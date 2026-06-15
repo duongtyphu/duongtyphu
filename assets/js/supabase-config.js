@@ -34,7 +34,7 @@ async function signOut() {
   window.location.href = '/login.html';
 }
 
-async function requireAuth(redirectTo = '/login.html') {
+async function requireAuth(redirectTo = 'login.html') {
   const session = await getSession();
   if (!session) {
     window.location.href = redirectTo + '?next=' + encodeURIComponent(window.location.pathname);
