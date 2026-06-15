@@ -95,6 +95,13 @@ select:focus-visible,
   --cyan:       #00D4FF;
   --violet:     #7C5CFC;
   --cyan-soft:  rgba(0,212,255,0.12);
+
+  /* Section palette — inspired by reference images */
+  --sec-teal:    #E8F7FB;   /* Samsung Tab S11: cyan/teal gradient */
+  --sec-orange:  #FFF2E8;   /* iPhone 16: copper/burnt orange */
+  --sec-sky:     #EBF5FF;   /* iPad Air: sky blue gradient */
+  --sec-lime:    #F3F9E6;   /* MacBook Air: yellow-green */
+  --sec-rose:    #FAF0F6;   /* Samsung tablet: pink/lavender */
   --violet-soft: rgba(124,92,252,0.12);
   --white:      #FFFFFF;
   --off-white:  #F7F9FC;
@@ -595,7 +602,7 @@ section { position: relative; }
 }
 
 /* ── 10. VẤN ĐỀ KHÁCH HÀNG ── */
-#problems { padding: var(--space-3xl) 0; background: var(--white); }
+#problems { padding: var(--space-3xl) 0; background: var(--sec-teal); }
 .problems-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
@@ -638,7 +645,7 @@ section { position: relative; }
 }
 
 /* ── 11. A5 SYSTEM ── */
-#a5-system { padding: var(--space-3xl) 0; background: var(--off-white); }
+#a5-system { padding: var(--space-3xl) 0; background: var(--sec-sky); }
 .a5-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
   gap: var(--space-sm);
@@ -673,7 +680,7 @@ section { position: relative; }
 .a5-statement .sep { color: var(--gray-300); margin: 0 6px; }
 
 /* ── 12. SOLO / SCALE ── */
-#programs { padding: var(--space-3xl) 0; background: var(--white); }
+#programs { padding: var(--space-3xl) 0; background: var(--sec-orange); }
 .programs-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
@@ -750,8 +757,8 @@ section { position: relative; }
 .program-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* ── 13. TUẦN / GIAI ĐOẠN ROADMAP ── */
-.roadmap-section { padding: var(--space-3xl) 0; }
-.roadmap-section.alt { background: var(--off-white); }
+.roadmap-section { padding: var(--space-3xl) 0; background: var(--sec-lime); }
+.roadmap-section.alt { background: var(--sec-lime); }
 .roadmap-grid {
   display: grid; grid-template-columns: repeat(4, 1fr);
   gap: var(--space-sm);
@@ -779,7 +786,7 @@ section { position: relative; }
 .roadmap-grid.phases-6 { grid-template-columns: repeat(3, 1fr); }
 
 /* ── 14. TRỢ LÝ AI ── */
-#ai-assistants { padding: var(--space-3xl) 0; background: var(--white); }
+#ai-assistants { padding: var(--space-3xl) 0; background: var(--sec-rose); }
 .assistants-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
   gap: var(--space-sm);
@@ -808,7 +815,7 @@ section { position: relative; }
 .assistants-warning p { font-size: var(--text-sm); color: var(--gray-700); line-height: 1.65; font-weight: 600; }
 
 /* ── 15. MÔ HÌNH ÁP DỤNG ── */
-#models { padding: var(--space-3xl) 0; background: var(--off-white); }
+#models { padding: var(--space-3xl) 0; background: var(--sec-teal); }
 .models-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
   gap: 10px; margin-bottom: var(--space-lg);
@@ -828,7 +835,7 @@ section { position: relative; }
 }
 
 /* ── 16. ĐỐI TƯỢNG PHÙ HỢP ── */
-#audience { padding: var(--space-3xl) 0; background: var(--white); }
+#audience { padding: var(--space-3xl) 0; background: var(--sec-orange); }
 .audience-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
@@ -854,7 +861,7 @@ section { position: relative; }
 .audience-col.unfit li svg { color: var(--error); }
 
 /* ── 17. PHƯƠNG PHÁP HỌC ── */
-#learning-method { padding: var(--space-3xl) 0; background: var(--off-white); }
+#learning-method { padding: var(--space-3xl) 0; background: var(--sec-sky); }
 .method-grid {
   display: grid; grid-template-columns: repeat(5, 1fr);
   gap: var(--space-sm);
@@ -874,7 +881,7 @@ section { position: relative; }
 .method-chip p { font-size: 0.8125rem; color: var(--gray-500); line-height: 1.55; }
 
 /* ── 18. GIẢNG VIÊN ── */
-#instructors { padding: var(--space-3xl) 0; background: var(--white); }
+#instructors { padding: var(--space-3xl) 0; background: var(--sec-lime); }
 .instructors-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
@@ -896,7 +903,7 @@ section { position: relative; }
 .instructor-bio { font-size: var(--text-sm); color: var(--gray-500); line-height: 1.6; }
 
 /* ── 19. CASE STUDY ── */
-#case-studies { padding: var(--space-3xl) 0; background: var(--off-white); }
+#case-studies { padding: var(--space-3xl) 0; background: var(--sec-rose); }
 .case-grid {
   display: grid; grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
@@ -927,7 +934,7 @@ section { position: relative; }
 }
 
 /* ── 20. FAQ ── */
-#faq { padding: var(--space-3xl) 0; background: var(--white); }
+#faq { padding: var(--space-3xl) 0; background: var(--sec-sky); }
 .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
 .faq-item {
   background: var(--off-white); border: 1px solid var(--gray-100);
