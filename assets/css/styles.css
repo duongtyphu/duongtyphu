@@ -105,12 +105,12 @@ select:focus-visible,
   --sec-violet:  #D8C8FF;
 
   /* Glossy gradients for cards */
-  --grad-teal:   linear-gradient(145deg, #D6F2F8 0%, #A8E0ED 60%, #88CDE0 100%);
-  --grad-orange: linear-gradient(145deg, #FFE8CC 0%, #FFD0A8 60%, #FFBA80 100%);
-  --grad-sky:    linear-gradient(145deg, #D0E8FF 0%, #A8D0FF 60%, #80B8FF 100%);
-  --grad-lime:   linear-gradient(145deg, #E4F8C0 0%, #CEEEA0 60%, #B8E480 100%);
-  --grad-rose:   linear-gradient(145deg, #FAD8EE 0%, #EFBEDE 60%, #E4A4CE 100%);
-  --grad-violet: linear-gradient(145deg, #EAE0FF 0%, #D8C8FF 60%, #C4B0FF 100%);
+  --grad-teal:   linear-gradient(145deg, #C2EEFA 0%, #7ED6EC 55%, #4FC3DF 100%);
+  --grad-orange: linear-gradient(145deg, #FFD8A8 0%, #FFB870 55%, #FFA040 100%);
+  --grad-sky:    linear-gradient(145deg, #C8E8FF 0%, #80C4FF 55%, #4AABFF 100%);
+  --grad-lime:   linear-gradient(145deg, #D8F5A0 0%, #AADD60 55%, #88CC30 100%);
+  --grad-rose:   linear-gradient(145deg, #F8C8E8 0%, #EE96D0 55%, #E068B8 100%);
+  --grad-violet: linear-gradient(145deg, #E0D0FF 0%, #C4AAFF 55%, #A888FF 100%);
   --violet-soft: rgba(124,92,252,0.12);
   --white:      #FFFFFF;
   --off-white:  #F7F9FC;
@@ -1564,3 +1564,15 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
   .founder-social-btn { padding: 8px 14px; font-size: var(--text-xs); }
 }
 
+
+/* ── CARD GLOSS ENHANCEMENT ── */
+.problem-card, .a5-card, .assistant-card, .model-chip,
+.method-chip, .instructor-card, .case-card, .faq-item,
+.roadmap-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.55);
+}
+.problem-card:hover, .a5-card:hover, .assistant-card:hover,
+.model-chip:hover, .method-chip:hover, .instructor-card:hover,
+.case-card:hover, .roadmap-card:hover {
+  box-shadow: 0 14px 36px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.55);
+}
