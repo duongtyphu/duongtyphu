@@ -50,7 +50,7 @@ html {
 body {
   font-family: var(--font);
   background: var(--off-white);
-  color: var(--navy);
+  color: var(--color-text-body);
   -webkit-font-smoothing: antialiased;
   line-height: 1.7;
   overflow-x: hidden;
@@ -86,17 +86,21 @@ select:focus-visible,
 
 /* ── 2. DESIGN TOKENS ── */
 :root {
-  /* Colors */
+  /* ════════════════════════════════════════
+     BRAND COLORS
+  ════════════════════════════════════════ */
   --navy:       #061A40;
   --deep-navy:  #020D22;
   --navy-mid:   #0D2B5E;
-  --blue:       #0A66FF;
-  --blue-mid:   #0852CC;
-  --cyan:       #00D4FF;
-  --violet:     #7C5CFC;
-  --cyan-soft:  rgba(0,212,255,0.12);
+  --blue:       #2563EB;   /* brand primary — WCAG AA on white */
+  --blue-mid:   #1D4ED8;
+  --blue-dark:  #1E40AF;
+  --cyan:       #06B6D4;
+  --violet:     #6D5DFB;
+  --cyan-soft:  rgba(6,182,212,0.12);
+  --violet-soft: rgba(109,93,251,0.12);
 
-  /* Section palette — inspired by reference images */
+  /* Section palette */
   --sec-teal:    #A8E0ED;
   --sec-orange:  #FFD0A8;
   --sec-sky:     #A8D0FF;
@@ -111,36 +115,92 @@ select:focus-visible,
   --grad-lime:   linear-gradient(145deg, #D8F5A0 0%, #AADD60 55%, #88CC30 100%);
   --grad-rose:   linear-gradient(145deg, #F8C8E8 0%, #EE96D0 55%, #E068B8 100%);
   --grad-violet: linear-gradient(145deg, #E0D0FF 0%, #C4AAFF 55%, #A888FF 100%);
-  --violet-soft: rgba(124,92,252,0.12);
+
   --white:      #FFFFFF;
-  --off-white:  #F7F9FC;
+  --off-white:  #F8FAFC;
 
-  /* Neutrals */
-  --gray-50:  #F0F4FA;
-  --gray-100: #E2E8F4;
-  --gray-200: #CBD5E8;
-  --gray-300: #9BAEC8;
-  --gray-500: #5A6E8C;
-  --gray-700: #2D3F58;
+  /* ════════════════════════════════════════
+     TYPOGRAPHY COLOR SYSTEM — VDAI ACADEMY
+     Senior UI/UX Design System v1.0
+  ════════════════════════════════════════
 
-  /* Status */
-  --success: #16A34A;
-  --error:   #DC2626;
-  --warning: #D97706;
+  HIERARCHY:
+  Primary   → H1, H2, bold lead text         contrast ~14:1 on white
+  Secondary → H3, H4, card titles            contrast ~8:1 on white
+  Tertiary  → Body paragraph                 contrast ~5.5:1 on white
+  Muted     → Subtitle, description          contrast ~4.5:1 on white ✓ WCAG AA
+  Disabled  → Placeholder, inactive          contrast ~2.5:1 (decorative only)
 
-  /* Typography */
-  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Plus Jakarta Sans', sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Manrope', sans-serif;
+  BRAND:
+  Blue      → Links, CTAs, eyebrows, accent  contrast ~4.6:1 on white ✓ WCAG AA
+  Violet    → Secondary brand, gradients     accent only
+  ════════════════════════════════════════ */
 
-  --text-xs:   0.75rem;
-  --text-sm:   0.875rem;
-  --text-base: 1rem;
-  --text-lg:   1.125rem;
-  --text-xl:   1.25rem;
-  --text-2xl:  1.5rem;
-  --text-3xl:  2rem;
-  --text-4xl:  2.75rem;
-  --text-5xl:  3.5rem;
+  /* Text — Neutral Scale (xanh đen, không dùng #000000) */
+  --color-text-primary:    #0F172A;  /* H1, H2 hero — contrast 17.5:1 ✓✓ */
+  --color-text-heading:    #1E293B;  /* H2, H3 sections — contrast 13.2:1 ✓✓ */
+  --color-text-body:       #334155;  /* body paragraph — contrast 8.6:1 ✓✓ */
+  --color-text-secondary:  #475569;  /* mô tả phụ, sub-body — contrast 6.0:1 ✓✓ */
+  --color-text-tertiary:   #64748B;  /* caption, label, meta — contrast 4.6:1 ✓ AA */
+  --color-text-muted:      #94A3B8;  /* placeholder, hint — contrast 2.9:1 (decorative) */
+  --color-text-disabled:   #CBD5E1;  /* disabled state — contrast 1.6:1 (inactive only) */
+
+  /* Text — Inverse (trên nền tối) */
+  --color-text-inverse:           #FFFFFF;      /* chữ trắng trên navy/dark */
+  --color-text-inverse-secondary: #CBD5E1;      /* phụ trên dark — contrast 5.8:1 ✓✓ */
+  --color-text-inverse-muted:     #94A3B8;      /* muted trên dark — contrast 3.4:1 */
+
+  /* Text — Brand */
+  --color-text-brand:      #2563EB;  /* brand blue — contrast 4.6:1 on white ✓ AA */
+  --color-text-brand-alt:  #6D5DFB;  /* brand violet — accent, không dùng body */
+  --color-text-link:       #2563EB;  /* link default */
+  --color-text-link-hover: #1D4ED8;  /* link hover — darker */
+  --color-text-link-dark:  #60A5FA;  /* link trên nền tối — contrast 5.0:1 ✓ */
+
+  /* Text — Semantic */
+  --color-text-success:    #15803D;  /* thông báo thành công — contrast 5.1:1 ✓ AA */
+  --color-text-warning:    #B45309;  /* cảnh báo — contrast 4.7:1 ✓ AA */
+  --color-text-error:      #DC2626;  /* lỗi — contrast 4.5:1 ✓ AA */
+  --color-text-info:       #0369A1;  /* thông tin — contrast 5.5:1 ✓✓ */
+
+  /* Text — On colored backgrounds */
+  --color-text-on-primary:  #FFFFFF;  /* chữ trên nút primary blue */
+  --color-text-on-accent:   #0F172A;  /* chữ trên nút cyan/gradient sáng */
+  --color-text-on-card:     #1E293B;  /* chữ trên card gradient pastel */
+  --color-text-on-card-sub: #334155;  /* phụ trên card pastel */
+
+  /* Text — Special */
+  --color-text-price:       #0F172A;  /* giá khóa học — đậm nhất */
+  --color-text-price-old:   #94A3B8;  /* giá cũ gạch ngang */
+  --color-text-badge-new:   #1D4ED8;  /* nhãn "Mới" */
+  --color-text-badge-hot:   #B45309;  /* nhãn "Bán chạy" */
+  --color-text-badge-sale:  #15803D;  /* nhãn "Ưu đãi" */
+  --color-text-copyright:   #64748B;  /* footer copyright */
+  --color-text-footer:      #94A3B8;  /* footer links, địa chỉ */
+  --color-text-footer-head: #CBD5E1;  /* footer heading */
+  --color-text-nav:         #334155;  /* nav links */
+  --color-text-nav-hover:   #2563EB;  /* nav hover */
+  --color-text-nav-active:  #1D4ED8;  /* nav active */
+
+  /* ════════════════════════════════════════
+     TYPOGRAPHY SCALE — VDAI ACADEMY
+     Font: SF Pro Display (system) / Manrope fallback
+  ════════════════════════════════════════ */
+
+  /* Font stacks */
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Manrope', 'Segoe UI', sans-serif;
+  --font:         -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Inter', 'Segoe UI', sans-serif;
+
+  /* Scale */
+  --text-xs:      0.75rem;    /* 12px — caption, badge, copyright */
+  --text-sm:      0.875rem;   /* 14px — body small, nav, button sm */
+  --text-base:    1rem;       /* 16px — body regular */
+  --text-lg:      1.125rem;   /* 18px — body large, card body */
+  --text-xl:      1.25rem;    /* 20px — H4, lead text */
+  --text-2xl:     1.5rem;     /* 24px — H3 */
+  --text-3xl:     2rem;       /* 32px — H2 section */
+  --text-4xl:     2.75rem;    /* 44px — H1 page */
+  --text-5xl:     3.5rem;     /* 56px — Display hero */
 
   /* Spacing */
   --space-xs:  8px;
@@ -151,6 +211,19 @@ select:focus-visible,
   --space-2xl: 56px;
   --space-3xl: 72px;
 
+  /* Neutrals */
+  --gray-50:  #F8FAFC;
+  --gray-100: #E2E8F0;
+  --gray-200: #CBD5E1;
+  --gray-300: #94A3B8;
+  --gray-500: #64748B;
+  --gray-700: #334155;
+
+  /* Status */
+  --success: #16A34A;
+  --error:   #DC2626;
+  --warning: #D97706;
+
   /* Radius */
   --radius-sm:  8px;
   --radius-md:  12px;
@@ -159,10 +232,18 @@ select:focus-visible,
   --radius-full: 9999px;
 
   /* Shadow */
-  --shadow-sm: 0 1px 3px rgba(6,26,64,0.08), 0 1px 2px rgba(6,26,64,0.04);
-  --shadow-md: 0 4px 16px rgba(6,26,64,0.10), 0 2px 6px rgba(6,26,64,0.06);
-  --shadow-lg: 0 16px 48px rgba(6,26,64,0.14), 0 4px 12px rgba(6,26,64,0.08);
-  --shadow-xl: 0 24px 64px rgba(6,26,64,0.18), 0 8px 24px rgba(6,26,64,0.10);
+  --shadow-sm: 0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md: 0 4px 16px rgba(15,23,42,0.10), 0 2px 6px rgba(15,23,42,0.06);
+  --shadow-lg: 0 16px 48px rgba(15,23,42,0.12), 0 4px 12px rgba(15,23,42,0.06);
+  --shadow-xl: 0 24px 64px rgba(15,23,42,0.16), 0 8px 24px rgba(15,23,42,0.08);
+
+  /* Easing */
+  --ease: cubic-bezier(0.16,1,0.3,1);
+
+  /* Layout */
+  --nav-height: 72px;
+  --container-max: 1240px;
+}
 
   /* Easing */
   --ease: cubic-bezier(0.16,1,0.3,1);
@@ -220,14 +301,14 @@ section { position: relative; }
   font-family: var(--font-display);
   font-size: clamp(1.25rem, 2.4vw, 2rem);
   font-weight: 800; line-height: 1.22; letter-spacing: -0.02em;
-  color: var(--navy); margin-bottom: var(--space-sm);
+  color: var(--color-text-heading); margin-bottom: var(--space-sm);
 }
 .section-title .hl {
   background: linear-gradient(135deg, var(--blue), var(--cyan));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .section-subtitle {
-  font-size: var(--text-base); color: var(--gray-500); line-height: 1.7;
+  font-size: var(--text-base); color: var(--color-text-secondary); line-height: 1.7;
 }
 .text-gradient {
   background: linear-gradient(135deg, var(--blue) 0%, var(--cyan) 100%);
@@ -1576,3 +1657,100 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
 .case-card:hover, .roadmap-card:hover {
   box-shadow: 0 14px 36px rgba(0,0,0,0.14), inset 0 1px 0 rgba(255,255,255,0.55);
 }
+
+/* ════════════════════════════════════════════════════════════
+   TYPOGRAPHY COLOR SYSTEM — VDAI ACADEMY v1.0
+   Applied across all sections
+════════════════════════════════════════════════════════════ */
+
+/* ── HEADINGS ── */
+h1, h2, h3, h4, h5, h6 { color: var(--color-text-heading); }
+h1, .hero-h1 { color: var(--color-text-primary); letter-spacing: -0.025em; }
+h2, .section-title { color: var(--color-text-heading); }
+h3 { color: var(--color-text-heading); font-size: var(--text-xl); font-weight: 700; }
+h4 { color: var(--color-text-body); font-size: var(--text-lg); font-weight: 700; }
+
+/* ── BODY TEXT ── */
+p { color: var(--color-text-body); }
+.section-subtitle, .hero-desc { color: var(--color-text-secondary); font-size: var(--text-base); }
+
+/* ── NAVIGATION ── */
+.nav-menu a { color: var(--color-text-nav); font-weight: 600; }
+.nav-menu a:hover { color: var(--color-text-nav-hover); }
+.nav-menu a.active { color: var(--color-text-nav-active); }
+.nav-logo { color: var(--color-text-primary); }
+.nav-logo-text .sub { color: var(--color-text-tertiary); }
+
+/* ── LINKS ── */
+a { color: inherit; }
+.text-link, .case-proof-link { color: var(--color-text-link); font-weight: 600; }
+.text-link:hover, .case-proof-link:hover { color: var(--color-text-link-hover); }
+
+/* ── CARDS (on pastel backgrounds) ── */
+.problem-card h3, .a5-card h3, .assistant-card h3,
+.method-chip h3, .instructor-info h3, .case-info h3,
+.roadmap-card h3, .model-chip { color: var(--color-text-on-card); }
+
+.problem-text, .a5-card p, .assistant-card p,
+.method-chip p, .instructor-bio, .case-result,
+.roadmap-field-val { color: var(--color-text-on-card-sub); }
+
+.instructor-role { color: var(--color-text-brand); }
+.case-track { color: var(--color-text-brand-alt); }
+
+/* ── NAVIGATION EYEBROW / LABELS ── */
+.section-eyebrow { color: var(--color-text-brand); }
+.roadmap-field-label { color: var(--color-text-tertiary); }
+
+/* ── BADGES ── */
+.tag-blue   { color: var(--color-text-badge-new); }
+.tag-violet { color: var(--color-text-brand-alt); }
+.tag-todo   { color: var(--color-text-warning); }
+
+/* ── FORMS ── */
+.form-input, .form-textarea, .form-select { color: var(--color-text-body); }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--color-text-muted); }
+.form-label { color: var(--color-text-body); font-weight: 600; font-size: var(--text-sm); }
+input[disabled], textarea[disabled] { color: var(--color-text-disabled); }
+
+/* ── FOOTER ── */
+.footer-nav-col h4 { color: var(--color-text-footer-head); }
+.footer-nav-col a { color: var(--color-text-footer); }
+.footer-nav-col a:hover { color: var(--color-text-inverse); }
+.footer-contact-item .label { color: var(--color-text-footer-head); font-size: var(--text-xs); }
+.footer-contact-item span:last-child { color: var(--color-text-footer); }
+.footer-bottom { color: var(--color-text-copyright); font-size: var(--text-xs); }
+.footer-legal-links a { color: var(--color-text-footer); }
+.footer-legal-links a:hover { color: var(--color-text-inverse); }
+
+/* ── DARK SECTIONS (CTA, problems-conclusion) ── */
+#final-cta, .problems-conclusion { color: var(--color-text-inverse); }
+#final-cta .final-cta-title { color: var(--color-text-inverse); }
+#final-cta .final-cta-desc  { color: var(--color-text-inverse-secondary); }
+
+/* ── SEMANTIC STATUS ── */
+.status-success, .form-success { color: var(--color-text-success); }
+.status-warning { color: var(--color-text-warning); }
+.status-error   { color: var(--color-text-error); }
+
+/* ── PRICE ── */
+.program-price { color: var(--color-text-price); font-weight: 800; }
+.program-price-old { color: var(--color-text-price-old); text-decoration: line-through; }
+
+/* ── FAQ ── */
+.faq-question { color: var(--color-text-on-card); font-weight: 700; }
+.faq-answer-inner { color: var(--color-text-on-card-sub); }
+
+/* ── SCALE CARD (dark program card) ── */
+.program-card.scale h3,
+.program-card.scale p,
+.program-card.scale li,
+.program-card.scale .program-badge { color: var(--color-text-inverse); }
+.program-card.scale .program-price { color: var(--color-text-inverse); }
+.program-card.scale .program-price-note { color: var(--color-text-inverse-secondary); }
+
+/* ── A5 STEP NUMBER ── */
+.a5-card .a5-step-num { color: var(--color-text-tertiary); }
+
+/* ── MODELS DISCLAIMER ── */
+.models-disclaimer { color: var(--color-text-tertiary); font-style: italic; }
