@@ -1668,14 +1668,18 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
 
 /* ── HEADINGS ── */
 h1, h2, h3, h4, h5, h6 { color: var(--color-text-heading); }
-h1, .hero-h1 { color: var(--color-text-primary); letter-spacing: -0.025em; }
+h1 { color: var(--color-text-primary); letter-spacing: -0.025em; }
 h2, .section-title { color: var(--color-text-heading); }
 h3 { color: var(--color-text-heading); font-size: var(--text-xl); font-weight: 700; }
 h4 { color: var(--color-text-body); font-size: var(--text-lg); font-weight: 700; }
+/* Hero h1 stays white — dark background */
+.hero-h1 { color: #fff; letter-spacing: -0.025em; }
 
 /* ── BODY TEXT ── */
 p { color: var(--color-text-body); }
-.section-subtitle, .hero-desc { color: var(--color-text-secondary); font-size: var(--text-base); }
+.section-subtitle { color: var(--color-text-secondary); font-size: var(--text-base); }
+/* Hero desc stays white/translucent — overrides p rule */
+.hero-desc { color: rgba(255,255,255,0.68); font-size: var(--text-base); }
 
 /* ── NAVIGATION ── */
 .nav-menu a { color: var(--color-text-nav); font-weight: 600; }
