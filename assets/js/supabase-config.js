@@ -3,7 +3,7 @@
    Điền thông tin sau khi tạo project tại https://supabase.com
 ════════════════════════════════════════════════════════════ */
 const SUPABASE_URL  = 'https://uosxpxolsvwcafxvnroy.supabase.co';
-const SUPABASE_KEY  = 'sb_publishable_6QdMtBcfIzBNMJeag2cOEw_wCwsec-9';
+const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvc3hweG9sc3Z3Y2FmeHZucm95Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1Mjk4MTgsImV4cCI6MjA5NzEwNTgxOH0.2fGXDEAYYFc5uxLnU1Ep4dvqkTmd0CLydLhDRpydVNE';
 
 // Khởi tạo client — dùng CDN supabase-js
 const _supabase = (typeof supabase !== 'undefined')
