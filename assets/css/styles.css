@@ -610,7 +610,7 @@ section { position: relative; }
 }
 .problem-card {
   display: flex; gap: 14px; align-items: flex-start;
-  background: var(--off-white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(0,175,210,0.28);
   border-radius: var(--radius-md); padding: var(--space-md);
 }
 .problem-icon {
@@ -651,7 +651,7 @@ section { position: relative; }
   gap: var(--space-sm);
 }
 .a5-card {
-  background: var(--white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(10,102,255,0.22);
   border-radius: var(--radius-lg); padding: var(--space-md);
   position: relative;
 }
@@ -692,8 +692,8 @@ section { position: relative; }
   position: relative; overflow: hidden;
 }
 .program-card.solo {
-  background: var(--white);
-  border: 1.5px solid var(--gray-100);
+  background: #FFFFFF;
+  border: 1.5px solid rgba(220,110,30,0.28);
 }
 .program-card.scale {
   background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
@@ -793,7 +793,7 @@ section { position: relative; }
   margin-bottom: var(--space-lg);
 }
 .assistant-card {
-  background: var(--off-white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(200,80,160,0.22);
   border-radius: var(--radius-md); padding: var(--space-md);
   text-align: center;
 }
@@ -821,7 +821,7 @@ section { position: relative; }
   gap: 10px; margin-bottom: var(--space-lg);
 }
 .model-chip {
-  background: var(--white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(0,175,210,0.28);
   border-radius: var(--radius-md); padding: 14px 16px;
   display: flex; align-items: center; gap: 10px;
   font-size: var(--text-sm); font-weight: 700; color: var(--navy);
@@ -867,7 +867,7 @@ section { position: relative; }
   gap: var(--space-sm);
 }
 .method-chip {
-  background: var(--white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(10,102,255,0.22);
   border-radius: var(--radius-md); padding: var(--space-md);
   text-align: center;
 }
@@ -888,7 +888,7 @@ section { position: relative; }
 }
 .instructor-card {
   display: flex; gap: var(--space-md); align-items: flex-start;
-  background: var(--off-white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(100,160,30,0.28);
   border-radius: var(--radius-lg); padding: var(--space-md);
 }
 .instructor-photo {
@@ -909,7 +909,7 @@ section { position: relative; }
   gap: var(--space-md);
 }
 .case-card {
-  background: var(--white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(200,80,160,0.22);
   border-radius: var(--radius-lg); padding: var(--space-md);
   display: flex; gap: var(--space-md); align-items: flex-start;
 }
@@ -937,7 +937,7 @@ section { position: relative; }
 #faq { padding: var(--space-3xl) 0; background: var(--sec-sky); }
 .faq-list { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
 .faq-item {
-  background: var(--off-white); border: 1px solid var(--gray-100);
+  background: #FFFFFF; border: 1.5px solid rgba(10,102,255,0.18);
   border-radius: var(--radius-md); overflow: hidden;
 }
 .faq-question {
