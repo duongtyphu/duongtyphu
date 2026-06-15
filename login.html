@@ -90,8 +90,11 @@
         <input type="email" id="loginEmail" placeholder="email@example.com" required autocomplete="email">
       </div>
       <div class="auth-field">
-        <label for="loginPassword">Mật khẩu</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <label for="loginPassword" style="margin-bottom:0">Mật khẩu</label>
+          <a href="#" id="forgotLink" style="font-size:0.8rem;color:#2563EB;text-decoration:none;font-weight:600">Quên mật khẩu?</a>
+        </div>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
       </div>
       <button type="submit" class="auth-btn" id="loginBtn">Đăng nhập</button>
     </form>
@@ -117,6 +120,27 @@
   const form    = document.getElementById('loginForm');
   const msg     = document.getElementById('authMsg');
   const btn     = document.getElementById('loginBtn');
+
+  // Quên mật khẩu
+  document.getElementById('forgotLink').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Vui lòng nhập email trước, sau đó nhấn "Quên mật khẩu?".';
+      return;
+    }
+    const { error } = await _supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/login.html'
+    });
+    if (error) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Lỗi: ' + error.message;
+    } else {
+      msg.className = 'auth-msg success';
+      msg.textContent = 'Đã gửi email đặt lại mật khẩu! Kiểm tra hộp thư của bạn.';
+    }
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
