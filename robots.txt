@@ -1,0 +1,9 @@
+# VDAI Academy — robots.txt
+# TODO: OWNER INPUT — cập nhật domain trong dòng Sitemap khi có tên miền chính thức
+
+User-agent: *
+Allow: /
+
+Disallow: /thank-you.html
+
+Sitemap: https://example.com/sitemap.xml
