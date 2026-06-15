@@ -97,11 +97,11 @@ select:focus-visible,
   --cyan-soft:  rgba(0,212,255,0.12);
 
   /* Section palette — inspired by reference images */
-  --sec-teal:    #E8F7FB;   /* Samsung Tab S11: cyan/teal gradient */
-  --sec-orange:  #FFF2E8;   /* iPhone 16: copper/burnt orange */
-  --sec-sky:     #EBF5FF;   /* iPad Air: sky blue gradient */
-  --sec-lime:    #F3F9E6;   /* MacBook Air: yellow-green */
-  --sec-rose:    #FAF0F6;   /* Samsung tablet: pink/lavender */
+  --sec-teal:    #C8EEF5;   /* Samsung Tab S11: cyan/teal */
+  --sec-orange:  #FFE0C8;   /* iPhone 16: copper/burnt orange */
+  --sec-sky:     #C8E4FF;   /* iPad Air: sky blue */
+  --sec-lime:    #E2F5C0;   /* MacBook Air: yellow-green */
+  --sec-rose:    #F5D8EE;   /* Samsung tablet: pink/lavender */
   --violet-soft: rgba(124,92,252,0.12);
   --white:      #FFFFFF;
   --off-white:  #F7F9FC;
