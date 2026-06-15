@@ -2594,12 +2594,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (hasError) return;
 
-    // Nếu chưa cấu hình endpoint, không giả vờ gửi thành công
+    // Nếu chưa cấu hình endpoint → redirect thẳng sang register
     if (!VDAI_CONFIG.form.isConnected || !VDAI_CONFIG.form.leadEndpoint) {
-      statusEl.className = 'form-status error show';
-      statusEl.innerHTML = errorIcon() +
-        '<span>Hệ thống nhận dữ liệu chưa được kết nối. Vui lòng liên hệ trực tiếp qua Zalo để nhận bản đồ Affiliate AI.</span>';
-      trackEvent('lead_error', { reason: 'endpoint_not_configured' });
+      statusEl.className = 'form-status success show';
+      statusEl.innerHTML = successIcon() + '<span>Đang chuyển đến trang nhận tài liệu...</span>';
+      submitBtn.textContent = 'Tiếp tục ✓';
+      submitBtn.disabled = true;
+      setTimeout(() => {
+        const params = new URLSearchParams({
+          email: emailInput.value.trim(),
+          name:  nameInput.value.trim(),
+          track: result.track
+        });
+        window.location.href = 'register.html?' + params.toString();
+      }, 1000);
       return;
     }
 
@@ -2633,14 +2641,18 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(() => {
         statusEl.className = 'form-status success show';
-        statusEl.innerHTML = successIcon() + '<span>Đã gửi thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.</span>';
+        statusEl.innerHTML = successIcon() + '<span>Hoàn tất! Đang chuyển đến trang nhận tài liệu...</span>';
         trackEvent('lead_success', { track: result.ctaTrack });
         submitBtn.textContent = 'Đã gửi ✓';
 
-        // Chuyển đến trang cảm ơn sau 1.5s (nếu trang đang ở root)
         setTimeout(() => {
-          window.location.href = 'thank-you.html';
-        }, 1500);
+          const params = new URLSearchParams({
+            email: emailInput.value.trim(),
+            name:  nameInput.value.trim(),
+            track: result.track
+          });
+          window.location.href = 'register.html?' + params.toString();
+        }, 1200);
       })
       .catch((err) => {
         console.error('Lead submit error:', err);
