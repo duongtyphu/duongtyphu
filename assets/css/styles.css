@@ -878,7 +878,10 @@ section { position: relative; }
 #solo-roadmap { background: var(--off-white); }
 #solo-roadmap .roadmap-card { background: var(--grad-lime); border-color: rgba(100,160,30,0.25); }
 #solo-roadmap .roadmap-card:hover { box-shadow: 0 12px 32px rgba(100,160,30,0.22); }
-#solo-roadmap .roadmap-num { background: rgba(100,160,30,0.18); color: #4A8000; }
+#solo-roadmap .roadmap-num { background: rgba(255,255,255,0.4); color: #2D5A00; font-weight: 800; }
+#solo-roadmap .roadmap-field-label { color: rgba(255,255,255,0.95); font-weight: 800; }
+#solo-roadmap .roadmap-card h3 { color: #1A3800; }
+#solo-roadmap .roadmap-field-val { color: #2D4A10; }
 
 /* SCALE outputs: violet */
 #scale-outputs { background: var(--white); }
