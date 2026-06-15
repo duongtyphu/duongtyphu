@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký — VDAI Academy</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #F8FAFC 0%, #EEF4FF 100%);
+      padding: 24px;
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(15,23,42,0.12);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+    .auth-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; margin-bottom: 32px;
+    }
+    .auth-logo-mark {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, #2563EB, #6D5DFB);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 900; font-size: 1rem;
+    }
+    .auth-logo-text { font-weight: 800; font-size: 1.1rem; color: #0F172A; }
+    .auth-logo-text span { color: #2563EB; }
+    .auth-title { font-size: 1.5rem; font-weight: 800; color: #0F172A; margin-bottom: 6px; }
+    .auth-sub { font-size: 0.9rem; color: #64748B; margin-bottom: 28px; }
+    .auth-field { margin-bottom: 16px; }
+    .auth-field label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 6px; }
+    .auth-field input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid #E2E8F0;
+      border-radius: 10px; font-size: 1rem; color: #0F172A;
+      transition: border-color 0.2s; outline: none; font-family: inherit;
+      box-sizing: border-box;
+    }
+    .auth-field input:focus { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .auth-btn {
+      width: 100%; padding: 14px; border: none; border-radius: 10px;
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;
+      margin-top: 8px; transition: opacity 0.2s, transform 0.2s;
+      font-family: inherit;
+    }
+    .auth-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .auth-switch { text-align: center; font-size: 0.875rem; color: #475569; margin-top: 20px; }
+    .auth-switch a { color: #2563EB; font-weight: 600; text-decoration: none; }
+    .auth-switch a:hover { color: #1D4ED8; }
+    .auth-msg { padding: 12px 14px; border-radius: 10px; font-size: 0.875rem; margin-bottom: 16px; display: none; }
+    .auth-msg.error { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; display: block; }
+    .auth-msg.success { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; display: block; }
+    .auth-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #64748B; text-decoration: none; margin-bottom: 20px; }
+    .auth-back:hover { color: #2563EB; }
+    .auth-perks { background: #F0F7FF; border-radius: 12px; padding: 14px 16px; margin-bottom: 24px; }
+    .auth-perks p { font-size: 0.8rem; color: #1E40AF; font-weight: 600; margin: 0 0 8px; }
+    .auth-perks ul { margin: 0; padding-left: 16px; }
+    .auth-perks li { font-size: 0.8rem; color: #1E3A8A; line-height: 1.6; }
+    @media (max-width: 480px) {
+      .auth-card { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+    <a href="index.html" class="auth-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Về trang chủ
+    </a>
+    <a href="index.html" class="auth-logo">
+      <div class="auth-logo-mark">V</div>
+      <div class="auth-logo-text">VDAI <span>Academy</span></div>
+    </a>
+    <h1 class="auth-title">Đăng ký miễn phí</h1>
+    <p class="auth-sub">Tạo tài khoản để nhận tài liệu & khoá học</p>
+
+    <div class="auth-perks">
+      <p>Thành viên được nhận:</p>
+      <ul>
+        <li>Bản đồ Affiliate AI miễn phí</li>
+        <li>Tài liệu & mini-course miễn phí</li>
+        <li>Ưu tiên thông báo khai giảng VDAI SOLO & SCALE</li>
+      </ul>
+    </div>
+
+    <div class="auth-msg" id="authMsg"></div>
+
+    <form id="registerForm">
+      <div class="auth-field">
+        <label for="regName">Họ và tên</label>
+        <input type="text" id="regName" placeholder="Nguyễn Văn A" required autocomplete="name">
+      </div>
+      <div class="auth-field">
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="email@example.com" required autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label for="regPassword">Mật khẩu</label>
+        <input type="password" id="regPassword" placeholder="Tối thiểu 8 ký tự" required autocomplete="new-password" minlength="8">
+      </div>
+      <button type="submit" class="auth-btn" id="registerBtn">Tạo tài khoản miễn phí</button>
+    </form>
+
+    <div class="auth-switch">
+      Đã có tài khoản? <a href="login.html">Đăng nhập</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script>
+(async () => {
+  const session = await getSession();
+  if (session) {
+    window.location.href = 'portal.html';
+    return;
+  }
+
+  const form = document.getElementById('registerForm');
+  const msg  = document.getElementById('authMsg');
+  const btn  = document.getElementById('registerBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = 'Đang tạo tài khoản...';
+    msg.className = 'auth-msg';
+
+    const name     = document.getElementById('regName').value.trim();
+    const email    = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+
+    const { error } = await signUp(email, password, { full_name: name });
+    if (error) {
+      msg.className = 'auth-msg error';
+      msg.textContent = error.message === 'User already registered'
+        ? 'Email này đã được đăng ký. Hãy đăng nhập.' : error.message;
+      btn.disabled = false;
+      btn.textContent = 'Tạo tài khoản miễn phí';
+    } else {
+      msg.className = 'auth-msg success';
+      msg.textContent = 'Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.';
+      btn.disabled = true;
+      btn.textContent = 'Đã gửi email xác nhận';
+    }
+  });
+})();
+</script>
+</body>
+</html>

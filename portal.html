@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tài liệu thành viên — VDAI Academy</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; margin: 0; }
+
+    /* ── Top Nav ── */
+    .portal-nav {
+      background: #fff;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .portal-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .portal-logo-mark {
+      width: 36px; height: 36px; border-radius: 9px;
+      background: linear-gradient(135deg, #2563EB, #6D5DFB);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 900; font-size: 0.95rem;
+    }
+    .portal-logo-text { font-weight: 800; font-size: 1rem; color: #0F172A; }
+    .portal-logo-text span { color: #2563EB; }
+    .portal-user { display: flex; align-items: center; gap: 14px; }
+    .portal-user-name { font-size: 0.875rem; color: #475569; font-weight: 500; }
+    .portal-signout {
+      font-size: 0.8rem; font-weight: 600; color: #64748B;
+      border: 1.5px solid #E2E8F0; border-radius: 8px;
+      padding: 6px 14px; background: none; cursor: pointer;
+      font-family: inherit; transition: all 0.2s;
+    }
+    .portal-signout:hover { color: #DC2626; border-color: #FECACA; background: #FEF2F2; }
+
+    /* ── Layout ── */
+    .portal-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+    .portal-greeting { margin-bottom: 36px; }
+    .portal-greeting h1 { font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; }
+    .portal-greeting p  { font-size: 0.95rem; color: #64748B; margin: 0; }
+
+    /* ── Section heading ── */
+    .portal-section { margin-bottom: 44px; }
+    .portal-section-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 2px solid #E2E8F0;
+    }
+    .portal-section-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .portal-section-head h2 { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0; }
+    .portal-section-head .badge {
+      font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+      background: #EEF4FF; color: #2563EB;
+    }
+    .portal-section-head .badge.coming { background: #FFF7ED; color: #C2410C; }
+
+    /* ── Course cards ── */
+    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .course-card {
+      background: #fff; border-radius: 16px;
+      border: 1.5px solid #E2E8F0;
+      overflow: hidden; transition: transform 0.22s, box-shadow 0.22s;
+      position: relative;
+    }
+    .course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(15,23,42,0.10); }
+    .course-card-cover {
+      height: 120px; display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem;
+    }
+    .course-card-body { padding: 18px 20px 20px; }
+    .course-card-body h3 { font-size: 1rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; }
+    .course-card-body p  { font-size: 0.83rem; color: #64748B; margin: 0 0 14px; line-height: 1.5; }
+    .course-card-meta { display: flex; align-items: center; justify-content: space-between; }
+    .course-tag {
+      font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    }
+    .tag-free    { background: #F0FDF4; color: #15803D; }
+    .tag-locked  { background: #F8FAFC; color: #94A3B8; }
+    .tag-soon    { background: #FFF7ED; color: #C2410C; }
+
+    .course-btn {
+      font-size: 0.8rem; font-weight: 700; padding: 7px 16px;
+      border-radius: 8px; border: none; cursor: pointer;
+      font-family: inherit; transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-primary { background: #2563EB; color: #fff; }
+    .btn-primary:hover { background: #1D4ED8; }
+    .btn-locked  { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
+
+    /* ── Locked overlay ── */
+    .course-card.locked .course-card-cover { filter: grayscale(0.3); }
+    .locked-banner {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(15,23,42,0.72); backdrop-filter: blur(4px);
+      color: #fff; font-size: 0.7rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ── Doc list ── */
+    .doc-list { display: flex; flex-direction: column; gap: 12px; }
+    .doc-item {
+      background: #fff; border-radius: 12px; border: 1.5px solid #E2E8F0;
+      padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .doc-item:hover { transform: translateX(4px); box-shadow: 0 4px 20px rgba(15,23,42,0.07); }
+    .doc-icon {
+      width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .doc-info { flex: 1; }
+    .doc-info h4 { font-size: 0.9rem; font-weight: 700; color: #0F172A; margin: 0 0 3px; }
+    .doc-info p  { font-size: 0.78rem; color: #64748B; margin: 0; }
+    .doc-btn {
+      font-size: 0.78rem; font-weight: 700; padding: 7px 14px;
+      border-radius: 8px; border: none; cursor: pointer;
+      font-family: inherit; transition: all 0.2s; white-space: nowrap;
+      text-decoration: none; display: inline-block; color: #fff;
+      background: #2563EB;
+    }
+    .doc-btn:hover { background: #1D4ED8; }
+
+    /* ── Coming soon card ── */
+    .coming-card {
+      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+      border-radius: 20px; padding: 32px 28px;
+      display: flex; gap: 24px; align-items: center;
+      margin-bottom: 20px; position: relative; overflow: hidden;
+    }
+    .coming-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, transparent 60%);
+    }
+    .coming-cover { font-size: 3rem; flex-shrink: 0; position: relative; }
+    .coming-body { position: relative; }
+    .coming-body h3 { font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 6px; }
+    .coming-body p  { font-size: 0.85rem; color: #94A3B8; margin: 0 0 16px; line-height: 1.6; }
+    .coming-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.3);
+      color: #FB923C; font-size: 0.78rem; font-weight: 700;
+      padding: 5px 14px; border-radius: 20px;
+    }
+    .coming-dot { width: 7px; height: 7px; border-radius: 50%; background: #FB923C; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    @media (max-width: 600px) {
+      .coming-card { flex-direction: column; gap: 16px; }
+      .portal-user-name { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="portal-nav">
+  <a href="index.html" class="portal-logo">
+    <div class="portal-logo-mark">V</div>
+    <div class="portal-logo-text">VDAI <span>Academy</span></div>
+  </a>
+  <div class="portal-user">
+    <span class="portal-user-name" id="userName"></span>
+    <button class="portal-signout" onclick="signOut()">Đăng xuất</button>
+  </div>
+</nav>
+
+<!-- Main -->
+<div class="portal-wrap">
+
+  <!-- Greeting -->
+  <div class="portal-greeting">
+    <h1>Xin chào, <span id="greetName">bạn</span> 👋</h1>
+    <p>Chào mừng đến với khu vực tài liệu dành riêng cho thành viên VDAI Academy.</p>
+  </div>
+
+  <!-- ── Khoá học chính ── -->
+  <div class="portal-section">
+    <div class="portal-section-head">
+      <div class="portal-section-icon" style="background:#EEF4FF">🎓</div>
+      <h2>Khoá học chính</h2>
+      <span class="badge coming">Sắp khai giảng</span>
+    </div>
+
+    <!-- VDAI SOLO -->
+    <div class="coming-card" style="margin-bottom:16px">
+      <div class="coming-cover">🚀</div>
+      <div class="coming-body">
+        <h3>VDAI SOLO</h3>
+        <p>Xây hệ thống Affiliate bằng AI — vận hành tinh gọn một người.<br>Lộ trình 8 tuần thực chiến, từ zero đến dòng tiền đầu tiên.</p>
+        <span class="coming-badge"><span class="coming-dot"></span>Sắp mở đăng ký</span>
+      </div>
+    </div>
+
+    <!-- VDAI SCALE -->
+    <div class="coming-card">
+      <div class="coming-cover">📈</div>
+      <div class="coming-body">
+        <h3>VDAI SCALE</h3>
+        <p>Nhân bản hệ thống Affiliate cùng đội nhóm — tự động hoá, mở rộng quy mô.<br>Dành cho người đã có nền tảng, muốn bứt phá doanh thu.</p>
+        <span class="coming-badge"><span class="coming-dot"></span>Sắp mở đăng ký</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Mini-course miễn phí ── -->
+  <div class="portal-section">
+    <div class="portal-section-head">
+      <div class="portal-section-icon" style="background:#F0FDF4">⚡</div>
+      <h2>Mini-course miễn phí</h2>
+      <span class="badge">Miễn phí</span>
+    </div>
+
+    <div class="course-grid">
+
+      <div class="course-card">
+        <div class="course-card-cover" style="background: linear-gradient(145deg,#C2EEFA,#4FC3DF)">🤖</div>
+        <div class="course-card-body">
+          <h3>ChatGPT cho người mới bắt đầu</h3>
+          <p>Làm chủ prompt, tạo nội dung & tự động hoá công việc hàng ngày với ChatGPT.</p>
+          <div class="course-card-meta">
+            <span class="course-tag tag-free">Miễn phí · 5 bài</span>
+            <a href="#" class="course-btn btn-primary">Học ngay →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card-cover" style="background: linear-gradient(145deg,#FFD8A8,#FFA040)">💡</div>
+        <div class="course-card-body">
+          <h3>Affiliate Marketing 101</h3>
+          <p>Hiểu cơ bản về mô hình Affiliate, chọn sản phẩm & xây kênh lần đầu tiên.</p>
+          <div class="course-card-meta">
+            <span class="course-tag tag-free">Miễn phí · 6 bài</span>
+            <a href="#" class="course-btn btn-primary">Học ngay →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="course-card">
+        <div class="course-card-cover" style="background: linear-gradient(145deg,#D8F5A0,#88CC30)">🗺️</div>
+        <div class="course-card-body">
+          <h3>Bản đồ Affiliate AI</h3>
+          <p>Tổng quan hệ thống Affiliate AI — từ traffic, content đến tự động hoá chuyển đổi.</p>
+          <div class="course-card-meta">
+            <span class="course-tag tag-free">Miễn phí · 1 bài</span>
+            <a href="#" class="course-btn btn-primary">Xem ngay →</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Tài liệu miễn phí ── -->
+  <div class="portal-section">
+    <div class="portal-section-head">
+      <div class="portal-section-icon" style="background:#FFF7ED">📄</div>
+      <h2>Tài liệu miễn phí</h2>
+      <span class="badge">Tải về ngay</span>
+    </div>
+
+    <div class="doc-list">
+
+      <div class="doc-item">
+        <div class="doc-icon" style="background:#EEF4FF">🗺️</div>
+        <div class="doc-info">
+          <h4>Bản đồ Affiliate AI 2025</h4>
+          <p>Sơ đồ tổng quan hệ thống Affiliate kết hợp AI — PDF màu, in được</p>
+        </div>
+        <a href="#" class="doc-btn">Tải PDF →</a>
+      </div>
+
+      <div class="doc-item">
+        <div class="doc-icon" style="background:#F0FDF4">📋</div>
+        <div class="doc-info">
+          <h4>Checklist 30 ngày đầu</h4>
+          <p>Danh sách việc cần làm tuần-by-tuần cho người mới bắt đầu Affiliate</p>
+        </div>
+        <a href="#" class="doc-btn">Tải PDF →</a>
+      </div>
+
+      <div class="doc-item">
+        <div class="doc-icon" style="background:#FFF7ED">💬</div>
+        <div class="doc-info">
+          <h4>100 Prompt AI viết content bán hàng</h4>
+          <p>Bộ prompt sẵn dùng cho Facebook, TikTok, email marketing & landing page</p>
+        </div>
+        <a href="#" class="doc-btn">Tải PDF →</a>
+      </div>
+
+      <div class="doc-item">
+        <div class="doc-icon" style="background:#F5F3FF">🔧</div>
+        <div class="doc-info">
+          <h4>Bộ công cụ AI miễn phí cho Affiliate</h4>
+          <p>Danh sách 20+ tool AI miễn phí giúp tự động hoá quy trình Affiliate</p>
+        </div>
+        <a href="#" class="doc-btn">Tải PDF →</a>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /portal-wrap -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script>
+(async () => {
+  const session = await requireAuth('/login.html');
+  if (!session) return;
+
+  const user = session.user;
+  const name = (user.user_metadata && user.user_metadata.full_name)
+    ? user.user_metadata.full_name.split(' ').pop()
+    : user.email.split('@')[0];
+
+  document.getElementById('greetName').textContent = name;
+  document.getElementById('userName').textContent  = user.email;
+})();
+</script>
+</body>
+</html>
