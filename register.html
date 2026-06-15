@@ -156,10 +156,17 @@
       btn.disabled = false;
       btn.textContent = 'Tạo tài khoản miễn phí';
     } else {
+      // Đăng ký xong → tự đăng nhập luôn → vào portal
       msg.className = 'auth-msg success';
-      msg.textContent = 'Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.';
-      btn.disabled = true;
-      btn.textContent = 'Đã gửi email xác nhận';
+      msg.textContent = 'Tạo tài khoản thành công! Đang vào trang tài liệu...';
+      btn.textContent = 'Đang chuyển...';
+      const { error: loginErr } = await signIn(email, password);
+      if (loginErr) {
+        // Nếu auto-login lỗi → chuyển sang login.html
+        setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+      } else {
+        setTimeout(() => { window.location.href = 'portal.html'; }, 800);
+      }
     }
   });
 })();
