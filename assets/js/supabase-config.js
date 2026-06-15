@@ -2,8 +2,8 @@
    SUPABASE CONFIG — VDAI Academy
    Điền thông tin sau khi tạo project tại https://supabase.com
 ════════════════════════════════════════════════════════════ */
-const SUPABASE_URL  = 'TODO: https://xxxxxxxxxxxx.supabase.co';
-const SUPABASE_KEY  = 'TODO: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+const SUPABASE_URL  = 'https://uosxpxolsvwcafxvnroy.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_6QdMtBcfIzBNMJeag2cOEw_wCwsec-9';
 
 // Khởi tạo client — dùng CDN supabase-js
 const _supabase = (typeof supabase !== 'undefined')
