@@ -1341,22 +1341,395 @@
 </section>
 
 <!-- ════════════════════════════════════════════════════════
-     13. GIẢNG VIÊN
-     Dữ liệu render từ VDAI_CONFIG.instructors (config.js)
+     13. ĐỘI NGŨ CHUYÊN GIA
 ════════════════════════════════════════════════════════ -->
-<section id="instructors" aria-label="Giảng viên">
+<style>
+/* ── Experts Section ── */
+#instructors {
+  background: #F7F9FC;
+  padding: 96px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+#instructors::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(37,99,235,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 50% at 10% 80%, rgba(109,93,251,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Grid */
+.experts-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+}
+@media (max-width: 1024px) {
+  .experts-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+@media (max-width: 600px) {
+  .experts-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* Card */
+.expert-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 22px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+  cursor: default;
+}
+.expert-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 56px rgba(37,99,235,0.13);
+  border-color: transparent;
+}
+.expert-card:hover::after {
+  opacity: 1;
+}
+.expert-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  padding: 1.5px;
+  background: linear-gradient(135deg, #2563EB, #6D5DFB);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  pointer-events: none;
+}
+
+/* Photo */
+.expert-photo-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: linear-gradient(135deg, #EFF6FF 0%, #EDE9FE 100%);
+}
+.expert-photo-wrap img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.expert-card:hover .expert-photo-wrap img {
+  transform: scale(1.05);
+}
+.expert-photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 4rem;
+  background: linear-gradient(135deg, #EFF6FF 0%, #EDE9FE 100%);
+}
+
+/* Founder badge */
+.expert-badge {
+  position: absolute;
+  top: 14px; left: 14px;
+  background: linear-gradient(135deg, #2563EB, #6D5DFB);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+/* Body */
+.expert-body {
+  padding: 20px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.expert-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 3px;
+  letter-spacing: -0.01em;
+}
+.expert-role {
+  font-size: 0.75rem;
+  color: #6D5DFB;
+  font-weight: 600;
+  margin-bottom: 10px;
+  letter-spacing: 0.02em;
+}
+.expert-bio {
+  font-size: 0.8rem;
+  color: #64748B;
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 14px;
+  flex: 1;
+}
+.expert-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.expert-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #2563EB;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  border-radius: 20px;
+  padding: 3px 10px;
+  letter-spacing: 0.02em;
+}
+.expert-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #2563EB;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: gap 0.2s ease, color 0.2s ease;
+  text-align: left;
+}
+.expert-cta:hover { gap: 10px; color: #6D5DFB; }
+.expert-cta:focus-visible {
+  outline: 2px solid #2563EB;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.expert-cta-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.expert-cta:hover .expert-cta-arrow { transform: translateX(3px); }
+
+/* ── Popup / Modal ── */
+.expert-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6,12,26,0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.expert-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+.expert-modal {
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  transform: translateY(24px) scale(0.97);
+  transition: transform 0.3s ease;
+  box-shadow: 0 32px 80px rgba(6,12,26,0.22);
+}
+.expert-modal-overlay.active .expert-modal {
+  transform: translateY(0) scale(1);
+}
+.expert-modal-close {
+  position: absolute;
+  top: 18px; right: 18px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #E2E8F0;
+  background: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; color: #64748B;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  z-index: 1;
+}
+.expert-modal-close:hover { background: #F1F5F9; border-color: #CBD5E1; color: #0F172A; }
+.expert-modal-close:focus-visible { outline: 2px solid #2563EB; outline-offset: 2px; }
+
+.expert-modal-header {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  padding: 36px 36px 24px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.expert-modal-photo {
+  width: 100px; height: 125px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #EFF6FF, #EDE9FE);
+}
+.expert-modal-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+.expert-modal-photo-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem;
+}
+.expert-modal-title { flex: 1; padding-top: 4px; }
+.expert-modal-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+.expert-modal-role {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6D5DFB;
+  margin-bottom: 12px;
+}
+.expert-modal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.expert-modal-body { padding: 28px 36px 32px; }
+.expert-modal-section { margin-bottom: 24px; }
+.expert-modal-section:last-of-type { margin-bottom: 0; }
+.expert-modal-section h4 {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #94A3B8;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin: 0 0 10px;
+}
+.expert-modal-section p {
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.75;
+  margin: 0;
+}
+.expert-modal-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.expert-modal-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: #334155;
+  line-height: 1.55;
+}
+.expert-modal-list li::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563EB, #6D5DFB);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+.expert-modal-footer {
+  padding: 0 36px 32px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.expert-modal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 11px 22px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  border: none;
+}
+.expert-modal-btn.primary {
+  background: linear-gradient(135deg, #2563EB, #6D5DFB);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+}
+.expert-modal-btn.primary:hover { box-shadow: 0 8px 24px rgba(37,99,235,0.4); transform: translateY(-1px); }
+.expert-modal-btn.secondary {
+  background: #F1F5F9;
+  color: #2563EB;
+  border: 1.5px solid #E2E8F0;
+}
+.expert-modal-btn.secondary:hover { background: #EFF6FF; border-color: #BFDBFE; }
+
+@media (max-width: 600px) {
+  .expert-modal-header { flex-direction: column; align-items: center; text-align: center; padding: 28px 22px 20px; }
+  .expert-modal-body { padding: 20px 22px 24px; }
+  .expert-modal-footer { padding: 0 22px 24px; }
+  .expert-modal-tags { justify-content: center; }
+  .expert-modal-footer { justify-content: center; }
+}
+</style>
+
+<section id="instructors" aria-label="Đội ngũ chuyên gia">
   <div class="container">
     <div class="section-header reveal">
-      <div class="section-eyebrow"><span class="dot" aria-hidden="true"></span> Đội ngũ</div>
-      <h2 class="section-title">Các chuyên gia</h2>
-      <p class="section-subtitle">Thông tin giảng viên sẽ được cập nhật đầy đủ trước khi chương trình khai giảng.</p>
+      <div class="section-eyebrow"><span class="dot" aria-hidden="true"></span> Đội ngũ chuyên gia</div>
+      <h2 class="section-title">Người đồng hành trên hành trình<br>làm chủ AI</h2>
+      <p class="section-subtitle">Đội ngũ giảng viên VDAI Academy sở hữu kinh nghiệm thực chiến trong AI, tự động hóa, kinh doanh số và phát triển hệ thống. Nội dung đào tạo tập trung vào khả năng ứng dụng và kết quả thực tế.</p>
     </div>
 
-    <div class="instructors-grid" id="instructorsGrid">
-      <!-- Render bằng JavaScript từ VDAI_CONFIG.instructors -->
+    <div class="experts-grid" id="expertsGrid" role="list">
+      <!-- Render bằng JavaScript -->
     </div>
   </div>
 </section>
+
+<!-- Expert Profile Modal -->
+<div class="expert-modal-overlay" id="expertModalOverlay" role="dialog" aria-modal="true" aria-labelledby="expertModalName">
+  <div class="expert-modal" id="expertModal">
+    <button class="expert-modal-close" id="expertModalClose" aria-label="Đóng hồ sơ chuyên gia">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="expert-modal-header">
+      <div class="expert-modal-photo" id="expertModalPhoto"></div>
+      <div class="expert-modal-title">
+        <h3 class="expert-modal-name" id="expertModalName"></h3>
+        <div class="expert-modal-role" id="expertModalRole"></div>
+        <div class="expert-modal-tags" id="expertModalTags"></div>
+      </div>
+    </div>
+    <div class="expert-modal-body" id="expertModalBody"></div>
+    <div class="expert-modal-footer" id="expertModalFooter"></div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════════════════════════
      14. CASE STUDY & PHẢN HỒI
@@ -1743,34 +2116,169 @@
       }
     });
 
-    // Render instructors
-    const instructorsGrid = document.getElementById('instructorsGrid');
-    VDAI_CONFIG.instructors.forEach(person => {
-      const card = document.createElement('div');
-      card.className = 'instructor-card reveal';
-      card.innerHTML = `
-        <div class="instructor-photo">
-          ${person.photo && !person.photo.includes('placeholder')
-            ? `<img src="${person.photo}" alt="${escapeAttr(person.name)}" loading="lazy">`
-            : '👤'}
-        </div>
-        <div class="instructor-info">
-          <h3>${escapeAttr(person.name)}</h3>
-          <div class="instructor-role">${escapeAttr(person.role)}</div>
-          <div class="instructor-bio">${escapeAttr(person.bio)}</div>
-        </div>
-      `;
-      instructorsGrid.appendChild(card);
-      // Re-observe cho reveal animation
-      if (window.IntersectionObserver) {
-        const obs = new IntersectionObserver((entries) => {
-          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-        }, { threshold: 0.1 });
-        obs.observe(card);
-      } else {
-        card.classList.add('visible');
+    // ── Experts data (enriched) ──────────────────────────────
+    const EXPERTS = [
+      {
+        name: "Võ Đương",
+        role: "Nhà sáng lập & Giảng viên VDAI Academy",
+        bio: "Chuyên gia AI ứng dụng, Affiliate Marketing và phát triển hệ thống kinh doanh số.",
+        photo: "assets/images/instructor-vo-duong.jpg",
+        badge: "Nhà sáng lập",
+        tags: ["AI ứng dụng", "Affiliate", "Phát triển hệ thống"],
+        intro: "Võ Đương là nhà sáng lập VDAI Academy và chuyên gia hàng đầu về ứng dụng AI trong kinh doanh số. Với nền tảng thực chiến sâu rộng trong Affiliate Marketing và xây dựng hệ thống tự động hóa, anh đã đồng hành cùng hàng trăm học viên chuyển đổi cách làm việc nhờ AI.",
+        expertise: ["Ứng dụng AI trong kinh doanh số và Affiliate Marketing", "Xây dựng hệ thống tự động hóa quy trình vận hành", "Phát triển kênh nội dung và chiến lược phân phối"],
+        philosophy: "\"Học AI không phải để biết — mà để làm được ngay. Mỗi buổi học là một kết quả thực tế.\"",
+        courseLink: "#programs"
+      },
+      {
+        name: "Vũ Tư",
+        role: "Giảng viên AI & Tự động hóa",
+        bio: "Chuyên gia đào tạo AI và xây dựng quy trình tự động hóa, giúp cá nhân và đội nhóm nâng cao hiệu suất vận hành.",
+        photo: "assets/images/instructor-vu-tu.jpg",
+        badge: null,
+        tags: ["AI Automation", "Quy trình", "Hiệu suất"],
+        intro: "Vũ Tư là chuyên gia đào tạo AI và tự động hóa quy trình với kinh nghiệm thực tiễn triển khai nhiều dự án cho doanh nghiệp và cá nhân. Anh tập trung vào giải pháp có thể đo lường và vận hành ngay.",
+        expertise: ["Thiết kế và triển khai quy trình tự động hóa bằng AI", "Tích hợp công cụ no-code/low-code vào hệ thống vận hành", "Đào tạo đội nhóm áp dụng AI vào công việc hàng ngày"],
+        philosophy: "\"Tự động hóa đúng chỗ giải phóng con người để làm những việc thực sự quan trọng.\"",
+        courseLink: "#programs"
+      },
+      {
+        name: "Hải Dương",
+        role: "Giảng viên AI chuyên sâu — VDAI SCALE",
+        bio: "Chuyên gia nghiên cứu và triển khai các hệ thống AI nâng cao vào hoạt động thực tế.",
+        photo: "assets/images/instructor-hai-duong.jpg",
+        badge: "VDAI SCALE",
+        tags: ["AI chuyên sâu", "AI System", "VDAI SCALE"],
+        intro: "Hải Dương chuyên nghiên cứu và triển khai các mô hình AI nâng cao vào môi trường hoạt động thực tế. Anh đồng hành cùng học viên VDAI SCALE trên hành trình từ người dùng AI thông thường đến xây dựng hệ thống AI vận hành độc lập.",
+        expertise: ["Xây dựng và tích hợp hệ thống AI phức tạp vào doanh nghiệp", "Nghiên cứu và ứng dụng các mô hình ngôn ngữ lớn (LLM)", "Phát triển agent AI và pipeline tự động hóa nâng cao"],
+        philosophy: "\"AI mạnh nhất khi nó trở thành một phần hữu cơ của hệ thống vận hành, không phải một công cụ rời rạc.\"",
+        courseLink: "#programs"
+      },
+      {
+        name: "Đỗ Tâm",
+        role: "Giảng viên AI Business & Leadership",
+        bio: "Chuyên gia kết hợp chiến lược kinh doanh, năng lực lãnh đạo và ứng dụng AI để tạo lợi thế cạnh tranh.",
+        photo: "https://uosxpxolsvwcafxvnroy.supabase.co/storage/v1/object/public/assets/instructor-do-tam.png",
+        badge: null,
+        tags: ["AI Business", "Leadership", "Chiến lược"],
+        intro: "Đỗ Tâm là chuyên gia tư vấn chiến lược AI với nền tảng vững chắc về tư duy kinh doanh và lãnh đạo. Anh giúp cá nhân và tổ chức tích hợp AI vào chiến lược tổng thể để tạo lợi thế cạnh tranh bền vững.",
+        expertise: ["Chiến lược ứng dụng AI cho doanh nghiệp và cá nhân", "Phát triển tư duy lãnh đạo trong kỷ nguyên AI", "Ra quyết định dựa trên dữ liệu và hệ thống AI hỗ trợ"],
+        philosophy: "\"AI không thay thế lãnh đạo — AI khuếch đại tầm nhìn của người biết dùng nó đúng cách.\"",
+        courseLink: "#programs"
       }
-    });
+    ];
+
+    // ── Render expert cards ──────────────────────────────────
+    const expertsGrid = document.getElementById('expertsGrid');
+    if (expertsGrid) {
+      EXPERTS.forEach((expert, idx) => {
+        const hasPhoto = expert.photo && !expert.photo.includes('placeholder');
+        const card = document.createElement('div');
+        card.className = 'expert-card reveal';
+        card.setAttribute('role', 'listitem');
+        card.innerHTML = `
+          <div class="expert-photo-wrap">
+            ${hasPhoto
+              ? `<img src="${escapeAttr(expert.photo)}" alt="Ảnh chân dung ${escapeAttr(expert.name)}" loading="lazy">`
+              : `<div class="expert-photo-placeholder">👤</div>`}
+            ${expert.badge ? `<div class="expert-badge">${escapeAttr(expert.badge)}</div>` : ''}
+          </div>
+          <div class="expert-body">
+            <h3 class="expert-name">${escapeAttr(expert.name)}</h3>
+            <div class="expert-role">${escapeAttr(expert.role)}</div>
+            <p class="expert-bio">${escapeAttr(expert.bio)}</p>
+            <div class="expert-tags">
+              ${expert.tags.map(t => `<span class="expert-tag">${escapeAttr(t)}</span>`).join('')}
+            </div>
+            <button class="expert-cta" data-expert-idx="${idx}" aria-label="Xem hồ sơ chuyên gia ${escapeAttr(expert.name)}">
+              Xem hồ sơ chuyên gia <span class="expert-cta-arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
+        `;
+        expertsGrid.appendChild(card);
+        if (window.IntersectionObserver) {
+          const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+          }, { threshold: 0.1 });
+          obs.observe(card);
+        } else {
+          card.classList.add('visible');
+        }
+      });
+
+      // ── Expert modal logic ─────────────────────────────────
+      const overlay  = document.getElementById('expertModalOverlay');
+      const modal    = document.getElementById('expertModal');
+      const closeBtn = document.getElementById('expertModalClose');
+
+      function openExpertModal(idx) {
+        const e = EXPERTS[idx];
+        const hasPhoto = e.photo && !e.photo.includes('placeholder');
+        document.getElementById('expertModalPhoto').innerHTML = hasPhoto
+          ? `<img src="${escapeAttr(e.photo)}" alt="Ảnh ${escapeAttr(e.name)}" loading="lazy">`
+          : `<div class="expert-modal-photo-placeholder">👤</div>`;
+        document.getElementById('expertModalName').textContent = e.name;
+        document.getElementById('expertModalRole').textContent = e.role;
+        document.getElementById('expertModalTags').innerHTML = e.tags.map(t => `<span class="expert-tag">${escapeAttr(t)}</span>`).join('');
+        document.getElementById('expertModalBody').innerHTML = `
+          <div class="expert-modal-section">
+            <h4>Giới thiệu</h4>
+            <p>${escapeAttr(e.intro)}</p>
+          </div>
+          <div class="expert-modal-section">
+            <h4>Lĩnh vực chuyên môn</h4>
+            <ul class="expert-modal-list">
+              ${e.expertise.map(x => `<li>${escapeAttr(x)}</li>`).join('')}
+            </ul>
+          </div>
+          <div class="expert-modal-section">
+            <h4>Triết lý giảng dạy</h4>
+            <p><em>${escapeAttr(e.philosophy)}</em></p>
+          </div>
+        `;
+        document.getElementById('expertModalFooter').innerHTML = `
+          <a href="${escapeAttr(e.courseLink)}" class="expert-modal-btn primary" onclick="document.getElementById('expertModalOverlay').classList.remove('active');document.body.style.overflow=''">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Xem khóa học liên quan
+          </a>
+          <button class="expert-modal-btn secondary" onclick="document.getElementById('expertModalOverlay').classList.remove('active');document.body.style.overflow=''">Đóng lại</button>
+        `;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        closeBtn.focus();
+      }
+
+      function closeExpertModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      // Open on card button click
+      expertsGrid.addEventListener('click', e => {
+        const btn = e.target.closest('[data-expert-idx]');
+        if (btn) openExpertModal(parseInt(btn.dataset.expertIdx, 10));
+      });
+
+      // Close on X
+      closeBtn.addEventListener('click', closeExpertModal);
+
+      // Close on overlay backdrop
+      overlay.addEventListener('click', e => { if (e.target === overlay) closeExpertModal(); });
+
+      // Close on ESC
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) closeExpertModal();
+      });
+
+      // Trap focus inside modal
+      modal.addEventListener('keydown', e => {
+        if (e.key !== 'Tab') return;
+        const focusable = modal.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])');
+        const first = focusable[0], last = focusable[focusable.length - 1];
+        if (e.shiftKey) { if (document.activeElement === first) { last.focus(); e.preventDefault(); } }
+        else { if (document.activeElement === last) { first.focus(); e.preventDefault(); } }
+      });
+    }
 
     // Render case studies
     const caseGrid = document.getElementById('caseStudiesGrid');
