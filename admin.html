@@ -81,6 +81,19 @@
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2563EB; }
     .form-actions { padding: 14px 24px; background: #F8FAFC; display: flex; gap: 8px; }
 
+    /* ── Upload zone ── */
+    .upload-zone {
+      border: 2px dashed #CBD5E1; border-radius: 10px; padding: 20px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      background: #F8FAFC; position: relative;
+    }
+    .upload-zone:hover, .upload-zone.drag { border-color: #2563EB; background: #EFF6FF; }
+    .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-zone p { font-size: 0.8rem; color: #64748B; margin-top: 6px; pointer-events: none; }
+    .upload-zone strong { font-size: 0.85rem; color: #334155; pointer-events: none; }
+    .upload-progress { height: 4px; background: #E2E8F0; border-radius: 4px; margin-top: 8px; overflow: hidden; display: none; }
+    .upload-progress-bar { height: 100%; background: linear-gradient(90deg, #2563EB, #6D5DFB); width: 0%; transition: width 0.3s; border-radius: 4px; }
+
     /* ── Course cards ── */
     .course-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 24px; }
     .course-admin-card { border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; }
@@ -202,20 +215,32 @@
         <input type="text" id="docTitle" placeholder="VD: Bản đồ Affiliate AI 2025">
       </div>
       <div class="form-group">
-        <label>Link PDF *</label>
-        <input type="url" id="docUrl" placeholder="https://drive.google.com/...">
-      </div>
-      <div class="form-group">
         <label>Mô tả</label>
-        <input type="text" id="docDesc" placeholder="Mô tả ngắn">
+        <input type="text" id="docDesc" placeholder="Mô tả ngắn về tài liệu">
       </div>
       <div class="form-group">
         <label>Icon (emoji)</label>
         <input type="text" id="docIcon" placeholder="📄" maxlength="4">
       </div>
+      <div class="form-group">
+        <label>Hoặc nhập Link PDF (nếu không upload)</label>
+        <input type="url" id="docUrl" placeholder="https://drive.google.com/...">
+      </div>
+      <div class="form-group full">
+        <label>Upload file PDF</label>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="pdfFile" accept=".pdf" onchange="onFileSelected(this)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" style="margin:0 auto 6px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <strong id="uploadFileName">Kéo thả file PDF vào đây hoặc nhấn để chọn</strong>
+          <p>Chỉ hỗ trợ file .pdf — tối đa 20MB</p>
+        </div>
+        <div class="upload-progress" id="uploadProgress">
+          <div class="upload-progress-bar" id="uploadProgressBar"></div>
+        </div>
+      </div>
     </div>
     <div class="form-actions">
-      <button class="btn btn-primary" onclick="addDocument()">+ Thêm tài liệu</button>
+      <button class="btn btn-primary" id="addDocBtn" onclick="addDocument()">+ Thêm tài liệu</button>
     </div>
 
     <!-- List -->
@@ -326,26 +351,73 @@ async function loadDocuments() {
     </tr>`).join('');
 }
 
+// ── File selected preview ──
+function onFileSelected(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('uploadFileName').textContent = '📎 ' + file.name;
+  if (!document.getElementById('docTitle').value.trim()) {
+    document.getElementById('docTitle').value = file.name.replace(/\.pdf$/i, '').replace(/[-_]/g, ' ');
+  }
+}
+
+// ── Upload PDF to Supabase Storage ──
+async function uploadPDF(file) {
+  const ext  = file.name.split('.').pop();
+  const path = `documents/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+  const prog = document.getElementById('uploadProgress');
+  const bar  = document.getElementById('uploadProgressBar');
+  prog.style.display = 'block';
+  bar.style.width = '20%';
+
+  const { data, error } = await _supabase.storage.from('pdfs').upload(path, file, { cacheControl: '3600', upsert: false });
+  bar.style.width = '80%';
+  if (error) { prog.style.display = 'none'; throw new Error('Upload lỗi: ' + error.message); }
+
+  const { data: urlData } = _supabase.storage.from('pdfs').getPublicUrl(data.path);
+  bar.style.width = '100%';
+  setTimeout(() => { prog.style.display = 'none'; bar.style.width = '0%'; }, 600);
+  return urlData.publicUrl;
+}
+
 // ── Add document ──
 async function addDocument() {
   const title = document.getElementById('docTitle').value.trim();
-  const url   = document.getElementById('docUrl').value.trim() || '#';
   const desc  = document.getElementById('docDesc').value.trim();
   const icon  = document.getElementById('docIcon').value.trim() || '📄';
+  const fileInput = document.getElementById('pdfFile');
+  const manualUrl = document.getElementById('docUrl').value.trim();
+
   if (!title) { showAlert('docsAlert', 'Vui lòng nhập tên tài liệu', 'error'); return; }
 
-  const { data: last } = await _supabase.from('documents').select('display_order').order('display_order', { ascending: false }).limit(1);
-  const order = (last?.[0]?.display_order || 0) + 1;
+  const btn = document.getElementById('addDocBtn');
+  btn.disabled = true; btn.textContent = 'Đang xử lý...';
 
-  const { error } = await _supabase.from('documents').insert({ title, url, description: desc, icon, display_order: order });
-  if (error) { showAlert('docsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  let url = manualUrl || '#';
+  try {
+    if (fileInput.files[0]) {
+      url = await uploadPDF(fileInput.files[0]);
+    }
 
-  document.getElementById('docTitle').value = '';
-  document.getElementById('docUrl').value   = '';
-  document.getElementById('docDesc').value  = '';
-  document.getElementById('docIcon').value  = '';
-  showAlert('docsAlert', 'Đã thêm tài liệu thành công!');
-  loadDocuments();
+    const { data: last } = await _supabase.from('documents').select('display_order').order('display_order', { ascending: false }).limit(1);
+    const order = (last?.[0]?.display_order || 0) + 1;
+
+    const { error } = await _supabase.from('documents').insert({ title, url, description: desc, icon, display_order: order });
+    if (error) { showAlert('docsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+
+    document.getElementById('docTitle').value = '';
+    document.getElementById('docUrl').value   = '';
+    document.getElementById('docDesc').value  = '';
+    document.getElementById('docIcon').value  = '';
+    document.getElementById('pdfFile').value  = '';
+    document.getElementById('uploadFileName').textContent = 'Kéo thả file PDF vào đây hoặc nhấn để chọn';
+    showAlert('docsAlert', '✅ Đã thêm tài liệu thành công!');
+    loadDocuments();
+  } catch(e) {
+    showAlert('docsAlert', e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '+ Thêm tài liệu';
+  }
 }
 
 // ── Edit document ──
@@ -408,6 +480,24 @@ async function updateCourse(id, status) {
   const { error } = await _supabase.from('courses').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) showAlert('coursesAlert', 'Lỗi: ' + error.message, 'error');
   else { showAlert('coursesAlert', `Đã cập nhật trạng thái khoá học!`); loadCourses(); }
+}
+
+// ── Drag & drop ──
+const zone = document.getElementById('uploadZone');
+if (zone) {
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type === 'application/pdf') {
+      const dt = new DataTransfer(); dt.items.add(file);
+      document.getElementById('pdfFile').files = dt.files;
+      onFileSelected(document.getElementById('pdfFile'));
+    } else if (file) {
+      showAlert('docsAlert', 'Chỉ hỗ trợ file .pdf', 'error');
+    }
+  });
 }
 
 // ── Init ──
