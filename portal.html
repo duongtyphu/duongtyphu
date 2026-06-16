@@ -498,11 +498,11 @@
     </div>
   </div>
 
-  <!-- MINI-COURSE MIỄN PHÍ -->
+  <!-- MINI-COURSE -->
   <div class="section">
     <div class="section-head">
-      <span class="section-badge badge-free">✅ Miễn phí</span>
-      <div class="section-title">Mini-course miễn phí</div>
+      <span class="section-badge badge-free">✅ Mini-course</span>
+      <div class="section-title">Mini-course</div>
       <div class="section-line"></div>
     </div>
     <div class="course-grid" id="freeCoursesGrid">
@@ -592,65 +592,64 @@ async function signOut() {
   window.location.href = 'login.html';
 }
 
-// ── Courses (flagship) from DB ──
+// ── Courses (flagship) from DB — with checkout ──
 async function loadCoursesFromDB() {
   const { data } = await _supabase.from('courses').select('*').order('created_at');
   const grid = document.getElementById('coursesGrid');
-  if (!data || !data.length) {
-    // Fallback flagship cards nếu DB chưa có data
-    grid.innerHTML = `
-      <div class="flagship-card flagship-solo">
-        <div class="flagship-grid-bg"></div><div class="flagship-orb solo-orb"></div>
-        <div class="flagship-tag solo-tag">⚡ VDAI SOLO</div>
-        <div class="flagship-icon">🚀</div>
-        <div class="flagship-body">
-          <div class="flagship-name">VDAI SOLO</div>
-          <div class="flagship-tagline">Xây hệ thống Affiliate AI vận hành tinh gọn — một mình.<br>Từ zero → dòng tiền đầu tiên trong 8 tuần.</div>
-          <div class="flagship-pills"><span class="flagship-pill">📍 8 tuần thực chiến</span><span class="flagship-pill">🤖 AI-powered</span><span class="flagship-pill">💰 Thu nhập thụ động</span></div>
-          <div class="flagship-status status-solo"><span class="status-dot dot-blue"></span>Sắp mở đăng ký</div>
-        </div>
-      </div>
-      <div class="flagship-card flagship-scale">
-        <div class="flagship-grid-bg"></div><div class="flagship-orb scale-orb"></div>
-        <div class="flagship-tag scale-tag">🚀 VDAI SCALE</div>
-        <div class="flagship-icon">📈</div>
-        <div class="flagship-body">
-          <div class="flagship-name">VDAI SCALE</div>
-          <div class="flagship-tagline">Nhân bản hệ thống Affiliate cùng đội nhóm.<br>Tự động hoá toàn diện, mở rộng doanh thu không giới hạn.</div>
-          <div class="flagship-pills"><span class="flagship-pill">🏆 Level Advanced</span><span class="flagship-pill">👥 Team building</span><span class="flagship-pill">⚙️ Full automation</span></div>
-          <div class="flagship-status status-scale"><span class="status-dot dot-purple"></span>Sắp mở đăng ký</div>
-        </div>
-      </div>`;
-    return;
-  }
   const statusLabel = { coming: 'Sắp mở đăng ký', open: 'Đang mở đăng ký', closed: 'Đã đóng' };
+  const fallback = `
+    <div class="flagship-card flagship-solo">
+      <div class="flagship-grid-bg"></div><div class="flagship-orb solo-orb"></div>
+      <div class="flagship-tag solo-tag">⚡ VDAI SOLO</div><div class="flagship-icon">🚀</div>
+      <div class="flagship-body">
+        <div class="flagship-name">VDAI SOLO</div>
+        <div class="flagship-tagline">Xây hệ thống Affiliate AI vận hành tinh gọn — một mình.<br>Từ zero → dòng tiền đầu tiên trong 8 tuần.</div>
+        <div class="flagship-status status-solo"><span class="status-dot dot-blue"></span>Sắp mở đăng ký</div>
+      </div>
+    </div>
+    <div class="flagship-card flagship-scale">
+      <div class="flagship-grid-bg"></div><div class="flagship-orb scale-orb"></div>
+      <div class="flagship-tag scale-tag">🚀 VDAI SCALE</div><div class="flagship-icon">📈</div>
+      <div class="flagship-body">
+        <div class="flagship-name">VDAI SCALE</div>
+        <div class="flagship-tagline">Nhân bản hệ thống Affiliate cùng đội nhóm.<br>Tự động hoá toàn diện, mở rộng doanh thu không giới hạn.</div>
+        <div class="flagship-status status-scale"><span class="status-dot dot-purple"></span>Sắp mở đăng ký</div>
+      </div>
+    </div>`;
+  if (!data || !data.length) { grid.innerHTML = fallback; return; }
   grid.innerHTML = data.map(c => {
-    const isSolo  = c.name?.toUpperCase().includes('SOLO') || !c.name?.toUpperCase().includes('SCALE');
-    const cardCls  = isSolo ? 'flagship-solo'   : 'flagship-scale';
-    const tagCls   = isSolo ? 'solo-tag'         : 'scale-tag';
-    const statCls  = isSolo ? 'status-solo'      : 'status-scale';
-    const dotCls   = isSolo ? 'dot-blue'         : 'dot-purple';
-    const orbCls   = isSolo ? 'solo-orb'         : 'scale-orb';
-    const icon     = isSolo ? '🚀'               : '📈';
-    const prefix   = isSolo ? '⚡'               : '🚀';
+    const isSolo = !c.name?.toUpperCase().includes('SCALE');
+    const cardCls = isSolo ? 'flagship-solo'  : 'flagship-scale';
+    const tagCls  = isSolo ? 'solo-tag'        : 'scale-tag';
+    const statCls = isSolo ? 'status-solo'     : 'status-scale';
+    const dotCls  = isSolo ? 'dot-blue'        : 'dot-purple';
+    const orbCls  = isSolo ? 'solo-orb'        : 'scale-orb';
+    const icon    = isSolo ? '🚀'              : '📈';
+    const price   = c.price || 0;
+    const buyBtn  = c.status === 'open'
+      ? `<button class="btn-buy" style="margin-top:14px;width:100%;justify-content:center;display:flex"
+           onclick='openCheckout(${JSON.stringify({id:c.id,title:c.name,price})}, "course")'>
+           ${price > 0 ? `Đăng ký — ${price.toLocaleString('vi-VN')}₫ →` : 'Đăng ký miễn phí →'}
+         </button>` : '';
     return `
       <div class="flagship-card ${cardCls}">
         <div class="flagship-grid-bg"></div>
         <div class="flagship-orb ${orbCls}"></div>
-        <div class="flagship-tag ${tagCls}">${prefix} ${c.name}</div>
+        <div class="flagship-tag ${tagCls}">${isSolo?'⚡':'🚀'} ${c.name}</div>
         <div class="flagship-icon">${icon}</div>
         <div class="flagship-body">
           <div class="flagship-name">${c.name}</div>
-          <div class="flagship-tagline">${(c.description || '').replace(/\n/g,'<br>')}</div>
+          <div class="flagship-tagline">${(c.description||'').replace(/\n/g,'<br>')}</div>
           <div class="flagship-status ${statCls}">
-            <span class="status-dot ${dotCls}"></span>${statusLabel[c.status] || c.status}
+            <span class="status-dot ${dotCls}"></span>${statusLabel[c.status]||c.status}
           </div>
+          ${buyBtn}
         </div>
       </div>`;
   }).join('');
 }
 
-// ── Lessons section ──
+// ── Lessons section — checkout for paid ──
 async function loadLessonsSection() {
   const { data } = await _supabase.from('lessons')
     .select('*, courses(name)')
@@ -660,26 +659,28 @@ async function loadLessonsSection() {
   const grid    = document.getElementById('lessonsGrid');
   if (!data || !data.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
-  grid.innerHTML = data.map(l => `
-    <div class="course-card">
-      <div class="course-cover" style="background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(37,99,235,0.15))">📚</div>
-      <div class="course-body">
-        <div class="course-type">${l.courses?.name || 'Bài giảng'}</div>
-        <h3>${l.title}</h3>
-        <p>${l.description || ''}</p>
-        <div class="course-footer">
-          ${(l.price || 0) === 0
-            ? `<span class="tag-free">Miễn phí</span>
-               <div style="display:flex;gap:6px">
-                 ${l.video_url ? `<a href="${l.video_url}" target="_blank" class="btn-access btn-view">▶ Xem</a>` : ''}
-                 ${l.pdf_url   ? `<a href="${l.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 Tải</a>` : ''}
-               </div>`
-            : `<span class="course-price">${(l.price).toLocaleString('vi-VN')}₫</span>
-               <button class="btn-buy" style="font-size:0.74rem;padding:6px 12px" onclick="alert('Liên hệ admin để đăng ký khoá học này!')">Đăng ký →</button>`
-          }
+  grid.innerHTML = data.map(l => {
+    const price = l.price || 0;
+    const footer = price === 0
+      ? `<span class="tag-free">Miễn phí</span>
+         <div style="display:flex;gap:6px">
+           ${l.video_url ? `<a href="${l.video_url}" target="_blank" class="btn-access btn-view">▶ Xem</a>` : ''}
+           ${l.pdf_url   ? `<a href="${l.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 Tải</a>` : ''}
+         </div>`
+      : `<span class="course-price">${price.toLocaleString('vi-VN')}₫</span>
+         <button class="btn-buy" style="font-size:0.74rem;padding:6px 12px"
+           onclick='openCheckout(${JSON.stringify({id:l.id,title:l.title,price})},"lesson")'>Mua ngay →</button>`;
+    return `
+      <div class="course-card">
+        <div class="course-cover" style="background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(37,99,235,0.15))">📚</div>
+        <div class="course-body">
+          <div class="course-type">${l.courses?.name || 'Bài giảng'}</div>
+          <h3>${l.title}</h3>
+          <p>${l.description || ''}</p>
+          <div class="course-footer">${footer}</div>
         </div>
-      </div>
-    </div>`).join('');
+      </div>`;
+  }).join('');
 }
 
 // ── Documents section (dynamic from DB) ──
@@ -707,35 +708,40 @@ async function loadDocumentsSection() {
     </div>`).join('');
 }
 
-// ── Free mini-courses ──
+// ── Mini-course section (type='mini_course', cả free lẫn paid) ──
 async function loadFreeCourses() {
-  const { data } = await _supabase.from('products').select('*').eq('active', true).eq('price', 0).order('created_at', { ascending: false });
+  const { data } = await _supabase.from('products').select('*').eq('active', true).eq('type', 'mini_course').order('created_at', { ascending: false });
   const grid = document.getElementById('freeCoursesGrid');
   if (!data || !data.length) {
-    grid.innerHTML = '<div class="empty-state">Chưa có mini-course miễn phí. Sắp ra mắt!</div>';
+    grid.innerHTML = '<div class="empty-state">Chưa có mini-course nào. Sắp ra mắt!</div>';
     return;
   }
-  grid.innerHTML = data.map(p => `
-    <div class="course-card">
-      <div class="course-cover" style="background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(109,93,251,0.15))">${p.icon || '⚡'}</div>
-      <div class="course-body">
-        <div class="course-type">${TYPE_LABELS[p.type] || 'Mini-course'}</div>
-        <h3>${p.title}</h3>
-        <p>${p.description || ''}</p>
-        <div class="course-footer">
-          <span class="tag-free">Miễn phí</span>
-          <div style="display:flex;gap:6px">
-            ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-access btn-view">▶ Xem</a>` : ''}
-            ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 Tải</a>` : ''}
-          </div>
+  grid.innerHTML = data.map(p => {
+    const price = p.price || 0;
+    const footer = price === 0
+      ? `<span class="tag-free">Miễn phí</span>
+         <div style="display:flex;gap:6px">
+           ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-access btn-view">▶ Xem</a>` : ''}
+           ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 Tải</a>` : ''}
+         </div>`
+      : `<span class="course-price">${price.toLocaleString('vi-VN')}₫</span>
+         <button class="btn-buy" onclick='openCheckout(${JSON.stringify(p)},"product")'>Mua ngay →</button>`;
+    return `
+      <div class="course-card">
+        <div class="course-cover" style="background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(109,93,251,0.15))">${p.icon || '⚡'}</div>
+        <div class="course-body">
+          <div class="course-type">🎓 Mini-course</div>
+          <h3>${p.title}</h3>
+          <p>${p.description || ''}</p>
+          <div class="course-footer">${footer}</div>
         </div>
-      </div>
-    </div>`).join('');
+      </div>`;
+  }).join('');
 }
 
-// ── Store (paid) ──
+// ── Store (paid, loại trừ mini_course) ──
 async function loadStore() {
-  const { data } = await _supabase.from('products').select('*').eq('active', true).gt('price', 0).order('created_at', { ascending: false });
+  const { data } = await _supabase.from('products').select('*').eq('active', true).gt('price', 0).neq('type', 'mini_course').order('created_at', { ascending: false });
   const grid = document.getElementById('storeGrid');
   if (!data || !data.length) {
     grid.innerHTML = '<div class="store-empty">Sản phẩm mới sắp ra mắt. Theo dõi để không bỏ lỡ! 🔥</div>';
@@ -750,50 +756,56 @@ async function loadStore() {
         <p>${p.description || ''}</p>
         <div class="store-footer">
           <div class="store-price">${fmtPrice(p.price)} <small>VNĐ</small></div>
-          <button class="btn-buy" onclick='openCheckout(${JSON.stringify(p)})'>Mua ngay →</button>
+          <button class="btn-buy" onclick='openCheckout(${JSON.stringify(p)},"product")'>Mua ngay →</button>
         </div>
       </div>
     </div>`).join('');
 }
 
-// ── Purchased ──
+// ── Purchased — hiện đủ product + lesson + course ──
 async function loadPurchased() {
   const { data } = await _supabase.from('orders')
-    .select('*, products(title, icon, video_url, pdf_url, type)')
+    .select('*, products(title, icon, video_url, pdf_url, type), lessons(title, video_url, pdf_url, courses(name)), courses(name)')
     .eq('member_email', _userEmail)
     .eq('status', 'confirmed')
     .order('confirmed_at', { ascending: false });
   if (!data || !data.length) return;
   document.getElementById('purchasedSection').style.display = 'block';
   document.getElementById('purchasedList').innerHTML = data.map(o => {
-    const p = o.products || {};
+    let icon = '💡', title = o.product_name, label = '', video = null, pdf = null;
+    if (o.products)      { icon = o.products.icon||'💡'; title = o.products.title; label = TYPE_LABELS[o.products.type]||''; video = o.products.video_url; pdf = o.products.pdf_url; }
+    else if (o.lessons)  { icon = '📚'; title = o.lessons.title; label = `🎓 ${o.lessons.courses?.name||'Bài giảng'}`; video = o.lessons.video_url; pdf = o.lessons.pdf_url; }
+    else if (o.courses)  { icon = '🏆'; title = o.courses.name||o.product_name; label = '🎓 Khoá học'; }
     return `
       <div class="purchased-item">
-        <div class="purchased-ico">${p.icon || '💡'}</div>
+        <div class="purchased-ico">${icon}</div>
         <div class="purchased-info">
-          <h4>${p.title || o.product_name}</h4>
-          <p>✅ Đã xác nhận · ${TYPE_LABELS[p.type] || ''}</p>
+          <h4>${title || o.product_name}</h4>
+          <p>✅ Đã xác nhận · ${label}</p>
         </div>
         <div class="purchased-btns">
-          ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-access btn-view">▶ Video</a>` : ''}
-          ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 PDF</a>` : ''}
+          ${video ? `<a href="${video}" target="_blank" class="btn-access btn-view">▶ Video</a>` : ''}
+          ${pdf   ? `<a href="${pdf}"   target="_blank" class="btn-access btn-dl">📄 PDF</a>`   : ''}
         </div>
       </div>`;
   }).join('');
 }
 
-// ── Checkout ──
-function openCheckout(item) {
-  _checkoutItem = item;
-  const note = `${_userEmail} ${item.title}`.substring(0, 50);
-  const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${item.price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
+// ── Checkout — dùng chung cho product / lesson / course ──
+function openCheckout(item, itemType = 'product') {
+  _checkoutItem = { ...item, _itemType: itemType };
+  const note = `${_userEmail.split('@')[0]} ${item.title}`.substring(0, 50);
+  const price = item.price || 0;
+  const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
+  const typeLabel = { product:'Sản phẩm số', lesson:'Bài giảng', course:'Khoá học' }[itemType] || '';
   document.getElementById('modalContent').innerHTML = `
-    <div class="modal-title">Thanh toán</div>
+    <div class="modal-title">Thanh toán — ${typeLabel}</div>
     <div class="modal-sub">${item.title}</div>
     <div class="modal-price-row">
       <span class="modal-price-label">Số tiền chuyển khoản</span>
-      <span class="modal-price-val">${fmtPrice(item.price)}</span>
+      <span class="modal-price-val">${price > 0 ? price.toLocaleString('vi-VN') + '₫' : 'Miễn phí'}</span>
     </div>
+    ${price > 0 ? `
     <div class="modal-qr">
       <img src="${qrUrl}" alt="QR VietQR" onerror="this.style.display='none'">
       <p>Quét mã bằng app ngân hàng bất kỳ</p>
@@ -804,10 +816,15 @@ function openCheckout(item) {
       <p>👤 Chủ TK: <strong>${BANK.owner}</strong></p>
     </div>
     <div class="modal-note">
-      📝 <strong>Nội dung chuyển khoản:</strong> ${note}<br><br>
-      Sau khi chuyển khoản, nhấn nút bên dưới. Admin xác nhận trong <strong>24h</strong> — nội dung tự động mở trong portal.
-    </div>
-    <button class="btn-paid" id="btnPaid" onclick="submitOrder()">✅ Tôi đã chuyển khoản</button>`;
+      📝 <strong>Nội dung CK:</strong> ${note}<br><br>
+      Sau khi chuyển khoản, nhấn nút bên dưới. Admin xác nhận trong <strong>24h</strong>.
+    </div>` : `
+    <div class="modal-note" style="text-align:center">
+      📩 Nhấn bên dưới để gửi yêu cầu đăng ký. Admin sẽ liên hệ và xác nhận trong <strong>24h</strong>.
+    </div>`}
+    <button class="btn-paid" id="btnPaid" onclick="submitOrder()">
+      ${price > 0 ? '✅ Tôi đã chuyển khoản' : '📩 Gửi yêu cầu đăng ký'}
+    </button>`;
   document.getElementById('checkoutModal').style.display = 'flex';
 }
 
@@ -820,10 +837,17 @@ async function submitOrder() {
   if (!_checkoutItem) return;
   const btn = document.getElementById('btnPaid');
   btn.disabled = true; btn.textContent = 'Đang gửi...';
-  const { error } = await _supabase.from('orders').insert({
-    member_email: _userEmail, product_id: _checkoutItem.id,
-    product_name: _checkoutItem.title, amount: _checkoutItem.price, status: 'pending'
-  });
+  const item = _checkoutItem;
+  const row = {
+    member_email: _userEmail,
+    product_name: item.title,
+    amount: item.price || 0,
+    status: 'pending'
+  };
+  if (item._itemType === 'lesson')       row.lesson_id  = item.id;
+  else if (item._itemType === 'course')  row.course_id  = String(item.id);
+  else                                   row.product_id = item.id;
+  const { error } = await _supabase.from('orders').insert(row);
   if (error) { btn.disabled = false; btn.textContent = '✅ Tôi đã chuyển khoản'; alert('Lỗi: ' + error.message); return; }
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-success">

@@ -627,6 +627,10 @@
         <span class="sidebar-item-icon">📚</span>
         <span>Bài giảng</span>
       </button>
+      <button class="sidebar-item" onclick="switchSection('minicourse', this)">
+        <span class="sidebar-item-icon">🎓</span>
+        <span>Mini-course</span>
+      </button>
       <button class="sidebar-item" onclick="switchSection('products', this)">
         <span class="sidebar-item-icon">💡</span>
         <span>Sản phẩm số</span>
@@ -866,6 +870,72 @@
         </div>
       </div>
 
+      <!-- PANEL: Mini-course -->
+      <div class="panel" id="panel-minicourse">
+        <div class="section-title">Mini-course</div>
+        <div class="section-sub">Quản lý các mini-course (miễn phí & có phí) hiển thị trên portal</div>
+        <div class="alert" id="minicourseAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm Mini-course mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tên Mini-course *</label>
+                <input type="text" id="mcTitle" placeholder="VD: 7 ngày làm quen AI Affiliate">
+              </div>
+              <div class="form-group">
+                <label>Giá (VNĐ) — để 0 nếu miễn phí</label>
+                <input type="number" id="mcPrice" placeholder="0" min="0" step="1000">
+              </div>
+              <div class="form-group">
+                <label>Icon (emoji)</label>
+                <input type="text" id="mcIcon" placeholder="🎓" maxlength="4">
+              </div>
+              <div class="form-group">
+                <label>Giá gốc / so sánh (VNĐ)</label>
+                <input type="number" id="mcOriginalPrice" placeholder="299000" min="0" step="1000">
+              </div>
+              <div class="form-group full">
+                <label>Mô tả nội dung</label>
+                <input type="text" id="mcDesc" placeholder="Mô tả ngắn về mini-course...">
+              </div>
+              <div class="form-group">
+                <label>Link Video (YouTube / Drive)</label>
+                <input type="url" id="mcVideo" placeholder="https://youtube.com/...">
+              </div>
+              <div class="form-group">
+                <label>Link PDF / Tài liệu</label>
+                <input type="url" id="mcPdf" placeholder="https://drive.google.com/...">
+              </div>
+              <div class="form-group">
+                <label>Link ảnh thumbnail</label>
+                <input type="url" id="mcThumb" placeholder="https://...">
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-purple" id="addMcBtn" onclick="addMiniCourse()">+ Thêm Mini-course</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Danh sách Mini-course</h2>
+            <button class="btn btn-ghost btn-sm" onclick="loadMiniCourses()">↻ Làm mới</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Mini-course</th><th>Giá</th><th>Giá gốc</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="minicourseBody">
+                <tr><td colspan="8"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- PANEL: Products -->
       <div class="panel" id="panel-products">
         <div class="section-title">Sản phẩm số</div>
@@ -883,7 +953,6 @@
                 <label>Loại sản phẩm</label>
                 <select id="prodType">
                   <option value="tip">💡 Tip / Thủ thuật</option>
-                  <option value="mini_course">🎓 Mini-course</option>
                   <option value="ebook">📘 Ebook / Tài liệu</option>
                   <option value="bundle">📦 Combo / Bundle</option>
                 </select>
@@ -987,13 +1056,14 @@ const ADMIN_EMAIL = 'duongvv.vn@gmail.com';
 let _currentSection = 'dashboard';
 
 const SECTION_META = {
-  dashboard: { title: 'Dashboard',    breadcrumb: 'Tổng quan' },
-  members:   { title: 'Thành viên',   breadcrumb: 'Danh sách thành viên' },
-  docs:      { title: 'Tài liệu',     breadcrumb: 'Quản lý tài liệu PDF' },
-  courses:   { title: 'Khoá học',     breadcrumb: 'Quản lý khoá học' },
-  lessons:   { title: 'Bài giảng',    breadcrumb: 'Quản lý bài giảng' },
-  products:  { title: 'Sản phẩm số',  breadcrumb: 'Sản phẩm số' },
-  orders:    { title: 'Đơn hàng',     breadcrumb: 'Quản lý đơn hàng' },
+  dashboard:  { title: 'Dashboard',    breadcrumb: 'Tổng quan' },
+  members:    { title: 'Thành viên',   breadcrumb: 'Danh sách thành viên' },
+  docs:       { title: 'Tài liệu',     breadcrumb: 'Quản lý tài liệu PDF' },
+  courses:    { title: 'Khoá học',     breadcrumb: 'Quản lý khoá học' },
+  lessons:    { title: 'Bài giảng',    breadcrumb: 'Quản lý bài giảng' },
+  minicourse: { title: 'Mini-course',  breadcrumb: 'Quản lý Mini-course' },
+  products:   { title: 'Sản phẩm số', breadcrumb: 'Sản phẩm số (Tip, Ebook, Bundle)' },
+  orders:     { title: 'Đơn hàng',    breadcrumb: 'Quản lý đơn hàng' },
 };
 
 // ── Section switch ──
@@ -1010,13 +1080,14 @@ function switchSection(name, btn) {
 
 function refreshCurrent() {
   const loaders = {
-    dashboard: loadDashboard,
-    members:   loadMembers,
-    docs:      loadDocuments,
-    courses:   loadCourses,
-    lessons:   loadLessons,
-    products:  loadProducts,
-    orders:    loadOrders,
+    dashboard:  loadDashboard,
+    members:    loadMembers,
+    docs:       loadDocuments,
+    courses:    loadCourses,
+    lessons:    loadLessons,
+    minicourse: loadMiniCourses,
+    products:   loadProducts,
+    orders:     loadOrders,
   };
   if (loaders[_currentSection]) loaders[_currentSection]();
 }
@@ -1547,11 +1618,110 @@ function openEditLessonModal(l) {
   });
 }
 
+// ── Mini-course (products with type='mini_course') ──
+async function loadMiniCourses() {
+  const { data, error } = await _supabase.from('products').select('*').eq('type', 'mini_course').order('created_at', { ascending: false });
+  const tbody = document.getElementById('minicourseBody');
+  if (error || !data || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có Mini-course nào. Thêm ngay!</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td>
+        <strong style="color:#fff">${p.icon || '🎓'} ${p.title}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">${p.description || ''}</span>
+      </td>
+      <td>${fmtPrice(p.price || 0)}</td>
+      <td style="font-size:0.78rem;color:#64748B">${p.original_price ? (p.original_price).toLocaleString('vi-VN')+'₫' : '—'}</td>
+      <td>${p.video_url ? `<a href="${p.video_url}" target="_blank" class="link-chip">▶ Xem</a>` : '<span style="color:#334155">—</span>'}</td>
+      <td>${p.pdf_url ? `<a href="${p.pdf_url}" target="_blank" class="link-chip">📄 Tải</a>` : '<span style="color:#334155">—</span>'}</td>
+      <td><span class="badge badge-${p.active !== false ? 'active' : 'closed'}">${p.active !== false ? (p.price > 0 ? 'Đang bán' : 'Miễn phí') : 'Ẩn'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-warning btn-sm" onclick='openEditMcModal(${JSON.stringify(p)})'>✏ Sửa</button>
+          <button class="btn btn-${p.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleMc(${p.id}, ${p.active !== false})">${p.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteMc(${p.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+async function addMiniCourse() {
+  const title = document.getElementById('mcTitle').value.trim();
+  const price = parseInt(document.getElementById('mcPrice').value) || 0;
+  const icon  = document.getElementById('mcIcon').value.trim() || '🎓';
+  const desc  = document.getElementById('mcDesc').value.trim();
+  const video = document.getElementById('mcVideo').value.trim();
+  const pdf   = document.getElementById('mcPdf').value.trim();
+  const thumb = document.getElementById('mcThumb').value.trim();
+  const orig  = parseInt(document.getElementById('mcOriginalPrice').value) || null;
+
+  if (!title) { showAlert('minicourseAlert', 'Vui lòng nhập tên Mini-course', 'error'); return; }
+
+  const btn = document.getElementById('addMcBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const slug = title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const { error } = await _supabase.from('products').insert({
+    title, type: 'mini_course', price, icon, description: desc,
+    video_url: video || null, pdf_url: pdf || null, thumbnail_url: thumb || null,
+    original_price: orig, slug, active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm Mini-course';
+  if (error) { showAlert('minicourseAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['mcTitle','mcDesc','mcVideo','mcPdf','mcThumb','mcPrice','mcIcon','mcOriginalPrice'].forEach(id => document.getElementById(id).value = '');
+  showAlert('minicourseAlert', '✅ Đã thêm Mini-course!');
+  loadMiniCourses();
+}
+
+async function toggleMc(id, current) {
+  await _supabase.from('products').update({ active: !current }).eq('id', id);
+  loadMiniCourses();
+}
+
+async function deleteMc(id) {
+  if (!confirm('Xoá Mini-course này?')) return;
+  await _supabase.from('products').delete().eq('id', id);
+  showAlert('minicourseAlert', 'Đã xoá!');
+  loadMiniCourses();
+}
+
+function openEditMcModal(p) {
+  openModal('Chỉnh sửa Mini-course', `
+    <div class="form-group"><label>Tên *</label><input type="text" id="m_mcTitle" value="${(p.title||'').replace(/"/g,'&quot;')}"></div>
+    <div class="form-group"><label>Icon</label><input type="text" id="m_mcIcon" value="${p.icon||'🎓'}" maxlength="4"></div>
+    <div class="form-group"><label>Giá (VNĐ)</label><input type="number" id="m_mcPrice" value="${p.price||0}" min="0" step="1000"></div>
+    <div class="form-group"><label>Giá gốc (VNĐ)</label><input type="number" id="m_mcOrig" value="${p.original_price||''}" min="0" step="1000"></div>
+    <div class="form-group"><label>Mô tả</label><input type="text" id="m_mcDesc" value="${(p.description||'').replace(/"/g,'&quot;')}"></div>
+    <div class="form-group"><label>Link Video</label><input type="url" id="m_mcVideo" value="${p.video_url||''}"></div>
+    <div class="form-group"><label>Link PDF</label><input type="url" id="m_mcPdf" value="${p.pdf_url||''}"></div>
+    <div class="form-group"><label>Thumbnail URL</label><input type="url" id="m_mcThumb" value="${p.thumbnail_url||''}"></div>
+  `, {
+    save: async () => {
+      const title = document.getElementById('m_mcTitle').value.trim();
+      if (!title) { showAlert('minicourseAlert', 'Tên không được trống', 'error'); return; }
+      const { error } = await _supabase.from('products').update({
+        title, icon: document.getElementById('m_mcIcon').value.trim() || '🎓',
+        price: parseInt(document.getElementById('m_mcPrice').value) || 0,
+        original_price: parseInt(document.getElementById('m_mcOrig').value) || null,
+        description: document.getElementById('m_mcDesc').value.trim(),
+        video_url: document.getElementById('m_mcVideo').value.trim() || null,
+        pdf_url: document.getElementById('m_mcPdf').value.trim() || null,
+        thumbnail_url: document.getElementById('m_mcThumb').value.trim() || null,
+      }).eq('id', p.id);
+      if (error) { showAlert('minicourseAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('minicourseAlert', '✅ Đã cập nhật!');
+      closeModal(); loadMiniCourses();
+    }
+  });
+}
+
 // ── Load products ──
 const PROD_LABELS = { tip:'💡 Tip/Thủ thuật', mini_course:'🎓 Mini-course', ebook:'📘 Ebook', bundle:'📦 Bundle' };
 
 async function loadProducts() {
-  const { data, error } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
+  const { data, error } = await _supabase.from('products').select('*').neq('type','mini_course').order('created_at', { ascending: false });
   const tbody = document.getElementById('productsBody');
   if (error || !data || !data.length) {
     tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có sản phẩm số nào. Thêm sản phẩm đầu tiên!</p></div></td></tr>`;
@@ -1738,8 +1908,8 @@ async function signOut() {
     loadCourses();
     loadOrders();
     loadLessons();
+    loadMiniCourses();
     loadProducts();
-    // loadMembers is triggered when tab is clicked or loadDashboard partial
     loadMembers();
   } catch(e) {
     window.location.href = 'login.html';
