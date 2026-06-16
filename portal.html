@@ -3,441 +3,656 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tài liệu thành viên — VDAI Academy</title>
+  <title>Member Portal — VDAI Academy</title>
   <meta name="robots" content="noindex,nofollow">
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
-    body { background: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; margin: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   #060C1A;
+      --navy2:  #0D1526;
+      --blue:   #2563EB;
+      --blue2:  #1D4ED8;
+      --purple: #6D5DFB;
+      --gold:   #F59E0B;
+      --green:  #10B981;
+      --text:   #E2E8F0;
+      --muted:  #94A3B8;
+      --border: rgba(255,255,255,0.08);
+      --card:   rgba(255,255,255,0.04);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--navy);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-    /* ── Top Nav ── */
-    .portal-nav {
-      background: #fff;
-      border-bottom: 1px solid #E2E8F0;
-      padding: 0 24px;
+    /* ─── NAV ─── */
+    .nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(6,12,26,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      height: 64px; position: sticky; top: 0; z-index: 100;
+      padding: 0 32px; height: 64px;
     }
-    .portal-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .portal-logo-mark {
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo-mark {
       width: 36px; height: 36px; border-radius: 9px;
-      background: linear-gradient(135deg, #2563EB, #6D5DFB);
+      background: linear-gradient(135deg, var(--blue), var(--purple));
       display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 900; font-size: 0.95rem;
+      font-weight: 900; font-size: 1rem; color: #fff;
+      box-shadow: 0 0 20px rgba(109,93,251,0.4);
     }
-    .portal-logo-text { font-weight: 800; font-size: 1rem; color: #0F172A; }
-    .portal-logo-text span { color: #2563EB; }
-    .portal-user { display: flex; align-items: center; gap: 14px; }
-    .portal-user-name { font-size: 0.875rem; color: #475569; font-weight: 500; }
-    .portal-signout {
-      font-size: 0.8rem; font-weight: 600; color: #64748B;
-      border: 1.5px solid #E2E8F0; border-radius: 8px;
+    .nav-logo-text { font-weight: 800; font-size: 1rem; color: #fff; }
+    .nav-logo-text span { color: var(--purple); }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .nav-email { font-size: 0.78rem; color: var(--muted); }
+    .nav-signout {
+      font-size: 0.78rem; font-weight: 600; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 8px;
       padding: 6px 14px; background: none; cursor: pointer;
       font-family: inherit; transition: all 0.2s;
     }
-    .portal-signout:hover { color: #DC2626; border-color: #FECACA; background: #FEF2F2; }
+    .nav-signout:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
 
-    /* ── Layout ── */
-    .portal-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
-    .portal-greeting { margin-bottom: 36px; }
-    .portal-greeting h1 { font-size: 1.6rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; }
-    .portal-greeting p  { font-size: 0.95rem; color: #64748B; margin: 0; }
+    /* ─── LAYOUT ─── */
+    .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px 100px; }
 
-    /* ── Section heading ── */
-    .portal-section { margin-bottom: 44px; }
-    .portal-section-head {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 20px; padding-bottom: 12px;
-      border-bottom: 2px solid #E2E8F0;
-    }
-    .portal-section-icon {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
-    }
-    .portal-section-head h2 { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0; }
-    .portal-section-head .badge {
-      font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
-      background: #EEF4FF; color: #2563EB;
-    }
-    .portal-section-head .badge.coming { background: #FFF7ED; color: #C2410C; }
-
-    /* ── Course cards ── */
-    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-    .course-card {
-      background: #fff; border-radius: 16px;
-      border: 1.5px solid #E2E8F0;
-      overflow: hidden; transition: transform 0.22s, box-shadow 0.22s;
+    /* ─── HERO GREETING ─── */
+    .hero {
+      padding: 60px 0 48px;
       position: relative;
     }
-    .course-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(15,23,42,0.10); }
-    .course-card-cover {
-      height: 120px; display: flex; align-items: center; justify-content: center;
-      font-size: 2.4rem;
+    .hero::before {
+      content: '';
+      position: absolute; top: 0; left: -24px; right: -24px; height: 300px;
+      background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(109,93,251,0.12) 0%, transparent 70%);
+      pointer-events: none;
     }
-    .course-card-body { padding: 18px 20px 20px; }
-    .course-card-body h3 { font-size: 1rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; }
-    .course-card-body p  { font-size: 0.83rem; color: #64748B; margin: 0 0 14px; line-height: 1.5; }
-    .course-card-meta { display: flex; align-items: center; justify-content: space-between; }
-    .course-tag {
-      font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    .hero-greeting {
+      font-size: 0.85rem; font-weight: 600; color: var(--purple);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;
     }
-    .tag-free    { background: #F0FDF4; color: #15803D; }
-    .tag-locked  { background: #F8FAFC; color: #94A3B8; }
-    .tag-soon    { background: #FFF7ED; color: #C2410C; }
+    .hero-title { font-size: 2.2rem; font-weight: 900; color: #fff; line-height: 1.2; margin-bottom: 12px; }
+    .hero-title span { background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: 1rem; color: var(--muted); line-height: 1.6; max-width: 520px; }
 
-    .course-btn {
-      font-size: 0.8rem; font-weight: 700; padding: 7px 16px;
-      border-radius: 8px; border: none; cursor: pointer;
-      font-family: inherit; transition: all 0.2s; text-decoration: none;
-      display: inline-flex; align-items: center; gap: 5px;
+    /* ─── SECTION HEAD ─── */
+    .section { margin-bottom: 56px; }
+    .section-head {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 28px;
     }
-    .btn-primary { background: #2563EB; color: #fff; }
-    .btn-primary:hover { background: #1D4ED8; }
-    .btn-locked  { background: #F1F5F9; color: #94A3B8; cursor: not-allowed; }
+    .section-badge {
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 4px 10px; border-radius: 20px;
+    }
+    .badge-hot  { background: rgba(239,68,68,0.15); color: #F87171; border: 1px solid rgba(239,68,68,0.25); }
+    .badge-free { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .badge-new  { background: rgba(245,158,11,0.15); color: #FCD34D; border: 1px solid rgba(245,158,11,0.25); }
+    .badge-mine { background: rgba(37,99,235,0.2);   color: #93C5FD; border: 1px solid rgba(37,99,235,0.3); }
+    .section-title { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
 
-    /* ── Locked overlay ── */
-    .course-card.locked .course-card-cover { filter: grayscale(0.3); }
-    .locked-banner {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(15,23,42,0.72); backdrop-filter: blur(4px);
-      color: #fff; font-size: 0.7rem; font-weight: 700;
-      padding: 4px 10px; border-radius: 20px;
-      display: flex; align-items: center; gap: 4px;
+    /* ─── FLAGSHIP COURSES (SOLO & SCALE) ─── */
+    .flagship-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .flagship-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      padding: 36px 32px; min-height: 340px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      cursor: default;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .flagship-card:hover { transform: translateY(-6px); }
+    .flagship-solo {
+      background: linear-gradient(145deg, #0D1F44 0%, #0A1628 60%, #0B0F1E 100%);
+      border: 1px solid rgba(37,99,235,0.3);
+      box-shadow: 0 0 60px rgba(37,99,235,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .flagship-solo:hover { box-shadow: 0 20px 80px rgba(37,99,235,0.25), inset 0 1px 0 rgba(255,255,255,0.08); }
+    .flagship-scale {
+      background: linear-gradient(145deg, #150D38 0%, #0F0A28 60%, #0B0F1E 100%);
+      border: 1px solid rgba(109,93,251,0.3);
+      box-shadow: 0 0 60px rgba(109,93,251,0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .flagship-scale:hover { box-shadow: 0 20px 80px rgba(109,93,251,0.25), inset 0 1px 0 rgba(255,255,255,0.08); }
+
+    /* Glow orb */
+    .flagship-orb {
+      position: absolute; top: -40px; right: -40px;
+      width: 220px; height: 220px; border-radius: 50%;
+      filter: blur(60px); opacity: 0.35; pointer-events: none;
+    }
+    .solo-orb  { background: radial-gradient(circle, #3B82F6, transparent); }
+    .scale-orb { background: radial-gradient(circle, #8B5CF6, transparent); }
+
+    /* Grid pattern */
+    .flagship-grid-bg {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
+      background-image: linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px);
+      background-size: 32px 32px;
     }
 
-    /* ── Doc list ── */
+    .flagship-tag {
+      position: absolute; top: 24px; left: 32px;
+      font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em;
+      padding: 5px 12px; border-radius: 20px;
+    }
+    .solo-tag  { background: rgba(37,99,235,0.2);  color: #93C5FD; border: 1px solid rgba(37,99,235,0.35); }
+    .scale-tag { background: rgba(109,93,251,0.2); color: #C4B5FD; border: 1px solid rgba(109,93,251,0.35); }
+
+    .flagship-icon {
+      position: absolute; top: 50px; right: 32px;
+      font-size: 4rem; opacity: 0.25; user-select: none;
+      filter: drop-shadow(0 0 20px currentColor);
+    }
+
+    .flagship-body { position: relative; z-index: 2; }
+    .flagship-name {
+      font-size: 2rem; font-weight: 900; letter-spacing: -0.02em;
+      margin-bottom: 8px; color: #fff;
+    }
+    .flagship-tagline {
+      font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin-bottom: 20px;
+    }
+    .flagship-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+    .flagship-pill {
+      font-size: 0.72rem; font-weight: 600; padding: 4px 12px;
+      border-radius: 20px; border: 1px solid var(--border);
+      color: var(--muted); background: rgba(255,255,255,0.04);
+    }
+    .flagship-status {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.82rem; font-weight: 700;
+      padding: 10px 20px; border-radius: 12px;
+      border: 1px solid;
+    }
+    .status-solo  { color: #93C5FD; border-color: rgba(37,99,235,0.4);  background: rgba(37,99,235,0.1); }
+    .status-scale { color: #C4B5FD; border-color: rgba(109,93,251,0.4); background: rgba(109,93,251,0.1); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; animation: pulse 1.6s infinite; }
+    .dot-blue   { background: #3B82F6; box-shadow: 0 0 8px #3B82F6; }
+    .dot-purple { background: #8B5CF6; box-shadow: 0 0 8px #8B5CF6; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+    /* ─── COURSE GRID (free & store) ─── */
+    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+    .course-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      overflow: hidden; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column;
+    }
+    .course-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(109,93,251,0.3);
+      box-shadow: 0 12px 40px rgba(109,93,251,0.1);
+    }
+    .course-cover {
+      height: 110px; display: flex; align-items: center; justify-content: center;
+      font-size: 2.6rem; position: relative; overflow: hidden;
+    }
+    .course-body { padding: 18px 20px 20px; flex: 1; display: flex; flex-direction: column; }
+    .course-type { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple); margin-bottom: 6px; }
+    .course-body h3 { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 7px; line-height: 1.4; }
+    .course-body p  { font-size: 0.78rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: 16px; }
+    .course-footer { display: flex; align-items: center; justify-content: space-between; }
+    .tag-free  { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .course-price { font-size: 1rem; font-weight: 900; color: #fff; }
+    .btn-access {
+      font-size: 0.78rem; font-weight: 700; padding: 7px 14px; border-radius: 9px;
+      border: none; cursor: pointer; font-family: inherit; transition: all 0.2s;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .btn-view   { background: rgba(37,99,235,0.15); color: #93C5FD; border: 1px solid rgba(37,99,235,0.3); }
+    .btn-view:hover { background: rgba(37,99,235,0.25); }
+    .btn-dl     { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .btn-dl:hover { background: rgba(16,185,129,0.25); }
+    .btn-buy {
+      font-size: 0.8rem; font-weight: 700; padding: 8px 16px; border-radius: 9px;
+      border: none; cursor: pointer; font-family: inherit;
+      background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff;
+      transition: opacity 0.2s; white-space: nowrap;
+    }
+    .btn-buy:hover { opacity: 0.85; }
+
+    /* ─── DOC LIST ─── */
     .doc-list { display: flex; flex-direction: column; gap: 12px; }
     .doc-item {
-      background: #fff; border-radius: 12px; border: 1.5px solid #E2E8F0;
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
       padding: 16px 20px; display: flex; align-items: center; gap: 16px;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: border-color 0.2s, transform 0.2s;
     }
-    .doc-item:hover { transform: translateX(4px); box-shadow: 0 4px 20px rgba(15,23,42,0.07); }
-    .doc-icon {
-      width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+    .doc-item:hover { border-color: rgba(109,93,251,0.25); transform: translateX(4px); }
+    .doc-ico {
+      width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+      background: rgba(255,255,255,0.05);
     }
     .doc-info { flex: 1; }
-    .doc-info h4 { font-size: 0.9rem; font-weight: 700; color: #0F172A; margin: 0 0 3px; }
-    .doc-info p  { font-size: 0.78rem; color: #64748B; margin: 0; }
+    .doc-info h4 { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .doc-info p  { font-size: 0.76rem; color: var(--muted); }
     .doc-btns { display: flex; gap: 8px; flex-shrink: 0; }
-    .doc-btn {
-      font-size: 0.78rem; font-weight: 700; padding: 7px 14px;
-      border-radius: 8px; border: none; cursor: pointer;
-      font-family: inherit; transition: all 0.2s; white-space: nowrap;
-      text-decoration: none; display: inline-block;
-    }
-    .doc-btn-view { background: #EEF4FF; color: #2563EB; }
-    .doc-btn-view:hover { background: #DBEAFE; }
-    .doc-btn-download { background: #2563EB; color: #fff; }
-    .doc-btn-download:hover { background: #1D4ED8; }
 
-    /* ── Store grid ── */
-    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    /* ─── STORE GRID ─── */
+    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
     .store-card {
-      background: #fff; border-radius: 16px; border: 1.5px solid #E2E8F0;
-      overflow: hidden; transition: transform 0.22s, box-shadow 0.22s; display: flex; flex-direction: column;
+      background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+      overflow: hidden; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; position: relative;
     }
-    .store-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(15,23,42,0.10); }
+    .store-card::before {
+      content: '🔥 HOT';
+      position: absolute; top: 14px; right: 14px;
+      font-size: 0.65rem; font-weight: 800; letter-spacing: 0.06em;
+      background: rgba(245,158,11,0.15); color: #FCD34D;
+      border: 1px solid rgba(245,158,11,0.3);
+      padding: 3px 9px; border-radius: 20px;
+    }
+    .store-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(245,158,11,0.25);
+      box-shadow: 0 12px 40px rgba(245,158,11,0.08);
+    }
     .store-cover {
       height: 110px; display: flex; align-items: center; justify-content: center;
-      font-size: 2.6rem; background: linear-gradient(135deg, #EEF4FF, #E0E7FF);
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, rgba(109,93,251,0.15), rgba(37,99,235,0.1));
     }
-    .store-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
-    .store-type { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6D5DFB; margin-bottom: 6px; }
-    .store-body h3 { font-size: 0.95rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; line-height: 1.4; }
-    .store-body p  { font-size: 0.78rem; color: #64748B; margin: 0 0 14px; line-height: 1.5; flex: 1; }
+    .store-body { padding: 16px 18px 20px; flex: 1; display: flex; flex-direction: column; }
+    .store-type { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #FCD34D; margin-bottom: 6px; }
+    .store-body h3 { font-size: 0.95rem; font-weight: 800; color: #fff; margin-bottom: 7px; line-height: 1.4; }
+    .store-body p  { font-size: 0.78rem; color: var(--muted); line-height: 1.55; flex: 1; margin-bottom: 16px; }
     .store-footer { display: flex; align-items: center; justify-content: space-between; }
-    .store-price { font-size: 1.05rem; font-weight: 900; color: #0F172A; }
-    .store-price small { font-size: 0.7rem; font-weight: 600; color: #64748B; }
-    .btn-buy {
-      font-size: 0.8rem; font-weight: 700; padding: 8px 16px;
-      border-radius: 8px; border: none; cursor: pointer; font-family: inherit;
-      background: linear-gradient(135deg, #2563EB, #6D5DFB); color: #fff;
-      transition: opacity 0.2s;
-    }
-    .btn-buy:hover { opacity: 0.88; }
-    .store-empty { padding: 40px; text-align: center; color: #94A3B8; font-size: 0.9rem; }
+    .store-price { font-size: 1.1rem; font-weight: 900; color: #FCD34D; }
+    .store-price small { font-size: 0.68rem; color: var(--muted); font-weight: 500; }
+    .store-empty { padding: 40px; text-align: center; color: var(--muted); font-size: 0.9rem; }
 
-    /* ── Purchased content ── */
+    /* ─── PURCHASED ─── */
     .purchased-item {
-      background: #fff; border-radius: 12px; border: 1.5px solid #BBF7D0;
-      padding: 16px 20px; display: flex; align-items: center; gap: 16px;
-      transition: box-shadow 0.2s;
+      background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.2); border-radius: 14px;
+      padding: 16px 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 12px;
     }
-    .purchased-item:hover { box-shadow: 0 4px 20px rgba(15,23,42,0.07); }
-    .purchased-icon {
-      width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
-      background: #F0FDF4; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    .purchased-ico {
+      width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+      background: rgba(16,185,129,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
     }
     .purchased-info { flex: 1; }
-    .purchased-info h4 { font-size: 0.9rem; font-weight: 700; color: #0F172A; margin: 0 0 3px; }
-    .purchased-info p  { font-size: 0.75rem; color: #64748B; margin: 0; }
+    .purchased-info h4 { font-size: 0.9rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .purchased-info p  { font-size: 0.75rem; color: #34D399; }
     .purchased-btns { display: flex; gap: 8px; flex-shrink: 0; }
-    .btn-content {
-      font-size: 0.78rem; font-weight: 700; padding: 7px 14px;
-      border-radius: 8px; border: none; cursor: pointer; font-family: inherit;
-      transition: all 0.2s; white-space: nowrap; text-decoration: none; display: inline-block;
-    }
-    .btn-video { background: #EEF4FF; color: #2563EB; }
-    .btn-video:hover { background: #DBEAFE; }
-    .btn-pdf   { background: #F0FDF4; color: #15803D; }
-    .btn-pdf:hover { background: #DCFCE7; }
 
-    /* ── Checkout Modal ── */
+    /* ─── COMMUNITY ─── */
+    .community-section {
+      margin-top: 72px; padding: 56px 40px;
+      background: linear-gradient(135deg, #0D0F20 0%, #0A0D1A 100%);
+      border: 1px solid var(--border); border-radius: 28px;
+      position: relative; overflow: hidden; text-align: center;
+    }
+    .community-section::before {
+      content: '';
+      position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(ellipse, rgba(109,93,251,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .community-section::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .community-eyebrow {
+      position: relative; z-index: 2;
+      font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--purple); margin-bottom: 14px;
+    }
+    .community-title {
+      position: relative; z-index: 2;
+      font-size: 2rem; font-weight: 900; color: #fff; line-height: 1.2;
+      margin-bottom: 10px;
+    }
+    .community-title .glow {
+      background: linear-gradient(135deg, #FCD34D, #F59E0B);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .community-sub {
+      position: relative; z-index: 2;
+      font-size: 0.95rem; color: var(--muted); line-height: 1.7;
+      max-width: 540px; margin: 0 auto 36px;
+    }
+    .community-cards { position: relative; z-index: 2; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+    .community-card {
+      width: 260px; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 28px 24px; text-decoration: none;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .community-card:hover { transform: translateY(-6px); }
+    .fb-card:hover { border-color: rgba(24,119,242,0.5); box-shadow: 0 16px 50px rgba(24,119,242,0.15); }
+    .zalo-card:hover { border-color: rgba(0,120,245,0.5); box-shadow: 0 16px 50px rgba(0,120,245,0.15); }
+    .community-logo { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    .fb-logo   { background: rgba(24,119,242,0.15); }
+    .zalo-logo { background: rgba(0,120,245,0.15); }
+    .community-card h3 { font-size: 1rem; font-weight: 800; color: #fff; }
+    .community-card p  { font-size: 0.78rem; color: var(--muted); line-height: 1.5; text-align: center; }
+    .community-pill {
+      font-size: 0.72rem; font-weight: 700; padding: 5px 14px; border-radius: 20px; margin-top: 4px;
+    }
+    .fb-pill   { background: rgba(24,119,242,0.15); color: #60A5FA; border: 1px solid rgba(24,119,242,0.3); }
+    .zalo-pill { background: rgba(0,120,245,0.15);  color: #7DD3FC; border: 1px solid rgba(0,120,245,0.3); }
+    .community-fomo {
+      position: relative; z-index: 2;
+      margin-top: 28px; font-size: 0.8rem; color: var(--muted);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .fomo-dot { width: 8px; height: 8px; border-radius: 50%; background: #34D399; box-shadow: 0 0 8px #34D399; animation: pulse 1.5s infinite; flex-shrink: 0; }
+
+    /* ─── CHECKOUT MODAL ─── */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(15,23,42,0.55);
-      backdrop-filter: blur(4px); z-index: 1000;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(6,12,26,0.8); backdrop-filter: blur(8px);
       display: flex; align-items: center; justify-content: center; padding: 20px;
     }
     .modal-box {
-      background: #fff; border-radius: 20px; width: 100%; max-width: 460px;
-      padding: 32px; position: relative; max-height: 90vh; overflow-y: auto;
+      background: #0D1526; border: 1px solid rgba(109,93,251,0.25);
+      border-radius: 24px; width: 100%; max-width: 460px;
+      padding: 36px; position: relative; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.6);
     }
     .modal-close {
-      position: absolute; top: 16px; right: 16px;
-      width: 32px; height: 32px; border-radius: 50%; border: none;
-      background: #F1F5F9; cursor: pointer; font-size: 1.1rem;
-      display: flex; align-items: center; justify-content: center;
+      position: absolute; top: 18px; right: 18px;
+      width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05); cursor: pointer; font-size: 1rem;
+      color: var(--muted); display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
     }
-    .modal-close:hover { background: #E2E8F0; }
-    .modal-title { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0 0 4px; }
-    .modal-sub   { font-size: 0.82rem; color: #64748B; margin: 0 0 20px; }
+    .modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .modal-title { font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .modal-sub   { font-size: 0.82rem; color: var(--muted); margin-bottom: 22px; }
     .modal-price-row {
-      background: #F8FAFC; border-radius: 12px; padding: 14px 18px;
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+      background: rgba(109,93,251,0.08); border: 1px solid rgba(109,93,251,0.2);
+      border-radius: 14px; padding: 14px 20px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px;
     }
-    .modal-price-label { font-size: 0.82rem; color: #64748B; }
-    .modal-price-val   { font-size: 1.4rem; font-weight: 900; color: #2563EB; }
-    .modal-qr { text-align: center; margin-bottom: 16px; }
-    .modal-qr img { width: 200px; height: 200px; border-radius: 12px; border: 1px solid #E2E8F0; }
+    .modal-price-label { font-size: 0.82rem; color: var(--muted); }
+    .modal-price-val   { font-size: 1.5rem; font-weight: 900; color: #FCD34D; }
+    .modal-qr { text-align: center; margin-bottom: 18px; }
+    .modal-qr img { width: 200px; height: 200px; border-radius: 14px; border: 1px solid var(--border); }
+    .modal-qr p { font-size: 0.74rem; color: var(--muted); margin-top: 8px; }
     .modal-bank {
-      background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px;
-      padding: 14px 18px; margin-bottom: 16px;
+      background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;
     }
-    .modal-bank p { margin: 0 0 4px; font-size: 0.83rem; color: #374151; }
-    .modal-bank strong { color: #0F172A; }
+    .modal-bank p { margin-bottom: 5px; font-size: 0.83rem; color: var(--muted); }
+    .modal-bank p:last-child { margin-bottom: 0; }
+    .modal-bank strong { color: #fff; }
     .modal-note {
-      background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 10px;
-      padding: 12px 16px; font-size: 0.8rem; color: #92400E; margin-bottom: 20px; line-height: 1.6;
+      background: rgba(245,158,11,0.07); border: 1px solid rgba(245,158,11,0.2);
+      border-radius: 10px; padding: 12px 16px;
+      font-size: 0.78rem; color: #FCD34D; margin-bottom: 22px; line-height: 1.7;
     }
-    .modal-note strong { color: #C2410C; }
+    .modal-note strong { color: #F59E0B; }
     .btn-paid {
-      width: 100%; padding: 14px; border-radius: 12px; border: none;
-      background: linear-gradient(135deg, #2563EB, #6D5DFB); color: #fff;
-      font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+      width: 100%; padding: 15px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: opacity 0.2s;
     }
     .btn-paid:hover { opacity: 0.9; }
-    .btn-paid:disabled { opacity: 0.6; cursor: not-allowed; }
-    .modal-success { text-align: center; padding: 20px 0; }
-    .modal-success .check { font-size: 3rem; margin-bottom: 12px; }
-    .modal-success h3 { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0 0 8px; }
-    .modal-success p  { font-size: 0.85rem; color: #64748B; margin: 0; line-height: 1.6; }
+    .btn-paid:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal-success { text-align: center; padding: 16px 0; }
+    .modal-success .check { font-size: 3.5rem; margin-bottom: 14px; }
+    .modal-success h3 { font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+    .modal-success p  { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+    .btn-close-modal {
+      margin-top: 22px; padding: 11px 28px; border-radius: 12px;
+      border: 1px solid var(--border); background: rgba(255,255,255,0.05);
+      color: #fff; font-weight: 700; cursor: pointer; font-family: inherit;
+      transition: background 0.2s;
+    }
+    .btn-close-modal:hover { background: rgba(255,255,255,0.1); }
 
-    /* ── Coming soon card ── */
-    .coming-card {
-      background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
-      border-radius: 20px; padding: 32px 28px;
-      display: flex; gap: 24px; align-items: center;
-      margin-bottom: 20px; position: relative; overflow: hidden;
-    }
-    .coming-card::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(37,99,235,0.15) 0%, transparent 60%);
-    }
-    .coming-cover { font-size: 3rem; flex-shrink: 0; position: relative; }
-    .coming-body { position: relative; }
-    .coming-body h3 { font-size: 1.25rem; font-weight: 900; color: #fff; margin: 0 0 6px; }
-    .coming-body p  { font-size: 0.85rem; color: #94A3B8; margin: 0 0 16px; line-height: 1.6; }
-    .coming-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.3);
-      color: #FB923C; font-size: 0.78rem; font-weight: 700;
-      padding: 5px 14px; border-radius: 20px;
-    }
-    .coming-dot { width: 7px; height: 7px; border-radius: 50%; background: #FB923C; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    /* ─── EMPTY STATE ─── */
+    .empty-state { padding: 40px 20px; text-align: center; color: var(--muted); font-size: 0.85rem; }
 
-    @media (max-width: 600px) {
-      .coming-card { flex-direction: column; gap: 16px; }
-      .portal-user-name { display: none; }
-      .store-grid { grid-template-columns: 1fr; }
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .flagship-grid { grid-template-columns: 1fr; }
+      .flagship-card { min-height: 280px; }
+      .flagship-name { font-size: 1.6rem; }
+      .nav { padding: 0 16px; }
+      .wrap { padding: 0 16px 80px; }
+      .community-section { padding: 36px 20px; }
+      .community-title { font-size: 1.5rem; }
+      .hero-title { font-size: 1.6rem; }
+      .nav-email { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- Nav -->
-<nav class="portal-nav">
-  <a href="index.html" class="portal-logo">
-    <div class="portal-logo-mark">V</div>
-    <div class="portal-logo-text">VDAI <span>Academy</span></div>
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-logo">
+    <div class="nav-logo-mark">V</div>
+    <div class="nav-logo-text">VDAI <span>Academy</span></div>
   </a>
-  <div class="portal-user">
-    <span class="portal-user-name" id="userName"></span>
-    <button class="portal-signout" onclick="signOut()">Đăng xuất</button>
+  <div class="nav-right">
+    <span class="nav-email" id="userName"></span>
+    <button class="nav-signout" onclick="signOut()">Đăng xuất</button>
   </div>
 </nav>
 
-<!-- Main -->
-<div class="portal-wrap">
+<!-- MAIN -->
+<div class="wrap">
 
-  <!-- Greeting -->
-  <div class="portal-greeting">
-    <h1>Xin chào, <span id="greetName">bạn</span> 👋</h1>
-    <p>Chào mừng đến với khu vực tài liệu dành riêng cho thành viên VDAI Academy.</p>
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-greeting">Chào mừng trở lại, <span id="greetName">bạn</span> 👋</div>
+    <h1 class="hero-title">Nơi kiến thức<br><span>biến thành tiền</span></h1>
+    <p class="hero-sub">Bạn đang ở đúng nơi. Đây là không gian học tập, công cụ và cộng đồng giúp bạn xây dựng dòng thu nhập bền vững với AI.</p>
   </div>
 
-  <!-- ── Khoá học chính ── -->
-  <div class="portal-section">
-    <div class="portal-section-head">
-      <div class="portal-section-icon" style="background:#EEF4FF">🎓</div>
-      <h2>Khoá học chính</h2>
-      <span class="badge coming">Sắp khai giảng</span>
+  <!-- FLAGSHIP COURSES -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-hot">🔥 Flagship</span>
+      <div class="section-title">Khoá học trọng tâm</div>
+      <div class="section-line"></div>
     </div>
 
-    <!-- VDAI SOLO -->
-    <div class="coming-card" style="margin-bottom:16px">
-      <div class="coming-cover">🚀</div>
-      <div class="coming-body">
-        <h3>VDAI SOLO</h3>
-        <p>Xây hệ thống Affiliate bằng AI — vận hành tinh gọn một người.<br>Lộ trình 8 tuần thực chiến, từ zero đến dòng tiền đầu tiên.</p>
-        <span class="coming-badge"><span class="coming-dot"></span>Sắp mở đăng ký</span>
+    <div class="flagship-grid">
+      <!-- SOLO -->
+      <div class="flagship-card flagship-solo">
+        <div class="flagship-grid-bg"></div>
+        <div class="flagship-orb solo-orb"></div>
+        <div class="flagship-tag solo-tag">⚡ VDAI SOLO</div>
+        <div class="flagship-icon">🚀</div>
+        <div class="flagship-body">
+          <div class="flagship-name">VDAI SOLO</div>
+          <div class="flagship-tagline">
+            Xây hệ thống Affiliate AI vận hành tinh gọn — một mình.<br>
+            Từ zero → dòng tiền đầu tiên trong 8 tuần.
+          </div>
+          <div class="flagship-pills">
+            <span class="flagship-pill">📍 8 tuần thực chiến</span>
+            <span class="flagship-pill">🤖 AI-powered</span>
+            <span class="flagship-pill">💰 Tạo thu nhập thụ động</span>
+            <span class="flagship-pill">🎯 1-on-1 mentoring</span>
+          </div>
+          <div class="flagship-status status-solo">
+            <span class="status-dot dot-blue"></span>Sắp mở đăng ký
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- VDAI SCALE -->
-    <div class="coming-card">
-      <div class="coming-cover">📈</div>
-      <div class="coming-body">
-        <h3>VDAI SCALE</h3>
-        <p>Nhân bản hệ thống Affiliate cùng đội nhóm — tự động hoá, mở rộng quy mô.<br>Dành cho người đã có nền tảng, muốn bứt phá doanh thu.</p>
-        <span class="coming-badge"><span class="coming-dot"></span>Sắp mở đăng ký</span>
+      <!-- SCALE -->
+      <div class="flagship-card flagship-scale">
+        <div class="flagship-grid-bg"></div>
+        <div class="flagship-orb scale-orb"></div>
+        <div class="flagship-tag scale-tag">🚀 VDAI SCALE</div>
+        <div class="flagship-icon">📈</div>
+        <div class="flagship-body">
+          <div class="flagship-name">VDAI SCALE</div>
+          <div class="flagship-tagline">
+            Nhân bản hệ thống Affiliate cùng đội nhóm.<br>
+            Tự động hoá toàn diện, mở rộng doanh thu không giới hạn.
+          </div>
+          <div class="flagship-pills">
+            <span class="flagship-pill">🏆 Level Advanced</span>
+            <span class="flagship-pill">👥 Team building</span>
+            <span class="flagship-pill">⚙️ Full automation</span>
+            <span class="flagship-pill">📊 Scale to 9 figures</span>
+          </div>
+          <div class="flagship-status status-scale">
+            <span class="status-dot dot-purple"></span>Sắp mở đăng ký
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ── Mini-course miễn phí ── -->
-  <div class="portal-section">
-    <div class="portal-section-head">
-      <div class="portal-section-icon" style="background:#F0FDF4">⚡</div>
-      <h2>Mini-course miễn phí</h2>
-      <span class="badge">Miễn phí</span>
+  <!-- MINI-COURSE MIỄN PHÍ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-free">✅ Miễn phí</span>
+      <div class="section-title">Mini-course miễn phí</div>
+      <div class="section-line"></div>
     </div>
     <div class="course-grid" id="freeCoursesGrid">
-      <p style="color:#94A3B8;font-size:0.85rem">Đang tải...</p>
+      <div class="empty-state">Đang tải...</div>
     </div>
   </div>
 
-  <!-- ── Tài liệu miễn phí ── -->
-  <div class="portal-section">
-    <div class="portal-section-head">
-      <div class="portal-section-icon" style="background:#FFF7ED">📄</div>
-      <h2>Tài liệu miễn phí</h2>
-      <span class="badge">Tải về ngay</span>
+  <!-- TÀI LIỆU MIỄN PHÍ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-free">📄 Tài liệu</span>
+      <div class="section-title">Tài liệu miễn phí</div>
+      <div class="section-line"></div>
     </div>
-
     <div class="doc-list">
-
       <div class="doc-item">
-        <div class="doc-icon" style="background:#EEF4FF">🗺️</div>
+        <div class="doc-ico">🗺️</div>
         <div class="doc-info">
           <h4>Bản đồ Affiliate AI 2025</h4>
           <p>Sơ đồ tổng quan hệ thống Affiliate kết hợp AI — PDF màu, in được</p>
         </div>
         <div class="doc-btns">
-          <a href="docs/doc1-ban-do-affiliate-ai.html" target="_blank" class="doc-btn doc-btn-view">Xem</a>
-          <a href="https://drive.google.com/uc?export=download&id=1rsCqwxWkKKRiPTV8yIRuWm_hJtmHfQpt" target="_blank" class="doc-btn doc-btn-download">Tải về</a>
+          <a href="docs/doc1-ban-do-affiliate-ai.html" target="_blank" class="btn-access btn-view">Xem</a>
+          <a href="https://drive.google.com/uc?export=download&id=1rsCqwxWkKKRiPTV8yIRuWm_hJtmHfQpt" target="_blank" class="btn-access btn-dl">Tải về</a>
         </div>
       </div>
-
       <div class="doc-item">
-        <div class="doc-icon" style="background:#F0FDF4">📋</div>
+        <div class="doc-ico">📋</div>
         <div class="doc-info">
           <h4>Checklist 30 ngày đầu</h4>
           <p>Danh sách việc cần làm tuần-by-tuần cho người mới bắt đầu Affiliate</p>
         </div>
         <div class="doc-btns">
-          <a href="docs/doc2-checklist-30-ngay.html" target="_blank" class="doc-btn doc-btn-view">Xem</a>
-          <a href="https://drive.google.com/uc?export=download&id=10mkBTOG5iM2wJS6Hd0OrPJoK1pRARxJo" target="_blank" class="doc-btn doc-btn-download">Tải về</a>
+          <a href="docs/doc2-checklist-30-ngay.html" target="_blank" class="btn-access btn-view">Xem</a>
+          <a href="https://drive.google.com/uc?export=download&id=10mkBTOG5iM2wJS6Hd0OrPJoK1pRARxJo" target="_blank" class="btn-access btn-dl">Tải về</a>
         </div>
       </div>
-
       <div class="doc-item">
-        <div class="doc-icon" style="background:#FFF7ED">💬</div>
+        <div class="doc-ico">💬</div>
         <div class="doc-info">
           <h4>100 Prompt AI viết content bán hàng</h4>
           <p>Bộ prompt sẵn dùng cho Facebook, TikTok, email marketing & landing page</p>
         </div>
         <div class="doc-btns">
-          <a href="docs/doc3-100-prompt-ai.html" target="_blank" class="doc-btn doc-btn-view">Xem</a>
-          <a href="https://drive.google.com/uc?export=download&id=1UwjyS90xCaHLnoWjSoJK6_LWJjvhrJEr" target="_blank" class="doc-btn doc-btn-download">Tải về</a>
+          <a href="docs/doc3-100-prompt-ai.html" target="_blank" class="btn-access btn-view">Xem</a>
+          <a href="https://drive.google.com/uc?export=download&id=1UwjyS90xCaHLnoWjSoJK6_LWJjvhrJEr" target="_blank" class="btn-access btn-dl">Tải về</a>
         </div>
       </div>
-
       <div class="doc-item">
-        <div class="doc-icon" style="background:#F5F3FF">🔧</div>
+        <div class="doc-ico">🔧</div>
         <div class="doc-info">
           <h4>Bộ công cụ AI miễn phí cho Affiliate</h4>
           <p>Danh sách 25 tool AI miễn phí giúp tự động hoá quy trình Affiliate</p>
         </div>
         <div class="doc-btns">
-          <a href="docs/doc4-bo-cong-cu-ai.html" target="_blank" class="doc-btn doc-btn-view">Xem</a>
-          <a href="https://drive.google.com/uc?export=download&id=1wrxUjjvD_QBVY1-CftmVAxzT6dL3EnR4" target="_blank" class="doc-btn doc-btn-download">Tải về</a>
+          <a href="docs/doc4-bo-cong-cu-ai.html" target="_blank" class="btn-access btn-view">Xem</a>
+          <a href="https://drive.google.com/uc?export=download&id=1wrxUjjvD_QBVY1-CftmVAxzT6dL3EnR4" target="_blank" class="btn-access btn-dl">Tải về</a>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- ── Cửa hàng sản phẩm số ── -->
-  <div class="portal-section">
-    <div class="portal-section-head">
-      <div class="portal-section-icon" style="background:#F5F3FF">🛒</div>
-      <h2>Cửa hàng sản phẩm số</h2>
-      <span class="badge">Mua lẻ</span>
+  <!-- CỬA HÀNG SẢN PHẨM SỐ -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-badge badge-new">⭐ Độc quyền</span>
+      <div class="section-title">Cửa hàng sản phẩm số</div>
+      <div class="section-line"></div>
     </div>
     <div class="store-grid" id="storeGrid">
       <div class="store-empty">Đang tải sản phẩm...</div>
     </div>
   </div>
 
-  <!-- ── Nội dung đã mua ── -->
-  <div class="portal-section" id="purchasedSection" style="display:none">
-    <div class="portal-section-head">
-      <div class="portal-section-icon" style="background:#F0FDF4">📦</div>
-      <h2>Nội dung đã mua</h2>
-      <span class="badge" style="background:#F0FDF4;color:#15803D">Đã xác nhận</span>
+  <!-- NỘI DUNG ĐÃ MUA -->
+  <div class="section" id="purchasedSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">📦 Của tôi</span>
+      <div class="section-title">Nội dung đã mua</div>
+      <div class="section-line"></div>
     </div>
-    <div class="doc-list" id="purchasedList"></div>
+    <div id="purchasedList"></div>
   </div>
 
-</div><!-- /portal-wrap -->
+  <!-- CỘNG ĐỒNG -->
+  <div class="community-section">
+    <div class="community-eyebrow">🌐 Cộng đồng VDAI Academy</div>
+    <h2 class="community-title">
+      Bạn không đi một mình.<br>
+      <span class="glow">Gia nhập cộng đồng ngay hôm nay.</span>
+    </h2>
+    <p class="community-sub">
+      Hàng nghìn thành viên đang học, chia sẻ chiến lược, hỗ trợ nhau và tạo ra thu nhập thực sự từ AI Affiliate mỗi ngày. Một mình bạn đi nhanh — cùng nhau chúng ta đi xa hơn.
+    </p>
 
-<!-- ── Checkout Modal ── -->
+    <div class="community-cards">
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/groups/24279131375123067" target="_blank" class="community-card fb-card">
+        <div class="community-logo fb-logo">💬</div>
+        <h3>Facebook Group</h3>
+        <p>Chia sẻ kết quả, đặt câu hỏi, nhận feedback từ mentor và cộng đồng mỗi ngày</p>
+        <span class="community-pill fb-pill">Tham gia ngay →</span>
+      </a>
+
+      <!-- Zalo -->
+      <a href="https://zalo.me/g/fcudmw102" target="_blank" class="community-card zalo-card">
+        <div class="community-logo zalo-logo">💙</div>
+        <h3>Zalo Group</h3>
+        <p>Nhận thông báo khoá học mới, tip nhanh và cập nhật độc quyền trực tiếp trên điện thoại</p>
+        <span class="community-pill zalo-pill">Tham gia ngay →</span>
+      </a>
+    </div>
+
+    <div class="community-fomo">
+      <span class="fomo-dot"></span>
+      Thành viên đang hoạt động — đừng để bỏ lỡ những chia sẻ giá trị mỗi ngày
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- CHECKOUT MODAL -->
 <div class="modal-overlay" id="checkoutModal" style="display:none" onclick="if(event.target===this)closeModal()">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div id="modalContent">
-      <!-- filled by JS -->
-    </div>
+    <div id="modalContent"></div>
   </div>
 </div>
 
-<script>
-// Show loading overlay while checking auth
-document.body.insertAdjacentHTML('afterbegin',
-  '<div id="authLoading" style="position:fixed;inset:0;background:#F8FAFC;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">' +
-  '<div style="width:36px;height:36px;border:3px solid #E2E8F0;border-top-color:#2563EB;border-radius:50%;animation:spin 0.7s linear infinite"></div>' +
-  '<p style="color:#64748B;font-size:0.9rem;font-family:system-ui">Đang kiểm tra đăng nhập...</p>' +
-  '<style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>'
-);
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"
-  onerror="document.getElementById('authLoading').innerHTML='<p style=color:#DC2626;font-family:system-ui;padding:20px>Lỗi tải thư viện. Vui lòng tải lại trang.</p>'">
-</script>
-<script src="assets/js/supabase-config.js"></script>
 <script>
 const BANK = { name: 'Vietcombank', account: '0721000632922', owner: 'VO VAN DUONG' };
 const TYPE_LABELS = { tip:'💡 Tip/Thủ thuật', mini_course:'🎓 Mini-course', ebook:'📘 Ebook', bundle:'📦 Bundle' };
@@ -448,37 +663,43 @@ function fmtPrice(p) {
   return p > 0 ? p.toLocaleString('vi-VN') + '₫' : 'Miễn phí';
 }
 
-// ── Load free mini-courses ──
+async function signOut() {
+  await _supabase.auth.signOut();
+  window.location.href = 'login.html';
+}
+
+// ── Free mini-courses ──
 async function loadFreeCourses() {
   const { data } = await _supabase.from('products').select('*').eq('active', true).eq('price', 0).order('created_at', { ascending: false });
   const grid = document.getElementById('freeCoursesGrid');
   if (!data || !data.length) {
-    grid.innerHTML = '<p style="color:#94A3B8;font-size:0.85rem;padding:8px 0">Chưa có mini-course miễn phí nào.</p>';
+    grid.innerHTML = '<div class="empty-state">Chưa có mini-course miễn phí. Sắp ra mắt!</div>';
     return;
   }
   grid.innerHTML = data.map(p => `
     <div class="course-card">
-      <div class="course-card-cover" style="background:linear-gradient(145deg,#C2EEFA,#4FC3DF);font-size:2.4rem;display:flex;align-items:center;justify-content:center">${p.icon || '⚡'}</div>
-      <div class="course-card-body">
+      <div class="course-cover" style="background:linear-gradient(135deg,rgba(37,99,235,0.2),rgba(109,93,251,0.15))">${p.icon || '⚡'}</div>
+      <div class="course-body">
+        <div class="course-type">${TYPE_LABELS[p.type] || 'Mini-course'}</div>
         <h3>${p.title}</h3>
         <p>${p.description || ''}</p>
-        <div class="course-card-meta">
-          <span class="course-tag tag-free">Miễn phí</span>
+        <div class="course-footer">
+          <span class="tag-free">Miễn phí</span>
           <div style="display:flex;gap:6px">
-            ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="course-btn btn-primary">▶ Xem</a>` : ''}
-            ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="course-btn" style="background:#F0FDF4;color:#15803D">📄 Tải</a>` : ''}
+            ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-access btn-view">▶ Xem</a>` : ''}
+            ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 Tải</a>` : ''}
           </div>
         </div>
       </div>
     </div>`).join('');
 }
 
-// ── Load store products (paid only) ──
+// ── Store (paid) ──
 async function loadStore() {
   const { data } = await _supabase.from('products').select('*').eq('active', true).gt('price', 0).order('created_at', { ascending: false });
   const grid = document.getElementById('storeGrid');
   if (!data || !data.length) {
-    grid.innerHTML = '<div class="store-empty">Chưa có sản phẩm nào. Quay lại sau nhé!</div>';
+    grid.innerHTML = '<div class="store-empty">Sản phẩm mới sắp ra mắt. Theo dõi để không bỏ lỡ! 🔥</div>';
     return;
   }
   grid.innerHTML = data.map(p => `
@@ -496,62 +717,58 @@ async function loadStore() {
     </div>`).join('');
 }
 
-// ── Load purchased content ──
+// ── Purchased ──
 async function loadPurchased() {
   const { data } = await _supabase.from('orders')
     .select('*, products(title, icon, video_url, pdf_url, type)')
     .eq('member_email', _userEmail)
     .eq('status', 'confirmed')
     .order('confirmed_at', { ascending: false });
-
   if (!data || !data.length) return;
-
   document.getElementById('purchasedSection').style.display = 'block';
   document.getElementById('purchasedList').innerHTML = data.map(o => {
     const p = o.products || {};
-    const videoBtn = p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-content btn-video">▶ Xem video</a>` : '';
-    const pdfBtn   = p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-content btn-pdf">📄 Tải PDF</a>`    : '';
     return `
       <div class="purchased-item">
-        <div class="purchased-icon">${p.icon || '💡'}</div>
+        <div class="purchased-ico">${p.icon || '💡'}</div>
         <div class="purchased-info">
           <h4>${p.title || o.product_name}</h4>
-          <p>${TYPE_LABELS[p.type] || ''} · Đã xác nhận</p>
+          <p>✅ Đã xác nhận · ${TYPE_LABELS[p.type] || ''}</p>
         </div>
-        <div class="purchased-btns">${videoBtn}${pdfBtn}</div>
+        <div class="purchased-btns">
+          ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-access btn-view">▶ Video</a>` : ''}
+          ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-access btn-dl">📄 PDF</a>` : ''}
+        </div>
       </div>`;
   }).join('');
 }
 
-// ── Checkout modal ──
+// ── Checkout ──
 function openCheckout(item) {
   _checkoutItem = item;
   const note = `${_userEmail} ${item.title}`.substring(0, 50);
   const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${item.price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
-
   document.getElementById('modalContent').innerHTML = `
-    <div class="modal-title">Thanh toán sản phẩm</div>
+    <div class="modal-title">Thanh toán</div>
     <div class="modal-sub">${item.title}</div>
     <div class="modal-price-row">
-      <span class="modal-price-label">Số tiền cần chuyển</span>
+      <span class="modal-price-label">Số tiền chuyển khoản</span>
       <span class="modal-price-val">${fmtPrice(item.price)}</span>
     </div>
     <div class="modal-qr">
-      <img src="${qrUrl}" alt="QR Vietcombank" onerror="this.style.display='none'">
-      <p style="font-size:0.75rem;color:#64748B;margin:8px 0 0">Quét mã bằng app ngân hàng bất kỳ</p>
+      <img src="${qrUrl}" alt="QR VietQR" onerror="this.style.display='none'">
+      <p>Quét mã bằng app ngân hàng bất kỳ</p>
     </div>
     <div class="modal-bank">
       <p>🏦 Ngân hàng: <strong>${BANK.name}</strong></p>
-      <p>💳 Số tài khoản: <strong>${BANK.account}</strong></p>
-      <p>👤 Chủ tài khoản: <strong>${BANK.owner}</strong></p>
+      <p>💳 Số TK: <strong>${BANK.account}</strong></p>
+      <p>👤 Chủ TK: <strong>${BANK.owner}</strong></p>
     </div>
     <div class="modal-note">
-      📝 <strong>Nội dung chuyển khoản:</strong><br>
-      <strong>${note}</strong><br><br>
-      Sau khi chuyển khoản, nhấn nút bên dưới. Admin sẽ xác nhận trong vòng <strong>24 giờ</strong> và nội dung sẽ tự động mở trong portal của bạn.
+      📝 <strong>Nội dung chuyển khoản:</strong> ${note}<br><br>
+      Sau khi chuyển khoản, nhấn nút bên dưới. Admin xác nhận trong <strong>24h</strong> — nội dung tự động mở trong portal.
     </div>
-    <button class="btn-paid" id="btnPaid" onclick="submitOrder()">✅ Tôi đã chuyển khoản</button>
-  `;
+    <button class="btn-paid" id="btnPaid" onclick="submitOrder()">✅ Tôi đã chuyển khoản</button>`;
   document.getElementById('checkoutModal').style.display = 'flex';
 }
 
@@ -564,56 +781,49 @@ async function submitOrder() {
   if (!_checkoutItem) return;
   const btn = document.getElementById('btnPaid');
   btn.disabled = true; btn.textContent = 'Đang gửi...';
-
   const { error } = await _supabase.from('orders').insert({
-    member_email: _userEmail,
-    product_id: _checkoutItem.id,
-    product_name: _checkoutItem.title,
-    amount: _checkoutItem.price,
-    status: 'pending'
+    member_email: _userEmail, product_id: _checkoutItem.id,
+    product_name: _checkoutItem.title, amount: _checkoutItem.price, status: 'pending'
   });
-
-  if (error) {
-    btn.disabled = false; btn.textContent = '✅ Tôi đã chuyển khoản';
-    alert('Lỗi gửi đơn: ' + error.message);
-    return;
-  }
-
+  if (error) { btn.disabled = false; btn.textContent = '✅ Tôi đã chuyển khoản'; alert('Lỗi: ' + error.message); return; }
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-success">
       <div class="check">🎉</div>
       <h3>Đã ghi nhận đơn hàng!</h3>
-      <p>Cảm ơn bạn đã thanh toán.<br>
-      Admin sẽ xác nhận trong vòng <strong>24 giờ</strong>.<br>
-      Nội dung sẽ xuất hiện trong mục <strong>"Nội dung đã mua"</strong> của bạn.</p>
-      <button onclick="closeModal()" style="margin-top:20px;padding:10px 24px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-weight:700;cursor:pointer;font-family:inherit">Đóng</button>
+      <p>Cảm ơn bạn đã thanh toán.<br>Admin sẽ xác nhận trong <strong style="color:#fff">24 giờ</strong>.<br>Nội dung sẽ xuất hiện trong mục <strong style="color:#fff">"Nội dung đã mua"</strong>.</p>
+      <button class="btn-close-modal" onclick="closeModal()">Đóng</button>
     </div>`;
 }
 
 // ── Init ──
+document.body.insertAdjacentHTML('afterbegin',
+  '<div id="authLoading" style="position:fixed;inset:0;background:#060C1A;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px">' +
+  '<div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:#6D5DFB;border-radius:50%;animation:spin 0.7s linear infinite"></div>' +
+  '<p style="color:#64748B;font-size:0.88rem;font-family:inherit">Đang xác thực...</p>' +
+  '<style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>'
+);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
+<script>
 (async () => {
   try {
     const session = await requireAuth('login.html');
     if (!session) return;
-
     const user = session.user;
     _userEmail = user.email;
-    const name = (user.user_metadata && user.user_metadata.full_name)
+    const name = (user.user_metadata?.full_name)
       ? user.user_metadata.full_name.split(' ').pop()
       : user.email.split('@')[0];
-
     document.getElementById('greetName').textContent = name;
     document.getElementById('userName').textContent  = user.email;
-
     loadFreeCourses();
     loadStore();
     loadPurchased();
   } catch(e) {
-    console.error('Portal auth error:', e);
     window.location.href = 'login.html';
   } finally {
-    const overlay = document.getElementById('authLoading');
-    if (overlay) overlay.remove();
+    document.getElementById('authLoading')?.remove();
   }
 })();
 </script>
