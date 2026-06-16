@@ -325,45 +325,8 @@
       <h2>Mini-course miễn phí</h2>
       <span class="badge">Miễn phí</span>
     </div>
-
-    <div class="course-grid">
-
-      <div class="course-card">
-        <div class="course-card-cover" style="background: linear-gradient(145deg,#C2EEFA,#4FC3DF)">🤖</div>
-        <div class="course-card-body">
-          <h3>ChatGPT cho người mới bắt đầu</h3>
-          <p>Làm chủ prompt, tạo nội dung & tự động hoá công việc hàng ngày với ChatGPT.</p>
-          <div class="course-card-meta">
-            <span class="course-tag tag-free">Miễn phí · 5 bài</span>
-            <a href="#" class="course-btn btn-primary">Học ngay →</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="course-card">
-        <div class="course-card-cover" style="background: linear-gradient(145deg,#FFD8A8,#FFA040)">💡</div>
-        <div class="course-card-body">
-          <h3>Affiliate Marketing 101</h3>
-          <p>Hiểu cơ bản về mô hình Affiliate, chọn sản phẩm & xây kênh lần đầu tiên.</p>
-          <div class="course-card-meta">
-            <span class="course-tag tag-free">Miễn phí · 6 bài</span>
-            <a href="#" class="course-btn btn-primary">Học ngay →</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="course-card">
-        <div class="course-card-cover" style="background: linear-gradient(145deg,#D8F5A0,#88CC30)">🗺️</div>
-        <div class="course-card-body">
-          <h3>Bản đồ Affiliate AI</h3>
-          <p>Tổng quan hệ thống Affiliate AI — từ traffic, content đến tự động hoá chuyển đổi.</p>
-          <div class="course-card-meta">
-            <span class="course-tag tag-free">Miễn phí · 1 bài</span>
-            <a href="#" class="course-btn btn-primary">Xem ngay →</a>
-          </div>
-        </div>
-      </div>
-
+    <div class="course-grid" id="freeCoursesGrid">
+      <p style="color:#94A3B8;font-size:0.85rem">Đang tải...</p>
     </div>
   </div>
 
@@ -485,9 +448,34 @@ function fmtPrice(p) {
   return p > 0 ? p.toLocaleString('vi-VN') + '₫' : 'Miễn phí';
 }
 
-// ── Load store products ──
+// ── Load free mini-courses ──
+async function loadFreeCourses() {
+  const { data } = await _supabase.from('products').select('*').eq('active', true).eq('price', 0).order('created_at', { ascending: false });
+  const grid = document.getElementById('freeCoursesGrid');
+  if (!data || !data.length) {
+    grid.innerHTML = '<p style="color:#94A3B8;font-size:0.85rem;padding:8px 0">Chưa có mini-course miễn phí nào.</p>';
+    return;
+  }
+  grid.innerHTML = data.map(p => `
+    <div class="course-card">
+      <div class="course-card-cover" style="background:linear-gradient(145deg,#C2EEFA,#4FC3DF);font-size:2.4rem;display:flex;align-items:center;justify-content:center">${p.icon || '⚡'}</div>
+      <div class="course-card-body">
+        <h3>${p.title}</h3>
+        <p>${p.description || ''}</p>
+        <div class="course-card-meta">
+          <span class="course-tag tag-free">Miễn phí</span>
+          <div style="display:flex;gap:6px">
+            ${p.video_url ? `<a href="${p.video_url}" target="_blank" class="course-btn btn-primary">▶ Xem</a>` : ''}
+            ${p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="course-btn" style="background:#F0FDF4;color:#15803D">📄 Tải</a>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Load store products (paid only) ──
 async function loadStore() {
-  const { data } = await _supabase.from('products').select('*').eq('active', true).order('created_at', { ascending: false });
+  const { data } = await _supabase.from('products').select('*').eq('active', true).gt('price', 0).order('created_at', { ascending: false });
   const grid = document.getElementById('storeGrid');
   if (!data || !data.length) {
     grid.innerHTML = '<div class="store-empty">Chưa có sản phẩm nào. Quay lại sau nhé!</div>';
@@ -617,6 +605,7 @@ async function submitOrder() {
     document.getElementById('greetName').textContent = name;
     document.getElementById('userName').textContent  = user.email;
 
+    loadFreeCourses();
     loadStore();
     loadPurchased();
   } catch(e) {
