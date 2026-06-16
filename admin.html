@@ -175,6 +175,8 @@
     <button class="tab active" onclick="switchTab('members', this)">👥 Thành viên</button>
     <button class="tab" onclick="switchTab('docs', this)">📄 Tài liệu</button>
     <button class="tab" onclick="switchTab('courses', this)">🎓 Khoá học</button>
+    <button class="tab" onclick="switchTab('lessons', this)">📚 Bài giảng</button>
+    <button class="tab" onclick="switchTab('products', this)">💡 Sản phẩm số</button>
   </div>
 
   <!-- Panel: Members -->
@@ -251,6 +253,123 @@
         </thead>
         <tbody id="docsBody">
           <tr><td colspan="6" class="empty"><p>Đang tải...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Lessons -->
+  <div class="panel" id="panel-lessons">
+    <div class="panel-head">
+      <h2>Quản lý bài giảng</h2>
+    </div>
+    <div class="alert" id="lessonsAlert"></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tên bài giảng *</label>
+        <input type="text" id="lessonTitle" placeholder="VD: Bài 1 – Tìm niche Affiliate với AI">
+      </div>
+      <div class="form-group">
+        <label>Thuộc khoá học</label>
+        <select id="lessonCourse">
+          <option value="">-- Chọn khoá học --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Giá (VNĐ) — để 0 nếu miễn phí</label>
+        <input type="number" id="lessonPrice" placeholder="0" min="0" step="1000">
+      </div>
+      <div class="form-group">
+        <label>Thứ tự hiển thị</label>
+        <input type="number" id="lessonOrder" placeholder="1" min="1">
+      </div>
+      <div class="form-group full">
+        <label>Mô tả ngắn</label>
+        <input type="text" id="lessonDesc" placeholder="Mô tả nội dung bài giảng...">
+      </div>
+      <div class="form-group">
+        <label>Link Video (YouTube / Drive)</label>
+        <input type="url" id="lessonVideo" placeholder="https://youtube.com/...">
+      </div>
+      <div class="form-group">
+        <label>Link PDF / Tài liệu đính kèm</label>
+        <input type="url" id="lessonPdf" placeholder="https://drive.google.com/...">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" id="addLessonBtn" onclick="addLesson()">+ Thêm bài giảng</button>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Tên bài giảng</th><th>Khoá học</th><th>Giá</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="lessonsBody">
+          <tr><td colspan="8" class="empty"><p>Đang tải...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Products -->
+  <div class="panel" id="panel-products">
+    <div class="panel-head">
+      <h2>Sản phẩm số (Tips / Thủ thuật / Mini-course)</h2>
+    </div>
+    <div class="alert" id="productsAlert"></div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tên sản phẩm *</label>
+        <input type="text" id="prodTitle" placeholder="VD: 50 Thủ thuật ChatGPT cho Affiliate">
+      </div>
+      <div class="form-group">
+        <label>Loại sản phẩm</label>
+        <select id="prodType">
+          <option value="tip">💡 Tip / Thủ thuật</option>
+          <option value="mini_course">🎓 Mini-course</option>
+          <option value="ebook">📘 Ebook / Tài liệu</option>
+          <option value="bundle">📦 Combo / Bundle</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Giá bán (VNĐ) *</label>
+        <input type="number" id="prodPrice" placeholder="99000" min="0" step="1000">
+      </div>
+      <div class="form-group">
+        <label>Icon (emoji)</label>
+        <input type="text" id="prodIcon" placeholder="💡" maxlength="4">
+      </div>
+      <div class="form-group full">
+        <label>Mô tả / Nội dung sẽ nhận được</label>
+        <input type="text" id="prodDesc" placeholder="Mô tả chi tiết giá trị sản phẩm...">
+      </div>
+      <div class="form-group">
+        <label>Link Video (YouTube / Drive)</label>
+        <input type="url" id="prodVideo" placeholder="https://youtube.com/...">
+      </div>
+      <div class="form-group">
+        <label>Link PDF / Tài liệu</label>
+        <input type="url" id="prodPdf" placeholder="https://drive.google.com/...">
+      </div>
+      <div class="form-group">
+        <label>Link ảnh thumbnail</label>
+        <input type="url" id="prodThumb" placeholder="https://...">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn btn-primary" id="addProdBtn" onclick="addProduct()">+ Thêm sản phẩm</button>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Sản phẩm</th><th>Loại</th><th>Giá</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="productsBody">
+          <tr><td colspan="8" class="empty"><p>Đang tải...</p></td></tr>
         </tbody>
       </table>
     </div>
@@ -500,6 +619,148 @@ if (zone) {
   });
 }
 
+// ── Load lessons ──
+async function loadLessons() {
+  const { data: courses } = await _supabase.from('courses').select('id, name').order('name');
+  const sel = document.getElementById('lessonCourse');
+  if (courses) {
+    sel.innerHTML = '<option value="">-- Chọn khoá học --</option>' +
+      courses.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  }
+
+  const { data, error } = await _supabase.from('lessons').select('*, courses(name)').order('sort_order');
+  const tbody = document.getElementById('lessonsBody');
+  if (error || !data || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có bài giảng nào. Thêm bài giảng đầu tiên!</p></div></td></tr>`;
+    return;
+  }
+  const fmtPrice = p => p > 0 ? p.toLocaleString('vi-VN') + '₫' : '<span style="color:#15803D;font-weight:700">Miễn phí</span>';
+  tbody.innerHTML = data.map((l, i) => `
+    <tr>
+      <td style="color:#94A3B8">${l.sort_order || i+1}</td>
+      <td><strong>${l.title}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${l.description || ''}</span></td>
+      <td style="font-size:0.8rem">${l.courses?.name || '—'}</td>
+      <td>${fmtPrice(l.price || 0)}</td>
+      <td>${l.video_url ? `<a href="${l.video_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">▶ Xem</a>` : '—'}</td>
+      <td>${l.pdf_url ? `<a href="${l.pdf_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">📄 Tải</a>` : '—'}</td>
+      <td><span class="badge badge-${l.active !== false ? 'active' : 'closed'}">${l.active !== false ? 'Hiện' : 'Ẩn'}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-${l.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleLesson(${l.id}, ${l.active !== false})">${l.active !== false ? 'Ẩn' : 'Hiện'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">Xoá</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function addLesson() {
+  const title = document.getElementById('lessonTitle').value.trim();
+  const courseId = document.getElementById('lessonCourse').value;
+  const price = parseInt(document.getElementById('lessonPrice').value) || 0;
+  const order = parseInt(document.getElementById('lessonOrder').value) || 1;
+  const desc = document.getElementById('lessonDesc').value.trim();
+  const video = document.getElementById('lessonVideo').value.trim();
+  const pdf = document.getElementById('lessonPdf').value.trim();
+
+  if (!title) { showAlert('lessonsAlert', 'Vui lòng nhập tên bài giảng', 'error'); return; }
+
+  const btn = document.getElementById('addLessonBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+
+  const { error } = await _supabase.from('lessons').insert({
+    title, description: desc, course_id: courseId || null,
+    price, sort_order: order,
+    video_url: video || null, pdf_url: pdf || null, active: true
+  });
+
+  btn.disabled = false; btn.textContent = '+ Thêm bài giảng';
+  if (error) { showAlert('lessonsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+
+  ['lessonTitle','lessonDesc','lessonVideo','lessonPdf','lessonPrice','lessonOrder'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('lessonCourse').value = '';
+  showAlert('lessonsAlert', '✅ Đã thêm bài giảng!');
+  loadLessons();
+}
+
+async function toggleLesson(id, current) {
+  await _supabase.from('lessons').update({ active: !current }).eq('id', id);
+  loadLessons();
+}
+
+async function deleteLesson(id) {
+  if (!confirm('Xoá bài giảng này?')) return;
+  await _supabase.from('lessons').delete().eq('id', id);
+  showAlert('lessonsAlert', 'Đã xoá!');
+  loadLessons();
+}
+
+// ── Load products ──
+const PROD_LABELS = { tip:'💡 Tip/Thủ thuật', mini_course:'🎓 Mini-course', ebook:'📘 Ebook', bundle:'📦 Bundle' };
+
+async function loadProducts() {
+  const { data, error } = await _supabase.from('products').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('productsBody');
+  if (error || !data || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có sản phẩm số nào. Thêm sản phẩm đầu tiên!</p></div></td></tr>`;
+    return;
+  }
+  const fmtPrice = p => p > 0 ? p.toLocaleString('vi-VN') + '₫' : '<span style="color:#15803D;font-weight:700">Miễn phí</span>';
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td style="color:#94A3B8">${i+1}</td>
+      <td><strong>${p.icon || '💡'} ${p.title}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${p.description || ''}</span></td>
+      <td style="font-size:0.8rem">${PROD_LABELS[p.type] || p.type}</td>
+      <td>${fmtPrice(p.price || 0)}</td>
+      <td>${p.video_url ? `<a href="${p.video_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">▶ Xem</a>` : '—'}</td>
+      <td>${p.pdf_url ? `<a href="${p.pdf_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">📄 Tải</a>` : '—'}</td>
+      <td><span class="badge badge-${p.active !== false ? 'active' : 'closed'}">${p.active !== false ? 'Đang bán' : 'Ẩn'}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-${p.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleProduct(${p.id}, ${p.active !== false})">${p.active !== false ? 'Ẩn' : 'Hiện'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Xoá</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function addProduct() {
+  const title = document.getElementById('prodTitle').value.trim();
+  const type = document.getElementById('prodType').value;
+  const price = parseInt(document.getElementById('prodPrice').value) || 0;
+  const icon = document.getElementById('prodIcon').value.trim() || '💡';
+  const desc = document.getElementById('prodDesc').value.trim();
+  const video = document.getElementById('prodVideo').value.trim();
+  const pdf = document.getElementById('prodPdf').value.trim();
+  const thumb = document.getElementById('prodThumb').value.trim();
+
+  if (!title) { showAlert('productsAlert', 'Vui lòng nhập tên sản phẩm', 'error'); return; }
+  if (!price) { showAlert('productsAlert', 'Vui lòng nhập giá bán', 'error'); return; }
+
+  const btn = document.getElementById('addProdBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+
+  const { error } = await _supabase.from('products').insert({
+    title, type, price, icon, description: desc,
+    video_url: video || null, pdf_url: pdf || null,
+    thumbnail_url: thumb || null, active: true
+  });
+
+  btn.disabled = false; btn.textContent = '+ Thêm sản phẩm';
+  if (error) { showAlert('productsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+
+  ['prodTitle','prodDesc','prodVideo','prodPdf','prodThumb','prodPrice','prodIcon'].forEach(id => document.getElementById(id).value = '');
+  showAlert('productsAlert', '✅ Đã thêm sản phẩm số!');
+  loadProducts();
+}
+
+async function toggleProduct(id, current) {
+  await _supabase.from('products').update({ active: !current }).eq('id', id);
+  loadProducts();
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Xoá sản phẩm này?')) return;
+  await _supabase.from('products').delete().eq('id', id);
+  showAlert('productsAlert', 'Đã xoá!');
+  loadProducts();
+}
+
 // ── Init ──
 (async () => {
   try {
@@ -516,6 +777,8 @@ if (zone) {
     loadMembers();
     loadDocuments();
     loadCourses();
+    loadLessons();
+    loadProducts();
   } catch(e) {
     window.location.href = 'login.html';
   }

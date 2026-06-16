@@ -81,3 +81,38 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- ── Lessons table ──
+create table if not exists lessons (
+  id           bigint generated always as identity primary key,
+  course_id    uuid references courses(id) on delete set null,
+  title        text not null,
+  description  text,
+  video_url    text,
+  pdf_url      text,
+  price        integer default 0,
+  sort_order   integer default 1,
+  active       boolean default true,
+  created_at   timestamptz default now()
+);
+alter table lessons enable row level security;
+create policy "Public read active lessons" on lessons for select using (active = true);
+create policy "Admin all lessons" on lessons for all using (auth.jwt() ->> 'email' = 'duongvv.vn@gmail.com');
+
+-- ── Products table ──
+create table if not exists products (
+  id            bigint generated always as identity primary key,
+  title         text not null,
+  description   text,
+  type          text default 'tip',  -- tip | mini_course | ebook | bundle
+  icon          text default '💡',
+  price         integer not null default 0,
+  video_url     text,
+  pdf_url       text,
+  thumbnail_url text,
+  active        boolean default true,
+  created_at    timestamptz default now()
+);
+alter table products enable row level security;
+create policy "Public read active products" on products for select using (active = true);
+create policy "Admin all products" on products for all using (auth.jwt() ->> 'email' = 'duongvv.vn@gmail.com');
