@@ -122,7 +122,7 @@ const VDAI_CONFIG = {
       name: "Đỗ Tâm",
       role: "Giảng viên AI Business & Leadership",
       bio: "Chuyên gia tư vấn chiến lược AI, kết hợp tư duy kinh doanh thực tiễn với ứng dụng AI để tạo lợi thế cạnh tranh bền vững cho cá nhân và đội nhóm.",
-      photo: "https://uosxpxolsvwcafxvnroy.supabase.co/storage/v1/object/public/assets/instructor-do-tam.jpg"
+      photo: "https://uosxpxolsvwcafxvnroy.supabase.co/storage/v1/object/public/assets/instructor-do-tam.png"
     }
   ],
 
