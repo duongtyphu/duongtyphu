@@ -116,3 +116,21 @@ create table if not exists products (
 alter table products enable row level security;
 create policy "Public read active products" on products for select using (active = true);
 create policy "Admin all products" on products for all using (auth.jwt() ->> 'email' = 'duongvv.vn@gmail.com');
+
+-- ── Orders table ──
+create table if not exists orders (
+  id            bigint generated always as identity primary key,
+  member_email  text not null,
+  product_id    bigint references products(id) on delete set null,
+  product_name  text,
+  amount        integer not null default 0,
+  status        text default 'pending',  -- pending | confirmed | rejected
+  confirmed_at  timestamptz,
+  created_at    timestamptz default now()
+);
+alter table orders enable row level security;
+-- Members can insert their own orders and read their own orders
+create policy "Members insert own orders" on orders for insert with check (auth.jwt() ->> 'email' = member_email);
+create policy "Members read own orders"   on orders for select using (auth.jwt() ->> 'email' = member_email);
+-- Admin can do everything
+create policy "Admin all orders" on orders for all using (auth.jwt() ->> 'email' = 'duongvv.vn@gmail.com');

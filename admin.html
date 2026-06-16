@@ -177,6 +177,7 @@
     <button class="tab" onclick="switchTab('courses', this)">🎓 Khoá học</button>
     <button class="tab" onclick="switchTab('lessons', this)">📚 Bài giảng</button>
     <button class="tab" onclick="switchTab('products', this)">💡 Sản phẩm số</button>
+    <button class="tab" onclick="switchTab('orders', this)">💰 Đơn hàng</button>
   </div>
 
   <!-- Panel: Members -->
@@ -253,6 +254,33 @@
         </thead>
         <tbody id="docsBody">
           <tr><td colspan="6" class="empty"><p>Đang tải...</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Panel: Orders -->
+  <div class="panel" id="panel-orders">
+    <div class="panel-head">
+      <h2>Quản lý đơn hàng</h2>
+      <button class="btn btn-ghost btn-sm" onclick="loadOrders()">↻ Làm mới</button>
+    </div>
+    <div class="alert" id="ordersAlert"></div>
+
+    <!-- Filter tabs -->
+    <div style="padding:12px 24px;border-bottom:1px solid #F1F5F9;display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" id="filterAll"     onclick="filterOrders('all')"      style="background:#EEF4FF;color:#2563EB">Tất cả</button>
+      <button class="btn btn-ghost btn-sm" id="filterPending" onclick="filterOrders('pending')">⏳ Chờ xác nhận</button>
+      <button class="btn btn-ghost btn-sm" id="filterConfirmed" onclick="filterOrders('confirmed')">✅ Đã xác nhận</button>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead>
+          <tr><th>#</th><th>Khách hàng</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày đặt</th><th>Trạng thái</th><th>Hành động</th></tr>
+        </thead>
+        <tbody id="ordersBody">
+          <tr><td colspan="7" class="empty"><p>Đang tải...</p></td></tr>
         </tbody>
       </table>
     </div>
@@ -619,6 +647,72 @@ if (zone) {
   });
 }
 
+// ── Orders ──
+let _allOrders = [];
+let _orderFilter = 'all';
+
+async function loadOrders() {
+  const { data, error } = await _supabase.from('orders')
+    .select('*, products(title, icon)')
+    .order('created_at', { ascending: false });
+
+  if (error) { showAlert('ordersAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  _allOrders = data || [];
+  renderOrders();
+}
+
+function filterOrders(f) {
+  _orderFilter = f;
+  ['All','Pending','Confirmed'].forEach(s => {
+    const el = document.getElementById('filter' + s);
+    if (el) el.style.cssText = '';
+  });
+  const active = document.getElementById('filter' + f.charAt(0).toUpperCase() + f.slice(1));
+  if (active) active.style.cssText = 'background:#EEF4FF;color:#2563EB';
+  renderOrders();
+}
+
+function renderOrders() {
+  const list = _orderFilter === 'all' ? _allOrders : _allOrders.filter(o => o.status === _orderFilter);
+  const tbody = document.getElementById('ordersBody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><p>Không có đơn hàng nào</p></div></td></tr>`;
+    return;
+  }
+  const statusLabel = { pending:'⏳ Chờ xác nhận', confirmed:'✅ Đã xác nhận', rejected:'❌ Từ chối' };
+  const statusClass = { pending:'badge-coming', confirmed:'badge-active', rejected:'badge-closed' };
+  tbody.innerHTML = list.map((o, i) => `
+    <tr>
+      <td style="color:#94A3B8">${i+1}</td>
+      <td style="font-size:0.82rem">${o.member_email}</td>
+      <td><strong>${o.products?.icon || '💡'} ${o.product_name || o.products?.title || '—'}</strong></td>
+      <td style="font-weight:700;color:#0F172A">${(o.amount||0).toLocaleString('vi-VN')}₫</td>
+      <td style="font-size:0.78rem;color:#64748B">${fmtDate(o.created_at)}</td>
+      <td><span class="badge ${statusClass[o.status] || 'badge-closed'}">${statusLabel[o.status] || o.status}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        ${o.status === 'pending' ? `
+          <button class="btn btn-primary btn-sm" onclick="confirmOrder(${o.id})">✅ Xác nhận</button>
+          <button class="btn btn-danger btn-sm"  onclick="rejectOrder(${o.id})">❌ Từ chối</button>
+        ` : `<span style="font-size:0.75rem;color:#94A3B8">Đã xử lý</span>`}
+      </td>
+    </tr>`).join('');
+}
+
+async function confirmOrder(id) {
+  if (!confirm('Xác nhận đơn hàng này? Khách sẽ được mở nội dung ngay lập tức.')) return;
+  const { error } = await _supabase.from('orders').update({ status: 'confirmed', confirmed_at: new Date().toISOString() }).eq('id', id);
+  if (error) { showAlert('ordersAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  showAlert('ordersAlert', '✅ Đã xác nhận! Khách hàng có thể truy cập nội dung ngay.');
+  loadOrders();
+}
+
+async function rejectOrder(id) {
+  if (!confirm('Từ chối đơn hàng này?')) return;
+  await _supabase.from('orders').update({ status: 'rejected' }).eq('id', id);
+  showAlert('ordersAlert', 'Đã từ chối đơn hàng.', 'error');
+  loadOrders();
+}
+
 // ── Load lessons ──
 async function loadLessons() {
   const { data: courses } = await _supabase.from('courses').select('id, name').order('name');
@@ -777,6 +871,7 @@ async function deleteProduct(id) {
     loadMembers();
     loadDocuments();
     loadCourses();
+    loadOrders();
     loadLessons();
     loadProducts();
   } catch(e) {

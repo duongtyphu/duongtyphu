@@ -133,6 +133,108 @@
     .doc-btn-download { background: #2563EB; color: #fff; }
     .doc-btn-download:hover { background: #1D4ED8; }
 
+    /* ── Store grid ── */
+    .store-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .store-card {
+      background: #fff; border-radius: 16px; border: 1.5px solid #E2E8F0;
+      overflow: hidden; transition: transform 0.22s, box-shadow 0.22s; display: flex; flex-direction: column;
+    }
+    .store-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(15,23,42,0.10); }
+    .store-cover {
+      height: 110px; display: flex; align-items: center; justify-content: center;
+      font-size: 2.6rem; background: linear-gradient(135deg, #EEF4FF, #E0E7FF);
+    }
+    .store-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+    .store-type { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6D5DFB; margin-bottom: 6px; }
+    .store-body h3 { font-size: 0.95rem; font-weight: 800; color: #0F172A; margin: 0 0 6px; line-height: 1.4; }
+    .store-body p  { font-size: 0.78rem; color: #64748B; margin: 0 0 14px; line-height: 1.5; flex: 1; }
+    .store-footer { display: flex; align-items: center; justify-content: space-between; }
+    .store-price { font-size: 1.05rem; font-weight: 900; color: #0F172A; }
+    .store-price small { font-size: 0.7rem; font-weight: 600; color: #64748B; }
+    .btn-buy {
+      font-size: 0.8rem; font-weight: 700; padding: 8px 16px;
+      border-radius: 8px; border: none; cursor: pointer; font-family: inherit;
+      background: linear-gradient(135deg, #2563EB, #6D5DFB); color: #fff;
+      transition: opacity 0.2s;
+    }
+    .btn-buy:hover { opacity: 0.88; }
+    .store-empty { padding: 40px; text-align: center; color: #94A3B8; font-size: 0.9rem; }
+
+    /* ── Purchased content ── */
+    .purchased-item {
+      background: #fff; border-radius: 12px; border: 1.5px solid #BBF7D0;
+      padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+      transition: box-shadow 0.2s;
+    }
+    .purchased-item:hover { box-shadow: 0 4px 20px rgba(15,23,42,0.07); }
+    .purchased-icon {
+      width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;
+      background: #F0FDF4; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+    }
+    .purchased-info { flex: 1; }
+    .purchased-info h4 { font-size: 0.9rem; font-weight: 700; color: #0F172A; margin: 0 0 3px; }
+    .purchased-info p  { font-size: 0.75rem; color: #64748B; margin: 0; }
+    .purchased-btns { display: flex; gap: 8px; flex-shrink: 0; }
+    .btn-content {
+      font-size: 0.78rem; font-weight: 700; padding: 7px 14px;
+      border-radius: 8px; border: none; cursor: pointer; font-family: inherit;
+      transition: all 0.2s; white-space: nowrap; text-decoration: none; display: inline-block;
+    }
+    .btn-video { background: #EEF4FF; color: #2563EB; }
+    .btn-video:hover { background: #DBEAFE; }
+    .btn-pdf   { background: #F0FDF4; color: #15803D; }
+    .btn-pdf:hover { background: #DCFCE7; }
+
+    /* ── Checkout Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.55);
+      backdrop-filter: blur(4px); z-index: 1000;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-box {
+      background: #fff; border-radius: 20px; width: 100%; max-width: 460px;
+      padding: 32px; position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: #F1F5F9; cursor: pointer; font-size: 1.1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { background: #E2E8F0; }
+    .modal-title { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0 0 4px; }
+    .modal-sub   { font-size: 0.82rem; color: #64748B; margin: 0 0 20px; }
+    .modal-price-row {
+      background: #F8FAFC; border-radius: 12px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+    }
+    .modal-price-label { font-size: 0.82rem; color: #64748B; }
+    .modal-price-val   { font-size: 1.4rem; font-weight: 900; color: #2563EB; }
+    .modal-qr { text-align: center; margin-bottom: 16px; }
+    .modal-qr img { width: 200px; height: 200px; border-radius: 12px; border: 1px solid #E2E8F0; }
+    .modal-bank {
+      background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 12px;
+      padding: 14px 18px; margin-bottom: 16px;
+    }
+    .modal-bank p { margin: 0 0 4px; font-size: 0.83rem; color: #374151; }
+    .modal-bank strong { color: #0F172A; }
+    .modal-note {
+      background: #FFF7ED; border: 1px solid #FED7AA; border-radius: 10px;
+      padding: 12px 16px; font-size: 0.8rem; color: #92400E; margin-bottom: 20px; line-height: 1.6;
+    }
+    .modal-note strong { color: #C2410C; }
+    .btn-paid {
+      width: 100%; padding: 14px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, #2563EB, #6D5DFB); color: #fff;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+    }
+    .btn-paid:hover { opacity: 0.9; }
+    .btn-paid:disabled { opacity: 0.6; cursor: not-allowed; }
+    .modal-success { text-align: center; padding: 20px 0; }
+    .modal-success .check { font-size: 3rem; margin-bottom: 12px; }
+    .modal-success h3 { font-size: 1.1rem; font-weight: 800; color: #0F172A; margin: 0 0 8px; }
+    .modal-success p  { font-size: 0.85rem; color: #64748B; margin: 0; line-height: 1.6; }
+
     /* ── Coming soon card ── */
     .coming-card {
       background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
@@ -160,6 +262,7 @@
     @media (max-width: 600px) {
       .coming-card { flex-direction: column; gap: 16px; }
       .portal-user-name { display: none; }
+      .store-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -325,7 +428,39 @@
     </div>
   </div>
 
+  <!-- ── Cửa hàng sản phẩm số ── -->
+  <div class="portal-section">
+    <div class="portal-section-head">
+      <div class="portal-section-icon" style="background:#F5F3FF">🛒</div>
+      <h2>Cửa hàng sản phẩm số</h2>
+      <span class="badge">Mua lẻ</span>
+    </div>
+    <div class="store-grid" id="storeGrid">
+      <div class="store-empty">Đang tải sản phẩm...</div>
+    </div>
+  </div>
+
+  <!-- ── Nội dung đã mua ── -->
+  <div class="portal-section" id="purchasedSection" style="display:none">
+    <div class="portal-section-head">
+      <div class="portal-section-icon" style="background:#F0FDF4">📦</div>
+      <h2>Nội dung đã mua</h2>
+      <span class="badge" style="background:#F0FDF4;color:#15803D">Đã xác nhận</span>
+    </div>
+    <div class="doc-list" id="purchasedList"></div>
+  </div>
+
 </div><!-- /portal-wrap -->
+
+<!-- ── Checkout Modal ── -->
+<div class="modal-overlay" id="checkoutModal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</div>
 
 <script>
 // Show loading overlay while checking auth
@@ -341,18 +476,149 @@ document.body.insertAdjacentHTML('afterbegin',
 </script>
 <script src="assets/js/supabase-config.js"></script>
 <script>
+const BANK = { name: 'Vietcombank', account: '0721000632922', owner: 'VO VAN DUONG' };
+const TYPE_LABELS = { tip:'💡 Tip/Thủ thuật', mini_course:'🎓 Mini-course', ebook:'📘 Ebook', bundle:'📦 Bundle' };
+let _userEmail = '';
+let _checkoutItem = null;
+
+function fmtPrice(p) {
+  return p > 0 ? p.toLocaleString('vi-VN') + '₫' : 'Miễn phí';
+}
+
+// ── Load store products ──
+async function loadStore() {
+  const { data } = await _supabase.from('products').select('*').eq('active', true).order('created_at', { ascending: false });
+  const grid = document.getElementById('storeGrid');
+  if (!data || !data.length) {
+    grid.innerHTML = '<div class="store-empty">Chưa có sản phẩm nào. Quay lại sau nhé!</div>';
+    return;
+  }
+  grid.innerHTML = data.map(p => `
+    <div class="store-card">
+      <div class="store-cover">${p.icon || '💡'}</div>
+      <div class="store-body">
+        <div class="store-type">${TYPE_LABELS[p.type] || p.type}</div>
+        <h3>${p.title}</h3>
+        <p>${p.description || ''}</p>
+        <div class="store-footer">
+          <div class="store-price">${fmtPrice(p.price)} <small>VNĐ</small></div>
+          <button class="btn-buy" onclick='openCheckout(${JSON.stringify(p)})'>Mua ngay →</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Load purchased content ──
+async function loadPurchased() {
+  const { data } = await _supabase.from('orders')
+    .select('*, products(title, icon, video_url, pdf_url, type)')
+    .eq('member_email', _userEmail)
+    .eq('status', 'confirmed')
+    .order('confirmed_at', { ascending: false });
+
+  if (!data || !data.length) return;
+
+  document.getElementById('purchasedSection').style.display = 'block';
+  document.getElementById('purchasedList').innerHTML = data.map(o => {
+    const p = o.products || {};
+    const videoBtn = p.video_url ? `<a href="${p.video_url}" target="_blank" class="btn-content btn-video">▶ Xem video</a>` : '';
+    const pdfBtn   = p.pdf_url   ? `<a href="${p.pdf_url}"   target="_blank" class="btn-content btn-pdf">📄 Tải PDF</a>`    : '';
+    return `
+      <div class="purchased-item">
+        <div class="purchased-icon">${p.icon || '💡'}</div>
+        <div class="purchased-info">
+          <h4>${p.title || o.product_name}</h4>
+          <p>${TYPE_LABELS[p.type] || ''} · Đã xác nhận</p>
+        </div>
+        <div class="purchased-btns">${videoBtn}${pdfBtn}</div>
+      </div>`;
+  }).join('');
+}
+
+// ── Checkout modal ──
+function openCheckout(item) {
+  _checkoutItem = item;
+  const note = `${_userEmail} ${item.title}`.substring(0, 50);
+  const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${item.price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-title">Thanh toán sản phẩm</div>
+    <div class="modal-sub">${item.title}</div>
+    <div class="modal-price-row">
+      <span class="modal-price-label">Số tiền cần chuyển</span>
+      <span class="modal-price-val">${fmtPrice(item.price)}</span>
+    </div>
+    <div class="modal-qr">
+      <img src="${qrUrl}" alt="QR Vietcombank" onerror="this.style.display='none'">
+      <p style="font-size:0.75rem;color:#64748B;margin:8px 0 0">Quét mã bằng app ngân hàng bất kỳ</p>
+    </div>
+    <div class="modal-bank">
+      <p>🏦 Ngân hàng: <strong>${BANK.name}</strong></p>
+      <p>💳 Số tài khoản: <strong>${BANK.account}</strong></p>
+      <p>👤 Chủ tài khoản: <strong>${BANK.owner}</strong></p>
+    </div>
+    <div class="modal-note">
+      📝 <strong>Nội dung chuyển khoản:</strong><br>
+      <strong>${note}</strong><br><br>
+      Sau khi chuyển khoản, nhấn nút bên dưới. Admin sẽ xác nhận trong vòng <strong>24 giờ</strong> và nội dung sẽ tự động mở trong portal của bạn.
+    </div>
+    <button class="btn-paid" id="btnPaid" onclick="submitOrder()">✅ Tôi đã chuyển khoản</button>
+  `;
+  document.getElementById('checkoutModal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('checkoutModal').style.display = 'none';
+  _checkoutItem = null;
+}
+
+async function submitOrder() {
+  if (!_checkoutItem) return;
+  const btn = document.getElementById('btnPaid');
+  btn.disabled = true; btn.textContent = 'Đang gửi...';
+
+  const { error } = await _supabase.from('orders').insert({
+    member_email: _userEmail,
+    product_id: _checkoutItem.id,
+    product_name: _checkoutItem.title,
+    amount: _checkoutItem.price,
+    status: 'pending'
+  });
+
+  if (error) {
+    btn.disabled = false; btn.textContent = '✅ Tôi đã chuyển khoản';
+    alert('Lỗi gửi đơn: ' + error.message);
+    return;
+  }
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="modal-success">
+      <div class="check">🎉</div>
+      <h3>Đã ghi nhận đơn hàng!</h3>
+      <p>Cảm ơn bạn đã thanh toán.<br>
+      Admin sẽ xác nhận trong vòng <strong>24 giờ</strong>.<br>
+      Nội dung sẽ xuất hiện trong mục <strong>"Nội dung đã mua"</strong> của bạn.</p>
+      <button onclick="closeModal()" style="margin-top:20px;padding:10px 24px;border-radius:10px;border:none;background:#2563EB;color:#fff;font-weight:700;cursor:pointer;font-family:inherit">Đóng</button>
+    </div>`;
+}
+
+// ── Init ──
 (async () => {
   try {
     const session = await requireAuth('login.html');
     if (!session) return;
 
     const user = session.user;
+    _userEmail = user.email;
     const name = (user.user_metadata && user.user_metadata.full_name)
       ? user.user_metadata.full_name.split(' ').pop()
       : user.email.split('@')[0];
 
     document.getElementById('greetName').textContent = name;
     document.getElementById('userName').textContent  = user.email;
+
+    loadStore();
+    loadPurchased();
   } catch(e) {
     console.error('Portal auth error:', e);
     window.location.href = 'login.html';
