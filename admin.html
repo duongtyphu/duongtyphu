@@ -5,122 +5,564 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin — VDAI Academy</title>
   <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif; background: #F1F5F9; color: #0F172A; -webkit-font-smoothing: antialiased; }
-
-    /* ── Nav ── */
-    .admin-nav {
-      background: #0F172A; padding: 0 24px; height: 60px;
-      display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #060C1A;
+      color: #E2E8F0;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
     }
-    .admin-nav-logo { color: #fff; font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
-    .admin-badge { background: #2563EB; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.05em; }
-    .admin-user { color: #94A3B8; font-size: 0.8rem; display: flex; align-items: center; gap: 12px; }
-    .btn-signout { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #CBD5E1; font-size: 0.75rem; font-weight: 600; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
-    .btn-signout:hover { background: rgba(220,38,38,0.2); border-color: #DC2626; color: #FCA5A5; }
 
-    /* ── Layout ── */
-    .admin-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px 80px; }
-    .admin-title { font-size: 1.4rem; font-weight: 800; color: #0F172A; margin-bottom: 24px; }
+    /* ── Loading ── */
+    #pageLoading {
+      position: fixed; inset: 0; background: #060C1A; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 14px;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-top-color: #6D5DFB;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Tabs ── */
-    .tabs { display: flex; gap: 4px; background: #E2E8F0; padding: 4px; border-radius: 10px; margin-bottom: 28px; width: fit-content; }
-    .tab { padding: 8px 18px; border-radius: 7px; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; background: none; font-family: inherit; color: #64748B; transition: all 0.18s; }
-    .tab.active { background: #fff; color: #0F172A; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    /* ── Shell layout ── */
+    .admin-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: #0D1526;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .sidebar-logo-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .sidebar-logo-badge {
+      display: inline-block;
+      background: #2563EB;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      letter-spacing: 0.06em;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+    .sidebar-logo-user {
+      font-size: 0.7rem;
+      color: #64748B;
+      margin-top: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 0;
+    }
+
+    .sidebar-section-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 12px 20px 6px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #64748B;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-family: inherit;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      position: relative;
+    }
+    .sidebar-item:hover {
+      color: #CBD5E1;
+      background: rgba(255,255,255,0.03);
+    }
+    .sidebar-item.active {
+      color: #fff;
+      background: rgba(109,93,251,0.12);
+      border-left-color: #6D5DFB;
+      font-weight: 600;
+    }
+    .sidebar-item-icon {
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .btn-signout {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: #64748B;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .btn-signout:hover {
+      background: rgba(220,38,38,0.15);
+      border-color: rgba(220,38,38,0.4);
+      color: #FCA5A5;
+    }
+
+    /* ── Main content ── */
+    .main-content {
+      flex: 1;
+      margin-left: 220px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .main-header {
+      background: rgba(13,21,38,0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 16px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .main-header-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .main-header-breadcrumb {
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 2px;
+    }
+    .main-header-breadcrumb span {
+      color: #6D5DFB;
+    }
+
+    .main-body {
+      flex: 1;
+      padding: 28px 32px 60px;
+    }
+
+    /* ── Panels ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
 
     /* ── Stat cards ── */
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
-    .stat-card { background: #fff; border-radius: 14px; padding: 20px 22px; border: 1px solid #E2E8F0; }
-    .stat-label { font-size: 0.78rem; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
-    .stat-value { font-size: 2rem; font-weight: 800; color: #0F172A; line-height: 1; }
-    .stat-sub { font-size: 0.75rem; color: #94A3B8; margin-top: 4px; }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #2563EB, #6D5DFB);
+      border-radius: 14px 14px 0 0;
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .stat-sub {
+      font-size: 0.72rem;
+      color: #475569;
+      margin-top: 6px;
+    }
+    .stat-icon {
+      position: absolute;
+      top: 18px; right: 18px;
+      font-size: 1.6rem;
+      opacity: 0.18;
+    }
 
-    /* ── Panel ── */
-    .panel { background: #fff; border-radius: 16px; border: 1px solid #E2E8F0; overflow: hidden; display: none; }
-    .panel.active { display: block; }
-    .panel-head { padding: 18px 24px; border-bottom: 1px solid #F1F5F9; display: flex; align-items: center; justify-content: space-between; }
-    .panel-head h2 { font-size: 1rem; font-weight: 700; color: #0F172A; }
+    /* ── Card containers ── */
+    .card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .card-head {
+      padding: 18px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-head h2 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .card-head-sub {
+      font-size: 0.75rem;
+      color: #475569;
+      margin-top: 2px;
+    }
 
     /* ── Table ── */
     .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th { padding: 12px 16px; text-align: left; font-size: 0.75rem; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.06em; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
-    .data-table td { padding: 13px 16px; font-size: 0.85rem; border-bottom: 1px solid #F1F5F9; color: #334155; }
+    .data-table th {
+      padding: 11px 16px;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .data-table td {
+      padding: 13px 16px;
+      font-size: 0.83rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      color: #CBD5E1;
+      vertical-align: middle;
+    }
     .data-table tr:last-child td { border-bottom: none; }
-    .data-table tr:hover td { background: #F8FAFC; }
+    .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 
     /* ── Status badges ── */
-    .badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.72rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
-    .badge-active  { background: #F0FDF4; color: #15803D; }
-    .badge-coming  { background: #FFF7ED; color: #C2410C; }
-    .badge-open    { background: #EFF6FF; color: #1D4ED8; }
-    .badge-closed  { background: #F8FAFC; color: #64748B; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+    .badge-active   { background: rgba(21,128,61,0.2);  color: #4ADE80; border: 1px solid rgba(21,128,61,0.3); }
+    .badge-coming   { background: rgba(194,65,12,0.2);  color: #FB923C; border: 1px solid rgba(194,65,12,0.3); }
+    .badge-open     { background: rgba(29,78,216,0.2);  color: #60A5FA; border: 1px solid rgba(29,78,216,0.3); }
+    .badge-closed   { background: rgba(255,255,255,0.06); color: #475569; border: 1px solid rgba(255,255,255,0.08); }
+    .badge-pending  { background: rgba(234,179,8,0.15); color: #FCD34D; border: 1px solid rgba(234,179,8,0.25); }
+    .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
     /* ── Buttons ── */
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: none; cursor: pointer; font-family: inherit; transition: all 0.18s; text-decoration: none; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      text-decoration: none;
+      white-space: nowrap;
+    }
     .btn-primary { background: #2563EB; color: #fff; }
     .btn-primary:hover { background: #1D4ED8; }
-    .btn-danger  { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
-    .btn-danger:hover { background: #DC2626; color: #fff; }
-    .btn-ghost   { background: #F8FAFC; color: #475569; border: 1px solid #E2E8F0; }
-    .btn-ghost:hover { background: #E2E8F0; }
-    .btn-sm { padding: 5px 10px; font-size: 0.75rem; }
+    .btn-purple { background: #6D5DFB; color: #fff; }
+    .btn-purple:hover { background: #5B4DEA; }
+    .btn-danger  { background: rgba(220,38,38,0.12); color: #F87171; border: 1px solid rgba(220,38,38,0.2); }
+    .btn-danger:hover { background: rgba(220,38,38,0.25); }
+    .btn-ghost   { background: rgba(255,255,255,0.04); color: #94A3B8; border: 1px solid rgba(255,255,255,0.08); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #E2E8F0; }
+    .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
+    .btn-warning { background: rgba(234,179,8,0.12); color: #FCD34D; border: 1px solid rgba(234,179,8,0.2); }
+    .btn-warning:hover { background: rgba(234,179,8,0.22); }
 
     /* ── Form ── */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px 24px; border-bottom: 1px solid #F1F5F9; }
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-body { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1/-1; }
-    .form-group label { font-size: 0.78rem; font-weight: 600; color: #475569; }
+    .form-group label { font-size: 0.75rem; font-weight: 600; color: #64748B; }
     .form-group input, .form-group select, .form-group textarea {
-      padding: 9px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px;
-      font-size: 0.875rem; color: #0F172A; font-family: inherit; outline: none;
-      transition: border-color 0.2s;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #E2E8F0;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2563EB; }
-    .form-actions { padding: 14px 24px; background: #F8FAFC; display: flex; gap: 8px; }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: #334155; }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      border-color: #6D5DFB;
+      background: rgba(109,93,251,0.06);
+    }
+    .form-group select option { background: #0D1526; color: #E2E8F0; }
+    .form-actions { padding: 14px 24px; background: rgba(255,255,255,0.02); display: flex; gap: 8px; }
 
     /* ── Upload zone ── */
     .upload-zone {
-      border: 2px dashed #CBD5E1; border-radius: 10px; padding: 20px;
-      text-align: center; cursor: pointer; transition: all 0.2s;
-      background: #F8FAFC; position: relative;
+      border: 2px dashed rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(255,255,255,0.02);
+      position: relative;
     }
-    .upload-zone:hover, .upload-zone.drag { border-color: #2563EB; background: #EFF6FF; }
-    .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-zone p { font-size: 0.8rem; color: #64748B; margin-top: 6px; pointer-events: none; }
-    .upload-zone strong { font-size: 0.85rem; color: #334155; pointer-events: none; }
-    .upload-progress { height: 4px; background: #E2E8F0; border-radius: 4px; margin-top: 8px; overflow: hidden; display: none; }
-    .upload-progress-bar { height: 100%; background: linear-gradient(90deg, #2563EB, #6D5DFB); width: 0%; transition: width 0.3s; border-radius: 4px; }
+    .upload-zone:hover, .upload-zone.drag {
+      border-color: #6D5DFB;
+      background: rgba(109,93,251,0.06);
+    }
+    .upload-zone input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-zone p { font-size: 0.78rem; color: #475569; margin-top: 6px; pointer-events: none; }
+    .upload-zone strong { font-size: 0.83rem; color: #94A3B8; pointer-events: none; }
+    .upload-progress {
+      height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px;
+      margin-top: 8px; overflow: hidden; display: none;
+    }
+    .upload-progress-bar {
+      height: 100%; background: linear-gradient(90deg, #2563EB, #6D5DFB);
+      width: 0%; transition: width 0.3s; border-radius: 4px;
+    }
 
     /* ── Course cards ── */
     .course-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 24px; }
-    .course-admin-card { border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 18px 20px; }
-    .course-admin-card h3 { font-size: 1rem; font-weight: 800; color: #0F172A; margin-bottom: 6px; }
+    .course-admin-card {
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.02);
+    }
+    .course-admin-card h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
     .course-admin-card p  { font-size: 0.8rem; color: #64748B; margin-bottom: 14px; line-height: 1.5; }
-    .course-status-select { padding: 7px 12px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 0.85rem; font-family: inherit; color: #0F172A; cursor: pointer; }
+    .course-status-select {
+      padding: 7px 12px;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      font-size: 0.83rem;
+      font-family: inherit;
+      color: #E2E8F0;
+      cursor: pointer;
+    }
+    .course-status-select option { background: #0D1526; }
 
     /* ── Empty state ── */
-    .empty { text-align: center; padding: 48px 20px; color: #94A3B8; }
-    .empty svg { margin: 0 auto 12px; display: block; opacity: 0.4; }
-    .empty p { font-size: 0.9rem; }
+    .empty { text-align: center; padding: 48px 20px; color: #334155; }
+    .empty p { font-size: 0.88rem; }
 
     /* ── Alert ── */
-    .alert { padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; margin: 12px 24px; display: none; }
+    .alert {
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      margin: 0 24px 16px;
+      display: none;
+      font-weight: 500;
+    }
     .alert.show { display: block; }
-    .alert-success { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
-    .alert-error   { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+    .alert-success { background: rgba(21,128,61,0.15); color: #4ADE80; border: 1px solid rgba(21,128,61,0.25); }
+    .alert-error   { background: rgba(220,38,38,0.12); color: #F87171; border: 1px solid rgba(220,38,38,0.2); }
 
-    /* ── Loading ── */
-    #pageLoading { position: fixed; inset: 0; background: #F1F5F9; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
-    .spinner { width: 36px; height: 36px; border: 3px solid #E2E8F0; border-top-color: #2563EB; border-radius: 50%; animation: spin 0.7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Section title ── */
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .section-sub {
+      font-size: 0.82rem;
+      color: #475569;
+      margin-bottom: 24px;
+    }
 
+    /* ── Filter bar ── */
+    .filter-bar {
+      padding: 12px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Edit Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-box {
+      background: #0D1526;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 520px;
+      transform: scale(0.96) translateY(8px);
+      transition: transform 0.2s;
+      overflow: hidden;
+    }
+    .modal-overlay.open .modal-box {
+      transform: scale(1) translateY(0);
+    }
+    .modal-head {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-head h3 { font-size: 0.95rem; font-weight: 700; color: #fff; }
+    .modal-close {
+      background: rgba(255,255,255,0.06);
+      border: none;
+      color: #64748B;
+      width: 28px; height: 28px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .modal-actions {
+      padding: 16px 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    /* ── Link chip ── */
+    .link-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      color: #6D5DFB;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(109,93,251,0.12);
+      border: 1px solid rgba(109,93,251,0.2);
+      transition: all 0.15s;
+    }
+    .link-chip:hover { background: rgba(109,93,251,0.22); }
+
+    /* ── Dashboard recent orders ── */
+    .recent-section { margin-top: 24px; }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 64px; }
+      .sidebar-logo-name, .sidebar-logo-user, .sidebar-logo-badge,
+      .sidebar-item span:not(.sidebar-item-icon), .sidebar-section-label,
+      .sidebar-footer .btn-signout span { display: none; }
+      .sidebar-item { padding: 12px 20px; justify-content: center; }
+      .main-content { margin-left: 64px; }
+    }
     @media (max-width: 640px) {
       .course-cards { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
-      .tabs { width: 100%; flex-wrap: wrap; }
+      .main-body { padding: 20px 16px 60px; }
+      .main-header { padding: 14px 16px; }
     }
   </style>
 </head>
@@ -128,309 +570,455 @@
 
 <div id="pageLoading">
   <div class="spinner"></div>
-  <p style="color:#64748B;font-size:0.9rem">Đang kiểm tra quyền truy cập...</p>
+  <p style="color:#475569;font-size:0.85rem">Đang kiểm tra quyền truy cập...</p>
 </div>
 
-<!-- Nav -->
-<nav class="admin-nav">
-  <div class="admin-nav-logo">
-    VDAI Academy <span class="admin-badge">ADMIN</span>
-  </div>
-  <div class="admin-user">
-    <span id="adminEmail"></span>
-    <button class="btn-signout" onclick="signOut()">Đăng xuất</button>
-  </div>
-</nav>
-
-<!-- Main -->
-<div class="admin-wrap">
-  <div class="admin-title">Dashboard quản trị</div>
-
-  <!-- Stat cards -->
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-label">Tổng thành viên</div>
-      <div class="stat-value" id="statTotal">—</div>
-      <div class="stat-sub">tài khoản đã đăng ký</div>
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3 id="editModalTitle">Chỉnh sửa</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Mới trong tuần</div>
-      <div class="stat-value" id="statWeek">—</div>
-      <div class="stat-sub">7 ngày gần nhất</div>
+    <div class="modal-body" id="editModalBody">
+      <!-- dynamic fields injected here -->
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Tài liệu</div>
-      <div class="stat-value" id="statDocs">—</div>
-      <div class="stat-sub">đang hiển thị</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Khoá học mở</div>
-      <div class="stat-value" id="statCourses">—</div>
-      <div class="stat-sub">đang nhận đăng ký</div>
-    </div>
-  </div>
-
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('members', this)">👥 Thành viên</button>
-    <button class="tab" onclick="switchTab('docs', this)">📄 Tài liệu</button>
-    <button class="tab" onclick="switchTab('courses', this)">🎓 Khoá học</button>
-    <button class="tab" onclick="switchTab('lessons', this)">📚 Bài giảng</button>
-    <button class="tab" onclick="switchTab('products', this)">💡 Sản phẩm số</button>
-    <button class="tab" onclick="switchTab('orders', this)">💰 Đơn hàng</button>
-  </div>
-
-  <!-- Panel: Members -->
-  <div class="panel active" id="panel-members">
-    <div class="panel-head">
-      <h2>Danh sách thành viên</h2>
-      <button class="btn btn-ghost btn-sm" onclick="loadMembers()">↻ Làm mới</button>
-    </div>
-    <div style="overflow-x:auto">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Họ tên</th>
-            <th>Email</th>
-            <th>Ngày đăng ký</th>
-            <th>Trạng thái</th>
-          </tr>
-        </thead>
-        <tbody id="membersBody">
-          <tr><td colspan="5" class="empty"><p>Đang tải...</p></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Panel: Documents -->
-  <div class="panel" id="panel-docs">
-    <div class="panel-head">
-      <h2>Quản lý tài liệu PDF</h2>
-    </div>
-    <div class="alert" id="docsAlert"></div>
-
-    <!-- Add form -->
-    <div class="form-row">
-      <div class="form-group">
-        <label>Tên tài liệu *</label>
-        <input type="text" id="docTitle" placeholder="VD: Bản đồ Affiliate AI 2025">
-      </div>
-      <div class="form-group">
-        <label>Mô tả</label>
-        <input type="text" id="docDesc" placeholder="Mô tả ngắn về tài liệu">
-      </div>
-      <div class="form-group">
-        <label>Icon (emoji)</label>
-        <input type="text" id="docIcon" placeholder="📄" maxlength="4">
-      </div>
-      <div class="form-group">
-        <label>Hoặc nhập Link PDF (nếu không upload)</label>
-        <input type="url" id="docUrl" placeholder="https://drive.google.com/...">
-      </div>
-      <div class="form-group full">
-        <label>Upload file PDF</label>
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="pdfFile" accept=".pdf" onchange="onFileSelected(this)">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" style="margin:0 auto 6px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <strong id="uploadFileName">Kéo thả file PDF vào đây hoặc nhấn để chọn</strong>
-          <p>Chỉ hỗ trợ file .pdf — tối đa 20MB</p>
-        </div>
-        <div class="upload-progress" id="uploadProgress">
-          <div class="upload-progress-bar" id="uploadProgressBar"></div>
-        </div>
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" id="addDocBtn" onclick="addDocument()">+ Thêm tài liệu</button>
-    </div>
-
-    <!-- List -->
-    <div style="overflow-x:auto">
-      <table class="data-table">
-        <thead>
-          <tr><th>#</th><th>Icon</th><th>Tên tài liệu</th><th>Link</th><th>Trạng thái</th><th>Hành động</th></tr>
-        </thead>
-        <tbody id="docsBody">
-          <tr><td colspan="6" class="empty"><p>Đang tải...</p></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Panel: Orders -->
-  <div class="panel" id="panel-orders">
-    <div class="panel-head">
-      <h2>Quản lý đơn hàng</h2>
-      <button class="btn btn-ghost btn-sm" onclick="loadOrders()">↻ Làm mới</button>
-    </div>
-    <div class="alert" id="ordersAlert"></div>
-
-    <!-- Filter tabs -->
-    <div style="padding:12px 24px;border-bottom:1px solid #F1F5F9;display:flex;gap:8px">
-      <button class="btn btn-ghost btn-sm" id="filterAll"     onclick="filterOrders('all')"      style="background:#EEF4FF;color:#2563EB">Tất cả</button>
-      <button class="btn btn-ghost btn-sm" id="filterPending" onclick="filterOrders('pending')">⏳ Chờ xác nhận</button>
-      <button class="btn btn-ghost btn-sm" id="filterConfirmed" onclick="filterOrders('confirmed')">✅ Đã xác nhận</button>
-    </div>
-
-    <div style="overflow-x:auto">
-      <table class="data-table">
-        <thead>
-          <tr><th>#</th><th>Khách hàng</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày đặt</th><th>Trạng thái</th><th>Hành động</th></tr>
-        </thead>
-        <tbody id="ordersBody">
-          <tr><td colspan="7" class="empty"><p>Đang tải...</p></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Panel: Lessons -->
-  <div class="panel" id="panel-lessons">
-    <div class="panel-head">
-      <h2>Quản lý bài giảng</h2>
-    </div>
-    <div class="alert" id="lessonsAlert"></div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>Tên bài giảng *</label>
-        <input type="text" id="lessonTitle" placeholder="VD: Bài 1 – Tìm niche Affiliate với AI">
-      </div>
-      <div class="form-group">
-        <label>Thuộc khoá học</label>
-        <select id="lessonCourse">
-          <option value="">-- Chọn khoá học --</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Giá (VNĐ) — để 0 nếu miễn phí</label>
-        <input type="number" id="lessonPrice" placeholder="0" min="0" step="1000">
-      </div>
-      <div class="form-group">
-        <label>Thứ tự hiển thị</label>
-        <input type="number" id="lessonOrder" placeholder="1" min="1">
-      </div>
-      <div class="form-group full">
-        <label>Mô tả ngắn</label>
-        <input type="text" id="lessonDesc" placeholder="Mô tả nội dung bài giảng...">
-      </div>
-      <div class="form-group">
-        <label>Link Video (YouTube / Drive)</label>
-        <input type="url" id="lessonVideo" placeholder="https://youtube.com/...">
-      </div>
-      <div class="form-group">
-        <label>Link PDF / Tài liệu đính kèm</label>
-        <input type="url" id="lessonPdf" placeholder="https://drive.google.com/...">
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" id="addLessonBtn" onclick="addLesson()">+ Thêm bài giảng</button>
-    </div>
-
-    <div style="overflow-x:auto">
-      <table class="data-table">
-        <thead>
-          <tr><th>#</th><th>Tên bài giảng</th><th>Khoá học</th><th>Giá</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
-        </thead>
-        <tbody id="lessonsBody">
-          <tr><td colspan="8" class="empty"><p>Đang tải...</p></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Panel: Products -->
-  <div class="panel" id="panel-products">
-    <div class="panel-head">
-      <h2>Sản phẩm số (Tips / Thủ thuật / Mini-course)</h2>
-    </div>
-    <div class="alert" id="productsAlert"></div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label>Tên sản phẩm *</label>
-        <input type="text" id="prodTitle" placeholder="VD: 50 Thủ thuật ChatGPT cho Affiliate">
-      </div>
-      <div class="form-group">
-        <label>Loại sản phẩm</label>
-        <select id="prodType">
-          <option value="tip">💡 Tip / Thủ thuật</option>
-          <option value="mini_course">🎓 Mini-course</option>
-          <option value="ebook">📘 Ebook / Tài liệu</option>
-          <option value="bundle">📦 Combo / Bundle</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Giá bán (VNĐ) *</label>
-        <input type="number" id="prodPrice" placeholder="99000" min="0" step="1000">
-      </div>
-      <div class="form-group">
-        <label>Icon (emoji)</label>
-        <input type="text" id="prodIcon" placeholder="💡" maxlength="4">
-      </div>
-      <div class="form-group full">
-        <label>Mô tả / Nội dung sẽ nhận được</label>
-        <input type="text" id="prodDesc" placeholder="Mô tả chi tiết giá trị sản phẩm...">
-      </div>
-      <div class="form-group">
-        <label>Link Video (YouTube / Drive)</label>
-        <input type="url" id="prodVideo" placeholder="https://youtube.com/...">
-      </div>
-      <div class="form-group">
-        <label>Link PDF / Tài liệu</label>
-        <input type="url" id="prodPdf" placeholder="https://drive.google.com/...">
-      </div>
-      <div class="form-group">
-        <label>Link ảnh thumbnail</label>
-        <input type="url" id="prodThumb" placeholder="https://...">
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn btn-primary" id="addProdBtn" onclick="addProduct()">+ Thêm sản phẩm</button>
-    </div>
-
-    <div style="overflow-x:auto">
-      <table class="data-table">
-        <thead>
-          <tr><th>#</th><th>Sản phẩm</th><th>Loại</th><th>Giá</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
-        </thead>
-        <tbody id="productsBody">
-          <tr><td colspan="8" class="empty"><p>Đang tải...</p></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Panel: Courses -->
-  <div class="panel" id="panel-courses">
-    <div class="panel-head">
-      <h2>Quản lý trạng thái khoá học</h2>
-    </div>
-    <div class="alert" id="coursesAlert"></div>
-    <div class="course-cards" id="coursesGrid">
-      <p style="padding:24px;color:#94A3B8">Đang tải...</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Huỷ</button>
+      <button class="btn btn-purple" id="editModalSaveBtn" onclick="saveEditModal()">Lưu thay đổi</button>
     </div>
   </div>
 </div>
+
+<!-- Shell -->
+<div class="admin-shell" id="adminShell" style="display:none">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-name">VDAI Academy <span class="sidebar-logo-badge">ADMIN</span></div>
+      <div class="sidebar-logo-user" id="sidebarEmail"></div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Menu</div>
+      <button class="sidebar-item active" onclick="switchSection('dashboard', this)">
+        <span class="sidebar-item-icon">🏠</span>
+        <span>Dashboard</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('members', this)">
+        <span class="sidebar-item-icon">👥</span>
+        <span>Thành viên</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('docs', this)">
+        <span class="sidebar-item-icon">📄</span>
+        <span>Tài liệu</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('courses', this)">
+        <span class="sidebar-item-icon">🎓</span>
+        <span>Khoá học</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('lessons', this)">
+        <span class="sidebar-item-icon">📚</span>
+        <span>Bài giảng</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('products', this)">
+        <span class="sidebar-item-icon">💡</span>
+        <span>Sản phẩm số</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('orders', this)">
+        <span class="sidebar-item-icon">💰</span>
+        <span>Đơn hàng</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn-signout" onclick="signOut()"><span>Đăng xuất</span></button>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main-content">
+    <div class="main-header">
+      <div>
+        <div class="main-header-title" id="mainHeaderTitle">Dashboard</div>
+        <div class="main-header-breadcrumb">Admin / <span id="mainHeaderBreadcrumb">Tổng quan</span></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="refreshCurrent()">↻ Làm mới</button>
+    </div>
+    <div class="main-body" id="mainBody">
+
+      <!-- PANEL: Dashboard -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="section-title">Tổng quan hệ thống</div>
+        <div class="section-sub">Số liệu thống kê toàn bộ nền tảng VDAI Academy</div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Tổng thành viên</div>
+            <div class="stat-value" id="statTotal">—</div>
+            <div class="stat-sub">tài khoản đã đăng ký</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🆕</div>
+            <div class="stat-label">Mới trong tuần</div>
+            <div class="stat-value" id="statWeek">—</div>
+            <div class="stat-sub">7 ngày gần nhất</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📄</div>
+            <div class="stat-label">Tài liệu đang hiện</div>
+            <div class="stat-value" id="statDocs">—</div>
+            <div class="stat-sub">tài liệu đang hiển thị</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🎓</div>
+            <div class="stat-label">Khoá học mở</div>
+            <div class="stat-value" id="statCourses">—</div>
+            <div class="stat-sub">đang nhận đăng ký</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Đơn chờ xác nhận</div>
+            <div class="stat-value" id="statPending">—</div>
+            <div class="stat-sub">cần xử lý ngay</div>
+          </div>
+        </div>
+        <div class="recent-section">
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h2>Đơn hàng gần nhất</h2>
+                <div class="card-head-sub">5 đơn hàng mới nhất trong hệ thống</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="switchSection('orders', document.querySelector('.sidebar-item:nth-child(7)'))">Xem tất cả →</button>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Khách hàng</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày đặt</th><th>Trạng thái</th></tr>
+                </thead>
+                <tbody id="dashboardOrdersBody">
+                  <tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: Members -->
+      <div class="panel" id="panel-members">
+        <div class="section-title">Thành viên</div>
+        <div class="section-sub">Danh sách tài khoản đã đăng ký trên nền tảng</div>
+        <div class="card">
+          <div class="card-head">
+            <h2>Danh sách thành viên</h2>
+            <button class="btn btn-ghost btn-sm" onclick="loadMembers()">↻ Làm mới</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Họ tên</th><th>Email</th><th>Ngày đăng ký</th><th>Trạng thái</th></tr>
+              </thead>
+              <tbody id="membersBody">
+                <tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: Documents -->
+      <div class="panel" id="panel-docs">
+        <div class="section-title">Tài liệu PDF</div>
+        <div class="section-sub">Quản lý tài liệu học tập cho thành viên</div>
+        <div class="alert" id="docsAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm tài liệu mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tên tài liệu *</label>
+                <input type="text" id="docTitle" placeholder="VD: Bản đồ Affiliate AI 2025">
+              </div>
+              <div class="form-group">
+                <label>Mô tả</label>
+                <input type="text" id="docDesc" placeholder="Mô tả ngắn về tài liệu">
+              </div>
+              <div class="form-group">
+                <label>Icon (emoji)</label>
+                <input type="text" id="docIcon" placeholder="📄" maxlength="4">
+              </div>
+              <div class="form-group">
+                <label>Hoặc nhập Link PDF (nếu không upload)</label>
+                <input type="url" id="docUrl" placeholder="https://drive.google.com/...">
+              </div>
+              <div class="form-group full">
+                <label>Upload file PDF</label>
+                <div class="upload-zone" id="uploadZone">
+                  <input type="file" id="pdfFile" accept=".pdf" onchange="onFileSelected(this)">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#475569" stroke-width="1.5" style="margin:0 auto 6px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <strong id="uploadFileName">Kéo thả file PDF vào đây hoặc nhấn để chọn</strong>
+                  <p>Chỉ hỗ trợ file .pdf — tối đa 20MB</p>
+                </div>
+                <div class="upload-progress" id="uploadProgress">
+                  <div class="upload-progress-bar" id="uploadProgressBar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-purple" id="addDocBtn" onclick="addDocument()">+ Thêm tài liệu</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Danh sách tài liệu</h2></div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Icon</th><th>Tên tài liệu</th><th>Link</th><th>Trạng thái</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="docsBody">
+                <tr><td colspan="6"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: Courses -->
+      <div class="panel" id="panel-courses">
+        <div class="section-title">Khoá học</div>
+        <div class="section-sub">Quản lý trạng thái mở / đóng khoá học</div>
+        <div class="alert" id="coursesAlert"></div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách khoá học</h2></div>
+          <div class="course-cards" id="coursesGrid">
+            <p style="padding:24px;color:#334155">Đang tải...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: Lessons -->
+      <div class="panel" id="panel-lessons">
+        <div class="section-title">Bài giảng</div>
+        <div class="section-sub">Quản lý các bài giảng trong từng khoá học</div>
+        <div class="alert" id="lessonsAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm bài giảng mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tên bài giảng *</label>
+                <input type="text" id="lessonTitle" placeholder="VD: Bài 1 – Tìm niche Affiliate với AI">
+              </div>
+              <div class="form-group">
+                <label>Thuộc khoá học</label>
+                <select id="lessonCourse">
+                  <option value="">-- Chọn khoá học --</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Giá (VNĐ) — để 0 nếu miễn phí</label>
+                <input type="number" id="lessonPrice" placeholder="0" min="0" step="1000">
+              </div>
+              <div class="form-group">
+                <label>Thứ tự hiển thị</label>
+                <input type="number" id="lessonOrder" placeholder="1" min="1">
+              </div>
+              <div class="form-group full">
+                <label>Mô tả ngắn</label>
+                <input type="text" id="lessonDesc" placeholder="Mô tả nội dung bài giảng...">
+              </div>
+              <div class="form-group">
+                <label>Link Video (YouTube / Drive)</label>
+                <input type="url" id="lessonVideo" placeholder="https://youtube.com/...">
+              </div>
+              <div class="form-group">
+                <label>Link PDF / Tài liệu đính kèm</label>
+                <input type="url" id="lessonPdf" placeholder="https://drive.google.com/...">
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-purple" id="addLessonBtn" onclick="addLesson()">+ Thêm bài giảng</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Danh sách bài giảng</h2></div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Tên bài giảng</th><th>Khoá học</th><th>Giá</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="lessonsBody">
+                <tr><td colspan="8"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: Products -->
+      <div class="panel" id="panel-products">
+        <div class="section-title">Sản phẩm số</div>
+        <div class="section-sub">Tips, thủ thuật, mini-course và ebook có bán</div>
+        <div class="alert" id="productsAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm sản phẩm số mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tên sản phẩm *</label>
+                <input type="text" id="prodTitle" placeholder="VD: 50 Thủ thuật ChatGPT cho Affiliate">
+              </div>
+              <div class="form-group">
+                <label>Loại sản phẩm</label>
+                <select id="prodType">
+                  <option value="tip">💡 Tip / Thủ thuật</option>
+                  <option value="mini_course">🎓 Mini-course</option>
+                  <option value="ebook">📘 Ebook / Tài liệu</option>
+                  <option value="bundle">📦 Combo / Bundle</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Giá bán (VNĐ) *</label>
+                <input type="number" id="prodPrice" placeholder="99000" min="0" step="1000">
+              </div>
+              <div class="form-group">
+                <label>Icon (emoji)</label>
+                <input type="text" id="prodIcon" placeholder="💡" maxlength="4">
+              </div>
+              <div class="form-group full">
+                <label>Mô tả / Nội dung sẽ nhận được</label>
+                <input type="text" id="prodDesc" placeholder="Mô tả chi tiết giá trị sản phẩm...">
+              </div>
+              <div class="form-group">
+                <label>Link Video (YouTube / Drive)</label>
+                <input type="url" id="prodVideo" placeholder="https://youtube.com/...">
+              </div>
+              <div class="form-group">
+                <label>Link PDF / Tài liệu</label>
+                <input type="url" id="prodPdf" placeholder="https://drive.google.com/...">
+              </div>
+              <div class="form-group">
+                <label>Link ảnh thumbnail</label>
+                <input type="url" id="prodThumb" placeholder="https://...">
+              </div>
+              <div class="form-group">
+                <label>Giá gốc / Giá so sánh (VNĐ)</label>
+                <input type="number" id="prodOriginalPrice" placeholder="199000" min="0" step="1000">
+              </div>
+              <div class="form-group">
+                <label>Tags / Từ khoá (phân cách bởi dấu phẩy)</label>
+                <input type="text" id="prodTags" placeholder="ai, affiliate, chatgpt">
+              </div>
+              <div class="form-group full">
+                <label>Slug URL (tự động nếu để trống)</label>
+                <input type="text" id="prodSlug" placeholder="vd: 50-thu-thuat-chatgpt">
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-purple" id="addProdBtn" onclick="addProduct()">+ Thêm sản phẩm</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h2>Danh sách sản phẩm số</h2></div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Sản phẩm</th><th>Loại</th><th>Giá</th><th>Video</th><th>PDF</th><th>Trạng thái</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="productsBody">
+                <tr><td colspan="8"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: Orders -->
+      <div class="panel" id="panel-orders">
+        <div class="section-title">Đơn hàng</div>
+        <div class="section-sub">Xác nhận và quản lý đơn mua sản phẩm số</div>
+        <div class="alert" id="ordersAlert"></div>
+        <div class="card">
+          <div class="card-head">
+            <h2>Danh sách đơn hàng</h2>
+            <button class="btn btn-ghost btn-sm" onclick="loadOrders()">↻ Làm mới</button>
+          </div>
+          <div class="filter-bar">
+            <button class="btn btn-ghost btn-sm" id="filterAll"       onclick="filterOrders('all')"       style="background:rgba(37,99,235,0.15);color:#60A5FA;border-color:rgba(37,99,235,0.3)">Tất cả</button>
+            <button class="btn btn-ghost btn-sm" id="filterPending"   onclick="filterOrders('pending')">⏳ Chờ xác nhận</button>
+            <button class="btn btn-ghost btn-sm" id="filterConfirmed" onclick="filterOrders('confirmed')">✅ Đã xác nhận</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Khách hàng</th><th>Sản phẩm</th><th>Số tiền</th><th>Ngày đặt</th><th>Trạng thái</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="ordersBody">
+                <tr><td colspan="7"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-body -->
+  </main>
+</div><!-- /admin-shell -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
 <script>
 const ADMIN_EMAIL = 'duongvv.vn@gmail.com';
 
-// ── Tab switch ──
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+// ── Current section ──
+let _currentSection = 'dashboard';
+
+const SECTION_META = {
+  dashboard: { title: 'Dashboard',    breadcrumb: 'Tổng quan' },
+  members:   { title: 'Thành viên',   breadcrumb: 'Danh sách thành viên' },
+  docs:      { title: 'Tài liệu',     breadcrumb: 'Quản lý tài liệu PDF' },
+  courses:   { title: 'Khoá học',     breadcrumb: 'Quản lý khoá học' },
+  lessons:   { title: 'Bài giảng',    breadcrumb: 'Quản lý bài giảng' },
+  products:  { title: 'Sản phẩm số',  breadcrumb: 'Sản phẩm số' },
+  orders:    { title: 'Đơn hàng',     breadcrumb: 'Quản lý đơn hàng' },
+};
+
+// ── Section switch ──
+function switchSection(name, btn) {
+  document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
+  if (btn) btn.classList.add('active');
   document.getElementById('panel-' + name).classList.add('active');
+  _currentSection = name;
+  const meta = SECTION_META[name] || {};
+  document.getElementById('mainHeaderTitle').textContent = meta.title || name;
+  document.getElementById('mainHeaderBreadcrumb').textContent = meta.breadcrumb || name;
+}
+
+function refreshCurrent() {
+  const loaders = {
+    dashboard: loadDashboard,
+    members:   loadMembers,
+    docs:      loadDocuments,
+    courses:   loadCourses,
+    lessons:   loadLessons,
+    products:  loadProducts,
+    orders:    loadOrders,
+  };
+  if (loaders[_currentSection]) loaders[_currentSection]();
 }
 
 // ── Alert helper ──
 function showAlert(id, msg, type = 'success') {
   const el = document.getElementById(id);
+  if (!el) return;
   el.textContent = msg;
   el.className = 'alert show alert-' + type;
   setTimeout(() => el.classList.remove('show'), 3500);
@@ -442,12 +1030,64 @@ function fmtDate(iso) {
   return new Date(iso).toLocaleDateString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric' });
 }
 
+// ── Format price ──
+function fmtPrice(p) {
+  return p > 0 ? p.toLocaleString('vi-VN') + '₫' : '<span style="color:#4ADE80;font-weight:700">Miễn phí</span>';
+}
+
+// ── Dashboard ──
+async function loadDashboard() {
+  // Stats are loaded alongside their panels, or re-loaded here
+  const [membersRes, docsRes, coursesRes, ordersRes] = await Promise.all([
+    _supabase.from('members').select('*'),
+    _supabase.from('documents').select('id, active'),
+    _supabase.from('courses').select('id, status'),
+    _supabase.from('orders').select('*, products(title, icon)').order('created_at', { ascending: false }).limit(5),
+  ]);
+
+  if (membersRes.data) {
+    const week = Date.now() - 7 * 24 * 3600 * 1000;
+    document.getElementById('statTotal').textContent = membersRes.data.length;
+    document.getElementById('statWeek').textContent  = membersRes.data.filter(m => new Date(m.created_at).getTime() > week).length;
+  }
+  if (docsRes.data) {
+    document.getElementById('statDocs').textContent = docsRes.data.filter(d => d.active).length;
+  }
+  if (coursesRes.data) {
+    document.getElementById('statCourses').textContent = coursesRes.data.filter(c => c.status === 'open').length;
+  }
+
+  const allOrders = ordersRes.data || [];
+  document.getElementById('statPending').textContent = allOrders.filter ? '—' : '—';
+
+  // Load pending count separately
+  const { data: pendingData } = await _supabase.from('orders').select('id', { count: 'exact' }).eq('status', 'pending');
+  if (pendingData) document.getElementById('statPending').textContent = pendingData.length;
+
+  // Recent orders table
+  const statusLabel = { pending:'⏳ Chờ xác nhận', confirmed:'✅ Đã xác nhận', rejected:'❌ Từ chối' };
+  const statusClass = { pending:'badge-pending', confirmed:'badge-active', rejected:'badge-closed' };
+  const tbody = document.getElementById('dashboardOrdersBody');
+  if (!allOrders.length) {
+    tbody.innerHTML = '<tr><td colspan="5"><div class="empty"><p>Chưa có đơn hàng nào</p></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = allOrders.slice(0,5).map(o => `
+    <tr>
+      <td style="font-size:0.8rem;color:#94A3B8">${o.member_email}</td>
+      <td><strong>${o.products?.icon || '💡'} ${o.product_name || o.products?.title || '—'}</strong></td>
+      <td style="font-weight:700;color:#fff">${(o.amount||0).toLocaleString('vi-VN')}₫</td>
+      <td style="font-size:0.78rem;color:#475569">${fmtDate(o.created_at)}</td>
+      <td><span class="badge ${statusClass[o.status] || 'badge-closed'}">${statusLabel[o.status] || o.status}</span></td>
+    </tr>`).join('');
+}
+
 // ── Load members ──
 async function loadMembers() {
   const { data, error } = await _supabase.from('members').select('*').order('created_at', { ascending: false });
   const tbody = document.getElementById('membersBody');
   if (error || !data) {
-    tbody.innerHTML = `<tr><td colspan="5" style="padding:20px;color:#DC2626;font-size:0.85rem">Lỗi tải thành viên: ${error?.message || 'Không có dữ liệu'}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="padding:20px;color:#F87171;font-size:0.83rem">Lỗi tải thành viên: ${error?.message || 'Không có dữ liệu'}</td></tr>`;
     return;
   }
   if (!data.length) {
@@ -461,10 +1101,10 @@ async function loadMembers() {
 
   tbody.innerHTML = data.map((m, i) => `
     <tr>
-      <td style="color:#94A3B8">${i + 1}</td>
-      <td>${m.full_name || '<span style="color:#94A3B8">—</span>'}</td>
-      <td><a href="mailto:${m.email}" style="color:#2563EB;text-decoration:none">${m.email}</a></td>
-      <td>${fmtDate(m.created_at)}</td>
+      <td style="color:#334155">${i + 1}</td>
+      <td style="color:#fff;font-weight:500">${m.full_name || '<span style="color:#334155">—</span>'}</td>
+      <td><a href="mailto:${m.email}" style="color:#6D5DFB;text-decoration:none">${m.email}</a></td>
+      <td style="color:#64748B">${fmtDate(m.created_at)}</td>
       <td><span class="badge badge-active"><span class="badge-dot"></span>${m.status || 'active'}</span></td>
     </tr>`).join('');
 }
@@ -482,18 +1122,23 @@ async function loadDocuments() {
   }
   tbody.innerHTML = data.map(d => `
     <tr>
-      <td style="color:#94A3B8">${d.display_order}</td>
+      <td style="color:#334155">${d.display_order}</td>
       <td style="font-size:1.2rem">${d.icon || '📄'}</td>
-      <td><strong>${d.title}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${d.description || ''}</span></td>
+      <td>
+        <strong style="color:#fff">${d.title}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">${d.description || ''}</span>
+      </td>
       <td>${d.url === '#'
-        ? '<span style="color:#94A3B8">Chưa có link</span>'
-        : `<a href="${d.url}" target="_blank" style="color:#2563EB;font-size:0.8rem">Mở link ↗</a>`}
+        ? '<span style="color:#334155;font-size:0.8rem">Chưa có link</span>'
+        : `<a href="${d.url}" target="_blank" class="link-chip">↗ Mở link</a>`}
       </td>
       <td><span class="badge ${d.active ? 'badge-active' : 'badge-closed'}">${d.active ? 'Hiện' : 'Ẩn'}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="editDoc(${d.id}, '${d.title.replace(/'/g,"\\'")}', '${(d.url||'#')}', '${(d.description||'').replace(/'/g,"\\'")}', '${d.icon||'📄'}')">Sửa</button>
-        <button class="btn btn-${d.active ? 'danger' : 'ghost'} btn-sm" onclick="toggleDoc(${d.id}, ${d.active})">${d.active ? 'Ẩn' : 'Hiện'}</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteDoc(${d.id})">Xoá</button>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-warning btn-sm" onclick='openEditDocModal(${JSON.stringify(d)})'>✏ Sửa</button>
+          <button class="btn btn-${d.active ? 'danger' : 'ghost'} btn-sm" onclick="toggleDoc(${d.id}, ${d.active})">${d.active ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteDoc(${d.id})">Xoá</button>
+        </div>
       </td>
     </tr>`).join('');
 }
@@ -510,7 +1155,6 @@ function onFileSelected(input) {
 
 // ── Upload PDF to Supabase Storage ──
 async function uploadPDF(file) {
-  const ext  = file.name.split('.').pop();
   const path = `documents/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
   const prog = document.getElementById('uploadProgress');
   const bar  = document.getElementById('uploadProgressBar');
@@ -567,17 +1211,74 @@ async function addDocument() {
   }
 }
 
-// ── Edit document ──
+// ── Edit modal state ──
+let _editModalContext = null;
+
+function openModal(title, fieldsHTML, context) {
+  document.getElementById('editModalTitle').textContent = title;
+  document.getElementById('editModalBody').innerHTML = fieldsHTML;
+  _editModalContext = context;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('open');
+  _editModalContext = null;
+}
+
+function closeEditModal(e) {
+  if (e.target === document.getElementById('editModal')) closeModal();
+}
+
+async function saveEditModal() {
+  if (!_editModalContext) return;
+  const btn = document.getElementById('editModalSaveBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  try {
+    await _editModalContext.save();
+  } finally {
+    btn.disabled = false; btn.textContent = 'Lưu thay đổi';
+  }
+}
+
+// ── Open edit modal for document ──
+function openEditDocModal(d) {
+  openModal('Chỉnh sửa tài liệu', `
+    <div class="form-group">
+      <label>Tên tài liệu *</label>
+      <input type="text" id="m_docTitle" value="${(d.title||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label>Mô tả</label>
+      <input type="text" id="m_docDesc" value="${(d.description||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label>Icon (emoji)</label>
+      <input type="text" id="m_docIcon" value="${d.icon||'📄'}" maxlength="4">
+    </div>
+    <div class="form-group">
+      <label>Link PDF</label>
+      <input type="url" id="m_docUrl" value="${d.url||'#'}">
+    </div>
+  `, {
+    save: async () => {
+      const title = document.getElementById('m_docTitle').value.trim();
+      const desc  = document.getElementById('m_docDesc').value.trim();
+      const icon  = document.getElementById('m_docIcon').value.trim() || '📄';
+      const url   = document.getElementById('m_docUrl').value.trim() || '#';
+      if (!title) { showAlert('docsAlert', 'Tên tài liệu không được trống', 'error'); return; }
+      const { error } = await _supabase.from('documents').update({ title, url, description: desc, icon }).eq('id', d.id);
+      if (error) { showAlert('docsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('docsAlert', '✅ Đã cập nhật tài liệu!');
+      closeModal();
+      loadDocuments();
+    }
+  });
+}
+
+// ── Edit document (kept for backward compat, now delegates to modal) ──
 function editDoc(id, title, url, desc, icon) {
-  const newTitle = prompt('Tên tài liệu:', title);
-  if (newTitle === null) return;
-  const newUrl = prompt('Link PDF:', url);
-  if (newUrl === null) return;
-  _supabase.from('documents').update({ title: newTitle, url: newUrl || '#', description: desc }).eq('id', id)
-    .then(({ error }) => {
-      if (error) showAlert('docsAlert', 'Lỗi: ' + error.message, 'error');
-      else { showAlert('docsAlert', 'Đã cập nhật!'); loadDocuments(); }
-    });
+  openEditDocModal({ id, title, url, description: desc, icon });
 }
 
 // ── Toggle document active ──
@@ -602,7 +1303,7 @@ async function loadCourses() {
   document.getElementById('statCourses').textContent = openCount;
 
   const grid = document.getElementById('coursesGrid');
-  if (error || !data) { grid.innerHTML = '<p style="padding:24px;color:#DC2626">Lỗi tải khoá học</p>'; return; }
+  if (error || !data) { grid.innerHTML = '<p style="padding:24px;color:#F87171">Lỗi tải khoá học</p>'; return; }
 
   grid.innerHTML = data.map(c => `
     <div class="course-admin-card">
@@ -626,7 +1327,7 @@ async function loadCourses() {
 async function updateCourse(id, status) {
   const { error } = await _supabase.from('courses').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) showAlert('coursesAlert', 'Lỗi: ' + error.message, 'error');
-  else { showAlert('coursesAlert', `Đã cập nhật trạng thái khoá học!`); loadCourses(); }
+  else { showAlert('coursesAlert', 'Đã cập nhật trạng thái khoá học!'); loadCourses(); }
 }
 
 // ── Drag & drop ──
@@ -668,7 +1369,7 @@ function filterOrders(f) {
     if (el) el.style.cssText = '';
   });
   const active = document.getElementById('filter' + f.charAt(0).toUpperCase() + f.slice(1));
-  if (active) active.style.cssText = 'background:#EEF4FF;color:#2563EB';
+  if (active) active.style.cssText = 'background:rgba(37,99,235,0.15);color:#60A5FA;border-color:rgba(37,99,235,0.3)';
   renderOrders();
 }
 
@@ -680,20 +1381,22 @@ function renderOrders() {
     return;
   }
   const statusLabel = { pending:'⏳ Chờ xác nhận', confirmed:'✅ Đã xác nhận', rejected:'❌ Từ chối' };
-  const statusClass = { pending:'badge-coming', confirmed:'badge-active', rejected:'badge-closed' };
+  const statusClass = { pending:'badge-pending', confirmed:'badge-active', rejected:'badge-closed' };
   tbody.innerHTML = list.map((o, i) => `
     <tr>
-      <td style="color:#94A3B8">${i+1}</td>
-      <td style="font-size:0.82rem">${o.member_email}</td>
-      <td><strong>${o.products?.icon || '💡'} ${o.product_name || o.products?.title || '—'}</strong></td>
-      <td style="font-weight:700;color:#0F172A">${(o.amount||0).toLocaleString('vi-VN')}₫</td>
-      <td style="font-size:0.78rem;color:#64748B">${fmtDate(o.created_at)}</td>
+      <td style="color:#334155">${i+1}</td>
+      <td style="font-size:0.8rem;color:#94A3B8">${o.member_email}</td>
+      <td><strong style="color:#fff">${o.products?.icon || '💡'} ${o.product_name || o.products?.title || '—'}</strong></td>
+      <td style="font-weight:700;color:#fff">${(o.amount||0).toLocaleString('vi-VN')}₫</td>
+      <td style="font-size:0.78rem;color:#475569">${fmtDate(o.created_at)}</td>
       <td><span class="badge ${statusClass[o.status] || 'badge-closed'}">${statusLabel[o.status] || o.status}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        ${o.status === 'pending' ? `
-          <button class="btn btn-primary btn-sm" onclick="confirmOrder(${o.id})">✅ Xác nhận</button>
-          <button class="btn btn-danger btn-sm"  onclick="rejectOrder(${o.id})">❌ Từ chối</button>
-        ` : `<span style="font-size:0.75rem;color:#94A3B8">Đã xử lý</span>`}
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${o.status === 'pending' ? `
+            <button class="btn btn-primary btn-sm" onclick="confirmOrder(${o.id})">✅ Xác nhận</button>
+            <button class="btn btn-danger btn-sm"  onclick="rejectOrder(${o.id})">❌ Từ chối</button>
+          ` : `<span style="font-size:0.72rem;color:#334155">Đã xử lý</span>`}
+        </div>
       </td>
     </tr>`).join('');
 }
@@ -728,19 +1431,24 @@ async function loadLessons() {
     tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có bài giảng nào. Thêm bài giảng đầu tiên!</p></div></td></tr>`;
     return;
   }
-  const fmtPrice = p => p > 0 ? p.toLocaleString('vi-VN') + '₫' : '<span style="color:#15803D;font-weight:700">Miễn phí</span>';
   tbody.innerHTML = data.map((l, i) => `
     <tr>
-      <td style="color:#94A3B8">${l.sort_order || i+1}</td>
-      <td><strong>${l.title}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${l.description || ''}</span></td>
-      <td style="font-size:0.8rem">${l.courses?.name || '—'}</td>
+      <td style="color:#334155">${l.sort_order || i+1}</td>
+      <td>
+        <strong style="color:#fff">${l.title}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">${l.description || ''}</span>
+      </td>
+      <td style="font-size:0.8rem;color:#64748B">${l.courses?.name || '—'}</td>
       <td>${fmtPrice(l.price || 0)}</td>
-      <td>${l.video_url ? `<a href="${l.video_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">▶ Xem</a>` : '—'}</td>
-      <td>${l.pdf_url ? `<a href="${l.pdf_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">📄 Tải</a>` : '—'}</td>
+      <td>${l.video_url ? `<a href="${l.video_url}" target="_blank" class="link-chip">▶ Xem</a>` : '<span style="color:#334155">—</span>'}</td>
+      <td>${l.pdf_url ? `<a href="${l.pdf_url}" target="_blank" class="link-chip">📄 Tải</a>` : '<span style="color:#334155">—</span>'}</td>
       <td><span class="badge badge-${l.active !== false ? 'active' : 'closed'}">${l.active !== false ? 'Hiện' : 'Ẩn'}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-${l.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleLesson(${l.id}, ${l.active !== false})">${l.active !== false ? 'Ẩn' : 'Hiện'}</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">Xoá</button>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-warning btn-sm" onclick='openEditLessonModal(${JSON.stringify(l)})'>✏ Sửa</button>
+          <button class="btn btn-${l.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleLesson(${l.id}, ${l.active !== false})">${l.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">Xoá</button>
+        </div>
       </td>
     </tr>`).join('');
 }
@@ -786,6 +1494,53 @@ async function deleteLesson(id) {
   loadLessons();
 }
 
+// ── Open edit modal for lesson ──
+function openEditLessonModal(l) {
+  openModal('Chỉnh sửa bài giảng', `
+    <div class="form-group">
+      <label>Tên bài giảng *</label>
+      <input type="text" id="m_lessonTitle" value="${(l.title||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label>Mô tả</label>
+      <input type="text" id="m_lessonDesc" value="${(l.description||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label>Giá (VNĐ)</label>
+      <input type="number" id="m_lessonPrice" value="${l.price||0}" min="0" step="1000">
+    </div>
+    <div class="form-group">
+      <label>Thứ tự</label>
+      <input type="number" id="m_lessonOrder" value="${l.sort_order||1}" min="1">
+    </div>
+    <div class="form-group">
+      <label>Link Video</label>
+      <input type="url" id="m_lessonVideo" value="${l.video_url||''}">
+    </div>
+    <div class="form-group">
+      <label>Link PDF</label>
+      <input type="url" id="m_lessonPdf" value="${l.pdf_url||''}">
+    </div>
+  `, {
+    save: async () => {
+      const title = document.getElementById('m_lessonTitle').value.trim();
+      if (!title) { showAlert('lessonsAlert', 'Tên bài giảng không được trống', 'error'); return; }
+      const { error } = await _supabase.from('lessons').update({
+        title,
+        description: document.getElementById('m_lessonDesc').value.trim(),
+        price: parseInt(document.getElementById('m_lessonPrice').value) || 0,
+        sort_order: parseInt(document.getElementById('m_lessonOrder').value) || 1,
+        video_url: document.getElementById('m_lessonVideo').value.trim() || null,
+        pdf_url: document.getElementById('m_lessonPdf').value.trim() || null,
+      }).eq('id', l.id);
+      if (error) { showAlert('lessonsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('lessonsAlert', '✅ Đã cập nhật bài giảng!');
+      closeModal();
+      loadLessons();
+    }
+  });
+}
+
 // ── Load products ──
 const PROD_LABELS = { tip:'💡 Tip/Thủ thuật', mini_course:'🎓 Mini-course', ebook:'📘 Ebook', bundle:'📦 Bundle' };
 
@@ -796,19 +1551,24 @@ async function loadProducts() {
     tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có sản phẩm số nào. Thêm sản phẩm đầu tiên!</p></div></td></tr>`;
     return;
   }
-  const fmtPrice = p => p > 0 ? p.toLocaleString('vi-VN') + '₫' : '<span style="color:#15803D;font-weight:700">Miễn phí</span>';
   tbody.innerHTML = data.map((p, i) => `
     <tr>
-      <td style="color:#94A3B8">${i+1}</td>
-      <td><strong>${p.icon || '💡'} ${p.title}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${p.description || ''}</span></td>
-      <td style="font-size:0.8rem">${PROD_LABELS[p.type] || p.type}</td>
+      <td style="color:#334155">${i+1}</td>
+      <td>
+        <strong style="color:#fff">${p.icon || '💡'} ${p.title}</strong><br>
+        <span style="font-size:0.72rem;color:#475569">${p.description || ''}</span>
+      </td>
+      <td style="font-size:0.78rem;color:#64748B">${PROD_LABELS[p.type] || p.type}</td>
       <td>${fmtPrice(p.price || 0)}</td>
-      <td>${p.video_url ? `<a href="${p.video_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">▶ Xem</a>` : '—'}</td>
-      <td>${p.pdf_url ? `<a href="${p.pdf_url}" target="_blank" style="color:#2563EB;font-size:0.8rem">📄 Tải</a>` : '—'}</td>
+      <td>${p.video_url ? `<a href="${p.video_url}" target="_blank" class="link-chip">▶ Xem</a>` : '<span style="color:#334155">—</span>'}</td>
+      <td>${p.pdf_url ? `<a href="${p.pdf_url}" target="_blank" class="link-chip">📄 Tải</a>` : '<span style="color:#334155">—</span>'}</td>
       <td><span class="badge badge-${p.active !== false ? 'active' : 'closed'}">${p.active !== false ? 'Đang bán' : 'Ẩn'}</span></td>
-      <td style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="btn btn-${p.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleProduct(${p.id}, ${p.active !== false})">${p.active !== false ? 'Ẩn' : 'Hiện'}</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Xoá</button>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-warning btn-sm" onclick='openEditProductModal(${JSON.stringify(p)})'>✏ Sửa</button>
+          <button class="btn btn-${p.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleProduct(${p.id}, ${p.active !== false})">${p.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">Xoá</button>
+        </div>
       </td>
     </tr>`).join('');
 }
@@ -822,6 +1582,10 @@ async function addProduct() {
   const video = document.getElementById('prodVideo').value.trim();
   const pdf = document.getElementById('prodPdf').value.trim();
   const thumb = document.getElementById('prodThumb').value.trim();
+  const originalPrice = parseInt(document.getElementById('prodOriginalPrice').value) || null;
+  const tags = document.getElementById('prodTags').value.trim();
+  const slugInput = document.getElementById('prodSlug').value.trim();
+  const slug = slugInput || title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
 
   if (!title) { showAlert('productsAlert', 'Vui lòng nhập tên sản phẩm', 'error'); return; }
   if (!price) { showAlert('productsAlert', 'Vui lòng nhập giá bán', 'error'); return; }
@@ -832,13 +1596,17 @@ async function addProduct() {
   const { error } = await _supabase.from('products').insert({
     title, type, price, icon, description: desc,
     video_url: video || null, pdf_url: pdf || null,
-    thumbnail_url: thumb || null, active: true
+    thumbnail_url: thumb || null,
+    original_price: originalPrice,
+    tags: tags || null,
+    slug,
+    active: true
   });
 
   btn.disabled = false; btn.textContent = '+ Thêm sản phẩm';
   if (error) { showAlert('productsAlert', 'Lỗi: ' + error.message, 'error'); return; }
 
-  ['prodTitle','prodDesc','prodVideo','prodPdf','prodThumb','prodPrice','prodIcon'].forEach(id => document.getElementById(id).value = '');
+  ['prodTitle','prodDesc','prodVideo','prodPdf','prodThumb','prodPrice','prodIcon','prodOriginalPrice','prodTags','prodSlug'].forEach(id => document.getElementById(id).value = '');
   showAlert('productsAlert', '✅ Đã thêm sản phẩm số!');
   loadProducts();
 }
@@ -855,6 +1623,89 @@ async function deleteProduct(id) {
   loadProducts();
 }
 
+// ── Open edit modal for product ──
+function openEditProductModal(p) {
+  openModal('Chỉnh sửa sản phẩm số', `
+    <div class="form-group">
+      <label>Tên sản phẩm *</label>
+      <input type="text" id="m_prodTitle" value="${(p.title||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label>Loại sản phẩm</label>
+      <select id="m_prodType">
+        <option value="tip"         ${p.type==='tip'         ?'selected':''}>💡 Tip / Thủ thuật</option>
+        <option value="mini_course" ${p.type==='mini_course' ?'selected':''}>🎓 Mini-course</option>
+        <option value="ebook"       ${p.type==='ebook'       ?'selected':''}>📘 Ebook / Tài liệu</option>
+        <option value="bundle"      ${p.type==='bundle'      ?'selected':''}>📦 Combo / Bundle</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Icon (emoji)</label>
+      <input type="text" id="m_prodIcon" value="${p.icon||'💡'}" maxlength="4">
+    </div>
+    <div class="form-group">
+      <label>Giá bán (VNĐ)</label>
+      <input type="number" id="m_prodPrice" value="${p.price||0}" min="0" step="1000">
+    </div>
+    <div class="form-group">
+      <label>Giá gốc / so sánh (VNĐ)</label>
+      <input type="number" id="m_prodOriginalPrice" value="${p.original_price||''}" min="0" step="1000">
+    </div>
+    <div class="form-group">
+      <label>Mô tả</label>
+      <input type="text" id="m_prodDesc" value="${(p.description||'').replace(/"/g,'&quot;')}">
+    </div>
+    <div class="form-group">
+      <label>Link Video</label>
+      <input type="url" id="m_prodVideo" value="${p.video_url||''}">
+    </div>
+    <div class="form-group">
+      <label>Link PDF</label>
+      <input type="url" id="m_prodPdf" value="${p.pdf_url||''}">
+    </div>
+    <div class="form-group">
+      <label>Thumbnail URL</label>
+      <input type="url" id="m_prodThumb" value="${p.thumbnail_url||''}">
+    </div>
+    <div class="form-group">
+      <label>Tags</label>
+      <input type="text" id="m_prodTags" value="${p.tags||''}">
+    </div>
+    <div class="form-group">
+      <label>Slug</label>
+      <input type="text" id="m_prodSlug" value="${p.slug||''}">
+    </div>
+  `, {
+    save: async () => {
+      const title = document.getElementById('m_prodTitle').value.trim();
+      if (!title) { showAlert('productsAlert', 'Tên sản phẩm không được trống', 'error'); return; }
+      const { error } = await _supabase.from('products').update({
+        title,
+        type: document.getElementById('m_prodType').value,
+        icon: document.getElementById('m_prodIcon').value.trim() || '💡',
+        price: parseInt(document.getElementById('m_prodPrice').value) || 0,
+        original_price: parseInt(document.getElementById('m_prodOriginalPrice').value) || null,
+        description: document.getElementById('m_prodDesc').value.trim(),
+        video_url: document.getElementById('m_prodVideo').value.trim() || null,
+        pdf_url: document.getElementById('m_prodPdf').value.trim() || null,
+        thumbnail_url: document.getElementById('m_prodThumb').value.trim() || null,
+        tags: document.getElementById('m_prodTags').value.trim() || null,
+        slug: document.getElementById('m_prodSlug').value.trim() || null,
+      }).eq('id', p.id);
+      if (error) { showAlert('productsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('productsAlert', '✅ Đã cập nhật sản phẩm!');
+      closeModal();
+      loadProducts();
+    }
+  });
+}
+
+// ── Sign out ──
+async function signOut() {
+  await _supabase.auth.signOut();
+  window.location.href = 'login.html';
+}
+
 // ── Init ──
 (async () => {
   try {
@@ -862,18 +1713,28 @@ async function deleteProduct(id) {
     if (!session) return;
 
     if (session.user.email !== ADMIN_EMAIL) {
-      document.body.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;font-family:system-ui"><h1 style="color:#DC2626">Không có quyền truy cập</h1><p style="color:#64748B">Tài khoản này không phải Admin.</p><a href="portal.html" style="color:#2563EB">← Về portal</a></div>';
+      document.body.innerHTML = `
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;font-family:'Inter',system-ui;background:#060C1A">
+          <h1 style="color:#F87171;font-size:1.4rem">Không có quyền truy cập</h1>
+          <p style="color:#475569">Tài khoản này không phải Admin.</p>
+          <a href="portal.html" style="color:#6D5DFB;text-decoration:none">← Về portal</a>
+        </div>`;
       return;
     }
 
-    document.getElementById('adminEmail').textContent = session.user.email;
+    document.getElementById('sidebarEmail').textContent = session.user.email;
     document.getElementById('pageLoading').remove();
-    loadMembers();
+    document.getElementById('adminShell').style.display = '';
+
+    // Initial load
+    loadDashboard();
     loadDocuments();
     loadCourses();
     loadOrders();
     loadLessons();
     loadProducts();
+    // loadMembers is triggered when tab is clicked or loadDashboard partial
+    loadMembers();
   } catch(e) {
     window.location.href = 'login.html';
   }
