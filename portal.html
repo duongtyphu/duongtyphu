@@ -700,7 +700,7 @@ async function loadDocumentsSection() {
       </div>
       <div class="doc-btns">
         ${d.url && d.url !== '#'
-          ? `<a href="${d.url}" target="_blank" class="btn-access btn-view">Xem</a>
+          ? `<a href="viewer.html?url=${encodeURIComponent(d.url)}&title=${encodeURIComponent(d.title || '')}" class="btn-access btn-view">Xem</a>
              <a href="${d.url}" download target="_blank" class="btn-access btn-dl">Tải về</a>`
           : '<span style="font-size:0.75rem;color:var(--muted)">Sắp có</span>'
         }
