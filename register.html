@@ -158,6 +158,10 @@
   if (params.get('email')) document.getElementById('regEmail').value = params.get('email');
   if (params.get('name'))  document.getElementById('regName').value  = params.get('name');
 
+  // Ghi nhận mã giới thiệu (?ref=XXXXXXXX) — lưu vào sessionStorage để giữ qua các bước
+  if (params.get('ref')) sessionStorage.setItem('vdai_ref', params.get('ref'));
+  const referredBy = sessionStorage.getItem('vdai_ref') || '';
+
   const form = document.getElementById('registerForm');
   const msg  = document.getElementById('authMsg');
   const btn  = document.getElementById('registerBtn');
@@ -172,7 +176,7 @@
     const email    = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
 
-    const { error } = await signUp(email, password, { full_name: name });
+    const { error } = await signUp(email, password, { full_name: name, referred_by: referredBy || null });
     if (error) {
       msg.className = 'auth-msg error';
       msg.textContent = error.message === 'User already registered'

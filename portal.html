@@ -271,6 +271,17 @@
     .store-price small { font-size: 0.68rem; color: var(--muted); font-weight: 500; }
     .store-empty { padding: 40px; text-align: center; color: var(--muted); font-size: 0.9rem; }
 
+    /* ─── REFERRAL ─── */
+    .referral-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px 30px; }
+    .referral-stats { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 22px; }
+    .referral-stat b { display: block; font-size: 1.5rem; font-weight: 900; color: #fff; }
+    .referral-stat span { font-size: 0.78rem; color: var(--muted); }
+    .referral-link-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+    .referral-link-row input { flex: 1; min-width: 220px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 0.85rem; font-family: inherit; }
+    .referral-copy-btn { background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; border: none; border-radius: 10px; padding: 11px 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .referral-copy-btn:hover { opacity: 0.9; }
+    .referral-note { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
     /* ─── PURCHASED ─── */
     .purchased-item {
       background: rgba(16,185,129,0.05); border: 1px solid rgba(16,185,129,0.2); border-radius: 14px;
@@ -522,6 +533,27 @@
     </div>
   </div>
 
+  <!-- GIỚI THIỆU BẠN BÈ -->
+  <div class="section" id="referralSection">
+    <div class="section-head">
+      <span class="section-badge badge-new">🤝 Referral</span>
+      <div class="section-title">Giới thiệu bạn bè — nhận hoa hồng 10%</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="referral-box">
+      <div class="referral-stats">
+        <div class="referral-stat"><b id="refCount">0</b><span>Người đã giới thiệu</span></div>
+        <div class="referral-stat"><b id="refConfirmed">0</b><span>Đã chuyển đổi</span></div>
+        <div class="referral-stat"><b id="refCommission">0₫</b><span>Hoa hồng đã ghi nhận</span></div>
+      </div>
+      <div class="referral-link-row">
+        <input type="text" id="refLinkInput" readonly>
+        <button type="button" id="refCopyBtn" class="referral-copy-btn">Sao chép link</button>
+      </div>
+      <p class="referral-note">Chia sẻ link này cho bạn bè. Khi họ đăng ký và hoàn tất thanh toán một khoá học, bạn nhận 10% học phí làm hoa hồng.</p>
+    </div>
+  </div>
+
   <!-- NỘI DUNG ĐÃ MUA -->
   <div class="section" id="purchasedSection" style="display:none">
     <div class="section-head">
@@ -762,6 +794,31 @@ async function loadStore() {
     </div>`).join('');
 }
 
+// ── Referral ──
+async function loadReferral() {
+  const { data: member } = await _supabase.from('members').select('id, referral_code').eq('email', _userEmail).maybeSingle();
+  if (!member?.referral_code) return;
+
+  const link = `${window.location.origin}/register.html?ref=${member.referral_code}`;
+  document.getElementById('refLinkInput').value = link;
+
+  const { data: refs } = await _supabase.from('referrals').select('status, commission_amount').eq('referrer_id', member.id);
+  const list = refs || [];
+  const confirmed = list.filter(r => r.status === 'confirmed' || r.status === 'paid');
+  const totalCommission = confirmed.reduce((sum, r) => sum + (r.commission_amount || 0), 0);
+
+  document.getElementById('refCount').textContent = list.length;
+  document.getElementById('refConfirmed').textContent = confirmed.length;
+  document.getElementById('refCommission').textContent = fmtPrice(totalCommission) + '₫';
+
+  document.getElementById('refCopyBtn').addEventListener('click', () => {
+    navigator.clipboard.writeText(link);
+    const btn = document.getElementById('refCopyBtn');
+    btn.textContent = 'Đã sao chép!';
+    setTimeout(() => { btn.textContent = 'Sao chép link'; }, 1800);
+  });
+}
+
 // ── Purchased — hiện đủ product + lesson + course ──
 async function loadPurchased() {
   const { data } = await _supabase.from('orders')
@@ -888,6 +945,7 @@ document.body.insertAdjacentHTML('afterbegin',
     loadFreeCourses();
     loadStore();
     loadPurchased();
+    loadReferral();
   } catch(e) {
     window.location.href = 'login.html';
   } finally {
