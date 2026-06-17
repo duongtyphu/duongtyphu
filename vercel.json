@@ -14,7 +14,11 @@
   ],
   "rewrites": [
     { "source": "/blog", "destination": "/blog/index.html" },
-    { "source": "/blog/", "destination": "/blog/index.html" }
+    { "source": "/blog/", "destination": "/blog/index.html" },
+    { "source": "/vdai-solo", "destination": "/vdai-solo/index.html" },
+    { "source": "/vdai-solo/", "destination": "/vdai-solo/index.html" },
+    { "source": "/vdai-scale", "destination": "/vdai-scale/index.html" },
+    { "source": "/vdai-scale/", "destination": "/vdai-scale/index.html" }
   ],
   "redirects": [],
   "errorPages": {
