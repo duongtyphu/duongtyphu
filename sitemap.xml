@@ -12,6 +12,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://example.com/blog/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://example.com/blog/ai-nghien-cuu-san-pham-affiliate.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://example.com/blog/prompt-ai-viet-content-ban-hang.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://example.com/blog/chatbot-ai-cham-soc-khach-hang.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://example.com/blog/van-hanh-tinh-gon-nhan-ban-he-thong.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://example.com/privacy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
