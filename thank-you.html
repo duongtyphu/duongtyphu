@@ -16,6 +16,78 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="assets/css/styles.css">
+<style>
+/* ── Thank-you page: next steps ── */
+.ty-hero {
+  background: linear-gradient(165deg, var(--deep-navy) 0%, var(--navy) 45%, var(--navy-mid) 100%);
+  padding: 140px 0 64px;
+  text-align: center;
+  color: #fff;
+}
+.ty-hero .thankyou-icon {
+  background: rgba(16,185,129,0.15);
+  color: #34D399;
+  box-shadow: 0 0 0 8px rgba(16,185,129,0.08);
+}
+.ty-hero .thankyou-title { color: #fff; }
+.ty-hero .thankyou-desc { color: #94A3B8; }
+.ty-hero .final-cta-actions { margin-top: 28px; }
+
+.ty-steps-section { background: #F7F9FC; padding: 64px 0 80px; }
+.ty-steps-eyebrow { text-align: center; margin-bottom: 12px; }
+.ty-steps-title { text-align: center; font-size: clamp(1.4rem, 3vw, 1.9rem); font-weight: 800; color: #0F172A; margin-bottom: 12px; }
+.ty-steps-subtitle { text-align: center; color: #64748B; max-width: 560px; margin: 0 auto 44px; line-height: 1.7; font-size: 0.95rem; }
+
+.ty-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin-bottom: 48px;
+}
+@media (max-width: 1024px) { .ty-steps-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .ty-steps-grid { grid-template-columns: 1fr; } }
+
+.ty-step-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 22px;
+  padding: 26px 22px;
+  position: relative;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.ty-step-card:hover { transform: translateY(-5px); box-shadow: 0 18px 44px rgba(6,26,64,0.1); }
+.ty-step-num {
+  width: 36px; height: 36px; border-radius: 12px;
+  background: linear-gradient(135deg, #2563EB, #6D5DFB);
+  color: #fff; font-weight: 800; font-size: 0.95rem;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+.ty-step-card h3 { font-size: 1rem; font-weight: 800; color: #0F172A; margin-bottom: 8px; line-height: 1.4; }
+.ty-step-card p { font-size: 0.85rem; color: #64748B; line-height: 1.65; margin-bottom: 14px; }
+.ty-step-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 700; color: #2563EB; text-decoration: none;
+}
+.ty-step-link:hover { gap: 9px; }
+
+.ty-cohort-box {
+  max-width: 720px; margin: 0 auto;
+  background: linear-gradient(135deg, #2563EB, #6D5DFB);
+  border-radius: 24px; padding: 32px 36px;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  color: #fff; flex-wrap: wrap;
+}
+.ty-cohort-box .label { font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 6px; }
+.ty-cohort-box .value { font-size: 1.15rem; font-weight: 800; }
+.ty-cohort-box .btn-primary { background: #fff; color: #2563EB; box-shadow: none; flex-shrink: 0; }
+.ty-cohort-box .btn-primary:hover { background: #F1F5F9; transform: translateY(-2px); }
+
+@media (max-width: 640px) {
+  .ty-hero { padding-top: 120px; }
+  .ty-cohort-box { flex-direction: column; text-align: center; }
+}
+</style>
 </head>
 <body>
 
@@ -69,28 +141,70 @@
 </div>
 
 <main id="main-content">
-  <div class="container">
-    <div class="thankyou-page">
-      <div>
-        <div class="thankyou-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <h1 class="thankyou-title">Đã nhận được thông tin của bạn!</h1>
-        <p class="thankyou-desc">
-          Cảm ơn bạn đã hoàn thành bài đánh giá "Bản đồ Affiliate AI". Đội ngũ VDAI Academy sẽ xem xét thông tin
-          và liên hệ với bạn qua số điện thoại/Zalo hoặc email đã cung cấp trong thời gian sớm nhất.
-        </p>
-        <p class="thankyou-desc">
-          Trong lúc chờ, bạn có thể tìm hiểu thêm về phương pháp VDAI A5 System và hai lộ trình SOLO / SCALE
-          ngay trên trang chủ.
-        </p>
-        <div class="final-cta-actions" style="justify-content:center;">
-          <a href="index.html" class="btn btn-primary btn-lg">Về trang chủ</a>
-          <a href="index.html#a5-system" class="btn btn-secondary btn-lg">Tìm hiểu phương pháp A5</a>
-        </div>
+
+  <section class="ty-hero">
+    <div class="container">
+      <div class="thankyou-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h1 class="thankyou-title">Đã nhận được thông tin của bạn!</h1>
+      <p class="thankyou-desc">
+        Cảm ơn bạn đã hoàn thành bài đánh giá "Bản đồ Affiliate AI". Đội ngũ VDAI Academy sẽ xem xét thông tin
+        và liên hệ với bạn qua số điện thoại/Zalo hoặc email đã cung cấp trong thời gian sớm nhất.
+      </p>
+      <div class="final-cta-actions" style="justify-content:center;">
+        <a href="index.html" class="btn btn-primary btn-lg">Về trang chủ</a>
+        <a href="index.html#a5-system" class="btn btn-secondary btn-lg">Tìm hiểu phương pháp A5</a>
       </div>
     </div>
-  </div>
+  </section>
+
+  <section class="ty-steps-section">
+    <div class="container">
+      <div class="section-eyebrow ty-steps-eyebrow" style="display:inline-flex;justify-content:center;width:100%"><span class="dot" aria-hidden="true"></span> Bước tiếp theo</div>
+      <h2 class="ty-steps-title">Đừng dừng lại ở đây</h2>
+      <p class="ty-steps-subtitle">Trong lúc chờ đội ngũ VDAI Academy liên hệ, hãy hoàn thành các bước dưới đây để không bỏ lỡ thông tin quan trọng và bắt đầu làm quen với cộng đồng.</p>
+
+      <div class="ty-steps-grid">
+        <div class="ty-step-card">
+          <div class="ty-step-num">1</div>
+          <h3>Tham gia nhóm Zalo cộng đồng</h3>
+          <p>Nhận thông báo nhanh nhất về lịch tư vấn, tài liệu miễn phí và giải đáp thắc mắc trực tiếp từ đội ngũ VDAI.</p>
+          <a href="#" id="tyZaloLink" class="ty-step-link" target="_blank" rel="noopener">Tham gia ngay →</a>
+        </div>
+
+        <div class="ty-step-card">
+          <div class="ty-step-num">2</div>
+          <h3>Theo dõi lịch khai giảng</h3>
+          <p>Các lớp VDAI SOLO &amp; SCALE khai giảng theo lịch cố định mỗi tháng — đặt lịch tư vấn sớm để giữ chỗ.</p>
+          <a href="index.html#programs" class="ty-step-link">Xem lịch khai giảng →</a>
+        </div>
+
+        <div class="ty-step-card">
+          <div class="ty-step-num">3</div>
+          <h3>Đọc kiến thức nền trước khi học</h3>
+          <p>Khám phá Blog AI của VDAI Academy để làm quen với các khái niệm AI ứng dụng cơ bản trước khi vào lớp.</p>
+          <a href="blog/index.html" class="ty-step-link">Đọc Blog AI →</a>
+        </div>
+
+        <div class="ty-step-card">
+          <div class="ty-step-num">4</div>
+          <h3>Theo dõi kênh nội dung</h3>
+          <p>Follow Fanpage và YouTube của VDAI Academy để nhận thêm tài liệu, case study và mẹo ứng dụng AI miễn phí.</p>
+          <a href="#" id="tyFbLink" class="ty-step-link" target="_blank" rel="noopener">Theo dõi Fanpage →</a>
+        </div>
+      </div>
+
+      <div class="ty-cohort-box">
+        <div>
+          <div class="label">Lịch khai giảng gần nhất</div>
+          <div class="value" id="tyCohort">Đang cập nhật...</div>
+        </div>
+        <a href="index.html#programs" class="btn btn-primary">Xem chi tiết chương trình →</a>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <!-- ════════════════════════════════════════════════════════
@@ -161,6 +275,10 @@
     document.getElementById('footerZalo').textContent = VDAI_CONFIG.contact.zaloLink;
     document.getElementById('footerAddress').textContent = VDAI_CONFIG.contact.address;
     document.getElementById('footerLegalName').textContent = VDAI_CONFIG.contact.legalName;
+
+    document.getElementById('tyZaloLink').href = VDAI_CONFIG.contact.zaloLink || '#';
+    document.getElementById('tyFbLink').href = VDAI_CONFIG.social.facebook || '#';
+    document.getElementById('tyCohort').textContent = VDAI_CONFIG.programs.solo.nextCohort || 'Đang cập nhật...';
 
     const socialIcons = {
       facebook: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>',
