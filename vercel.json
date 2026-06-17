@@ -12,7 +12,10 @@
       ]
     }
   ],
-  "rewrites": [],
+  "rewrites": [
+    { "source": "/blog", "destination": "/blog/index.html" },
+    { "source": "/blog/", "destination": "/blog/index.html" }
+  ],
   "redirects": [],
   "errorPages": {
     "404": "/404.html"
