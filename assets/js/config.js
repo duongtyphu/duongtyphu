@@ -63,8 +63,8 @@ const VDAI_CONFIG = {
   //   result: { track, bottleneck, priorities, roadmap }
   // }
   form: {
-    leadEndpoint: "", // TODO: OWNER INPUT — URL endpoint nhận lead (để trống = chưa kết nối)
-    isConnected: false // Đặt true khi đã cấu hình leadEndpoint thật
+    leadEndpoint: "https://script.google.com/macros/s/AKfycbyQSzjWJRjI6bQOx0UN6FUOWnuaGQ2ueVBf1o1hCRP0TNy_gecrpk-hsHmbWgHCTYgV/exec",
+    isConnected: true
   },
 
   // ──────────────────────────────────────────────────────────
