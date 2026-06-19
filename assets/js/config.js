@@ -63,7 +63,7 @@ const VDAI_CONFIG = {
   //   result: { track, bottleneck, priorities, roadmap }
   // }
   form: {
-    leadEndpoint: "https://script.google.com/macros/s/AKfycbyQSzjWJRjI6bQOx0UN6FUOWnuaGQ2ueVBf1o1hCRP0TNy_gecrpk-hsHmbWgHCTYgV/exec",
+    leadEndpoint: "https://script.google.com/macros/s/AKfycbzQjUBifwswvJ9p4p7amiDsD4Q3FIb8KrBtbWyTYBFay-BaIacUf2E7VYZ4swt-nA/exec",
     isConnected: true
   },
 
