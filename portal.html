@@ -918,12 +918,38 @@ async function loadPurchased() {
 }
 
 // ── Checkout — dùng chung cho product / lesson / course ──
-function openCheckout(item, itemType = 'product') {
-  _checkoutItem = { ...item, _itemType: itemType };
-  const note = `${_userEmail.split('@')[0]} ${item.title}`.substring(0, 50);
+// Đơn hàng được tạo NGAY khi mở modal (status: pending) để có order_code
+// duy nhất nhúng vào nội dung chuyển khoản — SePay webhook sẽ khớp đúng
+// đơn hàng theo mã này và tự xác nhận khi tiền vào, không cần admin bấm tay.
+async function openCheckout(item, itemType = 'product') {
   const price = item.price || 0;
+  const row = {
+    member_email: _userEmail,
+    product_name: item.title,
+    amount: price,
+    status: 'pending'
+  };
+  if (itemType === 'lesson')       row.lesson_id  = item.id;
+  else if (itemType === 'course')  row.course_id  = String(item.id);
+  else                              row.product_id = item.id;
+
+  document.getElementById('modalContent').innerHTML = `<div class="modal-note" style="text-align:center">Đang khởi tạo đơn hàng...</div>`;
+  document.getElementById('checkoutModal').style.display = 'flex';
+
+  const { data: order, error } = await _supabase.from('orders').insert(row).select().single();
+  if (error) {
+    document.getElementById('modalContent').innerHTML = `<div class="modal-note" style="text-align:center">Lỗi tạo đơn hàng: ${error.message}</div>`;
+    return;
+  }
+
+  _checkoutItem = { ...item, _itemType: itemType, _orderId: order.id };
+  const orderCode = `VDAI${order.id}`;
+  const note = orderCode;
   const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
   const typeLabel = { product:'Sản phẩm số', lesson:'Bài giảng', course:'Khoá học' }[itemType] || '';
+
+  await _supabase.from('orders').update({ order_code: orderCode }).eq('id', order.id);
+
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-title">Thanh toán — ${typeLabel}</div>
     <div class="modal-sub">${item.title}</div>
@@ -942,16 +968,15 @@ function openCheckout(item, itemType = 'product') {
       <p>👤 Chủ TK: <strong>${BANK.owner}</strong></p>
     </div>
     <div class="modal-note">
-      📝 <strong>Nội dung CK:</strong> ${note}<br><br>
-      Sau khi chuyển khoản, nhấn nút bên dưới. Admin xác nhận trong <strong>24h</strong>.
+      📝 <strong>Nội dung CK (bắt buộc giữ nguyên):</strong> ${note}<br><br>
+      Hệ thống sẽ <strong>tự động xác nhận</strong> ngay khi nhận được tiền, không cần chờ admin.
     </div>` : `
     <div class="modal-note" style="text-align:center">
       📩 Nhấn bên dưới để gửi yêu cầu đăng ký. Admin sẽ liên hệ và xác nhận trong <strong>24h</strong>.
     </div>`}
-    <button class="btn-paid" id="btnPaid" onclick="submitOrder()">
-      ${price > 0 ? '✅ Tôi đã chuyển khoản' : '📩 Gửi yêu cầu đăng ký'}
+    <button class="btn-paid" id="btnPaid" onclick="${price > 0 ? 'pollOrderStatus()' : 'submitFreeOrder()'}">
+      ${price > 0 ? '✅ Tôi đã chuyển khoản — kiểm tra trạng thái' : '📩 Gửi yêu cầu đăng ký'}
     </button>`;
-  document.getElementById('checkoutModal').style.display = 'flex';
 }
 
 function closeModal() {
@@ -959,22 +984,28 @@ function closeModal() {
   _checkoutItem = null;
 }
 
-async function submitOrder() {
+async function pollOrderStatus() {
+  if (!_checkoutItem) return;
+  const btn = document.getElementById('btnPaid');
+  btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+  const { data } = await _supabase.from('orders').select('status').eq('id', _checkoutItem._orderId).single();
+  if (data?.status === 'confirmed') {
+    showOrderSuccess();
+  } else {
+    btn.disabled = false;
+    btn.textContent = '✅ Tôi đã chuyển khoản — kiểm tra trạng thái';
+    alert('Hệ thống chưa nhận được giao dịch. Nếu bạn vừa chuyển khoản, vui lòng đợi vài giây rồi bấm lại.');
+  }
+}
+
+async function submitFreeOrder() {
   if (!_checkoutItem) return;
   const btn = document.getElementById('btnPaid');
   btn.disabled = true; btn.textContent = 'Đang gửi...';
-  const item = _checkoutItem;
-  const row = {
-    member_email: _userEmail,
-    product_name: item.title,
-    amount: item.price || 0,
-    status: 'pending'
-  };
-  if (item._itemType === 'lesson')       row.lesson_id  = item.id;
-  else if (item._itemType === 'course')  row.course_id  = String(item.id);
-  else                                   row.product_id = item.id;
-  const { error } = await _supabase.from('orders').insert(row);
-  if (error) { btn.disabled = false; btn.textContent = '✅ Tôi đã chuyển khoản'; alert('Lỗi: ' + error.message); return; }
+  showOrderSuccess();
+}
+
+function showOrderSuccess() {
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-success">
       <div class="check">🎉</div>

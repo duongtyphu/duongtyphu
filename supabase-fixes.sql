@@ -31,3 +31,8 @@ CREATE POLICY "Admin full access to referrals" ON public.referrals
 UPDATE public.members
 SET referral_code = upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8))
 WHERE referral_code IS NULL;
+
+-- 7) Tích hợp SePay (xác nhận chuyển khoản tự động qua webhook)
+--    order_code = mã đơn hàng duy nhất (dạng "VDAI{id}") nhúng vào nội dung
+--    chuyển khoản, dùng để khớp đúng đơn khi SePay báo có tiền vào.
+ALTER TABLE orders ADD COLUMN IF NOT EXISTS order_code text UNIQUE;
