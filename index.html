@@ -328,6 +328,8 @@
 }
 
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="assets/js/supabase-config.js"></script>
 </head>
 <body>
 
@@ -3130,6 +3132,11 @@ document.addEventListener('DOMContentLoaded', function () {
               <div class="form-error-msg" id="quizEmailError">Vui lòng nhập email hợp lệ.</div>
             </div>
             <div class="form-group">
+              <label class="form-label" for="quizPassword">Đặt mật khẩu *</label>
+              <input class="form-input" type="password" id="quizPassword" name="password" required minlength="8" autocomplete="new-password">
+              <div class="form-error-msg" id="quizPasswordError">Mật khẩu cần ít nhất 8 ký tự.</div>
+            </div>
+            <div class="form-group">
               <label class="form-checkbox-row">
                 <input type="checkbox" id="quizConsent" name="consent" required>
                 <span>Tôi đồng ý với <a href="privacy.html" target="_blank">Chính sách bảo mật</a> của VDAI Academy *</span>
@@ -3138,7 +3145,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
 
             <button type="submit" class="btn btn-primary btn-block" id="quizSubmitBtn">
-              Nhận bản đồ Affiliate AI →
+              Tạo tài khoản & Nhận bản đồ Affiliate AI →
             </button>
 
             <div class="form-status" id="quizFormStatus" role="status" aria-live="polite"></div>
@@ -3165,16 +3172,17 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ────────────────────────────────────────────────────────
      XỬ LÝ GỬI FORM LEAD (quiz result)
   ──────────────────────────────────────────────────────── */
-  function handleLeadSubmit(form, result) {
+  async function handleLeadSubmit(form, result) {
     const nameInput = form.querySelector('#quizName');
     const phoneInput = form.querySelector('#quizPhone');
     const emailInput = form.querySelector('#quizEmail');
+    const passwordInput = form.querySelector('#quizPassword');
     const consentInput = form.querySelector('#quizConsent');
     const statusEl = form.querySelector('#quizFormStatus');
     const submitBtn = form.querySelector('#quizSubmitBtn');
 
     // Reset trạng thái lỗi
-    [nameInput, phoneInput, emailInput].forEach(el => el.classList.remove('error'));
+    [nameInput, phoneInput, emailInput, passwordInput].forEach(el => el.classList.remove('error'));
     form.querySelectorAll('.form-error-msg').forEach(el => el.classList.remove('show'));
     statusEl.className = 'form-status';
     statusEl.innerHTML = '';
@@ -3202,6 +3210,12 @@ document.addEventListener('DOMContentLoaded', function () {
       hasError = true;
     }
 
+    // Validate mật khẩu
+    if (passwordInput.value.length < 8) {
+      showFieldError(passwordInput, 'quizPasswordError');
+      hasError = true;
+    }
+
     // Validate checkbox đồng ý chính sách
     if (!consentInput.checked) {
       document.getElementById('quizConsentError')?.classList.add('show');
@@ -3210,73 +3224,73 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (hasError) return;
 
-    // Nếu chưa cấu hình endpoint → redirect thẳng sang register
-    if (!VDAI_CONFIG.form.isConnected || !VDAI_CONFIG.form.leadEndpoint) {
-      statusEl.className = 'form-status success show';
-      statusEl.innerHTML = successIcon() + '<span>Đang chuyển đến trang nhận tài liệu...</span>';
-      submitBtn.textContent = 'Tiếp tục ✓';
-      submitBtn.disabled = true;
-      setTimeout(() => {
-        const params = new URLSearchParams({
-          email: emailInput.value.trim(),
-          name:  nameInput.value.trim(),
-          track: result.track
-        });
-        window.location.href = 'thank-you.html?' + params.toString();
-      }, 1000);
-      return;
+    const name = nameInput.value.trim();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    // Gửi lead sang Google Apps Script (analytics/backup), không chờ kết quả
+    if (VDAI_CONFIG.form.isConnected && VDAI_CONFIG.form.leadEndpoint) {
+      const payload = {
+        type: 'quiz_lead',
+        name,
+        phone: phoneDigits,
+        email,
+        quizAnswers: state.answers,
+        result: {
+          track: result.ctaTrack,
+          bottleneck: result.bottleneck,
+          priorities: result.priorities,
+          roadmap: result.roadmap
+        },
+        submittedAt: new Date().toISOString()
+      };
+      fetch(VDAI_CONFIG.form.leadEndpoint, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).catch(() => {});
     }
+
+    trackEvent('lead_submit', { track: result.ctaTrack });
 
     // Trạng thái loading
     submitBtn.disabled = true;
     statusEl.className = 'form-status loading show';
-    statusEl.innerHTML = loadingIcon() + '<span>Đang gửi thông tin...</span>';
+    statusEl.innerHTML = loadingIcon() + '<span>Đang tạo tài khoản...</span>';
 
-    const payload = {
-      type: 'quiz_lead',
-      name: nameInput.value.trim(),
-      phone: phoneDigits,
-      email: emailInput.value.trim(),
-      quizAnswers: state.answers,
-      result: {
-        track: result.ctaTrack,
-        bottleneck: result.bottleneck,
-        priorities: result.priorities,
-        roadmap: result.roadmap
-      },
-      submittedAt: new Date().toISOString()
-    };
+    try {
+      const { error } = await signUp(email, password, { full_name: name, phone: phoneDigits });
 
-    trackEvent('lead_submit', { track: result.ctaTrack });
-
-    fetch(VDAI_CONFIG.form.leadEndpoint, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
-    })
-      .then(() => {
-        statusEl.className = 'form-status success show';
-        statusEl.innerHTML = successIcon() + '<span>Hoàn tất! Đang chuyển đến trang nhận tài liệu...</span>';
-        trackEvent('lead_success', { track: result.ctaTrack });
-        submitBtn.textContent = 'Đã gửi ✓';
-
-        setTimeout(() => {
-          const params = new URLSearchParams({
-            email: emailInput.value.trim(),
-            name:  nameInput.value.trim(),
-            track: result.track
-          });
-          window.location.href = 'thank-you.html?' + params.toString();
-        }, 1200);
-      })
-      .catch((err) => {
-        console.error('Lead submit error:', err);
-        statusEl.className = 'form-status error show';
-        statusEl.innerHTML = errorIcon() + '<span>Có lỗi xảy ra khi gửi. Vui lòng thử lại hoặc liên hệ trực tiếp qua Zalo.</span>';
+      if (error) {
+        if (error.message === 'User already registered') {
+          statusEl.className = 'form-status error show';
+          statusEl.innerHTML = errorIcon() + '<span>Email này đã được đăng ký. Hãy <a href="login.html">đăng nhập</a>.</span>';
+        } else {
+          statusEl.className = 'form-status error show';
+          statusEl.innerHTML = errorIcon() + '<span>' + escapeHtml(error.message) + '</span>';
+        }
         submitBtn.disabled = false;
-        trackEvent('lead_error', { reason: 'fetch_failed', track: result.ctaTrack });
-      });
+        trackEvent('lead_error', { reason: 'signup_failed', track: result.ctaTrack });
+        return;
+      }
+
+      statusEl.className = 'form-status success show';
+      statusEl.innerHTML = successIcon() + '<span>Tạo tài khoản thành công! Đang vào trang thành viên...</span>';
+      trackEvent('lead_success', { track: result.ctaTrack });
+      submitBtn.textContent = 'Đang chuyển...';
+
+      const { error: loginErr } = await signIn(email, password);
+      setTimeout(() => {
+        window.location.href = loginErr ? 'login.html' : 'portal.html';
+      }, 800);
+    } catch (err) {
+      console.error('Lead submit error:', err);
+      statusEl.className = 'form-status error show';
+      statusEl.innerHTML = errorIcon() + '<span>Có lỗi xảy ra. Vui lòng thử lại hoặc liên hệ trực tiếp qua Zalo.</span>';
+      submitBtn.disabled = false;
+      trackEvent('lead_error', { reason: 'fetch_failed', track: result.ctaTrack });
+    }
   }
 
   function showFieldError(input, errorId) {
