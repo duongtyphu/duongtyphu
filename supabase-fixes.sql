@@ -24,3 +24,10 @@ ALTER TABLE referrals ADD COLUMN IF NOT EXISTS paid_at timestamptz;
 DROP POLICY IF EXISTS "Admin full access to referrals" ON public.referrals;
 CREATE POLICY "Admin full access to referrals" ON public.referrals
   FOR ALL USING (auth.jwt() ->> 'email' = 'duongvv.vn@gmail.com');
+
+-- 6) Tạo lại mã giới thiệu cho các thành viên đã đăng ký TRƯỚC khi trigger
+--    set_referral_code được thêm vào (trigger chỉ tự sinh mã cho member MỚI,
+--    không hồi tố cho member cũ → đây là lý do link Referral trống trong portal)
+UPDATE public.members
+SET referral_code = upper(substr(replace(gen_random_uuid()::text, '-', ''), 1, 8))
+WHERE referral_code IS NULL;
