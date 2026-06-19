@@ -153,8 +153,8 @@
         và liên hệ với bạn qua số điện thoại/Zalo hoặc email đã cung cấp trong thời gian sớm nhất.
       </p>
       <div class="final-cta-actions" style="justify-content:center;">
-        <a href="index.html" class="btn btn-primary btn-lg">Về trang chủ</a>
-        <a href="index.html#a5-system" class="btn btn-secondary btn-lg">Tìm hiểu phương pháp A5</a>
+        <a href="register.html" id="tyRegisterLink" class="btn btn-primary btn-lg">Tạo tài khoản nhận Bản đồ Affiliate AI →</a>
+        <a href="index.html" class="btn btn-secondary btn-lg">Về trang chủ</a>
       </div>
     </div>
   </section>
@@ -275,6 +275,11 @@
     document.getElementById('footerZalo').textContent = VDAI_CONFIG.contact.zaloLink;
     document.getElementById('footerAddress').textContent = VDAI_CONFIG.contact.address;
     document.getElementById('footerLegalName').textContent = VDAI_CONFIG.contact.legalName;
+
+    const tyParams = new URLSearchParams(window.location.search);
+    if (tyParams.toString()) {
+      document.getElementById('tyRegisterLink').href = 'register.html?' + tyParams.toString();
+    }
 
     document.getElementById('tyZaloLink').href = VDAI_CONFIG.contact.zaloLink || '#';
     document.getElementById('tyFbLink').href = VDAI_CONFIG.social.facebook || '#';

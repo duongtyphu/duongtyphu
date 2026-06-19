@@ -639,6 +639,10 @@
         <span class="sidebar-item-icon">💰</span>
         <span>Đơn hàng</span>
       </button>
+      <button class="sidebar-item" onclick="switchSection('affiliate', this)">
+        <span class="sidebar-item-icon">🤝</span>
+        <span>Affiliate</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-signout" onclick="signOut()"><span>Đăng xuất</span></button>
@@ -1043,6 +1047,59 @@
         </div>
       </div>
 
+      <!-- PANEL: Affiliate -->
+      <div class="panel" id="panel-affiliate">
+        <div class="section-title">Affiliate / Giới thiệu bạn bè</div>
+        <div class="section-sub">Theo dõi thành viên giới thiệu, hoa hồng và thanh toán</div>
+        <div class="alert" id="affiliateAlert"></div>
+
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-label">Thành viên có giới thiệu</div><div class="stat-value" id="affTotalReferrers">0</div></div>
+          <div class="stat-card"><div class="stat-icon">🎓</div><div class="stat-label">Khoá học bán qua referral</div><div class="stat-value" id="affCoursesSold">0</div></div>
+          <div class="stat-card"><div class="stat-icon">💰</div><div class="stat-label">Tổng hoa hồng phải trả</div><div class="stat-value" id="affTotalOwed">0₫</div></div>
+          <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-label">Đã thanh toán</div><div class="stat-value" id="affTotalPaid">0₫</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>🏆 Bảng xếp hạng thành viên giới thiệu</h2>
+            <button class="btn btn-ghost btn-sm" onclick="loadAffiliate()">↻ Làm mới</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Thành viên</th><th>Mã giới thiệu</th><th>Người đã giới thiệu</th><th>Khoá học bán được</th><th>Hoa hồng chờ xác nhận</th><th>Hoa hồng đã xác nhận</th><th>Đã thanh toán</th></tr>
+              </thead>
+              <tbody id="affLeaderboardBody">
+                <tr><td colspan="8"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>Chi tiết các lượt giới thiệu</h2>
+          </div>
+          <div class="filter-bar">
+            <button class="btn btn-ghost btn-sm" id="affFilterAll"       onclick="filterAffiliate('all')"       style="background:rgba(37,99,235,0.15);color:#60A5FA;border-color:rgba(37,99,235,0.3)">Tất cả</button>
+            <button class="btn btn-ghost btn-sm" id="affFilterPending"   onclick="filterAffiliate('pending')">⏳ Chờ xác nhận</button>
+            <button class="btn btn-ghost btn-sm" id="affFilterConfirmed" onclick="filterAffiliate('confirmed')">✅ Đã xác nhận</button>
+            <button class="btn btn-ghost btn-sm" id="affFilterPaid"      onclick="filterAffiliate('paid')">💸 Đã thanh toán</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="data-table">
+              <thead>
+                <tr><th>#</th><th>Người giới thiệu</th><th>Người được giới thiệu</th><th>Hoa hồng</th><th>Ngày</th><th>Trạng thái</th><th>Hành động</th></tr>
+              </thead>
+              <tbody id="affDetailBody">
+                <tr><td colspan="7"><div class="empty"><p>Đang tải...</p></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /main-body -->
   </main>
 </div><!-- /admin-shell -->
@@ -1064,6 +1121,7 @@ const SECTION_META = {
   minicourse: { title: 'Mini-course',  breadcrumb: 'Quản lý Mini-course' },
   products:   { title: 'Sản phẩm số', breadcrumb: 'Sản phẩm số (Tip, Ebook, Bundle)' },
   orders:     { title: 'Đơn hàng',    breadcrumb: 'Quản lý đơn hàng' },
+  affiliate:  { title: 'Affiliate',   breadcrumb: 'Chương trình giới thiệu bạn bè' },
 };
 
 // ── Section switch ──
@@ -1088,6 +1146,7 @@ function refreshCurrent() {
     minicourse: loadMiniCourses,
     products:   loadProducts,
     orders:     loadOrders,
+    affiliate:  loadAffiliate,
   };
   if (loaders[_currentSection]) loaders[_currentSection]();
 }
@@ -1427,6 +1486,114 @@ if (zone) {
 
 // ── Orders ──
 let _allOrders = [];
+// ── Affiliate ──
+let _allReferrals = [];
+let _affFilter = 'all';
+
+async function loadAffiliate() {
+  const { data, error } = await _supabase.from('referrals')
+    .select('*, referrer:referrer_id(id, full_name, email, referral_code)')
+    .order('created_at', { ascending: false });
+
+  if (error) { showAlert('affiliateAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  _allReferrals = data || [];
+  renderAffiliateStats();
+  renderAffiliateLeaderboard();
+  renderAffiliateDetail();
+}
+
+function renderAffiliateStats() {
+  const list = _allReferrals;
+  const confirmed = list.filter(r => r.status === 'confirmed');
+  const paid = list.filter(r => r.status === 'paid');
+  const referrerIds = new Set(list.map(r => r.referrer_id).filter(Boolean));
+
+  document.getElementById('affTotalReferrers').textContent = referrerIds.size;
+  document.getElementById('affCoursesSold').textContent = confirmed.length + paid.length;
+  document.getElementById('affTotalOwed').textContent = confirmed.reduce((s, r) => s + (r.commission_amount || 0), 0).toLocaleString('vi-VN') + '₫';
+  document.getElementById('affTotalPaid').textContent = paid.reduce((s, r) => s + (r.commission_amount || 0), 0).toLocaleString('vi-VN') + '₫';
+}
+
+function renderAffiliateLeaderboard() {
+  const byReferrer = {};
+  _allReferrals.forEach(r => {
+    if (!r.referrer_id) return;
+    const key = r.referrer_id;
+    if (!byReferrer[key]) {
+      byReferrer[key] = {
+        referrer: r.referrer, count: 0, coursesSold: 0,
+        pendingAmt: 0, confirmedAmt: 0, paidAmt: 0
+      };
+    }
+    const row = byReferrer[key];
+    row.count++;
+    if (r.status === 'confirmed' || r.status === 'paid') row.coursesSold++;
+    if (r.status === 'pending')   row.pendingAmt   += (r.commission_amount || 0);
+    if (r.status === 'confirmed') row.confirmedAmt += (r.commission_amount || 0);
+    if (r.status === 'paid')      row.paidAmt      += (r.commission_amount || 0);
+  });
+
+  const rows = Object.values(byReferrer).sort((a, b) => (b.confirmedAmt + b.paidAmt) - (a.confirmedAmt + a.paidAmt));
+  const tbody = document.getElementById('affLeaderboardBody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có dữ liệu affiliate</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((row, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${row.referrer?.full_name || '—'}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${row.referrer?.email || ''}</span></td>
+      <td style="font-size:0.8rem;color:#94A3B8">${row.referrer?.referral_code || '—'}</td>
+      <td>${row.count}</td>
+      <td>${row.coursesSold}</td>
+      <td style="color:#FBBF24">${row.pendingAmt.toLocaleString('vi-VN')}₫</td>
+      <td style="color:#60A5FA">${row.confirmedAmt.toLocaleString('vi-VN')}₫</td>
+      <td style="color:#34D399">${row.paidAmt.toLocaleString('vi-VN')}₫</td>
+    </tr>`).join('');
+}
+
+function filterAffiliate(f) {
+  _affFilter = f;
+  ['All','Pending','Confirmed','Paid'].forEach(s => {
+    const el = document.getElementById('affFilter' + s);
+    if (el) el.style.cssText = '';
+  });
+  const active = document.getElementById('affFilter' + f.charAt(0).toUpperCase() + f.slice(1));
+  if (active) active.style.cssText = 'background:rgba(37,99,235,0.15);color:#60A5FA;border-color:rgba(37,99,235,0.3)';
+  renderAffiliateDetail();
+}
+
+function renderAffiliateDetail() {
+  const list = _affFilter === 'all' ? _allReferrals : _allReferrals.filter(r => r.status === _affFilter);
+  const tbody = document.getElementById('affDetailBody');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><p>Không có lượt giới thiệu nào</p></div></td></tr>`;
+    return;
+  }
+  const statusLabel = { pending:'⏳ Chờ xác nhận', confirmed:'✅ Đã xác nhận', paid:'💸 Đã thanh toán' };
+  const statusClass = { pending:'badge-pending', confirmed:'badge-active', paid:'badge-active' };
+  tbody.innerHTML = list.map((r, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${r.referrer?.full_name || '—'}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${r.referrer?.email || ''}</span></td>
+      <td style="font-size:0.8rem;color:#94A3B8">${r.referred_email}</td>
+      <td style="font-weight:700;color:#fff">${(r.commission_amount||0).toLocaleString('vi-VN')}₫</td>
+      <td style="font-size:0.78rem;color:#475569">${fmtDate(r.created_at)}</td>
+      <td><span class="badge ${statusClass[r.status] || 'badge-closed'}">${statusLabel[r.status] || r.status}</span></td>
+      <td>
+        ${r.status === 'confirmed' ? `<button class="btn btn-primary btn-sm" onclick="markReferralPaid(${r.id})">💸 Đánh dấu đã trả</button>` : `<span style="font-size:0.72rem;color:#334155">—</span>`}
+      </td>
+    </tr>`).join('');
+}
+
+async function markReferralPaid(id) {
+  if (!confirm('Xác nhận đã chuyển khoản hoa hồng cho thành viên này?')) return;
+  const { error } = await _supabase.from('referrals').update({ status: 'paid', paid_at: new Date().toISOString() }).eq('id', id);
+  if (error) { showAlert('affiliateAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  showAlert('affiliateAlert', '✅ Đã đánh dấu thanh toán hoa hồng.');
+  loadAffiliate();
+}
+
 let _orderFilter = 'all';
 
 async function loadOrders() {

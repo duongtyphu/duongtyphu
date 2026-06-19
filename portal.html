@@ -273,14 +273,33 @@
 
     /* ─── REFERRAL ─── */
     .referral-box { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 28px 30px; }
-    .referral-stats { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 22px; }
-    .referral-stat b { display: block; font-size: 1.5rem; font-weight: 900; color: #fff; }
-    .referral-stat span { font-size: 0.78rem; color: var(--muted); }
+    .referral-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }
+    @media (max-width: 760px) { .referral-stats { grid-template-columns: repeat(2, 1fr); } }
+    .referral-stat-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+    .referral-stat-card .ric { font-size: 1.3rem; margin-bottom: 6px; }
+    .referral-stat-card b { display: block; font-size: 1.4rem; font-weight: 900; color: #fff; }
+    .referral-stat-card span { font-size: 0.76rem; color: var(--muted); }
     .referral-link-row { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
     .referral-link-row input { flex: 1; min-width: 220px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 0.85rem; font-family: inherit; }
     .referral-copy-btn { background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; border: none; border-radius: 10px; padding: 11px 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit; white-space: nowrap; }
     .referral-copy-btn:hover { opacity: 0.9; }
-    .referral-note { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+    .referral-note { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+    .referral-breakdown { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+    .referral-breakdown-item { flex: 1; min-width: 140px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+    .referral-breakdown-item b { display: block; font-size: 1.05rem; font-weight: 800; }
+    .referral-breakdown-item span { font-size: 0.72rem; color: var(--muted); }
+    .rb-pending b { color: #FBBF24; }
+    .rb-confirmed b { color: #60A5FA; }
+    .rb-paid b { color: #34D399; }
+    .referral-history-title { font-size: 0.85rem; font-weight: 700; color: var(--text); margin: 18px 0 10px; }
+    .referral-history-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .referral-history-table th { text-align: left; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    .referral-history-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .ref-status-pill { font-size: 0.7rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+    .ref-status-pill.pending { background: rgba(251,191,36,0.15); color: #FBBF24; }
+    .ref-status-pill.confirmed { background: rgba(96,165,250,0.15); color: #60A5FA; }
+    .ref-status-pill.paid { background: rgba(52,211,153,0.15); color: #34D399; }
+    .referral-empty-history { padding: 18px; text-align: center; color: var(--muted); font-size: 0.82rem; }
 
     /* ─── PURCHASED ─── */
     .purchased-item {
@@ -542,15 +561,31 @@
     </div>
     <div class="referral-box">
       <div class="referral-stats">
-        <div class="referral-stat"><b id="refCount">0</b><span>Người đã giới thiệu</span></div>
-        <div class="referral-stat"><b id="refConfirmed">0</b><span>Đã chuyển đổi</span></div>
-        <div class="referral-stat"><b id="refCommission">0₫</b><span>Hoa hồng đã ghi nhận</span></div>
+        <div class="referral-stat-card"><div class="ric">👥</div><b id="refCount">0</b><span>Người đã giới thiệu</span></div>
+        <div class="referral-stat-card"><div class="ric">🎓</div><b id="refCoursesSold">0</b><span>Khoá học bán được</span></div>
+        <div class="referral-stat-card"><div class="ric">💰</div><b id="refCommission">0₫</b><span>Tổng hoa hồng (đã xác nhận)</span></div>
+        <div class="referral-stat-card"><div class="ric">📅</div><b id="refSince">—</b><span>Tham gia chương trình từ</span></div>
       </div>
+
+      <div class="referral-breakdown">
+        <div class="referral-breakdown-item rb-pending"><b id="refPendingAmt">0₫</b><span>Chờ xác nhận (<span id="refPendingCount">0</span>)</span></div>
+        <div class="referral-breakdown-item rb-confirmed"><b id="refConfirmedAmt">0₫</b><span>Đã xác nhận, chưa thanh toán (<span id="refConfirmedCount">0</span>)</span></div>
+        <div class="referral-breakdown-item rb-paid"><b id="refPaidAmt">0₫</b><span>Đã thanh toán cho bạn (<span id="refPaidCount">0</span>)</span></div>
+      </div>
+
       <div class="referral-link-row">
         <input type="text" id="refLinkInput" readonly>
         <button type="button" id="refCopyBtn" class="referral-copy-btn">Sao chép link</button>
       </div>
-      <p class="referral-note">Chia sẻ link này cho bạn bè. Khi họ đăng ký và hoàn tất thanh toán một khoá học, bạn nhận 10% học phí làm hoa hồng.</p>
+      <p class="referral-note">Chia sẻ link này cho bạn bè. Khi họ đăng ký và hoàn tất thanh toán một khoá học/bài giảng, bạn nhận 10% giá trị đơn hàng làm hoa hồng. Hoa hồng chuyển trạng thái: <b>Chờ xác nhận</b> → <b>Đã xác nhận</b> → <b>Đã thanh toán</b> khi đội ngũ VDAI Academy chuyển khoản cho bạn.</p>
+
+      <div class="referral-history-title">Lịch sử giới thiệu</div>
+      <div id="referralHistoryWrap">
+        <table class="referral-history-table">
+          <thead><tr><th>Thời gian</th><th>Người được giới thiệu</th><th>Hoa hồng</th><th>Trạng thái</th></tr></thead>
+          <tbody id="referralHistoryBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -796,20 +831,54 @@ async function loadStore() {
 
 // ── Referral ──
 async function loadReferral() {
-  const { data: member } = await _supabase.from('members').select('id, referral_code').eq('email', _userEmail).maybeSingle();
+  const { data: member } = await _supabase.from('members').select('id, referral_code, created_at').eq('email', _userEmail).maybeSingle();
   if (!member?.referral_code) return;
 
   const link = `${window.location.origin}/register.html?ref=${member.referral_code}`;
   document.getElementById('refLinkInput').value = link;
+  if (member.created_at) {
+    document.getElementById('refSince').textContent = new Date(member.created_at).toLocaleDateString('vi-VN');
+  }
 
-  const { data: refs } = await _supabase.from('referrals').select('status, commission_amount').eq('referrer_id', member.id);
+  const { data: refs } = await _supabase.from('referrals')
+    .select('status, commission_amount, referred_email, created_at')
+    .eq('referrer_id', member.id)
+    .order('created_at', { ascending: false });
   const list = refs || [];
-  const confirmed = list.filter(r => r.status === 'confirmed' || r.status === 'paid');
-  const totalCommission = confirmed.reduce((sum, r) => sum + (r.commission_amount || 0), 0);
+
+  const pending   = list.filter(r => r.status === 'pending');
+  const confirmed = list.filter(r => r.status === 'confirmed');
+  const paid      = list.filter(r => r.status === 'paid');
+  const coursesSold = confirmed.length + paid.length;
+
+  const sum = arr => arr.reduce((s, r) => s + (r.commission_amount || 0), 0);
+  const totalConfirmedCommission = sum(confirmed) + sum(paid);
 
   document.getElementById('refCount').textContent = list.length;
-  document.getElementById('refConfirmed').textContent = confirmed.length;
-  document.getElementById('refCommission').textContent = fmtPrice(totalCommission) + '₫';
+  document.getElementById('refCoursesSold').textContent = coursesSold;
+  document.getElementById('refCommission').textContent = fmtPrice(totalConfirmedCommission) + '₫';
+
+  document.getElementById('refPendingAmt').textContent = fmtPrice(sum(pending)) + '₫';
+  document.getElementById('refPendingCount').textContent = pending.length;
+  document.getElementById('refConfirmedAmt').textContent = fmtPrice(sum(confirmed)) + '₫';
+  document.getElementById('refConfirmedCount').textContent = confirmed.length;
+  document.getElementById('refPaidAmt').textContent = fmtPrice(sum(paid)) + '₫';
+  document.getElementById('refPaidCount').textContent = paid.length;
+
+  const statusLabel = { pending: 'Chờ xác nhận', confirmed: 'Đã xác nhận', paid: 'Đã thanh toán' };
+  const body = document.getElementById('referralHistoryBody');
+  if (!list.length) {
+    body.innerHTML = '';
+    document.getElementById('referralHistoryWrap').innerHTML = '<div class="referral-empty-history">Chưa có lượt giới thiệu nào. Hãy chia sẻ link của bạn!</div>';
+  } else {
+    body.innerHTML = list.map(r => `
+      <tr>
+        <td>${r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+        <td>${(r.referred_email || '').replace(/(.{3}).+(@.+)/, '$1***$2')}</td>
+        <td>${fmtPrice(r.commission_amount || 0)}₫</td>
+        <td><span class="ref-status-pill ${r.status}">${statusLabel[r.status] || r.status}</span></td>
+      </tr>`).join('');
+  }
 
   document.getElementById('refCopyBtn').addEventListener('click', () => {
     navigator.clipboard.writeText(link);
