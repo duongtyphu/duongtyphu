@@ -20,8 +20,5 @@
     { "source": "/vdai-scale", "destination": "/vdai-scale/index.html" },
     { "source": "/vdai-scale/", "destination": "/vdai-scale/index.html" }
   ],
-  "redirects": [],
-  "errorPages": {
-    "404": "/404.html"
-  }
+  "redirects": []
 }
