@@ -19,7 +19,7 @@ const VDAI_CONFIG = {
   site: {
     name: "VDAI Academy",
     tagline: "Vận hành tinh gọn. Nhân bản mạnh mẽ.",
-    url: "https://example.com", // TODO: OWNER INPUT — Tên miền chính thức
+    url: "https://v-academy-mauve.vercel.app", // TODO: OWNER INPUT — đổi khi mua domain riêng
     logoPath: "assets/images/logo.svg", // TODO: OWNER INPUT — Logo chính thức
     faviconPath: "assets/icons/favicon.ico", // TODO: OWNER INPUT — Favicon chính thức
     defaultOgImage: "assets/images/og-cover.jpg" // TODO: OWNER INPUT — Ảnh chia sẻ mạng xã hội (1200x630)

@@ -9,6 +9,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 const FROM_EMAIL = "VDAI Academy <onboarding@resend.dev>"; // TODO: OWNER INPUT — đổi sang domain riêng đã verify trên Resend khi có domain
+const SITE_URL = "https://v-academy-mauve.vercel.app"; // TODO: OWNER INPUT — đổi khi có domain riêng
 
 const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 
@@ -21,14 +22,14 @@ Deno.serve(async (req) => {
     }
 
     const firstName = (member.full_name || member.email.split("@")[0]).split(" ")[0];
-    const referralLink = `https://vdaiacademy.com/register.html?ref=${member.referral_code ?? ""}`;
+    const referralLink = `${SITE_URL}/register.html?ref=${member.referral_code ?? ""}`;
 
     const html = `
       <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;color:#0F172A">
         <h2 style="color:#2563EB">Chào ${firstName}, chào mừng bạn đến với VDAI Academy! 🎉</h2>
         <p>Tài khoản của bạn đã được tạo thành công. Đăng nhập vào trang thành viên để nhận tài liệu, mini-course miễn phí và theo dõi lịch khai giảng VDAI SOLO &amp; SCALE.</p>
         <p style="margin:24px 0">
-          <a href="https://vdaiacademy.com/portal.html" style="background:#2563EB;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:700">Vào trang thành viên →</a>
+          <a href="${SITE_URL}/portal.html" style="background:#2563EB;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:700">Vào trang thành viên →</a>
         </p>
         <p>Mã giới thiệu của bạn: <b>${member.referral_code ?? ""}</b><br>
         Mỗi bạn bè đăng ký khóa học qua link giới thiệu, bạn nhận được hoa hồng:<br>
