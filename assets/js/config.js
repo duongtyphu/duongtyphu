@@ -20,9 +20,9 @@ const VDAI_CONFIG = {
     name: "VDAI Academy",
     tagline: "Vận hành tinh gọn. Nhân bản mạnh mẽ.",
     url: "https://v-academy-mauve.vercel.app", // TODO: OWNER INPUT — đổi khi mua domain riêng
-    logoPath: "assets/images/logo.svg", // TODO: OWNER INPUT — Logo chính thức
-    faviconPath: "assets/icons/favicon.ico", // TODO: OWNER INPUT — Favicon chính thức
-    defaultOgImage: "assets/images/og-cover.jpg" // TODO: OWNER INPUT — Ảnh chia sẻ mạng xã hội (1200x630)
+    logoPath: "assets/images/logo.svg?v=20260620f",
+    faviconPath: "assets/icons/favicon.ico?v=20260620f",
+    defaultOgImage: "assets/images/og-cover.jpg?v=20260620f"
   },
 
   // ──────────────────────────────────────────────────────────
