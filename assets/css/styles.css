@@ -1385,6 +1385,12 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
   .faq-question { min-height: 52px; }
 }
 
+/* Fallback for in-app webviews (e.g. Zalo) that ignore the viewport meta tag
+   and report an inflated layout width — keys off physical device width instead */
+@media (max-device-width: 700px) {
+  .roadmap-grid, .roadmap-grid.phases-6 { grid-template-columns: 1fr !important; }
+}
+
 /* ── Small mobile ≤480px ── */
 @media (max-width: 480px) {
   .container, .container-narrow { padding: 0 16px; }
