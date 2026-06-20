@@ -73,31 +73,25 @@
     <div class="container">
       <h1>Chính sách hoàn phí</h1>
       <p>Quy định về bảo lưu và hoàn phí đối với các chương trình VDAI SOLO và VDAI SCALE.</p>
-      <div class="static-updated">Cập nhật lần cuối: 12/06/2026</div>
+      <div class="static-updated">Cập nhật lần cuối: 20/06/2026</div>
     </div>
   </div>
 
   <div class="container-narrow static-body">
-    <div class="static-callout">
-      <strong>TODO: OWNER INPUT</strong> — Nội dung chi tiết về điều kiện, thời hạn và quy trình hoàn phí/bảo lưu
-      cụ thể cho từng chương trình (VDAI SOLO, VDAI SCALE) cần được chủ sở hữu xác nhận trước khi xuất bản.
-      Khung nội dung dưới đây là cấu trúc tham khảo, chưa phải chính sách chính thức.
-    </div>
-
     <h2>1. Phạm vi áp dụng</h2>
     <p>Chính sách này áp dụng cho các giao dịch đăng ký tham gia chương trình VDAI SOLO và VDAI SCALE thông qua tư vấn trực tiếp từ VDAI Academy. Chính sách không áp dụng cho các dịch vụ/sản phẩm của bên thứ ba được giới thiệu trong quá trình học (nếu có).</p>
 
     <h2>2. Điều kiện bảo lưu</h2>
-    <p><span class="tag tag-todo">TODO: OWNER INPUT — Điều kiện và thời hạn cho phép bảo lưu khóa học (ví dụ: số lần bảo lưu tối đa, thời gian báo trước)</span></p>
+    <p>Học viên được bảo lưu khóa học <strong>1 lần duy nhất</strong>, với điều kiện gửi yêu cầu bảo lưu trước <strong>ít nhất 3 ngày</strong> so với buổi học kế tiếp. Thời hạn bảo lưu tối đa là 3 tháng kể từ ngày được chấp thuận; sau thời hạn này, học viên cần đăng ký lại theo lịch khai giảng mới.</p>
 
     <h2>3. Điều kiện hoàn phí</h2>
-    <p><span class="tag tag-todo">TODO: OWNER INPUT — Điều kiện hoàn phí cụ thể (ví dụ: thời hạn yêu cầu hoàn phí kể từ ngày đăng ký/kích hoạt, tỷ lệ hoàn phí theo từng mốc thời gian)</span></p>
+    <p>Học viên được hoàn <strong>100% học phí</strong> nếu gửi yêu cầu hoàn phí trong vòng <strong>7 ngày</strong> kể từ ngày đăng ký/kích hoạt khóa học. Sau thời hạn 7 ngày, VDAI Academy không áp dụng hoàn phí.</p>
 
     <h2>4. Trường hợp không áp dụng hoàn phí</h2>
-    <p><span class="tag tag-todo">TODO: OWNER INPUT — Các trường hợp không được hoàn phí (ví dụ: đã truy cập quá X% nội dung, vi phạm điều khoản sử dụng)</span></p>
+    <p>Yêu cầu hoàn phí gửi sau thời hạn 7 ngày nêu tại Mục 3 sẽ không được chấp thuận. Học viên vi phạm điều khoản sử dụng (chia sẻ tài khoản, sao chép/phân phối lại nội dung khóa học) cũng không được hoàn phí.</p>
 
     <h2>5. Quy trình yêu cầu hoàn phí / bảo lưu</h2>
-    <p><span class="tag tag-todo">TODO: OWNER INPUT — Các bước cụ thể: gửi yêu cầu qua kênh nào, thời gian xử lý, thời gian hoàn tiền dự kiến</span></p>
+    <p>Học viên gửi yêu cầu hoàn phí hoặc bảo lưu qua email <strong id="contactEmail3"></strong>, kèm thông tin đăng ký (họ tên, số điện thoại, chương trình đã đăng ký) và lý do yêu cầu. VDAI Academy xử lý và phản hồi trong vòng <strong>3-5 ngày làm việc</strong>; nếu yêu cầu hoàn phí được chấp thuận, tiền sẽ được hoàn trong vòng 7 ngày làm việc kể từ ngày phản hồi chấp thuận.</p>
 
     <h2>6. Liên hệ</h2>
     <p>Mọi yêu cầu liên quan đến hoàn phí hoặc bảo lưu vui lòng liên hệ:</p>
@@ -203,6 +197,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('contactEmail').textContent = VDAI_CONFIG.contact.email;
+    document.getElementById('contactEmail3').textContent = VDAI_CONFIG.contact.email;
     document.getElementById('contactPhone').textContent = VDAI_CONFIG.contact.phone;
   });
 </script>
