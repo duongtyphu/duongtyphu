@@ -786,6 +786,7 @@ section { position: relative; }
   transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
 .roadmap-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(6,26,64,0.12); }
+.roadmap-card-fullrow { grid-column: span 3; }
 
 /* SOLO outputs: orange */
 #solo-outputs { background: var(--white); }
@@ -1362,6 +1363,7 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
   .mobile-drawer-panel a { min-height: 48px; display: flex; align-items: center; }
 
   .roadmap-grid, .roadmap-grid.phases-6 { grid-template-columns: repeat(2, 1fr) !important; }
+  .roadmap-card-fullrow { grid-column: span 2 !important; }
   .assistants-grid { grid-template-columns: repeat(2, 1fr); }
   .models-grid { grid-template-columns: repeat(2, 1fr); }
   .method-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1389,6 +1391,7 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
    and report an inflated layout width — keys off physical device width instead */
 @media (max-device-width: 700px) {
   .roadmap-grid, .roadmap-grid.phases-6 { grid-template-columns: repeat(2, 1fr) !important; }
+  .roadmap-card-fullrow { grid-column: span 2 !important; }
 }
 
 /* ── Small mobile ≤480px ── */
