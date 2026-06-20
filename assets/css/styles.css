@@ -776,7 +776,7 @@ section { position: relative; }
 .roadmap-section { padding: var(--space-3xl) 0; }
 .roadmap-section.alt { background: var(--off-white); }
 .roadmap-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: var(--space-sm); align-items: stretch;
 }
 .roadmap-card {
@@ -826,7 +826,7 @@ section { position: relative; }
 .roadmap-field-val { font-size: var(--text-sm); color: var(--gray-700); line-height: 1.55; }
 
 /* SCALE phases use 6 items -> 3 cols x 2 rows */
-.roadmap-grid.phases-6 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.roadmap-grid.phases-6 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 
 /* ── 14. TRỢ LÝ AI ── */
 #ai-assistants { padding: var(--space-3xl) 0; background: var(--white); }
@@ -1361,7 +1361,7 @@ footer { background: var(--deep-navy); color: rgba(255,255,255,0.55); padding: v
   .nav-actions .btn { min-height: 44px; padding: 10px 18px; }
   .mobile-drawer-panel a { min-height: 48px; display: flex; align-items: center; }
 
-  .roadmap-grid, .roadmap-grid.phases-6 { grid-template-columns: 1fr; }
+  .roadmap-grid, .roadmap-grid.phases-6 { grid-template-columns: 1fr !important; }
   .assistants-grid { grid-template-columns: repeat(2, 1fr); }
   .models-grid { grid-template-columns: repeat(2, 1fr); }
   .method-grid { grid-template-columns: repeat(2, 1fr); }
