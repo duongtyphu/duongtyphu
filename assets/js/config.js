@@ -104,19 +104,19 @@ const VDAI_CONFIG = {
       name: "Võ Đương",
       role: "Giảng viên AI Ứng dụng — VDAI SOLO",
       bio: "Chuyên gia ứng dụng AI trong công việc và kinh doanh với nhiều năm kinh nghiệm thực chiến. Phương pháp giảng dạy tập trung vào kết quả đo lường được — học viên áp dụng ngay từ buổi đầu tiên.",
-      photo: "assets/images/instructor-vo-duong.jpg"
+      photo: "assets/images/instructor-vo-duong.jpg?v=20260620"
     },
     {
       name: "Vũ Tư",
       role: "Giảng viên AI & Tự động hóa",
       bio: "Chuyên gia đào tạo AI và tự động hóa quy trình, đã dẫn dắt nhiều dự án triển khai AI thực tiễn giúp cá nhân và đội nhóm vận hành hiệu quả hơn.",
-      photo: "assets/images/instructor-vu-tu.jpg"
+      photo: "assets/images/instructor-vu-tu.jpg?v=20260620"
     },
     {
       name: "Hải Dương",
       role: "Giảng viên AI Chuyên sâu — VDAI SCALE",
       bio: "Chuyên gia AI chuyên sâu, nghiên cứu và ứng dụng các công nghệ AI tiên tiến. Đồng hành cùng học viên trên hành trình từ người dùng AI thông thường đến xây dựng hệ thống AI vận hành thực tế.",
-      photo: "assets/images/instructor-hai-duong.jpg"
+      photo: "assets/images/instructor-hai-duong.jpg?v=20260620"
     },
     {
       name: "Đỗ Tâm",
