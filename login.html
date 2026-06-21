@@ -149,6 +149,10 @@
 (async () => {
   const msg = document.getElementById('authMsg');
 
+  // Dự phòng: nếu file assets/js/supabase-config.js trên server chưa được cập nhật
+  // (thiếu khai báo SITE_URL), vẫn dùng được domain chính thức thay vì throw lỗi.
+  const SITE_URL_RESOLVED = (typeof SITE_URL !== 'undefined') ? SITE_URL : 'https://v-academy-mauve.vercel.app';
+
   // Link "Quên mật khẩu" trong email trả về URL có #access_token=...&type=recovery
   // → Supabase tự tạo session tạm. Phải xử lý TRƯỚC khi kiểm tra "đã đăng nhập",
   // nếu không sẽ bị chuyển hướng thẳng vào portal mà không cho đặt mật khẩu mới.
@@ -211,7 +215,7 @@
   document.getElementById('googleBtn').addEventListener('click', async () => {
     const { error } = await _supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: SITE_URL + '/portal.html' }
+      options: { redirectTo: SITE_URL_RESOLVED + '/portal.html' }
     });
     if (error) {
       msg.className = 'auth-msg error';
@@ -250,7 +254,7 @@
 
     try {
       const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: SITE_URL + '/login.html'
+        redirectTo: SITE_URL_RESOLVED + '/login.html'
       });
 
       if (error) {

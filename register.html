@@ -134,6 +134,10 @@
 <script src="assets/js/supabase-config.js"></script>
 <script>
 (async () => {
+  // Dự phòng: nếu file assets/js/supabase-config.js trên server chưa được cập nhật
+  // (thiếu khai báo SITE_URL), vẫn dùng được domain chính thức thay vì throw lỗi.
+  const SITE_URL_RESOLVED = (typeof SITE_URL !== 'undefined') ? SITE_URL : 'https://v-academy-mauve.vercel.app';
+
   const session = await getSession();
   if (session) {
     window.location.href = 'portal.html';
@@ -144,7 +148,7 @@
   document.getElementById('googleBtn').addEventListener('click', async () => {
     const { error } = await _supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: SITE_URL + '/portal.html' }
+      options: { redirectTo: SITE_URL_RESOLVED + '/portal.html' }
     });
     if (error) {
       const msg = document.getElementById('authMsg');
