@@ -642,6 +642,17 @@
       .hero-title { font-size: 1.6rem; }
       .nav-email { display: none; }
     }
+
+    @media (max-width: 480px) {
+      .nav { padding: 0 12px; }
+      .wrap { padding: 0 12px 80px; }
+      .modal-box { padding: 20px; max-width: 100%; }
+      .hero-title { font-size: 1.35rem; }
+      .flagship-name { font-size: 1.3rem; }
+      .notice-ticker-track span { font-size: 0.88rem; }
+      .referral-link-row { flex-direction: column; }
+      .referral-link-row input { min-width: unset; width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -809,7 +820,7 @@
       <p class="referral-note">Chia sẻ link này cho bạn bè. Khi họ đăng ký và hoàn tất thanh toán một khoá học/bài giảng, bạn nhận 10% giá trị đơn hàng làm hoa hồng. Hoa hồng chuyển trạng thái: <b>Chờ xác nhận</b> → <b>Đã xác nhận</b> → <b>Đã thanh toán</b> khi đội ngũ VDAI Academy chuyển khoản cho bạn.</p>
 
       <div class="referral-history-title">Lịch sử giới thiệu</div>
-      <div id="referralHistoryWrap">
+      <div id="referralHistoryWrap" style="overflow-x:auto">
         <table class="referral-history-table">
           <thead><tr><th>Thời gian</th><th>Người được giới thiệu</th><th>Hoa hồng</th><th>Trạng thái</th></tr></thead>
           <tbody id="referralHistoryBody"></tbody>

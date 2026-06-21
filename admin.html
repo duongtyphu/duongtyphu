@@ -580,6 +580,7 @@
       .form-row { grid-template-columns: 1fr; }
       .main-body { padding: 20px 16px 60px; }
       .main-header { padding: 14px 16px; }
+      .main-content { margin-left: 0; }
       .admin-sidebar-toggle {
         display: flex; align-items: center; gap: 7px; position: fixed; left: 16px; bottom: 18px; z-index: 300;
         background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; border: none; border-radius: 999px;
@@ -593,6 +594,12 @@
       .sidebar.mobile-open .sidebar-footer .btn-signout span { display: inline; }
       .sidebar.mobile-open .sidebar-item { padding: 10px 18px; justify-content: flex-start; }
       .admin-sidebar-overlay.show { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 280; }
+    }
+
+    @media (max-width: 480px) {
+      .main-body { padding: 16px 12px 60px; }
+      .modal-box { padding: 20px; max-width: 100%; }
+      .stat-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
