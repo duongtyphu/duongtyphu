@@ -2278,6 +2278,31 @@
       });
     }
 
+    // ── Chuyên gia thêm từ Admin (Supabase) — nối thêm vào cuối đội ngũ chuyên gia ──
+    (async () => {
+      if (!expertsGrid || typeof _supabase === 'undefined' || !_supabase) return;
+      const { data } = await _supabase.from('experts').select('*').eq('active', true).order('created_at', { ascending: false });
+      if (!data || !data.length) return;
+      data.forEach(e => {
+        const card = document.createElement('div');
+        card.className = 'expert-card reveal visible';
+        card.setAttribute('role', 'listitem');
+        card.innerHTML = `
+          <div class="expert-photo-wrap">
+            ${e.avatar_url
+              ? `<img src="${escapeAttr(e.avatar_url)}" alt="Ảnh chân dung ${escapeAttr(e.name)}" loading="lazy">`
+              : `<div class="expert-photo-placeholder">👤</div>`}
+          </div>
+          <div class="expert-body">
+            <h3 class="expert-name">${escapeAttr(e.name)}</h3>
+            <div class="expert-role">${escapeAttr(e.title || '')}</div>
+            <p class="expert-bio">${escapeAttr(e.bio || '')}</p>
+          </div>
+        `;
+        expertsGrid.appendChild(card);
+      });
+    })();
+
     // Render case studies
     const caseGrid = document.getElementById('caseStudiesGrid');
     VDAI_CONFIG.caseStudies.forEach(cs => {
