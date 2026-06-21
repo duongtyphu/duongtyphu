@@ -248,19 +248,24 @@
     forgotSubmitBtn.disabled = true;
     forgotSubmitBtn.textContent = 'Đang gửi...';
 
-    const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: SITE_URL + '/login.html'
-    });
+    try {
+      const { error } = await _supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: SITE_URL + '/login.html'
+      });
 
-    forgotSubmitBtn.disabled = false;
-    forgotSubmitBtn.textContent = 'Gửi email đặt lại mật khẩu';
-
-    if (error) {
+      if (error) {
+        msg.className = 'auth-msg error';
+        msg.textContent = 'Lỗi: ' + error.message;
+      } else {
+        msg.className = 'auth-msg success';
+        msg.textContent = 'Đã gửi email đặt lại mật khẩu! Kiểm tra hộp thư của bạn.';
+      }
+    } catch (err) {
       msg.className = 'auth-msg error';
-      msg.textContent = 'Lỗi: ' + error.message;
-    } else {
-      msg.className = 'auth-msg success';
-      msg.textContent = 'Đã gửi email đặt lại mật khẩu! Kiểm tra hộp thư của bạn.';
+      msg.textContent = 'Lỗi kết nối: ' + (err && err.message ? err.message : 'Không gửi được email, vui lòng thử lại.');
+    } finally {
+      forgotSubmitBtn.disabled = false;
+      forgotSubmitBtn.textContent = 'Gửi email đặt lại mật khẩu';
     }
   });
 
