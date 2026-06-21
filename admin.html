@@ -643,6 +643,30 @@
         <span class="sidebar-item-icon">🤝</span>
         <span>Affiliate</span>
       </button>
+      <button class="sidebar-item" onclick="switchSection('leads', this)">
+        <span class="sidebar-item-icon">📞</span>
+        <span>Lead</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('schedules', this)">
+        <span class="sidebar-item-icon">🗓️</span>
+        <span>Lịch khai giảng</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('coupons', this)">
+        <span class="sidebar-item-icon">🏷️</span>
+        <span>Mã giảm giá</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('casestudies', this)">
+        <span class="sidebar-item-icon">📈</span>
+        <span>Case study</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('experts', this)">
+        <span class="sidebar-item-icon">🧑‍🏫</span>
+        <span>Chuyên gia</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('blog', this)">
+        <span class="sidebar-item-icon">📝</span>
+        <span>Blog</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-signout" onclick="signOut()"><span>Đăng xuất</span></button>
@@ -1100,6 +1124,175 @@
         </div>
       </div>
 
+      <!-- PANEL: Leads -->
+      <div class="panel" id="panel-leads">
+        <div class="section-title">Lead</div>
+        <div class="section-sub">Khách hàng tiềm năng thu thập từ quiz, form quan tâm...</div>
+        <div class="alert" id="leadsAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm Lead mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group"><label>Họ tên</label><input type="text" id="leadName" placeholder="Nguyễn Văn A"></div>
+              <div class="form-group"><label>Email</label><input type="email" id="leadEmail" placeholder="email@example.com"></div>
+              <div class="form-group"><label>Số điện thoại</label><input type="text" id="leadPhone" placeholder="09xxxxxxxx"></div>
+              <div class="form-group"><label>Nguồn</label><input type="text" id="leadSource" placeholder="vd: quiz, landing-solo"></div>
+              <div class="form-group full"><label>Ghi chú</label><input type="text" id="leadNote" placeholder="Ghi chú thêm..."></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addLeadBtn" onclick="addLead()">+ Thêm Lead</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách Lead</h2><button class="btn btn-ghost btn-sm" onclick="loadLeads()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Họ tên</th><th>Liên hệ</th><th>Nguồn</th><th>Trạng thái</th><th>Ngày</th><th>Hành động</th></tr></thead>
+            <tbody id="leadsBody"><tr><td colspan="7"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Lịch khai giảng -->
+      <div class="panel" id="panel-schedules">
+        <div class="section-title">Lịch khai giảng</div>
+        <div class="section-sub">Lịch học các khoá VDAI SOLO / SCALE, link Zoom/Meet</div>
+        <div class="alert" id="schedulesAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm lịch khai giảng mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group"><label>Tên khoá học *</label><input type="text" id="schCourseName" placeholder="VDAI SOLO"></div>
+              <div class="form-group"><label>Ngày khai giảng</label><input type="date" id="schStartDate"></div>
+              <div class="form-group"><label>Ngày kết thúc</label><input type="date" id="schEndDate"></div>
+              <div class="form-group"><label>Tổng số chỗ</label><input type="number" id="schSeatsTotal" min="0" placeholder="30"></div>
+              <div class="form-group full"><label>Lịch học (text)</label><input type="text" id="schScheduleText" placeholder="Thứ 3 - 5 - 7, 20h-21h30"></div>
+              <div class="form-group full"><label>Link Zoom/Google Meet</label><input type="url" id="schMeetUrl" placeholder="https://meet.google.com/..."></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addSchBtn" onclick="addSchedule()">+ Thêm lịch</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách lịch khai giảng</h2><button class="btn btn-ghost btn-sm" onclick="loadSchedules()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Khoá học</th><th>Khai giảng</th><th>Lịch học</th><th>Meet</th><th>Chỗ</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody id="schedulesBody"><tr><td colspan="8"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Mã giảm giá -->
+      <div class="panel" id="panel-coupons">
+        <div class="section-title">Mã giảm giá</div>
+        <div class="section-sub">Quản lý coupon áp dụng cho sản phẩm / khoá học</div>
+        <div class="alert" id="couponsAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm mã giảm giá mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group"><label>Mã (code) *</label><input type="text" id="cpCode" placeholder="VD: VDAI20"></div>
+              <div class="form-group">
+                <label>Loại giảm</label>
+                <select id="cpType"><option value="percent">% Phần trăm</option><option value="amount">VNĐ Số tiền</option></select>
+              </div>
+              <div class="form-group"><label>Giá trị giảm *</label><input type="number" id="cpValue" placeholder="20" min="0"></div>
+              <div class="form-group"><label>Số lần dùng tối đa</label><input type="number" id="cpMaxUses" min="0" placeholder="100"></div>
+              <div class="form-group"><label>Hết hạn</label><input type="date" id="cpExpires"></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addCpBtn" onclick="addCoupon()">+ Thêm mã</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách mã giảm giá</h2><button class="btn btn-ghost btn-sm" onclick="loadCoupons()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Mã</th><th>Giảm</th><th>Đã dùng</th><th>Hết hạn</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody id="couponsBody"><tr><td colspan="7"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Case study -->
+      <div class="panel" id="panel-casestudies">
+        <div class="section-title">Case study</div>
+        <div class="section-sub">Câu chuyện thành công của học viên, hiển thị công khai trên site</div>
+        <div class="alert" id="csAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm Case study mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group"><label>Tiêu đề *</label><input type="text" id="csTitle" placeholder="VD: Từ 0 đến 50tr/tháng với Affiliate AI"></div>
+              <div class="form-group"><label>Tên học viên</label><input type="text" id="csClientName" placeholder="Nguyễn Văn A"></div>
+              <div class="form-group"><label>Kết quả nổi bật</label><input type="text" id="csResultMetric" placeholder="+320% doanh thu sau 3 tháng"></div>
+              <div class="form-group"><label>Link ảnh thumbnail</label><input type="url" id="csThumb" placeholder="https://..."></div>
+              <div class="form-group full"><label>Tóm tắt</label><input type="text" id="csSummary" placeholder="Tóm tắt ngắn về case study..."></div>
+              <div class="form-group full"><label>Link chi tiết (nếu có)</label><input type="url" id="csLink" placeholder="https://..."></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addCsBtn" onclick="addCaseStudy()">+ Thêm Case study</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách Case study</h2><button class="btn btn-ghost btn-sm" onclick="loadCaseStudies()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Case study</th><th>Học viên</th><th>Kết quả</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody id="csBody"><tr><td colspan="6"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Chuyên gia -->
+      <div class="panel" id="panel-experts">
+        <div class="section-title">Chuyên gia</div>
+        <div class="section-sub">Hồ sơ đội ngũ chuyên gia hiển thị công khai trên site</div>
+        <div class="alert" id="expAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm Chuyên gia mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group"><label>Họ tên *</label><input type="text" id="expName" placeholder="Nguyễn Văn A"></div>
+              <div class="form-group"><label>Chức danh</label><input type="text" id="expTitle" placeholder="Chuyên gia AI Affiliate"></div>
+              <div class="form-group"><label>Link ảnh đại diện</label><input type="url" id="expAvatar" placeholder="https://..."></div>
+              <div class="form-group full"><label>Giới thiệu</label><input type="text" id="expBio" placeholder="Giới thiệu ngắn về chuyên gia..."></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addExpBtn" onclick="addExpert()">+ Thêm Chuyên gia</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách Chuyên gia</h2><button class="btn btn-ghost btn-sm" onclick="loadExperts()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Chuyên gia</th><th>Chức danh</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody id="expBody"><tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Blog -->
+      <div class="panel" id="panel-blog">
+        <div class="section-title">Bài viết blog</div>
+        <div class="section-sub">Quản lý nội dung blog hiển thị công khai trên site</div>
+        <div class="alert" id="blogAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Viết bài mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group full"><label>Tiêu đề *</label><input type="text" id="blogTitle" placeholder="Tiêu đề bài viết"></div>
+              <div class="form-group"><label>Slug URL (tự động nếu để trống)</label><input type="text" id="blogSlug" placeholder="vd: 5-buoc-bat-dau-affiliate-ai"></div>
+              <div class="form-group"><label>Link ảnh cover</label><input type="url" id="blogCover" placeholder="https://..."></div>
+              <div class="form-group full"><label>Mô tả ngắn (excerpt)</label><input type="text" id="blogExcerpt" placeholder="Mô tả ngắn hiển thị ở danh sách bài viết..."></div>
+              <div class="form-group full"><label>Nội dung</label><textarea id="blogContent" rows="6" placeholder="Nội dung bài viết..." style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:0.9rem;box-sizing:border-box"></textarea></div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-ghost" id="saveDraftBtn" onclick="addBlogPost('draft')">Lưu bản nháp</button>
+            <button class="btn btn-purple" id="publishBtn" onclick="addBlogPost('published')">Xuất bản</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách bài viết</h2><button class="btn btn-ghost btn-sm" onclick="loadBlogPosts()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Bài viết</th><th>Trạng thái</th><th>Ngày tạo</th><th>Hành động</th></tr></thead>
+            <tbody id="blogBody"><tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
     </div><!-- /main-body -->
   </main>
 </div><!-- /admin-shell -->
@@ -1122,6 +1315,12 @@ const SECTION_META = {
   products:   { title: 'Sản phẩm số', breadcrumb: 'Sản phẩm số (Tip, Ebook, Bundle)' },
   orders:     { title: 'Đơn hàng',    breadcrumb: 'Quản lý đơn hàng' },
   affiliate:  { title: 'Affiliate',   breadcrumb: 'Chương trình giới thiệu bạn bè' },
+  leads:        { title: 'Lead',             breadcrumb: 'Khách hàng tiềm năng' },
+  schedules:    { title: 'Lịch khai giảng',  breadcrumb: 'Lịch học & link Zoom/Meet' },
+  coupons:      { title: 'Mã giảm giá',      breadcrumb: 'Quản lý coupon' },
+  casestudies:  { title: 'Case study',       breadcrumb: 'Câu chuyện thành công học viên' },
+  experts:      { title: 'Chuyên gia',       breadcrumb: 'Đội ngũ chuyên gia' },
+  blog:         { title: 'Blog',             breadcrumb: 'Bài viết blog' },
 };
 
 // ── Section switch ──
@@ -1147,6 +1346,12 @@ function refreshCurrent() {
     products:   loadProducts,
     orders:     loadOrders,
     affiliate:  loadAffiliate,
+    leads:       loadLeads,
+    schedules:   loadSchedules,
+    coupons:     loadCoupons,
+    casestudies: loadCaseStudies,
+    experts:     loadExperts,
+    blog:        loadBlogPosts,
   };
   if (loaders[_currentSection]) loaders[_currentSection]();
 }
@@ -2043,6 +2248,315 @@ function openEditProductModal(p) {
   });
 }
 
+// ════════════════════ NHÓM 2 ════════════════════
+
+// ── Lead ──
+async function loadLeads() {
+  const { data, error } = await _supabase.from('leads').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('leadsBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><p>Chưa có Lead nào.</p></div></td></tr>`; return; }
+  const statusLabel = { new: 'Mới', contacted: 'Đã liên hệ', converted: 'Đã chuyển đổi', lost: 'Đã mất' };
+  tbody.innerHTML = data.map((l, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${l.name || '—'}</strong><br><span style="font-size:0.72rem;color:#475569">${l.note || ''}</span></td>
+      <td>${l.email || '—'}<br><span style="font-size:0.72rem;color:#64748B">${l.phone || ''}</span></td>
+      <td>${l.source || '—'}</td>
+      <td>
+        <select onchange="updateLeadStatus(${l.id}, this.value)" style="font-size:0.78rem;padding:4px 8px;border-radius:6px">
+          ${Object.entries(statusLabel).map(([v,t]) => `<option value="${v}" ${l.status===v?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </td>
+      <td style="font-size:0.78rem;color:#64748B">${l.created_at ? new Date(l.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteLead(${l.id})">Xoá</button></td>
+    </tr>`).join('');
+}
+async function addLead() {
+  const name = document.getElementById('leadName').value.trim();
+  const email = document.getElementById('leadEmail').value.trim();
+  if (!name && !email) { showAlert('leadsAlert', 'Vui lòng nhập tên hoặc email', 'error'); return; }
+  const btn = document.getElementById('addLeadBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('leads').insert({
+    name, email,
+    phone: document.getElementById('leadPhone').value.trim(),
+    source: document.getElementById('leadSource').value.trim(),
+    note: document.getElementById('leadNote').value.trim(),
+    status: 'new'
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm Lead';
+  if (error) { showAlert('leadsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['leadName','leadEmail','leadPhone','leadSource','leadNote'].forEach(id => document.getElementById(id).value = '');
+  showAlert('leadsAlert', '✅ Đã thêm Lead!');
+  loadLeads();
+}
+async function updateLeadStatus(id, status) {
+  await _supabase.from('leads').update({ status }).eq('id', id);
+  showAlert('leadsAlert', 'Đã cập nhật trạng thái!');
+}
+async function deleteLead(id) {
+  if (!confirm('Xoá Lead này?')) return;
+  await _supabase.from('leads').delete().eq('id', id);
+  showAlert('leadsAlert', 'Đã xoá!');
+  loadLeads();
+}
+
+// ── Lịch khai giảng ──
+async function loadSchedules() {
+  const { data, error } = await _supabase.from('course_schedules').select('*').order('start_date', { ascending: false });
+  const tbody = document.getElementById('schedulesBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><p>Chưa có lịch khai giảng nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((s, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${s.course_name}</strong></td>
+      <td style="font-size:0.78rem">${s.start_date || '—'} ${s.end_date ? '→ ' + s.end_date : ''}</td>
+      <td style="font-size:0.78rem;color:#64748B">${s.schedule_text || '—'}</td>
+      <td>${s.meet_url ? `<a href="${s.meet_url}" target="_blank" class="link-chip">🔗 Link</a>` : '<span style="color:#334155">—</span>'}</td>
+      <td>${s.seats_taken || 0}/${s.seats_total ?? '∞'}</td>
+      <td><span class="badge badge-${s.active !== false ? 'active' : 'closed'}">${s.active !== false ? 'Đang mở' : 'Đã đóng'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${s.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleSchedule(${s.id}, ${s.active !== false})">${s.active !== false ? 'Đóng' : 'Mở'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteSchedule(${s.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addSchedule() {
+  const course_name = document.getElementById('schCourseName').value.trim();
+  if (!course_name) { showAlert('schedulesAlert', 'Vui lòng nhập tên khoá học', 'error'); return; }
+  const btn = document.getElementById('addSchBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('course_schedules').insert({
+    course_name,
+    start_date: document.getElementById('schStartDate').value || null,
+    end_date: document.getElementById('schEndDate').value || null,
+    seats_total: parseInt(document.getElementById('schSeatsTotal').value) || null,
+    schedule_text: document.getElementById('schScheduleText').value.trim(),
+    meet_url: document.getElementById('schMeetUrl').value.trim() || null,
+    active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm lịch';
+  if (error) { showAlert('schedulesAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['schCourseName','schStartDate','schEndDate','schSeatsTotal','schScheduleText','schMeetUrl'].forEach(id => document.getElementById(id).value = '');
+  showAlert('schedulesAlert', '✅ Đã thêm lịch khai giảng!');
+  loadSchedules();
+}
+async function toggleSchedule(id, current) {
+  await _supabase.from('course_schedules').update({ active: !current }).eq('id', id);
+  loadSchedules();
+}
+async function deleteSchedule(id) {
+  if (!confirm('Xoá lịch khai giảng này?')) return;
+  await _supabase.from('course_schedules').delete().eq('id', id);
+  showAlert('schedulesAlert', 'Đã xoá!');
+  loadSchedules();
+}
+
+// ── Mã giảm giá ──
+async function loadCoupons() {
+  const { data, error } = await _supabase.from('coupons').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('couponsBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><p>Chưa có mã giảm giá nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((c, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${c.code}</strong></td>
+      <td>${c.discount_type === 'percent' ? c.discount_value + '%' : fmtPrice(c.discount_value) + '₫'}</td>
+      <td>${c.used_count || 0}${c.max_uses ? '/' + c.max_uses : ''}</td>
+      <td style="font-size:0.78rem;color:#64748B">${c.expires_at ? new Date(c.expires_at).toLocaleDateString('vi-VN') : 'Không giới hạn'}</td>
+      <td><span class="badge badge-${c.active !== false ? 'active' : 'closed'}">${c.active !== false ? 'Đang dùng' : 'Đã tắt'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${c.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleCoupon(${c.id}, ${c.active !== false})">${c.active !== false ? 'Tắt' : 'Bật'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCoupon(${c.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addCoupon() {
+  const code = document.getElementById('cpCode').value.trim().toUpperCase();
+  const value = parseFloat(document.getElementById('cpValue').value);
+  if (!code || !value) { showAlert('couponsAlert', 'Vui lòng nhập mã và giá trị giảm', 'error'); return; }
+  const btn = document.getElementById('addCpBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('coupons').insert({
+    code, discount_value: value,
+    discount_type: document.getElementById('cpType').value,
+    max_uses: parseInt(document.getElementById('cpMaxUses').value) || null,
+    expires_at: document.getElementById('cpExpires').value || null,
+    active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm mã';
+  if (error) { showAlert('couponsAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['cpCode','cpValue','cpMaxUses','cpExpires'].forEach(id => document.getElementById(id).value = '');
+  showAlert('couponsAlert', '✅ Đã thêm mã giảm giá!');
+  loadCoupons();
+}
+async function toggleCoupon(id, current) {
+  await _supabase.from('coupons').update({ active: !current }).eq('id', id);
+  loadCoupons();
+}
+async function deleteCoupon(id) {
+  if (!confirm('Xoá mã giảm giá này?')) return;
+  await _supabase.from('coupons').delete().eq('id', id);
+  showAlert('couponsAlert', 'Đã xoá!');
+  loadCoupons();
+}
+
+// ── Case study ──
+async function loadCaseStudies() {
+  const { data, error } = await _supabase.from('case_studies').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('csBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><p>Chưa có Case study nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((c, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${c.title}</strong><br><span style="font-size:0.72rem;color:#475569">${c.summary || ''}</span></td>
+      <td>${c.client_name || '—'}</td>
+      <td style="font-size:0.78rem;color:#34D399">${c.result_metric || '—'}</td>
+      <td><span class="badge badge-${c.active !== false ? 'active' : 'closed'}">${c.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${c.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleCaseStudy(${c.id}, ${c.active !== false})">${c.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteCaseStudy(${c.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addCaseStudy() {
+  const title = document.getElementById('csTitle').value.trim();
+  if (!title) { showAlert('csAlert', 'Vui lòng nhập tiêu đề', 'error'); return; }
+  const btn = document.getElementById('addCsBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('case_studies').insert({
+    title,
+    client_name: document.getElementById('csClientName').value.trim(),
+    result_metric: document.getElementById('csResultMetric').value.trim(),
+    thumbnail_url: document.getElementById('csThumb').value.trim() || null,
+    summary: document.getElementById('csSummary').value.trim(),
+    link_url: document.getElementById('csLink').value.trim() || null,
+    active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm Case study';
+  if (error) { showAlert('csAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['csTitle','csClientName','csResultMetric','csThumb','csSummary','csLink'].forEach(id => document.getElementById(id).value = '');
+  showAlert('csAlert', '✅ Đã thêm Case study!');
+  loadCaseStudies();
+}
+async function toggleCaseStudy(id, current) {
+  await _supabase.from('case_studies').update({ active: !current }).eq('id', id);
+  loadCaseStudies();
+}
+async function deleteCaseStudy(id) {
+  if (!confirm('Xoá Case study này?')) return;
+  await _supabase.from('case_studies').delete().eq('id', id);
+  showAlert('csAlert', 'Đã xoá!');
+  loadCaseStudies();
+}
+
+// ── Chuyên gia ──
+async function loadExperts() {
+  const { data, error } = await _supabase.from('experts').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('expBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><p>Chưa có Chuyên gia nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((e, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${e.name}</strong><br><span style="font-size:0.72rem;color:#475569">${e.bio || ''}</span></td>
+      <td>${e.title || '—'}</td>
+      <td><span class="badge badge-${e.active !== false ? 'active' : 'closed'}">${e.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${e.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleExpert(${e.id}, ${e.active !== false})">${e.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteExpert(${e.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addExpert() {
+  const name = document.getElementById('expName').value.trim();
+  if (!name) { showAlert('expAlert', 'Vui lòng nhập họ tên', 'error'); return; }
+  const btn = document.getElementById('addExpBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('experts').insert({
+    name,
+    title: document.getElementById('expTitle').value.trim(),
+    avatar_url: document.getElementById('expAvatar').value.trim() || null,
+    bio: document.getElementById('expBio').value.trim(),
+    active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm Chuyên gia';
+  if (error) { showAlert('expAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['expName','expTitle','expAvatar','expBio'].forEach(id => document.getElementById(id).value = '');
+  showAlert('expAlert', '✅ Đã thêm Chuyên gia!');
+  loadExperts();
+}
+async function toggleExpert(id, current) {
+  await _supabase.from('experts').update({ active: !current }).eq('id', id);
+  loadExperts();
+}
+async function deleteExpert(id) {
+  if (!confirm('Xoá Chuyên gia này?')) return;
+  await _supabase.from('experts').delete().eq('id', id);
+  showAlert('expAlert', 'Đã xoá!');
+  loadExperts();
+}
+
+// ── Blog ──
+async function loadBlogPosts() {
+  const { data, error } = await _supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('blogBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><p>Chưa có bài viết nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${p.title}</strong><br><span style="font-size:0.72rem;color:#475569">${p.excerpt || ''}</span></td>
+      <td><span class="badge badge-${p.status === 'published' ? 'active' : 'closed'}">${p.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}</span></td>
+      <td style="font-size:0.78rem;color:#64748B">${p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${p.status === 'published' ? 'ghost' : 'purple'} btn-sm" onclick="toggleBlogStatus(${p.id}, '${p.status}')">${p.status === 'published' ? 'Chuyển nháp' : 'Xuất bản'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBlogPost(${p.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addBlogPost(status) {
+  const title = document.getElementById('blogTitle').value.trim();
+  if (!title) { showAlert('blogAlert', 'Vui lòng nhập tiêu đề', 'error'); return; }
+  const btnId = status === 'published' ? 'publishBtn' : 'saveDraftBtn';
+  const btn = document.getElementById(btnId);
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  let slug = document.getElementById('blogSlug').value.trim();
+  if (!slug) slug = title.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');
+  const { error } = await _supabase.from('blog_posts').insert({
+    title, slug,
+    cover_url: document.getElementById('blogCover').value.trim() || null,
+    excerpt: document.getElementById('blogExcerpt').value.trim(),
+    content: document.getElementById('blogContent').value.trim(),
+    status,
+    published_at: status === 'published' ? new Date().toISOString() : null
+  });
+  btn.disabled = false; btn.textContent = status === 'published' ? 'Xuất bản' : 'Lưu bản nháp';
+  if (error) { showAlert('blogAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['blogTitle','blogSlug','blogCover','blogExcerpt','blogContent'].forEach(id => document.getElementById(id).value = '');
+  showAlert('blogAlert', status === 'published' ? '✅ Đã xuất bản bài viết!' : '✅ Đã lưu bản nháp!');
+  loadBlogPosts();
+}
+async function toggleBlogStatus(id, current) {
+  const next = current === 'published' ? 'draft' : 'published';
+  await _supabase.from('blog_posts').update({ status: next, published_at: next === 'published' ? new Date().toISOString() : null }).eq('id', id);
+  loadBlogPosts();
+}
+async function deleteBlogPost(id) {
+  if (!confirm('Xoá bài viết này?')) return;
+  await _supabase.from('blog_posts').delete().eq('id', id);
+  showAlert('blogAlert', 'Đã xoá!');
+  loadBlogPosts();
+}
+
 // ── Sign out ──
 async function signOut() {
   await _supabase.auth.signOut();
@@ -2078,6 +2592,12 @@ async function signOut() {
     loadMiniCourses();
     loadProducts();
     loadMembers();
+    loadLeads();
+    loadSchedules();
+    loadCoupons();
+    loadCaseStudies();
+    loadExperts();
+    loadBlogPosts();
   } catch(e) {
     window.location.href = 'login.html';
   }
