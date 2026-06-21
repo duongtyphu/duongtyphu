@@ -329,6 +329,26 @@
     .progress-bar-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
     .progress-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(135deg, var(--blue), var(--purple)); transition: width 0.4s; }
     .progress-course-meta { font-size: 0.74rem; color: var(--muted); margin-top: 8px; }
+    .cert-btn { margin-top: 12px; justify-content: center; }
+
+    /* ─── CHỨNG NHẬN HOÀN THÀNH ─── */
+    .certificate { padding: 6px; }
+    .certificate-border {
+      border: 3px solid var(--gold, #F59E0B); border-radius: 18px; padding: 36px 24px;
+      text-align: center; background: radial-gradient(circle at top, rgba(245,158,11,0.08), transparent 70%);
+    }
+    .certificate-eyebrow { font-size: 0.72rem; font-weight: 800; letter-spacing: 3px; color: var(--purple); }
+    .certificate-title { font-size: 1.3rem; font-weight: 900; color: #fff; margin: 10px 0 16px; letter-spacing: 1px; }
+    .certificate-sub { font-size: 0.82rem; color: var(--muted); }
+    .certificate-name { font-size: 1.6rem; font-weight: 800; color: var(--gold, #F59E0B); margin: 8px 0; font-family: Georgia, serif; }
+    .certificate-course { font-size: 1.05rem; font-weight: 800; color: #fff; margin: 8px 0 18px; }
+    .certificate-date { font-size: 0.78rem; color: var(--muted); margin-top: 10px; }
+    .certificate-sign { font-size: 0.85rem; font-weight: 700; color: #fff; margin-top: 6px; font-style: italic; }
+    @media print {
+      body * { visibility: hidden; }
+      #certificatePrint, #certificatePrint * { visibility: visible; }
+      #certificatePrint { position: fixed; top: 0; left: 0; width: 100%; }
+    }
     .next-lesson-card {
       background: linear-gradient(145deg, rgba(37,99,235,0.12), rgba(109,93,251,0.08));
       border: 1px solid rgba(109,93,251,0.3); border-radius: 16px;
@@ -876,6 +896,7 @@
 const BANK = { name: 'Vietcombank', account: '0721000632922', owner: 'VO VAN DUONG' };
 const TYPE_LABELS = { tip:'💡 Tip/Thủ thuật', mini_course:'🎓 Mini-course', ebook:'📘 Ebook', bundle:'📦 Bundle' };
 let _userEmail = '';
+let _fullName = '';
 let _checkoutItem = null;
 
 function fmtPrice(p) {
@@ -1178,6 +1199,7 @@ async function loadProgress() {
         <div class="progress-course-head"><h4>${course.name}</h4><span class="progress-course-pct">${pct}%</span></div>
         <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
         <div class="progress-course-meta">${done}/${total} bài đã hoàn thành</div>
+        ${pct === 100 ? `<button class="btn-buy cert-btn" onclick='showCertificate(${JSON.stringify(course.name)})'>🎓 Nhận chứng nhận</button>` : ''}
       </div>`);
     if (!nextLesson) {
       const upcoming = course.lessons.find(l => !completedIds.has(l.id));
@@ -1202,6 +1224,26 @@ async function loadProgress() {
       <div class="next-lesson-title">Bạn đã hoàn thành tất cả bài giảng hiện có!</div>
       <div class="next-lesson-course">Theo dõi để cập nhật bài giảng mới.</div>`;
   }
+}
+
+// ── Chứng nhận hoàn thành ──
+function showCertificate(courseName) {
+  const dateStr = new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  document.getElementById('modalContent').innerHTML = `
+    <div class="certificate" id="certificatePrint">
+      <div class="certificate-border">
+        <div class="certificate-eyebrow">VDAI ACADEMY</div>
+        <div class="certificate-title">CHỨNG NHẬN HOÀN THÀNH</div>
+        <div class="certificate-sub">Chứng nhận này được trao cho</div>
+        <div class="certificate-name">${_fullName}</div>
+        <div class="certificate-sub">đã hoàn thành xuất sắc khoá học</div>
+        <div class="certificate-course">${courseName}</div>
+        <div class="certificate-date">Ngày cấp: ${dateStr}</div>
+        <div class="certificate-sign">VDAI Academy</div>
+      </div>
+    </div>
+    <button class="btn-buy" style="margin-top:16px;justify-content:center" onclick="window.print()">🖨️ In / Lưu PDF chứng nhận</button>`;
+  document.getElementById('checkoutModal').style.display = 'flex';
 }
 
 // ── Lịch sử thanh toán — toàn bộ đơn hàng (mọi trạng thái) của học viên ──
@@ -1557,6 +1599,7 @@ document.body.insertAdjacentHTML('afterbegin',
     if (!session) return;
     const user = session.user;
     _userEmail = user.email;
+    _fullName = user.user_metadata?.full_name || user.email.split('@')[0];
     const name = (user.user_metadata?.full_name)
       ? user.user_metadata.full_name.split(' ').pop()
       : user.email.split('@')[0];
