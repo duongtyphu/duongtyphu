@@ -694,10 +694,6 @@
     <a class="sidebar-link" data-target="referralSection">🤝 Giới thiệu bạn bè</a>
 
     <div class="sidebar-section-label">Cộng đồng &amp; hỗ trợ</div>
-    <a class="sidebar-link" data-target="caseStudySection">📈 Case study</a>
-    <a class="sidebar-link" data-target="expertSection">🧑‍🏫 Chuyên gia</a>
-    <a class="sidebar-link" data-target="blogSection">📝 Blog AI</a>
-    <a class="sidebar-link" data-target="notifSection">🔔 Thông báo</a>
     <a class="sidebar-link" data-target="supportSection">🛟 Hỗ trợ</a>
     <a class="sidebar-link" data-target="communitySection">🌐 Cộng đồng</a>
   </aside>
@@ -857,45 +853,6 @@
     </div>
   </div>
 
-  <!-- CASE STUDY -->
-  <div class="section" id="caseStudySection" style="display:none">
-    <div class="section-head">
-      <span class="section-badge badge-mine">📈 Câu chuyện</span>
-      <div class="section-title">Case study học viên</div>
-      <div class="section-line"></div>
-    </div>
-    <div class="showcase-grid" id="caseStudyGrid"></div>
-  </div>
-
-  <!-- CHUYÊN GIA -->
-  <div class="section" id="expertSection" style="display:none">
-    <div class="section-head">
-      <span class="section-badge badge-mine">🧑‍🏫 Đội ngũ</span>
-      <div class="section-title">Chuyên gia đồng hành</div>
-      <div class="section-line"></div>
-    </div>
-    <div class="showcase-grid" id="expertGrid"></div>
-  </div>
-
-  <!-- BLOG -->
-  <div class="section" id="blogSection" style="display:none">
-    <div class="section-head">
-      <span class="section-badge badge-mine">📝 Bài viết</span>
-      <div class="section-title">Bài viết mới nhất</div>
-      <div class="section-line"></div>
-    </div>
-    <div class="showcase-grid" id="blogGrid"></div>
-  </div>
-
-  <!-- THÔNG BÁO -->
-  <div class="section" id="notifSection" style="display:none">
-    <div class="section-head">
-      <span class="section-badge badge-mine">🔔 Thông báo</span>
-      <div class="section-title">Thông báo mới</div>
-      <div class="section-line"></div>
-    </div>
-    <div class="notif-list" id="notifList"></div>
-  </div>
 
   <!-- PROMPT / TEMPLATE -->
   <div class="section" id="promptSection" style="display:none">
@@ -1245,9 +1202,9 @@ async function loadPurchased() {
     .eq('member_email', _userEmail)
     .eq('status', 'confirmed')
     .order('confirmed_at', { ascending: false });
-  if (!data || !data.length) return;
-  document.getElementById('purchasedSection').style.display = 'block';
-  document.getElementById('purchasedList').innerHTML = data.map(o => {
+  const list = document.getElementById('purchasedList');
+  if (!data || !data.length) { list.innerHTML = `<div class="empty-state">Bạn chưa có nội dung nào được xác nhận mua.</div>`; return; }
+  list.innerHTML = data.map(o => {
     let icon = '💡', title = o.product_name, label = '', video = null, pdf = null;
     if (o.products)      { icon = o.products.icon||'💡'; title = o.products.title; label = TYPE_LABELS[o.products.type]||''; video = o.products.video_url; pdf = o.products.pdf_url; }
     else if (o.lessons)  { icon = '📚'; title = o.lessons.title; label = `🎓 ${o.lessons.courses?.name||'Bài giảng'}`; video = o.lessons.video_url; pdf = o.lessons.pdf_url; }
@@ -1273,7 +1230,11 @@ async function loadProgress() {
     .select('id, title, course_id, sort_order, courses(name)')
     .eq('active', true)
     .order('sort_order');
-  if (!lessons || !lessons.length) return;
+  if (!lessons || !lessons.length) {
+    document.getElementById('progressCourses').innerHTML = `<div class="empty-state">Chưa có bài giảng nào để theo dõi tiến độ.</div>`;
+    document.getElementById('nextLessonCard').innerHTML = '';
+    return;
+  }
 
   const { data: orders } = await _supabase.from('orders')
     .select('lesson_id')
@@ -1308,8 +1269,10 @@ async function loadProgress() {
     }
   }
 
-  if (!cards.length) return;
-  document.getElementById('progressSection').style.display = 'block';
+  if (!cards.length) {
+    document.getElementById('progressCourses').innerHTML = `<div class="empty-state">Chưa có bài giảng nào để theo dõi tiến độ.</div>`;
+    return;
+  }
   document.getElementById('progressCourses').innerHTML = cards.join('');
 
   const nextCard = document.getElementById('nextLessonCard');
@@ -1318,7 +1281,7 @@ async function loadProgress() {
       <div class="next-lesson-eyebrow">▶ Bài học tiếp theo</div>
       <div class="next-lesson-title">${nextLesson.title}</div>
       <div class="next-lesson-course">${nextCourseName}</div>
-      <button class="btn-buy" onclick="document.getElementById('lessonsSection').scrollIntoView({behavior:'smooth'})">Học ngay →</button>`;
+      <button class="btn-buy" onclick="switchPortalPage('lessonsSection')">Học ngay →</button>`;
   } else {
     nextCard.innerHTML = `
       <div class="next-lesson-eyebrow">🎉 Hoàn tất</div>
@@ -1353,11 +1316,11 @@ async function loadPaymentHistory() {
     .select('*, products(title), lessons(title), courses(name)')
     .eq('member_email', _userEmail)
     .order('created_at', { ascending: false });
-  if (!data || !data.length) return;
+  const tbody = document.getElementById('paymentHistoryBody');
+  if (!data || !data.length) { tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">Bạn chưa có giao dịch nào.</div></td></tr>`; return; }
 
   const statusLabel = { pending: 'Chờ xác nhận', confirmed: 'Đã xác nhận', rejected: 'Đã từ chối' };
-  document.getElementById('paymentHistorySection').style.display = 'block';
-  document.getElementById('paymentHistoryBody').innerHTML = data.map(o => {
+  tbody.innerHTML = data.map(o => {
     const title = o.products?.title || o.lessons?.title || o.courses?.name || o.product_name || '—';
     const status = o.status || 'pending';
     return `
@@ -1376,10 +1339,10 @@ async function loadLiveClasses() {
     .select('*')
     .eq('active', true)
     .order('start_date', { ascending: true });
-  if (!data || !data.length) return;
+  const grid = document.getElementById('liveClassGrid');
+  if (!data || !data.length) { grid.innerHTML = `<div class="empty-state">Hiện chưa có lịch khai giảng nào.</div>`; return; }
 
-  document.getElementById('liveClassSection').style.display = 'block';
-  document.getElementById('liveClassGrid').innerHTML = data.map(s => `
+  grid.innerHTML = data.map(s => `
     <div class="liveclass-card">
       <h4>${s.course_name}</h4>
       <div class="liveclass-date">${s.start_date ? '🗓️ Khai giảng: ' + new Date(s.start_date).toLocaleDateString('vi-VN') : 'Đang cập nhật lịch'}</div>
@@ -1388,102 +1351,47 @@ async function loadLiveClasses() {
     </div>`).join('');
 }
 
-// ── Case study (quản lý ở Admin → Case study) ──
-async function loadCaseStudies() {
-  const { data } = await _supabase.from('case_studies').select('*').eq('active', true).order('created_at', { ascending: false });
-  if (!data || !data.length) return;
-  document.getElementById('caseStudySection').style.display = 'block';
-  document.getElementById('caseStudyGrid').innerHTML = data.map(c => `
-    <div class="showcase-card">
-      ${c.thumbnail_url ? `<img src="${c.thumbnail_url}" alt="${c.title}">` : ''}
-      <div class="showcase-card-body">
-        <h4>${c.title}</h4>
-        ${c.client_name ? `<p>👤 ${c.client_name}</p>` : ''}
-        ${c.result_metric ? `<div class="showcase-metric">📈 ${c.result_metric}</div>` : ''}
-        ${c.summary ? `<p>${c.summary}</p>` : ''}
-        ${c.link_url ? `<a class="btn-buy" href="${c.link_url}" target="_blank" style="text-decoration:none;text-align:center;margin-top:6px">Xem chi tiết →</a>` : ''}
-      </div>
-    </div>`).join('');
-}
-
-// ── Chuyên gia (quản lý ở Admin → Chuyên gia) ──
-async function loadExperts() {
-  const { data } = await _supabase.from('experts').select('*').eq('active', true).order('created_at', { ascending: false });
-  if (!data || !data.length) return;
-  document.getElementById('expertSection').style.display = 'block';
-  document.getElementById('expertGrid').innerHTML = data.map(e => `
-    <div class="showcase-card expert-card">
-      ${e.avatar_url ? `<img class="expert-avatar" src="${e.avatar_url}" alt="${e.name}">` : `<div class="expert-avatar-fallback">${(e.name||'?')[0].toUpperCase()}</div>`}
-      <div class="showcase-card-body" style="padding:0">
-        <h4>${e.name}</h4>
-        ${e.title ? `<p style="color:var(--purple);font-weight:600">${e.title}</p>` : ''}
-        ${e.bio ? `<p>${e.bio}</p>` : ''}
-      </div>
-    </div>`).join('');
-}
-
-// ── Bài viết blog (quản lý ở Admin → Blog) ──
-async function loadBlogPosts() {
-  const { data } = await _supabase.from('blog_posts').select('*').eq('status', 'published').order('published_at', { ascending: false }).limit(6);
-  if (!data || !data.length) return;
-  document.getElementById('blogSection').style.display = 'block';
-  document.getElementById('blogGrid').innerHTML = data.map(p => `
-    <div class="showcase-card">
-      ${p.cover_url ? `<img src="${p.cover_url}" alt="${p.title}">` : ''}
-      <div class="showcase-card-body">
-        <h4>${p.title}</h4>
-        ${p.excerpt ? `<p>${p.excerpt}</p>` : ''}
-      </div>
-    </div>`).join('');
-}
-
-// ── Sidebar menu (toggle mobile + scroll-spy) ──
+// ── Sidebar menu — chuyển trang (không cuộn), mỗi mục là 1 trang riêng ──
+const PORTAL_PAGES = [
+  'progressSection','purchasedSection','coursesSection','lessonsSection','freeCoursesSection','docsSection',
+  'promptSection','submissionSection','liveClassSection','paymentHistorySection','storeSection','referralSection',
+  'supportSection','communitySection'
+];
 function toggleSidebar() {
   document.getElementById('portalSidebar').classList.toggle('open');
   document.getElementById('sidebarOverlay').classList.toggle('show');
 }
+function switchPortalPage(targetId) {
+  PORTAL_PAGES.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = (id === targetId) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.toggle('active', l.dataset.target === targetId));
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  document.getElementById('portalSidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+  history.replaceState(null, '', '#' + targetId);
+}
 (function setupPortalSidebar() {
   const links = Array.from(document.querySelectorAll('.sidebar-link'));
   links.forEach(l => {
-    l.href = '#' + l.dataset.target;
-    l.addEventListener('click', () => {
-      document.getElementById('portalSidebar').classList.remove('open');
-      document.getElementById('sidebarOverlay').classList.remove('show');
-    });
+    l.href = 'javascript:void(0)';
+    l.addEventListener('click', () => switchPortalPage(l.dataset.target));
   });
-  function onScroll() {
-    const offset = 100;
-    let current = null;
-    links.forEach(l => {
-      const el = document.getElementById(l.dataset.target);
-      if (el && el.getBoundingClientRect().top - offset <= 0) current = l;
-    });
-    links.forEach(l => l.classList.toggle('active', l === current));
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  const startPage = (location.hash && PORTAL_PAGES.includes(location.hash.slice(1))) ? location.hash.slice(1) : 'progressSection';
+  switchPortalPage(startPage);
 })();
 
-// ── Thông báo (quản lý ở Admin → Thông báo) ──
+// ── Thông báo (quản lý ở Admin → Thông báo) — chỉ hiện dạng chữ chạy đầu trang ──
 async function loadNotifications() {
   const { data } = await _supabase.from('notifications').select('*').eq('active', true).order('created_at', { ascending: false }).limit(10);
   if (!data || !data.length) return;
-  document.getElementById('notifSection').style.display = 'block';
   const ticker = document.getElementById('noticeTicker');
   const track = document.getElementById('noticeTickerTrack');
   if (ticker && track) {
     track.innerHTML = data.map(n => `<span>📢 ${n.title}${n.message ? ' — ' + n.message : ''}</span>`).join('<span style="opacity:.35">●</span>');
     ticker.style.display = 'flex';
   }
-  document.getElementById('notifList').innerHTML = data.map(n => `
-    <div class="notif-card">
-      <span class="notif-icon">🔔</span>
-      <div>
-        <div class="notif-title">${n.title}</div>
-        ${n.message ? `<div class="notif-msg">${n.message}</div>` : ''}
-        <div class="notif-date">${n.created_at ? new Date(n.created_at).toLocaleDateString('vi-VN') : ''}</div>
-      </div>
-    </div>`).join('');
 }
 
 // ── Trung tâm hỗ trợ (quản lý ở Admin → Trung tâm hỗ trợ) ──
@@ -1522,9 +1430,9 @@ async function submitSupportTicket() {
 // ── Prompt/Template (quản lý ở Admin → Prompt/Template) ──
 async function loadPromptTemplates() {
   const { data } = await _supabase.from('prompt_templates').select('*').eq('active', true).order('created_at', { ascending: false });
-  if (!data || !data.length) return;
-  document.getElementById('promptSection').style.display = 'block';
-  document.getElementById('promptGrid').innerHTML = data.map((p, i) => `
+  const grid = document.getElementById('promptGrid');
+  if (!data || !data.length) { grid.innerHTML = `<div class="empty-state">Chưa có Prompt/Template nào.</div>`; window._promptData = []; return; }
+  grid.innerHTML = data.map((p, i) => `
     <div class="prompt-card">
       ${p.category ? `<span class="prompt-cat">${p.category}</span>` : ''}
       <div class="prompt-title">${p.title}</div>
@@ -1750,9 +1658,6 @@ document.body.insertAdjacentHTML('afterbegin',
     loadPaymentHistory();
     loadProgress();
     loadLiveClasses();
-    loadCaseStudies();
-    loadExperts();
-    loadBlogPosts();
     loadNotifications();
     loadPromptTemplates();
     loadSubmissions();
