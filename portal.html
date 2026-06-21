@@ -59,12 +59,69 @@
     }
     .nav-signout:hover { color: #fff; border-color: rgba(255,255,255,0.2); }
 
+    /* ─── NOTICE TICKER ─── */
+    .notice-ticker {
+      display: none; align-items: center; gap: 10px;
+      background: linear-gradient(90deg, rgba(245,158,11,0.16), rgba(109,93,251,0.1));
+      border-bottom: 1px solid var(--border); padding: 9px 0; overflow: hidden;
+    }
+    .notice-ticker-icon { flex-shrink: 0; margin-left: 22px; font-size: 0.95rem; }
+    .notice-ticker-viewport { flex: 1; overflow: hidden; white-space: nowrap; position: relative; mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+    .notice-ticker-track { display: inline-flex; gap: 56px; white-space: nowrap; padding-left: 100%; animation: ticker-scroll 22s linear infinite; }
+    .notice-ticker-track span { font-size: 0.8rem; font-weight: 700; color: #FCD34D; }
+    @keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+    /* ─── PORTAL SHELL (sidebar + content) ─── */
+    .portal-shell { display: flex; max-width: 1320px; margin: 0 auto; align-items: flex-start; }
+    .sidebar {
+      width: 248px; flex-shrink: 0; position: sticky; top: 64px;
+      height: calc(100vh - 64px); overflow-y: auto;
+      border-right: 1px solid var(--border); padding: 22px 14px 60px;
+      background: rgba(255,255,255,0.015);
+      scrollbar-width: thin;
+    }
+    .sidebar-section-label {
+      font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin: 20px 10px 8px;
+    }
+    .sidebar-section-label:first-child { margin-top: 2px; }
+    .sidebar-link {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px;
+      color: var(--text); text-decoration: none; font-size: 0.82rem; font-weight: 600;
+      margin-bottom: 2px; transition: all 0.15s; white-space: nowrap;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .sidebar-link.active {
+      background: linear-gradient(135deg, rgba(37,99,235,0.2), rgba(109,93,251,0.18));
+      color: #fff; box-shadow: inset 3px 0 0 var(--purple);
+    }
+    .main-content { flex: 1; min-width: 0; }
+    .sidebar-toggle {
+      display: none; align-items: center; gap: 7px; position: fixed; left: 16px; bottom: 18px; z-index: 250;
+      background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; border: none; border-radius: 999px;
+      padding: 12px 20px; font-weight: 700; font-size: 0.82rem; cursor: pointer; box-shadow: 0 8px 24px rgba(37,99,235,0.45);
+      font-family: inherit;
+    }
+    .sidebar-overlay { display: none; }
+    @media (max-width: 980px) {
+      .sidebar-toggle { display: flex; }
+      .sidebar {
+        position: fixed; top: 0; left: 0; height: 100vh; z-index: 270; width: 270px;
+        transform: translateX(-100%); transition: transform 0.25s ease;
+        background: var(--navy2); padding-top: 84px; box-shadow: 8px 0 30px rgba(0,0,0,0.4);
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.show {
+        display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 260;
+      }
+    }
+
     /* ─── LAYOUT ─── */
     .wrap { max-width: 1140px; margin: 0 auto; padding: 0 24px 100px; }
 
     /* ─── HERO GREETING ─── */
     .hero {
-      padding: 60px 0 48px;
+      padding: 48px 0 44px;
       position: relative;
     }
     .hero::before {
@@ -82,7 +139,7 @@
     .hero-sub { font-size: 1rem; color: var(--muted); line-height: 1.6; max-width: 520px; }
 
     /* ─── SECTION HEAD ─── */
-    .section { margin-bottom: 56px; }
+    .section { margin-bottom: 56px; scroll-margin-top: 84px; }
     .section-head {
       display: flex; align-items: center; gap: 12px;
       margin-bottom: 28px;
@@ -603,8 +660,50 @@
   </div>
 </nav>
 
-<!-- MAIN -->
-<div class="wrap">
+<!-- NOTICE TICKER -->
+<div class="notice-ticker" id="noticeTicker">
+  <span class="notice-ticker-icon">🔔</span>
+  <div class="notice-ticker-viewport">
+    <div class="notice-ticker-track" id="noticeTickerTrack"></div>
+  </div>
+</div>
+
+<!-- PORTAL SHELL -->
+<div class="portal-shell">
+  <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰ Menu</button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <aside class="sidebar" id="portalSidebar">
+    <div class="sidebar-section-label">Tổng quan</div>
+    <a class="sidebar-link" data-target="progressSection">📊 Tiến độ học tập</a>
+    <a class="sidebar-link" data-target="purchasedSection">📦 Nội dung đã mua</a>
+
+    <div class="sidebar-section-label">Học tập</div>
+    <a class="sidebar-link" data-target="coursesSection">🔥 Khoá học trọng tâm</a>
+    <a class="sidebar-link" data-target="lessonsSection">📚 Bài giảng</a>
+    <a class="sidebar-link" data-target="freeCoursesSection">✅ Mini-course</a>
+    <a class="sidebar-link" data-target="docsSection">📄 Tài liệu</a>
+
+    <div class="sidebar-section-label">Công cụ &amp; thực hành</div>
+    <a class="sidebar-link" data-target="promptSection">🧩 Prompt/Template</a>
+    <a class="sidebar-link" data-target="submissionSection">📤 Bài thực hành</a>
+
+    <div class="sidebar-section-label">Sự kiện &amp; giao dịch</div>
+    <a class="sidebar-link" data-target="liveClassSection">🗓️ Lịch học trực tiếp</a>
+    <a class="sidebar-link" data-target="paymentHistorySection">🧾 Lịch sử thanh toán</a>
+    <a class="sidebar-link" data-target="storeSection">⭐ Cửa hàng sản phẩm số</a>
+    <a class="sidebar-link" data-target="referralSection">🤝 Giới thiệu bạn bè</a>
+
+    <div class="sidebar-section-label">Cộng đồng &amp; hỗ trợ</div>
+    <a class="sidebar-link" data-target="caseStudySection">📈 Case study</a>
+    <a class="sidebar-link" data-target="expertSection">🧑‍🏫 Chuyên gia</a>
+    <a class="sidebar-link" data-target="blogSection">📝 Blog AI</a>
+    <a class="sidebar-link" data-target="notifSection">🔔 Thông báo</a>
+    <a class="sidebar-link" data-target="supportSection">🛟 Hỗ trợ</a>
+    <a class="sidebar-link" data-target="communitySection">🌐 Cộng đồng</a>
+  </aside>
+
+  <main class="main-content">
+  <div class="wrap">
 
   <!-- HERO -->
   <div class="hero">
@@ -627,7 +726,7 @@
   </div>
 
   <!-- KHOÁ HỌC TRỌNG TÂM -->
-  <div class="section">
+  <div class="section" id="coursesSection">
     <div class="section-head">
       <span class="section-badge badge-hot">🔥 Flagship</span>
       <div class="section-title">Khoá học trọng tâm</div>
@@ -651,7 +750,7 @@
   </div>
 
   <!-- TÀI LIỆU -->
-  <div class="section">
+  <div class="section" id="docsSection">
     <div class="section-head">
       <span class="section-badge badge-free">📄 Tài liệu</span>
       <div class="section-title">Tài liệu</div>
@@ -663,7 +762,7 @@
   </div>
 
   <!-- MINI-COURSE -->
-  <div class="section">
+  <div class="section" id="freeCoursesSection">
     <div class="section-head">
       <span class="section-badge badge-free">✅ Mini-course</span>
       <div class="section-title">Mini-course</div>
@@ -675,7 +774,7 @@
   </div>
 
   <!-- CỬA HÀNG SẢN PHẨM SỐ -->
-  <div class="section">
+  <div class="section" id="storeSection">
     <div class="section-head">
       <span class="section-badge badge-new">⭐ Độc quyền</span>
       <div class="section-title">Cửa hàng sản phẩm số</div>
@@ -848,7 +947,7 @@
   </div>
 
   <!-- CỘNG ĐỒNG -->
-  <div class="community-section">
+  <div class="community-section" id="communitySection" style="scroll-margin-top:84px">
     <div class="community-eyebrow">🌐 Cộng đồng VDAI Academy</div>
     <h2 class="community-title">
       Bạn không đi một mình.<br>
@@ -882,7 +981,9 @@
     </div>
   </div>
 
-</div><!-- /wrap -->
+  </div><!-- /wrap -->
+  </main>
+</div><!-- /portal-shell -->
 
 <!-- CHECKOUT MODAL -->
 <div class="modal-overlay" id="checkoutModal" style="display:none" onclick="if(event.target===this)closeModal()">
@@ -1336,11 +1437,44 @@ async function loadBlogPosts() {
     </div>`).join('');
 }
 
+// ── Sidebar menu (toggle mobile + scroll-spy) ──
+function toggleSidebar() {
+  document.getElementById('portalSidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+(function setupPortalSidebar() {
+  const links = Array.from(document.querySelectorAll('.sidebar-link'));
+  links.forEach(l => {
+    l.href = '#' + l.dataset.target;
+    l.addEventListener('click', () => {
+      document.getElementById('portalSidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('show');
+    });
+  });
+  function onScroll() {
+    const offset = 100;
+    let current = null;
+    links.forEach(l => {
+      const el = document.getElementById(l.dataset.target);
+      if (el && el.getBoundingClientRect().top - offset <= 0) current = l;
+    });
+    links.forEach(l => l.classList.toggle('active', l === current));
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
 // ── Thông báo (quản lý ở Admin → Thông báo) ──
 async function loadNotifications() {
   const { data } = await _supabase.from('notifications').select('*').eq('active', true).order('created_at', { ascending: false }).limit(10);
   if (!data || !data.length) return;
   document.getElementById('notifSection').style.display = 'block';
+  const ticker = document.getElementById('noticeTicker');
+  const track = document.getElementById('noticeTickerTrack');
+  if (ticker && track) {
+    track.innerHTML = data.map(n => `<span>📢 ${n.title}${n.message ? ' — ' + n.message : ''}</span>`).join('<span style="opacity:.35">●</span>');
+    ticker.style.display = 'flex';
+  }
   document.getElementById('notifList').innerHTML = data.map(n => `
     <div class="notif-card">
       <span class="notif-icon">🔔</span>
