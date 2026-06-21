@@ -675,6 +675,14 @@
         <span class="sidebar-item-icon">🛟</span>
         <span>Trung tâm hỗ trợ</span>
       </button>
+      <button class="sidebar-item" onclick="switchSection('prompts', this)">
+        <span class="sidebar-item-icon">🧩</span>
+        <span>Prompt/Template</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('submissions', this)">
+        <span class="sidebar-item-icon">📤</span>
+        <span>Bài thực hành</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-signout" onclick="signOut()"><span>Đăng xuất</span></button>
@@ -1347,6 +1355,53 @@
         </div>
       </div>
 
+      <!-- PANEL: Prompt/Template -->
+      <div class="panel" id="panel-prompts">
+        <div class="section-title">Prompt / Template</div>
+        <div class="section-sub">Thư viện prompt AI & template dùng sẵn, hiển thị ở Portal để học viên copy</div>
+        <div class="alert" id="promptAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm Prompt/Template mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group"><label>Tiêu đề *</label><input type="text" id="ptTitle" placeholder="VD: Prompt viết content bán hàng"></div>
+              <div class="form-group"><label>Danh mục</label><input type="text" id="ptCategory" placeholder="VD: Content, Nghiên cứu sản phẩm"></div>
+              <div class="form-group full"><label>Nội dung prompt/template *</label><textarea id="ptContent" rows="5" placeholder="Nhập nội dung prompt..." style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:0.9rem;box-sizing:border-box"></textarea></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addPtBtn" onclick="addPromptTemplate()">+ Thêm Prompt/Template</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách Prompt/Template</h2><button class="btn btn-ghost btn-sm" onclick="loadPromptTemplates()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Tiêu đề</th><th>Danh mục</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody id="promptBody"><tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Bài thực hành -->
+      <div class="panel" id="panel-submissions">
+        <div class="section-title">Bài thực hành</div>
+        <div class="section-sub">Bài thực hành học viên nộp qua Portal, chấm & phản hồi tại đây</div>
+        <div class="alert" id="subAlert"></div>
+        <div class="card">
+          <div class="card-head">
+            <h2>Danh sách bài thực hành</h2>
+            <button class="btn btn-ghost btn-sm" onclick="loadSubmissions()">↻ Làm mới</button>
+          </div>
+          <div class="filter-bar">
+            <button class="btn btn-ghost btn-sm" id="subFilterAll"      onclick="filterSubmissions('all')"      style="background:rgba(37,99,235,0.15);color:#60A5FA;border-color:rgba(37,99,235,0.3)">Tất cả</button>
+            <button class="btn btn-ghost btn-sm" id="subFilterPending"  onclick="filterSubmissions('pending')">🟡 Chưa chấm</button>
+            <button class="btn btn-ghost btn-sm" id="subFilterReviewed" onclick="filterSubmissions('reviewed')">✅ Đã chấm</button>
+          </div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Học viên</th><th>Bài làm</th><th>Trạng thái</th><th>Ngày nộp</th><th>Hành động</th></tr></thead>
+            <tbody id="subBody"><tr><td colspan="6"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
     </div><!-- /main-body -->
   </main>
 </div><!-- /admin-shell -->
@@ -1377,6 +1432,8 @@ const SECTION_META = {
   blog:         { title: 'Blog',             breadcrumb: 'Bài viết blog' },
   notifications:{ title: 'Thông báo',        breadcrumb: 'Thông báo gửi học viên' },
   support:      { title: 'Trung tâm hỗ trợ', breadcrumb: 'Yêu cầu hỗ trợ từ học viên' },
+  prompts:      { title: 'Prompt/Template',  breadcrumb: 'Thư viện prompt & template' },
+  submissions:  { title: 'Bài thực hành',    breadcrumb: 'Chấm & phản hồi bài thực hành' },
 };
 
 // ── Section switch ──
@@ -1410,6 +1467,8 @@ function refreshCurrent() {
     blog:        loadBlogPosts,
     notifications: loadNotifications,
     support:       loadSupportTickets,
+    prompts:       loadPromptTemplates,
+    submissions:   loadSubmissions,
   };
   if (loaders[_currentSection]) loaders[_currentSection]();
 }
@@ -2710,6 +2769,102 @@ function openReplyModal(t) {
   });
 }
 
+// ── Prompt / Template ──
+async function loadPromptTemplates() {
+  const { data, error } = await _supabase.from('prompt_templates').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('promptBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><p>Chưa có Prompt/Template nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((p, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${p.title}</strong></td>
+      <td style="font-size:0.78rem;color:#64748B">${p.category || '—'}</td>
+      <td><span class="badge badge-${p.active !== false ? 'active' : 'closed'}">${p.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${p.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="togglePromptTemplate(${p.id}, ${p.active !== false})">${p.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deletePromptTemplate(${p.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addPromptTemplate() {
+  const title = document.getElementById('ptTitle').value.trim();
+  const content = document.getElementById('ptContent').value.trim();
+  if (!title || !content) { showAlert('promptAlert', 'Vui lòng nhập tiêu đề và nội dung', 'error'); return; }
+  const btn = document.getElementById('addPtBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('prompt_templates').insert({
+    title, content, category: document.getElementById('ptCategory').value.trim(), active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm Prompt/Template';
+  if (error) { showAlert('promptAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['ptTitle','ptCategory','ptContent'].forEach(id => document.getElementById(id).value = '');
+  showAlert('promptAlert', '✅ Đã thêm Prompt/Template!');
+  loadPromptTemplates();
+}
+async function togglePromptTemplate(id, current) {
+  await _supabase.from('prompt_templates').update({ active: !current }).eq('id', id);
+  loadPromptTemplates();
+}
+async function deletePromptTemplate(id) {
+  if (!confirm('Xoá Prompt/Template này?')) return;
+  await _supabase.from('prompt_templates').delete().eq('id', id);
+  showAlert('promptAlert', 'Đã xoá!');
+  loadPromptTemplates();
+}
+
+// ── Bài thực hành ──
+let _subFilter = 'all';
+let _subData = [];
+async function loadSubmissions() {
+  const { data, error } = await _supabase.from('submissions').select('*').order('created_at', { ascending: false });
+  _subData = data || [];
+  if (error) { document.getElementById('subBody').innerHTML = `<tr><td colspan="6"><div class="empty"><p>Lỗi tải dữ liệu.</p></div></td></tr>`; return; }
+  renderSubmissions();
+}
+function filterSubmissions(status) {
+  _subFilter = status;
+  ['subFilterAll','subFilterPending','subFilterReviewed'].forEach(id => document.getElementById(id).style.background = '');
+  const map = { all: 'subFilterAll', pending: 'subFilterPending', reviewed: 'subFilterReviewed' };
+  document.getElementById(map[status]).style.background = 'rgba(37,99,235,0.15)';
+  renderSubmissions();
+}
+function renderSubmissions() {
+  const tbody = document.getElementById('subBody');
+  const list = _subFilter === 'all' ? _subData : _subData.filter(s => s.status === _subFilter);
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><p>Chưa có bài thực hành nào.</p></div></td></tr>`; return; }
+  const statusLabel = { pending: 'Chưa chấm', reviewed: 'Đã chấm' };
+  tbody.innerHTML = list.map((s, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td>${s.member_email}</td>
+      <td><strong style="color:#fff">${s.title}</strong><br><span style="font-size:0.72rem;color:#475569">${s.content || ''}</span>${s.link_url ? `<br><a href="${s.link_url}" target="_blank" class="link-chip">🔗 Xem bài làm</a>` : ''}${s.feedback ? `<br><span style="font-size:0.72rem;color:#34D399">↳ Phản hồi: ${s.feedback}</span>` : ''}</td>
+      <td><span class="badge badge-${s.status === 'pending' ? 'closed' : 'active'}">${statusLabel[s.status] || s.status}</span></td>
+      <td style="font-size:0.78rem;color:#64748B">${s.created_at ? new Date(s.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td><button class="btn btn-warning btn-sm" onclick='openFeedbackModal(${JSON.stringify(s)})'>${s.feedback ? 'Sửa phản hồi' : 'Chấm bài'}</button></td>
+    </tr>`).join('');
+}
+function openFeedbackModal(s) {
+  openModal('Phản hồi bài thực hành', `
+    <div class="form-group"><label>Học viên</label><input type="text" value="${s.member_email}" disabled></div>
+    <div class="form-group"><label>Bài làm</label><input type="text" value="${(s.title||'').replace(/"/g,'&quot;')}" disabled></div>
+    <div class="form-group"><label>Nội dung phản hồi *</label><input type="text" id="m_feedback" value="${(s.feedback||'').replace(/"/g,'&quot;')}" placeholder="Nhập nhận xét..."></div>
+  `, {
+    save: async () => {
+      const feedback = document.getElementById('m_feedback').value.trim();
+      if (!feedback) { showAlert('subAlert', 'Vui lòng nhập nội dung phản hồi', 'error'); return; }
+      const { error } = await _supabase.from('submissions').update({
+        feedback, status: 'reviewed', reviewed_at: new Date().toISOString()
+      }).eq('id', s.id);
+      if (error) { showAlert('subAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('subAlert', '✅ Đã gửi phản hồi!');
+      closeModal();
+      loadSubmissions();
+    }
+  });
+}
+
 // ── Sign out ──
 async function signOut() {
   await _supabase.auth.signOut();
@@ -2753,6 +2908,8 @@ async function signOut() {
     loadBlogPosts();
     loadNotifications();
     loadSupportTickets();
+    loadPromptTemplates();
+    loadSubmissions();
   } catch(e) {
     window.location.href = 'login.html';
   }

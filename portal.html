@@ -387,6 +387,16 @@
     .support-ticket-status { font-size: 0.68rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
     .support-ticket-status.open { background: rgba(251,191,36,0.15); color: #FBBF24; }
     .support-ticket-status.replied { background: rgba(16,185,129,0.15); color: #34D399; }
+    .support-ticket-status.pending { background: rgba(251,191,36,0.15); color: #FBBF24; }
+    .support-ticket-status.reviewed { background: rgba(16,185,129,0.15); color: #34D399; }
+
+    /* ─── PROMPT / TEMPLATE ─── */
+    .prompt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .prompt-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+    .prompt-cat { font-size: 0.68rem; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.5px; }
+    .prompt-title { font-size: 0.92rem; font-weight: 800; color: #fff; }
+    .prompt-content { font-size: 0.78rem; color: var(--muted); line-height: 1.5; max-height: 110px; overflow-y: auto; white-space: pre-wrap; background: rgba(255,255,255,0.03); border-radius: 10px; padding: 10px; }
+    .prompt-copy-btn { align-self: flex-start; }
 
     /* ─── CASE STUDY / CHUYÊN GIA / BLOG ─── */
     .showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
@@ -766,6 +776,36 @@
       <div class="section-line"></div>
     </div>
     <div class="notif-list" id="notifList"></div>
+  </div>
+
+  <!-- PROMPT / TEMPLATE -->
+  <div class="section" id="promptSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">🧩 Prompt/Template</span>
+      <div class="section-title">Thư viện Prompt &amp; Template</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="prompt-grid" id="promptGrid"></div>
+  </div>
+
+  <!-- BÀI THỰC HÀNH -->
+  <div class="section" id="submissionSection">
+    <div class="section-head">
+      <span class="section-badge badge-mine">📤 Thực hành</span>
+      <div class="section-title">Gửi bài thực hành</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="support-grid">
+      <div class="support-form-card">
+        <input type="text" id="subTitle" placeholder="Tên bài thực hành">
+        <textarea id="subContent" rows="4" placeholder="Mô tả nội dung bài làm..."></textarea>
+        <input type="text" id="subLink" placeholder="Link bài làm (Google Doc/Drive/ảnh...) - không bắt buộc">
+        <button class="btn-buy" id="subSubmitBtn" onclick="submitPracticeWork()" style="justify-content:center">Gửi bài thực hành</button>
+      </div>
+      <div class="support-ticket-list" id="submissionList">
+        <p style="color:var(--muted);font-size:0.82rem">Bạn chưa gửi bài thực hành nào.</p>
+      </div>
+    </div>
   </div>
 
   <!-- TRUNG TÂM HỖ TRỢ -->
@@ -1303,6 +1343,63 @@ async function submitSupportTicket() {
   }
 }
 
+// ── Prompt/Template (quản lý ở Admin → Prompt/Template) ──
+async function loadPromptTemplates() {
+  const { data } = await _supabase.from('prompt_templates').select('*').eq('active', true).order('created_at', { ascending: false });
+  if (!data || !data.length) return;
+  document.getElementById('promptSection').style.display = 'block';
+  document.getElementById('promptGrid').innerHTML = data.map((p, i) => `
+    <div class="prompt-card">
+      ${p.category ? `<span class="prompt-cat">${p.category}</span>` : ''}
+      <div class="prompt-title">${p.title}</div>
+      <div class="prompt-content" id="promptContent${i}">${p.content}</div>
+      <button class="btn-buy prompt-copy-btn" onclick="copyPromptTemplate(${i})">📋 Copy</button>
+    </div>`).join('');
+  window._promptData = data;
+}
+function copyPromptTemplate(i) {
+  const text = (window._promptData && window._promptData[i] && window._promptData[i].content) || '';
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Đã copy nội dung prompt/template!');
+  });
+}
+
+// ── Bài thực hành (quản lý ở Admin → Bài thực hành) ──
+async function loadSubmissions() {
+  const { data } = await _supabase.from('submissions').select('*').eq('member_email', _userEmail).order('created_at', { ascending: false });
+  const list = document.getElementById('submissionList');
+  if (!data || !data.length) { list.innerHTML = `<p style="color:var(--muted);font-size:0.82rem">Bạn chưa gửi bài thực hành nào.</p>`; return; }
+  const statusLabel = { pending: 'Chưa chấm', reviewed: 'Đã chấm' };
+  list.innerHTML = data.map(s => `
+    <div class="support-ticket-card">
+      <span class="support-ticket-status ${s.status === 'pending' ? 'pending' : 'reviewed'}">${statusLabel[s.status] || s.status}</span>
+      <div class="support-ticket-subject" style="margin-top:6px">${s.title}</div>
+      ${s.content ? `<div class="support-ticket-msg">${s.content}</div>` : ''}
+      ${s.link_url ? `<p style="margin:4px 0"><a href="${s.link_url}" target="_blank" style="color:var(--purple);font-size:0.78rem">🔗 Xem bài làm</a></p>` : ''}
+      ${s.feedback ? `<div class="support-ticket-reply">💬 Phản hồi: ${s.feedback}</div>` : ''}
+    </div>`).join('');
+}
+async function submitPracticeWork() {
+  const title = document.getElementById('subTitle').value.trim();
+  const content = document.getElementById('subContent').value.trim();
+  const link_url = document.getElementById('subLink').value.trim();
+  if (!title) { alert('Vui lòng nhập tên bài thực hành.'); return; }
+  const btn = document.getElementById('subSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Đang gửi...';
+  try {
+    const { error } = await _supabase.from('submissions').insert({
+      member_email: _userEmail, title, content, link_url: link_url || null, status: 'pending'
+    });
+    if (error) { alert('Lỗi: ' + error.message); return; }
+    document.getElementById('subTitle').value = '';
+    document.getElementById('subContent').value = '';
+    document.getElementById('subLink').value = '';
+    loadSubmissions();
+  } finally {
+    btn.disabled = false; btn.textContent = 'Gửi bài thực hành';
+  }
+}
+
 // ── Checkout — dùng chung cho product / lesson / course ──
 // Đơn hàng được tạo NGAY khi mở modal (status: pending) để có order_code
 // duy nhất nhúng vào nội dung chuyển khoản — SePay webhook sẽ khớp đúng
@@ -1480,6 +1577,8 @@ document.body.insertAdjacentHTML('afterbegin',
     loadExperts();
     loadBlogPosts();
     loadNotifications();
+    loadPromptTemplates();
+    loadSubmissions();
     loadSupportTickets();
     loadReferral();
   } catch(e) {
