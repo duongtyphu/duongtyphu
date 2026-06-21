@@ -114,6 +114,19 @@
       Chưa có tài khoản? <a href="register.html">Đăng ký miễn phí</a>
     </div>
 
+    <!-- Form quên mật khẩu — chỉ hiện khi bấm "Quên mật khẩu?", yêu cầu nhập email rồi mới gửi -->
+    <form id="forgotForm" style="display:none">
+      <p class="auth-sub" style="margin-bottom:20px">Nhập email tài khoản của bạn, chúng tôi sẽ gửi link đặt lại mật khẩu.</p>
+      <div class="auth-field">
+        <label for="forgotEmail">Email</label>
+        <input type="email" id="forgotEmail" placeholder="email@example.com" required autocomplete="email">
+      </div>
+      <button type="submit" class="auth-btn" id="forgotSubmitBtn">Gửi email đặt lại mật khẩu</button>
+      <div class="auth-switch" style="margin-top:16px">
+        <a href="#" id="backToLoginLink">← Quay lại đăng nhập</a>
+      </div>
+    </form>
+
     <!-- Form đặt lại mật khẩu mới — chỉ hiện khi vào từ link "Quên mật khẩu" trong email -->
     <form id="resetForm" style="display:none">
       <p class="auth-sub" style="margin-bottom:20px">Nhập mật khẩu mới cho tài khoản của bạn.</p>
@@ -206,18 +219,42 @@
     }
   });
 
-  // Quên mật khẩu
-  document.getElementById('forgotLink').addEventListener('click', async (e) => {
+  // Quên mật khẩu — bấm link sẽ chuyển sang form riêng yêu cầu nhập email rồi mới gửi
+  const forgotForm = document.getElementById('forgotForm');
+  const forgotEmailInput = document.getElementById('forgotEmail');
+
+  document.getElementById('forgotLink').addEventListener('click', (e) => {
     e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    if (!email) {
-      msg.className = 'auth-msg error';
-      msg.textContent = 'Vui lòng nhập email trước, sau đó nhấn "Quên mật khẩu?".';
-      return;
-    }
+    msg.className = 'auth-msg';
+    forgotEmailInput.value = document.getElementById('loginEmail').value.trim();
+    form.style.display = 'none';
+    document.getElementById('registerSwitch').style.display = 'none';
+    forgotForm.style.display = 'block';
+  });
+
+  document.getElementById('backToLoginLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    msg.className = 'auth-msg';
+    forgotForm.style.display = 'none';
+    form.style.display = 'block';
+    document.getElementById('registerSwitch').style.display = 'block';
+  });
+
+  forgotForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = forgotEmailInput.value.trim();
+    const forgotSubmitBtn = document.getElementById('forgotSubmitBtn');
+
+    forgotSubmitBtn.disabled = true;
+    forgotSubmitBtn.textContent = 'Đang gửi...';
+
     const { error } = await _supabase.auth.resetPasswordForEmail(email, {
       redirectTo: SITE_URL + '/login.html'
     });
+
+    forgotSubmitBtn.disabled = false;
+    forgotSubmitBtn.textContent = 'Gửi email đặt lại mật khẩu';
+
     if (error) {
       msg.className = 'auth-msg error';
       msg.textContent = 'Lỗi: ' + error.message;
