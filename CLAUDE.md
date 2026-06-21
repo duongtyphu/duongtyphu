@@ -25,3 +25,14 @@ kiểu cũ (chữ "V" trong ô vuông).
 Lưu ý: các trang tĩnh cũ (privacy.html, terms.html, refund-policy.html, thank-you.html, 404.html...)
 vẫn còn dùng pattern cũ — chưa cần sửa lại trừ khi được yêu cầu riêng. Quy tắc này chỉ bắt buộc
 áp dụng cho các trang MỚI tạo từ nay về sau.
+
+## Internal linking cho bài viết Blog AI (bắt buộc cho bài viết mới)
+
+Mỗi bài viết mới đăng ở trang Blog AI phải có liên kết (internal link) tới:
+
+1. **Một bài nền tảng (pillar post)** — bài viết tổng quan/gốc của chủ đề đó.
+2. **Hai hoặc ba bài cùng chủ đề** — các bài liên quan trong cùng cụm nội dung.
+3. **Trang SOLO hoặc SCALE phù hợp** — trỏ về trang khoá học tương ứng với nội dung bài viết
+   (VDAI SOLO cho nội dung vận hành một mình, VDAI SCALE cho nội dung mở rộng/đội nhóm).
+
+Áp dụng cho mọi bài viết Blog AI tạo ra từ nay về sau.
