@@ -203,6 +203,12 @@
     return;
   }
 
+  // Tài khoản bị Admin khoá → requireAuth() đã signOut và redirect về đây với ?locked=1
+  if (new URLSearchParams(window.location.search).get('locked') === '1') {
+    msg.className = 'auth-msg error';
+    msg.textContent = 'Tài khoản của bạn đã bị khoá. Vui lòng liên hệ quản trị viên để được hỗ trợ.';
+  }
+
   // Nếu đã đăng nhập (và không phải đang trong luồng reset) → chuyển thẳng vào portal
   const session = await getSession();
   if (session) {
