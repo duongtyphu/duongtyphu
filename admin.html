@@ -11,17 +11,17 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy:   var(--navy);
-      --navy2:  var(--navy2);
-      --blue:   var(--blue);
-      --blue2:  var(--blue2);
-      --purple: var(--purple);
+      --navy:   #060C1A;
+      --navy2:  #0D1526;
+      --blue:   #2563EB;
+      --blue2:  #1D4ED8;
+      --purple: #6D5DFB;
       --gold:   #F59E0B;
       --green:  #10B981;
-      --red:    var(--red);
-      --text:   var(--text);
-      --muted:  var(--muted);
-      --muted2: var(--muted2);
+      --red:    #F87171;
+      --text:   #E2E8F0;
+      --muted:  #94A3B8;
+      --muted2: #64748B;
       --border: rgba(255,255,255,0.08);
       --card:   rgba(255,255,255,0.04);
     }
@@ -180,7 +180,16 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      position: relative;
     }
+    .main-content::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 300px;
+      background: radial-gradient(ellipse 60% 100% at 50% 0%, rgba(109,93,251,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .main-header, .main-body { position: relative; z-index: 1; }
 
     .main-header {
       background: rgba(13,21,38,0.8);
