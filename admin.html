@@ -667,6 +667,14 @@
         <span class="sidebar-item-icon">📝</span>
         <span>Blog</span>
       </button>
+      <button class="sidebar-item" onclick="switchSection('notifications', this)">
+        <span class="sidebar-item-icon">🔔</span>
+        <span>Thông báo</span>
+      </button>
+      <button class="sidebar-item" onclick="switchSection('support', this)">
+        <span class="sidebar-item-icon">🛟</span>
+        <span>Trung tâm hỗ trợ</span>
+      </button>
     </nav>
     <div class="sidebar-footer">
       <button class="btn-signout" onclick="signOut()"><span>Đăng xuất</span></button>
@@ -1293,6 +1301,52 @@
         </div>
       </div>
 
+      <!-- PANEL: Thông báo -->
+      <div class="panel" id="panel-notifications">
+        <div class="section-title">Thông báo</div>
+        <div class="section-sub">Gửi thông báo broadcast tới toàn bộ học viên, hiển thị ở Portal</div>
+        <div class="alert" id="notiAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Gửi thông báo mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group full"><label>Tiêu đề *</label><input type="text" id="notiTitle" placeholder="VD: Khai giảng VDAI SOLO khoá 5"></div>
+              <div class="form-group full"><label>Nội dung</label><input type="text" id="notiMessage" placeholder="Nội dung thông báo..."></div>
+            </div>
+          </div>
+          <div class="form-actions"><button class="btn btn-purple" id="addNotiBtn" onclick="addNotification()">+ Gửi thông báo</button></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Danh sách thông báo</h2><button class="btn btn-ghost btn-sm" onclick="loadNotifications()">↻ Làm mới</button></div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Thông báo</th><th>Ngày gửi</th><th>Trạng thái</th><th>Hành động</th></tr></thead>
+            <tbody id="notiBody"><tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
+      <!-- PANEL: Trung tâm hỗ trợ -->
+      <div class="panel" id="panel-support">
+        <div class="section-title">Trung tâm hỗ trợ</div>
+        <div class="section-sub">Câu hỏi/yêu cầu hỗ trợ từ học viên gửi qua Portal</div>
+        <div class="alert" id="supportAlert"></div>
+        <div class="card">
+          <div class="card-head">
+            <h2>Danh sách yêu cầu hỗ trợ</h2>
+            <button class="btn btn-ghost btn-sm" onclick="loadSupportTickets()">↻ Làm mới</button>
+          </div>
+          <div class="filter-bar">
+            <button class="btn btn-ghost btn-sm" id="suFilterAll"     onclick="filterSupport('all')"     style="background:rgba(37,99,235,0.15);color:#60A5FA;border-color:rgba(37,99,235,0.3)">Tất cả</button>
+            <button class="btn btn-ghost btn-sm" id="suFilterOpen"    onclick="filterSupport('open')">🟡 Chưa trả lời</button>
+            <button class="btn btn-ghost btn-sm" id="suFilterReplied" onclick="filterSupport('replied')">✅ Đã trả lời</button>
+          </div>
+          <div style="overflow-x:auto"><table class="data-table">
+            <thead><tr><th>#</th><th>Học viên</th><th>Câu hỏi</th><th>Trạng thái</th><th>Ngày gửi</th><th>Hành động</th></tr></thead>
+            <tbody id="supportBody"><tr><td colspan="6"><div class="empty"><p>Đang tải...</p></div></td></tr></tbody>
+          </table></div>
+        </div>
+      </div>
+
     </div><!-- /main-body -->
   </main>
 </div><!-- /admin-shell -->
@@ -1321,6 +1375,8 @@ const SECTION_META = {
   casestudies:  { title: 'Case study',       breadcrumb: 'Câu chuyện thành công học viên' },
   experts:      { title: 'Chuyên gia',       breadcrumb: 'Đội ngũ chuyên gia' },
   blog:         { title: 'Blog',             breadcrumb: 'Bài viết blog' },
+  notifications:{ title: 'Thông báo',        breadcrumb: 'Thông báo gửi học viên' },
+  support:      { title: 'Trung tâm hỗ trợ', breadcrumb: 'Yêu cầu hỗ trợ từ học viên' },
 };
 
 // ── Section switch ──
@@ -1352,6 +1408,8 @@ function refreshCurrent() {
     casestudies: loadCaseStudies,
     experts:     loadExperts,
     blog:        loadBlogPosts,
+    notifications: loadNotifications,
+    support:       loadSupportTickets,
   };
   if (loaders[_currentSection]) loaders[_currentSection]();
 }
@@ -2557,6 +2615,101 @@ async function deleteBlogPost(id) {
   loadBlogPosts();
 }
 
+// ── Thông báo ──
+async function loadNotifications() {
+  const { data, error } = await _supabase.from('notifications').select('*').order('created_at', { ascending: false });
+  const tbody = document.getElementById('notiBody');
+  if (error || !data || !data.length) { tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><p>Chưa có thông báo nào.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map((n, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td><strong style="color:#fff">${n.title}</strong><br><span style="font-size:0.72rem;color:#475569">${n.message || ''}</span></td>
+      <td style="font-size:0.78rem;color:#64748B">${n.created_at ? new Date(n.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td><span class="badge badge-${n.active !== false ? 'active' : 'closed'}">${n.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn btn-${n.active !== false ? 'danger' : 'ghost'} btn-sm" onclick="toggleNotification(${n.id}, ${n.active !== false})">${n.active !== false ? 'Ẩn' : 'Hiện'}</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteNotification(${n.id})">Xoá</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+async function addNotification() {
+  const title = document.getElementById('notiTitle').value.trim();
+  if (!title) { showAlert('notiAlert', 'Vui lòng nhập tiêu đề', 'error'); return; }
+  const btn = document.getElementById('addNotiBtn');
+  btn.disabled = true; btn.textContent = 'Đang gửi...';
+  const { error } = await _supabase.from('notifications').insert({
+    title, message: document.getElementById('notiMessage').value.trim(), active: true
+  });
+  btn.disabled = false; btn.textContent = '+ Gửi thông báo';
+  if (error) { showAlert('notiAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['notiTitle','notiMessage'].forEach(id => document.getElementById(id).value = '');
+  showAlert('notiAlert', '✅ Đã gửi thông báo!');
+  loadNotifications();
+}
+async function toggleNotification(id, current) {
+  await _supabase.from('notifications').update({ active: !current }).eq('id', id);
+  loadNotifications();
+}
+async function deleteNotification(id) {
+  if (!confirm('Xoá thông báo này?')) return;
+  await _supabase.from('notifications').delete().eq('id', id);
+  showAlert('notiAlert', 'Đã xoá!');
+  loadNotifications();
+}
+
+// ── Trung tâm hỗ trợ ──
+let _supportFilter = 'all';
+let _supportData = [];
+async function loadSupportTickets() {
+  const { data, error } = await _supabase.from('support_tickets').select('*').order('created_at', { ascending: false });
+  _supportData = data || [];
+  if (error) { document.getElementById('supportBody').innerHTML = `<tr><td colspan="6"><div class="empty"><p>Lỗi tải dữ liệu.</p></div></td></tr>`; return; }
+  renderSupportTickets();
+}
+function filterSupport(status) {
+  _supportFilter = status;
+  ['suFilterAll','suFilterOpen','suFilterReplied'].forEach(id => document.getElementById(id).style.background = '');
+  const map = { all: 'suFilterAll', open: 'suFilterOpen', replied: 'suFilterReplied' };
+  document.getElementById(map[status]).style.background = 'rgba(37,99,235,0.15)';
+  renderSupportTickets();
+}
+function renderSupportTickets() {
+  const tbody = document.getElementById('supportBody');
+  const list = _supportFilter === 'all' ? _supportData : _supportData.filter(t => t.status === _supportFilter);
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><p>Chưa có yêu cầu hỗ trợ nào.</p></div></td></tr>`; return; }
+  const statusLabel = { open: 'Chưa trả lời', replied: 'Đã trả lời', closed: 'Đã đóng' };
+  tbody.innerHTML = list.map((t, i) => `
+    <tr>
+      <td style="color:#334155">${i+1}</td>
+      <td>${t.member_email}</td>
+      <td><strong style="color:#fff">${t.subject}</strong><br><span style="font-size:0.72rem;color:#475569">${t.message}</span>${t.reply ? `<br><span style="font-size:0.72rem;color:#34D399">↳ Đã trả lời: ${t.reply}</span>` : ''}</td>
+      <td><span class="badge badge-${t.status === 'open' ? 'closed' : 'active'}">${statusLabel[t.status] || t.status}</span></td>
+      <td style="font-size:0.78rem;color:#64748B">${t.created_at ? new Date(t.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td><button class="btn btn-warning btn-sm" onclick='openReplyModal(${JSON.stringify(t)})'>${t.reply ? 'Sửa trả lời' : 'Trả lời'}</button></td>
+    </tr>`).join('');
+}
+function openReplyModal(t) {
+  openModal('Trả lời hỗ trợ', `
+    <div class="form-group"><label>Học viên</label><input type="text" value="${t.member_email}" disabled></div>
+    <div class="form-group"><label>Câu hỏi</label><input type="text" value="${(t.subject||'').replace(/"/g,'&quot;')}" disabled></div>
+    <div class="form-group"><label>Nội dung trả lời *</label><input type="text" id="m_reply" value="${(t.reply||'').replace(/"/g,'&quot;')}" placeholder="Nhập câu trả lời..."></div>
+  `, {
+    save: async () => {
+      const reply = document.getElementById('m_reply').value.trim();
+      if (!reply) { showAlert('supportAlert', 'Vui lòng nhập nội dung trả lời', 'error'); return; }
+      const { error } = await _supabase.from('support_tickets').update({
+        reply, status: 'replied', replied_at: new Date().toISOString()
+      }).eq('id', t.id);
+      if (error) { showAlert('supportAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('supportAlert', '✅ Đã trả lời!');
+      closeModal();
+      loadSupportTickets();
+    }
+  });
+}
+
 // ── Sign out ──
 async function signOut() {
   await _supabase.auth.signOut();
@@ -2598,6 +2751,8 @@ async function signOut() {
     loadCaseStudies();
     loadExperts();
     loadBlogPosts();
+    loadNotifications();
+    loadSupportTickets();
   } catch(e) {
     window.location.href = 'login.html';
   }

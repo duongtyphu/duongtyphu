@@ -360,6 +360,34 @@
     .liveclass-schedule { font-size: 0.78rem; color: var(--muted); }
     .liveclass-card .btn-buy { margin-top: 4px; align-self: flex-start; }
 
+    /* ─── THÔNG BÁO ─── */
+    .notif-list { display: flex; flex-direction: column; gap: 12px; }
+    .notif-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+      padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .notif-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .notif-title { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .notif-msg { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
+    .notif-date { font-size: 0.7rem; color: var(--muted); margin-top: 6px; }
+
+    /* ─── TRUNG TÂM HỖ TRỢ ─── */
+    .support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .support-grid { grid-template-columns: 1fr; } }
+    .support-form-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .support-form-card input, .support-form-card textarea {
+      width: 100%; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: #fff; font-family: inherit; font-size: 0.85rem; box-sizing: border-box;
+    }
+    .support-ticket-list { display: flex; flex-direction: column; gap: 12px; max-height: 360px; overflow-y: auto; }
+    .support-ticket-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+    .support-ticket-subject { font-size: 0.85rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .support-ticket-msg { font-size: 0.78rem; color: var(--muted); margin-bottom: 8px; }
+    .support-ticket-reply { font-size: 0.78rem; color: #34D399; background: rgba(16,185,129,0.08); border-radius: 10px; padding: 8px 10px; }
+    .support-ticket-status { font-size: 0.68rem; font-weight: 700; padding: 2px 9px; border-radius: 999px; }
+    .support-ticket-status.open { background: rgba(251,191,36,0.15); color: #FBBF24; }
+    .support-ticket-status.replied { background: rgba(16,185,129,0.15); color: #34D399; }
+
     /* ─── CASE STUDY / CHUYÊN GIA / BLOG ─── */
     .showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
     .showcase-card {
@@ -728,6 +756,35 @@
       <div class="section-line"></div>
     </div>
     <div class="showcase-grid" id="blogGrid"></div>
+  </div>
+
+  <!-- THÔNG BÁO -->
+  <div class="section" id="notifSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">🔔 Thông báo</span>
+      <div class="section-title">Thông báo mới</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </div>
+
+  <!-- TRUNG TÂM HỖ TRỢ -->
+  <div class="section" id="supportSection">
+    <div class="section-head">
+      <span class="section-badge badge-mine">🛟 Hỗ trợ</span>
+      <div class="section-title">Trung tâm hỗ trợ</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="support-grid">
+      <div class="support-form-card">
+        <input type="text" id="suSubject" placeholder="Tiêu đề câu hỏi / yêu cầu">
+        <textarea id="suMessage" rows="4" placeholder="Mô tả chi tiết vấn đề của bạn..."></textarea>
+        <button class="btn-buy" id="suSubmitBtn" onclick="submitSupportTicket()" style="justify-content:center">Gửi yêu cầu hỗ trợ</button>
+      </div>
+      <div class="support-ticket-list" id="supportTicketList">
+        <p style="color:var(--muted);font-size:0.82rem">Bạn chưa gửi yêu cầu hỗ trợ nào.</p>
+      </div>
+    </div>
   </div>
 
   <!-- CỘNG ĐỒNG -->
@@ -1197,6 +1254,55 @@ async function loadBlogPosts() {
     </div>`).join('');
 }
 
+// ── Thông báo (quản lý ở Admin → Thông báo) ──
+async function loadNotifications() {
+  const { data } = await _supabase.from('notifications').select('*').eq('active', true).order('created_at', { ascending: false }).limit(10);
+  if (!data || !data.length) return;
+  document.getElementById('notifSection').style.display = 'block';
+  document.getElementById('notifList').innerHTML = data.map(n => `
+    <div class="notif-card">
+      <span class="notif-icon">🔔</span>
+      <div>
+        <div class="notif-title">${n.title}</div>
+        ${n.message ? `<div class="notif-msg">${n.message}</div>` : ''}
+        <div class="notif-date">${n.created_at ? new Date(n.created_at).toLocaleDateString('vi-VN') : ''}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── Trung tâm hỗ trợ (quản lý ở Admin → Trung tâm hỗ trợ) ──
+async function loadSupportTickets() {
+  const { data } = await _supabase.from('support_tickets').select('*').eq('member_email', _userEmail).order('created_at', { ascending: false });
+  const list = document.getElementById('supportTicketList');
+  if (!data || !data.length) { list.innerHTML = `<p style="color:var(--muted);font-size:0.82rem">Bạn chưa gửi yêu cầu hỗ trợ nào.</p>`; return; }
+  const statusLabel = { open: 'Chưa trả lời', replied: 'Đã trả lời', closed: 'Đã đóng' };
+  list.innerHTML = data.map(t => `
+    <div class="support-ticket-card">
+      <span class="support-ticket-status ${t.status === 'open' ? 'open' : 'replied'}">${statusLabel[t.status] || t.status}</span>
+      <div class="support-ticket-subject" style="margin-top:6px">${t.subject}</div>
+      <div class="support-ticket-msg">${t.message}</div>
+      ${t.reply ? `<div class="support-ticket-reply">💬 Admin trả lời: ${t.reply}</div>` : ''}
+    </div>`).join('');
+}
+async function submitSupportTicket() {
+  const subject = document.getElementById('suSubject').value.trim();
+  const message = document.getElementById('suMessage').value.trim();
+  if (!subject || !message) { alert('Vui lòng nhập đầy đủ tiêu đề và nội dung.'); return; }
+  const btn = document.getElementById('suSubmitBtn');
+  btn.disabled = true; btn.textContent = 'Đang gửi...';
+  try {
+    const { error } = await _supabase.from('support_tickets').insert({
+      member_email: _userEmail, subject, message, status: 'open'
+    });
+    if (error) { alert('Lỗi: ' + error.message); return; }
+    document.getElementById('suSubject').value = '';
+    document.getElementById('suMessage').value = '';
+    loadSupportTickets();
+  } finally {
+    btn.disabled = false; btn.textContent = 'Gửi yêu cầu hỗ trợ';
+  }
+}
+
 // ── Checkout — dùng chung cho product / lesson / course ──
 // Đơn hàng được tạo NGAY khi mở modal (status: pending) để có order_code
 // duy nhất nhúng vào nội dung chuyển khoản — SePay webhook sẽ khớp đúng
@@ -1373,6 +1479,8 @@ document.body.insertAdjacentHTML('afterbegin',
     loadCaseStudies();
     loadExperts();
     loadBlogPosts();
+    loadNotifications();
+    loadSupportTickets();
     loadReferral();
   } catch(e) {
     window.location.href = 'login.html';
