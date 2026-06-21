@@ -349,6 +349,17 @@
     .pay-status-pill.rejected  { background: rgba(239,68,68,0.15); color: #F87171; }
     .payment-history-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 8px 14px; overflow-x: auto; }
 
+    /* ─── LỊCH HỌC TRỰC TIẾP ─── */
+    .liveclass-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .liveclass-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .liveclass-card h4 { font-size: 0.95rem; font-weight: 800; color: #fff; }
+    .liveclass-date { font-size: 0.78rem; color: var(--gold); font-weight: 700; }
+    .liveclass-schedule { font-size: 0.78rem; color: var(--muted); }
+    .liveclass-card .btn-buy { margin-top: 4px; align-self: flex-start; }
+
     /* ─── COMMUNITY ─── */
     .community-section {
       margin-top: 72px; padding: 56px 40px;
@@ -644,6 +655,16 @@
       <div class="section-line"></div>
     </div>
     <div id="purchasedList"></div>
+  </div>
+
+  <!-- LỊCH HỌC TRỰC TIẾP -->
+  <div class="section" id="liveClassSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">🗓️ Lịch học</span>
+      <div class="section-title">Lịch học trực tiếp</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="liveclass-grid" id="liveClassGrid"></div>
   </div>
 
   <!-- LỊCH SỬ THANH TOÁN -->
@@ -1061,6 +1082,24 @@ async function loadPaymentHistory() {
   }).join('');
 }
 
+// ── Lịch học trực tiếp — hiển thị lịch khai giảng đang mở (quản lý ở Admin) ──
+async function loadLiveClasses() {
+  const { data } = await _supabase.from('course_schedules')
+    .select('*')
+    .eq('active', true)
+    .order('start_date', { ascending: true });
+  if (!data || !data.length) return;
+
+  document.getElementById('liveClassSection').style.display = 'block';
+  document.getElementById('liveClassGrid').innerHTML = data.map(s => `
+    <div class="liveclass-card">
+      <h4>${s.course_name}</h4>
+      <div class="liveclass-date">${s.start_date ? '🗓️ Khai giảng: ' + new Date(s.start_date).toLocaleDateString('vi-VN') : 'Đang cập nhật lịch'}</div>
+      ${s.schedule_text ? `<div class="liveclass-schedule">⏰ ${s.schedule_text}</div>` : ''}
+      ${s.meet_url ? `<a class="btn-buy" href="${s.meet_url}" target="_blank" style="text-decoration:none;text-align:center">Vào lớp học →</a>` : ''}
+    </div>`).join('');
+}
+
 // ── Checkout — dùng chung cho product / lesson / course ──
 // Đơn hàng được tạo NGAY khi mở modal (status: pending) để có order_code
 // duy nhất nhúng vào nội dung chuyển khoản — SePay webhook sẽ khớp đúng
@@ -1191,6 +1230,7 @@ document.body.insertAdjacentHTML('afterbegin',
     loadPurchased();
     loadPaymentHistory();
     loadProgress();
+    loadLiveClasses();
     loadReferral();
   } catch(e) {
     window.location.href = 'login.html';
