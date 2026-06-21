@@ -144,7 +144,7 @@
   document.getElementById('googleBtn').addEventListener('click', async () => {
     const { error } = await _supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/portal.html' }
+      options: { redirectTo: SITE_URL + '/portal.html' }
     });
     if (error) {
       const msg = document.getElementById('authMsg');

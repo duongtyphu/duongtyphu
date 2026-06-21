@@ -198,7 +198,7 @@
   document.getElementById('googleBtn').addEventListener('click', async () => {
     const { error } = await _supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.origin + '/portal.html' }
+      options: { redirectTo: SITE_URL + '/portal.html' }
     });
     if (error) {
       msg.className = 'auth-msg error';
@@ -216,7 +216,7 @@
       return;
     }
     const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/login.html'
+      redirectTo: SITE_URL + '/login.html'
     });
     if (error) {
       msg.className = 'auth-msg error';
