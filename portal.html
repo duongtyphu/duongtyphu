@@ -315,6 +315,40 @@
     .purchased-info p  { font-size: 0.75rem; color: #34D399; }
     .purchased-btns { display: flex; gap: 8px; flex-shrink: 0; }
 
+    /* ─── TIẾN ĐỘ HỌC TẬP ─── */
+    .progress-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .progress-grid { grid-template-columns: 1fr; } }
+    .progress-courses { display: flex; flex-direction: column; gap: 14px; }
+    .progress-course-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 18px 20px;
+    }
+    .progress-course-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .progress-course-head h4 { font-size: 0.9rem; font-weight: 800; color: #fff; }
+    .progress-course-pct { font-size: 0.85rem; font-weight: 800; color: var(--purple); }
+    .progress-bar-track { height: 8px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(135deg, var(--blue), var(--purple)); transition: width 0.4s; }
+    .progress-course-meta { font-size: 0.74rem; color: var(--muted); margin-top: 8px; }
+    .next-lesson-card {
+      background: linear-gradient(145deg, rgba(37,99,235,0.12), rgba(109,93,251,0.08));
+      border: 1px solid rgba(109,93,251,0.3); border-radius: 16px;
+      padding: 22px 22px; display: flex; flex-direction: column; height: 100%;
+    }
+    .next-lesson-eyebrow { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--purple); margin-bottom: 10px; }
+    .next-lesson-title { font-size: 1.05rem; font-weight: 800; color: #fff; margin-bottom: 6px; line-height: 1.4; }
+    .next-lesson-course { font-size: 0.78rem; color: var(--muted); margin-bottom: 18px; }
+    .next-lesson-card .btn-buy { align-self: flex-start; margin-top: auto; }
+
+    /* ─── LỊCH SỬ THANH TOÁN ─── */
+    .payment-history-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .payment-history-table th { text-align: left; color: var(--muted); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .payment-history-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+    .pay-status-pill { font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+    .pay-status-pill.pending   { background: rgba(251,191,36,0.15); color: #FBBF24; }
+    .pay-status-pill.confirmed { background: rgba(16,185,129,0.15); color: #34D399; }
+    .pay-status-pill.rejected  { background: rgba(239,68,68,0.15); color: #F87171; }
+    .payment-history-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 8px 14px; overflow-x: auto; }
+
     /* ─── COMMUNITY ─── */
     .community-section {
       margin-top: 72px; padding: 56px 40px;
@@ -492,6 +526,19 @@
     <p class="hero-sub">Bạn đang ở đúng nơi. Đây là không gian học tập, công cụ và cộng đồng giúp bạn xây dựng dòng thu nhập bền vững với AI.</p>
   </div>
 
+  <!-- TIẾN ĐỘ HỌC TẬP -->
+  <div class="section" id="progressSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">📊 Tiến độ</span>
+      <div class="section-title">Tiến độ học tập</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="progress-grid">
+      <div class="progress-courses" id="progressCourses"></div>
+      <div class="next-lesson-card" id="nextLessonCard"></div>
+    </div>
+  </div>
+
   <!-- KHOÁ HỌC TRỌNG TÂM -->
   <div class="section">
     <div class="section-head">
@@ -597,6 +644,21 @@
       <div class="section-line"></div>
     </div>
     <div id="purchasedList"></div>
+  </div>
+
+  <!-- LỊCH SỬ THANH TOÁN -->
+  <div class="section" id="paymentHistorySection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">🧾 Giao dịch</span>
+      <div class="section-title">Lịch sử thanh toán</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="payment-history-wrap">
+      <table class="payment-history-table">
+        <thead><tr><th>Thời gian</th><th>Nội dung</th><th>Số tiền</th><th>Trạng thái</th></tr></thead>
+        <tbody id="paymentHistoryBody"></tbody>
+      </table>
+    </div>
   </div>
 
   <!-- CỘNG ĐỒNG -->
@@ -917,6 +979,88 @@ async function loadPurchased() {
   }).join('');
 }
 
+// ── Tiến độ học tập — tính từ bài giảng đã mua/đã xác nhận trong từng khoá học ──
+async function loadProgress() {
+  const { data: lessons } = await _supabase.from('lessons')
+    .select('id, title, course_id, sort_order, courses(name)')
+    .eq('active', true)
+    .order('sort_order');
+  if (!lessons || !lessons.length) return;
+
+  const { data: orders } = await _supabase.from('orders')
+    .select('lesson_id')
+    .eq('member_email', _userEmail)
+    .eq('status', 'confirmed')
+    .not('lesson_id', 'is', null);
+  const completedIds = new Set((orders || []).map(o => o.lesson_id));
+
+  const byCourse = new Map();
+  lessons.forEach(l => {
+    const key = l.course_id || '_no_course';
+    if (!byCourse.has(key)) byCourse.set(key, { name: l.courses?.name || 'Bài giảng tự do', lessons: [] });
+    byCourse.get(key).lessons.push(l);
+  });
+
+  let nextLesson = null, nextCourseName = '';
+  const cards = [];
+  for (const [, course] of byCourse) {
+    const total = course.lessons.length;
+    const done  = course.lessons.filter(l => completedIds.has(l.id)).length;
+    const pct   = total ? Math.round((done / total) * 100) : 0;
+    cards.push(`
+      <div class="progress-course-card">
+        <div class="progress-course-head"><h4>${course.name}</h4><span class="progress-course-pct">${pct}%</span></div>
+        <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        <div class="progress-course-meta">${done}/${total} bài đã hoàn thành</div>
+      </div>`);
+    if (!nextLesson) {
+      const upcoming = course.lessons.find(l => !completedIds.has(l.id));
+      if (upcoming) { nextLesson = upcoming; nextCourseName = course.name; }
+    }
+  }
+
+  if (!cards.length) return;
+  document.getElementById('progressSection').style.display = 'block';
+  document.getElementById('progressCourses').innerHTML = cards.join('');
+
+  const nextCard = document.getElementById('nextLessonCard');
+  if (nextLesson) {
+    nextCard.innerHTML = `
+      <div class="next-lesson-eyebrow">▶ Bài học tiếp theo</div>
+      <div class="next-lesson-title">${nextLesson.title}</div>
+      <div class="next-lesson-course">${nextCourseName}</div>
+      <button class="btn-buy" onclick="document.getElementById('lessonsSection').scrollIntoView({behavior:'smooth'})">Học ngay →</button>`;
+  } else {
+    nextCard.innerHTML = `
+      <div class="next-lesson-eyebrow">🎉 Hoàn tất</div>
+      <div class="next-lesson-title">Bạn đã hoàn thành tất cả bài giảng hiện có!</div>
+      <div class="next-lesson-course">Theo dõi để cập nhật bài giảng mới.</div>`;
+  }
+}
+
+// ── Lịch sử thanh toán — toàn bộ đơn hàng (mọi trạng thái) của học viên ──
+async function loadPaymentHistory() {
+  const { data } = await _supabase.from('orders')
+    .select('*, products(title), lessons(title), courses(name)')
+    .eq('member_email', _userEmail)
+    .order('created_at', { ascending: false });
+  if (!data || !data.length) return;
+
+  const statusLabel = { pending: 'Chờ xác nhận', confirmed: 'Đã xác nhận', rejected: 'Đã từ chối' };
+  document.getElementById('paymentHistorySection').style.display = 'block';
+  document.getElementById('paymentHistoryBody').innerHTML = data.map(o => {
+    const title = o.products?.title || o.lessons?.title || o.courses?.name || o.product_name || '—';
+    const status = o.status || 'pending';
+    return `
+      <tr>
+        <td>${o.created_at ? new Date(o.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+        <td>${title}</td>
+        <td>${fmtPrice(o.amount || 0)}₫</td>
+        <td><span class="pay-status-pill ${status}">${statusLabel[status] || status}</span></td>
+      </tr>`;
+  }).join('');
+}
+
 // ── Checkout — dùng chung cho product / lesson / course ──
 // Đơn hàng được tạo NGAY khi mở modal (status: pending) để có order_code
 // duy nhất nhúng vào nội dung chuyển khoản — SePay webhook sẽ khớp đúng
@@ -1045,6 +1189,8 @@ document.body.insertAdjacentHTML('afterbegin',
     loadFreeCourses();
     loadStore();
     loadPurchased();
+    loadPaymentHistory();
+    loadProgress();
     loadReferral();
   } catch(e) {
     window.location.href = 'login.html';
