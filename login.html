@@ -110,9 +110,23 @@
       <button type="submit" class="auth-btn" id="loginBtn">Đăng nhập</button>
     </form>
 
-    <div class="auth-switch">
+    <div class="auth-switch" id="registerSwitch">
       Chưa có tài khoản? <a href="register.html">Đăng ký miễn phí</a>
     </div>
+
+    <!-- Form đặt lại mật khẩu mới — chỉ hiện khi vào từ link "Quên mật khẩu" trong email -->
+    <form id="resetForm" style="display:none">
+      <p class="auth-sub" style="margin-bottom:20px">Nhập mật khẩu mới cho tài khoản của bạn.</p>
+      <div class="auth-field">
+        <label for="resetPassword">Mật khẩu mới</label>
+        <input type="password" id="resetPassword" placeholder="••••••••" required autocomplete="new-password" minlength="6">
+      </div>
+      <div class="auth-field">
+        <label for="resetPasswordConfirm">Xác nhận mật khẩu mới</label>
+        <input type="password" id="resetPasswordConfirm" placeholder="••••••••" required autocomplete="new-password" minlength="6">
+      </div>
+      <button type="submit" class="auth-btn" id="resetBtn">Đặt lại mật khẩu</button>
+    </form>
   </div>
 </div>
 
@@ -120,7 +134,56 @@
 <script src="assets/js/supabase-config.js"></script>
 <script>
 (async () => {
-  // Nếu đã đăng nhập → chuyển thẳng vào portal
+  const msg = document.getElementById('authMsg');
+
+  // Link "Quên mật khẩu" trong email trả về URL có #access_token=...&type=recovery
+  // → Supabase tự tạo session tạm. Phải xử lý TRƯỚC khi kiểm tra "đã đăng nhập",
+  // nếu không sẽ bị chuyển hướng thẳng vào portal mà không cho đặt mật khẩu mới.
+  const isRecovery = window.location.hash.includes('type=recovery');
+
+  if (isRecovery) {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('registerSwitch').style.display = 'none';
+    const resetForm = document.getElementById('resetForm');
+    resetForm.style.display = 'block';
+
+    resetForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const pass1 = document.getElementById('resetPassword').value;
+      const pass2 = document.getElementById('resetPasswordConfirm').value;
+      const resetBtn = document.getElementById('resetBtn');
+
+      if (pass1 !== pass2) {
+        msg.className = 'auth-msg error';
+        msg.textContent = 'Hai mật khẩu không khớp nhau.';
+        return;
+      }
+      if (pass1.length < 6) {
+        msg.className = 'auth-msg error';
+        msg.textContent = 'Mật khẩu cần tối thiểu 6 ký tự.';
+        return;
+      }
+
+      resetBtn.disabled = true;
+      resetBtn.textContent = 'Đang cập nhật...';
+      const { error } = await _supabase.auth.updateUser({ password: pass1 });
+
+      if (error) {
+        msg.className = 'auth-msg error';
+        msg.textContent = 'Lỗi: ' + error.message;
+        resetBtn.disabled = false;
+        resetBtn.textContent = 'Đặt lại mật khẩu';
+      } else {
+        msg.className = 'auth-msg success';
+        msg.textContent = 'Đặt lại mật khẩu thành công! Đang chuyển vào portal...';
+        setTimeout(() => { window.location.href = '/portal.html'; }, 1000);
+      }
+    });
+
+    return;
+  }
+
+  // Nếu đã đăng nhập (và không phải đang trong luồng reset) → chuyển thẳng vào portal
   const session = await getSession();
   if (session) {
     const next = new URLSearchParams(window.location.search).get('next') || '/portal.html';
@@ -129,7 +192,6 @@
   }
 
   const form    = document.getElementById('loginForm');
-  const msg     = document.getElementById('authMsg');
   const btn     = document.getElementById('loginBtn');
 
   // Google OAuth
