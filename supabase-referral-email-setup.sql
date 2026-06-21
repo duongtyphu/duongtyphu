@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS public.referrals (
   referred_email   TEXT NOT NULL,
   referred_id      UUID REFERENCES public.members(id) ON DELETE SET NULL,
   order_id         BIGINT REFERENCES public.orders(id) ON DELETE SET NULL,
-  commission_rate  NUMERIC DEFAULT 0.10,   -- 10% học phí — TODO: OWNER INPUT nếu cần đổi tỉ lệ
+  commission_rate  NUMERIC DEFAULT 0.10,   -- 10% học phí
   commission_amount INTEGER DEFAULT 0,
   status           TEXT DEFAULT 'pending', -- pending (vừa đăng ký) | confirmed (đã có đơn hàng được xác nhận) | paid (đã trả hoa hồng)
   created_at       TIMESTAMPTZ DEFAULT NOW()

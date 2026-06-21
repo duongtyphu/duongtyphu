@@ -39,10 +39,10 @@ python3 -m http.server 8080
 - `assets/css/styles.css` vẫn cần cho layout đầy đủ khi chạy qua server
 - Deploy: push lên GitHub → connect Vercel → auto deploy
 
-## TODO
+## Việc cần làm tiếp
 - [ ] Điền tracking IDs: GA4, Meta Pixel, TikTok Pixel, Clarity
 - [ ] Điền consultLink cho SOLO và SCALE
 - [ ] Kết nối leadEndpoint (form đăng ký)
-- [ ] Cập nhật canonical URL
-- [ ] Thêm favicon và og-cover image
-- [ ] Ảnh instructor Đỗ Tâm (placeholder hiện tại)
+- [ ] Cập nhật học phí & lịch khai giảng cho SOLO/SCALE
+- [ ] Thay logo/favicon/og-cover tạm thời bằng bộ nhận diện chính thức khi có
+- [ ] Ảnh instructor Đỗ Tâm chính thức (đang dùng placeholder)

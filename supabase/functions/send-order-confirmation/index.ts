@@ -9,8 +9,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const FROM_EMAIL = "VDAI Academy <onboarding@resend.dev>"; // TODO: OWNER INPUT — đổi sang domain riêng đã verify trên Resend khi có domain
-const SITE_URL = "https://v-academy-mauve.vercel.app"; // TODO: OWNER INPUT — đổi khi có domain riêng
+const FROM_EMAIL = "VDAI Academy <onboarding@resend.dev>";
+const SITE_URL = "https://v-academy-mauve.vercel.app";
 
 const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
 

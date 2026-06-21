@@ -1,63 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: OWNER INPUT — thay https://example.com bằng tên miền chính thức ở tất cả các <loc> -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://example.com/</loc>
+    <loc>https://v-academy-mauve.vercel.app/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://example.com/vo-duong/</loc>
+    <loc>https://v-academy-mauve.vercel.app/vo-duong/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://example.com/vdai-solo/</loc>
+    <loc>https://v-academy-mauve.vercel.app/vdai-solo/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://example.com/vdai-scale/</loc>
+    <loc>https://v-academy-mauve.vercel.app/vdai-scale/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://example.com/blog/</loc>
+    <loc>https://v-academy-mauve.vercel.app/blog/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://example.com/blog/ai-nghien-cuu-san-pham-affiliate.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/blog/ai-nghien-cuu-san-pham-affiliate.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://example.com/blog/prompt-ai-viet-content-ban-hang.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/blog/prompt-ai-viet-content-ban-hang.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://example.com/blog/chatbot-ai-cham-soc-khach-hang.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/blog/chatbot-ai-cham-soc-khach-hang.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://example.com/blog/van-hanh-tinh-gon-nhan-ban-he-thong.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/blog/van-hanh-tinh-gon-nhan-ban-he-thong.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://example.com/privacy.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/privacy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://example.com/terms.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/terms.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://example.com/refund-policy.html</loc>
+    <loc>https://v-academy-mauve.vercel.app/refund-policy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

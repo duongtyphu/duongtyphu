@@ -6,8 +6,6 @@
  * hiển thị) được tập trung tại đây để dễ cập nhật mà không cần
  * sửa app.js hoặc các trang HTML.
  *
- * TODO: OWNER INPUT — Tìm và thay tất cả giá trị có ghi chú
- * "TODO: OWNER INPUT" trước khi triển khai chính thức.
  * ════════════════════════════════════════════════════════════
  */
 
@@ -19,7 +17,7 @@ const VDAI_CONFIG = {
   site: {
     name: "VDAI Academy",
     tagline: "Vận hành tinh gọn. Nhân bản mạnh mẽ.",
-    url: "https://v-academy-mauve.vercel.app", // TODO: OWNER INPUT — đổi khi mua domain riêng
+    url: "https://v-academy-mauve.vercel.app",
     logoPath: "assets/images/logo.svg?v=20260620f",
     faviconPath: "assets/icons/favicon.ico?v=20260620f",
     defaultOgImage: "assets/images/og-cover.jpg?v=20260620f"
@@ -72,10 +70,10 @@ const VDAI_CONFIG = {
   // ──────────────────────────────────────────────────────────
   // Để trống = không tải script tương ứng (tránh lỗi console).
   tracking: {
-    ga4Id: "",        // TODO: OWNER INPUT — Google Analytics 4 Measurement ID (G-XXXXXXX)
-    metaPixelId: "",  // TODO: OWNER INPUT — Meta Pixel ID
-    tiktokPixelId: "",// TODO: OWNER INPUT — TikTok Pixel ID
-    clarityId: ""     // TODO: OWNER INPUT — Microsoft Clarity Project ID
+    ga4Id: "",        // Google Analytics 4 Measurement ID (G-XXXXXXX)
+    metaPixelId: "",  // Meta Pixel ID
+    tiktokPixelId: "",// TikTok Pixel ID
+    clarityId: ""     // Microsoft Clarity Project ID
   },
 
   // ──────────────────────────────────────────────────────────
@@ -86,13 +84,13 @@ const VDAI_CONFIG = {
       name: "VDAI SOLO",
       nextCohort: "Khai giảng tuần đầu mỗi tháng",
       price: "300$",
-      consultLink: "" // TODO: OWNER INPUT — Link đặt lịch tư vấn SOLO (Calendly...)
+      consultLink: "" // Link đặt lịch tư vấn SOLO (Calendly...)
     },
     scale: {
       name: "VDAI SCALE",
       nextCohort: "Khai giảng tuần đầu mỗi tháng",
-      price: "1000$", // TODO: OWNER INPUT — Xác nhận lại học phí VDAI SCALE
-      consultLink: "" // TODO: OWNER INPUT — Link đặt lịch tư vấn SCALE (Calendly...)
+      price: "1000$",
+      consultLink: "" // Link đặt lịch tư vấn SCALE (Calendly...)
     }
   },
 
@@ -133,15 +131,14 @@ const VDAI_CONFIG = {
   // viên từ các khóa học trước đây. Số liệu phần trăm cụ thể của
   // khóa cũ đã được loại bỏ vì chưa được đo lường lại trong khuôn
   // khổ chương trình VDAI — chỉ giữ lại mô tả kết quả định tính.
-  // TODO: OWNER INPUT — khi có case study đo lường trực tiếp từ
-  // học viên VDAI SOLO / VDAI SCALE, thay thế các mục dưới đây.
+  // Khi có case study đo lường trực tiếp từ học viên VDAI SOLO / VDAI SCALE, thay thế các mục dưới đây.
   caseStudies: [
     {
       name: "Lê Minh Phương",
       track: "VDAI SOLO",
       result: "Xây dựng kênh nội dung cá nhân và phát triển lượng theo dõi ổn định nhờ quy trình sáng tạo nội dung có hệ thống, hỗ trợ bởi AI.",
-      proofLink: "", // TODO: OWNER INPUT — Link video/bằng chứng
-      photo: "assets/images/case-placeholder.jpg" // TODO: OWNER INPUT — Hình ảnh học viên
+      proofLink: "",
+      photo: "assets/images/case-placeholder.jpg"
     },
     {
       name: "Đinh Quốc Duy",
