@@ -360,6 +360,24 @@
     .liveclass-schedule { font-size: 0.78rem; color: var(--muted); }
     .liveclass-card .btn-buy { margin-top: 4px; align-self: flex-start; }
 
+    /* ─── CASE STUDY / CHUYÊN GIA / BLOG ─── */
+    .showcase-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+    .showcase-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      overflow: hidden; display: flex; flex-direction: column;
+    }
+    .showcase-card img { width: 100%; height: 140px; object-fit: cover; display: block; }
+    .showcase-card-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+    .showcase-card h4 { font-size: 0.92rem; font-weight: 800; color: #fff; line-height: 1.4; }
+    .showcase-card p { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .showcase-metric { font-size: 0.78rem; font-weight: 700; color: var(--green); }
+    .expert-card { align-items: center; text-align: center; padding: 24px 18px; gap: 10px; }
+    .expert-avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: linear-gradient(135deg, var(--blue), var(--purple)); }
+    .expert-avatar-fallback {
+      width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; font-weight: 800; font-size: 1.4rem;
+    }
+
     /* ─── COMMUNITY ─── */
     .community-section {
       margin-top: 72px; padding: 56px 40px;
@@ -680,6 +698,36 @@
         <tbody id="paymentHistoryBody"></tbody>
       </table>
     </div>
+  </div>
+
+  <!-- CASE STUDY -->
+  <div class="section" id="caseStudySection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">📈 Câu chuyện</span>
+      <div class="section-title">Case study học viên</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="showcase-grid" id="caseStudyGrid"></div>
+  </div>
+
+  <!-- CHUYÊN GIA -->
+  <div class="section" id="expertSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">🧑‍🏫 Đội ngũ</span>
+      <div class="section-title">Chuyên gia đồng hành</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="showcase-grid" id="expertGrid"></div>
+  </div>
+
+  <!-- BLOG -->
+  <div class="section" id="blogSection" style="display:none">
+    <div class="section-head">
+      <span class="section-badge badge-mine">📝 Bài viết</span>
+      <div class="section-title">Bài viết mới nhất</div>
+      <div class="section-line"></div>
+    </div>
+    <div class="showcase-grid" id="blogGrid"></div>
   </div>
 
   <!-- CỘNG ĐỒNG -->
@@ -1100,6 +1148,55 @@ async function loadLiveClasses() {
     </div>`).join('');
 }
 
+// ── Case study (quản lý ở Admin → Case study) ──
+async function loadCaseStudies() {
+  const { data } = await _supabase.from('case_studies').select('*').eq('active', true).order('created_at', { ascending: false });
+  if (!data || !data.length) return;
+  document.getElementById('caseStudySection').style.display = 'block';
+  document.getElementById('caseStudyGrid').innerHTML = data.map(c => `
+    <div class="showcase-card">
+      ${c.thumbnail_url ? `<img src="${c.thumbnail_url}" alt="${c.title}">` : ''}
+      <div class="showcase-card-body">
+        <h4>${c.title}</h4>
+        ${c.client_name ? `<p>👤 ${c.client_name}</p>` : ''}
+        ${c.result_metric ? `<div class="showcase-metric">📈 ${c.result_metric}</div>` : ''}
+        ${c.summary ? `<p>${c.summary}</p>` : ''}
+        ${c.link_url ? `<a class="btn-buy" href="${c.link_url}" target="_blank" style="text-decoration:none;text-align:center;margin-top:6px">Xem chi tiết →</a>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ── Chuyên gia (quản lý ở Admin → Chuyên gia) ──
+async function loadExperts() {
+  const { data } = await _supabase.from('experts').select('*').eq('active', true).order('created_at', { ascending: false });
+  if (!data || !data.length) return;
+  document.getElementById('expertSection').style.display = 'block';
+  document.getElementById('expertGrid').innerHTML = data.map(e => `
+    <div class="showcase-card expert-card">
+      ${e.avatar_url ? `<img class="expert-avatar" src="${e.avatar_url}" alt="${e.name}">` : `<div class="expert-avatar-fallback">${(e.name||'?')[0].toUpperCase()}</div>`}
+      <div class="showcase-card-body" style="padding:0">
+        <h4>${e.name}</h4>
+        ${e.title ? `<p style="color:var(--purple);font-weight:600">${e.title}</p>` : ''}
+        ${e.bio ? `<p>${e.bio}</p>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+// ── Bài viết blog (quản lý ở Admin → Blog) ──
+async function loadBlogPosts() {
+  const { data } = await _supabase.from('blog_posts').select('*').eq('status', 'published').order('published_at', { ascending: false }).limit(6);
+  if (!data || !data.length) return;
+  document.getElementById('blogSection').style.display = 'block';
+  document.getElementById('blogGrid').innerHTML = data.map(p => `
+    <div class="showcase-card">
+      ${p.cover_url ? `<img src="${p.cover_url}" alt="${p.title}">` : ''}
+      <div class="showcase-card-body">
+        <h4>${p.title}</h4>
+        ${p.excerpt ? `<p>${p.excerpt}</p>` : ''}
+      </div>
+    </div>`).join('');
+}
+
 // ── Checkout — dùng chung cho product / lesson / course ──
 // Đơn hàng được tạo NGAY khi mở modal (status: pending) để có order_code
 // duy nhất nhúng vào nội dung chuyển khoản — SePay webhook sẽ khớp đúng
@@ -1125,21 +1222,33 @@ async function openCheckout(item, itemType = 'product') {
     return;
   }
 
-  _checkoutItem = { ...item, _itemType: itemType, _orderId: order.id };
   const orderCode = `VDAI${order.id}`;
-  const note = orderCode;
-  const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
-  const typeLabel = { product:'Sản phẩm số', lesson:'Bài giảng', course:'Khoá học' }[itemType] || '';
-
   await _supabase.from('orders').update({ order_code: orderCode }).eq('id', order.id);
+
+  _checkoutItem = { ...item, _itemType: itemType, _orderId: order.id, _basePrice: price, _finalPrice: price, _orderCode: orderCode };
+  renderCheckoutModal();
+}
+
+function renderCheckoutModal() {
+  const ci = _checkoutItem;
+  if (!ci) return;
+  const price = ci._finalPrice;
+  const note = ci._orderCode;
+  const qrUrl = `https://img.vietqr.io/image/VCB-${BANK.account}-compact2.png?amount=${price}&addInfo=${encodeURIComponent(note)}&accountName=${encodeURIComponent(BANK.owner)}`;
+  const typeLabel = { product:'Sản phẩm số', lesson:'Bài giảng', course:'Khoá học' }[ci._itemType] || '';
 
   document.getElementById('modalContent').innerHTML = `
     <div class="modal-title">Thanh toán — ${typeLabel}</div>
-    <div class="modal-sub">${item.title}</div>
+    <div class="modal-sub">${ci.title}</div>
     <div class="modal-price-row">
       <span class="modal-price-label">Số tiền chuyển khoản</span>
-      <span class="modal-price-val">${price > 0 ? price.toLocaleString('vi-VN') + '₫' : 'Miễn phí'}</span>
+      <span class="modal-price-val">${price > 0 ? price.toLocaleString('vi-VN') + '₫' : 'Miễn phí'}${ci._couponCode ? ` <span style="font-size:0.75rem;color:#34D399">(mã ${ci._couponCode})</span>` : ''}</span>
     </div>
+    ${ci._basePrice > 0 && !ci._couponCode ? `
+    <div class="modal-coupon" style="display:flex;gap:8px;margin-bottom:14px">
+      <input type="text" id="couponInput" placeholder="Mã giảm giá (nếu có)" style="flex:1;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;background:rgba(255,255,255,0.04);color:#fff;font-family:inherit">
+      <button class="btn btn-ghost btn-sm" onclick="applyCoupon()" id="applyCouponBtn">Áp dụng</button>
+    </div>` : ''}
     ${price > 0 ? `
     <div class="modal-qr">
       <img src="${qrUrl}" alt="QR VietQR" onerror="this.style.display='none'">
@@ -1160,6 +1269,36 @@ async function openCheckout(item, itemType = 'product') {
     <button class="btn-paid" id="btnPaid" onclick="${price > 0 ? 'pollOrderStatus()' : 'submitFreeOrder()'}">
       ${price > 0 ? '✅ Tôi đã chuyển khoản — kiểm tra trạng thái' : '📩 Gửi yêu cầu đăng ký'}
     </button>`;
+}
+
+// ── Mã giảm giá (quản lý ở Admin → Mã giảm giá) ──
+async function applyCoupon() {
+  const ci = _checkoutItem;
+  if (!ci) return;
+  const input = document.getElementById('couponInput');
+  const code = input.value.trim().toUpperCase();
+  if (!code) return;
+  const btn = document.getElementById('applyCouponBtn');
+  btn.disabled = true; btn.textContent = 'Đang kiểm tra...';
+
+  const { data: coupon } = await _supabase.from('coupons').select('*').eq('code', code).eq('active', true).maybeSingle();
+  btn.disabled = false; btn.textContent = 'Áp dụng';
+
+  if (!coupon) { alert('Mã giảm giá không hợp lệ hoặc đã hết hiệu lực.'); return; }
+  if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) { alert('Mã giảm giá đã hết hạn.'); return; }
+  if (coupon.max_uses && coupon.used_count >= coupon.max_uses) { alert('Mã giảm giá đã hết lượt sử dụng.'); return; }
+
+  const discount = coupon.discount_type === 'percent'
+    ? Math.round(ci._basePrice * coupon.discount_value / 100)
+    : coupon.discount_value;
+  const finalPrice = Math.max(0, ci._basePrice - discount);
+
+  await _supabase.from('orders').update({ amount: finalPrice }).eq('id', ci._orderId);
+  await _supabase.from('coupons').update({ used_count: (coupon.used_count || 0) + 1 }).eq('id', coupon.id);
+
+  ci._finalPrice = finalPrice;
+  ci._couponCode = code;
+  renderCheckoutModal();
 }
 
 function closeModal() {
@@ -1231,6 +1370,9 @@ document.body.insertAdjacentHTML('afterbegin',
     loadPaymentHistory();
     loadProgress();
     loadLiveClasses();
+    loadCaseStudies();
+    loadExperts();
+    loadBlogPosts();
     loadReferral();
   } catch(e) {
     window.location.href = 'login.html';
