@@ -10,24 +10,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:   var(--navy);
+      --navy2:  var(--navy2);
+      --blue:   var(--blue);
+      --blue2:  var(--blue2);
+      --purple: var(--purple);
+      --gold:   #F59E0B;
+      --green:  #10B981;
+      --red:    var(--red);
+      --text:   var(--text);
+      --muted:  var(--muted);
+      --muted2: var(--muted2);
+      --border: rgba(255,255,255,0.08);
+      --card:   rgba(255,255,255,0.04);
+    }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #060C1A;
-      color: #E2E8F0;
+      background: var(--navy);
+      color: var(--text);
       -webkit-font-smoothing: antialiased;
       min-height: 100vh;
     }
 
     /* ── Loading ── */
     #pageLoading {
-      position: fixed; inset: 0; background: #060C1A; z-index: 9999;
+      position: fixed; inset: 0; background: var(--navy); z-index: 9999;
       display: flex; align-items: center; justify-content: center;
       flex-direction: column; gap: 14px;
     }
     .spinner {
       width: 36px; height: 36px;
       border: 3px solid rgba(255,255,255,0.08);
-      border-top-color: #6D5DFB;
+      border-top-color: var(--purple);
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
     }
@@ -43,7 +58,7 @@
     .sidebar {
       width: 220px;
       flex-shrink: 0;
-      background: #0D1526;
+      background: var(--navy2);
       border-right: 1px solid rgba(255,255,255,0.06);
       display: flex;
       flex-direction: column;
@@ -65,7 +80,7 @@
     }
     .sidebar-logo-badge {
       display: inline-block;
-      background: #2563EB;
+      background: var(--blue);
       color: #fff;
       font-size: 0.6rem;
       font-weight: 700;
@@ -77,7 +92,7 @@
     }
     .sidebar-logo-user {
       font-size: 0.7rem;
-      color: #64748B;
+      color: var(--muted2);
       margin-top: 4px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -105,7 +120,7 @@
       padding: 9px 20px;
       font-size: 0.85rem;
       font-weight: 500;
-      color: #64748B;
+      color: var(--muted2);
       cursor: pointer;
       border: none;
       background: none;
@@ -123,7 +138,7 @@
     .sidebar-item.active {
       color: #fff;
       background: rgba(109,93,251,0.12);
-      border-left-color: #6D5DFB;
+      border-left-color: var(--purple);
       font-weight: 600;
     }
     .sidebar-item-icon {
@@ -142,7 +157,7 @@
       width: 100%;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.08);
-      color: #64748B;
+      color: var(--muted2);
       font-size: 0.78rem;
       font-weight: 600;
       padding: 8px 12px;
@@ -191,7 +206,7 @@
       margin-top: 2px;
     }
     .main-header-breadcrumb span {
-      color: #6D5DFB;
+      color: var(--purple);
     }
 
     .main-body {
@@ -223,7 +238,7 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 2px;
-      background: linear-gradient(90deg, #2563EB, #6D5DFB);
+      background: linear-gradient(90deg, var(--blue), var(--purple));
       border-radius: 14px 14px 0 0;
     }
     .stat-label {
@@ -317,7 +332,7 @@
     .badge-coming   { background: rgba(194,65,12,0.2);  color: #FB923C; border: 1px solid rgba(194,65,12,0.3); }
     .badge-open     { background: rgba(29,78,216,0.2);  color: #60A5FA; border: 1px solid rgba(29,78,216,0.3); }
     .badge-closed   { background: rgba(255,255,255,0.06); color: #475569; border: 1px solid rgba(255,255,255,0.08); }
-    .badge-pending  { background: rgba(234,179,8,0.15); color: #FCD34D; border: 1px solid rgba(234,179,8,0.25); }
+    .badge-pending  { background: rgba(234,179,8,0.15); color: var(--gold); border: 1px solid rgba(234,179,8,0.25); }
     .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
     /* ── Buttons ── */
@@ -336,16 +351,16 @@
       text-decoration: none;
       white-space: nowrap;
     }
-    .btn-primary { background: #2563EB; color: #fff; }
-    .btn-primary:hover { background: #1D4ED8; }
-    .btn-purple { background: #6D5DFB; color: #fff; }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue2); }
+    .btn-purple { background: var(--purple); color: #fff; }
     .btn-purple:hover { background: #5B4DEA; }
-    .btn-danger  { background: rgba(220,38,38,0.12); color: #F87171; border: 1px solid rgba(220,38,38,0.2); }
+    .btn-danger  { background: rgba(220,38,38,0.12); color: var(--red); border: 1px solid rgba(220,38,38,0.2); }
     .btn-danger:hover { background: rgba(220,38,38,0.25); }
-    .btn-ghost   { background: rgba(255,255,255,0.04); color: #94A3B8; border: 1px solid rgba(255,255,255,0.08); }
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: #E2E8F0; }
+    .btn-ghost   { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid rgba(255,255,255,0.08); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--text); }
     .btn-sm { padding: 5px 10px; font-size: 0.72rem; }
-    .btn-warning { background: rgba(234,179,8,0.12); color: #FCD34D; border: 1px solid rgba(234,179,8,0.2); }
+    .btn-warning { background: rgba(234,179,8,0.12); color: var(--gold); border: 1px solid rgba(234,179,8,0.2); }
     .btn-warning:hover { background: rgba(234,179,8,0.22); }
 
     /* ── Form ── */
@@ -353,14 +368,14 @@
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1/-1; }
-    .form-group label { font-size: 0.75rem; font-weight: 600; color: #64748B; }
+    .form-group label { font-size: 0.75rem; font-weight: 600; color: var(--muted2); }
     .form-group input, .form-group select, .form-group textarea {
       padding: 9px 12px;
       background: rgba(255,255,255,0.04);
       border: 1.5px solid rgba(255,255,255,0.08);
       border-radius: 8px;
       font-size: 0.85rem;
-      color: #E2E8F0;
+      color: var(--text);
       font-family: inherit;
       outline: none;
       transition: border-color 0.2s, background 0.2s;
@@ -370,10 +385,10 @@
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
-      border-color: #6D5DFB;
+      border-color: var(--purple);
       background: rgba(109,93,251,0.06);
     }
-    .form-group select option { background: #0D1526; color: #E2E8F0; }
+    .form-group select option { background: var(--navy2); color: var(--text); }
     .form-actions { padding: 14px 24px; background: rgba(255,255,255,0.02); display: flex; gap: 8px; }
 
     /* ── Upload zone ── */
@@ -388,20 +403,20 @@
       position: relative;
     }
     .upload-zone:hover, .upload-zone.drag {
-      border-color: #6D5DFB;
+      border-color: var(--purple);
       background: rgba(109,93,251,0.06);
     }
     .upload-zone input[type=file] {
       position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
     .upload-zone p { font-size: 0.78rem; color: #475569; margin-top: 6px; pointer-events: none; }
-    .upload-zone strong { font-size: 0.83rem; color: #94A3B8; pointer-events: none; }
+    .upload-zone strong { font-size: 0.83rem; color: var(--muted); pointer-events: none; }
     .upload-progress {
       height: 4px; background: rgba(255,255,255,0.08); border-radius: 4px;
       margin-top: 8px; overflow: hidden; display: none;
     }
     .upload-progress-bar {
-      height: 100%; background: linear-gradient(90deg, #2563EB, #6D5DFB);
+      height: 100%; background: linear-gradient(90deg, var(--blue), var(--purple));
       width: 0%; transition: width 0.3s; border-radius: 4px;
     }
 
@@ -414,7 +429,7 @@
       background: rgba(255,255,255,0.02);
     }
     .course-admin-card h3 { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
-    .course-admin-card p  { font-size: 0.8rem; color: #64748B; margin-bottom: 14px; line-height: 1.5; }
+    .course-admin-card p  { font-size: 0.8rem; color: var(--muted2); margin-bottom: 14px; line-height: 1.5; }
     .course-status-select {
       padding: 7px 12px;
       background: rgba(255,255,255,0.04);
@@ -422,10 +437,10 @@
       border-radius: 8px;
       font-size: 0.83rem;
       font-family: inherit;
-      color: #E2E8F0;
+      color: var(--text);
       cursor: pointer;
     }
-    .course-status-select option { background: #0D1526; }
+    .course-status-select option { background: var(--navy2); }
 
     /* ── Empty state ── */
     .empty { text-align: center; padding: 48px 20px; color: #334155; }
@@ -442,7 +457,7 @@
     }
     .alert.show { display: block; }
     .alert-success { background: rgba(21,128,61,0.15); color: #4ADE80; border: 1px solid rgba(21,128,61,0.25); }
-    .alert-error   { background: rgba(220,38,38,0.12); color: #F87171; border: 1px solid rgba(220,38,38,0.2); }
+    .alert-error   { background: rgba(220,38,38,0.12); color: var(--red); border: 1px solid rgba(220,38,38,0.2); }
 
     /* ── Section title ── */
     .section-title {
@@ -486,7 +501,7 @@
       pointer-events: all;
     }
     .modal-box {
-      background: #0D1526;
+      background: var(--navy2);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
       width: 100%;
@@ -509,7 +524,7 @@
     .modal-close {
       background: rgba(255,255,255,0.06);
       border: none;
-      color: #64748B;
+      color: var(--muted2);
       width: 28px; height: 28px;
       border-radius: 6px;
       cursor: pointer;
@@ -536,7 +551,7 @@
       align-items: center;
       gap: 4px;
       font-size: 0.75rem;
-      color: #6D5DFB;
+      color: var(--purple);
       text-decoration: none;
       font-weight: 600;
       padding: 3px 8px;
@@ -558,11 +573,26 @@
       .sidebar-item { padding: 12px 20px; justify-content: center; }
       .main-content { margin-left: 64px; }
     }
+    .admin-sidebar-toggle { display: none; }
+    .admin-sidebar-overlay { display: none; }
     @media (max-width: 640px) {
       .course-cards { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
       .main-body { padding: 20px 16px 60px; }
       .main-header { padding: 14px 16px; }
+      .admin-sidebar-toggle {
+        display: flex; align-items: center; gap: 7px; position: fixed; left: 16px; bottom: 18px; z-index: 300;
+        background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; border: none; border-radius: 999px;
+        padding: 12px 20px; font-weight: 700; font-size: 0.82rem; cursor: pointer; box-shadow: 0 8px 24px rgba(37,99,235,0.45);
+        font-family: inherit;
+      }
+      .sidebar { width: 250px; transform: translateX(-100%); transition: transform 0.25s ease; z-index: 290; padding-top: 0; }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .sidebar.mobile-open .sidebar-logo-name, .sidebar.mobile-open .sidebar-logo-user, .sidebar.mobile-open .sidebar-logo-badge,
+      .sidebar.mobile-open .sidebar-item span:not(.sidebar-item-icon), .sidebar.mobile-open .sidebar-section-label,
+      .sidebar.mobile-open .sidebar-footer .btn-signout span { display: inline; }
+      .sidebar.mobile-open .sidebar-item { padding: 10px 18px; justify-content: flex-start; }
+      .admin-sidebar-overlay.show { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 280; }
     }
   </style>
 </head>
@@ -593,8 +623,11 @@
 <!-- Shell -->
 <div class="admin-shell" id="adminShell" style="display:none">
 
+  <button class="admin-sidebar-toggle" id="adminSidebarToggle" onclick="toggleAdminSidebar()">☰ Menu</button>
+  <div class="admin-sidebar-overlay" id="adminSidebarOverlay" onclick="toggleAdminSidebar()"></div>
+
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="adminSidebar">
     <div class="sidebar-logo">
       <div style="display:flex;align-items:center;gap:10px">
         <svg width="34" height="34" viewBox="0 0 32 32" fill="none" style="flex-shrink:0"><path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB"/><circle cx="27" cy="7.5" r="3" fill="#F97316"/></svg>
@@ -771,7 +804,7 @@
           <div style="overflow-x:auto">
             <table class="data-table">
               <thead>
-                <tr><th>#</th><th>Họ tên</th><th>Email</th><th>Ngày đăng ký</th><th>Trạng thái</th></tr>
+                <tr><th>#</th><th>Họ tên</th><th>Email</th><th>Ngày đăng ký</th><th>Trạng thái</th><th>Hành động</th></tr>
               </thead>
               <tbody id="membersBody">
                 <tr><td colspan="5"><div class="empty"><p>Đang tải...</p></div></td></tr>
@@ -843,10 +876,40 @@
       <!-- PANEL: Courses -->
       <div class="panel" id="panel-courses">
         <div class="section-title">Khoá học</div>
-        <div class="section-sub">Quản lý trạng thái mở / đóng khoá học</div>
+        <div class="section-sub">Tạo khoá học mới &amp; quản lý trạng thái mở / đóng</div>
         <div class="alert" id="coursesAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Thêm khoá học mới</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Mã khoá học (slug) *</label>
+                <input type="text" id="courseId" placeholder="VD: solo, slace">
+              </div>
+              <div class="form-group">
+                <label>Tên khoá học *</label>
+                <input type="text" id="courseName" placeholder="VD: VDAI SOLO">
+              </div>
+              <div class="form-group">
+                <label>Trạng thái</label>
+                <select id="courseStatus">
+                  <option value="coming">Sắp mở</option>
+                  <option value="open">Mở đăng ký</option>
+                  <option value="closed">Đóng</option>
+                </select>
+              </div>
+              <div class="form-group full">
+                <label>Mô tả</label>
+                <input type="text" id="courseDescription" placeholder="Mô tả ngắn về khoá học">
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="addCourseBtn" onclick="addCourse()">+ Thêm khoá học</button>
+            </div>
+          </div>
+        </div>
         <div class="card">
-          <div class="card-head"><h2>Danh sách khoá học</h2></div>
+          <div class="card-head"><h2>Danh sách khoá học</h2><button class="btn btn-ghost btn-sm" onclick="loadCourses()">↻ Làm mới</button></div>
           <div class="course-cards" id="coursesGrid">
             <p style="padding:24px;color:#334155">Đang tải...</p>
           </div>
@@ -1064,6 +1127,35 @@
         <div class="section-title">Đơn hàng</div>
         <div class="section-sub">Xác nhận và quản lý đơn mua sản phẩm số</div>
         <div class="alert" id="ordersAlert"></div>
+        <div class="card" style="margin-bottom:20px">
+          <div class="card-head"><h2>Tạo đơn hàng thủ công</h2></div>
+          <div class="form-body">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email học viên *</label>
+                <input type="email" id="moEmail" placeholder="hocvien@email.com">
+              </div>
+              <div class="form-group">
+                <label>Tên sản phẩm/khoá học *</label>
+                <input type="text" id="moProductName" placeholder="VD: VDAI SOLO">
+              </div>
+              <div class="form-group">
+                <label>Số tiền (VNĐ) *</label>
+                <input type="number" id="moAmount" placeholder="0" min="0" step="1000">
+              </div>
+              <div class="form-group">
+                <label>Trạng thái</label>
+                <select id="moStatus">
+                  <option value="confirmed">Đã xác nhận</option>
+                  <option value="pending">Chờ xác nhận</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" id="addOrderBtn" onclick="addManualOrder()">+ Tạo đơn hàng</button>
+            </div>
+          </div>
+        </div>
         <div class="card">
           <div class="card-head">
             <h2>Danh sách đơn hàng</h2>
@@ -1292,7 +1384,7 @@
               <div class="form-group"><label>Slug URL (tự động nếu để trống)</label><input type="text" id="blogSlug" placeholder="vd: 5-buoc-bat-dau-affiliate-ai"></div>
               <div class="form-group"><label>Link ảnh cover</label><input type="url" id="blogCover" placeholder="https://..."></div>
               <div class="form-group full"><label>Mô tả ngắn (excerpt)</label><input type="text" id="blogExcerpt" placeholder="Mô tả ngắn hiển thị ở danh sách bài viết..."></div>
-              <div class="form-group full"><label>Nội dung</label><textarea id="blogContent" rows="6" placeholder="Nội dung bài viết..." style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:0.9rem;box-sizing:border-box"></textarea></div>
+              <div class="form-group full"><label>Nội dung</label><textarea id="blogContent" rows="6" placeholder="Nội dung bài viết..." style="width:100%;padding:12px 14px;border:1.5px solid var(--text);border-radius:10px;font-family:inherit;font-size:0.9rem;box-sizing:border-box"></textarea></div>
             </div>
           </div>
           <div class="form-actions">
@@ -1366,7 +1458,7 @@
             <div class="form-row">
               <div class="form-group"><label>Tiêu đề *</label><input type="text" id="ptTitle" placeholder="VD: Prompt viết content bán hàng"></div>
               <div class="form-group"><label>Danh mục</label><input type="text" id="ptCategory" placeholder="VD: Content, Nghiên cứu sản phẩm"></div>
-              <div class="form-group full"><label>Nội dung prompt/template *</label><textarea id="ptContent" rows="5" placeholder="Nhập nội dung prompt..." style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:0.9rem;box-sizing:border-box"></textarea></div>
+              <div class="form-group full"><label>Nội dung prompt/template *</label><textarea id="ptContent" rows="5" placeholder="Nhập nội dung prompt..." style="width:100%;padding:12px 14px;border:1.5px solid var(--text);border-radius:10px;font-family:inherit;font-size:0.9rem;box-sizing:border-box"></textarea></div>
             </div>
           </div>
           <div class="form-actions"><button class="btn btn-purple" id="addPtBtn" onclick="addPromptTemplate()">+ Thêm Prompt/Template</button></div>
@@ -1446,6 +1538,14 @@ function switchSection(name, btn) {
   const meta = SECTION_META[name] || {};
   document.getElementById('mainHeaderTitle').textContent = meta.title || name;
   document.getElementById('mainHeaderBreadcrumb').textContent = meta.breadcrumb || name;
+  document.getElementById('adminSidebar').classList.remove('mobile-open');
+  document.getElementById('adminSidebarOverlay').classList.remove('show');
+}
+
+// ── Mobile sidebar toggle ──
+function toggleAdminSidebar() {
+  document.getElementById('adminSidebar').classList.toggle('mobile-open');
+  document.getElementById('adminSidebarOverlay').classList.toggle('show');
 }
 
 function refreshCurrent() {
@@ -1532,7 +1632,7 @@ async function loadDashboard() {
   }
   tbody.innerHTML = allOrders.slice(0,5).map(o => `
     <tr>
-      <td style="font-size:0.8rem;color:#94A3B8">${o.member_email}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${o.member_email}</td>
       <td><strong>${o.products?.icon || '💡'} ${o.product_name || o.products?.title || '—'}</strong></td>
       <td style="font-weight:700;color:#fff">${(o.amount||0).toLocaleString('vi-VN')}₫</td>
       <td style="font-size:0.78rem;color:#475569">${fmtDate(o.created_at)}</td>
@@ -1545,11 +1645,11 @@ async function loadMembers() {
   const { data, error } = await _supabase.from('members').select('*').order('created_at', { ascending: false });
   const tbody = document.getElementById('membersBody');
   if (error || !data) {
-    tbody.innerHTML = `<tr><td colspan="5" style="padding:20px;color:#F87171;font-size:0.83rem">Lỗi tải thành viên: ${error?.message || 'Không có dữ liệu'}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:20px;color:var(--red);font-size:0.83rem">Lỗi tải thành viên: ${error?.message || 'Không có dữ liệu'}</td></tr>`;
     return;
   }
   if (!data.length) {
-    tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><p>Chưa có thành viên nào</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><p>Chưa có thành viên nào</p></div></td></tr>`;
     return;
   }
   const week = Date.now() - 7 * 24 * 3600 * 1000;
@@ -1557,14 +1657,27 @@ async function loadMembers() {
   document.getElementById('statTotal').textContent = data.length;
   document.getElementById('statWeek').textContent  = newCount;
 
-  tbody.innerHTML = data.map((m, i) => `
+  tbody.innerHTML = data.map((m, i) => {
+    const isDisabled = m.status === 'disabled';
+    return `
     <tr>
       <td style="color:#334155">${i + 1}</td>
       <td style="color:#fff;font-weight:500">${m.full_name || '<span style="color:#334155">—</span>'}</td>
-      <td><a href="mailto:${m.email}" style="color:#6D5DFB;text-decoration:none">${m.email}</a></td>
-      <td style="color:#64748B">${fmtDate(m.created_at)}</td>
-      <td><span class="badge badge-active"><span class="badge-dot"></span>${m.status || 'active'}</span></td>
-    </tr>`).join('');
+      <td><a href="mailto:${m.email}" style="color:var(--purple);text-decoration:none">${m.email}</a></td>
+      <td style="color:var(--muted2)">${fmtDate(m.created_at)}</td>
+      <td><span class="badge ${isDisabled ? 'badge-closed' : 'badge-active'}"><span class="badge-dot"></span>${m.status || 'active'}</span></td>
+      <td><button class="btn btn-sm ${isDisabled ? 'btn-ghost' : 'btn-danger'}" onclick="toggleMemberStatus('${m.id}', '${m.status || 'active'}')">${isDisabled ? 'Mở khoá' : 'Khoá'}</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function toggleMemberStatus(id, currentStatus) {
+  const newStatus = currentStatus === 'disabled' ? 'active' : 'disabled';
+  const confirmMsg = newStatus === 'disabled' ? 'Khoá tài khoản này? Học viên sẽ không thể đăng nhập.' : 'Mở khoá tài khoản này?';
+  if (!confirm(confirmMsg)) return;
+  const { error } = await _supabase.from('members').update({ status: newStatus }).eq('id', id);
+  if (error) { alert('Lỗi: ' + error.message); return; }
+  loadMembers();
 }
 
 // ── Load documents ──
@@ -1761,7 +1874,7 @@ async function loadCourses() {
   document.getElementById('statCourses').textContent = openCount;
 
   const grid = document.getElementById('coursesGrid');
-  if (error || !data) { grid.innerHTML = '<p style="padding:24px;color:#F87171">Lỗi tải khoá học</p>'; return; }
+  if (error || !data) { grid.innerHTML = '<p style="padding:24px;color:var(--red)">Lỗi tải khoá học</p>'; return; }
 
   grid.innerHTML = data.map(c => `
     <div class="course-admin-card">
@@ -1777,8 +1890,55 @@ async function loadCourses() {
           <option value="open"    ${c.status==='open'   ?'selected':''}>Mở đăng ký</option>
           <option value="closed"  ${c.status==='closed' ?'selected':''}>Đóng</option>
         </select>
+        <button class="btn btn-ghost btn-sm" onclick='openEditCourseModal(${JSON.stringify(c)})'>Sửa</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCourse('${c.id}')">Xoá</button>
       </div>
     </div>`).join('');
+}
+
+// ── Thêm khoá học mới ──
+async function addCourse() {
+  const id = document.getElementById('courseId').value.trim();
+  const name = document.getElementById('courseName').value.trim();
+  if (!id || !name) { showAlert('coursesAlert', 'Vui lòng nhập mã khoá học và tên khoá học', 'error'); return; }
+  const btn = document.getElementById('addCourseBtn');
+  btn.disabled = true; btn.textContent = 'Đang lưu...';
+  const { error } = await _supabase.from('courses').insert({
+    id, name,
+    status: document.getElementById('courseStatus').value,
+    description: document.getElementById('courseDescription').value.trim()
+  });
+  btn.disabled = false; btn.textContent = '+ Thêm khoá học';
+  if (error) { showAlert('coursesAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['courseId','courseName','courseDescription'].forEach(i => document.getElementById(i).value = '');
+  showAlert('coursesAlert', '✅ Đã thêm khoá học!');
+  loadCourses();
+}
+function openEditCourseModal(c) {
+  openModal('Sửa khoá học', `
+    <div class="form-group"><label>Mã khoá học</label><input type="text" value="${c.id}" disabled></div>
+    <div class="form-group"><label>Tên khoá học *</label><input type="text" id="m_courseName" value="${(c.name||'').replace(/"/g,'&quot;')}"></div>
+    <div class="form-group"><label>Mô tả</label><input type="text" id="m_courseDesc" value="${(c.description||'').replace(/"/g,'&quot;')}"></div>
+  `, {
+    save: async () => {
+      const name = document.getElementById('m_courseName').value.trim();
+      if (!name) { showAlert('coursesAlert', 'Vui lòng nhập tên khoá học', 'error'); return; }
+      const { error } = await _supabase.from('courses').update({
+        name, description: document.getElementById('m_courseDesc').value.trim(), updated_at: new Date().toISOString()
+      }).eq('id', c.id);
+      if (error) { showAlert('coursesAlert', 'Lỗi: ' + error.message, 'error'); return; }
+      showAlert('coursesAlert', '✅ Đã cập nhật khoá học!');
+      closeModal();
+      loadCourses();
+    }
+  });
+}
+async function deleteCourse(id) {
+  if (!confirm('Xoá khoá học này? Bài giảng thuộc khoá học có thể bị ảnh hưởng.')) return;
+  const { error } = await _supabase.from('courses').delete().eq('id', id);
+  if (error) { showAlert('coursesAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  showAlert('coursesAlert', 'Đã xoá khoá học!');
+  loadCourses();
 }
 
 // ── Update course status ──
@@ -1864,13 +2024,13 @@ function renderAffiliateLeaderboard() {
   tbody.innerHTML = rows.map((row, i) => `
     <tr>
       <td style="color:#334155">${i+1}</td>
-      <td><strong style="color:#fff">${row.referrer?.full_name || '—'}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${row.referrer?.email || ''}</span></td>
-      <td style="font-size:0.8rem;color:#94A3B8">${row.referrer?.referral_code || '—'}</td>
+      <td><strong style="color:#fff">${row.referrer?.full_name || '—'}</strong><br><span style="font-size:0.75rem;color:var(--muted)">${row.referrer?.email || ''}</span></td>
+      <td style="font-size:0.8rem;color:var(--muted)">${row.referrer?.referral_code || '—'}</td>
       <td>${row.count}</td>
       <td>${row.coursesSold}</td>
       <td style="color:#FBBF24">${row.pendingAmt.toLocaleString('vi-VN')}₫</td>
       <td style="color:#60A5FA">${row.confirmedAmt.toLocaleString('vi-VN')}₫</td>
-      <td style="color:#34D399">${row.paidAmt.toLocaleString('vi-VN')}₫</td>
+      <td style="color:var(--green)">${row.paidAmt.toLocaleString('vi-VN')}₫</td>
     </tr>`).join('');
 }
 
@@ -1897,8 +2057,8 @@ function renderAffiliateDetail() {
   tbody.innerHTML = list.map((r, i) => `
     <tr>
       <td style="color:#334155">${i+1}</td>
-      <td><strong style="color:#fff">${r.referrer?.full_name || '—'}</strong><br><span style="font-size:0.75rem;color:#94A3B8">${r.referrer?.email || ''}</span></td>
-      <td style="font-size:0.8rem;color:#94A3B8">${r.referred_email}</td>
+      <td><strong style="color:#fff">${r.referrer?.full_name || '—'}</strong><br><span style="font-size:0.75rem;color:var(--muted)">${r.referrer?.email || ''}</span></td>
+      <td style="font-size:0.8rem;color:var(--muted)">${r.referred_email}</td>
       <td style="font-weight:700;color:#fff">${(r.commission_amount||0).toLocaleString('vi-VN')}₫</td>
       <td style="font-size:0.78rem;color:#475569">${fmtDate(r.created_at)}</td>
       <td><span class="badge ${statusClass[r.status] || 'badge-closed'}">${statusLabel[r.status] || r.status}</span></td>
@@ -1928,6 +2088,25 @@ async function loadOrders() {
   renderOrders();
 }
 
+// ── Tạo đơn hàng thủ công (vd: học viên chuyển khoản ngoài hệ thống) ──
+async function addManualOrder() {
+  const member_email = document.getElementById('moEmail').value.trim();
+  const product_name = document.getElementById('moProductName').value.trim();
+  const amount = parseInt(document.getElementById('moAmount').value, 10) || 0;
+  if (!member_email || !product_name) { showAlert('ordersAlert', 'Vui lòng nhập email và tên sản phẩm/khoá học', 'error'); return; }
+  const status = document.getElementById('moStatus').value;
+  const btn = document.getElementById('addOrderBtn');
+  btn.disabled = true; btn.textContent = 'Đang tạo...';
+  const row = { member_email, product_name, amount, status };
+  if (status === 'confirmed') row.confirmed_at = new Date().toISOString();
+  const { error } = await _supabase.from('orders').insert(row);
+  btn.disabled = false; btn.textContent = '+ Tạo đơn hàng';
+  if (error) { showAlert('ordersAlert', 'Lỗi: ' + error.message, 'error'); return; }
+  ['moEmail','moProductName','moAmount'].forEach(id => document.getElementById(id).value = '');
+  showAlert('ordersAlert', '✅ Đã tạo đơn hàng thủ công!');
+  loadOrders();
+}
+
 function filterOrders(f) {
   _orderFilter = f;
   ['All','Pending','Confirmed'].forEach(s => {
@@ -1951,7 +2130,7 @@ function renderOrders() {
   tbody.innerHTML = list.map((o, i) => `
     <tr>
       <td style="color:#334155">${i+1}</td>
-      <td style="font-size:0.8rem;color:#94A3B8">${o.member_email}</td>
+      <td style="font-size:0.8rem;color:var(--muted)">${o.member_email}</td>
       <td><strong style="color:#fff">${o.products?.icon || '💡'} ${o.product_name || o.products?.title || '—'}</strong></td>
       <td style="font-weight:700;color:#fff">${(o.amount||0).toLocaleString('vi-VN')}₫</td>
       <td style="font-size:0.78rem;color:#475569">${fmtDate(o.created_at)}</td>
@@ -2004,7 +2183,7 @@ async function loadLessons() {
         <strong style="color:#fff">${l.title}</strong><br>
         <span style="font-size:0.72rem;color:#475569">${l.description || ''}</span>
       </td>
-      <td style="font-size:0.8rem;color:#64748B">${l.courses?.name || '—'}</td>
+      <td style="font-size:0.8rem;color:var(--muted2)">${l.courses?.name || '—'}</td>
       <td>${fmtPrice(l.price || 0)}</td>
       <td>${l.video_url ? `<a href="${l.video_url}" target="_blank" class="link-chip">▶ Xem</a>` : '<span style="color:#334155">—</span>'}</td>
       <td>${l.pdf_url ? `<a href="${l.pdf_url}" target="_blank" class="link-chip">📄 Tải</a>` : '<span style="color:#334155">—</span>'}</td>
@@ -2123,7 +2302,7 @@ async function loadMiniCourses() {
         <span style="font-size:0.72rem;color:#475569">${p.description || ''}</span>
       </td>
       <td>${fmtPrice(p.price || 0)}</td>
-      <td style="font-size:0.78rem;color:#64748B">${p.original_price ? (p.original_price).toLocaleString('vi-VN')+'₫' : '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${p.original_price ? (p.original_price).toLocaleString('vi-VN')+'₫' : '—'}</td>
       <td>${p.video_url ? `<a href="${p.video_url}" target="_blank" class="link-chip">▶ Xem</a>` : '<span style="color:#334155">—</span>'}</td>
       <td>${p.pdf_url ? `<a href="${p.pdf_url}" target="_blank" class="link-chip">📄 Tải</a>` : '<span style="color:#334155">—</span>'}</td>
       <td><span class="badge badge-${p.active !== false ? 'active' : 'closed'}">${p.active !== false ? (p.price > 0 ? 'Đang bán' : 'Miễn phí') : 'Ẩn'}</span></td>
@@ -2223,7 +2402,7 @@ async function loadProducts() {
         <strong style="color:#fff">${p.icon || '💡'} ${p.title}</strong><br>
         <span style="font-size:0.72rem;color:#475569">${p.description || ''}</span>
       </td>
-      <td style="font-size:0.78rem;color:#64748B">${PROD_LABELS[p.type] || p.type}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${PROD_LABELS[p.type] || p.type}</td>
       <td>${fmtPrice(p.price || 0)}</td>
       <td>${p.video_url ? `<a href="${p.video_url}" target="_blank" class="link-chip">▶ Xem</a>` : '<span style="color:#334155">—</span>'}</td>
       <td>${p.pdf_url ? `<a href="${p.pdf_url}" target="_blank" class="link-chip">📄 Tải</a>` : '<span style="color:#334155">—</span>'}</td>
@@ -2377,14 +2556,14 @@ async function loadLeads() {
     <tr>
       <td style="color:#334155">${i+1}</td>
       <td><strong style="color:#fff">${l.name || '—'}</strong><br><span style="font-size:0.72rem;color:#475569">${l.note || ''}</span></td>
-      <td>${l.email || '—'}<br><span style="font-size:0.72rem;color:#64748B">${l.phone || ''}</span></td>
+      <td>${l.email || '—'}<br><span style="font-size:0.72rem;color:var(--muted2)">${l.phone || ''}</span></td>
       <td>${l.source || '—'}</td>
       <td>
         <select onchange="updateLeadStatus(${l.id}, this.value)" style="font-size:0.78rem;padding:4px 8px;border-radius:6px">
           ${Object.entries(statusLabel).map(([v,t]) => `<option value="${v}" ${l.status===v?'selected':''}>${t}</option>`).join('')}
         </select>
       </td>
-      <td style="font-size:0.78rem;color:#64748B">${l.created_at ? new Date(l.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${l.created_at ? new Date(l.created_at).toLocaleDateString('vi-VN') : '—'}</td>
       <td><button class="btn btn-danger btn-sm" onclick="deleteLead(${l.id})">Xoá</button></td>
     </tr>`).join('');
 }
@@ -2428,7 +2607,7 @@ async function loadSchedules() {
       <td style="color:#334155">${i+1}</td>
       <td><strong style="color:#fff">${s.course_name}</strong></td>
       <td style="font-size:0.78rem">${s.start_date || '—'} ${s.end_date ? '→ ' + s.end_date : ''}</td>
-      <td style="font-size:0.78rem;color:#64748B">${s.schedule_text || '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${s.schedule_text || '—'}</td>
       <td>${s.meet_url ? `<a href="${s.meet_url}" target="_blank" class="link-chip">🔗 Link</a>` : '<span style="color:#334155">—</span>'}</td>
       <td>${s.seats_taken || 0}/${s.seats_total ?? '∞'}</td>
       <td><span class="badge badge-${s.active !== false ? 'active' : 'closed'}">${s.active !== false ? 'Đang mở' : 'Đã đóng'}</span></td>
@@ -2482,7 +2661,7 @@ async function loadCoupons() {
       <td><strong style="color:#fff">${c.code}</strong></td>
       <td>${c.discount_type === 'percent' ? c.discount_value + '%' : fmtPrice(c.discount_value) + '₫'}</td>
       <td>${c.used_count || 0}${c.max_uses ? '/' + c.max_uses : ''}</td>
-      <td style="font-size:0.78rem;color:#64748B">${c.expires_at ? new Date(c.expires_at).toLocaleDateString('vi-VN') : 'Không giới hạn'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${c.expires_at ? new Date(c.expires_at).toLocaleDateString('vi-VN') : 'Không giới hạn'}</td>
       <td><span class="badge badge-${c.active !== false ? 'active' : 'closed'}">${c.active !== false ? 'Đang dùng' : 'Đã tắt'}</span></td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2532,7 +2711,7 @@ async function loadCaseStudies() {
       <td style="color:#334155">${i+1}</td>
       <td><strong style="color:#fff">${c.title}</strong><br><span style="font-size:0.72rem;color:#475569">${c.summary || ''}</span></td>
       <td>${c.client_name || '—'}</td>
-      <td style="font-size:0.78rem;color:#34D399">${c.result_metric || '—'}</td>
+      <td style="font-size:0.78rem;color:var(--green)">${c.result_metric || '—'}</td>
       <td><span class="badge badge-${c.active !== false ? 'active' : 'closed'}">${c.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2631,7 +2810,7 @@ async function loadBlogPosts() {
       <td style="color:#334155">${i+1}</td>
       <td><strong style="color:#fff">${p.title}</strong><br><span style="font-size:0.72rem;color:#475569">${p.excerpt || ''}</span></td>
       <td><span class="badge badge-${p.status === 'published' ? 'active' : 'closed'}">${p.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'}</span></td>
-      <td style="font-size:0.78rem;color:#64748B">${p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '—'}</td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           <button class="btn btn-${p.status === 'published' ? 'ghost' : 'purple'} btn-sm" onclick="toggleBlogStatus(${p.id}, '${p.status}')">${p.status === 'published' ? 'Chuyển nháp' : 'Xuất bản'}</button>
@@ -2683,7 +2862,7 @@ async function loadNotifications() {
     <tr>
       <td style="color:#334155">${i+1}</td>
       <td><strong style="color:#fff">${n.title}</strong><br><span style="font-size:0.72rem;color:#475569">${n.message || ''}</span></td>
-      <td style="font-size:0.78rem;color:#64748B">${n.created_at ? new Date(n.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${n.created_at ? new Date(n.created_at).toLocaleDateString('vi-VN') : '—'}</td>
       <td><span class="badge badge-${n.active !== false ? 'active' : 'closed'}">${n.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2743,9 +2922,9 @@ function renderSupportTickets() {
     <tr>
       <td style="color:#334155">${i+1}</td>
       <td>${t.member_email}</td>
-      <td><strong style="color:#fff">${t.subject}</strong><br><span style="font-size:0.72rem;color:#475569">${t.message}</span>${t.reply ? `<br><span style="font-size:0.72rem;color:#34D399">↳ Đã trả lời: ${t.reply}</span>` : ''}</td>
+      <td><strong style="color:#fff">${t.subject}</strong><br><span style="font-size:0.72rem;color:#475569">${t.message}</span>${t.reply ? `<br><span style="font-size:0.72rem;color:var(--green)">↳ Đã trả lời: ${t.reply}</span>` : ''}</td>
       <td><span class="badge badge-${t.status === 'open' ? 'closed' : 'active'}">${statusLabel[t.status] || t.status}</span></td>
-      <td style="font-size:0.78rem;color:#64748B">${t.created_at ? new Date(t.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${t.created_at ? new Date(t.created_at).toLocaleDateString('vi-VN') : '—'}</td>
       <td><button class="btn btn-warning btn-sm" onclick='openReplyModal(${JSON.stringify(t)})'>${t.reply ? 'Sửa trả lời' : 'Trả lời'}</button></td>
     </tr>`).join('');
 }
@@ -2778,7 +2957,7 @@ async function loadPromptTemplates() {
     <tr>
       <td style="color:#334155">${i+1}</td>
       <td><strong style="color:#fff">${p.title}</strong></td>
-      <td style="font-size:0.78rem;color:#64748B">${p.category || '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${p.category || '—'}</td>
       <td><span class="badge badge-${p.active !== false ? 'active' : 'closed'}">${p.active !== false ? 'Hiển thị' : 'Ẩn'}</span></td>
       <td>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2839,9 +3018,9 @@ function renderSubmissions() {
     <tr>
       <td style="color:#334155">${i+1}</td>
       <td>${s.member_email}</td>
-      <td><strong style="color:#fff">${s.title}</strong><br><span style="font-size:0.72rem;color:#475569">${s.content || ''}</span>${s.link_url ? `<br><a href="${s.link_url}" target="_blank" class="link-chip">🔗 Xem bài làm</a>` : ''}${s.feedback ? `<br><span style="font-size:0.72rem;color:#34D399">↳ Phản hồi: ${s.feedback}</span>` : ''}</td>
+      <td><strong style="color:#fff">${s.title}</strong><br><span style="font-size:0.72rem;color:#475569">${s.content || ''}</span>${s.link_url ? `<br><a href="${s.link_url}" target="_blank" class="link-chip">🔗 Xem bài làm</a>` : ''}${s.feedback ? `<br><span style="font-size:0.72rem;color:var(--green)">↳ Phản hồi: ${s.feedback}</span>` : ''}</td>
       <td><span class="badge badge-${s.status === 'pending' ? 'closed' : 'active'}">${statusLabel[s.status] || s.status}</span></td>
-      <td style="font-size:0.78rem;color:#64748B">${s.created_at ? new Date(s.created_at).toLocaleDateString('vi-VN') : '—'}</td>
+      <td style="font-size:0.78rem;color:var(--muted2)">${s.created_at ? new Date(s.created_at).toLocaleDateString('vi-VN') : '—'}</td>
       <td><button class="btn btn-warning btn-sm" onclick='openFeedbackModal(${JSON.stringify(s)})'>${s.feedback ? 'Sửa phản hồi' : 'Chấm bài'}</button></td>
     </tr>`).join('');
 }
@@ -2879,10 +3058,10 @@ async function signOut() {
 
     if (session.user.email !== ADMIN_EMAIL) {
       document.body.innerHTML = `
-        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;font-family:'Inter',system-ui;background:#060C1A">
-          <h1 style="color:#F87171;font-size:1.4rem">Không có quyền truy cập</h1>
+        <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;font-family:'Inter',system-ui;background:var(--navy)">
+          <h1 style="color:var(--red);font-size:1.4rem">Không có quyền truy cập</h1>
           <p style="color:#475569">Tài khoản này không phải Admin.</p>
-          <a href="portal.html" style="color:#6D5DFB;text-decoration:none">← Về portal</a>
+          <a href="portal.html" style="color:var(--purple);text-decoration:none">← Về portal</a>
         </div>`;
       return;
     }

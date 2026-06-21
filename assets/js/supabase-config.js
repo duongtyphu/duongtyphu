@@ -46,5 +46,18 @@ async function requireAuth(redirectTo = 'login.html') {
     window.location.href = redirectTo + '?next=' + encodeURIComponent(window.location.pathname);
     return null;
   }
+
+  // Chặn đăng nhập nếu tài khoản đã bị Admin khoá (members.status = 'disabled')
+  const { data: member } = await _supabase
+    .from('members')
+    .select('status')
+    .eq('id', session.user.id)
+    .maybeSingle();
+  if (member && member.status === 'disabled') {
+    await _supabase.auth.signOut();
+    window.location.href = redirectTo + '?locked=1';
+    return null;
+  }
+
   return session;
 }
