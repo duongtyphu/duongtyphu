@@ -2334,6 +2334,31 @@
       }
     });
 
+    // ── Case study thêm từ Admin (Supabase) — nối thêm vào cuối mục Phản hồi ──
+    (async () => {
+      if (!caseGrid || typeof _supabase === 'undefined' || !_supabase) return;
+      const { data } = await _supabase.from('case_studies').select('*').eq('active', true).order('created_at', { ascending: false });
+      if (!data || !data.length) return;
+      data.forEach(cs => {
+        const card = document.createElement('div');
+        card.className = 'case-card reveal visible';
+        card.innerHTML = `
+          <div class="case-photo">
+            ${cs.thumbnail_url ? `<img src="${escapeAttr(cs.thumbnail_url)}" alt="${escapeAttr(cs.client_name || cs.title)}" loading="lazy">` : '👤'}
+          </div>
+          <div class="case-info">
+            <h3>${escapeAttr(cs.client_name || cs.title)}</h3>
+            <div class="case-track">${escapeAttr(cs.title)}</div>
+            <div class="case-result">${escapeAttr(cs.result_metric || cs.summary || '')}</div>
+            ${cs.link_url && cs.link_url.startsWith('http')
+              ? `<a class="case-proof-link" href="${escapeAttr(cs.link_url)}" target="_blank" rel="noopener">Xem bằng chứng →</a>`
+              : ''}
+          </div>
+        `;
+        caseGrid.appendChild(card);
+      });
+    })();
+
     function escapeAttr(str) {
       const div = document.createElement('div');
       div.textContent = str || '';
