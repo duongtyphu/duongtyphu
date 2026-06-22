@@ -56,17 +56,9 @@
 .ld-sticky-cta span { display: block; font-size: 0.76rem; color: #64748B; }
 @media (max-width: 560px) { .ld-sticky-cta strong { font-size: 0.82rem; } .ld-sticky-cta .btn { font-size: 0.82rem; padding: 10px 16px; } }
 
-/* ── Đồng bộ nhịp khoảng cách & xen kẽ màu nền giữa các mục (VDAI SOLO / SCALE) ──
-   #fit và #curriculum chưa có padding riêng trong styles.css (chỉ #ai-assistants,
-   #models, #learning-method, #pricing... mới có) → gây khoảng cách lệch giữa các
-   mục. Đồng thời chuẩn hoá lại thứ tự trắng/off-white xen kẽ vì các mục chuyển từ
-   trang chủ qua (#ai-assistants, #models, #learning-method) đứng liền kề nhau nên
-   bị lặp màu 2-3 mục liên tiếp. */
-#fit, #curriculum { padding: var(--space-3xl) 0; background: var(--white); }
-#ai-assistants     { background: var(--off-white); }
-#models            { background: var(--white); }
-#pricing           { background: var(--white); }
-#faq               { background: var(--off-white); }
+/* ── Đồng bộ nhịp khoảng cách giữa các mục (#fit, #curriculum chưa có padding
+   riêng trong styles.css) ── */
+#fit, #curriculum { padding: var(--space-3xl) 0; }
 
 @media (max-width: 1024px) {
   #fit, #curriculum { padding: var(--space-xl) 0; }
@@ -75,10 +67,96 @@
   #fit, #curriculum { padding: var(--space-lg) 0; }
 }
 
-/* ── Đồng bộ màu nền các ô (card/chip) trong các mục chuyển từ trang chủ qua
-   thành màu trắng, thay cho gradient màu gốc (--grad-rose/--grad-teal/--grad-sky) ── */
-#ai-assistants .assistant-card,
-#models .model-chip,
-#learning-method .method-chip {
-  background: var(--white);
+/* ════════════════════════════════════════════════════════
+   GIAO DIỆN NỀN XANH NAVY ĐỒNG NHẤT — VDAI SOLO / SCALE
+   Toàn bộ trang dùng tông navy/deep-navy làm nền chủ đạo,
+   xen kẽ 2 sắc độ navy để tạo nhịp giữa các mục, phong cách
+   công nghệ/AI: card kính mờ (glass), viền phát sáng cyan/violet,
+   chữ trắng/xám sáng để đảm bảo độ tương phản và dễ đọc.
+════════════════════════════════════════════════════════ */
+body { background: var(--deep-navy); }
+
+#nav {
+  background: rgba(2,13,34,0.85);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
 }
+.nav-menu a { color: rgba(255,255,255,0.72); }
+.nav-menu a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.nav-menu a.active { color: #5EA6FF; }
+.nav-mobile-toggle { color: #fff; }
+.nav-mobile-toggle:hover { background: rgba(255,255,255,0.08); }
+
+.mobile-drawer-panel { background: var(--deep-navy); }
+.mobile-drawer-panel a { color: rgba(255,255,255,0.78); }
+.mobile-drawer-panel a:hover, .mobile-drawer-panel a:focus-visible { background: rgba(255,255,255,0.06); }
+.mobile-drawer-close { background: rgba(255,255,255,0.08); color: #fff; }
+
+/* Xen kẽ 2 sắc độ navy giữa các mục để tạo nhịp thị giác */
+#fit, .roadmap-section.alt, #ai-assistants, #pricing { background: var(--deep-navy); }
+#curriculum, #models, #learning-method, #faq { background: var(--navy); }
+
+.section-eyebrow { background: rgba(255,255,255,0.08); color: #7DC4FF; border-color: rgba(255,255,255,0.14); }
+.section-title { color: #fff; }
+.section-subtitle { color: #9FB3CE; }
+
+/* Card đầu ra / lộ trình */
+.roadmap-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+}
+.roadmap-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-color: rgba(94,166,255,0.4); }
+.roadmap-card h3 { color: #fff; }
+.roadmap-field-val { color: #9FB3CE; }
+.roadmap-num { background: rgba(94,166,255,0.16); color: #7DC4FF; }
+
+/* Phù hợp với ai */
+.ld-fit-card { border: 1px solid rgba(255,255,255,0.1); }
+.ld-fit-card.good { background: linear-gradient(180deg, rgba(94,166,255,0.1), rgba(255,255,255,0.03)); }
+.ld-fit-card.bad  { background: rgba(255,255,255,0.03); }
+.ld-fit-card h3 { color: #fff; }
+.ld-fit-card li { color: #B9C8DE; }
+.ld-fit-card li a { color: #7DC4FF; }
+.ld-fit-card.good li svg { color: #34D399; }
+.ld-fit-card.bad li svg { color: #F87171; }
+
+/* Bộ trợ lý AI / Phạm vi áp dụng / Phương pháp học */
+.assistant-card, .model-chip, .method-chip {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+}
+.assistant-card:hover, .model-chip:hover, .method-chip:hover {
+  border-color: rgba(94,166,255,0.4);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+}
+.assistant-card h3, .method-chip h3 { color: #fff; }
+.assistant-card p, .method-chip p { color: #9FB3CE; }
+.model-chip { color: #E2E8F0; font-weight: 600; }
+.assistant-icon, .method-chip-icon {
+  background: linear-gradient(135deg, rgba(94,166,255,0.25), rgba(167,139,250,0.25));
+}
+.assistants-warning, .models-disclaimer {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #9FB3CE;
+}
+.assistants-warning p { color: #B9C8DE; }
+
+/* FAQ */
+.faq-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.faq-item:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
+.faq-question { color: #fff; }
+.faq-question .faq-icon { color: #7DC4FF; }
+.faq-answer-inner { color: #9FB3CE; }
+.faq-answer-inner a { color: #7DC4FF; }
+
+/* Sticky CTA */
+.ld-sticky-cta { background: var(--deep-navy); border-top: 1px solid rgba(255,255,255,0.1); box-shadow: 0 -8px 30px rgba(0,0,0,0.4); }
+.ld-sticky-cta strong { color: #fff; }
+.ld-sticky-cta span { color: #9FB3CE; }
+
+/* Footer đã là deep-navy sẵn trong styles.css — đồng bộ, không cần đổi */
