@@ -55,3 +55,22 @@
 .ld-sticky-cta strong { color: #0F172A; font-size: 0.92rem; }
 .ld-sticky-cta span { display: block; font-size: 0.76rem; color: #64748B; }
 @media (max-width: 560px) { .ld-sticky-cta strong { font-size: 0.82rem; } .ld-sticky-cta .btn { font-size: 0.82rem; padding: 10px 16px; } }
+
+/* ── Đồng bộ nhịp khoảng cách & xen kẽ màu nền giữa các mục (VDAI SOLO / SCALE) ──
+   #fit và #curriculum chưa có padding riêng trong styles.css (chỉ #ai-assistants,
+   #models, #learning-method, #pricing... mới có) → gây khoảng cách lệch giữa các
+   mục. Đồng thời chuẩn hoá lại thứ tự trắng/off-white xen kẽ vì các mục chuyển từ
+   trang chủ qua (#ai-assistants, #models, #learning-method) đứng liền kề nhau nên
+   bị lặp màu 2-3 mục liên tiếp. */
+#fit, #curriculum { padding: var(--space-3xl) 0; background: var(--white); }
+#ai-assistants     { background: var(--off-white); }
+#models            { background: var(--white); }
+#pricing           { background: var(--white); }
+#faq               { background: var(--off-white); }
+
+@media (max-width: 1024px) {
+  #fit, #curriculum { padding: var(--space-xl) 0; }
+}
+@media (max-width: 480px) {
+  #fit, #curriculum { padding: var(--space-lg) 0; }
+}
