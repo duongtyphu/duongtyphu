@@ -74,3 +74,11 @@
 @media (max-width: 480px) {
   #fit, #curriculum { padding: var(--space-lg) 0; }
 }
+
+/* ── Đồng bộ màu nền các ô (card/chip) trong các mục chuyển từ trang chủ qua
+   thành màu trắng, thay cho gradient màu gốc (--grad-rose/--grad-teal/--grad-sky) ── */
+#ai-assistants .assistant-card,
+#models .model-chip,
+#learning-method .method-chip {
+  background: var(--white);
+}
