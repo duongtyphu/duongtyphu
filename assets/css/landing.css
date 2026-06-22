@@ -1,162 +1,156 @@
 /* ════════════════════════════════════════════════════════
    LANDING PAGES — VDAI SOLO / VDAI SCALE
+   Phong cách hiện đại — khoa học: nền xanh dương nhạt (sky)
+   liền mạch từ đầu đến cuối trang, phân tầng nội dung bằng
+   thẻ (card) nổi trên nền sáng thay vì đổi màu nền theo mục.
 ════════════════════════════════════════════════════════ */
 
-.ld-hero { position: relative; padding: 150px 0 70px; text-align: center; color: #fff; overflow: hidden; }
-.ld-hero.solo  { background: linear-gradient(165deg, var(--deep-navy) 0%, var(--navy) 45%, #0B3A8F 100%); }
-.ld-hero.scale { background: linear-gradient(165deg, var(--deep-navy) 0%, var(--navy) 45%, #3D2A8C 100%); }
-.ld-hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 999px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 20px; }
-.ld-hero h1 { font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.25; max-width: 820px; margin: 0 auto 18px; }
-.ld-hero h1 .hl { color: #5EA6FF; }
-.ld-hero.scale h1 .hl { color: #B7A8FF; }
-.ld-hero p.lead { font-size: 1.02rem; color: #94A3B8; max-width: 620px; margin: 0 auto 30px; line-height: 1.75; }
+:root {
+  --ld-bg:        #EAF3FF;   /* nền sky nhạt, liền mạch toàn trang */
+  --ld-surface:   #FFFFFF;   /* nền thẻ/card */
+  --ld-border:    #D6E6FB;   /* viền thẻ */
+  --ld-text:      #0F1E3D;   /* chữ chính */
+  --ld-text-soft: #5B7396;   /* chữ phụ */
+  --ld-accent:    #0A66FF;   /* xanh dương chủ đạo */
+  --ld-accent-2:  #00B8D9;   /* cyan phụ trợ */
+}
+
+body { background: var(--ld-bg); }
+
+/* ── Thanh điều hướng — đồng bộ với nền sáng ───────────── */
+#nav { background: rgba(234,243,255,0.88); border-bottom: 1px solid var(--ld-border); }
+#nav .nav-logo b   { color: var(--ld-text) !important; }
+#nav .nav-logo small { color: var(--ld-text-soft) !important; }
+.nav-menu a { color: var(--ld-text-soft); }
+.nav-menu a:hover { color: var(--ld-accent); background: rgba(10,102,255,0.06); }
+.nav-menu a.active { color: var(--ld-accent); }
+.nav-mobile-toggle { color: var(--ld-text); }
+.nav-mobile-toggle:hover { background: rgba(10,102,255,0.08); }
+
+.mobile-drawer-panel { background: var(--ld-surface); }
+.mobile-drawer-panel .nav-logo b   { color: var(--ld-text) !important; }
+.mobile-drawer-panel .nav-logo small { color: var(--ld-text-soft) !important; }
+.mobile-drawer-panel a { color: var(--ld-text-soft); }
+.mobile-drawer-panel a:hover, .mobile-drawer-panel a:focus-visible { background: rgba(10,102,255,0.06); color: var(--ld-accent); }
+.mobile-drawer-close { background: rgba(10,102,255,0.08); color: var(--ld-text); }
+
+/* ── Tất cả section dùng chung nền sky — không đổi màu theo mục ── */
+#fit, #curriculum, .roadmap-section.alt,
+#ai-assistants, #models, #learning-method, #pricing, #faq {
+  background: transparent;
+  padding: var(--space-3xl) 0;
+}
+@media (max-width: 1024px) {
+  #fit, #curriculum, .roadmap-section.alt,
+  #ai-assistants, #models, #learning-method, #pricing, #faq { padding: var(--space-xl) 0; }
+}
+@media (max-width: 480px) {
+  #fit, #curriculum, .roadmap-section.alt,
+  #ai-assistants, #models, #learning-method, #pricing, #faq { padding: var(--space-lg) 0; }
+}
+
+.section-eyebrow { background: rgba(10,102,255,0.08); color: var(--ld-accent); border-color: rgba(10,102,255,0.16); }
+.section-title { color: var(--ld-text); }
+.section-subtitle { color: var(--ld-text-soft); }
+
+/* ── Hero — cùng nền sky, nhấn bằng card video + gradient chữ ── */
+.ld-hero { position: relative; padding: 130px 0 64px; text-align: center; color: var(--ld-text); overflow: hidden; background: transparent; }
+.ld-hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 999px; background: var(--ld-surface); border: 1px solid var(--ld-border); color: var(--ld-accent); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(10,102,255,0.08); }
+.ld-hero h1 { font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.25; max-width: 820px; margin: 0 auto 18px; color: var(--ld-text); }
+.ld-hero h1 .hl { background: linear-gradient(135deg, var(--ld-accent), var(--ld-accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.ld-hero p.lead { font-size: 1.02rem; color: var(--ld-text-soft); max-width: 620px; margin: 0 auto 30px; line-height: 1.75; }
 .ld-hero-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 36px; }
+.ld-hero-actions .btn-secondary { background: var(--ld-surface); color: var(--ld-text); border: 1.5px solid var(--ld-border); }
+.ld-hero-actions .btn-secondary:hover { border-color: var(--ld-accent); color: var(--ld-accent); }
 .ld-hero-stats { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; }
 .ld-hero-stat { text-align: center; }
-.ld-hero-stat b { display: block; font-size: 1.5rem; font-weight: 800; color: #fff; }
-.ld-hero-stat span { font-size: 0.78rem; color: #94A3B8; }
+.ld-hero-stat b { display: block; font-size: 1.5rem; font-weight: 800; color: var(--ld-accent); }
+.ld-hero-stat span { font-size: 0.78rem; color: var(--ld-text-soft); }
 
-.ld-video-wrap { max-width: 860px; margin: 44px auto 0; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.12); }
-.ld-video-ratio { position: relative; width: 100%; padding-top: 56.25%; background: #08142E; }
+.ld-video-wrap { max-width: 860px; margin: 44px auto 0; border-radius: 20px; overflow: hidden; box-shadow: 0 24px 60px rgba(10,40,90,0.12); border: 1px solid var(--ld-border); }
+.ld-video-ratio { position: relative; width: 100%; padding-top: 56.25%; background: linear-gradient(165deg, #0B2A55, #0A66FF); }
 .ld-video-ratio iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.ld-video-ratio .ld-video-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #94A3B8; font-size: 0.85rem; }
-.ld-video-fallback .play-circle { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.12); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+.ld-video-ratio .ld-video-fallback { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(255,255,255,0.85); font-size: 0.85rem; }
+.ld-video-fallback .play-circle { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.16); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; color: #fff; }
 
-.ld-countdown-bar { background: #0F172A; padding: 18px 0; }
-.ld-countdown-inner { display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap; color: #fff; }
-.ld-countdown-label { font-size: 0.85rem; color: #94A3B8; font-weight: 600; }
+/* ── Thanh đếm ngược — gọn lại thành thẻ nổi, không còn dải tối full-width ── */
+.ld-countdown-bar { background: transparent; padding: 0 0 var(--space-lg); }
+.ld-countdown-inner {
+  display: flex; align-items: center; justify-content: center; gap: 22px; flex-wrap: wrap;
+  max-width: 640px; margin: 0 auto; padding: 14px 24px; border-radius: 16px;
+  background: var(--ld-surface); border: 1px solid var(--ld-border);
+  box-shadow: 0 8px 24px rgba(10,40,90,0.08); color: var(--ld-text);
+}
+.ld-countdown-label { font-size: 0.85rem; color: var(--ld-text-soft); font-weight: 600; }
 .ld-countdown-units { display: flex; gap: 10px; }
-.ld-countdown-unit { background: rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 12px; min-width: 56px; text-align: center; }
-.ld-countdown-unit b { display: block; font-size: 1.15rem; font-weight: 800; }
-.ld-countdown-unit span { font-size: 0.68rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.5px; }
+.ld-countdown-unit { background: rgba(10,102,255,0.07); border-radius: 10px; padding: 8px 12px; min-width: 56px; text-align: center; }
+.ld-countdown-unit b { display: block; font-size: 1.15rem; font-weight: 800; color: var(--ld-accent); }
+.ld-countdown-unit span { font-size: 0.68rem; color: var(--ld-text-soft); text-transform: uppercase; letter-spacing: 0.5px; }
 
+/* ── Phù hợp với ai ─────────────────────────────────────── */
 .ld-fit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
 @media (max-width: 800px) { .ld-fit-grid { grid-template-columns: 1fr; } }
-.ld-fit-card { border-radius: 22px; padding: 30px 28px; border: 1px solid #E2E8F0; }
-.ld-fit-card.good { background: linear-gradient(180deg, rgba(37,99,235,0.06), #fff); }
-.ld-fit-card.bad  { background: #F7F9FC; }
-.ld-fit-card h3 { font-size: 1.05rem; font-weight: 800; color: #0F172A; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.ld-fit-card { border-radius: 20px; padding: 30px 28px; border: 1px solid var(--ld-border); background: var(--ld-surface); box-shadow: 0 6px 20px rgba(10,40,90,0.06); }
+.ld-fit-card.good { border-left: 4px solid #16A34A; }
+.ld-fit-card.bad  { border-left: 4px solid #DC2626; }
+.ld-fit-card h3 { font-size: 1.05rem; font-weight: 800; color: var(--ld-text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .ld-fit-card ul { display: flex; flex-direction: column; gap: 12px; }
-.ld-fit-card li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.92rem; color: #334155; line-height: 1.55; }
+.ld-fit-card li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.92rem; color: var(--ld-text-soft); line-height: 1.55; }
 .ld-fit-card li svg { flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px; }
+.ld-fit-card li a { color: var(--ld-accent); }
 .ld-fit-card.good li svg { color: #16A34A; }
 .ld-fit-card.bad li svg { color: #DC2626; }
 
-.ld-pricing-box { max-width: 760px; margin: 0 auto; background: linear-gradient(135deg, #2563EB, #6D5DFB); border-radius: 26px; padding: 38px 40px; color: #fff; text-align: center; }
-.ld-pricing-box.scale { background: linear-gradient(135deg, #6D5DFB, #9333EA); }
+/* ── Card đầu ra / lộ trình ─────────────────────────────── */
+.roadmap-card { background: var(--ld-surface); border: 1px solid var(--ld-border); box-shadow: 0 4px 16px rgba(10,40,90,0.05); }
+.roadmap-card:hover { box-shadow: 0 12px 28px rgba(10,40,90,0.12); border-color: rgba(10,102,255,0.3); }
+.roadmap-card h3 { color: var(--ld-text); }
+.roadmap-field-val { color: var(--ld-text-soft); }
+.roadmap-num { background: rgba(10,102,255,0.1); color: var(--ld-accent); }
+
+/* ── Bộ trợ lý AI / Phạm vi áp dụng / Phương pháp học ───── */
+.assistant-card, .model-chip, .method-chip {
+  background: var(--ld-surface); border: 1px solid var(--ld-border); box-shadow: 0 4px 16px rgba(10,40,90,0.05);
+}
+.assistant-card:hover, .model-chip:hover, .method-chip:hover {
+  border-color: rgba(10,102,255,0.3); box-shadow: 0 12px 28px rgba(10,40,90,0.1);
+}
+.assistant-card h3, .method-chip h3 { color: var(--ld-text); }
+.assistant-card p, .method-chip p { color: var(--ld-text-soft); }
+.model-chip { color: var(--ld-text); font-weight: 600; }
+.assistant-icon, .method-chip-icon {
+  background: linear-gradient(135deg, rgba(10,102,255,0.14), rgba(0,184,217,0.14));
+  color: var(--ld-accent);
+}
+.assistants-warning, .models-disclaimer {
+  background: var(--ld-surface); border: 1px solid var(--ld-border); color: var(--ld-text-soft);
+}
+.assistants-warning p { color: var(--ld-text-soft); }
+
+/* ── Bảng giá — giữ thẻ gradient nổi bật làm điểm nhấn duy nhất ── */
+.ld-pricing-box { max-width: 760px; margin: 0 auto; background: linear-gradient(135deg, #0A66FF, #00B8D9); border-radius: 24px; padding: 38px 40px; color: #fff; text-align: center; box-shadow: 0 20px 50px rgba(10,102,255,0.25); }
+.ld-pricing-box.scale { background: linear-gradient(135deg, #6D5DFB, #00B8D9); }
 .ld-pricing-box .ld-price { font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 800; margin: 10px 0 4px; }
-.ld-pricing-box .ld-price-note { font-size: 0.85rem; color: rgba(255,255,255,0.75); margin-bottom: 22px; }
-.ld-pricing-box .btn-primary { background: #fff; color: #2563EB; box-shadow: none; }
+.ld-pricing-box .ld-price-note { font-size: 0.85rem; color: rgba(255,255,255,0.8); margin-bottom: 22px; }
+.ld-pricing-box .btn-primary { background: #fff; color: var(--ld-accent); box-shadow: none; }
 .ld-pricing-box .btn-primary:hover { background: #F1F5F9; transform: translateY(-2px); }
 .ld-pricing-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
 
-.ld-sticky-cta { position: fixed; bottom: 0; left: 0; right: 0; z-index: 90; background: #fff; border-top: 1px solid #E2E8F0; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 -8px 30px rgba(6,26,64,0.1); transform: translateY(100%); transition: transform 0.3s ease; }
+/* ── FAQ ────────────────────────────────────────────────── */
+.faq-item { background: var(--ld-surface); border: 1px solid var(--ld-border); box-shadow: 0 4px 16px rgba(10,40,90,0.05); }
+.faq-item:hover { box-shadow: 0 10px 24px rgba(10,40,90,0.1); }
+.faq-question { color: var(--ld-text); }
+.faq-question .faq-icon { color: var(--ld-accent); }
+.faq-answer-inner { color: var(--ld-text-soft); }
+.faq-answer-inner a { color: var(--ld-accent); }
+
+/* ── CTA dính đáy ───────────────────────────────────────── */
+.ld-sticky-cta { position: fixed; bottom: 0; left: 0; right: 0; z-index: 90; background: var(--ld-surface); border-top: 1px solid var(--ld-border); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; box-shadow: 0 -8px 30px rgba(10,40,90,0.1); transform: translateY(100%); transition: transform 0.3s ease; }
 .ld-sticky-cta.visible { transform: translateY(0); }
-.ld-sticky-cta strong { color: #0F172A; font-size: 0.92rem; }
-.ld-sticky-cta span { display: block; font-size: 0.76rem; color: #64748B; }
+.ld-sticky-cta strong { color: var(--ld-text); font-size: 0.92rem; }
+.ld-sticky-cta span { display: block; font-size: 0.76rem; color: var(--ld-text-soft); }
 @media (max-width: 560px) { .ld-sticky-cta strong { font-size: 0.82rem; } .ld-sticky-cta .btn { font-size: 0.82rem; padding: 10px 16px; } }
 
-/* ── Đồng bộ nhịp khoảng cách giữa các mục (#fit, #curriculum chưa có padding
-   riêng trong styles.css) ── */
-#fit, #curriculum { padding: var(--space-3xl) 0; }
-
-@media (max-width: 1024px) {
-  #fit, #curriculum { padding: var(--space-xl) 0; }
-}
-@media (max-width: 480px) {
-  #fit, #curriculum { padding: var(--space-lg) 0; }
-}
-
-/* ════════════════════════════════════════════════════════
-   GIAO DIỆN NỀN XANH NAVY ĐỒNG NHẤT — VDAI SOLO / SCALE
-   Toàn bộ trang dùng tông navy/deep-navy làm nền chủ đạo,
-   xen kẽ 2 sắc độ navy để tạo nhịp giữa các mục, phong cách
-   công nghệ/AI: card kính mờ (glass), viền phát sáng cyan/violet,
-   chữ trắng/xám sáng để đảm bảo độ tương phản và dễ đọc.
-════════════════════════════════════════════════════════ */
-body { background: var(--deep-navy); }
-
-#nav {
-  background: rgba(2,13,34,0.85);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.nav-menu a { color: rgba(255,255,255,0.72); }
-.nav-menu a:hover { color: #fff; background: rgba(255,255,255,0.06); }
-.nav-menu a.active { color: #5EA6FF; }
-.nav-mobile-toggle { color: #fff; }
-.nav-mobile-toggle:hover { background: rgba(255,255,255,0.08); }
-
-.mobile-drawer-panel { background: var(--deep-navy); }
-.mobile-drawer-panel a { color: rgba(255,255,255,0.78); }
-.mobile-drawer-panel a:hover, .mobile-drawer-panel a:focus-visible { background: rgba(255,255,255,0.06); }
-.mobile-drawer-close { background: rgba(255,255,255,0.08); color: #fff; }
-
-/* Xen kẽ 2 sắc độ navy giữa các mục để tạo nhịp thị giác */
-#fit, .roadmap-section.alt, #ai-assistants, #pricing { background: var(--deep-navy); }
-#curriculum, #models, #learning-method, #faq { background: var(--navy); }
-
-.section-eyebrow { background: rgba(255,255,255,0.08); color: #7DC4FF; border-color: rgba(255,255,255,0.14); }
-.section-title { color: #fff; }
-.section-subtitle { color: #9FB3CE; }
-
-/* Card đầu ra / lộ trình */
-.roadmap-card {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(6px);
-}
-.roadmap-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.35); border-color: rgba(94,166,255,0.4); }
-.roadmap-card h3 { color: #fff; }
-.roadmap-field-val { color: #9FB3CE; }
-.roadmap-num { background: rgba(94,166,255,0.16); color: #7DC4FF; }
-
-/* Phù hợp với ai */
-.ld-fit-card { border: 1px solid rgba(255,255,255,0.1); }
-.ld-fit-card.good { background: linear-gradient(180deg, rgba(94,166,255,0.1), rgba(255,255,255,0.03)); }
-.ld-fit-card.bad  { background: rgba(255,255,255,0.03); }
-.ld-fit-card h3 { color: #fff; }
-.ld-fit-card li { color: #B9C8DE; }
-.ld-fit-card li a { color: #7DC4FF; }
-.ld-fit-card.good li svg { color: #34D399; }
-.ld-fit-card.bad li svg { color: #F87171; }
-
-/* Bộ trợ lý AI / Phạm vi áp dụng / Phương pháp học */
-.assistant-card, .model-chip, .method-chip {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(6px);
-}
-.assistant-card:hover, .model-chip:hover, .method-chip:hover {
-  border-color: rgba(94,166,255,0.4);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.3);
-}
-.assistant-card h3, .method-chip h3 { color: #fff; }
-.assistant-card p, .method-chip p { color: #9FB3CE; }
-.model-chip { color: #E2E8F0; font-weight: 600; }
-.assistant-icon, .method-chip-icon {
-  background: linear-gradient(135deg, rgba(94,166,255,0.25), rgba(167,139,250,0.25));
-}
-.assistants-warning, .models-disclaimer {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: #9FB3CE;
-}
-.assistants-warning p { color: #B9C8DE; }
-
-/* FAQ */
-.faq-item {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-.faq-item:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.3); }
-.faq-question { color: #fff; }
-.faq-question .faq-icon { color: #7DC4FF; }
-.faq-answer-inner { color: #9FB3CE; }
-.faq-answer-inner a { color: #7DC4FF; }
-
-/* Sticky CTA */
-.ld-sticky-cta { background: var(--deep-navy); border-top: 1px solid rgba(255,255,255,0.1); box-shadow: 0 -8px 30px rgba(0,0,0,0.4); }
-.ld-sticky-cta strong { color: #fff; }
-.ld-sticky-cta span { color: #9FB3CE; }
-
-/* Footer đã là deep-navy sẵn trong styles.css — đồng bộ, không cần đổi */
+/* Footer giữ nguyên nền deep-navy sẵn có trong styles.css — đây là điểm
+   nhấn tối duy nhất, đồng nhất với footer của toàn bộ site, không phải
+   nền nội dung chính nên không vi phạm yêu cầu nền liền mạch của trang. */
