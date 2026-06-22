@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prompts } from "@/data/prompts";
+import { LeadGate } from "@/components/portal/LeadGate";
 
 export function generateStaticParams() {
   return prompts.map((p) => ({ id: p.id }));
@@ -39,13 +40,12 @@ export default async function PromptDetailPage({ params }: PageProps<"/portal/pr
         </div>
 
         <div className="mt-6">
-          <a
-            href={`data:text/plain,${encodeURIComponent(prompt.preview)}`}
-            download="prompt.txt"
-            className="inline-flex rounded-full gradient-surface px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-          >
-            Tải prompt
-          </a>
+          <LeadGate
+            source={`prompt:${prompt.id}`}
+            downloadHref={`data:text/plain,${encodeURIComponent(prompt.preview)}`}
+            downloadFilename={`${prompt.id}.txt`}
+            ctaLabel="Tải prompt"
+          />
         </div>
       </div>
     </div>

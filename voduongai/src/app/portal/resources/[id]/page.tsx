@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { freeResources } from "@/data/resources";
+import { LeadGate } from "@/components/portal/LeadGate";
 
 export function generateStaticParams() {
   return freeResources.map((r) => ({ id: r.id }));
@@ -31,9 +32,14 @@ export default async function ResourceDetailPage({ params }: PageProps<"/portal/
         <p className="mt-4 leading-relaxed text-brand-gray-700">{resource.description}</p>
 
         <div className="mt-8">
-          <button className="rounded-full gradient-surface px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90">
-            Tải miễn phí
-          </button>
+          <LeadGate
+            source={`resource:${resource.id}`}
+            downloadHref={`data:text/plain,${encodeURIComponent(
+              `${resource.title}\n\n${resource.description}`
+            )}`}
+            downloadFilename={`${resource.id}.txt`}
+            ctaLabel="Tải miễn phí"
+          />
         </div>
       </div>
     </div>
