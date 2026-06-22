@@ -11,4 +11,6 @@ export const affiliateResources: AffiliateResource[] = [
   { id: "a4", title: "Content System", description: "Hệ thống sản xuất nội dung lặp lại được, không phụ thuộc cảm hứng." },
   { id: "a5", title: "Landing Page", description: "Nguyên tắc thiết kế landing page chuyển đổi cho Affiliate." },
   { id: "a6", title: "Lead Magnet", description: "Cách tạo tài nguyên miễn phí để thu thập khách hàng tiềm năng." },
+  { id: "a7", title: "Affiliate Strategy", description: "Chiến lược dài hạn để mở rộng và đa dạng hoá nguồn thu Affiliate." },
+  { id: "a8", title: "Case Studies", description: "Câu chuyện thực tế và bài học từ những hệ thống Affiliate đã triển khai." },
 ];

@@ -1,5 +1,7 @@
 import { siteConfig } from "@/lib/site";
 
+export const metadata = { title: "Community" };
+
 const channels = [
   { label: "Facebook Group", href: siteConfig.links.facebook },
   { label: "Zalo Community", href: siteConfig.links.zalo },

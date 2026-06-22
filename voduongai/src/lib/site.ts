@@ -7,7 +7,6 @@ export const siteConfig = {
   url: "https://voduongai.com",
   description:
     "Hệ sinh thái giúp bạn học AI, ứng dụng AI vào công việc, xây thương hiệu cá nhân, làm Affiliate Marketing và tạo tài sản số — quy tụ trong một Portal duy nhất.",
-  ogImage: "/og-cover.jpg",
   links: {
     facebook: "https://facebook.com/voduongai",
     youtube: "https://youtube.com/@voduongai",

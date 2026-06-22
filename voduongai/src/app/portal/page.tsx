@@ -4,6 +4,8 @@ import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { premiumProducts } from "@/data/premium";
 
+export const metadata = { title: "Portal" };
+
 export default function PortalDashboard() {
   return (
     <div className="space-y-12">

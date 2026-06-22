@@ -33,13 +33,14 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
-    images: [{ url: siteConfig.ogImage }],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteConfig.name} — ${siteConfig.tagline}`,
     description: siteConfig.description,
-    images: [siteConfig.ogImage],
+  },
+  icons: {
+    icon: "/icon.svg",
   },
   robots: { index: true, follow: true },
 };

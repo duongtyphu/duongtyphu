@@ -5,6 +5,8 @@ const lessons = [
   { title: "Ứng dụng AI vào công việc hàng ngày", description: "Tự động hoá các việc lặp lại bằng AI." },
 ];
 
+export const metadata = { title: "AI Academy" };
+
 export default function AiAcademyPage() {
   return (
     <div className="space-y-6">

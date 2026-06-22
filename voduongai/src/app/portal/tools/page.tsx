@@ -1,5 +1,7 @@
 import { tools } from "@/data/tools";
 
+export const metadata = { title: "Tool Library" };
+
 export default function ToolsPage() {
   return (
     <div className="space-y-6">

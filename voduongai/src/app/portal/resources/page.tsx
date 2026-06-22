@@ -1,5 +1,7 @@
 import { freeResources } from "@/data/resources";
 
+export const metadata = { title: "Free Resources" };
+
 export default function ResourcesPage() {
   return (
     <div className="space-y-6">

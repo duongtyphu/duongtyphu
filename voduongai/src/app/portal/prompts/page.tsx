@@ -1,5 +1,7 @@
 import { prompts } from "@/data/prompts";
 
+export const metadata = { title: "Prompt Library" };
+
 export default function PromptsPage() {
   return (
     <div className="space-y-6">

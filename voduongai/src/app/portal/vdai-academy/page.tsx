@@ -1,5 +1,7 @@
 import { vdaiCourses } from "@/data/courses";
 
+export const metadata = { title: "VDAI Academy" };
+
 export default function VdaiAcademyPage() {
   return (
     <div className="space-y-6">

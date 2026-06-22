@@ -1,5 +1,7 @@
 import { affiliateResources } from "@/data/affiliate";
 
+export const metadata = { title: "Affiliate Hub" };
+
 export default function AffiliateHubPage() {
   return (
     <div className="space-y-6">

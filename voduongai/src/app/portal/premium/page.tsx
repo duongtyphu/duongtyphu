@@ -1,5 +1,7 @@
 import { premiumProducts } from "@/data/premium";
 
+export const metadata = { title: "Premium Resources" };
+
 export default function PremiumPage() {
   return (
     <div className="space-y-6">
