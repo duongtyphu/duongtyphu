@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -10,7 +11,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Email không hợp lệ" }, { status: 400 });
   }
 
-  console.log(`[lead] ${email} — source: ${source}`);
+  const supabase = getSupabaseAdmin();
+  if (!supabase) {
+    console.warn("[lead] Supabase chưa được cấu hình, chỉ log ra console");
+    console.log(`[lead] ${email} — source: ${source}`);
+    return NextResponse.json({ ok: true });
+  }
+
+  const { error } = await supabase
+    .from("leads")
+    .insert({ email, source });
+
+  // 23505 = unique_violation — email already captured, treat as success.
+  if (error && error.code !== "23505") {
+    console.error("[lead] Supabase insert error:", error.message);
+    return NextResponse.json({ error: "Không thể lưu email, vui lòng thử lại" }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }
