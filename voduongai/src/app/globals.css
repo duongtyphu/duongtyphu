@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #0B1220;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Brand — VO DUONG AI */
+  --color-brand-blue:      #155EEF; /* Technology Blue */
+  --color-brand-blue-dark: #0D3FB0;
+  --color-brand-violet:    #7C5CFC; /* Blue Violet */
+  --color-brand-violet-dark:#5B3FD9;
+  --color-brand-navy:      #0B1220; /* Dark Navy */
+  --color-brand-navy-soft: #111A2E;
+  --color-brand-gray-50:   #F8FAFC;
+  --color-brand-gray-100:  #F1F5F9;
+  --color-brand-gray-200:  #E2E8F0;
+  --color-brand-gray-400:  #94A3B8;
+  --color-brand-gray-500:  #64748B;
+  --color-brand-gray-700:  #334155;
+
+  --font-sans: var(--font-jakarta);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gradient-text {
+  background-image: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-surface {
+  background-image: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-violet));
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(11, 18, 32, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
