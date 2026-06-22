@@ -1,16 +1,16 @@
 /* ════════════════════════════════════════════════════════
    LANDING PAGES — VDAI SOLO / VDAI SCALE
-   Phong cách hiện đại — khoa học: nền xanh dương nhạt (sky)
-   liền mạch từ đầu đến cuối trang, phân tầng nội dung bằng
-   thẻ (card) nổi trên nền sáng thay vì đổi màu nền theo mục.
+   Phong cách hiện đại — khoa học: nền trắng/off-white liền
+   mạch từ đầu đến cuối trang, phân tầng nội dung bằng thẻ
+   (card) nổi nhẹ trên nền sáng thay vì đổi màu nền theo mục.
 ════════════════════════════════════════════════════════ */
 
 :root {
-  --ld-bg:        #EAF3FF;   /* nền sky nhạt, liền mạch toàn trang */
+  --ld-bg:        #F7F9FC;   /* nền off-white, liền mạch toàn trang */
   --ld-surface:   #FFFFFF;   /* nền thẻ/card */
-  --ld-border:    #D6E6FB;   /* viền thẻ */
+  --ld-border:    #E2E8F0;   /* viền thẻ */
   --ld-text:      #0F1E3D;   /* chữ chính */
-  --ld-text-soft: #5B7396;   /* chữ phụ */
+  --ld-text-soft: #5B6B85;   /* chữ phụ */
   --ld-accent:    #0A66FF;   /* xanh dương chủ đạo */
   --ld-accent-2:  #00B8D9;   /* cyan phụ trợ */
 }
@@ -18,7 +18,7 @@
 body { background: var(--ld-bg); }
 
 /* ── Thanh điều hướng — đồng bộ với nền sáng ───────────── */
-#nav { background: rgba(234,243,255,0.88); border-bottom: 1px solid var(--ld-border); }
+#nav { background: rgba(247,249,252,0.88); border-bottom: 1px solid var(--ld-border); }
 #nav .nav-logo b   { color: var(--ld-text) !important; }
 #nav .nav-logo small { color: var(--ld-text-soft) !important; }
 .nav-menu a { color: var(--ld-text-soft); }
