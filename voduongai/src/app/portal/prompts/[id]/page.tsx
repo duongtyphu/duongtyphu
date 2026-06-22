@@ -1,0 +1,53 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { prompts } from "@/data/prompts";
+
+export function generateStaticParams() {
+  return prompts.map((p) => ({ id: p.id }));
+}
+
+export async function generateMetadata({ params }: PageProps<"/portal/prompts/[id]">) {
+  const { id } = await params;
+  const prompt = prompts.find((p) => p.id === id);
+  return { title: prompt?.title ?? "Prompt" };
+}
+
+export default async function PromptDetailPage({ params }: PageProps<"/portal/prompts/[id]">) {
+  const { id } = await params;
+  const prompt = prompts.find((p) => p.id === id);
+  if (!prompt) notFound();
+
+  return (
+    <div className="space-y-6">
+      <Link href="/portal/prompts" className="text-sm font-semibold text-brand-blue hover:underline">
+        ← Prompt Library
+      </Link>
+
+      <div className="rounded-2xl border border-brand-gray-200 bg-white p-8">
+        <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
+          {prompt.category}
+        </span>
+        <h1 className="mt-4 text-2xl font-extrabold text-brand-navy">{prompt.title}</h1>
+
+        <div className="mt-6 rounded-xl bg-brand-gray-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand-gray-400">
+            Prompt
+          </p>
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-brand-gray-700">
+            {prompt.preview}
+          </p>
+        </div>
+
+        <div className="mt-6">
+          <a
+            href={`data:text/plain,${encodeURIComponent(prompt.preview)}`}
+            download="prompt.txt"
+            className="inline-flex rounded-full gradient-surface px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+          >
+            Tải prompt
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}

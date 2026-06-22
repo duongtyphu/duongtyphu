@@ -1,5 +1,8 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site";
+import { tools } from "@/data/tools";
+import { prompts } from "@/data/prompts";
+import { freeResources } from "@/data/resources";
 
 const routes = [
   "/",
@@ -16,6 +19,9 @@ const routes = [
   "/portal/premium",
   "/portal/my-products",
   "/portal/community",
+  ...tools.map((t) => `/portal/tools/${t.id}`),
+  ...prompts.map((p) => `/portal/prompts/${p.id}`),
+  ...freeResources.map((r) => `/portal/resources/${r.id}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

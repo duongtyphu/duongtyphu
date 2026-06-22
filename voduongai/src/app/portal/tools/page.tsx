@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { tools } from "@/data/tools";
 
 export const metadata = { title: "Tool Library" };
@@ -13,7 +14,11 @@ export default function ToolsPage() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {tools.map((t) => (
-          <div key={t.id} className="rounded-2xl border border-brand-gray-200 bg-white p-5">
+          <Link
+            key={t.id}
+            href={`/portal/tools/${t.id}`}
+            className="rounded-2xl border border-brand-gray-200 bg-white p-5 transition hover:shadow-lg hover:shadow-brand-blue/10"
+          >
             <div className="flex items-center justify-between">
               <div className="h-9 w-9 rounded-lg gradient-surface" />
               <span className="rounded-full bg-brand-gray-50 px-2.5 py-0.5 text-[10px] font-semibold text-brand-gray-500">
@@ -31,7 +36,7 @@ export default function ToolsPage() {
                 I Use This
               </span>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </div>
