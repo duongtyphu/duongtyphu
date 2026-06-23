@@ -15,10 +15,11 @@ export function FounderStory() {
           className="grid gap-10 md:grid-cols-[minmax(0,520px)_1fr] md:items-center"
         >
           <div className="relative mx-auto flex w-full max-w-[520px] flex-col">
-            <div className="absolute -inset-10 -z-10 rounded-[48px] bg-brand-orange/15 blur-3xl" />
-            <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/15 blur-3xl" />
+            <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/25 blur-3xl" />
+            <div className="absolute -inset-16 -z-10 rounded-[56px] bg-brand-violet/20 blur-[80px]" />
+            <div className="absolute -inset-8 -z-10 rounded-[44px] bg-brand-orange/10 blur-2xl" />
 
-            <div className="relative w-full overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur">
+            <div className="relative w-full overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_0_70px_-5px_rgba(37,99,235,0.55),0_40px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur">
               <Image
                 src="/founder.png"
                 alt="Võ Đương — Người sáng lập, Võ Đương AI"
