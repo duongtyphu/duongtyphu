@@ -100,9 +100,9 @@ export function Footer() {
               {siteConfig.tagline}
             </p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
-              VO DUONG AI — nơi học AI, xây hệ thống và tạo tài sản số hội tụ
-              trong một hệ sinh thái duy nhất, đồng hành cùng bạn từ người mới
-              đến nhà đầu tư thực chiến.
+              Nơi học AI, xây hệ thống và tạo tài sản số hội tụ trong một hệ
+              sinh thái duy nhất, đồng hành cùng bạn từ người mới đến nhà đầu
+              tư thực chiến trong kỷ nguyên mới.
             </p>
           </div>
 
