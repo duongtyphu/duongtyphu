@@ -86,7 +86,7 @@ export function Ecosystem() {
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
           <h2 className="text-2xl font-extrabold md:text-3xl">
-            Hệ sinh thái Võ Đương AI
+            Hệ sinh thái VO DUONG AI
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
             Một hệ sinh thái đang vận hành và phát triển — không phải một
@@ -125,6 +125,34 @@ export function Ecosystem() {
                   stroke={active ? "#5B8CFF" : "rgba(255,255,255,0.12)"}
                   strokeWidth={active ? 1.4 : 1}
                   style={{ transition: "stroke 0.3s ease, stroke-width 0.3s ease" }}
+                />
+              );
+            })}
+
+            {/* Blockchain-style data flow running from each module towards the center "V" */}
+            {modules.map((m, i) => {
+              const { x, y } = planetPosition(i, modules.length, m.ring);
+              const active = activeIndex === i;
+              return (
+                <motion.line
+                  key={`flow-${m.label}`}
+                  x1={50}
+                  y1={50}
+                  x2={x}
+                  y2={y}
+                  vectorEffect="non-scaling-stroke"
+                  stroke={active ? "#FFC57A" : "#5B8CFF"}
+                  strokeWidth={active ? 1 : 0.6}
+                  strokeLinecap="round"
+                  strokeDasharray="2 4"
+                  opacity={active ? 0.95 : 0.45}
+                  animate={{ strokeDashoffset: [0, 24] }}
+                  transition={{
+                    duration: active ? 0.7 : 2.6,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  style={{ transition: "stroke 0.3s ease, opacity 0.3s ease" }}
                 />
               );
             })}
