@@ -82,8 +82,7 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="mesh-navy border-t border-white/10 text-white/60">
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-blue/70 to-transparent shadow-[0_0_24px_2px_rgba(91,140,255,0.55)]" />
+    <footer className="text-white/60">
       <div className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>

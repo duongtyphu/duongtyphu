@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export function FounderStory() {
   return (
-    <section className="py-14 text-white md:py-20">
+    <section className="py-9 text-white md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -76,8 +76,11 @@ export function FounderStory() {
               </p>
             </div>
 
-            <p className="mt-6 font-serif text-base italic text-white/80">
-              — Võ Đương AI
+            <p className="mt-6 inline-flex items-center gap-2 text-base font-extrabold tracking-wide">
+              <span className="h-px w-6 bg-gradient-to-r from-brand-orange to-brand-violet" />
+              <span className="bg-gradient-to-r from-brand-orange via-brand-violet to-brand-blue bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(255,122,0,0.35)]">
+                Nhà sáng lập Võ Đương AI
+              </span>
             </p>
           </div>
         </motion.div>

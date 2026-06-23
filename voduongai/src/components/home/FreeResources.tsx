@@ -67,7 +67,7 @@ const badgeStyle: Record<string, string> = {
 
 export function FreeResources() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
+    <section className="mx-auto max-w-6xl px-5 py-9 md:py-12">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-2xl font-extrabold text-white md:text-3xl">
           Điều gì đang chờ bạn bên trong?

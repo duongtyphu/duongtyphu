@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { tools } from "@/data/tools";
 
+function logoUrl(link: string) {
+  const domain = link.split(",")[0].trim().replace(/^https?:\/\//, "").split("/")[0];
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+}
+
 export function ToolsIUse() {
   return (
-    <section className="py-14 md:py-20">
+    <section className="py-9 md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -30,7 +35,15 @@ export function ToolsIUse() {
               className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-5"
             >
               <div className="flex items-center justify-between">
-                <div className="h-9 w-9 rounded-lg gradient-surface" />
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 p-1.5">
+                  <img
+                    src={logoUrl(t.link)}
+                    alt={`${t.name} logo`}
+                    width={28}
+                    height={28}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
                 {t.iUseThis && (
                   <span className="rounded-full bg-brand-orange/15 px-2.5 py-0.5 text-[10px] font-semibold text-brand-orange">
                     Tôi đang dùng

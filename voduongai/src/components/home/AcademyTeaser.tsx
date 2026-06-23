@@ -30,7 +30,7 @@ const modules = [
 
 export function AcademyTeaser() {
   return (
-    <section className="py-14 md:py-20">
+    <section className="py-9 md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-extrabold text-white md:text-3xl">

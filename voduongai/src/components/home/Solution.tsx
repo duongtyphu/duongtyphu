@@ -23,7 +23,7 @@ const pillars = [
 
 export function Solution() {
   return (
-    <section className="py-14 md:py-20">
+    <section className="py-9 md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-base leading-relaxed text-white/70">

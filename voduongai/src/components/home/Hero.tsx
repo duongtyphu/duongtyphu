@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden pt-24 pb-16 text-white md:pt-28 md:pb-20">
+    <section className="relative overflow-hidden pt-16 pb-10 text-white md:pt-20 md:pb-12">
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-2 md:items-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

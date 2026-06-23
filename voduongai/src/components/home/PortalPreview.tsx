@@ -34,7 +34,7 @@ const filters = ["Tất cả", "AI Academy", "Affiliate", "Công cụ", "Prompt"
 
 export function PortalPreview() {
   return (
-    <section className="py-14 text-white md:py-20">
+    <section className="py-9 text-white md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-extrabold md:text-3xl">
