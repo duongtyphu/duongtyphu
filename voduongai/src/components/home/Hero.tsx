@@ -49,7 +49,7 @@ const floatingBadges = [
 export function Hero() {
   return (
     <section className="relative overflow-hidden pt-16 pb-10 text-white md:pt-20 md:pb-12">
-      <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1fr_1.3fr] md:items-center">
+      <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1.2fr_1fr] md:items-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -102,13 +102,13 @@ export function Hero() {
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="group relative overflow-hidden rounded-[30px] border border-white/12 bg-white/[0.045] p-3.5 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-5"
+            className="group relative overflow-hidden rounded-[26px] border border-white/12 bg-white/[0.045] p-3 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-3.5"
           >
             {/* Light reflection */}
             <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-gradient-to-br from-white/[0.08] via-transparent to-transparent" />
             <div className="pointer-events-none absolute -inset-px rounded-[30px] ring-1 ring-inset ring-white/10" />
 
-            <div className="relative flex items-center gap-1.5 border-b border-white/10 px-3 pb-3 md:pb-4">
+            <div className="relative flex items-center gap-1.5 border-b border-white/10 px-2.5 pb-2.5">
               <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
@@ -116,12 +116,12 @@ export function Hero() {
                 voduongai.com/portal
               </span>
             </div>
-            <div className="relative flex gap-3 p-4 md:gap-4 md:p-5">
-              <div className="hidden w-32 flex-shrink-0 space-y-1.5 sm:block md:w-36">
+            <div className="relative flex gap-3 p-3.5">
+              <div className="hidden w-28 flex-shrink-0 space-y-1.5 sm:block">
                 {navItems.map((m, i) => (
                   <div
                     key={m}
-                    className={`cursor-pointer rounded-lg px-2.5 py-2 text-[11px] font-medium transition hover:bg-white/10 hover:text-white md:text-xs ${
+                    className={`cursor-pointer rounded-lg px-2.5 py-2 text-[11px] font-medium transition hover:bg-white/10 hover:text-white ${
                       i === 0 ? "bg-white/10 text-white" : "text-white"
                     }`}
                   >
@@ -129,16 +129,16 @@ export function Hero() {
                   </div>
                 ))}
               </div>
-              <div className="grid flex-1 grid-cols-2 gap-3 md:gap-4">
+              <div className="grid flex-1 grid-cols-2 gap-3">
                 {tiles.map(({ label, icon: Icon }) => (
                   <div
                     key={label}
-                    className="card-shine rounded-xl border border-white/10 bg-white/[0.035] p-4 md:p-5"
+                    className="card-shine rounded-xl border border-white/10 bg-white/[0.035] p-4"
                   >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue/25 to-brand-violet/15 text-brand-violet md:h-10 md:w-10">
-                      <Icon className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={2} />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue/25 to-brand-violet/15 text-brand-violet">
+                      <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
                     </div>
-                    <p className="mt-3 text-sm font-semibold text-white md:text-[15px]">{label}</p>
+                    <p className="mt-3 text-sm font-semibold text-white">{label}</p>
                     <span className="mt-2 inline-flex rounded-full bg-brand-orange/15 px-2 py-0.5 text-[10px] font-semibold text-brand-orange">
                       Miễn phí
                     </span>
