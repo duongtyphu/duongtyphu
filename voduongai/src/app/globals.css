@@ -111,21 +111,3 @@ body {
 .card-shine:hover::after {
   transform: translateX(120%);
 }
-
-.glow-ring {
-  background: conic-gradient(
-    from 0deg,
-    var(--color-brand-orange),
-    var(--color-brand-violet),
-    var(--color-brand-blue),
-    var(--color-brand-orange)
-  );
-  animation: glow-ring-spin 6s linear infinite;
-  box-shadow: 0 0 50px 6px rgba(255, 122, 0, 0.25), 0 0 90px 20px rgba(91, 140, 255, 0.18);
-}
-
-@keyframes glow-ring-spin {
-  to {
-    filter: hue-rotate(360deg);
-  }
-}

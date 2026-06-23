@@ -18,19 +18,17 @@ export function FounderStory() {
             <div className="absolute -inset-10 -z-10 rounded-[48px] bg-brand-orange/15 blur-3xl" />
             <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/15 blur-3xl" />
 
-            <div className="glow-ring relative rounded-[38px] p-[3px]">
-              <div className="relative w-full overflow-hidden rounded-[35px] border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur">
-                <Image
-                  src="/founder.png"
-                  alt="Võ Đương — Người sáng lập, Võ Đương AI"
-                  width={1536}
-                  height={1024}
-                  className="h-auto w-full object-contain"
-                  sizes="520px"
-                  priority
-                />
-                <div className="absolute inset-0 rounded-[35px] ring-1 ring-inset ring-white/10" />
-              </div>
+            <div className="relative w-full overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur">
+              <Image
+                src="/founder.png"
+                alt="Võ Đương — Người sáng lập, Võ Đương AI"
+                width={1536}
+                height={1024}
+                className="h-auto w-full object-contain"
+                sizes="520px"
+                priority
+              />
+              <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-white/10" />
             </div>
 
             <div className="mt-5 flex justify-center">
