@@ -3,6 +3,7 @@ import { siteConfig } from "@/lib/site";
 import { tools } from "@/data/tools";
 import { prompts } from "@/data/prompts";
 import { freeResources } from "@/data/resources";
+import { blogPosts } from "@/data/blog";
 
 const routes = [
   "/",
@@ -22,6 +23,7 @@ const routes = [
   ...tools.map((t) => `/portal/tools/${t.id}`),
   ...prompts.map((p) => `/portal/prompts/${p.id}`),
   ...freeResources.map((r) => `/portal/resources/${r.id}`),
+  ...blogPosts.map((p) => `/blog/${p.slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
