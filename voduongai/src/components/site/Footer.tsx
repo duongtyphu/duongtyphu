@@ -100,9 +100,9 @@ export function Footer() {
               {siteConfig.tagline}
             </p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
-              Hệ sinh thái AI, Affiliate Marketing và tài sản số dành cho
-              những người muốn học nhanh hơn, xây hệ thống hiệu quả hơn và
-              tạo giá trị bền vững trong thời đại AI.
+              VO DUONG AI — nơi học AI, xây hệ thống và tạo tài sản số hội tụ
+              trong một hệ sinh thái duy nhất, đồng hành cùng bạn từ người mới
+              đến nhà đầu tư thực chiến.
             </p>
           </div>
 
