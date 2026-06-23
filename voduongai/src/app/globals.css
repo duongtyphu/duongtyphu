@@ -60,11 +60,13 @@ body {
 .mesh-navy {
   background-color: #020817;
   background-image:
+    linear-gradient(rgba(53, 194, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 194, 255, 0.035) 1px, transparent 1px),
     radial-gradient(900px circle at 100% 0%, rgba(11, 92, 255, 0.18), transparent 70%),
     radial-gradient(700px circle at 0% 100%, rgba(53, 194, 255, 0.12), transparent 70%),
     linear-gradient(165deg, #020817 0%, #041224 50%, #06142B 100%);
   background-attachment: scroll;
-  background-size: 100% 100%;
+  background-size: 60px 60px, 60px 60px, 100% 100%, 100% 100%, 100% 100%;
 }
 
 .mesh-light {
