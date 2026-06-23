@@ -25,10 +25,25 @@ export function FounderStory() {
                 alt="Võ Đương — Người sáng lập, Võ Đương AI"
                 width={1536}
                 height={1024}
-                className="h-auto w-full object-contain"
+                className="h-auto w-full object-contain pointer-events-none select-none"
                 sizes="520px"
                 priority
+                draggable={false}
               />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 flex flex-wrap items-center justify-center gap-x-10 gap-y-16 overflow-hidden opacity-[0.08]"
+                style={{ transform: "rotate(-24deg) scale(1.4)" }}
+              >
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className="whitespace-nowrap text-sm font-extrabold uppercase tracking-widest text-white"
+                  >
+                    VO DUONG AI
+                  </span>
+                ))}
+              </div>
               <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-white/10" />
             </div>
 

@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { AntiCopy } from "@/components/site/AntiCopy";
 import { siteConfig } from "@/lib/site";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -62,6 +63,7 @@ export default function RootLayout({
     <html lang="vi" className={`${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans text-white">
         <div className="mesh-navy fixed inset-0 -z-10" aria-hidden="true" />
+        <AntiCopy />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
