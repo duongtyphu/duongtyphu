@@ -112,6 +112,14 @@ body {
   transform: translateX(120%);
 }
 
+.glow-blue {
+  box-shadow: 0 0 60px -10px rgba(37, 99, 235, 0.45), 0 0 0 1px rgba(37, 99, 235, 0.25) inset;
+}
+
+.glow-violet {
+  box-shadow: 0 0 60px -10px rgba(91, 140, 255, 0.4), 0 0 0 1px rgba(91, 140, 255, 0.2) inset;
+}
+
 .shimmer-gold {
   background-image: linear-gradient(100deg, #fef9c3 0%, #ffffff 25%, #fde68a 50%, #ffffff 75%, #fef9c3 100%);
   background-size: 200% auto;

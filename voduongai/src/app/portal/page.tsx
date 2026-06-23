@@ -25,13 +25,19 @@ export default function PortalDashboard() {
         </p>
       </div>
 
-      <section className="card-shine rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
+      <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-bold text-white">Tiến độ lộ trình</h2>
             <p className="mt-1 text-sm text-white/70">
               Chưa biết bắt đầu từ đâu? Lộ trình 7 bước sẽ chỉ đúng bước tiếp theo cho bạn.
             </p>
+            <div className="mt-4 flex items-center gap-3">
+              <div className="h-2 w-40 overflow-hidden rounded-full bg-white/10">
+                <div className="h-full w-[28%] rounded-full bg-gradient-to-r from-brand-blue to-brand-violet" />
+              </div>
+              <span className="text-xs font-semibold text-white/60">Bước 2/7 · minh hoạ</span>
+            </div>
           </div>
           <Link
             href="/portal/roadmap"
@@ -43,7 +49,12 @@ export default function PortalDashboard() {
       </section>
 
       <section>
-        <h2 className="text-lg font-bold text-white">Nhiệm vụ hôm nay</h2>
+        <div className="flex items-end justify-between">
+          <h2 className="text-lg font-bold text-white">Nhiệm vụ hôm nay</h2>
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-orange/10 px-3 py-1 text-xs font-bold text-brand-orange">
+            🔥 Streak 1 ngày · minh hoạ
+          </span>
+        </div>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {todayTasks.map((t) => (
             <Link

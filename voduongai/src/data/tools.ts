@@ -9,6 +9,9 @@ export type Tool = {
   affiliateUrl?: string;
   pricing: "Miễn phí" | "Freemium" | "Trả phí";
   iUseThis?: boolean;
+  pros?: string[];
+  cons?: string[];
+  workflow?: string;
 };
 
 export const tools: Tool[] = [
@@ -23,6 +26,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Trả lời nhanh, hiểu ngữ cảnh tiếng Việt tốt", "Có app di động, dùng được mọi lúc"],
+    cons: ["Bản miễn phí giới hạn số lượt hỏi vào giờ cao điểm"],
+    workflow: "Sáng viết outline content bằng ChatGPT → chỉnh lại giọng văn cho phù hợp thương hiệu → đăng lên các kênh.",
   },
   {
     id: "claude",
@@ -35,6 +41,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Viết code chính xác, hiểu yêu cầu dài và phức tạp", "Giữ ngữ cảnh tốt trong các phiên làm việc dài"],
+    cons: ["Giới hạn số lượt chat miễn phí trong ngày"],
+    workflow: "Mô tả yêu cầu tính năng → Claude viết/sửa code → kiểm tra và deploy lên Vercel.",
   },
   {
     id: "gemini",
@@ -47,6 +56,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Tích hợp sẵn với Google Search và Workspace", "Tổng hợp thông tin từ nhiều nguồn nhanh"],
+    cons: ["Đôi khi trả lời chung, cần hỏi lại cụ thể hơn"],
+    workflow: "Dùng Gemini để research nhanh một chủ đề → đối chiếu với ChatGPT/Claude trước khi viết bài.",
   },
   {
     id: "canva",
@@ -59,6 +71,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Kho mẫu lớn, kéo-thả dễ dùng", "Có sẵn template cho mạng xã hội phổ biến"],
+    cons: ["Một số mẫu/asset đẹp nằm trong bản Pro"],
+    workflow: "Lấy outline content từ ChatGPT → dùng Canva dựng ảnh/slide minh hoạ → xuất file đăng kênh.",
   },
   {
     id: "capcut",
@@ -71,6 +86,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Phụ đề tự động khá chính xác với tiếng Việt", "Có sẵn nhiều template dựng nhanh"],
+    cons: ["Một số hiệu ứng/nhạc cần mua thêm gói Pro"],
+    workflow: "Quay/chụp tư liệu thô → cắt ghép và thêm phụ đề trong CapCut → xuất video lên TikTok/Shorts.",
   },
   {
     id: "heygen",
@@ -83,6 +101,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Trả phí",
     iUseThis: true,
+    pros: ["Tạo video avatar AI mà không cần quay mặt thật", "Hỗ trợ nhiều ngôn ngữ, lồng giọng tự nhiên"],
+    cons: ["Trả phí mới mở khoá đủ tính năng, chưa có bản miễn phí đủ dùng"],
+    workflow: "Viết script bằng ChatGPT → dán vào HeyGen tạo video avatar → chỉnh sửa và xuất bản.",
   },
   {
     id: "hostinger",
@@ -95,6 +116,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Trả phí",
     iUseThis: true,
+    pros: ["Chi phí hợp lý cho người mới bắt đầu", "Vercel deploy nhanh, tích hợp tốt với Next.js"],
+    cons: ["Cần biết cấu hình domain/DNS cơ bản"],
+    workflow: "Build website bằng Next.js → deploy lên Vercel → gắn domain quản lý qua Hostinger.",
   },
   {
     id: "notion",
@@ -107,6 +131,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Linh hoạt, tự dựng được mọi loại bảng/tài liệu", "Đồng bộ tốt giữa máy tính và điện thoại"],
+    cons: ["Cần thời gian làm quen để dựng hệ thống đầu tiên"],
+    workflow: "Lưu mọi ý tưởng/kế hoạch vào Notion → biến thành checklist hành động hàng tuần.",
   },
   {
     id: "make",
@@ -119,6 +146,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Freemium",
     iUseThis: true,
+    pros: ["Tự động hoá không cần biết code (no-code)", "Kết nối được hàng trăm công cụ khác nhau"],
+    cons: ["Workflow phức tạp cần thời gian học logic kéo-thả"],
+    workflow: "Lead điền form → Make tự động gửi email chào mừng → ghi vào bảng theo dõi.",
   },
   {
     id: "google-workspace",
@@ -131,6 +161,9 @@ export const tools: Tool[] = [
     affiliateUrl: "",
     pricing: "Trả phí",
     iUseThis: true,
+    pros: ["Email thương hiệu chuyên nghiệp (@tendoanh.com)", "Lưu trữ và chia sẻ tài liệu thuận tiện"],
+    cons: ["Có phí hàng tháng theo số lượng tài khoản"],
+    workflow: "Tạo email thương hiệu → dùng cho mọi giao tiếp khách hàng và đăng ký công cụ khác.",
   },
   {
     id: "figma",
@@ -142,5 +175,8 @@ export const tools: Tool[] = [
     link: "https://figma.com",
     affiliateUrl: "",
     pricing: "Freemium",
+    pros: ["Thiết kế UI/UX chuyên sâu, cộng tác realtime", "Có sẵn nhiều community template tham khảo"],
+    cons: ["Cần nền tảng thiết kế cơ bản để dùng hiệu quả"],
+    workflow: "Wireframe trang mới trong Figma → bàn giao cho lập trình dựng thành trang thật.",
   },
 ];

@@ -64,6 +64,39 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
           </span>
         )}
 
+        {(tool.pros || tool.cons) && (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {tool.pros && (
+              <div className="rounded-xl bg-white/5 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-white">Ưu điểm</p>
+                <ul className="mt-2 space-y-1.5 text-sm text-white/80">
+                  {tool.pros.map((p) => <li key={p}>• {p}</li>)}
+                </ul>
+              </div>
+            )}
+            {tool.cons && (
+              <div className="rounded-xl bg-white/5 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-white">Nhược điểm</p>
+                <ul className="mt-2 space-y-1.5 text-sm text-white/80">
+                  {tool.cons.map((c) => <li key={c}>• {c}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {tool.workflow && (
+          <div className="mt-4 rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-violet">Workflow thực tế</p>
+            <p className="mt-1 text-sm text-white/80">{tool.workflow}</p>
+          </div>
+        )}
+
+        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-white/50">Video hướng dẫn</p>
+          <p className="mt-1 text-sm text-white/50">Sắp cập nhật — chưa có video hướng dẫn thật cho công cụ này.</p>
+        </div>
+
         <div className="mt-8 flex flex-wrap gap-3">
           <a
             href={tool.affiliateUrl || tool.link}
