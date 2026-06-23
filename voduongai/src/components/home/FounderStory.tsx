@@ -40,7 +40,7 @@ export function FounderStory() {
                 </span>
                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white">
                   Đại diện Quốc gia khu vực Miền Nam
-                  <span className="text-brand-orange"> — DigiU Việt Nam</span>
+                  <span className="text-red-500"> — DigiU Việt Nam</span>
                 </p>
               </div>
             </div>
