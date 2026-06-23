@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export function FounderStory() {
   return (
@@ -15,8 +16,15 @@ export function FounderStory() {
         >
           <div className="relative mx-auto w-full max-w-[280px]">
             <div className="absolute -inset-4 -z-10 rounded-[32px] bg-brand-orange/10 blur-2xl" />
-            <div className="flex aspect-[4/5] w-full items-center justify-center rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur">
-              <span className="text-5xl font-extrabold text-white/20">VĐ</span>
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur">
+              <Image
+                src="/founder.png"
+                alt="Võ Đương — Founder, Võ Đương AI"
+                fill
+                className="object-cover"
+                sizes="280px"
+                priority
+              />
             </div>
             <p className="mt-4 text-center text-xs font-medium text-white/40">
               Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam
