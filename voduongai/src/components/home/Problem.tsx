@@ -7,9 +7,9 @@ const problems = [
 
 export function Problem() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
+    <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
+      <div className="mx-auto max-w-3xl text-center">
+        <h2 className="whitespace-nowrap text-lg font-extrabold text-brand-navy sm:text-2xl md:text-3xl">
           Bạn không thiếu cơ hội. Bạn thiếu một hệ thống đúng.
         </h2>
       </div>
@@ -17,7 +17,7 @@ export function Problem() {
         {problems.map((p) => (
           <div
             key={p}
-            className="flex items-start gap-3 rounded-[20px] border border-brand-gray-200 bg-white p-5"
+            className="card-shine flex items-start gap-3 rounded-[20px] border border-brand-gray-200 bg-white p-5"
           >
             <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-red-50 text-sm font-bold text-red-500">
               !

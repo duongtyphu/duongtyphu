@@ -10,12 +10,12 @@ const pillars = [
       "Hệ thống và lộ trình giúp bạn làm Affiliate Marketing có chiến lược, không làm theo cảm tính.",
   },
   {
-    title: "Personal Branding",
+    title: "Thương hiệu cá nhân",
     description:
       "Xây thương hiệu cá nhân nhất quán — nội dung, hình ảnh và tiếng nói riêng của bạn.",
   },
   {
-    title: "Digital Assets",
+    title: "Tài sản số",
     description:
       "Website, sản phẩm số, hệ thống tự động — những tài sản tạo ra giá trị lâu dài.",
   },
@@ -23,7 +23,7 @@ const pillars = [
 
 export function Solution() {
   return (
-    <section className="bg-brand-gray-50 py-16 md:py-24">
+    <section className="bg-brand-gray-50 py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-base leading-relaxed text-brand-gray-700">
@@ -36,7 +36,7 @@ export function Solution() {
           {pillars.map((p, i) => (
             <div
               key={p.title}
-              className="rounded-[20px] border border-brand-gray-200 bg-white p-6"
+              className="card-shine rounded-[20px] border border-brand-gray-200 bg-white p-6"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-xl gradient-surface text-sm font-bold text-white">
                 {i + 1}

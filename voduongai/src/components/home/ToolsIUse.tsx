@@ -3,7 +3,7 @@ import { tools } from "@/data/tools";
 
 export function ToolsIUse() {
   return (
-    <section className="bg-brand-gray-50 py-16 md:py-24">
+    <section className="bg-brand-gray-50 py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -19,7 +19,7 @@ export function ToolsIUse() {
             href="/portal/tools"
             className="text-sm font-semibold text-brand-blue hover:underline"
           >
-            Xem Tool Library →
+            Xem Thư viện công cụ →
           </Link>
         </div>
 
@@ -27,7 +27,7 @@ export function ToolsIUse() {
           {tools.slice(0, 9).map((t) => (
             <div
               key={t.id}
-              className="rounded-[20px] border border-brand-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
+              className="card-shine rounded-[20px] border border-brand-gray-200 bg-white p-5 shadow-sm"
             >
               <div className="flex items-center justify-between">
                 <div className="h-9 w-9 rounded-lg gradient-surface" />

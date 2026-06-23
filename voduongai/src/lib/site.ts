@@ -17,25 +17,25 @@ export const siteConfig = {
 };
 
 export const mainNav = [
-  { label: "Home", href: "/" },
-  { label: "Resources", href: "/portal/resources" },
-  { label: "AI Tools", href: "/portal/tools" },
+  { label: "Trang chủ", href: "/" },
+  { label: "Tài nguyên", href: "/portal/resources" },
+  { label: "Công cụ AI", href: "/portal/tools" },
   { label: "Portal", href: "/portal" },
   { label: "Blog", href: "/blog" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
+  { label: "Giới thiệu", href: "/about" },
+  { label: "Liên hệ", href: "/contact" },
 ];
 
 export const portalNav = [
-  { label: "Dashboard", href: "/portal" },
+  { label: "Tổng quan", href: "/portal" },
   { label: "AI Academy", href: "/portal/ai-academy" },
   { label: "VDAI Academy", href: "/portal/vdai-academy" },
   { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
-  { label: "Tool Library", href: "/portal/tools" },
-  { label: "Prompt Library", href: "/portal/prompts" },
-  { label: "Free Resources", href: "/portal/resources" },
-  { label: "Premium Resources", href: "/portal/premium" },
-  { label: "My Products", href: "/portal/my-products" },
-  { label: "Community", href: "/portal/community" },
+  { label: "Thư viện công cụ", href: "/portal/tools" },
+  { label: "Thư viện Prompt", href: "/portal/prompts" },
+  { label: "Tài nguyên miễn phí", href: "/portal/resources" },
+  { label: "Tài nguyên Premium", href: "/portal/premium" },
+  { label: "Sản phẩm của tôi", href: "/portal/my-products" },
+  { label: "Cộng đồng", href: "/portal/community" },
   { label: "Blog", href: "/blog" },
 ];

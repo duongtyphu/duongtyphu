@@ -8,16 +8,16 @@ const stats = [
 ];
 
 const channels = [
-  { label: "Facebook Group", href: siteConfig.links.facebook },
-  { label: "Zalo Community", href: siteConfig.links.zalo },
+  { label: "Nhóm Facebook", href: siteConfig.links.facebook },
+  { label: "Cộng đồng Zalo", href: siteConfig.links.zalo },
   { label: "YouTube", href: siteConfig.links.youtube },
   { label: "TikTok", href: siteConfig.links.tiktok },
-  { label: "Newsletter", href: siteConfig.links.telegram },
+  { label: "Bản tin Email", href: siteConfig.links.telegram },
 ];
 
 export function TrustStats() {
   return (
-    <section className="border-y border-brand-gray-200 bg-brand-gray-50 py-16 md:py-24">
+    <section className="border-y border-brand-gray-200 bg-brand-gray-50 py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">

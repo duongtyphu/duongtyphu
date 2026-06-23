@@ -3,56 +3,56 @@ import Link from "next/link";
 const vaultItems = [
   {
     icon: "🧰",
-    title: "AI Toolkit",
+    title: "Bộ công cụ AI",
     description: "Bộ công cụ AI cần thiết để bắt đầu học và làm việc với AI.",
-    badge: "Free" as const,
+    badge: "Miễn phí" as const,
     href: "/portal/resources",
   },
   {
     icon: "💬",
     title: "100+ Prompt ChatGPT",
     description: "Bộ prompt dùng ngay cho công việc, marketing và Affiliate.",
-    badge: "Free" as const,
+    badge: "Miễn phí" as const,
     href: "/portal/prompts",
   },
   {
     icon: "🗺️",
-    title: "Affiliate Roadmap",
+    title: "Lộ trình Affiliate",
     description: "Lộ trình từng bước để bắt đầu Affiliate Marketing đúng hướng.",
     badge: "Portal" as const,
     href: "/portal/affiliate-hub",
   },
   {
     icon: "🧱",
-    title: "Tool Library",
+    title: "Thư viện công cụ",
     description: "Danh sách công cụ AI tôi đã thử nghiệm và đang dùng thực tế.",
     badge: "Portal" as const,
     href: "/portal/tools",
   },
   {
     icon: "🌐",
-    title: "Website Toolkit",
+    title: "Bộ công cụ Website",
     description: "Bộ công cụ và mẫu để dựng website cá nhân nhanh chóng.",
-    badge: "Free" as const,
+    badge: "Miễn phí" as const,
     href: "/portal/resources",
   },
   {
     icon: "🗓️",
-    title: "Content Calendar",
+    title: "Lịch nội dung",
     description: "Lịch nội dung mẫu cho 30 ngày đầu xây kênh của bạn.",
-    badge: "Free" as const,
+    badge: "Miễn phí" as const,
     href: "/portal/resources",
   },
   {
     icon: "📘",
-    title: "Free Ebook",
+    title: "Ebook miễn phí",
     description: "Hướng dẫn ứng dụng AI thực chiến vào công việc hàng ngày.",
-    badge: "Free" as const,
+    badge: "Miễn phí" as const,
     href: "/portal/resources",
   },
   {
     icon: "⭐",
-    title: "Premium Resources",
+    title: "Tài nguyên Premium",
     description: "Tài liệu và sản phẩm chuyên sâu cho người muốn đi xa hơn.",
     badge: "Premium" as const,
     href: "/portal/premium",
@@ -60,14 +60,14 @@ const vaultItems = [
 ];
 
 const badgeStyle: Record<string, string> = {
-  Free: "bg-brand-orange/10 text-brand-orange",
+  "Miễn phí": "bg-brand-orange/10 text-brand-orange",
   Portal: "bg-brand-blue/10 text-brand-blue",
   Premium: "bg-brand-violet/15 text-brand-violet",
 };
 
 export function FreeResources() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 md:py-24">
+    <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
       <div className="mx-auto max-w-2xl text-center">
         <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
           Điều gì đang chờ bạn bên trong?
@@ -83,7 +83,7 @@ export function FreeResources() {
           <Link
             key={item.title}
             href={item.href}
-            className="group flex flex-col rounded-[20px] border border-brand-gray-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
+            className="card-shine group flex flex-col rounded-[20px] border border-brand-gray-200 bg-white p-5"
           >
             <div className="flex items-center justify-between">
               <span className="text-2xl">{item.icon}</span>

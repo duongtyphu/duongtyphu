@@ -20,7 +20,7 @@ export default function PortalDashboard() {
       </div>
 
       <section className="rounded-[24px] border border-brand-gray-200 bg-brand-gray-50 p-6">
-        <h2 className="text-lg font-bold text-brand-navy">Start Here</h2>
+        <h2 className="text-lg font-bold text-brand-navy">Bắt đầu tại đây</h2>
         <p className="mt-1 text-sm text-brand-gray-500">
           Hai điểm khởi đầu nhanh nhất nếu bạn mới tham gia Portal.
         </p>
@@ -29,7 +29,7 @@ export default function PortalDashboard() {
             href="/portal/resources"
             className="rounded-[20px] border border-brand-gray-200 bg-white p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
           >
-            <p className="text-sm font-bold text-brand-navy">AI Toolkit</p>
+            <p className="text-sm font-bold text-brand-navy">Bộ công cụ AI</p>
             <p className="mt-1 text-xs text-brand-gray-500">
               Bộ công cụ AI cần thiết để bắt đầu, nhận miễn phí ngay.
             </p>
@@ -38,7 +38,7 @@ export default function PortalDashboard() {
             href="/portal/affiliate-hub"
             className="rounded-[20px] border border-brand-gray-200 bg-white p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
           >
-            <p className="text-sm font-bold text-brand-navy">Affiliate Roadmap</p>
+            <p className="text-sm font-bold text-brand-navy">Lộ trình Affiliate</p>
             <p className="mt-1 text-xs text-brand-gray-500">
               Lộ trình từng bước để bắt đầu Affiliate Marketing đúng hướng.
             </p>
@@ -49,7 +49,7 @@ export default function PortalDashboard() {
       <section>
         <div className="flex items-end justify-between">
           <h2 className="text-lg font-bold text-brand-navy">
-            Recommended Tools
+            Công cụ đề xuất
           </h2>
           <Link href="/portal/tools" className="text-sm font-semibold text-brand-blue hover:underline">
             Xem tất cả →
@@ -88,7 +88,7 @@ export default function PortalDashboard() {
 
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-brand-navy">Latest Resources</h2>
+          <h2 className="text-lg font-bold text-brand-navy">Tài nguyên mới nhất</h2>
           <Link href="/portal/resources" className="text-sm font-semibold text-brand-blue hover:underline">
             Xem tất cả →
           </Link>
@@ -107,7 +107,7 @@ export default function PortalDashboard() {
 
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-brand-navy">Featured Products</h2>
+          <h2 className="text-lg font-bold text-brand-navy">Sản phẩm nổi bật</h2>
           <Link href="/portal/premium" className="text-sm font-semibold text-brand-blue hover:underline">
             Xem tất cả →
           </Link>

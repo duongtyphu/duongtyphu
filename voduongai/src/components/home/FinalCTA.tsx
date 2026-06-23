@@ -2,14 +2,13 @@ import Link from "next/link";
 
 export function FinalCTA() {
   return (
-    <section className="relative overflow-hidden mesh-navy py-16 text-white md:py-24">
-      <div className="mx-auto max-w-2xl px-5 text-center">
-        <h2 className="text-2xl font-extrabold md:text-4xl">
+    <section className="relative overflow-hidden mesh-light py-14 text-brand-navy md:py-20">
+      <div className="mx-auto max-w-3xl px-5 text-center">
+        <h2 className="whitespace-nowrap text-lg font-extrabold sm:text-2xl md:text-3xl">
           Bắt đầu hành trình AI của bạn hôm nay
         </h2>
-        <p className="mt-4 text-white/70">
-          Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong
-          Portal. Việc của bạn là bắt đầu.
+        <p className="mt-4 whitespace-nowrap text-[11px] text-brand-gray-500 sm:text-sm md:text-base">
+          Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Portal. Việc của bạn là bắt đầu.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
@@ -20,7 +19,7 @@ export function FinalCTA() {
           </Link>
           <Link
             href="/portal/resources"
-            className="inline-flex rounded-full border border-white/20 px-8 py-3.5 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
+            className="inline-flex rounded-full border border-brand-gray-200 px-8 py-3.5 text-sm font-semibold text-brand-navy transition hover:border-brand-blue hover:text-brand-blue"
           >
             Xem kho tài nguyên
           </Link>

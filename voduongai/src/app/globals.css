@@ -65,6 +65,14 @@ body {
     radial-gradient(800px circle at 50% 100%, rgba(37, 99, 235, 0.18), transparent 60%);
 }
 
+.mesh-light {
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(700px circle at 15% 0%, rgba(37, 99, 235, 0.08), transparent 60%),
+    radial-gradient(600px circle at 90% 20%, rgba(255, 122, 0, 0.07), transparent 55%),
+    radial-gradient(800px circle at 50% 100%, rgba(91, 140, 255, 0.08), transparent 60%);
+}
+
 .card-tilt {
   transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
@@ -72,4 +80,30 @@ body {
 .card-tilt:hover {
   transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
   box-shadow: 0 24px 60px -20px rgba(11, 31, 77, 0.35);
+}
+
+.card-shine {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card-shine:hover {
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 24px 50px -18px rgba(37, 99, 235, 0.35);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.card-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.55) 38%, transparent 55%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.card-shine:hover::after {
+  transform: translateX(120%);
 }

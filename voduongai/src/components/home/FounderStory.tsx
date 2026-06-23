@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export function FounderStory() {
   return (
-    <section className="mesh-navy py-16 text-white md:py-24">
+    <section className="mesh-light py-14 text-brand-navy md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -18,17 +18,17 @@ export function FounderStory() {
             <div className="absolute -inset-10 -z-10 rounded-[48px] bg-brand-orange/15 blur-3xl" />
             <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/15 blur-3xl" />
 
-            <div className="relative w-full overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur">
+            <div className="relative w-full overflow-hidden rounded-[36px] border border-brand-gray-200 bg-gradient-to-b from-brand-gray-50 to-white shadow-[0_30px_60px_-20px_rgba(11,31,77,0.25)] backdrop-blur">
               <Image
                 src="/founder.png"
-                alt="Võ Đương — Founder, Võ Đương AI"
+                alt="Võ Đương — Người sáng lập, Võ Đương AI"
                 width={1536}
                 height={1024}
                 className="h-auto w-full object-contain"
                 sizes="520px"
                 priority
               />
-              <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-white/10" />
+              <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-brand-gray-200" />
             </div>
 
             <div className="mt-5 flex justify-center">
@@ -45,12 +45,12 @@ export function FounderStory() {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] backdrop-blur md:p-8">
+          <div className="rounded-[24px] border border-brand-gray-200 bg-gradient-to-br from-brand-gray-50 via-white to-transparent p-6 shadow-[0_20px_50px_-20px_rgba(11,31,77,0.2)] backdrop-blur md:p-8">
             <h2 className="text-xl font-extrabold md:text-2xl">
               Tại sao tôi xây Võ Đương AI?
             </h2>
 
-            <div className="mt-5 space-y-3.5 text-sm leading-relaxed text-white/70">
+            <div className="mt-5 space-y-3.5 text-sm leading-relaxed text-brand-gray-700">
               <p>
                 Tôi là Võ Đương — nhà đầu tư, người ứng dụng AI thực chiến và
                 hiện đang đồng hành phát triển cộng đồng DigiU Việt Nam với
@@ -69,14 +69,14 @@ export function FounderStory() {
                 dụng mỗi ngày trong công việc, kinh doanh, AI và Affiliate
                 Marketing.
               </p>
-              <p className="font-semibold text-white">
+              <p className="font-semibold text-brand-navy">
                 Mục tiêu của tôi rất đơn giản: giúp bạn học AI nhanh hơn, xây
                 hệ thống hiệu quả hơn và từng bước tạo ra tài sản số bền vững
                 cho tương lai.
               </p>
             </div>
 
-            <p className="mt-6 font-serif text-base italic text-white/80">
+            <p className="mt-6 font-serif text-base italic text-brand-gray-500">
               — Võ Đương AI
             </p>
           </div>

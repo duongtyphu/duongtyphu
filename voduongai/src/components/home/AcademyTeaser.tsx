@@ -30,7 +30,7 @@ const modules = [
 
 export function AcademyTeaser() {
   return (
-    <section className="bg-brand-gray-50 py-16 md:py-24">
+    <section className="bg-brand-gray-50 py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
@@ -47,7 +47,7 @@ export function AcademyTeaser() {
             <Link
               key={m.title}
               href={m.href}
-              className="rounded-[20px] border border-brand-gray-200 bg-white p-6 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
+              className="card-shine rounded-[20px] border border-brand-gray-200 bg-white p-6"
             >
               <h3 className="text-lg font-bold text-brand-navy">{m.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-brand-gray-500">
