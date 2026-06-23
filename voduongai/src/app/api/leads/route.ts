@@ -20,10 +20,9 @@ export async function POST(request: Request) {
 
   const { error } = await supabase
     .from("leads")
-    .insert({ email, source });
+    .insert({ email, source, status: "new" });
 
-  // 23505 = unique_violation — email already captured, treat as success.
-  if (error && error.code !== "23505") {
+  if (error) {
     console.error("[lead] Supabase insert error:", error.message);
     return NextResponse.json({ error: "Không thể lưu email, vui lòng thử lại" }, { status: 500 });
   }
