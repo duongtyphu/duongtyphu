@@ -10,8 +10,13 @@ export function Header() {
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
-          <span className="text-sm font-extrabold tracking-tight text-brand-navy">
-            {siteConfig.name}
+          <span className="flex flex-col leading-tight">
+            <span className="text-sm font-extrabold tracking-tight text-brand-blue">
+              {siteConfig.name}
+            </span>
+            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-violet sm:block">
+              {siteConfig.tagline}
+            </span>
           </span>
         </Link>
 

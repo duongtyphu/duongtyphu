@@ -45,7 +45,7 @@ export function Footer() {
                 {siteConfig.name}
               </span>
             </div>
-            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-brand-violet">
+            <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">
               {siteConfig.tagline}
             </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed">
