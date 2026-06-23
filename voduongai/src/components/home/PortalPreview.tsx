@@ -69,7 +69,7 @@ export function PortalPreview() {
               {sidebar.map((item, i) => (
                 <div
                   key={item}
-                  className={`rounded-lg px-3 py-2 text-xs font-medium ${
+                  className={`cursor-pointer rounded-lg px-3 py-2 text-xs font-medium transition hover:bg-white/10 hover:text-white ${
                     i === 0 ? "bg-white/10 text-white" : "text-white/50"
                   }`}
                 >

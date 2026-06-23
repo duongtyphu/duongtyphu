@@ -68,7 +68,7 @@ export function Hero() {
                   (m, i) => (
                     <div
                       key={m}
-                      className={`rounded-lg px-2.5 py-2 text-[11px] font-medium ${
+                      className={`cursor-pointer rounded-lg px-2.5 py-2 text-[11px] font-medium transition hover:bg-white/10 hover:text-white ${
                         i === 0
                           ? "bg-white/10 text-white"
                           : "text-white/50"
