@@ -29,7 +29,7 @@ export default function ToolsPage() {
             <p className="mt-1 text-xs text-brand-gray-400">{t.category}</p>
             <p className="mt-2 text-sm text-brand-gray-500">{t.description}</p>
             <p className="mt-2 text-xs font-medium text-brand-gray-400">
-              Use case: {t.useCase}
+              {t.useCase}
             </p>
             {t.iUseThis && (
               <span className="mt-3 inline-flex rounded-full bg-brand-violet/10 px-2.5 py-0.5 text-[10px] font-semibold text-brand-violet">

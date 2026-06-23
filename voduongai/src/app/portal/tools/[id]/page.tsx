@@ -34,11 +34,19 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
         <p className="mt-1 text-sm text-brand-gray-400">{tool.category}</p>
         <p className="mt-4 leading-relaxed text-brand-gray-700">{tool.description}</p>
 
-        <div className="mt-6 rounded-xl bg-brand-gray-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand-gray-400">
-            Use case
-          </p>
-          <p className="mt-1 text-sm text-brand-gray-700">{tool.useCase}</p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="rounded-xl bg-brand-gray-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-gray-400">
+              Dùng để làm gì
+            </p>
+            <p className="mt-1 text-sm text-brand-gray-700">{tool.useCase}</p>
+          </div>
+          <div className="rounded-xl bg-brand-gray-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-gray-400">
+              Phù hợp với ai
+            </p>
+            <p className="mt-1 text-sm text-brand-gray-700">{tool.audience}</p>
+          </div>
         </div>
 
         {tool.iUseThis && (
@@ -49,7 +57,7 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
 
         <div className="mt-8 flex flex-wrap gap-3">
           <a
-            href={tool.affiliateUrl ?? tool.link}
+            href={tool.affiliateUrl || tool.link}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full gradient-surface px-6 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"

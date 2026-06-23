@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #0B1220;
+  --foreground: #06142D;
 }
 
 @theme inline {
@@ -10,12 +10,13 @@
   --color-foreground: var(--foreground);
 
   /* Brand — VO DUONG AI */
-  --color-brand-blue:      #155EEF; /* Technology Blue */
-  --color-brand-blue-dark: #0D3FB0;
-  --color-brand-violet:    #7C5CFC; /* Blue Violet */
-  --color-brand-violet-dark:#5B3FD9;
-  --color-brand-navy:      #0B1220; /* Dark Navy */
-  --color-brand-navy-soft: #111A2E;
+  --color-brand-blue:      #2563EB; /* Primary Blue */
+  --color-brand-blue-dark: #0B1F4D; /* Dark Blue */
+  --color-brand-violet:    #5B8CFF; /* Soft Blue */
+  --color-brand-violet-dark:#0B1F4D;
+  --color-brand-orange:    #FF7A00; /* Orange Accent */
+  --color-brand-navy:      #06142D; /* Deep Navy */
+  --color-brand-navy-soft: #0B1F4D;
   --color-brand-gray-50:   #F8FAFC;
   --color-brand-gray-100:  #F1F5F9;
   --color-brand-gray-200:  #E2E8F0;
@@ -54,4 +55,21 @@ body {
   background: rgba(11, 18, 32, 0.6);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+.mesh-navy {
+  background-color: var(--color-brand-navy);
+  background-image:
+    radial-gradient(700px circle at 15% 0%, rgba(91, 140, 255, 0.22), transparent 60%),
+    radial-gradient(600px circle at 90% 20%, rgba(255, 122, 0, 0.12), transparent 55%),
+    radial-gradient(800px circle at 50% 100%, rgba(37, 99, 235, 0.18), transparent 60%);
+}
+
+.card-tilt {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card-tilt:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 0 24px 60px -20px rgba(11, 31, 77, 0.35);
 }

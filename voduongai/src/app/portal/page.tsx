@@ -11,31 +11,37 @@ export default function PortalDashboard() {
     <div className="space-y-12">
       <div>
         <h1 className="text-2xl font-extrabold text-brand-navy">
-          Chào mừng trở lại 👋
+          Chào mừng đến với Võ Đương AI Portal
         </h1>
         <p className="mt-2 text-brand-gray-500">
-          Đây là không gian học tập, công cụ và sản phẩm của bạn trong hệ
-          sinh thái Võ Đương AI.
+          Nơi tập hợp tài nguyên, công cụ, khóa học và lộ trình giúp bạn học
+          AI, làm Affiliate và xây tài sản số.
         </p>
       </div>
 
-      <section className="rounded-2xl border border-brand-gray-200 bg-brand-gray-50 p-6">
+      <section className="rounded-[24px] border border-brand-gray-200 bg-brand-gray-50 p-6">
         <h2 className="text-lg font-bold text-brand-navy">Start Here</h2>
         <p className="mt-1 text-sm text-brand-gray-500">
-          Nhận AI Toolkit miễn phí và bắt đầu lộ trình Affiliate Roadmap.
+          Hai điểm khởi đầu nhanh nhất nếu bạn mới tham gia Portal.
         </p>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Link
             href="/portal/resources"
-            className="rounded-full gradient-surface px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+            className="rounded-[20px] border border-brand-gray-200 bg-white p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
           >
-            Nhận AI Toolkit
+            <p className="text-sm font-bold text-brand-navy">AI Toolkit</p>
+            <p className="mt-1 text-xs text-brand-gray-500">
+              Bộ công cụ AI cần thiết để bắt đầu, nhận miễn phí ngay.
+            </p>
           </Link>
           <Link
             href="/portal/affiliate-hub"
-            className="rounded-full border border-brand-gray-200 px-5 py-2.5 text-sm font-semibold text-brand-navy transition hover:border-brand-blue hover:text-brand-blue"
+            className="rounded-[20px] border border-brand-gray-200 bg-white p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-blue/10"
           >
-            Affiliate Roadmap
+            <p className="text-sm font-bold text-brand-navy">Affiliate Roadmap</p>
+            <p className="mt-1 text-xs text-brand-gray-500">
+              Lộ trình từng bước để bắt đầu Affiliate Marketing đúng hướng.
+            </p>
           </Link>
         </div>
       </section>
@@ -51,7 +57,7 @@ export default function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {tools.slice(0, 4).map((t) => (
-            <div key={t.id} className="rounded-2xl border border-brand-gray-200 bg-white p-4">
+            <div key={t.id} className="rounded-[20px] border border-brand-gray-200 bg-white p-4">
               <div className="h-8 w-8 rounded-lg gradient-surface" />
               <p className="mt-3 text-sm font-semibold text-brand-navy">{t.name}</p>
             </div>
@@ -71,7 +77,7 @@ export default function PortalDashboard() {
             <Link
               key={c.id}
               href={c.href}
-              className="rounded-2xl border border-brand-gray-200 bg-white p-4 transition hover:shadow-lg hover:shadow-brand-blue/10"
+              className="rounded-[20px] border border-brand-gray-200 bg-white p-4 transition hover:shadow-lg hover:shadow-brand-blue/10"
             >
               <p className="text-sm font-semibold text-brand-navy">{c.title}</p>
               <p className="mt-1 text-xs text-brand-gray-500">{c.description}</p>
@@ -89,7 +95,7 @@ export default function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {freeResources.slice(0, 3).map((r) => (
-            <div key={r.id} className="rounded-2xl border border-brand-gray-200 bg-white p-4">
+            <div key={r.id} className="rounded-[20px] border border-brand-gray-200 bg-white p-4">
               <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
                 {r.type}
               </span>
@@ -108,7 +114,7 @@ export default function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {premiumProducts.slice(0, 2).map((p) => (
-            <div key={p.id} className="rounded-2xl border border-brand-gray-200 bg-white p-4">
+            <div key={p.id} className="rounded-[20px] border border-brand-gray-200 bg-white p-4">
               <span className="inline-flex rounded-full bg-brand-violet/10 px-2.5 py-0.5 text-xs font-semibold text-brand-violet">
                 {p.type}
               </span>

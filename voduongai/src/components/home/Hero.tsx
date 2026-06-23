@@ -2,38 +2,37 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-white pt-20 pb-16 md:pt-28 md:pb-24">
-      <div className="absolute inset-x-0 top-0 -z-10 h-[480px] bg-gradient-to-b from-brand-blue/5 via-brand-violet/5 to-transparent" />
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 md:grid-cols-2 md:items-center">
+    <section className="relative overflow-hidden mesh-navy pt-24 pb-20 text-white md:pt-32 md:pb-28">
+      <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-2 md:items-center">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand-gray-200 bg-brand-gray-50 px-4 py-1.5 text-xs font-semibold text-brand-blue">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-brand-violet">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />
             Personal Brand · AI Ecosystem
           </span>
 
-          <h1 className="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-brand-navy md:text-5xl">
+          <h1 className="mt-6 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">
             AI không thay thế bạn.{" "}
-            <span className="gradient-text">
+            <span className="bg-gradient-to-r from-brand-violet to-brand-orange bg-clip-text text-transparent">
               Người biết dùng AI sẽ thay thế người không biết dùng AI.
             </span>
           </h1>
 
-          <p className="mt-5 max-w-lg text-base leading-relaxed text-brand-gray-500">
-            Tôi là Võ Đương AI. Tôi chia sẻ những công cụ, tài liệu, lộ trình
-            và hệ thống AI giúp bạn học nhanh hơn, làm việc hiệu quả hơn, xây
-            thương hiệu cá nhân và tạo thêm thu nhập online.
+          <p className="mt-6 max-w-lg text-base leading-relaxed text-white/70">
+            Tôi là Võ Đương AI. Tôi chia sẻ những công cụ, tài liệu, lộ trình và
+            hệ thống giúp bạn học AI, xây thương hiệu cá nhân, làm Affiliate
+            Marketing và tạo tài sản số bền vững.
           </p>
 
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/portal/resources"
-              className="rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90"
+              className="rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
             >
               Nhận AI Toolkit miễn phí
             </Link>
             <Link
               href="/portal"
-              className="rounded-full border border-brand-gray-200 px-6 py-3 text-sm font-semibold text-brand-navy transition hover:border-brand-blue hover:text-brand-blue"
+              className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
             >
               Khám phá Portal →
             </Link>
@@ -41,35 +40,49 @@ export function Hero() {
         </div>
 
         <div className="relative">
-          <div className="rounded-3xl border border-brand-gray-200 bg-white p-3 shadow-2xl shadow-brand-navy/10">
-            <div className="flex items-center gap-1.5 border-b border-brand-gray-100 px-3 pb-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-              <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
-              <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
-              <span className="ml-3 text-xs font-medium text-brand-gray-400">
+          <div className="absolute -inset-6 -z-10 rounded-[32px] bg-brand-orange/10 blur-3xl" />
+          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-3 shadow-2xl shadow-black/40 backdrop-blur">
+            <div className="flex items-center gap-1.5 border-b border-white/10 px-3 pb-3">
+              <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
+              <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
+              <span className="ml-3 text-xs font-medium text-white/40">
                 voduongai.com/portal
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-3 p-4">
-              {[
-                "AI Academy",
-                "VDAI Academy",
-                "Affiliate Hub",
-                "Tool Library",
-              ].map((m) => (
-                <div
-                  key={m}
-                  className="rounded-xl border border-brand-gray-100 bg-brand-gray-50 p-4"
-                >
-                  <div className="h-7 w-7 rounded-lg gradient-surface" />
-                  <p className="mt-3 text-sm font-semibold text-brand-navy">
-                    {m}
-                  </p>
-                </div>
-              ))}
+            <div className="flex gap-3 p-4">
+              <div className="hidden w-28 flex-shrink-0 space-y-1.5 sm:block">
+                {["Dashboard", "AI Academy", "Affiliate Hub", "Tool Library", "Community"].map(
+                  (m, i) => (
+                    <div
+                      key={m}
+                      className={`rounded-lg px-2.5 py-2 text-[11px] font-medium ${
+                        i === 0
+                          ? "bg-white/10 text-white"
+                          : "text-white/50"
+                      }`}
+                    >
+                      {m}
+                    </div>
+                  ),
+                )}
+              </div>
+              <div className="grid flex-1 grid-cols-2 gap-3">
+                {["AI Toolkit", "Prompt Library", "VDAI Academy", "Free Resources"].map((m) => (
+                  <div
+                    key={m}
+                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                  >
+                    <div className="h-7 w-7 rounded-lg gradient-surface" />
+                    <p className="mt-3 text-sm font-semibold text-white">{m}</p>
+                    <span className="mt-2 inline-flex rounded-full bg-brand-orange/15 px-2 py-0.5 text-[10px] font-semibold text-brand-orange">
+                      Free
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="absolute -bottom-6 -right-6 h-28 w-28 rounded-2xl gradient-surface opacity-90 blur-2xl" />
         </div>
       </div>
     </section>

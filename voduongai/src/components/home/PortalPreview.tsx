@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const modules = [
+const sidebar = [
   "Dashboard",
   "AI Academy",
   "VDAI Academy",
@@ -9,42 +9,112 @@ const modules = [
   "Prompt Library",
   "Free Resources",
   "Premium Resources",
+  "Community",
 ];
+
+const cards = [
+  { title: "AI Toolkit", badge: "Free" as const },
+  { title: "100+ Prompt ChatGPT", badge: "Free" as const },
+  { title: "Affiliate Roadmap", badge: "Portal" as const },
+  { title: "VDAI SOLO", badge: "Premium" as const },
+  { title: "Tool Library", badge: "Portal" as const },
+  { title: "Content Calendar", badge: "Free" as const },
+];
+
+const badgeStyle: Record<string, string> = {
+  Free: "bg-brand-orange/15 text-brand-orange",
+  Portal: "bg-brand-blue/10 text-brand-blue",
+  Premium: "bg-brand-violet/15 text-brand-violet",
+};
+
+const filters = ["Tất cả", "AI Academy", "Affiliate", "Tool", "Prompt", "Premium"];
 
 export function PortalPreview() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-16 md:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
-          Một Portal, toàn bộ hệ sinh thái
-        </h2>
-        <p className="mt-3 text-brand-gray-500">
-          Không phải LMS. Đây là không gian học tập, công cụ và cộng đồng kiểu
-          Netflix + Notion + Creator Hub.
-        </p>
-      </div>
-
-      <div className="mt-10 rounded-3xl border border-brand-gray-200 bg-white p-3 shadow-2xl shadow-brand-navy/10 md:p-6">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {modules.map((m) => (
-            <div
-              key={m}
-              className="rounded-xl border border-brand-gray-100 bg-brand-gray-50 p-4"
-            >
-              <div className="h-7 w-7 rounded-lg gradient-surface" />
-              <p className="mt-3 text-sm font-semibold text-brand-navy">{m}</p>
-            </div>
-          ))}
+    <section className="mesh-navy py-16 text-white md:py-24">
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-2xl font-extrabold md:text-3xl">
+            Bên trong Võ Đương AI Portal có gì?
+          </h2>
+          <p className="mt-3 text-white/60">
+            Một không gian duy nhất để bạn truy cập tài nguyên AI, Prompt
+            Library, Tool Library, Affiliate Hub, VDAI Academy, tài liệu miễn
+            phí và các sản phẩm số.
+          </p>
         </div>
-      </div>
 
-      <div className="mt-8 text-center">
-        <Link
-          href="/portal"
-          className="inline-flex rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/20 transition hover:opacity-90"
-        >
-          Truy cập Portal
-        </Link>
+        <div className="card-tilt mx-auto mt-12 max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/40 backdrop-blur [perspective:1200px]">
+          <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
+            <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
+            <div className="ml-3 flex flex-1 items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs text-white/40">
+              <span>⌕</span>
+              <span>Tìm tài nguyên, prompt, công cụ...</span>
+            </div>
+          </div>
+
+          <div className="flex">
+            <div className="hidden w-44 flex-shrink-0 space-y-1 border-r border-white/10 p-4 sm:block">
+              {sidebar.map((item, i) => (
+                <div
+                  key={item}
+                  className={`rounded-lg px-3 py-2 text-xs font-medium ${
+                    i === 0 ? "bg-white/10 text-white" : "text-white/50"
+                  }`}
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex-1 p-5">
+              <div className="flex flex-wrap gap-2">
+                {filters.map((f, i) => (
+                  <span
+                    key={f}
+                    className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+                      i === 0
+                        ? "bg-white text-brand-navy"
+                        : "border border-white/15 text-white/50"
+                    }`}
+                  >
+                    {f}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-3">
+                {cards.map((c) => (
+                  <div
+                    key={c.title}
+                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4 transition hover:-translate-y-0.5 hover:border-white/20"
+                  >
+                    <div className="h-7 w-7 rounded-lg gradient-surface" />
+                    <p className="mt-3 text-sm font-semibold text-white">
+                      {c.title}
+                    </p>
+                    <span
+                      className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${badgeStyle[c.badge]}`}
+                    >
+                      {c.badge}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link
+            href="/portal"
+            className="inline-flex rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
+          >
+            Truy cập Portal
+          </Link>
+        </div>
       </div>
     </section>
   );

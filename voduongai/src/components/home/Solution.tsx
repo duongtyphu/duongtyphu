@@ -1,23 +1,23 @@
 const pillars = [
   {
-    title: "Học AI đúng cách",
+    title: "AI ứng dụng",
     description:
       "Lộ trình rõ ràng giúp bạn hiểu và ứng dụng AI vào công việc thực tế, không lan man.",
   },
   {
-    title: "Xây hệ thống",
+    title: "Affiliate Marketing",
     description:
-      "Biến kiến thức rời rạc thành quy trình lặp lại được — nội dung, công cụ, tự động hoá.",
+      "Hệ thống và lộ trình giúp bạn làm Affiliate Marketing có chiến lược, không làm theo cảm tính.",
   },
   {
-    title: "Tạo tài sản số",
+    title: "Personal Branding",
     description:
-      "Website, thương hiệu cá nhân, sản phẩm số — những thứ tạo ra giá trị lâu dài cho bạn.",
+      "Xây thương hiệu cá nhân nhất quán — nội dung, hình ảnh và tiếng nói riêng của bạn.",
   },
   {
-    title: "Affiliate & thu nhập online",
+    title: "Digital Assets",
     description:
-      "Ứng dụng AI vào Affiliate Marketing để tạo thêm nguồn thu nhập bền vững.",
+      "Website, sản phẩm số, hệ thống tự động — những tài sản tạo ra giá trị lâu dài.",
   },
 ];
 
@@ -26,12 +26,9 @@ export function Solution() {
     <section className="bg-brand-gray-50 py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
-            4 trụ cột của hệ sinh thái Võ Đương AI
-          </h2>
-          <p className="mt-3 text-brand-gray-500">
-            Mọi nội dung, công cụ và sản phẩm trong Portal đều xoay quanh 4 trụ
-            cột này.
+          <p className="text-base leading-relaxed text-brand-gray-700">
+            Võ Đương AI gom tài nguyên, công cụ, khóa học, lộ trình và cộng
+            đồng vào một hệ sinh thái duy nhất.
           </p>
         </div>
 
@@ -39,7 +36,7 @@ export function Solution() {
           {pillars.map((p, i) => (
             <div
               key={p.title}
-              className="rounded-2xl border border-brand-gray-200 bg-white p-6"
+              className="rounded-[20px] border border-brand-gray-200 bg-white p-6"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-xl gradient-surface text-sm font-bold text-white">
                 {i + 1}
