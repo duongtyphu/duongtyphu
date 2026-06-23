@@ -12,21 +12,107 @@ export function FounderStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="grid gap-10 md:grid-cols-[minmax(0,280px)_1fr] md:items-start"
+          className="grid gap-10 md:grid-cols-[minmax(0,380px)_1fr] md:items-start"
         >
-          <div className="relative mx-auto w-full max-w-[280px]">
-            <div className="absolute -inset-4 -z-10 rounded-[32px] bg-brand-orange/10 blur-2xl" />
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] backdrop-blur">
+          <div className="relative mx-auto w-full max-w-[380px]">
+            <div className="absolute -inset-8 -z-10 rounded-[40px] bg-brand-orange/10 blur-3xl" />
+            <div className="absolute -inset-10 -z-10 rounded-[44px] bg-brand-violet/10 blur-3xl" />
+
+            {/* blockchain-style orbiting nodes */}
+            <svg
+              className="pointer-events-none absolute -inset-6 -z-0 h-[calc(100%+3rem)] w-[calc(100%+3rem)]"
+              viewBox="0 0 100 100"
+              fill="none"
+            >
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="46"
+                stroke="rgba(91,140,255,0.25)"
+                strokeWidth="0.3"
+                strokeDasharray="1 3"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                style={{ originX: "50%", originY: "50%" }}
+              />
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="38"
+                stroke="rgba(255,122,0,0.2)"
+                strokeWidth="0.3"
+                strokeDasharray="0.5 2.5"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
+                style={{ originX: "50%", originY: "50%" }}
+              />
+              <motion.line
+                x1="50"
+                y1="4"
+                x2="50"
+                y2="12"
+                stroke="rgba(91,140,255,0.4)"
+                strokeWidth="0.4"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+                style={{ originX: "50%", originY: "50%" }}
+              />
+              <motion.line
+                x1="50"
+                y1="96"
+                x2="50"
+                y2="88"
+                stroke="rgba(255,122,0,0.4)"
+                strokeWidth="0.4"
+                animate={{ rotate: -360 }}
+                transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
+                style={{ originX: "50%", originY: "50%" }}
+              />
+            </svg>
+
+            {[
+              { top: "0%", left: "8%", size: 8, color: "bg-brand-blue", delay: 0 },
+              { top: "12%", left: "92%", size: 6, color: "bg-brand-orange", delay: 0.4 },
+              { top: "50%", left: "-4%", size: 5, color: "bg-brand-violet", delay: 0.8 },
+              { top: "88%", left: "94%", size: 7, color: "bg-brand-blue", delay: 1.2 },
+              { top: "96%", left: "12%", size: 6, color: "bg-brand-orange", delay: 1.6 },
+              { top: "38%", left: "98%", size: 5, color: "bg-brand-violet", delay: 2 },
+            ].map((dot, i) => (
+              <motion.span
+                key={i}
+                className={`absolute -z-0 rounded-full ${dot.color} shadow-[0_0_12px_2px_rgba(91,140,255,0.6)]`}
+                style={{
+                  top: dot.top,
+                  left: dot.left,
+                  width: dot.size,
+                  height: dot.size,
+                }}
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: [0.4, 1, 0.4],
+                  scale: [1, 1.4, 1],
+                }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: dot.delay,
+                }}
+              />
+            ))}
+
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur">
               <Image
                 src="/founder.png"
                 alt="Võ Đương — Founder, Võ Đương AI"
                 fill
-                className="object-cover"
-                sizes="280px"
+                className="object-cover object-top"
+                sizes="380px"
                 priority
               />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/40 via-transparent to-transparent" />
             </div>
-            <p className="mt-4 text-center text-xs font-medium text-white/40">
+            <p className="mt-5 text-center text-xs font-medium text-white/40">
               Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam
             </p>
           </div>
