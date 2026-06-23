@@ -88,7 +88,7 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <Link href="/" className="flex items-center gap-2">
-              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
+              <svg width="34" height="34" viewBox="0 0 32 32" fill="none" className="shrink-0">
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#5B8CFF" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
@@ -153,12 +153,8 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row">
           <span>
-            © {new Date().getFullYear()} {siteConfig.name}. Bảo lưu mọi quyền.
+            Copyright © {new Date().getFullYear()} {siteConfig.name}
           </span>
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />
-            <span>Nhà đầu tư chuyên nghiệp</span>
-          </div>
         </div>
       </div>
     </footer>
