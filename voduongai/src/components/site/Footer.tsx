@@ -155,6 +155,17 @@ export function Footer() {
           <span>
             Copyright © {new Date().getFullYear()} {siteConfig.name}
           </span>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link href="/privacy" className="hover:text-white">
+              Chính sách bảo mật
+            </Link>
+            <Link href="/terms" className="hover:text-white">
+              Điều khoản sử dụng
+            </Link>
+            <Link href="/refund-policy" className="hover:text-white">
+              Chính sách hoàn phí
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

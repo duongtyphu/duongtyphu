@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { AntiCopy } from "@/components/site/AntiCopy";
 import { siteConfig } from "@/lib/site";
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
@@ -62,6 +65,20 @@ export default function RootLayout({
   return (
     <html lang="vi" className={`${jakarta.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans text-white">
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="ga-init" strategy="afterInteractive">
+              {`window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');`}
+            </Script>
+          </>
+        )}
         <div className="mesh-navy fixed inset-0 -z-10" aria-hidden="true" />
         <AntiCopy />
         <script
