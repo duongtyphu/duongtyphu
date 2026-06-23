@@ -3,6 +3,7 @@ import { tools } from "@/data/tools";
 import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { premiumProducts } from "@/data/premium";
+import { logoUrl } from "@/lib/logo";
 
 export const metadata = { title: "Portal" };
 
@@ -58,7 +59,15 @@ export default function PortalDashboard() {
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {tools.slice(0, 4).map((t) => (
             <div key={t.id} className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4">
-              <div className="h-8 w-8 rounded-lg gradient-surface" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 p-1.5">
+                <img
+                  src={logoUrl(t.link)}
+                  alt={`${t.name} logo`}
+                  width={20}
+                  height={20}
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <p className="mt-3 text-sm font-semibold text-white">{t.name}</p>
             </div>
           ))}

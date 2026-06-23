@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { tools } from "@/data/tools";
+import { logoUrl } from "@/lib/logo";
 
 export function generateStaticParams() {
   return tools.map((t) => ({ id: t.id }));
@@ -25,7 +26,15 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
 
       <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
         <div className="flex items-start justify-between">
-          <div className="h-14 w-14 rounded-xl gradient-surface" />
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/90 p-2">
+            <img
+              src={logoUrl(tool.link)}
+              alt={`${tool.name} logo`}
+              width={40}
+              height={40}
+              className="h-full w-full object-contain"
+            />
+          </div>
           <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white">
             {tool.pricing}
           </span>

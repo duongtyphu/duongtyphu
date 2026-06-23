@@ -60,7 +60,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="vi" className={`${jakarta.variable} h-full antialiased`}>
-      <body className="mesh-navy min-h-full flex flex-col font-sans text-white">
+      <body className="min-h-full flex flex-col font-sans text-white">
+        <div className="mesh-navy fixed inset-0 -z-10" aria-hidden="true" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

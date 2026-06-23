@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { tools } from "@/data/tools";
+import { logoUrl } from "@/lib/logo";
 
 export const metadata = { title: "Thư viện công cụ" };
 
@@ -20,7 +21,15 @@ export default function ToolsPage() {
             className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30"
           >
             <div className="flex items-center justify-between">
-              <div className="h-9 w-9 rounded-lg gradient-surface" />
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 p-1.5">
+                <img
+                  src={logoUrl(t.link)}
+                  alt={`${t.name} logo`}
+                  width={28}
+                  height={28}
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-[10px] font-semibold text-white">
                 {t.pricing}
               </span>
