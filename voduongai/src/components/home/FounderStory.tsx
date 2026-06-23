@@ -12,96 +12,13 @@ export function FounderStory() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="grid gap-10 md:grid-cols-[minmax(0,380px)_1fr] md:items-start"
+          className="grid gap-10 md:grid-cols-[minmax(0,380px)_1fr] md:items-stretch"
         >
-          <div className="relative mx-auto w-full max-w-[380px]">
+          <div className="relative mx-auto flex w-full max-w-[380px] flex-col">
             <div className="absolute -inset-8 -z-10 rounded-[40px] bg-brand-orange/10 blur-3xl" />
             <div className="absolute -inset-10 -z-10 rounded-[44px] bg-brand-violet/10 blur-3xl" />
 
-            {/* blockchain-style orbiting nodes */}
-            <svg
-              className="pointer-events-none absolute -inset-6 -z-0 h-[calc(100%+3rem)] w-[calc(100%+3rem)]"
-              viewBox="0 0 100 100"
-              fill="none"
-            >
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="46"
-                stroke="rgba(91,140,255,0.25)"
-                strokeWidth="0.3"
-                strokeDasharray="1 3"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                style={{ originX: "50%", originY: "50%" }}
-              />
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="38"
-                stroke="rgba(255,122,0,0.2)"
-                strokeWidth="0.3"
-                strokeDasharray="0.5 2.5"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-                style={{ originX: "50%", originY: "50%" }}
-              />
-              <motion.line
-                x1="50"
-                y1="4"
-                x2="50"
-                y2="12"
-                stroke="rgba(91,140,255,0.4)"
-                strokeWidth="0.4"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-                style={{ originX: "50%", originY: "50%" }}
-              />
-              <motion.line
-                x1="50"
-                y1="96"
-                x2="50"
-                y2="88"
-                stroke="rgba(255,122,0,0.4)"
-                strokeWidth="0.4"
-                animate={{ rotate: -360 }}
-                transition={{ duration: 55, repeat: Infinity, ease: "linear" }}
-                style={{ originX: "50%", originY: "50%" }}
-              />
-            </svg>
-
-            {[
-              { top: "0%", left: "8%", size: 8, color: "bg-brand-blue", delay: 0 },
-              { top: "12%", left: "92%", size: 6, color: "bg-brand-orange", delay: 0.4 },
-              { top: "50%", left: "-4%", size: 5, color: "bg-brand-violet", delay: 0.8 },
-              { top: "88%", left: "94%", size: 7, color: "bg-brand-blue", delay: 1.2 },
-              { top: "96%", left: "12%", size: 6, color: "bg-brand-orange", delay: 1.6 },
-              { top: "38%", left: "98%", size: 5, color: "bg-brand-violet", delay: 2 },
-            ].map((dot, i) => (
-              <motion.span
-                key={i}
-                className={`absolute -z-0 rounded-full ${dot.color} shadow-[0_0_12px_2px_rgba(91,140,255,0.6)]`}
-                style={{
-                  top: dot.top,
-                  left: dot.left,
-                  width: dot.size,
-                  height: dot.size,
-                }}
-                animate={{
-                  y: [0, -10, 0],
-                  opacity: [0.4, 1, 0.4],
-                  scale: [1, 1.4, 1],
-                }}
-                transition={{
-                  duration: 3.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: dot.delay,
-                }}
-              />
-            ))}
-
-            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur">
+            <div className="relative aspect-[4/5] w-full flex-1 overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/50 backdrop-blur md:aspect-auto">
               <Image
                 src="/founder.png"
                 alt="Võ Đương — Founder, Võ Đương AI"
@@ -110,11 +27,73 @@ export function FounderStory() {
                 sizes="380px"
                 priority
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/40 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/60 via-brand-navy/0 to-brand-navy/10" />
+
+              {/* hidden tech/blockchain badges overlaid on the photo */}
+              <motion.div
+                className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-brand-blue/30 bg-brand-navy/60 shadow-[0_0_18px_rgba(91,140,255,0.35)] backdrop-blur"
+                animate={{ y: [0, -8, 0], rotate: [0, 6, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <svg viewBox="0 0 48 48" fill="none" className="h-6 w-6">
+                  <circle cx="24" cy="24" r="20" stroke="#5B8CFF" strokeWidth="1.3" />
+                  <path
+                    d="M14 20 Q19 15 24 20 Q29 25 34 20"
+                    stroke="#5B8CFF"
+                    strokeWidth="1.2"
+                    fill="none"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="14" cy="20" r="1.6" fill="#5B8CFF" />
+                  <circle cx="24" cy="20" r="1.6" fill="#5B8CFF" />
+                  <circle cx="34" cy="20" r="1.6" fill="#5B8CFF" />
+                  <path d="M24 20v10" stroke="#5B8CFF" strokeWidth="1.2" />
+                </svg>
+              </motion.div>
+
+              <motion.div
+                className="absolute left-4 top-10 flex h-9 w-9 items-center justify-center rounded-full border border-brand-orange/30 bg-brand-navy/60 shadow-[0_0_16px_rgba(255,122,0,0.3)] backdrop-blur"
+                animate={{ y: [0, 10, 0], rotate: [0, -10, 0] }}
+                transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="h-4.5 w-4.5">
+                  <path
+                    d="M12 2 20 6.5V17.5L12 22 4 17.5V6.5L12 2Z"
+                    stroke="#FF7A00"
+                    strokeWidth="1.3"
+                  />
+                  <path d="M12 2V22M4 6.5L20 17.5M20 6.5L4 17.5" stroke="#FF7A00" strokeWidth="0.7" opacity="0.5" />
+                </svg>
+              </motion.div>
+
+              <motion.div
+                className="absolute bottom-10 right-5 flex h-8 w-8 items-center justify-center rounded-full border border-brand-violet/30 bg-brand-navy/60 shadow-[0_0_14px_rgba(91,140,255,0.3)] backdrop-blur"
+                animate={{ y: [0, -6, 0], opacity: [0.7, 1, 0.7] }}
+                transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <span className="h-2 w-2 rounded-full bg-brand-violet" />
+              </motion.div>
+
+              <motion.div
+                className="absolute bottom-6 left-6 flex h-10 w-10 items-center justify-center rounded-full border border-brand-blue/30 bg-brand-navy/60 shadow-[0_0_16px_rgba(91,140,255,0.3)] backdrop-blur"
+                animate={{ y: [0, 8, 0], rotate: [0, 8, 0] }}
+                transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+                  <rect x="4" y="4" width="6" height="6" rx="1" stroke="#5B8CFF" strokeWidth="1.2" />
+                  <rect x="14" y="4" width="6" height="6" rx="1" stroke="#5B8CFF" strokeWidth="1.2" />
+                  <rect x="4" y="14" width="6" height="6" rx="1" stroke="#5B8CFF" strokeWidth="1.2" />
+                  <rect x="14" y="14" width="6" height="6" rx="1" stroke="#5B8CFF" strokeWidth="1.2" />
+                  <path d="M10 7H14M7 10V14M17 10V14M10 17H14" stroke="#5B8CFF" strokeWidth="1" opacity="0.6" />
+                </svg>
+              </motion.div>
+
+              <div className="absolute inset-x-5 bottom-5 z-10">
+                <p className="text-center text-xs font-medium text-white/60">
+                  Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam
+                </p>
+              </div>
             </div>
-            <p className="mt-5 text-center text-xs font-medium text-white/40">
-              Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam
-            </p>
           </div>
 
           <div className="rounded-[28px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur md:p-10">

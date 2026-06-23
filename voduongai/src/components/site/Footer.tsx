@@ -41,11 +41,11 @@ export function Footer() {
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#5B8CFF" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
-              <span className="text-base font-extrabold text-white">
+              <span className="text-base font-extrabold tracking-tight text-brand-orange">
                 {siteConfig.name}
               </span>
             </div>
-            <p className="mt-3 text-sm font-medium text-brand-violet">
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-brand-violet">
               {siteConfig.tagline}
             </p>
             <p className="mt-3 max-w-xs text-sm leading-relaxed">
