@@ -31,16 +31,58 @@ export const mainNav = [
   { label: "Blog AI", href: "/blog" },
 ];
 
-export const portalNav = [
-  { label: "Tổng quan", href: "/portal" },
-  { label: "AI Academy", href: "/portal/ai-academy" },
-  { label: "VDAI Academy", href: "/portal/vdai-academy" },
-  { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
-  { label: "Thư viện công cụ", href: "/portal/tools" },
-  { label: "Thư viện Prompt", href: "/portal/prompts" },
-  { label: "Tài nguyên miễn phí", href: "/portal/resources" },
-  { label: "Tài nguyên Premium", href: "/portal/premium" },
-  { label: "Sản phẩm của tôi", href: "/portal/my-products" },
-  { label: "Cộng đồng", href: "/portal/community" },
-  { label: "Blog AI", href: "/blog" },
+export const portalNavGroups = [
+  {
+    group: null,
+    items: [{ label: "Tổng quan", href: "/portal" }],
+  },
+  {
+    group: null,
+    items: [{ label: "Lộ trình thành công", href: "/portal/roadmap" }],
+  },
+  {
+    group: "Học tập",
+    items: [
+      { label: "Học viện AI", href: "/portal/ai-academy" },
+      { label: "Học viện Affiliate", href: "/portal/vdai-academy" },
+      { label: "Thương hiệu cá nhân", href: "/portal/personal-brand" },
+    ],
+  },
+  {
+    group: "Thư viện",
+    items: [
+      { label: "Prompt AI", href: "/portal/prompts" },
+      { label: "Công cụ AI", href: "/portal/tools" },
+      { label: "Template", href: "/portal/templates" },
+      { label: "Ebook", href: "/portal/resources" },
+      { label: "Checklist", href: "/portal/checklists" },
+      { label: "SOP", href: "/portal/sop" },
+    ],
+  },
+  {
+    group: "Kiếm tiền",
+    items: [
+      { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
+      { label: "Sản phẩm số", href: "/portal/premium" },
+      { label: "Sản phẩm của tôi", href: "/portal/my-products" },
+      { label: "Dịch vụ", href: "/portal/services" },
+    ],
+  },
+  {
+    group: "Tài sản số",
+    items: [{ label: "Trung tâm Tài sản số", href: "/portal/assets" }],
+  },
+  {
+    group: null,
+    items: [{ label: "Cộng đồng", href: "/portal/community" }],
+  },
+  {
+    group: null,
+    items: [
+      { label: "Tài khoản", href: "/portal/account" },
+      { label: "Blog AI", href: "/blog" },
+    ],
+  },
 ];
+
+export const portalNav = portalNavGroups.flatMap((g) => g.items);
