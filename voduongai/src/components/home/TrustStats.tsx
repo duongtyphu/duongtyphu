@@ -17,13 +17,13 @@ const channels = [
 
 export function TrustStats() {
   return (
-    <section className="border-y border-brand-gray-200 bg-brand-gray-50 py-14 md:py-20">
+    <section className="border-y border-white/10 py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
+          <h2 className="text-2xl font-extrabold text-white md:text-3xl">
             Bạn không học một mình
           </h2>
-          <p className="mt-3 text-brand-gray-500">
+          <p className="mt-3 text-white/60">
             Tham gia cộng đồng để học hỏi, chia sẻ và cập nhật cùng những
             người đang xây hệ thống AI & Affiliate.
           </p>
@@ -36,7 +36,7 @@ export function TrustStats() {
               href={c.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-brand-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-brand-navy transition hover:border-brand-blue hover:text-brand-blue"
+              className="card-shine rounded-full border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
             >
               {c.label}
             </a>
@@ -46,10 +46,10 @@ export function TrustStats() {
         <div className="mt-12 grid grid-cols-2 gap-8 md:grid-cols-4">
           {stats.map((s) => (
             <div key={s.label} className="text-center">
-              <p className="text-2xl font-extrabold text-brand-navy md:text-3xl">
+              <p className="text-2xl font-extrabold text-white md:text-3xl">
                 {s.value}
               </p>
-              <p className="mt-1 text-sm text-brand-gray-500">{s.label}</p>
+              <p className="mt-1 text-sm text-white/60">{s.label}</p>
             </div>
           ))}
         </div>

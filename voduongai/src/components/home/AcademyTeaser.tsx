@@ -30,13 +30,13 @@ const modules = [
 
 export function AcademyTeaser() {
   return (
-    <section className="bg-brand-gray-50 py-14 md:py-20">
+    <section className="py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
+          <h2 className="text-2xl font-extrabold text-white md:text-3xl">
             Học AI và Affiliate theo lộ trình thực chiến
           </h2>
-          <p className="mt-3 text-brand-gray-500">
+          <p className="mt-3 text-white/60">
             VDAI Academy không còn là thương hiệu chính — đây là một module
             bên trong hệ sinh thái Võ Đương AI.
           </p>
@@ -47,13 +47,13 @@ export function AcademyTeaser() {
             <Link
               key={m.title}
               href={m.href}
-              className="card-shine rounded-[20px] border border-brand-gray-200 bg-white p-6"
+              className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-6"
             >
-              <h3 className="text-lg font-bold text-brand-navy">{m.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-brand-gray-500">
+              <h3 className="text-lg font-bold text-white">{m.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/60">
                 {m.description}
               </p>
-              <span className="mt-4 inline-flex text-xs font-semibold text-brand-blue">
+              <span className="mt-4 inline-flex text-xs font-semibold text-brand-violet">
                 Khám phá →
               </span>
             </Link>
@@ -64,7 +64,7 @@ export function AcademyTeaser() {
           {lessons.map((l) => (
             <span
               key={l}
-              className="rounded-full border border-brand-gray-200 bg-white px-4 py-1.5 text-xs font-medium text-brand-gray-700"
+              className="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/70"
             >
               {l}
             </span>

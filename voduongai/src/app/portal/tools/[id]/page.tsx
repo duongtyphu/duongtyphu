@@ -9,7 +9,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/portal/tools/[id]">) {
   const { id } = await params;
   const tool = tools.find((t) => t.id === id);
-  return { title: tool?.name ?? "Tool" };
+  return { title: tool?.name ?? "Công cụ" };
 }
 
 export default async function ToolDetailPage({ params }: PageProps<"/portal/tools/[id]">) {
@@ -20,38 +20,38 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
   return (
     <div className="space-y-6">
       <Link href="/portal/tools" className="text-sm font-semibold text-brand-blue hover:underline">
-        ← Tool Library
+        ← Thư viện công cụ
       </Link>
 
-      <div className="rounded-2xl border border-brand-gray-200 bg-white p-8">
+      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
         <div className="flex items-start justify-between">
           <div className="h-14 w-14 rounded-xl gradient-surface" />
-          <span className="rounded-full bg-brand-gray-50 px-3 py-1 text-xs font-semibold text-brand-gray-500">
+          <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white/60">
             {tool.pricing}
           </span>
         </div>
-        <h1 className="mt-5 text-2xl font-extrabold text-brand-navy">{tool.name}</h1>
-        <p className="mt-1 text-sm text-brand-gray-400">{tool.category}</p>
-        <p className="mt-4 leading-relaxed text-brand-gray-700">{tool.description}</p>
+        <h1 className="mt-5 text-2xl font-extrabold text-white">{tool.name}</h1>
+        <p className="mt-1 text-sm text-white/40">{tool.category}</p>
+        <p className="mt-4 leading-relaxed text-white/70">{tool.description}</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl bg-brand-gray-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-gray-400">
+          <div className="rounded-xl bg-white/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
               Dùng để làm gì
             </p>
-            <p className="mt-1 text-sm text-brand-gray-700">{tool.useCase}</p>
+            <p className="mt-1 text-sm text-white/70">{tool.useCase}</p>
           </div>
-          <div className="rounded-xl bg-brand-gray-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-gray-400">
+          <div className="rounded-xl bg-white/5 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
               Phù hợp với ai
             </p>
-            <p className="mt-1 text-sm text-brand-gray-700">{tool.audience}</p>
+            <p className="mt-1 text-sm text-white/70">{tool.audience}</p>
           </div>
         </div>
 
         {tool.iUseThis && (
           <span className="mt-6 inline-flex rounded-full bg-brand-violet/10 px-3 py-1 text-xs font-semibold text-brand-violet">
-            I Use This
+            Tôi đang dùng
           </span>
         )}
 
@@ -68,7 +68,7 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
             href={tool.link}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border border-brand-gray-200 px-6 py-2.5 text-sm font-semibold text-brand-navy transition hover:border-brand-blue hover:text-brand-blue"
+            className="rounded-full border border-white/10 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
           >
             Website chính thức
           </a>

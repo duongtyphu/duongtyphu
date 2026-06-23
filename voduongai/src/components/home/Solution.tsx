@@ -23,10 +23,10 @@ const pillars = [
 
 export function Solution() {
   return (
-    <section className="bg-brand-gray-50 py-14 md:py-20">
+    <section className="py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-base leading-relaxed text-brand-gray-700">
+          <p className="text-base leading-relaxed text-white/70">
             Võ Đương AI gom tài nguyên, công cụ, khóa học, lộ trình và cộng
             đồng vào một hệ sinh thái duy nhất.
           </p>
@@ -36,15 +36,15 @@ export function Solution() {
           {pillars.map((p, i) => (
             <div
               key={p.title}
-              className="card-shine rounded-[20px] border border-brand-gray-200 bg-white p-6"
+              className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-6"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-xl gradient-surface text-sm font-bold text-white">
                 {i + 1}
               </span>
-              <h3 className="mt-4 text-lg font-bold text-brand-navy">
+              <h3 className="mt-4 text-lg font-bold text-white">
                 {p.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-brand-gray-500">
+              <p className="mt-2 text-sm leading-relaxed text-white/60">
                 {p.description}
               </p>
             </div>

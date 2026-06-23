@@ -60,19 +60,19 @@ const vaultItems = [
 ];
 
 const badgeStyle: Record<string, string> = {
-  "Miễn phí": "bg-brand-orange/10 text-brand-orange",
-  Portal: "bg-brand-blue/10 text-brand-blue",
-  Premium: "bg-brand-violet/15 text-brand-violet",
+  "Miễn phí": "bg-brand-orange/15 text-brand-orange",
+  Portal: "bg-brand-blue/15 text-brand-blue",
+  Premium: "bg-brand-violet/20 text-brand-violet",
 };
 
 export function FreeResources() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-14 md:py-20">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="text-2xl font-extrabold text-brand-navy md:text-3xl">
+        <h2 className="text-2xl font-extrabold text-white md:text-3xl">
           Điều gì đang chờ bạn bên trong?
         </h2>
-        <p className="mt-3 text-brand-gray-500">
+        <p className="mt-3 text-white/60">
           Tài nguyên, công cụ và lộ trình được sắp xếp sẵn trong Portal — bạn
           không cần tự mày mò từ đầu.
         </p>
@@ -83,7 +83,7 @@ export function FreeResources() {
           <Link
             key={item.title}
             href={item.href}
-            className="card-shine group flex flex-col rounded-[20px] border border-brand-gray-200 bg-white p-5"
+            className="card-shine group flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5"
           >
             <div className="flex items-center justify-between">
               <span className="text-2xl">{item.icon}</span>
@@ -93,13 +93,13 @@ export function FreeResources() {
                 {item.badge}
               </span>
             </div>
-            <h3 className="mt-4 text-sm font-bold text-brand-navy">
+            <h3 className="mt-4 text-sm font-bold text-white">
               {item.title}
             </h3>
-            <p className="mt-1.5 flex-1 text-xs leading-relaxed text-brand-gray-500">
+            <p className="mt-1.5 flex-1 text-xs leading-relaxed text-white/60">
               {item.description}
             </p>
-            <span className="mt-4 text-xs font-semibold text-brand-blue group-hover:underline">
+            <span className="mt-4 text-xs font-semibold text-brand-violet group-hover:underline">
               Mở trong Portal →
             </span>
           </Link>

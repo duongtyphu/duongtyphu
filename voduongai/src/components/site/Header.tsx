@@ -3,7 +3,7 @@ import { mainNav, siteConfig } from "@/lib/site";
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-gray-200 bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-navy/70 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Link href="/" className="flex items-center gap-2">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
@@ -25,7 +25,7 @@ export function Header() {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-brand-gray-700 transition hover:text-brand-blue"
+              className="text-sm font-medium text-white/70 transition hover:text-white"
             >
               {item.label}
             </Link>

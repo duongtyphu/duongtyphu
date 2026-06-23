@@ -1,19 +1,19 @@
 import { siteConfig } from "@/lib/site";
 
-export const metadata = { title: "Community" };
+export const metadata = { title: "Cộng đồng" };
 
 const channels = [
-  { label: "Facebook Group", href: siteConfig.links.facebook },
-  { label: "Zalo Community", href: siteConfig.links.zalo },
-  { label: "Telegram Channel", href: siteConfig.links.telegram },
+  { label: "Nhóm Facebook", href: siteConfig.links.facebook },
+  { label: "Cộng đồng Zalo", href: siteConfig.links.zalo },
+  { label: "Kênh Telegram", href: siteConfig.links.telegram },
 ];
 
 export default function CommunityPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-brand-navy">Community</h1>
-        <p className="mt-2 text-brand-gray-500">
+        <h1 className="text-2xl font-extrabold text-white">Cộng đồng</h1>
+        <p className="mt-2 text-white/60">
           Tham gia cộng đồng để học hỏi, chia sẻ và cập nhật cùng những người
           đang xây hệ thống AI & Affiliate.
         </p>
@@ -23,7 +23,7 @@ export default function CommunityPage() {
           <a
             key={c.label}
             href={c.href}
-            className="rounded-2xl border border-brand-gray-200 bg-white p-5 text-center text-sm font-semibold text-brand-navy transition hover:border-brand-blue hover:text-brand-blue"
+            className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-center text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
           >
             {c.label}
           </a>

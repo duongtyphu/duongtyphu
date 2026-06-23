@@ -12,7 +12,7 @@ export default function PortalLayout({
             <Link
               key={item.href}
               href={item.href}
-              className="block rounded-lg px-3 py-2 text-sm font-medium text-brand-gray-700 transition hover:bg-brand-gray-50 hover:text-brand-blue"
+              className="block rounded-lg px-3 py-2 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
             >
               {item.label}
             </Link>

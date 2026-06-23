@@ -10,7 +10,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/portal/resources/[id]">) {
   const { id } = await params;
   const resource = freeResources.find((r) => r.id === id);
-  return { title: resource?.title ?? "Resource" };
+  return { title: resource?.title ?? "Tài nguyên" };
 }
 
 export default async function ResourceDetailPage({ params }: PageProps<"/portal/resources/[id]">) {
@@ -21,15 +21,15 @@ export default async function ResourceDetailPage({ params }: PageProps<"/portal/
   return (
     <div className="space-y-6">
       <Link href="/portal/resources" className="text-sm font-semibold text-brand-blue hover:underline">
-        ← Free Resources
+        ← Tài nguyên miễn phí
       </Link>
 
-      <div className="rounded-2xl border border-brand-gray-200 bg-white p-8">
+      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
         <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
           {resource.type}
         </span>
-        <h1 className="mt-4 text-2xl font-extrabold text-brand-navy">{resource.title}</h1>
-        <p className="mt-4 leading-relaxed text-brand-gray-700">{resource.description}</p>
+        <h1 className="mt-4 text-2xl font-extrabold text-white">{resource.title}</h1>
+        <p className="mt-4 leading-relaxed text-white/70">{resource.description}</p>
 
         <div className="mt-8">
           <LeadGate

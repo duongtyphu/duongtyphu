@@ -11,16 +11,16 @@ export default function AiAcademyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-brand-navy">AI Academy</h1>
-        <p className="mt-2 text-brand-gray-500">
+        <h1 className="text-2xl font-extrabold text-white">AI Academy</h1>
+        <p className="mt-2 text-white/60">
           Lộ trình học AI từ nền tảng đến ứng dụng thực chiến trong công việc.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {lessons.map((l) => (
-          <div key={l.title} className="rounded-2xl border border-brand-gray-200 bg-white p-5">
-            <h3 className="text-sm font-bold text-brand-navy">{l.title}</h3>
-            <p className="mt-2 text-sm text-brand-gray-500">{l.description}</p>
+          <div key={l.title} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+            <h3 className="text-sm font-bold text-white">{l.title}</h3>
+            <p className="mt-2 text-sm text-white/60">{l.description}</p>
           </div>
         ))}
       </div>

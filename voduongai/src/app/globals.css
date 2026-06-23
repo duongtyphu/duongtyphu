@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #06142D;
+  --background: #06142D;
+  --foreground: #ffffff;
 }
 
 @theme inline {
@@ -60,9 +60,12 @@ body {
 .mesh-navy {
   background-color: var(--color-brand-navy);
   background-image:
-    radial-gradient(700px circle at 15% 0%, rgba(91, 140, 255, 0.22), transparent 60%),
-    radial-gradient(600px circle at 90% 20%, rgba(255, 122, 0, 0.12), transparent 55%),
-    radial-gradient(800px circle at 50% 100%, rgba(37, 99, 235, 0.18), transparent 60%);
+    radial-gradient(900px circle at 15% 0%, rgba(91, 140, 255, 0.22), transparent 60%),
+    radial-gradient(700px circle at 90% 15%, rgba(255, 122, 0, 0.12), transparent 55%),
+    radial-gradient(900px circle at 50% 55%, rgba(37, 99, 235, 0.16), transparent 60%),
+    radial-gradient(800px circle at 20% 100%, rgba(91, 140, 255, 0.14), transparent 60%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
 }
 
 .mesh-light {

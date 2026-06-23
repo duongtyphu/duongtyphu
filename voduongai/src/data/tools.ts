@@ -1,13 +1,13 @@
 export type Tool = {
   id: string;
   name: string;
-  category: "AI" | "Design" | "Video" | "Productivity" | "Automation" | "Hosting";
+  category: "AI" | "Thiết kế" | "Video" | "Năng suất" | "Tự động hoá" | "Lưu trữ web";
   description: string;
   useCase: string;
   audience: string;
   link: string;
   affiliateUrl?: string;
-  pricing: "Free" | "Freemium" | "Paid";
+  pricing: "Miễn phí" | "Freemium" | "Trả phí";
   iUseThis?: boolean;
 };
 
@@ -51,7 +51,7 @@ export const tools: Tool[] = [
   {
     id: "canva",
     name: "Canva",
-    category: "Design",
+    category: "Thiết kế",
     description: "Tôi dùng Canva để thiết kế hình ảnh, slide và tài liệu mà không cần kỹ năng thiết kế.",
     useCase: "Thiết kế hình ảnh, slide, tài liệu",
     audience: "Phù hợp với người không có nền tảng thiết kế",
@@ -81,25 +81,25 @@ export const tools: Tool[] = [
     audience: "Phù hợp với người ngại lên hình hoặc cần video nhanh",
     link: "https://heygen.com",
     affiliateUrl: "",
-    pricing: "Paid",
+    pricing: "Trả phí",
     iUseThis: true,
   },
   {
     id: "hostinger",
     name: "Hostinger / Vercel",
-    category: "Hosting",
+    category: "Lưu trữ web",
     description: "Tôi dùng Hostinger và Vercel để host website cá nhân và các landing page của mình.",
     useCase: "Host website cá nhân, landing page",
     audience: "Phù hợp với người muốn có website riêng với chi phí hợp lý",
     link: "https://hostinger.com",
     affiliateUrl: "",
-    pricing: "Paid",
+    pricing: "Trả phí",
     iUseThis: true,
   },
   {
     id: "notion",
     name: "Notion",
-    category: "Productivity",
+    category: "Năng suất",
     description: "Tôi dùng Notion để quản lý tri thức, tài liệu và toàn bộ hệ thống vận hành cá nhân.",
     useCase: "Quản lý tri thức, theo dõi tiến độ công việc",
     audience: "Phù hợp với người muốn có một nơi tổ chức mọi thứ",
@@ -111,7 +111,7 @@ export const tools: Tool[] = [
   {
     id: "make",
     name: "Make / n8n",
-    category: "Automation",
+    category: "Tự động hoá",
     description: "Tôi dùng Make và n8n để tự động hoá quy trình, kết nối các công cụ với nhau.",
     useCase: "Tự động hoá content, nuôi dưỡng lead",
     audience: "Phù hợp với người muốn giảm việc thủ công lặp lại",
@@ -123,19 +123,19 @@ export const tools: Tool[] = [
   {
     id: "google-workspace",
     name: "Google Workspace",
-    category: "Productivity",
+    category: "Năng suất",
     description: "Tôi dùng Google Workspace cho email thương hiệu và lưu trữ dữ liệu hàng ngày.",
     useCase: "Email thương hiệu, lưu trữ dữ liệu",
     audience: "Phù hợp với người xây thương hiệu cá nhân chuyên nghiệp",
     link: "https://workspace.google.com",
     affiliateUrl: "",
-    pricing: "Paid",
+    pricing: "Trả phí",
     iUseThis: true,
   },
   {
     id: "figma",
     name: "Figma",
-    category: "Design",
+    category: "Thiết kế",
     description: "Tôi dùng Figma để thiết kế UI/UX và dựng wireframe cho các sản phẩm số.",
     useCase: "Thiết kế landing page, mockup Portal",
     audience: "Phù hợp với người làm sản phẩm cần thiết kế chuyên sâu",

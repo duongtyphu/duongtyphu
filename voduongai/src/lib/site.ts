@@ -21,9 +21,7 @@ export const mainNav = [
   { label: "Tài nguyên", href: "/portal/resources" },
   { label: "Công cụ AI", href: "/portal/tools" },
   { label: "Portal", href: "/portal" },
-  { label: "Blog", href: "/blog" },
-  { label: "Giới thiệu", href: "/about" },
-  { label: "Liên hệ", href: "/contact" },
+  { label: "Blog AI", href: "/blog" },
 ];
 
 export const portalNav = [
@@ -37,5 +35,5 @@ export const portalNav = [
   { label: "Tài nguyên Premium", href: "/portal/premium" },
   { label: "Sản phẩm của tôi", href: "/portal/my-products" },
   { label: "Cộng đồng", href: "/portal/community" },
-  { label: "Blog", href: "/blog" },
+  { label: "Blog AI", href: "/blog" },
 ];
