@@ -77,8 +77,8 @@ export function FounderStory() {
             </div>
 
             <p className="mt-6 inline-flex items-center gap-2 text-base font-extrabold tracking-wide">
-              <span className="h-px w-6 bg-gradient-to-r from-brand-orange to-brand-violet" />
-              <span className="bg-gradient-to-r from-brand-orange via-brand-violet to-brand-blue bg-clip-text text-transparent drop-shadow-[0_0_18px_rgba(255,122,0,0.35)]">
+              <span className="h-px w-6 bg-brand-blue" />
+              <span className="text-brand-blue">
                 Nhà sáng lập Võ Đương AI
               </span>
             </p>
