@@ -33,7 +33,7 @@ export function ToolsIUse() {
               <div className="flex items-center justify-between">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 p-1.5">
                   <img
-                    src={logoUrl(t.link)}
+                    src={logoUrl(t.id)}
                     alt={`${t.name} logo`}
                     width={28}
                     height={28}

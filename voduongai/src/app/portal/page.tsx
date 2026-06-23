@@ -61,7 +61,7 @@ export default function PortalDashboard() {
             <div key={t.id} className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 p-1.5">
                 <img
-                  src={logoUrl(t.link)}
+                  src={logoUrl(t.id)}
                   alt={`${t.name} logo`}
                   width={20}
                   height={20}

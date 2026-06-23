@@ -28,7 +28,7 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
         <div className="flex items-start justify-between">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/90 p-2">
             <img
-              src={logoUrl(tool.link)}
+              src={logoUrl(tool.id)}
               alt={`${tool.name} logo`}
               width={40}
               height={40}

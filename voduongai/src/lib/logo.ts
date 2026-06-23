@@ -1,4 +1,18 @@
-export function logoUrl(link: string) {
-  const domain = link.split(",")[0].trim().replace(/^https?:\/\//, "").split("/")[0];
-  return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+const extensionById: Record<string, string> = {
+  chatgpt: "svg",
+  claude: "ico",
+  gemini: "svg",
+  canva: "ico",
+  capcut: "ico",
+  heygen: "ico",
+  hostinger: "ico",
+  notion: "ico",
+  make: "ico",
+  "google-workspace": "ico",
+  figma: "ico",
+};
+
+export function logoUrl(id: string) {
+  const ext = extensionById[id] ?? "ico";
+  return `/tools/${id}.${ext}`;
 }
