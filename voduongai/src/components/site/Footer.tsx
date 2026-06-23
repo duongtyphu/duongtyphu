@@ -115,7 +115,7 @@ export function Footer() {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/50 transition hover:text-white"
+                      className="-mx-2 block rounded-lg px-2 py-1 text-sm text-white/50 transition hover:bg-white/10 hover:text-white"
                     >
                       {link.label}
                     </Link>
