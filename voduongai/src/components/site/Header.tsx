@@ -14,7 +14,7 @@ export function Header() {
             <span className="text-sm font-extrabold tracking-tight text-brand-blue">
               {siteConfig.name}
             </span>
-            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-violet sm:block">
+            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-orange sm:block">
               {siteConfig.tagline}
             </span>
           </span>
