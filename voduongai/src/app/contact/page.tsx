@@ -1,6 +1,6 @@
 import { siteConfig } from "@/lib/site";
 
-export const metadata = { title: "Contact" };
+export const metadata = { title: "Liên hệ" };
 
 const channels = [
   { label: "Facebook", href: siteConfig.links.facebook },
