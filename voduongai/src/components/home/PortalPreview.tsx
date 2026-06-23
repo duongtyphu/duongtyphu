@@ -4,15 +4,15 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const sidebar = [
-  "Dashboard",
+  "Tổng quan",
   "AI Academy",
   "VDAI Academy",
   "Affiliate Hub",
-  "Tool Library",
-  "Prompt Library",
-  "Free Resources",
-  "Premium Resources",
-  "Community",
+  "Thư viện Công cụ",
+  "Thư viện Prompt",
+  "Tài nguyên miễn phí",
+  "Tài nguyên Premium",
+  "Cộng đồng",
 ];
 
 const cards = [
