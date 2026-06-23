@@ -1,10 +1,17 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden mesh-navy pt-24 pb-20 text-white md:pt-32 md:pb-28">
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-2 md:items-center">
-        <div>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-brand-violet">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />
             Personal Brand · AI Ecosystem
@@ -37,9 +44,14 @@ export function Hero() {
               Khám phá Portal →
             </Link>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="relative">
+        <motion.div
+          initial={{ opacity: 0, y: 24, rotateX: 4 }}
+          animate={{ opacity: 1, y: 0, rotateX: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
+          className="relative [perspective:1200px]"
+        >
           <div className="absolute -inset-6 -z-10 rounded-[32px] bg-brand-orange/10 blur-3xl" />
           <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] p-3 shadow-2xl shadow-black/40 backdrop-blur">
             <div className="flex items-center gap-1.5 border-b border-white/10 px-3 pb-3">
@@ -83,7 +95,7 @@ export function Hero() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

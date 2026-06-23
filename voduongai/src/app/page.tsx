@@ -4,9 +4,9 @@ import { FreeResources } from "@/components/home/FreeResources";
 import { ToolsIUse } from "@/components/home/ToolsIUse";
 import { Problem } from "@/components/home/Problem";
 import { Solution } from "@/components/home/Solution";
-import { Journey } from "@/components/home/Journey";
 import { AcademyTeaser } from "@/components/home/AcademyTeaser";
 import { TrustStats } from "@/components/home/TrustStats";
+import { FounderStory } from "@/components/home/FounderStory";
 import { FinalCTA } from "@/components/home/FinalCTA";
 
 export default function Home() {
@@ -18,9 +18,9 @@ export default function Home() {
       <ToolsIUse />
       <Problem />
       <Solution />
-      <Journey />
       <AcademyTeaser />
       <TrustStats />
+      <FounderStory />
       <FinalCTA />
     </>
   );

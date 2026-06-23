@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "VO DUONG AI",
   displayName: "Võ Đương AI",
-  tagline: "Học AI. Xây hệ thống. Tạo tài sản số.",
+  tagline: "Học AI • Xây hệ thống • Tạo tài sản số",
   taglineSecondary:
     "Ứng dụng AI thực chiến cho công việc, kinh doanh và tạo giá trị bền vững.",
   url: "https://voduongai.com",

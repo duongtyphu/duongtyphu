@@ -5,18 +5,13 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-brand-gray-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-        <Link href="/" className="flex items-center gap-2.5">
-          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" className="shrink-0">
+        <Link href="/" className="flex items-center gap-2">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
-          <span className="flex flex-col leading-none">
-            <span className="text-sm font-extrabold tracking-tight text-brand-navy">
-              {siteConfig.name}
-            </span>
-            <span className="text-[10px] font-medium tracking-widest text-brand-gray-400">
-              {siteConfig.displayName}
-            </span>
+          <span className="text-sm font-extrabold tracking-tight text-brand-navy">
+            {siteConfig.name}
           </span>
         </Link>
 

@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const sidebar = [
   "Dashboard",
@@ -44,7 +47,13 @@ export function PortalPreview() {
           </p>
         </div>
 
-        <div className="card-tilt mx-auto mt-12 max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/40 backdrop-blur [perspective:1200px]">
+        <motion.div
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="card-tilt mx-auto mt-12 max-w-5xl overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/40 backdrop-blur [perspective:1200px]"
+        >
           <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3.5">
             <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
@@ -105,7 +114,7 @@ export function PortalPreview() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <div className="mt-10 text-center">
           <Link
