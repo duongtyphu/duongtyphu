@@ -111,3 +111,25 @@ body {
 .card-shine:hover::after {
   transform: translateX(120%);
 }
+
+.shimmer-gold {
+  background-image: linear-gradient(100deg, #fef9c3 0%, #ffffff 25%, #fde68a 50%, #ffffff 75%, #fef9c3 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-move 3.5s linear infinite;
+}
+
+@keyframes shimmer-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.spin-slow {
+  animation: spin-slow 7s linear infinite;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
@@ -60,6 +60,19 @@ const particles = [
 
 export function Ecosystem() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [autoIndex, setAutoIndex] = useState(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setAutoIndex((prev) => (prev + 1) % modules.length);
+    }, 1800);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  const activeIndex = hovered ?? autoIndex;
 
   return (
     <section className="relative overflow-hidden py-12 text-white md:py-16">
@@ -100,7 +113,7 @@ export function Ecosystem() {
           >
             {modules.map((m, i) => {
               const { x, y } = planetPosition(i, modules.length, m.ring);
-              const active = hovered === i;
+              const active = activeIndex === i;
               return (
                 <line
                   key={m.label}
@@ -118,13 +131,17 @@ export function Ecosystem() {
           </svg>
 
           {/* Sun */}
-          <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-            <div className="absolute -inset-10 -z-10 rounded-full bg-brand-blue/30 blur-3xl" />
-            <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full border border-white/20 bg-gradient-to-br from-brand-blue to-brand-violet text-center shadow-[0_0_60px_-5px_rgba(37,99,235,0.7)]">
-              <span className="text-lg font-extrabold text-white">V•</span>
-              <span className="text-[9px] font-bold tracking-wide text-white">VO DUONG AI</span>
+          <div className="group absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
+            <div className="absolute -inset-10 -z-10 rounded-full bg-brand-blue/30 blur-3xl transition-all duration-500 group-hover:bg-brand-blue/50 group-hover:blur-[60px]" />
+            <div className="spin-slow absolute -inset-1 rounded-full bg-[conic-gradient(from_0deg,rgba(91,140,255,0),rgba(91,140,255,0.85),rgba(255,122,0,0.6),rgba(91,140,255,0))] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+            <div className="relative flex h-28 w-28 flex-col items-center justify-center gap-1 rounded-full border border-white/20 bg-gradient-to-br from-[#0B1F4D] to-[#06142D] text-center shadow-[0_0_60px_-5px_rgba(37,99,235,0.7)] transition-shadow duration-500 group-hover:shadow-[0_0_90px_-5px_rgba(91,140,255,0.95)]">
+              <svg width="22" height="22" viewBox="0 0 32 32" fill="none" className="shrink-0">
+                <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#fff" />
+                <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
+              </svg>
+              <span className="text-[9px] font-bold tracking-wide text-brand-orange">VO DUONG AI</span>
             </div>
-            <p className="mt-3 text-center text-[10px] font-medium text-white/60">
+            <p className="shimmer-gold mt-3 text-center text-[10px] font-semibold">
               Học AI • Xây hệ thống • Tạo tài sản số
             </p>
           </div>
@@ -134,13 +151,18 @@ export function Ecosystem() {
             const { x, y } = planetPosition(i, modules.length, m.ring);
             const Icon = m.icon;
             const duration = 4 + (i % 5) * 0.8;
+            const isHovered = hovered === i;
             return (
               <motion.div
                 key={m.label}
                 className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${x}%`, top: `${y}%` }}
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }}
+                animate={isHovered ? { y: 0 } : { y: [0, -8, 0] }}
+                transition={
+                  isHovered
+                    ? { duration: 0.3, ease: "easeOut" }
+                    : { duration, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }
+                }
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -153,7 +175,7 @@ export function Ecosystem() {
                 </motion.div>
 
                 <AnimatePresence>
-                  {hovered === i && (
+                  {activeIndex === i && (
                     <motion.div
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
