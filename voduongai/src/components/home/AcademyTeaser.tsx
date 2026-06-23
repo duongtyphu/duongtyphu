@@ -32,11 +32,11 @@ export function AcademyTeaser() {
   return (
     <section className="py-9 md:py-12">
       <div className="mx-auto max-w-6xl px-5">
-        <div className="mx-auto max-w-2xl text-center">
+        <div className="mx-auto max-w-2xl text-center md:max-w-none">
           <h2 className="text-2xl font-extrabold text-white md:text-3xl">
             Học AI và Affiliate theo lộ trình thực chiến
           </h2>
-          <p className="mt-3 text-white">
+          <p className="mt-3 text-white md:whitespace-nowrap">
             VDAI Academy không còn là thương hiệu chính — đây là một module
             bên trong hệ sinh thái Võ Đương AI.
           </p>

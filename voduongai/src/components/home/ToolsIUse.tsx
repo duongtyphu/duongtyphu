@@ -11,7 +11,7 @@ export function ToolsIUse() {
             <h2 className="text-2xl font-extrabold text-white md:text-3xl">
               Những công cụ tôi thực sự đang dùng
             </h2>
-            <p className="mt-2 max-w-lg text-white">
+            <p className="mt-2 max-w-lg text-white md:max-w-none md:whitespace-nowrap">
               Không phải danh sách chung chung — đây là những gì tôi đang
               dùng thật, mỗi ngày.
             </p>

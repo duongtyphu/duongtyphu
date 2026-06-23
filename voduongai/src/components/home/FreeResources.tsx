@@ -68,11 +68,11 @@ const badgeStyle: Record<string, string> = {
 export function FreeResources() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-9 md:py-12">
-      <div className="mx-auto max-w-2xl text-center">
+      <div className="mx-auto max-w-2xl text-center md:max-w-none">
         <h2 className="text-2xl font-extrabold text-white md:text-3xl">
           Điều gì đang chờ bạn bên trong?
         </h2>
-        <p className="mt-3 text-white">
+        <p className="mt-3 text-white md:whitespace-nowrap">
           Tài nguyên, công cụ và lộ trình được sắp xếp sẵn trong Portal — bạn
           không cần tự mày mò từ đầu.
         </p>
