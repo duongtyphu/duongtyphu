@@ -96,7 +96,7 @@ export function PortalPreview() {
             Một không gian duy nhất để học AI, khám phá công cụ, lưu trữ tài
             nguyên, xây hệ thống và từng bước tạo tài sản số.
           </p>
-          <p className="mx-auto mt-2 max-w-xl text-sm text-white/60">
+          <p className="mx-auto mt-2 max-w-xl text-sm text-white/60 md:max-w-none md:whitespace-nowrap">
             Khám phá tài nguyên, công cụ và lộ trình được sắp xếp rõ ràng
             trong một dashboard duy nhất.
           </p>
