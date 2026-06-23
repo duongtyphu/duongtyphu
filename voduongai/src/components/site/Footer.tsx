@@ -28,63 +28,53 @@ const socials = [
   {
     label: "Facebook",
     href: siteConfig.links.facebook,
+    bg: "#1877F2",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-        <path
-          d="M14 9h2.5V6.5H14C12.34 6.5 11 7.84 11 9.5V11H9v2.5h2V19h2.5v-5.5h2.1l.4-2.5h-2.5v-1.2c0-.5.3-.8.8-.8Z"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinejoin="round"
-        />
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
+        <path d="M14.5 8.5H16.8V5.7H14.5C12.4 5.7 10.7 7.4 10.7 9.5V11.3H8.6V14H10.7V19.5H13.4V14H15.7L16.1 11.3H13.4V9.7C13.4 9.04 13.84 8.5 14.5 8.5Z" />
       </svg>
     ),
   },
   {
     label: "YouTube",
     href: siteConfig.links.youtube,
+    bg: "#FF0000",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-        <rect x="3" y="6.5" width="18" height="11" rx="3" stroke="currentColor" strokeWidth="1.3" />
-        <path d="M10.5 9.5 15 12l-4.5 2.5v-5Z" fill="currentColor" />
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
+        <path d="M9.7 8.6 16 12l-6.3 3.4V8.6Z" />
       </svg>
     ),
   },
   {
     label: "TikTok",
     href: siteConfig.links.tiktok,
+    bg: "#000000",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-        <path
-          d="M14 4v9.5a3 3 0 1 1-2.4-2.94"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M14 4c.3 2 1.8 3.5 3.8 3.7"
-          stroke="currentColor"
-          strokeWidth="1.3"
-          strokeLinecap="round"
-        />
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
+        <path d="M16.5 3c.5 2 2 3.5 4 3.8v3a7 7 0 0 1-4-1.3v6.7a5.7 5.7 0 1 1-5-5.66v3.1a2.6 2.6 0 1 0 2 2.5V3h3Z" />
       </svg>
     ),
   },
   {
     label: "Zalo",
     href: siteConfig.links.zalo,
+    bg: "#0068FF",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.3" />
+      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none">
+        <text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">
+          Z
+        </text>
       </svg>
     ),
   },
   {
     label: "Email",
     href: `mailto:hello@${new URL(siteConfig.url).hostname}`,
+    bg: "rgba(255,255,255,0.12)",
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4">
-        <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="currentColor" strokeWidth="1.3" />
-        <path d="M4.5 7 12 12.5 19.5 7" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+      <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
+        <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="#fff" strokeWidth="1.4" />
+        <path d="M4.5 7 12 12.5 19.5 7" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -93,18 +83,22 @@ const socials = [
 export function Footer() {
   return (
     <footer className="mesh-navy border-t border-white/10 text-white/60">
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-brand-blue/70 to-transparent shadow-[0_0_24px_2px_rgba(91,140,255,0.55)]" />
       <div className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
             <Link href="/" className="flex items-center gap-2">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="shrink-0">
-                <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#FF7A00" />
-                <circle cx="27" cy="7.5" r="3" fill="#5B8CFF" />
+              <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
+                <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#5B8CFF" />
+                <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
-              <span className="text-lg font-extrabold tracking-tight text-brand-orange">
+              <span className="text-base font-extrabold tracking-tight text-brand-orange">
                 {siteConfig.name}
               </span>
             </Link>
+            <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">
+              {siteConfig.tagline}
+            </p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
               Hệ sinh thái AI, Affiliate Marketing và tài sản số dành cho
               những người muốn học nhanh hơn, xây hệ thống hiệu quả hơn và
@@ -141,9 +135,14 @@ export function Footer() {
                 <li key={s.label}>
                   <a
                     href={s.href}
-                    className="flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+                    className="flex items-center gap-2.5 text-sm text-white/50 transition hover:text-white"
                   >
-                    {s.icon}
+                    <span
+                      className="flex h-6 w-6 items-center justify-center rounded-full"
+                      style={{ backgroundColor: s.bg }}
+                    >
+                      {s.icon}
+                    </span>
                     {s.label}
                   </a>
                 </li>
@@ -158,7 +157,7 @@ export function Footer() {
           </span>
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />
-            <span>Xây dựng hệ sinh thái AI từ 2024</span>
+            <span>Xây dựng hệ sinh thái AI từ 2020</span>
           </div>
         </div>
       </div>
