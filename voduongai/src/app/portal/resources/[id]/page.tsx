@@ -29,7 +29,7 @@ export default async function ResourceDetailPage({ params }: PageProps<"/portal/
           {resource.type}
         </span>
         <h1 className="mt-4 text-2xl font-extrabold text-white">{resource.title}</h1>
-        <p className="mt-4 leading-relaxed text-white/70">{resource.description}</p>
+        <p className="mt-4 leading-relaxed text-white">{resource.description}</p>
 
         <div className="mt-8">
           <LeadGate

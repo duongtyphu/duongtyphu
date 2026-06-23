@@ -36,7 +36,7 @@ export function AcademyTeaser() {
           <h2 className="text-2xl font-extrabold text-white md:text-3xl">
             Học AI và Affiliate theo lộ trình thực chiến
           </h2>
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-white">
             VDAI Academy không còn là thương hiệu chính — đây là một module
             bên trong hệ sinh thái Võ Đương AI.
           </p>
@@ -50,7 +50,7 @@ export function AcademyTeaser() {
               className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-6"
             >
               <h3 className="text-lg font-bold text-white">{m.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">
+              <p className="mt-2 text-sm leading-relaxed text-white">
                 {m.description}
               </p>
               <span className="mt-4 inline-flex text-xs font-semibold text-brand-violet">
@@ -64,7 +64,7 @@ export function AcademyTeaser() {
           {lessons.map((l) => (
             <span
               key={l}
-              className="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/70"
+              className="rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white"
             >
               {l}
             </span>

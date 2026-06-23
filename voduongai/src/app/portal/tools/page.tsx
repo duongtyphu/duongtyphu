@@ -8,7 +8,7 @@ export default function ToolsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Thư viện công cụ</h1>
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-white">
           Công cụ AI tôi đã thử nghiệm và sử dụng thực tế, theo từng nhóm.
         </p>
       </div>
@@ -21,14 +21,14 @@ export default function ToolsPage() {
           >
             <div className="flex items-center justify-between">
               <div className="h-9 w-9 rounded-lg gradient-surface" />
-              <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-[10px] font-semibold text-white/60">
+              <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-[10px] font-semibold text-white">
                 {t.pricing}
               </span>
             </div>
             <h3 className="mt-3 text-sm font-bold text-white">{t.name}</h3>
-            <p className="mt-1 text-xs text-white/40">{t.category}</p>
-            <p className="mt-2 text-sm text-white/60">{t.description}</p>
-            <p className="mt-2 text-xs font-medium text-white/40">
+            <p className="mt-1 text-xs text-white">{t.category}</p>
+            <p className="mt-2 text-sm text-white">{t.description}</p>
+            <p className="mt-2 text-xs font-medium text-white">
               {t.useCase}
             </p>
             {t.iUseThis && (

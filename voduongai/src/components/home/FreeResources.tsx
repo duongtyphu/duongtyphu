@@ -72,7 +72,7 @@ export function FreeResources() {
         <h2 className="text-2xl font-extrabold text-white md:text-3xl">
           Điều gì đang chờ bạn bên trong?
         </h2>
-        <p className="mt-3 text-white/60">
+        <p className="mt-3 text-white">
           Tài nguyên, công cụ và lộ trình được sắp xếp sẵn trong Portal — bạn
           không cần tự mày mò từ đầu.
         </p>
@@ -96,7 +96,7 @@ export function FreeResources() {
             <h3 className="mt-4 text-sm font-bold text-white">
               {item.title}
             </h3>
-            <p className="mt-1.5 flex-1 text-xs leading-relaxed text-white/60">
+            <p className="mt-1.5 flex-1 text-xs leading-relaxed text-white">
               {item.description}
             </p>
             <span className="mt-4 text-xs font-semibold text-brand-violet group-hover:underline">

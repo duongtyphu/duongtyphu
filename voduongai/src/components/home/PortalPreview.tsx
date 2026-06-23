@@ -40,7 +40,7 @@ export function PortalPreview() {
           <h2 className="text-2xl font-extrabold md:text-3xl">
             Bên trong Võ Đương AI Portal có gì?
           </h2>
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-white">
             Một không gian duy nhất để bạn truy cập tài nguyên AI, Thư viện
             Prompt, Thư viện công cụ, Affiliate Hub, VDAI Academy, tài liệu
             miễn phí và các sản phẩm số.
@@ -58,7 +58,7 @@ export function PortalPreview() {
             <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
             <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
-            <div className="ml-3 flex flex-1 items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs text-white/40">
+            <div className="ml-3 flex flex-1 items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs text-white">
               <span>⌕</span>
               <span>Tìm tài nguyên, prompt, công cụ...</span>
             </div>
@@ -70,7 +70,7 @@ export function PortalPreview() {
                 <div
                   key={item}
                   className={`cursor-pointer rounded-lg px-3 py-2 text-xs font-medium transition hover:bg-white/10 hover:text-white ${
-                    i === 0 ? "bg-white/10 text-white" : "text-white/50"
+                    i === 0 ? "bg-white/10 text-white" : "text-white"
                   }`}
                 >
                   {item}
@@ -86,7 +86,7 @@ export function PortalPreview() {
                     className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
                       i === 0
                         ? "bg-white text-brand-navy"
-                        : "border border-white/15 text-white/50"
+                        : "border border-white/15 text-white"
                     }`}
                   >
                     {f}

@@ -13,7 +13,7 @@ export default function CommunityPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Cộng đồng</h1>
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-white">
           Tham gia cộng đồng để học hỏi, chia sẻ và cập nhật cùng những người
           đang xây hệ thống AI & Affiliate.
         </p>

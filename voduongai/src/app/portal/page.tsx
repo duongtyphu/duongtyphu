@@ -13,7 +13,7 @@ export default function PortalDashboard() {
         <h1 className="text-2xl font-extrabold text-white">
           Chào mừng đến với Võ Đương AI Portal
         </h1>
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-white">
           Nơi tập hợp tài nguyên, công cụ, khóa học và lộ trình giúp bạn học
           AI, làm Affiliate và xây tài sản số.
         </p>
@@ -21,7 +21,7 @@ export default function PortalDashboard() {
 
       <section className="rounded-[24px] border border-white/10 bg-white/5 p-6">
         <h2 className="text-lg font-bold text-white">Bắt đầu tại đây</h2>
-        <p className="mt-1 text-sm text-white/60">
+        <p className="mt-1 text-sm text-white">
           Hai điểm khởi đầu nhanh nhất nếu bạn mới tham gia Portal.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -30,7 +30,7 @@ export default function PortalDashboard() {
             className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
           >
             <p className="text-sm font-bold text-white">Bộ công cụ AI</p>
-            <p className="mt-1 text-xs text-white/60">
+            <p className="mt-1 text-xs text-white">
               Bộ công cụ AI cần thiết để bắt đầu, nhận miễn phí ngay.
             </p>
           </Link>
@@ -39,7 +39,7 @@ export default function PortalDashboard() {
             className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
           >
             <p className="text-sm font-bold text-white">Lộ trình Affiliate</p>
-            <p className="mt-1 text-xs text-white/60">
+            <p className="mt-1 text-xs text-white">
               Lộ trình từng bước để bắt đầu Affiliate Marketing đúng hướng.
             </p>
           </Link>
@@ -80,7 +80,7 @@ export default function PortalDashboard() {
               className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:shadow-lg hover:shadow-black/30"
             >
               <p className="text-sm font-semibold text-white">{c.title}</p>
-              <p className="mt-1 text-xs text-white/60">{c.description}</p>
+              <p className="mt-1 text-xs text-white">{c.description}</p>
             </Link>
           ))}
         </div>

@@ -157,7 +157,7 @@ export function Footer() {
           </span>
           <div className="flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />
-            <span>Xây dựng hệ sinh thái AI từ 2020</span>
+            <span>Nhà đầu tư chuyên nghiệp</span>
           </div>
         </div>
       </div>

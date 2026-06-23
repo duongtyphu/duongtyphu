@@ -7,7 +7,7 @@ export function FinalCTA() {
         <h2 className="whitespace-nowrap text-lg font-extrabold sm:text-2xl md:text-3xl">
           Bắt đầu hành trình AI của bạn hôm nay
         </h2>
-        <p className="mt-4 whitespace-nowrap text-[11px] text-white/70 sm:text-sm md:text-base">
+        <p className="mt-4 whitespace-nowrap text-[11px] text-white sm:text-sm md:text-base">
           Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Portal. Việc của bạn là bắt đầu.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

@@ -24,7 +24,7 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-white/70">
+          <p className="mt-6 max-w-lg text-base leading-relaxed text-white">
             Tôi là Võ Đương AI. Tôi chia sẻ những công cụ, tài liệu, lộ trình và
             hệ thống giúp bạn học AI, xây thương hiệu cá nhân, làm Affiliate
             Marketing và tạo tài sản số bền vững.
@@ -58,7 +58,7 @@ export function Hero() {
               <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
-              <span className="ml-3 text-xs font-medium text-white/40">
+              <span className="ml-3 text-xs font-medium text-white">
                 voduongai.com/portal
               </span>
             </div>
@@ -71,7 +71,7 @@ export function Hero() {
                       className={`cursor-pointer rounded-lg px-2.5 py-2 text-[11px] font-medium transition hover:bg-white/10 hover:text-white ${
                         i === 0
                           ? "bg-white/10 text-white"
-                          : "text-white/50"
+                          : "text-white"
                       }`}
                     >
                       {m}

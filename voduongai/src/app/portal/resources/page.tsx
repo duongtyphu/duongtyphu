@@ -8,7 +8,7 @@ export default function ResourcesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Tài nguyên miễn phí</h1>
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-white">
           Ebook, prompt, checklist, template — tải miễn phí và dùng ngay.
         </p>
       </div>
@@ -23,7 +23,7 @@ export default function ResourcesPage() {
               {r.type}
             </span>
             <h3 className="mt-3 text-sm font-bold text-white">{r.title}</h3>
-            <p className="mt-2 text-sm text-white/60">{r.description}</p>
+            <p className="mt-2 text-sm text-white">{r.description}</p>
           </Link>
         ))}
       </div>

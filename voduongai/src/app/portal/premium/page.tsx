@@ -7,7 +7,7 @@ export default function PremiumPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Tài nguyên Premium</h1>
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-white">
           Sản phẩm và dịch vụ chuyên sâu dành cho người muốn đi nhanh hơn.
         </p>
       </div>
@@ -18,7 +18,7 @@ export default function PremiumPage() {
               {p.type}
             </span>
             <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-            <p className="mt-2 text-sm text-white/60">{p.description}</p>
+            <p className="mt-2 text-sm text-white">{p.description}</p>
           </div>
         ))}
       </div>

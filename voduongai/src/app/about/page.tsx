@@ -12,7 +12,7 @@ export default function AboutPage() {
   return (
     <section className="mx-auto max-w-3xl px-5 py-16 md:py-24">
       <h1 className="text-3xl font-extrabold text-white">Về Võ Đương AI</h1>
-      <p className="mt-6 leading-relaxed text-white/70">
+      <p className="mt-6 leading-relaxed text-white">
         Tôi xây dựng Võ Đương AI để chia sẻ những công cụ, tài liệu và hệ
         thống AI mà tôi đã dùng để học nhanh hơn, làm việc hiệu quả hơn và tạo
         thêm thu nhập online. Mục tiêu của tôi là giúp bạn không chỉ biết về
@@ -23,7 +23,7 @@ export default function AboutPage() {
         {roles.map((r) => (
           <span
             key={r}
-            className="card-shine rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/70"
+            className="card-shine rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white"
           >
             {r}
           </span>

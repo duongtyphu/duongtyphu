@@ -26,7 +26,7 @@ export function Solution() {
     <section className="py-9 md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-base leading-relaxed text-white/70">
+          <p className="text-base leading-relaxed text-white">
             Võ Đương AI gom tài nguyên, công cụ, khóa học, lộ trình và cộng
             đồng vào một hệ sinh thái duy nhất.
           </p>
@@ -44,7 +44,7 @@ export function Solution() {
               <h3 className="mt-4 text-lg font-bold text-white">
                 {p.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">
+              <p className="mt-2 text-sm leading-relaxed text-white">
                 {p.description}
               </p>
             </div>

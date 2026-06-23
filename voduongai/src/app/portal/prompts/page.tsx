@@ -8,7 +8,7 @@ export default function PromptsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-white">Thư viện Prompt</h1>
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-white">
           Prompt thực chiến theo từng danh mục — copy và dùng ngay.
         </p>
       </div>
@@ -23,7 +23,7 @@ export default function PromptsPage() {
               {p.category}
             </span>
             <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-            <p className="mt-2 text-sm text-white/60">{p.preview}</p>
+            <p className="mt-2 text-sm text-white">{p.preview}</p>
           </Link>
         ))}
       </div>

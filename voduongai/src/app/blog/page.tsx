@@ -7,7 +7,7 @@ export default function BlogPage() {
   return (
     <section className="mx-auto max-w-5xl px-5 py-16 md:py-24">
       <h1 className="text-3xl font-extrabold text-white">Blog AI</h1>
-      <p className="mt-4 text-white/60">
+      <p className="mt-4 text-white">
         Kiến thức thực chiến về ứng dụng AI trong Affiliate Marketing, tự động
         hoá quy trình và xây dựng hệ thống kinh doanh số.
       </p>
@@ -20,17 +20,17 @@ export default function BlogPage() {
           >
             <div className="flex items-center justify-between text-2xl">
               <span>{post.emoji}</span>
-              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold text-white/70">
+              <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] font-semibold text-white">
                 {post.tag}
               </span>
             </div>
-            <div className="mt-4 text-xs text-white/40">
+            <div className="mt-4 text-xs text-white">
               {post.category} · {post.readTime}
             </div>
             <h3 className="mt-2 text-base font-bold text-white">
               {post.title}
             </h3>
-            <p className="mt-2 text-sm text-white/60">{post.excerpt}</p>
+            <p className="mt-2 text-sm text-white">{post.excerpt}</p>
             <span className="mt-4 inline-block text-sm font-semibold text-brand-violet">
               Đọc bài viết →
             </span>

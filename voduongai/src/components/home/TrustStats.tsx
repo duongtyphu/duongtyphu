@@ -23,7 +23,7 @@ export function TrustStats() {
           <h2 className="text-2xl font-extrabold text-white md:text-3xl">
             Bạn không học một mình
           </h2>
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-white">
             Tham gia cộng đồng để học hỏi, chia sẻ và cập nhật cùng những
             người đang xây hệ thống AI & Affiliate.
           </p>
@@ -49,7 +49,7 @@ export function TrustStats() {
               <p className="text-2xl font-extrabold text-white md:text-3xl">
                 {s.value}
               </p>
-              <p className="mt-1 text-sm text-white/60">{s.label}</p>
+              <p className="mt-1 text-sm text-white">{s.label}</p>
             </div>
           ))}
         </div>

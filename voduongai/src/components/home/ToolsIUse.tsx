@@ -15,7 +15,7 @@ export function ToolsIUse() {
             <h2 className="text-2xl font-extrabold text-white md:text-3xl">
               Những công cụ tôi thực sự đang dùng
             </h2>
-            <p className="mt-2 max-w-lg text-white/60">
+            <p className="mt-2 max-w-lg text-white">
               Không phải danh sách chung chung — đây là những gì tôi đang
               dùng thật, mỗi ngày.
             </p>
@@ -51,10 +51,10 @@ export function ToolsIUse() {
                 )}
               </div>
               <h3 className="mt-3 text-sm font-bold text-white">{t.name}</h3>
-              <p className="mt-1.5 text-xs leading-relaxed text-white/60">
+              <p className="mt-1.5 text-xs leading-relaxed text-white">
                 {t.description}
               </p>
-              <p className="mt-2 text-[11px] font-medium text-white/40">
+              <p className="mt-2 text-[11px] font-medium text-white">
                 {t.audience}
               </p>
               <Link

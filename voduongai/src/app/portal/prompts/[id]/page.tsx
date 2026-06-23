@@ -32,10 +32,10 @@ export default async function PromptDetailPage({ params }: PageProps<"/portal/pr
         <h1 className="mt-4 text-2xl font-extrabold text-white">{prompt.title}</h1>
 
         <div className="mt-6 rounded-xl bg-white/5 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
+          <p className="text-xs font-semibold uppercase tracking-wide text-white">
             Prompt
           </p>
-          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-white/70">
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-white">
             {prompt.preview}
           </p>
         </div>

@@ -50,7 +50,7 @@ export function FounderStory() {
               Tại sao tôi xây Võ Đương AI?
             </h2>
 
-            <div className="mt-5 space-y-3.5 text-sm leading-relaxed text-white/70">
+            <div className="mt-5 space-y-3.5 text-sm leading-relaxed text-white">
               <p>
                 Tôi là Võ Đương — nhà đầu tư, người ứng dụng AI thực chiến và
                 hiện đang đồng hành phát triển cộng đồng DigiU Việt Nam với

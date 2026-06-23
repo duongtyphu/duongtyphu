@@ -14,7 +14,7 @@ export default function ContactPage() {
   return (
     <section className="mx-auto max-w-3xl px-5 py-16 md:py-24">
       <h1 className="text-3xl font-extrabold text-white">Liên hệ</h1>
-      <p className="mt-4 text-white/60">
+      <p className="mt-4 text-white">
         Kết nối với tôi qua các kênh dưới đây — tôi phản hồi nhanh nhất qua
         Zalo và Telegram.
       </p>

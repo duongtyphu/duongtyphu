@@ -22,7 +22,7 @@ export function Problem() {
             <span className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-red-500/15 text-sm font-bold text-red-400">
               !
             </span>
-            <p className="text-sm leading-relaxed text-white/70">{p}</p>
+            <p className="text-sm leading-relaxed text-white">{p}</p>
           </div>
         ))}
       </div>
