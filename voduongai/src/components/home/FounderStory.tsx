@@ -31,9 +31,18 @@ export function FounderStory() {
               <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-white/10" />
             </div>
 
-            <p className="mt-4 text-center text-xs font-medium text-white/40">
-              Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam
-            </p>
+            <div className="mt-5 flex justify-center">
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-brand-orange/30 bg-gradient-to-r from-brand-orange/15 via-white/[0.04] to-brand-blue/15 px-5 py-2 shadow-[0_0_24px_rgba(255,122,0,0.15)] backdrop-blur">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-orange opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-orange" />
+                </span>
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white">
+                  Đại diện Quốc gia khu vực Miền Nam
+                  <span className="text-brand-orange"> — DigiU Việt Nam</span>
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="rounded-[24px] border border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] backdrop-blur md:p-8">

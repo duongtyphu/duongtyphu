@@ -11,10 +11,10 @@ export function Header() {
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <span className="flex flex-col leading-tight">
-            <span className="text-sm font-extrabold tracking-tight text-brand-blue">
+            <span className="text-sm font-extrabold tracking-tight text-brand-orange">
               {siteConfig.name}
             </span>
-            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-orange sm:block">
+            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-navy sm:block">
               {siteConfig.tagline}
             </span>
           </span>
