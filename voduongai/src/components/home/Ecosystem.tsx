@@ -132,14 +132,14 @@ export function Ecosystem() {
 
           {/* Sun */}
           <div className="group absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
-            <div className="absolute -inset-10 -z-10 rounded-full bg-brand-blue/30 blur-3xl transition-all duration-500 group-hover:bg-brand-blue/50 group-hover:blur-[60px]" />
+            <div className="absolute -inset-12 -z-10 animate-pulse rounded-full bg-brand-blue/40 blur-3xl transition-all duration-500 group-hover:bg-brand-blue/60 group-hover:blur-[70px]" />
             <div className="spin-slow absolute -inset-1 rounded-full bg-[conic-gradient(from_0deg,rgba(91,140,255,0),rgba(91,140,255,0.85),rgba(255,122,0,0.6),rgba(91,140,255,0))] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            <div className="relative flex h-28 w-28 flex-col items-center justify-center gap-1 rounded-full border border-white/20 bg-gradient-to-br from-brand-blue to-brand-violet text-center shadow-[0_0_60px_-5px_rgba(37,99,235,0.7)] transition-shadow duration-500 group-hover:shadow-[0_0_90px_-5px_rgba(91,140,255,0.95)]">
-              <svg width="22" height="22" viewBox="0 0 32 32" fill="none" className="shrink-0">
+            <div className="relative flex h-32 w-32 flex-col items-center justify-center gap-1.5 rounded-full border border-white/20 bg-gradient-to-br from-brand-blue to-brand-violet text-center shadow-[0_0_70px_-5px_rgba(37,99,235,0.85)] transition-shadow duration-500 group-hover:shadow-[0_0_100px_-5px_rgba(91,140,255,1)]">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="shrink-0">
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#fff" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
-              <span className="text-[9px] font-bold tracking-wide text-brand-orange">VO DUONG AI</span>
+              <span className="text-[11px] font-extrabold tracking-wide text-white">VO DUONG AI</span>
             </div>
             <p className="shimmer-gold mt-3 text-center text-[10px] font-semibold">
               Học AI • Xây hệ thống • Tạo tài sản số
@@ -169,9 +169,9 @@ export function Ecosystem() {
                 <motion.div
                   whileHover={{ scale: 1.12, y: -4 }}
                   transition={{ duration: 0.25, ease: "easeOut" }}
-                  className="flex h-16 w-16 cursor-default flex-col items-center justify-center gap-1 rounded-2xl border border-white/15 bg-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] transition-shadow hover:border-brand-violet/40 hover:shadow-[0_0_30px_-4px_rgba(91,140,255,0.5)]"
+                  className="flex h-16 w-16 cursor-default flex-col items-center justify-center gap-1 rounded-2xl border border-white/15 bg-gradient-to-br from-brand-blue to-brand-violet shadow-[0_0_24px_-4px_rgba(37,99,235,0.7)] transition-shadow hover:border-white/30 hover:shadow-[0_0_36px_-2px_rgba(91,140,255,0.9)]"
                 >
-                  <Icon className="h-5 w-5 text-brand-blue" strokeWidth={2} />
+                  <Icon className="h-5 w-5 text-white" strokeWidth={2} />
                 </motion.div>
 
                 <AnimatePresence>
