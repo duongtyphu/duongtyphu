@@ -8,11 +8,10 @@ const stats = [
 ];
 
 const channels = [
-  { label: "Nhóm Facebook", href: siteConfig.links.facebook },
-  { label: "Cộng đồng Zalo", href: siteConfig.links.zalo },
+  { label: "Nhóm Facebook", href: siteConfig.community.facebookGroup },
+  { label: "Cộng đồng Zalo", href: siteConfig.community.zaloGroup },
   { label: "YouTube", href: siteConfig.links.youtube },
   { label: "TikTok", href: siteConfig.links.tiktok },
-  { label: "Bản tin Email", href: siteConfig.links.telegram },
 ];
 
 export function TrustStats() {

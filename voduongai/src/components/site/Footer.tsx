@@ -69,7 +69,7 @@ const socials = [
   },
   {
     label: "Email",
-    href: `mailto:hello@${new URL(siteConfig.url).hostname}`,
+    href: `mailto:${siteConfig.contact.email}`,
     bg: "rgba(255,255,255,0.12)",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">

@@ -8,11 +8,18 @@ export const siteConfig = {
   description:
     "Hệ sinh thái giúp bạn học AI, ứng dụng AI vào công việc, xây thương hiệu cá nhân, làm Affiliate Marketing và tạo tài sản số — quy tụ trong một Portal duy nhất.",
   links: {
-    facebook: "https://facebook.com/voduongai",
-    youtube: "https://youtube.com/@voduongai",
-    tiktok: "https://tiktok.com/@voduongai",
-    zalo: "https://zalo.me/voduongai",
-    telegram: "https://t.me/voduongai",
+    facebook: "https://www.facebook.com/duong.vv",
+    youtube: "https://www.youtube.com/@voduongofficial",
+    tiktok: "https://www.tiktok.com/@vdai_academy",
+    zalo: "https://zalo.me/0909150587",
+  },
+  community: {
+    facebookGroup: "https://www.facebook.com/groups/24279131375123067",
+    zaloGroup: "https://zalo.me/g/fcudmw102",
+  },
+  contact: {
+    email: "typhuonline87@gmail.com",
+    phone: "0909150587",
   },
 };
 

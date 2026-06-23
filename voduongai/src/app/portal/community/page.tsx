@@ -3,9 +3,9 @@ import { siteConfig } from "@/lib/site";
 export const metadata = { title: "Cộng đồng" };
 
 const channels = [
-  { label: "Nhóm Facebook", href: siteConfig.links.facebook },
-  { label: "Cộng đồng Zalo", href: siteConfig.links.zalo },
-  { label: "Kênh Telegram", href: siteConfig.links.telegram },
+  { label: "Nhóm Facebook", href: siteConfig.community.facebookGroup },
+  { label: "Cộng đồng Zalo", href: siteConfig.community.zaloGroup },
+  { label: "Kênh YouTube", href: siteConfig.links.youtube },
 ];
 
 export default function CommunityPage() {

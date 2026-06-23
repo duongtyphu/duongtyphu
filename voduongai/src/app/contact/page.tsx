@@ -7,7 +7,7 @@ const channels = [
   { label: "YouTube", href: siteConfig.links.youtube },
   { label: "TikTok", href: siteConfig.links.tiktok },
   { label: "Zalo", href: siteConfig.links.zalo },
-  { label: "Telegram", href: siteConfig.links.telegram },
+  { label: "Email", href: `mailto:${siteConfig.contact.email}` },
 ];
 
 export default function ContactPage() {
@@ -16,7 +16,7 @@ export default function ContactPage() {
       <h1 className="text-3xl font-extrabold text-white">Liên hệ</h1>
       <p className="mt-4 text-white">
         Kết nối với tôi qua các kênh dưới đây — tôi phản hồi nhanh nhất qua
-        Zalo và Telegram.
+        Zalo.
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {channels.map((c) => (
