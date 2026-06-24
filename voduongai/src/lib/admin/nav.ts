@@ -68,6 +68,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     items: [
       { label: "Sản phẩm số", href: "/admin/premium" },
       { label: "Đơn hàng", href: "/admin/orders" },
+      { label: "Mã giảm giá", href: "/admin/coupons" },
       { label: "Dịch vụ", href: "/admin/services" },
       { label: "Hỗ trợ", href: "/admin/support" },
     ],

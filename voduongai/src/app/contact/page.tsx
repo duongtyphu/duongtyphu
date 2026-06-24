@@ -1,4 +1,5 @@
 import { siteConfig } from "@/lib/site";
+import { EmailOptInForm } from "@/components/EmailOptInForm";
 
 export const metadata = { title: "Liên hệ" };
 
@@ -28,6 +29,9 @@ export default function ContactPage() {
             {c.label}
           </a>
         ))}
+      </div>
+      <div className="mt-10">
+        <EmailOptInForm source="contact-page" />
       </div>
     </section>
   );
