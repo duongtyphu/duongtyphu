@@ -97,7 +97,6 @@ export const portalNavGroups = [
     group: null,
     items: [
       { label: "Hỗ trợ", href: "/portal/support" },
-      { label: "Tài khoản", href: "/portal/account" },
       { label: "Blog AI", href: "/blog" },
     ],
   },
