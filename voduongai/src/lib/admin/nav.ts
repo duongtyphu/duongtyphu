@@ -55,6 +55,17 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   {
+    group: "Tài sản số",
+    items: [
+      { label: "Tổng quan", href: "/admin/digital-assets" },
+      { label: "Danh mục", href: "/admin/digital-assets/categories" },
+      { label: "Dự án", href: "/admin/digital-assets/projects" },
+      { label: "Link dự án", href: "/admin/digital-assets/links" },
+      { label: "Bài viết dự án", href: "/admin/digital-assets/articles" },
+      { label: "Báo cáo", href: "/admin/digital-assets/analytics" },
+    ],
+  },
+  {
     group: "Nội dung",
     items: [
       { label: "Blog AI", href: "/admin/blog" },

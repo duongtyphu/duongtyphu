@@ -20,6 +20,7 @@ const LINK_TYPE_ICON: Record<DigitalAssetLinkType, string> = {
   Document: "📄",
   Video: "🎬",
   Guide: "📘",
+  Community: "👥",
   Other: "🔹",
 };
 
