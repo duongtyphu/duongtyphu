@@ -14,11 +14,16 @@ export async function createOrder(
   itemId: string | number,
   title: string,
   price: number,
+  customerName: string,
+  customerPhone: string,
 ): Promise<CreateOrderResult> {
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const email = userData.user?.email;
   if (!email) return { ok: false, error: "Bạn cần đăng nhập để mua." };
+  if (!customerName.trim() || !customerPhone.trim()) {
+    return { ok: false, error: "Vui lòng nhập đầy đủ họ tên và số điện thoại." };
+  }
 
   const admin = getSupabaseAdmin();
   if (!admin) return { ok: false, error: "Hệ thống thanh toán chưa được cấu hình." };
@@ -28,6 +33,8 @@ export async function createOrder(
     product_name: title,
     amount: price,
     status: "pending",
+    customer_name: customerName.trim(),
+    customer_phone: customerPhone.trim(),
   };
   if (itemType === "lesson") row.lesson_id = itemId;
   else if (itemType === "course") row.course_id = String(itemId);
