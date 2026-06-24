@@ -1,5 +1,6 @@
 import { premiumProducts } from "@/data/premium";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { CheckoutButton } from "@/components/portal/CheckoutModal";
 
 export const metadata = { title: "Tài nguyên Premium" };
 
@@ -51,6 +52,12 @@ export default async function PremiumPage() {
                 </div>
                 <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
                 {p.description && <p className="mt-2 text-sm text-white/70">{p.description}</p>}
+                <div className="mt-4">
+                  <CheckoutButton
+                    target={{ itemType: "product", itemId: p.id, title: p.title, price: p.price }}
+                    label="Mua ngay"
+                  />
+                </div>
               </div>
             ))}
           </div>

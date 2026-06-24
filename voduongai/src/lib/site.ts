@@ -23,6 +23,13 @@ export const siteConfig = {
   },
 };
 
+export const bankConfig = {
+  name: "Vietcombank",
+  bankCode: "VCB",
+  account: "0721000632922",
+  owner: "VO VAN DUONG",
+};
+
 export const mainNav = [
   { label: "Trang chủ", href: "/" },
   { label: "Tài nguyên", href: "/portal/resources" },

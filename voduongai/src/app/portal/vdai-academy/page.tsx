@@ -1,5 +1,6 @@
 import { vdaiCourses } from "@/data/courses";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { CheckoutButton } from "@/components/portal/CheckoutModal";
 
 export const metadata = { title: "VDAI Academy" };
 
@@ -157,7 +158,7 @@ export default async function VdaiAcademyPage() {
                   </span>
                 </div>
                 {l.description && <p className="mt-2 text-sm text-white/70">{l.description}</p>}
-                {l.video_url && (
+                {l.price === 0 && l.video_url && (
                   <a
                     href={l.video_url}
                     target="_blank"
@@ -166,6 +167,14 @@ export default async function VdaiAcademyPage() {
                   >
                     Xem tài liệu buổi học →
                   </a>
+                )}
+                {l.price > 0 && (
+                  <div className="mt-3">
+                    <CheckoutButton
+                      target={{ itemType: "lesson", itemId: l.id, title: l.title, price: l.price }}
+                      label="Mua ngay"
+                    />
+                  </div>
                 )}
               </div>
             ))}
