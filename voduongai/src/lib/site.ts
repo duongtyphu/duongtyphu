@@ -53,6 +53,7 @@ export const portalNavGroups = [
       { label: "Học viện AI", href: "/portal/ai-academy" },
       { label: "Học viện Affiliate", href: "/portal/vdai-academy" },
       { label: "Thương hiệu cá nhân", href: "/portal/personal-brand" },
+      { label: "Nộp bài thực hành", href: "/portal/practice" },
     ],
   },
   {
@@ -83,6 +84,14 @@ export const portalNavGroups = [
   {
     group: null,
     items: [{ label: "Cộng đồng", href: "/portal/community" }],
+  },
+  {
+    group: "Khám phá",
+    items: [
+      { label: "Case Study", href: "/portal/case-studies" },
+      { label: "Chuyên gia", href: "/portal/experts" },
+      { label: "Tin tức nội bộ", href: "/portal/news" },
+    ],
   },
   {
     group: null,

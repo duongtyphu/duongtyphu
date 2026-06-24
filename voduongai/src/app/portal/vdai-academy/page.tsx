@@ -26,6 +26,35 @@ async function getLiveLessons(): Promise<LiveLesson[]> {
   return data ?? [];
 }
 
+type LiveClass = {
+  id: number;
+  course_name: string;
+  start_date: string | null;
+  end_date: string | null;
+  schedule_text: string | null;
+  meet_url: string | null;
+  seats_total: number | null;
+  seats_taken: number | null;
+};
+
+async function getLiveClasses(): Promise<LiveClass[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
+  const supabase = await getSupabaseServer();
+  const { data } = await supabase
+    .from("course_schedules")
+    .select("id, course_name, start_date, end_date, schedule_text, meet_url, seats_total, seats_taken")
+    .eq("active", true)
+    .order("start_date", { ascending: true });
+  return data ?? [];
+}
+
+function formatDate(d: string | null) {
+  if (!d) return null;
+  return new Date(d).toLocaleDateString("vi-VN");
+}
+
 const tracks = [
   {
     id: "solo",
@@ -72,6 +101,7 @@ const a5System = [
 
 export default async function VdaiAcademyPage() {
   const liveLessons = await getLiveLessons();
+  const liveClasses = await getLiveClasses();
 
   return (
     <div className="space-y-10">
@@ -142,6 +172,44 @@ export default async function VdaiAcademyPage() {
           ))}
         </div>
       </div>
+
+      {liveClasses.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">
+            Lớp học trực tiếp
+          </h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {liveClasses.map((c) => {
+              const seatsLeft = c.seats_total != null ? c.seats_total - (c.seats_taken ?? 0) : null;
+              return (
+                <div key={c.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <h3 className="text-sm font-bold text-white">{c.course_name}</h3>
+                  <div className="mt-2 space-y-1 text-xs text-white/70">
+                    {(c.start_date || c.end_date) && (
+                      <p>
+                        🗓 {formatDate(c.start_date)}
+                        {c.end_date && ` — ${formatDate(c.end_date)}`}
+                      </p>
+                    )}
+                    {c.schedule_text && <p>⏰ {c.schedule_text}</p>}
+                    {seatsLeft != null && <p>👥 Còn {Math.max(seatsLeft, 0)} chỗ</p>}
+                  </div>
+                  {c.meet_url && (
+                    <a
+                      href={c.meet_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block rounded-full gradient-surface px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+                    >
+                      Vào lớp học →
+                    </a>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {liveLessons.length > 0 && (
         <div>

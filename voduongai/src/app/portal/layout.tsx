@@ -21,11 +21,16 @@ import {
   Newspaper,
   Percent,
   LifeBuoy,
+  PenSquare,
+  TrendingUp,
+  BadgeCheck,
+  Megaphone,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { LogoutButton } from "@/components/portal/LogoutButton";
+import { NotificationTicker } from "@/components/portal/NotificationTicker";
 
 const navIcons: Record<string, LucideIcon> = {
   "/portal": LayoutDashboard,
@@ -33,6 +38,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/ai-academy": GraduationCap,
   "/portal/vdai-academy": Rocket,
   "/portal/personal-brand": UserCircle,
+  "/portal/practice": PenSquare,
   "/portal/prompts": Sparkles,
   "/portal/tools": Wrench,
   "/portal/templates": FileText,
@@ -46,6 +52,9 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/services": Handshake,
   "/portal/assets": Boxes,
   "/portal/community": MessageCircle,
+  "/portal/case-studies": TrendingUp,
+  "/portal/experts": BadgeCheck,
+  "/portal/news": Megaphone,
   "/portal/support": LifeBuoy,
   "/portal/account": CircleUser,
   "/blog": Newspaper,
@@ -101,7 +110,10 @@ export default async function PortalLayout({
           ))}
         </nav>
       </aside>
-      <div className="min-w-0 flex-1">{children}</div>
+      <div className="min-w-0 flex-1">
+        <NotificationTicker />
+        {children}
+      </div>
     </div>
   );
 }
