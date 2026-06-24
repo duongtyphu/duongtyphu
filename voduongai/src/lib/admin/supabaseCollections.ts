@@ -23,6 +23,18 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "ai-academy": "ai_academy",
   "affiliate-academy": "affiliate_academy",
   "personal-brand": "personal_brand",
+
+  // Phase 3 — Portal Builder / Roadmap config collections
+  "portal-banners": "portal_banners",
+  "portal-cta": "portal_cta",
+  "portal-featured": "portal_featured",
+  "today-action-cards": "today_action_cards",
+  "start-here-steps": "start_here_steps",
+  "user-goals": "user_goals",
+  "roadmap-steps": "roadmap_steps",
+  "daily-missions": "daily_missions",
+  "affiliate-hub-sections": "affiliate_hub_sections",
+  "affiliate-hub-top-products": "affiliate_hub_top_products",
 };
 
 export function tableForCollection(key: string): string | null {
