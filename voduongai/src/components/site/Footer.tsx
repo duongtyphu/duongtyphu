@@ -5,6 +5,7 @@ const columns = [
   {
     title: "Portal",
     links: [
+      { label: "Hồ sơ", href: "/portal/account" },
       { label: "AI Academy", href: "/portal/ai-academy" },
       { label: "VDAI Academy", href: "/portal/vdai-academy" },
       { label: "Affiliate Hub", href: "/portal/affiliate-hub" },

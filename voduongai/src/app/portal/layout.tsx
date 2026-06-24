@@ -63,7 +63,6 @@ export default function PortalLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
-      <NotificationTicker />
       <div className="mx-auto flex max-w-6xl gap-8 px-5 py-10">
         <aside className="hidden w-56 flex-shrink-0 md:block">
           <nav className="sticky top-24 space-y-4">
@@ -93,7 +92,10 @@ export default function PortalLayout({
             ))}
           </nav>
         </aside>
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="min-w-0 flex-1">
+          <NotificationTicker />
+          {children}
+        </div>
       </div>
     </>
   );
