@@ -1,36 +1,46 @@
-"use client";
+import { listLeads } from "./actions";
+import { LeadRow } from "./LeadRow";
 
-import { CrudPage } from "@/components/admin/CrudPage";
-import { leadsSeed, type AdminLead } from "@/data/admin/people";
+export default async function LeadsAdminPage() {
+  const { leads, configured } = await listLeads();
 
-export default function LeadsAdminPage() {
   return (
-    <CrudPage<AdminLead>
-      title="Leads"
-      description="Theo dõi lead đăng ký từ các nguồn khác nhau."
-      collectionKey="leads"
-      seed={leadsSeed}
-      searchKeys={["name", "email", "source"]}
-      filterOptions={{ key: "status", label: "Trạng thái", options: ["New", "Contacted", "Converted"] }}
-      columns={[
-        { key: "name", label: "Họ tên" },
-        { key: "email", label: "Email" },
-        { key: "source", label: "Nguồn" },
-        { key: "leadMagnet", label: "Lead magnet" },
-        { key: "registeredAt", label: "Ngày đăng ký" },
-        { key: "status", label: "Trạng thái" },
-      ]}
-      fields={[
-        { key: "name", label: "Họ tên", type: "text", required: true },
-        { key: "email", label: "Email", type: "text", required: true },
-        { key: "phone", label: "Số điện thoại", type: "text" },
-        { key: "source", label: "Nguồn đăng ký", type: "text" },
-        { key: "leadMagnet", label: "Lead magnet", type: "text" },
-        { key: "registeredAt", label: "Ngày đăng ký", type: "date" },
-        { key: "status", label: "Trạng thái", type: "select", options: ["New", "Contacted", "Converted"] },
-        { key: "note", label: "Ghi chú", type: "textarea", full: true },
-        { key: "tags", label: "Tag", type: "tags" },
-      ]}
-    />
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-xl font-extrabold text-white">Leads</h1>
+        <p className="mt-1 text-sm text-white/50">
+          Email đăng ký thật từ form thu thập trên Portal (dữ liệu thật từ Supabase).
+        </p>
+      </div>
+
+      {!configured && (
+        <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/5 p-5 text-sm text-white/80">
+          Chưa cấu hình <code className="text-brand-orange">SUPABASE_SERVICE_ROLE_KEY</code> trong{" "}
+          <code className="text-brand-orange">.env.local</code> — cần quyền service role để đọc lead thật.
+        </div>
+      )}
+
+      {configured && (
+        <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.04]">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-white/10 text-xs font-semibold uppercase tracking-wide text-white/40">
+                <th className="px-3 py-3">Email</th>
+                <th className="px-3 py-3">Nguồn</th>
+                <th className="px-3 py-3">Ngày đăng ký</th>
+                <th className="px-3 py-3">Trạng thái</th>
+                <th className="px-3 py-3">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leads.map((l) => (
+                <LeadRow key={l.id} lead={l} />
+              ))}
+            </tbody>
+          </table>
+          {leads.length === 0 && <p className="p-5 text-sm text-white/40">Chưa có lead nào.</p>}
+        </div>
+      )}
+    </div>
   );
 }

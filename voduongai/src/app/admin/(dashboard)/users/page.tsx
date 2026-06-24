@@ -1,45 +1,60 @@
-"use client";
+import { listUsers } from "./actions";
+import { UserRow } from "./UserRow";
 
-import { CrudPage } from "@/components/admin/CrudPage";
-import { usersSeed, type AdminUserRow } from "@/data/admin/people";
+export default async function UsersAdminPage() {
+  const { users, configured } = await listUsers();
 
-export default function UsersAdminPage() {
   return (
-    <CrudPage<AdminUserRow>
-      title="Người dùng"
-      description="Danh sách học viên. Sửa để đổi vai trò, gói hoặc khoá tài khoản."
-      collectionKey="users"
-      seed={usersSeed}
-      searchKeys={["name", "email"]}
-      filterOptions={{ key: "status", label: "Trạng thái", options: ["Active", "Blocked"] }}
-      columns={[
-        { key: "name", label: "Tên" },
-        { key: "email", label: "Email" },
-        { key: "role", label: "Vai trò" },
-        { key: "tier", label: "Gói" },
-        { key: "registeredAt", label: "Ngày đăng ký" },
-        { key: "roadmapProgress", label: "Tiến độ (%)" },
-        { key: "selectedGoal", label: "Mục tiêu đã chọn" },
-        { key: "lastLoginAt", label: "Đăng nhập gần nhất" },
-        { key: "status", label: "Trạng thái" },
-      ]}
-      fields={[
-        { key: "name", label: "Tên", type: "text", required: true },
-        { key: "email", label: "Email", type: "text", required: true },
-        { key: "role", label: "Vai trò", type: "select", options: ["Admin", "Member"] },
-        { key: "tier", label: "Gói", type: "select", options: ["Free", "Premium"] },
-        { key: "status", label: "Trạng thái", type: "select", options: ["Active", "Blocked"] },
-        { key: "registeredAt", label: "Ngày đăng ký", type: "date" },
-        { key: "roadmapProgress", label: "Tiến độ roadmap (mock %)", type: "number" },
-        { key: "promptsCopied", label: "Prompt copied (mock)", type: "number" },
-        { key: "toolsClicked", label: "Tools clicked (mock)", type: "number" },
-        { key: "resourcesDownloaded", label: "Resources downloaded (mock)", type: "number" },
-        { key: "selectedGoal", label: "Mục tiêu đã chọn (mock)", type: "text" },
-        { key: "savedItemsCount", label: "Tài nguyên đã lưu (mock)", type: "number" },
-        { key: "startHereProgress", label: "Tiến độ Start Here (mock %)", type: "number" },
-        { key: "affiliateLinksClicked", label: "Affiliate links đã click (mock)", type: "number" },
-        { key: "lastLoginAt", label: "Lần đăng nhập gần nhất", type: "date" },
-      ]}
-    />
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-xl font-extrabold text-white">Người dùng</h1>
+        <p className="mt-1 text-sm text-white/50">
+          Toàn bộ tài khoản đăng ký thật trên Portal (Supabase Auth) — khoá tài khoản nếu vi phạm.
+        </p>
+      </div>
+
+      {!configured && (
+        <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/5 p-5 text-sm text-white/80">
+          Chưa cấu hình <code className="text-brand-orange">SUPABASE_SERVICE_ROLE_KEY</code> trong{" "}
+          <code className="text-brand-orange">.env.local</code> — cần quyền service role (Auth Admin API) để đọc
+          danh sách người dùng thật.
+        </div>
+      )}
+
+      {configured && (
+        <>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-white/40">Tổng số người dùng</p>
+            <p className="mt-2 text-2xl font-extrabold text-white">{users.length}</p>
+            <p className="mt-2 text-xs text-white/40">
+              Lưu ý: các chỉ số tương tác (tiến độ roadmap, prompt đã copy, tool đã click...) chưa được theo dõi
+              trong hệ thống — cần xây tracking riêng nếu muốn hiển thị tại đây.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.04]">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-white/10 text-xs font-semibold uppercase tracking-wide text-white/40">
+                  <th className="px-3 py-3">Tên</th>
+                  <th className="px-3 py-3">Email</th>
+                  <th className="px-3 py-3">Mã giới thiệu</th>
+                  <th className="px-3 py-3">Ngày đăng ký</th>
+                  <th className="px-3 py-3">Đăng nhập gần nhất</th>
+                  <th className="px-3 py-3">Trạng thái</th>
+                  <th className="px-3 py-3">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <UserRow key={u.id} user={u} />
+                ))}
+              </tbody>
+            </table>
+            {users.length === 0 && <p className="p-5 text-sm text-white/40">Chưa có người dùng nào.</p>}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
