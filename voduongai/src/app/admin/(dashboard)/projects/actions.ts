@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
 export type Submission = {
@@ -14,15 +14,8 @@ export type Submission = {
   created_at: string;
 };
 
-function getServiceClient() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return null;
-  return createClient(url, key, { auth: { persistSession: false } });
-}
-
 export async function listSubmissions(): Promise<{ submissions: Submission[]; configured: boolean }> {
-  const supabase = getServiceClient();
+  const supabase = getSupabaseAdmin();
   if (!supabase) return { submissions: [], configured: false };
 
   const { data } = await supabase
@@ -34,7 +27,7 @@ export async function listSubmissions(): Promise<{ submissions: Submission[]; co
 }
 
 export async function gradeSubmission(id: number, feedback: string, status: "pending" | "reviewed") {
-  const supabase = getServiceClient();
+  const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 
   const { error } = await supabase.from("submissions").update({ feedback, status }).eq("id", id);
