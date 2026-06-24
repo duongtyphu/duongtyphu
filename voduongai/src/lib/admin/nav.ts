@@ -20,7 +20,6 @@ export const adminNavGroups: AdminNavGroup[] = [
     items: [
       { label: "Lộ trình thành công", href: "/admin/roadmap" },
       { label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
-      { label: "Tiến độ học viên", href: "/admin/student-progress" },
     ],
   },
   {
@@ -50,7 +49,6 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Affiliate Hub", href: "/admin/affiliate-hub" },
       { label: "Sản phẩm Affiliate", href: "/admin/affiliate/products" },
       { label: "Link Affiliate", href: "/admin/affiliate/links" },
-      { label: "Tracking", href: "/admin/affiliate/tracking" },
       { label: "Báo cáo Affiliate", href: "/admin/affiliate/analytics" },
     ],
   },
