@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
+import { SaveButton } from "@/components/portal/SaveButton";
 
 export function generateStaticParams() {
   return tools.map((t) => ({ id: t.id }));
@@ -20,9 +21,12 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
 
   return (
     <div className="space-y-6">
-      <Link href="/portal/tools" className="text-sm font-semibold text-brand-blue hover:underline">
-        ← Thư viện công cụ
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/portal/tools" className="text-sm font-semibold text-brand-blue hover:underline">
+          ← Thư viện công cụ
+        </Link>
+        <SaveButton item={{ id: `tool_${tool.id}`, kind: "tool", title: tool.name, href: `/portal/tools/${tool.id}`, meta: tool.category }} />
+      </div>
 
       <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
         <div className="flex items-start justify-between">
@@ -35,9 +39,20 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
               className="h-full w-full object-contain"
             />
           </div>
-          <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white">
-            {tool.pricing}
-          </span>
+          <div className="flex items-center gap-2">
+            {tool.iUseThis ? (
+              <span className="rounded-full bg-brand-violet/10 px-3 py-1 text-xs font-semibold text-brand-violet">
+                Tôi đang dùng
+              </span>
+            ) : (
+              <span className="rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
+                Recommended
+              </span>
+            )}
+            <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white">
+              {tool.pricing}
+            </span>
+          </div>
         </div>
         <h1 className="mt-5 text-2xl font-extrabold text-white">{tool.name}</h1>
         <p className="mt-1 text-sm text-white">{tool.category}</p>
@@ -57,12 +72,6 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
             <p className="mt-1 text-sm text-white">{tool.audience}</p>
           </div>
         </div>
-
-        {tool.iUseThis && (
-          <span className="mt-6 inline-flex rounded-full bg-brand-violet/10 px-3 py-1 text-xs font-semibold text-brand-violet">
-            Tôi đang dùng
-          </span>
-        )}
 
         {(tool.pros || tool.cons) && (
           <div className="mt-6 grid gap-4 sm:grid-cols-2">

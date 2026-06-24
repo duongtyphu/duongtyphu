@@ -1,7 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { PracticeSubmissionForm } from "@/components/portal/PracticeSubmissionForm";
 
-export const metadata = { title: "Nộp bài thực hành" };
+export const metadata = { title: "Dự án thực chiến" };
 
 type Submission = {
   id: number;
@@ -42,9 +42,9 @@ export default async function PracticePage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Nộp bài thực hành</h1>
+        <h1 className="text-2xl font-extrabold text-white">Dự án thực chiến</h1>
         <p className="mt-2 text-white">
-          Nộp bài thực hành sau mỗi buổi học để được admin chấm và phản hồi.
+          Nộp dự án thực chiến sau mỗi buổi học để được admin chấm và phản hồi.
         </p>
       </div>
 

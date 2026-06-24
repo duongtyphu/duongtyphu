@@ -45,6 +45,10 @@ export const portalNavGroups = [
   },
   {
     group: null,
+    items: [{ label: "🚀 Bắt đầu tại đây", href: "/portal/start-here" }],
+  },
+  {
+    group: null,
     items: [{ label: "Lộ trình thành công", href: "/portal/roadmap" }],
   },
   {
@@ -53,7 +57,7 @@ export const portalNavGroups = [
       { label: "Học viện AI", href: "/portal/ai-academy" },
       { label: "Học viện Affiliate", href: "/portal/vdai-academy" },
       { label: "Thương hiệu cá nhân", href: "/portal/personal-brand" },
-      { label: "Nộp bài thực hành", href: "/portal/practice" },
+      { label: "Dự án thực chiến", href: "/portal/practice" },
     ],
   },
   {
@@ -79,19 +83,20 @@ export const portalNavGroups = [
   },
   {
     group: "Tài sản số",
-    items: [{ label: "Trung tâm Tài sản số", href: "/portal/assets" }],
+    items: [{ label: "Tài sản số", href: "/portal/assets" }],
   },
   {
     group: "Khám phá",
     items: [
       { label: "Case Study", href: "/portal/case-studies" },
-      { label: "Chuyên gia", href: "/portal/experts" },
-      { label: "Tin tức nội bộ", href: "/portal/news" },
+      { label: "Thành công học viên", href: "/portal/student-success" },
+      { label: "Tin tức & Cập nhật", href: "/portal/updates" },
     ],
   },
   {
     group: null,
     items: [
+      { label: "Đã lưu", href: "/portal/saved" },
       { label: "Hỗ trợ", href: "/portal/support" },
       { label: "Cộng đồng", href: "/portal/community" },
     ],

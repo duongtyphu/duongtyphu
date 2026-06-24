@@ -25,6 +25,8 @@ import {
   TrendingUp,
   BadgeCheck,
   Megaphone,
+  Rocket as RocketStart,
+  Bookmark,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -32,6 +34,8 @@ import { NotificationTicker } from "@/components/portal/NotificationTicker";
 
 const navIcons: Record<string, LucideIcon> = {
   "/portal": LayoutDashboard,
+  "/portal/start-here": RocketStart,
+  "/portal/saved": Bookmark,
   "/portal/roadmap": Map,
   "/portal/ai-academy": GraduationCap,
   "/portal/vdai-academy": Rocket,
@@ -51,8 +55,8 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/assets": Boxes,
   "/portal/community": MessageCircle,
   "/portal/case-studies": TrendingUp,
-  "/portal/experts": BadgeCheck,
-  "/portal/news": Megaphone,
+  "/portal/student-success": BadgeCheck,
+  "/portal/updates": Megaphone,
   "/portal/support": LifeBuoy,
   "/portal/account": CircleUser,
   "/blog": Newspaper,

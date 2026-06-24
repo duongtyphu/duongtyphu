@@ -6,6 +6,9 @@ import { affiliateResources } from "@/data/affiliate";
 import { logoUrl } from "@/lib/logo";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { ProfileQuickMenu } from "@/components/portal/ProfileQuickMenu";
+import { TodayGoals } from "@/components/portal/TodayGoals";
+import { GoalWidget } from "@/components/portal/GoalWidget";
+import { SavedRecent } from "@/components/portal/SavedRecent";
 
 export const metadata = { title: "Portal" };
 
@@ -62,6 +65,10 @@ export default async function PortalDashboard() {
           />
         )}
       </div>
+
+      <TodayGoals />
+
+      <GoalWidget />
 
       <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -136,22 +143,39 @@ export default async function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {tools.slice(0, 4).map((t) => (
-            <Link
+            <div
               key={t.id}
-              href="/portal/tools"
               className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 p-1.5">
-                <img
-                  src={logoUrl(t.id)}
-                  alt={`${t.name} logo`}
-                  width={20}
-                  height={20}
-                  className="h-full w-full object-contain"
-                />
+              <div className="flex items-center justify-between">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 p-1.5">
+                  <img
+                    src={logoUrl(t.id)}
+                    alt={`${t.name} logo`}
+                    width={20}
+                    height={20}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                {t.iUseThis ? (
+                  <span className="rounded-full bg-brand-violet/10 px-2 py-0.5 text-[10px] font-semibold text-brand-violet">
+                    Tôi đang dùng
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[10px] font-semibold text-brand-blue">
+                    Recommended
+                  </span>
+                )}
               </div>
               <p className="mt-3 text-sm font-semibold text-white">{t.name}</p>
-            </Link>
+              <p className="mt-1 text-xs text-white/60">{t.description}</p>
+              <Link
+                href={`/portal/tools/${t.id}`}
+                className="mt-3 inline-flex text-xs font-semibold text-brand-blue hover:underline"
+              >
+                Xem chi tiết →
+              </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -199,6 +223,8 @@ export default async function PortalDashboard() {
           ))}
         </div>
       </section>
+
+      <SavedRecent />
     </div>
   );
 }
