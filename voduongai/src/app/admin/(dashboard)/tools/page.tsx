@@ -16,6 +16,7 @@ export default function ToolsAdminPage() {
       columns={[
         { key: "name", label: "Tên công cụ" },
         { key: "category", label: "Danh mục" },
+        { key: "badge", label: "Badge" },
         { key: "pricing", label: "Giá" },
         { key: "rating", label: "Rating" },
         {
@@ -40,6 +41,12 @@ export default function ToolsAdminPage() {
         { key: "link", label: "Link truy cập", type: "text" },
         { key: "affiliateUrl", label: "Affiliate URL", type: "text" },
         { key: "videoUrl", label: "Video hướng dẫn", type: "text" },
+        { key: "workflow", label: "Workflow thực tế", type: "textarea", full: true },
+        { key: "relatedPromptId", label: "Prompt liên quan (id)", type: "text" },
+        { key: "relatedResourceHref", label: "Tài nguyên liên quan", type: "text" },
+        { key: "ctaText", label: "CTA text", type: "text", required: true },
+        { key: "ctaLink", label: "CTA link", type: "text", required: true },
+        { key: "badge", label: "Badge", type: "select", options: ["Recommended", "Tôi đang dùng", "Affiliate"] },
         { key: "rating", label: "Rating", type: "number" },
         { key: "featured", label: "Featured", type: "boolean" },
         { key: "tier", label: "Free / Paid", type: "select", options: ["Free", "Paid"] },

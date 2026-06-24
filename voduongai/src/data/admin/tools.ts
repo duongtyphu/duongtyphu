@@ -14,6 +14,12 @@ export type AdminTool = {
   link: string;
   affiliateUrl?: string;
   videoUrl?: string;
+  workflow?: string;
+  relatedPromptId?: string;
+  relatedResourceHref?: string;
+  ctaText: string;
+  ctaLink: string;
+  badge: "Recommended" | "Tôi đang dùng" | "Affiliate";
   rating: number;
   featured: boolean;
   tier: "Free" | "Paid";
@@ -36,6 +42,12 @@ export const toolsAdminSeed: AdminTool[] = [
     pricing: "Freemium",
     link: "https://chatgpt.com",
     affiliateUrl: "",
+    workflow: "Sáng viết outline content bằng ChatGPT → chỉnh lại giọng văn cho phù hợp thương hiệu → đăng lên các kênh.",
+    relatedPromptId: "prompt_1",
+    relatedResourceHref: "/portal/templates",
+    ctaText: "Dùng thử ChatGPT",
+    ctaLink: "https://chatgpt.com",
+    badge: "Tôi đang dùng",
     rating: 4.8,
     featured: true,
     tier: "Free",

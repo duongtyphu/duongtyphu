@@ -19,6 +19,8 @@ export default function UsersAdminPage() {
         { key: "tier", label: "Gói" },
         { key: "registeredAt", label: "Ngày đăng ký" },
         { key: "roadmapProgress", label: "Tiến độ (%)" },
+        { key: "selectedGoal", label: "Mục tiêu đã chọn" },
+        { key: "lastLoginAt", label: "Đăng nhập gần nhất" },
         { key: "status", label: "Trạng thái" },
       ]}
       fields={[
@@ -32,6 +34,11 @@ export default function UsersAdminPage() {
         { key: "promptsCopied", label: "Prompt copied (mock)", type: "number" },
         { key: "toolsClicked", label: "Tools clicked (mock)", type: "number" },
         { key: "resourcesDownloaded", label: "Resources downloaded (mock)", type: "number" },
+        { key: "selectedGoal", label: "Mục tiêu đã chọn (mock)", type: "text" },
+        { key: "savedItemsCount", label: "Tài nguyên đã lưu (mock)", type: "number" },
+        { key: "startHereProgress", label: "Tiến độ Start Here (mock %)", type: "number" },
+        { key: "affiliateLinksClicked", label: "Affiliate links đã click (mock)", type: "number" },
+        { key: "lastLoginAt", label: "Lần đăng nhập gần nhất", type: "date" },
       ]}
     />
   );

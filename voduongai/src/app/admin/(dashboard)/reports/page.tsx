@@ -7,6 +7,11 @@ import { resourcesSeed } from "@/data/admin/resources";
 import { affiliateLinksSeed } from "@/data/admin/affiliate";
 import { blogPostsSeed } from "@/data/admin/content";
 import { leadsSeed } from "@/data/admin/people";
+import { topSavedMock } from "@/data/admin/savedStats";
+import { userGoalsSeed } from "@/data/admin/userGoals";
+import { todayActionsSeed } from "@/data/admin/todayActions";
+import { startHereSeed } from "@/data/admin/startHere";
+import { affiliateHubTopProductsSeed } from "@/data/admin/affiliateHub";
 
 function TopList({ title, items }: { title: string; items: { label: string; value: string | number }[] }) {
   return (
@@ -29,6 +34,12 @@ const mockKeywords = [
   { label: "prompt content viral", value: 142 },
   { label: "công cụ ai miễn phí", value: 98 },
   { label: "affiliate marketing là gì", value: 76 },
+];
+
+const mockToolDetailViews = [
+  { label: "ChatGPT", value: 412 },
+  { label: "Canva", value: 287 },
+  { label: "HeyGen", value: 153 },
 ];
 
 export default function ReportsPage() {
@@ -82,6 +93,39 @@ export default function ReportsPage() {
             .map((b) => ({ label: b.title, value: b.publishedAt }))}
         />
         <TopList title="Từ khóa tìm kiếm (mock)" items={mockKeywords} />
+        <TopList
+          title="Mục tiêu người dùng được chọn nhiều nhất (mock)"
+          items={[...userGoalsSeed]
+            .sort((a, b) => a.order - b.order)
+            .map((g, i) => ({ label: g.label, value: 120 - i * 18 }))}
+        />
+        <TopList
+          title="'Hôm nay bạn muốn làm gì' — thẻ được click nhiều nhất (mock)"
+          items={[...todayActionsSeed]
+            .sort((a, b) => a.order - b.order)
+            .map((c, i) => ({ label: c.title, value: 95 - i * 12 }))}
+        />
+        <TopList
+          title="Start Here — bước được mở nhiều nhất (mock)"
+          items={[...startHereSeed]
+            .sort((a, b) => a.order - b.order)
+            .map((s, i) => ({ label: s.title, value: 80 - i * 9 }))}
+        />
+        <TopList title="Prompt được lưu nhiều nhất (mock)" items={topSavedMock.topPrompts.map((p) => ({ label: p.title, value: p.count }))} />
+        <TopList title="Công cụ được lưu nhiều nhất (mock)" items={topSavedMock.topTools.map((t) => ({ label: t.title, value: t.count }))} />
+        <TopList title="Tool detail được xem nhiều nhất (mock)" items={mockToolDetailViews} />
+        <TopList
+          title="Sản phẩm Affiliate được click nhiều nhất (mock)"
+          items={affiliateHubTopProductsSeed.map((p) => ({ label: p.productName, value: 67 }))}
+        />
+        <TopList
+          title="Tài nguyên được lưu nhiều nhất (mock)"
+          items={topSavedMock.topEbooks.map((e) => ({ label: e.title, value: e.count }))}
+        />
+        <TopList
+          title="Tài nguyên được tải nhiều nhất (mock)"
+          items={resources.slice(0, 5).map((r, i) => ({ label: r.name, value: 60 - i * 7 }))}
+        />
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">

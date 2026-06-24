@@ -67,15 +67,64 @@ export type PortalSection = {
   id: string;
   key: string;
   label: string;
+  description?: string;
+  dataSource?: string;
+  ctaText?: string;
+  ctaHref?: string;
   order: number;
   visible: boolean;
 };
 
 export const portalSectionsSeed: PortalSection[] = [
-  { id: "sec_1", key: "roadmap", label: "Tiến độ lộ trình", order: 1, visible: true },
-  { id: "sec_2", key: "missions", label: "Nhiệm vụ hôm nay", order: 2, visible: true },
-  { id: "sec_3", key: "courses", label: "Tiếp tục học", order: 3, visible: true },
-  { id: "sec_4", key: "tools", label: "Công cụ nổi bật", order: 4, visible: true },
-  { id: "sec_5", key: "affiliate", label: "Đề xuất hôm nay — Affiliate", order: 5, visible: true },
-  { id: "sec_6", key: "resources", label: "Tài nguyên mới nhất", order: 6, visible: true },
+  {
+    id: "sec_0",
+    key: "welcome",
+    label: "Welcome + thẻ người dùng",
+    description: "Lời chào, tên người dùng, hạng thành viên.",
+    dataSource: "portal-welcome",
+    ctaText: "Xem lộ trình của tôi",
+    ctaHref: "/portal/roadmap",
+    order: 1,
+    visible: true,
+  },
+  {
+    id: "sec_7",
+    key: "today-actions",
+    label: "Hôm nay bạn muốn làm gì",
+    description: "Các thẻ lựa chọn hành động nhanh trên Dashboard.",
+    dataSource: "today-action-cards",
+    order: 2,
+    visible: true,
+  },
+  {
+    id: "sec_8",
+    key: "user-goals",
+    label: "Mục tiêu của tôi",
+    description: "Widget chọn mục tiêu cá nhân hoá gợi ý nội dung.",
+    dataSource: "user-goals",
+    order: 3,
+    visible: true,
+  },
+  { id: "sec_1", key: "roadmap", label: "Tiến độ lộ trình", dataSource: "roadmap-stages", order: 4, visible: true },
+  { id: "sec_2", key: "missions", label: "Nhiệm vụ hôm nay", dataSource: "daily-missions", order: 5, visible: true },
+  { id: "sec_3", key: "courses", label: "Tiếp tục học", dataSource: "ai-academy-lessons", order: 6, visible: true },
+  { id: "sec_4", key: "tools", label: "Công cụ nổi bật", dataSource: "tools", order: 7, visible: true },
+  {
+    id: "sec_5",
+    key: "affiliate",
+    label: "Đề xuất hôm nay — Affiliate",
+    dataSource: "affiliate-products",
+    order: 8,
+    visible: true,
+  },
+  { id: "sec_6", key: "resources", label: "Tài nguyên mới nhất", dataSource: "resources", order: 9, visible: true },
+  {
+    id: "sec_9",
+    key: "saved-recent",
+    label: "Tài nguyên đã lưu gần đây",
+    description: "Danh sách rút gọn các mục người dùng vừa lưu.",
+    dataSource: "saved-items",
+    order: 10,
+    visible: true,
+  },
 ];

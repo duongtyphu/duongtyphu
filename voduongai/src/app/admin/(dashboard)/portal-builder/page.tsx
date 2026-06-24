@@ -43,7 +43,13 @@ export default function PortalBuilderPage() {
           <h1 className="text-xl font-extrabold text-white">Portal Builder</h1>
           <p className="mt-1 text-sm text-white/50">Điều khiển nội dung hiển thị trên Dashboard Portal.</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Link href="/admin/portal-builder/start-here" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10">
+            Bắt đầu tại đây
+          </Link>
+          <Link href="/admin/portal-builder/today-actions" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10">
+            Hôm nay bạn muốn làm gì
+          </Link>
           <Link href="/admin/portal-builder/banner" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10">
             Quản lý Banner
           </Link>
@@ -52,6 +58,9 @@ export default function PortalBuilderPage() {
           </Link>
           <Link href="/admin/portal-builder/cta" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10">
             CTA Manager
+          </Link>
+          <Link href="/admin/portal-builder/user-goals" className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 hover:bg-white/10">
+            Mục tiêu người dùng
           </Link>
         </div>
       </div>
@@ -116,7 +125,13 @@ export default function PortalBuilderPage() {
               >
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-semibold text-white/40">#{s.order}</span>
-                  <span className="text-sm font-semibold text-white">{s.label}</span>
+                  <div>
+                    <span className="block text-sm font-semibold text-white">{s.label}</span>
+                    {s.description && <span className="block text-xs text-white/40">{s.description}</span>}
+                    {s.dataSource && (
+                      <span className="block text-[11px] text-white/30">Nguồn dữ liệu: {s.dataSource}</span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => move(s.id, -1)} className="rounded-lg border border-white/10 px-2 py-1 text-xs text-white/60 hover:bg-white/10">

@@ -10,6 +10,11 @@ export type AdminUserRow = {
   promptsCopied: number;
   toolsClicked: number;
   resourcesDownloaded: number;
+  selectedGoal?: string;
+  savedItemsCount: number;
+  startHereProgress: number;
+  affiliateLinksClicked: number;
+  lastLoginAt: string;
 };
 
 export const usersSeed: AdminUserRow[] = [
@@ -25,6 +30,11 @@ export const usersSeed: AdminUserRow[] = [
     promptsCopied: 12,
     toolsClicked: 8,
     resourcesDownloaded: 4,
+    selectedGoal: "Học AI",
+    savedItemsCount: 9,
+    startHereProgress: 80,
+    affiliateLinksClicked: 5,
+    lastLoginAt: "2026-06-23",
   },
   {
     id: "user_2",
@@ -38,6 +48,11 @@ export const usersSeed: AdminUserRow[] = [
     promptsCopied: 3,
     toolsClicked: 2,
     resourcesDownloaded: 1,
+    selectedGoal: "Làm Affiliate",
+    savedItemsCount: 2,
+    startHereProgress: 20,
+    affiliateLinksClicked: 1,
+    lastLoginAt: "2026-06-20",
   },
 ];
 
