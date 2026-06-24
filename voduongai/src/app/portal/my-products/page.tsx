@@ -8,6 +8,8 @@ type Order = {
   amount: number;
   status: string;
   created_at: string;
+  products: { title: string; icon: string | null; video_url: string | null; pdf_url: string | null } | null;
+  lessons: { title: string; video_url: string | null; pdf_url: string | null } | null;
 };
 
 const statusLabel: Record<string, string> = {
@@ -27,11 +29,11 @@ async function getUserOrders(): Promise<{ email: string | null; orders: Order[] 
 
   const { data } = await supabase
     .from("orders")
-    .select("id, product_name, amount, status, created_at")
+    .select("id, product_name, amount, status, created_at, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
     .eq("member_email", email)
     .order("created_at", { ascending: false });
 
-  return { email, orders: data ?? [] };
+  return { email, orders: (data as unknown as Order[]) ?? [] };
 }
 
 export default async function MyProductsPage() {
@@ -64,19 +66,42 @@ export default async function MyProductsPage() {
 
       {email && orders.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
-          {orders.map((o) => (
-            <div key={o.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="flex items-start justify-between gap-3">
-                <h3 className="text-sm font-bold text-white">{o.product_name ?? "Sản phẩm"}</h3>
-                <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-white">
-                  {statusLabel[o.status] ?? o.status}
-                </span>
+          {orders.map((o) => {
+            const title = o.products?.title ?? o.lessons?.title ?? o.product_name ?? "Sản phẩm";
+            const icon = o.products?.icon ?? (o.lessons ? "📚" : "💡");
+            const video = o.products?.video_url ?? o.lessons?.video_url;
+            const pdf = o.products?.pdf_url ?? o.lessons?.pdf_url;
+            return (
+              <div key={o.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-sm font-bold text-white">
+                    <span className="mr-1">{icon}</span>
+                    {title}
+                  </h3>
+                  <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-white">
+                    {statusLabel[o.status] ?? o.status}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-white/70">
+                  {o.amount.toLocaleString("vi-VN")}đ · {new Date(o.created_at).toLocaleDateString("vi-VN")}
+                </p>
+                {o.status === "confirmed" && (video || pdf) && (
+                  <div className="mt-3 flex gap-2">
+                    {video && (
+                      <a href={video} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:border-brand-violet hover:text-brand-violet">
+                        ▶ Video
+                      </a>
+                    )}
+                    {pdf && (
+                      <a href={pdf} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:border-brand-violet hover:text-brand-violet">
+                        📄 PDF
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
-              <p className="mt-2 text-sm text-white/70">
-                {o.amount.toLocaleString("vi-VN")}đ · {new Date(o.created_at).toLocaleDateString("vi-VN")}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

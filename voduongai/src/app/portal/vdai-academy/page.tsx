@@ -55,6 +55,28 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleDateString("vi-VN");
 }
 
+type LiveCourse = { name: string; status: string; description: string | null };
+
+const courseStatusLabel: Record<string, string> = {
+  coming: "Sắp mở đăng ký",
+  open: "Đang mở đăng ký",
+  closed: "Đã đóng",
+};
+
+async function getLiveCourseStatuses(): Promise<Record<string, LiveCourse>> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return {};
+  }
+  const supabase = await getSupabaseServer();
+  const { data } = await supabase.from("courses").select("name, status, description");
+  const map: Record<string, LiveCourse> = {};
+  for (const c of data ?? []) {
+    const key = c.name?.toUpperCase().includes("SCALE") ? "scale" : "solo";
+    map[key] = c;
+  }
+  return map;
+}
+
 const tracks = [
   {
     id: "solo",
@@ -102,6 +124,7 @@ const a5System = [
 export default async function VdaiAcademyPage() {
   const liveLessons = await getLiveLessons();
   const liveClasses = await getLiveClasses();
+  const liveCourseStatuses = await getLiveCourseStatuses();
 
   return (
     <div className="space-y-10">
@@ -115,7 +138,9 @@ export default async function VdaiAcademyPage() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        {tracks.map((t) => (
+        {tracks.map((t) => {
+          const live = liveCourseStatuses[t.id];
+          return (
           <div
             key={t.id}
             className="card-shine flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6"
@@ -129,7 +154,12 @@ export default async function VdaiAcademyPage() {
                 Lộ trình {t.duration}
               </span>
             )}
-            <p className="mt-3 text-sm leading-relaxed text-white/70">{t.tagline}</p>
+            {live && (
+              <span className="mt-1 inline-flex w-fit rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white">
+                {courseStatusLabel[live.status] ?? live.status}
+              </span>
+            )}
+            <p className="mt-3 text-sm leading-relaxed text-white/70">{live?.description || t.tagline}</p>
 
             <div className="mt-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-white/50">
@@ -153,7 +183,8 @@ export default async function VdaiAcademyPage() {
               </ul>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div>

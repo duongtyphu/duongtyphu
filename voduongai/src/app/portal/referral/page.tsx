@@ -12,6 +12,8 @@ type Referral = {
   created_at: string;
 };
 
+type Member = { id: string; referral_code: string | null; created_at: string };
+
 const statusLabel: Record<string, string> = {
   pending: "Vừa đăng ký",
   confirmed: "Đã có đơn hàng",
@@ -20,16 +22,16 @@ const statusLabel: Record<string, string> = {
 
 async function getReferralData() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { email: null, referralCode: null as string | null, referrals: [] as Referral[] };
+    return { email: null, member: null as Member | null, referrals: [] as Referral[] };
   }
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
-  if (!user) return { email: null, referralCode: null, referrals: [] };
+  if (!user) return { email: null, member: null, referrals: [] };
 
   const { data: member } = await supabase
     .from("members")
-    .select("id, referral_code")
+    .select("id, referral_code, created_at")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -41,13 +43,14 @@ async function getReferralData() {
 
   return {
     email: user.email ?? null,
-    referralCode: member?.referral_code ?? null,
+    member: member ?? null,
     referrals: referrals ?? [],
   };
 }
 
 export default async function ReferralPage() {
-  const { email, referralCode, referrals } = await getReferralData();
+  const { email, member, referrals } = await getReferralData();
+  const referralCode = member?.referral_code ?? null;
 
   const pending = referrals.filter((r) => r.status === "pending");
   const confirmed = referrals.filter((r) => r.status === "confirmed");
@@ -108,6 +111,12 @@ export default async function ReferralPage() {
               <p className="mt-2 text-2xl font-extrabold text-white">{referrals.length}</p>
             </div>
           </div>
+
+          {member?.created_at && (
+            <p className="text-xs text-white/40">
+              Tham gia từ {new Date(member.created_at).toLocaleDateString("vi-VN")}
+            </p>
+          )}
 
           <div>
             <h2 className="text-lg font-bold text-white">Lịch sử giới thiệu</h2>
