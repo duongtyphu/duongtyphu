@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { bankConfig } from "@/lib/site";
 import { createOrder, applyCoupon, getOrderStatus, type CheckoutItemType } from "@/app/portal/checkout/actions";
 
@@ -23,11 +23,15 @@ export function CheckoutButton({ target, label }: { target: CheckoutTarget; labe
   const [couponCode, setCouponCode] = useState("");
   const [couponInput, setCouponInput] = useState("");
   const [couponBusy, setCouponBusy] = useState(false);
+  const creatingRef = useRef(false);
 
   async function handleOpen() {
+    if (creatingRef.current) return;
+    creatingRef.current = true;
     setOpen(true);
     setStage("loading");
     const result = await createOrder(target.itemType, target.itemId, target.title, target.price);
+    creatingRef.current = false;
     if (!result.ok) {
       setErrorMsg(result.error);
       setStage("error");
@@ -134,7 +138,14 @@ export function CheckoutButton({ target, label }: { target: CheckoutTarget; labe
                 {finalPrice > 0 ? (
                   <>
                     <div className="mt-4 flex flex-col items-center gap-2">
-                      <img src={qrUrl} alt="QR VietQR" className="h-44 w-44 rounded-lg bg-white p-2" />
+                      <img
+                        src={qrUrl}
+                        alt="QR VietQR"
+                        width={176}
+                        height={176}
+                        decoding="async"
+                        className="h-44 w-44 shrink-0 rounded-lg bg-white p-2"
+                      />
                       <p className="text-xs text-white/50">Quét mã bằng app ngân hàng bất kỳ</p>
                     </div>
                     <div className="mt-3 space-y-1 text-sm text-white/80">
