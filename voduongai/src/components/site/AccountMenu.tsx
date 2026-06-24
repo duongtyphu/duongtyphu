@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
 type AccountMenuProps = {
@@ -14,6 +14,7 @@ export function AccountMenu({ email, fullName }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -29,6 +30,8 @@ export function AccountMenu({ email, fullName }: AccountMenuProps) {
     router.push("/login");
     router.refresh();
   }
+
+  if (pathname?.startsWith("/portal")) return null;
 
   const initial = (fullName || email).trim().charAt(0).toUpperCase();
 
