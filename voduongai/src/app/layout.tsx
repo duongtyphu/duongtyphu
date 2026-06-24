@@ -4,7 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { NotificationTicker } from "@/components/portal/NotificationTicker";
+import { WelcomeBanner } from "@/components/portal/WelcomeBanner";
 import { AntiCopy } from "@/components/site/AntiCopy";
 import { siteConfig } from "@/lib/site";
 
@@ -87,7 +87,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
         <Header />
-        <NotificationTicker />
+        <WelcomeBanner />
         <main className="flex-1">{children}</main>
         <Footer />
       </body>
