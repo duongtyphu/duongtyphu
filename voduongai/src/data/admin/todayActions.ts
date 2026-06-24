@@ -55,7 +55,7 @@ export const todayActionsSeed: TodayActionCard[] = [
     icon: "💎",
     gradient: "from-emerald-400/20 to-emerald-400/0",
     ctaText: "Khám phá ngay",
-    ctaHref: "/portal/assets",
+    ctaHref: "/portal/digital-assets",
     order: 4,
     featured: false,
     status: "Published",

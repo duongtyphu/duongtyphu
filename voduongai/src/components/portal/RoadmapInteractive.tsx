@@ -51,7 +51,7 @@ const steps: Step[] = [
     step: 6,
     title: "Tạo tài sản số",
     description: "Mở rộng sang các loại tài sản số khác để đa dạng nguồn lực.",
-    resource: { label: "Trung tâm Tài sản số", href: "/portal/assets" },
+    resource: { label: "Trung tâm Tài sản số", href: "/portal/digital-assets" },
     action: "Tìm hiểu các loại tài sản số phù hợp với mục tiêu dài hạn.",
   },
   {

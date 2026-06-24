@@ -26,7 +26,7 @@ const CARDS = [
     icon: "💎",
     title: "Đầu tư tài sản số",
     description: "Khám phá DigiU, Blockchain, Crypto, Trading và tư duy tài sản số.",
-    href: "/portal/assets",
+    href: "/portal/digital-assets",
     gradient: "from-emerald-400/20 to-emerald-400/0",
   },
 ];

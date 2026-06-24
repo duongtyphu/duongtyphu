@@ -36,7 +36,7 @@ const STEPS = [
     title: "Tạo sản phẩm số và tài sản số",
     description: "Đóng gói kiến thức thành sản phẩm số, tích lũy tài sản số dài hạn.",
     resource: { label: "Sản phẩm số", href: "/portal/premium" },
-    tool: { label: "Tài sản số", href: "/portal/assets" },
+    tool: { label: "Tài sản số", href: "/portal/digital-assets" },
   },
 ];
 

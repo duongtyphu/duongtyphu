@@ -10,7 +10,7 @@ const GOALS = [
   { id: "affiliate", label: "Làm Affiliate", href: "/portal/affiliate-hub", hint: "Vào Affiliate Hub để chọn ngách và sản phẩm phù hợp." },
   { id: "brand", label: "Xây thương hiệu cá nhân", href: "/portal/personal-brand", hint: "Lên kế hoạch nội dung và xây hình ảnh cá nhân." },
   { id: "product", label: "Tạo sản phẩm số", href: "/portal/premium", hint: "Khám phá Sản phẩm số để đóng gói kiến thức của bạn." },
-  { id: "assets", label: "Đầu tư tài sản số", href: "/portal/assets", hint: "Tìm hiểu DigiU, Blockchain, Crypto, Trading." },
+  { id: "assets", label: "Đầu tư tài sản số", href: "/portal/digital-assets", hint: "Tìm hiểu DigiU, Blockchain, Crypto, Trading." },
 ] as const;
 
 export function GoalWidget() {

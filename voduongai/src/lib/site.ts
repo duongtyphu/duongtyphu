@@ -83,7 +83,7 @@ export const portalNavGroups = [
   },
   {
     group: "Tài sản số",
-    items: [{ label: "Tài sản số", href: "/portal/assets" }],
+    items: [{ label: "Tài sản số", href: "/portal/digital-assets" }],
   },
   {
     group: "Khám phá",

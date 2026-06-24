@@ -52,7 +52,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/premium": Crown,
   "/portal/my-products": Package,
   "/portal/services": Handshake,
-  "/portal/assets": Boxes,
+  "/portal/digital-assets": Boxes,
   "/portal/community": MessageCircle,
   "/portal/case-studies": TrendingUp,
   "/portal/student-success": BadgeCheck,
