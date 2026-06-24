@@ -19,6 +19,8 @@ import {
   MessageCircle,
   CircleUser,
   Newspaper,
+  Percent,
+  LifeBuoy,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -38,11 +40,13 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/checklists": ListChecks,
   "/portal/sop": ClipboardList,
   "/portal/affiliate-hub": Users,
+  "/portal/referral": Percent,
   "/portal/premium": Crown,
   "/portal/my-products": Package,
   "/portal/services": Handshake,
   "/portal/assets": Boxes,
   "/portal/community": MessageCircle,
+  "/portal/support": LifeBuoy,
   "/portal/account": CircleUser,
   "/blog": Newspaper,
 };

@@ -63,6 +63,7 @@ export const portalNavGroups = [
     group: "Kiếm tiền",
     items: [
       { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
+      { label: "Hoa hồng giới thiệu", href: "/portal/referral" },
       { label: "Sản phẩm số", href: "/portal/premium" },
       { label: "Sản phẩm của tôi", href: "/portal/my-products" },
       { label: "Dịch vụ", href: "/portal/services" },
@@ -79,6 +80,7 @@ export const portalNavGroups = [
   {
     group: null,
     items: [
+      { label: "Hỗ trợ", href: "/portal/support" },
       { label: "Tài khoản", href: "/portal/account" },
       { label: "Blog AI", href: "/blog" },
     ],

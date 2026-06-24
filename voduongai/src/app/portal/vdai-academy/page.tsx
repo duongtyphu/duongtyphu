@@ -1,6 +1,29 @@
 import { vdaiCourses } from "@/data/courses";
+import { getSupabaseServer } from "@/lib/supabase-server";
 
 export const metadata = { title: "VDAI Academy" };
+
+type LiveLesson = {
+  id: number;
+  title: string;
+  description: string | null;
+  video_url: string | null;
+  pdf_url: string | null;
+  price: number;
+};
+
+async function getLiveLessons(): Promise<LiveLesson[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
+  const supabase = await getSupabaseServer();
+  const { data } = await supabase
+    .from("lessons")
+    .select("id, title, description, video_url, pdf_url, price")
+    .eq("active", true)
+    .order("sort_order", { ascending: true });
+  return data ?? [];
+}
 
 const tracks = [
   {
@@ -46,7 +69,9 @@ const a5System = [
   { step: "Amplify", desc: "Tiêu chuẩn hoá, đào tạo, KPI, phát triển đội nhóm" },
 ];
 
-export default function VdaiAcademyPage() {
+export default async function VdaiAcademyPage() {
+  const liveLessons = await getLiveLessons();
+
   return (
     <div className="space-y-10">
       <div>
@@ -116,6 +141,37 @@ export default function VdaiAcademyPage() {
           ))}
         </div>
       </div>
+
+      {liveLessons.length > 0 && (
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">
+            Buổi học thật
+          </h2>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {liveLessons.map((l) => (
+              <div key={l.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-sm font-bold text-white">{l.title}</h3>
+                  <span className="shrink-0 rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold text-brand-orange">
+                    {l.price > 0 ? `${l.price.toLocaleString("vi-VN")}đ` : "Miễn phí"}
+                  </span>
+                </div>
+                {l.description && <p className="mt-2 text-sm text-white/70">{l.description}</p>}
+                {l.video_url && (
+                  <a
+                    href={l.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
+                  >
+                    Xem tài liệu buổi học →
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div>
         <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">
