@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { bankConfig } from "@/lib/site";
 import { createOrder, applyCoupon, getOrderStatus, type CheckoutItemType } from "@/app/portal/checkout/actions";
 
@@ -89,7 +90,7 @@ export function CheckoutButton({ target, label }: { target: CheckoutTarget; labe
         {label}
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
           onClick={(e) => e.target === e.currentTarget && handleClose()}
@@ -199,7 +200,8 @@ export function CheckoutButton({ target, label }: { target: CheckoutTarget; labe
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
