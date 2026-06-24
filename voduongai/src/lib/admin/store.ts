@@ -74,9 +74,16 @@ function useSupabaseCollection<T extends { id: string }>(key: string) {
     [endpoint, load]
   );
 
-  const reorder = useCallback((next: T[]) => setItems(next), []);
+  const set = useCallback(
+    async (next: T[]) => {
+      setItems(next);
+      await fetch(endpoint, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
+      load();
+    },
+    [endpoint, load]
+  );
 
-  return { items, ready, add, update, remove, reorder, set: reorder };
+  return { items, ready, add, update, remove, reorder: set, set };
 }
 
 function useLocalCollection<T extends { id: string }>(key: string, seed: T[]) {

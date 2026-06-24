@@ -35,6 +35,18 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "daily-missions": "daily_missions",
   "affiliate-hub-sections": "affiliate_hub_sections",
   "affiliate-hub-top-products": "affiliate_hub_top_products",
+
+  // Phase 4 — Affiliate products/links, Digital Assets, Settings, Portal singletons
+  "affiliate-products": "affiliate_products",
+  "affiliate-links": "affiliate_links",
+  "digital-asset-categories": "digital_asset_categories",
+  "digital-asset-projects": "digital_asset_projects",
+  "digital-asset-links": "digital_asset_links",
+  "digital-asset-articles": "digital_asset_articles",
+  "digital-asset-settings": "digital_asset_settings",
+  settings: "settings",
+  "portal-sections": "portal_sections",
+  "portal-welcome": "portal_welcome",
 };
 
 export function tableForCollection(key: string): string | null {
