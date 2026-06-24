@@ -1,7 +1,21 @@
 import Link from "next/link";
 import { mainNav, siteConfig } from "@/lib/site";
+import { getSupabaseServer } from "@/lib/supabase-server";
+import { AccountMenu } from "@/components/site/AccountMenu";
 
-export function Header() {
+async function getCurrentUser() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
+  const supabase = await getSupabaseServer();
+  const { data } = await supabase.auth.getUser();
+  return data.user;
+}
+
+export async function Header() {
+  const user = await getCurrentUser();
+  const meta = user?.user_metadata ?? {};
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-navy/70 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
@@ -32,12 +46,25 @@ export function Header() {
           ))}
         </nav>
 
-        <Link
-          href="/portal"
-          className="rounded-full gradient-surface px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
-        >
-          Vào Portal
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/portal"
+            className="rounded-full gradient-surface px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+          >
+            Vào Portal
+          </Link>
+          {user?.email && (
+            <AccountMenu
+              email={user.email}
+              fullName={meta.full_name}
+              phone={meta.phone}
+              birthday={meta.birthday}
+              gender={meta.gender}
+              occupation={meta.occupation}
+              bio={meta.bio}
+            />
+          )}
+        </div>
       </div>
     </header>
   );
