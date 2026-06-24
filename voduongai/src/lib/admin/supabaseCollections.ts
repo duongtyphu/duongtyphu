@@ -47,6 +47,9 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   settings: "settings",
   "portal-sections": "portal_sections",
   "portal-welcome": "portal_welcome",
+
+  // Phase 5 — Services (was localStorage-only)
+  services: "services",
 };
 
 export function tableForCollection(key: string): string | null {

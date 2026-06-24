@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { affiliateResources } from "@/data/affiliate";
 import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
-
-export const metadata = { title: "Affiliate Hub" };
+import { useCollection } from "@/lib/admin/store";
+import { affiliateHubSeed } from "@/data/admin/affiliateHub";
+import { affiliateHubTopProductsSeed } from "@/data/admin/affiliateHub";
+import { affiliateProductsSeed } from "@/data/admin/affiliate";
 
 const featuredOffers = tools.filter((t) => t.iUseThis);
 
@@ -26,6 +29,18 @@ const TOOL_CATEGORIES = [
 ];
 
 export default function AffiliateHubPage() {
+  const { items: hubSections } = useCollection("affiliate-hub-sections", affiliateHubSeed);
+  const { items: topProducts } = useCollection("affiliate-hub-top-products", affiliateHubTopProductsSeed);
+  const { items: affiliateProducts } = useCollection("affiliate-products", affiliateProductsSeed);
+
+  const sections = [...hubSections]
+    .filter((s) => s.status === "Published")
+    .sort((a, b) => a.order - b.order);
+  const products = [...topProducts]
+    .filter((p) => p.status === "Active")
+    .sort((a, b) => a.order - b.order)
+    .map((p) => ({ ...p, product: affiliateProducts.find((ap) => ap.id === p.productId) }));
+
   return (
     <div className="space-y-12">
       <div className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-8">
@@ -138,11 +153,17 @@ export default function AffiliateHubPage() {
       <section>
         <h2 className="text-lg font-bold text-white">6. Case Study</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {affiliateResources.map((a) => (
-            <div key={a.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <h3 className="text-sm font-bold text-white">{a.title}</h3>
-              <p className="mt-2 text-sm text-white/70">{a.description}</p>
-            </div>
+          {sections.map((s) => (
+            <Link
+              key={s.id}
+              href={s.ctaHref || "#"}
+              className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30"
+            >
+              <h3 className="text-sm font-bold text-white">
+                {s.icon} {s.title}
+              </h3>
+              <p className="mt-2 text-sm text-white/70">{s.description}</p>
+            </Link>
           ))}
         </div>
       </section>
@@ -153,27 +174,31 @@ export default function AffiliateHubPage() {
           Công cụ tôi đã dùng thật và muốn giới thiệu lại cho bạn.
         </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {featuredOffers.map((t) => (
-            <div key={t.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+          {products.map((p) => (
+            <div key={p.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
               <div className="flex items-start justify-between">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/90 p-1.5">
-                  <img src={logoUrl(t.id)} alt={`${t.name} logo`} width={28} height={28} className="h-full w-full object-contain" />
+                  <img src={logoUrl(p.product?.slug || p.productId)} alt={`${p.productName} logo`} width={28} height={28} className="h-full w-full object-contain" />
                 </div>
-                <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-white">
-                  {t.pricing}
-                </span>
+                {p.badge ? (
+                  <span className="rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-white">
+                    {p.badge}
+                  </span>
+                ) : null}
               </div>
-              <h3 className="mt-3 text-sm font-bold text-white">{t.name}</h3>
-              <p className="mt-1 text-xs text-white/70">{t.useCase}</p>
+              <h3 className="mt-3 text-sm font-bold text-white">{p.productName}</h3>
+              {p.product?.shortDescription ? (
+                <p className="mt-1 text-xs text-white/70">{p.product.shortDescription}</p>
+              ) : null}
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link
-                  href={`/portal/tools/${t.id}`}
+                  href={p.guideHref || "#"}
                   className="rounded-full bg-brand-blue/10 px-3 py-1.5 text-xs font-semibold text-brand-blue transition hover:bg-brand-blue/20"
                 >
                   Xem hướng dẫn
                 </Link>
                 <Link
-                  href={`/portal/tools/${t.id}`}
+                  href={p.trialHref || "#"}
                   className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
                 >
                   Dùng thử

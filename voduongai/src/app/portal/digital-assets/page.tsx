@@ -9,6 +9,7 @@ import {
   type DigitalAssetCategoryKey,
   type DigitalAssetBadge,
 } from "@/data/digitalAssets";
+import { useCollection } from "@/lib/admin/store";
 import { DigitalAssetProjectCard } from "@/components/portal/DigitalAssetProjectCard";
 import { DigitalAssetDisclaimer } from "@/components/portal/DigitalAssetDisclaimer";
 
@@ -16,12 +17,16 @@ const BADGES: DigitalAssetBadge[] = ["Đang theo dõi", "Đang tham gia", "Đề
 type SortKey = "featured" | "newest" | "recommended";
 
 export default function DigitalAssetsHubPage() {
+  const { items: categories } = useCollection("digital-asset-categories", digitalAssetCategories);
+  const { items: projects } = useCollection("digital-asset-projects", digitalAssetProjects);
+  const { items: articles } = useCollection("digital-asset-articles", digitalAssetArticles);
+
   const [activeCategory, setActiveCategory] = useState<DigitalAssetCategoryKey | "all">("all");
   const [search, setSearch] = useState("");
   const [badgeFilter, setBadgeFilter] = useState<DigitalAssetBadge | "all">("all");
   const [sort, setSort] = useState<SortKey>("featured");
 
-  const publishedProjects = useMemo(() => digitalAssetProjects.filter((p) => p.status === "Published"), []);
+  const publishedProjects = useMemo(() => projects.filter((p) => p.status === "Published"), [projects]);
 
   const filtered = useMemo(() => {
     let list = publishedProjects;
@@ -39,7 +44,7 @@ export default function DigitalAssetsHubPage() {
   }, [publishedProjects, activeCategory, badgeFilter, search, sort]);
 
   const featuredProjects = publishedProjects.filter((p) => p.featured);
-  const latestArticles = [...digitalAssetArticles]
+  const latestArticles = [...articles]
     .filter((a) => a.status === "Published")
     .sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1))
     .slice(0, 4);
@@ -76,7 +81,7 @@ export default function DigitalAssetsHubPage() {
           >
             Tất cả
           </button>
-          {digitalAssetCategories.map((c) => {
+          {categories.map((c) => {
             const count = publishedProjects.filter((p) => p.category === c.key).length;
             return (
               <button
@@ -98,7 +103,7 @@ export default function DigitalAssetsHubPage() {
 
         {/* Category overview cards */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {digitalAssetCategories.map((c) => (
+          {categories.map((c) => (
             <button
               key={c.id}
               onClick={() => setActiveCategory(c.key)}
@@ -184,7 +189,7 @@ export default function DigitalAssetsHubPage() {
           <h2 className="text-sm font-bold text-white">Bài viết mới nhất</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {latestArticles.map((a) => {
-              const project = digitalAssetProjects.find((p) => p.id === a.projectId);
+              const project = projects.find((p) => p.id === a.projectId);
               return (
                 <Link
                   key={a.id}
@@ -192,7 +197,7 @@ export default function DigitalAssetsHubPage() {
                   className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-0.5"
                 >
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">
-                    {digitalAssetCategories.find((c) => c.key === a.category)?.name}
+                    {categories.find((c) => c.key === a.category)?.name}
                   </p>
                   <h3 className="mt-2 text-sm font-bold text-white">{a.title}</h3>
                   <p className="mt-1.5 line-clamp-2 text-xs text-white/60">{a.excerpt}</p>
