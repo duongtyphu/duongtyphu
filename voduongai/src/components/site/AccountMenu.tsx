@@ -8,16 +8,9 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 type AccountMenuProps = {
   email: string;
   fullName?: string;
-  phone?: string;
-  birthday?: string;
-  gender?: string;
-  occupation?: string;
-  bio?: string;
 };
 
-const genderLabel: Record<string, string> = { male: "Nam", female: "Nữ", other: "Khác" };
-
-export function AccountMenu({ email, fullName, phone, birthday, gender, occupation, bio }: AccountMenuProps) {
+export function AccountMenu({ email, fullName }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -52,19 +45,11 @@ export function AccountMenu({ email, fullName, phone, birthday, gender, occupati
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-2xl border border-white/10 bg-[#0B1F4D] p-4 shadow-xl">
-          <p className="text-sm font-bold text-white">{fullName || "Học viên"}</p>
-          <p className="text-xs text-white/60">{email}</p>
+        <div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-2xl border border-white/10 bg-[#0B1F4D] p-3 shadow-xl">
+          <p className="truncate px-1 text-sm font-bold text-white">{fullName || "Học viên"}</p>
+          <p className="truncate px-1 text-xs text-white/60">{email}</p>
 
-          <div className="mt-3 space-y-1.5 text-xs text-white/70">
-            {phone && <p>📱 {phone}</p>}
-            {birthday && <p>🎂 {new Date(birthday).toLocaleDateString("vi-VN")}</p>}
-            {gender && <p>⚧ {genderLabel[gender] ?? gender}</p>}
-            {occupation && <p>💼 {occupation}</p>}
-            {bio && <p className="leading-relaxed text-white/60">📝 {bio}</p>}
-          </div>
-
-          <div className="mt-4 flex items-center gap-2 border-t border-white/10 pt-3">
+          <div className="mt-3 flex items-center gap-2 border-t border-white/10 pt-3">
             <Link
               href="/portal/account"
               onClick={() => setOpen(false)}

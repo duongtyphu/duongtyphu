@@ -4,6 +4,7 @@ import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { logoUrl } from "@/lib/logo";
+import { getSupabaseServer } from "@/lib/supabase-server";
 
 export const metadata = { title: "Portal" };
 
@@ -13,7 +14,32 @@ const todayTasks = [
   { label: "Xem lại bước hiện tại trong Lộ trình thành công", href: "/portal/roadmap" },
 ];
 
-export default function PortalDashboard() {
+async function getProfileSummary() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
+  const supabase = await getSupabaseServer();
+  const { data: userData } = await supabase.auth.getUser();
+  const user = userData.user;
+  if (!user?.email) return null;
+
+  const { count } = await supabase
+    .from("orders")
+    .select("id", { count: "exact", head: true })
+    .eq("member_email", user.email)
+    .eq("status", "confirmed");
+
+  return {
+    email: user.email,
+    fullName: user.user_metadata?.full_name as string | undefined,
+    memberSince: new Date(user.created_at),
+    purchasedCount: count ?? 0,
+  };
+}
+
+export default async function PortalDashboard() {
+  const profile = await getProfileSummary();
+
   return (
     <div className="space-y-12">
       <div>
@@ -25,28 +51,57 @@ export default function PortalDashboard() {
         </p>
       </div>
 
-      <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-white">Tiến độ lộ trình</h2>
-            <p className="mt-1 text-sm text-white/70">
-              Chưa biết bắt đầu từ đâu? Lộ trình 7 bước sẽ chỉ đúng bước tiếp theo cho bạn.
-            </p>
-            <div className="mt-4 flex items-center gap-3">
-              <div className="h-2 w-40 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-[28%] rounded-full bg-gradient-to-r from-brand-blue to-brand-violet" />
+      <div className="grid gap-5 lg:grid-cols-[1fr_300px]">
+        <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white">Tiến độ lộ trình</h2>
+              <p className="mt-1 text-sm text-white/70">
+                Chưa biết bắt đầu từ đâu? Lộ trình 7 bước sẽ chỉ đúng bước tiếp theo cho bạn.
+              </p>
+              <div className="mt-4 flex items-center gap-3">
+                <div className="h-2 w-40 overflow-hidden rounded-full bg-white/10">
+                  <div className="h-full w-[28%] rounded-full bg-gradient-to-r from-brand-blue to-brand-violet" />
+                </div>
+                <span className="text-xs font-semibold text-white/60">Bước 2/7 · minh hoạ</span>
               </div>
-              <span className="text-xs font-semibold text-white/60">Bước 2/7 · minh hoạ</span>
             </div>
+            <Link
+              href="/portal/roadmap"
+              className="shrink-0 rounded-full bg-brand-blue px-5 py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
+            >
+              Xem lộ trình của tôi →
+            </Link>
           </div>
+        </section>
+
+        {profile && (
           <Link
-            href="/portal/roadmap"
-            className="shrink-0 rounded-full bg-brand-blue px-5 py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
+            href="/portal/account"
+            className="card-shine flex flex-col rounded-[24px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-brand-blue/40"
           >
-            Xem lộ trình của tôi →
+            <div className="flex items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-orange/20 text-base font-bold text-brand-orange">
+                {(profile.fullName || profile.email).trim().charAt(0).toUpperCase()}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-white">{profile.fullName || "Học viên"}</p>
+                <p className="truncate text-xs text-white/60">{profile.email}</p>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-white/50">
+              📅 Đăng ký từ {profile.memberSince.toLocaleDateString("vi-VN")}
+            </p>
+            <div className="mt-3 flex items-center gap-4">
+              <div>
+                <p className="text-base font-extrabold text-white">{profile.purchasedCount}</p>
+                <p className="text-xs text-white/50">Đã mua</p>
+              </div>
+            </div>
+            <span className="mt-auto pt-3 text-xs font-semibold text-brand-blue">Xem hồ sơ đầy đủ →</span>
           </Link>
-        </div>
-      </section>
+        )}
+      </div>
 
       <section>
         <div className="flex items-end justify-between">

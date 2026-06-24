@@ -53,17 +53,7 @@ export async function Header() {
           >
             Vào Portal
           </Link>
-          {user?.email && (
-            <AccountMenu
-              email={user.email}
-              fullName={meta.full_name}
-              phone={meta.phone}
-              birthday={meta.birthday}
-              gender={meta.gender}
-              occupation={meta.occupation}
-              bio={meta.bio}
-            />
-          )}
+          {user?.email && <AccountMenu email={user.email} fullName={meta.full_name} />}
         </div>
       </div>
     </header>
