@@ -1,28 +1,28 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAdminAuth } from "@/lib/admin/auth";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
-export default function AdminLoginPage() {
-  const { login } = useAdminAuth();
-  const router = useRouter();
-  const [email, setEmail] = useState("duongvv.vn@gmail.com");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+function AdminLoginForm() {
+  const searchParams = useSearchParams();
+  const notAdmin = searchParams.get("error") === "not_admin";
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-    const res = await login(email, password);
-    setLoading(false);
-    if (!res.ok) {
-      setError(res.error ?? "Đăng nhập thất bại.");
-      return;
-    }
-    router.push("/admin/dashboard");
+    setStatus("sending");
+
+    const supabase = getSupabaseBrowser();
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/admin/dashboard`,
+      },
+    });
+
+    setStatus(error ? "error" : "sent");
   }
 
   return (
@@ -39,45 +39,56 @@ export default function AdminLoginPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Email</label>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              required
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
-              Mật khẩu
-            </label>
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              required
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
-            />
-          </div>
+        {notAdmin && (
+          <p className="mb-4 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+            Tài khoản này không có quyền Admin.
+          </p>
+        )}
 
-          {error && <p className="text-sm text-red-300">{error}</p>}
+        {status === "sent" ? (
+          <p className="text-sm text-white/80">
+            Đã gửi liên kết đăng nhập tới <span className="font-semibold text-white">{email}</span>. Mở email và
+            bấm vào liên kết để vào trang Admin.
+          </p>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
+                Email Admin
+              </label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                required
+                placeholder="ban@email.com"
+                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-brand-blue py-2.5 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60"
-          >
-            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="w-full rounded-lg bg-brand-blue py-2.5 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-60"
+            >
+              {status === "sending" ? "Đang gửi..." : "Gửi liên kết đăng nhập"}
+            </button>
+            {status === "error" && <p className="text-sm text-red-300">Không gửi được liên kết, vui lòng thử lại.</p>}
+          </form>
+        )}
 
         <p className="mt-5 text-center text-xs text-white/30">
-          Demo: duongvv.vn@gmail.com / admin123
+          Chỉ tài khoản có quyền Admin mới truy cập được trang này.
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

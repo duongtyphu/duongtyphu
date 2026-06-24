@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { revalidatePath } from "next/cache";
 
 export type Lead = {
@@ -24,6 +25,8 @@ export async function listLeads(): Promise<{ leads: Lead[]; configured: boolean 
 }
 
 export async function updateLeadStatus(id: number, status: "new" | "contacted" | "converted") {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 

@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { tableForCollection } from "@/lib/admin/supabaseCollections";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ table: string; id: string }> }
 ) {
+  if (!(await requireAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { table: key, id } = await params;
   const table = tableForCollection(key);
   if (!table) return NextResponse.json({ error: "Unknown collection" }, { status: 404 });
@@ -43,6 +46,8 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ table: string; id: string }> }
 ) {
+  if (!(await requireAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { table: key, id } = await params;
   const table = tableForCollection(key);
   if (!table) return NextResponse.json({ error: "Unknown collection" }, { status: 404 });

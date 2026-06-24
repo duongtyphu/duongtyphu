@@ -2,27 +2,19 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
-import { useAdminAuth } from "@/lib/admin/auth";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
-  const { user, loading, logout } = useAdminAuth();
+export function AdminShell({ email, children }: { email: string; children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !user) router.replace("/admin/login");
-  }, [loading, user, router]);
-
-  if (loading || !user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#06142D] text-white/50">
-        Đang tải...
-      </div>
-    );
+  async function logout() {
+    await getSupabaseBrowser().auth.signOut();
+    router.push("/admin/login");
   }
 
   const activeLabel =
@@ -86,12 +78,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <h1 className="text-sm font-bold text-white/80">{activeLabel}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden text-sm text-white/50 sm:inline">{user.email}</span>
+            <span className="hidden text-sm text-white/50 sm:inline">{email}</span>
             <button
-              onClick={() => {
-                logout();
-                router.push("/admin/login");
-              }}
+              onClick={logout}
               className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:border-red-400/40 hover:text-red-300"
             >
               Đăng xuất

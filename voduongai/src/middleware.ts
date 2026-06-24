@@ -30,6 +30,8 @@ export async function middleware(request: NextRequest) {
 
   const isPortalRoute = request.nextUrl.pathname.startsWith("/portal");
   const isLoginRoute = request.nextUrl.pathname === "/login";
+  const isAdminLoginRoute = request.nextUrl.pathname === "/admin/login";
+  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin") && !isAdminLoginRoute;
 
   if (isPortalRoute && !data.user) {
     const loginUrl = new URL("/login", request.url);
@@ -41,9 +43,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/portal", request.url));
   }
 
+  if (isAdminRoute || isAdminLoginRoute) {
+    let isAdmin = false;
+    if (data.user) {
+      const { data: member } = await supabase.from("members").select("is_admin").eq("id", data.user.id).single();
+      isAdmin = Boolean(member?.is_admin);
+    }
+
+    if (isAdminRoute && !isAdmin) {
+      const loginUrl = new URL("/admin/login", request.url);
+      if (data.user) loginUrl.searchParams.set("error", "not_admin");
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (isAdminLoginRoute && isAdmin) {
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+    }
+  }
+
   return response;
 }
 
 export const config = {
-  matcher: ["/portal/:path*", "/login"],
+  matcher: ["/portal/:path*", "/login", "/admin/:path*"],
 };

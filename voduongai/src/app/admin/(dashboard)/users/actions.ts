@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { revalidatePath } from "next/cache";
 
 export type AdminUser = {
@@ -41,6 +42,8 @@ export async function listUsers(): Promise<{ users: AdminUser[]; configured: boo
 }
 
 export async function setUserBanned(id: string, banned: boolean) {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 
