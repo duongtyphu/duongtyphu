@@ -5,6 +5,7 @@ import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { logoUrl } from "@/lib/logo";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { ProfileQuickMenu } from "@/components/portal/ProfileQuickMenu";
 
 export const metadata = { title: "Portal" };
 
@@ -53,30 +54,12 @@ export default async function PortalDashboard() {
         </div>
 
         {profile && (
-          <Link
-            href="/portal/account"
-            className="card-shine flex w-full flex-col rounded-[24px] border border-white/10 bg-white/[0.04] p-5 transition hover:border-brand-blue/40 sm:w-72"
-          >
-            <div className="flex items-center gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-orange/20 text-base font-bold text-brand-orange">
-                {(profile.fullName || profile.email).trim().charAt(0).toUpperCase()}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white">{profile.fullName || "Học viên"}</p>
-                <p className="truncate text-xs text-white/60">{profile.email}</p>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-white/50">
-              📅 Đăng ký từ {profile.memberSince.toLocaleDateString("vi-VN")}
-            </p>
-            <div className="mt-3 flex items-center gap-4">
-              <div>
-                <p className="text-base font-extrabold text-white">{profile.purchasedCount}</p>
-                <p className="text-xs text-white/50">Đã mua</p>
-              </div>
-            </div>
-            <span className="mt-auto pt-3 text-xs font-semibold text-brand-blue">Xem hồ sơ đầy đủ →</span>
-          </Link>
+          <ProfileQuickMenu
+            email={profile.email}
+            fullName={profile.fullName}
+            memberSince={profile.memberSince.toLocaleDateString("vi-VN")}
+            purchasedCount={profile.purchasedCount}
+          />
         )}
       </div>
 
