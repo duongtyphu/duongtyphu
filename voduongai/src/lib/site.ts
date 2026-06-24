@@ -82,10 +82,6 @@ export const portalNavGroups = [
     items: [{ label: "Trung tâm Tài sản số", href: "/portal/assets" }],
   },
   {
-    group: null,
-    items: [{ label: "Cộng đồng", href: "/portal/community" }],
-  },
-  {
     group: "Khám phá",
     items: [
       { label: "Case Study", href: "/portal/case-studies" },
@@ -97,7 +93,7 @@ export const portalNavGroups = [
     group: null,
     items: [
       { label: "Hỗ trợ", href: "/portal/support" },
-      { label: "Blog AI", href: "/blog" },
+      { label: "Cộng đồng", href: "/portal/community" },
     ],
   },
 ];
