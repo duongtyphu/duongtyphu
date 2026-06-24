@@ -5,6 +5,7 @@ import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { AntiCopy } from "@/components/site/AntiCopy";
+import { ChromeGate } from "@/components/site/ChromeGate";
 import { siteConfig } from "@/lib/site";
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
@@ -85,9 +86,9 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ChromeGate header={<Header />} footer={<Footer />}>
+          {children}
+        </ChromeGate>
       </body>
     </html>
   );

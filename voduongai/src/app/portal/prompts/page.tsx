@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prompts } from "@/data/prompts";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { CopyPromptButton } from "@/components/portal/CopyPromptButton";
+import { AdminPromptsSection } from "@/components/portal/AdminPromptsSection";
 
 export const metadata = { title: "Thư viện Prompt" };
 
@@ -51,6 +52,8 @@ export default async function PromptsPage() {
           </div>
         </div>
       )}
+
+      <AdminPromptsSection />
 
       <div>
         <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">Prompt mẫu</h2>

@@ -1,4 +1,5 @@
 import { RoadmapInteractive } from "@/components/portal/RoadmapInteractive";
+import { AdminRoadmapSection } from "@/components/portal/AdminRoadmapSection";
 
 export const metadata = { title: "Lộ trình thành công" };
 
@@ -12,6 +13,7 @@ export default function RoadmapPage() {
           đầu phù hợp với bạn.
         </p>
       </div>
+      <AdminRoadmapSection />
       <RoadmapInteractive />
     </div>
   );
