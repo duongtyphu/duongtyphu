@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AUTH_KEY = "vdai_admin_auth";
-const MOCK_ADMIN = { email: "admin@voduongai.com", password: "admin123" };
+const MOCK_ADMIN = { email: "duongvv.vn@gmail.com", password: "admin123" };
 
 type AdminUser = { email: string; name: string };
 

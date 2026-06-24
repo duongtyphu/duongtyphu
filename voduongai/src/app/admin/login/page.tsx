@@ -7,7 +7,7 @@ import { useAdminAuth } from "@/lib/admin/auth";
 export default function AdminLoginPage() {
   const { login } = useAdminAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("admin@voduongai.com");
+  const [email, setEmail] = useState("duongvv.vn@gmail.com");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -75,7 +75,7 @@ export default function AdminLoginPage() {
         </form>
 
         <p className="mt-5 text-center text-xs text-white/30">
-          Demo: admin@voduongai.com / admin123
+          Demo: duongvv.vn@gmail.com / admin123
         </p>
       </div>
     </div>

@@ -31,7 +31,7 @@ export const settingsSeed: SiteSettings = {
   youtubeUrl: "https://www.youtube.com/@voduongofficial",
   tiktokUrl: "https://www.tiktok.com/@vdai_academy",
   zaloUrl: "https://zalo.me/0909150587",
-  adminEmailNotify: "typhuonline87@gmail.com",
+  adminEmailNotify: "duongvv.vn@gmail.com",
 };
 
 export const trafficSeed = [
