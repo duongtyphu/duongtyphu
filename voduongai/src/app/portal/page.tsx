@@ -4,6 +4,8 @@ import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { logoUrl } from "@/lib/logo";
+import { getSupabaseServer } from "@/lib/supabase-server";
+import { ProfileQuickMenu } from "@/components/portal/ProfileQuickMenu";
 
 export const metadata = { title: "Portal" };
 
@@ -13,16 +15,52 @@ const todayTasks = [
   { label: "Xem lại bước hiện tại trong Lộ trình thành công", href: "/portal/roadmap" },
 ];
 
+async function getProfileSummary() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
+  const supabase = await getSupabaseServer();
+  const { data: userData } = await supabase.auth.getUser();
+  const user = userData.user;
+  if (!user?.email) return null;
+
+  const { count } = await supabase
+    .from("orders")
+    .select("id", { count: "exact", head: true })
+    .eq("member_email", user.email)
+    .eq("status", "confirmed");
+
+  return {
+    email: user.email,
+    fullName: user.user_metadata?.full_name as string | undefined,
+    memberSince: new Date(user.created_at),
+    purchasedCount: count ?? 0,
+  };
+}
+
 export default async function PortalDashboard() {
+  const profile = await getProfileSummary();
+
   return (
     <div className="space-y-12">
-      <div>
-        <h1 className="text-2xl font-extrabold text-white">
-          Chào mừng đến với Võ Đương AI Portal
-        </h1>
-        <p className="mt-2 text-white">
-          Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div>
+          <h1 className="text-2xl font-extrabold text-white">
+            Chào mừng đến với Võ Đương AI Portal
+          </h1>
+          <p className="mt-2 text-white">
+            Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây.
+          </p>
+        </div>
+
+        {profile && (
+          <ProfileQuickMenu
+            email={profile.email}
+            fullName={profile.fullName}
+            memberSince={profile.memberSince.toLocaleDateString("vi-VN")}
+            purchasedCount={profile.purchasedCount}
+          />
+        )}
       </div>
 
       <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
