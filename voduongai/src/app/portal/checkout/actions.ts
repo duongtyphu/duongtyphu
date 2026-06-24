@@ -97,3 +97,27 @@ export async function getOrderStatus(orderId: number) {
 
   return { status: data?.status ?? null };
 }
+
+export type OrderRecord = {
+  id: number;
+  order_code: string | null;
+  product_name: string | null;
+  amount: number;
+  status: string;
+};
+
+export async function getOrder(orderId: number): Promise<OrderRecord | null> {
+  const supabase = await getSupabaseServer();
+  const { data: userData } = await supabase.auth.getUser();
+  const email = userData.user?.email;
+  if (!email) return null;
+
+  const { data } = await supabase
+    .from("orders")
+    .select("id, order_code, product_name, amount, status")
+    .eq("id", orderId)
+    .eq("member_email", email)
+    .maybeSingle();
+
+  return data ?? null;
+}
