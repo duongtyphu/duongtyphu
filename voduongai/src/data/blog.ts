@@ -1,3 +1,14 @@
+export const blogCategories = [
+  "AI",
+  "Affiliate Marketing",
+  "Prompt",
+  "Công cụ AI",
+  "Tài sản số",
+  "DigiU",
+  "Website & SEO",
+  "Case Study",
+] as const;
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -21,7 +32,7 @@ export const blogPosts: BlogPost[] = [
     title: "AI giúp tăng tốc nghiên cứu sản phẩm Affiliate như thế nào?",
     excerpt:
       "Quy trình nghiên cứu ngách, đối thủ và sản phẩm tiềm năng thường mất hàng giờ. Đây là cách dùng AI để rút quy trình đó xuống chỉ còn vài chục phút mà vẫn chính xác.",
-    category: "AI ứng dụng",
+    category: "Affiliate Marketing",
     tag: "AI Affiliate",
     emoji: "🔍",
     date: "15/01/2026",
@@ -52,7 +63,7 @@ export const blogPosts: BlogPost[] = [
     title: "5 prompt AI giúp viết content bán hàng nhanh gấp 3 lần",
     excerpt:
       "Không cần là copywriter chuyên nghiệp. Với 5 cấu trúc prompt này, bạn có thể tạo ra content quảng cáo, bài đăng và caption chuyển đổi cao trong vài phút.",
-    category: "AI ứng dụng",
+    category: "Prompt",
     tag: "Content AI",
     emoji: "✍️",
     date: "22/01/2026",
@@ -87,7 +98,7 @@ export const blogPosts: BlogPost[] = [
     title: "Tự động hoá chăm sóc khách hàng bằng Chatbot AI cho người mới",
     excerpt:
       "Hướng dẫn từng bước để dựng một chatbot AI trả lời khách hàng 24/7 mà không cần biết lập trình — áp dụng được ngay cho shop nhỏ và freelancer.",
-    category: "Tự động hóa",
+    category: "Công cụ AI",
     tag: "Tự động hóa",
     emoji: "🤖",
     date: "03/02/2026",
@@ -122,7 +133,7 @@ export const blogPosts: BlogPost[] = [
     title: "Vận hành tinh gọn, nhân bản mạnh mẽ: Xu hướng Affiliate 2026",
     excerpt:
       "AI đang thay đổi cách một cá nhân vận hành như cả một đội nhóm. Đây là những thay đổi quan trọng nhất trong cách làm Affiliate Marketing năm 2026.",
-    category: "Chiến lược",
+    category: "Affiliate Marketing",
     tag: "Hệ thống",
     emoji: "⚙️",
     date: "18/02/2026",

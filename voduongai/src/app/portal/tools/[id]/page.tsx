@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { tools } from "@/data/tools";
@@ -31,7 +32,7 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
       <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
         <div className="flex items-start justify-between">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/90 p-2">
-            <img
+            <Image
               src={logoUrl(tool.id)}
               alt={`${tool.name} logo`}
               width={40}
@@ -123,6 +124,21 @@ export default async function ToolDetailPage({ params }: PageProps<"/portal/tool
           >
             Website chính thức
           </a>
+        </div>
+      </div>
+
+      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+        <h3 className="text-base font-bold text-white">Muốn áp dụng {tool.name} hiệu quả hơn?</h3>
+        <p className="mt-2 text-sm text-white/70">
+          Xem thêm các công cụ và workflow thực chiến khác trong Thư viện công cụ, hoặc tìm hiểu lộ trình V-SOLO để biết cách kết hợp công cụ vào hệ thống của bạn.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link href="/portal/tools" className="text-sm font-semibold text-brand-violet hover:underline">
+            Xem thêm công cụ →
+          </Link>
+          <Link href="/portal/vdai-academy" className="text-sm font-semibold text-brand-violet hover:underline">
+            Tìm hiểu V-SOLO →
+          </Link>
         </div>
       </div>
     </div>
