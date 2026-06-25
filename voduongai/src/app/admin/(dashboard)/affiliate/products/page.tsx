@@ -38,6 +38,7 @@ export default function AffiliateProductsPage() {
         { key: "pricing", label: "Giá", type: "text" },
         { key: "affiliateUrl", label: "Affiliate URL", type: "text", required: true },
         { key: "trackingCode", label: "Tracking code", type: "text" },
+        { key: "isAffiliate", label: "Là liên kết Affiliate", type: "boolean" },
         { key: "videoUrl", label: "Video review", type: "text" },
         { key: "badge", label: "Badge", type: "select", options: ["Recommended", "Best Choice", "New", "None"] },
         { key: "featured", label: "Featured", type: "boolean" },

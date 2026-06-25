@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { blogPosts, getBlogPost } from "@/data/blog";
+import { Breadcrumb } from "@/components/site/Breadcrumb";
 
 export function generateStaticParams() {
   return blogPosts.map((p) => ({ slug: p.slug }));
@@ -55,7 +56,15 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-16 md:py-24">
-      <Link href="/blog" className="text-sm font-semibold text-brand-violet hover:underline">
+      <Breadcrumb
+        items={[
+          { label: "Trang chủ", href: "/" },
+          { label: "Blog AI", href: "/blog" },
+          { label: post.title },
+        ]}
+      />
+
+      <Link href="/blog" className="mt-4 inline-block text-sm font-semibold text-brand-violet hover:underline">
         ← Blog AI
       </Link>
 

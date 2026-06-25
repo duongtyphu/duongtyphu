@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCollection } from "@/lib/admin/store";
 import { toolsAdminSeed } from "@/data/admin/tools";
 import { logoUrl } from "@/lib/logo";
@@ -25,7 +26,7 @@ export function AdminToolsSection() {
           >
             <div className="flex items-center justify-between">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 p-1.5">
-                <img
+                <Image
                   src={logoUrl(t.slug)}
                   alt={`${t.name} logo`}
                   width={28}

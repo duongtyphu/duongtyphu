@@ -5,6 +5,7 @@ import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { AntiCopy } from "@/components/site/AntiCopy";
+import { BackToTop } from "@/components/site/BackToTop";
 import { ChromeGate } from "@/components/site/ChromeGate";
 import { siteConfig } from "@/lib/site";
 import { getSiteSettings } from "@/lib/site-settings";
@@ -101,6 +102,7 @@ export default async function RootLayout({
         <ChromeGate header={<Header settings={settings} />} footer={<Footer settings={settings} />}>
           {children}
         </ChromeGate>
+        <BackToTop />
       </body>
     </html>
   );

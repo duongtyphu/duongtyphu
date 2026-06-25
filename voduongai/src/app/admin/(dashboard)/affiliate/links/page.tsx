@@ -25,6 +25,8 @@ export default function AffiliateLinksPage() {
         { key: "affiliateUrl", label: "Affiliate URL", type: "text", required: true },
         { key: "shortLabel", label: "Short label", type: "text" },
         { key: "campaign", label: "Campaign", type: "text" },
+        { key: "trackingCode", label: "Tracking code", type: "text" },
+        { key: "isAffiliate", label: "Là liên kết Affiliate", type: "boolean" },
         { key: "clicks", label: "Click count (mock)", type: "number" },
         { key: "conversions", label: "Conversion (mock)", type: "number" },
         { key: "status", label: "Trạng thái", type: "select", options: ["Active", "Inactive"] },

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
@@ -32,7 +33,7 @@ export function ToolsIUse() {
             >
               <div className="flex items-center justify-between">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 p-1.5">
-                  <img
+                  <Image
                     src={logoUrl(t.id)}
                     alt={`${t.name} logo`}
                     width={28}

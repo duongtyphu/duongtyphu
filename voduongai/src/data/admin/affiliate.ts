@@ -14,6 +14,7 @@ export type AdminAffiliateProduct = {
   pricing: string;
   affiliateUrl: string;
   trackingCode?: string;
+  isAffiliate: boolean;
   videoUrl?: string;
   badge: "Recommended" | "Best Choice" | "New" | "None";
   featured: boolean;
@@ -35,6 +36,8 @@ export const affiliateProductsSeed: AdminAffiliateProduct[] = [
     cons: ["Hỗ trợ tiếng Việt hạn chế"],
     pricing: "Từ 49.000đ/tháng",
     affiliateUrl: "https://hostinger.com?ref=voduongai",
+    trackingCode: "hostinger-home",
+    isAffiliate: true,
     badge: "Recommended",
     featured: true,
     status: "Published",
@@ -48,6 +51,8 @@ export type AdminAffiliateLink = {
   affiliateUrl: string;
   shortLabel: string;
   campaign: string;
+  trackingCode?: string;
+  isAffiliate: boolean;
   clicks: number;
   conversions: number;
   status: "Active" | "Inactive";
@@ -61,6 +66,8 @@ export const affiliateLinksSeed: AdminAffiliateLink[] = [
     affiliateUrl: "https://hostinger.com?ref=voduongai",
     shortLabel: "vdai/hostinger",
     campaign: "blog-q2",
+    trackingCode: "hostinger-home",
+    isAffiliate: true,
     clicks: 1248,
     conversions: 36,
     status: "Active",
