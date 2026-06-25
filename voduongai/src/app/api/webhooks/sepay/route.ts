@@ -54,8 +54,21 @@ export async function POST(request: Request) {
   }
   if (!order) return NextResponse.json({ ok: true, skipped: "order not found" });
   if (order.status === "confirmed") return NextResponse.json({ ok: true, skipped: "already confirmed" });
-  if (amount < order.amount) {
-    return NextResponse.json({ ok: true, skipped: "amount too low", expected: order.amount, received: amount });
+  if (amount !== order.amount) {
+    // Leave status untouched (pending) so an admin reconciles the mismatch manually
+    // instead of auto-confirming an underpaid/overpaid transfer.
+    console.error("SePay webhook: amount mismatch — left pending for manual review", {
+      orderId,
+      expected: order.amount,
+      received: amount,
+      referenceCode: body.referenceCode,
+    });
+    return NextResponse.json({
+      ok: true,
+      skipped: "amount mismatch — left pending for manual review",
+      expected: order.amount,
+      received: amount,
+    });
   }
 
   const { error } = await supabase
@@ -63,7 +76,10 @@ export async function POST(request: Request) {
     .update({ status: "confirmed", payment_reference: body.referenceCode ?? null })
     .eq("id", orderId);
 
-  if (error) return NextResponse.json({ error: "Failed to confirm order" }, { status: 500 });
+  if (error) {
+    console.error("SePay webhook: failed to confirm order", { orderId, error });
+    return NextResponse.json({ error: "Failed to confirm order" }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true, orderId });
 }

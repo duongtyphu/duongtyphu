@@ -4,6 +4,8 @@ import { tableForCollection } from "@/lib/admin/supabaseCollections";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ table: string }> }) {
+  if (!(await requireAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { table: key } = await params;
   const table = tableForCollection(key);
   if (!table) return NextResponse.json({ error: "Unknown collection" }, { status: 404 });
