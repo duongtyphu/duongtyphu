@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createOrder, type CheckoutItemType } from "./actions";
 
 type CheckoutTarget = {
@@ -69,6 +70,22 @@ export function CheckoutForm({ target, email }: { target: CheckoutTarget; email:
       </div>
 
       {error && <p className="text-sm text-red-400">{error}</p>}
+
+      <p className="text-xs text-white/50">
+        Bằng việc bấm "Thanh toán ngay", bạn đồng ý với{" "}
+        <Link href="/terms" target="_blank" className="text-white/70 underline hover:text-white">
+          Điều khoản sử dụng
+        </Link>
+        ,{" "}
+        <Link href="/privacy" target="_blank" className="text-white/70 underline hover:text-white">
+          Chính sách bảo mật
+        </Link>{" "}
+        và{" "}
+        <Link href="/refund-policy" target="_blank" className="text-white/70 underline hover:text-white">
+          Chính sách hoàn phí
+        </Link>{" "}
+        của VDAI Academy.
+      </p>
 
       <button
         type="submit"
