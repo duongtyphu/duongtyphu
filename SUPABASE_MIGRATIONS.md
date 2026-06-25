@@ -51,16 +51,20 @@ exist):
 13. `supabase-digital-asset-links-deactivate.sql` — one-off data fix,
     deactivates placeholder example.com links. **Depends on #8** (phase 4
     creates `digital_asset_links`).
+14. `supabase-coupons-fix.sql` — reconciles the `coupons` table (see below).
+    **Depends on #4** (`supabase-group2.sql` creates `coupons`).
 
-## Known issue: duplicate `coupons` definition
+## Resolved: duplicate `coupons` definition
 
-`voduongai/supabase-coupons.sql` creates a **second**, slightly different
-`coupons` table definition (adds a `check (discount_type in (...))`
-constraint that `supabase-group2.sql`'s version doesn't have). Because both
-use `create table if not exists`, whichever ran first on the live project
-is the one actually in effect — the other file is dead/misleading. Do not
-run `voduongai/supabase-coupons.sql` on a project that already ran
-`supabase-group2.sql` (step 4 above); they target the same table. This
-should be reconciled into one definition and the duplicate deleted, but
-that's left as a follow-up since it requires checking which constraint set
-is actually live in production first.
+`voduongai/supabase-coupons.sql` used to create a **second**, slightly
+different `coupons` table definition (added a
+`check (discount_type in ('percent', 'fixed'))` constraint and NOT NULL
+defaults that `supabase-group2.sql`'s version didn't have). Since both used
+`create table if not exists`, `supabase-group2.sql`'s version is the one
+that's actually live (it ran first). The app code (`coupons/actions.ts`)
+confirms `discount_type` values are `"percent" | "fixed"`, matching the
+voduongai version's constraint — not group2.sql's stale comment
+(`-- percent | amount`). `voduongai/supabase-coupons.sql` has been deleted;
+`supabase-coupons-fix.sql` (step 14) brings the live table up to the same
+NOT NULL + check-constraint strictness via `ALTER TABLE`, safe to run on
+the already-existing table.
