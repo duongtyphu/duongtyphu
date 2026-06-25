@@ -5,7 +5,7 @@ const STORIES = [
     name: "Minh Anh",
     role: "Content Creator",
     result: "Tăng 3x lượt tương tác sau 30 ngày dùng Prompt content viral.",
-    quote: "Trước đây mình mất cả buổi để viết 1 bài. Giờ chỉ cần 15 phút với prompt có sẵn trong VDAI.",
+    quote: "Trước đây mình mất cả buổi để viết 1 bài. Giờ chỉ cần 15 phút với prompt có sẵn trong VO DUONG AI.",
   },
   {
     name: "Quốc Huy",

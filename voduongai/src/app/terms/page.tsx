@@ -20,7 +20,7 @@ export default function TermsPage() {
         {
           heading: "1. Giới thiệu chung",
           body: [
-            'VO DUONG AI ("chúng tôi") là đơn vị đào tạo và chia sẻ độc lập, cung cấp nội dung, công cụ và chương trình hướng dẫn ứng dụng AI vào công việc, kinh doanh và xây dựng tài sản số, thông qua các lộ trình VDAI SOLO và VDAI SCALE. Bằng việc truy cập website hoặc đăng ký tham gia, bạn ("người dùng", "học viên") đồng ý với các điều khoản dưới đây.',
+            'VO DUONG AI ("chúng tôi") là đơn vị đào tạo và chia sẻ độc lập, cung cấp nội dung, công cụ và chương trình hướng dẫn ứng dụng AI vào công việc, kinh doanh và xây dựng tài sản số, thông qua các lộ trình V-SOLO và V-SCALE. Bằng việc truy cập website hoặc đăng ký tham gia, bạn ("người dùng", "học viên") đồng ý với các điều khoản dưới đây.',
           ],
         },
         {
@@ -32,7 +32,7 @@ export default function TermsPage() {
         {
           heading: "3. Đăng ký nhận nội dung và tư vấn",
           body: [
-            "Các form đăng ký trên website là công cụ để bạn nhận tài nguyên miễn phí hoặc yêu cầu tư vấn về lộ trình phù hợp (VDAI SOLO hoặc VDAI SCALE) — không phải kết quả thẩm định chuyên sâu hay tư vấn cá nhân hoá hoàn toàn.",
+            "Các form đăng ký trên website là công cụ để bạn nhận tài nguyên miễn phí hoặc yêu cầu tư vấn về lộ trình phù hợp (V-SOLO hoặc V-SCALE) — không phải kết quả thẩm định chuyên sâu hay tư vấn cá nhân hoá hoàn toàn.",
           ],
         },
         {
@@ -51,7 +51,7 @@ export default function TermsPage() {
         {
           heading: "6. Học phí và thanh toán",
           body: [
-            "Học phí, lịch khai giảng và hình thức thanh toán cho từng lộ trình (VDAI SOLO / VDAI SCALE) sẽ được cung cấp trực tiếp khi tư vấn qua các kênh liên hệ trên website.",
+            "Học phí, lịch khai giảng và hình thức thanh toán cho từng lộ trình (V-SOLO / V-SCALE) sẽ được cung cấp trực tiếp khi tư vấn qua các kênh liên hệ trên website.",
           ],
         },
         {

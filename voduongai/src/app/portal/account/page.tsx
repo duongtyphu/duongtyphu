@@ -58,7 +58,7 @@ export default async function AccountPage() {
   const initial = (meta.full_name || user.email || "?").trim().charAt(0).toUpperCase();
 
   const activities = [
-    { id: "joined", dot: "#5B8CFF", text: "Tham gia VDAI Academy", time: memberSince },
+    { id: "joined", dot: "#5B8CFF", text: "Tham gia VO DUONG AI Academy", time: memberSince },
     ...orders.map((o) => ({
       id: `order-${o.id}`,
       dot: o.status === "confirmed" ? "#10B981" : o.status === "pending" ? "#F59E0B" : "#EF4444",

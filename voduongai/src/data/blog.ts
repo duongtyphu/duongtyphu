@@ -29,8 +29,8 @@ export const blogPosts: BlogPost[] = [
     tags: ["AI ứng dụng", "Affiliate Marketing", "Nghiên cứu sản phẩm"],
     ctaTitle: "Muốn áp dụng quy trình này vào hệ thống của bạn?",
     ctaDescription:
-      "VDAI SOLO hướng dẫn chi tiết quy trình nghiên cứu sản phẩm bằng AI từ A đến Z, kèm thực hành trực tiếp trên ngách của bạn.",
-    ctaLabel: "Xem chương trình VDAI SOLO →",
+      "V-SOLO hướng dẫn chi tiết quy trình nghiên cứu sản phẩm bằng AI từ A đến Z, kèm thực hành trực tiếp trên ngách của bạn.",
+    ctaLabel: "Xem chương trình V-SOLO →",
     ctaHref: "/portal/vdai-academy",
     content: [
       "Một trong những công việc tốn thời gian nhất khi làm Affiliate Marketing là nghiên cứu sản phẩm: tìm ngách phù hợp, đánh giá đối thủ, kiểm tra mức độ cạnh tranh và dự đoán khả năng chuyển đổi. Theo cách làm truyền thống, một người mới thường mất 3–5 giờ cho mỗi sản phẩm để có đủ dữ liệu ra quyết định. Với AI, quy trình này có thể rút ngắn xuống còn 20–30 phút mà độ chính xác không giảm — thậm chí còn tốt hơn vì AI xử lý được lượng dữ liệu lớn hơn con người.",
@@ -60,8 +60,8 @@ export const blogPosts: BlogPost[] = [
     tags: ["Content AI", "Copywriting", "Prompt Engineering"],
     ctaTitle: "Muốn có bộ prompt đầy đủ cho từng loại content?",
     ctaDescription:
-      "VDAI SOLO cung cấp thư viện prompt thực chiến cùng hướng dẫn tinh chỉnh theo từng ngách sản phẩm.",
-    ctaLabel: "Xem chương trình VDAI SOLO →",
+      "V-SOLO cung cấp thư viện prompt thực chiến cùng hướng dẫn tinh chỉnh theo từng ngách sản phẩm.",
+    ctaLabel: "Xem chương trình V-SOLO →",
     ctaHref: "/portal/vdai-academy",
     content: [
       "Viết content bán hàng là việc lặp đi lặp lại mỗi ngày — và cũng là việc dễ \"cạn ý tưởng\" nhất. Thay vì ngồi nhìn màn hình trắng, bạn có thể dùng AI như một trợ lý viết draft đầu tiên, sau đó chỉnh sửa theo giọng văn của riêng mình. Dưới đây là 5 cấu trúc prompt đã được kiểm chứng hiệu quả trong thực tế.",
@@ -95,8 +95,8 @@ export const blogPosts: BlogPost[] = [
     tags: ["Tự động hóa", "Chatbot AI", "Chăm sóc khách hàng"],
     ctaTitle: "Muốn dựng chatbot AI cho shop của bạn?",
     ctaDescription:
-      "VDAI SCALE hướng dẫn xây dựng hệ thống chatbot tích hợp đơn hàng, giúp đội nhóm vận hành tự động và hiệu quả hơn.",
-    ctaLabel: "Xem chương trình VDAI SCALE →",
+      "V-SCALE hướng dẫn xây dựng hệ thống chatbot tích hợp đơn hàng, giúp đội nhóm vận hành tự động và hiệu quả hơn.",
+    ctaLabel: "Xem chương trình V-SCALE →",
     ctaHref: "/portal/vdai-academy",
     content: [
       "Một trong những lý do khiến nhiều người bán hàng online \"burnout\" là phải trả lời cùng những câu hỏi lặp đi lặp lại: giá bao nhiêu, còn hàng không, ship mất bao lâu. Chatbot AI giải quyết đúng vấn đề này — và tin tốt là bạn không cần biết lập trình để dựng một chatbot cơ bản hoạt động hiệu quả.",
@@ -130,18 +130,18 @@ export const blogPosts: BlogPost[] = [
     tags: ["Chiến lược", "Affiliate Marketing", "Hệ thống hóa"],
     ctaTitle: "Sẵn sàng xây hệ thống vận hành của riêng bạn?",
     ctaDescription:
-      "VDAI SOLO và VDAI SCALE là hai lộ trình giúp bạn từ vận hành cá nhân đến nhân bản hệ thống cùng đội nhóm.",
-    ctaLabel: "Khám phá lộ trình VDAI →",
+      "V-SOLO và V-SCALE là hai lộ trình giúp bạn từ vận hành cá nhân đến nhân bản hệ thống cùng đội nhóm.",
+    ctaLabel: "Khám phá lộ trình VO DUONG AI →",
     ctaHref: "/portal/vdai-academy",
     content: [
-      "Trong nhiều năm, làm Affiliate Marketing đồng nghĩa với việc phải đánh đổi thời gian để có doanh thu: nhiều content hơn, nhiều sản phẩm hơn, nhiều giờ làm việc hơn. AI đang thay đổi phương trình đó. Một cá nhân với hệ thống đúng có thể vận hành ở quy mô mà trước đây cần cả một đội nhóm — đây chính là tinh thần \"vận hành tinh gọn, nhân bản mạnh mẽ\" mà VDAI Academy theo đuổi.",
+      "Trong nhiều năm, làm Affiliate Marketing đồng nghĩa với việc phải đánh đổi thời gian để có doanh thu: nhiều content hơn, nhiều sản phẩm hơn, nhiều giờ làm việc hơn. AI đang thay đổi phương trình đó. Một cá nhân với hệ thống đúng có thể vận hành ở quy mô mà trước đây cần cả một đội nhóm — đây chính là tinh thần \"vận hành tinh gọn, nhân bản mạnh mẽ\" mà VO DUONG AI Academy theo đuổi.",
       "## 1. Từ làm việc theo giờ sang làm việc theo hệ thống",
       "Thay vì đo hiệu suất bằng số giờ ngồi máy, người làm Affiliate hiện đại đo hiệu suất bằng chất lượng của hệ thống họ xây dựng: quy trình nghiên cứu sản phẩm, quy trình tạo content, quy trình chăm sóc khách hàng. Khi mỗi quy trình được tối ưu và một phần được AI hỗ trợ, tổng thời gian cần thiết giảm đáng kể mà sản lượng vẫn tăng.",
       "## 2. AI là đòn bẩy, không phải đối thủ",
       "Một lo ngại phổ biến là AI sẽ \"thay thế\" người làm Affiliate. Trên thực tế, AI hoạt động tốt nhất khi được điều khiển bởi một người hiểu rõ thị trường, khách hàng và mục tiêu kinh doanh. Người chiến thắng trong giai đoạn này không phải người dùng AI nhiều nhất, mà là người biết kết hợp AI với chiến lược đúng.",
-      "> 💡 Quan sát thực tế: Những học viên VDAI có kết quả tốt nhất không phải là người chạy nhiều AI tool nhất, mà là người xây được một quy trình rõ ràng rồi mới đưa AI vào từng bước cụ thể.",
+      "> 💡 Quan sát thực tế: Những học viên VO DUONG AI có kết quả tốt nhất không phải là người chạy nhiều AI tool nhất, mà là người xây được một quy trình rõ ràng rồi mới đưa AI vào từng bước cụ thể.",
       "## 3. Từ một người làm tất cả đến hệ thống có thể nhân bản",
-      "Khi đã vận hành tinh gọn với AI ở quy mô cá nhân, bước tiếp theo là nhân bản: chuyển giao một phần quy trình cho cộng tác viên hoặc đội nhóm nhỏ, với AI đóng vai trò chuẩn hóa cách làm. Đây là điểm khác biệt giữa VDAI SOLO (tối ưu vận hành cá nhân) và VDAI SCALE (nhân bản hệ thống cho đội nhóm).",
+      "Khi đã vận hành tinh gọn với AI ở quy mô cá nhân, bước tiếp theo là nhân bản: chuyển giao một phần quy trình cho cộng tác viên hoặc đội nhóm nhỏ, với AI đóng vai trò chuẩn hóa cách làm. Đây là điểm khác biệt giữa V-SOLO (tối ưu vận hành cá nhân) và V-SCALE (nhân bản hệ thống cho đội nhóm).",
       "### Ba dấu hiệu cho thấy bạn đã sẵn sàng nhân bản hệ thống:",
       "- Quy trình làm việc của bạn đã được viết thành tài liệu rõ ràng, không chỉ nằm trong đầu\n- Bạn có thể đo lường kết quả ở từng bước, không chỉ kết quả cuối cùng\n- Bạn dành nhiều thời gian xử lý công việc lặp lại hơn là công việc tạo ra giá trị mới",
       "## 4. Xu hướng 2026: Cá nhân hóa ở quy mô lớn",

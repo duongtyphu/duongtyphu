@@ -39,7 +39,7 @@ export default async function ResourcesPage() {
 
       {liveDocuments.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold text-white">Tài liệu từ VDAI Academy</h2>
+          <h2 className="text-lg font-bold text-white">Tài liệu từ VO DUONG AI Academy</h2>
           <p className="mt-1 text-sm text-white/60">Tài liệu thật, được cập nhật trực tiếp từ hệ thống.</p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {liveDocuments.map((d) => (

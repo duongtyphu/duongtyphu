@@ -58,7 +58,7 @@ const steps: Step[] = [
     step: 7,
     title: "Mở rộng hệ sinh thái",
     description: "Nhân bản hệ thống, xây đội nhóm, mở rộng quy mô.",
-    resource: { label: "VDAI SCALE", href: "/portal/vdai-academy" },
+    resource: { label: "V-SCALE", href: "/portal/vdai-academy" },
     action: "Đánh giá hệ thống hiện tại và lên kế hoạch nhân bản.",
   },
 ];

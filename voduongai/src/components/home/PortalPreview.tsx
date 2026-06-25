@@ -20,7 +20,7 @@ import {
 const sidebar: { label: string; icon: LucideIcon }[] = [
   { label: "Tổng quan", icon: LayoutDashboard },
   { label: "Học viện AI", icon: GraduationCap },
-  { label: "VDAI Academy", icon: Rocket },
+  { label: "VO DUONG AI Academy", icon: Rocket },
   { label: "Tiếp thị liên kết", icon: Users },
   { label: "Thư viện Prompt", icon: Wand2 },
   { label: "Thư viện Công cụ", icon: Wrench },
@@ -59,7 +59,7 @@ const cards: { title: string; badge: Badge; desc: string }[] = [
     desc: "50+ công cụ AI, thiết kế, video, website và tự động hoá.",
   },
   {
-    title: "VDAI Academy",
+    title: "VO DUONG AI Academy",
     badge: "PREMIUM",
     desc: "Khoá học AI & Affiliate theo lộ trình thực chiến.",
   },

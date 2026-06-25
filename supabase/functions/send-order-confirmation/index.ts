@@ -9,7 +9,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const FROM_EMAIL = "VDAI Academy <onboarding@resend.dev>";
+const FROM_EMAIL = "VO DUONG AI Academy <onboarding@resend.dev>";
 const SITE_URL = "https://v-academy-mauve.vercel.app";
 
 const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
@@ -40,8 +40,8 @@ Deno.serve(async (req) => {
         <p style="margin:24px 0">
           <a href="${SITE_URL}/portal.html" style="background:#16A34A;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:700">Vào trang thành viên để học ngay →</a>
         </p>
-        <p>Nếu khoá học chưa khai giảng, đội ngũ VDAI Academy sẽ nhắc lịch khai giảng qua Zalo trước 1-2 ngày.</p>
-        <p style="color:#64748B;font-size:0.85rem;margin-top:32px">VDAI Academy — Vận hành tinh gọn. Nhân bản mạnh mẽ.</p>
+        <p>Nếu khoá học chưa khai giảng, đội ngũ VO DUONG AI Academy sẽ nhắc lịch khai giảng qua Zalo trước 1-2 ngày.</p>
+        <p style="color:#64748B;font-size:0.85rem;margin-top:32px">VO DUONG AI Academy — Vận hành tinh gọn. Nhân bản mạnh mẽ.</p>
       </div>`;
 
     const resendResp = await fetch("https://api.resend.com/emails", {
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         from: FROM_EMAIL,
         to: order.member_email,
-        subject: "Đơn hàng VDAI Academy đã được xác nhận ✅",
+        subject: "Đơn hàng VO DUONG AI Academy đã được xác nhận ✅",
         html,
       }),
     });

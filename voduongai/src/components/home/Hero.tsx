@@ -9,7 +9,7 @@ const navItems = ["Tổng quan", "AI Academy", "Affiliate Hub", "Thư viện cô
 const tiles = [
   { label: "Bộ công cụ AI", icon: Wrench },
   { label: "Thư viện Prompt", icon: Wand2 },
-  { label: "VDAI Academy", icon: Rocket },
+  { label: "VO DUONG AI Academy", icon: Rocket },
   { label: "Tài nguyên miễn phí", icon: FolderOpen },
 ];
 

@@ -6,8 +6,8 @@ const lessons = [
   "Nghiên cứu khách hàng bằng ChatGPT",
   "Xây kế hoạch nội dung Affiliate 30 ngày",
   "Bộ công cụ AI cho người mới",
-  "VDAI SOLO",
-  "VDAI SCALE",
+  "V-SOLO",
+  "V-SCALE",
 ];
 
 const modules = [
@@ -17,7 +17,7 @@ const modules = [
     href: "/portal/ai-academy",
   },
   {
-    title: "VDAI Academy",
+    title: "VO DUONG AI Academy",
     description: "Hệ thống Affiliate Marketing ứng dụng AI, từ SOLO đến SCALE.",
     href: "/portal/vdai-academy",
   },
@@ -37,7 +37,7 @@ export function AcademyTeaser() {
             Học AI và Affiliate theo lộ trình thực chiến
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
-            VDAI Academy không còn là thương hiệu chính — đây là một module
+            VO DUONG AI Academy không còn là thương hiệu chính — đây là một module
             bên trong hệ sinh thái Võ Đương AI.
           </p>
         </div>

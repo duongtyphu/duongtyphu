@@ -14,13 +14,13 @@ export default function RefundPolicyPage() {
   return (
     <LegalPage
       title="Chính sách hoàn phí"
-      subtitle="Quy định về bảo lưu và hoàn phí đối với các chương trình VDAI SOLO và VDAI SCALE."
+      subtitle="Quy định về bảo lưu và hoàn phí đối với các chương trình V-SOLO và V-SCALE."
       updatedAt="23/06/2026"
       sections={[
         {
           heading: "1. Phạm vi áp dụng",
           body: [
-            "Chính sách này áp dụng cho các giao dịch đăng ký tham gia chương trình VDAI SOLO và VDAI SCALE thông qua tư vấn trực tiếp từ VO DUONG AI. Chính sách không áp dụng cho các dịch vụ/sản phẩm của bên thứ ba được giới thiệu trong quá trình học (nếu có).",
+            "Chính sách này áp dụng cho các giao dịch đăng ký tham gia chương trình V-SOLO và V-SCALE thông qua tư vấn trực tiếp từ VO DUONG AI. Chính sách không áp dụng cho các dịch vụ/sản phẩm của bên thứ ba được giới thiệu trong quá trình học (nếu có).",
           ],
         },
         {

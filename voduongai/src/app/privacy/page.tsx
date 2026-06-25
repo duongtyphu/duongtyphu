@@ -26,7 +26,7 @@ export default function PrivacyPage() {
         {
           heading: "2. Mục đích sử dụng thông tin",
           body: [
-            "Gửi tài nguyên miễn phí, nội dung học AI và thông tin về các sản phẩm/khoá học VDAI SOLO, VDAI SCALE phù hợp với bạn.",
+            "Gửi tài nguyên miễn phí, nội dung học AI và thông tin về các sản phẩm/khoá học V-SOLO, V-SCALE phù hợp với bạn.",
             "Liên hệ tư vấn khi bạn chủ động yêu cầu, và cải thiện chất lượng nội dung, sản phẩm dựa trên hành vi sử dụng tổng hợp (không định danh cá nhân).",
           ],
         },

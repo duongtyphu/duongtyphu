@@ -7,7 +7,7 @@ const columns = [
     links: [
       { label: "Hồ sơ", href: "/portal/account" },
       { label: "AI Academy", href: "/portal/ai-academy" },
-      { label: "VDAI Academy", href: "/portal/vdai-academy" },
+      { label: "VO DUONG AI Academy", href: "/portal/vdai-academy" },
       { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
       { label: "Thư viện Prompt", href: "/portal/prompts" },
       { label: "Thư viện Công cụ", href: "/portal/tools" },

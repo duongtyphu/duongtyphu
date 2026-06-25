@@ -39,7 +39,7 @@ export function ProfileForm({ meta }: { meta: ProfileMeta }) {
       <input name="fb_url" type="url" defaultValue={meta.fb_url} placeholder="Link Facebook" className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40" />
       <input name="occupation" defaultValue={meta.occupation} placeholder="Nghề nghiệp" className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40" />
       <textarea name="bio" defaultValue={meta.bio} placeholder="Giới thiệu ngắn về bạn..." rows={3} className="col-span-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40" />
-      <input name="goal" defaultValue={meta.goal} placeholder="Mục tiêu khi học VDAI Academy" className="col-span-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40" />
+      <input name="goal" defaultValue={meta.goal} placeholder="Mục tiêu khi học VO DUONG AI Academy" className="col-span-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40" />
 
       <div className="col-span-full flex items-center gap-3">
         <button

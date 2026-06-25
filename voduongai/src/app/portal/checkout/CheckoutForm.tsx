@@ -84,7 +84,7 @@ export function CheckoutForm({ target, email }: { target: CheckoutTarget; email:
         <Link href="/refund-policy" target="_blank" className="text-white/70 underline hover:text-white">
           Chính sách hoàn phí
         </Link>{" "}
-        của VDAI Academy.
+        của VO DUONG AI.
       </p>
 
       <button

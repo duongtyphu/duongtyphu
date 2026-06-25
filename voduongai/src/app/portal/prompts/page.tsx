@@ -36,7 +36,7 @@ export default async function PromptsPage() {
       {livePrompts.length > 0 && (
         <div>
           <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">
-            Prompt mới từ VDAI Academy
+            Prompt mới từ VO DUONG AI Academy
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {livePrompts.map((p) => (

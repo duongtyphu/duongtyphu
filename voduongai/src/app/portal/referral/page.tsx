@@ -65,7 +65,7 @@ export default async function ReferralPage() {
       <div>
         <h1 className="text-2xl font-extrabold text-white">Hoa hồng giới thiệu</h1>
         <p className="mt-2 text-white">
-          Giới thiệu người khác tham gia VDAI Academy và nhận hoa hồng thật trên mỗi đơn hàng được xác nhận.
+          Giới thiệu người khác tham gia VO DUONG AI Academy và nhận hoa hồng thật trên mỗi đơn hàng được xác nhận.
         </p>
       </div>
 
