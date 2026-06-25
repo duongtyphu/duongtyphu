@@ -14,11 +14,13 @@ type SePayPayload = {
 
 export async function POST(request: Request) {
   const expectedKey = process.env.SEPAY_WEBHOOK_API_KEY;
-  if (expectedKey) {
-    const auth = request.headers.get("authorization") ?? "";
-    if (auth !== `Apikey ${expectedKey}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+  if (!expectedKey) {
+    console.error("SEPAY_WEBHOOK_API_KEY is not configured — rejecting webhook call");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
+  const auth = request.headers.get("authorization") ?? "";
+  if (auth !== `Apikey ${expectedKey}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body: SePayPayload | null = await request.json().catch(() => null);
@@ -40,12 +42,16 @@ export async function POST(request: Request) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return NextResponse.json({ error: "Supabase not configured" }, { status: 500 });
 
-  const { data: order } = await supabase
+  const { data: order, error: lookupError } = await supabase
     .from("orders")
     .select("id, amount, status")
     .eq("id", orderId)
     .maybeSingle();
 
+  if (lookupError) {
+    console.error("SePay webhook: order lookup failed", lookupError);
+    return NextResponse.json({ error: "Order lookup failed" }, { status: 500 });
+  }
   if (!order) return NextResponse.json({ ok: true, skipped: "order not found" });
   if (order.status === "confirmed") return NextResponse.json({ ok: true, skipped: "already confirmed" });
   if (amount < order.amount) {

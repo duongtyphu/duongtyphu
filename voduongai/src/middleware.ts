@@ -8,6 +8,11 @@ export async function middleware(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
+    // Portal is intentionally left public when Supabase isn't configured (local/demo use).
+    // Admin must never be reachable in that state — there's no safe "open admin" fallback.
+    if (request.nextUrl.pathname.startsWith("/admin") && request.nextUrl.pathname !== "/admin/login") {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
     return response;
   }
 
