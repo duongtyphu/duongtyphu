@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { EmailOptInForm } from "@/components/EmailOptInForm";
 
 export function FinalCTA() {
   return (
@@ -24,9 +23,6 @@ export function FinalCTA() {
           >
             Xem kho tài nguyên
           </Link>
-        </div>
-        <div className="mt-8 flex justify-center">
-          <EmailOptInForm source="homepage-final-cta" />
         </div>
       </div>
     </section>
