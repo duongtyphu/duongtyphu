@@ -10,7 +10,7 @@ import { TodayGoals } from "@/components/portal/TodayGoals";
 import { GoalWidget } from "@/components/portal/GoalWidget";
 import { SavedRecent } from "@/components/portal/SavedRecent";
 
-export const metadata = { title: "Portal" };
+export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
 
 const todayTasks = [
   { label: "Đọc 1 bài trong Học viện AI hoặc Affiliate", href: "/portal/ai-academy" },

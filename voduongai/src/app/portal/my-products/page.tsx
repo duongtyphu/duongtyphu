@@ -1,6 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 
-export const metadata = { title: "Sản phẩm của tôi" };
+export const metadata = { title: "Sản phẩm của tôi", description: "Danh sách sản phẩm và khoá học bạn đã mua tại VO DUONG AI.", robots: { index: false } };
 
 type Order = {
   id: number;

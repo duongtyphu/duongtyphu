@@ -5,7 +5,7 @@ import { SecurityPanel } from "@/components/portal/SecurityPanel";
 import { NotificationSettingsPanel } from "@/components/portal/NotificationSettingsPanel";
 import { ProfileTabs } from "@/components/portal/ProfileTabs";
 
-export const metadata = { title: "Tài khoản" };
+export const metadata = { title: "Tài khoản", description: "Quản lý hồ sơ, bảo mật và đơn hàng tài khoản VO DUONG AI của bạn.", robots: { index: false } };
 
 type Order = {
   id: number;

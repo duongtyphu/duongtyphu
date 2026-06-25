@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: [
     "Vo Duong AI",
-    "VDAI Academy",
+    "VO DUONG AI",
     "học AI",
     "AI Toolkit",
     "Affiliate Marketing",

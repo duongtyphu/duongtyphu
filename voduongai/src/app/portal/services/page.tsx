@@ -1,6 +1,6 @@
 import { AdminServicesSection } from "@/components/portal/AdminServicesSection";
 
-export const metadata = { title: "Dịch vụ" };
+export const metadata = { title: "Dịch vụ", description: "Các dịch vụ tư vấn và hỗ trợ triển khai AI, Affiliate Marketing của VO DUONG AI." };
 
 export default function ServicesPage() {
   return (

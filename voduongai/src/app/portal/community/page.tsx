@@ -1,6 +1,6 @@
 import { siteConfig } from "@/lib/site";
 
-export const metadata = { title: "Cộng đồng" };
+export const metadata = { title: "Cộng đồng", description: "Cộng đồng học viên VO DUONG AI — kết nối, hỏi đáp và chia sẻ kinh nghiệm ứng dụng AI." };
 
 const channels = [
   { label: "Nhóm Facebook", href: siteConfig.community.facebookGroup },

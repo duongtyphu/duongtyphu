@@ -31,7 +31,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/portal/digital-assets/[slug]">) {
   const { slug } = await params;
   const project = digitalAssetProjects.find((p) => p.slug === slug);
-  return { title: project?.name ?? "Tài sản số" };
+  const title = project?.name ?? "Tài sản số";
+  const description = project?.shortDescription ?? "Tài sản số mà VO DUONG AI đang theo dõi và chia sẻ.";
+  return { title, description, openGraph: { title, description }, twitter: { title, description } };
 }
 
 export default async function DigitalAssetDetailPage({ params }: PageProps<"/portal/digital-assets/[slug]">) {

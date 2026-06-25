@@ -5,7 +5,7 @@ const sops = [
   { title: "SOP onboarding cộng tác viên mới", description: "Quy trình hướng dẫn cộng tác viên mới làm quen hệ thống Affiliate." },
 ];
 
-export const metadata = { title: "SOP" };
+export const metadata = { title: "SOP", description: "Quy trình chuẩn (SOP) vận hành Affiliate Marketing và sản xuất nội dung của VO DUONG AI." };
 
 export default function SopPage() {
   return (

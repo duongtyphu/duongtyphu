@@ -6,7 +6,7 @@ const lessons = [
   { title: "Biến follower thành khách hàng", description: "Chuyển từ người theo dõi sang người tin tưởng và mua hàng." },
 ];
 
-export const metadata = { title: "Thương hiệu cá nhân" };
+export const metadata = { title: "Thương hiệu cá nhân", description: "Lộ trình xây dựng thương hiệu cá nhân ứng dụng AI của VO DUONG AI." };
 
 export default function PersonalBrandPage() {
   return (

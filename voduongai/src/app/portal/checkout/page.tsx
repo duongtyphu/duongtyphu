@@ -3,7 +3,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { CheckoutForm } from "./CheckoutForm";
 import type { CheckoutItemType } from "./actions";
 
-export const metadata = { title: "Hoàn tất đơn hàng" };
+export const metadata = { title: "Hoàn tất đơn hàng", description: "Hoàn tất thanh toán đơn hàng tại VO DUONG AI.", robots: { index: false } };
 
 export default async function CheckoutPage({
   searchParams,

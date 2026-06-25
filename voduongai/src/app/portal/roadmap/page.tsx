@@ -1,7 +1,7 @@
 import { RoadmapInteractive } from "@/components/portal/RoadmapInteractive";
 import { AdminRoadmapSection } from "@/components/portal/AdminRoadmapSection";
 
-export const metadata = { title: "Lộ trình thành công" };
+export const metadata = { title: "Lộ trình thành công", description: "Lộ trình học và áp dụng AI, Affiliate Marketing theo từng giai đoạn tại VO DUONG AI." };
 
 export default function RoadmapPage() {
   return (

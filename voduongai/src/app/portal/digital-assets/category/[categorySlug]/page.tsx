@@ -11,7 +11,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/portal/digital-assets/category/[categorySlug]">) {
   const { categorySlug } = await params;
   const category = digitalAssetCategories.find((c) => c.key === categorySlug);
-  return { title: category ? `Tài sản số — ${category.name}` : "Tài sản số" };
+  const title = category ? `Tài sản số — ${category.name}` : "Tài sản số";
+  const description = category?.description ?? "Tài sản số mà VO DUONG AI đang theo dõi và chia sẻ.";
+  return { title, description, openGraph: { title, description }, twitter: { title, description } };
 }
 
 export default async function DigitalAssetCategoryPage({

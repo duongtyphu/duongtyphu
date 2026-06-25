@@ -9,7 +9,14 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">) {
   const { slug } = await params;
   const post = getBlogPost(slug);
-  return { title: post?.title ?? "Blog AI" };
+  const title = post?.title ?? "Blog AI";
+  const description = post?.excerpt ?? "Blog VO DUONG AI chia sẻ kiến thức ứng dụng AI và Affiliate Marketing.";
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: "article" },
+    twitter: { title, description },
+  };
 }
 
 function ContentBlock({ block }: { block: string }) {
@@ -58,7 +65,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
         </span>
         <h1 className="mt-4 text-3xl font-extrabold text-white">{post.title}</h1>
         <div className="mt-3 flex items-center gap-2 text-xs text-white">
-          <span>VDAI Academy</span>
+          <span>VO DUONG AI</span>
           <span>·</span>
           <span>{post.date}</span>
           <span>·</span>

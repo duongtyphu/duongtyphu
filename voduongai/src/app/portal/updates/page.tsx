@@ -1,4 +1,4 @@
-export const metadata = { title: "Tin tức & Cập nhật" };
+export const metadata = { title: "Tin tức & Cập nhật", description: "Cập nhật mới nhất về Prompt, công cụ và nội dung trong Portal VO DUONG AI." };
 
 const UPDATES = [
   { date: "2026-06-20", title: "Thêm 3 Prompt mới cho Content & Affiliate", type: "Prompt" },
