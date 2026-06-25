@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Wrench, Wand2, Rocket, FolderOpen, Sparkles } from "lucide-react";
+import { siteConfig } from "@/lib/site";
+
+const displayUrl = `${siteConfig.url.replace(/^https?:\/\//, "")}/portal`;
 
 const navItems = ["Tổng quan", "AI Academy", "Affiliate Hub", "Thư viện công cụ", "Cộng đồng"];
 
@@ -113,7 +116,7 @@ export function Hero() {
               <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
               <span className="ml-3 text-xs font-medium text-white">
-                voduongai.com/portal
+                {displayUrl}
               </span>
             </div>
             <div className="relative flex gap-3 p-3.5">

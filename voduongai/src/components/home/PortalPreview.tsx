@@ -16,6 +16,9 @@ import {
   Bell,
   type LucideIcon,
 } from "lucide-react";
+import { siteConfig } from "@/lib/site";
+
+const displayUrl = `${siteConfig.url.replace(/^https?:\/\//, "")}/portal`;
 
 const sidebar: { label: string; icon: LucideIcon }[] = [
   { label: "Tổng quan", icon: LayoutDashboard },
@@ -130,7 +133,7 @@ export function PortalPreview() {
               <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
               <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
               <span className="ml-3 text-xs font-medium text-white/60">
-                voduongai.com/portal
+                {displayUrl}
               </span>
             </div>
 

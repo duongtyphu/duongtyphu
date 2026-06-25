@@ -2,6 +2,7 @@
 
 import { CrudPage } from "@/components/admin/CrudPage";
 import { blogPostsSeed, type AdminBlogPost } from "@/data/admin/content";
+import { blogCategories } from "@/data/blog";
 import { Badge } from "@/components/admin/ui/Badge";
 
 export default function BlogAdminPage() {
@@ -31,7 +32,7 @@ export default function BlogAdminPage() {
         { key: "coverImage", label: "Ảnh đại diện", type: "text" },
         { key: "excerpt", label: "Mô tả ngắn", type: "textarea", full: true },
         { key: "content", label: "Nội dung bài viết (Markdown)", type: "textarea", full: true },
-        { key: "category", label: "Danh mục", type: "text" },
+        { key: "category", label: "Danh mục", type: "select", options: [...blogCategories] },
         { key: "tags", label: "Tag", type: "tags" },
         { key: "author", label: "Tác giả", type: "text" },
         { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"] },
