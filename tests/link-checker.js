@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * VDAI Academy — Automated link checker
+ * VO DUONG AI — Automated link checker
  *
  * Quét toàn bộ file .html trong repo và kiểm tra các nhóm liên kết:
  *   1. Menu (nav + mobile drawer)
@@ -255,7 +255,7 @@ async function run() {
 run().then((results) => {
   let hasFailure = false;
   console.log("════════════════════════════════════════════════════════");
-  console.log(" VDAI ACADEMY — BÁO CÁO KIỂM THỬ LIÊN KẾT TỰ ĐỘNG");
+  console.log(" VO DUONG AI — BÁO CÁO KIỂM THỬ LIÊN KẾT TỰ ĐỘNG");
   console.log("════════════════════════════════════════════════════════");
   console.log(`Tổng số file HTML quét: ${htmlFiles.length}`);
   console.log(`Tổng số link tìm thấy: ${allLinks.length}\n`);

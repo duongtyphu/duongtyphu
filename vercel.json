@@ -15,10 +15,15 @@
   "rewrites": [
     { "source": "/blog", "destination": "/blog/index.html" },
     { "source": "/blog/", "destination": "/blog/index.html" },
-    { "source": "/vdai-solo", "destination": "/vdai-solo/index.html" },
-    { "source": "/vdai-solo/", "destination": "/vdai-solo/index.html" },
-    { "source": "/vdai-scale", "destination": "/vdai-scale/index.html" },
-    { "source": "/vdai-scale/", "destination": "/vdai-scale/index.html" }
+    { "source": "/v-solo", "destination": "/v-solo/index.html" },
+    { "source": "/v-solo/", "destination": "/v-solo/index.html" },
+    { "source": "/v-scale", "destination": "/v-scale/index.html" },
+    { "source": "/v-scale/", "destination": "/v-scale/index.html" }
   ],
-  "redirects": []
+  "redirects": [
+    { "source": "/vdai-solo", "destination": "/v-solo", "permanent": true },
+    { "source": "/vdai-solo/", "destination": "/v-solo", "permanent": true },
+    { "source": "/vdai-scale", "destination": "/v-scale", "permanent": true },
+    { "source": "/vdai-scale/", "destination": "/v-scale", "permanent": true }
+  ]
 }

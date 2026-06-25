@@ -1,6 +1,6 @@
 /**
  * ════════════════════════════════════════════════════════════
- * VDAI ACADEMY — CONFIG
+ * VO DUONG AI — CONFIG
  * ════════════════════════════════════════════════════════════
  * Tất cả giá trị có thể thay đổi (endpoint, tracking ID, dữ liệu
  * hiển thị) được tập trung tại đây để dễ cập nhật mà không cần
@@ -15,7 +15,7 @@ const VDAI_CONFIG = {
   // THÔNG TIN CHUNG / BRAND
   // ──────────────────────────────────────────────────────────
   site: {
-    name: "VDAI Academy",
+    name: "VO DUONG AI",
     tagline: "Vận hành tinh gọn. Nhân bản mạnh mẽ.",
     url: "https://v-academy-mauve.vercel.app",
     logoPath: "assets/images/logo.svg?v=20260620f",
@@ -81,13 +81,13 @@ const VDAI_CONFIG = {
   // ──────────────────────────────────────────────────────────
   programs: {
     solo: {
-      name: "VDAI SOLO",
+      name: "V-SOLO",
       nextCohort: "Khai giảng tuần đầu mỗi tháng",
       price: "300$",
       consultLink: "" // Link đặt lịch tư vấn SOLO (Calendly...)
     },
     scale: {
-      name: "VDAI SCALE",
+      name: "V-SCALE",
       nextCohort: "Khai giảng tuần đầu mỗi tháng",
       price: "1000$",
       consultLink: "" // Link đặt lịch tư vấn SCALE (Calendly...)
@@ -100,7 +100,7 @@ const VDAI_CONFIG = {
   instructors: [
     {
       name: "Võ Đương",
-      role: "Chuyên gia AI Ứng dụng — VDAI SOLO",
+      role: "Chuyên gia AI Ứng dụng — V-SOLO",
       bio: "Chuyên gia ứng dụng AI trong công việc và kinh doanh với nhiều năm kinh nghiệm thực chiến. Phương pháp giảng dạy tập trung vào kết quả đo lường được — học viên áp dụng ngay từ buổi đầu tiên.",
       photo: "assets/images/instructor-vo-duong.jpg?v=20260620"
     },
@@ -112,7 +112,7 @@ const VDAI_CONFIG = {
     },
     {
       name: "Hải Dương",
-      role: "Chuyên gia AI Chuyên sâu — VDAI SCALE",
+      role: "Chuyên gia AI Chuyên sâu — V-SCALE",
       bio: "Chuyên gia AI chuyên sâu, nghiên cứu và ứng dụng các công nghệ AI tiên tiến. Đồng hành cùng học viên trên hành trình từ người dùng AI thông thường đến xây dựng hệ thống AI vận hành thực tế.",
       photo: "assets/images/instructor-hai-duong.jpg?v=20260620"
     },
@@ -130,19 +130,19 @@ const VDAI_CONFIG = {
   // Ghi chú: 2 case study dưới đây dựa trên phản hồi thật của học
   // viên từ các khóa học trước đây. Số liệu phần trăm cụ thể của
   // khóa cũ đã được loại bỏ vì chưa được đo lường lại trong khuôn
-  // khổ chương trình VDAI — chỉ giữ lại mô tả kết quả định tính.
-  // Khi có case study đo lường trực tiếp từ học viên VDAI SOLO / VDAI SCALE, thay thế các mục dưới đây.
+  // khổ chương trình VO DUONG AI — chỉ giữ lại mô tả kết quả định tính.
+  // Khi có case study đo lường trực tiếp từ học viên V-SOLO / V-SCALE, thay thế các mục dưới đây.
   caseStudies: [
     {
       name: "Lê Minh Phương",
-      track: "VDAI SOLO",
+      track: "V-SOLO",
       result: "Xây dựng kênh nội dung cá nhân và phát triển lượng theo dõi ổn định nhờ quy trình sáng tạo nội dung có hệ thống, hỗ trợ bởi AI.",
       proofLink: "",
       photo: "assets/images/case-placeholder.jpg"
     },
     {
       name: "Đinh Quốc Duy",
-      track: "VDAI SCALE",
+      track: "V-SCALE",
       result: "Triển khai quy trình AI cho đội nhóm khoảng 20 người, giúp tối ưu chi phí vận hành và chuẩn hóa cách làm việc giữa các thành viên.",
       proofLink: "",
       photo: "assets/images/case-placeholder.jpg"

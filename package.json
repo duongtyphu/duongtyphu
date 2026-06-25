@@ -1,7 +1,7 @@
 {
   "name": "duongtyphu",
   "version": "1.0.0",
-  "description": "VDAI Academy website",
+  "description": "VO DUONG AI website",
   "main": "index.js",
   "directories": {
     "doc": "docs"

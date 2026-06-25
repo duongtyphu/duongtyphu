@@ -1,6 +1,6 @@
 /**
  * ════════════════════════════════════════════════════════════
- * VDAI ACADEMY — APP.JS
+ * VO DUONG AI — APP.JS
  * ════════════════════════════════════════════════════════════
  * Toàn bộ logic JavaScript của website:
  * 1. Sticky nav + scroll shadow
@@ -224,10 +224,10 @@ function trackEvent(eventName, params) {
 
     // Console log khi chưa kết nối tracking (giúp debug, không phải lỗi)
     if (!window.gtag && !window.fbq && !window.ttq) {
-      console.info('[VDAI tracking] ' + eventName, params);
+      console.info('[VO DUONG AI tracking] ' + eventName, params);
     }
   } catch (err) {
     // Không để lỗi tracking ảnh hưởng đến trải nghiệm người dùng
-    console.warn('[VDAI tracking] lỗi gửi event:', eventName, err);
+    console.warn('[VO DUONG AI tracking] lỗi gửi event:', eventName, err);
   }
 }

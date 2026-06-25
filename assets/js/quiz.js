@@ -1,10 +1,10 @@
 /**
  * ════════════════════════════════════════════════════════════
- * VDAI ACADEMY — QUIZ.JS
+ * VO DUONG AI — QUIZ.JS
  * ════════════════════════════════════════════════════════════
  * Logic cho modal "Nhận Bản đồ Affiliate AI miễn phí" — bài
- * đánh giá 6 câu hỏi giúp phân loại khách hàng vào VDAI SOLO
- * hoặc VDAI SCALE.
+ * đánh giá 6 câu hỏi giúp phân loại khách hàng vào V-SOLO
+ * hoặc V-SCALE.
  *
  * Cấu trúc:
  * - QUIZ_QUESTIONS: định nghĩa câu hỏi & lựa chọn
@@ -326,16 +326,16 @@ document.addEventListener('DOMContentLoaded', function () {
         'Xây bộ prompt và quy trình AI để sản xuất nội dung đều đặn',
         'Xây phễu khách hàng cơ bản: landing page, quy trình tư vấn, follow-up'
       ];
-      roadmap = 'Lộ trình VDAI SOLO 8 tuần — đi từ chọn ngách, nghiên cứu khách hàng, xây thương hiệu cá nhân đến tối ưu chuyển đổi bằng AI.';
-      ctaTrack = 'VDAI SOLO';
+      roadmap = 'Lộ trình V-SOLO 8 tuần — đi từ chọn ngách, nghiên cứu khách hàng, xây thương hiệu cá nhân đến tối ưu chuyển đổi bằng AI.';
+      ctaTrack = 'V-SOLO';
     } else {
       priorities = [
         'Chuẩn hóa mô hình đang chạy thành tài liệu/quy trình có thể nhân bản',
         'Xây quy trình tuyển và onboarding thành viên mới trong 7 ngày',
         'Thiết lập KPI và dashboard để theo dõi hiệu quả đội nhóm'
       ];
-      roadmap = 'Lộ trình VDAI SCALE 6 giai đoạn — từ chuẩn hóa mô hình, tuyển/onboarding, xây học viện nội bộ đến phát triển leader kế thừa.';
-      ctaTrack = 'VDAI SCALE';
+      roadmap = 'Lộ trình V-SCALE 6 giai đoạn — từ chuẩn hóa mô hình, tuyển/onboarding, xây học viện nội bộ đến phát triển leader kế thừa.';
+      ctaTrack = 'V-SCALE';
     }
 
     return { track, ctaTrack, currentLevel, bottleneck, priorities, roadmap };
@@ -347,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderResultStep() {
     const result = calculateResult();
     const trackClass = result.track;
-    const trackLabel = result.track === 'solo' ? 'VDAI SOLO' : 'VDAI SCALE';
+    const trackLabel = result.track === 'solo' ? 'V-SOLO' : 'V-SCALE';
 
     body.innerHTML = `
       <div class="quiz-step active">
@@ -403,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="form-group">
               <label class="form-checkbox-row">
                 <input type="checkbox" id="quizConsent" name="consent" required>
-                <span>Tôi đồng ý với <a href="privacy.html" target="_blank">Chính sách bảo mật</a> của VDAI Academy *</span>
+                <span>Tôi đồng ý với <a href="privacy.html" target="_blank">Chính sách bảo mật</a> của VO DUONG AI *</span>
               </label>
               <div class="form-error-msg" id="quizConsentError">Vui lòng đồng ý với Chính sách bảo mật để tiếp tục.</div>
             </div>

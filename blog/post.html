@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Bài viết — Blog VDAI Academy</title>
+<title>Bài viết — Blog VO DUONG AI</title>
 <meta name="robots" content="index, follow">
 <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico?v=20260620f">
 <link rel="stylesheet" href="../assets/css/styles.css?v=20260620e">
@@ -23,7 +23,7 @@
 <nav id="nav" aria-label="Điều hướng chính">
   <div class="container nav-inner">
     <a href="/index.html" class="nav-logo" style="display:inline-flex;align-items:center;text-decoration:none">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:inline-block;flex-shrink:0"><path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB"/><circle cx="27" cy="7.5" r="3" fill="#F97316"/></svg><span style="display:inline-flex;flex-direction:column;line-height:1;margin-left:7px"><b style="font-size:15px;font-weight:800;color:#fff;letter-spacing:1.5px;font-family:Inter,system-ui,sans-serif">VDAI</b><small style="font-size:8px;font-weight:600;color:#94a3b8;letter-spacing:3px;font-family:Inter,system-ui,sans-serif">ACADEMY</small></span>
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="display:inline-block;flex-shrink:0"><path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB"/><circle cx="27" cy="7.5" r="3" fill="#F97316"/></svg><span style="display:inline-flex;flex-direction:column;line-height:1;margin-left:7px"><b style="font-size:15px;font-weight:800;color:#fff;letter-spacing:1.5px;font-family:Inter,system-ui,sans-serif">VO DUONG</b><small style="font-size:8px;font-weight:600;color:#94a3b8;letter-spacing:3px;font-family:Inter,system-ui,sans-serif">AI</small></span>
     </a>
     <div class="nav-menu" role="navigation">
       <a href="/index.html#a5-system">Phương pháp A5</a>
@@ -50,7 +50,7 @@
 <footer>
   <div class="container">
     <div class="footer-bottom">
-      <div>© <span id="footerYear">2026</span> VDAI Academy. Đã đăng ký bản quyền nội dung.</div>
+      <div>© <span id="footerYear">2026</span> VO DUONG AI. Đã đăng ký bản quyền nội dung.</div>
     </div>
   </div>
 </footer>
@@ -73,7 +73,7 @@ document.getElementById('footerYear').textContent = new Date().getFullYear();
 
   if (!post) { postBody.innerHTML = '<p>Không tìm thấy bài viết hoặc bài viết chưa được xuất bản.</p>'; return; }
 
-  document.title = post.title + ' — Blog VDAI Academy';
+  document.title = post.title + ' — Blog VO DUONG AI';
   postBody.innerHTML = `
     ${post.cover_url ? `<img class="post-cover" src="${post.cover_url}" alt="${post.title}">` : ''}
     <div class="post-meta">${post.published_at ? new Date(post.published_at).toLocaleDateString('vi-VN') : ''}</div>

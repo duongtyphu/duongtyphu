@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════════════
-   SUPABASE CONFIG — VDAI Academy
+   SUPABASE CONFIG — VO DUONG AI
    Điền thông tin sau khi tạo project tại https://supabase.com
 ════════════════════════════════════════════════════════════ */
 const SUPABASE_URL  = 'https://uosxpxolsvwcafxvnroy.supabase.co';
