@@ -1,5 +1,6 @@
 import { vdaiCourses } from "@/data/courses";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getPurchasedIds } from "@/lib/access";
 import { CheckoutButton } from "@/components/portal/CheckoutModal";
 
 export const metadata = { title: "VO DUONG AI Academy" };
@@ -125,6 +126,7 @@ export default async function VdaiAcademyPage() {
   const liveLessons = await getLiveLessons();
   const liveClasses = await getLiveClasses();
   const liveCourseStatuses = await getLiveCourseStatuses();
+  const purchasedLessonIds = await getPurchasedIds("lesson_id");
 
   return (
     <div className="space-y-10">
@@ -251,35 +253,51 @@ export default async function VdaiAcademyPage() {
             Buổi học thật
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {liveLessons.map((l) => (
-              <div key={l.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-sm font-bold text-white">{l.title}</h3>
-                  <span className="shrink-0 rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold text-brand-orange">
-                    {l.price > 0 ? `${l.price.toLocaleString("vi-VN")}đ` : "Miễn phí"}
-                  </span>
-                </div>
-                {l.description && <p className="mt-2 text-sm text-white/70">{l.description}</p>}
-                {l.price === 0 && l.video_url && (
-                  <a
-                    href={l.video_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
-                  >
-                    Xem tài liệu buổi học →
-                  </a>
-                )}
-                {l.price > 0 && (
-                  <div className="mt-3">
-                    <CheckoutButton
-                      target={{ itemType: "lesson", itemId: l.id, title: l.title, price: l.price }}
-                      label="Mua ngay"
-                    />
+            {liveLessons.map((l) => {
+              const owned = l.price === 0 || purchasedLessonIds.has(String(l.id));
+              return (
+                <div key={l.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-sm font-bold text-white">{l.title}</h3>
+                    <span className="shrink-0 rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold text-brand-orange">
+                      {l.price > 0 ? (owned ? "Đã sở hữu" : `${l.price.toLocaleString("vi-VN")}đ`) : "Miễn phí"}
+                    </span>
                   </div>
-                )}
-              </div>
-            ))}
+                  {l.description && <p className="mt-2 text-sm text-white/70">{l.description}</p>}
+                  {owned ? (
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      {l.video_url && (
+                        <a
+                          href={l.video_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-semibold text-brand-blue hover:underline"
+                        >
+                          Xem video buổi học →
+                        </a>
+                      )}
+                      {l.pdf_url && (
+                        <a
+                          href={l.pdf_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-semibold text-brand-blue hover:underline"
+                        >
+                          Tải tài liệu →
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="mt-3">
+                      <CheckoutButton
+                        target={{ itemType: "lesson", itemId: l.id, title: l.title, price: l.price }}
+                        label="Mua ngay"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
