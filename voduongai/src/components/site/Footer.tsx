@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/site";
+import type { SiteSettings } from "@/lib/site-settings";
 
 const columns = [
   {
@@ -25,63 +25,66 @@ const columns = [
   },
 ];
 
-const socials = [
-  {
-    label: "Facebook",
-    href: siteConfig.links.facebook,
-    bg: "#1877F2",
-    icon: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
-        <path d="M14.5 8.5H16.8V5.7H14.5C12.4 5.7 10.7 7.4 10.7 9.5V11.3H8.6V14H10.7V19.5H13.4V14H15.7L16.1 11.3H13.4V9.7C13.4 9.04 13.84 8.5 14.5 8.5Z" />
-      </svg>
-    ),
-  },
-  {
-    label: "YouTube",
-    href: siteConfig.links.youtube,
-    bg: "#FF0000",
-    icon: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
-        <path d="M9.7 8.6 16 12l-6.3 3.4V8.6Z" />
-      </svg>
-    ),
-  },
-  {
-    label: "TikTok",
-    href: siteConfig.links.tiktok,
-    bg: "#000000",
-    icon: (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
-        <path d="M16.5 3c.5 2 2 3.5 4 3.8v3a7 7 0 0 1-4-1.3v6.7a5.7 5.7 0 1 1-5-5.66v3.1a2.6 2.6 0 1 0 2 2.5V3h3Z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Zalo",
-    href: siteConfig.links.zalo,
-    bg: "#0068FF",
-    icon: (
-      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none">
-        <text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">
-          Z
-        </text>
-      </svg>
-    ),
-  },
-  {
-    label: "Email",
-    href: `mailto:${siteConfig.contact.email}`,
-    bg: "rgba(255,255,255,0.12)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
-        <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="#fff" strokeWidth="1.4" />
-        <path d="M4.5 7 12 12.5 19.5 7" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-];
+function getSocials(settings: SiteSettings) {
+  return [
+    {
+      label: "Facebook",
+      href: settings.facebookUrl,
+      bg: "#1877F2",
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
+          <path d="M14.5 8.5H16.8V5.7H14.5C12.4 5.7 10.7 7.4 10.7 9.5V11.3H8.6V14H10.7V19.5H13.4V14H15.7L16.1 11.3H13.4V9.7C13.4 9.04 13.84 8.5 14.5 8.5Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "YouTube",
+      href: settings.youtubeUrl,
+      bg: "#FF0000",
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
+          <path d="M9.7 8.6 16 12l-6.3 3.4V8.6Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "TikTok",
+      href: settings.tiktokUrl,
+      bg: "#000000",
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" fill="#fff">
+          <path d="M16.5 3c.5 2 2 3.5 4 3.8v3a7 7 0 0 1-4-1.3v6.7a5.7 5.7 0 1 1-5-5.66v3.1a2.6 2.6 0 1 0 2 2.5V3h3Z" />
+        </svg>
+      ),
+    },
+    {
+      label: "Zalo",
+      href: settings.zaloUrl,
+      bg: "#0068FF",
+      icon: (
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none">
+          <text x="12" y="16" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff">
+            Z
+          </text>
+        </svg>
+      ),
+    },
+    {
+      label: "Email",
+      href: `mailto:${settings.adminEmailNotify}`,
+      bg: "rgba(255,255,255,0.12)",
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
+          <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="#fff" strokeWidth="1.4" />
+          <path d="M4.5 7 12 12.5 19.5 7" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
+        </svg>
+      ),
+    },
+  ];
+}
 
-export function Footer() {
+export function Footer({ settings }: { settings: SiteSettings }) {
+  const socials = getSocials(settings);
   return (
     <footer className="relative">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-blue/70 to-transparent shadow-[0_0_24px_2px_rgba(91,140,255,0.55)]" />
@@ -94,11 +97,11 @@ export function Footer() {
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
               <span className="text-base font-extrabold tracking-tight text-brand-orange">
-                {siteConfig.name}
+                {settings.siteName}
               </span>
             </Link>
             <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">
-              {siteConfig.tagline}
+              {settings.slogan}
             </p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
               Nơi học AI, xây hệ thống và tạo tài sản số hội tụ trong một hệ
@@ -154,7 +157,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row">
           <span>
-            Copyright © {new Date().getFullYear()} {siteConfig.name}
+            Copyright © {new Date().getFullYear()} {settings.siteName}
           </span>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
             <Link href="/privacy" className="hover:text-white">

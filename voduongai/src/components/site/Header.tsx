@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { mainNav, siteConfig } from "@/lib/site";
+import { mainNav } from "@/lib/site";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { AccountMenu } from "@/components/site/AccountMenu";
+import type { SiteSettings } from "@/lib/site-settings";
 
 async function getCurrentUser() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -12,7 +13,7 @@ async function getCurrentUser() {
   return data.user;
 }
 
-export async function Header() {
+export async function Header({ settings }: { settings: SiteSettings }) {
   const user = await getCurrentUser();
   const meta = user?.user_metadata ?? {};
 
@@ -26,10 +27,10 @@ export async function Header() {
           </svg>
           <span className="flex flex-col leading-tight">
             <span className="text-sm font-extrabold tracking-tight text-brand-orange">
-              {siteConfig.name}
+              {settings.siteName}
             </span>
             <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-blue sm:block">
-              {siteConfig.tagline}
+              {settings.slogan}
             </span>
           </span>
         </Link>
