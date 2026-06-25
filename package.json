@@ -1,0 +1,23 @@
+{
+  "name": "duongtyphu",
+  "version": "1.0.0",
+  "description": "VO DUONG AI website",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "node tests/link-checker.js",
+    "test:links": "node tests/link-checker.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://local_proxy@127.0.0.1:35609/git/duongtyphu/duongtyphu"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cheerio": "^1.2.0"
+  }
+}

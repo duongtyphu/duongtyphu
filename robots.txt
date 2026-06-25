@@ -1,0 +1,8 @@
+# VDAI Academy — robots.txt
+
+User-agent: *
+Allow: /
+
+Disallow: /thank-you.html
+
+Sitemap: https://v-academy-mauve.vercel.app/sitemap.xml

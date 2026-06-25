@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist 30 Ngày Đầu — VO DUONG AI</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #0F172A; background: #fff; font-size: 14px; line-height: 1.7; }
+  .page-header { background: linear-gradient(135deg, #064E3B, #059669); color: #fff; padding: 36px 48px 28px; }
+  .page-header .brand { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .page-header h1 { font-size: 28px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+  .page-header .subtitle { font-size: 14px; opacity: 0.85; }
+  .page-header .meta { margin-top: 16px; display: flex; gap: 20px; font-size: 12px; opacity: 0.7; }
+  .content { padding: 32px 48px; max-width: 900px; margin: 0 auto; }
+  h2 { font-size: 18px; font-weight: 800; color: #064E3B; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 2px solid #A7F3D0; }
+  h3 { font-size: 15px; font-weight: 700; color: #059669; margin: 20px 0 8px; }
+  p { margin-bottom: 10px; color: #334155; }
+  .intro-box { background: #ECFDF5; border: 1.5px solid #6EE7B7; border-radius: 10px; padding: 18px 22px; margin-bottom: 24px; }
+  .intro-box h3 { color: #065F46; margin-top: 0; }
+  .intro-box p { margin: 0; color: #065F46; }
+  .week-block { margin-bottom: 28px; border-radius: 12px; overflow: hidden; border: 1.5px solid #E2E8F0; }
+  .week-header { padding: 14px 20px; font-weight: 800; font-size: 15px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+  .week-1 .week-header { background: linear-gradient(135deg, #1D4ED8, #2563EB); }
+  .week-2 .week-header { background: linear-gradient(135deg, #7C3AED, #8B5CF6); }
+  .week-3 .week-header { background: linear-gradient(135deg, #B45309, #D97706); }
+  .week-4 .week-header { background: linear-gradient(135deg, #B91C1C, #DC2626); }
+  .week-header .goal-tag { font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 20px; }
+  .day-item { padding: 12px 20px; border-bottom: 1px solid #F1F5F9; display: flex; gap: 14px; align-items: flex-start; }
+  .day-item:last-child { border-bottom: none; }
+  .day-item:hover { background: #F8FAFC; }
+  .checkbox { width: 18px; height: 18px; border: 2px solid #CBD5E1; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+  .day-label { font-size: 11px; font-weight: 700; color: #2563EB; min-width: 52px; margin-top: 2px; }
+  .day-content { flex: 1; }
+  .day-title { font-size: 13px; font-weight: 700; color: #0F172A; margin-bottom: 3px; }
+  .day-desc { font-size: 12px; color: #64748B; line-height: 1.5; }
+  .day-tool { display: inline-block; font-size: 10px; font-weight: 700; background: #EFF6FF; color: #1D4ED8; padding: 2px 8px; border-radius: 20px; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+  th { background: #064E3B; color: #fff; padding: 10px 12px; text-align: left; font-weight: 700; font-size: 12px; }
+  td { padding: 9px 12px; border-bottom: 1px solid #E2E8F0; color: #334155; }
+  tr:nth-child(even) td { background: #F8FAFC; }
+  .kpi-table th { background: #1E3A8A; }
+  .niche-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 16px 0; }
+  .niche-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 12px; }
+  .niche-card h4 { font-size: 12px; font-weight: 700; color: #0F172A; margin-bottom: 6px; }
+  .niche-card ul { padding-left: 14px; }
+  .niche-card li { font-size: 11px; color: #64748B; margin-bottom: 2px; }
+  .success-box { background: #ECFDF5; border: 1.5px solid #6EE7B7; border-radius: 10px; padding: 16px 20px; margin: 20px 0; }
+  .success-box h3 { color: #065F46; margin-top: 0; margin-bottom: 8px; }
+  .success-box ul { padding-left: 16px; }
+  .success-box li { font-size: 13px; color: #065F46; margin-bottom: 4px; }
+  .footer { background: #F1F5F9; border-top: 2px solid #E2E8F0; padding: 14px 48px; text-align: center; font-size: 11px; color: #64748B; margin-top: 40px; }
+  .footer strong { color: #059669; }
+  @media print {
+    @page { size: A4; margin: 12mm 15mm; }
+    body { font-size: 12px; }
+    .page-header { padding: 20px 32px; }
+    .content { padding: 16px 32px; }
+    h2 { page-break-after: avoid; }
+    .week-block { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="brand">VO DUONG AI · Tài liệu độc quyền dành cho thành viên</div>
+  <h1>📋 Checklist 30 Ngày Đầu</h1>
+  <div class="subtitle">Từ Số 0 Đến Thu Nhập Đầu Tiên — Lộ trình từng ngày có thể thực hiện ngay</div>
+  <div class="meta">
+    <span>📅 Cập nhật: Tháng 6/2025</span>
+    <span>📄 Tài liệu số 2/4</span>
+    <span>⏱ In ra và tích từng ngày</span>
+  </div>
+</div>
+
+<div class="content">
+
+<div class="intro-box">
+  <h3>💬 Lời nhắn trước khi bắt đầu</h3>
+  <p>30 ngày đầu không phải để kiếm thật nhiều tiền — mà để <strong>xây nền móng vững chắc</strong>. Hầu hết người thất bại vì kỳ vọng quá cao ngay từ đầu. Hãy cam kết làm đúng checklist mỗi ngày, dù chỉ 1-2 giờ, và bạn sẽ thấy kết quả vào cuối tháng.</p>
+</div>
+
+<h2>Tiêu Chí Chọn Niche Tốt</h2>
+<p>Trước khi bắt đầu 30 ngày, hãy dành 30 phút để xác định niche của bạn theo các tiêu chí sau:</p>
+
+<div class="niche-grid">
+  <div class="niche-card">
+    <h4>✅ Dấu hiệu niche tốt</h4>
+    <ul>
+      <li>Có nhiều sản phẩm affiliate</li>
+      <li>Người mua có khả năng chi tiêu</li>
+      <li>Bạn có hiểu biết cơ bản</li>
+      <li>Cạnh tranh vừa phải</li>
+      <li>Nhu cầu ổn định quanh năm</li>
+      <li>Hoa hồng tốt (≥5%)</li>
+    </ul>
+  </div>
+  <div class="niche-card">
+    <h4>❌ Dấu hiệu nên tránh</h4>
+    <ul>
+      <li>Quá chung chung (thời trang, ẩm thực)</li>
+      <li>Cạnh tranh cực cao (điện thoại)</li>
+      <li>Hoa hồng quá thấp (dưới 2%)</li>
+      <li>Sản phẩm có vấn đề pháp lý</li>
+      <li>Chỉ hot theo mùa vụ ngắn</li>
+    </ul>
+  </div>
+  <div class="niche-card">
+    <h4>💡 Gợi ý niche cho người mới</h4>
+    <ul>
+      <li>Sức khỏe & làm đẹp</li>
+      <li>Công nghệ & gadget</li>
+      <li>Học ngoại ngữ & kỹ năng</li>
+      <li>Tài chính cá nhân</li>
+      <li>Đồ dùng nhà bếp</li>
+      <li>Sách & khóa học online</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Tuần 1 (Ngày 1–7): Xây Dựng Nền Tảng</h2>
+
+<div class="week-block week-1">
+  <div class="week-header">
+    🏗️ TUẦN 1: SETUP NỀN TẢNG
+    <span class="goal-tag">Mục tiêu: Có tất cả tài khoản & kế hoạch</span>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 1</div>
+    <div class="day-content">
+      <div class="day-title">Chọn niche chính thức và cam kết với nó</div>
+      <div class="day-desc">Dùng bảng tiêu chí ở trên để chọn 1 niche duy nhất. Viết ra lý do tại sao bạn chọn niche này. Tìm 3-5 từ khóa chính của niche trên Google Trends. Xác nhận có ít nhất 2 nền tảng affiliate cho niche này.</div>
+      <span class="day-tool">🛠 Tool: Google Trends, ChatGPT để brainstorm</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 2</div>
+    <div class="day-content">
+      <div class="day-title">Nghiên cứu 5 đối thủ đang làm tốt trong niche</div>
+      <div class="day-desc">Tìm 5 Facebook Page/TikTok/YouTube trong niche. Phân tích: họ đăng content gì, tần suất, format nào nhiều lượt tương tác nhất. Ghi chép lại 10 ý tưởng content từ đối thủ (không copy, lấy ý tưởng). Tìm "lỗ hổng" mà đối thủ chưa làm tốt.</div>
+      <span class="day-tool">🛠 Tool: Facebook search, TikTok search, SimilarWeb Free</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 3</div>
+    <div class="day-content">
+      <div class="day-title">Đăng ký các nền tảng affiliate</div>
+      <div class="day-desc">Đăng ký tài khoản Shopee Affiliate (shop.shopee.vn/affiliate). Đăng ký AccessTrade (accesstrade.vn). Đăng ký 1 nền tảng quốc tế phù hợp với niche. Chờ duyệt và đọc kỹ điều khoản, cơ chế tính hoa hồng của từng nền tảng.</div>
+      <span class="day-tool">🛠 Action: Điền form đăng ký, chuẩn bị CMND/CCCD và thông tin ngân hàng</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 4</div>
+    <div class="day-content">
+      <div class="day-title">Setup tất cả tài khoản mạng xã hội</div>
+      <div class="day-desc">Tạo Facebook Page với tên niche rõ ràng (VD: "Review Đồ Nhà Bếp Thông Minh"). Tạo TikTok account với username chuyên nghiệp. Tối ưu bio: ảnh đại diện, mô tả ngắn gọn, link liên kết. Tạo logo đơn giản bằng Canva AI (miễn phí).</div>
+      <span class="day-tool">🛠 Tool: Canva AI để tạo logo và ảnh bìa</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 5</div>
+    <div class="day-content">
+      <div class="day-title">Nghiên cứu và chọn 10 sản phẩm tiềm năng</div>
+      <div class="day-desc">Vào Shopee/Lazada, tìm 10 sản phẩm trong niche có: đánh giá tốt (4.5+ sao), nhiều đơn hàng, giá từ 200K trở lên, hoa hồng hợp lý. Copy link affiliate của từng sản phẩm. Ghi chép ưu/nhược điểm của từng sản phẩm để chuẩn bị review.</div>
+      <span class="day-tool">🛠 Action: Tạo file Excel theo dõi sản phẩm (tên, link, giá, hoa hồng, đánh giá)</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 6</div>
+    <div class="day-content">
+      <div class="day-title">Chọn 2-3 sản phẩm chủ lực để tập trung tuần đầu</div>
+      <div class="day-desc">Từ 10 sản phẩm ngày 5, chọn ra 2-3 sản phẩm tốt nhất. Tiêu chí: bạn có thể nói nhiều về nó, giá ổn, hoa hồng tốt, review tốt từ người dùng thực. Nếu có điều kiện, hãy mua/thử sản phẩm để review chân thực hơn.</div>
+      <span class="day-tool">🛠 Tip: Đọc toàn bộ review của khách hàng để hiểu điểm mạnh/yếu thực tế</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 7</div>
+    <div class="day-content">
+      <div class="day-title">Lập kế hoạch content 30 ngày</div>
+      <div class="day-desc">Dùng ChatGPT để tạo 30 ý tưởng content trong niche (prompt: "Tạo 30 ý tưởng content về [niche] cho người làm affiliate, dạng review, tips, so sánh, hướng dẫn"). Phân loại: review sản phẩm, tips hữu ích, so sánh, hướng dẫn sử dụng. Lên lịch đăng cụ thể: ngày nào đăng gì, trên kênh nào.</div>
+      <span class="day-tool">🛠 Tool: ChatGPT, Google Sheets để lên lịch content</span>
+    </div>
+  </div>
+</div>
+
+<h2>Tuần 2 (Ngày 8–14): Tạo Content Đầu Tiên</h2>
+
+<div class="week-block week-2">
+  <div class="week-header">
+    ✍️ TUẦN 2: TẠO CONTENT & ĐĂNG BÀI
+    <span class="goal-tag">Mục tiêu: Có 7-10 bài đăng đầu tiên</span>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 8</div>
+    <div class="day-content">
+      <div class="day-title">Viết bài review chi tiết sản phẩm đầu tiên</div>
+      <div class="day-desc">Dùng prompt AI: "Viết bài review chi tiết về [sản phẩm] gồm: tổng quan, ưu điểm, nhược điểm, ai nên mua, giá có hợp lý không, kết luận". Chỉnh sửa cho tự nhiên, thêm trải nghiệm cá nhân nếu có. Thêm link affiliate một cách tự nhiên. Đăng lên Facebook Page.</div>
+      <span class="day-tool">🛠 Tool: ChatGPT/Claude + 100 Prompt trong Tài liệu số 3</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 9</div>
+    <div class="day-content">
+      <div class="day-title">Tạo video TikTok đầu tiên (60 giây)</div>
+      <div class="day-desc">Dùng AI viết script 60 giây: hook (5 giây đầu gây tò mò) + nội dung chính (45 giây) + CTA (10 giây). Quay video đơn giản bằng điện thoại. Dùng CapCut AI thêm phụ đề tự động, nhạc nền. Đăng TikTok với caption + hashtag phù hợp.</div>
+      <span class="day-tool">🛠 Tool: CapCut AI, ChatGPT viết script</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 10</div>
+    <div class="day-content">
+      <div class="day-title">Tạo 5 ảnh/infographic giới thiệu sản phẩm</div>
+      <div class="day-desc">Dùng Canva AI tạo 5 ảnh: ảnh sản phẩm + điểm nổi bật, bảng so sánh 2-3 sản phẩm, infographic "5 lý do nên mua", ảnh giá cả trực quan, ảnh review ngắn từ người dùng khác. Đăng dạng carousel Facebook hoặc post ảnh TikTok.</div>
+      <span class="day-tool">🛠 Tool: Canva AI (miễn phí), Adobe Firefly</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 11</div>
+    <div class="day-content">
+      <div class="day-title">Viết bài "So sánh 3 sản phẩm cùng loại"</div>
+      <div class="day-desc">Bài so sánh thường có tỷ lệ chuyển đổi cao vì người đọc đang trong giai đoạn quyết định mua. Prompt: "So sánh [sản phẩm A] vs [sản phẩm B] vs [sản phẩm C]: bảng so sánh tính năng, ưu nhược điểm, ai nên chọn cái nào, kết luận". Thêm link affiliate của cả 3 sản phẩm.</div>
+      <span class="day-tool">🛠 Tool: ChatGPT tạo bảng so sánh, Canva tạo ảnh bảng so sánh đẹp</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 12</div>
+    <div class="day-content">
+      <div class="day-title">Viết bài "Hướng dẫn sử dụng" hoặc "Tips" liên quan</div>
+      <div class="day-desc">Nội dung giáo dục (không bán hàng trực tiếp) giúp xây dựng uy tín. Ví dụ: "10 tips dùng [sản phẩm] hiệu quả hơn" hoặc "Cách chọn [loại sản phẩm] phù hợp với nhu cầu của bạn". Đề cập tự nhiên đến sản phẩm bạn giới thiệu trong bài.</div>
+      <span class="day-tool">🛠 Tool: ChatGPT viết, thêm ví dụ thực tế để nội dung thuyết phục hơn</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 13</div>
+    <div class="day-content">
+      <div class="day-title">Tạo video TikTok thứ 2 — format "unboxing" hoặc "before/after"</div>
+      <div class="day-desc">Format unboxing và before/after luôn hấp dẫn vì tính chân thực cao. Nếu có sản phẩm: quay cảnh mở hộp và dùng thử. Nếu chưa có: tổng hợp từ video review của người khác (comment link nguồn). Thêm nhận xét cá nhân để tạo độ tin cậy.</div>
+      <span class="day-tool">🛠 Tool: CapCut AI cắt ghép, thêm text và nhạc tự động</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 14</div>
+    <div class="day-content">
+      <div class="day-title">Review kết quả tuần 1 & 2 + điều chỉnh</div>
+      <div class="day-desc">Xem analytics Facebook Page: bài nào nhiều reach, tương tác nhất? TikTok: video nào nhiều view, follow nhất? Link affiliate: đã có ai click chưa? Điều chỉnh format và chủ đề dựa trên dữ liệu thực tế. Đây là thói quen quan trọng nhất của người làm Affiliate chuyên nghiệp.</div>
+      <span class="day-tool">🛠 Action: Ghi chép vào bảng KPI cuối tài liệu này</span>
+    </div>
+  </div>
+</div>
+
+<h2>Tuần 3 (Ngày 15–21): Phân Phối & Tăng Traffic</h2>
+
+<div class="week-block week-3">
+  <div class="week-header">
+    📢 TUẦN 3: PHÂN PHỐI & TRAFFIC
+    <span class="goal-tag">Mục tiêu: Tăng reach lên 3-5x</span>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 15</div>
+    <div class="day-content">
+      <div class="day-title">Tìm và tham gia 5-10 nhóm Facebook liên quan đến niche</div>
+      <div class="day-desc">Tìm group Facebook lớn (10K+ thành viên) trong niche. Ví dụ: niche đồ bếp → group "Chia sẻ mẹo nấu ăn", "Review đồ dùng nhà bếp". Tham gia và tương tác thật sự (comment hữu ích) 2-3 ngày trước khi đăng bài. Không spam link ngay từ đầu.</div>
+      <span class="day-tool">🛠 Action: Tìm bằng từ khóa niche trên thanh tìm kiếm Facebook</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 16</div>
+    <div class="day-content">
+      <div class="day-title">Đăng bài trong group một cách tự nhiên</div>
+      <div class="day-desc">Chia sẻ bài viết review dưới dạng "hỏi đáp" hoặc "chia sẻ kinh nghiệm" thay vì quảng cáo. Ví dụ: "Mình vừa mua [sản phẩm], ai đã dùng chưa? Mình thấy [nhận xét thật]...". Comment trả lời câu hỏi của người khác liên quan đến sản phẩm của bạn.</div>
+      <span class="day-tool">🛠 Chú ý: Đọc quy tắc nhóm trước, nhiều group cấm đăng link thương mại</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 17</div>
+    <div class="day-content">
+      <div class="day-title">Tạo email list đầu tiên — setup Mailchimp miễn phí</div>
+      <div class="day-desc">Đăng ký Mailchimp (miễn phí 500 subscriber). Tạo "lead magnet" đơn giản: PDF tóm tắt tips, checklist, hoặc coupon code. Tạo landing page đơn giản (dùng Mailchimp hoặc Canva) để thu email. Chia sẻ link thu email lên các kênh đang có.</div>
+      <span class="day-tool">🛠 Tool: Mailchimp.com (miễn phí), dùng ChatGPT viết nội dung email đầu tiên</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 18</div>
+    <div class="day-content">
+      <div class="day-title">Chạy thử Facebook Boost Post ngân sách nhỏ (50K-100K/ngày)</div>
+      <div class="day-desc">Chọn bài post có tương tác tự nhiên tốt nhất để boost. Target: tuổi phù hợp với niche, sở thích liên quan, địa lý (cả nước hoặc thành phố lớn). Chạy 3 ngày, xem kết quả. Mục tiêu: học cách chạy ads, không phải kiếm tiền ngay.</div>
+      <span class="day-tool">🛠 Ngân sách tối thiểu: 150K-300K cho 3 ngày test</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 19</div>
+    <div class="day-content">
+      <div class="day-title">Tăng tốc TikTok — đăng 2 video/ngày trong 3 ngày</div>
+      <div class="day-desc">TikTok ưu tiên tài khoản đăng đều đặn và nhiều. Tạo sẵn 6 video (dùng AI viết script, quay nhanh). Đăng lúc 12h và 20h. Trả lời comment nhanh trong 30 phút đầu sau khi đăng để boost thuật toán.</div>
+      <span class="day-tool">🛠 Tip: TikTok creator tool cho thấy giờ đăng tốt nhất của tài khoản bạn</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 20</div>
+    <div class="day-content">
+      <div class="day-title">Viết bài blog SEO đầu tiên (nếu có website)</div>
+      <div class="day-desc">Nếu chưa có website, dùng Blogger.com hoặc WordPress.com miễn phí. Prompt: "Viết bài blog 800-1000 từ về [từ khóa] theo chuẩn SEO, gồm intro, 5 phần chính, kết luận, tự nhiên đề cập [sản phẩm]". Submit lên Google Search Console.</div>
+      <span class="day-tool">🛠 Tool: ChatGPT viết, Google Search Console để index bài</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 21</div>
+    <div class="day-content">
+      <div class="day-title">Gửi email đầu tiên đến list subscriber</div>
+      <div class="day-desc">Viết email giới thiệu: bạn là ai, bạn sẽ gửi gì, tặng gì miễn phí. Kết thúc email bằng 1 sản phẩm giới thiệu kèm link affiliate. Tỷ lệ mở email từ list tự xây thường 20-40% — cao hơn nhiều so với quảng cáo lạnh.</div>
+      <span class="day-tool">🛠 Tool: Mailchimp, dùng ChatGPT viết email hấp dẫn</span>
+    </div>
+  </div>
+</div>
+
+<h2>Tuần 4 (Ngày 22–30): Phân Tích & Scale</h2>
+
+<div class="week-block week-4">
+  <div class="week-header">
+    📈 TUẦN 4: TỐI ƯU & SCALE
+    <span class="goal-tag">Mục tiêu: Nhân đôi những gì hoạt động</span>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 22</div>
+    <div class="day-content">
+      <div class="day-title">Phân tích toàn diện 3 tuần qua</div>
+      <div class="day-desc">Liệt kê: content nào có nhiều click affiliate nhất, kênh nào hiệu quả nhất, sản phẩm nào được quan tâm nhất, khung giờ đăng tốt nhất. Từ đó xác định "công thức thắng" — pattern nào lặp lại ở những bài thành công.</div>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 23-24</div>
+    <div class="day-content">
+      <div class="day-title">Tạo thêm 10 pieces of content theo công thức thắng</div>
+      <div class="day-desc">Nhân bản format đã thành công: nếu video "so sánh 3 sản phẩm" hiệu quả → tạo thêm 5 video so sánh tương tự. Nếu bài "tips và tricks" được chia sẻ nhiều → viết thêm 5 bài tips. Dùng AI để sản xuất nhanh hơn.</div>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 25</div>
+    <div class="day-content">
+      <div class="day-title">Tăng ngân sách quảng cáo cho campaign tốt nhất</div>
+      <div class="day-desc">Nếu ngày 18 chạy ads và có kết quả tốt: tăng ngân sách lên 200-500K/ngày. Duplicate campaign và test thêm 1-2 target audience khác. Theo dõi CPA (chi phí/chuyển đổi) để quyết định tiếp tục hay dừng.</div>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 26-27</div>
+    <div class="day-content">
+      <div class="day-title">Mở rộng sang 1-2 sản phẩm mới trong cùng niche</div>
+      <div class="day-desc">Chọn sản phẩm bổ sung (upsell hoặc complementary) cho sản phẩm chủ lực. Ví dụ: đang review máy pha cà phê → mở rộng sang cà phê hạt, ly giữ nhiệt. Người đã mua 1 sản phẩm qua link của bạn có khả năng mua tiếp cao.</div>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 28</div>
+    <div class="day-content">
+      <div class="day-title">Tối ưu hóa link affiliate và tracking</div>
+      <div class="day-desc">Dùng Bitly.com để rút gọn link affiliate (miễn phí, có thống kê click). Tạo link riêng cho từng kênh (Facebook, TikTok, email) để biết kênh nào mang lại click nhiều nhất. Xem báo cáo trên dashboard affiliate để kiểm tra conversion rate.</div>
+      <span class="day-tool">🛠 Tool: Bitly.com, Shopee/AccessTrade dashboard</span>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 29</div>
+    <div class="day-content">
+      <div class="day-title">Lập kế hoạch tháng 2 — dựa hoàn toàn trên dữ liệu</div>
+      <div class="day-desc">Tháng 2 phải có mục tiêu rõ ràng hơn: số lượng content, ngân sách ads, mục tiêu doanh thu. Quyết định: có nên thêm kênh mới không? Có nên thêm niche không? Có nên thuê người phụ không? Mọi quyết định dựa trên số liệu, không phải cảm tính.</div>
+    </div>
+  </div>
+
+  <div class="day-item">
+    <div class="checkbox"></div>
+    <div class="day-label">Ngày 30</div>
+    <div class="day-content">
+      <div class="day-title">Tổng kết 30 ngày — ăn mừng và cam kết tiếp tục</div>
+      <div class="day-desc">Tính tổng: tổng click, tổng đơn hàng, tổng hoa hồng, tổng chi phí (nếu có ads). Chia sẻ kết quả trong cộng đồng VO DUONG AI để nhận góp ý và động lực. Nhớ rằng: 30 ngày đầu là để học và xây nền tảng — con số quan trọng nhất là bạn đã không bỏ cuộc.</div>
+    </div>
+  </div>
+</div>
+
+<h2>Bảng Theo Dõi KPI Hàng Tuần</h2>
+<p>In bảng này ra và điền vào mỗi tối Chủ nhật:</p>
+<table class="kpi-table">
+  <tr>
+    <th>Chỉ số</th>
+    <th>Tuần 1<br>Mục tiêu</th>
+    <th>Tuần 1<br>Thực tế</th>
+    <th>Tuần 2<br>Mục tiêu</th>
+    <th>Tuần 2<br>Thực tế</th>
+    <th>Tuần 3<br>Mục tiêu</th>
+    <th>Tuần 3<br>Thực tế</th>
+    <th>Tuần 4<br>Mục tiêu</th>
+    <th>Tuần 4<br>Thực tế</th>
+  </tr>
+  <tr><td>Số bài đăng</td><td>—</td><td></td><td>7</td><td></td><td>7</td><td></td><td>10</td><td></td></tr>
+  <tr><td>Facebook Reach</td><td>—</td><td></td><td>500+</td><td></td><td>1.000+</td><td></td><td>3.000+</td><td></td></tr>
+  <tr><td>TikTok Views</td><td>—</td><td></td><td>500+</td><td></td><td>2.000+</td><td></td><td>5.000+</td><td></td></tr>
+  <tr><td>Số click affiliate</td><td>—</td><td></td><td>20+</td><td></td><td>50+</td><td></td><td>100+</td><td></td></tr>
+  <tr><td>Số đơn hàng</td><td>—</td><td></td><td>1+</td><td></td><td>3+</td><td></td><td>5+</td><td></td></tr>
+  <tr><td>Hoa hồng (VNĐ)</td><td>—</td><td></td><td>50K+</td><td></td><td>200K+</td><td></td><td>500K+</td><td></td></tr>
+  <tr><td>Email subscriber</td><td>—</td><td></td><td>—</td><td></td><td>10+</td><td></td><td>30+</td><td></td></tr>
+</table>
+
+<div class="success-box">
+  <h3>🏆 Dấu Hiệu Thành Công Sau 30 Ngày</h3>
+  <ul>
+    <li>✅ Đã có ít nhất 1 đơn hàng từ link affiliate của bạn</li>
+    <li>✅ Facebook Page có trên 100 follower</li>
+    <li>✅ TikTok có ít nhất 1 video đạt 1.000+ view</li>
+    <li>✅ Đã tích lũy được ít nhất 20 email subscriber</li>
+    <li>✅ Đã hiểu rõ niche và biết content format nào hiệu quả</li>
+    <li>✅ Đã có thói quen tạo content đều đặn (ít nhất 5 bài/tuần)</li>
+    <li>✅ Biết cách dùng ít nhất 3 công cụ AI để tăng tốc</li>
+  </ul>
+</div>
+
+</div>
+
+<div class="footer">
+  <strong>VO DUONG AI</strong> · Tài liệu độc quyền dành cho thành viên · Vui lòng không chia sẻ bên ngoài<br>
+  Checklist 30 Ngày Đầu · Tài liệu 2/4 · academy.vdai.vn
+</div>
+</body>
+</html>

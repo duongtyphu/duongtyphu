@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+:root {
+  --background: #06142D;
+  --foreground: #ffffff;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  /* Brand — VO DUONG AI */
+  --color-brand-blue:      #2563EB; /* Primary Blue */
+  --color-brand-blue-dark: #0B1F4D; /* Dark Blue */
+  --color-brand-violet:    #5B8CFF; /* Soft Blue */
+  --color-brand-violet-dark:#0B1F4D;
+  --color-brand-orange:    #FF7A00; /* Orange Accent */
+  --color-brand-navy:      #06142D; /* Deep Navy */
+  --color-brand-navy-soft: #0B1F4D;
+  --color-brand-gray-50:   #F8FAFC;
+  --color-brand-gray-100:  #F1F5F9;
+  --color-brand-gray-200:  #E2E8F0;
+  --color-brand-gray-400:  #94A3B8;
+  --color-brand-gray-500:  #64748B;
+  --color-brand-gray-700:  #334155;
+
+  --font-sans: var(--font-jakarta);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gradient-text {
+  background-image: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-surface {
+  background-image: linear-gradient(135deg, var(--color-brand-blue), var(--color-brand-violet));
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-dark {
+  background: rgba(11, 18, 32, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.mesh-navy {
+  background-color: #020817;
+  background-image:
+    linear-gradient(rgba(53, 194, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(53, 194, 255, 0.035) 1px, transparent 1px),
+    radial-gradient(900px circle at 100% 0%, rgba(11, 92, 255, 0.18), transparent 70%),
+    radial-gradient(700px circle at 0% 100%, rgba(53, 194, 255, 0.12), transparent 70%),
+    linear-gradient(165deg, #020817 0%, #041224 50%, #06142B 100%);
+  background-attachment: scroll;
+  background-size: 60px 60px, 60px 60px, 100% 100%, 100% 100%, 100% 100%;
+}
+
+.mesh-light {
+  background-color: #ffffff;
+  background-image:
+    radial-gradient(700px circle at 15% 0%, rgba(37, 99, 235, 0.08), transparent 60%),
+    radial-gradient(600px circle at 90% 20%, rgba(255, 122, 0, 0.07), transparent 55%),
+    radial-gradient(800px circle at 50% 100%, rgba(91, 140, 255, 0.08), transparent 60%);
+}
+
+.card-tilt {
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.card-tilt:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+  box-shadow: 0 24px 60px -20px rgba(11, 31, 77, 0.35);
+}
+
+.card-shine {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card-shine:hover {
+  transform: translateY(-5px) scale(1.015);
+  box-shadow: 0 24px 50px -18px rgba(37, 99, 235, 0.35);
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.card-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.55) 38%, transparent 55%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+
+.card-shine:hover::after {
+  transform: translateX(120%);
+}
+
+.glow-blue {
+  box-shadow: 0 0 60px -10px rgba(37, 99, 235, 0.45), 0 0 0 1px rgba(37, 99, 235, 0.25) inset;
+}
+
+.glow-violet {
+  box-shadow: 0 0 60px -10px rgba(91, 140, 255, 0.4), 0 0 0 1px rgba(91, 140, 255, 0.2) inset;
+}
+
+.shimmer-gold {
+  background-image: linear-gradient(100deg, #fef9c3 0%, #ffffff 25%, #fde68a 50%, #ffffff 75%, #fef9c3 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-move 3.5s linear infinite;
+}
+
+@keyframes shimmer-move {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.spin-slow {
+  animation: spin-slow 7s linear infinite;
+}
+
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+
+.notice-ticker-track {
+  padding-left: 100%;
+  animation: ticker-scroll 40s linear infinite;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}

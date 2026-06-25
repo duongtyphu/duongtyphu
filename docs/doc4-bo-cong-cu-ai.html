@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bộ Công Cụ AI Miễn Phí — VO DUONG AI</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #0F172A; background: #fff; font-size: 14px; line-height: 1.7; }
+  .page-header { background: linear-gradient(135deg, #4C1D95, #6D28D9); color: #fff; padding: 36px 48px 28px; }
+  .page-header .brand { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .page-header h1 { font-size: 28px; font-weight: 900; line-height: 1.2; margin-bottom: 8px; }
+  .page-header .subtitle { font-size: 14px; opacity: 0.85; }
+  .page-header .meta { margin-top: 16px; display: flex; gap: 20px; font-size: 12px; opacity: 0.7; }
+  .content { padding: 28px 48px 40px; max-width: 960px; margin: 0 auto; }
+  h2 { font-size: 16px; font-weight: 800; color: #4C1D95; margin: 32px 0 14px; padding: 10px 16px; background: #F5F3FF; border-left: 4px solid #6D28D9; border-radius: 0 8px 8px 0; }
+  .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 8px; }
+  .tool-card { border: 1.5px solid #E2E8F0; border-radius: 12px; padding: 16px 18px; background: #fff; transition: border-color 0.2s; }
+  .tool-card:hover { border-color: #6D28D9; }
+  .tool-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .tool-icon { font-size: 24px; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .tool-name { font-size: 14px; font-weight: 800; color: #0F172A; }
+  .tool-url { font-size: 11px; color: #6D28D9; font-weight: 600; }
+  .tool-desc { font-size: 12px; color: #475569; margin-bottom: 8px; line-height: 1.5; }
+  .tool-affiliate { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; }
+  .tool-affiliate-label { font-size: 10px; font-weight: 700; color: #15803D; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .tool-affiliate p { font-size: 12px; color: #166534; margin: 0; line-height: 1.5; }
+  .tool-footer { display: flex; justify-content: space-between; align-items: center; }
+  .tool-limit { font-size: 11px; color: #64748B; }
+  .tool-rating { color: #F59E0B; font-size: 13px; }
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-right: 4px; }
+  .tag-free { background: #F0FDF4; color: #15803D; }
+  .tag-freemium { background: #FFF7ED; color: #C2410C; }
+  .tip-box { background: #F5F3FF; border: 1.5px solid #DDD6FE; border-radius: 10px; padding: 14px 18px; margin: 20px 0; }
+  .tip-box h3 { font-size: 13px; font-weight: 700; color: #4C1D95; margin-bottom: 6px; }
+  .tip-box p { font-size: 12px; color: #5B21B6; margin: 0; }
+  .workflow-box { background: #0F172A; color: #fff; border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
+  .workflow-box h3 { font-size: 14px; font-weight: 800; color: #E2E8F0; margin-bottom: 12px; }
+  .workflow-step { display: flex; gap: 12px; margin-bottom: 8px; align-items: flex-start; }
+  .workflow-num { background: #6D28D9; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; margin-top: 1px; }
+  .workflow-step p { font-size: 12px; color: #CBD5E1; margin: 0; }
+  .workflow-step strong { color: #A78BFA; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+  th { background: #4C1D95; color: #fff; padding: 9px 12px; text-align: left; font-weight: 700; }
+  td { padding: 8px 12px; border-bottom: 1px solid #E2E8F0; color: #334155; }
+  tr:nth-child(even) td { background: #F8FAFC; }
+  .footer { background: #F1F5F9; border-top: 2px solid #E2E8F0; padding: 14px 48px; text-align: center; font-size: 11px; color: #64748B; margin-top: 32px; }
+  .footer strong { color: #6D28D9; }
+  @media print {
+    @page { size: A4; margin: 10mm 12mm; }
+    body { font-size: 11px; }
+    .page-header { padding: 18px 28px; }
+    .content { padding: 14px 28px; }
+    .tool-grid { grid-template-columns: 1fr 1fr; }
+    h2 { page-break-after: avoid; }
+    .tool-card { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="brand">VO DUONG AI · Tài liệu độc quyền dành cho thành viên</div>
+  <h1>🔧 Bộ Công Cụ AI Miễn Phí</h1>
+  <div class="subtitle">25 Tool Tốt Nhất Cho Affiliate — Được Chọn Lọc Kỹ, Hướng Dẫn Dùng Thực Tế</div>
+  <div class="meta">
+    <span>📅 Cập nhật: Tháng 6/2025</span>
+    <span>📄 Tài liệu số 4/4</span>
+    <span>🆓 Tất cả đều có bản miễn phí</span>
+  </div>
+</div>
+
+<div class="content">
+
+<div class="tip-box">
+  <h3>💡 Cách dùng tài liệu này hiệu quả nhất</h3>
+  <p>Đừng cố cài tất cả 25 tool cùng lúc. Hãy bắt đầu với <strong>1 tool mỗi nhóm</strong> — thành thạo rồi mới mở rộng. Với người mới: ChatGPT + Canva + CapCut + Mailchimp + Bitly là đủ để bắt đầu tạo ra kết quả thực tế.</p>
+</div>
+
+<!-- GROUP 1 -->
+<h2>✍️ NHÓM 1: VIẾT CONTENT AI (6 Tools)</h2>
+<div class="tool-grid">
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#10A37F20">🤖</div>
+    <div><div class="tool-name">ChatGPT</div><div class="tool-url">chat.openai.com</div></div>
+  </div>
+  <div class="tool-desc">Trợ lý AI đa năng của OpenAI — viết bài, brainstorm ý tưởng, phân tích dữ liệu, dịch thuật, tạo outline và hơn thế nữa. Đây là công cụ AI phổ biến nhất thế giới hiện nay.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Dùng 100 prompt trong Tài liệu số 3 để viết review, caption, email, landing page trong vài phút. Prompt hay nhất: "Viết bài review [sản phẩm] 500 từ, tone thân thiện, thêm ưu/nhược điểm thật, kết thúc bằng CTA."</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: GPT-4o mini / Trả phí $20/tháng: GPT-4o</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#D97E212020">🌟</div>
+    <div><div class="tool-name">Claude (Anthropic)</div><div class="tool-url">claude.ai</div></div>
+  </div>
+  <div class="tool-desc">Trợ lý AI của Anthropic — nổi bật về viết văn tự nhiên, phân tích dài, giữ context tốt hơn ChatGPT trong các cuộc hội thoại dài. Viết tiếng Việt rất tốt và tự nhiên.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tốt nhất cho: viết bài blog dài (2000+ từ), phân tích đối thủ, soạn email sequence, và khi cần giọng văn tự nhiên hơn ChatGPT. Thử prompt: "Viết bài blog SEO 1500 từ về [chủ đề], giọng văn chuyên gia nhưng dễ đọc."</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: Claude Sonnet / Trả phí $20/tháng: Claude Opus</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#4285F420">💎</div>
+    <div><div class="tool-name">Google Gemini</div><div class="tool-url">gemini.google.com</div></div>
+  </div>
+  <div class="tool-desc">AI của Google — tích hợp với Google Search, Drive, Gmail. Điểm mạnh: tra cứu thông tin thời gian thực, tóm tắt tài liệu PDF, tạo content dựa trên dữ liệu mới nhất từ internet.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Dùng khi cần thông tin sản phẩm mới nhất (giá, thông số, so sánh). Có thể upload ảnh sản phẩm và hỏi "Viết caption bán hàng cho sản phẩm trong ảnh này". Tích hợp Google Docs để viết trực tiếp trong tài liệu.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: Gemini 2.0 Flash / Trả phí $20/tháng: Gemini Ultra</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#7C3AED20">✨</div>
+    <div><div class="tool-name">Copy.ai</div><div class="tool-url">copy.ai</div></div>
+  </div>
+  <div class="tool-desc">Tool AI chuyên viết marketing copy — có sẵn 90+ templates cho các loại content: Facebook ads, product description, email subject line, blog intro, Instagram caption. Tối ưu cho người không quen prompt.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Dùng template "Product Description" để viết mô tả sản phẩm nhanh. Template "Facebook Ad Copy" tạo ngay 5-10 phiên bản ads khác nhau để test. Đặc biệt hữu ích cho người mới chưa biết cách prompt AI.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 2.000 từ/tháng / Trả phí $36/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#059669 20">🚀</div>
+    <div><div class="tool-name">Writesonic</div><div class="tool-url">writesonic.com</div></div>
+  </div>
+  <div class="tool-desc">Platform AI viết content chuyên cho marketing — tích hợp SEO check, brand voice, và Chatsonic (AI chat với internet access). Có template riêng cho landing page, ads, blog, email marketing.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tính năng "AI Article Writer" tạo bài SEO hoàn chỉnh với từ khóa và outline tự động. "Product Description" viết mô tả cho nhiều sản phẩm cùng lúc — tiết kiệm thời gian khi làm Affiliate nhiều sản phẩm.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 10.000 từ trial / Trả phí từ $16/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#2563EB20">📝</div>
+    <div><div class="tool-name">Rytr</div><div class="tool-url">rytr.me</div></div>
+  </div>
+  <div class="tool-desc">Tool AI viết content đơn giản nhất trong nhóm này — giao diện tối giản, chọn use case, nhập keyword, ra content ngay. Hỗ trợ 40+ ngôn ngữ bao gồm tiếng Việt. Phù hợp người mới bắt đầu.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Use case "Product Description" và "Blog Section" dùng thường xuyên nhất. Tính năng "Magic Command" cho phép ra lệnh tự do bằng tiếng Việt. Giới hạn miễn phí 10K ký tự/tháng — đủ để tạo 5-8 bài review.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 10.000 ký tự/tháng / Unlimited $9/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐</div>
+  </div>
+</div>
+
+</div>
+
+<!-- GROUP 2 -->
+<h2>🎨 NHÓM 2: HÌNH ẢNH & THIẾT KẾ (5 Tools)</h2>
+<div class="tool-grid">
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#7B68EE20">🎨</div>
+    <div><div class="tool-name">Canva AI</div><div class="tool-url">canva.com</div></div>
+  </div>
+  <div class="tool-desc">Nền tảng thiết kế online số 1 cho non-designer — có Magic Design (AI tạo thiết kế từ mô tả), Magic Write (viết content), Text to Image, Background Remover, và 250.000+ template có sẵn.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo: ảnh sản phẩm đẹp, infographic so sánh, banner quảng cáo Facebook/Instagram, thumbnail YouTube, logo thương hiệu. Dùng "Magic Design" — upload ảnh sản phẩm + mô tả ngắn → Canva tự tạo poster đẹp. Template "Product Review" và "Sale Banner" dùng nhiều nhất.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: hầu hết tính năng / Pro $13/tháng: thêm AI tools</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#FF0000 20">🔥</div>
+    <div><div class="tool-name">Adobe Firefly</div><div class="tool-url">firefly.adobe.com</div></div>
+  </div>
+  <div class="tool-desc">AI tạo ảnh của Adobe — chất lượng cao, an toàn bản quyền (trained trên stock ảnh có license). Tính năng Generative Fill cho phép chỉnh sửa ảnh bằng AI: thêm, xóa, thay đổi nền ảnh.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo background đẹp cho ảnh sản phẩm, xóa nền tự động, thêm props vào ảnh sản phẩm bằng Generative Fill. Dùng khi cần ảnh lifestyle: "Đặt [sản phẩm] trên bàn gỗ tối, ánh đèn vàng ấm, phong cách minimalist".</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 25 credits/tháng / Trả phí từ $5/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#000020">⚡</div>
+    <div><div class="tool-name">DALL-E 3 (trong ChatGPT)</div><div class="tool-url">chat.openai.com</div></div>
+  </div>
+  <div class="tool-desc">Model tạo ảnh AI tích hợp trong ChatGPT — có thể tạo ảnh từ mô tả chi tiết bằng ngôn ngữ tự nhiên. Chất lượng cao, hiểu context tốt, có thể tạo ảnh có text (tên thương hiệu, slogan).</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo ảnh minh họa cho bài blog, thumbnail độc đáo, ảnh sản phẩm trong môi trường lý tưởng. Prompt mạnh: "Tạo ảnh [sản phẩm] được đặt trong [cảnh nền đẹp], ánh sáng tự nhiên, phong cách nhiếp ảnh thương mại, 4K, không có watermark". Cần ChatGPT Plus ($20/tháng).</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Trong ChatGPT Free: giới hạn / ChatGPT Plus $20/tháng: không giới hạn</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#8B5CF620">💜</div>
+    <div><div class="tool-name">Ideogram</div><div class="tool-url">ideogram.ai</div></div>
+  </div>
+  <div class="tool-desc">AI tạo ảnh chuyên biệt — điểm mạnh tuyệt đối là tạo ảnh có TEXT đẹp và chính xác (điều mà các AI khác làm rất kém). Tạo poster, banner, thumbnail với chữ in ngay trên ảnh.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo thumbnail YouTube có tiêu đề ngay trong ảnh, banner sale với text "GIẢM 50%", poster sự kiện, ảnh review với rating stars. Đây là tool tốt nhất để tạo ảnh có chữ cho affiliate content mà không cần Photoshop.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-free">Miễn phí</span><span class="tool-limit">Miễn phí: 10 ảnh/ngày / Trả phí $8/tháng: nhiều hơn</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card" style="grid-column: 1/-1; max-width: 460px;">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#0078D420">🎯</div>
+    <div><div class="tool-name">Microsoft Designer</div><div class="tool-url">designer.microsoft.com</div></div>
+  </div>
+  <div class="tool-desc">Tool thiết kế AI của Microsoft — tích hợp DALL-E, tạo social media post, banner, flyer từ mô tả ngắn. Tương tự Canva nhưng đơn giản hơn và miễn phí hoàn toàn với tài khoản Microsoft.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo nhanh post Instagram/Facebook với ảnh AI và text đẹp chỉ trong 2 phút. Nhập "Tạo post giới thiệu [sản phẩm] cho [nền tảng], phong cách [minimalist/colorful]" → Designer tạo 4 phiên bản để chọn.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-free">Miễn phí</span><span class="tool-limit">Hoàn toàn miễn phí với tài khoản Microsoft</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+</div>
+
+<!-- GROUP 3 -->
+<h2>🎬 NHÓM 3: VIDEO & TIKTOK (4 Tools)</h2>
+<div class="tool-grid">
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#000020">🎬</div>
+    <div><div class="tool-name">CapCut AI</div><div class="tool-url">capcut.com</div></div>
+  </div>
+  <div class="tool-desc">App chỉnh sửa video số 1 cho TikTok — được ByteDance (TikTok) phát triển nên tích hợp trend và âm nhạc TikTok. AI tự động: phụ đề, xóa nền, tăng sáng, chuyển cảnh, chọn nhạc theo cảm xúc.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Workflow: Quay video thô bằng điện thoại (5-10 phút) → Upload lên CapCut → Auto Captions (phụ đề tự động) → chọn nhạc trending → thêm text highlight sản phẩm → xuất 1080p → đăng TikTok. Toàn bộ quy trình mất 15-20 phút.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-free">Miễn phí</span><span class="tool-limit">Hầu hết miễn phí / Pro $7.99/tháng: thêm templates premium</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#6D28D920">🎥</div>
+    <div><div class="tool-name">InVideo AI</div><div class="tool-url">invideo.io</div></div>
+  </div>
+  <div class="tool-desc">Tạo video marketing từ text — nhập script hoặc mô tả ngắn, AI tự ghép ảnh/video stock, thêm nhạc, voiceover, và tạo ra video hoàn chỉnh. Hơn 5.000 template video cho mọi mục đích.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Nhập: "Tạo video 60 giây review [sản phẩm] cho TikTok, nhấn mạnh [3 lợi ích chính], tone vui vẻ" → InVideo tự tạo video với ảnh/video liên quan, nhạc nền, voiceover. Thay thế ảnh stock bằng ảnh sản phẩm thật. Xuất và đăng.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: có watermark / Trả phí $20/tháng: không watermark</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#DC262620">📹</div>
+    <div><div class="tool-name">Pictory</div><div class="tool-url">pictory.ai</div></div>
+  </div>
+  <div class="tool-desc">Chuyển bài viết/blog thành video ngắn tự động — paste URL bài blog, Pictory tự tóm tắt nội dung quan trọng, ghép với video stock phù hợp, thêm phụ đề và nhạc nền. Lý tưởng để repurpose content.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Bạn viết 1 bài review sản phẩm → Pictory tạo 3-5 video ngắn từ bài đó cho TikTok/Reels/Shorts. Tiết kiệm 80% thời gian tạo video so với làm thủ công. 1 bài blog = 5 video = 5 platform = traffic đa kênh.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Trial: 3 video miễn phí / Trả phí $23/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#0EA5E920">🤖</div>
+    <div><div class="tool-name">D-ID</div><div class="tool-url">d-id.com</div></div>
+  </div>
+  <div class="tool-desc">Tạo video với AI avatar — nhập text, chọn avatar (người ảo), AI avatar sẽ nói nội dung bạn nhập với giọng tự nhiên. Không cần lộ mặt, không cần quay phim, không cần lồng tiếng.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Lý tưởng cho người không muốn lộ mặt hoặc ngại nói trước camera. Dùng avatar chuyên nghiệp để tạo video review sản phẩm, video giới thiệu khóa học, video quảng cáo. Chất lượng đủ tốt cho TikTok và YouTube Shorts.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 5 video/tháng (20 giây mỗi video) / Trả phí từ $6/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐</div>
+  </div>
+</div>
+
+</div>
+
+<!-- GROUP 4 -->
+<h2>🔍 NHÓM 4: SEO & NGHIÊN CỨU (4 Tools)</h2>
+<div class="tool-grid">
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#4285F420">📊</div>
+    <div><div class="tool-name">Google Trends</div><div class="tool-url">trends.google.com.vn</div></div>
+  </div>
+  <div class="tool-desc">Công cụ miễn phí của Google — hiển thị xu hướng tìm kiếm theo thời gian, so sánh độ phổ biến giữa các từ khóa, phân tích theo khu vực địa lý. Dữ liệu thực tế từ hàng tỷ lượt tìm kiếm.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Trước khi chọn niche: so sánh trend của 3-5 niche khác nhau, chọn cái đang tăng hoặc ổn định. Trước khi viết bài: kiểm tra từ khóa có trend tốt không. Tìm "related queries" để phát hiện từ khóa phụ chưa ai khai thác.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-free">Miễn phí hoàn toàn</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#7C3AED20">❓</div>
+    <div><div class="tool-name">AnswerThePublic</div><div class="tool-url">answerthepublic.com</div></div>
+  </div>
+  <div class="tool-desc">Công cụ nghiên cứu từ khóa dạng câu hỏi — hiển thị tất cả câu hỏi mà người dùng đang hỏi về 1 chủ đề dưới dạng visual. Dữ liệu từ Google Suggest và Bing Suggest.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Nhập "[tên sản phẩm]" hoặc "[loại sản phẩm]" → lấy hết câu hỏi → dùng làm ý tưởng bài viết, FAQ section, TikTok video. Ví dụ: nhập "nồi chiên không dầu" → thấy ngay "nồi chiên không dầu loại nào tốt", "có nên mua nồi chiên không dầu"...</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 3 lượt search/ngày / Trả phí $9/tháng: không giới hạn</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#059669 20">🗺️</div>
+    <div><div class="tool-name">AlsoAsked</div><div class="tool-url">alsoasked.com</div></div>
+  </div>
+  <div class="tool-desc">Tương tự AnswerThePublic nhưng lấy dữ liệu từ "People Also Ask" của Google — hiển thị dạng cây câu hỏi liên kết nhau. Rất tốt để tìm topic cluster và FAQ cho SEO.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tìm các câu hỏi liên quan mà Google đang hiển thị PAA (People Also Ask) box — đây là cơ hội để rank position 0 (featured snippet). Viết câu trả lời ngắn gọn 40-60 từ cho mỗi câu hỏi trong bài viết.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 3 lượt search/ngày / Trả phí từ $15/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#FF492020">📈</div>
+    <div><div class="tool-name">Semrush (Free tier)</div><div class="tool-url">semrush.com</div></div>
+  </div>
+  <div class="tool-desc">Công cụ SEO chuyên nghiệp hàng đầu — bản miễn phí cho phép 10 lượt tra cứu/ngày: volume từ khóa, độ khó (KD%), top 10 kết quả, backlink domain. Đủ để research niche và competitor.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Mỗi ngày dùng 10 lượt: tra volume từ khóa sản phẩm, kiểm tra KD% (dưới 30 = dễ rank), xem ai đang rank top để học từ họ. Dùng "Keyword Magic Tool" miễn phí để tìm 10 từ khóa dài (long-tail) mỗi ngày.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 10 request/ngày / Trả phí $130/tháng (không cần thiết cho người mới)</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+</div>
+
+<!-- GROUP 5 -->
+<h2>📧 NHÓM 5: EMAIL & AUTOMATION (3 Tools)</h2>
+<div class="tool-grid">
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#FFE01B20">🐵</div>
+    <div><div class="tool-name">Mailchimp</div><div class="tool-url">mailchimp.com</div></div>
+  </div>
+  <div class="tool-desc">Nền tảng email marketing phổ biến nhất thế giới cho người mới — drag & drop editor, automation cơ bản, A/B testing, analytics chi tiết. Bản miễn phí đủ dùng cho đến 500 subscriber.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo form thu email trên website → Setup automation "Welcome email" gửi ngay khi có người đăng ký → Tạo drip campaign 5 email giới thiệu sản phẩm dần dần (dùng 5 email templates trong Tài liệu số 3). Đây là kênh có ROI cao nhất trong Affiliate.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 500 sub, 1.000 email/tháng / Trả phí từ $13/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#0A7BFF20">📨</div>
+    <div><div class="tool-name">Brevo (SendinBlue)</div><div class="tool-url">brevo.com</div></div>
+  </div>
+  <div class="tool-desc">Nền tảng email + SMS marketing — bản miễn phí generous hơn Mailchimp: 300 email/ngày, không giới hạn contact. Có automation, landing page builder, CRM cơ bản trong bản miễn phí.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Thay thế tốt cho Mailchimp nếu cần gửi nhiều email hơn mà không trả phí. Tính năng "Transactional Email" miễn phí hoàn toàn — dùng để gửi email xác nhận hoặc welcome email tự động khi có subscriber mới qua API.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 300 email/ngày, không giới hạn contact / Trả phí từ $25/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card" style="grid-column: 1/-1; max-width: 460px;">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#EF444420">🐝</div>
+    <div><div class="tool-name">Beehiiv</div><div class="tool-url">beehiiv.com</div></div>
+  </div>
+  <div class="tool-desc">Nền tảng newsletter đang hot nhất hiện nay — đặc biệt phù hợp cho affiliate vì có tính năng "Boosts" (kiếm tiền từ subscriber của người khác) và monetization tích hợp sẵn. UX đẹp hơn Mailchimp nhiều.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Build newsletter về niche của bạn → vừa gửi content hữu ích vừa chèn link affiliate tự nhiên → Kích hoạt "Boosts" để nhận thêm $1-3 mỗi khi subscriber của bạn subscribe vào newsletter khác. Double income từ cùng 1 list email.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: đến 2.500 sub / Trả phí $42/tháng: custom domain và features nâng cao</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+</div>
+
+<!-- GROUP 6 -->
+<h2>📊 NHÓM 6: PHÂN TÍCH & TRACKING (3 Tools)</h2>
+<div class="tool-grid">
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#F4B40020">📊</div>
+    <div><div class="tool-name">Google Analytics 4</div><div class="tool-url">analytics.google.com</div></div>
+  </div>
+  <div class="tool-desc">Công cụ phân tích website miễn phí và mạnh nhất — track: số người xem, nguồn traffic, trang nào được xem nhiều, tỷ lệ bounce, conversion. Cần cài code tracking lên website/blog.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Xem bài viết nào nhiều traffic nhất → tập trung tối ưu và tạo thêm content tương tự. Track "Events" khi người dùng click vào link affiliate → biết bài nào chuyển đổi tốt nhất. Xem "Acquisition" để biết traffic đến từ kênh nào (SEO, social, direct).</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-free">Miễn phí hoàn toàn</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#FF3C4120">🔥</div>
+    <div><div class="tool-name">Hotjar (Free)</div><div class="tool-url">hotjar.com</div></div>
+  </div>
+  <div class="tool-desc">Tool phân tích hành vi người dùng trực quan — heatmap (vùng nào nhiều người nhấp nhất), session recording (xem người dùng làm gì trên trang), feedback polls. Hiểu sâu hơn GA4.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Xem heatmap landing page: người đọc đến đâu rồi thoát ra, button CTA có ai thấy không, vùng nào nhiều người click nhất. Từ đó di chuyển link affiliate lên vị trí tốt hơn. Session recording cho thấy tại sao người dùng không click link của bạn.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 35 session/ngày, heatmap cơ bản / Trả phí từ $39/tháng</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+<div class="tool-card" style="grid-column: 1/-1; max-width: 460px;">
+  <div class="tool-top">
+    <div class="tool-icon" style="background:#EF444420">🔗</div>
+    <div><div class="tool-name">Bitly</div><div class="tool-url">bitly.com</div></div>
+  </div>
+  <div class="tool-desc">Rút gọn và track link — biến link affiliate dài xấu thành link ngắn đẹp, và theo dõi bao nhiêu người đã click, từ đâu, lúc nào. Quan trọng: mỗi kênh dùng 1 link Bitly riêng để biết kênh nào hiệu quả.</div>
+  <div class="tool-affiliate">
+    <div class="tool-affiliate-label">🎯 Cách dùng trong Affiliate</div>
+    <p>Tạo link riêng: bit.ly/sp-facebook, bit.ly/sp-tiktok, bit.ly/sp-email → đăng mỗi link lên mỗi kênh → cuối tuần xem link nào được click nhiều nhất → biết kênh nào đang mang lại traffic nhất để tập trung vào đó.</p>
+  </div>
+  <div class="tool-footer">
+    <div><span class="tag tag-freemium">Freemium</span><span class="tool-limit">Miễn phí: 10 link/tháng, analytics cơ bản / Trả phí $8/tháng: không giới hạn</span></div>
+    <div class="tool-rating">⭐⭐⭐⭐⭐</div>
+  </div>
+</div>
+
+</div>
+
+<!-- WORKFLOW -->
+<div class="workflow-box">
+  <h3>🔄 Workflow AI Hoàn Chỉnh Cho 1 Ngày Làm Affiliate (2-3 tiếng)</h3>
+  <div class="workflow-step"><div class="workflow-num">1</div><p><strong>7:00 — Research (15 phút):</strong> Dùng <strong>Google Trends + AnswerThePublic</strong> tìm 1 chủ đề hot trong niche hôm nay</p></div>
+  <div class="workflow-step"><div class="workflow-num">2</div><p><strong>7:15 — Viết content (30 phút):</strong> Dùng <strong>ChatGPT/Claude</strong> viết 1 bài review hoặc tips, chỉnh sửa cho tự nhiên, thêm link affiliate</p></div>
+  <div class="workflow-step"><div class="workflow-num">3</div><p><strong>7:45 — Tạo ảnh (15 phút):</strong> Dùng <strong>Canva AI hoặc Ideogram</strong> tạo 3-5 ảnh đẹp cho bài viết và social media</p></div>
+  <div class="workflow-step"><div class="workflow-num">4</div><p><strong>8:00 — Video (30 phút):</strong> Dùng script từ bài viết + <strong>CapCut AI</strong> tạo video 60 giây cho TikTok</p></div>
+  <div class="workflow-step"><div class="workflow-num">5</div><p><strong>8:30 — Phân phối (20 phút):</strong> Đăng lên Facebook + TikTok + gửi email qua <strong>Mailchimp/Beehiiv</strong>. Dùng <strong>Bitly</strong> tạo link tracking riêng cho mỗi kênh</p></div>
+  <div class="workflow-step"><div class="workflow-num">6</div><p><strong>9:00 — Phân tích (10 phút):</strong> Xem <strong>GA4 + Hotjar</strong> kết quả hôm qua, điều chỉnh kế hoạch hôm nay</p></div>
+</div>
+
+<!-- SUMMARY TABLE -->
+<h2>📋 Bảng Tóm Tắt — Chọn Tool Theo Ngân Sách</h2>
+<table>
+  <tr><th>Nhóm</th><th>Tool miễn phí tốt nhất</th><th>Khi nào nên upgrade?</th><th>Chi phí upgrade</th></tr>
+  <tr><td>Viết content</td><td>ChatGPT Free + Claude Free</td><td>Khi cần tạo nhiều content/ngày</td><td>$20/tháng</td></tr>
+  <tr><td>Hình ảnh</td><td>Canva Free + Ideogram</td><td>Khi cần ảnh không watermark và brand kit</td><td>$13/tháng</td></tr>
+  <tr><td>Video</td><td>CapCut (miễn phí hoàn toàn)</td><td>Khi cần template premium InVideo</td><td>$20/tháng</td></tr>
+  <tr><td>SEO</td><td>Google Trends + AnswerThePublic</td><td>Khi kiếm được >10 triệu/tháng</td><td>$130/tháng</td></tr>
+  <tr><td>Email</td><td>Mailchimp (dưới 500 sub)</td><td>Khi vượt 500 subscriber</td><td>$13/tháng</td></tr>
+  <tr><td>Tracking</td><td>GA4 + Bitly (đều miễn phí)</td><td>Hiếm khi cần upgrade</td><td>—</td></tr>
+  <tr style="font-weight:700"><td>TỔNG CHI PHÍ BAN ĐẦU</td><td colspan="2">$0 — 100% miễn phí khi mới bắt đầu</td><td>$0</td></tr>
+</table>
+
+</div>
+
+<div class="footer">
+  <strong>VO DUONG AI</strong> · Tài liệu độc quyền dành cho thành viên · Vui lòng không chia sẻ bên ngoài<br>
+  Bộ Công Cụ AI Miễn Phí · Tài liệu 4/4 · academy.vdai.vn
+</div>
+</body>
+</html>

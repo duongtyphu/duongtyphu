@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xem tài liệu — VO DUONG AI</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #060C1A; --navy2: #0D1526; --blue: #2563EB; --purple: #6D5DFB;
+      --text: #E2E8F0; --muted: #94A3B8; --border: rgba(255,255,255,0.08);
+    }
+    html, body { height: 100%; }
+    body {
+      background: var(--navy);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--text);
+      display: flex; flex-direction: column;
+    }
+    .viewer-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; height: 60px; flex-shrink: 0;
+      background: rgba(6,12,26,0.9);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+    }
+    .viewer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .viewer-logo span { display: flex; flex-direction: column; line-height: 1; }
+    .viewer-logo b { font-size: 14px; font-weight: 800; color: #fff; letter-spacing: 1.5px; }
+    .viewer-logo small { font-size: 7px; font-weight: 600; color: var(--muted); letter-spacing: 3px; }
+    .viewer-title {
+      font-size: 0.85rem; font-weight: 600; color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      max-width: 40%;
+    }
+    .viewer-actions { display: flex; align-items: center; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.8rem; font-weight: 700; padding: 8px 16px;
+      border-radius: 10px; text-decoration: none; cursor: pointer; border: none;
+      transition: all .2s;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; }
+    .btn-primary:hover { box-shadow: 0 6px 20px rgba(37,99,235,.4); }
+    .btn-ghost { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); }
+    .viewer-frame-wrap { flex: 1; position: relative; background: #11151f; }
+    .viewer-frame-wrap iframe {
+      width: 100%; height: 100%; border: none; display: block;
+    }
+    .viewer-empty {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; text-align: center; padding: 20px;
+    }
+    .viewer-empty .ico { font-size: 3rem; opacity: .6; }
+    .viewer-empty p { color: var(--muted); font-size: 0.9rem; max-width: 320px; }
+    @media (max-width: 600px) {
+      .viewer-title { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewer-nav">
+    <a href="portal.html" class="viewer-logo" aria-label="VO DUONG AI">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB"/><circle cx="27" cy="7.5" r="3" fill="#F97316"/></svg>
+      <span><b>VO DUONG</b><small>AI</small></span>
+    </a>
+    <div class="viewer-title" id="docTitle">Tài liệu</div>
+    <div class="viewer-actions">
+      <a id="downloadBtn" class="btn btn-ghost" href="#" target="_blank" rel="noopener">⬇ Tải về</a>
+      <a class="btn btn-primary" href="portal.html">← Quay lại Portal</a>
+    </div>
+  </div>
+
+  <div class="viewer-frame-wrap" id="frameWrap">
+    <div class="viewer-empty" id="emptyState" style="display:none">
+      <div class="ico">📄</div>
+      <p>Không tìm thấy tài liệu hoặc liên kết không hợp lệ.</p>
+      <a href="portal.html" class="btn btn-primary">Quay lại Portal</a>
+    </div>
+  </div>
+
+  <script>
+    function toEmbedUrl(rawUrl) {
+      try {
+        const u = new URL(rawUrl);
+        // Google Drive file link → embed/preview form
+        const driveMatch = rawUrl.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+        if (driveMatch) {
+          return `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+        }
+        const driveOpenMatch = rawUrl.match(/drive\.google\.com\/open\?id=([^&]+)/);
+        if (driveOpenMatch) {
+          return `https://drive.google.com/file/d/${driveOpenMatch[1]}/preview`;
+        }
+        // Google Docs/Sheets/Slides — already viewable, use as-is
+        if (u.hostname.includes('docs.google.com')) {
+          return rawUrl;
+        }
+        // Direct PDF or other file → use Google Docs viewer as fallback
+        if (/\.pdf($|\?)/i.test(rawUrl)) {
+          return rawUrl;
+        }
+        return rawUrl;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const rawUrl = params.get('url');
+    const title  = params.get('title');
+
+    if (title) {
+      document.getElementById('docTitle').textContent = title;
+      document.title = title + ' — VO DUONG AI';
+    }
+
+    const frameWrap = document.getElementById('frameWrap');
+    const emptyState = document.getElementById('emptyState');
+    const downloadBtn = document.getElementById('downloadBtn');
+
+    if (rawUrl && /^https?:\/\//i.test(rawUrl)) {
+      downloadBtn.href = rawUrl;
+      const embedUrl = toEmbedUrl(rawUrl);
+      const iframe = document.createElement('iframe');
+      iframe.src = embedUrl;
+      iframe.setAttribute('allow', 'autoplay');
+      iframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+      frameWrap.appendChild(iframe);
+    } else {
+      emptyState.style.display = 'flex';
+      downloadBtn.style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
