@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   GraduationCap,
   Users,
@@ -187,20 +187,18 @@ export function Ecosystem() {
                   <Icon className="h-5 w-5 text-white" strokeWidth={2} />
                 </div>
 
-                <AnimatePresence>
-                  {activeIndex === i && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 6 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute left-1/2 top-[calc(100%+10px)] z-30 w-44 -translate-x-1/2 rounded-xl border border-white/15 bg-[#0B1F4D]/95 p-3 text-center shadow-xl backdrop-blur-md"
-                    >
-                      <p className="text-xs font-bold text-white">{m.label}</p>
-                      <p className="mt-1 text-[10px] leading-relaxed text-white/60">{m.desc}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <motion.div
+                  animate={isHovered ? { opacity: 1, y: 0 } : { opacity: [0, 1, 0], y: 0 }}
+                  transition={
+                    isHovered
+                      ? { duration: 0.2 }
+                      : { duration: duration * 1.4, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }
+                  }
+                  className="absolute left-1/2 top-[calc(100%+10px)] z-30 w-44 -translate-x-1/2 rounded-xl border border-white/15 bg-[#0B1F4D]/95 p-3 text-center shadow-xl backdrop-blur-md"
+                >
+                  <p className="text-xs font-bold text-white">{m.label}</p>
+                  <p className="mt-1 text-[10px] leading-relaxed text-white/60">{m.desc}</p>
+                </motion.div>
               </motion.div>
             );
           })}
