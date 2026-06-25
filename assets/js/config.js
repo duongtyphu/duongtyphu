@@ -138,14 +138,14 @@ const VDAI_CONFIG = {
       track: "V-SOLO",
       result: "Xây dựng kênh nội dung cá nhân và phát triển lượng theo dõi ổn định nhờ quy trình sáng tạo nội dung có hệ thống, hỗ trợ bởi AI.",
       proofLink: "",
-      photo: "assets/images/case-placeholder.jpg"
+      photo: ""
     },
     {
       name: "Đinh Quốc Duy",
       track: "V-SCALE",
       result: "Triển khai quy trình AI cho đội nhóm khoảng 20 người, giúp tối ưu chi phí vận hành và chuẩn hóa cách làm việc giữa các thành viên.",
       proofLink: "",
-      photo: "assets/images/case-placeholder.jpg"
+      photo: ""
     }
   ]
 };
