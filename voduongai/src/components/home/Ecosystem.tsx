@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   GraduationCap,
@@ -60,19 +60,8 @@ const particles = [
 
 export function Ecosystem() {
   const [hovered, setHovered] = useState<number | null>(null);
-  const [autoIndex, setAutoIndex] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  useEffect(() => {
-    intervalRef.current = setInterval(() => {
-      setAutoIndex((prev) => (prev + 1) % modules.length);
-    }, 1800);
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
-
-  const activeIndex = hovered ?? autoIndex;
+  const activeIndex = hovered;
 
   return (
     <section className="relative overflow-hidden py-12 text-white md:py-16">
@@ -185,18 +174,16 @@ export function Ecosystem() {
                 key={m.label}
                 className="absolute z-20 -translate-x-1/2 -translate-y-1/2"
                 style={{ left: `${x}%`, top: `${y}%` }}
-                animate={isHovered ? { y: 0 } : { y: [0, -8, 0] }}
-                transition={
-                  isHovered
-                    ? { duration: 0.3, ease: "easeOut" }
-                    : { duration, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }
-                }
                 onMouseEnter={() => setHovered(i)}
                 onMouseLeave={() => setHovered(null)}
               >
                 <motion.div
-                  whileHover={{ scale: 1.12, y: -4 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  animate={isHovered ? { scale: 1.12 } : { scale: [1, 1.07, 1] }}
+                  transition={
+                    isHovered
+                      ? { duration: 0.25, ease: "easeOut" }
+                      : { duration, repeat: Infinity, ease: "easeInOut", delay: i * 0.25 }
+                  }
                   className="flex h-16 w-16 cursor-default flex-col items-center justify-center gap-1 rounded-2xl border border-white/15 bg-gradient-to-br from-brand-blue to-brand-violet shadow-[0_0_24px_-4px_rgba(37,99,235,0.7)] transition-shadow hover:border-white/30 hover:shadow-[0_0_36px_-2px_rgba(91,140,255,0.9)]"
                 >
                   <Icon className="h-5 w-5 text-white" strokeWidth={2} />
