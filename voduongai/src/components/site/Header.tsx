@@ -3,6 +3,7 @@ import { mainNav } from "@/lib/site";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { AccountMenu } from "@/components/site/AccountMenu";
 import type { SiteSettings } from "@/lib/site-settings";
+import { brandMain, brandAccent } from "@/lib/brand-name";
 
 async function getCurrentUser() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -26,8 +27,9 @@ export async function Header({ settings }: { settings: SiteSettings }) {
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <span className="flex flex-col leading-tight">
-            <span className="text-sm font-extrabold tracking-tight text-brand-orange">
-              {settings.siteName}
+            <span className="text-sm font-extrabold tracking-tight text-white">
+              {brandMain(settings.siteName)}
+              <span className="text-brand-orange">{brandAccent(settings.siteName)}</span>
             </span>
             <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-blue sm:block">
               {settings.slogan}

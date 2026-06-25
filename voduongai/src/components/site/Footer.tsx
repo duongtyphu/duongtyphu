@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { SiteSettings } from "@/lib/site-settings";
+import { brandMain, brandAccent } from "@/lib/brand-name";
 
 const columns = [
   {
@@ -96,8 +97,9 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#5B8CFF" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
-              <span className="text-base font-extrabold tracking-tight text-brand-orange">
-                {settings.siteName}
+              <span className="text-base font-extrabold tracking-tight text-white">
+                {brandMain(settings.siteName)}
+                <span className="text-brand-orange">{brandAccent(settings.siteName)}</span>
               </span>
             </Link>
             <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">
