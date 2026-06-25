@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCollection } from "@/lib/admin/store";
 import { useAdminToast } from "@/lib/admin/toast";
 import { settingsSeed, type SiteSettings } from "@/data/admin/settings";
@@ -47,11 +47,16 @@ const fieldGroups: { title: string; fields: { key: keyof SiteSettings; label: st
 ];
 
 export default function SettingsPage() {
-  const { items, set } = useCollection<SiteSettings & { id: string }>("settings", [
+  const { items, ready, set } = useCollection<SiteSettings & { id: string }>("settings", [
     { id: "settings", ...settingsSeed },
   ]);
   const { push } = useAdminToast();
   const [form, setForm] = useState(items[0]);
+
+  useEffect(() => {
+    if (items[0]) setForm(items[0]);
+    else if (ready) setForm({ id: "settings", ...settingsSeed });
+  }, [items, ready]);
 
   function save() {
     if (!form) return;
@@ -59,7 +64,7 @@ export default function SettingsPage() {
     push("Đã lưu cài đặt.");
   }
 
-  if (!form) return null;
+  if (!form) return <p className="text-sm text-white/50">Đang tải cài đặt...</p>;
 
   return (
     <div className="space-y-6">
