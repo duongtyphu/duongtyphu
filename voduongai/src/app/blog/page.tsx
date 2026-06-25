@@ -1,7 +1,15 @@
 import Link from "next/link";
 import { blogPosts } from "@/data/blog";
 
-export const metadata = { title: "Blog AI" };
+const title = "Blog AI";
+const description = "Blog VO DUONG AI chia sẻ kiến thức ứng dụng AI, Affiliate Marketing và tự động hóa cho cá nhân và đội nhóm.";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: { title, description },
+  twitter: { title, description },
+};
 
 export default function BlogPage() {
   return (

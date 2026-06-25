@@ -27,6 +27,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     items: [
       { label: "Học viện AI", href: "/admin/ai-academy" },
       { label: "Học viện Affiliate", href: "/admin/affiliate-academy" },
+      { label: "Học phí V-SOLO / V-SCALE", href: "/admin/course-pricing" },
       { label: "Thương hiệu cá nhân", href: "/admin/personal-brand" },
       { label: "Dự án thực chiến", href: "/admin/projects" },
     ],

@@ -1,6 +1,14 @@
 import { LegalPage } from "@/components/legal/LegalPage";
 
-export const metadata = { title: "Điều khoản sử dụng" };
+const title = "Điều khoản sử dụng";
+const description = "Điều khoản sử dụng dịch vụ và website của VO DUONG AI.";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: { title, description },
+  twitter: { title, description },
+};
 
 export default function TermsPage() {
   return (

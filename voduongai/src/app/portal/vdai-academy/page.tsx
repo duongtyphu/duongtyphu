@@ -2,7 +2,7 @@ import { vdaiCourses } from "@/data/courses";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { CheckoutButton } from "@/components/portal/CheckoutModal";
 
-export const metadata = { title: "VDAI Academy" };
+export const metadata = { title: "VO DUONG AI Academy" };
 
 type LiveLesson = {
   id: number;
@@ -55,7 +55,7 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleDateString("vi-VN");
 }
 
-type LiveCourse = { name: string; status: string; description: string | null };
+type LiveCourse = { name: string; status: string; description: string | null; price: number | null };
 
 const courseStatusLabel: Record<string, string> = {
   coming: "Sắp mở đăng ký",
@@ -68,7 +68,7 @@ async function getLiveCourseStatuses(): Promise<Record<string, LiveCourse>> {
     return {};
   }
   const supabase = await getSupabaseServer();
-  const { data } = await supabase.from("courses").select("name, status, description");
+  const { data } = await supabase.from("courses").select("name, status, description, price");
   const map: Record<string, LiveCourse> = {};
   for (const c of data ?? []) {
     const key = c.name?.toUpperCase().includes("SCALE") ? "scale" : "solo";
@@ -80,8 +80,8 @@ async function getLiveCourseStatuses(): Promise<Record<string, LiveCourse>> {
 const tracks = [
   {
     id: "solo",
-    name: "VDAI SOLO",
-    price: "300$",
+    name: "V-SOLO",
+    price: 7_800_000,
     duration: "8 tuần",
     tagline:
       "Xây hệ thống Affiliate AI vận hành tinh gọn — một mình. Từ zero đến dòng tiền đầu tiên trong 8 tuần.",
@@ -97,8 +97,8 @@ const tracks = [
   },
   {
     id: "scale",
-    name: "VDAI SCALE",
-    price: "1000$",
+    name: "V-SCALE",
+    price: 26_000_000,
     duration: null,
     tagline:
       "Nhân bản hệ thống Affiliate cùng đội nhóm. Tự động hoá toàn diện, mở rộng doanh thu không giới hạn.",
@@ -129,10 +129,10 @@ export default async function VdaiAcademyPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">VDAI Academy</h1>
+        <h1 className="text-2xl font-extrabold text-white">VO DUONG AI Academy</h1>
         <p className="mt-2 text-white">
-          Hệ thống Affiliate Marketing ứng dụng AI — từ VDAI SOLO (một người)
-          đến VDAI SCALE (mở rộng đội nhóm), cùng theo khung phương pháp A5
+          Hệ thống Affiliate Marketing ứng dụng AI — từ V-SOLO (một người)
+          đến V-SCALE (mở rộng đội nhóm), cùng theo khung phương pháp A5
           System.
         </p>
       </div>
@@ -140,6 +140,7 @@ export default async function VdaiAcademyPage() {
       <div className="grid gap-5 sm:grid-cols-2">
         {tracks.map((t) => {
           const live = liveCourseStatuses[t.id];
+          const price = live?.price ?? t.price;
           return (
           <div
             key={t.id}
@@ -147,7 +148,9 @@ export default async function VdaiAcademyPage() {
           >
             <div className="flex items-baseline justify-between gap-3">
               <h2 className="text-lg font-extrabold text-white">{t.name}</h2>
-              <span className="text-xl font-extrabold text-brand-orange">{t.price}</span>
+              <span className="text-xl font-extrabold text-brand-orange">
+                {price.toLocaleString("vi-VN")}đ
+              </span>
             </div>
             {t.duration && (
               <span className="mt-1 text-xs font-semibold text-brand-violet">

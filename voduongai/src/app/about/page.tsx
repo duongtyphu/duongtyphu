@@ -1,11 +1,19 @@
-export const metadata = { title: "Giới thiệu" };
+const title = "Giới thiệu";
+const description = "Giới thiệu về VO DUONG AI và người sáng lập — hệ sinh thái học AI, ứng dụng AI và Affiliate Marketing.";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: { title, description },
+  twitter: { title, description },
+};
 
 const roles = [
   "Nhà sáng tạo nội dung",
   "Giảng dạy AI",
   "Affiliate Marketer",
   "Xây dựng sản phẩm số",
-  "Người sáng lập VDAI Academy",
+  "Người sáng lập VO DUONG AI",
 ];
 
 export default function AboutPage() {

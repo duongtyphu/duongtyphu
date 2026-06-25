@@ -1,7 +1,15 @@
 import { siteConfig } from "@/lib/site";
 import { EmailOptInForm } from "@/components/EmailOptInForm";
 
-export const metadata = { title: "Liên hệ" };
+const title = "Liên hệ";
+const description = "Liên hệ với VO DUONG AI qua email, Zalo hoặc các kênh mạng xã hội để được tư vấn.";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: { title, description },
+  twitter: { title, description },
+};
 
 const channels = [
   { label: "Facebook", href: siteConfig.links.facebook },

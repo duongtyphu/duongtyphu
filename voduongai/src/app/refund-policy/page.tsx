@@ -1,6 +1,14 @@
 import { LegalPage } from "@/components/legal/LegalPage";
 
-export const metadata = { title: "Chính sách hoàn phí" };
+const title = "Chính sách hoàn phí";
+const description = "Chính sách hoàn phí và bảo lưu của VO DUONG AI đối với các chương trình V-SOLO và V-SCALE.";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: { title, description },
+  twitter: { title, description },
+};
 
 export default function RefundPolicyPage() {
   return (

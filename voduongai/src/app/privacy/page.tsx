@@ -1,6 +1,14 @@
 import { LegalPage } from "@/components/legal/LegalPage";
 
-export const metadata = { title: "Chính sách bảo mật" };
+const title = "Chính sách bảo mật";
+const description = "Chính sách bảo mật của VO DUONG AI: cách thu thập, sử dụng và bảo vệ thông tin cá nhân của người dùng.";
+
+export const metadata = {
+  title,
+  description,
+  openGraph: { title, description },
+  twitter: { title, description },
+};
 
 export default function PrivacyPage() {
   return (
