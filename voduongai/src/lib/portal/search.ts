@@ -3,6 +3,7 @@ import { tools } from "@/data/tools";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { prompts } from "@/data/prompts";
+import { sops } from "@/data/sop";
 import { portalNav } from "@/lib/site";
 
 export type PortalSearchResult = {
@@ -17,11 +18,11 @@ let cachedIndex: PortalSearchResult[] | null = null;
 
 /**
  * Client-side search index built from the statically-imported data sources
- * (courses, tools, free resources, affiliate resources, prompts) plus the
- * Portal nav map. Templates/Checklists/SOP/Case Study/etc. are managed via
- * Supabase (admin/store collections) and are not included here yet — wiring
- * them in requires either a server search endpoint or loading those
- * collections client-side. Nav links to those sections are still searchable.
+ * (courses, tools, free resources, affiliate resources, prompts, SOP) plus
+ * the Portal nav map. Templates/Checklists/Case Study are managed via
+ * Supabase (admin/store collections or dedicated tables) and are loaded
+ * separately at query time by `usePortalSearchExtras` (see search-extras.ts)
+ * since they require a hook/fetch rather than a static import.
  */
 export function getPortalSearchIndex(): PortalSearchResult[] {
   if (cachedIndex) return cachedIndex;
@@ -66,6 +67,13 @@ export function getPortalSearchIndex(): PortalSearchResult[] {
       description: p.preview,
       href: "/portal/prompts",
       type: "Prompt",
+    })),
+    ...sops.map((s) => ({
+      id: `sop-${s.title}`,
+      title: s.title,
+      description: s.description,
+      href: "/portal/sop",
+      type: "SOP",
     })),
   ];
   return cachedIndex;

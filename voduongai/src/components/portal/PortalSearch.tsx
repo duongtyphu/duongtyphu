@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
 import { searchPortal, type PortalSearchResult } from "@/lib/portal/search";
+import { usePortalSearchExtras } from "@/lib/portal/search-extras";
 
 export function PortalSearch() {
+  const extras = usePortalSearchExtras();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PortalSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,14 +27,21 @@ export function PortalSearch() {
     setLoading(true);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setResults(searchPortal(query));
+      const q = query.trim().toLowerCase();
+      const extraMatches = extras.filter(
+        (item) =>
+          item.title.toLowerCase().includes(q) ||
+          item.description?.toLowerCase().includes(q) ||
+          item.type.toLowerCase().includes(q)
+      );
+      setResults([...searchPortal(query), ...extraMatches]);
       setActiveIndex(-1);
       setLoading(false);
     }, 220);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [query]);
+  }, [query, extras]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
