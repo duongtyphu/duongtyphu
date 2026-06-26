@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCollection } from "@/lib/admin/store";
 import { templatesSeed, checklistsSeed } from "@/data/admin/resources";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
@@ -28,31 +28,34 @@ export function usePortalSearchExtras(): PortalSearchResult[] {
       .then(({ data }) => setCaseStudies(data ?? []));
   }, []);
 
-  return [
-    ...templates
-      .filter((t) => t.status === "Published")
-      .map((t) => ({
-        id: `template-${t.id}`,
-        title: t.name,
-        description: t.description,
-        href: "/portal/templates",
-        type: "Template",
+  return useMemo(
+    () => [
+      ...templates
+        .filter((t) => t.status === "Published")
+        .map((t) => ({
+          id: `template-${t.id}`,
+          title: t.name,
+          description: t.description,
+          href: "/portal/templates",
+          type: "Template",
+        })),
+      ...checklists
+        .filter((c) => c.status === "Published")
+        .map((c) => ({
+          id: `checklist-${c.id}`,
+          title: c.name,
+          description: c.description,
+          href: "/portal/checklists",
+          type: "Checklist",
+        })),
+      ...caseStudies.map((c) => ({
+        id: `case-study-${c.id}`,
+        title: c.title,
+        description: c.summary ?? undefined,
+        href: "/portal/case-studies",
+        type: "Case Study",
       })),
-    ...checklists
-      .filter((c) => c.status === "Published")
-      .map((c) => ({
-        id: `checklist-${c.id}`,
-        title: c.name,
-        description: c.description,
-        href: "/portal/checklists",
-        type: "Checklist",
-      })),
-    ...caseStudies.map((c) => ({
-      id: `case-study-${c.id}`,
-      title: c.title,
-      description: c.summary ?? undefined,
-      href: "/portal/case-studies",
-      type: "Case Study",
-    })),
-  ];
+    ],
+    [templates, checklists, caseStudies]
+  );
 }
