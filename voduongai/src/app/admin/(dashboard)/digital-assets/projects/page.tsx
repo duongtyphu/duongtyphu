@@ -9,8 +9,8 @@ const BADGE_OPTIONS = ["Đang theo dõi", "Đang tham gia", "Đề xuất", "M�
 export default function DigitalAssetProjectsAdminPage() {
   return (
     <CrudPage<DigitalAssetProject>
-      title="Dự án Tài sản số"
-      description="Quản lý các dự án/sản phẩm hiển thị trong mục Tài sản số trên Portal."
+      title="Dự án ĐẦU TƯ CÙNG TÔI"
+      description="Quản lý các dự án/sản phẩm hiển thị trong mục ĐẦU TƯ CÙNG TÔI trên Portal."
       collectionKey="digital-asset-projects"
       seed={digitalAssetProjects}
       searchKeys={["name", "slug"]}

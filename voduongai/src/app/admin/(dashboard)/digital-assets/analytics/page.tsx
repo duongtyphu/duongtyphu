@@ -26,9 +26,9 @@ export default function DigitalAssetAnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-white">Báo cáo Tài sản số</h1>
+        <h1 className="text-xl font-extrabold text-white">Báo cáo ĐẦU TƯ CÙNG TÔI</h1>
         <p className="mt-1 text-sm text-white/50">
-          Phân tích tương tác (mock) trên các dự án, link và bài viết trong mục Tài sản số.
+          Phân tích tương tác (mock) trên các dự án, link và bài viết trong mục ĐẦU TƯ CÙNG TÔI.
         </p>
       </div>
 

@@ -82,7 +82,7 @@ export const portalNavGroups = [
     ],
   },
   {
-    group: "Tài sản số",
+    group: "ĐẦU TƯ CÙNG TÔI",
     items: [
       { label: "Hệ sinh thái DigiU", href: "/portal/digital-assets/category/digiu" },
       { label: "Đầu tư cổ phần tại SolarGroup", href: "/portal/digital-assets/category/equity" },

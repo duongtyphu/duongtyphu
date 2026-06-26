@@ -54,7 +54,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   {
-    group: "Tài sản số",
+    group: "ĐẦU TƯ CÙNG TÔI",
     items: [
       { label: "Tổng quan", href: "/admin/digital-assets" },
       { label: "Danh mục", href: "/admin/digital-assets/categories" },

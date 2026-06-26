@@ -59,9 +59,9 @@ export default function DigitalAssetsAdminDashboardPage() {
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl font-extrabold text-white">Tài sản số — Tổng quan</h1>
+          <h1 className="text-xl font-extrabold text-white">ĐẦU TƯ CÙNG TÔI — Tổng quan</h1>
           <p className="mt-1 text-sm text-white/50">
-            Quản lý toàn bộ danh mục, dự án, link và bài viết của mục Tài sản số trên Portal.
+            Quản lý toàn bộ danh mục, dự án, link và bài viết của mục ĐẦU TƯ CÙNG TÔI trên Portal.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -140,8 +140,8 @@ export default function DigitalAssetsAdminDashboardPage() {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-        <h2 className="text-sm font-bold text-white">Disclaimer mặc định (Tài sản số)</h2>
-        <p className="mt-1 text-xs text-white/40">Hiển thị ở mọi trang Tài sản số trên Portal, có thể override riêng theo từng dự án.</p>
+        <h2 className="text-sm font-bold text-white">Disclaimer mặc định (ĐẦU TƯ CÙNG TÔI)</h2>
+        <p className="mt-1 text-xs text-white/40">Hiển thị ở mọi trang ĐẦU TƯ CÙNG TÔI trên Portal, có thể override riêng theo từng dự án.</p>
         <textarea
           value={disclaimer}
           onChange={(e) => setDisclaimer(e.target.value)}

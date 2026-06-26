@@ -18,8 +18,8 @@ function projectName(projectId: string) {
 export default function DigitalAssetArticlesAdminPage() {
   return (
     <CrudPage<DigitalAssetArticle>
-      title="Bài viết dự án Tài sản số"
-      description="Quản lý các bài viết/phân tích gắn với từng dự án Tài sản số."
+      title="Bài viết dự án ĐẦU TƯ CÙNG TÔI"
+      description="Quản lý các bài viết/phân tích gắn với từng dự án ĐẦU TƯ CÙNG TÔI."
       collectionKey="digital-asset-articles"
       seed={digitalAssetArticles}
       searchKeys={["title"]}

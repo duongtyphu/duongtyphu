@@ -53,7 +53,7 @@ export default function DigitalAssetsHubPage() {
     <div className="space-y-10">
       {/* Hero */}
       <div className="card-shine glow-blue rounded-2xl border border-brand-blue/30 bg-brand-blue/5 p-8">
-        <h1 className="text-2xl font-extrabold text-white">Tài sản số</h1>
+        <h1 className="text-2xl font-extrabold text-white">ĐẦU TƯ CÙNG TÔI</h1>
         <p className="mt-3 max-w-2xl text-white/80">
           Nơi tôi chia sẻ các lĩnh vực, dự án và cơ hội mà bản thân đang nghiên cứu, theo dõi hoặc tham gia trong kỷ
           nguyên tài sản số.

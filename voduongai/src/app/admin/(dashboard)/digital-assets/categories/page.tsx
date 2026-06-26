@@ -6,8 +6,8 @@ import { digitalAssetCategories, type DigitalAssetCategory } from "@/data/digita
 export default function DigitalAssetCategoriesAdminPage() {
   return (
     <CrudPage<DigitalAssetCategory>
-      title="Danh mục Tài sản số"
-      description="Quản lý các lĩnh vực/danh mục trong mục Tài sản số trên Portal."
+      title="Danh mục ĐẦU TƯ CÙNG TÔI"
+      description="Quản lý các lĩnh vực/danh mục trong mục ĐẦU TƯ CÙNG TÔI trên Portal."
       collectionKey="digital-asset-categories"
       seed={digitalAssetCategories}
       searchKeys={["name", "slug"]}

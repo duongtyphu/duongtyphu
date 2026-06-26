@@ -25,7 +25,7 @@ function projectName(projectId: string) {
 export default function DigitalAssetLinksAdminPage() {
   return (
     <CrudPage<DigitalAssetLink>
-      title="Link dự án Tài sản số"
+      title="Link dự án ĐẦU TƯ CÙNG TÔI"
       description="Quản lý các link (website, affiliate, cộng đồng...) gắn với từng dự án."
       collectionKey="digital-asset-links"
       seed={digitalAssetLinks}
