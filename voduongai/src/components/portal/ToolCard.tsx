@@ -9,16 +9,18 @@ type ToolCardProps = {
   useCase?: string;
   pricing?: string;
   iUseThis?: boolean;
+  /** Overrides the default `/portal/tools/${id}` detail link — pass the tool's slug-based href. */
+  href?: string;
 };
 
 /**
  * Shared card for AI tool listings (Dashboard "Công cụ nổi bật" and
- * /portal/tools). Only renders fields with real data from src/data/tools.ts.
+ * /portal/tools).
  */
-export function ToolCard({ id, name, category, description, useCase, pricing, iUseThis }: ToolCardProps) {
+export function ToolCard({ id, name, category, description, useCase, pricing, iUseThis, href }: ToolCardProps) {
   return (
     <Link
-      href={`/portal/tools/${id}`}
+      href={href ?? `/portal/tools/${id}`}
       className="card-shine flex h-full flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
     >
       <div className="flex items-center justify-between gap-2">

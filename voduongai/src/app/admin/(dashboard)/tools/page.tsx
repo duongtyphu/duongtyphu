@@ -19,6 +19,7 @@ export default function ToolsAdminPage() {
         { key: "badge", label: "Badge" },
         { key: "pricing", label: "Giá" },
         { key: "rating", label: "Rating" },
+        { key: "order", label: "Thứ tự" },
         {
           key: "featured",
           label: "Nổi bật",
@@ -51,6 +52,7 @@ export default function ToolsAdminPage() {
         { key: "featured", label: "Featured", type: "boolean" },
         { key: "tier", label: "Free / Paid", type: "select", options: ["Free", "Paid"] },
         { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"] },
+        { key: "order", label: "Thứ tự hiển thị", type: "number", required: true },
       ]}
     />
   );

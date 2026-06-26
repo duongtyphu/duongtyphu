@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { tableForCollection } from "@/lib/admin/supabaseCollections";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
+import { validateAndNormalizeUrls } from "@/lib/admin/collectionValidation";
 
 export async function PATCH(
   request: Request,
@@ -30,6 +31,10 @@ export async function PATCH(
   if (fetchError || !existing) return NextResponse.json({ error: "Không tìm thấy bản ghi" }, { status: 404 });
 
   const merged = { ...(existing.data as Record<string, unknown>), ...patch };
+
+  const urlError = validateAndNormalizeUrls(key, merged);
+  if (urlError) return NextResponse.json({ error: urlError.error }, { status: 400 });
+
   const { error } = await supabase
     .from(table)
     .update({

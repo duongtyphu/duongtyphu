@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { tools } from "@/data/tools";
+import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
@@ -53,8 +53,28 @@ async function fetchProfileSummary() {
   };
 }
 
+async function getFeaturedTools(): Promise<AdminTool[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
+  }
+  try {
+    const supabase = await getSupabaseServer();
+    const { data, error } = await supabase
+      .from("tools")
+      .select("id, data")
+      .eq("status", "Published")
+      .order("order", { ascending: true })
+      .limit(4);
+    if (error || !data) return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
+    return data.map((row) => ({ ...(row.data as AdminTool), id: row.id }));
+  } catch {
+    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
+  }
+}
+
 export default async function PortalDashboard() {
   const profile = await getProfileSummary();
+  const featuredTools = await getFeaturedTools();
 
   return (
     <div className="space-y-12">
@@ -127,14 +147,15 @@ export default async function PortalDashboard() {
           </Link>
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {tools.slice(0, 4).map((t) => (
+          {featuredTools.map((t) => (
             <ToolCard
               key={t.id}
               id={t.id}
+              href={`/portal/tools/${t.slug}`}
               name={t.name}
-              description={t.description}
+              description={t.shortDescription}
               pricing={t.pricing}
-              iUseThis={t.iUseThis}
+              iUseThis={t.badge === "Tôi đang dùng"}
             />
           ))}
         </div>

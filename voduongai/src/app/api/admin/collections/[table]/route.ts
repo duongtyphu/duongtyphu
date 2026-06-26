@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { tableForCollection } from "@/lib/admin/supabaseCollections";
 import { requireAdmin, requireMember } from "@/lib/admin/requireAdmin";
+import { validateAndNormalizeUrls } from "@/lib/admin/collectionValidation";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ table: string }> }) {
   if (!(await requireMember())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -40,6 +41,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ tab
     return NextResponse.json({ error: "Thiếu dữ liệu" }, { status: 400 });
   }
 
+  const urlError = validateAndNormalizeUrls(key, item);
+  if (urlError) return NextResponse.json({ error: urlError.error }, { status: 400 });
+
   const { error } = await supabase.from(table).upsert({
     id: item.id,
     data: item,
@@ -68,6 +72,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ tabl
 
   const list = await request.json().catch(() => null);
   if (!Array.isArray(list)) return NextResponse.json({ error: "Thiếu dữ liệu" }, { status: 400 });
+
+  for (const item of list as Record<string, unknown>[]) {
+    const urlError = validateAndNormalizeUrls(key, item);
+    if (urlError) return NextResponse.json({ error: urlError.error }, { status: 400 });
+  }
 
   const rows = list.map((item: Record<string, unknown>, i: number) => ({
     id: String(item.id),

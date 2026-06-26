@@ -24,6 +24,7 @@ export type AdminTool = {
   featured: boolean;
   tier: "Free" | "Paid";
   status: "Draft" | "Published" | "Hidden";
+  order: number;
 };
 
 export const toolsAdminSeed: AdminTool[] = [
@@ -52,5 +53,6 @@ export const toolsAdminSeed: AdminTool[] = [
     featured: true,
     tier: "Free",
     status: "Published",
+    order: 1,
   },
 ];

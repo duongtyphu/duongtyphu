@@ -1,5 +1,4 @@
 import { vdaiCourses } from "@/data/courses";
-import { tools } from "@/data/tools";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { prompts } from "@/data/prompts";
@@ -39,13 +38,6 @@ export function getPortalSearchIndex(): PortalSearchResult[] {
       description: c.description,
       href: c.href,
       type: "Khoá học",
-    })),
-    ...tools.map((t) => ({
-      id: `tool-${t.id}`,
-      title: t.name,
-      description: t.description,
-      href: `/portal/tools/${t.id}`,
-      type: "Công cụ AI",
     })),
     ...freeResources.map((r) => ({
       id: `resource-${r.id}`,
