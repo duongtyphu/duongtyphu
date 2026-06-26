@@ -4,7 +4,6 @@ import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { ProfileQuickMenu } from "@/components/portal/ProfileQuickMenu";
 import { TodayGoals } from "@/components/portal/TodayGoals";
 import { GoalWidget } from "@/components/portal/GoalWidget";
 import { SavedRecent } from "@/components/portal/SavedRecent";
@@ -49,24 +48,13 @@ export default async function PortalDashboard() {
 
   return (
     <div className="space-y-12">
-      <div className="flex flex-wrap items-start justify-between gap-5">
-        <div>
-          <h1 className="text-2xl font-extrabold text-white">
-            Chào mừng đến với Võ Đương AI Portal
-          </h1>
-          <p className="mt-2 text-white">
-            Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây.
-          </p>
-        </div>
-
-        {profile && (
-          <ProfileQuickMenu
-            email={profile.email}
-            fullName={profile.fullName}
-            memberSince={profile.memberSince.toLocaleDateString("vi-VN")}
-            purchasedCount={profile.purchasedCount}
-          />
-        )}
+      <div>
+        <h1 className="text-2xl font-extrabold text-white">
+          Chào mừng đến với Võ Đương AI Portal
+        </h1>
+        <p className="mt-2 text-white">
+          Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây.
+        </p>
       </div>
 
       <GoalWidget />
