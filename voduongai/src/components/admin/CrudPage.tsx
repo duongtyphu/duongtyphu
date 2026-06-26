@@ -265,7 +265,12 @@ export function CrudPage<T extends BaseItem>({
                 <input
                   type={f.type === "number" ? "number" : f.type === "date" ? "date" : "text"}
                   value={String(form[f.key] ?? "")}
-                  onChange={(e) => setForm((s) => ({ ...s, [f.key]: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((s) => ({
+                      ...s,
+                      [f.key]: f.type === "number" ? Number(e.target.value) : e.target.value,
+                    }))
+                  }
                   placeholder={f.placeholder}
                   className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-brand-blue focus:outline-none"
                 />

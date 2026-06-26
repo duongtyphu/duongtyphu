@@ -24,6 +24,16 @@ async function getProfileSummary() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return null;
   }
+  // A Supabase/cookie failure here must not 500 the whole dashboard —
+  // fall back to the logged-out view instead.
+  try {
+    return await fetchProfileSummary();
+  } catch {
+    return null;
+  }
+}
+
+async function fetchProfileSummary() {
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;

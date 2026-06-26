@@ -25,7 +25,10 @@ export function usePortalSearchExtras(): PortalSearchResult[] {
       .from("case_studies")
       .select("id, title, summary")
       .eq("active", true)
-      .then(({ data }) => setCaseStudies(data ?? []));
+      .then(
+        ({ data }) => setCaseStudies(data ?? []),
+        () => setCaseStudies([]),
+      );
   }, []);
 
   return useMemo(
