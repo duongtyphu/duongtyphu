@@ -6,7 +6,10 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
 function LoginForm() {
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/portal";
+  const rawNext = searchParams.get("next") ?? "/portal";
+  // Only allow same-site relative paths — a raw query param used as a
+  // redirect target is an open-redirect vector ("/login?next=https://evil.com").
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/portal";
   const [mode, setMode] = useState<"magic" | "password">("magic");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
