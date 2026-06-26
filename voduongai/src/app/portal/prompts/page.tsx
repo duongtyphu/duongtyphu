@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { prompts } from "@/data/prompts";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { CopyPromptButton } from "@/components/portal/CopyPromptButton";
 import { AdminPromptsSection } from "@/components/portal/AdminPromptsSection";
+import { ResourceCard } from "@/components/portal/ResourceCard";
 
 export const metadata = { title: "Thư viện Prompt" };
 
@@ -40,13 +40,15 @@ export default async function PromptsPage() {
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {livePrompts.map((p) => (
-              <div key={p.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
+              <div key={p.id} className="card-shine flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <span className="inline-flex w-fit rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
                   {p.category}
                 </span>
                 <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
                 <p className="mt-2 line-clamp-3 text-sm text-white/70">{p.content}</p>
-                <CopyPromptButton content={p.content} />
+                <div className="mt-3">
+                  <CopyPromptButton content={p.content} />
+                </div>
               </div>
             ))}
           </div>
@@ -59,17 +61,13 @@ export default async function PromptsPage() {
         <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">Prompt mẫu</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {prompts.map((p) => (
-            <Link
+            <ResourceCard
               key={p.id}
+              title={p.title}
+              description={p.preview}
+              type={p.category}
               href={`/portal/prompts/${p.id}`}
-              className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30"
-            >
-              <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
-                {p.category}
-              </span>
-              <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-              <p className="mt-2 text-sm text-white">{p.preview}</p>
-            </Link>
+            />
           ))}
         </div>
       </div>

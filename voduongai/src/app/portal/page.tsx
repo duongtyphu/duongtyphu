@@ -10,6 +10,8 @@ import { TodayGoals } from "@/components/portal/TodayGoals";
 import { GoalWidget } from "@/components/portal/GoalWidget";
 import { SavedRecent } from "@/components/portal/SavedRecent";
 import { ProgressOverview } from "@/components/portal/ProgressOverview";
+import { CourseCard } from "@/components/portal/CourseCard";
+import { ResourceCard } from "@/components/portal/ResourceCard";
 
 export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
 
@@ -114,14 +116,7 @@ export default async function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {vdaiCourses.slice(0, 4).map((c) => (
-            <Link
-              key={c.id}
-              href={c.href}
-              className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:shadow-lg hover:shadow-black/30"
-            >
-              <p className="text-sm font-semibold text-white">{c.title}</p>
-              <p className="mt-1 text-xs text-white">{c.description}</p>
-            </Link>
+            <CourseCard key={c.id} title={c.title} description={c.description} href={c.href} />
           ))}
         </div>
       </section>
@@ -181,14 +176,7 @@ export default async function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {affiliateResources.slice(0, 3).map((a) => (
-            <Link
-              key={a.id}
-              href="/portal/affiliate-hub"
-              className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:shadow-lg hover:shadow-black/30"
-            >
-              <p className="text-sm font-semibold text-white">{a.title}</p>
-              <p className="mt-1 text-xs text-white">{a.description}</p>
-            </Link>
+            <ResourceCard key={a.id} title={a.title} description={a.description} href="/portal/affiliate-hub" />
           ))}
         </div>
       </section>
@@ -202,16 +190,7 @@ export default async function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {freeResources.slice(0, 3).map((r) => (
-            <Link
-              key={r.id}
-              href={`/portal/resources/${r.id}`}
-              className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:shadow-lg hover:shadow-black/30"
-            >
-              <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
-                {r.type}
-              </span>
-              <p className="mt-2 text-sm font-semibold text-white">{r.title}</p>
-            </Link>
+            <ResourceCard key={r.id} title={r.title} type={r.type} href={`/portal/resources/${r.id}`} />
           ))}
         </div>
       </section>
