@@ -1,0 +1,47 @@
+import Link from "next/link";
+import { logoUrl } from "@/lib/logo";
+
+type ToolCardProps = {
+  id: string;
+  name: string;
+  category?: string;
+  description?: string;
+  useCase?: string;
+  pricing?: string;
+  iUseThis?: boolean;
+};
+
+/**
+ * Shared card for AI tool listings (Dashboard "Công cụ nổi bật" and
+ * /portal/tools). Only renders fields with real data from src/data/tools.ts.
+ */
+export function ToolCard({ id, name, category, description, useCase, pricing, iUseThis }: ToolCardProps) {
+  return (
+    <Link
+      href={`/portal/tools/${id}`}
+      className="card-shine flex h-full flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/90 p-1.5">
+          <img src={logoUrl(id)} alt={`${name} logo`} width={24} height={24} className="h-full w-full object-contain" />
+        </div>
+        {iUseThis ? (
+          <span className="rounded-full bg-brand-violet/10 px-2 py-0.5 text-[10px] font-semibold text-brand-violet">
+            Tôi đang dùng
+          </span>
+        ) : (
+          pricing && (
+            <span className="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[10px] font-semibold text-brand-blue">
+              {pricing}
+            </span>
+          )
+        )}
+      </div>
+      <p className="mt-3 text-sm font-semibold text-white">{name}</p>
+      {category && <p className="mt-0.5 text-xs text-white/50">{category}</p>}
+      {description && <p className="mt-2 text-xs text-white/60">{description}</p>}
+      {useCase && <p className="mt-2 text-xs font-medium text-white/40">{useCase}</p>}
+      <span className="mt-3 inline-flex text-xs font-semibold text-brand-blue">Xem chi tiết →</span>
+    </Link>
+  );
+}

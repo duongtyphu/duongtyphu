@@ -3,7 +3,6 @@ import { tools } from "@/data/tools";
 import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
-import { logoUrl } from "@/lib/logo";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { ProfileQuickMenu } from "@/components/portal/ProfileQuickMenu";
 import { TodayGoals } from "@/components/portal/TodayGoals";
@@ -11,6 +10,7 @@ import { GoalWidget } from "@/components/portal/GoalWidget";
 import { SavedRecent } from "@/components/portal/SavedRecent";
 import { ProgressOverview } from "@/components/portal/ProgressOverview";
 import { CourseCard } from "@/components/portal/CourseCard";
+import { ToolCard } from "@/components/portal/ToolCard";
 import { ResourceCard } from "@/components/portal/ResourceCard";
 
 export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
@@ -130,39 +130,14 @@ export default async function PortalDashboard() {
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
           {tools.slice(0, 4).map((t) => (
-            <div
+            <ToolCard
               key={t.id}
-              className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90 p-1.5">
-                  <img
-                    src={logoUrl(t.id)}
-                    alt={`${t.name} logo`}
-                    width={20}
-                    height={20}
-                    className="h-full w-full object-contain"
-                  />
-                </div>
-                {t.iUseThis ? (
-                  <span className="rounded-full bg-brand-violet/10 px-2 py-0.5 text-[10px] font-semibold text-brand-violet">
-                    Tôi đang dùng
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-brand-blue/10 px-2 py-0.5 text-[10px] font-semibold text-brand-blue">
-                    Recommended
-                  </span>
-                )}
-              </div>
-              <p className="mt-3 text-sm font-semibold text-white">{t.name}</p>
-              <p className="mt-1 text-xs text-white/60">{t.description}</p>
-              <Link
-                href={`/portal/tools/${t.id}`}
-                className="mt-3 inline-flex text-xs font-semibold text-brand-blue hover:underline"
-              >
-                Xem chi tiết →
-              </Link>
-            </div>
+              id={t.id}
+              name={t.name}
+              description={t.description}
+              pricing={t.pricing}
+              iUseThis={t.iUseThis}
+            />
           ))}
         </div>
       </section>
