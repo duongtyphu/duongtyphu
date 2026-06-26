@@ -1,5 +1,16 @@
+import { timingSafeEqual } from "crypto";
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+
+// Constant-time string compare so a timing attack can't be used to brute-force
+// the API key one byte at a time. Buffers must be equal length for
+// timingSafeEqual, so a length mismatch is rejected before the byte compare.
+function safeCompare(a: string, b: string) {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
 
 // SePay webhook payload: https://docs.sepay.vn/tich-hop-webhooks.html
 // Sends one row per matched bank transaction. We match it back to an order
@@ -19,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
   }
   const auth = request.headers.get("authorization") ?? "";
-  if (auth !== `Apikey ${expectedKey}`) {
+  if (!safeCompare(auth, `Apikey ${expectedKey}`)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

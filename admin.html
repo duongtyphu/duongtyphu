@@ -1744,7 +1744,11 @@ function onFileSelected(input) {
 
 // ── Upload PDF to Supabase Storage ──
 async function uploadPDF(file) {
-  const path = `documents/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+  if (file.type !== 'application/pdf') throw new Error('Chỉ hỗ trợ file .pdf');
+  // Strip to a safe basename: drop any directory components (path traversal
+  // like "../../x.pdf") and replace anything but alphanumerics/dot/dash/underscore.
+  const safeName = file.name.split(/[/\\]/).pop().replace(/[^a-zA-Z0-9.\-_]/g, '_');
+  const path = `documents/${Date.now()}_${safeName}`;
   const prog = document.getElementById('uploadProgress');
   const bar  = document.getElementById('uploadProgressBar');
   prog.style.display = 'block';
