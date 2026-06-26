@@ -20,6 +20,10 @@ type CrudPageProps<T extends BaseItem> = {
   statusKey?: keyof T;
   filterOptions?: { key: keyof T; label: string; options: string[] };
   emptyLabel?: string;
+  /** Restricts this CrudPage instance to a single fixed value of one field
+   * (e.g. category) — hides the filter dropdown and pre-fills new items with
+   * that value, so the page only ever shows/creates items in that bucket. */
+  lockedFilter?: { key: keyof T; value: string };
 };
 
 function emptyFromFields(fields: FieldConfig[]): Record<string, unknown> {
@@ -42,6 +46,7 @@ export function CrudPage<T extends BaseItem>({
   fields,
   searchKeys,
   filterOptions,
+  lockedFilter,
   emptyLabel = "Chưa có dữ liệu nào. Bấm “Thêm mới” để tạo nội dung đầu tiên.",
 }: CrudPageProps<T>) {
   const { items, ready, add, update, remove } = useCollection<T>(collectionKey, seed);
@@ -57,6 +62,9 @@ export function CrudPage<T extends BaseItem>({
 
   const filtered = useMemo(() => {
     let list = [...items];
+    if (lockedFilter) {
+      list = list.filter((it) => String(it[lockedFilter.key]) === lockedFilter.value);
+    }
     if (query.trim()) {
       const q = query.trim().toLowerCase();
       list = list.filter((it) =>
@@ -69,11 +77,13 @@ export function CrudPage<T extends BaseItem>({
     const labelOf = (it: T) => String(it.title ?? it.name ?? "");
     list.sort((a, b) => (sortAsc ? labelOf(a).localeCompare(labelOf(b)) : labelOf(b).localeCompare(labelOf(a))));
     return list;
-  }, [items, query, filterValue, filterOptions, sortAsc, searchKeys]);
+  }, [items, query, filterValue, filterOptions, lockedFilter, sortAsc, searchKeys]);
 
   function openCreate() {
     setEditing(null);
-    setForm(emptyFromFields(fields));
+    const base = emptyFromFields(fields);
+    if (lockedFilter) base[lockedFilter.key as string] = lockedFilter.value;
+    setForm(base);
     setModalOpen(true);
   }
 
@@ -89,11 +99,12 @@ export function CrudPage<T extends BaseItem>({
       push(`Vui lòng nhập "${missing.label}"`, "error");
       return;
     }
+    const payload = lockedFilter ? { ...form, [lockedFilter.key]: lockedFilter.value } : form;
     if (editing) {
-      update(editing.id, form as Partial<T>);
+      update(editing.id, payload as Partial<T>);
       push("Đã lưu thay đổi.");
     } else {
-      add({ id: genId(collectionKey), ...form } as unknown as T);
+      add({ id: genId(collectionKey), ...payload } as unknown as T);
       push("Đã thêm mới thành công.");
     }
     setModalOpen(false);
