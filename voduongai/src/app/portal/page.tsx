@@ -9,6 +9,7 @@ import { ProfileQuickMenu } from "@/components/portal/ProfileQuickMenu";
 import { TodayGoals } from "@/components/portal/TodayGoals";
 import { GoalWidget } from "@/components/portal/GoalWidget";
 import { SavedRecent } from "@/components/portal/SavedRecent";
+import { ProgressOverview } from "@/components/portal/ProgressOverview";
 
 export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
 
@@ -66,23 +67,15 @@ export default async function PortalDashboard() {
         )}
       </div>
 
-      <TodayGoals />
-
       <GoalWidget />
 
       <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-bold text-white">Tiến độ lộ trình</h2>
+            <h2 className="text-lg font-bold text-white">Lộ trình thành công</h2>
             <p className="mt-1 text-sm text-white/70">
               Chưa biết bắt đầu từ đâu? Lộ trình 7 bước sẽ chỉ đúng bước tiếp theo cho bạn.
             </p>
-            <div className="mt-4 flex items-center gap-3">
-              <div className="h-2 w-40 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full w-[28%] rounded-full bg-gradient-to-r from-brand-blue to-brand-violet" />
-              </div>
-              <span className="text-xs font-semibold text-white/60">Bước 2/7 · minh hoạ</span>
-            </div>
           </div>
           <Link
             href="/portal/roadmap"
@@ -94,12 +87,7 @@ export default async function PortalDashboard() {
       </section>
 
       <section>
-        <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Nhiệm vụ hôm nay</h2>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-orange/10 px-3 py-1 text-xs font-bold text-brand-orange">
-            🔥 Streak 1 ngày · minh hoạ
-          </span>
-        </div>
+        <h2 className="text-lg font-bold text-white">Việc nên làm tiếp theo</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {todayTasks.map((t) => (
             <Link
@@ -112,6 +100,10 @@ export default async function PortalDashboard() {
           ))}
         </div>
       </section>
+
+      <ProgressOverview purchasedCount={profile?.purchasedCount ?? 0} />
+
+      <TodayGoals />
 
       <section>
         <div className="flex items-end justify-between">

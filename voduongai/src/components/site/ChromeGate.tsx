@@ -13,8 +13,9 @@ export function ChromeGate({
 }) {
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+  const isPortal = pathname?.startsWith("/portal");
 
-  if (isAdmin) return <>{children}</>;
+  if (isAdmin || isPortal) return <>{children}</>;
 
   return (
     <>
