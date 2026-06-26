@@ -144,7 +144,9 @@ export default function DigitalAssetDetailPage() {
           <h2 className="text-sm font-bold text-white">Bài viết / Phân tích</h2>
           {projectArticles.map((a) => (
             <div key={a.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-              <h3 className="text-sm font-bold text-white">{a.title}</h3>
+              <Link href={`/portal/digital-assets/articles/${a.slug}`} className="text-sm font-bold text-white hover:text-brand-blue">
+                {a.title}
+              </Link>
               <p className="mt-1 text-xs text-white/40">{a.publishedAt}</p>
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-white/70">
                 {a.content.split("\n\n").map((para, i) => (

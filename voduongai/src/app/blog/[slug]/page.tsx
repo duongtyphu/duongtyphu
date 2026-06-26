@@ -1,15 +1,37 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { blogPosts, getBlogPost } from "@/data/blog";
+import { blogPosts, fromAdminPost, getBlogPost, type AdminBlogPostLike, type BlogPost } from "@/data/blog";
+import { getSupabaseServer } from "@/lib/supabase-server";
 import { Breadcrumb } from "@/components/site/Breadcrumb";
 
 export function generateStaticParams() {
   return blogPosts.map((p) => ({ slug: p.slug }));
 }
 
+async function getAdminPost(slug: string): Promise<BlogPost | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return null;
+  try {
+    const supabase = await getSupabaseServer();
+    const { data, error } = await supabase
+      .from("blog")
+      .select("id, data")
+      .eq("data->>status", "Published")
+      .eq("data->>slug", slug)
+      .maybeSingle();
+    if (error || !data) return null;
+    return fromAdminPost({ ...(data.data as AdminBlogPostLike), id: data.id });
+  } catch {
+    return null;
+  }
+}
+
+async function getAnyBlogPost(slug: string): Promise<BlogPost | null> {
+  return getBlogPost(slug) ?? (await getAdminPost(slug));
+}
+
 export async function generateMetadata({ params }: PageProps<"/blog/[slug]">) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getAnyBlogPost(slug);
   const title = post?.title ?? "Blog AI";
   const description = post?.excerpt ?? "Blog VO DUONG AI chia sẻ kiến thức ứng dụng AI và Affiliate Marketing.";
   return {
@@ -49,7 +71,7 @@ function ContentBlock({ block }: { block: string }) {
 
 export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getAnyBlogPost(slug);
   if (!post) notFound();
 
   const related = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);

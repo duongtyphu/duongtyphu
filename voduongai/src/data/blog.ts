@@ -166,3 +166,40 @@ export const blogPosts: BlogPost[] = [
 export function getBlogPost(slug: string) {
   return blogPosts.find((p) => p.slug === slug);
 }
+
+export type AdminBlogPostLike = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  tags: string[];
+  author: string;
+  status: "Draft" | "Published" | "Hidden";
+  publishedAt: string;
+  featured: boolean;
+};
+
+// Adapts a post created in /admin/blog (Supabase-backed, single markdown
+// `content` string) to the BlogPost shape this page renders — admin posts
+// don't have tag/emoji/readTime/CTA fields, so those get sensible defaults.
+export function fromAdminPost(post: AdminBlogPostLike): BlogPost {
+  const words = post.content.split(/\s+/).filter(Boolean).length;
+  return {
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    category: post.category,
+    tag: post.category,
+    emoji: "📝",
+    date: post.publishedAt,
+    readTime: `${Math.max(1, Math.round(words / 200))} phút đọc`,
+    tags: post.tags,
+    ctaTitle: "Muốn áp dụng kiến thức này vào hệ thống của bạn?",
+    ctaDescription: "Khám phá các khoá học và công cụ AI thực chiến tại VO DUONG AI.",
+    ctaLabel: "Xem Portal →",
+    ctaHref: "/portal",
+    content: post.content.split("\n\n").filter(Boolean),
+  };
+}

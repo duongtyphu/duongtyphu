@@ -189,11 +189,10 @@ export default function DigitalAssetsHubPage() {
           <h2 className="text-sm font-bold text-white">Bài viết mới nhất</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {latestArticles.map((a) => {
-              const project = projects.find((p) => p.id === a.projectId);
               return (
                 <Link
                   key={a.id}
-                  href={project ? `/portal/digital-assets/${project.slug}` : "/portal/digital-assets"}
+                  href={`/portal/digital-assets/articles/${a.slug}`}
                   className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-0.5"
                 >
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">
