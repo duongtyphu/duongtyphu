@@ -1,14 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
 import { useCollection } from "@/lib/admin/store";
 import { affiliateHubSeed } from "@/data/admin/affiliateHub";
 import { affiliateHubTopProductsSeed } from "@/data/admin/affiliateHub";
 import { affiliateProductsSeed } from "@/data/admin/affiliate";
-
-const featuredOffers = tools.filter((t) => t.iUseThis);
 
 const NICHE_TIPS = [
   "Chọn ngách bạn am hiểu hoặc đang dùng sản phẩm thật — dễ tạo nội dung thuyết phục hơn.",

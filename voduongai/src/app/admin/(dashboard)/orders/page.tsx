@@ -11,7 +11,7 @@ export default async function OrdersAdminPage() {
       <div>
         <h1 className="text-xl font-extrabold text-white">Đơn hàng</h1>
         <p className="mt-1 text-sm text-white/50">
-          Toàn bộ đơn hàng học viên (dữ liệu thật từ Supabase) — xác nhận để mở khoá sản phẩm tại "Sản phẩm của tôi".
+          Toàn bộ đơn hàng học viên (dữ liệu thật từ Supabase) — xác nhận để mở khoá sản phẩm tại &quot;Sản phẩm của tôi&quot;.
         </p>
       </div>
 

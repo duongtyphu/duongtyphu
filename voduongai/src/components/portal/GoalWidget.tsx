@@ -19,6 +19,9 @@ export function GoalWidget() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // Hydration-safe: render starts with goalId=null (matches SSR), then this
+    // mount effect syncs the real value from localStorage.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setGoalId(window.localStorage.getItem(STORAGE_KEY));
     setReady(true);
   }, []);

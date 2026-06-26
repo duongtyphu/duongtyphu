@@ -36,10 +36,12 @@ function useSupabaseCollection<T extends { id: string }>(key: string) {
     } finally {
       setReady(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint, table]);
 
   useEffect(() => {
+    // Fetch-on-mount from Supabase via the generic collections API; no pure
+    // render-time equivalent exists for this remote data load.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
   }, [load]);
 
@@ -92,9 +94,13 @@ function useLocalCollection<T extends { id: string }>(key: string, seed: T[]) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    // Hydration-safe: render starts with the seed (matches SSR), then this
+    // mount effect syncs in the real value from localStorage, which has no
+    // server-side equivalent and can't be read during render.
     const raw = window.localStorage.getItem(storageKey);
     if (raw) {
       try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setItems(JSON.parse(raw));
       } catch {
         setItems(seed);

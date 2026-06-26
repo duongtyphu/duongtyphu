@@ -20,6 +20,9 @@ export function PortalSearch() {
 
   useEffect(() => {
     if (!query.trim()) {
+      // Resets search state when the query is cleared; reacting to user
+      // input over time, not a pure render computation.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setResults([]);
       setLoading(false);
       return;

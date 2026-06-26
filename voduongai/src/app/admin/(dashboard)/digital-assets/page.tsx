@@ -35,6 +35,9 @@ export default function DigitalAssetsAdminDashboardPage() {
 
   const [disclaimer, setDisclaimer] = useState("");
   useEffect(() => {
+    // Syncs local edit buffer once the async collection load resolves; no
+    // pure render-time source for this value.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (settingsReady && settings[0]) setDisclaimer(settings[0].disclaimer);
   }, [settingsReady, settings]);
 

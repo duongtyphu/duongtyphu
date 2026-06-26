@@ -72,7 +72,7 @@ export function CheckoutForm({ target, email }: { target: CheckoutTarget; email:
       {error && <p className="text-sm text-red-400">{error}</p>}
 
       <p className="text-xs text-white/50">
-        Bằng việc bấm "Thanh toán ngay", bạn đồng ý với{" "}
+        Bằng việc bấm &quot;Thanh toán ngay&quot;, bạn đồng ý với{" "}
         <Link href="/terms" target="_blank" className="text-white/70 underline hover:text-white">
           Điều khoản sử dụng
         </Link>

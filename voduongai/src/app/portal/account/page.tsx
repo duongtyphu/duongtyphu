@@ -19,12 +19,12 @@ type Order = {
 
 async function getAccountData() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { user: null, orders: [] as Order[] };
+    return { user: null, orders: [] as Order[], now: Date.now() };
   }
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
-  if (!user?.email) return { user, orders: [] as Order[] };
+  if (!user?.email) return { user, orders: [] as Order[], now: Date.now() };
 
   const { data } = await supabase
     .from("orders")
@@ -32,11 +32,11 @@ async function getAccountData() {
     .eq("member_email", user.email)
     .order("created_at", { ascending: false });
 
-  return { user, orders: (data as unknown as Order[]) ?? [] };
+  return { user, orders: (data as unknown as Order[]) ?? [], now: Date.now() };
 }
 
 export default async function AccountPage() {
-  const { user, orders } = await getAccountData();
+  const { user, orders, now } = await getAccountData();
 
   if (!user) {
     return (
@@ -54,7 +54,7 @@ export default async function AccountPage() {
   const meta = user.user_metadata ?? {};
   const confirmedOrders = orders.filter((o) => o.status === "confirmed");
   const memberSince = new Date(user.created_at);
-  const daysSince = Math.max(0, Math.floor((Date.now() - memberSince.getTime()) / 86_400_000));
+  const daysSince = Math.max(0, Math.floor((now - memberSince.getTime()) / 86_400_000));
   const initial = (meta.full_name || user.email || "?").trim().charAt(0).toUpperCase();
 
   const activities = [

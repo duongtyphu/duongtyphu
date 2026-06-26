@@ -109,7 +109,10 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
+    // Auto-expands the group containing the active route on navigation;
+    // this is a reaction to a route change, not a pure render computation.
     if (activeGroupName) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenGroups((prev) => ({ ...prev, [activeGroupName]: true }));
     }
   }, [activeGroupName]);

@@ -20,11 +20,17 @@ export function PortalShell({
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
+    // Hydration-safe: render starts collapsed=false (matches SSR), then this
+    // mount effect syncs the persisted preference from localStorage.
     const stored = window.localStorage.getItem(COLLAPSE_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (stored === "1") setCollapsed(true);
   }, []);
 
   useEffect(() => {
+    // Closes the mobile drawer on route change; reacting to navigation,
+    // not a pure render computation.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDrawerOpen(false);
   }, [pathname]);
 

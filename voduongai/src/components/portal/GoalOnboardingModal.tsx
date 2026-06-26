@@ -9,8 +9,11 @@ export function GoalOnboardingModal() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Hydration-safe: render starts closed (matches SSR), then this mount
+    // effect opens the modal based on localStorage, unavailable on the server.
     const hasGoal = window.localStorage.getItem(GOAL_STORAGE_KEY);
     const skipped = window.localStorage.getItem(SKIPPED_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!hasGoal && !skipped) setOpen(true);
   }, []);
 

@@ -11,6 +11,9 @@ export function ProgressOverview({ purchasedCount }: { purchasedCount: number })
   const [goalReady, setGoalReady] = useState(false);
 
   useEffect(() => {
+    // Hydration-safe: render starts with hasGoal=false (matches SSR), then
+    // this mount effect syncs the real value from localStorage.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHasGoal(Boolean(window.localStorage.getItem(GOAL_KEY)));
     setGoalReady(true);
   }, []);

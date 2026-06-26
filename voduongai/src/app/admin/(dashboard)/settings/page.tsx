@@ -54,6 +54,9 @@ export default function SettingsPage() {
   const [form, setForm] = useState(items[0]);
 
   useEffect(() => {
+    // Syncs the edit form once the async collection load resolves; no pure
+    // render-time source for this value.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (items[0]) setForm(items[0]);
     else if (ready) setForm({ id: "settings", ...settingsSeed });
   }, [items, ready]);
