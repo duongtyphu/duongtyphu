@@ -94,7 +94,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           <div>
             <Link href="/" className="flex items-center gap-2">
               <svg width="34" height="34" viewBox="0 0 32 32" fill="none" className="shrink-0">
-                <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#5B8CFF" />
+                <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
               <span className="text-base font-extrabold tracking-tight text-white">

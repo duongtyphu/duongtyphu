@@ -30,11 +30,13 @@ function AdminLoginForm() {
       <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#0B1F4D] p-8 shadow-2xl">
         <div className="mb-6 flex items-center gap-2">
           <svg width="30" height="30" viewBox="0 0 32 32" fill="none" className="shrink-0">
-            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#5B8CFF" />
+            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <div>
-            <p className="text-sm font-extrabold text-brand-orange">VO DUONG AI</p>
+            <p className="text-sm font-extrabold text-white">
+              VO DUONG <span className="text-brand-orange">AI</span>
+            </p>
             <p className="text-xs text-white/50">Admin Console</p>
           </div>
         </div>
