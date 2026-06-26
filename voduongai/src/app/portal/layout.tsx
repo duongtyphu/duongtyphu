@@ -1,5 +1,6 @@
 import { PortalShell } from "@/components/portal/PortalShell";
 import { NotificationTicker } from "@/components/portal/NotificationTicker";
+import { GoalOnboardingModal } from "@/components/portal/GoalOnboardingModal";
 import { getSupabaseServer } from "@/lib/supabase-server";
 
 async function getCurrentUser() {
@@ -20,6 +21,7 @@ export default async function PortalLayout({
   return (
     <PortalShell user={user}>
       <NotificationTicker />
+      <GoalOnboardingModal />
       {children}
     </PortalShell>
   );

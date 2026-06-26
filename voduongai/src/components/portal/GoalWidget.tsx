@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "vdai_portal_goal";
+export const GOAL_STORAGE_KEY = "vdai_portal_goal";
+const STORAGE_KEY = GOAL_STORAGE_KEY;
 
-const GOALS = [
+export const GOALS = [
   { id: "ai", label: "Học AI", href: "/portal/ai-academy", hint: "Bắt đầu với Học viện AI và Prompt thực chiến." },
   { id: "affiliate", label: "Làm Affiliate", href: "/portal/affiliate-hub", hint: "Vào Affiliate Hub để chọn ngách và sản phẩm phù hợp." },
   { id: "brand", label: "Xây thương hiệu cá nhân", href: "/portal/personal-brand", hint: "Lên kế hoạch nội dung và xây hình ảnh cá nhân." },
