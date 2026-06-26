@@ -32,6 +32,11 @@ import {
   Rocket as RocketStart,
   Bookmark,
   ChevronDown,
+  Layers,
+  Building2,
+  Bitcoin,
+  Link2,
+  LineChart,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -57,6 +62,11 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/my-products": Package,
   "/portal/services": Handshake,
   "/portal/digital-assets": Boxes,
+  "/portal/digital-assets/category/digiu": Layers,
+  "/portal/digital-assets/category/equity": Building2,
+  "/portal/digital-assets/category/crypto": Bitcoin,
+  "/portal/digital-assets/category/blockchain": Link2,
+  "/portal/digital-assets/category/trading": LineChart,
   "/portal/community": MessageCircle,
   "/portal/case-studies": TrendingUp,
   "/portal/student-success": BadgeCheck,

@@ -49,11 +49,11 @@ drop policy if exists "public read published" on digital_asset_categories;
 create policy "public read published" on digital_asset_categories for select using (status in ('Published', 'Active'));
 
 insert into digital_asset_categories (id, data, status) values
-  ('cat_digiu', '{"id":"cat_digiu","key":"digiu","slug":"digiu","name":"DigiU","description":"Các sản phẩm, cập nhật và cơ hội trong hệ sinh thái DigiU mà tôi đang theo dõi và chia sẻ.","icon":"💠","color":"#2563EB","order":1,"status":"Active"}'::jsonb, 'Active'),
+  ('cat_digiu', '{"id":"cat_digiu","key":"digiu","slug":"digiu","name":"Hệ sinh thái DigiU","description":"Các sản phẩm, cập nhật và cơ hội trong hệ sinh thái DigiU mà tôi đang theo dõi và chia sẻ.","icon":"💠","color":"#2563EB","order":1,"status":"Active"}'::jsonb, 'Active'),
   ('cat_blockchain', '{"id":"cat_blockchain","key":"blockchain","slug":"blockchain","name":"Blockchain","description":"Nền tảng, công nghệ, dự án Web3 và các sàn/công cụ Blockchain liên quan.","icon":"⛓️","color":"#7C3AED","order":2,"status":"Active"}'::jsonb, 'Active'),
-  ('cat_crypto', '{"id":"cat_crypto","key":"crypto","slug":"crypto","name":"Crypto","description":"Các tài sản số, nền tảng giao dịch, công cụ theo dõi thị trường và bài viết phân tích cơ bản.","icon":"🪙","color":"#EAB308","order":3,"status":"Active"}'::jsonb, 'Active'),
+  ('cat_crypto', '{"id":"cat_crypto","key":"crypto","slug":"crypto","name":"Sàn giao dịch Crypto","description":"Các tài sản số, nền tảng giao dịch, công cụ theo dõi thị trường và bài viết phân tích cơ bản.","icon":"🪙","color":"#EAB308","order":3,"status":"Active"}'::jsonb, 'Active'),
   ('cat_trading', '{"id":"cat_trading","key":"trading","slug":"trading","name":"Trading","description":"Tư duy giao dịch, quản trị vốn, công cụ phân tích và các nền tảng hỗ trợ trading.","icon":"📈","color":"#F97316","order":4,"status":"Active"}'::jsonb, 'Active'),
-  ('cat_equity', '{"id":"cat_equity","key":"equity","slug":"equity","name":"Cổ phần doanh nghiệp","description":"Các dự án đầu tư cổ phần doanh nghiệp, cơ hội sở hữu tài sản doanh nghiệp và thông tin liên quan.","icon":"🏢","color":"#22C55E","order":5,"status":"Active"}'::jsonb, 'Active')
+  ('cat_equity', '{"id":"cat_equity","key":"equity","slug":"equity","name":"Đầu tư cổ phần tại SolarGroup","description":"Các dự án đầu tư cổ phần doanh nghiệp, cơ hội sở hữu tài sản doanh nghiệp và thông tin liên quan.","icon":"🏢","color":"#22C55E","order":5,"status":"Active"}'::jsonb, 'Active')
 on conflict (id) do nothing;
 
 -- ===== digital_asset_projects =====

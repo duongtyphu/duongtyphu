@@ -83,7 +83,13 @@ export const portalNavGroups = [
   },
   {
     group: "Tài sản số",
-    items: [{ label: "Tài sản số", href: "/portal/digital-assets" }],
+    items: [
+      { label: "Hệ sinh thái DigiU", href: "/portal/digital-assets/category/digiu" },
+      { label: "Đầu tư cổ phần tại SolarGroup", href: "/portal/digital-assets/category/equity" },
+      { label: "Sàn giao dịch Crypto", href: "/portal/digital-assets/category/crypto" },
+      { label: "Blockchain", href: "/portal/digital-assets/category/blockchain" },
+      { label: "Trading", href: "/portal/digital-assets/category/trading" },
+    ],
   },
   {
     group: "Khám phá",
