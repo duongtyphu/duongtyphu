@@ -3078,7 +3078,13 @@ async function signOut() {
     const session = await requireAuth('login.html');
     if (!session) return;
 
-    if (session.user.email !== ADMIN_EMAIL) {
+    // RLS is the real boundary (see supabase-admin-flag-rls-migration.sql) —
+    // this is only a UX gate, so it must accept the same is_admin flag, not
+    // just the original hardcoded email, or a second admin would pass RLS
+    // but still see "Không có quyền truy cập" here.
+    const { data: member } = await _supabase.from('members').select('is_admin').eq('id', session.user.id).single();
+    const isAdmin = session.user.email === ADMIN_EMAIL || member?.is_admin === true;
+    if (!isAdmin) {
       document.body.innerHTML = `
         <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;font-family:'Inter',system-ui;background:var(--navy)">
           <h1 style="color:var(--red);font-size:1.4rem">Không có quyền truy cập</h1>
