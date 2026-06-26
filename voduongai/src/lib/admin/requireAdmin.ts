@@ -15,3 +15,16 @@ export async function requireAdmin() {
 
   return data.user;
 }
+
+/**
+ * Server-only guard for read-only /api/admin/collections GET — Portal pages
+ * reuse this generic API to read Supabase-backed content, so reads only need
+ * an authenticated member (middleware already gates /portal/* on this),
+ * not is_admin. Mutating verbs must keep using requireAdmin.
+ */
+export async function requireMember() {
+  const supabase = await getSupabaseServer();
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) return null;
+  return data.user;
+}

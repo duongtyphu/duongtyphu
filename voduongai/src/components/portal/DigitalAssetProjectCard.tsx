@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import type { DigitalAssetProject } from "@/data/digitalAssets";
+import type { DigitalAssetProject, DigitalAssetLink } from "@/data/digitalAssets";
 import { digitalAssetCategories, digitalAssetLinks } from "@/data/digitalAssets";
+import { useCollection } from "@/lib/admin/store";
 
 const BADGE_TONE: Record<DigitalAssetProject["badge"], string> = {
   "Đang theo dõi": "bg-white/10 text-white/70",
@@ -10,11 +13,13 @@ const BADGE_TONE: Record<DigitalAssetProject["badge"], string> = {
 };
 
 export function DigitalAssetProjectCard({ project }: { project: DigitalAssetProject }) {
-  const category = digitalAssetCategories.find((c) => c.key === project.category);
-  const linkCount = digitalAssetLinks.filter((l) => l.projectId === project.id && l.status === "Active").length;
-  const primaryLink = digitalAssetLinks
-    .filter((l) => l.projectId === project.id && l.status === "Active")
-    .sort((a, b) => a.order - b.order)[0];
+  const { items: categories } = useCollection("digital-asset-categories", digitalAssetCategories);
+  const { items: links } = useCollection<DigitalAssetLink>("digital-asset-links", digitalAssetLinks);
+
+  const category = categories.find((c) => c.key === project.category);
+  const activeLinks = links.filter((l) => l.projectId === project.id && l.status === "Active");
+  const linkCount = activeLinks.length;
+  const primaryLink = [...activeLinks].sort((a, b) => a.order - b.order)[0];
 
   return (
     <div className="card-shine flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30">

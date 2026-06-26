@@ -1,12 +1,18 @@
+"use client";
+
+import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import {
   digitalAssetProjects,
   digitalAssetCategories,
   digitalAssetLinks,
   digitalAssetArticles,
+  type DigitalAssetProject,
+  type DigitalAssetLink,
+  type DigitalAssetArticle,
   type DigitalAssetLinkType,
 } from "@/data/digitalAssets";
+import { useCollection } from "@/lib/admin/store";
 import { DigitalAssetProjectCard } from "@/components/portal/DigitalAssetProjectCard";
 import { DigitalAssetDisclaimer } from "@/components/portal/DigitalAssetDisclaimer";
 import { SaveButton } from "@/components/portal/SaveButton";
@@ -24,30 +30,28 @@ const LINK_TYPE_ICON: Record<DigitalAssetLinkType, string> = {
   Other: "🔹",
 };
 
-export function generateStaticParams() {
-  return digitalAssetProjects.map((p) => ({ slug: p.slug }));
-}
+export default function DigitalAssetDetailPage() {
+  const { slug } = useParams<{ slug: string }>();
+  const { items: projects, ready: projectsReady } = useCollection<DigitalAssetProject>(
+    "digital-asset-projects",
+    digitalAssetProjects
+  );
+  const { items: categories } = useCollection("digital-asset-categories", digitalAssetCategories);
+  const { items: links } = useCollection<DigitalAssetLink>("digital-asset-links", digitalAssetLinks);
+  const { items: articles } = useCollection<DigitalAssetArticle>("digital-asset-articles", digitalAssetArticles);
 
-export async function generateMetadata({ params }: PageProps<"/portal/digital-assets/[slug]">) {
-  const { slug } = await params;
-  const project = digitalAssetProjects.find((p) => p.slug === slug);
-  const title = project?.name ?? "ĐẦU TƯ CÙNG TÔI";
-  const description = project?.shortDescription ?? "ĐẦU TƯ CÙNG TÔI mà VO DUONG AI đang theo dõi và chia sẻ.";
-  return { title, description, openGraph: { title, description }, twitter: { title, description } };
-}
+  const project = projects.find((p) => p.slug === slug);
 
-export default async function DigitalAssetDetailPage({ params }: PageProps<"/portal/digital-assets/[slug]">) {
-  const { slug } = await params;
-  const project = digitalAssetProjects.find((p) => p.slug === slug);
-  if (!project) notFound();
+  if (projectsReady && !project) notFound();
+  if (!project) return null;
 
-  const category = digitalAssetCategories.find((c) => c.key === project.category);
-  const links = digitalAssetLinks
+  const category = categories.find((c) => c.key === project.category);
+  const projectLinks = links
     .filter((l) => l.projectId === project.id && l.status === "Active")
     .sort((a, b) => a.order - b.order);
-  const primaryLink = links[0];
-  const articles = digitalAssetArticles.filter((a) => a.projectId === project.id && a.status === "Published");
-  const relatedProjects = digitalAssetProjects
+  const primaryLink = projectLinks[0];
+  const projectArticles = articles.filter((a) => a.projectId === project.id && a.status === "Published");
+  const relatedProjects = projects
     .filter((p) => p.category === project.category && p.id !== project.id && p.status === "Published")
     .slice(0, 3);
 
@@ -91,9 +95,12 @@ export default async function DigitalAssetDetailPage({ params }: PageProps<"/por
               Truy cập dự án
             </a>
           )}
-          {links.find((l) => l.type === "Guide" || l.type === "Document") && (
+          {projectLinks.find((l) => l.type === "Guide" || l.type === "Document") && (
             <a
-              href={(links.find((l) => l.type === "Guide" || l.type === "Document") as (typeof links)[number]).url}
+              href={
+                (projectLinks.find((l) => l.type === "Guide" || l.type === "Document") as (typeof projectLinks)[number])
+                  .url
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-white/10 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
@@ -132,10 +139,10 @@ export default async function DigitalAssetDetailPage({ params }: PageProps<"/por
       </div>
 
       {/* Bài viết / phân tích */}
-      {articles.length > 0 && (
+      {projectArticles.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-sm font-bold text-white">Bài viết / Phân tích</h2>
-          {articles.map((a) => (
+          {projectArticles.map((a) => (
             <div key={a.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-6">
               <h3 className="text-sm font-bold text-white">{a.title}</h3>
               <p className="mt-1 text-xs text-white/40">{a.publishedAt}</p>
@@ -152,11 +159,11 @@ export default async function DigitalAssetDetailPage({ params }: PageProps<"/por
       )}
 
       {/* Link liên quan */}
-      {links.length > 0 && (
+      {projectLinks.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-sm font-bold text-white">Link liên quan</h2>
           <div className="grid gap-3 sm:grid-cols-2">
-            {links.map((l) => (
+            {projectLinks.map((l) => (
               <a
                 key={l.id}
                 href={l.url}

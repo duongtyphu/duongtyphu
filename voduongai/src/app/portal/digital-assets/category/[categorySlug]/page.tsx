@@ -1,29 +1,26 @@
+"use client";
+
+import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
-import { notFound } from "next/navigation";
-import { digitalAssetCategories, digitalAssetProjects } from "@/data/digitalAssets";
+import { digitalAssetCategories, digitalAssetProjects, type DigitalAssetProject } from "@/data/digitalAssets";
+import { useCollection } from "@/lib/admin/store";
 import { DigitalAssetProjectCard } from "@/components/portal/DigitalAssetProjectCard";
 import { DigitalAssetDisclaimer } from "@/components/portal/DigitalAssetDisclaimer";
 
-export function generateStaticParams() {
-  return digitalAssetCategories.map((c) => ({ categorySlug: c.key }));
-}
+export default function DigitalAssetCategoryPage() {
+  const { categorySlug } = useParams<{ categorySlug: string }>();
+  const { items: categories, ready: categoriesReady } = useCollection("digital-asset-categories", digitalAssetCategories);
+  const { items: projects, ready: projectsReady } = useCollection<DigitalAssetProject>(
+    "digital-asset-projects",
+    digitalAssetProjects
+  );
 
-export async function generateMetadata({ params }: PageProps<"/portal/digital-assets/category/[categorySlug]">) {
-  const { categorySlug } = await params;
-  const category = digitalAssetCategories.find((c) => c.key === categorySlug);
-  const title = category ? `ĐẦU TƯ CÙNG TÔI — ${category.name}` : "ĐẦU TƯ CÙNG TÔI";
-  const description = category?.description ?? "ĐẦU TƯ CÙNG TÔI mà VO DUONG AI đang theo dõi và chia sẻ.";
-  return { title, description, openGraph: { title, description }, twitter: { title, description } };
-}
+  const category = categories.find((c) => c.key === categorySlug);
 
-export default async function DigitalAssetCategoryPage({
-  params,
-}: PageProps<"/portal/digital-assets/category/[categorySlug]">) {
-  const { categorySlug } = await params;
-  const category = digitalAssetCategories.find((c) => c.key === categorySlug);
-  if (!category) notFound();
+  if (categoriesReady && !category) notFound();
+  if (!category) return null;
 
-  const projects = digitalAssetProjects
+  const sortedProjects = projects
     .filter((p) => p.category === category.key && p.status === "Published")
     .sort((a, b) => a.order - b.order);
 
@@ -42,14 +39,20 @@ export default async function DigitalAssetCategoryPage({
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-white">Dự án ({projects.length})</h2>
-        {projects.length === 0 ? (
+        <h2 className="text-sm font-bold text-white">Dự án ({sortedProjects.length})</h2>
+        {!projectsReady ? (
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-24 animate-pulse rounded-2xl bg-white/5" />
+            ))}
+          </div>
+        ) : sortedProjects.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white/60">
             Chưa có dự án nào trong lĩnh vực này.
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-            {projects.map((p) => (
+            {sortedProjects.map((p) => (
               <DigitalAssetProjectCard key={p.id} project={p} />
             ))}
           </div>
