@@ -13,6 +13,7 @@ export default function ToolsAdminPage() {
       seed={toolsAdminSeed}
       searchKeys={["name", "category"]}
       filterOptions={{ key: "category", label: "Danh mục", options: ["AI", "Thiết kế", "Video", "Năng suất", "Tự động hoá", "Lưu trữ web"] }}
+      viewHref={(it) => `/portal/tools/${it.slug}`}
       columns={[
         { key: "name", label: "Tên công cụ" },
         { key: "category", label: "Danh mục" },

@@ -38,6 +38,7 @@ export default function DigitalAssetArticlesAdminPage() {
               seed={digitalAssetArticles}
               searchKeys={["title"]}
               lockedFilter={{ key: "category", value: categoryKey }}
+              viewHref={(a) => `/portal/digital-assets/articles/${a.slug}`}
               columns={[
                 { key: "title", label: "Tiêu đề" },
                 { key: "projectId", label: "Dự án", render: (a) => projectName(a.projectId) },

@@ -24,6 +24,11 @@ type CrudPageProps<T extends BaseItem> = {
    * (e.g. category) — hides the filter dropdown and pre-fills new items with
    * that value, so the page only ever shows/creates items in that bucket. */
   lockedFilter?: { key: keyof T; value: string };
+  /** When set, renders a "Xem" link per row pointing at the item's real
+   * public URL — without this, admins have no way to find the live URL
+   * except guessing (e.g. typing the title into the address bar), which
+   * 404s since titles aren't slugs. */
+  viewHref?: (item: T) => string;
 };
 
 function emptyFromFields(fields: FieldConfig[]): Record<string, unknown> {
@@ -47,6 +52,7 @@ export function CrudPage<T extends BaseItem>({
   searchKeys,
   filterOptions,
   lockedFilter,
+  viewHref,
   emptyLabel = "Chưa có dữ liệu nào. Bấm “Thêm mới” để tạo nội dung đầu tiên.",
 }: CrudPageProps<T>) {
   const { items, ready, add, update, remove } = useCollection<T>(collectionKey, seed);
@@ -200,6 +206,16 @@ export function CrudPage<T extends BaseItem>({
                     </td>
                   ))}
                   <td className="px-4 py-3 text-right">
+                    {viewHref && (
+                      <a
+                        href={viewHref(item)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mr-2 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10"
+                      >
+                        Xem
+                      </a>
+                    )}
                     <button
                       onClick={() => openEdit(item)}
                       className="mr-2 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10"

@@ -27,6 +27,7 @@ export default function DigitalAssetProjectsAdminPage() {
               seed={digitalAssetProjects}
               searchKeys={["name", "slug"]}
               lockedFilter={{ key: "category", value: categoryKey }}
+              viewHref={(p) => `/portal/digital-assets/${p.slug}`}
               columns={[
                 {
                   key: "name",

@@ -60,6 +60,7 @@ export default function DigitalAssetCategoryAdminPage() {
         seed={digitalAssetProjects}
         searchKeys={["name", "slug"]}
         lockedFilter={{ key: "category", value: categoryKey }}
+        viewHref={(p) => `/portal/digital-assets/${p.slug}`}
         columns={[
           {
             key: "name",
@@ -107,6 +108,7 @@ export default function DigitalAssetCategoryAdminPage() {
         seed={digitalAssetArticles}
         searchKeys={["title"]}
         lockedFilter={{ key: "category", value: categoryKey }}
+        viewHref={(a) => `/portal/digital-assets/articles/${a.slug}`}
         columns={[
           { key: "title", label: "Tiêu đề" },
           {

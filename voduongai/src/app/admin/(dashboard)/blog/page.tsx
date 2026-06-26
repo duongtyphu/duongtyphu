@@ -14,6 +14,7 @@ export default function BlogAdminPage() {
       seed={blogPostsSeed}
       searchKeys={["title", "category"]}
       filterOptions={{ key: "status", label: "Trạng thái", options: ["Draft", "Published", "Hidden"] }}
+      viewHref={(it) => `/blog/${it.slug}`}
       columns={[
         { key: "title", label: "Tiêu đề" },
         { key: "category", label: "Danh mục" },
