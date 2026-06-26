@@ -9,6 +9,30 @@ type CreateOrderResult =
   | { ok: false; error: string }
   | { ok: true; orderId: number; orderCode: string; basePrice: number; finalPrice: number };
 
+const ITEM_TABLE: Record<CheckoutItemType, string> = {
+  product: "products",
+  lesson: "lessons",
+  course: "courses",
+};
+
+// Looks up the authoritative price server-side instead of trusting the
+// client-supplied `price` — otherwise anyone could buy any item for any
+// price by editing the checkout URL before submitting.
+async function lookupAuthoritativePrice(
+  admin: ReturnType<typeof getSupabaseAdmin>,
+  itemType: CheckoutItemType,
+  itemId: string | number,
+): Promise<number | null> {
+  if (!admin) return null;
+  const { data, error } = await admin
+    .from(ITEM_TABLE[itemType])
+    .select("price")
+    .eq("id", itemId)
+    .maybeSingle();
+  if (error || !data || typeof data.price !== "number") return null;
+  return data.price;
+}
+
 export async function createOrder(
   itemType: CheckoutItemType,
   itemId: string | number,
@@ -28,10 +52,13 @@ export async function createOrder(
   const admin = getSupabaseAdmin();
   if (!admin) return { ok: false, error: "Hệ thống thanh toán chưa được cấu hình." };
 
+  const realPrice = await lookupAuthoritativePrice(admin, itemType, itemId);
+  if (realPrice === null) return { ok: false, error: "Không xác định được sản phẩm hoặc giá, vui lòng thử lại." };
+
   const row: Record<string, unknown> = {
     member_email: email,
     product_name: title,
-    amount: price,
+    amount: realPrice,
     status: "pending",
     customer_name: customerName.trim(),
     customer_phone: customerPhone.trim(),
@@ -46,20 +73,33 @@ export async function createOrder(
   const orderCode = `VDAI${order.id}`;
   await admin.from("orders").update({ order_code: orderCode }).eq("id", order.id);
 
-  return { ok: true, orderId: order.id as number, orderCode, basePrice: price, finalPrice: price };
+  return { ok: true, orderId: order.id as number, orderCode, basePrice: realPrice, finalPrice: realPrice };
 }
 
 type ApplyCouponResult =
   | { ok: false; error: string }
   | { ok: true; finalPrice: number; couponCode: string };
 
-export async function applyCoupon(orderId: number, basePrice: number, rawCode: string): Promise<ApplyCouponResult> {
+export async function applyCoupon(orderId: number, rawCode: string): Promise<ApplyCouponResult> {
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
-  if (!userData.user?.email) return { ok: false, error: "Bạn cần đăng nhập." };
+  const email = userData.user?.email;
+  if (!email) return { ok: false, error: "Bạn cần đăng nhập." };
 
   const admin = getSupabaseAdmin();
   if (!admin) return { ok: false, error: "Hệ thống thanh toán chưa được cấu hình." };
+
+  // Re-fetch the order's real amount scoped to this user — never trust a
+  // client-supplied basePrice, and never let one user touch another's order.
+  const { data: order } = await supabase
+    .from("orders")
+    .select("amount, status")
+    .eq("id", orderId)
+    .eq("member_email", email)
+    .maybeSingle();
+  if (!order) return { ok: false, error: "Không tìm thấy đơn hàng." };
+  if (order.status !== "pending") return { ok: false, error: "Đơn hàng đã được xử lý, không thể áp mã." };
+  const basePrice = order.amount;
 
   const code = rawCode.trim().toUpperCase();
   const { data: coupon } = await admin.from("coupons").select("*").eq("code", code).eq("active", true).maybeSingle();

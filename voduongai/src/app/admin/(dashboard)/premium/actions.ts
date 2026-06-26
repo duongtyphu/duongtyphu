@@ -2,6 +2,7 @@
 
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 
 export type Product = {
   id: number;
@@ -40,6 +41,8 @@ export async function listProducts(): Promise<{ products: Product[]; configured:
 }
 
 export async function createProduct(input: ProductInput) {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 
@@ -60,6 +63,8 @@ export async function createProduct(input: ProductInput) {
 }
 
 export async function updateProduct(id: number, input: ProductInput) {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 
@@ -83,6 +88,8 @@ export async function updateProduct(id: number, input: ProductInput) {
 }
 
 export async function deleteProduct(id: number) {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 

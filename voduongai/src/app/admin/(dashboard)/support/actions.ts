@@ -2,6 +2,7 @@
 
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 
 export type Ticket = {
   id: number;
@@ -26,6 +27,8 @@ export async function listTickets(): Promise<{ tickets: Ticket[]; configured: bo
 }
 
 export async function replyTicket(id: number, reply: string, status: "open" | "replied" | "closed") {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 

@@ -2,6 +2,7 @@
 
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 
 export type Order = {
   id: number;
@@ -26,6 +27,8 @@ export async function listOrders(): Promise<{ orders: Order[]; configured: boole
 }
 
 export async function updateOrderStatus(id: number, status: "pending" | "confirmed" | "rejected") {
+  if (!(await requireAdmin())) return { error: "Unauthorized" };
+
   const supabase = getSupabaseAdmin();
   if (!supabase) return { error: "Chưa cấu hình SUPABASE_SERVICE_ROLE_KEY." };
 

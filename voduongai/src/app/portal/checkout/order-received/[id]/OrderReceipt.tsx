@@ -47,7 +47,7 @@ export function OrderReceipt({ order }: { order: OrderRecord }) {
   async function handleApplyCoupon() {
     if (!couponInput.trim()) return;
     setCouponBusy(true);
-    const result = await applyCoupon(order.id, order.amount, couponInput);
+    const result = await applyCoupon(order.id, couponInput);
     setCouponBusy(false);
     if (!result.ok) {
       alert(result.error);
