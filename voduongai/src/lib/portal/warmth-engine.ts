@@ -89,8 +89,9 @@ export const warmthLibrary: Record<WarmthCategory, string[]> = {
   ],
 };
 
-function pick<T>(items: T[]): T {
-  return items[Math.floor(Math.random() * items.length)];
+function pick<T>(items: T[], seed?: number): T {
+  const index = seed === undefined ? Math.floor(Math.random() * items.length) : seed % items.length;
+  return items[index];
 }
 
 export function getWelcomeState({
@@ -118,6 +119,6 @@ export function getWelcomeMessage(state: WelcomeState): string {
   return pick(welcomeCopy[state]);
 }
 
-export function getWarmthLine(category: WarmthCategory): string {
-  return pick(warmthLibrary[category]);
+export function getWarmthLine(category: WarmthCategory, seed?: number): string {
+  return pick(warmthLibrary[category], seed);
 }

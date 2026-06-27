@@ -106,6 +106,7 @@ export const portalHubs: PortalHub[] = [
     heroTitle: "My Legacy",
     heroSubtitle: "Di sản số của riêng bạn — những gì bạn xây hôm nay sẽ còn mãi.",
     modules: [
+      { label: "My Story", description: "Portal kể lại hành trình trưởng thành của riêng bạn.", href: "/portal/story" },
       { label: "Hồ sơ cá nhân", description: "Thông tin tài khoản và đơn hàng của bạn.", href: "/portal/account" },
       { label: "Đã lưu", description: "Nội dung bạn đã lưu lại để xem sau.", href: "/portal/saved" },
       { label: "Ghi chú", description: "Ghi chú cá nhân trong quá trình học." },

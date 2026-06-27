@@ -1,0 +1,46 @@
+import { Mail } from "lucide-react";
+import { GemCard } from "@/components/portal/ui/GemCard";
+
+export type MonthlyLetterStats = {
+  monthLabel: string;
+  reflectionCount: number;
+  capsuleCount: number;
+  memberSinceLabel?: string;
+};
+
+function buildLetter(stats: MonthlyLetterStats): string {
+  const lines: string[] = [];
+
+  if (stats.reflectionCount > 0) {
+    lines.push(
+      stats.reflectionCount === 1
+        ? "Tháng này bạn đã dừng lại để suy ngẫm ít nhất một lần — đó là một điều không nhỏ."
+        : `Tháng này bạn đã dành ${stats.reflectionCount} lần để nhìn lại chính mình. Đó là một sự kiên trì đáng được ghi nhận.`
+    );
+  } else {
+    lines.push("Tháng này có thể bạn đã bận, hoặc cần thời gian cho riêng mình — điều đó hoàn toàn bình thường.");
+  }
+
+  if (stats.capsuleCount > 0) {
+    lines.push(`Bạn đã lưu lại ${stats.capsuleCount} khoảnh khắc đáng nhớ vào hành trình của mình.`);
+  }
+
+  lines.push("Mỗi bước nhỏ bạn đi qua đang dần trở thành phiên bản tốt hơn của chính bạn.");
+
+  return lines.join(" ");
+}
+
+/**
+ * Answers: "Portal có đang viết một lá thư cho tôi, hay chỉ xuất một bản báo cáo?"
+ */
+export function MonthlyLetterCard({ stats }: { stats: MonthlyLetterStats }) {
+  return (
+    <GemCard variant="featured">
+      <div className="flex items-center gap-2">
+        <Mail className="h-4 w-4 text-[#22D3EE]" />
+        <h2 className="text-sm font-bold text-white">Lá thư tháng {stats.monthLabel}</h2>
+      </div>
+      <p className="mt-3 text-sm leading-relaxed text-white/75">{buildLetter(stats)}</p>
+    </GemCard>
+  );
+}

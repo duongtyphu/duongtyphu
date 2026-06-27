@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/portal/ui/Button";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import type { WelcomeState } from "@/lib/portal/warmth-engine";
@@ -22,13 +23,18 @@ export function WelcomeHero({
         Gem Home{name && state !== "first" ? ` · ${name}` : ""}
       </p>
       <h1 className="mt-2 whitespace-pre-line text-xl font-extrabold text-white sm:text-2xl">{welcomeMessage}</h1>
-      <p className="mt-3 max-w-xl text-sm italic text-white/55">{reflectionPrompt}</p>
+      <Link href="/portal/story" className="mt-3 block max-w-xl text-sm italic text-white/55 hover:text-white/75">
+        {reflectionPrompt}
+      </Link>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button href="/portal/journey" variant="primary">
           Tiếp tục hành trình →
         </Button>
         <Button href="/portal/roadmap" variant="secondary">
           Xem lộ trình
+        </Button>
+        <Button href="/portal/story" variant="secondary">
+          My Story
         </Button>
       </div>
     </GemCard>
