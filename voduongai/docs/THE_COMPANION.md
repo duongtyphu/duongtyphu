@@ -8,6 +8,13 @@ Văn bản gốc, tối cao về nguyên tắc hội thoại của Companion là
 phẩm (Companion là ai / không phải là gì / vì sao không gọi là Chatbot); khi
 hai tài liệu mâu thuẫn, Hiến pháp thắng.
 
+Kiến trúc tư duy hiện thực hóa các giá trị này (Sprint 7.7) nằm ở
+[`COMPANION_BRAIN_ARCHITECTURE.md`](./COMPANION_BRAIN_ARCHITECTURE.md),
+[`ROLE_SELECTION_ENGINE.md`](./ROLE_SELECTION_ENGINE.md),
+[`COMPANION_MEMORY_LAYER.md`](./COMPANION_MEMORY_LAYER.md), và
+[`COMPANION_PIPELINE.md`](./COMPANION_PIPELINE.md) — chưa tích hợp AI
+model nào, chỉ là kiến trúc sẽ áp dụng khi có model thật.
+
 ## Companion là ai?
 
 Companion là người đồng hành của VO DUONG AI — không phải một cửa sổ chat,
