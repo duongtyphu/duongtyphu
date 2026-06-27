@@ -5,75 +5,43 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard,
+  Rocket,
   Map,
   GraduationCap,
-  Rocket,
-  UserCircle,
-  Sparkles,
-  Wrench,
-  FileText,
-  Gift,
-  ListChecks,
-  ClipboardList,
-  Users,
+  Library,
+  Swords,
+  Wallet,
+  Compass,
   Crown,
-  Package,
-  Handshake,
-  Boxes,
+  Bot,
   MessageCircle,
-  CircleUser,
+  Trophy,
   Newspaper,
-  Percent,
-  LifeBuoy,
-  PenSquare,
-  TrendingUp,
-  BadgeCheck,
-  Megaphone,
-  Rocket as RocketStart,
+  CircleUser,
   Bookmark,
+  LifeBuoy,
   ChevronDown,
-  Layers,
-  Building2,
-  Bitcoin,
-  Link2,
-  LineChart,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
 
 const navIcons: Record<string, LucideIcon> = {
   "/portal": LayoutDashboard,
-  "/portal/start-here": RocketStart,
-  "/portal/saved": Bookmark,
+  "/portal/start-here": Rocket,
   "/portal/roadmap": Map,
-  "/portal/ai-academy": GraduationCap,
-  "/portal/vdai-academy": Rocket,
-  "/portal/personal-brand": UserCircle,
-  "/portal/practice": PenSquare,
-  "/portal/prompts": Sparkles,
-  "/portal/tools": Wrench,
-  "/portal/templates": FileText,
-  "/portal/resources": Gift,
-  "/portal/checklists": ListChecks,
-  "/portal/sop": ClipboardList,
-  "/portal/affiliate-hub": Users,
-  "/portal/referral": Percent,
+  "/portal/academy": GraduationCap,
+  "/portal/library": Library,
+  "/portal/practice": Swords,
+  "/portal/earn": Wallet,
+  "/portal/opportunities": Compass,
   "/portal/premium": Crown,
-  "/portal/my-products": Package,
-  "/portal/services": Handshake,
-  "/portal/digital-assets": Boxes,
-  "/portal/digital-assets/category/digiu": Layers,
-  "/portal/digital-assets/category/equity": Building2,
-  "/portal/digital-assets/category/crypto": Bitcoin,
-  "/portal/digital-assets/category/blockchain": Link2,
-  "/portal/digital-assets/category/trading": LineChart,
+  "/portal/ai-assistant": Bot,
   "/portal/community": MessageCircle,
-  "/portal/case-studies": TrendingUp,
-  "/portal/student-success": BadgeCheck,
-  "/portal/updates": Megaphone,
-  "/portal/support": LifeBuoy,
+  "/portal/achievements": Trophy,
+  "/portal/updates": Newspaper,
   "/portal/account": CircleUser,
-  "/blog": Newspaper,
+  "/portal/saved": Bookmark,
+  "/portal/support": LifeBuoy,
 };
 
 function isItemActive(pathname: string, href: string) {
@@ -90,21 +58,14 @@ type PortalSidebarProps = {
 export function PortalSidebar({ collapsed = false, variant = "desktop", onNavigate }: PortalSidebarProps) {
   const pathname = usePathname() || "/portal";
 
-  const topItems = portalNavGroups[0].items.concat(
-    portalNavGroups[1].items,
-    portalNavGroups[2].items
-  );
-  const groupedSections = portalNavGroups.slice(3, -1);
-  const tailItems = portalNavGroups[portalNavGroups.length - 1].items;
-
   const activeGroupName = useMemo(() => {
-    for (const section of groupedSections) {
+    for (const section of portalNavGroups) {
       if (section.items.some((item) => isItemActive(pathname, item.href))) {
         return section.group;
       }
     }
     return null;
-  }, [pathname, groupedSections]);
+  }, [pathname]);
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
@@ -124,71 +85,45 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
   const showLabels = variant === "mobile" || !collapsed;
 
   return (
-    <nav className="space-y-4" aria-label="Điều hướng Portal">
-      <div className="space-y-1">
-        {topItems.map((item) => (
-          <NavLink
-            key={item.href}
-            item={item}
-            active={isItemActive(pathname, item.href)}
-            showLabel={showLabels}
-            onNavigate={onNavigate}
-          />
-        ))}
-      </div>
+    <nav className="space-y-1" aria-label="Điều hướng Portal">
+      {portalNavGroups.map((section, i) => {
+        const groupName = section.group ?? `group-${i}`;
+        const isOpen = showLabels ? (openGroups[groupName] ?? true) : true;
+        const hasActive = section.items.some((item) => isItemActive(pathname, item.href));
 
-      <div className="space-y-1">
-        {groupedSections.map((section, i) => {
-          const groupName = section.group ?? `group-${i}`;
-          const isOpen = showLabels ? (openGroups[groupName] ?? section.group === activeGroupName) : true;
-          const hasActive = section.items.some((item) => isItemActive(pathname, item.href));
-
-          return (
-            <div key={groupName}>
-              {showLabels ? (
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(groupName)}
-                  aria-expanded={isOpen}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
-                    hasActive ? "text-white" : "text-white/40 hover:text-white/70"
-                  }`}
-                >
-                  {section.group}
-                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                </button>
-              ) : (
-                <div className="my-2 h-px bg-white/10" />
-              )}
-              {isOpen && (
-                <div className="space-y-1">
-                  {section.items.map((item) => (
-                    <NavLink
-                      key={item.href}
-                      item={item}
-                      active={isItemActive(pathname, item.href)}
-                      showLabel={showLabels}
-                      onNavigate={onNavigate}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="space-y-1 border-t border-white/10 pt-3">
-        {tailItems.map((item) => (
-          <NavLink
-            key={item.href}
-            item={item}
-            active={isItemActive(pathname, item.href)}
-            showLabel={showLabels}
-            onNavigate={onNavigate}
-          />
-        ))}
-      </div>
+        return (
+          <div key={groupName} className={i > 0 ? "pt-3" : ""}>
+            {showLabels ? (
+              <button
+                type="button"
+                onClick={() => toggleGroup(groupName)}
+                aria-expanded={isOpen}
+                className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
+                  hasActive ? "text-white/80" : "text-white/35 hover:text-white/60"
+                }`}
+              >
+                {section.group}
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+              </button>
+            ) : (
+              i > 0 && <div className="my-2 h-px bg-white/10" />
+            )}
+            {isOpen && (
+              <div className="space-y-1">
+                {section.items.map((item) => (
+                  <NavLink
+                    key={item.href}
+                    item={item}
+                    active={isItemActive(pathname, item.href)}
+                    showLabel={showLabels}
+                    onNavigate={onNavigate}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </nav>
   );
 }
@@ -212,12 +147,15 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}
       className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition ${
-        active
-          ? "bg-brand-blue/15 text-white"
-          : "text-white/80 hover:bg-white/10 hover:text-white"
+        active ? "gemos-nav-active text-white" : "text-white/75 hover:bg-white/[0.06] hover:text-white"
       } ${!showLabel ? "justify-center" : ""}`}
     >
-      {active && <span className="absolute left-0 top-1/2 h-4 -translate-y-1/2 rounded-full bg-brand-blue" style={{ width: 3 }} />}
+      {active && (
+        <span
+          className="gemos-nav-active-bar absolute left-0 top-1/2 h-4 -translate-y-1/2 rounded-full"
+          style={{ width: 3 }}
+        />
+      )}
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
       {showLabel && <span className="truncate">{item.label}</span>}
       {!showLabel && (

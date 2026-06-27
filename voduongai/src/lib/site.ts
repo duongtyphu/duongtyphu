@@ -40,73 +40,49 @@ export const mainNav = [
 
 export const portalNavGroups = [
   {
-    group: null,
-    items: [{ label: "Tổng quan", href: "/portal" }],
-  },
-  {
-    group: null,
-    items: [{ label: "🚀 Bắt đầu tại đây", href: "/portal/start-here" }],
-  },
-  {
-    group: null,
-    items: [{ label: "Lộ trình thành công", href: "/portal/roadmap" }],
-  },
-  {
-    group: "Học tập",
+    group: "Tổng quan",
     items: [
-      { label: "Học viện AI", href: "/portal/ai-academy" },
-      { label: "Học viện Affiliate", href: "/portal/vdai-academy" },
-      { label: "Thương hiệu cá nhân", href: "/portal/personal-brand" },
-      { label: "Dự án thực chiến", href: "/portal/practice" },
+      { label: "Dashboard", href: "/portal" },
+      { label: "Bắt đầu từ đây", href: "/portal/start-here" },
+      { label: "Lộ trình thành công", href: "/portal/roadmap" },
     ],
   },
   {
-    group: "Thư viện",
+    group: "Học",
     items: [
-      { label: "Prompt AI", href: "/portal/prompts" },
-      { label: "Công cụ AI", href: "/portal/tools" },
-      { label: "Template", href: "/portal/templates" },
-      { label: "Ebook", href: "/portal/resources" },
-      { label: "Checklist", href: "/portal/checklists" },
-      { label: "SOP", href: "/portal/sop" },
+      { label: "Học viện", href: "/portal/academy" },
+      { label: "Thư viện AI", href: "/portal/library" },
+      { label: "Thực chiến", href: "/portal/practice" },
     ],
   },
   {
-    group: "Kiếm tiền",
+    group: "Phát triển",
     items: [
-      { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
-      { label: "Hoa hồng giới thiệu", href: "/portal/referral" },
-      { label: "Sản phẩm số", href: "/portal/premium" },
-      { label: "Sản phẩm của tôi", href: "/portal/my-products" },
-      { label: "Dịch vụ", href: "/portal/services" },
+      { label: "Kiếm thu nhập", href: "/portal/earn" },
+      { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
+      { label: "Premium", href: "/portal/premium" },
     ],
   },
   {
-    group: "ĐẦU TƯ CÙNG TÔI",
+    group: "Hệ sinh thái",
     items: [
-      { label: "Hệ sinh thái DigiU", href: "/portal/digital-assets/category/digiu" },
-      { label: "Đầu tư cổ phần tại SolarGroup", href: "/portal/digital-assets/category/equity" },
-      { label: "Sàn giao dịch Crypto", href: "/portal/digital-assets/category/crypto" },
-      { label: "Blockchain", href: "/portal/digital-assets/category/blockchain" },
-      { label: "Trading", href: "/portal/digital-assets/category/trading" },
+      { label: "AI Assistant", href: "/portal/ai-assistant" },
+      { label: "Cộng đồng", href: "/portal/community" },
+      { label: "Thành tựu", href: "/portal/achievements" },
+      { label: "Tin tức", href: "/portal/updates" },
     ],
   },
   {
-    group: "Khám phá",
+    group: "Cá nhân",
     items: [
-      { label: "Case Study", href: "/portal/case-studies" },
-      { label: "Thành công học viên", href: "/portal/student-success" },
-      { label: "Tin tức & Cập nhật", href: "/portal/updates" },
-    ],
-  },
-  {
-    group: null,
-    items: [
+      { label: "Không gian của tôi", href: "/portal/account" },
       { label: "Đã lưu", href: "/portal/saved" },
       { label: "Hỗ trợ", href: "/portal/support" },
-      { label: "Cộng đồng", href: "/portal/community" },
     ],
   },
 ];
 
+// Legacy/standalone routes still in production, kept reachable via hub pages
+// and direct links even though they no longer appear as their own sidebar
+// entries (see PortalSidebar / the route map in portal hub pages).
 export const portalNav = portalNavGroups.flatMap((g) => g.items);
