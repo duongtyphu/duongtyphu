@@ -3,30 +3,38 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 import type { BuildModule } from "@/data/portal/build-os";
 
 /**
- * Answers: "Tôi có thể xây thương hiệu cá nhân của mình bằng những công cụ nào?"
+ * Answers: "Trong nhóm trụ cột này, cụ thể tôi có thể bắt tay làm gì?"
  */
-export function BrandBuilderSection({ modules }: { modules: BuildModule[] }) {
+export function BuildModuleGrid({
+  title,
+  subtitle,
+  modules,
+}: {
+  title?: string;
+  subtitle?: string;
+  modules: BuildModule[];
+}) {
   return (
-    <section>
-      <h2 className="text-lg font-bold text-white">Brand Builder</h2>
-      <p className="mt-1 text-sm text-white/55">Xây dựng thương hiệu cá nhân có giá trị lâu dài.</p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div>
+      {title && <h3 className="text-base font-bold text-white">{title}</h3>}
+      {subtitle && <p className="mt-1 text-sm text-white/55">{subtitle}</p>}
+      <div className={`grid gap-3 sm:grid-cols-2 lg:grid-cols-3 ${title || subtitle ? "mt-4" : ""}`}>
         {modules.map((m) =>
           m.href ? (
             <Link key={m.id} href={m.href} className="block">
               <GemCard className="h-full transition hover:-translate-y-1">
-                <h3 className="text-sm font-bold text-white">{m.label}</h3>
+                <h4 className="text-sm font-bold text-white">{m.label}</h4>
                 <p className="mt-1 text-xs text-white/55">{m.description}</p>
               </GemCard>
             </Link>
           ) : (
             <GemCard key={m.id} className="h-full">
-              <h3 className="text-sm font-bold text-white">{m.label}</h3>
+              <h4 className="text-sm font-bold text-white">{m.label}</h4>
               <p className="mt-1 text-xs text-white/55">{m.description}</p>
             </GemCard>
           )
         )}
       </div>
-    </section>
+    </div>
   );
 }

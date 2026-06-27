@@ -2,11 +2,8 @@ import { HubModuleGrid } from "@/components/portal/ui/HubModuleGrid";
 import { getHub } from "@/lib/portal/hubs";
 import { BuildHero } from "@/components/portal/build/BuildHero";
 import { BuildPillars } from "@/components/portal/build/BuildPillars";
-import { IncomeEngineSection } from "@/components/portal/build/IncomeEngineSection";
-import { BrandBuilderSection } from "@/components/portal/build/BrandBuilderSection";
-import { SystemBuilderSection } from "@/components/portal/build/SystemBuilderSection";
+import { BuildEngineTabs } from "@/components/portal/build/BuildEngineTabs";
 import { ProjectOpportunitySection } from "@/components/portal/build/ProjectOpportunitySection";
-import { PremiumPathSection } from "@/components/portal/build/PremiumPathSection";
 import { AIBuildCoach } from "@/components/portal/build/AIBuildCoach";
 import { BuildProgressCard } from "@/components/portal/build/BuildProgressCard";
 import { FounderJourneyCard } from "@/components/portal/build/FounderJourneyCard";
@@ -15,8 +12,8 @@ import {
   incomeEngineModules,
   brandBuilderModules,
   systemBuilderModules,
-  projectOpportunityModules,
   premiumPathModules,
+  projectOpportunityModules,
   aiBuildTip,
   buildProgress,
   founderJourney,
@@ -27,6 +24,13 @@ export const metadata = {
   description: "Biến tri thức thành giá trị — thu nhập, thương hiệu, hệ thống, dự án, doanh nghiệp và tài sản.",
 };
 
+const ENGINE_TABS = [
+  { key: "income", label: "Thu nhập", subtitle: "Các nguồn thu nhập bạn có thể bắt đầu xây dựng ngay hôm nay.", modules: incomeEngineModules },
+  { key: "brand", label: "Thương hiệu", subtitle: "Xây dựng thương hiệu cá nhân có giá trị lâu dài.", modules: brandBuilderModules },
+  { key: "system", label: "Hệ thống", subtitle: "Thiết kế quy trình, landing page, email, CRM, automation và AI Agent.", modules: systemBuilderModules },
+  { key: "premium", label: "Premium", subtitle: "Dành cho người muốn rút ngắn thời gian thử-sai.", modules: premiumPathModules },
+];
+
 export default function BuildOSPage() {
   const hub = getHub("growth")!;
 
@@ -34,11 +38,14 @@ export default function BuildOSPage() {
     <div className="space-y-10">
       <BuildHero />
       <BuildPillars pillars={buildPillars} />
-      <IncomeEngineSection modules={incomeEngineModules} />
-      <BrandBuilderSection modules={brandBuilderModules} />
-      <SystemBuilderSection modules={systemBuilderModules} />
+      <section>
+        <h2 className="text-lg font-bold text-white">Khu vực kiến tạo</h2>
+        <p className="mt-1 text-sm text-white/55">Chọn nhóm bạn muốn bắt đầu — thu nhập, thương hiệu, hệ thống hay premium.</p>
+        <div className="mt-4">
+          <BuildEngineTabs tabs={ENGINE_TABS} />
+        </div>
+      </section>
       <ProjectOpportunitySection modules={projectOpportunityModules} />
-      <PremiumPathSection modules={premiumPathModules} />
       <AIBuildCoach tip={aiBuildTip} />
       <BuildProgressCard dimensions={buildProgress} />
       <FounderJourneyCard journey={founderJourney} />
