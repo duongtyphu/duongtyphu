@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
 import { GemBackground } from "@/components/portal/ui/GemBackground";
+import { CompanionPresence } from "@/components/portal/companion/CompanionPresence";
 
 const COLLAPSE_KEY = "vdai_portal_sidebar_collapsed";
 
@@ -100,6 +101,8 @@ export function PortalShell({
           <div className="mx-auto max-w-5xl">{children}</div>
         </main>
       </div>
+
+      <CompanionPresence />
     </div>
   );
 }

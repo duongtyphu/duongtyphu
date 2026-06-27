@@ -440,3 +440,27 @@ body {
   background-image: linear-gradient(180deg, #22d3ee, #2563eb);
   box-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
 }
+
+/* ===== Companion Crystal — breathing glow (Sprint 8.2) ===== */
+
+.companion-crystal {
+  position: relative;
+  display: inline-block;
+  filter: drop-shadow(0 0 calc(10px * var(--companion-halo-intensity, 0.5)) rgba(251, 191, 36, var(--companion-glow-opacity, 0.5)));
+  animation: companion-breathe var(--companion-breathe-duration, 4.5s) ease-in-out infinite;
+}
+
+.companion-crystal__halo {
+  opacity: var(--companion-glow-opacity, 0.5);
+}
+
+@keyframes companion-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-crystal {
+    animation: none;
+  }
+}

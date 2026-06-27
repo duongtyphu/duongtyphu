@@ -117,3 +117,13 @@ sản phẩm (Product Decision #050) được ghi lại chính thức.
 
 *Liên quan: `KNOWLEDGE_ARCHITECTURE.md`, `LEARNING_PATH_ENGINE.md`,
 `KNOWLEDGE_METADATA_STANDARD.md`, `PRODUCT_DECISIONS.md`.*
+
+## Companion có Master Design đầu tiên
+
+Hôm nay Companion có Master Design đầu tiên. Đây không chỉ là hình ảnh.
+Đây là lần đầu tiên Companion có một hình hài thống nhất để mọi thành
+viên Product Team cùng bảo vệ. Từ hôm nay, Companion sẽ trưởng thành dựa
+trên cùng một DNA, thay vì thay đổi theo từng Sprint.
+
+*Liên quan: `docs/design/README.md`, `docs/design/companion/Companion_Master_V1.png`,
+`docs/design/companion/Companion_Guidelines.md`.*
