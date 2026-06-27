@@ -23,6 +23,8 @@ import { todayMissions, recommendedItems, latestUpdates } from "@/data/portal/ge
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { humanMomentumSignals, livingPortalCopy } from "@/data/portal/living-portal";
 import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
+import { dominantChallenge } from "@/lib/portal/human-understanding";
+import type { Reflection } from "@/lib/portal/reflections";
 
 export const metadata = { title: "Gem Home", description: "Gem Home — nơi bắt đầu hành trình trưởng thành mỗi ngày cùng VO DUONG AI.", robots: { index: false } };
 
@@ -60,6 +62,26 @@ async function fetchProfileSummary() {
   };
 }
 
+async function getRecentReflections(): Promise<Reflection[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
+  try {
+    const supabase = await getSupabaseServer();
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+    if (!user) return [];
+    const { data, error } = await supabase
+      .from("reflections")
+      .select("id, question, answer, created_at")
+      .eq("member_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(60);
+    if (error || !data) return [];
+    return data.map((r) => ({ id: r.id, question: r.question, answer: r.answer, createdAt: r.created_at }));
+  } catch {
+    return [];
+  }
+}
+
 async function getFeaturedTools(): Promise<AdminTool[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
@@ -84,7 +106,8 @@ export default async function GemHomePage() {
   const featuredTools = await getFeaturedTools();
 
   const continueLearningCourse = vdaiCourses[0];
-  const flow = getHumanFlowState("knowledge");
+  const recentReflections = await getRecentReflections();
+  const flow = getHumanFlowState("knowledge", dominantChallenge(recentReflections));
   const welcomeState = getWelcomeState({ createdAt: profile?.memberSince, lastSignInAt: profile?.lastSignInAt });
   const welcomeMessage = getWelcomeMessage(welcomeState);
   const reflectionPrompt = getWarmthLine("reflection");

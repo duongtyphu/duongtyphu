@@ -1,3 +1,5 @@
+import type { ChallengeTag } from "@/lib/portal/human-insight";
+
 export type PortalOS = "journey" | "knowledge" | "build" | "connect" | "legacy";
 
 export type HumanFlowState = {
@@ -72,18 +74,49 @@ const FLOW_STAGES: Record<PortalOS, Omit<HumanFlowState, "currentOS" | "nextOS" 
 };
 
 /**
+ * Nhiệm vụ 04 (Sprint 7.2) — Next Insight: khi một thử thách (challenge)
+ * được Reflection nhắc tới nhiều nhất gần đây, nó ưu tiên một hành động
+ * nhỏ, vừa sức thay vì bước tiếp theo mặc định của OS hiện tại.
+ */
+const CHALLENGE_OVERRIDE: Partial<Record<ChallengeTag, { nextBestAction: string; reason: string }>> = {
+  "Thiếu tự tin": {
+    nextBestAction: "Thực hành một bài tập nhỏ, vừa sức hôm nay",
+    reason: "Có vẻ gần đây bạn đang thiếu tự tin — một kết quả nhỏ ngay lúc này quan trọng hơn một khóa học nâng cao.",
+  },
+  "Thiếu kiến thức": {
+    nextBestAction: "Ôn lại một bài học nền tảng trước khi đi tiếp",
+    reason: "Có vẻ một vài kiến thức nền vẫn cần được củng cố trước khi bước tiếp.",
+  },
+  "Thiếu động lực": {
+    nextBestAction: "Đọc lại một thành tựu nhỏ bạn đã lưu trong My Story",
+    reason: "Có lẽ nhìn lại những gì bạn đã làm được sẽ giúp bạn có thêm động lực.",
+  },
+  "Thiếu hệ thống": {
+    nextBestAction: "Dùng một Template hoặc SOP có sẵn thay vì làm từ đầu",
+    reason: "Có vẻ bạn đang cần một quy trình rõ ràng hơn là thêm kiến thức mới.",
+  },
+  "Thiếu thời gian": {
+    nextBestAction: "Chọn một nhiệm vụ 5 phút trong Nhiệm vụ 30 ngày",
+    reason: "Có vẻ thời gian là rào cản lớn nhất lúc này — một bước rất nhỏ vẫn là tiến bộ.",
+  },
+};
+
+/**
  * Mock-data version of the Human Flow Engine — same shape will later read
  * from real progress data (missions, courses, community activity) instead
- * of a hardcoded currentOS.
+ * of a hardcoded currentOS. `dominantChallenge` (from human-understanding.ts)
+ * is optional and, when present, overrides the default next-best-action.
  */
-export function getHumanFlowState(currentOS: PortalOS = "knowledge"): HumanFlowState {
+export function getHumanFlowState(currentOS: PortalOS = "knowledge", dominantChallenge?: ChallengeTag): HumanFlowState {
   const nextOS = NEXT_OS[currentOS];
   const stage = FLOW_STAGES[currentOS];
+  const override = dominantChallenge ? CHALLENGE_OVERRIDE[dominantChallenge] : undefined;
 
   return {
     currentOS,
     nextOS,
     recommendedRoute: OS_ROUTE[nextOS],
     ...stage,
+    ...(override ?? {}),
   };
 }

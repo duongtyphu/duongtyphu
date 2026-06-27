@@ -5,9 +5,12 @@ import { MonthlyLetterCard } from "@/components/portal/story/MonthlyLetterCard";
 import { CompanionMemoryCard } from "@/components/portal/story/CompanionMemoryCard";
 import { ReflectionJournalCard } from "@/components/portal/story/ReflectionJournalCard";
 import { AddMemoryCapsuleForm } from "@/components/portal/story/AddMemoryCapsuleForm";
+import { UnderstandingNoteCard } from "@/components/portal/story/UnderstandingNoteCard";
+import { HumanGrowthDashboardCard } from "@/components/portal/story/HumanGrowthDashboardCard";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
+import { buildUnderstandingNote, detectGrowthPattern, buildGrowingQualities } from "@/lib/portal/human-understanding";
 
 export const metadata = {
   title: "My Story",
@@ -126,11 +129,15 @@ export default async function MyStoryPage() {
           <ReflectionJournalCard />
         </div>
         <div className="lg:col-span-5">
-          <CompanionMemoryCard lastReflection={reflections[0]} />
+          <CompanionMemoryCard reflections={reflections} />
         </div>
       </div>
 
       <AddMemoryCapsuleForm />
+
+      <UnderstandingNoteCard note={buildUnderstandingNote(reflections)} pattern={detectGrowthPattern(reflections)} />
+
+      <HumanGrowthDashboardCard qualities={buildGrowingQualities(reflections)} />
 
       <MonthlyLetterCard
         stats={{
