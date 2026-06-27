@@ -84,10 +84,10 @@ export const portalHubs: PortalHub[] = [
   },
   {
     key: "ecosystem",
-    label: "Hệ sinh thái",
+    label: "Hệ Kết Nối",
     href: "/portal/ecosystem",
-    heroTitle: "Hệ sinh thái",
-    heroSubtitle: "Không ai tỏa sáng một mình — đây là cộng đồng đồng hành cùng bạn.",
+    heroTitle: "Hệ Kết Nối",
+    heroSubtitle: "Không ai tiến hóa một mình — kết nối với cộng đồng, mentor, sự kiện và cơ hội.",
     modules: [
       { label: "AI Assistant", description: "Một người đồng hành AI riêng cho hành trình của bạn.", href: "/portal/ai-assistant" },
       { label: "Cộng đồng", description: "Kết nối với những người cùng hành trình.", href: "/portal/community" },
