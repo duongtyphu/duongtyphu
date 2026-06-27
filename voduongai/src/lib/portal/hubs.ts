@@ -59,10 +59,10 @@ export const portalHubs: PortalHub[] = [
   },
   {
     key: "growth",
-    label: "Phát triển",
+    label: "Hệ Kiến Tạo",
     href: "/portal/growth",
-    heroTitle: "Phát triển",
-    heroSubtitle: "Biến tri thức AI thành thu nhập và tài sản số — từng bước, bền vững.",
+    heroTitle: "Hệ Kiến Tạo",
+    heroSubtitle: "Biến tri thức thành giá trị — thu nhập, thương hiệu, hệ thống, dự án, doanh nghiệp và tài sản.",
     modules: [
       { label: "Kiếm thu nhập", description: "Các cách tạo thu nhập cùng AI.", href: "/portal/earn" },
       { label: "Affiliate Hub", description: "Chọn ngách, chọn sản phẩm, xây hệ thống Affiliate.", href: "/portal/affiliate-hub" },
