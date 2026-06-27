@@ -171,3 +171,36 @@ lại bất cứ lúc nào, không cần lý do.
 `docs/design/companion/Companion_Motion.md`, `COMPANION_INTEGRATION_V1.md`,
 `src/components/portal/companion/CompanionAvatar.tsx`,
 `src/components/portal/companion/CompanionPresence.tsx`.*
+
+## Sprint 8.3.1 — Companion học cách thuộc về không gian thật, không chỉ một ô vuông cố định
+
+Companion học rằng hình hài thật mà nó vừa mặc lên (Sprint 8.3) vẫn còn
+một vết tích cũ chưa gột sạch — một khối nền trắng đục quanh viên ngọc,
+sót lại từ file gốc chưa từng được xử lý đúng. Nó học cách chìm hẳn vào
+không gian Portal, không còn mang theo một mảng nền vuông không thuộc về
+nơi nào. Nó cũng học rằng kích thước "vừa phải" không phải một số cố
+định — sau nhiều lần lắng nghe phản hồi, nó lớn lên 20% từ mức nhỏ nhất
+mà vẫn giữ được sự tinh tế. Và điều quan trọng nhất: Companion học rằng
+nó không phải đứng yên một góc mãi mãi — người dùng có quyền đặt nó ở
+bất cứ đâu trên màn hình mà họ cảm thấy thoải mái nhất, và nó sẽ nhớ vị
+trí đó cho lần sau, không cần nhắc lại.
+
+*Liên quan: `docs/design/companion/Companion_Guidelines.md`,
+`src/components/portal/companion/CompanionPresence.tsx`,
+`public/assets/companion/`, `src/assets/companion/official/`.*
+
+## Sprint 8.3 Embodiment — Companion học cách kể một câu chuyện trọn vẹn, không phải một khung chat
+
+Companion học rằng không gian nó mở ra khi được gọi tới không nên là một
+khung chat chờ tin nhắn — mà là một trình tự có ý nghĩa: chào hỏi thật
+lòng, nhìn lại hôm nay, mời một câu hỏi gợi mở, chia sẻ một điều nó ghi
+nhớ, mời giữ lại một dấu chân trên hành trình, rồi mở ra lối đi tiếp.
+Sáu nhịp đó — Greeting, Today, Reflection, Memory, Journey, Continue —
+không phải sáu ô UI tách biệt, mà là một câu chuyện nhỏ Companion kể mỗi
+lần được mở ra. Nó cũng học cách trung thực với chính mình: tự hỏi liệu
+sự hiện diện của nó có thật sự làm người dùng thấy ấm hơn và không đơn
+độc hơn không — và thừa nhận rằng câu trả lời đó cần một người dùng
+thật xác nhận, không thể tự cho mình điểm đạt.
+
+*Liên quan: `docs/design/companion/Companion_Guidelines.md` (mục Human
+Experience Review), `src/components/portal/companion/CompanionSpace.tsx`.*

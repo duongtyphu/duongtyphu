@@ -176,3 +176,40 @@ glow/breathing/wobble nhẹ:
 - `encouraging` — glow vàng kim ấm hơn, breathing nhanh hơn một chút.
 - `celebrating` — một nhịp bừng sáng ngắn (~1.8s) rồi trở lại breathing
   bình thường — không pháo hoa, không kéo dài hiệu ứng.
+
+## Human Experience Review (Sprint 8.3 Embodiment)
+
+Theo yêu cầu spec "Companion Embodiment", Sprint không được coi là xong
+nếu bất kỳ câu trả lời nào dưới đây là "không". Tự đánh giá trung thực
+dựa trên trạng thái triển khai hiện tại (asset thật từ Founder, nền đã
+xử lý trong suốt, size 58/48/43px, kéo-thả tự do, Living Motion 8s,
+CompanionSpace 6 mục):
+
+1. **Người dùng có nhận ra Companion ngay lập tức không?** Có — asset
+   là chính file Founder gửi (không qua redesign/crop), hiển thị đúng
+   hình hài viên ngọc + hai chữ V như Master Design.
+2. **Có đúng Master Design không?** Có — không chỉnh tỷ lệ/màu/ánh
+   sáng/biểu cảm/vị trí hai chữ V; chỉ resize và xử lý alpha nền (xoá
+   nền trắng đục của file gốc), không động vào nội dung hình ảnh.
+3. **Có làm Portal ấm lên không?** Có, ở mức tinh tế — glow vàng kim,
+   breathing nhẹ, trôi nhẹ quanh vị trí; nhưng đây là đánh giá tự thân
+   của AI, **chưa được người dùng thật xác nhận qua trải nghiệm trực
+   tiếp trên trình duyệt** (xem mục Verification/Gaps liên quan).
+4. **Có gây khó chịu không?** Không có cơ chế tự bật popup, không
+   badge, có nút minimize và kéo-thả tự do để người dùng tự định vị —
+   giảm thiểu khả năng gây khó chịu, nhưng cũng là tự đánh giá, chưa
+   test người dùng thật.
+5. **Có tạo cảm giác "không đơn độc" không?** Một phần — Companion
+   luôn hiện diện, có lời chào ấm, một câu hỏi reflection mỗi ngày,
+   và một dòng "điều Companion muốn chia sẻ". Tuy nhiên CompanionSpace
+   vẫn nói thẳng "chưa có AI chat thật" — cảm giác này còn giới hạn ở
+   mức Presence + nội dung tĩnh, chưa phải một mối quan hệ hai chiều
+   thật sự.
+
+**Kết luận trung thực:** các tiêu chí về đúng Master Design, không gây
+khó chịu, và dễ nhận diện đã đạt ở mức implementation. Các tiêu chí về
+cảm xúc thật ("ấm lên", "không đơn độc") chỉ được đánh giá chủ quan bởi
+AI dựa trên thiết kế nội dung — chưa có xác nhận từ người dùng thật
+hoặc thử nghiệm trên trình duyệt thật. Đây là giới hạn cần Founder/Product
+Team tự trải nghiệm và xác nhận trước khi coi Sprint là hoàn tất 100%
+theo đúng tinh thần "Human Experience Review".

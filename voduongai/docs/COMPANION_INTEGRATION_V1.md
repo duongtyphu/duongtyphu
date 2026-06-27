@@ -85,29 +85,48 @@ state phản ứng theo hành vi thật (ví dụ vừa hoàn thành một mốc
 `/portal/*`, không áp dụng cho Admin Dashboard (Admin có layout/shell
 riêng, không dùng `PortalShell`).
 
-## Asset system (cập nhật Sprint 8.3)
+## Asset system (cập nhật Sprint 8.3.1)
 
-Từ Sprint 8.3, Companion render bằng **asset thật** — `CompanionAvatar`
+Companion render bằng **asset thật** — `CompanionAvatar`
 (`src/components/portal/companion/CompanionAvatar.tsx`) dùng các file
-`src/assets/companion/official/companion-master-v1-*.png`, cắt trực
-tiếp từ `docs/design/companion/Companion_Master_V1.png` (ellipse-feather
-quanh viên ngọc, giữ trọn V trắng trung tâm + V vàng kim đỉnh). Đây
-không còn là placeholder — đây là Product Asset chính thức được dùng
-mặc định ở mọi nơi Companion xuất hiện trong Portal.
+`src/assets/companion/official/companion-master-v1-*.png`. Nguồn là file
+PNG do Founder gửi trực tiếp (`public/assets/companion/Companion_Master_V1.png`,
+1254×1254) — **không phải nền trong suốt như ghi nhận ban đầu**: file
+gốc có nền trắng đục (RGB, không alpha). Sprint 8.3.1 đã xử lý tách nền
+trắng đó thành alpha trong suốt (ngưỡng feather trên kênh màu tối
+thiểu, không đụng tới vùng tối trong viên ngọc), rồi resize giữ tỷ lệ
+cho từng size hiển thị — không crop/chỉnh sửa nội dung hình ảnh. Đây là
+Product Asset chính thức, dùng mặc định ở mọi nơi Companion xuất hiện
+trong Portal.
 
 `CompanionCrystal` (`src/assets/companion/placeholder/CompanionCrystal.tsx`)
 vẫn được giữ trong code làm phương án dự phòng (ví dụ asset ảnh lỗi
 tải) — không xoá, nhưng không còn là phương án mặc định.
 
-## Kích thước, safe zone, motion, state visuals (Sprint 8.3)
+## Kích thước, vị trí, motion, state visuals (Sprint 8.3.1)
 
-Đã chuyển từ Presence cố định 52px sang kích thước lớn hơn, responsive
-theo thiết bị (64–76px mobile / 84–96px tablet / 96–120px desktop), với
-2 mode vị trí (`anchored` / `floating`), thu nhỏ khi scroll nhanh, tự ẩn
-khi bàn phím mobile mở, và nút minimize rõ ràng. Chi tiết đầy đủ (bảng
-kích thước, safe zone theo px, quy tắc motion, state visuals) nằm ở
-`docs/design/companion/Companion_Guidelines.md` — không lặp lại ở đây để
-tránh hai nguồn sự thật lệch nhau.
+Kích thước Presence hiện tại: **58px desktop / 48px tablet / 43px
+mobile** (sau 3 lần điều chỉnh theo phản hồi Founder — xem
+`COMPANION_GROWTH_LOG.md`). Companion Presence **không còn cố định**
+một vị trí — người dùng kéo (chuột/chạm) tới bất kỳ đâu trong viewport,
+vị trí được nhớ qua `localStorage` và luôn được kẹp trong vùng nhìn
+thấy. Bấm (không kéo) vẫn mở `CompanionSpace`. Living Motion (breathing
+→ glow → floating → xoay rất nhẹ) gói trong một chu kỳ 8s. Vẫn còn 2
+mode vị trí khởi điểm (`anchored` cho route nhập liệu nhiều /
+`floating` cho route khác), thu nhỏ khi scroll nhanh, tự ẩn khi bàn
+phím mobile mở, nút minimize riêng. Chi tiết đầy đủ (bảng kích thước,
+quy tắc kéo-thả, motion, state visuals, Human Experience Review) nằm ở
+`docs/design/companion/Companion_Guidelines.md` — không lặp lại ở đây
+để tránh hai nguồn sự thật lệch nhau.
+
+## Companion Space — 6 mục (Sprint 8.3 Embodiment)
+
+`CompanionSpace.tsx` được tái cấu trúc theo 6 mục tường minh — Greeting,
+Today, Reflection, Memory, Journey, Continue — thay vì một danh sách
+section không tên. Nội dung từng mục giữ nguyên (lời chào, "Hôm nay của
+bạn", câu hỏi reflection, dòng Companion muốn chia sẻ, lời mời lưu dấu
+chân, 3 CTA) — chỉ tổ chức lại để đúng tinh thần spec: một câu chuyện
+có trình tự, không phải khung chat.
 
 ## Roadmap tiếp theo (đề xuất, chưa thực hiện)
 
@@ -118,5 +137,6 @@ tránh hai nguồn sự thật lệch nhau.
 - Khi có AI model thật (xem `COMPANION_BRAIN_ARCHITECTURE.md`), thay
   phần "Chia sẻ với Companion" bằng trò chuyện thật, vẫn tuân theo 8
   tầng suy nghĩ và Conversation Pipeline đã thiết kế.
-- Khi Product Team xuất asset chính thức từ Master Design, thay thế
-  `CompanionCrystal` placeholder.
+- Human Experience Review (xem `Companion_Guidelines.md`) hiện chỉ là
+  tự đánh giá của AI — cần Founder/Product Team trải nghiệm thật trên
+  trình duyệt để xác nhận trước khi coi là đạt 100%.

@@ -1,9 +1,11 @@
 "use client";
 
 /**
- * Companion Space (Sprint 8.2 — Nhiệm vụ 04). Panel nhẹ mở ra khi bấm vào
- * Companion Presence — không phải UI kiểu ChatGPT/Messenger/Intercom.
- * Không có AI chat thật ở V1 — nói thẳng điều đó, không giả vờ.
+ * Companion Space (Sprint 8.2 — Nhiệm vụ 04; tái cấu trúc Sprint 8.3
+ * Embodiment theo 6 mục: Greeting / Today / Reflection / Memory /
+ * Journey / Continue). Panel nhẹ mở ra khi bấm vào Companion Presence —
+ * không phải UI kiểu ChatGPT/Messenger/Intercom. Không có AI chat thật
+ * ở V1 — nói thẳng điều đó, không giả vờ.
  */
 
 import { useEffect, useRef } from "react";
@@ -45,7 +47,8 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
         aria-label={`${displayName}`}
         className="relative z-10 max-h-[85vh] w-full overflow-y-auto rounded-t-2xl border border-white/10 bg-[#0B1F4D] p-5 shadow-2xl sm:max-h-[80vh] sm:w-[380px] sm:rounded-2xl sm:p-6"
       >
-        <div className="mb-4 flex items-center justify-between gap-3">
+        {/* 1. Greeting — chào, nhận diện Companion, không phải chat header */}
+        <section aria-label="Greeting" className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <CompanionAvatar state={state.key} className="h-10 w-10 shrink-0" />
             <div>
@@ -62,27 +65,22 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
           >
             <X className="h-4 w-4" />
           </button>
-        </div>
+        </section>
 
         <p className="mb-5 text-sm leading-relaxed text-white/85">
           Mình đang ở đây. Hôm nay bạn muốn chia sẻ điều gì?
         </p>
 
-        <section className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4">
+        {/* 2. Today — ghi nhận hiện diện hôm nay của người dùng */}
+        <section aria-label="Today" className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">Hôm nay của bạn</p>
           <p className="text-sm text-white/80">
             Mình nhận thấy bạn vẫn đang ở đây, vẫn đang tiếp tục — điều đó không nhỏ.
           </p>
         </section>
 
-        <section className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">
-            Điều Companion muốn chia sẻ
-          </p>
-          <p className="whitespace-pre-line text-sm text-white/80">{sharedLine}</p>
-        </section>
-
-        <section className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
+        {/* 3. Reflection — một câu hỏi mời gợi mở, không bắt buộc trả lời */}
+        <section aria-label="Reflection" className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">
             Hôm nay mình muốn hỏi bạn một điều
           </p>
@@ -92,7 +90,16 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
           </p>
         </section>
 
-        <section className="mb-5 rounded-xl border border-dashed border-white/15 p-4">
+        {/* 4. Memory — điều Companion ghi nhớ và muốn chia sẻ lại */}
+        <section aria-label="Memory" className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">
+            Điều Companion muốn chia sẻ
+          </p>
+          <p className="whitespace-pre-line text-sm text-white/80">{sharedLine}</p>
+        </section>
+
+        {/* 5. Journey — mời giữ lại một dấu chân nhỏ trên hành trình */}
+        <section aria-label="Journey" className="mb-5 rounded-xl border border-dashed border-white/15 p-4">
           <p className="mb-2 text-sm text-white/75">
             Có điều gì hôm nay bạn muốn giữ lại — một dấu chân nhỏ trên hành trình này?
           </p>
@@ -102,7 +109,8 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
           </p>
         </section>
 
-        <div className="flex flex-col gap-2">
+        {/* 6. Continue — lối đi tiếp, không phải khung chat */}
+        <section aria-label="Continue" className="flex flex-col gap-2">
           <Button href="/portal/ai-assistant" variant="primary" className="w-full">
             Chia sẻ với Companion
           </Button>
@@ -112,7 +120,7 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
           <Button href="/portal/journey" variant="secondary" className="w-full">
             Tiếp tục hành trình
           </Button>
-        </div>
+        </section>
       </div>
     </div>
   );
