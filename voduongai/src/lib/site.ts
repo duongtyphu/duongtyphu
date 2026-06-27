@@ -1,3 +1,5 @@
+import { portalHubs } from "@/lib/portal/hubs";
+
 export const siteConfig = {
   name: "VO DUONG AI",
   displayName: "Võ Đương AI",
@@ -38,51 +40,23 @@ export const mainNav = [
   { label: "Blog AI", href: "/blog" },
 ];
 
+// The Portal sidebar now shows only the 6 GemOS hubs (see
+// src/lib/portal/hubs.ts) — every legacy feature page still exists and is
+// reachable from inside its hub's module grid, it just no longer has its
+// own top-level sidebar entry.
 export const portalNavGroups = [
   {
-    group: "Tổng quan",
-    items: [
-      { label: "Dashboard", href: "/portal" },
-      { label: "Bắt đầu từ đây", href: "/portal/start-here" },
-      { label: "Lộ trình thành công", href: "/portal/roadmap" },
-    ],
-  },
-  {
-    group: "Học",
-    items: [
-      { label: "Học viện", href: "/portal/academy" },
-      { label: "Thư viện AI", href: "/portal/library" },
-      { label: "Thực chiến", href: "/portal/practice" },
-    ],
-  },
-  {
-    group: "Phát triển",
-    items: [
-      { label: "Kiếm thu nhập", href: "/portal/earn" },
-      { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
-      { label: "Premium", href: "/portal/premium" },
-    ],
-  },
-  {
-    group: "Hệ sinh thái",
-    items: [
-      { label: "AI Assistant", href: "/portal/ai-assistant" },
-      { label: "Cộng đồng", href: "/portal/community" },
-      { label: "Thành tựu", href: "/portal/achievements" },
-      { label: "Tin tức", href: "/portal/updates" },
-    ],
-  },
-  {
-    group: "Cá nhân",
-    items: [
-      { label: "Không gian của tôi", href: "/portal/account" },
-      { label: "Đã lưu", href: "/portal/saved" },
-      { label: "Hỗ trợ", href: "/portal/support" },
-    ],
+    group: null as string | null,
+    items: portalHubs.map((h) => ({ label: h.label, href: h.href })),
   },
 ];
 
-// Legacy/standalone routes still in production, kept reachable via hub pages
-// and direct links even though they no longer appear as their own sidebar
-// entries (see PortalSidebar / the route map in portal hub pages).
-export const portalNav = portalNavGroups.flatMap((g) => g.items);
+// Search index: hub entries plus every module inside each hub that has a
+// real destination (modules without an href are "coming soon" and aren't
+// indexed).
+export const portalNav = [
+  ...portalHubs.map((h) => ({ label: h.label, href: h.href })),
+  ...portalHubs.flatMap((h) =>
+    h.modules.filter((m) => m.href).map((m) => ({ label: m.label, href: m.href as string }))
+  ),
+];

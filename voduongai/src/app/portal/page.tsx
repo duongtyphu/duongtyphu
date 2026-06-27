@@ -15,6 +15,7 @@ import { ResourceCard } from "@/components/portal/ResourceCard";
 import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { Button } from "@/components/portal/ui/Button";
+import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
 
 export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
 
@@ -94,6 +95,27 @@ export default async function PortalDashboard() {
 
       <GoalWidget />
 
+      <div className="grid gap-5 lg:grid-cols-2">
+        <GemCard variant="progress">
+          <h2 className="mb-4 text-sm font-bold text-white">Human Growth Index</h2>
+          <HumanGrowthIndex />
+          <Button href="/portal/journey" variant="secondary" className="mt-4">
+            Xem hành trình đầy đủ →
+          </Button>
+        </GemCard>
+
+        <GemCard variant="featured">
+          <h2 className="text-sm font-bold text-white">AI Coach gợi ý</h2>
+          <p className="mt-2 text-sm text-white/70">
+            Hôm nay hãy thử dành 15 phút đọc một bài trong Học viện AI, sau đó áp dụng ngay một
+            prompt vào công việc của bạn — những bước nhỏ đều đặn sẽ làm viên ngọc của bạn sáng hơn.
+          </p>
+          <Button href="/portal/ai-assistant" variant="primary" className="mt-4">
+            Trò chuyện với AI Assistant →
+          </Button>
+        </GemCard>
+      </div>
+
       <GemCard className="!p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -165,8 +187,8 @@ export default async function PortalDashboard() {
 
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Đề xuất hôm nay — Affiliate</h2>
-          <Link href="/portal/affiliate-hub" className="text-sm font-semibold text-brand-blue hover:underline">
+          <h2 className="text-lg font-bold text-white">Cơ hội hôm nay</h2>
+          <Link href="/portal/growth" className="text-sm font-semibold text-[#22D3EE] hover:underline">
             Xem tất cả →
           </Link>
         </div>
@@ -180,7 +202,7 @@ export default async function PortalDashboard() {
       <section>
         <div className="flex items-end justify-between">
           <h2 className="text-lg font-bold text-white">Tài nguyên mới nhất</h2>
-          <Link href="/portal/resources" className="text-sm font-semibold text-brand-blue hover:underline">
+          <Link href="/portal/resources" className="text-sm font-semibold text-[#22D3EE] hover:underline">
             Xem tất cả →
           </Link>
         </div>
@@ -188,6 +210,25 @@ export default async function PortalDashboard() {
           {freeResources.slice(0, 3).map((r) => (
             <ResourceCard key={r.id} title={r.title} type={r.type} href={`/portal/resources/${r.id}`} />
           ))}
+        </div>
+      </section>
+
+      <section>
+        <div className="flex items-end justify-between">
+          <h2 className="text-lg font-bold text-white">Tin mới</h2>
+          <Link href="/portal/ecosystem" className="text-sm font-semibold text-[#22D3EE] hover:underline">
+            Xem tất cả →
+          </Link>
+        </div>
+        <div className="mt-4">
+          <GemCard>
+            <p className="text-sm text-white/70">
+              Cập nhật mới nhất từ cộng đồng, sự kiện và thành tựu học viên đều nằm trong Hệ sinh thái.
+            </p>
+            <Button href="/portal/updates" variant="secondary" className="mt-4">
+              Xem tin tức →
+            </Button>
+          </GemCard>
         </div>
       </section>
 
