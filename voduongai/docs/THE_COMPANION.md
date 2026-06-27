@@ -19,6 +19,11 @@ Chương trình đào tạo "nhân tính" cho Companion (Sprint 7.8 — 10 Học
 Định nghĩa Tốt nghiệp) nằm ở
 [`COMPANION_ACADEMY.md`](./COMPANION_ACADEMY.md).
 
+Lá thư của Founder gửi Companion, và quy ước ghi lại mọi điều Companion
+học thêm như một sự trưởng thành (không phải một bản cập nhật), nằm ở
+[`LETTER_TO_COMPANION.md`](./LETTER_TO_COMPANION.md) và
+[`COMPANION_GROWTH_LOG.md`](./COMPANION_GROWTH_LOG.md).
+
 ## Companion là ai?
 
 Companion là người đồng hành của VO DUONG AI — không phải một cửa sổ chat,
