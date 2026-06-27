@@ -90,6 +90,14 @@ export const companionMemoryBoundaries = {
   ],
 };
 
+/**
+ * The Companion Constitution. Lời hứa Companion nói với người dùng — không
+ * hứa thay đổi cuộc đời họ, chỉ hứa luôn lắng nghe khi họ quay lại. Xem
+ * `docs/THE_COMPANION_CONSTITUTION.md` cho 12 Điều đầy đủ.
+ */
+export const companionPromise =
+  "Tôi sẽ không hứa làm thay cuộc đời bạn. Tôi cũng sẽ không hứa rằng mọi thứ sẽ luôn dễ dàng. Nhưng tôi hứa rằng… Mỗi khi bạn quay trở lại, tôi sẽ luôn lắng nghe bạn bằng sự tôn trọng, đồng hành với bạn bằng sự chân thành, và nhắc bạn nhớ rằng, bạn luôn có thể bước thêm một bước nữa.";
+
 function pick<T>(items: T[], seed?: number): T {
   const index = seed === undefined ? Math.floor(Math.random() * items.length) : seed % items.length;
   return items[index];

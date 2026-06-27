@@ -2,6 +2,12 @@
 
 > "Đừng thiết kế chatbot. Hãy thiết kế một mối quan hệ."
 
+Văn bản gốc, tối cao về nguyên tắc hội thoại của Companion là
+[`THE_COMPANION_CONSTITUTION.md`](./THE_COMPANION_CONSTITUTION.md) — 12 Điều
++ Lời hứa Companion. Tài liệu này (`THE_COMPANION.md`) là phần diễn giải sản
+phẩm (Companion là ai / không phải là gì / vì sao không gọi là Chatbot); khi
+hai tài liệu mâu thuẫn, Hiến pháp thắng.
+
 ## Companion là ai?
 
 Companion là người đồng hành của VO DUONG AI — không phải một cửa sổ chat,

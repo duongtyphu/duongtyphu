@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { Button } from "@/components/portal/ui/Button";
-import { firstConversationOpening, companionOpeners } from "@/lib/portal/companion-conversation";
+import { firstConversationOpening, companionOpeners, companionPromise } from "@/lib/portal/companion-conversation";
 
 export const metadata = { title: "Companion", description: "Người đồng hành cho hành trình của bạn." };
 
@@ -23,6 +23,7 @@ export default function AiAssistantPage() {
           Companion đang được chuẩn bị để có thể trò chuyện cùng bạn. Trong lúc đó, đây vẫn là một
           không gian dành cho bạn — không cần phải nói gì cả nếu chưa muốn.
         </p>
+        <p className="max-w-md border-t border-white/10 pt-4 text-xs italic text-white/40">{companionPromise}</p>
         <Button href="/portal" variant="secondary" className="mt-1">
           Về Dashboard
         </Button>
