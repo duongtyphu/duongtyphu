@@ -22,6 +22,7 @@ import { LatestUpdates } from "@/components/portal/gem-home/LatestUpdates";
 import { todayMissions, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { humanMomentumSignals, livingPortalCopy } from "@/data/portal/living-portal";
+import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
 
 export const metadata = { title: "Gem Home", description: "Gem Home — nơi bắt đầu hành trình trưởng thành mỗi ngày cùng VO DUONG AI.", robots: { index: false } };
 
@@ -54,6 +55,7 @@ async function fetchProfileSummary() {
     email: user.email,
     fullName: user.user_metadata?.full_name as string | undefined,
     memberSince: new Date(user.created_at),
+    lastSignInAt: user.last_sign_in_at ? new Date(user.last_sign_in_at) : undefined,
     purchasedCount: count ?? 0,
   };
 }
@@ -83,6 +85,9 @@ export default async function GemHomePage() {
 
   const continueLearningCourse = vdaiCourses[0];
   const flow = getHumanFlowState("knowledge");
+  const welcomeState = getWelcomeState({ createdAt: profile?.memberSince, lastSignInAt: profile?.lastSignInAt });
+  const welcomeMessage = getWelcomeMessage(welcomeState);
+  const reflectionPrompt = getWarmthLine("reflection");
   const opportunityItems = affiliateResources.slice(0, 3).map((a) => ({
     id: a.id,
     title: a.title,
@@ -92,7 +97,12 @@ export default async function GemHomePage() {
 
   return (
     <div className="space-y-10">
-      <WelcomeHero name={profile?.fullName} />
+      <WelcomeHero
+        name={profile?.fullName}
+        welcomeMessage={welcomeMessage}
+        reflectionPrompt={reflectionPrompt}
+        state={welcomeState}
+      />
 
       <div className="mt-1">
         <OnboardingSummary />
