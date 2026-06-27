@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Menu, Bell, Bookmark } from "lucide-react";
 import { PortalSearch } from "@/components/portal/PortalSearch";
 import { PortalUserMenu } from "@/components/portal/PortalUserMenu";
+import { TopbarGlass } from "@/components/portal/ui/TopbarGlass";
 
 export function PortalHeader({
   user,
@@ -13,7 +14,7 @@ export function PortalHeader({
   onToggleSidebar: () => void;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-navy/85 backdrop-blur-md">
+    <TopbarGlass>
       <div className="flex h-16 items-center gap-3 px-4 md:px-6">
         <button
           type="button"
@@ -57,6 +58,6 @@ export function PortalHeader({
           {user && <PortalUserMenu email={user.email} fullName={user.fullName} />}
         </div>
       </div>
-    </header>
+    </TopbarGlass>
   );
 }

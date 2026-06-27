@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { PageHeader } from "@/components/portal/ui/PageHeader";
+import { GemCard } from "@/components/portal/ui/GemCard";
 
 export const metadata = { title: "Bắt đầu tại đây" };
 
@@ -43,21 +45,15 @@ const STEPS = [
 export default function StartHerePage() {
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-extrabold text-white">Bắt đầu tại đây</h1>
-        <p className="mt-2 text-white">
-          Nếu bạn mới bước vào hệ sinh thái VO DUONG AI, hãy đi theo lộ trình đơn giản này để
-          học AI, ứng dụng vào công việc và từng bước xây hệ thống tạo tài sản số.
-        </p>
-      </div>
+      <PageHeader
+        title="Bắt đầu tại đây"
+        description="Nếu bạn mới bước vào hệ sinh thái VO DUONG AI, hãy đi theo lộ trình đơn giản này để học AI, ứng dụng vào công việc và từng bước xây hệ thống tạo tài sản số."
+      />
 
       <div className="space-y-4">
         {STEPS.map((s) => (
-          <div
-            key={s.step}
-            className="card-shine flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:flex-row sm:items-center"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-blue/15 text-sm font-extrabold text-brand-blue">
+          <GemCard key={s.step} className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2563EB]/25 to-[#7C3AED]/20 text-sm font-extrabold text-[#A78BFA]">
               {s.step}
             </div>
             <div className="flex-1">
@@ -66,14 +62,14 @@ export default function StartHerePage() {
               <div className="mt-2 flex flex-wrap gap-2 text-xs text-white/50">
                 <span>
                   Tài nguyên đề xuất:{" "}
-                  <Link href={s.resource.href} className="font-semibold text-brand-blue hover:underline">
+                  <Link href={s.resource.href} className="font-semibold text-[#22D3EE] hover:underline">
                     {s.resource.label}
                   </Link>
                 </span>
                 <span>·</span>
                 <span>
                   Công cụ đề xuất:{" "}
-                  <Link href={s.tool.href} className="font-semibold text-brand-blue hover:underline">
+                  <Link href={s.tool.href} className="font-semibold text-[#22D3EE] hover:underline">
                     {s.tool.label}
                   </Link>
                 </span>
@@ -81,11 +77,11 @@ export default function StartHerePage() {
             </div>
             <Link
               href={s.resource.href}
-              className="shrink-0 rounded-full bg-brand-blue px-5 py-2.5 text-center text-xs font-bold text-white transition hover:opacity-90"
+              className="gemos-btn-primary shrink-0 rounded-full px-5 py-2.5 text-center text-xs font-bold text-white"
             >
               Bắt đầu bước này →
             </Link>
-          </div>
+          </GemCard>
         ))}
       </div>
     </div>

@@ -98,7 +98,7 @@ export function PortalSearch() {
           onKeyDown={handleKeyDown}
           placeholder="Tìm trong Portal..."
           aria-label="Tìm kiếm toàn Portal"
-          className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/40 focus:border-brand-blue/50 focus:outline-none"
+          className="gemos-search-glass w-full rounded-full py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/40 focus:outline-none"
         />
         {open && query.trim() && (
           <SearchDropdown
