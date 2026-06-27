@@ -11,7 +11,7 @@
  */
 
 import Image from "next/image";
-import companionMasterAsset from "@/assets/companion/official/companion-master-v1-320.png";
+import companionMasterAsset from "@/assets/companion/official/companion-master-v1-96.png";
 import type { CompanionStateKey } from "@/lib/portal/companion/companion-identity";
 import { stateVisuals } from "@/assets/companion/states/state-visuals";
 

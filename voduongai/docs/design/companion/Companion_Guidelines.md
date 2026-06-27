@@ -76,22 +76,21 @@ DNA thì không bao giờ được giảm hay đổi.
 - Không tự redesign khi chưa có quyết định Product Team (xem
   `../README.md`).
 
-## Asset thật (Sprint 8.3)
+## Asset thật (Sprint 8.3, cập nhật với file tách lớp chính thức)
 
-Từ Sprint 8.3, Companion Presence render bằng asset thật cắt từ
-`Companion_Master_V1.png` — không còn dùng placeholder CSS/SVG
-(`CompanionCrystal`) làm hình ảnh chính. Asset nằm ở
-`src/assets/companion/official/companion-master-v1-*.png` (các size
-320/160/96/64/48, crop ellipse-feather sát quanh viên ngọc — bỏ vòng bệ
-đỡ và mảnh tinh thể trôi nổi để icon không bị "dính" mảng nền vuông khi
-hiển thị nhỏ — giữ trọn hai chữ V).
+Companion Presence render bằng asset thật — không còn dùng placeholder
+CSS/SVG (`CompanionCrystal`) làm hình ảnh chính. Nguồn ảnh hiện tại là
+file PNG nền trong suốt do Founder gửi trực tiếp (`Companion_Master_V1.png`,
+1254×1254, đã tách lớp sẵn) — lưu ở:
 
-**Lưu ý nguồn ảnh:** asset hiện tại do AI tự cắt từ file poster nhiều
-panel `Companion_Master_V1.png` (không phải bản tách lớp sẵn từ Founder).
-Nếu Founder/Product Co-Designer có file PNG tách lớp nền trong suốt
-chính thức (ví dụ icon đơn lẻ, không phải tấm spec-sheet), nên gửi trực
-tiếp file đó để thay thế bản tự cắt này — xem trao đổi trong
-`COMPANION_GROWTH_LOG.md`.
+- `public/assets/companion/Companion_Master_V1.png` +
+  `Companion_Master_V1.webp` (bản gốc, theo Nhiệm vụ 01).
+- `src/assets/companion/official/companion-master-v1-{320,160,96,64,48}.png`
+  (các bản resize từ đúng file gốc này, không crop/chỉnh sửa thêm —
+  chỉ resize giữ tỷ lệ, dùng cho từng kích thước hiển thị).
+
+Bản đầu Sprint 8.3 từng dùng asset do AI tự cắt từ file poster nhiều
+panel — đã được thay thế hoàn toàn bằng file tách lớp chính thức này.
 Placeholder cũ vẫn giữ trong code làm phương án dự phòng nếu asset lỗi
 tải — không xoá, không dùng làm mặc định nữa.
 
@@ -100,17 +99,17 @@ không quay lại dùng placeholder làm mặc định trong bất kỳ bề m�
 nào. Nếu cần thêm size/crop mới, cắt từ đúng `Companion_Master_V1.png`
 gốc, giữ nguyên tỷ lệ DNA + hai chữ V — không tự vẽ lại.
 
-## Kích thước chuẩn (Sprint 8.3, điều chỉnh theo phản hồi Founder)
+## Kích thước chuẩn (Sprint 8.3, điều chỉnh theo phản hồi Founder — 2 lần)
 
-Bản đầu Sprint 8.3 dùng 96–120px — Founder phản hồi là quá to, gây cảm
-giác chiếm chỗ hơn là một sự hiện diện tinh tế. Kích thước chuẩn hiện
-tại:
+Bản đầu Sprint 8.3 dùng 96–120px — Founder phản hồi quá to, gây cảm
+giác chiếm chỗ hơn là một sự hiện diện tinh tế. Lần điều chỉnh thứ hai
+(96–120 → 64) vẫn còn to, nên kích thước chuẩn hiện tại đã giảm tiếp:
 
 | Thiết bị | Kích thước Presence | Hover/focus scale |
 |---|---|---|
-| Desktop (`lg:`) | 64px | 1.06 |
-| Tablet (`sm:`) | 56px | — |
-| Mobile (mặc định) | 48px | — |
+| Desktop (`lg:`) | 48px | 1.06 |
+| Tablet (`sm:`) | 40px | — |
+| Mobile (mặc định) | 36px | — |
 
 Companion Space header dùng avatar nhỏ hơn (40px) — không áp dụng bảng
 trên, chỉ để nhận diện trong panel.

@@ -107,8 +107,8 @@ export function CompanionPresence() {
           >
             <CompanionAvatar
               state={state.key}
-              className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16"
-              size={64}
+              className="h-9 w-9 sm:h-10 sm:w-10 lg:h-12 lg:w-12"
+              size={48}
             />
           </button>
 
