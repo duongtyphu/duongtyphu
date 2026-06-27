@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
+import { GemBackground } from "@/components/portal/ui/GemBackground";
 
 const COLLAPSE_KEY = "vdai_portal_sidebar_collapsed";
 
@@ -56,6 +57,7 @@ export function PortalShell({
 
   return (
     <div className="flex min-h-screen flex-col">
+      <GemBackground />
       <PortalHeader user={user} onToggleSidebar={handleToggleSidebar} />
 
       <div className="flex flex-1">

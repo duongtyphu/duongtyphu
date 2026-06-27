@@ -12,6 +12,9 @@ import { ProgressOverview } from "@/components/portal/ProgressOverview";
 import { CourseCard } from "@/components/portal/CourseCard";
 import { ToolCard } from "@/components/portal/ToolCard";
 import { ResourceCard } from "@/components/portal/ResourceCard";
+import { PageHeader } from "@/components/portal/ui/PageHeader";
+import { GemCard } from "@/components/portal/ui/GemCard";
+import { Button } from "@/components/portal/ui/Button";
 
 export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
 
@@ -80,12 +83,10 @@ export default async function PortalDashboard() {
   return (
     <div className="space-y-12">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">
-          Chào mừng đến với Võ Đương AI Portal
-        </h1>
-        <p className="mt-2 text-white">
-          Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây.
-        </p>
+        <PageHeader
+          title="Chào mừng đến với Võ Đương AI Portal"
+          description="Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây."
+        />
         <div className="mt-3">
           <OnboardingSummary />
         </div>
@@ -93,7 +94,7 @@ export default async function PortalDashboard() {
 
       <GoalWidget />
 
-      <section className="card-shine glow-blue rounded-[24px] border border-brand-blue/30 bg-brand-blue/5 p-6">
+      <GemCard className="!p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-lg font-bold text-white">Lộ trình thành công</h2>
@@ -101,14 +102,11 @@ export default async function PortalDashboard() {
               Chưa biết bắt đầu từ đâu? Lộ trình 7 bước sẽ chỉ đúng bước tiếp theo cho bạn.
             </p>
           </div>
-          <Link
-            href="/portal/roadmap"
-            className="shrink-0 rounded-full bg-brand-blue px-5 py-2.5 text-center text-sm font-bold text-white transition hover:opacity-90"
-          >
+          <Button href="/portal/roadmap" variant="primary">
             Xem lộ trình của tôi →
-          </Link>
+          </Button>
         </div>
-      </section>
+      </GemCard>
 
       <section>
         <h2 className="text-lg font-bold text-white">Việc nên làm tiếp theo</h2>

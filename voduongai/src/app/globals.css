@@ -19,6 +19,24 @@
   --color-brand-navy-soft: #0B1F4D;
   --color-brand-purple:    #8B5CF6; /* Purple accent */
   --color-brand-cyan:      #22D3EE; /* Cyan accent */
+
+  /* GemOS Design System — base, gradient, accent, text tokens */
+  --color-gemos-navy:           #050B18; /* Deep Navy */
+  --color-gemos-midnight:       #071426; /* Midnight Blue */
+  --color-gemos-sapphire:       #0B1B35; /* Dark Sapphire */
+  --color-gemos-ai-blue:        #2563EB;
+  --color-gemos-gem-cyan:       #22D3EE;
+  --color-gemos-vision-purple:  #7C3AED;
+  --color-gemos-soft-violet:    #A78BFA;
+  --color-gemos-gold:           #FBBF24; /* Gem Gold */
+  --color-gemos-success:        #10B981; /* Success Emerald */
+  --color-gemos-warning:        #F59E0B; /* Warning Amber */
+  --color-gemos-danger:         #F43F5E; /* Danger Rose */
+  --color-gemos-text-primary:   #F8FAFC;
+  --color-gemos-text-secondary: #CBD5E1;
+  --color-gemos-text-muted:     #94A3B8;
+  --color-gemos-text-disabled:  #64748B;
+
   --color-brand-gray-50:   #F8FAFC;
   --color-brand-gray-100:  #F1F5F9;
   --color-brand-gray-200:  #E2E8F0;
@@ -156,4 +174,102 @@ body {
 @keyframes ticker-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-100%); }
+}
+
+/* ===== GemOS Design System — background system ===== */
+
+.gemos-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-gemos-navy);
+  background-image:
+    radial-gradient(900px circle at 85% -5%, rgba(124, 58, 237, 0.16), transparent 60%),
+    radial-gradient(800px circle at 0% 100%, rgba(37, 99, 235, 0.14), transparent 60%),
+    radial-gradient(600px circle at 50% 40%, rgba(34, 211, 238, 0.06), transparent 65%),
+    linear-gradient(165deg, var(--color-gemos-navy) 0%, var(--color-gemos-midnight) 55%, var(--color-gemos-sapphire) 100%);
+}
+
+.gemos-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+}
+
+.gemos-glow-particle {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(2px);
+  opacity: 0.5;
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.9), transparent 70%);
+  animation: gemos-float 9s ease-in-out infinite;
+}
+
+@keyframes gemos-float {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.35; }
+  50% { transform: translateY(-18px) translateX(8px); opacity: 0.65; }
+}
+
+/* ===== GemOS Design System — glass surfaces ===== */
+
+.gemos-glass-card {
+  position: relative;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.gemos-glass-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 45px -20px rgba(37, 99, 235, 0.35);
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
+.gemos-gem-card {
+  position: relative;
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.8), rgba(11, 27, 53, 0.7));
+  border: 1px solid rgba(124, 58, 237, 0.28);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 50px -18px rgba(124, 58, 237, 0.35), 0 0 30px -14px rgba(34, 211, 238, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.gemos-gem-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 60px -14px rgba(124, 58, 237, 0.45), 0 0 36px -10px rgba(34, 211, 238, 0.3);
+}
+
+.gemos-btn-primary {
+  background-image: linear-gradient(135deg, var(--color-gemos-ai-blue), var(--color-gemos-vision-purple));
+  box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.5);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.gemos-btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.gemos-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.gemos-btn-secondary:hover {
+  border-color: rgba(148, 163, 184, 0.4);
+  background: rgba(255, 255, 255, 0.08);
 }
