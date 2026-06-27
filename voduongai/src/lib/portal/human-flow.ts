@@ -1,4 +1,5 @@
 import type { ChallengeTag } from "@/lib/portal/human-insight";
+import { getWhenLifeIsHardLine, type HardTimeTrigger } from "@/lib/portal/when-life-is-hard";
 
 export type PortalOS = "journey" | "knowledge" | "build" | "connect" | "legacy";
 
@@ -12,6 +13,8 @@ export type HumanFlowState = {
   momentumMessage: string;
   recommendedRoute: string;
   recommendedCTA: string;
+  /** Sprint 7.5 — chỉ có khi một thử thách khó khăn đang nổi rõ gần đây. */
+  hardTimeLine?: string;
 };
 
 const OS_ROUTE: Record<PortalOS, string> = {
@@ -101,16 +104,26 @@ const CHALLENGE_OVERRIDE: Partial<Record<ChallengeTag, { nextBestAction: string;
   },
 };
 
+const CHALLENGE_HARD_TIME_TRIGGER: Partial<Record<ChallengeTag, HardTimeTrigger>> = {
+  "Thiếu tự tin": "doubtingTheJourney",
+  "Thiếu kiến thức": "doubtingTheJourney",
+  "Thiếu động lực": "lowEnergy",
+  "Thiếu hệ thống": "carryingTooMuch",
+  "Thiếu thời gian": "carryingTooMuch",
+};
+
 /**
  * Mock-data version of the Human Flow Engine — same shape will later read
  * from real progress data (missions, courses, community activity) instead
  * of a hardcoded currentOS. `dominantChallenge` (from human-understanding.ts)
- * is optional and, when present, overrides the default next-best-action.
+ * is optional and, when present, overrides the default next-best-action and
+ * adds a quiet "When Life Is Hard" line (Sprint 7.5) before the CTA.
  */
 export function getHumanFlowState(currentOS: PortalOS = "knowledge", dominantChallenge?: ChallengeTag): HumanFlowState {
   const nextOS = NEXT_OS[currentOS];
   const stage = FLOW_STAGES[currentOS];
   const override = dominantChallenge ? CHALLENGE_OVERRIDE[dominantChallenge] : undefined;
+  const hardTimeTrigger = dominantChallenge ? CHALLENGE_HARD_TIME_TRIGGER[dominantChallenge] : undefined;
 
   return {
     currentOS,
@@ -118,5 +131,6 @@ export function getHumanFlowState(currentOS: PortalOS = "knowledge", dominantCha
     recommendedRoute: OS_ROUTE[nextOS],
     ...stage,
     ...(override ?? {}),
+    ...(hardTimeTrigger ? { hardTimeLine: getWhenLifeIsHardLine(hardTimeTrigger) } : {}),
   };
 }

@@ -13,6 +13,7 @@ export function NextBestActionCard({ flow }: { flow: HumanFlowState }) {
         <Compass className="h-4 w-4 text-[#22D3EE]" />
         <h2 className="text-sm font-bold text-white">Bước tiếp theo của bạn</h2>
       </div>
+      {flow.hardTimeLine && <p className="mt-3 text-sm text-white/70">{flow.hardTimeLine}</p>}
       <p className="mt-3 text-sm font-semibold text-white">{flow.nextBestAction}</p>
       <p className="mt-2 text-sm text-white/65">{flow.reason}</p>
       <Button href={flow.recommendedRoute} variant="primary" className="mt-4">

@@ -5,6 +5,7 @@ import { CheckCircle2, Circle, CircleDot } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import type { TodayMission, MissionStatus } from "@/data/portal/gem-home";
 import { useMissionStatus } from "@/lib/portal/missionStatus";
+import { getSmallVictoryLine } from "@/lib/portal/small-victories";
 
 const STATUS_ICON: Record<MissionStatus, typeof Circle> = {
   todo: Circle,
@@ -68,6 +69,9 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
           );
         })}
       </ul>
+      {ready && doneCount > 0 && (
+        <p className="mt-3 text-xs text-white/55">{getSmallVictoryLine("didNotGiveUp", doneCount)}</p>
+      )}
     </GemCard>
   );
 }
