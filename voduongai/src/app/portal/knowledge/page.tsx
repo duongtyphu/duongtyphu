@@ -1,21 +1,44 @@
-import { PageHeader } from "@/components/portal/ui/PageHeader";
-import { Button } from "@/components/portal/ui/Button";
 import { HubModuleGrid } from "@/components/portal/ui/HubModuleGrid";
 import { getHub } from "@/lib/portal/hubs";
+import { KnowledgeHero } from "@/components/portal/knowledge/KnowledgeHero";
+import { LearningPathGrid } from "@/components/portal/knowledge/LearningPathGrid";
+import { AcademySection } from "@/components/portal/knowledge/AcademySection";
+import { ResourceLibraryGrid } from "@/components/portal/knowledge/ResourceLibraryGrid";
+import { PracticeZone } from "@/components/portal/knowledge/PracticeZone";
+import { AIKnowledgeCoach } from "@/components/portal/knowledge/AIKnowledgeCoach";
+import { RecommendedKnowledge } from "@/components/portal/knowledge/RecommendedKnowledge";
+import { KnowledgeStats } from "@/components/portal/knowledge/KnowledgeStats";
+import {
+  learningPaths,
+  academyItems,
+  resourceLibraryItems,
+  practiceItems,
+  aiKnowledgeTip,
+  recommendedKnowledgeItems,
+  knowledgeStats,
+} from "@/data/portal/knowledge-hub";
 
-export const metadata = { title: "Tri thức", description: "Toàn bộ tri thức AI thực chiến — học đúng thứ bạn cần, áp dụng ngay." };
+export const metadata = { title: "Tri thức", description: "Hệ Tri Thức của bạn — học đúng, thực hành đúng và lưu giữ đúng." };
 
 export default function KnowledgeHubPage() {
   const hub = getHub("knowledge")!;
 
   return (
-    <div className="space-y-8">
-      <PageHeader
-        title={hub.heroTitle}
-        description={hub.heroSubtitle}
-        action={<Button href="/portal" variant="secondary">← Về Gem Home</Button>}
-      />
-      <HubModuleGrid modules={hub.modules} />
+    <div className="space-y-10">
+      <KnowledgeHero />
+      <LearningPathGrid paths={learningPaths} />
+      <AcademySection items={academyItems} />
+      <ResourceLibraryGrid items={resourceLibraryItems} />
+      <PracticeZone items={practiceItems} />
+      <AIKnowledgeCoach tip={aiKnowledgeTip} />
+      <RecommendedKnowledge items={recommendedKnowledgeItems} />
+      <KnowledgeStats stats={knowledgeStats} />
+      <section>
+        <h2 className="text-lg font-bold text-white">Khám phá thêm trong Tri thức</h2>
+        <div className="mt-4">
+          <HubModuleGrid modules={hub.modules} />
+        </div>
+      </section>
     </div>
   );
 }
