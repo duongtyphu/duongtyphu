@@ -13,9 +13,9 @@ const STATUS_ICON: Record<MissionStatus, typeof Circle> = {
 };
 
 const STATUS_LABEL: Record<MissionStatus, string> = {
-  todo: "Chưa làm",
-  "in-progress": "Đang làm",
-  done: "Hoàn thành",
+  todo: "Chưa bắt đầu",
+  "in-progress": "Đang thực hiện",
+  done: "Đã xong",
 };
 
 const STATUS_TONE: Record<MissionStatus, string> = {
@@ -33,11 +33,14 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
   return (
     <GemCard>
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-white">Nhiệm vụ hôm nay</h2>
+        <h2 className="text-sm font-bold text-white">Hôm nay, vài điều nhỏ để đi tiếp</h2>
         <span className="text-xs font-semibold text-white/50">
-          {ready ? `${doneCount}/${missions.length} hoàn thành` : "…"}
+          {ready ? `${doneCount}/${missions.length} đã xong` : "…"}
         </span>
       </div>
+      <p className="mt-1 text-xs text-white/45">
+        Không cần làm hết. Một điều thôi cũng đủ để hôm nay có ý nghĩa.
+      </p>
       <ul className="mt-4 space-y-2.5">
         {missions.map((m) => {
           const status = getStatus(m.id);

@@ -79,6 +79,9 @@ export function AddMemoryCapsuleForm() {
       >
         {saved ? "Đã cất giữ" : "Cất giữ vào My Story"}
       </Button>
+      {saved && (
+        <p className="mt-2 text-xs text-white/55">Khoảnh khắc này đã được giữ lại cho hành trình của bạn.</p>
+      )}
     </GemCard>
   );
 }

@@ -10,6 +10,9 @@ export function RecommendedResources({ items }: { items: RecommendedItem[] }) {
   return (
     <section>
       <h2 className="text-lg font-bold text-white">Gợi ý dành cho bạn</h2>
+      <p className="mt-1 text-sm text-white/55">
+        Không cần tự mò hết — đây là vài điều có thể có ích cho bước tiếp theo của bạn.
+      </p>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         {items.map((item) => (
           <Link key={item.id} href={item.href} className="block">

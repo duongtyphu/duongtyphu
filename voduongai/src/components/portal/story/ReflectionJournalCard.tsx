@@ -77,7 +77,7 @@ export function ReflectionJournalCard() {
         }}
         disabled={!draft.trim()}
       >
-        Lưu lại suy ngẫm này
+        Lưu lại một dấu chân hôm nay
       </Button>
     </GemCard>
   );

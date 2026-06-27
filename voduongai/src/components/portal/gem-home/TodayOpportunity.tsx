@@ -30,7 +30,7 @@ export function TodayOpportunity({ items }: { items: OpportunityItem[] }) {
             <h3 className="text-sm font-bold text-white">{item.title}</h3>
             <p className="mt-1.5 flex-1 text-xs text-white/60">{item.description}</p>
             <Button href={item.href} variant="secondary" className="mt-3 self-start">
-              Tìm hiểu thêm →
+              Khi bạn sẵn sàng, tìm hiểu thêm →
             </Button>
           </GemCard>
         ))}
