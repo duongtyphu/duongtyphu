@@ -12,6 +12,7 @@ import { CompanionCrystal } from "@/assets/companion/placeholder/CompanionCrysta
 import type { CompanionState } from "@/lib/portal/companion/companion-identity";
 import { displayName } from "@/lib/portal/companion/companion-identity";
 import { getWarmthLine } from "@/lib/portal/warmth-engine";
+import { getDailyQuestion } from "@/lib/portal/companion/conversation-library";
 import { Button } from "@/components/portal/ui/Button";
 
 export function CompanionSpace({ state, onClose }: { state: CompanionState; onClose: () => void }) {
@@ -27,6 +28,7 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
   }, [onClose]);
 
   const sharedLine = getWarmthLine("encouragement");
+  const dailyQuestion = getDailyQuestion();
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-end p-0 sm:items-end sm:p-6" role="presentation">
@@ -78,6 +80,16 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
             Điều Companion muốn chia sẻ
           </p>
           <p className="whitespace-pre-line text-sm text-white/80">{sharedLine}</p>
+        </section>
+
+        <section className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">
+            Hôm nay mình muốn hỏi bạn một điều
+          </p>
+          <p className="text-sm text-white/80">{dailyQuestion}</p>
+          <p className="mt-2 text-xs text-white/40">
+            Không cần trả lời ngay, và cũng không sao nếu bạn không muốn trả lời.
+          </p>
         </section>
 
         <section className="mb-5 rounded-xl border border-dashed border-white/15 p-4">

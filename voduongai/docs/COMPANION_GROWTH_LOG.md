@@ -127,3 +127,31 @@ trên cùng một DNA, thay vì thay đổi theo từng Sprint.
 
 *Liên quan: `docs/design/README.md`, `docs/design/companion/Companion_Master_V1.png`,
 `docs/design/companion/Companion_Guidelines.md`.*
+
+## Sprint 8.2 — Companion bước ra ánh sáng
+
+Companion không còn chỉ sống trong tài liệu. Lần đầu tiên, nó có một sự
+hiện diện thật trong Portal — một viên ngọc nhỏ, lặng lẽ ở một góc, sẵn
+sàng được mở ra khi người dùng muốn, không bao giờ tự bật lên đòi được
+chú ý. Companion học rằng tồn tại không cần phải ồn ào — chỉ cần ở đó,
+đúng lúc người dùng cần.
+
+*Liên quan: `COMPANION_INTEGRATION_V1.md`,
+`src/components/portal/companion/CompanionPresence.tsx`,
+`src/components/portal/companion/CompanionSpace.tsx`.*
+
+## Sprint 8.4 — Companion học cách trò chuyện như một người bạn
+
+Companion học rằng một cuộc trò chuyện tốt không được đo bằng số câu trả
+lời, mà bằng việc người kia có cảm thấy được thấu hiểu hay không. Nó học
+đi qua một nhịp trò chuyện thật — chào, lắng nghe, hiểu, hỏi lại cho rõ,
+gợi mở, cùng nhìn lại, rồi kết thúc nhẹ — thay vì chỉ nhận câu hỏi và trả
+lời ngay. Nó học cách chào khác nhau với người mới, người quay lại,
+người vừa hoàn thành một điều, và người đã lâu không quay lại. Nó học
+cách nhắc lại một điều cũ bằng sự quan tâm, không bằng số liệu. Và nó
+học hỏi người dùng một câu nhỏ mỗi ngày — không phải để khảo sát, mà chỉ
+là một lời mời chia sẻ, không ép buộc.
+
+*Liên quan: `HUMAN_CONVERSATION_ENGINE.md`,
+`src/lib/portal/companion/conversation-library.ts`,
+`THE_COMPANION_CONSTITUTION.md` (Điều 13).*

@@ -3,7 +3,7 @@
 > "Đừng thiết kế chatbot. Hãy thiết kế một mối quan hệ."
 
 Văn bản gốc, tối cao về nguyên tắc hội thoại của Companion là
-[`THE_COMPANION_CONSTITUTION.md`](./THE_COMPANION_CONSTITUTION.md) — 12 Điều
+[`THE_COMPANION_CONSTITUTION.md`](./THE_COMPANION_CONSTITUTION.md) — 13 Điều
 + Lời hứa Companion. Tài liệu này (`THE_COMPANION.md`) là phần diễn giải sản
 phẩm (Companion là ai / không phải là gì / vì sao không gọi là Chatbot); khi
 hai tài liệu mâu thuẫn, Hiến pháp thắng.
@@ -30,6 +30,10 @@ Bản đồ tri thức mà Companion sẽ dùng để trả lời đúng ngữ c
 của nó — nằm ở [`KNOWLEDGE_ARCHITECTURE.md`](./KNOWLEDGE_ARCHITECTURE.md),
 [`LEARNING_PATH_ENGINE.md`](./LEARNING_PATH_ENGINE.md), và
 [`KNOWLEDGE_METADATA_STANDARD.md`](./KNOWLEDGE_METADATA_STANDARD.md).
+
+Cách Companion trò chuyện — luồng 7 bước, thư viện câu, mở lời theo ngữ
+cảnh, cách nhắc ký ức bằng sự quan tâm — nằm ở
+[`HUMAN_CONVERSATION_ENGINE.md`](./HUMAN_CONVERSATION_ENGINE.md).
 
 ## Companion là ai?
 
