@@ -18,12 +18,26 @@ const KIND_OPTIONS: { value: MemoryCapsuleKind; label: string }[] = [
  * Answers: "Tôi có thể tự cất giữ một khoảnh khắc đáng nhớ vào hành trình của mình không?"
  */
 export function AddMemoryCapsuleForm() {
-  const { addCapsule, signedIn, ready } = useMemoryCapsules();
+  const { addCapsule, signedIn, ready, tableReady } = useMemoryCapsules();
   const [kind, setKind] = useState<MemoryCapsuleKind>("milestone");
   const [title, setTitle] = useState("");
   const [saved, setSaved] = useState(false);
 
   if (!ready || !signedIn) return null;
+
+  if (!tableReady) {
+    return (
+      <GemCard>
+        <div className="flex items-center gap-2">
+          <Gem className="h-4 w-4 text-[#22D3EE]" />
+          <h2 className="text-sm font-bold text-white">Lưu lại một khoảnh khắc đáng nhớ</h2>
+        </div>
+        <p className="mt-3 text-sm text-white/65">
+          Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
+        </p>
+      </GemCard>
+    );
+  }
 
   return (
     <GemCard>

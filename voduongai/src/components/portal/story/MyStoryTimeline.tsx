@@ -20,8 +20,8 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
     return (
       <GemCard>
         <p className="text-sm text-white/65">
-          Cuốn sách của bạn vẫn còn những trang trắng — và điều đó hoàn toàn ổn. Mỗi suy ngẫm, mỗi cột mốc bạn lưu lại
-          từ hôm nay sẽ trở thành một trang trong câu chuyện này.
+          Câu chuyện của bạn đang chờ những dòng đầu tiên. Một khoảnh khắc nhỏ hôm nay có thể trở thành viên ngọc đáng
+          nhớ ngày mai.
         </p>
       </GemCard>
     );

@@ -10,7 +10,7 @@ import { useReflections } from "@/lib/portal/reflections";
  * Answers: "Portal có thực sự hỏi và lắng nghe tôi, không chỉ dạy tôi?"
  */
 export function ReflectionJournalCard() {
-  const { question, answeredToday, submitAnswer, signedIn, ready } = useReflections();
+  const { question, answeredToday, submitAnswer, signedIn, ready, tableReady } = useReflections();
   const [draft, setDraft] = useState("");
   const [justSaved, setJustSaved] = useState(false);
 
@@ -22,6 +22,20 @@ export function ReflectionJournalCard() {
           <h2 className="text-sm font-bold text-white">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-2 text-sm text-white/55 italic">{question}</p>
+      </GemCard>
+    );
+  }
+
+  if (!tableReady) {
+    return (
+      <GemCard className="h-full">
+        <div className="flex items-center gap-2">
+          <Feather className="h-4 w-4 text-[#A78BFA]" />
+          <h2 className="text-sm font-bold text-white">Một câu hỏi nhỏ hôm nay</h2>
+        </div>
+        <p className="mt-3 text-sm text-white/65">
+          Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
+        </p>
       </GemCard>
     );
   }

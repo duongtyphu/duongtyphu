@@ -6,6 +6,7 @@ export type MonthlyLetterStats = {
   reflectionCount: number;
   capsuleCount: number;
   memberSinceLabel?: string;
+  hasAnyHistory?: boolean;
 };
 
 function buildLetter(stats: MonthlyLetterStats): string {
@@ -34,13 +35,17 @@ function buildLetter(stats: MonthlyLetterStats): string {
  * Answers: "Portal có đang viết một lá thư cho tôi, hay chỉ xuất một bản báo cáo?"
  */
 export function MonthlyLetterCard({ stats }: { stats: MonthlyLetterStats }) {
+  const letter = stats.hasAnyHistory === false
+    ? "Lá thư đầu tiên sẽ được viết khi hành trình của bạn có đủ những dấu chân đầu tiên."
+    : buildLetter(stats);
+
   return (
     <GemCard variant="featured">
       <div className="flex items-center gap-2">
         <Mail className="h-4 w-4 text-[#22D3EE]" />
         <h2 className="text-sm font-bold text-white">Lá thư tháng {stats.monthLabel}</h2>
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-white/75">{buildLetter(stats)}</p>
+      <p className="mt-3 text-sm leading-relaxed text-white/75">{letter}</p>
     </GemCard>
   );
 }

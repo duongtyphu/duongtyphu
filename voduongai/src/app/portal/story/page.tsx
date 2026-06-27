@@ -7,6 +7,7 @@ import { ReflectionJournalCard } from "@/components/portal/story/ReflectionJourn
 import { AddMemoryCapsuleForm } from "@/components/portal/story/AddMemoryCapsuleForm";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
+import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
 
 export const metadata = {
   title: "My Story",
@@ -24,15 +25,15 @@ const CAPSULE_EMOJI: Record<MemoryCapsuleKind, string> = {
 
 async function getStoryData() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { memberSince: null as Date | null, reflections: [] as Reflection[], capsules: [] as MemoryCapsule[] };
+    return { memberSince: null as Date | null, reflections: [] as Reflection[], capsules: [] as MemoryCapsule[], storageReady: true };
   }
   try {
     const supabase = await getSupabaseServer();
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
-    if (!user) return { memberSince: null, reflections: [], capsules: [] };
+    if (!user) return { memberSince: null, reflections: [], capsules: [], storageReady: true };
 
-    const [{ data: reflectionRows }, { data: capsuleRows }] = await Promise.all([
+    const [{ data: reflectionRows, error: reflectionError }, { data: capsuleRows, error: capsuleError }] = await Promise.all([
       supabase
         .from("reflections")
         .select("id, question, answer, created_at")
@@ -44,6 +45,16 @@ async function getStoryData() {
         .eq("member_id", user.id)
         .order("occurred_at", { ascending: false }),
     ]);
+
+    let storageReady = true;
+    if (isMissingTableError(reflectionError)) {
+      storageReady = false;
+      warnMissingTableOnce("reflections");
+    }
+    if (isMissingTableError(capsuleError)) {
+      storageReady = false;
+      warnMissingTableOnce("memory_capsules");
+    }
 
     return {
       memberSince: new Date(user.created_at),
@@ -60,14 +71,15 @@ async function getStoryData() {
         description: c.description ?? undefined,
         occurredAt: c.occurred_at,
       })),
+      storageReady,
     };
   } catch {
-    return { memberSince: null, reflections: [], capsules: [] };
+    return { memberSince: null, reflections: [], capsules: [], storageReady: true };
   }
 }
 
 export default async function MyStoryPage() {
-  const { memberSince, reflections, capsules } = await getStoryData();
+  const { memberSince, reflections, capsules, storageReady } = await getStoryData();
 
   const now = new Date();
   const thisMonthReflections = reflections.filter((r) => {
@@ -125,12 +137,20 @@ export default async function MyStoryPage() {
           monthLabel: now.toLocaleDateString("vi-VN", { month: "long" }),
           reflectionCount: thisMonthReflections.length,
           capsuleCount: thisMonthCapsules.length,
+          hasAnyHistory: reflections.length > 0 || capsules.length > 0,
         }}
       />
 
       <section>
         <h2 className="text-lg font-bold text-white">Dòng thời gian của bạn</h2>
-        <div className="mt-4">
+        <div className="mt-4 space-y-3">
+          {!storageReady && (
+            <GemCard>
+              <p className="text-sm text-white/65">
+                Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
+              </p>
+            </GemCard>
+          )}
           <MyStoryTimeline moments={moments} />
         </div>
       </section>
