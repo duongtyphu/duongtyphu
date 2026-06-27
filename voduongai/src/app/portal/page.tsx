@@ -4,26 +4,23 @@ import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { TodayGoals } from "@/components/portal/TodayGoals";
-import { GoalWidget } from "@/components/portal/GoalWidget";
 import { OnboardingSummary } from "@/components/portal/OnboardingSummary";
 import { SavedRecent } from "@/components/portal/SavedRecent";
-import { ProgressOverview } from "@/components/portal/ProgressOverview";
-import { CourseCard } from "@/components/portal/CourseCard";
 import { ToolCard } from "@/components/portal/ToolCard";
 import { ResourceCard } from "@/components/portal/ResourceCard";
-import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
-import { Button } from "@/components/portal/ui/Button";
 import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
+import { WelcomeHero } from "@/components/portal/gem-home/WelcomeHero";
+import { TodayMissionCard } from "@/components/portal/gem-home/TodayMissionCard";
+import { GemProgressCard } from "@/components/portal/gem-home/GemProgressCard";
+import { ContinueLearningCard } from "@/components/portal/gem-home/ContinueLearningCard";
+import { AICoachCard } from "@/components/portal/gem-home/AICoachCard";
+import { RecommendedResources } from "@/components/portal/gem-home/RecommendedResources";
+import { TodayOpportunity } from "@/components/portal/gem-home/TodayOpportunity";
+import { LatestUpdates } from "@/components/portal/gem-home/LatestUpdates";
+import { todayMissions, aiCoachTip, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
 
-export const metadata = { title: "Portal", description: "Portal học viên VO DUONG AI — lộ trình học, công cụ AI, tài nguyên và Affiliate Marketing.", robots: { index: false } };
-
-const todayTasks = [
-  { label: "Đọc 1 bài trong Học viện AI hoặc Affiliate", href: "/portal/ai-academy" },
-  { label: "Copy 1 prompt và áp dụng ngay vào công việc", href: "/portal/prompts" },
-  { label: "Xem lại bước hiện tại trong Lộ trình thành công", href: "/portal/roadmap" },
-];
+export const metadata = { title: "Gem Home", description: "Gem Home — nơi bắt đầu hành trình trưởng thành mỗi ngày cùng VO DUONG AI.", robots: { index: false } };
 
 async function getProfileSummary() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -77,96 +74,64 @@ async function getFeaturedTools(): Promise<AdminTool[]> {
   }
 }
 
-export default async function PortalDashboard() {
+export default async function GemHomePage() {
   const profile = await getProfileSummary();
   const featuredTools = await getFeaturedTools();
 
+  const continueLearningCourse = vdaiCourses[0];
+  const opportunityItems = affiliateResources.slice(0, 3).map((a) => ({
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    href: "/portal/affiliate-hub",
+  }));
+
   return (
-    <div className="space-y-12">
-      <div>
-        <PageHeader
-          title="Chào mừng đến với Võ Đương AI Portal"
-          description="Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây."
-        />
-        <div className="mt-3">
-          <OnboardingSummary />
+    <div className="space-y-10">
+      <WelcomeHero name={profile?.fullName} />
+
+      <div className="mt-1">
+        <OnboardingSummary />
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <TodayMissionCard missions={todayMissions} />
+        </div>
+        <div className="lg:col-span-5">
+          <GemProgressCard percent={profile ? 42 : 12} />
         </div>
       </div>
 
-      <GoalWidget />
-
-      <div className="grid gap-5 lg:grid-cols-2">
-        <GemCard variant="progress">
-          <h2 className="mb-4 text-sm font-bold text-white">Human Growth Index</h2>
-          <HumanGrowthIndex />
-          <Button href="/portal/journey" variant="secondary" className="mt-4">
-            Xem hành trình đầy đủ →
-          </Button>
-        </GemCard>
-
-        <GemCard variant="featured">
-          <h2 className="text-sm font-bold text-white">AI Coach gợi ý</h2>
-          <p className="mt-2 text-sm text-white/70">
-            Hôm nay hãy thử dành 15 phút đọc một bài trong Học viện AI, sau đó áp dụng ngay một
-            prompt vào công việc của bạn — những bước nhỏ đều đặn sẽ làm viên ngọc của bạn sáng hơn.
-          </p>
-          <Button href="/portal/ai-assistant" variant="primary" className="mt-4">
-            Trò chuyện với AI Assistant →
-          </Button>
-        </GemCard>
-      </div>
-
-      <GemCard className="!p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-lg font-bold text-white">Lộ trình thành công</h2>
-            <p className="mt-1 text-sm text-white/70">
-              Chưa biết bắt đầu từ đâu? Lộ trình 7 bước sẽ chỉ đúng bước tiếp theo cho bạn.
-            </p>
-          </div>
-          <Button href="/portal/roadmap" variant="primary">
-            Xem lộ trình của tôi →
-          </Button>
-        </div>
+      <GemCard variant="progress">
+        <h2 className="mb-4 text-sm font-bold text-white">Human Growth Index</h2>
+        <HumanGrowthIndex />
       </GemCard>
 
-      <section>
-        <h2 className="text-lg font-bold text-white">Việc nên làm tiếp theo</h2>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {todayTasks.map((t) => (
-            <Link
-              key={t.label}
-              href={t.href}
-              className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold text-white transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
-            >
-              {t.label}
-            </Link>
-          ))}
+      <div className="grid gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          {continueLearningCourse && (
+            <ContinueLearningCard
+              item={{
+                title: continueLearningCourse.title,
+                description: continueLearningCourse.description,
+                href: continueLearningCourse.href,
+                progressPercent: 30,
+              }}
+            />
+          )}
         </div>
-      </section>
-
-      <ProgressOverview purchasedCount={profile?.purchasedCount ?? 0} />
-
-      <TodayGoals />
-
-      <section>
-        <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Tiếp tục học</h2>
-          <Link href="/portal/vdai-academy" className="text-sm font-semibold text-brand-blue hover:underline">
-            Xem tất cả →
-          </Link>
+        <div className="lg:col-span-5">
+          <AICoachCard tip={aiCoachTip} />
         </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {vdaiCourses.slice(0, 4).map((c) => (
-            <CourseCard key={c.id} title={c.title} description={c.description} href={c.href} />
-          ))}
-        </div>
-      </section>
+      </div>
+
+      <RecommendedResources items={recommendedItems} />
 
       <section>
         <div className="flex items-end justify-between">
           <h2 className="text-lg font-bold text-white">Công cụ nổi bật</h2>
-          <Link href="/portal/tools" className="text-sm font-semibold text-brand-blue hover:underline">
+          <Link href="/portal/tools" className="text-sm font-semibold text-[#22D3EE] hover:underline">
             Xem tất cả →
           </Link>
         </div>
@@ -185,19 +150,7 @@ export default async function PortalDashboard() {
         </div>
       </section>
 
-      <section>
-        <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Cơ hội hôm nay</h2>
-          <Link href="/portal/growth" className="text-sm font-semibold text-[#22D3EE] hover:underline">
-            Xem tất cả →
-          </Link>
-        </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {affiliateResources.slice(0, 3).map((a) => (
-            <ResourceCard key={a.id} title={a.title} description={a.description} href="/portal/affiliate-hub" />
-          ))}
-        </div>
-      </section>
+      <TodayOpportunity items={opportunityItems} />
 
       <section>
         <div className="flex items-end justify-between">
@@ -213,24 +166,7 @@ export default async function PortalDashboard() {
         </div>
       </section>
 
-      <section>
-        <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Tin mới</h2>
-          <Link href="/portal/ecosystem" className="text-sm font-semibold text-[#22D3EE] hover:underline">
-            Xem tất cả →
-          </Link>
-        </div>
-        <div className="mt-4">
-          <GemCard>
-            <p className="text-sm text-white/70">
-              Cập nhật mới nhất từ cộng đồng, sự kiện và thành tựu học viên đều nằm trong Hệ sinh thái.
-            </p>
-            <Button href="/portal/updates" variant="secondary" className="mt-4">
-              Xem tin tức →
-            </Button>
-          </GemCard>
-        </div>
-      </section>
+      <LatestUpdates updates={latestUpdates} />
 
       <SavedRecent />
     </div>
