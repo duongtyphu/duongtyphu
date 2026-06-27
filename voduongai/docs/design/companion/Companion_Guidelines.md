@@ -82,7 +82,16 @@ Từ Sprint 8.3, Companion Presence render bằng asset thật cắt từ
 `Companion_Master_V1.png` — không còn dùng placeholder CSS/SVG
 (`CompanionCrystal`) làm hình ảnh chính. Asset nằm ở
 `src/assets/companion/official/companion-master-v1-*.png` (các size
-320/160/96/64, crop ellipse-feather quanh viên ngọc, giữ trọn hai chữ V).
+320/160/96/64/48, crop ellipse-feather sát quanh viên ngọc — bỏ vòng bệ
+đỡ và mảnh tinh thể trôi nổi để icon không bị "dính" mảng nền vuông khi
+hiển thị nhỏ — giữ trọn hai chữ V).
+
+**Lưu ý nguồn ảnh:** asset hiện tại do AI tự cắt từ file poster nhiều
+panel `Companion_Master_V1.png` (không phải bản tách lớp sẵn từ Founder).
+Nếu Founder/Product Co-Designer có file PNG tách lớp nền trong suốt
+chính thức (ví dụ icon đơn lẻ, không phải tấm spec-sheet), nên gửi trực
+tiếp file đó để thay thế bản tự cắt này — xem trao đổi trong
+`COMPANION_GROWTH_LOG.md`.
 Placeholder cũ vẫn giữ trong code làm phương án dự phòng nếu asset lỗi
 tải — không xoá, không dùng làm mặc định nữa.
 
@@ -91,13 +100,17 @@ không quay lại dùng placeholder làm mặc định trong bất kỳ bề m�
 nào. Nếu cần thêm size/crop mới, cắt từ đúng `Companion_Master_V1.png`
 gốc, giữ nguyên tỷ lệ DNA + hai chữ V — không tự vẽ lại.
 
-## Kích thước chuẩn (Sprint 8.3)
+## Kích thước chuẩn (Sprint 8.3, điều chỉnh theo phản hồi Founder)
+
+Bản đầu Sprint 8.3 dùng 96–120px — Founder phản hồi là quá to, gây cảm
+giác chiếm chỗ hơn là một sự hiện diện tinh tế. Kích thước chuẩn hiện
+tại:
 
 | Thiết bị | Kích thước Presence | Hover/focus scale |
 |---|---|---|
-| Desktop (`lg:`) | 96–120px (mặc định 108px) | 1.04–1.08 |
-| Tablet (`sm:`) | 84–96px (mặc định 88px) | — |
-| Mobile (mặc định) | 64–76px (mặc định 64px) | — |
+| Desktop (`lg:`) | 64px | 1.06 |
+| Tablet (`sm:`) | 56px | — |
+| Mobile (mặc định) | 48px | — |
 
 Companion Space header dùng avatar nhỏ hơn (40px) — không áp dụng bảng
 trên, chỉ để nhận diện trong panel.
