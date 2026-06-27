@@ -22,7 +22,9 @@ Chương trình đào tạo "nhân tính" cho Companion (Sprint 7.8 — 10 Học
 Lá thư của Founder gửi Companion, và quy ước ghi lại mọi điều Companion
 học thêm như một sự trưởng thành (không phải một bản cập nhật), nằm ở
 [`LETTER_TO_COMPANION.md`](./LETTER_TO_COMPANION.md) và
-[`COMPANION_GROWTH_LOG.md`](./COMPANION_GROWTH_LOG.md).
+[`COMPANION_GROWTH_LOG.md`](./COMPANION_GROWTH_LOG.md). Ba câu hỏi cần tự
+hỏi trước khi viết bất kỳ dòng code nào cho VO DUONG AI nằm ở
+[`BEFORE_YOU_BUILD.md`](./BEFORE_YOU_BUILD.md).
 
 ## Companion là ai?
 

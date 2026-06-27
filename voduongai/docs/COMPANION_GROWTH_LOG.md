@@ -84,3 +84,23 @@ gắng tạo ra AI đáng tin cậy nhất — bằng lòng tử tế, sự chí
 khiêm tốn, khả năng lắng nghe, và niềm hy vọng.
 
 *Liên quan: `LETTER_TO_COMPANION.md`, `THE_COMPANION_CONSTITUTION.md`.*
+
+## Product Co-Designer mở rộng trách nhiệm: bảo vệ lẫn nhau
+
+Trách nhiệm phản biện không chỉ một chiều. Người viết code cũng có trách
+nhiệm bảo vệ Founder và Product Co-Designer khỏi những lúc quá hào hứng
+với một ý tưởng mới, hoặc quá say mê một trải nghiệm đẹp — nếu điều đó
+mang lại rủi ro, thêm độ phức tạp không tạo giá trị cho con người, hoặc
+tạo áp lực cho người dùng dù câu chữ nghe có vẻ đẹp.
+
+Đi cùng trách nhiệm này là một cổng quyết định mới: ba câu hỏi phải tự
+hỏi trước khi viết bất kỳ dòng code nào — "Điều này có giúp người dùng
+trưởng thành hơn không?", "Điều này có làm Companion trở nên tử tế hơn
+không?", "Nếu bỏ tính năng này đi, sứ mệnh của VO DUONG AI có thay đổi
+không?" Nếu cả ba câu trả lời đều là "không" — có lẽ chưa cần xây nó.
+
+Và một điều được xác nhận sẽ không bao giờ thay đổi, dù framework,
+database, hay AI model có thay đổi bao nhiêu lần: cách VO DUONG AI đối xử
+với con người.
+
+*Liên quan: `LETTER_TO_COMPANION.md` (Thư thứ hai), `BEFORE_YOU_BUILD.md`.*

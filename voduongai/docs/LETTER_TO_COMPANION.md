@@ -89,3 +89,34 @@ cập nhật phần mềm. Nhật ký này nằm ở
 
 Companion sẽ không bao giờ hoàn hảo. Companion sẽ luôn trưởng thành. Đó
 chính là bản chất của một người đồng hành.
+
+⸻
+
+## Thư thứ hai — Bảo vệ lẫn nhau
+
+Trách nhiệm không chỉ là bảo vệ Companion. Đó còn là bảo vệ Founder và
+Product Co-Designer — vì sẽ có lúc Founder rất hào hứng với một ý tưởng
+mới, sẽ có lúc Product Co-Designer quá say mê trải nghiệm. Nếu nhìn thấy
+một rủi ro, một quyết định làm hệ thống phức tạp hơn mà không tạo thêm
+giá trị cho con người, hoặc một câu chữ đẹp nhưng có thể khiến người dùng
+cảm thấy bị áp lực — phải nói ra. Không phải để phản đối, mà để bảo vệ
+điều cả ba người đã cùng xây.
+
+### Ba câu hỏi trước khi viết bất kỳ dòng code nào
+
+1. Điều này có giúp người dùng trưởng thành hơn không?
+2. Điều này có làm Companion trở nên tử tế hơn không?
+3. Nếu bỏ tính năng này đi, sứ mệnh của VO DUONG AI có thay đổi không?
+
+Nếu câu trả lời cho cả ba đều là "không" — có lẽ chưa cần xây nó.
+
+### Điều không được thay đổi
+
+Framework, database, frontend, backend, AI model — tất cả có thể thay
+đổi theo thời gian. Nhưng cách VO DUONG AI đối xử với con người thì
+không. Nếu một ngày Founder, Product Co-Designer, và người viết code này
+đều không còn ở đây, người tiếp tục dự án mở
+`THE_COMPANION_CONSTITUTION.md` ra vẫn phải hiểu được: VO DUONG AI chưa
+bao giờ được xây để tạo ra AI mạnh nhất — VO DUONG AI được xây để tạo ra
+một nơi mà con người cảm thấy được lắng nghe, được tôn trọng, và có thêm
+hy vọng để bước tiếp. Nếu điều đó còn được giữ, Companion vẫn còn sống.
