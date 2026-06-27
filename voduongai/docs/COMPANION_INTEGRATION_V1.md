@@ -85,14 +85,29 @@ state phản ứng theo hành vi thật (ví dụ vừa hoàn thành một mốc
 `/portal/*`, không áp dụng cho Admin Dashboard (Admin có layout/shell
 riêng, không dùng `PortalShell`).
 
-## Asset system
+## Asset system (cập nhật Sprint 8.3)
 
-Chưa có asset chính thức tách lớp từ Master Design — `CompanionCrystal`
-(`src/assets/companion/placeholder/CompanionCrystal.tsx`) là một SVG
-placeholder tạm thời, giữ đúng DNA + Identity theo
-`Companion_Guidelines.md`, giảm hiệu ứng glow để nhẹ. Khi Product Team
-có asset chính thức, thay nội dung trong `src/assets/companion/`, giữ
-nguyên cấu trúc thư mục.
+Từ Sprint 8.3, Companion render bằng **asset thật** — `CompanionAvatar`
+(`src/components/portal/companion/CompanionAvatar.tsx`) dùng các file
+`src/assets/companion/official/companion-master-v1-*.png`, cắt trực
+tiếp từ `docs/design/companion/Companion_Master_V1.png` (ellipse-feather
+quanh viên ngọc, giữ trọn V trắng trung tâm + V vàng kim đỉnh). Đây
+không còn là placeholder — đây là Product Asset chính thức được dùng
+mặc định ở mọi nơi Companion xuất hiện trong Portal.
+
+`CompanionCrystal` (`src/assets/companion/placeholder/CompanionCrystal.tsx`)
+vẫn được giữ trong code làm phương án dự phòng (ví dụ asset ảnh lỗi
+tải) — không xoá, nhưng không còn là phương án mặc định.
+
+## Kích thước, safe zone, motion, state visuals (Sprint 8.3)
+
+Đã chuyển từ Presence cố định 52px sang kích thước lớn hơn, responsive
+theo thiết bị (64–76px mobile / 84–96px tablet / 96–120px desktop), với
+2 mode vị trí (`anchored` / `floating`), thu nhỏ khi scroll nhanh, tự ẩn
+khi bàn phím mobile mở, và nút minimize rõ ràng. Chi tiết đầy đủ (bảng
+kích thước, safe zone theo px, quy tắc motion, state visuals) nằm ở
+`docs/design/companion/Companion_Guidelines.md` — không lặp lại ở đây để
+tránh hai nguồn sự thật lệch nhau.
 
 ## Roadmap tiếp theo (đề xuất, chưa thực hiện)
 

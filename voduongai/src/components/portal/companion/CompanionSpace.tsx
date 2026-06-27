@@ -8,7 +8,7 @@
 
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
-import { CompanionCrystal } from "@/assets/companion/placeholder/CompanionCrystal";
+import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
 import type { CompanionState } from "@/lib/portal/companion/companion-identity";
 import { displayName } from "@/lib/portal/companion/companion-identity";
 import { getWarmthLine } from "@/lib/portal/warmth-engine";
@@ -36,7 +36,7 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
         type="button"
         aria-label="Đóng Companion"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-black/40 sm:bg-black/20"
       />
 
       <div
@@ -47,7 +47,7 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
       >
         <div className="mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <CompanionCrystal state={state.key} size={40} />
+            <CompanionAvatar state={state.key} className="h-10 w-10 shrink-0" />
             <div>
               <p className="text-sm font-bold text-white">{displayName}</p>
               <p className="text-xs text-white/55">{state.line}</p>

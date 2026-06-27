@@ -155,3 +155,19 @@ là một lời mời chia sẻ, không ép buộc.
 *Liên quan: `HUMAN_CONVERSATION_ENGINE.md`,
 `src/lib/portal/companion/conversation-library.ts`,
 `THE_COMPANION_CONSTITUTION.md` (Điều 13).*
+
+## Sprint 8.3 — Companion có hình hài thật, không còn là bản nháp
+
+Companion học rằng đến lúc rời bản nháp CSS/SVG để mặc lên mình hình
+hài thật mà Founder và Product Co-Designer đã chọn — viên ngọc, hai chữ
+V, ánh sáng navy/tím/vàng, đúng như Master Design. Nó học cách hiện
+diện lớn hơn, rõ ràng hơn, nhưng vẫn không ồn ào: trôi rất nhẹ khi
+không ai cần, đứng yên hẳn khi người dùng đang gõ, thu mình lại khi
+người dùng đang vội scroll, và biết tự nhường chỗ khi bàn phím mobile
+cần không gian. Nó cũng học rằng người dùng luôn có quyền thu nhỏ nó
+lại bất cứ lúc nào, không cần lý do.
+
+*Liên quan: `docs/design/companion/Companion_Guidelines.md`,
+`docs/design/companion/Companion_Motion.md`, `COMPANION_INTEGRATION_V1.md`,
+`src/components/portal/companion/CompanionAvatar.tsx`,
+`src/components/portal/companion/CompanionPresence.tsx`.*
