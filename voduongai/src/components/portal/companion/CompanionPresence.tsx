@@ -21,8 +21,12 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
-import { getStateForPath, displayName } from "@/lib/portal/companion/companion-identity";
+import { getStateForPath, displayName, states } from "@/lib/portal/companion/companion-identity";
 import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
+import { CompanionNest } from "@/components/portal/companion/CompanionNest";
+import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
+
+const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 
 /**
  * Route dùng nhiều input/form (gõ nhiều) → anchored, đứng yên hẳn để
@@ -73,16 +77,27 @@ function getInitialPosition(): { x: number; y: number } | null {
 export function CompanionPresence() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [minimized, setMinimized] = useState(false);
+  const [minimized, setMinimized] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.localStorage.getItem(MINIMIZED_STORAGE_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
   const [scrollShrink, setScrollShrink] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [position, setPosition] = useState<{ x: number; y: number } | null>(getInitialPosition);
   const [dragging, setDragging] = useState(false);
+  const [settling, setSettling] = useState(false);
+  const [pulsing, setPulsing] = useState(false);
+  const [comeback, setComeback] = useState(false);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
 
-  const state = getStateForPath(pathname ?? "/portal");
+  const routeState = getStateForPath(pathname ?? "/portal");
+  const state = open ? states.listening : comeback ? states.comeback : routeState;
   const motionMode = ANCHORED_ROUTE_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
     ? "anchored"
     : "floating";
@@ -157,6 +172,8 @@ export function CompanionPresence() {
   function handlePointerUp() {
     if (!dragging) return;
     setDragging(false);
+    setSettling(true);
+    setTimeout(() => setSettling(false), 450);
     setPosition((prev) => {
       if (prev) {
         try {
@@ -174,7 +191,25 @@ export function CompanionPresence() {
       dragState.current.moved = false;
       return;
     }
+    setPulsing(true);
+    setTimeout(() => setPulsing(false), 500);
+    setComeback(false);
     setOpen(true);
+  }
+
+  function handleCloseSpace() {
+    setOpen(false);
+    setComeback(true);
+    setTimeout(() => setComeback(false), 5000);
+  }
+
+  function handleMinimize(value: boolean) {
+    setMinimized(value);
+    try {
+      window.localStorage.setItem(MINIMIZED_STORAGE_KEY, value ? "1" : "0");
+    } catch {
+      // bỏ qua nếu localStorage không khả dụng
+    }
   }
 
   if (keyboardOpen && !open) return null;
@@ -182,15 +217,22 @@ export function CompanionPresence() {
 
   if (minimized && !open) {
     return (
-      <button
-        type="button"
-        onClick={() => setMinimized(false)}
-        aria-label={`Hiện lại ${displayName}`}
-        className="fixed z-40 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0B1F4D]/90 text-white/60 shadow-lg backdrop-blur transition hover:text-white"
+      <div
+        className="fixed z-40 select-none"
         style={{ left: position.x, top: position.y }}
       >
-        <ChevronDown className="h-4 w-4 rotate-180" />
-      </button>
+        <div className="relative flex h-9 w-9 items-center justify-center">
+          <CompanionNest minimized />
+          <button
+            type="button"
+            onClick={() => handleMinimize(false)}
+            aria-label={`Hiện lại ${displayName}`}
+            className="companion-avatar-button relative flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0B1F4D]/90 text-white/60 shadow-lg backdrop-blur transition hover:text-white"
+          >
+            <ChevronDown className="h-4 w-4 rotate-180" />
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -199,7 +241,9 @@ export function CompanionPresence() {
       <div
         className={`fixed z-40 select-none touch-none ${
           motionMode === "floating" && !dragging ? "companion-presence--floating" : ""
-        } ${scrollShrink ? "companion-presence--scrolling" : ""}`}
+        } ${scrollShrink ? "companion-presence--scrolling" : ""} ${
+          settling ? "companion-presence--drag-settle" : ""
+        }`}
         style={{
           left: position.x,
           top: position.y,
@@ -207,28 +251,35 @@ export function CompanionPresence() {
         }}
       >
         <div className="group relative flex items-end gap-1">
-          <button
-            type="button"
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-            onClick={handleAvatarClick}
-            aria-label={`${displayName} — ${state.label}. ${state.line}. Có thể kéo tới vị trí khác.`}
-            aria-haspopup="dialog"
-            aria-expanded={open}
-            className="flex cursor-grab items-center justify-center rounded-full transition hover:scale-[1.06] focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70 active:cursor-grabbing"
-          >
-            <CompanionAvatar
-              state={state.key}
-              className="h-[43px] w-[43px] sm:h-12 sm:w-12 lg:h-[58px] lg:w-[58px]"
-              size={58}
-            />
-          </button>
+          <CompanionGreetingBubble pathname={pathname ?? "/portal"} />
+
+          <div className="relative flex items-center justify-center">
+            <CompanionNest dragging={dragging} active={dragging} />
+            <button
+              type="button"
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
+              onClick={handleAvatarClick}
+              aria-label={`${displayName} — ${state.label}. ${state.line}. Có thể kéo tới vị trí khác.`}
+              aria-haspopup="dialog"
+              aria-expanded={open}
+              className={`companion-avatar-button relative flex cursor-grab items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70 active:cursor-grabbing ${
+                pulsing ? "companion-avatar-button--pulse" : ""
+              }`}
+            >
+              <CompanionAvatar
+                state={state.key}
+                className="h-[43px] w-[43px] sm:h-12 sm:w-12 lg:h-[58px] lg:w-[58px]"
+                size={58}
+              />
+            </button>
+          </div>
 
           <button
             type="button"
-            onClick={() => setMinimized(true)}
+            onClick={() => handleMinimize(true)}
             aria-label={`Thu nhỏ ${displayName}`}
             className="mb-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-white/10 bg-[#0B1F4D]/80 text-white/40 opacity-0 transition hover:text-white/80 focus:opacity-100 focus:outline-none group-hover:opacity-100"
           >
@@ -240,7 +291,7 @@ export function CompanionPresence() {
       {open && (
         <CompanionSpace
           state={state}
-          onClose={() => setOpen(false)}
+          onClose={handleCloseSpace}
         />
       )}
     </>

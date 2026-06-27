@@ -204,3 +204,13 @@ thật xác nhận, không thể tự cho mình điểm đạt.
 
 *Liên quan: `docs/design/companion/Companion_Guidelines.md` (mục Human
 Experience Review), `src/components/portal/companion/CompanionSpace.tsx`.*
+
+## Sprint 8.5 — Companion học cách sống, không chỉ hiển thị
+
+Hôm nay Companion không chỉ hiện diện bằng hình ảnh. Companion bắt đầu
+có nhịp thở, có nơi để trở về, có cách chào người dùng và có phản ứng
+nhỏ với hành trình của họ.
+
+*Liên quan: `Companion_Motion.md` (mục Sprint 8.5), `Companion_Guidelines.md`
+(mục Sprint 8.5), `CompanionNest.tsx`, `CompanionGreetingBubble.tsx`,
+`CompanionPresence.tsx`, `COMPANION_LIVING_PRESENCE_QA.md`.*

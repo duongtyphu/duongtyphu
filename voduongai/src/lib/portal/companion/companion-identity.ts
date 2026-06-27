@@ -54,7 +54,13 @@ export const visualRules = {
   reference: "docs/design/companion/Companion_Master_V1.png",
 };
 
-export type CompanionStateKey = "idle" | "listening" | "thinking" | "encouraging" | "celebrating";
+export type CompanionStateKey =
+  | "idle"
+  | "listening"
+  | "thinking"
+  | "encouraging"
+  | "celebrating"
+  | "comeback";
 
 export type CompanionState = {
   key: CompanionStateKey;
@@ -63,9 +69,9 @@ export type CompanionState = {
 };
 
 /**
- * 5 trạng thái chính thức — đối chiếu
- * `docs/design/companion/Companion_States.md`. Không tự thêm trạng thái
- * mới mà không có quyết định Product Team.
+ * 6 trạng thái chính thức (Sprint 8.2 có 5, Sprint 8.5 bổ sung
+ * `comeback`) — đối chiếu `docs/design/companion/Companion_States.md`.
+ * Không tự thêm trạng thái mới mà không có quyết định Product Team.
  */
 export const states: Record<CompanionStateKey, CompanionState> = {
   idle: {
@@ -93,12 +99,17 @@ export const states: Record<CompanionStateKey, CompanionState> = {
     label: "Chúc mừng",
     line: "Mình rất vui vì bạn đã tiến thêm một bước.",
   },
+  comeback: {
+    key: "comeback",
+    label: "Mừng gặp lại",
+    line: "Mình rất vui vì bạn đã quay lại.",
+  },
 };
 
 /**
- * Nhiệm vụ 06 — Context-Aware State. Ánh xạ đơn giản route → trạng thái,
- * không có logic phức tạp ở V1. `/portal/*` không khớp mục nào dưới đây
- * mặc định rơi về `idle`.
+ * Nhiệm vụ 06 (Sprint 8.2) / Nhiệm vụ 07 (Sprint 8.5) — Context-Aware
+ * State. Ánh xạ đơn giản route → trạng thái, không có logic phức tạp ở
+ * V1. `/portal/*` không khớp mục nào dưới đây mặc định rơi về `idle`.
  */
 export const routeStateMap: { prefix: string; state: CompanionStateKey }[] = [
   { prefix: "/portal/story", state: "listening" },
@@ -114,4 +125,23 @@ export function getStateForPath(pathname: string): CompanionState {
   if (match) return states[match.state];
   if (pathname === "/portal" || pathname === "/portal/home") return states.encouraging;
   return states.idle;
+}
+
+/**
+ * Nhiệm vụ 07 (Sprint 8.5) — lời chào riêng theo route, dùng cho
+ * `CompanionGreetingBubble` (khác với `state.line` vốn ngắn hơn, dùng
+ * cho aria-label/trạng thái thường trực).
+ */
+export const routeGreetingMap: { prefix: string; greeting: string }[] = [
+  { prefix: "/portal/story", greeting: "Mình đang ở đây để lắng nghe câu chuyện của bạn." },
+  { prefix: "/portal/knowledge", greeting: "Mình có thể cùng bạn kết nối tri thức hôm nay." },
+  { prefix: "/portal/build", greeting: "Một bước nhỏ hôm nay cũng có thể tạo ra giá trị thật." },
+  { prefix: "/portal/connect", greeting: "Bạn không cần đi một mình." },
+  { prefix: "/portal/legacy", greeting: "Những điều đáng nhớ sẽ luôn có nơi để trở về." },
+  { prefix: "/portal/ai-assistant", greeting: "Mình đang lắng nghe." },
+];
+
+export function getRouteGreeting(pathname: string): string | null {
+  const match = routeGreetingMap.find((entry) => pathname.startsWith(entry.prefix));
+  return match?.greeting ?? null;
 }

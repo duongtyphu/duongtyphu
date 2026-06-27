@@ -45,15 +45,18 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
         role="dialog"
         aria-modal="true"
         aria-label={`${displayName}`}
-        className="relative z-10 max-h-[85vh] w-full overflow-y-auto rounded-t-2xl border border-white/10 bg-[#0B1F4D] p-5 shadow-2xl sm:max-h-[80vh] sm:w-[380px] sm:rounded-2xl sm:p-6"
+        className="companion-space-panel relative z-10 max-h-[85vh] w-full overflow-y-auto rounded-t-[28px] border border-white/10 bg-[#0B1F4D] p-5 pt-6 shadow-2xl sm:max-h-[80vh] sm:w-[380px] sm:rounded-2xl sm:p-6"
       >
+        <div aria-hidden="true" className="companion-space-aura" />
+        <div aria-hidden="true" className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/15 sm:hidden" />
+
         {/* 1. Greeting — chào, nhận diện Companion, không phải chat header */}
-        <section aria-label="Greeting" className="mb-4 flex items-center justify-between gap-3">
+        <section aria-label="Greeting" className="relative mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <CompanionAvatar state={state.key} className="h-10 w-10 shrink-0" />
             <div>
               <p className="text-sm font-bold text-white">{displayName}</p>
-              <p className="text-xs text-white/55">{state.line}</p>
+              <p className="text-xs text-white/55">Mình ở đây. {state.line}</p>
             </div>
           </div>
           <button

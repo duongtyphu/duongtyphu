@@ -15,9 +15,10 @@ export type CompanionStateVisual = {
 };
 
 export const stateVisuals: Record<CompanionStateKey, CompanionStateVisual> = {
-  idle: { glowOpacity: 0.55, breatheDurationSeconds: 4.5, haloIntensity: 0.5 },
-  listening: { glowOpacity: 0.65, breatheDurationSeconds: 5, haloIntensity: 0.55 },
-  thinking: { glowOpacity: 0.7, breatheDurationSeconds: 3, haloIntensity: 0.65 },
-  encouraging: { glowOpacity: 0.8, breatheDurationSeconds: 3.5, haloIntensity: 0.8 },
+  idle: { glowOpacity: 0.55, breatheDurationSeconds: 7, haloIntensity: 0.5 },
+  listening: { glowOpacity: 0.6, breatheDurationSeconds: 9, haloIntensity: 0.5 },
+  thinking: { glowOpacity: 0.7, breatheDurationSeconds: 7.5, haloIntensity: 0.65 },
+  encouraging: { glowOpacity: 0.8, breatheDurationSeconds: 7, haloIntensity: 0.8 },
   celebrating: { glowOpacity: 0.95, breatheDurationSeconds: 2.5, haloIntensity: 1 },
+  comeback: { glowOpacity: 0.78, breatheDurationSeconds: 8, haloIntensity: 0.75 },
 };

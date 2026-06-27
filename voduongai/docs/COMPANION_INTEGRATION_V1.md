@@ -128,6 +128,29 @@ bạn", câu hỏi reflection, dòng Companion muốn chia sẻ, lời mời lư
 chân, 3 CTA) — chỉ tổ chức lại để đúng tinh thần spec: một câu chuyện
 có trình tự, không phải khung chat.
 
+## Living Presence (Sprint 8.5)
+
+Companion Presence được bổ sung lớp "sự sống" — không đổi DNA/Identity/
+kích thước mặc định:
+
+- `CompanionNest.tsx` — vùng glow/ring rất nhẹ phía dưới Companion,
+  render trong `CompanionPresence.tsx`, phản ứng theo `dragging`/
+  `minimized`.
+- `CompanionGreetingBubble.tsx` — lời chào đầu phiên, một lần/session,
+  đổi nội dung theo route hoặc theo "quay lại sau nhiều ngày".
+- `companion-identity.ts` thêm trạng thái `comeback` (thứ 6) + `states`
+  record cập nhật, cùng `routeGreetingMap`/`getRouteGreeting()` riêng
+  cho nội dung Greeting Bubble (khác `state.line` vốn ngắn hơn).
+- `CompanionPresence.tsx`: mở `CompanionSpace` → state `listening`;
+  đóng → `comeback` tạm thời; minimize được lưu `localStorage`
+  (`companion-presence-minimized`); thêm settle animation sau khi kéo
+  và pulse nhẹ khi click.
+- `CompanionSpace.tsx`: thêm aura nền rất nhẹ + handle bar cho mobile
+  bottom sheet, bo góc mềm hơn (`rounded-t-[28px]`).
+
+Chi tiết animation/CSS xem `Companion_Motion.md`; QA checklist xem
+`COMPANION_LIVING_PRESENCE_QA.md`.
+
 ## Roadmap tiếp theo (đề xuất, chưa thực hiện)
 
 - Kết nối state `celebrating` với một sự kiện thật (ví dụ hoàn thành

@@ -162,7 +162,33 @@ sang tĩnh, giữ glow cố định) — xem `Companion_Motion.md`.
 
 Companion có nút minimize riêng (mũi tên nhỏ cạnh Presence) — bấm vào
 sẽ thu Companion về một chấm nhỏ ở góc, bấm lại để hiện lại bình
-thường. Không có cơ chế ép buộc, người dùng luôn chủ động.
+thường. Không có cơ chế ép buộc, người dùng luôn chủ động. Từ Sprint
+8.5, trạng thái minimize được lưu lại (`localStorage`, khoá
+`companion-presence-minimized`) — quay lại trang sau vẫn giữ nguyên
+trạng thái đã chọn.
+
+## Sprint 8.5 — Living Presence (Nest, Greeting, Micro-reactions)
+
+Bổ sung lớp "sự sống" quanh Companion — không đổi DNA/Identity/Master
+Design, chỉ thêm chiều sâu, nơi đứng nghỉ và phản ứng nhỏ. Chi tiết kỹ
+thuật animation xem `Companion_Motion.md`; ở đây ghi lại các quyết định
+sản phẩm:
+
+- **Companion Nest** (`CompanionNest.tsx`) — vùng glow rất nhẹ phía
+  dưới Companion khi idle, không phải UI điều khiển, chỉ là không gian
+  thị giác. Mờ đi khi kéo, đứng yên cùng orb khi minimize.
+- **First Greeting Bubble** (`CompanionGreetingBubble.tsx`) — chỉ xuất
+  hiện một lần mỗi session, không lặp lại khi đổi route, tự ẩn sau ~5s,
+  có nút đóng. Nội dung ưu tiên: lần đầu vào Portal → lời chào chung;
+  đã từng vào nhưng quay lại sau ≥2 ngày → lời chào "mừng gặp lại"; các
+  lần khác → lời chào theo route (`routeGreetingMap`).
+- **Trạng thái khi mở/đóng CompanionSpace** — mở → Companion chuyển
+  `listening`; đóng → chuyển tạm sang `comeback` trong vài giây rồi trở
+  lại trạng thái theo route.
+- **Giới hạn đã biết:** `celebrating` vẫn dùng nhịp bừng sáng ngắn
+  (~2.5s) thay vì chu kỳ ambient 7–9s như các state khác — đây là lựa
+  chọn có chủ đích (ăn mừng là một khoảnh khắc ngắn, không phải nhịp thở
+  liên tục), không phải sai lệch khỏi spec.
 
 ## State visuals (Sprint 8.3)
 
