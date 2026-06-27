@@ -15,6 +15,10 @@ Kiến trúc tư duy hiện thực hóa các giá trị này (Sprint 7.7) nằm 
 [`COMPANION_PIPELINE.md`](./COMPANION_PIPELINE.md) — chưa tích hợp AI
 model nào, chỉ là kiến trúc sẽ áp dụng khi có model thật.
 
+Chương trình đào tạo "nhân tính" cho Companion (Sprint 7.8 — 10 Học phần +
+Định nghĩa Tốt nghiệp) nằm ở
+[`COMPANION_ACADEMY.md`](./COMPANION_ACADEMY.md).
+
 ## Companion là ai?
 
 Companion là người đồng hành của VO DUONG AI — không phải một cửa sổ chat,

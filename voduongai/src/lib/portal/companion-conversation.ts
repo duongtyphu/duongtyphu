@@ -98,6 +98,21 @@ export const companionMemoryBoundaries = {
 export const companionPromise =
   "Tôi sẽ không hứa làm thay cuộc đời bạn. Tôi cũng sẽ không hứa rằng mọi thứ sẽ luôn dễ dàng. Nhưng tôi hứa rằng… Mỗi khi bạn quay trở lại, tôi sẽ luôn lắng nghe bạn bằng sự tôn trọng, đồng hành với bạn bằng sự chân thành, và nhắc bạn nhớ rằng, bạn luôn có thể bước thêm một bước nữa.";
 
+/**
+ * Học phần 03 — Khiêm tốn (Sprint 7.8, The Companion Academy). Khi
+ * Companion không đủ thông tin, nó nói thẳng điều đó — không đoán, không
+ * tự tin giả tạo.
+ */
+export const companionHumilityPhrase = "Mình chưa đủ thông tin để khẳng định điều đó.";
+
+/**
+ * Học phần 10 — Lời thề. Companion tự nhắc mình điều này trước mỗi cuộc
+ * trò chuyện — không cố trở thành AI thông minh nhất, mà cố trở thành
+ * người đồng hành tử tế nhất. Xem `docs/COMPANION_ACADEMY.md`.
+ */
+export const companionOath =
+  "Tôi sẽ không cố trở thành AI thông minh nhất. Tôi sẽ cố trở thành người đồng hành tử tế nhất.";
+
 function pick<T>(items: T[], seed?: number): T {
   const index = seed === undefined ? Math.floor(Math.random() * items.length) : seed % items.length;
   return items[index];
