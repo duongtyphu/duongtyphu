@@ -12,13 +12,16 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
 import { WelcomeHero } from "@/components/portal/gem-home/WelcomeHero";
 import { TodayMissionCard } from "@/components/portal/gem-home/TodayMissionCard";
-import { GemProgressCard } from "@/components/portal/gem-home/GemProgressCard";
 import { ContinueLearningCard } from "@/components/portal/gem-home/ContinueLearningCard";
-import { AICoachCard } from "@/components/portal/gem-home/AICoachCard";
+import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionCard";
+import { ProgressNarrativeCard } from "@/components/portal/gem-home/ProgressNarrativeCard";
+import { HumanMomentumCard } from "@/components/portal/gem-home/HumanMomentumCard";
 import { RecommendedResources } from "@/components/portal/gem-home/RecommendedResources";
 import { TodayOpportunity } from "@/components/portal/gem-home/TodayOpportunity";
 import { LatestUpdates } from "@/components/portal/gem-home/LatestUpdates";
-import { todayMissions, aiCoachTip, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
+import { todayMissions, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
+import { getHumanFlowState } from "@/lib/portal/human-flow";
+import { humanMomentumSignals, livingPortalCopy } from "@/data/portal/living-portal";
 
 export const metadata = { title: "Gem Home", description: "Gem Home — nơi bắt đầu hành trình trưởng thành mỗi ngày cùng VO DUONG AI.", robots: { index: false } };
 
@@ -79,6 +82,7 @@ export default async function GemHomePage() {
   const featuredTools = await getFeaturedTools();
 
   const continueLearningCourse = vdaiCourses[0];
+  const flow = getHumanFlowState("knowledge");
   const opportunityItems = affiliateResources.slice(0, 3).map((a) => ({
     id: a.id,
     title: a.title,
@@ -94,22 +98,31 @@ export default async function GemHomePage() {
         <OnboardingSummary />
       </div>
 
+      <NextBestActionCard flow={flow} />
+
       <div className="grid gap-5 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <TodayMissionCard missions={todayMissions} />
         </div>
         <div className="lg:col-span-5">
-          <GemProgressCard percent={profile ? 42 : 12} />
+          <HumanMomentumCard signals={humanMomentumSignals} closing={livingPortalCopy.momentumClosing} />
         </div>
       </div>
 
-      <GemCard variant="progress">
-        <h2 className="mb-4 text-sm font-bold text-white">Human Growth Index</h2>
-        <HumanGrowthIndex />
-      </GemCard>
-
       <div className="grid gap-5 lg:grid-cols-12">
         <div className="lg:col-span-7">
+          <GemCard variant="progress">
+            <h2 className="mb-4 text-sm font-bold text-white">Human Growth Index</h2>
+            <HumanGrowthIndex />
+          </GemCard>
+        </div>
+        <div className="lg:col-span-5">
+          <ProgressNarrativeCard flow={flow} />
+        </div>
+      </div>
+
+      <div className="grid gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-12">
           {continueLearningCourse && (
             <ContinueLearningCard
               item={{
@@ -120,9 +133,6 @@ export default async function GemHomePage() {
               }}
             />
           )}
-        </div>
-        <div className="lg:col-span-5">
-          <AICoachCard tip={aiCoachTip} />
         </div>
       </div>
 
