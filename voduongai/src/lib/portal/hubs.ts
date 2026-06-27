@@ -58,9 +58,9 @@ export const portalHubs: PortalHub[] = [
     ],
   },
   {
-    key: "growth",
+    key: "build",
     label: "Hệ Kiến Tạo",
-    href: "/portal/growth",
+    href: "/portal/build",
     heroTitle: "Hệ Kiến Tạo",
     heroSubtitle: "Biến tri thức thành giá trị — thu nhập, thương hiệu, hệ thống, dự án, doanh nghiệp và tài sản.",
     modules: [

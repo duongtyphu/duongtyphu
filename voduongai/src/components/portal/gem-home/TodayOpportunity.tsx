@@ -17,7 +17,7 @@ export function TodayOpportunity({ items }: { items: OpportunityItem[] }) {
     <section>
       <div className="flex items-end justify-between">
         <h2 className="text-lg font-bold text-white">Cơ hội hôm nay</h2>
-        <Link href="/portal/growth" className="text-sm font-semibold text-[#22D3EE] hover:underline">
+        <Link href="/portal/build" className="text-sm font-semibold text-[#22D3EE] hover:underline">
           Xem tất cả →
         </Link>
       </div>

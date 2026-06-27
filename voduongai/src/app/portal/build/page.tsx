@@ -32,7 +32,7 @@ const ENGINE_TABS = [
 ];
 
 export default function BuildOSPage() {
-  const hub = getHub("growth")!;
+  const hub = getHub("build")!;
 
   return (
     <div className="space-y-10">
