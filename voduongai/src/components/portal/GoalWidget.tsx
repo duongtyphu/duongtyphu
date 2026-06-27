@@ -2,17 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { GOAL_STORAGE_KEY, ONBOARDING_GOALS } from "@/lib/portal/onboarding";
 
-export const GOAL_STORAGE_KEY = "vdai_portal_goal";
 const STORAGE_KEY = GOAL_STORAGE_KEY;
-
-export const GOALS = [
-  { id: "ai", label: "Học AI", href: "/portal/ai-academy", hint: "Bắt đầu với Học viện AI và Prompt thực chiến." },
-  { id: "affiliate", label: "Làm Affiliate", href: "/portal/affiliate-hub", hint: "Vào Affiliate Hub để chọn ngách và sản phẩm phù hợp." },
-  { id: "brand", label: "Xây thương hiệu cá nhân", href: "/portal/personal-brand", hint: "Lên kế hoạch nội dung và xây hình ảnh cá nhân." },
-  { id: "product", label: "Tạo sản phẩm số", href: "/portal/premium", hint: "Khám phá Sản phẩm số để đóng gói kiến thức của bạn." },
-  { id: "assets", label: "Đầu tư tài sản số", href: "/portal/digital-assets", hint: "Tìm hiểu DigiU, Blockchain, Crypto, Trading." },
-] as const;
+export const GOALS = ONBOARDING_GOALS;
 
 export function GoalWidget() {
   const [goalId, setGoalId] = useState<string | null>(null);

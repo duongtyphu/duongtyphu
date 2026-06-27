@@ -6,6 +6,7 @@ import { affiliateResources } from "@/data/affiliate";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { TodayGoals } from "@/components/portal/TodayGoals";
 import { GoalWidget } from "@/components/portal/GoalWidget";
+import { OnboardingSummary } from "@/components/portal/OnboardingSummary";
 import { SavedRecent } from "@/components/portal/SavedRecent";
 import { ProgressOverview } from "@/components/portal/ProgressOverview";
 import { CourseCard } from "@/components/portal/CourseCard";
@@ -85,6 +86,9 @@ export default async function PortalDashboard() {
         <p className="mt-2 text-white">
           Học AI, làm Affiliate và xây tài sản số — mọi thứ bạn cần đều ở đây.
         </p>
+        <div className="mt-3">
+          <OnboardingSummary />
+        </div>
       </div>
 
       <GoalWidget />
