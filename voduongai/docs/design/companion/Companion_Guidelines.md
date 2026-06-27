@@ -79,15 +79,26 @@ DNA thì không bao giờ được giảm hay đổi.
 ## Asset thật (Sprint 8.3, cập nhật với file tách lớp chính thức)
 
 Companion Presence render bằng asset thật — không còn dùng placeholder
-CSS/SVG (`CompanionCrystal`) làm hình ảnh chính. Nguồn ảnh hiện tại là
-file PNG nền trong suốt do Founder gửi trực tiếp (`Companion_Master_V1.png`,
-1254×1254, đã tách lớp sẵn) — lưu ở:
+CSS/SVG (`CompanionCrystal`) làm hình ảnh chính. Nguồn ảnh là file PNG
+do Founder gửi trực tiếp (`Companion_Master_V1.png`, 1254×1254) — lưu
+ở:
 
 - `public/assets/companion/Companion_Master_V1.png` +
   `Companion_Master_V1.webp` (bản gốc, theo Nhiệm vụ 01).
 - `src/assets/companion/official/companion-master-v1-{320,160,96,64,48}.png`
-  (các bản resize từ đúng file gốc này, không crop/chỉnh sửa thêm —
-  chỉ resize giữ tỷ lệ, dùng cho từng kích thước hiển thị).
+  (các bản resize từ đúng file gốc này, không crop nội dung — chỉ
+  resize giữ tỷ lệ, dùng cho từng kích thước hiển thị).
+
+**Sprint 8.3.1 — sửa nền trắng vuông:** file gốc Founder gửi thực chất
+là PNG nền **trắng đục** (RGB, không có kênh alpha), không phải nền
+trong suốt như ghi nhận ban đầu — đây là lý do Companion Presence từng
+hiển thị một khối vuông trắng quanh viên ngọc trên nền tối của Portal.
+Đã xử lý: tách nền trắng (gần trắng, kênh màu tối thiểu > ngưỡng) thành
+alpha trong suốt bằng ngưỡng có feather (190–235) để giữ mượt viền,
+không đụng tới vùng tối bên trong viên ngọc (mắt/miệng) — khác với lần
+thử chroma-key theo độ sáng trước đó đã làm hỏng vùng tối này. Tất cả
+file trong `public/assets/companion/` và `src/assets/companion/official/`
+đã được tạo lại từ bản đã tách nền này, đều là RGBA nền trong suốt thật.
 
 Bản đầu Sprint 8.3 từng dùng asset do AI tự cắt từ file poster nhiều
 panel — đã được thay thế hoàn toàn bằng file tách lớp chính thức này.
@@ -99,32 +110,40 @@ không quay lại dùng placeholder làm mặc định trong bất kỳ bề m�
 nào. Nếu cần thêm size/crop mới, cắt từ đúng `Companion_Master_V1.png`
 gốc, giữ nguyên tỷ lệ DNA + hai chữ V — không tự vẽ lại.
 
-## Kích thước chuẩn (Sprint 8.3, điều chỉnh theo phản hồi Founder — 2 lần)
+## Kích thước chuẩn (Sprint 8.3.1, tăng 20% theo yêu cầu Founder)
 
-Bản đầu Sprint 8.3 dùng 96–120px — Founder phản hồi quá to, gây cảm
-giác chiếm chỗ hơn là một sự hiện diện tinh tế. Lần điều chỉnh thứ hai
-(96–120 → 64) vẫn còn to, nên kích thước chuẩn hiện tại đã giảm tiếp:
+Bản đầu Sprint 8.3 dùng 96–120px — Founder phản hồi quá to. Hai lần
+điều chỉnh sau đó giảm xuống 64–56–48px rồi 48–40–36px. Founder sau đó
+yêu cầu tăng lại 20% so với mức 48–40–36px — kích thước chuẩn hiện tại:
 
 | Thiết bị | Kích thước Presence | Hover/focus scale |
 |---|---|---|
-| Desktop (`lg:`) | 48px | 1.06 |
-| Tablet (`sm:`) | 40px | — |
-| Mobile (mặc định) | 36px | — |
+| Desktop (`lg:`) | 58px | 1.06 |
+| Tablet (`sm:`) | 48px | — |
+| Mobile (mặc định) | 43px | — |
 
 Companion Space header dùng avatar nhỏ hơn (40px) — không áp dụng bảng
 trên, chỉ để nhận diện trong panel.
 
-## Safe zones (Sprint 8.3)
+## Vị trí — kéo-thả tự do (Sprint 8.3.1)
 
-Companion Presence luôn neo ở góc dưới phải, cách cạnh:
+Theo yêu cầu Founder, Companion Presence **không còn cố định** ở góc
+dưới phải. Người dùng có thể kéo (chuột hoặc chạm) Companion tới bất kỳ
+vị trí nào trong vùng nhìn thấy của màn hình. Vị trí được lưu lại
+(`localStorage`, khoá `companion-presence-position`) và phục hồi ở lần
+xem sau; nếu chưa từng kéo, vị trí mặc định vẫn là góc dưới phải như
+cũ. Companion luôn được kẹp (clamp) trong viewport, cách mép tối thiểu
+12px, kể cả sau khi resize cửa sổ. Bấm (không kéo) vẫn mở `CompanionSpace`
+như trước — phân biệt bằng ngưỡng di chuyển 6px.
 
-- Desktop: 24px (`lg:bottom-6 lg:right-6`).
-- Tablet: 18px (`sm:bottom-[18px] sm:right-[18px]`).
-- Mobile: 16px (`bottom-4 right-4`).
+## Safe zones (Sprint 8.3, vị trí khởi điểm)
 
-Không bao giờ che CTA chính, bottom navigation (nếu có), hoặc form
-input đang được focus. Khi bàn phím mobile mở (phát hiện qua
-`visualViewport` co lại > 140px), Companion tự ẩn để không che input.
+Vị trí khởi điểm khi chưa từng kéo vẫn là góc dưới phải, cách cạnh tối
+thiểu 12–16px theo thiết bị — sau đó người dùng có thể kéo đi nơi khác
+(xem mục trên). Không bao giờ để Companion che CTA chính, bottom
+navigation (nếu có), hoặc form input đang được focus. Khi bàn phím
+mobile mở (phát hiện qua `visualViewport` co lại > 140px), Companion tự
+ẩn để không che input.
 
 ## Motion rules (Sprint 8.3)
 
