@@ -32,7 +32,7 @@ const CONNECT_TABS = [
 ];
 
 export default function ConnectOSPage() {
-  const hub = getHub("ecosystem")!;
+  const hub = getHub("connect")!;
 
   return (
     <div className="space-y-10">

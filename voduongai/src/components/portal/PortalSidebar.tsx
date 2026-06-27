@@ -18,7 +18,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/journey": Compass,
   "/portal/knowledge": BookOpen,
   "/portal/build": Rocket,
-  "/portal/ecosystem": Globe,
+  "/portal/connect": Globe,
   "/portal/legacy": Crown,
 };
 

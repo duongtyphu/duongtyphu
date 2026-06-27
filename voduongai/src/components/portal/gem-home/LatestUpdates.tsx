@@ -10,7 +10,7 @@ export function LatestUpdates({ updates }: { updates: GemUpdate[] }) {
     <section>
       <div className="flex items-end justify-between">
         <h2 className="text-lg font-bold text-white">Tin mới</h2>
-        <Link href="/portal/ecosystem" className="text-sm font-semibold text-[#22D3EE] hover:underline">
+        <Link href="/portal/connect" className="text-sm font-semibold text-[#22D3EE] hover:underline">
           Xem tất cả →
         </Link>
       </div>

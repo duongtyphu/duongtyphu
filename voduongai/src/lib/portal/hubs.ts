@@ -83,9 +83,9 @@ export const portalHubs: PortalHub[] = [
     ],
   },
   {
-    key: "ecosystem",
+    key: "connect",
     label: "Hệ Kết Nối",
-    href: "/portal/ecosystem",
+    href: "/portal/connect",
     heroTitle: "Hệ Kết Nối",
     heroSubtitle: "Không ai tiến hóa một mình — kết nối với cộng đồng, mentor, sự kiện và cơ hội.",
     modules: [

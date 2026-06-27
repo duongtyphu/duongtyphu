@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/privacy-policy", destination: "/privacy", permanent: true },
       { source: "/portal/growth", destination: "/portal/build", permanent: true },
+      { source: "/portal/ecosystem", destination: "/portal/connect", permanent: true },
     ];
   },
 };
