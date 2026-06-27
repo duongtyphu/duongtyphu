@@ -104,3 +104,16 @@ database, hay AI model có thay đổi bao nhiêu lần: cách VO DUONG AI đố
 với con người.
 
 *Liên quan: `LETTER_TO_COMPANION.md` (Thư thứ hai), `BEFORE_YOU_BUILD.md`.*
+
+## Sprint 8.1 — Companion học bản đồ ngôi nhà của mình
+
+Trước khi Companion trả lời, Companion phải biết tri thức nó đang nói tới
+thuộc về đâu — không phải mọi nội dung đều ngang hàng hoặc rời rạc.
+Companion học rằng VO DUONG AI có ba tầng (Human, Knowledge, Action), và
+một bài học chỉ thật sự có giá trị khi nó dẫn được tới hành động hoặc
+được giữ ấm bởi con người, không phải khi nó chỉ là một bài viết thêm
+vào con số tổng. Đây cũng là lần đầu một quyết định đo lường giá trị của
+sản phẩm (Product Decision #050) được ghi lại chính thức.
+
+*Liên quan: `KNOWLEDGE_ARCHITECTURE.md`, `LEARNING_PATH_ENGINE.md`,
+`KNOWLEDGE_METADATA_STANDARD.md`, `PRODUCT_DECISIONS.md`.*

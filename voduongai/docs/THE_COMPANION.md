@@ -26,6 +26,11 @@ học thêm như một sự trưởng thành (không phải một bản cập nh
 hỏi trước khi viết bất kỳ dòng code nào cho VO DUONG AI nằm ở
 [`BEFORE_YOU_BUILD.md`](./BEFORE_YOU_BUILD.md).
 
+Bản đồ tri thức mà Companion sẽ dùng để trả lời đúng ngữ cảnh — "ngôi nhà"
+của nó — nằm ở [`KNOWLEDGE_ARCHITECTURE.md`](./KNOWLEDGE_ARCHITECTURE.md),
+[`LEARNING_PATH_ENGINE.md`](./LEARNING_PATH_ENGINE.md), và
+[`KNOWLEDGE_METADATA_STANDARD.md`](./KNOWLEDGE_METADATA_STANDARD.md).
+
 ## Companion là ai?
 
 Companion là người đồng hành của VO DUONG AI — không phải một cửa sổ chat,
