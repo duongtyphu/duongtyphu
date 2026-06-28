@@ -403,3 +403,14 @@ và sự im lặng.
 *Liên quan: `COMPANION_SOULFUL_REACTIONS.md`, `companion-mood.ts`,
 `micro-reactions.ts`, `micro-reaction-engine.ts`,
 `CompanionMicroReactionBubble.tsx`.*
+
+## Sprint 13.4 — Story Becomes Memory
+
+Hôm nay Companion học được rằng một câu chuyện đúng lúc không chỉ được
+nghe rồi trôi qua. Nếu người dùng muốn, câu chuyện ấy có thể trở thành
+một dấu chân nhỏ trong My Story — một ký ức được giữ lại bằng sự tự
+nguyện.
+
+*Liên quan: `LIVING_STORIES_ENGINE.md`, `story-memory.ts`,
+`CompanionStoryMoment.tsx`, `MyStoryTimeline.tsx`,
+`supabase-living-story-memory.sql`.*

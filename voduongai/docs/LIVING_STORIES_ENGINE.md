@@ -89,3 +89,37 @@ Ranh giới này nối tiếp "No Therapy Boundary" đã có ở
 `COMPANION_COVENANT.md` — Story cũng không dùng để chẩn đoán hay khẳng
 định cảm xúc người đọc (mọi `Quiet Story`/`Resilience Story` đều viết ở
 dạng ẩn dụ phổ quát, không trực tiếp gán cảm xúc cho người dùng).
+
+## Lưu Story vào My Story (Sprint 13.4 — Story Becomes Memory)
+
+Từ Sprint 13.4, người dùng có thể chọn lưu một Living Story đang được
+kể vào `/portal/story` như một Memory Capsule (`saveLivingStoryToMyStory`
+trong `story-memory.ts`). Ranh giới riêng cho việc lưu trữ:
+
+- **Story nào được lưu**: bất kỳ `LivingStory` nào trong thư viện đều
+  có thể được lưu — vì mọi story trong V1 đã được kiểm tra đạt ranh
+  giới ở trên (hư cấu về Companion, ẩn dụ phổ quát, hoặc biên soạn ẩn
+  danh) trước khi được thêm vào `living-stories.ts`. Không có story
+  "không an toàn để lưu" đang tồn tại trong thư viện.
+- **Story nào sẽ không được lưu trong tương lai**: nếu sau này thư viện
+  có một câu chuyện dựa trên người dùng thật (xem điều kiện consent ở
+  trên), story đó **không được phép xuất hiện trong flow lưu vào My
+  Story** trừ khi người được kể chuyện (không phải người đang đọc) đã
+  đồng ý rõ ràng cho việc câu chuyện của họ được người khác lưu lại —
+  một lớp consent khác với việc chỉ "thêm story vào thư viện để kể".
+- **Anonymous/biên soạn vs. story người dùng thật**: capsule được lưu
+  từ Living Story luôn ghi `source: "companion_living_story"` và
+  `story_id` trỏ về `LivingStory.id` — không bao giờ chèn nội dung hội
+  thoại, tên, hay dữ liệu cá nhân của người dùng đang lưu vào capsule.
+  Capsule chỉ chứa metadata tĩnh của story (title/type/meaningTags/
+  closingLine) — giống nhau cho mọi người dùng lưu cùng một story.
+- **Khi nào cần consent**: việc lưu vào My Story là hành động tự
+  nguyện của chính người đọc (không cần consent thêm, vì không có dữ
+  liệu cá nhân nào được thu thập) — consent chỉ thực sự cần khi thư
+  viện story bổ sung một câu chuyện *về* một người dùng thật cụ thể,
+  như đã nêu ở mục Privacy & Trust Boundary.
+- **Quyền xoá**: capsule được lưu từ Living Story là một
+  `memory_capsules` row như mọi capsule khác — người dùng có quyền xoá
+  bất cứ lúc nào qua cùng cơ chế xoá Memory Capsule hiện có (hoặc sẽ có)
+  của My Story; không có cơ chế lưu trữ riêng/khó xoá hơn cho loại
+  capsule này.

@@ -27,7 +27,14 @@ const CAPSULE_EMOJI: Record<MemoryCapsuleKind, string> = {
   decision: "🧭",
   breakthrough: "🌱",
   achievement: "🤝",
+  // Sprint 13.4 — capsule được lưu từ một Living Story.
+  living_story: "📖",
+  companion_story: "🫂",
+  wisdom_story: "🪶",
+  garden_story: "🌿",
 };
+
+const STORY_CAPSULE_KINDS: MemoryCapsuleKind[] = ["living_story", "companion_story", "wisdom_story", "garden_story"];
 
 async function getStoryData() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -47,7 +54,7 @@ async function getStoryData() {
         .order("created_at", { ascending: false }),
       supabase
         .from("memory_capsules")
-        .select("id, kind, title, description, occurred_at")
+        .select("id, kind, title, description, occurred_at, source")
         .eq("member_id", user.id)
         .order("occurred_at", { ascending: false }),
     ]);
@@ -76,6 +83,7 @@ async function getStoryData() {
         title: c.title,
         description: c.description ?? undefined,
         occurredAt: c.occurred_at,
+        source: c.source ?? undefined,
       })),
       storageReady,
     };
@@ -107,6 +115,7 @@ export default async function MyStoryPage() {
       title: c.title,
       description: c.description,
       date: new Date(c.occurredAt),
+      source: STORY_CAPSULE_KINDS.includes(c.kind) ? "Companion · Living Story" : undefined,
     })),
     ...reflections.map((r) => ({
       id: r.id,

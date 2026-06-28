@@ -71,3 +71,23 @@ dùng phải "làm gì đó" ngay với câu chuyện vừa nghe.
   khác.
 - `docs/LIVING_STORIES_ENGINE.md` — tài liệu kỹ thuật/thiết kế đầy đủ,
   bao gồm Privacy & Trust Boundary chi tiết.
+
+## Từ câu chuyện đến ký ức
+
+Một Living Story vốn chỉ tồn tại trong một khoảnh khắc — Companion kể,
+người đọc nghe, rồi cuộc trò chuyện tiếp tục. Nhưng có những câu chuyện
+ở lại lâu hơn một khoảnh khắc. Từ Sprint 13.4, người đọc có thể chọn
+giữ lại một câu chuyện như vậy trong My Story — không phải vì câu
+chuyện đó "quan trọng" theo nghĩa thành tích, mà vì nó chạm đúng vào
+một điều người đọc đang sống cùng lúc đó.
+
+Đây không phải một tính năng lưu trữ. Đó là sự công nhận rằng ý nghĩa
+không chỉ nằm trong chính câu chuyện, mà nằm trong khoảnh khắc một
+người chọn giữ nó lại. Companion không hỏi "bạn có muốn lưu không?"
+như một popup nhắc nhở — nút lưu luôn ở đó, nhẹ và không thúc ép, và
+việc bỏ qua nó cũng bình thường như việc chọn lưu. Khi người đọc chọn
+giữ lại, Companion không nói "đã lưu thành công" như một hệ thống —
+Companion nói rằng nó sẽ giữ câu chuyện ấy trong hành trình của người
+đọc, vì đó đúng là điều đang xảy ra: một câu chuyện đã trở thành một
+dấu chân, đứng cạnh những reflection và memory khác trong cuốn sách
+hành trình của riêng người đọc.

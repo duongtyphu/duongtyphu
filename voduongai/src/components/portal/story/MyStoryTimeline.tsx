@@ -6,6 +6,8 @@ export type StoryMoment = {
   title: string;
   description?: string;
   date: Date;
+  /** Sprint 13.4 — ví dụ "Companion · Living Story" khi moment đến từ một Living Story đã lưu. */
+  source?: string;
 };
 
 function formatDate(date: Date) {
@@ -36,6 +38,11 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
             <div className="flex flex-wrap items-baseline gap-2">
               <h3 className="text-sm font-bold text-white">{m.title}</h3>
               <span className="text-xs text-white/40">{formatDate(m.date)}</span>
+              {m.source && (
+                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/35">
+                  {m.source}
+                </span>
+              )}
             </div>
             {m.description && <p className="mt-1 text-sm text-white/65">{m.description}</p>}
           </div>

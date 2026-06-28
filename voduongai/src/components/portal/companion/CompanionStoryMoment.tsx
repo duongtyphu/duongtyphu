@@ -10,6 +10,12 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import type { LivingStory } from "@/lib/portal/companion/living-stories";
+import { saveLivingStoryToMyStory } from "@/lib/portal/companion/story-memory";
+
+const SAVE_CONFIRM_LINES = [
+  "Được rồi. Mình sẽ giữ câu chuyện này trong hành trình của bạn.",
+  "Mình đã đặt câu chuyện này vào My Story, như một dấu chân nhỏ của hôm nay.",
+];
 
 export function CompanionStoryMoment({
   story,
@@ -19,6 +25,7 @@ export function CompanionStoryMoment({
   onDismiss: () => void;
 }) {
   const [visible, setVisible] = useState(true);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
 
   useEffect(() => {
     const showTimer = setTimeout(() => setVisible(true), 0);
@@ -31,6 +38,15 @@ export function CompanionStoryMoment({
     return () => clearTimeout(cleanupTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
+
+  async function handleSave() {
+    if (saveState !== "idle") return;
+    setSaveState("saving");
+    const result = await saveLivingStoryToMyStory(story);
+    setSaveState(result === "saved" ? "saved" : "idle");
+  }
+
+  const confirmLine = SAVE_CONFIRM_LINES[story.id.length % SAVE_CONFIRM_LINES.length];
 
   return (
     <div
@@ -56,6 +72,10 @@ export function CompanionStoryMoment({
       <p className="mb-3 whitespace-pre-line text-[13px] leading-relaxed text-white/75">{story.body}</p>
       <p className="mb-3 text-[13px] italic text-white/55">{story.closingLine}</p>
 
+      {saveState === "saved" ? (
+        <p className="mb-3 text-[13px] text-amber-200/80">{confirmLine}</p>
+      ) : null}
+
       <div className="flex flex-col gap-1.5">
         <button
           type="button"
@@ -67,11 +87,11 @@ export function CompanionStoryMoment({
         <div className="flex gap-1.5">
           <button
             type="button"
-            disabled
-            title="Sắp ra mắt"
-            className="flex-1 cursor-not-allowed rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/30"
+            onClick={handleSave}
+            disabled={saveState !== "idle"}
+            className="flex-1 rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/70 transition hover:bg-white/5 hover:text-white/90 disabled:cursor-default disabled:text-white/40"
           >
-            Lưu vào My Story
+            {saveState === "saved" ? "Đã lưu" : saveState === "saving" ? "Đang lưu…" : "Lưu vào My Story"}
           </button>
           <button
             type="button"

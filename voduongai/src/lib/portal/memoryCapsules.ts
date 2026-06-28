@@ -4,7 +4,17 @@ import { useCallback, useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
 
-export type MemoryCapsuleKind = "milestone" | "lesson" | "decision" | "breakthrough" | "achievement";
+export type MemoryCapsuleKind =
+  | "milestone"
+  | "lesson"
+  | "decision"
+  | "breakthrough"
+  | "achievement"
+  // Sprint 13.4 — Story Becomes Memory: capsule được lưu từ một Living Story.
+  | "living_story"
+  | "companion_story"
+  | "wisdom_story"
+  | "garden_story";
 
 export type MemoryCapsule = {
   id: string;
@@ -12,6 +22,10 @@ export type MemoryCapsule = {
   title: string;
   description?: string;
   occurredAt: string;
+  /** Sprint 13.4 — null cho capsule người dùng tự thêm; "companion_living_story" khi lưu từ Companion. */
+  source?: string;
+  storyId?: string;
+  meaningTags?: string[];
 };
 
 export function useMemoryCapsules() {
@@ -31,7 +45,7 @@ export function useMemoryCapsules() {
       }
       const { data: rows, error } = await supabase
         .from("memory_capsules")
-        .select("id, kind, title, description, occurred_at")
+        .select("id, kind, title, description, occurred_at, source, story_id, meaning_tags")
         .eq("member_id", uid)
         .order("occurred_at", { ascending: false });
       if (error) {
@@ -49,6 +63,9 @@ export function useMemoryCapsules() {
           title: r.title,
           description: r.description ?? undefined,
           occurredAt: r.occurred_at,
+          source: r.source ?? undefined,
+          storyId: r.story_id ?? undefined,
+          meaningTags: r.meaning_tags ?? undefined,
         }))
       );
       setReady(true);
@@ -62,7 +79,7 @@ export function useMemoryCapsules() {
       const { data, error } = await supabase
         .from("memory_capsules")
         .insert({ member_id: userId, kind: capsule.kind, title: capsule.title.trim(), description: capsule.description ?? null })
-        .select("id, kind, title, description, occurred_at")
+        .select("id, kind, title, description, occurred_at, source, story_id, meaning_tags")
         .single();
       if (error) {
         if (isMissingTableError(error)) {
@@ -73,7 +90,16 @@ export function useMemoryCapsules() {
       }
       if (data) {
         setCapsules((prev) => [
-          { id: data.id, kind: data.kind, title: data.title, description: data.description ?? undefined, occurredAt: data.occurred_at },
+          {
+            id: data.id,
+            kind: data.kind,
+            title: data.title,
+            description: data.description ?? undefined,
+            occurredAt: data.occurred_at,
+            source: data.source ?? undefined,
+            storyId: data.story_id ?? undefined,
+            meaningTags: data.meaning_tags ?? undefined,
+          },
           ...prev,
         ]);
       }
