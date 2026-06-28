@@ -21,6 +21,17 @@ import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
 import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 
+/**
+ * Sprint 13.2 — gợi ý nhẹ, chỉ khi GardenStage cho thấy rõ một story
+ * Garden phù hợp. Không phải toàn bộ thư viện Living Stories — chỉ map
+ * tối thiểu để Portal Brain "biết" có gợi ý hay không, việc chọn thật
+ * (cooldown, đã kể chưa, ngữ cảnh khác) vẫn do `story-matching-engine.ts` quyết định.
+ */
+const GARDEN_STORY_SUGGESTION: Partial<Record<GardenStage, { id: string; reason: string }>> = {
+  sprouting: { id: "garden-the-first-leaf", reason: "Khu vườn vừa có dấu hiệu nảy mầm." },
+  rooting: { id: "garden-roots-before-flowers", reason: "Khu vườn đang ở giai đoạn bén rễ, chưa thấy hoa." },
+};
+
 export type CompanionTone =
   | "warm-quiet"
   | "encouraging"
@@ -41,6 +52,15 @@ export type CompanionDecision = {
    * tâm" nào đang lên tiếng. Xem `docs/INTERNAL_VOICES_ARCHITECTURE.md`.
    */
   voicesHeard: VoiceMessage[];
+  /**
+   * Sprint 13.2 — Living Stories Engine. KHÔNG bắt buộc: chỉ có giá trị
+   * khi tín hiệu đủ rõ để gợi ý một story cụ thể (hiện tại: có
+   * GardenStage). Companion chỉ thực sự kể chuyện qua
+   * `story-matching-engine.ts` (áp thêm cooldown/session rule riêng) —
+   * trường này chỉ là một gợi ý nhẹ, không phải lệnh "phải kể".
+   */
+  suggestedStoryId?: string;
+  storyReason?: string;
 };
 
 /**
@@ -161,6 +181,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
 
   const gardenCopy = GARDEN_COPY[signals.gardenStage];
   const companionState = states[TONE_TO_STATE[gardenCopy.tone]];
+  const storySuggestion = GARDEN_STORY_SUGGESTION[signals.gardenStage];
 
   return {
     companionState,
@@ -169,5 +190,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
     recommendedTone: gardenCopy.tone,
     shouldSpeak: true,
     voicesHeard,
+    suggestedStoryId: storySuggestion?.id,
+    storyReason: storySuggestion?.reason,
   };
 }

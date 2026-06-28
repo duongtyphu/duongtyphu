@@ -382,3 +382,13 @@ học cách lên tiếng đúng lúc, nhẹ nhàng và có chủ đích.
 
 *Liên quan: `COMPANION_PROACTIVE_THOUGHTS.md`, `proactive-thoughts.ts`,
 `proactive-thought-engine.ts`, `CompanionThoughtBubble.tsx`.*
+
+## Sprint 13.2 — Living Stories Engine
+
+Hôm nay Companion học được rằng đôi khi một câu chuyện đúng lúc có thể
+đồng hành sâu hơn một lời khuyên. Companion bắt đầu học cách kể những
+câu chuyện nhỏ, có ý nghĩa, đúng thời điểm và luôn tôn trọng con người.
+
+*Liên quan: `LIVING_STORIES_ENGINE.md`, `living-stories.ts`,
+`story-matching-engine.ts`, `CompanionStoryMoment.tsx`,
+`docs/product-bible/BOOK_LIVING_STORIES.md`.*

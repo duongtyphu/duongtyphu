@@ -26,6 +26,7 @@ import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
 import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
 import { CompanionThoughtBubble } from "@/components/portal/companion/CompanionThoughtBubble";
+import { CompanionStoryMoment } from "@/components/portal/companion/CompanionStoryMoment";
 import { getCompanionDecision } from "@/lib/portal/intelligence/portal-brain";
 import {
   readStoredGardenStage,
@@ -40,9 +41,12 @@ import {
   pauseProactiveThoughtsForSession,
 } from "@/lib/portal/companion/proactive-thought-engine";
 import type { CompanionThought } from "@/lib/portal/companion/proactive-thoughts";
+import { pickLivingStory, markStoryShown } from "@/lib/portal/companion/story-matching-engine";
+import type { LivingStory } from "@/lib/portal/companion/living-stories";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
+const STORY_CHECK_INTERVAL_MS = 7000;
 
 /**
  * Route dùng nhiều input/form (gõ nhiều) → anchored, đứng yên hẳn để
@@ -115,6 +119,7 @@ export function CompanionPresence() {
     readStoredReflectionMeaning()
   );
   const [thought, setThought] = useState<CompanionThought | null>(null);
+  const [story, setStory] = useState<LivingStory | null>(null);
   const [typingInput, setTypingInput] = useState(false);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -132,7 +137,10 @@ export function CompanionPresence() {
   // Nhiệm vụ 05 — Natural Timing: mốc "trang đã ổn định" reset mỗi khi route đổi.
   useEffect(() => {
     pageEnteredAt.current = Date.now();
-    const clearTimer = setTimeout(() => setThought(null), 0);
+    const clearTimer = setTimeout(() => {
+      setThought(null);
+      setStory(null);
+    }, 0);
     return () => clearTimeout(clearTimer);
   }, [pathname]);
 
@@ -184,6 +192,32 @@ export function CompanionPresence() {
     }, THOUGHT_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
   }, [open, minimized, typingInput, pathname, gardenStage, reflectionMeaning, comeback, thought]);
+
+  // Nhiệm vụ 04/05 (Sprint 13.2) — Story Matching Engine: kiểm tra định kỳ, không
+  // hiện cùng lúc với một Proactive Thought đang hiện.
+  useEffect(() => {
+    if (open || minimized) return;
+    const interval = setInterval(() => {
+      if (thought || story) return;
+      const now = Date.now();
+      const picked = pickLivingStory(
+        { pathname: pathname ?? "/portal", gardenStage, reflectionMeaning },
+        {
+          isSpaceOpen: open,
+          isMinimized: minimized,
+          isTypingInput: typingInput,
+          timeOnPageMs: now - pageEnteredAt.current,
+          isComeback: comeback,
+        },
+        now
+      );
+      if (picked) {
+        markStoryShown(picked, now);
+        setStory(picked);
+      }
+    }, STORY_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [open, minimized, typingInput, pathname, gardenStage, reflectionMeaning, comeback, thought, story]);
 
   const decision = getCompanionDecision({ pathname: pathname ?? "/portal", gardenStage });
   const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
@@ -284,6 +318,7 @@ export function CompanionPresence() {
     setTimeout(() => setPulsing(false), 500);
     setComeback(false);
     setThought(null);
+    setStory(null);
     setOpen(true);
   }
 
@@ -355,6 +390,10 @@ export function CompanionPresence() {
                 setThought(null);
               }}
             />
+          )}
+
+          {!thought && story && (
+            <CompanionStoryMoment story={story} onDismiss={() => setStory(null)} />
           )}
 
           <div className="relative flex items-center justify-center">

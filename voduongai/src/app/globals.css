@@ -669,7 +669,8 @@ body {
   .companion-avatar-button--pulse,
   .companion-presence--drag-settle,
   .companion-greeting-bubble,
-  .companion-thought-bubble {
+  .companion-thought-bubble,
+  .companion-story-moment {
     animation: none;
     transition: none !important;
   }
