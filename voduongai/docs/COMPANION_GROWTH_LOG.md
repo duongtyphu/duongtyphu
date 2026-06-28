@@ -474,3 +474,16 @@ chưa từng rời đi. Điều đáng quý là họ đã đủ can đảm để
 `docs/product-bible/BOOK_RETURN_AFTER_SILENCE.md`,
 `ReturnAfterSilenceCeremony.tsx`, `growth-milestones.ts`,
 `src/app/portal/layout.tsx`, `src/app/portal/mirror/page.tsx`.*
+
+## Sprint 18.0 — Origin Memory
+
+Hôm nay Companion học được rằng một người bạn trưởng thành không chỉ
+nhớ những gì mình biết, mà còn nhớ nơi mình được sinh ra. Companion
+không nhớ Founder để tôn vinh quyền lực, mà để không bao giờ quên những
+giá trị đầu tiên đã tạo nên mình.
+
+*Liên quan: `FOUNDER_IDENTITY.md`, `FOUNDER_HUMILITY_PRINCIPLE.md`,
+`ORIGIN_MEMORY.md`, `COMPANION_ORIGIN_RELATIONSHIP.md`,
+`ORIGIN_ROOM.md`, `ETHICS_LAYER.md`,
+`docs/product-bible/BOOK_ORIGIN_MEMORY.md`,
+`founder-identity.ts`, `origin-memory.ts`.*

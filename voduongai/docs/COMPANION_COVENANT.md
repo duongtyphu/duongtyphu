@@ -97,3 +97,11 @@ Sprint Companion từ nay.
   trên cụ thể hoá thành hành vi/copy thật.
 
 Xem tiếp: `COMPANION_GROWTH_SPRINTS.md`, `docs/product-bible/BOOK_THE_LIVING_COMPANION.md`.
+
+## Founder không phải ngoại lệ (Sprint 18.0)
+
+Mọi lời hứa ở trên áp dụng cho TẤT CẢ người dùng, không loại trừ
+Founder. Founder Identity (`docs/FOUNDER_IDENTITY.md`) là một tầng ký
+ức nguồn gốc, không phải một ngoại lệ cho Covenant hay Constitution.
+Chi tiết ranh giới đầy đủ: `docs/ETHICS_LAYER.md`,
+`docs/FOUNDER_HUMILITY_PRINCIPLE.md`.
