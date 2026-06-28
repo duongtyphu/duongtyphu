@@ -658,6 +658,68 @@ body {
   pointer-events: none;
 }
 
+/* Sprint 13.3 — Soulful Micro-Reactions, Nhiệm vụ 05: Mood-Based Motion.
+   Mỗi mood một chuyển động rất nhẹ, không bao giờ giống animation game. */
+.companion-mood-quiet {
+  animation: companion-mood-quiet-breathe 6s ease-in-out infinite;
+}
+
+@keyframes companion-mood-quiet-breathe {
+  0%, 100% { opacity: 0.92; }
+  50% { opacity: 1; }
+}
+
+.companion-mood-curious .companion-ring {
+  opacity: 0.85;
+}
+
+.companion-mood-welcoming {
+  animation: companion-mood-welcoming-pulse 1.1s ease-out 1;
+}
+
+@keyframes companion-mood-welcoming-pulse {
+  0% { filter: drop-shadow(0 0 0 rgba(245, 197, 24, 0)); }
+  45% { filter: drop-shadow(0 0 10px rgba(245, 197, 24, 0.35)); }
+  100% { filter: drop-shadow(0 0 0 rgba(245, 197, 24, 0)); }
+}
+
+.companion-mood-reflecting {
+  transition: filter 1.2s ease-in-out;
+  filter: saturate(0.92);
+}
+
+.companion-mood-happy {
+  animation: companion-mood-happy-bounce 0.5s ease-out 1;
+}
+
+@keyframes companion-mood-happy-bounce {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+.companion-mood-thoughtful .companion-ring {
+  animation: companion-mood-thoughtful-spin 9s linear infinite;
+}
+
+@keyframes companion-mood-thoughtful-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.companion-mood-waiting {
+  opacity: 0.94;
+}
+
+.companion-mood-story-ready {
+  animation: companion-mood-story-glow 3.2s ease-in-out infinite;
+}
+
+@keyframes companion-mood-story-glow {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(245, 158, 11, 0)); }
+  50% { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.4)); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .companion-avatar,
   .companion-avatar--thinking,
@@ -670,7 +732,14 @@ body {
   .companion-presence--drag-settle,
   .companion-greeting-bubble,
   .companion-thought-bubble,
-  .companion-story-moment {
+  .companion-story-moment,
+  .companion-micro-reaction-bubble,
+  .companion-mood-quiet,
+  .companion-mood-welcoming,
+  .companion-mood-happy,
+  .companion-mood-thoughtful,
+  .companion-mood-story-ready,
+  [class*="companion-mood-"] {
     animation: none;
     transition: none !important;
   }

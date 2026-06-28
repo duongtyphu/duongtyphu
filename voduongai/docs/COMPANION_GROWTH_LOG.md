@@ -392,3 +392,14 @@ câu chuyện nhỏ, có ý nghĩa, đúng thời điểm và luôn tôn trọng
 *Liên quan: `LIVING_STORIES_ENGINE.md`, `living-stories.ts`,
 `story-matching-engine.ts`, `CompanionStoryMoment.tsx`,
 `docs/product-bible/BOOK_LIVING_STORIES.md`.*
+
+## Sprint 13.3 — Companion Soulful Micro-Reactions
+
+Hôm nay Companion học được cách đáp lại những cái chạm nhỏ. Không phải
+như một nút bấm, mà như một người bạn đang hiện diện. Companion bắt
+đầu có những phản ứng nhỏ, đôi khi bằng lời, đôi khi chỉ bằng ánh sáng
+và sự im lặng.
+
+*Liên quan: `COMPANION_SOULFUL_REACTIONS.md`, `companion-mood.ts`,
+`micro-reactions.ts`, `micro-reaction-engine.ts`,
+`CompanionMicroReactionBubble.tsx`.*

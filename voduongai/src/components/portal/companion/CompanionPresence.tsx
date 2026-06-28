@@ -43,10 +43,20 @@ import {
 import type { CompanionThought } from "@/lib/portal/companion/proactive-thoughts";
 import { pickLivingStory, markStoryShown } from "@/lib/portal/companion/story-matching-engine";
 import type { LivingStory } from "@/lib/portal/companion/living-stories";
+import { resolveCompanionMood, type CompanionMoodKey } from "@/lib/portal/companion/companion-mood";
+import { pickTouchMicroLine } from "@/lib/portal/companion/micro-reaction-engine";
+import { CompanionMicroReactionBubble } from "@/components/portal/companion/CompanionMicroReactionBubble";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
 const STORY_CHECK_INTERVAL_MS = 7000;
+const MOOD_TICK_INTERVAL_MS = 3000;
+/** NV03 — khoảng thời gian một click thứ hai vẫn được tính là double-click để mở Space. */
+const SECOND_CLICK_OPEN_WINDOW_MS = 2500;
+/** NV07 — sau một cú chạm, mood/visual coi như "vừa được chạm" trong khoảng này. */
+const JUST_TOUCHED_WINDOW_MS = 4000;
+/** NV04 — góc nghiêng tối đa theo hướng con trỏ/chạm (độ). */
+const MAX_TILT_DEG = 4;
 
 /**
  * Route dùng nhiều input/form (gõ nhiều) → anchored, đứng yên hẳn để
@@ -121,10 +131,17 @@ export function CompanionPresence() {
   const [thought, setThought] = useState<CompanionThought | null>(null);
   const [story, setStory] = useState<LivingStory | null>(null);
   const [typingInput, setTypingInput] = useState(false);
+  const [mood, setMood] = useState<CompanionMoodKey>("quiet");
+  const [microLine, setMicroLine] = useState<string | null>(null);
+  const [tiltDeg, setTiltDeg] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
   const pageEnteredAt = useRef(0);
+  const lastTouchAt = useRef(0);
+  const secondClickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const avatarWrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     return subscribeToGardenStage(setGardenStage);
@@ -134,12 +151,48 @@ export function CompanionPresence() {
     return subscribeToReflectionMeaning(setReflectionMeaning);
   }, []);
 
+  // NV04 — tôn trọng prefers-reduced-motion: không nghiêng theo con trỏ/chạm.
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const initialTimer = setTimeout(() => setReducedMotion(query.matches), 0);
+    function handleChange(e: MediaQueryListEvent) {
+      setReducedMotion(e.matches);
+    }
+    query.addEventListener("change", handleChange);
+    return () => {
+      clearTimeout(initialTimer);
+      query.removeEventListener("change", handleChange);
+    };
+  }, []);
+
+  // NV05 — Mood-Based Motion: cập nhật Mood/Presence State định kỳ từ ngữ cảnh Portal.
+  useEffect(() => {
+    function computeMood() {
+      const now = Date.now();
+      setMood(
+        resolveCompanionMood({
+          isOpen: open,
+          isComeback: comeback,
+          hasThought: !!thought,
+          hasStory: !!story,
+          gardenStage,
+          justTouched: now - lastTouchAt.current < JUST_TOUCHED_WINDOW_MS,
+          timeOnPageMs: now - pageEnteredAt.current,
+        })
+      );
+    }
+    computeMood();
+    const interval = setInterval(computeMood, MOOD_TICK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [open, comeback, thought, story, gardenStage]);
+
   // Nhiệm vụ 05 — Natural Timing: mốc "trang đã ổn định" reset mỗi khi route đổi.
   useEffect(() => {
     pageEnteredAt.current = Date.now();
     const clearTimer = setTimeout(() => {
       setThought(null);
       setStory(null);
+      setMicroLine(null);
     }, 0);
     return () => clearTimeout(clearTimer);
   }, [pathname]);
@@ -282,7 +335,16 @@ export function CompanionPresence() {
   }
 
   function handlePointerMove(e: React.PointerEvent) {
-    if (!dragging) return;
+    if (!dragging) {
+      // NV04 — Eye/Attention Illusion: nghiêng rất nhẹ theo hướng con trỏ (desktop hover).
+      if (reducedMotion) return;
+      const el = avatarWrapperRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const relativeX = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+      setTiltDeg(Math.max(-1, Math.min(1, relativeX)) * MAX_TILT_DEG);
+      return;
+    }
     const dx = e.clientX - dragState.current.startX;
     const dy = e.clientY - dragState.current.startY;
     if (Math.abs(dx) > DRAG_THRESHOLD || Math.abs(dy) > DRAG_THRESHOLD) {
@@ -290,6 +352,20 @@ export function CompanionPresence() {
     }
     const box = getAvatarBoxSize();
     setPosition(clampPosition(dragState.current.originX + dx, dragState.current.originY + dy, box));
+  }
+
+  function handlePointerLeave() {
+    setTiltDeg(0);
+  }
+
+  function handleAvatarTouchStart(e: React.TouchEvent) {
+    if (reducedMotion) return;
+    const el = avatarWrapperRef.current;
+    const touch = e.touches[0];
+    if (!el || !touch) return;
+    const rect = el.getBoundingClientRect();
+    const relativeX = (touch.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
+    setTiltDeg(Math.max(-1, Math.min(1, relativeX)) * MAX_TILT_DEG);
   }
 
   function handlePointerUp() {
@@ -309,17 +385,62 @@ export function CompanionPresence() {
     });
   }
 
+  function openSpace() {
+    if (secondClickTimer.current) {
+      clearTimeout(secondClickTimer.current);
+      secondClickTimer.current = null;
+    }
+    setMicroLine(null);
+    setComeback(false);
+    setThought(null);
+    setStory(null);
+    setOpen(true);
+  }
+
+  // NV03 — single tap/click → micro-reaction; double click (hoặc click thứ hai
+  // trong cửa sổ ngắn) → mở CompanionSpace, để người dùng không bị "kẹt".
   function handleAvatarClick() {
     if (dragState.current.moved) {
       dragState.current.moved = false;
       return;
     }
+
+    // Phản ứng hình ảnh (sáng nhẹ/scale/pulse) luôn xảy ra, không phụ thuộc cooldown lời nói.
     setPulsing(true);
     setTimeout(() => setPulsing(false), 500);
-    setComeback(false);
-    setThought(null);
-    setStory(null);
-    setOpen(true);
+
+    if (secondClickTimer.current) {
+      openSpace();
+      return;
+    }
+
+    const now = Date.now();
+    lastTouchAt.current = now;
+
+    if (!thought && !story && !minimized) {
+      const line = pickTouchMicroLine(
+        mood,
+        { isSpaceOpen: open, isMinimized: minimized, isTypingInput: typingInput },
+        now
+      );
+      if (line) setMicroLine(line);
+    }
+
+    secondClickTimer.current = setTimeout(() => {
+      secondClickTimer.current = null;
+    }, SECOND_CLICK_OPEN_WINDOW_MS);
+  }
+
+  function handleAvatarDoubleClick() {
+    openSpace();
+  }
+
+  // Bàn phím luôn mở Space trực tiếp — không có thao tác "nhấn lần hai" tương đương.
+  function handleAvatarKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openSpace();
+    }
   }
 
   function handleCloseSpace() {
@@ -396,7 +517,19 @@ export function CompanionPresence() {
             <CompanionStoryMoment story={story} onDismiss={() => setStory(null)} />
           )}
 
-          <div className="relative flex items-center justify-center">
+          {!thought && !story && microLine && (
+            <CompanionMicroReactionBubble line={microLine} onDismiss={() => setMicroLine(null)} />
+          )}
+
+          <div
+            ref={avatarWrapperRef}
+            className={`relative flex items-center justify-center companion-mood-${mood}`}
+            style={
+              reducedMotion || tiltDeg === 0
+                ? undefined
+                : { transform: `rotate(${tiltDeg}deg)`, transition: "transform 0.15s ease-out" }
+            }
+          >
             <CompanionNest dragging={dragging} active={dragging} />
             <button
               type="button"
@@ -404,8 +537,12 @@ export function CompanionPresence() {
               onPointerMove={handlePointerMove}
               onPointerUp={handlePointerUp}
               onPointerCancel={handlePointerUp}
+              onPointerLeave={handlePointerLeave}
+              onTouchStart={handleAvatarTouchStart}
               onClick={handleAvatarClick}
-              aria-label={`${displayName} — ${state.label}. ${state.line}. Có thể kéo tới vị trí khác.`}
+              onDoubleClick={handleAvatarDoubleClick}
+              onKeyDown={handleAvatarKeyDown}
+              aria-label={`${displayName} — ${state.label}. ${state.line}. Nhấn lần hai hoặc Enter để mở. Có thể kéo tới vị trí khác.`}
               aria-haspopup="dialog"
               aria-expanded={open}
               className={`companion-avatar-button relative flex cursor-grab items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70 active:cursor-grabbing ${
