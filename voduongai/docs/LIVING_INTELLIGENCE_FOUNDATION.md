@@ -128,3 +128,11 @@ không chỉ một bài học AI.
 
 Xem `docs/LIVING_INTELLIGENCE_MAP.md` cho việc đặt từng hệ thống Portal
 hiện có vào đúng vị trí trong Framework/Cycle này.
+
+## 6. Cập nhật Sprint 14.0 — Human Growth Map là lăng kính nhìn lại Cycle
+
+Human Growth Map (`docs/HUMAN_GROWTH_MAP.md`) không phải một trụ cột mới
+của Living Intelligence — nó là lăng kính nhìn LẠI những dấu chân đã đi
+qua trong Cycle (Reflection, Action, Growth...) và kể lại bằng ngôn ngữ
+con người, không bằng chỉ số. Cùng ràng buộc đã nêu ở mục 5: không gắn
+điểm số/rank, chỉ dùng để định vị/nhìn lại, không dùng để so sánh.

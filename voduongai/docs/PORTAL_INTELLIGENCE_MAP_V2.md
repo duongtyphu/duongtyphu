@@ -108,3 +108,12 @@ dây kỹ thuật là nguyên tắc đứng sau: Portal không đo "Reflection n
 sâu bao nhiêu" — Portal chỉ hỏi "Reflection này đang nói điều gì về con
 người". Xem `docs/REFLECTION_MEANING_ENGINE.md` và NGUYÊN LÝ 11
 trong `docs/FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`.
+
+### Cập nhật Sprint 14.0 — Human Growth Map kết nối các tiếng nói thành một bản đồ
+
+Sprint 14.0 thêm một lớp đọc lại các tiếng nói nội tâm theo thời gian:
+Reflection, Memory Capsule, Garden Stage được chuyển thành `GrowthSignal`
+(`growth-signals.ts`), rồi dịch thành Growth Timeline, Growth Milestone,
+và một câu phản chiếu của Companion. Đây không phải một OS/Engine mới
+trong sơ đồ V2 — nó là một lăng kính nhìn lại các OS/Engine đã có, không
+gắn điểm số hay rank. Xem `docs/HUMAN_GROWTH_MAP.md`.

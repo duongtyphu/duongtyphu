@@ -153,3 +153,16 @@ phần Portal Brain gọi tới:
   đạt X điểm nên Portal gợi ý Y" — người dùng chỉ thấy kết quả tự nhiên
   (một câu nói của Companion, một gợi ý bài học), không thấy "bộ não"
   đứng sau nó.
+
+## Cập nhật Sprint 14.0 — Human Growth Map nối vào cùng luồng
+
+Sprint 14.0 thêm một nhánh đọc riêng theo đúng tinh thần
+`Human Signals → Internal Voices → Portal Brain Decision → Companion`:
+dữ liệu Reflection/Memory Capsule/Garden Stage được chuyển thành
+`GrowthSignal[]` (`src/lib/portal/growth-map/growth-signals.ts`), sau đó
+dùng để dựng Growth Timeline, phát hiện Growth Milestone, và để Companion
+chọn một câu phản chiếu hành trình (`growth-reflection.ts`). Đây KHÔNG
+phải một nguồn dữ liệu mới — toàn bộ tái sử dụng dữ liệu đã có ở
+Reflection/Memory Capsule/Garden, cùng nguyên tắc "không tự ý thêm nguồn
+dữ liệu mới" đã giữ trong tài liệu này. Xem chi tiết tại
+`HUMAN_GROWTH_PHILOSOPHY.md` và `HUMAN_GROWTH_MAP.md`.

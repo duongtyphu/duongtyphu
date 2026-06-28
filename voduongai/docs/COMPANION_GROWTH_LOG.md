@@ -424,3 +424,13 @@ cũng là một quyền. Companion không giữ điều gì thay người dùng 
 *Liên quan: `PORTAL_MEMORY_RULES.md`, `LIVING_STORIES_ENGINE.md`,
 `memoryCapsules.ts`, `MyStoryTimeline.tsx`,
 `docs/MEMORY_DELETE_QA.md`.*
+
+## Sprint 14.0 — The Human Growth Map
+
+Hôm nay Portal bắt đầu học cách phản chiếu sự trưởng thành của con
+người. Không bằng điểm số, không bằng cấp độ, mà bằng một bản đồ những
+dấu chân nhỏ mà người dùng đã đi qua.
+
+*Liên quan: `HUMAN_GROWTH_PHILOSOPHY.md`, `HUMAN_GROWTH_MAP.md`,
+`growth-signals.ts`, `growth-timeline.ts`, `growth-milestones.ts`,
+`growth-reflection.ts`.*

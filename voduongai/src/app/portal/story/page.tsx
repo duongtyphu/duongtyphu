@@ -14,6 +14,7 @@ import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
 import { buildUnderstandingNote, detectGrowthPattern, buildGrowingQualities } from "@/lib/portal/human-understanding";
+import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
 
 export const metadata = {
   title: "My Story",
@@ -127,6 +128,8 @@ export default async function MyStoryPage() {
     })),
   ].sort((a, b) => b.date.getTime() - a.date.getTime());
 
+  const growthSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
+
   return (
     <div className="space-y-8">
       <GemCard variant="featured" className="!p-7 sm:!p-8">
@@ -154,6 +157,21 @@ export default async function MyStoryPage() {
       <UnderstandingNoteCard note={buildUnderstandingNote(reflections)} pattern={detectGrowthPattern(reflections)} />
 
       <HumanGrowthDashboardCard qualities={buildGrowingQualities(reflections)} />
+
+      <GemCard>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">Bản đồ trưởng thành</p>
+        <p className="mt-2 text-sm text-white/70">
+          {growthSignals.length === 0
+            ? "Bản đồ trưởng thành của bạn đang chờ những dấu chân đầu tiên."
+            : "Nhìn lại những dấu chân nhỏ đã tạo nên hành trình của bạn."}
+        </p>
+        <a
+          href="#story-timeline"
+          className="mt-3 inline-block text-sm font-semibold text-[#22D3EE] hover:underline"
+        >
+          Xem My Story
+        </a>
+      </GemCard>
 
       <section>
         <div className="flex items-end justify-between">
@@ -188,7 +206,7 @@ export default async function MyStoryPage() {
         }}
       />
 
-      <section>
+      <section id="story-timeline">
         <h2 className="text-lg font-bold text-white">Dòng thời gian của bạn</h2>
         <div className="mt-4 space-y-3">
           {!storageReady && (
