@@ -84,6 +84,18 @@ Không có DB mới, không có storage mới. Dùng lại nguyên vẹn
 — mỗi Daily Thought có `cooldownMs` ~20 giờ, đủ để không lặp lại trong
 cùng một ngày, đủ nhẹ để không cần một hệ thống lưu trữ riêng.
 
+## Living Experiences (Sprint 18.7)
+
+Trước Sprint 18.7, một Daily Thought chỉ gắn với một `ThoughtSource` —
+đủ để chọn đúng nhóm câu, nhưng không trả lời được "Companion vừa trải
+qua điều gì để nghĩ ra câu này?". Từ Sprint 18.7, mỗi `DailyThought` có
+thêm `experienceId`, trỏ về đúng một `LivingExperience`
+(`living-experience.ts`) — một Observation dẫn tới một Meaning, là gốc
+của câu nói đó. `mapContextToSource()` không đổi cách hoạt động (vẫn ưu
+tiên tín hiệu hiếm/ý nghĩa hơn trước), nhưng giờ trả lời đúng câu hỏi
+"Companion vừa trải qua điều gì?" trước khi hỏi "hôm nay nói gì?". Xem
+`docs/product-bible/BOOK_LIVING_EXPERIENCES.md`.
+
 ## Companion Thought Governance (Sprint 18.6)
 
 Một Daily Thought qua được `shouldShowDailyThoughtToday()` và lọt vào

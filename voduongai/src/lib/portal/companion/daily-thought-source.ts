@@ -16,6 +16,8 @@
  * page/layout từ dữ liệu đã có sẵn (lifeMoment, gardenStage,...).
  */
 
+import type { ExperienceSource } from "@/lib/portal/companion/living-experience";
+
 /** 9 nguồn suy nghĩ ban đầu — đúng danh sách đã định nghĩa, không thêm tuỳ ý. */
 export type ThoughtSource =
   | "garden"
@@ -27,6 +29,21 @@ export type ThoughtSource =
   | "life-moments"
   | "origin-memory"
   | "companion-chapter";
+
+/**
+ * Sprint 18.7 — Living Experiences: mỗi `ThoughtSource` truy ngược về
+ * đúng một `ExperienceSource` (`living-experience.ts`), nguồn để chọn
+ * `LivingExperience` mà một Daily Thought bắt nguồn từ. "companion-chapter"
+ * không có trong 8 ExperienceSource chính thức — một chương mới của
+ * Companion tự nó cũng là một dạng "journey" (hành trình của chính
+ * Companion, không phải của người dùng), nên gộp vào đó thay vì thêm một
+ * ExperienceSource thứ 9 chỉ để phục vụ một nhóm rất nhỏ.
+ */
+export function toExperienceSource(source: ThoughtSource): ExperienceSource {
+  if (source === "origin-memory") return "origin";
+  if (source === "companion-chapter") return "journey";
+  return source;
+}
 
 /**
  * Ngữ cảnh hiện tại của một Portal session — Daily Thought đọc từ đây để

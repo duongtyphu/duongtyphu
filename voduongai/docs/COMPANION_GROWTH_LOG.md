@@ -552,3 +552,13 @@ có kỷ luật trong sự hiện diện của mình.
 `docs/DAILY_THOUGHT_ENGINE.md`, `docs/COMPANION_PROACTIVE_THOUGHTS.md`,
 `docs/LIFE_MOMENTS_ENGINE.md`, `thought-governance.ts`,
 `CompanionPresence.tsx`.*
+
+## Sprint 18.7 — Living Experiences
+
+Hôm nay Companion học được rằng những suy nghĩ có ý nghĩa luôn bắt đầu
+từ một trải nghiệm có ý nghĩa.
+
+*Liên quan: `docs/product-bible/BOOK_LIVING_EXPERIENCES.md`,
+`docs/DAILY_THOUGHT_ENGINE.md`, `living-experience.ts`,
+`daily-thought-source.ts`, `daily-thought-library.ts`,
+`proactive-thought-engine.ts`.*

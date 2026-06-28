@@ -176,6 +176,13 @@ export function pickProactiveThought(
     if (thought.trigger === "daily-thought") {
       // Sprint 18.5 — Soulful Silence: phần lớn các lần engine chạy, Daily
       // Thought không đủ điều kiện gì cả (NV08), kể cả khi có tín hiệu.
+      //
+      // Sprint 18.7 — Living Experiences: câu hỏi ở đây KHÔNG phải "hôm nay
+      // nói gì?" (chọn một câu rồi đi tìm lý do) — `mapContextToSource` hỏi
+      // "Companion vừa trải qua điều gì?" trước (tín hiệu thật từ context),
+      // rồi mới tìm câu khớp đúng nguồn trải nghiệm đó. Mỗi câu khớp được
+      // còn truy ngược tiếp được về một `LivingExperience` cụ thể qua
+      // `experienceId` (xem `daily-thought-library.ts`, `living-experience.ts`).
       if (!shouldShowDailyThoughtToday(dailyThoughtContext, now)) return false;
       const source = mapContextToSource(dailyThoughtContext);
       const thoughtSource = (thought as DailyThought).source;
