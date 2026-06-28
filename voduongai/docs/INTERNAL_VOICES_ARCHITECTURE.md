@@ -5,6 +5,18 @@
 > `docs/HUMAN_CONTEXT_ENGINE.md`. Đây là tài liệu KIẾN TRÚC + NGÔN NGỮ —
 > không phải tính năng mới, không phải AI backend mới.
 
+## Cập nhật Sprint 12.3 — Reflection có tiếng nói thật, không phải độ sâu
+
+Sprint 12.3 ("Reflection Meaning Engine") nối tín hiệu thật đầu tiên
+trong bảng dưới đây: Reflection. `reflectionDepth` (placeholder cũ) bị
+loại bỏ hoàn toàn khỏi `PortalSignals`, thay bằng `reflectionMeaning` —
+một `ReflectionMeaning` (Kiên trì, Tò mò, Can đảm, Khiêm tốn, Đóng góp,
+Biết ơn, Phục hồi, Tập trung, Khám phá, Trách nhiệm), KHÔNG có thứ tự
+hơn/kém. Reflection voice giờ có ưu tiên `"high"` — cao nhất trong các
+tiếng nói — vì khi người dùng vừa viết Reflection, đó thường là tín
+hiệu đáng được Companion lắng nghe trước các tiếng nói khác. Xem chi
+tiết tại `docs/REFLECTION_MEANING_ENGINE.md`.
+
 ## Internal Voices là gì
 
 Sprint 12.1 đã chứng minh một mạch: Human Signals → Portal Brain →
@@ -62,7 +74,7 @@ Human Signals → Internal Voices → Portal Brain Decision → Companion Respon
 | Companion | Người bạn đồng hành | "Mình đang ở đây." | Lên tiếng khi có greeting/insight từ tiếng nói khác hoặc route; im lặng khi không có tín hiệu nào đủ rõ (`silenceReason`) |
 | Living Garden | Ý chí / sự trưởng thành | "Mình đang lớn lên từng chút." | `gardenStage`: dormant, sprouting, rooting, rising, blooming, radiant |
 | Story | Ký ức | "Mình nhớ bạn đã đi qua điều gì." | milestone, memory capsule, reflection history (`storyMomentum`, tương lai) |
-| Reflection | Nội tâm | "Hôm nay mình thật sự nghĩ gì?" | depth, emotion, challenge, insight (`reflectionDepth`, tương lai) |
+| Reflection | Nội tâm | "Hôm nay mình thật sự nghĩ gì?" | `reflectionMeaning` — ý nghĩa Reflection truyền tải, không phải độ sâu (Sprint 12.3, xem `docs/REFLECTION_MEANING_ENGINE.md`) |
 | Knowledge | Trí tuệ | "Điều gì mình cần hiểu trước khi hành động?" | topic, difficulty, prerequisite, next concept (`learningFocus`, tương lai) |
 | Journey | Con đường | "Mình đang ở đâu trên hành trình?" | current OS, current stage, next path (`journeyState`, tương lai) |
 | Build | Năng lực kiến tạo | "Mình đang tạo ra giá trị gì?" | project, action, system, income, brand (tương lai) |
@@ -112,7 +124,8 @@ thuật:
   nói có tín hiệu thật (Garden, Story, Reflection*, Knowledge) mới được
   lập trình; phần còn lại là kiến trúc chờ.
 
-*Reflection voice hiện chỉ kiểm tra `reflectionDepth !== undefined`
-trong `PortalSignals` — chưa có nơi nào thực sự gán giá trị này (chưa
-có Reflection Depth Engine thật), nên trong thực tế tiếng nói Reflection
-hiện luôn im lặng. Đây là chỗ nối sẵn cho sprint sau, không phải bug.
+*Từ Sprint 12.3, Reflection voice đọc `reflectionMeaning` trong
+`PortalSignals` (xem `docs/REFLECTION_MEANING_ENGINE.md`) — KHÔNG đọc
+độ sâu hay điểm số. `detectReflectionMeaning()` là rule-based thuần,
+khớp từ khoá; nếu không khớp gì, trả về `null` và Reflection voice vẫn
+im lặng — Portal không ép phân loại khi không nhận ra ý nghĩa nào.

@@ -7,6 +7,7 @@
  */
 
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
+import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 
 export type InternalVoiceKey =
   | "companion"
@@ -32,7 +33,7 @@ export type InternalVoice = {
 
 export type VoiceSignal = Pick<
   PortalSignals,
-  "gardenStage" | "pathname" | "reflectionDepth" | "learningFocus" | "storyMomentum"
+  "gardenStage" | "pathname" | "reflectionMeaning" | "learningFocus" | "storyMomentum"
 >;
 
 export type VoiceMessage = {
@@ -78,12 +79,31 @@ function StoryVoice(signals: VoiceSignal): VoiceMessage | null {
   };
 }
 
+/**
+ * Sprint 12.3 — Reflection Meaning Engine. Reflection không nói "depth
+ * cao/thấp" — nó chỉ nói ý nghĩa nó nhận ra ở người dùng. Không có
+ * tốt/xấu giữa các nhánh dưới đây — `recovery` (nghỉ ngơi) được lắng
+ * nghe với cùng sự trân trọng như `persistence` (kiên trì).
+ */
+const REFLECTION_VOICE_LINES: Record<ReflectionMeaning, string> = {
+  persistence: "Hôm nay mình nghe thấy sự kiên trì.",
+  curiosity: "Hôm nay mình nghe thấy một sự tò mò muốn hiểu thêm.",
+  courage: "Mình nghe thấy một chút can đảm trong điều bạn vừa chia sẻ.",
+  humility: "Mình nghe thấy một sự can đảm khi dám nhìn lại chính mình.",
+  contribution: "Mình nghe thấy bạn đã nghĩ đến người khác hôm nay.",
+  gratitude: "Mình nghe thấy một lòng biết ơn trong điều bạn vừa viết.",
+  recovery: "Có lẽ hôm nay điều quan trọng nhất không phải tiến lên, mà là nghỉ ngơi.",
+  focus: "Mình nghe thấy một sự tập trung rất rõ trong điều bạn vừa chia sẻ.",
+  discovery: "Mình nghe thấy bạn vừa nhận ra một điều mới về chính mình.",
+  responsibility: "Mình nghe thấy một sự trách nhiệm trong điều bạn vừa chia sẻ.",
+};
+
 function ReflectionVoice(signals: VoiceSignal): VoiceMessage | null {
-  if (signals.reflectionDepth === undefined) return null;
+  if (!signals.reflectionMeaning) return null;
   return {
     voice: "reflection",
-    line: "Hôm nay mình thật sự nghĩ gì — câu hỏi đó vẫn đang chờ.",
-    priority: "medium",
+    line: REFLECTION_VOICE_LINES[signals.reflectionMeaning],
+    priority: "high",
   };
 }
 

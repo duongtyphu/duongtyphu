@@ -13,6 +13,15 @@
  * Internal `intensity` (0–1) chỉ dùng để tính độ "tươi" của hiệu ứng
  * hiển thị (glow, số lá/hoa vẽ ra) — không bao giờ hiển thị ra UI dưới
  * dạng điểm số, %, hay con số trần trụi.
+ *
+ * Sprint 12.3 (Reflection Meaning Engine) — ràng buộc kiến trúc: hàm
+ * này CHỈ CỘNG, không bao giờ trừ. Một Reflection mang ý nghĩa
+ * `recovery` (nghỉ ngơi) vẫn được tính là một "rễ" đã có, giống như
+ * `persistence` — Garden không phạt, không giảm, không héo vì ý nghĩa
+ * của Reflection là gì. Garden đọc SỰ TỒN TẠI của Reflection
+ * (`reflectionsCount`), không đọc ý nghĩa hay độ dài của nó — ý nghĩa
+ * Reflection chỉ dành cho Companion/Internal Voices lắng nghe, không
+ * dành cho Garden chấm điểm. Xem `docs/REFLECTION_MEANING_ENGINE.md`.
  */
 
 export type GardenStage = "dormant" | "sprouting" | "rooting" | "rising" | "blooming" | "radiant";

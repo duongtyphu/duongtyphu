@@ -81,10 +81,11 @@ ghi tín hiệu vào `localStorage` (tái dùng đúng pattern đã có cho
 `companion-presence-position`) và phát một custom event để Companion
 đang mở sẵn trên trang khác cũng cập nhật ngay, không cần reload.
 
-## Mở rộng về sau (Reflection / Knowledge / Story)
+## Mở rộng về sau (Knowledge / Story)
 
-Khi có tín hiệu thật từ Reflection (`reflectionDepth`), Knowledge
-(`learningFocus`), Story (`storyMomentum`), hay nhịp quay lại
+Sprint 12.3 đã nối tín hiệu thật đầu tiên — Reflection (`reflectionMeaning`,
+xem `docs/REFLECTION_MEANING_ENGINE.md`). Khi có tín hiệu thật từ
+Knowledge (`learningFocus`), Story (`storyMomentum`), hay nhịp quay lại
 (`lastComebackDays`), `journeyState`... mỗi tín hiệu mới chỉ cần:
 
 1. Một adapter thuần riêng (như `garden-signal.ts`) chuyển dữ liệu module

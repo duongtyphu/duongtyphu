@@ -1,8 +1,8 @@
 # First Principles of VO DUONG AI
-### "Hiến pháp VO DUONG AI" — 10 Nguyên lý bất biến
+### "Hiến pháp VO DUONG AI" — 11 Nguyên lý bất biến
 
 > Tài liệu quan trọng nhất của toàn bộ dự án. Không phải tài liệu mới —
-> đây là 10 nguyên lý đã lặp đi lặp lại, dưới nhiều hình thức khác
+> đây là 11 nguyên lý đã lặp đi lặp lại, dưới nhiều hình thức khác
 > nhau, qua `THE_COMPANION_CONSTITUTION.md`, `LETTER_TO_COMPANION.md`,
 > `BEFORE_YOU_BUILD.md`, `PRODUCT_DECISIONS.md`, `VO_DUONG_AI_
 > PHILOSOPHY.md`, `THE_LEARNING_DNA.md`, `HUMAN_OPERATING_SYSTEM.md`,
@@ -14,19 +14,21 @@
 > `THE_COMPANION_CONSTITUTION.md` (vốn chỉ chi phối hội thoại Companion)
 > — Hiến pháp này chi phối **mọi quyết định** của toàn hệ sinh thái:
 > Product, UX, UI, AI, Companion, Living Garden, Nội dung, Portal, Khoá
-> học, Cộng đồng. Khi một tài liệu khác mâu thuẫn với 10 nguyên lý dưới
+> học, Cộng đồng. Khi một tài liệu khác mâu thuẫn với 11 nguyên lý dưới
 > đây, tài liệu đó phải được xem xét lại — không phải Hiến pháp.
 
-## Cách 10 nguyên lý này được trích xuất
+## Cách 11 nguyên lý này được trích xuất
 
 Không lấy một danh sách giá trị lý tưởng rồi viết xuôi theo nó. Mỗi
 nguyên lý dưới đây chỉ được giữ lại vì nó xuất hiện, dưới nhiều cách
 diễn đạt khác nhau, ở **nhiều tài liệu độc lập, qua nhiều Sprint khác
-nhau** — danh sách đề xuất của Founder ở đầu Sprint này được đối chiếu
-ngược lại với toàn bộ tài liệu đã có, và được giữ nguyên cả 10 vì mỗi
-nguyên lý đều có thể truy ngược tới ít nhất 3 nguồn độc lập (xem mục
-"Vì sao nguyên lý này tồn tại" trong mỗi mục). Không nguyên lý nào được
-thêm mới ngoài 10 đề xuất của Founder.
+nhau** — danh sách đề xuất ban đầu của Founder được đối chiếu ngược lại
+với toàn bộ tài liệu đã có, và được giữ nguyên cả 10 vì mỗi nguyên lý
+đều có thể truy ngược tới ít nhất 3 nguồn độc lập (xem mục "Vì sao
+nguyên lý này tồn tại" trong mỗi mục). NGUYÊN LÝ 11 là nguyên lý duy
+nhất được thêm sau danh sách gốc — bổ sung tại Sprint 12.3, theo lời
+nhắn trực tiếp của Founder về Reflection Meaning Engine, và cũng truy
+ngược được tới các nguồn độc lập đã có từ trước (NL06, NL07).
 
 ---
 
@@ -429,6 +431,55 @@ thuật đã thành thạo.
 
 ---
 
+## NGUYÊN LÝ 11 — Portal không đánh giá con người, Portal chỉ cố hiểu con người
+
+**1. Ý nghĩa:** Portal không phải một bài kiểm tra. Mọi tín hiệu Portal
+lắng nghe từ con người — đặc biệt Reflection — không phải dữ liệu để
+chấm điểm, xếp hạng, hay đo "sâu/nông", "mạnh/yếu", "tốt/xấu". Portal
+chỉ được phép hỏi "điều này đang nói gì về con người", không bao giờ
+hỏi "điều này đáng bao nhiêu điểm".
+
+**2. Vì sao nguyên lý này tồn tại:** Sprint 12.3 — Reflection Meaning
+Engine (lời nhắn Founder, verbatim): "Reflection không phải bài kiểm
+tra. Reflection không phải dữ liệu để chấm điểm. Reflection là tiếng
+nói của nội tâm... Đó là khác biệt giữa phân tích và thấu hiểu." Đây là
+phần mở rộng trực tiếp của NL07 (Garden không phản ánh thành tích) và
+NL06 (Companion không điều khiển/phán xét) sang một nguyên lý độc lập,
+vì giới hạn này áp dụng cho *toàn bộ Portal*, không riêng Garden hay
+Companion.
+
+**3. Ảnh hưởng tới Product:** Không có thành phần nào trong Portal được
+phép hiển thị điểm số, %, rank, hay nhãn "sâu/nông" cho bất kỳ nội dung
+do người dùng tạo ra (Reflection, ghi chú, chia sẻ...).
+
+**4. Ảnh hưởng tới Companion:** Companion không nói "Reflection của bạn
+thuộc nhóm X" — Companion lắng nghe ý nghĩa rồi đồng hành bằng câu nói
+riêng của mình, ấm áp, không phân tích (`portal-brain.ts`,
+`COMPANION_REFLECTION_RESPONSE`).
+
+**5. Ảnh hưởng tới Living Garden:** Garden chỉ cộng, không bao giờ trừ.
+Một Reflection mang ý nghĩa `recovery` (nghỉ ngơi) được tính như một
+"rễ" đã có, giống `persistence` — Garden không phạt, không giảm, không
+héo vì ý nghĩa của Reflection là gì (`garden-model.ts`).
+
+**6. Ảnh hưởng tới Portal:** `ReflectionMeaning`
+(`reflection-meaning.ts`) chỉ là tập ý nghĩa (Kiên trì, Tò mò, Can đảm,
+Khiêm tốn...), không có thứ tự hơn/kém giữa các giá trị.
+
+**7. Ví dụ đúng:** "Mình rất vui vì hôm nay bạn đã quay lại." (Companion
+phản hồi ý nghĩa Persistence, không nhắc gì tới nhãn hay điểm số).
+
+**8. Ví dụ sai:** "Reflection hôm nay của bạn đạt mức độ sâu trung
+bình" hoặc "Bạn thuộc nhóm Persistence (Level 2)".
+
+**9. Checklist:**
+- [ ] Tính năng này có hiển thị bất kỳ điểm số/%/rank/nhãn so sánh nào
+  cho nội dung người dùng tự viết không?
+- [ ] Nếu thay "ý nghĩa" bằng "điểm chấm", câu nói này có còn giữ được
+  sự thấu hiểu, hay biến thành một bài kiểm tra?
+
+---
+
 ## Mâu thuẫn và trùng lặp — tự kiểm tra
 
 Không có nguyên lý nào trực tiếp mâu thuẫn nguyên lý khác. Có 2 cặp gần
@@ -443,11 +494,15 @@ nhau nhưng được giữ tách biệt vì trả lời câu hỏi khác nhau:
   phẩm, NL07 là cách nguyên lý đó được *thể hiện cụ thể* qua một thành
   phần (Living Garden). NL07 là ứng dụng của NL02, không phải một bản
   sao.
+- **NL06 (Companion không điều khiển) và NL11 (Portal không đánh giá
+  con người)** — NL06 nói về *quyền lựa chọn* (Companion không áp đặt
+  hành động), NL11 nói về *cách lắng nghe* (Portal không chấm điểm nội
+  tâm). Một nói về hành động, một nói về diễn giải — không trùng lặp.
 
 ## Cách dùng Hiến pháp này
 
 Trước khi quyết định bất kỳ điều gì cho Product/UX/UI/AI/Companion/
-Living Garden/Nội dung/Portal/Khoá học/Cộng đồng — đối chiếu với 10
+Living Garden/Nội dung/Portal/Khoá học/Cộng đồng — đối chiếu với 11
 nguyên lý trên. Nếu một quyết định không thể giải thích bằng bất kỳ
 nguyên lý nào, hoặc đi ngược lại một nguyên lý, quyết định đó phải được
 xem xét lại trước khi triển khai.

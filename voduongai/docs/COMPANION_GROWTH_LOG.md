@@ -283,3 +283,12 @@ là nội tâm, Knowledge là trí tuệ.
 
 *Liên quan: `INTERNAL_VOICES_ARCHITECTURE.md`, `PORTAL_BRAIN.md`,
 `FIRST_INTELLIGENCE_CIRCUIT.md`, `internal-voices.ts`.*
+
+## Sprint 12.3 — Companion học cách lắng nghe ý nghĩa, không đo độ sâu
+
+Hôm nay Portal từ bỏ việc đo độ sâu của Reflection. Portal bắt đầu học
+cách lắng nghe ý nghĩa của Reflection.
+
+*Liên quan: `REFLECTION_MEANING_ENGINE.md`, `INTERNAL_VOICES_ARCHITECTURE.md`,
+`PORTAL_BRAIN.md`, `FIRST_PRINCIPLES_OF_VO_DUONG_AI.md` (NGUYÊN LÝ 11),
+`reflection-meaning.ts`.*

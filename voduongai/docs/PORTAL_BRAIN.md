@@ -46,6 +46,19 @@ nói và `collectInternalVoices(signals)` (rule-based thuần, không AI) —
 `voicesHeard` trong `CompanionDecision`. API cũ không đổi. Xem chi tiết
 tại `docs/INTERNAL_VOICES_ARCHITECTURE.md`.
 
+## Cập nhật Sprint 12.3 — Portal Brain lắng nghe ý nghĩa Reflection, không đo độ sâu
+
+Sprint 12.3 ("Reflection Meaning Engine") nối tín hiệu thật đầu tiên
+cho tiếng nói Reflection. `PortalSignals.reflectionMeaning` thay cho
+placeholder `reflectionDepth` cũ — Portal Brain không nhận một con số
+độ sâu, mà nhận một `ReflectionMeaning` (Kiên trì, Tò mò, Can đảm...).
+`companionResponseToVoice()` (mới, trong `portal-brain.ts`) là lớp dịch
+riêng cho Reflection: khi tiếng nói to nhất là Reflection, Companion
+không lặp lại nguyên văn câu nói nội tâm — nó trả lời bằng giọng riêng
+của mình (`COMPANION_REFLECTION_RESPONSE`), ấm áp, không phân tích.
+Xem chi tiết tại `docs/REFLECTION_MEANING_ENGINE.md` và NGUYÊN LÝ 11
+trong `docs/FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`.
+
 ## Portal Brain là gì
 
 **Portal Brain KHÔNG phải AI. KHÔNG phải LLM. KHÔNG phải Chatbot.**

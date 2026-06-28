@@ -19,6 +19,7 @@ import {
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
 import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
+import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 
 export type CompanionTone =
   | "warm-quiet"
@@ -83,6 +84,25 @@ const TONE_TO_STATE: Record<CompanionTone, CompanionStateKey> = {
   neutral: "idle",
 };
 
+/**
+ * Sprint 12.3 — Nhiệm vụ 05. Companion KHÔNG lặp lại nguyên văn câu nói
+ * của Reflection Voice — Companion lắng nghe ý nghĩa đó rồi đồng hành
+ * theo cách của riêng nó (ấm áp, "mình", không phân tích). Không có
+ * dòng nào nói "Reflection của bạn thuộc nhóm X".
+ */
+const COMPANION_REFLECTION_RESPONSE: Record<ReflectionMeaning, string> = {
+  persistence: "Mình rất vui vì hôm nay bạn đã quay lại.",
+  curiosity: "Mình thích sự tò mò của bạn hôm nay.",
+  courage: "Mình thấy điều bạn vừa chia sẻ không dễ nói ra — cảm ơn bạn đã tin tưởng.",
+  humility: "Không phải ai cũng dám nhìn lại chính mình như vậy — mình trân trọng điều đó.",
+  contribution: "Mình rất vui vì hôm nay bạn đã nghĩ đến người khác.",
+  gratitude: "Mình cảm nhận được sự ấm áp trong điều bạn vừa viết.",
+  recovery: "Nghỉ ngơi hôm nay cũng là một bước tiến — mình ở đây cùng bạn.",
+  focus: "Mình thấy bạn đã thật sự ở đây, trọn vẹn, hôm nay.",
+  discovery: "Mình mừng vì bạn vừa nhận ra điều đó.",
+  responsibility: "Mình tin vào điều bạn vừa cam kết với chính mình.",
+};
+
 const PRIORITY_RANK: Record<VoiceMessage["priority"], number> = {
   high: 2,
   medium: 1,
@@ -107,17 +127,31 @@ function loudestVoice(voices: VoiceMessage[]): VoiceMessage | null {
  * nguồn copy chính cho `companionGreeting`/`companionState` (giữ đúng
  * API NV1.2 cũ — không phá tương thích).
  */
+/**
+ * Companion không lặp lại nguyên văn tiếng nói nội tâm to nhất — nếu đó
+ * là Reflection Voice, Companion dùng cách nói riêng của mình
+ * (`COMPANION_REFLECTION_RESPONSE`); với các tiếng nói khác, Companion
+ * hiện tại chỉ chuyển tiếp nguyên văn (chưa có lớp "dịch" riêng).
+ */
+function companionResponseToVoice(voice: VoiceMessage, signals: PortalSignals): string {
+  if (voice.voice === "reflection" && signals.reflectionMeaning) {
+    return COMPANION_REFLECTION_RESPONSE[signals.reflectionMeaning];
+  }
+  return voice.line;
+}
+
 export function getCompanionDecision(signals: PortalSignals): CompanionDecision {
   const routeState = getStateForPath(signals.pathname);
   const routeGreeting = getRouteGreeting(signals.pathname);
   const voicesHeard = collectInternalVoices(signals);
   const loudest = loudestVoice(voicesHeard);
+  const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals) : null;
 
   if (!signals.gardenStage) {
     return {
       companionState: routeState,
       companionGreeting: routeGreeting,
-      companionInsight: loudest?.line ?? null,
+      companionInsight: insightFromVoice,
       recommendedTone: "neutral",
       shouldSpeak: Boolean(routeGreeting) || Boolean(loudest),
       silenceReason: routeGreeting || loudest ? undefined : "no-signal",
@@ -131,7 +165,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   return {
     companionState,
     companionGreeting: gardenCopy.greeting,
-    companionInsight: loudest?.line ?? gardenCopy.greeting,
+    companionInsight: insightFromVoice ?? gardenCopy.greeting,
     recommendedTone: gardenCopy.tone,
     shouldSpeak: true,
     voicesHeard,

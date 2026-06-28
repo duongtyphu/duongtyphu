@@ -1,4 +1,5 @@
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
+import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 
 export type JourneyState = "starting" | "in-progress" | "completed";
 
@@ -9,7 +10,13 @@ export type PortalSignals = {
   journeyState?: JourneyState;
   learningFocus?: string;
   storyMomentum?: number;
-  reflectionDepth?: number;
+  /**
+   * Sprint 12.3 — Reflection Meaning Engine. KHÔNG phải điểm số/độ sâu
+   * ("Reflection này sâu bao nhiêu?") — là Ý NGHĨA Reflection đang
+   * truyền tải ("Reflection này đang nói điều gì về con người?"). Xem
+   * `docs/REFLECTION_MEANING_ENGINE.md`.
+   */
+  reflectionMeaning?: ReflectionMeaning;
 };
 
 const GARDEN_STAGE_KEY = "portal-signal-garden-stage";

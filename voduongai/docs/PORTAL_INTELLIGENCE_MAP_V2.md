@@ -97,3 +97,14 @@ bước lắng nghe ở giữa: `Human Signals → Internal Voices → Portal Br
 Decision → Companion`, lập trình tại
 `src/lib/portal/intelligence/internal-voices.ts`. Xem
 `docs/INTERNAL_VOICES_ARCHITECTURE.md` cho voice mapping đầy đủ.
+
+### Cập nhật Sprint 12.3 — Reflection có tín hiệu thật, Portal từ bỏ việc đo độ sâu
+
+Sprint 12.3 ("Reflection Meaning Engine") biến tiếng nói Reflection từ
+kiến trúc chờ thành tín hiệu thật đầu tiên có dữ liệu thật chạy qua:
+`detectReflectionMeaning()` → `PortalSignals.reflectionMeaning` →
+Reflection voice → Companion response riêng. Quan trọng hơn cách nối
+dây kỹ thuật là nguyên tắc đứng sau: Portal không đo "Reflection này
+sâu bao nhiêu" — Portal chỉ hỏi "Reflection này đang nói điều gì về con
+người". Xem `docs/REFLECTION_MEANING_ENGINE.md` và NGUYÊN LÝ 11
+trong `docs/FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`.
