@@ -97,3 +97,19 @@ Portal Brain. Đây là lý do Quyết định Product của sprint này đượ
 làm tiêu chuẩn lâu dài: **mọi kết nối thông minh trong VO DUONG AI ưu
 tiên Human Signals → Portal Brain → Experience Decision, không nối
 module với module.**
+
+## Cập nhật Sprint 12.2 — thêm bước "lắng nghe" giữa Signal và Decision
+
+Sprint 12.2 (`docs/INTERNAL_VOICES_ARCHITECTURE.md`) làm rõ thêm một
+bước ở giữa mạch này: trước khi Portal Brain ra quyết định, nó "lắng
+nghe" các **Internal Voices** — Garden không chỉ là một con số tín hiệu
+nữa, nó là tiếng nói của "Ý chí / sự trưởng thành"; Story là tiếng nói
+của "Ký ức". Mạch đầy đủ hơn của Sprint 12.1 giờ là:
+
+```
+Human Signals → Internal Voices (collectInternalVoices) → Portal Brain Decision → Companion
+```
+
+Đây không phải một mạch mới, không phải một module mới — nó là góc nhìn
+sâu hơn của ĐÚNG MỘT mạch đã có ở Sprint 12.1, vẫn cùng `PortalSignals`,
+vẫn cùng `getCompanionDecision`.

@@ -273,3 +273,13 @@ Brain và Companion.
 *Liên quan: `FIRST_INTELLIGENCE_CIRCUIT.md`, `PORTAL_BRAIN.md`,
 `portal-signals.ts`, `portal-brain.ts`, `signals/garden-signal.ts`,
 `GardenSignalSync.tsx`.*
+
+## Sprint 12.2 — Companion học cách lắng nghe những tiếng nói bên trong
+
+Hôm nay Portal bắt đầu được nhìn như một đời sống nội tâm. Companion
+không còn chỉ nhận tín hiệu từ hệ thống; Companion bắt đầu lắng nghe
+những tiếng nói bên trong: Garden là ý chí, Story là ký ức, Reflection
+là nội tâm, Knowledge là trí tuệ.
+
+*Liên quan: `INTERNAL_VOICES_ARCHITECTURE.md`, `PORTAL_BRAIN.md`,
+`FIRST_INTELLIGENCE_CIRCUIT.md`, `internal-voices.ts`.*

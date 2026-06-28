@@ -26,6 +26,26 @@ Knowledge, Next Step trong bảng dưới đây vẫn là HƯỚNG THIẾT KẾ 
 sprint sau, chưa có code thật. Xem chi tiết kiến trúc và lý do tại
 `docs/FIRST_INTELLIGENCE_CIRCUIT.md`.
 
+## Cập nhật Sprint 12.2 — Portal Brain lắng nghe Internal Voices trước khi quyết định
+
+Sprint 12.2 ("Internal Voices Architecture") thêm một bước GIỮA tín
+hiệu thô và quyết định: Portal không còn được xem là tập hợp module —
+mỗi OS/Engine là một **tiếng nói nội tâm** (Companion = Người bạn,
+Garden = Ý chí, Story = Ký ức, Reflection = Nội tâm, Knowledge = Trí
+tuệ, Journey = Con đường, Build = Năng lực kiến tạo, Connect = Mối quan
+hệ, Legacy = Di sản). Luồng quyết định giờ là:
+
+```
+Human Signals → Internal Voices → Portal Brain Decision → Companion
+```
+
+`src/lib/portal/intelligence/internal-voices.ts` định nghĩa các tiếng
+nói và `collectInternalVoices(signals)` (rule-based thuần, không AI) —
+`getCompanionDecision` (`portal-brain.ts`) gọi nó trước, chọn tiếng nói
+đang "lên tiếng to nhất" làm `companionInsight`, và trả thêm
+`voicesHeard` trong `CompanionDecision`. API cũ không đổi. Xem chi tiết
+tại `docs/INTERNAL_VOICES_ARCHITECTURE.md`.
+
 ## Portal Brain là gì
 
 **Portal Brain KHÔNG phải AI. KHÔNG phải LLM. KHÔNG phải Chatbot.**

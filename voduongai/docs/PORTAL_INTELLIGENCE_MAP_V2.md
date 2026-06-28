@@ -85,3 +85,15 @@ quyết định Companion nói gì. Đây là cạnh DUY NHẤT trong toàn bộ
 trên có code thật tính tới Sprint 12.1 — mọi cạnh khác (Knowledge,
 Story, Next Step, Human Context đầy đủ) vẫn là thiết kế chờ. Xem
 `docs/FIRST_INTELLIGENCE_CIRCUIT.md` cho chi tiết và lý do kiến trúc.
+
+### Cập nhật Sprint 12.2 — Portal không còn được xem là tập hợp module
+
+Sprint 12.2 ("Internal Voices Architecture") đổi góc nhìn của toàn bộ
+sơ đồ V2: mỗi OS/Engine ở trên (Garden, Story, Companion, Knowledge,
+Journey, Build, Connect, Legacy, Reflection) không phải một "node dữ
+liệu" — nó là một tiếng nói nội tâm (Garden = Ý chí, Story = Ký ức,
+Reflection = Nội tâm...). Cạnh code thật ở Sprint 12.1 nay có thêm một
+bước lắng nghe ở giữa: `Human Signals → Internal Voices → Portal Brain
+Decision → Companion`, lập trình tại
+`src/lib/portal/intelligence/internal-voices.ts`. Xem
+`docs/INTERNAL_VOICES_ARCHITECTURE.md` cho voice mapping đầy đủ.

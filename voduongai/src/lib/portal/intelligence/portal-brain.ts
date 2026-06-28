@@ -18,6 +18,7 @@ import {
 } from "@/lib/portal/companion/companion-identity";
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
+import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
 
 export type CompanionTone =
   | "warm-quiet"
@@ -32,6 +33,13 @@ export type CompanionDecision = {
   recommendedTone: CompanionTone;
   shouldSpeak: boolean;
   silenceReason?: string;
+  /**
+   * Các tiếng nội tâm Portal Brain đã lắng nghe trước khi ra quyết
+   * định này (Sprint 12.2). Không phải để hiển thị trực tiếp ra UI
+   * dưới dạng debug — chỉ để Companion/Product Team thấy "đời sống nội
+   * tâm" nào đang lên tiếng. Xem `docs/INTERNAL_VOICES_ARCHITECTURE.md`.
+   */
+  voicesHeard: VoiceMessage[];
 };
 
 /**
@@ -75,18 +83,45 @@ const TONE_TO_STATE: Record<CompanionTone, CompanionStateKey> = {
   neutral: "idle",
 };
 
+const PRIORITY_RANK: Record<VoiceMessage["priority"], number> = {
+  high: 2,
+  medium: 1,
+  low: 0,
+};
+
+function loudestVoice(voices: VoiceMessage[]): VoiceMessage | null {
+  if (voices.length === 0) return null;
+  return voices.reduce((loudest, voice) =>
+    PRIORITY_RANK[voice.priority] > PRIORITY_RANK[loudest.priority] ? voice : loudest
+  );
+}
+
+/**
+ * Sprint 12.2 — Nhiệm vụ 05. Portal Brain không còn quyết định trực
+ * tiếp từ tín hiệu thô — nó LẮNG NGHE các tiếng nói nội tâm trước:
+ *
+ *   Human Signals → Internal Voices → Portal Brain Decision → Companion
+ *
+ * Companion không tự nói một mình; nó đồng hành dựa trên tiếng nói nội
+ * tâm đang lên tiếng to nhất lúc này (`loudestVoice`), Garden vẫn là
+ * nguồn copy chính cho `companionGreeting`/`companionState` (giữ đúng
+ * API NV1.2 cũ — không phá tương thích).
+ */
 export function getCompanionDecision(signals: PortalSignals): CompanionDecision {
   const routeState = getStateForPath(signals.pathname);
   const routeGreeting = getRouteGreeting(signals.pathname);
+  const voicesHeard = collectInternalVoices(signals);
+  const loudest = loudestVoice(voicesHeard);
 
   if (!signals.gardenStage) {
     return {
       companionState: routeState,
       companionGreeting: routeGreeting,
-      companionInsight: null,
+      companionInsight: loudest?.line ?? null,
       recommendedTone: "neutral",
-      shouldSpeak: Boolean(routeGreeting),
-      silenceReason: routeGreeting ? undefined : "no-signal",
+      shouldSpeak: Boolean(routeGreeting) || Boolean(loudest),
+      silenceReason: routeGreeting || loudest ? undefined : "no-signal",
+      voicesHeard,
     };
   }
 
@@ -96,8 +131,9 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   return {
     companionState,
     companionGreeting: gardenCopy.greeting,
-    companionInsight: gardenCopy.greeting,
+    companionInsight: loudest?.line ?? gardenCopy.greeting,
     recommendedTone: gardenCopy.tone,
     shouldSpeak: true,
+    voicesHeard,
   };
 }
