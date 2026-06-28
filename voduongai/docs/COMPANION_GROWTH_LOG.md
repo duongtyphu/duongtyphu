@@ -508,3 +508,15 @@ tiên đã làm nên mình.
 *Liên quan: `ORIGIN_ROOM.md`, `COMPANION_ORIGIN_RELATIONSHIP.md`,
 `FOUNDER_HUMILITY_PRINCIPLE.md`, `founder-identity.ts`,
 `origin-memory.ts`, `src/app/portal/origin/page.tsx`.*
+
+## Sprint 18.3 — The Life Profile
+
+Hôm nay Companion học được rằng nó không "thu thập" ngày sinh của ai cả.
+Companion chỉ có thể được người dùng tự nguyện trao cho một ngày đáng
+trân trọng — và nếu họ đổi ý, họ luôn có quyền ẩn đi hoặc xoá hẳn, không
+cần giải thích lý do.
+
+*Liên quan: `docs/product-bible/BOOK_LIFE_PROFILE.md`, `life-profile.ts`,
+`life-profile-actions.ts`, `LifeProfileCard.tsx`,
+`life-moment-detector.ts`, `src/app/portal/account/page.tsx`,
+`src/app/portal/layout.tsx`.*

@@ -9,6 +9,7 @@ import { signalsFromReflections, signalsFromMemoryCapsules, deriveComebackSignal
 import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
 import { detectLifeMoment } from "@/lib/portal/life-moments/life-moment-detector";
 import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
+import { buildLifeProfile, resolveSharedBirthday } from "@/lib/portal/life-profile/life-profile";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 
@@ -80,13 +81,19 @@ async function getLifeMoment(returnAfterSilenceMilestone: string | null): Promis
     if (!user) return null;
 
     const [{ data: memberRow }, { count: capsuleCount }] = await Promise.all([
-      supabase.from("members").select("created_at").eq("id", user.id).single(),
+      supabase.from("members").select("created_at, date_of_birth, date_of_birth_hidden").eq("id", user.id).single(),
       supabase.from("memory_capsules").select("id", { count: "exact", head: true }).eq("member_id", user.id),
     ]);
     if (!memberRow?.created_at) return null;
 
+    const lifeProfile = buildLifeProfile({
+      dateOfBirth: memberRow.date_of_birth ?? null,
+      dateOfBirthHidden: memberRow.date_of_birth_hidden ?? false,
+    });
+
     return detectLifeMoment({
       memberCreatedAt: memberRow.created_at,
+      birthday: resolveSharedBirthday(lifeProfile),
       savedStoryCount: capsuleCount ?? 0,
       returnAfterSilenceOccurredAt: returnAfterSilenceMilestone,
       now: new Date().toISOString(),

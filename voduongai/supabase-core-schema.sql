@@ -22,6 +22,12 @@ alter table members add column if not exists referral_code text;
 alter table members add column if not exists is_admin boolean not null default false;
 alter table members add column if not exists created_at timestamptz not null default now();
 
+-- Sprint 18.3 — The Life Profile: người dùng tự nguyện chia sẻ, không bị
+-- thu thập. `date_of_birth` chỉ được Companion dùng khi
+-- `date_of_birth_hidden = false` (xem `docs/product-bible/BOOK_LIFE_PROFILE.md`).
+alter table members add column if not exists date_of_birth date;
+alter table members add column if not exists date_of_birth_hidden boolean not null default false;
+
 alter table members enable row level security;
 drop policy if exists "members can read own row" on members;
 create policy "members can read own row" on members for select using (auth.uid() = id);

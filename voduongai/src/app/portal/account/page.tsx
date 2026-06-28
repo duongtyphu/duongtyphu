@@ -4,6 +4,8 @@ import { ProfileForm } from "@/components/portal/ProfileForm";
 import { SecurityPanel } from "@/components/portal/SecurityPanel";
 import { NotificationSettingsPanel } from "@/components/portal/NotificationSettingsPanel";
 import { ProfileTabs } from "@/components/portal/ProfileTabs";
+import { LifeProfileCard } from "@/components/portal/account/LifeProfileCard";
+import { buildLifeProfile } from "@/lib/portal/life-profile/life-profile";
 
 export const metadata = { title: "Tài khoản", description: "Quản lý hồ sơ, bảo mật và đơn hàng tài khoản VO DUONG AI của bạn.", robots: { index: false } };
 
@@ -19,24 +21,34 @@ type Order = {
 
 async function getAccountData() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { user: null, orders: [] as Order[], now: Date.now() };
+    return { user: null, orders: [] as Order[], now: Date.now(), lifeProfile: buildLifeProfile({ dateOfBirth: null, dateOfBirthHidden: false }) };
   }
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
-  if (!user?.email) return { user, orders: [] as Order[], now: Date.now() };
+  if (!user?.email) {
+    return { user, orders: [] as Order[], now: Date.now(), lifeProfile: buildLifeProfile({ dateOfBirth: null, dateOfBirthHidden: false }) };
+  }
 
-  const { data } = await supabase
-    .from("orders")
-    .select("id, product_name, status, created_at, confirmed_at, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
-    .eq("member_email", user.email)
-    .order("created_at", { ascending: false });
+  const [{ data }, { data: memberRow }] = await Promise.all([
+    supabase
+      .from("orders")
+      .select("id, product_name, status, created_at, confirmed_at, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
+      .eq("member_email", user.email)
+      .order("created_at", { ascending: false }),
+    supabase.from("members").select("date_of_birth, date_of_birth_hidden").eq("id", user.id).single(),
+  ]);
 
-  return { user, orders: (data as unknown as Order[]) ?? [], now: Date.now() };
+  const lifeProfile = buildLifeProfile({
+    dateOfBirth: memberRow?.date_of_birth ?? null,
+    dateOfBirthHidden: memberRow?.date_of_birth_hidden ?? false,
+  });
+
+  return { user, orders: (data as unknown as Order[]) ?? [], now: Date.now(), lifeProfile };
 }
 
 export default async function AccountPage() {
-  const { user, orders, now } = await getAccountData();
+  const { user, orders, now, lifeProfile } = await getAccountData();
 
   if (!user) {
     return (
@@ -77,7 +89,12 @@ export default async function AccountPage() {
       key: "info",
       label: "Thông tin",
       icon: "📋",
-      content: <ProfileForm meta={meta} />,
+      content: (
+        <div className="space-y-4">
+          <ProfileForm meta={meta} />
+          <LifeProfileCard lifeProfile={lifeProfile} />
+        </div>
+      ),
     },
     {
       key: "security",
