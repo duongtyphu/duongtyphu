@@ -8,16 +8,22 @@ import { PortalSidebar } from "@/components/portal/PortalSidebar";
 import { GemBackground } from "@/components/portal/ui/GemBackground";
 import { CompanionPresence } from "@/components/portal/companion/CompanionPresence";
 import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
+import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
 
 const COLLAPSE_KEY = "vdai_portal_sidebar_collapsed";
 
 export function PortalShell({
   user,
   dailyThoughtContext,
+  lifeMoment,
+  returnAfterSilenceMilestone,
   children,
 }: {
   user: { email: string; fullName?: string } | null;
   dailyThoughtContext?: ThoughtContext;
+  /** Sprint 18.8 — Presence Coordinator: tín hiệu server, thread xuống CompanionPresence. */
+  lifeMoment?: LifeMoment | null;
+  returnAfterSilenceMilestone?: string | null;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -105,7 +111,11 @@ export function PortalShell({
         </main>
       </div>
 
-      <CompanionPresence dailyThoughtContext={dailyThoughtContext} />
+      <CompanionPresence
+        dailyThoughtContext={dailyThoughtContext}
+        lifeMoment={lifeMoment ?? null}
+        returnAfterSilenceMilestone={returnAfterSilenceMilestone ?? null}
+      />
     </div>
   );
 }

@@ -34,6 +34,17 @@ function momentKey(moment: LifeMoment): string {
   return `${moment.type}_${moment.trigger.occurredAt}`;
 }
 
+/**
+ * Sprint 18.8 — Presence Coordinator: cho coordinator hỏi "Life Moment này
+ * còn xứng đáng hiện không?" mà không phải đoán lại logic cooldown/seen ở
+ * đây. KHÔNG đổi hành vi hiển thị thật của component — chỉ lộ ra phần kiểm
+ * tra điều kiện đã có sẵn (`hasSeen` + `shownAlreadyToday`).
+ */
+export function isLifeMomentEligibleToShow(moment: LifeMoment | null): boolean {
+  if (!moment) return false;
+  return !hasSeen(momentKey(moment)) && !shownAlreadyToday();
+}
+
 function hasSeen(key: string): boolean {
   try {
     return localStorage.getItem(`${SEEN_KEY_PREFIX}${key}`) === "1";

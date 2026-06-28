@@ -57,3 +57,14 @@ là một phần của hành trình." — không phân tích, không đặt câu
 Đã hiện thực hóa tại Sprint 18.0
 (`ReturnAfterSilenceCeremony.tsx`, `src/app/portal/layout.tsx`,
 `src/app/portal/mirror/page.tsx`).
+
+## Presence Coordinator (Sprint 18.8)
+
+Từ Sprint 18.8, `ReturnAfterSilenceCeremony` không còn render trực tiếp ở
+`layout.tsx` ngoài governance. `milestoneOccurredAt` được thread xuống
+`CompanionPresence.tsx` qua `PortalShell`, và component chỉ thật sự hiện khi
+`presence-coordinator.ts` chọn `"return-after-silence"` là moment cao nhất
+(qua `chooseCompanionMoment()`, Sprint 18.6) — ví dụ không hiện cùng lúc với
+Greeting. Logic điều kiện hiển thị gốc (`hasSeenForMilestone`) không đổi —
+chỉ lộ thêm `isReturnAfterSilenceEligibleToShow()` để coordinator dùng lại,
+không đoán lại. Xem `docs/PRESENCE_COORDINATOR.md`.

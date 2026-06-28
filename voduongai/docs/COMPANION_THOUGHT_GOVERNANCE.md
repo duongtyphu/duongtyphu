@@ -99,18 +99,15 @@ thực sự hiển thị một moment "lớn", gọi `chooseCompanionMoment()` �
 tra Speech Budget; nếu qua được, gọi `recordMajorMomentShown()`. Greeting
 bị suppress khi `thought` hoặc `story` đang hiện (ưu tiên thấp hơn).
 
-**Technical debt được ghi nhận, không che giấu**: Life Moment, Return
-After Silence, và Birthday hiện vẫn render độc lập ở `layout.tsx`
-(`LifeMomentBubble`, `ReturnAfterSilenceCeremony`) — KHÔNG đi qua
-`chooseCompanionMoment()`, vì chúng là server component ở tầng layout,
-tách biệt cây client-state của `CompanionPresence`. Việc thật sự nối hai
-tầng này cần một coordinator chia sẻ state qua client/server boundary —
-đó là một refactor cấu trúc, vượt khỏi phạm vi "Integration Light" của
-Sprint này. Rủi ro thực tế hiện tại thấp vì Life Moments đã tự giới hạn
-1 lần/ngày và không xảy ra cùng lúc với Thought/Story trong phần lớn
-trường hợp thực tế — nhưng đây là điểm cần khép lại khi Sprint tương lai
-thực sự cần governance đầy đủ.
+**Technical debt đã khép lại (Sprint 18.8 — Presence Coordinator)**: Life
+Moment và Return After Silence không còn render độc lập ở `layout.tsx`.
+`presence-coordinator.ts` gom candidate từ cả server (`lifeMoment`,
+`returnAfterSilenceMilestone`, thread từ `layout.tsx` xuống qua
+`PortalShell` → `CompanionPresence`) và client (Thought, Story, Greeting,
+Micro Reaction), rồi đưa thẳng vào `chooseCompanionMoment()` đã có sẵn ở
+đây — không sửa file này. Xem `docs/PRESENCE_COORDINATOR.md`.
 
 *Liên quan: `docs/DAILY_THOUGHT_ENGINE.md`,
 `docs/COMPANION_PROACTIVE_THOUGHTS.md`, `docs/LIFE_MOMENTS_ENGINE.md`,
-`thought-governance.ts`, `CompanionPresence.tsx`.*
+`docs/PRESENCE_COORDINATOR.md`, `thought-governance.ts`,
+`presence-coordinator.ts`, `CompanionPresence.tsx`.*

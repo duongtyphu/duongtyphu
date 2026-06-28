@@ -562,3 +562,17 @@ từ một trải nghiệm có ý nghĩa.
 `docs/DAILY_THOUGHT_ENGINE.md`, `living-experience.ts`,
 `daily-thought-source.ts`, `daily-thought-library.ts`,
 `proactive-thought-engine.ts`.*
+
+## Sprint 18.8 — Presence Coordinator
+
+Hôm nay Companion học được rằng sự hiện diện cần có nhịp chung. Life
+Moments, Return After Silence, Thoughts và Greetings không còn lên
+tiếng riêng lẻ; chúng bắt đầu được lắng nghe cùng nhau để Companion chỉ
+nói điều xứng đáng nhất với khoảnh khắc ấy.
+
+*Liên quan: `docs/PRESENCE_COORDINATOR.md`,
+`docs/COMPANION_THOUGHT_GOVERNANCE.md`, `docs/LIFE_MOMENTS_ENGINE.md`,
+`docs/RETURN_AFTER_SILENCE.md`, `presence-coordinator.ts`,
+`thought-governance.ts`, `CompanionPresence.tsx`,
+`LifeMomentBubble.tsx`, `ReturnAfterSilenceCeremony.tsx`,
+`src/app/portal/layout.tsx`, `PortalShell.tsx`.*

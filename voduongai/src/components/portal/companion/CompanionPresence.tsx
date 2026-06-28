@@ -27,6 +27,13 @@ import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
 import { CompanionThoughtBubble } from "@/components/portal/companion/CompanionThoughtBubble";
 import { CompanionStoryMoment } from "@/components/portal/companion/CompanionStoryMoment";
+import { LifeMomentBubble, isLifeMomentEligibleToShow } from "@/components/portal/companion/LifeMomentBubble";
+import {
+  ReturnAfterSilenceCeremony,
+  isReturnAfterSilenceEligibleToShow,
+} from "@/components/portal/ReturnAfterSilenceCeremony";
+import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
+import { choosePresenceMoment } from "@/lib/portal/companion/presence-coordinator";
 import { getCompanionDecision } from "@/lib/portal/intelligence/portal-brain";
 import {
   readStoredGardenStage,
@@ -108,9 +115,14 @@ function getInitialPosition(): { x: number; y: number } | null {
 
 export function CompanionPresence({
   dailyThoughtContext,
+  lifeMoment = null,
+  returnAfterSilenceMilestone = null,
 }: {
   /** Sprint 18.5 — ngữ cảnh Daily Thought, dựng sẵn ở layout.tsx (server). */
   dailyThoughtContext?: ThoughtContext;
+  /** Sprint 18.8 — Presence Coordinator: tín hiệu server, dựng sẵn ở layout.tsx. */
+  lifeMoment?: LifeMoment | null;
+  returnAfterSilenceMilestone?: string | null;
 } = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -142,6 +154,12 @@ export function CompanionPresence({
   const [microLine, setMicroLine] = useState<string | null>(null);
   const [tiltDeg, setTiltDeg] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  // Sprint 18.8 — Presence Coordinator: điều kiện hiển thị thật của Life
+  // Moment/Return After Silence, đọc từ chính helper mà component gốc của
+  // chúng dùng — không đoán lại logic cooldown/seen ở đây.
+  const [lifeMomentEligible, setLifeMomentEligible] = useState(false);
+  const [returnAfterSilenceEligible, setReturnAfterSilenceEligible] = useState(false);
+  const [presenceNow, setPresenceNow] = useState<number | null>(null);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
@@ -170,6 +188,25 @@ export function CompanionPresence({
       clearTimeout(initialTimer);
       query.removeEventListener("change", handleChange);
     };
+  }, []);
+
+  // Sprint 18.8 — Presence Coordinator: hydration-safe, chỉ đọc
+  // localStorage sau mount, giống mọi điều kiện hiển thị khác trong file này.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLifeMomentEligible(isLifeMomentEligibleToShow(lifeMoment));
+  }, [lifeMoment]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReturnAfterSilenceEligible(isReturnAfterSilenceEligibleToShow(returnAfterSilenceMilestone));
+  }, [returnAfterSilenceMilestone]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPresenceNow(Date.now());
+    const interval = setInterval(() => setPresenceNow(Date.now()), 1000);
+    return () => clearInterval(interval);
   }, []);
 
   // NV05 — Mood-Based Motion: cập nhật Mood/Presence State định kỳ từ ngữ cảnh Portal.
@@ -305,6 +342,30 @@ export function CompanionPresence({
 
   const decision = getCompanionDecision({ pathname: pathname ?? "/portal", gardenStage });
   const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
+
+  // Sprint 18.8 — Presence Coordinator: một dòng quyết định hiện diện duy
+  // nhất cho Life Moment, Return After Silence, Thought, Story, Greeting,
+  // Micro Reaction — thay cho việc mỗi nguồn tự hiện độc lập như trước.
+  const presenceChosen =
+    presenceNow === null
+      ? "soulful-silence"
+      : choosePresenceMoment({
+          now: presenceNow,
+          server: {
+            lifeMoment,
+            lifeMomentEligible,
+            returnAfterSilenceMilestone,
+            returnAfterSilenceEligible,
+          },
+          client: {
+            isSpaceOpen: open,
+            isMinimized: minimized,
+            thought,
+            story,
+            microLine,
+            hasGreeting: true,
+          },
+        }).decision.chosen;
   const motionMode = ANCHORED_ROUTE_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
     ? "anchored"
     : "floating";
@@ -528,16 +589,17 @@ export function CompanionPresence({
         }}
       >
         <div className="group relative flex items-end gap-1">
-          {/* Sprint 18.6 — Thought Governance: Greeting có ưu tiên thấp hơn
-              Thought/Story, im lặng khi một trong hai đang hiện (NV03). */}
-          {!thought && !story && (
+          {/* Sprint 18.8 — Presence Coordinator: đúng một moment được hiện
+              tại một thời điểm, chọn bởi `choosePresenceMoment()` thay vì
+              mỗi nguồn tự gác cổng riêng (NV04/NV05). */}
+          {presenceChosen === "greeting" && (
             <CompanionGreetingBubble
               pathname={pathname ?? "/portal"}
               brainGreeting={decision.companionGreeting}
             />
           )}
 
-          {thought && (
+          {(presenceChosen === "daily-thought" || presenceChosen === "proactive-thought") && thought && (
             <CompanionThoughtBubble
               thought={thought}
               onDismiss={() => setThought(null)}
@@ -548,11 +610,11 @@ export function CompanionPresence({
             />
           )}
 
-          {!thought && story && (
+          {presenceChosen === "story-moment" && story && (
             <CompanionStoryMoment story={story} onDismiss={() => setStory(null)} />
           )}
 
-          {!thought && !story && microLine && (
+          {presenceChosen === "micro-reaction" && microLine && (
             <CompanionMicroReactionBubble line={microLine} onDismiss={() => setMicroLine(null)} />
           )}
 
@@ -609,6 +671,14 @@ export function CompanionPresence({
           onClose={handleCloseSpace}
           insight={decision.companionInsight}
         />
+      )}
+
+      {/* Sprint 18.8 — Presence Coordinator: Life Moment/Return After
+          Silence giờ đi qua đúng một dòng quyết định hiện diện, không còn
+          render độc lập ở `layout.tsx` ngoài governance. */}
+      {presenceChosen === "life-moment" && <LifeMomentBubble moment={lifeMoment} />}
+      {presenceChosen === "return-after-silence" && (
+        <ReturnAfterSilenceCeremony milestoneOccurredAt={returnAfterSilenceMilestone} />
       )}
     </>
   );

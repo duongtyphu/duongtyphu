@@ -32,6 +32,12 @@ function markSeenForMilestone(occurredAt: string) {
   }
 }
 
+/** Sprint 18.8 — Presence Coordinator: lộ điều kiện hiển thị đã có, không đoán lại. */
+export function isReturnAfterSilenceEligibleToShow(milestoneOccurredAt: string | null): boolean {
+  if (!milestoneOccurredAt) return false;
+  return !hasSeenForMilestone(milestoneOccurredAt);
+}
+
 type CeremonyStep = "opening" | "garden" | "closing";
 
 export function ReturnAfterSilenceCeremony({

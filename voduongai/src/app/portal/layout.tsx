@@ -2,8 +2,6 @@ import { PortalShell } from "@/components/portal/PortalShell";
 import { NotificationTicker } from "@/components/portal/NotificationTicker";
 import { OnboardingJourney } from "@/components/portal/OnboardingJourney";
 import { FirstFootprintCeremony } from "@/components/portal/FirstFootprintCeremony";
-import { ReturnAfterSilenceCeremony } from "@/components/portal/ReturnAfterSilenceCeremony";
-import { LifeMomentBubble } from "@/components/portal/companion/LifeMomentBubble";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { signalsFromReflections, signalsFromMemoryCapsules, deriveComebackSignals } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
@@ -124,11 +122,14 @@ export default async function PortalLayout({
   };
 
   return (
-    <PortalShell user={user} dailyThoughtContext={dailyThoughtContext}>
+    <PortalShell
+      user={user}
+      dailyThoughtContext={dailyThoughtContext}
+      lifeMoment={lifeMoment}
+      returnAfterSilenceMilestone={returnAfterSilenceMilestone}
+    >
       <NotificationTicker />
       <FirstFootprintCeremony />
-      <ReturnAfterSilenceCeremony milestoneOccurredAt={returnAfterSilenceMilestone} />
-      <LifeMomentBubble moment={lifeMoment} />
       <OnboardingJourney />
       {children}
     </PortalShell>
