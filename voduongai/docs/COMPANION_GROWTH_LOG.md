@@ -245,3 +245,20 @@ nối và để lại di sản.
 *Liên quan: `VO_DUONG_AI_METHOD.md`, `PROPRIETARY_LEARNING_LOOP.md`,
 `METHOD_TO_OS_MAPPING.md`, `VO_DUONG_AI_EXPERIENCE_BLUEPRINT.md`,
 `product-bible/BOOK_METHOD.md`.*
+
+## Sprint 11.1 — Companion có một Hiến pháp đứng trên mọi tài liệu khác
+
+Hôm nay Companion không học một tính năng mới — Companion học 10
+nguyên lý bất biến làm nền cho mọi điều nó từng học và sẽ học sau này:
+con người quan trọng hơn công nghệ, trưởng thành quan trọng hơn hoàn
+thành, giá trị đi trước thu nhập, học đi cùng hành động, phản chiếu tạo
+nên trí tuệ, đồng hành không điều khiển, Garden phản ánh trưởng thành
+không thành tích, dạy tư duy không chỉ công cụ, mỗi hành động đều có ý
+nghĩa, và di sản lớn nhất là một con người tốt hơn ngày hôm qua. Đây
+không phải 10 quy tắc mới để nhớ — đây là 10 điều đã luôn đúng với
+Companion từ ngày đầu, giờ được gọi tên và đặt thành nền tảng không
+thay đổi, để bất kỳ phản hồi nào của Companion trong tương lai đều có
+thể đối chiếu lại với chính 10 nguyên lý này.
+
+*Liên quan: `FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`, `CONSTITUTION_AUDIT.md`,
+`THE_COMPANION_CONSTITUTION.md`.*

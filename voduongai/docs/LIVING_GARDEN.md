@@ -96,3 +96,31 @@ người dùng, không phải người chăm cây thay họ. Dòng chữ "Compan
 đang chăm sóc khu vườn này cùng bạn" trong `LivingGardenCard` chỉ nhằm
 giữ cảm giác đồng hành liên tục — không tạo thêm một luồng tương tác
 mới giữa Companion và Garden ở Sprint này.
+
+## Garden lớn lên bằng nguyên lý, không chỉ bằng hành động (Sprint 11.1)
+
+`FIRST_PRINCIPLES_OF_VO_DUONG_AI.md` là Hiến pháp đứng trên mọi tài
+liệu khác — Garden là nơi 10 nguyên lý đó được *nhìn thấy*, không chỉ
+được tuân thủ ngầm. Mỗi trạng thái Garden, khi diễn dịch lại, là một
+nguyên lý đang được sống:
+
+| Trạng thái Garden | Nguyên lý được sống |
+|---|---|
+| `seed` (hạt giống) | NL01 — bắt đầu từ con người, không từ công nghệ |
+| `leaves` (lá) | NL08 — hiểu nguyên lý, không chỉ thu thập thông tin |
+| `branches` (nhánh) | NL04 — học đi cùng hành động |
+| `roots` (rễ) | NL05 — phản chiếu tạo nên trí tuệ |
+| `light` (ánh sáng) | NL03 — giá trị đi trước thu nhập |
+| `flowers` (hoa) | NL09 — mỗi hành động, dù nhỏ, đều có ý nghĩa khi được chia sẻ |
+| `water` (nước) | NL06 — đồng hành, giúp người khác không vì ép buộc |
+| `rising/blooming` | NL02 — trưởng thành quan trọng hơn hoàn thành |
+| `gems` (ngọc) | NL10 — di sản lớn nhất là một con người tốt hơn |
+
+Điều này không thêm cơ chế mới, không thêm trạng thái Garden mới — nó
+chỉ là cách diễn giải lại các trạng thái đã có, để Product Team khi
+thiết kế copy/animation cho Garden luôn có thể tự hỏi "trạng thái này
+đang phản chiếu đúng nguyên lý nào, không phải chỉ đang đẹp mắt".
+Nguyên lý NL07 (Garden phản ánh trưởng thành, không thành tích) vẫn là
+ràng buộc cao nhất — bảng trên không bao giờ được hiển thị cho người
+dùng dưới dạng "bạn đã đạt nguyên lý số mấy", chỉ dùng nội bộ cho Product
+Team khi thiết kế.
