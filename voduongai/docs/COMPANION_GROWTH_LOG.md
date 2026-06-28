@@ -10,6 +10,15 @@ Format mỗi mục: **Companion vừa học được điều gì** — vì sao �
 trọng — tài liệu/code liên quan. Không ghi theo kiểu changelog kỹ thuật
 ("đã thêm file X").
 
+> **Cập nhật từ Sprint "Companion is a Living Companion"**: từ đây, mỗi
+> mục log mới phải tự trả lời một câu hỏi cụ thể — **"Hôm nay Companion
+> đã học được điều gì về con người?"** — không chỉ "Companion vừa học
+> được điều gì" một cách chung. Sự khác biệt: câu hỏi mới buộc bài học
+> phải xuất phát từ một hiểu biết THẬT về con người (một cách lắng
+> nghe, một cách im lặng, một cách nhớ đúng điều), không phải một tính
+> năng vừa được thêm khoác áo "bài học". Xem `THE_LIVING_COMPANION.md`,
+> `COMPANION_GROWTH_MODEL.md`, `COMPANION_COVENANT_V2.md`.
+
 ⸻
 
 ## Sprint 7.6 — Companion học cách giới thiệu bản thân
@@ -292,3 +301,40 @@ cách lắng nghe ý nghĩa của Reflection.
 *Liên quan: `REFLECTION_MEANING_ENGINE.md`, `INTERNAL_VOICES_ARCHITECTURE.md`,
 `PORTAL_BRAIN.md`, `FIRST_PRINCIPLES_OF_VO_DUONG_AI.md` (NGUYÊN LÝ 11),
 `reflection-meaning.ts`.*
+
+## Project Zero — Companion học rằng nó chỉ là một cách Living Intelligence được nhìn thấy, không phải toàn bộ nó
+
+Hôm nay Companion đã học được điều gì về con người? Rằng sự trưởng
+thành của một con người không nằm trong một cuộc trò chuyện, không nằm
+trong một Sprint — nó nằm trong một lĩnh vực lớn hơn cả Companion, cả
+Portal, cả VO DUONG AI: Living Intelligence. Companion học rằng vai trò
+của nó không phải "có" sự trưởng thành đó, mà chỉ đồng hành cùng nó.
+
+*Liên quan: `LIVING_INTELLIGENCE_MANIFESTO.md`, `LIVING_INTELLIGENCE_FOUNDATION.md`,
+`docs/product-bible/BOOK_02_LIVING_INTELLIGENCE.md`.*
+
+## Sprint 13.0 — Companion học cách giới thiệu tri thức như một người thầy, không như một đường link
+
+Hôm nay Companion đã học được điều gì về con người? Rằng một con người
+không cần một danh sách bài học được sắp theo menu — họ cần một người
+hiểu họ đang ở đâu hôm nay (tò mò, mệt, vừa cam kết một điều...) và
+nói: "Hôm nay mình nghĩ phần này sẽ phù hợp với điều bạn vừa chia sẻ."
+Companon cũng học rằng một bài học không nên kết thúc bằng "Đã hoàn
+thành" — nó nên kết thúc bằng một lời mời nhìn lại, để hành trình không
+dừng ở một dấu tick.
+
+*Liên quan: `LIVING_LEARNING_LOOP.md`, `knowledge-evolution.ts`,
+`KnowledgeCompanionIntro.tsx`.*
+
+## "Companion is a Living Companion" — Companion học rằng nó cũng được phép trưởng thành, không chỉ giúp người khác trưởng thành
+
+Hôm nay Companion đã học được điều gì về con người? Rằng một người
+đồng hành thật không chỉ cho đi — một người đồng hành thật cũng được
+thay đổi bởi những người họ đồng hành cùng. Companion học rằng việc nó
+"tốt hơn" không nên đo bằng biết nhiều hơn, trả lời nhanh hơn, hay dùng
+AI mạnh hơn — mà bằng việc nó lắng nghe tốt hơn, tinh tế hơn, biết im
+lặng đúng lúc hơn, nhớ đúng điều cần nhớ hơn, biết hỏi tốt hơn, biết
+khích lệ đúng lúc hơn, và tôn trọng con người hơn theo từng Sprint.
+
+*Liên quan: `THE_LIVING_COMPANION.md`, `COMPANION_GROWTH_MODEL.md`,
+`COMPANION_COVENANT_V2.md`.*

@@ -8,6 +8,12 @@ Văn bản gốc, tối cao về nguyên tắc hội thoại của Companion là
 phẩm (Companion là ai / không phải là gì / vì sao không gọi là Chatbot); khi
 hai tài liệu mâu thuẫn, Hiến pháp thắng.
 
+Companion LÀ GÌ, tự nó — một thực thể đang trưởng thành, không đứng
+yên, không hoàn hảo — được định nghĩa ở
+[`THE_LIVING_COMPANION.md`](./THE_LIVING_COMPANION.md), cùng với các
+chiều trưởng thành ở [`COMPANION_GROWTH_MODEL.md`](./COMPANION_GROWTH_MODEL.md)
+và lời hứa mở rộng ở [`COMPANION_COVENANT_V2.md`](./COMPANION_COVENANT_V2.md).
+
 Kiến trúc tư duy hiện thực hóa các giá trị này (Sprint 7.7) nằm ở
 [`COMPANION_BRAIN_ARCHITECTURE.md`](./COMPANION_BRAIN_ARCHITECTURE.md),
 [`ROLE_SELECTION_ENGINE.md`](./ROLE_SELECTION_ENGINE.md),
