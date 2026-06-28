@@ -47,6 +47,7 @@ import { resolveCompanionMood, type CompanionMoodKey } from "@/lib/portal/compan
 import { pickTouchMicroLine } from "@/lib/portal/companion/micro-reaction-engine";
 import { CompanionMicroReactionBubble } from "@/components/portal/companion/CompanionMicroReactionBubble";
 import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
+import { chooseCompanionMoment, recordMajorMomentShown } from "@/lib/portal/companion/thought-governance";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -245,8 +246,23 @@ export function CompanionPresence({
         now
       );
       if (picked) {
-        markThoughtShown(picked, now);
-        setThought(picked);
+        // Sprint 18.6 — Thought Governance: trước khi thực sự nói, kiểm
+        // tra Speech Budget của ngày/session (NV04).
+        const momentDecision = chooseCompanionMoment(
+          [
+            {
+              type: picked.trigger === "daily-thought" ? "daily-thought" : "proactive-thought",
+              isEligible: true,
+              isMajor: true,
+            },
+          ],
+          now
+        );
+        if (momentDecision.chosen !== "soulful-silence") {
+          markThoughtShown(picked, now);
+          recordMajorMomentShown(now);
+          setThought(picked);
+        }
       }
     }, THOUGHT_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
@@ -271,8 +287,17 @@ export function CompanionPresence({
         now
       );
       if (picked) {
-        markStoryShown(picked, now);
-        setStory(picked);
+        // Sprint 18.6 — Thought Governance: Story Moment cũng là một
+        // moment "lớn", cùng chia Speech Budget với Proactive/Daily Thought.
+        const momentDecision = chooseCompanionMoment(
+          [{ type: "story-moment", isEligible: true, isMajor: true }],
+          now
+        );
+        if (momentDecision.chosen !== "soulful-silence") {
+          markStoryShown(picked, now);
+          recordMajorMomentShown(now);
+          setStory(picked);
+        }
       }
     }, STORY_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
@@ -503,10 +528,14 @@ export function CompanionPresence({
         }}
       >
         <div className="group relative flex items-end gap-1">
-          <CompanionGreetingBubble
-            pathname={pathname ?? "/portal"}
-            brainGreeting={decision.companionGreeting}
-          />
+          {/* Sprint 18.6 — Thought Governance: Greeting có ưu tiên thấp hơn
+              Thought/Story, im lặng khi một trong hai đang hiện (NV03). */}
+          {!thought && !story && (
+            <CompanionGreetingBubble
+              pathname={pathname ?? "/portal"}
+              brainGreeting={decision.companionGreeting}
+            />
+          )}
 
           {thought && (
             <CompanionThoughtBubble

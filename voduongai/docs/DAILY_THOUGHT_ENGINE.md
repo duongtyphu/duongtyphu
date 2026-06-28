@@ -84,6 +84,17 @@ Không có DB mới, không có storage mới. Dùng lại nguyên vẹn
 — mỗi Daily Thought có `cooldownMs` ~20 giờ, đủ để không lặp lại trong
 cùng một ngày, đủ nhẹ để không cần một hệ thống lưu trữ riêng.
 
+## Companion Thought Governance (Sprint 18.6)
+
+Một Daily Thought qua được `shouldShowDailyThoughtToday()` và lọt vào
+`weightedPick()` vẫn chưa chắc được hiển thị: `CompanionPresence.tsx`
+gọi thêm `chooseCompanionMoment()` (`thought-governance.ts`) trước khi
+`setThought` thật sự chạy — nếu Speech Budget của session/ngày đã hết,
+hoặc một moment ưu tiên cao hơn (Life Moment, Return After Silence,
+Birthday, Story Moment) đang chiếm lượt nói, Daily Thought im lặng dù
+đã đủ điều kiện ở tầng Thought Selector. Xem
+`docs/COMPANION_THOUGHT_GOVERNANCE.md`.
+
 ## Boundary (bắt buộc)
 
 Daily Thought KHÔNG được: bán hàng, quảng bá khoá học, CTA, "click vào

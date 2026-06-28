@@ -123,7 +123,19 @@ hơn quảng cáo/chat-support: không icon "!", không màu đỏ, không khung
 to, không nút "Trả lời ngay". Tôn trọng `prefers-reduced-motion` qua
 class `.companion-thought-bubble` trong `globals.css`.
 
-## 9. Technical debt còn lại
+## 9. Companion Thought Governance (Sprint 18.6)
+
+Một thought đã qua được mọi cooldown/rule ở trên vẫn còn một lớp kiểm
+tra cuối: `CompanionPresence.tsx` gọi `chooseCompanionMoment()`
+(`thought-governance.ts`) trước khi `setThought` chạy — nếu Speech
+Budget của session/ngày đã hết, hoặc Proactive Thought thua một moment
+ưu tiên cao hơn (Life Moment, Return After Silence, Birthday, Origin
+Line, Story Moment, Daily Thought) đang cùng đủ điều kiện, Proactive
+Thought im lặng. Đây là lớp điều phối NẰM TRÊN engine này, không thay
+đổi bất kỳ quy tắc nào ở mục 1-8. Xem
+`docs/COMPANION_THOUGHT_GOVERNANCE.md`.
+
+## 10. Technical debt còn lại
 
 - `weightedPick` dùng `now % weighted.length` làm nguồn "ngẫu nhiên" —
   đủ cho mục đích hiện tại (tránh lệ thuộc `Math.random()` ở mọi nơi

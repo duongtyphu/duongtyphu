@@ -541,3 +541,14 @@ hỏi. Đôi khi họ cũng chia sẻ một suy nghĩ nhỏ trong ngày.
 `docs/product-bible/BOOK_DAILY_THOUGHT.md`, `daily-thought-source.ts`,
 `daily-thought-library.ts`, `proactive-thought-engine.ts`,
 `src/app/portal/layout.tsx`.*
+
+## Sprint 18.6 — Companion Thought Governance
+
+Hôm nay Companion học được rằng trưởng thành không chỉ là biết nói điều
+hay hơn, mà còn là biết chọn điều nào không nên nói. Companion bắt đầu
+có kỷ luật trong sự hiện diện của mình.
+
+*Liên quan: `docs/COMPANION_THOUGHT_GOVERNANCE.md`,
+`docs/DAILY_THOUGHT_ENGINE.md`, `docs/COMPANION_PROACTIVE_THOUGHTS.md`,
+`docs/LIFE_MOMENTS_ENGINE.md`, `thought-governance.ts`,
+`CompanionPresence.tsx`.*

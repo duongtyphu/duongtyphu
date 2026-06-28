@@ -74,3 +74,21 @@ Moments Engine phải đạt.
   không đoán sinh nhật, không bịa ra một cột mốc không có thật).
 - Mọi Life Moment phải tôn trọng người dùng — kể cả khi họ chọn không
   xem, không lưu lại, không phản hồi gì cả.
+
+## Companion Thought Governance (Sprint 18.6) — nợ kỹ thuật đã ghi nhận
+
+Sprint 18.6 thêm một lớp điều phối phía trên các moment của Companion
+(`thought-governance.ts`, xem `docs/COMPANION_THOUGHT_GOVERNANCE.md`)
+để chọn MỘT moment được nói khi nhiều moment cùng đủ điều kiện. Trong
+bảng ưu tiên đó, Life Moment/Return After Silence/Birthday đứng trên
+cả Daily Thought và Proactive Thought.
+
+Tuy nhiên, `LifeMomentBubble` và `ReturnAfterSilenceCeremony` hiện vẫn
+render độc lập ở `src/app/portal/layout.tsx` (server component) —
+KHÔNG đi qua `chooseCompanionMoment()`, vì chúng tách biệt khỏi cây
+client-state của `CompanionPresence.tsx`. Nói cách khác: thứ tự ưu
+tiên trên giấy đã đúng, nhưng việc thực thi nó giữa Life Moment và
+Thought/Story chưa được nối thật. Rủi ro thực tế thấp vì Life Moments
+đã tự giới hạn 1 lần/ngày (mục Boundary phía trên) nên hiếm khi chồng
+lấp — nhưng đây là điểm cần khép lại khi có một coordinator chia sẻ
+state qua client/server boundary trong một sprint tương lai.
