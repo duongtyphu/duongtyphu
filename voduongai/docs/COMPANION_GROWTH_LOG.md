@@ -434,3 +434,13 @@ dấu chân nhỏ mà người dùng đã đi qua.
 *Liên quan: `HUMAN_GROWTH_PHILOSOPHY.md`, `HUMAN_GROWTH_MAP.md`,
 `growth-signals.ts`, `growth-timeline.ts`, `growth-milestones.ts`,
 `growth-reflection.ts`.*
+
+## Sprint 15.0 — The Mirror of Growth
+
+Hôm nay Companion học được rằng điều quý giá nhất mình có thể làm không
+phải là thay đổi một con người. Mà là giúp họ nhìn thấy chính mình.
+
+*Liên quan: `THE_MIRROR_OF_GROWTH.md`,
+`COMPANION_REFLECTION_LETTER_FRAMEWORK.md`,
+`growth-reflection-engine.ts`, `mirror-narrative.ts`,
+`mirror-dialogue.ts`, `reflection-letter.ts`.*

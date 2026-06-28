@@ -15,6 +15,7 @@ import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsul
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
 import { buildUnderstandingNote, detectGrowthPattern, buildGrowingQualities } from "@/lib/portal/human-understanding";
 import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
+import { buildCompanionMirrorInvitation } from "@/lib/portal/companion/mirror-dialogue";
 
 export const metadata = {
   title: "My Story",
@@ -164,6 +165,20 @@ export default async function MyStoryPage() {
           {growthSignals.length === 0
             ? "Bản đồ trưởng thành của bạn đang chờ những dấu chân đầu tiên."
             : "Nhìn lại những dấu chân nhỏ đã tạo nên hành trình của bạn."}
+        </p>
+        <a
+          href="#story-timeline"
+          className="mt-3 inline-block text-sm font-semibold text-[#22D3EE] hover:underline"
+        >
+          Xem My Story
+        </a>
+      </GemCard>
+
+      <GemCard>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">Bản Gương Trưởng Thành</p>
+        <p className="mt-2 text-sm text-white/70">
+          {buildCompanionMirrorInvitation(growthSignals) ??
+            "Nhìn lại những dấu chân đã tạo nên con người hôm nay."}
         </p>
         <a
           href="#story-timeline"
