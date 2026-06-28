@@ -79,10 +79,9 @@ export const eventWebinarModules: ConnectModule[] = [
 export const achievementLeaderboardModules: ConnectModule[] = [
   { id: "al1", label: "Thành tựu học viên", description: "Những cột mốc đáng tự hào của thành viên.", href: "/portal/achievements" },
   { id: "al2", label: "Success Stories", description: "Hành trình tỏa sáng của các học viên.", href: "/portal/student-success" },
-  { id: "al3", label: "Leaderboard", description: "Bảng xếp hạng những viên ngọc sáng nhất." },
-  { id: "al4", label: "Badge", description: "Huy hiệu ghi nhận năng lực và sự đóng góp." },
-  { id: "al5", label: "Chứng nhận", description: "Chứng nhận hoàn thành các chặng quan trọng." },
-  { id: "al6", label: "Top Contributor", description: "Những người đóng góp nhiều nhất cho cộng đồng." },
+  { id: "al3", label: "Đóng góp nổi bật", description: "Những câu chuyện đóng góp được cộng đồng đón nhận." },
+  { id: "al5", label: "Chứng nhận", description: "Chứng nhận hoàn thành các chặng quan trọng — và những phẩm chất được cộng đồng nhận ra ở bạn." },
+  { id: "al6", label: "Đóng góp đáng ghi nhận", description: "Những đóng góp có ý nghĩa, được cộng đồng phản hồi tích cực." },
 ];
 
 export const opportunityNetworkModules: ConnectModule[] = [

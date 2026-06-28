@@ -9,11 +9,10 @@ const DOT_STYLE: Record<MissionDay["status"], string> = {
 };
 
 /**
- * Answers: "Tôi đã duy trì được bao nhiêu ngày, và ngày hôm nay/sắp tới là gì?"
+ * Answers: "Những cột mốc nào tôi đã đi qua trong 30 ngày đầu tiên?"
  */
 export function Mission30DayCard({
   totalDays,
-  currentDay,
   days,
 }: {
   totalDays: number;
@@ -25,11 +24,11 @@ export function Mission30DayCard({
   return (
     <GemCard>
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-white">Nhiệm vụ 30 ngày</h2>
-        <span className="text-xs font-semibold text-white/50">Ngày {currentDay}/{totalDays}</span>
+        <h2 className="text-sm font-bold text-white">30 ngày đầu tiên</h2>
+        <span className="text-xs font-semibold text-white/50">{completedCount}/{totalDays} cột mốc</span>
       </div>
       <div className="mt-4">
-        <GemProgress percent={(completedCount / totalDays) * 100} label="Tiến độ chuỗi 30 ngày" />
+        <GemProgress percent={(completedCount / totalDays) * 100} label="Các cột mốc trong 30 ngày đầu" />
       </div>
       <div className="mt-4 grid grid-cols-10 gap-1.5 sm:grid-cols-[repeat(15,minmax(0,1fr))]">
         {days.map((d) => (
