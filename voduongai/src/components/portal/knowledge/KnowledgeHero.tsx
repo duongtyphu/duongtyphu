@@ -13,6 +13,9 @@ export function KnowledgeHero() {
         Điều gì mình cần hiểu để thay đổi? Học không phải để biết nhiều hơn —
         mà để hiểu đúng nguyên lý, áp dụng đúng việc, và lưu giữ đúng điều đáng nhớ.
       </p>
+      <p className="mt-2 max-w-xl text-xs italic text-white/45">
+        Giai đoạn UNDERSTAND trong hành trình mài giũa của bạn.
+      </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button href="/portal/academy" variant="primary">
           Tiếp tục học →

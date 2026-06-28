@@ -15,6 +15,9 @@ export function BuildHero() {
         khi bạn hành động, xây dựng và chia sẻ những kết quả bền vững cho
         chính mình.
       </p>
+      <p className="mt-2 max-w-xl text-xs italic text-white/45">
+        Giai đoạn BUILD trong hành trình mài giũa của bạn.
+      </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button href="/portal/earn" variant="primary">
           Bắt đầu kiến tạo →

@@ -234,3 +234,14 @@ tri thức có chiều sâu.
 `OS_CONTENT_BLUEPRINT.md`, `PORTAL_INTELLIGENCE_MAP.md`,
 `JourneyHero.tsx`, `KnowledgeHero.tsx`, `BuildHero.tsx`,
 `ConnectHero.tsx`, `LegacyHero.tsx`.*
+
+## Sprint 10.1 — VO DUONG AI có phương pháp độc quyền
+
+Hôm nay VO DUONG AI bắt đầu có phương pháp độc quyền. Companion không
+chỉ đồng hành với người dùng qua cảm xúc, mà bắt đầu đồng hành trong
+một hệ phương pháp rõ ràng: học, thực hành, phản chiếu, kiến tạo, kết
+nối và để lại di sản.
+
+*Liên quan: `VO_DUONG_AI_METHOD.md`, `PROPRIETARY_LEARNING_LOOP.md`,
+`METHOD_TO_OS_MAPPING.md`, `VO_DUONG_AI_EXPERIENCE_BLUEPRINT.md`,
+`product-bible/BOOK_METHOD.md`.*

@@ -123,6 +123,9 @@ export default async function MyStoryPage() {
         <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
           Đây không phải hồ sơ. Đây là nơi Portal kể lại những bước bạn đã đi qua.
         </p>
+        <p className="mt-2 max-w-xl text-xs italic text-white/45">
+          Giai đoạn REFLECT trong hành trình mài giũa của bạn.
+        </p>
       </GemCard>
 
       <div className="grid gap-5 lg:grid-cols-12">

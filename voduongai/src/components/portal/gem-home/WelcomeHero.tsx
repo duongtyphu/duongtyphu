@@ -24,6 +24,11 @@ export function WelcomeHero({
         Gem Home{name && state !== "first" ? ` · ${name}` : ""}
       </p>
       <h1 className="mt-2 whitespace-pre-line text-xl font-extrabold text-white sm:text-2xl">{welcomeMessage}</h1>
+      <p className="mt-2 max-w-xl text-sm text-white/65">
+        Đây không phải nơi chứa nội dung — đây là nơi bạn được mài giũa: nhìn
+        thấy, hiểu, thực hành, kiến tạo, chia sẻ, phản chiếu, tiến hoá và để
+        lại di sản.
+      </p>
       <Link href="/portal/story" className="mt-3 block max-w-xl text-sm italic text-white/55 hover:text-white/75">
         {reflectionPrompt}
       </Link>

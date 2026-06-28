@@ -70,8 +70,11 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
           </button>
         </section>
 
-        <p className="mb-5 text-sm leading-relaxed text-white/85">
+        <p className="mb-1 text-sm leading-relaxed text-white/85">
           Mình đang ở đây. Hôm nay bạn muốn chia sẻ điều gì?
+        </p>
+        <p className="mb-5 text-xs italic text-white/40">
+          Mình đồng hành cùng bạn qua từng giai đoạn — không chỉ đọc nội dung.
         </p>
 
         {/* 2. Today — ghi nhận hiện diện hôm nay của người dùng */}

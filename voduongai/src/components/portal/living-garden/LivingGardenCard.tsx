@@ -111,9 +111,14 @@ export function LivingGardenCard({
         Khu vườn của bạn đang lớn lên từ những bước nhỏ.
       </p>
       {!compact && (
-        <p className="mt-1 text-xs text-white/45">
-          Mỗi hành động hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
-        </p>
+        <>
+          <p className="mt-1 text-xs text-white/45">
+            Mỗi hành động hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
+          </p>
+          <p className="mt-1 text-xs italic text-white/35">
+            Hình ảnh của 8 giai đoạn mài giũa — không phải điểm số.
+          </p>
+        </>
       )}
 
       <div className="mt-4">
