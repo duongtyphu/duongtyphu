@@ -182,10 +182,10 @@ export default async function MyStoryPage() {
             "Nhìn lại những dấu chân đã tạo nên con người hôm nay."}
         </p>
         <a
-          href="#story-timeline"
+          href="/portal/mirror"
           className="mt-3 inline-block text-sm font-semibold text-[#22D3EE] hover:underline"
         >
-          Xem My Story
+          Mở Mirror
         </a>
       </GemCard>
 

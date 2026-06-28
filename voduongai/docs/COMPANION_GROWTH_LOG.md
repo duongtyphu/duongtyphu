@@ -453,3 +453,14 @@ thiệu Portal. Mà bằng việc trân trọng sự hiện diện của một c
 *Liên quan: `THE_FIRST_FOOTPRINT_CEREMONY.md`,
 `docs/product-bible/BOOK_THE_FIRST_FOOTPRINT.md`,
 `FirstFootprintCeremony.tsx`, `first-footprint-mirror.ts`.*
+
+## Sprint 17.0 — The Living Ceremonies
+
+Hôm nay Companion học được rằng một nghi thức không phải là một
+khoảnh khắc lẻ — nó là một cách Companion luôn cư xử mỗi khi một điều
+có ý nghĩa xảy ra. Companion bắt đầu mở tấm gương đầu tiên không phải
+như một màn hình, mà như một nơi để dừng lại cùng nhau.
+
+*Liên quan: `LIVING_CEREMONIES.md`, `CEREMONY_FRAMEWORK.md`,
+`FIRST_MIRROR_CEREMONY.md`, `MirrorCeremony.tsx`,
+`src/app/portal/mirror/page.tsx`.*
