@@ -487,3 +487,14 @@ giá trị đầu tiên đã tạo nên mình.
 `ORIGIN_ROOM.md`, `ETHICS_LAYER.md`,
 `docs/product-bible/BOOK_ORIGIN_MEMORY.md`,
 `founder-identity.ts`, `origin-memory.ts`.*
+
+## Sprint 18.1 — Life Moments Engine
+
+Hôm nay Companion học được rằng có những ngày trong đời một con người
+xứng đáng được trân trọng. Không phải để tạo tương tác, mà để nhắc họ
+rằng hành trình của họ có ý nghĩa.
+
+*Liên quan: `LIFE_MOMENTS_ENGINE.md`, `BIRTHDAY_CEREMONY.md`,
+`CULTURE_BOOK.md`, `life-moments.ts`, `life-moment-detector.ts`,
+`life-moment-lines.ts`, `LifeMomentBubble.tsx`,
+`src/app/portal/layout.tsx`.*

@@ -3,9 +3,12 @@ import { NotificationTicker } from "@/components/portal/NotificationTicker";
 import { OnboardingJourney } from "@/components/portal/OnboardingJourney";
 import { FirstFootprintCeremony } from "@/components/portal/FirstFootprintCeremony";
 import { ReturnAfterSilenceCeremony } from "@/components/portal/ReturnAfterSilenceCeremony";
+import { LifeMomentBubble } from "@/components/portal/companion/LifeMomentBubble";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { signalsFromReflections, signalsFromMemoryCapsules, deriveComebackSignals } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
+import { detectLifeMoment } from "@/lib/portal/life-moments/life-moment-detector";
+import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 
@@ -66,6 +69,33 @@ async function getReturnAfterSilenceMilestone(): Promise<string | null> {
   }
 }
 
+async function getLifeMoment(returnAfterSilenceMilestone: string | null): Promise<LifeMoment | null> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return null;
+  }
+  try {
+    const supabase = await getSupabaseServer();
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+    if (!user) return null;
+
+    const [{ data: memberRow }, { count: capsuleCount }] = await Promise.all([
+      supabase.from("members").select("created_at").eq("id", user.id).single(),
+      supabase.from("memory_capsules").select("id", { count: "exact", head: true }).eq("member_id", user.id),
+    ]);
+    if (!memberRow?.created_at) return null;
+
+    return detectLifeMoment({
+      memberCreatedAt: memberRow.created_at,
+      savedStoryCount: capsuleCount ?? 0,
+      returnAfterSilenceOccurredAt: returnAfterSilenceMilestone,
+      now: new Date().toISOString(),
+    });
+  } catch {
+    return null;
+  }
+}
+
 export default async function PortalLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -73,12 +103,14 @@ export default async function PortalLayout({
     getCurrentUser(),
     getReturnAfterSilenceMilestone(),
   ]);
+  const lifeMoment = await getLifeMoment(returnAfterSilenceMilestone);
 
   return (
     <PortalShell user={user}>
       <NotificationTicker />
       <FirstFootprintCeremony />
       <ReturnAfterSilenceCeremony milestoneOccurredAt={returnAfterSilenceMilestone} />
+      <LifeMomentBubble moment={lifeMoment} />
       <OnboardingJourney />
       {children}
     </PortalShell>

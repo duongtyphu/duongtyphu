@@ -16,7 +16,12 @@ export type MemoryCapsuleKind =
   | "wisdom_story"
   | "garden_story"
   // Sprint 16.0 — The First Footprint Ceremony: món quà lưu niệm của lần ghé đầu tiên.
-  | "first_footprint";
+  | "first_footprint"
+  // Sprint 18.1 — Life Moments Engine: capsule lưu tự nguyện từ một Life Moment.
+  | "birthday"
+  | "annual_mirror"
+  | "first_portal_day"
+  | "return_after_silence";
 
 export type MemoryCapsule = {
   id: string;
