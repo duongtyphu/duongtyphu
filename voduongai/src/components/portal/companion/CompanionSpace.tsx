@@ -17,7 +17,15 @@ import { getWarmthLine } from "@/lib/portal/warmth-engine";
 import { getDailyQuestion } from "@/lib/portal/companion/conversation-library";
 import { Button } from "@/components/portal/ui/Button";
 
-export function CompanionSpace({ state, onClose }: { state: CompanionState; onClose: () => void }) {
+export function CompanionSpace({
+  state,
+  onClose,
+  insight,
+}: {
+  state: CompanionState;
+  onClose: () => void;
+  insight?: string | null;
+}) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -81,7 +89,7 @@ export function CompanionSpace({ state, onClose }: { state: CompanionState; onCl
         <section aria-label="Today" className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4">
           <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">Hôm nay của bạn</p>
           <p className="text-sm text-white/80">
-            Mình nhận thấy bạn vẫn đang ở đây, vẫn đang tiếp tục — điều đó không nhỏ.
+            {insight ?? "Mình nhận thấy bạn vẫn đang ở đây, vẫn đang tiếp tục — điều đó không nhỏ."}
           </p>
         </section>
 

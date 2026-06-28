@@ -23,7 +23,13 @@ const FIRST_TIME_GREETING =
   "Chào bạn. Mình sẽ đồng hành cùng bạn trong hành trình này.";
 const COMEBACK_GREETING = "Mình rất vui vì lại được gặp bạn.";
 
-export function CompanionGreetingBubble({ pathname }: { pathname: string }) {
+export function CompanionGreetingBubble({
+  pathname,
+  brainGreeting,
+}: {
+  pathname: string;
+  brainGreeting?: string | null;
+}) {
   const [greeting, setGreeting] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -53,7 +59,7 @@ export function CompanionGreetingBubble({ pathname }: { pathname: string }) {
     const text = isComeback
       ? COMEBACK_GREETING
       : hasVisitedBefore
-        ? getRouteGreeting(pathname) ?? FIRST_TIME_GREETING
+        ? brainGreeting ?? getRouteGreeting(pathname) ?? FIRST_TIME_GREETING
         : FIRST_TIME_GREETING;
 
     const showTimer = setTimeout(() => {

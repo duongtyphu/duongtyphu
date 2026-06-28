@@ -8,6 +8,8 @@ import { AddMemoryCapsuleForm } from "@/components/portal/story/AddMemoryCapsule
 import { UnderstandingNoteCard } from "@/components/portal/story/UnderstandingNoteCard";
 import { HumanGrowthDashboardCard } from "@/components/portal/story/HumanGrowthDashboardCard";
 import { LivingGardenCard } from "@/components/portal/living-garden/LivingGardenCard";
+import { GardenSignalSync } from "@/components/portal/intelligence/GardenSignalSync";
+import { buildGardenState } from "@/lib/portal/living-garden/garden-model";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
@@ -157,6 +159,12 @@ export default async function MyStoryPage() {
               reflectionsCount: reflections.length,
               memoriesSaved: capsules.length,
             }}
+          />
+          <GardenSignalSync
+            garden={buildGardenState({
+              reflectionsCount: reflections.length,
+              memoriesSaved: capsules.length,
+            })}
           />
         </div>
       </section>

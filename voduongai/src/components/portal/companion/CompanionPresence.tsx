@@ -21,10 +21,16 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
-import { getStateForPath, displayName, states } from "@/lib/portal/companion/companion-identity";
+import { displayName, states } from "@/lib/portal/companion/companion-identity";
 import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
 import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
+import { getCompanionDecision } from "@/lib/portal/intelligence/portal-brain";
+import {
+  readStoredGardenStage,
+  subscribeToGardenStage,
+} from "@/lib/portal/intelligence/portal-signals";
+import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 
@@ -92,12 +98,19 @@ export function CompanionPresence() {
   const [settling, setSettling] = useState(false);
   const [pulsing, setPulsing] = useState(false);
   const [comeback, setComeback] = useState(false);
+  const [gardenStage, setGardenStage] = useState<GardenStage | undefined>(() =>
+    readStoredGardenStage()
+  );
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
 
-  const routeState = getStateForPath(pathname ?? "/portal");
-  const state = open ? states.listening : comeback ? states.comeback : routeState;
+  useEffect(() => {
+    return subscribeToGardenStage(setGardenStage);
+  }, []);
+
+  const decision = getCompanionDecision({ pathname: pathname ?? "/portal", gardenStage });
+  const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
   const motionMode = ANCHORED_ROUTE_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
     ? "anchored"
     : "floating";
@@ -251,7 +264,10 @@ export function CompanionPresence() {
         }}
       >
         <div className="group relative flex items-end gap-1">
-          <CompanionGreetingBubble pathname={pathname ?? "/portal"} />
+          <CompanionGreetingBubble
+            pathname={pathname ?? "/portal"}
+            brainGreeting={decision.companionGreeting}
+          />
 
           <div className="relative flex items-center justify-center">
             <CompanionNest dragging={dragging} active={dragging} />
@@ -292,6 +308,7 @@ export function CompanionPresence() {
         <CompanionSpace
           state={state}
           onClose={handleCloseSpace}
+          insight={decision.companionInsight}
         />
       )}
     </>

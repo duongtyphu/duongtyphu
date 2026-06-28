@@ -262,3 +262,14 @@ thể đối chiếu lại với chính 10 nguyên lý này.
 
 *Liên quan: `FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`, `CONSTITUTION_AUDIT.md`,
 `THE_COMPANION_CONSTITUTION.md`.*
+
+## Sprint 12.1 — Companion bắt đầu nghe tín hiệu đầu tiên từ hành trình
+
+Hôm nay Companion không còn chỉ đổi trạng thái theo route. Companion bắt
+đầu lắng nghe tín hiệu đầu tiên từ hành trình của người dùng: Living
+Garden. Đây là mạch thần kinh thật đầu tiên nối Human Signals, Portal
+Brain và Companion.
+
+*Liên quan: `FIRST_INTELLIGENCE_CIRCUIT.md`, `PORTAL_BRAIN.md`,
+`portal-signals.ts`, `portal-brain.ts`, `signals/garden-signal.ts`,
+`GardenSignalSync.tsx`.*

@@ -73,3 +73,15 @@ liên kết ở trên định nghĩa luồng và quy tắc, KHÔNG có nghĩa to
 được lập trình. Bảng "Cài đặt thực tế hiện tại vs. mục tiêu" ở
 `INTELLIGENCE_GRAPH.md` là nguồn chính xác nhất về phần nào đã có code,
 phần nào còn là thiết kế chờ sprint code sau.
+
+### Cập nhật Sprint 12.1 — cạnh đầu tiên đã có code thật
+
+Sprint 12.1 ("First Intelligence Circuit") đã biến MỘT cạnh nhỏ của
+luồng V2 thành code thật: `Garden (gardenStage) → Portal Brain →
+Companion`. Không nối Garden → Companion trực tiếp — Garden chỉ là một
+"Human Signal" đi qua `garden-signal.ts` (adapter thuần) vào
+`PortalSignals`, rồi `portal-brain.ts` (`getCompanionDecision`) mới
+quyết định Companion nói gì. Đây là cạnh DUY NHẤT trong toàn bộ sơ đồ
+trên có code thật tính tới Sprint 12.1 — mọi cạnh khác (Knowledge,
+Story, Next Step, Human Context đầy đủ) vẫn là thiết kế chờ. Xem
+`docs/FIRST_INTELLIGENCE_CIRCUIT.md` cho chi tiết và lý do kiến trúc.

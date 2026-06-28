@@ -9,6 +9,23 @@
 > hành), NL07 (Garden phản ánh trưởng thành) trong
 > `FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`.
 
+## Cập nhật Sprint 12.1 — Portal Brain đã có code thật
+
+Tài liệu này được viết ở Sprint 12.0 như một bản thiết kế kiến trúc
+(chưa có code). Sprint 12.1 ("First Intelligence Circuit") đã triển khai
+PHIÊN BẢN ĐẦU TIÊN thật của Portal Brain ở
+`src/lib/portal/intelligence/portal-brain.ts`:
+`getCompanionDecision(signals: PortalSignals): CompanionDecision`.
+
+Phạm vi thật (V1, không phải toàn bộ thiết kế dưới đây): chỉ MỘT tín
+hiệu con người có dữ liệu thật — `gardenStage`, đi qua adapter thuần
+`src/lib/portal/intelligence/signals/garden-signal.ts`. Output thật chỉ
+ảnh hưởng tới Companion (`companionState`, `companionGreeting`,
+`companionInsight`, `recommendedTone`, `shouldSpeak`) — Garden, Story,
+Knowledge, Next Step trong bảng dưới đây vẫn là HƯỚNG THIẾT KẾ cho các
+sprint sau, chưa có code thật. Xem chi tiết kiến trúc và lý do tại
+`docs/FIRST_INTELLIGENCE_CIRCUIT.md`.
+
 ## Portal Brain là gì
 
 **Portal Brain KHÔNG phải AI. KHÔNG phải LLM. KHÔNG phải Chatbot.**
