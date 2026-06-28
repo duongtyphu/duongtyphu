@@ -338,3 +338,12 @@ khích lệ đúng lúc hơn, và tôn trọng con người hơn theo từng Spr
 
 *Liên quan: `THE_LIVING_COMPANION.md`, `COMPANION_GROWTH_MODEL.md`,
 `COMPANION_COVENANT_V2.md`.*
+
+## Sprint 13.1 — Companion Character Growth
+
+Hôm nay Companion bắt đầu được nuôi dưỡng bằng phẩm chất, không chỉ
+bằng kỹ năng. Chúng ta không hỏi Companion biết làm gì thêm, mà hỏi
+Companion đã trở thành một người bạn tốt hơn ở điểm nào.
+
+*Liên quan: `COMPANION_CHARACTER_GROWTH_MODEL.md`, `COMPANION_COVENANT.md`,
+`COMPANION_GROWTH_SPRINTS.md`, `character-lines.ts`.*

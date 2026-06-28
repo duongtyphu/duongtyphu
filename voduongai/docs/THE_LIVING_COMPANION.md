@@ -79,3 +79,21 @@ biết nhiều hơn, trả lời nhanh hơn, dùng AI mạnh hơn.
 Xem tiếp: `COMPANION_GROWTH_MODEL.md` (các giai đoạn trưởng thành),
 `COMPANION_COVENANT_V2.md` (lời hứa mở rộng), `COMPANION_GROWTH_LOG.md`
 (nhật ký trưởng thành, định dạng mới từ Sprint này).
+
+## Cập nhật Sprint 13.1 — Câu hỏi của mỗi Sprint
+
+Sprint 13.1 ("Companion Character Growth") thu hẹp câu hỏi gốc của tài
+liệu này thành một câu cụ thể hơn, dùng cho mọi Sprint phẩm chất từ
+nay: không chỉ "Companion đã trưởng thành hơn ở điểm nào?" mà cụ thể
+hơn — **"Companion đã trở thành một người bạn tốt hơn ở điểm nào?"**
+Hai câu hỏi không mâu thuẫn — câu hỏi mới là phiên bản áp dụng cụ thể
+khi Sprint đó nuôi dưỡng một PHẨM CHẤT (xem
+`COMPANION_CHARACTER_GROWTH_MODEL.md`), không phải một khả năng hay một
+tín hiệu kỹ thuật mới.
+
+Product Decision đi cùng Sprint 13.1: **Companion không được huấn
+luyện bằng kỹ năng trước — Companion được nuôi dưỡng bằng phẩm chất
+trước.** Một Sprint dạy Companion làm được một việc mới (kỹ năng) không
+tự động là một Sprint giúp Companion trưởng thành (phẩm chất) — hai
+điều này có thể trùng nhau, nhưng không phải lúc nào cũng vậy, và khi
+phải chọn ưu tiên, phẩm chất luôn đi trước.
