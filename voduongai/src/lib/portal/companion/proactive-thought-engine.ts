@@ -18,6 +18,20 @@ import {
   type CompanionThought,
   type ThoughtTrigger,
 } from "@/lib/portal/companion/proactive-thoughts";
+import { DAILY_THOUGHTS, type DailyThought } from "@/lib/portal/companion/daily-thought-library";
+import {
+  mapContextToSource,
+  shouldShowDailyThoughtToday,
+  type ThoughtContext,
+} from "@/lib/portal/companion/daily-thought-source";
+
+/**
+ * Sprint 18.5 — The Daily Thought đăng ký vào đây như MỘT Thought Source
+ * bổ sung, không phải một Delivery Engine khác. `ALL_THOUGHTS` là danh
+ * sách engine thực sự đọc — Proactive Thoughts (13.1) và Daily Thought
+ * (18.5) cùng đi qua một cơ chế cooldown/storage/silence duy nhất.
+ */
+const ALL_THOUGHTS: CompanionThought[] = [...PROACTIVE_THOUGHTS, ...DAILY_THOUGHTS];
 
 const GLOBAL_COOLDOWN_MS = 1000 * 60 * 3; // không hiện thought nào sớm hơn 3 phút sau thought trước
 const LAST_SHOWN_AT_KEY = "companion-proactive-last-shown-at";
@@ -37,6 +51,7 @@ const TRIGGER_CONTEXT_WEIGHT: Record<ThoughtTrigger, number> = {
   "quiet-presence": 2,
   hope: 2,
   "idle-presence": 1,
+  "daily-thought": 4,
 };
 
 export type ProactiveSessionState = {
@@ -54,6 +69,8 @@ export type ProactiveSignals = {
   pathname: string;
   gardenStage?: string;
   reflectionMeaning?: string;
+  /** Sprint 18.5 — ngữ cảnh để Thought Selector xét nguồn Daily Thought nào phù hợp. */
+  dailyThoughtContext?: ThoughtContext;
 };
 
 /** NV05 — Natural Timing: chờ ít nhất một khoảng lặng (8-15s) sau khi route ổn định trước khi nói. */
@@ -148,12 +165,22 @@ export function pickProactiveThought(
 
   const sessionShownIds = readSessionShownIds();
 
-  const eligible = PROACTIVE_THOUGHTS.filter((thought) => {
+  const dailyThoughtContext = signals.dailyThoughtContext ?? {};
+
+  const eligible = ALL_THOUGHTS.filter((thought) => {
     if (sessionShownIds.has(thought.id)) return false;
     if (now - lastShownAt < thought.cooldownMs && lastShownAt > 0) return false;
     if (thought.trigger === "comeback" && !session.isComeback) return false;
     if (thought.trigger === "garden-signal" && !signals.gardenStage) return false;
     if (thought.trigger === "reflection-meaning" && !signals.reflectionMeaning) return false;
+    if (thought.trigger === "daily-thought") {
+      // Sprint 18.5 — Soulful Silence: phần lớn các lần engine chạy, Daily
+      // Thought không đủ điều kiện gì cả (NV08), kể cả khi có tín hiệu.
+      if (!shouldShowDailyThoughtToday(dailyThoughtContext, now)) return false;
+      const source = mapContextToSource(dailyThoughtContext);
+      const thoughtSource = (thought as DailyThought).source;
+      if (!source || thoughtSource !== source) return false;
+    }
     if (thought.shouldShow && !thought.shouldShow(signals)) return false;
     return true;
   });

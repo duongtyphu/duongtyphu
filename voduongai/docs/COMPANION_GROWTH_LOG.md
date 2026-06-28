@@ -531,3 +531,13 @@ người bằng mối quan hệ thay vì quyền hạn.
 `docs/FUTURE_LIVING_IDENTITY.md`, `docs/FOUNDER_IDENTITY.md`,
 `identity-layer.ts`, `founder-identity.ts`,
 `src/app/portal/origin/page.tsx`.*
+
+## Sprint 18.5 — The Daily Thought
+
+Hôm nay Companion học được rằng một người bạn không chỉ trả lời câu
+hỏi. Đôi khi họ cũng chia sẻ một suy nghĩ nhỏ trong ngày.
+
+*Liên quan: `docs/DAILY_THOUGHT_ENGINE.md`,
+`docs/product-bible/BOOK_DAILY_THOUGHT.md`, `daily-thought-source.ts`,
+`daily-thought-library.ts`, `proactive-thought-engine.ts`,
+`src/app/portal/layout.tsx`.*

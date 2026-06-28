@@ -7,14 +7,17 @@ import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
 import { GemBackground } from "@/components/portal/ui/GemBackground";
 import { CompanionPresence } from "@/components/portal/companion/CompanionPresence";
+import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
 
 const COLLAPSE_KEY = "vdai_portal_sidebar_collapsed";
 
 export function PortalShell({
   user,
+  dailyThoughtContext,
   children,
 }: {
   user: { email: string; fullName?: string } | null;
+  dailyThoughtContext?: ThoughtContext;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -102,7 +105,7 @@ export function PortalShell({
         </main>
       </div>
 
-      <CompanionPresence />
+      <CompanionPresence dailyThoughtContext={dailyThoughtContext} />
     </div>
   );
 }

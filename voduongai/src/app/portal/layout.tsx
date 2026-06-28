@@ -12,6 +12,7 @@ import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
 import { buildLifeProfile, resolveSharedBirthday } from "@/lib/portal/life-profile/life-profile";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
+import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
 
 async function getCurrentUser() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -112,8 +113,18 @@ export default async function PortalLayout({
   ]);
   const lifeMoment = await getLifeMoment(returnAfterSilenceMilestone);
 
+  // Sprint 18.5 — The Daily Thought: tái dùng tín hiệu đã có sẵn ở trên
+  // (không query lại DB) để dựng `ThoughtContext` cho Thought Selector.
+  const dailyThoughtContext: ThoughtContext = {
+    isBirthday: lifeMoment?.type === "birthday",
+    isReturnAfterSilence: lifeMoment?.type === "return_after_silence" || !!returnAfterSilenceMilestone,
+    isAnnualMirror: lifeMoment?.type === "annual_mirror",
+    isOriginMoment: lifeMoment?.type === "first_portal_day",
+    hasNewCompanionChapter: lifeMoment?.type === "companion_new_chapter",
+  };
+
   return (
-    <PortalShell user={user}>
+    <PortalShell user={user} dailyThoughtContext={dailyThoughtContext}>
       <NotificationTicker />
       <FirstFootprintCeremony />
       <ReturnAfterSilenceCeremony milestoneOccurredAt={returnAfterSilenceMilestone} />

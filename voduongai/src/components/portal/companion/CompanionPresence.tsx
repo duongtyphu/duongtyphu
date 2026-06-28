@@ -46,6 +46,7 @@ import type { LivingStory } from "@/lib/portal/companion/living-stories";
 import { resolveCompanionMood, type CompanionMoodKey } from "@/lib/portal/companion/companion-mood";
 import { pickTouchMicroLine } from "@/lib/portal/companion/micro-reaction-engine";
 import { CompanionMicroReactionBubble } from "@/components/portal/companion/CompanionMicroReactionBubble";
+import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -104,7 +105,12 @@ function getInitialPosition(): { x: number; y: number } | null {
   return clampPosition(window.innerWidth - box - 16, window.innerHeight - box - 16, box);
 }
 
-export function CompanionPresence() {
+export function CompanionPresence({
+  dailyThoughtContext,
+}: {
+  /** Sprint 18.5 — ngữ cảnh Daily Thought, dựng sẵn ở layout.tsx (server). */
+  dailyThoughtContext?: ThoughtContext;
+} = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [minimized, setMinimized] = useState(() => {
@@ -228,7 +234,7 @@ export function CompanionPresence() {
       if (thought) return;
       const now = Date.now();
       const picked = pickProactiveThought(
-        { pathname: pathname ?? "/portal", gardenStage, reflectionMeaning },
+        { pathname: pathname ?? "/portal", gardenStage, reflectionMeaning, dailyThoughtContext },
         {
           isSpaceOpen: open,
           isMinimized: minimized,
@@ -244,7 +250,7 @@ export function CompanionPresence() {
       }
     }, THOUGHT_CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [open, minimized, typingInput, pathname, gardenStage, reflectionMeaning, comeback, thought]);
+  }, [open, minimized, typingInput, pathname, gardenStage, reflectionMeaning, comeback, thought, dailyThoughtContext]);
 
   // Nhiệm vụ 04/05 (Sprint 13.2) — Story Matching Engine: kiểm tra định kỳ, không
   // hiện cùng lúc với một Proactive Thought đang hiện.

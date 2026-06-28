@@ -24,7 +24,13 @@ export type ThoughtTrigger =
   | "story"
   | "quiet-presence"
   | "hope"
-  | "next-small-step";
+  | "next-small-step"
+  /**
+   * Sprint 18.5 — The Daily Thought. KHÔNG phải một trigger ambient như
+   * các trigger phía trên (lặp lại nhiều lần/session) — Daily Thought chỉ
+   * đủ điều kiện tối đa một lần/ngày, xem `daily-thought-source.ts`.
+   */
+  | "daily-thought";
 
 /** Mức ưu tiên khi nhiều thought cùng phù hợp — không phải điểm số hiển thị cho người dùng. */
 export type ThoughtPriority = "low" | "medium" | "high";
