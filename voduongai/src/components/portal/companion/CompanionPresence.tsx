@@ -25,14 +25,24 @@ import { displayName, states } from "@/lib/portal/companion/companion-identity";
 import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
 import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
+import { CompanionThoughtBubble } from "@/components/portal/companion/CompanionThoughtBubble";
 import { getCompanionDecision } from "@/lib/portal/intelligence/portal-brain";
 import {
   readStoredGardenStage,
+  readStoredReflectionMeaning,
   subscribeToGardenStage,
+  subscribeToReflectionMeaning,
 } from "@/lib/portal/intelligence/portal-signals";
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
+import {
+  pickProactiveThought,
+  markThoughtShown,
+  pauseProactiveThoughtsForSession,
+} from "@/lib/portal/companion/proactive-thought-engine";
+import type { CompanionThought } from "@/lib/portal/companion/proactive-thoughts";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
+const THOUGHT_CHECK_INTERVAL_MS = 5000;
 
 /**
  * Route dùng nhiều input/form (gõ nhiều) → anchored, đứng yên hẳn để
@@ -101,13 +111,79 @@ export function CompanionPresence() {
   const [gardenStage, setGardenStage] = useState<GardenStage | undefined>(() =>
     readStoredGardenStage()
   );
+  const [reflectionMeaning, setReflectionMeaning] = useState<string | undefined>(() =>
+    readStoredReflectionMeaning()
+  );
+  const [thought, setThought] = useState<CompanionThought | null>(null);
+  const [typingInput, setTypingInput] = useState(false);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
+  const pageEnteredAt = useRef(0);
 
   useEffect(() => {
     return subscribeToGardenStage(setGardenStage);
   }, []);
+
+  useEffect(() => {
+    return subscribeToReflectionMeaning(setReflectionMeaning);
+  }, []);
+
+  // Nhiệm vụ 05 — Natural Timing: mốc "trang đã ổn định" reset mỗi khi route đổi.
+  useEffect(() => {
+    pageEnteredAt.current = Date.now();
+    const clearTimer = setTimeout(() => setThought(null), 0);
+    return () => clearTimeout(clearTimer);
+  }, [pathname]);
+
+  // Nhiệm vụ 03 — không hiện proactive thought khi người dùng đang nhập input/textarea.
+  useEffect(() => {
+    function isFormField(target: EventTarget | null) {
+      if (!(target instanceof HTMLElement)) return false;
+      return (
+        target.tagName === "INPUT" ||
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable
+      );
+    }
+    function handleFocusIn(e: FocusEvent) {
+      if (isFormField(e.target)) setTypingInput(true);
+    }
+    function handleFocusOut(e: FocusEvent) {
+      if (isFormField(e.target)) setTypingInput(false);
+    }
+    document.addEventListener("focusin", handleFocusIn);
+    document.addEventListener("focusout", handleFocusOut);
+    return () => {
+      document.removeEventListener("focusin", handleFocusIn);
+      document.removeEventListener("focusout", handleFocusOut);
+    };
+  }, []);
+
+  // Nhiệm vụ 03/06 — Proactive Thought Engine: kiểm tra định kỳ, không bao giờ ép buộc.
+  useEffect(() => {
+    if (open || minimized) return;
+    const interval = setInterval(() => {
+      if (thought) return;
+      const now = Date.now();
+      const picked = pickProactiveThought(
+        { pathname: pathname ?? "/portal", gardenStage, reflectionMeaning },
+        {
+          isSpaceOpen: open,
+          isMinimized: minimized,
+          isTypingInput: typingInput,
+          timeOnPageMs: now - pageEnteredAt.current,
+          isComeback: comeback,
+        },
+        now
+      );
+      if (picked) {
+        markThoughtShown(picked, now);
+        setThought(picked);
+      }
+    }, THOUGHT_CHECK_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [open, minimized, typingInput, pathname, gardenStage, reflectionMeaning, comeback, thought]);
 
   const decision = getCompanionDecision({ pathname: pathname ?? "/portal", gardenStage });
   const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
@@ -207,6 +283,7 @@ export function CompanionPresence() {
     setPulsing(true);
     setTimeout(() => setPulsing(false), 500);
     setComeback(false);
+    setThought(null);
     setOpen(true);
   }
 
@@ -268,6 +345,17 @@ export function CompanionPresence() {
             pathname={pathname ?? "/portal"}
             brainGreeting={decision.companionGreeting}
           />
+
+          {thought && (
+            <CompanionThoughtBubble
+              thought={thought}
+              onDismiss={() => setThought(null)}
+              onPauseSession={() => {
+                pauseProactiveThoughtsForSession();
+                setThought(null);
+              }}
+            />
+          )}
 
           <div className="relative flex items-center justify-center">
             <CompanionNest dragging={dragging} active={dragging} />

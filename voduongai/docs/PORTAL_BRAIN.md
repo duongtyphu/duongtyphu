@@ -59,6 +59,20 @@ của mình (`COMPANION_REFLECTION_RESPONSE`), ấm áp, không phân tích.
 Xem chi tiết tại `docs/REFLECTION_MEANING_ENGINE.md` và NGUYÊN LÝ 11
 trong `docs/FIRST_PRINCIPLES_OF_VO_DUONG_AI.md`.
 
+## Cập nhật Sprint 13.1 — Companion bắt đầu có những suy nghĩ chủ động
+
+Sprint 13.1 ("Companion Proactive Thoughts") thêm một đầu ra mới mà
+Portal Brain không trực tiếp tạo ra, nhưng cùng tinh thần rule-based:
+`pickProactiveThought()` (`src/lib/portal/companion/proactive-thought-engine.ts`)
+đọc lại `gardenStage`/`reflectionMeaning` (cùng nguồn tín hiệu Portal
+Brain đã dùng) cộng với trạng thái phiên (Companion đang mở/minimize,
+người dùng có đang nhập input, trang đã ổn định bao lâu) để quyết định
+Companion có nên chủ động hiện một `CompanionThought` hay không — và
+nếu có, chọn câu nào theo trọng số ngữ cảnh (Garden/Reflection signal
+ưu tiên hơn idle). Giống Portal Brain, "không có gì phù hợp" là một kết
+quả hợp lệ, không phải lỗi — engine trả `null` nhiều hơn là trả một
+thought. Xem chi tiết tại `docs/COMPANION_PROACTIVE_THOUGHTS.md`.
+
 ## Portal Brain là gì
 
 **Portal Brain KHÔNG phải AI. KHÔNG phải LLM. KHÔNG phải Chatbot.**

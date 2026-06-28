@@ -668,8 +668,10 @@ body {
   .companion-ring,
   .companion-avatar-button--pulse,
   .companion-presence--drag-settle,
-  .companion-greeting-bubble {
+  .companion-greeting-bubble,
+  .companion-thought-bubble {
     animation: none;
+    transition: none !important;
   }
 }
 

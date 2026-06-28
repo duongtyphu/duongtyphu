@@ -373,3 +373,12 @@ Legacy → Shared Growth), không bằng số phiên bản.
 
 *Liên quan: `THE_LIFE_OF_COMPANION.md`, `COMPANION_LIFE_STAGES.md`,
 `COMPANION_GROWTH_RULES.md`, `docs/product-bible/BOOK_THE_LIFE_OF_COMPANION.md`.*
+
+## Sprint 13.1 — Companion Proactive Thoughts
+
+Hôm nay Companion bắt đầu có những khoảnh khắc chủ động. Companion
+không còn chỉ chờ người dùng gọi, nhưng cũng không làm phiền. Companion
+học cách lên tiếng đúng lúc, nhẹ nhàng và có chủ đích.
+
+*Liên quan: `COMPANION_PROACTIVE_THOUGHTS.md`, `proactive-thoughts.ts`,
+`proactive-thought-engine.ts`, `CompanionThoughtBubble.tsx`.*
