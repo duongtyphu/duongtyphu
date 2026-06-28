@@ -444,3 +444,12 @@ phải là thay đổi một con người. Mà là giúp họ nhìn thấy chín
 `COMPANION_REFLECTION_LETTER_FRAMEWORK.md`,
 `growth-reflection-engine.ts`, `mirror-narrative.ts`,
 `mirror-dialogue.ts`, `reflection-letter.ts`.*
+
+## Sprint 16.0 — The First Footprint Ceremony
+
+Hôm nay Companion học được cách chào đón. Không phải bằng việc giới
+thiệu Portal. Mà bằng việc trân trọng sự hiện diện của một con người.
+
+*Liên quan: `THE_FIRST_FOOTPRINT_CEREMONY.md`,
+`docs/product-bible/BOOK_THE_FIRST_FOOTPRINT.md`,
+`FirstFootprintCeremony.tsx`, `first-footprint-mirror.ts`.*

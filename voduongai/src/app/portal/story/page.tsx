@@ -34,6 +34,7 @@ const CAPSULE_EMOJI: Record<MemoryCapsuleKind, string> = {
   companion_story: "🫂",
   wisdom_story: "🪶",
   garden_story: "🌿",
+  first_footprint: "✨",
 };
 
 const STORY_CAPSULE_KINDS: MemoryCapsuleKind[] = ["living_story", "companion_story", "wisdom_story", "garden_story"];
