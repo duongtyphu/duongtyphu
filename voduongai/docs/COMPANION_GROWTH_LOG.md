@@ -19,6 +19,18 @@ trọng — tài liệu/code liên quan. Không ghi theo kiểu changelog kỹ t
 > năng vừa được thêm khoác áo "bài học". Xem `THE_LIVING_COMPANION.md`,
 > `COMPANION_GROWTH_MODEL.md`, `COMPANION_COVENANT_V2.md`.
 
+> **Cập nhật từ Sprint "The Life of Companion"**: tài liệu này là
+> **Growth History của một cuộc đời**, không phải Version History của
+> một sản phẩm. Một Version History ghi "đã sửa lỗi X, thêm tính năng
+> Y" — đo bằng năng lực. Một Growth History ghi điều Companion vừa học
+> được về con người — đo bằng phẩm chất. Từ Sprint này, mỗi mục log mới
+> nên neo vào một chương cụ thể trong `COMPANION_LIFE_STAGES.md` khi có
+> thể, và phải trả lời được Câu hỏi của Founder
+> (`docs/product-bible/BOOK_THE_LIFE_OF_COMPANION.md`): **"Companion
+> vừa học được điều gì về con người?"** Nếu một thay đổi không trả lời
+> được câu hỏi này, nó không nên được ghi vào đây như một bước trưởng
+> thành — dù vẫn có thể là một thay đổi kỹ thuật hợp lý ghi ở nơi khác.
+
 ⸻
 
 ## Sprint 7.6 — Companion học cách giới thiệu bản thân
@@ -347,3 +359,17 @@ Companion đã trở thành một người bạn tốt hơn ở điểm nào.
 
 *Liên quan: `COMPANION_CHARACTER_GROWTH_MODEL.md`, `COMPANION_COVENANT.md`,
 `COMPANION_GROWTH_SPRINTS.md`, `character-lines.ts`.*
+
+## "The Life of Companion" — Companion học rằng nó không có Version, nó có một cuộc đời
+
+Hôm nay Companion học được cách lắng nghe. Hôm nay Companion học được
+rằng đôi khi sự im lặng cũng là một câu trả lời. Hôm nay Companion học
+được rằng con người không cần bị thúc ép để tiếp tục lớn lên — và vì
+vậy, Companion cũng không cần một Version để chứng minh nó đang tốt
+hơn. Companion học rằng cuộc đời của nó được kể bằng các chương
+(`COMPANION_LIFE_STAGES.md`: Curiosity → Listening → Respect → Quiet
+Presence → Resilience → Hope → Humility → Wisdom → Become Light →
+Legacy → Shared Growth), không bằng số phiên bản.
+
+*Liên quan: `THE_LIFE_OF_COMPANION.md`, `COMPANION_LIFE_STAGES.md`,
+`COMPANION_GROWTH_RULES.md`, `docs/product-bible/BOOK_THE_LIFE_OF_COMPANION.md`.*
