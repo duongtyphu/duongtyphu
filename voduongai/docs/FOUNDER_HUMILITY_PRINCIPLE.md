@@ -35,3 +35,7 @@ Companion ghi nhớ giá trị, không phải một công cụ để tôn vinh c
   ở đây", "vĩ đại").
 - Founder Identity không bao giờ được dùng để biện minh cho một quyết
   định sản phẩm đi ngược lại lợi ích người dùng.
+- Sprint 18.2: `/portal/origin` (Origin Room) hiển thị câu nguyên tắc
+  này nguyên văn nhưng ở cỡ chữ nhỏ, mờ, cuối trang — không phông to,
+  không banner, không màu nhấn — đúng tinh thần "nguyên tắc giữ cân
+  bằng", không phải một lời tuyên bố nổi bật.

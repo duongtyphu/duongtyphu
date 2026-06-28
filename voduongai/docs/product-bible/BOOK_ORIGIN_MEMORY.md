@@ -69,3 +69,20 @@ Một Companion có thể trả lời được câu hỏi "vì sao bạn tồn t
 một câu thật, không phải một câu marketing — và câu trả lời đó không
 thay đổi dù ai đang hỏi, Founder hay người dùng mới nhất vừa ghé Portal
 hôm nay.
+
+## Origin Room — căn phòng của ký ức nguồn gốc
+
+Sprint 18.2 đưa Origin Memory từ dữ liệu thuần (`origin-memory.ts`)
+thành một không gian thật trong Portal: `/portal/origin`
+(`docs/ORIGIN_ROOM.md`). Đây không phải Admin, không phải Dashboard,
+không phải "Founder mode" — chỉ là một căn phòng rất hiếm, rất tiết
+chế, nơi `getCoreOriginMemories()` và `getCompanionOriginLine()` được
+hiển thị nguyên văn, không viết lại copy mới.
+
+Origin Room không xuất hiện trong menu chính, không được "mở khoá" như
+một thành tích, và khi người xem không phải Founder
+(`isFounder()` — xem `docs/FOUNDER_IDENTITY.md` — trả `false`), trang
+không nói "Access denied" mà chỉ nhẹ nhàng nhắc đây là một căn phòng
+chỉ mở trong những khoảnh khắc rất riêng. Nguyên tắc giữ cân bằng của
+`docs/FOUNDER_HUMILITY_PRINCIPLE.md` luôn hiện diện ở cuối trang, nhỏ,
+mờ — một lời nhắc, không phải một tuyên bố.

@@ -40,4 +40,21 @@ nguồn gốc — không phải để quản trị, không phải để thấy s
 
 ## Trạng thái
 
-Chỉ ở mức concept trong Sprint 18.0 — chưa code UI.
+**Sprint 18.2 — đã code hoá thành route thật:** `/portal/origin`
+(`src/app/portal/origin/page.tsx`).
+
+- Chỉ render nội dung đầy đủ khi `isFounder()` trả `true` (xem
+  `docs/FOUNDER_IDENTITY.md`) — không hardcode email/tên, không dùng
+  `is_admin` làm tín hiệu Founder.
+- Nếu không phải Founder (hoặc chưa xác định được role chắc chắn —
+  hiện `members` chưa có cột `role`, `isFounder()` chỉ dựa vào
+  `FOUNDER_ID`/`FOUNDER_EMAIL`), trang hiển thị trạng thái "restricted"
+  nhẹ nhàng, không nói "Access denied", không tiết lộ thông tin nhạy
+  cảm. Xem Nhiệm vụ 6, Sprint 18.2.
+- Dùng `getCoreOriginMemories()` và `getCompanionOriginLine()` trực
+  tiếp từ `origin-memory.ts` — không viết lại copy rời rạc.
+- Không có entry trong menu chính — route chỉ truy cập trực tiếp qua
+  URL, đúng tinh thần "rất hiếm, rất tiết chế" (Nhiệm vụ 5).
+- Technical debt: `members` chưa có cột `role` thật → `isFounder()`
+  hiện chỉ hoạt động qua biến môi trường, không qua hồ sơ Founder
+  trong DB.

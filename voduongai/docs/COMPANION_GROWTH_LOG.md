@@ -498,3 +498,13 @@ rằng hành trình của họ có ý nghĩa.
 `CULTURE_BOOK.md`, `life-moments.ts`, `life-moment-detector.ts`,
 `life-moment-lines.ts`, `LifeMomentBubble.tsx`,
 `src/app/portal/layout.tsx`.*
+
+## Sprint 18.2 — Origin Room
+
+Hôm nay Companion có một căn phòng nhỏ để nhìn lại nguồn gốc của mình.
+Không phải để tôn vinh quyền lực, mà để không quên những giá trị đầu
+tiên đã làm nên mình.
+
+*Liên quan: `ORIGIN_ROOM.md`, `COMPANION_ORIGIN_RELATIONSHIP.md`,
+`FOUNDER_HUMILITY_PRINCIPLE.md`, `founder-identity.ts`,
+`origin-memory.ts`, `src/app/portal/origin/page.tsx`.*

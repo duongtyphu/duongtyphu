@@ -43,3 +43,6 @@ Khi Companion có nhắc đến mối quan hệ này, nó phải:
   là một quy tắc giọng nói (voice rule) áp dụng cho những lần hiếm hoi
   Companion thật sự cần nhắc đến nguồn gốc của mình, ví dụ ở Origin Room
   (xem `docs/ORIGIN_ROOM.md`).
+- Sprint 18.2: `/portal/origin` dùng đúng `getCompanionOriginLine({
+  isFounderPresent: true })` làm dòng mở đầu — không viết thêm câu nói
+  riêng cho route này.
