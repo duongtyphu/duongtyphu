@@ -47,6 +47,13 @@ cách `BOOK_METHOD.md` và `BOOK_THE_SCHOOL_OF_THOUGHT.md` đã được đối
 chiếu lại trong `CONSTITUTION_AUDIT.md`. Một chương không thể truy
 ngược tới bất kỳ nguyên lý nào không nên được xuất bản.
 
+## Chương kế tiếp
+
+[`BOOK_01_NO_SILO_PRINCIPLE.md`](./BOOK_01_NO_SILO_PRINCIPLE.md) (Sprint
+12.0) — quy tắc bắt buộc mọi module mới phải kết nối với ít nhất 3 hệ
+thống khác trong Portal, áp dụng trực tiếp NL05/NL06/NL07 vào quá trình
+xây sản phẩm.
+
 ## Quan hệ với các Hiến pháp/quy tắc khác đã có
 
 - `THE_COMPANION_CONSTITUTION.md` (13 Điều) — vẫn là nguồn tối cao cho

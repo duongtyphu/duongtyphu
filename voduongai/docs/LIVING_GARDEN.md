@@ -124,3 +124,26 @@ Nguyên lý NL07 (Garden phản ánh trưởng thành, không thành tích) vẫ
 ràng buộc cao nhất — bảng trên không bao giờ được hiển thị cho người
 dùng dưới dạng "bạn đã đạt nguyên lý số mấy", chỉ dùng nội bộ cho Product
 Team khi thiết kế.
+
+## Garden Evolution — phản ánh CÁCH lớn lên, không chỉ ĐÃ lớn (Sprint 12.0)
+
+`buildGardenState` (`garden-model.ts`) hiện tính một `GardenStage` tổng
+(`dormant→sprouting→rooting→rising→blooming→radiant`) từ TỔNG số hành
+động — điều này trả lời "đã lớn bao nhiêu", nhưng chưa trả lời "đang lớn
+theo CÁCH nào". Sprint 12.0 (Intelligence Layer) bổ sung một lớp diễn
+giải thứ hai, đọc cùng `GardenInputs` đã có, không thêm input mới:
+
+| Cách lớn lên | Tín hiệu (từ `GardenInputs` đã có) |
+|---|---|
+| Đang học nhiều | `learningTouchpoints` cao hơn rõ rệt so với các yếu tố khác |
+| Đang hành động | `actionsCompleted` cao hơn rõ rệt so với `learningTouchpoints` |
+| Đang phản chiếu | `reflectionsCount` cao hơn rõ rệt so với các yếu tố khác |
+| Đang chia sẻ | `sharesCount` tăng so với giai đoạn trước |
+| Đang kiên trì | `recentActiveDays` đều đặn theo thời gian, không cần liên tục (đúng triết lý "không streak" đã có) |
+
+Đây vẫn là diễn giải bằng NGÔN NGỮ PHÁT TRIỂN ("vườn của bạn đang vươn
+lá nhiều hơn nở hoa lúc này" — kiểu câu, không phải con số), không bao
+giờ bằng điểm hay Level. Lớp này được Portal Brain (`PORTAL_BRAIN.md`)
+và Companion Memory (`COMPANION_MEMORY_EVOLUTION.md`) đọc để biết nên
+gợi ý hành động lấp đúng phần đang yếu (ví dụ học nhiều nhưng chưa hành
+động → gợi ý một bài thực hành) — xem `INTELLIGENT_NEXT_STEP.md`.
