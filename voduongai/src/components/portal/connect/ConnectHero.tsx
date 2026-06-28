@@ -2,7 +2,7 @@ import { Button } from "@/components/portal/ui/Button";
 import { GemCard } from "@/components/portal/ui/GemCard";
 
 /**
- * Answers: "Tôi đang ở trong một hệ điều hành giúp tôi kết nối, không chỉ một trang cộng đồng đơn thuần."
+ * Answers: "Mình nên đồng hành cùng ai?"
  */
 export function ConnectHero() {
   return (
@@ -10,7 +10,8 @@ export function ConnectHero() {
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">Hệ Kết Nối</p>
       <h1 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Không ai tiến hóa một mình.</h1>
       <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
-        VO DUONG AI là nơi bạn kết nối với cộng đồng, mentor, tri thức, cơ hội và những con người cùng khát vọng phát
+        Mình nên đồng hành cùng ai? VO DUONG AI là nơi bạn kết nối với cộng
+        đồng, mentor, tri thức, cơ hội và những con người cùng khát vọng phát
         triển trong kỷ nguyên AI.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">

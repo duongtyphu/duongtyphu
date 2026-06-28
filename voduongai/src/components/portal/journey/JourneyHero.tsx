@@ -2,7 +2,7 @@ import { Button } from "@/components/portal/ui/Button";
 import { GemCard } from "@/components/portal/ui/GemCard";
 
 /**
- * Answers: "Tôi đang ở đâu trong hành trình, và bước tiếp theo là gì?"
+ * Answers: "Mình đang ở đâu trên hành trình trưởng thành?"
  */
 export function JourneyHero() {
   return (
@@ -12,7 +12,9 @@ export function JourneyHero() {
         Hành trình mài giũa viên ngọc của bạn
       </h1>
       <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
-        Mỗi bước nhỏ hôm nay sẽ tạo nên một phiên bản tốt hơn của bạn trong kỷ nguyên AI.
+        Mình đang ở đâu trên hành trình trưởng thành? Biết rõ vị trí của mình
+        quan trọng hơn việc đi nhanh — mỗi bước nhỏ hôm nay đều tạo nên một
+        phiên bản tốt hơn của bạn.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
         <Button href="/portal/practice" variant="primary">

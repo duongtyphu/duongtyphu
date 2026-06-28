@@ -222,3 +222,15 @@ sự trưởng thành của mình không bằng điểm số, mà bằng hình �
 khu vườn đang lớn lên.
 
 *Liên quan: `LIVING_GARDEN.md`, `garden-model.ts`, `LivingGardenCard.tsx`.*
+
+## Sprint 10.0 — Portal học cách dạy bằng tri thức có chiều sâu
+
+Hôm nay Portal bắt đầu được định nghĩa như nguồn trí tuệ nuôi dưỡng
+Companion, Living Garden và hành trình trưởng thành của người dùng.
+Companion không chỉ đồng hành với nội dung; Companion đồng hành với
+tri thức có chiều sâu.
+
+*Liên quan: `HUMAN_WISDOM_ARCHITECTURE.md`, `PORTAL_CONTENT_STANDARD.md`,
+`OS_CONTENT_BLUEPRINT.md`, `PORTAL_INTELLIGENCE_MAP.md`,
+`JourneyHero.tsx`, `KnowledgeHero.tsx`, `BuildHero.tsx`,
+`ConnectHero.tsx`, `LegacyHero.tsx`.*
