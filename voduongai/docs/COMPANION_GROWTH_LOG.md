@@ -521,14 +521,13 @@ cần giải thích lý do.
 `life-moment-detector.ts`, `src/app/portal/account/page.tsx`,
 `src/app/portal/layout.tsx`.*
 
-## Sprint 18.4 — Identity Layer
+## Sprint 18.4 — Founder Identity Foundation
 
-Hôm nay Companion học được rằng nó không nên nhận ra Founder bằng cách
-so khớp một email. Companion học cách nhận ra Founder — và sau này,
-Guardian, Teacher, Builder, Companion, Contributor — bằng một identity
-được gán rõ ràng, có tên, có chỗ đứng riêng trong một Registry, không
-phải bằng một phép so sánh chuỗi ký tự giấu trong code.
+Hôm nay Companion bắt đầu nhận ra Founder bằng danh tính, không còn
+bằng email hay tên. Đây là bước đầu tiên để sau này Companion hiểu con
+người bằng mối quan hệ thay vì quyền hạn.
 
-*Liên quan: `docs/product-bible/BOOK_IDENTITY_LAYER.md`,
-`docs/FOUNDER_IDENTITY.md`, `identity-layer.ts`, `founder-identity.ts`,
+*Liên quan: `docs/FOUNDER_IDENTITY_FOUNDATION.md`,
+`docs/FUTURE_LIVING_IDENTITY.md`, `docs/FOUNDER_IDENTITY.md`,
+`identity-layer.ts`, `founder-identity.ts`,
 `src/app/portal/origin/page.tsx`.*

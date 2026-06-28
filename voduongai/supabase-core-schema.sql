@@ -28,14 +28,15 @@ alter table members add column if not exists created_at timestamptz not null def
 alter table members add column if not exists date_of_birth date;
 alter table members add column if not exists date_of_birth_hidden boolean not null default false;
 
--- Sprint 18.4 — Identity Layer: Companion nhận ra Founder (và trong tương
--- lai Guardian/Teacher/Builder/Companion/Contributor) bằng MỘT identity
--- được gán rõ ràng trên hồ sơ, không phải bằng cách so khớp email. Cột
--- này là nguồn dữ liệu chính; biến môi trường `FOUNDER_ID`/`FOUNDER_EMAIL`
--- chỉ còn là lớp fallback tương thích ngược (xem
--- `docs/product-bible/BOOK_IDENTITY_LAYER.md`,
+-- Sprint 18.4 — Founder Identity Foundation: Companion nhận ra Founder
+-- bằng MỘT identity được gán rõ ràng trên hồ sơ, không phải bằng cách
+-- so khớp email. Cột này là nguồn dữ liệu chính; biến môi trường
+-- `FOUNDER_ID`/`FOUNDER_EMAIL` chỉ còn là lớp fallback tương thích
+-- ngược (xem `docs/FOUNDER_IDENTITY_FOUNDATION.md`,
 -- `src/lib/portal/identity/identity-layer.ts`). `identity_type = null`
 -- nghĩa là một thành viên bình thường — không có gì thay đổi với họ.
+-- Đây CHỈ là nền móng — KHÔNG phải Identity Registry (xem
+-- `docs/FUTURE_LIVING_IDENTITY.md` cho roadmap kiến trúc tương lai).
 alter table members add column if not exists identity_type text;
 alter table members drop constraint if exists members_identity_type_check;
 alter table members add constraint members_identity_type_check

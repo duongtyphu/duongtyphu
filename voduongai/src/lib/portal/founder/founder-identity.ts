@@ -1,8 +1,8 @@
 /**
  * Founder Identity (Sprint 18.0 — Origin Memory; cập nhật Sprint 18.4 —
- * Identity Layer). Xem `docs/FOUNDER_IDENTITY.md`,
+ * Founder Identity Foundation). Xem `docs/FOUNDER_IDENTITY.md`,
  * `docs/FOUNDER_HUMILITY_PRINCIPLE.md`, `docs/ETHICS_LAYER.md`,
- * `docs/product-bible/BOOK_IDENTITY_LAYER.md`.
+ * `docs/product-bible/FOUNDER_IDENTITY_FOUNDATION.md`.
  *
  * Đây KHÔNG phải hệ thống đặc quyền — `isFounder()` không cấp, không
  * mở rộng, và không thay thế bất kỳ quyền quản trị nào (`is_admin`,
@@ -12,15 +12,17 @@
  * `docs/COMPANION_ORIGIN_RELATIONSHIP.md`.
  *
  * Từ Sprint 18.4, `isFounder()` không tự so khớp email/role nữa — nó
- * chỉ là một câu hỏi hẹp đặt vào Identity Layer
+ * chỉ là một câu hỏi hẹp đặt vào `isFounderIdentity()`
  * (`src/lib/portal/identity/identity-layer.ts`), nơi DUY NHẤT quyết
- * định identity của một người (qua `members.identity_type`, với env
+ * định Founder (qua `members.identity_type`, với env
  * `FOUNDER_ID`/`FOUNDER_EMAIL` chỉ còn là fallback tương thích ngược).
  * Companion không nhận ra Founder bằng email — Companion nhận ra
- * Founder bằng Identity.
+ * Founder bằng Identity. Đây CHỈ là nền móng — Identity Registry và
+ * Living Identity là roadmap tương lai, xem
+ * `docs/FUTURE_LIVING_IDENTITY.md`.
  */
 
-import { resolveIdentityType, type IdentityCheckProfile } from "@/lib/portal/identity/identity-layer";
+import { isFounderIdentity, type IdentityCheckProfile } from "@/lib/portal/identity/identity-layer";
 
 export type FounderRole = "founder";
 
@@ -49,7 +51,7 @@ export function getOriginRole(profile: FounderCheckProfile | null | undefined): 
 }
 
 export function isFounder(profile: FounderCheckProfile | null | undefined): boolean {
-  return resolveIdentityType(profile) === "founder";
+  return isFounderIdentity(profile);
 }
 
 /**
