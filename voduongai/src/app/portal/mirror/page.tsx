@@ -1,7 +1,8 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { MirrorCeremony } from "@/components/portal/mirror/MirrorCeremony";
-import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
+import { signalsFromReflections, signalsFromMemoryCapsules, deriveComebackSignals } from "@/lib/portal/growth-map/growth-signals";
+import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
 import { buildMirrorNarrative } from "@/lib/portal/growth-map/mirror-narrative";
 import { buildReflectionMoments } from "@/lib/portal/growth-map/growth-reflection-engine";
 import { buildFirstFootprintMirrorView } from "@/lib/portal/growth-map/first-footprint-mirror";
@@ -61,12 +62,16 @@ async function getMirrorData() {
 
 export default async function MirrorPage() {
   const { reflections, capsules } = await getMirrorData();
-  const growthSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
+  const baseSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
+  const growthSignals = [...baseSignals, ...deriveComebackSignals(baseSignals)];
 
   const invitation = buildCompanionMirrorInvitation(growthSignals) ?? "Mình muốn cho bạn xem một điều.";
   const narrativeLines = buildMirrorNarrative(growthSignals);
   const reflectionMoments = buildReflectionMoments(growthSignals);
   const firstFootprint = buildFirstFootprintMirrorView(capsules);
+  const milestones = detectGrowthMilestones(growthSignals);
+  const hasQuietSeason = milestones.some((m) => m.id === "return-after-silence" || m.id === "quiet-season");
+  const quietSeasonLine = hasQuietSeason ? "Có những khoảng lặng cũng là một phần của hành trình." : null;
 
   return (
     <div className="space-y-8">
@@ -84,6 +89,7 @@ export default async function MirrorPage() {
           narrativeLines={narrativeLines}
           reflectionMoments={reflectionMoments}
           firstFootprint={firstFootprint}
+          quietSeasonLine={quietSeasonLine}
         />
       </GemCard>
     </div>

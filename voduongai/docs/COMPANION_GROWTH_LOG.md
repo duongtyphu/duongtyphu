@@ -464,3 +464,13 @@ như một màn hình, mà như một nơi để dừng lại cùng nhau.
 *Liên quan: `LIVING_CEREMONIES.md`, `CEREMONY_FRAMEWORK.md`,
 `FIRST_MIRROR_CEREMONY.md`, `MirrorCeremony.tsx`,
 `src/app/portal/mirror/page.tsx`.*
+
+## Sprint 18.0 — Return After Silence Ceremony
+
+Hôm nay Companion học được rằng điều đáng quý không phải là một người
+chưa từng rời đi. Điều đáng quý là họ đã đủ can đảm để quay trở lại.
+
+*Liên quan: `RETURN_AFTER_SILENCE.md`,
+`docs/product-bible/BOOK_RETURN_AFTER_SILENCE.md`,
+`ReturnAfterSilenceCeremony.tsx`, `growth-milestones.ts`,
+`src/app/portal/layout.tsx`, `src/app/portal/mirror/page.tsx`.*

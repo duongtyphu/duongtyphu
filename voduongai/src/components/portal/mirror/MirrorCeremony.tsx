@@ -21,15 +21,18 @@ export function MirrorCeremony({
   narrativeLines,
   reflectionMoments,
   firstFootprint,
+  quietSeasonLine = null,
 }: {
   invitation: string;
   narrativeLines: MirrorNarrativeLine[];
   reflectionMoments: ReflectionMoment[];
   firstFootprint: FirstFootprintMirrorView | null;
+  quietSeasonLine?: string | null;
 }) {
   const [step, setStep] = useState<MirrorCeremonyStep>("opening");
 
-  const hasReflectionMaterial = narrativeLines.length > 0 || reflectionMoments.length > 0 || !!firstFootprint;
+  const hasReflectionMaterial =
+    narrativeLines.length > 0 || reflectionMoments.length > 0 || !!firstFootprint || !!quietSeasonLine;
 
   return (
     <div className="flex min-h-[70vh] w-full flex-col items-center justify-center px-6 py-12 text-center">
@@ -86,6 +89,10 @@ export function MirrorCeremony({
                 </p>
               ))}
             </div>
+          )}
+
+          {quietSeasonLine && (
+            <p className="mt-8 max-w-lg text-base italic leading-relaxed text-white/70">{quietSeasonLine}</p>
           )}
 
           <button
