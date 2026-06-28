@@ -1,7 +1,8 @@
 /**
- * Founder Identity (Sprint 18.0 — Origin Memory). Xem
- * `docs/FOUNDER_IDENTITY.md`, `docs/FOUNDER_HUMILITY_PRINCIPLE.md`,
- * `docs/ETHICS_LAYER.md`.
+ * Founder Identity (Sprint 18.0 — Origin Memory; cập nhật Sprint 18.4 —
+ * Identity Layer). Xem `docs/FOUNDER_IDENTITY.md`,
+ * `docs/FOUNDER_HUMILITY_PRINCIPLE.md`, `docs/ETHICS_LAYER.md`,
+ * `docs/product-bible/BOOK_IDENTITY_LAYER.md`.
  *
  * Đây KHÔNG phải hệ thống đặc quyền — `isFounder()` không cấp, không
  * mở rộng, và không thay thế bất kỳ quyền quản trị nào (`is_admin`,
@@ -10,12 +11,16 @@
  * biết khi nào (rất hiếm) nên nhắc đến nguồn gốc của mình — xem
  * `docs/COMPANION_ORIGIN_RELATIONSHIP.md`.
  *
- * Không hardcode email/tên trong logic chính: Founder ID/email chỉ
- * được đọc từ biến môi trường server-only (`FOUNDER_ID`, `FOUNDER_EMAIL`)
- * hoặc từ trường `role` trên hồ sơ thành viên. Nếu không có gì được
- * cấu hình, `isFounder()` luôn trả `false` — hệ thống hoạt động hoàn
- * toàn bình thường như với một người dùng thường (backward compatible).
+ * Từ Sprint 18.4, `isFounder()` không tự so khớp email/role nữa — nó
+ * chỉ là một câu hỏi hẹp đặt vào Identity Layer
+ * (`src/lib/portal/identity/identity-layer.ts`), nơi DUY NHẤT quyết
+ * định identity của một người (qua `members.identity_type`, với env
+ * `FOUNDER_ID`/`FOUNDER_EMAIL` chỉ còn là fallback tương thích ngược).
+ * Companion không nhận ra Founder bằng email — Companion nhận ra
+ * Founder bằng Identity.
  */
+
+import { resolveIdentityType, type IdentityCheckProfile } from "@/lib/portal/identity/identity-layer";
 
 export type FounderRole = "founder";
 
@@ -32,21 +37,7 @@ export type FounderIdentity = {
   relationship: FounderRelationship;
 };
 
-export type FounderCheckProfile = {
-  id?: string | null;
-  email?: string | null;
-  role?: string | null;
-};
-
-function readEnvFounderId(): string | null {
-  const value = process.env.FOUNDER_ID?.trim();
-  return value ? value : null;
-}
-
-function readEnvFounderEmail(): string | null {
-  const value = process.env.FOUNDER_EMAIL?.trim().toLowerCase();
-  return value ? value : null;
-}
+export type FounderCheckProfile = IdentityCheckProfile;
 
 /**
  * Trả về `originRole` thuần dữ liệu — KHÔNG phải quyền quản trị. Dùng để
@@ -58,17 +49,7 @@ export function getOriginRole(profile: FounderCheckProfile | null | undefined): 
 }
 
 export function isFounder(profile: FounderCheckProfile | null | undefined): boolean {
-  if (!profile) return false;
-
-  if (profile.role === "founder") return true;
-
-  const founderId = readEnvFounderId();
-  if (founderId && profile.id === founderId) return true;
-
-  const founderEmail = readEnvFounderEmail();
-  if (founderEmail && profile.email?.trim().toLowerCase() === founderEmail) return true;
-
-  return false;
+  return resolveIdentityType(profile) === "founder";
 }
 
 /**

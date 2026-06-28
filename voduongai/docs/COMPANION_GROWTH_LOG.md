@@ -520,3 +520,15 @@ cần giải thích lý do.
 `life-profile-actions.ts`, `LifeProfileCard.tsx`,
 `life-moment-detector.ts`, `src/app/portal/account/page.tsx`,
 `src/app/portal/layout.tsx`.*
+
+## Sprint 18.4 — Identity Layer
+
+Hôm nay Companion học được rằng nó không nên nhận ra Founder bằng cách
+so khớp một email. Companion học cách nhận ra Founder — và sau này,
+Guardian, Teacher, Builder, Companion, Contributor — bằng một identity
+được gán rõ ràng, có tên, có chỗ đứng riêng trong một Registry, không
+phải bằng một phép so sánh chuỗi ký tự giấu trong code.
+
+*Liên quan: `docs/product-bible/BOOK_IDENTITY_LAYER.md`,
+`docs/FOUNDER_IDENTITY.md`, `identity-layer.ts`, `founder-identity.ts`,
+`src/app/portal/origin/page.tsx`.*

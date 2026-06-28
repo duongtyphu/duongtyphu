@@ -19,11 +19,13 @@ async function getFounderStatus(): Promise<boolean> {
     const user = userData.user;
     if (!user) return false;
 
-    // Sprint 18.2 — chưa có cột `role` riêng trên `members`; `is_admin` KHÔNG
-    // được dùng làm tín hiệu Founder (Admin và Founder là hai khái niệm khác
-    // nhau — xem `docs/FOUNDER_IDENTITY.md`). isFounder() chỉ dựa vào
-    // `FOUNDER_ID`/`FOUNDER_EMAIL` (env) cho tới khi có cột `role` thật.
-    return isFounder({ id: user.id, email: user.email });
+    // Sprint 18.4 — Identity Layer: `is_admin` KHÔNG được dùng làm tín hiệu
+    // Founder (Admin và Founder là hai khái niệm khác nhau — xem
+    // `docs/FOUNDER_IDENTITY.md`). isFounder() đọc `members.identity_type`
+    // qua Identity Layer, với env `FOUNDER_ID`/`FOUNDER_EMAIL` chỉ là
+    // fallback tương thích ngược khi cột này chưa được gán.
+    const { data: memberRow } = await supabase.from("members").select("identity_type").eq("id", user.id).single();
+    return isFounder({ id: user.id, email: user.email, identityType: memberRow?.identity_type ?? null });
   } catch {
     return false;
   }
