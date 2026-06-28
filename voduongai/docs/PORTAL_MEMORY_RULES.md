@@ -42,8 +42,10 @@ việc người dùng đã bỏ qua một câu hỏi.
 
 - Mọi ký ức gắn với một người dùng cụ thể (`member_id`), được bảo vệ bằng
   Row Level Security — chỉ chính người dùng đó đọc/viết được.
-- Người dùng có quyền xóa ký ức của mình bất cứ lúc nào (tính năng xóa sẽ
-  được bổ sung ở sprint sau nếu cần — nguyên tắc đã được ghi nhận tại đây).
+- Người dùng có quyền xóa ký ức của mình bất cứ lúc nào. Từ Sprint 13.5
+  (Memory Ownership), `/portal/story` có hành động "Xoá khỏi My Story" cho
+  mỗi Memory Capsule (bao gồm capsule lưu từ Living Story) — xoá thật trên
+  Supabase, không phải ẩn ở UI, và luôn yêu cầu xác nhận trước khi xoá.
 - Ký ức không có hạn dùng nhân tạo — Portal không xóa ký ức để "dọn dữ liệu",
   trừ khi người dùng yêu cầu.
 

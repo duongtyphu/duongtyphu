@@ -116,6 +116,7 @@ export default async function MyStoryPage() {
       description: c.description,
       date: new Date(c.occurredAt),
       source: STORY_CAPSULE_KINDS.includes(c.kind) ? "Companion · Living Story" : undefined,
+      deletable: true,
     })),
     ...reflections.map((r) => ({
       id: r.id,

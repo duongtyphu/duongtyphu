@@ -414,3 +414,13 @@ nguyện.
 *Liên quan: `LIVING_STORIES_ENGINE.md`, `story-memory.ts`,
 `CompanionStoryMoment.tsx`, `MyStoryTimeline.tsx`,
 `supabase-living-story-memory.sql`.*
+
+## Sprint 13.5 — Memory Ownership
+
+Hôm nay Portal học được rằng giữ ký ức là một quyền, và buông ký ức
+cũng là một quyền. Companion không giữ điều gì thay người dùng khi họ
+đã sẵn sàng gỡ nó khỏi hành trình của mình.
+
+*Liên quan: `PORTAL_MEMORY_RULES.md`, `LIVING_STORIES_ENGINE.md`,
+`memoryCapsules.ts`, `MyStoryTimeline.tsx`,
+`docs/MEMORY_DELETE_QA.md`.*

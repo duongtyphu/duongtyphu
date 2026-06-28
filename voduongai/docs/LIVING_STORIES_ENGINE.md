@@ -120,6 +120,9 @@ trong `story-memory.ts`). Ranh giới riêng cho việc lưu trữ:
   như đã nêu ở mục Privacy & Trust Boundary.
 - **Quyền xoá**: capsule được lưu từ Living Story là một
   `memory_capsules` row như mọi capsule khác — người dùng có quyền xoá
-  bất cứ lúc nào qua cùng cơ chế xoá Memory Capsule hiện có (hoặc sẽ có)
-  của My Story; không có cơ chế lưu trữ riêng/khó xoá hơn cho loại
-  capsule này.
+  bất cứ lúc nào qua cùng cơ chế xoá Memory Capsule hiện có của My
+  Story; không có cơ chế lưu trữ riêng/khó xoá hơn cho loại capsule
+  này. Từ Sprint 13.5 (Memory Ownership), quyền này đã được triển khai:
+  mỗi capsule trong `/portal/story` (kể cả capsule lưu từ Living Story)
+  có hành động "Xoá khỏi My Story" với xác nhận trước khi xoá thật trên
+  Supabase (`deleteMemoryCapsule` trong `memoryCapsules.ts`).

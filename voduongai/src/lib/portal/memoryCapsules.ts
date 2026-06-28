@@ -107,5 +107,26 @@ export function useMemoryCapsules() {
     [userId]
   );
 
-  return { capsules, ready, addCapsule, signedIn: !!userId, tableReady };
+  const removeCapsule = useCallback(async (id: string) => {
+    setCapsules((prev) => prev.filter((c) => c.id !== id));
+    const ok = await deleteMemoryCapsule(id);
+    return ok;
+  }, []);
+
+  return { capsules, ready, addCapsule, removeCapsule, signedIn: !!userId, tableReady };
+}
+
+/**
+ * Sprint 13.5 — Memory Ownership: xoá một Memory Capsule (bao gồm capsule
+ * được lưu từ một Living Story, không có logic riêng cho loại đó). RLS
+ * (`member_id = auth.uid()`) đã chặn xoá capsule của người khác; lọc thêm
+ * `member_id` ở đây chỉ để tường minh, không phải lớp bảo vệ duy nhất.
+ */
+export async function deleteMemoryCapsule(id: string): Promise<boolean> {
+  const supabase = getSupabaseBrowser();
+  const { data: userData } = await supabase.auth.getUser();
+  const uid = userData.user?.id;
+  if (!uid) return false;
+  const { error } = await supabase.from("memory_capsules").delete().eq("id", id).eq("member_id", uid);
+  return !error;
 }
