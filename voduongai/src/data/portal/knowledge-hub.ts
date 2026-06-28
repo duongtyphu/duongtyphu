@@ -89,13 +89,19 @@ export type RecommendedKnowledgeItem = {
   title: string;
   description: string;
   href: string;
+  /**
+   * Sprint 13.0 — Knowledge Evolution. Chủ đề nội dung này gắn với, để
+   * `emphasizeByTags()` ưu tiên hiển thị khi khớp ý nghĩa Reflection
+   * gần nhất. Không dùng để lọc bỏ — chỉ dùng để sắp xếp lại.
+   */
+  emphasisTags?: string[];
 };
 
 export const recommendedKnowledgeItems: RecommendedKnowledgeItem[] = [
-  { id: "rk1", kind: "Bài học", title: "AI Foundation — Bài 1", description: "Hiểu đúng AI là gì trước khi dùng đúng.", href: "/portal/academy" },
-  { id: "rk2", kind: "Prompt", title: "Prompt phân tích khách hàng", description: "Dựng chân dung khách hàng mục tiêu trong 5 phút.", href: "/portal/prompts" },
-  { id: "rk3", kind: "Tool", title: "Công cụ AI viết content", description: "Viết nội dung nhanh hơn với một công cụ được tuyển chọn.", href: "/portal/tools" },
-  { id: "rk4", kind: "Template", title: "Template kế hoạch nội dung 7 ngày", description: "Mẫu lên kế hoạch dùng lại được ngay.", href: "/portal/templates" },
+  { id: "rk1", kind: "Bài học", title: "AI Foundation — Bài 1", description: "Hiểu đúng AI là gì trước khi dùng đúng.", href: "/portal/academy", emphasisTags: ["first-principles", "foundation", "explore"] },
+  { id: "rk2", kind: "Prompt", title: "Prompt phân tích khách hàng", description: "Dựng chân dung khách hàng mục tiêu trong 5 phút.", href: "/portal/prompts", emphasisTags: ["practice", "deep-work"] },
+  { id: "rk3", kind: "Tool", title: "Công cụ AI viết content", description: "Viết nội dung nhanh hơn với một công cụ được tuyển chọn.", href: "/portal/tools", emphasisTags: ["practice", "project", "consistency"] },
+  { id: "rk4", kind: "Template", title: "Template kế hoạch nội dung 7 ngày", description: "Mẫu lên kế hoạch dùng lại được ngay.", href: "/portal/templates", emphasisTags: ["consistency", "project"] },
 ];
 
 export type KnowledgeStat = {

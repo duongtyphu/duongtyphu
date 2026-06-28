@@ -5,7 +5,7 @@ import { LearningPathGrid } from "@/components/portal/knowledge/LearningPathGrid
 import { AcademySection } from "@/components/portal/knowledge/AcademySection";
 import { ResourceLibraryGrid } from "@/components/portal/knowledge/ResourceLibraryGrid";
 import { PracticeZone } from "@/components/portal/knowledge/PracticeZone";
-import { AIKnowledgeCoach } from "@/components/portal/knowledge/AIKnowledgeCoach";
+import { KnowledgeCompanionIntro } from "@/components/portal/knowledge/KnowledgeCompanionIntro";
 import { RecommendedKnowledge } from "@/components/portal/knowledge/RecommendedKnowledge";
 import { KnowledgeStats } from "@/components/portal/knowledge/KnowledgeStats";
 import {
@@ -30,7 +30,7 @@ export default function KnowledgeHubPage() {
       <AcademySection items={academyItems} />
       <ResourceLibraryGrid items={resourceLibraryItems} />
       <PracticeZone items={practiceItems} />
-      <AIKnowledgeCoach tip={aiKnowledgeTip} />
+      <KnowledgeCompanionIntro tip={aiKnowledgeTip} items={recommendedKnowledgeItems} />
       <RecommendedKnowledge items={recommendedKnowledgeItems} />
       <KnowledgeStats stats={knowledgeStats} />
       <section>

@@ -22,6 +22,14 @@
  * (`reflectionsCount`), không đọc ý nghĩa hay độ dài của nó — ý nghĩa
  * Reflection chỉ dành cho Companion/Internal Voices lắng nghe, không
  * dành cho Garden chấm điểm. Xem `docs/REFLECTION_MEANING_ENGINE.md`.
+ *
+ * Sprint 13.0 (Living Learning Loop) — `learningTouchpoints` (mở bài
+ * học) tồn tại trong kiểu dữ liệu nhưng KHÔNG được truyền dữ liệu thật
+ * ở bất kỳ nơi gọi nào trong ứng dụng (`GardenInputs` chỉ nhận
+ * `reflectionsCount`/`memoriesSaved` thật). Đây là chủ đích: Garden
+ * không được lớn lên chỉ vì có nhiều bài học được mở — chỉ Reflection
+ * và ký ức thật mới khiến Garden lớn lên. Xem
+ * `docs/LIVING_LEARNING_LOOP.md`.
  */
 
 export type GardenStage = "dormant" | "sprouting" | "rooting" | "rising" | "blooming" | "radiant";
