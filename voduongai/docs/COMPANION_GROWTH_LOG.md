@@ -214,3 +214,11 @@ nhỏ với hành trình của họ.
 *Liên quan: `Companion_Motion.md` (mục Sprint 8.5), `Companion_Guidelines.md`
 (mục Sprint 8.5), `CompanionNest.tsx`, `CompanionGreetingBubble.tsx`,
 `CompanionPresence.tsx`, `COMPANION_LIVING_PRESENCE_QA.md`.*
+
+## Sprint 9.0 — Portal có một khu vườn, không phải một bảng điểm
+
+Hôm nay Portal có The Living Garden — một cách để người dùng nhìn thấy
+sự trưởng thành của mình không bằng điểm số, mà bằng hình ảnh của một
+khu vườn đang lớn lên.
+
+*Liên quan: `LIVING_GARDEN.md`, `garden-model.ts`, `LivingGardenCard.tsx`.*

@@ -678,3 +678,46 @@ body {
     animation: none;
   }
 }
+
+/* Sprint 9.0 — The Living Garden. Motion rất nhẹ: glow thở, node lá/hoa
+   sáng nhẹ luân phiên, hạt giống lấp lánh. Không bao giờ hiển thị số
+   điểm — chỉ là hiệu ứng thị giác. */
+.living-garden-glow {
+  background: radial-gradient(
+    circle at 50% 85%,
+    rgba(34, 211, 238, calc(0.18 * var(--garden-glow-intensity, 0.4))),
+    rgba(124, 58, 237, calc(0.14 * var(--garden-glow-intensity, 0.4))) 45%,
+    transparent 75%
+  );
+  animation: living-garden-breathe 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes living-garden-breathe {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.living-garden-node {
+  background: radial-gradient(circle, rgba(167, 243, 208, 0.95), rgba(34, 211, 238, 0.55) 70%, transparent 100%);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.45);
+  animation: living-garden-shimmer 6s ease-in-out infinite;
+}
+
+@keyframes living-garden-shimmer {
+  0%, 100% { opacity: 0.55; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+.living-garden-seed {
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  animation: living-garden-shimmer 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .living-garden-glow,
+  .living-garden-node,
+  .living-garden-seed {
+    animation: none;
+  }
+}

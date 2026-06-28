@@ -7,6 +7,7 @@ import { ReflectionJournalCard } from "@/components/portal/story/ReflectionJourn
 import { AddMemoryCapsuleForm } from "@/components/portal/story/AddMemoryCapsuleForm";
 import { UnderstandingNoteCard } from "@/components/portal/story/UnderstandingNoteCard";
 import { HumanGrowthDashboardCard } from "@/components/portal/story/HumanGrowthDashboardCard";
+import { LivingGardenCard } from "@/components/portal/living-garden/LivingGardenCard";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
@@ -138,6 +139,24 @@ export default async function MyStoryPage() {
       <UnderstandingNoteCard note={buildUnderstandingNote(reflections)} pattern={detectGrowthPattern(reflections)} />
 
       <HumanGrowthDashboardCard qualities={buildGrowingQualities(reflections)} />
+
+      <section>
+        <div className="flex items-end justify-between">
+          <h2 className="text-lg font-bold text-white">Khu vườn trưởng thành của bạn</h2>
+        </div>
+        <p className="mt-1 text-sm text-white/55">
+          My Story lưu lại dấu chân của bạn. Khu vườn là nơi nhìn thấy dấu chân đó đang lớn lên.
+        </p>
+        <div className="mt-4">
+          <LivingGardenCard
+            compact
+            inputs={{
+              reflectionsCount: reflections.length,
+              memoriesSaved: capsules.length,
+            }}
+          />
+        </div>
+      </section>
 
       <MonthlyLetterCard
         stats={{

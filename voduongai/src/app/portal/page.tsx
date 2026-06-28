@@ -17,6 +17,7 @@ import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionC
 import { ProgressNarrativeCard } from "@/components/portal/gem-home/ProgressNarrativeCard";
 import { HumanMomentumCard } from "@/components/portal/gem-home/HumanMomentumCard";
 import { RecommendedResources } from "@/components/portal/gem-home/RecommendedResources";
+import { LivingGardenCard } from "@/components/portal/living-garden/LivingGardenCard";
 import { TodayOpportunity } from "@/components/portal/gem-home/TodayOpportunity";
 import { LatestUpdates } from "@/components/portal/gem-home/LatestUpdates";
 import { todayMissions, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
@@ -168,6 +169,12 @@ export default async function GemHomePage() {
           )}
         </div>
       </div>
+
+      <LivingGardenCard
+        inputs={{
+          reflectionsCount: recentReflections.length,
+        }}
+      />
 
       <RecommendedResources items={recommendedItems} />
 
