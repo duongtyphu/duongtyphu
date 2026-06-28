@@ -148,3 +148,29 @@ SEE → UNDERSTAND → PRACTICE → BUILD → SHARE → REFLECT → EVOLVE → L
   bạn dùng AI — VO DUONG AI mài giũa bạn thành phiên bản tốt hơn, qua 8
   giai đoạn: Nhìn thấy, Hiểu, Thực hành, Kiến tạo, Chia sẻ, Phản chiếu,
   Tiến hoá, Di sản."
+
+⸻
+
+## Tên chính thức — chờ Founder phê duyệt
+
+Từ Sprint chiến lược này, **The GEM Method** ("Phương pháp Mài Ngọc")
+được đề xuất là tên chính thức của phương pháp VO DUONG AI — không còn
+là một cách gọi tạm. Lý do giữ nguyên tên này thay vì đặt tên mới:
+
+- **Không trùng framework thị trường.** Khác với Bloom's Taxonomy,
+  ADDIE, Kirkpatrick Model, hay các mô hình "Learn-Practice-Apply" phổ
+  biến trong giáo dục/LMS — "Mài Ngọc" là một ẩn dụ văn hoá Việt
+  (ngọc bất trác bất thành khí — ngọc không mài thì không thành đồ),
+  không phải một khung lý thuyết phương Tây được dịch lại.
+- **Đã có tài sản thương hiệu đi trước.** `GemCard`, "viên ngọc",
+  "mài giũa" đã xuất hiện trong Portal từ trước khi phương pháp này
+  được đặt tên (Journey OS, Gem Home) — tên phương pháp không áp đặt
+  lên brand, nó được rút ra *từ* brand đã tồn tại.
+- **Đủ ngắn, đủ chiều sâu để thành tài sản trí tuệ:** có thể trở thành
+  tên một khoá học ("Học theo phương pháp GEM"), một chứng nhận ("Hoàn
+  thành 8 giai đoạn GEM Method"), hoặc tên một chương sách
+  (`product-bible/BOOK_THE_SCHOOL_OF_THOUGHT.md`).
+
+Founder cần xác nhận tên này trước khi dùng làm tài sản thương hiệu
+chính thức (đăng ký, in ấn, dùng trong quảng cáo) — tài liệu này chỉ đề
+xuất và lý giải, không tự quyết định thay Founder.
