@@ -189,7 +189,7 @@ cạnh Technical Review, không phải một mục tuỳ chọn.
 
 | Experience Debt | Vì sao chưa trả | Ghi nhận tại |
 |---|---|---|
-| Bước "Repeated Validation" chỉ đếm số lần lặp lại (`CHARACTER_TRANSFORMATION_THRESHOLD`), chưa kiểm tra điều kiện "luôn tạo kết quả tích cực" | Chưa có dữ liệu thật về outcome của mỗi lần áp dụng Lesson để kiểm tra | Sprint 21.6 |
+| Bước "Repeated Validation" chỉ đếm số lần lặp lại (`CHARACTER_TRANSFORMATION_THRESHOLD`), chưa kiểm tra Positive Outcome thật (`docs/POSITIVE_OUTCOME.md` định nghĩa câu hỏi, chưa có cơ chế đọc Outcome thật) | Chưa có dữ liệu thật về outcome của mỗi lần áp dụng Lesson để kiểm tra; Sprint 21.7 cố ý chỉ định nghĩa, không build scoring/analytics | Sprint 21.6, làm rõ ở Sprint 21.7 |
 | Bước "Heritage Candidate" hoàn toàn chưa có code | Cố ý dừng ở định nghĩa — đi xa hơn sẽ phải quyết định cách "đề xuất trừu tượng" thật, chưa có nhu cầu thật | Sprint 21.6 |
 | Meaning/Lesson chưa được Reflection lại sau khi tạo Outcome (vòng phản hồi một chiều: Reflection → Lesson → Meaning, nhưng Outcome của Meaning không quay lại thành Reflection mới) | Chưa có cơ chế đo Outcome của một Decision bị ảnh hưởng bởi Meaning | Sprint 21.6 |
 | Cross-user/anonymized aggregation hoàn toàn chưa thiết kế | Cố ý — đòi hỏi thiết kế privacy riêng, xem `docs/FUTURE_ANONYMIZED_WISDOM_AGGREGATION.md` | Sprint 21.6 |

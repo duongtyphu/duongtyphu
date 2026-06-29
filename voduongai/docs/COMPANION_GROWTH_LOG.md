@@ -1271,3 +1271,39 @@ không thu thập cuộc đời.
 *Liên quan:* `docs/EXPERIENCE_HARVEST.md`, `docs/EXPERIENCE_LIFECYCLE.md`,
 `docs/FUTURE_ANONYMIZED_WISDOM_AGGREGATION.md`, `docs/THE_LIVING_WISDOM_SYSTEM.md`,
 `docs/LIVING_HERITAGE.md`, `docs/CHARACTER_MEMORY.md`.
+
+## The Validation of Wisdom (Sprint 21.7)
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* —
+  Companion lần đầu phân biệt RÕ một Lesson "lặp lại nhiều lần" khỏi
+  một Lesson "thật sự tốt cho con người" — "không phải điều lặp lại
+  nhiều lần đều là trí tuệ" (`docs/POSITIVE_OUTCOME.md`).
+- *Companion học được điều gì?* — Audit xác nhận `character-memory.ts`
+  hôm nay chỉ đếm SỐ LẦN một `ReflectionMeaning` lặp lại
+  (`CHARACTER_TRANSFORMATION_THRESHOLD`) — không có Outcome nào được
+  ghi nhận sau mỗi lần áp dụng Lesson, nghĩa là "đủ điều kiện chuyển
+  hoá thành Character" hôm nay KHÔNG đồng nghĩa "đã được kiểm chứng là
+  tốt" theo đúng nghĩa Positive Outcome.
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi —
+  đúng phạm vi Sprint (chỉ định nghĩa, không build scoring/analytics/AI,
+  theo đúng yêu cầu NHIỆM VỤ 4).
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới. Giá
+  trị là một định nghĩa rõ ràng để Sprint sau biết PHẢI kiểm chứng điều
+  gì (Positive Outcome thật) trước khi cho phép Bước 5 (Repeated
+  Validation) tiến tới Bước 6 (Living Wisdom).
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Cách đọc
+  Outcome thật của một lần áp dụng Lesson (không suy đoán, không
+  gamification); toàn bộ Bước 7 (Heritage Candidate) vẫn chưa có code.
+
+*Education Debt mới*: cập nhật dòng Experience Debt "Repeated
+Validation" ở `docs/COMPANION_GROWTH_PRINCIPLE.md` — nay đã có ĐỊNH
+NGHĨA Positive Outcome, nhưng vẫn CHƯA có cơ chế thật đọc Outcome đó.
+
+*Culture Review*: không hành vi mới cho người dùng thấy — giá trị củng
+cố là một ranh giới chống gamification rõ ràng: số lần lặp lại không
+được phép thay thế câu hỏi thật "điều này có giúp con người trưởng
+thành hơn không".
+
+*Liên quan:* `docs/POSITIVE_OUTCOME.md`, `docs/EXPERIENCE_LIFECYCLE.md`,
+`docs/EXPERIENCE_HARVEST.md`, `docs/THE_30_YEAR_TRUST_PRINCIPLE.md`,
+`docs/THE_EDUCATION_ERA.md`, `docs/MORAL_COMPASS.md`.

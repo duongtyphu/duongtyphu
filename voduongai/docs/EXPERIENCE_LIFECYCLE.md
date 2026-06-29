@@ -88,18 +88,21 @@ trước khi được phép trở thành điều lâu dài hơn một lần ghi 
   này dùng.
 - **Privacy boundary**: vẫn per-user, chưa rời khỏi phạm vi cá nhân.
 
-### Bước 5 — Repeated Validation (MỚI ở Sprint này)
+### Bước 5 — Repeated Validation
 
 - **Input**: một Meaning đã từng ảnh hưởng hành vi Companion với MỘT
-  người dùng.
-- **Output**: số lần Meaning đó lặp lại VÀ luôn tạo kết quả tích cực
+  người dùng, VÀ một Positive Outcome thật cho mỗi lần áp dụng đó (xem
+  `docs/POSITIVE_OUTCOME.md`, Sprint 21.7).
+- **Output**: số lần Meaning đó lặp lại VÀ luôn tạo Positive Outcome
   (không có lần nào mâu thuẫn/gây hại) — đúng điều kiện 1 và 2 của
   `docs/LIVING_HERITAGE.md`.
 - **Điều kiện đi tiếp**: lặp lại nhiều lần, nhất quán — không có một
   ngưỡng số cố định mới được phát minh ở đây; Sprint này KHÔNG định ra
   một con số tuỳ tiện, để tránh suy đoán hành vi trước khi có dữ liệu
   thật (đúng nguyên tắc đã áp dụng cho `applyIntegrityCheck()`,
-  Sprint 20.3).
+  Sprint 20.3). Quan trọng hơn số lần: MỘT lần không tạo Positive
+  Outcome đủ để dừng bước này — "lặp lại nhiều" không tự động là "trí
+  tuệ" (`docs/POSITIVE_OUTCOME.md`).
 - **Khi nào dừng**: nếu một lần áp dụng Meaning đó tạo kết quả tiêu cực
   hoặc mâu thuẫn — vòng đời DỪNG LẠI ở đây, không đi tiếp, dù đã từng
   lặp lại nhiều lần trước đó.
@@ -176,16 +179,26 @@ trước khi được phép trở thành điều lâu dài hơn một lần ghi 
 | Inner Thought (`inner-thought-engine.ts`) | — | Bước 4 (Meaning thể hiện qua hành vi) | Hành vi thật |
 | Living Wisdom System (8 bước) | `docs/THE_LIVING_WISDOM_SYSTEM.md` | Mô tả tới bước 8 (Contribution) | CHỈ DOCS — Value/Action/Contribution chưa có code |
 | Living Heritage | `docs/LIVING_HERITAGE.md` | Bước 7 (Heritage Candidate → xét Heritage) | CHỈ DOCS — không có code |
-| Repeated Validation (bước 5 mới) | — | Chưa có hệ thống nào đo "lặp lại + luôn tích cực" một cách rõ ràng; `character-memory.ts` có ĐẾM lặp lại (transformation count ≥ 2) nhưng KHÔNG kiểm tra "luôn tích cực" | MỘT PHẦN — chỉ đếm số lần, chưa kiểm tra điều kiện tích cực |
+| Repeated Validation (bước 5) | — | `character-memory.ts` có ĐẾM lặp lại (transformation count ≥ 2) nhưng KHÔNG kiểm tra Positive Outcome (`docs/POSITIVE_OUTCOME.md`, Sprint 21.7) | MỘT PHẦN — chỉ đếm số lần, chưa kiểm tra điều kiện Positive Outcome |
 | Heritage Candidate (bước 7) | — | Chưa có | CHƯA CÓ GÌ — Education Debt |
 | Core Memory | `core-memory.ts` | Không thuộc vòng đời này (niềm tin gốc của Companion, không phải trải nghiệm người dùng) | N/A |
 
 **Kết luận audit**: hôm nay, hệ thống đi xa nhất tới gần cuối bước 6
 (Living Wisdom, qua Character Memory) cho CHÍNH một người dùng. Bước 7
-(Heritage Candidate) và một phần của bước 5 (kiểm tra "luôn tích cực",
-không chỉ đếm số lần) hoàn toàn chưa có code — đây là Experience Debt
-lớn nhất sau Sprint này.
+(Heritage Candidate) và phần Positive Outcome của bước 5 (không chỉ
+đếm số lần) hoàn toàn chưa có code — đây là Experience Debt lớn nhất
+sau Sprint 21.6/21.7.
+
+> **Cập nhật — `docs/POSITIVE_OUTCOME.md` (Sprint 21.7)**: audit xác
+> nhận `character-memory.ts` (`CHARACTER_TRANSFORMATION_THRESHOLD`)
+> chỉ đo SỐ LẦN một `ReflectionMeaning` lặp lại — nó hoàn toàn không
+> biết liệu mỗi lần áp dụng Lesson tương ứng có tạo Positive Outcome
+> hay không (không có Outcome nào được ghi nhận sau khi Lesson được
+> dùng). "Lặp lại nhiều lần" hôm nay đồng nghĩa "đủ điều kiện chuyển
+> hoá thành Character" — đây CHÍNH XÁC là khoảng trống Sprint 21.7 gọi
+> tên: số lần lặp lại không tự động là Positive Outcome.
 
 Xem tiếp: `docs/EXPERIENCE_HARVEST.md`, `docs/THE_LIVING_WISDOM_SYSTEM.md`,
 `docs/LIVING_HERITAGE.md`, `docs/CHARACTER_MEMORY.md`,
+`docs/POSITIVE_OUTCOME.md`,
 `docs/FUTURE_ANONYMIZED_WISDOM_AGGREGATION.md`.
