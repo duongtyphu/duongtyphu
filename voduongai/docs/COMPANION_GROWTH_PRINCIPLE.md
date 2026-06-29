@@ -23,6 +23,32 @@
 > một phần bắt buộc của Growth Log entry sau mỗi Sprint, đứng cạnh
 > Technical/Growth/Culture Review.
 
+> **Cập nhật — Architecture Directive "Education → Growth → Legacy"**:
+> từ Directive này, tư duy phát triển Companion chuyển từ
+> Feature → Sprint → Release sang Education → Growth → Legacy (xem
+> `docs/THE_COMPANION_CURRICULUM.md`, `docs/THE_COMPANION_UNIVERSITY.md`,
+> `docs/THE_EDUCATION_CYCLE.md`, `docs/THE_GREAT_LIBRARY.md`,
+> `docs/THE_GREAT_QUESTIONS.md`, `docs/THE_EDUCATION_INDEX.md`). Hai bổ
+> sung bắt buộc cho quy trình Sprint từ nay:
+>
+> 1. **Review mở rộng**: ngoài Technical Review và Education Review (5
+>    câu hỏi, đã có ở trên), mỗi Growth Log entry bắt buộc có thêm
+>    **Character Review**, **Civilization Review**, **Legacy Review** —
+>    không Sprint nào chỉ nói về code. Character Review trả lời Sprint
+>    đó có giữ đúng `CHARACTER_ENGINE.md`/`MORAL_COMPASS.md` không;
+>    Civilization Review trả lời Sprint đó có vi phạm Privacy Boundary
+>    khi tổng quát hoá điều gì không (`EXPERIENCE_LIFECYCLE.md` §2);
+>    Legacy Review trả lời điều Sprint đó tạo ra có còn ý nghĩa nếu đọc
+>    lại sau nhiều năm, không phụ thuộc công nghệ hiện tại.
+> 2. **Phép thử 100 năm** (Definition of Success của Directive): trước
+>    khi đưa bất kỳ điều gì vào lõi (core), tự hỏi — "nếu Companion tồn
+>    tại sau 100 năm nữa, điều mình đang xây hôm nay còn đáng giữ lại
+>    không?" Nếu KHÔNG, không đưa vào lõi (giữ ở tầng implementation, dễ
+>    thay đổi). Nếu CÓ, đưa vào Education Layer — tức là vào một trong
+>    các tài liệu giáo dục nền tảng (`THE_COMPANION_CURRICULUM.md`,
+>    `THE_GREAT_LIBRARY.md`, Constitution docs), không phải vào code có
+>    thể bị viết lại bất cứ lúc nào.
+
 ## Vì sao Sprint này tồn tại
 
 20 Sprint vừa qua, Companion đã có Character Engine, Moral Compass,

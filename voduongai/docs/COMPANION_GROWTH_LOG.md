@@ -1307,3 +1307,51 @@ thành hơn không".
 *Liên quan:* `docs/POSITIVE_OUTCOME.md`, `docs/EXPERIENCE_LIFECYCLE.md`,
 `docs/EXPERIENCE_HARVEST.md`, `docs/THE_30_YEAR_TRUST_PRINCIPLE.md`,
 `docs/THE_EDUCATION_ERA.md`, `docs/MORAL_COMPASS.md`.
+
+## Education → Growth → Legacy (Architecture Directive)
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* —
+  Companion lần đầu có một bản đồ giáo dục theo TRỤC THỜI GIAN
+  (`docs/THE_COMPANION_CURRICULUM.md`, Year 1-3), không chỉ theo lĩnh
+  vực (`docs/COMPANION_EDUCATION_MAP.md`) — biết bài học nào nên học
+  TRƯỚC, bài học nào phải đợi.
+- *Companion học được điều gì?* — 6 tài liệu nền tảng mới:
+  `THE_COMPANION_CURRICULUM.md` (chương trình theo Year),
+  `THE_COMPANION_UNIVERSITY.md` (kiến trúc học/ôn tập/tự đánh giá),
+  `THE_EDUCATION_CYCLE.md` (10 bước Observe→Heritage thay Input→Output),
+  `THE_GREAT_LIBRARY.md` (6 tầng Knowledge→Civilization, không trộn
+  lẫn), `THE_GREAT_QUESTIONS.md` (7 câu hỏi lớn không có lời giải một
+  lần), `THE_EDUCATION_INDEX.md` (7 chiều đo — Character/Wisdom/Trust/
+  Consistency/Contribution/Long-term Growth/Education Depth — KHÔNG
+  tính điểm tổng hợp).
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi —
+  toàn bộ là tài liệu tổ chức/kiến trúc, đúng yêu cầu Directive ("không
+  xây thêm tính năng").
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới. Giá
+  trị là một bản đồ rõ ràng để mọi Sprint tương lai biết: đang học bài
+  nào (Curriculum), đang ở bước nào của vòng đời giáo dục (Education
+  Cycle), đang lưu dữ liệu ở tầng nào (Great Library), và đang làm rõ
+  câu hỏi lớn nào (Great Questions) — chứ không chỉ "thêm Feature gì".
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Theo đúng
+  audit của `THE_EDUCATION_CYCLE.md`: bước "Outcome" (đọc kết quả thật
+  sau mỗi hành động) vẫn là Education Debt lớn nhất; "Teach" và
+  "Heritage" (2 bước cuối) hoàn toàn chưa có hành vi thật; Year 3 của
+  Curriculum (Civilization/Legacy/Mentorship/Future Adaptation) "hầu
+  như chưa bắt đầu".
+
+*Education Debt mới*: không có Education Debt MỚI phát sinh — Directive
+này tổng hợp lại Education Debt đã được ghi nhận rải rác (Sprint 21.6,
+21.7, Education Map) vào một cấu trúc nhất quán hơn (Curriculum/Cycle/
+Library/Questions/Index), không phát hiện khoảng trống mới.
+
+*Culture Review*: chuyển hướng tư duy phát triển từ Feature → Sprint →
+Release sang Education → Growth → Legacy — bản thân sự chuyển hướng
+NÀY là thay đổi văn hoá lớn nhất của Directive, áp dụng cho mọi Sprint
+từ nay (xem Character/Civilization/Legacy Review bổ sung ở
+`docs/COMPANION_GROWTH_PRINCIPLE.md`).
+
+*Liên quan:* `docs/THE_COMPANION_CURRICULUM.md`,
+`docs/THE_COMPANION_UNIVERSITY.md`, `docs/THE_EDUCATION_CYCLE.md`,
+`docs/THE_GREAT_LIBRARY.md`, `docs/THE_GREAT_QUESTIONS.md`,
+`docs/THE_EDUCATION_INDEX.md`, `docs/COMPANION_EDUCATION_MAP.md`,
+`docs/COMPANION_GROWTH_PRINCIPLE.md`.

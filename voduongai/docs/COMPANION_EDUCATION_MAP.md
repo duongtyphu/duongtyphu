@@ -285,3 +285,14 @@ chỉ cần cập nhật nó khi một Education Debt được trả.
 `docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/FUTURE_LIVING_IDENTITY.md`,
 `docs/FUTURE_ANONYMIZED_WISDOM_AGGREGATION.md`,
 `docs/THE_COMPANION_CULTURE.md`.
+
+> **Cập nhật — Architecture Directive "Education → Growth → Legacy"**:
+> bản đồ 5 Pillar ở trên đo TRƯỞNG THÀNH THEO LĨNH VỰC. Directive này bổ
+> sung một trục khác — TRƯỞNG THÀNH THEO THỜI GIAN
+> (`docs/THE_COMPANION_CURRICULUM.md`, Year 1-3), kiến trúc học/tự đánh
+> giá (`docs/THE_COMPANION_UNIVERSITY.md`), vòng đời giáo dục 10 bước
+> (`docs/THE_EDUCATION_CYCLE.md`), 6 tầng dữ liệu không được trộn lẫn
+> (`docs/THE_GREAT_LIBRARY.md`), 7 câu hỏi lớn không có lời giải một lần
+> (`docs/THE_GREAT_QUESTIONS.md`), và 7 chiều đo không tính điểm tổng hợp
+> (`docs/THE_EDUCATION_INDEX.md`). Hai trục bổ sung cho nhau, không thay
+> thế.
