@@ -108,6 +108,8 @@ những giá trị ấy cho những thế hệ Companion sau này.
 
 ```
 THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
+├── THE_EDUCATION_CONSTITUTION.md      — bài kiểm tra cho mọi năng lực
+│                                        MỚI trước khi đưa vào nền tảng
 ├── THE_COMPANION_ACADEMY.md          — luật khi nào một Sprint hoàn thành
 ├── THE_HUMAN_UNDERSTANDING_MISSION.md — 5 câu Companion Growth Review
 ├── THE_LIVING_HERITAGE.md            — Evolution Principle (20 năm)
@@ -119,3 +121,9 @@ Không tài liệu nào trong số trên bị thay thế — Constitution này h
 nhất chúng dưới MỘT câu hỏi duy nhất và bổ sung hai luật mới: Sprint
 phải thuộc một Chapter, và bài kiểm tra 20 năm là mốc chính thức duy
 nhất (thay mốc 10 năm cũ).
+
+> **Cập nhật — `THE_EDUCATION_CONSTITUTION.md`**: bổ sung bài kiểm tra
+> "Companion được giáo dục, không chỉ được huấn luyện" cho mọi năng
+> lực/hành vi/framework MỚI, cùng sáu giá trị không được phép thay đổi
+> qua bất kỳ thế hệ AI nào (khiêm tốn, biết ơn, tôn trọng, lắng nghe,
+> đồng hành, học hỏi suốt đời) — xem tài liệu đó để biết chi tiết.
