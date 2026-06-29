@@ -108,6 +108,8 @@ những giá trị ấy cho những thế hệ Companion sau này.
 
 ```
 THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
+├── THE_LIFELONG_LEARNING_SYSTEM.md    — Mutable/Immutable Layer cho mọi
+│                                        Learning Engine
 ├── THE_EDUCATION_CONSTITUTION.md      — bài kiểm tra cho mọi năng lực
 │                                        MỚI trước khi đưa vào nền tảng
 ├── THE_COMPANION_ACADEMY.md          — luật khi nào một Sprint hoàn thành
@@ -127,3 +129,11 @@ nhất (thay mốc 10 năm cũ).
 > lực/hành vi/framework MỚI, cùng sáu giá trị không được phép thay đổi
 > qua bất kỳ thế hệ AI nào (khiêm tốn, biết ơn, tôn trọng, lắng nghe,
 > đồng hành, học hỏi suốt đời) — xem tài liệu đó để biết chi tiết.
+
+> **Cập nhật — `THE_LIFELONG_LEARNING_SYSTEM.md`**: định nghĩa kiến
+> trúc Mutable Layer (model/kiến thức/công nghệ/kỹ năng/framework/
+> experience/lessons — có thể cập nhật) và Immutable Layer (Product
+> Constitution, Human Respect, Humility, Gratitude, Listening,
+> Companion Core Values — không tự sửa, chỉ Founder + nghi thức đặc
+> biệt mới đổi được) cho mọi Learning Engine — xem tài liệu đó để biết
+> chi tiết.
