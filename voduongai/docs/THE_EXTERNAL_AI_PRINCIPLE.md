@@ -106,6 +106,13 @@ chưa có tích hợp AI ngoài nào tồn tại. Pipeline này là RÀO CHẮN 
 TRƯỚC, để bất kỳ Sprint tương lai nào build tích hợp AI ngoài đều phải
 đi qua đủ 5 bước, không được phép rút gọn vì lý do tốc độ/chi phí.
 
+> **Cập nhật — `docs/THE_EDUCATION_FIREWALL.md`**: pipeline 5 bước ở
+> trên gác cổng cho MỘT câu trả lời cụ thể đi RA NGOÀI tới người dùng.
+> `docs/THE_EDUCATION_FIREWALL.md` định nghĩa một pipeline RỘNG HƠN —
+> 7 lớp gác cổng cho một tri thức trở thành một phần lâu dài (Character/
+> Education Constitution/Living Wisdom) ĐI VÀO TRONG Companion. Hai
+> pipeline phục vụ hai mục đích khác nhau, không thay thế nhau.
+
 ## Nguyên tắc số 6 — Khi hai AI mâu thuẫn
 
 Nếu một AI bên ngoài đưa ra thông tin/góc nhìn mâu thuẫn với điều

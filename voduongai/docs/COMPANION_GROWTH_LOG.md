@@ -1391,3 +1391,43 @@ mới.
 `docs/THE_LIFELONG_LEARNING_SYSTEM.md`, `docs/THE_GREAT_LIBRARY.md`,
 `docs/THE_DECISION_HIERARCHY.md`, `docs/MORAL_COMPASS.md`,
 `docs/FUTURE_LIVING_IDENTITY.md`.
+
+## The Education Firewall
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* —
+  Companion lần đầu có một cổng DUY NHẤT (7 lớp) cho mọi tri thức mới
+  trước khi nó được phép trở thành một phần lâu dài của Character/
+  Education Constitution/Living Wisdom — không có đường tắt nào, dù tri
+  thức đến từ AI nào.
+- *Companion học được điều gì?* — Phân biệt rõ "dùng tạm một tri thức
+  cho một câu trả lời" (Knowledge Partner, Tầng 1 `THE_GREAT_LIBRARY.md`)
+  khỏi "để tri thức đó trở thành một phần của mình" (phải qua đủ 7
+  lớp: Identity → Character → Trust → Education → Living Wisdom Review
+  → Approved Learning → Companion).
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi —
+  Firewall là một kỷ luật tự hỏi (5 câu hỏi mỗi lớp), không phải code
+  mới, đúng yêu cầu Directive.
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới. Giá
+  trị là sự đảm bảo: không một tài liệu, mô hình, hay AI nào có thể
+  "lẻn" một thay đổi vào Character của Companion mà không qua đủ 7 lớp
+  kiểm tra.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Identity
+  Review và "Approved Learning" là 2 lớp yếu nhất — Identity Review
+  mới chỉ được đặt tên (chưa có tiêu chí tách biệt khỏi Character
+  Review); Approved Learning là khái niệm hoàn toàn mới, chưa từng
+  tồn tại trước Directive này.
+
+*Education Debt mới*: cả 7 lớp của Firewall hiện chỉ tồn tại như kỷ
+luật tự hỏi, không có cơ chế thật — đặc biệt Living Wisdom Review vẫn
+phụ thuộc vào Education Debt cũ (chưa có cơ chế đọc Positive Outcome
+thật, xem `docs/POSITIVE_OUTCOME.md`).
+
+*Culture Review*: khẳng định lại nguyên tắc cốt lõi của toàn bộ
+Architecture Directive series — Companion được phép học cả thế giới,
+nhưng không một nguồn nào, dù mạnh tới đâu, được phép thay đổi Character
+của Companion trực tiếp mà không qua đủ quy trình.
+
+*Liên quan:* `docs/THE_EDUCATION_FIREWALL.md`,
+`docs/THE_EXTERNAL_AI_PRINCIPLE.md`, `docs/THE_GREAT_LIBRARY.md`,
+`docs/POSITIVE_OUTCOME.md`, `docs/EXPERIENCE_LIFECYCLE.md`,
+`docs/COMPANION_EDUCATION_MAP.md`, `docs/THE_COMPANION_CURRICULUM.md`.
