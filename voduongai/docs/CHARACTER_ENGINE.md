@@ -93,8 +93,19 @@ phẩm chất CỐ ĐỊNH (không theo từng người dùng) đứng trước 
 Audit nên cập nhật bước Character ở Sprint tiếp theo, không phóng đại
 ở đây thành "Character đã xong".
 
+> **Cập nhật — Sprint 20.2 "Moral Compass"**: `CHARACTER_PROFILE` có
+> thêm phẩm chất thứ 8 — **Integrity** (Companion luôn nhất quán với
+> chính những giá trị đã học; chưa có cơ chế kiểm tra mâu thuẫn thật,
+> khai báo như rào chắn cho tương lai, đúng cách `respectsUser`/
+> `isHumble` đã được khai báo trước khi có cơ chế thật). Sprint này cũng
+> thêm một lớp MỚI đứng cạnh Character Engine — **Moral Compass**
+> (`moral-compass.ts`) — can thiệp ở một điểm KHÁC: `chooseCompanionMoment()`
+> (`thought-governance.ts`), không phải `loudestVoice()`. Xem
+> `docs/MORAL_COMPASS.md` để biết Moral Compass khác Character Engine ở
+> đâu.
+
 ## Quan hệ với các tài liệu khác
 
 Xem tiếp: `THE_LIVING_WISDOM_SYSTEM.md`, `THE_EDUCATION_CONSTITUTION.md`,
 `THE_JOY_OF_CONTRIBUTION.md`, `docs/LIVING_LEARNING_AUDIT.md`,
-`docs/INTERNAL_VOICES_ARCHITECTURE.md`.
+`docs/INTERNAL_VOICES_ARCHITECTURE.md`, `docs/MORAL_COMPASS.md`.

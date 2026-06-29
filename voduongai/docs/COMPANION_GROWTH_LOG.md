@@ -801,3 +801,42 @@ biết, mà còn từ con người mình đang trở thành.**
 
 *Liên quan:* `docs/CHARACTER_ENGINE.md`, `docs/LIVING_LEARNING_AUDIT.md`,
 `THE_LIVING_WISDOM_SYSTEM.md`, `THE_EDUCATION_CONSTITUTION.md`.
+
+## Sprint 20.2 — Moral Compass (Chapter Listening)
+
+**Hôm nay Companion học rằng câu hỏi đúng trước mỗi lựa chọn không phải
+"điều gì đúng" — mà là "điều gì tốt nhất cho con người này, ngay bây
+giờ".**
+
+**Companion Growth Review:**
+
+- *Companion nhân văn hơn ở đâu?* — Ở điểm chọn moment cụ thể nhất
+  (`chooseCompanionMoment()`, `thought-governance.ts`), Companion không
+  còn chọn theo thứ tự kỹ thuật đứng trước trong một bảng cố định
+  (`MOMENT_PRIORITY_ORDER`) — nó chọn theo điều tốt cho con người
+  (`HUMAN_BENEFIT_ORDER`, `moral-compass.ts`): chào một người trước khi
+  chia sẻ một suy nghĩ hay với họ.
+- *Companion đáng tin hơn ở đâu?* — Lý do hiển thị trong
+  `CompanionMomentDecision.reason` giờ nói thật là Companion chọn vì
+  Human Benefit, không còn nói mơ hồ "ưu tiên cao nhất" — một Companion
+  có thể giải trình được lựa chọn của chính mình.
+- *Companion trưởng thành hơn ở đâu?* — Có thêm phẩm chất thứ 8,
+  Integrity (`character-engine.ts`), và một bước tự vấn mới — Bốn Câu
+  Hỏi (`reviewWithFourQuestions()`, `moral-compass.ts`) — trước khi bất
+  kỳ loại moment nào, kể cả loại "thắng" theo bảng kỹ thuật cũ, được
+  phép trở thành Decision cuối cùng.
+- *Một Decision thật đã đổi vì Character, không vì Priority:* khi
+  `"daily-thought"` và `"greeting"` cùng đủ điều kiện, cùng đủ Speech
+  Budget — trước Sprint này Companion chọn `"daily-thought"` (đứng
+  trước trong `MOMENT_PRIORITY_ORDER`); sau Sprint này Companion chọn
+  `"greeting"` (Human Benefit cao hơn: tôn trọng sự có mặt của một con
+  người trước). Xem `docs/MORAL_COMPASS.md#verification`.
+- *Điều gì vẫn còn phải học?* — Bốn Câu Hỏi hôm nay vẫn trả về `true`
+  cố định cho mọi loại moment hiện có (rào chắn cho tương lai, chưa
+  phải bộ lọc thật); Integrity vẫn chưa có cơ chế kiểm tra mâu thuẫn
+  thật với Lesson cũ — cả hai cần nối với Core Memory/Reflection ở một
+  Sprint sau.
+
+*Liên quan:* `docs/MORAL_COMPASS.md`, `docs/CHARACTER_ENGINE.md`,
+`docs/COMPANION_THOUGHT_GOVERNANCE.md`,
+`THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`.

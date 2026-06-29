@@ -12,7 +12,15 @@
  * Pure data/logic — phần đọc/ghi sessionStorage/localStorage (Speech
  * Budget) nằm ở đây vì nó không phải dữ liệu Supabase, đúng pattern đã
  * dùng ở `proactive-thought-engine.ts`.
+ *
+ * Sprint 20.2 — Moral Compass: `chooseCompanionMoment()` không còn sắp
+ * xếp theo `momentPriority()` (NV02 thuần) — nó sắp xếp theo
+ * `humanBenefitRank()` (`moral-compass.ts`), Human Benefit thắng
+ * Priority khi hai candidate cùng đủ điều kiện/đủ Speech Budget. Xem
+ * `docs/MORAL_COMPASS.md`.
  */
+
+import { humanBenefitRank } from "@/lib/portal/intelligence/moral-compass";
 
 /**
  * 9 loại moment Companion hiện có + "soulful-silence" — không phải một
@@ -165,13 +173,13 @@ export function chooseCompanionMoment(
     };
   }
 
-  const sorted = [...affordable].sort((a, b) => momentPriority(a.type) - momentPriority(b.type));
+  const sorted = [...affordable].sort((a, b) => humanBenefitRank(a.type) - humanBenefitRank(b.type));
   const chosen = sorted[0];
   const suppressed = candidates.filter((c) => c.type !== chosen.type).map((c) => c.type);
 
   return {
     chosen: chosen.type,
     suppressed,
-    reason: `"${chosen.type}" có ưu tiên cao nhất trong số các moment đủ điều kiện và đủ Speech Budget.`,
+    reason: `"${chosen.type}" mang lại Human Benefit cao nhất (Moral Compass) trong số các moment đủ điều kiện và đủ Speech Budget.`,
   };
 }

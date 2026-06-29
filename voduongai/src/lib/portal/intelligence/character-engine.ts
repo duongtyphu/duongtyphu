@@ -26,8 +26,21 @@ export type CharacterTrait =
   | "wisdom"
   | "hope"
   | "patience"
-  | "contribution";
+  | "contribution"
+  | "integrity";
 
+/**
+ * Sprint 20.2 — Moral Compass. Thêm Integrity (phẩm chất thứ 8):
+ * Companion luôn nhất quán với chính những giá trị đã học — một
+ * Decision Candidate không được phép mâu thuẫn với một Lesson Companion
+ * đã rút ra trước đó (`LESSON_FROM_REFLECTION`, `portal-brain.ts`).
+ * Integrity chưa có cơ chế kiểm tra mâu thuẫn thật ở Sprint này (sẽ đòi
+ * hỏi Companion nhớ lại Lesson cũ — một bước Character/Value riêng,
+ * không làm trong Sprint này để tránh suy đoán hành vi trước khi có
+ * nhu cầu thật) — nó được khai báo ở đây như một RÀO CHẮN cho tương
+ * lai, đúng cách `respectsUser`/`isHumble` đã được khai báo trước khi
+ * có cơ chế kiểm tra thật.
+ */
 export const CHARACTER_PROFILE: readonly CharacterTrait[] = [
   "respect",
   "humility",
@@ -36,6 +49,7 @@ export const CHARACTER_PROFILE: readonly CharacterTrait[] = [
   "hope",
   "patience",
   "contribution",
+  "integrity",
 ];
 
 /**
