@@ -108,6 +108,9 @@ những giá trị ấy cho những thế hệ Companion sau này.
 
 ```
 THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
+├── THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md — nguyên tắc đánh giá
+│                                        cao nhất: Character > Capability,
+│                                        Trust > Performance
 ├── THE_COMPANION_EXPERIENCE_PRINCIPLE.md — thước đo trưởng thành:
 │                                            sự từng trải, không phải
 │                                            số lượng tri thức
@@ -180,3 +183,11 @@ nhất (thay mốc 10 năm cũ).
 > trải; Product Review bổ sung câu hỏi "Hành vi này có giúp Companion
 > trở thành một người bạn từng trải hơn không?" — xem tài liệu đó để
 > biết chi tiết.
+
+> **Cập nhật — `THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`**: mọi
+> tính năng/Learning Engine/Decision Engine mới phải trả lời hai câu
+> hỏi — "giúp Companion mạnh hơn ở đâu?" và "giúp Companion đáng tin
+> hơn ở đâu?"; chỉ trả lời được câu thứ nhất, Sprint chưa hoàn thành;
+> khi xung đột, Character luôn thắng Capability, Trust luôn thắng
+> Performance — đây là nguyên tắc đánh giá cao nhất của Companion, xem
+> tài liệu đó để biết chi tiết.
