@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
 import type { MirrorNarrativeLine } from "@/lib/portal/growth-map/mirror-narrative";
 import type { ReflectionMoment } from "@/lib/portal/growth-map/growth-reflection-engine";
 import type { FirstFootprintMirrorView } from "@/lib/portal/growth-map/first-footprint-mirror";
@@ -22,12 +23,21 @@ export function MirrorCeremony({
   reflectionMoments,
   firstFootprint,
   quietSeasonLine = null,
+  originLine = null,
 }: {
   invitation: string;
   narrativeLines: MirrorNarrativeLine[];
   reflectionMoments: ReflectionMoment[];
   firstFootprint: FirstFootprintMirrorView | null;
   quietSeasonLine?: string | null;
+  /**
+   * Sprint 18.10 — Ceremony Context Adapter (NHIỆM VỤ 4). Origin Line đã
+   * được gate ở server qua `getOriginLineFromCoreMemory("ceremony", ...)` —
+   * component này chỉ quyết định CÓ NÊN thì thầm lại hay không (Frequency
+   * Guard), và CHỈ khi mùa phản chiếu trống (`!hasReflectionMaterial`) —
+   * không bao giờ thay thế nội dung phản chiếu thật của người dùng.
+   */
+  originLine?: string | null;
 }) {
   const [step, setStep] = useState<MirrorCeremonyStep>("opening");
 
@@ -54,10 +64,13 @@ export function MirrorCeremony({
       {step === "reflection" && (
         <>
           {!hasReflectionMaterial && (
-            <p className="mt-8 max-w-lg text-lg leading-relaxed text-white/90">
-              Hành trình của bạn vẫn còn rất mới. Mình sẽ giữ tấm gương này lại,
-              cho đến khi có nhiều dấu chân hơn để nhìn lại cùng bạn.
-            </p>
+            <>
+              <p className="mt-8 max-w-lg text-lg leading-relaxed text-white/90">
+                Hành trình của bạn vẫn còn rất mới. Mình sẽ giữ tấm gương này lại,
+                cho đến khi có nhiều dấu chân hơn để nhìn lại cùng bạn.
+              </p>
+              <OriginLineWhisper context="mirror_of_growth" line={originLine} />
+            </>
           )}
 
           {firstFootprint && (

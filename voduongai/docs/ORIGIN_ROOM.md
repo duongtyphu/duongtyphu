@@ -51,10 +51,21 @@ nguồn gốc — không phải để quản trị, không phải để thấy s
   `FOUNDER_ID`/`FOUNDER_EMAIL`), trang hiển thị trạng thái "restricted"
   nhẹ nhàng, không nói "Access denied", không tiết lộ thông tin nhạy
   cảm. Xem Nhiệm vụ 6, Sprint 18.2.
-- Dùng `getCoreOriginMemories()` và `getCompanionOriginLine()` trực
-  tiếp từ `origin-memory.ts` — không viết lại copy rời rạc.
+- Dùng `getCoreOriginMemories()` từ `origin-memory.ts` — không viết lại
+  copy rời rạc.
 - Không có entry trong menu chính — route chỉ truy cập trực tiếp qua
   URL, đúng tinh thần "rất hiếm, rất tiết chế" (Nhiệm vụ 5).
 - Technical debt: `members` chưa có cột `role` thật → `isFounder()`
   hiện chỉ hoạt động qua biến môi trường, không qua hồ sơ Founder
   trong DB.
+
+**Sprint 18.10 — Origin Line Ritual Wiring:** Origin Line ở trang này
+giờ đi qua hai tầng: `getOriginLineFromCoreMemory("origin-room", ...)`
+(Sprint 18.9, cổng kiến trúc) rồi `OriginLineWhisper` (component client
+nhỏ, `src/components/portal/companion/OriginLineWhisper.tsx`) áp dụng
+Frequency Guard của ngữ cảnh `origin_room` từ
+`src/lib/portal/companion/origin-line-context.ts` — tối đa 1 lần/ngày,
+dùng `localStorage` (`vdai_origin_line_day_origin_room`), hydration-safe
+giống các ceremony khác trong codebase. Nếu đã thấy hôm nay, dòng này
+không render lại, dù route được mở lại nhiều lần — vẫn không CTA, không
+bubble, không lặp.

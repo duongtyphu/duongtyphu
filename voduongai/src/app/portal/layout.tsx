@@ -2,6 +2,8 @@ import { PortalShell } from "@/components/portal/PortalShell";
 import { NotificationTicker } from "@/components/portal/NotificationTicker";
 import { OnboardingJourney } from "@/components/portal/OnboardingJourney";
 import { FirstFootprintCeremony } from "@/components/portal/FirstFootprintCeremony";
+import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
+import { getOriginLineContextDefinition } from "@/lib/portal/companion/origin-line-context";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { signalsFromReflections, signalsFromMemoryCapsules, deriveComebackSignals } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
@@ -129,7 +131,11 @@ export default async function PortalLayout({
       returnAfterSilenceMilestone={returnAfterSilenceMilestone}
     >
       <NotificationTicker />
-      <FirstFootprintCeremony />
+      <FirstFootprintCeremony
+        originLine={getOriginLineFromCoreMemory(
+          getOriginLineContextDefinition("first_footprint_ceremony").coreMemoryContext
+        )}
+      />
       <OnboardingJourney />
       {children}
     </PortalShell>

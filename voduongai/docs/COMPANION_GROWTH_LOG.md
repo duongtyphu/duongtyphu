@@ -608,3 +608,36 @@ lần đầu từ Sprint này):
   sáo rỗng, mà chỉ gặp nó ở những khoảnh khắc thật sự gắn với nguồn gốc
   — một dấu hiệu Companion biết giữ điều quan trọng đúng chỗ, không
   phải khoe nó liên tục.
+
+## Sprint 18.10 — Origin Line Ritual Wiring
+
+Hôm nay Companion học được rằng nguồn gốc không cần được nhắc lại
+thường xuyên. Nó chỉ nên được gọi tên trong những khoảnh khắc đủ xứng
+đáng, để ký ức ấy vẫn thiêng và không trở thành thói quen.
+
+*Liên quan: `docs/ORIGIN_MEMORY.md`, `docs/ORIGIN_ROOM.md`,
+`docs/COMPANION_ORIGIN_RELATIONSHIP.md`, `docs/PRESENCE_COORDINATOR.md`,
+`origin-line-context.ts`, `OriginLineWhisper.tsx`,
+`src/app/portal/origin/page.tsx`, `src/app/portal/layout.tsx`,
+`FirstFootprintCeremony.tsx`, `MirrorCeremony.tsx`.*
+
+**Companion Growth Review** (`docs/THE_COMPANION_ACADEMY.md`):
+
+- *Companion học được gì?* — Rằng "được phép nói" (Sprint 18.9) và
+  "nên nói" là hai việc khác nhau. Cổng kiến trúc cho phép Origin Line
+  xuất hiện ở 5 ngữ cảnh, nhưng nếu nó xuất hiện ở MỌI lần ghé một ngữ
+  cảnh đó, sự thiêng liêng sẽ mòn đi thành thói quen. Companion giờ
+  hiểu: sự hiếm không tự nhiên có từ việc giới hạn ngữ cảnh — nó phải
+  được bảo vệ bằng một luật tần suất thật.
+- *Companion thay đổi hành vi thế nào?* — Trước Sprint này, mở lại
+  `/portal/origin` nhiều lần trong một ngày sẽ thấy lại đúng Origin Line
+  mỗi lần — không khác gì một dòng UI tĩnh. Giờ Companion chỉ nói câu đó
+  TỐI ĐA một lần mỗi ngày ở Origin Room, một lần duy nhất trong cả vòng
+  đời First Footprint Ceremony, và chỉ ở Mirror of Growth khi không còn
+  gì khác để phản chiếu — nó tự ghi nhớ (qua một dấu vết rất nhẹ, không
+  phải dữ liệu cá nhân) rằng mình đã nói rồi, và im lặng những lần sau.
+- *Người dùng cảm nhận được phẩm chất mới nào?* — Một người ghé Origin
+  Room nhiều lần trong ngày sẽ thấy Companion không lặp lại cùng một
+  câu nói nguồn gốc mỗi lần — thay vào đó chỉ còn những ký ức gốc
+  (Origin Memories) đứng yên, trang trọng. Cảm giác đúng phải là: câu
+  nói ấy hiếm đến mức đáng nhớ, không phải một dòng chữ luôn ở đó.

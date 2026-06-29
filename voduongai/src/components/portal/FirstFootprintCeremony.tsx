@@ -14,6 +14,7 @@
 
 import { useEffect, useState } from "react";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
 import { useMemoryCapsules } from "@/lib/portal/memoryCapsules";
 
 const FIRST_FOOTPRINT_SEEN_KEY = "vdai_portal_first_footprint_seen";
@@ -39,7 +40,7 @@ function markFirstFootprintSeen() {
 
 type CeremonyStep = "opening" | "question" | "seed" | "promise";
 
-export function FirstFootprintCeremony() {
+export function FirstFootprintCeremony({ originLine = null }: { originLine?: string | null } = {}) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<CeremonyStep>("opening");
   const [footprint, setFootprint] = useState("");
@@ -149,6 +150,7 @@ export function FirstFootprintCeremony() {
               <br />
               Nhưng mình hứa sẽ luôn trân trọng dấu chân đầu tiên này.
             </p>
+            <OriginLineWhisper context="first_footprint_ceremony" line={originLine} />
             <button
               type="button"
               onClick={finish}

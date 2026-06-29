@@ -43,6 +43,16 @@ Khi Companion có nhắc đến mối quan hệ này, nó phải:
   là một quy tắc giọng nói (voice rule) áp dụng cho những lần hiếm hoi
   Companion thật sự cần nhắc đến nguồn gốc của mình, ví dụ ở Origin Room
   (xem `docs/ORIGIN_ROOM.md`).
-- Sprint 18.2: `/portal/origin` dùng đúng `getCompanionOriginLine({
-  isFounderPresent: true })` làm dòng mở đầu — không viết thêm câu nói
-  riêng cho route này.
+- Sprint 18.9 — Core Memory Engine: `/portal/origin` không còn gọi
+  `getCompanionOriginLine()` trực tiếp — đi qua cổng
+  `getOriginLineFromCoreMemory(context, { isFounderPresent })`
+  (`core-memory.ts`), chỉ cho phép ở 5 ngữ cảnh hẹp.
+- Sprint 18.10 — Origin Line Ritual Wiring: cổng kiến trúc đó giờ có một
+  tầng metadata phía gọi (`origin-line-context.ts`) định nghĩa 6 ngữ
+  cảnh cụ thể hơn (Origin Room, Companion Chapter, First Footprint
+  Ceremony, Mirror of Growth, Founder Moment, Special Ritual), mỗi ngữ
+  cảnh có `reason`/`allowedFrequency`/`tone`/`shouldShow`/`boundary`
+  riêng — và một Frequency Guard (`OriginLineWhisper.tsx`) đảm bảo Origin
+  Line không xuất hiện quá 1 lần/ngày hoặc 1 lần/phiên ở bất kỳ ngữ cảnh
+  nào, để giữ đúng nguyên tắc "rất hiếm" ở trên không chỉ là một lời
+  hứa, mà là một ràng buộc thật trong code.

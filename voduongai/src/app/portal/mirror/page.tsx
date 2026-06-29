@@ -7,6 +7,8 @@ import { buildMirrorNarrative } from "@/lib/portal/growth-map/mirror-narrative";
 import { buildReflectionMoments } from "@/lib/portal/growth-map/growth-reflection-engine";
 import { buildFirstFootprintMirrorView } from "@/lib/portal/growth-map/first-footprint-mirror";
 import { buildCompanionMirrorInvitation } from "@/lib/portal/companion/mirror-dialogue";
+import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
+import { getOriginLineContextDefinition } from "@/lib/portal/companion/origin-line-context";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 
@@ -73,6 +75,15 @@ export default async function MirrorPage() {
   const hasQuietSeason = milestones.some((m) => m.id === "return-after-silence" || m.id === "quiet-season");
   const quietSeasonLine = hasQuietSeason ? "Có những khoảng lặng cũng là một phần của hành trình." : null;
 
+  // Sprint 18.10 — Ceremony Context Adapter (NHIỆM VỤ 4): Origin Line chỉ
+  // được gate khi mùa phản chiếu thật sự trống — không bao giờ thay vị trí
+  // của nội dung phản chiếu thật của người dùng.
+  const hasReflectionMaterial = narrativeLines.length > 0 || reflectionMoments.length > 0 || !!firstFootprint || !!quietSeasonLine;
+  const mirrorContext = getOriginLineContextDefinition("mirror_of_growth");
+  const originLine = hasReflectionMaterial
+    ? null
+    : getOriginLineFromCoreMemory(mirrorContext.coreMemoryContext);
+
   return (
     <div className="space-y-8">
       <GemCard variant="featured" className="!p-7 sm:!p-8">
@@ -90,6 +101,7 @@ export default async function MirrorPage() {
           reflectionMoments={reflectionMoments}
           firstFootprint={firstFootprint}
           quietSeasonLine={quietSeasonLine}
+          originLine={originLine}
         />
       </GemCard>
     </div>

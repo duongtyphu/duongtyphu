@@ -2,7 +2,9 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { isFounder } from "@/lib/portal/founder/founder-identity";
 import { getCoreOriginMemories } from "@/lib/portal/companion/origin-memory";
 import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
+import { getOriginLineContextDefinition } from "@/lib/portal/companion/origin-line-context";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
 
 export const metadata = {
   title: "Origin Room",
@@ -53,7 +55,10 @@ export default async function OriginRoomPage() {
   // Sprint 18.9 — Core Memory Engine: Origin Room là 1 trong 5 ngữ cảnh
   // duy nhất được phép phát Origin Line — đi qua cổng Core Memory, không
   // gọi `getCompanionOriginLine()` trực tiếp nữa.
-  const originLine = getOriginLineFromCoreMemory("origin-room", { isFounderPresent: true });
+  const originRoomContext = getOriginLineContextDefinition("origin_room");
+  const originLine = getOriginLineFromCoreMemory(originRoomContext.coreMemoryContext, {
+    isFounderPresent: true,
+  });
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
@@ -63,7 +68,7 @@ export default async function OriginRoomPage() {
         <p className="mt-2 text-sm text-white/50">
           Nơi Companion nhìn lại những điều đầu tiên đã tạo nên mình.
         </p>
-        <p className="mt-8 text-base italic leading-relaxed text-white/80">&ldquo;{originLine}&rdquo;</p>
+        <OriginLineWhisper context="origin_room" line={originLine} isFounderPresent />
       </div>
 
       <div className="mt-14 space-y-8">

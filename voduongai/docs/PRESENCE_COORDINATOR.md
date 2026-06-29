@@ -105,14 +105,37 @@ chỉ khi `process.env.NODE_ENV === "development"` — log gồm
 `suppressed`. Không log nội dung câu nói thật, không log dữ liệu hồ sơ người
 dùng. Không chạy ở production.
 
+## Sprint 18.10 — Origin Line Ritual Wiring
+
+`origin_line` giờ có nơi gọi thật trong UI: Origin Room
+(`/portal/origin`), First Footprint Ceremony (bước "promise"), và Mirror
+of Growth (chỉ khi mùa phản chiếu trống). Mỗi nơi gọi đi qua hai tầng —
+`getOriginLineFromCoreMemory()` (Sprint 18.9, cổng "được phép xuất hiện
+ở ngữ cảnh nào") rồi `src/lib/portal/companion/origin-line-context.ts` +
+`OriginLineWhisper.tsx` (Sprint 18.10, "có nên xuất hiện LẦN NÀY không"
+— Frequency Guard theo localStorage/sessionStorage, tối đa 1 lần/ngày
+hoặc 1 lần/phiên tuỳ ngữ cảnh). Candidate `origin_line` của Presence
+Coordinator (8 nguồn ở trên) vẫn không đổi hành vi — nó vẫn chỉ phản ánh
+`PresenceServerState.originLineContext` nếu một nơi nào đó set giá trị
+này cho Thought Governance; ba nơi gọi mới ở trên hiển thị Origin Line
+trực tiếp tại chỗ (Origin Room/Ceremony/Mirror), KHÔNG đi qua
+`buildPresenceCandidates()` — vì đó là những không gian riêng, không
+phải bubble nổi cạnh tranh với Daily Thought/Greeting. Founder Moment
+(`founder_moment`) và Special Ritual vẫn là placeholder — chưa có nguồn
+dữ liệu thật để biết "lần đầu Founder mở Origin Room" hay một nghi thức
+đặc biệt nào đang diễn ra (xem `getFounderMomentTrigger()`, trả về
+`null` trung thực, không fake event).
+
 ## Technical Debt còn lại
 
-- Chưa có Ceremony/Companion Chapter component nào thật sự đặt
-  `originLineContext` để kích hoạt candidate `origin_line` — cổng đã mở
-  đúng theo Core Memory (Sprint 18.9), nhưng chưa có nơi gọi nó trong UI.
-  Đây là kết nối tiếp theo, không phải lỗi của Sprint 18.9 (brief chỉ yêu
-  cầu Origin Line "được phép" xuất hiện ở 5 ngữ cảnh, không yêu cầu nối
-  dây UI cho từng ngữ cảnh ngay).
+- Founder Moment (`founder_moment`) và Special Ritual chưa có nguồn dữ
+  liệu thật để kích hoạt — `getFounderMomentTrigger()` là một adapter
+  rõ ràng, không fake event, chờ một bảng theo dõi lượt ghé Origin Room
+  hoặc một sự kiện Growth Log runtime trong tương lai.
+- `origin_line` (candidate Presence Coordinator) vẫn chưa có nơi nào đặt
+  `originLineContext` trên `PresenceServerState` — ba nơi gọi mới của
+  Sprint 18.10 hiển thị trực tiếp, không qua governance bubble, đúng
+  tinh thần "không phải bubble thường ngày" của Origin Line.
 - `presenceNow` cập nhật mỗi giây qua `setInterval` riêng trong
   `CompanionPresence.tsx` — một state tick nhỏ, không phải vấn đề hiệu năng ở
   quy mô hiện tại, nhưng nếu sau này có thêm nhiều coordinator tick khác, nên

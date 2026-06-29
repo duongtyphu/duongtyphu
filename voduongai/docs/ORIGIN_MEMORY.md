@@ -151,3 +151,10 @@ Toàn bộ 12 Origin Memory trên được định nghĩa dưới dạng dữ li
 tại `src/lib/portal/companion/origin-memory.ts`
 (`getCoreOriginMemories()`), cộng với một Origin Memory riêng về Founder
 (`getFounderOriginMemory()`) — xem `docs/FOUNDER_IDENTITY.md`.
+
+**Sprint 18.10 — Origin Line Ritual Wiring**: bản thân `origin-memory.ts`
+không đổi. Cái mới là một tầng phía gọi (`origin-line-context.ts`) định
+nghĩa ngữ cảnh nào được phép phát Origin Line (câu nói duy nhất rút ra
+từ tập ký ức này, qua `getCompanionOriginLine()`/Core Memory) và hiếm
+đến mức nào — xem `docs/PRESENCE_COORDINATOR.md`,
+`docs/COMPANION_ORIGIN_RELATIONSHIP.md`.
