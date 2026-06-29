@@ -19,6 +19,7 @@ import {
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
 import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
+import { applyCharacterReview } from "@/lib/portal/intelligence/character-engine";
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 import { getCoreMemories, type CoreMemory } from "@/lib/portal/companion/core-memory";
 
@@ -242,7 +243,12 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   const routeState = getStateForPath(signals.pathname);
   const routeGreeting = getRouteGreeting(signals.pathname);
   const voicesHeard = collectInternalVoices(signals);
-  const loudest = loudestVoice(voicesHeard);
+  // Sprint 20.1 — Character Engine. Character không thay thế Decision —
+  // nó chỉ xem lại các Decision Candidate trước khi cái to nhất được
+  // chọn, và chỉ đổi thứ tự giữa các candidate cùng priority (xem
+  // `character-engine.ts`). `voicesHeard` trả về vẫn là danh sách gốc,
+  // chưa qua Character Review — chỉ ảnh hưởng tới việc chọn `loudest`.
+  const loudest = loudestVoice(applyCharacterReview(voicesHeard));
   // Sprint 19.0 — Lesson được rút ra TRƯỚC khi Meaning được phép trở
   // thành một câu nói công khai (Reflection → Lesson → Meaning).
   const lessonObserved = signals.reflectionMeaning

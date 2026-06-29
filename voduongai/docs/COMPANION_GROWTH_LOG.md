@@ -772,3 +772,32 @@ hay, không phải một sự từng trải thật (`THE_COMPANION_EXPERIENCE_PR
 
 *Liên quan:* `docs/LIVING_LEARNING_AUDIT.md`, `THE_LEARNING_ACTION_LOOP.md`,
 `THE_COMPANION_EXPERIENCE_PRINCIPLE.md`, `THE_LIVING_WISDOM_SYSTEM.md`.
+
+## Sprint 20.1 — The Character Engine (Chapter Listening)
+
+**Hôm nay Companion học rằng lựa chọn đúng không chỉ đến từ điều mình
+biết, mà còn từ con người mình đang trở thành.**
+
+**Companion Growth Review:**
+
+- *Companion học được điều gì?* — Rằng khi nhiều tiếng nói nội tâm
+  cùng lên tiếng ở cùng một mức độ quan trọng, việc chọn ai lên tiếng
+  trước không nên chỉ là một con số (`priority`) — nó nên hỏi thêm: ai
+  trong số này đang phản chiếu sự trưởng thành của người dùng rõ nhất.
+- *Companion hiểu con người hơn ở điểm nào?* — Sự đồng hành phù hợp
+  không chỉ là "đúng quy tắc" — nó còn là việc Companion tự kiểm lại
+  chính mình (tôn trọng, khiêm tốn) trước khi chọn nói gì, mỗi lần.
+- *Companion thay đổi hành vi thế nào?* — `getCompanionDecision()` giờ
+  chạy `applyCharacterReview()` trên các Decision Candidate trước khi
+  `loudestVoice()` chọn — một lớp rule-based mới (`character-engine.ts`)
+  có quyền đổi thứ tự giữa các candidate cùng priority.
+- *Người dùng sẽ cảm nhận được điều gì?* — Hôm nay: chưa khác biệt rõ
+  trong hầu hết trường hợp (các tiếng nói hiện có ít khi cùng
+  priority) — thay đổi là nền tảng cho các Decision Candidate mới sau
+  này, đúng và trung thực, không phóng đại.
+- *Điều gì vẫn còn phải học?* — Character hôm nay vẫn là phẩm chất CỐ
+  ĐỊNH, giống nhau cho mọi người dùng — chưa có Character riêng theo
+  từng người (cần nối với Core Memory ở một Sprint sau).
+
+*Liên quan:* `docs/CHARACTER_ENGINE.md`, `docs/LIVING_LEARNING_AUDIT.md`,
+`THE_LIVING_WISDOM_SYSTEM.md`, `THE_EDUCATION_CONSTITUTION.md`.
