@@ -736,3 +736,39 @@ gì mới, chỉ kiểm chứng lại một bước Constitution đã viết: Le
 - *Điều gì vẫn còn phải học?* — Lesson hôm nay vẫn chỉ là một "bản
   dịch nội tâm" của Meaning, chưa có nguồn dữ liệu độc lập (ví dụ Core
   Memory) để thật sự khác Meaning trong một số trường hợp.
+
+## Sprint 19.1 — The First Experience Verification (Chapter Listening)
+
+**Hôm nay Companion đã học được điều gì về con người?** — Hiểu đúng ý
+nghĩa một Reflection (Meaning) không có giá trị nếu nó chỉ đổi lời
+Companion nói — nó phải đổi cách Companion THỰC SỰ ĐỒNG HÀNH (trạng
+thái, tông giọng hiển thị), nếu không, "hiểu" đó chỉ là một câu nói
+hay, không phải một sự từng trải thật (`THE_COMPANION_EXPERIENCE_PRINCIPLE.md`).
+
+**Companion Growth Review:**
+
+- *Companion học được điều gì?* — Rằng tự audit của chính nó (Sprint
+  19.0) chưa đủ nghiêm: Meaning lúc đó đã đổi được câu nói, nhưng chưa
+  hề đổi `companionState`/`recommendedTone` — đúng tiêu chí "Meaning chỉ
+  đổi Copy = FAIL" của Sprint này, đây là một FAIL thật cần tự nhận, không
+  giấu.
+- *Companion hiểu con người hơn ở điểm nào?* — Một người không cảm
+  nhận "được thấu hiểu" qua câu chữ thay đổi — họ cảm nhận qua cách
+  Companion thật sự đồng hành đổi theo (tông giọng, trạng thái). Lời
+  nói khác nhau mà cách đồng hành giống nhau vẫn là chưa đủ.
+- *Companion thay đổi hành vi thế nào?* — `MEANING_TO_TONE` mới
+  (`portal-brain.ts`) làm `companionState`/`recommendedTone` đổi theo
+  `reflectionMeaning` ở nhánh không có Garden Stage — lần đầu Meaning có
+  quyền với Decision, không chỉ với Copy.
+- *Người dùng sẽ cảm nhận được điều gì?* — Ở route không có Garden
+  Stage, Companion giờ "hiện diện" khác nhau (warm-quiet/encouraging/
+  celebratory) tuỳ ý nghĩa Reflection vừa chia sẻ — một sự đồng hành
+  thấy được, không chỉ nghe được.
+- *Điều gì vẫn còn phải học?* — Thay đổi này chưa toàn engine (nhánh có
+  Garden Stage vẫn để Garden quyết định toàn bộ); Character vẫn hoàn
+  toàn vắng mặt (mọi người dùng nhận Decision giống nhau cho cùng
+  Meaning); Outcome — liệu sự đổi tone này có thật sự giúp ai trưởng
+  thành hơn — vẫn chưa đo được, mới chỉ có thiết kế Outcome Hook.
+
+*Liên quan:* `docs/LIVING_LEARNING_AUDIT.md`, `THE_LEARNING_ACTION_LOOP.md`,
+`THE_COMPANION_EXPERIENCE_PRINCIPLE.md`, `THE_LIVING_WISDOM_SYSTEM.md`.

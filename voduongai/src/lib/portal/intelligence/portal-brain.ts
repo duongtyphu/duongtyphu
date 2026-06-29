@@ -167,6 +167,27 @@ const LESSON_FROM_REFLECTION: Record<ReflectionMeaning, string> = {
   responsibility: "Một lời cam kết với chính mình quan trọng hơn một lời cam kết được tuyên bố.",
 };
 
+/**
+ * Sprint 19.1 — The First Experience Verification. Trước Sprint này,
+ * Meaning chỉ đổi CÂU CHỮ (`COMPANION_REFLECTION_RESPONSE`) — không hề
+ * ảnh hưởng tới `companionState`/`recommendedTone` (phần thật sự là
+ * QUYẾT ĐỊNH của Portal Brain). Theo đúng phân biệt "Meaning chỉ đổi
+ * Copy = chưa đủ, Meaning phải đổi Decision" — bảng này là lần đầu
+ * Meaning có quyền với Decision, không chỉ với lời nói.
+ */
+const MEANING_TO_TONE: Record<ReflectionMeaning, CompanionTone> = {
+  persistence: "encouraging",
+  curiosity: "encouraging",
+  courage: "warm-quiet",
+  humility: "warm-quiet",
+  contribution: "celebratory",
+  gratitude: "warm-quiet",
+  recovery: "warm-quiet",
+  focus: "encouraging",
+  discovery: "celebratory",
+  responsibility: "encouraging",
+};
+
 const PRIORITY_RANK: Record<VoiceMessage["priority"], number> = {
   high: 2,
   medium: 1,
@@ -231,11 +252,19 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   const coreMemoryHeard = getCoreMemories();
 
   if (!signals.gardenStage) {
+    // Sprint 19.1 — Meaning chỉ được tính là một Decision thật khi nó
+    // đổi companionState/recommendedTone, không chỉ câu nói. Cùng điều
+    // kiện gate với Lesson (`lessonObserved`) ở NHIỆM VỤ 3 Sprint 19.0.
+    const meaningTone = signals.reflectionMeaning && lessonObserved
+      ? MEANING_TO_TONE[signals.reflectionMeaning]
+      : null;
+    const recommendedTone = meaningTone ?? "neutral";
+    const companionState = meaningTone ? states[TONE_TO_STATE[meaningTone]] : routeState;
     return {
-      companionState: routeState,
+      companionState,
       companionGreeting: routeGreeting,
       companionInsight: insightFromVoice,
-      recommendedTone: "neutral",
+      recommendedTone,
       shouldSpeak: Boolean(routeGreeting) || Boolean(loudest),
       silenceReason: routeGreeting || loudest ? undefined : "no-signal",
       voicesHeard,
