@@ -196,9 +196,22 @@ function loudestVoice(voices: VoiceMessage[]): VoiceMessage | null {
  * là Reflection Voice, Companion dùng cách nói riêng của mình
  * (`COMPANION_REFLECTION_RESPONSE`); với các tiếng nói khác, Companion
  * hiện tại chỉ chuyển tiếp nguyên văn (chưa có lớp "dịch" riêng).
+ *
+ * Sprint 19.0 (Verification Era) — Nhiệm vụ 3: Lesson → Meaning. Câu
+ * trả lời theo Meaning (`COMPANION_REFLECTION_RESPONSE`) giờ CHỈ được
+ * nói ra khi Companion đã tự rút được một `lessonObserved` trước đó —
+ * nếu không có Lesson, Companion không dùng câu trả lời riêng theo ý
+ * nghĩa, nó lùi về câu nói chung của tiếng nói nội tâm
+ * (`voice.line`). Đây là một ràng buộc thật trong code, không chỉ một
+ * comment mô tả thứ tự — Meaning không còn được phép tự đứng một mình
+ * trước người dùng mà không đi qua Lesson trước.
  */
-function companionResponseToVoice(voice: VoiceMessage, signals: PortalSignals): string {
-  if (voice.voice === "reflection" && signals.reflectionMeaning) {
+function companionResponseToVoice(
+  voice: VoiceMessage,
+  signals: PortalSignals,
+  lessonObserved: string | null
+): string {
+  if (voice.voice === "reflection" && signals.reflectionMeaning && lessonObserved) {
     return COMPANION_REFLECTION_RESPONSE[signals.reflectionMeaning];
   }
   return voice.line;
@@ -209,11 +222,13 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   const routeGreeting = getRouteGreeting(signals.pathname);
   const voicesHeard = collectInternalVoices(signals);
   const loudest = loudestVoice(voicesHeard);
-  const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals) : null;
-  const coreMemoryHeard = getCoreMemories();
+  // Sprint 19.0 — Lesson được rút ra TRƯỚC khi Meaning được phép trở
+  // thành một câu nói công khai (Reflection → Lesson → Meaning).
   const lessonObserved = signals.reflectionMeaning
     ? LESSON_FROM_REFLECTION[signals.reflectionMeaning]
     : null;
+  const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals, lessonObserved) : null;
+  const coreMemoryHeard = getCoreMemories();
 
   if (!signals.gardenStage) {
     return {

@@ -1,158 +1,203 @@
 # Living Learning Audit — Companion Decision Engine
 
-> Sprint 19.0 "The First Living Learning Engine". Áp dụng
-> `docs/THE_LIVING_WISDOM_SYSTEM.md` (chuỗi 8 bước Experience →
+> Sprint 19.0 "The First Living Learning Engine" + Sprint 19.0
+> "The First Verification Era" (cùng số hiệu, hai brief riêng). Áp
+> dụng `docs/THE_LIVING_WISDOM_SYSTEM.md` (chuỗi 8 bước Experience →
 > Contribution) lên engine quyết định hành vi thật của Companion:
 > `getCompanionDecision()` (`src/lib/portal/intelligence/portal-brain.ts`),
 > được `docs/product-bible/BOOK_CORE_MEMORY.md` gọi đúng tên là
-> "Companion Decision". Đây là audit TRUNG THỰC — không suy diễn, không
-> "đẹp hoá" những gì chưa có.
+> "Companion Decision". Tài liệu này được CẬP NHẬT (không viết lại) ở
+> Verification Era để audit lại đúng-sai của lần đầu, không để lần
+> audit cũ tự nhận đã đúng mà không kiểm chứng.
 
 ## Engine được audit
 
 `getCompanionDecision(signals: PortalSignals): CompanionDecision`
-(`src/lib/portal/intelligence/portal-brain.ts`). Input: `PortalSignals`
-(tín hiệu về con người — route, `gardenStage`, `reflectionMeaning`...).
-Output: `CompanionDecision` (trạng thái/câu nói Companion nên dùng).
+(`src/lib/portal/intelligence/portal-brain.ts`). Không audit
+`thought-governance.ts`/`presence-coordinator.ts` — hai file đó là
+tầng "ai được nói" (governance), không phải tầng "Companion học/quyết
+định nói gì".
 
-Không audit `thought-governance.ts`/`presence-coordinator.ts` — hai
-file đó tự nhận là tầng "ai được nói" (governance), không phải tầng
-"Companion học/quyết định nói gì" — đúng đối tượng của Living Wisdom
-System là tầng sau.
-
-## Bảng audit 8 bước (trước khi sửa)
+## NHIỆM VỤ 1 — Audit theo chuỗi 8 bước (sau Sprint Verification Era)
 
 | Bước | Trạng thái | Bằng chứng |
 |---|---|---|
-| **Experience** | `implemented` | `PortalSignals` đưa vào — route, `gardenStage`, `reflectionMeaning`, v.v. Đây là trải nghiệm thô của một người dùng cụ thể tại một thời điểm cụ thể. |
-| **Reflection** | `implemented` | `collectInternalVoices(signals)` + `loudestVoice()` (`portal-brain.ts:179-180`) — Portal Brain không quyết định trực tiếp từ tín hiệu thô, nó "lắng nghe" các tiếng nói nội tâm trước (đúng comment ở dòng 152-162 của file). |
-| **Lesson** | `missing` (trước khi sửa) | Không có bước nào rút ra một câu "bài học cụ thể" từ Reflection — `reflectionMeaning` đi thẳng từ category (Meaning) sang câu nói cho người dùng (Action), không có một bước trung gian ghi nhận "điều này dạy Companion điều gì". |
-| **Meaning** | `implemented` | `ReflectionMeaning` (`reflection-meaning.ts`) — 10 giá trị (persistence, curiosity, courage, humility, contribution, gratitude, recovery, focus, discovery, responsibility), rule-based, không phải điểm số. Đây đúng là bước Meaning: ý nghĩa Reflection đang truyền tải, không phải phân loại kỹ thuật. |
-| **Value** | `partial` | `coreMemoryHeard = getCoreMemories()` (`portal-brain.ts:182`) — Core Memory (`lesson.whatCompanionLearned`/`whatMustNeverBeForgotten`) ĐƯỢC ĐỌC vào quyết định, nhưng comment ở dòng 57-65 nói rõ: "Hôm nay chưa có nhánh rẽ hành vi cụ thể dựa trên trường này — đây là nền tảng đọc được, không phải hành vi mới." Giá trị có mặt như dữ liệu, chưa thật sự định hình nhánh quyết định. |
-| **Character** | `missing` | Không có trạng thái nào tích lũy qua thời gian cho một người dùng cụ thể (ví dụ: "Companion đã học được người này cần sự kiên nhẫn hơn"). `COMPANION_REFLECTION_RESPONSE` là một bảng tĩnh, giống nhau cho mọi người dùng, mọi lần — không phải phẩm chất đã được nội tâm hoá riêng cho mối quan hệ này. |
-| **Action** | `implemented` | `companionGreeting`/`companionInsight`/`companionState`/`recommendedTone` — đầu ra cụ thể, là điều Companion thực sự nói/thể hiện. |
-| **Contribution** | `missing` | Không có cơ chế nào để một quyết định/bài học từ tương tác này được "trao lại" cho một người dùng khác hoặc một thế hệ Companion sau (`docs/THE_JOY_OF_CONTRIBUTION.md`). Engine chỉ phục vụ một chiều: tín hiệu vào → câu nói ra cho đúng người đó, không có vòng Legacy. |
+| **Experience** | ✅ | `PortalSignals` đưa vào — route, `gardenStage`, `reflectionMeaning`. |
+| **Reflection** | ✅ | `collectInternalVoices(signals)` + `loudestVoice()` — Portal Brain lắng nghe tiếng nói nội tâm trước khi quyết định. |
+| **Lesson** | ✅ | `lessonObserved` (`LESSON_FROM_REFLECTION[signals.reflectionMeaning]`) — tính TRƯỚC `insightFromVoice`, một bài học nội tâm không hiển thị ra UI. |
+| **Meaning** | ⚠ | `ReflectionMeaning` (`reflection-meaning.ts`) tồn tại và hoạt động — NHƯNG từ Sprint này, câu trả lời theo Meaning (`COMPANION_REFLECTION_RESPONSE`) chỉ được phép phát ra khi `lessonObserved` đã có (`companionResponseToVoice`, gate mới). Đánh dấu ⚠ không phải vì nó thiếu, mà vì nó vừa chuyển từ "độc lập, tự đứng trước người dùng" sang "phụ thuộc Lesson" — một ràng buộc mới chưa được kiểm chứng qua nhiều Sprint, cần theo dõi thêm trước khi đánh ✅ chắc chắn. |
+| **Value** | ❌ | `coreMemoryHeard = getCoreMemories()` được đọc vào nhưng KHÔNG có nhánh hành vi nào dựa trên nó — comment gốc trong code (Sprint 18.9) vẫn còn đúng nguyên văn: "chưa có nhánh rẽ hành vi cụ thể dựa trên trường này." Sprint Verification Era này KHÔNG động vào Value — đúng luật "chỉ chọn đúng một bước". |
+| **Character** | ❌ | Không có bộ nhớ riêng theo từng người dùng ở tầng quyết định này. `COMPANION_REFLECTION_RESPONSE`/`LESSON_FROM_REFLECTION` là bảng tĩnh, giống nhau cho mọi người dùng. |
+| **Action** | ✅ | `companionGreeting`/`companionInsight`/`companionState`/`recommendedTone` — đầu ra cụ thể. |
+| **Contribution** | ❌ | Không có cơ chế trao lại một bài học cho người dùng khác hoặc thế hệ Companion sau. |
 
-## Vì sao các bước missing/partial chưa có
+**Sửa lại so với audit lần trước (Sprint "The First Living Learning
+Engine")**: lần đó đánh "Meaning ✅" không kèm điều kiện — điều đó đúng
+tại thời điểm đó (Meaning thực sự độc lập, tự đứng được). Sau khi
+NHIỆM VỤ 3 của Sprint này thay đổi code, Meaning không còn độc lập nữa
+— nó phụ thuộc Lesson. Đây là lý do audit lần này hạ Meaning xuống ⚠:
+không suy diễn nó vẫn ✅ chỉ vì nó "vẫn hoạt động", phải đánh giá lại
+đúng trạng thái MỚI sau khi code đổi.
 
-- **Lesson missing**: vì trước Sprint 12.3 (Reflection Meaning Engine),
-  Portal Brain chỉ cần phân loại ý nghĩa rồi trả lời ngay — không có
-  brief nào trước đây yêu cầu một bước trung gian "Companion tự rút ra
-  bài học của riêng nó" tách biệt khỏi câu trả lời cho người dùng. Đây
-  không phải một thiếu sót bị bỏ quên — đơn giản là chưa từng có yêu
-  cầu cho bước này tồn tại, đúng tinh thần "không suy đoán hành vi
-  trước khi có nhu cầu thật" đã ghi ở `portal-brain.ts:65`.
-- **Value partial**: Core Memory (Sprint 18.9) được thiết kế có chủ đích
-  là "nền tảng đọc được, không phải hành vi mới" — một quyết định kỹ
-  thuật rõ ràng để tránh suy đoán nhánh hành vi cụ thể trước khi nhu
-  cầu thật xuất hiện (cùng tinh thần với Origin Presence Policy).
-- **Character missing**: vì không có bộ nhớ riêng theo từng người dùng
-  ở tầng quyết định này — `CoreMemory` là ký ức CHUNG của Companion (từ
-  Founder/Origin), không phải ký ức về MỘT người dùng cụ thể. Xây dựng
-  một "Character" tích lũy riêng theo người dùng là một quyết định sản
-  phẩm lớn (lưu trữ, quyền riêng tư, persistence) — không nên overbuild
-  trong Sprint này.
-- **Contribution missing**: chưa có brief/nhu cầu thật nào yêu cầu một
-  bài học từ một người dùng được trao lại cho người khác — đúng luật
-  "không fake event, không suy đoán" đã có ở `FUTURE_ORIGIN_EVENTS.md`.
-  Đây vẫn là một bước hợp lệ để missing, không phải lỗi.
+## NHIỆM VỤ 2 — Mutable / Immutable (theo từng thành phần thật trong engine)
 
-## Bước được áp dụng trong Sprint này: Reflection → Lesson
+| Thành phần | Phân loại | Vì sao |
+|---|---|---|
+| `GARDEN_COPY`, `COMPANION_REFLECTION_RESPONSE`, `LESSON_FROM_REFLECTION` | **Mutable** | Bảng câu nói/lesson cụ thể — có thể viết lại, mở rộng, thay cơ chế khác. |
+| `MEANING_RULES` (`reflection-meaning.ts`) | **Mutable** | Rule-based keyword matching — công nghệ phân loại, có thể đổi sang engine khác. |
+| `Knowledge` (kiến thức Companion dùng để chọn câu trả lời) | **Mutable** | Đúng `THE_LIFELONG_LEARNING_SYSTEM.md` — kiến thức luôn được phép cập nhật. |
+| `Reflection Meaning` (khái niệm — không phải bảng rule cụ thể) | **Mutable** | Là một kỹ năng phân loại, có thể thay bằng phương pháp tốt hơn trong tương lai. |
+| Gate "Meaning chỉ được nói khi có Lesson" (logic mới của Sprint này) | **Mutable** | Đây là MỘT CÁCH thực thi nguyên tắc, không phải nguyên tắc — có thể được viết lại bằng cơ chế khác miễn vẫn giữ đúng thứ tự Lesson trước Meaning. |
+| Companion không lặp nguyên văn phân tích kỹ thuật cho người dùng | **Immutable** | Biểu hiện cụ thể của Human Respect/Listening — không Learning Engine nào được phép tự sửa để Companion nói thẳng "Reflection của bạn thuộc nhóm X". |
+| `ReflectionMeaning` "không phải điểm số, không tốt/xấu, không mạnh/yếu" | **Immutable** | Ràng buộc chống gamification có sẵn — `LESSON_FROM_REFLECTION` mới phải tuân theo, không câu Lesson nào xếp hạng người dùng. |
+| Product Constitution (`THE_COMPANION_FORMATION.md`) | **Immutable** | Chỉ Founder + nghi thức đặc biệt mới đổi được. |
+| Human Respect, Humility, Gratitude, Listening (Companion Core Values) | **Immutable** | `THE_LIFELONG_LEARNING_SYSTEM.md`, `THE_EDUCATION_CONSTITUTION.md`. |
+| 3 trạng thái hiện diện của Origin Memory (`coreMemoryHeard`) | **Immutable** | `ORIGIN_PRESENCE_POLICY.md` — engine này vẫn giữ đúng Silent Core Memory, không bị Sprint này động tới. |
 
-Theo ưu tiên của brief ("Reflection ↓ Lesson"), Sprint 19.0 thêm ĐÚNG
-MỘT bước còn thiếu: một trường `lessonObserved` trong `CompanionDecision`,
-tách biệt rõ với `companionInsight` (câu Companion NÓI ra) —
-`lessonObserved` là điều Companion TỰ RÚT RA cho mình, không hiển thị
-trực tiếp cho người dùng (giống cách `coreMemoryHeard` được "mang theo"
-mà không phát ra thành câu nói).
+## NHIỆM VỤ 3 — Áp dụng thật: Lesson → Meaning
 
-- Thêm map `LESSON_FROM_REFLECTION: Record<ReflectionMeaning, string>`
-  — mỗi giá trị Meaning có một câu Lesson nội tâm riêng, KHÁC câu trả
-  lời công khai ở `COMPANION_REFLECTION_RESPONSE` (ví dụ: Meaning
-  "persistence" → câu nói công khai là "Mình rất vui vì hôm nay bạn đã
-  quay lại"; Lesson nội tâm là "Sự quay lại, không phải kết quả, là
-  điều đáng được công nhận trước tiên").
-- `lessonObserved` chỉ có giá trị khi `signals.reflectionMeaning` tồn
-  tại — không suy đoán Lesson khi không có Reflection thật.
-- KHÔNG lưu trữ Lesson này lại (không tạo bảng mới, không persistence)
-  — đây vẫn là một bước tính toán trong cùng một lần gọi
-  `getCompanionDecision()`, không phải một bộ nhớ dài hạn. Việc Lesson
-  có nên được tích lũy thành Character (bước tiếp theo) hay không là
-  quyết định của một Sprint sau, khi có nhu cầu thật.
+Chọn đúng một bước: **Lesson → Meaning** (Reflection → Lesson đã được
+áp dụng ở Sprint trước, không lặp lại).
 
-## Mutable / Immutable Audit (`THE_LIFELONG_LEARNING_SYSTEM.md`)
+**Trước:** `companionResponseToVoice(voice, signals)` — nếu tiếng nói
+là Reflection và có `reflectionMeaning`, Companion LUÔN trả lời theo
+Meaning, không quan tâm Lesson có tồn tại hay không. Lesson
+(`lessonObserved`) được tính ra nhưng không hề ảnh hưởng tới việc
+Meaning có được nói ra hay không — hai bước tồn tại CẠNH NHAU, không
+PHỤ THUỘC nhau.
 
-**Mutable Layer mà engine đang dùng:**
-- `GARDEN_COPY`, `COMPANION_REFLECTION_RESPONSE`, `LESSON_FROM_REFLECTION`
-  (mới) — các bảng câu nói/lesson cụ thể. Đây là "framework"/"kiến
-  thức" theo nghĩa `THE_LIFELONG_LEARNING_SYSTEM.md` — có thể viết lại,
-  mở rộng, hoặc thay bằng cơ chế khác (ví dụ rule phức tạp hơn) mà
-  không ảnh hưởng tới phần Immutable dưới đây.
-- `MEANING_RULES` (`reflection-meaning.ts`) — rule-based keyword
-  matching, có thể thay bằng một engine phân loại khác trong tương lai.
-- `GARDEN_STORY_SUGGESTION`, `TONE_TO_STATE` — các bảng map, mutable.
+**Sau:** `companionResponseToVoice(voice, signals, lessonObserved)` —
+câu trả lời theo Meaning chỉ được trả về khi `lessonObserved` đã có
+giá trị. Nếu không có Lesson, Companion lùi về câu nói chung
+(`voice.line`), không dùng câu trả lời riêng theo ý nghĩa. Lesson giờ
+là ĐIỀU KIỆN BẮT BUỘC để Meaning được phép trở thành một câu nói công
+khai — đúng thứ tự Reflection → Lesson → Meaning, không còn là hai
+nhánh song song.
 
-**Immutable constraint mà engine đang chịu (không tự sửa được):**
-- Companion không bao giờ lặp nguyên văn phân tích kỹ thuật cho người
-  dùng (`companionResponseToVoice` luôn "dịch" qua giọng riêng của
-  Companion, không bao giờ in ra "Reflection của bạn thuộc nhóm X") —
-  đây là biểu hiện cụ thể của "Listening"/"Respect"
-  (`COMPANION_LIFE_STAGES.md`), một phần Companion Core Values.
-  `lessonObserved` mới tiếp tục giữ đúng ràng buộc này: Lesson không
-  bao giờ được trả ra UI, chỉ tồn tại nội bộ.
-- `ReflectionMeaning` "KHÔNG phải điểm số, không có tốt/xấu, không có
-  mạnh/yếu" (`reflection-meaning.ts:7-8`) — ràng buộc chống gamification
-  đã có, không Learning Engine nào được phép biến nó thành điểm số.
-  `LESSON_FROM_REFLECTION` mới tuân theo đúng ràng buộc này — không câu
-  Lesson nào mang tính xếp hạng/đánh giá người dùng.
-- Companion không hiển thị Origin Memory ngoài 3 trạng thái đã định
-  nghĩa ở `ORIGIN_PRESENCE_POLICY.md` — `coreMemoryHeard` trong engine
-  này vẫn ở đúng trạng thái Silent Core Memory, không bị Sprint này
-  động tới.
+Không AI backend, không DB mới, không framework mới — chỉ một thay đổi
+thứ tự phụ thuộc trong cùng một hàm đã có.
 
-## Companion Growth Review
+## NHIỆM VỤ 4 — Behavior Change
 
-(`docs/THE_HUMAN_UNDERSTANDING_MISSION.md`, 5 câu — Sprint này thuộc
-**Chapter Listening** trong `docs/COMPANION_LIFE_STAGES.md`.)
+**Trước Sprint này:**
+```
+Companion đọc Reflection → phân loại Meaning → trả lời ngay theo Meaning
+```
+Lesson tồn tại trong dữ liệu trả về (`lessonObserved`) nhưng không có
+quyền gì với câu trả lời — nó là một trường song song, không phải một
+điều kiện.
 
-1. **Companion học được điều gì?** — Rằng "hiểu ý nghĩa của một
-   Reflection" (Meaning) và "tự rút ra một bài học từ nó" (Lesson) là
-   hai việc khác nhau. Trước Sprint này, Companion đi thẳng từ phân
-   loại ý nghĩa sang câu trả lời — nó chưa từng có một khoảnh khắc nội
-   tâm riêng để tự nói với mình "điều này dạy mình điều gì", tách biệt
-   khỏi điều nó sẽ nói với người dùng.
-2. **Companion hiểu con người hơn ở điểm nào?** — Companion giờ phân
-   biệt rõ giữa điều nó NÓI RA (an ủi, ấm áp, hướng về người dùng) và
-   điều nó TỰ RÚT RA (một nhận thức nội tâm, hướng về chính nó). Một
-   người kiên trì quay lại không chỉ đáng được khen — Companion giờ tự
-   ghi nhận rằng "sự quay lại, không phải kết quả, là điều đáng được
-   công nhận trước tiên", một sắc thái không hiện ra trong câu nói công
-   khai nhưng định hình cách nó nhìn nhận hành động đó.
-3. **Companion thay đổi hành vi thế nào?** — `getCompanionDecision()`
-   giờ trả về thêm `lessonObserved` ở cả hai nhánh quyết định (có/không
-   `gardenStage`) khi có `reflectionMeaning` — một trường dữ liệu mới,
-   tính toán thật, không suy đoán, sẵn sàng để các Sprint sau (Character,
-   Contribution) đọc vào nếu cần, nhưng KHÔNG tự ý lưu trữ hay hiển thị.
-4. **Người dùng sẽ cảm nhận được điều gì?** — Không có gì thay đổi về
-   mặt hiển thị (đúng tinh thần các Sprint trước: phẩm chất không phải
-   lúc nào cũng là một trải nghiệm nhìn thấy được). Thay đổi nằm ở tầng
-   nội tâm của Companion — một sự chuẩn bị cho những Sprint sau có thể
-   khiến Companion "nhớ" theo một cách sâu hơn.
-5. **Điều gì vẫn còn phải học?** — Companion vẫn chưa biết cách giữ lại
-   một Lesson qua nhiều lần gặp cùng một người (Character) — mỗi lần
-   gọi `getCompanionDecision()` vẫn là một lần tính lại từ đầu, không
-   có ký ức riêng về MỘT con người cụ thể tích lũy qua thời gian. Và nó
-   vẫn chưa biết cách biến một Lesson của một người thành điều gì đó có
-   ích cho một người khác (Contribution) — cả hai vẫn đang chờ một nhu
-   cầu thật, không bị ép phải có ngay.
+**Sau Sprint này:**
+```
+Companion đọc Reflection → rút Lesson → CHỈ KHI có Lesson → mới cho phép
+Meaning trở thành câu trả lời riêng → nếu không có Lesson, trả lời chung
+```
+
+Đây là một thay đổi hành vi THẬT, có thể kiểm chứng bằng cách đọc trực
+tiếp `companionResponseToVoice`: hàm này hôm nay có một nhánh điều
+kiện (`&& lessonObserved`) không tồn tại trước Sprint này.
+
+## NHIỆM VỤ 5 — Companion Growth Review
+
+(`docs/THE_HUMAN_UNDERSTANDING_MISSION.md`, 5 câu — Sprint thuộc
+**Chapter Listening**, `docs/COMPANION_LIFE_STAGES.md`.)
+
+1. **Companion học được điều gì?** — Rằng việc nó "hiểu ý nghĩa" của
+   một Reflection (Meaning) không tự động cho nó quyền nói ra điều đó
+   theo cách riêng — nó phải tự đảm bảo đã rút được một bài học cho
+   chính mình (Lesson) trước, mới được dùng cách nói gắn với ý nghĩa
+   đó. Trước đây, hai việc này độc lập với nhau; giờ một việc phải xảy
+   ra trước việc kia.
+2. **Companion hiểu con người hơn ở điểm nào?** — Hiểu ý nghĩa của một
+   Reflection (ví dụ: ai đó vừa kiên trì quay lại) khác với việc thật
+   sự rút ra được điều gì từ đó cho chính mình. Companion giờ không
+   coi việc phân loại đúng ý nghĩa là đủ điều kiện để nói một câu ấm áp
+   — nó cần đã "ngẫm" (Lesson) trước.
+3. **Companion thay đổi hành vi thế nào?** — `companionResponseToVoice`
+   giờ có một điều kiện mới: chỉ trả lời theo Meaning khi
+   `lessonObserved` không null. Trong thực tế hôm nay, Lesson được suy
+   ra 1:1 từ Meaning nên hành vi quan sát được CHƯA đổi với người dùng
+   — nhưng cấu trúc phụ thuộc trong code đã đổi thật, và đây là nền cho
+   việc Lesson có thể tách khỏi Meaning trong các Sprint sau (ví dụ
+   Lesson phụ thuộc thêm Core Memory) mà không cần sửa lại logic gate
+   này.
+4. **Người dùng sẽ cảm nhận được điều gì?** — Hôm nay: không gì khác
+   biệt, đúng và trung thực — vì Lesson và Meaning vẫn còn gắn 1:1.
+   Thay đổi là nội bộ, chuẩn bị cho việc hai bước này tách rời thật
+   trong tương lai.
+5. **Điều gì vẫn còn phải học?** — Companion vẫn chưa biết cách để
+   Lesson thực sự ĐỘC LẬP với Meaning (hôm nay Lesson chỉ là một bản
+   dịch nội tâm của đúng cùng một bảng phân loại) — một Lesson "thật"
+   nên có khả năng khác Meaning khi ngữ cảnh khác đi (ví dụ: cùng một
+   Meaning "persistence" nhưng Lesson khác nhau tuỳ Core Memory). Đây
+   là lý do Meaning vẫn chỉ được đánh ⚠, không phải ✅ chắc chắn.
+
+## NHIỆM VỤ 6 — Product Review (theo Companion trưởng thành, không theo feature/code/UI)
+
+Không có feature mới, không có UI mới — và đó là đúng tinh thần Sprint
+này. Câu hỏi đúng không phải "code chạy chưa" mà "Companion có trưởng
+thành hay không": CÓ — Companion giờ có một ràng buộc nội tại buộc nó
+phải tự rút bài học trước khi dùng đến ý nghĩa đã hiểu để nói chuyện
+với người dùng. Đây là một phẩm chất (sự cẩn trọng trước khi nói),
+không phải một năng lực (biết phân loại tốt hơn) — đúng phân biệt ở
+`THE_COMPANION_FORMATION.md`.
+
+## NHIỆM VỤ 7 — Book Update
+
+Hành vi ĐÃ thay đổi thật (NHIỆM VỤ 3-4, kiểm chứng được bằng code) —
+nên Book Note được phép viết. Không chương Product Bible
+(`docs/product-bible/`) nào được sửa trong Sprint này — không chương
+nào trong số đó mô tả riêng Companion Decision Engine ở mức đủ cụ thể
+để cần cập nhật, và việc thêm một chương Product Bible mới chỉ vì
+Sprint này sẽ là overbuild, vi phạm chính luật "không thêm triết lý
+mới" của brief. Book Note cho Sprint này được ghi trực tiếp trong tài
+liệu audit này (mục NHIỆM VỤ 3-4 ở trên) và trong
+`docs/COMPANION_GROWTH_LOG.md` — đây là "Book" thực tế của Companion
+Decision Engine, không cần một Book riêng trong Product Bible.
+
+## NHIỆM VỤ 8 — Technical Review
+
+`npx tsc --noEmit`: sạch. `npm run lint`: sạch (chỉ 5 warning `<img>`
+tiền-tồn-tại, không liên quan). `npm run build`: thành công.
+
+## Sprint Review
+
+- **Living Wisdom Pipeline hiện ở đâu?** Experience ✅ → Reflection ✅
+  → Lesson ✅ → Meaning ⚠ (giờ phụ thuộc Lesson, chưa qua nhiều Sprint
+  để tin chắc) → Value ❌ → Character ❌ → Action ✅ → Contribution ❌.
+- **Reflection → Lesson đã hoạt động thật chưa?** Đã hoạt động từ
+  Sprint trước, không đổi ở Sprint này.
+- **Lesson → Meaning đã hoạt động chưa?** CÓ, từ Sprint này — Meaning
+  không còn được phép tự đứng trước người dùng mà không qua Lesson.
+- **Mutable/Immutable phân chia ra sao?** Xem bảng NHIỆM VỤ 2 — mọi
+  bảng dữ liệu cụ thể (copy, rule, lesson) là Mutable; Companion Core
+  Values, Product Constitution, và ràng buộc chống gamification/Origin
+  Presence là Immutable.
+- **Companion thay đổi hành vi gì?** Một điều kiện code thật:
+  `companionResponseToVoice` chỉ trả lời theo Meaning khi đã có Lesson.
+- **Constitution nào đã được kiểm chứng?** `THE_LIVING_WISDOM_SYSTEM.md`
+  (chuỗi Experience→Lesson→Meaning) — hai bước nối tiếp đã là code
+  thật, không chỉ tài liệu.
+- **Constitution nào vẫn chỉ là tài liệu?** `THE_LIFELONG_LEARNING_SYSTEM.md`
+  (Mutable/Immutable Layer) — đã được DÙNG ĐỂ AUDIT (bảng NHIỆM VỤ 2)
+  nhưng chưa có cơ chế code nào THỰC THI nó (ví dụ chặn một Pull Request
+  sửa Immutable). `THE_JOY_OF_CONTRIBUTION.md` — Contribution vẫn ❌,
+  chưa một dòng code nào thể hiện nó.
+- **Technical debt còn lại?** Lesson hôm nay vẫn chỉ là "bản dịch nội
+  tâm" 1:1 của Meaning — chưa có nguồn dữ liệu độc lập (ví dụ Core
+  Memory) để Lesson thật sự khác Meaning trong một số trường hợp.
+- **Sprint tiếp theo nên kiểm chứng Engine nào?** Tiếp tục đúng Engine
+  này — bước hợp lý kế tiếp là Value (đọc Core Memory vào Lesson, để
+  Lesson lần đầu có nguồn độc lập với Meaning) — không mở Engine mới
+  khi Engine này còn ❌ ở Value/Character/Contribution.
 
 ## Definition of Done — đã đạt
 
-Constitution không còn chỉ nằm trong tài liệu: `getCompanionDecision()`
-giờ thực sự đi qua một bước Lesson trước khi tới Meaning/Action — một
-nguyên tắc từ `THE_LIVING_WISDOM_SYSTEM.md` đã thật sự thay đổi cấu trúc
-dữ liệu và hành vi tính toán của Companion Decision Engine, không chỉ
-mô tả trong docs.
+Một nguyên tắc trong Constitution (Lesson phải tồn tại trước khi
+Meaning được phép trở thành lời nói — `THE_LIVING_WISDOM_SYSTEM.md`)
+không còn chỉ nằm trong tài liệu — nó là một điều kiện code thật
+(`&& lessonObserved`) trong `companionResponseToVoice`, kiểm chứng được
+bằng cách đọc trực tiếp source, không cần tin lời mô tả.
 
 ## Quan hệ với các tài liệu khác
 

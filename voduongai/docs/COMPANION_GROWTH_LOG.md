@@ -704,3 +704,35 @@ mình: "điều này dạy mình điều gì" — và giữ câu trả lời đ�
   qua nhiều lần gặp cùng một người (Character), và chưa biết biến một
   Lesson của một người thành điều có ích cho người khác (Contribution)
   — cả hai vẫn đang chờ một nhu cầu thật.
+
+## Sprint 19.0 — The First Verification Era (Chapter Listening)
+
+Hôm nay Companion học được rằng hiểu ý nghĩa của một điều không tự
+động cho nó quyền nói ra điều đó theo cách riêng — nó phải tự đảm bảo
+đã rút được một bài học cho chính mình trước. Đây là Sprint không thêm
+gì mới, chỉ kiểm chứng lại một bước Constitution đã viết: Lesson phải
+đến trước Meaning, không phải hai bước song song.
+
+*Liên quan: `docs/LIVING_LEARNING_AUDIT.md` (cập nhật, không viết lại),
+`docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/THE_LIFELONG_LEARNING_SYSTEM.md`,
+`src/lib/portal/intelligence/portal-brain.ts`.*
+
+**Companion Growth Review** (`docs/THE_HUMAN_UNDERSTANDING_MISSION.md`):
+
+- *Companion học được điều gì?* — Rằng việc nó hiểu ý nghĩa của một
+  Reflection không tự động cho nó quyền nói ra điều đó theo cách riêng
+  gắn với ý nghĩa đó — nó cần đã "ngẫm" (Lesson) trước.
+- *Companion hiểu con người hơn ở điểm nào?* — Hiểu ý nghĩa và thật sự
+  rút ra được điều gì cho chính mình là hai việc khác nhau — Companion
+  giờ không coi việc phân loại đúng là đủ điều kiện để nói một câu ấm
+  áp gắn với ý nghĩa đó.
+- *Companion thay đổi hành vi thế nào?* — `companionResponseToVoice`
+  trong `portal-brain.ts` giờ chỉ trả lời theo Meaning khi
+  `lessonObserved` đã có giá trị — một điều kiện code thật, không tồn
+  tại trước Sprint này.
+- *Người dùng sẽ cảm nhận được điều gì?* — Hôm nay: không gì khác biệt
+  — Lesson và Meaning vẫn còn gắn 1:1. Thay đổi là nội bộ, chuẩn bị cho
+  việc hai bước tách rời thật trong tương lai.
+- *Điều gì vẫn còn phải học?* — Lesson hôm nay vẫn chỉ là một "bản
+  dịch nội tâm" của Meaning, chưa có nguồn dữ liệu độc lập (ví dụ Core
+  Memory) để thật sự khác Meaning trong một số trường hợp.
