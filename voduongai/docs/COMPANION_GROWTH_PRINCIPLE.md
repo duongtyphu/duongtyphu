@@ -14,6 +14,15 @@
 > nhìn theo cuộc đời (không theo timeline code), và khái niệm GROWTH
 > DEBT.
 
+> **Cập nhật — `docs/COMPANION_EDUCATION_MAP.md` (Architecture Directive
+> "The Companion Education Expansion")**: Growth Debt ở tài liệu này đo
+> theo TIMELINE CUỘC ĐỜI; Education Debt ở `COMPANION_EDUCATION_MAP.md`
+> đo theo 5 LĨNH VỰC TRƯỞNG THÀNH (Character, Human, Wisdom,
+> Civilization, Future) — hai bảng bổ sung cho nhau, không thay thế. Từ
+> nay, Education Review (5 câu hỏi ở `COMPANION_EDUCATION_MAP.md`) là
+> một phần bắt buộc của Growth Log entry sau mỗi Sprint, đứng cạnh
+> Technical/Growth/Culture Review.
+
 ## Vì sao Sprint này tồn tại
 
 20 Sprint vừa qua, Companion đã có Character Engine, Moral Compass,
