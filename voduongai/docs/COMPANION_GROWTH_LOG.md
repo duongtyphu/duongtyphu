@@ -1232,3 +1232,42 @@ thuẫn, thay vì giả định mọi phẩm chất luôn hài hoà với nhau.
 *Liên quan:* `docs/CHARACTER_COHERENCE.md`, `docs/CHARACTER_CONFLICT_MAP.md`,
 `docs/THE_ONE_NEW_PRINCIPLE_RULE.md`, `docs/CHARACTER_ENGINE.md`,
 `docs/MORAL_COMPASS.md`, `THE_DECISION_HIERARCHY.md`.
+
+## The Experience Harvest (Sprint 21.6)
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* —
+  Companion lần đầu có một bản đồ rõ ràng (`docs/EXPERIENCE_LIFECYCLE.md`)
+  phân biệt "ghi nhận một trải nghiệm" khỏi "thu thập cuộc đời người
+  dùng" — với Privacy Boundary viết rõ ở mỗi bước, không chỉ một câu
+  nguyên tắc chung.
+- *Companion học được điều gì?* — Audit xác nhận hôm nay hệ thống chỉ
+  đi xa nhất tới gần cuối Bước 6 (Living Wisdom, qua Character Memory)
+  cho CHÍNH một người dùng; Bước 7 (Heritage Candidate) và phần "luôn
+  tạo kết quả tích cực" của Bước 5 (Repeated Validation) hoàn toàn chưa
+  có code.
+- *Companion thay đổi hành vi nào?* — Thêm một helper nhỏ, rule-based:
+  `isExperienceEligibleForLesson()` (`character-memory.ts`) — kiểm tra
+  một Experience có Meaning thật VÀ câu Lesson định dùng có nằm trong
+  danh sách đã vetting sẵn (`CHARACTER_STATEMENT`) hay không, đảm bảo
+  không chứa thông tin nhận diện theo đúng Privacy Boundary. Helper này
+  chưa được gọi ở bất kỳ pipeline Decision thật nào — đúng tinh thần
+  "proof nhỏ, không ép overbuild".
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới. Giá
+  trị là một bản đồ kiến trúc giúp Sprint sau biết chính xác cần kiểm
+  chứng bước nào trước khi thêm hành vi mới.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Cách đo
+  "luôn tạo kết quả tích cực" thật (không chỉ đếm số lần lặp lại); cách
+  một Outcome quay lại thành Reflection mới; toàn bộ Bước 7 (Heritage
+  Candidate).
+
+*Education Debt mới*: xem bảng Experience Debt ở
+`docs/COMPANION_GROWTH_PRINCIPLE.md` — 4 mục, tất cả đều CỐ Ý chưa trả
+trong Sprint này để tránh suy đoán hành vi trước khi có nhu cầu thật.
+
+*Culture Review*: không hành vi mới cho người dùng thấy — giá trị củng
+cố là ranh giới quyền riêng tư rõ ràng: Companion gìn giữ bài học,
+không thu thập cuộc đời.
+
+*Liên quan:* `docs/EXPERIENCE_HARVEST.md`, `docs/EXPERIENCE_LIFECYCLE.md`,
+`docs/FUTURE_ANONYMIZED_WISDOM_AGGREGATION.md`, `docs/THE_LIVING_WISDOM_SYSTEM.md`,
+`docs/LIVING_HERITAGE.md`, `docs/CHARACTER_MEMORY.md`.

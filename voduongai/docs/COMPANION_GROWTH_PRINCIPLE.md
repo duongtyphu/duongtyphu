@@ -182,6 +182,18 @@ cạnh Technical Review, không phải một mục tuỳ chọn.
 | 6/7 xung đột trong `docs/CHARACTER_CONFLICT_MAP.md` chưa có cơ chế thật trong code (Gratitude vs Integrity, Trust vs Truthfulness, Compassion vs Honesty, Hope vs Reality chưa có gì; Patience vs Timely Action và Contribution vs Respect chỉ có một phần) | Sprint 21.5 chỉ định nghĩa bản đồ ưu tiên (rule-based, dạng tài liệu) — cố ý KHÔNG viết Engine mới để tránh suy đoán hành vi trước khi có nhu cầu thật | Sprint 21.5 (The Character Coherence) |
 | `CHARACTER_PROFILE` (8 `CharacterTrait` trong code) và `COMPANION_CHARACTER_GROWTH_MODEL.md` (10 phẩm chất tài liệu) là hai tầng schema khác nhau, chưa được hợp nhất tên gọi | Hai tài liệu được viết ở hai Sprint khác nhau cho hai mục đích khác nhau (runtime trait vs phẩm chất tổng quan); hợp nhất sớm có thể ép một mô hình vào mô hình kia một cách giả tạo | Sprint 20.2 / Sprint 21.5 (audit) |
 
+> **Cập nhật — `docs/EXPERIENCE_HARVEST.md` (Sprint 21.6)**: thêm một
+> nhóm nợ con mới — **Experience Debt** — thuộc `docs/EXPERIENCE_LIFECYCLE.md`
+> (vòng đời Experience → Reflection → Lesson → Meaning → Repeated
+> Validation → Living Wisdom → Heritage Candidate):
+
+| Experience Debt | Vì sao chưa trả | Ghi nhận tại |
+|---|---|---|
+| Bước "Repeated Validation" chỉ đếm số lần lặp lại (`CHARACTER_TRANSFORMATION_THRESHOLD`), chưa kiểm tra điều kiện "luôn tạo kết quả tích cực" | Chưa có dữ liệu thật về outcome của mỗi lần áp dụng Lesson để kiểm tra | Sprint 21.6 |
+| Bước "Heritage Candidate" hoàn toàn chưa có code | Cố ý dừng ở định nghĩa — đi xa hơn sẽ phải quyết định cách "đề xuất trừu tượng" thật, chưa có nhu cầu thật | Sprint 21.6 |
+| Meaning/Lesson chưa được Reflection lại sau khi tạo Outcome (vòng phản hồi một chiều: Reflection → Lesson → Meaning, nhưng Outcome của Meaning không quay lại thành Reflection mới) | Chưa có cơ chế đo Outcome của một Decision bị ảnh hưởng bởi Meaning | Sprint 21.6 |
+| Cross-user/anonymized aggregation hoàn toàn chưa thiết kế | Cố ý — đòi hỏi thiết kế privacy riêng, xem `docs/FUTURE_ANONYMIZED_WISDOM_AGGREGATION.md` | Sprint 21.6 |
+
 Một Growth Debt KHÔNG bắt buộc phải trả ngay — nhưng phải được nhìn
 thấy, không được lãng quên. Khi một Sprint mới trả được một Growth Debt
 cũ, Growth Review của Sprint đó nên nói rõ "Sprint này trả Growth Debt

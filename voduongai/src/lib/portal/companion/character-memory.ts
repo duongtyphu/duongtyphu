@@ -144,3 +144,23 @@ export function hasCharacterPreference(
 ): boolean {
   return characterMemory.some((entry) => entry.preference === preference);
 }
+
+/**
+ * Sprint 21.6 — The Experience Harvest (`docs/EXPERIENCE_HARVEST.md`,
+ * Bước 3 "Lesson" của `docs/EXPERIENCE_LIFECYCLE.md`). Rule-based thuần
+ * — không suy đoán, không AI. Một trải nghiệm chỉ đủ điều kiện trở
+ * thành Lesson candidate khi CẢ HAI đúng: (1) một `ReflectionMeaning`
+ * thật đã được phát hiện (không phải Experience rỗng/chưa qua bước
+ * Reflection), và (2) câu Lesson định dùng PHẢI là một trong các câu đã
+ * được vetting sẵn ở `CHARACTER_STATEMENT` — cấu trúc này tự đảm bảo
+ * không chứa thông tin nhận diện, vì nó không bao giờ là văn bản tự do
+ * lấy từ Reflection gốc của người dùng, đúng Privacy Boundary ở
+ * `docs/EXPERIENCE_LIFECYCLE.md`.
+ */
+export function isExperienceEligibleForLesson(
+  meaning: ReflectionMeaning | null,
+  lessonCandidateStatement: string
+): boolean {
+  if (!meaning) return false;
+  return Object.values(CHARACTER_STATEMENT).includes(lessonCandidateStatement);
+}
