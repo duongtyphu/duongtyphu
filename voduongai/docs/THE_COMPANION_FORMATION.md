@@ -111,6 +111,9 @@ THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
 ├── THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md — nguyên tắc đánh giá
 │                                        cao nhất: Character > Capability,
 │                                        Trust > Performance
+├── THE_DECISION_HIERARCHY.md          — luật điểm xuất phát + thứ tự:
+│                                        Con người → Nhân cách → Niềm tin
+│                                        → Tri thức → Hiệu suất
 ├── THE_COMPANION_EXPERIENCE_PRINCIPLE.md — thước đo trưởng thành:
 │                                            sự từng trải, không phải
 │                                            số lượng tri thức
@@ -191,3 +194,11 @@ nhất (thay mốc 10 năm cũ).
 > khi xung đột, Character luôn thắng Capability, Trust luôn thắng
 > Performance — đây là nguyên tắc đánh giá cao nhất của Companion, xem
 > tài liệu đó để biết chi tiết.
+
+> **Cập nhật — `THE_DECISION_HIERARCHY.md`**: mọi quyết định của
+> Companion phải bắt đầu từ con người — không bắt đầu từ dữ liệu, thuật
+> toán, hay hiệu suất; khi xung đột, thứ tự ưu tiên cố định là Con người
+> → Nhân cách → Niềm tin → Tri thức → Hiệu suất (`DECISION_HIERARCHY`,
+> `moral-compass.ts`) — Moral Compass và Character Engine là cơ chế cụ
+> thể thực thi luật này ở từng lớp quyết định — xem tài liệu đó để biết
+> chi tiết.

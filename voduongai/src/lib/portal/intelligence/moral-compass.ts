@@ -12,6 +12,45 @@
 import type { CompanionMomentType } from "@/lib/portal/companion/thought-governance";
 
 /**
+ * The Decision Hierarchy (xem `docs/THE_DECISION_HIERARCHY.md`). Mọi
+ * quyết định của Companion phải BẮT ĐẦU từ con người — không bắt đầu
+ * từ dữ liệu, không bắt đầu từ thuật toán, không bắt đầu từ hiệu suất.
+ * Khi xung đột, thứ tự ưu tiên cố định, không đổi theo tình huống:
+ * Con người → Nhân cách → Niềm tin → Tri thức → Hiệu suất.
+ *
+ * `DECISION_HIERARCHY` không phải một bộ điểm số (sẽ phạm nguyên tắc
+ * chống gamification) — nó là TÊN của 5 tầng, dùng để mọi nơi trong
+ * code/doc khi nói "ưu tiên X hơn Y" đều quy về đúng 5 tầng này, không
+ * phát sinh tầng mới tuỳ tiện. `"performance"` ở đây CHÍNH LÀ tầng mà
+ * `MOMENT_PRIORITY_ORDER` (`thought-governance.ts`, thứ tự kỹ thuật/
+ * thuật toán viết sẵn) thuộc về — tầng thấp nhất. `HUMAN_BENEFIT_ORDER`
+ * dưới đây là cách `"human"` được áp dụng cụ thể để thắng `"performance"`
+ * tại lớp Thought Governance.
+ */
+export type DecisionHierarchyLevel = "human" | "character" | "trust" | "knowledge" | "performance";
+
+export const DECISION_HIERARCHY: readonly DecisionHierarchyLevel[] = [
+  "human",
+  "character",
+  "trust",
+  "knowledge",
+  "performance",
+];
+
+export function hierarchyRank(level: DecisionHierarchyLevel): number {
+  return DECISION_HIERARCHY.indexOf(level);
+}
+
+/**
+ * Khi hai cấp độ Decision Hierarchy xung đột, cấp độ có rank nhỏ hơn
+ * (đứng trước trong `DECISION_HIERARCHY`, gần "human" hơn) luôn thắng —
+ * không phụ thuộc tình huống, không có ngoại lệ rule-based nào khác.
+ */
+export function hierarchyWins(a: DecisionHierarchyLevel, b: DecisionHierarchyLevel): boolean {
+  return hierarchyRank(a) < hierarchyRank(b);
+}
+
+/**
  * Bốn câu hỏi Moral Compass tự hỏi trước khi cho phép một loại moment
  * được tham gia chọn lựa. Rule-based — tất cả 11 loại moment đang tồn
  * tại hôm nay đều đã được thiết kế để trả lời "có" cho cả bốn câu (đúng
@@ -20,9 +59,13 @@ import type { CompanionMomentType } from "@/lib/portal/companion/thought-governa
  * tương lai, không phải bộ lọc cho hôm nay.
  */
 export type FourQuestionsReview = {
+  /** Tầng "human" (`DECISION_HIERARCHY`). */
   respectsHuman: boolean;
+  /** Tầng "human" (`DECISION_HIERARCHY`) — trưởng thành của con người, không phải hiệu suất. */
   helpsGrowth: boolean;
+  /** Tầng "character" (`DECISION_HIERARCHY`). */
   reflectsCharacter: boolean;
+  /** Tầng "trust" (`DECISION_HIERARCHY`) — niềm tin với chính mình theo thời gian. */
   wouldBeProudLater: boolean;
 };
 
@@ -54,14 +97,14 @@ export type HumanBenefitRank = number;
  * không đảo các vị trí khác để tránh thay đổi không có chủ đích (ví dụ
  * `safety-boundary` luôn phải đứng đầu, không được phép thua bất kỳ loại
  * moment nào khác).
- */
-/**
- * Bản sao có chủ đích của `MOMENT_PRIORITY_ORDER` (`thought-governance.ts`,
- * Sprint 18.6) — KHÔNG import trực tiếp mảng đó để tránh circular import
- * giữa hai module (`thought-governance.ts` cần gọi `humanBenefitRank()`
- * ở đây). Mọi thay đổi ở `MOMENT_PRIORITY_ORDER` gốc nên được phản chiếu
- * lại đây, giữ nguyên thứ tự, CHỈ TRỪ vị trí của `greeting`/`daily-thought`
- * đã được đảo có chủ đích (xem lý do ở comment trên).
+ *
+ * Đây là ví dụ cụ thể của tầng "human" (`DECISION_HIERARCHY`) thắng
+ * tầng "performance" (thứ tự kỹ thuật `MOMENT_PRIORITY_ORDER`) — KHÔNG
+ * import trực tiếp mảng đó để tránh circular import giữa hai module
+ * (`thought-governance.ts` cần gọi `humanBenefitRank()` ở đây). Mọi
+ * thay đổi ở `MOMENT_PRIORITY_ORDER` gốc nên được phản chiếu lại đây,
+ * giữ nguyên thứ tự, CHỈ TRỪ vị trí của `greeting`/`daily-thought` đã
+ * được đảo có chủ đích.
  */
 export const HUMAN_BENEFIT_ORDER: CompanionMomentType[] = [
   "safety-boundary",

@@ -98,6 +98,14 @@ mỗi lần Companion phải chọn giữa nhiều điều hợp lệ, nó chọ
 nhất cho CON NGƯỜI, không chỉ điều đứng trước theo bảng ưu tiên kỹ
 thuật.
 
+> **Cập nhật — `THE_DECISION_HIERARCHY.md`**: Moral Compass là CƠ CHẾ
+> cụ thể thực thi tầng "human" của Decision Hierarchy (Con người →
+> Nhân cách → Niềm tin → Tri thức → Hiệu suất) tại lớp Thought
+> Governance. `humanBenefitRank()` thắng `momentPriority()` chính là
+> tầng "human" thắng tầng "performance" — không phải một ngoại lệ
+> riêng của Sprint này, mà một áp dụng cụ thể của luật chung. Xem tài
+> liệu đó để biết toàn bộ 5 tầng.
+
 ## Bốn câu hỏi trước mọi lựa chọn
 
 `reviewWithFourQuestions()` (`moral-compass.ts`) — rule-based, trả về

@@ -840,3 +840,31 @@ giờ".**
 *Liên quan:* `docs/MORAL_COMPASS.md`, `docs/CHARACTER_ENGINE.md`,
 `docs/COMPANION_THOUGHT_GOVERNANCE.md`,
 `THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`.
+
+## The Decision Hierarchy (Chapter Listening)
+
+**Hôm nay Companion học rằng trước khi hỏi "điều gì tốt nhất", nó phải
+tự hỏi nó đang BẮT ĐẦU suy nghĩ từ đâu.**
+
+**Companion Growth Review:**
+
+- *Companion nhân văn hơn ở đâu?* — Companion có một luật rõ ràng: mọi
+  quyết định phải bắt đầu từ con người, không bắt đầu từ dữ liệu/thuật
+  toán/hiệu suất — và khi các điều này xung đột, thứ tự không đổi theo
+  tình huống: Con người → Nhân cách → Niềm tin → Tri thức → Hiệu suất
+  (`DECISION_HIERARCHY`, `moral-compass.ts`).
+- *Companion đáng tin hơn ở đâu?* — Cơ chế Human Benefit thắng Priority
+  ở Sprint Moral Compass không còn là một ngoại lệ riêng — nó là một
+  áp dụng cụ thể của một luật chung, có thể audit lại ở mọi quyết định
+  khác trong tương lai theo cùng 5 tầng.
+- *Companion trưởng thành hơn ở đâu?* — Có thêm một tài liệu Constitution
+  mới (`docs/THE_DECISION_HIERARCHY.md`) đặt tên rõ cho 5 tầng đã tồn
+  tại rải rác ở Character Engine/Moral Compass — không tạo engine mới,
+  không tạo điểm số mới, chỉ đặt tên và thứ tự cho thứ đã có.
+- *Điều gì vẫn còn phải học?* — 5 tầng hôm nay mới được áp dụng thật ở
+  một điểm code (`chooseCompanionMoment()`); các điểm quyết định khác
+  (`getCompanionDecision()`, các Decision Candidate tương lai) cần được
+  audit lại theo đúng 5 tầng này ở các Sprint sau.
+
+*Liên quan:* `docs/THE_DECISION_HIERARCHY.md`, `docs/MORAL_COMPASS.md`,
+`docs/CHARACTER_ENGINE.md`, `THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`.
