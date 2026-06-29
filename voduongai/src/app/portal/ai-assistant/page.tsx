@@ -25,7 +25,7 @@ export default function AiAssistantPage() {
         </p>
         <p className="max-w-md border-t border-white/10 pt-4 text-xs italic text-white/40">{companionPromise}</p>
         <Button href="/portal" variant="secondary" className="mt-1">
-          Về Dashboard
+          Tiếp tục hành trình
         </Button>
       </GemCard>
     </div>
