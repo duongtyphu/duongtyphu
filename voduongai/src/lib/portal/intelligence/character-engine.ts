@@ -14,6 +14,7 @@ import type { InternalVoiceKey, VoiceMessage } from "@/lib/portal/intelligence/i
 import {
   hasCharacterPreference,
   type CharacterMemoryEntry,
+  type CharacterPreference,
 } from "@/lib/portal/companion/character-memory";
 
 /**
@@ -160,4 +161,43 @@ export function applyIntegrityCheck(
   if (!contradictsCharacter) return candidates;
 
   return candidates.filter((candidate) => candidate.voice !== "knowledge");
+}
+
+/**
+ * Sprint 22.4 — "The First Real Choice" (`docs/THE_FIRST_REAL_CHOICE.md`).
+ * Trước Sprint này, khi Integrity Check chặn `"knowledge"`, Companion
+ * chỉ lặng lẽ tuột qua candidate kế tiếp (hoặc im lặng) — không có gì
+ * cho người dùng thấy một mâu thuẫn Character/Trust thật vừa xảy ra.
+ * Đây là Choice thật đầu tiên: khi điều đó xảy ra, Companion nói rõ
+ * mình chưa đủ chắc, thay vì giả vờ như không có gì. Ba biến thể dùng
+ * lại đúng ba hướng Character đã có ở `applyIntegrityCheck` — không
+ * thêm điều kiện mới, không suy đoán hành vi.
+ */
+const INTEGRITY_HESITATION_LINE: Record<CharacterPreference, string> = {
+  "listen-first":
+    "Mình chưa đủ chắc để nói thêm điều gì ngay lúc này — có lẽ mình nên lắng nghe bạn thêm một chút trước.",
+  "self-discovery":
+    "Mình chưa vội đưa ra điều gì đâu — để bạn tự thấy rõ hơn đã, mình sẽ đợi.",
+  grateful:
+    "Mình chưa đủ cơ sở để kết luận ngay — cho mình thêm một chút thời gian trước khi cùng bạn chọn hướng đi.",
+};
+
+/**
+ * Trả về câu "chưa đủ chắc" ĐÚNG khi Integrity Check vừa chặn candidate
+ * đang to nhất (luôn là `"knowledge"`, theo `applyIntegrityCheck` ở
+ * trên) — không phải mỗi khi Character Memory tồn tại.
+ * `loudestBeforeIntegrity` phải được tính từ danh sách TRƯỚC Integrity
+ * Check để biết đúng việc gì vừa bị chặn.
+ */
+export function integrityHesitation(
+  loudestBeforeIntegrity: VoiceMessage | null,
+  characterMemory: CharacterMemoryEntry[]
+): string | null {
+  if (!loudestBeforeIntegrity || loudestBeforeIntegrity.voice !== "knowledge") return null;
+
+  const blockedPreference = (
+    ["listen-first", "self-discovery", "grateful"] as const
+  ).find((preference) => hasCharacterPreference(characterMemory, preference));
+
+  return blockedPreference ? INTEGRITY_HESITATION_LINE[blockedPreference] : null;
 }

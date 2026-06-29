@@ -19,7 +19,11 @@ import {
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
 import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
-import { applyCharacterReview, applyIntegrityCheck } from "@/lib/portal/intelligence/character-engine";
+import {
+  applyCharacterReview,
+  applyIntegrityCheck,
+  integrityHesitation,
+} from "@/lib/portal/intelligence/character-engine";
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 import { getCoreMemories, type CoreMemory } from "@/lib/portal/companion/core-memory";
 import { getCharacterMemory } from "@/lib/portal/companion/character-memory";
@@ -266,15 +270,24 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   // Integrity từ một phẩm chất khai báo (`CHARACTER_PROFILE`) trở thành
   // một thay đổi Decision thật.
   const characterMemory = getCharacterMemory();
-  const loudest = loudestVoice(
-    applyIntegrityCheck(applyCharacterReview(voicesHeard), characterMemory)
-  );
+  const reviewedCandidates = applyCharacterReview(voicesHeard);
+  // Sprint 22.4 — "The First Real Choice". Cần biết candidate nào đang
+  // to nhất TRƯỚC Integrity Check để phân biệt đúng: Integrity Check vừa
+  // CHẶN nó (cần nói "chưa đủ chắc"), hay chỉ đơn giản không có gì để
+  // chặn. Không tính lại — chỉ đọc thêm một lần trước khi lọc.
+  const loudestBeforeIntegrity = loudestVoice(reviewedCandidates);
+  const loudest = loudestVoice(applyIntegrityCheck(reviewedCandidates, characterMemory));
+  const hesitation = integrityHesitation(loudestBeforeIntegrity, characterMemory);
   // Sprint 19.0 — Lesson được rút ra TRƯỚC khi Meaning được phép trở
   // thành một câu nói công khai (Reflection → Lesson → Meaning).
   const lessonObserved = signals.reflectionMeaning
     ? LESSON_FROM_REFLECTION[signals.reflectionMeaning]
     : null;
-  const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals, lessonObserved) : null;
+  // Sprint 22.4 — câu "chưa đủ chắc" được nói TRƯỚC bất kỳ insight nào
+  // khác, đúng tinh thần Choice: khi Companion chưa đủ cơ sở, nó không
+  // lặng lẽ thay bằng một insight khác — nó nói rõ điều đó.
+  const insightFromVoice =
+    hesitation ?? (loudest ? companionResponseToVoice(loudest, signals, lessonObserved) : null);
   const coreMemoryHeard = getCoreMemories();
   // Sprint 20.4 — The Inner Life. Đọc Character Memory THẬT (đã tính ở
   // trên cho Integrity Check), không tính lại — Inner Thought chỉ ra
@@ -295,8 +308,8 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
       companionGreeting: routeGreeting,
       companionInsight: insightFromVoice,
       recommendedTone,
-      shouldSpeak: Boolean(routeGreeting) || Boolean(loudest),
-      silenceReason: routeGreeting || loudest ? undefined : "no-signal",
+      shouldSpeak: Boolean(routeGreeting) || Boolean(loudest) || Boolean(hesitation),
+      silenceReason: routeGreeting || loudest || hesitation ? undefined : "no-signal",
       voicesHeard,
       coreMemoryHeard,
       lessonObserved,

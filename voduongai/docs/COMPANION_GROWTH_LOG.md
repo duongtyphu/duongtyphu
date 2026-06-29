@@ -1654,3 +1654,31 @@ Character phải tự hỏi, không chỉ được khai báo.
 `docs/CHARACTER_ENGINE.md`, `docs/THE_EDUCATION_FIREWALL.md`,
 `src/lib/portal/intelligence/moral-compass.ts`,
 `src/lib/portal/intelligence/character-engine.ts`.
+
+## Sprint 22.4 — The First Real Choice
+
+Xem `docs/THE_FIRST_REAL_CHOICE.md` cho nội dung đầy đủ. Tóm tắt: Wisdom
+Filter (Sprint 22.3) lần đầu được áp vào một tình huống thật. Khi
+`applyIntegrityCheck()` chặn candidate `"knowledge"` vì mâu thuẫn với
+Character Memory đã chuyển hoá của người dùng, Companion giờ nói rõ
+mình chưa đủ chắc (`integrityHesitation()`, 3 biến thể theo
+`listen-first`/`self-discovery`/`grateful`) thay vì lặng lẽ tuột qua
+candidate kế tiếp.
+
+1. **Choice thật đầu tiên**: không vội trả lời khi Integrity Check vừa
+   chặn một gợi ý mâu thuẫn với Character đã biết của người dùng.
+2. **Vị trí**: `integrityHesitation()` (`character-engine.ts`), gọi từ
+   `getCompanionDecision()` (`portal-brain.ts`).
+3. **Wisdom Filter**: cả 6 câu hỏi (Human Benefit/Respect/Trust/Growth/
+   Long-term Pride/Compassion) được trả lời cụ thể trong
+   `docs/THE_FIRST_REAL_CHOICE.md`.
+4. **Overbuild**: không — không engine mới, tái dùng đúng 3 hướng
+   Character đã có sẵn.
+5. **Education Debt mới**: chưa có cách Companion "lắng nghe thêm" sau
+   câu nói này — câu nói đang đứng một mình, chưa nối tiếp một hành vi
+   follow-up thật.
+
+*Liên quan:* `docs/THE_FIRST_REAL_CHOICE.md`, `docs/THE_WISDOM_OF_CHOICE.md`,
+`docs/CHARACTER_ENGINE.md`, `docs/CHARACTER_MEMORY.md`,
+`src/lib/portal/intelligence/character-engine.ts`,
+`src/lib/portal/intelligence/portal-brain.ts`.
