@@ -13,7 +13,7 @@ Trước khi một framework/engine/capability mới được coi là thiết k�
 xong (không phải lúc nó được code xong, mà lúc nó được THIẾT KẾ), nó
 phải trả lời được cả hai câu sau:
 
-1. **Nếu công nghệ AI thay đổi sau 10 năm, framework này còn đúng
+1. **Nếu công nghệ AI thay đổi sau 20 năm, framework này còn đúng
    không?**
 2. **Nếu không còn đúng, điều gì là giá trị cốt lõi cần được giữ lại?**
 
@@ -55,7 +55,7 @@ MỚI (không áp dụng cho sprint chỉ sửa lỗi hoặc nối dây cái đ�
 Companion Growth Review (`THE_COMPANION_ACADEMY.md`) nên trả lời thêm,
 hoặc Sprint Report nên có riêng một mục ngắn:
 
-- Framework này còn đúng nếu công nghệ AI đổi sau 10 năm không?
+- Framework này còn đúng nếu công nghệ AI đổi sau 20 năm không?
 - Nếu không, giá trị cốt lõi nào cần giữ lại?
 
 Không bắt buộc với mọi sprint (sprint nối dây/sửa lỗi không cần) — chỉ
@@ -72,5 +72,10 @@ bắt buộc khi sprint đó tạo ra một framework/engine/capability MỚI.
   tài liệu áp dụng ở ba tầng khác nhau (phẩm chất / sprint / kiến trúc),
   không thay thế nhau.
 
+> **Cập nhật — `THE_COMPANION_FORMATION.md`**: mốc kiểm tra chính thức
+> đã được nâng từ 10 năm lên **20 năm** (Product Constitution, cấp cao
+> hơn tài liệu này). Hai câu hỏi bắt buộc và mục Áp dụng vào Sprint
+> Review ở trên đã được cập nhật theo mốc 20 năm này.
+
 Xem tiếp: `THE_LIVING_COMPANION.md`, `COMPANION_GROWTH_RULES.md`,
-`THE_COMPANION_ACADEMY.md`.
+`THE_COMPANION_ACADEMY.md`, `THE_COMPANION_FORMATION.md`.
