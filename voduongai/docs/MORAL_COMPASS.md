@@ -210,5 +210,14 @@ THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
         └── docs/MORAL_COMPASS.md (Sprint 20.2 — tài liệu này)
 ```
 
+> **Cập nhật — `docs/CHARACTER_COHERENCE.md` (Sprint 21.5)**: Moral
+> Compass xét MỘT Decision Candidate trước con người — nó KHÔNG xử lý
+> xung đột giữa hai phẩm chất nội tại của Companion (`humility` vs
+> `wisdom`, `compassion` vs `integrity`...). Đó là phạm vi của Character
+> Coherence (`docs/CHARACTER_CONFLICT_MAP.md`) — một lớp riêng, đứng
+> trước cả Moral Compass, vì một Companion phải nhất quán với chính nó
+> trước khi có thể hỏi điều gì tốt nhất cho con người.
+
 Xem tiếp: `docs/CHARACTER_ENGINE.md`, `docs/COMPANION_THOUGHT_GOVERNANCE.md`,
-`THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`, `THE_COMPANION_FORMATION.md`.
+`THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`, `THE_COMPANION_FORMATION.md`,
+`docs/CHARACTER_COHERENCE.md`.

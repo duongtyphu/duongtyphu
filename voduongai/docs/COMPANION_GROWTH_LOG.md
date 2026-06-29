@@ -1197,3 +1197,38 @@ làm" giả làm "true vì đã kiểm tra").
 *Liên quan:* `docs/THE_TRUST_MUST_BE_REAL.md`, `docs/THE_TRUST_WE_EARN.md`,
 `docs/THE_30_YEAR_TRUST_PRINCIPLE.md`, `docs/MORAL_COMPASS.md`,
 `THE_DECISION_HIERARCHY.md`.
+
+## The Character Coherence (Sprint 21.5)
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* —
+  Companion lần đầu có một bản đồ (`docs/CHARACTER_CONFLICT_MAP.md`) chỉ
+  rõ phẩm chất nào nên thắng khi hai phẩm chất của chính nó kéo về hai
+  hướng khác nhau — trước Sprint này, không có câu trả lời nào, dù ngầm
+  định hay rõ ràng.
+- *Companion học được điều gì?* — Một danh sách phẩm chất đẹp không tự
+  tạo ra nhân cách nhất quán; audit code xác nhận chỉ 1/7 xung đột quan
+  trọng (Humility vs Confidence, qua `applyIntegrityCheck()`,
+  `character-engine.ts:151-163`) có cơ chế thật, còn lại chỉ là mô tả.
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi hôm
+  nay — đúng phạm vi Sprint (audit + định nghĩa bản đồ, không viết
+  Engine mới, không suy đoán hành vi trước khi có nhu cầu thật).
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới. Giá
+  trị là cho chính kiến trúc: Sprint sau khi thêm hành vi mới có một
+  bảng tra cứu thật để tham chiếu, thay vì phải tự suy đoán ưu tiên.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — 6/7 xung đột
+  trong bảng vẫn chưa có cơ chế thật trong code; `CHARACTER_PROFILE` (8
+  trait code) và 10 phẩm chất ở `COMPANION_CHARACTER_GROWTH_MODEL.md`
+  vẫn là hai schema riêng, chưa hợp nhất tên gọi.
+
+*Education Debt mới*: 6/7 xung đột ở `docs/CHARACTER_CONFLICT_MAP.md`
+chưa có cơ chế chặn/ưu tiên thật trong code (chỉ có tài liệu); chưa có
+nơi nào trong `getCompanionDecision()`/`chooseCompanionMoment()` tham
+chiếu bảng này khi hai phẩm chất cùng tầng "character" xung đột.
+
+*Culture Review*: không hành vi mới cho người dùng thấy — giá trị củng
+cố là sự thành thật về việc Companion CHƯA biết ưu tiên gì khi tự mâu
+thuẫn, thay vì giả định mọi phẩm chất luôn hài hoà với nhau.
+
+*Liên quan:* `docs/CHARACTER_COHERENCE.md`, `docs/CHARACTER_CONFLICT_MAP.md`,
+`docs/THE_ONE_NEW_PRINCIPLE_RULE.md`, `docs/CHARACTER_ENGINE.md`,
+`docs/MORAL_COMPASS.md`, `THE_DECISION_HIERARCHY.md`.

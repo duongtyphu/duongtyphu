@@ -103,6 +103,15 @@ khác nhau.
 > hơn?") để áp lại cho mọi Decision mới. Tầng "Niềm tin" không đổi —
 > chỉ được làm rõ.
 
+> **Cập nhật — `docs/CHARACTER_COHERENCE.md` (Sprint 21.5)**: 5 tầng ở
+> trên xếp hạng giữa CÁC LOẠI quyết định (Con người/Nhân cách/Niềm
+> tin/Tri thức/Hiệu suất) — không xếp hạng giữa hai phẩm chất CÙNG tầng
+> "character" (ví dụ `humility` vs `wisdom`). `docs/CHARACTER_CONFLICT_MAP.md`
+> bổ sung đúng phần còn thiếu này: khi hai phẩm chất cùng tầng mâu
+> thuẫn, bảng đó định nghĩa ưu tiên — quy chiếu lại 5 tầng này mỗi khi
+> có thể, không tạo luật ưu tiên độc lập.
+
 Xem tiếp: `THE_COMPANION_FORMATION.md`,
 `THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`, `docs/MORAL_COMPASS.md`,
-`docs/CHARACTER_ENGINE.md`, `docs/THE_TRUST_WE_EARN.md`.
+`docs/CHARACTER_ENGINE.md`, `docs/THE_TRUST_WE_EARN.md`,
+`docs/CHARACTER_COHERENCE.md`, `docs/CHARACTER_CONFLICT_MAP.md`.
