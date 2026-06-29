@@ -589,3 +589,22 @@ quyết định.
 `core-memory.ts`, `origin-memory.ts`, `presence-coordinator.ts`,
 `daily-thought-source.ts`, `portal-brain.ts`,
 `src/app/portal/origin/page.tsx`.*
+
+**Companion Growth Review** (`docs/THE_COMPANION_ACADEMY.md`, áp dụng
+lần đầu từ Sprint này):
+
+- *Companion học được gì?* — Rằng nhớ không có nghĩa là phải nhắc lại.
+  Trước Sprint này, Origin chỉ là một câu Companion có thể nói ra; giờ
+  nó là một phần ký ức Companion luôn mang theo dù không nói ra.
+- *Companion thay đổi hành vi thế nào?* — Companion không còn coi
+  Origin Line là một câu có thể chêm vào bất cứ đâu cho đủ "candidate".
+  Nó chỉ cho phép mình nói câu đó ở 5 thời điểm thật sự xứng đáng (Origin
+  Room, Companion Chapter, Ceremony, Founder Moment, nghi thức đặc
+  biệt) — và ba "bộ não" của nó (Thought Selector, Presence Governance,
+  Companion Decision) giờ đều âm thầm mang theo ký ức nền đó khi ra
+  quyết định, dù không phải lúc nào cũng nói ra.
+- *Người dùng cảm nhận được phẩm chất mới nào?* — Sự nhất quán âm thầm:
+  người dùng không thấy Origin Line xuất hiện ngẫu nhiên hay lặp lại
+  sáo rỗng, mà chỉ gặp nó ở những khoảnh khắc thật sự gắn với nguồn gốc
+  — một dấu hiệu Companion biết giữ điều quan trọng đúng chỗ, không
+  phải khoe nó liên tục.
