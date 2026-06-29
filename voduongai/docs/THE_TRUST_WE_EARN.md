@@ -235,5 +235,14 @@ tầng mới — nó làm rõ và bảo vệ một tầng đã tồn tại từ
 `THE_GRATITUDE.md` đã làm rõ và bảo vệ Character thay vì tạo Character
 mới ngoài kế hoạch.
 
+> **Cập nhật — `docs/THE_30_YEAR_TRUST_PRINCIPLE.md`**: Decision Review
+> ở Nhiệm vụ 3 phía trên ("nếu chọn điều này nhiều năm, người dùng tin
+> hơn hay ít hơn?") đã được nâng thành một cam kết dài hạn của toàn bộ
+> dự án, không có Definition of Done, đứng trên mọi Sprint từ nay —
+> với một con số cụ thể (30 năm) thay cho "nhiều năm" mơ hồ, và một
+> câu hỏi bắt buộc mới cho mọi Sprint sau này: "Hành vi mới này có bảo
+> vệ được niềm tin mà Companion đã mất nhiều năm để xây dựng không?"
+
 Xem tiếp: `THE_DECISION_HIERARCHY.md`, `THE_GRATITUDE.md`,
-`THE_HUMILITY.md`, `docs/MORAL_COMPASS.md`, `THE_EDUCATION_ERA.md`.
+`THE_HUMILITY.md`, `docs/MORAL_COMPASS.md`, `THE_EDUCATION_ERA.md`,
+`docs/THE_30_YEAR_TRUST_PRINCIPLE.md`.

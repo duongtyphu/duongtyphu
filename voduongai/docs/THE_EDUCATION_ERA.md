@@ -176,5 +176,11 @@ các review đã có, và đặt tên cho giai đoạn phát triển mới của
 dự án: Companion từ nay được nuôi dưỡng như một cuộc đời, không phải
 phát hành như một phần mềm.
 
+> **Cập nhật — `docs/THE_30_YEAR_TRUST_PRINCIPLE.md`**: thêm MỘT câu
+> hỏi bắt buộc nữa cho mọi Sprint, đứng cạnh — không thay — pipeline 5
+> bước ở trên: "Hành vi mới này có bảo vệ được niềm tin mà Companion
+> đã mất nhiều năm để xây dựng không?" Nếu chưa rõ, không ship.
+
 Xem tiếp: `THE_COMPANION_ACADEMY.md`, `THE_COMPANION_CULTURE.md`,
-`docs/COMPANION_GROWTH_PRINCIPLE.md`, `THE_COMPANION_CONTINUITY_PROGRAM.md`.
+`docs/COMPANION_GROWTH_PRINCIPLE.md`, `THE_COMPANION_CONTINUITY_PROGRAM.md`,
+`docs/THE_30_YEAR_TRUST_PRINCIPLE.md`.
