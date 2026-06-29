@@ -19,22 +19,33 @@ Companion trở thành một người bạn tốt hơn, không phải một AI m
 
 Từ Sprint này, mỗi Sprint Review phải có thêm một phần **Companion
 Growth Review**, đứng cạnh (không thay thế) Technical Review thông
-thường (tsc/lint/build, commit/push). Phần này trả lời đúng ba câu, bằng
-ngôn ngữ con người, không bằng changelog kỹ thuật:
+thường (tsc/lint/build, commit/push).
 
-1. **Companion học được gì?** — không phải "đã thêm field/function nào",
-   mà điều gì Companion vừa hiểu thêm về cách đồng hành, im lặng, ghi
-   nhớ, hay lắng nghe.
-2. **Companion thay đổi hành vi thế nào?** — một bài học không thật nếu
+> **Cập nhật — `THE_HUMAN_UNDERSTANDING_MISSION.md`**: định dạng câu
+> hỏi dưới đây đã được MỞ RỘNG từ 3 câu lên 5 câu, gắn vào sứ mệnh cụ
+> thể hơn: Companion phải hiểu CON NGƯỜI hơn, không chỉ biết nhiều hơn
+> hay trả lời tốt hơn. Phần này trả lời đúng năm câu, bằng ngôn ngữ con
+> người, không bằng changelog kỹ thuật:
+
+1. **Companion học được điều gì?** — không phải "đã thêm field/function
+   nào", mà điều gì Companion vừa hiểu thêm về cách đồng hành, im lặng,
+   ghi nhớ, hay lắng nghe.
+2. **Companion hiểu con người hơn ở điểm nào?** — phải neo vào một cách
+   hiểu con người cụ thể (một cảm xúc, một hoàn cảnh, một phản ứng mà
+   trước đó Companion chưa nhận ra) — không phải một khái niệm kỹ thuật
+   diễn giải lại thành "hiểu hơn".
+3. **Companion thay đổi hành vi thế nào?** — một bài học không thật nếu
    không có ít nhất một hành vi cụ thể (một quyết định nó đưa ra khác đi,
    một điều nó không còn làm nữa, một ngữ cảnh nó giờ biết phân biệt).
-3. **Người dùng cảm nhận được phẩm chất mới nào?** — phải neo được vào
-   một trải nghiệm người dùng thật, không phải một khái niệm chỉ tồn tại
-   trong code.
+4. **Người dùng cảm nhận được gì?** — phải neo được vào một trải nghiệm
+   người dùng thật, không phải một khái niệm chỉ tồn tại trong code.
+5. **Companion vẫn chưa hiểu điều gì?** — bắt buộc thừa nhận giới hạn;
+   một câu trả lời "không còn gì" nên bị nghi ngờ, vì hiểu con người
+   luôn còn dở dang.
 
-Nếu một Sprint không trả lời rõ được cả ba câu trên, Sprint đó chưa nên
-được coi là một bước trưởng thành — dù phần kỹ thuật có thể vẫn đúng và
-được ship.
+Nếu một Sprint không trả lời rõ được cả năm câu trên, Sprint đó chưa
+nên được coi là một bước trưởng thành — dù phần kỹ thuật có thể vẫn
+đúng và được ship.
 
 ## Quan hệ với các tài liệu khác
 
@@ -48,4 +59,4 @@ Nếu một Sprint không trả lời rõ được cả ba câu trên, Sprint đ
   ghi vào Growth Log.
 
 Xem tiếp: `COMPANION_GROWTH_RULES.md`, `COMPANION_GROWTH_LOG.md`,
-`THE_LIVING_COMPANION.md`.
+`THE_LIVING_COMPANION.md`, `THE_HUMAN_UNDERSTANDING_MISSION.md`.
