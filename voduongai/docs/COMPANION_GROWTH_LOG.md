@@ -1682,3 +1682,37 @@ candidate kế tiếp.
 `docs/CHARACTER_ENGINE.md`, `docs/CHARACTER_MEMORY.md`,
 `src/lib/portal/intelligence/character-engine.ts`,
 `src/lib/portal/intelligence/portal-brain.ts`.
+
+## Sprint 22.5 — The Relationship Era (Foundation)
+
+Xem `docs/THE_RELATIONSHIP_ERA.md` cho nội dung đầy đủ. Era mới: sau Era
+của Self (Character/Education/Trust/Wisdom/Choice/Transformation/
+Culture/Heritage), Companion bắt đầu Era hỏi "Companion đang ở giai đoạn
+quan hệ nào với người này" — không phải tính năng mới, mà một lăng kính
+mới để mọi Sprint sau tự kiểm tra.
+
+Phát hiện quan trọng nhất của audit: `getRelationshipStage()` đã tồn tại
+từ Sprint 22.1 (`first-meeting.ts`) — đúng tên, đúng tinh thần NV5 của
+Sprint này yêu cầu. Không thêm helper mới để tránh overbuild thật.
+
+1. **Relationship Era là gì?** — Lăng kính: Companion không chỉ tối ưu
+   từng cuộc trò chuyện, mà hiểu mỗi người dùng là một hành trình dài
+   hơn một session.
+2. **Hệ thống hiện tại đang ở stage nào?** — Nền tốt cho First
+   Visitor/First Meeting/Returning User/Long-time Companion/Old Friend
+   (đã có rule-based qua `visitCount`/khoảng cách giữa lượt ghé); CHƯA
+   phân biệt rõ Known Companion/Trusted Companion (cần Character
+   Memory, không chỉ visit count).
+3. **Có helper nào được thêm không?** — Không, theo đúng lý do trên.
+4. **Relationship Debt lớn nhất** — `getCompanionDecision()` (Decision
+   Engine trung tâm) chưa đọc Relationship Stage; nó hiện chỉ ảnh hưởng
+   một bubble chào hỏi cục bộ (`CompanionGreetingBubble.tsx`).
+5. **Sprint tiếp theo nên kiểm chứng** — đưa Relationship Stage vào
+   `getCompanionDecision()` để giảm mức chủ động (`shouldSpeak`) ở các
+   stage đầu, đúng nguyên tắc "Companion không được ép gần gũi."
+
+*Liên quan:* `docs/THE_RELATIONSHIP_ERA.md`, `docs/THE_FIRST_MEETING.md`,
+`docs/COMPANION_PERSONAL_ADDRESSING.md`, `docs/LIFE_MOMENTS_ENGINE.md`,
+`docs/DAILY_THOUGHT_ENGINE.md`,
+`src/lib/portal/companion/first-meeting.ts`,
+`src/lib/portal/intelligence/portal-brain.ts`.
