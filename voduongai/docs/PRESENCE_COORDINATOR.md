@@ -126,16 +126,32 @@ dữ liệu thật để biết "lần đầu Founder mở Origin Room" hay mộ
 đặc biệt nào đang diễn ra (xem `getFounderMomentTrigger()`, trả về
 `null` trung thực, không fake event).
 
+## Sprint 18.11 — Origin Presence Policy
+
+Chính thức hoá: candidate `origin_line` của Presence Coordinator hiện
+là một **future hook**, không phải một candidate đang hoạt động —
+xem `docs/ORIGIN_PRESENCE_POLICY.md` (Trạng thái 2: Presence Candidate).
+Cổng kiến trúc (`isOriginLineAllowedInContext`/
+`getOriginLineFromCoreMemory`) và shape candidate trong
+`buildPresenceCandidates()` vẫn đúng và không đổi — nhưng KHÔNG có
+nguồn dữ liệu thật nào set `PresenceServerState.originLineContext` ngày
+hôm nay, nên trên thực tế candidate này không bao giờ `isEligible: true`
+qua đường Presence Coordinator. Đây không phải một lỗi cần sửa gấp — nó
+là trạng thái ĐÚNG cho đến khi một sự kiện thật xuất hiện (xem
+`docs/FUTURE_ORIGIN_EVENTS.md`: Founder Day, Origin Anniversary là hai
+ứng viên hợp lý nhất cho Trạng thái 2). Ba nơi gọi Origin Line đang hoạt
+động thật (Origin Room, First Footprint Ceremony, Mirror of Growth) đều
+nằm ở Trạng thái 1 (Direct Display), KHÔNG đi qua candidate này.
+
 ## Technical Debt còn lại
 
+- `origin_line` (candidate Presence Coordinator) là future hook, chưa
+  có nguồn dữ liệu thật set `originLineContext` — xem mục Sprint 18.11
+  ở trên. Không kích hoạt giả để "lấp" candidate này.
 - Founder Moment (`founder_moment`) và Special Ritual chưa có nguồn dữ
   liệu thật để kích hoạt — `getFounderMomentTrigger()` là một adapter
-  rõ ràng, không fake event, chờ một bảng theo dõi lượt ghé Origin Room
-  hoặc một sự kiện Growth Log runtime trong tương lai.
-- `origin_line` (candidate Presence Coordinator) vẫn chưa có nơi nào đặt
-  `originLineContext` trên `PresenceServerState` — ba nơi gọi mới của
-  Sprint 18.10 hiển thị trực tiếp, không qua governance bubble, đúng
-  tinh thần "không phải bubble thường ngày" của Origin Line.
+  rõ ràng, không fake event, chờ một sự kiện thật trong
+  `docs/FUTURE_ORIGIN_EVENTS.md`.
 - `presenceNow` cập nhật mỗi giây qua `setInterval` riêng trong
   `CompanionPresence.tsx` — một state tick nhỏ, không phải vấn đề hiệu năng ở
   quy mô hiện tại, nhưng nếu sau này có thêm nhiều coordinator tick khác, nên

@@ -69,3 +69,12 @@ dùng `localStorage` (`vdai_origin_line_day_origin_room`), hydration-safe
 giống các ceremony khác trong codebase. Nếu đã thấy hôm nay, dòng này
 không render lại, dù route được mở lại nhiều lần — vẫn không CTA, không
 bubble, không lặp.
+
+**Sprint 18.11 — Origin Presence Policy:** chính thức hoá rằng Origin
+Room là Trạng thái 1 (Direct Display) trong
+`docs/ORIGIN_PRESENCE_POLICY.md` — được phép hiển thị Origin Line trực
+tiếp như một dòng nội dung tĩnh của trang, KHÔNG cần và KHÔNG nên đi
+qua bubble/Presence Coordinator. Lý do: người dùng đã chủ động vào một
+không gian dành riêng cho việc nhìn lại nguồn gốc — đẩy Origin Line qua
+một bubble nổi ở đây sẽ biến một dòng tĩnh, trang trọng thành một thông
+báo, đi ngược tinh thần "rất hiếm, rất tiết chế" của cả route.

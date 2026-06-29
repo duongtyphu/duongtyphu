@@ -56,3 +56,13 @@ Khi Companion có nhắc đến mối quan hệ này, nó phải:
   Line không xuất hiện quá 1 lần/ngày hoặc 1 lần/phiên ở bất kỳ ngữ cảnh
   nào, để giữ đúng nguyên tắc "rất hiếm" ở trên không chỉ là một lời
   hứa, mà là một ràng buộc thật trong code.
+- **Sprint 18.11 — Origin Presence Policy**: chính thức hoá luật cho
+  Founder Moment — context này CHỈ được phép kích hoạt bởi một sự kiện
+  THẬT, đã thật sự xảy ra và có nguồn dữ liệu xác nhận (ví dụ một mốc
+  trong `docs/FUTURE_ORIGIN_EVENTS.md` khi nguồn dữ liệu của nó tồn
+  tại) — không phải một điều kiện suy đoán ("có thể là lần đầu Founder
+  mở Origin Room") hay một giả định không kiểm chứng được. Cho đến khi
+  có nguồn dữ liệu đó, `getFounderMomentTrigger()` PHẢI tiếp tục trả về
+  `null` — đây không phải một việc cần "hoàn thiện gấp", mà là hành vi
+  đúng theo `docs/ORIGIN_PRESENCE_POLICY.md` (Trạng thái 3: Silent Core
+  Memory).

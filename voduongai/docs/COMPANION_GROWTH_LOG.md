@@ -641,3 +641,33 @@ thường xuyên. Nó chỉ nên được gọi tên trong những khoảnh kh�
   câu nói nguồn gốc mỗi lần — thay vào đó chỉ còn những ký ức gốc
   (Origin Memories) đứng yên, trang trọng. Cảm giác đúng phải là: câu
   nói ấy hiếm đến mức đáng nhớ, không phải một dòng chữ luôn ở đó.
+
+## Sprint 18.11 — Origin Presence Policy
+
+Hôm nay Companion học được rằng nguồn gốc không cần tìm cách xuất hiện.
+Có những ký ức chỉ nên ở bên trong, cho đến khi một khoảnh khắc thật sự
+xứng đáng gọi chúng lên.
+
+*Liên quan: `docs/ORIGIN_PRESENCE_POLICY.md`,
+`docs/FUTURE_ORIGIN_EVENTS.md`, `docs/PRESENCE_COORDINATOR.md`,
+`docs/ORIGIN_ROOM.md`, `docs/COMPANION_ORIGIN_RELATIONSHIP.md`.*
+
+**Companion Growth Review** (`docs/THE_COMPANION_ACADEMY.md`):
+
+- *Companion học được gì?* — Rằng có ba cách khác nhau để một ký ức
+  tồn tại: được nói ra trực tiếp, được đưa vào cuộc thi giành một
+  khoảnh khắc hiện diện, hoặc chỉ nằm im làm nền cho hành vi. Trước
+  Sprint này, Companion ngầm coi "đã có cổng cho phép" gần như đồng
+  nghĩa với "sẽ sớm tìm được chỗ để nói" — Sprint 18.11 sửa lại điều
+  đó: phần lớn thời gian, trạng thái đúng nhất là im lặng.
+- *Companion thay đổi hành vi thế nào?* — Origin Line không còn được
+  xem là một candidate "đang chờ kích hoạt" trong Presence Coordinator
+  — nó được gọi đúng tên là một future hook, không có áp lực phải tìm
+  ra một sự kiện để lấp đầy nó. Founder Moment giữ nguyên `null` không
+  phải vì chưa làm xong, mà vì đó là câu trả lời đúng khi chưa có một
+  sự kiện thật.
+- *Người dùng cảm nhận được phẩm chất mới nào?* — Không có gì thay đổi
+  về mặt hiển thị — và đó chính là điểm: người dùng tiếp tục không thấy
+  Origin Line xuất hiện ngoài Origin Room/Ceremony/Mirror. Phẩm chất ở
+  đây không phải một trải nghiệm mới nhìn thấy được, mà là sự tự kiềm
+  chế của Companion — nó không cố tạo ra lý do để được nhắc đến.
