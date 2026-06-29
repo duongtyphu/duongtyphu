@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { PortalShell } from "@/components/portal/PortalShell";
 import { NotificationTicker } from "@/components/portal/NotificationTicker";
 import { OnboardingJourney } from "@/components/portal/OnboardingJourney";
@@ -124,20 +125,22 @@ export default async function PortalLayout({
   };
 
   return (
-    <PortalShell
-      user={user}
-      dailyThoughtContext={dailyThoughtContext}
-      lifeMoment={lifeMoment}
-      returnAfterSilenceMilestone={returnAfterSilenceMilestone}
-    >
-      <NotificationTicker />
-      <FirstFootprintCeremony
-        originLine={getOriginLineFromCoreMemory(
-          getOriginLineContextDefinition("first_footprint_ceremony").coreMemoryContext
-        )}
-      />
-      <OnboardingJourney />
-      {children}
-    </PortalShell>
+    <Suspense fallback={null}>
+      <PortalShell
+        user={user}
+        dailyThoughtContext={dailyThoughtContext}
+        lifeMoment={lifeMoment}
+        returnAfterSilenceMilestone={returnAfterSilenceMilestone}
+      >
+        <NotificationTicker />
+        <FirstFootprintCeremony
+          originLine={getOriginLineFromCoreMemory(
+            getOriginLineContextDefinition("first_footprint_ceremony").coreMemoryContext
+          )}
+        />
+        <OnboardingJourney />
+        {children}
+      </PortalShell>
+    </Suspense>
   );
 }
