@@ -86,6 +86,15 @@ người dùng cần không?") — KHÔNG quyết định AI NÀO/HỆ THỐNG N
 lời câu hỏi đó, vì hôm nay chưa có dữ liệu thật về outcome của từng lần
 áp dụng Lesson (xem Audit dưới) để bất kỳ cơ chế thật nào có thể dùng.
 
+> **Cập nhật — Sprint 22.0, `docs/THE_TRANSFORMATION_ENGINE.md`**: gap
+> "chưa có dữ liệu thật về outcome" ở trên đã có một câu trả lời nhỏ —
+> `outcome-signal.ts` đọc Outcome rule-based dựa trên Character Memory
+> đã có. Nhưng Positive Outcome (câu hỏi PHỦ ĐỊNH ở trên) và
+> `OutcomeSignal` (`"aligned" | "new-direction"`) KHÔNG phải một —
+> Positive Outcome hỏi "có dấu hiệu ngược không", `OutcomeSignal` hỏi
+> "có cùng hướng Character đã có không". Hai khái niệm bổ sung, không
+> thay thế nhau.
+
 Xem tiếp: `docs/EXPERIENCE_LIFECYCLE.md`, `docs/EXPERIENCE_HARVEST.md`,
 `docs/THE_30_YEAR_TRUST_PRINCIPLE.md`, `docs/THE_EDUCATION_ERA.md`,
-`docs/MORAL_COMPASS.md`.
+`docs/MORAL_COMPASS.md`, `docs/THE_TRANSFORMATION_ENGINE.md`.

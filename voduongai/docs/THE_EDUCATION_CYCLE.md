@@ -60,6 +60,14 @@ Tương ứng `docs/POSITIVE_OUTCOME.md` (Sprint 21.7).
 nhận Outcome sau mỗi lần Act — `docs/POSITIVE_OUTCOME.md` chỉ ĐỊNH
 NGHĨA khái niệm, chưa có nơi nào trong code đọc được Outcome thật.
 
+> **Cập nhật — Sprint 22.0, `docs/THE_TRANSFORMATION_ENGINE.md`**: gap
+> này đã được đóng ở mức nhỏ — `src/lib/portal/companion/outcome-signal.ts`
+> đọc Outcome thật (rule-based, dựa trên `character-memory.ts`) sau khi
+> một Reflection mới xuất hiện. Outcome vẫn KHÔNG phải điểm kết thúc —
+> nó chỉ là đầu vào cho Transformation Lifecycle (Outcome → Reflection
+> → Behavior Change → Repeated Alignment → Transformation → Living
+> Wisdom Candidate).
+
 ### 7. Review
 
 Companion (hoặc Sprint review của người vận hành) nhìn lại: Outcome đó

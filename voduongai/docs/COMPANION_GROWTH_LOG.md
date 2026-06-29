@@ -1431,3 +1431,45 @@ của Companion trực tiếp mà không qua đủ quy trình.
 `docs/THE_EXTERNAL_AI_PRINCIPLE.md`, `docs/THE_GREAT_LIBRARY.md`,
 `docs/POSITIVE_OUTCOME.md`, `docs/EXPERIENCE_LIFECYCLE.md`,
 `docs/COMPANION_EDUCATION_MAP.md`, `docs/THE_COMPANION_CURRICULUM.md`.
+
+## Sprint 22.0 — The Transformation Engine
+
+1. *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?*
+   Companion không còn dừng lại ở "điều gì đã xảy ra" (Outcome) — lần
+   đầu tiên có một cơ chế thật (`outcome-signal.ts`) đọc xem một
+   Reflection mới có cùng hướng Character đã có hay không, làm nền cho
+   câu hỏi sâu hơn: "điều gì đã thật sự thay đổi trong con người?"
+2. *Companion học được gì?* Outcome không phải điểm kết thúc — nó là
+   đầu vào cho một vòng đời dài hơn (Transformation Lifecycle: Act →
+   Outcome → Reflection → Behavior Change → Repeated Alignment →
+   Transformation → Living Wisdom Candidate), và Wisdom chỉ thật khi đi
+   hết vòng đời đó, không phải khi một sự kiện lặp lại.
+3. *Companion thay đổi hành vi nào?* Chưa thay đổi hành vi NGƯỜI DÙNG
+   thấy được — `outcome-signal.ts`/`isTransformationCandidate()` là
+   helper sẵn sàng để gọi, chưa nối vào flow UI thật. Thay đổi thật ở
+   Sprint này là kiến trúc: Companion giờ có một cách đo được "aligned"
+   vs "new-direction" mà trước đây không tồn tại.
+4. *Người dùng nhận được giá trị gì?* Trực tiếp: không có thay đổi UI.
+   Gián tiếp: nền tảng để các Sprint sau xây Living Wisdom thật, không
+   phải Wisdom suy diễn từ số lần lặp lại đơn thuần.
+5. *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* Act vẫn chưa
+   có ID/log riêng — Outcome hôm nay chỉ đo ở cấp "hướng Character",
+   chưa đo hiệu ứng của MỘT Act cụ thể. Đây là Education Debt còn lại
+   lớn nhất.
+
+*Education Debt mới*: (1) Act không có ID để đo Outcome riêng của từng
+hành động; (2) `isTransformationCandidate()` chưa được gọi tự động sau
+mỗi Reflection mới — chưa nối vào flow thật; (3) Living Wisdom Candidate
+vẫn hoàn toàn concept, chưa có Sprint nối kết quả `true` vào một bảng
+Living Wisdom.
+
+*Culture Review*: giữ đúng nguyên tắc chống gamification toàn dự án —
+không `transformationScore`, không ranking, không badge. Transformation
+chỉ là nhãn/boolean nội bộ, không bao giờ hiển thị cho người dùng như
+một con số.
+
+*Liên quan:* `docs/THE_TRANSFORMATION_ENGINE.md`,
+`docs/THE_EDUCATION_CYCLE.md`, `docs/POSITIVE_OUTCOME.md`,
+`docs/THE_GREAT_LIBRARY.md`, `docs/THE_EDUCATION_FIREWALL.md`,
+`src/lib/portal/companion/outcome-signal.ts`,
+`src/lib/portal/companion/character-memory.ts`.

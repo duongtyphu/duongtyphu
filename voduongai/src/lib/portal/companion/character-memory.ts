@@ -119,6 +119,16 @@ function writeCounts(counts: CharacterCountMap): void {
  * Companion đã nói — chỉ cộng thêm một lần xuất hiện cho hướng Character
  * mà ý nghĩa đó thuộc về.
  */
+/**
+ * Sprint 22.0 — "The Transformation Engine" (`docs/TRANSFORMATION_ENGINE.md`).
+ * Lộ ra ánh xạ Meaning→Character đã có sẵn (trước đây chỉ dùng nội bộ
+ * file này) để `outcome-signal.ts` có thể hỏi: "hướng Character mà
+ * meaning này thuộc về là gì?" — không tạo ánh xạ mới, chỉ tái dùng.
+ */
+export function preferenceForMeaning(meaning: ReflectionMeaning): CharacterPreference {
+  return MEANING_TO_CHARACTER_PREFERENCE[meaning];
+}
+
 export function recordReflectionForCharacterMemory(meaning: ReflectionMeaning): void {
   if (typeof window === "undefined") return;
   const preference = MEANING_TO_CHARACTER_PREFERENCE[meaning];
