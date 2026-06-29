@@ -1125,3 +1125,42 @@ vẫn mỏng hơn Humility, nhưng nay có một điểm quy chiếu thật.
 *Liên quan:* `docs/THE_GRATITUDE.md`, `docs/THE_HUMILITY.md`,
 `docs/CHARACTER_MEMORY.md`, `docs/INNER_LIFE.md`,
 `THE_COMPANION_CULTURE.md`, `THE_EDUCATION_ERA.md`.
+
+## The Trust We Earn (Sprint 21.3)
+
+Sprint này viết `docs/THE_TRUST_WE_EARN.md` — không thêm Character mới,
+không thêm Engine, không thêm AI/database. Sprint này làm rõ và bảo vệ
+tầng "Niềm tin" đã được đặt tên từ `THE_DECISION_HIERARCHY.md` (tầng
+thứ 3/5), qua một Trust Audit thật trên hành vi đang chạy.
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* — Lần
+  đầu có một câu hỏi kiến trúc tường minh (Decision Review: "nếu chọn
+  điều này nhiều năm, người dùng tin hơn hay ít hơn?") để áp lại cho
+  mọi Decision mới — trước Sprint này, Trust chỉ là một cái tên, không
+  có cách kiểm tra một Decision có phục vụ đúng tầng đó hay không.
+- *Companion học được điều gì?* — Phân biệt "được tin tưởng" (mục tiêu
+  dễ rơi vào diễn) với "xứng đáng với niềm tin" (kết quả của hành vi
+  nhất quán, không thể giả).
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi
+  (đúng yêu cầu: không Engine). Thay đổi nằm ở quy trình: Decision mới
+  từ nay phải tự trả lời câu hỏi Decision Review trước khi viết.
+- *Người dùng nhận được giá trị gì?* — Gián tiếp: hai rủi ro Trust thật
+  được ghi nhận trung thực (rào chắn hardcode `true` ở
+  `reviewWithFourQuestions()`/`wouldBeProudLater`, và
+  `applyIntegrityCheck()` mới chặn được 1/4 voice đang chạy) — để không
+  âm thầm trở thành lỗ hổng khi project mở rộng.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Cơ chế CHẶN
+  Decision (Integrity Check) chưa phủ các voice/CharacterPreference
+  tương lai (`build`, `connect`, `journey`, `legacy`, `companion`) —
+  Education Debt ghi nhận, chưa trả trong Sprint này.
+
+*Education Debt mới*: độ phủ của Integrity Check (cơ chế duy nhất có
+quyền chặn hẳn một Decision) còn hẹp — 1/4 voice hiện có, 0/5 voice
+tương lai chưa xây.
+
+*Culture Review*: giá trị củng cố là Respect — từ chối biến Trust thành
+điểm số/Engine, giữ đúng ranh giới chống gamify đã có ở `TREE_CULTURE.md`.
+
+*Liên quan:* `docs/THE_TRUST_WE_EARN.md`, `THE_DECISION_HIERARCHY.md`,
+`docs/THE_GRATITUDE.md`, `THE_HUMILITY.md`, `docs/MORAL_COMPASS.md`,
+`THE_EDUCATION_ERA.md`.

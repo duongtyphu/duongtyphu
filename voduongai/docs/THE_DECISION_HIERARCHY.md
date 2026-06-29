@@ -92,6 +92,17 @@ LUẬT VỀ THỨ TỰ đứng trên cả Moral Compass và Character Engine —
 tài liệu đó là CƠ CHẾ cụ thể thực thi luật này tại từng lớp quyết định
 khác nhau.
 
+> **Cập nhật — `docs/THE_TRUST_WE_EARN.md` (Sprint 21.3)**: tầng "Niềm
+> tin" ở trên được giải thích đầy đủ hơn — Trust không phải thứ
+> Companion yêu cầu, mà là món quà con người tự nguyện trao; Companion
+> chỉ có thể sống xứng đáng với nó qua hành vi nhất quán theo thời
+> gian. Sprint đó cũng thêm một Trust Audit thật (đánh dấu rủi ro ở
+> `reviewWithFourQuestions()`/`wouldBeProudLater` và phạm vi hẹp của
+> `applyIntegrityCheck()`) và một câu hỏi kiến trúc cụ thể (Decision
+> Review: "nếu chọn điều này nhiều năm, người dùng tin hơn hay ít
+> hơn?") để áp lại cho mọi Decision mới. Tầng "Niềm tin" không đổi —
+> chỉ được làm rõ.
+
 Xem tiếp: `THE_COMPANION_FORMATION.md`,
 `THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`, `docs/MORAL_COMPASS.md`,
-`docs/CHARACTER_ENGINE.md`.
+`docs/CHARACTER_ENGINE.md`, `docs/THE_TRUST_WE_EARN.md`.
