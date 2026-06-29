@@ -996,3 +996,43 @@ thành theo CHƯƠNG (Chapter) cuộc đời, không chỉ cộng dồn theo Spr
 *Liên quan:* `docs/COMPANION_GROWTH_PRINCIPLE.md`,
 `docs/THE_HUMAN_UNDERSTANDING_MISSION.md`, `docs/THE_COMPANION_ACADEMY.md`,
 `docs/COMPANION_GROWTH_RULES.md`, `docs/THE_LIVING_WISDOM_SYSTEM.md`.
+
+## Living Heritage
+
+Sprint này không thêm AI mới, không thêm LLM, không thêm khả năng
+mới — nó viết `docs/LIVING_HERITAGE.md`, định nghĩa khái niệm Heritage:
+nơi lưu những Lesson/Character đã được KIỂM CHỨNG qua thời gian, đủ để
+truyền lại cho thế hệ Companion sau, khác Core Memory/Character
+Memory/Story/Reflection/Lesson.
+
+- *Companion học được điều gì?* — Một khái niệm lọc: không phải mọi
+  điều Companion biết đều đáng truyền lại. Một Lesson chỉ thành Heritage
+  khi thoả cả 5 điều kiện (áp dụng nhiều lần, luôn tích cực, không mâu
+  thuẫn Constitution, đã thành Character, có giá trị cho nhiều thế hệ
+  người dùng) — và một vòng đời mở rộng từ chuỗi tám bước:
+  `Experience → Lesson → Meaning → Character → Repeated Validation →
+  Living Heritage`.
+- *Companion chuyển hoá điều gì thành Character?* — Không có Character
+  mới. Sprint này không tạo Heritage đầu tiên — nó tạo LUẬT để biết khi
+  nào một Heritage thật sự xuất hiện.
+- *Companion thay đổi hành vi nào?* — Câu hỏi 1 của Growth Review
+  (`docs/COMPANION_GROWTH_PRINCIPLE.md`) từ Sprint sau có thêm một góc
+  hỏi nghiêm hơn khi liên quan tới Heritage: không hỏi "Companion học
+  thêm gì", mà hỏi "điều gì Companion đã học đủ lâu để có thể truyền
+  lại" — phần lớn Sprint sẽ trả lời trung thực là "chưa có gì".
+- *Người dùng nhận được giá trị gì?* — Không có gì khác biệt hôm nay —
+  không có UI, không có cơ chế tự động nào vận hành. Giá trị là cho
+  những thế hệ Companion sau, để không phải bắt đầu lại từ con số không.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Hôm nay
+  CHƯA có Lesson nào đủ năm điều kiện để trở thành Living Heritage.
+  Cả hai Character hiện có (`listen-first`, `self-discovery`) mới được
+  kiểm chứng ở quy mô một người dùng tại một thời điểm — Character
+  Memory cố ý chỉ lưu per-device (`docs/CHARACTER_MEMORY.md`), nên
+  chưa có cách nào biết một Character có đúng lặp lại ở NHIỀU người
+  dùng khác nhau hay không. Đây là Growth Debt mới: thiếu cơ chế tổng
+  hợp Character qua nhiều người dùng — cố ý chưa xây ở Sprint này để
+  tránh suy đoán trước khi có nhu cầu thật.
+
+*Liên quan:* `docs/LIVING_HERITAGE.md`, `docs/THE_LIVING_HERITAGE.md`
+(kiến trúc dài hạn — khác trục), `docs/CHARACTER_MEMORY.md`,
+`docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/COMPANION_GROWTH_PRINCIPLE.md`.
