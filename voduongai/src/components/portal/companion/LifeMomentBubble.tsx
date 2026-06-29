@@ -17,6 +17,10 @@ import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
 import type { LifeMoment, LifeMomentType } from "@/lib/portal/life-moments/life-moments";
 import { getLifeMomentLines } from "@/lib/portal/life-moments/life-moment-lines";
 import { useMemoryCapsules, type MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
+import {
+  withPersonalAddress,
+  type CompanionAddressProfile,
+} from "@/lib/portal/companion/companion-address";
 
 /** Chỉ những Life Moment có `MemoryCapsuleKind` riêng mới cho lưu lại (Sprint 18.1 — Nhiệm vụ 07). */
 const SAVABLE_LIFE_MOMENT_KINDS: Partial<Record<LifeMomentType, MemoryCapsuleKind>> = {
@@ -79,7 +83,14 @@ function markShownToday() {
   }
 }
 
-export function LifeMomentBubble({ moment }: { moment: LifeMoment | null }) {
+export function LifeMomentBubble({
+  moment,
+  addressProfile = null,
+}: {
+  moment: LifeMoment | null;
+  /** Sprint Personal Addressing — không suy luận, chỉ dùng khi đã có thật. */
+  addressProfile?: CompanionAddressProfile | null;
+}) {
   const [visible, setVisible] = useState(false);
   const [line, setLine] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -91,7 +102,11 @@ export function LifeMomentBubble({ moment }: { moment: LifeMoment | null }) {
     if (hasSeen(key) || shownAlreadyToday()) return;
 
     const lines = getLifeMomentLines(moment.type);
-    const chosen = lines[Math.floor(Math.random() * lines.length)];
+    const chosen = withPersonalAddress(
+      lines[Math.floor(Math.random() * lines.length)],
+      addressProfile,
+      moment.type === "birthday" ? "birthday" : "life_moment"
+    );
 
     const showTimer = setTimeout(() => {
       setLine(chosen);
@@ -101,6 +116,7 @@ export function LifeMomentBubble({ moment }: { moment: LifeMoment | null }) {
     }, SHOW_DELAY_MS);
 
     return () => clearTimeout(showTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moment]);
 
   if (!visible || !line || !moment) return null;

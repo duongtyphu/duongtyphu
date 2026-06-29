@@ -11,6 +11,10 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { getRouteGreeting } from "@/lib/portal/companion/companion-identity";
+import {
+  withPersonalAddress,
+  type CompanionAddressProfile,
+} from "@/lib/portal/companion/companion-address";
 
 const SESSION_SHOWN_KEY = "companion-greeting-shown-session";
 const LAST_VISIT_KEY = "companion-last-visit";
@@ -26,9 +30,12 @@ const COMEBACK_GREETING = "Mình rất vui vì lại được gặp bạn.";
 export function CompanionGreetingBubble({
   pathname,
   brainGreeting,
+  addressProfile = null,
 }: {
   pathname: string;
   brainGreeting?: string | null;
+  /** Sprint Personal Addressing — chỉ dùng để gọi tên đúng lúc, không bao giờ suy luận. */
+  addressProfile?: CompanionAddressProfile | null;
 }) {
   const [greeting, setGreeting] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -56,11 +63,12 @@ export function CompanionGreetingBubble({
       // bỏ qua nếu localStorage không khả dụng
     }
 
-    const text = isComeback
+    const rawText = isComeback
       ? COMEBACK_GREETING
       : hasVisitedBefore
         ? brainGreeting ?? getRouteGreeting(pathname) ?? FIRST_TIME_GREETING
         : FIRST_TIME_GREETING;
+    const text = withPersonalAddress(rawText, addressProfile, "greeting");
 
     const showTimer = setTimeout(() => {
       setGreeting(text);

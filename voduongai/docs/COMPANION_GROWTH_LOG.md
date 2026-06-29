@@ -1510,3 +1510,52 @@ Co-Designer, hay bất kỳ AI model nào.
 `docs/product-bible/BOOK_00_CONSTITUTION.md`,
 `docs/THE_DECISION_HIERARCHY.md`, `docs/THE_LIFELONG_LEARNING_SYSTEM.md`,
 `docs/THE_EXTERNAL_AI_PRINCIPLE.md`, `docs/LIVING_HERITAGE.md`.
+
+## Sprint — Personal Addressing
+
+Companion học cách gọi một con người bằng cách họ muốn được gọi: "bạn"
+khi chưa biết tên (mặc định tôn trọng, không phải lỗi), tên thật khi đã
+biết — nhưng chỉ ở những khoảnh khắc có ý nghĩa, không lạm dụng.
+
+1. *Điều gì đã thay đổi?* `src/lib/portal/companion/companion-address.ts`
+   (mới) — `getCompanionAddress(profile)`, `shouldUseUserName(context)`,
+   `withPersonalAddress(line, profile, context)`. Đã nối vào
+   `CompanionGreetingBubble.tsx` (greeting), `LifeMomentBubble.tsx`
+   (life-moment/birthday), `ReturnAfterSilenceCeremony.tsx` (câu mở đầu);
+   dữ liệu `fullName` (đã có thật từ Supabase `user_metadata.full_name`)
+   được thread qua `layout.tsx` → `PortalShell.tsx` → `CompanionPresence.tsx`.
+2. *Vì sao "bạn" là mặc định, không phải thiếu sót?* Một người mới chưa
+   cần Companion "biết tên ngay" để cảm thấy được chào đón — họ cần
+   Companion không đoán bừa. "Bạn" trong tiếng Việt đã là một cách gọi
+   tôn trọng, không xa lạ.
+3. *Vì sao không thay thế "bạn" giữa câu trong `LIFE_MOMENT_LINES`?* Mỗi
+   câu ở đó đã viết tay đúng ngữ pháp tiếng Việt với "bạn" ở giữa câu;
+   thay trực tiếp bằng tên rủi ro phá ngữ pháp. Giải pháp: chỉ THÊM một
+   lời gọi ở đầu câu khi có tên thật và context cho phép, giữ nguyên câu
+   gốc khi không.
+4. *Trường hợp không áp dụng được?* `reflection-letter.ts` chỉ là khung
+   xét điều kiện, câu văn thật do con người vận hành Companion viết tay
+   — không có chuỗi text nào để can thiệp bằng code. Mirror/Story/Daily
+   Thought/Companion page hôm nay không có một dòng "lời chào" trực
+   tiếp để chèn — ghi nhận là Education Debt cho lần các nơi đó có thêm
+   một câu mở đầu trong tương lai.
+5. *Privacy/Trust Rule có được tôn trọng không?* Có — không suy luận
+   tên, không lấy tên từ email, chỉ dùng dữ liệu người dùng đã tự nguyện
+   cung cấp (`full_name`), helper đã viết sẵn ưu tiên `preferred_name`
+   cho ngày schema có thêm field đó.
+6. *Có biến thành điểm số/gamification không?* Không — không có
+   `addressScore`, không ranking, không liên quan XP/badge.
+
+*Education Debt mới*: chưa có cơ chế ép buộc một điểm tích hợp copy MỚI
+trong tương lai phải dùng `withPersonalAddress()` — vẫn là kỷ luật tự
+giác của người viết code.
+
+*Culture Review*: gọi đúng tên một người, đúng lúc, là một hình thức
+tôn trọng — không phải một tính năng cá nhân hoá để "trông tốt hơn".
+
+*Liên quan:* `docs/COMPANION_PERSONAL_ADDRESSING.md`,
+`src/lib/portal/companion/companion-address.ts`,
+`src/components/portal/companion/CompanionGreetingBubble.tsx`,
+`src/components/portal/companion/LifeMomentBubble.tsx`,
+`src/components/portal/ReturnAfterSilenceCeremony.tsx`,
+`docs/THE_TRUST_MUST_BE_REAL.md`.

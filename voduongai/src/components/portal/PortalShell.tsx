@@ -115,6 +115,7 @@ export function PortalShell({
         dailyThoughtContext={dailyThoughtContext}
         lifeMoment={lifeMoment ?? null}
         returnAfterSilenceMilestone={returnAfterSilenceMilestone ?? null}
+        addressProfile={user?.fullName ? { fullName: user.fullName } : null}
       />
     </div>
   );

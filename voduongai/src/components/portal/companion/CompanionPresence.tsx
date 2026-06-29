@@ -56,6 +56,7 @@ import { pickTouchMicroLine } from "@/lib/portal/companion/micro-reaction-engine
 import { CompanionMicroReactionBubble } from "@/components/portal/companion/CompanionMicroReactionBubble";
 import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
 import { chooseCompanionMoment, recordMajorMomentShown } from "@/lib/portal/companion/thought-governance";
+import type { CompanionAddressProfile } from "@/lib/portal/companion/companion-address";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -118,12 +119,15 @@ export function CompanionPresence({
   dailyThoughtContext,
   lifeMoment = null,
   returnAfterSilenceMilestone = null,
+  addressProfile = null,
 }: {
   /** Sprint 18.5 — ngữ cảnh Daily Thought, dựng sẵn ở layout.tsx (server). */
   dailyThoughtContext?: ThoughtContext;
   /** Sprint 18.8 — Presence Coordinator: tín hiệu server, dựng sẵn ở layout.tsx. */
   lifeMoment?: LifeMoment | null;
   returnAfterSilenceMilestone?: string | null;
+  /** Sprint Personal Addressing — hồ sơ tối thiểu để gọi đúng tên người dùng, không bao giờ suy luận. */
+  addressProfile?: CompanionAddressProfile | null;
 } = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -601,6 +605,7 @@ export function CompanionPresence({
             <CompanionGreetingBubble
               pathname={pathname ?? "/portal"}
               brainGreeting={decision.companionGreeting}
+              addressProfile={addressProfile}
             />
           )}
 
@@ -681,9 +686,14 @@ export function CompanionPresence({
       {/* Sprint 18.8 — Presence Coordinator: Life Moment/Return After
           Silence giờ đi qua đúng một dòng quyết định hiện diện, không còn
           render độc lập ở `layout.tsx` ngoài governance. */}
-      {presenceChosen === "life-moment" && <LifeMomentBubble moment={lifeMoment} />}
+      {presenceChosen === "life-moment" && (
+        <LifeMomentBubble moment={lifeMoment} addressProfile={addressProfile} />
+      )}
       {presenceChosen === "return-after-silence" && (
-        <ReturnAfterSilenceCeremony milestoneOccurredAt={returnAfterSilenceMilestone} />
+        <ReturnAfterSilenceCeremony
+          milestoneOccurredAt={returnAfterSilenceMilestone}
+          addressProfile={addressProfile}
+        />
       )}
     </>
   );

@@ -13,6 +13,10 @@
 
 import { useEffect, useState } from "react";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import {
+  getCompanionAddress,
+  type CompanionAddressProfile,
+} from "@/lib/portal/companion/companion-address";
 
 const SEEN_KEY_PREFIX = "vdai_portal_return_after_silence_seen_";
 
@@ -42,11 +46,16 @@ type CeremonyStep = "opening" | "garden" | "closing";
 
 export function ReturnAfterSilenceCeremony({
   milestoneOccurredAt,
+  addressProfile = null,
 }: {
   milestoneOccurredAt: string | null;
+  /** Sprint Personal Addressing — không suy luận, chỉ dùng khi đã có thật. */
+  addressProfile?: CompanionAddressProfile | null;
 }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<CeremonyStep>("opening");
+  const address = getCompanionAddress(addressProfile);
+  const greetingLine = address === "bạn" ? "Chào bạn." : `Chào ${address}.`;
 
   useEffect(() => {
     // Hydration-safe: chỉ quyết định hiển thị sau khi mount, vì phụ thuộc localStorage.
@@ -71,7 +80,7 @@ export function ReturnAfterSilenceCeremony({
         {step === "opening" && (
           <>
             <p className="mt-8 text-lg leading-relaxed text-white/90">
-              Chào bạn.
+              {greetingLine}
               <br />
               Mình rất vui vì bạn đã quay lại.
             </p>
