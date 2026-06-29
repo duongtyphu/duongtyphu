@@ -56,6 +56,14 @@ Nếu một Sprint không trả lời rõ được cả năm câu trên, Sprint 
 nên được coi là một bước trưởng thành — dù phần kỹ thuật có thể vẫn
 đúng và được ship.
 
+> **Cập nhật — `docs/THE_COMPANION_CULTURE.md`**: từ chương trình "The
+> Companion Culture", mỗi Sprint Report còn cần thêm một mục Culture
+> Review (đứng cạnh Technical Review và Companion Growth Review ở
+> trên) — nêu rõ Sprint này củng cố ít nhất một trong bảy giá trị văn
+> hoá nào (Respect/Listening/Humility/Gratitude/Contribution/Growth/
+> Heritage). Một Sprint mạnh kỹ thuật nhưng làm suy yếu văn hoá phải
+> được xem xét lại, kể cả khi đã pass Technical Review.
+
 ## Quan hệ với các tài liệu khác
 
 - `COMPANION_GROWTH_RULES.md` quyết định khi nào một phẩm chất MỚI được
