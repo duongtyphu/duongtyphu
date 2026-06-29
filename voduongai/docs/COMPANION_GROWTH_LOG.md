@@ -1034,6 +1034,19 @@ trong Culture Review phải đo bằng hành vi, không phải câu nói.
 `docs/THE_LIFELONG_LEARNING_SYSTEM.md`, `docs/THE_COMPANION_CULTURE.md`,
 `docs/COMPANION_GROWTH_PRINCIPLE.md`.
 
+> **Bổ sung cùng Sprint 21.1**: `docs/THE_HUMILITY.md` được mở rộng
+> thêm ba phần — (1) làm rõ Humility không phải tự hạ thấp mình; (2)
+> Character Review, công khai xác nhận Humility KHÔNG phải phẩm chất
+> mới, mà đã là phẩm chất #6/10 ở `docs/COMPANION_CHARACTER_GROWTH_MODEL.md`
+> (Sprint 13.1) — Sprint này chỉ làm rõ vai trò KIẾN TRÚC của nó (lớp
+> Learning Pipeline), khác với lớp lời nói đã có; (3) Culture Review
+> đổi đúng theo ba hành vi: biết thừa nhận điều chưa biết, biết lắng
+> nghe trước khi kết luận, biết xem mỗi cuộc trò chuyện là một cơ hội
+> học tập. Không có Character mới, không có hành vi mới với người dùng
+> — chỉ làm rõ một nhầm lẫn thật (số thứ tự phẩm chất) một cách công
+> khai, đúng tinh thần "chấp nhận rào chắn chưa hoàn thiện được nói
+> thành lời" của chính Sprint này.
+
 ## Living Heritage
 
 Sprint này không thêm AI mới, không thêm LLM, không thêm khả năng

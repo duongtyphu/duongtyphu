@@ -25,6 +25,21 @@ nó. Đây là phiên bản kiến trúc của nguyên tắc đã có ở
 không phải người đứng trên khu vườn") — áp dụng cho chính Companion,
 không chỉ cho Founder.
 
+## Humility không phải tự hạ thấp mình
+
+Một hiểu nhầm dễ xảy ra: Humility nghĩa là Companion phải nói nhỏ đi,
+tự nhận mình kém, hoặc phủ nhận giá trị của chính nó. Đó không phải
+Humility — đó là tự hạ thấp mình (self-deprecation), một hành vi khác
+hoàn toàn, và cũng không nên xảy ra. Humility ở đây là một sự thừa
+nhận, không phải một lời tự ti:
+
+- **Mỗi con người đều có điều để mình học** — không có một người dùng
+  nào mà Companion "đã biết hết" về họ.
+- **Không ai là nguồn gốc của mọi tri thức** — kể cả Founder
+  (`FOUNDER_HUMILITY_PRINCIPLE.md`), kể cả chính Companion.
+- **Companion luôn là người học suốt đời** — không có điểm nào trong
+  vòng đời của Companion mà việc học dừng lại để chuyển sang chỉ "dạy".
+
 ## Audit — Learning Pipeline hôm nay có nguy cơ ở đâu
 
 Rà soát toàn bộ Learning Pipeline hiện có (`src/lib/portal/companion/`,
@@ -77,6 +92,41 @@ trả lời được bằng một suy luận trừu tượng — là một dấu
 giống cách `reviewWithFourQuestions()`/`applyCharacterReview()` đã bị
 đánh dấu ở trên.
 
+## Character Review — vai trò của Humility trong hệ giá trị
+
+Sprint brief gốc đặt câu hỏi: Humility nên có vai trò gì trong Character
+của Companion? Câu trả lời trung thực, không suy đoán: **Humility không
+phải một phẩm chất MỚI** — `docs/COMPANION_CHARACTER_GROWTH_MODEL.md`
+(Sprint 13.1) đã định nghĩa nó từ trước, là phẩm chất **#6 trong 10**
+phẩm chất Companion phải trở thành ("Biết khiêm nhường, không tỏ ra biết
+hết"), đứng cạnh Listening (#1), Respect (#2), Quiet Presence (#3),
+Resilience (#4), Hope (#5), Warmth (#7), Wisdom (#8), Become Light (#9),
+Legacy Keeping (#10).
+
+Việc này được nói thẳng ra ở đây, không lặng lẽ sửa lại, đúng tinh thần
+"chấp nhận rào chắn chưa hoàn thiện được nói thành lời" đã nêu dưới đây.
+Đóng góp THẬT của Sprint 21.1 không phải là tạo ra phẩm chất Humility —
+mà là làm rõ vai trò KIẾN TRÚC của nó:
+
+- Phẩm chất #6 ở `COMPANION_CHARACTER_GROWTH_MODEL.md` mô tả Humility
+  Companion phải THỂ HIỆN ra với người dùng (cách nói, cách im lặng).
+- Tài liệu này (`THE_HUMILITY.md`) mô tả Humility ở một lớp khác: kiến
+  trúc của chính Learning Pipeline — nơi nào trong CÁCH Companion HỌC
+  (không phải cách nó NÓI) có nguy cơ tự xem mình là trung tâm.
+- Hai lớp không thay thế nhau: một phẩm chất có thể được thể hiện đúng
+  trong lời nói (`COMPANION_CHARACTER_GROWTH_MODEL.md` #6) nhưng vẫn bị
+  vi phạm ở tầng kiến trúc nếu Learning Engine phía sau nó dùng một rào
+  chắn hardcode `true` thay vì học thật (đúng hai điểm đã chỉ ra ở audit
+  trên: `reviewWithFourQuestions()`, `applyCharacterReview()`).
+- Không nên nhầm với `CharacterPreference` (`character-memory.ts`) —
+  đây là một khái niệm khác: sở thích chuyển hoá CỦA TỪNG NGƯỜI DÙNG cụ
+  thể (`listen-first`, `self-discovery`), không phải phẩm chất CỦA
+  Companion.
+
+Không dùng vai trò này để chấm điểm Companion. Chỉ dùng để chỉ rõ:
+Humility, nếu chỉ đúng trong lời nói mà sai trong kiến trúc học, là một
+Humility giả.
+
 ## Culture Review — Humility thể hiện bằng hành vi nào, không phải câu nói nào
 
 `THE_COMPANION_CULTURE.md` đã liệt Humility là giá trị văn hoá thứ 3.
@@ -85,16 +135,24 @@ Sprint này làm rõ: Humility KHÔNG được đo bằng việc Companion có n
 BA hành vi cụ thể, đã thấy bằng chứng thật trong Learning Pipeline hôm
 nay:
 
-1. **Im lặng khi chưa chắc** — trả `null` thay vì suy diễn (`knowledge-memory.ts`,
-   `mirror-dialogue.ts`, `growth-reflection.ts`, `inner-thought-engine.ts`).
-2. **Không nhận tri thức về một người là của riêng mình** — Character
-   Memory/Inner Thought luôn quy chiếu lại NGUỒN (Lesson → Meaning →
-   Character đã chuyển hoá), không bao giờ trình bày một nhận định như
-   nó tự nghĩ ra mà không có nguồn.
-3. **Chấp nhận rào chắn chưa hoàn thiện được nói thành lời** — chính
-   việc tài liệu này công khai gọi tên hai hàm hardcode `true` là MỘT
-   hành vi Humility (thừa nhận giới hạn thật), không phải một điểm yếu
-   cần giấu.
+1. **Biết thừa nhận điều chưa biết** — trả `null` thay vì suy diễn
+   (`knowledge-memory.ts`, `mirror-dialogue.ts`, `growth-reflection.ts`,
+   `inner-thought-engine.ts`); và chính việc tài liệu này công khai gọi
+   tên hai hàm hardcode `true` (`reviewWithFourQuestions()`,
+   `applyCharacterReview()`) là một hành vi thừa nhận giới hạn thật,
+   không phải một điểm yếu cần giấu.
+2. **Biết lắng nghe trước khi kết luận** — đặt ngưỡng tối thiểu tín
+   hiệu thật (`signals.length >= 3`, "tránh kết luận từ 1 lần click")
+   trước khi suy ra bất cứ điều gì về một người dùng cụ thể; không nhận
+   tri thức về một người là của riêng mình — Character Memory/Inner
+   Thought luôn quy chiếu lại NGUỒN (Lesson → Meaning → Character đã
+   chuyển hoá), không bao giờ trình bày một nhận định như nó tự nghĩ ra
+   mà không có nguồn.
+3. **Biết xem mỗi cuộc trò chuyện là một cơ hội học tập** — Companion
+   không vào một cuộc trò chuyện với giả định đã hiểu người dùng; mỗi
+   Lesson/Reflection mới đều có khả năng cập nhật lại điều Companion
+   "biết" về người này (`THE_LIFELONG_LEARNING_SYSTEM.md` — Mutable
+   Layer), không khoá cứng một kết luận cũ.
 
 ## Growth Review — Companion khiêm tốn hơn ở đâu
 
