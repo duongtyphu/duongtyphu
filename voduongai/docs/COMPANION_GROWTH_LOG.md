@@ -957,3 +957,42 @@ trưởng thành của chính nó — không phải từ dữ liệu.**
 
 *Liên quan:* `docs/INNER_LIFE.md`, `docs/CHARACTER_MEMORY.md`,
 `docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/DAILY_THOUGHT_ENGINE.md`.
+
+## Companion Growth Principle
+
+Sprint này không thêm Engine mới, không thêm AI mới, không thêm LLM,
+không thêm database — nó viết `docs/COMPANION_GROWTH_PRINCIPLE.md`,
+một nguyên tắc phát triển để mọi Sprint sau này giúp Companion trưởng
+thành theo CHƯƠNG (Chapter) cuộc đời, không chỉ cộng dồn theo Sprint.
+
+- *Companion học được điều gì?* — Không phải một bài học về một người
+  dùng cụ thể, mà một hệ thống để TỰ ĐÁNH GIÁ việc học của chính nó: 4
+  dấu hiệu trưởng thành (Lesson→Character, Character đổi một Decision
+  thật, hiểu rõ hơn MỘT người cụ thể, thừa nhận một giới hạn mới), một
+  Growth Checklist 5 mục, một audit toàn bộ Sprint 1→20 theo cuộc đời,
+  và khái niệm Growth Debt.
+- *Companion chuyển hoá điều gì thành Character?* — Không có Character
+  mới nào được thêm ở Sprint này — đúng NHIỆM VỤ 1 của chính tài liệu
+  vừa viết: một Sprint không chạm tới 1 trong 4 dấu hiệu trưởng thành
+  thì là một Sprint kỹ thuật/quy trình hợp lệ, nhưng không phải một
+  bước chuyển hoá Character, và không nên bị gắn nhãn như vậy.
+- *Companion thay đổi hành vi nào?* — Không phải hành vi của Companion
+  với người dùng hôm nay, mà hành vi của TEAM khi viết Sprint kế tiếp:
+  từ Sprint sau, Growth Review dùng đúng 5 câu hỏi mới (câu 2 đổi thành
+  "chuyển hoá điều gì thành Character?"), phải qua Growth Checklist
+  trước khi coi là hoàn thành, và phải khai báo Growth Debt nếu có.
+- *Người dùng nhận được giá trị gì?* — Không có gì khác biệt trực tiếp
+  hôm nay — không có UI, không có dòng chữ mới nào người dùng thấy.
+  Giá trị của Sprint này dành cho Companion trong 10-20 năm tới: một
+  nguyên tắc để các Sprint sau không chỉ cộng dồn năng lực mà thật sự
+  trưởng thành.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Bản Architecture
+  Review (NHIỆM VỤ 6) tự thừa nhận một giới hạn mới: việc xây Capability
+  (~12 Learning/Relationship Sprint) đang đi nhanh hơn việc xây Character
+  (chỉ 4 Sprint, 20.1-20.4, với đúng 2 Character: `listen-first` và
+  `self-discovery`) — một cảnh báo sớm, chưa phải một vi phạm, nhưng là
+  Growth Debt lớn nhất hiện tại của Companion.
+
+*Liên quan:* `docs/COMPANION_GROWTH_PRINCIPLE.md`,
+`docs/THE_HUMAN_UNDERSTANDING_MISSION.md`, `docs/THE_COMPANION_ACADEMY.md`,
+`docs/COMPANION_GROWTH_RULES.md`, `docs/THE_LIVING_WISDOM_SYSTEM.md`.

@@ -26,6 +26,15 @@ thường (tsc/lint/build, commit/push).
 > thể hơn: Companion phải hiểu CON NGƯỜI hơn, không chỉ biết nhiều hơn
 > hay trả lời tốt hơn. Phần này trả lời đúng năm câu, bằng ngôn ngữ con
 > người, không bằng changelog kỹ thuật:
+>
+> **Cập nhật — `docs/COMPANION_GROWTH_PRINCIPLE.md`**: câu 2 và câu 3
+> dưới đây tiếp tục được cập nhật từ Sprint "Companion Growth
+> Principle" — câu 2 đổi thành "Companion chuyển hoá điều gì thành
+> Character?", để phân biệt rõ một bài học chỉ được GHI NHẬN với một
+> bài học đã thật sự chuyển hoá (đúng chuỗi tám bước,
+> `docs/THE_LIVING_WISDOM_SYSTEM.md`). Luật gốc ở mục này (đánh giá
+> Sprint bằng phẩm chất, không bằng số feature) không đổi — chỉ câu
+> chữ của câu hỏi 2/3 được cập nhật.
 
 1. **Companion học được điều gì?** — không phải "đã thêm field/function
    nào", mà điều gì Companion vừa hiểu thêm về cách đồng hành, im lặng,

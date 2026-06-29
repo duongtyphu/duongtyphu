@@ -47,6 +47,15 @@ Hai câu hỏi 2 và 5 là điểm khác biệt cốt lõi so với định dạ
 — chúng buộc mỗi Sprint phải định vị rõ ràng "hiểu hơn ở đâu" và
 "chưa hiểu ở đâu", thay vì chỉ mô tả một bài học chung.
 
+> **Cập nhật — `docs/COMPANION_GROWTH_PRINCIPLE.md`**: từ Sprint
+> "Companion Growth Principle", câu hỏi 2 ở trên tiếp tục được cập
+> nhật thành "Companion chuyển hoá điều gì thành Character?" — để phân
+> biệt rõ một bài học chỉ được GHI NHẬN với một bài học đã thật sự
+> chuyển hoá thành phẩm chất (đúng chuỗi tám bước,
+> `docs/THE_LIVING_WISDOM_SYSTEM.md`). Sứ mệnh gốc ở mục này (hiểu con
+> người hơn, không chỉ biết nhiều hơn) không đổi — chỉ câu chữ của câu
+> hỏi 2 được cập nhật.
+
 ## Quan hệ với các tài liệu khác
 
 - `THE_COMPANION_ACADEMY.md` vẫn giữ luật duy nhất của nó (Sprint được
