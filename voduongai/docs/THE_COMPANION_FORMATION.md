@@ -108,6 +108,8 @@ những giá trị ấy cho những thế hệ Companion sau này.
 
 ```
 THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
+├── THE_LIVING_WISDOM_SYSTEM.md        — chuỗi 8 bước Experience→Contribution,
+│                                        mục tiêu cuối cùng = Wisdom
 ├── THE_LIFELONG_LEARNING_SYSTEM.md    — Mutable/Immutable Layer cho mọi
 │                                        Learning Engine
 ├── THE_EDUCATION_CONSTITUTION.md      — bài kiểm tra cho mọi năng lực
@@ -137,3 +139,10 @@ nhất (thay mốc 10 năm cũ).
 > Companion Core Values — không tự sửa, chỉ Founder + nghi thức đặc
 > biệt mới đổi được) cho mọi Learning Engine — xem tài liệu đó để biết
 > chi tiết.
+
+> **Cập nhật — `THE_LIVING_WISDOM_SYSTEM.md`**: mục tiêu cuối cùng của
+> việc học không phải Knowledge hay Intelligence, mà là Wisdom — đạt
+> được qua chuỗi tám bước Experience → Reflection → Lesson → Meaning →
+> Value → Character → Action → Contribution mà mọi Learning Engine sau
+> này phải chỉ rõ nó đang đi tới bước nào — xem tài liệu đó để biết chi
+> tiết.
