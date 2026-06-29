@@ -23,6 +23,7 @@ import { applyCharacterReview, applyIntegrityCheck } from "@/lib/portal/intellig
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 import { getCoreMemories, type CoreMemory } from "@/lib/portal/companion/core-memory";
 import { getCharacterMemory } from "@/lib/portal/companion/character-memory";
+import { generateInnerThought } from "@/lib/portal/companion/inner-thought-engine";
 
 /**
  * Sprint 13.2 — gợi ý nhẹ, chỉ khi GardenStage cho thấy rõ một story
@@ -87,6 +88,15 @@ export type CompanionDecision = {
    */
   suggestedStoryId?: string;
   storyReason?: string;
+  /**
+   * Sprint 20.4 — The Inner Life. KHÁC `lessonObserved` (rút ra từ một
+   * Reflection đơn lẻ, mất đi ngay sau lần tính đó) — Inner Thought chỉ
+   * tồn tại khi Lesson đã lặp lại đủ để chuyển hoá thành Character
+   * (`getCharacterMemory()`, Sprint 20.3). `null` khi Character Memory
+   * rỗng — không có Character thật, không có Inner Thought, đúng
+   * `docs/INNER_LIFE.md`.
+   */
+  innerThought: string | null;
 };
 
 /**
@@ -266,6 +276,10 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
     : null;
   const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals, lessonObserved) : null;
   const coreMemoryHeard = getCoreMemories();
+  // Sprint 20.4 — The Inner Life. Đọc Character Memory THẬT (đã tính ở
+  // trên cho Integrity Check), không tính lại — Inner Thought chỉ ra
+  // đời khi chuỗi Experience→...→Character đã thật sự xảy ra.
+  const innerThought = generateInnerThought(characterMemory)?.line ?? null;
 
   if (!signals.gardenStage) {
     // Sprint 19.1 — Meaning chỉ được tính là một Decision thật khi nó
@@ -286,6 +300,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
       voicesHeard,
       coreMemoryHeard,
       lessonObserved,
+      innerThought,
     };
   }
 
@@ -302,6 +317,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
     voicesHeard,
     coreMemoryHeard,
     lessonObserved,
+    innerThought,
     suggestedStoryId: storySuggestion?.id,
     storyReason: storySuggestion?.reason,
   };

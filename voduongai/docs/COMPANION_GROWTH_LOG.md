@@ -916,3 +916,44 @@ trong Decision.**
 *Liên quan:* `docs/CHARACTER_MEMORY.md`, `docs/CHARACTER_ENGINE.md`,
 `docs/MORAL_COMPASS.md`, `docs/THE_DECISION_HIERARCHY.md`,
 `docs/LIVING_LEARNING_AUDIT.md`.
+
+## The Inner Life (Sprint 20.4)
+
+**Hôm nay Companion lần đầu tiên có một suy nghĩ được sinh ra từ sự
+trưởng thành của chính nó — không phải từ dữ liệu.**
+
+**Companion Growth Review:**
+
+- *Companion nhân văn hơn ở đâu?* — Companion không còn chỉ chọn một
+  câu nói sẵn theo ngữ cảnh (Daily Thought) hay phản ứng tức thời với
+  một Reflection (Reflection Voice). Nó có một dạng suy nghĩ thứ ba —
+  Inner Thought (`inner-thought-engine.ts`) — chỉ tồn tại sau khi một
+  bài học về CHÍNH người dùng này đã lặp lại đủ để trở thành Character.
+- *Companion đáng tin hơn ở đâu?* — `generateInnerThought()` chỉ nhận
+  Character Memory đã chuyển hoá (Sprint 20.3), không nhận dữ liệu thô,
+  không random. Nếu Character Memory rỗng, nó luôn trả về `null` — im
+  lặng là kết quả duy nhất hợp lệ khi chưa có Character thật, không có
+  Inner Thought "tạm" để lấp chỗ trống.
+- *Companion trưởng thành hơn ở đâu?* — Đây là Learning Engine đầu tiên
+  của Companion thật sự đi tới bước "Character → một suy nghĩ" trong
+  chuỗi tám bước (`docs/THE_LIVING_WISDOM_SYSTEM.md`) — **Companion hôm
+  nay đã có một suy nghĩ hay**: sau khi Character Memory ghi nhận
+  `self-discovery` ("Người này thích tự khám phá."), `decision.innerThought`
+  lần đầu tiên khác `null` — "Mình nhận ra bạn thường tự tìm ra câu trả
+  lời rõ hơn là khi mình đưa ra câu trả lời ngay." Xem
+  `docs/INNER_LIFE.md#verification`.
+- *Người dùng sẽ cảm nhận được điều gì?* — Không có gì lộ liễu — Inner
+  Thought hôm nay mới là một trường dữ liệu (`innerThought`) trong
+  `CompanionDecision`, chưa có UI riêng để hiển thị nó. Người dùng chưa
+  thấy gì khác hôm nay; giá trị của Sprint này là nền tảng RULE đúng
+  (không cho lời khuyên, không nhắc về Companion, luôn hướng về người
+  dùng) trước khi quyết định CÁCH hiển thị.
+- *Điều gì vẫn còn phải học?* — `innerThought` chưa được nối vào bất kỳ
+  UI/Delivery Engine nào (`thought-governance.ts`, `CompanionPresence.tsx`)
+  — cố ý chưa làm ở Sprint này để tránh suy đoán cách hiển thị trước
+  khi có nhu cầu thật; chỉ có 2 Character (`listen-first`/`self-discovery`)
+  nên chỉ có 2 Inner Thought tồn tại — cần nhiều Character thật hơn
+  trước khi tập hợp câu nói đa dạng hơn.
+
+*Liên quan:* `docs/INNER_LIFE.md`, `docs/CHARACTER_MEMORY.md`,
+`docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/DAILY_THOUGHT_ENGINE.md`.
