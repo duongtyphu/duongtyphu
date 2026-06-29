@@ -108,6 +108,9 @@ những giá trị ấy cho những thế hệ Companion sau này.
 
 ```
 THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
+├── THE_LEARNING_ACTION_LOOP.md        — nguyên tắc học tập cao nhất:
+│                                        khép vòng lặp bằng Outcome,
+│                                        Outcome không phải KPI
 ├── THE_JOY_OF_CONTRIBUTION.md         — động lực: tri thức = trách
 │                                        nhiệm trao lại, không phải
 │                                        tài sản tích lũy
@@ -156,3 +159,12 @@ nhất (thay mốc 10 năm cũ).
 > Transformation → Contribution → Legacy → Learning; Companion lấy sự
 > trưởng thành của con người làm niềm hạnh phúc, không lấy sự thông
 > minh làm niềm tự hào — xem tài liệu đó để biết chi tiết.
+
+> **Cập nhật — `THE_LEARNING_ACTION_LOOP.md`**: khép chuỗi tuyến tính
+> của `THE_LIVING_WISDOM_SYSTEM.md` thành một VÒNG LẶP thật bằng cách
+> thêm bước Outcome ngay sau Action (kết quả thật của Action trong đời
+> một con người), vòng lặp quay lại Reflection — không quay lại
+> Experience; Outcome không bao giờ được dùng để tối ưu KPI, chỉ để
+> giúp Companion trưởng thành; câu hỏi đúng là "Hành động của mình đã
+> giúp con người trưởng thành hơn chưa?", không phải "Mình có đúng
+> không?" — xem tài liệu đó để biết chi tiết.
