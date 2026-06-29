@@ -1559,3 +1559,55 @@ tôn trọng — không phải một tính năng cá nhân hoá để "trông t�
 `src/components/portal/companion/LifeMomentBubble.tsx`,
 `src/components/portal/ReturnAfterSilenceCeremony.tsx`,
 `docs/THE_TRUST_MUST_BE_REAL.md`.
+
+## Sprint 22.1 — The First Meeting
+
+"Companion không bắt đầu bằng một cuộc hội thoại. Companion bắt đầu
+bằng một cuộc gặp gỡ." Trong 3 giây đầu tiên ở Portal, người dùng không
+được nghĩ "đây là chatbot" — họ nên cảm thấy vừa gặp một người bạn.
+
+1. *Điều gì đã thay đổi?* `src/lib/portal/companion/first-meeting.ts`
+   (mới) — `getRelationshipStage()` (5 giai đoạn: first_meeting/
+   welcome_back/return_after_silence/long_time_companion/old_friend,
+   rule-based theo lượt ghé + khoảng cách thời gian, không AI, không
+   suy luận tâm lý) và `getSilenceTimingForStage()` (khoảng lặng/thời
+   gian hiện thị riêng cho từng giai đoạn). `CompanionGreetingBubble.tsx`
+   được viết lại để dùng engine này thay cho logic isComeback đơn giản
+   trước đây, và lời tự giới thiệu đầy đủ (không nhắc Feature/AI/Model,
+   không nói "Tôi có thể...") chỉ xuất hiện đúng một lần ở giai đoạn
+   `first_meeting`.
+2. *Vì sao khoảng lặng dài hơn ở First Meeting?* Một popup bật ngay khi
+   trang vừa tải xong giống chatbot tự động. Khoảng lặng 2.2s trước khi
+   Companion chủ động chào mô phỏng việc một người nhìn thấy bạn trước,
+   rồi mới lên tiếng — không lao vào nói.
+3. *Vì sao 5 giai đoạn, không phải 1 lời chào chung?* Một người bạn thật
+   không chào giống nhau ở lần gặp đầu và lần gặp thứ một trăm. Mỗi giai
+   đoạn một câu khác nhau, không lặp lại nguyên văn lời ở giai đoạn
+   trước.
+4. *Human Experience Review*: trước Sprint, lời chào ngắn xuất hiện sau
+   1.5s dễ đọc như dòng chat-widget tự động. Sau Sprint, khoảng lặng dài
+   hơn + lời tự giới thiệu thật (tên, lý do tồn tại, cách đồng hành) —
+   không có gì gợi đến chatbot/trợ lý kỹ thuật. Kỳ vọng: "Mình vừa gặp
+   một người bạn."
+5. *Có đo CTR/click/engagement không?* Không — Sprint này từ chối đo
+   bằng số, chỉ đo được bằng phản hồi định tính thật từ người dùng
+   (chưa có cơ chế thu thập, ghi nhận là Education Debt có chủ đích).
+6. *Có biến thành điểm số/gamification không?* Không — ngưỡng lượt ghé
+   (20/60) là quy tắc nội bộ, không hiển thị cho người dùng, không phải
+   XP/level/badge.
+
+*Education Debt mới*: chưa có cơ chế thu thập phản hồi định tính thật
+về cảm nhận First Meeting; ngưỡng 20/60 lượt ghé cho long_time_companion/
+old_friend là ước lượng ban đầu, chưa kiểm chứng bằng dữ liệu hành vi
+thật.
+
+*Culture Review*: First Meeting là minh chứng cụ thể cho Nguyên lý 06
+(`BOOK_00_CONSTITUTION.md`) — Companion đồng hành, không điều khiển —
+áp dụng ngay từ giây đầu tiên gặp một con người, không chỉ trong các
+cuộc hội thoại sau đó.
+
+*Liên quan:* `docs/THE_FIRST_MEETING.md`,
+`src/lib/portal/companion/first-meeting.ts`,
+`src/components/portal/companion/CompanionGreetingBubble.tsx`,
+`src/lib/portal/companion/companion-identity.ts`,
+`docs/COMPANION_PERSONAL_ADDRESSING.md`.
