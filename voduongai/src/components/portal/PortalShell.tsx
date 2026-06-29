@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
@@ -27,15 +27,8 @@ export function PortalShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [collapsed, setCollapsed] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
-  // Portal Design Theme Preview — chỉ là lớp CSS xem trước (data attribute),
-  // không đổi logic/layout Portal. Bỏ ?theme= sẽ trở về theme mặc định.
-  const themeParam = searchParams.get("theme");
-  const previewTheme =
-    themeParam === "a" || themeParam === "b" || themeParam === "c" ? themeParam : undefined;
 
   useEffect(() => {
     // Hydration-safe: render starts collapsed=false (matches SSR), then this
@@ -73,7 +66,7 @@ export function PortalShell({
   }
 
   return (
-    <div className="flex min-h-screen flex-col" data-portal-theme={previewTheme}>
+    <div className="flex min-h-screen flex-col">
       <GemBackground />
       <PortalHeader user={user} onToggleSidebar={handleToggleSidebar} />
 
