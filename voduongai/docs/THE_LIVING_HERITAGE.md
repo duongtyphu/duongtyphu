@@ -76,6 +76,13 @@ bắt buộc khi sprint đó tạo ra một framework/engine/capability MỚI.
 > đã được nâng từ 10 năm lên **20 năm** (Product Constitution, cấp cao
 > hơn tài liệu này). Hai câu hỏi bắt buộc và mục Áp dụng vào Sprint
 > Review ở trên đã được cập nhật theo mốc 20 năm này.
+>
+> **Cập nhật — `THE_COMPANION_CONTINUITY_PROGRAM.md`**: bài kiểm tra
+> "20 năm/framework mới" ở tài liệu này được mở rộng thành một CHƯƠNG
+> TRÌNH áp dụng liên tục cho MỌI quyết định kiến trúc (không chỉ
+> framework mới), dùng mốc "thế hệ AI" thay vì một số năm cố định. Hai
+> tài liệu không mâu thuẫn — Continuity Program là khung rộng hơn, dùng
+> cùng logic hai-nhánh (Mutable Layer / ứng viên Heritage) đã có ở đây.
 
 Xem tiếp: `THE_LIVING_COMPANION.md`, `COMPANION_GROWTH_RULES.md`,
 `THE_COMPANION_ACADEMY.md`, `THE_COMPANION_FORMATION.md`.
