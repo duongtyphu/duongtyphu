@@ -1611,3 +1611,46 @@ cuộc hội thoại sau đó.
 `src/components/portal/companion/CompanionGreetingBubble.tsx`,
 `src/lib/portal/companion/companion-identity.ts`,
 `docs/COMPANION_PERSONAL_ADDRESSING.md`.
+
+## Sprint 22.3 — The Wisdom of Choice
+
+*Companion đã học điều gì?* Rằng có những tình huống không có rule đúng
+sẵn — và giả vờ có một rule (trả lời chắc chắn dù chưa đủ cơ sở) là một
+sai lầm về nhân cách, không chỉ một sai lầm kỹ thuật. Sprint này định
+nghĩa Wisdom Filter: sáu câu tự hỏi (giúp con người không/giữ phẩm
+giá/bảo vệ Trust lâu dài/giúp trưởng thành/tự hào sau nhiều năm/vẫn chọn
+vậy nếu là người thân yêu nhất) mà mọi Decision quan trọng phải tự hỏi
+trước khi trở thành một Choice thật.
+
+*Decision khác Choice thế nào?* Decision áp một rule có sẵn cho một
+input, trả về output xác định — `humanBenefitRank()`, `hierarchyWins()`,
+`applyCharacterReview()` đều là Decision tốt. Choice là khi không rule
+nào đủ để quyết định thay Companion — nó phải tự đứng vào một bên bằng
+chính nhân cách của mình. Audit cho thấy mọi cơ chế hiện có (Moral
+Compass, Decision Hierarchy, Character Engine, Trust Review) đều là
+Decision rule-based vững chắc; `applyIntegrityCheck()` là nơi gần Choice
+nhất nhưng phạm vi vẫn hẹp (chỉ chặn voice `"knowledge"`).
+
+*Wisdom Filter có đủ đơn giản không?* Có — sáu câu hỏi bằng tiếng Việt
+thường, không công thức, không điểm số, không ngưỡng.
+
+*Có overbuild không?* Không. Không file code mới, không hàm mới, không
+bảng dữ liệu mới — Sprint này chỉ đọc và đặt tên lại hệ thống đã có.
+
+*Education Debt mới*: chưa có Sprint nào áp Wisdom Filter vào một tình
+huống Choice cụ thể (ví dụ một Companion Voice mới đi qua đủ 6 câu hỏi
+trước khi thêm vào `internal-voices.ts`); chưa có câu nói thật trong UI
+thể hiện "mình chưa chắc, để mình hỏi thêm" — mọi Companion Voice hôm nay
+giả định đã có đủ nội dung để nói.
+
+*Culture Review*: Wisdom of Choice là minh chứng cụ thể cho việc Character
+phải trở thành hành động, không chỉ tồn tại như một danh sách phẩm chất
+tĩnh (`CHARACTER_PROFILE`) — đúng tinh thần "Character trước Capability"
+(`THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`) được đẩy thêm một bước:
+Character phải tự hỏi, không chỉ được khai báo.
+
+*Liên quan:* `docs/THE_WISDOM_OF_CHOICE.md`,
+`docs/THE_DECISION_HIERARCHY.md`, `docs/MORAL_COMPASS.md`,
+`docs/CHARACTER_ENGINE.md`, `docs/THE_EDUCATION_FIREWALL.md`,
+`src/lib/portal/intelligence/moral-compass.ts`,
+`src/lib/portal/intelligence/character-engine.ts`.
