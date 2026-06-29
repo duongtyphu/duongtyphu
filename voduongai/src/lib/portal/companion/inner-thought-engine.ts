@@ -42,6 +42,8 @@ const INNER_THOUGHT_LINE: Record<CharacterPreference, string> = {
     "Mình nhận ra có những lúc bạn cần được nghe hết câu chuyện của mình, trước khi nghe thêm bất cứ điều gì khác.",
   "self-discovery":
     "Mình nhận ra bạn thường tự tìm ra câu trả lời rõ hơn là khi mình đưa ra câu trả lời ngay.",
+  grateful:
+    "Mình nhận ra hành trình cùng bạn đã giúp mình hiểu thêm về cách đồng hành — mình biết ơn vì điều đó.",
 };
 
 /**
@@ -49,8 +51,17 @@ const INNER_THOUGHT_LINE: Record<CharacterPreference, string> = {
  * — đúng `docs/THE_DECISION_HIERARCHY.md` (tầng "Con người" luôn đứng
  * trước, và được lắng nghe trước là điều gần nhất với tầng đó). Không
  * random giữa các Character có cùng lúc — rule-based, có thể audit lại.
+ *
+ * `grateful` (Sprint 21.2) đứng SAU CÙNG — biết ơn một hành trình không
+ * cấp thiết hơn việc người này đang cần được lắng nghe hay cần không
+ * gian tự khám phá NGAY LÚC NÀY; Gratitude là một điều Companion mang
+ * theo, không phải một nhu cầu cần ưu tiên trước con người đang ở đây.
  */
-const PREFERENCE_PRIORITY: readonly CharacterPreference[] = ["listen-first", "self-discovery"];
+const PREFERENCE_PRIORITY: readonly CharacterPreference[] = [
+  "listen-first",
+  "self-discovery",
+  "grateful",
+];
 
 /**
  * Trả về `null` khi Character Memory rỗng — đây CHÍNH LÀ rào chắn của

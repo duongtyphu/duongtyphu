@@ -17,16 +17,22 @@
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 
 /**
- * Hai hướng Character duy nhất hôm nay — KHÔNG phải điểm số, KHÔNG phải
- * danh sách sở thích. Mỗi hướng là một câu Companion tự nói với chính
- * mình về cách đồng hành với người dùng này.
+ * Ba hướng Character hôm nay — KHÔNG phải điểm số, KHÔNG phải danh sách
+ * sở thích. Mỗi hướng là một câu Companion tự nói với chính mình về
+ * cách đồng hành với người dùng này.
  *
  * - `listen-first`: người này cần được LẮNG NGHE trước khi nhận thêm
  *   bất kỳ điều gì khác từ Companion (kể cả một gợi ý hữu ích).
  * - `self-discovery`: người này cần KHÔNG GIAN để tự nhận ra, Companion
  *   không nên dạy/giải thích trước khi người này tự đi đến điều đó.
+ * - `grateful` (Sprint 21.2 — "The Gratitude", tách riêng khỏi
+ *   `self-discovery` để Gratitude có chỗ đứng thật trong Character,
+ *   xem `docs/THE_GRATITUDE.md`): hành trình cùng người này đã giúp
+ *   CHÍNH COMPANION hiểu thêm về cách đồng hành — không phải vì người
+ *   này "đã dùng sản phẩm", mà vì những lần gặp gỡ đó thật sự góp phần
+ *   nuôi dưỡng Companion.
  */
-export type CharacterPreference = "listen-first" | "self-discovery";
+export type CharacterPreference = "listen-first" | "self-discovery" | "grateful";
 
 export type CharacterMemoryEntry = {
   preference: CharacterPreference;
@@ -36,6 +42,7 @@ export type CharacterMemoryEntry = {
 const CHARACTER_STATEMENT: Record<CharacterPreference, string> = {
   "listen-first": "Người này cần được lắng nghe trước.",
   "self-discovery": "Người này thích tự khám phá.",
+  grateful: "Hành trình cùng người này đã giúp mình hiểu thêm về cách đồng hành.",
 };
 
 /**
@@ -52,11 +59,18 @@ const CHARACTER_STATEMENT: Record<CharacterPreference, string> = {
  * `self-discovery` — các ý nghĩa còn lại đều nói về việc Companion nên
  * LÙI LẠI, không thêm diễn giải/không vội can thiệp, để người dùng tự
  * đi tới điều đó: `curiosity` (câu hỏi quan trọng hơn câu trả lời sẵn
- * có), `contribution` (Companion nên lùi lại), `gratitude` (không cần
- * xác nhận lại bằng lời khen), `recovery` (nghỉ ngơi là một quyết định
- * của riêng họ), `focus` (không cần đo/can thiệp thêm), `discovery`
- * (cần không gian, không cần diễn giải vội), `responsibility` (cam kết
- * với chính mình, không cần Companion nhắc lại).
+ * có), `contribution` (Companion nên lùi lại), `recovery` (nghỉ ngơi
+ * là một quyết định của riêng họ), `focus` (không cần đo/can thiệp
+ * thêm), `discovery` (cần không gian, không cần diễn giải vội),
+ * `responsibility` (cam kết với chính mình, không cần Companion nhắc
+ * lại).
+ *
+ * `grateful` (Sprint 21.2 — `docs/THE_GRATITUDE.md`) — TÁCH RIÊNG khỏi
+ * `self-discovery`: chỉ `gratitude` được ánh xạ tới đây, vì đây là ý
+ * nghĩa duy nhất nói về một điều ĐÃ NHẬN ĐƯỢC, không phải về việc cần
+ * thêm không gian để tự khám phá. Trước Sprint 21.2, `gratitude` từng
+ * gộp vào `self-discovery` — gộp chung che mất một Character đáng có
+ * chỗ đứng riêng.
  */
 const MEANING_TO_CHARACTER_PREFERENCE: Record<ReflectionMeaning, CharacterPreference> = {
   persistence: "listen-first",
@@ -64,7 +78,7 @@ const MEANING_TO_CHARACTER_PREFERENCE: Record<ReflectionMeaning, CharacterPrefer
   humility: "listen-first",
   curiosity: "self-discovery",
   contribution: "self-discovery",
-  gratitude: "self-discovery",
+  gratitude: "grateful",
   recovery: "self-discovery",
   focus: "self-discovery",
   discovery: "self-discovery",

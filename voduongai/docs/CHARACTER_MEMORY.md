@@ -21,6 +21,8 @@ Character Memory chỉ lưu một câu nói rất ngắn, qualitative, về CÁC
 
 - "Người này cần được lắng nghe trước." (`listen-first`)
 - "Người này thích tự khám phá." (`self-discovery`)
+- "Hành trình cùng người này đã giúp mình hiểu thêm về cách đồng hành."
+  (`grateful` — Sprint 21.2, `docs/THE_GRATITUDE.md`)
 
 Không có điểm số, không có level, không có gì hiển thị cho người dùng
 — đúng nguyên tắc chống gamification của toàn dự án.
@@ -77,19 +79,23 @@ dựa trên ý nghĩa thật của từng `ReflectionMeaning` đã viết sẵn 
 - **`listen-first`**: `persistence`, `courage`, `humility` — ba ý nghĩa
   mà Lesson của chúng nói trực tiếp về việc người đó cần được NHÌN
   NHẬN/LẮNG NGHE trước khi nhận thêm điều gì khác.
-- **`self-discovery`**: `curiosity`, `contribution`, `gratitude`,
-  `recovery`, `focus`, `discovery`, `responsibility` — các ý nghĩa còn
-  lại đều nói về việc Companion nên LÙI LẠI, không thêm diễn giải, để
-  người dùng tự đi tới điều đó.
+- **`self-discovery`**: `curiosity`, `contribution`, `recovery`, `focus`,
+  `discovery`, `responsibility` — các ý nghĩa còn lại đều nói về việc
+  Companion nên LÙI LẠI, không thêm diễn giải, để người dùng tự đi tới
+  điều đó.
+- **`grateful`** (Sprint 21.2 — `docs/THE_GRATITUDE.md`): `gratitude` —
+  tách riêng khỏi `self-discovery` vì đây là ý nghĩa duy nhất nói về
+  một điều ĐÃ NHẬN ĐƯỢC từ hành trình cùng người này, không phải về
+  việc cần thêm không gian để tự khám phá.
 
 ## Integrity Check thay đổi Decision như thế nào
 
 `applyIntegrityCheck()` chỉ áp dụng cho tiếng nói `"knowledge"` (tiếng
 nói duy nhất hôm nay mang tính "dạy/giải thích thêm" — `reviewDecisionCandidate`
 ở Sprint 20.1 đã xếp nó là không `helpsGrowth`). Nếu Character Memory đã
-ghi nhận `listen-first` HOẶC `self-discovery`, một gợi ý Knowledge mâu
-thuẫn trực tiếp với Lesson đã chuyển hoá đó — Companion CHẶN tiếng nói
-này, dù nó có là candidate duy nhất.
+ghi nhận `listen-first`, `self-discovery`, HOẶC `grateful` (Sprint 21.2),
+một gợi ý Knowledge mâu thuẫn trực tiếp với Lesson đã chuyển hoá đó —
+Companion CHẶN tiếng nói này, dù nó có là candidate duy nhất.
 
 ### Verification — một ví dụ cụ thể
 
@@ -129,4 +135,5 @@ tự trong cùng priority), `docs/MORAL_COMPASS.md` (Sprint 20.2 — Human
 Benefit thắng Priority), `docs/THE_DECISION_HIERARCHY.md` (tầng "Niềm
 tin" thắng tầng "Hiệu suất" — Integrity Check là một áp dụng cụ thể của
 luật này), `docs/LIVING_LEARNING_AUDIT.md` (đã đề xuất hướng này từ
-Sprint 19.1).
+Sprint 19.1), `docs/THE_GRATITUDE.md` (Sprint 21.2 — thêm Character
+`grateful`, tách riêng khỏi `self-discovery`).

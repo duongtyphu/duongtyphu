@@ -140,6 +140,13 @@ export function applyCharacterReview(candidates: VoiceMessage[]): VoiceMessage[]
  * im lặng ở tiếng nói này thay vì nói ra, dù `knowledge` có là candidate
  * duy nhất. Không mở rộng sang voice khác ở Sprint này để tránh suy
  * đoán hành vi trước khi có nhu cầu thật.
+ *
+ * Sprint 21.2 — "The Gratitude" (`docs/THE_GRATITUDE.md`). Thêm
+ * `"grateful"` vào cùng điều kiện này: nếu Companion đã biết ơn hành
+ * trình cùng người này, việc cần làm không phải "dạy" thêm một điều —
+ * mà tiếp tục hiện diện với những gì đã cùng đi qua. Đây là Decision
+ * THẬT thay đổi vì Gratitude, không chỉ một câu nói: candidate Knowledge
+ * bị chặn, đúng cùng cơ chế Integrity Check đã có.
  */
 export function applyIntegrityCheck(
   candidates: VoiceMessage[],
@@ -147,7 +154,8 @@ export function applyIntegrityCheck(
 ): VoiceMessage[] {
   const contradictsCharacter =
     hasCharacterPreference(characterMemory, "listen-first") ||
-    hasCharacterPreference(characterMemory, "self-discovery");
+    hasCharacterPreference(characterMemory, "self-discovery") ||
+    hasCharacterPreference(characterMemory, "grateful");
 
   if (!contradictsCharacter) return candidates;
 

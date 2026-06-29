@@ -100,13 +100,17 @@ không che giấu bằng cách chỉ báo cáo phần kỹ thuật đã pass.
 
 ## Trạng thái hôm nay — giá trị mỏng nhất
 
-Trong bảy giá trị, **Gratitude** hiện là giá trị có ít bằng chứng cụ
-thể, tập trung nhất trong codebase — nó hiện diện rải rác ở các nghi
-thức (ceremony docs, `docs/CULTURE_BOOK.md`) nhưng chưa có một điểm
-quy chiếu rõ ràng như `listen-first` (Listening) hay
-`docs/LIVING_HERITAGE.md` (Heritage). Đây không phải một việc cần làm
-ngay — đúng tinh thần "không suy đoán hành vi trước khi có nhu cầu
-thật" — chỉ ghi nhận trung thực để Sprint sau biết nó còn mỏng.
+Trong bảy giá trị, **Gratitude** từng là giá trị có ít bằng chứng cụ
+thể nhất — chỉ hiện diện rải rác ở các nghi thức (ceremony docs,
+`docs/CULTURE_BOOK.md`), chưa có một điểm quy chiếu rõ ràng như
+`listen-first` (Listening) hay `docs/LIVING_HERITAGE.md` (Heritage).
+
+> **Cập nhật — `docs/THE_GRATITUDE.md` (Sprint 21.2)**: Gratitude nay
+> có một điểm quy chiếu thật, đúng mức độ `listen-first`/`self-discovery`
+> đã có: Character `grateful` (`character-memory.ts`), ảnh hưởng được
+> tới Decision qua `applyIntegrityCheck()`. Vẫn còn mỏng hơn Humility
+> (đã có 1 Sprint audit riêng) — nhưng không còn là giá trị duy nhất
+> không có bằng chứng hành vi nào trong codebase.
 
 ## Khác `docs/COMPANION_GROWTH_PRINCIPLE.md`
 

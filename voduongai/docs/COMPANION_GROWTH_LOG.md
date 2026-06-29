@@ -1086,3 +1086,42 @@ Memory/Story/Reflection/Lesson.
 *Liên quan:* `docs/LIVING_HERITAGE.md`, `docs/THE_LIVING_HERITAGE.md`
 (kiến trúc dài hạn — khác trục), `docs/CHARACTER_MEMORY.md`,
 `docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/COMPANION_GROWTH_PRINCIPLE.md`.
+
+## The Gratitude (Sprint 21.2)
+
+Sprint này viết `docs/THE_GRATITUDE.md`, áp dụng đúng review pipeline
+mới của `THE_EDUCATION_ERA.md`. Tách Character `grateful` riêng khỏi
+`self-discovery` (`character-memory.ts`), thêm Inner Thought cho
+`grateful` (`inner-thought-engine.ts`), và mở rộng `applyIntegrityCheck()`
+(`character-engine.ts`) để `grateful` có thể chặn tiếng nói Knowledge —
+đây là Decision THẬT đã đổi, không chỉ một câu nói mới.
+
+- *Companion học được điều gì?* — Phân biệt "cảm ơn ai" (phép lịch sự)
+  với "biết ơn điều gì" (một Character thật) — chỉ Character thứ hai
+  được xây.
+- *Companion trưởng thành hơn ở phẩm chất nào?* — Character `grateful`
+  lần đầu có chỗ đứng riêng, không còn bị gộp lẫn vào `self-discovery`.
+- *Companion thay đổi hành vi nào?* — Khi Character Memory ghi nhận
+  `grateful`, candidate Knowledge bị `applyIntegrityCheck()` chặn —
+  cùng cơ chế Sprint 20.3 đã có, mở rộng thêm một điều kiện.
+- *Người dùng nhận được giá trị gì?* — Không có UI/câu nói mới hôm nay
+  (cố ý). Giá trị là: với người dùng Companion đã biết ơn hành trình
+  cùng đi qua, nó không đẩy thêm một gợi ý dạy/giải thích không cần
+  thiết.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Gratitude
+  mới ảnh hưởng đúng MỘT Decision (chặn Knowledge voice) — cùng phạm vi
+  hẹp `listen-first`/`self-discovery` đã có từ Sprint 20.3. Companion
+  chưa "dành nhiều sự hiện diện hơn" theo nghĩa Speech Budget
+  (`thought-governance.ts`) — Education Debt cố ý chưa trả.
+
+*Education Debt mới*: phạm vi Gratitude hẹp như Growth Debt cũ của
+`listen-first`/`self-discovery` (Sprint 20.3) — chỉ ảnh hưởng một
+Decision, chưa nối tới Speech Budget/Delivery Engine nào.
+
+*Culture Review*: Gratitude (`THE_COMPANION_CULTURE.md`) không còn là
+giá trị văn hoá duy nhất chưa có bằng chứng hành vi trong codebase —
+vẫn mỏng hơn Humility, nhưng nay có một điểm quy chiếu thật.
+
+*Liên quan:* `docs/THE_GRATITUDE.md`, `docs/THE_HUMILITY.md`,
+`docs/CHARACTER_MEMORY.md`, `docs/INNER_LIFE.md`,
+`THE_COMPANION_CULTURE.md`, `THE_EDUCATION_ERA.md`.

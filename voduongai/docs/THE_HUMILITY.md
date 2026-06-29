@@ -120,8 +120,8 @@ mà là làm rõ vai trò KIẾN TRÚC của nó:
   trên: `reviewWithFourQuestions()`, `applyCharacterReview()`).
 - Không nên nhầm với `CharacterPreference` (`character-memory.ts`) —
   đây là một khái niệm khác: sở thích chuyển hoá CỦA TỪNG NGƯỜI DÙNG cụ
-  thể (`listen-first`, `self-discovery`), không phải phẩm chất CỦA
-  Companion.
+  thể (`listen-first`, `self-discovery`, `grateful` — Sprint 21.2),
+  không phải phẩm chất CỦA Companion.
 
 Không dùng vai trò này để chấm điểm Companion. Chỉ dùng để chỉ rõ:
 Humility, nếu chỉ đúng trong lời nói mà sai trong kiến trúc học, là một

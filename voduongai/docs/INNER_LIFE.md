@@ -36,8 +36,10 @@ Thought "dự phòng" sinh ra từ nơi khác để lấp chỗ trống.
 Không AI, không sinh random: mỗi `CharacterPreference` ánh xạ tới đúng
 MỘT câu cố định (`INNER_THOUGHT_LINE`); khi có nhiều Character cùng
 lúc, chọn theo thứ tự ưu tiên cố định (`listen-first` trước
-`self-discovery`, đúng `docs/THE_DECISION_HIERARCHY.md` — tầng "Con
-người" gần nhất với việc được lắng nghe trước) — không random giữa các
+`self-discovery`, trước `grateful` — Sprint 21.2, `docs/THE_GRATITUDE.md`
+— đúng `docs/THE_DECISION_HIERARCHY.md`: tầng "Con người" gần nhất với
+việc được lắng nghe trước, Gratitude là điều Companion mang theo, không
+phải nhu cầu cấp thiết của người đang ở đây) — không random giữa các
 lựa chọn.
 
 ## Luật của một Inner Thought (Nhiệm vụ 2 + 3)
