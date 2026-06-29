@@ -72,3 +72,7 @@ xây sản phẩm.
 - Khi bất kỳ tài liệu nào (cũ hoặc mới) mâu thuẫn với 11 Nguyên lý
   trong chương này, **chương này thắng** — tài liệu mâu thuẫn cần được
   Product Team xem xét lại.
+- `docs/PRODUCT_CO_DESIGNER_TRUST_CHARTER.md` (Founding Directive,
+  nhóm Governance/Trust Layer) — giới hạn quyền lực của vai trò Product
+  Co-Designer trước 11 Nguyên lý ở đây: không cá nhân nào, kể cả người
+  giữ vai trò đó, được phép thay đổi Hiến pháp này một mình.

@@ -1473,3 +1473,40 @@ một con số.
 `docs/THE_GREAT_LIBRARY.md`, `docs/THE_EDUCATION_FIREWALL.md`,
 `src/lib/portal/companion/outcome-signal.ts`,
 `src/lib/portal/companion/character-memory.ts`.
+
+## The Product Co-Designer Trust Charter (Founding Directive)
+
+1. *Charter này bảo vệ điều gì?* Bảo vệ Companion khỏi việc phụ thuộc
+   vào một cá nhân, một AI model, hay một đội ngũ cụ thể — đặt niềm tin
+   vào nguyên tắc (Principle over Personality, Human over Product,
+   Education over Feature, Trust over Speed, Character over
+   Capability), không vào con người nắm vai trò Product Co-Designer.
+2. *Nó giới hạn Product Co-Designer như thế nào?* Cấm tự ý sửa Immutable
+   Layer, cấm đưa quan điểm cá nhân vào Character như sự thật hiển
+   nhiên, cấm trở thành điểm phụ thuộc duy nhất; mọi đề xuất vào lõi
+   phải vượt Decision Filter 5 câu hỏi.
+3. *Nó giúp Companion ít phụ thuộc vào cá nhân hơn ra sao?* Qua
+   Succession Principle — nếu Product Co-Designer/model/đội ngũ/code
+   thay đổi hoàn toàn, các nguyên tắc ở mục 7–11 vẫn phải tiếp tục dẫn
+   đường, không biến mất theo người.
+4. *Nó củng cố Education Era như thế nào?* Đưa Education over Feature
+   thành một nguyên tắc bắt buộc cho cả vai trò thiết kế sản phẩm, không
+   chỉ cho Companion — một ý tưởng dù khả thi kỹ thuật cũng không vào
+   lõi nếu không phục vụ mục tiêu giáo dục thật.
+5. *Education Debt mới?* Decision Filter và Anti-Idolization Rule hiện
+   chỉ là kỷ luật tự hỏi, chưa có cơ chế thật ép buộc; chưa có "nghi
+   thức đặc biệt" cụ thể cho việc thay đổi Immutable Layer hợp lệ.
+6. *Có overbuild không?* Không — thuần tài liệu, không thêm code/AI/
+   database, đúng yêu cầu Directive.
+
+*Education Debt mới*: Decision Filter chưa có cơ chế ép buộc thật; quy
+trình ngoại lệ hợp lệ để sửa Immutable Layer vẫn chưa được định nghĩa.
+
+*Culture Review*: nguyên tắc cốt lõi — VO DUONG AI trung thành với
+nguyên tắc, không trung thành với cá nhân, dù đó là Founder, Product
+Co-Designer, hay bất kỳ AI model nào.
+
+*Liên quan:* `docs/PRODUCT_CO_DESIGNER_TRUST_CHARTER.md`,
+`docs/product-bible/BOOK_00_CONSTITUTION.md`,
+`docs/THE_DECISION_HIERARCHY.md`, `docs/THE_LIFELONG_LEARNING_SYSTEM.md`,
+`docs/THE_EXTERNAL_AI_PRINCIPLE.md`, `docs/LIVING_HERITAGE.md`.
