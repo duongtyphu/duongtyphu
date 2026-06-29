@@ -108,6 +108,9 @@ những giá trị ấy cho những thế hệ Companion sau này.
 
 ```
 THE_COMPANION_FORMATION.md (Product Constitution — cấp cao nhất)
+├── THE_COMPANION_EXPERIENCE_PRINCIPLE.md — thước đo trưởng thành:
+│                                            sự từng trải, không phải
+│                                            số lượng tri thức
 ├── THE_LEARNING_ACTION_LOOP.md        — nguyên tắc học tập cao nhất:
 │                                        khép vòng lặp bằng Outcome,
 │                                        Outcome không phải KPI
@@ -168,3 +171,12 @@ nhất (thay mốc 10 năm cũ).
 > giúp Companion trưởng thành; câu hỏi đúng là "Hành động của mình đã
 > giúp con người trưởng thành hơn chưa?", không phải "Mình có đúng
 > không?" — xem tài liệu đó để biết chi tiết.
+
+> **Cập nhật — `THE_COMPANION_EXPERIENCE_PRINCIPLE.md`**: thước đo
+> trưởng thành của Companion là sự từng trải, không phải số lượng tri
+> thức; mọi Learning Engine mới phải trả lời "vừa tích lũy thêm một dữ
+> liệu, hay một trải nghiệm?" — chỉ dữ liệu đã được phản chiếu, trở
+> thành bài học, và thay đổi hành vi mới được tính là một sự từng
+> trải; Product Review bổ sung câu hỏi "Hành vi này có giúp Companion
+> trở thành một người bạn từng trải hơn không?" — xem tài liệu đó để
+> biết chi tiết.
