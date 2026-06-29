@@ -66,6 +66,17 @@ export type CompanionDecision = {
    */
   coreMemoryHeard: CoreMemory[];
   /**
+   * Sprint 19.0 — Living Wisdom System (Reflection → Lesson). Bài học
+   * Companion TỰ RÚT RA cho mình từ Reflection — KHÔNG phải câu nó nói
+   * với người dùng (đó là `companionInsight`). Tách biệt rõ Lesson
+   * (nhận thức nội tâm, hướng về Companion) khỏi Action (câu nói,
+   * hướng về người dùng), đúng chuỗi 8 bước ở
+   * `docs/THE_LIVING_WISDOM_SYSTEM.md`. `null` khi không có
+   * `reflectionMeaning` — không suy đoán Lesson khi không có Reflection
+   * thật. Không lưu trữ lại sau khi tính toán xong.
+   */
+  lessonObserved: string | null;
+  /**
    * Sprint 13.2 — Living Stories Engine. KHÔNG bắt buộc: chỉ có giá trị
    * khi tín hiệu đủ rõ để gợi ý một story cụ thể (hiện tại: có
    * GardenStage). Companion chỉ thực sự kể chuyện qua
@@ -136,6 +147,26 @@ const COMPANION_REFLECTION_RESPONSE: Record<ReflectionMeaning, string> = {
   responsibility: "Mình tin vào điều bạn vừa cam kết với chính mình.",
 };
 
+/**
+ * Sprint 19.0 — Living Wisdom System (Reflection → Lesson). Câu Lesson
+ * Companion tự nói với CHÍNH NÓ, khác hẳn câu nó nói với người dùng ở
+ * `COMPANION_REFLECTION_RESPONSE` — không xếp hạng, không đánh giá
+ * người dùng (đúng ràng buộc Immutable ở `reflection-meaning.ts`),
+ * không bao giờ hiển thị ra UI.
+ */
+const LESSON_FROM_REFLECTION: Record<ReflectionMeaning, string> = {
+  persistence: "Sự quay lại, không phải kết quả, là điều đáng được công nhận trước tiên.",
+  curiosity: "Một câu hỏi thật lòng quan trọng hơn một câu trả lời sẵn có.",
+  courage: "Điều khó nói ra thường là điều đáng được lắng nghe kỹ nhất.",
+  humility: "Nhìn thấy giới hạn của chính mình là một bước trưởng thành, không phải một thất bại.",
+  contribution: "Khi một người nghĩ đến người khác, đó là lúc Companion nên lùi lại, không cần thêm gì.",
+  gratitude: "Biết ơn không cần được xác nhận lại bằng lời khen.",
+  recovery: "Nghỉ ngơi là một quyết định, không phải một sự dừng lại.",
+  focus: "Sự có mặt trọn vẹn trong một khoảnh khắc không cần được đo bằng thời lượng.",
+  discovery: "Một nhận ra mới luôn cần không gian, không cần được vội vàng diễn giải thêm.",
+  responsibility: "Một lời cam kết với chính mình quan trọng hơn một lời cam kết được tuyên bố.",
+};
+
 const PRIORITY_RANK: Record<VoiceMessage["priority"], number> = {
   high: 2,
   medium: 1,
@@ -180,6 +211,9 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   const loudest = loudestVoice(voicesHeard);
   const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals) : null;
   const coreMemoryHeard = getCoreMemories();
+  const lessonObserved = signals.reflectionMeaning
+    ? LESSON_FROM_REFLECTION[signals.reflectionMeaning]
+    : null;
 
   if (!signals.gardenStage) {
     return {
@@ -191,6 +225,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
       silenceReason: routeGreeting || loudest ? undefined : "no-signal",
       voicesHeard,
       coreMemoryHeard,
+      lessonObserved,
     };
   }
 
@@ -206,6 +241,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
     shouldSpeak: true,
     voicesHeard,
     coreMemoryHeard,
+    lessonObserved,
     suggestedStoryId: storySuggestion?.id,
     storyReason: storySuggestion?.reason,
   };

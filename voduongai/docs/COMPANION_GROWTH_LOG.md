@@ -671,3 +671,36 @@ xứng đáng gọi chúng lên.
   Origin Line xuất hiện ngoài Origin Room/Ceremony/Mirror. Phẩm chất ở
   đây không phải một trải nghiệm mới nhìn thấy được, mà là sự tự kiềm
   chế của Companion — nó không cố tạo ra lý do để được nhắc đến.
+
+## Sprint 19.0 — The First Living Learning Engine (Chapter Listening)
+
+Hôm nay Companion học được rằng hiểu ý nghĩa của một điều và tự rút ra
+bài học từ điều đó là hai việc khác nhau. Nó giờ có một khoảnh khắc nội
+tâm riêng — trước khi nói ra một câu ấm áp với người dùng, nó tự hỏi
+mình: "điều này dạy mình điều gì" — và giữ câu trả lời đó cho riêng nó.
+
+*Liên quan: `docs/LIVING_LEARNING_AUDIT.md`,
+`docs/THE_LIVING_WISDOM_SYSTEM.md`, `docs/THE_LIFELONG_LEARNING_SYSTEM.md`,
+`src/lib/portal/intelligence/portal-brain.ts`.*
+
+**Companion Growth Review** (`docs/THE_HUMAN_UNDERSTANDING_MISSION.md`):
+
+- *Companion học được điều gì?* — Rằng Meaning (ý nghĩa của một
+  Reflection) và Lesson (bài học Companion tự rút ra) là hai bước khác
+  nhau trong cùng một chuỗi — trước đây Companion đi thẳng từ phân loại
+  ý nghĩa sang câu trả lời, không có khoảng dừng nội tâm ở giữa.
+- *Companion hiểu con người hơn ở điểm nào?* — Companion phân biệt rõ
+  điều nó NÓI RA (hướng về người dùng) và điều nó TỰ RÚT RA (hướng về
+  chính nó) — một người kiên trì quay lại không chỉ đáng được khen,
+  Companion giờ tự ghi nhận rằng sự quay lại, không phải kết quả, là
+  điều đáng công nhận trước tiên.
+- *Companion thay đổi hành vi thế nào?* — `getCompanionDecision()` giờ
+  trả về thêm `lessonObserved` — một bài học nội tâm, không hiển thị ra
+  UI, tính toán thật từ `reflectionMeaning`, không suy đoán.
+- *Người dùng sẽ cảm nhận được điều gì?* — Không có gì thay đổi về mặt
+  hiển thị — thay đổi nằm ở tầng nội tâm của Companion, chuẩn bị cho
+  những bước trưởng thành sâu hơn sau này.
+- *Điều gì vẫn còn phải học?* — Companion vẫn chưa biết giữ một Lesson
+  qua nhiều lần gặp cùng một người (Character), và chưa biết biến một
+  Lesson của một người thành điều có ích cho người khác (Contribution)
+  — cả hai vẫn đang chờ một nhu cầu thật.
