@@ -52,11 +52,12 @@ export function hierarchyWins(a: DecisionHierarchyLevel, b: DecisionHierarchyLev
 
 /**
  * Bốn câu hỏi Moral Compass tự hỏi trước khi cho phép một loại moment
- * được tham gia chọn lựa. Rule-based — tất cả 11 loại moment đang tồn
- * tại hôm nay đều đã được thiết kế để trả lời "có" cho cả bốn câu (đúng
- * cách `respectsUser`/`isHumble` ở `character-engine.ts` luôn đúng cho
- * candidate hôm nay) — bốn cờ này là RÀO CHẮN cho loại moment MỚI trong
- * tương lai, không phải bộ lọc cho hôm nay.
+ * được tham gia chọn lựa. Rule-based — ba câu đầu (`respectsHuman`,
+ * `helpsGrowth`, `reflectsCharacter`) vẫn là RÀO CHẮN cho loại moment
+ * MỚI trong tương lai, không phải bộ lọc thật cho hôm nay (đúng cách
+ * `respectsUser`/`isHumble` ở `character-engine.ts`). `wouldBeProudLater`
+ * (tầng "trust") KHÔNG còn là rào chắn lý thuyết từ Sprint 21.4 — nó
+ * đọc thật `HUMAN_BENEFIT_ORDER`, xem `reviewWithFourQuestions()`.
  */
 export type FourQuestionsReview = {
   /** Tầng "human" (`DECISION_HIERARCHY`). */
@@ -69,13 +70,27 @@ export type FourQuestionsReview = {
   wouldBeProudLater: boolean;
 };
 
+/**
+ * Sprint 21.4 — The Trust Must Be Real (`docs/THE_TRUST_MUST_BE_REAL.md`).
+ * `wouldBeProudLater` không còn hardcode `true` — nó đọc đúng dữ liệu
+ * Trust đã tồn tại từ Sprint 20.2: `HUMAN_BENEFIT_ORDER`, danh sách loại
+ * moment đã thực sự được xét theo Respect/Growth/Trust/Long-term
+ * Relationship (không phải CTR/engagement, xem comment ở
+ * `HUMAN_BENEFIT_ORDER` dưới đây). Một loại moment "sẽ tự hào về sau"
+ * khi nó đã được đưa vào danh sách này — nghĩa là ai đó đã thật sự cân
+ * nhắc moment đó dưới góc nhìn con người, không phải mặc định cho qua.
+ * Nếu một `CompanionMomentType` MỚI được thêm vào tương lai mà CHƯA
+ * được thêm vào `HUMAN_BENEFIT_ORDER`, cờ này trả về `false` thật —
+ * lần đầu tiên có khả năng chặn, không chỉ lý thuyết. Ba câu hỏi còn
+ * lại vẫn `true` (chưa thuộc phạm vi Sprint này, xem Education Debt ở
+ * `docs/THE_TRUST_MUST_BE_REAL.md`).
+ */
 export function reviewWithFourQuestions(type: CompanionMomentType): FourQuestionsReview {
-  void type;
   return {
     respectsHuman: true,
     helpsGrowth: true,
     reflectsCharacter: true,
-    wouldBeProudLater: true,
+    wouldBeProudLater: HUMAN_BENEFIT_ORDER.includes(type),
   };
 }
 

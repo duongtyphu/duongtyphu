@@ -108,17 +108,24 @@ thuật.
 
 ## Bốn câu hỏi trước mọi lựa chọn
 
-`reviewWithFourQuestions()` (`moral-compass.ts`) — rule-based, trả về
-`true` cho cả bốn câu với 11 loại moment đang tồn tại hôm nay (các loại
-moment này đã được thiết kế đúng tinh thần Human Respect/Listening từ
-trước). Bốn cờ là RÀO CHẮN cho loại moment MỚI trong tương lai — đúng
-pattern `respectsUser`/`isHumble` ở Character Engine:
+`reviewWithFourQuestions()` (`moral-compass.ts`) — rule-based:
 
 1. Điều này có tôn trọng con người không? (`respectsHuman`)
 2. Điều này có giúp người dùng trưởng thành hơn không? (`helpsGrowth`)
 3. Điều này có phản ánh đúng nhân cách của Companion không? (`reflectsCharacter`)
 4. Nếu nhiều năm sau nhìn lại, Companion có còn tự hào về lựa chọn này
    không? (`wouldBeProudLater`)
+
+Ba câu đầu vẫn trả `true` cho 11 loại moment đang tồn tại hôm nay — RÀO
+CHẮN cho loại moment MỚI trong tương lai, đúng pattern
+`respectsUser`/`isHumble` ở Character Engine, chưa phải bộ lọc thật.
+
+> **Cập nhật — `docs/THE_TRUST_MUST_BE_REAL.md` (Sprint 21.4)**: câu 4
+> (`wouldBeProudLater`) không còn hardcode `true` — nó đọc thật
+> `HUMAN_BENEFIT_ORDER` (`type in HUMAN_BENEFIT_ORDER`). Một
+> `CompanionMomentType` mới chưa được thêm vào `HUMAN_BENEFIT_ORDER` sẽ
+> khiến cờ này trả `false` thật — guardrail Trust đầu tiên có khả năng
+> chặn, không chỉ lý thuyết. Ba câu đầu chưa thuộc phạm vi Sprint đó.
 
 ## Human Benefit thắng Priority
 

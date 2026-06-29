@@ -1164,3 +1164,36 @@ tương lai chưa xây.
 *Liên quan:* `docs/THE_TRUST_WE_EARN.md`, `THE_DECISION_HIERARCHY.md`,
 `docs/THE_GRATITUDE.md`, `THE_HUMILITY.md`, `docs/MORAL_COMPASS.md`,
 `THE_EDUCATION_ERA.md`.
+
+## The Trust Must Be Real (Sprint 21.4)
+
+Sprint này viết `docs/THE_TRUST_MUST_BE_REAL.md` — không Engine mới,
+không AI, không Character, không Layer. Chỉ sửa đúng một dòng:
+`wouldBeProudLater` (`reviewWithFourQuestions()`, `moral-compass.ts`)
+không còn hardcode `true` — nó đọc thật `HUMAN_BENEFIT_ORDER` (đã có từ
+Sprint 20.2), trả `false` cho một `CompanionMomentType` chưa được xét.
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* — Lần
+  đầu có một Trust Rule đọc dữ liệu thật, có khả năng thất bại thật.
+- *Companion học được điều gì?* — Một rào chắn chỉ là rào chắn nếu nó
+  CÓ THỂ trả về `false` — một hàm luôn `true` không bảo vệ gì cả.
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi
+  hôm nay (guardrail chưa được gọi trong pipeline Decision thật) —
+  nhưng tín hiệu đã thật, sẵn sàng cho Sprint sau dùng.
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới (đúng
+  tinh thần Proof of Reality, không phải Feature).
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — 3/4 cờ Four
+  Questions còn lại vẫn là stub; guardrail chưa được gọi bắt buộc ở
+  bất kỳ pipeline Decision nào.
+
+*Education Debt mới*: `reviewWithFourQuestions()` tồn tại độc lập,
+chưa có cổng nào BẮT BUỘC một `CompanionMomentType` mới phải qua nó
+trước khi merge; 3/4 cờ còn lại vẫn hardcode `true`.
+
+*Culture Review*: không hành vi mới cho người dùng thấy — giá trị củng
+cố là tính trung thực của chính cơ chế kiến trúc (không "true vì chưa
+làm" giả làm "true vì đã kiểm tra").
+
+*Liên quan:* `docs/THE_TRUST_MUST_BE_REAL.md`, `docs/THE_TRUST_WE_EARN.md`,
+`docs/THE_30_YEAR_TRUST_PRINCIPLE.md`, `docs/MORAL_COMPASS.md`,
+`THE_DECISION_HIERARCHY.md`.

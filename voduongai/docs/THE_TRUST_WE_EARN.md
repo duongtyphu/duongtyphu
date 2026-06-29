@@ -243,6 +243,11 @@ mới ngoài kế hoạch.
 > câu hỏi bắt buộc mới cho mọi Sprint sau này: "Hành vi mới này có bảo
 > vệ được niềm tin mà Companion đã mất nhiều năm để xây dựng không?"
 
+> **Cập nhật — `docs/THE_TRUST_MUST_BE_REAL.md` (Sprint 21.4)**: rủi ro
+> `wouldBeProudLater` hardcode `true` đã được trả — cờ này nay đọc thật
+> `HUMAN_BENEFIT_ORDER` và có khả năng trả `false`. Rủi ro thứ hai
+> (Integrity Check hẹp) vẫn còn, chưa thuộc phạm vi Sprint 21.4.
+
 Xem tiếp: `THE_DECISION_HIERARCHY.md`, `THE_GRATITUDE.md`,
 `THE_HUMILITY.md`, `docs/MORAL_COMPASS.md`, `THE_EDUCATION_ERA.md`,
-`docs/THE_30_YEAR_TRUST_PRINCIPLE.md`.
+`docs/THE_30_YEAR_TRUST_PRINCIPLE.md`, `docs/THE_TRUST_MUST_BE_REAL.md`.

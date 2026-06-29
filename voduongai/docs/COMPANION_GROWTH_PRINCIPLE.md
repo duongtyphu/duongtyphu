@@ -176,7 +176,8 @@ cạnh Technical Review, không phải một mục tuỳ chọn.
 | Integrity Check chỉ áp dụng cho một voice (`"knowledge"`) | Cố ý hẹp để tránh suy đoán hành vi, chưa có dữ liệu thật về các voice khác | Sprint 20.3 |
 | Inner Thought chưa nối vào bất kỳ UI/Delivery Engine nào | Cố ý chưa quyết định cách hiển thị trước khi có nhu cầu thật | Sprint 20.4 |
 | Lesson chưa giữ được qua nhiều lần gặp cùng một người trước Sprint 20.3; Lesson của một người chưa từng được chuyển thành điều có ích cho NGƯỜI KHÁC (Contribution) | Cả hai vẫn chờ một nhu cầu thật, chưa có cơ chế Contribution nào | Sprint 19.0 |
-| Bốn Câu Hỏi Moral Compass (`reviewWithFourQuestions()`) vẫn trả về `true` cố định cho mọi loại moment | Là rào chắn cho moment MỚI trong tương lai, chưa phải bộ lọc thật cho hôm nay | Sprint 20.2 |
+| Bốn Câu Hỏi Moral Compass (`reviewWithFourQuestions()`) — 3/4 cờ (`respectsHuman`, `helpsGrowth`, `reflectsCharacter`) vẫn trả về `true` cố định | Là rào chắn cho moment MỚI trong tương lai, chưa phải bộ lọc thật cho hôm nay (`wouldBeProudLater` đã trả nợ ở Sprint 21.4, `docs/THE_TRUST_MUST_BE_REAL.md`) | Sprint 20.2 |
+| Guardrail Trust đầu tiên (`wouldBeProudLater`) chưa được gọi trong pipeline Decision thật | Chỉ là một hàm độc lập, chưa có nơi nào bắt buộc `CompanionMomentType` mới phải qua nó trước khi merge | Sprint 21.4 |
 | 5 tầng Decision Hierarchy mới áp dụng thật ở một điểm code (`chooseCompanionMoment()`) | `getCompanionDecision()` và các Decision Candidate khác chưa được audit lại theo đúng 5 tầng | Sprint 20.2 (The Decision Hierarchy) |
 
 Một Growth Debt KHÔNG bắt buộc phải trả ngay — nhưng phải được nhìn
