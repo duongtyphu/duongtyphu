@@ -19,9 +19,10 @@ import {
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
 import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
-import { applyCharacterReview } from "@/lib/portal/intelligence/character-engine";
+import { applyCharacterReview, applyIntegrityCheck } from "@/lib/portal/intelligence/character-engine";
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 import { getCoreMemories, type CoreMemory } from "@/lib/portal/companion/core-memory";
+import { getCharacterMemory } from "@/lib/portal/companion/character-memory";
 
 /**
  * Sprint 13.2 — gợi ý nhẹ, chỉ khi GardenStage cho thấy rõ một story
@@ -248,7 +249,16 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   // chọn, và chỉ đổi thứ tự giữa các candidate cùng priority (xem
   // `character-engine.ts`). `voicesHeard` trả về vẫn là danh sách gốc,
   // chưa qua Character Review — chỉ ảnh hưởng tới việc chọn `loudest`.
-  const loudest = loudestVoice(applyCharacterReview(voicesHeard));
+  // Sprint 20.3 — Integrity Check. Sau Character Review (đổi thứ tự),
+  // trước khi `loudestVoice()` chọn, Integrity Check được quyền CHẶN
+  // một candidate mâu thuẫn với Character Memory đã chuyển hoá của
+  // CHÍNH người dùng này — `docs/CHARACTER_MEMORY.md`. Đây là nơi
+  // Integrity từ một phẩm chất khai báo (`CHARACTER_PROFILE`) trở thành
+  // một thay đổi Decision thật.
+  const characterMemory = getCharacterMemory();
+  const loudest = loudestVoice(
+    applyIntegrityCheck(applyCharacterReview(voicesHeard), characterMemory)
+  );
   // Sprint 19.0 — Lesson được rút ra TRƯỚC khi Meaning được phép trở
   // thành một câu nói công khai (Reflection → Lesson → Meaning).
   const lessonObserved = signals.reflectionMeaning

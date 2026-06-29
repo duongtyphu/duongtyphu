@@ -35,6 +35,7 @@ import {
 import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
 import { choosePresenceMoment } from "@/lib/portal/companion/presence-coordinator";
 import { getCompanionDecision } from "@/lib/portal/intelligence/portal-brain";
+import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 import {
   readStoredGardenStage,
   readStoredReflectionMeaning,
@@ -340,7 +341,11 @@ export function CompanionPresence({
     return () => clearInterval(interval);
   }, [open, minimized, typingInput, pathname, gardenStage, reflectionMeaning, comeback, thought, story]);
 
-  const decision = getCompanionDecision({ pathname: pathname ?? "/portal", gardenStage });
+  const decision = getCompanionDecision({
+    pathname: pathname ?? "/portal",
+    gardenStage,
+    reflectionMeaning: reflectionMeaning as ReflectionMeaning | undefined,
+  });
   const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
 
   // Sprint 18.8 — Presence Coordinator: một dòng quyết định hiện diện duy

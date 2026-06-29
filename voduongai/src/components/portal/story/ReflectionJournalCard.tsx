@@ -7,6 +7,7 @@ import { Button } from "@/components/portal/ui/Button";
 import { useReflections } from "@/lib/portal/reflections";
 import { detectReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
 import { writeStoredReflectionMeaning } from "@/lib/portal/intelligence/portal-signals";
+import { recordReflectionForCharacterMemory } from "@/lib/portal/companion/character-memory";
 
 /**
  * Answers: "Portal có thực sự hỏi và lắng nghe tôi, không chỉ dạy tôi?"
@@ -75,7 +76,10 @@ export function ReflectionJournalCard() {
         className="mt-3"
         onClick={async () => {
           const meaning = detectReflectionMeaning(draft);
-          if (meaning) writeStoredReflectionMeaning(meaning);
+          if (meaning) {
+            writeStoredReflectionMeaning(meaning);
+            recordReflectionForCharacterMemory(meaning);
+          }
           await submitAnswer(draft);
           setJustSaved(true);
         }}

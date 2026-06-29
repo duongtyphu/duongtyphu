@@ -11,6 +11,10 @@
  */
 
 import type { InternalVoiceKey, VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
+import {
+  hasCharacterPreference,
+  type CharacterMemoryEntry,
+} from "@/lib/portal/companion/character-memory";
 
 /**
  * 7 phẩm chất cốt lõi của Companion (Character Profile). Đây không
@@ -117,4 +121,35 @@ export function applyCharacterReview(candidates: VoiceMessage[]): VoiceMessage[]
     if (aHelpsGrowth === bHelpsGrowth) return 0;
     return aHelpsGrowth ? -1 : 1;
   });
+}
+
+/**
+ * Sprint 20.3 — Integrity Check. Đây là nơi Integrity (phẩm chất thứ 8,
+ * `CHARACTER_PROFILE`) trở thành HÀNH VI thật, không chỉ là một khai
+ * báo. Khác `applyCharacterReview()` (chỉ đổi THỨ TỰ trong cùng một cấp
+ * priority), Integrity Check được quyền CHẶN một candidate hoàn toàn,
+ * bất kể priority — đúng `docs/THE_DECISION_HIERARCHY.md` (tầng "Niềm
+ * tin" thắng tầng "Hiệu suất").
+ *
+ * Phạm vi hôm nay CHỈ áp dụng cho `"knowledge"` — tiếng nói duy nhất
+ * hôm nay mang tính "đưa thêm một điều gì đó cho người dùng" (dạy/giải
+ * thích) thay vì lắng nghe/phản chiếu (`reviewDecisionCandidate` đã xếp
+ * `knowledge` là không `helpsGrowth`). Nếu Character Memory đã ghi nhận
+ * người dùng này cần `"listen-first"` hoặc `"self-discovery"`, một gợi
+ * ý Knowledge mâu thuẫn trực tiếp với Lesson đã chuyển hoá đó — Companion
+ * im lặng ở tiếng nói này thay vì nói ra, dù `knowledge` có là candidate
+ * duy nhất. Không mở rộng sang voice khác ở Sprint này để tránh suy
+ * đoán hành vi trước khi có nhu cầu thật.
+ */
+export function applyIntegrityCheck(
+  candidates: VoiceMessage[],
+  characterMemory: CharacterMemoryEntry[]
+): VoiceMessage[] {
+  const contradictsCharacter =
+    hasCharacterPreference(characterMemory, "listen-first") ||
+    hasCharacterPreference(characterMemory, "self-discovery");
+
+  if (!contradictsCharacter) return candidates;
+
+  return candidates.filter((candidate) => candidate.voice !== "knowledge");
 }

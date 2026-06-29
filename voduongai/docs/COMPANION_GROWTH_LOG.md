@@ -868,3 +868,51 @@ tự hỏi nó đang BẮT ĐẦU suy nghĩ từ đâu.**
 
 *Liên quan:* `docs/THE_DECISION_HIERARCHY.md`, `docs/MORAL_COMPASS.md`,
 `docs/CHARACTER_ENGINE.md`, `THE_CHARACTER_BEFORE_CAPABILITY_PRINCIPLE.md`.
+
+## The Living Character (Sprint 20.3)
+
+**Hôm nay Companion bắt đầu giữ lời hứa với chính mình — Integrity từ
+một phẩm chất khai báo trở thành một hành vi thật, có thể nhìn thấy
+trong Decision.**
+
+**Companion Growth Review:**
+
+- *Companion nhân văn hơn ở đâu?* — Companion không còn coi mọi người
+  dùng giống nhau ở lớp Decision. Nó nhớ — không phải dữ liệu, không
+  phải sở thích — mà cách CHÍNH người này cần được đồng hành
+  (`character-memory.ts`), rút ra từ Reflection lặp lại của họ, không
+  phải từ một ô cài đặt họ tự chọn.
+- *Companion đáng tin hơn ở đâu?* — Lần đầu tiên, Integrity Check
+  (`applyIntegrityCheck()`, `character-engine.ts`) có quyền CHẶN một
+  Decision Candidate (`"knowledge"`) khi nó mâu thuẫn với Character
+  Memory của người dùng — không phải đổi thứ tự trong cùng priority
+  như Character Review Sprint 20.1, mà chặn hẳn, bất kể priority.
+  **Ví dụ thật**: ở `/portal/knowledge`, trước Sprint này Companion
+  luôn nói "Có lẽ hôm nay điều cần nhất là hiểu đúng trước khi làm
+  nhanh." Sau khi người dùng đã viết ≥2 Reflection mang ý nghĩa
+  `curiosity` (Character Memory ghi nhận `self-discovery`: "Người này
+  thích tự khám phá."), CÙNG một trang, Companion im lặng ở tiếng nói
+  này — Decision đổi do Character Memory, không do Priority. Xem
+  `docs/CHARACTER_MEMORY.md#verification`.
+- *Companion trưởng thành hơn ở đâu?* — Có một tài liệu mới
+  (`docs/CHARACTER_MEMORY.md`) phân biệt rõ Character Memory với Core
+  Memory (toàn cục, không đổi), Preference (người dùng tự khai báo),
+  và Story (nội dung kể CHO người dùng, không phải trạng thái nội tâm
+  VỀ người dùng) — tránh ba cách hiểu sai đã được cảnh báo trước ở
+  brief gốc.
+- *Người dùng sẽ cảm nhận được điều gì?* — Không cảm nhận được "Companion
+  đang nhớ tôi" theo nghĩa lộ liễu — không có thông báo, không có điểm
+  số. Họ chỉ cảm nhận Companion dần ít "dạy" họ hơn ở những lúc họ đã
+  cho thấy mình thích tự khám phá, hoặc cần được lắng nghe trước khi
+  nhận thêm một gợi ý.
+- *Điều gì vẫn còn phải học?* — Integrity Check hôm nay chỉ áp dụng cho
+  một tiếng nói (`"knowledge"`) để tránh suy đoán hành vi trước khi có
+  nhu cầu thật; các tiếng nói khác (`story`, `journey`, `connect`...)
+  chưa được xét — cần dữ liệu thật về Reflection của người dùng trước
+  khi mở rộng. `getCompanionDecision()`'s lessonObserved/MEANING_TO_TONE
+  branch giờ đã thật sự reachable (đã nối `reflectionMeaning` vào
+  `CompanionPresence.tsx`), cần quan sát thật trước khi điều chỉnh thêm.
+
+*Liên quan:* `docs/CHARACTER_MEMORY.md`, `docs/CHARACTER_ENGINE.md`,
+`docs/MORAL_COMPASS.md`, `docs/THE_DECISION_HIERARCHY.md`,
+`docs/LIVING_LEARNING_AUDIT.md`.
