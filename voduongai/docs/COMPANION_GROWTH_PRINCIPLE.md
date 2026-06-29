@@ -184,6 +184,14 @@ thấy, không được lãng quên. Khi một Sprint mới trả được một
 cũ, Growth Review của Sprint đó nên nói rõ "Sprint này trả Growth Debt
 nào" (không chỉ "Sprint này học điều gì mới").
 
+> **Cập nhật — `THE_EDUCATION_ERA.md`**: từ Architecture Directive
+> "The Education Era", Growth Debt là một trường hợp con của một loại
+> nợ rộng hơn — **Education Debt** — bao gồm thêm Culture chưa thành
+> thói quen, Heritage chưa được kiểm chứng, Relationship chưa đủ sâu,
+> Trust chưa được hình thành. Bảng Growth Debt ở trên không bị thay
+> thế; nó là phần "Character/Lesson chưa chuyển hoá" của bảng Education
+> Debt đầy đủ hơn.
+
 ## NHIỆM VỤ 6 — Architecture Review: Capability hay Character?
 
 Đánh giá kiến trúc Companion-intelligence hiện tại theo đúng câu hỏi

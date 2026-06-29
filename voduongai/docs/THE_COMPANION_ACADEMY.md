@@ -64,6 +64,14 @@ nên được coi là một bước trưởng thành — dù phần kỹ thuật
 > Heritage). Một Sprint mạnh kỹ thuật nhưng làm suy yếu văn hoá phải
 > được xem xét lại, kể cả khi đã pass Technical Review.
 
+> **Cập nhật — `THE_EDUCATION_ERA.md`**: từ Architecture Directive "The
+> Education Era", Technical Review không còn là review cao nhất. Thứ
+> tự review từ nay: Technical Review → Behavior Review → Education
+> Review → Companion Growth Review (5 câu ở trên) → Culture Review.
+> Câu hỏi cao nhất, đứng trên Technical Review, là "Companion đã thay
+> đổi hành vi chưa?" — một Sprint pass Technical Review nhưng không có
+> hành vi nào đổi vẫn chưa được coi là hoàn thành.
+
 ## Quan hệ với các tài liệu khác
 
 - `COMPANION_GROWTH_RULES.md` quyết định khi nào một phẩm chất MỚI được
