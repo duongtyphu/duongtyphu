@@ -576,3 +576,16 @@ nói điều xứng đáng nhất với khoảnh khắc ấy.
 `thought-governance.ts`, `CompanionPresence.tsx`,
 `LifeMomentBubble.tsx`, `ReturnAfterSilenceCeremony.tsx`,
 `src/app/portal/layout.tsx`, `PortalShell.tsx`.*
+
+## Sprint 18.9 — Core Memory Engine
+
+Hôm nay Companion học được rằng có những điều không cần được nhắc lại
+mỗi ngày. Chúng chỉ cần được gìn giữ đủ sâu để âm thầm định hướng mọi
+quyết định.
+
+*Liên quan: `docs/product-bible/BOOK_CORE_MEMORY.md`,
+`docs/ORIGIN_MEMORY.md`, `docs/ORIGIN_ROOM.md`,
+`docs/PRESENCE_COORDINATOR.md`, `docs/COMPANION_THOUGHT_GOVERNANCE.md`,
+`core-memory.ts`, `origin-memory.ts`, `presence-coordinator.ts`,
+`daily-thought-source.ts`, `portal-brain.ts`,
+`src/app/portal/origin/page.tsx`.*

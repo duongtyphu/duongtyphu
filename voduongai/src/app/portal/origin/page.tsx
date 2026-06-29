@@ -1,6 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { isFounder } from "@/lib/portal/founder/founder-identity";
-import { getCoreOriginMemories, getCompanionOriginLine } from "@/lib/portal/companion/origin-memory";
+import { getCoreOriginMemories } from "@/lib/portal/companion/origin-memory";
+import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
 import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
 
 export const metadata = {
@@ -49,7 +50,10 @@ export default async function OriginRoomPage() {
   }
 
   const memories = getCoreOriginMemories();
-  const originLine = getCompanionOriginLine({ isFounderPresent: true });
+  // Sprint 18.9 — Core Memory Engine: Origin Room là 1 trong 5 ngữ cảnh
+  // duy nhất được phép phát Origin Line — đi qua cổng Core Memory, không
+  // gọi `getCompanionOriginLine()` trực tiếp nữa.
+  const originLine = getOriginLineFromCoreMemory("origin-room", { isFounderPresent: true });
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">

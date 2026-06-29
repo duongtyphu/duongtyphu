@@ -38,11 +38,15 @@ layout.tsx → PortalShell.tsx → CompanionPresence.tsx
 `greeting`, `story_moment`, `micro_reaction`, `origin_line` — đúng danh sách
 brief yêu cầu, không thêm tuỳ ý.
 
-`origin_line` hiện luôn `isEligible: false` — không có engine nào kích hoạt
-Origin Line như một moment hiện diện tự phát hôm nay (`origin-memory.ts` chỉ
-phục vụ Origin Room page và lời nói hiếm khi có founder hiện diện). Đây là
-một giới hạn được công khai trong code (xem comment ở
-`buildPresenceCandidates()`), không phải một tích hợp giả tạo.
+**Cập nhật Sprint 18.9 — Core Memory Engine**: `origin_line` không còn
+hardcode `isEligible: false` vô thời hạn. Nó đọc
+`PresenceCoordinatorContext.server.originLineContext` và chỉ đủ điều kiện
+khi giá trị đó rơi vào 1 trong 5 ngữ cảnh Core Memory cho phép (Origin
+Room, Companion Chapter, Ceremony, Founder Moment, nghi thức đặc biệt —
+xem `docs/product-bible/BOOK_CORE_MEMORY.md`, `core-memory.ts`). Không nơi
+nào hôm nay đặt giá trị này trong luồng Portal thông thường, nên trên
+thực tế candidate vẫn không tự hiện ngẫu nhiên — nhưng cơ chế giờ là một
+cổng theo ngữ cảnh thật, không còn là một giới hạn cứng vô thời hạn.
 
 ## Server/Client Boundary (NV02)
 
@@ -103,8 +107,12 @@ dùng. Không chạy ở production.
 
 ## Technical Debt còn lại
 
-- `origin_line` chưa có engine sản sinh — candidate luôn `isEligible: false`
-  (đã ghi nhận ở trên, không phải lỗi).
+- Chưa có Ceremony/Companion Chapter component nào thật sự đặt
+  `originLineContext` để kích hoạt candidate `origin_line` — cổng đã mở
+  đúng theo Core Memory (Sprint 18.9), nhưng chưa có nơi gọi nó trong UI.
+  Đây là kết nối tiếp theo, không phải lỗi của Sprint 18.9 (brief chỉ yêu
+  cầu Origin Line "được phép" xuất hiện ở 5 ngữ cảnh, không yêu cầu nối
+  dây UI cho từng ngữ cảnh ngay).
 - `presenceNow` cập nhật mỗi giây qua `setInterval` riêng trong
   `CompanionPresence.tsx` — một state tick nhỏ, không phải vấn đề hiệu năng ở
   quy mô hiện tại, nhưng nếu sau này có thêm nhiều coordinator tick khác, nên

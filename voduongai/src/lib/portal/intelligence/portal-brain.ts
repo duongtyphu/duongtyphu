@@ -20,6 +20,7 @@ import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
 import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
 import type { ReflectionMeaning } from "@/lib/portal/intelligence/reflection-meaning";
+import { getCoreMemories, type CoreMemory } from "@/lib/portal/companion/core-memory";
 
 /**
  * Sprint 13.2 — gợi ý nhẹ, chỉ khi GardenStage cho thấy rõ một story
@@ -52,6 +53,18 @@ export type CompanionDecision = {
    * tâm" nào đang lên tiếng. Xem `docs/INTERNAL_VOICES_ARCHITECTURE.md`.
    */
   voicesHeard: VoiceMessage[];
+  /**
+   * Sprint 18.9 — Core Memory Engine (NV03). Companion Decision đọc Core
+   * Memory như một tầng ký ức nền — KHÔNG để hiển thị thành câu nói (đó
+   * vẫn là việc riêng của Origin Line ở 5 ngữ cảnh hẹp, xem
+   * `core-memory.ts`), chỉ để Portal Brain "mang theo" điều không bao giờ
+   * được quên khi ra quyết định. Hôm nay chưa có nhánh rẽ hành vi cụ thể
+   * dựa trên trường này — đây là nền tảng đọc được, không phải hành vi
+   * mới; việc thật sự đổi nhánh quyết định theo Core Memory là bước tiếp
+   * theo, không làm trong sprint này để tránh suy đoán hành vi trước khi
+   * có nhu cầu thật.
+   */
+  coreMemoryHeard: CoreMemory[];
   /**
    * Sprint 13.2 — Living Stories Engine. KHÔNG bắt buộc: chỉ có giá trị
    * khi tín hiệu đủ rõ để gợi ý một story cụ thể (hiện tại: có
@@ -166,6 +179,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   const voicesHeard = collectInternalVoices(signals);
   const loudest = loudestVoice(voicesHeard);
   const insightFromVoice = loudest ? companionResponseToVoice(loudest, signals) : null;
+  const coreMemoryHeard = getCoreMemories();
 
   if (!signals.gardenStage) {
     return {
@@ -176,6 +190,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
       shouldSpeak: Boolean(routeGreeting) || Boolean(loudest),
       silenceReason: routeGreeting || loudest ? undefined : "no-signal",
       voicesHeard,
+      coreMemoryHeard,
     };
   }
 
@@ -190,6 +205,7 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
     recommendedTone: gardenCopy.tone,
     shouldSpeak: true,
     voicesHeard,
+    coreMemoryHeard,
     suggestedStoryId: storySuggestion?.id,
     storyReason: storySuggestion?.reason,
   };

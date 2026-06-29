@@ -24,12 +24,21 @@ import {
   type CompanionMomentType,
   type CompanionSpeechBudget,
 } from "@/lib/portal/companion/thought-governance";
+import {
+  getOriginLineFromCoreMemory,
+  isOriginLineAllowedInContext,
+  type CoreMemoryContext,
+} from "@/lib/portal/companion/core-memory";
 
 /**
  * 8 nguồn candidate ban đầu (NV01) — đúng danh sách đã định nghĩa, không
- * thêm tuỳ ý. `origin_line` chưa có engine nào thực sự kích hoạt nó như một
- * moment hiện diện tự phát hôm nay (xem `origin-memory.ts`) — candidate của
- * nó luôn `isEligible: false`, một giới hạn được công khai, không che giấu.
+ * thêm tuỳ ý. `origin_line` KHÔNG đủ điều kiện một cách ngẫu nhiên chỉ để
+ * đủ candidate (Sprint 18.9 — Core Memory Engine) — nó chỉ đủ điều kiện
+ * khi `PresenceCoordinatorContext.server.originLineContext` rơi vào đúng
+ * 1 trong 5 ngữ cảnh Core Memory cho phép (`core-memory.ts`): Origin Room,
+ * Companion Chapter, Ceremony, Founder Moment, các nghi thức đặc biệt.
+ * Không nơi nào hôm nay đặt giá trị này ngoài 5 ngữ cảnh đó, nên candidate
+ * vẫn không tự hiện trong luồng Portal thông thường.
  */
 export type PresenceCandidateSource =
   | "life_moment"
@@ -48,7 +57,7 @@ export type PresenceCandidatePayload =
   | { source: "story_moment"; story: LivingStory }
   | { source: "greeting" }
   | { source: "micro_reaction"; line: string }
-  | { source: "origin_line" };
+  | { source: "origin_line"; line: string };
 
 /** Shape thống nhất một candidate hiện diện, bất kể nó sinh ra ở server hay client. */
 export type CompanionPresenceCandidate = {
@@ -68,6 +77,14 @@ export type PresenceServerState = {
   lifeMomentEligible: boolean;
   returnAfterSilenceMilestone: string | null;
   returnAfterSilenceEligible: boolean;
+  /**
+   * Sprint 18.9 — Core Memory Engine: chỉ đặt giá trị này khi Portal
+   * thật sự đang ở một trong 5 ngữ cảnh Core Memory cho phép Origin Line
+   * xuất hiện (Origin Room, Companion Chapter, Ceremony, Founder Moment,
+   * nghi thức đặc biệt). `undefined`/`null` ở mọi nơi khác.
+   */
+  originLineContext?: CoreMemoryContext | null;
+  isFounderPresent?: boolean;
 };
 
 /** Dữ liệu phía client — trạng thái session/UI hiện có ở `CompanionPresence.tsx`. */
@@ -145,16 +162,19 @@ export function buildPresenceCandidates(context: PresenceCoordinatorContext): Co
       isMajor: false,
       payload: client.microLine ? { source: "micro_reaction", line: client.microLine } : undefined,
     },
-    // Sprint 18.8 — chưa có engine nào tạo Origin Line như một moment hiện
-    // diện tự phát; giữ candidate ở đây để registry đủ 8 nguồn theo brief,
-    // nhưng luôn không đủ điều kiện cho tới khi engine đó thật sự tồn tại.
-    {
-      source: "origin_line",
-      momentType: "origin-line",
-      isEligible: false,
-      isMajor: true,
-    },
   ];
+
+  const originLine = isOriginLineAllowedInContext(server.originLineContext)
+    ? getOriginLineFromCoreMemory(server.originLineContext, { isFounderPresent: server.isFounderPresent })
+    : null;
+
+  candidates.push({
+    source: "origin_line",
+    momentType: "origin-line",
+    isEligible: !!originLine,
+    isMajor: true,
+    payload: originLine ? { source: "origin_line", line: originLine } : undefined,
+  });
 
   return candidates;
 }

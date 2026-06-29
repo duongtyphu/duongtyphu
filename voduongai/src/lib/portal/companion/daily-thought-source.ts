@@ -17,6 +17,7 @@
  */
 
 import type { ExperienceSource } from "@/lib/portal/companion/living-experience";
+import { getCoreMemories } from "@/lib/portal/companion/core-memory";
 
 /** 9 nguồn suy nghĩ ban đầu — đúng danh sách đã định nghĩa, không thêm tuỳ ý. */
 export type ThoughtSource =
@@ -86,7 +87,14 @@ export function mapContextToSource(context: ThoughtContext): ThoughtSource | nul
   if (context.isBirthday) return "life-moments";
   if (context.isReturnAfterSilence) return "life-moments";
   if (context.isAnnualMirror) return "life-moments";
-  if (context.isOriginMoment) return "origin-memory";
+  // Sprint 18.9 — Core Memory Engine: Thought Selector đọc Core Memory
+  // trước khi đề xuất nguồn "origin-memory" — đây là nhóm suy nghĩ chủ đề
+  // nguồn gốc (`daily-thought-library.ts`), KHÔNG phải Origin Line. Origin
+  // Line vẫn chỉ ra đời qua `getOriginLineFromCoreMemory()` ở 5 ngữ cảnh
+  // riêng (`core-memory.ts`), không qua đường này.
+  if (context.isOriginMoment && getCoreMemories().some((memory) => memory.source === "origin")) {
+    return "origin-memory";
+  }
   if (context.hasNewCompanionChapter) return "companion-chapter";
   if (context.journeyState) return "journey";
   if (context.reflectionMeaning) return "reflection";
