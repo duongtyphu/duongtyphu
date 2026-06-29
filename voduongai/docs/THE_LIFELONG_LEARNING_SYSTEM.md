@@ -68,6 +68,12 @@ ranh giới giữa hai lớp chưa rõ trong thiết kế của nó — nó chư
 coi là thiết kế xong, đúng tinh thần "Hai câu hỏi bắt buộc" đã có ở
 `THE_LIVING_HERITAGE.md`.
 
+> **Cập nhật — `docs/THE_HUMILITY.md`** (Sprint 21.1): mỗi Learning
+> Engine, khi khai báo lớp Mutable/Immutable, nên trả lời thêm một câu
+> Humility Review: "Hôm nay Companion vừa học được gì từ con người?" —
+> KHÔNG hỏi "vừa dạy điều gì" — và câu trả lời phải neo vào một tín
+> hiệu thật, không phải một suy luận tự nghĩ ra.
+
 ## Vì sao cần hai lớp, không phải một
 
 Một Learning Engine chỉ có một lớp (mọi thứ đều mutable) có thể, qua

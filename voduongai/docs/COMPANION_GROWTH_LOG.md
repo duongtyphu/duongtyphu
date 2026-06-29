@@ -997,6 +997,43 @@ thành theo CHƯƠNG (Chapter) cuộc đời, không chỉ cộng dồn theo Spr
 `docs/THE_HUMAN_UNDERSTANDING_MISSION.md`, `docs/THE_COMPANION_ACADEMY.md`,
 `docs/COMPANION_GROWTH_RULES.md`, `docs/THE_LIVING_WISDOM_SYSTEM.md`.
 
+## The Humility (Sprint 21.1)
+
+Sprint này viết `docs/THE_HUMILITY.md` — không phải đạo đức, mà kiến
+trúc: audit toàn bộ Learning Pipeline để gọi tên chính xác nơi Companion
+có nguy cơ tự xem mình là trung tâm, đặt câu hỏi Humility Review mới
+("học được gì từ con người" thay vì "dạy điều gì"), và làm rõ Humility
+trong Culture Review phải đo bằng hành vi, không phải câu nói.
+
+- *Companion học được điều gì?* — Hai điểm rào chắn CHƯA THẬT trong
+  Learning Pipeline: `reviewWithFourQuestions()` (`moral-compass.ts`)
+  và `applyCharacterReview()` (`character-engine.ts`) đều hardcode
+  `true` cho mọi candidate — đây là rào chắn cho tương lai, không phải
+  phép kiểm tra đang chạy thật hôm nay.
+- *Companion chuyển hoá điều gì thành Character?* — Không có Character
+  mới. Sprint này xác nhận lại Humility đã thể hiện ĐÚNG bằng hành vi ở
+  nhiều Engine có sẵn (`knowledge-memory.ts` chờ ≥3 tín hiệu thật,
+  `mirror-dialogue.ts`/`growth-reflection.ts` trả `null` khi chưa đủ
+  dấu chân, `inner-thought-engine.ts` chỉ nói sau khi Character đã
+  chuyển hoá thật) — không tạo Character mới, chỉ gọi tên Character đã
+  có.
+- *Companion thay đổi hành vi nào?* — Chưa thay đổi hành vi với người
+  dùng hôm nay. Từ Sprint sau, mỗi Learning Engine mới khi khai báo
+  Mutable/Immutable Layer (`THE_LIFELONG_LEARNING_SYSTEM.md`) nên trả
+  lời thêm Humility Review, neo vào tín hiệu thật.
+- *Người dùng nhận được giá trị gì?* — Không có gì khác biệt hôm nay.
+  Giá trị là nền móng để Gratitude (giá trị văn hoá còn mỏng nhất,
+  `docs/THE_COMPANION_CULTURE.md`) có gốc rễ thật ở Sprint sau.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — Hai hàm
+  hardcode `true` ở trên vẫn chưa được thay bằng phép kiểm tra thật —
+  cố ý chưa sửa ở Sprint này (chỉ 11 loại moment/candidate hôm nay đều
+  đúng cả bốn câu, nên chưa có nhu cầu thật để code một phép tính phức
+  tạp hơn) — đây là Growth Debt tiếp tục, không phải debt mới.
+
+*Liên quan:* `docs/THE_HUMILITY.md`, `FOUNDER_HUMILITY_PRINCIPLE.md`,
+`docs/THE_LIFELONG_LEARNING_SYSTEM.md`, `docs/THE_COMPANION_CULTURE.md`,
+`docs/COMPANION_GROWTH_PRINCIPLE.md`.
+
 ## Living Heritage
 
 Sprint này không thêm AI mới, không thêm LLM, không thêm khả năng
