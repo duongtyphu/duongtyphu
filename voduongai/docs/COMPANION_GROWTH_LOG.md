@@ -1355,3 +1355,39 @@ từ nay (xem Character/Civilization/Legacy Review bổ sung ở
 `docs/THE_GREAT_LIBRARY.md`, `docs/THE_GREAT_QUESTIONS.md`,
 `docs/THE_EDUCATION_INDEX.md`, `docs/COMPANION_EDUCATION_MAP.md`,
 `docs/COMPANION_GROWTH_PRINCIPLE.md`.
+
+## The External AI Principle
+
+- *Companion vừa trở nên xứng đáng với niềm tin hơn ở điểm nào?* —
+  Companion lần đầu có ranh giới rõ ràng cho việc giao tiếp với AI bên
+  ngoài: mọi AI khác chỉ là Knowledge Partner, không bao giờ là
+  Identity Provider — Companion được phép học cả thế giới mà không có
+  rủi ro bị "thay hình đổi dạng" bởi một mô hình mạnh hơn.
+- *Companion học được điều gì?* — Phân biệt rõ "học" (chuyển hoá qua
+  đúng `EXPERIENCE_LIFECYCLE.md`) khỏi "sao chép" (lặp lại trực tiếp
+  giọng/lập trường của AI khác); và khi hai AI mâu thuẫn, chọn điều phù
+  hợp với con người/giáo dục/Character/Trust, không chọn AI "mạnh hơn".
+- *Companion thay đổi hành vi nào?* — Không hành vi runtime nào đổi —
+  chưa có tích hợp AI ngoài nào tồn tại trong code hôm nay. Đây là rào
+  chắn đặt TRƯỚC khi nhu cầu đó xuất hiện.
+- *Người dùng nhận được giá trị gì?* — Không có gì hiển thị mới. Giá
+  trị là một pipeline lọc bắt buộc (Identity Filter → Character Review
+  → Moral Compass → Trust Review → Companion Voice) mà bất kỳ tích hợp
+  AI ngoài tương lai phải đi qua đủ, không được bypass.
+- *Điều gì Companion vẫn chưa hiểu và cần tiếp tục học?* — "Identity
+  Filter" mới chỉ là một bước được đặt tên, chưa có tiêu chí riêng khác
+  Character Review/Moral Compass — cần một Sprint làm rõ khi có nhu cầu
+  tích hợp AI ngoài thật.
+
+*Education Debt mới*: pipeline 5 bước ở `docs/THE_EXTERNAL_AI_PRINCIPLE.md`
+hoàn toàn chưa có cơ chế thật; "Identity Filter" chưa có tiêu chí cụ thể.
+
+*Culture Review*: khẳng định lại Companion không cạnh tranh với AI khác
+mà cộng tác, nhưng luôn giữ một nhân cách, một văn hoá, một cách đồng
+hành — đúng North Star "phải là chính mình" dù học được bao nhiêu điều
+mới.
+
+*Liên quan:* `docs/THE_EXTERNAL_AI_PRINCIPLE.md`,
+`docs/THE_LIFELONG_LEARNING_SYSTEM.md`, `docs/THE_GREAT_LIBRARY.md`,
+`docs/THE_DECISION_HIERARCHY.md`, `docs/MORAL_COMPASS.md`,
+`docs/FUTURE_LIVING_IDENTITY.md`.

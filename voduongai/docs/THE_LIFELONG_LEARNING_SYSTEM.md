@@ -50,6 +50,12 @@ hoá ngay. Cho tới khi nghi thức đó được Founder định nghĩa rõ, l
 Immutable là bất biến tuyệt đối: không Sprint, không Learning Engine,
 không quy trình tự động nào được phép đề xuất sửa nó.
 
+> **Cập nhật — `docs/THE_EXTERNAL_AI_PRINCIPLE.md`**: ranh giới
+> Mutable/Immutable ở trên áp dụng KHÔNG CHỈ cho Learning Engine nội
+> bộ, mà còn cho mọi input đến từ một AI bên ngoài. Một AI ngoài chỉ
+> được phép đóng vai Knowledge Partner (nhập vào Mutable Layer), không
+> bao giờ là Identity Provider (chạm vào Immutable Layer).
+
 ## Mọi Learning Engine phải khai báo rõ nó đang sửa lớp nào
 
 > **Mọi Learning Engine sau này đều phải chỉ rõ: nó đang cập nhật
