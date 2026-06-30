@@ -2048,3 +2048,34 @@ Legacy Recognition, concern tương tự từ Sprint 22.5.
 *Liên quan:* `docs/THE_LEGACY_SEED.md`,
 `docs/THE_TRANSFORMATION_PRINCIPLE.md`,
 `docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`.
+
+## Portal Architecture Freeze™
+
+Xem `docs/THE_PORTAL_ARCHITECTURE_FREEZE.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người học nhanh
+hơn khi mọi thứ đều ở đúng chỗ. Không phải vì họ lười, mà vì năng lượng nhận
+thức là có hạn. Khi sidebar luôn ở bên trái, search luôn ở trên, Companion
+luôn ở góc phải — người dùng không cần dùng một phần não để "tìm mình đang ở
+đâu". Toàn bộ sự chú ý được dành cho điều thật sự quan trọng: nội dung, hành
+trình, và việc trưởng thành. Freeze không phải lười thiết kế. Freeze là sự tôn
+trọng năng lượng nhận thức của con người.
+
+**Nền móng đã đặt:**
+- Canonical Portal Structure được document hoàn chỉnh: `PortalLayout →
+  PortalShell → GemBackground + PortalHeader + PortalSidebar + main{children} +
+  CompanionPresence + NotificationTicker + FirstFootprintCeremony + OnboardingJourney`
+- Freeze Rules bất biến: không tạo sub-layout, không override shell components,
+  không custom header từ project, không thêm sidebar item từ project, không tắt
+  CompanionPresence
+- Kiểm tra tuân thủ 7-point checklist — bắt buộc trước mọi Portal PR
+- Audit tháng 06/2026: tất cả 8 rules PASS — Architecture đang ở trạng thái Frozen
+- Chỉ được thay đổi từ Project: dữ liệu, màu accent, banner hero, logo/icon, nội dung
+- Admin và Article cũng được freeze với cùng nguyên tắc nhất quán tuyệt đối
+
+**Genome Verdict:** PASS — Freeze không thêm complexity, không thêm feature.
+Freeze giảm cognitive load và bảo đảm Companion luôn hiện diện.
+
+*Liên quan:* `docs/THE_PORTAL_ARCHITECTURE_FREEZE.md`,
+`src/app/portal/layout.tsx`,
+`src/components/portal/PortalShell.tsx`.
