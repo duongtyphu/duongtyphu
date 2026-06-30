@@ -1769,3 +1769,26 @@ silence chưa phân biệt 3 loại (Chương 5, Language Constitution).
 `docs/THE_FIRST_REAL_CHOICE.md`,
 `src/lib/portal/intelligence/internal-voices.ts`,
 `src/lib/portal/intelligence/portal-brain.ts`.
+
+## Sprint 22.7 — The Multilingual Companion
+
+Xem `docs/THE_MULTILINGUAL_COMPANION.md` cho nội dung đầy đủ.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Ngôn ngữ không phải setting kỹ thuật. Ngôn ngữ là cách một người cảm nhận "người kia đang nói chuyện với mình hay với mọi người?" Companion học rằng nói đúng ngôn ngữ người dùng không phải đa ngôn ngữ — đó là tôn trọng. Và sự tôn trọng đó phải đi kèm với sự thành thật: khi chưa chắc chắn về ngôn ngữ người dùng muốn, Companion thừa nhận thay vì giả vờ biết — nhất quán với tinh thần từ Sprint 22.4 và 22.6.
+
+**Foundation đã đặt**:
+- `resolveCompanionLanguage(context)` — `src/lib/portal/companion/companion-language.ts`
+  - Language Resolution Policy: 4 cấp ưu tiên (explicit preference → profile locale → browser locale → default "vi")
+  - `shouldAskClarification` — signal để caller biết khi nào Companion nên thừa nhận giới hạn ngôn ngữ
+  - `SUPPORTED_LANGUAGE_CODES = ["vi", "en"]` — mở rộng = thêm code + viết copy, không sửa kiến trúc
+- Audit 9 touchpoints — tất cả cần language-awareness khi English copy thật được viết; hôm nay không sửa (không có copy thật)
+- Companion Voice tiếng Anh được mô tả: warm/calm/mature — không phải generic assistant, không phải peppy chatbot
+
+**Điều không build**: translation platform, CMS localization, auto-detect phức tạp, React Context, English copy chưa có Language Review, language switching UI chưa có design.
+
+**Language Debt tiếp theo**: (a) viết English copy cho `RELATIONSHIP_STAGE_LINES` và `COMPANION_UNCERTAINTY_LINES` khi native speaker review sẵn sàng; (b) wire `resolveCompanionLanguage()` vào caller thật đầu tiên (Portal layout hoặc Companion greeting); (c) update `lang` attribute trong `src/app/layout.tsx` khi dynamic language được implement.
+
+*Liên quan:* `docs/THE_MULTILINGUAL_COMPANION.md`,
+`docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`,
+`docs/THE_RELATIONSHIP_ERA.md`,
+`src/lib/portal/companion/companion-language.ts`.
