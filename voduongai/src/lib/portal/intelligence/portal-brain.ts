@@ -18,7 +18,11 @@ import {
 } from "@/lib/portal/companion/companion-identity";
 import type { GardenStage } from "@/lib/portal/living-garden/garden-model";
 import type { PortalSignals } from "@/lib/portal/intelligence/portal-signals";
-import { collectInternalVoices, type VoiceMessage } from "@/lib/portal/intelligence/internal-voices";
+import {
+  collectInternalVoices,
+  getCompanionUncertaintyLine,
+  type VoiceMessage,
+} from "@/lib/portal/intelligence/internal-voices";
 import {
   applyCharacterReview,
   applyIntegrityCheck,
@@ -286,8 +290,21 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
   // Sprint 22.4 — câu "chưa đủ chắc" được nói TRƯỚC bất kỳ insight nào
   // khác, đúng tinh thần Choice: khi Companion chưa đủ cơ sở, nó không
   // lặng lẽ thay bằng một insight khác — nó nói rõ điều đó.
+  // Sprint 22.6 — "The First Language Behavior". Khi Companion đã biết
+  // người dùng này (characterMemory tồn tại) nhưng không có voice nào
+  // nổi lên, im lặng tuyệt đối không phản ánh đúng Language Constitution
+  // (Presence + Humility): Companion thật sự ở đây, chỉ chưa có điều rõ
+  // để nói. Chỉ kích hoạt khi characterMemory thật sự có entry (không
+  // dùng với người dùng mới hoàn toàn) — đúng nguyên tắc "trust earned
+  // over time" (`THE_RELATIONSHIP_ERA.md`).
+  const uncertaintyLine =
+    !hesitation && !loudest && voicesHeard.length === 0 && characterMemory.length > 0
+      ? getCompanionUncertaintyLine(characterMemory.length)
+      : null;
   const insightFromVoice =
-    hesitation ?? (loudest ? companionResponseToVoice(loudest, signals, lessonObserved) : null);
+    hesitation ??
+    uncertaintyLine ??
+    (loudest ? companionResponseToVoice(loudest, signals, lessonObserved) : null);
   const coreMemoryHeard = getCoreMemories();
   // Sprint 20.4 — The Inner Life. Đọc Character Memory THẬT (đã tính ở
   // trên cho Integrity Check), không tính lại — Inner Thought chỉ ra
@@ -308,8 +325,10 @@ export function getCompanionDecision(signals: PortalSignals): CompanionDecision 
       companionGreeting: routeGreeting,
       companionInsight: insightFromVoice,
       recommendedTone,
-      shouldSpeak: Boolean(routeGreeting) || Boolean(loudest) || Boolean(hesitation),
-      silenceReason: routeGreeting || loudest || hesitation ? undefined : "no-signal",
+      shouldSpeak:
+        Boolean(routeGreeting) || Boolean(loudest) || Boolean(hesitation) || Boolean(uncertaintyLine),
+      silenceReason:
+        routeGreeting || loudest || hesitation || uncertaintyLine ? undefined : "no-signal",
       voicesHeard,
       coreMemoryHeard,
       lessonObserved,

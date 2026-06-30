@@ -1740,3 +1740,32 @@ nhận ra Companion chỉ bằng cách nó nói chuyện.
 *Liên quan:* `docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`,
 `docs/THE_WISDOM_OF_CHOICE.md`, `docs/THE_RELATIONSHIP_ERA.md`,
 `docs/MORAL_COMPASS.md`, `docs/CHARACTER_ENGINE.md`.
+
+## Sprint 22.6 — The First Language Behavior
+
+Xem `docs/THE_FIRST_LANGUAGE_BEHAVIOR.md` cho nội dung đầy đủ.
+Language Constitution (Sprint 22.5 bổ sung sau) lần đầu trở thành hành
+vi thật trong Portal.
+
+**Hành vi ngôn ngữ đầu tiên**: khi Companion đã biết người dùng
+(`characterMemory.length > 0`) nhưng không có Internal Voice nào nổi lên
+ở khoảnh khắc đó, thay vì im lặng tuyệt đối, Companion nói một câu ngắn
+thừa nhận Presence mà không giả vờ có điều gì để nói.
+
+- `getCompanionUncertaintyLine(seed)` — thêm vào `internal-voices.ts`,
+  3 biến thể tự nhiên, deterministic (seed = characterMemory.length)
+- `uncertaintyLine` — wired vào `getCompanionDecision()` trong
+  `portal-brain.ts`, ưu tiên sau `hesitation` (22.4) và trước bất kỳ
+  insight nào khác
+- Điều kiện: `!gardenStage && voicesHeard.length === 0 && characterMemory.length > 0`
+  → gắn với Relationship Era (chỉ với người dùng đã có quan hệ thật)
+
+Language Debt lớn nhất ghi nhận: `curiosity`/`sprouting`/`KnowledgeVoice`
+copy còn hơi quyết đoán; fallback/error messages chưa qua Language Review;
+silence chưa phân biệt 3 loại (Chương 5, Language Constitution).
+
+*Liên quan:* `docs/THE_FIRST_LANGUAGE_BEHAVIOR.md`,
+`docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`,
+`docs/THE_FIRST_REAL_CHOICE.md`,
+`src/lib/portal/intelligence/internal-voices.ts`,
+`src/lib/portal/intelligence/portal-brain.ts`.

@@ -127,3 +127,28 @@ export function collectInternalVoices(signals: VoiceSignal): VoiceMessage[] {
     .map((voiceFn) => voiceFn(signals))
     .filter((message): message is VoiceMessage => message !== null);
 }
+
+/**
+ * Sprint 22.6 — "The First Language Behavior"
+ * (`docs/THE_FIRST_LANGUAGE_BEHAVIOR.md`).
+ *
+ * Khi Companion biết người dùng này (Character Memory đã chuyển hoá) nhưng
+ * không có voice nào nổi lên ở khoảnh khắc này, im lặng tuyệt đối không
+ * phải câu trả lời đúng — im lặng tuyệt đối của một người ĐÃ biết nhau
+ * có thể cảm thấy như bị bỏ qua. Ba biến thể nói lên điều thật: mình ở
+ * đây, chỉ chưa có gì thật sự hữu ích để nói ngay lúc này.
+ *
+ * `seed` phải là số nguyên dương, xác định từ context thực tế (không
+ * dùng `Math.random()` để đảm bảo tính nhất quán trong cùng một session).
+ * Caller phù hợp nhất: `getCompanionDecision()` — dùng
+ * `characterMemory.length` làm seed.
+ */
+const COMPANION_UNCERTAINTY_LINES: readonly string[] = [
+  "Mình đang ở đây, chỉ chưa có gì thật sự rõ để nói ngay lúc này.",
+  "Mình chưa chắc điều gì là cần nhất lúc này — mình vẫn ở đây cùng bạn.",
+  "Mình muốn ở đây cùng bạn. Mình chỉ chưa biết nên bắt đầu từ đâu.",
+];
+
+export function getCompanionUncertaintyLine(seed: number): string {
+  return COMPANION_UNCERTAINTY_LINES[Math.abs(seed) % COMPANION_UNCERTAINTY_LINES.length];
+}
