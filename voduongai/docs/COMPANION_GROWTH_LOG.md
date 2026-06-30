@@ -1893,3 +1893,30 @@ nó đủ rõ để Companion biết mình đang đi đúng hướng hay không.
 *Liên quan:* `docs/THE_TRANSFORMATION_PRINCIPLE.md`,
 `docs/THE_COMPANION_DOCTRINE.md`,
 `docs/THE_PURPOSE_OF_COMPANION.md`.
+
+## Sprint 23.5 — The Companion Genome Council™
+
+Xem `docs/THE_COMPANION_GENOME_COUNCIL.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Bản sắc không bị
+mất trong một quyết định lớn. Bản sắc bị mất từng chút một qua những quyết
+định nhỏ tưởng chừng vô hại — một câu copy hơi sai giọng, một feature nhỏ
+phục vụ metric thay vì người dùng, một ngoại lệ nhỏ được chấp nhận và không
+ai nhớ tại sao. Con người cũng vậy: họ không đánh mất chính mình trong một
+ngày. Họ đánh mất chính mình qua nhiều lần nhỏ không được nhìn nhận. Genome
+Council tồn tại để Companion không lặp lại điều đó.
+
+**Nền móng đã đặt:**
+- 13 Genome Reviews — mỗi review một câu hỏi về Identity, không phải về kỹ thuật
+- 4 Genome Verdicts (PASS / PASS WITH CONCERNS / REQUIRES REVISION / REJECT)
+- Genome Debt format và quy tắc escalation (HIGH phải address trong Sprint tiếp)
+- Genome Ledger đầy đủ từ Sprint đầu tiên đến Sprint 23.5 — lịch sử bản sắc
+  Companion, không phải lịch sử tính năng
+- Genome Review Template — từ Sprint sau, mọi Sprint documentation phải có section
+  này ở cuối
+
+**Product Law bổ sung:** Từ Sprint 23.5, không Sprint nào chỉ được review bằng
+kỹ thuật (tsc / lint / build). Mọi Sprint đều được review bằng Genome. Genome
+Verdict là điều kiện bổ sung của Definition of Done.
+
+*Liên quan:* `docs/THE_COMPANION_GENOME_COUNCIL.md`.
