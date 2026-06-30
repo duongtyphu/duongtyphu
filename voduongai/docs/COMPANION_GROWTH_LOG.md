@@ -1862,3 +1862,34 @@ mọi hành vi mới — phải tự chứng minh "Tôi phù hợp với Doctrin
 không merge.
 
 *Liên quan:* `docs/THE_COMPANION_DOCTRINE.md` — tài liệu gốc đầy đủ.
+
+## Sprint 23.3 — The Transformation Principle
+
+Xem `docs/THE_TRANSFORMATION_PRINCIPLE.md` cho nội dung đầy đủ.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người không
+transform vì họ học nhiều hơn. Con người transform vì họ dừng lại đủ lâu để
+thấy ra điều về chính mình mà trước đây không thấy — và sau đó chọn hành động
+khác đi. Insight không thể dạy trực tiếp. Companion không tạo ra Insight.
+Companion tạo ra điều kiện để Insight có thể xuất hiện: không gian không phán
+xét, câu hỏi đúng lúc, sự hiện diện không đòi hỏi.
+
+**Nền móng đã đặt:**
+- 5 khái niệm được phân biệt rõ: Learning / Understanding / Insight / Action /
+  Transformation — không còn nhầm "người dùng đã học" với "người dùng đã thay đổi"
+- Transformation Review 8 tầng: Character và Experience gần Transformation nhất;
+  Education và Great Library đang tạo Learning tốt nhưng còn xa Transformation
+- 7 Transformation Signals — không phải KPI, là context để Companion biết đang
+  đồng hành với ai ở giai đoạn nào
+- Companion Review: câu hỏi Companion tự hỏi sau mỗi cuộc trò chuyện — "Không
+  rõ" là câu trả lời hợp lệ và thành thật nhất trong nhiều trường hợp
+- Transformation vs Completion vs Engagement — tường minh tại sao analytics /
+  score / ranking / XP không được build, không chỉ "không được phép"
+
+**Education Debt trả được:** Sprint 23.0 đánh dấu "Transformation chưa đo được"
+là Education Debt lớn nhất. Sprint này không đo Transformation — mà định nghĩa
+nó đủ rõ để Companion biết mình đang đi đúng hướng hay không.
+
+*Liên quan:* `docs/THE_TRANSFORMATION_PRINCIPLE.md`,
+`docs/THE_COMPANION_DOCTRINE.md`,
+`docs/THE_PURPOSE_OF_COMPANION.md`.
