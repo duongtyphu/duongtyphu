@@ -208,6 +208,7 @@ export type AiProfessionGroup = {
   emoji: string;
   popularNeedSlugs: string[];
   recommendedToolSlugs: string[];
+  relatedArticleSlugs: string[];
 };
 
 export const PROFESSION_GROUPS: AiProfessionGroup[] = [
@@ -219,6 +220,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "🏢",
     popularNeedSlugs: ["marketing", "phan-tich-du-lieu", "tu-dong-hoa"],
     recommendedToolSlugs: ["chatgpt", "perplexity", "n8n"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-chu-doanh-nghiep"],
   },
   {
     slug: "affiliate",
@@ -228,6 +230,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "💰",
     popularNeedSlugs: ["viet-noi-dung", "nghien-cuu", "marketing"],
     recommendedToolSlugs: ["chatgpt", "perplexity", "claude"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-affiliate-marketer", "ung-dung-ai-trong-affiliate-marketing"],
   },
   {
     slug: "nguoi-ban-hang",
@@ -237,6 +240,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "🛒",
     popularNeedSlugs: ["viet-noi-dung", "marketing", "phan-tich-du-lieu"],
     recommendedToolSlugs: ["chatgpt", "gemini", "canva-ai"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-nguoi-ban-hang"],
   },
   {
     slug: "content-creator",
@@ -246,6 +250,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "🎥",
     popularNeedSlugs: ["viet-noi-dung", "lam-video", "thiet-ke-hinh-anh"],
     recommendedToolSlugs: ["chatgpt", "canva-ai", "runway"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-content-creator"],
   },
   {
     slug: "designer",
@@ -255,6 +260,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "🖌️",
     popularNeedSlugs: ["thiet-ke-hinh-anh", "viet-noi-dung", "lam-video"],
     recommendedToolSlugs: ["midjourney", "canva-ai", "chatgpt"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-designer"],
   },
   {
     slug: "lap-trinh-vien",
@@ -264,6 +270,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "👨‍💻",
     popularNeedSlugs: ["lap-trinh", "phan-tich-du-lieu", "tu-dong-hoa"],
     recommendedToolSlugs: ["cursor", "claude", "chatgpt"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-lap-trinh-vien"],
   },
   {
     slug: "giao-vien",
@@ -273,6 +280,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "👩‍🏫",
     popularNeedSlugs: ["viet-noi-dung", "nghien-cuu", "dich-thuat"],
     recommendedToolSlugs: ["chatgpt", "gemini", "claude"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-giao-vien"],
   },
   {
     slug: "sinh-vien",
@@ -282,6 +290,7 @@ export const PROFESSION_GROUPS: AiProfessionGroup[] = [
     emoji: "🎓",
     popularNeedSlugs: ["nghien-cuu", "viet-noi-dung", "dich-thuat"],
     recommendedToolSlugs: ["chatgpt", "perplexity", "gemini"],
+    relatedArticleSlugs: ["cach-dung-ai-cho-sinh-vien"],
   },
 ];
 
