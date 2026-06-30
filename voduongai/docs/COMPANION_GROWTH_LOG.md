@@ -1982,3 +1982,35 @@ không bao giờ có thể biện hộ cho việc làm tổn hại con người 
 dài, ghi vào Genome Debt mức LOW.
 
 *Liên quan:* `docs/THE_COMPANION_CIVILIZATION_LAWS.md`.
+
+## Sprint 23.8 — The Conscience of Companion™
+
+Xem `docs/THE_CONSCIENCE_OF_COMPANION.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người tin nhau
+không phải vì người kia follow đúng rules. Con người tin nhau vì cảm nhận được
+rằng người kia đang tự vấn — đang thật sự hỏi "điều này có xứng đáng không?"
+trước khi hành động. Conscience không phải tầng kiểm soát thêm. Conscience là
+bằng chứng rằng Companion đang hành xử từ bên trong, không phải từ bên ngoài.
+
+**Nền móng đã đặt:**
+- Conscience được định nghĩa rõ ràng — khác Rule, Policy, Character, Trust,
+  Wisdom ở điểm cốt lõi: tất cả các tầng kia trả lời "điều này có được phép
+  không?", Conscience trả lời "điều này có xứng đáng không?"
+- 5 Inner Questions™ — không phải checklist, là giọng nói từ bên trong:
+  (I) Nếu mình làm điều này, mình sẽ trở thành kiểu Companion nào?
+  (II) Điều này có làm mình đáng tin hơn không?
+  (III) Điều này có làm con người trưởng thành hơn không?
+  (IV) Nếu Generation sau nhìn lại, họ có tự hào không?
+  (V) Mình đang im lặng vì đây là điều đúng, hay vì mình không muốn đối mặt
+      với câu trả lời?
+- Audit phát hiện: Conscience cần đứng trước mọi Method và trước Genome Review
+  — không phải sau. Hai Genome Debts từ 23.7 và 23.8 nâng thành MEDIUM: cần
+  Sprint riêng để bổ sung Method 7 và kết nối Inner Questions™ vào Doctrine.
+
+**Genome Verdict:** PASS WITH CONCERNS — Genome Debt MEDIUM từ Sprint 23.7
+được mở rộng, cần address trước Sprint 25.x.
+
+*Liên quan:* `docs/THE_CONSCIENCE_OF_COMPANION.md`,
+`docs/THE_COMPANION_CIVILIZATION_LAWS.md`,
+`docs/THE_COMPANION_DOCTRINE.md`.
