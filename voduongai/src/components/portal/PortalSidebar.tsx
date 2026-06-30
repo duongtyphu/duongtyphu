@@ -48,7 +48,7 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
       {portalNavGroups.map((section, si) => (
         <div key={si} className={si > 0 ? "mt-4" : ""}>
           {section.group && showLabels && (
-            <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-white/40">
+            <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
               {section.emoji ? `${section.emoji} ${section.group}` : section.group}
             </p>
           )}
@@ -87,8 +87,8 @@ function NavLink({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}
-      className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
-        active ? "gemos-nav-active text-white" : "text-white/60 hover:bg-white/[0.08] hover:text-white"
+      className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition ${
+        active ? "gemos-nav-active font-bold text-blue-700" : "font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900"
       } ${!showLabel ? "justify-center" : ""}`}
     >
       {active && (
@@ -100,7 +100,7 @@ function NavLink({
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
       {showLabel && <span className="truncate">{item.label}</span>}
       {!showLabel && (
-        <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-white/10 bg-[#0B1F4D] px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-xl transition group-hover:opacity-100">
+        <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-900 opacity-0 shadow-lg transition group-hover:opacity-100">
           {item.label}
         </span>
       )}

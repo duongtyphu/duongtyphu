@@ -21,7 +21,7 @@ export function PortalHeader({
           onClick={onToggleSidebar}
           aria-label="Mở hoặc thu gọn menu"
           title="Mở hoặc thu gọn menu"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition hover:border-brand-blue/40 hover:text-white"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-brand-blue hover:text-brand-blue"
         >
           <Menu className="h-4.5 w-4.5" />
         </button>
@@ -31,7 +31,7 @@ export function PortalHeader({
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
-          <span className="hidden text-sm font-extrabold tracking-tight text-white sm:inline">Portal</span>
+          <span className="hidden text-sm font-extrabold tracking-tight text-gray-900 sm:inline">Portal</span>
         </Link>
 
         <div className="ml-auto flex flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">
@@ -41,7 +41,7 @@ export function PortalHeader({
             href="/portal/updates"
             aria-label="Thông báo"
             title="Thông báo"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition hover:border-brand-blue/40 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-brand-blue hover:text-brand-blue"
           >
             <Bell className="h-4 w-4" />
           </Link>
@@ -50,7 +50,7 @@ export function PortalHeader({
             href="/portal/saved"
             aria-label="Nội dung đã lưu"
             title="Nội dung đã lưu"
-            className="hidden h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition hover:border-brand-blue/40 hover:text-white sm:flex"
+            className="hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-600 transition hover:border-brand-blue hover:text-brand-blue sm:flex"
           >
             <Bookmark className="h-4 w-4" />
           </Link>

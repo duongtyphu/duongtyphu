@@ -74,7 +74,7 @@ export function PortalShell({
 
       <div className="flex flex-1">
         <aside
-          className={`hidden shrink-0 border-r border-white/10 py-6 transition-all md:block ${
+          className={`hidden shrink-0 border-r border-gray-200 bg-white py-6 transition-all md:block ${
             collapsed ? "w-[68px] px-2" : "w-64 px-4"
           }`}
         >
@@ -91,14 +91,14 @@ export function PortalShell({
               onClick={() => setDrawerOpen(false)}
               className="absolute inset-0 bg-black/60"
             />
-            <div className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-white/10 bg-[#0B1F4D] p-4 shadow-2xl">
+            <div className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-gray-200 bg-white p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-extrabold text-white">Menu Portal</span>
+                <span className="text-sm font-extrabold text-gray-900">Menu Portal</span>
                 <button
                   type="button"
                   aria-label="Đóng menu"
                   onClick={() => setDrawerOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 text-white/70"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500"
                 >
                   <X className="h-4 w-4" />
                 </button>
