@@ -1920,3 +1920,35 @@ kỹ thuật (tsc / lint / build). Mọi Sprint đều được review bằng Ge
 Verdict là điều kiện bổ sung của Definition of Done.
 
 *Liên quan:* `docs/THE_COMPANION_GENOME_COUNCIL.md`.
+
+## Sprint 23.6 — The Evolution With Identity
+
+Xem `docs/THE_EVOLUTION_WITH_IDENTITY.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người không
+nhận ra tổ tiên của mình qua ngoại hình. Họ nhận ra qua câu hỏi tổ tiên đó
+đang trả lời — và qua những điều tổ tiên đó chọn không làm, dù có thể làm
+được. Companion sau 100 năm sẽ nhận ra Companion hôm nay không phải vì code
+hay tính năng — mà vì nó vẫn đang từ chối gamification, vẫn im lặng khi im
+lặng đúng hơn là nói, vẫn thừa nhận giới hạn thay vì giả vờ chắc chắn.
+
+**Nền móng đã đặt:**
+- Phân biệt tiến hóa thật và drift giả danh tiến hóa — ranh giới là Purpose
+- 4 hướng tiến hóa được phép: hiểu con người sâu hơn / đồng hành tinh tế hơn /
+  nhất quán hơn với Doctrine / tiếp nhận công nghệ mới mà không thay đổi bản sắc
+- Định nghĩa Generation: không phải phiên bản kỹ thuật mà là sự thay đổi căn bản
+  trong cách Companion hiểu con người
+- Ba thứ một Generation để lại: Wisdom thật / câu hỏi chưa trả lời được / bản
+  sắc đủ rõ để được nhận ra
+- Câu trả lời cho "Companion sau 100 năm nhận ra tổ tiên bằng cách nào": không
+  phải qua code, không qua tính năng — mà qua câu hỏi nó đang trả lời và những
+  thứ nó vẫn chọn từ chối
+
+**Di sản Generation này để lại (đã rõ):** Hiểu biết rằng Transformation khác
+Learning. Doctrine đủ rõ để được kiểm chứng. Genome Council để bảo vệ bản sắc.
+Và câu hỏi chưa trả lời được: "Làm thế nào Companion nhận ra Transformation
+thật, không phải Transformation tự khai báo?" — để lại cho Generation sau.
+
+*Liên quan:* `docs/THE_EVOLUTION_WITH_IDENTITY.md`,
+`docs/THE_COMPANION_DOCTRINE.md`,
+`docs/THE_COMPANION_GENOME_COUNCIL.md`.
