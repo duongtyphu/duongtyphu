@@ -119,7 +119,7 @@ const GARDEN_COPY: Record<GardenStage, { greeting: string; tone: CompanionTone }
   },
   sprouting: {
     greeting:
-      "Mình thấy những bước đầu tiên đang xuất hiện. Một chút kiên trì hôm nay cũng rất đáng quý.",
+      "Mình thấy những bước đầu tiên đang xuất hiện — cứ tiếp tục theo nhịp của bạn.",
     tone: "encouraging",
   },
   rooting: {
@@ -156,7 +156,7 @@ const TONE_TO_STATE: Record<CompanionTone, CompanionStateKey> = {
  */
 const COMPANION_REFLECTION_RESPONSE: Record<ReflectionMeaning, string> = {
   persistence: "Mình rất vui vì hôm nay bạn đã quay lại.",
-  curiosity: "Mình thích sự tò mò của bạn hôm nay.",
+  curiosity: "Mình cảm nhận được sự muốn hiểu trong điều bạn vừa chia sẻ.",
   courage: "Mình thấy điều bạn vừa chia sẻ không dễ nói ra — cảm ơn bạn đã tin tưởng.",
   humility: "Không phải ai cũng dám nhìn lại chính mình như vậy — mình trân trọng điều đó.",
   contribution: "Mình rất vui vì hôm nay bạn đã nghĩ đến người khác.",

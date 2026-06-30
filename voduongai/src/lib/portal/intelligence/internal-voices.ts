@@ -111,7 +111,7 @@ function KnowledgeVoice(signals: VoiceSignal): VoiceMessage | null {
   if (!signals.pathname.startsWith("/portal/knowledge")) return null;
   return {
     voice: "knowledge",
-    line: "Có lẽ hôm nay điều cần nhất là hiểu đúng trước khi làm nhanh.",
+    line: "Mình đang ở đây — nếu muốn hiểu kỹ hơn trước khi bắt tay vào làm, mình sẵn sàng cùng bạn.",
     priority: "low",
   };
 }

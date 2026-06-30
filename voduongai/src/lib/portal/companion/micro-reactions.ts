@@ -111,12 +111,11 @@ export const MICRO_REACTIONS: MicroReaction[] = [
     "Mình không đi đâu trong lúc bạn vắng mặt.",
   ]),
   ...group("encouragement", [
-    "Một bước nhỏ hôm nay cũng đáng quý.",
+    "Mình thấy bạn vẫn đang tiếp tục — điều đó không nhỏ.",
     "Bạn vẫn đang tiếp tục, điều đó không nhỏ.",
     "Mình thấy bạn đã đi được một đoạn rồi.",
     "Cứ tiếp tục theo nhịp của bạn.",
     "Mình tin nhịp đi của bạn là đủ.",
-    "Một chút kiên trì hôm nay cũng rất đáng quý.",
     "Bạn không cần đi nhanh, chỉ cần đi tiếp.",
     "Mình thấy được sự cố gắng của bạn, dù nhỏ.",
   ]),
