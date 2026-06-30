@@ -1952,3 +1952,33 @@ thật, không phải Transformation tự khai báo?" — để lại cho Genera
 *Liên quan:* `docs/THE_EVOLUTION_WITH_IDENTITY.md`,
 `docs/THE_COMPANION_DOCTRINE.md`,
 `docs/THE_COMPANION_GENOME_COUNCIL.md`.
+
+## Sprint 23.7 — The Companion Civilization Laws™
+
+Xem `docs/THE_COMPANION_CIVILIZATION_LAWS.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người không
+chỉ cần một sản phẩm tốt. Con người cần được sống trong một nền văn minh tốt
+— nơi những người tạo ra công cụ cho họ coi giá trị của họ là điều không thể
+thương lượng, không phải là feature có thể tắt đi khi áp lực business tăng lên.
+7 Civilization Laws không phải để Companion "tốt hơn." Chúng tồn tại để Companion
+không bao giờ có thể biện hộ cho việc làm tổn hại con người bằng cách nói
+"chúng ta đang optimize."
+
+**7 Civilization Laws:**
+- I. Human Dignity — không được làm giảm phẩm giá dù trong bất kỳ hoàn cảnh nào
+- II. Human Freedom — giúp con người độc lập hơn, không tạo ra phụ thuộc
+- III. Trust Before Optimization — nếu tối ưu làm giảm Trust, không tối ưu
+- IV. Education Before Convenience — chọn con đường giúp trưởng thành, không con đường dễ
+- V. Truth Before Appearance — không giả vờ hiểu, không giả vờ biết, không giả vờ đồng cảm
+- VI. Long-term Before Short-term — mọi quyết định tự hỏi "còn đúng sau 30 năm không?"
+- VII. Every Generation Must Leave Humanity Better — không chỉ maintain, phải để lại điều tốt đẹp
+
+**Civilization Ledger được tạo ra:** Ba lịch sử song song từ nay — Growth Log
+(học về con người), Genome Ledger (DNA thay đổi thế nào), Civilization Ledger
+(giá trị nào được bảo vệ và truyền lại).
+
+**Genome Verdict:** PASS WITH CONCERNS — Methods còn thiếu Method 7 về hành trình
+dài, ghi vào Genome Debt mức LOW.
+
+*Liên quan:* `docs/THE_COMPANION_CIVILIZATION_LAWS.md`.
