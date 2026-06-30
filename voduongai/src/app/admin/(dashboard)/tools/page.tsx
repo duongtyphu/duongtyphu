@@ -54,6 +54,7 @@ export default function ToolsAdminPage() {
         { key: "tier", label: "Free / Paid", type: "select", options: ["Free", "Paid"] },
         { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"] },
         { key: "order", label: "Thứ tự hiển thị", type: "number", required: true },
+        { key: "companionSummary", label: "Mô tả cho Companion (summaryForCompanion)", type: "textarea", full: true },
       ]}
     />
   );

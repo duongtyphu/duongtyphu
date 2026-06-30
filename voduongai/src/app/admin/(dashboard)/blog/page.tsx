@@ -42,6 +42,10 @@ export default function BlogAdminPage() {
         { key: "metaTitle", label: "Meta title", type: "text" },
         { key: "metaDescription", label: "Meta description", type: "textarea", full: true },
         { key: "ogImage", label: "Open Graph image", type: "text" },
+        { key: "companionSummary", label: "Mô tả cho Companion (summaryForCompanion)", type: "textarea", full: true },
+        { key: "keyTakeaways", label: "Key Takeaways (mỗi dòng 1 điểm)", type: "textarea", full: true },
+        { key: "relatedTools", label: "Công cụ liên quan (slug, cách nhau bởi dấu phẩy)", type: "text", full: true },
+        { key: "relatedCourseHref", label: "Khóa học liên quan (href)", type: "text" },
       ]}
     />
   );

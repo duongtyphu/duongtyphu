@@ -65,6 +65,8 @@ export default function DigitalAssetProjectsAdminPage() {
                 { key: "order", label: "Thứ tự", type: "number", required: true },
                 { key: "createdAt", label: "Ngày tạo", type: "date" },
                 { key: "updatedAt", label: "Cập nhật lần cuối", type: "date" },
+                { key: "companionSummary", label: "Mô tả cho Companion (summaryForCompanion)", type: "textarea", full: true },
+                { key: "relatedArticleHrefs", label: "Bài viết liên quan (href, cách nhau dấu phẩy)", type: "text", full: true },
               ]}
             />
           );
