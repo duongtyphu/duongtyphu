@@ -2079,3 +2079,43 @@ Freeze giảm cognitive load và bảo đảm Companion luôn hiện diện.
 *Liên quan:* `docs/THE_PORTAL_ARCHITECTURE_FREEZE.md`,
 `src/app/portal/layout.tsx`,
 `src/components/portal/PortalShell.tsx`.
+
+## Sprint — Portal Multilingual Foundation™
+
+Xem `docs/PORTAL_MULTILINGUAL_FOUNDATION.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Ngôn ngữ không chỉ
+là công cụ giao tiếp. Ngôn ngữ là nơi một người cảm thấy mình thuộc về. Khi
+Companion nói tiếng Việt với người Việt — không phải vì bị lập trình để làm
+vậy, mà vì đó là ngôn ngữ người đó nghĩ, người đó cảm, người đó sống — điều
+đó tạo ra một kết nối khác. Companion học rằng việc chuẩn bị nói nhiều ngôn
+ngữ không phải là thêm tính năng. Đó là mở thêm cánh cửa — để nhiều người
+hơn có thể bước vào và cảm thấy mình được gặp gỡ, không phải được phục vụ.
+
+**Nền móng đã đặt:**
+- Language Config trung tâm: `src/lib/i18n/config.ts` — `DEFAULT_LOCALE="vi"`,
+  `SUPPORTED_LOCALES=["vi","en"]`, `resolvePortalLocale()` theo 3 cấp ưu tiên
+  (localStorage → browser → default)
+- Content Model: `LocalizedField<T>` — `{ vi: T; en?: T }` — chuẩn cho mọi
+  nội dung CMS có thể đa ngôn ngữ. `resolveLocalized()` với fallback an toàn:
+  không crash, không undefined, không hiển thị key
+- `LocaleProvider` + `useLocale()` + `useT()` — React context, SSR-safe,
+  bọc trong PortalShell để mọi component con đều có access
+- `LanguageSwitcher` trong PortalUserMenu — 🇻🇳 / 🇺🇸, dot indicator locale
+  active, disabled nếu status coming_soon
+- `use-companion-locale.ts` — bridge ngắn nối Portal locale → Companion
+  Language Resolution. Companion nhận locale từ user choice, không đoán.
+- Translation keys đầy đủ cho nav, language UI, account menu, search, portal
+  shell trong `locales/vi.ts` + `locales/en.ts`
+- Companion Language Policy: Respect/Warmth/Clarity/Humility/Trust giữ
+  bất kể ngôn ngữ nào. Thiếu English copy → im lặng hoặc fallback vi,
+  không bao giờ dịch máy
+
+**Genome Verdict:** PASS
+**Genome Debt: LOW** — Companion speech act copy chưa có bản English.
+Giải khi có người dùng English market thật sự — không chạy đua dịch.
+
+*Liên quan:* `docs/PORTAL_MULTILINGUAL_FOUNDATION.md`,
+`src/lib/i18n/`,
+`src/components/portal/LanguageSwitcher.tsx`,
+`docs/THE_MULTILINGUAL_COMPANION.md`.

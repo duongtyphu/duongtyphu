@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Settings, ExternalLink, LogOut } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
+import { LanguageSwitcher } from "@/components/portal/LanguageSwitcher";
 
 export function PortalUserMenu({ email, fullName }: { email: string; fullName?: string }) {
   const [open, setOpen] = useState(false);
@@ -87,6 +88,10 @@ export function PortalUserMenu({ email, fullName }: { email: string; fullName?: 
               <LogOut className="h-4 w-4" />
               Đăng xuất
             </button>
+          </div>
+
+          <div className="mt-2 border-t border-white/10 pt-2">
+            <LanguageSwitcher onSelect={() => setOpen(false)} />
           </div>
         </div>
       )}

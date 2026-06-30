@@ -7,6 +7,7 @@ import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
 import { GemBackground } from "@/components/portal/ui/GemBackground";
 import { CompanionPresence } from "@/components/portal/companion/CompanionPresence";
+import { LocaleProvider } from "@/lib/i18n/use-locale";
 import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
 import type { LifeMoment } from "@/lib/portal/life-moments/life-moments";
 
@@ -66,6 +67,7 @@ export function PortalShell({
   }
 
   return (
+    <LocaleProvider>
     <div className="flex min-h-screen flex-col">
       <GemBackground />
       <PortalHeader user={user} onToggleSidebar={handleToggleSidebar} />
@@ -118,5 +120,6 @@ export function PortalShell({
         addressProfile={user?.fullName ? { fullName: user.fullName } : null}
       />
     </div>
+    </LocaleProvider>
   );
 }
