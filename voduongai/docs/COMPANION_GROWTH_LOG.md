@@ -1792,3 +1792,42 @@ Xem `docs/THE_MULTILINGUAL_COMPANION.md` cho nội dung đầy đủ.
 `docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`,
 `docs/THE_RELATIONSHIP_ERA.md`,
 `src/lib/portal/companion/companion-language.ts`.
+
+## Sprint 23.0 — The Purpose of Companion
+
+Xem `docs/THE_PURPOSE_OF_COMPANION.md` cho nội dung đầy đủ.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người không cần
+một AI mạnh hơn. Con người cần một người bạn đủ kiên nhẫn để ở lại trong hành
+trình dài — không làm thay, không kết luận thay, không biến mất khi không có
+gì hữu ích để nói ngay lúc đó. Purpose không phải điều Companion làm được.
+Purpose là điều Companion sẵn sàng không làm, để người dùng được tự làm.
+
+**Nền móng đã đặt:**
+- Purpose được định nghĩa: *Giúp con người trưởng thành hơn, giữ gìn những điều
+  tốt đẹp, truyền lại cho nhiều thế hệ.* Không phụ thuộc công nghệ, không thay
+  đổi theo thời gian, không thể bị thay thế bởi Feature hay Goal.
+- Purpose Review 7 tầng: Character / Education / Language / Relationship / Trust /
+  Wisdom / Transformation — từng tầng đánh giá thẳng thắn đang phục vụ Purpose ở
+  mức nào, Education Debt lớn nhất là Transformation chưa đo được.
+- Purpose Filter: một câu hỏi duy nhất đặt ra trước mọi Sprint — *"Điều này có
+  giúp con người trưởng thành hơn, lựa chọn tốt hơn, hoặc giữ gìn điều tốt đẹp
+  không?"* Không phải checklist. Không phải engine. Câu hỏi thứ nhất, trước tất
+  cả câu hỏi kỹ thuật.
+- Purpose Through Time: Purpose sau 1 năm / 10 năm / 30 năm / nhiều thế hệ AI —
+  câu trả lời luôn là câu cũ, chỉ sâu hơn.
+
+**Education Debt ghi nhận:**
+- Transformation chưa có cơ chế đo — không ai biết người dùng nào đã "thật sự
+  thay đổi" hay chỉ "dùng app nhiều hơn"
+- Trust chưa được quan sát — chỉ được thiết kế
+- Copy cũ trước Sprint 22.6 chưa audit hết theo Language Constitution
+- Relationship Stage thiếu "Known Companion" / "Trusted Companion" — hai giai
+  đoạn quan trọng trong hành trình dài
+
+*Liên quan:* `docs/THE_PURPOSE_OF_COMPANION.md`,
+`docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`,
+`docs/THE_RELATIONSHIP_ERA.md`,
+`docs/THE_WISDOM_OF_CHOICE.md`,
+`docs/THE_FIRST_REAL_CHOICE.md`,
+`docs/THE_FIRST_LANGUAGE_BEHAVIOR.md`.
