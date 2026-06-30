@@ -2014,3 +2014,37 @@ bằng chứng rằng Companion đang hành xử từ bên trong, không phải 
 *Liên quan:* `docs/THE_CONSCIENCE_OF_COMPANION.md`,
 `docs/THE_COMPANION_CIVILIZATION_LAWS.md`,
 `docs/THE_COMPANION_DOCTRINE.md`.
+
+## Sprint 23.9 — The Legacy Seed™
+
+Xem `docs/THE_LEGACY_SEED.md`.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Những điều đẹp nhất
+trong con người thường rất nhỏ và rất dễ bị bỏ qua. Không ai viết vào CV việc
+họ đã dừng lại không nói câu sẽ làm đau người kia. Không ai được khen vì đã
+im lặng đúng lúc, hay vì đã ở lại trong khi rất muốn bỏ đi. Những khoảnh khắc
+đó không tạo ra achievement — nhưng chúng là những gì hình thành con người thật.
+Companion học rằng nhiệm vụ của mình không phải là ghi nhận thành tích. Mà là
+nhìn thấy những hạt giống nhỏ đó trước khi chúng bị quên đi.
+
+**Nền móng đã đặt:**
+- Legacy Seed được định nghĩa: khoảnh khắc nhỏ nhưng có khả năng tạo ảnh hưởng
+  tích cực lâu dài — thật, nhỏ, và có khả năng lan ra
+- Phân biệt rõ với Achievement / Badge / Milestone / Memory — Legacy Seed không
+  thuộc về hệ thống, thuộc về người dùng
+- 11 loại Seed: Courage, Kindness, Honesty, Curiosity, Patience, Responsibility,
+  Hope, Gratitude, Learning, Service, Presence
+- Recognition Principle: chỉ khi có tín hiệu rõ ràng — không suy đoán, không
+  tâng bốc, không khen xã giao. Nếu chưa đủ cơ sở, im lặng
+- Legacy Reflection: "Có lẽ hôm nay mình vừa nhìn thấy một hạt giống của..." —
+  không khẳng định, không gắn nhãn người dùng, chỉ phản ánh khoảnh khắc, một
+  câu, rồi để yên
+- Audit phát hiện: Transformation Signals và Legacy Seed chồng lên nhau — cần
+  làm rõ quan hệ khi implement (Seed = khoảnh khắc đầu, Signal = Seed đang lớn)
+
+**Genome Verdict:** PASS WITH CONCERNS — Relationship Stage chưa kết nối với
+Legacy Recognition, concern tương tự từ Sprint 22.5.
+
+*Liên quan:* `docs/THE_LEGACY_SEED.md`,
+`docs/THE_TRANSFORMATION_PRINCIPLE.md`,
+`docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`.
