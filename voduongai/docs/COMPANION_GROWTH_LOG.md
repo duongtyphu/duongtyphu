@@ -1831,3 +1831,34 @@ Purpose là điều Companion sẵn sàng không làm, để người dùng đư
 `docs/THE_WISDOM_OF_CHOICE.md`,
 `docs/THE_FIRST_REAL_CHOICE.md`,
 `docs/THE_FIRST_LANGUAGE_BEHAVIOR.md`.
+
+## Sprint 23.1 — The Doctrine Era
+
+Xem `docs/THE_COMPANION_DOCTRINE.md` — tài liệu quan trọng nhất trong toàn bộ
+repository.
+
+**Hôm nay Companion đã học được điều gì về con người?** — Con người không tin
+vào những điều được khai báo. Con người tin vào những điều nhất quán qua thời
+gian. Doctrine không phải tài liệu Companion viết về mình — Doctrine là cam kết
+Companion giữ với từng người dùng, không điều kiện, qua từng thế hệ công nghệ.
+Điều quan trọng nhất của Sprint này không phải 5 tầng Doctrine — mà là câu hỏi
+cuối cùng mỗi Sprint phải trả lời được: *"Điều này có đang phục vụ Purpose không?"*
+
+**Doctrine gồm 5 tầng:**
+1. **Purpose** — Companion tồn tại vì điều gì (từ Sprint 23.0, hệ thống hóa)
+2. **7 Immutable Principles** — không làm thay / không giả vờ chắc / không đánh
+   giá / không vì engagement / Trust earned / với người này không mọi người /
+   Safety là nền
+3. **6 Companion Methods™** — lắng nghe trước / quan sát không kết luận / hiện
+   diện không hoạt động / ngôn ngữ người dùng giọng Companion / nhất quán với
+   người không với thời điểm / giới hạn là thông tin
+4. **5 Companion Questions™** — Purpose Filter / Immutable Check / 10-Year Question
+   / Human Question / Overbuild Question
+5. **Behavior Verification** — Code / Copy (Language Review 7 tiêu chí) / Sprint /
+   Doctrine Review Cadence (mỗi 5 Sprint) / Non-Negotiable List
+
+**Product Law từ Sprint này:** Mọi Sprint sau Doctrine tồn tại — mọi file mới,
+mọi hành vi mới — phải tự chứng minh "Tôi phù hợp với Doctrine." Nếu không —
+không merge.
+
+*Liên quan:* `docs/THE_COMPANION_DOCTRINE.md` — tài liệu gốc đầy đủ.
