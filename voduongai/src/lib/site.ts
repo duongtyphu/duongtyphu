@@ -1,4 +1,4 @@
-import { portalHubs } from "@/lib/portal/hubs";
+import { portalHubs, portalNavSections } from "@/lib/portal/hubs";
 
 export const siteConfig = {
   name: "VO DUONG AI",
@@ -40,16 +40,10 @@ export const mainNav = [
   { label: "Blog AI", href: "/blog" },
 ];
 
-// The Portal sidebar now shows only the 6 GemOS hubs (see
-// src/lib/portal/hubs.ts) — every legacy feature page still exists and is
-// reachable from inside its hub's module grid, it just no longer has its
-// own top-level sidebar entry.
-export const portalNavGroups = [
-  {
-    group: null as string | null,
-    items: portalHubs.map((h) => ({ label: h.label, href: h.href })),
-  },
-];
+// Portal Knowledge Architecture — 3 hành trình: Học hỏi / Xây dựng / Trưởng thành.
+// portalNavGroups now proxies portalNavSections from hubs.ts — single source of truth.
+// Xem: docs/PORTAL_KNOWLEDGE_ARCHITECTURE.md
+export const portalNavGroups = portalNavSections;
 
 // Search index: hub entries plus every module inside each hub that has a
 // real destination (modules without an href are "coming soon" and aren't

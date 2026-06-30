@@ -125,3 +125,57 @@ export const portalHubs: PortalHub[] = [
 export function getHub(key: string) {
   return portalHubs.find((h) => h.key === key);
 }
+
+// ─────────────────────────────────────────────────────────
+// Portal Knowledge Architecture — 3 Hành trình
+// Sprint: Portal Knowledge Architecture
+// Xem: docs/PORTAL_KNOWLEDGE_ARCHITECTURE.md
+// ─────────────────────────────────────────────────────────
+
+export type NavSection = {
+  /** null = không hiển thị group header (dùng cho Trang chủ). */
+  group: string | null;
+  emoji?: string;
+  items: { label: string; href: string }[];
+};
+
+/**
+ * Cấu trúc sidebar theo 3 hành trình:
+ * Học hỏi / Xây dựng / Trưởng thành.
+ *
+ * Đây là nguồn sự thật duy nhất cho PortalSidebar.
+ * Mọi Project mới KHÔNG được thêm item vào đây từ page.tsx riêng
+ * (theo Portal Architecture Freeze — docs/THE_PORTAL_ARCHITECTURE_FREEZE.md).
+ */
+export const portalNavSections: NavSection[] = [
+  {
+    group: null,
+    items: [{ label: "Trang chủ", href: "/portal" }],
+  },
+  {
+    group: "Học hỏi",
+    emoji: "🌱",
+    items: [
+      { label: "Không gian AI", href: "/portal/tools" },
+      { label: "Thư viện tri thức", href: "/portal/library" },
+      { label: "Nhật ký học tập", href: "/portal/news" },
+    ],
+  },
+  {
+    group: "Xây dựng",
+    emoji: "🚀",
+    items: [
+      { label: "Học viện", href: "/portal/academy" },
+      { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
+      { label: "Cộng đồng", href: "/portal/community" },
+    ],
+  },
+  {
+    group: "Trưởng thành",
+    emoji: "🌟",
+    items: [
+      { label: "Companion", href: "/portal/companion" },
+      { label: "Hành trình của tôi", href: "/portal/journey" },
+    ],
+  },
+];

@@ -3,23 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Gem,
+  Home,
+  Cpu,
+  Library,
+  Notebook,
+  GraduationCap,
+  TrendingUp,
+  Users,
+  Sparkles,
   Compass,
-  BookOpen,
-  Rocket,
-  Globe,
-  Crown,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
 
 const navIcons: Record<string, LucideIcon> = {
-  "/portal": Gem,
+  "/portal": Home,
+  "/portal/tools": Cpu,
+  "/portal/library": Library,
+  "/portal/news": Notebook,
+  "/portal/academy": GraduationCap,
+  "/portal/opportunities": TrendingUp,
+  "/portal/community": Users,
+  "/portal/companion": Sparkles,
   "/portal/journey": Compass,
-  "/portal/knowledge": BookOpen,
-  "/portal/build": Rocket,
-  "/portal/connect": Globe,
-  "/portal/legacy": Crown,
 };
 
 function isItemActive(pathname: string, href: string) {
@@ -36,18 +42,28 @@ type PortalSidebarProps = {
 export function PortalSidebar({ collapsed = false, variant = "desktop", onNavigate }: PortalSidebarProps) {
   const pathname = usePathname() || "/portal";
   const showLabels = variant === "mobile" || !collapsed;
-  const items = portalNavGroups.flatMap((section) => section.items);
 
   return (
-    <nav className="space-y-1.5" aria-label="Điều hướng Portal">
-      {items.map((item) => (
-        <NavLink
-          key={item.href}
-          item={item}
-          active={isItemActive(pathname, item.href)}
-          showLabel={showLabels}
-          onNavigate={onNavigate}
-        />
+    <nav aria-label="Điều hướng Portal">
+      {portalNavGroups.map((section, si) => (
+        <div key={si} className={si > 0 ? "mt-4" : ""}>
+          {section.group && showLabels && (
+            <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-white/30">
+              {section.emoji ? `${section.emoji} ${section.group}` : section.group}
+            </p>
+          )}
+          <div className="space-y-0.5">
+            {section.items.map((item) => (
+              <NavLink
+                key={item.href}
+                item={item}
+                active={isItemActive(pathname, item.href)}
+                showLabel={showLabels}
+                onNavigate={onNavigate}
+              />
+            ))}
+          </div>
+        </div>
       ))}
     </nav>
   );

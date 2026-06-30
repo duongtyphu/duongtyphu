@@ -6,20 +6,22 @@
 export const en = {
   nav: {
     home: "Home",
+    // Legacy
     journey: "Journey",
     knowledge: "Knowledge",
     build: "Build",
     connect: "Connect",
     legacy: "Legacy",
-    learning: "Learning",
+    // Portal Knowledge Architecture — 3 journeys
+    sectionLearning: "Learning",
+    sectionBuilding: "Building",
+    sectionGrowth: "Growth",
     aiWorkspace: "AI Workspace",
     knowledgeLibrary: "Knowledge Library",
     learningJournal: "Learning Journal",
-    building: "Building",
     academy: "Academy",
     projectsOpportunities: "Projects & Opportunities",
     community: "Community",
-    growth: "Growth",
     companion: "Companion",
     myJourney: "My Journey",
     language: "Language",

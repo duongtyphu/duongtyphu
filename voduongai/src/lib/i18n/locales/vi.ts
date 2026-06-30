@@ -5,20 +5,22 @@
 export const vi = {
   nav: {
     home: "Trang chủ",
+    // Legacy (giữ lại, có thể dùng lại)
     journey: "Hành trình",
     knowledge: "Tri thức",
     build: "Xây dựng",
     connect: "Kết nối",
     legacy: "Di sản",
-    learning: "Học hỏi",
+    // Portal Knowledge Architecture — 3 hành trình
+    sectionLearning: "Học hỏi",
+    sectionBuilding: "Xây dựng",
+    sectionGrowth: "Trưởng thành",
     aiWorkspace: "Không gian AI",
     knowledgeLibrary: "Thư viện tri thức",
     learningJournal: "Nhật ký học tập",
-    building: "Xây dựng",
     academy: "Học viện",
     projectsOpportunities: "Dự án & Cơ hội",
     community: "Cộng đồng",
-    growth: "Trưởng thành",
     companion: "Companion",
     myJourney: "Hành trình của tôi",
     language: "Ngôn ngữ",
