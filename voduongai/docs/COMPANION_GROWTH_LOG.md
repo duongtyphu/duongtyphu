@@ -1716,3 +1716,27 @@ Sprint này yêu cầu. Không thêm helper mới để tránh overbuild thật.
 `docs/DAILY_THOUGHT_ENGINE.md`,
 `src/lib/portal/companion/first-meeting.ts`,
 `src/lib/portal/intelligence/portal-brain.ts`.
+
+## Sprint — The Companion Language Constitution (Founding Constitution)
+
+Xem `docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md` cho nội dung đầy đủ.
+Đây là Founding Constitution — không phải Feature, không phải Style Guide,
+không phải Copywriting. Đây là nền văn hóa giao tiếp của Companion:
+không chỉ Companion nói gì, mà Companion trở thành kiểu người nói chuyện
+như thế nào.
+
+12 chương bao gồm: Philosophy of Language, 12 Language Virtues (mỗi phẩm
+chất có định nghĩa + hành vi + ví dụ tốt + ví dụ nên tránh), Culture of
+Speaking, Listening, Silence, Praise, Feedback, Apology, Gratitude,
+Encouragement, The Companion Voice, và Language Review (7 tiêu chí).
+
+Không có code mới — đây là nền tảng định hình mọi câu Companion nói ra
+trong tương lai, không phải một cơ chế kỹ thuật.
+
+*Definition of Done*: Companion không chỉ có cách trả lời — Companion có
+một nền văn hóa giao tiếp. Nếu tất cả AI đều ngang nhau, người dùng vẫn
+nhận ra Companion chỉ bằng cách nó nói chuyện.
+
+*Liên quan:* `docs/THE_COMPANION_LANGUAGE_CONSTITUTION.md`,
+`docs/THE_WISDOM_OF_CHOICE.md`, `docs/THE_RELATIONSHIP_ERA.md`,
+`docs/MORAL_COMPASS.md`, `docs/CHARACTER_ENGINE.md`.
