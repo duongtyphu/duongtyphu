@@ -27,8 +27,8 @@ export default async function PromptsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Thư viện Prompt</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Thư viện Prompt</h1>
+        <p className="mt-2 text-gray-900">
           Prompt thực chiến theo từng danh mục — copy và dùng ngay.
         </p>
       </div>
@@ -40,12 +40,12 @@ export default async function PromptsPage() {
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {livePrompts.map((p) => (
-              <div key={p.id} className="card-shine flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+              <div key={p.id} className="card-shine flex h-full flex-col rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
                 <span className="inline-flex w-fit rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
                   {p.category}
                 </span>
-                <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-                <p className="mt-2 line-clamp-3 text-sm text-white/70">{p.content}</p>
+                <h3 className="mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
+                <p className="mt-2 line-clamp-3 text-sm text-gray-600">{p.content}</p>
                 <div className="mt-3">
                   <CopyPromptButton content={p.content} />
                 </div>

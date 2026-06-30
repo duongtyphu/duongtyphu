@@ -15,7 +15,7 @@ export function GemLockedOverlay({
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#7C3AED]/30 to-[#22D3EE]/20 text-[#A78BFA]">
         <Lock className="h-4 w-4" />
       </div>
-      <p className="max-w-xs text-sm text-white/75">{message}</p>
+      <p className="max-w-xs text-sm text-gray-600">{message}</p>
       <Button href={ctaHref} variant="primary" className="mt-1">
         {ctaLabel}
       </Button>

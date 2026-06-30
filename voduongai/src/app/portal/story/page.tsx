@@ -140,12 +140,12 @@ export default async function MyStoryPage() {
   return (
     <div className="space-y-8">
       <GemCard variant="featured" className="!p-7 sm:!p-8">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">My Story</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Cuốn sách hành trình của bạn</h1>
-        <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">My Story</p>
+        <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">Cuốn sách hành trình của bạn</h1>
+        <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
           Đây không phải hồ sơ. Đây là nơi Portal kể lại những bước bạn đã đi qua.
         </p>
-        <p className="mt-2 max-w-xl text-xs italic text-white/45">
+        <p className="mt-2 max-w-xl text-xs italic text-gray-900/45">
           Giai đoạn REFLECT trong hành trình mài giũa của bạn.
         </p>
       </GemCard>
@@ -166,29 +166,29 @@ export default async function MyStoryPage() {
       <HumanGrowthDashboardCard qualities={buildGrowingQualities(reflections)} />
 
       <GemCard>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">Bản đồ trưởng thành</p>
-        <p className="mt-2 text-sm text-white/70">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Bản đồ trưởng thành</p>
+        <p className="mt-2 text-sm text-gray-600">
           {growthSignals.length === 0
             ? "Bản đồ trưởng thành của bạn đang chờ những dấu chân đầu tiên."
             : "Nhìn lại những dấu chân nhỏ đã tạo nên hành trình của bạn."}
         </p>
         <a
           href="#story-timeline"
-          className="mt-3 inline-block text-sm font-semibold text-[#22D3EE] hover:underline"
+          className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline"
         >
           Xem My Story
         </a>
       </GemCard>
 
       <GemCard>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">Bản Gương Trưởng Thành</p>
-        <p className="mt-2 text-sm text-white/70">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Bản Gương Trưởng Thành</p>
+        <p className="mt-2 text-sm text-gray-600">
           {buildCompanionMirrorInvitation(growthSignals) ??
             "Nhìn lại những dấu chân đã tạo nên con người hôm nay."}
         </p>
         <a
           href="/portal/mirror"
-          className="mt-3 inline-block text-sm font-semibold text-[#22D3EE] hover:underline"
+          className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline"
         >
           Mở Mirror
         </a>
@@ -196,9 +196,9 @@ export default async function MyStoryPage() {
 
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Khu vườn trưởng thành của bạn</h2>
+          <h2 className="text-lg font-bold text-gray-900">Khu vườn trưởng thành của bạn</h2>
         </div>
-        <p className="mt-1 text-sm text-white/55">
+        <p className="mt-1 text-sm text-gray-500">
           My Story lưu lại dấu chân của bạn. Khu vườn là nơi nhìn thấy dấu chân đó đang lớn lên.
         </p>
         <div className="mt-4">
@@ -228,11 +228,11 @@ export default async function MyStoryPage() {
       />
 
       <section id="story-timeline">
-        <h2 className="text-lg font-bold text-white">Dòng thời gian của bạn</h2>
+        <h2 className="text-lg font-bold text-gray-900">Dòng thời gian của bạn</h2>
         <div className="mt-4 space-y-3">
           {!storageReady && (
             <GemCard>
-              <p className="text-sm text-white/65">
+              <p className="text-sm text-gray-600">
                 Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
               </p>
             </GemCard>

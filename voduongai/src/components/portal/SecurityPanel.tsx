@@ -44,21 +44,21 @@ export function SecurityPanel() {
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleChangePassword} className="card-shine grid gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:grid-cols-2">
-        <h3 className="col-span-full text-sm font-bold text-white">Đổi mật khẩu</h3>
+      <form onSubmit={handleChangePassword} className="card-shine grid gap-3 rounded-2xl border border-gray-200 bg-white/[0.04] p-5 sm:grid-cols-2">
+        <h3 className="col-span-full text-sm font-bold text-gray-900">Đổi mật khẩu</h3>
         <input
           type="password"
           value={newPw}
           onChange={(e) => setNewPw(e.target.value)}
           placeholder="Mật khẩu mới (tối thiểu 8 ký tự)"
-          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40"
+          className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
         />
         <input
           type="password"
           value={confirmPw}
           onChange={(e) => setConfirmPw(e.target.value)}
           placeholder="Xác nhận mật khẩu mới"
-          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40"
+          className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
         />
         <div className="col-span-full flex items-center gap-3">
           <button
@@ -76,16 +76,16 @@ export function SecurityPanel() {
         </div>
       </form>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-        <h3 className="text-sm font-bold text-white">Phiên đăng nhập</h3>
-        <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+        <h3 className="text-sm font-bold text-gray-900">Phiên đăng nhập</h3>
+        <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
           <div>
-            <p className="text-sm font-semibold text-white">Đăng xuất khỏi tất cả thiết bị</p>
-            <p className="mt-0.5 text-xs text-white/60">Kết thúc tất cả phiên đăng nhập đang hoạt động.</p>
+            <p className="text-sm font-semibold text-gray-900">Đăng xuất khỏi tất cả thiết bị</p>
+            <p className="mt-0.5 text-xs text-gray-500">Kết thúc tất cả phiên đăng nhập đang hoạt động.</p>
           </div>
           <button
             onClick={handleSignOutAll}
-            className="shrink-0 rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-white/70 hover:border-red-400/40 hover:text-red-300"
+            className="shrink-0 rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:border-red-400/40 hover:text-red-300"
           >
             Đăng xuất tất cả
           </button>

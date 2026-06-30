@@ -63,20 +63,20 @@ export default async function ReferralPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Hoa hồng giới thiệu</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Hoa hồng giới thiệu</h1>
+        <p className="mt-2 text-gray-900">
           Giới thiệu người khác tham gia VO DUONG AI Academy và nhận hoa hồng thật trên mỗi đơn hàng được xác nhận.
         </p>
       </div>
 
       {!email && (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white">
+        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-900">
           Đăng nhập để lấy link giới thiệu và xem hoa hồng của bạn.
         </div>
       )}
 
       {email && !refLink && (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white">
+        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-900">
           Tài khoản của bạn chưa được cấp mã giới thiệu. Liên hệ {siteConfig.contact.email} để được hỗ trợ.
         </div>
       )}
@@ -84,58 +84,58 @@ export default async function ReferralPage() {
       {email && refLink && (
         <>
           <div className="card-shine glow-blue rounded-2xl border border-brand-blue/30 bg-brand-blue/5 p-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-white/60">Link giới thiệu của bạn</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Link giới thiệu của bạn</p>
             <div className="mt-3 flex items-center gap-3">
               <input
                 readOnly
                 value={refLink}
-                className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white/80"
+                className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700"
               />
               <CopyLinkButton value={refLink} />
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Đã trả</p>
-              <p className="mt-2 text-2xl font-extrabold text-white">{totalPaid.toLocaleString("vi-VN")}đ</p>
-              <p className="mt-1 text-xs text-white/60">{paid.length} lượt</p>
+            <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Đã trả</p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-900">{totalPaid.toLocaleString("vi-VN")}đ</p>
+              <p className="mt-1 text-xs text-gray-500">{paid.length} lượt</p>
             </div>
-            <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Đang chờ</p>
-              <p className="mt-2 text-2xl font-extrabold text-white">{totalPending.toLocaleString("vi-VN")}đ</p>
-              <p className="mt-1 text-xs text-white/60">{pending.length + confirmed.length} lượt</p>
+            <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Đang chờ</p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-900">{totalPending.toLocaleString("vi-VN")}đ</p>
+              <p className="mt-1 text-xs text-gray-500">{pending.length + confirmed.length} lượt</p>
             </div>
-            <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <p className="text-xs font-semibold uppercase tracking-wider text-white/50">Tổng lượt giới thiệu</p>
-              <p className="mt-2 text-2xl font-extrabold text-white">{referrals.length}</p>
+            <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">Tổng lượt giới thiệu</p>
+              <p className="mt-2 text-2xl font-extrabold text-gray-900">{referrals.length}</p>
             </div>
           </div>
 
           {member?.created_at && (
-            <p className="text-xs text-white/40">
+            <p className="text-xs text-gray-400">
               Tham gia từ {new Date(member.created_at).toLocaleDateString("vi-VN")}
             </p>
           )}
 
           <div>
-            <h2 className="text-lg font-bold text-white">Lịch sử giới thiệu</h2>
+            <h2 className="text-lg font-bold text-gray-900">Lịch sử giới thiệu</h2>
             {referrals.length === 0 ? (
-              <p className="mt-3 text-sm text-white/60">Chưa có lượt giới thiệu nào — chia sẻ link ở trên để bắt đầu.</p>
+              <p className="mt-3 text-sm text-gray-500">Chưa có lượt giới thiệu nào — chia sẻ link ở trên để bắt đầu.</p>
             ) : (
               <div className="mt-4 space-y-2">
                 {referrals.map((r) => (
                   <div
                     key={r.id}
-                    className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                    className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 p-4"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-white">{r.referred_email}</p>
-                      <p className="text-xs text-white/50">{new Date(r.created_at).toLocaleDateString("vi-VN")}</p>
+                      <p className="text-sm font-semibold text-gray-900">{r.referred_email}</p>
+                      <p className="text-xs text-gray-500">{new Date(r.created_at).toLocaleDateString("vi-VN")}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-bold text-white">{r.commission_amount.toLocaleString("vi-VN")}đ</p>
-                      <p className="text-xs text-white/50">{statusLabel[r.status] ?? r.status}</p>
+                      <p className="text-sm font-bold text-gray-900">{r.commission_amount.toLocaleString("vi-VN")}đ</p>
+                      <p className="text-xs text-gray-500">{statusLabel[r.status] ?? r.status}</p>
                     </div>
                   </div>
                 ))}

@@ -131,8 +131,8 @@ export default async function VdaiAcademyPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">VO DUONG AI Academy</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">VO DUONG AI Academy</h1>
+        <p className="mt-2 text-gray-900">
           Hệ thống Affiliate Marketing ứng dụng AI — từ V-SOLO (một người)
           đến V-SCALE (mở rộng đội nhóm), cùng theo khung phương pháp A5
           System.
@@ -146,10 +146,10 @@ export default async function VdaiAcademyPage() {
           return (
           <div
             key={t.id}
-            className="card-shine flex flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6"
+            className="card-shine flex flex-col rounded-2xl border border-gray-200 bg-white/[0.04] p-6"
           >
             <div className="flex items-baseline justify-between gap-3">
-              <h2 className="text-lg font-extrabold text-white">{t.name}</h2>
+              <h2 className="text-lg font-extrabold text-gray-900">{t.name}</h2>
               <span className="text-xl font-extrabold text-brand-orange">
                 {price.toLocaleString("vi-VN")}đ
               </span>
@@ -160,17 +160,17 @@ export default async function VdaiAcademyPage() {
               </span>
             )}
             {live && (
-              <span className="mt-1 inline-flex w-fit rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white">
+              <span className="mt-1 inline-flex w-fit rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-900">
                 {courseStatusLabel[live.status] ?? live.status}
               </span>
             )}
-            <p className="mt-3 text-sm leading-relaxed text-white/70">{live?.description || t.tagline}</p>
+            <p className="mt-3 text-sm leading-relaxed text-gray-600">{live?.description || t.tagline}</p>
 
             <div className="mt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
                 Phù hợp với
               </h3>
-              <ul className="mt-2 space-y-1.5 text-sm text-white/80">
+              <ul className="mt-2 space-y-1.5 text-sm text-gray-700">
                 {t.audience.map((a) => (
                   <li key={a}>• {a}</li>
                 ))}
@@ -178,10 +178,10 @@ export default async function VdaiAcademyPage() {
             </div>
 
             <div className="mt-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-white/50">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
                 Bạn nhận được
               </h3>
-              <ul className="mt-2 space-y-1.5 text-sm text-white/80">
+              <ul className="mt-2 space-y-1.5 text-sm text-gray-700">
                 {t.outputs.map((o) => (
                   <li key={o}>• {o}</li>
                 ))}
@@ -200,10 +200,10 @@ export default async function VdaiAcademyPage() {
           {a5System.map((s) => (
             <div
               key={s.step}
-              className="card-shine rounded-xl border border-white/10 bg-white/[0.04] p-4"
+              className="card-shine rounded-xl border border-gray-200 bg-white/[0.04] p-4"
             >
-              <p className="text-sm font-bold text-white">{s.step}</p>
-              <p className="mt-1 text-xs leading-relaxed text-white/60">{s.desc}</p>
+              <p className="text-sm font-bold text-gray-900">{s.step}</p>
+              <p className="mt-1 text-xs leading-relaxed text-gray-500">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -218,9 +218,9 @@ export default async function VdaiAcademyPage() {
             {liveClasses.map((c) => {
               const seatsLeft = c.seats_total != null ? c.seats_total - (c.seats_taken ?? 0) : null;
               return (
-                <div key={c.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-                  <h3 className="text-sm font-bold text-white">{c.course_name}</h3>
-                  <div className="mt-2 space-y-1 text-xs text-white/70">
+                <div key={c.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+                  <h3 className="text-sm font-bold text-gray-900">{c.course_name}</h3>
+                  <div className="mt-2 space-y-1 text-xs text-gray-600">
                     {(c.start_date || c.end_date) && (
                       <p>
                         🗓 {formatDate(c.start_date)}
@@ -256,14 +256,14 @@ export default async function VdaiAcademyPage() {
             {liveLessons.map((l) => {
               const owned = l.price === 0 || purchasedLessonIds.has(String(l.id));
               return (
-                <div key={l.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+                <div key={l.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <h3 className="text-sm font-bold text-white">{l.title}</h3>
+                    <h3 className="text-sm font-bold text-gray-900">{l.title}</h3>
                     <span className="shrink-0 rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold text-brand-orange">
                       {l.price > 0 ? (owned ? "Đã sở hữu" : `${l.price.toLocaleString("vi-VN")}đ`) : "Miễn phí"}
                     </span>
                   </div>
-                  {l.description && <p className="mt-2 text-sm text-white/70">{l.description}</p>}
+                  {l.description && <p className="mt-2 text-sm text-gray-600">{l.description}</p>}
                   {owned ? (
                     <div className="mt-3 flex flex-wrap gap-3">
                       {l.video_url && (
@@ -308,9 +308,9 @@ export default async function VdaiAcademyPage() {
         </h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {vdaiCourses.map((c) => (
-            <div key={c.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <h3 className="text-sm font-bold text-white">{c.title}</h3>
-              <p className="mt-2 text-sm text-white">{c.description}</p>
+            <div key={c.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+              <h3 className="text-sm font-bold text-gray-900">{c.title}</h3>
+              <p className="mt-2 text-sm text-gray-900">{c.description}</p>
             </div>
           ))}
         </div>

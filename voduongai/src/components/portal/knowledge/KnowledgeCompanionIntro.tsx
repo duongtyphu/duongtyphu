@@ -50,17 +50,17 @@ export function KnowledgeCompanionIntro({
     <GemCard variant="featured">
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-[#A78BFA]" />
-        <h2 className="text-sm font-bold text-white">
+        <h2 className="text-sm font-bold text-gray-900">
           {companionLine ? "Companion" : "AI Knowledge Coach"}
         </h2>
       </div>
-      <p className="mt-3 text-sm text-white/70">{companionLine ?? tip.message}</p>
+      <p className="mt-3 text-sm text-gray-600">{companionLine ?? tip.message}</p>
 
       {evolution && emphasized.length > 0 && (
         <ul className="mt-3 space-y-1">
           {emphasized.map((item) => (
-            <li key={item.id} className="text-xs text-white/55">
-              <a href={item.href} className="underline decoration-white/20 hover:text-white">
+            <li key={item.id} className="text-xs text-gray-500">
+              <a href={item.href} className="underline decoration-white/20 hover:text-gray-900">
                 {item.title}
               </a>
             </li>

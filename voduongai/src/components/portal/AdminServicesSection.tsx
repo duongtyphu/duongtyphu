@@ -13,7 +13,7 @@ export function AdminServicesSection() {
   if (!ready) return null;
 
   if (published.length === 0) {
-    return <p className="text-sm text-white/40">Chưa có dịch vụ nào được công bố.</p>;
+    return <p className="text-sm text-gray-400">Chưa có dịch vụ nào được công bố.</p>;
   }
 
   return (
@@ -24,9 +24,9 @@ export function AdminServicesSection() {
             ? `mailto:${s.ctaValue || siteConfig.contact.email}`
             : s.ctaValue || "#";
         return (
-          <div key={s.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-            <h3 className="text-sm font-bold text-white">{s.title}</h3>
-            <p className="mt-2 text-sm text-white">{s.description}</p>
+          <div key={s.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+            <h3 className="text-sm font-bold text-gray-900">{s.title}</h3>
+            <p className="mt-2 text-sm text-gray-900">{s.description}</p>
             <a href={href} target={s.ctaType === "link" ? "_blank" : undefined} rel="noopener noreferrer" className="mt-4 inline-block text-sm font-semibold text-brand-blue hover:underline">
               {s.ctaLabel} →
             </a>

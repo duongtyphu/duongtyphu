@@ -40,7 +40,7 @@ export function CompanionMicroReactionBubble({
     <div
       role="status"
       aria-live="polite"
-      className={`companion-micro-reaction-bubble pointer-events-none absolute bottom-full right-0 mb-3 w-[min(70vw,210px)] rounded-2xl border border-white/10 bg-[#0B1F4D]/90 px-3.5 py-2 text-left text-xs leading-snug text-white/85 shadow-lg backdrop-blur transition-all duration-300 ${
+      className={`companion-micro-reaction-bubble pointer-events-none absolute bottom-full right-0 mb-3 w-[min(70vw,210px)] rounded-2xl border border-gray-200 bg-white/90 px-3.5 py-2 text-left text-xs leading-snug text-gray-900/85 shadow-lg backdrop-blur transition-all duration-300 ${
         visible ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"
       }`}
     >

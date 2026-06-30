@@ -79,7 +79,7 @@ export function FirstFootprintCeremony({ originLine = null }: { originLine?: str
 
         {step === "opening" && (
           <>
-            <p className="mt-8 text-lg leading-relaxed text-white/90">
+            <p className="mt-8 text-lg leading-relaxed text-gray-800">
               Chào bạn.
               <br />
               Cảm ơn vì đã ghé nơi này.
@@ -91,7 +91,7 @@ export function FirstFootprintCeremony({ originLine = null }: { originLine?: str
             <button
               type="button"
               onClick={() => setStep("question")}
-              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
+              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-white/30 hover:text-gray-900"
             >
               Mình sẵn sàng
             </button>
@@ -100,26 +100,26 @@ export function FirstFootprintCeremony({ originLine = null }: { originLine?: str
 
         {step === "question" && (
           <>
-            <p className="mt-8 text-lg leading-relaxed text-white/90">{FIRST_FOOTPRINT_QUESTION}</p>
+            <p className="mt-8 text-lg leading-relaxed text-gray-800">{FIRST_FOOTPRINT_QUESTION}</p>
             <textarea
               value={footprint}
               onChange={(e) => setFootprint(e.target.value)}
               rows={3}
               placeholder="Bạn có thể viết, hoặc để trống cũng được."
-              className="mt-6 w-full resize-none rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white placeholder:text-white/30 focus:border-white/25 focus:outline-none"
+              className="mt-6 w-full resize-none rounded-2xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-900 placeholder:text-gray-400 focus:border-white/25 focus:outline-none"
             />
             <div className="mt-6 flex items-center gap-4">
               <button
                 type="button"
                 onClick={() => void keepFootprint()}
-                className="rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
+                className="rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-white/30 hover:text-gray-900"
               >
                 Mình muốn giữ lại điều này
               </button>
               <button
                 type="button"
                 onClick={() => void keepFootprint()}
-                className="text-sm font-semibold text-white/40 transition hover:text-white/70"
+                className="text-sm font-semibold text-gray-400 transition hover:text-gray-600"
               >
                 Bỏ qua
               </button>
@@ -130,13 +130,13 @@ export function FirstFootprintCeremony({ originLine = null }: { originLine?: str
         {step === "seed" && (
           <>
             <div className="mt-8 h-3 w-3 animate-pulse rounded-full bg-gradient-to-br from-amber-200 to-amber-400 shadow-[0_0_24px_rgba(252,211,77,0.7)]" />
-            <p className="mt-6 text-lg leading-relaxed text-white/90">
+            <p className="mt-6 text-lg leading-relaxed text-gray-800">
               Mình sẽ giữ hạt giống này cùng bạn.
             </p>
             <button
               type="button"
               onClick={() => setStep("promise")}
-              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
+              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-white/30 hover:text-gray-900"
             >
               Tiếp tục
             </button>
@@ -145,7 +145,7 @@ export function FirstFootprintCeremony({ originLine = null }: { originLine?: str
 
         {step === "promise" && (
           <>
-            <p className="mt-8 text-lg leading-relaxed text-white/90">
+            <p className="mt-8 text-lg leading-relaxed text-gray-800">
               Mình không biết rồi đây bạn sẽ trở thành ai.
               <br />
               Nhưng mình hứa sẽ luôn trân trọng dấu chân đầu tiên này.
@@ -154,7 +154,7 @@ export function FirstFootprintCeremony({ originLine = null }: { originLine?: str
             <button
               type="button"
               onClick={finish}
-              className="mt-10 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan px-7 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-purple/30 transition"
+              className="mt-10 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan px-7 py-2.5 text-sm font-bold text-gray-900 shadow-lg shadow-brand-purple/30 transition"
             >
               Bắt đầu cùng nhau
             </button>

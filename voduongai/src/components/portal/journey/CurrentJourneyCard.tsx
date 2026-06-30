@@ -15,12 +15,12 @@ export function CurrentJourneyCard({ journey }: { journey: CurrentJourney }) {
 
   return (
     <GemCard>
-      <h2 className="text-sm font-bold text-white">Hành trình hiện tại</h2>
+      <h2 className="text-sm font-bold text-gray-900">Hành trình hiện tại</h2>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {facts.map((f) => (
-          <div key={f.label} className="rounded-xl border border-white/8 bg-white/[0.03] p-3">
-            <p className="text-[11px] font-semibold text-white/45">{f.label}</p>
-            <p className="mt-1 text-sm font-semibold text-white">{f.value}</p>
+          <div key={f.label} className="rounded-xl border border-white/8 bg-gray-50 p-3">
+            <p className="text-[11px] font-semibold text-gray-900/45">{f.label}</p>
+            <p className="mt-1 text-sm font-semibold text-gray-900">{f.value}</p>
           </div>
         ))}
       </div>

@@ -30,7 +30,7 @@ export function ConnectEngineTabs({ tabs }: { tabs: ConnectTab[] }) {
             className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
               t.key === current.key
                 ? "gemos-btn-primary text-white"
-                : "gemos-btn-secondary text-white/70"
+                : "gemos-btn-secondary text-gray-600"
             }`}
           >
             {t.label}
@@ -38,7 +38,7 @@ export function ConnectEngineTabs({ tabs }: { tabs: ConnectTab[] }) {
         ))}
       </div>
       <div className="mt-5">
-        <p className="text-sm text-white/55">{current.subtitle}</p>
+        <p className="text-sm text-gray-500">{current.subtitle}</p>
         <div className="mt-4">
           <ConnectModuleGrid modules={current.modules} />
         </div>

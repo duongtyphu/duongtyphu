@@ -15,11 +15,11 @@ function CopyField({ label, value, highlight }: { label: string; value: string; 
 
   return (
     <p className="flex items-center justify-between gap-2">
-      <span className="text-white/60">{label}</span>
+      <span className="text-gray-500">{label}</span>
       <button
         type="button"
         onClick={handleCopy}
-        className={`flex items-center gap-1.5 font-semibold hover:underline ${highlight ? "text-brand-orange" : "text-white"}`}
+        className={`flex items-center gap-1.5 font-semibold hover:underline ${highlight ? "text-brand-orange" : "text-gray-900"}`}
       >
         {value}
         <span className="text-xs">{copied ? "✅" : "📋"}</span>
@@ -62,11 +62,11 @@ export function OrderReceipt({ order }: { order: OrderRecord }) {
 
   if (status === "confirmed") {
     return (
-      <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
+      <div className="mt-6 rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-center">
         <p className="text-3xl">🎉</p>
-        <h2 className="mt-2 text-lg font-bold text-white">Đã xác nhận thanh toán!</h2>
-        <p className="mt-2 text-sm text-white/70">
-          Nội dung sẽ xuất hiện trong <strong className="text-white">Sản phẩm của tôi</strong>.
+        <h2 className="mt-2 text-lg font-bold text-gray-900">Đã xác nhận thanh toán!</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Nội dung sẽ xuất hiện trong <strong className="text-gray-900">Sản phẩm của tôi</strong>.
         </p>
         <a
           href="/portal/my-products"
@@ -80,19 +80,19 @@ export function OrderReceipt({ order }: { order: OrderRecord }) {
 
   if (finalPrice === 0) {
     return (
-      <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-center">
+      <div className="mt-6 rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-center">
         <p className="text-3xl">📩</p>
-        <h2 className="mt-2 text-lg font-bold text-white">Đã ghi nhận yêu cầu đăng ký</h2>
-        <p className="mt-2 text-sm text-white/70">Admin sẽ liên hệ và xác nhận trong 24h.</p>
+        <h2 className="mt-2 text-lg font-bold text-gray-900">Đã ghi nhận yêu cầu đăng ký</h2>
+        <p className="mt-2 text-sm text-gray-600">Admin sẽ liên hệ và xác nhận trong 24h.</p>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.04] p-6">
+    <div className="mt-6 rounded-2xl border border-gray-200 bg-white/[0.04] p-6">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-white/60">Số tiền chuyển khoản</span>
-        <span className="text-lg font-extrabold text-white">
+        <span className="text-xs text-gray-500">Số tiền chuyển khoản</span>
+        <span className="text-lg font-extrabold text-gray-900">
           {finalPrice.toLocaleString("vi-VN")}đ
           {couponCode && <span className="ml-1 text-xs font-semibold text-green-400">(mã {couponCode})</span>}
         </span>
@@ -104,12 +104,12 @@ export function OrderReceipt({ order }: { order: OrderRecord }) {
             value={couponInput}
             onChange={(e) => setCouponInput(e.target.value)}
             placeholder="Mã giảm giá (nếu có)"
-            className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40"
+            className="flex-1 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
           />
           <button
             onClick={handleApplyCoupon}
             disabled={couponBusy}
-            className="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-white hover:border-brand-violet hover:text-brand-violet disabled:opacity-50"
+            className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 hover:border-brand-violet hover:text-brand-violet disabled:opacity-50"
           >
             {couponBusy ? "..." : "Áp dụng"}
           </button>
@@ -125,25 +125,25 @@ export function OrderReceipt({ order }: { order: OrderRecord }) {
           decoding="async"
           className="h-52 w-52 shrink-0 rounded-lg bg-white p-2"
         />
-        <p className="text-xs text-white/50">Quét mã bằng app ngân hàng bất kỳ</p>
+        <p className="text-xs text-gray-500">Quét mã bằng app ngân hàng bất kỳ</p>
       </div>
 
-      <div className="mt-3 space-y-1.5 rounded-lg bg-white/5 p-3 text-sm">
+      <div className="mt-3 space-y-1.5 rounded-lg bg-gray-50 p-3 text-sm">
         <p className="flex items-center justify-between gap-2">
-          <span className="text-white/60">🏦 Ngân hàng</span>
-          <span className="font-semibold text-white">{bankConfig.name}</span>
+          <span className="text-gray-500">🏦 Ngân hàng</span>
+          <span className="font-semibold text-gray-900">{bankConfig.name}</span>
         </p>
         <CopyField label="💳 Số TK" value={bankConfig.account} />
         <p className="flex items-center justify-between gap-2">
-          <span className="text-white/60">👤 Chủ TK</span>
-          <span className="font-semibold text-white">{bankConfig.owner}</span>
+          <span className="text-gray-500">👤 Chủ TK</span>
+          <span className="font-semibold text-gray-900">{bankConfig.owner}</span>
         </p>
         <CopyField label="💰 Số tiền" value={`${finalPrice.toLocaleString("vi-VN")}đ`} />
         <CopyField label="📝 Nội dung CK" value={orderCode} highlight />
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-white/5 p-3 text-xs text-white/70">
-        <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/20 border-t-brand-orange" />
+      <div className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-gray-50 p-3 text-xs text-gray-600">
+        <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-gray-200 border-t-brand-orange" />
         Đang chờ xác nhận thanh toán tự động — vui lòng không tắt trang này.
       </div>
     </div>

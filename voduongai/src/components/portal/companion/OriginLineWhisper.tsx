@@ -91,5 +91,5 @@ export function OriginLineWhisper({
 
   if (!visible || !line) return null;
 
-  return <p className="mt-8 text-base italic leading-relaxed text-white/80">&ldquo;{line}&rdquo;</p>;
+  return <p className="mt-8 text-base italic leading-relaxed text-gray-700">&ldquo;{line}&rdquo;</p>;
 }

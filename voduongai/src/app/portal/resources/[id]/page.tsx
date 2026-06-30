@@ -24,12 +24,12 @@ export default async function ResourceDetailPage({ params }: PageProps<"/portal/
         ← Tài nguyên miễn phí
       </Link>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
           {resource.type}
         </span>
-        <h1 className="mt-4 text-2xl font-extrabold text-white">{resource.title}</h1>
-        <p className="mt-4 leading-relaxed text-white">{resource.description}</p>
+        <h1 className="mt-4 text-2xl font-extrabold text-gray-900">{resource.title}</h1>
+        <p className="mt-4 leading-relaxed text-gray-900">{resource.description}</p>
 
         <div className="mt-8">
           <LeadGate

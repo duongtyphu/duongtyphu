@@ -12,6 +12,7 @@ import {
   Users,
   Sparkles,
   Compass,
+  Crown,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -26,6 +27,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/community": Users,
   "/portal/companion": Sparkles,
   "/portal/journey": Compass,
+  "/portal/premium": Crown,
 };
 
 function isItemActive(pathname: string, href: string) {

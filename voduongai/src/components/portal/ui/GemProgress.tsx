@@ -10,7 +10,7 @@ export function GemProgress({
   return (
     <div>
       {label && (
-        <div className="mb-2 flex items-center justify-between text-xs font-semibold text-white/60">
+        <div className="mb-2 flex items-center justify-between text-xs font-semibold text-gray-500">
           <span>{label}</span>
           <span>{Math.round(clamped)}%</span>
         </div>

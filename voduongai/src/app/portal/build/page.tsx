@@ -39,8 +39,8 @@ export default function BuildOSPage() {
       <BuildHero />
       <BuildPillars pillars={buildPillars} />
       <section>
-        <h2 className="text-lg font-bold text-white">Khu vực kiến tạo</h2>
-        <p className="mt-1 text-sm text-white/55">Chọn nhóm bạn muốn bắt đầu — thu nhập, thương hiệu, hệ thống hay premium.</p>
+        <h2 className="text-lg font-bold text-gray-900">Khu vực kiến tạo</h2>
+        <p className="mt-1 text-sm text-gray-500">Chọn nhóm bạn muốn bắt đầu — thu nhập, thương hiệu, hệ thống hay premium.</p>
         <div className="mt-4">
           <BuildEngineTabs tabs={ENGINE_TABS} />
         </div>
@@ -50,7 +50,7 @@ export default function BuildOSPage() {
       <BuildProgressCard dimensions={buildProgress} />
       <FounderJourneyCard journey={founderJourney} />
       <section>
-        <h2 className="text-lg font-bold text-white">Khám phá thêm trong Hệ Kiến Tạo</h2>
+        <h2 className="text-lg font-bold text-gray-900">Khám phá thêm trong Hệ Kiến Tạo</h2>
         <div className="mt-4">
           <HubModuleGrid modules={hub.modules} />
         </div>

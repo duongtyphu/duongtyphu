@@ -12,8 +12,8 @@ type BaseProps = {
 
 const variantClass: Record<Variant, string> = {
   primary: "gemos-btn-primary rounded-full px-6 py-2.5 text-sm font-bold text-white",
-  secondary: "gemos-btn-secondary rounded-full px-6 py-2.5 text-sm font-semibold text-white/85",
-  icon: "gemos-btn-secondary flex h-9 w-9 items-center justify-center rounded-full text-white/80",
+  secondary: "gemos-btn-secondary rounded-full px-6 py-2.5 text-sm font-semibold text-gray-900/85",
+  icon: "gemos-btn-secondary flex h-9 w-9 items-center justify-center rounded-full text-gray-700",
 };
 
 export function Button({

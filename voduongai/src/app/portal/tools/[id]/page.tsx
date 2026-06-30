@@ -28,7 +28,7 @@ export default function ToolDetailPage() {
         <SaveButton item={{ id: `tool_${tool.id}`, kind: "tool", title: tool.name, href: `/portal/tools/${tool.slug}`, meta: tool.category }} />
       </div>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <div className="flex items-start justify-between">
           <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/90 p-2">
             <img
@@ -49,44 +49,44 @@ export default function ToolDetailPage() {
                 {tool.badge}
               </span>
             )}
-            <span className="rounded-full bg-white/5 px-3 py-1 text-xs font-semibold text-white">
+            <span className="rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-900">
               {tool.pricing}
             </span>
           </div>
         </div>
-        <h1 className="mt-5 text-2xl font-extrabold text-white">{tool.name}</h1>
-        <p className="mt-1 text-sm text-white">{tool.category}</p>
-        <p className="mt-4 leading-relaxed text-white">{tool.longDescription || tool.shortDescription}</p>
+        <h1 className="mt-5 text-2xl font-extrabold text-gray-900">{tool.name}</h1>
+        <p className="mt-1 text-sm text-gray-900">{tool.category}</p>
+        <p className="mt-4 leading-relaxed text-gray-900">{tool.longDescription || tool.shortDescription}</p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl bg-white/5 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white">
+          <div className="rounded-xl bg-gray-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-900">
               Dùng để làm gì
             </p>
-            <p className="mt-1 text-sm text-white">{tool.useCase}</p>
+            <p className="mt-1 text-sm text-gray-900">{tool.useCase}</p>
           </div>
-          <div className="rounded-xl bg-white/5 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white">
+          <div className="rounded-xl bg-gray-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-900">
               Phù hợp với ai
             </p>
-            <p className="mt-1 text-sm text-white">{tool.audience}</p>
+            <p className="mt-1 text-sm text-gray-900">{tool.audience}</p>
           </div>
         </div>
 
         {(tool.pros?.length || tool.cons?.length) ? (
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {tool.pros && tool.pros.length > 0 && (
-              <div className="rounded-xl bg-white/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white">Ưu điểm</p>
-                <ul className="mt-2 space-y-1.5 text-sm text-white/80">
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-900">Ưu điểm</p>
+                <ul className="mt-2 space-y-1.5 text-sm text-gray-700">
                   {tool.pros.map((p) => <li key={p}>• {p}</li>)}
                 </ul>
               </div>
             )}
             {tool.cons && tool.cons.length > 0 && (
-              <div className="rounded-xl bg-white/5 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-white">Nhược điểm</p>
-                <ul className="mt-2 space-y-1.5 text-sm text-white/80">
+              <div className="rounded-xl bg-gray-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-900">Nhược điểm</p>
+                <ul className="mt-2 space-y-1.5 text-sm text-gray-700">
                   {tool.cons.map((c) => <li key={c}>• {c}</li>)}
                 </ul>
               </div>
@@ -97,18 +97,18 @@ export default function ToolDetailPage() {
         {tool.workflow && (
           <div className="mt-4 rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-brand-violet">Workflow thực tế</p>
-            <p className="mt-1 text-sm text-white/80">{tool.workflow}</p>
+            <p className="mt-1 text-sm text-gray-700">{tool.workflow}</p>
           </div>
         )}
 
-        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-white/50">Video hướng dẫn</p>
+        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Video hướng dẫn</p>
           {tool.videoUrl && isSafeUrl(tool.videoUrl) ? (
             <a href={tool.videoUrl} target="_blank" rel="noopener noreferrer" className="mt-1 inline-block text-sm font-semibold text-brand-blue hover:underline">
               Xem video hướng dẫn →
             </a>
           ) : (
-            <p className="mt-1 text-sm text-white/50">Sắp cập nhật — chưa có video hướng dẫn thật cho công cụ này.</p>
+            <p className="mt-1 text-sm text-gray-500">Sắp cập nhật — chưa có video hướng dẫn thật cho công cụ này.</p>
           )}
         </div>
 
@@ -128,7 +128,7 @@ export default function ToolDetailPage() {
               href={tool.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border border-white/10 px-6 py-2.5 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
+              className="rounded-full border border-gray-200 px-6 py-2.5 text-sm font-semibold text-gray-900 transition hover:border-brand-violet hover:text-brand-violet"
             >
               Website chính thức
             </a>
@@ -136,9 +136,9 @@ export default function ToolDetailPage() {
         </div>
       </div>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-6">
-        <h3 className="text-base font-bold text-white">Muốn áp dụng {tool.name} hiệu quả hơn?</h3>
-        <p className="mt-2 text-sm text-white/70">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6">
+        <h3 className="text-base font-bold text-gray-900">Muốn áp dụng {tool.name} hiệu quả hơn?</h3>
+        <p className="mt-2 text-sm text-gray-600">
           Xem thêm các công cụ và workflow thực chiến khác trong Thư viện công cụ, hoặc tìm hiểu lộ trình V-SOLO để biết cách kết hợp công cụ vào hệ thống của bạn.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">

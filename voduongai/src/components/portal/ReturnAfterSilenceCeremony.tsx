@@ -79,7 +79,7 @@ export function ReturnAfterSilenceCeremony({
 
         {step === "opening" && (
           <>
-            <p className="mt-8 text-lg leading-relaxed text-white/90">
+            <p className="mt-8 text-lg leading-relaxed text-gray-800">
               {greetingLine}
               <br />
               Mình rất vui vì bạn đã quay lại.
@@ -87,7 +87,7 @@ export function ReturnAfterSilenceCeremony({
             <button
               type="button"
               onClick={() => setStep("garden")}
-              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
+              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-white/30 hover:text-gray-900"
             >
               Tiếp tục
             </button>
@@ -97,13 +97,13 @@ export function ReturnAfterSilenceCeremony({
         {step === "garden" && (
           <>
             <div className="mt-8 h-3 w-3 animate-pulse rounded-full bg-gradient-to-br from-emerald-200 to-emerald-400 shadow-[0_0_24px_rgba(110,231,183,0.7)]" />
-            <p className="mt-6 text-lg leading-relaxed text-white/90">
+            <p className="mt-6 text-lg leading-relaxed text-gray-800">
               Có một chồi non vừa nhú lên trong khu vườn của bạn.
             </p>
             <button
               type="button"
               onClick={() => setStep("closing")}
-              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/30 hover:text-white"
+              className="mt-10 rounded-full border border-white/15 px-7 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-white/30 hover:text-gray-900"
             >
               Tiếp tục
             </button>
@@ -112,7 +112,7 @@ export function ReturnAfterSilenceCeremony({
 
         {step === "closing" && (
           <>
-            <p className="mt-8 text-lg leading-relaxed text-white/90">
+            <p className="mt-8 text-lg leading-relaxed text-gray-800">
               Mình vẫn ở đây.
               <br />
               Và mình rất vui vì bạn cũng vậy.
@@ -120,7 +120,7 @@ export function ReturnAfterSilenceCeremony({
             <button
               type="button"
               onClick={finish}
-              className="mt-10 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan px-7 py-2.5 text-sm font-bold text-white shadow-lg shadow-brand-purple/30 transition"
+              className="mt-10 rounded-full bg-gradient-to-r from-brand-purple to-brand-cyan px-7 py-2.5 text-sm font-bold text-gray-900 shadow-lg shadow-brand-purple/30 transition"
             >
               Cùng tiếp tục
             </button>

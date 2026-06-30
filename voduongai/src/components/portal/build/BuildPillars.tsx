@@ -18,7 +18,7 @@ const ICON_MAP = {
 export function BuildPillars({ pillars }: { pillars: BuildPillar[] }) {
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">6 trụ cột kiến tạo</h2>
+      <h2 className="text-lg font-bold text-gray-900">6 trụ cột kiến tạo</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {pillars.map((p) => {
           const Icon = ICON_MAP[p.icon];
@@ -28,10 +28,10 @@ export function BuildPillars({ pillars }: { pillars: BuildPillar[] }) {
                 <Icon className="h-4 w-4" />
               </span>
               <div>
-                <h3 className="text-sm font-bold text-white">{p.title}</h3>
-                <p className="mt-1 text-xs text-white/55">{p.description}</p>
+                <h3 className="text-sm font-bold text-gray-900">{p.title}</h3>
+                <p className="mt-1 text-xs text-gray-500">{p.description}</p>
               </div>
-              <Link href={p.href} className="mt-auto text-xs font-semibold text-[#22D3EE] hover:underline">
+              <Link href={p.href} className="mt-auto text-xs font-semibold text-blue-600 hover:underline">
                 Khám phá →
               </Link>
             </GemCard>

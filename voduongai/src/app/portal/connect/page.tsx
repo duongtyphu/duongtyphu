@@ -39,8 +39,8 @@ export default function ConnectOSPage() {
       <ConnectHero />
       <ConnectPillars pillars={connectPillars} />
       <section>
-        <h2 className="text-lg font-bold text-white">Khu vực kết nối</h2>
-        <p className="mt-1 text-sm text-white/55">Chọn nhóm bạn muốn tham gia — cộng đồng, sự kiện, thành tựu, cơ hội hay đóng góp.</p>
+        <h2 className="text-lg font-bold text-gray-900">Khu vực kết nối</h2>
+        <p className="mt-1 text-sm text-gray-500">Chọn nhóm bạn muốn tham gia — cộng đồng, sự kiện, thành tựu, cơ hội hay đóng góp.</p>
         <div className="mt-4">
           <ConnectEngineTabs tabs={CONNECT_TABS} />
         </div>
@@ -49,7 +49,7 @@ export default function ConnectOSPage() {
       <ConnectProgressCard dimensions={connectProgress} />
       <HumanNetworkCard network={humanNetwork} />
       <section>
-        <h2 className="text-lg font-bold text-white">Khám phá thêm trong Hệ Kết Nối</h2>
+        <h2 className="text-lg font-bold text-gray-900">Khám phá thêm trong Hệ Kết Nối</h2>
         <div className="mt-4">
           <HubModuleGrid modules={hub.modules} />
         </div>

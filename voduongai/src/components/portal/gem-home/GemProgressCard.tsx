@@ -9,8 +9,8 @@ export function GemProgressCard({ percent }: { percent: number }) {
     <GemCard variant="progress" className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
       <ProgressRing percent={percent} size={88} strokeWidth={8} />
       <div>
-        <h2 className="text-sm font-bold text-white">Gem Progress</h2>
-        <p className="mt-1 text-sm text-white/65">
+        <h2 className="text-sm font-bold text-gray-900">Gem Progress</h2>
+        <p className="mt-1 text-sm text-gray-600">
           Viên ngọc của bạn đã sáng hơn từng chút một qua mỗi hành động.
         </p>
       </div>

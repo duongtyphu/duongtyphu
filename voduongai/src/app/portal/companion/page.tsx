@@ -61,13 +61,13 @@ export default function CompanionPage() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/20">
             <Sparkles className="h-5 w-5 text-violet-400" />
           </div>
-          <span className="text-sm font-semibold uppercase tracking-widest text-white/40">Companion</span>
+          <span className="text-sm font-semibold uppercase tracking-widest text-gray-400">Companion</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-white">Ngôi nhà tri thức</h1>
-        <p className="text-lg leading-relaxed text-white/70">
+        <h1 className="text-3xl font-extrabold text-gray-900">Ngôi nhà tri thức</h1>
+        <p className="text-lg leading-relaxed text-gray-600">
           Companion không phải là nơi để chat. Companion là một hệ thống tri thức — triết lý, genome, phương pháp, hành trình, và những gì Companion học được về con người qua từng Sprint.
         </p>
-        <p className="text-base leading-relaxed text-white/50">
+        <p className="text-base leading-relaxed text-gray-500">
           Mỗi tài liệu ở đây trả lời một câu hỏi quan trọng: <em>Tại sao Companion làm điều này — không phải Companion làm điều gì.</em>
         </p>
       </div>
@@ -78,27 +78,27 @@ export default function CompanionPage() {
           <a
             key={s.title}
             href={s.href}
-            className="group rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-white/20 hover:bg-white/[0.06]"
+            className="group rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:border-gray-200 hover:bg-white/[0.06]"
           >
             <div className="mb-3 flex items-center gap-2.5">
               <s.icon className={`h-5 w-5 ${s.color}`} />
-              <span className="text-sm font-bold text-white">{s.title}</span>
+              <span className="text-sm font-bold text-gray-900">{s.title}</span>
             </div>
-            <p className="text-sm leading-relaxed text-white/55">{s.description}</p>
+            <p className="text-sm leading-relaxed text-gray-500">{s.description}</p>
           </a>
         ))}
       </div>
 
       {/* Growth Log link */}
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
-        <h2 className="mb-2 text-base font-bold text-white">Companion Growth Log</h2>
-        <p className="mb-4 text-sm leading-relaxed text-white/60">
+      <div className="rounded-xl border border-gray-200 bg-white/[0.02] p-6">
+        <h2 className="mb-2 text-base font-bold text-gray-900">Companion Growth Log</h2>
+        <p className="mb-4 text-sm leading-relaxed text-gray-500">
           Mỗi Sprint, Companion học được điều gì về con người. Đây là Growth History của một cuộc đời — không phải Version History của một sản phẩm.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
             href="/portal/journey"
-            className="rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white/20 hover:text-white"
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
           >
             Hành trình của tôi →
           </Link>
@@ -107,7 +107,7 @@ export default function CompanionPage() {
 
       {/* Doctrine summary */}
       <div id="doctrine" className="space-y-6">
-        <h2 className="text-xl font-bold text-white">7 Nguyên tắc bất biến</h2>
+        <h2 className="text-xl font-bold text-gray-900">7 Nguyên tắc bất biến</h2>
         <div className="space-y-3">
           {[
             "Không làm thay",
@@ -119,8 +119,8 @@ export default function CompanionPage() {
             "Safety là nền, không phải exception",
           ].map((p, i) => (
             <div key={i} className="flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3">
-              <span className="mt-0.5 text-xs font-bold text-white/30">{String(i + 1).padStart(2, "0")}</span>
-              <span className="text-sm text-white/80">{p}</span>
+              <span className="mt-0.5 text-xs font-bold text-gray-400">{String(i + 1).padStart(2, "0")}</span>
+              <span className="text-sm text-gray-700">{p}</span>
             </div>
           ))}
         </div>

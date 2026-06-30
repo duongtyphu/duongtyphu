@@ -148,7 +148,7 @@ export default async function GemHomePage() {
       <div className="grid gap-5 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <GemCard variant="progress">
-            <h2 className="mb-4 text-sm font-bold text-white">Human Growth Index</h2>
+            <h2 className="mb-4 text-sm font-bold text-gray-900">Human Growth Index</h2>
             <HumanGrowthIndex />
           </GemCard>
         </div>
@@ -185,8 +185,8 @@ export default async function GemHomePage() {
 
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Công cụ nổi bật</h2>
-          <Link href="/portal/tools" className="text-sm font-semibold text-[#22D3EE] hover:underline">
+          <h2 className="text-lg font-bold text-gray-900">Công cụ nổi bật</h2>
+          <Link href="/portal/tools" className="text-sm font-semibold text-blue-600 hover:underline">
             Xem tất cả →
           </Link>
         </div>
@@ -209,8 +209,8 @@ export default async function GemHomePage() {
 
       <section>
         <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-white">Tài nguyên mới nhất</h2>
-          <Link href="/portal/resources" className="text-sm font-semibold text-[#22D3EE] hover:underline">
+          <h2 className="text-lg font-bold text-gray-900">Tài nguyên mới nhất</h2>
+          <Link href="/portal/resources" className="text-sm font-semibold text-blue-600 hover:underline">
             Xem tất cả →
           </Link>
         </div>

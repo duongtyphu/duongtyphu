@@ -29,7 +29,7 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
 
   return (
     <div
-      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-white/10 bg-black/20 ${
+      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-gray-200 bg-black/20 ${
         compact ? "h-24" : "h-36 sm:h-44"
       }`}
       aria-hidden="true"
@@ -79,12 +79,12 @@ export function LivingGardenCard({
       <GemCard className={`relative ${className}`}>
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-amber-300" />
-          <h2 className="text-sm font-bold text-white">Khu vườn của bạn</h2>
+          <h2 className="text-sm font-bold text-gray-900">Khu vườn của bạn</h2>
         </div>
-        <p className="mt-3 text-sm leading-relaxed text-white/80">
+        <p className="mt-3 text-sm leading-relaxed text-gray-700">
           Khu vườn của bạn đang chờ hạt giống đầu tiên.
         </p>
-        <p className="mt-1 text-xs text-white/45">
+        <p className="mt-1 text-xs text-gray-900/45">
           Mỗi hành động nhỏ hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -95,7 +95,7 @@ export function LivingGardenCard({
             Bắt đầu hành trình
           </Button>
         </div>
-        <p className="mt-4 text-xs text-white/40">Companion đang chăm sóc khu vườn này cùng bạn.</p>
+        <p className="mt-4 text-xs text-gray-400">Companion đang chăm sóc khu vườn này cùng bạn.</p>
       </GemCard>
     );
   }
@@ -104,18 +104,18 @@ export function LivingGardenCard({
     <GemCard className={`relative ${className}`}>
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-amber-300" />
-        <h2 className="text-sm font-bold text-white">Khu vườn của bạn</h2>
+        <h2 className="text-sm font-bold text-gray-900">Khu vườn của bạn</h2>
       </div>
 
-      <p className="mt-2 text-sm leading-relaxed text-white/85">
+      <p className="mt-2 text-sm leading-relaxed text-gray-900/85">
         Khu vườn của bạn đang lớn lên từ những bước nhỏ.
       </p>
       {!compact && (
         <>
-          <p className="mt-1 text-xs text-white/45">
+          <p className="mt-1 text-xs text-gray-900/45">
             Mỗi hành động hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
           </p>
-          <p className="mt-1 text-xs italic text-white/35">
+          <p className="mt-1 text-xs italic text-gray-400">
             Hình ảnh của 8 giai đoạn mài giũa — không phải điểm số.
           </p>
         </>
@@ -125,16 +125,16 @@ export function LivingGardenCard({
         <GardenVisual intensity={Math.max(...garden.elements.map((e) => e.intensity))} compact={compact} />
       </div>
 
-      <p className="mt-3 text-sm font-semibold text-white/85">{garden.headline}</p>
+      <p className="mt-3 text-sm font-semibold text-gray-900/85">{garden.headline}</p>
 
       {!compact && (
-        <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-white/60 sm:grid-cols-1">
+        <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-gray-500 sm:grid-cols-1">
           {ELEMENT_ORDER.map((key) => {
             const el = garden.elements.find((e) => e.key === key)!;
             return (
               <li key={key} className="flex items-baseline gap-1.5">
-                <span className="font-semibold text-white/75">{el.label}</span>
-                <span className="text-white/40">·</span>
+                <span className="font-semibold text-gray-600">{el.label}</span>
+                <span className="text-gray-400">·</span>
                 <span>{el.meaning}</span>
               </li>
             );
@@ -142,7 +142,7 @@ export function LivingGardenCard({
         </ul>
       )}
 
-      <p className="mt-4 text-xs text-white/40">Companion đang chăm sóc khu vườn này cùng bạn.</p>
+      <p className="mt-4 text-xs text-gray-400">Companion đang chăm sóc khu vườn này cùng bạn.</p>
     </GemCard>
   );
 }

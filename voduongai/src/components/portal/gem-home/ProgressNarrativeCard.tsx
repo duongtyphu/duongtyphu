@@ -7,8 +7,8 @@ import type { HumanFlowState } from "@/lib/portal/human-flow";
 export function ProgressNarrativeCard({ flow }: { flow: HumanFlowState }) {
   return (
     <GemCard variant="progress" className="h-full">
-      <h2 className="text-sm font-bold text-white">{flow.currentStage}</h2>
-      <p className="mt-2 text-sm text-white/70">{flow.progressNarrative}</p>
+      <h2 className="text-sm font-bold text-gray-900">{flow.currentStage}</h2>
+      <p className="mt-2 text-sm text-gray-600">{flow.progressNarrative}</p>
     </GemCard>
   );
 }

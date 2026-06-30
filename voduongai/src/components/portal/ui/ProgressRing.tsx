@@ -38,7 +38,7 @@ export function ProgressRing({
           style={{ transition: "stroke-dashoffset 0.5s ease" }}
         />
       </svg>
-      <span className="absolute text-sm font-bold text-white">{label ?? `${Math.round(clamped)}%`}</span>
+      <span className="absolute text-sm font-bold text-gray-900">{label ?? `${Math.round(clamped)}%`}</span>
     </div>
   );
 }

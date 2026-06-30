@@ -42,20 +42,20 @@ export default async function MyProductsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Sản phẩm của tôi</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Sản phẩm của tôi</h1>
+        <p className="mt-2 text-gray-900">
           Sản phẩm và tài nguyên bạn đã mở khoá sẽ hiển thị tại đây.
         </p>
       </div>
 
       {!email && (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white">
+        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-900">
           Đăng nhập để xem lịch sử mua hàng của bạn.
         </div>
       )}
 
       {email && orders.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white">
+        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-900">
           Bạn chưa có sản phẩm nào. Khám phá{" "}
           <a href="/portal/premium" className="font-semibold text-brand-blue hover:underline">
             Tài nguyên Premium
@@ -72,28 +72,28 @@ export default async function MyProductsPage() {
             const video = o.products?.video_url ?? o.lessons?.video_url;
             const pdf = o.products?.pdf_url ?? o.lessons?.pdf_url;
             return (
-              <div key={o.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+              <div key={o.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-sm font-bold text-white">
+                  <h3 className="text-sm font-bold text-gray-900">
                     <span className="mr-1">{icon}</span>
                     {title}
                   </h3>
-                  <span className="shrink-0 rounded-full bg-white/5 px-2.5 py-0.5 text-xs font-semibold text-white">
+                  <span className="shrink-0 rounded-full bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-gray-900">
                     {statusLabel[o.status] ?? o.status}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-white/70">
+                <p className="mt-2 text-sm text-gray-600">
                   {o.amount.toLocaleString("vi-VN")}đ · {new Date(o.created_at).toLocaleDateString("vi-VN")}
                 </p>
                 {o.status === "confirmed" && (video || pdf) && (
                   <div className="mt-3 flex gap-2">
                     {video && (
-                      <a href={video} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:border-brand-violet hover:text-brand-violet">
+                      <a href={video} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-900 hover:border-brand-violet hover:text-brand-violet">
                         ▶ Video
                       </a>
                     )}
                     {pdf && (
-                      <a href={pdf} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:border-brand-violet hover:text-brand-violet">
+                      <a href={pdf} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-900 hover:border-brand-violet hover:text-brand-violet">
                         📄 PDF
                       </a>
                     )}

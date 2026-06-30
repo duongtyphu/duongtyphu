@@ -86,10 +86,10 @@ export default function OpportunitiesHubPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20">
             <LineChart className="h-4 w-4 text-emerald-400" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-white/40">Dự án & Cơ hội</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Dự án & Cơ hội</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-white">Những gì tôi đang theo dõi</h1>
-        <p className="max-w-2xl text-white/60">
+        <h1 className="text-2xl font-extrabold text-gray-900">Những gì tôi đang theo dõi</h1>
+        <p className="max-w-2xl text-gray-500">
           Đây là nơi VO DUONG AI chia sẻ các hệ sinh thái đang nghiên cứu, các dự án đang đồng hành, góc nhìn cá nhân, bài học — và cơ hội nếu phù hợp.
         </p>
       </div>
@@ -101,12 +101,12 @@ export default function OpportunitiesHubPage() {
       />
 
       {/* Introduction */}
-      <div className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
-        <h2 className="mb-3 text-base font-bold text-white">Giới thiệu</h2>
-        <p className="mb-4 text-sm leading-relaxed text-white/70">
+      <div className="rounded-xl border border-gray-200 bg-white/[0.02] p-6">
+        <h2 className="mb-3 text-base font-bold text-gray-900">Giới thiệu</h2>
+        <p className="mb-4 text-sm leading-relaxed text-gray-600">
           VO DUONG AI không phải là nền tảng tư vấn đầu tư. Trang này tồn tại vì tôi tin vào sự minh bạch — thay vì chỉ chia sẻ thành công, tôi muốn chia sẻ đầy đủ: những gì tôi đang theo dõi, tại sao, những điều tôi chưa chắc chắn, và những bài học từ sai lầm.
         </p>
-        <p className="text-sm leading-relaxed text-white/70">
+        <p className="text-sm leading-relaxed text-gray-600">
           Mọi quyết định tài chính là quyết định của bạn. Nghiên cứu kỹ trước khi tham gia bất kỳ dự án nào.
         </p>
       </div>
@@ -115,13 +115,13 @@ export default function OpportunitiesHubPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4 text-emerald-400" />
-          <p className="text-xs font-bold uppercase tracking-widest text-white/30">Tiêu chí chia sẻ của tôi</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Tiêu chí chia sẻ của tôi</p>
         </div>
         <div className="space-y-2">
           {CRITERIA.map((c, i) => (
             <div key={i} className="flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400/60" />
-              <p className="text-sm text-white/70">{c}</p>
+              <p className="text-sm text-gray-600">{c}</p>
             </div>
           ))}
         </div>
@@ -129,24 +129,24 @@ export default function OpportunitiesHubPage() {
 
       {/* Ecosystem cards */}
       <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-white/30">Các hệ sinh thái đang theo dõi</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các hệ sinh thái đang theo dõi</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ECOSYSTEMS.map((item) => (
             <Link
               key={item.title}
               href={item.href}
-              className="group block rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-white/20 hover:bg-white/[0.06]"
+              className="group block rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:border-gray-200 hover:bg-white/[0.06]"
             >
               <div className="mb-4 flex items-start justify-between gap-2">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
                   <item.icon className="h-5 w-5" />
                 </div>
-                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-white/40">
+                <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-400">
                   {item.status}
                 </span>
               </div>
-              <h3 className={`mb-2 text-sm font-bold text-white group-hover:${item.color}`}>{item.title}</h3>
-              <p className="text-xs leading-relaxed text-white/55">{item.description}</p>
+              <h3 className={`mb-2 text-sm font-bold text-gray-900 group-hover:${item.color}`}>{item.title}</h3>
+              <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
             </Link>
           ))}
         </div>
@@ -155,28 +155,28 @@ export default function OpportunitiesHubPage() {
       {/* FAQ */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-white/30" />
-          <p className="text-xs font-bold uppercase tracking-widest text-white/30">Câu hỏi thường gặp</p>
+          <HelpCircle className="h-4 w-4 text-gray-400" />
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Câu hỏi thường gặp</p>
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-              <p className="mb-2 text-sm font-bold text-white">{item.q}</p>
-              <p className="text-sm leading-relaxed text-white/60">{item.a}</p>
+            <div key={item.q} className="rounded-xl border border-gray-200 bg-white/[0.02] p-4">
+              <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
+              <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Next step */}
-      <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white/[0.02] p-5">
         <div>
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-white/30">Tiếp theo bạn nên...</p>
-          <p className="text-sm text-white/70">Đọc bài viết về các chủ đề liên quan trước khi quyết định bất cứ điều gì.</p>
+          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-400">Tiếp theo bạn nên...</p>
+          <p className="text-sm text-gray-600">Đọc bài viết về các chủ đề liên quan trước khi quyết định bất cứ điều gì.</p>
         </div>
         <Link
           href="/portal/news"
-          className="ml-4 shrink-0 rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white/20 hover:text-white"
+          className="ml-4 shrink-0 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
         >
           Đọc bài viết →
         </Link>

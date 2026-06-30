@@ -71,10 +71,10 @@ export default function AcademyHubPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20">
             <GraduationCap className="h-4 w-4 text-blue-400" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-white/40">Học viện</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Học viện</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-white">Học theo lộ trình</h1>
-        <p className="max-w-2xl text-white/60">
+        <h1 className="text-2xl font-extrabold text-gray-900">Học theo lộ trình</h1>
+        <p className="max-w-2xl text-gray-500">
           Mỗi viên ngọc cần thời gian để mài giũa. Học viện giúp bạn đi đúng hướng — không đốt thời gian vào những thứ không cần thiết.
         </p>
       </div>
@@ -87,22 +87,22 @@ export default function AcademyHubPage() {
 
       {/* Learning Path */}
       <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-white/30">Lộ trình học đề xuất</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Lộ trình học đề xuất</p>
         <div className="space-y-2">
           {LEARNING_PATH.map((item) => (
             <Link
               key={item.step}
               href={item.href}
-              className="group flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 transition hover:border-white/20 hover:bg-white/[0.05]"
+              className="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white/[0.02] p-4 transition hover:border-gray-200 hover:bg-white/[0.05]"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/5 text-xs font-bold text-white/40">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-bold text-gray-400">
                 {item.step}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-white">{item.label}</p>
-                <p className="text-xs text-white/50">{item.description}</p>
+                <p className="text-sm font-bold text-gray-900">{item.label}</p>
+                <p className="text-xs text-gray-500">{item.description}</p>
               </div>
-              <ArrowRight className="h-4 w-4 shrink-0 text-white/20 transition group-hover:text-white/60" />
+              <ArrowRight className="h-4 w-4 shrink-0 text-gray-300 transition group-hover:text-gray-500" />
             </Link>
           ))}
         </div>
@@ -110,11 +110,11 @@ export default function AcademyHubPage() {
 
       {/* Tracks */}
       <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-white/30">Chương trình học</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Chương trình học</p>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TRACKS.map((t) => (
             <Link key={t.href} href={t.href} className="group block">
-              <div className="h-full rounded-xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-white/20 hover:bg-white/[0.06]">
+              <div className="h-full rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:border-gray-200 hover:bg-white/[0.06]">
                 <div className="mb-4 flex items-start justify-between gap-2">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-full ${t.bg} ${t.color}`}>
                     <t.icon className="h-5 w-5" />
@@ -125,11 +125,11 @@ export default function AcademyHubPage() {
                     </span>
                   )}
                 </div>
-                <h3 className={`mb-2 text-sm font-bold text-white group-hover:${t.color}`}>{t.title}</h3>
-                <p className="mb-4 text-xs leading-relaxed text-white/55">{t.description}</p>
+                <h3 className={`mb-2 text-sm font-bold text-gray-900 group-hover:${t.color}`}>{t.title}</h3>
+                <p className="mb-4 text-xs leading-relaxed text-gray-500">{t.description}</p>
                 <ul className="space-y-1">
                   {t.outcomes.map((o) => (
-                    <li key={o} className="flex items-center gap-2 text-xs text-white/40">
+                    <li key={o} className="flex items-center gap-2 text-xs text-gray-400">
                       <span className="h-1 w-1 shrink-0 rounded-full bg-white/20" />
                       {o}
                     </li>
@@ -143,13 +143,13 @@ export default function AcademyHubPage() {
 
       {/* Mentoring CTA */}
       <div className="rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-6">
-        <h3 className="mb-2 text-base font-bold text-white">Cần hỗ trợ riêng?</h3>
-        <p className="mb-4 text-sm leading-relaxed text-white/60">
+        <h3 className="mb-2 text-base font-bold text-gray-900">Cần hỗ trợ riêng?</h3>
+        <p className="mb-4 text-sm leading-relaxed text-gray-500">
           Nếu bạn muốn được hỗ trợ cá nhân hoá — chọn đúng lộ trình, giải quyết vướng mắc cụ thể — hãy liên hệ để được mentoring 1-1.
         </p>
         <Link
           href="/portal/community"
-          className="inline-block rounded-lg border border-white/10 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white/20 hover:text-white"
+          className="inline-block rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
         >
           Kết nối cộng đồng →
         </Link>
@@ -158,14 +158,14 @@ export default function AcademyHubPage() {
       {/* FAQ */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-white/30" />
-          <p className="text-xs font-bold uppercase tracking-widest text-white/30">Câu hỏi thường gặp</p>
+          <HelpCircle className="h-4 w-4 text-gray-400" />
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Câu hỏi thường gặp</p>
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-              <p className="mb-2 text-sm font-bold text-white">{item.q}</p>
-              <p className="text-sm leading-relaxed text-white/60">{item.a}</p>
+            <div key={item.q} className="rounded-xl border border-gray-200 bg-white/[0.02] p-4">
+              <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
+              <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>
           ))}
         </div>

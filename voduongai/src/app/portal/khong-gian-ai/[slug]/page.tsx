@@ -253,7 +253,7 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
 
       {/* CTA */}
       <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 text-center">
-        <h2 className="text-xl font-bold text-white mb-2">Sẵn sàng thử chưa?</h2>
+        <h2 className="text-xl font-bold text-gray-900 mb-2">Sẵn sàng thử chưa?</h2>
         <p className="text-blue-100 text-sm mb-5">
           Truy cập {tool.name} ngay hôm nay và bắt đầu tăng hiệu suất công việc với AI.
         </p>
@@ -426,7 +426,7 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
       {/* CTA */}
       <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white mb-1">{category.ctaLabel}</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-1">{category.ctaLabel}</h2>
           <p className="text-blue-100 text-sm">Khám phá thêm tài nguyên và prompt mẫu cho {category.title}</p>
         </div>
         <a

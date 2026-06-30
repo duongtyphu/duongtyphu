@@ -12,17 +12,17 @@ export default function PersonalBrandPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Thương hiệu cá nhân</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Thương hiệu cá nhân</h1>
+        <p className="mt-2 text-gray-900">
           Micro-learning giúp bạn xây dựng thương hiệu cá nhân làm nền tảng cho
           Affiliate Marketing và tạo tài sản số lâu dài.
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         {lessons.map((l) => (
-          <div key={l.title} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-            <h3 className="text-sm font-bold text-white">{l.title}</h3>
-            <p className="mt-2 text-sm text-white">{l.description}</p>
+          <div key={l.title} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+            <h3 className="text-sm font-bold text-gray-900">{l.title}</h3>
+            <p className="mt-2 text-sm text-gray-900">{l.description}</p>
           </div>
         ))}
       </div>

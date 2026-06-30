@@ -9,7 +9,7 @@ import type { AcademyItem } from "@/data/portal/knowledge-hub";
 export function AcademySection({ items }: { items: AcademyItem[] }) {
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">Học viện</h2>
+      <h2 className="text-lg font-bold text-gray-900">Học viện</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((a) => (
           <Link key={a.id} href={a.href} className="block">
@@ -18,8 +18,8 @@ export function AcademySection({ items }: { items: AcademyItem[] }) {
                 <GraduationCap className="h-4 w-4" />
               </span>
               <div>
-                <h3 className="text-sm font-bold text-white">{a.title}</h3>
-                <p className="mt-1 text-xs text-white/55">{a.description}</p>
+                <h3 className="text-sm font-bold text-gray-900">{a.title}</h3>
+                <p className="mt-1 text-xs text-gray-500">{a.description}</p>
               </div>
             </GemCard>
           </Link>

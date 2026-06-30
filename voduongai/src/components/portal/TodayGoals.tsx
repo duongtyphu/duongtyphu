@@ -34,17 +34,17 @@ const CARDS = [
 export function TodayGoals() {
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">Hôm nay bạn muốn làm gì?</h2>
+      <h2 className="text-lg font-bold text-gray-900">Hôm nay bạn muốn làm gì?</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
         {CARDS.map((c) => (
           <Link
             key={c.title}
             href={c.href}
-            className={`card-shine group rounded-[20px] border border-white/10 bg-gradient-to-br ${c.gradient} bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30`}
+            className={`card-shine group rounded-[20px] border border-gray-200 bg-gradient-to-br ${c.gradient} bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30`}
           >
             <span className="text-2xl">{c.icon}</span>
-            <h3 className="mt-3 text-sm font-bold text-white">{c.title}</h3>
-            <p className="mt-1.5 text-xs text-white/70">{c.description}</p>
+            <h3 className="mt-3 text-sm font-bold text-gray-900">{c.title}</h3>
+            <p className="mt-1.5 text-xs text-gray-600">{c.description}</p>
             <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-brand-blue group-hover:underline">
               Khám phá ngay →
             </span>

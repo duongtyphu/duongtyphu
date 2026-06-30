@@ -13,8 +13,8 @@ export function HumanNetworkCard({ network }: { network: HumanNetwork }) {
         <Network className="h-5 w-5" />
       </span>
       <div className="flex-1">
-        <h2 className="text-sm font-bold text-white">{network.title}</h2>
-        <p className="mt-1 text-xs text-white/55">{network.description}</p>
+        <h2 className="text-sm font-bold text-gray-900">{network.title}</h2>
+        <p className="mt-1 text-xs text-gray-500">{network.description}</p>
       </div>
       <Button href={network.href} variant="secondary" className="shrink-0">
         {network.cta} →

@@ -10,13 +10,13 @@ export default function TemplatesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Template</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Template</h1>
+        <p className="mt-2 text-gray-900">
           Mẫu dùng ngay cho content, landing page và vận hành — tải về và tuỳ biến theo nhu cầu.
         </p>
       </div>
       {!ready ? null : templates.length === 0 ? (
-        <p className="text-sm text-white/40">Chưa có template nào được công bố.</p>
+        <p className="text-sm text-gray-400">Chưa có template nào được công bố.</p>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {templates.map((r) => {
@@ -27,13 +27,13 @@ export default function TemplatesPage() {
                 href={href}
                 target={href !== "#" ? "_blank" : undefined}
                 rel="noopener noreferrer"
-                className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30"
+                className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30"
               >
                 <span className="inline-flex rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
                   {r.type}
                 </span>
-                <h3 className="mt-3 text-sm font-bold text-white">{r.name}</h3>
-                <p className="mt-2 text-sm text-white">{r.description}</p>
+                <h3 className="mt-3 text-sm font-bold text-gray-900">{r.name}</h3>
+                <p className="mt-2 text-sm text-gray-900">{r.description}</p>
               </a>
             );
           })}

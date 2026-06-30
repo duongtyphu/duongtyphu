@@ -11,9 +11,9 @@ export function AIBuildCoach({ tip }: { tip: AiBuildTip }) {
     <GemCard variant="featured">
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-[#FBBF24]" />
-        <h2 className="text-sm font-bold text-white">AI Build Coach</h2>
+        <h2 className="text-sm font-bold text-gray-900">AI Build Coach</h2>
       </div>
-      <p className="mt-3 text-sm text-white/70">{tip.message}</p>
+      <p className="mt-3 text-sm text-gray-600">{tip.message}</p>
       <Button href={tip.href} variant="primary" className="mt-4">
         {tip.cta} →
       </Button>

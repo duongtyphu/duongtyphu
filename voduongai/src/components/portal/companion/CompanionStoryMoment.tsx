@@ -52,7 +52,7 @@ export function CompanionStoryMoment({
     <div
       role="dialog"
       aria-label="Một câu chuyện nhỏ từ Companion"
-      className={`companion-story-moment pointer-events-auto absolute bottom-full right-0 mb-3 w-[min(86vw,320px)] rounded-2xl border border-white/15 bg-[#0B1F4D]/95 p-4 text-left text-sm leading-relaxed text-white/90 shadow-2xl backdrop-blur transition-all duration-300 ${
+      className={`companion-story-moment pointer-events-auto absolute bottom-full right-0 mb-3 w-[min(86vw,320px)] rounded-2xl border border-white/15 bg-white/95 p-4 text-left text-sm leading-relaxed text-gray-800 shadow-2xl backdrop-blur transition-all duration-300 ${
         visible ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"
       }`}
     >
@@ -60,17 +60,17 @@ export function CompanionStoryMoment({
         type="button"
         onClick={() => setVisible(false)}
         aria-label="Đóng"
-        className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-white/40 transition hover:text-white/80 focus:outline-none"
+        className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-gray-400 transition hover:text-gray-700 focus:outline-none"
       >
         <X className="h-3 w-3" />
       </button>
 
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-white/40">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
         Một câu chuyện nhỏ
       </p>
-      <p className="mb-2 text-sm font-semibold text-white/90">{story.title}</p>
-      <p className="mb-3 whitespace-pre-line text-[13px] leading-relaxed text-white/75">{story.body}</p>
-      <p className="mb-3 text-[13px] italic text-white/55">{story.closingLine}</p>
+      <p className="mb-2 text-sm font-semibold text-gray-800">{story.title}</p>
+      <p className="mb-3 whitespace-pre-line text-[13px] leading-relaxed text-gray-600">{story.body}</p>
+      <p className="mb-3 text-[13px] italic text-gray-500">{story.closingLine}</p>
 
       {saveState === "saved" ? (
         <p className="mb-3 text-[13px] text-amber-200/80">{confirmLine}</p>
@@ -80,7 +80,7 @@ export function CompanionStoryMoment({
         <button
           type="button"
           onClick={() => setVisible(false)}
-          className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/80 transition hover:bg-white/10"
+          className="rounded-lg border border-white/15 bg-gray-50 px-3 py-1.5 text-xs text-gray-700 transition hover:bg-gray-100"
         >
           Cảm ơn, mình muốn tiếp tục
         </button>
@@ -89,14 +89,14 @@ export function CompanionStoryMoment({
             type="button"
             onClick={handleSave}
             disabled={saveState !== "idle"}
-            className="flex-1 rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/70 transition hover:bg-white/5 hover:text-white/90 disabled:cursor-default disabled:text-white/40"
+            className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 transition hover:bg-gray-50 hover:text-gray-800 disabled:cursor-default disabled:text-gray-400"
           >
             {saveState === "saved" ? "Đã lưu" : saveState === "saving" ? "Đang lưu…" : "Lưu vào My Story"}
           </button>
           <button
             type="button"
             onClick={() => setVisible(false)}
-            className="flex-1 rounded-lg border border-white/10 px-3 py-1.5 text-xs text-white/50 transition hover:text-white/80"
+            className="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-500 transition hover:text-gray-700"
           >
             Kể lúc khác
           </button>

@@ -29,10 +29,10 @@ export function AddMemoryCapsuleForm() {
     return (
       <GemCard>
         <div className="flex items-center gap-2">
-          <Gem className="h-4 w-4 text-[#22D3EE]" />
-          <h2 className="text-sm font-bold text-white">Lưu lại một khoảnh khắc đáng nhớ</h2>
+          <Gem className="h-4 w-4 text-blue-600" />
+          <h2 className="text-sm font-bold text-gray-900">Lưu lại một khoảnh khắc đáng nhớ</h2>
         </div>
-        <p className="mt-3 text-sm text-white/65">
+        <p className="mt-3 text-sm text-gray-600">
           Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
         </p>
       </GemCard>
@@ -42,10 +42,10 @@ export function AddMemoryCapsuleForm() {
   return (
     <GemCard>
       <div className="flex items-center gap-2">
-        <Gem className="h-4 w-4 text-[#22D3EE]" />
-        <h2 className="text-sm font-bold text-white">Lưu lại một khoảnh khắc đáng nhớ</h2>
+        <Gem className="h-4 w-4 text-blue-600" />
+        <h2 className="text-sm font-bold text-gray-900">Lưu lại một khoảnh khắc đáng nhớ</h2>
       </div>
-      <p className="mt-1 text-sm text-white/55">Không cần lưu tất cả — chỉ điều bạn muốn nhớ mãi.</p>
+      <p className="mt-1 text-sm text-gray-500">Không cần lưu tất cả — chỉ điều bạn muốn nhớ mãi.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {KIND_OPTIONS.map((opt) => (
           <button
@@ -53,7 +53,7 @@ export function AddMemoryCapsuleForm() {
             type="button"
             onClick={() => setKind(opt.value)}
             className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-              kind === opt.value ? "gemos-btn-primary text-white" : "gemos-btn-secondary text-white/70"
+              kind === opt.value ? "gemos-btn-primary text-white" : "gemos-btn-secondary text-gray-600"
             }`}
           >
             {opt.label}
@@ -64,7 +64,7 @@ export function AddMemoryCapsuleForm() {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Điều gì đáng nhớ với bạn hôm nay?"
-        className="mt-3 w-full rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-[#22D3EE]/50"
+        className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-400/50"
       />
       <Button
         variant="secondary"
@@ -80,7 +80,7 @@ export function AddMemoryCapsuleForm() {
         {saved ? "Đã cất giữ" : "Cất giữ vào My Story"}
       </Button>
       {saved && (
-        <p className="mt-2 text-xs text-white/55">Khoảnh khắc này đã được giữ lại cho hành trình của bạn.</p>
+        <p className="mt-2 text-xs text-gray-500">Khoảnh khắc này đã được giữ lại cho hành trình của bạn.</p>
       )}
     </GemCard>
   );

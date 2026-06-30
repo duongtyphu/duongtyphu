@@ -48,7 +48,7 @@ export default async function PremiumPage() {
 
       {liveProducts.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold text-white">Sản phẩm đang mở bán</h2>
+          <h2 className="text-lg font-bold text-gray-900">Sản phẩm đang mở bán</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {liveProducts.map((p) => {
               const owned = purchasedProductIds.has(String(p.id));
@@ -62,8 +62,8 @@ export default async function PremiumPage() {
                       <GemBadge tone="premium">{`${p.price.toLocaleString("vi-VN")}đ`}</GemBadge>
                     )}
                   </div>
-                  <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-                  {p.description && <p className="mt-2 text-sm text-white/70">{p.description}</p>}
+                  <h3 className="mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
+                  {p.description && <p className="mt-2 text-sm text-gray-600">{p.description}</p>}
                   {owned ? (
                     <div className="mt-4 flex flex-wrap gap-3">
                       {p.video_url && (
@@ -81,7 +81,7 @@ export default async function PremiumPage() {
                           href={p.pdf_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="gemos-btn-secondary rounded-full px-5 py-2 text-sm font-semibold text-white"
+                          className="gemos-btn-secondary rounded-full px-5 py-2 text-sm font-semibold text-gray-900"
                         >
                           Tải tài liệu →
                         </a>
@@ -106,13 +106,13 @@ export default async function PremiumPage() {
       )}
 
       <section>
-        <h2 className="text-lg font-bold text-white">Danh mục Premium</h2>
+        <h2 className="text-lg font-bold text-gray-900">Danh mục Premium</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {premiumProducts.map((p) => (
             <GemCard key={p.id} variant="locked">
               <GemBadge tone="locked">{p.type}</GemBadge>
-              <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-              <p className="mt-2 text-sm text-white/70">{p.description}</p>
+              <h3 className="mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
+              <p className="mt-2 text-sm text-gray-600">{p.description}</p>
               <GemLockedOverlay />
             </GemCard>
           ))}

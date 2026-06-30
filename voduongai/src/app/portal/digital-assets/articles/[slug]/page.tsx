@@ -50,15 +50,15 @@ export default function DigitalAssetArticleDetailPage() {
         />
       </div>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">{category?.name}</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-white">{article.title}</h1>
-        <p className="mt-2 text-sm text-white/50">
+        <h1 className="mt-2 text-2xl font-extrabold text-gray-900">{article.title}</h1>
+        <p className="mt-2 text-sm text-gray-500">
           {article.author} · {article.publishedAt}
         </p>
-        <div className="mt-6 space-y-3 text-sm leading-relaxed text-white/80">
+        <div className="mt-6 space-y-3 text-sm leading-relaxed text-gray-700">
           {article.content.split("\n\n").map((para, i) => (
-            <p key={i} className={para.startsWith(">") ? "border-l-2 border-brand-blue/40 pl-3 italic text-white/60" : ""}>
+            <p key={i} className={para.startsWith(">") ? "border-l-2 border-brand-blue/40 pl-3 italic text-gray-500" : ""}>
               {para.replace(/^>\s*/, "")}
             </p>
           ))}
@@ -66,7 +66,7 @@ export default function DigitalAssetArticleDetailPage() {
         {article.tags.length > 0 && (
           <div className="mt-6 flex flex-wrap gap-2">
             {article.tags.map((t) => (
-              <span key={t} className="rounded-full bg-white/5 px-3 py-1 text-xs text-white/60">
+              <span key={t} className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-500">
                 #{t}
               </span>
             ))}

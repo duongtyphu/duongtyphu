@@ -171,6 +171,13 @@ export const portalNavSections: NavSection[] = [
     ],
   },
   {
+    group: "Premium",
+    emoji: "💎",
+    items: [
+      { label: "Premium", href: "/portal/premium" },
+    ],
+  },
+  {
     group: "Trưởng thành",
     emoji: "🌟",
     items: [

@@ -9,7 +9,7 @@ import type { PracticeItem } from "@/data/portal/knowledge-hub";
 export function PracticeZone({ items }: { items: PracticeItem[] }) {
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">Khu thực hành</h2>
+      <h2 className="text-lg font-bold text-gray-900">Khu thực hành</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((p) => (
           <Link key={p.id} href={p.href} className="block">
@@ -18,8 +18,8 @@ export function PracticeZone({ items }: { items: PracticeItem[] }) {
                 <Target className="h-4 w-4" />
               </span>
               <div>
-                <h3 className="text-sm font-bold text-white">{p.title}</h3>
-                <p className="mt-1 text-xs text-white/55">{p.description}</p>
+                <h3 className="text-sm font-bold text-gray-900">{p.title}</h3>
+                <p className="mt-1 text-xs text-gray-500">{p.description}</p>
               </div>
             </GemCard>
           </Link>

@@ -79,10 +79,10 @@ export default function CommunityPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20">
             <Users className="h-4 w-4 text-blue-400" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-white/40">Cộng đồng</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Cộng đồng</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-white">Không ai tiến hóa một mình</h1>
-        <p className="max-w-2xl text-white/60">
+        <h1 className="text-2xl font-extrabold text-gray-900">Không ai tiến hóa một mình</h1>
+        <p className="max-w-2xl text-gray-500">
           Kết nối với những người cùng hành trình — học hỏi, chia sẻ kinh nghiệm thực tế, cập nhật kiến thức mới và phát triển cùng nhau.
         </p>
       </div>
@@ -97,7 +97,7 @@ export default function CommunityPage() {
       <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
         <div className="mb-3 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-amber-400" />
-          <p className="text-sm font-bold text-white">Bạn mới? Nên bắt đầu từ đây</p>
+          <p className="text-sm font-bold text-gray-900">Bạn mới? Nên bắt đầu từ đây</p>
         </div>
         <div className="space-y-2">
           {[
@@ -110,7 +110,7 @@ export default function CommunityPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-[10px] font-bold text-amber-400">
                 {item.step}
               </span>
-              <p className="text-sm text-white/70">{item.text}</p>
+              <p className="text-sm text-gray-600">{item.text}</p>
             </div>
           ))}
         </div>
@@ -118,33 +118,33 @@ export default function CommunityPage() {
 
       {/* Communities */}
       <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-white/30">Các kênh cộng đồng</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các kênh cộng đồng</p>
         <div className="space-y-4">
           {COMMUNITIES.map((c) => (
-            <div key={c.title} className="rounded-xl border border-white/10 bg-white/[0.03] p-5">
+            <div key={c.title} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
               <div className="mb-4 flex items-start gap-4">
                 <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
                   <c.icon className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-white/30">{c.platform}</p>
-                  <h3 className="mt-0.5 text-sm font-bold text-white">{c.title}</h3>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">{c.platform}</p>
+                  <h3 className="mt-0.5 text-sm font-bold text-gray-900">{c.title}</h3>
                 </div>
               </div>
-              <p className="mb-3 text-sm leading-relaxed text-white/65">{c.description}</p>
+              <p className="mb-3 text-sm leading-relaxed text-gray-600">{c.description}</p>
               <div className="mb-4 space-y-1.5">
-                <p className="text-xs text-white/40">
-                  <span className="font-semibold text-white/60">Dành cho:</span> {c.audience}
+                <p className="text-xs text-gray-400">
+                  <span className="font-semibold text-gray-500">Dành cho:</span> {c.audience}
                 </p>
-                <p className="text-xs text-white/40">
-                  <span className="font-semibold text-white/60">Hoạt động:</span> {c.activity}
+                <p className="text-xs text-gray-400">
+                  <span className="font-semibold text-gray-500">Hoạt động:</span> {c.activity}
                 </p>
               </div>
               <a
                 href={c.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${c.color} border border-current/20 hover:bg-white/5`}
+                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${c.color} border border-current/20 hover:bg-gray-50`}
               >
                 {c.cta}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -156,12 +156,12 @@ export default function CommunityPage() {
 
       {/* Rules */}
       <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-white/30">Nội quy cộng đồng</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Nội quy cộng đồng</p>
         <div className="space-y-2">
           {RULES.map((rule, i) => (
             <div key={i} className="flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3">
-              <span className="mt-0.5 text-xs font-bold text-white/20">{String(i + 1).padStart(2, "0")}</span>
-              <p className="text-sm text-white/70">{rule}</p>
+              <span className="mt-0.5 text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
+              <p className="text-sm text-gray-600">{rule}</p>
             </div>
           ))}
         </div>
@@ -170,14 +170,14 @@ export default function CommunityPage() {
       {/* FAQ */}
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-white/30" />
-          <p className="text-xs font-bold uppercase tracking-widest text-white/30">Câu hỏi thường gặp</p>
+          <HelpCircle className="h-4 w-4 text-gray-400" />
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Câu hỏi thường gặp</p>
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-              <p className="mb-2 text-sm font-bold text-white">{item.q}</p>
-              <p className="text-sm leading-relaxed text-white/60">{item.a}</p>
+            <div key={item.q} className="rounded-xl border border-gray-200 bg-white/[0.02] p-4">
+              <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
+              <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>
           ))}
         </div>
@@ -185,8 +185,8 @@ export default function CommunityPage() {
 
       {/* CTA */}
       <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-6 text-center">
-        <h3 className="mb-2 text-base font-bold text-white">Sẵn sàng tham gia?</h3>
-        <p className="mb-5 text-sm text-white/60">Hàng trăm người đang học và chia sẻ mỗi ngày — đừng đi một mình.</p>
+        <h3 className="mb-2 text-base font-bold text-gray-900">Sẵn sàng tham gia?</h3>
+        <p className="mb-5 text-sm text-gray-500">Hàng trăm người đang học và chia sẻ mỗi ngày — đừng đi một mình.</p>
         <div className="flex flex-wrap justify-center gap-3">
           <a
             href={siteConfig.community.facebookGroup}
@@ -201,7 +201,7 @@ export default function CommunityPage() {
             href={siteConfig.community.zaloGroup}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-5 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/20 hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
           >
             <MessageCircle className="h-4 w-4" />
             Tham gia Zalo

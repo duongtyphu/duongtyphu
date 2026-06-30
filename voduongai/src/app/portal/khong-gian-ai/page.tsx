@@ -465,7 +465,7 @@ export default function KhongGianAiPage() {
         <section className="rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 to-indigo-50 p-6 md:p-8 shadow-sm text-center space-y-4">
           <div className="flex justify-center">
             <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 shadow-lg">
-              <Zap className="h-6 w-6 text-white" />
+              <Zap className="h-6 w-6 text-gray-900" />
             </div>
           </div>
           <div className="space-y-1">

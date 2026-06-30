@@ -21,8 +21,8 @@ export function ResourceLibraryGrid({ items }: { items: ResourceLibraryItem[] })
   return (
     <section>
       <div className="flex items-end justify-between">
-        <h2 className="text-lg font-bold text-white">Thư viện AI</h2>
-        <Link href="/portal/library" className="text-sm font-semibold text-[#22D3EE] hover:underline">
+        <h2 className="text-lg font-bold text-gray-900">Thư viện AI</h2>
+        <Link href="/portal/library" className="text-sm font-semibold text-blue-600 hover:underline">
           Xem tất cả →
         </Link>
       </div>
@@ -32,8 +32,8 @@ export function ResourceLibraryGrid({ items }: { items: ResourceLibraryItem[] })
           return (
             <Link key={r.id} href={r.href} className="block">
               <GemCard className="flex flex-col items-center gap-2 py-5 text-center transition hover:-translate-y-1">
-                <Icon className="h-5 w-5 text-[#22D3EE]" />
-                <span className="text-xs font-semibold text-white">{r.label}</span>
+                <Icon className="h-5 w-5 text-blue-600" />
+                <span className="text-xs font-semibold text-gray-900">{r.label}</span>
               </GemCard>
             </Link>
           );

@@ -42,10 +42,10 @@ export function MonthlyLetterCard({ stats }: { stats: MonthlyLetterStats }) {
   return (
     <GemCard variant="featured">
       <div className="flex items-center gap-2">
-        <Mail className="h-4 w-4 text-[#22D3EE]" />
-        <h2 className="text-sm font-bold text-white">Lá thư tháng {stats.monthLabel}</h2>
+        <Mail className="h-4 w-4 text-blue-600" />
+        <h2 className="text-sm font-bold text-gray-900">Lá thư tháng {stats.monthLabel}</h2>
       </div>
-      <p className="mt-3 text-sm leading-relaxed text-white/75">{letter}</p>
+      <p className="mt-3 text-sm leading-relaxed text-gray-600">{letter}</p>
     </GemCard>
   );
 }

@@ -25,18 +25,18 @@ export default function StudentSuccessPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Thành công học viên</h1>
-        <p className="mt-2 text-white">Câu chuyện thực tế từ học viên đã áp dụng AI, Affiliate và xây tài sản số.</p>
+        <h1 className="text-2xl font-extrabold text-gray-900">Thành công học viên</h1>
+        <p className="mt-2 text-gray-900">Câu chuyện thực tế từ học viên đã áp dụng AI, Affiliate và xây tài sản số.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {STORIES.map((s) => (
-          <div key={s.name} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white/10 text-xl">👤</div>
-            <h3 className="mt-3 text-center text-sm font-bold text-white">{s.name}</h3>
+          <div key={s.name} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl">👤</div>
+            <h3 className="mt-3 text-center text-sm font-bold text-gray-900">{s.name}</h3>
             <p className="text-center text-xs text-brand-violet">{s.role}</p>
             <p className="mt-3 text-sm font-semibold text-brand-blue">{s.result}</p>
-            <p className="mt-2 text-sm italic text-white/70">&ldquo;{s.quote}&rdquo;</p>
+            <p className="mt-2 text-sm italic text-gray-600">&ldquo;{s.quote}&rdquo;</p>
           </div>
         ))}
       </div>

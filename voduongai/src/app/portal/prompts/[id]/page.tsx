@@ -25,17 +25,17 @@ export default async function PromptDetailPage({ params }: PageProps<"/portal/pr
         ← Thư viện Prompt
       </Link>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
           {prompt.category}
         </span>
-        <h1 className="mt-4 text-2xl font-extrabold text-white">{prompt.title}</h1>
+        <h1 className="mt-4 text-2xl font-extrabold text-gray-900">{prompt.title}</h1>
 
-        <div className="mt-6 rounded-xl bg-white/5 p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-white">
+        <div className="mt-6 rounded-xl bg-gray-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-900">
             Prompt
           </p>
-          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-white">
+          <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-gray-900">
             {prompt.preview}
           </p>
         </div>

@@ -574,7 +574,7 @@ export function CompanionPresence({
             type="button"
             onClick={() => handleMinimize(false)}
             aria-label={`Hiện lại ${displayName}`}
-            className="companion-avatar-button relative flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-[#0B1F4D]/90 text-white/60 shadow-lg backdrop-blur transition hover:text-white"
+            className="companion-avatar-button relative flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/90 text-gray-500 shadow-lg backdrop-blur transition hover:text-gray-900"
           >
             <ChevronDown className="h-4 w-4 rotate-180" />
           </button>
@@ -668,7 +668,7 @@ export function CompanionPresence({
             type="button"
             onClick={() => handleMinimize(true)}
             aria-label={`Thu nhỏ ${displayName}`}
-            className="mb-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-white/10 bg-[#0B1F4D]/80 text-white/40 opacity-0 transition hover:text-white/80 focus:opacity-100 focus:outline-none group-hover:opacity-100"
+            className="mb-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-white/80 text-gray-400 opacity-0 transition hover:text-gray-700 focus:opacity-100 focus:outline-none group-hover:opacity-100"
           >
             <ChevronDown className="h-3 w-3" />
           </button>

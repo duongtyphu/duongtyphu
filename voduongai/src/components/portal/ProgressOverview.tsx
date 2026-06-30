@@ -26,16 +26,16 @@ export function ProgressOverview({ purchasedCount }: { purchasedCount: number })
 
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">Tiến độ của tôi</h2>
+      <h2 className="text-lg font-bold text-gray-900">Tiến độ của tôi</h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
         {stats.map((s) => (
-          <div key={s.label} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-            <p className="text-2xl font-extrabold text-white">{s.value === null ? "–" : s.value}</p>
-            <p className="mt-1 text-xs text-white/60">{s.label}</p>
+          <div key={s.label} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-4">
+            <p className="text-2xl font-extrabold text-gray-900">{s.value === null ? "–" : s.value}</p>
+            <p className="mt-1 text-xs text-gray-500">{s.label}</p>
           </div>
         ))}
       </div>
-      <p className="mt-3 text-xs text-white/40">
+      <p className="mt-3 text-xs text-gray-400">
         Theo dõi tiến độ học theo bài/chương đang được phát triển — số liệu trên dựa trên dữ liệu thật hiện có
         (đơn hàng đã xác nhận và nội dung bạn đã lưu).
       </p>

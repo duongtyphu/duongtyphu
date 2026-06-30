@@ -21,20 +21,20 @@ export function SupportTicketForm() {
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="card-shine space-y-3 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-      <h2 className="text-sm font-bold text-white">Gửi yêu cầu hỗ trợ mới</h2>
+    <form ref={formRef} action={handleSubmit} className="card-shine space-y-3 rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+      <h2 className="text-sm font-bold text-gray-900">Gửi yêu cầu hỗ trợ mới</h2>
       <input
         name="subject"
         placeholder="Tiêu đề"
         required
-        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40"
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
       />
       <textarea
         name="message"
         placeholder="Mô tả vấn đề của bạn..."
         required
         rows={4}
-        className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/40"
+        className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400"
       />
       <div className="flex items-center gap-3">
         <button

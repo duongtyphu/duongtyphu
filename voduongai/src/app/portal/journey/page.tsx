@@ -47,7 +47,7 @@ export default function JourneyHubPage() {
       <RelatedActions actions={relatedActions} />
 
       <section>
-        <h2 className="text-lg font-bold text-white">Khám phá thêm trong Hành trình</h2>
+        <h2 className="text-lg font-bold text-gray-900">Khám phá thêm trong Hành trình</h2>
         <div className="mt-4">
           <HubModuleGrid modules={hub.modules} />
         </div>

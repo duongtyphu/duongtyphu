@@ -20,9 +20,9 @@ const STATUS_LABEL: Record<MissionStatus, string> = {
 };
 
 const STATUS_TONE: Record<MissionStatus, string> = {
-  todo: "text-white/40",
+  todo: "text-gray-400",
   "in-progress": "text-[#FBBF24]",
-  done: "text-[#22D3EE]",
+  done: "text-blue-600",
 };
 
 /**
@@ -34,12 +34,12 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
   return (
     <GemCard>
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-white">Hôm nay, vài điều nhỏ để đi tiếp</h2>
-        <span className="text-xs font-semibold text-white/50">
+        <h2 className="text-sm font-bold text-gray-900">Hôm nay, vài điều nhỏ để đi tiếp</h2>
+        <span className="text-xs font-semibold text-gray-500">
           {ready ? `${doneCount}/${missions.length} đã xong` : "…"}
         </span>
       </div>
-      <p className="mt-1 text-xs text-white/45">
+      <p className="mt-1 text-xs text-gray-900/45">
         Không cần làm hết. Một điều thôi cũng đủ để hôm nay có ý nghĩa.
       </p>
       <ul className="mt-4 space-y-2.5">
@@ -47,7 +47,7 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
           const status = getStatus(m.id);
           const Icon = STATUS_ICON[status];
           return (
-            <li key={m.id} className="flex items-start gap-3 rounded-xl border border-white/8 bg-white/[0.03] p-3">
+            <li key={m.id} className="flex items-start gap-3 rounded-xl border border-white/8 bg-gray-50 p-3">
               <button
                 type="button"
                 onClick={() => cycleStatus(m.id)}
@@ -57,10 +57,10 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
                 <Icon className="h-5 w-5" />
               </button>
               <div className="min-w-0 flex-1">
-                <Link href={m.href} className="text-sm font-semibold text-white hover:text-[#22D3EE]">
+                <Link href={m.href} className="text-sm font-semibold text-gray-900 hover:text-blue-600">
                   {m.label}
                 </Link>
-                <p className="mt-0.5 text-xs text-white/45">{m.description}</p>
+                <p className="mt-0.5 text-xs text-gray-900/45">{m.description}</p>
               </div>
               <span className={`shrink-0 text-[10px] font-semibold ${STATUS_TONE[status]}`}>
                 {STATUS_LABEL[status]}
@@ -70,7 +70,7 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
         })}
       </ul>
       {ready && doneCount > 0 && (
-        <p className="mt-3 text-xs text-white/55">{getSmallVictoryLine("didNotGiveUp", doneCount)}</p>
+        <p className="mt-3 text-xs text-gray-500">{getSmallVictoryLine("didNotGiveUp", doneCount)}</p>
       )}
     </GemCard>
   );

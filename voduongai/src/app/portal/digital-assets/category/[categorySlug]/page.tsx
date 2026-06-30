@@ -30,24 +30,24 @@ export default function DigitalAssetCategoryPage() {
         ← ĐẦU TƯ CÙNG TÔI
       </Link>
 
-      <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-8">
+      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <div className="flex items-center gap-3">
           <span className="text-2xl">{category.icon}</span>
-          <h1 className="text-2xl font-extrabold text-white">{category.name}</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900">{category.name}</h1>
         </div>
-        <p className="mt-3 max-w-2xl text-white/70">{category.description}</p>
+        <p className="mt-3 max-w-2xl text-gray-600">{category.description}</p>
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-sm font-bold text-white">Dự án ({sortedProjects.length})</h2>
+        <h2 className="text-sm font-bold text-gray-900">Dự án ({sortedProjects.length})</h2>
         {!projectsReady ? (
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-2xl bg-white/5" />
+              <div key={i} className="h-24 animate-pulse rounded-2xl bg-gray-50" />
             ))}
           </div>
         ) : sortedProjects.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white/60">
+          <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-500">
             Chưa có dự án nào trong lĩnh vực này.
           </div>
         ) : (

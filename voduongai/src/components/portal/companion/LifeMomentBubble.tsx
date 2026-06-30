@@ -132,26 +132,26 @@ export function LifeMomentBubble({
   return (
     <div
       role="status"
-      className="fixed bottom-6 left-6 z-[70] w-[min(86vw,300px)] rounded-2xl border border-white/15 bg-[#0B1F4D]/95 px-4 py-3.5 text-left shadow-xl backdrop-blur"
+      className="fixed bottom-6 left-6 z-[70] w-[min(86vw,300px)] rounded-2xl border border-white/15 bg-white/95 px-4 py-3.5 text-left shadow-xl backdrop-blur"
     >
       <button
         type="button"
         onClick={() => setVisible(false)}
         aria-label="Đóng"
-        className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-white/40 transition hover:text-white/80 focus:outline-none"
+        className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full text-gray-400 transition hover:text-gray-700 focus:outline-none"
       >
         <X className="h-3 w-3" />
       </button>
       <div className="flex items-start gap-3 pr-4">
         <CompanionAvatar state="idle" size={32} />
         <div>
-          <p className="text-sm leading-relaxed text-white/90">{line}</p>
+          <p className="text-sm leading-relaxed text-gray-800">{line}</p>
           {capsuleKind && signedIn && (
             <button
               type="button"
               onClick={handleSave}
               disabled={saved}
-              className="mt-2 text-xs font-semibold text-brand-cyan transition hover:text-brand-cyan/80 disabled:text-white/40"
+              className="mt-2 text-xs font-semibold text-brand-cyan transition hover:text-brand-cyan/80 disabled:text-gray-400"
             >
               {saved ? "Đã giữ lại" : "Giữ lại khoảnh khắc này"}
             </button>

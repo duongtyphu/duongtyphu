@@ -10,10 +10,10 @@ export function AIConnectCoach({ tip }: { tip: AiConnectTip }) {
   return (
     <GemCard variant="featured">
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-[#22D3EE]" />
-        <h2 className="text-sm font-bold text-white">AI Connect Coach</h2>
+        <Sparkles className="h-4 w-4 text-blue-600" />
+        <h2 className="text-sm font-bold text-gray-900">AI Connect Coach</h2>
       </div>
-      <p className="mt-3 text-sm text-white/70">{tip.message}</p>
+      <p className="mt-3 text-sm text-gray-600">{tip.message}</p>
       <Button href={tip.href} variant="primary" className="mt-4">
         {tip.cta} →
       </Button>

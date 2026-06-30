@@ -24,8 +24,8 @@ export default function AchievementsHubPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#FBBF24]/25 to-[#7C3AED]/20 text-[#FBBF24]">
                 <item.icon className="h-5 w-5" />
               </div>
-              <h3 className="mt-4 text-sm font-bold text-white">{item.title}</h3>
-              <p className="mt-1 text-sm text-white/60">{item.description}</p>
+              <h3 className="mt-4 text-sm font-bold text-gray-900">{item.title}</h3>
+              <p className="mt-1 text-sm text-gray-500">{item.description}</p>
             </GemCard>
           </Link>
         ))}

@@ -8,8 +8,8 @@ import type { BuildModule } from "@/data/portal/build-os";
 export function ProjectOpportunitySection({ modules }: { modules: BuildModule[] }) {
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">Project &amp; Opportunity</h2>
-      <p className="mt-1 text-sm text-white/55">
+      <h2 className="text-lg font-bold text-gray-900">Project &amp; Opportunity</h2>
+      <p className="mt-1 text-sm text-gray-500">
         Thông tin chia sẻ và phân tích cơ hội để bạn tự tìm hiểu — không phải lời cam kết lợi nhuận hay khuyến nghị đầu tư.
       </p>
       <GemCard className="mt-4">

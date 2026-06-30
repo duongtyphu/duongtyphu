@@ -49,7 +49,7 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
   if (visibleMoments.length === 0) {
     return (
       <GemCard>
-        <p className="text-sm text-white/65">
+        <p className="text-sm text-gray-600">
           Câu chuyện của bạn đang chờ những dòng đầu tiên. Một khoảnh khắc nhỏ hôm nay có thể trở thành viên ngọc đáng
           nhớ ngày mai.
         </p>
@@ -64,17 +64,17 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
           <span className="text-lg leading-none">{m.emoji}</span>
           <div className="flex-1">
             <div className="flex flex-wrap items-baseline gap-2">
-              <h3 className="text-sm font-bold text-white">{m.title}</h3>
-              <span className="text-xs text-white/40">{formatDate(m.date)}</span>
+              <h3 className="text-sm font-bold text-gray-900">{m.title}</h3>
+              <span className="text-xs text-gray-400">{formatDate(m.date)}</span>
               {m.source && (
-                <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-white/35">
+                <span className="rounded-full border border-gray-200 px-2 py-0.5 text-[10px] uppercase tracking-wide text-gray-400">
                   {m.source}
                 </span>
               )}
             </div>
-            {m.description && <p className="mt-1 text-sm text-white/65">{m.description}</p>}
+            {m.description && <p className="mt-1 text-sm text-gray-600">{m.description}</p>}
             {feedback?.id === m.id && (
-              <p className={`mt-2 text-xs ${feedback.tone === "ok" ? "text-white/50" : "text-red-300/80"}`}>
+              <p className={`mt-2 text-xs ${feedback.tone === "ok" ? "text-gray-500" : "text-red-300/80"}`}>
                 {feedback.text}
               </p>
             )}
@@ -87,19 +87,19 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
                 aria-label="Tuỳ chọn cho ký ức này"
                 onClick={() => setOpenMenuId(openMenuId === m.id ? null : m.id)}
                 disabled={deletingId === m.id}
-                className="rounded-full p-1.5 text-white/35 transition hover:bg-white/10 hover:text-white/70 disabled:opacity-50"
+                className="rounded-full p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 disabled:opacity-50"
               >
                 <MoreHorizontal className="h-4 w-4" />
               </button>
               {openMenuId === m.id && (
-                <div className="absolute right-0 top-full z-10 mt-1 w-44 rounded-xl border border-white/10 bg-[#0B1220] p-1 shadow-xl">
+                <div className="absolute right-0 top-full z-10 mt-1 w-44 rounded-xl border border-gray-200 bg-[#0B1220] p-1 shadow-xl">
                   <button
                     type="button"
                     onClick={() => {
                       setOpenMenuId(null);
                       setConfirmId(m.id);
                     }}
-                    className="w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
+                    className="w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
                   >
                     Xoá khỏi My Story
                   </button>
@@ -112,9 +112,9 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
 
       {confirmId && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-4">
-          <div className="glass-dark w-full max-w-sm rounded-2xl border border-white/10 p-6">
-            <h3 className="text-base font-bold text-white">Bạn muốn xoá ký ức này?</h3>
-            <p className="mt-2 text-sm text-white/65">
+          <div className="glass-dark w-full max-w-sm rounded-2xl border border-gray-200 p-6">
+            <h3 className="text-base font-bold text-gray-900">Bạn muốn xoá ký ức này?</h3>
+            <p className="mt-2 text-sm text-gray-600">
               Ký ức này sẽ được gỡ khỏi My Story của bạn. Bạn không cần giữ lại điều gì nếu nó không còn phù hợp với
               hành trình hiện tại.
             </p>
@@ -122,7 +122,7 @@ export function MyStoryTimeline({ moments }: { moments: StoryMoment[] }) {
               <button
                 type="button"
                 onClick={() => setConfirmId(null)}
-                className="rounded-full border border-white/10 px-4 py-2 text-sm font-semibold text-white/70 transition hover:bg-white/5"
+                className="rounded-full border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-50"
               >
                 Giữ lại
               </button>

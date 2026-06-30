@@ -34,7 +34,7 @@ export default function KnowledgeHubPage() {
       <RecommendedKnowledge items={recommendedKnowledgeItems} />
       <KnowledgeStats stats={knowledgeStats} />
       <section>
-        <h2 className="text-lg font-bold text-white">Khám phá thêm trong Tri thức</h2>
+        <h2 className="text-lg font-bold text-gray-900">Khám phá thêm trong Tri thức</h2>
         <div className="mt-4">
           <HubModuleGrid modules={hub.modules} />
         </div>

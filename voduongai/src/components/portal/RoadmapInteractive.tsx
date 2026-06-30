@@ -74,19 +74,19 @@ export function RoadmapInteractive() {
         <div className="grid gap-4 sm:grid-cols-2">
           <button
             onClick={() => setLevel("new")}
-            className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-left transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
+            className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-left transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
           >
-            <p className="text-base font-bold text-white">Tôi là người mới</p>
-            <p className="mt-2 text-sm text-white/70">
+            <p className="text-base font-bold text-gray-900">Tôi là người mới</p>
+            <p className="mt-2 text-sm text-gray-600">
               Bắt đầu từ Bước 1 — làm quen AI từ căn bản.
             </p>
           </button>
           <button
             onClick={() => setLevel("experienced")}
-            className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-left transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
+            className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-left transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
           >
-            <p className="text-base font-bold text-white">Tôi đã có kinh nghiệm</p>
-            <p className="mt-2 text-sm text-white/70">
+            <p className="text-base font-bold text-gray-900">Tôi đã có kinh nghiệm</p>
+            <p className="mt-2 text-sm text-gray-600">
               Bỏ qua phần nền tảng, vào thẳng Bước 4 — Affiliate Marketing.
             </p>
           </button>
@@ -105,15 +105,15 @@ export function RoadmapInteractive() {
           {visibleSteps.map((s) => (
             <div
               key={s.step}
-              className="card-shine flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between"
+              className="card-shine flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white/[0.04] p-5 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex gap-4">
                 <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand-blue/20 text-sm font-extrabold text-brand-blue">
                   {s.step}
                 </span>
                 <div>
-                  <h3 className="text-sm font-bold text-white">{s.title}</h3>
-                  <p className="mt-1 text-sm text-white/70">{s.description}</p>
+                  <h3 className="text-sm font-bold text-gray-900">{s.title}</h3>
+                  <p className="mt-1 text-sm text-gray-600">{s.description}</p>
                   <p className="mt-2 text-xs font-semibold text-brand-violet">
                     Hành động: {s.action}
                   </p>
@@ -121,7 +121,7 @@ export function RoadmapInteractive() {
               </div>
               <Link
                 href={s.resource.href}
-                className="shrink-0 rounded-full border border-white/15 px-4 py-2 text-center text-xs font-semibold text-white transition hover:border-brand-blue hover:text-brand-blue"
+                className="shrink-0 rounded-full border border-white/15 px-4 py-2 text-center text-xs font-semibold text-gray-900 transition hover:border-brand-blue hover:text-brand-blue"
               >
                 {s.resource.label} →
               </Link>

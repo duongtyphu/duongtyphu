@@ -14,7 +14,7 @@ export function CopyPromptButton({ content }: { content: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="mt-3 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white hover:border-brand-violet hover:text-brand-violet"
+      className="mt-3 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-900 hover:border-brand-violet hover:text-brand-violet"
     >
       {copied ? "Đã copy!" : "Copy prompt"}
     </button>

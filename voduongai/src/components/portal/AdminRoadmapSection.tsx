@@ -15,12 +15,12 @@ export function AdminRoadmapSection() {
       </h2>
       <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
         {published.map((s) => (
-          <div key={s.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+          <div key={s.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
             <span className="text-2xl">{s.icon}</span>
-            <h3 className="mt-3 text-sm font-bold text-white">
+            <h3 className="mt-3 text-sm font-bold text-gray-900">
               Bước {s.order}: {s.title}
             </h3>
-            <p className="mt-2 text-sm text-white/70">{s.description}</p>
+            <p className="mt-2 text-sm text-gray-600">{s.description}</p>
           </div>
         ))}
       </div>

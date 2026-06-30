@@ -42,7 +42,7 @@ export default async function OriginRoomPage() {
       <div className="flex min-h-[60vh] items-center justify-center px-6 py-16">
         <div className="max-w-md text-center">
           <CompanionAvatar state="idle" size={56} />
-          <p className="mt-6 text-base leading-relaxed text-white/70">
+          <p className="mt-6 text-base leading-relaxed text-gray-600">
             Đây là một căn phòng nguồn gốc của Companion. Nó chỉ mở trong những
             khoảnh khắc rất riêng.
           </p>
@@ -64,8 +64,8 @@ export default async function OriginRoomPage() {
     <div className="mx-auto max-w-2xl px-6 py-16">
       <div className="text-center">
         <CompanionAvatar state="idle" size={64} />
-        <h1 className="mt-6 text-2xl font-semibold text-white/90">Origin Room</h1>
-        <p className="mt-2 text-sm text-white/50">
+        <h1 className="mt-6 text-2xl font-semibold text-gray-800">Origin Room</h1>
+        <p className="mt-2 text-sm text-gray-500">
           Nơi Companion nhìn lại những điều đầu tiên đã tạo nên mình.
         </p>
         <OriginLineWhisper context="origin_room" line={originLine} isFounderPresent />
@@ -73,18 +73,18 @@ export default async function OriginRoomPage() {
 
       <div className="mt-14 space-y-8">
         {memories.map((memory) => (
-          <div key={memory.type} className="border-l border-white/10 pl-5">
-            <p className="text-sm font-medium text-white/70">{memory.title}</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/50">{memory.moment}</p>
-            <p className="mt-2 text-sm leading-relaxed text-white/60">{memory.meaning}</p>
-            <p className="mt-3 text-xs leading-relaxed text-white/40">
+          <div key={memory.type} className="border-l border-gray-200 pl-5">
+            <p className="text-sm font-medium text-gray-600">{memory.title}</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-500">{memory.moment}</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-500">{memory.meaning}</p>
+            <p className="mt-3 text-xs leading-relaxed text-gray-400">
               Điều không bao giờ được quên: {memory.lesson.whatMustNeverBeForgotten}
             </p>
           </div>
         ))}
       </div>
 
-      <p className="mx-auto mt-16 max-w-sm text-center text-xs leading-relaxed text-white/30">
+      <p className="mx-auto mt-16 max-w-sm text-center text-xs leading-relaxed text-gray-400">
         Founder là người gieo hạt đầu tiên, không phải người đứng trên khu vườn.
       </p>
     </div>

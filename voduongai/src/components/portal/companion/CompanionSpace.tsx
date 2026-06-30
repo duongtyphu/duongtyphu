@@ -53,7 +53,7 @@ export function CompanionSpace({
         role="dialog"
         aria-modal="true"
         aria-label={`${displayName}`}
-        className="companion-space-panel relative z-10 max-h-[85vh] w-full overflow-y-auto rounded-t-[28px] border border-white/10 bg-[#0B1F4D] p-5 pt-6 shadow-2xl sm:max-h-[80vh] sm:w-[380px] sm:rounded-2xl sm:p-6"
+        className="companion-space-panel relative z-10 max-h-[85vh] w-full overflow-y-auto rounded-t-[28px] border border-gray-200 bg-white p-5 pt-6 shadow-2xl sm:max-h-[80vh] sm:w-[380px] sm:rounded-2xl sm:p-6"
       >
         <div aria-hidden="true" className="companion-space-aura" />
         <div aria-hidden="true" className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/15 sm:hidden" />
@@ -63,8 +63,8 @@ export function CompanionSpace({
           <div className="flex items-center gap-3">
             <CompanionAvatar state={state.key} className="h-10 w-10 shrink-0" />
             <div>
-              <p className="text-sm font-bold text-white">{displayName}</p>
-              <p className="text-xs text-white/55">Mình ở đây. {state.line}</p>
+              <p className="text-sm font-bold text-gray-900">{displayName}</p>
+              <p className="text-xs text-gray-500">Mình ở đây. {state.line}</p>
             </div>
           </div>
           <button
@@ -72,52 +72,52 @@ export function CompanionSpace({
             type="button"
             onClick={onClose}
             aria-label="Đóng Companion"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/70 transition hover:text-white"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-600 transition hover:text-gray-900"
           >
             <X className="h-4 w-4" />
           </button>
         </section>
 
-        <p className="mb-1 text-sm leading-relaxed text-white/85">
+        <p className="mb-1 text-sm leading-relaxed text-gray-900/85">
           Mình đang ở đây. Hôm nay bạn muốn chia sẻ điều gì?
         </p>
-        <p className="mb-5 text-xs italic text-white/40">
+        <p className="mb-5 text-xs italic text-gray-400">
           Mình đồng hành cùng bạn qua từng giai đoạn — không chỉ đọc nội dung.
         </p>
 
         {/* 2. Today — ghi nhận hiện diện hôm nay của người dùng */}
-        <section aria-label="Today" className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">Hôm nay của bạn</p>
-          <p className="text-sm text-white/80">
+        <section aria-label="Today" className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-900/45">Hôm nay của bạn</p>
+          <p className="text-sm text-gray-700">
             {insight ?? "Mình nhận thấy bạn vẫn đang ở đây, vẫn đang tiếp tục — điều đó không nhỏ."}
           </p>
         </section>
 
         {/* 3. Reflection — một câu hỏi mời gợi mở, không bắt buộc trả lời */}
-        <section aria-label="Reflection" className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">
+        <section aria-label="Reflection" className="mb-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-900/45">
             Hôm nay mình muốn hỏi bạn một điều
           </p>
-          <p className="text-sm text-white/80">{dailyQuestion}</p>
-          <p className="mt-2 text-xs text-white/40">
+          <p className="text-sm text-gray-700">{dailyQuestion}</p>
+          <p className="mt-2 text-xs text-gray-400">
             Không cần trả lời ngay, và cũng không sao nếu bạn không muốn trả lời.
           </p>
         </section>
 
         {/* 4. Memory — điều Companion ghi nhớ và muốn chia sẻ lại */}
-        <section aria-label="Memory" className="mb-5 rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-white/45">
+        <section aria-label="Memory" className="mb-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-900/45">
             Điều Companion muốn chia sẻ
           </p>
-          <p className="whitespace-pre-line text-sm text-white/80">{sharedLine}</p>
+          <p className="whitespace-pre-line text-sm text-gray-700">{sharedLine}</p>
         </section>
 
         {/* 5. Journey — mời giữ lại một dấu chân nhỏ trên hành trình */}
         <section aria-label="Journey" className="mb-5 rounded-xl border border-dashed border-white/15 p-4">
-          <p className="mb-2 text-sm text-white/75">
+          <p className="mb-2 text-sm text-gray-600">
             Có điều gì hôm nay bạn muốn giữ lại — một dấu chân nhỏ trên hành trình này?
           </p>
-          <p className="text-xs text-white/45">
+          <p className="text-xs text-gray-900/45">
             Trò chuyện sâu với Companion đang được chuẩn bị. Hiện tại, mình có thể giúp bạn nhìn lại
             hành trình và lưu lại những điều quan trọng.
           </p>

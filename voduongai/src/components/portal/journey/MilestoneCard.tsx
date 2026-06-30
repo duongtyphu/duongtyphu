@@ -11,11 +11,11 @@ export function MilestoneCard({ milestone }: { milestone: Milestone }) {
     <GemCard variant="success">
       <div className="flex items-center gap-2">
         <Award className="h-4 w-4 text-[#FBBF24]" />
-        <h2 className="text-sm font-bold text-white">Chứng chỉ &amp; Mốc tiếp theo</h2>
+        <h2 className="text-sm font-bold text-gray-900">Chứng chỉ &amp; Mốc tiếp theo</h2>
       </div>
-      <p className="mt-3 text-sm font-semibold text-white">{milestone.certificateLabel}</p>
-      <p className="mt-1 text-xs text-white/55">Mốc tiếp theo: {milestone.nextMilestoneLabel}</p>
-      <p className="mt-1 text-xs text-white/45">{milestone.conditionLabel}</p>
+      <p className="mt-3 text-sm font-semibold text-gray-900">{milestone.certificateLabel}</p>
+      <p className="mt-1 text-xs text-gray-500">Mốc tiếp theo: {milestone.nextMilestoneLabel}</p>
+      <p className="mt-1 text-xs text-gray-900/45">{milestone.conditionLabel}</p>
       <Button href="/portal/legacy" variant="secondary" className="mt-4">
         Xem chứng chỉ →
       </Button>

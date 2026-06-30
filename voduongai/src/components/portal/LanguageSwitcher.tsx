@@ -19,8 +19,8 @@ export function LanguageSwitcher({ onSelect }: Props) {
   return (
     <div>
       <div className="flex items-center gap-2 px-2 py-1.5">
-        <Globe className="h-4 w-4 text-white/60" />
-        <span className="text-xs font-semibold uppercase tracking-wider text-white/50">
+        <Globe className="h-4 w-4 text-gray-500" />
+        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
           {t.language.label}
         </span>
       </div>
@@ -39,7 +39,7 @@ export function LanguageSwitcher({ onSelect }: Props) {
               onClick={() => status === "active" && handleSelect(code)}
               disabled={status === "coming_soon"}
               className={`flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition
-                ${active ? "bg-white/10 text-white" : "text-white/80 hover:bg-white/5 hover:text-white"}
+                ${active ? "bg-gray-100 text-gray-900" : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"}
                 ${status === "coming_soon" ? "cursor-not-allowed opacity-50" : "cursor-pointer"}
               `}
             >
@@ -49,7 +49,7 @@ export function LanguageSwitcher({ onSelect }: Props) {
                 <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" aria-hidden="true" />
               )}
               {status === "coming_soon" && (
-                <span className="text-[10px] text-white/40">{t.language.comingSoon}</span>
+                <span className="text-[10px] text-gray-400">{t.language.comingSoon}</span>
               )}
             </button>
           );

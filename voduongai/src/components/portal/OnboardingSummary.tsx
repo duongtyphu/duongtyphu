@@ -26,12 +26,12 @@ export function OnboardingSummary() {
   return (
     <div className="flex flex-wrap gap-2 text-xs">
       {level && (
-        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 font-semibold text-white/70">
+        <span className="rounded-full border border-gray-200 bg-white/[0.04] px-3 py-1.5 font-semibold text-gray-600">
           Cấp độ: {level}
         </span>
       )}
       {time && (
-        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 font-semibold text-white/70">
+        <span className="rounded-full border border-gray-200 bg-white/[0.04] px-3 py-1.5 font-semibold text-gray-600">
           {time}/ngày
         </span>
       )}

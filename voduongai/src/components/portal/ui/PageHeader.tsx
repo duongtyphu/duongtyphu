@@ -10,8 +10,8 @@ export function PageHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">{title}</h1>
-        {description && <p className="mt-2 text-sm text-white/60 sm:text-base">{description}</p>}
+        <h1 className="text-2xl font-extrabold text-gray-900">{title}</h1>
+        {description && <p className="mt-2 text-sm text-gray-500 sm:text-base">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

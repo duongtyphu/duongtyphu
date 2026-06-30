@@ -14,8 +14,8 @@ export default async function OrderReceivedPage({ params }: { params: Promise<{ 
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="text-2xl font-bold text-white">Cảm ơn bạn!</h1>
-      <p className="mt-1 text-sm text-white/60">Đơn hàng #{order.order_code ?? order.id} đã được ghi nhận.</p>
+      <h1 className="text-2xl font-bold text-gray-900">Cảm ơn bạn!</h1>
+      <p className="mt-1 text-sm text-gray-500">Đơn hàng #{order.order_code ?? order.id} đã được ghi nhận.</p>
       <OrderReceipt order={order} />
     </div>
   );

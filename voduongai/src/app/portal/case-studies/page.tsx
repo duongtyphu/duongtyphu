@@ -31,24 +31,24 @@ export default async function CaseStudiesPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Case Study</h1>
-        <p className="mt-2 text-white">Kết quả thực tế từ học viên và khách hàng đã triển khai hệ thống.</p>
+        <h1 className="text-2xl font-extrabold text-gray-900">Case Study</h1>
+        <p className="mt-2 text-gray-900">Kết quả thực tế từ học viên và khách hàng đã triển khai hệ thống.</p>
       </div>
 
       {caseStudies.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-white/5 p-10 text-center text-sm text-white">
+        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-900">
           Chưa có case study nào được đăng. Quay lại sau nhé!
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {caseStudies.map((c) => (
-            <div key={c.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+            <div key={c.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
               {c.thumbnail_url && (
                 <img src={c.thumbnail_url} alt={c.title} className="mb-3 h-36 w-full rounded-lg object-cover" />
               )}
-              <h3 className="text-sm font-bold text-white">{c.title}</h3>
-              {c.client_name && <p className="mt-1 text-xs text-white/50">{c.client_name}</p>}
-              {c.summary && <p className="mt-2 text-sm text-white/70">{c.summary}</p>}
+              <h3 className="text-sm font-bold text-gray-900">{c.title}</h3>
+              {c.client_name && <p className="mt-1 text-xs text-gray-500">{c.client_name}</p>}
+              {c.summary && <p className="mt-2 text-sm text-gray-600">{c.summary}</p>}
               {c.result_metric && (
                 <p className="mt-2 inline-flex rounded-full bg-brand-orange/10 px-2.5 py-0.5 text-xs font-semibold text-brand-orange">
                   📈 {c.result_metric}

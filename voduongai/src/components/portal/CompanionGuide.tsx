@@ -13,7 +13,7 @@ export function CompanionGuide({ message, action }: Props) {
         <Sparkles className="h-4 w-4 text-violet-400" />
       </div>
       <div className="min-w-0">
-        <p className="text-sm leading-relaxed text-white/80">{message}</p>
+        <p className="text-sm leading-relaxed text-gray-700">{message}</p>
         {action && (
           <Link
             href={action.href}

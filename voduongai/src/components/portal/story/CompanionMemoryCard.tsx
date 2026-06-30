@@ -10,10 +10,10 @@ export function CompanionMemoryCard({ reflections }: { reflections: Reflection[]
   return (
     <GemCard className="h-full">
       <div className="flex items-center gap-2">
-        <HeartHandshake className="h-4 w-4 text-[#22D3EE]" />
-        <h2 className="text-sm font-bold text-white">Mình vẫn nhớ</h2>
+        <HeartHandshake className="h-4 w-4 text-blue-600" />
+        <h2 className="text-sm font-bold text-gray-900">Mình vẫn nhớ</h2>
       </div>
-      <p className="mt-3 text-sm text-white/70">{buildInsightMemoryLine(reflections)}</p>
+      <p className="mt-3 text-sm text-gray-600">{buildInsightMemoryLine(reflections)}</p>
     </GemCard>
   );
 }

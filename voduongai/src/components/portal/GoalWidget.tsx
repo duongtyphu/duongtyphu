@@ -28,8 +28,8 @@ export function GoalWidget() {
   const active = GOALS.find((g) => g.id === goalId);
 
   return (
-    <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-      <h3 className="text-sm font-bold text-white">Mục tiêu của tôi</h3>
+    <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+      <h3 className="text-sm font-bold text-gray-900">Mục tiêu của tôi</h3>
       <div className="mt-3 flex flex-wrap gap-2">
         {GOALS.map((g) => (
           <button
@@ -38,7 +38,7 @@ export function GoalWidget() {
             className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
               g.id === goalId
                 ? "bg-brand-blue text-white"
-                : "border border-white/10 text-white/70 hover:border-brand-blue/50 hover:text-white"
+                : "border border-gray-200 text-gray-600 hover:border-brand-blue/50 hover:text-gray-900"
             }`}
           >
             {g.label}
@@ -46,7 +46,7 @@ export function GoalWidget() {
         ))}
       </div>
       {active && (
-        <div className="mt-4 rounded-xl border border-brand-blue/20 bg-brand-blue/5 p-3 text-sm text-white/80">
+        <div className="mt-4 rounded-xl border border-brand-blue/20 bg-brand-blue/5 p-3 text-sm text-gray-700">
           Dựa trên mục tiêu của bạn, hãy bắt đầu với{" "}
           <Link href={active.href} className="font-semibold text-brand-blue hover:underline">
             {active.label}

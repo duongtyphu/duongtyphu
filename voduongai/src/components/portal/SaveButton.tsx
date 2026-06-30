@@ -21,7 +21,7 @@ export function SaveButton({ item, className }: { item: SavedItem; className?: s
         `inline-flex h-7 w-7 items-center justify-center rounded-full border transition ${
           saved
             ? "border-brand-orange bg-brand-orange/10 text-brand-orange"
-            : "border-white/10 bg-white/5 text-white/50 hover:border-brand-orange/50 hover:text-brand-orange"
+            : "border-gray-200 bg-gray-50 text-gray-500 hover:border-brand-orange/50 hover:text-brand-orange"
         }`
       }
     >

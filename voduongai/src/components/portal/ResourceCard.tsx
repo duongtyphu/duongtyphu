@@ -19,7 +19,7 @@ type ResourceCardProps = {
  */
 export function ResourceCard({ title, description, type, href, external, meta, icon, action }: ResourceCardProps) {
   const className =
-    "card-shine flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30";
+    "card-shine flex h-full flex-col rounded-2xl border border-gray-200 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30";
 
   const content = (
     <>
@@ -29,9 +29,9 @@ export function ResourceCard({ title, description, type, href, external, meta, i
           {type}
         </span>
       )}
-      <h3 className="mt-3 text-sm font-bold text-white">{title}</h3>
-      {description && <p className="mt-2 line-clamp-3 text-sm text-white/70">{description}</p>}
-      {meta && <p className="mt-2 text-xs text-white/40">{meta}</p>}
+      <h3 className="mt-3 text-sm font-bold text-gray-900">{title}</h3>
+      {description && <p className="mt-2 line-clamp-3 text-sm text-gray-600">{description}</p>}
+      {meta && <p className="mt-2 text-xs text-gray-400">{meta}</p>}
       {action && <div className="mt-3">{action}</div>}
     </>
   );

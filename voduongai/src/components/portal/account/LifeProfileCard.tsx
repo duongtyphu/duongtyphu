@@ -39,12 +39,12 @@ export function LifeProfileCard({ lifeProfile }: { lifeProfile: LifeProfile }) {
   }
 
   return (
-    <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-      <h3 className="text-sm font-bold text-white">Điều bạn muốn Companion nhớ</h3>
+    <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+      <h3 className="text-sm font-bold text-gray-900">Điều bạn muốn Companion nhớ</h3>
 
       {!entry && (
         <>
-          <p className="mt-1 text-xs leading-relaxed text-white/60">
+          <p className="mt-1 text-xs leading-relaxed text-gray-500">
             Nếu bạn muốn, mình rất muốn biết ngày sinh của bạn — không phải để
             thu thập dữ liệu, mà để có thể cùng bạn trân trọng một ngày ý nghĩa
             mỗi năm. Bạn hoàn toàn có thể bỏ qua điều này.
@@ -54,7 +54,7 @@ export function LifeProfileCard({ lifeProfile }: { lifeProfile: LifeProfile }) {
               type="date"
               value={dateValue}
               onChange={(e) => setDateValue(e.target.value)}
-              className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900"
             />
             <button
               type="button"
@@ -70,7 +70,7 @@ export function LifeProfileCard({ lifeProfile }: { lifeProfile: LifeProfile }) {
 
       {entry && (
         <>
-          <p className="mt-1 text-xs leading-relaxed text-white/60">
+          <p className="mt-1 text-xs leading-relaxed text-gray-500">
             Cảm ơn vì bạn đã tin tưởng chia sẻ ngày này với mình.
             {entry.visibility === "hidden" && " Hiện bạn đang tạm ẩn — mình sẽ không nhắc đến nó."}
           </p>
@@ -79,13 +79,13 @@ export function LifeProfileCard({ lifeProfile }: { lifeProfile: LifeProfile }) {
               type="date"
               value={dateValue}
               onChange={(e) => setDateValue(e.target.value)}
-              className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white"
+              className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-900"
             />
             <button
               type="button"
               onClick={handleShare}
               disabled={!dateValue || status === "saving"}
-              className="rounded-lg border border-white/10 px-4 py-2 text-xs font-semibold text-white/80 transition hover:border-white/30 disabled:opacity-50"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-white/30 disabled:opacity-50"
             >
               Cập nhật
             </button>
@@ -93,7 +93,7 @@ export function LifeProfileCard({ lifeProfile }: { lifeProfile: LifeProfile }) {
               type="button"
               onClick={handleToggleHidden}
               disabled={status === "saving"}
-              className="rounded-lg border border-white/10 px-4 py-2 text-xs font-semibold text-white/80 transition hover:border-white/30 disabled:opacity-50"
+              className="rounded-lg border border-gray-200 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-white/30 disabled:opacity-50"
             >
               {entry.visibility === "hidden" ? "Hiện lại" : "Ẩn"}
             </button>

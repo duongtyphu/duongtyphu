@@ -30,7 +30,7 @@ export function BuildEngineTabs({ tabs }: { tabs: EngineTab[] }) {
             className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
               t.key === current.key
                 ? "gemos-btn-primary text-white"
-                : "gemos-btn-secondary text-white/70"
+                : "gemos-btn-secondary text-gray-600"
             }`}
           >
             {t.label}

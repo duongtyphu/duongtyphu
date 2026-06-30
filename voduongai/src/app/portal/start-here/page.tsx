@@ -57,19 +57,19 @@ export default function StartHerePage() {
               {s.step}
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-bold text-white">{s.title}</h3>
-              <p className="mt-1 text-sm text-white/70">{s.description}</p>
-              <div className="mt-2 flex flex-wrap gap-2 text-xs text-white/50">
+              <h3 className="text-sm font-bold text-gray-900">{s.title}</h3>
+              <p className="mt-1 text-sm text-gray-600">{s.description}</p>
+              <div className="mt-2 flex flex-wrap gap-2 text-xs text-gray-500">
                 <span>
                   Tài nguyên đề xuất:{" "}
-                  <Link href={s.resource.href} className="font-semibold text-[#22D3EE] hover:underline">
+                  <Link href={s.resource.href} className="font-semibold text-blue-600 hover:underline">
                     {s.resource.label}
                   </Link>
                 </span>
                 <span>·</span>
                 <span>
                   Công cụ đề xuất:{" "}
-                  <Link href={s.tool.href} className="font-semibold text-[#22D3EE] hover:underline">
+                  <Link href={s.tool.href} className="font-semibold text-blue-600 hover:underline">
                     {s.tool.label}
                   </Link>
                 </span>

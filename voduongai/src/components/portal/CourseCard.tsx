@@ -21,12 +21,12 @@ const STATUS_CTA: Record<CourseStatus, string> = {
 };
 
 const STATUS_TONE: Record<CourseStatus, string> = {
-  "not-started": "bg-white/10 text-white/70",
+  "not-started": "bg-gray-100 text-gray-600",
   "in-progress": "bg-brand-blue/15 text-brand-blue",
   completed: "bg-emerald-400/15 text-emerald-300",
-  locked: "bg-white/10 text-white/50",
+  locked: "bg-gray-100 text-gray-500",
   premium: "bg-brand-orange/15 text-brand-orange",
-  "coming-soon": "bg-white/10 text-white/50",
+  "coming-soon": "bg-gray-100 text-gray-500",
 };
 
 type CourseCardProps = {
@@ -54,15 +54,15 @@ export function CourseCard({ title, description, href, level, lessonsCount, prog
             {STATUS_LABEL[status]}
           </span>
         )}
-        {level && <span className="text-[10px] font-semibold text-white/40">{level}</span>}
+        {level && <span className="text-[10px] font-semibold text-gray-400">{level}</span>}
       </div>
-      <h3 className="mt-3 text-sm font-bold text-white">{title}</h3>
-      {description && <p className="mt-1.5 text-xs text-white/60">{description}</p>}
+      <h3 className="mt-3 text-sm font-bold text-gray-900">{title}</h3>
+      {description && <p className="mt-1.5 text-xs text-gray-500">{description}</p>}
       {typeof lessonsCount === "number" && (
-        <p className="mt-2 text-xs text-white/40">{lessonsCount} bài học</p>
+        <p className="mt-2 text-xs text-gray-400">{lessonsCount} bài học</p>
       )}
       {typeof progressPercent === "number" && (
-        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
           <div
             className="h-full rounded-full bg-gradient-to-r from-brand-blue to-brand-violet"
             style={{ width: `${Math.min(100, Math.max(0, progressPercent))}%` }}
@@ -77,7 +77,7 @@ export function CourseCard({ title, description, href, level, lessonsCount, prog
     </>
   );
 
-  const className = `card-shine flex h-full flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-4 transition ${
+  const className = `card-shine flex h-full flex-col rounded-[20px] border border-gray-200 bg-white/[0.04] p-4 transition ${
     isLocked ? "opacity-60" : "hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
   }`;
 

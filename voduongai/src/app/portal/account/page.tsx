@@ -53,9 +53,9 @@ export default async function AccountPage() {
   if (!user) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-extrabold text-white">Tài khoản</h1>
-        <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-          <p className="text-sm text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Tài khoản</h1>
+        <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+          <p className="text-sm text-gray-900">
             Portal đang ở chế độ truy cập công khai (chưa yêu cầu đăng nhập).
           </p>
         </div>
@@ -107,11 +107,11 @@ export default async function AccountPage() {
       label: "Khoá học",
       icon: "🎓",
       content: (
-        <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-          <h3 className="text-sm font-bold text-white">Sản phẩm đã mua</h3>
-          <p className="mt-1 text-xs text-white/60">Nội dung bạn đã thanh toán và được xác nhận</p>
+        <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+          <h3 className="text-sm font-bold text-gray-900">Sản phẩm đã mua</h3>
+          <p className="mt-1 text-xs text-gray-500">Nội dung bạn đã thanh toán và được xác nhận</p>
           {confirmedOrders.length === 0 ? (
-            <p className="mt-4 text-center text-sm text-white/60">
+            <p className="mt-4 text-center text-sm text-gray-500">
               Bạn chưa mua sản phẩm nào.{" "}
               <a href="/portal/vdai-academy" className="font-semibold text-brand-blue hover:underline">
                 Xem khoá học →
@@ -125,20 +125,20 @@ export default async function AccountPage() {
                 const video = o.products?.video_url ?? o.lessons?.video_url;
                 const pdf = o.products?.pdf_url ?? o.lessons?.pdf_url;
                 return (
-                  <div key={o.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                  <div key={o.id} className="flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 p-4">
                     <div>
-                      <h4 className="text-sm font-semibold text-white">{icon} {title}</h4>
-                      <p className="mt-0.5 text-xs text-white/60">
+                      <h4 className="text-sm font-semibold text-gray-900">{icon} {title}</h4>
+                      <p className="mt-0.5 text-xs text-gray-500">
                         Xác nhận {new Date(o.confirmed_at ?? o.created_at).toLocaleDateString("vi-VN")}
                       </p>
                       <div className="mt-2 flex gap-2">
                         {video && (
-                          <a href={video} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-3 py-1 text-xs font-semibold text-brand-blue hover:border-brand-blue">
+                          <a href={video} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-semibold text-brand-blue hover:border-brand-blue">
                             ▶ Video
                           </a>
                         )}
                         {pdf && (
-                          <a href={pdf} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-white/10 px-3 py-1 text-xs font-semibold text-green-400 hover:border-green-400">
+                          <a href={pdf} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-semibold text-green-400 hover:border-green-400">
                             📄 PDF
                           </a>
                         )}
@@ -166,16 +166,16 @@ export default async function AccountPage() {
       label: "Hoạt động",
       icon: "📊",
       content: (
-        <div className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-          <h3 className="text-sm font-bold text-white">Lịch sử hoạt động</h3>
-          <p className="mt-1 text-xs text-white/60">Các hoạt động gần đây trong tài khoản của bạn</p>
+        <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+          <h3 className="text-sm font-bold text-gray-900">Lịch sử hoạt động</h3>
+          <p className="mt-1 text-xs text-gray-500">Các hoạt động gần đây trong tài khoản của bạn</p>
           <div className="mt-4 space-y-3">
             {activities.map((a) => (
               <div key={a.id} className="flex items-start gap-3">
                 <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full" style={{ background: a.dot }} />
                 <div>
-                  <p className="text-sm text-white">{a.text}</p>
-                  <span className="text-xs text-white/50">{a.time.toLocaleDateString("vi-VN")}</span>
+                  <p className="text-sm text-gray-900">{a.text}</p>
+                  <span className="text-xs text-gray-500">{a.time.toLocaleDateString("vi-VN")}</span>
                 </div>
               </div>
             ))}
@@ -188,31 +188,31 @@ export default async function AccountPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Tài khoản</h1>
-        <p className="mt-2 text-white">Thông tin đăng nhập của bạn trên Portal.</p>
+        <h1 className="text-2xl font-extrabold text-gray-900">Tài khoản</h1>
+        <p className="mt-2 text-gray-900">Thông tin đăng nhập của bạn trên Portal.</p>
       </div>
 
-      <div className="card-shine flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+      <div className="card-shine flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
         <div className="flex items-center gap-4">
           <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-orange/20 text-xl font-bold text-brand-orange">
             {initial}
           </span>
           <div>
-            <p className="text-sm font-bold text-white">{meta.full_name || "Học viên"}</p>
-            <p className="text-xs text-white/60">{user.email}</p>
-            <span className="mt-1 inline-flex rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-semibold text-white/70">
+            <p className="text-sm font-bold text-gray-900">{meta.full_name || "Học viên"}</p>
+            <p className="text-xs text-gray-500">{user.email}</p>
+            <span className="mt-1 inline-flex rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
               📅 Đăng ký từ {memberSince.toLocaleDateString("vi-VN")}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-6">
           <div className="text-center">
-            <p className="text-lg font-extrabold text-white">{confirmedOrders.length}</p>
-            <p className="text-xs text-white/50">Đã mua</p>
+            <p className="text-lg font-extrabold text-gray-900">{confirmedOrders.length}</p>
+            <p className="text-xs text-gray-500">Đã mua</p>
           </div>
           <div className="text-center">
-            <p className="text-lg font-extrabold text-white">{daysSince}</p>
-            <p className="text-xs text-white/50">Ngày học</p>
+            <p className="text-lg font-extrabold text-gray-900">{daysSince}</p>
+            <p className="text-xs text-gray-500">Ngày học</p>
           </div>
           <LogoutButton />
         </div>

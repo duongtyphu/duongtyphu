@@ -22,9 +22,9 @@ export function ReflectionJournalCard() {
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
           <Feather className="h-4 w-4 text-[#A78BFA]" />
-          <h2 className="text-sm font-bold text-white">Một câu hỏi nhỏ hôm nay</h2>
+          <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
-        <p className="mt-2 text-sm text-white/55 italic">{question}</p>
+        <p className="mt-2 text-sm text-gray-500 italic">{question}</p>
       </GemCard>
     );
   }
@@ -34,9 +34,9 @@ export function ReflectionJournalCard() {
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
           <Feather className="h-4 w-4 text-[#A78BFA]" />
-          <h2 className="text-sm font-bold text-white">Một câu hỏi nhỏ hôm nay</h2>
+          <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
-        <p className="mt-3 text-sm text-white/65">
+        <p className="mt-3 text-sm text-gray-600">
           Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
         </p>
       </GemCard>
@@ -48,9 +48,9 @@ export function ReflectionJournalCard() {
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
           <Feather className="h-4 w-4 text-[#A78BFA]" />
-          <h2 className="text-sm font-bold text-white">Một câu hỏi nhỏ hôm nay</h2>
+          <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
-        <p className="mt-3 text-sm text-white/65">
+        <p className="mt-3 text-sm text-gray-600">
           Cảm ơn bạn đã dành chút thời gian để suy ngẫm hôm nay. Câu trả lời đã được lưu vào My Story.
         </p>
       </GemCard>
@@ -61,15 +61,15 @@ export function ReflectionJournalCard() {
     <GemCard className="h-full">
       <div className="flex items-center gap-2">
         <Feather className="h-4 w-4 text-[#A78BFA]" />
-        <h2 className="text-sm font-bold text-white">Một câu hỏi nhỏ hôm nay</h2>
+        <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
       </div>
-      <p className="mt-2 text-sm text-white/70">{question}</p>
+      <p className="mt-2 text-sm text-gray-600">{question}</p>
       <textarea
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
         placeholder="Không cần dài, chỉ cần thật..."
         rows={2}
-        className="mt-3 w-full rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white placeholder:text-white/35 focus:outline-none focus:ring-1 focus:ring-[#22D3EE]/50"
+        className="mt-3 w-full rounded-xl border border-gray-200 bg-gray-50 p-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-400/50"
       />
       <Button
         variant="secondary"

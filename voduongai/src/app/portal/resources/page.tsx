@@ -31,16 +31,16 @@ export default async function ResourcesPage() {
   return (
     <div className="space-y-10">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">Tài nguyên miễn phí</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">Tài nguyên miễn phí</h1>
+        <p className="mt-2 text-gray-900">
           Ebook, prompt, checklist, template — tải miễn phí và dùng ngay.
         </p>
       </div>
 
       {liveDocuments.length > 0 && (
         <section>
-          <h2 className="text-lg font-bold text-white">Tài liệu từ VO DUONG AI Academy</h2>
-          <p className="mt-1 text-sm text-white/60">Tài liệu thật, được cập nhật trực tiếp từ hệ thống.</p>
+          <h2 className="text-lg font-bold text-gray-900">Tài liệu từ VO DUONG AI Academy</h2>
+          <p className="mt-1 text-sm text-gray-500">Tài liệu thật, được cập nhật trực tiếp từ hệ thống.</p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {liveDocuments.map((d) => (
               <ResourceCard
@@ -57,7 +57,7 @@ export default async function ResourcesPage() {
       )}
 
       <section>
-        <h2 className="text-lg font-bold text-white">Thư viện tài nguyên</h2>
+        <h2 className="text-lg font-bold text-gray-900">Thư viện tài nguyên</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {freeResources.map((r) => (
             <ResourceCard

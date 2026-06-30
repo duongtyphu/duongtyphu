@@ -130,7 +130,7 @@ export function CompanionGreetingBubble({
   return (
     <div
       role="status"
-      className={`companion-greeting-bubble pointer-events-auto absolute bottom-full right-0 mb-3 rounded-2xl border border-white/15 bg-[#0B1F4D]/95 px-4 py-3 text-left text-sm leading-relaxed text-white/90 shadow-xl backdrop-blur ${
+      className={`companion-greeting-bubble pointer-events-auto absolute bottom-full right-0 mb-3 rounded-2xl border border-white/15 bg-white/95 px-4 py-3 text-left text-sm leading-relaxed text-gray-800 shadow-xl backdrop-blur ${
         isFirstMeeting ? "w-[min(90vw,340px)]" : "w-[min(78vw,260px)]"
       }`}
     >
@@ -138,7 +138,7 @@ export function CompanionGreetingBubble({
         type="button"
         onClick={() => setVisible(false)}
         aria-label="Đóng lời chào"
-        className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-white/40 transition hover:text-white/80 focus:outline-none"
+        className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-gray-400 transition hover:text-gray-700 focus:outline-none"
       >
         <X className="h-3 w-3" />
       </button>

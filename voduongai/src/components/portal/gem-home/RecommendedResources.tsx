@@ -9,8 +9,8 @@ import type { RecommendedItem } from "@/data/portal/gem-home";
 export function RecommendedResources({ items }: { items: RecommendedItem[] }) {
   return (
     <section>
-      <h2 className="text-lg font-bold text-white">Gợi ý dành cho bạn</h2>
-      <p className="mt-1 text-sm text-white/55">
+      <h2 className="text-lg font-bold text-gray-900">Gợi ý dành cho bạn</h2>
+      <p className="mt-1 text-sm text-gray-500">
         Không cần tự mò hết — đây là vài điều có thể có ích cho bước tiếp theo của bạn.
       </p>
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -18,8 +18,8 @@ export function RecommendedResources({ items }: { items: RecommendedItem[] }) {
           <Link key={item.id} href={item.href} className="block">
             <GemCard className="h-full">
               <GemBadge tone="free">{item.kind}</GemBadge>
-              <h3 className="mt-3 text-sm font-bold text-white">{item.title}</h3>
-              <p className="mt-1 text-xs text-white/55">{item.description}</p>
+              <h3 className="mt-3 text-sm font-bold text-gray-900">{item.title}</h3>
+              <p className="mt-1 text-xs text-gray-500">{item.description}</p>
             </GemCard>
           </Link>
         ))}

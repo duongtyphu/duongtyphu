@@ -87,9 +87,9 @@ export default async function MirrorPage() {
   return (
     <div className="space-y-8">
       <GemCard variant="featured" className="!p-7 sm:!p-8">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">Mirror</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-white sm:text-3xl">Tấm gương trưởng thành của bạn</h1>
-        <p className="mt-2 max-w-xl text-sm text-white/65 sm:text-base">
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Mirror</p>
+        <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">Tấm gương trưởng thành của bạn</h1>
+        <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
           Đây không phải dashboard, không phải bảng điểm. Đây là nơi Portal phản chiếu lại điều bạn đã đi qua.
         </p>
       </GemCard>

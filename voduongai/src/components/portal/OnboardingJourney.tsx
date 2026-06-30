@@ -61,22 +61,22 @@ export function OnboardingJourney() {
     <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-[#020817] p-4 py-10 sm:p-6">
       <div className="mesh-navy absolute inset-0" />
 
-      <div className="glass-dark glow-gem relative z-10 w-full max-w-2xl rounded-[28px] border border-white/10 p-6 sm:p-10">
+      <div className="glass-dark glow-gem relative z-10 w-full max-w-2xl rounded-[28px] border border-gray-200 p-6 sm:p-10">
         <div className="flex flex-col items-center text-center">
           <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
             <div className="spin-slow absolute inset-0 rounded-full border border-dashed border-brand-purple/40" />
             <div className="glow-gem flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-brand-purple to-brand-cyan sm:h-14 sm:w-14">
-              <Gem className="h-6 w-6 text-white sm:h-7 sm:w-7" />
+              <Gem className="h-6 w-6 text-gray-900 sm:h-7 sm:w-7" />
             </div>
           </div>
 
-          <h1 className="mt-5 text-xl font-extrabold text-white sm:text-2xl">
+          <h1 className="mt-5 text-xl font-extrabold text-gray-900 sm:text-2xl">
             Chào mừng bạn đến với VO DUONG AI
           </h1>
           <p className="gradient-text mt-2 text-sm font-semibold sm:text-base">
             Mỗi con người đều là một viên ngọc quý. AI chỉ là công cụ giúp bạn tỏa sáng.
           </p>
-          <p className="mt-3 max-w-md text-sm text-white/60">
+          <p className="mt-3 max-w-md text-sm text-gray-500">
             Hãy bắt đầu hành trình mài giũa phiên bản tốt hơn của chính mình trong kỷ nguyên AI.
           </p>
         </div>
@@ -86,7 +86,7 @@ export function OnboardingJourney() {
             <div
               key={s}
               className={`h-1.5 rounded-full transition-all ${
-                s === step ? "w-10 bg-gradient-to-r from-brand-purple to-brand-cyan" : s < step ? "w-6 bg-brand-cyan/60" : "w-6 bg-white/10"
+                s === step ? "w-10 bg-gradient-to-r from-brand-purple to-brand-cyan" : s < step ? "w-6 bg-brand-cyan/60" : "w-6 bg-gray-100"
               }`}
             />
           ))}
@@ -125,7 +125,7 @@ export function OnboardingJourney() {
             <button
               type="button"
               onClick={back}
-              className="flex items-center gap-1 rounded-full border border-white/10 px-4 py-2.5 text-sm font-semibold text-white/70 transition hover:border-white/30 hover:text-white"
+              className="flex items-center gap-1 rounded-full border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-600 transition hover:border-white/30 hover:text-gray-900"
             >
               <ChevronLeft className="h-4 w-4" />
               Quay lại
@@ -134,7 +134,7 @@ export function OnboardingJourney() {
             <button
               type="button"
               onClick={skip}
-              className="text-sm font-semibold text-white/40 transition hover:text-white/70"
+              className="text-sm font-semibold text-gray-400 transition hover:text-gray-600"
             >
               Bỏ qua, để sau
             </button>
@@ -161,7 +161,7 @@ export function OnboardingJourney() {
           )}
         </div>
 
-        <p className="mt-6 text-center text-xs text-white/35">
+        <p className="mt-6 text-center text-xs text-gray-400">
           Bạn có thể thay đổi mục tiêu bất cứ lúc nào trong Không gian của tôi.
         </p>
       </div>
@@ -184,7 +184,7 @@ function StepBlock({
 }) {
   return (
     <div>
-      <h2 className="text-center text-base font-bold text-white sm:text-lg">{prompt}</h2>
+      <h2 className="text-center text-base font-bold text-gray-900 sm:text-lg">{prompt}</h2>
       <div
         className={`mt-5 grid gap-3 ${
           columns === 4 ? "grid-cols-2 sm:grid-cols-4" : "sm:grid-cols-2"
@@ -199,8 +199,8 @@ function StepBlock({
               onClick={() => onSelect(opt.id)}
               className={`card-shine rounded-2xl border p-4 text-left text-sm font-semibold transition ${
                 isSelected
-                  ? "glow-gem border-brand-purple/60 bg-gradient-to-br from-brand-purple/20 to-brand-cyan/10 text-white"
-                  : "border-white/10 bg-white/[0.03] text-white/75 hover:border-brand-purple/30 hover:text-white"
+                  ? "glow-gem border-brand-purple/60 bg-gradient-to-br from-brand-purple/20 to-brand-cyan/10 text-gray-900"
+                  : "border-gray-200 bg-gray-50 text-gray-600 hover:border-brand-purple/30 hover:text-gray-900"
               } ${columns === 4 ? "text-center" : ""}`}
             >
               {opt.label}

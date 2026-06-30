@@ -52,8 +52,8 @@ export default async function AiAcademyPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-extrabold text-white">AI Academy</h1>
-        <p className="mt-2 text-white">
+        <h1 className="text-2xl font-extrabold text-gray-900">AI Academy</h1>
+        <p className="mt-2 text-gray-900">
           Lộ trình học AI từ nền tảng đến ứng dụng thực chiến trong công việc.
         </p>
       </div>
@@ -63,9 +63,9 @@ export default async function AiAcademyPage() {
           <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">Bài học mới</h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             {liveLessons.map((l) => (
-              <div key={l.id} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+              <div key={l.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-sm font-bold text-white">{l.title}</h3>
+                  <h3 className="text-sm font-bold text-gray-900">{l.title}</h3>
                   {l.tier === "Premium" && (
                     <span className="shrink-0 rounded-full bg-brand-violet/15 px-2.5 py-0.5 text-xs font-semibold text-brand-violet">
                       Premium
@@ -73,11 +73,11 @@ export default async function AiAcademyPage() {
                   )}
                 </div>
                 {(l.category || l.level || l.duration) && (
-                  <p className="mt-1 text-xs text-white/50">
+                  <p className="mt-1 text-xs text-gray-500">
                     {[l.category, l.level, l.duration].filter(Boolean).join(" · ")}
                   </p>
                 )}
-                {l.shortDescription && <p className="mt-2 text-sm text-white">{l.shortDescription}</p>}
+                {l.shortDescription && <p className="mt-2 text-sm text-gray-900">{l.shortDescription}</p>}
                 {l.tier !== "Premium" && l.videoUrl && (
                   <a
                     href={l.videoUrl}
@@ -98,9 +98,9 @@ export default async function AiAcademyPage() {
         <h2 className="text-sm font-bold uppercase tracking-wider text-brand-violet">Lộ trình nền tảng</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {lessons.map((l) => (
-            <div key={l.title} className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-              <h3 className="text-sm font-bold text-white">{l.title}</h3>
-              <p className="mt-2 text-sm text-white">{l.description}</p>
+            <div key={l.title} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+              <h3 className="text-sm font-bold text-gray-900">{l.title}</h3>
+              <p className="mt-2 text-sm text-gray-900">{l.description}</p>
             </div>
           ))}
         </div>

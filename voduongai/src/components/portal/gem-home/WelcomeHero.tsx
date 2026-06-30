@@ -20,20 +20,20 @@ export function WelcomeHero({
 }) {
   return (
     <GemCard variant="featured" className="!p-7 sm:!p-8">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#22D3EE]">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
         Gem Home{name && state !== "first" ? ` · ${name}` : ""}
       </p>
-      <h1 className="mt-2 whitespace-pre-line text-xl font-extrabold text-white sm:text-2xl">{welcomeMessage}</h1>
-      <p className="mt-2 max-w-xl text-sm text-white/65">
+      <h1 className="mt-2 whitespace-pre-line text-xl font-extrabold text-gray-900 sm:text-2xl">{welcomeMessage}</h1>
+      <p className="mt-2 max-w-xl text-sm text-gray-600">
         Đây không phải nơi chứa nội dung — đây là nơi bạn được mài giũa: nhìn
         thấy, hiểu, thực hành, kiến tạo, chia sẻ, phản chiếu, tiến hoá và để
         lại di sản.
       </p>
-      <Link href="/portal/story" className="mt-3 block max-w-xl text-sm italic text-white/55 hover:text-white/75">
+      <Link href="/portal/story" className="mt-3 block max-w-xl text-sm italic text-gray-500 hover:text-gray-600">
         {reflectionPrompt}
       </Link>
       {state === "comeback" && (
-        <p className="mt-3 max-w-xl text-sm text-white/65">{getLifeMomentLine("quietReturn")}</p>
+        <p className="mt-3 max-w-xl text-sm text-gray-600">{getLifeMomentLine("quietReturn")}</p>
       )}
       <div className="mt-5 flex flex-wrap gap-3">
         <Button href="/portal/journey" variant="primary">
