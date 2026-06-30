@@ -1,5 +1,4 @@
 import { PortalShell } from "@/components/portal/PortalShell";
-import { NotificationTicker } from "@/components/portal/NotificationTicker";
 import { OnboardingJourney } from "@/components/portal/OnboardingJourney";
 import { FirstFootprintCeremony } from "@/components/portal/FirstFootprintCeremony";
 import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
@@ -130,7 +129,6 @@ export default async function PortalLayout({
       lifeMoment={lifeMoment}
       returnAfterSilenceMilestone={returnAfterSilenceMilestone}
     >
-      <NotificationTicker />
       <FirstFootprintCeremony
         originLine={getOriginLineFromCoreMemory(
           getOriginLineContextDefinition("first_footprint_ceremony").coreMemoryContext

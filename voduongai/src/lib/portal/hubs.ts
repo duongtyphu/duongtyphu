@@ -156,7 +156,7 @@ export const portalNavSections: NavSection[] = [
     group: "Học hỏi",
     emoji: "🌱",
     items: [
-      { label: "Không gian AI", href: "/portal/tools" },
+      { label: "Không gian AI", href: "/portal/khong-gian-ai" },
       { label: "Thư viện tri thức", href: "/portal/library" },
       { label: "Nhật ký học tập", href: "/portal/news" },
     ],

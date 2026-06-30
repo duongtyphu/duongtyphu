@@ -18,7 +18,7 @@ import { portalNavGroups } from "@/lib/site";
 
 const navIcons: Record<string, LucideIcon> = {
   "/portal": Home,
-  "/portal/tools": Cpu,
+  "/portal/khong-gian-ai": Cpu,
   "/portal/library": Library,
   "/portal/news": Notebook,
   "/portal/academy": GraduationCap,
@@ -48,7 +48,7 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
       {portalNavGroups.map((section, si) => (
         <div key={si} className={si > 0 ? "mt-4" : ""}>
           {section.group && showLabels && (
-            <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-white/30">
+            <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-white/40">
               {section.emoji ? `${section.emoji} ${section.group}` : section.group}
             </p>
           )}
@@ -87,14 +87,14 @@ function NavLink({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}
-      className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-        active ? "gemos-nav-active text-white" : "text-white/75 hover:bg-white/[0.06] hover:text-white"
+      className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
+        active ? "gemos-nav-active text-white" : "text-white/60 hover:bg-white/[0.08] hover:text-white"
       } ${!showLabel ? "justify-center" : ""}`}
     >
       {active && (
         <span
-          className="gemos-nav-active-bar absolute left-0 top-1/2 h-4 -translate-y-1/2 rounded-full"
-          style={{ width: 3 }}
+          className="gemos-nav-active-bar absolute left-0 top-1/2 h-5 -translate-y-1/2 rounded-full"
+          style={{ width: 3.5 }}
         />
       )}
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
