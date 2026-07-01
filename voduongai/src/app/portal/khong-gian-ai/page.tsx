@@ -159,7 +159,7 @@ function ToolCard({ tool }: { tool: AiTool }) {
 function ArticleCard({ article }: { article: AiArticle }) {
   return (
     <Link
-      href={`/blog/${article.slug}`}
+      href={`/portal/khong-gian-ai/bai-viet/${article.slug}`}
       className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
       {/* Thumbnail placeholder */}
@@ -295,7 +295,7 @@ export default function KhongGianAiPage() {
       <div className="rounded-2xl border border-violet-200 bg-violet-50 p-5">
         <CompanionGuide
           message="Nếu bạn mới bắt đầu học AI, mình gợi ý bắt đầu từ AI Chat. Sau đó hãy khám phá Prompt và AI Tự động hóa."
-          action={{ label: "Xem lộ trình học AI", href: "/blog/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau" }}
+          action={{ label: "Xem lộ trình học AI", href: "/portal/khong-gian-ai/bai-viet/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau" }}
         />
       </div>
 
@@ -485,7 +485,7 @@ export default function KhongGianAiPage() {
               Xem khoá học VDAI SOLO <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
-              href="/blog/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau"
+              href="/portal/khong-gian-ai/bai-viet/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau"
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow hover:bg-gray-50 transition"
             >
               Đọc lộ trình miễn phí

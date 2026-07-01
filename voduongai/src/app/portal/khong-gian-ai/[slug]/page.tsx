@@ -61,7 +61,7 @@ function BadgePill({ badge }: { badge: AiTool["badge"] }) {
 function ArticleCard({ article }: { article: (typeof AI_ARTICLES)[number] }) {
   return (
     <Link
-      href={`/blog/${article.slug}`}
+      href={`/portal/khong-gian-ai/bai-viet/${article.slug}`}
       className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group"
     >
       <span className="inline-block text-xs font-semibold text-blue-600 bg-blue-50 rounded-full px-2.5 py-0.5 mb-2">

@@ -181,7 +181,7 @@ export default async function ProfessionPage({ params }: { params: Promise<{ slu
             {articles.map((article) => (
               <Link
                 key={article.slug}
-                href={`/blog/${article.slug}`}
+                href={`/portal/khong-gian-ai/bai-viet/${article.slug}`}
                 className="group flex items-start justify-between gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
               >
                 <div className="min-w-0">
