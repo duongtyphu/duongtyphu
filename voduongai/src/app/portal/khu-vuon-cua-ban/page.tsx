@@ -31,6 +31,10 @@ import {
  * VDAI-GARDEN-001 (xem design-system/visual-dna/references/). Đây là
  * bản tái hiện (RECREATE MODE), không redesign — bố cục, màu sắc, vị
  * trí visual chính giữ đúng theo ảnh Founder đã duyệt.
+ *
+ * Nền là MỘT ảnh cây liên tục phủ toàn bộ trang (không chia thành các
+ * khối/box riêng biệt) — mọi nội dung (title, card, stats, quote) nổi
+ * lên trên nền ảnh đó, đúng như Reference.
  */
 
 export const metadata = {
@@ -49,15 +53,15 @@ const LEAF_ICON: Record<LeafActionKey, LucideIcon> = {
   explore: Sprout,
 };
 
-// Vị trí leaf chip trên ảnh cây — tính theo tỷ lệ % khớp với vùng đã
-// crop từ Design Reference (garden-tree-scene.jpg).
+// Vị trí leaf chip trên nền ảnh toàn trang — tính theo % khớp với
+// garden-full-bg.jpg (crop x:580-1347, y:0-1168 từ VDAI-GARDEN-001.png).
 const LEAF_POSITION: Record<LeafActionKey, { top: string; left: string }> = {
-  read: { top: "20%", left: "32%" },
-  learn: { top: "24%", left: "76%" },
-  practice: { top: "40%", left: "22%" },
-  save: { top: "41%", left: "44%" },
-  ask: { top: "47%", left: "76%" },
-  share: { top: "64%", left: "38%" },
+  read: { top: "13%", left: "36%" },
+  learn: { top: "16%", left: "77%" },
+  practice: { top: "26%", left: "26%" },
+  save: { top: "27%", left: "47%" },
+  ask: { top: "30%", left: "77%" },
+  share: { top: "41%", left: "41%" },
   challenge: { top: "0%", left: "0%" },
   explore: { top: "0%", left: "0%" },
 };
@@ -85,124 +89,131 @@ const RECENT_TONE: Record<LeafActionKey, string> = {
 export default function KnowledgeGardenPage() {
   return (
     <div className="garden-page relative -mx-4 -my-6 md:-mx-8 md:-my-8">
-      <div className="garden-page-bg" aria-hidden="true" />
+      {/* Nền toàn trang: MỘT ảnh cây liên tục, không chia khối */}
+      <div className="absolute inset-0 z-0" aria-hidden="true">
+        <Image
+          src="/images/garden/garden-full-bg.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover object-[75%_0%]"
+          priority
+        />
+        {/* Gradient trắng ngọc phủ dần từ trái sang để chữ luôn đọc được,
+            tiếp nối tự nhiên với vùng ảnh có sẵn (không phải một khối cứng) */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(100deg, rgba(255,253,247,0.97) 0%, rgba(255,253,247,0.93) 24%, rgba(255,253,247,0.55) 40%, rgba(255,253,247,0.1) 56%, transparent 68%)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(255,253,247,0.4) 0%, transparent 18%, transparent 78%, rgba(255,253,247,0.65) 100%)",
+          }}
+        />
+        <div className="garden-sunray" aria-hidden="true" />
+        <span className="garden-sparkle" style={{ top: "9%", left: "58%", width: 4, height: 4, animationDelay: "0s" }} />
+        <span className="garden-sparkle" style={{ top: "22%", left: "85%", width: 3, height: 3, animationDelay: "1s" }} />
+        <span className="garden-sparkle" style={{ top: "35%", left: "70%", width: 3, height: 3, animationDelay: "2s" }} />
+      </div>
+
+      {/* Leaf chip nổi trực tiếp trên nền ảnh toàn trang */}
+      {LEAF_CHIPS_SHOWN.map((key) => {
+        const Icon = LEAF_ICON[key];
+        const action = LEAF_ACTIONS.find((a) => a.key === key)!;
+        return (
+          <div
+            key={key}
+            className="garden-leaf-chip-photo absolute z-10 hidden -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 px-3 py-2 text-center lg:flex"
+            style={LEAF_POSITION[key]}
+          >
+            <Icon className="h-4 w-4 text-white" />
+            <span className="text-xs font-bold text-white">{action.label}</span>
+            <span className="text-[10px] text-white/75">{action.time}</span>
+          </div>
+        );
+      })}
 
       <div className="relative z-10 space-y-8 px-4 py-6 md:px-8 md:py-8">
-        {/* Hero — trái nội dung / phải cây lớn */}
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_1.7fr] lg:items-start">
-          {/* LEFT */}
-          <div>
-            <span className="text-2xl">🌿</span>
-            <h1 className="mt-2 text-3xl font-extrabold text-gray-900">Khu vườn của bạn</h1>
-            <p
-              className="mt-2 max-w-md bg-clip-text text-lg font-medium italic leading-snug text-transparent"
-              style={{ backgroundImage: "linear-gradient(90deg, #2563EB, #7C3AED, #F97316)" }}
-            >
-              Mỗi hành động nhỏ,
-              <br />
-              đều đang vun đắp cho sự trưởng thành.
-            </p>
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-500">
-              Đây là nơi Companion ghi nhận hành trình học tập, khám phá và trưởng thành của bạn mỗi
-              ngày.
-            </p>
+        {/* Header + hero content — bên trái, nổi trên nền ảnh chung */}
+        <div className="max-w-md">
+          <span className="text-2xl">🌿</span>
+          <h1 className="mt-2 text-3xl font-extrabold text-gray-900">Khu vườn của bạn</h1>
+          <p
+            className="mt-2 bg-clip-text text-lg font-medium italic leading-snug text-transparent"
+            style={{ backgroundImage: "linear-gradient(90deg, #2563EB, #7C3AED, #F97316)" }}
+          >
+            Mỗi hành động nhỏ,
+            <br />
+            đều đang vun đắp cho sự trưởng thành.
+          </p>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-600">
+            Đây là nơi Companion ghi nhận hành trình học tập, khám phá và trưởng thành của bạn mỗi
+            ngày.
+          </p>
 
-            {/* Card "Cây tri thức của bạn" */}
-            <div className="gemos-gem-card mt-6 rounded-2xl p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="gemos-card-title text-sm font-bold text-gray-900">
-                  Cây tri thức của bạn
-                </h3>
-                <span className="text-sm font-extrabold text-gray-900">Lv. {gardenStats.level}</span>
-              </div>
-              <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="text-gray-500">Đang lớn lên mỗi ngày 🌱</span>
-                <span className="font-semibold text-amber-500">{gardenStats.tierName}</span>
-              </div>
-              <div className="mt-2 flex items-center gap-3">
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-500"
-                    style={{ width: `${gardenStats.percentToNextLevel}%` }}
-                  />
-                </div>
-                <span className="text-xs font-semibold text-gray-500">
-                  {gardenStats.percentToNextLevel}%
-                </span>
-              </div>
+          {/* Card "Cây tri thức của bạn" */}
+          <div className="gemos-gem-card mt-6 rounded-2xl p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="gemos-card-title text-sm font-bold text-gray-900">
+                Cây tri thức của bạn
+              </h3>
+              <span className="text-sm font-extrabold text-gray-900">Lv. {gardenStats.level}</span>
             </div>
-
-            {/* Stats 2x2 */}
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {STATS.map((s) => (
-                <div key={s.label} className="gemos-gem-card rounded-2xl p-3 text-center">
-                  <s.icon className={`mx-auto h-4 w-4 ${s.tone}`} />
-                  <p className="mt-1 text-base font-extrabold text-gray-900">{s.value}</p>
-                  <p className="text-[10px] leading-snug text-gray-500">{s.label}</p>
-                </div>
-              ))}
+            <div className="mt-3 flex items-center justify-between text-xs">
+              <span className="text-gray-500">Đang lớn lên mỗi ngày 🌱</span>
+              <span className="font-semibold text-amber-500">{gardenStats.tierName}</span>
             </div>
-
-            {/* Quote nhỏ */}
-            <div className="mt-4 rounded-xl border border-green-100 bg-green-50/60 px-4 py-3">
-              <p className="text-xs leading-relaxed text-green-800">
-                <span className="mr-1">🌱</span>
-                {GARDEN_QUOTE_SMALL}
-              </p>
+            <div className="mt-2 flex items-center gap-3">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-500"
+                  style={{ width: `${gardenStats.percentToNextLevel}%` }}
+                />
+              </div>
+              <span className="text-xs font-semibold text-gray-500">
+                {gardenStats.percentToNextLevel}%
+              </span>
             </div>
           </div>
 
-          {/* RIGHT — cây thật, linh hồn của trang */}
-          <div className="relative">
-            <div
-              className="garden-scene relative h-80 w-full overflow-hidden rounded-3xl sm:h-96 lg:h-[30rem]"
-              style={{ aspectRatio: "727 / 750" }}
-            >
-              <Image
-                src="/images/garden/garden-tree-scene.jpg"
-                alt="Cây tri thức trong khu vườn của bạn, ánh nắng buổi sáng chiếu qua tán lá"
-                fill
-                sizes="(min-width: 1024px) 55vw, 100vw"
-                className="object-cover"
-                priority
-              />
-              <div className="garden-sunray" aria-hidden="true" />
-              <span className="garden-sparkle" style={{ top: "10%", left: "18%", width: 4, height: 4, animationDelay: "0s" }} />
-              <span className="garden-sparkle" style={{ top: "28%", left: "60%", width: 3, height: 3, animationDelay: "1s" }} />
-              <span className="garden-sparkle" style={{ top: "55%", left: "80%", width: 3, height: 3, animationDelay: "2s" }} />
+          {/* Stats 2x2 */}
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.label} className="gemos-gem-card rounded-2xl p-3 text-center">
+                <s.icon className={`mx-auto h-4 w-4 ${s.tone}`} />
+                <p className="mt-1 text-base font-extrabold text-gray-900">{s.value}</p>
+                <p className="text-[10px] leading-snug text-gray-500">{s.label}</p>
+              </div>
+            ))}
+          </div>
 
-              {LEAF_CHIPS_SHOWN.map((key) => {
-                const Icon = LEAF_ICON[key];
-                const action = LEAF_ACTIONS.find((a) => a.key === key)!;
-                return (
-                  <div
-                    key={key}
-                    className="garden-leaf-chip-photo absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 px-3 py-2 text-center"
-                    style={LEAF_POSITION[key]}
-                  >
-                    <Icon className="h-4 w-4 text-white" />
-                    <span className="text-xs font-bold text-white">{action.label}</span>
-                    <span className="text-[10px] text-white/75">{action.time}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Gợi ý chăm sóc khu vườn — nổi trên vùng cây */}
-            <div className="gemos-glass-card absolute -bottom-6 right-2 w-[88%] rounded-2xl p-4 sm:w-[80%] lg:right-4">
-              <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-700">
-                <span className="mt-0.5 shrink-0">🪴</span>
-                <span>
-                  <span className="font-semibold text-gray-900">Gợi ý chăm sóc khu vườn. </span>
-                  {GARDEN_CARE_TIP}
-                </span>
-              </p>
-            </div>
+          {/* Quote nhỏ */}
+          <div className="mt-4 rounded-xl border border-green-100 bg-green-50/70 px-4 py-3 backdrop-blur-sm">
+            <p className="text-xs leading-relaxed text-green-800">
+              <span className="mr-1">🌱</span>
+              {GARDEN_QUOTE_SMALL}
+            </p>
           </div>
         </div>
 
+        {/* Gợi ý chăm sóc khu vườn — nổi bên phải, trên nền ảnh cây */}
+        <div className="gemos-glass-card max-w-xs rounded-2xl p-4 lg:absolute lg:right-8 lg:top-[38%] lg:max-w-sm xl:right-16">
+          <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-700">
+            <span className="mt-0.5 shrink-0">🪴</span>
+            <span>
+              <span className="font-semibold text-gray-900">Gợi ý chăm sóc khu vườn. </span>
+              {GARDEN_CARE_TIP}
+            </span>
+          </p>
+        </div>
+
         {/* Section dưới: 2 card */}
-        <div className="grid gap-6 pt-8 lg:grid-cols-2">
+        <div className="grid gap-6 pt-4 lg:grid-cols-2 lg:pt-24">
           {/* Những chiếc lá gần đây */}
           <div className="gemos-gem-card rounded-2xl p-5">
             <div className="flex items-center justify-between">
@@ -217,11 +228,10 @@ export default function KnowledgeGardenPage() {
               {RECENT_ACTIVITIES.map((a) => {
                 const Icon = LEAF_ICON[a.actionKey];
                 return (
-                  <div
-                    key={a.id}
-                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
-                  >
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${RECENT_TONE[a.actionKey]}`}>
+                  <div key={a.id} className="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+                    <span
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${RECENT_TONE[a.actionKey]}`}
+                    >
                       <Icon className="h-4 w-4" />
                     </span>
                     <p className="min-w-0 flex-1 text-xs text-gray-700 sm:text-sm">
