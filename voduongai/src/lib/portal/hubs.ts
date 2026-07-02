@@ -183,6 +183,7 @@ export const portalNavSections: NavSection[] = [
     items: [
       { label: "Companion", href: "/portal/companion" },
       { label: "Hành trình của tôi", href: "/portal/journey" },
+      { label: "Khu vườn của bạn", href: "/portal/khu-vuon-cua-ban" },
     ],
   },
 ];

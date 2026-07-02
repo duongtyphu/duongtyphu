@@ -17,9 +17,9 @@ import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionC
 import { ProgressNarrativeCard } from "@/components/portal/gem-home/ProgressNarrativeCard";
 import { HumanMomentumCard } from "@/components/portal/gem-home/HumanMomentumCard";
 import { RecommendedResources } from "@/components/portal/gem-home/RecommendedResources";
-import { LivingGardenCard } from "@/components/portal/living-garden/LivingGardenCard";
 import { GardenSignalSync } from "@/components/portal/intelligence/GardenSignalSync";
 import { buildGardenState } from "@/lib/portal/living-garden/garden-model";
+import { GardenWidget } from "@/components/portal/garden/GardenWidget";
 import { TodayOpportunity } from "@/components/portal/gem-home/TodayOpportunity";
 import { LatestUpdates } from "@/components/portal/gem-home/LatestUpdates";
 import { todayMissions, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
@@ -172,11 +172,7 @@ export default async function GemHomePage() {
         </div>
       </div>
 
-      <LivingGardenCard
-        inputs={{
-          reflectionsCount: recentReflections.length,
-        }}
-      />
+      <GardenWidget />
       <GardenSignalSync
         garden={buildGardenState({ reflectionsCount: recentReflections.length })}
       />

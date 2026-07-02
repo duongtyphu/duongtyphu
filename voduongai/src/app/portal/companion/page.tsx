@@ -130,6 +130,7 @@ export default function CompanionSanctuaryPage() {
   const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSeed(getRandomThoughtSeed());
     const timer = setTimeout(() => setShowIntro(false), 1300);
     return () => clearTimeout(timer);

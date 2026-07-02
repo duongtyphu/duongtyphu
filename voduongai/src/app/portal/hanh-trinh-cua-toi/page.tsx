@@ -49,6 +49,7 @@ export default function MyJourneySanctuaryPage() {
   const [seed, setSeed] = useState<string | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSeed(getRandomThoughtSeed());
   }, []);
 

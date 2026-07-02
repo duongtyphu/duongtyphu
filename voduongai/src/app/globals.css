@@ -860,3 +860,80 @@ body {
     linear-gradient(180deg, #FFFFFF 0%, #F6F9FE 35%, #FDF6EE 70%, #FFFFFF 100%);
   background-size: 34px 34px, 34px 34px, auto, auto, auto, auto;
 }
+
+/* ============================================================
+ * KHU VƯỜN CỦA BẠN — hiệu ứng riêng cho /portal/khu-vuon-cua-ban
+ * và widget preview ở trang chủ. Ấm áp, tự nhiên, bình yên — không
+ * dùng ở trang khác trong Portal.
+ * ============================================================ */
+
+.garden-scene {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 100% at 85% 0%, rgba(253, 230, 138, 0.35), transparent 55%),
+    radial-gradient(90% 80% at 15% 100%, rgba(134, 239, 172, 0.18), transparent 60%),
+    linear-gradient(180deg, #FFFDF8 0%, #FDFBF3 45%, #F5FBF6 100%);
+}
+
+.garden-sunray {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(253, 224, 71, 0.55), transparent 65%);
+  filter: blur(20px);
+  animation: garden-sunray-pulse 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes garden-sunray-pulse {
+  0%, 100% { opacity: 0.75; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+.garden-sparkle {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #FFFFFF 0%, #FDE68A 60%, transparent 100%);
+  box-shadow: 0 0 6px rgba(253, 224, 71, 0.8);
+  animation: garden-sparkle-twinkle 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes garden-sparkle-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.garden-leaf-fall {
+  position: absolute;
+  animation: garden-leaf-drift 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes garden-leaf-drift {
+  0% { transform: translateY(-6%) translateX(0) rotate(-6deg); opacity: 0; }
+  10% { opacity: 0.9; }
+  50% { transform: translateY(45%) translateX(10px) rotate(10deg); }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(96%) translateX(-6px) rotate(-4deg); opacity: 0; }
+}
+
+.garden-leaf-chip {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.garden-leaf-chip:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 10px 24px -8px rgba(34, 139, 34, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-sunray,
+  .garden-sparkle,
+  .garden-leaf-fall {
+    animation: none;
+  }
+}

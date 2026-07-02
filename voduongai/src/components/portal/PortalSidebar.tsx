@@ -13,6 +13,7 @@ import {
   Sparkles,
   Compass,
   Crown,
+  Leaf,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -27,6 +28,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/community": Users,
   "/portal/companion": Sparkles,
   "/portal/journey": Compass,
+  "/portal/khu-vuon-cua-ban": Leaf,
   "/portal/premium": Crown,
 };
 
