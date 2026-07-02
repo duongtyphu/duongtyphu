@@ -1181,130 +1181,132 @@ body {
   overflow: visible;
 }
 
-/* Outer aura — glow xanh rất mềm phía sau toàn bộ icon, chỉ hiện ở
- * size lớn (64px+) để không tạo vệt mờ khó chịu ở icon nhỏ. */
+/* Aura — quầng sáng mềm bao quanh khối hành tinh, thở rất nhẹ */
 .living-core__aura {
-  position: absolute;
-  inset: -30%;
-  z-index: 0;
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(79, 125, 255, 0.32) 0%, rgba(79, 125, 255, 0) 68%);
-  filter: blur(2px);
+  transform-box: fill-box;
+  transform-origin: center;
   animation: living-core-aura-breathe 6s ease-in-out infinite;
-  pointer-events: none;
 }
 
 @keyframes living-core-aura-breathe {
-  0%, 100% { opacity: 0.75; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.06); }
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.045); }
 }
 
-/* Core planet — pulse nhẹ, tốc độ/độ sáng thay đổi theo state */
-.living-core__core {
-  transform-origin: 50px 50px;
+/* Body — khối hành tinh bầu dục nghiêng, pulse nhẹ như đang thở */
+.living-core__body {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: living-core-pulse 5s ease-in-out infinite;
 }
 
 @keyframes living-core-pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.035); }
+  50% { transform: scale(1.02); }
 }
 
-.living-core__inner-glow {
-  transform-origin: 50px 46px;
+/* Core — lõi trắng lệch tâm, pulse độc lập với body */
+.living-core__core-glow {
+  transform-box: fill-box;
+  transform-origin: center;
   animation: living-core-inner-glow 5s ease-in-out infinite;
 }
 
+.living-core__core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: living-core-pulse 5s ease-in-out infinite;
+}
+
 @keyframes living-core-inner-glow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.75; transform: scale(1.15); }
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.12); }
 }
 
-.living-core__glow {
-  transform-origin: 50px 50px;
-  animation: living-core-glow-breathe 6s ease-in-out infinite;
-}
-
-@keyframes living-core-glow-breathe {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 0.85; }
-}
-
-/* Orbit rings — quay chậm quanh tâm 50,50; mỗi vòng lệch tốc độ/chiều
- * để cảm giác các quỹ đạo độc lập, không đồng bộ máy móc. */
+/* Orbit rings — CSS tự quay (không dùng transform SVG tĩnh để tránh CSS
+ * transform ghi đè); mỗi vòng có góc nghiêng khởi điểm + tốc độ riêng
+ * để hai quỹ đạo cảm giác độc lập, cắt nhau gần lõi như ảnh gốc. */
 .living-core__orbit {
-  transform-origin: 50px 50px;
-  animation: living-core-orbit-spin 40s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.living-core__orbit--1 {
+  animation: living-core-orbit-1-spin 42s linear infinite;
 }
 
 .living-core__orbit--2 {
-  animation-duration: 55s;
-  animation-direction: reverse;
+  animation: living-core-orbit-2-spin 58s linear infinite reverse;
 }
 
-.living-core__orbit--3 {
-  animation-duration: 68s;
+@keyframes living-core-orbit-1-spin {
+  from { transform: rotate(-18deg); }
+  to { transform: rotate(342deg); }
 }
 
-@keyframes living-core-orbit-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes living-core-orbit-2-spin {
+  from { transform: rotate(34deg); }
+  to { transform: rotate(394deg); }
 }
 
 /* Galaxy dust — hạt sáng thoáng ẩn hiện, không nhấp nháy đồng loạt */
 .living-core__mote {
-  animation: living-core-mote-twinkle 4.5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: living-core-mote-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
 }
-
-.living-core__mote--2 { animation-delay: 0.6s; animation-duration: 5.2s; }
-.living-core__mote--3 { animation-delay: 1.4s; animation-duration: 3.8s; }
-.living-core__mote--4 { animation-delay: 2.1s; animation-duration: 5.6s; }
-.living-core__mote--5 { animation-delay: 0.9s; animation-duration: 4.2s; }
 
 @keyframes living-core-mote-twinkle {
-  0%, 100% { opacity: 0.15; transform: scale(0.7); }
-  50% { opacity: 0.9; transform: scale(1.2); }
+  0%, 100% { opacity: 0.2; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1.25); }
 }
 
-/* ===== State: thinking — quỹ đạo nhanh hơn, core sáng hơn, hạt nhiều hơn ===== */
-.living-core--thinking .living-core__orbit { animation-duration: 15s; }
-.living-core--thinking .living-core__orbit--2 { animation-duration: 18s; }
-.living-core--thinking .living-core__orbit--3 { animation-duration: 12s; }
-.living-core--thinking .living-core__core { animation-duration: 2.4s; filter: brightness(1.1); }
-.living-core--thinking .living-core__mote { animation-duration: 2.2s; }
+/* ===== State: thinking — quỹ đạo nhanh hơn, core sáng hơn ===== */
+.living-core--thinking .living-core__orbit--1 { animation-duration: 16s; }
+.living-core--thinking .living-core__orbit--2 { animation-duration: 13s; }
+.living-core--thinking .living-core__body { filter: brightness(1.1); }
+.living-core--thinking .living-core__mote { animation-duration: 2s !important; }
 
-/* ===== State: speaking — core pulse theo nhịp nói, glow mềm hơn ===== */
-.living-core--speaking .living-core__core { animation: living-core-pulse 1.8s ease-in-out infinite; }
-.living-core--speaking .living-core__inner-glow { animation-duration: 1.8s; }
-.living-core--speaking .living-core__glow { animation-duration: 3.2s; opacity: 0.7; }
+/* ===== State: speaking — core pulse theo nhịp nói, aura mềm hơn ===== */
+.living-core--speaking .living-core__core,
+.living-core--speaking .living-core__body { animation-duration: 1.8s; }
+.living-core--speaking .living-core__core-glow { animation-duration: 1.8s; }
+.living-core--speaking .living-core__aura { animation-duration: 3.2s; opacity: 0.7; }
 
 /* ===== State: celebrating — sparkle bùng nhẹ trong 2.5s rồi trở lại bình thường ===== */
 .living-core--celebrating .living-core__mote {
-  animation: living-core-mote-celebrate 2.5s ease-in-out 1;
+  animation-name: living-core-mote-celebrate;
+  animation-duration: 2.5s !important;
+  animation-iteration-count: 1;
 }
 
 @keyframes living-core-mote-celebrate {
-  0% { opacity: 0.2; transform: scale(0.7); }
-  30% { opacity: 1; transform: scale(1.5); }
-  60% { opacity: 1; transform: scale(1.3); }
-  100% { opacity: 0.15; transform: scale(0.7); }
+  0% { opacity: 0.25; transform: scale(0.7); }
+  30% { opacity: 1; transform: scale(1.6); }
+  60% { opacity: 1; transform: scale(1.35); }
+  100% { opacity: 0.2; transform: scale(0.7); }
 }
 
 .living-core--celebrating .living-core__core {
-  animation: living-core-celebrate-pulse 2.5s ease-in-out 1;
+  animation-name: living-core-celebrate-pulse;
+  animation-duration: 2.5s;
+  animation-iteration-count: 1;
 }
 
 @keyframes living-core-celebrate-pulse {
   0%, 100% { transform: scale(1); }
-  40% { transform: scale(1.12); }
+  40% { transform: scale(1.18); }
 }
 
-/* ===== State: sleeping — glow giảm, orbit rất chậm, core mờ hơn ===== */
-.living-core--sleeping .living-core__orbit { animation-duration: 90s; }
-.living-core--sleeping .living-core__core { animation-duration: 8s; opacity: 0.75; }
-.living-core--sleeping .living-core__glow { opacity: 0.35; animation-duration: 8s; }
-.living-core--sleeping .living-core__aura { animation-duration: 10s; opacity: 0.5; }
-.living-core--sleeping .living-core__mote { opacity: 0.25; animation-play-state: paused; }
+/* ===== State: sleeping — aura/orbit rất chậm, core mờ hơn ===== */
+.living-core--sleeping .living-core__orbit--1 { animation-duration: 100s; }
+.living-core--sleeping .living-core__orbit--2 { animation-duration: 130s; }
+.living-core--sleeping .living-core__body { animation-duration: 8s; opacity: 0.82; }
+.living-core--sleeping .living-core__aura { opacity: 0.4; animation-duration: 9s; }
+.living-core--sleeping .living-core__core-glow { animation-duration: 8s; }
+.living-core--sleeping .living-core__mote { opacity: 0.3; animation-play-state: paused; }
 
 /* ===== State: offline — grayscale + mờ, không particles/orbit chuyển động ===== */
 .living-core--offline {
@@ -1313,24 +1315,23 @@ body {
 }
 
 .living-core--offline .living-core__orbit,
+.living-core--offline .living-core__body,
 .living-core--offline .living-core__core,
-.living-core--offline .living-core__inner-glow,
-.living-core--offline .living-core__glow,
+.living-core--offline .living-core__core-glow,
 .living-core--offline .living-core__aura,
 .living-core--offline .living-core__mote {
   animation: none;
 }
 
-/* Cường độ (intensity prop) — scale biên độ pulse/glow qua CSS var,
- * áp dụng nhẹ nhàng bằng cách nhân với opacity/scale nền tại root. */
+/* Cường độ (intensity prop) — scale độ sáng tổng thể nhẹ nhàng */
 .living-core {
   filter: brightness(calc(0.94 + 0.06 * var(--lc-scale, 1)));
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .living-core__body,
   .living-core__core,
-  .living-core__inner-glow,
-  .living-core__glow,
+  .living-core__core-glow,
   .living-core__aura,
   .living-core__orbit,
   .living-core__mote {
