@@ -54,6 +54,17 @@ phải ảnh tham khảo để lấy cảm hứng. Điều đó có nghĩa:
   chính bị kéo oval quá mức thay vì gần tròn, (2) quỹ đạo nằm gọn
   trong thân cầu thay vì vươn ra ngoài như vành đai. Đã sửa lại đúng
   hình học ảnh v1.0 — xem toạ độ cụ thể trong `LivingCore.tsx`.
+- **v1.0 — chất liệu (material)**: Founder làm rõ đây là ENERGY CORE,
+  không phải planet/sphere/3D ball/marble/egg/glass ball — không được
+  có cảm giác vật thể đặc/khối lượng/bóng đổ như quả bóng, không
+  specular highlight kiểu bóng nhựa. Đã đổi phần "body" từ gradient mô
+  phỏng ánh sáng chiếu lên khối cầu rắn (viền tối đặc) sang plasma/
+  volumetric glow: rìa tan dần vào trong suốt (opacity → 0, không còn
+  màu tối ở viền), `mix-blend-mode: screen` để các lớp sáng cộng dồn
+  thay vì tô đặc, thêm blur mềm ở rìa. Quỹ đạo cũng được kéo cách xa
+  quầng sáng ở MỌI hướng (không chỉ theo chiều ngang) để bay tự do như
+  electron quanh hạt nhân, không còn áp sát bề mặt như dây quấn quanh
+  quả bóng.
 
 ## Trạng thái triển khai
 

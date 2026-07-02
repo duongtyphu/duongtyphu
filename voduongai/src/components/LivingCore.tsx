@@ -15,9 +15,14 @@
  * định). Mọi thay đổi hình học sau Design Lock phải đối chiếu lại
  * ảnh gốc trước, không tự sáng tạo layer mới.
  *
- * Companion không phải robot, không có khuôn mặt. Lõi trắng là sự
- * trung thực/trong sáng, quỹ đạo là tri thức đang chuyển động, hạt
- * sáng là những điều Companion học được, ánh sáng là sự đồng hành.
+ * Companion không phải robot, không có khuôn mặt, không phải hành
+ * tinh/quả cầu/viên bi/quả trứng/quả cầu thuỷ tinh — đây là một
+ * ENERGY CORE: năng lượng đang sống, không khối lượng, không bóng đổ
+ * như vật thể rắn. Rìa tan dần vào trong suốt (không viền tối), các
+ * lớp sáng blend cộng dồn (mix-blend-mode: screen) thay vì tô đặc.
+ * Lõi trắng là sự trung thực/trong sáng, quỹ đạo là tri thức đang
+ * chuyển động, hạt sáng là những điều Companion học được, ánh sáng là
+ * sự đồng hành.
  *
  * Không GIF/video/ảnh tĩnh/Lottie. Toàn bộ chuyển động dùng CSS
  * animation trên transform/opacity (GPU friendly), tôn trọng
@@ -153,17 +158,17 @@ export function LivingCore({
         className="living-core__svg"
       >
         <defs>
-          {/* Lõi gần tâm: trắng → cyan → xanh dương → tím, đúng
-           * Companion Blue™ — theo Official Visual Design v1.0, lõi
-           * sáng nằm gần chính giữa khối cầu (không lệch mạnh như bản
-           * trước). */}
+          {/* Năng lượng, không phải khối đặc: gradient tan dần ra TRONG
+           * SUỐT ở rìa (không còn màu tối đặc ở viền) — không mô phỏng
+           * ánh sáng chiếu lên một khối cầu rắn, mà là một nguồn năng
+           * lượng tự phát sáng, nhẹ, không khối lượng, không bóng đổ. */}
           <radialGradient id={bodyGradId} cx="47%" cy="46%" r="68%">
-            <stop offset="0%" stopColor="#FFFFFF" />
-            <stop offset="14%" stopColor="#BFEAFF" />
-            <stop offset="34%" stopColor="#38D5FF" />
-            <stop offset="60%" stopColor="#4F7DFF" />
-            <stop offset="84%" stopColor="#2447B8" />
-            <stop offset="100%" stopColor="#1B3A96" />
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
+            <stop offset="14%" stopColor="#BFEAFF" stopOpacity="1" />
+            <stop offset="32%" stopColor="#38D5FF" stopOpacity="0.95" />
+            <stop offset="55%" stopColor="#4F7DFF" stopOpacity="0.75" />
+            <stop offset="78%" stopColor="#4F7DFF" stopOpacity="0.32" />
+            <stop offset="100%" stopColor="#4F7DFF" stopOpacity="0" />
           </radialGradient>
           <radialGradient id={auraGradId} cx="47%" cy="46%" r="62%">
             <stop offset="0%" stopColor="rgba(180,220,255,0.5)" />
@@ -175,13 +180,18 @@ export function LivingCore({
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </radialGradient>
           <clipPath id={clipId}>
-            <ellipse cx="50" cy="51" rx="36" ry="34" />
+            <ellipse cx="50" cy="51" rx="34" ry="32" />
           </clipPath>
           {detail.showAura && (
             <filter id={blurId} x="-80%" y="-80%" width="260%" height="260%">
               <feGaussianBlur stdDeviation="2.4" />
             </filter>
           )}
+          {/* Blur riêng cho body — làm mềm rìa thành quầng năng lượng
+           * khuếch tán, thay vì một đĩa tròn có cạnh cứng như quả bóng. */}
+          <filter id={`${bodyGradId}-blur`} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="1.6" />
+          </filter>
         </defs>
 
         {/* Toàn bộ khối hành tinh nghiêng nhẹ -14° — khối cầu gần tròn
@@ -207,6 +217,7 @@ export function LivingCore({
             rx="37"
             ry="35"
             fill={`url(#${bodyGradId})`}
+            filter={`url(#${bodyGradId}-blur)`}
           />
 
           {dust.length > 0 && (
@@ -226,16 +237,16 @@ export function LivingCore({
             </g>
           )}
 
-          {/* Orbit rings — đúng 2 vòng quỹ đạo, bán kính lớn hơn khối
-           * cầu (vươn ra ngoài rìa như vành đai), nghiêng góc khác
-           * nhau, cắt nhau gần lõi, giống ảnh gốc v1.0. */}
+          {/* Orbit rings — bay TỰ DO quanh lõi, có khoảng cách rõ với
+           * quầng năng lượng ở mọi hướng (giống electron quay quanh hạt
+           * nhân), KHÔNG áp sát bề mặt như dây quấn quanh quả bóng. */}
           {detail.orbitCount >= 1 && (
             <ellipse
               className="living-core__orbit living-core__orbit--1"
               cx="50"
               cy="51"
-              rx="53"
-              ry="16"
+              rx="52"
+              ry="43"
               stroke="rgba(255,255,255,0.85)"
               strokeWidth="0.9"
             />
@@ -245,8 +256,8 @@ export function LivingCore({
               className="living-core__orbit living-core__orbit--2"
               cx="50"
               cy="51"
-              rx="49"
-              ry="14"
+              rx="47"
+              ry="39"
               stroke="rgba(224,244,255,0.75)"
               strokeWidth="0.8"
             />

@@ -1181,10 +1181,13 @@ body {
   overflow: visible;
 }
 
-/* Aura — quầng sáng mềm bao quanh khối hành tinh, thở rất nhẹ */
+/* Aura — quầng năng lượng mềm lan toả quanh lõi, thở rất nhẹ.
+ * mix-blend-mode: screen để ánh sáng CỘNG DỒN thay vì phủ như sơn đặc
+ * — tránh cảm giác vật thể rắn có khối lượng. */
 .living-core__aura {
   transform-box: fill-box;
   transform-origin: center;
+  mix-blend-mode: screen;
   animation: living-core-aura-breathe 6s ease-in-out infinite;
 }
 
@@ -1193,10 +1196,14 @@ body {
   50% { opacity: 1; transform: scale(1.045); }
 }
 
-/* Body — khối hành tinh bầu dục nghiêng, pulse nhẹ như đang thở */
+/* Body — năng lượng, KHÔNG phải hành tinh/quả cầu đặc: rìa tan dần
+ * vào trong suốt (không viền tối), blend screen để cộng dồn ánh sáng
+ * thay vì tô một lớp màu đặc — không bóng đổ, không cảm giác khối
+ * lượng. Pulse nhẹ như một nhịp năng lượng đang thở. */
 .living-core__body {
   transform-box: fill-box;
   transform-origin: center;
+  mix-blend-mode: screen;
   animation: living-core-pulse 5s ease-in-out infinite;
 }
 
