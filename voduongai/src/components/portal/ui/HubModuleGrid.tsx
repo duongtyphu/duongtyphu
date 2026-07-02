@@ -10,14 +10,14 @@ export function HubModuleGrid({ modules }: { modules: HubModule[] }) {
         m.href ? (
           <Link key={m.label} href={m.href} className="block">
             <GemCard className="h-full">
-              <h3 className="text-sm font-bold text-gray-900">{m.label}</h3>
+              <h3 className="gemos-card-title text-sm font-bold text-gray-900">{m.label}</h3>
               <p className="mt-1 text-sm text-gray-500">{m.description}</p>
             </GemCard>
           </Link>
         ) : (
           <GemCard key={m.label} variant="locked" className="h-full">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="text-sm font-bold text-gray-900">{m.label}</h3>
+              <h3 className="gemos-card-title text-sm font-bold text-gray-900">{m.label}</h3>
               <GemBadge tone="locked">Sắp ra mắt</GemBadge>
             </div>
             <p className="mt-1 text-sm text-gray-500">{m.description}</p>

@@ -14,9 +14,9 @@ export function RelatedActions({ actions }: { actions: RelatedAction[] }) {
           <Link
             key={a.id}
             href={a.href}
-            className="card-shine flex items-center justify-between gap-2 rounded-2xl border border-gray-200 bg-white/[0.04] p-4 text-sm font-semibold text-gray-900 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
+            className="gemos-gem-card flex items-center justify-between gap-2 rounded-2xl p-4 text-sm font-semibold"
           >
-            {a.label}
+            <span className="gemos-card-title text-gray-900">{a.label}</span>
             <ArrowRight className="h-4 w-4 shrink-0 text-blue-600" />
           </Link>
         ))}
