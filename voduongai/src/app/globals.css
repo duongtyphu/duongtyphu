@@ -1240,13 +1240,13 @@ body {
 }
 
 @keyframes living-core-orbit-1-spin {
-  from { transform: rotate(-18deg); }
-  to { transform: rotate(342deg); }
+  from { transform: rotate(-22deg); }
+  to { transform: rotate(338deg); }
 }
 
 @keyframes living-core-orbit-2-spin {
-  from { transform: rotate(34deg); }
-  to { transform: rotate(394deg); }
+  from { transform: rotate(26deg); }
+  to { transform: rotate(386deg); }
 }
 
 /* Galaxy dust — hạt sáng thoáng ẩn hiện, không nhấp nháy đồng loạt */

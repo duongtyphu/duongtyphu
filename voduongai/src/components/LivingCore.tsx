@@ -3,16 +3,17 @@
 /**
  * Living Core™ — biểu tượng sống của Companion.
  *
- * ⚠️ DESIGN LOCK — xem design-system/visual-dna/companion/LIVING-CORE-001.md
+ * ⚠️ DESIGN LOCK v1.0 — xem design-system/visual-dna/companion/LIVING-CORE-001.md
  * Founder: "Hãy coi hình Companion này giống như Logo Apple. Không ai
  * được quyền thiết kế lại logo. Bạn chỉ được quyền dựng lại bằng SVG.
  * Không thay đổi ngôn ngữ thiết kế." — file PNG gốc là Visual Truth
  * DUY NHẤT, đối xử như logo đã chốt, KHÔNG phải ảnh tham khảo để lấy
  * cảm hứng. Việc duy nhất được phép: tái tạo bằng SVG + CSS animation
  * (đã làm ở component này) — KHÔNG redesign, KHÔNG đổi tỷ lệ/hình
- * dạng (oval nghiêng, không phải hình tròn)/màu sắc (Companion Blue™)/
- * số lượng quỹ đạo (= 2, cố định). Mọi thay đổi hình học sau Design
- * Lock phải đối chiếu lại ảnh gốc trước, không tự sáng tạo layer mới.
+ * dạng (khối cầu gần tròn + 2 vòng quỹ đạo lớn vươn ra ngoài rìa như
+ * vành đai)/màu sắc (Companion Blue™)/số lượng quỹ đạo (= 2, cố
+ * định). Mọi thay đổi hình học sau Design Lock phải đối chiếu lại
+ * ảnh gốc trước, không tự sáng tạo layer mới.
  *
  * Companion không phải robot, không có khuôn mặt. Lõi trắng là sự
  * trung thực/trong sáng, quỹ đạo là tri thức đang chuyển động, hạt
@@ -152,10 +153,11 @@ export function LivingCore({
         className="living-core__svg"
       >
         <defs>
-          {/* Lõi lệch tâm: trắng → cyan → xanh dương → tím, đúng
-           * Companion Blue™. cx/cy lệch trong objectBoundingBox để lõi
-           * sáng nằm lệch trái-trên như ảnh gốc, không phải chính giữa. */}
-          <radialGradient id={bodyGradId} cx="38%" cy="40%" r="70%">
+          {/* Lõi gần tâm: trắng → cyan → xanh dương → tím, đúng
+           * Companion Blue™ — theo Official Visual Design v1.0, lõi
+           * sáng nằm gần chính giữa khối cầu (không lệch mạnh như bản
+           * trước). */}
+          <radialGradient id={bodyGradId} cx="47%" cy="46%" r="68%">
             <stop offset="0%" stopColor="#FFFFFF" />
             <stop offset="14%" stopColor="#BFEAFF" />
             <stop offset="34%" stopColor="#38D5FF" />
@@ -163,7 +165,7 @@ export function LivingCore({
             <stop offset="84%" stopColor="#2447B8" />
             <stop offset="100%" stopColor="#1B3A96" />
           </radialGradient>
-          <radialGradient id={auraGradId} cx="42%" cy="42%" r="60%">
+          <radialGradient id={auraGradId} cx="47%" cy="46%" r="62%">
             <stop offset="0%" stopColor="rgba(180,220,255,0.5)" />
             <stop offset="55%" stopColor="rgba(120,190,255,0.22)" />
             <stop offset="100%" stopColor="rgba(120,190,255,0)" />
@@ -173,7 +175,7 @@ export function LivingCore({
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </radialGradient>
           <clipPath id={clipId}>
-            <ellipse cx="50" cy="53" rx="38" ry="32" />
+            <ellipse cx="50" cy="51" rx="36" ry="34" />
           </clipPath>
           {detail.showAura && (
             <filter id={blurId} x="-80%" y="-80%" width="260%" height="260%">
@@ -182,16 +184,17 @@ export function LivingCore({
           )}
         </defs>
 
-        {/* Toàn bộ khối hành tinh nghiêng -18° — một khối bầu dục nghiêng
-         * (KHÔNG phải hình tròn), đúng theo Official Visual Design. */}
-        <g transform="rotate(-18 50 53)">
+        {/* Toàn bộ khối hành tinh nghiêng nhẹ -14° — khối cầu gần tròn
+         * (Official Visual Design v1.0), 2 vòng quỹ đạo lớn vươn ra
+         * NGOÀI rìa khối cầu (kiểu vành đai Saturn), cắt nhau gần lõi. */}
+        <g transform="rotate(-14 50 51)">
           {detail.showAura && (
             <ellipse
               className="living-core__aura"
               cx="50"
-              cy="53"
-              rx="45"
-              ry="38"
+              cy="51"
+              rx="42"
+              ry="40"
               fill={`url(#${auraGradId})`}
               filter={`url(#${blurId})`}
             />
@@ -200,9 +203,9 @@ export function LivingCore({
           <ellipse
             className="living-core__body"
             cx="50"
-            cy="53"
-            rx="39"
-            ry="33"
+            cy="51"
+            rx="37"
+            ry="35"
             fill={`url(#${bodyGradId})`}
           />
 
@@ -223,15 +226,16 @@ export function LivingCore({
             </g>
           )}
 
-          {/* Orbit rings — đúng 2 vòng quỹ đạo, nghiêng góc khác nhau,
-           * cắt nhau gần lõi, giống ảnh gốc. */}
+          {/* Orbit rings — đúng 2 vòng quỹ đạo, bán kính lớn hơn khối
+           * cầu (vươn ra ngoài rìa như vành đai), nghiêng góc khác
+           * nhau, cắt nhau gần lõi, giống ảnh gốc v1.0. */}
           {detail.orbitCount >= 1 && (
             <ellipse
               className="living-core__orbit living-core__orbit--1"
-              cx="46"
-              cy="50"
-              rx="37"
-              ry="13"
+              cx="50"
+              cy="51"
+              rx="53"
+              ry="16"
               stroke="rgba(255,255,255,0.85)"
               strokeWidth="0.9"
             />
@@ -239,18 +243,18 @@ export function LivingCore({
           {detail.orbitCount >= 2 && (
             <ellipse
               className="living-core__orbit living-core__orbit--2"
-              cx="51"
-              cy="55"
-              rx="33"
-              ry="10.5"
+              cx="50"
+              cy="51"
+              rx="49"
+              ry="14"
               stroke="rgba(224,244,255,0.75)"
               strokeWidth="0.8"
             />
           )}
 
-          {/* Core — lõi hiện diện, trắng sáng, lệch tâm sang trái-trên */}
-          <circle className="living-core__core-glow" cx="42" cy="46" r="16" fill={`url(#${coreGradId})`} />
-          <circle className="living-core__core" cx="42" cy="46" r="6.5" fill="#FFFFFF" />
+          {/* Core — lõi hiện diện, trắng sáng, gần chính giữa khối cầu */}
+          <circle className="living-core__core-glow" cx="48" cy="49" r="17" fill={`url(#${coreGradId})`} />
+          <circle className="living-core__core" cx="48" cy="49" r="6.5" fill="#FFFFFF" />
         </g>
       </svg>
     </span>
