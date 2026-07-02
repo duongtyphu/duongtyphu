@@ -701,54 +701,6 @@ body {
   }
 }
 
-/* Sprint 9.0 — The Living Garden. Motion rất nhẹ: glow thở, node lá/hoa
-   sáng nhẹ luân phiên, hạt giống lấp lánh. Không bao giờ hiển thị số
-   điểm — chỉ là hiệu ứng thị giác. */
-.living-garden-glow {
-  background: radial-gradient(
-    circle at 50% 85%,
-    rgba(37, 99, 235, calc(0.18 * var(--garden-glow-intensity, 0.4))),
-    rgba(124, 58, 237, calc(0.16 * var(--garden-glow-intensity, 0.4))) 45%,
-    transparent 75%
-  );
-  animation: living-garden-breathe 8s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes living-garden-breathe {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-.living-garden-node {
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), transparent 45%),
-    radial-gradient(circle, #FDF6EC 0%, #FDE68A 45%, #F97316 100%);
-  box-shadow: 0 0 10px rgba(251, 191, 36, 0.55), 0 0 2px rgba(255, 255, 255, 0.8) inset;
-  animation: living-garden-shimmer 6s ease-in-out infinite;
-}
-
-@keyframes living-garden-shimmer {
-  0%, 100% { opacity: 0.7; transform: scale(0.92); filter: brightness(1); }
-  50% { opacity: 1; transform: scale(1.12); filter: brightness(1.25); }
-}
-
-.living-garden-seed {
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), transparent 45%),
-    radial-gradient(circle, #FDF6EC 0%, #FDE68A 45%, #F97316 100%);
-  box-shadow: 0 0 12px rgba(251, 191, 36, 0.6), 0 0 2px rgba(255, 255, 255, 0.8) inset;
-  animation: living-garden-shimmer 5s ease-in-out infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .living-garden-glow,
-  .living-garden-node,
-  .living-garden-seed {
-    animation: none;
-  }
-}
-
 /* ============================================================
  * THE SANCTUARY OF COMPANION — background system riêng cho
  * /portal/companion và /portal/hanh-trinh-cua-toi. Không dùng ở
@@ -852,6 +804,37 @@ body {
   background: rgba(255, 255, 255, 0.74);
   border-color: rgba(255, 255, 255, 0.7);
   box-shadow: 0 14px 34px -14px rgba(37, 99, 235, 0.22);
+}
+
+/* Widget "Khu vườn của bạn" ở trang chủ — nền trắng ngọc pha nắng ấm,
+ * cùng tông với /portal/khu-vuon-cua-ban thay vì nền trắng phẳng
+ * dùng chung cho mọi card khác trong Portal. */
+.garden-widget-card.gemos-gem-card {
+  background: linear-gradient(160deg, #fffdf7 0%, #fff8ea 55%, #fff0d6 100%);
+  border: 1px solid rgba(253, 224, 71, 0.28);
+  box-shadow: 0 8px 26px -16px rgba(180, 130, 20, 0.22);
+}
+
+.garden-widget-card.gemos-gem-card:hover {
+  border-color: rgba(253, 224, 71, 0.5);
+  box-shadow: 0 16px 34px -16px rgba(180, 130, 20, 0.32);
+}
+
+/* Chấm lá nhỏ nổi ở góc ảnh cây trong widget — chi tiết sống động
+ * rất nhẹ, không phải leaf chip tương tác đầy đủ như trang chi tiết. */
+.garden-widget-leaf {
+  animation: garden-widget-leaf-bob 4.5s ease-in-out infinite;
+}
+
+@keyframes garden-widget-leaf-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-widget-leaf {
+    animation: none;
+  }
 }
 
 /* ============================================================
