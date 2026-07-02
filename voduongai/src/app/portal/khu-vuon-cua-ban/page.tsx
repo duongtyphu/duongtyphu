@@ -15,6 +15,7 @@ import {
   Quote,
   type LucideIcon,
 } from "lucide-react";
+import { GardenScene } from "@/components/portal/garden/scene/GardenScene";
 import {
   gardenStats,
   RECENT_ACTIVITIES,
@@ -22,7 +23,6 @@ import {
   GARDEN_CARE_TIP,
   CARE_SUGGESTIONS,
   GARDEN_FOOTER_QUOTE,
-  LEAF_ACTIONS,
   type LeafActionKey,
 } from "@/data/portal/knowledge-garden";
 
@@ -48,21 +48,6 @@ const LEAF_ICON: Record<LeafActionKey, LucideIcon> = {
   challenge: Star,
   explore: Sprout,
 };
-
-// Vị trí leaf chip trên ảnh cây — tính theo tỷ lệ % khớp với vùng đã
-// crop từ Design Reference (garden-tree-scene.jpg).
-const LEAF_POSITION: Record<LeafActionKey, { top: string; left: string }> = {
-  read: { top: "20%", left: "32%" },
-  learn: { top: "24%", left: "76%" },
-  practice: { top: "40%", left: "22%" },
-  save: { top: "41%", left: "44%" },
-  ask: { top: "47%", left: "76%" },
-  share: { top: "64%", left: "38%" },
-  challenge: { top: "0%", left: "0%" },
-  explore: { top: "0%", left: "0%" },
-};
-
-const LEAF_CHIPS_SHOWN: LeafActionKey[] = ["read", "learn", "practice", "save", "ask", "share"];
 
 const STATS = [
   { icon: Leaf, value: String(gardenStats.totalLeaves), label: "Chiếc lá", tone: "text-green-600" },
@@ -154,68 +139,7 @@ export default function KnowledgeGardenPage() {
 
           {/* RIGHT — cây thật, linh hồn của trang */}
           <div className="relative">
-            <div
-              className="garden-scene relative h-80 w-full overflow-hidden rounded-3xl sm:h-96 lg:h-[30rem]"
-              style={{ aspectRatio: "727 / 750" }}
-            >
-              {/* Ảnh cây — Official Tree Reference, không đổi. Chỉ thêm
-                  chuyển động "thở" rất nhẹ (scale ~0.6%) để mô phỏng gió. */}
-              <div className="garden-tree-photo absolute inset-0">
-                <Image
-                  src="/images/garden/garden-tree-scene.jpg"
-                  alt="Cây tri thức trong khu vườn của bạn, ánh nắng buổi sáng chiếu qua tán lá"
-                  fill
-                  sizes="(min-width: 1024px) 55vw, 100vw"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-
-              {/* Ánh nắng thở nhẹ (opacity 95% <-> 100%, dịch chuyển rất nhỏ) */}
-              <div className="garden-sunray-live" aria-hidden="true" />
-
-              {/* Bụi sáng trôi rất chậm — ẩn trên mobile để nhẹ máy */}
-              <span className="garden-bokeh hidden sm:block" style={{ top: "22%", left: "62%", width: 5, height: 5, animationDelay: "0s" }} />
-              <span className="garden-bokeh hidden sm:block" style={{ top: "38%", left: "48%", width: 4, height: 4, animationDelay: "5s" }} />
-              <span className="garden-bokeh hidden sm:block" style={{ top: "15%", left: "80%", width: 3, height: 3, animationDelay: "10s" }} />
-
-              {/* Sparkle thoáng qua rồi biến mất */}
-              <span className="garden-sparkle-glint" style={{ top: "18%", left: "70%", width: 5, height: 5, animationDelay: "0s" }} />
-              <span className="garden-sparkle-glint" style={{ top: "45%", left: "30%", width: 4, height: 4, animationDelay: "4s" }} />
-
-              {/* Lá rơi thưa thớt — mỗi ~8s một chiếc, so le nhau, không liên tục */}
-              <span className="garden-leaf-fall" style={{ left: "22%", top: 0, animationDuration: "24s", animationDelay: "0s" }}>
-                <svg width={9} height={12} viewBox="0 0 10 13" fill="none">
-                  <path d="M5 0C8 3 10 6 5 13C0 6 2 3 5 0Z" fill="#86EFAC" opacity={0.85} />
-                </svg>
-              </span>
-              <span className="garden-leaf-fall" style={{ left: "55%", top: 0, animationDuration: "24s", animationDelay: "8s" }}>
-                <svg width={8} height={11} viewBox="0 0 10 13" fill="none">
-                  <path d="M5 0C8 3 10 6 5 13C0 6 2 3 5 0Z" fill="#86EFAC" opacity={0.8} />
-                </svg>
-              </span>
-              <span className="garden-leaf-fall" style={{ left: "78%", top: 0, animationDuration: "24s", animationDelay: "16s" }}>
-                <svg width={9} height={12} viewBox="0 0 10 13" fill="none">
-                  <path d="M5 0C8 3 10 6 5 13C0 6 2 3 5 0Z" fill="#A3E635" opacity={0.8} />
-                </svg>
-              </span>
-
-              {LEAF_CHIPS_SHOWN.map((key) => {
-                const Icon = LEAF_ICON[key];
-                const action = LEAF_ACTIONS.find((a) => a.key === key)!;
-                return (
-                  <div
-                    key={key}
-                    className="garden-leaf-chip-photo absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 px-3 py-2 text-center"
-                    style={LEAF_POSITION[key]}
-                  >
-                    <Icon className="h-4 w-4 text-white" />
-                    <span className="text-xs font-bold text-white">{action.label}</span>
-                    <span className="text-[10px] text-white/75">{action.time}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <GardenScene />
 
             {/* Gợi ý chăm sóc khu vườn — nổi trên vùng cây */}
             <div className="gemos-glass-card absolute -bottom-6 right-2 w-[88%] rounded-2xl p-4 sm:w-[80%] lg:right-4">

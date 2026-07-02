@@ -876,6 +876,18 @@ body {
     linear-gradient(180deg, #FFFDF8 0%, #FDFBF3 45%, #F5FBF6 100%);
 }
 
+/* Window blend — làm mềm rìa ảnh cây để hòa vào nền trang thay vì
+ * dừng đột ngột như một tấm ảnh dán trong khung. Feathered vignette
+ * chỉ ăn vào ~10% viền, giữ nguyên phần lõi để không che cây/leaf chip. */
+.garden-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 42px 14px rgba(255, 253, 247, 0.55);
+  mix-blend-mode: normal;
+}
+
 .garden-sunray {
   position: absolute;
   top: -10%;
@@ -984,25 +996,43 @@ body {
     linear-gradient(180deg, #FFFDF7 0%, #FFF9EE 45%, #FFFDF7 100%);
 }
 
+/* Leaf Chip Layer — hình chiếc lá nhẹ, kính mờ (glassmorphism), KHÔNG
+ * còn là thanh nền đặc tối che cây. Opacity thấp (~0.5) để ánh sáng và
+ * chi tiết tán lá phía sau vẫn xuyên qua được — cảm giác "một chiếc lá
+ * phát sáng đậu trên cành", không phải "nhãn dán che ảnh". */
 .garden-leaf-chip-photo {
   position: relative;
-  background: linear-gradient(160deg, rgba(47, 94, 60, 0.88), rgba(31, 74, 43, 0.92));
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border-radius: 18px 18px 18px 4px;
-  box-shadow: 0 8px 20px -6px rgba(21, 62, 33, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  background: linear-gradient(160deg, rgba(74, 155, 96, 0.55), rgba(45, 110, 66, 0.6));
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 999px 999px 999px 6px;
+  box-shadow: 0 4px 14px -4px rgba(21, 62, 33, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.18) inset;
   animation: garden-leaf-sway 6s ease-in-out infinite;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 
 .garden-leaf-chip-photo:hover {
   animation-play-state: paused;
-  transform: translate(-50%, -50%) translateY(-5px) scale(1.05);
-  box-shadow: 0 14px 28px -8px rgba(21, 62, 33, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  transform: translate(-50%, -50%) translateY(-5px) scale(1.06);
+  background: linear-gradient(160deg, rgba(74, 155, 96, 0.72), rgba(45, 110, 66, 0.78));
+  box-shadow: 0 12px 22px -6px rgba(21, 62, 33, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+}
+
+/* Just-bloomed — hiệu ứng ngắn khi một chiếc lá mới vừa xuất hiện:
+ * sáng lên ~2 giây rồi ổn định lại (dùng khi Companion thêm lá mới). */
+.garden-leaf-just-bloomed {
+  animation: garden-leaf-bloom 2s ease-out, garden-leaf-sway 6s ease-in-out 2s infinite;
+}
+
+@keyframes garden-leaf-bloom {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); filter: brightness(1); }
+  40% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); filter: brightness(1.6); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .garden-leaf-chip-photo {
+  .garden-leaf-chip-photo,
+  .garden-leaf-just-bloomed {
     animation: none;
   }
 }

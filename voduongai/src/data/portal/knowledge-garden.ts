@@ -183,6 +183,120 @@ export const LEAF_ACTIONS: LeafAction[] = [
   { key: "share", label: "Cảm hứng", time: "16:10 PM" },
 ];
 
+/**
+ * Dynamic Leaf — mô hình dữ liệu đầy đủ cho một chiếc lá thật trên
+ * cây. Leaf Chip Layer render từ mảng này thay vì hardcode tọa độ —
+ * mỗi lá đại diện cho một hành động có ý nghĩa của người dùng, không
+ * phải trang trí. Companion sẽ thêm phần tử mới vào mảng này khi có
+ * dữ liệu thật (API), không cần đổi component hiển thị.
+ *
+ * `position` dùng tên "cành" (branch) trừu tượng thay vì toạ độ px để
+ * độc lập với kích thước ảnh cây — GARDEN_LEAF_BRANCH_POSITION ánh xạ
+ * mỗi tên cành sang toạ độ % cụ thể trên Tree Layer hiện tại.
+ */
+export type GardenLeafBranch =
+  | "branch-1"
+  | "branch-2"
+  | "branch-3"
+  | "branch-4"
+  | "branch-5"
+  | "branch-6";
+
+export type GardenLeafAnimation = "wind-soft" | "just-bloomed";
+
+export type GardenLeaf = {
+  id: string;
+  type: LeafActionKey;
+  label: string;
+  createdAt: string;
+  position: GardenLeafBranch;
+  animation: GardenLeafAnimation;
+  tooltip: string;
+  unlocked: boolean;
+};
+
+/** Toạ độ % của từng "cành" trên Tree Layer (garden-tree-scene.jpg). */
+export const GARDEN_LEAF_BRANCH_POSITION: Record<GardenLeafBranch, { top: string; left: string }> = {
+  "branch-1": { top: "20%", left: "32%" },
+  "branch-2": { top: "24%", left: "76%" },
+  "branch-3": { top: "40%", left: "22%" },
+  "branch-4": { top: "41%", left: "44%" },
+  "branch-5": { top: "47%", left: "76%" },
+  "branch-6": { top: "64%", left: "38%" },
+};
+
+/**
+ * Seed data mẫu — sau này thay bằng dữ liệu thật từ hành động của
+ * người dùng (đọc bài, hoàn thành bài học, lưu tài liệu, thực hành,
+ * đặt câu hỏi, chia sẻ...). Thêm phần tử mới = thêm một chiếc lá mới
+ * trên cây, không cần đổi Tree Layer hay layout.
+ */
+export const GARDEN_LEAVES: GardenLeaf[] = [
+  {
+    id: "leaf-248",
+    type: "read",
+    label: "Đọc bài viết",
+    createdAt: "2026-07-02T10:24:00",
+    position: "branch-1",
+    animation: "wind-soft",
+    tooltip: "Bạn đã đọc: 10 Prompt viết content thu hút — 10:24 sáng",
+    unlocked: true,
+  },
+  {
+    id: "leaf-247",
+    type: "learn",
+    label: "Học bài học",
+    createdAt: "2026-07-02T09:15:00",
+    position: "branch-2",
+    animation: "wind-soft",
+    tooltip: "Bạn đã hoàn thành: AI Prompting Cơ Bản — 09:15 sáng",
+    unlocked: true,
+  },
+  {
+    id: "leaf-246",
+    type: "practice",
+    label: "Thực hành",
+    createdAt: "2026-07-02T08:46:00",
+    position: "branch-3",
+    animation: "wind-soft",
+    tooltip: "Bạn đã thực hành: Viết email chuyên nghiệp — 08:46 sáng",
+    unlocked: true,
+  },
+  {
+    id: "leaf-245",
+    type: "save",
+    label: "Lưu tài liệu",
+    createdAt: "2026-07-01T11:30:00",
+    position: "branch-4",
+    animation: "wind-soft",
+    tooltip: "Bạn đã lưu: 10 Prompt hữu ích cho công việc — hôm qua",
+    unlocked: true,
+  },
+  {
+    id: "leaf-244",
+    type: "ask",
+    label: "Đặt câu hỏi",
+    createdAt: "2026-06-30T14:20:00",
+    position: "branch-5",
+    animation: "wind-soft",
+    tooltip: "Bạn đã hỏi Companion về lộ trình học AI — 2 ngày trước",
+    unlocked: true,
+  },
+  {
+    id: "leaf-243",
+    type: "share",
+    label: "Cảm hứng",
+    createdAt: "2026-06-29T16:10:00",
+    position: "branch-6",
+    animation: "wind-soft",
+    tooltip: "Bạn đã chia sẻ điều học được với cộng đồng — 3 ngày trước",
+    unlocked: true,
+  },
+];
+
+/** Bảng gỗ nhỏ gần gốc cây — chi tiết cảm xúc, không nổi bật quá. */
+export const GARDEN_TREE_CAPTION = "Mỗi chiếc lá là một điều bạn đã học.";
+
 /** "Những chiếc lá gần đây" — đúng theo Reference. */
 export const RECENT_ACTIVITIES: RecentActivity[] = [
   {
