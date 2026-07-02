@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Sprout, Leaf, Sparkles, Infinity as InfinityIcon } from "lucide-react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
+import { LivingCore } from "@/components/portal/companion/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 
 // ─────────────────────────────────────────────
@@ -192,6 +193,50 @@ export default function CompanionSanctuaryPage() {
             Companion tồn tại để trở thành người bạn đồng hành đáng tin cậy nhất.
           </p>
         </section>
+
+        {/* ═══════════════════ LIVING CORE™ — demo các size/state ═══════════════════ */}
+        <Reveal className="mt-32">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">Living Core™</p>
+          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">
+            Một biểu tượng sống, không phải một khuôn mặt
+          </h2>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600">
+            Hình tròn là lõi hiện diện. Ánh sáng là sự đồng hành. Quỹ đạo là tri thức đang chuyển
+            động. Hạt sáng là những điều Companion học được. Lõi trắng là sự trung thực và trong
+            sáng.
+          </p>
+
+          <div className="mt-10 flex flex-wrap items-end gap-10">
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={256} state="idle" />
+              <span className="text-xs font-medium text-gray-400">256px · idle</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={128} state="thinking" />
+              <span className="text-xs font-medium text-gray-400">128px · thinking</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={64} state="speaking" />
+              <span className="text-xs font-medium text-gray-400">64px · speaking</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={52} state="celebrating" />
+              <span className="text-xs font-medium text-gray-400">52px · celebrating</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={32} state="sleeping" />
+              <span className="text-xs font-medium text-gray-400">32px · sleeping</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={16} state="idle" />
+              <span className="text-xs font-medium text-gray-400">16px · idle</span>
+            </div>
+            <div className="flex flex-col items-center gap-3">
+              <LivingCore size={64} state="offline" />
+              <span className="text-xs font-medium text-gray-400">64px · offline</span>
+            </div>
+          </div>
+        </Reveal>
 
         {/* ═══════════════════ SECTION 1 — Ý tưởng ═══════════════════ */}
         <Reveal className="mt-40">
