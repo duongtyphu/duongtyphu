@@ -158,18 +158,47 @@ export default function KnowledgeGardenPage() {
               className="garden-scene relative h-80 w-full overflow-hidden rounded-3xl sm:h-96 lg:h-[30rem]"
               style={{ aspectRatio: "727 / 750" }}
             >
-              <Image
-                src="/images/garden/garden-tree-scene.jpg"
-                alt="Cây tri thức trong khu vườn của bạn, ánh nắng buổi sáng chiếu qua tán lá"
-                fill
-                sizes="(min-width: 1024px) 55vw, 100vw"
-                className="object-cover"
-                priority
-              />
-              <div className="garden-sunray" aria-hidden="true" />
-              <span className="garden-sparkle" style={{ top: "10%", left: "18%", width: 4, height: 4, animationDelay: "0s" }} />
-              <span className="garden-sparkle" style={{ top: "28%", left: "60%", width: 3, height: 3, animationDelay: "1s" }} />
-              <span className="garden-sparkle" style={{ top: "55%", left: "80%", width: 3, height: 3, animationDelay: "2s" }} />
+              {/* Ảnh cây — Official Tree Reference, không đổi. Chỉ thêm
+                  chuyển động "thở" rất nhẹ (scale ~0.6%) để mô phỏng gió. */}
+              <div className="garden-tree-photo absolute inset-0">
+                <Image
+                  src="/images/garden/garden-tree-scene.jpg"
+                  alt="Cây tri thức trong khu vườn của bạn, ánh nắng buổi sáng chiếu qua tán lá"
+                  fill
+                  sizes="(min-width: 1024px) 55vw, 100vw"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+
+              {/* Ánh nắng thở nhẹ (opacity 95% <-> 100%, dịch chuyển rất nhỏ) */}
+              <div className="garden-sunray-live" aria-hidden="true" />
+
+              {/* Bụi sáng trôi rất chậm — ẩn trên mobile để nhẹ máy */}
+              <span className="garden-bokeh hidden sm:block" style={{ top: "22%", left: "62%", width: 5, height: 5, animationDelay: "0s" }} />
+              <span className="garden-bokeh hidden sm:block" style={{ top: "38%", left: "48%", width: 4, height: 4, animationDelay: "5s" }} />
+              <span className="garden-bokeh hidden sm:block" style={{ top: "15%", left: "80%", width: 3, height: 3, animationDelay: "10s" }} />
+
+              {/* Sparkle thoáng qua rồi biến mất */}
+              <span className="garden-sparkle-glint" style={{ top: "18%", left: "70%", width: 5, height: 5, animationDelay: "0s" }} />
+              <span className="garden-sparkle-glint" style={{ top: "45%", left: "30%", width: 4, height: 4, animationDelay: "4s" }} />
+
+              {/* Lá rơi thưa thớt — mỗi ~8s một chiếc, so le nhau, không liên tục */}
+              <span className="garden-leaf-fall" style={{ left: "22%", top: 0, animationDuration: "24s", animationDelay: "0s" }}>
+                <svg width={9} height={12} viewBox="0 0 10 13" fill="none">
+                  <path d="M5 0C8 3 10 6 5 13C0 6 2 3 5 0Z" fill="#86EFAC" opacity={0.85} />
+                </svg>
+              </span>
+              <span className="garden-leaf-fall" style={{ left: "55%", top: 0, animationDuration: "24s", animationDelay: "8s" }}>
+                <svg width={8} height={11} viewBox="0 0 10 13" fill="none">
+                  <path d="M5 0C8 3 10 6 5 13C0 6 2 3 5 0Z" fill="#86EFAC" opacity={0.8} />
+                </svg>
+              </span>
+              <span className="garden-leaf-fall" style={{ left: "78%", top: 0, animationDuration: "24s", animationDelay: "16s" }}>
+                <svg width={9} height={12} viewBox="0 0 10 13" fill="none">
+                  <path d="M5 0C8 3 10 6 5 13C0 6 2 3 5 0Z" fill="#A3E635" opacity={0.8} />
+                </svg>
+              </span>
 
               {LEAF_CHIPS_SHOWN.map((key) => {
                 const Icon = LEAF_ICON[key];

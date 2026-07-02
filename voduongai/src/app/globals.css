@@ -1006,3 +1006,85 @@ body {
     animation: none;
   }
 }
+
+/* ============================================================
+ * LIVING GARDEN — biến ảnh cây tĩnh (Official Tree Reference)
+ * thành một khu vườn "đang sống": lá rung rất nhẹ theo gió, ánh nắng
+ * thở nhẹ, bụi sáng trôi chậm, sparkle thoáng qua, lá rơi thưa thớt.
+ * Ảnh cây KHÔNG đổi — chỉ overlay chuyển động rất tinh tế lên trên.
+ * ============================================================ */
+
+.garden-tree-photo {
+  animation: garden-tree-photo-breathe 11s ease-in-out infinite;
+  transform-origin: center 65%;
+  will-change: transform;
+}
+
+@keyframes garden-tree-photo-breathe {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.006) rotate(0.15deg); }
+}
+
+/* Ánh nắng thở: opacity 95% -> 100% -> 95%, dịch chuyển vị trí rất nhẹ */
+.garden-sunray-live {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(700px circle at 72% 18%, rgba(255, 244, 190, 0.5), transparent 60%);
+  mix-blend-mode: soft-light;
+  animation: garden-sunray-live-breathe 9s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes garden-sunray-live-breathe {
+  0%, 100% { opacity: 0.95; transform: translate(0, 0) scale(1); }
+  50% { opacity: 1; transform: translate(1%, -1%) scale(1.03); }
+}
+
+/* Bụi sáng (bokeh) trôi rất chậm, tinh tế */
+.garden-bokeh {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 250, 220, 0.85), transparent 70%);
+  filter: blur(1.5px);
+  pointer-events: none;
+  animation: garden-bokeh-drift 16s ease-in-out infinite;
+}
+
+@keyframes garden-bokeh-drift {
+  0% { transform: translate(0, 0); opacity: 0; }
+  15% { opacity: 0.55; }
+  50% { transform: translate(6px, -14px); opacity: 0.75; }
+  85% { opacity: 0.4; }
+  100% { transform: translate(-4px, -26px); opacity: 0; }
+}
+
+/* Sparkle thoáng qua rồi biến mất — thưa hơn garden-sparkle thường */
+.garden-sparkle-glint {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #FFFFFF 0%, #FFF3C4 55%, transparent 100%);
+  box-shadow: 0 0 10px rgba(255, 244, 190, 0.9);
+  pointer-events: none;
+  animation: garden-sparkle-glint-pass 8s ease-in-out infinite;
+}
+
+@keyframes garden-sparkle-glint-pass {
+  0%, 92%, 100% { opacity: 0; transform: scale(0.6); }
+  95% { opacity: 1; transform: scale(1.3); }
+  97% { opacity: 0.4; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-tree-photo,
+  .garden-sunray-live,
+  .garden-bokeh,
+  .garden-sparkle-glint {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .garden-bokeh {
+    display: none;
+  }
+}
