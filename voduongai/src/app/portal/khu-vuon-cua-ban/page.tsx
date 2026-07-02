@@ -129,7 +129,7 @@ export default function KnowledgeGardenPage() {
             </div>
 
             {/* Quote nhỏ */}
-            <div className="mt-4 rounded-xl border border-green-100 bg-green-50/60 px-4 py-3">
+            <div className="mt-4 px-1 py-1">
               <p className="text-xs leading-relaxed text-green-800">
                 <span className="mr-1">🌱</span>
                 {GARDEN_QUOTE_SMALL}
@@ -172,7 +172,7 @@ export default function KnowledgeGardenPage() {
                 return (
                   <div
                     key={a.id}
-                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
+                    className="flex items-center gap-3 rounded-xl p-3"
                   >
                     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${RECENT_TONE[a.actionKey]}`}>
                       <Icon className="h-4 w-4" />
