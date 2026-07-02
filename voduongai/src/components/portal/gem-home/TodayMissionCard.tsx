@@ -34,7 +34,7 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
   return (
     <GemCard>
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-gray-900">Hôm nay, vài điều nhỏ để đi tiếp</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-gray-900">Hôm nay, vài điều nhỏ để đi tiếp</h2>
         <span className="text-xs font-semibold text-gray-500">
           {ready ? `${doneCount}/${missions.length} đã xong` : "…"}
         </span>
@@ -47,7 +47,7 @@ export function TodayMissionCard({ missions }: { missions: TodayMission[] }) {
           const status = getStatus(m.id);
           const Icon = STATUS_ICON[status];
           return (
-            <li key={m.id} className="flex items-start gap-3 rounded-xl border border-white/8 bg-gray-50 p-3">
+            <li key={m.id} className="flex items-start gap-3 rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-violet-50 p-3">
               <button
                 type="button"
                 onClick={() => cycleStatus(m.id)}

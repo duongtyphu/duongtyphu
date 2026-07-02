@@ -11,7 +11,7 @@ export function NextBestActionCard({ flow }: { flow: HumanFlowState }) {
     <GemCard variant="featured">
       <div className="flex items-center gap-2">
         <Compass className="h-4 w-4 text-blue-600" />
-        <h2 className="text-sm font-bold text-gray-900">Bước tiếp theo của bạn</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-gray-900">Bước tiếp theo của bạn</h2>
       </div>
       {flow.hardTimeLine && <p className="mt-3 text-sm text-gray-600">{flow.hardTimeLine}</p>}
       <p className="mt-3 text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>

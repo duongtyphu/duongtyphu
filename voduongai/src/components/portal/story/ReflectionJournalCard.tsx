@@ -22,7 +22,7 @@ export function ReflectionJournalCard() {
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
           <Feather className="h-4 w-4 text-[#A78BFA]" />
-          <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
+          <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-2 text-sm text-gray-500 italic">{question}</p>
       </GemCard>
@@ -34,7 +34,7 @@ export function ReflectionJournalCard() {
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
           <Feather className="h-4 w-4 text-[#A78BFA]" />
-          <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
+          <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-3 text-sm text-gray-600">
           Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
@@ -48,7 +48,7 @@ export function ReflectionJournalCard() {
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
           <Feather className="h-4 w-4 text-[#A78BFA]" />
-          <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
+          <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-3 text-sm text-gray-600">
           Cảm ơn bạn đã dành chút thời gian để suy ngẫm hôm nay. Câu trả lời đã được lưu vào My Story.
@@ -61,7 +61,7 @@ export function ReflectionJournalCard() {
     <GemCard className="h-full">
       <div className="flex items-center gap-2">
         <Feather className="h-4 w-4 text-[#A78BFA]" />
-        <h2 className="text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
       </div>
       <p className="mt-2 text-sm text-gray-600">{question}</p>
       <textarea

@@ -3,9 +3,9 @@ import { GemProgress } from "@/components/portal/ui/GemProgress";
 import type { MissionDay } from "@/data/portal/journey-hub";
 
 const DOT_STYLE: Record<MissionDay["status"], string> = {
-  completed: "bg-[#22D3EE] text-[#050B18]",
-  current: "bg-[#FBBF24] text-[#050B18] gemos-glow-pulse",
-  upcoming: "bg-white/[0.06] text-gray-400",
+  completed: "bg-gradient-to-br from-blue-500 to-violet-500 text-white",
+  current: "bg-orange-400 text-white",
+  upcoming: "bg-gray-100 text-gray-400",
 };
 
 /**
@@ -24,7 +24,7 @@ export function Mission30DayCard({
   return (
     <GemCard>
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-bold text-gray-900">30 ngày đầu tiên</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-gray-900">30 ngày đầu tiên</h2>
         <span className="text-xs font-semibold text-gray-500">{completedCount}/{totalDays} cột mốc</span>
       </div>
       <div className="mt-4">

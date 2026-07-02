@@ -11,7 +11,7 @@ export function CompanionMemoryCard({ reflections }: { reflections: Reflection[]
     <GemCard className="h-full">
       <div className="flex items-center gap-2">
         <HeartHandshake className="h-4 w-4 text-blue-600" />
-        <h2 className="text-sm font-bold text-gray-900">Mình vẫn nhớ</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-gray-900">Mình vẫn nhớ</h2>
       </div>
       <p className="mt-3 text-sm text-gray-600">{buildInsightMemoryLine(reflections)}</p>
     </GemCard>

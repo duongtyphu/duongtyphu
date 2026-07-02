@@ -9,7 +9,7 @@ export function HumanGrowthDashboardCard({ qualities }: { qualities: string[] })
     <GemCard>
       <div className="flex items-center gap-2">
         <Sprout className="h-4 w-4 text-blue-600" />
-        <h2 className="text-sm font-bold text-gray-900">Tôi đang trưởng thành như thế nào?</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-gray-900">Tôi đang trưởng thành như thế nào?</h2>
       </div>
       {qualities.length === 0 ? (
         <p className="mt-3 text-sm text-gray-600">

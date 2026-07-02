@@ -15,10 +15,10 @@ export function CurrentJourneyCard({ journey }: { journey: CurrentJourney }) {
 
   return (
     <GemCard>
-      <h2 className="text-sm font-bold text-gray-900">Hành trình hiện tại</h2>
+      <h2 className="gemos-card-title text-sm font-bold text-gray-900">Hành trình hiện tại</h2>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {facts.map((f) => (
-          <div key={f.label} className="rounded-xl border border-white/8 bg-gray-50 p-3">
+          <div key={f.label} className="rounded-xl border border-blue-100 bg-gradient-to-br from-blue-50 to-violet-50 p-3">
             <p className="text-[11px] font-semibold text-gray-900/45">{f.label}</p>
             <p className="mt-1 text-sm font-semibold text-gray-900">{f.value}</p>
           </div>

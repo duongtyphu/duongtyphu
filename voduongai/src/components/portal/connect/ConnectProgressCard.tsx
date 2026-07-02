@@ -8,7 +8,7 @@ import type { ConnectProgressDimension } from "@/data/portal/connect-os";
 export function ConnectProgressCard({ dimensions }: { dimensions: ConnectProgressDimension[] }) {
   return (
     <GemCard variant="progress">
-      <h2 className="text-sm font-bold text-gray-900">Connect Progress</h2>
+      <h2 className="gemos-card-title text-sm font-bold text-gray-900">Connect Progress</h2>
       <div className="mt-4 space-y-4">
         {dimensions.map((d) => (
           <GemProgress key={d.id} percent={d.percent} label={d.label} />
