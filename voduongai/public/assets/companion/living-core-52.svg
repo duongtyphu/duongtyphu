@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 100 100" fill="none" role="img" aria-label="Companion Living Core">
+  <title>Companion Living Core™</title>
+  <defs>
+    <radialGradient id="lc-body-52" cx="38%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="14%" stop-color="#BFEAFF" />
+      <stop offset="34%" stop-color="#38D5FF" />
+      <stop offset="60%" stop-color="#4F7DFF" />
+      <stop offset="84%" stop-color="#2447B8" />
+      <stop offset="100%" stop-color="#1B3A96" />
+    </radialGradient>
+    <radialGradient id="lc-aura-52" cx="42%" cy="42%" r="60%">
+      <stop offset="0%" stop-color="rgba(180,220,255,0.5)" />
+      <stop offset="55%" stop-color="rgba(120,190,255,0.22)" />
+      <stop offset="100%" stop-color="rgba(120,190,255,0)" />
+    </radialGradient>
+    <radialGradient id="lc-core-52" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+    </radialGradient>
+    <clipPath id="lc-clip-52">
+      <ellipse cx="50" cy="53" rx="38" ry="32" />
+    </clipPath>
+    <filter id="lc-blur-52" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="2.4" /></filter>
+    <style>
+      .living-core__aura { transform-box: fill-box; transform-origin: center; animation: lc-aura-breathe 6s ease-in-out infinite; }
+      @keyframes lc-aura-breathe { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.045); } }
+      .living-core__body { transform-box: fill-box; transform-origin: center; animation: lc-pulse 5s ease-in-out infinite; }
+      @keyframes lc-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+      .living-core__core-glow { transform-box: fill-box; transform-origin: center; animation: lc-inner-glow 5s ease-in-out infinite; }
+      .living-core__core { transform-box: fill-box; transform-origin: center; animation: lc-pulse 5s ease-in-out infinite; }
+      @keyframes lc-inner-glow { 0%, 100% { opacity: 0.55; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.12); } }
+      .living-core__orbit { transform-box: fill-box; transform-origin: center; }
+      .living-core__orbit--1 { animation: lc-orbit-1-spin 42s linear infinite; }
+      .living-core__orbit--2 { animation: lc-orbit-2-spin 58s linear infinite reverse; }
+      @keyframes lc-orbit-1-spin { from { transform: rotate(-18deg); } to { transform: rotate(342deg); } }
+      @keyframes lc-orbit-2-spin { from { transform: rotate(34deg); } to { transform: rotate(394deg); } }
+      .living-core__mote { transform-box: fill-box; transform-origin: center; animation-name: lc-mote-twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
+      @keyframes lc-mote-twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.25); } }
+      @media (prefers-reduced-motion: reduce) {
+        .living-core__aura, .living-core__body, .living-core__core, .living-core__core-glow, .living-core__orbit, .living-core__mote { animation: none !important; }
+      }
+    </style>
+  </defs>
+  <g transform="rotate(-18 50 53)">
+    <ellipse class="living-core__aura" cx="50" cy="53" rx="45" ry="38" fill="url(#lc-aura-52)" filter="url(#lc-blur-52)" />
+    <ellipse class="living-core__body" cx="50" cy="53" rx="39" ry="33" fill="url(#lc-body-52)" />
+    <g clip-path="url(#lc-clip-52)" class="living-core__dust">
+      <circle class="living-core__mote" style="animation-delay:0.00s;animation-duration:3.60s" cx="42" cy="46" r="1.1" fill="#EAF4FF" />
+      <circle class="living-core__mote" style="animation-delay:0.35s;animation-duration:4.00s" cx="50" cy="40" r="1.3" fill="#EAF4FF" />
+      <circle class="living-core__mote" style="animation-delay:0.70s;animation-duration:4.40s" cx="34" cy="40" r="1.2" fill="#EAF4FF" />
+      <circle class="living-core__mote" style="animation-delay:1.05s;animation-duration:4.80s" cx="48" cy="56" r="1.4" fill="#EAF4FF" />
+      <circle class="living-core__mote" style="animation-delay:1.40s;animation-duration:5.20s" cx="60" cy="48" r="1.1" fill="#EAF4FF" />
+      <circle class="living-core__mote" style="animation-delay:1.75s;animation-duration:3.60s" cx="36" cy="54" r="1" fill="#EAF4FF" />
+      <circle class="living-core__mote" style="animation-delay:2.10s;animation-duration:4.00s" cx="55" cy="30" r="1.2" fill="#EAF4FF" />
+    </g>
+    <ellipse class="living-core__orbit living-core__orbit--1" cx="46" cy="50" rx="37" ry="13" stroke="rgba(255,255,255,0.85)" stroke-width="0.9" />
+    <ellipse class="living-core__orbit living-core__orbit--2" cx="51" cy="55" rx="33" ry="10.5" stroke="rgba(224,244,255,0.75)" stroke-width="0.8" />
+    <circle class="living-core__core-glow" cx="42" cy="46" r="16" fill="url(#lc-core-52)" />
+    <circle class="living-core__core" cx="42" cy="46" r="6.5" fill="#FFFFFF" />
+  </g>
+</svg>
