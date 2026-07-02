@@ -861,6 +861,26 @@ body {
   background-size: 34px 34px, 34px 34px, auto, auto, auto, auto;
 }
 
+/* Garden glass card — override riêng cho card trong trang "Khu vườn
+ * của bạn": trong suốt, nổi nhẹ trên nền khu vườn thay vì nền trắng
+ * đặc dùng chung toàn Portal. Đặt cùng `.gemos-gem-card`/
+ * `.gemos-glass-card` để vẫn giữ hiệu ứng hover-lift + đổi màu title. */
+.garden-glass-card.gemos-gem-card,
+.garden-glass-card.gemos-glass-card {
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 8px 30px -14px rgba(15, 23, 42, 0.16);
+}
+
+.garden-glass-card.gemos-gem-card:hover,
+.garden-glass-card.gemos-glass-card:hover {
+  background: rgba(255, 255, 255, 0.74);
+  border-color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 14px 34px -14px rgba(37, 99, 235, 0.22);
+}
+
 /* ============================================================
  * KHU VƯỜN CỦA BẠN — hiệu ứng riêng cho /portal/khu-vuon-cua-ban
  * và widget preview ở trang chủ. Ấm áp, tự nhiên, bình yên — không
@@ -1002,11 +1022,14 @@ body {
  * phát sáng đậu trên cành", không phải "nhãn dán che ảnh". */
 .garden-leaf-chip-photo {
   position: relative;
-  background: linear-gradient(160deg, rgba(134, 239, 172, 0.22), rgba(74, 155, 96, 0.26));
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: linear-gradient(160deg, rgba(134, 239, 172, 0.3), rgba(74, 155, 96, 0.34));
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   border-radius: 999px 999px 999px 6px;
-  box-shadow: 0 3px 10px -5px rgba(21, 62, 33, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.22) inset;
+  box-shadow:
+    0 3px 10px -5px rgba(21, 62, 33, 0.25),
+    0 0 14px 1px rgba(134, 239, 172, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.25) inset;
   animation: garden-leaf-sway 6s ease-in-out infinite;
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
@@ -1014,8 +1037,11 @@ body {
 .garden-leaf-chip-photo:hover {
   animation-play-state: paused;
   transform: translate(-50%, -50%) translateY(-5px) scale(1.06);
-  background: linear-gradient(160deg, rgba(134, 239, 172, 0.4), rgba(74, 155, 96, 0.42));
-  box-shadow: 0 10px 18px -6px rgba(21, 62, 33, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+  background: linear-gradient(160deg, rgba(134, 239, 172, 0.46), rgba(74, 155, 96, 0.48));
+  box-shadow:
+    0 10px 18px -6px rgba(21, 62, 33, 0.32),
+    0 0 20px 2px rgba(134, 239, 172, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.32) inset;
 }
 
 /* Just-bloomed — hiệu ứng ngắn khi một chiếc lá mới vừa xuất hiện:

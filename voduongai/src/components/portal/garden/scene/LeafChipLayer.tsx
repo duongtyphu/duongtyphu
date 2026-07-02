@@ -49,9 +49,12 @@ export function LeafChipLayer() {
             style={pos}
             title={leaf.tooltip}
           >
-            <Icon className="h-4 w-4 text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.65)]" />
+            <Icon className="h-4 w-4 text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.65)]" strokeWidth={1.9} />
             <span className="text-xs font-bold text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.65)]">
               {leaf.label}
+            </span>
+            <span className="text-[9px] font-medium text-white/80 drop-shadow-[0_1px_2px_rgba(21,62,33,0.6)]">
+              {leaf.time}
             </span>
           </div>
         );

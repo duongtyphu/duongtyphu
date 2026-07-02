@@ -93,7 +93,7 @@ export default function KnowledgeGardenPage() {
             </p>
 
             {/* Card "Cây tri thức của bạn" */}
-            <div className="gemos-gem-card mt-6 rounded-2xl p-5">
+            <div className="garden-glass-card gemos-gem-card mt-6 rounded-2xl p-5">
               <div className="flex items-center justify-between">
                 <h3 className="gemos-card-title text-sm font-bold text-gray-900">
                   Cây tri thức của bạn
@@ -120,7 +120,7 @@ export default function KnowledgeGardenPage() {
             {/* Stats 2x2 */}
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {STATS.map((s) => (
-                <div key={s.label} className="gemos-gem-card rounded-2xl p-3 text-center">
+                <div key={s.label} className="garden-glass-card gemos-gem-card rounded-2xl p-3 text-center">
                   <s.icon className={`mx-auto h-4 w-4 ${s.tone}`} />
                   <p className="mt-1 text-base font-extrabold text-gray-900">{s.value}</p>
                   <p className="text-[10px] leading-snug text-gray-500">{s.label}</p>
@@ -142,7 +142,7 @@ export default function KnowledgeGardenPage() {
             <GardenScene />
 
             {/* Gợi ý chăm sóc khu vườn — nổi trên vùng cây */}
-            <div className="gemos-glass-card absolute -bottom-6 right-2 w-[88%] rounded-2xl p-4 sm:w-[80%] lg:right-4">
+            <div className="garden-glass-card gemos-glass-card absolute -bottom-6 right-2 w-[88%] rounded-2xl p-4 sm:w-[80%] lg:right-4">
               <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-700">
                 <span className="mt-0.5 shrink-0">🪴</span>
                 <span>
@@ -157,7 +157,7 @@ export default function KnowledgeGardenPage() {
         {/* Section dưới: 2 card */}
         <div className="grid gap-6 pt-8 lg:grid-cols-2">
           {/* Những chiếc lá gần đây */}
-          <div className="gemos-gem-card rounded-2xl p-5">
+          <div className="garden-glass-card gemos-gem-card rounded-2xl p-5">
             <div className="flex items-center justify-between">
               <h2 className="gemos-card-title text-base font-bold text-gray-900">
                 Những chiếc lá gần đây
@@ -187,7 +187,7 @@ export default function KnowledgeGardenPage() {
           </div>
 
           {/* Chăm sóc khu vườn */}
-          <div className="gemos-gem-card relative overflow-hidden rounded-2xl p-5">
+          <div className="garden-glass-card gemos-gem-card relative overflow-hidden rounded-2xl p-5">
             <h2 className="gemos-card-title text-base font-bold text-gray-900">Chăm sóc khu vườn</h2>
             <p className="text-xs text-gray-400">Gợi ý cho hôm nay</p>
             <div className="relative mt-4 space-y-3 pr-20 sm:pr-28">
@@ -218,7 +218,7 @@ export default function KnowledgeGardenPage() {
         </div>
 
         {/* Footer riêng — không dùng Footer Portal */}
-        <footer className="gemos-glass-card mt-8 rounded-3xl p-8 text-center">
+        <footer className="garden-glass-card gemos-glass-card mt-8 rounded-3xl p-8 text-center">
           <Quote className="mx-auto h-6 w-6 text-blue-200" />
           <p className="mx-auto mt-3 max-w-lg whitespace-pre-line text-sm leading-relaxed text-gray-700 sm:text-base">
             {GARDEN_FOOTER_QUOTE}

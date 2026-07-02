@@ -208,6 +208,7 @@ export type GardenLeaf = {
   id: string;
   type: LeafActionKey;
   label: string;
+  time: string;
   createdAt: string;
   position: GardenLeafBranch;
   animation: GardenLeafAnimation;
@@ -215,14 +216,23 @@ export type GardenLeaf = {
   unlocked: boolean;
 };
 
-/** Toạ độ % của từng "cành" trên Tree Layer (garden-tree-scene.jpg). */
+/**
+ * Toạ độ % của từng "cành" trên Tree Layer (garden-tree-scene.jpg),
+ * đúng theo Design Reference VDAI-GARDEN-001:
+ * branch-1 Đọc bài viết — tán cây phía trên giữa
+ * branch-2 Học bài học — tán cây góc phải
+ * branch-3 Thực hành — trái giữa tán cây
+ * branch-4 Lưu tài liệu — giữa thân/tán cây
+ * branch-5 Đặt câu hỏi — phải giữa
+ * branch-6 Cảm hứng — gần thân cây phía dưới
+ */
 export const GARDEN_LEAF_BRANCH_POSITION: Record<GardenLeafBranch, { top: string; left: string }> = {
-  "branch-1": { top: "20%", left: "32%" },
-  "branch-2": { top: "24%", left: "76%" },
-  "branch-3": { top: "40%", left: "22%" },
-  "branch-4": { top: "41%", left: "44%" },
-  "branch-5": { top: "47%", left: "76%" },
-  "branch-6": { top: "64%", left: "38%" },
+  "branch-1": { top: "14%", left: "46%" },
+  "branch-2": { top: "20%", left: "78%" },
+  "branch-3": { top: "38%", left: "20%" },
+  "branch-4": { top: "42%", left: "48%" },
+  "branch-5": { top: "46%", left: "78%" },
+  "branch-6": { top: "62%", left: "40%" },
 };
 
 /**
@@ -236,7 +246,8 @@ export const GARDEN_LEAVES: GardenLeaf[] = [
     id: "leaf-248",
     type: "read",
     label: "Đọc bài viết",
-    createdAt: "2026-07-02T10:24:00",
+        time: "10:24 AM",
+createdAt: "2026-07-02T10:24:00",
     position: "branch-1",
     animation: "wind-soft",
     tooltip: "Bạn đã đọc: 10 Prompt viết content thu hút — 10:24 sáng",
@@ -246,7 +257,8 @@ export const GARDEN_LEAVES: GardenLeaf[] = [
     id: "leaf-247",
     type: "learn",
     label: "Học bài học",
-    createdAt: "2026-07-02T09:15:00",
+        time: "09:15 AM",
+createdAt: "2026-07-02T09:15:00",
     position: "branch-2",
     animation: "wind-soft",
     tooltip: "Bạn đã hoàn thành: AI Prompting Cơ Bản — 09:15 sáng",
@@ -256,7 +268,8 @@ export const GARDEN_LEAVES: GardenLeaf[] = [
     id: "leaf-246",
     type: "practice",
     label: "Thực hành",
-    createdAt: "2026-07-02T08:46:00",
+        time: "08:46 AM",
+createdAt: "2026-07-02T08:46:00",
     position: "branch-3",
     animation: "wind-soft",
     tooltip: "Bạn đã thực hành: Viết email chuyên nghiệp — 08:46 sáng",
@@ -266,7 +279,8 @@ export const GARDEN_LEAVES: GardenLeaf[] = [
     id: "leaf-245",
     type: "save",
     label: "Lưu tài liệu",
-    createdAt: "2026-07-01T11:30:00",
+        time: "11:30 AM",
+createdAt: "2026-07-01T11:30:00",
     position: "branch-4",
     animation: "wind-soft",
     tooltip: "Bạn đã lưu: 10 Prompt hữu ích cho công việc — hôm qua",
@@ -276,7 +290,8 @@ export const GARDEN_LEAVES: GardenLeaf[] = [
     id: "leaf-244",
     type: "ask",
     label: "Đặt câu hỏi",
-    createdAt: "2026-06-30T14:20:00",
+        time: "14:20 PM",
+createdAt: "2026-06-30T14:20:00",
     position: "branch-5",
     animation: "wind-soft",
     tooltip: "Bạn đã hỏi Companion về lộ trình học AI — 2 ngày trước",
@@ -286,7 +301,8 @@ export const GARDEN_LEAVES: GardenLeaf[] = [
     id: "leaf-243",
     type: "share",
     label: "Cảm hứng",
-    createdAt: "2026-06-29T16:10:00",
+        time: "16:10 PM",
+createdAt: "2026-06-29T16:10:00",
     position: "branch-6",
     animation: "wind-soft",
     tooltip: "Bạn đã chia sẻ điều học được với cộng đồng — 3 ngày trước",
