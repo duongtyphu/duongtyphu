@@ -26,7 +26,9 @@ export type LeafActionKey =
   | "practice"
   | "save"
   | "ask"
-  | "inspire";
+  | "share"
+  | "challenge"
+  | "explore";
 
 export type LeafAction = {
   key: LeafActionKey;
@@ -62,7 +64,9 @@ export const LEAF_ACTIONS: LeafAction[] = [
   { key: "practice", label: "Thực hành", time: "Hôm qua" },
   { key: "save", label: "Lưu tài liệu", time: "Hôm qua" },
   { key: "ask", label: "Đặt câu hỏi", time: "2 ngày trước" },
-  { key: "inspire", label: "Cảm hứng", time: "3 ngày trước" },
+  { key: "share", label: "Chia sẻ", time: "3 ngày trước" },
+  { key: "challenge", label: "Hoàn thành thử thách", time: "4 ngày trước" },
+  { key: "explore", label: "Khám phá", time: "5 ngày trước" },
 ];
 
 export const RECENT_ACTIVITIES: RecentActivity[] = [

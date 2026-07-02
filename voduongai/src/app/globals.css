@@ -922,18 +922,48 @@ body {
 }
 
 .garden-leaf-chip {
+  animation: garden-leaf-sway 6s ease-in-out infinite;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .garden-leaf-chip:hover {
-  transform: translateY(-4px) scale(1.04);
+  animation-play-state: paused;
+  transform: translate(-50%, -50%) translateY(-4px) scale(1.04);
   box-shadow: 0 10px 24px -8px rgba(34, 139, 34, 0.35);
+}
+
+@keyframes garden-leaf-sway {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  50% { transform: translate(-50%, -50%) rotate(2.5deg); }
+}
+
+.garden-tree-canopy {
+  animation: garden-tree-breathe 8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes garden-tree-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+
+.garden-tree-trunk {
+  animation: garden-trunk-sway 8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes garden-trunk-sway {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  50% { transform: translateX(-50%) rotate(0.6deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .garden-sunray,
   .garden-sparkle,
-  .garden-leaf-fall {
+  .garden-leaf-fall,
+  .garden-leaf-chip,
+  .garden-tree-canopy,
+  .garden-tree-trunk {
     animation: none;
   }
 }
