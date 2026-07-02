@@ -11,6 +11,10 @@ export type GardenStats = {
   streakDays: number;
   topicsCompleted: number;
   gardenLevel: string;
+  /** "Lv. 7" — hiển thị đúng theo Design Reference VDAI-GARDEN-001. */
+  level: number;
+  /** "Vùng vàng" — tên vùng hiện tại của cây, đúng theo Reference. */
+  tierName: string;
   percentToNextLevel: number;
 };
 
@@ -44,12 +48,14 @@ export type RecentActivity = {
 };
 
 export const gardenStats: GardenStats = {
-  totalLeaves: 247,
+  totalLeaves: 128,
   totalHours: 36,
-  streakDays: 28,
-  topicsCompleted: 5,
+  streakDays: 24,
+  topicsCompleted: 15,
   gardenLevel: "Cây trưởng thành",
-  percentToNextLevel: 72,
+  level: 7,
+  tierName: "Vùng vàng",
+  percentToNextLevel: 78,
 };
 
 /**
@@ -164,24 +170,56 @@ export const gardenToday: GardenToday = {
   seedsPlanted: 3,
 };
 
+/**
+ * 6 leaf chip treo trên cây — đúng nhãn + giờ theo Design Reference
+ * VDAI-GARDEN-001.
+ */
 export const LEAF_ACTIONS: LeafAction[] = [
-  { key: "read", label: "Đọc bài viết", time: "5 phút trước" },
-  { key: "learn", label: "Học bài học", time: "1 giờ trước" },
-  { key: "practice", label: "Thực hành", time: "Hôm qua" },
-  { key: "save", label: "Lưu tài liệu", time: "Hôm qua" },
-  { key: "ask", label: "Đặt câu hỏi", time: "2 ngày trước" },
-  { key: "share", label: "Chia sẻ", time: "3 ngày trước" },
-  { key: "challenge", label: "Hoàn thành thử thách", time: "4 ngày trước" },
-  { key: "explore", label: "Khám phá", time: "5 ngày trước" },
+  { key: "read", label: "Đọc bài viết", time: "10:24 AM" },
+  { key: "learn", label: "Học bài học", time: "09:15 AM" },
+  { key: "practice", label: "Thực hành", time: "08:46 AM" },
+  { key: "save", label: "Lưu tài liệu", time: "11:30 AM" },
+  { key: "ask", label: "Đặt câu hỏi", time: "14:20 PM" },
+  { key: "share", label: "Cảm hứng", time: "16:10 PM" },
 ];
 
+/** "Những chiếc lá gần đây" — đúng theo Reference. */
 export const RECENT_ACTIVITIES: RecentActivity[] = [
-  { id: "a1", actionKey: "read", label: "Đọc bài", detail: "10 Prompt viết content thu hút" },
-  { id: "a2", actionKey: "learn", label: "Hoàn thành bài học", detail: "AI Writing Mastery" },
-  { id: "a3", actionKey: "save", label: "Lưu tài liệu", detail: "Công thức viết blog chuẩn SEO" },
-  { id: "a4", actionKey: "practice", label: "Thực hành prompt", detail: "Viết mô tả sản phẩm" },
-  { id: "a5", actionKey: "ask", label: "Đặt câu hỏi", detail: "Hỏi Companion về lộ trình học AI" },
+  {
+    id: "a1",
+    actionKey: "learn",
+    label: "Hoàn thành bài học",
+    detail: "AI Prompting Cơ Bản",
+  },
+  {
+    id: "a2",
+    actionKey: "save",
+    label: "Lưu tài liệu",
+    detail: "10 Prompt hữu ích cho công việc",
+  },
+  {
+    id: "a3",
+    actionKey: "practice",
+    label: "Thực hành",
+    detail: "Viết email chuyên nghiệp",
+  },
 ];
 
+/** Quote nhỏ dưới card "Cây tri thức của bạn" (bên trái). */
+export const GARDEN_QUOTE_SMALL =
+  "Cây không lớn trong một ngày, và bạn cũng vậy. Hãy kiên nhẫn, từng chiếc lá sẽ kể câu chuyện của bạn. 🌱";
+
+/** Gợi ý nổi trên vùng cây (góc dưới phải). */
 export const GARDEN_CARE_TIP =
-  "Bạn đã học rất đều đặn. Hãy thử áp dụng kiến thức hôm nay vào một dự án thực tế để khu vườn nở thêm nhiều lá mới nhé.";
+  "Bạn đã học rất đều đặn! Hãy thử áp dụng kiến thức hôm nay vào một dự án thực tế để khu vườn nở thêm nhiều lá mới nhé.";
+
+/** "Chăm sóc khu vườn" — 3 gợi ý cho hôm nay. */
+export const CARE_SUGGESTIONS = [
+  { title: "Dành 20 phút học tập", subtitle: "Tưới nước cho cây tri thức" },
+  { title: "Thực hành một điều mới", subtitle: "Giúp cây ra thêm lá mới" },
+  { title: "Chia sẻ điều bạn học được", subtitle: "Lan tỏa giá trị đến cộng đồng" },
+] as const;
+
+/** Quote footer riêng của trang — không dùng Footer Portal. */
+export const GARDEN_FOOTER_QUOTE =
+  "Khu vườn này không thuộc về AI. Nó thuộc về bạn.\nCompanion chỉ là người bạn đồng hành,\ncùng bạn vun đắp từng ngày. 💗";

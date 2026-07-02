@@ -967,3 +967,42 @@ body {
     animation: none;
   }
 }
+
+/* ============================================================
+ * KHU VƯỜN CỦA BẠN — Design Reference VDAI-GARDEN-001
+ * Nền trắng ngọc pha nắng ấm (không caro), leaf chip glass xanh lá
+ * đúng theo ảnh Founder đã duyệt.
+ * ============================================================ */
+
+.garden-page-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1000px circle at 85% 10%, rgba(253, 224, 71, 0.16), transparent 60%),
+    linear-gradient(180deg, #FFFDF7 0%, #FFF9EE 45%, #FFFDF7 100%);
+}
+
+.garden-leaf-chip-photo {
+  position: relative;
+  background: linear-gradient(160deg, rgba(47, 94, 60, 0.88), rgba(31, 74, 43, 0.92));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 18px 18px 18px 4px;
+  box-shadow: 0 8px 20px -6px rgba(21, 62, 33, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  animation: garden-leaf-sway 6s ease-in-out infinite;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.garden-leaf-chip-photo:hover {
+  animation-play-state: paused;
+  transform: translate(-50%, -50%) translateY(-5px) scale(1.05);
+  box-shadow: 0 14px 28px -8px rgba(21, 62, 33, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-leaf-chip-photo {
+    animation: none;
+  }
+}

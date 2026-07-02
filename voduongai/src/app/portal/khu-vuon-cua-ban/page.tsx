@@ -1,138 +1,230 @@
+import Image from "next/image";
+import Link from "next/link";
 import {
   BookOpen,
   GraduationCap,
   PenTool,
   Bookmark,
   MessageCircleQuestion,
-  Share2,
-  Trophy,
-  Compass,
+  Heart,
   Leaf,
-  Clock,
+  Sun,
+  Droplet,
+  Star,
   Sprout,
+  Quote,
   type LucideIcon,
 } from "lucide-react";
-import { GardenTreeVisual } from "@/components/portal/garden/GardenTreeVisual";
-import { GardenProgressRing } from "@/components/portal/garden/GardenProgressRing";
 import {
   gardenStats,
-  gardenToday,
   RECENT_ACTIVITIES,
+  GARDEN_QUOTE_SMALL,
   GARDEN_CARE_TIP,
-  GROWTH_STAGES,
-  GROWTH_HISTORY,
-  COMPANION_GROWTH_MESSAGES,
-  getGrowthStage,
+  CARE_SUGGESTIONS,
+  GARDEN_FOOTER_QUOTE,
+  LEAF_ACTIONS,
   type LeafActionKey,
 } from "@/data/portal/knowledge-garden";
 
+/**
+ * Khu vườn của bạn — được xây theo Official Design Reference
+ * VDAI-GARDEN-001 (xem design-system/visual-dna/references/). Đây là
+ * bản tái hiện (RECREATE MODE), không redesign — bố cục, màu sắc, vị
+ * trí visual chính giữ đúng theo ảnh Founder đã duyệt.
+ */
+
 export const metadata = {
   title: "Khu vườn của bạn",
-  description: "Mỗi hành động đều là một chiếc lá — mỗi chiếc lá là một bước bạn trưởng thành.",
+  description: "Mỗi hành động nhỏ, đều đang vun đắp cho sự trưởng thành.",
 };
 
-const ACTIVITY_ICON: Record<LeafActionKey, LucideIcon> = {
+const LEAF_ICON: Record<LeafActionKey, LucideIcon> = {
   read: BookOpen,
   learn: GraduationCap,
   practice: PenTool,
   save: Bookmark,
   ask: MessageCircleQuestion,
-  share: Share2,
-  challenge: Trophy,
-  explore: Compass,
+  share: Heart,
+  challenge: Star,
+  explore: Sprout,
 };
 
-const GARDEN_RESULTS = [
-  { emoji: "🌿", value: String(gardenStats.totalLeaves), label: "Tổng lá" },
-  { emoji: "🌱", value: `${gardenStats.totalHours} giờ`, label: "Nuôi dưỡng" },
-  { emoji: "📅", value: String(gardenStats.streakDays), label: "Ngày liên tục" },
-  { emoji: "🌳", value: gardenStats.gardenLevel, label: "Cấp độ vườn" },
-  { emoji: "🍃", value: `${gardenStats.percentToNextLevel}%`, label: "đến mùa tiếp theo" },
+// Vị trí leaf chip trên ảnh cây — tính theo tỷ lệ % khớp với vùng đã
+// crop từ Design Reference (garden-tree-scene.jpg).
+const LEAF_POSITION: Record<LeafActionKey, { top: string; left: string }> = {
+  read: { top: "20%", left: "32%" },
+  learn: { top: "24%", left: "76%" },
+  practice: { top: "40%", left: "22%" },
+  save: { top: "41%", left: "44%" },
+  ask: { top: "47%", left: "76%" },
+  share: { top: "64%", left: "38%" },
+  challenge: { top: "0%", left: "0%" },
+  explore: { top: "0%", left: "0%" },
+};
+
+const LEAF_CHIPS_SHOWN: LeafActionKey[] = ["read", "learn", "practice", "save", "ask", "share"];
+
+const STATS = [
+  { icon: Leaf, value: String(gardenStats.totalLeaves), label: "Chiếc lá", tone: "text-green-600" },
+  { icon: Sun, value: String(gardenStats.streakDays), label: "Ngày hoạt động", tone: "text-amber-500" },
+  { icon: Droplet, value: `${gardenStats.totalHours}h`, label: "Thời gian học", tone: "text-blue-500" },
+  { icon: Star, value: String(gardenStats.topicsCompleted), label: "Chủ đề khám phá", tone: "text-yellow-500" },
 ];
 
+const RECENT_TONE: Record<LeafActionKey, string> = {
+  read: "text-green-600 bg-green-50",
+  learn: "text-green-600 bg-green-50",
+  practice: "text-blue-500 bg-blue-50",
+  save: "text-amber-500 bg-amber-50",
+  ask: "text-green-600 bg-green-50",
+  share: "text-rose-500 bg-rose-50",
+  challenge: "text-yellow-500 bg-yellow-50",
+  explore: "text-green-600 bg-green-50",
+};
+
 export default function KnowledgeGardenPage() {
-  const { stage, index } = getGrowthStage(gardenStats.totalLeaves);
-  const nextStage = GROWTH_STAGES[index + 1];
-  const companionMessage = COMPANION_GROWTH_MESSAGES[0];
-
   return (
-    <div className="space-y-14">
-      {/* Hero — 35/65 */}
-      <div className="grid gap-8 lg:grid-cols-[35%_65%] lg:items-center">
-        {/* LEFT — 35% */}
-        <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">Khu vườn của bạn 🌿</h1>
-          <p
-            className="mt-3 max-w-md bg-clip-text text-base font-medium italic leading-relaxed text-transparent [letter-spacing:0.01em]"
-            style={{ backgroundImage: "linear-gradient(90deg, #2563EB, #7C3AED, #F97316)" }}
-          >
-            Mỗi hành động đều là một chiếc lá,
-            <br />
-            mỗi chiếc lá là một bước bạn trưởng thành.
-          </p>
+    <div className="garden-page relative -mx-4 -my-6 md:-mx-8 md:-my-8">
+      <div className="garden-page-bg" aria-hidden="true" />
 
-          <h2 className="mt-8 text-2xl font-extrabold text-gray-900 sm:text-3xl">
-            Vườn đang lớn lên mỗi ngày
-          </h2>
-          <p className="mt-3 max-w-md text-sm leading-relaxed text-gray-600 sm:text-base">
-            Bạn đã gieo những hạt giống tri thức.
-            <br />
-            Mỗi lần học.
-            <br />
-            Mỗi lần thực hành.
-            <br />
-            Mỗi lần chia sẻ.
-            <br />
-            Khu vườn của bạn lại xanh hơn một chút.
-          </p>
+      <div className="relative z-10 space-y-8 px-4 py-6 md:px-8 md:py-8">
+        {/* Hero — trái nội dung / phải cây lớn */}
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_1.7fr] lg:items-start">
+          {/* LEFT */}
+          <div>
+            <span className="text-2xl">🌿</span>
+            <h1 className="mt-2 text-3xl font-extrabold text-gray-900">Khu vườn của bạn</h1>
+            <p
+              className="mt-2 max-w-md bg-clip-text text-lg font-medium italic leading-snug text-transparent"
+              style={{ backgroundImage: "linear-gradient(90deg, #2563EB, #7C3AED, #F97316)" }}
+            >
+              Mỗi hành động nhỏ,
+              <br />
+              đều đang vun đắp cho sự trưởng thành.
+            </p>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-500">
+              Đây là nơi Companion ghi nhận hành trình học tập, khám phá và trưởng thành của bạn mỗi
+              ngày.
+            </p>
 
-          {/* Card Hành trình hôm nay */}
-          <div className="gemos-gem-card mt-6 rounded-2xl p-5">
-            <h3 className="gemos-card-title text-sm font-bold text-gray-900">Hành trình hôm nay</h3>
-            <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-              <div className="flex flex-col items-center gap-1">
-                <Leaf className="h-4 w-4 text-green-600" />
-                <p className="text-lg font-extrabold text-gray-900">{gardenToday.newLeaves}</p>
-                <p className="text-[11px] text-gray-500">Lá mới</p>
+            {/* Card "Cây tri thức của bạn" */}
+            <div className="gemos-gem-card mt-6 rounded-2xl p-5">
+              <div className="flex items-center justify-between">
+                <h3 className="gemos-card-title text-sm font-bold text-gray-900">
+                  Cây tri thức của bạn
+                </h3>
+                <span className="text-sm font-extrabold text-gray-900">Lv. {gardenStats.level}</span>
               </div>
-              <div className="flex flex-col items-center gap-1">
-                <Clock className="h-4 w-4 text-blue-600" />
-                <p className="text-lg font-extrabold text-gray-900">{gardenToday.minutesLearned} phút</p>
-                <p className="text-[11px] text-gray-500">Thời gian học</p>
+              <div className="mt-3 flex items-center justify-between text-xs">
+                <span className="text-gray-500">Đang lớn lên mỗi ngày 🌱</span>
+                <span className="font-semibold text-amber-500">{gardenStats.tierName}</span>
               </div>
-              <div className="flex flex-col items-center gap-1">
-                <Sprout className="h-4 w-4 text-orange-500" />
-                <p className="text-lg font-extrabold text-gray-900">{gardenToday.seedsPlanted}</p>
-                <p className="text-[11px] text-gray-500">Hạt giống gieo</p>
+              <div className="mt-2 flex items-center gap-3">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-500"
+                    style={{ width: `${gardenStats.percentToNextLevel}%` }}
+                  />
+                </div>
+                <span className="text-xs font-semibold text-gray-500">
+                  {gardenStats.percentToNextLevel}%
+                </span>
               </div>
+            </div>
+
+            {/* Stats 2x2 */}
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {STATS.map((s) => (
+                <div key={s.label} className="gemos-gem-card rounded-2xl p-3 text-center">
+                  <s.icon className={`mx-auto h-4 w-4 ${s.tone}`} />
+                  <p className="mt-1 text-base font-extrabold text-gray-900">{s.value}</p>
+                  <p className="text-[10px] leading-snug text-gray-500">{s.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Quote nhỏ */}
+            <div className="mt-4 rounded-xl border border-green-100 bg-green-50/60 px-4 py-3">
+              <p className="text-xs leading-relaxed text-green-800">
+                <span className="mr-1">🌱</span>
+                {GARDEN_QUOTE_SMALL}
+              </p>
             </div>
           </div>
 
-          {/* Gợi ý — nhỏ, không nổi bật quá */}
-          <div className="mt-4 rounded-xl border border-green-100 bg-green-50/50 px-4 py-3">
-            <p className="text-xs leading-relaxed text-green-800">
-              <span className="mr-1">🌱</span>
-              {GARDEN_CARE_TIP}
-            </p>
-          </div>
+          {/* RIGHT — cây thật, linh hồn của trang */}
+          <div className="relative">
+            <div
+              className="garden-scene relative h-80 w-full overflow-hidden rounded-3xl sm:h-96 lg:h-[30rem]"
+              style={{ aspectRatio: "727 / 750" }}
+            >
+              <Image
+                src="/images/garden/garden-tree-scene.jpg"
+                alt="Cây tri thức trong khu vườn của bạn, ánh nắng buổi sáng chiếu qua tán lá"
+                fill
+                sizes="(min-width: 1024px) 55vw, 100vw"
+                className="object-cover"
+                priority
+              />
+              <div className="garden-sunray" aria-hidden="true" />
+              <span className="garden-sparkle" style={{ top: "10%", left: "18%", width: 4, height: 4, animationDelay: "0s" }} />
+              <span className="garden-sparkle" style={{ top: "28%", left: "60%", width: 3, height: 3, animationDelay: "1s" }} />
+              <span className="garden-sparkle" style={{ top: "55%", left: "80%", width: 3, height: 3, animationDelay: "2s" }} />
 
-          {/* Hoạt động gần đây */}
-          <div className="mt-8">
-            <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-400">
-              Hoạt động gần đây
-            </h2>
-            <div className="space-y-2">
+              {LEAF_CHIPS_SHOWN.map((key) => {
+                const Icon = LEAF_ICON[key];
+                const action = LEAF_ACTIONS.find((a) => a.key === key)!;
+                return (
+                  <div
+                    key={key}
+                    className="garden-leaf-chip-photo absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 px-3 py-2 text-center"
+                    style={LEAF_POSITION[key]}
+                  >
+                    <Icon className="h-4 w-4 text-white" />
+                    <span className="text-xs font-bold text-white">{action.label}</span>
+                    <span className="text-[10px] text-white/75">{action.time}</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Gợi ý chăm sóc khu vườn — nổi trên vùng cây */}
+            <div className="gemos-glass-card absolute -bottom-6 right-2 w-[88%] rounded-2xl p-4 sm:w-[80%] lg:right-4">
+              <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-700">
+                <span className="mt-0.5 shrink-0">🪴</span>
+                <span>
+                  <span className="font-semibold text-gray-900">Gợi ý chăm sóc khu vườn. </span>
+                  {GARDEN_CARE_TIP}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Section dưới: 2 card */}
+        <div className="grid gap-6 pt-8 lg:grid-cols-2">
+          {/* Những chiếc lá gần đây */}
+          <div className="gemos-gem-card rounded-2xl p-5">
+            <div className="flex items-center justify-between">
+              <h2 className="gemos-card-title text-base font-bold text-gray-900">
+                Những chiếc lá gần đây
+              </h2>
+              <Link href="#" className="text-xs font-semibold text-blue-600 hover:underline">
+                Xem tất cả →
+              </Link>
+            </div>
+            <div className="mt-4 space-y-2">
               {RECENT_ACTIVITIES.map((a) => {
-                const Icon = ACTIVITY_ICON[a.actionKey];
+                const Icon = LEAF_ICON[a.actionKey];
                 return (
                   <div
                     key={a.id}
-                    className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white p-3 shadow-sm"
+                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
                   >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-600">
-                      <Icon className="h-3.5 w-3.5" />
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${RECENT_TONE[a.actionKey]}`}>
+                      <Icon className="h-4 w-4" />
                     </span>
-                    <p className="text-xs text-gray-700 sm:text-sm">
+                    <p className="min-w-0 flex-1 text-xs text-gray-700 sm:text-sm">
                       <span className="font-semibold text-gray-900">{a.label}:</span> {a.detail}
                     </p>
                   </div>
@@ -140,79 +232,46 @@ export default function KnowledgeGardenPage() {
               })}
             </div>
           </div>
-        </div>
 
-        {/* RIGHT — 65%, linh hồn của trang */}
-        <div className="relative">
-          <GardenTreeVisual stageIndex={index} />
-        </div>
-      </div>
-
-      {/* Cây của bạn đang ở giai đoạn nào? */}
-      <section className="gemos-glass-card rounded-2xl p-6">
-        <h2 className="text-base font-bold text-gray-900">Cây của bạn đang ở giai đoạn nào?</h2>
-        <div className="mt-5 flex flex-col items-center gap-5 sm:flex-row sm:items-center">
-          <GardenProgressRing percent={gardenStats.percentToNextLevel} emoji={stage.emoji} />
-          <div className="text-center sm:text-left">
-            <p className="text-lg font-extrabold text-gray-900">
-              {stage.emoji} {stage.label}
-            </p>
-            {nextStage && (
-              <p className="mt-1 text-sm text-gray-500">
-                {gardenStats.percentToNextLevel}% đến {nextStage.label.toLowerCase()}
-              </p>
-            )}
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-gray-600">{stage.message}</p>
+          {/* Chăm sóc khu vườn */}
+          <div className="gemos-gem-card relative overflow-hidden rounded-2xl p-5">
+            <h2 className="gemos-card-title text-base font-bold text-gray-900">Chăm sóc khu vườn</h2>
+            <p className="text-xs text-gray-400">Gợi ý cho hôm nay</p>
+            <div className="relative mt-4 space-y-3 pr-20 sm:pr-28">
+              {CARE_SUGGESTIONS.map((c, i) => (
+                <div key={c.title} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                    {i === 0 && <Sun className="h-4 w-4" />}
+                    {i === 1 && <Sprout className="h-4 w-4" />}
+                    {i === 2 && <Heart className="h-4 w-4 text-rose-500" />}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">{c.title}</p>
+                    <p className="text-xs text-gray-500">{c.subtitle}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="pointer-events-none absolute bottom-3 right-3 h-24 w-20 overflow-hidden rounded-xl opacity-90 sm:h-28 sm:w-24">
+              <Image
+                src="/images/garden/garden-care-visual.jpg"
+                alt=""
+                fill
+                sizes="120px"
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* Hành trình lớn lên */}
-      <section>
-        <h2 className="mb-4 text-lg font-bold text-gray-900">Hành trình lớn lên</h2>
-        <div className="relative space-y-6 border-l border-green-100 pl-6">
-          {GROWTH_HISTORY.map((h) => (
-            <div key={h.label} className="relative">
-              <span className="absolute -left-[27px] top-1 h-2.5 w-2.5 rounded-full bg-gradient-to-br from-green-400 to-green-600" />
-              <p className="text-sm font-bold text-gray-900">{h.label}</p>
-              <p className="mt-0.5 text-sm text-gray-600">{h.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Companion message */}
-      <section className="rounded-2xl border border-violet-100 bg-violet-50/60 p-6 text-center">
-        <p className="mx-auto max-w-lg whitespace-pre-line text-sm leading-relaxed text-violet-800">
-          {companionMessage}
-        </p>
-        <p className="mt-3 text-xs font-semibold text-violet-500">— Companion</p>
-      </section>
-
-      {/* Thành quả khu vườn */}
-      <section>
-        <h2 className="mb-4 text-lg font-bold text-gray-900">Thành quả khu vườn</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {GARDEN_RESULTS.map((item) => (
-            <div key={item.label} className="gemos-gem-card rounded-2xl p-4 text-center">
-              <div className="text-xl">{item.emoji}</div>
-              <p className="mt-1 text-lg font-extrabold text-gray-900">{item.value}</p>
-              <p className="mt-0.5 text-[11px] leading-snug text-gray-500">{item.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Footer riêng — nối tiếp nền, không dùng Footer Portal */}
-      <footer className="border-t border-gray-100 pt-14 text-center">
-        <p className="mx-auto max-w-md text-sm italic leading-relaxed text-gray-500">
-          &ldquo;Cây không lớn trong một ngày.
-          <br />
-          Con người cũng vậy.
-          <br />
-          Companion sẽ tiếp tục đồng hành cùng bạn.&rdquo;
-        </p>
-      </footer>
+        {/* Footer riêng — không dùng Footer Portal */}
+        <footer className="gemos-glass-card mt-8 rounded-3xl p-8 text-center">
+          <Quote className="mx-auto h-6 w-6 text-blue-200" />
+          <p className="mx-auto mt-3 max-w-lg whitespace-pre-line text-sm leading-relaxed text-gray-700 sm:text-base">
+            {GARDEN_FOOTER_QUOTE}
+          </p>
+        </footer>
+      </div>
     </div>
   );
 }
