@@ -10,28 +10,30 @@
  * DUY NHẤT, đối xử như logo đã chốt, KHÔNG phải ảnh tham khảo để lấy
  * cảm hứng. Việc duy nhất được phép: tái tạo bằng SVG + CSS animation
  * (đã làm ở component này) — KHÔNG redesign, KHÔNG đổi tỷ lệ/hình
- * dạng/màu sắc (Companion Blue™)/số lượng quỹ đạo (= 2, cố định). Mọi
- * thay đổi hình học sau Design Lock phải đối chiếu lại ảnh gốc trước,
+ * dạng/màu sắc (Companion Blue™)/số lượng quỹ đạo (= 3, cố định — cập
+ * nhật theo brief "ENERGY CORE" mới nhất của Founder). Mọi thay đổi
+ * hình học sau Design Lock phải đối chiếu lại brief/ảnh gốc trước,
  * không tự sáng tạo layer mới.
  *
- * Hình tổng thể (khối năng lượng trung tâm) phải CÂN ĐỐI TUYỆT ĐỐI —
- * hình tròn thuần (rx = ry), KHÔNG kéo dài, KHÔNG oval, KHÔNG egg,
- * KHÔNG méo. Chỉ 2 vòng quỹ đạo (ellipse, nghiêng góc khác nhau) được
- * phép không phải hình tròn — bản thân lõi/quầng sáng luôn tròn đều.
- * Cảm giác tham chiếu: Apple Intelligence, Siri Orb, OpenAI Voice Orb,
- * Nothing Glyph, Interstellar energy core — KHÔNG phải Earth/Planet/
- * Marble/Crystal Ball.
+ * Hình tổng thể (Energy Core) phải CÂN ĐỐI TUYỆT ĐỐI — hình tròn
+ * thuần (rx = ry), KHÔNG kéo dài, KHÔNG oval, KHÔNG méo, không giống
+ * quả trứng/quả bóng/vật thể 3D. Chỉ 3 vòng Orbit Ring (ellipse,
+ * nghiêng góc khác nhau) được phép không phải hình tròn — bản thân
+ * lõi/quầng sáng luôn tròn đều. Cảm giác tham chiếu: Apple
+ * Intelligence, Siri Orb, OpenAI Voice Orb, Nothing Glyph,
+ * Interstellar energy core — KHÔNG phải Earth/Planet/Marble/Crystal
+ * Ball/quả bóng vật lý.
  *
- * Companion không phải robot, không có khuôn mặt, không phải hành
- * tinh/quả cầu/viên bi/quả trứng/quả cầu thuỷ tinh — đây là một
- * ENERGY CORE: năng lượng đang sống, không khối lượng, không bóng đổ
+ * Companion không phải robot, không có khuôn mặt — đây là một ENERGY
+ * CORE: một lõi ánh sáng, một trái tim năng lượng, một nguồn sáng
+ * đang thở, một thực thể đồng hành. Không khối lượng, không bóng đổ
  * như vật thể rắn. Rìa tan dần vào trong suốt (không viền tối), các
  * lớp sáng blend cộng dồn (mix-blend-mode: screen) thay vì tô đặc.
- * Lõi trắng là sự trung thực/trong sáng, quỹ đạo là tri thức đang
- * chuyển động, hạt sáng là những điều Companion học được, ánh sáng là
- * sự đồng hành.
+ * Lõi trắng là sự chân thật, ánh xanh là niềm tin, quỹ đạo là tri
+ * thức/trải nghiệm đang chuyển động, hạt sáng là những điều Companion
+ * học được, glow là sự đồng hành.
  *
- * Không GIF/video/ảnh tĩnh/Lottie. Toàn bộ chuyển động dùng CSS
+ * Không GIF/video/ảnh tĩnh/Lottie/PNG. Toàn bộ chuyển động dùng CSS
  * animation trên transform/opacity (GPU friendly), tôn trọng
  * `prefers-reduced-motion` (dừng orbit/pulse, giữ icon tĩnh). Không
  * canvas/webgl/thư viện animation nặng.
@@ -58,11 +60,9 @@ export type LivingCoreProps = {
 };
 
 /**
- * Starfield cố định (không Math.random — tránh lệch hydration SSR/CSR).
- * Toạ độ nằm trong hệ cục bộ của group đã nghiêng -18° nên khi render
- * sẽ tự động xoay theo đúng góc nghiêng của khối hành tinh. Sắp xếp
- * dày dần về phía lõi (42, 46) giống ảnh gốc. 3 hạt cuối cùng là
- * "sparkle warm" (#FFE082) — rất ít, chỉ hiện ở size lớn.
+ * Sparkle Particles cố định (không Math.random — tránh lệch hydration
+ * SSR/CSR). Dày dần về phía lõi, thưa dần ra rìa Energy Core. 3 hạt
+ * cuối cùng là "sparkle warm" (#FFE082) — rất ít, chỉ hiện ở size lớn.
  */
 const DUST_POINTS: Array<{ x: number; y: number; r: number; warm?: boolean }> = [
   { x: 42, y: 46, r: 1.1 },
@@ -96,11 +96,12 @@ const DUST_POINTS: Array<{ x: number; y: number; r: number; warm?: boolean }> = 
 
 /**
  * Ngưỡng độ chi tiết theo kích thước — ở size nhỏ (16-32px) Companion
- * vẫn phải nhận ra được (giữ đúng hình oval nghiêng + màu), nên bớt số
- * lớp trang trí thay vì đổi hình dạng gốc.
+ * vẫn phải nhận ra được (giữ đúng hình tròn cân đối + màu), nên bớt số
+ * lớp trang trí thay vì đổi hình dạng gốc. Orbit Ring 3 chỉ xuất hiện
+ * ở size lớn (128px+) nơi đủ chỗ để 3 vòng không rối mắt.
  */
 function detailForSize(size: LivingCoreSize) {
-  const orbitCount = size >= 52 ? 2 : size >= 32 ? 1 : 0;
+  const orbitCount = size >= 128 ? 3 : size >= 52 ? 2 : size >= 32 ? 1 : 0;
   const dustCount = size >= 256 ? 27 : size >= 128 ? 24 : size >= 64 ? 14 : size >= 52 ? 7 : 0;
   return {
     orbitCount,
@@ -165,10 +166,10 @@ export function LivingCore({
         className="living-core__svg"
       >
         <defs>
-          {/* Năng lượng, không phải khối đặc: gradient tan dần ra TRONG
-           * SUỐT ở rìa (không còn màu tối đặc ở viền) — không mô phỏng
-           * ánh sáng chiếu lên một khối cầu rắn, mà là một nguồn năng
-           * lượng tự phát sáng, nhẹ, không khối lượng, không bóng đổ. */}
+          {/* Energy Core — gradient tan dần ra TRONG SUỐT ở rìa (không
+           * còn màu tối đặc ở viền), không mô phỏng ánh sáng chiếu lên
+           * một vật thể rắn, mà là một nguồn năng lượng tự phát sáng,
+           * nhẹ, không khối lượng, không bóng đổ. */}
           <radialGradient id={bodyGradId} cx="47%" cy="46%" r="68%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
             <stop offset="14%" stopColor="#BFEAFF" stopOpacity="1" />
@@ -194,16 +195,16 @@ export function LivingCore({
               <feGaussianBlur stdDeviation="2.4" />
             </filter>
           )}
-          {/* Blur riêng cho body — làm mềm rìa thành quầng năng lượng
-           * khuếch tán, thay vì một đĩa tròn có cạnh cứng như quả bóng. */}
+          {/* Blur riêng cho Energy Core — làm mềm rìa thành quầng năng
+           * lượng khuếch tán, thay vì một đĩa tròn có cạnh cứng. */}
           <filter id={`${bodyGradId}-blur`} x="-40%" y="-40%" width="180%" height="180%">
             <feGaussianBlur stdDeviation="1.6" />
           </filter>
         </defs>
 
-        {/* Khối năng lượng: hình tròn CÂN ĐỐI TUYỆT ĐỐI (rx = ry) —
-         * không kéo dài, không oval, không egg, không méo. Chỉ 2 vòng
-         * quỹ đạo (ellipse) nghiêng góc khác nhau bay quanh, bản thân
+        {/* Energy Core: hình tròn CÂN ĐỐI TUYỆT ĐỐI (rx = ry) — không
+         * kéo dài, không oval, không méo. 3 Orbit Ring (ellipse) nghiêng
+         * góc/tốc độ/độ mảnh/opacity khác nhau bay quanh, bản thân
          * lõi/quầng sáng luôn là hình tròn thuần. */}
         <g>
           {detail.showAura && (
@@ -217,6 +218,7 @@ export function LivingCore({
             />
           )}
 
+          {/* Energy Core */}
           <circle
             className="living-core__body"
             cx="50"
@@ -243,9 +245,11 @@ export function LivingCore({
             </g>
           )}
 
-          {/* Orbit rings — bay TỰ DO quanh lõi, có khoảng cách rõ với
-           * quầng năng lượng ở mọi hướng (giống electron quay quanh hạt
-           * nhân), KHÔNG áp sát bề mặt như dây quấn quanh quả bóng. */}
+          {/* Orbit Ring 1/2/3 — bay TỰ DO quanh lõi, có khoảng cách rõ
+           * với quầng năng lượng ở mọi hướng (giống electron quay quanh
+           * hạt nhân), KHÔNG áp sát bề mặt. Mỗi vòng khác góc nghiêng,
+           * độ mảnh, tốc độ (CSS) và opacity — cảm giác 3 quỹ đạo độc
+           * lập, không đồng bộ máy móc. */}
           {detail.orbitCount >= 1 && (
             <ellipse
               className="living-core__orbit living-core__orbit--1"
@@ -268,8 +272,19 @@ export function LivingCore({
               strokeWidth="0.8"
             />
           )}
+          {detail.orbitCount >= 3 && (
+            <ellipse
+              className="living-core__orbit living-core__orbit--3"
+              cx="50"
+              cy="51"
+              rx="57"
+              ry="47"
+              stroke="rgba(139,125,255,0.55)"
+              strokeWidth="0.6"
+            />
+          )}
 
-          {/* Core — lõi hiện diện, trắng sáng, gần chính giữa khối cầu */}
+          {/* Energy Core — lõi hiện diện, trắng sáng, gần chính giữa */}
           <circle className="living-core__core-glow" cx="48" cy="49" r="17" fill={`url(#${coreGradId})`} />
           <circle className="living-core__core" cx="48" cy="49" r="6.5" fill="#FFFFFF" />
         </g>

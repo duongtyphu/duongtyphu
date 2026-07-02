@@ -1161,11 +1161,12 @@ body {
 }
 
 /* ============================================================
- * LIVING CORE™ — biểu tượng sống của Companion (SVG + CSS thuần).
- * Không phải robot, không có khuôn mặt — một "hành tinh ánh sáng":
- * lõi trắng = trung thực/trong sáng, quỹ đạo = tri thức chuyển động,
- * hạt sáng = điều đã học, ánh sáng = sự đồng hành. Mọi chuyển động
- * dùng transform/opacity (GPU friendly), tôn trọng prefers-reduced-motion.
+ * LIVING CORE™ (Energy Core) — biểu tượng sống của Companion (SVG +
+ * CSS thuần). Không phải robot, không có khuôn mặt — một lõi ánh
+ * sáng/trái tim năng lượng: lõi trắng = trung thực, ánh xanh = niềm
+ * tin, quỹ đạo = tri thức/trải nghiệm chuyển động, hạt sáng = điều đã
+ * học, glow = sự đồng hành. Mọi chuyển động dùng transform/opacity
+ * (GPU friendly), tôn trọng prefers-reduced-motion.
  * ============================================================ */
 
 .living-core {
@@ -1196,10 +1197,10 @@ body {
   50% { opacity: 1; transform: scale(1.045); }
 }
 
-/* Body — năng lượng, KHÔNG phải hành tinh/quả cầu đặc: rìa tan dần
- * vào trong suốt (không viền tối), blend screen để cộng dồn ánh sáng
- * thay vì tô một lớp màu đặc — không bóng đổ, không cảm giác khối
- * lượng. Pulse nhẹ như một nhịp năng lượng đang thở. */
+/* Energy Core — rìa tan dần vào trong suốt (không viền tối), blend
+ * screen để cộng dồn ánh sáng thay vì tô một lớp màu đặc — không bóng
+ * đổ, không cảm giác khối lượng. Pulse nhẹ như một nhịp năng lượng
+ * đang thở. */
 .living-core__body {
   transform-box: fill-box;
   transform-origin: center;
@@ -1230,9 +1231,11 @@ body {
   50% { opacity: 0.85; transform: scale(1.12); }
 }
 
-/* Orbit rings — CSS tự quay (không dùng transform SVG tĩnh để tránh CSS
- * transform ghi đè); mỗi vòng có góc nghiêng khởi điểm + tốc độ riêng
- * để hai quỹ đạo cảm giác độc lập, cắt nhau gần lõi như ảnh gốc. */
+/* Orbit Ring 1/2/3 — CSS tự quay (không dùng transform SVG tĩnh để
+ * tránh CSS transform ghi đè); mỗi vòng có góc nghiêng khởi điểm, tốc
+ * độ, độ mảnh (stroke-width ở SVG) và opacity riêng để 3 quỹ đạo cảm
+ * giác độc lập, không đồng bộ máy móc — như electron ở các mức năng
+ * lượng khác nhau, không phải dây quấn quanh một vật thể. */
 .living-core__orbit {
   transform-box: fill-box;
   transform-origin: center;
@@ -1246,6 +1249,11 @@ body {
   animation: living-core-orbit-2-spin 58s linear infinite reverse;
 }
 
+.living-core__orbit--3 {
+  animation: living-core-orbit-3-spin 71s linear infinite;
+  opacity: 0.7;
+}
+
 @keyframes living-core-orbit-1-spin {
   from { transform: rotate(-22deg); }
   to { transform: rotate(338deg); }
@@ -1254,6 +1262,11 @@ body {
 @keyframes living-core-orbit-2-spin {
   from { transform: rotate(26deg); }
   to { transform: rotate(386deg); }
+}
+
+@keyframes living-core-orbit-3-spin {
+  from { transform: rotate(64deg); }
+  to { transform: rotate(424deg); }
 }
 
 /* Galaxy dust — hạt sáng thoáng ẩn hiện, không nhấp nháy đồng loạt */
@@ -1273,6 +1286,7 @@ body {
 /* ===== State: thinking — quỹ đạo nhanh hơn, core sáng hơn ===== */
 .living-core--thinking .living-core__orbit--1 { animation-duration: 16s; }
 .living-core--thinking .living-core__orbit--2 { animation-duration: 13s; }
+.living-core--thinking .living-core__orbit--3 { animation-duration: 19s; }
 .living-core--thinking .living-core__body { filter: brightness(1.1); }
 .living-core--thinking .living-core__mote { animation-duration: 2s !important; }
 
@@ -1310,6 +1324,7 @@ body {
 /* ===== State: sleeping — aura/orbit rất chậm, core mờ hơn ===== */
 .living-core--sleeping .living-core__orbit--1 { animation-duration: 100s; }
 .living-core--sleeping .living-core__orbit--2 { animation-duration: 130s; }
+.living-core--sleeping .living-core__orbit--3 { animation-duration: 150s; }
 .living-core--sleeping .living-core__body { animation-duration: 8s; opacity: 0.82; }
 .living-core--sleeping .living-core__aura { opacity: 0.4; animation-duration: 9s; }
 .living-core--sleeping .living-core__core-glow { animation-duration: 8s; }

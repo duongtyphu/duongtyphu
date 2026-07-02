@@ -53,7 +53,7 @@ const DUST_POINTS = [
 
 // Giữ đồng bộ với detailForSize() trong LivingCore.tsx
 function detailForSize(size) {
-  const orbitCount = size >= 52 ? 2 : size >= 32 ? 1 : 0;
+  const orbitCount = size >= 128 ? 3 : size >= 52 ? 2 : size >= 32 ? 1 : 0;
   const dustCount = size >= 256 ? 27 : size >= 128 ? 24 : size >= 64 ? 14 : size >= 52 ? 7 : 0;
   return {
     orbitCount,
@@ -99,6 +99,10 @@ ${dust
     detail.orbitCount >= 2
       ? `<ellipse class="living-core__orbit living-core__orbit--2" cx="50" cy="51" rx="47" ry="39" stroke="rgba(224,244,255,0.75)" stroke-width="0.8" />`
       : "";
+  const orbit3 =
+    detail.orbitCount >= 3
+      ? `<ellipse class="living-core__orbit living-core__orbit--3" cx="50" cy="51" rx="57" ry="47" stroke="rgba(139,125,255,0.55)" stroke-width="0.6" />`
+      : "";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 100 100" fill="none" role="img" aria-label="Companion Living Core">
   <title>Companion Living Core™</title>
@@ -136,8 +140,10 @@ ${dust
       .living-core__orbit { transform-box: fill-box; transform-origin: center; }
       .living-core__orbit--1 { animation: lc-orbit-1-spin 42s linear infinite; }
       .living-core__orbit--2 { animation: lc-orbit-2-spin 58s linear infinite reverse; }
+      .living-core__orbit--3 { animation: lc-orbit-3-spin 71s linear infinite; opacity: 0.7; }
       @keyframes lc-orbit-1-spin { from { transform: rotate(-22deg); } to { transform: rotate(338deg); } }
       @keyframes lc-orbit-2-spin { from { transform: rotate(26deg); } to { transform: rotate(386deg); } }
+      @keyframes lc-orbit-3-spin { from { transform: rotate(64deg); } to { transform: rotate(424deg); } }
       .living-core__mote { transform-box: fill-box; transform-origin: center; animation-name: lc-mote-twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; }
       @keyframes lc-mote-twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.25); } }
       @media (prefers-reduced-motion: reduce) {
@@ -151,6 +157,7 @@ ${dust
     ${dustEls}
     ${orbit1}
     ${orbit2}
+    ${orbit3}
     <circle class="living-core__core-glow" cx="48" cy="49" r="17" fill="url(#${coreGradId})" />
     <circle class="living-core__core" cx="48" cy="49" r="6.5" fill="#FFFFFF" />
   </g>
