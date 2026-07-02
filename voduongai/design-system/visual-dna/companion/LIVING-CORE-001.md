@@ -20,9 +20,10 @@ phải ảnh tham khảo để lấy cảm hứng. Điều đó có nghĩa:
 
 - KHÔNG redesign, KHÔNG tạo biến thể mới, KHÔNG thay bằng phiên bản
   AI-generate khác.
-- KHÔNG đổi tỷ lệ, hình dạng (khối cầu gần tròn + 2 vòng quỹ đạo lớn
-  vươn ra ngoài rìa như vành đai Saturn), màu sắc, hoặc **số lượng quỹ
-  đạo (= 2, cố định)**.
+- KHÔNG đổi tỷ lệ, hình dạng (khối năng lượng trung tâm phải là hình
+  TRÒN THUẦN, cân đối tuyệt đối — không oval/egg/méo — + 2 vòng quỹ
+  đạo lớn vươn ra ngoài rìa như vành đai), màu sắc, hoặc **số lượng
+  quỹ đạo (= 2, cố định)**.
 - Việc DUY NHẤT được phép làm với file này là dựng lại bằng SVG + CSS
   animation (đã làm ở `LivingCore.tsx`) — tức "vẽ lại y hệt bằng công
   nghệ khác", không phải "thiết kế lại".
@@ -32,9 +33,12 @@ phải ảnh tham khảo để lấy cảm hứng. Điều đó có nghĩa:
 
 ## Đặc điểm hình học (đã đối chiếu trực tiếp với ảnh v1.0)
 
-- **Khối chính**: khối cầu GẦN TRÒN (rx≈ry, chỉ hơi nghiêng ~-14°),
-  khác với bản nháp trước (từng là oval kéo dài) — rìa mềm/mờ dần ra
-  ngoài (aura), không có cạnh cứng.
+- **Khối chính**: hình TRÒN THUẦN (rx = ry, không nghiêng) — CÂN ĐỐI
+  TUYỆT ĐỐI, không oval/egg/méo (đã sửa lại từ bản trước còn hơi kéo
+  dài) — rìa mềm/mờ dần ra ngoài (aura), không có cạnh cứng. Cảm giác
+  tham chiếu: Apple Intelligence / Siri Orb / OpenAI Voice Orb /
+  Nothing Glyph / Interstellar energy core — KHÔNG phải Earth/Planet/
+  Marble/Crystal Ball.
 - **Lõi trắng**: gần chính giữa khối cầu (chỉ lệch nhẹ), là điểm sáng
   nhất trong ảnh — KHÔNG lệch mạnh sang một góc như bản nháp trước.
 - **Quỹ đạo**: đúng **2 vòng** elip mảnh màu trắng/xanh nhạt, bán kính
@@ -65,6 +69,13 @@ phải ảnh tham khảo để lấy cảm hứng. Điều đó có nghĩa:
   quầng sáng ở MỌI hướng (không chỉ theo chiều ngang) để bay tự do như
   electron quanh hạt nhân, không còn áp sát bề mặt như dây quấn quanh
   quả bóng.
+- **v1.0 — cân đối tuyệt đối**: Founder chỉ rõ hình tổng thể không
+  được kéo dài/oval/egg/méo — phải là hình tròn cân đối tuyệt đối. Đã
+  đổi khối chính + aura + clipPath từ ellipse (rx≠ry, có nghiêng -14°)
+  sang circle thuần (rx=ry, bỏ transform nghiêng vì không còn cần
+  thiết với hình tròn đối xứng). Chỉ 2 vòng quỹ đạo giữ dạng ellipse
+  nghiêng (đây là layer riêng, không phải hình dạng của khối năng
+  lượng chính).
 
 ## Trạng thái triển khai
 

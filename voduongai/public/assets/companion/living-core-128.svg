@@ -19,7 +19,7 @@
       <stop offset="100%" stop-color="rgba(255,255,255,0)" />
     </radialGradient>
     <clipPath id="lc-clip-128">
-      <ellipse cx="50" cy="51" rx="34" ry="32" />
+      <circle cx="50" cy="51" r="33" />
     </clipPath>
     <filter id="lc-blur-128" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="2.4" /></filter>
     <filter id="lc-body-128-blur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.6" /></filter>
@@ -43,9 +43,9 @@
       }
     </style>
   </defs>
-  <g transform="rotate(-14 50 51)">
-    <ellipse class="living-core__aura" cx="50" cy="51" rx="42" ry="40" fill="url(#lc-aura-128)" filter="url(#lc-blur-128)" />
-    <ellipse class="living-core__body" cx="50" cy="51" rx="37" ry="35" fill="url(#lc-body-128)" filter="url(#lc-body-128-blur)" />
+  <g>
+    <circle class="living-core__aura" cx="50" cy="51" r="41" fill="url(#lc-aura-128)" filter="url(#lc-blur-128)" />
+    <circle class="living-core__body" cx="50" cy="51" r="36" fill="url(#lc-body-128)" filter="url(#lc-body-128-blur)" />
     <g clip-path="url(#lc-clip-128)" class="living-core__dust">
       <circle class="living-core__mote" style="animation-delay:0.00s;animation-duration:3.60s" cx="42" cy="46" r="1.1" fill="#EAF4FF" />
       <circle class="living-core__mote" style="animation-delay:0.35s;animation-duration:4.00s" cx="50" cy="40" r="1.3" fill="#EAF4FF" />

@@ -10,10 +10,17 @@
  * DUY NHẤT, đối xử như logo đã chốt, KHÔNG phải ảnh tham khảo để lấy
  * cảm hứng. Việc duy nhất được phép: tái tạo bằng SVG + CSS animation
  * (đã làm ở component này) — KHÔNG redesign, KHÔNG đổi tỷ lệ/hình
- * dạng (khối cầu gần tròn + 2 vòng quỹ đạo lớn vươn ra ngoài rìa như
- * vành đai)/màu sắc (Companion Blue™)/số lượng quỹ đạo (= 2, cố
- * định). Mọi thay đổi hình học sau Design Lock phải đối chiếu lại
- * ảnh gốc trước, không tự sáng tạo layer mới.
+ * dạng/màu sắc (Companion Blue™)/số lượng quỹ đạo (= 2, cố định). Mọi
+ * thay đổi hình học sau Design Lock phải đối chiếu lại ảnh gốc trước,
+ * không tự sáng tạo layer mới.
+ *
+ * Hình tổng thể (khối năng lượng trung tâm) phải CÂN ĐỐI TUYỆT ĐỐI —
+ * hình tròn thuần (rx = ry), KHÔNG kéo dài, KHÔNG oval, KHÔNG egg,
+ * KHÔNG méo. Chỉ 2 vòng quỹ đạo (ellipse, nghiêng góc khác nhau) được
+ * phép không phải hình tròn — bản thân lõi/quầng sáng luôn tròn đều.
+ * Cảm giác tham chiếu: Apple Intelligence, Siri Orb, OpenAI Voice Orb,
+ * Nothing Glyph, Interstellar energy core — KHÔNG phải Earth/Planet/
+ * Marble/Crystal Ball.
  *
  * Companion không phải robot, không có khuôn mặt, không phải hành
  * tinh/quả cầu/viên bi/quả trứng/quả cầu thuỷ tinh — đây là một
@@ -180,7 +187,7 @@ export function LivingCore({
             <stop offset="100%" stopColor="rgba(255,255,255,0)" />
           </radialGradient>
           <clipPath id={clipId}>
-            <ellipse cx="50" cy="51" rx="34" ry="32" />
+            <circle cx="50" cy="51" r="33" />
           </clipPath>
           {detail.showAura && (
             <filter id={blurId} x="-80%" y="-80%" width="260%" height="260%">
@@ -194,28 +201,27 @@ export function LivingCore({
           </filter>
         </defs>
 
-        {/* Toàn bộ khối hành tinh nghiêng nhẹ -14° — khối cầu gần tròn
-         * (Official Visual Design v1.0), 2 vòng quỹ đạo lớn vươn ra
-         * NGOÀI rìa khối cầu (kiểu vành đai Saturn), cắt nhau gần lõi. */}
-        <g transform="rotate(-14 50 51)">
+        {/* Khối năng lượng: hình tròn CÂN ĐỐI TUYỆT ĐỐI (rx = ry) —
+         * không kéo dài, không oval, không egg, không méo. Chỉ 2 vòng
+         * quỹ đạo (ellipse) nghiêng góc khác nhau bay quanh, bản thân
+         * lõi/quầng sáng luôn là hình tròn thuần. */}
+        <g>
           {detail.showAura && (
-            <ellipse
+            <circle
               className="living-core__aura"
               cx="50"
               cy="51"
-              rx="42"
-              ry="40"
+              r="41"
               fill={`url(#${auraGradId})`}
               filter={`url(#${blurId})`}
             />
           )}
 
-          <ellipse
+          <circle
             className="living-core__body"
             cx="50"
             cy="51"
-            rx="37"
-            ry="35"
+            r="36"
             fill={`url(#${bodyGradId})`}
             filter={`url(#${bodyGradId}-blur)`}
           />

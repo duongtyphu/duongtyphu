@@ -74,7 +74,7 @@ function buildSvg(size, idSuffix) {
   const blurId = `lc-blur-${idSuffix}`;
 
   const auraEl = detail.showAura
-    ? `<ellipse class="living-core__aura" cx="50" cy="51" rx="42" ry="40" fill="url(#${auraGradId})" filter="url(#${blurId})" />`
+    ? `<circle class="living-core__aura" cx="50" cy="51" r="41" fill="url(#${auraGradId})" filter="url(#${blurId})" />`
     : "";
 
   const dustEls =
@@ -121,7 +121,7 @@ ${dust
       <stop offset="100%" stop-color="rgba(255,255,255,0)" />
     </radialGradient>
     <clipPath id="${clipId}">
-      <ellipse cx="50" cy="51" rx="34" ry="32" />
+      <circle cx="50" cy="51" r="33" />
     </clipPath>
     ${detail.showAura ? `<filter id="${blurId}" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="2.4" /></filter>` : ""}
     <filter id="${bodyGradId}-blur" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.6" /></filter>
@@ -145,9 +145,9 @@ ${dust
       }
     </style>
   </defs>
-  <g transform="rotate(-14 50 51)">
+  <g>
     ${auraEl}
-    <ellipse class="living-core__body" cx="50" cy="51" rx="37" ry="35" fill="url(#${bodyGradId})" filter="url(#${bodyGradId}-blur)" />
+    <circle class="living-core__body" cx="50" cy="51" r="36" fill="url(#${bodyGradId})" filter="url(#${bodyGradId}-blur)" />
     ${dustEls}
     ${orbit1}
     ${orbit2}
