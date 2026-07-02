@@ -173,14 +173,14 @@ export function LivingCore({
           <radialGradient id={bodyGradId} cx="47%" cy="46%" r="68%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
             <stop offset="14%" stopColor="#BFEAFF" stopOpacity="1" />
-            <stop offset="32%" stopColor="#38D5FF" stopOpacity="0.95" />
-            <stop offset="55%" stopColor="#4F7DFF" stopOpacity="0.75" />
-            <stop offset="78%" stopColor="#4F7DFF" stopOpacity="0.32" />
+            <stop offset="30%" stopColor="#38D5FF" stopOpacity="1" />
+            <stop offset="52%" stopColor="#4F7DFF" stopOpacity="0.92" />
+            <stop offset="76%" stopColor="#4F7DFF" stopOpacity="0.55" />
             <stop offset="100%" stopColor="#4F7DFF" stopOpacity="0" />
           </radialGradient>
           <radialGradient id={auraGradId} cx="47%" cy="46%" r="62%">
-            <stop offset="0%" stopColor="rgba(180,220,255,0.5)" />
-            <stop offset="55%" stopColor="rgba(120,190,255,0.22)" />
+            <stop offset="0%" stopColor="rgba(180,220,255,0.65)" />
+            <stop offset="55%" stopColor="rgba(120,190,255,0.34)" />
             <stop offset="100%" stopColor="rgba(120,190,255,0)" />
           </radialGradient>
           <radialGradient id={coreGradId} cx="50%" cy="50%" r="50%">
@@ -257,8 +257,8 @@ export function LivingCore({
               cy="51"
               rx="52"
               ry="43"
-              stroke="rgba(255,255,255,0.85)"
-              strokeWidth="0.9"
+              stroke="rgba(255,255,255,0.95)"
+              strokeWidth="1.3"
             />
           )}
           {detail.orbitCount >= 2 && (
@@ -268,8 +268,9 @@ export function LivingCore({
               cy="51"
               rx="47"
               ry="39"
-              stroke="rgba(224,244,255,0.75)"
-              strokeWidth="0.8"
+              stroke="#38D5FF"
+              strokeOpacity="0.9"
+              strokeWidth="1.1"
             />
           )}
           {detail.orbitCount >= 3 && (
@@ -279,14 +280,15 @@ export function LivingCore({
               cy="51"
               rx="57"
               ry="47"
-              stroke="rgba(139,125,255,0.55)"
-              strokeWidth="0.6"
+              stroke="#8B7DFF"
+              strokeOpacity="0.8"
+              strokeWidth="0.9"
             />
           )}
 
           {/* Energy Core — lõi hiện diện, trắng sáng, gần chính giữa */}
-          <circle className="living-core__core-glow" cx="48" cy="49" r="17" fill={`url(#${coreGradId})`} />
-          <circle className="living-core__core" cx="48" cy="49" r="6.5" fill="#FFFFFF" />
+          <circle className="living-core__core-glow" cx="48" cy="49" r="18" fill={`url(#${coreGradId})`} />
+          <circle className="living-core__core" cx="48" cy="49" r="7.5" fill="#FFFFFF" />
         </g>
       </svg>
     </span>
