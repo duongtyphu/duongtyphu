@@ -545,26 +545,6 @@ body {
   50% { opacity: calc(var(--companion-nest-opacity, 0.85) * 0.65); }
 }
 
-/* ===== Companion Energy Ring (Sprint 8.5 — Nhiệm vụ 03) ===== */
-.companion-ring {
-  position: absolute;
-  inset: -18%;
-  border-radius: 9999px;
-  border: 1px solid rgba(251, 191, 36, 0.35);
-  pointer-events: none;
-  animation: companion-ring-spin 9s linear infinite;
-}
-
-.companion-ring--active {
-  border-color: rgba(251, 191, 36, 0.75);
-  box-shadow: 0 0 14px rgba(251, 191, 36, 0.45);
-}
-
-@keyframes companion-ring-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 /* Floating presence mode — di chuyển rất nhẹ quanh vị trí hiện tại, kèm
    xoay nhẹ rất nhỏ. Một chu kỳ Living Motion đầy đủ (breathing → glow →
    floating → tiny rotation) gói trong 8s, theo `Companion_Motion.md`. */
@@ -653,10 +633,6 @@ body {
   50% { opacity: 1; }
 }
 
-.companion-mood-curious .companion-ring {
-  opacity: 0.85;
-}
-
 .companion-mood-welcoming {
   animation: companion-mood-welcoming-pulse 1.1s ease-out 1;
 }
@@ -682,15 +658,6 @@ body {
   100% { transform: translateY(0); }
 }
 
-.companion-mood-thoughtful .companion-ring {
-  animation: companion-mood-thoughtful-spin 9s linear infinite;
-}
-
-@keyframes companion-mood-thoughtful-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
 .companion-mood-waiting {
   opacity: 0.94;
 }
@@ -711,7 +678,6 @@ body {
   .companion-avatar--comeback,
   .companion-presence--floating,
   .companion-nest,
-  .companion-ring,
   .companion-avatar-button--pulse,
   .companion-presence--drag-settle,
   .companion-greeting-bubble,

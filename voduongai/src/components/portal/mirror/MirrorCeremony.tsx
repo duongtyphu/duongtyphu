@@ -9,7 +9,7 @@
  */
 
 import { useState } from "react";
-import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { LivingCore } from "@/components/LivingCore";
 import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
 import type { MirrorNarrativeLine } from "@/lib/portal/growth-map/mirror-narrative";
 import type { ReflectionMoment } from "@/lib/portal/growth-map/growth-reflection-engine";
@@ -46,7 +46,7 @@ export function MirrorCeremony({
 
   return (
     <div className="flex min-h-[70vh] w-full flex-col items-center justify-center px-6 py-12 text-center">
-      <CompanionAvatar state="idle" size={88} />
+      <LivingCore size={128} state="idle" />
 
       {step === "opening" && (
         <>

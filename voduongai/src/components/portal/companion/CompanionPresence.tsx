@@ -27,8 +27,9 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { LivingCore, type LivingCoreSize, type LivingCoreState } from "@/components/LivingCore";
-import { displayName, states, type CompanionStateKey } from "@/lib/portal/companion/companion-identity";
+import { LivingCore, type LivingCoreSize } from "@/components/LivingCore";
+import { displayName, states } from "@/lib/portal/companion/companion-identity";
+import { toLivingCoreState } from "@/lib/portal/companion/living-core-state";
 import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
 import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
@@ -91,8 +92,10 @@ function getAvatarBoxSize() {
   if (typeof window === "undefined") return 58;
   const width = window.innerWidth;
   if (width >= 1024) return 58;
-  if (width >= 640) return 48;
-  return 43;
+  if (width >= 640) return 52;
+  // Mobile — tăng kích thước Companion (trước đây 43px, hơi nhỏ để
+  // nhận diện đúng Living Core™ trên màn hình nhỏ).
+  return 56;
 }
 
 /** Living Core™ — size hợp lệ gần nhất với box nổi hiện tại theo breakpoint. */
@@ -100,28 +103,7 @@ function getLivingCoreSize(): LivingCoreSize {
   if (typeof window === "undefined") return 52;
   const width = window.innerWidth;
   if (width >= 1024) return 64;
-  if (width >= 640) return 52;
-  return 32;
-}
-
-/** Map 6 CompanionStateKey hiện có sang 6 state của Living Core™. */
-function toLivingCoreState(key: CompanionStateKey): LivingCoreState {
-  switch (key) {
-    case "idle":
-      return "idle";
-    case "listening":
-      return "thinking";
-    case "thinking":
-      return "thinking";
-    case "encouraging":
-      return "speaking";
-    case "celebrating":
-      return "celebrating";
-    case "comeback":
-      return "speaking";
-    default:
-      return "idle";
-  }
+  return 52;
 }
 
 function clampPosition(x: number, y: number, box: number) {
@@ -676,7 +658,7 @@ export function CompanionPresence({
                 : { transform: `rotate(${tiltDeg}deg)`, transition: "transform 0.15s ease-out" }
             }
           >
-            <CompanionNest dragging={dragging} active={dragging} />
+            <CompanionNest dragging={dragging} />
             <button
               type="button"
               onPointerDown={handlePointerDown}

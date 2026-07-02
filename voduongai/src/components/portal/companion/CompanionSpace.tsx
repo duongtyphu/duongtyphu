@@ -10,7 +10,8 @@
 
 import { useEffect, useRef } from "react";
 import { X } from "lucide-react";
-import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { LivingCore } from "@/components/LivingCore";
+import { toLivingCoreState } from "@/lib/portal/companion/living-core-state";
 import type { CompanionState } from "@/lib/portal/companion/companion-identity";
 import { displayName } from "@/lib/portal/companion/companion-identity";
 import { getWarmthLine } from "@/lib/portal/warmth-engine";
@@ -61,7 +62,7 @@ export function CompanionSpace({
         {/* 1. Greeting — chào, nhận diện Companion, không phải chat header */}
         <section aria-label="Greeting" className="relative mb-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <CompanionAvatar state={state.key} className="h-10 w-10 shrink-0" />
+            <LivingCore size={32} state={toLivingCoreState(state.key)} />
             <div>
               <p className="text-sm font-bold text-gray-900">{displayName}</p>
               <p className="text-xs text-gray-500">Mình ở đây. {state.line}</p>

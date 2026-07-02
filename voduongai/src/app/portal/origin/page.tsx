@@ -3,7 +3,7 @@ import { isFounder } from "@/lib/portal/founder/founder-identity";
 import { getCoreOriginMemories } from "@/lib/portal/companion/origin-memory";
 import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
 import { getOriginLineContextDefinition } from "@/lib/portal/companion/origin-line-context";
-import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { LivingCore } from "@/components/LivingCore";
 import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
 
 export const metadata = {
@@ -41,7 +41,7 @@ export default async function OriginRoomPage() {
     return (
       <div className="flex min-h-[60vh] items-center justify-center px-6 py-16">
         <div className="max-w-md text-center">
-          <CompanionAvatar state="idle" size={56} />
+          <LivingCore size={52} state="idle" />
           <p className="mt-6 text-base leading-relaxed text-gray-600">
             Đây là một căn phòng nguồn gốc của Companion. Nó chỉ mở trong những
             khoảnh khắc rất riêng.
@@ -63,7 +63,7 @@ export default async function OriginRoomPage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
       <div className="text-center">
-        <CompanionAvatar state="idle" size={64} />
+        <LivingCore size={64} state="idle" />
         <h1 className="mt-6 text-2xl font-semibold text-gray-800">Origin Room</h1>
         <p className="mt-2 text-sm text-gray-500">
           Nơi Companion nhìn lại những điều đầu tiên đã tạo nên mình.

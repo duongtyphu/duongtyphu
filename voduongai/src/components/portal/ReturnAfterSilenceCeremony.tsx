@@ -12,7 +12,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { LivingCore } from "@/components/LivingCore";
 import {
   getCompanionAddress,
   type CompanionAddressProfile,
@@ -75,7 +75,7 @@ export function ReturnAfterSilenceCeremony({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_35%,rgba(34,211,238,0.16),transparent_60%)]" />
 
       <div className="relative z-10 flex w-full max-w-lg flex-col items-center text-center">
-        <CompanionAvatar state="idle" size={88} />
+        <LivingCore size={128} state="idle" />
 
         {step === "opening" && (
           <>

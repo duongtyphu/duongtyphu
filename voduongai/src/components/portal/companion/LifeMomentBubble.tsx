@@ -13,7 +13,7 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
+import { LivingCore } from "@/components/LivingCore";
 import type { LifeMoment, LifeMomentType } from "@/lib/portal/life-moments/life-moments";
 import { getLifeMomentLines } from "@/lib/portal/life-moments/life-moment-lines";
 import { useMemoryCapsules, type MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
@@ -143,7 +143,7 @@ export function LifeMomentBubble({
         <X className="h-3 w-3" />
       </button>
       <div className="flex items-start gap-3 pr-4">
-        <CompanionAvatar state="idle" size={32} />
+        <LivingCore size={32} state="idle" />
         <div>
           <p className="text-sm leading-relaxed text-gray-800">{line}</p>
           {capsuleKind && signedIn && (
