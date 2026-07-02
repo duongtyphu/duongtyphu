@@ -29,7 +29,7 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
 
   return (
     <div
-      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-100 ${
+      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-[#1E3A8A]/30 bg-gradient-to-br from-[#0B1F4D] via-[#1E3A8A] to-[#5B21B6] ${
         compact ? "h-24" : "h-36 sm:h-44"
       }`}
       aria-hidden="true"
@@ -79,12 +79,12 @@ export function LivingGardenCard({
       <GemCard className={`relative ${className}`}>
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-orange-400" />
-          <h2 className="gemos-card-title text-sm font-bold text-violet-700">Khu vườn của bạn</h2>
+          <h2 className="gemos-card-title text-sm font-bold text-blue-700">Khu vườn của bạn</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-gray-700">
           Khu vườn của bạn đang chờ hạt giống đầu tiên.
         </p>
-        <p className="mt-1 text-xs text-blue-600/70">
+        <p className="mt-1 text-xs text-violet-600/70">
           Mỗi hành động nhỏ hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -104,7 +104,7 @@ export function LivingGardenCard({
     <GemCard className={`relative ${className}`}>
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-orange-400" />
-        <h2 className="gemos-card-title text-sm font-bold text-violet-700">Khu vườn của bạn</h2>
+        <h2 className="gemos-card-title text-sm font-bold text-blue-700">Khu vườn của bạn</h2>
       </div>
 
       <p className="mt-2 text-sm leading-relaxed text-gray-700">
@@ -112,7 +112,7 @@ export function LivingGardenCard({
       </p>
       {!compact && (
         <>
-          <p className="mt-1 text-xs text-blue-600/70">
+          <p className="mt-1 text-xs text-violet-600/70">
             Mỗi hành động hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
           </p>
           <p className="mt-1 text-xs italic text-gray-400">
@@ -133,7 +133,7 @@ export function LivingGardenCard({
             const el = garden.elements.find((e) => e.key === key)!;
             return (
               <li key={key} className="flex items-baseline gap-1.5">
-                <span className="font-semibold text-violet-600">{el.label}</span>
+                <span className="font-semibold text-orange-600">{el.label}</span>
                 <span className="text-gray-400">·</span>
                 <span>{el.meaning}</span>
               </li>
