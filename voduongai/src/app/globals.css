@@ -183,25 +183,14 @@ body {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background-color: #F8FAFC;
+  background-color: #F6F7F9;
   background-image:
+    linear-gradient(rgba(17, 24, 39, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(17, 24, 39, 0.07) 1px, transparent 1px),
     radial-gradient(900px circle at 85% -5%, rgba(37, 99, 235, 0.05), transparent 60%),
     radial-gradient(800px circle at 0% 100%, rgba(91, 140, 255, 0.04), transparent 60%),
-    linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
-}
-
-.gemos-glow-particle {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(2px);
-  opacity: 0.5;
-  background: radial-gradient(circle, rgba(34, 211, 238, 0.9), transparent 70%);
-  animation: gemos-float 9s ease-in-out infinite;
-}
-
-@keyframes gemos-float {
-  0%, 100% { transform: translateY(0) translateX(0); opacity: 0.35; }
-  50% { transform: translateY(-18px) translateX(8px); opacity: 0.65; }
+    linear-gradient(180deg, #F6F7F9 0%, #F1F5F9 100%);
+  background-size: 32px 32px, 32px 32px, auto, auto, auto;
 }
 
 /* ===== GemOS Design System — glass surfaces ===== */

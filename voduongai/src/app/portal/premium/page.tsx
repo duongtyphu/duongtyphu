@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { premiumProducts } from "@/data/premium";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
@@ -7,7 +8,7 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 import { GemLockedOverlay } from "@/components/portal/ui/GemLockedOverlay";
 import { GemBadge } from "@/components/portal/ui/GemBadge";
 
-export const metadata = { title: "Tài nguyên Premium" };
+export const metadata = { title: "Premium | VO DUONG AI" };
 
 type LiveProduct = {
   id: number;
@@ -33,6 +34,56 @@ async function getLiveProducts(): Promise<LiveProduct[]> {
   return data ?? [];
 }
 
+const PREMIUM_INCLUDES = [
+  {
+    emoji: "🚀",
+    title: "V-Solo",
+    description: "Lộ trình xây dựng hệ thống làm việc một mình với AI — từ số 0 đến có doanh thu đầu tiên.",
+  },
+  {
+    emoji: "📈",
+    title: "V-Scale",
+    description: "Nhân bản quy trình, xây đội nhóm và mở rộng hệ thống đã vận hành ổn định lên quy mô lớn hơn.",
+  },
+  {
+    emoji: "🎥",
+    title: "Bài giảng chuyên sâu",
+    description: "Thư viện video bài giảng chi tiết theo từng chủ đề, học theo tốc độ của riêng bạn.",
+  },
+  {
+    emoji: "🎓",
+    title: "Masterclass",
+    description: "Các buổi học chuyên đề chuyên sâu cùng chuyên gia, đi thẳng vào vấn đề thực chiến.",
+  },
+  {
+    emoji: "🛠️",
+    title: "Workshop Premium",
+    description: "Workshop thực hành trực tiếp, làm cùng và nhận phản hồi ngay trong buổi học.",
+  },
+];
+
+const LEARNING_PATH = [
+  { emoji: "🌱", title: "Người mới bắt đầu", description: "Làm quen với AI, xây nền tảng tư duy và công cụ đúng ngay từ đầu." },
+  { emoji: "🏗️", title: "Xây hệ thống", description: "Biến kiến thức thành quy trình làm việc lặp lại được, có kết quả đo lường được." },
+  { emoji: "🔁", title: "Nhân bản quy trình", description: "Tối ưu và nhân bản quy trình đã chạy ổn định để tăng hiệu suất mà không tăng công sức." },
+  { emoji: "👥", title: "Phát triển đội nhóm", description: "Chuyển giao quy trình cho đội nhóm, xây dựng hệ thống vận hành không phụ thuộc một người." },
+];
+
+const PREMIUM_FAQ = [
+  {
+    q: "Premium gồm những gì?",
+    a: "Premium bao gồm V-Solo, V-Scale, thư viện bài giảng chuyên sâu, các buổi Masterclass và Workshop Premium — toàn bộ nội dung học chuyên sâu của VO DUONG AI.",
+  },
+  {
+    q: "Tôi có thể học theo lộ trình nào?",
+    a: "Bạn có thể chọn lộ trình phù hợp với giai đoạn hiện tại: Người mới bắt đầu, Xây hệ thống, Nhân bản quy trình, hoặc Phát triển đội nhóm.",
+  },
+  {
+    q: "Sau khi tham gia tôi được mở khóa nội dung nào?",
+    a: "Sau khi tham gia, bạn được mở khóa toàn bộ bài giảng, tài liệu, template và buổi học thuộc chương trình bạn đăng ký, cùng quyền truy cập các Workshop Premium định kỳ.",
+  },
+];
+
 export default async function PremiumPage() {
   const [liveProducts, purchasedProductIds] = await Promise.all([
     getLiveProducts(),
@@ -40,12 +91,92 @@ export default async function PremiumPage() {
   ]);
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
+      {/* Hero */}
       <PageHeader
-        title="Tài nguyên Premium"
-        description="Sản phẩm và dịch vụ chuyên sâu dành cho người muốn đi nhanh hơn — nơi viên ngọc của bạn được mài giũa ở cấp độ cao hơn."
+        title="Premium"
+        description="Khu vực học tập chuyên sâu dành cho thành viên VO DUONG AI."
       />
 
+      {/* Companion Guide */}
+      <section className="rounded-2xl border border-violet-100 bg-violet-50 p-5">
+        <div className="flex items-start gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-100">
+            <svg className="h-5 w-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div>
+            <p className="mb-1 text-sm font-semibold text-violet-800">Premium dành cho ai?</p>
+            <p className="text-sm leading-relaxed text-violet-700">
+              Premium dành cho những ai đã dùng thử AI ở khu vực miễn phí và muốn đi xa hơn — xây một
+              hệ thống làm việc thật với AI, có lộ trình rõ ràng, bài giảng chuyên sâu và sự đồng hành
+              trực tiếp thay vì tự mò mẫm.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Premium Includes */}
+      <section>
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Premium bao gồm</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {PREMIUM_INCLUDES.map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-2xl">
+                {item.emoji}
+              </div>
+              <h3 className="mt-3 font-bold text-gray-900">{item.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-gray-500">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Learning Path */}
+      <section>
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Lộ trình học</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {LEARNING_PATH.map((step, i) => (
+            <div
+              key={step.title}
+              className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <span className="text-xs font-semibold text-blue-600">Bước {i + 1}</span>
+              <div className="mt-2 text-2xl">{step.emoji}</div>
+              <h3 className="mt-2 font-bold text-gray-900">{step.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-gray-500">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 p-8 text-center">
+        <h2 className="text-xl font-bold text-white">Sẵn sàng tham gia Premium?</h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-blue-100">
+          Chọn chương trình phù hợp và bắt đầu hành trình xây hệ thống làm việc với AI ngay hôm nay.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link
+            href="/portal/vdai-academy"
+            className="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-blue-700 shadow transition hover:bg-blue-50"
+          >
+            Tham gia Premium
+          </Link>
+          <Link
+            href="/portal/checkout"
+            className="rounded-full border border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+          >
+            Đi đến thanh toán
+          </Link>
+        </div>
+      </section>
+
+      {/* Sản phẩm đang mở bán (live, Supabase-backed) */}
       {liveProducts.length > 0 && (
         <section>
           <h2 className="text-lg font-bold text-gray-900">Sản phẩm đang mở bán</h2>
@@ -115,6 +246,19 @@ export default async function PremiumPage() {
               <p className="mt-2 text-sm text-gray-600">{p.description}</p>
               <GemLockedOverlay />
             </GemCard>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section>
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Câu hỏi thường gặp</h2>
+        <div className="space-y-3">
+          {PREMIUM_FAQ.map((item) => (
+            <div key={item.q} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+              <h3 className="font-bold text-gray-900">{item.q}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-gray-600">{item.a}</p>
+            </div>
           ))}
         </div>
       </section>
