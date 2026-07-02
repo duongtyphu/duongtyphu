@@ -26,7 +26,7 @@ import { GARDEN_TREE_CAPTION } from "@/data/portal/knowledge-garden";
 export function GardenScene() {
   return (
     <div
-      className="garden-scene relative h-80 w-full overflow-hidden rounded-3xl sm:h-96 lg:h-[30rem]"
+      className="garden-scene relative h-80 w-full sm:h-96 lg:h-[30rem]"
       style={{ aspectRatio: "727 / 750" }}
     >
       <WindLayer>
