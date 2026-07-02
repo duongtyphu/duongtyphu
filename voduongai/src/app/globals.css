@@ -595,6 +595,12 @@ body {
   transform: scale(1.03);
 }
 
+/* Living Core™ trong nút nổi — glow sáng hơn nhẹ khi hover/focus, không bounce mạnh */
+.companion-avatar-button:hover .living-core,
+.companion-avatar-button:focus-visible .living-core {
+  filter: brightness(1.12);
+}
+
 .companion-avatar-button--pulse {
   animation: companion-click-pulse 0.45s ease-out 1;
 }

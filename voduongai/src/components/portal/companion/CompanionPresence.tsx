@@ -15,13 +15,20 @@
  * Sprint 8.3.1: người dùng có thể kéo Companion tới bất kỳ vị trí nào
  * trên màn hình (không còn cố định góc dưới phải) — vị trí được nhớ lại
  * giữa các lần xem (localStorage), luôn được giữ trong vùng nhìn thấy.
+ *
+ * NHIỆM VỤ KHẨN — thay icon nổi bằng Living Core™: biểu tượng bên trong
+ * nút nổi đã đổi từ `CompanionAvatar` (viên ngọc 2 chữ V, Master Design
+ * V1.0) sang `LivingCore` (SVG + CSS, xem
+ * design-system/visual-dna/companion/LIVING-CORE-001.md — Design Lock
+ * v1.2). Chỉ đổi icon bên trong — vị trí/kéo-thả/container/hành vi
+ * click/mở CompanionSpace/z-index/route giữ nguyên 100%.
  */
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
-import { CompanionAvatar } from "@/components/portal/companion/CompanionAvatar";
-import { displayName, states } from "@/lib/portal/companion/companion-identity";
+import { LivingCore, type LivingCoreSize, type LivingCoreState } from "@/components/LivingCore";
+import { displayName, states, type CompanionStateKey } from "@/lib/portal/companion/companion-identity";
 import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
 import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
@@ -86,6 +93,35 @@ function getAvatarBoxSize() {
   if (width >= 1024) return 58;
   if (width >= 640) return 48;
   return 43;
+}
+
+/** Living Core™ — size hợp lệ gần nhất với box nổi hiện tại theo breakpoint. */
+function getLivingCoreSize(): LivingCoreSize {
+  if (typeof window === "undefined") return 52;
+  const width = window.innerWidth;
+  if (width >= 1024) return 64;
+  if (width >= 640) return 52;
+  return 32;
+}
+
+/** Map 6 CompanionStateKey hiện có sang 6 state của Living Core™. */
+function toLivingCoreState(key: CompanionStateKey): LivingCoreState {
+  switch (key) {
+    case "idle":
+      return "idle";
+    case "listening":
+      return "thinking";
+    case "thinking":
+      return "thinking";
+    case "encouraging":
+      return "speaking";
+    case "celebrating":
+      return "celebrating";
+    case "comeback":
+      return "speaking";
+    default:
+      return "idle";
+  }
 }
 
 function clampPosition(x: number, y: number, box: number) {
@@ -159,6 +195,7 @@ export function CompanionPresence({
   const [microLine, setMicroLine] = useState<string | null>(null);
   const [tiltDeg, setTiltDeg] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [livingCoreSize, setLivingCoreSize] = useState<LivingCoreSize>(52);
   // Sprint 18.8 — Presence Coordinator: điều kiện hiển thị thật của Life
   // Moment/Return After Silence, đọc từ chính helper mà component gốc của
   // chúng dùng — không đoán lại logic cooldown/seen ở đây.
@@ -384,7 +421,9 @@ export function CompanionPresence({
   useEffect(() => {
     function handleResize() {
       setPosition((prev) => (prev ? clampPosition(prev.x, prev.y, getAvatarBoxSize()) : prev));
+      setLivingCoreSize(getLivingCoreSize());
     }
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -656,11 +695,7 @@ export function CompanionPresence({
                 pulsing ? "companion-avatar-button--pulse" : ""
               }`}
             >
-              <CompanionAvatar
-                state={state.key}
-                className="h-[43px] w-[43px] sm:h-12 sm:w-12 lg:h-[58px] lg:w-[58px]"
-                size={58}
-              />
+              <LivingCore size={livingCoreSize} state={toLivingCoreState(state.key)} />
             </button>
           </div>
 
