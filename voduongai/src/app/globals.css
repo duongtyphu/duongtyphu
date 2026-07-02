@@ -1021,7 +1021,6 @@ body {
  * chi tiết tán lá phía sau vẫn xuyên qua được — cảm giác "một chiếc lá
  * phát sáng đậu trên cành", không phải "nhãn dán che ảnh". */
 .garden-leaf-chip-photo {
-  position: relative;
   background: linear-gradient(160deg, rgba(134, 239, 172, 0.3), rgba(74, 155, 96, 0.34));
   backdrop-filter: blur(3px);
   -webkit-backdrop-filter: blur(3px);
