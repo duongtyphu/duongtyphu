@@ -55,3 +55,11 @@ src/design-system/
 ## Quan hệ với `/design-system` ở gốc repo
 
 Sprint trước đã tạo `voduongai/design-system/` (thư mục gốc dự án) chứa các tài liệu ban đầu: `DESIGN_DOCTRINE.md`, `DESIGN_REFERENCE_GUIDE.md`, `GARDEN_DESIGN_SPEC.md`, `MOTION_SYSTEM.md`, `COLOR_SYSTEM.md`, `COMPONENT_RULES.md`. `src/design-system/` (thư mục này) là **cấu trúc chính thức và đầy đủ hơn**, kế thừa toàn bộ nội dung đó và mở rộng thêm Typography/Spacing/Icons/Layout/Patterns. Nội dung liên quan đã được đưa vào đúng thư mục con tương ứng (xem `docs/MIGRATION_NOTE.md`). Thư mục gốc `voduongai/design-system/` được giữ nguyên làm bản lưu trữ, không phát triển thêm — mọi cập nhật mới từ nay áp dụng vào `src/design-system/`.
+
+## VISUAL DNA SYSTEM™
+
+Kể từ sprint tiếp theo, quy trình Design Reference chính thức được nâng cấp thành **VISUAL DNA SYSTEM™**, đặt tại `voduongai/design-system/visual-dna/` (cùng cấp với `design-references/` cũ — nơi lưu asset ảnh nhị phân, không đặt trong `src/`).
+
+- Manifesto đầy đủ: `voduongai/design-system/visual-dna/VISUAL_DNA.md` — quy định **RECREATE MODE** (clone giao diện, không redesign), **Design Lock** (reference đã duyệt không được đổi trừ khi Founder yêu cầu), ngưỡng chất lượng **95–99% giống Reference**, Image Import Workflow 5 bước khi Founder nói "DUYỆT".
+- Cấu trúc asset: `references/`, `assets/`, `illustrations/`, `backgrounds/`, `trees/`, `lights/`, `leaves/`, và thư mục riêng cho từng khu vực (`garden/`, `companion/`, `journey/`, `premium/`, `library/`).
+- `src/design-system/10-reference/` vẫn là nơi viết **Design Spec bằng văn bản** (mô tả bố cục/màu/cảm xúc) tương ứng với từng ảnh reference lưu ở `visual-dna/references/`.
