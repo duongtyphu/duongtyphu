@@ -3,13 +3,16 @@
 /**
  * Living Core™ — biểu tượng sống của Companion.
  *
- * QUAN TRỌNG: Đây là bản dựng lại bằng SVG + CSS animation từ OFFICIAL
- * VISUAL DESIGN do Founder cung cấp (ảnh hành tinh xanh phát sáng,
- * lõi trắng lệch tâm, 2 vòng quỹ đạo nghiêng, starfield dày đặc, khối
- * hình bầu dục nghiêng — KHÔNG phải hình tròn đối xứng). Nhiệm vụ ở
- * đây là "PNG → SVG + CSS animation", KHÔNG redesign — giữ nguyên tỷ
- * lệ, hình dạng (oval nghiêng), màu sắc (Companion Blue™), và đúng
- * SỐ LƯỢNG QUỸ ĐẠO = 2 như ảnh gốc.
+ * ⚠️ DESIGN LOCK — xem design-system/visual-dna/companion/LIVING-CORE-001.md
+ * Founder: "Hãy coi hình Companion này giống như Logo Apple. Không ai
+ * được quyền thiết kế lại logo. Bạn chỉ được quyền dựng lại bằng SVG.
+ * Không thay đổi ngôn ngữ thiết kế." — file PNG gốc là Visual Truth
+ * DUY NHẤT, đối xử như logo đã chốt, KHÔNG phải ảnh tham khảo để lấy
+ * cảm hứng. Việc duy nhất được phép: tái tạo bằng SVG + CSS animation
+ * (đã làm ở component này) — KHÔNG redesign, KHÔNG đổi tỷ lệ/hình
+ * dạng (oval nghiêng, không phải hình tròn)/màu sắc (Companion Blue™)/
+ * số lượng quỹ đạo (= 2, cố định). Mọi thay đổi hình học sau Design
+ * Lock phải đối chiếu lại ảnh gốc trước, không tự sáng tạo layer mới.
  *
  * Companion không phải robot, không có khuôn mặt. Lõi trắng là sự
  * trung thực/trong sáng, quỹ đạo là tri thức đang chuyển động, hạt
