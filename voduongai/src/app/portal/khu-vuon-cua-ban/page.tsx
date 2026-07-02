@@ -73,24 +73,8 @@ export default function KnowledgeGardenPage() {
       <div className="garden-page-bg" aria-hidden="true" />
 
       <div className="relative z-10 space-y-8 px-4 py-6 md:px-8 md:py-8">
-        {/* Hero — một cảnh liền mạch: ảnh rừng thật sắc nét trải toàn
-         * bộ khu vực (không blur, không khung), chữ bên trái + cây bên
-         * phải cùng nằm trên một tấm ảnh duy nhất. */}
-        <div className="relative overflow-hidden rounded-3xl">
-          <div className="garden-hero-photo absolute inset-0 -z-10" aria-hidden="true">
-            <Image
-              src="/images/garden/garden-forest-full.jpg"
-              alt="Khu rừng thật nơi cây tri thức của bạn lớn lên"
-              fill
-              sizes="100vw"
-              className="object-cover"
-              style={{ objectPosition: "62% 46%" }}
-              priority
-            />
-            <div className="garden-hero-wash absolute inset-0" />
-          </div>
-
-          <div className="grid gap-8 p-5 lg:grid-cols-[minmax(0,1fr)_1.7fr] lg:items-start lg:p-10">
+        {/* Hero — trái nội dung / phải cây lớn */}
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_1.7fr] lg:items-start">
           {/* LEFT */}
           <div>
             <span className="text-2xl">🌿</span>
@@ -145,7 +129,7 @@ export default function KnowledgeGardenPage() {
             </div>
 
             {/* Quote nhỏ */}
-            <div className="mt-4 px-1 py-1">
+            <div className="mt-4 rounded-xl border border-green-100 bg-green-50/60 px-4 py-3">
               <p className="text-xs leading-relaxed text-green-800">
                 <span className="mr-1">🌱</span>
                 {GARDEN_QUOTE_SMALL}
@@ -168,7 +152,6 @@ export default function KnowledgeGardenPage() {
               </p>
             </div>
           </div>
-          </div>
         </div>
 
         {/* Section dưới: 2 card */}
@@ -189,7 +172,7 @@ export default function KnowledgeGardenPage() {
                 return (
                   <div
                     key={a.id}
-                    className="flex items-center gap-3 rounded-xl p-3"
+                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
                   >
                     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${RECENT_TONE[a.actionKey]}`}>
                       <Icon className="h-4 w-4" />
@@ -222,12 +205,12 @@ export default function KnowledgeGardenPage() {
                 </div>
               ))}
             </div>
-            <div className="garden-care-visual-fade pointer-events-none absolute bottom-3 right-3 h-28 w-28 sm:h-32 sm:w-32">
+            <div className="pointer-events-none absolute bottom-3 right-3 h-24 w-20 overflow-hidden rounded-xl opacity-90 sm:h-28 sm:w-24">
               <Image
                 src="/images/garden/garden-care-visual.jpg"
                 alt=""
                 fill
-                sizes="130px"
+                sizes="120px"
                 className="object-cover"
               />
             </div>
