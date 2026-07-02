@@ -4,8 +4,10 @@ import {
   NEED_CATEGORIES,
   AI_ARTICLES,
   AI_PROMPTS,
+  PROFESSION_GROUPS,
   type AiTool,
   type AiNeedCategory,
+  type AiProfessionGroup,
 } from "@/data/khong-gian-ai";
 
 // ─────────────────────────────────────────────
@@ -463,6 +465,272 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
 }
 
 // ─────────────────────────────────────────────
+// Profession Detail Page
+// ─────────────────────────────────────────────
+
+function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup }) {
+  const tools = AI_TOOLS.filter((t) => profession.recommendedToolSlugs.includes(t.slug));
+
+  return (
+    <div className="rounded-3xl bg-[#F6F7F9] p-6 md:p-8 space-y-10">
+      {/* Breadcrumb */}
+      <Breadcrumb
+        items={[
+          { label: "Portal", href: "/portal" },
+          { label: "Không gian AI", href: "/portal/khong-gian-ai" },
+          { label: profession.title },
+        ]}
+      />
+
+      {/* Hero */}
+      <section>
+        <div className="flex items-center gap-4 mb-4">
+          <span className="text-5xl">{profession.emoji}</span>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold">
+              <span className="bg-gradient-to-r from-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">
+                AI cho {profession.title}
+              </span>
+            </h1>
+          </div>
+        </div>
+        <p className="text-lg text-gray-600 max-w-2xl leading-relaxed">{profession.description}</p>
+      </section>
+
+      {/* Companion Guide */}
+      <section className="bg-violet-50 border border-violet-100 rounded-2xl p-5">
+        <div className="flex items-start gap-3">
+          <div className="shrink-0 w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center">
+            <svg className="w-5 h-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-violet-800 mb-1">Hướng dẫn từ Companion</p>
+            <p className="text-sm text-violet-700 leading-relaxed">{profession.companionMessage}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Disclaimer (e.g. Nhà đầu tư) */}
+      {profession.disclaimer && (
+        <section className="bg-amber-50 border border-amber-100 rounded-2xl p-5">
+          <div className="flex items-start gap-3">
+            <span className="shrink-0 w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">
+              <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-amber-800 mb-1">Lưu ý quan trọng</p>
+              <p className="text-sm text-amber-800 leading-relaxed">{profession.disclaimer}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Nhóm kỹ năng */}
+      {profession.skillGroups.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Nhóm kỹ năng</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {profession.skillGroups.map((skill, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex items-center gap-3"
+              >
+                <span className="shrink-0 w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+                  <svg className="w-3.5 h-3.5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                </span>
+                <span className="text-sm font-medium text-gray-700">{skill}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Bài viết mẫu */}
+      {profession.sampleArticles.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Bài viết mẫu</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {profession.sampleArticles.map((title, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5"
+              >
+                <span className="inline-block text-xs font-semibold text-blue-600 bg-blue-50 rounded-full px-2.5 py-0.5 mb-2">
+                  Bài viết
+                </span>
+                <h3 className="font-semibold text-gray-900 text-sm leading-snug">{title}</h3>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Prompt mẫu */}
+      {profession.samplePrompts.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Prompt mẫu</h2>
+          <div className="flex flex-wrap gap-2">
+            {profession.samplePrompts.map((title, i) => (
+              <span
+                key={i}
+                className="inline-block text-sm font-medium text-violet-700 bg-violet-50 border border-violet-100 rounded-full px-3.5 py-1.5"
+              >
+                {title}
+              </span>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Checklist mẫu */}
+      {profession.sampleChecklists && profession.sampleChecklists.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Checklist mẫu</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <ul className="space-y-2">
+              {profession.sampleChecklists.map((title, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-400" />
+                  {title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* Template mẫu */}
+      {profession.sampleTemplates && profession.sampleTemplates.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Template mẫu</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <ul className="space-y-2">
+              {profession.sampleTemplates.map((title, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-violet-400" />
+                  {title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* SOP mẫu */}
+      {profession.sampleSops && profession.sampleSops.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">SOP mẫu</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <ul className="space-y-2">
+              {profession.sampleSops.map((title, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-green-400" />
+                  {title}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {/* Công cụ AI gợi ý */}
+      {tools.length > 0 && (
+        <section>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Công cụ AI gợi ý</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {tools.map((tool) => (
+              <Link
+                key={tool.slug}
+                href={`/portal/khong-gian-ai/${tool.slug}`}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group block"
+              >
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div>
+                    <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                      {tool.name}
+                    </h3>
+                    <p className="text-xs text-gray-400 mt-0.5">{tool.category}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    <PricingBadge pricing={tool.pricing} />
+                    {tool.badge && <BadgePill badge={tool.badge} />}
+                  </div>
+                </div>
+                <p className="text-sm text-gray-600 leading-relaxed">{tool.tagline}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* CTA */}
+      {profession.isPremiumDeep ? (
+        <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">
+              Tham gia Premium để mở khóa lộ trình học chuyên sâu
+            </h2>
+            <p className="text-blue-100 text-sm">Nội dung chuyên sâu dành cho thành viên Premium</p>
+          </div>
+          <Link
+            href="/portal/premium"
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
+          >
+            Tham gia Premium
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </section>
+      ) : (
+        <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">Khám phá lộ trình</h2>
+            <p className="text-blue-100 text-sm">
+              Bắt đầu học AI bài bản theo đúng nhu cầu của {profession.title.toLowerCase()}
+            </p>
+          </div>
+          <Link
+            href="/portal/academy"
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
+          >
+            Khám phá lộ trình
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </section>
+      )}
+
+      {/* Bước tiếp theo */}
+      <section>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-gray-700 mb-1">Quay lại Không gian AI</p>
+            <p className="text-sm text-gray-500">Khám phá thêm nhu cầu và công cụ khác trong hub</p>
+          </div>
+          <Link
+            href="/portal/khong-gian-ai"
+            className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+          >
+            Về hub
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
 // Not Found Page
 // ─────────────────────────────────────────────
 
@@ -500,7 +768,8 @@ function NotFoundPage({ slug }: { slug: string }) {
 export async function generateStaticParams() {
   const toolSlugs = AI_TOOLS.map((t) => ({ slug: t.slug }));
   const needSlugs = NEED_CATEGORIES.map((c) => ({ slug: c.slug }));
-  return [...toolSlugs, ...needSlugs];
+  const professionSlugs = PROFESSION_GROUPS.map((p) => ({ slug: p.slug }));
+  return [...toolSlugs, ...needSlugs, ...professionSlugs];
 }
 
 export default async function Page({
@@ -515,6 +784,9 @@ export default async function Page({
 
   const category = NEED_CATEGORIES.find((c) => c.slug === slug);
   if (category) return <NeedCategoryPage category={category} />;
+
+  const profession = PROFESSION_GROUPS.find((p) => p.slug === slug);
+  if (profession) return <ProfessionDetailPage profession={profession} />;
 
   return <NotFoundPage slug={slug} />;
 }

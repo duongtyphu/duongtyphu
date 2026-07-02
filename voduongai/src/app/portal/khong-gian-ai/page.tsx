@@ -104,7 +104,7 @@ function NeedCategoryCard({ category }: { category: AiNeedCategory }) {
 function ProfessionCard({ profession }: { profession: AiProfessionGroup }) {
   return (
     <Link
-      href={`/portal/khong-gian-ai/nghe/${profession.slug}`}
+      href={`/portal/khong-gian-ai/${profession.slug}`}
       className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
       <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-2xl">
