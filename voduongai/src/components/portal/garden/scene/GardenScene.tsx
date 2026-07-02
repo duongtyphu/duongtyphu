@@ -1,5 +1,3 @@
-import { TreeLayer } from "@/components/portal/garden/scene/TreeLayer";
-import { WindLayer } from "@/components/portal/garden/scene/WindLayer";
 import { SunlightLayer } from "@/components/portal/garden/scene/SunlightLayer";
 import { BokehLayer } from "@/components/portal/garden/scene/BokehLayer";
 import { SparkleLayer } from "@/components/portal/garden/scene/SparkleLayer";
@@ -11,28 +9,22 @@ import { GARDEN_TREE_CAPTION } from "@/data/portal/knowledge-garden";
  * các layer độc lập để Companion có thể mở rộng qua nhiều năm mà
  * KHÔNG cần đổi thiết kế gốc:
  *
- *   Tree Layer      — Official Tree Asset, cố định (Tree = Constant)
- *   Wind Layer      — chuyển động "thở" rất nhẹ bọc quanh Tree Layer
+ *   Tree Layer      — Official Tree Asset, cố định (Tree = Constant) —
+ *                     giờ là ảnh nền chung của cả hero (xem page.tsx),
+ *                     không còn nằm riêng trong component này.
  *   Sunlight Layer  — ánh nắng thở nhẹ (Light = Companion)
  *   Bokeh Layer     — bụi sáng trôi rất chậm
  *   Sparkle Layer   — sparkle thoáng qua + lá rơi thưa thớt
  *   Leaf Chip Layer — lá hành động, component riêng, dữ liệu động
  *                     (Leaves = User Growth)
  *
- * Mọi layer đè lên nhau trong cùng một khung "cửa sổ" (`.garden-scene`
- * + vignette blend ở `::after`) để cảm giác là một khu vườn thật đang
- * tồn tại phía sau giao diện, không phải một tấm ảnh dán trong khung.
+ * GardenScene giờ chỉ là lớp hiệu ứng TRONG SUỐT nổi trên ảnh rừng
+ * chung của hero — không có nền/khung riêng — để cây và các layer
+ * cùng nằm trên một tấm ảnh liền mạch thay vì "ảnh dán trong hộp".
  */
 export function GardenScene() {
   return (
-    <div
-      className="garden-scene relative h-80 w-full sm:h-96 lg:h-[30rem]"
-      style={{ aspectRatio: "727 / 750" }}
-    >
-      <WindLayer>
-        <TreeLayer />
-      </WindLayer>
-
+    <div className="relative h-80 w-full sm:h-96 lg:h-[30rem]">
       <SunlightLayer />
       <BokehLayer />
       <SparkleLayer />

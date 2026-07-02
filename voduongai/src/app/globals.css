@@ -1040,6 +1040,37 @@ body {
     linear-gradient(180deg, rgba(255, 253, 247, 0.86) 0%, rgba(255, 249, 238, 0.78) 45%, rgba(255, 253, 247, 0.88) 100%);
 }
 
+/* Hero photo — ảnh rừng THẬT, SẮC NÉT (không blur) trải toàn bộ khu
+ * vực hero, chữ bên trái và cây bên phải cùng nằm trên một tấm ảnh
+ * duy nhất. Lớp wash phủ nhẹ bên trên chỉ để chữ đọc được, mờ dần
+ * sang bên phải để cây hiện rõ nguyên bản, không bị làm mờ. */
+.garden-hero-photo {
+  animation: garden-hero-breathe 12s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes garden-hero-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.012); }
+}
+
+.garden-hero-wash {
+  background: linear-gradient(
+    100deg,
+    rgba(255, 253, 247, 0.96) 0%,
+    rgba(255, 253, 247, 0.92) 24%,
+    rgba(255, 253, 247, 0.62) 42%,
+    rgba(255, 253, 247, 0.18) 58%,
+    rgba(255, 253, 247, 0) 72%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-hero-photo {
+    animation: none;
+  }
+}
+
 /* Leaf Chip Layer — hình chiếc lá nhẹ, kính mờ (glassmorphism), KHÔNG
  * còn là thanh nền đặc tối che cây. Opacity thấp (~0.5) để ánh sáng và
  * chi tiết tán lá phía sau vẫn xuyên qua được — cảm giác "một chiếc lá

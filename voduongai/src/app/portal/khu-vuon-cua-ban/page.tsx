@@ -73,8 +73,24 @@ export default function KnowledgeGardenPage() {
       <div className="garden-page-bg" aria-hidden="true" />
 
       <div className="relative z-10 space-y-8 px-4 py-6 md:px-8 md:py-8">
-        {/* Hero — trái nội dung / phải cây lớn */}
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_1.7fr] lg:items-start">
+        {/* Hero — một cảnh liền mạch: ảnh rừng thật sắc nét trải toàn
+         * bộ khu vực (không blur, không khung), chữ bên trái + cây bên
+         * phải cùng nằm trên một tấm ảnh duy nhất. */}
+        <div className="relative overflow-hidden rounded-3xl">
+          <div className="garden-hero-photo absolute inset-0 -z-10" aria-hidden="true">
+            <Image
+              src="/images/garden/garden-forest-full.jpg"
+              alt="Khu rừng thật nơi cây tri thức của bạn lớn lên"
+              fill
+              sizes="100vw"
+              className="object-cover"
+              style={{ objectPosition: "62% 46%" }}
+              priority
+            />
+            <div className="garden-hero-wash absolute inset-0" />
+          </div>
+
+          <div className="grid gap-8 p-5 lg:grid-cols-[minmax(0,1fr)_1.7fr] lg:items-start lg:p-10">
           {/* LEFT */}
           <div>
             <span className="text-2xl">🌿</span>
@@ -151,6 +167,7 @@ export default function KnowledgeGardenPage() {
                 </span>
               </p>
             </div>
+          </div>
           </div>
         </div>
 
