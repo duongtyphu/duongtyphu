@@ -101,7 +101,7 @@ export default function OpportunitiesHubPage() {
       />
 
       {/* Introduction */}
-      <div className="rounded-xl border border-gray-200 bg-white/[0.02] p-6">
+      <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
         <h2 className="mb-3 text-base font-bold text-gray-900">Giới thiệu</h2>
         <p className="mb-4 text-sm leading-relaxed text-gray-600">
           VO DUONG AI không phải là nền tảng tư vấn đầu tư. Trang này tồn tại vì tôi tin vào sự minh bạch — thay vì chỉ chia sẻ thành công, tôi muốn chia sẻ đầy đủ: những gì tôi đang theo dõi, tại sao, những điều tôi chưa chắc chắn, và những bài học từ sai lầm.
@@ -119,8 +119,8 @@ export default function OpportunitiesHubPage() {
         </div>
         <div className="space-y-2">
           {CRITERIA.map((c, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400/60" />
+            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-sm">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
               <p className="text-sm text-gray-600">{c}</p>
             </div>
           ))}
@@ -132,11 +132,7 @@ export default function OpportunitiesHubPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các hệ sinh thái đang theo dõi</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ECOSYSTEMS.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className="group block rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:border-gray-200 hover:bg-white/[0.06]"
-            >
+            <Link key={item.title} href={item.href} className="gemos-gem-card block rounded-xl p-5">
               <div className="mb-4 flex items-start justify-between gap-2">
                 <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
                   <item.icon className="h-5 w-5" />
@@ -145,7 +141,7 @@ export default function OpportunitiesHubPage() {
                   {item.status}
                 </span>
               </div>
-              <h3 className={`mb-2 text-sm font-bold text-gray-900 group-hover:${item.color}`}>{item.title}</h3>
+              <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
               <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
             </Link>
           ))}
@@ -160,7 +156,7 @@ export default function OpportunitiesHubPage() {
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-gray-200 bg-white/[0.02] p-4">
+            <div key={item.q} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
               <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>
@@ -169,14 +165,14 @@ export default function OpportunitiesHubPage() {
       </div>
 
       {/* Next step */}
-      <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <div>
           <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-400">Tiếp theo bạn nên...</p>
           <p className="text-sm text-gray-600">Đọc bài viết về các chủ đề liên quan trước khi quyết định bất cứ điều gì.</p>
         </div>
         <Link
           href="/portal/news"
-          className="ml-4 shrink-0 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
+          className="ml-4 shrink-0 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
         >
           Đọc bài viết →
         </Link>

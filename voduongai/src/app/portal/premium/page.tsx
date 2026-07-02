@@ -122,14 +122,11 @@ export default async function PremiumPage() {
         <h2 className="mb-4 text-xl font-bold text-gray-900">Premium bao gồm</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PREMIUM_INCLUDES.map((item) => (
-            <div
-              key={item.title}
-              className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-50 text-2xl">
+            <div key={item.title} className="gemos-gem-card rounded-2xl p-5">
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-violet-100 text-2xl">
                 {item.emoji}
               </div>
-              <h3 className="mt-3 font-bold text-gray-900">{item.title}</h3>
+              <h3 className="gemos-card-title mt-3 font-bold text-gray-900">{item.title}</h3>
               <p className="mt-1 text-sm leading-relaxed text-gray-500">{item.description}</p>
             </div>
           ))}
@@ -141,13 +138,10 @@ export default async function PremiumPage() {
         <h2 className="mb-4 text-xl font-bold text-gray-900">Lộ trình học</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {LEARNING_PATH.map((step, i) => (
-            <div
-              key={step.title}
-              className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-            >
+            <div key={step.title} className="gemos-gem-card rounded-2xl p-5">
               <span className="text-xs font-semibold text-blue-600">Bước {i + 1}</span>
               <div className="mt-2 text-2xl">{step.emoji}</div>
-              <h3 className="mt-2 font-bold text-gray-900">{step.title}</h3>
+              <h3 className="gemos-card-title mt-2 font-bold text-gray-900">{step.title}</h3>
               <p className="mt-1 text-sm leading-relaxed text-gray-500">{step.description}</p>
             </div>
           ))}
@@ -193,7 +187,7 @@ export default async function PremiumPage() {
                       <GemBadge tone="premium">{`${p.price.toLocaleString("vi-VN")}đ`}</GemBadge>
                     )}
                   </div>
-                  <h3 className="mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
+                  <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
                   {p.description && <p className="mt-2 text-sm text-gray-600">{p.description}</p>}
                   {owned ? (
                     <div className="mt-4 flex flex-wrap gap-3">
@@ -242,7 +236,7 @@ export default async function PremiumPage() {
           {premiumProducts.map((p) => (
             <GemCard key={p.id} variant="locked">
               <GemBadge tone="locked">{p.type}</GemBadge>
-              <h3 className="mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
+              <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
               <p className="mt-2 text-sm text-gray-600">{p.description}</p>
               <GemLockedOverlay />
             </GemCard>
@@ -256,7 +250,7 @@ export default async function PremiumPage() {
         <div className="space-y-3">
           {PREMIUM_FAQ.map((item) => (
             <div key={item.q} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <h3 className="font-bold text-gray-900">{item.q}</h3>
+              <h3 className="gemos-card-title font-bold text-gray-900">{item.q}</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">{item.a}</p>
             </div>
           ))}

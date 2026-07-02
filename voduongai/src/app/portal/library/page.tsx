@@ -98,11 +98,11 @@ export default function KnowledgeLibraryPage() {
       />
 
       {/* Search hint */}
-      <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white/[0.02] px-4 py-3">
+      <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
         <Search className="h-4 w-4 shrink-0 text-gray-400" />
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-500">
           Tìm kiếm tài nguyên cụ thể qua{" "}
-          <Link href="/portal" className="text-gray-600 underline underline-offset-2 hover:text-gray-900">
+          <Link href="/portal" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
             thanh tìm kiếm Portal
           </Link>
         </p>
@@ -113,15 +113,11 @@ export default function KnowledgeLibraryPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Danh mục tài nguyên</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className="group rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:border-gray-200 hover:bg-white/[0.06]"
-            >
+            <Link key={item.title} href={item.href} className="gemos-gem-card block rounded-xl p-5">
               <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color} mb-4`}>
                 <item.icon className="h-5 w-5" />
               </div>
-              <h3 className={`mb-2 text-sm font-bold text-gray-900 group-hover:${item.color}`}>{item.title}</h3>
+              <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
               <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
             </Link>
           ))}
@@ -129,14 +125,14 @@ export default function KnowledgeLibraryPage() {
       </div>
 
       {/* Featured resources link */}
-      <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-white/[0.02] p-5">
+      <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <div>
           <p className="text-sm font-bold text-gray-900">Mới cập nhật</p>
           <p className="mt-1 text-xs text-gray-500">Tài nguyên được thêm gần đây nhất</p>
         </div>
         <Link
           href="/portal/resources"
-          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
+          className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
         >
           Xem tất cả →
         </Link>

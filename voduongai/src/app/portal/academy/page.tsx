@@ -93,16 +93,16 @@ export default function AcademyHubPage() {
             <Link
               key={item.step}
               href={item.href}
-              className="group flex items-center gap-4 rounded-xl border border-gray-200 bg-white/[0.02] p-4 transition hover:border-gray-200 hover:bg-white/[0.05]"
+              className="gemos-gem-card group flex items-center gap-4 rounded-xl p-4"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-50 text-xs font-bold text-gray-400">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">
                 {item.step}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-gray-900">{item.label}</p>
+                <p className="gemos-card-title text-sm font-bold text-gray-900">{item.label}</p>
                 <p className="text-xs text-gray-500">{item.description}</p>
               </div>
-              <ArrowRight className="h-4 w-4 shrink-0 text-gray-300 transition group-hover:text-gray-500" />
+              <ArrowRight className="h-4 w-4 shrink-0 text-gray-300 transition group-hover:text-blue-500" />
             </Link>
           ))}
         </div>
@@ -113,29 +113,27 @@ export default function AcademyHubPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Chương trình học</p>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TRACKS.map((t) => (
-            <Link key={t.href} href={t.href} className="group block">
-              <div className="h-full rounded-xl border border-gray-200 bg-gray-50 p-5 transition hover:border-gray-200 hover:bg-white/[0.06]">
-                <div className="mb-4 flex items-start justify-between gap-2">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${t.bg} ${t.color}`}>
-                    <t.icon className="h-5 w-5" />
-                  </div>
-                  {t.tag && (
-                    <span className="rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange">
-                      {t.tag}
-                    </span>
-                  )}
+            <Link key={t.href} href={t.href} className="gemos-gem-card block rounded-xl p-5">
+              <div className="mb-4 flex items-start justify-between gap-2">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-full ${t.bg} ${t.color}`}>
+                  <t.icon className="h-5 w-5" />
                 </div>
-                <h3 className={`mb-2 text-sm font-bold text-gray-900 group-hover:${t.color}`}>{t.title}</h3>
-                <p className="mb-4 text-xs leading-relaxed text-gray-500">{t.description}</p>
-                <ul className="space-y-1">
-                  {t.outcomes.map((o) => (
-                    <li key={o} className="flex items-center gap-2 text-xs text-gray-400">
-                      <span className="h-1 w-1 shrink-0 rounded-full bg-white/20" />
-                      {o}
-                    </li>
-                  ))}
-                </ul>
+                {t.tag && (
+                  <span className="rounded-full bg-brand-orange/10 px-2 py-0.5 text-[10px] font-bold text-brand-orange">
+                    {t.tag}
+                  </span>
+                )}
               </div>
+              <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{t.title}</h3>
+              <p className="mb-4 text-xs leading-relaxed text-gray-500">{t.description}</p>
+              <ul className="space-y-1">
+                {t.outcomes.map((o) => (
+                  <li key={o} className="flex items-center gap-2 text-xs text-gray-400">
+                    <span className="h-1 w-1 shrink-0 rounded-full bg-gray-300" />
+                    {o}
+                  </li>
+                ))}
+              </ul>
             </Link>
           ))}
         </div>
@@ -149,7 +147,7 @@ export default function AcademyHubPage() {
         </p>
         <Link
           href="/portal/community"
-          className="inline-block rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
+          className="inline-block rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
         >
           Kết nối cộng đồng →
         </Link>
@@ -163,7 +161,7 @@ export default function AcademyHubPage() {
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-gray-200 bg-white/[0.02] p-4">
+            <div key={item.q} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
               <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>

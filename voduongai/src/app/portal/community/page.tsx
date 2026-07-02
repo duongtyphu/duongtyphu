@@ -121,14 +121,14 @@ export default function CommunityPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các kênh cộng đồng</p>
         <div className="space-y-4">
           {COMMUNITIES.map((c) => (
-            <div key={c.title} className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+            <div key={c.title} className="gemos-gem-card rounded-xl p-5">
               <div className="mb-4 flex items-start gap-4">
                 <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
                   <c.icon className="h-6 w-6" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">{c.platform}</p>
-                  <h3 className="mt-0.5 text-sm font-bold text-gray-900">{c.title}</h3>
+                  <h3 className="gemos-card-title mt-0.5 text-sm font-bold text-gray-900">{c.title}</h3>
                 </div>
               </div>
               <p className="mb-3 text-sm leading-relaxed text-gray-600">{c.description}</p>
@@ -159,7 +159,7 @@ export default function CommunityPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Nội quy cộng đồng</p>
         <div className="space-y-2">
           {RULES.map((rule, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-sm">
               <span className="mt-0.5 text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
               <p className="text-sm text-gray-600">{rule}</p>
             </div>
@@ -175,7 +175,7 @@ export default function CommunityPage() {
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-gray-200 bg-white/[0.02] p-4">
+            <div key={item.q} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
               <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>

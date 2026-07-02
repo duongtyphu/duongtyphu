@@ -102,7 +102,7 @@ export default function LearningJournalPage() {
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white/[0.02] p-12 text-center text-sm text-gray-400">
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center text-sm text-gray-400">
             Chưa có bài viết trong danh mục này.
           </div>
         ) : (
@@ -115,19 +115,19 @@ export default function LearningJournalPage() {
       </div>
 
       {/* Next step */}
-      <div className="rounded-xl border border-gray-200 bg-white/[0.02] p-5">
+      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
         <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-400">Tiếp theo bạn nên...</p>
         <p className="mb-4 text-sm text-gray-600">Áp dụng những gì đọc được vào thực tế — bắt đầu từ một công cụ AI phù hợp với chủ đề bạn vừa đọc.</p>
         <div className="flex flex-wrap gap-3">
           <Link
             href="/portal/tools"
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
           >
             Xem công cụ AI →
           </Link>
           <Link
             href="/portal/library"
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
           >
             Tải tài nguyên →
           </Link>
@@ -142,11 +142,7 @@ function ArticleCard({ post, featured = false }: { post: AdminBlogPost; featured
   return (
     <Link
       href={href}
-      className={`group block rounded-2xl border p-5 transition ${
-        featured
-          ? "border-brand-violet/30 bg-brand-violet/5 hover:border-brand-violet/50"
-          : "border-gray-200 bg-gray-50 hover:border-gray-200 hover:bg-white/[0.06]"
-      }`}
+      className={`gemos-gem-card block rounded-2xl p-5 ${featured ? "border-violet-200 bg-violet-50/40" : ""}`}
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <span className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
@@ -164,7 +160,7 @@ function ArticleCard({ post, featured = false }: { post: AdminBlogPost; featured
           </span>
         )}
       </div>
-      <h3 className="mb-2 text-sm font-bold leading-snug text-gray-900 group-hover:text-brand-blue">
+      <h3 className="gemos-card-title mb-2 text-sm font-bold leading-snug text-gray-900">
         {post.title}
       </h3>
       <p className="line-clamp-2 text-xs leading-relaxed text-gray-500">{post.excerpt}</p>
