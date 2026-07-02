@@ -254,7 +254,7 @@ export default function KhongGianAiPage() {
   const hasResults = filteredNeeds.length > 0 || filteredTools.length > 0 || filteredArticles.length > 0;
 
   return (
-    <div className="rounded-3xl bg-[#F6F7F9] p-6 md:p-8 space-y-10">
+    <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
         <Link href="/portal" className="hover:text-gray-700 transition">

@@ -103,7 +103,7 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
   const relatedPrompts = AI_PROMPTS.filter((p) => p.toolSlug === tool.slug).slice(0, 3);
 
   return (
-    <div className="rounded-3xl bg-[#F6F7F9] p-6 md:p-8 space-y-10">
+    <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -304,7 +304,7 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
   const prompts = AI_PROMPTS.filter((p) => p.needSlug === category.slug);
 
   return (
-    <div className="rounded-3xl bg-[#F6F7F9] p-6 md:p-8 space-y-10">
+    <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -472,7 +472,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
   const tools = AI_TOOLS.filter((t) => profession.recommendedToolSlugs.includes(t.slug));
 
   return (
-    <div className="rounded-3xl bg-[#F6F7F9] p-6 md:p-8 space-y-10">
+    <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -736,7 +736,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
 
 function NotFoundPage({ slug }: { slug: string }) {
   return (
-    <div className="rounded-3xl bg-[#F6F7F9] p-6 md:p-8">
+    <div className="rounded-3xl p-6 md:p-8">
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
