@@ -35,7 +35,7 @@ export function Mission30DayCard({
           <span
             key={d.day}
             title={`Ngày ${d.day}`}
-            className={`flex aspect-square items-center justify-center rounded-md text-[10px] font-bold ${DOT_STYLE[d.status]}`}
+            className={`mission-day-dot flex aspect-square cursor-default items-center justify-center rounded-md text-[10px] font-bold transition-transform duration-150 ease-out hover:-translate-y-1 hover:scale-110 hover:shadow-md ${DOT_STYLE[d.status]}`}
           >
             {d.day}
           </span>
