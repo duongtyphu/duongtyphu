@@ -45,16 +45,13 @@ export function LeafChipLayer() {
         return (
           <div
             key={leaf.id}
-            className="garden-leaf-chip-photo group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-0.5 px-2 text-center"
+            className="garden-leaf-chip-photo group absolute z-10 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-0.5 px-1.5 text-center"
             style={pos}
-            title={leaf.tooltip}
+            title={`${leaf.tooltip} — ${leaf.time}`}
           >
-            <Icon className="h-4 w-4 text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.65)]" strokeWidth={1.9} />
-            <span className="text-[11px] font-bold leading-tight text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.65)]">
+            <Icon className="h-3.5 w-3.5 text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.7)]" strokeWidth={2} />
+            <span className="text-[8px] font-bold leading-tight text-white drop-shadow-[0_1px_3px_rgba(21,62,33,0.7)]">
               {leaf.label}
-            </span>
-            <span className="text-[9px] font-medium text-white/80 drop-shadow-[0_1px_2px_rgba(21,62,33,0.6)]">
-              {leaf.time}
             </span>
           </div>
         );

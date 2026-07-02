@@ -895,18 +895,16 @@ body {
  * tấm ảnh nằm trong khung. */
 .garden-scene {
   position: relative;
-  -webkit-mask-image: radial-gradient(
-    92% 88% at 50% 42%,
-    black 58%,
-    rgba(0, 0, 0, 0.75) 78%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    92% 88% at 50% 42%,
-    black 58%,
-    rgba(0, 0, 0, 0.75) 78%,
-    transparent 100%
-  );
+  -webkit-mask-image:
+    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
+    radial-gradient(90% 85% at 50% 42%, black 40%, rgba(0, 0, 0, 0.55) 66%, rgba(0, 0, 0, 0.1) 88%, transparent 100%);
+  -webkit-mask-composite: source-in, source-in;
+  mask-image:
+    linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+    linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%),
+    radial-gradient(90% 85% at 50% 42%, black 40%, rgba(0, 0, 0, 0.55) 66%, rgba(0, 0, 0, 0.1) 88%, transparent 100%);
+  mask-composite: intersect, intersect;
 }
 
 .garden-sunray {
@@ -1022,19 +1020,19 @@ body {
  * chi tiết tán lá phía sau vẫn xuyên qua được — cảm giác "một chiếc lá
  * phát sáng đậu trên cành", không phải "nhãn dán che ảnh". */
 .garden-leaf-chip-photo {
-  width: 88px;
-  height: 100px;
-  background: linear-gradient(160deg, rgba(94, 201, 130, 0.72), rgba(52, 130, 82, 0.8));
+  width: 60px;
+  height: 68px;
+  background: linear-gradient(160deg, rgba(110, 224, 148, 0.8), rgba(46, 125, 78, 0.86));
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   /* Hình lá thật: mũi lá nhọn phía trên, bụng lá phình hai bên, thu
    * nhỏ lại thành cuống ở đáy — thay cho hình viên/pill trước đây. */
   clip-path: path(
-    "M44 2C63 14 82 34 84 56C86 79 68 98 44 98C20 98 2 79 4 56C6 34 25 14 44 2Z"
+    "M30 1C43 10 56 23 57 38C58 54 46 66 30 66C14 66 2 54 3 38C4 23 17 10 30 1Z"
   );
   box-shadow:
-    0 4px 12px -6px rgba(21, 62, 33, 0.28),
-    0 0 14px 1px rgba(134, 239, 172, 0.3);
+    0 3px 8px -5px rgba(21, 62, 33, 0.3),
+    0 0 16px 3px rgba(134, 239, 172, 0.55);
   animation: garden-leaf-sway 6s ease-in-out infinite;
   transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
@@ -1055,10 +1053,10 @@ body {
 .garden-leaf-chip-photo:hover {
   animation-play-state: paused;
   transform: translate(-50%, -50%) translateY(-5px) scale(1.06);
-  background: linear-gradient(160deg, rgba(94, 201, 130, 0.86), rgba(52, 130, 82, 0.92));
+  background: linear-gradient(160deg, rgba(110, 224, 148, 0.94), rgba(46, 125, 78, 0.98));
   box-shadow:
-    0 10px 18px -6px rgba(21, 62, 33, 0.34),
-    0 0 20px 2px rgba(134, 239, 172, 0.42);
+    0 8px 16px -6px rgba(21, 62, 33, 0.36),
+    0 0 24px 4px rgba(134, 239, 172, 0.7);
 }
 
 /* Just-bloomed — hiệu ứng ngắn khi một chiếc lá mới vừa xuất hiện:
