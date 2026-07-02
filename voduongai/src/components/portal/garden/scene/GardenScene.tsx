@@ -24,7 +24,7 @@ import { GARDEN_TREE_CAPTION } from "@/data/portal/knowledge-garden";
  */
 export function GardenScene() {
   return (
-    <div className="relative h-80 w-full sm:h-96 lg:h-[30rem]">
+    <div className="relative h-80 w-full sm:h-[26rem] lg:h-[34rem]">
       <SunlightLayer />
       <BokehLayer />
       <SparkleLayer />

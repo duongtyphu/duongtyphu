@@ -1071,6 +1071,14 @@ body {
   }
 }
 
+/* Ảnh minh hoạ nhỏ trong card "Chăm sóc khu vườn" — bo tròn và tan
+ * dần ra mép (feather) thay vì khung chữ nhật cứng, để hoà vào card
+ * trong suốt thay vì trông như một tấm ảnh dán riêng. */
+.garden-care-visual-fade {
+  -webkit-mask-image: radial-gradient(circle at center, black 55%, transparent 82%);
+  mask-image: radial-gradient(circle at center, black 55%, transparent 82%);
+}
+
 /* Leaf Chip Layer — hình chiếc lá nhẹ, kính mờ (glassmorphism), KHÔNG
  * còn là thanh nền đặc tối che cây. Opacity thấp (~0.5) để ánh sáng và
  * chi tiết tán lá phía sau vẫn xuyên qua được — cảm giác "một chiếc lá
@@ -1078,9 +1086,9 @@ body {
 .garden-leaf-chip-photo {
   width: 88px;
   height: 100px;
-  background: linear-gradient(160deg, rgba(134, 239, 172, 0.34), rgba(74, 155, 96, 0.4));
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  background: linear-gradient(160deg, rgba(94, 201, 130, 0.72), rgba(52, 130, 82, 0.8));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   /* Hình lá thật: mũi lá nhọn phía trên, bụng lá phình hai bên, thu
    * nhỏ lại thành cuống ở đáy — thay cho hình viên/pill trước đây. */
   clip-path: path(
@@ -1109,7 +1117,7 @@ body {
 .garden-leaf-chip-photo:hover {
   animation-play-state: paused;
   transform: translate(-50%, -50%) translateY(-5px) scale(1.06);
-  background: linear-gradient(160deg, rgba(134, 239, 172, 0.5), rgba(74, 155, 96, 0.54));
+  background: linear-gradient(160deg, rgba(94, 201, 130, 0.86), rgba(52, 130, 82, 0.92));
   box-shadow:
     0 10px 18px -6px rgba(21, 62, 33, 0.34),
     0 0 20px 2px rgba(134, 239, 172, 0.42);

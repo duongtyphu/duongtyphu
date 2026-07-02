@@ -222,12 +222,12 @@ export default function KnowledgeGardenPage() {
                 </div>
               ))}
             </div>
-            <div className="pointer-events-none absolute bottom-3 right-3 h-24 w-20 overflow-hidden rounded-xl opacity-90 sm:h-28 sm:w-24">
+            <div className="garden-care-visual-fade pointer-events-none absolute bottom-3 right-3 h-28 w-28 sm:h-32 sm:w-32">
               <Image
                 src="/images/garden/garden-care-visual.jpg"
                 alt=""
                 fill
-                sizes="120px"
+                sizes="130px"
                 className="object-cover"
               />
             </div>
