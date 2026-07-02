@@ -3,7 +3,12 @@
 /**
  * Living Core™ — biểu tượng sống của Companion.
  *
- * ⚠️ DESIGN LOCK v1.0 — xem design-system/visual-dna/companion/LIVING-CORE-001.md
+ * 🔒 DESIGN LOCK v1.2 — FINAL, Founder đã duyệt ("Ok mình duyệt phiên
+ * bản này. Hãy khoá bản thiết kế này lại. Không thay đổi nữa."). Xem
+ * design-system/visual-dna/companion/LIVING-CORE-001.md — KHÔNG tự ý
+ * sửa thêm màu/hình dạng/opacity/geometry ở file này nữa, kể cả những
+ * thay đổi tưởng như nhỏ. Nếu có yêu cầu mới, phải xác nhận lại với
+ * Founder xem có phải đang chủ động mở khoá bản duyệt hay không.
  * Founder: "Hãy coi hình Companion này giống như Logo Apple. Không ai
  * được quyền thiết kế lại logo. Bạn chỉ được quyền dựng lại bằng SVG.
  * Không thay đổi ngôn ngữ thiết kế." — file PNG gốc là Visual Truth

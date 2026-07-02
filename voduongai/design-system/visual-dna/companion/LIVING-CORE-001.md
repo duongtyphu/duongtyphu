@@ -1,12 +1,25 @@
 # LIVING CORE-001
 
 - **Name:** Companion Living Core™
-- **Version:** v1.0 — Official Companion Visual Design (thay thế bản nháp trước;
-  Founder xác nhận đây là bản chính thức được đánh số version).
-- **Status:** Approved — **DESIGN LOCK**
+- **Version:** v1.2 — **FINAL, Founder đã duyệt ("Ok mình duyệt phiên bản
+  này. Hãy khoá bản thiết kế này lại. Không thay đổi nữa.")**
+- **Status:** 🔒 **LOCKED — KHÔNG ĐƯỢC SỬA THÊM** (trừ khi Founder tự
+  yêu cầu mở khoá lại bằng văn bản rõ ràng)
 - **Founder Approved:** Yes
-- **File:** `LIVING-CORE-001.png` (đã ghi đè theo ảnh v1.0 Founder gửi)
+- **File:** `LIVING-CORE-001.png` (ảnh gốc v1.0) +
+  `LIVING-CORE-001-approved-final.png` (screenshot render thật của
+  bản v1.2 tại thời điểm duyệt — dùng để đối chiếu pixel khi cần review
+  lại sau này)
 - **Applies to:** `src/components/LivingCore.tsx`
+
+## 🔒 KHOÁ THIẾT KẾ — đọc trước khi mở PR/sửa bất kỳ dòng nào
+
+Bản v1.2 (opacity/màu ở mục "Giá trị hình học/màu cuối cùng" bên dưới)
+là bản Founder đã xem trực tiếp và duyệt. **Không tự ý điều chỉnh thêm**
+— kể cả những thay đổi tưởng như nhỏ/hợp lý (màu, opacity, kích thước
+orbit, tốc độ animation...). Nếu có yêu cầu mới liên quan đến
+Companion Living Core, phải hỏi lại Founder xem có phải đang mở khoá
+bản duyệt này hay không trước khi sửa.
 
 ## Rule — đọc trước khi chạm vào component này
 
@@ -87,6 +100,32 @@ phải ảnh tham khảo để lấy cảm hứng. Điều đó có nghĩa:
   không rối mắt ở size nhỏ. Đã purge từ "hành tinh"/"khối cầu" khỏi
   toàn bộ comment trong `LivingCore.tsx`, `globals.css`, và script
   export SVG.
+- **v1.2 — độ đậm màu (FINAL, đã duyệt)**: Founder yêu cầu màu đậm/rõ
+  hơn qua 2 vòng phản hồi. (1) Phát hiện `mix-blend-mode: screen` trên
+  layer body rửa trôi màu xanh thành nhạt khi cộng dồn với nền trắng
+  — đã bỏ blend mode này khỏi body (giữ lại ở aura). (2) Vành ngoài
+  cùng bị fade sớm (opacity 0.55 từ 76%) — đã đẩy mốc đậm ra xa hơn
+  (giữ opacity cao tới 90%) và đổi màu dải ngoài sang xanh đậm hơn
+  (`#3B5BFF` → `#2F4CE0`), chỉ fade mềm thật trong 10% cuối sát rìa.
+  **Founder đã xem bản này trực tiếp và duyệt — đây là bản KHOÁ CUỐI
+  CÙNG.**
+
+## Giá trị hình học/màu cuối cùng (KHOÁ — copy nguyên trạng, không suy diễn lại)
+
+Tham chiếu trực tiếp từ `src/components/LivingCore.tsx` tại thời điểm
+duyệt (commit sau "fix(companion): lớp xanh ngoài cùng..."):
+
+- **Energy Core (body)**: `<circle r="36">`, gradient tâm lệch
+  `cx=47% cy=46%`, dải màu: trắng (0%) → `#BFEAFF` (14%) → `#38D5FF`
+  (28%, opacity 1) → `#4F7DFF` (48%, opacity 1) → `#3B5BFF` (70%,
+  opacity 0.95) → `#2F4CE0` (90%, opacity 0.9) → `#2F4CE0` (100%,
+  opacity 0). KHÔNG có `mix-blend-mode` trên layer này.
+- **Aura**: `<circle r="41">`, giữ `mix-blend-mode: screen`.
+- **Lõi trắng**: `core-glow` r=18, `core` r=7.5, tâm `(48, 49)`.
+- **Orbit Ring 1**: `rx=52 ry=43`, stroke trắng opacity 0.95, width 1.3.
+- **Orbit Ring 2**: `rx=47 ry=39`, stroke `#38D5FF` opacity 0.9, width 1.1.
+- **Orbit Ring 3**: `rx=57 ry=47`, stroke `#8B7DFF` opacity 0.8, width 0.9.
+- Screenshot render thật: `LIVING-CORE-001-approved-final.png`.
 
 ## Trạng thái triển khai
 
