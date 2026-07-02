@@ -4,7 +4,7 @@
 - **Status:** Approved — **DESIGN LOCK**
 - **Founder Approved:** Yes
 - **File:** `LIVING-CORE-001.png`
-- **Applies to:** `src/components/portal/companion/LivingCore.tsx`
+- **Applies to:** `src/components/LivingCore.tsx`
 
 ## Rule — đọc trước khi chạm vào component này
 
@@ -45,7 +45,7 @@ phải ảnh tham khảo để lấy cảm hứng. Điều đó có nghĩa:
 
 ## Trạng thái triển khai
 
-Component: `src/components/portal/companion/LivingCore.tsx` +
+Component: `src/components/LivingCore.tsx` +
 `.living-core*` trong `src/app/globals.css`. Xem chi tiết ở
-`src/components/portal/companion/LivingCore.tsx` (docstring đầu file
+`src/components/LivingCore.tsx` (docstring đầu file
 ghi rõ rule này).

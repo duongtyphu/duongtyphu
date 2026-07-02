@@ -8,7 +8,7 @@ Reference và asset riêng cho **The Sanctuary of Companion** (`/portal/companio
 
 - **`LIVING-CORE-001.png` / `LIVING-CORE-001.md`** — Companion Living Core™,
   **Design Lock** (đối xử như logo, xem rule trong file `.md`). Component:
-  `src/components/portal/companion/LivingCore.tsx`. KHÔNG redesign — chỉ được
+  `src/components/LivingCore.tsx`. KHÔNG redesign — chỉ được
   dựng lại bằng SVG + CSS, giữ nguyên tỷ lệ/hình dạng/màu sắc/số lượng quỹ đạo.
 
 Design Spec riêng cho phần còn lại của Companion (`COMPANION_DESIGN_SPEC.md`)

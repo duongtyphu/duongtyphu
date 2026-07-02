@@ -2,7 +2,7 @@
 /**
  * Xuất Living Core™ thành các file SVG tĩnh (đứng độc lập, không cần
  * React) cho assets/companion/. Hình học/gradient/animation ở đây PHẢI
- * khớp với src/components/portal/companion/LivingCore.tsx — đây là
+ * khớp với src/components/LivingCore.tsx — đây là
  * cùng một Design Lock (design-system/visual-dna/companion/
  * LIVING-CORE-001.md), chỉ xuất ra dạng file tĩnh để dùng ở nơi không
  * chạy được React (favicon, chia sẻ, preview, <img src>, ...).

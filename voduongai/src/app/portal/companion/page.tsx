@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Sprout, Leaf, Sparkles, Infinity as InfinityIcon } from "lucide-react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
-import { LivingCore, type LivingCoreState } from "@/components/portal/companion/LivingCore";
+import { LivingCore, type LivingCoreState } from "@/components/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 
 // ─────────────────────────────────────────────
