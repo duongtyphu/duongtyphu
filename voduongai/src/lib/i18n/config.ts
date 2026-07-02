@@ -30,7 +30,6 @@ export function isSupportedLocale(raw: string): raw is SupportedLocale {
   return (SUPPORTED_LOCALES as readonly string[]).includes(raw);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 /** Đọc locale đã lưu từ localStorage. Trả về null nếu chưa có hoặc không hợp lệ. */
 export function getStoredLocale(): SupportedLocale | null {
   if (typeof window === "undefined") return null;

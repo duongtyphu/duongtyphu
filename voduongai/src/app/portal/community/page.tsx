@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Users, MessageCircle, PlayCircle, HelpCircle, ArrowRight, Sparkles } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";

@@ -33,8 +33,6 @@ export default function LearningJournalPage() {
       ? published
       : published.filter((p) => p.category === activeCategory);
 
-  const recent = published.slice(0, 6);
-
   return (
     <div className="space-y-10">
       {/* Hero */}

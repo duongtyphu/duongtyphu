@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Search, ChevronRight, Sparkles, BookOpen, Zap, ArrowRight } from "lucide-react";
+import { Search, ChevronRight, BookOpen, Zap, ArrowRight } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import {
   type AiNeedCategory,
