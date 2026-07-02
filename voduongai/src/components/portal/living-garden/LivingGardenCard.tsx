@@ -29,7 +29,7 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
 
   return (
     <div
-      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-gray-200 bg-black/20 ${
+      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-100 ${
         compact ? "h-24" : "h-36 sm:h-44"
       }`}
       aria-hidden="true"
@@ -37,7 +37,7 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
       <div className="living-garden-glow absolute inset-0" style={{ "--garden-glow-intensity": intensity } as React.CSSProperties} />
 
       <div className="relative flex h-full w-full items-end justify-center pb-3">
-        <div className="living-garden-stem relative h-[70%] w-px bg-gradient-to-t from-[#22D3EE]/70 via-[#7C3AED]/50 to-transparent">
+        <div className="living-garden-stem relative h-[70%] w-px bg-gradient-to-t from-[#2563EB]/70 via-[#7C3AED]/50 to-transparent">
           {Array.from({ length: nodeCount }).map((_, i) => {
             const offsetBottom = 14 + i * (60 / nodeCount);
             const side = i % 2 === 0 ? 1 : -1;
@@ -57,7 +57,7 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
             );
           })}
         </div>
-        <span className="living-garden-seed absolute bottom-0 h-2.5 w-2.5 rounded-full bg-gradient-to-br from-amber-300 to-amber-500" />
+        <span className="living-garden-seed absolute bottom-0 h-2.5 w-2.5 rounded-full bg-gradient-to-br from-blue-400 to-violet-500" />
       </div>
     </div>
   );
@@ -78,13 +78,13 @@ export function LivingGardenCard({
     return (
       <GemCard className={`relative ${className}`}>
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-amber-300" />
-          <h2 className="text-sm font-bold text-gray-900">Khu vườn của bạn</h2>
+          <Sparkles className="h-4 w-4 text-orange-400" />
+          <h2 className="gemos-card-title text-sm font-bold text-violet-700">Khu vườn của bạn</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-gray-700">
           Khu vườn của bạn đang chờ hạt giống đầu tiên.
         </p>
-        <p className="mt-1 text-xs text-gray-900/45">
+        <p className="mt-1 text-xs text-blue-600/70">
           Mỗi hành động nhỏ hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -103,16 +103,16 @@ export function LivingGardenCard({
   return (
     <GemCard className={`relative ${className}`}>
       <div className="flex items-center gap-2">
-        <Sparkles className="h-4 w-4 text-amber-300" />
-        <h2 className="text-sm font-bold text-gray-900">Khu vườn của bạn</h2>
+        <Sparkles className="h-4 w-4 text-orange-400" />
+        <h2 className="gemos-card-title text-sm font-bold text-violet-700">Khu vườn của bạn</h2>
       </div>
 
-      <p className="mt-2 text-sm leading-relaxed text-gray-900/85">
+      <p className="mt-2 text-sm leading-relaxed text-gray-700">
         Khu vườn của bạn đang lớn lên từ những bước nhỏ.
       </p>
       {!compact && (
         <>
-          <p className="mt-1 text-xs text-gray-900/45">
+          <p className="mt-1 text-xs text-blue-600/70">
             Mỗi hành động hôm nay là một hạt giống cho phiên bản tốt hơn của bạn ngày mai.
           </p>
           <p className="mt-1 text-xs italic text-gray-400">
@@ -125,7 +125,7 @@ export function LivingGardenCard({
         <GardenVisual intensity={Math.max(...garden.elements.map((e) => e.intensity))} compact={compact} />
       </div>
 
-      <p className="mt-3 text-sm font-semibold text-gray-900/85">{garden.headline}</p>
+      <p className="mt-3 text-sm font-semibold text-blue-700">{garden.headline}</p>
 
       {!compact && (
         <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs text-gray-500 sm:grid-cols-1">
@@ -133,7 +133,7 @@ export function LivingGardenCard({
             const el = garden.elements.find((e) => e.key === key)!;
             return (
               <li key={key} className="flex items-baseline gap-1.5">
-                <span className="font-semibold text-gray-600">{el.label}</span>
+                <span className="font-semibold text-violet-600">{el.label}</span>
                 <span className="text-gray-400">·</span>
                 <span>{el.meaning}</span>
               </li>

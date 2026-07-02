@@ -18,18 +18,17 @@ type ResourceCardProps = {
  * placeholder/fake metadata.
  */
 export function ResourceCard({ title, description, type, href, external, meta, icon, action }: ResourceCardProps) {
-  const className =
-    "card-shine flex h-full flex-col rounded-2xl border border-gray-200 bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30";
+  const className = "gemos-gem-card flex h-full flex-col rounded-2xl p-5";
 
   const content = (
     <>
       {icon && <span className="text-2xl">{icon}</span>}
       {type && (
-        <span className="inline-flex w-fit rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
+        <span className="inline-flex w-fit rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600">
           {type}
         </span>
       )}
-      <h3 className="mt-3 text-sm font-bold text-gray-900">{title}</h3>
+      <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{title}</h3>
       {description && <p className="mt-2 line-clamp-3 text-sm text-gray-600">{description}</p>}
       {meta && <p className="mt-2 text-xs text-gray-400">{meta}</p>}
       {action && <div className="mt-3">{action}</div>}

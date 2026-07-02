@@ -56,7 +56,7 @@ export function CourseCard({ title, description, href, level, lessonsCount, prog
         )}
         {level && <span className="text-[10px] font-semibold text-gray-400">{level}</span>}
       </div>
-      <h3 className="mt-3 text-sm font-bold text-gray-900">{title}</h3>
+      <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{title}</h3>
       {description && <p className="mt-1.5 text-xs text-gray-500">{description}</p>}
       {typeof lessonsCount === "number" && (
         <p className="mt-2 text-xs text-gray-400">{lessonsCount} bài học</p>
@@ -77,9 +77,7 @@ export function CourseCard({ title, description, href, level, lessonsCount, prog
     </>
   );
 
-  const className = `card-shine flex h-full flex-col rounded-[20px] border border-gray-200 bg-white/[0.04] p-4 transition ${
-    isLocked ? "opacity-60" : "hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
-  }`;
+  const className = `gemos-gem-card flex h-full flex-col rounded-[20px] p-4 ${isLocked ? "opacity-60" : ""}`;
 
   if (isLocked) {
     return <div className={className}>{body}</div>;

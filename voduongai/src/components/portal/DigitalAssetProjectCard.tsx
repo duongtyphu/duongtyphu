@@ -22,14 +22,14 @@ export function DigitalAssetProjectCard({ project }: { project: DigitalAssetProj
   const primaryLink = [...activeLinks].sort((a, b) => a.order - b.order)[0];
 
   return (
-    <div className="card-shine flex flex-col rounded-2xl border border-gray-200 bg-white/[0.04] p-5 transition hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/30">
+    <div className="gemos-gem-card flex flex-col rounded-2xl p-5">
       <div className="flex items-center justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 text-lg">{project.logo}</div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-violet-100 text-lg">{project.logo}</div>
         <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${BADGE_TONE[project.badge]}`}>
           {project.badge}
         </span>
       </div>
-      <h3 className="mt-3 text-sm font-bold text-gray-900">{project.name}</h3>
+      <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{project.name}</h3>
       <p className="mt-0.5 text-xs text-gray-400">{category?.name}</p>
       <p className="mt-2 line-clamp-3 text-sm text-gray-600">{project.shortDescription}</p>
       <p className="mt-3 text-[11px] text-gray-400">{linkCount} link liên quan</p>

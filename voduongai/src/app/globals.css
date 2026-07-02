@@ -195,21 +195,16 @@ body {
 
 /* ===== GemOS Design System — glass surfaces ===== */
 
-.gemos-glass-card {
-  position: relative;
-  border-radius: 24px;
-  background: #ffffff;
-  border: 1px solid #E2E8F0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-}
+/*
+ * ===== Portal standard hover system (áp dụng cho TOÀN BỘ card trong Portal) =====
+ * Hiệu ứng 1 — Nhô lên (lift): translateY(-4px đến -6px) + shadow tăng nhẹ + border sáng hơn.
+ * Hiệu ứng 2 — Đổi màu tiêu đề khi hover: title chuyển sang brand-blue.
+ * Cách dùng: đặt `.gemos-gem-card` (hoặc `.gemos-glass-card`) trên card wrapper,
+ * đặt `.gemos-card-title` trên phần tử tiêu đề bên trong — không cần class `group`
+ * của Tailwind vì hiệu ứng dùng CSS descendant selector thuần.
+ */
 
-.gemos-glass-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.15);
-  border-color: #CBD5E1;
-}
-
+.gemos-glass-card,
 .gemos-gem-card {
   position: relative;
   border-radius: 24px;
@@ -219,10 +214,20 @@ body {
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
+.gemos-glass-card:hover,
 .gemos-gem-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-5px);
   border-color: #CBD5E1;
-  box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.18);
+  box-shadow: 0 12px 28px -10px rgba(37, 99, 235, 0.2);
+}
+
+.gemos-card-title {
+  transition: color 0.2s ease;
+}
+
+.gemos-glass-card:hover .gemos-card-title,
+.gemos-gem-card:hover .gemos-card-title {
+  color: var(--color-brand-blue, #2563eb);
 }
 
 .gemos-btn-primary {
@@ -730,8 +735,8 @@ body {
 .living-garden-glow {
   background: radial-gradient(
     circle at 50% 85%,
-    rgba(34, 211, 238, calc(0.18 * var(--garden-glow-intensity, 0.4))),
-    rgba(124, 58, 237, calc(0.14 * var(--garden-glow-intensity, 0.4))) 45%,
+    rgba(37, 99, 235, calc(0.18 * var(--garden-glow-intensity, 0.4))),
+    rgba(124, 58, 237, calc(0.16 * var(--garden-glow-intensity, 0.4))) 45%,
     transparent 75%
   );
   animation: living-garden-breathe 8s ease-in-out infinite;
@@ -744,8 +749,8 @@ body {
 }
 
 .living-garden-node {
-  background: radial-gradient(circle, rgba(167, 243, 208, 0.95), rgba(34, 211, 238, 0.55) 70%, transparent 100%);
-  box-shadow: 0 0 8px rgba(34, 211, 238, 0.45);
+  background: radial-gradient(circle, rgba(191, 219, 254, 0.95), rgba(124, 58, 237, 0.55) 70%, transparent 100%);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.45);
   animation: living-garden-shimmer 6s ease-in-out infinite;
 }
 
@@ -755,7 +760,7 @@ body {
 }
 
 .living-garden-seed {
-  box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.6);
   animation: living-garden-shimmer 5s ease-in-out infinite;
 }
 
