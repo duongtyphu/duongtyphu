@@ -29,9 +29,10 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
 
   return (
     <div
-      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-[#1E3A8A]/30 bg-gradient-to-br from-[#0B1F4D] via-[#1E3A8A] to-[#5B21B6] ${
+      className={`living-garden-visual relative flex items-end justify-center overflow-hidden rounded-2xl border border-gray-200 ${
         compact ? "h-24" : "h-36 sm:h-44"
       }`}
+      style={{ backgroundImage: "linear-gradient(90deg, #111827, #2563EB, #7C3AED, #F97316)" }}
       aria-hidden="true"
     >
       <div className="living-garden-glow absolute inset-0" style={{ "--garden-glow-intensity": intensity } as React.CSSProperties} />
@@ -57,7 +58,7 @@ function GardenVisual({ intensity, compact = false }: { intensity: number; compa
             );
           })}
         </div>
-        <span className="living-garden-seed absolute bottom-0 h-2.5 w-2.5 rounded-full bg-gradient-to-br from-blue-400 to-violet-500" />
+        <span className="living-garden-seed absolute bottom-0 h-2.5 w-2.5 rounded-full" />
       </div>
     </div>
   );
@@ -79,7 +80,7 @@ export function LivingGardenCard({
       <GemCard className={`relative ${className}`}>
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-orange-400" />
-          <h2 className="gemos-card-title text-sm font-bold text-blue-700">Khu vườn của bạn</h2>
+          <h2 className="gemos-card-title text-base font-bold text-blue-700">Khu vườn của bạn</h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-gray-700">
           Khu vườn của bạn đang chờ hạt giống đầu tiên.
@@ -104,7 +105,7 @@ export function LivingGardenCard({
     <GemCard className={`relative ${className}`}>
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-orange-400" />
-        <h2 className="gemos-card-title text-sm font-bold text-blue-700">Khu vườn của bạn</h2>
+        <h2 className="gemos-card-title text-base font-bold text-blue-700">Khu vườn của bạn</h2>
       </div>
 
       <p className="mt-2 text-sm leading-relaxed text-gray-700">
@@ -133,9 +134,9 @@ export function LivingGardenCard({
             const el = garden.elements.find((e) => e.key === key)!;
             return (
               <li key={key} className="flex items-baseline gap-1.5">
-                <span className="font-semibold text-orange-600">{el.label}</span>
+                <span className="font-semibold text-violet-600">{el.label}</span>
                 <span className="text-gray-400">·</span>
-                <span>{el.meaning}</span>
+                <span className="font-medium text-green-600">{el.meaning}</span>
               </li>
             );
           })}

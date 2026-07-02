@@ -749,18 +749,23 @@ body {
 }
 
 .living-garden-node {
-  background: radial-gradient(circle, rgba(191, 219, 254, 0.95), rgba(124, 58, 237, 0.55) 70%, transparent 100%);
-  box-shadow: 0 0 8px rgba(37, 99, 235, 0.45);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), transparent 45%),
+    radial-gradient(circle, #FDF6EC 0%, #FDE68A 45%, #F97316 100%);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.55), 0 0 2px rgba(255, 255, 255, 0.8) inset;
   animation: living-garden-shimmer 6s ease-in-out infinite;
 }
 
 @keyframes living-garden-shimmer {
-  0%, 100% { opacity: 0.55; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.08); }
+  0%, 100% { opacity: 0.7; transform: scale(0.92); filter: brightness(1); }
+  50% { opacity: 1; transform: scale(1.12); filter: brightness(1.25); }
 }
 
 .living-garden-seed {
-  box-shadow: 0 0 10px rgba(124, 58, 237, 0.6);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), transparent 45%),
+    radial-gradient(circle, #FDF6EC 0%, #FDE68A 45%, #F97316 100%);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.6), 0 0 2px rgba(255, 255, 255, 0.8) inset;
   animation: living-garden-shimmer 5s ease-in-out infinite;
 }
 
