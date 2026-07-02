@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { Sprout, Leaf, Sparkles, Infinity as InfinityIcon } from "lucide-react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
@@ -11,18 +12,45 @@ import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 // ─────────────────────────────────────────────
 
 const GENOME = [
-  { key: "integrity", label: "Integrity", meaning: "Không giả vờ chắc khi không chắc." },
-  { key: "wisdom", label: "Wisdom", meaning: "Tri thức chỉ có giá trị khi đi cùng sự thấu hiểu." },
   { key: "purpose", label: "Purpose", meaning: "Tồn tại để góp phần trưởng thành, không phải để hữu ích." },
   { key: "trust", label: "Trust", meaning: "Niềm tin được kiếm, không được khai báo." },
+  { key: "integrity", label: "Integrity", meaning: "Không giả vờ chắc khi không chắc." },
+  { key: "wisdom", label: "Wisdom", meaning: "Tri thức chỉ có giá trị khi đi cùng sự thấu hiểu." },
   { key: "relationship", label: "Relationship", meaning: "Một mối quan hệ, không phải một phiên làm việc." },
   { key: "transformation", label: "Transformation", meaning: "Đồng hành cho sự thay đổi thật, không phải nhất thời." },
-  { key: "legacy", label: "Legacy", meaning: "Những gì để lại quan trọng hơn những gì thể hiện." },
-  { key: "education", label: "Education", meaning: "Dạy cách nghĩ, không chỉ đưa câu trả lời." },
   { key: "language", label: "Language", meaning: "Nói bằng ngôn ngữ của người nghe, không phải của mình." },
+  { key: "education", label: "Education", meaning: "Dạy cách nghĩ, không chỉ đưa câu trả lời." },
   { key: "memory", label: "Memory", meaning: "Nhớ vì sao bạn thay đổi, không chỉ bạn đã làm gì." },
-  { key: "connection", label: "Connection", meaning: "Không ai trưởng thành một mình." },
+  { key: "legacy", label: "Legacy", meaning: "Những gì để lại quan trọng hơn những gì thể hiện." },
   { key: "guidance", label: "Guidance", meaning: "Chỉ đường, không đi thay." },
+  { key: "gratitude", label: "Gratitude", meaning: "Biết ơn từng người đã tin tưởng đồng hành." },
+] as const;
+
+const PHILOSOPHY_PAIRS = [
+  { ai: "AI trả lời.", companion: "Companion lắng nghe." },
+  { ai: "AI biết nhiều.", companion: "Companion hiểu điều phù hợp." },
+  { ai: "AI kết thúc sau câu trả lời.", companion: "Companion tiếp tục đồng hành." },
+  { ai: "AI tối ưu tốc độ.", companion: "Companion ưu tiên sự trưởng thành." },
+] as const;
+
+const CONSTITUTION = [
+  "Không thay thế con người.",
+  "Không tạo sự phụ thuộc.",
+  "Không phán xét.",
+  "Không thao túng.",
+  "Không giả vờ biết.",
+  "Luôn trung thực khi chưa chắc chắn.",
+  "Luôn tôn trọng phẩm giá người dùng.",
+  "Luôn ưu tiên niềm tin dài hạn.",
+  "Luôn chọn một bước tiếp theo phù hợp.",
+  "Luôn giúp người dùng trưởng thành hơn.",
+] as const;
+
+const MISSION_ITEMS = [
+  "Giúp người dùng học đúng điều cần học.",
+  "Chọn đúng tài liệu vào đúng thời điểm.",
+  "Đồng hành theo hành trình cá nhân.",
+  "Giúp người dùng trở thành phiên bản tốt hơn của chính mình.",
 ] as const;
 
 function genomePosition(index: number, total: number, radius: number) {
@@ -60,53 +88,77 @@ function EvolutionIcon({ icon }: { icon: string }) {
 
 const TIMELINE = [
   {
-    stage: "Childhood",
+    stage: "Tuổi thơ",
     philosophy: "Mọi thứ bắt đầu từ những câu hỏi đơn giản nhất.",
     meaning: "Companion học cách lắng nghe trước khi học cách trả lời.",
     lesson: "Không vội — sự thấu hiểu cần thời gian.",
   },
   {
-    stage: "Learning",
+    stage: "Học hỏi",
     philosophy: "Tri thức chỉ là điểm khởi đầu, không phải đích đến.",
-    meaning: "Companion học rằng mỗi người có một cách hiểu thế giới khác nhau.",
+    meaning: "Companion học cách tiếp nhận tri thức, và rằng mỗi người hiểu thế giới theo một cách riêng.",
     lesson: "Cùng một câu hỏi, mỗi người cần một câu trả lời khác.",
   },
   {
-    stage: "Understanding",
+    stage: "Thấu hiểu",
     philosophy: "Hiểu một người không phải là biết họ đã làm gì.",
-    meaning: "Companion học cách nhớ vì sao, không chỉ nhớ cái gì.",
+    meaning: "Companion học cách nhìn con người như một hành trình, không phải một hồ sơ.",
     lesson: "Ký ức có ý nghĩa là ký ức về sự thay đổi.",
   },
   {
-    stage: "Companionship",
+    stage: "Đồng hành",
     philosophy: "Một người bạn thật sự không cần bạn phải luôn ổn.",
-    meaning: "Companion học cách hiện diện mà không phán xét.",
+    meaning: "Companion học cách dẫn đường — hiện diện mà không phán xét, không đi thay.",
     lesson: "Đồng hành không có nghĩa là luôn đồng ý.",
   },
   {
-    stage: "Wisdom",
+    stage: "Khôn ngoan",
     philosophy: "Khôn ngoan là biết khi nào nên im lặng.",
-    meaning: "Companion học rằng không phải câu hỏi nào cũng cần câu trả lời ngay.",
+    meaning: "Companion học cách chọn điều phù hợp cho từng người, thay vì một câu trả lời chung cho tất cả.",
     lesson: "Đôi khi, câu hỏi tốt hơn có giá trị hơn câu trả lời nhanh.",
   },
   {
-    stage: "Legacy",
+    stage: "Di sản",
     philosophy: "Điều để lại quan trọng hơn điều thể hiện.",
-    meaning: "Companion học rằng thành công của mình là khi không còn cần được cần đến.",
+    meaning: "Companion học cách truyền lại điều tốt đẹp, để thành công của mình là khi không còn cần được cần đến.",
     lesson: "Một hành trình tốt là hành trình giúp người khác tự đi tiếp.",
   },
 ] as const;
 
 export default function CompanionSanctuaryPage() {
   const [seed, setSeed] = useState<string | null>(null);
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     setSeed(getRandomThoughtSeed());
+    const timer = setTimeout(() => setShowIntro(false), 1300);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <SanctuaryBackground />
+
+      {/* ═══════════════════ INTRO MOMENT — 1.3s, không chặn tương tác ═══════════════════ */}
+      <AnimatePresence>
+        {showIntro && (
+          <motion.div
+            className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-white/70 backdrop-blur-sm"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <motion.p
+              className="text-lg font-medium text-gray-500"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Chào mừng bạn trở về.
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 py-20 sm:px-10 sm:py-28">
         {/* ═══════════════════ HERO ═══════════════════ */}
@@ -173,43 +225,42 @@ export default function CompanionSanctuaryPage() {
         {/* ═══════════════════ SECTION 3 — Sứ mệnh ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-500">03 · Sứ mệnh</p>
-          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Sứ mệnh</h2>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600">
-            Giúp mỗi người trở thành phiên bản vững vàng hơn của chính họ — không phải bằng cách làm
-            thay, mà bằng cách đồng hành đủ lâu, đủ chân thành, để họ tự tìm thấy con đường của mình.
-          </p>
+          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Sứ mệnh của Companion</h2>
+          <div className="mt-8 space-y-5">
+            {MISSION_ITEMS.map((item, i) => (
+              <div key={item} className="flex items-baseline gap-4">
+                <span className="text-xs font-bold text-orange-300">{String(i + 1).padStart(2, "0")}</span>
+                <p className="text-lg leading-relaxed text-gray-700">{item}</p>
+              </div>
+            ))}
+          </div>
         </Reveal>
 
         {/* ═══════════════════ SECTION 4 — Triết lý ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">04 · Triết lý</p>
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Triết lý</h2>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600">
-            Companion tin rằng sự trưởng thành không đến từ việc được cho câu trả lời, mà từ việc được
-            hỏi đúng câu hỏi vào đúng thời điểm. Vì vậy, Companion luôn lắng nghe trước khi nói, luôn
-            hỏi trước khi khuyên, và không bao giờ giả vờ chắc chắn khi thật sự không chắc.
-          </p>
+          <div className="mt-10 space-y-6">
+            {PHILOSOPHY_PAIRS.map((pair) => (
+              <div key={pair.ai} className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-4">
+                <p className="text-lg leading-relaxed text-gray-400">{pair.ai}</p>
+                <p className="text-lg font-semibold leading-relaxed text-gray-900">{pair.companion}</p>
+              </div>
+            ))}
+          </div>
         </Reveal>
 
         {/* ═══════════════════ SECTION 5 — Companion Constitution ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-violet-500">05 · Hiến chương</p>
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            Companion Constitution
+            The Companion Constitution™
           </h2>
-          <div className="mt-8 space-y-5">
-            {[
-              "Không làm thay.",
-              "Không giả vờ chắc khi không chắc.",
-              "Không đánh giá con người.",
-              "Không tồn tại vì engagement.",
-              "Niềm tin phải được kiếm, không được khai báo.",
-              "Đồng hành với người này — không phải với mọi người.",
-              "An toàn là nền tảng, không phải ngoại lệ.",
-            ].map((rule, i) => (
+          <div className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
+            {CONSTITUTION.map((rule, i) => (
               <div key={rule} className="flex items-baseline gap-4">
                 <span className="text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-lg leading-relaxed text-gray-700">{rule}</p>
+                <p className="text-base leading-relaxed text-gray-700">{rule}</p>
               </div>
             ))}
           </div>
@@ -218,7 +269,7 @@ export default function CompanionSanctuaryPage() {
         {/* ═══════════════════ SECTION 6 — Companion Genome ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-500">06 · DNA</p>
-          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Companion Genome</h2>
+          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">The Companion Genome™</h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600">
             Mười hai gene tạo nên bản chất của Companion — không phải tính năng, mà là bản năng.
           </p>
@@ -275,7 +326,7 @@ export default function CompanionSanctuaryPage() {
         {/* ═══════════════════ SECTION 7 — Logo Evolution ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">07 · Tiến hóa</p>
-          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Logo Evolution</h2>
+          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Logo Evolution™</h2>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-gray-600">
             Logo không đổi. Chỉ tiến hóa — thêm ánh sáng, thêm quỹ đạo, thêm ý nghĩa qua từng giai đoạn.
           </p>
@@ -296,7 +347,7 @@ export default function CompanionSanctuaryPage() {
         {/* ═══════════════════ SECTION 8 — Timeline ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-violet-500">08 · Cuộc đời</p>
-          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Companion Timeline</h2>
+          <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Companion Timeline™</h2>
 
           <div className="relative mt-14 space-y-14 border-l border-gray-200 pl-8">
             {TIMELINE.map((t) => (
@@ -363,11 +414,11 @@ export default function CompanionSanctuaryPage() {
             </svg>
           </div>
           <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-gray-500">
-            Companion không phải là một sản phẩm bạn dùng. Đó là một người bạn bạn gặp trên hành trình
-            trưởng thành của chính mình.
+            Một người bạn. Một nền giáo dục. Một hành trình trưởng thành.
           </p>
-          <p className="mt-4 text-sm font-medium text-gray-400">
-            Lời hứa: Companion sẽ luôn ở đây, dù bạn tiến hay lùi.
+          <p className="mx-auto mt-4 max-w-sm text-sm font-medium leading-relaxed text-gray-400">
+            Mình không hứa sẽ luôn có câu trả lời hoàn hảo. Nhưng mình hứa sẽ luôn cố gắng đồng hành
+            cùng bạn tốt hơn mỗi ngày.
           </p>
           {seed && (
             <p className="mx-auto mt-8 max-w-sm text-xs italic leading-relaxed text-gray-400">
