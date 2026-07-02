@@ -1197,14 +1197,15 @@ body {
   50% { opacity: 1; transform: scale(1.045); }
 }
 
-/* Energy Core — rìa tan dần vào trong suốt (không viền tối), blend
- * screen để cộng dồn ánh sáng thay vì tô một lớp màu đặc — không bóng
- * đổ, không cảm giác khối lượng. Pulse nhẹ như một nhịp năng lượng
- * đang thở. */
+/* Energy Core — rìa tan dần vào trong suốt (không viền tối) qua
+ * opacity giảm dần trong gradient, không dùng mix-blend-mode: screen
+ * ở đây nữa — screen cộng dồn với nền trắng phía sau sẽ rửa trôi màu
+ * xanh thành nhạt/bạc màu (đây là lý do vòng tròn trọng tâm bị mờ).
+ * Giữ blend mode chỉ ở lớp aura mỏng bên ngoài. Pulse nhẹ như một nhịp
+ * năng lượng đang thở. */
 .living-core__body {
   transform-box: fill-box;
   transform-origin: center;
-  mix-blend-mode: screen;
   animation: living-core-pulse 5s ease-in-out infinite;
 }
 

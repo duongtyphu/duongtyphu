@@ -26,7 +26,7 @@
     <style>
       .living-core__aura { transform-box: fill-box; transform-origin: center; mix-blend-mode: screen; animation: lc-aura-breathe 6s ease-in-out infinite; }
       @keyframes lc-aura-breathe { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 1; transform: scale(1.045); } }
-      .living-core__body { transform-box: fill-box; transform-origin: center; mix-blend-mode: screen; animation: lc-pulse 5s ease-in-out infinite; }
+      .living-core__body { transform-box: fill-box; transform-origin: center; animation: lc-pulse 5s ease-in-out infinite; }
       @keyframes lc-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
       .living-core__core-glow { transform-box: fill-box; transform-origin: center; animation: lc-inner-glow 5s ease-in-out infinite; }
       .living-core__core { transform-box: fill-box; transform-origin: center; animation: lc-pulse 5s ease-in-out infinite; }
