@@ -173,10 +173,11 @@ export function LivingCore({
           <radialGradient id={bodyGradId} cx="47%" cy="46%" r="68%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="1" />
             <stop offset="14%" stopColor="#BFEAFF" stopOpacity="1" />
-            <stop offset="30%" stopColor="#38D5FF" stopOpacity="1" />
-            <stop offset="52%" stopColor="#4F7DFF" stopOpacity="0.92" />
-            <stop offset="76%" stopColor="#4F7DFF" stopOpacity="0.55" />
-            <stop offset="100%" stopColor="#4F7DFF" stopOpacity="0" />
+            <stop offset="28%" stopColor="#38D5FF" stopOpacity="1" />
+            <stop offset="48%" stopColor="#4F7DFF" stopOpacity="1" />
+            <stop offset="70%" stopColor="#3B5BFF" stopOpacity="0.95" />
+            <stop offset="90%" stopColor="#2F4CE0" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#2F4CE0" stopOpacity="0" />
           </radialGradient>
           <radialGradient id={auraGradId} cx="47%" cy="46%" r="62%">
             <stop offset="0%" stopColor="rgba(180,220,255,0.65)" />
