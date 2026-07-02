@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { gardenStats } from "@/data/portal/knowledge-garden";
+import { gardenStats, getGrowthStage, GROWTH_STAGES } from "@/data/portal/knowledge-garden";
 import { GardenTreeVisual } from "@/components/portal/garden/GardenTreeVisual";
 
 /**
- * Preview nhỏ của "Khu vườn của bạn" ở trang chủ Portal — chỉ tóm tắt,
+ * Preview nhỏ của "Khu vườn của bạn" ở trang chủ Portal — chỉ tóm tắt
+ * (cây nhỏ + giai đoạn hiện tại + tổng lá + % đến giai đoạn tiếp theo),
  * không render toàn bộ cây lớn + lá hành động. Click dẫn tới trang
  * chi tiết /portal/khu-vuon-cua-ban.
  */
 export function GardenWidget() {
+  const { stage, index } = getGrowthStage(gardenStats.totalLeaves);
+  const nextStage = GROWTH_STAGES[index + 1];
+
   return (
     <Link
       href="/portal/khu-vuon-cua-ban"
@@ -19,22 +23,21 @@ export function GardenWidget() {
           <span className="text-xl">🌿</span>
           <h2 className="gemos-card-title text-sm font-bold text-gray-900">Khu vườn của bạn</h2>
         </div>
-        <p className="mt-2 text-xs leading-relaxed text-gray-500">
-          Mỗi hành động là một chiếc lá — vườn của bạn đang ở cấp{" "}
-          <span className="font-semibold text-green-600">{gardenStats.gardenLevel}</span>.
+        <p className="mt-2 text-sm font-semibold text-gray-900">
+          {stage.emoji} {stage.label}
         </p>
-        <div className="mt-4 grid grid-cols-3 gap-3 text-center sm:grid-cols-3">
+        <p className="mt-1 text-xs leading-relaxed text-gray-500">
+          {gardenStats.totalLeaves} lá
+          {nextStage && ` · ${gardenStats.percentToNextLevel}% đến ${nextStage.label.toLowerCase()}`}
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-3 text-center">
           <div>
-            <p className="text-base font-extrabold text-gray-900">{gardenStats.totalLeaves}</p>
-            <p className="text-[11px] text-gray-400">Lá đã gieo</p>
+            <p className="text-base font-extrabold text-gray-900">{gardenStats.streakDays}</p>
+            <p className="text-[11px] text-gray-400">Ngày liên tục</p>
           </div>
           <div>
             <p className="text-base font-extrabold text-gray-900">{gardenStats.totalHours}h</p>
-            <p className="text-[11px] text-gray-400">Thời gian học</p>
-          </div>
-          <div>
-            <p className="text-base font-extrabold text-gray-900">{gardenStats.streakDays}</p>
-            <p className="text-[11px] text-gray-400">Ngày liên tiếp</p>
+            <p className="text-[11px] text-gray-400">Nuôi dưỡng</p>
           </div>
         </div>
         <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
@@ -42,7 +45,7 @@ export function GardenWidget() {
         </span>
       </div>
       <div className="hidden sm:block">
-        <GardenTreeVisual compact />
+        <GardenTreeVisual compact stageIndex={index} />
       </div>
     </Link>
   );

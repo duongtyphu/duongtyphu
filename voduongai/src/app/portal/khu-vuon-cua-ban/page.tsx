@@ -13,11 +13,16 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { GardenTreeVisual } from "@/components/portal/garden/GardenTreeVisual";
+import { GardenProgressRing } from "@/components/portal/garden/GardenProgressRing";
 import {
   gardenStats,
   gardenToday,
   RECENT_ACTIVITIES,
   GARDEN_CARE_TIP,
+  GROWTH_STAGES,
+  GROWTH_HISTORY,
+  COMPANION_GROWTH_MESSAGES,
+  getGrowthStage,
   type LeafActionKey,
 } from "@/data/portal/knowledge-garden";
 
@@ -46,6 +51,10 @@ const GARDEN_RESULTS = [
 ];
 
 export default function KnowledgeGardenPage() {
+  const { stage, index } = getGrowthStage(gardenStats.totalLeaves);
+  const nextStage = GROWTH_STAGES[index + 1];
+  const companionMessage = COMPANION_GROWTH_MESSAGES[0];
+
   return (
     <div className="space-y-14">
       {/* Hero — 35/65 */}
@@ -135,9 +144,50 @@ export default function KnowledgeGardenPage() {
 
         {/* RIGHT — 65%, linh hồn của trang */}
         <div className="relative">
-          <GardenTreeVisual />
+          <GardenTreeVisual stageIndex={index} />
         </div>
       </div>
+
+      {/* Cây của bạn đang ở giai đoạn nào? */}
+      <section className="gemos-glass-card rounded-2xl p-6">
+        <h2 className="text-base font-bold text-gray-900">Cây của bạn đang ở giai đoạn nào?</h2>
+        <div className="mt-5 flex flex-col items-center gap-5 sm:flex-row sm:items-center">
+          <GardenProgressRing percent={gardenStats.percentToNextLevel} emoji={stage.emoji} />
+          <div className="text-center sm:text-left">
+            <p className="text-lg font-extrabold text-gray-900">
+              {stage.emoji} {stage.label}
+            </p>
+            {nextStage && (
+              <p className="mt-1 text-sm text-gray-500">
+                {gardenStats.percentToNextLevel}% đến {nextStage.label.toLowerCase()}
+              </p>
+            )}
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-gray-600">{stage.message}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Hành trình lớn lên */}
+      <section>
+        <h2 className="mb-4 text-lg font-bold text-gray-900">Hành trình lớn lên</h2>
+        <div className="relative space-y-6 border-l border-green-100 pl-6">
+          {GROWTH_HISTORY.map((h) => (
+            <div key={h.label} className="relative">
+              <span className="absolute -left-[27px] top-1 h-2.5 w-2.5 rounded-full bg-gradient-to-br from-green-400 to-green-600" />
+              <p className="text-sm font-bold text-gray-900">{h.label}</p>
+              <p className="mt-0.5 text-sm text-gray-600">{h.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Companion message */}
+      <section className="rounded-2xl border border-violet-100 bg-violet-50/60 p-6 text-center">
+        <p className="mx-auto max-w-lg whitespace-pre-line text-sm leading-relaxed text-violet-800">
+          {companionMessage}
+        </p>
+        <p className="mt-3 text-xs font-semibold text-violet-500">— Companion</p>
+      </section>
 
       {/* Thành quả khu vườn */}
       <section>
