@@ -1,12 +1,13 @@
 # VDAI-GARDEN-001
 
 - **Name:** The Garden of Growth™
-- **Version:** 001
+- **Version:** 002 — thay thế bản v001 (ảnh mockup toàn trang cũ). Bản này là ảnh cây sạch,
+  không dính UI/card/sidebar đè lên, dùng trực tiếp làm asset nền cho vùng cây.
 - **Status:** Approved
 - **Founder Approved:** Yes
-- **File:** `VDAI-GARDEN-001.png`
+- **File:** `VDAI-GARDEN-001.png` (đã ghi đè lên bản v001 theo yêu cầu Founder — "Đã duyệt")
 - **Applies to:** `/portal/khu-vuon-cua-ban`
-- **Rule:** This image is Visual Truth. Do not redesign.
+- **Rule:** This image is Visual Truth. Do not redesign. Do not replace with AI-generated variation, different crop, different angle, different color or lighting.
 
 ## Ý tưởng
 
@@ -56,9 +57,9 @@ Khu vườn tri thức của người dùng — cây lớn đại diện cho s�
 
 ## Ghi chú kỹ thuật (asset đã crop từ ảnh gốc)
 
-Vì chưa có ảnh cây tách riêng (clean, không có UI đè lên), đã crop tạm 2 vùng từ ảnh gốc để dùng làm background thật cho vùng cây và vùng "Chăm sóc khu vườn" — theo đúng cho phép trong brief ("có thể dùng ảnh reference làm background tạm thời cho vùng tree, nhưng phải crop/fit đúng"):
+Từ v002, ảnh gốc là ảnh cây sạch (không còn baked-in UI của bản mockup cũ). Asset dùng trên trang được crop trực tiếp từ `VDAI-GARDEN-001.png` v002:
 
-- `public/images/garden/garden-tree-scene.jpg` — crop vùng cây + ánh nắng (loại bỏ sidebar/nội dung trái).
-- `public/images/garden/garden-care-visual.jpg` — crop vùng bình tưới nhỏ dùng cho card "Chăm sóc khu vườn".
+- `public/images/garden/garden-tree-scene.jpg` — crop vùng cây căn giữa thân cây, tỷ lệ khớp khung hiển thị (727:750) trong `khu-vuon-cua-ban/page.tsx`.
+- `public/images/garden/garden-care-visual.jpg` — crop cận cảnh cỏ/hoa dưới gốc cây, dùng làm ảnh trang trí nhỏ cho card "Chăm sóc khu vườn" (ảnh v001 có bình tưới baked-in từ mockup cũ — v002 không có, đã thay bằng crop hoa cỏ tự nhiên).
 
-Khi có asset cây thật tách riêng (không dính leaf chip baked-in), thay thế 2 file trên và cập nhật ghi chú này.
+Nếu Founder muốn asset "bình tưới" xuất hiện lại, cần một ảnh reference riêng có bình tưới thật (không phải baked vào mockup) để crop.
