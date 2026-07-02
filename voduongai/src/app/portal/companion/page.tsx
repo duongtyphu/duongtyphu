@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Sprout, Leaf, Sparkles, Infinity as InfinityIcon } from "lucide-react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
-import { LivingCore } from "@/components/portal/companion/LivingCore";
+import { LivingCore, type LivingCoreState } from "@/components/portal/companion/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 
 // ─────────────────────────────────────────────
@@ -126,9 +126,28 @@ const TIMELINE = [
   },
 ] as const;
 
+const LIVING_CORE_STATES: LivingCoreState[] = [
+  "idle",
+  "thinking",
+  "speaking",
+  "celebrating",
+  "sleeping",
+  "offline",
+];
+
+const LIVING_CORE_STATE_LABEL: Record<LivingCoreState, string> = {
+  idle: "Idle",
+  thinking: "Thinking",
+  speaking: "Speaking",
+  celebrating: "Celebrating",
+  sleeping: "Sleeping",
+  offline: "Offline",
+};
+
 export default function CompanionSanctuaryPage() {
   const [seed, setSeed] = useState<string | null>(null);
   const [showIntro, setShowIntro] = useState(true);
+  const [livingCoreState, setLivingCoreState] = useState<LivingCoreState>("idle");
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -205,6 +224,29 @@ export default function CompanionSanctuaryPage() {
             động. Hạt sáng là những điều Companion học được. Lõi trắng là sự trung thực và trong
             sáng.
           </p>
+
+          {/* Living Companion — không chỉ là ảnh tĩnh minh hoạ từng state,
+           * mà thật sự phản ứng sống theo lựa chọn, chứng minh đây là một
+           * biểu tượng "đang sống" chứ không phải ảnh chụp từng trạng thái. */}
+          <div className="mt-10 flex flex-col items-center gap-6 rounded-3xl border border-blue-100 bg-blue-50/40 p-8 sm:flex-row sm:justify-between">
+            <LivingCore size={128} state={livingCoreState} />
+            <div className="flex flex-wrap justify-center gap-2 sm:justify-end">
+              {LIVING_CORE_STATES.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setLivingCoreState(s)}
+                  className={`rounded-full px-4 py-2 text-xs font-semibold transition-colors ${
+                    livingCoreState === s
+                      ? "bg-blue-600 text-white"
+                      : "bg-white text-gray-500 hover:bg-blue-100 hover:text-blue-700"
+                  }`}
+                >
+                  {LIVING_CORE_STATE_LABEL[s]}
+                </button>
+              ))}
+            </div>
+          </div>
 
           <div className="mt-10 flex flex-wrap items-end gap-10">
             <div className="flex flex-col items-center gap-3">
