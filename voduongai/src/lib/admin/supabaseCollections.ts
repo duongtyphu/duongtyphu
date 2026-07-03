@@ -20,9 +20,6 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   updates: "updates",
   community: "community",
   "student-success-stories": "student_success_stories",
-  "ai-academy": "ai_academy",
-  "affiliate-academy": "affiliate_academy",
-  "personal-brand": "personal_brand",
 
   // Phase 3 — Portal Builder / Roadmap config collections
   "portal-banners": "portal_banners",
