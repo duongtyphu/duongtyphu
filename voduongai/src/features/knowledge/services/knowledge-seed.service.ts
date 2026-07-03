@@ -100,14 +100,40 @@ export function getRelatedSeedObjects(seed: KnowledgeSeed): KnowledgeSeed[] {
     .filter((s): s is KnowledgeSeed => Boolean(s));
 }
 
+/** Seed nào coi Seed này là điều kiện tiên quyết — Sprint 05/06 Knowledge Dependency. */
+export function getDependentSeedObjects(seed: KnowledgeSeed): KnowledgeSeed[] {
+  return knowledgeSeedJourneys.filter((s) => s.prerequisites.includes(seed.slug));
+}
+
+/** Sprint 06 — Seed nên học tiếp theo, đọc tường minh từ `nextSeeds[]`. */
+export function getNextSeedObjects(seed: KnowledgeSeed): KnowledgeSeed[] {
+  return seed.nextSeeds
+    .map((slug) => getKnowledgeSeedBySlug(slug))
+    .filter((s): s is KnowledgeSeed => Boolean(s));
+}
+
 /**
- * Companion Guide — chỉ dẫn đường, không chat/trả lời. Nếu Seed liền trước
- * (trong Collection) chưa hoàn thành, khuyên học Seed đó trước.
+ * Companion Guide — chỉ dẫn đường, không chat/trả lời. Sprint 06: ưu tiên
+ * đọc `prerequisites[]` (phụ thuộc thực chất, có thể bắc cầu Collection) —
+ * chỉ fallback về Seed liền trước trong Collection khi Seed không khai báo
+ * prerequisite tường minh nào.
  */
 export function getPrerequisiteGuidance(
   seed: KnowledgeSeed,
   getSeedCompletedStepIds: (seedId: string) => string[]
 ): string | null {
+  const explicitPrerequisites = seed.prerequisites
+    .map((slug) => getKnowledgeSeedBySlug(slug))
+    .filter((s): s is KnowledgeSeed => Boolean(s));
+
+  const incomplete = explicitPrerequisites.find(
+    (p) => computeSeedProgress(p, getSeedCompletedStepIds(p.id)).percent < 100
+  );
+  if (incomplete) {
+    return `Bạn nên hoàn thành "${incomplete.title}" trước khi học "${seed.title}".`;
+  }
+  if (explicitPrerequisites.length > 0) return null;
+
   const { previous } = getAdjacentSeeds(seed);
   if (!previous) return null;
   const { percent } = computeSeedProgress(previous, getSeedCompletedStepIds(previous.id));

@@ -140,11 +140,44 @@ export function validateSeedQuality(seed: KnowledgeSeed): QualityIssue[] {
 
 export type GraphIssue = { slug: string; message: string };
 
-/** Đối chiếu toàn vẹn Knowledge Graph — dangling reference, chu trình, Seed cô lập (Sprint 05). */
+/**
+ * Đối chiếu toàn vẹn Knowledge Graph — dangling reference, chu trình, Seed
+ * cô lập, Seed mồ côi, Collection không liên kết, duplicate id/slug (Sprint
+ * 05 + Sprint 06 Task 03).
+ */
 export function validateGraphIntegrity(seeds: KnowledgeSeed[], collections: KnowledgeCollection[]): GraphIssue[] {
   const issues: GraphIssue[] = [];
   const seedSlugs = new Set(seeds.map((s) => s.slug));
   const collectionSlugs = new Set(collections.map((c) => c.slug));
+
+  // Duplicate id / slug — mỗi Seed phải là duy nhất.
+  const idCounts = new Map<string, number>();
+  const slugCounts = new Map<string, number>();
+  for (const seed of seeds) {
+    idCounts.set(seed.id, (idCounts.get(seed.id) ?? 0) + 1);
+    slugCounts.set(seed.slug, (slugCounts.get(seed.slug) ?? 0) + 1);
+  }
+  for (const [id, count] of idCounts) {
+    if (count > 1) issues.push({ slug: id, message: `Duplicate id: "${id}" xuất hiện ${count} lần.` });
+  }
+  for (const [slug, count] of slugCounts) {
+    if (count > 1) issues.push({ slug, message: `Duplicate slug: "${slug}" xuất hiện ${count} lần.` });
+  }
+
+  // Seed mồ côi — không thuộc seedSlugs[] của bất kỳ Collection nào.
+  const allCollectionSeedSlugs = new Set(collections.flatMap((c) => c.seedSlugs));
+  for (const seed of seeds) {
+    if (!allCollectionSeedSlugs.has(seed.slug)) {
+      issues.push({ slug: seed.slug, message: "Seed mồ côi — không nằm trong seedSlugs[] của Collection nào." });
+    }
+  }
+
+  // Collection không liên kết — relatedCollections rỗng.
+  for (const collection of collections) {
+    if (collection.relatedCollections.length === 0) {
+      issues.push({ slug: collection.slug, message: "Collection không liên kết — relatedCollections rỗng." });
+    }
+  }
 
   for (const seed of seeds) {
     for (const slug of seed.relatedSeeds) {
@@ -152,6 +185,10 @@ export function validateGraphIntegrity(seeds: KnowledgeSeed[], collections: Know
     }
     for (const slug of seed.prerequisites) {
       if (!seedSlugs.has(slug)) issues.push({ slug: seed.slug, message: `prerequisites trỏ tới slug không tồn tại: ${slug}` });
+    }
+    for (const slug of seed.nextSeeds) {
+      if (!seedSlugs.has(slug)) issues.push({ slug: seed.slug, message: `nextSeeds trỏ tới slug không tồn tại: ${slug}` });
+      if (slug === seed.slug) issues.push({ slug: seed.slug, message: "nextSeeds trỏ vào chính nó." });
     }
     if (!collectionSlugs.has(seed.collectionSlug)) {
       issues.push({ slug: seed.slug, message: `collectionSlug không tồn tại: ${seed.collectionSlug}` });

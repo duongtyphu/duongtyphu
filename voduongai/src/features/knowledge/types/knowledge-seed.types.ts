@@ -82,6 +82,12 @@ export type KnowledgeGraphLinks = {
    * độc lập với thứ tự Collection, dùng khi phụ thuộc bắc cầu giữa các Collection.
    */
   prerequisites: string[];
+  /**
+   * Sprint 06 — slug Seed nên học SAU seed này, tường minh trong data thay vì
+   * chỉ suy ra từ thứ tự Collection (`getAdjacentSeeds`). Cho phép gợi ý bắc
+   * cầu sang Collection khác khi Seed này là cuối Collection hiện tại.
+   */
+  nextSeeds: string[];
 };
 
 export type KnowledgeSeed = CompanionContentStandard &

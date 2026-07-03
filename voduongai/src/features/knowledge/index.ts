@@ -24,3 +24,7 @@ export { useSeedReflection } from "./utils/use-seed-reflection";
 export * from "./types/knowledge-taxonomy.types";
 export * from "./data/knowledge-taxonomy";
 export * from "./services/knowledge-graph.service";
+
+// Sprint 06 — CKOS Intelligence Layer™
+export * from "./services/recommendation-rules.service";
+export * from "./quality/ckos-quality-guard";

@@ -87,6 +87,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt"],
     scenarios: ["office-work", "customer-service"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["tom-tat-tai-lieu-pdf-dai"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-viet-email-chuyen-nghiep-bang-ai", "Cách dùng AI để viết email chuyên nghiệp", 1),
       step(KnowledgeType.PROMPT, "prompt-xin-phan-hoi-sau-cuoc-hop", "Viết email xin phản hồi sau cuộc họp", 2),
@@ -161,6 +162,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt"],
     scenarios: ["office-work", "management"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["thiet-ke-powerpoint-nhanh-gon"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-viet-bao-cao-tuan-bang-ai", "Cách dùng AI để viết báo cáo công việc hàng tuần", 1),
       step(KnowledgeType.PROMPT, "prompt-tong-hop-bao-cao-tuan", "Tổng hợp báo cáo tuần từ ghi chú rời rạc", 2),
@@ -235,6 +237,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt", "gamma"],
     scenarios: ["presentation-scenario", "management"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["viet-prompt-hieu-qua"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-thiet-ke-powerpoint-bang-ai", "Cách dùng AI để thiết kế PowerPoint nhanh gọn", 1),
       step(KnowledgeType.PROMPT, "prompt-viet-outline-slide", "Viết outline slide thuyết trình từ một chủ đề", 2),
@@ -309,6 +312,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt", "notebooklm"],
     scenarios: ["research-scenario", "office-work"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["lam-bao-cao-tuan-bang-ai"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-doc-hieu-pdf-dai-bang-ai", "Cách dùng AI để đọc hiểu tài liệu PDF dài", 1),
       step(KnowledgeType.PROMPT, "prompt-tom-tat-tai-lieu-pdf", "Tóm tắt tài liệu PDF dài theo mục lục", 2),
@@ -380,6 +384,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt"],
     scenarios: ["office-work", "management"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["soan-bo-faq-cho-cong-viec"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-quan-ly-thoi-gian-bang-ai", "Cách dùng AI để quản lý thời gian làm việc hiệu quả hơn", 1),
       step(KnowledgeType.PROMPT, "prompt-sap-xep-uu-tien-cong-viec", "Sắp xếp ưu tiên công việc trong ngày", 2),
@@ -453,6 +458,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt", "otter"],
     scenarios: ["office-work", "management"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["tu-dong-hoa-cong-viec-van-phong-bang-ai"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-ghi-chu-cuoc-hop-bang-ai", "Cách dùng AI để ghi chú và tổng hợp cuộc họp", 1),
       step(KnowledgeType.PROMPT, "prompt-tong-hop-viec-can-lam-sau-hop", "Tổng hợp việc cần làm sau cuộc họp", 2),
@@ -525,6 +531,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt", "perplexity"],
     scenarios: ["research-scenario"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["quan-ly-thoi-gian-lam-viec"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-nghien-cuu-nhanh-bang-ai", "Cách dùng AI để nghiên cứu một chủ đề nhanh chóng", 1),
       step(KnowledgeType.PROMPT, "prompt-tong-quan-chu-de-nghien-cuu", "Tổng quan nhanh về một chủ đề cần nghiên cứu", 2),
@@ -598,6 +605,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt"],
     scenarios: ["customer-service", "office-work"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["viet-email-chuyen-nghiep"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-tra-loi-cau-hoi-thuong-gap-bang-ai", "Cách dùng AI để soạn bộ câu hỏi thường gặp (FAQ) cho công việc", 1),
       step(KnowledgeType.PROMPT, "prompt-soan-cau-tra-loi-faq", "Soạn câu trả lời chuẩn cho câu hỏi thường gặp", 2),
@@ -676,6 +684,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt", "claude"],
     scenarios: ["office-work"],
     prerequisites: [],
+    nextSeeds: ["phan-tich-excel-bang-ai"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-viet-prompt-hieu-qua", "Cách viết prompt hiệu quả theo cấu trúc 4 phần", 1),
       step(KnowledgeType.PROMPT, "prompt-viet-lai-yeu-cau-mo-ho", "Prompt mẫu: viết lại yêu cầu mơ hồ thành prompt rõ ràng", 2),
@@ -751,6 +760,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt", "copilot", "excel"],
     scenarios: ["office-work", "management"],
     prerequisites: ["viet-prompt-hieu-qua"],
+    nextSeeds: ["ghi-chu-va-tong-hop-cuoc-hop"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-phan-tich-excel-bang-ai", "Cách dùng AI để lọc và phân tích dữ liệu Excel", 1),
       step(KnowledgeType.PROMPT, "prompt-viet-cong-thuc-excel-theo-mo-ta", "Prompt mẫu: viết công thức Excel theo mô tả", 2),
@@ -827,6 +837,7 @@ export const knowledgeSeedJourneys: KnowledgeSeed[] = [
     aiTools: ["chatgpt"],
     scenarios: ["office-work", "management"],
     prerequisites: ["viet-prompt-hieu-qua", "phan-tich-excel-bang-ai"],
+    nextSeeds: ["nghien-cuu-mot-chu-de-nhanh-chong"],
     steps: [
       step(KnowledgeType.GUIDE, "guide-tu-dong-hoa-cong-viec-van-phong", "Cách nhận diện và tự động hoá việc lặp lại bằng AI", 1),
       step(KnowledgeType.PROMPT, "prompt-de-xuat-quy-trinh-tu-dong-hoa", "Prompt mẫu: đề xuất quy trình tự động hoá công việc lặp lại", 2),
