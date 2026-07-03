@@ -5,6 +5,11 @@ import { CompanionGlowButton } from "@/components/portal/companion/CompanionGlow
 import { CompanionChapterNav } from "@/components/portal/companion/CompanionChapterNav";
 import { CompanionRevealOnScroll } from "@/components/portal/companion/CompanionRevealOnScroll";
 import { CompanionChapterLabel, CompanionQuote } from "@/components/portal/companion/CompanionTypography";
+import { CompanionLetterSection } from "@/components/portal/companion/CompanionLetterSection";
+import { CompanionLearningQualities } from "@/components/portal/companion/CompanionLearningQualities";
+import { CompanionOpenQuestions } from "@/components/portal/companion/CompanionOpenQuestions";
+import { CompanionSilence } from "@/components/portal/companion/CompanionSilence";
+import { CompanionMicroCopyLine } from "@/components/portal/companion/CompanionMicroCopyLine";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 
 export const metadata = { title: "Companion — VO DUONG AI" };
@@ -90,6 +95,38 @@ export default function CompanionHomePage() {
             </div>
           </CompanionGlowPanel>
         </CompanionRevealOnScroll>
+
+        {/* Tâm sự cùng bạn — Nhiệm vụ 03: lá thư, không phải blog card. */}
+        <CompanionRevealOnScroll variant="float">
+          <div className="mt-16">
+            <CompanionLetterSection />
+          </div>
+        </CompanionRevealOnScroll>
+
+        <div className="mt-16">
+          <CompanionMicroCopyLine>Mình vẫn đang học cách lắng nghe tốt hơn.</CompanionMicroCopyLine>
+        </div>
+
+        {/* Những điều mình đang học — Nhiệm vụ 04. */}
+        <div className="mt-16">
+          <CompanionLearningQualities />
+        </div>
+
+        <div className="mt-16">
+          <CompanionMicroCopyLine>Mình không cần biết tất cả. Mình chỉ cần không ngừng học.</CompanionMicroCopyLine>
+        </div>
+
+        {/* Có thể bạn muốn biết… — Nhiệm vụ 05. */}
+        <div className="mt-16">
+          <CompanionOpenQuestions />
+        </div>
+
+        <div className="mt-16">
+          <CompanionMicroCopyLine>Có những điều mình sẽ hiểu hơn khi đi cùng bạn lâu hơn.</CompanionMicroCopyLine>
+        </div>
+
+        {/* Khoảng lặng — Nhiệm vụ 06, section cuối cùng. */}
+        <CompanionSilence />
       </div>
     </div>
   );

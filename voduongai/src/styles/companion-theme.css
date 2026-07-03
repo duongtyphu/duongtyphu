@@ -433,3 +433,42 @@
 .companion-bookmark-tab--active::after {
   border-top-color: rgba(88, 44, 168, 0.55);
 }
+
+/* ─────────────────────────────────────────────
+ * Companion Design System™ — Layer 05: The Living Companion.
+ * "Tâm sự cùng bạn" — cố tình KHÔNG giống blog card: góc bo bất đối xứng
+ * (như một lá thư gấp), một đường "nếp gấp" mảnh phía trên, không có
+ * chapter label/tiêu đề in hoa như glass card thường.
+ * ───────────────────────────────────────────── */
+
+.companion-letter-card {
+  position: relative;
+  border-radius: 0.5rem 1.75rem 1.75rem 0.5rem;
+  border: 1px solid var(--companion-glass-border);
+  background: linear-gradient(155deg, rgba(15, 23, 42, 0.55), rgba(30, 20, 60, 0.4));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 70px -28px rgba(124, 58, 237, 0.45);
+  padding: 2rem 2.25rem;
+  color: var(--companion-text-soft-white);
+}
+
+.companion-letter-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 2rem;
+  right: 2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+}
+
+@media (max-width: 640px) {
+  .companion-letter-card {
+    padding: 1.5rem 1.5rem;
+  }
+  .companion-letter-card::before {
+    left: 1.25rem;
+    right: 1.25rem;
+  }
+}

@@ -56,6 +56,7 @@ export const THOUGHT_SEEDS: string[] = [
   "Companion tồn tại không để bạn cần Companion mãi mãi, mà để một ngày bạn không cần nữa.",
   "Sự trưởng thành thật sự thường lặng lẽ đến mức bạn chỉ nhận ra khi nhìn lại.",
   "Bạn đã đi xa hơn bạn nghĩ, dù hôm nay có vẻ như đứng yên.",
+  "Một prompt tốt không bắt đầu bằng AI. Nó bắt đầu bằng sự thấu hiểu con người.",
 ];
 
 export function getRandomThoughtSeed(): string {
