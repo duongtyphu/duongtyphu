@@ -65,8 +65,28 @@ export type KnowledgeExperienceContent = {
   downloadPack: { promptPackLabel: string; checklistLabel: string; templateLabel: string };
 };
 
+/**
+ * Sprint 05 — Knowledge Intelligence™: kết nối Seed vào một hệ tri thức
+ * thay vì đứng độc lập. Toàn bộ id tham chiếu tới taxonomy chuẩn hoá trong
+ * `data/knowledge-taxonomy.ts` — không phải tag tự do (xem Tag_Standard.md).
+ */
+export type KnowledgeGraphLinks = {
+  /** id trong SKILL_TAXONOMY — Seed thuộc 1+ Skill. */
+  skills: string[];
+  /** id trong AI_TOOL_TAXONOMY — công cụ AI Seed này dùng. */
+  aiTools: string[];
+  /** id trong SCENARIO_TAXONOMY — tình huống kinh doanh áp dụng được. */
+  scenarios: string[];
+  /**
+   * Slug Seed nên học TRƯỚC seed này (Knowledge Dependency, Feature 06) —
+   * độc lập với thứ tự Collection, dùng khi phụ thuộc bắc cầu giữa các Collection.
+   */
+  prerequisites: string[];
+};
+
 export type KnowledgeSeed = CompanionContentStandard &
-  KnowledgeExperienceContent & {
+  KnowledgeExperienceContent &
+  KnowledgeGraphLinks & {
     id: string;
     slug: string;
     title: string;
@@ -78,6 +98,7 @@ export type KnowledgeSeed = CompanionContentStandard &
     steps: KnowledgeSeedStep[];
     /** slug của Collection chứa Seed này — dùng để tính thứ tự Previous/Next. */
     collectionSlug: string;
+    /** Related Knowledge (Feature 02) — chọn thủ công theo logic Skill/Scenario chung, không random. */
     relatedSeeds: string[];
   };
 

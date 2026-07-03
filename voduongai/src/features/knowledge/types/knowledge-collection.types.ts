@@ -10,6 +10,12 @@ export type KnowledgeCollection = {
   description: string;
   /** slug của các Seed thuộc Collection này, đúng thứ tự học. */
   seedSlugs: string[];
+  /**
+   * Sprint 05 — Collection Relationship (Feature 07): slug Collection nên
+   * học tiếp theo sau khi hoàn thành Collection này. Rỗng nếu chưa có
+   * Collection kế tiếp (không tạo Collection giả để lấp chỗ trống).
+   */
+  relatedCollections: string[];
 };
 
 export type KnowledgeCollectionProgress = {

@@ -22,6 +22,7 @@ import { CompletionExperience } from "../components/CompletionExperience";
 import { OneNextStepCard } from "../components/OneNextStepCard";
 import { SeedNavigation } from "../components/SeedNavigation";
 import { RelatedKnowledge } from "../components/RelatedKnowledge";
+import { KnowledgeGraphPanel, KnowledgeDependency } from "../components/KnowledgeGraphPanel";
 import { BookmarkButton } from "../components/BookmarkButton";
 import { ReflectionBox } from "../components/ReflectionBox";
 import { KnowledgeMap } from "../components/KnowledgeMap";
@@ -38,8 +39,10 @@ import {
   getAdjacentSeeds,
   getRelatedSeedObjects,
   getPrerequisiteGuidance,
+  getAllKnowledgeSeeds,
 } from "../services/knowledge-seed.service";
 import { getKnowledgeCollectionBySlug, computeCollectionProgress } from "../services/knowledge-collection.service";
+import { getKnowledgeGraphView, getPrerequisiteSeeds, getDependentSeeds } from "../services/knowledge-graph.service";
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
 
 function estimateReadingMinutes(seed: KnowledgeSeed): number {
@@ -70,6 +73,9 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
   const readingMinutes = estimateReadingMinutes(seed);
   const beforeAfter = splitBeforeAfter(seed.example);
   const isComplete = progress.percent >= 100;
+  const graphView = getKnowledgeGraphView(seed);
+  const prerequisiteSeeds = getPrerequisiteSeeds(seed);
+  const dependentSeeds = getDependentSeeds(seed, getAllKnowledgeSeeds());
 
   useEffect(() => {
     recordSeedVisit(seed.id, seed.slug, seed.title);
@@ -114,6 +120,9 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
           {oneNextStep && (
             <OneNextStepCard step={oneNextStep.step} asset={oneNextStep.asset} onComplete={toggleStep} />
           )}
+
+          {/* Sprint 05 — Knowledge Graph: Collection → Skill → AI Tool → Scenario */}
+          <KnowledgeGraphPanel collection={collection} graph={graphView} />
 
           {/* Feature 02 — Learning Outcome */}
           <LearningOutcome items={seed.whatYouWillGain} />
@@ -203,6 +212,7 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
           </div>
 
           <SeedNavigation previous={previous} next={next} />
+          <KnowledgeDependency prerequisites={prerequisiteSeeds} dependents={dependentSeeds} />
           <RelatedKnowledge seeds={related} />
 
           {/* Feature 12 — Companion Note */}

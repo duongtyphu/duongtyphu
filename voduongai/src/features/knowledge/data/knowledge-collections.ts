@@ -17,6 +17,10 @@ export const knowledgeCollections: KnowledgeCollection[] = [
       "ghi-chu-va-tong-hop-cuoc-hop",
       "tu-dong-hoa-cong-viec-van-phong-bang-ai",
     ],
+    // Chuỗi Collection tương lai theo Blueprint: AI Office → AI Content → AI
+    // Marketing → AI Business. Chỉ AI Research & Productivity đã tồn tại —
+    // không tạo Collection giả để lấp chỗ trống (xem Collection_Relationship_Guide.md).
+    relatedCollections: ["ai-research-presentation"],
   },
   {
     id: "collection-ai-research-presentation",
@@ -29,5 +33,6 @@ export const knowledgeCollections: KnowledgeCollection[] = [
       "quan-ly-thoi-gian-lam-viec",
       "soan-bo-faq-cho-cong-viec",
     ],
+    relatedCollections: ["ai-office"],
   },
 ];

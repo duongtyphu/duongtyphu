@@ -19,3 +19,8 @@ export * from "./types/knowledge-collection.types";
 export * from "./services/knowledge-collection.service";
 export { useSeedBookmark, getSeedBookmarks, type BookmarkKind } from "./utils/use-seed-bookmark";
 export { useSeedReflection } from "./utils/use-seed-reflection";
+
+// Sprint 05 — Knowledge Intelligence™
+export * from "./types/knowledge-taxonomy.types";
+export * from "./data/knowledge-taxonomy";
+export * from "./services/knowledge-graph.service";

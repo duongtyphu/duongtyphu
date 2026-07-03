@@ -41,8 +41,51 @@ Phạm vi review: 11 Knowledge Seed hiện có trong
    `companionNote`. Biến Standard từ tài liệu thành rào chắn kỹ thuật thật.
 4. Sửa mục Checklist borderline ở Seed PowerPoint khi có đợt chỉnh sửa nội dung tiếp theo.
 
-## Kết luận
+## Kết luận (Sprint 04)
 
 Collection AI Office đạt chuẩn CKOS ở mức cao (không có vi phạm nghiêm trọng nào về giọng văn,
 tính thực tế, hay cấu trúc Prompt/Reflection/Companion Note). 5 điểm chưa đạt ở trên đều ở mức
 trung bình/thấp, không cần chặn phát hành, nhưng nên đưa vào backlog kỹ thuật cho Sprint sau.
+
+---
+
+## Bổ sung Sprint 05 — Knowledge Graph Quality Review (Feature 09)
+
+Kiểm tra tính toàn vẹn của Knowledge Graph trên toàn bộ 11 Seed + 2 Collection, bằng script
+đối chiếu tự động (không chỉ đọc thủ công như Sprint 04) chạy qua
+`knowledge-seed-journeys.ts` và `knowledge-collections.ts`.
+
+### Điểm đạt
+
+| Kiểm tra | Kết quả |
+|---|---|
+| Dangling reference trong `relatedSeeds[]` | 0 phát hiện — toàn bộ slug trỏ tới Seed thật |
+| Dangling reference trong `prerequisites[]` | 0 phát hiện |
+| Dangling `collectionSlug` | 0 phát hiện — mọi Seed trỏ đúng Collection tồn tại |
+| Dangling `relatedCollections[]` | 0 phát hiện |
+| Chu trình (cycle) trong Knowledge Dependency | 0 phát hiện — đồ thị `prerequisites` là DAG hợp lệ |
+| Seed có 0 kết nối (skill/scenario/relatedSeeds) | 0 phát hiện — mọi Seed đều gắn ít nhất 1 kết nối |
+| Tag ngoài taxonomy (`skills`/`aiTools`/`scenarios`) | 0 phát hiện — toàn bộ 11 Skill trong taxonomy đều được ít nhất 1 Seed sử dụng, không Seed nào dùng id lạ |
+
+### Điểm chưa đạt / cần lưu ý
+
+| # | Vấn đề | Mức độ |
+|---|---|---|
+| 6 | **`prerequisites` không đối xứng với thứ tự Collection.** "Viết Prompt Hiệu Quả" đứng vị trí thứ 5 trong `seedSlugs[]` của Collection AI Office nhưng là prerequisite của 7/8 Seed khác trong cùng Collection — về mặt Learning Path hiển thị, người học có thể gặp Seed cần `viet-prompt-hieu-qua` làm prerequisite *trước khi* đến lượt học chính Seed đó theo thứ tự Collection. Đây là xung đột thiết kế giữa thứ tự tuyến tính (Collection) và đồ thị phụ thuộc (Knowledge Dependency) — xem `Relationship_Guide.md`. | Trung bình — Companion Guide hiện tại (`getPrerequisiteGuidance`, Sprint 02) chỉ xét Seed liền kề trong Collection, chưa đọc `prerequisites[]` mới của Sprint 05, nên chưa hiển thị cảnh báo sai thứ tự này cho người học. |
+| 7 | **AI Tool Taxonomy có tag chưa được kiểm chứng chéo với `dna.aiTools` ở tầng Asset (Sprint 01).** `KnowledgeAsset.dna.aiTools` (Sprint 01) là chuỗi tự do ("ChatGPT", "Copilot"...), trong khi `KnowledgeSeed.aiTools` (Sprint 05) là id chuẩn hoá ("chatgpt", "copilot"). Hai nguồn dữ liệu mô tả cùng khái niệm nhưng khác định dạng, chưa hợp nhất. | Thấp — không gây lỗi hiển thị (2 tầng độc lập), nhưng là nợ kỹ thuật nếu sau này cần thống kê "Seed nào dùng ChatGPT" xuyên suốt cả Asset lẫn Seed. |
+| 8 | **Scenario `marketing`/`sales`/`affiliate` chưa có Seed nào sử dụng** — đúng như thiết kế (chuẩn bị trước cho Collection tương lai), nhưng nếu không có Sprint nào dùng đến trong vài chu kỳ tới, nên cân nhắc bỏ khỏi taxonomy để tránh gây nhầm lẫn "tưởng đã có nội dung". | Thấp — mang tính nhắc nhở, không phải lỗi. |
+
+### Đề xuất cải thiện bổ sung
+
+5. Mở rộng `getPrerequisiteGuidance` (hoặc thêm hàm mới trong `knowledge-graph.service.ts`)
+   để đọc `prerequisites[]` thay vì chỉ xét Seed liền kề Collection — giải quyết điểm #6.
+6. Hợp nhất định dạng `aiTools` giữa `KnowledgeAsset.dna.aiTools` (Sprint 01, chuỗi tự do) và
+   `KnowledgeSeed.aiTools` (Sprint 05, taxonomy) trong một đợt refactor riêng.
+7. Thêm assertion cho graph integrity (dangling ref, cycle, zero-connection) vào script kiểm
+   tra tĩnh đề xuất ở mục #3 phía trên — biến kiểm tra thủ công vừa chạy thành CI check thật.
+
+### Kết luận (Sprint 05)
+
+Knowledge Graph toàn vẹn về mặt cấu trúc (không đứt gãy, không tag lạ, không chu trình). Vấn
+đề còn lại chủ yếu là **tích hợp giữa tầng Dependency mới và tầng Companion Guide cũ** (điểm
+#6) — không phải lỗi dữ liệu mà là cơ hội cải thiện cho Sprint sau.

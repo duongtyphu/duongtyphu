@@ -6,6 +6,7 @@ import { CollectionHeader } from "../components/CollectionHeader";
 import { LearningPath } from "../components/LearningPath";
 import { CompanionSuggestion } from "../components/CompanionSuggestion";
 import { CollectionCompleteBanner } from "../components/CollectionCompleteBanner";
+import { CollectionRelationship } from "../components/CollectionRelationship";
 import {
   computeCollectionProgress,
   getSeedsWithStatus,
@@ -13,6 +14,7 @@ import {
   getCollectionCompanionGuidance,
   getSuggestedNextCollection,
 } from "../services/knowledge-collection.service";
+import { getRelatedCollectionObjects } from "../services/knowledge-graph.service";
 import { getSeedCompletedStepIds } from "../utils/use-seed-progress";
 import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
@@ -22,6 +24,7 @@ export function KnowledgeCollectionView({ collection }: { collection: KnowledgeC
   const nextSeed = getNextSeedToLearn(collection, getSeedCompletedStepIds);
   const guidance = getCollectionCompanionGuidance(collection, getSeedCompletedStepIds);
   const suggestedNext = getSuggestedNextCollection(collection, getSeedCompletedStepIds);
+  const relatedCollections = getRelatedCollectionObjects(collection);
 
   return (
     <div className="space-y-6">
@@ -45,6 +48,8 @@ export function KnowledgeCollectionView({ collection }: { collection: KnowledgeC
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Learning Path</p>
         <LearningPath seedsWithStatus={seedsWithStatus} />
       </div>
+
+      <CollectionRelationship related={relatedCollections} />
     </div>
   );
 }
