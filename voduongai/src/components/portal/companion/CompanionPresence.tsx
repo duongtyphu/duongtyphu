@@ -69,6 +69,10 @@ import { CompanionQuickPanel } from "@/components/portal/companion/CompanionQuic
 import { getRouteContext, hasContextualNudge } from "@/lib/portal/companion/route-context";
 import { hasNudgeBeenShown, isNudgeDisabled, markNudgeShown } from "@/lib/portal/companion/nudge-session";
 import { orchestrate } from "@/companion/agents/companion-orchestrator";
+import {
+  subscribeToCompanionIntent,
+  type CompanionIntent,
+} from "@/lib/portal/companion/orchestrator-intent";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -190,6 +194,7 @@ export function CompanionPresence({
   const [presenceNow, setPresenceNow] = useState<number | null>(null);
   const [quickPanelOpen, setQuickPanelOpen] = useState(false);
   const [nudgeVisible, setNudgeVisible] = useState(false);
+  const [intent, setIntent] = useState<CompanionIntent | null>(null);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
@@ -268,9 +273,22 @@ export function CompanionPresence({
       setStory(null);
       setMicroLine(null);
       setQuickPanelOpen(false);
+      setIntent(null);
     }, 0);
     return () => clearTimeout(clearTimer);
   }, [pathname]);
+
+  // Sprint A.2 — Connect Orchestrator to Real User Actions: khi người dùng
+  // bấm một hành động thật ("Bắt đầu Mission", "Thực hành", "Phân tích dự
+  // án"...), Companion nhận userGoal/currentContext thật và tự mở Quick
+  // Panel để cho thấy mình đang lập kế hoạch/mời Agent ngay lúc đó.
+  useEffect(() => {
+    return subscribeToCompanionIntent((nextIntent) => {
+      setIntent(nextIntent);
+      setNudgeVisible(false);
+      setQuickPanelOpen(true);
+    });
+  }, []);
 
   // Contextual Nudge — mỗi khu vực Portal chủ động nói 1 câu ngắn, tối đa
   // 1 lần/session/khu vực, im lặng nếu người dùng đã tắt nudge, và không
@@ -400,7 +418,12 @@ export function CompanionPresence({
   const routeContext = getRouteContext(pathname ?? "/portal");
   // Product Amendment 02 — Companion Orchestration System™: đội Agent +
   // kế hoạch Companion đã tự chọn cho module hiện tại (rule-based, chưa AI thật).
-  const orchestrationPlan = orchestrate({ currentRoute: pathname ?? "/portal" });
+  const orchestrationPlan = orchestrate({
+    currentRoute: pathname ?? "/portal",
+    currentModule: intent?.module,
+    userGoal: intent?.userGoal,
+    currentContext: intent?.currentContext,
+  });
 
   // Sprint 18.8 — Presence Coordinator: một dòng quyết định hiện diện duy
   // nhất cho Life Moment, Return After Silence, Thought, Story, Greeting,

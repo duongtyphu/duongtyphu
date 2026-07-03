@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, HelpCircle } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -132,18 +133,25 @@ export default function OpportunitiesHubPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các hệ sinh thái đang theo dõi</p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ECOSYSTEMS.map((item) => (
-            <Link key={item.title} href={item.href} className="gemos-gem-card block rounded-xl p-5">
-              <div className="mb-4 flex items-start justify-between gap-2">
-                <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
-                  <item.icon className="h-5 w-5" />
+            <div key={item.title} className="gemos-gem-card rounded-xl p-5">
+              <Link href={item.href} className="block">
+                <div className="mb-4 flex items-start justify-between gap-2">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-400">
+                    {item.status}
+                  </span>
                 </div>
-                <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-400">
-                  {item.status}
-                </span>
-              </div>
-              <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
-              <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
-            </Link>
+                <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
+                <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
+              </Link>
+              <OpportunityAgentActions
+                projectName={item.title}
+                opportunityType={item.status}
+                riskContext={item.description}
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { JourneyTimeline } from "./JourneyTimeline";
 import { CompanionGuidance } from "./CompanionGuidance";
 import { GrowthCheckpoint } from "./GrowthCheckpoint";
 import { computeJourneyStatus, getCompanionJourneyGuidance } from "../services/journey.service";
 import { JOURNEY_STAGE_LABELS, JourneyStage } from "../types/journey.types";
 import type { LearningJourney } from "../types/journey.types";
+import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
 
 /**
  * Feature 03 — Journey Card. KHÔNG hiển thị Progress Bar kiểu LMS — chỉ
@@ -35,13 +36,31 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
         <GrowthCheckpoint journeySlug={journey.slug} />
       )}
 
-      <Link
-        href={`/portal/library/collection/${journey.collectionSlug}`}
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:underline"
-      >
-        Tiếp tục hành trình
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+      <div className="flex flex-wrap items-center gap-4">
+        <Link
+          href={`/portal/library/collection/${journey.collectionSlug}`}
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:underline"
+        >
+          Tiếp tục hành trình
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+
+        {/* Sprint A.2 — Bắt đầu Mission: gửi missionTitle/goal thật cho Companion Orchestrator. */}
+        <button
+          type="button"
+          onClick={() =>
+            pushCompanionIntent({
+              module: "academy",
+              userGoal: journey.title,
+              currentContext: `${journey.goal} — có minh chứng thật khi hoàn thành.`,
+            })
+          }
+          className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
+        >
+          <Sparkles className="h-3.5 w-3.5" />
+          Bắt đầu Mission
+        </button>
+      </div>
     </div>
   );
 }

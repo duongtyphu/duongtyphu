@@ -74,7 +74,11 @@ export function orchestrate(input: OrchestratorInput): OrchestrationPlan | null 
   // AI Agent xuất hiện trong trải nghiệm người dùng thấy được.
   const visibleAgents = portalModule === "learning-journal" ? [] : agents;
 
-  const companionMessage = rule?.companionMessage ?? buildDefaultMessage(visibleAgents);
+  const companionMessage = rule
+    ? typeof rule.companionMessage === "function"
+      ? rule.companionMessage(input)
+      : rule.companionMessage
+    : buildDefaultMessage(visibleAgents, input.userGoal);
 
   return {
     module: portalModule,
@@ -86,8 +90,10 @@ export function orchestrate(input: OrchestratorInput): OrchestrationPlan | null 
   };
 }
 
-function buildDefaultMessage(agents: CompanionAgent[]): string {
+function buildDefaultMessage(agents: CompanionAgent[], userGoal?: string): string {
   if (agents.length === 0) return "Mình luôn ở đây nếu bạn cần một người đồng hành.";
   const names = agents.map((agent) => agent.name.replace(/^AI /, "")).join(" và ");
-  return `Mình sẽ cùng bạn làm việc này. Mình mời ${names} hỗ trợ chúng ta.`;
+  return userGoal
+    ? `Mình sẽ cùng bạn làm "${userGoal}". Mình mời ${names} hỗ trợ chúng ta.`
+    : `Mình sẽ cùng bạn làm việc này. Mình mời ${names} hỗ trợ chúng ta.`;
 }

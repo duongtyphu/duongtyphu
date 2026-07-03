@@ -42,6 +42,26 @@ describe("companion-orchestrator", () => {
     expect(plan?.actionPlan.map((s) => s.label)).not.toContain(expect.stringContaining("Mời"));
   });
 
+  it("Sprint A.2 — Academy 'Bắt đầu Mission' click changes the Companion message with the real mission title", () => {
+    const plan = orchestrate({ currentRoute: "/portal/academy", userGoal: "Xây kênh TikTok đầu tiên" });
+    expect(plan?.companionMessage).toContain("Xây kênh TikTok đầu tiên");
+    expect(plan?.selectedAgents.length).toBeGreaterThan(0);
+  });
+
+  it("Sprint A.2 — CKOS 'Thực hành' click selects the practice agent team", () => {
+    const plan = orchestrate({ currentRoute: "/portal/library/slug", userGoal: "thực hành Prompt cơ bản" });
+    expect(plan?.selectedAgents.map((a) => a.id)).toEqual(["ckos-prompt-agent", "ckos-reviewer"]);
+    expect(plan?.companionMessage).toContain("Prompt cơ bản");
+  });
+
+  it("Sprint A.2 — Opportunities 'Phân tích dự án' vs 'Lập kế hoạch áp dụng' select different agent teams", () => {
+    const analysisPlan = orchestrate({ currentRoute: "/portal/opportunities", userGoal: "phân tích dự án SolarGroup" });
+    const planPlan = orchestrate({ currentRoute: "/portal/opportunities", userGoal: "lập kế hoạch áp dụng SolarGroup" });
+    expect(analysisPlan?.selectedAgents.map((a) => a.id)).toEqual(["project-analyst", "risk-analyst"]);
+    expect(planPlan?.selectedAgents.map((a) => a.id)).toEqual(["strategy-agent", "action-planner"]);
+    expect(analysisPlan?.companionMessage).not.toBe(planPlan?.companionMessage);
+  });
+
   it("builds an action plan with a done step per invited agent and a pending synthesis step", () => {
     const plan = orchestrate({ currentRoute: "/portal/opportunities", userGoal: "đánh giá rủi ro" });
     expect(plan?.actionPlan[0]).toEqual({ id: "understand-goal", label: "Hiểu mục tiêu", status: "done" });

@@ -44,6 +44,7 @@ import {
 import { getKnowledgeCollectionBySlug, computeCollectionProgress } from "../services/knowledge-collection.service";
 import { getKnowledgeGraphView, getPrerequisiteSeeds, getDependentSeeds } from "../services/knowledge-graph.service";
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
+import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
 
 function estimateReadingMinutes(seed: KnowledgeSeed): number {
   const text = [
@@ -201,6 +202,19 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
           {/* Feature 10 — Exercise */}
           <ContentSection id="exercise" icon={Dumbbell} title="Exercise · 5-15 phút">
             <p>{seed.exercise}</p>
+            <button
+              type="button"
+              onClick={() =>
+                pushCompanionIntent({
+                  module: "ckos",
+                  userGoal: `thực hành ${seed.title}`,
+                  currentContext: `Kỹ năng: ${seed.skills.join(", ") || "—"}. Công cụ AI: ${seed.aiTools.join(", ") || "—"}.`,
+                })
+              }
+              className="mt-3 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
+            >
+              Thực hành cùng Companion
+            </button>
           </ContentSection>
 
           {/* Feature 11 — Reflection: chỉ 3 câu hỏi */}
@@ -225,6 +239,19 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
 
           {/* Feature 13 — Next Action */}
           <NextActionCard action={seed.nextStep} />
+          <button
+            type="button"
+            onClick={() =>
+              pushCompanionIntent({
+                module: "ckos",
+                userGoal: `bước tiếp theo sau ${seed.title}`,
+                currentContext: seed.nextStep,
+              })
+            }
+            className="-mt-3 inline-flex rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-blue-300 hover:text-blue-600"
+          >
+            Nhờ Companion gợi ý bước tiếp theo
+          </button>
 
           {/* Feature 14 — Completion Experience */}
           {isComplete && <CompletionExperience seedTitle={seed.title} />}
