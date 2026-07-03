@@ -1,4 +1,3 @@
-import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { prompts } from "@/data/prompts";
@@ -17,7 +16,7 @@ let cachedIndex: PortalSearchResult[] | null = null;
 
 /**
  * Client-side search index built from the statically-imported data sources
- * (courses, tools, free resources, affiliate resources, prompts, SOP) plus
+ * (tools, free resources, affiliate resources, prompts, SOP) plus
  * the Portal nav map. Templates/Checklists/Case Study are managed via
  * Supabase (admin/store collections or dedicated tables) and are loaded
  * separately at query time by `usePortalSearchExtras` (see search-extras.ts)
@@ -31,13 +30,6 @@ export function getPortalSearchIndex(): PortalSearchResult[] {
       title: n.label.replace(/^[^\p{L}\p{N}]+/u, "").trim(),
       href: n.href,
       type: "Mục Portal",
-    })),
-    ...vdaiCourses.map((c) => ({
-      id: `course-${c.id}`,
-      title: c.title,
-      description: c.description,
-      href: c.href,
-      type: "Khoá học",
     })),
     ...freeResources.map((r) => ({
       id: `resource-${r.id}`,

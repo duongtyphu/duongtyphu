@@ -1,31 +1,9 @@
-const lessons = [
-  { title: "Định vị thương hiệu cá nhân", description: "Xác định bạn muốn được biết đến vì điều gì, với ai." },
-  { title: "Xây câu chuyện cá nhân (Personal Story)", description: "Kể câu chuyện của bạn theo cách tạo kết nối và niềm tin." },
-  { title: "Chọn kênh và tần suất xuất hiện", description: "Chọn 1-2 kênh phù hợp năng lực, duy trì đều đặn hơn là dàn trải." },
-  { title: "Xây hình ảnh chuyên nghiệp bằng AI", description: "Dùng AI tạo ảnh đại diện, mô tả, bộ nhận diện cá nhân nhất quán." },
-  { title: "Biến follower thành khách hàng", description: "Chuyển từ người theo dõi sang người tin tưởng và mua hàng." },
-];
+import { redirect } from "next/navigation";
 
-export const metadata = { title: "Thương hiệu cá nhân", description: "Lộ trình xây dựng thương hiệu cá nhân ứng dụng AI của VO DUONG AI." };
-
+/**
+ * Academy Reset — Product Decision: gỡ bỏ danh sách bài học demo cũ. Route
+ * giữ nguyên, chuyển hướng vào Academy Operating System mới tại /portal/academy.
+ */
 export default function PersonalBrandPage() {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Thương hiệu cá nhân</h1>
-        <p className="mt-2 text-gray-900">
-          Micro-learning giúp bạn xây dựng thương hiệu cá nhân làm nền tảng cho
-          Affiliate Marketing và tạo tài sản số lâu dài.
-        </p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {lessons.map((l) => (
-          <div key={l.title} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
-            <h3 className="text-sm font-bold text-gray-900">{l.title}</h3>
-            <p className="mt-2 text-sm text-gray-900">{l.description}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  redirect("/portal/academy");
 }

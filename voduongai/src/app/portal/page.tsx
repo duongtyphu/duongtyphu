@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
-import { vdaiCourses } from "@/data/courses";
 import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { getSupabaseServer } from "@/lib/supabase-server";
@@ -12,7 +11,6 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
 import { WelcomeHero } from "@/components/portal/gem-home/WelcomeHero";
 import { TodayMissionCard } from "@/components/portal/gem-home/TodayMissionCard";
-import { ContinueLearningCard } from "@/components/portal/gem-home/ContinueLearningCard";
 import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionCard";
 import { ProgressNarrativeCard } from "@/components/portal/gem-home/ProgressNarrativeCard";
 import { HumanMomentumCard } from "@/components/portal/gem-home/HumanMomentumCard";
@@ -108,7 +106,6 @@ export default async function GemHomePage() {
   const profile = await getProfileSummary();
   const featuredTools = await getFeaturedTools();
 
-  const continueLearningCourse = vdaiCourses[0];
   const recentReflections = await getRecentReflections();
   const flow = getHumanFlowState("knowledge", dominantChallenge(recentReflections));
   const welcomeState = getWelcomeState({ createdAt: profile?.memberSince, lastSignInAt: profile?.lastSignInAt });
@@ -154,21 +151,6 @@ export default async function GemHomePage() {
         </div>
         <div className="lg:col-span-5">
           <ProgressNarrativeCard flow={flow} />
-        </div>
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-12">
-          {continueLearningCourse && (
-            <ContinueLearningCard
-              item={{
-                title: continueLearningCourse.title,
-                description: continueLearningCourse.description,
-                href: continueLearningCourse.href,
-                progressPercent: 30,
-              }}
-            />
-          )}
         </div>
       </div>
 
