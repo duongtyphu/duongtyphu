@@ -201,12 +201,21 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Motion Language — Arrival: Companion "xuất hiện", một lần duy nhất khi
-   Hero mount, không lặp lại (khác breathing — vòng lặp vô hạn). */
+/* Motion Language — Arrival (Layer 04, "The First Meeting" — đã tinh
+   chỉnh lại): Companion không "nhảy vào" — chỉ mờ dần hiện ra, gần như
+   đã ở đó từ trước, đang chờ người dùng đến. Không bounce/scale-overshoot,
+   một lần duy nhất khi Hero mount (khác breathing — vòng lặp vô hạn). */
 @keyframes companion-orb-arrival {
-  0% { opacity: 0; transform: scale(0.85); filter: brightness(0.8); }
-  60% { opacity: 1; transform: scale(1.03); filter: brightness(1.08); }
+  0% { opacity: 0; transform: scale(0.98); filter: brightness(0.92); }
   100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+
+/* First Meeting — chữ xuất hiện lần lượt, có khoảng lặng giữa các dòng
+   (không assign delay cứng ở đây — component set qua style inline
+   animationDelay để mỗi dòng/CTA có nhịp riêng). */
+@keyframes companion-text-settle {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Motion Language — Leaving/route transition: fade + blur nhẹ khi một
@@ -220,7 +229,8 @@
 .companion-anim-pulse { animation: companion-soft-pulse 3.2s ease-in-out infinite; }
 .companion-anim-glow-breathe { animation: companion-glow-breathe 4s ease-in-out infinite; }
 .companion-anim-fade-up { animation: companion-fade-up 0.6s ease-out both; }
-.companion-anim-arrival { animation: companion-orb-arrival 1.1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.companion-anim-arrival { animation: companion-orb-arrival 2.1s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.companion-anim-text-settle { animation: companion-text-settle 0.9s cubic-bezier(0.16, 1, 0.3, 1) both; }
 .companion-route-enter { animation: companion-route-enter 0.42s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -231,7 +241,8 @@
   .companion-anim-pulse,
   .companion-anim-glow-breathe,
   .companion-anim-fade-up,
-  .companion-anim-arrival {
+  .companion-anim-arrival,
+  .companion-anim-text-settle {
     animation: none !important;
   }
   /* Route enter vẫn giữ fade (không blur/translate) — người dùng vẫn cảm
@@ -252,8 +263,22 @@
  * ───────────────────────────────────────────── */
 
 .companion-orb {
+  position: relative;
   display: inline-flex;
   transition: filter 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* Layer 04 — Nhiệm vụ 07 "Eye Contact": không có mắt/khuôn mặt (Design
+   Lock), chỉ gợi ý Companion đang "hướng về phía người dùng" bằng một quầng
+   sáng rất nhẹ, hơi lệch xuống dưới (phía người xem) — tĩnh, không thêm
+   chuyển động mới ngoài breathing đã có. */
+.companion-orb--gaze::before {
+  content: "";
+  position: absolute;
+  inset: -14%;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 62%, rgba(255, 255, 255, 0.12), transparent 68%);
+  pointer-events: none;
 }
 
 /* listening — ánh sáng mềm hơn, ít chuyển động hơn cảm giác đang lắng nghe,
@@ -347,4 +372,56 @@
        chuyển động nào khác đè lên, glow vẫn giữ tĩnh nhưng đẹp. */
     animation-play-state: paused;
   }
+}
+
+/* ─────────────────────────────────────────────
+ * Companion Design System™ — Layer 04: The First Meeting.
+ * Chapter Navigation kiểu "bookmark của một cuốn sách" — cố tình KHÔNG
+ * giống navbar (không thanh ngang đầy, không menu bar phẳng).
+ * ───────────────────────────────────────────── */
+
+.companion-bookmark-tab {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.65rem 1rem 0.85rem;
+  border-radius: 0.85rem 0.85rem 0.35rem 0.35rem;
+  border: 1px solid var(--companion-glass-border);
+  border-bottom: none;
+  background: rgba(15, 23, 42, 0.45);
+  color: var(--companion-text-secondary);
+  transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+}
+
+.companion-bookmark-tab::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 7px solid rgba(15, 23, 42, 0.45);
+  transition: border-top-color 0.3s ease;
+}
+
+.companion-bookmark-tab:hover {
+  transform: translateY(-2px);
+  border-color: var(--companion-glass-border-hover);
+  color: var(--companion-text-soft-white);
+}
+
+.companion-bookmark-tab--active {
+  background: linear-gradient(160deg, rgba(124, 58, 237, 0.22), rgba(34, 211, 238, 0.1));
+  border-color: var(--companion-glass-border-hover);
+  color: var(--companion-text-soft-white);
+  box-shadow: 0 -6px 24px -10px rgba(167, 139, 250, 0.5);
+}
+
+.companion-bookmark-tab--active::after {
+  border-top-color: rgba(88, 44, 168, 0.55);
 }
