@@ -68,11 +68,11 @@ import { CompanionContextualNudge } from "@/components/portal/companion/Companio
 import { CompanionQuickPanel } from "@/components/portal/companion/CompanionQuickPanel";
 import { getRouteContext, hasContextualNudge } from "@/lib/portal/companion/route-context";
 import { hasNudgeBeenShown, isNudgeDisabled, markNudgeShown } from "@/lib/portal/companion/nudge-session";
-import { orchestrate } from "@/companion/agents/companion-orchestrator";
 import {
   subscribeToCompanionIntent,
   type CompanionIntent,
 } from "@/lib/portal/companion/orchestrator-intent";
+import { useCompanionWorkSession } from "@/companion/work-session/use-companion-work-session";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -414,16 +414,35 @@ export function CompanionPresence({
     gardenStage,
     reflectionMeaning: reflectionMeaning as ReflectionMeaning | undefined,
   });
-  const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
   const routeContext = getRouteContext(pathname ?? "/portal");
-  // Product Amendment 02 — Companion Orchestration System™: đội Agent +
-  // kế hoạch Companion đã tự chọn cho module hiện tại (rule-based, chưa AI thật).
-  const orchestrationPlan = orchestrate({
-    currentRoute: pathname ?? "/portal",
-    currentModule: intent?.module,
-    userGoal: intent?.userGoal,
-    currentContext: intent?.currentContext,
-  });
+  // EPIC 02 — Sprint 04: Work Session chỉ tồn tại khi có một hành động
+  // thật (intent) — không có Work Session, Companion quay về Silent
+  // Presence bình thường (mood/greeting/thought engine cũ, không đổi).
+  const { session: workSession, celebrate: celebrateWork } = useCompanionWorkSession(
+    intent
+      ? {
+          currentRoute: pathname ?? "/portal",
+          currentModule: intent.module,
+          userGoal: intent.userGoal,
+          currentContext: intent.currentContext,
+        }
+      : null
+  );
+  const workSessionMoodKey =
+    workSession?.currentStatus === "CELEBRATING"
+      ? "celebrating"
+      : workSession?.currentStatus === "READY"
+        ? "encouraging"
+        : workSession && workSession.currentStatus !== "OBSERVING"
+          ? "thinking"
+          : null;
+  const state = open
+    ? states.listening
+    : comeback
+      ? states.comeback
+      : workSessionMoodKey
+        ? states[workSessionMoodKey]
+        : decision.companionState;
 
   // Sprint 18.8 — Presence Coordinator: một dòng quyết định hiện diện duy
   // nhất cho Life Moment, Return After Silence, Thought, Story, Greeting,
@@ -706,7 +725,8 @@ export function CompanionPresence({
             <CompanionQuickPanel
               state={state}
               routeContext={routeContext}
-              orchestrationPlan={orchestrationPlan}
+              workSession={workSession}
+              onCelebrate={celebrateWork}
               onClose={() => setQuickPanelOpen(false)}
             />
           )}

@@ -26,7 +26,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/khong-gian-ai",
     context: {
       key: "khong-gian-ai",
-      nudge: "Mình ở đây nếu bạn muốn thử một ý tưởng với AI.",
+      nudge: "Mình ở đây để cùng bạn thử ý tưởng với AI.",
       quickActions: [
         { label: "Thử một ý tưởng mới", href: "/portal/khong-gian-ai" },
         { label: "Xem công cụ AI", href: "/portal/tools" },
@@ -38,7 +38,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/library",
     context: {
       key: "ckos-library",
-      nudge: "Hôm nay mình có thể giúp bạn chọn một hạt giống tri thức phù hợp.",
+      nudge: "Mình có thể giúp bạn biến tri thức này thành một hành động nhỏ.",
       quickActions: [
         { label: "Tiếp tục học", href: "/portal/library" },
         { label: "Chọn hạt giống tri thức", href: "/portal/library" },
@@ -50,7 +50,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/academy",
     context: {
       key: "academy",
-      nudge: "Mình sẽ đi cùng bạn trong từng trải nghiệm học – làm.",
+      nudge: "Mình sẽ đi cùng bạn trong từng Mission.",
       quickActions: [
         { label: "Bắt đầu trải nghiệm", href: "/portal/academy" },
         { label: "Xem nhiệm vụ hôm nay", href: "/portal/roadmap" },
@@ -62,7 +62,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/opportunities",
     context: {
       key: "opportunities",
-      nudge: "Khi bạn sẵn sàng áp dụng điều đã học, mình sẽ giúp bạn nhìn rõ hơn.",
+      nudge: "Mình sẽ giúp bạn nhìn cơ hội từ nhiều góc độ trước khi hành động.",
       quickActions: [
         { label: "Khám phá cơ hội", href: "/portal/opportunities" },
         { label: "Xem cách áp dụng", href: "/portal/opportunities" },
@@ -74,7 +74,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/premium",
     context: {
       key: "premium",
-      nudge: "Đây là nơi mình đồng hành sâu hơn cùng bạn.",
+      nudge: "Khi bạn muốn đi sâu hơn, mình sẽ đồng hành kỹ hơn.",
       quickActions: [
         { label: "Xem quyền lợi Premium", href: "/portal/premium" },
         { label: "Khám phá nội dung Premium", href: "/portal/premium" },
@@ -86,7 +86,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/news",
     context: {
       key: "learning-journal",
-      nudge: "Hôm nay bạn muốn ghi lại điều gì đã học được không?",
+      nudge: "Mình có thể giúp bạn rút ra bài học từ điều vừa trải nghiệm.",
       quickActions: [
         { label: "Viết Reflection", href: "/portal/story" },
         { label: "Xem điều đã học", href: "/portal/news" },
@@ -98,7 +98,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/journey",
     context: {
       key: "my-journey",
-      nudge: "Mình sẽ giúp bạn nhìn lại mình đã trưởng thành như thế nào.",
+      nudge: "Mình sẽ giúp bạn nhìn lại mình đã thay đổi như thế nào.",
       quickActions: [
         { label: "Xem tiến trình", href: "/portal/journey" },
         { label: "Nhìn lại tuần này", href: "/portal/journey" },
@@ -110,7 +110,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     prefix: "/portal/khu-vuon-cua-ban",
     context: {
       key: "living-garden",
-      nudge: "Mỗi bước nhỏ của bạn sẽ làm khu vườn này lớn lên.",
+      nudge: "Mỗi bước bạn hoàn thành sẽ làm khu vườn này lớn lên.",
       quickActions: [
         { label: "Xem cây đang lớn", href: "/portal/khu-vuon-cua-ban" },
         { label: "Xem bước tiếp theo", href: "/portal/roadmap" },
