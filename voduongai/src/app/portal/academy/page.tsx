@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { GraduationCap, Rocket, UserCircle, ArrowRight, HelpCircle } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { JourneyCard } from "@/features/academy/components/JourneyCard";
+import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
 
 export const metadata = {
   title: "Học viện",
@@ -84,6 +86,16 @@ export default function AcademyHubPage() {
         message="Nếu bạn mới bắt đầu, hãy chọn Học viện AI trước. Nền tảng AI tốt sẽ giúp bạn học mọi thứ khác nhanh hơn gấp đôi."
         action={{ label: "Xem lộ trình đề xuất", href: "/portal/journey" }}
       />
+
+      {/* Learning Journey — Academy Operating System (Sprint 02) */}
+      <div className="space-y-4">
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Hành trình của bạn</p>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {getAllLearningJourneys().map((journey) => (
+            <JourneyCard key={journey.id} journey={journey} />
+          ))}
+        </div>
+      </div>
 
       {/* Learning Path */}
       <div className="space-y-4">

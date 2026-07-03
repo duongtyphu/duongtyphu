@@ -13,7 +13,17 @@ Thứ tự đọc khuyến nghị cho người mới tiếp cận EPIC 02 — Ac
 7. **`Practice_Framework.md`** — Quy định Practice (ngắn/thực tế/làm ngay/có kết quả).
 8. **`Growth_Framework.md`** — 4 dấu hiệu trưởng thành, không đo Score/Điểm/Xếp hạng.
 
-Báo cáo Sprint: `EPIC_02_Sprint_01_Review_Report.md`.
+### Sprint 02 — Learning Journey Engine™
+
+9. **`Learning_Journey_Blueprint.md`** — Journey là gì, khác Learning Path ở đâu, kiến trúc code.
+10. **`JourneyRules.md`** — Ngưỡng chuyển giai đoạn, khi nào gợi ý Practice/Reflection, giọng
+    nói Companion Guidance.
+11. **`Growth_Checkpoint_Standard.md`** — Chuẩn Growth Checkpoint (2 câu hỏi cố định, không
+    chấm điểm).
+12. **`Templates/Journey.template.md`**, **`Templates/Checkpoint.template.md`**,
+    **`Templates/GrowthPrompt.template.md`** — mẫu tham chiếu khi mở rộng Journey Engine.
+
+Báo cáo Sprint: `EPIC_02_Sprint_01_Review_Report.md`, `EPIC_02_Sprint_02_Review_Report.md`.
 
 ## Quan hệ với CKOS
 
