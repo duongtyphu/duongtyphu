@@ -15,17 +15,22 @@ import { toLivingCoreState } from "@/lib/portal/companion/living-core-state";
 import { displayName, type CompanionState } from "@/lib/portal/companion/companion-identity";
 import type { RouteContext } from "@/lib/portal/companion/route-context";
 import type { CompanionWorkSession } from "@/companion/work-session/work-session.types";
+import type { PortalModule } from "@/companion/agents/agent.types";
 import { CompanionWorkSessionPanel } from "./CompanionWorkSessionPanel";
+import { CompanionTaskEntryPanel } from "./CompanionTaskEntryPanel";
 
 export function CompanionQuickPanel({
   state,
   routeContext,
+  module,
   workSession = null,
   onCelebrate,
   onClose,
 }: {
   state: CompanionState;
   routeContext: RouteContext;
+  /** Sprint 04 patch — Companion Task Entry: module hiện tại, để gợi ý Quick Mission đúng ngữ cảnh. */
+  module: PortalModule | null;
   /** EPIC 02 — Sprint 04: phiên làm việc hiện tại của Companion, nếu có (route/goal thật vừa được kích hoạt). */
   workSession?: CompanionWorkSession | null;
   onCelebrate: () => void;
@@ -80,7 +85,13 @@ export function CompanionQuickPanel({
         </div>
       </div>
 
-      <div className="space-y-1.5">
+      {workSession ? (
+        <CompanionWorkSessionPanel session={workSession} onCelebrate={onCelebrate} />
+      ) : (
+        <CompanionTaskEntryPanel module={module} />
+      )}
+
+      <div className="mt-3 space-y-1.5 border-t border-gray-100 pt-3">
         {otherActions.slice(0, 2).map((action) => (
           <Link
             key={action.label}
@@ -92,8 +103,6 @@ export function CompanionQuickPanel({
           </Link>
         ))}
       </div>
-
-      {workSession && <CompanionWorkSessionPanel session={workSession} onCelebrate={onCelebrate} />}
 
       <Link
         href={khongGianAi.href}

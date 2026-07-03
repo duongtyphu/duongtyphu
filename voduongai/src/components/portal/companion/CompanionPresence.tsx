@@ -73,6 +73,7 @@ import {
   type CompanionIntent,
 } from "@/lib/portal/companion/orchestrator-intent";
 import { useCompanionWorkSession } from "@/companion/work-session/use-companion-work-session";
+import { getModuleForRoute } from "@/companion/agents/module-agent-map";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -415,6 +416,7 @@ export function CompanionPresence({
     reflectionMeaning: reflectionMeaning as ReflectionMeaning | undefined,
   });
   const routeContext = getRouteContext(pathname ?? "/portal");
+  const currentModule = getModuleForRoute(pathname ?? "/portal");
   // EPIC 02 — Sprint 04: Work Session chỉ tồn tại khi có một hành động
   // thật (intent) — không có Work Session, Companion quay về Silent
   // Presence bình thường (mood/greeting/thought engine cũ, không đổi).
@@ -725,6 +727,7 @@ export function CompanionPresence({
             <CompanionQuickPanel
               state={state}
               routeContext={routeContext}
+              module={currentModule}
               workSession={workSession}
               onCelebrate={celebrateWork}
               onClose={() => setQuickPanelOpen(false)}
