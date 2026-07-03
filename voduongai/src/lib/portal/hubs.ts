@@ -140,8 +140,11 @@ export type NavSection = {
 };
 
 /**
- * Cấu trúc sidebar theo 3 hành trình:
- * Học hỏi / Xây dựng / Trưởng thành.
+ * Cấu trúc sidebar — danh sách phẳng theo đúng thứ tự sản phẩm yêu cầu,
+ * không còn tiêu đề nhóm (Học hỏi/Xây dựng/Premium/Trưởng thành đã bỏ).
+ * Nhóm thứ 2 (Nhật ký học tập/Hành trình của tôi/Khu vườn của bạn) chỉ
+ * tách riêng bằng một đường kẻ ngăn cách trong `PortalSidebar.tsx`, không
+ * phải section có điều kiện mở khóa — cả 3 mục luôn hiển thị bình thường.
  *
  * Đây là nguồn sự thật duy nhất cho PortalSidebar.
  * Mọi Project mới KHÔNG được thêm item vào đây từ page.tsx riêng
@@ -150,40 +153,23 @@ export type NavSection = {
 export const portalNavSections: NavSection[] = [
   {
     group: null,
-    items: [{ label: "Trang chủ", href: "/portal" }],
-  },
-  {
-    group: "Học hỏi",
-    emoji: "🌱",
     items: [
+      { label: "Trang chủ", href: "/portal" },
+      { label: "Companion", href: "/portal/companion" },
       { label: "Không gian AI", href: "/portal/khong-gian-ai" },
       { label: "Thư viện tri thức", href: "/portal/library" },
-      { label: "Nhật ký học tập", href: "/portal/news" },
-    ],
-  },
-  {
-    group: "Xây dựng",
-    emoji: "🚀",
-    items: [
       { label: "Học viện", href: "/portal/academy" },
       { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
+      { label: "Premium", href: "/portal/premium" },
       { label: "Cộng đồng", href: "/portal/community" },
     ],
   },
   {
-    group: "Premium",
-    emoji: "💎",
+    group: null,
     items: [
-      { label: "Premium", href: "/portal/premium" },
-    ],
-  },
-  {
-    group: "Trưởng thành",
-    emoji: "🌟",
-    items: [
+      { label: "Nhật ký học tập", href: "/portal/news" },
       { label: "Hành trình của tôi", href: "/portal/journey" },
       { label: "Khu vườn của bạn", href: "/portal/khu-vuon-cua-ban" },
-      { label: "Companion", href: "/portal/companion" },
     ],
   },
 ];

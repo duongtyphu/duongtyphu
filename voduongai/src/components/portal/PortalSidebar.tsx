@@ -4,15 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
+  UserRound,
   Cpu,
   Library,
-  Notebook,
   GraduationCap,
-  TrendingUp,
-  Users,
-  Sparkles,
-  Compass,
+  Rocket,
   Crown,
+  Users,
+  Notebook,
+  Compass,
   Leaf,
   type LucideIcon,
 } from "lucide-react";
@@ -20,16 +20,16 @@ import { portalNavGroups } from "@/lib/site";
 
 const navIcons: Record<string, LucideIcon> = {
   "/portal": Home,
+  "/portal/companion": UserRound,
   "/portal/khong-gian-ai": Cpu,
   "/portal/library": Library,
-  "/portal/news": Notebook,
   "/portal/academy": GraduationCap,
-  "/portal/opportunities": TrendingUp,
+  "/portal/opportunities": Rocket,
+  "/portal/premium": Crown,
   "/portal/community": Users,
-  "/portal/companion": Sparkles,
+  "/portal/news": Notebook,
   "/portal/journey": Compass,
   "/portal/khu-vuon-cua-ban": Leaf,
-  "/portal/premium": Crown,
 };
 
 // Khu vườn của bạn dùng tông xanh lá riêng cho active state (đúng
@@ -57,7 +57,7 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
   return (
     <nav aria-label="Điều hướng Portal">
       {portalNavGroups.map((section, si) => (
-        <div key={si} className={si > 0 ? "mt-4" : ""}>
+        <div key={si} className={si > 0 ? "mt-4 border-t border-gray-100 pt-4" : ""}>
           {section.group && showLabels && (
             <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
               {section.emoji ? `${section.emoji} ${section.group}` : section.group}
