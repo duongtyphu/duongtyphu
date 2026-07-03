@@ -46,6 +46,33 @@ Mỗi ví dụ trên PHẢI đi kèm hành động cụ thể ngay sau (không d
 - Không trùng thời điểm với Contextual Nudge hoặc khi có Work Session đang chạy.
 - Không lặp lại cùng 1 Discovery item cho cùng 1 người dùng.
 
+## Teaser nội dung file — ưu tiên cao nhất
+
+Loại Discovery quan trọng nhất trong Portal: **bật mí một chi tiết thật bên trong một file đính
+kèm đang LOCKED** (Prompt Pack/Checklist/Template — xem `JOURNEY_UNLOCK_BLUEPRINT.md` mục "Ưu
+tiên hàng đầu"). Đây khác Discovery thông thường ở chỗ nó luôn gắn với MỘT file cụ thể sắp/đang
+chờ mở khóa, không phải nội dung đã mở sẵn.
+
+Quy tắc viết Teaser:
+
+1. **Bật mí đúng MỘT chi tiết thật**, không tóm tắt toàn bộ file, không liệt kê mục lục.
+2. **Chi tiết phải cụ thể với đúng file đó** — không dùng câu chung chung dùng lại được cho mọi
+   file ("Có nội dung hay bên trong!").
+3. **Không nói ra cách để mở ngay** (không phải "trả tiền để xem" hay "bấm vào đây để unlock
+   ngay") — Teaser chỉ tăng tò mò, điều kiện mở khóa vẫn theo `UNLOCK_RULE_STANDARD.md`.
+4. **Giữ lại phần hay nhất** — Teaser nên hé lộ một chi tiết THÚ VỊ nhưng không phải là phần giá
+   trị nhất của file (giữ lý do để thực sự mở khóa và đọc toàn bộ).
+
+Ví dụ:
+
+> "Trong Checklist này có một bước mà rất nhiều người bỏ qua — mình nghĩ bạn sẽ thấy bất ngờ."
+> "Prompt Pack này có một prompt mình viết riêng cho đúng tình huống bạn hay gặp."
+> "Template này có một phần mở đầu mà mình nghĩ bạn sẽ dùng lại nhiều lần."
+
+Vị trí hiển thị Teaser: ngay tại `DownloadPrepCard` (khu vực "Sẵn sàng để tải xuống") — không
+cần bong bóng Companion riêng nếu Teaser đã nằm sẵn trong khu vực đó; dùng Contextual
+Nudge/Quick Panel khi muốn Companion chủ động nhắc tới file này ở nơi khác trong Portal.
+
 ## Discovery vs Surprise vs Unlock — bảng phân biệt nhanh
 
 | | Điều kiện | Có báo trước không | Ví dụ |

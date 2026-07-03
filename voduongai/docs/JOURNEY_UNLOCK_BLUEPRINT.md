@@ -44,21 +44,44 @@ thúc ở "hết rồi" (xem `PORTAL_UNLOCK_REVIEW.md` cho ví dụ áp dụng t
 
 ## Những thứ có thể mở khóa (Unlockable Assets)
 
-| Loại | Nguồn dữ liệu hiện có (map để Sprint sau code) |
-|---|---|
-| Prompt Pack | `KnowledgeSeed.prompts` (CKOS) |
-| Checklist | `KnowledgeSeed.checklist`, `src/data/*` checklist collections |
-| Template | Library `templates` collection |
-| Case Study | `case_study`/`student-success-stories` collection |
-| Mission mới | `LearningJourney` (Academy — `journey.types.ts`) |
-| Learning Path | `Collection` (CKOS) |
-| Companion Secret | Nội dung mới — xem "Surprise" bên dưới, không cần data model riêng ban đầu, có thể dùng `character-memory.ts`/`living-stories.ts` đã có |
-| AI Specialist mới | `agent-registry.ts` (Companion Orchestration System™) — Specialist "ẩn" chỉ xuất hiện sau khi Unlock |
-| Premium Challenge | Premium module |
-| Project Challenge | Opportunities module |
-| Knowledge Collection | CKOS Collection |
-| Reflection Insight | Tổng hợp từ nhiều Reflection đã viết (`reflections` table) |
-| Companion Story | `living-stories.ts` (đã có Story Matching Engine — Sprint 13.2) |
+**Ưu tiên hàng đầu: tài liệu tải về / file đính kèm thật** (Prompt Pack, Checklist, Template).
+Đây là loại Unlock nên implement TRƯỚC các loại khác, vì UI đã sẵn sàng chờ đúng cơ chế này —
+`DownloadPrepCard` (`src/features/knowledge/components/DownloadPrepCard.tsx`) hiện đang hiển
+thị y nguyên 3 nhãn này dưới dòng "Sẵn sàng để tải xuống (sắp có)" — đây CHÍNH LÀ trạng thái
+`LOCKED` của framework, chỉ cần nối vào Unlock Rule Engine thay vì để "sắp có" mãi mãi. Xem
+mục "Teaser nội dung file" bên dưới cho cách Companion tạo tò mò trước khi mở.
+
+| Loại | Nguồn dữ liệu hiện có (map để Sprint sau code) | Ưu tiên |
+|---|---|---|
+| Prompt Pack (file tải về) | `KnowledgeSeed.prompts` + `downloadPack.promptPackLabel`, hiển thị qua `DownloadPrepCard` | **1 — ưu tiên cao nhất** |
+| Checklist (file tải về) | `KnowledgeSeed.checklist` + `downloadPack.checklistLabel`, `DownloadPrepCard` | **1 — ưu tiên cao nhất** |
+| Template (file tải về) | `downloadPack.templateLabel`, Library `templates` collection, `DownloadPrepCard` | **1 — ưu tiên cao nhất** |
+| Case Study (tài liệu đọc, có thể kèm file PDF thật) | `case_study`/`student-success-stories` collection | 2 |
+| Mission mới | `LearningJourney` (Academy — `journey.types.ts`) | 2 |
+| Learning Path | `Collection` (CKOS) | 2 |
+| Knowledge Collection | CKOS Collection | 2 |
+| Reflection Insight | Tổng hợp từ nhiều Reflection đã viết (`reflections` table) | 3 |
+| Companion Story | `living-stories.ts` (đã có Story Matching Engine — Sprint 13.2) | 3 |
+| Companion Secret | Nội dung mới — xem "Surprise" bên dưới, không cần data model riêng ban đầu, có thể dùng `character-memory.ts`/`living-stories.ts` đã có | 3 |
+| AI Specialist mới | `agent-registry.ts` (Companion Orchestration System™) — Specialist "ẩn" chỉ xuất hiện sau khi Unlock | 3 |
+| Premium Challenge | Premium module | 3 |
+| Project Challenge | Opportunities module | 3 |
+
+**Vì sao ưu tiên file tải về**: đây là loại "phần thưởng" cụ thể, hữu hình, dùng được ngay —
+đúng tinh thần `REWARD_STANDARD.md` ("người dùng có thể DÙNG được thứ này để làm việc/học tốt
+hơn không?"). Các loại còn lại (Mission, Learning Path, Companion Secret...) trừu tượng hơn và
+nên implement sau khi cơ chế file tải về đã chạy ổn.
+
+## Teaser nội dung file — Companion tăng tò mò trước khi mở khóa
+
+Trước khi một file tải về được Unlock, Companion nên **bật mí một chi tiết cụ thể bên trong**
+(không phải toàn bộ nội dung) để tăng sự tò mò — đây là một dạng Discovery đặc biệt dành riêng
+cho file đính kèm, xem `DISCOVERY_STANDARD.md` mục "Teaser nội dung file" và
+`COMPANION_UNLOCK_LANGUAGE.md` nhóm câu Teaser.
+
+Ví dụ: thay vì chỉ nói "Có một Checklist sắp mở", Companion nói "Trong Checklist này có một
+bước mà rất nhiều người bỏ qua — mình nghĩ bạn sẽ thấy bất ngờ". Bật mí PHẢI cụ thể (nhắc một
+chi tiết thật trong file), không được là câu chung chung dùng lại cho mọi file.
 
 Không tạo loại "vật phẩm" mới ngoài danh sách trên (không badge/coin/gem/XP — xem mục "Không
 được dùng").

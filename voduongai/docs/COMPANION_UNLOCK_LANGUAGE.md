@@ -33,6 +33,22 @@ Quy tắc lời nói của Companion khi báo một Unlock hoặc Discovery. Cù
 | "Có một Case Study rất hay." | Discovery một Case Study/Real Story |
 | "Mình nghĩ hôm nay bạn sẽ thích điều này." | Discovery chung, không thuộc 2 loại trên |
 
+## Câu Teaser file đính kèm (ưu tiên cao nhất — xem `JOURNEY_UNLOCK_BLUEPRINT.md`)
+
+Dùng khi một file tải về (Prompt Pack/Checklist/Template) đang `LOCKED`. Mỗi câu phải nhắc một
+chi tiết CỤ THỂ, thay `[...]` bằng chi tiết thật của đúng file đó khi dùng:
+
+| Câu mẫu | Ghi chú |
+|---|---|
+| "Trong [Checklist này] có một bước mà rất nhiều người hay bỏ qua." | Checklist |
+| "[Prompt Pack này] có một prompt mình viết riêng cho đúng tình huống bạn hay gặp." | Prompt Pack |
+| "[Template này] có một phần mở đầu mình nghĩ bạn sẽ dùng lại nhiều lần." | Template |
+| "Có một chi tiết nhỏ trong tài liệu này mà mình nghĩ sẽ thay đổi cách bạn làm việc này." | Chung |
+| "Mình sẽ không nói hết đâu, nhưng có một mẹo trong đó rất đáng thử." | Chung, giữ bí mật phần còn lại |
+| "Một trong những phần mình thích nhất ở tài liệu này là cách trình bày ví dụ thật." | Chung |
+
+Xem đầy đủ quy tắc viết Teaser ở `DISCOVERY_STANDARD.md` mục "Teaser nội dung file".
+
 ## Cấu trúc một câu Unlock đầy đủ (mẫu để mở rộng, không phải template cứng)
 
 ```

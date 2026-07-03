@@ -28,11 +28,11 @@ Lock/Unlock/Discovery/Surprise/Recognition/Reflection theo Journey Unlock Framew
 
 | Lớp | Áp dụng |
 |---|---|
-| Lock | Seed cuối trong mỗi Collection chỉ hiện tiêu đề + mô tả ngắn cho tới khi hoàn thành Seed trước đó (KHÔNG ẩn hoàn toàn — vẫn thấy trong `KnowledgeGraphPanel`/`SeedNavigation` đã có, chỉ nội dung chi tiết chưa mở) |
-| Discovery | Prompt "đặc biệt" gợi ý giữa lúc đọc Seed (đã có `CompanionSuggestion` — nối thêm Discovery vào đây) |
+| Lock | `DownloadPrepCard` mỗi Seed ("Sẵn sàng để tải xuống — sắp có") CHÍNH LÀ trạng thái LOCKED có sẵn cho Prompt Pack/Checklist/Template — **ưu tiên implement đầu tiên**, xem `JOURNEY_UNLOCK_BLUEPRINT.md` |
+| Discovery/Teaser | Companion bật mí một chi tiết thật trong Prompt Pack/Checklist/Template đang Lock (xem `DISCOVERY_STANDARD.md` mục "Teaser nội dung file"); Prompt "đặc biệt" gợi ý giữa lúc đọc Seed (đã có `CompanionSuggestion` — nối thêm Discovery vào đây) |
 | Practice | Nút "Thực hành cùng Companion" (đã có, Sprint A.2) |
 | Reflection | 3 câu hỏi Reflection mỗi Seed (đã có, `ReflectionBox`) |
-| Unlock | Case Study/Real Story sau khi hoàn thành Collection (trigger `collection-completed`) |
+| Unlock | Prompt Pack/Checklist/Template tải về thật khi hoàn thành Seed (trigger `seed-completed`); Case Study/Real Story sau khi hoàn thành Collection (trigger `collection-completed`) |
 | Recognition | "Điều mình thích nhất là cách bạn tự sửa lại prompt sau lần thử đầu." |
 | Next Journey | Collection kế tiếp được gợi ý ngay sau Unlock (đã có gợi ý liên quan qua `RelatedKnowledge`, cần thêm dòng Companion dẫn dắt) |
 

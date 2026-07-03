@@ -11,11 +11,14 @@ bản tóm tắt "Standard" chính thức, dùng để review nhanh mọi Sprint
 
 ## Được phép mở khóa (danh sách đóng — không tự ý thêm loại mới ngoài đây)
 
+**Ưu tiên triển khai trước**: Prompt Pack/Checklist/Template — đây là file tải về thật, đã có
+UI chờ sẵn (`DownloadPrepCard`). Xem `JOURNEY_UNLOCK_BLUEPRINT.md` mục "Ưu tiên hàng đầu".
+
 | Loại | Vì sao là "phần thưởng thật" |
 |---|---|
-| Prompt Pack | Công cụ dùng ngay cho công việc thật |
-| Template | Rút ngắn thời gian làm việc thật |
-| Checklist | Giúp làm đúng, không phải trang trí |
+| Prompt Pack (file tải về) | Công cụ dùng ngay cho công việc thật |
+| Template (file tải về) | Rút ngắn thời gian làm việc thật |
+| Checklist (file tải về) | Giúp làm đúng, không phải trang trí |
 | Case Study / Real Story | Bằng chứng người thật đã làm được — xem `REAL_STORY_STANDARD.md` |
 | Knowledge Collection | Tri thức có cấu trúc, không phải bài viết rời rạc |
 | Mission | Cơ hội thực hành mới |
