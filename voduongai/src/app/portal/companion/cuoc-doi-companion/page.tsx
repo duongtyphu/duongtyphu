@@ -1,6 +1,7 @@
 import { CompanionCosmicBackground } from "@/components/portal/companion/CompanionCosmicBackground";
 import { CompanionLifeTimeline } from "@/components/portal/companion/CompanionLifeTimeline";
 import { CompanionLegacy } from "@/components/portal/companion/CompanionLegacy";
+import { CompanionCloseChapter } from "@/components/portal/companion/CompanionCloseChapter";
 import { CompanionHeading, CompanionSubtitle } from "@/components/portal/companion/CompanionTypography";
 
 export const metadata = { title: "Cuộc đời Companion — Companion" };
@@ -30,6 +31,8 @@ export default function CuocDoiCompanionPage() {
         <div className="mt-20">
           <CompanionLegacy />
         </div>
+
+        <CompanionCloseChapter />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { CompanionCosmicBackground } from "@/components/portal/companion/CompanionCosmicBackground";
 import { CompanionBeliefPage } from "@/components/portal/companion/CompanionBeliefPage";
+import { CompanionCloseChapter } from "@/components/portal/companion/CompanionCloseChapter";
 import { CompanionHeading, CompanionSubtitle } from "@/components/portal/companion/CompanionTypography";
 
 export const metadata = { title: "Thư viện niềm tin — Companion" };
@@ -44,6 +45,8 @@ export default function NhungDieuMinhTinPage() {
             </p>
           </CompanionBeliefPage>
         </div>
+
+        <CompanionCloseChapter />
       </div>
     </div>
   );

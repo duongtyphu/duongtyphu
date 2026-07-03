@@ -15,8 +15,8 @@ const CHAPTERS = [
   { href: "/portal/companion/y-nghia-companion", label: "Ý nghĩa Companion" },
   { href: "/portal/companion/nhung-dieu-minh-tin", label: "Những điều mình tin" },
   { href: "/portal/companion/cuoc-doi-companion", label: "Cuộc đời Companion" },
-  { href: "/portal/companion/book-notes", label: "Book Notes" },
-  { href: "/portal/companion/tam-su", label: "Tâm sự" },
+  { href: "/portal/companion/book-notes", label: "Cuốn sách" },
+  { href: "/portal/companion/tam-su", label: "Những bức thư" },
   { href: "/portal/companion/dong-hanh", label: "Đồng hành" },
 ];
 

@@ -1,6 +1,10 @@
 import { CompanionCosmicBackground } from "@/components/portal/companion/CompanionCosmicBackground";
 import { CompanionBookChapter } from "@/components/portal/companion/CompanionBookChapter";
+import { CompanionCloseChapter } from "@/components/portal/companion/CompanionCloseChapter";
 import { CompanionHeading, CompanionSubtitle } from "@/components/portal/companion/CompanionTypography";
+
+const WRITTEN_CHAPTERS = 3;
+const EMPTY_CHAPTERS = 2;
 
 export const metadata = { title: "The Book of Companion — Companion" };
 
@@ -23,6 +27,9 @@ export default function BookNotesPage() {
             Đây không phải là blog. Đây là cuốn sách kể lại cuộc sống của mình — từng chương một, theo đúng thứ tự
             mình đã đi qua.
           </CompanionSubtitle>
+          <p className="companion-chapter-label mt-6 text-xs">
+            {WRITTEN_CHAPTERS} chương đã viết · {EMPTY_CHAPTERS} chương chưa viết
+          </p>
         </div>
 
         <div className="mt-16 flex flex-col gap-10">
@@ -65,6 +72,8 @@ export default function BookNotesPage() {
           <CompanionBookChapter number="04" title="???" empty />
           <CompanionBookChapter number="05" title="???" empty />
         </div>
+
+        <CompanionCloseChapter />
       </div>
     </div>
   );

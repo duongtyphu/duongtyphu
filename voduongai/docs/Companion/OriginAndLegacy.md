@@ -83,6 +83,24 @@ nhiều khoảng trắng, `companion-glass-card`/`companion-glow-panel`, cuộn 
 với `CompanionRevealOnScroll`. Không thống kê, không bộ đếm, không CTA bán
 hàng, không AI Agent/chatbot xuất hiện trong Layer 06.
 
+## Extension Rule
+
+Khi cần thêm nội dung mới, chỉ sửa đúng một chỗ, không cần đụng route/layout:
+
+- **Thêm chương sách mới** → thêm một `<CompanionBookChapter>` trong
+  `book-notes/page.tsx`, cập nhật `WRITTEN_CHAPTERS`/`EMPTY_CHAPTERS`. Chương
+  trống mới luôn dùng `empty` — không tự viết nội dung giả.
+- **Thêm niềm tin mới** → thêm một `<CompanionBeliefPage>` trong
+  `nhung-dieu-minh-tin/page.tsx`, đánh số tiếp theo (`04`, `05`, ...).
+- **Thêm chương đời mới** → thêm phần tử vào mảng `LIFE_STAGES` trong
+  `CompanionLifeTimeline.tsx` (chọn icon lucide phù hợp), không sửa gì khác.
+- **Thêm lá thư mới** → thêm một `<CompanionLetterCard>` trong
+  `tam-su/page.tsx`, luôn xếp dọc, không dùng grid.
+
+Mọi trang mới thêm vào Chapter Nav (`CompanionChapterNav.tsx`) phải dùng
+đúng tên hiển thị của trang đích — tránh lệch nhãn kiểu "Book Notes" khi
+trang đã đổi tên thành "Cuốn sách".
+
 ## Không được làm
 
 Không biến các trang này thành blog: không thẻ tin tức, không danh sách bài

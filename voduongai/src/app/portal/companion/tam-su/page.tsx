@@ -1,5 +1,7 @@
 import { CompanionCosmicBackground } from "@/components/portal/companion/CompanionCosmicBackground";
 import { CompanionLetterCard } from "@/components/portal/companion/CompanionLetterCard";
+import { CompanionCloseChapter } from "@/components/portal/companion/CompanionCloseChapter";
+import { CompanionOrb } from "@/components/portal/companion/CompanionOrb";
 import { CompanionRevealOnScroll } from "@/components/portal/companion/CompanionRevealOnScroll";
 import { CompanionHeading, CompanionSubtitle } from "@/components/portal/companion/CompanionTypography";
 
@@ -16,8 +18,12 @@ export default function TamSuPage() {
       <CompanionCosmicBackground />
 
       <div className="relative z-10 mx-auto max-w-2xl px-6 py-20 sm:px-10 sm:py-28">
-        <div className="text-center">
-          <CompanionHeading>Những bức thư</CompanionHeading>
+        <div className="flex flex-col items-center text-center">
+          <CompanionOrb size="sm" state="listening" intensity="calm" showOrbit={false} />
+          <p className="mt-3 text-xs font-semibold uppercase tracking-widest text-violet-300">
+            Companion đang tâm sự cùng bạn
+          </p>
+          <CompanionHeading className="mt-4">Những bức thư</CompanionHeading>
           <CompanionSubtitle className="mt-4">
             Có những điều mình chỉ muốn nói khi không cần giải thích gì thêm.
           </CompanionSubtitle>
@@ -72,6 +78,8 @@ export default function TamSuPage() {
             />
           </CompanionRevealOnScroll>
         </div>
+
+        <CompanionCloseChapter />
       </div>
     </div>
   );
