@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Home,
-  UserRound,
+  HeartHandshake,
   Cpu,
   Library,
   GraduationCap,
@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
 
+/** Companion dùng icon riêng, tách biệt hẳn khỏi icon user/profile — thể
+ * hiện "người đồng hành", không phải tài khoản cá nhân. */
 const navIcons: Record<string, LucideIcon> = {
   "/portal": Home,
-  "/portal/companion": UserRound,
+  "/portal/companion": HeartHandshake,
   "/portal/khong-gian-ai": Cpu,
   "/portal/library": Library,
   "/portal/academy": GraduationCap,
@@ -61,7 +63,7 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
           {si > 0 && (
             <span
               aria-hidden="true"
-              className="absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-brand-blue/70 to-transparent shadow-[0_0_10px_1px_rgba(91,140,255,0.5)]"
+              className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-brand-blue/90 to-transparent shadow-[0_0_14px_1.5px_rgba(91,140,255,0.65)]"
             />
           )}
           {section.group && showLabels && (
@@ -118,7 +120,7 @@ function NavLink({
           style={{ width: 3.5 }}
         />
       )}
-      {Icon && <Icon className="h-4 w-4 shrink-0" />}
+      {Icon && <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />}
       {showLabel && <span className="truncate">{item.label}</span>}
       {!showLabel && (
         <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-900 opacity-0 shadow-lg transition group-hover:opacity-100">
