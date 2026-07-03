@@ -1,7 +1,13 @@
-# Journey Unlock System™ — Blueprint
+# Journey Unlock Framework™ — Blueprint
 
-Product Constitution. Áp dụng cho toàn bộ Portal — không riêng Academy. Đây là tài liệu nền,
-được khoá trước khi bất kỳ Sprint nào code tính năng theo Constitution này.
+Product Constitution. Áp dụng cho toàn bộ Portal — không riêng Academy: CKOS, Academy, Project
+& Opportunities, Premium, Journey, Garden, Companion đều dùng chung một framework duy nhất
+(Legacy Asset của Sprint 04.5). Tài liệu này là nền, được khoá trước khi bất kỳ Sprint nào code
+tính năng theo Constitution này.
+
+**Sprint 04.5 finalize**: framework layer đổi tên từ bản nháp Sprint 04 sang tên chính thức
+(`LOCKED` thay cho `VISIBLE`, `NEXT JOURNEY` thay cho `NEXT`) — xem mục "6 lớp Unlock" bên
+dưới. Đây là tên DUY NHẤT được dùng từ nay về sau.
 
 ## Vấn đề Constitution này giải quyết
 
@@ -16,24 +22,25 @@ Journey, toàn bộ Prompt Pack. Khi người dùng "xem hết" một khu vực,
 Journey Unlock System không phải một tính năng game hoá. Nó là cách tổ chức lại **nhịp độ hé
 lộ tri thức** để mỗi khu vực Portal luôn có một lớp nữa phía sau lớp đang thấy.
 
-## 6 lớp Unlock
+## 6 lớp Unlock (tên chính thức — Sprint 04.5)
 
 ```
-VISIBLE → DISCOVER → PRACTICE → REFLECTION → UNLOCK → NEXT
+LOCKED → DISCOVER → PRACTICE → REFLECTION → UNLOCK → NEXT JOURNEY
 ```
 
 | Lớp | Ý nghĩa | Người dùng thấy gì |
 |---|---|---|
-| **VISIBLE** | Phần luôn hiển thị ngay, không cần điều kiện | Tiêu đề, mô tả ngắn, lý do nó tồn tại — đủ để tò mò, không đủ để "xem hết" |
+| **LOCKED** | Phần chưa khả dụng, nhưng gợi ý sự tồn tại của nó — không phải "trống rỗng/ẩn hoàn toàn" | Tiêu đề, mô tả ngắn, lý do nó tồn tại — đủ để tò mò, không đủ để "xem hết" |
 | **DISCOVER** | Companion chủ động giới thiệu một điều cụ thể (không phải toàn bộ danh sách) | Một Prompt, một Case Study, một đoạn tri thức — Companion nói, không phải banner |
 | **PRACTICE** | Người dùng làm một việc thật (không phải đọc thêm) | Bài tập, Mission, áp dụng vào công việc thật |
 | **REFLECTION** | Người dùng tự nhìn lại điều vừa trải nghiệm | Câu hỏi Reflection (đã có sẵn cơ chế ở CKOS/Academy) |
 | **UNLOCK** | Một thứ mới trở nên khả dụng, Companion là người báo | Không dùng chữ "Đã mở khóa" — xem `COMPANION_UNLOCK_LANGUAGE.md` |
-| **NEXT** | Ngay sau Unlock, luôn có một gợi ý về điều tiếp theo (chưa mở) | Không để người dùng đứng yên sau khi nhận thưởng |
+| **NEXT JOURNEY** | Ngay sau Unlock, luôn có một gợi ý về hành trình tiếp theo (chưa mở) | Không để người dùng đứng yên sau khi nhận thưởng — luôn có một LOCKED mới xuất hiện phía trước |
 
 **Quy tắc cứng**: không lớp nào được bỏ qua. Không có "Unlock ngay khi vào trang" (bỏ qua
 DISCOVER/PRACTICE/REFLECTION) — nếu làm vậy, Unlock trở thành một banner quảng cáo, vi phạm
-Constitution.
+Constitution. `NEXT JOURNEY` luôn phải trỏ tới một `LOCKED` khác — vòng lặp không bao giờ kết
+thúc ở "hết rồi" (xem `PORTAL_UNLOCK_REVIEW.md` cho ví dụ áp dụng theo từng module).
 
 ## Những thứ có thể mở khóa (Unlockable Assets)
 
@@ -105,6 +112,38 @@ Portal thành checklist game). Xem `REWARD_RULES.md` mục "Ẩn danh sách Unlo
   Companion "làm việc cùng" người dùng; Unlock là cách Companion "cho thêm" người dùng.
 - **Tái dùng** cơ chế nudge/dismiss/session-memory đã có (`nudge-session.ts`) làm nền cho tần
   suất Discovery/Unlock — không xây lại bộ nhớ phiên từ đầu.
+
+## Legacy Assets — Sprint 04.5
+
+Framework này (Journey Unlock Framework™) là tài sản nền dùng chung, không riêng cho Academy:
+
+| Module | Áp dụng LOCKED/DISCOVER/PRACTICE/REFLECTION/UNLOCK/NEXT JOURNEY cho |
+|---|---|
+| CKOS | Seed/Collection/Prompt Pack |
+| Academy | Mission/Journey/Evidence |
+| Project & Opportunities | Project Challenge/phân tích dự án |
+| Premium | Premium Challenge |
+| Journey (Hành trình của tôi) | Milestone/Reflection Insight |
+| Garden (Khu vườn của bạn) | Growth Recognition gắn với hình ảnh cây lớn lên |
+| Companion | Companion Secret/Companion Story |
+
+Xem `PORTAL_UNLOCK_REVIEW.md` cho review chi tiết từng khu vực Portal (nơi nào nên Lock/
+Unlock/Discovery/Surprise/Recognition/Reflection).
+
+## Bộ tài liệu đầy đủ (Documentation Assets — Sprint 04.5)
+
+1. `JOURNEY_UNLOCK_BLUEPRINT.md` (tài liệu này)
+2. `UNLOCK_RULE_STANDARD.md` — thiết kế Rule Engine (không hardcode)
+3. `DISCOVERY_STANDARD.md` — chuẩn Discovery Layer toàn Portal
+4. `RECOGNITION_STANDARD.md` — chuẩn Growth Recognition
+5. `COMPANION_UNLOCK_LANGUAGE.md` — thư viện câu nói (≥80 câu thật)
+6. `REWARD_STANDARD.md` — triết lý phần thưởng, danh sách được phép/cấm
+7. `REAL_STORY_STANDARD.md` — chuẩn Case Study/Real Story
+8. `JOURNEY_MEMORY_RULE.md` — quy tắc lưu trạng thái hành trình
+9. `PORTAL_UNLOCK_REVIEW.md` — review toàn Portal theo framework này
+
+Các tài liệu chi tiết hơn từ Sprint 04 (`JOURNEY_UNLOCK_RULES.md`, `DISCOVERY_RULES.md`,
+`REWARD_RULES.md`) vẫn còn hiệu lực — các Standard mới ở trên xây trên nền đó, không thay thế.
 
 ## Không code ở tài liệu này
 
