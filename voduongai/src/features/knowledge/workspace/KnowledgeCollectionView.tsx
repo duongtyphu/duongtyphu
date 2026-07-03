@@ -3,14 +3,25 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { CollectionHeader } from "../components/CollectionHeader";
-import { SeedListItem } from "../components/SeedListItem";
-import { getSeedsInCollection, computeCollectionProgress } from "../services/knowledge-collection.service";
+import { LearningPath } from "../components/LearningPath";
+import { CompanionSuggestion } from "../components/CompanionSuggestion";
+import { CollectionCompleteBanner } from "../components/CollectionCompleteBanner";
+import {
+  computeCollectionProgress,
+  getSeedsWithStatus,
+  getNextSeedToLearn,
+  getCollectionCompanionGuidance,
+  getSuggestedNextCollection,
+} from "../services/knowledge-collection.service";
 import { getSeedCompletedStepIds } from "../utils/use-seed-progress";
 import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
 export function KnowledgeCollectionView({ collection }: { collection: KnowledgeCollection }) {
-  const seeds = getSeedsInCollection(collection);
   const progress = computeCollectionProgress(collection, getSeedCompletedStepIds);
+  const seedsWithStatus = getSeedsWithStatus(collection, getSeedCompletedStepIds);
+  const nextSeed = getNextSeedToLearn(collection, getSeedCompletedStepIds);
+  const guidance = getCollectionCompanionGuidance(collection, getSeedCompletedStepIds);
+  const suggestedNext = getSuggestedNextCollection(collection, getSeedCompletedStepIds);
 
   return (
     <div className="space-y-6">
@@ -22,15 +33,17 @@ export function KnowledgeCollectionView({ collection }: { collection: KnowledgeC
         Quay lại Thư viện tri thức
       </Link>
 
-      <CollectionHeader collection={collection} progress={progress} />
+      <CollectionHeader collection={collection} progress={progress} nextSeed={nextSeed} />
 
-      <div className="space-y-3">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Knowledge Seed trong Collection</p>
-        <div className="space-y-2">
-          {seeds.map((seed, i) => (
-            <SeedListItem key={seed.id} seed={seed} index={i} />
-          ))}
-        </div>
+      {progress.percent >= 100 ? (
+        <CollectionCompleteBanner collection={collection} suggestedNext={suggestedNext} />
+      ) : (
+        guidance && <CompanionSuggestion message={guidance} />
+      )}
+
+      <div className="space-y-3 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Learning Path</p>
+        <LearningPath seedsWithStatus={seedsWithStatus} />
       </div>
     </div>
   );

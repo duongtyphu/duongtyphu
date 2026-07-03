@@ -13,6 +13,7 @@ import { Search } from "lucide-react";
 import { CompanionDiscovery } from "../components/CompanionDiscovery";
 import { KnowledgeSeedCard } from "../components/KnowledgeSeedCard";
 import { CollectionCard } from "../components/CollectionCard";
+import { ContinueLearningBanner } from "../components/ContinueLearningBanner";
 import { getPublishedKnowledgeAssets } from "../services/knowledge.service";
 import { getAllKnowledgeSeeds, getKnowledgeSeedsByGoal, searchKnowledgeSeeds } from "../services/knowledge-seed.service";
 import { getAllKnowledgeCollections } from "../services/knowledge-collection.service";
@@ -47,6 +48,8 @@ export function KnowledgeLibrary() {
 
   return (
     <div className="space-y-8">
+      <ContinueLearningBanner />
+
       <CompanionDiscovery activeGoalId={activeGoalId} onSelectGoal={setActiveGoalId} />
 
       {/* Search — theo Collection, Seed, Keyword, Prompt, AI Tool */}

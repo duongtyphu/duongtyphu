@@ -100,6 +100,21 @@ export function getRelatedSeedObjects(seed: KnowledgeSeed): KnowledgeSeed[] {
     .filter((s): s is KnowledgeSeed => Boolean(s));
 }
 
+/**
+ * Companion Guide — chỉ dẫn đường, không chat/trả lời. Nếu Seed liền trước
+ * (trong Collection) chưa hoàn thành, khuyên học Seed đó trước.
+ */
+export function getPrerequisiteGuidance(
+  seed: KnowledgeSeed,
+  getSeedCompletedStepIds: (seedId: string) => string[]
+): string | null {
+  const { previous } = getAdjacentSeeds(seed);
+  if (!previous) return null;
+  const { percent } = computeSeedProgress(previous, getSeedCompletedStepIds(previous.id));
+  if (percent >= 100) return null;
+  return `Bạn nên hoàn thành "${previous.title}" trước khi học "${seed.title}".`;
+}
+
 /** Search — theo Seed (title/summary), dùng chung cho ô tìm kiếm CKOS. */
 export function searchKnowledgeSeeds(query: string): KnowledgeSeed[] {
   const q = query.trim().toLowerCase();
