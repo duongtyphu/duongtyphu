@@ -5,6 +5,7 @@ import { CompanionGlassCard } from "@/components/portal/companion/CompanionGlass
 import { CompanionGlowPanel } from "@/components/portal/companion/CompanionGlowPanel";
 import { CompanionSectionShell } from "@/components/portal/companion/CompanionSectionShell";
 import { CompanionGlowButton } from "@/components/portal/companion/CompanionGlowButton";
+import { CompanionRevealOnScroll } from "@/components/portal/companion/CompanionRevealOnScroll";
 import {
   CompanionChapterLabel,
   CompanionHeading,
@@ -41,10 +42,13 @@ export default function CompanionHomePage() {
             LivingCore (Design Lock), CompanionOrb chỉ chọn size/state đúng.
             Mobile dùng size nhỏ hơn (xl) để không đẩy hero quá cao. */}
         <section className="flex flex-col items-center text-center">
-          <div className="companion-motion-breathe sm:hidden">
+          {/* Arrival — Companion "xuất hiện" một lần khi Hero mount, sau đó
+              chuyển sang Presence (breathing vô hạn). Xem Motion Language,
+              docs/Companion/CompanionMotionSystem.md. */}
+          <div className="companion-anim-arrival companion-motion-breathe sm:hidden">
             <CompanionOrb size="xl" state="idle" intensity="radiant" />
           </div>
-          <div className="companion-motion-breathe hidden sm:block">
+          <div className="companion-anim-arrival companion-motion-breathe hidden sm:block">
             <CompanionOrb size="hero" state="idle" intensity="radiant" />
           </div>
           <CompanionHeading className="mt-8">Companion</CompanionHeading>
@@ -55,73 +59,87 @@ export default function CompanionHomePage() {
         </section>
 
         {/* Foundation showcase */}
-        <CompanionSectionShell className="mt-24">
-          <CompanionChapterLabel>Layer 01</CompanionChapterLabel>
-          <CompanionHeading className="mt-3 text-2xl sm:text-3xl">
-            Companion Design Foundation
-          </CompanionHeading>
-          <CompanionBody className="mt-4 max-w-xl">
-            Nền móng thị giác cho toàn bộ thế giới Companion — màu sắc, ánh sáng, glassmorphism,
-            typography và chuyển động. Các trang nội dung đầy đủ sẽ được xây ở những lớp tiếp
-            theo.
-          </CompanionBody>
+        <CompanionRevealOnScroll variant="fade-up">
+          <CompanionSectionShell className="mt-24">
+            <CompanionChapterLabel>Layer 01</CompanionChapterLabel>
+            <CompanionHeading className="mt-3 text-2xl sm:text-3xl">
+              Companion Design Foundation
+            </CompanionHeading>
+            <CompanionBody className="mt-4 max-w-xl">
+              Nền móng thị giác cho toàn bộ thế giới Companion — màu sắc, ánh sáng, glassmorphism,
+              typography và chuyển động. Các trang nội dung đầy đủ sẽ được xây ở những lớp tiếp
+              theo.
+            </CompanionBody>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2">
-            <CompanionGlassCard>
-              <CompanionChapterLabel>Glass Card</CompanionChapterLabel>
-              <p className="mt-3 text-sm text-slate-200">
-                Nền kính mờ, border sáng nhẹ, shadow xanh tím — dùng cho phần lớn nội dung
-                Companion.
-              </p>
-            </CompanionGlassCard>
+            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+              <CompanionRevealOnScroll variant="float" delay={0.05}>
+                <CompanionGlassCard>
+                  <CompanionChapterLabel>Glass Card</CompanionChapterLabel>
+                  <p className="mt-3 text-sm text-slate-200">
+                    Nền kính mờ, border sáng nhẹ, shadow xanh tím — dùng cho phần lớn nội dung
+                    Companion.
+                  </p>
+                </CompanionGlassCard>
+              </CompanionRevealOnScroll>
 
-            <CompanionGlowPanel>
-              <CompanionChapterLabel>Glow Panel</CompanionChapterLabel>
-              <p className="mt-3 text-sm text-slate-200">
-                Gradient tím–cyan nhẹ, dùng để nhấn mạnh một khối nội dung quan trọng hơn.
-              </p>
-            </CompanionGlowPanel>
-          </div>
+              <CompanionRevealOnScroll variant="float" delay={0.12}>
+                <CompanionGlowPanel>
+                  <CompanionChapterLabel>Glow Panel</CompanionChapterLabel>
+                  <p className="mt-3 text-sm text-slate-200">
+                    Gradient tím–cyan nhẹ, dùng để nhấn mạnh một khối nội dung quan trọng hơn.
+                  </p>
+                </CompanionGlowPanel>
+              </CompanionRevealOnScroll>
+            </div>
 
-          <div className="mt-8">
-            <CompanionQuote>&ldquo;Mình không hoàn hảo, nhưng mình luôn ở đây.&rdquo;</CompanionQuote>
-          </div>
+            <CompanionRevealOnScroll variant="fade" delay={0.1}>
+              <div className="mt-8">
+                <CompanionQuote>&ldquo;Mình không hoàn hảo, nhưng mình luôn ở đây.&rdquo;</CompanionQuote>
+              </div>
+            </CompanionRevealOnScroll>
 
-          <div className="mt-8">
-            <CompanionGlowButton href="/portal/companion/y-nghia-companion">Sample Glow Button</CompanionGlowButton>
-          </div>
-        </CompanionSectionShell>
+            <div className="mt-8">
+              <CompanionGlowButton href="/portal/companion/y-nghia-companion">Sample Glow Button</CompanionGlowButton>
+            </div>
+          </CompanionSectionShell>
+        </CompanionRevealOnScroll>
 
         {/* Hôm nay Companion nghĩ gì? — Nhiệm vụ 05: orb nhỏ đúng nơi có
             cảm giác tâm sự, để đây là lời Companion nói, không phải text
             website. */}
-        <CompanionGlowPanel className="mt-16 flex items-start gap-4">
-          <CompanionOrb size="sm" state="thinking" intensity="calm" showOrbit={false} className="mt-0.5 shrink-0" />
-          <div>
-            <CompanionChapterLabel>Hôm nay Companion nghĩ gì?</CompanionChapterLabel>
-            <CompanionQuote className="mt-2 text-base">&ldquo;{thought}&rdquo;</CompanionQuote>
-          </div>
-        </CompanionGlowPanel>
+        <CompanionRevealOnScroll variant="glow">
+          <CompanionGlowPanel className="mt-16 flex items-start gap-4">
+            <CompanionOrb size="sm" state="thinking" intensity="calm" showOrbit={false} className="mt-0.5 shrink-0" />
+            <div>
+              <CompanionChapterLabel>Hôm nay Companion nghĩ gì?</CompanionChapterLabel>
+              <CompanionQuote className="mt-2 text-base">&ldquo;{thought}&rdquo;</CompanionQuote>
+            </div>
+          </CompanionGlowPanel>
+        </CompanionRevealOnScroll>
 
         {/* Chapters — điều hướng sang các route con */}
-        <section className="mt-20">
-          <CompanionChapterLabel>Khám phá</CompanionChapterLabel>
-          <CompanionHeading className="mt-3 text-2xl sm:text-3xl">Các chương của Companion</CompanionHeading>
+        <CompanionRevealOnScroll variant="fade-up">
+          <section className="mt-20">
+            <CompanionChapterLabel>Khám phá</CompanionChapterLabel>
+            <CompanionHeading className="mt-3 text-2xl sm:text-3xl">Các chương của Companion</CompanionHeading>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {CHAPTERS.map((chapter) => (
-              <CompanionGlassCard key={chapter.href} className="group transition hover:-translate-y-0.5">
-                <Link href={chapter.href} className="block">
-                  <p className="text-base font-bold text-white">{chapter.label}</p>
-                  <p className="mt-2 text-sm text-slate-300">{chapter.desc}</p>
-                  <span className="mt-4 inline-block text-xs font-semibold text-cyan-300 group-hover:text-cyan-200">
-                    Xem →
-                  </span>
-                </Link>
-              </CompanionGlassCard>
-            ))}
-          </div>
-        </section>
+            <div className="mt-8 grid gap-4 sm:grid-cols-2">
+              {CHAPTERS.map((chapter, i) => (
+                <CompanionRevealOnScroll key={chapter.href} variant="slide" delay={i * 0.05}>
+                  <CompanionGlassCard className="group">
+                    <Link href={chapter.href} className="block">
+                      <p className="text-base font-bold text-white">{chapter.label}</p>
+                      <p className="mt-2 text-sm text-slate-300">{chapter.desc}</p>
+                      <span className="mt-4 inline-block text-xs font-semibold text-cyan-300 group-hover:text-cyan-200">
+                        Xem →
+                      </span>
+                    </Link>
+                  </CompanionGlassCard>
+                </CompanionRevealOnScroll>
+              ))}
+            </div>
+          </section>
+        </CompanionRevealOnScroll>
       </div>
     </div>
   );

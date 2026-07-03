@@ -36,6 +36,9 @@
     radial-gradient(900px circle at 100% 10%, rgba(34, 211, 238, 0.16), transparent 60%),
     radial-gradient(800px circle at 30% 110%, rgba(91, 140, 255, 0.14), transparent 65%),
     linear-gradient(165deg, #050b18 0%, #0b1b35 55%, #071426 100%);
+  /* Nhiệm vụ 03 — Cosmic Background Motion: "Glow thay đổi rất nhẹ", không
+     phải hiệu ứng game — chỉ một nhịp thở rất chậm trên toàn nền. */
+  animation: companion-bg-glow-breathe 14s ease-in-out infinite;
 }
 
 .companion-aurora-blob {
@@ -51,7 +54,9 @@
   position: absolute;
   border-radius: 9999px;
   background: #ffffff;
-  animation: companion-star-twinkle 4.5s ease-in-out infinite;
+  /* twinkle (opacity) + float rất nhẹ (translateY) trong cùng 1 keyframe —
+     "particle bay nhẹ", không phải hiệu ứng game/nặng tay. */
+  animation: companion-star-twinkle 4.5s ease-in-out infinite, companion-particle-float 7s ease-in-out infinite;
   will-change: opacity, transform;
 }
 
@@ -74,6 +79,8 @@
 .companion-glass-card:hover {
   border-color: var(--companion-glass-border-hover);
   box-shadow: 0 24px 70px -22px rgba(34, 211, 238, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  /* Nhiệm vụ 06 — Interaction Motion: lift nhẹ, không bounce/spring mạnh. */
+  transform: translateY(-3px);
 }
 
 .companion-glow-panel {
@@ -85,6 +92,11 @@
   -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.08) inset, 0 30px 80px -30px rgba(34, 211, 238, 0.4);
   color: var(--companion-text-soft-white);
+  transition: box-shadow 0.35s ease;
+}
+
+.companion-glow-panel:hover {
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.16) inset, 0 34px 90px -26px rgba(34, 211, 238, 0.5);
 }
 
 .companion-section-shell {
@@ -172,24 +184,63 @@
   50% { opacity: 0.9; }
 }
 
+/* Nhiệm vụ 03 — "particle bay nhẹ": trôi dọc rất nhẹ, không rơi/bay nhanh. */
+@keyframes companion-particle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Nhiệm vụ 03 — nền cosmic "thở" rất chậm, không phải hiệu ứng game. */
+@keyframes companion-bg-glow-breathe {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  50% { filter: brightness(1.045) saturate(1.05); }
+}
+
 @keyframes companion-fade-up {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Motion Language — Arrival: Companion "xuất hiện", một lần duy nhất khi
+   Hero mount, không lặp lại (khác breathing — vòng lặp vô hạn). */
+@keyframes companion-orb-arrival {
+  0% { opacity: 0; transform: scale(0.85); filter: brightness(0.8); }
+  60% { opacity: 1; transform: scale(1.03); filter: brightness(1.08); }
+  100% { opacity: 1; transform: scale(1); filter: brightness(1); }
+}
+
+/* Motion Language — Leaving/route transition: fade + blur nhẹ khi một
+   trang Companion vừa mount (thay cho nháy trắng/loading cứng). */
+@keyframes companion-route-enter {
+  from { opacity: 0; filter: blur(6px); transform: translateY(6px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
 }
 
 .companion-anim-float { animation: companion-slow-float 6s ease-in-out infinite; }
 .companion-anim-pulse { animation: companion-soft-pulse 3.2s ease-in-out infinite; }
 .companion-anim-glow-breathe { animation: companion-glow-breathe 4s ease-in-out infinite; }
 .companion-anim-fade-up { animation: companion-fade-up 0.6s ease-out both; }
+.companion-anim-arrival { animation: companion-orb-arrival 1.1s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.companion-route-enter { animation: companion-route-enter 0.42s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {
   .companion-aurora-blob,
   .companion-star,
+  .companion-cosmic-base,
   .companion-anim-float,
   .companion-anim-pulse,
   .companion-anim-glow-breathe,
-  .companion-anim-fade-up {
+  .companion-anim-fade-up,
+  .companion-anim-arrival {
     animation: none !important;
+  }
+  /* Route enter vẫn giữ fade (không blur/translate) — người dùng vẫn cảm
+     nhận trang đổi mượt, không nháy trắng, nhưng bớt chuyển động. */
+  .companion-route-enter {
+    animation: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
   }
 }
 
