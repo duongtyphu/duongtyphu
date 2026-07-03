@@ -1,0 +1,155 @@
+/**
+ * Companion Presence — Contextual Nudge & Quick Actions (Sprint "Companion
+ * Presence Fix"). Rule-based, không AI thật: mỗi khu vực Portal có đúng một
+ * câu nudge ngắn + tối đa 3 gợi ý hành động, dùng để Companion "nói đúng lúc"
+ * thay vì đứng yên hoặc nói liên tục.
+ */
+
+export type QuickAction = { label: string; href: string };
+
+export type RouteContext = {
+  /** Khoá ổn định dùng để nhớ "đã hiện nudge" theo từng khu vực trong session. */
+  key: string;
+  /** Câu nudge ngắn, chủ động, đúng ngữ cảnh khu vực. */
+  nudge: string;
+  /** Tối đa 3 gợi ý hành động cho panel khi người dùng bấm vào Companion. */
+  quickActions: QuickAction[];
+};
+
+const KHONG_GIAN_AI: QuickAction = { label: "Mở Không gian AI", href: "/portal/khong-gian-ai" };
+
+/**
+ * Khớp theo prefix, ưu tiên entry dài hơn trước để tránh nhầm route con.
+ */
+const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
+  {
+    prefix: "/portal/khong-gian-ai",
+    context: {
+      key: "khong-gian-ai",
+      nudge: "Mình ở đây nếu bạn muốn thử một ý tưởng với AI.",
+      quickActions: [
+        { label: "Thử một ý tưởng mới", href: "/portal/khong-gian-ai" },
+        { label: "Xem công cụ AI", href: "/portal/tools" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/library",
+    context: {
+      key: "ckos-library",
+      nudge: "Hôm nay mình có thể giúp bạn chọn một hạt giống tri thức phù hợp.",
+      quickActions: [
+        { label: "Tiếp tục học", href: "/portal/library" },
+        { label: "Chọn hạt giống tri thức", href: "/portal/library" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/academy",
+    context: {
+      key: "academy",
+      nudge: "Mình sẽ đi cùng bạn trong từng trải nghiệm học – làm.",
+      quickActions: [
+        { label: "Bắt đầu trải nghiệm", href: "/portal/academy" },
+        { label: "Xem nhiệm vụ hôm nay", href: "/portal/roadmap" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/opportunities",
+    context: {
+      key: "opportunities",
+      nudge: "Khi bạn sẵn sàng áp dụng điều đã học, mình sẽ giúp bạn nhìn rõ hơn.",
+      quickActions: [
+        { label: "Khám phá cơ hội", href: "/portal/opportunities" },
+        { label: "Xem cách áp dụng", href: "/portal/opportunities" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/premium",
+    context: {
+      key: "premium",
+      nudge: "Đây là nơi mình đồng hành sâu hơn cùng bạn.",
+      quickActions: [
+        { label: "Xem quyền lợi Premium", href: "/portal/premium" },
+        { label: "Khám phá nội dung Premium", href: "/portal/premium" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/news",
+    context: {
+      key: "learning-journal",
+      nudge: "Hôm nay bạn muốn ghi lại điều gì đã học được không?",
+      quickActions: [
+        { label: "Viết Reflection", href: "/portal/story" },
+        { label: "Xem điều đã học", href: "/portal/news" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/journey",
+    context: {
+      key: "my-journey",
+      nudge: "Mình sẽ giúp bạn nhìn lại mình đã trưởng thành như thế nào.",
+      quickActions: [
+        { label: "Xem tiến trình", href: "/portal/journey" },
+        { label: "Nhìn lại tuần này", href: "/portal/journey" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/khu-vuon-cua-ban",
+    context: {
+      key: "living-garden",
+      nudge: "Mỗi bước nhỏ của bạn sẽ làm khu vườn này lớn lên.",
+      quickActions: [
+        { label: "Xem cây đang lớn", href: "/portal/khu-vuon-cua-ban" },
+        { label: "Xem bước tiếp theo", href: "/portal/roadmap" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+  {
+    prefix: "/portal/companion",
+    context: {
+      key: "companion",
+      nudge: "Đây là nơi bạn có thể hiểu rõ hơn về hành trình cùng nhau.",
+      quickActions: [
+        { label: "Xem lại hành trình", href: "/portal/journey" },
+        { label: "Khu vườn của bạn", href: "/portal/khu-vuon-cua-ban" },
+        KHONG_GIAN_AI,
+      ],
+    },
+  },
+];
+
+/** Gợi ý mặc định cho các route Portal chưa có nudge riêng — panel vẫn hữu ích, chỉ không có nudge chủ động. */
+const DEFAULT_CONTEXT: RouteContext = {
+  key: "portal-default",
+  nudge: "Mình luôn ở đây nếu bạn cần một người đồng hành.",
+  quickActions: [
+    { label: "Thư viện tri thức", href: "/portal/library" },
+    { label: "Học viện", href: "/portal/academy" },
+    KHONG_GIAN_AI,
+  ],
+};
+
+/** Route nào có nudge chủ động theo ngữ cảnh (8 khu vực theo Product Decision). */
+export function getRouteContext(pathname: string): RouteContext {
+  const match = ROUTE_CONTEXTS.find((entry) => pathname.startsWith(entry.prefix));
+  return match?.context ?? DEFAULT_CONTEXT;
+}
+
+/** Chỉ những route có nudge chủ động mới hiện Contextual Nudge (route mặc định thì im lặng, chỉ có panel khi bấm). */
+export function hasContextualNudge(pathname: string): boolean {
+  return ROUTE_CONTEXTS.some((entry) => pathname.startsWith(entry.prefix));
+}

@@ -60,11 +60,14 @@ import type { CompanionThought } from "@/lib/portal/companion/proactive-thoughts
 import { pickLivingStory, markStoryShown } from "@/lib/portal/companion/story-matching-engine";
 import type { LivingStory } from "@/lib/portal/companion/living-stories";
 import { resolveCompanionMood, type CompanionMoodKey } from "@/lib/portal/companion/companion-mood";
-import { pickTouchMicroLine } from "@/lib/portal/companion/micro-reaction-engine";
 import { CompanionMicroReactionBubble } from "@/components/portal/companion/CompanionMicroReactionBubble";
 import type { ThoughtContext } from "@/lib/portal/companion/daily-thought-source";
 import { chooseCompanionMoment, recordMajorMomentShown } from "@/lib/portal/companion/thought-governance";
 import type { CompanionAddressProfile } from "@/lib/portal/companion/companion-address";
+import { CompanionContextualNudge } from "@/components/portal/companion/CompanionContextualNudge";
+import { CompanionQuickPanel } from "@/components/portal/companion/CompanionQuickPanel";
+import { getRouteContext, hasContextualNudge } from "@/lib/portal/companion/route-context";
+import { hasNudgeBeenShown, isNudgeDisabled, markNudgeShown } from "@/lib/portal/companion/nudge-session";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -184,6 +187,8 @@ export function CompanionPresence({
   const [lifeMomentEligible, setLifeMomentEligible] = useState(false);
   const [returnAfterSilenceEligible, setReturnAfterSilenceEligible] = useState(false);
   const [presenceNow, setPresenceNow] = useState<number | null>(null);
+  const [quickPanelOpen, setQuickPanelOpen] = useState(false);
+  const [nudgeVisible, setNudgeVisible] = useState(false);
   const lastScrollY = useRef(0);
   const shrinkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragState = useRef({ startX: 0, startY: 0, originX: 0, originY: 0, moved: false });
@@ -261,8 +266,29 @@ export function CompanionPresence({
       setThought(null);
       setStory(null);
       setMicroLine(null);
+      setQuickPanelOpen(false);
     }, 0);
     return () => clearTimeout(clearTimer);
+  }, [pathname]);
+
+  // Contextual Nudge — mỗi khu vực Portal chủ động nói 1 câu ngắn, tối đa
+  // 1 lần/session/khu vực, im lặng nếu người dùng đã tắt nudge, và không
+  // hiện khi Space/Quick Panel đang mở.
+  useEffect(() => {
+    const hideTimer = setTimeout(() => setNudgeVisible(false), 0);
+    const routeKey = getRouteContext(pathname ?? "/portal").key;
+    if (!hasContextualNudge(pathname ?? "/portal") || isNudgeDisabled() || hasNudgeBeenShown(routeKey) || open || minimized || quickPanelOpen) {
+      return () => clearTimeout(hideTimer);
+    }
+    const showTimer = setTimeout(() => {
+      markNudgeShown(routeKey);
+      setNudgeVisible(true);
+    }, 900);
+    return () => {
+      clearTimeout(hideTimer);
+      clearTimeout(showTimer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   // Nhiệm vụ 03 — không hiện proactive thought khi người dùng đang nhập input/textarea.
@@ -370,6 +396,7 @@ export function CompanionPresence({
     reflectionMeaning: reflectionMeaning as ReflectionMeaning | undefined,
   });
   const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
+  const routeContext = getRouteContext(pathname ?? "/portal");
 
   // Sprint 18.8 — Presence Coordinator: một dòng quyết định hiện diện duy
   // nhất cho Life Moment, Return After Silence, Thought, Story, Greeting,
@@ -513,14 +540,21 @@ export function CompanionPresence({
       secondClickTimer.current = null;
     }
     setMicroLine(null);
+    setQuickPanelOpen(false);
     setComeback(false);
     setThought(null);
     setStory(null);
     setOpen(true);
   }
 
-  // NV03 — single tap/click → micro-reaction; double click (hoặc click thứ hai
-  // trong cửa sổ ngắn) → mở CompanionSpace, để người dùng không bị "kẹt".
+  function toggleQuickPanel() {
+    setNudgeVisible(false);
+    setQuickPanelOpen((prev) => !prev);
+  }
+
+  // User-Initiated Interaction — một click mở Quick Panel (chào ngắn + gợi ý
+  // hành động theo trang). Click/nhấn lần hai trong cửa sổ ngắn (hoặc double
+  // click) vẫn mở CompanionSpace đầy đủ như trước, để không mất lối vào cũ.
   function handleAvatarClick() {
     if (dragState.current.moved) {
       dragState.current.moved = false;
@@ -538,15 +572,7 @@ export function CompanionPresence({
 
     const now = Date.now();
     lastTouchAt.current = now;
-
-    if (!thought && !story && !minimized) {
-      const line = pickTouchMicroLine(
-        mood,
-        { isSpaceOpen: open, isMinimized: minimized, isTypingInput: typingInput },
-        now
-      );
-      if (line) setMicroLine(line);
-    }
+    toggleQuickPanel();
 
     secondClickTimer.current = setTimeout(() => {
       secondClickTimer.current = null;
@@ -557,11 +583,11 @@ export function CompanionPresence({
     openSpace();
   }
 
-  // Bàn phím luôn mở Space trực tiếp — không có thao tác "nhấn lần hai" tương đương.
+  // Bàn phím kích hoạt giống như click — mở Quick Panel.
   function handleAvatarKeyDown(e: React.KeyboardEvent) {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      openSpace();
+      toggleQuickPanel();
     }
   }
 
@@ -649,6 +675,18 @@ export function CompanionPresence({
             <CompanionMicroReactionBubble line={microLine} onDismiss={() => setMicroLine(null)} />
           )}
 
+          {quickPanelOpen && (
+            <CompanionQuickPanel
+              state={state}
+              routeContext={routeContext}
+              onClose={() => setQuickPanelOpen(false)}
+            />
+          )}
+
+          {!quickPanelOpen && !open && nudgeVisible && (
+            <CompanionContextualNudge routeContext={routeContext} onDismiss={() => setNudgeVisible(false)} />
+          )}
+
           <div
             ref={avatarWrapperRef}
             className={`relative flex items-center justify-center companion-mood-${mood}`}
@@ -670,7 +708,7 @@ export function CompanionPresence({
               onClick={handleAvatarClick}
               onDoubleClick={handleAvatarDoubleClick}
               onKeyDown={handleAvatarKeyDown}
-              aria-label={`${displayName} — ${state.label}. ${state.line}. Nhấn lần hai hoặc Enter để mở. Có thể kéo tới vị trí khác.`}
+              aria-label={`${displayName} — ${state.label}. ${state.line}. Nhấn hoặc Enter để mở gợi ý nhanh. Có thể kéo tới vị trí khác.`}
               aria-haspopup="dialog"
               aria-expanded={open}
               className={`companion-avatar-button relative flex cursor-grab items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70 active:cursor-grabbing ${
