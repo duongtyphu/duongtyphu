@@ -35,6 +35,7 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     group: "Thư viện",
     items: [
+      { label: "Knowledge Seed", href: "/admin/knowledge-seed" },
       { label: "Prompt AI", href: "/admin/prompts" },
       { label: "Công cụ AI", href: "/admin/tools" },
       { label: "Template", href: "/admin/templates" },

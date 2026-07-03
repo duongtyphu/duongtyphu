@@ -5,9 +5,26 @@ import { useCollection, genId } from "@/lib/admin/store";
 import { useAdminToast } from "@/lib/admin/toast";
 import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
 import { Badge, STATUS_TONE } from "@/components/admin/ui/Badge";
+import { CompanionWriteButton } from "@/components/admin/ai/CompanionWriteButton";
+import { CompanionQuickActions } from "@/components/admin/ai/CompanionQuickActions";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
+import type { CompanionAgentKind, GeneratedGenericContent, GeneratedKnowledgeSeed } from "@/ai/types/ai.types";
 
 type BaseItem = { id: string; status?: string; title?: string; name?: string };
+
+/**
+ * Companion Studio™ — cấu hình để CrudPage hiển thị nút "Companion viết
+ * giúp" + Quick Actions. `applyResult` map dữ liệu AI sinh ra vào đúng
+ * field key của collection đó (mỗi collection đặt tên field khác nhau).
+ */
+type AiAssistConfig<T> = {
+  kind: CompanionAgentKind;
+  /** Field dùng làm "ý tưởng/mô tả ngắn" gửi kèm cho Companion, nếu có. */
+  briefKey?: keyof T;
+  /** Field chứa nội dung chính — Quick Actions áp dụng lên field này. */
+  contentKey: keyof T;
+  applyResult: (data: GeneratedGenericContent | GeneratedKnowledgeSeed) => Partial<T>;
+};
 
 type CrudPageProps<T extends BaseItem> = {
   title: string;
@@ -29,6 +46,8 @@ type CrudPageProps<T extends BaseItem> = {
    * except guessing (e.g. typing the title into the address bar), which
    * 404s since titles aren't slugs. */
   viewHref?: (item: T) => string;
+  /** Companion Studio™ — khi set, hiển thị nút "Companion viết giúp" + Quick Actions. */
+  aiAssist?: AiAssistConfig<T>;
 };
 
 function emptyFromFields(fields: FieldConfig[]): Record<string, unknown> {
@@ -53,6 +72,7 @@ export function CrudPage<T extends BaseItem>({
   filterOptions,
   lockedFilter,
   viewHref,
+  aiAssist,
   emptyLabel = "Chưa có dữ liệu nào. Bấm “Thêm mới” để tạo nội dung đầu tiên.",
 }: CrudPageProps<T>) {
   const { items, ready, add, update, remove } = useCollection<T>(collectionKey, seed);
@@ -237,6 +257,36 @@ export function CrudPage<T extends BaseItem>({
       </div>
 
       <Modal open={modalOpen} title={editing ? "Sửa nội dung" : "Thêm mới"} onClose={() => setModalOpen(false)}>
+        {aiAssist && (
+          <div className="mb-5 space-y-3 rounded-xl border border-violet-500/20 bg-violet-500/[0.06] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-semibold text-violet-200">
+                Nhập tiêu đề, để Companion viết giúp phần còn lại — bạn luôn xem lại trước khi lưu.
+              </p>
+              <CompanionWriteButton
+                kind={aiAssist.kind}
+                getTitle={() => String(form.title ?? form.name ?? "")}
+                getBrief={aiAssist.briefKey ? () => String(form[aiAssist.briefKey as string] ?? "") || undefined : undefined}
+                onGenerated={(data) => setForm((s) => ({ ...s, ...aiAssist.applyResult(data) }))}
+              />
+            </div>
+            {String(form[aiAssist.contentKey as string] ?? "").trim() && (
+              <CompanionQuickActions
+                kind={aiAssist.kind}
+                getContent={() => String(form[aiAssist.contentKey as string] ?? "")}
+                onApply={(result) =>
+                  setForm((s) => ({
+                    ...s,
+                    [aiAssist.contentKey as string]: result.content,
+                    ...(result.slug ? { slug: result.slug } : {}),
+                    ...(result.seoTitle ? { metaTitle: result.seoTitle } : {}),
+                    ...(result.seoDescription ? { metaDescription: result.seoDescription } : {}),
+                  }))
+                }
+              />
+            )}
+          </div>
+        )}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {fields.map((f) => (
             <div key={f.key} className={f.full ? "sm:col-span-2" : ""}>

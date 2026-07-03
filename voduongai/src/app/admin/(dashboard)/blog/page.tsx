@@ -27,6 +27,19 @@ export default function BlogAdminPage() {
         },
         { key: "status", label: "Trạng thái" },
       ]}
+      aiAssist={{
+        kind: "blog",
+        briefKey: "excerpt",
+        contentKey: "content",
+        applyResult: (data) => ({
+          slug: data.slug,
+          excerpt: data.summary,
+          content: "content" in data ? data.content : "",
+          tags: data.tags,
+          metaTitle: "seoTitle" in data ? data.seoTitle : undefined,
+          metaDescription: "seoDescription" in data ? data.seoDescription : undefined,
+        }),
+      }}
       fields={[
         { key: "title", label: "Tiêu đề", type: "text", required: true },
         { key: "slug", label: "Slug", type: "text", required: true },

@@ -24,6 +24,17 @@ export default function PromptsAdminPage() {
         },
         { key: "status", label: "Trạng thái" },
       ]}
+      aiAssist={{
+        kind: "prompt",
+        briefKey: "description",
+        contentKey: "content",
+        applyResult: (data) => ({
+          slug: data.slug,
+          description: data.summary,
+          content: "content" in data ? data.content : "",
+          tags: data.tags,
+        }),
+      }}
       fields={[
         { key: "title", label: "Tiêu đề Prompt", type: "text", required: true },
         { key: "slug", label: "Slug", type: "text", required: true },

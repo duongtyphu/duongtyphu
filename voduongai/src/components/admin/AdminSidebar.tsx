@@ -66,6 +66,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/course-pricing": Wallet,
   "/admin/personal-brand": UserCircle,
   "/admin/projects": FolderKanban,
+  "/admin/knowledge-seed": Sparkles,
   "/admin/prompts": Sparkles,
   "/admin/tools": Wrench,
   "/admin/templates": FileText,
