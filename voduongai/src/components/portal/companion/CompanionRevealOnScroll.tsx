@@ -10,7 +10,7 @@
 import { motion, useReducedMotion, type TargetAndTransition } from "framer-motion";
 import type { ReactNode } from "react";
 
-export type CompanionRevealVariant = "fade-up" | "float" | "slide" | "fade" | "glow";
+export type CompanionRevealVariant = "fade-up" | "float" | "slide" | "fade" | "glow" | "page-turn";
 
 const VARIANTS: Record<CompanionRevealVariant, { hidden: TargetAndTransition; visible: TargetAndTransition }> = {
   "fade-up": { hidden: { opacity: 0, y: 18 }, visible: { opacity: 1, y: 0 } },
@@ -18,6 +18,13 @@ const VARIANTS: Record<CompanionRevealVariant, { hidden: TargetAndTransition; vi
   slide: { hidden: { opacity: 0, x: 16 }, visible: { opacity: 1, x: 0 } },
   fade: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
   glow: { hidden: { opacity: 0, filter: "brightness(0.7)" }, visible: { opacity: 1, filter: "brightness(1)" } },
+  /* Layer 06 — Reading Experience: gợi ý cảm giác "lật trang" rất nhẹ khi
+     một chương sách xuất hiện — không phải hiệu ứng flip 3D thật, chỉ
+     rotateX rất nhỏ + fade, đủ để gợi nhịp đọc sách, không nặng máy. */
+  "page-turn": {
+    hidden: { opacity: 0, y: 14, rotateX: -4 },
+    visible: { opacity: 1, y: 0, rotateX: 0 },
+  },
 };
 
 export function CompanionRevealOnScroll({
@@ -42,6 +49,7 @@ export function CompanionRevealOnScroll({
   return (
     <motion.div
       className={className}
+      style={variant === "page-turn" ? { transformPerspective: 800, transformOrigin: "top center" } : undefined}
       initial={hidden}
       whileInView={visible}
       viewport={{ once: true, margin: "-64px" }}
