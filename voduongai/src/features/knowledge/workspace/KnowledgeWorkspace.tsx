@@ -163,7 +163,12 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
           <div id="example" className="scroll-mt-20 space-y-2 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
             <h2 className="text-sm font-bold uppercase tracking-wide text-gray-500">Ví dụ</h2>
             {beforeAfter ? (
-              <RealExample before={beforeAfter.before} after={beforeAfter.after} />
+              <RealExample
+                before={beforeAfter.before}
+                after={beforeAfter.after}
+                beforeLabel={beforeAfter.beforeLabel}
+                afterLabel={beforeAfter.afterLabel}
+              />
             ) : (
               <p className="text-sm leading-relaxed text-gray-700">{seed.example}</p>
             )}
