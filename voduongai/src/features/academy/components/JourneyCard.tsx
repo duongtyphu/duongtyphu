@@ -9,6 +9,7 @@ import { computeJourneyStatus, getCompanionJourneyGuidance } from "../services/j
 import { JOURNEY_STAGE_LABELS, JourneyStage } from "../types/journey.types";
 import type { LearningJourney } from "../types/journey.types";
 import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
+import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
 /**
  * Feature 03 — Journey Card. KHÔNG hiển thị Progress Bar kiểu LMS — chỉ
@@ -61,6 +62,12 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
           Bắt đầu Mission
         </button>
       </div>
+
+      <CompanionTaskEntry
+        module="academy"
+        heading="Thực hành cùng Companion"
+        placeholder={`VD: Mình muốn thực hành "${journey.title}" theo cách riêng của mình...`}
+      />
     </div>
   );
 }

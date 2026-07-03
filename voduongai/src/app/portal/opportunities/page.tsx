@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, HelpCircle } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
+import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -99,6 +100,13 @@ export default function OpportunitiesHubPage() {
       <CompanionGuide
         message="Hãy đọc phần Giới thiệu và Tiêu chí đánh giá trước khi xem bất kỳ dự án nào. Tất cả chia sẻ ở đây là góc nhìn cá nhân — không phải lời khuyên tài chính."
         action={{ label: "Xem bài học từ trải nghiệm", href: "/portal/news" }}
+      />
+
+      {/* Companion Task Entry */}
+      <CompanionTaskEntry
+        module="opportunities"
+        heading="Phân tích cùng Companion"
+        placeholder="VD: Mình đang cân nhắc tham gia SolarGroup, giúp mình nhìn rõ hơn..."
       />
 
       {/* Introduction */}

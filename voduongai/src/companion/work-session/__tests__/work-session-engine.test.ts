@@ -75,6 +75,25 @@ describe("companion work-session-engine", () => {
     expect(celebratedTwice).toBe(celebrated);
   });
 
+  it("Companion Task Entry — an arbitrary free-text goal (not matching any keyword rule) still opens a real Work Session with a default specialist team", () => {
+    const session = createWorkSession({
+      currentRoute: "/portal/khong-gian-ai",
+      currentModule: "khong-gian-ai",
+      userGoal: "Mình muốn thử viết caption cho một sản phẩm bằng AI",
+    })!;
+    expect(session).not.toBeNull();
+    expect(session.companionMessages[0].text).toContain("Mình muốn thử viết caption cho một sản phẩm bằng AI");
+    expect(session.selectedSpecialists.length).toBeGreaterThan(0);
+
+    let settled = session;
+    let guard = 0;
+    while (!isWorkSessionSettled(settled) && guard < 50) {
+      settled = advanceWorkSession(settled);
+      guard++;
+    }
+    expect(settled.currentStatus).toBe("READY");
+  });
+
   it("skips specialist-invite ticks entirely for Learning Journal (no visible Agent, per Product Rule)", () => {
     let session = createWorkSession({ currentRoute: "/portal/news" })!;
     expect(session.selectedSpecialists).toEqual([]);

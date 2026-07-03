@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search, ChevronRight, BookOpen, Zap, ArrowRight } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 import {
   type AiNeedCategory,
   type AiProfessionGroup,
@@ -298,6 +299,13 @@ export default function KhongGianAiPage() {
           action={{ label: "Xem lộ trình học AI", href: "/portal/khong-gian-ai/bai-viet/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau" }}
         />
       </div>
+
+      {/* ── Companion Task Entry ───────────────────────────────────────────── */}
+      <CompanionTaskEntry
+        module="khong-gian-ai"
+        heading="Giao việc cho Companion"
+        placeholder="VD: Mình muốn thử viết caption cho một sản phẩm bằng AI..."
+      />
 
       {/* ── Search ─────────────────────────────────────────────────────────── */}
       <div className="relative">

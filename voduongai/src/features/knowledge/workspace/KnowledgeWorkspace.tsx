@@ -45,6 +45,7 @@ import { getKnowledgeCollectionBySlug, computeCollectionProgress } from "../serv
 import { getKnowledgeGraphView, getPrerequisiteSeeds, getDependentSeeds } from "../services/knowledge-graph.service";
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
 import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
+import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
 function estimateReadingMinutes(seed: KnowledgeSeed): number {
   const text = [
@@ -216,6 +217,12 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
               Thực hành cùng Companion
             </button>
           </ContentSection>
+
+          <CompanionTaskEntry
+            module="ckos"
+            heading="Áp dụng cùng Companion"
+            placeholder={`VD: Mình muốn áp dụng "${seed.title}" vào công việc thật của mình...`}
+          />
 
           {/* Feature 11 — Reflection: chỉ 3 câu hỏi */}
           <div id="reflection" className="scroll-mt-20 space-y-4">
