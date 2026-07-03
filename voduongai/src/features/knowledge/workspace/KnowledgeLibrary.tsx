@@ -1,18 +1,21 @@
 "use client";
 
 /**
- * CKOS — Sprint 02: The Knowledge Journey™
+ * CKOS — Knowledge Workspace Foundation
  * Thư viện tri thức bắt đầu bằng Companion Discovery, không phải Search.
- * Chọn mục tiêu -> thấy Knowledge Seed phù hợp. Search/filter Asset rời
- * rạc (Sprint 01) vẫn còn, nhưng đưa xuống dưới, là công cụ phụ.
+ * Chọn mục tiêu -> thấy Knowledge Seed phù hợp. Bên dưới là Collection
+ * System (duyệt theo chủ đề lớn) và Asset Explorer (lọc tri thức lẻ) —
+ * cả hai đều là công cụ phụ, không phải trải nghiệm chính.
  */
 
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { CompanionDiscovery } from "../components/CompanionDiscovery";
 import { KnowledgeSeedCard } from "../components/KnowledgeSeedCard";
+import { CollectionCard } from "../components/CollectionCard";
 import { getPublishedKnowledgeAssets } from "../services/knowledge.service";
-import { getAllKnowledgeSeeds, getKnowledgeSeedsByGoal } from "../services/knowledge-seed.service";
+import { getAllKnowledgeSeeds, getKnowledgeSeedsByGoal, searchKnowledgeSeeds } from "../services/knowledge-seed.service";
+import { getAllKnowledgeCollections } from "../services/knowledge-collection.service";
 import { DISCOVERY_GOAL_TO_SEED_GOAL } from "../data/discovery-goals";
 import { KNOWLEDGE_TYPE_LABELS, KNOWLEDGE_PERSONAS, KNOWLEDGE_GOALS } from "../utils/knowledge-labels";
 import type { KnowledgeAsset, KnowledgeType } from "../types/knowledge.types";
@@ -21,33 +24,131 @@ const ALL = "Tất cả";
 
 export function KnowledgeLibrary() {
   const [activeGoalId, setActiveGoalId] = useState<string | null>(null);
+  const [unifiedQuery, setUnifiedQuery] = useState("");
   const allSeeds = useMemo(() => getAllKnowledgeSeeds(), []);
+  const allCollections = useMemo(() => getAllKnowledgeCollections(), []);
+  const allAssets = useMemo(() => getPublishedKnowledgeAssets(), []);
 
   const seedGoal = activeGoalId ? DISCOVERY_GOAL_TO_SEED_GOAL[activeGoalId] : null;
   const relevantSeeds = seedGoal ? getKnowledgeSeedsByGoal(seedGoal) : allSeeds;
+
+  const q = unifiedQuery.trim().toLowerCase();
+  const searching = q.length > 0;
+  const matchedCollections = searching ? allCollections.filter((c) => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)) : [];
+  const matchedSeeds = searching ? searchKnowledgeSeeds(q) : [];
+  const matchedAssets = searching
+    ? allAssets.filter(
+        (a) =>
+          a.title.toLowerCase().includes(q) ||
+          a.summary.toLowerCase().includes(q) ||
+          a.dna.aiTools.some((t) => t.toLowerCase().includes(q))
+      )
+    : [];
 
   return (
     <div className="space-y-8">
       <CompanionDiscovery activeGoalId={activeGoalId} onSelectGoal={setActiveGoalId} />
 
-      <div className="space-y-3">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-          {activeGoalId ? "Hành trình phù hợp với bạn" : "Tất cả hành trình tri thức"}
-        </p>
-        {relevantSeeds.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-8 text-center text-sm text-gray-400">
-            Chưa có hành trình phù hợp — mình sẽ chuẩn bị thêm sớm. Xem tất cả hành trình bên dưới nhé.
+      {/* Search — theo Collection, Seed, Keyword, Prompt, AI Tool */}
+      <div className="relative">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          value={unifiedQuery}
+          onChange={(e) => setUnifiedQuery(e.target.value)}
+          placeholder="Tìm theo Collection, Seed, từ khoá, Prompt hoặc công cụ AI..."
+          className="w-full rounded-xl border border-gray-200 bg-white/70 py-2.5 pl-9 pr-3 text-sm text-gray-700 shadow-sm outline-none backdrop-blur-sm focus:border-blue-300"
+        />
+      </div>
+
+      {searching ? (
+        <SearchResults collections={matchedCollections} seeds={matchedSeeds} assets={matchedAssets} />
+      ) : (
+        <>
+          <div className="space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
+              {activeGoalId ? "Hành trình phù hợp với bạn" : "Tất cả hành trình tri thức"}
+            </p>
+            {relevantSeeds.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400 backdrop-blur-sm">
+                Chưa có hành trình phù hợp — mình sẽ chuẩn bị thêm sớm. Xem tất cả hành trình bên dưới nhé.
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {relevantSeeds.map((seed) => (
+                  <KnowledgeSeedCard key={seed.id} seed={seed} />
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
+
+          <div className="space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Collection — học theo chủ đề</p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {allCollections.map((collection) => (
+                <CollectionCard key={collection.id} collection={collection} />
+              ))}
+            </div>
+          </div>
+
+          <AssetExplorer />
+        </>
+      )}
+    </div>
+  );
+}
+
+function SearchResults({
+  collections,
+  seeds,
+  assets,
+}: {
+  collections: ReturnType<typeof getAllKnowledgeCollections>;
+  seeds: ReturnType<typeof getAllKnowledgeSeeds>;
+  assets: KnowledgeAsset[];
+}) {
+  const nothingFound = collections.length === 0 && seeds.length === 0 && assets.length === 0;
+
+  if (nothingFound) {
+    return (
+      <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-12 text-center text-sm text-gray-400 backdrop-blur-sm">
+        Không tìm thấy kết quả phù hợp.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {collections.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Collection</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {relevantSeeds.map((seed) => (
+            {collections.map((c) => (
+              <CollectionCard key={c.id} collection={c} />
+            ))}
+          </div>
+        </div>
+      )}
+      {seeds.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Knowledge Seed</p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {seeds.map((seed) => (
               <KnowledgeSeedCard key={seed.id} seed={seed} />
             ))}
           </div>
-        )}
-      </div>
-
-      <AssetExplorer />
+        </div>
+      )}
+      {assets.length > 0 && (
+        <div className="space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Tri thức lẻ</p>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {assets.map((asset) => (
+              <KnowledgeAssetCard key={asset.id} asset={asset} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -78,14 +179,14 @@ function AssetExplorer() {
     <div className="space-y-4 border-t border-gray-100 pt-8">
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Tìm tri thức lẻ theo bộ lọc</p>
 
-      <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      <div className="space-y-4 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Hôm nay Companion có thể giúp bạn điều gì?"
+            placeholder="Lọc theo tiêu đề/mô tả tri thức lẻ..."
             className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm text-gray-700 outline-none focus:border-blue-300"
           />
         </div>
@@ -110,7 +211,7 @@ function AssetExplorer() {
 
       <p className="text-xs font-bold uppercase tracking-widest text-gray-400">{filtered.length} tri thức</p>
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center text-sm text-gray-400">
+        <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-12 text-center text-sm text-gray-400 backdrop-blur-sm">
           Không tìm thấy tri thức phù hợp với bộ lọc này.
         </div>
       ) : (
@@ -157,7 +258,7 @@ function FilterSelect({
 
 function KnowledgeAssetCard({ asset }: { asset: KnowledgeAsset }) {
   return (
-    <div className="gemos-gem-card block rounded-2xl p-5">
+    <div className="rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
           {KNOWLEDGE_TYPE_LABELS[asset.type]}
@@ -167,7 +268,7 @@ function KnowledgeAssetCard({ asset }: { asset: KnowledgeAsset }) {
         </span>
         <span className="text-[10px] text-gray-400">{asset.dna.estimatedTime}</span>
       </div>
-      <h3 className="gemos-card-title mb-2 text-sm font-bold leading-snug text-gray-900">{asset.title}</h3>
+      <h3 className="mb-2 text-sm font-bold leading-snug text-gray-900">{asset.title}</h3>
       <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-gray-500">{asset.summary}</p>
       <p className="text-xs font-semibold text-emerald-600">Bước tiếp theo: {asset.growth.nextStep}</p>
     </div>

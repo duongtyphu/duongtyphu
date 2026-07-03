@@ -32,6 +32,11 @@ function writeAll(map: ProgressMap) {
   }
 }
 
+/** Đọc trực tiếp (không phải hook) — dùng cho tính progress tổng hợp Collection. */
+export function getSeedCompletedStepIds(seedId: string): string[] {
+  return readAll()[seedId] ?? [];
+}
+
 export function useSeedProgress(seedId: string) {
   const [completedStepIds, setCompletedStepIds] = useState<string[]>([]);
 

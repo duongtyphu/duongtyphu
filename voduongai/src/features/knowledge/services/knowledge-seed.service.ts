@@ -5,6 +5,7 @@
  */
 
 import { knowledgeSeedJourneys } from "../data/knowledge-seed-journeys";
+import { knowledgeCollections } from "../data/knowledge-collections";
 import { getKnowledgeAssetBySlug } from "./knowledge.service";
 import {
   stageFromPercent,
@@ -77,4 +78,36 @@ export function getOneNextStep(seed: KnowledgeSeed, completedStepIds: string[]) 
   if (!step) return null;
   const asset = step.assetId ? getKnowledgeAssetBySlug(step.assetId) : undefined;
   return { step, asset: asset ?? null };
+}
+
+/** Knowledge Navigation — Previous/Next theo đúng thứ tự Seed trong Collection. */
+export function getAdjacentSeeds(seed: KnowledgeSeed): { previous: KnowledgeSeed | null; next: KnowledgeSeed | null } {
+  const collection = knowledgeCollections.find((c) => c.slug === seed.collectionSlug);
+  if (!collection) return { previous: null, next: null };
+  const index = collection.seedSlugs.indexOf(seed.slug);
+  const previousSlug = index > 0 ? collection.seedSlugs[index - 1] : undefined;
+  const nextSlug = index >= 0 && index < collection.seedSlugs.length - 1 ? collection.seedSlugs[index + 1] : undefined;
+  return {
+    previous: previousSlug ? getKnowledgeSeedBySlug(previousSlug) ?? null : null,
+    next: nextSlug ? getKnowledgeSeedBySlug(nextSlug) ?? null : null,
+  };
+}
+
+/** Knowledge Navigation — Related Seed, resolved thành object đầy đủ. */
+export function getRelatedSeedObjects(seed: KnowledgeSeed): KnowledgeSeed[] {
+  return seed.relatedSeeds
+    .map((slug) => getKnowledgeSeedBySlug(slug))
+    .filter((s): s is KnowledgeSeed => Boolean(s));
+}
+
+/** Search — theo Seed (title/summary), dùng chung cho ô tìm kiếm CKOS. */
+export function searchKnowledgeSeeds(query: string): KnowledgeSeed[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return knowledgeSeedJourneys.filter(
+    (seed) =>
+      seed.title.toLowerCase().includes(q) ||
+      seed.summary.toLowerCase().includes(q) ||
+      seed.goal.some((g) => g.toLowerCase().includes(q))
+  );
 }

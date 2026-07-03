@@ -22,7 +22,29 @@ export type KnowledgeSeedStep = {
   required: boolean;
 };
 
-export type KnowledgeSeed = {
+/**
+ * Companion Content Standard — 14 phần bắt buộc cho mỗi Knowledge Seed.
+ * (1) Hero = title/summary, (2) whatYouWillGain, (3) persona, (4) problem,
+ * (5) coreIdea, (6) guide (Hướng dẫn), (7) samplePrompt, (8) example,
+ * (9) commonMistakes, (10) checklist, (11) exercise, (12) reflectionQuestions,
+ * (13) companionNote, (14) nextStep.
+ */
+export type CompanionContentStandard = {
+  whatYouWillGain: string[];
+  problem: string;
+  coreIdea: string;
+  guide: string;
+  samplePrompt: string;
+  example: string;
+  commonMistakes: string[];
+  checklist: string[];
+  exercise: string;
+  reflectionQuestions: string[];
+  companionNote: string;
+  nextStep: string;
+};
+
+export type KnowledgeSeed = CompanionContentStandard & {
   id: string;
   slug: string;
   title: string;
@@ -32,9 +54,9 @@ export type KnowledgeSeed = {
   difficulty: Difficulty;
   estimatedTime: string;
   steps: KnowledgeSeedStep[];
-  nextSeed?: string;
+  /** slug của Collection chứa Seed này — dùng để tính thứ tự Previous/Next. */
+  collectionSlug: string;
   relatedSeeds: string[];
-  companionNote?: string;
 };
 
 /** Trạng thái tiến độ của một Seed đối với một người dùng cụ thể (client-side). */
