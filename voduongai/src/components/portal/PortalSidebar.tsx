@@ -17,6 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
+import { CompanionSidebarOrb } from "@/components/portal/companion/CompanionSidebarOrb";
 
 /** Companion dùng icon riêng, tách biệt hẳn khỏi icon user/profile — thể
  * hiện "người đồng hành", không phải tài khoản cá nhân. */
@@ -55,6 +56,9 @@ type PortalSidebarProps = {
 export function PortalSidebar({ collapsed = false, variant = "desktop", onNavigate }: PortalSidebarProps) {
   const pathname = usePathname() || "/portal";
   const showLabels = variant === "mobile" || !collapsed;
+  // Companion Design System™ — Layer 01, Bước 5: sidebar chuyển theme riêng
+  // trong toàn bộ thế giới Companion, không đổi thứ tự/nội dung menu.
+  const isCompanionTheme = pathname === "/portal/companion" || pathname.startsWith("/portal/companion/");
 
   return (
     <nav aria-label="Điều hướng Portal">
@@ -63,11 +67,19 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
           {si > 0 && (
             <span
               aria-hidden="true"
-              className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-brand-blue/90 to-transparent shadow-[0_0_14px_1.5px_rgba(91,140,255,0.65)]"
+              className={`absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r to-transparent ${
+                isCompanionTheme
+                  ? "from-transparent via-violet-400/80 shadow-[0_0_14px_1.5px_rgba(167,139,250,0.6)]"
+                  : "from-transparent via-brand-blue/90 shadow-[0_0_14px_1.5px_rgba(91,140,255,0.65)]"
+              }`}
             />
           )}
           {section.group && showLabels && (
-            <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
+            <p
+              className={`mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest ${
+                isCompanionTheme ? "text-slate-500" : "text-gray-400"
+              }`}
+            >
               {section.emoji ? `${section.emoji} ${section.group}` : section.group}
             </p>
           )}
@@ -79,11 +91,14 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
                 active={isItemActive(pathname, item.href)}
                 showLabel={showLabels}
                 onNavigate={onNavigate}
+                companionTheme={isCompanionTheme}
               />
             ))}
           </div>
         </div>
       ))}
+
+      {isCompanionTheme && <CompanionSidebarOrb showLabel={showLabels} />}
     </nav>
   );
 }
@@ -93,15 +108,22 @@ function NavLink({
   active,
   showLabel,
   onNavigate,
+  companionTheme,
 }: {
   item: { label: string; href: string };
   active: boolean;
   showLabel: boolean;
   onNavigate?: () => void;
+  companionTheme: boolean;
 }) {
   const Icon = navIcons[item.href];
   const activeOverride = activeToneOverrides[item.href];
-  const activeClass = activeOverride ?? "gemos-nav-active font-bold text-blue-700";
+  const activeClass = companionTheme
+    ? "bg-white/10 font-bold text-white shadow-[0_0_18px_-4px_rgba(167,139,250,0.7)]"
+    : (activeOverride ?? "gemos-nav-active font-bold text-blue-700");
+  const idleClass = companionTheme
+    ? "font-semibold text-slate-300 hover:bg-white/5 hover:text-white"
+    : "font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900";
   return (
     <Link
       href={item.href}
@@ -109,13 +131,13 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}
       className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition ${
-        active ? activeClass : "font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+        active ? activeClass : idleClass
       } ${!showLabel ? "justify-center" : ""}`}
     >
       {active && (
         <span
           className={`absolute left-0 top-1/2 h-5 -translate-y-1/2 rounded-full ${
-            activeOverride ? "bg-green-500" : "gemos-nav-active-bar"
+            companionTheme ? "bg-violet-400" : activeOverride ? "bg-green-500" : "gemos-nav-active-bar"
           }`}
           style={{ width: 3.5 }}
         />

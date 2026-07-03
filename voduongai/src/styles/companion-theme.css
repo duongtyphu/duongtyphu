@@ -1,0 +1,194 @@
+/**
+ * Companion Design System™ — Layer 01: Companion Design Foundation.
+ * Scope: CHỈ áp dụng trong các route /portal/companion và /portal/companion/*.
+ * Không đổi typography/màu sắc của Portal nói chung — mọi class ở đây có
+ * tiền tố `companion-` và chỉ được dùng bên trong các trang Companion.
+ *
+ * Tái dùng token màu đã có của GemOS Design System (gemos-navy/midnight/
+ * sapphire/vision-purple/soft-violet/gem-cyan/gold) thay vì phát minh lại —
+ * chỉ thêm 2 token thật sự mới: warm gold accent (đã có sẵn = gemos-gold)
+ * và glass border riêng cho Companion.
+ */
+
+:root {
+  /* Colors */
+  --companion-midnight-navy: var(--color-gemos-navy);
+  --companion-deep-blue: var(--color-gemos-sapphire);
+  --companion-aurora-purple: var(--color-gemos-vision-purple);
+  --companion-cyan-glow: var(--color-gemos-gem-cyan);
+  --companion-soft-violet: var(--color-gemos-soft-violet);
+  --companion-warm-gold: var(--color-gemos-gold);
+  --companion-glass-border: rgba(167, 139, 250, 0.22);
+  --companion-glass-border-hover: rgba(34, 211, 238, 0.4);
+  --companion-text-soft-white: var(--color-gemos-text-primary);
+  --companion-text-secondary: var(--color-gemos-text-secondary);
+  --companion-text-muted: var(--color-gemos-text-muted);
+}
+
+/* ─────────────────────────────────────────────
+ * Cosmic background
+ * ───────────────────────────────────────────── */
+
+.companion-cosmic-base {
+  background-color: var(--companion-midnight-navy);
+  background-image:
+    radial-gradient(1100px circle at 15% -10%, rgba(124, 58, 237, 0.28), transparent 60%),
+    radial-gradient(900px circle at 100% 10%, rgba(34, 211, 238, 0.16), transparent 60%),
+    radial-gradient(800px circle at 30% 110%, rgba(91, 140, 255, 0.14), transparent 65%),
+    linear-gradient(165deg, #050b18 0%, #0b1b35 55%, #071426 100%);
+}
+
+.companion-aurora-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  opacity: 0.55;
+  animation: companion-aurora-drift 22s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.companion-star {
+  position: absolute;
+  border-radius: 9999px;
+  background: #ffffff;
+  animation: companion-star-twinkle 4.5s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+/* ─────────────────────────────────────────────
+ * Glassmorphism system
+ * ───────────────────────────────────────────── */
+
+.companion-glass-card {
+  position: relative;
+  border-radius: 1.75rem;
+  border: 1px solid var(--companion-glass-border);
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 20px 60px -25px rgba(76, 29, 149, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  color: var(--companion-text-soft-white);
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+}
+
+.companion-glass-card:hover {
+  border-color: var(--companion-glass-border-hover);
+  box-shadow: 0 24px 70px -22px rgba(34, 211, 238, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.companion-glow-panel {
+  position: relative;
+  border-radius: 1.5rem;
+  border: 1px solid var(--companion-glass-border);
+  background: linear-gradient(160deg, rgba(124, 58, 237, 0.14), rgba(34, 211, 238, 0.06));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 0 0 1px rgba(167, 139, 250, 0.08) inset, 0 30px 80px -30px rgba(34, 211, 238, 0.4);
+  color: var(--companion-text-soft-white);
+}
+
+.companion-section-shell {
+  position: relative;
+  border-radius: 2rem;
+  padding: 2.5rem;
+}
+
+@media (max-width: 640px) {
+  .companion-section-shell {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+ * Typography foundation (Companion scope only)
+ * ───────────────────────────────────────────── */
+
+.companion-heading {
+  color: var(--companion-text-soft-white);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-shadow: 0 0 28px rgba(167, 139, 250, 0.35);
+}
+
+.companion-subtitle {
+  color: var(--companion-text-secondary);
+  font-weight: 500;
+}
+
+.companion-chapter-label {
+  color: var(--companion-cyan-glow);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.6875rem;
+}
+
+.companion-quote {
+  color: var(--companion-text-secondary);
+  font-style: italic;
+}
+
+.companion-body {
+  color: var(--companion-text-secondary);
+  line-height: 1.75;
+}
+
+/* ─────────────────────────────────────────────
+ * Sidebar theme (applied by PortalShell only when route === /portal/companion*)
+ * ───────────────────────────────────────────── */
+
+.companion-sidebar-theme {
+  background: linear-gradient(180deg, #070f22 0%, #0b1b35 100%);
+  border-color: rgba(167, 139, 250, 0.16) !important;
+}
+
+/* ─────────────────────────────────────────────
+ * Motion tokens
+ * ───────────────────────────────────────────── */
+
+@keyframes companion-slow-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes companion-soft-pulse {
+  0%, 100% { opacity: 0.85; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.03); }
+}
+
+@keyframes companion-glow-breathe {
+  0%, 100% { box-shadow: 0 0 24px -6px rgba(34, 211, 238, 0.35); }
+  50% { box-shadow: 0 0 44px -4px rgba(34, 211, 238, 0.55); }
+}
+
+@keyframes companion-aurora-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(3%, -4%, 0) scale(1.08); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes companion-star-twinkle {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes companion-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.companion-anim-float { animation: companion-slow-float 6s ease-in-out infinite; }
+.companion-anim-pulse { animation: companion-soft-pulse 3.2s ease-in-out infinite; }
+.companion-anim-glow-breathe { animation: companion-glow-breathe 4s ease-in-out infinite; }
+.companion-anim-fade-up { animation: companion-fade-up 0.6s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-aurora-blob,
+  .companion-star,
+  .companion-anim-float,
+  .companion-anim-pulse,
+  .companion-anim-glow-breathe,
+  .companion-anim-fade-up {
+    animation: none !important;
+  }
+}
