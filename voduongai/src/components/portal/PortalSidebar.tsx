@@ -57,7 +57,13 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
   return (
     <nav aria-label="Điều hướng Portal">
       {portalNavGroups.map((section, si) => (
-        <div key={si} className={si > 0 ? "mt-4 border-t border-gray-100 pt-4" : ""}>
+        <div key={si} className={si > 0 ? "relative mt-5 pt-4" : ""}>
+          {si > 0 && (
+            <span
+              aria-hidden="true"
+              className="absolute inset-x-3 top-0 h-px bg-gradient-to-r from-transparent via-brand-blue/70 to-transparent shadow-[0_0_10px_1px_rgba(91,140,255,0.5)]"
+            />
+          )}
           {section.group && showLabels && (
             <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
               {section.emoji ? `${section.emoji} ${section.group}` : section.group}
