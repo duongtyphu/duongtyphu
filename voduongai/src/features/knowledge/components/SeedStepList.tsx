@@ -19,7 +19,10 @@ export function SeedStepList({
     <div className="space-y-2">
       {ordered.map((step) => {
         const done = completedStepIds.includes(step.id);
-        const comingSoon = !step.assetId;
+        // Step optional chưa có Asset riêng -> "sắp có" (disabled). Step bắt buộc
+        // không có Asset vẫn toggle được bình thường vì nội dung đã có ngay trên
+        // trang Seed (Sprint 03 — Knowledge Experience), không phụ thuộc Asset rời.
+        const comingSoon = !step.assetId && !step.required;
         return (
           <button
             key={step.id}

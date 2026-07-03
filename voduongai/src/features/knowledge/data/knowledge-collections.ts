@@ -2,29 +2,32 @@ import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
 export const knowledgeCollections: KnowledgeCollection[] = [
   {
-    id: "collection-ai-office-essentials",
-    slug: "ai-office-essentials",
-    title: "AI Office Essentials",
+    id: "collection-ai-office",
+    slug: "ai-office",
+    title: "AI Office",
     description:
-      "Những kỹ năng AI nền tảng cho công việc văn phòng hằng ngày — email, báo cáo, cuộc họp, thời gian và FAQ.",
+      "8 kỹ năng AI nền tảng cho công việc văn phòng — từ email, báo cáo, slide, Excel, họp hành đến tự động hoá công việc lặp lại.",
     seedSlugs: [
       "viet-email-chuyen-nghiep",
+      "tom-tat-tai-lieu-pdf-dai",
       "lam-bao-cao-tuan-bang-ai",
+      "thiet-ke-powerpoint-nhanh-gon",
+      "viet-prompt-hieu-qua",
+      "phan-tich-excel-bang-ai",
       "ghi-chu-va-tong-hop-cuoc-hop",
-      "quan-ly-thoi-gian-lam-viec",
-      "soan-bo-faq-cho-cong-viec",
+      "tu-dong-hoa-cong-viec-van-phong-bang-ai",
     ],
   },
   {
     id: "collection-ai-research-presentation",
     slug: "ai-research-presentation",
-    title: "AI Research & Presentation",
+    title: "AI Research & Productivity",
     description:
-      "Kỹ năng AI cho nghiên cứu và trình bày — đọc tài liệu dài, nghiên cứu chủ đề mới, thiết kế slide thuyết trình.",
+      "Kỹ năng AI cho nghiên cứu và năng suất cá nhân — nghiên cứu chủ đề mới, quản lý thời gian, soạn FAQ cho công việc.",
     seedSlugs: [
-      "thiet-ke-powerpoint-nhanh-gon",
-      "tom-tat-tai-lieu-pdf-dai",
       "nghien-cuu-mot-chu-de-nhanh-chong",
+      "quan-ly-thoi-gian-lam-viec",
+      "soan-bo-faq-cho-cong-viec",
     ],
   },
 ];

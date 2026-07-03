@@ -9,6 +9,8 @@ import { WhyThisMatters } from "../components/WhyThisMatters";
 import { ContentSection } from "../components/ContentSection";
 import { StepByStepGuide } from "../components/StepByStepGuide";
 import { PromptExperience } from "../components/PromptExperience";
+import { PromptPack } from "../components/PromptPack";
+import { DownloadPrepCard } from "../components/DownloadPrepCard";
 import { RealExample } from "../components/RealExample";
 import { ActionChecklist } from "../components/ActionChecklist";
 import { JourneyProgress } from "../components/JourneyProgress";
@@ -136,13 +138,16 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
           </div>
 
           {/* Feature 06 — Prompt Experience */}
-          <div id="prompt" className="scroll-mt-20">
+          <div id="prompt" className="scroll-mt-20 space-y-4">
             <PromptExperience
               prompt={seed.samplePrompt}
               tips={seed.promptTips}
               exampleInput={seed.promptExampleInput}
               exampleOutput={seed.promptExampleOutput}
             />
+            <div className="rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
+              <PromptPack prompts={seed.prompts} packLabel="Prompt Pack" />
+            </div>
           </div>
 
           {/* Feature 07 — Real Example */}
@@ -172,6 +177,12 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
             </h2>
             <ActionChecklist seedId={seed.id} items={seed.checklist} />
           </div>
+
+          <DownloadPrepCard
+            promptPackLabel={seed.downloadPack.promptPackLabel}
+            checklistLabel={seed.downloadPack.checklistLabel}
+            templateLabel={seed.downloadPack.templateLabel}
+          />
 
           {/* Feature 10 — Exercise */}
           <ContentSection id="exercise" icon={Dumbbell} title="Exercise · 5-15 phút">

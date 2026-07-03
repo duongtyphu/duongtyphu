@@ -59,6 +59,10 @@ export type KnowledgeExperienceContent = {
   promptTips: string[];
   promptExampleInput: string;
   promptExampleOutput: string;
+  /** Prompt Pack — tối thiểu 5 prompt thật, dùng được ngay (Sprint 03). */
+  prompts: string[];
+  /** Chuẩn bị nhãn cho tính năng download sau này (chưa xây file thật). */
+  downloadPack: { promptPackLabel: string; checklistLabel: string; templateLabel: string };
 };
 
 export type KnowledgeSeed = CompanionContentStandard &
