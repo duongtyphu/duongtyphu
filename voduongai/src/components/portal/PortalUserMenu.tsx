@@ -7,7 +7,15 @@ import { Settings, ExternalLink, LogOut } from "lucide-react";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { LanguageSwitcher } from "@/components/portal/LanguageSwitcher";
 
-export function PortalUserMenu({ email, fullName }: { email: string; fullName?: string }) {
+export function PortalUserMenu({
+  email,
+  fullName,
+  companionTheme = false,
+}: {
+  email: string;
+  fullName?: string;
+  companionTheme?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -44,7 +52,11 @@ export function PortalUserMenu({ email, fullName }: { email: string; fullName?: 
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Tài khoản"
-        className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 transition hover:border-brand-blue"
+        className={
+          companionTheme
+            ? "flex items-center gap-2 rounded-full border border-violet-400/20 bg-white/5 px-2 py-1.5 text-sm font-semibold text-white transition hover:border-violet-300/50"
+            : "flex items-center gap-2 rounded-full border border-gray-200 bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 transition hover:border-brand-blue"
+        }
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-orange/20 text-xs font-bold text-brand-orange">
           {initial}

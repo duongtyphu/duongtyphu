@@ -6,7 +6,7 @@ import { Search, X } from "lucide-react";
 import { searchPortal, type PortalSearchResult } from "@/lib/portal/search";
 import { usePortalSearchExtras } from "@/lib/portal/search-extras";
 
-export function PortalSearch() {
+export function PortalSearch({ companionTheme = false }: { companionTheme?: boolean } = {}) {
   const extras = usePortalSearchExtras();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<PortalSearchResult[]>([]);
@@ -98,7 +98,11 @@ export function PortalSearch() {
           onKeyDown={handleKeyDown}
           placeholder="Tìm trong Portal..."
           aria-label="Tìm kiếm toàn Portal"
-          className="gemos-search-glass w-full rounded-full py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          className={
+            companionTheme
+              ? "w-full rounded-full border border-violet-400/20 bg-white/5 py-2 pl-9 pr-3 text-sm text-white placeholder:text-slate-400 focus:border-violet-300/50 focus:outline-none"
+              : "gemos-search-glass w-full rounded-full py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
+          }
         />
         {open && query.trim() && (
           <SearchDropdown
@@ -117,7 +121,11 @@ export function PortalSearch() {
         aria-label="Tìm kiếm"
         title="Tìm kiếm"
         onClick={() => setMobileOpen(true)}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-700 transition hover:border-brand-blue/40 hover:text-gray-900 md:hidden"
+        className={
+          companionTheme
+            ? "flex h-9 w-9 items-center justify-center rounded-full border border-violet-400/20 bg-white/5 text-slate-200 transition hover:border-violet-300/50 hover:text-white md:hidden"
+            : "flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-700 transition hover:border-brand-blue/40 hover:text-gray-900 md:hidden"
+        }
       >
         <Search className="h-4 w-4" />
       </button>

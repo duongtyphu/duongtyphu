@@ -154,6 +154,14 @@
   border-color: rgba(167, 139, 250, 0.16) !important;
 }
 
+/* Layer 05 patch — Header/topbar theme, cùng hệ nền với sidebar/cosmic
+   background. Glassmorphism nhẹ (blur giữ nguyên từ .gemos-topbar), chỉ đổi
+   màu nền/border để hài hoà. */
+.companion-topbar-theme {
+  background: linear-gradient(180deg, rgba(7, 15, 34, 0.92) 0%, rgba(11, 27, 53, 0.9) 100%) !important;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.16) !important;
+}
+
 /* ─────────────────────────────────────────────
  * Motion tokens
  * ───────────────────────────────────────────── */
