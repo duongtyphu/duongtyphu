@@ -192,3 +192,108 @@
     animation: none !important;
   }
 }
+
+/* ─────────────────────────────────────────────
+ * Companion Design System™ — Layer 02: Companion Character.
+ * CompanionOrb là lớp bọc thuần CSS quanh LivingCore (Design Lock v1.2) —
+ * KHÔNG có rule nào ở đây đổi geometry/màu gốc của SVG, chỉ opacity/scale/
+ * filter/ẩn-hiện ở lớp ngoài. Xem docs/Companion/CompanionCharacterSystem.md.
+ * ───────────────────────────────────────────── */
+
+.companion-orb {
+  display: inline-flex;
+  transition: filter 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* listening — ánh sáng mềm hơn, ít chuyển động hơn cảm giác đang lắng nghe,
+   không phải trạng thái LivingCore riêng (Design Lock) nên tạo khác biệt
+   hoàn toàn bằng CSS ở lớp bọc: dịu sáng + hơi thu nhỏ orbit. */
+.companion-orb--listening {
+  filter: saturate(0.88) brightness(0.96);
+}
+.companion-orb--listening .living-core__orbit {
+  opacity: 0.6;
+}
+
+/* radiant — cường độ vượt mức "high" gốc của LivingCore, dùng cho khoảnh
+   khắc cần rực rỡ hơn (Hero Orb) mà không đổi state. */
+.companion-orb--radiant {
+  filter: brightness(1.16) saturate(1.08);
+}
+
+/* calm — dịu hơn mức "low" gốc một chút, dùng cho mini orb sidebar. */
+.companion-orb--calm {
+  filter: saturate(0.92);
+}
+
+/* showOrbit=false — ẩn 3 vòng quỹ đạo, giữ nguyên lõi/aura/particles. */
+.companion-orb--no-orbit .living-core__orbit {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* speaking — nhấn nhịp nhẹ theo lời nói, cộng thêm lên animation gốc của
+   LivingCore (không thay animation gốc, chỉ thêm một lớp pulse phụ ở viền). */
+.companion-orb--speaking {
+  animation: companion-speaking-pulse 1.4s ease-in-out infinite;
+}
+
+/* celebrating — spark nhẹ ở lớp bọc, cộng thêm cảm giác lấp lánh mà không
+   loè loẹt (particles thật đã có sẵn qua showParticles). */
+.companion-orb--celebrating {
+  animation: companion-celebrate-spark 2.2s ease-in-out infinite;
+}
+
+/* sleeping — dim rất nhẹ thêm ở lớp bọc, cộng với trạng thái sleeping gốc. */
+.companion-orb--sleeping {
+  animation: companion-sleep-dim 6s ease-in-out infinite;
+}
+
+/* Character motion tokens (Nhiệm vụ 06) */
+@keyframes companion-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+@keyframes companion-orbit-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes companion-glow-pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.12); }
+}
+@keyframes companion-speaking-pulse {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.02); filter: brightness(1.08); }
+}
+@keyframes companion-celebrate-spark {
+  0%, 100% { filter: brightness(1) saturate(1); }
+  40% { filter: brightness(1.2) saturate(1.15); }
+  60% { filter: brightness(1.05) saturate(1.05); }
+}
+@keyframes companion-sleep-dim {
+  0%, 100% { opacity: 0.82; }
+  50% { opacity: 0.7; }
+}
+
+.companion-motion-breathe { animation: companion-breathe 5s ease-in-out infinite; }
+.companion-motion-orbit-slow { animation: companion-orbit-slow 30s linear infinite; }
+.companion-motion-glow-pulse { animation: companion-glow-pulse 4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-orb--speaking,
+  .companion-orb--celebrating,
+  .companion-orb--sleeping,
+  .companion-motion-breathe,
+  .companion-motion-orbit-slow,
+  .companion-motion-glow-pulse {
+    animation: none !important;
+  }
+  .companion-orb--no-orbit .living-core__orbit,
+  .companion-orb .living-core__orbit {
+    /* LivingCore tự tắt orbit rotate khi reduced-motion (đã xử lý trong
+       LivingCore.tsx/globals.css) — ở đây chỉ đảm bảo lớp bọc không thêm
+       chuyển động nào khác đè lên, glow vẫn giữ tĩnh nhưng đẹp. */
+    animation-play-state: paused;
+  }
+}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LivingCore } from "@/components/LivingCore";
+import { CompanionOrb } from "@/components/portal/companion/CompanionOrb";
 import { CompanionCosmicBackground } from "@/components/portal/companion/CompanionCosmicBackground";
 import { CompanionGlassCard } from "@/components/portal/companion/CompanionGlassCard";
 import { CompanionGlowPanel } from "@/components/portal/companion/CompanionGlowPanel";
@@ -12,6 +12,7 @@ import {
   CompanionQuote,
   CompanionBody,
 } from "@/components/portal/companion/CompanionTypography";
+import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 
 export const metadata = { title: "Companion — VO DUONG AI" };
 
@@ -28,14 +29,24 @@ const CHAPTERS = [
  * Đây CHỈ là nền móng thị giác để review — chưa phải nội dung đầy đủ.
  */
 export default function CompanionHomePage() {
+  const thought = getRandomThoughtSeed();
+
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <CompanionCosmicBackground />
 
       <div className="relative z-10 mx-auto max-w-4xl px-6 py-20 sm:px-10 sm:py-28">
-        {/* Hero */}
+        {/* Hero Orb — Nhiệm vụ 03: orbit ring xoay chậm, glow tím-xanh, aura
+            mềm, breathing, particles nhẹ — trách nhiệm hiển thị nằm trong
+            LivingCore (Design Lock), CompanionOrb chỉ chọn size/state đúng.
+            Mobile dùng size nhỏ hơn (xl) để không đẩy hero quá cao. */}
         <section className="flex flex-col items-center text-center">
-          <LivingCore size={128} state="idle" />
+          <div className="companion-motion-breathe sm:hidden">
+            <CompanionOrb size="xl" state="idle" intensity="radiant" />
+          </div>
+          <div className="companion-motion-breathe hidden sm:block">
+            <CompanionOrb size="hero" state="idle" intensity="radiant" />
+          </div>
           <CompanionHeading className="mt-8">Companion</CompanionHeading>
           <CompanionSubtitle className="mt-4 max-w-xl">
             Một thế giới riêng, dành cho người bạn luôn đồng hành cùng bạn trong hành trình
@@ -80,6 +91,17 @@ export default function CompanionHomePage() {
             <CompanionGlowButton href="/portal/companion/y-nghia-companion">Sample Glow Button</CompanionGlowButton>
           </div>
         </CompanionSectionShell>
+
+        {/* Hôm nay Companion nghĩ gì? — Nhiệm vụ 05: orb nhỏ đúng nơi có
+            cảm giác tâm sự, để đây là lời Companion nói, không phải text
+            website. */}
+        <CompanionGlowPanel className="mt-16 flex items-start gap-4">
+          <CompanionOrb size="sm" state="thinking" intensity="calm" showOrbit={false} className="mt-0.5 shrink-0" />
+          <div>
+            <CompanionChapterLabel>Hôm nay Companion nghĩ gì?</CompanionChapterLabel>
+            <CompanionQuote className="mt-2 text-base">&ldquo;{thought}&rdquo;</CompanionQuote>
+          </div>
+        </CompanionGlowPanel>
 
         {/* Chapters — điều hướng sang các route con */}
         <section className="mt-20">
