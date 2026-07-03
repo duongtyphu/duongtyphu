@@ -2,26 +2,22 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Target,
-  Users,
-  AlertTriangle,
-  Lightbulb,
-  BookOpenText,
-  Sparkles,
-  ImageIcon,
-  ListX,
-  ListChecks,
-  Dumbbell,
-  Clock,
-} from "lucide-react";
-import { WorkspaceHeader } from "../components/WorkspaceHeader";
+import { ArrowLeft, ListX, ListChecks, Dumbbell, Clock } from "lucide-react";
+import { LearningHero } from "../components/LearningHero";
+import { LearningOutcome } from "../components/LearningOutcome";
+import { WhyThisMatters } from "../components/WhyThisMatters";
+import { ContentSection } from "../components/ContentSection";
+import { StepByStepGuide } from "../components/StepByStepGuide";
+import { PromptExperience } from "../components/PromptExperience";
+import { RealExample } from "../components/RealExample";
+import { ActionChecklist } from "../components/ActionChecklist";
 import { JourneyProgress } from "../components/JourneyProgress";
 import { SeedStepList } from "../components/SeedStepList";
 import { CompanionSuggestion } from "../components/CompanionSuggestion";
+import { CompanionNoteBlock } from "../components/CompanionNoteBlock";
+import { NextActionCard } from "../components/NextActionCard";
+import { CompletionExperience } from "../components/CompletionExperience";
 import { OneNextStepCard } from "../components/OneNextStepCard";
-import { ContentSection } from "../components/ContentSection";
 import { SeedNavigation } from "../components/SeedNavigation";
 import { RelatedKnowledge } from "../components/RelatedKnowledge";
 import { BookmarkButton } from "../components/BookmarkButton";
@@ -32,6 +28,7 @@ import { ReadingProgressBar } from "../components/ReadingProgressBar";
 import { SectionNav } from "../components/SectionNav";
 import { useSeedProgress, getSeedCompletedStepIds } from "../utils/use-seed-progress";
 import { recordSeedVisit } from "../utils/use-continue-learning";
+import { splitBeforeAfter } from "../utils/split-before-after";
 import {
   computeSeedProgress,
   getCompanionSuggestion,
@@ -40,7 +37,7 @@ import {
   getRelatedSeedObjects,
   getPrerequisiteGuidance,
 } from "../services/knowledge-seed.service";
-import { getKnowledgeCollectionBySlug } from "../services/knowledge-collection.service";
+import { getKnowledgeCollectionBySlug, computeCollectionProgress } from "../services/knowledge-collection.service";
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
 
 function estimateReadingMinutes(seed: KnowledgeSeed): number {
@@ -67,7 +64,10 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
   const { previous, next } = getAdjacentSeeds(seed);
   const related = getRelatedSeedObjects(seed);
   const collection = getKnowledgeCollectionBySlug(seed.collectionSlug);
+  const collectionProgress = collection ? computeCollectionProgress(collection, getSeedCompletedStepIds) : null;
   const readingMinutes = estimateReadingMinutes(seed);
+  const beforeAfter = splitBeforeAfter(seed.example);
+  const isComplete = progress.percent >= 100;
 
   useEffect(() => {
     recordSeedVisit(seed.id, seed.slug, seed.title);
@@ -83,15 +83,21 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
         Quay lại Thư viện tri thức
       </Link>
 
-      {/* Feature 04 — Knowledge Map */}
+      {/* Feature 04 — Knowledge Map (Learning Engine, không sửa) */}
       <KnowledgeMap collection={collection} seed={seed} next={next} isLastSeed={!next} />
 
       <ReadingProgressBar />
 
       <div className="flex gap-6">
         <div className="min-w-0 flex-1 space-y-6">
-          {/* 1. Hero */}
-          <WorkspaceHeader seed={seed} />
+          {/* Feature 01 — Learning Hero */}
+          <LearningHero
+            seed={seed}
+            collection={collection}
+            collectionProgressLabel={
+              collectionProgress ? `${collectionProgress.completedSeeds}/${collectionProgress.totalSeeds} Seed trong Collection` : null
+            }
+          />
           <div className="flex flex-wrap items-center justify-between gap-3">
             <BookmarkButton seedId={seed.id} />
             <span className="flex items-center gap-1.5 text-xs font-medium text-gray-400">
@@ -100,55 +106,56 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
             </span>
           </div>
 
+          {/* Learning Engine — giữ nguyên, không sửa */}
           <JourneyProgress progress={progress} />
-
-          {/* Feature 07 — Companion Guide: chỉ dẫn đường, không chat */}
           <CompanionSuggestion message={prerequisiteGuidance ?? stepSuggestion} />
-
           {oneNextStep && (
             <OneNextStepCard step={oneNextStep.step} asset={oneNextStep.asset} onComplete={toggleStep} />
           )}
 
-          {/* 2. Bạn sẽ đạt được gì */}
-          <ContentSection id="gain" icon={Target} title="Bạn sẽ đạt được gì">
-            <ul className="list-disc space-y-1 pl-5">
-              {seed.whatYouWillGain.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </ContentSection>
+          {/* Feature 02 — Learning Outcome */}
+          <LearningOutcome items={seed.whatYouWillGain} />
 
-          {/* 3. Phù hợp với ai */}
-          <ContentSection id="persona" icon={Users} title="Phù hợp với ai">
-            <p>{seed.persona.join(", ")}</p>
-          </ContentSection>
+          {/* Feature 03 — Why This Matters */}
+          <WhyThisMatters text={seed.whyMatters} />
 
-          {/* 4. Vấn đề */}
-          <ContentSection id="problem" icon={AlertTriangle} title="Vấn đề">
-            <p>{seed.problem}</p>
-          </ContentSection>
+          {/* Feature 04 — Core Knowledge (Vấn đề + Ý tưởng cốt lõi) */}
+          <div id="problem" className="scroll-mt-20 rounded-2xl border-l-4 border-orange-300 bg-orange-50/40 p-5">
+            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-orange-600">Vấn đề</p>
+            <p className="text-sm italic leading-relaxed text-gray-700">&ldquo;{seed.problem}&rdquo;</p>
+          </div>
+          <div id="core-idea" className="scroll-mt-20 rounded-2xl border border-blue-100 bg-blue-50/40 p-5">
+            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-blue-600">Ý tưởng cốt lõi</p>
+            <p className="text-sm leading-relaxed text-gray-700">{seed.coreIdea}</p>
+          </div>
 
-          {/* 5. Ý tưởng cốt lõi */}
-          <ContentSection id="core-idea" icon={Lightbulb} title="Ý tưởng cốt lõi">
-            <p>{seed.coreIdea}</p>
-          </ContentSection>
+          {/* Feature 05 — Step by Step Guide */}
+          <div id="guide" className="scroll-mt-20 space-y-2 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-gray-500">Hướng dẫn</h2>
+            <StepByStepGuide steps={seed.guideSteps} />
+          </div>
 
-          {/* 6. Hướng dẫn */}
-          <ContentSection id="guide" icon={BookOpenText} title="Hướng dẫn">
-            <p>{seed.guide}</p>
-          </ContentSection>
+          {/* Feature 06 — Prompt Experience */}
+          <div id="prompt" className="scroll-mt-20">
+            <PromptExperience
+              prompt={seed.samplePrompt}
+              tips={seed.promptTips}
+              exampleInput={seed.promptExampleInput}
+              exampleOutput={seed.promptExampleOutput}
+            />
+          </div>
 
-          {/* 7. Prompt */}
-          <ContentSection id="prompt" icon={Sparkles} title="Prompt">
-            <p className="rounded-lg bg-gray-50 p-3 font-mono text-xs text-gray-600">{seed.samplePrompt}</p>
-          </ContentSection>
+          {/* Feature 07 — Real Example */}
+          <div id="example" className="scroll-mt-20 space-y-2 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wide text-gray-500">Ví dụ</h2>
+            {beforeAfter ? (
+              <RealExample before={beforeAfter.before} after={beforeAfter.after} />
+            ) : (
+              <p className="text-sm leading-relaxed text-gray-700">{seed.example}</p>
+            )}
+          </div>
 
-          {/* 8. Ví dụ */}
-          <ContentSection id="example" icon={ImageIcon} title="Ví dụ">
-            <p>{seed.example}</p>
-          </ContentSection>
-
-          {/* 9. Sai lầm thường gặp */}
+          {/* Feature 08 — Common Mistakes */}
           <ContentSection id="mistakes" icon={ListX} title="Sai lầm thường gặp">
             <ul className="list-disc space-y-1 pl-5">
               {seed.commonMistakes.map((item) => (
@@ -157,37 +164,44 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
             </ul>
           </ContentSection>
 
-          {/* 10. Checklist */}
-          <ContentSection id="checklist" icon={ListChecks} title="Checklist">
-            <ul className="list-disc space-y-1 pl-5">
-              {seed.checklist.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </ContentSection>
+          {/* Feature 09 — Action Checklist (có thể tick) */}
+          <div id="checklist" className="scroll-mt-20 space-y-2 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
+            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-gray-500">
+              <ListChecks className="h-4 w-4 text-blue-500" />
+              Checklist
+            </h2>
+            <ActionChecklist seedId={seed.id} items={seed.checklist} />
+          </div>
 
-          {/* 11. Exercise */}
-          <ContentSection id="exercise" icon={Dumbbell} title="Exercise">
+          {/* Feature 10 — Exercise */}
+          <ContentSection id="exercise" icon={Dumbbell} title="Exercise · 5-15 phút">
             <p>{seed.exercise}</p>
           </ContentSection>
 
-          {/* 12. Reflection */}
+          {/* Feature 11 — Reflection: chỉ 3 câu hỏi */}
           <div id="reflection" className="scroll-mt-20 space-y-4">
-            {seed.reflectionQuestions.map((question) => (
-              <ReflectionBox key={question} seedId={seed.id} question={question} />
-            ))}
+            <ReflectionBox seedId={seed.id} question={`Hôm nay bạn học được gì từ "${seed.title}"?`} />
+            <ReflectionBox seedId={seed.id} question={seed.reflectionQuestions[0]} />
+            <ReflectionBox seedId={seed.id} question="Điều gì còn chưa rõ với bạn?" />
           </div>
 
-          {/* 13 & 14. Companion Note + Next Step đã hiển thị qua CompanionSuggestion/OneNextStepCard ở trên */}
-
+          {/* Learning Engine — giữ nguyên, không sửa */}
           <div className="space-y-3">
             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Hành trình từng bước</p>
             <SeedStepList steps={seed.steps} completedStepIds={completedStepIds} onToggle={toggleStep} />
           </div>
 
           <SeedNavigation previous={previous} next={next} />
-
           <RelatedKnowledge seeds={related} />
+
+          {/* Feature 12 — Companion Note */}
+          <CompanionNoteBlock note={seed.companionNote} />
+
+          {/* Feature 13 — Next Action */}
+          <NextActionCard action={seed.nextStep} />
+
+          {/* Feature 14 — Completion Experience */}
+          {isComplete && <CompletionExperience seedTitle={seed.title} />}
         </div>
 
         <TableOfContents />

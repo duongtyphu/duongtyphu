@@ -44,20 +44,38 @@ export type CompanionContentStandard = {
   nextStep: string;
 };
 
-export type KnowledgeSeed = CompanionContentStandard & {
-  id: string;
-  slug: string;
-  title: string;
-  summary: string;
-  goal: string[];
-  persona: string[];
-  difficulty: Difficulty;
-  estimatedTime: string;
-  steps: KnowledgeSeedStep[];
-  /** slug của Collection chứa Seed này — dùng để tính thứ tự Previous/Next. */
-  collectionSlug: string;
-  relatedSeeds: string[];
+/**
+ * Sprint 03 — Knowledge Experience: một Seed là "một buổi học hoàn chỉnh",
+ * không phải một bài viết. Các field dưới đây bổ sung cho Learning Hero,
+ * Step-by-Step Guide và Prompt Experience — không thay Companion Content
+ * Standard, chỉ mở rộng cách trình bày.
+ */
+export type KnowledgeExperienceContent = {
+  subtitle: string;
+  skillsGained: string[];
+  whyMatters: string;
+  /** Từng bước cụ thể của phần Hướng dẫn — Step 1 → Step 2 → ... → Done. */
+  guideSteps: string[];
+  promptTips: string[];
+  promptExampleInput: string;
+  promptExampleOutput: string;
 };
+
+export type KnowledgeSeed = CompanionContentStandard &
+  KnowledgeExperienceContent & {
+    id: string;
+    slug: string;
+    title: string;
+    summary: string;
+    goal: string[];
+    persona: string[];
+    difficulty: Difficulty;
+    estimatedTime: string;
+    steps: KnowledgeSeedStep[];
+    /** slug của Collection chứa Seed này — dùng để tính thứ tự Previous/Next. */
+    collectionSlug: string;
+    relatedSeeds: string[];
+  };
 
 /** Trạng thái tiến độ của một Seed đối với một người dùng cụ thể (client-side). */
 export type KnowledgeSeedProgress = {
