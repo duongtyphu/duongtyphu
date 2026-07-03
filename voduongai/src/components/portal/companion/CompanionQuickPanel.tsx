@@ -9,19 +9,23 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import { Check, Circle, X } from "lucide-react";
 import { LivingCore } from "@/components/LivingCore";
 import { toLivingCoreState } from "@/lib/portal/companion/living-core-state";
 import { displayName, type CompanionState } from "@/lib/portal/companion/companion-identity";
 import type { RouteContext } from "@/lib/portal/companion/route-context";
+import type { OrchestrationPlan } from "@/companion/agents/companion-orchestrator";
 
 export function CompanionQuickPanel({
   state,
   routeContext,
+  orchestrationPlan = null,
   onClose,
 }: {
   state: CompanionState;
   routeContext: RouteContext;
+  /** Product Amendment 02 — Companion Orchestration System™: đội Agent + kế hoạch Companion đã chọn cho module hiện tại, nếu có. */
+  orchestrationPlan?: OrchestrationPlan | null;
   onClose: () => void;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -85,6 +89,29 @@ export function CompanionQuickPanel({
           </Link>
         ))}
       </div>
+
+      {orchestrationPlan && (
+        <div className="mt-3 rounded-xl border border-gray-100 bg-gray-50 p-3">
+          <p className="text-xs font-semibold text-gray-700">{orchestrationPlan.companionMessage}</p>
+          {orchestrationPlan.selectedAgents.length > 0 && (
+            <p className="mt-1.5 text-[11px] text-gray-400">
+              Đội đồng hành: {orchestrationPlan.selectedAgents.map((agent) => agent.name.replace(/^AI /, "")).join(", ")}
+            </p>
+          )}
+          <ul className="mt-2 space-y-1">
+            {orchestrationPlan.actionPlan.map((step) => (
+              <li key={step.id} className="flex items-center gap-1.5 text-[11px] text-gray-500">
+                {step.status === "done" ? (
+                  <Check className="h-3 w-3 shrink-0 text-emerald-500" />
+                ) : (
+                  <Circle className="h-3 w-3 shrink-0 text-gray-300" />
+                )}
+                {step.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <Link
         href={khongGianAi.href}

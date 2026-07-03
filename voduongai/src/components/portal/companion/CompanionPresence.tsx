@@ -68,6 +68,7 @@ import { CompanionContextualNudge } from "@/components/portal/companion/Companio
 import { CompanionQuickPanel } from "@/components/portal/companion/CompanionQuickPanel";
 import { getRouteContext, hasContextualNudge } from "@/lib/portal/companion/route-context";
 import { hasNudgeBeenShown, isNudgeDisabled, markNudgeShown } from "@/lib/portal/companion/nudge-session";
+import { orchestrate } from "@/companion/agents/companion-orchestrator";
 
 const MINIMIZED_STORAGE_KEY = "companion-presence-minimized";
 const THOUGHT_CHECK_INTERVAL_MS = 5000;
@@ -397,6 +398,9 @@ export function CompanionPresence({
   });
   const state = open ? states.listening : comeback ? states.comeback : decision.companionState;
   const routeContext = getRouteContext(pathname ?? "/portal");
+  // Product Amendment 02 — Companion Orchestration System™: đội Agent +
+  // kế hoạch Companion đã tự chọn cho module hiện tại (rule-based, chưa AI thật).
+  const orchestrationPlan = orchestrate({ currentRoute: pathname ?? "/portal" });
 
   // Sprint 18.8 — Presence Coordinator: một dòng quyết định hiện diện duy
   // nhất cho Life Moment, Return After Silence, Thought, Story, Greeting,
@@ -679,6 +683,7 @@ export function CompanionPresence({
             <CompanionQuickPanel
               state={state}
               routeContext={routeContext}
+              orchestrationPlan={orchestrationPlan}
               onClose={() => setQuickPanelOpen(false)}
             />
           )}
