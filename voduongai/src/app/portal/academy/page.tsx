@@ -2,6 +2,7 @@ import Link from "next/link";
 import { GraduationCap, HelpCircle } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
+import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
 
 export const metadata = {
@@ -65,6 +66,9 @@ export default function AcademyHubPage() {
           </div>
         )}
       </div>
+
+      {/* Sprint 05 — Unlockable Assets pilot Mission */}
+      <LandingPageMissionPilot />
 
       {/* Mentoring CTA */}
       <div className="rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-6">
