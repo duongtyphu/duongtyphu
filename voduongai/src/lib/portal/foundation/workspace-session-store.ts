@@ -13,6 +13,10 @@
 
 import type { WorkspaceContext } from "@/lib/portal/companion-workspace";
 import { emitGrowthEvent } from "./growth-event-bus";
+import { createWorkforceApiProvider } from "./ai-provider";
+import { startAgentRun, completeAgentRun, failAgentRun } from "./agent-run-store";
+import type { WriterAgentResult } from "@/ai/agents/writer-agent";
+import type { ReviewerAgentResult } from "@/ai/agents/reviewer-agent";
 
 export type ExecutionStepId =
   | "mission_started"
@@ -51,6 +55,23 @@ export type ReflectionAnswer = {
   submittedAt: string;
 };
 
+/** AI Agent Integration MVP — nhận xét thật từ Reviewer Agent (khác
+    `CompanionReview` thủ công) — GỢI Ý, không phải quyết định cuối. */
+export type AgentReviewResult = {
+  strengths: string[];
+  issues: string[];
+  suggestedImprovements: string[];
+  approvalRecommendation: "approve" | "revise";
+  versionSuggestion: string;
+  isMock: boolean;
+};
+
+/** Trạng thái phê duyệt hiển thị cho User — tách biệt với `reviewStatus`
+    (Review Flow thủ công đã khóa từ Sprint B3) để không đổi điều kiện
+    Portfolio đã khóa (Sprint B4 vẫn yêu cầu `reviewStatus: "reviewed"` +
+    `reflectionStatus: "submitted"`, không nới lỏng). */
+export type ApprovalStatus = "draft" | "reviewed" | "needs_revision" | "approved";
+
 export type OutputRecord = {
   outputId: string;
   type: OutputType;
@@ -60,6 +81,8 @@ export type OutputRecord = {
   reflections: ReflectionAnswer[];
   createdAt: string;
   updatedAt: string;
+  agentReview?: AgentReviewResult;
+  approvalStatus?: ApprovalStatus;
 };
 
 export type HistoryEntry = {
@@ -350,4 +373,96 @@ export function submitReflection(
   if (!result) return null;
   emitGrowthEvent({ eventType: "REFLECTION_COMPLETED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
   return result;
+}
+
+/**
+ * AI Agent Integration MVP — Writer Agent chạy thật (hoặc mock nếu chưa
+ * cấu hình API key), lưu Output như 1 phiên bản mới qua `saveOutputVersion`
+ * hiện có (không viết lại logic lưu Output) — chỉ khác nguồn `content` là
+ * do Writer Agent tạo ra thay vì người dùng gõ tay.
+ */
+export async function runWriterAgentForOutput(
+  sessionId: string,
+  input: { goal: string; blueprintName: string; taskName: string; context?: string; userInput?: string; outputType: OutputType }
+): Promise<{ session: WorkspaceSessionRecord; output: OutputRecord; agentResult: WriterAgentResult } | null> {
+  const run = startAgentRun(sessionId, "Writer Agent");
+  const provider = createWorkforceApiProvider();
+  try {
+    const agentResult = await provider.execute<WriterAgentResult>("writer", {
+      goal: input.goal,
+      blueprintName: input.blueprintName,
+      taskName: input.taskName,
+      context: input.context,
+      userInput: input.userInput,
+      outputFormat: input.outputType,
+    });
+    const saved = saveOutputVersion(sessionId, { type: input.outputType, content: agentResult.draftOutput });
+    if (!saved) {
+      failAgentRun(run.runId, "Không tìm thấy Session để lưu Output.");
+      return null;
+    }
+    const withDraftStatus = updateOutput(saved.session, saved.output.outputId, { approvalStatus: "draft" }, "AI Draft Created");
+    completeAgentRun(run.runId, agentResult.isMock);
+    return withDraftStatus ? { ...withDraftStatus, agentResult } : { ...saved, agentResult };
+  } catch (err) {
+    failAgentRun(run.runId, err instanceof Error ? err.message : "Lỗi không xác định.");
+    return null;
+  }
+}
+
+/**
+ * AI Agent Integration MVP — Reviewer Agent review Output thật. Reviewer
+ * KHÔNG tự approve — chỉ ghi `agentReview` + gợi ý `approvalRecommendation`.
+ * "approve" → `approvalStatus: "reviewed"` (chờ User bấm Approve thật qua
+ * `approveOutput`); "revise" → `approvalStatus: "needs_revision"`.
+ */
+export async function runReviewerAgentForOutput(
+  sessionId: string,
+  outputId: string,
+  input: { qaChecklist: string[]; goal: string; expectedOutput?: string }
+): Promise<{ session: WorkspaceSessionRecord; output: OutputRecord; agentResult: ReviewerAgentResult } | null> {
+  const session = getSession(sessionId);
+  const output = session?.outputs.find((o) => o.outputId === outputId);
+  if (!session || !output) return null;
+  const latestContent = output.versions[output.versions.length - 1]?.content ?? "";
+
+  const run = startAgentRun(sessionId, "Reviewer Agent", outputId);
+  const provider = createWorkforceApiProvider();
+  try {
+    const agentResult = await provider.execute<ReviewerAgentResult>("reviewer", {
+      draftOutput: latestContent,
+      qaChecklist: input.qaChecklist,
+      goal: input.goal,
+      expectedOutput: input.expectedOutput,
+    });
+    const approvalStatus: ApprovalStatus = agentResult.approvalRecommendation === "approve" ? "reviewed" : "needs_revision";
+    const result = updateOutput(session, outputId, { agentReview: agentResult, approvalStatus }, "Output Reviewed by AI Agent");
+    if (!result) {
+      failAgentRun(run.runId, "Không cập nhật được Output.");
+      return null;
+    }
+    emitGrowthEvent({ eventType: "OUTPUT_REVIEWED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
+    if (approvalStatus === "reviewed") {
+      emitGrowthEvent({ eventType: "USER_APPROVAL_REQUIRED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
+    }
+    completeAgentRun(run.runId, agentResult.isMock);
+    return { ...result, agentResult };
+  } catch (err) {
+    failAgentRun(run.runId, err instanceof Error ? err.message : "Lỗi không xác định.");
+    return null;
+  }
+}
+
+/**
+ * User bấm Approve — QUYẾT ĐỊNH CUỐI, không phải Agent. Dùng lại
+ * `startReview`/`markOutputReviewed` đã có (Sprint B3) để đặt
+ * `reviewStatus: "reviewed"` — KHÔNG nới lỏng điều kiện Portfolio đã khóa
+ * (Sprint B4 vẫn yêu cầu thêm `reflectionStatus: "submitted"` trước khi
+ * `promoteEligibleOutputs()` nhận Output này).
+ */
+export function approveOutput(sessionId: string, outputId: string) {
+  startReview(sessionId, outputId);
+  const reviewed = markOutputReviewed(sessionId, outputId);
+  if (!reviewed) return null;
+  return updateOutput(reviewed.session, outputId, { approvalStatus: "approved" }, "User Approved Output");
 }

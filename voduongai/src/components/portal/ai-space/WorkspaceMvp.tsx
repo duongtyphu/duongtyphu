@@ -32,6 +32,9 @@ import {
   markOutputReviewed,
   startReflection,
   submitReflection,
+  runWriterAgentForOutput,
+  runReviewerAgentForOutput,
+  approveOutput,
   type OutputType,
   type WorkspaceSessionRecord,
 } from "@/lib/portal/foundation/workspace-session-store";
@@ -43,6 +46,7 @@ import {
 import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store";
 import { computeCapabilityProfiles } from "@/lib/portal/foundation/capability-engine";
 import { recordNewUnlocks } from "@/lib/portal/foundation/mission-unlock-runtime";
+import { listAgentRuns, type AgentRunRecord } from "@/lib/portal/foundation/agent-run-store";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -111,6 +115,10 @@ export function WorkspaceMvp() {
   const [outputType, setOutputType] = useState<OutputType>("markdown");
   const [activeOutputId, setActiveOutputId] = useState<string | undefined>(undefined);
   const [reflectionDraft, setReflectionDraft] = useState<string[]>(REFLECTION_QUESTIONS.map(() => ""));
+  const [agentRuns, setAgentRuns] = useState<AgentRunRecord[]>([]);
+  const [writerRunning, setWriterRunning] = useState(false);
+  const [reviewerRunning, setReviewerRunning] = useState(false);
+  const [agentError, setAgentError] = useState<string | null>(null);
 
   useEffect(() => {
     // Ưu tiên context đầy đủ từ sessionStorage; query params chỉ là bản
@@ -142,8 +150,10 @@ export function WorkspaceMvp() {
   useEffect(() => {
     if (!context || session) return;
     const resumable = findResumableSession(context);
+    const resolved = resumable ?? createSession(context);
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSession(resumable ?? createSession(context));
+    setSession(resolved);
+    setAgentRuns(listAgentRuns(resolved.sessionId));
   }, [context, session]);
 
   const goal = context?.userGoal ?? context?.title ?? "Chưa xác định mục tiêu cụ thể";
@@ -175,6 +185,64 @@ export function WorkspaceMvp() {
     setSession(result.session);
     setActiveOutputId(result.output.outputId);
     setDraftContent("");
+  }
+
+  // AI Agent Integration MVP — Writer Agent tạo Output thật (hoặc mock nếu
+  // chưa cấu hình API key). Dùng nội dung đang gõ trong textarea làm "Yêu
+  // cầu cụ thể từ người dùng" gửi cho Writer Agent, thay vì tự gõ Output.
+  async function handleRunWriterAgent() {
+    if (!session) return;
+    setAgentError(null);
+    setWriterRunning(true);
+    try {
+      const result = await runWriterAgentForOutput(session.sessionId, {
+        goal: goal,
+        blueprintName: context?.title ?? sourceLabel,
+        taskName: currentStep?.doing ?? "Draft",
+        context: context?.expectedOutput,
+        userInput: draftContent.trim() || undefined,
+        outputType,
+      });
+      if (!result) {
+        setAgentError("Writer Agent thất bại — xem Agent Run Log.");
+      } else {
+        setSession(result.session);
+        setActiveOutputId(result.output.outputId);
+        setDraftContent("");
+      }
+    } finally {
+      setWriterRunning(false);
+      if (session) setAgentRuns(listAgentRuns(session.sessionId));
+    }
+  }
+
+  // Reviewer Agent — chỉ gợi ý (approve/revise), không tự approve.
+  async function handleRunReviewerAgent(outputId: string) {
+    if (!session) return;
+    setAgentError(null);
+    setReviewerRunning(true);
+    try {
+      const result = await runReviewerAgentForOutput(session.sessionId, outputId, {
+        qaChecklist: ["Đúng định dạng Output mong đợi", "Không sai thông tin cơ bản", "Sẵn sàng dùng ngay"],
+        goal,
+        expectedOutput: context?.expectedOutput,
+      });
+      if (!result) {
+        setAgentError("Reviewer Agent thất bại — xem Agent Run Log.");
+      } else {
+        setSession(result.session);
+      }
+    } finally {
+      setReviewerRunning(false);
+      if (session) setAgentRuns(listAgentRuns(session.sessionId));
+    }
+  }
+
+  // User Approval — quyết định cuối luôn thuộc User, không phải Agent.
+  function handleApproveOutput(outputId: string) {
+    if (!session) return;
+    const result = approveOutput(session.sessionId, outputId);
+    if (result) setSession(result.session);
   }
 
   function handlePauseResume() {
@@ -370,8 +438,17 @@ export function WorkspaceMvp() {
                   <div key={output.outputId} className="rounded-xl border border-gray-100 bg-gray-50/60 p-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-wide text-blue-600">{output.type}</span>
-                      <span className="text-[10px] text-gray-400">
-                        {output.reviewStatus === "reviewed" ? "Đã review" : "Chờ review"} · v{output.versions.length}
+                      <span className="flex items-center gap-1.5 text-[10px] text-gray-400">
+                        <span className="rounded-full bg-gray-200 px-2 py-0.5 font-semibold text-gray-600">
+                          {output.approvalStatus === "approved"
+                            ? "Approved"
+                            : output.approvalStatus === "needs_revision"
+                              ? "Needs Revision"
+                              : output.approvalStatus === "reviewed"
+                                ? "Reviewed"
+                                : "Draft"}
+                        </span>
+                        v{output.versions.length}
                       </span>
                     </div>
                     <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700 line-clamp-3">
@@ -399,14 +476,56 @@ export function WorkspaceMvp() {
                       </details>
                     )}
 
+                    {/* AI Agent Integration MVP — Reviewer Agent + User Approval */}
                     {output.reviewStatus !== "reviewed" && (
-                      <button
-                        type="button"
-                        onClick={() => handleMarkReviewed(output.outputId)}
-                        className="mt-3 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
-                      >
-                        Review cùng Companion →
-                      </button>
+                      <div className="mt-3 flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => handleRunReviewerAgent(output.outputId)}
+                          disabled={reviewerRunning}
+                          className="text-xs font-semibold text-violet-600 hover:text-violet-700 transition disabled:opacity-40"
+                        >
+                          {reviewerRunning ? "Reviewer Agent đang chạy…" : "Chạy Reviewer Agent →"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMarkReviewed(output.outputId)}
+                          className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+                        >
+                          Review cùng Companion (thủ công) →
+                        </button>
+                      </div>
+                    )}
+
+                    {output.agentReview && (
+                      <div className="mt-3 space-y-1.5 rounded-lg border border-amber-100 bg-amber-50/50 p-3 text-xs text-gray-700">
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-amber-600">
+                          Reviewer Agent {output.agentReview.isMock ? "(MOCK)" : ""}
+                        </p>
+                        {output.agentReview.strengths.length > 0 && (
+                          <p><span className="font-semibold">Điểm mạnh:</span> {output.agentReview.strengths.join("; ")}</p>
+                        )}
+                        {output.agentReview.issues.length > 0 && (
+                          <p><span className="font-semibold">Vấn đề:</span> {output.agentReview.issues.join("; ")}</p>
+                        )}
+                        {output.agentReview.suggestedImprovements.length > 0 && (
+                          <p><span className="font-semibold">Gợi ý cải thiện:</span> {output.agentReview.suggestedImprovements.join("; ")}</p>
+                        )}
+                        <p>
+                          <span className="font-semibold">Gợi ý của Reviewer Agent:</span>{" "}
+                          {output.agentReview.approvalRecommendation === "approve" ? "Nên duyệt" : "Nên chỉnh sửa thêm"}
+                          {" "}(chỉ là gợi ý — quyết định cuối luôn thuộc bạn)
+                        </p>
+                        {output.approvalStatus !== "approved" && (
+                          <button
+                            type="button"
+                            onClick={() => handleApproveOutput(output.outputId)}
+                            className="mt-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700"
+                          >
+                            Duyệt (Approve)
+                          </button>
+                        )}
+                      </div>
                     )}
 
                     {output.reviewStatus === "reviewed" && output.reflectionStatus !== "submitted" && (
@@ -463,21 +582,61 @@ export function WorkspaceMvp() {
                 <textarea
                   value={draftContent}
                   onChange={(e) => setDraftContent(e.target.value)}
-                  placeholder="Viết hoặc dán nội dung Output thật của bạn vào đây…"
+                  placeholder="Viết/dán nội dung Output, hoặc để trống và bấm 'Chạy Writer Agent' để AI tự tạo bản nháp…"
                   rows={6}
                   className="w-full rounded-xl border border-gray-200 p-3 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 />
-                <button
-                  type="button"
-                  onClick={handleSaveOutput}
-                  disabled={!draftContent.trim()}
-                  className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  Lưu phiên bản mới
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={handleSaveOutput}
+                    disabled={!draftContent.trim()}
+                    className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Lưu phiên bản mới (thủ công)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRunWriterAgent}
+                    disabled={writerRunning}
+                    className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {writerRunning ? "Writer Agent đang chạy…" : "Chạy Writer Agent"}
+                  </button>
+                </div>
+                {agentError && <p className="text-xs text-red-600">{agentError}</p>}
               </div>
             )}
           </section>
+
+          {/* AI Agent Run Log — AI Agent Integration MVP */}
+          {agentRuns.length > 0 && (
+            <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+              <h2 className="text-lg font-bold text-gray-900">Agent Run Log</h2>
+              <ol className="mt-3 space-y-2">
+                {agentRuns.map((run) => (
+                  <li key={run.runId} className="flex items-center justify-between text-xs text-gray-500">
+                    <span className="font-medium text-gray-700">
+                      {run.agentRole}
+                      {run.isMock ? " (MOCK)" : ""}
+                      {run.error ? ` — Lỗi: ${run.error}` : ""}
+                    </span>
+                    <span
+                      className={`rounded-full px-2 py-0.5 font-semibold ${
+                        run.status === "completed"
+                          ? "bg-green-100 text-green-700"
+                          : run.status === "failed"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-blue-100 text-blue-700"
+                      }`}
+                    >
+                      {run.status}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
 
           {/* History */}
           <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">

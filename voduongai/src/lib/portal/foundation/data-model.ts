@@ -159,15 +159,17 @@ export type CompanionReview = {
 };
 
 /**
- * 16 loại Growth Event. 10 loại gốc theo `FOUNDATION_DATA_LAYER.md` mục
+ * 21 loại Growth Event. 10 loại gốc theo `FOUNDATION_DATA_LAYER.md` mục
  * 12, cộng `WORKSPACE_RESUMED`/`WORKSPACE_COMPLETED` ở Sprint B2, cộng
  * `REVIEW_STARTED`/`REFLECTION_STARTED` ở Sprint B3, cộng
- * `REVIEW_COMPLETED`/`PORTFOLIO_CREATED` ở Sprint B4 (Portfolio & Growth
- * Engine — xem `portfolio-store.ts`). Đối chiếu brief Sprint B4:
- * `MISSION_RESUMED`→dùng `WORKSPACE_RESUMED`; `REFLECTION_SUBMITTED`→dùng
- * `REFLECTION_COMPLETED`; `IMPACT_RECORDED`→dùng `IMPACT_UPDATED` — cùng
- * ý nghĩa, không thêm type trùng lặp (xem
- * `docs/SPRINT_B4_PORTFOLIO_GROWTH_ENGINE.md`).
+ * `REVIEW_COMPLETED`/`PORTFOLIO_CREATED` ở Sprint B4, cộng
+ * `AGENT_RUN_STARTED`/`AGENT_RUN_COMPLETED`/`AGENT_RUN_FAILED`/
+ * `OUTPUT_REVIEWED`/`USER_APPROVAL_REQUIRED` ở AI Agent Integration MVP
+ * (xem `agent-run-store.ts`). Đối chiếu brief MVP: `OUTPUT_REVIEWED` khác
+ * `REVIEW_COMPLETED` đã có — `REVIEW_COMPLETED` là bước Review Flow thủ
+ * công (Sprint B3, người dùng tự đánh dấu đã xem lại); `OUTPUT_REVIEWED`
+ * là sự kiện Reviewer Agent thật vừa trả kết quả review (khác nguồn gốc,
+ * giữ cả 2, không hợp nhất).
  */
 export type GrowthEventType =
   | "WORKSPACE_STARTED"
@@ -185,7 +187,12 @@ export type GrowthEventType =
   | "PORTFOLIO_CREATED"
   | "CAPABILITY_UPDATED"
   | "IMPACT_UPDATED"
-  | "MISSION_UNLOCKED";
+  | "MISSION_UNLOCKED"
+  | "AGENT_RUN_STARTED"
+  | "AGENT_RUN_COMPLETED"
+  | "AGENT_RUN_FAILED"
+  | "OUTPUT_REVIEWED"
+  | "USER_APPROVAL_REQUIRED";
 
 export type GrowthEvent = {
   eventId: string;

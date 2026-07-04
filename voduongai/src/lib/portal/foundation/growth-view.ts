@@ -31,6 +31,11 @@ const EVENT_LABEL: Record<GrowthEventType, string> = {
   CAPABILITY_UPDATED: "Năng lực được cập nhật",
   IMPACT_UPDATED: "Ghi nhận AI Impact",
   MISSION_UNLOCKED: "Mở khóa Mission mới",
+  AGENT_RUN_STARTED: "AI Agent bắt đầu xử lý",
+  AGENT_RUN_COMPLETED: "AI Agent hoàn thành xử lý",
+  AGENT_RUN_FAILED: "AI Agent gặp lỗi",
+  OUTPUT_REVIEWED: "Reviewer Agent đã review Output",
+  USER_APPROVAL_REQUIRED: "Đang chờ bạn phê duyệt",
 };
 
 export type ActivityEntry = {
