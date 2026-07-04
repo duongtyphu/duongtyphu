@@ -165,8 +165,31 @@
  * Sidebar theme (applied by PortalShell only when route === /portal/companion*)
  * ───────────────────────────────────────────── */
 
+/* Sprint CW-001.1 — Nhiệm vụ VIII: "góc hiện diện" ở cuối sidebar, không
+   phải quảng cáo — glass mềm + glow rất nhẹ, thở rất chậm cùng nhịp Orb. */
+.companion-sidebar-presence {
+  position: relative;
+  border: 1px solid rgba(167, 139, 250, 0.14);
+  background: linear-gradient(160deg, rgba(124, 58, 237, 0.08), rgba(34, 211, 238, 0.03));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 0 24px -16px rgba(167, 139, 250, 0.5);
+  animation: companion-bg-glow-breathe 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-sidebar-presence {
+    animation: none !important;
+  }
+}
+
 .companion-sidebar-theme {
-  background: linear-gradient(180deg, #070f22 0%, #0b1b35 100%);
+  /* Sprint CW-001.1 — Nhiệm vụ VIII: đồng bộ nền sidebar với tông trời đêm
+     của Hero (thêm 1 quầng aurora rất mờ ở góc trên), glow mềm hơn thay vì
+     gradient phẳng — vẫn cùng 2 màu gốc, không đổi bảng màu. */
+  background:
+    radial-gradient(120% 60% at 15% 0%, rgba(124, 58, 237, 0.16), transparent 60%),
+    linear-gradient(180deg, #070f22 0%, #0b1b35 100%);
   border-color: rgba(167, 139, 250, 0.16) !important;
 }
 
@@ -425,6 +448,23 @@
   transition: transform 0.3s ease, border-color 0.3s ease, color 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Nhiệm vụ VI — "hover có ánh sáng lan": một quầng sáng rất mờ lan ra từ
+   tâm khi hover, thay vì chỉ đổi màu/border tĩnh. */
+.companion-bookmark-tab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120% 140% at 50% 100%, rgba(34, 211, 238, 0.22), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.companion-bookmark-tab:hover::before {
+  opacity: 1;
+}
+
 .companion-bookmark-tab::after {
   content: "";
   position: absolute;
@@ -624,6 +664,47 @@
   pointer-events: none;
 }
 
+/* Vài cọng cỏ rất mờ ở rìa dưới khung — Layer 5, chỉ gợi ý, không chi tiết. */
+.companion-hero-grass-blade {
+  position: absolute;
+  bottom: -2%;
+  width: 2px;
+  height: 3.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(190, 242, 210, 0.22), transparent);
+  filter: blur(1.5px);
+  transform-origin: bottom center;
+  animation: companion-hero-grass-sway 6.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes companion-hero-grass-sway {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+/* Sprint CW-001.1 — Nhiệm vụ II: phản chiếu rất nhẹ trên mặt đá ngay dưới
+   Orb, tách biệt với reflection mặt hồ (.companion-hero-reflection). */
+.companion-hero-orb-reflection {
+  position: absolute;
+  left: 50%;
+  bottom: -1.35rem;
+  width: 46%;
+  height: 0.4rem;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(226, 232, 255, 0.35), transparent);
+  filter: blur(1px);
+  animation: companion-hero-reflection-shimmer 7s ease-in-out infinite reverse;
+  pointer-events: none;
+}
+
+/* Nhiệm vụ VII — vầng hào quang rất nhẹ quanh CTA, tách khỏi glow-breathe
+   có sẵn của nút, chỉ để CTA "nổi" hơn giữa Hero. */
+.companion-hero-cta {
+  filter: drop-shadow(0 0 22px rgba(34, 211, 238, 0.22));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .companion-hero-parallax {
     animation: none !important;
@@ -633,7 +714,9 @@
   .companion-hero-mist,
   .companion-hero-reflection,
   .companion-hero-orb-ground-glow,
-  .companion-hero-bokeh {
+  .companion-hero-orb-reflection,
+  .companion-hero-bokeh,
+  .companion-hero-grass-blade {
     animation: none !important;
   }
 }
