@@ -159,10 +159,15 @@ export type CompanionReview = {
 };
 
 /**
- * 12 loại Growth Event. 10 loại gốc theo `FOUNDATION_DATA_LAYER.md` mục
- * 12, cộng `WORKSPACE_RESUMED`/`WORKSPACE_COMPLETED` thêm ở Sprint B2 (AI
- * Workspace Execution Engine) cho vòng đời Pause/Resume/Complete của
- * `WorkspaceSession` — xem `workspace-session-store.ts`.
+ * 14 loại Growth Event. 10 loại gốc theo `FOUNDATION_DATA_LAYER.md` mục
+ * 12, cộng `WORKSPACE_RESUMED`/`WORKSPACE_COMPLETED` ở Sprint B2 (vòng
+ * đời Pause/Resume/Complete của `WorkspaceSession`), cộng
+ * `REVIEW_STARTED`/`REFLECTION_STARTED` ở Sprint B3 (Companion
+ * Orchestrator điều phối Review/Reflection Flow — xem
+ * `execution-orchestrator.ts`). `MISSION_RESUMED` (nhắc tới trong brief
+ * Sprint B3) dùng chung `WORKSPACE_RESUMED` đã có — không thêm event
+ * trùng ý nghĩa, xem ghi chú đối chiếu ở
+ * `docs/SPRINT_B3_COMPANION_ORCHESTRATOR.md`.
  */
 export type GrowthEventType =
   | "WORKSPACE_STARTED"
@@ -173,6 +178,8 @@ export type GrowthEventType =
   | "OUTPUT_CREATED"
   | "OUTPUT_UPDATED"
   | "OUTPUT_VERSIONED"
+  | "REVIEW_STARTED"
+  | "REFLECTION_STARTED"
   | "REFLECTION_COMPLETED"
   | "CAPABILITY_UPDATED"
   | "IMPACT_UPDATED"

@@ -45,12 +45,19 @@ export type OutputVersionRecord = {
 export type ReviewStatus = "not_ready" | "pending" | "reviewed";
 export type ReflectionStatus = "not_ready" | "pending" | "submitted";
 
+export type ReflectionAnswer = {
+  question: string;
+  answer: string;
+  submittedAt: string;
+};
+
 export type OutputRecord = {
   outputId: string;
   type: OutputType;
   versions: OutputVersionRecord[];
   reviewStatus: ReviewStatus;
   reflectionStatus: ReflectionStatus;
+  reflections: ReflectionAnswer[];
   createdAt: string;
   updatedAt: string;
 };
@@ -222,6 +229,7 @@ export function saveOutputVersion(
       versions: [],
       reviewStatus: "not_ready",
       reflectionStatus: "not_ready",
+      reflections: [],
       createdAt: now,
       updatedAt: now,
     };
@@ -253,4 +261,83 @@ export function saveOutputVersion(
   });
 
   return { session: updatedSession, output: updatedOutput };
+}
+
+function updateOutput(
+  session: WorkspaceSessionRecord,
+  outputId: string,
+  patch: Partial<OutputRecord>,
+  historyLabel: string
+): { session: WorkspaceSessionRecord; output: OutputRecord } | null {
+  const output = session.outputs.find((o) => o.outputId === outputId);
+  if (!output) return null;
+  const now = new Date().toISOString();
+  const updatedOutput: OutputRecord = { ...output, ...patch, updatedAt: now };
+  const updatedSession: WorkspaceSessionRecord = {
+    ...session,
+    outputs: session.outputs.map((o) => (o.outputId === outputId ? updatedOutput : o)),
+    history: [...session.history, { label: historyLabel, occurredAt: now }],
+  };
+  upsert(updatedSession);
+  return { session: updatedSession, output: updatedOutput };
+}
+
+/** Companion Orchestrator (Sprint B3) — khởi tạo Review Flow cho 1
+    Output. KHÔNG có AI Review thật ở sprint này — chỉ chuẩn hóa trạng
+    thái + phát Event, để Sprint sau (Companion Review thật) có chỗ cắm
+    vào mà không cần đổi luồng. */
+export function startReview(sessionId: string, outputId: string) {
+  const session = getSession(sessionId);
+  if (!session) return null;
+  const result = updateOutput(session, outputId, { reviewStatus: "pending" }, "Review Started");
+  if (!result) return null;
+  emitGrowthEvent({ eventType: "REVIEW_STARTED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
+  return result;
+}
+
+/** Đánh dấu Output đã được xem lại — tự người dùng xác nhận (chưa có AI
+    Review), vẫn đi qua đúng luồng `reviewStatus` đã chuẩn hóa. */
+export function markOutputReviewed(sessionId: string, outputId: string) {
+  const session = getSession(sessionId);
+  if (!session) return null;
+  return updateOutput(session, outputId, { reviewStatus: "reviewed" }, "Review Completed");
+}
+
+/** Companion Orchestrator (Sprint B3) — khởi tạo Reflection Flow, phát
+    `REFLECTION_STARTED`. Câu hỏi chuẩn nằm ở `execution-orchestrator.ts`
+    (`REFLECTION_QUESTIONS`), không lặp lại ở đây. */
+export function startReflection(sessionId: string, outputId: string) {
+  const session = getSession(sessionId);
+  if (!session) return null;
+  const result = updateOutput(session, outputId, { reflectionStatus: "pending" }, "Reflection Started");
+  if (!result) return null;
+  emitGrowthEvent({ eventType: "REFLECTION_STARTED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
+  return result;
+}
+
+/** Lưu câu trả lời Reflection thật — dữ liệu thuộc Output (Workspace sở
+    hữu), Companion chỉ điều phối lúc nào hỏi, không tự lưu dữ liệu riêng
+    (Role & Responsibility Matrix mục 4/11). */
+export function submitReflection(
+  sessionId: string,
+  outputId: string,
+  answers: { question: string; answer: string }[]
+) {
+  const session = getSession(sessionId);
+  if (!session) return null;
+  const now = new Date().toISOString();
+  const output = session.outputs.find((o) => o.outputId === outputId);
+  if (!output) return null;
+  const result = updateOutput(
+    session,
+    outputId,
+    {
+      reflectionStatus: "submitted",
+      reflections: [...output.reflections, ...answers.map((a) => ({ ...a, submittedAt: now }))],
+    },
+    "Reflection Completed"
+  );
+  if (!result) return null;
+  emitGrowthEvent({ eventType: "REFLECTION_COMPLETED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
+  return result;
 }

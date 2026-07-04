@@ -31,6 +31,8 @@ export const GROWTH_EVENT_CONSUMERS: Record<GrowthEventType, string[]> = {
   OUTPUT_CREATED: ["learning-journal", "my-journey", "living-garden", "portfolio", "impact-engine"],
   OUTPUT_UPDATED: ["learning-journal", "my-journey", "living-garden"],
   OUTPUT_VERSIONED: ["learning-journal", "my-journey", "living-garden", "portfolio"],
+  REVIEW_STARTED: ["learning-journal", "my-journey", "living-garden"],
+  REFLECTION_STARTED: ["learning-journal", "my-journey", "living-garden"],
   REFLECTION_COMPLETED: ["learning-journal", "my-journey", "living-garden", "capability-engine"],
   CAPABILITY_UPDATED: ["learning-journal", "my-journey", "living-garden"],
   IMPACT_UPDATED: ["learning-journal", "my-journey", "living-garden"],

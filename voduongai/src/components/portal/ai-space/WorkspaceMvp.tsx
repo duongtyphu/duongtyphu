@@ -28,10 +28,18 @@ import {
   advanceStep,
   completeSession,
   saveOutputVersion,
-  type ExecutionStepId,
+  startReview,
+  markOutputReviewed,
+  startReflection,
+  submitReflection,
   type OutputType,
   type WorkspaceSessionRecord,
 } from "@/lib/portal/foundation/workspace-session-store";
+import {
+  EXECUTION_STEP_TASKS,
+  REFLECTION_QUESTIONS,
+  getNextAction,
+} from "@/lib/portal/foundation/execution-orchestrator";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -80,18 +88,6 @@ const COMPANION_SUGGESTION: Partial<Record<PortalModule, { message: string; labe
   },
 };
 
-/** Mỗi bước trong Execution Timeline có gợi ý "việc cần làm" khác nhau —
-    Task Panel, không phải checklist tĩnh vì nội dung đổi theo bước hiện tại. */
-const STEP_TASK: Record<ExecutionStepId, { doing: string; task: string }> = {
-  mission_started: { doing: "Bắt đầu Mission", task: "Xác nhận mục tiêu và kết quả mong đợi trước khi bắt tay vào làm." },
-  preparing: { doing: "Chuẩn bị", task: "Thu thập thông tin/ngữ cảnh cần thiết trước khi viết." },
-  research: { doing: "Nghiên cứu", task: "Tìm dữ liệu, ví dụ, tham khảo liên quan tới việc này." },
-  draft: { doing: "Viết bản nháp", task: "Viết/dán bản nháp Output đầu tiên vào khung bên dưới." },
-  review: { doing: "Xem lại", task: "Đọc lại bản nháp, đối chiếu với kết quả mong đợi." },
-  revision: { doing: "Chỉnh sửa", task: "Sửa lại và lưu thành Version mới, không ghi đè bản cũ." },
-  completed: { doing: "Hoàn thành", task: "Mission đã hoàn thành — Output đã sẵn sàng." },
-};
-
 const OUTPUT_TYPE_OPTIONS: { value: OutputType; label: string }[] = [
   { value: "markdown", label: "Markdown" },
   { value: "word", label: "Word" },
@@ -111,6 +107,7 @@ export function WorkspaceMvp() {
   const [draftContent, setDraftContent] = useState("");
   const [outputType, setOutputType] = useState<OutputType>("markdown");
   const [activeOutputId, setActiveOutputId] = useState<string | undefined>(undefined);
+  const [reflectionDraft, setReflectionDraft] = useState<string[]>(REFLECTION_QUESTIONS.map(() => ""));
 
   useEffect(() => {
     // Ưu tiên context đầy đủ từ sessionStorage; query params chỉ là bản
@@ -150,8 +147,9 @@ export function WorkspaceMvp() {
   const sourceLabel = context ? (SOURCE_LABEL[context.source] ?? context.source) : "Không rõ nguồn";
   const originModule = context ? MODULE_ROUTE[context.module] : null;
   const suggestion = context ? COMPANION_SUGGESTION[context.module] : undefined;
-  const currentStep = session ? STEP_TASK[session.currentStepId] : null;
+  const currentStep = session ? EXECUTION_STEP_TASKS[session.currentStepId] : null;
   const currentStepIndex = session ? EXECUTION_TIMELINE.findIndex((s) => s.id === session.currentStepId) : -1;
+  const nextAction = session ? getNextAction(session) : null;
 
   function handleAdvanceStep() {
     if (!session) return;
@@ -177,6 +175,30 @@ export function WorkspaceMvp() {
     if (!session) return;
     if (session.status === "paused") setSession(resumeSession(session.sessionId));
     else setSession(pauseSession(session.sessionId));
+  }
+
+  // Companion Orchestrator (Sprint B3): Review Coordination — chưa AI
+  // thật, chỉ chuẩn hóa luồng reviewStatus + phát Event (REVIEW_STARTED),
+  // rồi mở luôn Reflection Flow đúng thứ tự Review → Reflection.
+  function handleMarkReviewed(outputId: string) {
+    if (!session) return;
+    startReview(session.sessionId, outputId);
+    const reviewed = markOutputReviewed(session.sessionId, outputId);
+    if (!reviewed) return;
+    const opened = startReflection(session.sessionId, outputId);
+    setSession(opened?.session ?? reviewed.session);
+  }
+
+  function handleSubmitReflection(outputId: string) {
+    if (!session) return;
+    const answers = REFLECTION_QUESTIONS.map((question, i) => ({ question, answer: reflectionDraft[i]?.trim() ?? "" })).filter(
+      (a) => a.answer.length > 0
+    );
+    if (answers.length === 0) return;
+    const result = submitReflection(session.sessionId, outputId, answers);
+    if (!result) return;
+    setSession(result.session);
+    setReflectionDraft(REFLECTION_QUESTIONS.map(() => ""));
   }
 
   return (
@@ -263,6 +285,15 @@ export function WorkspaceMvp() {
 
       {session && (
         <>
+          {/* Next Action — Companion chỉ gợi ý MỘT hành động tiếp theo. */}
+          {nextAction && (
+            <section className="flex items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm">
+              <Sparkles className="h-4 w-4 shrink-0 text-blue-500" />
+              <span className="text-gray-700">Companion gợi ý: </span>
+              <span className="font-semibold text-blue-700">{nextAction.label}</span>
+            </section>
+          )}
+
           {/* Execution Timeline */}
           <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
             <h2 className="text-lg font-bold text-gray-900">Tiến trình</h2>
@@ -333,6 +364,48 @@ export function WorkspaceMvp() {
                     <p className="mt-1 text-[10px] text-gray-400">
                       Cập nhật {new Date(output.updatedAt).toLocaleString("vi-VN")}
                     </p>
+
+                    {output.reviewStatus !== "reviewed" && (
+                      <button
+                        type="button"
+                        onClick={() => handleMarkReviewed(output.outputId)}
+                        className="mt-3 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+                      >
+                        Review cùng Companion →
+                      </button>
+                    )}
+
+                    {output.reviewStatus === "reviewed" && output.reflectionStatus !== "submitted" && (
+                      <div className="mt-3 space-y-2 rounded-lg border border-violet-100 bg-violet-50/40 p-3">
+                        <p className="text-xs font-bold uppercase tracking-wide text-violet-600">Reflection</p>
+                        {REFLECTION_QUESTIONS.map((question, i) => (
+                          <div key={question} className="space-y-1">
+                            <label className="text-xs text-gray-600">{question}</label>
+                            <input
+                              type="text"
+                              value={reflectionDraft[i]}
+                              onChange={(e) => setReflectionDraft((prev) => prev.map((v, idx) => (idx === i ? e.target.value : v)))}
+                              className="w-full rounded-lg border border-gray-200 px-2 py-1.5 text-xs text-gray-900 outline-none focus:border-violet-400"
+                            />
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => handleSubmitReflection(output.outputId)}
+                          className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-700"
+                        >
+                          Gửi Reflection
+                        </button>
+                      </div>
+                    )}
+
+                    {output.reflectionStatus === "submitted" && output.reflections.length > 0 && (
+                      <div className="mt-3 space-y-1 rounded-lg border border-green-100 bg-green-50/40 p-3 text-xs text-gray-600">
+                        {output.reflections.slice(-REFLECTION_QUESTIONS.length).map((r, i) => (
+                          <p key={`${r.question}-${i}`}><span className="font-semibold text-gray-800">{r.question}</span> {r.answer}</p>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
