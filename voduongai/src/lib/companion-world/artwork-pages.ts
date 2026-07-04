@@ -29,8 +29,8 @@ export const COMPANION_ARTWORK_PAGES: Record<string, CompanionArtworkPage> = {
     title: "Những điều mình tin — Companion",
     href: "/portal/companion/nhung-dieu-minh-tin",
     src: "/assets/companion-pages/nhung-dieu-minh-tin.webp",
-    width: 1024,
-    height: 1536,
+    width: 2200,
+    height: 3300,
   },
   "cuoc-doi-companion": {
     id: "cuoc-doi-companion",
