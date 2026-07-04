@@ -1,5 +1,5 @@
 /**
- * PHASE 4 EPIC 01 — AnthropicProviderAdapter.
+ * Provider Wave 1 — Tier: Core — AnthropicProviderAdapter ("Claude").
  *
  * Nơi DUY NHẤT trong toàn bộ AI Workforce được phép gọi thẳng
  * `api.anthropic.com`. Không Companion/Agent nào khác được gọi trực
@@ -19,45 +19,35 @@ import type {
   ProviderBenchmarkResult,
 } from "./types";
 import { runAdapterBenchmark } from "./benchmark-utils";
+import { ALL_TEXT_CAPABILITIES } from "./capability-list";
 
 const DEFAULT_MODEL = "claude-sonnet-5";
+const ENV_VAR = "ANTHROPIC_API_KEY";
 
 export class AnthropicProviderAdapter implements ProviderAdapter {
   readonly providerId = "anthropic";
   readonly name = "Anthropic Provider";
+  readonly tier = "core" as const;
   readonly supportedModels = [DEFAULT_MODEL];
-  readonly supportedCapabilities = [
-    "writing.draft",
-    "writing.review",
-    "writing.edit",
-    "coding.general",
-    "research.market-analysis",
-    "research.knowledge-synthesis",
-    "strategy.planning",
-    "qa.review",
-    "office.spreadsheet",
-    "growth.goal-coaching",
-    "growth.reflection-coaching",
-    "research.fact-checking",
-    "research.trend-scouting",
-    "writing.copywriting",
-    "writing.seo",
-    "business.sales",
-    "business.finance",
-    "design.visual",
-    "automation.workflow",
-    "office.dashboard",
-    "growth.learning-coaching",
-  ];
+  readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
+  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 200_000, description: "Claude — mạnh về viết/reasoning dài." }];
+  readonly costProfile = { inputPer1kTokens: 0.003, outputPer1kTokens: 0.015, currency: "USD" as const };
+  readonly benchmarkProfile = { reportedQuality: 90, reportedSpeed: 70, reportedReliability: 90 };
+  readonly configuration = { envVar: ENV_VAR };
+  readonly securityPolicy = {
+    keyStorage: "server-only-env" as const,
+    loggingPolicy: "never-log-key-or-raw-content" as const,
+    dataRetentionNote: "Theo chính sách dữ liệu công khai của Anthropic — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
+  };
 
   isAvailable(): boolean {
-    return Boolean(process.env.ANTHROPIC_API_KEY);
+    return Boolean(process.env[ENV_VAR]);
   }
 
   async execute(request: ProviderExecuteRequest): Promise<ProviderExecuteResult> {
     const startedAt = Date.now();
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) throw new Error("Chưa cấu hình ANTHROPIC_API_KEY.");
+    const apiKey = process.env[ENV_VAR];
+    if (!apiKey) throw new Error(`Chưa cấu hình ${ENV_VAR}.`);
 
     const model = request.model ?? DEFAULT_MODEL;
     const prompt = String(request.input.prompt ?? "");
@@ -86,15 +76,13 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
     return {
       providerId: this.providerId,
       available,
-      reason: available ? undefined : "Thiếu ANTHROPIC_API_KEY.",
+      reason: available ? undefined : `Thiếu ${ENV_VAR}.`,
       checkedAt: new Date().toISOString(),
     };
   }
 
   estimateCost(): ProviderCostEstimate {
-    // Ước tính tham khảo — không phải giá niêm yết chính thức, chỉ dùng để
-    // so sánh tương đối giữa các Provider trong Benchmark/Sandbox.
-    return { unit: "per-1k-tokens", estimate: 0.003, currency: "USD" };
+    return { unit: "per-1k-tokens", estimate: this.costProfile.inputPer1kTokens, currency: "USD" };
   }
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {

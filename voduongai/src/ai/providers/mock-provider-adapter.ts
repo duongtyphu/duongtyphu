@@ -1,5 +1,5 @@
 /**
- * PHASE 4 EPIC 01 — MockProviderAdapter.
+ * Provider Wave 1 — Tier: Development — MockProviderAdapter.
  *
  * Không gọi mạng, không cần API key — luôn `isAvailable() === true`.
  * `ModelRouter` chọn Adapter này khi KHÔNG có Provider thật nào sẵn sàng
@@ -16,34 +16,23 @@ import type {
   ProviderBenchmarkResult,
 } from "./types";
 import { runAdapterBenchmark } from "./benchmark-utils";
+import { ALL_TEXT_CAPABILITIES } from "./capability-list";
 
 export class MockProviderAdapter implements ProviderAdapter {
   readonly providerId = "mock";
   readonly name = "Mock Provider";
+  readonly tier = "development" as const;
   readonly supportedModels = ["mock-model"];
-  readonly supportedCapabilities = [
-    "writing.draft",
-    "writing.review",
-    "writing.edit",
-    "coding.general",
-    "research.market-analysis",
-    "research.knowledge-synthesis",
-    "strategy.planning",
-    "qa.review",
-    "office.spreadsheet",
-    "growth.goal-coaching",
-    "growth.reflection-coaching",
-    "research.fact-checking",
-    "research.trend-scouting",
-    "writing.copywriting",
-    "writing.seo",
-    "business.sales",
-    "business.finance",
-    "design.visual",
-    "automation.workflow",
-    "office.dashboard",
-    "growth.learning-coaching",
-  ];
+  readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
+  readonly modelRegistry = [{ modelId: "mock-model", contextWindow: 0, description: "Không gọi mạng — trả JSON placeholder có cấu trúc." }];
+  readonly costProfile = { inputPer1kTokens: 0, outputPer1kTokens: 0, currency: "USD" as const };
+  readonly benchmarkProfile = { reportedQuality: 0, reportedSpeed: 100, reportedReliability: 100 };
+  readonly configuration = { envVar: "" }; // không cần ENV nào
+  readonly securityPolicy = {
+    keyStorage: "server-only-env" as const,
+    loggingPolicy: "never-log-key-or-raw-content" as const,
+    dataRetentionNote: "Không gửi dữ liệu ra ngoài — không có vendor thật nào nhận request.",
+  };
 
   isAvailable(): boolean {
     return true;
@@ -54,7 +43,7 @@ export class MockProviderAdapter implements ProviderAdapter {
     return {
       raw: JSON.stringify({
         mock: true,
-        note: "[MOCK — chưa cấu hình ANTHROPIC_API_KEY/OPENAI_API_KEY/GEMINI_API_KEY]",
+        note: "[MOCK — chưa cấu hình API key Provider thật nào]",
         taskType: request.taskType,
       }),
       model: this.supportedModels[0],

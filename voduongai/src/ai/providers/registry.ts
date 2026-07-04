@@ -1,5 +1,6 @@
 /**
- * PHASE 4 EPIC 01 — ProviderRegistry (server-side, thật).
+ * Provider Wave 1 — ProviderRegistry (server-side, thật), tổ chức theo
+ * Tier (Core/Recommended/Specialized/Development).
  *
  * Khác `src/lib/portal/foundation/provider-registry.ts` (client-safe,
  * chỉ chứa metadata tĩnh để UI/Companion tham chiếu) — registry này
@@ -11,11 +12,17 @@
  * đây — không sửa `ProviderManager`/`ModelRouter`/Companion nào khác.
  */
 import "server-only";
-import type { ProviderAdapter } from "./types";
+import type { ProviderAdapter, ProviderTier } from "./types";
 import { MockProviderAdapter } from "./mock-provider-adapter";
 import { AnthropicProviderAdapter } from "./anthropic-provider-adapter";
 import { OpenAIProviderAdapter } from "./openai-provider-adapter";
 import { GeminiProviderAdapter } from "./gemini-provider-adapter";
+import { DeepSeekProviderAdapter } from "./deepseek-provider-adapter";
+import { GrokProviderAdapter } from "./grok-provider-adapter";
+import { MistralProviderAdapter } from "./mistral-provider-adapter";
+import { OllamaProviderAdapter } from "./ollama-provider-adapter";
+import { PerplexityProviderAdapter } from "./perplexity-provider-adapter";
+import { CohereProviderAdapter } from "./cohere-provider-adapter";
 
 class ProviderRegistry {
   private readonly adapters = new Map<string, ProviderAdapter>();
@@ -39,13 +46,26 @@ class ProviderRegistry {
   listSupporting(capability: string): ProviderAdapter[] {
     return this.list().filter((a) => a.supportedCapabilities.includes(capability));
   }
+
+  listByTier(tier: ProviderTier): ProviderAdapter[] {
+    return this.list().filter((a) => a.tier === tier);
+  }
 }
 
 export const providerRegistry = new ProviderRegistry();
 
-// Đăng ký 4 Adapter mặc định — Mock luôn có, 3 Adapter thật tự
-// `isAvailable() === false` cho tới khi ENV var tương ứng được cấu hình.
-providerRegistry.register(new MockProviderAdapter());
-providerRegistry.register(new AnthropicProviderAdapter());
+// Provider Wave 1 — 10 Provider chính thức, đăng ký theo đúng 4 Tier.
+// Core:
 providerRegistry.register(new OpenAIProviderAdapter());
+providerRegistry.register(new AnthropicProviderAdapter());
 providerRegistry.register(new GeminiProviderAdapter());
+providerRegistry.register(new DeepSeekProviderAdapter());
+// Recommended:
+providerRegistry.register(new GrokProviderAdapter());
+providerRegistry.register(new MistralProviderAdapter());
+providerRegistry.register(new OllamaProviderAdapter());
+// Specialized:
+providerRegistry.register(new PerplexityProviderAdapter());
+providerRegistry.register(new CohereProviderAdapter());
+// Development:
+providerRegistry.register(new MockProviderAdapter());

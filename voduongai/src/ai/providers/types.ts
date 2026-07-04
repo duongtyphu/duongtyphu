@@ -1,5 +1,6 @@
 /**
- * PHASE 4 EPIC 01 — AI Provider Layer — hợp đồng dữ liệu dùng chung.
+ * PHASE 4 EPIC 01/"Provider Wave 1" — AI Provider Layer — hợp đồng dữ
+ * liệu dùng chung.
  *
  * "server-only" theo tinh thần chung của toàn bộ layer này (không import
  * vào component client — chỉ dùng trong route handler/agent server-side).
@@ -13,6 +14,47 @@ import "server-only";
     giới hạn cứng thành union — Capability Registry là nơi mở rộng danh
     sách, Provider Layer chỉ cần biết chuỗi id để định tuyến. */
 export type ProviderCapability = string;
+
+/** 4 Tier chính thức của Provider Wave 1 — quyết định thứ tự ưu tiên mặc
+    định khi không có tín hiệu nào khác (điểm/preference/fallback). */
+export type ProviderTier = "core" | "recommended" | "specialized" | "development";
+
+export type ModelRegistryEntry = {
+  modelId: string;
+  contextWindow: number; // tokens — số công khai của vendor, ước tính tham khảo
+  description: string;
+};
+
+export type ProviderCostProfile = {
+  inputPer1kTokens: number; // USD — ước tính tham khảo, KHÔNG phải giá niêm yết chính thức
+  outputPer1kTokens: number;
+  currency: "USD";
+};
+
+/** Baseline TỰ KHAI BÁO (self-declared), KHÔNG phải điểm đo thật — điểm
+    đo thật (dựa trên `ProviderExecutionLog` thật) là `ProviderScore`
+    (`provider-score.ts`), dùng baseline này làm "prior" trước khi có đủ
+    dữ liệu thật. Không được nhầm 2 khái niệm này với nhau. */
+export type ProviderBenchmarkProfile = {
+  reportedQuality: number; // 0-100
+  reportedSpeed: number; // 0-100
+  reportedReliability: number; // 0-100
+};
+
+export type ProviderConfiguration = {
+  /** Tên biến ENV cần có để Provider hoạt động thật — KHÔNG lưu giá trị. */
+  envVar: string;
+  /** Ollama (local runtime) cần thêm Base URL, không phải API key — các
+      Provider khác để trống. */
+  optionalEnvVar?: string;
+};
+
+export type ProviderSecurityPolicy = {
+  /** Cố định cho MỌI Provider — không có ngoại lệ. */
+  keyStorage: "server-only-env";
+  loggingPolicy: "never-log-key-or-raw-content";
+  dataRetentionNote: string;
+};
 
 export type ProviderExecuteRequest = {
   /** Loại Task cụ thể — giữ tương thích với `agentRole` đã khóa ở
@@ -56,7 +98,7 @@ export type ProviderBenchmarkResult = {
   capability: ProviderCapability;
   /** 0-100 — điểm tổng hợp MVP (thành công + tốc độ), không phải điểm
       chất lượng nội dung (chất lượng nội dung do con người/Reviewer Agent
-      chấm riêng, xem `AI_SANDBOX.md` Phần I). */
+      chấm — xem `docs/AI_SANDBOX.md` Phần I). */
   score: number;
   latencyMs: number;
   isMock: boolean;
@@ -64,16 +106,23 @@ export type ProviderBenchmarkResult = {
 };
 
 /**
- * PROVIDER ADAPTER CONTRACT — mọi Provider (Mock/OpenAI/Anthropic/Gemini/
- * Provider tương lai) đều phải implement đúng interface này. Đây là hợp
- * đồng duy nhất `ProviderManager` biết tới — không có logic gọi vendor
- * nào được phép nằm ngoài 1 Adapter cụ thể.
+ * PROVIDER ADAPTER CONTRACT — mọi Provider (10 Provider Wave 1: OpenAI/
+ * Claude/Gemini/DeepSeek/Grok/Mistral/Ollama/Perplexity/Cohere/Mock)
+ * đều phải implement đúng interface này. Đây là hợp đồng duy nhất
+ * `ProviderManager` biết tới — không có logic gọi vendor nào được phép
+ * nằm ngoài 1 Adapter cụ thể.
  */
 export interface ProviderAdapter {
   readonly providerId: string;
   readonly name: string;
+  readonly tier: ProviderTier;
   readonly supportedModels: string[];
   readonly supportedCapabilities: ProviderCapability[];
+  readonly modelRegistry: ModelRegistryEntry[];
+  readonly costProfile: ProviderCostProfile;
+  readonly benchmarkProfile: ProviderBenchmarkProfile;
+  readonly configuration: ProviderConfiguration;
+  readonly securityPolicy: ProviderSecurityPolicy;
 
   /** Kiểm tra nhanh (không gọi mạng) — có đủ ENV var để hoạt động không. */
   isAvailable(): boolean;
@@ -85,7 +134,7 @@ export interface ProviderAdapter {
       hình + trạng thái đã biết gần nhất. */
   healthCheck(): Promise<ProviderHealth>;
 
-  /** Ước tính chi phí cho 1 request — tính toán thuần, không gọi mạng. */
+  /** Ước tính chi phí cho 1 request — tính toán thuần từ `costProfile`, không gọi mạng. */
   estimateCost(request: ProviderExecuteRequest): ProviderCostEstimate;
 
   /** Chạy 1 request thật qua `execute()` và trả về điểm Benchmark MVP. */

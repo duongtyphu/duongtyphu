@@ -12,7 +12,7 @@
 import "server-only";
 import type { ProviderExecuteResult, ProviderHealth } from "./types";
 import { providerRegistry } from "./registry";
-import { selectAdapter } from "./model-router";
+import { selectAdapter, matchCapability, type OptimizeFor } from "./model-router";
 import { recordExecution } from "./provider-execution-log";
 import { checkAllProvidersHealth } from "./provider-health-check";
 
@@ -22,16 +22,17 @@ export type ProviderManagerRequest = {
   input: Record<string, unknown>;
   context?: string;
   preferredProvider?: string;
-  /** PHASE 4 EPIC 02 — Provider thứ 2 chỉ định tường minh (vd
-      "Fallback Provider" khai báo riêng của 1 Companion trong
-      `workforce-registry.ts`), được thử SAU `preferredProvider` và
-      TRƯỚC bảng ưu tiên mặc định của hệ thống. */
+  /** Provider thứ 2 chỉ định tường minh (vd "Fallback Provider" khai báo
+      riêng của 1 Companion trong `workforce-registry.ts`), được thử SAU
+      `preferredProvider` và TRƯỚC bảng ưu tiên mặc định của hệ thống. */
   fallbackProvider?: string;
   /** Mặc định `true` (giữ nguyên hành vi hiện có — tự fallback Mock khi
       không có Provider thật nào khả dụng). Đặt `false` khi caller bắt
       buộc cần Provider thật (vd Benchmark có chủ đích) — khi đó thiếu
       Provider thật sẽ ném lỗi thay vì âm thầm chạy Mock. */
   fallbackAllowed?: boolean;
+  /** "Cost Optimization"/"Benchmark Selection" — mặc định "quality". */
+  optimizeFor?: OptimizeFor;
 };
 
 async function execute(request: ProviderManagerRequest): Promise<ProviderExecuteResult> {
@@ -40,6 +41,7 @@ async function execute(request: ProviderManagerRequest): Promise<ProviderExecute
     preferredProvider: request.preferredProvider,
     fallbackProvider: request.fallbackProvider,
     fallbackAllowed: request.fallbackAllowed,
+    optimizeFor: request.optimizeFor,
   });
   const startedAt = Date.now();
 
@@ -83,8 +85,15 @@ function healthCheckAll(): Promise<ProviderHealth[]> {
   return checkAllProvidersHealth();
 }
 
+/** "Capability Matching" — trả về mọi Provider đã đăng ký (kể cả chưa
+    khả dụng) khai báo hỗ trợ 1 capability cụ thể. */
+function matchProvidersForCapability(capability: string) {
+  return matchCapability(capability);
+}
+
 export const providerManager = {
   execute,
   hasAvailableRealProvider,
   healthCheckAll,
+  matchProvidersForCapability,
 };

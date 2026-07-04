@@ -1,9 +1,8 @@
 /**
- * Provider Wave 1 — Tier: Core — GeminiProviderAdapter.
+ * Provider Wave 1 — Tier: Specialized — CohereProviderAdapter.
  *
- * Nơi DUY NHẤT được phép gọi thẳng `generativelanguage.googleapis.com`.
- * Đọc key từ `process.env.GEMINI_API_KEY` tại thời điểm gọi — không
- * hard-code.
+ * Nơi DUY NHẤT được phép gọi thẳng `api.cohere.ai`. Chuyên biệt cho các
+ * tác vụ doanh nghiệp/phân loại/enterprise text-generation.
  */
 import "server-only";
 import type {
@@ -17,23 +16,23 @@ import type {
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
 
-const DEFAULT_MODEL = "gemini-1.5-flash";
-const ENV_VAR = "GEMINI_API_KEY";
+const DEFAULT_MODEL = "command-r";
+const ENV_VAR = "COHERE_API_KEY";
 
-export class GeminiProviderAdapter implements ProviderAdapter {
-  readonly providerId = "gemini";
-  readonly name = "Gemini Provider";
-  readonly tier = "core" as const;
+export class CohereProviderAdapter implements ProviderAdapter {
+  readonly providerId = "cohere";
+  readonly name = "Cohere Provider";
+  readonly tier = "specialized" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
-  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 1_000_000, description: "Gemini — context window lớn, mạnh về research/tổng hợp." }];
-  readonly costProfile = { inputPer1kTokens: 0.000075, outputPer1kTokens: 0.0003, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 82, reportedSpeed: 80, reportedReliability: 85 };
+  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 128_000, description: "Cohere — mạnh về tác vụ doanh nghiệp/phân loại văn bản." }];
+  readonly costProfile = { inputPer1kTokens: 0.0005, outputPer1kTokens: 0.0015, currency: "USD" as const };
+  readonly benchmarkProfile = { reportedQuality: 75, reportedSpeed: 78, reportedReliability: 80 };
   readonly configuration = { envVar: ENV_VAR };
   readonly securityPolicy = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
-    dataRetentionNote: "Theo chính sách dữ liệu công khai của Google — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
+    dataRetentionNote: "Theo chính sách dữ liệu công khai của Cohere — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
   };
 
   isAvailable(): boolean {
@@ -47,18 +46,15 @@ export class GeminiProviderAdapter implements ProviderAdapter {
 
     const model = request.model ?? DEFAULT_MODEL;
     const prompt = String(request.input.prompt ?? "");
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-      }
-    );
-    if (!res.ok) throw new Error(`Gemini API lỗi: ${res.status}`);
+    const res = await fetch("https://api.cohere.ai/v1/chat", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ model, message: prompt }),
+    });
+    if (!res.ok) throw new Error(`Cohere API lỗi: ${res.status}`);
     const json = await res.json();
     return {
-      raw: json.candidates?.[0]?.content?.parts?.[0]?.text ?? "",
+      raw: json.text ?? "",
       model,
       providerId: this.providerId,
       isMock: false,

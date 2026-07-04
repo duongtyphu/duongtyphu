@@ -1,9 +1,9 @@
 /**
- * Provider Wave 1 — Tier: Core — GeminiProviderAdapter.
+ * Provider Wave 1 — Tier: Core — DeepSeekProviderAdapter.
  *
- * Nơi DUY NHẤT được phép gọi thẳng `generativelanguage.googleapis.com`.
- * Đọc key từ `process.env.GEMINI_API_KEY` tại thời điểm gọi — không
- * hard-code.
+ * Nơi DUY NHẤT được phép gọi thẳng `api.deepseek.com`. API tương thích
+ * OpenAI Chat Completions (public docs) — cùng shape request/response
+ * với `openai-provider-adapter.ts`, khác endpoint/model/key.
  */
 import "server-only";
 import type {
@@ -17,23 +17,23 @@ import type {
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
 
-const DEFAULT_MODEL = "gemini-1.5-flash";
-const ENV_VAR = "GEMINI_API_KEY";
+const DEFAULT_MODEL = "deepseek-chat";
+const ENV_VAR = "DEEPSEEK_API_KEY";
 
-export class GeminiProviderAdapter implements ProviderAdapter {
-  readonly providerId = "gemini";
-  readonly name = "Gemini Provider";
+export class DeepSeekProviderAdapter implements ProviderAdapter {
+  readonly providerId = "deepseek";
+  readonly name = "DeepSeek Provider";
   readonly tier = "core" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
-  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 1_000_000, description: "Gemini — context window lớn, mạnh về research/tổng hợp." }];
-  readonly costProfile = { inputPer1kTokens: 0.000075, outputPer1kTokens: 0.0003, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 82, reportedSpeed: 80, reportedReliability: 85 };
+  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 64_000, description: "DeepSeek — mạnh về coding, chi phí thấp." }];
+  readonly costProfile = { inputPer1kTokens: 0.00014, outputPer1kTokens: 0.00028, currency: "USD" as const };
+  readonly benchmarkProfile = { reportedQuality: 80, reportedSpeed: 80, reportedReliability: 80 };
   readonly configuration = { envVar: ENV_VAR };
   readonly securityPolicy = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
-    dataRetentionNote: "Theo chính sách dữ liệu công khai của Google — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
+    dataRetentionNote: "Theo chính sách dữ liệu công khai của DeepSeek — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
   };
 
   isAvailable(): boolean {
@@ -47,18 +47,15 @@ export class GeminiProviderAdapter implements ProviderAdapter {
 
     const model = request.model ?? DEFAULT_MODEL;
     const prompt = String(request.input.prompt ?? "");
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-      }
-    );
-    if (!res.ok) throw new Error(`Gemini API lỗi: ${res.status}`);
+    const res = await fetch("https://api.deepseek.com/chat/completions", {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }] }),
+    });
+    if (!res.ok) throw new Error(`DeepSeek API lỗi: ${res.status}`);
     const json = await res.json();
     return {
-      raw: json.candidates?.[0]?.content?.parts?.[0]?.text ?? "",
+      raw: json.choices?.[0]?.message?.content ?? "",
       model,
       providerId: this.providerId,
       isMock: false,
