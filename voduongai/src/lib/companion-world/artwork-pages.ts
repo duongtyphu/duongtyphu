@@ -1,9 +1,9 @@
 /**
- * Companion World™ — Artwork Final. Từ sprint này, Companion Home và các
- * trang con (trừ "Ý nghĩa Companion" — vẫn giữ nguyên nội dung cũ) không
- * còn dựng bằng nhiều component/section riêng — mỗi trang là MỘT artwork
- * đã duyệt, hiển thị full width trong vùng content. Claude Code chỉ gắn
- * route + vùng click lên đúng vị trí, không thiết kế lại.
+ * Companion World™ — "Companion qua hình ảnh". Companion Home giờ là nội
+ * dung Sanctuary gốc (trước đây ở /portal/companion/y-nghia-companion) —
+ * 7 artwork đã duyệt không còn là các trang riêng, mà gộp thành MỘT trang
+ * duy nhất (`/portal/companion/companion-qua-hinh-anh`), hiển thị lần
+ * lượt theo đúng thứ tự dưới đây.
  *
  * Quy chuẩn asset (chính thức, áp dụng cho mọi artwork Companion về sau):
  * - PNG chỉ dùng làm master lưu trữ/chỉnh sửa (không commit vào repo).
@@ -12,10 +12,9 @@
  *   trong `public/assets/companion-pages/` đều theo chuẩn này.
  */
 
-export type CompanionArtworkPage = {
+export type CompanionArtwork = {
   id: string;
   title: string;
-  href: string;
   src: string;
   /** Kích thước gốc — dùng cho next/image width/height (không dùng `fill`)
       để giữ đúng tỉ lệ, không bị crop/méo ở bất kỳ breakpoint nào. */
@@ -23,59 +22,54 @@ export type CompanionArtworkPage = {
   height: number;
 };
 
-export const COMPANION_HOME_ARTWORK = {
-  src: "/assets/companion-pages/companion-home.webp",
-  width: 1536,
-  height: 1024,
-};
-
-export const COMPANION_ARTWORK_PAGES: Record<string, CompanionArtworkPage> = {
-  "nhung-dieu-minh-tin": {
+export const COMPANION_ARTWORK_SEQUENCE: CompanionArtwork[] = [
+  {
+    id: "companion-home",
+    title: "Xin chào, mình là Companion",
+    src: "/assets/companion-pages/companion-home.webp",
+    width: 1536,
+    height: 1024,
+  },
+  {
     id: "nhung-dieu-minh-tin",
-    title: "Những điều mình tin — Companion",
-    href: "/portal/companion/nhung-dieu-minh-tin",
+    title: "Những điều mình tin",
     src: "/assets/companion-pages/nhung-dieu-minh-tin.webp",
     width: 2200,
     height: 3300,
   },
-  "cuoc-doi-companion": {
+  {
     id: "cuoc-doi-companion",
     title: "Cuộc đời Companion",
-    href: "/portal/companion/cuoc-doi-companion",
     src: "/assets/companion-pages/cuoc-doi-companion.webp",
     width: 1536,
     height: 1024,
   },
-  "book-notes": {
+  {
     id: "book-notes",
-    title: "Book Notes — Companion",
-    href: "/portal/companion/book-notes",
+    title: "Book Notes",
     src: "/assets/companion-pages/book-notes.webp",
     width: 1536,
     height: 1024,
   },
-  "tam-su": {
+  {
     id: "tam-su",
-    title: "Tâm sự cùng bạn — Companion",
-    href: "/portal/companion/tam-su",
+    title: "Tâm sự cùng bạn",
     src: "/assets/companion-pages/tam-su-cung-ban.webp",
     width: 1536,
     height: 1024,
   },
-  "nhung-buc-thu": {
+  {
     id: "nhung-buc-thu",
     title: "Những bức thư Companion",
-    href: "/portal/companion/nhung-buc-thu",
     src: "/assets/companion-pages/nhung-buc-thu-companion.webp",
     width: 1536,
     height: 1024,
   },
-  "di-san": {
+  {
     id: "di-san",
     title: "Di sản Companion",
-    href: "/portal/companion/di-san",
     src: "/assets/companion-pages/di-san-companion.webp",
     width: 1536,
     height: 1024,
   },
-};
+];
