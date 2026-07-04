@@ -60,3 +60,27 @@
   background-color: rgba(10, 14, 28, 0.8);
   transform: translateY(-1px);
 }
+
+/* Story Book Experience — mỗi artwork trong "Companion qua hình ảnh" đọc
+   như một trang sách: shadow rất mờ quanh trang + một dải sáng rất nhẹ ở
+   điểm nối giữa hai trang (khoảng nghỉ 64px), không phải hiệu ứng lật
+   sách 3D — chỉ gợi ý cảm giác một chương mới đang bắt đầu. */
+.companion-story-page {
+  box-shadow: 0 30px 70px -35px rgba(0, 0, 0, 0.65);
+}
+
+.companion-story-seam {
+  isolation: isolate;
+}
+
+.companion-story-seam::before {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: -2rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(226, 232, 255, 0.16), transparent);
+  pointer-events: none;
+}
+
