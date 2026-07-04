@@ -4,6 +4,12 @@
  * còn dựng bằng nhiều component/section riêng — mỗi trang là MỘT artwork
  * đã duyệt, hiển thị full width trong vùng content. Claude Code chỉ gắn
  * route + vùng click lên đúng vị trí, không thiết kế lại.
+ *
+ * Quy chuẩn asset (chính thức, áp dụng cho mọi artwork Companion về sau):
+ * - PNG chỉ dùng làm master lưu trữ/chỉnh sửa (không commit vào repo).
+ * - WebP dùng để render trên website — convert bằng sharp (quality ~92),
+ *   tối ưu tốc độ tải mà không giảm chất lượng nhìn thấy được. Mọi file
+ *   trong `public/assets/companion-pages/` đều theo chuẩn này.
  */
 
 export type CompanionArtworkPage = {
