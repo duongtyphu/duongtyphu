@@ -79,7 +79,7 @@ export function CompanionFlipbook() {
       </Link>
 
       {/* Khung sách — bìa/khung tối, bóng đổ mềm, chiều sâu 3D qua perspective. */}
-      <div className="companion-flipbook-frame relative flex w-full max-w-3xl flex-col items-center">
+      <div className="companion-flipbook-frame relative flex w-full max-w-[1080px] flex-col items-center">
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -114,7 +114,7 @@ export function CompanionFlipbook() {
                 src={page.src}
                 alt={page.title}
                 fill
-                sizes="(min-width: 640px) 768px, 100vw"
+                sizes="(min-width: 640px) 1080px, 100vw"
                 className="object-contain p-3 sm:p-6"
                 priority={index <= 1}
                 loading={index <= 1 ? undefined : "lazy"}
