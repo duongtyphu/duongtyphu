@@ -20,9 +20,9 @@ const MODULE_ROUTE_PREFIXES: { prefix: string; module: PortalModule }[] = [
 ];
 
 export const MODULE_LABELS: Record<PortalModule, string> = {
-  "khong-gian-ai": "Không gian AI",
+  "khong-gian-ai": "AI Workspace",
   ckos: "Thư viện tri thức",
-  academy: "Học viện",
+  academy: "Học viện AI",
   opportunities: "Dự án & Cơ hội",
   premium: "Premium",
   "learning-journal": "Nhật ký học tập",

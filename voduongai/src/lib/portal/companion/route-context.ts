@@ -16,7 +16,7 @@ export type RouteContext = {
   quickActions: QuickAction[];
 };
 
-const KHONG_GIAN_AI: QuickAction = { label: "Mở Không gian AI", href: "/portal/khong-gian-ai" };
+const KHONG_GIAN_AI: QuickAction = { label: "Mở AI Workspace", href: "/portal/khong-gian-ai" };
 
 /**
  * Khớp theo prefix, ưu tiên entry dài hơn trước để tránh nhầm route con.
@@ -138,7 +138,7 @@ const DEFAULT_CONTEXT: RouteContext = {
   nudge: "Mình luôn ở đây nếu bạn cần một người đồng hành.",
   quickActions: [
     { label: "Thư viện tri thức", href: "/portal/library" },
-    { label: "Học viện", href: "/portal/academy" },
+    { label: "Học viện AI", href: "/portal/academy" },
     KHONG_GIAN_AI,
   ],
 };

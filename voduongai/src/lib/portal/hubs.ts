@@ -156,9 +156,9 @@ export const portalNavSections: NavSection[] = [
     items: [
       { label: "Trang chủ", href: "/portal" },
       { label: "Companion", href: "/portal/companion" },
-      { label: "Không gian AI", href: "/portal/khong-gian-ai" },
+      { label: "Học viện AI", href: "/portal/academy" },
+      { label: "AI Workspace", href: "/portal/khong-gian-ai" },
       { label: "Thư viện tri thức", href: "/portal/library" },
-      { label: "Học viện", href: "/portal/academy" },
       { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
       { label: "Premium", href: "/portal/premium" },
       { label: "Cộng đồng", href: "/portal/community" },

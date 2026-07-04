@@ -6,8 +6,8 @@ import { LandingPageMissionPilot } from "@/features/academy/components/LandingPa
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
 
 export const metadata = {
-  title: "Học viện",
-  description: "Academy Operating System — nơi tri thức được chuyển hoá thành thực hành, năng lực và cảm nhận trưởng thành.",
+  title: "Học viện AI",
+  description: "Học AI có hệ thống. Hiểu đúng, luyện đúng và thực hành cùng Companion.",
 };
 
 const FAQ = [
@@ -36,12 +36,19 @@ export default function AcademyHubPage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20">
             <GraduationCap className="h-4 w-4 text-blue-400" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Học viện</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Học viện AI</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Hôm nay bạn tốt hơn hôm qua</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900">Học viện AI</h1>
+        <p className="max-w-2xl font-semibold text-gray-700">
+          Học AI có hệ thống. Hiểu đúng, luyện đúng và thực hành cùng Companion.
+        </p>
         <p className="max-w-2xl text-gray-500">
           Học viện không phải nơi chứa khoá học. Đây là nơi tri thức bạn đã học được chuyển hoá
-          thành thực hành thật, năng lực thật và cảm nhận trưởng thành thật.
+          thành thực hành thật, năng lực thật và cảm nhận trưởng thành thật. Học xong, hãy sang{" "}
+          <Link href="/portal/khong-gian-ai" className="font-semibold text-blue-600 hover:underline">
+            AI Workspace
+          </Link>{" "}
+          để thực hành cùng Companion.
         </p>
       </div>
 
