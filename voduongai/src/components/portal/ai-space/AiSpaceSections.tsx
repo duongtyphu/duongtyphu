@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronRight, Copy, Check } from "lucide-react";
 import { startCompanionWorkspace, type WorkspaceItemType } from "@/lib/portal/companion-workspace";
 import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
+import { RECOMMENDED_WORKSPACE_TO_MISSION } from "@/lib/portal/foundation/mission-catalog";
 import { prompts } from "@/data/prompts";
 
 function SectionHeader({ label, title, href, hrefLabel }: { label: string; title: string; href?: string; hrefLabel?: string }) {
@@ -33,7 +34,15 @@ function SectionHeader({ label, title, href, hrefLabel }: { label: string; title
 
 function usePracticeAction() {
   const router = useRouter();
-  return function practice(input: { source: string; title?: string; itemId?: string; itemType?: WorkspaceItemType; expectedOutput?: string; userGoal?: string }) {
+  return function practice(input: {
+    source: string;
+    title?: string;
+    itemId?: string;
+    itemType?: WorkspaceItemType;
+    expectedOutput?: string;
+    userGoal?: string;
+    missionId?: string;
+  }) {
     router.push(startCompanionWorkspace(input));
   };
 }
@@ -140,6 +149,7 @@ export function RecommendedWorkspaceSection() {
                   itemType: "workspace",
                   title: ws.title,
                   expectedOutput: ws.expectedOutput,
+                  missionId: RECOMMENDED_WORKSPACE_TO_MISSION[ws.id],
                 })
               }
               className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"

@@ -12,8 +12,9 @@
  */
 
 import { listAllSessions, type WorkspaceSessionRecord, type OutputRecord } from "./workspace-session-store";
-import { listPortfolioItems } from "./portfolio-store";
+import { listPortfolioItems, type PortfolioItemRecord } from "./portfolio-store";
 import { emitGrowthEvent } from "./growth-event-bus";
+import { getGoldenMission } from "./mission-catalog";
 
 /**
  * 6 mức Capability (Level 0-5) — thang triển khai chính thức của
@@ -57,21 +58,34 @@ export type CapabilityTimelineEntry = {
 const TIMELINE_KEY = "vdai_capability_timeline";
 
 /**
- * Capability hiện tại được xấp xỉ theo `context.module` — vì Portal CHƯA
- * có catalog Mission/Competency thật (Technical Debt đã ghi ở Sprint B1
- * Foundation Report #1, chưa xử lý). Khi Mission Engine thật tồn tại
- * (Sprint B7+), thay `deriveCapabilityId` bằng đọc `mission.competencyIds`
- * thật — không đổi phần còn lại của Engine.
+ * Phase 2 (B5 hoàn thiện): Capability giờ đo đúng COMPETENCY thật (AI
+ * Writing/Research/Presentation/Automation/Data Analysis...) khi
+ * `context.missionId` khớp 1 Golden Mission trong `mission-catalog.ts` —
+ * KHÔNG còn đo "đã dùng module nào" như bản trước. Chỉ khi Session không
+ * mang `missionId` nhận diện được (CTA cũ chưa gắn Mission thật — vẫn còn
+ * một phần Academy/CKOS chưa tổ chức lại, xem Technical Debt) mới rơi về
+ * fallback theo module, đánh dấu rõ `isMissionMapped: false` để không lẫn
+ * với Capability đo đúng Competency.
  */
-const MODULE_CAPABILITY_LABEL: Record<string, { name: string; description: string }> = {
-  academy: { name: "Học tập chủ động cùng AI", description: "Năng lực tự học và thực hành có hệ thống trong Học viện AI." },
-  "khong-gian-ai": { name: "Thực hành tạo kết quả bằng AI", description: "Năng lực dùng AI để tạo ra Output thật trong công việc." },
-  ckos: { name: "Ứng dụng tri thức thực chiến", description: "Năng lực áp dụng kiến thức từ Thư viện tri thức vào việc thật." },
-  opportunities: { name: "Ra quyết định dự án bằng AI", description: "Năng lực dùng AI hỗ trợ đánh giá dự án/cơ hội." },
+const MODULE_FALLBACK_LABEL: Record<string, { name: string; description: string }> = {
+  academy: { name: "Học tập chủ động cùng AI (chưa gắn Mission cụ thể)", description: "Ghi nhận tạm thời — Journey/Mission CKOS chưa tổ chức lại đầy đủ." },
+  "khong-gian-ai": { name: "Thực hành AI Workspace (chưa gắn Mission cụ thể)", description: "Ghi nhận tạm thời — CTA này chưa map vào Golden Mission." },
+  ckos: { name: "Ứng dụng tri thức (chưa gắn Mission cụ thể)", description: "Ghi nhận tạm thời — Thư viện tri thức chưa tổ chức theo Mission." },
+  opportunities: { name: "Ra quyết định dự án (chưa gắn Mission cụ thể)", description: "Ghi nhận tạm thời — chưa có Golden Mission cho khu vực này." },
 };
 
-function deriveCapabilityId(module: string): string {
-  return `capability_${module}`;
+/** Trả về `{capabilityId, isMissionMapped}` — competency thật nếu
+    `missionId` khớp Golden Mission, ngược lại fallback theo module. */
+function deriveCapabilityKey(session: WorkspaceSessionRecord): { capabilityId: string; isMissionMapped: boolean } {
+  const mission = session.context.missionId ? getGoldenMission(session.context.missionId) : undefined;
+  if (mission) return { capabilityId: mission.primaryCompetencyId, isMissionMapped: true };
+  return { capabilityId: `unmapped_${session.context.module}`, isMissionMapped: false };
+}
+
+function derivePortfolioCapabilityId(item: PortfolioItemRecord): string {
+  const mission = item.missionId ? getGoldenMission(item.missionId) : undefined;
+  if (mission) return mission.primaryCompetencyId;
+  return `unmapped_${item.tags[0] ?? ""}`;
 }
 
 /** Evidence Engine — 1 Output là Evidence hợp lệ khi đã Review + đã
@@ -126,12 +140,11 @@ export function computeCapabilityProfiles(sessions?: WorkspaceSessionRecord[]): 
   const portfolioItems = listPortfolioItems();
   const now = new Date().toISOString();
 
-  const byCapability = new Map<string, { evidenceCount: number; missionsCompleted: number; portalModule: string }>();
+  const byCapability = new Map<string, { evidenceCount: number; missionsCompleted: number; portalModule: string; isMissionMapped: boolean }>();
 
   for (const session of allSessions) {
-    const portalModule = session.context.module;
-    const capabilityId = deriveCapabilityId(portalModule);
-    const bucket = byCapability.get(capabilityId) ?? { evidenceCount: 0, missionsCompleted: 0, portalModule };
+    const { capabilityId, isMissionMapped } = deriveCapabilityKey(session);
+    const bucket = byCapability.get(capabilityId) ?? { evidenceCount: 0, missionsCompleted: 0, portalModule: session.context.module, isMissionMapped };
     bucket.evidenceCount += session.outputs.filter(isValidEvidence).length;
     if (session.status === "completed") bucket.missionsCompleted += 1;
     byCapability.set(capabilityId, bucket);
@@ -142,11 +155,13 @@ export function computeCapabilityProfiles(sessions?: WorkspaceSessionRecord[]): 
   for (const [capabilityId, bucket] of byCapability) {
     if (bucket.evidenceCount <= 0) continue; // Validation Rule: không có Evidence → không tạo/cập nhật hồ sơ
 
-    const label = MODULE_CAPABILITY_LABEL[bucket.portalModule] ?? {
-      name: `Năng lực thực hành (${bucket.portalModule})`,
-      description: "Năng lực hình thành từ hoạt động thật trong module này.",
-    };
-    const portfolioLinked = portfolioItems.filter((p) => deriveCapabilityId(p.tags[0] ?? "") === capabilityId).length;
+    const label = bucket.isMissionMapped
+      ? { name: capabilityId, description: `Năng lực "${capabilityId}" — đo từ Output thật gắn đúng Golden Mission.` }
+      : MODULE_FALLBACK_LABEL[bucket.portalModule] ?? {
+          name: `Năng lực thực hành (${bucket.portalModule}, chưa gắn Mission)`,
+          description: "Ghi nhận tạm thời — chưa map vào Golden Mission/Competency thật.",
+        };
+    const portfolioLinked = portfolioItems.filter((p) => derivePortfolioCapabilityId(p) === capabilityId).length;
     const newLevel = levelFromEvidenceCount(bucket.evidenceCount);
 
     const timeline = getCapabilityTimeline(capabilityId);

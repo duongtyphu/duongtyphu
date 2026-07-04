@@ -47,6 +47,7 @@ import { getKnowledgeGraphView, getPrerequisiteSeeds, getDependentSeeds } from "
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
+import { getMissionIdForKnowledgeAsset } from "@/data/foundation/knowledge-asset-mission-map";
 
 function estimateReadingMinutes(seed: KnowledgeSeed): number {
   const text = [
@@ -217,6 +218,9 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
                     title: seed.title,
                     userGoal: `thực hành ${seed.title}`,
                     expectedOutput: `Kỹ năng: ${seed.skills.join(", ") || "—"}. Công cụ AI: ${seed.aiTools.join(", ") || "—"}.`,
+                    // Phase 2 (B2 hoàn thiện) — gắn Golden Mission thật khi
+                    // Asset này đã được tổ chức lại (knowledge-asset-mission-map.ts).
+                    missionId: getMissionIdForKnowledgeAsset(seed.id),
                   })
                 )
               }
@@ -266,6 +270,7 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
                   title: seed.title,
                   userGoal: `bước tiếp theo sau ${seed.title}`,
                   expectedOutput: seed.nextStep,
+                  missionId: getMissionIdForKnowledgeAsset(seed.id),
                 })
               )
             }

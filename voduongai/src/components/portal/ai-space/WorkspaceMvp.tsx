@@ -42,6 +42,7 @@ import {
 } from "@/lib/portal/foundation/execution-orchestrator";
 import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store";
 import { computeCapabilityProfiles } from "@/lib/portal/foundation/capability-engine";
+import { recordNewUnlocks } from "@/lib/portal/foundation/mission-unlock-runtime";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -159,6 +160,9 @@ export function WorkspaceMvp() {
     const nextStep = EXECUTION_TIMELINE[nextIndex];
     if (nextStep.id === "completed") {
       setSession(completeSession(session.sessionId));
+      // Phase 2 (B4 hoàn thiện) — Unlock Runtime: kiểm tra lại Mission nào
+      // vừa đủ điều kiện mở khóa ngay khi Mission hiện tại hoàn thành.
+      recordNewUnlocks();
     } else {
       setSession(advanceStep(session.sessionId, nextStep.id));
     }
@@ -208,6 +212,9 @@ export function WorkspaceMvp() {
     // (Output + Reflection) ngay khi có Evidence mới — không có UI hiển
     // thị kết quả này trong sprint B5 (đúng brief "không cần UI").
     computeCapabilityProfiles();
+    // Phase 2 (B4 hoàn thiện) — Capability vừa đổi cũng có thể đủ điều
+    // kiện mở khóa Mission theo requiresCapability, kiểm tra lại ngay.
+    recordNewUnlocks();
   }
 
   return (

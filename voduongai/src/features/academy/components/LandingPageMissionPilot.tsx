@@ -40,6 +40,10 @@ export function LandingPageMissionPilot() {
               title: LANDING_PAGE_MISSION_TITLE,
               userGoal: LANDING_PAGE_MISSION_TITLE,
               expectedOutput: "Mission thực hành viết Landing Page đầu tiên.",
+              // Phase 2 (B2 hoàn thiện) — gắn đúng Golden Reference Mission thật
+              // (mission-catalog.ts) để Capability/Unlock Runtime đo đúng
+              // Competency "AI Writing", không suy ra từ module như trước.
+              missionId: "viet-landing-page",
             })
           )
         }
