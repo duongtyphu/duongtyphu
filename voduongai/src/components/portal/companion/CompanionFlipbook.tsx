@@ -73,13 +73,15 @@ export function CompanionFlipbook() {
   }
 
   return (
-    <div className="companion-flipbook-stage relative -mx-4 -my-6 flex min-h-screen flex-col items-center overflow-x-hidden bg-[#010425] px-4 py-16 md:-mx-8 md:-my-8 sm:py-20">
+    <div className="companion-flipbook-stage relative -mx-4 -my-6 flex min-h-screen flex-col items-center justify-center overflow-x-hidden bg-[#010425] px-4 py-6 md:-mx-8 md:-my-8 sm:py-8">
       <Link href="/portal/companion" className="companion-artwork-back" style={{ zIndex: 30 }}>
         ← Quay lại Companion
       </Link>
 
-      {/* Khung sách — bìa/khung tối, bóng đổ mềm, chiều sâu 3D qua perspective. */}
-      <div className="companion-flipbook-frame relative flex w-full max-w-[1080px] flex-col items-center">
+      {/* Khung sách — bìa/khung tối, bóng đổ mềm, chiều sâu 3D qua perspective.
+          Thu nhỏ 20% (1080px -> 864px) + căn giữa dọc để vừa trọn 1 màn hình,
+          không cần cuộn. */}
+      <div className="companion-flipbook-frame relative flex w-full max-w-[864px] flex-col items-center">
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -114,7 +116,7 @@ export function CompanionFlipbook() {
                 src={page.src}
                 alt={page.title}
                 fill
-                sizes="(min-width: 640px) 1080px, 100vw"
+                sizes="(min-width: 640px) 864px, 100vw"
                 className="object-contain p-3 sm:p-6"
                 priority={index <= 1}
                 loading={index <= 1 ? undefined : "lazy"}
