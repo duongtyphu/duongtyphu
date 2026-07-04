@@ -1,9 +1,19 @@
 import Link from "next/link";
-import { GraduationCap, HelpCircle } from "lucide-react";
+import { ChevronRight, GraduationCap, HelpCircle } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
+import { WorkNeedSection, LearningPathSection } from "@/components/portal/ai-space/AiSpaceSections";
+import { AI_TOOLS } from "@/data/khong-gian-ai";
+
+/**
+ * Content Audit sprint: "Theo nhu cầu công việc" và "Lộ trình học AI" đã
+ * chuyển từ AI Workspace sang đây (đúng vai trò HỌC) — xem
+ * docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md. "Học AI theo công cụ" là
+ * section mới, tái dùng dữ liệu AI_TOOLS ở dạng khám phá/tìm hiểu (không có
+ * CTA "Dùng cùng Companion" — nút đó vẫn thuộc AI Toolbox bên Workspace).
+ */
 
 export const metadata = {
   title: "Học viện AI",
@@ -57,6 +67,41 @@ export default function AcademyHubPage() {
         message="Chọn một hành trình bên dưới và bắt đầu từ bước Companion gợi ý — không cần làm hết mọi thứ cùng lúc."
         action={{ label: "Xem Thư viện tri thức", href: "/portal/library" }}
       />
+
+      {/* Lộ trình học AI */}
+      <LearningPathSection />
+
+      {/* Học AI theo nhu cầu */}
+      <WorkNeedSection label="Học theo nhu cầu" title="Học AI theo nhu cầu" ctaLabel="Học và thực hành" />
+
+      {/* Học AI theo công cụ — khám phá, không phải Toolbox thực thi (Toolbox ở AI Workspace) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Công cụ AI</p>
+            <h2 className="text-xl font-bold text-gray-900">Học AI theo công cụ</h2>
+          </div>
+          <Link href="/portal/khong-gian-ai/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+            Xem tất cả công cụ <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {AI_TOOLS.filter((tool) => tool.featured).map((tool) => (
+            <Link
+              key={tool.slug}
+              href={`/portal/khong-gian-ai/${tool.slug}`}
+              className="group flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+            >
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 text-lg font-bold text-blue-700">
+                {tool.name.charAt(0)}
+              </div>
+              <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition">{tool.name}</p>
+              <p className="text-xs leading-relaxed text-gray-500 line-clamp-2">{tool.tagline}</p>
+              <span className="mt-auto text-xs font-semibold text-blue-600">Tìm hiểu công cụ →</span>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* Learning Journey — Academy Operating System */}
       <div className="space-y-4">

@@ -12,20 +12,19 @@ import {
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import {
   CompanionDesk,
-  WorkNeedSection,
   RecommendedWorkspaceSection,
   AiWorkflowSection,
   PromptLibrarySection,
-  LearningPathSection,
   ResourceSection,
 } from "@/components/portal/ai-space/AiSpaceSections";
 
 /**
- * EPIC 02 — Sprint 01: AI Workspace Foundation.
- * Kiến trúc mới: Hero → Companion Desk → Theo nhu cầu công việc →
- * Workspace đề xuất → AI Workflows → Prompt Library → AI Toolbox →
- * Learning Path → Resources → Blog AI. AI_TOOLS/AI_ARTICLES cũ vẫn dùng
- * nguyên (chỉ đổi vị trí/vai trò) — không xoá dữ liệu cũ.
+ * EPIC 02 — Content Audit sprint: Kiến trúc AI Workspace = LÀM/THỰC HÀNH.
+ * "Theo nhu cầu công việc" và "Lộ trình học AI" đã chuyển sang Học viện AI
+ * (xem docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md). Kiến trúc hiện tại:
+ * Hero → Companion Desk → Workspace đề xuất → Quy trình AI theo công việc →
+ * Prompt Library → AI Toolbox theo nhiệm vụ → Tài nguyên thực hành →
+ * Blog AI. AI_TOOLS/AI_ARTICLES cũ vẫn dùng nguyên — không xoá dữ liệu cũ.
  */
 
 // ─── Tool category badge color ────────────────────────────────────────────────
@@ -164,24 +163,21 @@ export default function KhongGianAiPage() {
       {/* ── 2. Companion Desk ─────────────────────────────────────────────── */}
       <CompanionDesk />
 
-      {/* ── 3. Theo nhu cầu công việc ──────────────────────────────────────── */}
-      <WorkNeedSection />
-
-      {/* ── 4. Workspace đề xuất ───────────────────────────────────────────── */}
+      {/* ── 3. Workspace đề xuất ───────────────────────────────────────────── */}
       <RecommendedWorkspaceSection />
 
-      {/* ── 5. AI Workflows ────────────────────────────────────────────────── */}
+      {/* ── 4. Quy trình AI theo công việc ──────────────────────────────────── */}
       <AiWorkflowSection />
 
-      {/* ── 6. Prompt Library ──────────────────────────────────────────────── */}
+      {/* ── 5. Prompt Library ──────────────────────────────────────────────── */}
       <PromptLibrarySection />
 
-      {/* ── 7. AI Toolbox (dữ liệu cũ, đổi vị trí + thêm CTA) ──────────────── */}
+      {/* ── 6. AI Toolbox theo nhiệm vụ (dữ liệu cũ, đổi tên hiển thị) ──────── */}
       <section id="ai-toolbox" className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <SectionLabel>Công cụ AI</SectionLabel>
-            <h2 className="text-xl font-bold text-gray-900">AI Toolbox</h2>
+            <h2 className="text-xl font-bold text-gray-900">AI Toolbox theo nhiệm vụ</h2>
           </div>
           <Link href="/portal/khong-gian-ai/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
             Tất cả công cụ <ChevronRight className="h-4 w-4" />
@@ -194,13 +190,10 @@ export default function KhongGianAiPage() {
         </div>
       </section>
 
-      {/* ── 8. Learning Path ───────────────────────────────────────────────── */}
-      <LearningPathSection />
-
-      {/* ── 9. Resources ───────────────────────────────────────────────────── */}
+      {/* ── 7. Tài nguyên thực hành ──────────────────────────────────────────── */}
       <ResourceSection />
 
-      {/* ── 10. Blog AI (dữ liệu cũ, đưa xuống cuối) ────────────────────────── */}
+      {/* ── 8. Blog AI (dữ liệu cũ, đưa xuống cuối) ────────────────────────── */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">

@@ -76,12 +76,23 @@ export function CompanionDesk() {
   );
 }
 
-/** Section 5 — Theo nhu cầu công việc. */
-export function WorkNeedSection() {
+/**
+ * Section — Theo nhu cầu công việc. Chuyển sang Học viện AI (khám phá "học AI
+ * theo nhu cầu") — label/title/CTA có thể override theo trang gọi.
+ */
+export function WorkNeedSection({
+  label = "Bắt đầu từ công việc",
+  title = "Theo nhu cầu công việc",
+  ctaLabel = "Thực hành cùng Companion",
+}: {
+  label?: string;
+  title?: string;
+  ctaLabel?: string;
+}) {
   const practice = usePracticeAction();
   return (
     <section className="space-y-4">
-      <SectionHeader label="Bắt đầu từ công việc" title="Theo nhu cầu công việc" />
+      <SectionHeader label={label} title={title} />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {WORK_NEEDS.map((need) => (
           <div key={need.id} className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
@@ -95,7 +106,7 @@ export function WorkNeedSection() {
               onClick={() => practice({ source: "work-need", itemId: need.id, itemType: "work_need", title: need.title })}
               className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
             >
-              Thực hành cùng Companion <ArrowRight className="h-3.5 w-3.5" />
+              {ctaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </button>
           </div>
         ))}
@@ -225,7 +236,7 @@ export function PromptLibrarySection() {
   );
 }
 
-/** Section 10 — Lộ trình học AI. */
+/** Section — Lộ trình học AI. Chuyển sang Học viện AI (đúng vai trò "học"). */
 export function LearningPathSection() {
   const practice = usePracticeAction();
   return (
@@ -264,7 +275,7 @@ export function ResourceSection() {
   const practice = usePracticeAction();
   return (
     <section className="space-y-4">
-      <SectionHeader label="Tài nguyên" title="Tài nguyên AI" />
+      <SectionHeader label="Tài nguyên" title="Tài nguyên thực hành" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {AI_RESOURCES.map((resource) => (
           <div key={resource.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
