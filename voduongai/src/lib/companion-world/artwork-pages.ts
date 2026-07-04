@@ -19,8 +19,8 @@ export type CompanionArtworkPage = {
 
 export const COMPANION_HOME_ARTWORK = {
   src: "/assets/companion-pages/companion-home.webp",
-  width: 1024,
-  height: 1536,
+  width: 1536,
+  height: 1024,
 };
 
 export const COMPANION_ARTWORK_PAGES: Record<string, CompanionArtworkPage> = {
