@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { GardenScene } from "@/components/portal/garden/scene/GardenScene";
+import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 import {
   gardenStats,
   RECENT_ACTIVITIES,
@@ -216,6 +217,9 @@ export default function KnowledgeGardenPage() {
             </div>
           </div>
         </div>
+
+        {/* Sprint B4 — Portfolio & Growth Engine: khối bổ sung, không đổi GardenScene/thiết kế đã duyệt */}
+        <GrowthActivityPanel variant="garden" />
 
         {/* Footer riêng — không dùng Footer Portal */}
         <footer className="garden-glass-card gemos-glass-card mt-8 rounded-3xl p-8 text-center">

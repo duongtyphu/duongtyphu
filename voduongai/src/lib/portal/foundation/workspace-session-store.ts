@@ -132,6 +132,13 @@ export function getSession(sessionId: string): WorkspaceSessionRecord | null {
   return readAll().find((s) => s.sessionId === sessionId) ?? null;
 }
 
+/** Đọc toàn bộ Session đã lưu — dùng cho Growth View (Sprint B4:
+    Nhật ký học tập/Hành trình của tôi/Khu vườn của bạn) tổng hợp tiến độ
+    thật, không phải để sửa dữ liệu. */
+export function listAllSessions(): WorkspaceSessionRecord[] {
+  return readAll();
+}
+
 /** Tạo Session mới — phát `MISSION_STARTED`/`WORKSPACE_STARTED` đã được
     `startCompanionWorkspace()` phát trước đó (Sprint B1); ở đây Session
     chỉ tự ghi lịch sử nội bộ, không phát trùng Event. */
@@ -300,7 +307,10 @@ export function startReview(sessionId: string, outputId: string) {
 export function markOutputReviewed(sessionId: string, outputId: string) {
   const session = getSession(sessionId);
   if (!session) return null;
-  return updateOutput(session, outputId, { reviewStatus: "reviewed" }, "Review Completed");
+  const result = updateOutput(session, outputId, { reviewStatus: "reviewed" }, "Review Completed");
+  if (!result) return null;
+  emitGrowthEvent({ eventType: "REVIEW_COMPLETED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
+  return result;
 }
 
 /** Companion Orchestrator (Sprint B3) — khởi tạo Reflection Flow, phát

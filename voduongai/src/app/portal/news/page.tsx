@@ -6,6 +6,7 @@ import { Notebook, Clock, Tag } from "lucide-react";
 import { useCollection } from "@/lib/admin/store";
 import { blogPostsSeed, type AdminBlogPost } from "@/data/admin/content";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 
 const CATEGORIES = [
   "Tất cả",
@@ -54,6 +55,8 @@ export default function LearningJournalPage() {
         message="Nếu chưa biết đọc bài nào trước, hãy thử lọc theo chủ đề bạn đang làm. Bài mình đánh dấu 'nổi bật' là những bài có ứng dụng thực tế cao nhất — đọc đó trước."
         action={{ label: "Xem lộ trình học", href: "/portal/journey" }}
       />
+
+      <GrowthActivityPanel variant="journal" />
 
       {/* Category filter */}
       <div className="space-y-3">

@@ -40,6 +40,7 @@ import {
   REFLECTION_QUESTIONS,
   getNextAction,
 } from "@/lib/portal/foundation/execution-orchestrator";
+import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -199,6 +200,9 @@ export function WorkspaceMvp() {
     if (!result) return;
     setSession(result.session);
     setReflectionDraft(REFLECTION_QUESTIONS.map(() => ""));
+    // Sprint B4 — Portfolio Engine: Output đủ điều kiện (đã Review + đã
+    // Reflection) tự động vào Portfolio, không cần bước "lưu vào Portfolio" riêng.
+    promoteEligibleOutputs(result.session.sessionId, result.session);
   }
 
   return (
@@ -364,6 +368,24 @@ export function WorkspaceMvp() {
                     <p className="mt-1 text-[10px] text-gray-400">
                       Cập nhật {new Date(output.updatedAt).toLocaleString("vi-VN")}
                     </p>
+
+                    {output.versions.length > 1 && (
+                      <details className="mt-2">
+                        <summary className="cursor-pointer text-[10px] font-semibold text-gray-500 hover:text-gray-700">
+                          Lịch sử phiên bản ({output.versions.length})
+                        </summary>
+                        <ol className="mt-1.5 space-y-1 border-l border-gray-200 pl-3">
+                          {output.versions.map((v) => (
+                            <li key={v.versionNumber} className="text-[10px] text-gray-500">
+                              v{v.versionNumber}
+                              {v.versionNumber === output.versions.length && output.reviewStatus === "reviewed" ? " · Final" : ""}
+                              {" — "}
+                              {new Date(v.editedAt).toLocaleString("vi-VN")}
+                            </li>
+                          ))}
+                        </ol>
+                      </details>
+                    )}
 
                     {output.reviewStatus !== "reviewed" && (
                       <button
