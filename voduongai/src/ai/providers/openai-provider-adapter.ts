@@ -21,7 +21,7 @@ export class OpenAIProviderAdapter implements ProviderAdapter {
   readonly providerId = "openai";
   readonly name = "OpenAI Provider";
   readonly supportedModels = [DEFAULT_MODEL];
-  readonly supportedCapabilities = ["writing.draft", "writing.review"];
+  readonly supportedCapabilities = ["writing.draft", "writing.review", "coding.general", "research.market-analysis"];
 
   isAvailable(): boolean {
     return Boolean(process.env.OPENAI_API_KEY);

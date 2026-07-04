@@ -26,7 +26,7 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
   readonly providerId = "anthropic";
   readonly name = "Anthropic Provider";
   readonly supportedModels = [DEFAULT_MODEL];
-  readonly supportedCapabilities = ["writing.draft", "writing.review"];
+  readonly supportedCapabilities = ["writing.draft", "writing.review", "coding.general", "research.market-analysis"];
 
   isAvailable(): boolean {
     return Boolean(process.env.ANTHROPIC_API_KEY);

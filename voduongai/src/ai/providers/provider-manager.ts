@@ -22,10 +22,19 @@ export type ProviderManagerRequest = {
   input: Record<string, unknown>;
   context?: string;
   preferredProvider?: string;
+  /** Mặc định `true` (giữ nguyên hành vi hiện có — tự fallback Mock khi
+      không có Provider thật nào khả dụng). Đặt `false` khi caller bắt
+      buộc cần Provider thật (vd Benchmark có chủ đích) — khi đó thiếu
+      Provider thật sẽ ném lỗi thay vì âm thầm chạy Mock. */
+  fallbackAllowed?: boolean;
 };
 
 async function execute(request: ProviderManagerRequest): Promise<ProviderExecuteResult> {
-  const adapter = selectAdapter({ capability: request.capability, preferredProvider: request.preferredProvider });
+  const adapter = selectAdapter({
+    capability: request.capability,
+    preferredProvider: request.preferredProvider,
+    fallbackAllowed: request.fallbackAllowed,
+  });
   const startedAt = Date.now();
 
   try {

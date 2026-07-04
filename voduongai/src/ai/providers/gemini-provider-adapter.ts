@@ -24,7 +24,7 @@ export class GeminiProviderAdapter implements ProviderAdapter {
   readonly providerId = "gemini";
   readonly name = "Gemini Provider";
   readonly supportedModels = [DEFAULT_MODEL];
-  readonly supportedCapabilities = ["writing.draft", "writing.review"];
+  readonly supportedCapabilities = ["writing.draft", "writing.review", "coding.general", "research.market-analysis"];
 
   isAvailable(): boolean {
     return Boolean(process.env.GEMINI_API_KEY);

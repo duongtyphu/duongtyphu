@@ -1,38 +1,96 @@
 /**
  * PHASE 4 EPIC 01 — ProviderScore.
  *
- * View tính toán (không lưu trữ riêng) từ `ProviderExecutionLog` — dùng
- * để `ModelRouter` xếp hạng Provider nào nên được ưu tiên chọn khi có
- * nhiều Provider cùng khả dụng cho 1 capability. Điểm số ở đây là
- * heuristic MVP (tỷ lệ thành công + tốc độ trung bình), KHÔNG phải điểm
- * chất lượng nội dung — chất lượng nội dung do con người/Reviewer Agent
- * chấm (`docs/AI_SANDBOX.md` Phần I, `docs/AI_CERTIFICATION_SYSTEM.md`).
+ * View tính toán (không lưu trữ riêng) từ `ProviderExecutionLog` +
+ * `adapter.estimateCost()` — dùng để `ModelRouter` xếp hạng Provider nào
+ * nên được ưu tiên chọn khi có nhiều Provider cùng khả dụng cho 1
+ * capability.
+ *
+ * 6 trục điểm theo đúng yêu cầu EPIC 01 (`quality`, `speed`, `cost`,
+ * `reliability`, `blueprintCompliance`, `userApprovalRate`), mỗi trục
+ * 0-100. `speed`/`reliability`/`cost` tính được thật từ dữ liệu đã có
+ * (Execution Log + `estimateCost()`); `quality`/`blueprintCompliance`/
+ * `userApprovalRate` là placeholder trung tính (50) cho tới khi nối với
+ * dữ liệu QA/Certification/Approval thật (xem
+ * `docs/AI_PERFORMANCE_MONITORING.md`, `docs/AI_CERTIFICATION_SYSTEM.md`
+ * — ngoài phạm vi EPIC 01, không bịa số liệu để trông "đầy đủ hơn").
  */
 import "server-only";
 import { listExecutions } from "./provider-execution-log";
+import { providerRegistry } from "./registry";
 
 export type ProviderScoreRecord = {
   providerId: string;
   totalRuns: number;
-  successRate: number; // 0-1
-  averageLatencyMs: number;
-  /** 0-100 — điểm tổng hợp: 70% tỷ lệ thành công + 30% tốc độ. */
+  quality: number;
+  speed: number;
+  cost: number;
+  reliability: number;
+  blueprintCompliance: number;
+  userApprovalRate: number;
+  /** Tổng hợp có trọng số — dùng để ModelRouter xếp hạng. */
   overallScore: number;
 };
 
-const NEUTRAL_DEFAULT_SCORE = 50; // chưa có lịch sử — không thiên vị Provider nào
+const NEUTRAL_PLACEHOLDER = 50; // chưa có dữ liệu thật — không thiên vị Provider nào
+
+/** Trọng số MVP — tổng = 1. Ưu tiên độ tin cậy + tốc độ (đo được thật
+    hôm nay) hơn 3 trục còn placeholder. */
+const WEIGHTS = {
+  reliability: 0.35,
+  speed: 0.25,
+  cost: 0.15,
+  quality: 0.1,
+  blueprintCompliance: 0.1,
+  userApprovalRate: 0.05,
+} as const;
+
+function computeCostScore(providerId: string): number {
+  const adapter = providerRegistry.get(providerId);
+  if (!adapter) return NEUTRAL_PLACEHOLDER;
+  const { estimate } = adapter.estimateCost({ taskType: "", input: {} });
+  if (estimate <= 0) return 100; // Mock — miễn phí
+  // Thang so sánh tương đối MVP: 0.01 USD/1k token trở lên coi là "đắt" (điểm thấp).
+  const normalized = Math.max(0, 100 - Math.round((estimate / 0.01) * 100));
+  return Math.min(100, normalized);
+}
 
 export function computeProviderScore(providerId: string): ProviderScoreRecord {
   const runs = listExecutions(providerId);
-  if (runs.length === 0) {
-    return { providerId, totalRuns: 0, successRate: 0, averageLatencyMs: 0, overallScore: NEUTRAL_DEFAULT_SCORE };
+
+  let reliability = NEUTRAL_PLACEHOLDER;
+  let speed = NEUTRAL_PLACEHOLDER;
+
+  if (runs.length > 0) {
+    const successCount = runs.filter((r) => r.success).length;
+    reliability = Math.round((successCount / runs.length) * 100);
+    const averageLatencyMs = runs.reduce((sum, r) => sum + r.latencyMs, 0) / runs.length;
+    speed = Math.max(0, 100 - Math.floor(averageLatencyMs / 50));
   }
 
-  const successCount = runs.filter((r) => r.success).length;
-  const successRate = successCount / runs.length;
-  const averageLatencyMs = runs.reduce((sum, r) => sum + r.latencyMs, 0) / runs.length;
-  const speedScore = Math.max(0, 30 - Math.floor(averageLatencyMs / 500));
-  const overallScore = Math.round(successRate * 70 + speedScore);
+  const cost = computeCostScore(providerId);
+  const quality = NEUTRAL_PLACEHOLDER;
+  const blueprintCompliance = NEUTRAL_PLACEHOLDER;
+  const userApprovalRate = NEUTRAL_PLACEHOLDER;
 
-  return { providerId, totalRuns: runs.length, successRate, averageLatencyMs, overallScore };
+  const overallScore = Math.round(
+    reliability * WEIGHTS.reliability +
+      speed * WEIGHTS.speed +
+      cost * WEIGHTS.cost +
+      quality * WEIGHTS.quality +
+      blueprintCompliance * WEIGHTS.blueprintCompliance +
+      userApprovalRate * WEIGHTS.userApprovalRate
+  );
+
+  return {
+    providerId,
+    totalRuns: runs.length,
+    quality,
+    speed,
+    cost,
+    reliability,
+    blueprintCompliance,
+    userApprovalRate,
+    overallScore,
+  };
 }
