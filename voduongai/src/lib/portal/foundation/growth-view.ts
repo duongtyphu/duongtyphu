@@ -36,6 +36,9 @@ const EVENT_LABEL: Record<GrowthEventType, string> = {
   AGENT_RUN_FAILED: "AI Agent gặp lỗi",
   OUTPUT_REVIEWED: "Reviewer Agent đã review Output",
   USER_APPROVAL_REQUIRED: "Đang chờ bạn phê duyệt",
+  COMPANION_ACTIVATED: "AI Companion được Activate vào Workforce",
+  COMPANION_TASK_ASSIGNED: "Companion nhận Task mới",
+  COMPANION_TASK_COMPLETED: "Companion hoàn thành Task",
 };
 
 export type ActivityEntry = {

@@ -21,7 +21,19 @@ export class MockProviderAdapter implements ProviderAdapter {
   readonly providerId = "mock";
   readonly name = "Mock Provider";
   readonly supportedModels = ["mock-model"];
-  readonly supportedCapabilities = ["writing.draft", "writing.review", "coding.general", "research.market-analysis"];
+  readonly supportedCapabilities = [
+    "writing.draft",
+    "writing.review",
+    "writing.edit",
+    "coding.general",
+    "research.market-analysis",
+    "research.knowledge-synthesis",
+    "strategy.planning",
+    "qa.review",
+    "office.spreadsheet",
+    "growth.goal-coaching",
+    "growth.reflection-coaching",
+  ];
 
   isAvailable(): boolean {
     return true;

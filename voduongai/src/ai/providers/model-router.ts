@@ -7,14 +7,19 @@
  *
  * Thứ tự quyết định:
  *   1. `preferredProvider` nếu có, hỗ trợ capability, và khả dụng.
- *   2. Thứ tự ưu tiên theo NHÓM capability (`CAPABILITY_FAMILY_PREFERENCE`
+ *   2. `fallbackProvider` nếu có, hỗ trợ capability, và khả dụng — đây là
+ *      lựa chọn thứ 2 CHỈ ĐỊNH TƯỜNG MINH (khác bước 3, vốn là bảng mặc
+ *      định chung của hệ thống) — dùng khi caller (vd 1 Companion cụ thể
+ *      trong `workforce-registry.ts`) tự khai báo chuỗi ưu tiên riêng
+ *      (PHASE 4 EPIC 02: "Provider Preference → Fallback Provider → Mock").
+ *   3. Thứ tự ưu tiên theo NHÓM capability (`CAPABILITY_FAMILY_PREFERENCE`
  *      — vd "writing" → Anthropic/OpenAI/Mock, "research" → Gemini/
  *      Anthropic/Mock) — Adapter đầu tiên trong danh sách đang khả dụng
  *      thắng.
- *   3. Nếu nhóm capability không khớp bảng ưu tiên (capability mới,
+ *   4. Nếu nhóm capability không khớp bảng ưu tiên (capability mới,
  *      chưa phân loại) — xếp hạng mọi Adapter thật hỗ trợ capability đó
  *      theo `ProviderScore.overallScore` (điểm cao nhất thắng).
- *   4. Nếu không có Adapter thật nào khả dụng: `fallbackAllowed !== false`
+ *   5. Nếu không có Adapter thật nào khả dụng: `fallbackAllowed !== false`
  *      → Mock; `fallbackAllowed === false` → ném lỗi rõ ràng (dùng khi
  *      caller cố tình muốn Provider thật, không chấp nhận Mock — vd
  *      Benchmark/Certification cần dữ liệu thật).
@@ -27,6 +32,7 @@ import { computeProviderScore } from "./provider-score";
 export type SelectAdapterParams = {
   capability: string;
   preferredProvider?: string;
+  fallbackProvider?: string;
   fallbackAllowed?: boolean; // mặc định true — giữ nguyên hành vi cũ
 };
 
@@ -40,6 +46,11 @@ const CAPABILITY_FAMILY_PREFERENCE: Record<string, string[]> = {
   coding: ["openai", "anthropic", "mock"],
   research: ["gemini", "anthropic", "mock"],
   review: ["anthropic", "openai", "mock"],
+  // PHASE 4 EPIC 02 — Wave 1 Companion capability family:
+  strategy: ["anthropic", "openai", "mock"],
+  qa: ["openai", "anthropic", "mock"],
+  office: ["openai", "anthropic", "mock"],
+  growth: ["anthropic", "openai", "mock"],
 };
 
 function capabilityFamily(capability: string): string {
@@ -47,7 +58,7 @@ function capabilityFamily(capability: string): string {
 }
 
 export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
-  const { capability, preferredProvider, fallbackAllowed = true } = params;
+  const { capability, preferredProvider, fallbackProvider, fallbackAllowed = true } = params;
 
   if (preferredProvider) {
     const preferred = providerRegistry.get(preferredProvider);
@@ -56,6 +67,13 @@ export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
     }
     // preferredProvider không khả dụng/không hỗ trợ — không throw, rơi
     // xuống lựa chọn tự động để giữ tính bền vững của Workspace.
+  }
+
+  if (fallbackProvider) {
+    const fallback = providerRegistry.get(fallbackProvider);
+    if (fallback && fallback.supportedCapabilities.includes(capability) && fallback.isAvailable()) {
+      return fallback;
+    }
   }
 
   const family = capabilityFamily(capability);

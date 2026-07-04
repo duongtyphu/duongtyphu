@@ -21,7 +21,10 @@ export type AiProvider = {
   readonly provider: string;
   status: AiProviderStatus;
   error?: string;
-  execute<TResult>(agentRole: "writer" | "reviewer", input: Record<string, unknown>): Promise<TResult>;
+  /** `agentRole` mở rộng dạng chuỗi (PHASE 4 EPIC 02 thêm "companion-task"
+      cho Task Assignment chung của Workforce) — vẫn tương thích ngược,
+      "writer"/"reviewer" là 2 giá trị cụ thể đã có từ MVP. */
+  execute<TResult>(agentRole: string, input: Record<string, unknown>): Promise<TResult>;
 };
 
 /** Provider MVP duy nhất — gọi qua API Route `/api/ai/workforce`. Model/
@@ -36,7 +39,7 @@ export function createWorkforceApiProvider(): AiProvider {
     status: "idle",
     error: undefined,
 
-    async execute<TResult>(agentRole: "writer" | "reviewer", input: Record<string, unknown>): Promise<TResult> {
+    async execute<TResult>(agentRole: string, input: Record<string, unknown>): Promise<TResult> {
       this.status = "running";
       this.error = undefined;
       try {

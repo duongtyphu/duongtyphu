@@ -22,6 +22,11 @@ export type ProviderManagerRequest = {
   input: Record<string, unknown>;
   context?: string;
   preferredProvider?: string;
+  /** PHASE 4 EPIC 02 — Provider thứ 2 chỉ định tường minh (vd
+      "Fallback Provider" khai báo riêng của 1 Companion trong
+      `workforce-registry.ts`), được thử SAU `preferredProvider` và
+      TRƯỚC bảng ưu tiên mặc định của hệ thống. */
+  fallbackProvider?: string;
   /** Mặc định `true` (giữ nguyên hành vi hiện có — tự fallback Mock khi
       không có Provider thật nào khả dụng). Đặt `false` khi caller bắt
       buộc cần Provider thật (vd Benchmark có chủ đích) — khi đó thiếu
@@ -33,6 +38,7 @@ async function execute(request: ProviderManagerRequest): Promise<ProviderExecute
   const adapter = selectAdapter({
     capability: request.capability,
     preferredProvider: request.preferredProvider,
+    fallbackProvider: request.fallbackProvider,
     fallbackAllowed: request.fallbackAllowed,
   });
   const startedAt = Date.now();

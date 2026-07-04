@@ -169,7 +169,10 @@ export type CompanionReview = {
  * `REVIEW_COMPLETED` đã có — `REVIEW_COMPLETED` là bước Review Flow thủ
  * công (Sprint B3, người dùng tự đánh dấu đã xem lại); `OUTPUT_REVIEWED`
  * là sự kiện Reviewer Agent thật vừa trả kết quả review (khác nguồn gốc,
- * giữ cả 2, không hợp nhất).
+ * giữ cả 2, không hợp nhất). Cộng `COMPANION_ACTIVATED`/
+ * `COMPANION_TASK_ASSIGNED`/`COMPANION_TASK_COMPLETED` ở PHASE 4 EPIC 02
+ * (Activate Core AI Companion Team — xem `workforce-registry.ts`/
+ * `companion-manager.ts`).
  */
 export type GrowthEventType =
   | "WORKSPACE_STARTED"
@@ -192,7 +195,10 @@ export type GrowthEventType =
   | "AGENT_RUN_COMPLETED"
   | "AGENT_RUN_FAILED"
   | "OUTPUT_REVIEWED"
-  | "USER_APPROVAL_REQUIRED";
+  | "USER_APPROVAL_REQUIRED"
+  | "COMPANION_ACTIVATED"
+  | "COMPANION_TASK_ASSIGNED"
+  | "COMPANION_TASK_COMPLETED";
 
 export type GrowthEvent = {
   eventId: string;
