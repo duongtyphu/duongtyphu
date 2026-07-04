@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ListX, ListChecks, Dumbbell, Clock } from "lucide-react";
 import { LearningHero } from "../components/LearningHero";
 import { LearningOutcome } from "../components/LearningOutcome";
@@ -44,7 +45,7 @@ import {
 import { getKnowledgeCollectionBySlug, computeCollectionProgress } from "../services/knowledge-collection.service";
 import { getKnowledgeGraphView, getPrerequisiteSeeds, getDependentSeeds } from "../services/knowledge-graph.service";
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
-import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
+import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
 function estimateReadingMinutes(seed: KnowledgeSeed): number {
@@ -63,6 +64,7 @@ function estimateReadingMinutes(seed: KnowledgeSeed): number {
 }
 
 export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
+  const router = useRouter();
   const { completedStepIds, toggleStep } = useSeedProgress(seed.id);
   const progress = computeSeedProgress(seed, completedStepIds);
   const stepSuggestion = getCompanionSuggestion(seed, completedStepIds);
@@ -206,11 +208,17 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
             <button
               type="button"
               onClick={() =>
-                pushCompanionIntent({
-                  module: "ckos",
-                  userGoal: `thực hành ${seed.title}`,
-                  currentContext: `Kỹ năng: ${seed.skills.join(", ") || "—"}. Công cụ AI: ${seed.aiTools.join(", ") || "—"}.`,
-                })
+                router.push(
+                  startCompanionWorkspace({
+                    module: "ckos",
+                    source: "knowledge-exercise",
+                    itemId: seed.id,
+                    itemType: "knowledge_seed",
+                    title: seed.title,
+                    userGoal: `thực hành ${seed.title}`,
+                    expectedOutput: `Kỹ năng: ${seed.skills.join(", ") || "—"}. Công cụ AI: ${seed.aiTools.join(", ") || "—"}.`,
+                  })
+                )
               }
               className="mt-3 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
             >
@@ -249,11 +257,17 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
           <button
             type="button"
             onClick={() =>
-              pushCompanionIntent({
-                module: "ckos",
-                userGoal: `bước tiếp theo sau ${seed.title}`,
-                currentContext: seed.nextStep,
-              })
+              router.push(
+                startCompanionWorkspace({
+                  module: "ckos",
+                  source: "knowledge-next-step",
+                  itemId: seed.id,
+                  itemType: "knowledge_seed",
+                  title: seed.title,
+                  userGoal: `bước tiếp theo sau ${seed.title}`,
+                  expectedOutput: seed.nextStep,
+                })
+              )
             }
             className="-mt-3 inline-flex rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-blue-300 hover:text-blue-600"
           >

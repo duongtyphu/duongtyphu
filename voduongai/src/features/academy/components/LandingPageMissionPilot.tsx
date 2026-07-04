@@ -7,12 +7,16 @@
  * Evidence + Reflection → Unlock Prompt Pack/Checklist/Template thật.
  */
 
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
-import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
+import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { MissionUnlockSection } from "@/components/portal/unlock/MissionUnlockSection";
 import { LANDING_PAGE_MISSION_ID, LANDING_PAGE_MISSION_TITLE } from "@/companion/unlock/unlock-assets";
 
 export function LandingPageMissionPilot() {
+  const router = useRouter();
   return (
     <div className="space-y-4 rounded-2xl border border-gray-100 bg-white/70 p-6 shadow-sm backdrop-blur-sm">
       <div>
@@ -27,11 +31,17 @@ export function LandingPageMissionPilot() {
       <button
         type="button"
         onClick={() =>
-          pushCompanionIntent({
-            module: "academy",
-            userGoal: LANDING_PAGE_MISSION_TITLE,
-            currentContext: "Mission thực hành viết Landing Page đầu tiên.",
-          })
+          router.push(
+            startCompanionWorkspace({
+              module: "academy",
+              source: "academy-mission-pilot",
+              itemId: LANDING_PAGE_MISSION_ID,
+              itemType: "mission",
+              title: LANDING_PAGE_MISSION_TITLE,
+              userGoal: LANDING_PAGE_MISSION_TITLE,
+              expectedOutput: "Mission thực hành viết Landing Page đầu tiên.",
+            })
+          )
         }
         className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
       >

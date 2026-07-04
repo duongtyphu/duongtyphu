@@ -1,15 +1,18 @@
 /**
- * EPIC 02 — Sprint 01: AI Workspace Foundation.
+ * EPIC 02 — Sprint 02: Connected Learning Ecosystem.
  *
  * Hành động dùng chung cho MỌI nút "Thực hành cùng Companion" / "Giao việc
  * cho Companion" / "Bắt đầu Workspace" / "Dùng Prompt này" / "Thực hành
- * quy trình này" / "Dùng cùng Companion" trên trang Không gian AI (và sau
- * này là các trang khác nếu cần) — không mỗi nút một logic riêng.
+ * quy trình này" / "Dùng cùng Companion" / "Dùng ngay" — trên TOÀN Portal
+ * (Học viện AI, AI Workspace, Thư viện tri thức), không chỉ trang Không
+ * gian AI như Sprint 01 — không mỗi nút một logic riêng.
  *
  * Sprint này CHƯA gọi AI thật, CHƯA có Agent thật — chỉ lưu context tạm
  * (sessionStorage) + một Growth Event tạm (localStorage), rồi điều hướng
  * sang `/portal/workspace` (MVP route hiển thị lại context, chưa xử lý gì).
  */
+
+import type { PortalModule } from "@/companion/agents/agent.types";
 
 export type WorkspaceItemType =
   | "work_need"
@@ -18,10 +21,12 @@ export type WorkspaceItemType =
   | "prompt"
   | "tool"
   | "learning_path"
-  | "resource";
+  | "resource"
+  | "mission"
+  | "knowledge_seed";
 
 export type WorkspaceContext = {
-  module: "ai-space";
+  module: PortalModule;
   source: string;
   title?: string;
   userGoal?: string;
@@ -34,7 +39,7 @@ export type WorkspaceContext = {
 
 export type WorkspaceStartedEvent = {
   type: "WORKSPACE_STARTED";
-  sourceModule: "ai-space";
+  sourceModule: PortalModule;
   title: string;
   timestamp: string;
 };
@@ -77,6 +82,7 @@ function pushGrowthEvent(event: WorkspaceStartedEvent) {
 
 function buildWorkspaceUrl(context: WorkspaceContext): string {
   const params = new URLSearchParams();
+  params.set("module", context.module);
   params.set("source", context.source);
   if (context.title) params.set("title", context.title);
   if (context.userGoal) params.set("goal", context.userGoal);
@@ -90,17 +96,22 @@ function buildWorkspaceUrl(context: WorkspaceContext): string {
 
 /**
  * `startCompanionWorkspace(context)` — điểm gọi DUY NHẤT cho mọi hành động
- * "thực hành cùng Companion" trên trang Không gian AI. Nhận context tối
- * thiểu (thiếu `module`/`routeFrom`/`timestamp` sẽ tự điền), lưu lại rồi
+ * "thực hành/dùng ngay cùng Companion" trên TOÀN Portal (Học viện AI, AI
+ * Workspace, Thư viện tri thức...). Nhận context tối thiểu (thiếu
+ * `module`/`routeFrom`/`timestamp` sẽ tự điền — `module` mặc định
+ * `"khong-gian-ai"` để không phá các call site Sprint 01 cũ), lưu lại rồi
  * trả về URL để điều hướng — component gọi `router.push(url)`.
  */
 export function startCompanionWorkspace(
-  input: Omit<WorkspaceContext, "module" | "routeFrom" | "timestamp"> & { routeFrom?: string }
+  input: Omit<WorkspaceContext, "module" | "routeFrom" | "timestamp"> & {
+    module?: PortalModule;
+    routeFrom?: string;
+  }
 ): string {
   const timestamp = new Date().toISOString();
   const routeFrom = input.routeFrom ?? (typeof window !== "undefined" ? window.location.pathname : "/portal/khong-gian-ai");
   const context: WorkspaceContext = {
-    module: "ai-space",
+    module: input.module ?? "khong-gian-ai",
     source: input.source,
     title: input.title,
     userGoal: input.userGoal,
@@ -114,7 +125,7 @@ export function startCompanionWorkspace(
   saveWorkspaceContext(context);
   pushGrowthEvent({
     type: "WORKSPACE_STARTED",
-    sourceModule: "ai-space",
+    sourceModule: context.module,
     title: context.title ?? context.userGoal ?? context.source,
     timestamp,
   });

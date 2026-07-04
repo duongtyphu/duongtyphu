@@ -1,21 +1,23 @@
 "use client";
 
 /**
- * EPIC 02 — Sprint 04 bổ sung: Companion Task Entry.
+ * EPIC 02 — Sprint 02: Connected Learning Ecosystem.
  *
  * Điểm vào duy nhất để người dùng GIAO VIỆC cho Companion — không phải
  * chọn Agent, không phải chatbot. Người dùng chỉ mô tả mục tiêu bằng lời
- * của mình; Companion tự hiểu mục tiêu, lập kế hoạch, chọn AI Specialist
- * và mở Work Session (xem `CompanionFirstRule.md`).
+ * của mình; Companion nhận Context và mở Workspace.
  *
- * Kỹ thuật: chỉ gọi `pushCompanionIntent()` — tái dùng nguyên vẹn
- * orchestrator/work-session engine đã có, không thêm logic chọn Agent mới.
+ * Kỹ thuật: gọi `startCompanionWorkspace()` — điểm gọi duy nhất dùng chung
+ * với mọi CTA "Thực hành/Giao việc/Dùng ngay cùng Companion" trên toàn
+ * Portal (xem docs/CONNECTED_LEARNING_ECOSYSTEM.md), rồi điều hướng sang
+ * `/portal/workspace`.
  */
 
 import { useId, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";
 import type { PortalModule } from "@/companion/agents/agent.types";
-import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
+import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 
 export function CompanionTaskEntry({
   module,
@@ -29,17 +31,14 @@ export function CompanionTaskEntry({
   submitLabel?: string;
 }) {
   const [value, setValue] = useState("");
-  const [justSent, setJustSent] = useState(false);
   const inputId = useId();
+  const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const goal = value.trim();
     if (!goal) return;
-    pushCompanionIntent({ module, userGoal: goal });
-    setValue("");
-    setJustSent(true);
-    setTimeout(() => setJustSent(false), 4000);
+    router.push(startCompanionWorkspace({ module, source: "task-entry", userGoal: goal }));
   }
 
   return (
@@ -68,11 +67,6 @@ export function CompanionTaskEntry({
           {submitLabel}
         </button>
       </div>
-      {justSent && (
-        <p className="mt-2 text-xs text-blue-600">
-          Companion đã nhận việc — mở biểu tượng Companion ở góc màn hình để xem mình đang làm gì.
-        </p>
-      )}
     </form>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { JourneyTimeline } from "./JourneyTimeline";
 import { CompanionGuidance } from "./CompanionGuidance";
@@ -8,7 +9,7 @@ import { GrowthCheckpoint } from "./GrowthCheckpoint";
 import { computeJourneyStatus, getCompanionJourneyGuidance } from "../services/journey.service";
 import { JOURNEY_STAGE_LABELS, JourneyStage } from "../types/journey.types";
 import type { LearningJourney } from "../types/journey.types";
-import { pushCompanionIntent } from "@/lib/portal/companion/orchestrator-intent";
+import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
 /**
@@ -18,6 +19,7 @@ import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskE
 export function JourneyCard({ journey }: { journey: LearningJourney }) {
   const status = computeJourneyStatus(journey);
   const guidance = getCompanionJourneyGuidance(journey, status);
+  const router = useRouter();
 
   return (
     <div className="space-y-4 rounded-2xl border border-gray-100 bg-white/70 p-6 shadow-sm backdrop-blur-sm">
@@ -46,15 +48,21 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
           <ArrowRight className="h-4 w-4" />
         </Link>
 
-        {/* Sprint A.2 — Bắt đầu Mission: gửi missionTitle/goal thật cho Companion Orchestrator. */}
+        {/* Sprint 02 — Bắt đầu Mission: Companion nhận Context, Workspace mở. */}
         <button
           type="button"
           onClick={() =>
-            pushCompanionIntent({
-              module: "academy",
-              userGoal: journey.title,
-              currentContext: `${journey.goal} — có minh chứng thật khi hoàn thành.`,
-            })
+            router.push(
+              startCompanionWorkspace({
+                module: "academy",
+                source: "academy-journey",
+                itemId: journey.id,
+                itemType: "learning_path",
+                title: journey.title,
+                userGoal: journey.title,
+                expectedOutput: `${journey.goal} — có minh chứng thật khi hoàn thành.`,
+              })
+            )
           }
           className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
         >
