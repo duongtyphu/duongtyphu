@@ -41,6 +41,7 @@ import {
   getNextAction,
 } from "@/lib/portal/foundation/execution-orchestrator";
 import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store";
+import { computeCapabilityProfiles } from "@/lib/portal/foundation/capability-engine";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -203,6 +204,10 @@ export function WorkspaceMvp() {
     // Sprint B4 — Portfolio Engine: Output đủ điều kiện (đã Review + đã
     // Reflection) tự động vào Portfolio, không cần bước "lưu vào Portfolio" riêng.
     promoteEligibleOutputs(result.session.sessionId, result.session);
+    // Sprint B5 — Capability Engine: tính lại Capability từ Evidence thật
+    // (Output + Reflection) ngay khi có Evidence mới — không có UI hiển
+    // thị kết quả này trong sprint B5 (đúng brief "không cần UI").
+    computeCapabilityProfiles();
   }
 
   return (
