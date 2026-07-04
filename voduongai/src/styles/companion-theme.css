@@ -1,9 +1,10 @@
 /**
  * Companion World™ — Artwork Final (FINAL v1). Companion Home là nội dung
- * Sanctuary gốc; "Companion qua hình ảnh" gộp 7 artwork đã duyệt thành một
- * trang duy nhất. Mọi class ở đây chỉ phục vụ: (1) nút "quay lại" nổi
- * trên artwork, (2) hiệu ứng chuyển route nhẹ dùng chung cho mọi trang
- * /portal/companion/*. Scope: CHỈ áp dụng trong route này.
+ * Sanctuary gốc; "Companion qua hình ảnh" là một cuốn sách 3D (flipbook)
+ * gộp 7 artwork đã duyệt. Mọi class ở đây chỉ phục vụ: (1) nút "quay lại"
+ * nổi trên artwork, (2) hiệu ứng chuyển route nhẹ dùng chung cho mọi
+ * trang /portal/companion/*, (3) khung sách/trang sách của flipbook.
+ * Scope: CHỈ áp dụng trong route này.
  */
 
 /* Motion Language — Leaving/route transition: fade + blur nhẹ khi một
@@ -61,26 +62,79 @@
   transform: translateY(-1px);
 }
 
-/* Story Book Experience — mỗi artwork trong "Companion qua hình ảnh" đọc
-   như một trang sách: shadow rất mờ quanh trang + một dải sáng rất nhẹ ở
-   điểm nối giữa hai trang (khoảng nghỉ 64px), không phải hiệu ứng lật
-   sách 3D — chỉ gợi ý cảm giác một chương mới đang bắt đầu. */
-.companion-story-page {
-  box-shadow: 0 30px 70px -35px rgba(0, 0, 0, 0.65);
+/* ─────────────────────────────────────────────
+ * 3D Flipbook — "Companion qua hình ảnh". Magical storybook: deep blue/
+ * purple/gold, glow mềm, không neon, không gaming. Ảnh không bao giờ bị
+ * crop/méo — mỗi "lá" chỉ là khung cố định tỉ lệ, ảnh nằm giữa bằng
+ * object-fit: contain (đặt trực tiếp trên thẻ Image trong component).
+ * ───────────────────────────────────────────── */
+
+/* Sân khấu ngoài — cosmic rất nhẹ, chỉ 2 quầng sáng tĩnh, không animation
+   nặng (không lặp lại CompanionCosmicBackground cũ đã bị gỡ). */
+.companion-flipbook-stage {
+  background-image:
+    radial-gradient(900px circle at 15% -10%, rgba(124, 58, 237, 0.16), transparent 60%),
+    radial-gradient(760px circle at 100% 10%, rgba(34, 211, 238, 0.1), transparent 60%);
 }
 
-.companion-story-seam {
-  isolation: isolate;
+/* Khung sách — "bìa" tối, viền vàng rất mờ, bóng đổ sâu tạo chiều sâu 3D. */
+.companion-flipbook-frame {
+  padding: 1.25rem;
+  border-radius: 1.5rem;
+  background: linear-gradient(160deg, rgba(30, 20, 55, 0.85), rgba(10, 14, 30, 0.9));
+  border: 1px solid rgba(250, 204, 120, 0.16);
+  box-shadow:
+    0 50px 100px -40px rgba(0, 0, 0, 0.75),
+    0 0 0 1px rgba(167, 139, 250, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.companion-story-seam::before {
-  content: "";
-  position: absolute;
-  left: 10%;
-  right: 10%;
-  top: -2rem;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(226, 232, 255, 0.16), transparent);
-  pointer-events: none;
+@media (min-width: 640px) {
+  .companion-flipbook-frame {
+    padding: 2rem;
+  }
+}
+
+/* Trang sách — "giấy" tối tím/xanh đêm, viền trong nhẹ để artwork nổi lên. */
+.companion-flipbook-leaf {
+  border-radius: 0.85rem;
+  background: linear-gradient(155deg, rgba(20, 16, 40, 0.9), rgba(8, 12, 26, 0.95));
+  box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.12), inset 0 20px 50px -35px rgba(0, 0, 0, 0.6);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Prev/Next — glass tròn, glow vàng/tím rất nhẹ khi hover, không neon. */
+.companion-flipbook-nav {
+  display: inline-flex;
+  height: 2.75rem;
+  width: 2.75rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(250, 204, 120, 0.22);
+  background: rgba(15, 12, 30, 0.6);
+  color: #f1f5f9;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+}
+
+.companion-flipbook-nav:hover:not(:disabled) {
+  border-color: rgba(250, 204, 120, 0.45);
+  box-shadow: 0 0 24px -10px rgba(250, 204, 120, 0.5);
+  transform: translateY(-1px);
+}
+
+.companion-flipbook-nav:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-flipbook-leaf {
+    transition: none !important;
+  }
 }
 
