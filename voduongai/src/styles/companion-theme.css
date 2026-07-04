@@ -472,3 +472,30 @@
     right: 1.25rem;
   }
 }
+
+/* ─────────────────────────────────────────────
+ * Companion World™ — CW-001 Hero Implementation.
+ * Parallax rất nhẹ trên ảnh nền CW-001 — chỉ một "ambient drift" chậm
+ * (scale + dịch chuyển vài %), không phải parallax theo scroll bằng JS.
+ * ───────────────────────────────────────────── */
+.companion-hero-parallax {
+  animation: companion-hero-drift 26s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes companion-hero-drift {
+  0%, 100% { transform: scale(1.04) translate3d(0, 0, 0); }
+  50% { transform: scale(1.08) translate3d(-0.6%, -0.8%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .companion-hero-parallax {
+    animation: none !important;
+    transform: scale(1.04) !important;
+  }
+}
+
+/* Chapter cards — thêm chút glow khi hover, ngoài transform/border có sẵn. */
+.companion-bookmark-tab:hover {
+  box-shadow: 0 -4px 20px -8px rgba(34, 211, 238, 0.35);
+}

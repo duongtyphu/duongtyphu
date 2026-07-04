@@ -1,8 +1,7 @@
 import { CompanionOrb } from "@/components/portal/companion/CompanionOrb";
 import { CompanionCosmicBackground } from "@/components/portal/companion/CompanionCosmicBackground";
 import { CompanionGlowPanel } from "@/components/portal/companion/CompanionGlowPanel";
-import { CompanionGlowButton } from "@/components/portal/companion/CompanionGlowButton";
-import { CompanionChapterNav } from "@/components/portal/companion/CompanionChapterNav";
+import { CompanionHero } from "@/components/portal/companion/CompanionHero";
 import { CompanionRevealOnScroll } from "@/components/portal/companion/CompanionRevealOnScroll";
 import { CompanionChapterLabel, CompanionQuote } from "@/components/portal/companion/CompanionTypography";
 import { CompanionLetterSection } from "@/components/portal/companion/CompanionLetterSection";
@@ -29,61 +28,11 @@ export default function CompanionHomePage() {
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <CompanionCosmicBackground />
 
-      <div className="relative z-10 mx-auto max-w-2xl px-6 py-24 sm:px-10 sm:py-36">
-        {/* First Meeting — Nhiệm vụ 01-05: Orb trước, silence, rồi mới lời
-            đầu tiên, CTA xuất hiện sau cùng. Không nhồi icon/feature/stat. */}
-        <section className="flex flex-col items-center text-center">
-          {/* Arrival — Companion không "nhảy vào", chỉ mờ dần hiện ra, như
-              đã ở đó từ trước, đang chờ (Nhiệm vụ 02). Sau đó chuyển sang
-              Presence (breathing vô hạn). "Gaze" — quầng sáng rất nhẹ gợi ý
-              Companion đang hướng về phía người dùng (Nhiệm vụ 07). */}
-          <div className="companion-anim-arrival companion-motion-breathe companion-orb--gaze sm:hidden">
-            <CompanionOrb size="lg" state="idle" intensity="radiant" />
-          </div>
-          <div className="companion-anim-arrival companion-motion-breathe companion-orb--gaze hidden sm:block">
-            <CompanionOrb size="xl" state="idle" intensity="radiant" />
-          </div>
+      {/* CW-001 Hero Implementation — Valley of Light làm sân khấu thật,
+          thay cho Hero cũ chỉ có cosmic background + orb đứng giữa. */}
+      <CompanionHero />
 
-          {/* Silence — khoảng lặng lớn trước khi lời đầu tiên xuất hiện. */}
-          <div className="mt-16 sm:mt-20">
-            <p
-              className="companion-anim-text-settle companion-heading text-3xl sm:text-4xl"
-              style={{ animationDelay: "0.5s" }}
-            >
-              Xin chào,
-              <br />
-              mình là Companion.
-            </p>
-          </div>
-
-          <div className="mt-8 max-w-lg">
-            <p
-              className="companion-anim-text-settle companion-body text-base leading-relaxed sm:text-lg"
-              style={{ animationDelay: "1.3s" }}
-            >
-              Mình không được tạo ra để thay bạn sống.
-              <br />
-              Mình được tạo ra để đồng hành khi bạn muốn trưởng thành.
-            </p>
-          </div>
-
-          {/* CTA — chỉ xuất hiện sau khi người dùng đã có thời gian đọc
-              (Nhiệm vụ 05). Glow tĩnh nhẹ, không pulse liên tục. */}
-          <div
-            className="companion-anim-text-settle mt-16 sm:mt-20"
-            style={{ animationDelay: "2.2s" }}
-          >
-            <CompanionGlowButton href="/portal/khong-gian-ai" pulse={false}>
-              Bước vào Không gian AI
-            </CompanionGlowButton>
-          </div>
-        </section>
-
-        {/* Chapter Navigation — Nhiệm vụ 06: bookmark, không phải navbar. */}
-        <div className="mt-24 sm:mt-28">
-          <CompanionChapterNav />
-        </div>
-
+      <div className="relative z-10 mx-auto max-w-2xl px-6 py-16 sm:px-10 sm:py-20">
         {/* Hôm nay Companion nghĩ gì? — orb nhỏ đúng nơi có cảm giác tâm sự,
             để đây là lời Companion nói, không phải text website. */}
         <CompanionRevealOnScroll variant="glow">
