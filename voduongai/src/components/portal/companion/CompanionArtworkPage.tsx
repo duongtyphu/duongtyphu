@@ -7,6 +7,8 @@ import Link from "next/link";
  * trắng/padding nào quanh ảnh. Không sidebar/header trong ảnh, không chữ
  * đè lên ảnh (trừ nút "Quay lại Companion" nổi ở góc). `width`/`height` là
  * kích thước gốc thật của ảnh để next/image giữ đúng tỉ lệ, không crop/méo.
+ * Lazy load mặc định (không set `priority`) — chỉ Companion Home mới
+ * preload, các trang con chỉ tải khi được điều hướng tới.
  */
 export function CompanionArtworkPage({
   src,
@@ -29,7 +31,7 @@ export function CompanionArtworkPage({
           height={height}
           sizes="100vw"
           className="block h-auto w-full"
-          priority
+          loading="lazy"
         />
 
         <Link href="/portal/companion" className="companion-artwork-back">
