@@ -78,3 +78,67 @@ Dù AI đạt Certification, **không có tiêu chí nào trong 10 mục ở đ�
 phép AI vượt qua ranh giới Governance đã khóa** (`AUTONOMOUS_AI_WORKFORCE.md`
 mục Governance Rules) — Certification xác nhận AI **có năng lực làm việc
 đúng chuẩn**, không cấp thêm quyền hạn nào vượt Companion/User.
+
+---
+
+## 6. PHASE 3 EPIC 06 — Áp dụng cho pipeline Tuyển dụng (AI Recruitment)
+
+Mục 1-5 ở trên áp dụng cho **mọi** AI trong Workforce (đã tuyển hay đang
+tuyển). Mục này bổ sung cách 10 tiêu chí ở mục 1 được **kiểm tra cụ thể**
+khi 1 Candidate đi qua pipeline Tuyển dụng của EPIC 06
+(`AI_RECRUITMENT_SYSTEM.md`) — không thay thế mục 1, chỉ ánh xạ 6 nhóm
+kiểm tra brief EPIC 06 yêu cầu vào đúng 10 tiêu chí đã có sẵn ở đây:
+
+| Nhóm kiểm tra (EPIC 06) | Ánh xạ vào tiêu chí mục 1 |
+|---|---|
+| Output Format | Tiêu chí #3 (Tạo Output đúng format) |
+| Blueprint Compliance | Tiêu chí #2 (Tuân thủ Blueprint) |
+| QA Score | Tổng hợp từ tiêu chí #9 (Evidence) + QA Checklist Department liên quan (`AI_COMPANION_REGISTRY.md`) |
+| Collaboration | Tiêu chí #8 (Phối hợp Department khác) |
+| Evidence | Tiêu chí #9 (Có thể tạo Evidence) |
+| Runtime Stability | Tiêu chí #10 (Có thể ghi Log) + kết quả Test Runtime ở `AI_SANDBOX.md` §5 |
+
+### 6.1 Certification Record cho Candidate (mở rộng, không thay `CertificationRecord` gốc)
+
+```ts
+type CertificationRecord = {
+  // Trường gốc — không đổi (dùng chung mọi AI, không riêng Candidate mới):
+  certificationId: string;
+  providerId: string;
+  capabilityId: string;
+  basedOnBenchmarkRunIds: string[];
+  decidedBy: "admin";
+  decision: "certified" | "rejected";
+  reason: string;
+  decidedAt: string;
+  expiresAt?: string;
+
+  // Mở rộng riêng cho pipeline EPIC 06 — chỉ có khi Certification này
+  // thuộc 1 Candidate đang tuyển dụng (không có ở Certification định kỳ
+  // của Companion đã Production):
+  candidateId?: string;
+  gapId?: string;
+};
+```
+
+### 6.2 Không đạt → quay lại Training (đúng brief mục VI)
+
+```
+certifying (đánh giá theo 10 tiêu chí mục 1)
+   │
+  đạt đủ 10/10 ──► certified ──► Recruitment Proposal (AI_RECRUITMENT_SYSTEM.md)
+   │
+  thiếu ≥1 tiêu chí ──► quay lại AI_TRAINING_ENGINE.md (Training Round mới,
+                         tập trung đúng topic liên quan tiêu chí đã fail)
+```
+
+Không có đường tắt — Candidate phải hoàn thành lại Comprehension Check
+của đúng topic liên quan trước khi được Certify lại, giữ nguyên nguyên
+tắc "Sandbox Task không dùng dữ liệu/Output thật của User" ở mục 2.
+
+### 6.3 Ranh giới bổ sung
+
+Certification cho Candidate mới **không được hạ thấp 10 tiêu chí** ở
+mục 1 để "cho qua" nhanh hơn Certification định kỳ của Companion đã
+Production — cùng 1 chuẩn, không có phiên bản "dễ hơn" cho Candidate
+mới dù pipeline tuyển dụng có áp lực thời gian.
