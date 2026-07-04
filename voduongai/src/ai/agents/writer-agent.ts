@@ -2,14 +2,19 @@
  * AI Agent Integration MVP — Writer Agent.
  *
  * "server-only" — chạy trong API Route (`src/app/api/ai/workforce/route.ts`),
- * KHÔNG import vào component client. Tái sử dụng `callCompanionModel`/
- * `isAiConfigured`/`extractJson` đã có sẵn (`companion.agent.ts`, dùng cho
- * Admin Companion Studio) — không tạo cơ chế gọi model thứ hai. Không hard-
- * code API key — key đọc từ biến môi trường qua `isAiConfigured()`.
+ * KHÔNG import vào component client.
+ *
+ * PHASE 4 EPIC 01: Writer Agent KHÔNG gọi vendor AI (Anthropic/OpenAI/
+ * Gemini) trực tiếp — mọi lời gọi model thật đi qua
+ * `providerManager.execute()` (`src/ai/providers/provider-manager.ts`),
+ * Provider Manager tự chọn Provider qua ModelRouter. `extractJson` vẫn
+ * tái dùng từ `companion.agent.ts` (thuần tiện ích parse JSON, không
+ * phải lời gọi vendor). Không hard-code API key.
  */
 
 import "server-only";
-import { callCompanionModel, extractJson, isAiConfigured } from "./companion.agent";
+import { extractJson } from "./companion.agent";
+import { providerManager } from "@/ai/providers/provider-manager";
 
 export type WriterAgentInput = {
   goal: string;
@@ -57,9 +62,13 @@ function mockResult(input: WriterAgentInput): WriterAgentResult {
 }
 
 export async function runWriterAgent(input: WriterAgentInput): Promise<WriterAgentResult> {
-  if (!isAiConfigured()) return mockResult(input);
+  if (!providerManager.hasAvailableRealProvider()) return mockResult(input);
 
-  const raw = await callCompanionModel(buildPrompt(input));
-  const parsed = extractJson<{ draftOutput: string; summary: string; suggestedTitle: string; notes: string }>(raw);
-  return { ...parsed, isMock: false };
+  const result = await providerManager.execute({
+    capability: "writing.draft",
+    taskType: "writer",
+    input: { prompt: buildPrompt(input) },
+  });
+  const parsed = extractJson<{ draftOutput: string; summary: string; suggestedTitle: string; notes: string }>(result.raw);
+  return { ...parsed, isMock: result.isMock };
 }

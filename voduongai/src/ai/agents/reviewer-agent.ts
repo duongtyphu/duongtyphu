@@ -5,10 +5,14 @@
  * gợi ý (`approvalRecommendation` là GỢI Ý, không phải quyết định cuối).
  * Quyết định Approve cuối cùng luôn do User bấm (xem
  * `workspace-session-store.ts` → `approveOutput`).
+ *
+ * PHASE 4 EPIC 01: Reviewer Agent KHÔNG gọi vendor AI trực tiếp — đi qua
+ * `providerManager.execute()`, giống Writer Agent.
  */
 
 import "server-only";
-import { callCompanionModel, extractJson, isAiConfigured } from "./companion.agent";
+import { extractJson } from "./companion.agent";
+import { providerManager } from "@/ai/providers/provider-manager";
 
 export type ReviewerAgentInput = {
   draftOutput: string;
@@ -56,9 +60,13 @@ function mockResult(): ReviewerAgentResult {
 }
 
 export async function runReviewerAgent(input: ReviewerAgentInput): Promise<ReviewerAgentResult> {
-  if (!isAiConfigured()) return mockResult();
+  if (!providerManager.hasAvailableRealProvider()) return mockResult();
 
-  const raw = await callCompanionModel(buildPrompt(input));
-  const parsed = extractJson<Omit<ReviewerAgentResult, "isMock">>(raw);
-  return { ...parsed, isMock: false };
+  const result = await providerManager.execute({
+    capability: "writing.review",
+    taskType: "reviewer",
+    input: { prompt: buildPrompt(input) },
+  });
+  const parsed = extractJson<Omit<ReviewerAgentResult, "isMock">>(result.raw);
+  return { ...parsed, isMock: result.isMock };
 }
