@@ -158,9 +158,16 @@ export type CompanionReview = {
   nextTimeSuggestion: string;
 };
 
-/** 10 loại Growth Event — bản cuối cùng, xem `growth-event-bus.ts`. */
+/**
+ * 12 loại Growth Event. 10 loại gốc theo `FOUNDATION_DATA_LAYER.md` mục
+ * 12, cộng `WORKSPACE_RESUMED`/`WORKSPACE_COMPLETED` thêm ở Sprint B2 (AI
+ * Workspace Execution Engine) cho vòng đời Pause/Resume/Complete của
+ * `WorkspaceSession` — xem `workspace-session-store.ts`.
+ */
 export type GrowthEventType =
   | "WORKSPACE_STARTED"
+  | "WORKSPACE_RESUMED"
+  | "WORKSPACE_COMPLETED"
   | "MISSION_STARTED"
   | "MISSION_COMPLETED"
   | "OUTPUT_CREATED"

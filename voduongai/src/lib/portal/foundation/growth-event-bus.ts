@@ -24,6 +24,8 @@ const GROWTH_EVENT_BUS = "vdai-growth-event";
     mục 8) — tối thiểu 3 module theo Product Guardrails. */
 export const GROWTH_EVENT_CONSUMERS: Record<GrowthEventType, string[]> = {
   WORKSPACE_STARTED: ["learning-journal", "my-journey", "living-garden"],
+  WORKSPACE_RESUMED: ["learning-journal", "my-journey", "living-garden"],
+  WORKSPACE_COMPLETED: ["learning-journal", "my-journey", "living-garden", "portfolio"],
   MISSION_STARTED: ["learning-journal", "my-journey", "living-garden"],
   MISSION_COMPLETED: ["learning-journal", "my-journey", "living-garden", "capability-engine"],
   OUTPUT_CREATED: ["learning-journal", "my-journey", "living-garden", "portfolio", "impact-engine"],
