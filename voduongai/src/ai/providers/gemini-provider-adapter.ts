@@ -36,6 +36,16 @@ export class GeminiProviderAdapter implements ProviderAdapter {
     "office.spreadsheet",
     "growth.goal-coaching",
     "growth.reflection-coaching",
+    "research.fact-checking",
+    "research.trend-scouting",
+    "writing.copywriting",
+    "writing.seo",
+    "business.sales",
+    "business.finance",
+    "design.visual",
+    "automation.workflow",
+    "office.dashboard",
+    "growth.learning-coaching",
   ];
 
   isAvailable(): boolean {

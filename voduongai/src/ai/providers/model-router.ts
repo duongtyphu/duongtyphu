@@ -51,6 +51,10 @@ const CAPABILITY_FAMILY_PREFERENCE: Record<string, string[]> = {
   qa: ["openai", "anthropic", "mock"],
   office: ["openai", "anthropic", "mock"],
   growth: ["anthropic", "openai", "mock"],
+  // PHASE 4 EPIC 02 — Wave 2 Companion capability family:
+  business: ["anthropic", "openai", "mock"],
+  design: ["openai", "anthropic", "mock"],
+  automation: ["openai", "anthropic", "mock"],
 };
 
 function capabilityFamily(capability: string): string {

@@ -78,11 +78,40 @@ Registry mô tả **nhân sự AI (vai trò nghiệp vụ)**. 2 Registry độc 
 nối nhau qua `capability`/`providerPreference` (chuỗi id), không trộn
 dữ liệu.
 
-## 6. Known Limitations
+## 6. Wave 2 (tiếp nối, cùng Sprint continuation)
+
+10 Companion tiếp theo, chạm đủ 7 Department (Creative & Design lần đầu
+có Companion chạy thật):
+
+| employeeId | Department | Position | Capability | Provider Pref → Fallback |
+|---|---|---|---|---|
+| EMP-R003 | research-knowledge | Fact Checker Companion | `research.fact-checking` | anthropic → openai |
+| EMP-R004 | research-knowledge | Trend Scout Companion | `research.trend-scouting` | gemini → anthropic |
+| EMP-C003 | content-communication | Copywriter Companion | `writing.copywriting` | anthropic → openai |
+| EMP-C004 | content-communication | SEO Companion | `writing.seo` | anthropic → openai |
+| EMP-B002 | business-strategy | Sales Companion | `business.sales` | anthropic → openai |
+| EMP-B003 | business-strategy | Finance Companion | `business.finance` | anthropic → openai |
+| EMP-D001 | creative-design | Designer Companion | `design.visual` | openai → anthropic |
+| EMP-T003 | technology-automation | Automation Companion | `automation.workflow` | openai → anthropic |
+| EMP-O002 | office-productivity | Dashboard Companion | `office.dashboard` | openai → anthropic |
+| EMP-G003 | personal-growth | Learning Coach Companion | `growth.learning-coaching` | anthropic → openai |
+
+`WORKFORCE_CATALOG = [...WAVE1_COMPANION_CATALOG, ...WAVE2_COMPANION_CATALOG]`
+— `listCompanions()`/`activateWave1Companions()` đọc/activate cả 2 Wave
+cùng lúc (hàm giữ nguyên tên cũ để không đổi API, chạy cho toàn Registry).
+
+Tổng 20/30 Companion đã thiết kế ở `AI_COMPANION_REGISTRY.md` nay đã có
+runtime thật — đủ 7/7 Department.
+
+## 7. Known Limitations
 
 1. Overlay trạng thái lưu `localStorage` (client-side, per-browser) —
    không đồng bộ đa thiết bị/đa người dùng trong sprint này (giống mọi
    Foundation Data Layer khác trước Sprint chuyển sang Supabase thật).
-2. Chỉ Wave 1 (10 Companion) — Wave 2/3 (20 Companion còn lại trong
-   30-Companion Team đã thiết kế ở `AI_COMPANION_REGISTRY.md`) chưa có
-   trong catalog runtime, thuộc phạm vi Sprint sau.
+2. Còn đúng 10 Companion cho Wave 3 (đã thiết kế ở `AI_COMPANION_REGISTRY.md`,
+   chưa có runtime): Customer Research Specialist (Research), Translator
+   (Content), Partnership Specialist (Business), Presentation Specialist/
+   Video Specialist/Brand Specialist (Creative — 3), Integration
+   Specialist (Technology), Word Specialist/PowerPoint Specialist/Report
+   Specialist (Office — 3). Growth Department đã đủ 3/3 từ Wave 1+2,
+   không còn Companion Growth nào cho Wave 3.

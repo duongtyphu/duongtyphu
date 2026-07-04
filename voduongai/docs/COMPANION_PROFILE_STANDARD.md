@@ -54,7 +54,7 @@ type CompanionRecord = {
    `providerId` nội bộ (`anthropic`/`openai`/`gemini`/`mock`), là chi
    tiết vận hành server-side, không phải nội dung nghiệp vụ.
 
-## 3. 10 Companion Wave 1 — tóm tắt (chi tiết đầy đủ trong `workforce-registry.ts`)
+## 3. 10 Companion Wave 1 — tóm tắt (chi tiết đầy đủ trong `workforce-registry.ts`; xem `WORKFORCE_REGISTRY.md` §6 cho Wave 2)
 
 | employeeId | Department | Position | Capability | Provider Pref → Fallback |
 |---|---|---|---|---|

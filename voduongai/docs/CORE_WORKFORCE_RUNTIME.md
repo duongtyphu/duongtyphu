@@ -1,5 +1,10 @@
 # PHASE 4 EPIC 02 — Core Workforce Runtime (Activate Core AI Companion Team)
 
+> **Cập nhật**: Sprint tiếp nối đã Activate thêm **Wave 2** (10 Companion),
+> nâng tổng Runtime lên **20/30 Companion**, đủ **7/7 Department**. Nội
+> dung dưới đây giữ nguyên phần Wave 1 làm tài liệu gốc; xem
+> `WORKFORCE_REGISTRY.md` §6 cho danh sách đầy đủ Wave 2.
+
 > Tổng quan Sprint — nối `WORKFORCE_REGISTRY.md`, `COMPANION_PROFILE_STANDARD.md`,
 > `COMPANION_LIFECYCLE.md`, `COMPANION_RUNTIME.md` thành 1 bức tranh. Đây
 > là bước đầu tiên biến AI Workforce từ kiến trúc thiết kế (EPIC 03/05/06)
@@ -61,7 +66,7 @@ Không file nào thuộc `workspace-session-store.ts`/`mission-catalog.ts`/
 | ProviderManager được gọi đúng | route `companion-task` gọi thẳng `providerManager.execute()` (PHASE 4 EPIC 01), verify qua test + curl thật |
 | Output trả về Runtime | `CompanionTaskResult` — verify cấu trúc đúng, `isMock`/`providerId` chính xác |
 | Không phá Build | `npm run build` thành công |
-| Không phá Test | `npx vitest run` — 85/85 pass (74 cũ + 11 mới, 0 regression) |
+| Không phá Test | `npx vitest run` — 90/90 pass (85 trước Wave 2 + 5 test Wave 2 mới, 0 regression) |
 
 ## 4. Product Principle — thể hiện trong code
 

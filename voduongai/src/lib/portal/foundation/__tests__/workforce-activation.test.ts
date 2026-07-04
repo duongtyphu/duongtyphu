@@ -23,16 +23,17 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
     vi.restoreAllMocks();
   });
 
-  it("Workforce Registry: đủ 10 Companion, đúng 6 Department theo brief", () => {
+  it("Workforce Registry: đủ 20 Companion (Wave 1 + Wave 2), đúng 7 Department", () => {
     const companions = listCompanions();
-    expect(companions).toHaveLength(10);
+    expect(companions).toHaveLength(20);
 
-    expect(listByDepartment("research-knowledge")).toHaveLength(2);
-    expect(listByDepartment("content-communication")).toHaveLength(2);
-    expect(listByDepartment("business-strategy")).toHaveLength(1);
-    expect(listByDepartment("technology-automation")).toHaveLength(2);
-    expect(listByDepartment("office-productivity")).toHaveLength(1);
-    expect(listByDepartment("personal-growth")).toHaveLength(2);
+    expect(listByDepartment("research-knowledge")).toHaveLength(4);
+    expect(listByDepartment("content-communication")).toHaveLength(4);
+    expect(listByDepartment("business-strategy")).toHaveLength(3);
+    expect(listByDepartment("creative-design")).toHaveLength(1);
+    expect(listByDepartment("technology-automation")).toHaveLength(3);
+    expect(listByDepartment("office-productivity")).toHaveLength(2);
+    expect(listByDepartment("personal-growth")).toHaveLength(3);
 
     // Mỗi Companion đủ 19 trường hồ sơ theo brief.
     for (const c of companions) {
@@ -58,14 +59,14 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
     }
   });
 
-  it("Companion Lifecycle: activateWave1Companions() đưa cả 10 Companion từ inactive -> active, ghi đủ 10 COMPANION_ACTIVATED", () => {
+  it("Companion Lifecycle: activateWave1Companions() đưa cả 20 Companion từ inactive -> active, ghi đủ 20 COMPANION_ACTIVATED", () => {
     const activated = activateWave1Companions();
-    expect(activated).toHaveLength(10);
+    expect(activated).toHaveLength(20);
     expect(activated.every((c) => c.workingStatus === "active")).toBe(true);
     expect(listCompanions().every((c) => c.workingStatus === "active")).toBe(true);
 
     const events = readGrowthEvents().filter((e) => e.eventType === "COMPANION_ACTIVATED");
-    expect(events).toHaveLength(10);
+    expect(events).toHaveLength(20);
   });
 
   it("Companion Lifecycle: từ chối chuyển trạng thái sai thứ tự (vd inactive -> active thẳng)", () => {
@@ -102,6 +103,12 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
       ["EMP-T001", "Coding Companion"],
       ["EMP-O001", "Excel Companion"],
       ["EMP-G001", "Goal Coach Companion"],
+      // Wave 2
+      ["EMP-R003", "Fact Checker Companion"],
+      ["EMP-C003", "Copywriter Companion"],
+      ["EMP-B002", "Sales Companion"],
+      ["EMP-D001", "Designer Companion"],
+      ["EMP-T003", "Automation Companion"],
     ])("%s (%s) nhận Task và trả Output đúng cấu trúc", async (employeeId, expectedPosition) => {
       const result = await assignTask(employeeId, { prompt: "Task kiểm thử Sprint Activation." });
       expect(result.position).toBe(expectedPosition);

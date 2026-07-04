@@ -1,8 +1,8 @@
 /**
- * PHASE 4 EPIC 02 — Workforce Registry (Wave 1, 10 AI Companion).
+ * PHASE 4 EPIC 02 — Workforce Registry (Wave 1 + Wave 2, 20 AI Companion).
  *
- * Nguồn sự thật cho 10 AI Companion Wave 1 — Companion (COO)/UI CHỈ ĐỌC
- * Registry này, không hard-code Companion nào. Static catalog (giống
+ * Nguồn sự thật cho AI Companion Wave 1 (10) + Wave 2 (10) — Companion
+ * (COO)/UI CHỈ ĐỌC Registry này, không hard-code Companion nào. Static catalog (giống
  * `mission-catalog.ts`) cho phần định nghĩa cố định (Mission/Capability/
  * Contract/...), cộng 1 overlay trong `localStorage` cho phần MUTABLE
  * (`workingStatus`/`performanceScore`) — giữ nguyên pattern đã dùng ở
@@ -269,6 +269,227 @@ const WAVE1_COMPANION_CATALOG: readonly CompanionRecord[] = [
   },
 ] as const;
 
+/**
+ * Wave 2 (PHASE 4 EPIC 02, tiếp nối Wave 1) — 10 Companion tiếp theo,
+ * chạm đủ 7 Department (Creative & Design lần đầu có Companion chạy
+ * thật). Nội dung kế thừa trực tiếp từ `AI_COMPANION_REGISTRY.md`
+ * §2.3/2.5/3.3/3.5/4.2/4.3/5.1/6.3/7.4/8.3 — không phát minh mới.
+ */
+const WAVE2_COMPANION_CATALOG: readonly CompanionRecord[] = [
+  {
+    employeeId: "EMP-R003",
+    department: "research-knowledge",
+    position: "Fact Checker Companion",
+    mission: "Đảm bảo thông tin Owner sắp dùng là đúng, tránh rủi ro sai lệch.",
+    responsibilities: ["Kiểm chứng độ tin cậy của một nhận định/số liệu/tuyên bố cụ thể"],
+    capability: ["research.fact-checking"],
+    supportedBlueprint: [],
+    supportedTasks: ["Kiểm chứng tuyên bố/số liệu", "Gắn mức độ tin cậy"],
+    inputContract: ["claim", "referenceSources?"],
+    outputContract: ["conclusion", "confidenceLevel", "reason"],
+    qaChecklist: ["Không trả lời đúng/sai tuyệt đối khi thiếu nguồn — luôn dùng thang tin cậy"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Research" },
+    providerPreference: "anthropic",
+    fallbackProvider: "openai",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-R004",
+    department: "research-knowledge",
+    position: "Trend Scout Companion",
+    mission: "Giữ cho Owner không bị tụt lại — phát hiện sớm xu hướng/thay đổi liên quan tới ngành của Owner.",
+    responsibilities: ["Theo dõi và tổng hợp định kỳ tín hiệu xu hướng mới từ dữ liệu Owner/Portal"],
+    capability: ["research.trend-scouting"],
+    supportedBlueprint: ["nghien-cuu-thi-truong", "lap-ke-hoach-marketing"],
+    supportedTasks: ["Tổng hợp xu hướng định kỳ"],
+    inputContract: ["periodicDataset"],
+    outputContract: ["trendBrief"],
+    qaChecklist: ["Mỗi xu hướng phải giải thích được vì sao liên quan tới Owner cụ thể"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Research" },
+    providerPreference: "gemini",
+    fallbackProvider: "anthropic",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-C003",
+    department: "content-communication",
+    position: "Copywriter Companion",
+    mission: "Viết nội dung có mục đích thuyết phục — khiến người đọc hành động.",
+    responsibilities: ["Viết nội dung bán hàng/quảng cáo (Landing Page, ads, CTA)"],
+    capability: ["writing.copywriting"],
+    supportedBlueprint: ["viet-landing-page", "viet-content-facebook"],
+    supportedTasks: ["Viết Landing Page copy", "Viết Ad copy/CTA"],
+    inputContract: ["persona?", "salesGoal", "productInfo"],
+    outputContract: ["headline", "body", "cta"],
+    qaChecklist: ["Mọi tuyên bố về sản phẩm phải khớp thông tin Owner cung cấp — không phóng đại"],
+    evidenceStandard: ["Output", "Version", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "AI Writing" },
+    providerPreference: "anthropic",
+    fallbackProvider: "openai",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-C004",
+    department: "content-communication",
+    position: "SEO Companion",
+    mission: "Giúp nội dung Owner viết ra có cơ hội được tìm thấy, không chỉ hay mà còn tới đúng người cần.",
+    responsibilities: ["Tối ưu nội dung đã có cho tìm kiếm (từ khoá, heading, internal link)"],
+    capability: ["writing.seo"],
+    supportedBlueprint: ["viet-content-facebook", "viet-landing-page"],
+    supportedTasks: ["Tối ưu SEO bài viết", "Đề xuất internal link"],
+    inputContract: ["draftContent", "targetKeyword?"],
+    outputContract: ["seoNote", "internalLinkSuggestions"],
+    qaChecklist: ["Không nhồi nhét từ khoá", "Internal link đề xuất phải thật sự liên quan nội dung"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "AI Writing" },
+    providerPreference: "anthropic",
+    fallbackProvider: "openai",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-B002",
+    department: "business-strategy",
+    position: "Sales Companion",
+    mission: "Giúp Owner chốt được nhiều cơ hội bán hàng hơn, đúng cách.",
+    responsibilities: ["Viết kịch bản bán hàng, gợi ý cách chăm sóc/chốt sale theo tình huống cụ thể"],
+    capability: ["business.sales"],
+    supportedBlueprint: ["viet-proposal-khach-hang"],
+    supportedTasks: ["Viết kịch bản bán hàng", "Xử lý phản đối khách hàng"],
+    inputContract: ["persona?", "productInfo", "salesSituation"],
+    outputContract: ["salesScript", "objectionHandling"],
+    qaChecklist: ["Kịch bản không được gây áp lực/thao túng khách hàng"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Strategy" },
+    providerPreference: "anthropic",
+    fallbackProvider: "openai",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-B003",
+    department: "business-strategy",
+    position: "Finance Companion",
+    mission: "Giúp Owner nhìn rõ con số trước khi quyết định, không mơ hồ về tài chính.",
+    responsibilities: ["Dự toán chi phí, theo dõi ngân sách cơ bản, phân tích tài chính đơn giản"],
+    capability: ["business.finance"],
+    supportedBlueprint: ["lam-dashboard-excel", "lap-ke-hoach-marketing"],
+    supportedTasks: ["Lập bảng dự toán", "Tính ROI/break-even cơ bản"],
+    inputContract: ["costItems", "revenueItems?", "financialGoal"],
+    outputContract: ["budgetEstimate", "riskNotes"],
+    qaChecklist: ["Mọi con số phải có công thức/căn cứ rõ ràng đi kèm"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Strategy" },
+    providerPreference: "anthropic",
+    fallbackProvider: "openai",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-D001",
+    department: "creative-design",
+    position: "Designer Companion",
+    mission: "Biến nội dung thành hình ảnh thu hút, đúng thương hiệu.",
+    responsibilities: ["Thiết kế hình ảnh (Banner, Brand Kit cơ bản)"],
+    capability: ["design.visual"],
+    supportedBlueprint: ["viet-landing-page", "viet-content-facebook"],
+    supportedTasks: ["Dựng Design Brief/Banner Spec"],
+    inputContract: ["contentToVisualize", "brandStyle?"],
+    outputContract: ["designBrief"],
+    qaChecklist: ["Nhất quán màu sắc/font với Brand Kit hiện có của Owner (nếu đã có)"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Design" },
+    providerPreference: "openai",
+    fallbackProvider: "anthropic",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-T003",
+    department: "technology-automation",
+    position: "Automation Companion",
+    mission: "Biến việc lặp lại thủ công thành quy trình có thể lặp lại tự động.",
+    responsibilities: ["Thiết kế quy trình tự động hoá (Automation Workflow/SOP) từ mô tả thao tác thủ công"],
+    capability: ["automation.workflow"],
+    supportedBlueprint: ["xay-sop"],
+    supportedTasks: ["Thiết kế Automation Workflow", "Viết SOP"],
+    inputContract: ["manualProcessDescription", "frequency?"],
+    outputContract: ["automationWorkflow", "sopDocument"],
+    qaChecklist: ["Mỗi bước phải có input/output rõ ràng, không mơ hồ"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Automation" },
+    providerPreference: "openai",
+    fallbackProvider: "anthropic",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-O002",
+    department: "office-productivity",
+    position: "Dashboard Companion",
+    mission: "Biến số liệu rời rạc thành Dashboard dễ đọc, ra quyết định nhanh.",
+    responsibilities: ["Tổng hợp số liệu từ nhiều nguồn thành 1 Dashboard"],
+    capability: ["office.dashboard"],
+    supportedBlueprint: ["lam-dashboard-excel"],
+    supportedTasks: ["Tổng hợp Dashboard số liệu"],
+    inputContract: ["processedData", "dashboardGoal"],
+    outputContract: ["dashboardSpec"],
+    qaChecklist: ["Mỗi chỉ số hiển thị phải trả lời được câu hỏi 'để làm gì'"],
+    evidenceStandard: ["Output", "Companion Review"],
+    portfolioMapping: { primaryCompetencyId: "Data Analysis" },
+    providerPreference: "openai",
+    fallbackProvider: "anthropic",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+  {
+    employeeId: "EMP-G003",
+    department: "personal-growth",
+    position: "Learning Coach Companion",
+    mission: "Gợi ý bước tiếp theo phù hợp với năng lực hiện tại của Owner, không để Owner tự mò mẫm.",
+    responsibilities: ["Gợi ý Mission/Journey tiếp theo dựa trên Capability hiện tại và Reflection đã ghi nhận"],
+    capability: ["growth.learning-coaching"],
+    supportedBlueprint: [],
+    supportedTasks: ["Gợi ý Mission/Journey tiếp theo"],
+    inputContract: ["currentCapability", "completedMissionHistory", "latestReflection?"],
+    outputContract: ["nextMissionSuggestion", "reason"],
+    qaChecklist: ["Gợi ý phải dựa trên dữ liệu Capability/Mission thật đã có", "Không gợi ý Mission Owner chưa đủ điều kiện unlock"],
+    evidenceStandard: ["Output", "Reflection"],
+    portfolioMapping: { primaryCompetencyId: "Personal Growth" },
+    providerPreference: "anthropic",
+    fallbackProvider: "openai",
+    workingStatus: "inactive",
+    trainingStatus: "completed",
+    certificationStatus: "certified",
+    performanceScore: 50,
+  },
+] as const;
+
+const WORKFORCE_CATALOG: readonly CompanionRecord[] = [...WAVE1_COMPANION_CATALOG, ...WAVE2_COMPANION_CATALOG];
+
 const STATUS_OVERLAY_KEY = "vdai_workforce_companion_status";
 
 type StatusOverlay = Record<string, { workingStatus: CompanionWorkingStatus; performanceScore: number }>;
@@ -304,7 +525,7 @@ const ALLOWED_TRANSITIONS: Record<CompanionWorkingStatus, CompanionWorkingStatus
 
 export function listCompanions(): CompanionRecord[] {
   const overlay = readOverlay();
-  return WAVE1_COMPANION_CATALOG.map((c) => ({ ...c, ...(overlay[c.employeeId] ?? {}) }));
+  return WORKFORCE_CATALOG.map((c) => ({ ...c, ...(overlay[c.employeeId] ?? {}) }));
 }
 
 export function getCompanion(employeeId: string): CompanionRecord | undefined {
@@ -328,12 +549,15 @@ export function setWorkingStatus(employeeId: string, next: CompanionWorkingStatu
 }
 
 /**
- * Activate toàn bộ Wave 1 vào Production Runtime — đi đúng chuỗi
- * `inactive → training → certified → active` cho từng Companion đang
- * `inactive`, phát 1 `COMPANION_ACTIVATED` khi tới `active` (không phát
- * 1 event/bước trung gian — Sprint Activation này gộp 3 bước thành 1
- * hành động vận hành, không phải quy trình đào tạo nhiều ngày thật của
- * `docs/AI_TRAINING_ENGINE.md`).
+ * Activate mọi Companion đang `inactive` (Wave 1 + Wave 2, và mọi Wave
+ * sau này thêm vào `WORKFORCE_CATALOG`) vào Production Runtime — đi
+ * đúng chuỗi `inactive → training → certified → active`, phát 1
+ * `COMPANION_ACTIVATED` khi tới `active` (không phát 1 event/bước
+ * trung gian — Sprint Activation này gộp 3 bước thành 1 hành động vận
+ * hành, không phải quy trình đào tạo nhiều ngày thật của
+ * `docs/AI_TRAINING_ENGINE.md`). Giữ tên `activateWave1Companions` để
+ * không đổi API đã dùng ở Sprint EPIC 02 Wave 1 — hàm này không giới
+ * hạn riêng Wave 1, chạy cho toàn bộ Registry.
  */
 export function activateWave1Companions(): CompanionRecord[] {
   const activated: CompanionRecord[] = [];
