@@ -20,8 +20,8 @@ export function CompanionArtworkPage({
   height: number;
 }) {
   return (
-    <div className="relative -mx-4 -my-6 min-h-screen bg-[#010930] md:-mx-8 md:-my-8">
-      <div className="relative">
+    <div className="relative -mx-4 -my-6 min-h-screen overflow-x-hidden bg-[#010930] md:-mx-8 md:-my-8">
+      <div className="relative w-full">
         <Image
           src={src}
           alt={alt}
