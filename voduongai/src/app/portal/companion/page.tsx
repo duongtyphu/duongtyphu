@@ -38,10 +38,10 @@ export default function CompanionHomePage() {
               Presence (breathing vô hạn). "Gaze" — quầng sáng rất nhẹ gợi ý
               Companion đang hướng về phía người dùng (Nhiệm vụ 07). */}
           <div className="companion-anim-arrival companion-motion-breathe companion-orb--gaze sm:hidden">
-            <CompanionOrb size="xl" state="idle" intensity="radiant" />
+            <CompanionOrb size="lg" state="idle" intensity="radiant" />
           </div>
           <div className="companion-anim-arrival companion-motion-breathe companion-orb--gaze hidden sm:block">
-            <CompanionOrb size="hero" state="idle" intensity="radiant" />
+            <CompanionOrb size="xl" state="idle" intensity="radiant" />
           </div>
 
           {/* Silence — khoảng lặng lớn trước khi lời đầu tiên xuất hiện. */}
