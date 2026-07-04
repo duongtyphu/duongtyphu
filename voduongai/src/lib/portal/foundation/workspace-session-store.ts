@@ -13,7 +13,7 @@
 
 import type { WorkspaceContext } from "@/lib/portal/companion-workspace";
 import { emitGrowthEvent } from "./growth-event-bus";
-import { createWorkforceApiProvider } from "./ai-provider";
+import { getProviderForCapability } from "./provider-manager";
 import { startAgentRun, completeAgentRun, failAgentRun } from "./agent-run-store";
 import type { WriterAgentResult } from "@/ai/agents/writer-agent";
 import type { ReviewerAgentResult } from "@/ai/agents/reviewer-agent";
@@ -386,7 +386,7 @@ export async function runWriterAgentForOutput(
   input: { goal: string; blueprintName: string; taskName: string; context?: string; userInput?: string; outputType: OutputType }
 ): Promise<{ session: WorkspaceSessionRecord; output: OutputRecord; agentResult: WriterAgentResult } | null> {
   const run = startAgentRun(sessionId, "Writer Agent");
-  const provider = createWorkforceApiProvider();
+  const provider = getProviderForCapability("writing.draft"); // PHASE 4 EPIC 01: AI Provider Manager
   try {
     const agentResult = await provider.execute<WriterAgentResult>("writer", {
       goal: input.goal,
@@ -427,7 +427,7 @@ export async function runReviewerAgentForOutput(
   const latestContent = output.versions[output.versions.length - 1]?.content ?? "";
 
   const run = startAgentRun(sessionId, "Reviewer Agent", outputId);
-  const provider = createWorkforceApiProvider();
+  const provider = getProviderForCapability("writing.review"); // PHASE 4 EPIC 01: AI Provider Manager
   try {
     const agentResult = await provider.execute<ReviewerAgentResult>("reviewer", {
       draftOutput: latestContent,
