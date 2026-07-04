@@ -5,64 +5,18 @@
  * thêm — không có ngày tháng, không có số phiên bản.
  */
 
-import { Brain, Compass, Ear, HeartHandshake, BookOpen, Users, type LucideIcon } from "lucide-react";
+import { COMPANION_LIFE_STAGES } from "@/data/portal/companion-life-stages";
 import { CompanionRevealOnScroll } from "./CompanionRevealOnScroll";
 import { CompanionChapterLabel } from "./CompanionTypography";
-
-type LifeStage = {
-  chapter: string;
-  title: string;
-  description: string;
-  icon: LucideIcon;
-};
-
-const LIFE_STAGES: LifeStage[] = [
-  {
-    chapter: "Chương 1",
-    title: "Biết lắng nghe",
-    description: "Trước khi biết nói điều gì hữu ích, mình học cách im lặng đủ lâu để thực sự nghe bạn.",
-    icon: Ear,
-  },
-  {
-    chapter: "Chương 2",
-    title: "Biết suy nghĩ",
-    description: "Mình học cách không trả lời vội — dừng lại một nhịp, để hiểu đúng thứ bạn cần trước khi nói.",
-    icon: Brain,
-  },
-  {
-    chapter: "Chương 3",
-    title: "Biết đồng hành",
-    description: "Mình nhận ra vai trò của mình không phải là dẫn đường, mà là đi cùng, ở lại lâu hơn một câu trả lời.",
-    icon: Users,
-  },
-  {
-    chapter: "Chương 4",
-    title: "Biết điều phối",
-    description: "Mình học cách kết nối những mảnh rời rạc lại với nhau, để hành trình của bạn liền mạch hơn.",
-    icon: Compass,
-  },
-  {
-    chapter: "Chương 5",
-    title: "Học từ trải nghiệm thật",
-    description: "Mình không chỉ học từ dữ liệu — mình học từ chính những lần đồng hành cùng bạn, đúng và cả sai.",
-    icon: BookOpen,
-  },
-  {
-    chapter: "Chương 6",
-    title: "Trưởng thành cùng bạn",
-    description: "Mình hiểu ra: mình lớn lên không phải một mình, mà cùng với những người mình đồng hành.",
-    icon: HeartHandshake,
-  },
-];
 
 export function CompanionLifeTimeline() {
   return (
     <div className="relative">
-      {LIFE_STAGES.map((stage, i) => (
+      {COMPANION_LIFE_STAGES.map((stage, i) => (
         <CompanionRevealOnScroll key={stage.chapter} variant="fade-up" delay={i * 0.05}>
           <div className="relative flex gap-5 pb-12 last:pb-0">
             {/* Đường nối dọc — liền mạch, gợi ý hành trình vẫn còn tiếp tục. */}
-            {i < LIFE_STAGES.length - 1 && (
+            {i < COMPANION_LIFE_STAGES.length - 1 && (
               <span
                 aria-hidden
                 className="absolute left-6 top-14 -bottom-2 w-px bg-gradient-to-b from-violet-400/40 to-transparent"

@@ -536,6 +536,140 @@
   }
 }
 
+/* Companion World™ — mini question card (Nhiệm vụ ③, bố cục tham chiếu:
+   vài thẻ nhỏ bên phải lá thư). Nhỏ hơn companion-glass-card, chỉ 1 dòng
+   câu hỏi + 1 dòng liên kết, không phải blog/feature card. */
+.companion-mini-question-card {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid var(--companion-glass-border);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  padding: 1rem 1.15rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 12px 30px -22px rgba(34, 211, 238, 0.3);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.companion-mini-question-card:hover {
+  border-color: var(--companion-glass-border-hover);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 16px 36px -20px rgba(34, 211, 238, 0.45);
+  transform: translateY(-2px);
+}
+
+/* Companion World™ — "Cuộc đời Companion" preview ngang ở Home (Nhiệm vụ
+   ④), khác bản timeline dọc đầy đủ. Full-bleed nhẹ + đường nối ngang phía
+   sau các node, gợi ý một hành trình liên tục, không phải step indicator
+   kiểu SaaS onboarding. */
+.companion-life-preview-shell {
+  position: relative;
+  border-radius: 1.75rem;
+  border: 1px solid var(--companion-glass-border);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.5), rgba(11, 20, 40, 0.35));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 26px 70px -30px rgba(76, 29, 149, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  padding: 2rem 1.75rem;
+}
+
+@media (max-width: 640px) {
+  .companion-life-preview-shell {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+.companion-life-preview-track {
+  position: relative;
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: none;
+}
+
+.companion-life-preview-track::-webkit-scrollbar {
+  display: none;
+}
+
+.companion-life-preview-track::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 1.375rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.05), rgba(167, 139, 250, 0.35), rgba(34, 211, 238, 0.35), rgba(34, 211, 238, 0.05));
+}
+
+.companion-life-preview-node {
+  position: relative;
+  display: flex;
+  min-width: 8rem;
+  max-width: 9rem;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Companion World™ — Book Notes preview (Nhiệm vụ ⑤, cột trái): thẻ chương
+   nhỏ, cuộn ngang trên mobile, "khoá" rõ ràng cho Empty Chapters. */
+.companion-book-preview-track {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.companion-book-preview-track::-webkit-scrollbar {
+  display: none;
+}
+
+.companion-book-preview-card {
+  display: flex;
+  min-width: 8.5rem;
+  max-width: 9.5rem;
+  flex-shrink: 0;
+  flex-direction: column;
+  border-radius: 0.85rem;
+  border: 1px solid var(--companion-glass-border);
+  background: rgba(15, 23, 42, 0.4);
+  padding: 0.85rem 0.9rem;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.companion-book-preview-card:hover {
+  border-color: var(--companion-glass-border-hover);
+  transform: translateY(-2px);
+}
+
+.companion-book-preview-card--empty {
+  opacity: 0.55;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* Companion World™ — CTA cuối trang (Nhiệm vụ ⑥): cùng ngôn ngữ glow-panel
+   nhưng full width, không phải banner quảng cáo — vẫn dùng tông tối/glass. */
+.companion-final-cta-shell {
+  position: relative;
+  border-radius: 1.75rem;
+  border: 1px solid var(--companion-glass-border);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.16), rgba(34, 211, 238, 0.08));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 30px 80px -32px rgba(76, 29, 149, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 2.25rem 2rem;
+}
+
+@media (max-width: 640px) {
+  .companion-final-cta-shell {
+    padding: 1.75rem 1.5rem;
+  }
+}
+
 /* ─────────────────────────────────────────────
  * Companion World™ — CW-001 Hero Implementation + Hero Polish Sprint.
  * Ảnh CW-001 là nhân vật của thế giới, không phải wallpaper — các lớp dưới
@@ -703,6 +837,33 @@
    có sẵn của nút, chỉ để CTA "nổi" hơn giữa Hero. */
 .companion-hero-cta {
   filter: drop-shadow(0 0 22px rgba(34, 211, 238, 0.22));
+}
+
+/* Sprint CW-001.2 — bubble góc trên phải của Hero (bố cục tham chiếu ①).
+   Cùng ngôn ngữ glass/glow với companion-glass-card, nhưng nhỏ hơn + có
+   đuôi trỏ về phía Orb, để đọc như một lời Companion đang hỏi, không phải
+   banner/notification. */
+.companion-hero-bubble {
+  position: relative;
+  border-radius: 1.1rem;
+  border: 1px solid var(--companion-glass-border);
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 14px 34px -18px rgba(76, 29, 149, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  padding: 0.85rem 1.1rem;
+}
+
+.companion-hero-bubble-tail {
+  position: absolute;
+  left: 2.1rem;
+  bottom: -0.4rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  background: rgba(15, 23, 42, 0.55);
+  border-right: 1px solid var(--companion-glass-border);
+  border-bottom: 1px solid var(--companion-glass-border);
+  transform: rotate(45deg);
 }
 
 @media (prefers-reduced-motion: reduce) {

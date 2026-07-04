@@ -13,9 +13,10 @@ import Image from "next/image";
 import { CompanionOrb } from "./CompanionOrb";
 import { CompanionGlowButton } from "./CompanionGlowButton";
 import { CompanionChapterNav } from "./CompanionChapterNav";
+import { CompanionHeroBubble } from "./CompanionHeroBubble";
 import { CW_001_VALLEY_OF_LIGHT } from "@/lib/companion-world/assets";
 
-export function CompanionHero() {
+export function CompanionHero({ greeting }: { greeting: string }) {
   return (
     <section className="relative overflow-hidden">
       {/* Layer 1+2 — Sky + Mountain/Lake: CW-001 Valley of Light, asset nền
@@ -81,6 +82,9 @@ export function CompanionHero() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-5xl px-6 py-20 sm:px-10 sm:py-28 lg:py-36">
+        {/* Bubble góc trên phải — bố cục tham chiếu mục ①. */}
+        <CompanionHeroBubble text={greeting} />
+
         <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end lg:gap-6">
           {/* Text zone — left 40% trên desktop, căn giữa trên mobile. Tăng
               khoảng thở giữa các dòng (Nhiệm vụ VII), nội dung giữ nguyên. */}

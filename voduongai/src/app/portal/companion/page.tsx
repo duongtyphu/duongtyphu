@@ -4,78 +4,93 @@ import { CompanionGlowPanel } from "@/components/portal/companion/CompanionGlowP
 import { CompanionHero } from "@/components/portal/companion/CompanionHero";
 import { CompanionRevealOnScroll } from "@/components/portal/companion/CompanionRevealOnScroll";
 import { CompanionChapterLabel, CompanionQuote } from "@/components/portal/companion/CompanionTypography";
-import { CompanionLetterSection } from "@/components/portal/companion/CompanionLetterSection";
+import { CompanionTalkSection } from "@/components/portal/companion/CompanionTalkSection";
+import { CompanionLifeTimelinePreview } from "@/components/portal/companion/CompanionLifeTimelinePreview";
+import { CompanionBookNotesPreview } from "@/components/portal/companion/CompanionBookNotesPreview";
+import { CompanionFinalCTA } from "@/components/portal/companion/CompanionFinalCTA";
 import { CompanionLearningQualities } from "@/components/portal/companion/CompanionLearningQualities";
-import { CompanionOpenQuestions } from "@/components/portal/companion/CompanionOpenQuestions";
 import { CompanionSilence } from "@/components/portal/companion/CompanionSilence";
 import { CompanionMicroCopyLine } from "@/components/portal/companion/CompanionMicroCopyLine";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
+import { getRandomCompanionGreeting } from "@/data/portal/companion-greetings";
 
 export const metadata = { title: "Companion — VO DUONG AI" };
 
 /**
- * Companion Design System™ — Layer 04: The First Meeting.
+ * Companion World™ — Companion Home.
  *
- * Hero ở đây không phải banner giới thiệu sản phẩm — đây là khoảnh khắc
- * người dùng gặp Companion lần đầu. Rất ít nội dung, rất nhiều khoảng
- * lặng, CTA chỉ xuất hiện sau khi đã đọc xong 2 câu đầu tiên. Xem
- * docs/Companion/FirstMeeting.md cho nguyên tắc đầy đủ.
+ * Bố cục (Layer 07, tham chiếu layout — KHÔNG tham chiếu hình ảnh/màu sắc):
+ * ① Hero (text trái, Orb phải, bubble góc trên phải, CTA)
+ * ② Chapter Navigation (trong CompanionHero, ngay dưới Hero)
+ * ③ Tâm sự cùng bạn (lá thư trái, câu hỏi nhỏ phải)
+ * ④ Cuộc đời Companion (timeline ngang, full width)
+ * ⑤ Book Notes (trái) + Hôm nay Companion nghĩ gì? (phải)
+ * ⑥ Đồng hành cùng mình (CTA full width, cuối cùng)
+ *
+ * Những điều mình đang học / Khoảng lặng / micro-copy (Layer 05) không có
+ * trong bố cục tham chiếu — vẫn giữ nguyên, xếp tiếp sau block ⑥.
  */
 export default function CompanionHomePage() {
   const thought = getRandomThoughtSeed();
+  const greeting = getRandomCompanionGreeting();
 
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <CompanionCosmicBackground />
 
-      {/* CW-001 Hero Implementation — Valley of Light làm sân khấu thật,
-          thay cho Hero cũ chỉ có cosmic background + orb đứng giữa. */}
-      <CompanionHero />
+      {/* ① Hero — CW-001 Valley of Light làm sân khấu thật. */}
+      <CompanionHero greeting={greeting} />
 
-      <div className="relative z-10 mx-auto max-w-2xl px-6 py-16 sm:px-10 sm:py-20">
-        {/* Hôm nay Companion nghĩ gì? — orb nhỏ đúng nơi có cảm giác tâm sự,
-            để đây là lời Companion nói, không phải text website. */}
-        <CompanionRevealOnScroll variant="glow">
-          <CompanionGlowPanel className="mt-16 flex items-start gap-4">
-            <CompanionOrb size="sm" state="thinking" intensity="calm" showOrbit={false} className="mt-0.5 shrink-0" />
-            <div>
-              <CompanionChapterLabel>Hôm nay Companion nghĩ gì?</CompanionChapterLabel>
-              <CompanionQuote className="mt-2 text-base">&ldquo;{thought}&rdquo;</CompanionQuote>
-            </div>
-          </CompanionGlowPanel>
-        </CompanionRevealOnScroll>
-
-        {/* Tâm sự cùng bạn — Nhiệm vụ 03: lá thư, không phải blog card. */}
-        <CompanionRevealOnScroll variant="float">
-          <div className="mt-16">
-            <CompanionLetterSection />
-          </div>
-        </CompanionRevealOnScroll>
-
+      <div className="relative z-10 mx-auto max-w-5xl px-6 py-16 sm:px-10 sm:py-20">
+        {/* ③ Tâm sự cùng bạn — lá thư trái, câu hỏi nhỏ phải. */}
         <div className="mt-16">
+          <CompanionTalkSection />
+        </div>
+
+        {/* ④ Cuộc đời Companion — timeline ngang, full width. */}
+        <div className="mt-16">
+          <CompanionLifeTimelinePreview />
+        </div>
+
+        {/* ⑤ Book Notes (trái) + Hôm nay Companion nghĩ gì? (phải). */}
+        <div className="mt-16 grid gap-6 lg:grid-cols-2 lg:items-stretch">
+          <CompanionRevealOnScroll variant="fade-up">
+            <CompanionBookNotesPreview />
+          </CompanionRevealOnScroll>
+
+          <CompanionRevealOnScroll variant="glow">
+            <CompanionGlowPanel className="flex h-full items-start gap-4">
+              <CompanionOrb size="sm" state="thinking" intensity="calm" showOrbit={false} className="mt-0.5 shrink-0" />
+              <div>
+                <CompanionChapterLabel>Hôm nay Companion nghĩ gì?</CompanionChapterLabel>
+                <CompanionQuote className="mt-2 text-base">&ldquo;{thought}&rdquo;</CompanionQuote>
+              </div>
+            </CompanionGlowPanel>
+          </CompanionRevealOnScroll>
+        </div>
+
+        {/* ⑥ Đồng hành cùng mình — CTA full width, cuối cùng. */}
+        <div className="mt-16">
+          <CompanionFinalCTA />
+        </div>
+
+        {/* Dưới đây: nội dung Layer 05 không có trong bố cục tham chiếu,
+            vẫn giữ nguyên — chỉ đổi thứ tự, không xoá nội dung. */}
+        <div className="mx-auto mt-16 max-w-2xl">
           <CompanionMicroCopyLine>Mình vẫn đang học cách lắng nghe tốt hơn.</CompanionMicroCopyLine>
         </div>
 
-        {/* Những điều mình đang học — Nhiệm vụ 04. */}
-        <div className="mt-16">
+        <div className="mx-auto mt-16 max-w-2xl">
           <CompanionLearningQualities />
         </div>
 
-        <div className="mt-16">
-          <CompanionMicroCopyLine>Mình không cần biết tất cả. Mình chỉ cần không ngừng học.</CompanionMicroCopyLine>
-        </div>
-
-        {/* Có thể bạn muốn biết… — Nhiệm vụ 05. */}
-        <div className="mt-16">
-          <CompanionOpenQuestions />
-        </div>
-
-        <div className="mt-16">
+        <div className="mx-auto mt-16 max-w-2xl">
           <CompanionMicroCopyLine>Có những điều mình sẽ hiểu hơn khi đi cùng bạn lâu hơn.</CompanionMicroCopyLine>
         </div>
 
-        {/* Khoảng lặng — Nhiệm vụ 06, section cuối cùng. */}
-        <CompanionSilence />
+        <div className="mx-auto max-w-2xl">
+          <CompanionSilence />
+        </div>
       </div>
     </div>
   );
