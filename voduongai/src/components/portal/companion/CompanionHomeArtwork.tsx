@@ -25,38 +25,38 @@ const HOTSPOTS: { label: string; href: string; top: string; left: string; width:
 export function CompanionHomeArtwork() {
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
-      <div className="mx-auto max-w-3xl px-3 py-6 sm:px-6 sm:py-8">
-        <div className="relative">
-          <Image
-            src={COMPANION_HOME_ARTWORK.src}
-            alt="Companion World — Xin chào, mình là Companion"
-            width={COMPANION_HOME_ARTWORK.width}
-            height={COMPANION_HOME_ARTWORK.height}
-            sizes="(min-width: 1024px) 768px, 100vw"
-            className="h-auto w-full rounded-2xl"
-            priority
+      {/* Artwork là nền của vùng content — khít edge-to-edge, không
+          padding/khoảng trắng nào quanh ảnh. */}
+      <div className="relative">
+        <Image
+          src={COMPANION_HOME_ARTWORK.src}
+          alt="Companion World — Xin chào, mình là Companion"
+          width={COMPANION_HOME_ARTWORK.width}
+          height={COMPANION_HOME_ARTWORK.height}
+          sizes="100vw"
+          className="block h-auto w-full"
+          priority
+        />
+
+        {/* Vùng click vô hình — khớp đúng vị trí 7 khối trên artwork. */}
+        {HOTSPOTS.map((spot) => (
+          <Link
+            key={spot.href}
+            href={spot.href}
+            aria-label={spot.label}
+            className="companion-artwork-hotspot absolute"
+            style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height }}
           />
+        ))}
+      </div>
 
-          {/* Vùng click vô hình — đúng vị trí 7 khối trên artwork. */}
-          {HOTSPOTS.map((spot) => (
-            <Link
-              key={spot.href}
-              href={spot.href}
-              aria-label={spot.label}
-              className="companion-artwork-hotspot absolute rounded-xl"
-              style={{ top: spot.top, left: spot.left, width: spot.width, height: spot.height }}
-            />
-          ))}
-        </div>
-
-        {/* Không có vùng riêng cho "Không gian AI" trên artwork — dùng nút
-            thật bên dưới, theo đúng chỉ dẫn "vùng click vô hình HOẶC nút
-            thật". */}
-        <div className="mt-6 flex justify-center">
-          <Link href="/portal/khong-gian-ai" className="companion-artwork-cta">
-            Bước vào Không gian AI →
-          </Link>
-        </div>
+      {/* Không có vùng riêng cho "Không gian AI" trên artwork — dùng nút
+          thật bên dưới, theo đúng chỉ dẫn "vùng click vô hình HOẶC nút
+          thật". Chỉ khoảng chứa riêng nút này có padding, không phải ảnh. */}
+      <div className="flex justify-center px-4 py-6">
+        <Link href="/portal/khong-gian-ai" className="companion-artwork-cta">
+          Bước vào Không gian AI →
+        </Link>
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 
 /**
  * Companion World™ — Artwork Final. Trang con chỉ hiển thị MỘT artwork đã
- * duyệt, full width trong vùng content — không sidebar/header trong ảnh,
- * không chữ đè lên ảnh, không crop/méo. `width`/`height` là kích thước gốc
- * thật của ảnh để next/image giữ đúng tỉ lệ ở mọi breakpoint.
+ * duyệt — ảnh là NỀN của vùng content, khít edge-to-edge, không khoảng
+ * trắng/padding nào quanh ảnh. Không sidebar/header trong ảnh, không chữ
+ * đè lên ảnh (trừ nút "Quay lại Companion" nổi ở góc). `width`/`height` là
+ * kích thước gốc thật của ảnh để next/image giữ đúng tỉ lệ, không crop/méo.
  */
 export function CompanionArtworkPage({
   src,
@@ -19,16 +21,20 @@ export function CompanionArtworkPage({
 }) {
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
-      <div className="mx-auto max-w-4xl px-3 py-6 sm:px-6 sm:py-8">
+      <div className="relative">
         <Image
           src={src}
           alt={alt}
           width={width}
           height={height}
-          sizes="(min-width: 1024px) 896px, 100vw"
-          className="h-auto w-full rounded-2xl"
+          sizes="100vw"
+          className="block h-auto w-full"
           priority
         />
+
+        <Link href="/portal/companion" className="companion-artwork-back">
+          ← Quay lại Companion
+        </Link>
       </div>
     </div>
   );
