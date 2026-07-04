@@ -13,6 +13,8 @@
  */
 
 import type { PortalModule } from "@/companion/agents/agent.types";
+import type { CompetencyLevel } from "@/lib/portal/foundation/data-model";
+import { emitGrowthEvent } from "@/lib/portal/foundation/growth-event-bus";
 
 export type WorkspaceItemType =
   | "work_need"
@@ -35,17 +37,21 @@ export type WorkspaceContext = {
   expectedOutput?: string;
   routeFrom: string;
   timestamp: string;
-};
-
-export type WorkspaceStartedEvent = {
-  type: "WORKSPACE_STARTED";
-  sourceModule: PortalModule;
-  title: string;
-  timestamp: string;
+  // EPIC 03 — Sprint B1: Universal Context (Foundation Data Layer mục 4).
+  // Field mới, tất cả tùy chọn — không phá call site cũ nào.
+  journeyId?: string;
+  collectionId?: string;
+  missionId?: string;
+  assetId?: string;
+  resourceId?: string;
+  promptId?: string;
+  templateId?: string;
+  difficulty?: "Beginner" | "Intermediate" | "Advanced";
+  currentCapability?: CompetencyLevel;
+  currentJourney?: string;
 };
 
 const CONTEXT_KEY = "vdai_workspace_context";
-const GROWTH_EVENTS_KEY = "vdai_growth_events";
 
 /** Lưu context tạm cho `/portal/workspace` đọc lại — sessionStorage vì chỉ
     cần sống trong một phiên điều hướng, không phải dữ liệu lâu dài. */
@@ -67,19 +73,6 @@ export function readWorkspaceContext(): WorkspaceContext | null {
   }
 }
 
-/** Growth Event tạm — WORKSPACE_STARTED. Về sau Nhật ký học tập/Hành trình
-    của tôi/Khu vườn của bạn sẽ đọc danh sách này (chưa làm trong sprint này). */
-function pushGrowthEvent(event: WorkspaceStartedEvent) {
-  try {
-    const raw = window.localStorage.getItem(GROWTH_EVENTS_KEY);
-    const list: WorkspaceStartedEvent[] = raw ? JSON.parse(raw) : [];
-    list.push(event);
-    window.localStorage.setItem(GROWTH_EVENTS_KEY, JSON.stringify(list.slice(-200)));
-  } catch {
-    // localStorage đầy/không khả dụng — Growth Event chỉ là tạm thời, bỏ qua an toàn.
-  }
-}
-
 function buildWorkspaceUrl(context: WorkspaceContext): string {
   const params = new URLSearchParams();
   params.set("module", context.module);
@@ -89,6 +82,14 @@ function buildWorkspaceUrl(context: WorkspaceContext): string {
   if (context.itemId) params.set("itemId", context.itemId);
   if (context.itemType) params.set("itemType", context.itemType);
   if (context.expectedOutput) params.set("expectedOutput", context.expectedOutput);
+  if (context.journeyId) params.set("journeyId", context.journeyId);
+  if (context.collectionId) params.set("collectionId", context.collectionId);
+  if (context.missionId) params.set("missionId", context.missionId);
+  if (context.assetId) params.set("assetId", context.assetId);
+  if (context.resourceId) params.set("resourceId", context.resourceId);
+  if (context.promptId) params.set("promptId", context.promptId);
+  if (context.templateId) params.set("templateId", context.templateId);
+  if (context.difficulty) params.set("difficulty", context.difficulty);
   params.set("routeFrom", context.routeFrom);
   params.set("ts", context.timestamp);
   return `/portal/workspace?${params.toString()}`;
@@ -120,14 +121,28 @@ export function startCompanionWorkspace(
     expectedOutput: input.expectedOutput,
     routeFrom,
     timestamp,
+    journeyId: input.journeyId,
+    collectionId: input.collectionId,
+    missionId: input.missionId,
+    assetId: input.assetId,
+    resourceId: input.resourceId,
+    promptId: input.promptId,
+    templateId: input.templateId,
+    difficulty: input.difficulty,
+    currentCapability: input.currentCapability,
+    currentJourney: input.currentJourney,
   };
 
   saveWorkspaceContext(context);
-  pushGrowthEvent({
-    type: "WORKSPACE_STARTED",
-    sourceModule: context.module,
-    title: context.title ?? context.userGoal ?? context.source,
-    timestamp,
+
+  // EPIC 03 — Sprint B1: phát Growth Event thật qua Event Bus chung
+  // (Foundation Data Layer mục 8/12) thay vì tự ghi localStorage riêng.
+  // MISSION_STARTED khi context có missionId (thực hành gắn với 1 Mission
+  // cụ thể), WORKSPACE_STARTED cho mọi trường hợp còn lại (vd Companion
+  // Desk tự do, chưa gắn Mission).
+  emitGrowthEvent({
+    eventType: context.missionId ? "MISSION_STARTED" : "WORKSPACE_STARTED",
+    missionId: context.missionId,
   });
 
   return buildWorkspaceUrl(context);
