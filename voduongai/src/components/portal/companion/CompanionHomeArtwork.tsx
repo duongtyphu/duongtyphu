@@ -12,19 +12,22 @@ import { COMPANION_HOME_ARTWORK } from "@/lib/companion-world/artwork-pages";
  * (1024×1536) — vì ảnh luôn giữ nguyên tỉ lệ (không `fill`/không crop),
  * % top/left/width/height khớp đúng vị trí ở mọi kích thước màn hình.
  */
+/* Thu nhỏ ~18% so với khung card gốc, giữ tâm cố định — vùng click nằm
+   gọn bên trong card thay vì khớp sát mép, tránh chồng lấn giữa các card
+   liền kề khi hover/focus. */
 const HOTSPOTS: { label: string; href: string; top: string; left: string; width: string; height: string }[] = [
-  { label: "Ý nghĩa Companion", href: "/portal/companion/y-nghia-companion", top: "33.8%", left: "2.9%", width: "23.5%", height: "24.5%" },
-  { label: "Những điều mình tin", href: "/portal/companion/nhung-dieu-minh-tin", top: "33.8%", left: "27.3%", width: "23%", height: "24.5%" },
-  { label: "Cuộc đời Companion", href: "/portal/companion/cuoc-doi-companion", top: "33.8%", left: "51.2%", width: "23%", height: "24.5%" },
-  { label: "Book Notes", href: "/portal/companion/book-notes", top: "33.8%", left: "75%", width: "22.5%", height: "24.5%" },
-  { label: "Tâm sự cùng bạn", href: "/portal/companion/tam-su", top: "59.6%", left: "2.9%", width: "33%", height: "24.5%" },
-  { label: "Những bức thư Companion", href: "/portal/companion/nhung-buc-thu", top: "59.6%", left: "37%", width: "28.5%", height: "24.5%" },
-  { label: "Di sản Companion", href: "/portal/companion/di-san", top: "59.6%", left: "66.7%", width: "30.4%", height: "24.5%" },
+  { label: "Ý nghĩa Companion", href: "/portal/companion/y-nghia-companion", top: "36%", left: "5.02%", width: "19.27%", height: "20.09%" },
+  { label: "Những điều mình tin", href: "/portal/companion/nhung-dieu-minh-tin", top: "36%", left: "29.37%", width: "18.86%", height: "20.09%" },
+  { label: "Cuộc đời Companion", href: "/portal/companion/cuoc-doi-companion", top: "36%", left: "53.27%", width: "18.86%", height: "20.09%" },
+  { label: "Book Notes", href: "/portal/companion/book-notes", top: "36%", left: "77.03%", width: "18.45%", height: "20.09%" },
+  { label: "Tâm sự cùng bạn", href: "/portal/companion/tam-su", top: "61.81%", left: "5.87%", width: "27.06%", height: "20.09%" },
+  { label: "Những bức thư Companion", href: "/portal/companion/nhung-buc-thu", top: "61.81%", left: "39.57%", width: "23.37%", height: "20.09%" },
+  { label: "Di sản Companion", href: "/portal/companion/di-san", top: "61.81%", left: "69.44%", width: "24.93%", height: "20.09%" },
 ];
 
 export function CompanionHomeArtwork() {
   return (
-    <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
+    <div className="relative -mx-4 -my-6 min-h-screen bg-[#010930] md:-mx-8 md:-my-8">
       {/* Artwork là nền của vùng content — khít edge-to-edge, không
           padding/khoảng trắng nào quanh ảnh. */}
       <div className="relative">

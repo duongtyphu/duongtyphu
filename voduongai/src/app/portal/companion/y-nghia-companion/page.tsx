@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Sprout, Leaf, Sparkles, Infinity as InfinityIcon } from "lucide-react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
@@ -159,6 +160,10 @@ export default function CompanionSanctuaryPage() {
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <SanctuaryBackground />
+
+      <Link href="/portal/companion" className="companion-artwork-back" style={{ zIndex: 30 }}>
+        ← Quay lại Companion
+      </Link>
 
       {/* ═══════════════════ INTRO MOMENT — 1.3s, không chặn tương tác ═══════════════════ */}
       <AnimatePresence>
