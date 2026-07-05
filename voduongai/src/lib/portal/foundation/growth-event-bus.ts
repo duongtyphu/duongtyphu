@@ -47,6 +47,8 @@ export const GROWTH_EVENT_CONSUMERS: Record<GrowthEventType, string[]> = {
   COMPANION_ACTIVATED: ["learning-journal", "my-journey", "living-garden"],
   COMPANION_TASK_ASSIGNED: ["learning-journal", "my-journey", "living-garden"],
   COMPANION_TASK_COMPLETED: ["learning-journal", "my-journey", "living-garden"],
+  OUTPUT_APPROVED: ["learning-journal", "my-journey", "living-garden", "portfolio"],
+  MEMORY_UPDATED: ["learning-journal", "my-journey", "living-garden"],
 };
 
 function readEventList(): GrowthEvent[] {

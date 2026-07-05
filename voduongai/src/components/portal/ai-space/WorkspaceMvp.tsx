@@ -34,6 +34,7 @@ import {
   submitReflection,
   runWriterAgentForOutput,
   runReviewerAgentForOutput,
+  runCompanionAgentForOutput,
   approveOutput,
   type OutputType,
   type WorkspaceSessionRecord,
@@ -47,6 +48,8 @@ import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store"
 import { computeCapabilityProfiles } from "@/lib/portal/foundation/capability-engine";
 import { recordNewUnlocks } from "@/lib/portal/foundation/mission-unlock-runtime";
 import { listAgentRuns, type AgentRunRecord } from "@/lib/portal/foundation/agent-run-store";
+import { syncMemoryForPortfolioItem } from "@/lib/portal/foundation/memory-store";
+import { listCompanions, activateWave1Companions, type CompanionRecord } from "@/lib/portal/foundation/workforce-registry";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -119,6 +122,12 @@ export function WorkspaceMvp() {
   const [writerRunning, setWriterRunning] = useState(false);
   const [reviewerRunning, setReviewerRunning] = useState(false);
   const [agentError, setAgentError] = useState<string | null>(null);
+  // Sprint 003 — Workspace Runtime Integration: AI Workforce module —
+  // chọn 1 trong 30 Companion đã Activate để giao Task (thay vì chỉ
+  // Writer/Reviewer hard-code).
+  const [companions, setCompanions] = useState<CompanionRecord[]>([]);
+  const [selectedCompanionId, setSelectedCompanionId] = useState<string>("");
+  const [companionRunning, setCompanionRunning] = useState(false);
 
   useEffect(() => {
     // Ưu tiên context đầy đủ từ sessionStorage; query params chỉ là bản
@@ -154,6 +163,11 @@ export function WorkspaceMvp() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSession(resolved);
     setAgentRuns(listAgentRuns(resolved.sessionId));
+    // Sprint 003 — Workspace Runtime Integration: đảm bảo AI Workforce đã
+    // Activate (idempotent — chỉ ảnh hưởng Companion đang "inactive")
+    // trước khi hiển thị danh sách Companion để giao Task.
+    activateWave1Companions();
+    setCompanions(listCompanions().filter((c) => c.workingStatus === "active" || c.workingStatus === "idle"));
   }, [context, session]);
 
   const goal = context?.userGoal ?? context?.title ?? "Chưa xác định mục tiêu cụ thể";
@@ -185,6 +199,31 @@ export function WorkspaceMvp() {
     setSession(result.session);
     setActiveOutputId(result.output.outputId);
     setDraftContent("");
+  }
+
+  // Sprint 003 — Workspace Runtime Integration: giao Task cho 1 trong 30
+  // AI Companion (Department → Companion → AI Service Manager → Provider
+  // → Output), qua Companion Manager (`assignTask`/`toOutputContract`).
+  async function handleRunCompanionAgent() {
+    if (!session || !selectedCompanionId) return;
+    setAgentError(null);
+    setCompanionRunning(true);
+    try {
+      const result = await runCompanionAgentForOutput(session.sessionId, selectedCompanionId, {
+        prompt: draftContent.trim() || goal,
+        context: context?.expectedOutput,
+      });
+      if (!result) {
+        setAgentError("Companion không thể nhận Task — xem Agent Run Log.");
+      } else {
+        setSession(result.session);
+        setActiveOutputId(result.output.outputId);
+        setDraftContent("");
+      }
+    } finally {
+      setCompanionRunning(false);
+      if (session) setAgentRuns(listAgentRuns(session.sessionId));
+    }
   }
 
   // AI Agent Integration MVP — Writer Agent tạo Output thật (hoặc mock nếu
@@ -275,7 +314,15 @@ export function WorkspaceMvp() {
     setReflectionDraft(REFLECTION_QUESTIONS.map(() => ""));
     // Sprint B4 — Portfolio Engine: Output đủ điều kiện (đã Review + đã
     // Reflection) tự động vào Portfolio, không cần bước "lưu vào Portfolio" riêng.
-    promoteEligibleOutputs(result.session.sessionId, result.session);
+    const promoted = promoteEligibleOutputs(result.session.sessionId, result.session);
+    // Sprint 003 — Memory Sync: Output vừa "Complete" (vào Portfolio) →
+    // ghi Memory thật từ Reflection/Review vừa có, không suy diễn.
+    const completedOutput = result.session.outputs.find((o) => o.outputId === outputId);
+    if (completedOutput) {
+      for (const item of promoted.filter((p) => p.outputId === outputId)) {
+        syncMemoryForPortfolioItem(item, completedOutput);
+      }
+    }
     // Sprint B5 — Capability Engine: tính lại Capability từ Evidence thật
     // (Output + Reflection) ngay khi có Evidence mới — không có UI hiển
     // thị kết quả này trong sprint B5 (đúng brief "không cần UI").
@@ -602,6 +649,32 @@ export function WorkspaceMvp() {
                     className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {writerRunning ? "Writer Agent đang chạy…" : "Chạy Writer Agent"}
+                  </button>
+                </div>
+
+                {/* Sprint 003 — AI Workforce module: giao Task cho 1 trong 30 Companion đã Activate */}
+                <div className="flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3">
+                  <label htmlFor="companion-select" className="text-xs font-semibold text-gray-500">AI Workforce</label>
+                  <select
+                    id="companion-select"
+                    value={selectedCompanionId}
+                    onChange={(e) => setSelectedCompanionId(e.target.value)}
+                    className="rounded-lg border border-gray-200 px-2 py-1 text-xs text-gray-700"
+                  >
+                    <option value="">— Chọn Companion —</option>
+                    {companions.map((c) => (
+                      <option key={c.employeeId} value={c.employeeId}>
+                        {c.department} · {c.position}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={handleRunCompanionAgent}
+                    disabled={companionRunning || !selectedCompanionId}
+                    className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {companionRunning ? "Companion đang xử lý…" : "Giao Task cho Companion"}
                   </button>
                 </div>
                 {agentError && <p className="text-xs text-red-600">{agentError}</p>}

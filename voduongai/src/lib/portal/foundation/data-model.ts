@@ -172,7 +172,13 @@ export type CompanionReview = {
  * giữ cả 2, không hợp nhất). Cộng `COMPANION_ACTIVATED`/
  * `COMPANION_TASK_ASSIGNED`/`COMPANION_TASK_COMPLETED` ở PHASE 4 EPIC 02
  * (Activate Core AI Companion Team — xem `workforce-registry.ts`/
- * `companion-manager.ts`).
+ * `companion-manager.ts`). Cộng `OUTPUT_APPROVED`/`MEMORY_UPDATED` ở
+ * Sprint 003 (Workspace Runtime Integration) — `OUTPUT_APPROVED` là sự
+ * kiện tường minh cho bước Owner Approval cuối cùng (trước đây
+ * `approveOutput()` chỉ tái dùng `REVIEW_COMPLETED` gián tiếp qua
+ * `markOutputReviewed`, không có event riêng cho chính hành động
+ * Approve); `MEMORY_UPDATED` đánh dấu Memory Sync sau khi Output hoàn
+ * thành vào Portfolio (`memory-store.ts`).
  */
 export type GrowthEventType =
   | "WORKSPACE_STARTED"
@@ -198,7 +204,9 @@ export type GrowthEventType =
   | "USER_APPROVAL_REQUIRED"
   | "COMPANION_ACTIVATED"
   | "COMPANION_TASK_ASSIGNED"
-  | "COMPANION_TASK_COMPLETED";
+  | "COMPANION_TASK_COMPLETED"
+  | "OUTPUT_APPROVED"
+  | "MEMORY_UPDATED";
 
 export type GrowthEvent = {
   eventId: string;

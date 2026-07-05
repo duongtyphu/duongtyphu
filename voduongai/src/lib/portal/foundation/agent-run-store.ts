@@ -9,7 +9,11 @@
 
 import { emitGrowthEvent } from "./growth-event-bus";
 
-export type AgentRole = "Writer Agent" | "Reviewer Agent";
+/** Mở rộng dạng chuỗi (Sprint 003 — Workspace Runtime Integration) để
+    Agent Run Log ghi được cả 30 AI Companion (`position` thật từ
+    Workforce Registry), không chỉ 2 Agent MVP — vẫn tương thích ngược,
+    "Writer Agent"/"Reviewer Agent" là 2 giá trị cụ thể đã có từ MVP. */
+export type AgentRole = string;
 export type AgentRunStatus = "running" | "completed" | "failed";
 
 export type AgentRunRecord = {

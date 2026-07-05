@@ -39,6 +39,8 @@ const EVENT_LABEL: Record<GrowthEventType, string> = {
   COMPANION_ACTIVATED: "AI Companion được Activate vào Workforce",
   COMPANION_TASK_ASSIGNED: "Companion nhận Task mới",
   COMPANION_TASK_COMPLETED: "Companion hoàn thành Task",
+  OUTPUT_APPROVED: "Owner đã phê duyệt Output",
+  MEMORY_UPDATED: "Memory được cập nhật",
 };
 
 export type ActivityEntry = {

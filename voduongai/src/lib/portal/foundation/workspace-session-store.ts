@@ -17,6 +17,8 @@ import { getProviderForCapability } from "./provider-manager";
 import { startAgentRun, completeAgentRun, failAgentRun } from "./agent-run-store";
 import type { WriterAgentResult } from "@/ai/agents/writer-agent";
 import type { ReviewerAgentResult } from "@/ai/agents/reviewer-agent";
+import { assignTask, toOutputContract } from "./companion-manager";
+import { getCompanion } from "./workforce-registry";
 
 export type ExecutionStepId =
   | "mission_started"
@@ -454,6 +456,42 @@ export async function runReviewerAgentForOutput(
 }
 
 /**
+ * Sprint 003 — Workspace Runtime Integration. Chạy 1 Task cho BẤT KỲ
+ * Companion nào trong 30 Companion đã Activate (`workforce-registry.ts`)
+ * qua Companion Manager (`assignTask`) rồi lưu Output vào Workspace
+ * Kernel qua `saveOutputVersion()` đã có — đây là điểm nối RUNTIME FLOW:
+ * `Companion → AI Service Manager → Provider → Output`. Khác
+ * `runWriterAgentForOutput` (chỉ Writer, dựng Prompt chuyên biệt) — hàm
+ * này dùng chung cho 28/30 Companion còn lại chưa có Agent chuyên biệt,
+ * qua đường `"companion-task"` generic (`companion-manager.ts`).
+ */
+export async function runCompanionAgentForOutput(
+  sessionId: string,
+  employeeId: string,
+  input: { prompt: string; context?: string }
+): Promise<{ session: WorkspaceSessionRecord; output: OutputRecord } | null> {
+  const companion = getCompanion(employeeId);
+  if (!companion) return null;
+
+  const run = startAgentRun(sessionId, companion.position);
+  try {
+    const taskResult = await assignTask(employeeId, input);
+    const contract = toOutputContract(companion, taskResult);
+    const saved = saveOutputVersion(sessionId, { type: contract.type, content: contract.content });
+    if (!saved) {
+      failAgentRun(run.runId, "Không tìm thấy Session để lưu Output.");
+      return null;
+    }
+    const withDraftStatus = updateOutput(saved.session, saved.output.outputId, { approvalStatus: "draft" }, `${companion.position} Draft Created`);
+    completeAgentRun(run.runId, taskResult.isMock);
+    return withDraftStatus ?? saved;
+  } catch (err) {
+    failAgentRun(run.runId, err instanceof Error ? err.message : "Lỗi không xác định.");
+    return null;
+  }
+}
+
+/**
  * User bấm Approve — QUYẾT ĐỊNH CUỐI, không phải Agent. Dùng lại
  * `startReview`/`markOutputReviewed` đã có (Sprint B3) để đặt
  * `reviewStatus: "reviewed"` — KHÔNG nới lỏng điều kiện Portfolio đã khóa
@@ -464,5 +502,11 @@ export function approveOutput(sessionId: string, outputId: string) {
   startReview(sessionId, outputId);
   const reviewed = markOutputReviewed(sessionId, outputId);
   if (!reviewed) return null;
-  return updateOutput(reviewed.session, outputId, { approvalStatus: "approved" }, "User Approved Output");
+  const result = updateOutput(reviewed.session, outputId, { approvalStatus: "approved" }, "User Approved Output");
+  if (result) {
+    // Sprint 003 — Workspace Runtime Integration: event tường minh cho
+    // đúng bước "APPROVED" trong Runtime Flow (Event Timeline).
+    emitGrowthEvent({ eventType: "OUTPUT_APPROVED", workspaceSessionId: sessionId, outputId, missionId: result.session.context.missionId });
+  }
+  return result;
 }
