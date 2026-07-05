@@ -147,18 +147,18 @@ describe("GOAL 001 — Goal Runtime", () => {
     expect(getGoalProgress(goal.goalId)).toBe(0);
   });
 
-  it("P0 GOAL CREATION RUNTIME: launchGoal() draft -> analyzing -> planning, ghi statusHistory thật, không cần AI/Provider/Mock", () => {
+  it("GOAL-002: launchGoal() draft -> ready_for_analysis, ghi statusHistory thật, không cần AI/Provider/Mock", () => {
     const goal = createGoalDraft({ title: "Ra mắt Kênh YouTube VO DUONG AI", expectedDeliverable: "10 video đầu tiên" });
     expect(goal.statusHistory).toEqual([{ status: "draft", at: goal.createdAt }]);
 
     const launched = launchGoal(goal.goalId)!;
-    expect(launched.status).toBe("planning");
-    expect(launched.statusHistory?.map((h) => h.status)).toEqual(["draft", "analyzing", "planning"]);
+    expect(launched.status).toBe("ready_for_analysis");
+    expect(launched.statusHistory?.map((h) => h.status)).toEqual(["draft", "ready_for_analysis"]);
 
     // Idempotent — gọi lại trên Goal đã qua khỏi draft là no-op, không tạo thêm mốc statusHistory.
     const launchedAgain = launchGoal(goal.goalId)!;
-    expect(launchedAgain.status).toBe("planning");
-    expect(launchedAgain.statusHistory).toHaveLength(3);
+    expect(launchedAgain.status).toBe("ready_for_analysis");
+    expect(launchedAgain.statusHistory).toHaveLength(2);
   });
 
   it("advanceGoalStatus(): từ chối chuyển sai thứ tự Goal Lifecycle (no-op)", () => {
@@ -170,7 +170,7 @@ describe("GOAL 001 — Goal Runtime", () => {
   it("computeGoalDashboardSummary(): đếm đúng Draft/Running/Completed/Archived từ dữ liệu thật", () => {
     createGoalDraft({ title: "Goal A" });
     const goalB = createGoalDraft({ title: "Goal B" });
-    launchGoal(goalB.goalId); // -> planning (running)
+    launchGoal(goalB.goalId); // -> ready_for_analysis (running)
 
     const summary = computeGoalDashboardSummary();
     expect(summary.total).toBe(2);

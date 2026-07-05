@@ -21,7 +21,7 @@
 import type { DepartmentId } from "./workforce-registry";
 import { emitGrowthEvent } from "./growth-event-bus";
 
-export type GoalStatus = "draft" | "analyzing" | "planning" | "active" | "completed" | "archived";
+export type GoalStatus = "draft" | "ready_for_analysis" | "active" | "completed" | "archived";
 export type MissionStatus = "not_started" | "in_progress" | "waiting_review" | "completed";
 export type GoalPriority = "low" | "medium" | "high";
 
@@ -29,11 +29,13 @@ export type GoalStatusHistoryEntry = { status: GoalStatus; at: string };
 
 /** Goal Lifecycle hợp lệ — giống pattern `ALLOWED_TRANSITIONS` đã dùng ở
     Companion Lifecycle (`workforce-registry.ts`): chuyển trạng thái sai
-    thứ tự bị từ chối (no-op, trả lại Goal hiện tại). */
+    thứ tự bị từ chối (no-op, trả lại Goal hiện tại). GOAL-002: "Khởi chạy
+    Goal" tạm thời chưa chạy AI — chỉ chuyển thẳng draft → ready_for_analysis
+    trong 1 bước (không qua analyzing/planning trung gian như bản nháp
+    trước đó). */
 const ALLOWED_GOAL_TRANSITIONS: Record<GoalStatus, GoalStatus[]> = {
-  draft: ["analyzing", "archived"],
-  analyzing: ["planning", "archived"],
-  planning: ["active", "archived"],
+  draft: ["ready_for_analysis", "archived"],
+  ready_for_analysis: ["active", "archived"],
   active: ["completed", "archived"],
   completed: ["archived"],
   archived: [],
@@ -290,27 +292,25 @@ export function getGoalProgress(goalId: string): number {
 }
 
 /**
- * P0 GOAL CREATION RUNTIME — "Khởi chạy Goal": Goal `draft` → `analyzing`
- * → `planning`. Chưa cần AI/Provider/Mock — chỉ chuyển trạng thái thật
- * qua đúng Goal Lifecycle (`advanceGoalStatus`), mỗi bước ghi vào
- * `statusHistory` (Goal Detail Timeline đọc thẳng từ đây). Idempotent —
- * gọi lại trên Goal không còn ở `draft` là no-op, trả về Goal hiện tại.
- * Việc tạo Epic/Mission/Workforce Assignment thật thuộc PHASE sau (không
- * làm trong PHASE 1 CREATE GOAL này, theo đúng brief).
+ * GOAL-002 — "Khởi chạy Goal": Goal `draft` → `ready_for_analysis`. Tạm
+ * thời CHƯA chạy AI/Provider/Mock — chỉ chuyển trạng thái thật qua đúng
+ * Goal Lifecycle (`advanceGoalStatus`), ghi vào `statusHistory` (Goal
+ * Detail Timeline đọc thẳng từ đây). Idempotent — gọi lại trên Goal
+ * không còn ở `draft` là no-op, trả về Goal hiện tại. Việc tạo Epic/
+ * Mission/Workforce Assignment thật thuộc PHASE sau.
  */
 export function launchGoal(goalId: string): GoalRecord | null {
   const goal = getGoal(goalId);
   if (!goal) return null;
   if (goal.status !== "draft") return goal;
 
-  const analyzing = advanceGoalStatus(goalId, "analyzing")!;
-  return advanceGoalStatus(analyzing.goalId, "planning")!;
+  return advanceGoalStatus(goalId, "ready_for_analysis")!;
 }
 
 export type GoalDashboardSummary = {
   total: number;
   draft: number;
-  running: number; // analyzing + planning + active
+  running: number; // ready_for_analysis + active
   completed: number;
   archived: number;
 };
@@ -321,7 +321,7 @@ export function computeGoalDashboardSummary(): GoalDashboardSummary {
   return {
     total: goals.length,
     draft: goals.filter((g) => g.status === "draft").length,
-    running: goals.filter((g) => g.status === "analyzing" || g.status === "planning" || g.status === "active").length,
+    running: goals.filter((g) => g.status === "ready_for_analysis" || g.status === "active").length,
     completed: goals.filter((g) => g.status === "completed").length,
     archived: goals.filter((g) => g.status === "archived").length,
   };

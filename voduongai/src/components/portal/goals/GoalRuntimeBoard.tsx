@@ -27,8 +27,7 @@ const PRIORITY_LABEL: Record<string, string> = { low: "Thấp", medium: "Trung b
 
 export const GOAL_STATUS_LABEL: Record<GoalStatus, string> = {
   draft: "Draft",
-  analyzing: "Đang phân tích",
-  planning: "Đang lập kế hoạch",
+  ready_for_analysis: "READY_FOR_ANALYSIS",
   active: "Đang chạy",
   completed: "Hoàn thành",
   archived: "Lưu trữ",
@@ -36,8 +35,7 @@ export const GOAL_STATUS_LABEL: Record<GoalStatus, string> = {
 
 export const GOAL_STATUS_STYLE: Record<GoalStatus, string> = {
   draft: "bg-gray-100 text-gray-500",
-  analyzing: "bg-amber-100 text-amber-700",
-  planning: "bg-amber-100 text-amber-700",
+  ready_for_analysis: "bg-amber-100 text-amber-700",
   active: "bg-blue-100 text-blue-700",
   completed: "bg-green-100 text-green-700",
   archived: "bg-gray-100 text-gray-400",
