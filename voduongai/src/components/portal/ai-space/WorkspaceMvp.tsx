@@ -50,6 +50,7 @@ import { recordNewUnlocks } from "@/lib/portal/foundation/mission-unlock-runtime
 import { listAgentRuns, type AgentRunRecord } from "@/lib/portal/foundation/agent-run-store";
 import { syncMemoryForPortfolioItem } from "@/lib/portal/foundation/memory-store";
 import { listCompanions, activateWave1Companions, type CompanionRecord } from "@/lib/portal/foundation/workforce-registry";
+import { getGoalMission, linkMissionToSession, completeGoalMission } from "@/lib/portal/foundation/goal-runtime";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -168,6 +169,12 @@ export function WorkspaceMvp() {
     // trước khi hiển thị danh sách Companion để giao Task.
     activateWave1Companions();
     setCompanions(listCompanions().filter((c) => c.workingStatus === "active" || c.workingStatus === "idle"));
+    // GOAL 001 — Goal Runtime: nếu Workspace này được mở từ 1 Goal Mission
+    // (`context.missionId` khớp 1 GoalMission thật), link Session vào
+    // Mission đó — không ảnh hưởng luồng Golden Mission (learning) cũ.
+    if (context.missionId && getGoalMission(context.missionId)) {
+      linkMissionToSession(context.missionId, resolved.sessionId);
+    }
   }, [context, session]);
 
   const goal = context?.userGoal ?? context?.title ?? "Chưa xác định mục tiêu cụ thể";
@@ -322,6 +329,11 @@ export function WorkspaceMvp() {
       for (const item of promoted.filter((p) => p.outputId === outputId)) {
         syncMemoryForPortfolioItem(item, completedOutput);
       }
+    }
+    // GOAL 001 — Goal Runtime: nếu Session này link tới 1 Goal Mission và
+    // vừa có Output vào Portfolio — Mission coi như "Complete".
+    if (promoted.length > 0 && context?.missionId && getGoalMission(context.missionId)) {
+      completeGoalMission(context.missionId);
     }
     // Sprint B5 — Capability Engine: tính lại Capability từ Evidence thật
     // (Output + Reflection) ngay khi có Evidence mới — không có UI hiển
