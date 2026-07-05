@@ -809,6 +809,20 @@ export function setWorkingStatus(employeeId: string, next: CompanionWorkingStatu
   return { ...current, workingStatus: next };
 }
 
+/** SPRINT F1 — Workforce Evolution Loop: cập nhật performanceScore từ dữ
+    liệu Task/Mission THẬT (Performance History) — đóng khoảng trống đã
+    ghi ở GOAL 001 Dashboard ("performanceScore hiện vẫn tĩnh 50"). Chỉ
+    cập nhật overlay, không đổi cấu trúc CompanionRecord/Registry. */
+export function setPerformanceScore(employeeId: string, score: number): CompanionRecord {
+  const current = getCompanion(employeeId);
+  if (!current) throw new Error(`Không tìm thấy Companion "${employeeId}" trong Workforce Registry.`);
+  const clamped = Math.max(0, Math.min(100, Math.round(score)));
+  const overlay = readOverlay();
+  overlay[employeeId] = { workingStatus: overlay[employeeId]?.workingStatus ?? current.workingStatus, performanceScore: clamped };
+  writeOverlay(overlay);
+  return { ...current, performanceScore: clamped };
+}
+
 /**
  * Activate mọi Companion đang `inactive` (Wave 1 + Wave 2, và mọi Wave
  * sau này thêm vào `WORKFORCE_CATALOG`) vào Production Runtime — đi
