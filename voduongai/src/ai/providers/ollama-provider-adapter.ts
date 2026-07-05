@@ -28,13 +28,17 @@ export class OllamaProviderAdapter implements ProviderAdapter {
   readonly providerId = "ollama";
   readonly name = "Ollama Provider";
   readonly tier = "recommended" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 8_000, description: "Ollama — chạy local, riêng tư tuyệt đối, không gửi dữ liệu ra ngoài." }];
   readonly costProfile = { inputPer1kTokens: 0, outputPer1kTokens: 0, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 65, reportedSpeed: 60, reportedReliability: 70 };
+  readonly qualityProfile = { reportedQuality: 65 };
+  readonly speedProfile = { reportedSpeed: 60 };
+  readonly reliabilityProfile = { reportedReliability: 70 };
+  readonly privacyProfile = { sendsDataExternally: false, dataResidencyNote: "Chạy local trên hạ tầng Owner — không gửi dữ liệu ra ngoài." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Chạy local — dữ liệu không rời khỏi hạ tầng Owner, không có bên thứ ba nào nhận request.",
@@ -83,5 +87,9 @@ export class OllamaProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

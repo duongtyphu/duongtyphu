@@ -23,13 +23,17 @@ export class MistralProviderAdapter implements ProviderAdapter {
   readonly providerId = "mistral";
   readonly name = "Mistral Provider";
   readonly tier = "recommended" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 128_000, description: "Mistral — model châu Âu, tối ưu chi phí." }];
   readonly costProfile = { inputPer1kTokens: 0.002, outputPer1kTokens: 0.006, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 78, reportedSpeed: 82, reportedReliability: 80 };
+  readonly qualityProfile = { reportedQuality: 78 };
+  readonly speedProfile = { reportedSpeed: 82 };
+  readonly reliabilityProfile = { reportedReliability: 80 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Theo chính sách dữ liệu công khai của Mistral (đặt máy chủ tại EU) — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
@@ -78,5 +82,9 @@ export class MistralProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

@@ -22,13 +22,17 @@ export class MockProviderAdapter implements ProviderAdapter {
   readonly providerId = "mock";
   readonly name = "Mock Provider";
   readonly tier = "development" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = ["mock-model"];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: "mock-model", contextWindow: 0, description: "Không gọi mạng — trả JSON placeholder có cấu trúc." }];
   readonly costProfile = { inputPer1kTokens: 0, outputPer1kTokens: 0, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 0, reportedSpeed: 100, reportedReliability: 100 };
+  readonly qualityProfile = { reportedQuality: 0 };
+  readonly speedProfile = { reportedSpeed: 100 };
+  readonly reliabilityProfile = { reportedReliability: 100 };
+  readonly privacyProfile = { sendsDataExternally: false, dataResidencyNote: "Không gọi mạng — không có dữ liệu nào rời khỏi tiến trình." };
   readonly configuration = { envVar: "" }; // không cần ENV nào
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Không gửi dữ liệu ra ngoài — không có vendor thật nào nhận request.",
@@ -63,5 +67,9 @@ export class MockProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

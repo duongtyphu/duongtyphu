@@ -28,13 +28,17 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
   readonly providerId = "anthropic";
   readonly name = "Anthropic Provider";
   readonly tier = "core" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 200_000, description: "Claude — mạnh về viết/reasoning dài." }];
   readonly costProfile = { inputPer1kTokens: 0.003, outputPer1kTokens: 0.015, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 90, reportedSpeed: 70, reportedReliability: 90 };
+  readonly qualityProfile = { reportedQuality: 90 };
+  readonly speedProfile = { reportedSpeed: 70 };
+  readonly reliabilityProfile = { reportedReliability: 90 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Theo chính sách dữ liệu công khai của Anthropic — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
@@ -87,5 +91,9 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

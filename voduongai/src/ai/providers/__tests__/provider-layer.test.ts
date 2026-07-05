@@ -18,7 +18,7 @@ const ENV_KEYS = [
   "OPENAI_API_KEY",
   "GEMINI_API_KEY",
   "DEEPSEEK_API_KEY",
-  "XAI_API_KEY",
+  "GROK_API_KEY",
   "MISTRAL_API_KEY",
   "OLLAMA_BASE_URL",
   "PERPLEXITY_API_KEY",
@@ -63,6 +63,28 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
     expect(providerRegistry.listByTier("recommended").map((a) => a.providerId).sort()).toEqual(["grok", "mistral", "ollama"]);
     expect(providerRegistry.listByTier("specialized").map((a) => a.providerId).sort()).toEqual(["cohere", "perplexity"]);
     expect(providerRegistry.listByTier("development").map((a) => a.providerId)).toEqual(["mock"]);
+  });
+
+  it("AI Service Registry: providerType không hard-code chỉ cho LLM — Wave 1 khai báo đúng 'llm', listByType mở rộng được", async () => {
+    const { providerRegistry, aiServiceRegistry } = await import("../registry");
+    expect(aiServiceRegistry).toBe(providerRegistry); // cùng 1 instance, chỉ khác tên export
+    expect(providerRegistry.list().every((a) => a.providerType === "llm")).toBe(true);
+    expect(providerRegistry.listByType("llm")).toHaveLength(10);
+    expect(providerRegistry.listByType("image")).toHaveLength(0); // chưa tích hợp — Registry vẫn trả mảng rỗng, không lỗi
+  });
+
+  it("AI Service Adapter Contract: getCapabilities() khớp đúng supportedCapabilities cho mọi Provider", async () => {
+    const { providerRegistry } = await import("../registry");
+    for (const adapter of providerRegistry.list()) {
+      expect(adapter.getCapabilities()).toEqual(adapter.supportedCapabilities);
+    }
+  });
+
+  it("AIServiceManager là cổng gọi duy nhất — alias cùng 1 object với providerManager", async () => {
+    const { providerManager, aiServiceManager } = await import("../provider-manager");
+    expect(aiServiceManager).toBe(providerManager);
+    const result = await aiServiceManager.execute({ capability: "writing.draft", taskType: "writer", input: { prompt: "x" } });
+    expect(result.isMock).toBe(true);
   });
 
   it("2. ProviderManager fallback sang Mock khi không có API key nào được cấu hình", async () => {

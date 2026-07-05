@@ -24,13 +24,17 @@ export class GeminiProviderAdapter implements ProviderAdapter {
   readonly providerId = "gemini";
   readonly name = "Gemini Provider";
   readonly tier = "core" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 1_000_000, description: "Gemini — context window lớn, mạnh về research/tổng hợp." }];
   readonly costProfile = { inputPer1kTokens: 0.000075, outputPer1kTokens: 0.0003, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 82, reportedSpeed: 80, reportedReliability: 85 };
+  readonly qualityProfile = { reportedQuality: 82 };
+  readonly speedProfile = { reportedSpeed: 80 };
+  readonly reliabilityProfile = { reportedReliability: 85 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Theo chính sách dữ liệu công khai của Google — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
@@ -82,5 +86,9 @@ export class GeminiProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

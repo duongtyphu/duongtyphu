@@ -1,11 +1,15 @@
 /**
- * PHASE 4 EPIC 01/"Provider Wave 1" — AI Provider Layer — hợp đồng dữ
- * liệu dùng chung.
+ * AI Service Registry — hợp đồng dữ liệu dùng chung.
  *
  * "server-only" theo tinh thần chung của toàn bộ layer này (không import
  * vào component client — chỉ dùng trong route handler/agent server-side).
  * Không có API key nào được hard-code ở đây — mọi Adapter tự đọc key
  * riêng từ `process.env` tại thời điểm `execute()`/`isAvailable()`.
+ *
+ * Đổi tư duy: đây KHÔNG chỉ là Registry cho LLM — `AIServiceType` mở ra
+ * cho mọi loại AI Service tương lai (image/video/voice/search/automation/
+ * local_runtime/embedding/rag/code/browser/data/...), Provider Wave 1
+ * (10 Provider) chỉ là lứa đầu tiên, toàn bộ đều `providerType: "llm"`.
  */
 import "server-only";
 
@@ -18,6 +22,28 @@ export type ProviderCapability = string;
 /** 4 Tier chính thức của Provider Wave 1 — quyết định thứ tự ưu tiên mặc
     định khi không có tín hiệu nào khác (điểm/preference/fallback). */
 export type ProviderTier = "core" | "recommended" | "specialized" | "development";
+
+/**
+ * Loại AI Service — KHÔNG giới hạn chỉ cho LLM. Provider Wave 1 (10
+ * Provider hiện có) đều là `"llm"`; các loại còn lại chuẩn bị sẵn chỗ
+ * đứng trong Registry cho Sprint sau (Image/Video/Voice/Search/
+ * Automation/Local Runtime — xem `docs/AI_SERVICE_REGISTRY.md` §Future
+ * Expansion), không tích hợp ngay.
+ */
+export type AIServiceType =
+  | "llm"
+  | "search"
+  | "image"
+  | "video"
+  | "voice"
+  | "automation"
+  | "local_runtime"
+  | "embedding"
+  | "rag"
+  | "code"
+  | "browser"
+  | "data"
+  | "other";
 
 export type ModelRegistryEntry = {
   modelId: string;
@@ -33,12 +59,21 @@ export type ProviderCostProfile = {
 
 /** Baseline TỰ KHAI BÁO (self-declared), KHÔNG phải điểm đo thật — điểm
     đo thật (dựa trên `ProviderExecutionLog` thật) là `ProviderScore`
-    (`provider-score.ts`), dùng baseline này làm "prior" trước khi có đủ
-    dữ liệu thật. Không được nhầm 2 khái niệm này với nhau. */
-export type ProviderBenchmarkProfile = {
-  reportedQuality: number; // 0-100
-  reportedSpeed: number; // 0-100
-  reportedReliability: number; // 0-100
+    (`provider-score.ts`), dùng 3 profile này làm "prior" trước khi có đủ
+    dữ liệu thật. Không được nhầm 2 khái niệm này với nhau. Tách thành 3
+    field riêng (thay vì 1 `benchmarkProfile` gộp) để khớp đúng cấu trúc
+    AI Service Registry — mỗi trục là 1 "hồ sơ" độc lập, dễ mở rộng thêm
+    field cho từng trục sau này (vd `qualityProfile` có thể thêm
+    `benchmarkSuite` cụ thể mà không ảnh hưởng `speedProfile`). */
+export type ProviderQualityProfile = { reportedQuality: number }; // 0-100
+export type ProviderSpeedProfile = { reportedSpeed: number }; // 0-100
+export type ProviderReliabilityProfile = { reportedReliability: number }; // 0-100
+
+/** Có gửi dữ liệu ra ngoài hạ tầng Owner hay không — quan trọng cho
+    Routing "Local / Privacy" (vd Ollama luôn `sendsDataExternally: false`). */
+export type ProviderPrivacyProfile = {
+  sendsDataExternally: boolean;
+  dataResidencyNote: string;
 };
 
 export type ProviderConfiguration = {
@@ -49,7 +84,7 @@ export type ProviderConfiguration = {
   optionalEnvVar?: string;
 };
 
-export type ProviderSecurityPolicy = {
+export type ProviderSecurityProfile = {
   /** Cố định cho MỌI Provider — không có ngoại lệ. */
   keyStorage: "server-only-env";
   loggingPolicy: "never-log-key-or-raw-content";
@@ -106,23 +141,28 @@ export type ProviderBenchmarkResult = {
 };
 
 /**
- * PROVIDER ADAPTER CONTRACT — mọi Provider (10 Provider Wave 1: OpenAI/
- * Claude/Gemini/DeepSeek/Grok/Mistral/Ollama/Perplexity/Cohere/Mock)
- * đều phải implement đúng interface này. Đây là hợp đồng duy nhất
- * `ProviderManager` biết tới — không có logic gọi vendor nào được phép
- * nằm ngoài 1 Adapter cụ thể.
+ * AI SERVICE ADAPTER CONTRACT — mọi AI Service (10 Provider Wave 1 hôm
+ * nay, mọi loại `AIServiceType` khác trong tương lai) đều phải implement
+ * đúng interface này. Đây là hợp đồng duy nhất `AIServiceManager` biết
+ * tới — không có logic gọi vendor nào được phép nằm ngoài 1 Adapter cụ
+ * thể; không module nào được gọi thẳng OpenAI/Claude/Gemini/... — luôn
+ * đi qua `AIServiceManager.execute()`.
  */
-export interface ProviderAdapter {
+export interface AIServiceAdapter {
   readonly providerId: string;
   readonly name: string;
+  readonly providerType: AIServiceType;
   readonly tier: ProviderTier;
   readonly supportedModels: string[];
   readonly supportedCapabilities: ProviderCapability[];
   readonly modelRegistry: ModelRegistryEntry[];
   readonly costProfile: ProviderCostProfile;
-  readonly benchmarkProfile: ProviderBenchmarkProfile;
+  readonly qualityProfile: ProviderQualityProfile;
+  readonly speedProfile: ProviderSpeedProfile;
+  readonly reliabilityProfile: ProviderReliabilityProfile;
+  readonly privacyProfile: ProviderPrivacyProfile;
   readonly configuration: ProviderConfiguration;
-  readonly securityPolicy: ProviderSecurityPolicy;
+  readonly securityProfile: ProviderSecurityProfile;
 
   /** Kiểm tra nhanh (không gọi mạng) — có đủ ENV var để hoạt động không. */
   isAvailable(): boolean;
@@ -139,4 +179,14 @@ export interface ProviderAdapter {
 
   /** Chạy 1 request thật qua `execute()` và trả về điểm Benchmark MVP. */
   benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult>;
+
+  /** "Capability Mapping" tường minh — trả lại đúng `supportedCapabilities`,
+      dùng làm API ổn định thay vì đọc trực tiếp field (cho phép Adapter
+      tương lai tính toán động nếu cần). */
+  getCapabilities(): ProviderCapability[];
 }
+
+/** Alias tương thích ngược — mọi code cũ dùng tên `ProviderAdapter` (từ
+    Sprint EPIC 01/02) vẫn chạy nguyên, không cần sửa lại. Tên chính thức
+    từ Sprint "AI Service Registry" trở đi là `AIServiceAdapter`. */
+export type ProviderAdapter = AIServiceAdapter;

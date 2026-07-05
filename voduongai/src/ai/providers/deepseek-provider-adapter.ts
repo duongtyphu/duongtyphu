@@ -24,13 +24,17 @@ export class DeepSeekProviderAdapter implements ProviderAdapter {
   readonly providerId = "deepseek";
   readonly name = "DeepSeek Provider";
   readonly tier = "core" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 64_000, description: "DeepSeek — mạnh về coding, chi phí thấp." }];
   readonly costProfile = { inputPer1kTokens: 0.00014, outputPer1kTokens: 0.00028, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 80, reportedSpeed: 80, reportedReliability: 80 };
+  readonly qualityProfile = { reportedQuality: 80 };
+  readonly speedProfile = { reportedSpeed: 80 };
+  readonly reliabilityProfile = { reportedReliability: 80 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Theo chính sách dữ liệu công khai của DeepSeek — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
@@ -79,5 +83,9 @@ export class DeepSeekProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

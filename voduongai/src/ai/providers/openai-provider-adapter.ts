@@ -23,13 +23,17 @@ export class OpenAIProviderAdapter implements ProviderAdapter {
   readonly providerId = "openai";
   readonly name = "OpenAI Provider";
   readonly tier = "core" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 128_000, description: "OpenAI — mạnh về coding/tool-use." }];
   readonly costProfile = { inputPer1kTokens: 0.00015, outputPer1kTokens: 0.0006, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 85, reportedSpeed: 85, reportedReliability: 90 };
+  readonly qualityProfile = { reportedQuality: 85 };
+  readonly speedProfile = { reportedSpeed: 85 };
+  readonly reliabilityProfile = { reportedReliability: 90 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Theo chính sách dữ liệu công khai của OpenAI — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
@@ -78,5 +82,9 @@ export class OpenAIProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

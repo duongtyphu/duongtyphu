@@ -17,19 +17,23 @@ import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
 
 const DEFAULT_MODEL = "grok-beta";
-const ENV_VAR = "XAI_API_KEY";
+const ENV_VAR = "GROK_API_KEY";
 
 export class GrokProviderAdapter implements ProviderAdapter {
   readonly providerId = "grok";
   readonly name = "Grok Provider";
   readonly tier = "recommended" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 128_000, description: "Grok (xAI) — cập nhật tín hiệu thời sự nhanh." }];
   readonly costProfile = { inputPer1kTokens: 0.005, outputPer1kTokens: 0.015, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 78, reportedSpeed: 75, reportedReliability: 75 };
+  readonly qualityProfile = { reportedQuality: 78 };
+  readonly speedProfile = { reportedSpeed: 75 };
+  readonly reliabilityProfile = { reportedReliability: 75 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Theo chính sách dữ liệu công khai của xAI — Owner tự rà soát trước khi gửi dữ liệu nhạy cảm.",
@@ -78,5 +82,9 @@ export class GrokProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

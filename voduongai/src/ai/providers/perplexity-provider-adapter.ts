@@ -25,13 +25,17 @@ export class PerplexityProviderAdapter implements ProviderAdapter {
   readonly providerId = "perplexity";
   readonly name = "Perplexity Provider";
   readonly tier = "specialized" as const;
+  readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
   readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 128_000, description: "Perplexity — có truy cập web-search thật ở phía vendor, mạnh về Research." }];
   readonly costProfile = { inputPer1kTokens: 0.001, outputPer1kTokens: 0.001, currency: "USD" as const };
-  readonly benchmarkProfile = { reportedQuality: 82, reportedSpeed: 65, reportedReliability: 78 };
+  readonly qualityProfile = { reportedQuality: 82 };
+  readonly speedProfile = { reportedSpeed: 65 };
+  readonly reliabilityProfile = { reportedReliability: 78 };
+  readonly privacyProfile = { sendsDataExternally: true, dataResidencyNote: "Dữ liệu gửi tới hạ tầng vendor bên thứ ba theo chính sách dữ liệu công khai của vendor." };
   readonly configuration = { envVar: ENV_VAR };
-  readonly securityPolicy = {
+  readonly securityProfile = {
     keyStorage: "server-only-env" as const,
     loggingPolicy: "never-log-key-or-raw-content" as const,
     dataRetentionNote: "Perplexity có thể truy vấn web thật để trả lời — Owner cân nhắc trước khi gửi dữ liệu nội bộ nhạy cảm.",
@@ -80,5 +84,9 @@ export class PerplexityProviderAdapter implements ProviderAdapter {
 
   async benchmark(request: ProviderExecuteRequest): Promise<ProviderBenchmarkResult> {
     return runAdapterBenchmark(this, request);
+  }
+
+  getCapabilities() {
+    return this.supportedCapabilities;
   }
 }

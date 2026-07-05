@@ -1,13 +1,16 @@
 /**
- * PHASE 4 EPIC 01 — ProviderManager.
+ * AIServiceManager (tên nội bộ file/biến vẫn giữ `provider-manager.ts`/
+ * `providerManager` để không phá import đã có — export thêm alias
+ * `aiServiceManager` làm tên chính thức từ Sprint "AI Service Registry").
  *
- * CỔNG DUY NHẤT để AI Workforce gọi AI. Không module/Companion nào được
- * gọi `ProviderAdapter`/vendor API trực tiếp — mọi lời gọi đi qua
- * `providerManager.execute(...)`. `writer-agent.ts`/`reviewer-agent.ts`
- * (PHASE 4 EPIC 01) đã được nối qua đây; các agent Admin Companion
- * Studio cũ (`community.agent.ts`, `content.agent.ts`, ...) nằm ngoài
- * phạm vi EPIC này — không đổi, tiếp tục dùng `companion.agent.ts` như
- * trước (không phá kiến trúc Admin đã khóa).
+ * CỔNG DUY NHẤT để AI Workforce gọi bất kỳ AI Service nào (LLM hôm nay,
+ * Image/Video/Voice/Search/Automation Sprint sau). Không module/Companion
+ * nào được gọi `AIServiceAdapter`/vendor API trực tiếp — mọi lời gọi đi
+ * qua `aiServiceManager.execute(...)`. `writer-agent.ts`/`reviewer-agent.ts`
+ * đã được nối qua đây; các agent Admin Companion Studio cũ
+ * (`community.agent.ts`, `content.agent.ts`, ...) nằm ngoài phạm vi này
+ * — không đổi, tiếp tục dùng `companion.agent.ts` như trước (không phá
+ * kiến trúc Admin đã khóa).
  */
 import "server-only";
 import type { ProviderExecuteResult, ProviderHealth } from "./types";
@@ -97,3 +100,6 @@ export const providerManager = {
   healthCheckAll,
   matchProvidersForCapability,
 };
+
+/** Tên chính thức từ Sprint "AI Service Registry" trở đi — cùng 1 object. */
+export const aiServiceManager = providerManager;

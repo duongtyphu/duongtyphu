@@ -2,14 +2,14 @@
  * Provider Wave 1 — ProviderScore.
  *
  * View tính toán (không lưu trữ riêng) từ `ProviderExecutionLog` +
- * `adapter.costProfile`/`adapter.benchmarkProfile` — dùng để `ModelRouter`
+ * `adapter.costProfile`/`adapter.qualityProfile`/`speedProfile`/`reliabilityProfile` — dùng để `ModelRouter`
  * xếp hạng Provider nào nên được ưu tiên chọn khi có nhiều Provider cùng
  * khả dụng cho 1 capability ("Benchmark Selection").
  *
  * 6 trục điểm theo đúng yêu cầu EPIC 01 (`quality`, `speed`, `cost`,
  * `reliability`, `blueprintCompliance`, `userApprovalRate`), mỗi trục
  * 0-100. Khi CHƯA có `ProviderExecutionLog` thật (`totalRuns === 0`),
- * `quality`/`speed`/`reliability` dùng `adapter.benchmarkProfile` (Provider
+ * `quality`/`speed`/`reliability` dùng `adapter.qualityProfile`/`speedProfile`/`reliabilityProfile` (Provider
  * Wave 1, tự khai báo) làm PRIOR — rõ ràng khác điểm đo thật, không trộn
  * lẫn 2 khái niệm; khi đã có dữ liệu thật, chỉ dùng dữ liệu thật, không
  * còn pha trộn với con số tự khai báo. `blueprintCompliance`/
@@ -59,9 +59,9 @@ function computeCostScore(providerId: string): number {
 export function computeProviderScore(providerId: string): ProviderScoreRecord {
   const runs = listExecutions(providerId);
   const adapter = providerRegistry.get(providerId);
-  const priorQuality = adapter?.benchmarkProfile.reportedQuality ?? NEUTRAL_PLACEHOLDER;
-  const priorSpeed = adapter?.benchmarkProfile.reportedSpeed ?? NEUTRAL_PLACEHOLDER;
-  const priorReliability = adapter?.benchmarkProfile.reportedReliability ?? NEUTRAL_PLACEHOLDER;
+  const priorQuality = adapter?.qualityProfile.reportedQuality ?? NEUTRAL_PLACEHOLDER;
+  const priorSpeed = adapter?.speedProfile.reportedSpeed ?? NEUTRAL_PLACEHOLDER;
+  const priorReliability = adapter?.reliabilityProfile.reportedReliability ?? NEUTRAL_PLACEHOLDER;
 
   let reliability = priorReliability;
   let speed = priorSpeed;

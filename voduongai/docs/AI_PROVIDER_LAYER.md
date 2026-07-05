@@ -74,7 +74,7 @@ interface ProviderAdapter {
 | **Core** | `AnthropicProviderAdapter` | `anthropic` | `api.anthropic.com` | `ANTHROPIC_API_KEY` |
 | **Core** | `GeminiProviderAdapter` | `gemini` | `generativelanguage.googleapis.com` | `GEMINI_API_KEY` |
 | **Core** | `DeepSeekProviderAdapter` | `deepseek` | `api.deepseek.com` | `DEEPSEEK_API_KEY` |
-| **Recommended** | `GrokProviderAdapter` | `grok` | `api.x.ai` | `XAI_API_KEY` |
+| **Recommended** | `GrokProviderAdapter` | `grok` | `api.x.ai` | `GROK_API_KEY` |
 | **Recommended** | `MistralProviderAdapter` | `mistral` | `api.mistral.ai` | `MISTRAL_API_KEY` |
 | **Recommended** | `OllamaProviderAdapter` | `ollama` | Local (`OLLAMA_BASE_URL`) | `OLLAMA_BASE_URL` (không phải API key) |
 | **Specialized** | `PerplexityProviderAdapter` | `perplexity` | `api.perplexity.ai` | `PERPLEXITY_API_KEY` |
@@ -243,7 +243,7 @@ OPENAI_API_KEY=        # tuỳ chọn — thiếu thì OpenAIProviderAdapter.isA
 GEMINI_API_KEY=        # tuỳ chọn — thiếu thì GeminiProviderAdapter.isAvailable() = false
 DEEPSEEK_API_KEY=      # tuỳ chọn — thiếu thì DeepSeekProviderAdapter.isAvailable() = false
 # Recommended
-XAI_API_KEY=           # tuỳ chọn — thiếu thì GrokProviderAdapter.isAvailable() = false
+GROK_API_KEY=           # tuỳ chọn — thiếu thì GrokProviderAdapter.isAvailable() = false
 MISTRAL_API_KEY=       # tuỳ chọn — thiếu thì MistralProviderAdapter.isAvailable() = false
 OLLAMA_BASE_URL=       # tuỳ chọn — địa chỉ Ollama server local (vd http://localhost:11434), KHÔNG phải API key
 # Specialized

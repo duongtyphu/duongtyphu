@@ -5,7 +5,7 @@ import "server-only";
  * được xem là hỗ trợ ở mức MVP — tránh lặp lại cùng 1 mảng ở 10 Adapter.
  * Provider chuyên biệt (vd Ollama chỉ chạy local, Perplexity thiên
  * research) vẫn dùng đúng danh sách này ở Wave 1 vì tất cả đều là model
- * sinh văn bản tổng quát — khác biệt thật sự nằm ở `tier`/`benchmarkProfile`,
+ * sinh văn bản tổng quát — khác biệt thật sự nằm ở `tier`/`providerType`,
  * không phải ở tập capability hỗ trợ.
  */
 export const ALL_TEXT_CAPABILITIES: string[] = [
