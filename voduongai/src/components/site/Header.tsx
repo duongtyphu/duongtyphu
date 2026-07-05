@@ -2,6 +2,7 @@ import Link from "next/link";
 import { mainNav } from "@/lib/site";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { AccountMenu } from "@/components/site/AccountMenu";
+import { MobileNavDrawer } from "@/components/site/MobileNavDrawer";
 import type { SiteSettings } from "@/lib/site-settings";
 import { brandMain, brandAccent } from "@/lib/brand-name";
 
@@ -37,7 +38,7 @@ export async function Header({ settings }: { settings: SiteSettings }) {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex">
+        <nav className="hidden items-center gap-7 lg:flex">
           {mainNav.map((item) => (
             <Link
               key={item.href}
@@ -49,14 +50,15 @@ export async function Header({ settings }: { settings: SiteSettings }) {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
             href="/portal"
-            className="rounded-full gradient-surface px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+            className="hidden shrink-0 rounded-full gradient-surface px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 min-[400px]:inline-flex"
           >
             Vào Portal
           </Link>
           {user?.email && <AccountMenu email={user.email} fullName={meta.full_name} />}
+          <MobileNavDrawer navItems={mainNav} user={user?.email ? { email: user.email, fullName: meta.full_name } : null} />
         </div>
       </div>
     </header>
