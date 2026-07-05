@@ -29,7 +29,7 @@ async function getAnyBlogPost(slug: string): Promise<BlogPost | null> {
   return getBlogPost(slug) ?? (await getAdminPost(slug));
 }
 
-export async function generateMetadata({ params }: PageProps<"/blog/[slug]">) {
+export async function generateMetadata({ params }: PageProps<"/blogai/[slug]">) {
   const { slug } = await params;
   const post = await getAnyBlogPost(slug);
   const title = post?.title ?? "Blog AI";
@@ -69,7 +69,7 @@ function ContentBlock({ block }: { block: string }) {
   return <p className="mt-4 leading-relaxed text-white">{block}</p>;
 }
 
-export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">) {
+export default async function BlogPostPage({ params }: PageProps<"/blogai/[slug]">) {
   const { slug } = await params;
   const post = await getAnyBlogPost(slug);
   if (!post) notFound();
@@ -81,12 +81,12 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
       <Breadcrumb
         items={[
           { label: "Trang chủ", href: "/" },
-          { label: "Blog AI", href: "/blog" },
+          { label: "Blog AI", href: "/blogai" },
           { label: post.title },
         ]}
       />
 
-      <Link href="/blog" className="mt-4 inline-block text-sm font-semibold text-brand-violet hover:underline">
+      <Link href="/blogai" className="mt-4 inline-block text-sm font-semibold text-brand-violet hover:underline">
         ← Blog AI
       </Link>
 
@@ -139,7 +139,7 @@ export default async function BlogPostPage({ params }: PageProps<"/blog/[slug]">
             {related.map((p) => (
               <Link
                 key={p.slug}
-                href={`/blog/${p.slug}`}
+                href={`/blogai/${p.slug}`}
                 className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:border-brand-violet"
               >
                 <div className="text-xs text-white">{p.category} · {p.readTime}</div>

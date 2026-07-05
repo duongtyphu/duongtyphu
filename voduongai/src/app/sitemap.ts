@@ -8,7 +8,7 @@ import { blogPosts } from "@/data/blog";
 const routes = [
   "/",
   "/about",
-  "/blog",
+  "/blogai",
   "/contact",
   "/privacy",
   "/terms",
@@ -26,7 +26,7 @@ const routes = [
   ...tools.map((t) => `/portal/tools/${t.id}`),
   ...prompts.map((p) => `/portal/prompts/${p.id}`),
   ...freeResources.map((r) => `/portal/resources/${r.id}`),
-  ...blogPosts.map((p) => `/blog/${p.slug}`),
+  ...blogPosts.map((p) => `/blogai/${p.slug}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

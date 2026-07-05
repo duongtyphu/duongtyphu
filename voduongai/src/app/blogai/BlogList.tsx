@@ -44,7 +44,7 @@ export function BlogList({ posts }: { posts: BlogPost[] }) {
           {filtered.map((post) => (
             <Link
               key={post.slug}
-              href={`/blog/${post.slug}`}
+              href={`/blogai/${post.slug}`}
               className="card-shine rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition hover:border-brand-violet"
             >
               <div className="flex items-center justify-between text-2xl">

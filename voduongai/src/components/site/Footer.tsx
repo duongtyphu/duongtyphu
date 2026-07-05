@@ -18,7 +18,7 @@ const columns = [
     title: "Tài nguyên",
     links: [
       { label: "Bộ công cụ AI", href: "/portal/resources" },
-      { label: "Blog", href: "/blog" },
+      { label: "Blog", href: "/blogai" },
       { label: "Ebook", href: "/portal/resources" },
       { label: "Tài nguyên miễn phí", href: "/portal/resources" },
       { label: "Tài nguyên Premium", href: "/portal/premium" },

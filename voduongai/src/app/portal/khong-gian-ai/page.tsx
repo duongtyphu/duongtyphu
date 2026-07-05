@@ -200,7 +200,7 @@ export default function KhongGianAiPage() {
             <SectionLabel>Blog AI</SectionLabel>
             <h2 className="text-xl font-bold text-gray-900">Bài viết AI mới</h2>
           </div>
-          <Link href="/blog" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+          <Link href="/blogai" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
             Xem tất cả bài viết <ChevronRight className="h-4 w-4" />
           </Link>
         </div>

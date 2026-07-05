@@ -139,7 +139,7 @@ export default function LearningJournalPage() {
 }
 
 function ArticleCard({ post, featured = false }: { post: AdminBlogPost; featured?: boolean }) {
-  const href = `/blog/${post.slug}`;
+  const href = `/blogai/${post.slug}`;
   return (
     <Link
       href={href}
