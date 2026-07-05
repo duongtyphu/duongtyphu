@@ -30,7 +30,7 @@ export type GrowthPathStep = {
 
 export const growthPathSteps: GrowthPathStep[] = [
   { key: "discover", label: "DISCOVER", description: "Khám phá AI có thể giúp gì cho hành trình của bạn.", status: "completed", href: "/portal/start-here" },
-  { key: "learn", label: "LEARN", description: "Học nền tảng AI, Prompt và công cụ thực chiến.", status: "completed", href: "/portal/academy" },
+  { key: "learn", label: "LEARN", description: "Học nền tảng AI, Prompt và công cụ thực chiến.", status: "completed", href: "/portal/hocvienai" },
   { key: "apply", label: "APPLY", description: "Áp dụng AI vào công việc và dự án thật.", status: "current", href: "/portal/practice" },
   { key: "build", label: "BUILD", description: "Xây hệ thống, sản phẩm hoặc thương hiệu riêng.", status: "locked" },
   { key: "share", label: "SHARE", description: "Chia sẻ giá trị, kết nối với cộng đồng.", status: "locked" },
@@ -101,9 +101,9 @@ export type RelatedAction = {
 };
 
 export const relatedActions: RelatedAction[] = [
-  { id: "ra1", label: "Học bài tiếp theo", href: "/portal/academy" },
+  { id: "ra1", label: "Học bài tiếp theo", href: "/portal/hocvienai" },
   { id: "ra2", label: "Thực hành Prompt", href: "/portal/prompts" },
   { id: "ra3", label: "Lưu ghi chú vào My Legacy", href: "/portal/legacy" },
   { id: "ra4", label: "Tham gia thử thách", href: "/portal/practice" },
-  { id: "ra5", label: "Xem cộng đồng", href: "/portal/community" },
+  { id: "ra5", label: "Xem cộng đồng", href: "/portal/congdongai" },
 ];

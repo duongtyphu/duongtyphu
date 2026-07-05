@@ -16,56 +16,56 @@ export type RouteContext = {
   quickActions: QuickAction[];
 };
 
-const KHONG_GIAN_AI: QuickAction = { label: "Mở AI Workspace", href: "/portal/khong-gian-ai" };
+const KHONG_GIAN_AI: QuickAction = { label: "Mở AI Workspace", href: "/portal/aiworkspace" };
 
 /**
  * Khớp theo prefix, ưu tiên entry dài hơn trước để tránh nhầm route con.
  */
 const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
   {
-    prefix: "/portal/khong-gian-ai",
+    prefix: "/portal/aiworkspace",
     context: {
       key: "khong-gian-ai",
       nudge: "Mình ở đây để cùng bạn thử ý tưởng với AI.",
       quickActions: [
-        { label: "Thử một ý tưởng mới", href: "/portal/khong-gian-ai" },
+        { label: "Thử một ý tưởng mới", href: "/portal/aiworkspace" },
         { label: "Xem công cụ AI", href: "/portal/tools" },
         KHONG_GIAN_AI,
       ],
     },
   },
   {
-    prefix: "/portal/library",
+    prefix: "/portal/hetrithucai",
     context: {
       key: "ckos-library",
       nudge: "Mình có thể giúp bạn biến tri thức này thành một hành động nhỏ.",
       quickActions: [
-        { label: "Tiếp tục học", href: "/portal/library" },
-        { label: "Chọn hạt giống tri thức", href: "/portal/library" },
+        { label: "Tiếp tục học", href: "/portal/hetrithucai" },
+        { label: "Chọn hạt giống tri thức", href: "/portal/hetrithucai" },
         KHONG_GIAN_AI,
       ],
     },
   },
   {
-    prefix: "/portal/academy",
+    prefix: "/portal/hocvienai",
     context: {
       key: "academy",
       nudge: "Mình sẽ đi cùng bạn trong từng Mission.",
       quickActions: [
-        { label: "Bắt đầu trải nghiệm", href: "/portal/academy" },
+        { label: "Bắt đầu trải nghiệm", href: "/portal/hocvienai" },
         { label: "Xem nhiệm vụ hôm nay", href: "/portal/roadmap" },
         KHONG_GIAN_AI,
       ],
     },
   },
   {
-    prefix: "/portal/opportunities",
+    prefix: "/portal/duan-cohoi",
     context: {
       key: "opportunities",
       nudge: "Mình sẽ giúp bạn nhìn cơ hội từ nhiều góc độ trước khi hành động.",
       quickActions: [
-        { label: "Khám phá cơ hội", href: "/portal/opportunities" },
-        { label: "Xem cách áp dụng", href: "/portal/opportunities" },
+        { label: "Khám phá cơ hội", href: "/portal/duan-cohoi" },
+        { label: "Xem cách áp dụng", href: "/portal/duan-cohoi" },
         KHONG_GIAN_AI,
       ],
     },
@@ -83,36 +83,36 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
     },
   },
   {
-    prefix: "/portal/news",
+    prefix: "/portal/nhatkyhoctap",
     context: {
       key: "learning-journal",
       nudge: "Mình có thể giúp bạn rút ra bài học từ điều vừa trải nghiệm.",
       quickActions: [
         { label: "Viết Reflection", href: "/portal/story" },
-        { label: "Xem điều đã học", href: "/portal/news" },
+        { label: "Xem điều đã học", href: "/portal/nhatkyhoctap" },
         KHONG_GIAN_AI,
       ],
     },
   },
   {
-    prefix: "/portal/journey",
+    prefix: "/portal/hanhtrinhcuatoi",
     context: {
       key: "my-journey",
       nudge: "Mình sẽ giúp bạn nhìn lại mình đã thay đổi như thế nào.",
       quickActions: [
-        { label: "Xem tiến trình", href: "/portal/journey" },
-        { label: "Nhìn lại tuần này", href: "/portal/journey" },
+        { label: "Xem tiến trình", href: "/portal/hanhtrinhcuatoi" },
+        { label: "Nhìn lại tuần này", href: "/portal/hanhtrinhcuatoi" },
         KHONG_GIAN_AI,
       ],
     },
   },
   {
-    prefix: "/portal/khu-vuon-cua-ban",
+    prefix: "/portal/khuvuoncuaban",
     context: {
       key: "living-garden",
       nudge: "Mỗi bước bạn hoàn thành sẽ làm khu vườn này lớn lên.",
       quickActions: [
-        { label: "Xem cây đang lớn", href: "/portal/khu-vuon-cua-ban" },
+        { label: "Xem cây đang lớn", href: "/portal/khuvuoncuaban" },
         { label: "Xem bước tiếp theo", href: "/portal/roadmap" },
         KHONG_GIAN_AI,
       ],
@@ -124,8 +124,8 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
       key: "companion",
       nudge: "Đây là nơi bạn có thể hiểu rõ hơn về hành trình cùng nhau.",
       quickActions: [
-        { label: "Xem lại hành trình", href: "/portal/journey" },
-        { label: "Khu vườn của bạn", href: "/portal/khu-vuon-cua-ban" },
+        { label: "Xem lại hành trình", href: "/portal/hanhtrinhcuatoi" },
+        { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
         KHONG_GIAN_AI,
       ],
     },
@@ -137,8 +137,8 @@ const DEFAULT_CONTEXT: RouteContext = {
   key: "portal-default",
   nudge: "Mình luôn ở đây nếu bạn cần một người đồng hành.",
   quickActions: [
-    { label: "Thư viện tri thức", href: "/portal/library" },
-    { label: "Học viện AI", href: "/portal/academy" },
+    { label: "Thư viện tri thức", href: "/portal/hetrithucai" },
+    { label: "Học viện AI", href: "/portal/hocvienai" },
     KHONG_GIAN_AI,
   ],
 };

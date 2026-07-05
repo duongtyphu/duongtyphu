@@ -32,7 +32,7 @@ export const buildPillars: BuildPillar[] = [
     id: "p4",
     title: "Dự án",
     description: "Khám phá các dự án, hệ sinh thái và cơ hội phát triển tài sản.",
-    href: "/portal/opportunities",
+    href: "/portal/duan-cohoi",
     icon: "layers",
   },
   {
@@ -75,7 +75,7 @@ export const brandBuilderModules: BuildModule[] = [
   { id: "bb4", label: "Social Content", description: "Nội dung mạng xã hội nhất quán, đúng định vị." },
   { id: "bb5", label: "Blog / SEO", description: "Nội dung bền vững, tìm thấy được theo thời gian." },
   { id: "bb6", label: "Email List", description: "Danh sách người theo dõi bạn sở hữu trọn đời." },
-  { id: "bb7", label: "Community Building", description: "Xây cộng đồng riêng quanh giá trị bạn tạo ra.", href: "/portal/community" },
+  { id: "bb7", label: "Community Building", description: "Xây cộng đồng riêng quanh giá trị bạn tạo ra.", href: "/portal/congdongai" },
 ];
 
 export const systemBuilderModules: BuildModule[] = [
@@ -94,7 +94,7 @@ export const projectOpportunityModules: BuildModule[] = [
   { id: "po3", label: "Crypto", description: "Các sàn giao dịch Crypto được đề xuất.", href: "/portal/digital-assets/category/crypto" },
   { id: "po4", label: "Blockchain", description: "Dự án và kiến thức Blockchain.", href: "/portal/digital-assets/category/blockchain" },
   { id: "po5", label: "Trading", description: "Tài nguyên và cơ hội Trading.", href: "/portal/digital-assets/category/trading" },
-  { id: "po6", label: "Cơ hội mới", description: "Toàn cảnh các dự án và cơ hội đang đồng hành.", href: "/portal/opportunities" },
+  { id: "po6", label: "Cơ hội mới", description: "Toàn cảnh các dự án và cơ hội đang đồng hành.", href: "/portal/duan-cohoi" },
 ];
 
 export const premiumPathModules: BuildModule[] = [

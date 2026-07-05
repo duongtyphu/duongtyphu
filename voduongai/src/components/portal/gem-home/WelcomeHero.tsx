@@ -36,7 +36,7 @@ export function WelcomeHero({
         <p className="mt-3 max-w-xl text-sm text-gray-600">{getLifeMomentLine("quietReturn")}</p>
       )}
       <div className="mt-5 flex flex-wrap gap-3">
-        <Button href="/portal/journey" variant="primary">
+        <Button href="/portal/hanhtrinhcuatoi" variant="primary">
           Tiếp tục hành trình →
         </Button>
         <Button href="/portal/roadmap" variant="secondary">

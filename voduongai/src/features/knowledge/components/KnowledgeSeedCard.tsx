@@ -12,7 +12,7 @@ export function KnowledgeSeedCard({ seed }: { seed: KnowledgeSeed }) {
   const progress = computeSeedProgress(seed, completedStepIds);
 
   return (
-    <Link href={`/portal/library/${seed.slug}`} className="gemos-gem-card block rounded-2xl p-5">
+    <Link href={`/portal/hetrithucai/${seed.slug}`} className="gemos-gem-card block rounded-2xl p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-600">
           <Sprout className="h-3 w-3" />

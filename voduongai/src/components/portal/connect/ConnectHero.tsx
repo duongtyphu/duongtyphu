@@ -15,7 +15,7 @@ export function ConnectHero() {
         triển trong kỷ nguyên AI.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <Button href="/portal/community" variant="primary">
+        <Button href="/portal/congdongai" variant="primary">
           Kết nối cộng đồng →
         </Button>
         <Button href="/portal/updates" variant="secondary">

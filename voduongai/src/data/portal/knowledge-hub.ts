@@ -12,13 +12,13 @@ export type LearningPath = {
 };
 
 export const learningPaths: LearningPath[] = [
-  { id: "lp1", title: "AI Foundation", description: "Nền tảng AI cho người mới — hiểu đúng trước khi dùng đúng.", level: "Cơ bản", progressPercent: 60, href: "/portal/academy" },
+  { id: "lp1", title: "AI Foundation", description: "Nền tảng AI cho người mới — hiểu đúng trước khi dùng đúng.", level: "Cơ bản", progressPercent: 60, href: "/portal/hocvienai" },
   { id: "lp2", title: "AI Thực chiến", description: "Áp dụng AI vào công việc và dự án thật mỗi ngày.", level: "Trung cấp", progressPercent: 30, href: "/portal/practice" },
   { id: "lp3", title: "Prompt Engineering", description: "Viết Prompt hiệu quả cho từng mục tiêu cụ thể.", level: "Trung cấp", progressPercent: 45, href: "/portal/prompts" },
   { id: "lp4", title: "Automation", description: "Tự động hoá quy trình lặp lại bằng AI và công cụ.", level: "Nâng cao", progressPercent: 10, href: "/portal/tools" },
   { id: "lp5", title: "Personal Brand", description: "Xây thương hiệu cá nhân với sự hỗ trợ của AI.", level: "Trung cấp", progressPercent: 0, href: "/portal/personal-brand" },
   { id: "lp6", title: "Affiliate AI", description: "Dùng AI để chọn ngách, tạo nội dung và bán hàng.", level: "Trung cấp", progressPercent: 20, href: "/portal/affiliate-hub" },
-  { id: "lp7", title: "AI Business", description: "Xây hệ thống kinh doanh vận hành cùng AI.", level: "Nâng cao", progressPercent: 0, href: "/portal/opportunities" },
+  { id: "lp7", title: "AI Business", description: "Xây hệ thống kinh doanh vận hành cùng AI.", level: "Nâng cao", progressPercent: 0, href: "/portal/duan-cohoi" },
 ];
 
 export type AcademyItem = {
@@ -31,7 +31,7 @@ export type AcademyItem = {
 export const academyItems: AcademyItem[] = [
   { id: "ac1", title: "Học viện AI", description: "Khoá học AI nền tảng đến chuyên sâu.", href: "/portal/ai-academy" },
   { id: "ac2", title: "Học viện Affiliate", description: "Lộ trình Affiliate Marketing cùng AI.", href: "/portal/affiliate-academy" },
-  { id: "ac3", title: "Ứng dụng AI", description: "Ứng dụng AI thực tế vào công việc hàng ngày.", href: "/portal/academy" },
+  { id: "ac3", title: "Ứng dụng AI", description: "Ứng dụng AI thực tế vào công việc hàng ngày.", href: "/portal/hocvienai" },
   { id: "ac4", title: "Thương hiệu cá nhân", description: "Xây dựng thương hiệu cá nhân trong kỷ nguyên AI.", href: "/portal/personal-brand" },
   { id: "ac5", title: "Automation", description: "Tự động hoá quy trình bằng AI.", href: "/portal/tools" },
   { id: "ac6", title: "Marketing AI", description: "Marketing hiện đại với sự hỗ trợ của AI.", href: "/portal/affiliate-hub" },
@@ -47,7 +47,7 @@ export const resourceLibraryItems: ResourceLibraryItem[] = [
   { id: "res1", label: "Prompt", href: "/portal/prompts" },
   { id: "res2", label: "Công cụ AI", href: "/portal/tools" },
   { id: "res3", label: "Template", href: "/portal/templates" },
-  { id: "res4", label: "Workflow", href: "/portal/library" },
+  { id: "res4", label: "Workflow", href: "/portal/hetrithucai" },
   { id: "res5", label: "Checklist", href: "/portal/checklists" },
   { id: "res6", label: "SOP", href: "/portal/sop" },
   { id: "res7", label: "Ebook", href: "/portal/resources" },
@@ -98,7 +98,7 @@ export type RecommendedKnowledgeItem = {
 };
 
 export const recommendedKnowledgeItems: RecommendedKnowledgeItem[] = [
-  { id: "rk1", kind: "Bài học", title: "AI Foundation — Bài 1", description: "Hiểu đúng AI là gì trước khi dùng đúng.", href: "/portal/academy", emphasisTags: ["first-principles", "foundation", "explore"] },
+  { id: "rk1", kind: "Bài học", title: "AI Foundation — Bài 1", description: "Hiểu đúng AI là gì trước khi dùng đúng.", href: "/portal/hocvienai", emphasisTags: ["first-principles", "foundation", "explore"] },
   { id: "rk2", kind: "Prompt", title: "Prompt phân tích khách hàng", description: "Dựng chân dung khách hàng mục tiêu trong 5 phút.", href: "/portal/prompts", emphasisTags: ["practice", "deep-work"] },
   { id: "rk3", kind: "Tool", title: "Công cụ AI viết content", description: "Viết nội dung nhanh hơn với một công cụ được tuyển chọn.", href: "/portal/tools", emphasisTags: ["practice", "project", "consistency"] },
   { id: "rk4", kind: "Template", title: "Template kế hoạch nội dung 7 ngày", description: "Mẫu lên kế hoạch dùng lại được ngay.", href: "/portal/templates", emphasisTags: ["consistency", "project"] },

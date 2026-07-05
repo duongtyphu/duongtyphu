@@ -19,14 +19,14 @@ const vaultItems = [
     icon: "🗺️",
     title: "Lộ trình Affiliate",
     description: "Lộ trình từng bước để bắt đầu Affiliate Marketing đúng hướng.",
-    badge: "Portal" as const,
+    badge: "Học viện" as const,
     href: "/portal/affiliate-hub",
   },
   {
     icon: "🧱",
     title: "Thư viện công cụ",
     description: "Danh sách công cụ AI tôi đã thử nghiệm và đang dùng thực tế.",
-    badge: "Portal" as const,
+    badge: "Học viện" as const,
     href: "/portal/tools",
   },
   {
@@ -61,7 +61,7 @@ const vaultItems = [
 
 const badgeStyle: Record<string, string> = {
   "Miễn phí": "bg-brand-orange/15 text-brand-orange",
-  Portal: "bg-brand-blue/15 text-brand-blue",
+  "Học viện": "bg-brand-blue/15 text-brand-blue",
   Premium: "bg-brand-violet/20 text-brand-violet",
 };
 
@@ -73,7 +73,7 @@ export function FreeResources() {
           Điều gì đang chờ bạn bên trong?
         </h2>
         <p className="mt-3 text-white md:whitespace-nowrap">
-          Tài nguyên, công cụ và lộ trình được sắp xếp sẵn trong Portal — bạn
+          Tài nguyên, công cụ và lộ trình được sắp xếp sẵn trong Học viện AI — bạn
           không cần tự mày mò từ đầu.
         </p>
       </div>
@@ -100,7 +100,7 @@ export function FreeResources() {
               {item.description}
             </p>
             <span className="mt-4 text-xs font-semibold text-brand-violet group-hover:underline">
-              Mở trong Portal →
+              Mở trong Học viện →
             </span>
           </Link>
         ))}

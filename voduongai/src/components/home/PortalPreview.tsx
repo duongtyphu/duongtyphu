@@ -93,7 +93,7 @@ export function PortalPreview() {
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
           <h2 className="text-2xl font-extrabold md:text-3xl">
-            Trải nghiệm bên trong Portal
+            Trải nghiệm bên trong Học viện AI
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
             Một không gian duy nhất để học AI, khám phá công cụ, lưu trữ tài
@@ -271,13 +271,13 @@ export function PortalPreview() {
         >
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/portal"
+              href="/portal/hocvienai"
               className="inline-flex rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
             >
-              Truy cập Portal
+              Truy cập Học viện
             </Link>
             <Link
-              href="/portal/resources"
+              href="/portal/duan-cohoi"
               className="inline-flex rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
             >
               Xem kho tài nguyên

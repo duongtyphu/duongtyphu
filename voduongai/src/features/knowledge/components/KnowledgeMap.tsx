@@ -19,7 +19,7 @@ export function KnowledgeMap({
     <nav className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500" aria-label="Knowledge Map">
       {collection && (
         <>
-          <Link href={`/portal/library/collection/${collection.slug}`} className="font-semibold hover:text-blue-600">
+          <Link href={`/portal/hetrithucai/collection/${collection.slug}`} className="font-semibold hover:text-blue-600">
             {collection.title}
           </Link>
           <ChevronRight className="h-3 w-3 text-gray-300" />
@@ -28,7 +28,7 @@ export function KnowledgeMap({
       <span className="font-bold text-gray-900">{seed.title}</span>
       <ChevronRight className="h-3 w-3 text-gray-300" />
       {next ? (
-        <Link href={`/portal/library/${next.slug}`} className="hover:text-blue-600">
+        <Link href={`/portal/hetrithucai/${next.slug}`} className="hover:text-blue-600">
           {next.title}
         </Link>
       ) : (

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { GoalRuntimeBoard } from "@/components/portal/goals/GoalRuntimeBoard";
 
-export const metadata = { title: "Goal Runtime — VO DUONG AI" };
+export const metadata = { title: "Bảng Mục tiêu — VO DUONG AI" };
 
 /**
  * GOAL 001 — Goal Runtime. `/portal/goals` hiển thị Goal → Epic → Mission

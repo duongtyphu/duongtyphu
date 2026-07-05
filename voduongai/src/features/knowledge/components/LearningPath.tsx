@@ -18,7 +18,7 @@ export function LearningPath({ seedsWithStatus }: { seedsWithStatus: SeedWithSta
             {i < seedsWithStatus.length - 1 && <div className="my-1 h-8 w-px bg-gray-200" />}
           </div>
           <Link
-            href={`/portal/library/${seed.slug}`}
+            href={`/portal/hetrithucai/${seed.slug}`}
             className="mb-3 -mt-0.5 min-w-0 flex-1 rounded-lg px-2 py-1 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 hover:text-blue-600"
           >
             {seed.title}

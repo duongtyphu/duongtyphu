@@ -113,7 +113,7 @@ export function MobileNavDrawer({
                     <Link href="/portal/account" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-base font-semibold text-white transition hover:bg-white/10">
                       Hồ sơ
                     </Link>
-                    <Link href="/portal" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-base font-semibold text-white transition hover:bg-white/10">
+                    <Link href="/portal/hocvienai" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-base font-semibold text-white transition hover:bg-white/10">
                       Bảng điều khiển
                     </Link>
                     <button

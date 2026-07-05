@@ -47,7 +47,7 @@ export function CollectionHeader({
 
       {nextSeed && (
         <Link
-          href={`/portal/library/${nextSeed.slug}`}
+          href={`/portal/hetrithucai/${nextSeed.slug}`}
           className="inline-flex items-center gap-1.5 rounded-lg bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
         >
           Tiếp tục {nextSeed.title}

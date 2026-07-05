@@ -4,24 +4,22 @@ import { brandMain, brandAccent } from "@/lib/brand-name";
 
 const columns = [
   {
-    title: "Portal",
+    title: "Học viện AI",
     links: [
-      { label: "Hồ sơ", href: "/portal/account" },
-      { label: "AI Academy", href: "/portal/ai-academy" },
-      { label: "VO DUONG AI Academy", href: "/portal/vdai-academy" },
-      { label: "Affiliate Hub", href: "/portal/affiliate-hub" },
-      { label: "Thư viện Prompt", href: "/portal/prompts" },
-      { label: "Thư viện Công cụ", href: "/portal/tools" },
+      { label: "Companion", href: "/portal/companion" },
+      { label: "Hệ tri thức AI", href: "/portal/hetrithucai" },
+      { label: "Kỹ năng AI", href: "/portal/hocvienai" },
+      { label: "Thực hành AI - Dự án & Cơ hội", href: "/portal/duan-cohoi" },
+      { label: "Premium", href: "/portal/premium" },
     ],
   },
   {
     title: "Tài nguyên",
     links: [
-      { label: "Bộ công cụ AI", href: "/portal/resources" },
-      { label: "Blog", href: "/blogai" },
-      { label: "Ebook", href: "/portal/resources" },
-      { label: "Tài nguyên miễn phí", href: "/portal/resources" },
-      { label: "Tài nguyên Premium", href: "/portal/premium" },
+      { label: "Nhật ký học tập", href: "/portal/nhatkyhoctap" },
+      { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
+      { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
+      { label: "Cộng đồng AI", href: "/portal/congdongai" },
     ],
   },
 ];

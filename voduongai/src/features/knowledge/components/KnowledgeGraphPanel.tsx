@@ -25,7 +25,7 @@ export function KnowledgeGraphPanel({
         <div className="flex items-center gap-2 text-sm">
           <Layers className="h-4 w-4 shrink-0 text-blue-500" />
           <span className="text-gray-500">Collection:</span>
-          <Link href={`/portal/library/collection/${collection.slug}`} className="font-semibold text-blue-600 hover:underline">
+          <Link href={`/portal/hetrithucai/collection/${collection.slug}`} className="font-semibold text-blue-600 hover:underline">
             {collection.title}
           </Link>
         </div>
@@ -85,7 +85,7 @@ export function KnowledgeDependency({
             {prerequisites.map((seed) => (
               <Link
                 key={seed.id}
-                href={`/portal/library/${seed.slug}`}
+                href={`/portal/hetrithucai/${seed.slug}`}
                 className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-300 hover:text-blue-600"
               >
                 {seed.title}
@@ -103,7 +103,7 @@ export function KnowledgeDependency({
             {dependents.map((seed) => (
               <Link
                 key={seed.id}
-                href={`/portal/library/${seed.slug}`}
+                href={`/portal/hetrithucai/${seed.slug}`}
                 className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-300 hover:text-blue-600"
               >
                 {seed.title}

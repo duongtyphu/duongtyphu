@@ -99,7 +99,7 @@ export default function OpportunitiesHubPage() {
       {/* Companion Guide */}
       <CompanionGuide
         message="Hãy đọc phần Giới thiệu và Tiêu chí đánh giá trước khi xem bất kỳ dự án nào. Tất cả chia sẻ ở đây là góc nhìn cá nhân — không phải lời khuyên tài chính."
-        action={{ label: "Xem bài học từ trải nghiệm", href: "/portal/news" }}
+        action={{ label: "Xem bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" }}
       />
 
       {/* Companion Task Entry */}
@@ -187,7 +187,7 @@ export default function OpportunitiesHubPage() {
           <p className="text-sm text-gray-600">Đọc bài viết về các chủ đề liên quan trước khi quyết định bất cứ điều gì.</p>
         </div>
         <Link
-          href="/portal/news"
+          href="/portal/nhatkyhoctap"
           className="ml-4 shrink-0 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
         >
           Đọc bài viết →

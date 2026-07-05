@@ -11,7 +11,7 @@ export const connectPillars: ConnectPillar[] = [
     id: "cp1",
     title: "Cộng đồng",
     description: "Kết nối với những người cùng học, cùng làm và cùng phát triển.",
-    href: "/portal/community",
+    href: "/portal/congdongai",
     icon: "users",
   },
   {
@@ -39,14 +39,14 @@ export const connectPillars: ConnectPillar[] = [
     id: "cp5",
     title: "Cơ hội",
     description: "Khám phá cơ hội học tập, hợp tác, affiliate, dự án và phát triển nghề nghiệp.",
-    href: "/portal/opportunities",
+    href: "/portal/duan-cohoi",
     icon: "handshake",
   },
   {
     id: "cp6",
     title: "Đóng góp",
     description: "Chia sẻ tri thức, kinh nghiệm và hỗ trợ cộng đồng cùng trưởng thành.",
-    href: "/portal/community",
+    href: "/portal/congdongai",
     icon: "share",
   },
 ];
@@ -59,7 +59,7 @@ export type ConnectModule = {
 };
 
 export const communityHubModules: ConnectModule[] = [
-  { id: "ch1", label: "Facebook Community", description: "Nhóm cộng đồng chính thức của VO DUONG AI.", href: "/portal/community" },
+  { id: "ch1", label: "Facebook Community", description: "Nhóm cộng đồng chính thức của VO DUONG AI.", href: "/portal/congdongai" },
   { id: "ch2", label: "Telegram / Zalo / Discord", description: "Kênh trao đổi nhanh, hỏi đáp theo thời gian thực." },
   { id: "ch3", label: "Thành viên nổi bật", description: "Những thành viên đang tạo cảm hứng cho cộng đồng." },
   { id: "ch4", label: "Bài chia sẻ cộng đồng", description: "Câu chuyện và kinh nghiệm thực chiến từ thành viên." },
@@ -86,7 +86,7 @@ export const achievementLeaderboardModules: ConnectModule[] = [
 
 export const opportunityNetworkModules: ConnectModule[] = [
   { id: "on1", label: "Affiliate Partner", description: "Trở thành đối tác giới thiệu của VO DUONG AI.", href: "/portal/referral" },
-  { id: "on2", label: "Dự án cộng đồng", description: "Tham gia các dự án do cộng đồng cùng xây.", href: "/portal/opportunities" },
+  { id: "on2", label: "Dự án cộng đồng", description: "Tham gia các dự án do cộng đồng cùng xây.", href: "/portal/duan-cohoi" },
   { id: "on3", label: "Cơ hội hợp tác", description: "Kết nối hợp tác cùng những thành viên khác." },
   { id: "on4", label: "Premium Community", description: "Không gian dành riêng cho thành viên Premium.", href: "/portal/premium" },
   { id: "on5", label: "Mentor Group", description: "Nhóm nhỏ được đồng hành sát sao hơn." },
@@ -140,6 +140,6 @@ export const humanNetwork: HumanNetwork = {
   title: "Mạng lưới những viên ngọc",
   description:
     "Mỗi thành viên trong VO DUONG AI là một viên ngọc đang được mài giũa. Khi những viên ngọc kết nối với nhau, chúng ta tạo nên một hệ sinh thái tri thức, hành động và di sản.",
-  href: "/portal/community",
+  href: "/portal/congdongai",
   cta: "Khám phá cộng đồng",
 };

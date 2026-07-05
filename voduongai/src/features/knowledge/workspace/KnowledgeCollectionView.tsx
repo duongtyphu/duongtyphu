@@ -29,7 +29,7 @@ export function KnowledgeCollectionView({ collection }: { collection: KnowledgeC
   return (
     <div className="space-y-6">
       <Link
-        href="/portal/library"
+        href="/portal/hetrithucai"
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-blue-600"
       >
         <ArrowLeft className="h-3.5 w-3.5" />

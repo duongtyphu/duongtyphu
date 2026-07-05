@@ -61,7 +61,7 @@ function ToolCard({ tool }: { tool: AiTool }) {
   const catColor = TOOL_CAT_COLOR[tool.category] ?? "bg-gray-100 text-gray-700";
   return (
     <div className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
-      <Link href={`/portal/khong-gian-ai/${tool.slug}`} className="flex flex-col gap-3">
+      <Link href={`/portal/aiworkspace/${tool.slug}`} className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 text-lg font-bold text-blue-700">
             {tool.name.charAt(0)}
@@ -93,7 +93,7 @@ function ToolCard({ tool }: { tool: AiTool }) {
 function ArticleCard({ article }: { article: AiArticle }) {
   return (
     <Link
-      href={`/portal/khong-gian-ai/bai-viet/${article.slug}`}
+      href={`/portal/aiworkspace/bai-viet/${article.slug}`}
       className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
       <div className="h-32 w-full rounded-xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
@@ -122,7 +122,7 @@ export default function KhongGianAiPage() {
     <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-gray-700 transition">Portal</Link>
+        <Link href="/portal" className="hover:text-gray-700 transition">Học viện</Link>
         <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
         <span className="text-gray-900 font-medium">Không gian AI</span>
       </nav>
@@ -179,7 +179,7 @@ export default function KhongGianAiPage() {
             <SectionLabel>Công cụ AI</SectionLabel>
             <h2 className="text-xl font-bold text-gray-900">AI Toolbox theo nhiệm vụ</h2>
           </div>
-          <Link href="/portal/khong-gian-ai/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+          <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
             Tất cả công cụ <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
@@ -233,7 +233,7 @@ export default function KhongGianAiPage() {
             Xem khoá học VDAI SOLO <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/portal/khong-gian-ai/bai-viet/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau"
+            href="/portal/aiworkspace/bai-viet/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau"
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow hover:bg-gray-50 transition"
           >
             Đọc lộ trình miễn phí

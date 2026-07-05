@@ -12,7 +12,7 @@ export function CollectionCard({ collection }: { collection: KnowledgeCollection
 
   return (
     <Link
-      href={`/portal/library/collection/${collection.slug}`}
+      href={`/portal/hetrithucai/collection/${collection.slug}`}
       className="block rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm transition hover:border-blue-200 hover:shadow-md"
     >
       <div className="mb-3 flex items-center gap-2">

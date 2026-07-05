@@ -15,7 +15,7 @@ export function RelatedKnowledge({ seeds }: { seeds: KnowledgeSeed[] }) {
         {seeds.map((seed) => (
           <Link
             key={seed.id}
-            href={`/portal/library/${seed.slug}`}
+            href={`/portal/hetrithucai/${seed.slug}`}
             className="rounded-xl border border-gray-100 bg-white/70 p-4 shadow-sm backdrop-blur-sm transition hover:border-blue-200"
           >
             <p className="text-sm font-bold text-gray-900">{seed.title}</p>

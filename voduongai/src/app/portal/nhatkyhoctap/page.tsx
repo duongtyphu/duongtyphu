@@ -53,7 +53,7 @@ export default function LearningJournalPage() {
       {/* Companion Guide */}
       <CompanionGuide
         message="Nếu chưa biết đọc bài nào trước, hãy thử lọc theo chủ đề bạn đang làm. Bài mình đánh dấu 'nổi bật' là những bài có ứng dụng thực tế cao nhất — đọc đó trước."
-        action={{ label: "Xem lộ trình học", href: "/portal/journey" }}
+        action={{ label: "Xem lộ trình học", href: "/portal/hanhtrinhcuatoi" }}
       />
 
       <GrowthActivityPanel variant="journal" />
@@ -127,7 +127,7 @@ export default function LearningJournalPage() {
             Xem công cụ AI →
           </Link>
           <Link
-            href="/portal/library"
+            href="/portal/hetrithucai"
             className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
           >
             Tải tài nguyên →

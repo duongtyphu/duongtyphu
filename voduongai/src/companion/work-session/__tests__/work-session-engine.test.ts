@@ -7,14 +7,14 @@ describe("companion work-session-engine", () => {
   });
 
   it("starts a session in OBSERVING with the real goal quoted back", () => {
-    const session = createWorkSession({ currentRoute: "/portal/academy", userGoal: "Tạo Landing Page" });
+    const session = createWorkSession({ currentRoute: "/portal/hocvienai", userGoal: "Tạo Landing Page" });
     expect(session?.currentStatus).toBe("OBSERVING");
     expect(session?.companionMessages[0].text).toContain("Tạo Landing Page");
     expect(session?.plan[0]).toEqual({ id: "understand-goal", label: "Hiểu mục tiêu", status: "active" });
   });
 
   it("walks through every status in order, inviting each specialist one at a time, ending READY", () => {
-    let session = createWorkSession({ currentRoute: "/portal/academy", userGoal: "Tạo Landing Page" })!;
+    let session = createWorkSession({ currentRoute: "/portal/hocvienai", userGoal: "Tạo Landing Page" })!;
     const specialistCount = session.selectedSpecialists.length;
     expect(specialistCount).toBeGreaterThan(0);
 
@@ -40,7 +40,7 @@ describe("companion work-session-engine", () => {
   });
 
   it("names each invited specialist in the work language, in order", () => {
-    let session = createWorkSession({ currentRoute: "/portal/academy", userGoal: "Tạo Landing Page" })!;
+    let session = createWorkSession({ currentRoute: "/portal/hocvienai", userGoal: "Tạo Landing Page" })!;
     const expectedOrder = session.selectedSpecialists.map((a) => a.name.replace(/^AI /, ""));
     const inviteMessages: string[] = [];
     let guard = 0;
@@ -57,7 +57,7 @@ describe("companion work-session-engine", () => {
   });
 
   it("does not advance past READY on its own, but celebrate() moves it to CELEBRATING exactly once", () => {
-    let session = createWorkSession({ currentRoute: "/portal/opportunities", userGoal: "phân tích dự án SolarGroup" })!;
+    let session = createWorkSession({ currentRoute: "/portal/duan-cohoi", userGoal: "phân tích dự án SolarGroup" })!;
     let guard = 0;
     while (!isWorkSessionSettled(session) && guard < 50) {
       session = advanceWorkSession(session);
@@ -77,7 +77,7 @@ describe("companion work-session-engine", () => {
 
   it("Companion Task Entry — an arbitrary free-text goal (not matching any keyword rule) still opens a real Work Session with a default specialist team", () => {
     const session = createWorkSession({
-      currentRoute: "/portal/khong-gian-ai",
+      currentRoute: "/portal/aiworkspace",
       currentModule: "khong-gian-ai",
       userGoal: "Mình muốn thử viết caption cho một sản phẩm bằng AI",
     })!;
@@ -95,7 +95,7 @@ describe("companion work-session-engine", () => {
   });
 
   it("skips specialist-invite ticks entirely for Learning Journal (no visible Agent, per Product Rule)", () => {
-    let session = createWorkSession({ currentRoute: "/portal/news" })!;
+    let session = createWorkSession({ currentRoute: "/portal/nhatkyhoctap" })!;
     expect(session.selectedSpecialists).toEqual([]);
     let guard = 0;
     while (!isWorkSessionSettled(session) && guard < 50) {

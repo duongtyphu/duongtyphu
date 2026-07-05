@@ -17,10 +17,10 @@ export function KnowledgeHero() {
         Giai đoạn UNDERSTAND trong hành trình mài giũa của bạn.
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
-        <Button href="/portal/academy" variant="primary">
+        <Button href="/portal/hocvienai" variant="primary">
           Tiếp tục học →
         </Button>
-        <Button href="/portal/library" variant="secondary">
+        <Button href="/portal/hetrithucai" variant="secondary">
           Khám phá thư viện AI
         </Button>
       </div>

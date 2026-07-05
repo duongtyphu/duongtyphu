@@ -55,7 +55,7 @@ export default function AcademyHubPage() {
         <p className="max-w-2xl text-gray-500">
           Học viện không phải nơi chứa khoá học. Đây là nơi tri thức bạn đã học được chuyển hoá
           thành thực hành thật, năng lực thật và cảm nhận trưởng thành thật. Học xong, hãy sang{" "}
-          <Link href="/portal/khong-gian-ai" className="font-semibold text-blue-600 hover:underline">
+          <Link href="/portal/aiworkspace" className="font-semibold text-blue-600 hover:underline">
             AI Workspace
           </Link>{" "}
           để thực hành cùng Companion.
@@ -65,7 +65,7 @@ export default function AcademyHubPage() {
       {/* Companion Guide */}
       <CompanionGuide
         message="Chọn một hành trình bên dưới và bắt đầu từ bước Companion gợi ý — không cần làm hết mọi thứ cùng lúc."
-        action={{ label: "Xem Thư viện tri thức", href: "/portal/library" }}
+        action={{ label: "Xem Thư viện tri thức", href: "/portal/hetrithucai" }}
       />
 
       {/* Lộ trình học AI */}
@@ -81,7 +81,7 @@ export default function AcademyHubPage() {
             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Công cụ AI</p>
             <h2 className="text-xl font-bold text-gray-900">Học AI theo công cụ</h2>
           </div>
-          <Link href="/portal/khong-gian-ai/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+          <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
             Xem tất cả công cụ <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
@@ -89,7 +89,7 @@ export default function AcademyHubPage() {
           {AI_TOOLS.filter((tool) => tool.featured).map((tool) => (
             <Link
               key={tool.slug}
-              href={`/portal/khong-gian-ai/${tool.slug}`}
+              href={`/portal/aiworkspace/${tool.slug}`}
               className="group flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 text-lg font-bold text-blue-700">
@@ -130,7 +130,7 @@ export default function AcademyHubPage() {
           không cần chờ đến đúng &ldquo;bài học&rdquo; nào đó.
         </p>
         <Link
-          href="/portal/community"
+          href="/portal/congdongai"
           className="inline-block rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
         >
           Kết nối cộng đồng →

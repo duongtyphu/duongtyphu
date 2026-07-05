@@ -23,23 +23,37 @@ import { portalNavGroups } from "@/lib/site";
 const navIcons: Record<string, LucideIcon> = {
   "/portal": Home,
   "/portal/companion": HeartHandshake,
-  "/portal/khong-gian-ai": Cpu,
-  "/portal/library": Library,
-  "/portal/academy": GraduationCap,
-  "/portal/opportunities": Rocket,
+  "/portal/aiworkspace": Cpu,
+  "/portal/hetrithucai": Library,
+  "/portal/hocvienai": GraduationCap,
+  "/portal/duan-cohoi": Rocket,
   "/portal/premium": Crown,
-  "/portal/community": Users,
-  "/portal/news": Notebook,
-  "/portal/journey": Compass,
-  "/portal/khu-vuon-cua-ban": Leaf,
+  "/portal/congdongai": Users,
+  "/portal/nhatkyhoctap": Notebook,
+  "/portal/hanhtrinhcuatoi": Compass,
+  "/portal/khuvuoncuaban": Leaf,
 };
 
 // Khu vườn của bạn dùng tông xanh lá riêng cho active state (đúng
 // Design Reference VDAI-GARDEN-001), khác với tông xanh dương mặc định
 // của các mục Portal khác.
 const activeToneOverrides: Record<string, string> = {
-  "/portal/khu-vuon-cua-ban": "bg-green-50 font-bold text-green-700",
+  "/portal/khuvuoncuaban": "bg-green-50 font-bold text-green-700",
 };
+
+// "Dự án & Cơ hội" và "Premium" gắn dấu V thương hiệu (đúng logo VO DUONG
+// AI: chữ V xanh + chấm cam) — theo yêu cầu IA & Route Localization
+// Refactor v1.0, dùng lại chính asset logo đã có ở Header/Footer.
+const V_BADGE_ROUTES = new Set(["/portal/duan-cohoi", "/portal/premium"]);
+
+function VBrandBadge() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 32 32" fill="none" className="ml-1 shrink-0" aria-hidden="true">
+      <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
+      <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
+    </svg>
+  );
+}
 
 function isItemActive(pathname: string, href: string) {
   if (href === "/portal") return pathname === "/portal";
@@ -122,7 +136,12 @@ function NavLink({
         />
       )}
       {Icon && <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />}
-      {showLabel && <span className="truncate">{item.label}</span>}
+      {showLabel && (
+        <span className="flex min-w-0 items-center truncate">
+          <span className="truncate">{item.label}</span>
+          {V_BADGE_ROUTES.has(item.href) && <VBrandBadge />}
+        </span>
+      )}
       {!showLabel && (
         <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-900 opacity-0 shadow-lg transition group-hover:opacity-100">
           {item.label}

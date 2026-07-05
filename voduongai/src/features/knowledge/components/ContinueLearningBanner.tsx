@@ -48,7 +48,7 @@ function ContinueLearningBannerBody({
         <p className="mt-0.5 text-xs text-gray-500">Còn khoảng {estimatedMinutesLeft} phút</p>
       </div>
       <Link
-        href={`/portal/library/${seedSlug}`}
+        href={`/portal/hetrithucai/${seedSlug}`}
         className="inline-flex items-center gap-1.5 rounded-lg bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
       >
         <PlayCircle className="h-4 w-4" />

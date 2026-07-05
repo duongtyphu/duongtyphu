@@ -21,7 +21,7 @@ export function CollectionCompleteBanner({
         <div className="pt-1">
           <p className="mb-2 text-xs font-semibold text-gray-500">Tiếp theo Companion đề xuất:</p>
           <Link
-            href={`/portal/library/collection/${suggestedNext.slug}`}
+            href={`/portal/hetrithucai/collection/${suggestedNext.slug}`}
             className="inline-flex items-center gap-1.5 rounded-lg bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
           >
             {suggestedNext.title}

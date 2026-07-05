@@ -55,14 +55,14 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
     <div className="mx-auto max-w-3xl">
       {/* Breadcrumb */}
       <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-blue-600 transition-colors">Portal</Link>
+        <Link href="/portal" className="hover:text-blue-600 transition-colors">Học viện</Link>
         <span className="text-gray-300">/</span>
-        <Link href="/portal/khong-gian-ai" className="hover:text-blue-600 transition-colors">Không gian AI</Link>
+        <Link href="/portal/aiworkspace" className="hover:text-blue-600 transition-colors">Không gian AI</Link>
         <span className="text-gray-300">/</span>
         <span className="font-medium text-gray-900 line-clamp-1">{post.title}</span>
       </nav>
 
-      <Link href="/portal/khong-gian-ai" className="inline-block text-sm font-semibold text-blue-600 hover:underline">
+      <Link href="/portal/aiworkspace" className="inline-block text-sm font-semibold text-blue-600 hover:underline">
         ← Không gian AI
       </Link>
 
@@ -119,7 +119,7 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
             {related.map((a) => (
               <Link
                 key={a.slug}
-                href={`/portal/khong-gian-ai/bai-viet/${a.slug}`}
+                href={`/portal/aiworkspace/bai-viet/${a.slug}`}
                 className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:border-blue-200 hover:shadow-md"
               >
                 <div className="text-xs font-semibold uppercase tracking-wide text-blue-600">{a.category}</div>

@@ -14,7 +14,7 @@ export function SeedNavigation({
     <div className="grid gap-3 sm:grid-cols-2">
       {previous ? (
         <Link
-          href={`/portal/library/${previous.slug}`}
+          href={`/portal/hetrithucai/${previous.slug}`}
           className="flex items-center gap-2 rounded-xl border border-gray-100 bg-white/70 p-4 text-left shadow-sm backdrop-blur-sm transition hover:border-blue-200"
         >
           <ArrowLeft className="h-4 w-4 shrink-0 text-gray-400" />
@@ -28,7 +28,7 @@ export function SeedNavigation({
       )}
       {next ? (
         <Link
-          href={`/portal/library/${next.slug}`}
+          href={`/portal/hetrithucai/${next.slug}`}
           className="flex items-center justify-end gap-2 rounded-xl border border-gray-100 bg-white/70 p-4 text-right shadow-sm backdrop-blur-sm transition hover:border-blue-200"
         >
           <span className="min-w-0">

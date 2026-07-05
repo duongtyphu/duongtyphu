@@ -6,7 +6,7 @@ import { gardenStats } from "@/data/portal/knowledge-garden";
 /**
  * Preview nhỏ của "Khu vườn của bạn" ở trang chủ Portal — dùng đúng
  * ảnh cây thật (Official Tree Asset) và nền trắng ngọc pha nắng ấm
- * giống hệt trang chi tiết /portal/khu-vuon-cua-ban, thay vì cây vẽ
+ * giống hệt trang chi tiết /portal/khuvuoncuaban, thay vì cây vẽ
  * bằng CSS blob tách biệt hoàn toàn về hình ảnh với trang gốc. Vẫn
  * chỉ là bản tóm tắt (cây nhỏ + Lv. hiện tại + tổng lá + % đến giai
  * đoạn tiếp theo + CTA) — không render leaf chip tương tác hay
@@ -15,7 +15,7 @@ import { gardenStats } from "@/data/portal/knowledge-garden";
 export function GardenWidget() {
   return (
     <Link
-      href="/portal/khu-vuon-cua-ban"
+      href="/portal/khuvuoncuaban"
       className="garden-widget-card gemos-gem-card group grid gap-4 overflow-hidden rounded-2xl p-0 sm:grid-cols-[minmax(0,1fr)_11rem]"
     >
       <div className="relative p-5 sm:p-6">

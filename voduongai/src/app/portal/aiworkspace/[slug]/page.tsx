@@ -63,7 +63,7 @@ function BadgePill({ badge }: { badge: AiTool["badge"] }) {
 function ArticleCard({ article }: { article: (typeof AI_ARTICLES)[number] }) {
   return (
     <Link
-      href={`/portal/khong-gian-ai/bai-viet/${article.slug}`}
+      href={`/portal/aiworkspace/bai-viet/${article.slug}`}
       className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group"
     >
       <span className="inline-block text-xs font-semibold text-blue-600 bg-blue-50 rounded-full px-2.5 py-0.5 mb-2">
@@ -108,7 +108,7 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
-          { label: "Không gian AI", href: "/portal/khong-gian-ai" },
+          { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: tool.name },
         ]}
       />
@@ -280,7 +280,7 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
             <p className="text-sm text-gray-500">Khám phá thêm công cụ và tài nguyên trong Không gian AI</p>
           </div>
           <Link
-            href="/portal/khong-gian-ai"
+            href="/portal/aiworkspace"
             className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
           >
             Quay lại hub
@@ -309,7 +309,7 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
-          { label: "Không gian AI", href: "/portal/khong-gian-ai" },
+          { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: category.title },
         ]}
       />
@@ -378,7 +378,7 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
             {tools.map((tool) => (
               <Link
                 key={tool.slug}
-                href={`/portal/khong-gian-ai/${tool.slug}`}
+                href={`/portal/aiworkspace/${tool.slug}`}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group block"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
@@ -450,7 +450,7 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
             <p className="text-sm text-gray-500">Khám phá thêm nhu cầu và công cụ khác trong hub</p>
           </div>
           <Link
-            href="/portal/khong-gian-ai"
+            href="/portal/aiworkspace"
             className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
           >
             Về hub
@@ -477,7 +477,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
-          { label: "Không gian AI", href: "/portal/khong-gian-ai" },
+          { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: profession.title },
         ]}
       />
@@ -647,7 +647,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
             {tools.map((tool) => (
               <Link
                 key={tool.slug}
-                href={`/portal/khong-gian-ai/${tool.slug}`}
+                href={`/portal/aiworkspace/${tool.slug}`}
                 className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group block"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
@@ -697,7 +697,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
             </p>
           </div>
           <Link
-            href="/portal/academy"
+            href="/portal/hocvienai"
             className="shrink-0 inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
           >
             Khám phá lộ trình
@@ -716,7 +716,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
             <p className="text-sm text-gray-500">Khám phá thêm nhu cầu và công cụ khác trong hub</p>
           </div>
           <Link
-            href="/portal/khong-gian-ai"
+            href="/portal/aiworkspace"
             className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors"
           >
             Về hub
@@ -740,7 +740,7 @@ function NotFoundPage({ slug }: { slug: string }) {
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
-          { label: "Không gian AI", href: "/portal/khong-gian-ai" },
+          { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: slug },
         ]}
       />
@@ -751,7 +751,7 @@ function NotFoundPage({ slug }: { slug: string }) {
           Không có công cụ hoặc danh mục nào khớp với <strong>&ldquo;{slug}&rdquo;</strong>.
         </p>
         <Link
-          href="/portal/khong-gian-ai"
+          href="/portal/aiworkspace"
           className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
         >
           Quay lại Không gian AI

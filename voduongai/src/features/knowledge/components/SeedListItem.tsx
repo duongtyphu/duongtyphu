@@ -14,7 +14,7 @@ export function SeedListItem({ seed, index }: { seed: KnowledgeSeed; index: numb
 
   return (
     <Link
-      href={`/portal/library/${seed.slug}`}
+      href={`/portal/hetrithucai/${seed.slug}`}
       className="flex items-center gap-4 rounded-xl border border-gray-100 bg-white/70 p-4 shadow-sm backdrop-blur-sm transition hover:border-blue-200"
     >
       <span

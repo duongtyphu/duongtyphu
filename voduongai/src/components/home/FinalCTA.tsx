@@ -8,17 +8,17 @@ export function FinalCTA() {
           Bắt đầu hành trình AI của bạn hôm nay
         </h2>
         <p className="mt-4 whitespace-nowrap text-[11px] text-white sm:text-sm md:text-base">
-          Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Portal. Việc của bạn là bắt đầu.
+          Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Học viện AI. Việc của bạn là bắt đầu.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
-            href="/portal"
+            href="/portal/hocvienai"
             className="inline-flex rounded-full gradient-surface px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
           >
-            Nhận quyền truy cập Portal miễn phí
+            Nhận quyền truy cập Học viện miễn phí
           </Link>
           <Link
-            href="/portal/resources"
+            href="/portal/premium"
             className="inline-flex rounded-full border border-white/20 px-8 py-3.5 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
           >
             Xem kho tài nguyên

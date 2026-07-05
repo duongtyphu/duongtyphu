@@ -1,5 +1,5 @@
 /**
- * Khu vườn của bạn — seed data mẫu cho /portal/khu-vuon-cua-ban và
+ * Khu vườn của bạn — seed data mẫu cho /portal/khuvuoncuaban và
  * widget preview ở trang chủ Portal. Mỗi hành động của người dùng
  * (đọc bài, học bài, thực hành, lưu tài liệu, hỏi Companion, cảm hứng)
  * được hình ảnh hóa thành một chiếc lá trên cây.

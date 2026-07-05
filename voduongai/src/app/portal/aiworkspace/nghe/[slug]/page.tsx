@@ -11,5 +11,5 @@ export default async function LegacyProfessionRedirect({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  redirect(`/portal/khong-gian-ai/${slug}`);
+  redirect(`/portal/aiworkspace/${slug}`);
 }

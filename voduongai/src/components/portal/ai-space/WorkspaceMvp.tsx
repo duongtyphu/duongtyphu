@@ -70,14 +70,14 @@ const SOURCE_LABEL: Record<string, string> = {
 
 /** Module nào dẫn tới đây → route quay lại đúng module đó (breadcrumb + fallback link). */
 const MODULE_ROUTE: Record<PortalModule, { label: string; href: string }> = {
-  "khong-gian-ai": { label: "AI Workspace", href: "/portal/khong-gian-ai" },
-  ckos: { label: "Thư viện tri thức", href: "/portal/library" },
-  academy: { label: "Học viện AI", href: "/portal/academy" },
-  opportunities: { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
+  "khong-gian-ai": { label: "AI Workspace", href: "/portal/aiworkspace" },
+  ckos: { label: "Thư viện tri thức", href: "/portal/hetrithucai" },
+  academy: { label: "Học viện AI", href: "/portal/hocvienai" },
+  opportunities: { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
   premium: { label: "Premium", href: "/portal/premium" },
-  "learning-journal": { label: "Nhật ký học tập", href: "/portal/news" },
-  "my-journey": { label: "Hành trình của tôi", href: "/portal/journey" },
-  "living-garden": { label: "Khu vườn của bạn", href: "/portal/khu-vuon-cua-ban" },
+  "learning-journal": { label: "Nhật ký học tập", href: "/portal/nhatkyhoctap" },
+  "my-journey": { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
+  "living-garden": { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
 };
 
 /** Knowledge Loop — nếu thiếu kiến thức, Companion gợi ý quay lại đúng module còn lại. */
@@ -85,17 +85,17 @@ const COMPANION_SUGGESTION: Partial<Record<PortalModule, { message: string; labe
   "khong-gian-ai": {
     message: "Nếu cần hiểu sâu hơn trước khi làm, mình nghĩ Học viện AI sẽ giúp bạn.",
     label: "Sang Học viện AI",
-    href: "/portal/academy",
+    href: "/portal/hocvienai",
   },
   academy: {
     message: "Học xong phần này, hãy thực hành ngay để biến kiến thức thành kết quả thật.",
     label: "Sang AI Workspace",
-    href: "/portal/khong-gian-ai",
+    href: "/portal/aiworkspace",
   },
   ckos: {
     message: "Đã tra cứu xong? Companion có thể giúp bạn áp dụng ngay vào một việc thật.",
     label: "Sang AI Workspace",
-    href: "/portal/khong-gian-ai",
+    href: "/portal/aiworkspace",
   },
 };
 
@@ -149,7 +149,7 @@ export function WorkspaceMvp() {
       itemId: searchParams.get("itemId") ?? undefined,
       itemType: (searchParams.get("itemType") as WorkspaceContext["itemType"]) ?? undefined,
       expectedOutput: searchParams.get("expectedOutput") ?? undefined,
-      routeFrom: searchParams.get("routeFrom") ?? "/portal/khong-gian-ai",
+      routeFrom: searchParams.get("routeFrom") ?? "/portal/aiworkspace",
       timestamp: searchParams.get("ts") ?? new Date().toISOString(),
       missionId: searchParams.get("missionId") ?? undefined,
     });
@@ -347,9 +347,9 @@ export function WorkspaceMvp() {
   return (
     <div className="space-y-8 rounded-3xl p-6 md:p-8">
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-gray-700 transition">Portal</Link>
+        <Link href="/portal" className="hover:text-gray-700 transition">Học viện</Link>
         <span className="text-gray-300">/</span>
-        <Link href={originModule?.href ?? "/portal/khong-gian-ai"} className="hover:text-gray-700 transition">
+        <Link href={originModule?.href ?? "/portal/aiworkspace"} className="hover:text-gray-700 transition">
           {originModule?.label ?? "AI Workspace"}
         </Link>
         <span className="text-gray-300">/</span>
@@ -406,7 +406,7 @@ export function WorkspaceMvp() {
         {!context && (
           <p className="mt-4 text-sm text-gray-500">
             Chưa có thông tin công việc nào. Quay lại{" "}
-            <Link href="/portal/khong-gian-ai" className="font-semibold text-blue-600 hover:underline">
+            <Link href="/portal/aiworkspace" className="font-semibold text-blue-600 hover:underline">
               AI Workspace
             </Link>{" "}
             và nói cho Companion biết bạn muốn làm gì.
@@ -739,7 +739,7 @@ export function WorkspaceMvp() {
       )}
 
       <Link
-        href={originModule?.href ?? "/portal/khong-gian-ai"}
+        href={originModule?.href ?? "/portal/aiworkspace"}
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition"
       >
         <ArrowLeft className="h-4 w-4" /> Quay lại {originModule?.label ?? "AI Workspace"}

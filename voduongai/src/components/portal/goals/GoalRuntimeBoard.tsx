@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * GOAL-001 — Goal Creation Runtime — Goal Dashboard.
+ * GOAL-001 — Goal Creation Runtime — Bảng Mục tiêu.
  *
  * `/portal/goals` — Goal là First-Class Object: Dashboard hiển thị Total/
  * Draft/Running/Completed/Archived (đếm thật qua `computeGoalDashboardSummary()`)
@@ -26,7 +26,7 @@ import {
 const PRIORITY_LABEL: Record<string, string> = { low: "Thấp", medium: "Trung bình", high: "Cao" };
 
 export const GOAL_STATUS_LABEL: Record<GoalStatus, string> = {
-  draft: "Draft",
+  draft: "Bản nháp",
   ready_for_analysis: "READY_FOR_ANALYSIS",
   active: "Đang chạy",
   completed: "Hoàn thành",
@@ -88,9 +88,9 @@ export function GoalRuntimeBoard() {
   return (
     <div className="space-y-8 rounded-3xl p-6 md:p-8">
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-gray-700 transition">Portal</Link>
+        <Link href="/portal" className="hover:text-gray-700 transition">Học viện</Link>
         <span className="text-gray-300">/</span>
-        <span className="font-medium text-gray-900">Goal Dashboard</span>
+        <span className="font-medium text-gray-900">Bảng Mục tiêu</span>
       </nav>
 
       <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
@@ -98,23 +98,23 @@ export function GoalRuntimeBoard() {
           <div>
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600">
               <Sparkles className="h-4 w-4" />
-              Goal Dashboard
+              Bảng Mục tiêu
             </div>
-            <h1 className="mt-3 text-2xl font-extrabold text-gray-900 md:text-3xl">Goal của bạn</h1>
+            <h1 className="mt-3 text-2xl font-extrabold text-gray-900 md:text-3xl">Mục tiêu của bạn</h1>
             <p className="mt-2 text-sm text-gray-500">
-              Mỗi Goal là 1 First-Class Object: Draft → Analyzing → Planning → Đang chạy → Hoàn thành.
+              Mỗi Mục tiêu là 1 đối tượng độc lập: Draft → Analyzing → Planning → Đang chạy → Hoàn thành.
             </p>
           </div>
           <Link
             href="/portal/goals/new"
             className="flex shrink-0 items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
           >
-            <Plus className="h-4 w-4" /> Tạo Goal mới
+            <Plus className="h-4 w-4" /> Tạo Mục tiêu mới
           </Link>
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-5">
-          <SummaryTile label="Total Goals" value={summary.total} />
+          <SummaryTile label="Tổng Mục tiêu" value={summary.total} />
           <SummaryTile label="Draft" value={summary.draft} />
           <SummaryTile label="Running" value={summary.running} />
           <SummaryTile label="Completed" value={summary.completed} />
@@ -123,7 +123,7 @@ export function GoalRuntimeBoard() {
       </section>
 
       {goals.length === 0 && (
-        <p className="text-sm text-gray-400">Chưa có Goal nào — đang khởi tạo…</p>
+        <p className="text-sm text-gray-400">Chưa có Mục tiêu nào — đang khởi tạo…</p>
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -133,7 +133,7 @@ export function GoalRuntimeBoard() {
       </div>
 
       <Link href="/portal" className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
-        <ArrowLeft className="h-4 w-4" /> Quay lại Portal
+        <ArrowLeft className="h-4 w-4" /> Quay lại Học viện
       </Link>
     </div>
   );

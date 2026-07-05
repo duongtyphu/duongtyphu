@@ -34,9 +34,8 @@ export const bankConfig = {
 
 export const mainNav = [
   { label: "Trang chủ", href: "/" },
-  { label: "Thư viện tri thức", href: "/portal/library" },
-  { label: "AI Workspace", href: "/portal/khong-gian-ai" },
-  { label: "Portal", href: "/portal" },
+  { label: "Học viện AI", href: "/portal/hocvienai" },
+  { label: "AI Workspace", href: "/portal/aiworkspace" },
   { label: "Blog AI", href: "/blogai" },
 ];
 

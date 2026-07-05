@@ -34,7 +34,7 @@ export function GoalCreateForm() {
     e.preventDefault();
     // 1. Validate
     if (!title.trim()) {
-      setError("Goal Title là bắt buộc.");
+      setError("Tiêu đề Mục tiêu là bắt buộc.");
       return;
     }
 
@@ -60,20 +60,20 @@ export function GoalCreateForm() {
   return (
     <div className="space-y-6 rounded-3xl p-6 md:p-8">
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal/goals" className="hover:text-gray-700 transition">Goal Dashboard</Link>
+        <Link href="/portal/goals" className="hover:text-gray-700 transition">Bảng Mục tiêu</Link>
         <span className="text-gray-300">/</span>
-        <span className="font-medium text-gray-900">Tạo Goal mới</span>
+        <span className="font-medium text-gray-900">Tạo Mục tiêu mới</span>
       </nav>
 
       <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-        <h1 className="text-2xl font-extrabold text-gray-900 md:text-3xl">Tạo Goal mới</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900 md:text-3xl">Tạo Mục tiêu mới</h1>
         <p className="mt-2 text-sm text-gray-500">
-          Goal của riêng bạn — không phải Goal mẫu. Sau khi lưu, bạn sẽ vào thẳng Goal Detail để bấm &quot;Khởi chạy Goal&quot;.
+          Mục tiêu của riêng bạn — không phải Mục tiêu mẫu. Sau khi lưu, bạn sẽ vào thẳng trang chi tiết để bấm &quot;Khởi chạy Mục tiêu&quot;.
         </p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-gray-800">Goal Title *</label>
+            <label className="block text-sm font-semibold text-gray-800">Tiêu đề Mục tiêu *</label>
             <input
               type="text"
               value={title}
@@ -84,7 +84,7 @@ export function GoalCreateForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-800">Goal Description</label>
+            <label className="block text-sm font-semibold text-gray-800">Mô tả Mục tiêu</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -96,7 +96,7 @@ export function GoalCreateForm() {
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Goal Category</label>
+              <label className="block text-sm font-semibold text-gray-800">Danh mục Mục tiêu</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -109,7 +109,7 @@ export function GoalCreateForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-800">Goal Type</label>
+              <label className="block text-sm font-semibold text-gray-800">Loại Mục tiêu</label>
               <select
                 value={goalType}
                 onChange={(e) => setGoalType(e.target.value)}
@@ -176,7 +176,7 @@ export function GoalCreateForm() {
               type="submit"
               className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
             >
-              Tạo Goal
+              Tạo Mục tiêu
             </button>
             <Link href="/portal/goals" className="text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
               Hủy
@@ -186,7 +186,7 @@ export function GoalCreateForm() {
       </section>
 
       <Link href="/portal/goals" className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
-        <ArrowLeft className="h-4 w-4" /> Quay lại Goal Dashboard
+        <ArrowLeft className="h-4 w-4" /> Quay lại Bảng Mục tiêu
       </Link>
     </div>
   );

@@ -2,7 +2,7 @@
 
 /**
  * EPIC 02 — Sprint 01: AI Workspace Foundation.
- * Các khối mới cho /portal/khong-gian-ai — mỗi khối đều dẫn về
+ * Các khối mới cho /portal/aiworkspace — mỗi khối đều dẫn về
  * `startCompanionWorkspace()` (điểm gọi duy nhất, xem
  * src/lib/portal/companion-workspace.ts), không mỗi nút một logic riêng.
  */

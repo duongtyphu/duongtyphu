@@ -35,7 +35,7 @@ import { GOAL_STATUS_LABEL, GOAL_STATUS_STYLE } from "./GoalRuntimeBoard";
 const MISSION_STATUS_LABEL: Record<MissionStatus, string> = {
   not_started: "Chưa bắt đầu",
   in_progress: "Đang thực hiện",
-  waiting_review: "Chờ Review",
+  waiting_review: "Chờ Đánh giá",
   completed: "Hoàn thành",
 };
 
@@ -83,7 +83,7 @@ function MissionRow({ mission, goalTitle }: { mission: GoalMissionRecord; goalTi
 
       <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-600 md:grid-cols-2">
         <p><span className="font-semibold text-gray-800">Input:</span> {mission.input.join("; ") || "—"}</p>
-        <p><span className="font-semibold text-gray-800">Output:</span> {mission.output.join("; ") || "—"}</p>
+        <p><span className="font-semibold text-gray-800">Kết quả:</span> {mission.output.join("; ") || "—"}</p>
         <p><span className="font-semibold text-gray-800">Deliverables:</span> {mission.deliverables.join("; ") || "—"}</p>
         <p><span className="font-semibold text-gray-800">Definition of Done:</span> {mission.definitionOfDone.join("; ") || "—"}</p>
       </div>
@@ -93,7 +93,7 @@ function MissionRow({ mission, goalTitle }: { mission: GoalMissionRecord; goalTi
         onClick={handleStart}
         className="mt-3 flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow transition hover:bg-blue-700"
       >
-        {mission.status === "not_started" ? "Bắt đầu Mission" : "Mở Workspace"} <ArrowRight className="h-3 w-3" />
+        {mission.status === "not_started" ? "Bắt đầu Nhiệm vụ" : "Mở Không gian làm việc"} <ArrowRight className="h-3 w-3" />
       </button>
     </div>
   );
@@ -136,9 +136,9 @@ export function GoalDetail({ goalId }: { goalId: string }) {
   if (goal === null) {
     return (
       <div className="space-y-4 rounded-3xl p-6 md:p-8">
-        <p className="text-sm text-gray-500">Không tìm thấy Goal này.</p>
+        <p className="text-sm text-gray-500">Không tìm thấy Mục tiêu này.</p>
         <Link href="/portal/goals" className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
-          <ArrowLeft className="h-4 w-4" /> Quay lại Goal Dashboard
+          <ArrowLeft className="h-4 w-4" /> Quay lại Bảng Mục tiêu
         </Link>
       </div>
     );
@@ -150,7 +150,7 @@ export function GoalDetail({ goalId }: { goalId: string }) {
   return (
     <div className="space-y-6 rounded-3xl p-6 md:p-8">
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal/goals" className="hover:text-gray-700 transition">Goal Dashboard</Link>
+        <Link href="/portal/goals" className="hover:text-gray-700 transition">Bảng Mục tiêu</Link>
         <span className="text-gray-300">/</span>
         <span className="font-medium text-gray-900">{goal.title}</span>
       </nav>
@@ -191,7 +191,7 @@ export function GoalDetail({ goalId }: { goalId: string }) {
             onClick={handleLaunch}
             className="mt-5 flex items-center gap-1.5 rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-amber-700"
           >
-            Khởi chạy Goal <ArrowRight className="h-4 w-4" />
+            Khởi chạy Mục tiêu <ArrowRight className="h-4 w-4" />
           </button>
         )}
       </section>
@@ -212,10 +212,10 @@ export function GoalDetail({ goalId }: { goalId: string }) {
 
       {/* Mission (Epic -> Mission -> Task -> Output -> Review -> Approval -> Portfolio) */}
       <section className="space-y-4">
-        <h2 className="text-lg font-bold text-gray-900">Mission</h2>
+        <h2 className="text-lg font-bold text-gray-900">Nhiệm vụ</h2>
         {epics.length === 0 ? (
           <p className="rounded-2xl border border-gray-100 bg-white p-6 text-sm text-gray-400 shadow-sm">
-            Chưa có Mission nào — sẽ được tạo khi Goal chuyển sang Đang chạy.
+            Chưa có Nhiệm vụ nào — sẽ được tạo khi Mục tiêu chuyển sang Đang chạy.
           </p>
         ) : (
           epics.map((epic) => <EpicSection key={epic.epicId} epic={epic} goal={goal} />)
@@ -224,16 +224,16 @@ export function GoalDetail({ goalId }: { goalId: string }) {
 
       {/* Output / Review / Portfolio — placeholder cho tới khi Mission chạy qua Workspace */}
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        {["Output", "Review", "Portfolio"].map((label) => (
+        {["Kết quả", "Đánh giá", "Thành quả"].map((label) => (
           <div key={label} className="rounded-2xl border border-gray-100 bg-white p-5 text-sm text-gray-400 shadow-sm">
             <p className="font-semibold text-gray-700">{label}</p>
-            <p className="mt-1 text-xs">Chưa có {label} — xuất hiện khi Mission được thực thi qua Workspace.</p>
+            <p className="mt-1 text-xs">Chưa có {label} — xuất hiện khi Nhiệm vụ được thực thi qua Không gian làm việc.</p>
           </div>
         ))}
       </section>
 
       <Link href="/portal/goals" className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
-        <ArrowLeft className="h-4 w-4" /> Quay lại Goal Dashboard
+        <ArrowLeft className="h-4 w-4" /> Quay lại Bảng Mục tiêu
       </Link>
     </div>
   );

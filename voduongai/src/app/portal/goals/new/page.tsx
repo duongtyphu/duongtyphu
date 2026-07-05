@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { GoalCreateForm } from "@/components/portal/goals/GoalCreateForm";
 
-export const metadata = { title: "Tạo Goal mới — VO DUONG AI" };
+export const metadata = { title: "Tạo Mục tiêu mới — VO DUONG AI" };
 
 /**
  * P0 GOAL CREATION — `/portal/goals/new`. User tự tạo Goal của riêng họ

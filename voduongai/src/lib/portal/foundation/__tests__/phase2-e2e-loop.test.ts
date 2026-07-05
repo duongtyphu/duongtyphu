@@ -149,7 +149,7 @@ describe("Phase 2 Exit Validation — full loop (Academy → Unlock)", () => {
     const emptySession = createSession({
       module: "khong-gian-ai",
       source: "test-empty",
-      routeFrom: "/portal/khong-gian-ai",
+      routeFrom: "/portal/aiworkspace",
       timestamp: new Date().toISOString(),
     });
     const emptyProfiles = computeCapabilityProfiles([emptySession]);

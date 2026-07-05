@@ -52,10 +52,10 @@ export async function Header({ settings }: { settings: SiteSettings }) {
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <Link
-            href="/portal"
+            href="/portal/hocvienai"
             className="hidden shrink-0 rounded-full gradient-surface px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 min-[400px]:inline-flex"
           >
-            Vào Portal
+            Vào Học viện
           </Link>
           {user?.email && <AccountMenu email={user.email} fullName={meta.full_name} />}
           <MobileNavDrawer navItems={mainNav} user={user?.email ? { email: user.email, fullName: meta.full_name } : null} />

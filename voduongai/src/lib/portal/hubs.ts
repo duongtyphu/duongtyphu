@@ -25,7 +25,7 @@ export const portalHubs: PortalHub[] = [
   {
     key: "journey",
     label: "Hành trình",
-    href: "/portal/journey",
+    href: "/portal/hanhtrinhcuatoi",
     heroTitle: "Hành trình của bạn",
     heroSubtitle: "Mỗi viên ngọc quý cần thời gian để mài giũa — đây là lộ trình của riêng bạn.",
     modules: [
@@ -44,8 +44,8 @@ export const portalHubs: PortalHub[] = [
     heroTitle: "Tri thức",
     heroSubtitle: "Toàn bộ tri thức AI thực chiến — học đúng thứ bạn cần, áp dụng ngay.",
     modules: [
-      { label: "Học viện", description: "Các khóa học AI, Affiliate, thương hiệu cá nhân.", href: "/portal/academy" },
-      { label: "Thư viện AI", description: "Prompt, công cụ, template, ebook, checklist, SOP.", href: "/portal/library" },
+      { label: "Học viện", description: "Các khóa học AI, Affiliate, thương hiệu cá nhân.", href: "/portal/hocvienai" },
+      { label: "Thư viện AI", description: "Prompt, công cụ, template, ebook, checklist, SOP.", href: "/portal/hetrithucai" },
       { label: "Prompt", description: "Thư viện prompt thực chiến, copy và dùng ngay.", href: "/portal/prompts" },
       { label: "Công cụ AI", description: "Các công cụ AI & phần mềm được tuyển chọn.", href: "/portal/tools" },
       { label: "Template", description: "Mẫu nội dung, kế hoạch dùng lại nhanh.", href: "/portal/templates" },
@@ -73,7 +73,7 @@ export const portalHubs: PortalHub[] = [
       { label: "Landing Page", description: "Mẫu trang đích chuyển đổi cao." },
       { label: "Email Marketing", description: "Chuỗi email tự động chăm sóc khách hàng." },
       { label: "Automation", description: "Tự động hoá quy trình bán hàng và chăm sóc." },
-      { label: "Dự án & Cơ hội", description: "Toàn cảnh các dự án và cơ hội đang đồng hành.", href: "/portal/opportunities" },
+      { label: "Dự án & Cơ hội", description: "Toàn cảnh các dự án và cơ hội đang đồng hành.", href: "/portal/duan-cohoi" },
       { label: "DigiU", description: "Hệ sinh thái DigiU.", href: "/portal/digital-assets/category/digiu" },
       { label: "SolarGroup", description: "Cơ hội đầu tư cổ phần dài hạn.", href: "/portal/digital-assets/category/equity" },
       { label: "Crypto", description: "Các sàn giao dịch Crypto được đề xuất.", href: "/portal/digital-assets/category/crypto" },
@@ -90,7 +90,7 @@ export const portalHubs: PortalHub[] = [
     heroSubtitle: "Không ai tiến hóa một mình — kết nối với cộng đồng, mentor, sự kiện và cơ hội.",
     modules: [
       { label: "AI Assistant", description: "Một người đồng hành AI riêng cho hành trình của bạn.", href: "/portal/ai-assistant" },
-      { label: "Cộng đồng", description: "Kết nối với những người cùng hành trình.", href: "/portal/community" },
+      { label: "Cộng đồng", description: "Kết nối với những người cùng hành trình.", href: "/portal/congdongai" },
       { label: "Tin tức", description: "Cập nhật mới nhất từ VO DUONG AI.", href: "/portal/updates" },
       { label: "Thành tựu", description: "Case Study và thành công học viên.", href: "/portal/achievements" },
       { label: "Webinar", description: "Buổi chia sẻ trực tiếp cùng chuyên gia." },
@@ -154,22 +154,22 @@ export const portalNavSections: NavSection[] = [
   {
     group: null,
     items: [
-      { label: "Trang chủ", href: "/portal" },
+      { label: "Trang chủ Học viện", href: "/portal" },
       { label: "Companion", href: "/portal/companion" },
-      { label: "Học viện AI", href: "/portal/academy" },
-      { label: "AI Workspace", href: "/portal/khong-gian-ai" },
-      { label: "Thư viện tri thức", href: "/portal/library" },
-      { label: "Dự án & Cơ hội", href: "/portal/opportunities" },
+      { label: "Hệ tri thức AI", href: "/portal/hetrithucai" },
+      { label: "Học viện AI", href: "/portal/hocvienai" },
+      { label: "AI Workspace", href: "/portal/aiworkspace" },
+      { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
       { label: "Premium", href: "/portal/premium" },
-      { label: "Cộng đồng", href: "/portal/community" },
+      { label: "Cộng đồng", href: "/portal/congdongai" },
     ],
   },
   {
     group: null,
     items: [
-      { label: "Nhật ký học tập", href: "/portal/news" },
-      { label: "Hành trình của tôi", href: "/portal/journey" },
-      { label: "Khu vườn của bạn", href: "/portal/khu-vuon-cua-ban" },
+      { label: "Nhật ký học tập", href: "/portal/nhatkyhoctap" },
+      { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
+      { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
     ],
   },
 ];

@@ -110,7 +110,7 @@ export function startCompanionWorkspace(
   }
 ): string {
   const timestamp = new Date().toISOString();
-  const routeFrom = input.routeFrom ?? (typeof window !== "undefined" ? window.location.pathname : "/portal/khong-gian-ai");
+  const routeFrom = input.routeFrom ?? (typeof window !== "undefined" ? window.location.pathname : "/portal/aiworkspace");
   const context: WorkspaceContext = {
     module: input.module ?? "khong-gian-ai",
     source: input.source,

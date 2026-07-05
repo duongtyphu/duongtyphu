@@ -18,7 +18,7 @@ export type HumanFlowState = {
 };
 
 const OS_ROUTE: Record<PortalOS, string> = {
-  journey: "/portal/journey",
+  journey: "/portal/hanhtrinhcuatoi",
   knowledge: "/portal/knowledge",
   build: "/portal/build",
   connect: "/portal/connect",

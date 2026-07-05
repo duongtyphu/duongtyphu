@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import { Wrench, Wand2, Rocket, FolderOpen, Sparkles } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 
-const displayUrl = `${siteConfig.url.replace(/^https?:\/\//, "")}/portal`;
+const displayUrl = `${siteConfig.url.replace(/^https?:\/\//, "")}/portal/hocvienai`;
 
-const navItems = ["Tổng quan", "AI Academy", "Affiliate Hub", "Thư viện công cụ", "Cộng đồng"];
+const navItems = ["Tổng quan", "Học viện AI", "Affiliate Hub", "Thư viện công cụ", "Cộng đồng"];
 
 const tiles = [
   { label: "Bộ công cụ AI", icon: Wrench },
@@ -78,16 +78,16 @@ export function Hero() {
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/portal/resources"
+              href="/portal/hetrithucai"
               className="rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
             >
-              Nhận AI Toolkit miễn phí
+              Học AI miễn phí
             </Link>
             <Link
-              href="/portal"
+              href="/portal/hocvienai"
               className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
             >
-              Khám phá Portal →
+              Khám phá Học viện AI →
             </Link>
           </div>
         </motion.div>

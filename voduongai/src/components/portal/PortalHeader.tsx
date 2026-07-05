@@ -35,7 +35,7 @@ export function PortalHeader({
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
-          <span className="hidden text-sm font-extrabold tracking-tight text-gray-900 sm:inline">Portal</span>
+          <span className="hidden text-sm font-extrabold tracking-tight text-gray-900 sm:inline">Học viện AI</span>
         </Link>
 
         <div className="ml-auto flex flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">

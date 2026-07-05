@@ -9,14 +9,14 @@ import { getAgentsByModule } from "./agent-registry";
 import type { CompanionAgent } from "./agent.types";
 
 const MODULE_ROUTE_PREFIXES: { prefix: string; module: PortalModule }[] = [
-  { prefix: "/portal/khong-gian-ai", module: "khong-gian-ai" },
-  { prefix: "/portal/library", module: "ckos" },
-  { prefix: "/portal/academy", module: "academy" },
-  { prefix: "/portal/opportunities", module: "opportunities" },
+  { prefix: "/portal/aiworkspace", module: "khong-gian-ai" },
+  { prefix: "/portal/hetrithucai", module: "ckos" },
+  { prefix: "/portal/hocvienai", module: "academy" },
+  { prefix: "/portal/duan-cohoi", module: "opportunities" },
   { prefix: "/portal/premium", module: "premium" },
-  { prefix: "/portal/news", module: "learning-journal" },
-  { prefix: "/portal/journey", module: "my-journey" },
-  { prefix: "/portal/khu-vuon-cua-ban", module: "living-garden" },
+  { prefix: "/portal/nhatkyhoctap", module: "learning-journal" },
+  { prefix: "/portal/hanhtrinhcuatoi", module: "my-journey" },
+  { prefix: "/portal/khuvuoncuaban", module: "living-garden" },
 ];
 
 export const MODULE_LABELS: Record<PortalModule, string> = {

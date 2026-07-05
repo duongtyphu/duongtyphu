@@ -41,7 +41,7 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
 
       <div className="flex flex-wrap items-center gap-4">
         <Link
-          href={`/portal/library/collection/${journey.collectionSlug}`}
+          href={`/portal/hetrithucai/collection/${journey.collectionSlug}`}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:underline"
         >
           Tiếp tục hành trình

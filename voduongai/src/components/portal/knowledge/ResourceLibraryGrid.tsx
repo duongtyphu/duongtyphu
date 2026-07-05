@@ -22,7 +22,7 @@ export function ResourceLibraryGrid({ items }: { items: ResourceLibraryItem[] })
     <section>
       <div className="flex items-end justify-between">
         <h2 className="text-lg font-bold text-gray-900">Thư viện AI</h2>
-        <Link href="/portal/library" className="text-sm font-semibold text-blue-600 hover:underline">
+        <Link href="/portal/hetrithucai" className="text-sm font-semibold text-blue-600 hover:underline">
           Xem tất cả →
         </Link>
       </div>

@@ -53,11 +53,11 @@ export function CompanionQuickPanel({
     };
   }, [onClose]);
 
-  const otherActions = routeContext.quickActions.filter((a) => a.href !== "/portal/khong-gian-ai");
+  const otherActions = routeContext.quickActions.filter((a) => a.href !== "/portal/aiworkspace");
   const khongGianAi =
-    routeContext.quickActions.find((a) => a.href === "/portal/khong-gian-ai") ?? {
+    routeContext.quickActions.find((a) => a.href === "/portal/aiworkspace") ?? {
       label: "Mở Không gian AI",
-      href: "/portal/khong-gian-ai",
+      href: "/portal/aiworkspace",
     };
 
   return (

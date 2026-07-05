@@ -15,7 +15,7 @@ export function CollectionRelationship({ related }: { related: KnowledgeCollecti
         {related.map((collection) => (
           <Link
             key={collection.id}
-            href={`/portal/library/collection/${collection.slug}`}
+            href={`/portal/hetrithucai/collection/${collection.slug}`}
             className="rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 hover:border-blue-300 hover:text-blue-600"
           >
             {collection.title}

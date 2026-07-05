@@ -15,7 +15,7 @@ import {
  * thị số điểm/% ra UI — chỉ trạng thái bằng chữ + hình ảnh trừu tượng.
  *
  * Hình ảnh dùng đúng ảnh cây thật (Official Tree Asset) + nền trắng
- * ngọc pha nắng ấm — đồng bộ với /portal/khu-vuon-cua-ban và widget
+ * ngọc pha nắng ấm — đồng bộ với /portal/khuvuoncuaban và widget
  * "Khu vườn của bạn" ở trang chủ, thay vì hình trừu tượng (thân cây
  * gradient + node phát sáng) tách biệt hoàn toàn về mặt thị giác.
  */
@@ -96,7 +96,7 @@ export function LivingGardenCard({
           <Button href="/portal/story" variant="primary" className="!w-auto">
             Viết Reflection đầu tiên
           </Button>
-          <Button href="/portal/journey" variant="secondary" className="!w-auto">
+          <Button href="/portal/hanhtrinhcuatoi" variant="secondary" className="!w-auto">
             Bắt đầu hành trình
           </Button>
         </div>

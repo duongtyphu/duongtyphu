@@ -132,7 +132,7 @@ export function CompanionSpace({
           <Button href="/portal/story" variant="secondary" className="w-full">
             Mở My Story
           </Button>
-          <Button href="/portal/journey" variant="secondary" className="w-full">
+          <Button href="/portal/hanhtrinhcuatoi" variant="secondary" className="w-full">
             Tiếp tục hành trình
           </Button>
         </section>
