@@ -21,9 +21,23 @@
 import type { DepartmentId } from "./workforce-registry";
 import { emitGrowthEvent } from "./growth-event-bus";
 
-export type GoalStatus = "draft" | "active" | "completed" | "archived";
+export type GoalStatus = "draft" | "analyzing" | "planning" | "active" | "completed" | "archived";
 export type MissionStatus = "not_started" | "in_progress" | "waiting_review" | "completed";
 export type GoalPriority = "low" | "medium" | "high";
+
+export type GoalStatusHistoryEntry = { status: GoalStatus; at: string };
+
+/** Goal Lifecycle hợp lệ — giống pattern `ALLOWED_TRANSITIONS` đã dùng ở
+    Companion Lifecycle (`workforce-registry.ts`): chuyển trạng thái sai
+    thứ tự bị từ chối (no-op, trả lại Goal hiện tại). */
+const ALLOWED_GOAL_TRANSITIONS: Record<GoalStatus, GoalStatus[]> = {
+  draft: ["analyzing", "archived"],
+  analyzing: ["planning", "archived"],
+  planning: ["active", "archived"],
+  active: ["completed", "archived"],
+  completed: ["archived"],
+  archived: [],
+};
 
 /** Tiến độ Mission theo giai đoạn thô (không phải % Task chi tiết —
     Sprint này chưa theo dõi từng Task riêng lẻ trong 1 Mission, chỉ
@@ -43,10 +57,17 @@ export type GoalRecord = {
   /** P0 Goal Creation — do User tự nhập khi tạo Goal mới (`createGoalDraft`),
       rỗng/undefined cho Goal gieo sẵn qua `seedLandingPageProductionGoal()`. */
   description?: string;
+  category?: string;
   goalType?: string;
   priority?: GoalPriority;
   expectedDeliverable?: string;
   dueDate?: string;
+  tags?: string[];
+  createdBy?: string;
+  /** Timeline thật — mỗi lần status đổi được ghi lại 1 mốc, hiển thị ở
+      Goal Detail. Rỗng/undefined cho Goal tạo qua `createGoal()` cũ
+      (legacy, không đổi hành vi). */
+  statusHistory?: GoalStatusHistoryEntry[];
 };
 
 export type EpicRecord = {
@@ -114,23 +135,39 @@ export function getGoal(goalId: string): GoalRecord | undefined {
   return listGoals().find((g) => g.goalId === goalId);
 }
 
-function updateGoalStatus(goalId: string, status: GoalStatus): GoalRecord | null {
+function updateGoalRecord(goalId: string, patch: Partial<GoalRecord>): GoalRecord | null {
   const goals = readList<GoalRecord>(GOALS_KEY);
   const idx = goals.findIndex((g) => g.goalId === goalId);
   if (idx < 0) return null;
-  const updated = { ...goals[idx], status };
+  const updated = { ...goals[idx], ...patch };
   goals[idx] = updated;
   writeList(GOALS_KEY, goals);
   return updated;
 }
 
+/** Chuyển Goal Status theo đúng Goal Lifecycle (`ALLOWED_GOAL_TRANSITIONS`)
+    — sai thứ tự thì no-op (trả lại Goal hiện tại, không throw, để UI
+    không cần try/catch riêng). Mỗi lần chuyển hợp lệ được ghi vào
+    `statusHistory` — nguồn dữ liệu thật cho Goal Detail Timeline. */
+export function advanceGoalStatus(goalId: string, next: GoalStatus): GoalRecord | null {
+  const goal = getGoal(goalId);
+  if (!goal) return null;
+  if (!ALLOWED_GOAL_TRANSITIONS[goal.status].includes(next)) return goal;
+
+  const history = [...(goal.statusHistory ?? [{ status: goal.status, at: goal.createdAt }]), { status: next, at: new Date().toISOString() }];
+  return updateGoalRecord(goalId, { status: next, statusHistory: history });
+}
+
 export type CreateGoalDraftInput = {
   title: string;
   description?: string;
+  category?: string;
   goalType?: string;
   priority?: GoalPriority;
   expectedDeliverable?: string;
   dueDate?: string;
+  tags?: string[];
+  createdBy?: string;
 };
 
 /** P0 Goal Creation — User tự tạo Goal của riêng họ (khác
@@ -138,16 +175,21 @@ export type CreateGoalDraftInput = {
     luôn bắt đầu ở `status: "draft"` — chưa có Epic/Mission nào cho tới
     khi Owner bấm "Khởi chạy Goal" (`launchGoal`). */
 export function createGoalDraft(input: CreateGoalDraftInput): GoalRecord {
+  const createdAt = new Date().toISOString();
   const goal: GoalRecord = {
     goalId: newId("goal"),
     title: input.title,
     status: "draft",
-    createdAt: new Date().toISOString(),
+    createdAt,
     description: input.description,
+    category: input.category,
     goalType: input.goalType,
     priority: input.priority,
     expectedDeliverable: input.expectedDeliverable,
     dueDate: input.dueDate,
+    tags: input.tags,
+    createdBy: input.createdBy ?? "Owner",
+    statusHistory: [{ status: "draft", at: createdAt }],
   };
   writeList(GOALS_KEY, [...readList<GoalRecord>(GOALS_KEY), goal]);
   return goal;
@@ -248,39 +290,41 @@ export function getGoalProgress(goalId: string): number {
 }
 
 /**
- * P0 Goal Creation — "Khởi chạy Goal": Goal `draft` → `active`, tự tạo 1
- * Epic + 1 Mission "Phân tích & Lập kế hoạch" đầu tiên (Companion bắt
- * đầu Analysis → Mission Planning → Workforce Assignment) — dùng lại
- * đúng `createEpic`/`createGoalMission` chung, Input/Output/Deliverables
- * lấy từ chính dữ liệu Goal do Owner nhập, KHÔNG hard-code nội dung Goal
- * cụ thể nào. Idempotent — gọi lại trên Goal đã launch trả về đúng
- * Epic/Mission đã có, không tạo trùng.
+ * P0 GOAL CREATION RUNTIME — "Khởi chạy Goal": Goal `draft` → `analyzing`
+ * → `planning`. Chưa cần AI/Provider/Mock — chỉ chuyển trạng thái thật
+ * qua đúng Goal Lifecycle (`advanceGoalStatus`), mỗi bước ghi vào
+ * `statusHistory` (Goal Detail Timeline đọc thẳng từ đây). Idempotent —
+ * gọi lại trên Goal không còn ở `draft` là no-op, trả về Goal hiện tại.
+ * Việc tạo Epic/Mission/Workforce Assignment thật thuộc PHASE sau (không
+ * làm trong PHASE 1 CREATE GOAL này, theo đúng brief).
  */
-export function launchGoal(goalId: string): { goal: GoalRecord; epic: EpicRecord; mission: GoalMissionRecord } | null {
+export function launchGoal(goalId: string): GoalRecord | null {
   const goal = getGoal(goalId);
   if (!goal) return null;
+  if (goal.status !== "draft") return goal;
 
-  if (goal.status !== "draft") {
-    const epic = listEpics(goal.goalId)[0];
-    const mission = epic ? listGoalMissions(epic.epicId)[0] : undefined;
-    return epic && mission ? { goal, epic, mission } : null;
-  }
+  const analyzing = advanceGoalStatus(goalId, "analyzing")!;
+  return advanceGoalStatus(analyzing.goalId, "planning")!;
+}
 
-  const launched = updateGoalStatus(goalId, "active")!;
-  const epic = createEpic(goalId, "Thực thi Goal");
-  const mission = createGoalMission({
-    epicId: epic.epicId,
-    title: "Phân tích & Lập kế hoạch",
-    owner: "Owner",
-    department: "research-knowledge",
-    companionEmployeeId: "EMP-R001", // Market Research Companion — luôn là bước Analysis đầu tiên cho mọi Goal
-    input: [launched.description || `Goal: ${launched.title}`],
-    output: ["Research Report", "Kế hoạch triển khai sơ bộ"],
-    deliverables: [launched.expectedDeliverable || "Kế hoạch triển khai"],
-    definitionOfDone: ["Xác định rõ phạm vi công việc cho Goal", "Có kế hoạch Mission tiếp theo"],
-  });
+export type GoalDashboardSummary = {
+  total: number;
+  draft: number;
+  running: number; // analyzing + planning + active
+  completed: number;
+  archived: number;
+};
 
-  return { goal: launched, epic, mission };
+/** Goal Dashboard — đếm thật từ `listGoals()`, không cảm tính. */
+export function computeGoalDashboardSummary(): GoalDashboardSummary {
+  const goals = listGoals();
+  return {
+    total: goals.length,
+    draft: goals.filter((g) => g.status === "draft").length,
+    running: goals.filter((g) => g.status === "analyzing" || g.status === "planning" || g.status === "active").length,
+    completed: goals.filter((g) => g.status === "completed").length,
+    archived: goals.filter((g) => g.status === "archived").length,
+  };
 }
 
 // ---- Seed: Landing Page Production — Goal ĐẦU TIÊN, không phải duy nhất ----
