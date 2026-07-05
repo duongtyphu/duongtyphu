@@ -164,6 +164,15 @@ export function linkMissionToSession(missionId: string, sessionId: string): Goal
   return updated;
 }
 
+/** Mission đã xong phần thực thi, chuyển sang chờ Owner duyệt (dùng bởi
+    Mission Runtime — QA pass mới được submit review). Idempotent — chỉ
+    chuyển tiếp từ "in_progress", không lùi trạng thái đã completed. */
+export function submitMissionForReview(missionId: string): GoalMissionRecord | null {
+  const mission = getGoalMission(missionId);
+  if (!mission || mission.status !== "in_progress") return mission ?? null;
+  return updateMission(missionId, { status: "waiting_review" });
+}
+
 /** Mission hoàn thành — gọi khi Output của Session liên kết đã vào
     Portfolio thật (đúng đúng "Complete" trong Runtime Flow đã khóa ở
     Sprint 003). */
