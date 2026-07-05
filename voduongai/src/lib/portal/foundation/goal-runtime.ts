@@ -21,8 +21,9 @@
 import type { DepartmentId } from "./workforce-registry";
 import { emitGrowthEvent } from "./growth-event-bus";
 
-export type GoalStatus = "active" | "completed" | "archived";
+export type GoalStatus = "draft" | "active" | "completed" | "archived";
 export type MissionStatus = "not_started" | "in_progress" | "waiting_review" | "completed";
+export type GoalPriority = "low" | "medium" | "high";
 
 /** Tiến độ Mission theo giai đoạn thô (không phải % Task chi tiết —
     Sprint này chưa theo dõi từng Task riêng lẻ trong 1 Mission, chỉ
@@ -39,6 +40,13 @@ export type GoalRecord = {
   title: string;
   status: GoalStatus;
   createdAt: string;
+  /** P0 Goal Creation — do User tự nhập khi tạo Goal mới (`createGoalDraft`),
+      rỗng/undefined cho Goal gieo sẵn qua `seedLandingPageProductionGoal()`. */
+  description?: string;
+  goalType?: string;
+  priority?: GoalPriority;
+  expectedDeliverable?: string;
+  dueDate?: string;
 };
 
 export type EpicRecord = {
@@ -104,6 +112,45 @@ export function listGoals(): GoalRecord[] {
 
 export function getGoal(goalId: string): GoalRecord | undefined {
   return listGoals().find((g) => g.goalId === goalId);
+}
+
+function updateGoalStatus(goalId: string, status: GoalStatus): GoalRecord | null {
+  const goals = readList<GoalRecord>(GOALS_KEY);
+  const idx = goals.findIndex((g) => g.goalId === goalId);
+  if (idx < 0) return null;
+  const updated = { ...goals[idx], status };
+  goals[idx] = updated;
+  writeList(GOALS_KEY, goals);
+  return updated;
+}
+
+export type CreateGoalDraftInput = {
+  title: string;
+  description?: string;
+  goalType?: string;
+  priority?: GoalPriority;
+  expectedDeliverable?: string;
+  dueDate?: string;
+};
+
+/** P0 Goal Creation — User tự tạo Goal của riêng họ (khác
+    `seedLandingPageProductionGoal()`, chỉ gieo 1 Goal mẫu). Goal mới
+    luôn bắt đầu ở `status: "draft"` — chưa có Epic/Mission nào cho tới
+    khi Owner bấm "Khởi chạy Goal" (`launchGoal`). */
+export function createGoalDraft(input: CreateGoalDraftInput): GoalRecord {
+  const goal: GoalRecord = {
+    goalId: newId("goal"),
+    title: input.title,
+    status: "draft",
+    createdAt: new Date().toISOString(),
+    description: input.description,
+    goalType: input.goalType,
+    priority: input.priority,
+    expectedDeliverable: input.expectedDeliverable,
+    dueDate: input.dueDate,
+  };
+  writeList(GOALS_KEY, [...readList<GoalRecord>(GOALS_KEY), goal]);
+  return goal;
 }
 
 // ---- Epic ----
@@ -198,6 +245,42 @@ export function getGoalProgress(goalId: string): number {
   const epics = listEpics(goalId);
   if (epics.length === 0) return 0;
   return Math.round(epics.reduce((sum, e) => sum + getEpicProgress(e.epicId), 0) / epics.length);
+}
+
+/**
+ * P0 Goal Creation — "Khởi chạy Goal": Goal `draft` → `active`, tự tạo 1
+ * Epic + 1 Mission "Phân tích & Lập kế hoạch" đầu tiên (Companion bắt
+ * đầu Analysis → Mission Planning → Workforce Assignment) — dùng lại
+ * đúng `createEpic`/`createGoalMission` chung, Input/Output/Deliverables
+ * lấy từ chính dữ liệu Goal do Owner nhập, KHÔNG hard-code nội dung Goal
+ * cụ thể nào. Idempotent — gọi lại trên Goal đã launch trả về đúng
+ * Epic/Mission đã có, không tạo trùng.
+ */
+export function launchGoal(goalId: string): { goal: GoalRecord; epic: EpicRecord; mission: GoalMissionRecord } | null {
+  const goal = getGoal(goalId);
+  if (!goal) return null;
+
+  if (goal.status !== "draft") {
+    const epic = listEpics(goal.goalId)[0];
+    const mission = epic ? listGoalMissions(epic.epicId)[0] : undefined;
+    return epic && mission ? { goal, epic, mission } : null;
+  }
+
+  const launched = updateGoalStatus(goalId, "active")!;
+  const epic = createEpic(goalId, "Thực thi Goal");
+  const mission = createGoalMission({
+    epicId: epic.epicId,
+    title: "Phân tích & Lập kế hoạch",
+    owner: "Owner",
+    department: "research-knowledge",
+    companionEmployeeId: "EMP-R001", // Market Research Companion — luôn là bước Analysis đầu tiên cho mọi Goal
+    input: [launched.description || `Goal: ${launched.title}`],
+    output: ["Research Report", "Kế hoạch triển khai sơ bộ"],
+    deliverables: [launched.expectedDeliverable || "Kế hoạch triển khai"],
+    definitionOfDone: ["Xác định rõ phạm vi công việc cho Goal", "Có kế hoạch Mission tiếp theo"],
+  });
+
+  return { goal: launched, epic, mission };
 }
 
 // ---- Seed: Landing Page Production — Goal ĐẦU TIÊN, không phải duy nhất ----

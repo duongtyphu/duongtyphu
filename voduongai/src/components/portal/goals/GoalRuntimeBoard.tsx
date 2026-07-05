@@ -17,7 +17,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Sparkles } from "lucide-react";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import {
   listGoals,
@@ -27,12 +27,15 @@ import {
   getEpicProgress,
   getMissionProgress,
   seedLandingPageProductionGoal,
+  launchGoal,
   type GoalRecord,
   type EpicRecord,
   type GoalMissionRecord,
   type MissionStatus,
 } from "@/lib/portal/foundation/goal-runtime";
 import { getCompanion } from "@/lib/portal/foundation/workforce-registry";
+
+const PRIORITY_LABEL: Record<string, string> = { low: "Thấp", medium: "Trung bình", high: "Cao" };
 
 const STATUS_LABEL: Record<MissionStatus, string> = {
   not_started: "Chưa bắt đầu",
@@ -99,6 +102,41 @@ function MissionRow({ mission, goalTitle }: { mission: GoalMissionRecord; goalTi
   );
 }
 
+function DraftGoalCard({ goal, onLaunched }: { goal: GoalRecord; onLaunched: () => void }) {
+  function handleLaunch() {
+    launchGoal(goal.goalId);
+    onLaunched();
+  }
+
+  return (
+    <section className="rounded-2xl border border-amber-100 bg-amber-50/40 p-6 shadow-sm md:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <span className="rounded-full bg-amber-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-700">Draft</span>
+          <h2 className="mt-2 text-xl font-extrabold text-gray-900">{goal.title}</h2>
+        </div>
+      </div>
+
+      {goal.description && <p className="mt-2 text-sm text-gray-600">{goal.description}</p>}
+
+      <div className="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-600 md:grid-cols-3">
+        {goal.goalType && <p><span className="font-semibold text-gray-800">Loại:</span> {goal.goalType}</p>}
+        {goal.priority && <p><span className="font-semibold text-gray-800">Priority:</span> {PRIORITY_LABEL[goal.priority] ?? goal.priority}</p>}
+        {goal.expectedDeliverable && <p><span className="font-semibold text-gray-800">Deliverable:</span> {goal.expectedDeliverable}</p>}
+        {goal.dueDate && <p><span className="font-semibold text-gray-800">Due:</span> {goal.dueDate}</p>}
+      </div>
+
+      <button
+        type="button"
+        onClick={handleLaunch}
+        className="mt-4 flex items-center gap-1.5 rounded-xl bg-amber-600 px-5 py-2.5 text-xs font-semibold text-white shadow transition hover:bg-amber-700"
+      >
+        Khởi chạy Goal <ArrowRight className="h-3 w-3" />
+      </button>
+    </section>
+  );
+}
+
 function EpicSection({ epic, goal }: { epic: EpicRecord; goal: GoalRecord }) {
   const missions = listGoalMissions(epic.epicId);
   const progress = getEpicProgress(epic.epicId);
@@ -137,33 +175,47 @@ export function GoalRuntimeBoard() {
       </nav>
 
       <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600">
-          <Sparkles className="h-4 w-4" />
-          Goal Runtime
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600">
+              <Sparkles className="h-4 w-4" />
+              Goal Runtime
+            </div>
+            <h1 className="mt-3 text-2xl font-extrabold text-gray-900 md:text-3xl">Goal của bạn</h1>
+            <p className="mt-2 text-sm text-gray-500">
+              Goal → Epic → Mission → Task → Output → Review → Approval → Portfolio. Mỗi Mission được điều phối bởi 1 AI Companion thật.
+            </p>
+          </div>
+          <Link
+            href="/portal/goals/new"
+            className="flex shrink-0 items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4" /> Tạo Goal mới
+          </Link>
         </div>
-        <h1 className="mt-3 text-2xl font-extrabold text-gray-900 md:text-3xl">Goal của bạn</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          Goal → Epic → Mission → Task → Output → Review → Approval → Portfolio. Mỗi Mission được điều phối bởi 1 AI Companion thật.
-        </p>
       </section>
 
       {goals.length === 0 && (
         <p className="text-sm text-gray-400">Chưa có Goal nào — đang khởi tạo…</p>
       )}
 
-      {goals.map((goal) => (
-        <div key={goal.goalId} className="space-y-4">
-          <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-extrabold text-gray-900">Goal: {goal.title}</h2>
-              <span className="text-sm font-semibold text-blue-600">{getGoalProgress(goal.goalId)}%</span>
-            </div>
-          </section>
-          {listEpics(goal.goalId).map((epic) => (
-            <EpicSection key={epic.epicId} epic={epic} goal={goal} />
-          ))}
-        </div>
-      ))}
+      {goals.map((goal) =>
+        goal.status === "draft" ? (
+          <DraftGoalCard key={goal.goalId} goal={goal} onLaunched={() => setGoals(listGoals())} />
+        ) : (
+          <div key={goal.goalId} className="space-y-4">
+            <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-extrabold text-gray-900">Goal: {goal.title}</h2>
+                <span className="text-sm font-semibold text-blue-600">{getGoalProgress(goal.goalId)}%</span>
+              </div>
+            </section>
+            {listEpics(goal.goalId).map((epic) => (
+              <EpicSection key={epic.epicId} epic={epic} goal={goal} />
+            ))}
+          </div>
+        )
+      )}
 
       <Link href="/portal" className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-700 transition">
         <ArrowLeft className="h-4 w-4" /> Quay lại Portal

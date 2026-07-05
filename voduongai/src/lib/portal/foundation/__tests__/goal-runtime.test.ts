@@ -3,6 +3,8 @@ import {
   createGoal,
   createEpic,
   createGoalMission,
+  createGoalDraft,
+  launchGoal,
   listGoals,
   listEpics,
   listGoalMissions,
@@ -123,5 +125,45 @@ describe("GOAL 001 — Goal Runtime", () => {
     for (const mission of seeded.missions) {
       expect(getCompanion(mission.companionEmployeeId)).toBeDefined();
     }
+  });
+
+  it("P0 Goal Creation: createGoalDraft() tạo Goal status draft, chưa có Epic/Mission nào", () => {
+    const goal = createGoalDraft({
+      title: "Ra mắt Kênh YouTube VO DUONG AI",
+      description: "Xây kênh YouTube dạy AI cho người mới bắt đầu",
+      goalType: "Nội dung",
+      priority: "high",
+      expectedDeliverable: "10 video đầu tiên",
+      dueDate: "2026-12-31",
+    });
+
+    expect(goal.status).toBe("draft");
+    expect(goal.description).toBe("Xây kênh YouTube dạy AI cho người mới bắt đầu");
+    expect(goal.priority).toBe("high");
+    expect(listGoals().map((g) => g.goalId)).toContain(goal.goalId);
+    expect(listEpics(goal.goalId)).toHaveLength(0);
+    expect(getGoalProgress(goal.goalId)).toBe(0);
+  });
+
+  it("P0 Goal Creation: launchGoal() draft -> active, tự tạo 1 Epic + 1 Mission Phân tích & Lập kế hoạch — generic, không hard-code nội dung Goal", () => {
+    const goal = createGoalDraft({ title: "Ra mắt Kênh YouTube VO DUONG AI", expectedDeliverable: "10 video đầu tiên" });
+
+    const launched = launchGoal(goal.goalId)!;
+    expect(launched.goal.status).toBe("active");
+    expect(launched.epic.goalId).toBe(goal.goalId);
+    expect(launched.mission.title).toBe("Phân tích & Lập kế hoạch");
+    expect(launched.mission.deliverables).toContain("10 video đầu tiên");
+    expect(launched.mission.companionEmployeeId).toBeTruthy();
+
+    // Idempotent — gọi lại trên Goal đã active trả về đúng Epic/Mission đã tạo, không tạo trùng.
+    const launchedAgain = launchGoal(goal.goalId)!;
+    expect(launchedAgain.epic.epicId).toBe(launched.epic.epicId);
+    expect(launchedAgain.mission.missionId).toBe(launched.mission.missionId);
+    expect(listEpics(goal.goalId)).toHaveLength(1);
+    expect(listGoalMissions(launched.epic.epicId)).toHaveLength(1);
+  });
+
+  it("launchGoal() trả về null cho goalId không tồn tại", () => {
+    expect(launchGoal("khong-ton-tai")).toBeNull();
   });
 });
