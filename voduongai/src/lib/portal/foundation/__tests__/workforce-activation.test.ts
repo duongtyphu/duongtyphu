@@ -6,7 +6,7 @@ import {
   activateWave1Companions,
   setWorkingStatus,
 } from "@/lib/portal/foundation/workforce-registry";
-import { assignTask } from "@/lib/portal/foundation/companion-manager";
+import { assignTask, toOutputContract } from "@/lib/portal/foundation/companion-manager";
 import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 
 /**
@@ -23,19 +23,27 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
     vi.restoreAllMocks();
   });
 
-  it("Workforce Registry: đủ 20 Companion (Wave 1 + Wave 2), đúng 7 Department", () => {
+  it("Workforce Registry: đủ 30/30 Companion (Wave 1 + Wave 2 + Wave 3), đúng 7 Department hoàn chỉnh", () => {
     const companions = listCompanions();
-    expect(companions).toHaveLength(20);
+    expect(companions).toHaveLength(30);
 
-    expect(listByDepartment("research-knowledge")).toHaveLength(4);
-    expect(listByDepartment("content-communication")).toHaveLength(4);
-    expect(listByDepartment("business-strategy")).toHaveLength(3);
-    expect(listByDepartment("creative-design")).toHaveLength(1);
-    expect(listByDepartment("technology-automation")).toHaveLength(3);
-    expect(listByDepartment("office-productivity")).toHaveLength(2);
+    expect(listByDepartment("research-knowledge")).toHaveLength(5);
+    expect(listByDepartment("content-communication")).toHaveLength(5);
+    expect(listByDepartment("business-strategy")).toHaveLength(4);
+    expect(listByDepartment("creative-design")).toHaveLength(4);
+    expect(listByDepartment("technology-automation")).toHaveLength(4);
+    expect(listByDepartment("office-productivity")).toHaveLength(5);
     expect(listByDepartment("personal-growth")).toHaveLength(3);
 
-    // Mỗi Companion đủ 19 trường hồ sơ theo brief.
+    // Không Companion nào trùng employeeId — Registry hoàn chỉnh, không lẫn dữ liệu.
+    const ids = companions.map((c) => c.employeeId);
+    expect(new Set(ids).size).toBe(30);
+
+    // Capability Matrix hoàn chỉnh — mỗi Companion có capabilityId riêng, không trùng nhau.
+    const capabilityIds = companions.map((c) => c.capability[0]);
+    expect(new Set(capabilityIds).size).toBe(30);
+
+    // Mỗi Companion đủ 19 trường hồ sơ theo brief + Output Contract (outputType).
     for (const c of companions) {
       expect(c.employeeId).toBeTruthy();
       expect(c.department).toBeTruthy();
@@ -50,6 +58,7 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
       expect(c.qaChecklist.length).toBeGreaterThan(0);
       expect(c.evidenceStandard.length).toBeGreaterThan(0);
       expect(c.portfolioMapping.primaryCompetencyId).toBeTruthy();
+      expect(c.outputType).toBeTruthy();
       expect(c.providerPreference).toBeTruthy();
       expect(c.fallbackProvider).toBeTruthy();
       expect(c.workingStatus).toBe("inactive");
@@ -59,14 +68,14 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
     }
   });
 
-  it("Companion Lifecycle: activateWave1Companions() đưa cả 20 Companion từ inactive -> active, ghi đủ 20 COMPANION_ACTIVATED", () => {
+  it("Companion Lifecycle: activateWave1Companions() đưa cả 30 Companion từ inactive -> active, ghi đủ 30 COMPANION_ACTIVATED", () => {
     const activated = activateWave1Companions();
-    expect(activated).toHaveLength(20);
+    expect(activated).toHaveLength(30);
     expect(activated.every((c) => c.workingStatus === "active")).toBe(true);
     expect(listCompanions().every((c) => c.workingStatus === "active")).toBe(true);
 
     const events = readGrowthEvents().filter((e) => e.eventType === "COMPANION_ACTIVATED");
-    expect(events).toHaveLength(20);
+    expect(events).toHaveLength(30);
   });
 
   it("Companion Lifecycle: từ chối chuyển trạng thái sai thứ tự (vd inactive -> active thẳng)", () => {
@@ -109,6 +118,12 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
       ["EMP-B002", "Sales Companion"],
       ["EMP-D001", "Designer Companion"],
       ["EMP-T003", "Automation Companion"],
+      // Wave 3 (Sprint 002 — hoàn thành 30/30)
+      ["EMP-R005", "Customer Research Companion"],
+      ["EMP-C005", "Translator Companion"],
+      ["EMP-B004", "Partnership Companion"],
+      ["EMP-D002", "Presentation Companion"],
+      ["EMP-O003", "Word Companion"],
     ])("%s (%s) nhận Task và trả Output đúng cấu trúc", async (employeeId, expectedPosition) => {
       const result = await assignTask(employeeId, { prompt: "Task kiểm thử Sprint Activation." });
       expect(result.position).toBe(expectedPosition);
@@ -135,6 +150,23 @@ describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
       const eventTypes = readGrowthEvents().map((e) => e.eventType);
       expect(eventTypes).toContain("COMPANION_TASK_ASSIGNED");
       expect(eventTypes).toContain("COMPANION_TASK_COMPLETED");
+    });
+
+    it("Output Contract: toOutputContract() map đúng CompanionTaskResult vào OutputType đã chuẩn hoá sẵn cho Workspace Integration", async () => {
+      const companion = getCompanion("EMP-O003")!; // Word Companion — outputType: "word"
+      const result = await assignTask("EMP-O003", { prompt: "Soạn công văn mẫu" });
+      const contract = toOutputContract(companion, result);
+      expect(contract.employeeId).toBe("EMP-O003");
+      expect(contract.type).toBe("word");
+      expect(contract.content).toBe(result.output);
+    });
+
+    it("Companion Manager điều phối được toàn bộ 30/30 Companion (không chỉ danh sách mẫu)", async () => {
+      for (const companion of listCompanions()) {
+        const result = await assignTask(companion.employeeId, { prompt: "Kiểm tra điều phối toàn Workforce." });
+        expect(result.isMock).toBe(true);
+        expect(getCompanion(companion.employeeId)?.workingStatus).toBe("active");
+      }
     });
   });
 });

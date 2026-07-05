@@ -71,11 +71,11 @@ type CompanionTaskResult = {
 
 Đây là **Output thô** trả về Runtime — chưa phải `OutputRecord` của
 Workspace Session (Sprint B2, đã khóa). Kết nối `CompanionTaskResult`
-vào `saveOutputVersion()`/Review/Portfolio thật cho cả 10 Companion là
-việc của Sprint sau (Blueprint Production, PHASE 4 EPIC 03) — EPIC 02
-chỉ chứng minh **Companion nhận được Task và Output quay về Runtime
-đúng qua Provider Manager**, đúng Definition of Done, không mở rộng
-thêm phạm vi.
+vào `saveOutputVersion()`/Review/Portfolio thật cho cả 30 Companion là
+việc của Sprint sau (Workspace Integration) — Sprint 002 chỉ chuẩn hoá
+**Output Contract** (`companion-manager.ts` → `toOutputContract()`,
+xem `WORKFORCE_REGISTRY.md` §8) để Sprint đó nối thẳng vào, không tự
+gọi `saveOutputVersion()` ở đây, không mở rộng thêm phạm vi.
 
 ## 4. Test đã verify (Mock Provider, không cần AI thật)
 
@@ -97,10 +97,10 @@ thêm phạm vi.
 ## 5. Known Limitations
 
 1. Chưa nối `assignTask()` vào UI Workspace (`WorkspaceMvp.tsx`) hay vào
-   Output/Review/Portfolio Store thật — phạm vi EPIC 02 chỉ là Runtime
-   nền (Registry + Task Assignment + Provider Manager), chưa phải trải
-   nghiệm Owner hoàn chỉnh cho 10 Companion mới.
-2. 8/10 Companion (trừ Writer/Reviewer đã có từ MVP) chưa có Agent
+   Output/Review/Portfolio Store thật — Sprint 002 chỉ chuẩn hoá Output
+   Contract (`toOutputContract()`), chưa phải trải nghiệm Owner hoàn
+   chỉnh cho 30 Companion.
+2. 28/30 Companion (trừ Writer/Reviewer đã có từ MVP) chưa có Agent
    server-side chuyên biệt (không tự dựng Prompt riêng theo đúng
    `buildPrompt()` pattern của Writer/Reviewer) — dùng chung đường
    `"companion-task"` generic, trả `raw` text thô. Viết Agent chuyên

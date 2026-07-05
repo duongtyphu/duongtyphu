@@ -30,4 +30,15 @@ export const ALL_TEXT_CAPABILITIES: string[] = [
   "growth.goal-coaching",
   "growth.reflection-coaching",
   "growth.learning-coaching",
+  // Sprint 002 — Wave 3 Companion capability (Workforce hoàn chỉnh 30/30):
+  "research.customer-insight",
+  "writing.translation",
+  "business.partnership",
+  "design.presentation",
+  "design.video-script",
+  "design.brand-consistency",
+  "automation.integration",
+  "office.document",
+  "office.presentation",
+  "office.report",
 ];

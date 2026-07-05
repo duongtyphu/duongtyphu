@@ -1,9 +1,10 @@
 # PHASE 4 EPIC 02 — Core Workforce Runtime (Activate Core AI Companion Team)
 
-> **Cập nhật**: Sprint tiếp nối đã Activate thêm **Wave 2** (10 Companion),
-> nâng tổng Runtime lên **20/30 Companion**, đủ **7/7 Department**. Nội
-> dung dưới đây giữ nguyên phần Wave 1 làm tài liệu gốc; xem
-> `WORKFORCE_REGISTRY.md` §6 cho danh sách đầy đủ Wave 2.
+> **Cập nhật (Sprint 002 "Complete Core AI Companion Team")**: đã
+> Activate thêm **Wave 3** (10 Companion cuối) — Workforce nay đạt
+> **30/30 Companion, 7/7 Department hoàn chỉnh**. Nội dung dưới đây giữ
+> nguyên phần Wave 1 làm tài liệu gốc; xem `WORKFORCE_REGISTRY.md` §6-7
+> cho Wave 2/Wave 3 và Output Contract chuẩn bị cho Workspace Integration.
 
 > Tổng quan Sprint — nối `WORKFORCE_REGISTRY.md`, `COMPANION_PROFILE_STANDARD.md`,
 > `COMPANION_LIFECYCLE.md`, `COMPANION_RUNTIME.md` thành 1 bức tranh. Đây

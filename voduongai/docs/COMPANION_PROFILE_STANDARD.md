@@ -54,7 +54,11 @@ type CompanionRecord = {
    `providerId` nội bộ (`anthropic`/`openai`/`gemini`/`mock`), là chi
    tiết vận hành server-side, không phải nội dung nghiệp vụ.
 
-## 3. 10 Companion Wave 1 — tóm tắt (chi tiết đầy đủ trong `workforce-registry.ts`; xem `WORKFORCE_REGISTRY.md` §6 cho Wave 2)
+## 3. 10 Companion Wave 1 — tóm tắt (chi tiết đầy đủ trong `workforce-registry.ts`; xem `WORKFORCE_REGISTRY.md` §6-7 cho Wave 2/Wave 3 — Workforce nay đủ 30/30 Companion, 7/7 Department)
+
+> Kể từ Sprint 002, `CompanionRecord` có thêm trường `outputType`
+> (Output Contract chuẩn bị cho Workspace Integration — xem
+> `WORKFORCE_REGISTRY.md` §8) — 20 trường tổng cộng, không phải 19.
 
 | employeeId | Department | Position | Capability | Provider Pref → Fallback |
 |---|---|---|---|---|

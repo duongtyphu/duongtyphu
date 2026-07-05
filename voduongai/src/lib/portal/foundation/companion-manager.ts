@@ -10,8 +10,9 @@
  */
 
 import { createWorkforceApiProvider } from "./ai-provider";
-import { getCompanion, setWorkingStatus } from "./workforce-registry";
+import { getCompanion, setWorkingStatus, type CompanionRecord } from "./workforce-registry";
 import { emitGrowthEvent } from "./growth-event-bus";
+import type { OutputType } from "./workspace-session-store";
 
 export type CompanionTaskInput = {
   prompt: string;
@@ -27,6 +28,33 @@ export type CompanionTaskResult = {
   providerId: string;
   isMock: boolean;
 };
+
+/**
+ * Output Contract chuẩn bị cho Sprint Workspace Integration sau này
+ * (Companion → Workspace Output → Review → Portfolio) — hình dạng
+ * đúng khớp tham số `saveOutputVersion(sessionId, { type, content })`
+ * đã có trong `workspace-session-store.ts` (Kernel, không đổi). Sprint
+ * này CHỈ chuẩn hoá interface — không gọi `saveOutputVersion` ở đây.
+ */
+export type CompanionOutputContract = {
+  employeeId: string;
+  type: OutputType;
+  content: string;
+};
+
+/**
+ * Biến 1 `CompanionTaskResult` đã có thành `CompanionOutputContract`
+ * sẵn sàng nối vào Workspace Output thật — Sprint sau chỉ cần gọi
+ * `saveOutputVersion(sessionId, { type: contract.type, content: contract.content })`,
+ * không cần đoán lại `OutputType` phù hợp cho từng Companion.
+ */
+export function toOutputContract(companion: CompanionRecord, result: CompanionTaskResult): CompanionOutputContract {
+  return {
+    employeeId: companion.employeeId,
+    type: companion.outputType,
+    content: result.output,
+  };
+}
 
 type ProviderTaskResponse = { raw: string; model: string; providerId: string; isMock: boolean };
 
