@@ -31,9 +31,12 @@
 | 6 | `supabase-phase-c-leads.sql` | Tương tự, bảng `leads` **+ bật RLS** (đã xác nhận 100% truy cập qua service role) | `enable row level security` — không ảnh hưởng hành vi |
 | 7 | `supabase-phase-c-case-studies.sql` | Tương tự, bảng `case_studies` | No-op nếu đã có |
 | 8 | `supabase-phase-c-prompt-templates.sql` | Tương tự, bảng `prompt_templates` | No-op nếu đã có |
-| 9 | `supabase-phase-e-sync-case-study-to-case-studies.sql` | **Chạy SAU bước 7** — đồng bộ nội dung Admin đã đăng từ `case_study` sang `case_studies` | Chỉ INSERT, dedup theo title |
-| 10 | `supabase-phase-e-sync-prompts-to-prompt-templates.sql` | **Chạy SAU bước 8** — đồng bộ nội dung Admin đã đăng từ `prompts` sang `prompt_templates` | Chỉ INSERT, dedup theo title |
-| 11 | `supabase-phase-c-orders-safety.sql` | UNIQUE constraint chống double-confirm thanh toán — **migration tự kiểm tra trùng lặp, tự abort nếu phát hiện trùng** | Có thể chạy bất kỳ lúc nào, độc lập với các bước trên |
+| 9 | `supabase-phase-f-case-studies-extend-schema.sql` | **BẮT BUỘC chạy trước bước 10** và trước khi dùng Admin CRUD Case Study mới (Phase F) — thêm 4 cột `slug`/`body`/`published_at`/`featured` vào `case_studies` | `add column if not exists` — an toàn, additive |
+| 10 | `supabase-phase-e-sync-case-study-to-case-studies.sql` | **Chạy SAU bước 9** — đồng bộ nội dung Admin đã đăng từ `case_study` sang `case_studies` | Chỉ INSERT, dedup theo title |
+| 11 | `supabase-phase-e-sync-prompts-to-prompt-templates.sql` | Tuỳ chọn (xem Phase F Canonical Table Decision — Prompt đã hiển thị đúng qua `<AdminPromptsSection>`, script này chỉ bổ sung để section "Prompt mới từ VO DUONG AI Academy" cũng có dữ liệu, không bắt buộc) | Chỉ INSERT, dedup theo title |
+| 12 | `supabase-phase-c-orders-safety.sql` | UNIQUE constraint chống double-confirm thanh toán — **migration tự kiểm tra trùng lặp, tự abort nếu phát hiện trùng** | Có thể chạy bất kỳ lúc nào, độc lập với các bước trên |
+
+**Lưu ý quan trọng (Phase F)**: sau khi chạy bước 9, trang Admin `/admin/case-study` đã được viết lại để ghi trực tiếp vào `case_studies` (không còn dùng `case_study` jsonb) — nếu bước 9 CHƯA chạy mà ai đó đã vào `/admin/case-study` thao tác, trang sẽ báo lỗi "Không thể tạo/lưu case study" (cột chưa tồn tại). Phải chạy bước 9 trước khi thông báo cho Admin dùng trang mới.
 
 **Lưu ý về các file RLS còn để dạng comment** (`supabase-phase-c-submissions.sql`, `-referrals.sql`, `-documents.sql`, `-support-tickets.sql`, `-case-studies.sql`, `-prompt-templates.sql`): mỗi file có sẵn phần policy đề xuất nhưng **để dạng comment**. TRƯỚC khi bỏ comment và bật RLS cho các bảng này, phải tự kiểm tra qua Dashboard (Database → Tables → [tên bảng] → RLS) xem RLS hiện đang BẬT hay TẮT:
 - Nếu đang **TẮT**: bật RLS mà không có policy đúng sẽ **chặn toàn bộ truy cập hiện tại** (regression) — chỉ bật kèm đúng policy đã viết sẵn trong file.
@@ -72,6 +75,7 @@
 |---|---|
 | `supabase-phase-d-orders-select-policy.sql` | `drop policy if exists "members can view own orders" on orders;` |
 | 7 migration Phase C (`submissions`...`prompt-templates`) | Chỉ `drop table if exists <tên>;` NẾU CHẮC CHẮN bảng đó vừa được tạo mới hoàn toàn bởi migration này (không có dữ liệu production từ trước) — với `documents`/`case_studies`/`prompt_templates`/`leads`... đã xác nhận Phase D là bảng **đã tồn tại từ trước**, nên rollback thực chất chỉ cần `alter table documents drop column if exists bg_color;` (nếu muốn lùi riêng phần cột mới) và `alter table leads disable row level security;` — KHÔNG drop bảng vì sẽ mất dữ liệu thật đang có |
+| `supabase-phase-f-case-studies-extend-schema.sql` | `alter table case_studies drop column if exists slug, drop column if exists body, drop column if exists published_at, drop column if exists featured;` — chỉ làm nếu chắc chắn Admin CRUD mới (`/admin/case-study`) chưa được ai dùng để nhập dữ liệu vào các cột này |
 | `supabase-phase-e-sync-case-study-to-case-studies.sql` | `delete from case_studies where title in (select data->>'title' from case_study where status='Published');` |
 | `supabase-phase-e-sync-prompts-to-prompt-templates.sql` | `delete from prompt_templates where title in (select data->>'title' from prompts where status='Published');` |
 | `supabase-phase-c-orders-safety.sql` | `alter table orders drop constraint if exists orders_order_code_key; drop index if exists orders_payment_reference_key;` (đã ghi sẵn trong file) |

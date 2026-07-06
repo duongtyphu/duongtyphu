@@ -7,6 +7,13 @@
  * it must never be widened to include sensitive tables (orders, leads, members...).
  */
 export const SUPABASE_COLLECTIONS: Record<string, string> = {
+  // NOTE (Phase F.1 correction): earlier phases assumed Admin-authored prompts
+  // were invisible on /portal/prompts because that page's `getLivePrompts()`
+  // reads a different, empty table (`prompt_templates`). That assumption was
+  // WRONG — the same page also renders <AdminPromptsSection>, which reads
+  // this `prompts` table (via useCollection, service-role bypass of RLS) and
+  // already displays Admin-authored Published prompts correctly for any
+  // logged-in user. No code change made here — left as-is intentionally.
   prompts: "prompts",
   tools: "tools",
   templates: "templates",
@@ -15,6 +22,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   sop: "sop",
   resources: "resources",
   blog: "blog",
+  // LEGACY (Phase F.2): no longer written to by any Admin UI. The Case Study
+  // admin page (app/admin/(dashboard)/case-study/page.tsx) now writes
+  // directly to the typed `case_studies` table via dedicated actions.ts,
+  // matching what /portal/case-studies + the search index actually read.
+  // Kept in the map (not removed) per "không xóa entry cũ nếu chưa chắc an toàn".
   "case-study": "case_study",
   news: "news",
   updates: "updates",
