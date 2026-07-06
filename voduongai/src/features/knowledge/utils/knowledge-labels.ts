@@ -15,7 +15,7 @@ export const KNOWLEDGE_TYPE_LABELS: Record<KnowledgeType, string> = {
   [KnowledgeType.FRAMEWORK]: "Framework",
   [KnowledgeType.SOP]: "SOP",
   [KnowledgeType.PLAYBOOK]: "Playbook",
-  [KnowledgeType.WORKFLOW]: "Workflow",
+  [KnowledgeType.WORKFLOW]: "Quy trình",
   [KnowledgeType.CASE_STUDY]: "Case Study",
   [KnowledgeType.VIDEO]: "Video",
   [KnowledgeType.PDF]: "PDF",

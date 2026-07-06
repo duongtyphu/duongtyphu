@@ -93,7 +93,7 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-blue-600"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        Quay lại Thư viện tri thức
+        Quay lại Hệ tri thức AI
       </Link>
 
       {/* Feature 04 — Knowledge Map (Learning Engine, không sửa) */}

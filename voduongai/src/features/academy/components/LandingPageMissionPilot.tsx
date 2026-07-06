@@ -20,11 +20,11 @@ export function LandingPageMissionPilot() {
   return (
     <div className="space-y-4 rounded-2xl border border-gray-100 bg-white/70 p-6 shadow-sm backdrop-blur-sm">
       <div>
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Mission</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Nhiệm vụ</p>
         <h3 className="mt-1 text-lg font-extrabold text-gray-900">{LANDING_PAGE_MISSION_TITLE}</h3>
         <p className="mt-1 text-sm text-gray-500">
           Tự tay viết một Landing Page hoàn chỉnh — thử thật, sau đó nhận bộ công cụ Companion
-          giữ riêng cho Mission này.
+          giữ riêng cho Nhiệm vụ này.
         </p>
       </div>
 
@@ -39,7 +39,7 @@ export function LandingPageMissionPilot() {
               itemType: "mission",
               title: LANDING_PAGE_MISSION_TITLE,
               userGoal: LANDING_PAGE_MISSION_TITLE,
-              expectedOutput: "Mission thực hành viết Landing Page đầu tiên.",
+              expectedOutput: "Nhiệm vụ thực hành viết Landing Page đầu tiên.",
               // Phase 2 (B2 hoàn thiện) — gắn đúng Golden Reference Mission thật
               // (mission-catalog.ts) để Capability/Unlock Runtime đo đúng
               // Competency "AI Writing", không suy ra từ module như trước.
@@ -50,7 +50,7 @@ export function LandingPageMissionPilot() {
         className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
       >
         <Sparkles className="h-3.5 w-3.5" />
-        Bắt đầu Mission
+        Bắt đầu Nhiệm vụ
       </button>
 
       <MissionUnlockSection missionId={LANDING_PAGE_MISSION_ID} />

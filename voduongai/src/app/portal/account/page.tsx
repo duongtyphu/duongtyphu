@@ -56,7 +56,7 @@ export default async function AccountPage() {
         <h1 className="text-2xl font-extrabold text-gray-900">Tài khoản</h1>
         <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
           <p className="text-sm text-gray-900">
-            Portal đang ở chế độ truy cập công khai (chưa yêu cầu đăng nhập).
+            Học viện đang ở chế độ truy cập công khai (chưa yêu cầu đăng nhập).
           </p>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default async function AccountPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">Tài khoản</h1>
-        <p className="mt-2 text-gray-900">Thông tin đăng nhập của bạn trên Portal.</p>
+        <p className="mt-2 text-gray-900">Thông tin đăng nhập của bạn trên Học viện.</p>
       </div>
 
       <div className="card-shine flex flex-wrap items-center justify-between gap-5 rounded-2xl border border-gray-200 bg-white/[0.04] p-5">

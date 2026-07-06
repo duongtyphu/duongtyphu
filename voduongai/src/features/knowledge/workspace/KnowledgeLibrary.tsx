@@ -9,7 +9,8 @@
  */
 
 import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Library } from "lucide-react";
+import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { CompanionDiscovery } from "../components/CompanionDiscovery";
 import { KnowledgeSeedCard } from "../components/KnowledgeSeedCard";
 import { CollectionCard } from "../components/CollectionCard";
@@ -48,6 +49,13 @@ export function KnowledgeLibrary() {
 
   return (
     <div className="space-y-8">
+      <PageHeader
+        icon={Library}
+        tone="violet"
+        title="Hệ tri thức AI"
+        subtitle="Nơi lưu giữ tri thức, tài liệu, quy trình và nền tảng học tập giúp bạn ứng dụng AI hiệu quả hơn."
+      />
+
       <ContinueLearningBanner />
 
       <CompanionDiscovery activeGoalId={activeGoalId} onSelectGoal={setActiveGoalId} />

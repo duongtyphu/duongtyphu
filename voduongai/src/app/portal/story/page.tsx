@@ -19,7 +19,7 @@ import { buildCompanionMirrorInvitation } from "@/lib/portal/companion/mirror-di
 
 export const metadata = {
   title: "My Story",
-  description: "Nơi Portal kể lại hành trình trưởng thành của riêng bạn — không phải hồ sơ, không phải dashboard.",
+  description: "Nơi Học viện kể lại hành trình trưởng thành của riêng bạn — không phải hồ sơ, không phải dashboard.",
   robots: { index: false },
 };
 
@@ -143,7 +143,7 @@ export default async function MyStoryPage() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">My Story</p>
         <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">Cuốn sách hành trình của bạn</h1>
         <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
-          Đây không phải hồ sơ. Đây là nơi Portal kể lại những bước bạn đã đi qua.
+          Đây không phải hồ sơ. Đây là nơi Học viện kể lại những bước bạn đã đi qua.
         </p>
         <p className="mt-2 max-w-xl text-xs italic text-gray-900/45">
           Giai đoạn REFLECT trong hành trình mài giũa của bạn.

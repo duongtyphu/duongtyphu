@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, GraduationCap, HelpCircle } from "lucide-react";
+import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
@@ -23,7 +24,7 @@ export const metadata = {
 const FAQ = [
   {
     q: "Học viện có phải là khoá học không?",
-    a: "Không. Học viện không bán khoá học — Học viện dẫn bạn qua một hành trình thực hành thật, dựa trên tri thức đã có trong Thư viện tri thức.",
+    a: "Không. Học viện không bán khoá học — Học viện dẫn bạn qua một hành trình thực hành thật, dựa trên tri thức đã có trong Hệ tri thức AI.",
   },
   {
     q: "Tôi cần hoàn thành bao nhiêu bài để 'xong'?",
@@ -42,16 +43,12 @@ export default function AcademyHubPage() {
     <div className="space-y-12">
       {/* Hero */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20">
-            <GraduationCap className="h-4 w-4 text-blue-400" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Học viện AI</span>
-        </div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Học viện AI</h1>
-        <p className="max-w-2xl font-semibold text-gray-700">
-          Học AI có hệ thống. Hiểu đúng, luyện đúng và thực hành cùng Companion.
-        </p>
+        <PageHeader
+          icon={GraduationCap}
+          tone="blue"
+          title="Học viện AI"
+          subtitle="Học AI theo lộ trình, theo kỹ năng và theo mục tiêu thực tế của bạn."
+        />
         <p className="max-w-2xl text-gray-500">
           Học viện không phải nơi chứa khoá học. Đây là nơi tri thức bạn đã học được chuyển hoá
           thành thực hành thật, năng lực thật và cảm nhận trưởng thành thật. Học xong, hãy sang{" "}
@@ -65,7 +62,7 @@ export default function AcademyHubPage() {
       {/* Companion Guide */}
       <CompanionGuide
         message="Chọn một hành trình bên dưới và bắt đầu từ bước Companion gợi ý — không cần làm hết mọi thứ cùng lúc."
-        action={{ label: "Xem Thư viện tri thức", href: "/portal/hetrithucai" }}
+        action={{ label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" }}
       />
 
       {/* Lộ trình học AI */}

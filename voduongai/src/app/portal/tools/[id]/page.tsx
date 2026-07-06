@@ -96,7 +96,7 @@ export default function ToolDetailPage() {
 
         {tool.workflow && (
           <div className="mt-4 rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-violet">Workflow thực tế</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-violet">Quy trình thực tế</p>
             <p className="mt-1 text-sm text-gray-700">{tool.workflow}</p>
           </div>
         )}

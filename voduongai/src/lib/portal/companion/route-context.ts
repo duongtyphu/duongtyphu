@@ -137,7 +137,7 @@ const DEFAULT_CONTEXT: RouteContext = {
   key: "portal-default",
   nudge: "Mình luôn ở đây nếu bạn cần một người đồng hành.",
   quickActions: [
-    { label: "Thư viện tri thức", href: "/portal/hetrithucai" },
+    { label: "Hệ tri thức AI", href: "/portal/hetrithucai" },
     { label: "Học viện AI", href: "/portal/hocvienai" },
     KHONG_GIAN_AI,
   ],

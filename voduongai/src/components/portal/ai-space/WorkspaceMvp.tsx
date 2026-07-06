@@ -56,22 +56,22 @@ const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
   "work-need": "Theo nhu cầu công việc",
   "recommended-workspace": "Workspace đề xuất",
-  "workflow": "AI Workflows",
+  "workflow": "Quy trình AI",
   "prompt-library": "Prompt Library",
   "toolbox": "AI Toolbox",
   "learning-path": "Lộ trình học AI",
   "resource": "Tài nguyên AI",
   "task-entry": "Giao việc cho Companion",
   "academy-journey": "Hành trình Học viện AI",
-  "academy-mission-pilot": "Mission — Học viện AI",
-  "knowledge-exercise": "Bài tập — Thư viện tri thức",
-  "knowledge-next-step": "Bước tiếp theo — Thư viện tri thức",
+  "academy-mission-pilot": "Nhiệm vụ — Học viện AI",
+  "knowledge-exercise": "Bài tập — Hệ tri thức AI",
+  "knowledge-next-step": "Bước tiếp theo — Hệ tri thức AI",
 };
 
 /** Module nào dẫn tới đây → route quay lại đúng module đó (breadcrumb + fallback link). */
 const MODULE_ROUTE: Record<PortalModule, { label: string; href: string }> = {
   "khong-gian-ai": { label: "AI Workspace", href: "/portal/aiworkspace" },
-  ckos: { label: "Thư viện tri thức", href: "/portal/hetrithucai" },
+  ckos: { label: "Hệ tri thức AI", href: "/portal/hetrithucai" },
   academy: { label: "Học viện AI", href: "/portal/hocvienai" },
   opportunities: { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
   premium: { label: "Premium", href: "/portal/premium" },
@@ -221,7 +221,7 @@ export function WorkspaceMvp() {
         context: context?.expectedOutput,
       });
       if (!result) {
-        setAgentError("Companion không thể nhận Task — xem Agent Run Log.");
+        setAgentError("Companion không thể nhận Công việc — xem Agent Run Log.");
       } else {
         setSession(result.session);
         setActiveOutputId(result.output.outputId);
@@ -353,14 +353,14 @@ export function WorkspaceMvp() {
           {originModule?.label ?? "AI Workspace"}
         </Link>
         <span className="text-gray-300">/</span>
-        <span className="font-medium text-gray-900">Workspace</span>
+        <span className="font-medium text-gray-900">Không gian làm việc</span>
       </nav>
 
       <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600">
             <Sparkles className="h-4 w-4" />
-            Workspace
+            Không gian làm việc
           </div>
           {session && (
             <div className="flex items-center gap-2">
@@ -481,16 +481,16 @@ export function WorkspaceMvp() {
                 onClick={handleAdvanceStep}
                 className="mt-4 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-blue-700"
               >
-                {currentStepIndex >= EXECUTION_TIMELINE.length - 2 ? "Hoàn thành Mission" : "Bước tiếp theo →"}
+                {currentStepIndex >= EXECUTION_TIMELINE.length - 2 ? "Hoàn thành Nhiệm vụ" : "Bước tiếp theo →"}
               </button>
             </section>
           )}
 
           {/* Output Panel */}
           <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
-            <h2 className="text-lg font-bold text-gray-900">Output</h2>
+            <h2 className="text-lg font-bold text-gray-900">Kết quả</h2>
             {session.outputs.length === 0 ? (
-              <p className="mt-2 text-sm text-gray-400">Chưa có Output nào — viết/dán kết quả của bạn vào khung bên dưới.</p>
+              <p className="mt-2 text-sm text-gray-400">Chưa có Kết quả nào — viết/dán kết quả của bạn vào khung bên dưới.</p>
             ) : (
               <div className="mt-3 space-y-3">
                 {session.outputs.map((output) => (
@@ -500,12 +500,12 @@ export function WorkspaceMvp() {
                       <span className="flex items-center gap-1.5 text-[10px] text-gray-400">
                         <span className="rounded-full bg-gray-200 px-2 py-0.5 font-semibold text-gray-600">
                           {output.approvalStatus === "approved"
-                            ? "Approved"
+                            ? "Đã phê duyệt"
                             : output.approvalStatus === "needs_revision"
-                              ? "Needs Revision"
+                              ? "Cần chỉnh sửa"
                               : output.approvalStatus === "reviewed"
-                                ? "Reviewed"
-                                : "Draft"}
+                                ? "Đã đánh giá"
+                                : "Bản nháp"}
                         </span>
                         v{output.versions.length}
                       </span>
@@ -551,7 +551,7 @@ export function WorkspaceMvp() {
                           onClick={() => handleMarkReviewed(output.outputId)}
                           className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
                         >
-                          Review cùng Companion (thủ công) →
+                          Đánh giá cùng Companion (thủ công) →
                         </button>
                       </div>
                     )}
@@ -581,7 +581,7 @@ export function WorkspaceMvp() {
                             onClick={() => handleApproveOutput(output.outputId)}
                             className="mt-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700"
                           >
-                            Duyệt (Approve)
+                            Duyệt
                           </button>
                         )}
                       </div>
@@ -626,7 +626,7 @@ export function WorkspaceMvp() {
             {session.status !== "completed" && (
               <div className="mt-4 space-y-2 border-t border-gray-100 pt-4">
                 <div className="flex items-center gap-2">
-                  <label htmlFor="output-type" className="text-xs font-semibold text-gray-500">Loại Output</label>
+                  <label htmlFor="output-type" className="text-xs font-semibold text-gray-500">Loại Kết quả</label>
                   <select
                     id="output-type"
                     value={outputType}
@@ -641,7 +641,7 @@ export function WorkspaceMvp() {
                 <textarea
                   value={draftContent}
                   onChange={(e) => setDraftContent(e.target.value)}
-                  placeholder="Viết/dán nội dung Output, hoặc để trống và bấm 'Chạy Writer Agent' để AI tự tạo bản nháp…"
+                  placeholder="Viết/dán nội dung Kết quả, hoặc để trống và bấm 'Chạy Writer Agent' để AI tự tạo bản nháp…"
                   rows={6}
                   className="w-full rounded-xl border border-gray-200 p-3 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 />
@@ -686,7 +686,7 @@ export function WorkspaceMvp() {
                     disabled={companionRunning || !selectedCompanionId}
                     className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    {companionRunning ? "Companion đang xử lý…" : "Giao Task cho Companion"}
+                    {companionRunning ? "Companion đang xử lý…" : "Giao Công việc cho Companion"}
                   </button>
                 </div>
                 {agentError && <p className="text-xs text-red-600">{agentError}</p>}

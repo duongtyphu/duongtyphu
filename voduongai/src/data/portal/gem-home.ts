@@ -52,7 +52,7 @@ export type GemUpdate = {
 };
 
 export const latestUpdates: GemUpdate[] = [
-  { id: "u1", title: "Portal vừa cập nhật Human Growth Index — theo dõi 5 chỉ số trưởng thành.", date: "Mới" },
+  { id: "u1", title: "Học viện vừa cập nhật Human Growth Index — theo dõi 5 chỉ số trưởng thành.", date: "Mới" },
   { id: "u2", title: "Thêm Case Study mới trong Tri thức.", date: "Tuần này" },
   { id: "u3", title: "Cộng đồng vừa có 3 Success Story mới.", date: "Tuần này" },
 ];

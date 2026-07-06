@@ -83,7 +83,7 @@ export function MissionUnlockSection({ missionId }: { missionId: string }) {
                   type="text"
                   value={reflectionDraft}
                   onChange={(e) => setReflectionDraft(e.target.value)}
-                  placeholder="Điều gì bạn nhận ra sau khi thử Mission này?"
+                  placeholder="Điều gì bạn nhận ra sau khi thử Nhiệm vụ này?"
                   className="min-w-0 flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                 />
                 <button

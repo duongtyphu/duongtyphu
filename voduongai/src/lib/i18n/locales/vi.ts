@@ -16,7 +16,7 @@ export const vi = {
     sectionBuilding: "Xây dựng",
     sectionGrowth: "Trưởng thành",
     aiWorkspace: "AI Workspace",
-    knowledgeLibrary: "Thư viện tri thức",
+    knowledgeLibrary: "Hệ tri thức AI",
     learningJournal: "Nhật ký học tập",
     academy: "Học viện AI",
     projectsOpportunities: "Dự án & Cơ hội",

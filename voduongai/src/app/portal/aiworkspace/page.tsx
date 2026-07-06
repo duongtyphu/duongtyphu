@@ -124,7 +124,7 @@ export default function KhongGianAiPage() {
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
         <Link href="/portal" className="hover:text-gray-700 transition">Học viện</Link>
         <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-        <span className="text-gray-900 font-medium">Không gian AI</span>
+        <span className="text-gray-900 font-medium">AI Workspace</span>
       </nav>
 
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
@@ -137,12 +137,12 @@ export default function KhongGianAiPage() {
           </span>
         </h1>
         <p className="text-base font-semibold text-gray-700">
-          Học thật. Thực hành thật. Tạo kết quả thật cùng Companion.
+          Nơi Companion và đội ngũ AI hỗ trợ bạn biến mục tiêu thành kết quả.
         </p>
         <p className="text-base text-gray-600 max-w-2xl leading-relaxed">
           Bạn không cần bắt đầu bằng việc chọn công cụ AI. Hãy bắt đầu bằng việc bạn muốn làm gì.
           Companion sẽ giúp bạn chọn đúng công cụ, đúng Prompt, đúng quy trình và đưa kết quả về
-          Workspace.
+          Không gian làm việc.
         </p>
         <div className="flex flex-col gap-3 pt-1 sm:flex-row">
           <a

@@ -90,7 +90,7 @@ export default async function MirrorPage() {
         <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Mirror</p>
         <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">Tấm gương trưởng thành của bạn</h1>
         <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
-          Đây không phải dashboard, không phải bảng điểm. Đây là nơi Portal phản chiếu lại điều bạn đã đi qua.
+          Đây không phải dashboard, không phải bảng điểm. Đây là nơi Học viện phản chiếu lại điều bạn đã đi qua.
         </p>
       </GemCard>
 

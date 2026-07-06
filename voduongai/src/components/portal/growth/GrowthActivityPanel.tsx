@@ -53,7 +53,7 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
         <div className="mt-4">
           {activity.length === 0 ? (
             <p className="text-sm text-gray-400">
-              Chưa có hoạt động nào được ghi nhận — hãy thử một Mission trong Học viện AI hoặc AI Workspace.
+              Chưa có hoạt động nào được ghi nhận — hãy thử một Nhiệm vụ trong Học viện AI hoặc AI Workspace.
             </p>
           ) : (
             <ol className="space-y-2.5">
@@ -72,7 +72,7 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
         <div className="mt-4">
           {progress.length === 0 ? (
             <p className="text-sm text-gray-400">
-              Bạn chưa bắt đầu Mission nào — chọn một hành trình ở Học viện AI để thấy tiến độ thật tại đây.
+              Bạn chưa bắt đầu Nhiệm vụ nào — chọn một hành trình ở Học viện AI để thấy tiến độ thật tại đây.
             </p>
           ) : (
             <ul className="space-y-3">
@@ -95,10 +95,10 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
       {variant === "garden" && garden && (
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
-            { label: "Cây (Mission hoàn thành)", value: garden.missionsCompleted },
+            { label: "Cây (Nhiệm vụ hoàn thành)", value: garden.missionsCompleted },
             { label: "Khu vực (Journey đã chạm)", value: garden.journeysTouched },
             { label: "Loài cây (đã thực hành)", value: garden.competenciesPracticed },
-            { label: "Output đã tạo", value: garden.totalOutputs },
+            { label: "Kết quả đã tạo", value: garden.totalOutputs },
           ].map((stat) => (
             <div key={stat.label} className="rounded-xl border border-gray-100 bg-gray-50/60 p-3 text-center">
               <p className="text-2xl font-extrabold text-gray-900">{stat.value}</p>
