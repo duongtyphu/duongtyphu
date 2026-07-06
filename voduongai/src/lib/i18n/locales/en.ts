@@ -39,12 +39,12 @@ export const en = {
     logout: "Log out",
   },
   search: {
-    placeholder: "Search Portal...",
+    placeholder: "Search Academy...",
     noResults: "No results found.",
-    label: "Search Portal",
+    label: "Search Academy",
   },
   portal: {
-    menuLabel: "Portal Menu",
+    menuLabel: "Academy Menu",
     closeMenu: "Close menu",
     notifications: "Notifications",
     savedContent: "Saved content",

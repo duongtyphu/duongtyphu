@@ -116,7 +116,7 @@ export const lifeSeasons: Record<LifeSeason, LifeSeasonProfile> = {
     whatUserNeedsToHear:
       "Một mùa chững lại không phải là một mùa thất bại. Nghỉ để nhìn lại cũng là một phần của trưởng thành, không phải là dừng lại trưởng thành.",
     whatPortalShouldDo:
-      "Mời người dùng nhìn lại hành trình đã qua trong My Story, không thúc ép họ chọn ngay một hướng mới. Cho họ thời gian, và nhắc rằng Portal vẫn ở đây khi họ sẵn sàng.",
+      "Mời người dùng nhìn lại hành trình đã qua trong My Story, không thúc ép họ chọn ngay một hướng mới. Cho họ thời gian, và nhắc rằng Học viện vẫn ở đây khi họ sẵn sàng.",
     whatPortalMustNeverSay:
       "Đừng nói 'Bạn đang chững lại', 'Bạn cần tìm mục tiêu mới ngay', hoặc coi giai đoạn nghỉ là một vấn đề cần được giải quyết gấp.",
   },

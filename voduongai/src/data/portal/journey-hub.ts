@@ -63,7 +63,7 @@ export type GrowthDetailDimension = {
 
 export const growthDetailDimensions: GrowthDetailDimension[] = [
   { key: "knowledge", label: "Knowledge", percent: 35, description: "Kiến thức nền tảng AI và lĩnh vực bạn theo đuổi.", tip: "Hoàn thành 1 bài học mới trong Học viện AI mỗi tuần." },
-  { key: "skill", label: "Skill", percent: 20, description: "Kỹ năng thực hành Prompt, công cụ và Workflow.", tip: "Thực hành ít nhất 1 Prompt thực chiến mỗi ngày." },
+  { key: "skill", label: "Skill", percent: 20, description: "Kỹ năng thực hành Prompt, công cụ và Quy trình.", tip: "Thực hành ít nhất 1 Prompt thực chiến mỗi ngày." },
   { key: "career", label: "Career", percent: 15, description: "Khả năng tạo thu nhập và phát triển sự nghiệp với AI.", tip: "Khám phá Affiliate Hub để bắt đầu hành trình thu nhập." },
   { key: "community", label: "Community", percent: 10, description: "Mức độ kết nối và đóng góp cho cộng đồng.", tip: "Tham gia một thảo luận trong Cộng đồng VO DUONG AI." },
   { key: "legacy", label: "Legacy", percent: 5, description: "Tài sản số và di sản bạn đang xây dựng lâu dài.", tip: "Lưu lại ghi chú hoặc prompt đầu tiên vào My Legacy." },
@@ -78,7 +78,7 @@ export type Milestone = {
 export const milestone: Milestone = {
   certificateLabel: "Chứng chỉ AI Foundation",
   nextMilestoneLabel: "Hoàn thành bước APPLY",
-  conditionLabel: "Hoàn thành 3 bài thực hành + 1 Workflow trong giai đoạn APPLY.",
+  conditionLabel: "Hoàn thành 3 bài thực hành + 1 Quy trình trong giai đoạn APPLY.",
 };
 
 export type AiJourneyTip = {
@@ -89,7 +89,7 @@ export type AiJourneyTip = {
 
 export const aiJourneyTip: AiJourneyTip = {
   message:
-    "Dựa trên hành trình hiện tại, bạn nên tập trung vào bước APPLY trong 7 ngày tới: thực hành Prompt, hoàn thành 1 Workflow và ghi lại 3 bài học quan trọng.",
+    "Dựa trên hành trình hiện tại, bạn nên tập trung vào bước APPLY trong 7 ngày tới: thực hành Prompt, hoàn thành 1 Quy trình và ghi lại 3 bài học quan trọng.",
   href: "/portal/ai-assistant",
   cta: "Hỏi AI Coach",
 };

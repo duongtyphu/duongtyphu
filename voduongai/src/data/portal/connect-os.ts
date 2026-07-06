@@ -96,7 +96,7 @@ export const opportunityNetworkModules: ConnectModule[] = [
 export const contributionZoneModules: ConnectModule[] = [
   { id: "cz1", label: "Chia sẻ bài học", description: "Lan tỏa điều bạn vừa học được tới người khác." },
   { id: "cz2", label: "Đóng góp Prompt", description: "Gửi prompt hữu ích cho thư viện chung.", href: "/portal/prompts" },
-  { id: "cz3", label: "Đóng góp Workflow", description: "Chia sẻ quy trình bạn đã kiểm chứng hiệu quả." },
+  { id: "cz3", label: "Đóng góp Quy trình", description: "Chia sẻ quy trình bạn đã kiểm chứng hiệu quả." },
   { id: "cz4", label: "Gửi Case Study", description: "Kể lại câu chuyện thực chiến của riêng bạn.", href: "/portal/case-studies" },
   { id: "cz5", label: "Góp ý sản phẩm", description: "Đóng góp ý kiến giúp VO DUONG AI tốt hơn.", href: "/portal/support" },
   { id: "cz6", label: "Giúp đỡ thành viên mới", description: "Đồng hành cùng những người mới bắt đầu." },

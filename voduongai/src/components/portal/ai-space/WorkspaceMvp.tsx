@@ -269,7 +269,7 @@ export function WorkspaceMvp() {
     setReviewerRunning(true);
     try {
       const result = await runReviewerAgentForOutput(session.sessionId, outputId, {
-        qaChecklist: ["Đúng định dạng Output mong đợi", "Không sai thông tin cơ bản", "Sẵn sàng dùng ngay"],
+        qaChecklist: ["Đúng định dạng Kết quả mong đợi", "Không sai thông tin cơ bản", "Sẵn sàng dùng ngay"],
         goal,
         expectedOutput: context?.expectedOutput,
       });
@@ -589,7 +589,7 @@ export function WorkspaceMvp() {
 
                     {output.reviewStatus === "reviewed" && output.reflectionStatus !== "submitted" && (
                       <div className="mt-3 space-y-2 rounded-lg border border-violet-100 bg-violet-50/40 p-3">
-                        <p className="text-xs font-bold uppercase tracking-wide text-violet-600">Reflection</p>
+                        <p className="text-xs font-bold uppercase tracking-wide text-violet-600">Chiêm nghiệm</p>
                         {REFLECTION_QUESTIONS.map((question, i) => (
                           <div key={question} className="space-y-1">
                             <label className="text-xs text-gray-600">{question}</label>
@@ -606,7 +606,7 @@ export function WorkspaceMvp() {
                           onClick={() => handleSubmitReflection(output.outputId)}
                           className="rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-700"
                         >
-                          Gửi Reflection
+                          Gửi Chiêm nghiệm
                         </button>
                       </div>
                     )}

@@ -71,7 +71,7 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
   const showLabels = variant === "mobile" || !collapsed;
 
   return (
-    <nav aria-label="Điều hướng Portal">
+    <nav aria-label="Điều hướng Học viện">
       {portalNavGroups.map((section, si) => (
         <div key={si} className={si > 0 ? "relative mt-5 pt-4" : ""}>
           {si > 0 && (

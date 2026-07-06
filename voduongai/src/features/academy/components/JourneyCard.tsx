@@ -48,7 +48,7 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
           <ArrowRight className="h-4 w-4" />
         </Link>
 
-        {/* Sprint 02 — Bắt đầu Mission: Companion nhận Context, Workspace mở. */}
+        {/* Sprint 02 — Bắt đầu Nhiệm vụ: Companion nhận Context, Workspace mở. */}
         <button
           type="button"
           onClick={() =>
@@ -67,7 +67,7 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
           className="inline-flex items-center gap-1.5 rounded-full border border-blue-200 px-3 py-1.5 text-xs font-semibold text-blue-600 transition hover:border-blue-400 hover:bg-blue-50"
         >
           <Sparkles className="h-3.5 w-3.5" />
-          Bắt đầu Mission
+          Bắt đầu Nhiệm vụ
         </button>
       </div>
 

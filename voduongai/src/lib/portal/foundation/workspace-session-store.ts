@@ -30,13 +30,13 @@ export type ExecutionStepId =
   | "completed";
 
 export const EXECUTION_TIMELINE: { id: ExecutionStepId; label: string }[] = [
-  { id: "mission_started", label: "Mission Started" },
-  { id: "preparing", label: "Preparing" },
-  { id: "research", label: "Research" },
-  { id: "draft", label: "Draft" },
-  { id: "review", label: "Review" },
-  { id: "revision", label: "Revision" },
-  { id: "completed", label: "Completed" },
+  { id: "mission_started", label: "Bắt đầu Nhiệm vụ" },
+  { id: "preparing", label: "Chuẩn bị" },
+  { id: "research", label: "Nghiên cứu" },
+  { id: "draft", label: "Bản nháp" },
+  { id: "review", label: "Đánh giá" },
+  { id: "revision", label: "Chỉnh sửa" },
+  { id: "completed", label: "Hoàn thành" },
 ];
 
 export type OutputType =
@@ -175,7 +175,7 @@ export function createSession(context: WorkspaceContext): WorkspaceSessionRecord
     status: "active",
     currentStepId: "mission_started",
     startedAt: now,
-    history: [{ label: "Mission Started", occurredAt: now }],
+    history: [{ label: "Bắt đầu Nhiệm vụ", occurredAt: now }],
     outputs: [],
   };
   upsert(session);
@@ -190,7 +190,7 @@ export function resumeSession(sessionId: string): WorkspaceSessionRecord | null 
     ...session,
     status: "active",
     resumedAt: now,
-    history: [...session.history, { label: "Workspace Resumed", occurredAt: now }],
+    history: [...session.history, { label: "Tiếp tục Không gian làm việc", occurredAt: now }],
   };
   upsert(updated);
   emitGrowthEvent({ eventType: "WORKSPACE_RESUMED", workspaceSessionId: sessionId, missionId: session.context.missionId });
@@ -205,7 +205,7 @@ export function pauseSession(sessionId: string): WorkspaceSessionRecord | null {
     ...session,
     status: "paused",
     pausedAt: now,
-    history: [...session.history, { label: "Workspace Paused", occurredAt: now }],
+    history: [...session.history, { label: "Tạm dừng Không gian làm việc", occurredAt: now }],
   };
   upsert(updated);
   return updated;
@@ -234,7 +234,7 @@ export function completeSession(sessionId: string): WorkspaceSessionRecord | nul
     status: "completed",
     currentStepId: "completed",
     finishedAt: now,
-    history: [...session.history, { label: "Completed", occurredAt: now }],
+    history: [...session.history, { label: "Hoàn thành", occurredAt: now }],
   };
   upsert(updated);
   emitGrowthEvent({ eventType: "WORKSPACE_COMPLETED", workspaceSessionId: sessionId, missionId: session.context.missionId });
@@ -280,7 +280,7 @@ export function saveOutputVersion(
     outputs: isNew ? [...session.outputs, updatedOutput] : session.outputs.map((o) => (o.outputId === updatedOutput.outputId ? updatedOutput : o)),
     history: [
       ...session.history,
-      { label: isNew ? "Output Created" : `Output Versioned (v${nextVersionNumber})`, occurredAt: now },
+      { label: isNew ? "Tạo Kết quả mới" : `Kết quả phiên bản mới (v${nextVersionNumber})`, occurredAt: now },
     ],
   };
   upsert(updatedSession);
@@ -321,7 +321,7 @@ function updateOutput(
 export function startReview(sessionId: string, outputId: string) {
   const session = getSession(sessionId);
   if (!session) return null;
-  const result = updateOutput(session, outputId, { reviewStatus: "pending" }, "Review Started");
+  const result = updateOutput(session, outputId, { reviewStatus: "pending" }, "Bắt đầu Đánh giá");
   if (!result) return null;
   emitGrowthEvent({ eventType: "REVIEW_STARTED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
   return result;
@@ -332,7 +332,7 @@ export function startReview(sessionId: string, outputId: string) {
 export function markOutputReviewed(sessionId: string, outputId: string) {
   const session = getSession(sessionId);
   if (!session) return null;
-  const result = updateOutput(session, outputId, { reviewStatus: "reviewed" }, "Review Completed");
+  const result = updateOutput(session, outputId, { reviewStatus: "reviewed" }, "Hoàn thành Đánh giá");
   if (!result) return null;
   emitGrowthEvent({ eventType: "REVIEW_COMPLETED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
   return result;
@@ -344,7 +344,7 @@ export function markOutputReviewed(sessionId: string, outputId: string) {
 export function startReflection(sessionId: string, outputId: string) {
   const session = getSession(sessionId);
   if (!session) return null;
-  const result = updateOutput(session, outputId, { reflectionStatus: "pending" }, "Reflection Started");
+  const result = updateOutput(session, outputId, { reflectionStatus: "pending" }, "Bắt đầu Chiêm nghiệm");
   if (!result) return null;
   emitGrowthEvent({ eventType: "REFLECTION_STARTED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
   return result;
@@ -370,7 +370,7 @@ export function submitReflection(
       reflectionStatus: "submitted",
       reflections: [...output.reflections, ...answers.map((a) => ({ ...a, submittedAt: now }))],
     },
-    "Reflection Completed"
+    "Hoàn thành Chiêm nghiệm"
   );
   if (!result) return null;
   emitGrowthEvent({ eventType: "REFLECTION_COMPLETED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
@@ -400,7 +400,7 @@ export async function runWriterAgentForOutput(
     });
     const saved = saveOutputVersion(sessionId, { type: input.outputType, content: agentResult.draftOutput });
     if (!saved) {
-      failAgentRun(run.runId, "Không tìm thấy Session để lưu Output.");
+      failAgentRun(run.runId, "Không tìm thấy Session để lưu Kết quả.");
       return null;
     }
     const withDraftStatus = updateOutput(saved.session, saved.output.outputId, { approvalStatus: "draft" }, "AI Draft Created");
@@ -438,9 +438,9 @@ export async function runReviewerAgentForOutput(
       expectedOutput: input.expectedOutput,
     });
     const approvalStatus: ApprovalStatus = agentResult.approvalRecommendation === "approve" ? "reviewed" : "needs_revision";
-    const result = updateOutput(session, outputId, { agentReview: agentResult, approvalStatus }, "Output Reviewed by AI Agent");
+    const result = updateOutput(session, outputId, { agentReview: agentResult, approvalStatus }, "Kết quả đã được AI Agent đánh giá");
     if (!result) {
-      failAgentRun(run.runId, "Không cập nhật được Output.");
+      failAgentRun(run.runId, "Không cập nhật được Kết quả.");
       return null;
     }
     emitGrowthEvent({ eventType: "OUTPUT_REVIEWED", workspaceSessionId: sessionId, outputId, missionId: session.context.missionId });
@@ -479,7 +479,7 @@ export async function runCompanionAgentForOutput(
     const contract = toOutputContract(companion, taskResult);
     const saved = saveOutputVersion(sessionId, { type: contract.type, content: contract.content });
     if (!saved) {
-      failAgentRun(run.runId, "Không tìm thấy Session để lưu Output.");
+      failAgentRun(run.runId, "Không tìm thấy Session để lưu Kết quả.");
       return null;
     }
     const withDraftStatus = updateOutput(saved.session, saved.output.outputId, { approvalStatus: "draft" }, `${companion.position} Draft Created`);
@@ -502,7 +502,7 @@ export function approveOutput(sessionId: string, outputId: string) {
   startReview(sessionId, outputId);
   const reviewed = markOutputReviewed(sessionId, outputId);
   if (!reviewed) return null;
-  const result = updateOutput(reviewed.session, outputId, { approvalStatus: "approved" }, "User Approved Output");
+  const result = updateOutput(reviewed.session, outputId, { approvalStatus: "approved" }, "Chủ sở hữu đã phê duyệt Kết quả");
   if (result) {
     // Sprint 003 — Workspace Runtime Integration: event tường minh cho
     // đúng bước "APPROVED" trong Runtime Flow (Event Timeline).

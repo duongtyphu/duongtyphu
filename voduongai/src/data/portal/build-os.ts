@@ -83,7 +83,7 @@ export const systemBuilderModules: BuildModule[] = [
   { id: "sb2", label: "Email Marketing", description: "Chuỗi email tự động chăm sóc khách hàng." },
   { id: "sb3", label: "CRM", description: "Quản lý khách hàng và cơ hội có hệ thống." },
   { id: "sb4", label: "Automation", description: "Tự động hoá quy trình bán hàng và chăm sóc." },
-  { id: "sb5", label: "Workflow", description: "Quy trình làm việc lặp lại được, không phụ thuộc cảm hứng." },
+  { id: "sb5", label: "Quy trình", description: "Quy trình làm việc lặp lại được, không phụ thuộc cảm hứng." },
   { id: "sb6", label: "AI Agent", description: "Trợ lý AI vận hành một phần công việc cho bạn." },
   { id: "sb7", label: "Sales Funnel", description: "Hành trình chuyển đổi khách hàng rõ từng bước." },
 ];
@@ -103,7 +103,7 @@ export const premiumPathModules: BuildModule[] = [
   { id: "pp3", label: "Mentoring", description: "Đồng hành 1:1 trên hành trình kiến tạo." },
   { id: "pp4", label: "Công cụ thực chiến", description: "Bộ công cụ dùng ngay cho công việc thật.", href: "/portal/tools" },
   { id: "pp5", label: "Exclusive Prompt", description: "Prompt độc quyền cho thành viên Premium.", href: "/portal/prompts" },
-  { id: "pp6", label: "Exclusive Workflow", description: "Workflow độc quyền đã được kiểm chứng." },
+  { id: "pp6", label: "Quy trình độc quyền", description: "Quy trình độc quyền đã được kiểm chứng." },
   { id: "pp7", label: "Tư vấn 1:1", description: "Một buổi tư vấn riêng cho tình huống của bạn." },
 ];
 

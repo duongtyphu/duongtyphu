@@ -8,7 +8,7 @@ export const siteConfig = {
     "Ứng dụng AI thực chiến cho công việc, kinh doanh và tạo giá trị bền vững.",
   url: "https://voduongai.com",
   description:
-    "Hệ sinh thái giúp bạn học AI, ứng dụng AI vào công việc, xây thương hiệu cá nhân, làm Affiliate Marketing và tạo tài sản số — quy tụ trong một Portal duy nhất.",
+    "Hệ sinh thái giúp bạn học AI, ứng dụng AI vào công việc, xây thương hiệu cá nhân, làm Affiliate Marketing và tạo tài sản số — quy tụ trong một hệ sinh thái duy nhất.",
   links: {
     facebook: "https://www.facebook.com/duong.vv",
     youtube: "https://www.youtube.com/@voduongofficial",

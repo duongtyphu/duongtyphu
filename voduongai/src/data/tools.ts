@@ -147,7 +147,7 @@ export const tools: Tool[] = [
     pricing: "Freemium",
     iUseThis: true,
     pros: ["Tự động hoá không cần biết code (no-code)", "Kết nối được hàng trăm công cụ khác nhau"],
-    cons: ["Workflow phức tạp cần thời gian học logic kéo-thả"],
+    cons: ["Quy trình phức tạp cần thời gian học logic kéo-thả"],
     workflow: "Lead điền form → Make tự động gửi email chào mừng → ghi vào bảng theo dõi.",
   },
   {
@@ -170,7 +170,7 @@ export const tools: Tool[] = [
     name: "Figma",
     category: "Thiết kế",
     description: "Tôi dùng Figma để thiết kế UI/UX và dựng wireframe cho các sản phẩm số.",
-    useCase: "Thiết kế landing page, mockup Portal",
+    useCase: "Thiết kế landing page, mockup giao diện web",
     audience: "Phù hợp với người làm sản phẩm cần thiết kế chuyên sâu",
     link: "https://figma.com",
     affiliateUrl: "",

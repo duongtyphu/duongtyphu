@@ -20,7 +20,7 @@ export default function PrivacyPage() {
         {
           heading: "1. Thông tin chúng tôi thu thập",
           body: [
-            "Khi bạn sử dụng website, đăng ký nhận tài nguyên miễn phí hoặc tham gia Portal, VO DUONG AI có thể thu thập: họ tên, số điện thoại/Zalo, địa chỉ email khi bạn điền vào form trên website, cùng dữ liệu sử dụng cơ bản (trang đã xem, thời gian truy cập) để cải thiện trải nghiệm.",
+            "Khi bạn sử dụng website, đăng ký nhận tài nguyên miễn phí hoặc tham gia Học viện, VO DUONG AI có thể thu thập: họ tên, số điện thoại/Zalo, địa chỉ email khi bạn điền vào form trên website, cùng dữ liệu sử dụng cơ bản (trang đã xem, thời gian truy cập) để cải thiện trải nghiệm.",
           ],
         },
         {

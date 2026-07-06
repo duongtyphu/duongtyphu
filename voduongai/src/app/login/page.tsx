@@ -66,7 +66,7 @@ function LoginForm() {
 
   return (
     <section className="mx-auto flex max-w-sm flex-col px-5 py-20 md:py-28">
-      <h1 className="text-2xl font-extrabold text-white">Đăng nhập Portal</h1>
+      <h1 className="text-2xl font-extrabold text-white">Đăng nhập Học viện</h1>
       <p className="mt-2 text-sm leading-relaxed text-white/60">
         {mode === "magic"
           ? "Nhập email để nhận liên kết đăng nhập — không cần mật khẩu."
@@ -94,7 +94,7 @@ function LoginForm() {
         status === "sent" ? (
           <div className="card-shine mt-8 rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-white/80">
             Đã gửi liên kết đăng nhập tới <span className="font-semibold text-white">{email}</span>.
-            Mở email và bấm vào liên kết để vào Portal.
+            Mở email và bấm vào liên kết để vào Học viện.
           </div>
         ) : (
           <form onSubmit={handleMagicLink} className="mt-8 space-y-3">

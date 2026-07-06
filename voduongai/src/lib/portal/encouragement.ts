@@ -33,7 +33,7 @@ export const encouragementLibrary: Record<EncouragementSituation, string[]> = {
     "Không ai duy trì động lực cao mãi mãi. Người đi được xa là người biết đi chậm khi cần, không phải người không bao giờ chậm lại.",
     "Bạn vẫn đang ở đây, vẫn đang đọc những dòng này — điều đó đáng được ghi nhận, dù bạn chưa làm gì hôm nay.",
     "Có lẽ hôm nay không phải ngày để tiến xa, mà là ngày để giữ cho mình không bỏ cuộc.",
-    "Một quyết định nhỏ — như mở Portal lên hôm nay — cũng là một hình thức của sự kiên trì.",
+    "Một quyết định nhỏ — như mở Học viện lên hôm nay — cũng là một hình thức của sự kiên trì.",
     "Khi cảm thấy chùn lại, hãy nhớ rằng cảm giác này sẽ qua, giống như những lần trước nó đã từng qua.",
     "Không cần phải tìm lại cảm hứng ngay lúc này. Đôi khi cảm hứng quay lại sau khi bạn đã bắt đầu, không phải trước đó.",
   ],

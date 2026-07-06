@@ -963,8 +963,8 @@ export function fromAdminPost(post: AdminBlogPostLike): BlogPost {
     tags: post.tags,
     ctaTitle: "Muốn áp dụng kiến thức này vào hệ thống của bạn?",
     ctaDescription: "Khám phá các khoá học và công cụ AI thực chiến tại VO DUONG AI.",
-    ctaLabel: "Xem Portal →",
-    ctaHref: "/portal",
+    ctaLabel: "Xem Học viện →",
+    ctaHref: "/portal/hocvienai",
     content: post.content.split("\n\n").filter(Boolean),
   };
 }

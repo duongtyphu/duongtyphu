@@ -80,7 +80,7 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
                 <li key={`${entry.missionId ?? entry.missionGoal}-${i}`} className="flex items-center justify-between rounded-xl border border-gray-100 bg-gray-50/60 p-3 text-sm">
                   <span className="text-gray-700">{entry.missionGoal}</span>
                   <span className="flex items-center gap-2 text-xs text-gray-500">
-                    {entry.outputCount} Output
+                    {entry.outputCount} Kết quả
                     <span className={`rounded-full px-2 py-0.5 font-semibold ${entry.isCompleted ? "bg-green-100 text-green-700" : "bg-blue-100 text-blue-700"}`}>
                       {entry.isCompleted ? "Hoàn thành" : "Đang làm"}
                     </span>
@@ -107,7 +107,7 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
           ))}
           {garden.totalOutputs === 0 && (
             <p className="col-span-2 mt-1 text-xs text-gray-400 sm:col-span-4">
-              Khu vườn còn trống — mỗi Mission bạn hoàn thành sẽ làm khu vườn lớn lên thật, không phải điểm số.
+              Khu vườn còn trống — mỗi Nhiệm vụ bạn hoàn thành sẽ làm khu vườn lớn lên thật, không phải điểm số.
             </p>
           )}
         </div>

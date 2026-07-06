@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles, Wrench, LayoutTemplate, Workflow, ListChecks, ClipboardList, BookOpen, FolderCheck } from "lucide-react";
+import { Sparkles, Wrench, LayoutTemplate, Workflow as WorkflowIcon, ListChecks, ClipboardList, BookOpen, FolderCheck } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import type { ResourceLibraryItem } from "@/data/portal/knowledge-hub";
 
@@ -7,7 +7,7 @@ const ICON_MAP: Record<string, typeof Sparkles> = {
   Prompt: Sparkles,
   "Công cụ AI": Wrench,
   Template: LayoutTemplate,
-  Workflow: Workflow,
+  "Quy trình": WorkflowIcon,
   Checklist: ListChecks,
   SOP: ClipboardList,
   Ebook: BookOpen,

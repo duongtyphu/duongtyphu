@@ -96,8 +96,8 @@ export function PortalSearch({ companionTheme = false }: { companionTheme?: bool
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Tìm trong Portal..."
-          aria-label="Tìm kiếm toàn Portal"
+          placeholder="Tìm trong Học viện..."
+          aria-label="Tìm kiếm toàn Học viện"
           className={
             companionTheme
               ? "w-full rounded-full border border-violet-400/20 bg-white/5 py-2 pl-9 pr-3 text-sm text-white placeholder:text-slate-400 focus:border-violet-300/50 focus:outline-none"
@@ -141,8 +141,8 @@ export function PortalSearch({ companionTheme = false }: { companionTheme?: bool
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Tìm trong Portal..."
-                aria-label="Tìm kiếm toàn Portal"
+                placeholder="Tìm trong Học viện..."
+                aria-label="Tìm kiếm toàn Học viện"
                 className="w-full rounded-full border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand-blue/50 focus:outline-none"
               />
             </div>

@@ -93,7 +93,7 @@ export function PortalShell({
             />
             <div className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-gray-200 bg-white p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-extrabold text-gray-900">Menu Portal</span>
+                <span className="text-sm font-extrabold text-gray-900">Menu Học viện</span>
                 <button
                   type="button"
                   aria-label="Đóng menu"

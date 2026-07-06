@@ -23,13 +23,13 @@ import { EXECUTION_TIMELINE } from "./workspace-session-store";
  * bước — UI (`WorkspaceMvp.tsx`) chỉ hiển thị, không tự định nghĩa lại.
  */
 export const EXECUTION_STEP_TASKS: Record<ExecutionStepId, { doing: string; task: string }> = {
-  mission_started: { doing: "Bắt đầu Mission", task: "Xác nhận mục tiêu và kết quả mong đợi trước khi bắt tay vào làm." },
+  mission_started: { doing: "Bắt đầu Nhiệm vụ", task: "Xác nhận mục tiêu và kết quả mong đợi trước khi bắt tay vào làm." },
   preparing: { doing: "Chuẩn bị", task: "Thu thập thông tin/ngữ cảnh cần thiết trước khi viết." },
   research: { doing: "Nghiên cứu", task: "Tìm dữ liệu, ví dụ, tham khảo liên quan tới việc này." },
-  draft: { doing: "Viết bản nháp", task: "Viết/dán bản nháp Output đầu tiên vào khung bên dưới." },
+  draft: { doing: "Viết bản nháp", task: "Viết/dán bản nháp Kết quả đầu tiên vào khung bên dưới." },
   review: { doing: "Xem lại", task: "Đọc lại bản nháp, đối chiếu với kết quả mong đợi." },
-  revision: { doing: "Chỉnh sửa", task: "Sửa lại và lưu thành Version mới, không ghi đè bản cũ." },
-  completed: { doing: "Hoàn thành", task: "Mission đã hoàn thành — Output đã sẵn sàng." },
+  revision: { doing: "Chỉnh sửa", task: "Sửa lại và lưu thành phiên bản mới, không ghi đè bản cũ." },
+  completed: { doing: "Hoàn thành", task: "Nhiệm vụ đã hoàn thành — Kết quả đã sẵn sàng." },
 };
 
 /** Reflection Coordination — bộ câu hỏi chuẩn, không AI, không chấm điểm
@@ -49,9 +49,9 @@ export const COMPANION_ENTRY_LABELS = {
   practiceWithCompanion: "Thực hành cùng Companion",
   useNowWithCompanion: "Dùng ngay cùng Companion",
   assignToCompanion: "Giao việc cho Companion",
-  continueMission: "Tiếp tục Mission",
-  createVersion2: "Tạo Version 2",
-  reviewWithCompanion: "Review cùng Companion",
+  continueMission: "Tiếp tục Nhiệm vụ",
+  createVersion2: "Tạo phiên bản 2",
+  reviewWithCompanion: "Đánh giá cùng Companion",
 } as const;
 
 export type MissionUnderstanding = {
@@ -109,9 +109,9 @@ export function getNextAction(session: WorkspaceSessionRecord): NextAction {
     return { label: COMPANION_ENTRY_LABELS.reviewWithCompanion, kind: "review_output" };
   }
   if (latestOutput.reflectionStatus !== "submitted") {
-    return { label: "Chia sẻ Reflection", kind: "start_reflection" };
+    return { label: "Chia sẻ Chiêm nghiệm", kind: "start_reflection" };
   }
-  return { label: "Chuyển sang Mission tiếp theo", kind: "next_mission" };
+  return { label: "Chuyển sang Nhiệm vụ tiếp theo", kind: "next_mission" };
 }
 
 /**

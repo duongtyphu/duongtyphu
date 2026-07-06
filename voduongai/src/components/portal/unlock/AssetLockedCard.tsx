@@ -30,7 +30,7 @@ export function AssetLockedCard({ asset }: { asset: UnlockableAsset }) {
         </div>
         <p className="text-xs italic leading-relaxed text-gray-500">&ldquo;{asset.lockedPreview}&rdquo;</p>
         <p className="mt-3 text-[11px] text-gray-400">
-          Mở sau khi bạn hoàn thành Mission và viết Reflection.
+          Mở sau khi bạn hoàn thành Nhiệm vụ và viết Chiêm nghiệm.
         </p>
       </div>
     </div>

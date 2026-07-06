@@ -21,7 +21,7 @@ export const KNOWLEDGE_TYPE_LABELS: Record<KnowledgeType, string> = {
   [KnowledgeType.PDF]: "PDF",
   [KnowledgeType.FAQ]: "FAQ",
   [KnowledgeType.EXERCISE]: "Bài tập",
-  [KnowledgeType.REFLECTION]: "Reflection",
+  [KnowledgeType.REFLECTION]: "Chiêm nghiệm",
   [KnowledgeType.ASSESSMENT]: "Đánh giá",
   [KnowledgeType.CHEATSHEET]: "Cheatsheet",
   [KnowledgeType.MINDMAP]: "Mindmap",

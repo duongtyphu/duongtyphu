@@ -57,7 +57,7 @@ function writeBestPractices(list: BestPracticeRecord[]): void {
     nhất 1 Mission làm bằng chứng, không được suy diễn không căn cứ. */
 export function promoteBestPractice(practice: string, evidenceMissionIds: string[], department?: DepartmentId): BestPracticeRecord {
   if (evidenceMissionIds.length === 0) {
-    throw new Error("Best Practice phải có ít nhất 1 Mission làm bằng chứng — không được suy diễn không căn cứ.");
+    throw new Error("Best Practice phải có ít nhất 1 Nhiệm vụ làm bằng chứng — không được suy diễn không căn cứ.");
   }
   const record: BestPracticeRecord = {
     practiceId: `bp_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
@@ -248,7 +248,7 @@ export function getOrganizationalMemoryTimeline(): OrganizationalMemoryEvent[] {
     })),
     ...readBlueprintImprovements().map((i): OrganizationalMemoryEvent => ({
       kind: "blueprint_improvement",
-      summary: `Blueprint Improvement (${i.status}): ${i.suggestion}`,
+      summary: `Đề xuất cải thiện Quy trình AI (${i.status}): ${i.suggestion}`,
       at: i.createdAt,
     })),
     ...readCrossDepartmentShares().map((s): OrganizationalMemoryEvent => ({

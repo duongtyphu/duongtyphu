@@ -56,10 +56,10 @@ export type AiWorkflow = {
 };
 
 export const AI_WORKFLOWS: AiWorkflow[] = [
-  { id: "lam-video-ngan", title: "Làm video ngắn", steps: ["Research", "Script", "Voice", "Visual", "Edit", "Caption", "Publish"], suggestedTools: ["ChatGPT", "Canva"] },
-  { id: "viet-ebook", title: "Viết Ebook", steps: ["Idea", "Outline", "Research", "Draft", "Design", "Export"], suggestedTools: ["ChatGPT", "NotebookLM", "Canva"] },
-  { id: "xay-landing-page", title: "Xây Landing Page", steps: ["Customer", "Problem", "Offer", "Copy", "Design", "Review", "Publish"], suggestedTools: ["ChatGPT", "Gamma"] },
-  { id: "affiliate-content", title: "Affiliate Content", steps: ["Niche", "Customer", "Hook", "Content", "CTA", "Tracking"], suggestedTools: ["ChatGPT", "Claude"] },
+  { id: "lam-video-ngan", title: "Làm video ngắn", steps: ["Nghiên cứu", "Kịch bản", "Thu âm", "Hình ảnh", "Dựng video", "Phụ đề", "Đăng bài"], suggestedTools: ["ChatGPT", "Canva"] },
+  { id: "viet-ebook", title: "Viết Ebook", steps: ["Ý tưởng", "Dàn ý", "Nghiên cứu", "Bản nháp", "Thiết kế", "Xuất bản"], suggestedTools: ["ChatGPT", "NotebookLM", "Canva"] },
+  { id: "xay-landing-page", title: "Xây Landing Page", steps: ["Khách hàng", "Vấn đề", "Giải pháp", "Nội dung", "Thiết kế", "Đánh giá", "Đăng bài"], suggestedTools: ["ChatGPT", "Gamma"] },
+  { id: "affiliate-content", title: "Affiliate Content", steps: ["Ngách", "Khách hàng", "Điểm nhấn", "Nội dung", "CTA", "Theo dõi"], suggestedTools: ["ChatGPT", "Claude"] },
 ];
 
 export type LearningPath = {
@@ -82,7 +82,7 @@ export const LEARNING_PATHS: LearningPath[] = [
 export type AiResource = {
   id: string;
   title: string;
-  type: "Checklist" | "Template" | "Cheatsheet" | "PDF" | "Mindmap" | "Workflow mẫu";
+  type: "Checklist" | "Template" | "Cheatsheet" | "PDF" | "Mindmap" | "Quy trình mẫu";
   href: string;
 };
 
@@ -90,5 +90,5 @@ export const AI_RESOURCES: AiResource[] = [
   { id: "checklist-viet-prompt", title: "Checklist viết Prompt hiệu quả", type: "Checklist", href: "/portal/checklists" },
   { id: "template-landing-page", title: "Template outline Landing Page", type: "Template", href: "/portal/templates" },
   { id: "cheatsheet-cong-cu-ai", title: "Cheatsheet chọn công cụ AI theo việc", type: "Cheatsheet", href: "/portal/resources" },
-  { id: "sop-quy-trinh-content", title: "SOP quy trình sản xuất content", type: "Workflow mẫu", href: "/portal/sop" },
+  { id: "sop-quy-trinh-content", title: "SOP quy trình sản xuất content", type: "Quy trình mẫu", href: "/portal/sop" },
 ];

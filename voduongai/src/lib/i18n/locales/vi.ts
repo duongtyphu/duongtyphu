@@ -38,12 +38,12 @@ export const vi = {
     logout: "Đăng xuất",
   },
   search: {
-    placeholder: "Tìm trong Portal...",
+    placeholder: "Tìm trong Học viện...",
     noResults: "Không tìm thấy kết quả phù hợp.",
-    label: "Tìm kiếm toàn Portal",
+    label: "Tìm kiếm toàn Học viện",
   },
   portal: {
-    menuLabel: "Menu Portal",
+    menuLabel: "Menu Học viện",
     closeMenu: "Đóng menu",
     notifications: "Thông báo",
     savedContent: "Nội dung đã lưu",

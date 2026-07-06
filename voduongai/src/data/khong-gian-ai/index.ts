@@ -91,7 +91,7 @@ export const NEED_CATEGORIES: AiNeedCategory[] = [
     subtasks: [
       "Viết code tự động",
       "Debug lỗi",
-      "Review code",
+      "Đánh giá code",
       "Tạo API",
     ],
     recommendedToolSlugs: ["cursor", "chatgpt", "claude"],
@@ -1408,10 +1408,10 @@ export const AI_PROMPTS: AiPrompt[] = [
   {
     id: "prompt-015",
     slug: "review-va-cai-thien-doan-code-python",
-    title: "Review và cải thiện đoạn code Python",
-    description: "Nhờ AI review code Python, tìm lỗi, tối ưu hiệu suất và đề xuất cải tiến.",
+    title: "Đánh giá và cải thiện đoạn code Python",
+    description: "Nhờ AI đánh giá code Python, tìm lỗi, tối ưu hiệu suất và đề xuất cải tiến.",
     prompt:
-      "Bạn là senior Python developer với 10 năm kinh nghiệm. Hãy review đoạn code sau và đưa ra phản hồi chi tiết:\n\n```python\n[DÁN CODE VÀO ĐÂY]\n```\n\nPhân tích theo các tiêu chí:\n1. Lỗi (bugs): có lỗi logic hoặc runtime error nào không? Chỉ rõ dòng nào và giải thích\n2. Code style: có tuân theo PEP 8 và best practices Python không?\n3. Hiệu suất: có chỗ nào có thể tối ưu tốc độ hoặc bộ nhớ không?\n4. Bảo mật: có vấn đề bảo mật tiềm ẩn nào không (SQL injection, input validation...)?\n5. Khả năng bảo trì: code có dễ đọc, dễ sửa sau này không?\n6. Edge cases: có trường hợp đặc biệt nào code chưa xử lý?\n\nSau phần phân tích, viết lại đoạn code đã được cải thiện và giải thích những thay đổi bạn đã thực hiện.",
+      "Bạn là senior Python developer với 10 năm kinh nghiệm. Hãy đánh giá đoạn code sau và đưa ra phản hồi chi tiết:\n\n```python\n[DÁN CODE VÀO ĐÂY]\n```\n\nPhân tích theo các tiêu chí:\n1. Lỗi (bugs): có lỗi logic hoặc runtime error nào không? Chỉ rõ dòng nào và giải thích\n2. Code style: có tuân theo PEP 8 và best practices Python không?\n3. Hiệu suất: có chỗ nào có thể tối ưu tốc độ hoặc bộ nhớ không?\n4. Bảo mật: có vấn đề bảo mật tiềm ẩn nào không (SQL injection, input validation...)?\n5. Khả năng bảo trì: code có dễ đọc, dễ sửa sau này không?\n6. Edge cases: có trường hợp đặc biệt nào code chưa xử lý?\n\nSau phần phân tích, viết lại đoạn code đã được cải thiện và giải thích những thay đổi bạn đã thực hiện.",
     category: "Lập trình",
     toolSlug: "claude",
     needSlug: "lap-trinh",

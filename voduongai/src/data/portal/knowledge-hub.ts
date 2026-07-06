@@ -47,7 +47,7 @@ export const resourceLibraryItems: ResourceLibraryItem[] = [
   { id: "res1", label: "Prompt", href: "/portal/prompts" },
   { id: "res2", label: "Công cụ AI", href: "/portal/tools" },
   { id: "res3", label: "Template", href: "/portal/templates" },
-  { id: "res4", label: "Workflow", href: "/portal/hetrithucai" },
+  { id: "res4", label: "Quy trình", href: "/portal/hetrithucai" },
   { id: "res5", label: "Checklist", href: "/portal/checklists" },
   { id: "res6", label: "SOP", href: "/portal/sop" },
   { id: "res7", label: "Ebook", href: "/portal/resources" },
@@ -66,7 +66,7 @@ export const practiceItems: PracticeItem[] = [
   { id: "pr2", title: "Dự án 30 ngày", description: "Dự án dài hơi giúp bạn xây năng lực bền vững.", href: "/portal/practice" },
   { id: "pr3", title: "Mini Project", description: "Bài tập nhỏ, áp dụng ngay một kỹ năng cụ thể.", href: "/portal/practice" },
   { id: "pr4", title: "Assignment", description: "Bài tập có hướng dẫn, phù hợp người mới.", href: "/portal/practice" },
-  { id: "pr5", title: "Portfolio", description: "Tổng hợp những gì bạn đã làm được thành hồ sơ năng lực.", href: "/portal/legacy" },
+  { id: "pr5", title: "Thành quả", description: "Tổng hợp những gì bạn đã làm được thành hồ sơ năng lực.", href: "/portal/legacy" },
   { id: "pr6", title: "Thử thách thực chiến", description: "Thử thách ngắn để kiểm tra năng lực hiện tại.", href: "/portal/practice" },
 ];
 
@@ -112,7 +112,7 @@ export type KnowledgeStat = {
 export const knowledgeStats: KnowledgeStat[] = [
   { label: "Bài học đã hoàn thành", value: 8 },
   { label: "Prompt đã lưu", value: 14 },
-  { label: "Workflow đã thực hành", value: 3 },
+  { label: "Quy trình đã thực hành", value: 3 },
   { label: "Tài nguyên đã tải", value: 6 },
   { label: "Ghi chú đã tạo", value: 5 },
 ];

@@ -61,7 +61,7 @@ export function PromptExperience({
               <p className="rounded-lg bg-gray-50 p-3 text-xs text-gray-600">{exampleInput}</p>
             </div>
             <div>
-              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Ví dụ Output</p>
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400">Ví dụ Kết quả</p>
               <p className="rounded-lg bg-blue-50 p-3 text-xs text-gray-700">{exampleOutput}</p>
             </div>
           </div>

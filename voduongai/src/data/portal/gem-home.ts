@@ -14,7 +14,7 @@ export type TodayMission = {
 export const todayMissions: TodayMission[] = [
   { id: "m1", label: "Một bài học nhỏ trong AI Foundation cũng đủ để hôm nay có nghĩa", description: "Học viện AI", href: "/portal/hocvienai" },
   { id: "m2", label: "Giữ lại một Prompt bạn thấy hữu ích vào My Legacy", description: "Thư viện Prompt", href: "/portal/prompts" },
-  { id: "m3", label: "Thử áp dụng một Workflow vào việc bạn đang làm", description: "Tri thức — Thực chiến", href: "/portal/practice" },
+  { id: "m3", label: "Thử áp dụng một Quy trình vào việc bạn đang làm", description: "Tri thức — Thực chiến", href: "/portal/practice" },
   { id: "m4", label: "Viết lại một điều bạn vừa học được, theo cách của riêng bạn", description: "My Legacy", href: "/portal/legacy" },
 ];
 

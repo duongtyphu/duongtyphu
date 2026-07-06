@@ -29,7 +29,7 @@ export function getPortalSearchIndex(): PortalSearchResult[] {
       id: `nav-${n.href}`,
       title: n.label.replace(/^[^\p{L}\p{N}]+/u, "").trim(),
       href: n.href,
-      type: "Mục Portal",
+      type: "Mục Học viện",
     })),
     ...freeResources.map((r) => ({
       id: `resource-${r.id}`,
