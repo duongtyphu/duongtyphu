@@ -176,7 +176,15 @@ export default async function GemHomePage() {
 
       {/* CKOS quick access */}
       <section>
-        <SectionHeader eyebrow="CKOS" title="Truy cập nhanh tri thức chuẩn hoá" />
+        <SectionHeader
+          eyebrow="CKOS"
+          title="Bộ não tri thức của Companion"
+          action={
+            <Link href="/portal/ckos" className="text-sm font-semibold text-blue-600 hover:underline">
+              Mở CKOS →
+            </Link>
+          }
+        />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <GemCard>
             <p className="gemos-card-title text-sm font-bold text-gray-900">Công cụ AI</p>
@@ -194,9 +202,9 @@ export default async function GemHomePage() {
             <Button href="/portal/sop" variant="secondary" className="mt-3">Xem</Button>
           </GemCard>
           <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">Hệ tri thức AI</p>
-            <p className="mt-1 text-xs text-gray-500">Toàn bộ CKOS ở một nơi.</p>
-            <Button href="/portal/hetrithucai" variant="secondary" className="mt-3">Xem</Button>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">CKOS đầy đủ</p>
+            <p className="mt-1 text-xs text-gray-500">Dashboard, Search, Collections và Danh mục tri thức.</p>
+            <Button href="/portal/ckos" variant="secondary" className="mt-3">Xem</Button>
           </GemCard>
         </div>
       </section>

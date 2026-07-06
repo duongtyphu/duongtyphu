@@ -7,6 +7,7 @@ import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 import { logoUrl } from "@/lib/logo";
 import { isSafeUrl } from "@/lib/urlSafety";
 import { SaveButton } from "@/components/portal/SaveButton";
+import { RelatedKnowledgePanel } from "@/components/portal/ckos/RelatedKnowledgePanel";
 
 export default function ToolDetailPage() {
   const { id: slug } = useParams<{ id: string }>();
@@ -150,6 +151,11 @@ export default function ToolDetailPage() {
           </Link>
         </div>
       </div>
+
+      <RelatedKnowledgePanel
+        prompts={tool.relatedPromptId ? [{ id: tool.relatedPromptId, title: "Prompt gợi ý dùng cùng công cụ này", href: `/portal/prompts/${tool.relatedPromptId}` }] : undefined}
+        resources={tool.relatedResourceHref ? [{ id: tool.relatedResourceHref, title: "Tài nguyên gợi ý dùng cùng công cụ này", href: tool.relatedResourceHref }] : undefined}
+      />
     </div>
   );
 }
