@@ -11,6 +11,7 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
 import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 
 /**
@@ -166,6 +167,15 @@ export default function AcademyHubPage() {
           ))}
         </div>
       </div>
+
+      <KnowledgeJourneyStrip
+        title="Học xong, đừng dừng lại"
+        steps={[
+          { label: "Xem CKOS", description: "Tra cứu Công cụ, Prompt, Quy trình liên quan đến bài học.", href: "/portal/ckos" },
+          { label: "Thực hành ở Workspace", description: "Mang kiến thức vừa học vào một phiên làm việc thật.", href: "/portal/aiworkspace" },
+          { label: "Xem Case Study", description: "Xem người khác đã áp dụng kiến thức này ra sao.", href: "/portal/case-studies" },
+        ]}
+      />
     </div>
   );
 }

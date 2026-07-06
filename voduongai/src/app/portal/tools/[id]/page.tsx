@@ -8,6 +8,7 @@ import { logoUrl } from "@/lib/logo";
 import { isSafeUrl } from "@/lib/urlSafety";
 import { SaveButton } from "@/components/portal/SaveButton";
 import { RelatedKnowledgePanel } from "@/components/portal/ckos/RelatedKnowledgePanel";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export default function ToolDetailPage() {
   const { id: slug } = useParams<{ id: string }>();
@@ -155,6 +156,15 @@ export default function ToolDetailPage() {
       <RelatedKnowledgePanel
         prompts={tool.relatedPromptId ? [{ id: tool.relatedPromptId, title: "Prompt gợi ý dùng cùng công cụ này", href: `/portal/prompts/${tool.relatedPromptId}` }] : undefined}
         resources={tool.relatedResourceHref ? [{ id: tool.relatedResourceHref, title: "Tài nguyên gợi ý dùng cùng công cụ này", href: tool.relatedResourceHref }] : undefined}
+      />
+
+      <KnowledgeJourneyStrip
+        title="Dùng công cụ này hiệu quả hơn"
+        steps={[
+          { label: "Prompt phù hợp", description: "Copy một prompt thực chiến để bắt đầu ngay.", href: "/portal/prompts" },
+          { label: "Quy trình chuẩn", description: "Ghép công cụ này vào một quy trình có sẵn.", href: "/portal/sop" },
+          { label: "Hỏi Companion", description: "Nhờ Companion gợi ý cách áp dụng vào công việc của bạn.", href: "/portal/companion" },
+        ]}
       />
     </div>
   );

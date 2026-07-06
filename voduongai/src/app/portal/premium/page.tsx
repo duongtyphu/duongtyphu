@@ -11,6 +11,7 @@ import { Button } from "@/components/portal/ui/Button";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = { title: "Premium | VO DUONG AI" };
 
@@ -280,6 +281,15 @@ export default async function PremiumPage() {
           ))}
         </div>
       </section>
+
+      <KnowledgeJourneyStrip
+        title="Chưa chắc Premium phù hợp?"
+        steps={[
+          { label: "Học thử miễn phí trước", description: "Bắt đầu từ Học viện AI — không cần trả phí để thử.", href: "/portal/hocvienai" },
+          { label: "Xem Workspace", description: "Trải nghiệm cách Companion đồng hành trong một phiên làm việc thật.", href: "/portal/workspace" },
+          { label: "Hỏi Companion", description: "Nhờ Companion tư vấn lộ trình phù hợp với bạn.", href: "/portal/companion" },
+        ]}
+      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
 import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { WelcomeHero } from "@/components/portal/gem-home/WelcomeHero";
 import { TodayMissionCard } from "@/components/portal/gem-home/TodayMissionCard";
 import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionCard";
@@ -300,6 +301,15 @@ export default async function GemHomePage() {
       <LatestUpdates updates={latestUpdates} />
 
       <SavedRecent />
+
+      <KnowledgeJourneyStrip
+        title="Chưa biết bắt đầu từ đâu?"
+        steps={[
+          { label: "Xem hành trình của bạn", description: "Xem lại chặng đường đã đi và bước tiếp theo.", href: "/portal/hanhtrinhcuatoi" },
+          { label: "Kết nối cộng đồng", description: "Chia sẻ và học hỏi cùng những người đang đi cùng hành trình.", href: "/portal/congdongai" },
+          { label: "Mở Companion", description: "Để Companion dẫn bạn tới đúng nơi cần đến.", href: "/portal/companion" },
+        ]}
+      />
     </div>
   );
 }

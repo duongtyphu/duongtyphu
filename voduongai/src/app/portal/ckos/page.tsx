@@ -8,6 +8,7 @@ import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { Button } from "@/components/portal/ui/Button";
 import { CkosQuickSearch } from "@/components/portal/ckos/CkosQuickSearch";
 import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 
@@ -216,6 +217,15 @@ export default async function CkosPage() {
           ))}
         </div>
       </section>
+
+      <KnowledgeJourneyStrip
+        title="Tri thức không dừng ở việc đọc"
+        steps={[
+          { label: "Học có hệ thống", description: "Đưa tri thức vào một hành trình học thật ở Academy.", href: "/portal/hocvienai" },
+          { label: "Áp dụng vào dự án", description: "Xem cơ hội và dự án bạn có thể áp dụng tri thức này.", href: "/portal/duan-cohoi" },
+          { label: "Hỏi Companion", description: "Nhờ Companion gợi ý nên bắt đầu từ đâu.", href: "/portal/companion" },
+        ]}
+      />
     </div>
   );
 }

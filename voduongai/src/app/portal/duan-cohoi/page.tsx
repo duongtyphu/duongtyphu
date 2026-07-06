@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -207,6 +208,16 @@ export default function OpportunitiesHubPage() {
           ))}
         </div>
       </section>
+
+      {/* Kiến thức cần học trước khi tham gia bất kỳ dự án nào */}
+      <KnowledgeJourneyStrip
+        title="Trước khi tham gia, nên học gì?"
+        steps={[
+          { label: "Học nền tảng", description: "Hiểu đúng về AI/Affiliate/Blockchain trước khi tham gia dự án nào.", href: "/portal/hocvienai" },
+          { label: "Công cụ hỗ trợ", description: "Các công cụ AI giúp bạn nghiên cứu dự án nhanh và kỹ hơn.", href: "/portal/tools" },
+          { label: "Hỏi Companion", description: "Nhờ Companion phân tích cùng bạn trước khi quyết định.", href: "/portal/companion" },
+        ]}
+      />
 
       {/* Next step */}
       <GemCard className="flex items-center justify-between gap-4">
