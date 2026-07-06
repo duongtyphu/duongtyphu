@@ -14,6 +14,15 @@
 --     tối thiểu — nếu cột này không tồn tại thật trên production, dòng
 --     `alter table ... add column if not exists created_at ...` vẫn an toàn
 --     (không phá dữ liệu hiện có, chỉ thêm cột mới với giá trị mặc định).
+--
+-- CẬP NHẬT — Phase D.4 (Duplicate Data Verification): đã xác minh trực tiếp
+-- qua PostgREST (anon key, read-only, không đổi dữ liệu) rằng bảng này ĐÃ TỒN
+-- TẠI thật trên production với 3 dòng dữ liệu thật (title/description/url/
+-- icon/display_order/active/created_at đúng như suy đoán ban đầu), NHƯNG có
+-- thêm 1 cột KHÔNG được suy luận ra từ code ban đầu: `bg_color` (text, ví dụ
+-- "#F0FDF4"). Đã bổ sung cột này vào migration bên dưới — đây là ví dụ cụ thể
+-- của "schema production khác schema file" theo quy tắc Phase D.2 #6, đã được
+-- phát hiện và sửa trước khi coi migration này là đầy đủ.
 -- ============================================================================
 
 create table if not exists documents (
@@ -22,10 +31,14 @@ create table if not exists documents (
   description text,
   url text not null,
   icon text,
+  bg_color text,
   active boolean not null default true,
   display_order int not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- Idempotent — an toàn nếu bảng đã tồn tại từ trước mà thiếu cột này.
+alter table documents add column if not exists bg_color text;
 
 comment on table documents is
   'Tài nguyên miễn phí (/portal/resources — bảng "documents", khác với bảng '

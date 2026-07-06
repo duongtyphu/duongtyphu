@@ -1,5 +1,11 @@
 "use client";
 
+// @archived — Phase D.5 (VO DUONG AI IA mapping).
+// Route mồ côi, KHÔNG liên kết từ bất kỳ nav/sidebar/footer nào — canonical
+// chính thức của module "Hành trình của tôi" là /portal/hanhtrinhcuatoi
+// (src/app/portal/hanhtrinhcuatoi/page.tsx). Nội dung "Sanctuary" ở file này
+// được GIỮ NGUYÊN theo quyết định Product Owner — không xoá, không redirect,
+// không merge — chờ đánh giá làm section/sub-feature của Journey ở phase sau.
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
