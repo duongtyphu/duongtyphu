@@ -9,6 +9,8 @@ import { MilestoneCard } from "@/components/portal/journey/MilestoneCard";
 import { AIJourneyCoach } from "@/components/portal/journey/AIJourneyCoach";
 import { RelatedActions } from "@/components/portal/journey/RelatedActions";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
+import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import {
   currentJourney,
   growthPathSteps,
@@ -50,11 +52,20 @@ export default function JourneyHubPage() {
       <GrowthActivityPanel variant="journey" />
 
       <section>
-        <h2 className="text-lg font-bold text-gray-900">Khám phá thêm trong Hành trình</h2>
+        <SectionHeader eyebrow="Growth Experience" title="Khám phá thêm trong hành trình" />
         <div className="mt-4">
           <HubModuleGrid modules={hub.modules} />
         </div>
       </section>
+
+      <KnowledgeJourneyStrip
+        title="Trưởng thành cần được nuôi dưỡng liên tục"
+        steps={[
+          { label: "Học tiếp", description: "Quay lại Học viện AI để tiếp tục hành trình học.", href: "/portal/hocvienai" },
+          { label: "Áp dụng vào dự án", description: "Xem cơ hội bạn có thể áp dụng những gì vừa trưởng thành.", href: "/portal/duan-cohoi" },
+          { label: "Chia sẻ với Companion", description: "Kể cho Companion nghe bạn đang cảm nhận thế nào.", href: "/portal/companion" },
+        ]}
+      />
     </div>
   );
 }

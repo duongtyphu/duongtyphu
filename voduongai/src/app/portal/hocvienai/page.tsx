@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { ChevronRight, GraduationCap } from "lucide-react";
+import { ChevronRight, GraduationCap, BookOpen, Dumbbell, Sparkles, TrendingUp } from "lucide-react";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
+import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
@@ -58,6 +59,15 @@ export default function AcademyHubPage() {
         quickActions={[
           { label: "Vào AI Workspace", href: "/portal/aiworkspace" },
           { label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" },
+        ]}
+      />
+
+      <ExperienceFlow
+        stages={[
+          { icon: BookOpen, label: "Hiểu", description: "Nắm đúng khái niệm trước khi luyện." },
+          { icon: Dumbbell, label: "Luyện", description: "Thực hành theo hành trình phù hợp với bạn." },
+          { icon: Sparkles, label: "Thực hành", description: "Áp dụng vào Workspace với Companion." },
+          { icon: TrendingUp, label: "Trưởng thành", description: "Cảm nhận sự khác biệt, không chỉ điểm số." },
         ]}
       />
 

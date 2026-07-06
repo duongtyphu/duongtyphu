@@ -131,6 +131,37 @@ export default function OpportunitiesHubPage() {
         placeholder="VD: Mình đang cân nhắc tham gia SolarGroup, giúp mình nhìn rõ hơn..."
       />
 
+      {/* Decision Experience — không phải danh sách, mà giúp trả lời "tôi nên bắt đầu ở đâu?" */}
+      <section>
+        <SectionHeader eyebrow="Quyết định" title="Tôi nên bắt đầu ở đâu?" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <GemCard>
+            <p className="text-sm text-gray-600">
+              <span className="font-semibold text-gray-900">Muốn học và kiếm thu nhập online ngay?</span>
+              {" "}→ Bắt đầu với <span className="font-semibold text-blue-600">Hệ sinh thái DigiU</span>.
+            </p>
+          </GemCard>
+          <GemCard>
+            <p className="text-sm text-gray-600">
+              <span className="font-semibold text-gray-900">Muốn đầu tư dài hạn, chấp nhận rủi ro thấp hơn?</span>
+              {" "}→ Xem <span className="font-semibold text-blue-600">SolarGroup</span>.
+            </p>
+          </GemCard>
+          <GemCard>
+            <p className="text-sm text-gray-600">
+              <span className="font-semibold text-gray-900">Tò mò về công nghệ mới, chấp nhận rủi ro cao hơn?</span>
+              {" "}→ Đọc <span className="font-semibold text-blue-600">Blockchain &amp; Crypto</span>.
+            </p>
+          </GemCard>
+          <GemCard>
+            <p className="text-sm text-gray-600">
+              <span className="font-semibold text-gray-900">Chưa chắc chắn điều gì cả?</span>
+              {" "}→ Bắt đầu bằng cách đọc <span className="font-semibold text-blue-600">Tiêu chí chia sẻ</span> bên dưới trước.
+            </p>
+          </GemCard>
+        </div>
+      </section>
+
       {/* Introduction */}
       <GemCard>
         <h2 className="gemos-card-title mb-3 text-base font-bold text-gray-900">Giới thiệu</h2>

@@ -132,18 +132,21 @@ export default async function PremiumPage() {
         action={{ label: "Xem lộ trình học", href: "#lo-trinh" }}
       />
 
-      {/* Learning / Progress — real, from actual purchases, never fabricated */}
+      {/* Value Experience — không hỏi "mua gói nào", mà trả lời "tôi nhận được giá trị gì tiếp theo?" */}
       <GemCard>
         <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
-          Trạng thái Premium của bạn
+          Giá trị tiếp theo của bạn
         </p>
         {ownedCount > 0 ? (
           <p className="mt-2 text-sm text-gray-600">
-            Bạn đã sở hữu <span className="font-semibold text-gray-900">{ownedCount}</span> sản phẩm Premium.
+            Bạn đã sở hữu <span className="font-semibold text-gray-900">{ownedCount}</span> sản phẩm Premium
+            — giá trị tiếp theo bạn có thể mở khoá là một Workshop Premium hoặc Masterclass chuyên sâu hơn
+            bên dưới.
           </p>
         ) : (
           <p className="mt-2 text-sm text-gray-500">
-            Bạn chưa sở hữu sản phẩm Premium nào — xem các lựa chọn bên dưới để bắt đầu.
+            Giá trị đầu tiên bạn nhận được khi tham gia: một lộ trình rõ ràng (V-Solo/V-Scale) thay vì tự
+            mò mẫm — xem bên dưới để chọn đúng giai đoạn của bạn.
           </p>
         )}
       </GemCard>

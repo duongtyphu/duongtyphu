@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Brain } from "lucide-react";
+import { Brain, Search, GraduationCap, Rocket, ArrowRight } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
@@ -9,6 +9,7 @@ import { Button } from "@/components/portal/ui/Button";
 import { CkosQuickSearch } from "@/components/portal/ckos/CkosQuickSearch";
 import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 
@@ -113,6 +114,15 @@ export default async function CkosPage() {
         quickActions={[
           { label: "Tìm trong CKOS", href: "/portal/ckos#search" },
           { label: "Xem Công cụ AI", href: "/portal/tools" },
+        ]}
+      />
+
+      <ExperienceFlow
+        stages={[
+          { icon: Search, label: "Khám phá", description: "Tìm đúng Tool/Prompt/Workflow bạn cần." },
+          { icon: GraduationCap, label: "Học", description: "Hiểu cách dùng thông qua Academy." },
+          { icon: Rocket, label: "Áp dụng", description: "Mang vào Workspace hoặc một dự án thật." },
+          { icon: ArrowRight, label: "Tiếp tục", description: "Companion gợi ý bước kế tiếp." },
         ]}
       />
 
