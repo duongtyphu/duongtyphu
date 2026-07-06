@@ -7,6 +7,7 @@ import { LandingPageMissionPilot } from "@/features/academy/components/LandingPa
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
 import { WorkNeedSection, LearningPathSection } from "@/components/portal/ai-space/AiSpaceSections";
 import { AI_TOOLS } from "@/data/khong-gian-ai";
+import { GemCard } from "@/components/portal/ui/GemCard";
 
 /**
  * Content Audit sprint: "Theo nhu cầu công việc" và "Lộ trình học AI" đã
@@ -88,12 +89,12 @@ export default function AcademyHubPage() {
             <Link
               key={tool.slug}
               href={`/portal/aiworkspace/${tool.slug}`}
-              className="group flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+              className="gemos-gem-card group flex flex-col gap-2 p-5"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 text-lg font-bold text-blue-700">
                 {tool.name.charAt(0)}
               </div>
-              <p className="font-semibold text-gray-900 group-hover:text-blue-600 transition">{tool.name}</p>
+              <p className="gemos-card-title font-semibold text-gray-900">{tool.name}</p>
               <p className="text-xs leading-relaxed text-gray-500 line-clamp-2">{tool.tagline}</p>
               <span className="mt-auto text-xs font-semibold text-blue-600">Tìm hiểu công cụ →</span>
             </Link>
@@ -143,10 +144,10 @@ export default function AcademyHubPage() {
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
+            <GemCard key={item.q}>
+              <p className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
-            </div>
+            </GemCard>
           ))}
         </div>
       </div>

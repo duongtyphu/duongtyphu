@@ -3,6 +3,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { CopyPromptButton } from "@/components/portal/CopyPromptButton";
 import { AdminPromptsSection } from "@/components/portal/AdminPromptsSection";
 import { ResourceCard } from "@/components/portal/ResourceCard";
+import { GemCard } from "@/components/portal/ui/GemCard";
 
 export const metadata = { title: "Thư viện Prompt" };
 
@@ -40,16 +41,16 @@ export default async function PromptsPage() {
           </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {livePrompts.map((p) => (
-              <div key={p.id} className="card-shine flex h-full flex-col rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+              <GemCard key={p.id} className="flex h-full flex-col">
                 <span className="inline-flex w-fit rounded-full bg-brand-blue/10 px-2.5 py-0.5 text-xs font-semibold text-brand-blue">
                   {p.category}
                 </span>
-                <h3 className="mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
+                <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
                 <p className="mt-2 line-clamp-3 text-sm text-gray-600">{p.content}</p>
                 <div className="mt-3">
                   <CopyPromptButton content={p.content} />
                 </div>
-              </div>
+              </GemCard>
             ))}
           </div>
         </div>

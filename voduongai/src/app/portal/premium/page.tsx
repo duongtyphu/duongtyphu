@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { premiumProducts } from "@/data/premium";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
@@ -7,6 +6,8 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 import { GemLockedOverlay } from "@/components/portal/ui/GemLockedOverlay";
 import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { GradientTitle } from "@/components/portal/ui/GradientTitle";
+import { Button } from "@/components/portal/ui/Button";
+import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 
 export const metadata = { title: "Premium | VO DUONG AI" };
 
@@ -121,31 +122,31 @@ export default async function PremiumPage() {
 
       {/* Premium Includes */}
       <section>
-        <h2 className="mb-4 text-xl font-bold text-gray-900">Premium bao gồm</h2>
+        <SectionHeader title="Premium bao gồm" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {PREMIUM_INCLUDES.map((item) => (
-            <div key={item.title} className="gemos-gem-card rounded-2xl p-5">
+            <GemCard key={item.title}>
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-violet-100 text-2xl">
                 {item.emoji}
               </div>
               <h3 className="gemos-card-title mt-3 font-bold text-gray-900">{item.title}</h3>
               <p className="mt-1 text-sm leading-relaxed text-gray-500">{item.description}</p>
-            </div>
+            </GemCard>
           ))}
         </div>
       </section>
 
       {/* Learning Path */}
       <section>
-        <h2 className="mb-4 text-xl font-bold text-gray-900">Lộ trình học</h2>
+        <SectionHeader title="Lộ trình học" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {LEARNING_PATH.map((step, i) => (
-            <div key={step.title} className="gemos-gem-card rounded-2xl p-5">
+            <GemCard key={step.title}>
               <span className="text-xs font-semibold text-blue-600">Bước {i + 1}</span>
               <div className="mt-2 text-2xl">{step.emoji}</div>
               <h3 className="gemos-card-title mt-2 font-bold text-gray-900">{step.title}</h3>
               <p className="mt-1 text-sm leading-relaxed text-gray-500">{step.description}</p>
-            </div>
+            </GemCard>
           ))}
         </div>
       </section>
@@ -157,18 +158,12 @@ export default async function PremiumPage() {
           Chọn chương trình phù hợp và bắt đầu hành trình xây hệ thống làm việc với AI ngay hôm nay.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link
-            href="/portal/vdai-academy"
-            className="rounded-full bg-white px-6 py-2.5 text-sm font-bold text-blue-700 shadow transition hover:bg-blue-50"
-          >
+          <Button href="/portal/vdai-academy" variant="inverse">
             Tham gia Premium
-          </Link>
-          <Link
-            href="/portal/checkout"
-            className="rounded-full border border-white/40 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
-          >
+          </Button>
+          <Button href="/portal/checkout" variant="inverse-ghost">
             Đi đến thanh toán
-          </Link>
+          </Button>
         </div>
       </section>
 
@@ -248,13 +243,13 @@ export default async function PremiumPage() {
 
       {/* FAQ */}
       <section>
-        <h2 className="mb-4 text-xl font-bold text-gray-900">Câu hỏi thường gặp</h2>
+        <SectionHeader title="Câu hỏi thường gặp" />
         <div className="space-y-3">
           {PREMIUM_FAQ.map((item) => (
-            <div key={item.q} className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <GemCard key={item.q}>
               <h3 className="gemos-card-title font-bold text-gray-900">{item.q}</h3>
               <p className="mt-2 text-sm leading-relaxed text-gray-600">{item.a}</p>
-            </div>
+            </GemCard>
           ))}
         </div>
       </section>

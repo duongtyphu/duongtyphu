@@ -46,6 +46,43 @@
   --color-brand-gray-700:  #334155;
 
   --font-sans: var(--font-jakarta);
+
+  /* ===== Portal 3.0 Design Tokens (P.2) — radius, shadow, motion, focus =====
+   * Xem docs/PORTAL_3_0_DESIGN_SYSTEM.md. Định nghĩa ở đây (trong @theme) để
+   * Tailwind v4 tự sinh utility tương ứng: --radius-token -> `rounded-token`,
+   * --shadow-token -> `shadow-token`. Dùng các token này thay vì hardcode
+   * `rounded-2xl`/`shadow-sm` tuỳ tiện cho component MỚI từ nay trở đi. */
+  --radius-xs:   6px;
+  --radius-sm:   8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  24px;
+  --radius-2xl: 28px;
+
+  --shadow-token-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-token-sm: 0 1px 4px rgba(15, 23, 42, 0.07);
+  --shadow-token-md: 0 8px 24px -8px rgba(15, 23, 42, 0.14);
+  --shadow-token-lg: 0 12px 28px -10px rgba(37, 99, 235, 0.22);
+  --shadow-token-focus: 0 0 0 3px rgba(37, 99, 235, 0.35);
+}
+
+/* Motion tokens — không phải utility Tailwind tự sinh (không có prefix màu/
+ * kích thước Tailwind hiểu), khai báo dạng CSS custom property thuần, dùng
+ * qua `transition-duration: var(--motion-base)` hoặc trong CSS thành phần. */
+:root {
+  --motion-fast: 150ms;
+  --motion-base: 250ms;
+  --motion-slow: 400ms;
+  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus states — bắt buộc cho mọi phần tử tương tác (Accessibility, mục 6).
+ * Áp dụng qua :focus-visible để không hiện ring khi click chuột, chỉ hiện
+ * khi điều hướng bàn phím. */
+:focus-visible {
+  outline: 2px solid var(--color-brand-blue, #2563eb);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
 }
 
 body {
@@ -208,18 +245,18 @@ body {
 .gemos-glass-card,
 .gemos-gem-card {
   position: relative;
-  border-radius: 24px;
+  border-radius: var(--radius-2xl);
   background: #ffffff;
   border: 1px solid #E2E8F0;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  box-shadow: var(--shadow-token-sm);
+  transition: transform var(--motion-base) var(--motion-ease), box-shadow var(--motion-base) var(--motion-ease), border-color var(--motion-base) var(--motion-ease);
 }
 
 .gemos-glass-card:hover,
 .gemos-gem-card:hover {
   transform: translateY(-5px);
   border-color: #CBD5E1;
-  box-shadow: 0 12px 28px -10px rgba(37, 99, 235, 0.2);
+  box-shadow: var(--shadow-token-lg);
 }
 
 .gemos-card-title {
@@ -339,22 +376,26 @@ body {
   border: 1px solid transparent;
 }
 
+/* Fixed P.2 (Accessibility, mục 6): màu text badge trước đây (#6ee7b7,
+ * #e9d5ff, #94a3b8) được thiết kế cho nền tối nhưng GemBadge luôn nằm trong
+ * .gemos-gem-card (nền trắng #ffffff) — contrast ratio ~1.5-2.5:1, KHÔNG đạt
+ * WCAG AA (4.5:1). Đổi sang text tối trên nền tint, giữ nguyên tông màu. */
 .gemos-badge-free {
   background: rgba(16, 185, 129, 0.12);
-  color: #6ee7b7;
+  color: #047857; /* emerald-700, ~5.6:1 trên nền trắng */
   border-color: rgba(16, 185, 129, 0.3);
 }
 
 .gemos-badge-premium {
-  background: linear-gradient(135deg, rgba(124, 58, 237, 0.22), rgba(34, 211, 238, 0.18));
-  color: #e9d5ff;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.16), rgba(34, 211, 238, 0.14));
+  color: #6d28d9; /* violet-700, ~7:1 trên nền trắng */
   border-color: rgba(124, 58, 237, 0.4);
 }
 
 .gemos-badge-locked {
-  background: rgba(148, 163, 184, 0.1);
-  color: #94a3b8;
-  border-color: rgba(148, 163, 184, 0.25);
+  background: rgba(148, 163, 184, 0.14);
+  color: #475569; /* slate-600, ~7.5:1 trên nền trắng */
+  border-color: rgba(148, 163, 184, 0.3);
 }
 
 /* ===== GemOS Design System — progress ===== */
