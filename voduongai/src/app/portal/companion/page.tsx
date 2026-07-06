@@ -8,6 +8,7 @@ import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
 import { LivingCore, type LivingCoreState } from "@/components/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
+import { CompanionExperience } from "@/components/portal/companion/CompanionExperience";
 
 // ─────────────────────────────────────────────
 // Companion Genome — 12 gene, bố cục vòng tròn DNA
@@ -213,7 +214,19 @@ export default function CompanionHomePage() {
             Companion tồn tại để trở thành người bạn đồng hành đáng tin cậy nhất.
           </p>
         </section>
+      </div>
 
+      {/* ═══════════════════ COMPANION EXPERIENCE — Portal 3.0 P.3 ═══════════════════
+       * Daily Focus / Next Best Action / Continue Learning / CKOS Suggestions /
+       * Journey Reflection / Workspace Suggestions / mỗi pillar một gợi ý / Quick
+       * Actions. Đặt ngay sau Hero, trước phần triết lý/Genome bên dưới — Companion
+       * phải xuất hiện như người đồng hành định hướng ngay từ đầu trang, không phải
+       * chờ đọc hết nội dung triết lý mới thấy hành động cụ thể. */}
+      <div className="relative z-10 py-4">
+        <CompanionExperience />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-3xl px-6 sm:px-10">
         {/* ═══════════════════ LIVING CORE™ — demo các size/state ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">Living Core™</p>
