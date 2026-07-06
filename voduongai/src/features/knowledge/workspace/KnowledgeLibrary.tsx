@@ -11,6 +11,9 @@
 import { useMemo, useState } from "react";
 import { Search, Library } from "lucide-react";
 import { PageHeader } from "@/components/portal/ui/PageHeader";
+import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { GemCard } from "@/components/portal/ui/GemCard";
+import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { CompanionDiscovery } from "../components/CompanionDiscovery";
 import { KnowledgeSeedCard } from "../components/KnowledgeSeedCard";
 import { CollectionCard } from "../components/CollectionCard";
@@ -78,9 +81,10 @@ export function KnowledgeLibrary() {
       ) : (
         <>
           <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-              {activeGoalId ? "Hành trình phù hợp với bạn" : "Tất cả hành trình tri thức"}
-            </p>
+            <SectionHeader
+              eyebrow="CKOS · Knowledge"
+              title={activeGoalId ? "Hành trình phù hợp với bạn" : "Tất cả hành trình tri thức"}
+            />
             {relevantSeeds.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400 backdrop-blur-sm">
                 Chưa có hành trình phù hợp — mình sẽ chuẩn bị thêm sớm. Xem tất cả hành trình bên dưới nhé.
@@ -95,7 +99,7 @@ export function KnowledgeLibrary() {
           </div>
 
           <div className="space-y-3">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Collection — học theo chủ đề</p>
+            <SectionHeader title="Collection — học theo chủ đề" />
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {allCollections.map((collection) => (
                 <CollectionCard key={collection.id} collection={collection} />
@@ -133,7 +137,7 @@ function SearchResults({
     <div className="space-y-6">
       {collections.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Collection</p>
+          <SectionHeader title="Collection" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {collections.map((c) => (
               <CollectionCard key={c.id} collection={c} />
@@ -143,7 +147,7 @@ function SearchResults({
       )}
       {seeds.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Knowledge Seed</p>
+          <SectionHeader title="Knowledge Seed" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {seeds.map((seed) => (
               <KnowledgeSeedCard key={seed.id} seed={seed} />
@@ -153,7 +157,7 @@ function SearchResults({
       )}
       {assets.length > 0 && (
         <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Tri thức lẻ</p>
+          <SectionHeader title="Tri thức lẻ" />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {assets.map((asset) => (
               <KnowledgeAssetCard key={asset.id} asset={asset} />
@@ -189,7 +193,7 @@ function AssetExplorer() {
 
   return (
     <div className="space-y-4 border-t border-gray-100 pt-8">
-      <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Tìm tri thức lẻ theo bộ lọc</p>
+      <SectionHeader title="Tìm tri thức lẻ theo bộ lọc" />
 
       <div className="space-y-4 rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
         <div className="relative">
@@ -270,19 +274,17 @@ function FilterSelect({
 
 function KnowledgeAssetCard({ asset }: { asset: KnowledgeAsset }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white/70 p-5 shadow-sm backdrop-blur-sm">
+    <GemCard>
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
-          {KNOWLEDGE_TYPE_LABELS[asset.type]}
-        </span>
+        <GemBadge tone="free">{KNOWLEDGE_TYPE_LABELS[asset.type]}</GemBadge>
         <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-600">
           {asset.dna.difficulty}
         </span>
         <span className="text-[10px] text-gray-400">{asset.dna.estimatedTime}</span>
       </div>
-      <h3 className="mb-2 text-sm font-bold leading-snug text-gray-900">{asset.title}</h3>
+      <h3 className="gemos-card-title mb-2 text-sm font-bold leading-snug text-gray-900">{asset.title}</h3>
       <p className="mb-3 line-clamp-2 text-xs leading-relaxed text-gray-500">{asset.summary}</p>
       <p className="text-xs font-semibold text-emerald-600">Bước tiếp theo: {asset.growth.nextStep}</p>
-    </div>
+    </GemCard>
   );
 }

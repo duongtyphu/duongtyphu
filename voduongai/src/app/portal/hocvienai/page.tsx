@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, GraduationCap, HelpCircle } from "lucide-react";
+import { ChevronRight, GraduationCap } from "lucide-react";
 import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
@@ -8,6 +8,7 @@ import { getAllLearningJourneys } from "@/features/academy/services/journey.serv
 import { WorkNeedSection, LearningPathSection } from "@/components/portal/ai-space/AiSpaceSections";
 import { AI_TOOLS } from "@/data/khong-gian-ai";
 import { GemCard } from "@/components/portal/ui/GemCard";
+import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 
 /**
  * Content Audit sprint: "Theo nhu cầu công việc" và "Lộ trình học AI" đã
@@ -75,15 +76,15 @@ export default function AcademyHubPage() {
 
       {/* Học AI theo công cụ — khám phá, không phải Toolbox thực thi (Toolbox ở AI Workspace) */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Công cụ AI</p>
-            <h2 className="text-xl font-bold text-gray-900">Học AI theo công cụ</h2>
-          </div>
-          <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
-            Xem tất cả công cụ <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
+        <SectionHeader
+          eyebrow="Công cụ AI"
+          title="Học AI theo công cụ"
+          action={
+            <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+              Xem tất cả công cụ <ChevronRight className="h-4 w-4" />
+            </Link>
+          }
+        />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {AI_TOOLS.filter((tool) => tool.featured).map((tool) => (
             <Link
@@ -104,7 +105,7 @@ export default function AcademyHubPage() {
 
       {/* Learning Journey — Academy Operating System */}
       <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Hành trình của bạn</p>
+        <SectionHeader eyebrow="Journey" title="Hành trình của bạn" />
         {journeys.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400">
             Chưa có hành trình nào sẵn sàng — quay lại sau nhé.
@@ -138,10 +139,7 @@ export default function AcademyHubPage() {
 
       {/* FAQ */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-gray-400" />
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Câu hỏi thường gặp</p>
-        </div>
+        <SectionHeader title="Câu hỏi thường gặp" />
         <div className="space-y-3">
           {FAQ.map((item) => (
             <GemCard key={item.q}>

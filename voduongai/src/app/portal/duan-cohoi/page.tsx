@@ -1,9 +1,13 @@
 import Link from "next/link";
-import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, HelpCircle } from "lucide-react";
+import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
+import { GemCard } from "@/components/portal/ui/GemCard";
+import { GemBadge } from "@/components/portal/ui/GemBadge";
+import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { Button } from "@/components/portal/ui/Button";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -111,46 +115,41 @@ export default function OpportunitiesHubPage() {
       />
 
       {/* Introduction */}
-      <div className="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="mb-3 text-base font-bold text-gray-900">Giới thiệu</h2>
+      <GemCard>
+        <h2 className="gemos-card-title mb-3 text-base font-bold text-gray-900">Giới thiệu</h2>
         <p className="mb-4 text-sm leading-relaxed text-gray-600">
           VO DUONG AI không phải là nền tảng tư vấn đầu tư. Trang này tồn tại vì tôi tin vào sự minh bạch — thay vì chỉ chia sẻ thành công, tôi muốn chia sẻ đầy đủ: những gì tôi đang theo dõi, tại sao, những điều tôi chưa chắc chắn, và những bài học từ sai lầm.
         </p>
         <p className="text-sm leading-relaxed text-gray-600">
           Mọi quyết định tài chính là quyết định của bạn. Nghiên cứu kỹ trước khi tham gia bất kỳ dự án nào.
         </p>
-      </div>
+      </GemCard>
 
       {/* Criteria */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="h-4 w-4 text-emerald-400" />
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Tiêu chí chia sẻ của tôi</p>
-        </div>
+      <section>
+        <SectionHeader eyebrow="Nguyên tắc" title="Tiêu chí chia sẻ của tôi" />
         <div className="space-y-2">
           {CRITERIA.map((c, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-sm">
+            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-token-sm">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
               <p className="text-sm text-gray-600">{c}</p>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Ecosystem cards */}
-      <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các hệ sinh thái đang theo dõi</p>
+      <section>
+        <SectionHeader eyebrow="Đang theo dõi" title="Các hệ sinh thái" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ECOSYSTEMS.map((item) => (
-            <div key={item.title} className="gemos-gem-card rounded-xl p-5">
+            <GemCard key={item.title}>
               <Link href={item.href} className="block">
                 <div className="mb-4 flex items-start justify-between gap-2">
                   <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
                     <item.icon className="h-5 w-5" />
                   </div>
-                  <span className="rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-400">
-                    {item.status}
-                  </span>
+                  <GemBadge tone="locked">{item.status}</GemBadge>
                 </div>
                 <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
                 <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
@@ -160,40 +159,34 @@ export default function OpportunitiesHubPage() {
                 opportunityType={item.status}
                 riskContext={item.description}
               />
-            </div>
+            </GemCard>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* FAQ */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-gray-400" />
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Câu hỏi thường gặp</p>
-        </div>
+      <section>
+        <SectionHeader title="Câu hỏi thường gặp" />
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
+            <GemCard key={item.q}>
+              <p className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
-            </div>
+            </GemCard>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Next step */}
-      <div className="flex items-center justify-between rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
+      <GemCard className="flex items-center justify-between gap-4">
         <div>
           <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-400">Tiếp theo bạn nên...</p>
           <p className="text-sm text-gray-600">Đọc bài viết về các chủ đề liên quan trước khi quyết định bất cứ điều gì.</p>
         </div>
-        <Link
-          href="/portal/nhatkyhoctap"
-          className="ml-4 shrink-0 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-        >
+        <Button href="/portal/nhatkyhoctap" variant="secondary" className="shrink-0">
           Đọc bài viết →
-        </Link>
-      </div>
+        </Button>
+      </GemCard>
     </div>
   );
 }
