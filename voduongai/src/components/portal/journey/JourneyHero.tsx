@@ -1,5 +1,6 @@
 import { Button } from "@/components/portal/ui/Button";
 import { GemCard } from "@/components/portal/ui/GemCard";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 
 /**
  * Answers: "Mình đang ở đâu trên hành trình trưởng thành?"
@@ -8,8 +9,8 @@ export function JourneyHero() {
   return (
     <GemCard variant="featured" className="!p-7 sm:!p-8">
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Hành trình</p>
-      <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">
-        Hành trình mài giũa viên ngọc của bạn
+      <h1 className="mt-2 text-2xl font-extrabold sm:text-3xl">
+        <GradientTitle text="Hành trình mài giũa viên ngọc của bạn" />
       </h1>
       <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
         Mình đang ở đâu trên hành trình trưởng thành? Biết rõ vị trí của mình

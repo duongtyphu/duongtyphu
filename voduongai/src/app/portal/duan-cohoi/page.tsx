@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, HelpCircle } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
@@ -90,7 +91,7 @@ export default function OpportunitiesHubPage() {
           </div>
           <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Dự án & Cơ hội</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Những gì tôi đang theo dõi</h1>
+        <h1 className="text-2xl font-extrabold"><GradientTitle text="Những gì tôi đang theo dõi" /></h1>
         <p className="max-w-2xl text-gray-500">
           Đây là nơi VO DUONG AI chia sẻ các hệ sinh thái đang nghiên cứu, các dự án đang đồng hành, góc nhìn cá nhân, bài học — và cơ hội nếu phù hợp.
         </p>

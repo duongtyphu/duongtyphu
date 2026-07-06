@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { GardenScene } from "@/components/portal/garden/scene/GardenScene";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 import {
   gardenStats,
@@ -79,7 +80,7 @@ export default function KnowledgeGardenPage() {
           {/* LEFT */}
           <div>
             <span className="text-2xl">🌿</span>
-            <h1 className="mt-2 text-3xl font-extrabold text-gray-900">Khu vườn của bạn</h1>
+            <h1 className="mt-2 text-3xl font-extrabold"><GradientTitle text="Khu vườn của bạn" /></h1>
             <p
               className="mt-2 max-w-md bg-clip-text text-lg font-medium italic leading-snug text-transparent"
               style={{ backgroundImage: "linear-gradient(90deg, #2563EB, #7C3AED, #F97316)" }}

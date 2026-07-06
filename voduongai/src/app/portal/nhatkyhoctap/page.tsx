@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Notebook, Clock, Tag } from "lucide-react";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { useCollection } from "@/lib/admin/store";
 import { blogPostsSeed, type AdminBlogPost } from "@/data/admin/content";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
@@ -44,7 +45,7 @@ export default function LearningJournalPage() {
           </div>
           <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Nhật ký học tập</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Learning Journal</h1>
+        <h1 className="text-2xl font-extrabold"><GradientTitle text="Nhật ký học tập" /></h1>
         <p className="max-w-2xl text-gray-500">
           Không gọi là Blog. Đây là nhật ký — những gì tôi đã học, đã ứng dụng thực tế và muốn chia sẻ lại. AI, Affiliate, Marketing, Tư duy và hành trình xây hệ thống.
         </p>

@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { GradientTitle } from "./GradientTitle";
 
 const TONE_GRADIENT: Record<string, string> = {
   blue: "from-blue-50 via-white to-white border-blue-100",
@@ -28,6 +29,7 @@ export function PageHeader({
   action,
   icon: Icon,
   tone = "blue",
+  titleGradient = false,
 }: {
   title: string;
   description?: string;
@@ -35,12 +37,17 @@ export function PageHeader({
   action?: React.ReactNode;
   icon?: LucideIcon;
   tone?: "blue" | "violet" | "orange" | "green";
+  /** Phối màu chữ tiêu đề theo phong cách Companion (gradient + "AI" tô
+      cam riêng) — dùng cho các trang module chính. */
+  titleGradient?: boolean;
 }) {
+  const titleNode = titleGradient ? <GradientTitle text={title} /> : title;
+
   if (!Icon) {
     return (
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-gray-900">{title}</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900">{titleNode}</h1>
           {description && <p className="mt-2 text-sm text-gray-500 sm:text-base">{description}</p>}
         </div>
         {action && <div className="shrink-0">{action}</div>}
@@ -56,7 +63,7 @@ export function PageHeader({
             <Icon className="h-6 w-6" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-2xl font-extrabold text-gray-900 md:text-3xl">{title}</h1>
+            <h1 className="text-2xl font-extrabold text-gray-900 md:text-3xl">{titleNode}</h1>
             {subtitle && <p className="mt-1.5 max-w-xl text-sm font-semibold text-gray-700 md:text-base">{subtitle}</p>}
             {description && <p className="mt-2 max-w-xl text-sm text-gray-500">{description}</p>}
           </div>

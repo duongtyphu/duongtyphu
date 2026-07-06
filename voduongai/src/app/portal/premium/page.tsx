@@ -6,6 +6,7 @@ import { CheckoutButton } from "@/components/portal/CheckoutModal";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { GemLockedOverlay } from "@/components/portal/ui/GemLockedOverlay";
 import { GemBadge } from "@/components/portal/ui/GemBadge";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 
 export const metadata = { title: "Premium | VO DUONG AI" };
 
@@ -93,7 +94,7 @@ export default async function PremiumPage() {
     <div className="space-y-12">
       {/* Hero */}
       <div>
-        <h1 className="text-2xl font-extrabold text-blue-600">Premium</h1>
+        <h1 className="text-2xl font-extrabold"><GradientTitle text="Premium" /></h1>
         <p className="mt-2 text-sm text-gray-500 sm:text-base">
           Khu vực học tập chuyên sâu dành cho thành viên VO DUONG AI.
         </p>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, BookOpen, Zap, ArrowRight } from "lucide-react";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import {
   type AiTool,
   type AiArticle,
@@ -130,11 +131,8 @@ export default function KhongGianAiPage() {
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 md:p-8 shadow-sm space-y-4">
         <SectionLabel>AI Workspace</SectionLabel>
-        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-gray-900 tracking-tight">
-          AI{" "}
-          <span className="bg-gradient-to-r from-[#2563EB] to-[#7C3AED] bg-clip-text text-transparent">
-            Workspace
-          </span>
+        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
+          <GradientTitle text="AI Workspace" />
         </h1>
         <p className="text-base font-semibold text-gray-700">
           Nơi Companion và đội ngũ AI hỗ trợ bạn biến mục tiêu thành kết quả.

@@ -1,6 +1,7 @@
 import { Users, MessageCircle, PlayCircle, HelpCircle, ArrowRight, Sparkles } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 
 export const metadata = {
   title: "Cộng đồng",
@@ -80,7 +81,7 @@ export default function CommunityPage() {
           </div>
           <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Cộng đồng</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-gray-900">Không ai tiến hóa một mình</h1>
+        <h1 className="text-2xl font-extrabold"><GradientTitle text="Không ai tiến hóa một mình" /></h1>
         <p className="max-w-2xl text-gray-500">
           Kết nối với những người cùng hành trình — học hỏi, chia sẻ kinh nghiệm thực tế, cập nhật kiến thức mới và phát triển cùng nhau.
         </p>

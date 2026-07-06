@@ -47,6 +47,7 @@ export default function AcademyHubPage() {
           icon={GraduationCap}
           tone="blue"
           title="Học viện AI"
+          titleGradient
           subtitle="Học AI theo lộ trình, theo kỹ năng và theo mục tiêu thực tế của bạn."
         />
         <p className="max-w-2xl text-gray-500">
