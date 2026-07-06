@@ -1,13 +1,16 @@
+import { Crown } from "lucide-react";
 import { premiumProducts } from "@/data/premium";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { CheckoutButton } from "@/components/portal/CheckoutModal";
+import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { GemLockedOverlay } from "@/components/portal/ui/GemLockedOverlay";
 import { GemBadge } from "@/components/portal/ui/GemBadge";
-import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { Button } from "@/components/portal/ui/Button";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { PillarHero } from "@/components/portal/ui/PillarHero";
+import { getHumanFlowState } from "@/lib/portal/human-flow";
 
 export const metadata = { title: "Premium | VO DUONG AI" };
 
@@ -90,35 +93,59 @@ export default async function PremiumPage() {
     getLiveProducts(),
     getPurchasedIds("product_id"),
   ]);
+  const flow = getHumanFlowState("build");
+  const ownedCount = purchasedProductIds.size;
 
   return (
     <div className="space-y-12">
       {/* Hero */}
-      <div>
-        <h1 className="text-2xl font-extrabold"><GradientTitle text="Premium" /></h1>
-        <p className="mt-2 text-sm text-gray-500 sm:text-base">
-          Khu vực học tập chuyên sâu dành cho thành viên VO DUONG AI.
-        </p>
-      </div>
+      <PillarHero
+        icon={Crown}
+        tone="value"
+        eyebrow="Premium · Value-first"
+        title="Đi xa hơn cùng VO DUONG AI"
+        subtitle="Dành cho người đã dùng thử AI ở khu vực miễn phí và muốn xây một hệ thống làm việc thật — có lộ trình rõ ràng, bài giảng chuyên sâu, và sự đồng hành trực tiếp thay vì tự mò mẫm."
+        quickActions={[
+          { label: "Tham gia Premium", href: "/portal/vdai-academy" },
+          { label: "Đi đến thanh toán", href: "/portal/checkout" },
+        ]}
+      />
+
+      {/* Next Best Action */}
+      <GemCard variant="action" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-brand-blue">
+            Bước tiếp theo
+          </p>
+          <p className="mt-2 text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>
+          <p className="mt-1 text-sm text-gray-600">{flow.reason}</p>
+        </div>
+        <Button href={flow.recommendedRoute} variant="primary" className="shrink-0">
+          {flow.recommendedCTA}
+        </Button>
+      </GemCard>
 
       {/* Companion Guide */}
-      <section className="rounded-2xl border border-violet-100 bg-violet-50 p-5">
-        <div className="flex items-start gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-100">
-            <svg className="h-5 w-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-            </svg>
-          </div>
-          <div>
-            <p className="mb-1 text-sm font-semibold text-violet-800">Premium dành cho ai?</p>
-            <p className="text-sm leading-relaxed text-violet-700">
-              Premium dành cho những ai đã dùng thử AI ở khu vực miễn phí và muốn đi xa hơn — xây một
-              hệ thống làm việc thật với AI, có lộ trình rõ ràng, bài giảng chuyên sâu và sự đồng hành
-              trực tiếp thay vì tự mò mẫm.
-            </p>
-          </div>
-        </div>
-      </section>
+      <CompanionGuide
+        message="Premium dành cho những ai đã dùng thử AI ở khu vực miễn phí và muốn đi xa hơn — không cần vội, chọn đúng lộ trình phù hợp với giai đoạn hiện tại của bạn."
+        action={{ label: "Xem lộ trình học", href: "#lo-trinh" }}
+      />
+
+      {/* Learning / Progress — real, from actual purchases, never fabricated */}
+      <GemCard>
+        <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
+          Trạng thái Premium của bạn
+        </p>
+        {ownedCount > 0 ? (
+          <p className="mt-2 text-sm text-gray-600">
+            Bạn đã sở hữu <span className="font-semibold text-gray-900">{ownedCount}</span> sản phẩm Premium.
+          </p>
+        ) : (
+          <p className="mt-2 text-sm text-gray-500">
+            Bạn chưa sở hữu sản phẩm Premium nào — xem các lựa chọn bên dưới để bắt đầu.
+          </p>
+        )}
+      </GemCard>
 
       {/* Premium Includes */}
       <section>
@@ -137,7 +164,7 @@ export default async function PremiumPage() {
       </section>
 
       {/* Learning Path */}
-      <section>
+      <section id="lo-trinh">
         <SectionHeader title="Lộ trình học" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {LEARNING_PATH.map((step, i) => (

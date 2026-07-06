@@ -134,6 +134,15 @@ export default async function GemHomePage() {
         <OnboardingSummary />
       </div>
 
+      {/* Quick Actions */}
+      <div className="flex flex-wrap gap-3">
+        <Button href="/portal/ckos" variant="secondary">Mở CKOS</Button>
+        <Button href="/portal/hocvienai" variant="secondary">Vào Học viện</Button>
+        <Button href="/portal/workspace" variant="secondary">Mở Workspace</Button>
+        <Button href="/portal/duan-cohoi" variant="secondary">Cơ hội hôm nay</Button>
+        <Button href="/portal/premium" variant="secondary">Xem Premium</Button>
+      </div>
+
       {/* Companion highlight — Companion đồng hành, không phải chatbot rỗng */}
       <GemCard variant="featured" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

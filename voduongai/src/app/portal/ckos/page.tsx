@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Brain } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { PageHeader } from "@/components/portal/ui/PageHeader";
+import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { Button } from "@/components/portal/ui/Button";
 import { CkosQuickSearch } from "@/components/portal/ckos/CkosQuickSearch";
-import { CkosJourneyStatus } from "@/components/portal/ckos/CkosJourneyStatus";
+import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 
@@ -103,16 +103,20 @@ export default async function CkosPage() {
 
   return (
     <div className="space-y-10">
-      <PageHeader
+      <PillarHero
         icon={Brain}
-        tone="violet"
-        title="CKOS"
-        titleGradient
-        subtitle="Đây không phải thư viện, không phải blog — CKOS là bộ não tri thức chuẩn hoá đứng sau mọi gợi ý của Companion."
+        tone="knowledge"
+        eyebrow="CKOS · Knowledge-first"
+        title="Bộ não tri thức của Companion"
+        subtitle="Không phải thư viện để lướt qua, không phải blog để đọc rồi quên — CKOS là nơi mọi Tool, Prompt, Workflow, Resource, Lesson, Best Practice và Case Study được chuẩn hoá thành một nguồn tri thức duy nhất mà Companion dùng để gợi ý cho bạn."
+        quickActions={[
+          { label: "Tìm trong CKOS", href: "/portal/ckos#search" },
+          { label: "Xem Công cụ AI", href: "/portal/tools" },
+        ]}
       />
 
       {/* Quick Search */}
-      <section>
+      <section id="search">
         <SectionHeader eyebrow="Quick Search" title="Tìm trong CKOS" />
         <CkosQuickSearch />
       </section>
@@ -135,7 +139,12 @@ export default async function CkosPage() {
       <section>
         <SectionHeader title="CKOS Dashboard" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <CkosJourneyStatus />
+          <JourneyStatusCard
+            eyebrow="Continue Learning"
+            emptyMessage="Bạn chưa có hành trình học nào đang dang dở trong CKOS — bắt đầu từ Học viện AI."
+            ctaLabel="Tiếp tục học"
+            ctaHref="/portal/hocvienai"
+          />
 
           <GemCard>
             <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">

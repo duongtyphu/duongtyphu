@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, GraduationCap } from "lucide-react";
-import { PageHeader } from "@/components/portal/ui/PageHeader";
+import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
@@ -9,6 +9,9 @@ import { WorkNeedSection, LearningPathSection } from "@/components/portal/ai-spa
 import { AI_TOOLS } from "@/data/khong-gian-ai";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { Button } from "@/components/portal/ui/Button";
+import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
+import { getHumanFlowState } from "@/lib/portal/human-flow";
 
 /**
  * Content Audit sprint: "Theo nhu cầu công việc" và "Lộ trình học AI" đã
@@ -40,32 +43,49 @@ const FAQ = [
 
 export default function AcademyHubPage() {
   const journeys = getAllLearningJourneys();
+  const flow = getHumanFlowState("knowledge");
 
   return (
     <div className="space-y-12">
       {/* Hero */}
-      <div className="space-y-3">
-        <PageHeader
-          icon={GraduationCap}
-          tone="blue"
-          title="Học viện AI"
-          titleGradient
-          subtitle="Học AI theo lộ trình, theo kỹ năng và theo mục tiêu thực tế của bạn."
-        />
-        <p className="max-w-2xl text-gray-500">
-          Học viện không phải nơi chứa khoá học. Đây là nơi tri thức bạn đã học được chuyển hoá
-          thành thực hành thật, năng lực thật và cảm nhận trưởng thành thật. Học xong, hãy sang{" "}
-          <Link href="/portal/aiworkspace" className="font-semibold text-blue-600 hover:underline">
-            AI Workspace
-          </Link>{" "}
-          để thực hành cùng Companion.
-        </p>
-      </div>
+      <PillarHero
+        icon={GraduationCap}
+        tone="learning"
+        eyebrow="Academy · Learning-first"
+        title="Học có hệ thống, thực hành thật"
+        subtitle="Không phải nơi chứa khoá học để xem qua rồi quên. Học viện dẫn bạn qua một hành trình thực hành thật — hiểu đúng, luyện đúng, rồi mang sang AI Workspace để làm ra kết quả cụ thể."
+        quickActions={[
+          { label: "Vào AI Workspace", href: "/portal/aiworkspace" },
+          { label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" },
+        ]}
+      />
+
+      {/* Next Best Action */}
+      <GemCard variant="action" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-brand-blue">
+            Bước tiếp theo
+          </p>
+          <p className="mt-2 text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>
+          <p className="mt-1 text-sm text-gray-600">{flow.reason}</p>
+        </div>
+        <Button href={flow.recommendedRoute} variant="primary" className="shrink-0">
+          {flow.recommendedCTA}
+        </Button>
+      </GemCard>
 
       {/* Companion Guide */}
       <CompanionGuide
         message="Chọn một hành trình bên dưới và bắt đầu từ bước Companion gợi ý — không cần làm hết mọi thứ cùng lúc."
         action={{ label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" }}
+      />
+
+      {/* Learning / Progress */}
+      <JourneyStatusCard
+        eyebrow="Tiến độ học"
+        emptyMessage="Bạn chưa có hành trình học nào đang dang dở — chọn một lộ trình bên dưới để bắt đầu."
+        ctaLabel="Xem lộ trình"
+        ctaHref="/portal/roadmap"
       />
 
       {/* Lộ trình học AI */}
@@ -123,19 +143,16 @@ export default function AcademyHubPage() {
       <LandingPageMissionPilot />
 
       {/* Mentoring CTA */}
-      <div className="rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-6">
-        <h3 className="mb-2 text-base font-bold text-gray-900">Cần đồng hành riêng?</h3>
+      <GemCard>
+        <h3 className="gemos-card-title mb-2 text-base font-bold text-gray-900">Cần đồng hành riêng?</h3>
         <p className="mb-4 text-sm leading-relaxed text-gray-500">
-          Nếu bạn muốn trao đổi trực tiếp về hành trình của mình, hãy kết nối với cộng đồng —
-          không cần chờ đến đúng &ldquo;bài học&rdquo; nào đó.
+          Muốn trao đổi trực tiếp về hành trình của mình? Kết nối cộng đồng — không cần chờ đúng
+          &ldquo;bài học&rdquo; nào đó.
         </p>
-        <Link
-          href="/portal/congdongai"
-          className="inline-block rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-        >
+        <Button href="/portal/congdongai" variant="secondary">
           Kết nối cộng đồng →
-        </Link>
-      </div>
+        </Button>
+      </GemCard>
 
       {/* FAQ */}
       <div className="space-y-4">

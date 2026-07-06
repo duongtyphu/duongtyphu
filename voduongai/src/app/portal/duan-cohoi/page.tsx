@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
+import { PillarHero } from "@/components/portal/ui/PillarHero";
+import { getHumanFlowState } from "@/lib/portal/human-flow";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -85,21 +86,36 @@ const FAQ = [
 ];
 
 export default function OpportunitiesHubPage() {
+  const flow = getHumanFlowState("build");
+
   return (
     <div className="space-y-12">
       {/* Hero */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/20">
-            <LineChart className="h-4 w-4 text-emerald-400" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Dự án & Cơ hội</span>
+      <PillarHero
+        icon={LineChart}
+        tone="opportunity"
+        eyebrow="Projects & Opportunities · Opportunity-first"
+        title="Những gì tôi đang thật sự theo dõi"
+        subtitle="Không phải nơi khuyến nghị đầu tư. Đây là góc nhìn minh bạch về các hệ sinh thái tôi đang tham gia, nghiên cứu hoặc đã rút ra bài học — kể cả những sai lầm."
+        quickActions={[
+          { label: "Xem Tiêu chí đánh giá", href: "#tieu-chi" },
+          { label: "Đọc bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" },
+        ]}
+      />
+
+      {/* Next Best Action */}
+      <GemCard variant="action" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-brand-blue">
+            Bước tiếp theo
+          </p>
+          <p className="mt-2 text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>
+          <p className="mt-1 text-sm text-gray-600">{flow.reason}</p>
         </div>
-        <h1 className="text-2xl font-extrabold"><GradientTitle text="Những gì tôi đang theo dõi" /></h1>
-        <p className="max-w-2xl text-gray-500">
-          Đây là nơi VO DUONG AI chia sẻ các hệ sinh thái đang nghiên cứu, các dự án đang đồng hành, góc nhìn cá nhân, bài học — và cơ hội nếu phù hợp.
-        </p>
-      </div>
+        <Button href={flow.recommendedRoute} variant="primary" className="shrink-0">
+          {flow.recommendedCTA}
+        </Button>
+      </GemCard>
 
       {/* Companion Guide */}
       <CompanionGuide
@@ -126,7 +142,7 @@ export default function OpportunitiesHubPage() {
       </GemCard>
 
       {/* Criteria */}
-      <section>
+      <section id="tieu-chi">
         <SectionHeader eyebrow="Nguyên tắc" title="Tiêu chí chia sẻ của tôi" />
         <div className="space-y-2">
           {CRITERIA.map((c, i) => (
@@ -162,6 +178,21 @@ export default function OpportunitiesHubPage() {
             </GemCard>
           ))}
         </div>
+      </section>
+
+      {/* Learning / Progress — honest: no engagement-tracking exists for this page yet */}
+      <section>
+        <SectionHeader eyebrow="Của bạn" title="Mức độ quan tâm của bạn" />
+        <GemCard>
+          <p className="text-sm text-gray-500">
+            Portal chưa theo dõi bạn đã xem/quan tâm hệ sinh thái nào — tính năng này chưa tồn tại, nên
+            không hiển thị số liệu giả ở đây. Hiện tại, cách tốt nhất để &ldquo;lưu vết&rdquo; quan tâm
+            của bạn là ghi lại vào Nhật ký học tập.
+          </p>
+          <Button href="/portal/nhatkyhoctap" variant="secondary" className="mt-3">
+            Mở nhật ký học tập
+          </Button>
+        </GemCard>
       </section>
 
       {/* FAQ */}
