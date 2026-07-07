@@ -4,6 +4,7 @@ import { JourneyHero } from "@/components/portal/journey/JourneyHero";
 import { RelatedActions } from "@/components/portal/journey/RelatedActions";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { GemCard } from "@/components/portal/ui/GemCard";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
 import { relatedActions } from "@/data/portal/journey-hub";
@@ -46,6 +47,25 @@ export default function JourneyHubPage() {
         <div className="grid gap-5 lg:grid-cols-2">
           <GrowthActivityPanel variant="journey" />
           <GrowthActivityPanel variant="garden" />
+        </div>
+      </section>
+
+      {/* Portal 4.0 Content Creation — trước đây trang này chỉ có số liệu
+       * hoạt động thật, chưa có nội dung giúp người dùng CHIÊM NGHIỆM về
+       * hoạt động đó. Câu hỏi tĩnh, không gắn với số liệu bịa nào. */}
+      <section>
+        <SectionHeader eyebrow="Chiêm nghiệm" title="Vài câu hỏi đáng dừng lại để nghĩ" />
+        <div className="grid gap-4 sm:grid-cols-2">
+          {[
+            "Việc gì tuần này bạn làm khác đi so với một tháng trước?",
+            "Có Output nào bạn tạo ra mà chính bạn cũng bất ngờ vì nó tốt hơn mong đợi?",
+            "Có việc nào bạn từng né tránh, giờ đã dám bắt đầu thử?",
+            "Nếu dừng lại hôm nay, điều gì bạn tự hào nhất về quãng đường đã đi?",
+          ].map((q) => (
+            <GemCard key={q}>
+              <p className="text-sm leading-relaxed text-gray-600">{q}</p>
+            </GemCard>
+          ))}
         </div>
       </section>
 

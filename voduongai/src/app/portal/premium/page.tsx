@@ -154,6 +154,34 @@ export default async function PremiumPage() {
         </div>
       </section>
 
+      {/* Portal 4.0 Content Creation — trước đây "Premium bao gồm" liệt kê
+       * V-Solo/V-Scale cạnh nhau mà không giải thích khác nhau ra sao hay
+       * khi nào nên chuyển từ cái này sang cái kia. */}
+      <section>
+        <SectionHeader eyebrow="Chọn đúng lộ trình" title="V-Solo hay V-Scale?" />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <GemCard>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">Chọn V-Solo nếu...</p>
+            <ul className="mt-2 space-y-2 text-sm leading-relaxed text-gray-600">
+              <li>• Bạn đang làm việc một mình hoặc với đội rất nhỏ.</li>
+              <li>• Bạn chưa có quy trình làm việc ổn định — cần xây từ đầu.</li>
+              <li>• Mục tiêu là có doanh thu/kết quả đầu tiên, chưa cần mở rộng.</li>
+            </ul>
+          </GemCard>
+          <GemCard>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">Chọn V-Scale nếu...</p>
+            <ul className="mt-2 space-y-2 text-sm leading-relaxed text-gray-600">
+              <li>• Quy trình của bạn đã chạy ổn định, giờ cần nhân bản.</li>
+              <li>• Bạn cần chuyển giao công việc cho người khác/đội nhóm.</li>
+              <li>• Mục tiêu là tăng quy mô mà không tăng công sức cá nhân tương ứng.</li>
+            </ul>
+          </GemCard>
+        </div>
+        <p className="mt-3 text-xs text-gray-400">
+          Không chắc? Bắt đầu với V-Solo — hầu hết mọi người cần xây nền tảng vững trước khi nhân bản được gì.
+        </p>
+      </section>
+
       {/* Learning Path */}
       <section id="lo-trinh">
         <SectionHeader title="Lộ trình học" />

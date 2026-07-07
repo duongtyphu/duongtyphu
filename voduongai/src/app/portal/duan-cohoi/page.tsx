@@ -160,6 +160,33 @@ export default function OpportunitiesHubPage() {
         </p>
       </GemCard>
 
+      {/* Portal 4.0 Content Creation — trước đây trang chỉ có tiêu chí chia
+       * sẻ (vì sao ecosystem xuất hiện ở đây), chưa có checklist giúp
+       * người đọc tự đánh giá sự sẵn sàng CỦA HỌ trước khi tham gia. */}
+      <section>
+        <SectionHeader eyebrow="Tự đánh giá" title="Bạn đã sẵn sàng tham gia một dự án chưa?" />
+        <div className="space-y-2">
+          {[
+            "Tôi đã đọc tài liệu gốc (whitepaper/trang chính thức) của dự án, không chỉ đọc bài chia sẻ ở đây.",
+            "Tôi biết rõ số tiền mình bỏ vào là số tiền tôi chấp nhận mất hoàn toàn.",
+            "Tôi hiểu ít nhất một rủi ro cụ thể của dự án này, không chỉ biết lợi ích.",
+            "Tôi không tham gia vì thấy người khác tham gia — tôi có lý do riêng của mình.",
+            "Tôi biết mình sẽ dừng lại ở đâu nếu mọi việc không như kỳ vọng.",
+          ].map((item, i) => (
+            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-token-sm">
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">
+                {i + 1}
+              </span>
+              <p className="text-sm text-gray-600">{item}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-gray-400">
+          Nếu bạn trả lời &ldquo;chưa&rdquo; cho bất kỳ câu nào ở trên, đó không phải là dấu hiệu xấu — đó là
+          dấu hiệu nên đọc thêm trước khi quyết định.
+        </p>
+      </section>
+
       {/* Criteria */}
       <section id="tieu-chi">
         <SectionHeader eyebrow="Nguyên tắc" title="Tiêu chí chia sẻ của tôi" />

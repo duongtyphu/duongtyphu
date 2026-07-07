@@ -119,6 +119,32 @@ export default function AcademyHubPage() {
         </div>
       </div>
 
+      {/* Portal 4.0 Content Creation — trước đây Academy chưa nói rõ một
+       * Journey cần điều kiện gì trước khi bắt đầu, hay "xong" nghĩa là gì.
+       * Nội dung giáo dục thật, áp dụng cho mọi hành trình. */}
+      <section>
+        <SectionHeader eyebrow="Trước khi chọn một hành trình" title="Cần gì trước, và 'xong' nghĩa là gì" />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <GemCard>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">Điều kiện tiên quyết</p>
+            <ul className="mt-2 space-y-2 text-sm leading-relaxed text-gray-600">
+              <li>• Bạn không cần biết code hay có nền tảng kỹ thuật.</li>
+              <li>• Bạn cần một công việc/mục tiêu cụ thể đang muốn làm tốt hơn — Academy dạy qua việc thật, không dạy lý thuyết suông.</li>
+              <li>• Bạn cần khoảng 20-30 phút liên tục mỗi lần thực hành, thay vì đọc lướt qua nhiều bài cùng lúc.</li>
+            </ul>
+          </GemCard>
+          <GemCard>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">Tiêu chí hoàn thành</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-600">
+              Một hành trình không &ldquo;xong&rdquo; vì bạn đã đọc hết bài viết. Nó xong khi bạn tạo ra được
+              một Output thật ở Workspace — một bản nháp, một quy trình, một kết quả — mà bạn có thể dùng
+              lại cho công việc thật của mình. Nếu chưa có Output nào, hành trình vẫn đang dang dở, dù bạn
+              đã đọc bao nhiêu bài.
+            </p>
+          </GemCard>
+        </div>
+      </section>
+
       {/* Learning Journey — Academy Operating System */}
       <div className="space-y-4">
         <SectionHeader eyebrow="Journey" title="Hành trình của bạn" />

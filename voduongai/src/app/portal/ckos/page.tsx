@@ -131,6 +131,38 @@ export default async function CkosPage() {
         <CkosQuickSearch />
       </section>
 
+      {/* Portal 4.0 Content Creation — CKOS trước đây chỉ liệt kê 7 loại tri
+       * thức mà không giải thích khác nhau ra sao hay nên bắt đầu từ đâu.
+       * Đây là nội dung giáo dục thật (không phải tổ chức lại dữ liệu). */}
+      <section>
+        <SectionHeader
+          eyebrow="Mới bắt đầu?"
+          title="7 loại tri thức khác nhau ra sao"
+          description="Mỗi loại trả lời một câu hỏi khác nhau — biết câu hỏi nào cần trả lời sẽ giúp bạn tìm đúng thứ nhanh hơn."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Tool", q: "Tôi nên dùng công cụ gì?" },
+            { label: "Prompt", q: "Tôi nên yêu cầu AI thế nào?" },
+            { label: "Workflow", q: "Các bước cần làm theo thứ tự nào?" },
+            { label: "Resource", q: "Tôi cần đọc/xem thêm tài liệu gì?" },
+            { label: "Lesson", q: "Tôi cần hiểu khái niệm nào trước?" },
+            { label: "Best Practice", q: "Người khác đã làm đúng cách như thế nào?" },
+            { label: "Case Study", q: "Việc này thực tế đã tạo ra kết quả gì?" },
+          ].map((item) => (
+            <GemCard key={item.label}>
+              <p className="gemos-card-title text-sm font-bold text-gray-900">{item.label}</p>
+              <p className="mt-2 text-xs leading-relaxed text-gray-500">{item.q}</p>
+            </GemCard>
+          ))}
+        </div>
+        <p className="mt-4 text-sm text-gray-500">
+          Chưa biết bắt đầu từ đâu? Nếu bạn mới, hãy xem <span className="font-semibold text-gray-900">Tool</span> trước
+          — nó cụ thể và dễ dùng ngay. Nếu bạn đã có công cụ nhưng chưa biết dùng hiệu quả, xem{" "}
+          <span className="font-semibold text-gray-900">Prompt</span> và <span className="font-semibold text-gray-900">Workflow</span> tiếp theo.
+        </p>
+      </section>
+
       {/* Portal 4.0 Phase 2 — Companion Presence: giọng "tò mò", riêng cho
        * CKOS. Trước đây khối này lặp lại y hệt flow.nextBestAction/reason đã
        * hiển thị ở Home (cùng engine, cùng câu chữ) — xoá lặp, thay bằng 1
