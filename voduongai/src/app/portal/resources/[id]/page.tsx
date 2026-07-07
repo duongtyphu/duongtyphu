@@ -31,6 +31,11 @@ export default async function ResourceDetailPage({ params }: PageProps<"/portal/
         <h1 className="mt-4 text-2xl font-extrabold text-gray-900">{resource.title}</h1>
         <p className="mt-4 leading-relaxed text-gray-900">{resource.description}</p>
 
+        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Khi nào nên dùng</p>
+          <p className="mt-2 text-sm leading-relaxed text-blue-900">{resource.whenToUse}</p>
+        </div>
+
         <div className="mt-8">
           <LeadGate
             source={`resource:${resource.id}`}

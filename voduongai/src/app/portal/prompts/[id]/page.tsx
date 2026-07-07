@@ -40,6 +40,16 @@ export default async function PromptDetailPage({ params }: PageProps<"/portal/pr
           </p>
         </div>
 
+        <div className="mt-4 rounded-xl border border-blue-100 bg-blue-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Khi nào nên dùng</p>
+          <p className="mt-2 text-sm leading-relaxed text-blue-900">{prompt.whenToUse}</p>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-violet-100 bg-violet-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-violet-700">Bước tiếp theo</p>
+          <p className="mt-2 text-sm leading-relaxed text-violet-900">{prompt.nextStep}</p>
+        </div>
+
         <div className="mt-6">
           <LeadGate
             source={`prompt:${prompt.id}`}

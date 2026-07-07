@@ -36,8 +36,16 @@ export default async function CaseStudiesPage() {
       </div>
 
       {caseStudies.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-900">
-          Chưa có case study nào được đăng. Quay lại sau nhé!
+        <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-700">
+          <p className="font-semibold text-gray-900">Chưa có Case Study nào được đăng.</p>
+          <p className="mx-auto mt-2 max-w-md">
+            Không phải vì chưa ai đạt được kết quả — mỗi Case Study cần thời gian thu thập số liệu thật và
+            sự đồng ý của người trong câu chuyện trước khi đăng công khai. Trong lúc chờ, Nhật ký học tập
+            cũng ghi lại những kết quả thực tế, chỉ chưa được biên tập thành case study đầy đủ.
+          </p>
+          <a href="/portal/nhatkyhoctap" className="mt-4 inline-block text-sm font-semibold text-brand-blue hover:underline">
+            Xem Nhật ký học tập →
+          </a>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">

@@ -58,6 +58,9 @@ export default async function ResourcesPage() {
 
       <section>
         <h2 className="text-lg font-bold text-gray-900">Thư viện tài nguyên</h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Bộ tài nguyên biên tập sẵn của VO DUONG AI — mỗi mục có ghi rõ khi nào nên dùng, không chỉ mô tả nội dung.
+        </p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {freeResources.map((r) => (
             <ResourceCard

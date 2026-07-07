@@ -16,6 +16,17 @@ export default function SopPage() {
           <div key={s.title} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
             <h3 className="text-sm font-bold text-gray-900">{s.title}</h3>
             <p className="mt-2 text-sm text-gray-900">{s.description}</p>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-blue-600">Khi nào dùng</p>
+            <p className="mt-1 text-sm text-gray-600">{s.whenToUse}</p>
+            <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-blue-600">Các bước</p>
+            <ol className="mt-1 space-y-1.5">
+              {s.steps.map((step, i) => (
+                <li key={i} className="flex gap-2 text-sm text-gray-600">
+                  <span className="shrink-0 font-semibold text-gray-400">{i + 1}.</span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
           </div>
         ))}
       </div>
