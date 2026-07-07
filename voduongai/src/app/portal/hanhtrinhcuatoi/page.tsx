@@ -5,7 +5,7 @@ import { RelatedActions } from "@/components/portal/journey/RelatedActions";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
 import { relatedActions } from "@/data/portal/journey-hub";
 
 export const metadata = { title: "Hành trình", description: "Mỗi viên ngọc quý cần thời gian để mài giũa — đây là lộ trình của riêng bạn." };
@@ -35,9 +35,10 @@ export default function JourneyHubPage() {
     <div className="space-y-10">
       <JourneyHero />
 
-      <CompanionGuide
-        message="Không phải mỗi ngày đều cần có gì đó mới để xem. Đôi khi nhìn lại quãng đường đã đi cũng là một hình thức tiến bộ."
-        action={{ label: "Xem hoạt động gần đây", href: "/portal/nhatkyhoctap" }}
+      <CompanionMemoryLine
+        emptyMessage="Companion chưa có gì để nhớ về hành trình của bạn — nó sẽ bắt đầu ghi nhớ từ lần đầu tiên bạn làm việc trong Workspace."
+        contextTemplate="Lần gần nhất ở đây, bạn đã {activity}. Muốn tiếp tục từ đó, hay bắt đầu một hướng mới hôm nay?"
+        action={{ label: "Mở Workspace", href: "/portal/workspace" }}
       />
 
       <section>

@@ -10,7 +10,7 @@ import { CkosQuickSearch } from "@/components/portal/ckos/CkosQuickSearch";
 import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 
 export const metadata = {
@@ -136,8 +136,9 @@ export default async function CkosPage() {
        * hiển thị ở Home (cùng engine, cùng câu chữ) — xoá lặp, thay bằng 1
        * câu Companion đúng ngữ cảnh "đang khám phá tri thức", không phải gợi
        * ý hành động trong ngày (đó là việc của Home). */}
-      <CompanionGuide
-        message="Mỗi lần bạn tìm một Tool hay Prompt, thử nhìn thêm phần 'Tri thức liên quan' bên dưới — thường có một mảnh ghép bạn chưa nghĩ tới."
+      <CompanionMemoryLine
+        emptyMessage="Companion chưa biết bạn đã xem qua phần nào trong CKOS — cứ khám phá tự do, mỗi lần tìm một Tool hay Prompt, thử nhìn thêm phần 'Tri thức liên quan' bên dưới."
+        contextTemplate="Lần gần nhất bạn ở đây, bạn đã {activity}. Thử tìm một mảnh tri thức liên quan đến việc đó xem sao."
         action={{ label: "Tìm trong CKOS", href: "/portal/ckos#search" }}
       />
 

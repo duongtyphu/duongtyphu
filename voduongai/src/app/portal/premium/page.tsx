@@ -109,9 +109,13 @@ export default async function PremiumPage() {
         ]}
       />
 
-      {/* Companion Guide */}
+      {/* Companion Guide — dùng ownedCount thật (Supabase), không phải câu chung chung cho mọi người */}
       <CompanionGuide
-        message="Không cần chọn gói cao nhất để bắt đầu. Chọn đúng giai đoạn bạn đang ở — Người mới, Xây hệ thống, Nhân bản hay Đội nhóm — Companion sẽ điều chỉnh gợi ý theo đó."
+        message={
+          ownedCount > 0
+            ? `Bạn đã có ${ownedCount} sản phẩm Premium — Companion nhớ điều đó. Bước tiếp theo có thể là một Workshop hoặc Masterclass để đi sâu hơn.`
+            : "Bạn chưa sở hữu sản phẩm Premium nào. Không cần chọn gói cao nhất để bắt đầu — chọn đúng giai đoạn bạn đang ở, Companion sẽ điều chỉnh gợi ý theo đó."
+        }
         action={{ label: "Xem lộ trình học", href: "#lo-trinh" }}
       />
 

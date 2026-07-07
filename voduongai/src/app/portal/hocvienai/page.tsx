@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight, GraduationCap, BookOpen, Dumbbell, Sparkles, TrendingUp } from "lucide-react";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
@@ -70,8 +70,9 @@ export default function AcademyHubPage() {
       />
 
       {/* Companion Guide */}
-      <CompanionGuide
-        message="Đừng cố học hết mọi thứ trong một ngày. Chọn một hành trình, làm đúng một bước Companion vừa gợi ý, rồi dừng lại — hôm sau quay lại làm bước kế tiếp."
+      <CompanionMemoryLine
+        emptyMessage="Bạn chưa bắt đầu hành trình học nào trong Workspace — chọn một lộ trình bên dưới, Companion sẽ bắt đầu đồng hành từ đó."
+        contextTemplate="Lần gần nhất, bạn đã {activity}. Đừng cố học hết mọi thứ trong một ngày — làm tiếp đúng một bước từ đó rồi dừng lại."
         action={{ label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" }}
       />
 
