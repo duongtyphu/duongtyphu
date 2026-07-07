@@ -38,8 +38,8 @@ export function WelcomeHero({
         {welcomeMessage}
       </h1>
       <p className="relative mt-3 max-w-xl text-sm leading-relaxed text-white/85 sm:text-base">
-        Đây không phải nơi chứa nội dung — đây là nơi bạn được mài giũa: nhìn thấy, hiểu, thực hành,
-        kiến tạo, chia sẻ, phản chiếu, tiến hoá và để lại di sản.
+        Mỗi lần bạn mở Gem Home, Companion đã xem lại bạn đang ở đâu và chọn sẵn một việc đáng làm nhất
+        hôm nay — bạn không cần tự lục lại từ đầu mỗi lần quay lại.
       </p>
       <Link href="/portal/story" className="relative mt-3 block max-w-xl text-sm italic text-white/70 hover:text-white">
         {reflectionPrompt}

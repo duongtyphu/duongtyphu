@@ -148,11 +148,11 @@ export default async function GemHomePage() {
       <GemCard variant="featured" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-brand-blue">
-            Companion của bạn
+            Người đồng hành, không phải trợ lý chờ lệnh
           </p>
           <p className="mt-2 max-w-xl text-sm leading-relaxed text-gray-600">
-            {flow.momentumMessage} Companion đang theo dõi hành trình của bạn và sẵn sàng gợi ý bước tiếp
-            theo bất cứ lúc nào.
+            {flow.momentumMessage} Bạn không cần hỏi Companion nên làm gì — Companion đã chuẩn bị sẵn câu
+            trả lời mỗi khi bạn mở Portal.
           </p>
         </div>
         <Button href="/portal/companion" variant="primary" className="shrink-0">
@@ -188,7 +188,7 @@ export default async function GemHomePage() {
       <section>
         <SectionHeader
           eyebrow="CKOS"
-          title="Bộ não tri thức của Companion"
+          title="Tri thức bạn cần, đã sắp xếp sẵn"
           action={
             <Link href="/portal/ckos" className="text-sm font-semibold text-blue-600 hover:underline">
               Mở CKOS →
@@ -284,12 +284,13 @@ export default async function GemHomePage() {
 
       {/* Premium preview */}
       <section>
-        <SectionHeader eyebrow="Premium" title="Đi xa hơn cùng Premium" />
+        <SectionHeader eyebrow="Premium" title="Khi tự học một mình là chưa đủ" />
         <GemCard variant="action" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <GemBadge tone="premium" />
             <p className="text-sm leading-relaxed text-gray-600">
-              V-Solo, V-Scale và các buổi Masterclass chuyên sâu dành cho thành viên Premium.
+              Premium là nơi bạn có người đồng hành thật khi tự học không còn đủ — không phải thêm bài
+              giảng, mà thêm một người biết bạn đang mắc ở đâu.
             </p>
           </div>
           <Button href="/portal/premium" variant="secondary" className="shrink-0">

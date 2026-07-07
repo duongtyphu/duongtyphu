@@ -108,9 +108,9 @@ export default async function CkosPage() {
       <PillarHero
         icon={Brain}
         tone="knowledge"
-        eyebrow="CKOS · Knowledge-first"
-        title="Bộ não tri thức của Companion"
-        subtitle="Không phải thư viện để lướt qua, không phải blog để đọc rồi quên — CKOS là nơi mọi Tool, Prompt, Workflow, Resource, Lesson, Best Practice và Case Study được chuẩn hoá thành một nguồn tri thức duy nhất mà Companion dùng để gợi ý cho bạn."
+        eyebrow="CKOS — Nơi tri thức được kết nối"
+        title="Mọi thứ bạn biết, nối lại thành một hệ thống"
+        subtitle="Một Prompt hay không có giá trị nếu bạn không biết dùng nó với công cụ nào, theo quy trình nào, để đạt kết quả gì. CKOS tồn tại để làm đúng một việc: khi bạn tìm một mảnh tri thức, nó chỉ ra ngay những mảnh khác cần đi cùng — rồi Companion giúp bạn ráp chúng lại thành hành động."
         quickActions={[
           { label: "Tìm trong CKOS", href: "/portal/ckos#search" },
           { label: "Xem Công cụ AI", href: "/portal/tools" },
@@ -134,7 +134,7 @@ export default async function CkosPage() {
 
       {/* Companion Recommendation */}
       <section>
-        <SectionHeader eyebrow="Companion" title="Companion gợi ý" />
+        <SectionHeader eyebrow="Companion đề xuất" title="Việc đáng làm nhất lúc này" />
         <GemCard variant="featured" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>
@@ -148,7 +148,7 @@ export default async function CkosPage() {
 
       {/* Dashboard: Continue Learning / Recently Viewed / Suggested Knowledge */}
       <section>
-        <SectionHeader title="CKOS Dashboard" />
+        <SectionHeader eyebrow="Ngay bây giờ" title="Bạn đang ở đâu trong hành trình tri thức" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <JourneyStatusCard
             eyebrow="Continue Learning"
@@ -159,17 +159,17 @@ export default async function CkosPage() {
 
           <GemCard>
             <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
-              Recently Viewed
+              Vừa xem gần đây
             </p>
             <p className="mt-2 text-sm text-gray-500">
-              CKOS chưa có tính năng theo dõi lịch sử xem — sẽ bổ sung ở một phase sau. Hiện tại đây là
-              trạng thái thật, không phải danh sách giả.
+              Companion chưa nhớ được bạn vừa xem gì — tính năng ghi nhớ lịch sử sẽ tới trong một bản cập
+              nhật sau. Cho tới lúc đó, dùng ô tìm kiếm phía trên mỗi khi muốn quay lại thứ vừa đọc.
             </p>
           </GemCard>
 
           <GemCard>
             <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
-              Suggested Knowledge
+              Companion chọn cho bạn
             </p>
             {featuredTool ? (
               <>

@@ -53,9 +53,9 @@ export default function AcademyHubPage() {
       <PillarHero
         icon={GraduationCap}
         tone="learning"
-        eyebrow="Academy · Learning-first"
-        title="Học có hệ thống, thực hành thật"
-        subtitle="Không phải nơi chứa khoá học để xem qua rồi quên. Học viện dẫn bạn qua một hành trình thực hành thật — hiểu đúng, luyện đúng, rồi mang sang AI Workspace để làm ra kết quả cụ thể."
+        eyebrow="Academy — Nơi năng lực được rèn"
+        title="Bạn không học AI. Bạn học cách làm việc khác đi"
+        subtitle="Một bài học tốt không kết thúc bằng việc bạn đọc xong — nó kết thúc bằng việc bạn làm ra một kết quả mà tuần trước bạn chưa làm được. Academy chọn cho bạn đúng một bước tiếp theo, không phải một danh sách khoá học để tự bơi."
         quickActions={[
           { label: "Vào AI Workspace", href: "/portal/aiworkspace" },
           { label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" },
@@ -87,7 +87,7 @@ export default function AcademyHubPage() {
 
       {/* Companion Guide */}
       <CompanionGuide
-        message="Chọn một hành trình bên dưới và bắt đầu từ bước Companion gợi ý — không cần làm hết mọi thứ cùng lúc."
+        message="Đừng cố học hết mọi thứ trong một ngày. Chọn một hành trình, làm đúng một bước Companion vừa gợi ý, rồi dừng lại — hôm sau quay lại làm bước kế tiếp."
         action={{ label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" }}
       />
 
@@ -108,8 +108,8 @@ export default function AcademyHubPage() {
       {/* Học AI theo công cụ — khám phá, không phải Toolbox thực thi (Toolbox ở AI Workspace) */}
       <div className="space-y-4">
         <SectionHeader
-          eyebrow="Công cụ AI"
-          title="Học AI theo công cụ"
+          eyebrow="Một cách khác để bắt đầu"
+          title="Chưa biết học gì? Chọn theo công cụ bạn đã có sẵn"
           action={
             <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
               Xem tất cả công cụ <ChevronRight className="h-4 w-4" />

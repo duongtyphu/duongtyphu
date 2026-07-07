@@ -95,9 +95,9 @@ export default function OpportunitiesHubPage() {
       <PillarHero
         icon={LineChart}
         tone="opportunity"
-        eyebrow="Projects & Opportunities · Opportunity-first"
-        title="Những gì tôi đang thật sự theo dõi"
-        subtitle="Không phải nơi khuyến nghị đầu tư. Đây là góc nhìn minh bạch về các hệ sinh thái tôi đang tham gia, nghiên cứu hoặc đã rút ra bài học — kể cả những sai lầm."
+        eyebrow="Projects & Opportunities — Trước khi quyết định"
+        title="Bạn không cần biết hết. Bạn chỉ cần chọn đúng điểm bắt đầu"
+        subtitle="Trang này không xếp hạng cơ hội nào tốt hơn cơ hội nào. Nó giúp bạn trả lời một câu hỏi trước khi đọc bất kỳ dự án nào: với tình huống của bạn hôm nay, nên bắt đầu tìm hiểu từ đâu — và cần biết trước điều gì để không mất tiền vì thiếu hiểu biết."
         quickActions={[
           { label: "Xem Tiêu chí đánh giá", href: "#tieu-chi" },
           { label: "Đọc bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" },
@@ -120,7 +120,7 @@ export default function OpportunitiesHubPage() {
 
       {/* Companion Guide */}
       <CompanionGuide
-        message="Hãy đọc phần Giới thiệu và Tiêu chí đánh giá trước khi xem bất kỳ dự án nào. Tất cả chia sẻ ở đây là góc nhìn cá nhân — không phải lời khuyên tài chính."
+        message="Trước khi bấm vào bất kỳ dự án nào bên dưới, hãy đọc Tiêu chí chia sẻ trước — nó giải thích vì sao một hệ sinh thái xuất hiện ở đây và điều gì KHÔNG được đảm bảo."
         action={{ label: "Xem bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" }}
       />
 
@@ -164,12 +164,16 @@ export default function OpportunitiesHubPage() {
 
       {/* Introduction */}
       <GemCard>
-        <h2 className="gemos-card-title mb-3 text-base font-bold text-gray-900">Giới thiệu</h2>
+        <h2 className="gemos-card-title mb-3 text-base font-bold text-gray-900">Vì sao trang này tồn tại</h2>
         <p className="mb-4 text-sm leading-relaxed text-gray-600">
-          VO DUONG AI không phải là nền tảng tư vấn đầu tư. Trang này tồn tại vì tôi tin vào sự minh bạch — thay vì chỉ chia sẻ thành công, tôi muốn chia sẻ đầy đủ: những gì tôi đang theo dõi, tại sao, những điều tôi chưa chắc chắn, và những bài học từ sai lầm.
+          Hầu hết nội dung &ldquo;cơ hội đầu tư&rdquo; trên mạng chỉ kể phần thắng. Trang này làm ngược
+          lại: mỗi hệ sinh thái ở đây đều có phần &ldquo;tại sao mình chưa chắc chắn&rdquo; và bài học từ
+          chính những lần mình đã sai — vì một quyết định tốt cần cả hai phía của câu chuyện, không chỉ
+          phía đẹp.
         </p>
         <p className="text-sm leading-relaxed text-gray-600">
-          Mọi quyết định tài chính là quyết định của bạn. Nghiên cứu kỹ trước khi tham gia bất kỳ dự án nào.
+          VO DUONG AI không phải nền tảng tư vấn đầu tư, và thứ tự hiển thị ở đây không phải một bảng xếp
+          hạng &ldquo;tốt nhất&rdquo;. Quyết định tài chính cuối cùng luôn là của bạn.
         </p>
       </GemCard>
 

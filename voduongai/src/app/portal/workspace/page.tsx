@@ -22,9 +22,9 @@ export default function WorkspacePage() {
       <PillarHero
         icon={Rocket}
         tone="opportunity"
-        eyebrow="Workspace · Execution-first"
-        title="Bạn đang làm việc, không phải lưu trữ"
-        subtitle="Đây là nơi một ý tưởng trở thành kết quả cụ thể — Companion cùng bạn đi qua từng bước, bạn viết/tạo ra Output thật, không phải chỉ ghi chú lại rồi bỏ đó."
+        eyebrow="Workspace — Nơi việc thật sự xong"
+        title="Ý tưởng chỉ có giá trị khi trở thành một thứ xong việc"
+        subtitle="Không phải ghi chú để đọc lại sau. Ở đây, mỗi phiên làm việc kết thúc bằng một Output thật — một bản nháp, một kế hoạch, một sản phẩm — mà bạn có thể dùng ngay hoặc gửi đi, không phải một ý tưởng nằm im trong hộp lưu trữ."
         quickActions={[
           { label: "Bắt đầu từ CKOS", href: "/portal/ckos" },
           { label: "Bắt đầu từ Academy", href: "/portal/hocvienai" },

@@ -103,9 +103,9 @@ export default async function PremiumPage() {
       <PillarHero
         icon={Crown}
         tone="value"
-        eyebrow="Premium · Value-first"
-        title="Đi xa hơn cùng VO DUONG AI"
-        subtitle="Dành cho người đã dùng thử AI ở khu vực miễn phí và muốn xây một hệ thống làm việc thật — có lộ trình rõ ràng, bài giảng chuyên sâu, và sự đồng hành trực tiếp thay vì tự mò mẫm."
+        eyebrow="Premium — Bước sau khi đã thử"
+        title="Miễn phí giúp bạn bắt đầu. Đây là phần giúp bạn không dừng lại"
+        subtitle="Bạn đã thấy AI có thể giúp gì. Câu hỏi tiếp theo không phải là học thêm gì nữa, mà là ai đi cùng khi mọi thứ không như kế hoạch. Premium là lộ trình có người đồng hành thật, không phải thêm một chồng bài giảng để tự xem."
         quickActions={[
           { label: "Tham gia Premium", href: "/portal/vdai-academy" },
           { label: "Đi đến thanh toán", href: "/portal/checkout" },
@@ -128,7 +128,7 @@ export default async function PremiumPage() {
 
       {/* Companion Guide */}
       <CompanionGuide
-        message="Premium dành cho những ai đã dùng thử AI ở khu vực miễn phí và muốn đi xa hơn — không cần vội, chọn đúng lộ trình phù hợp với giai đoạn hiện tại của bạn."
+        message="Không cần chọn gói cao nhất để bắt đầu. Chọn đúng giai đoạn bạn đang ở — Người mới, Xây hệ thống, Nhân bản hay Đội nhóm — Companion sẽ điều chỉnh gợi ý theo đó."
         action={{ label: "Xem lộ trình học", href: "#lo-trinh" }}
       />
 
