@@ -17,12 +17,15 @@ export type HumanFlowState = {
   hardTimeLine?: string;
 };
 
+// Portal 4.0 Content Reconstruction: 4 route OS hub cũ (/knowledge, /build,
+// /connect, /legacy) đã bị xoá (xem PORTAL_CONTENT_RECONSTRUCTION_PLAN.md
+// mục B.9) — trỏ lại đúng pillar thật đang tồn tại thay thế.
 const OS_ROUTE: Record<PortalOS, string> = {
   journey: "/portal/hanhtrinhcuatoi",
-  knowledge: "/portal/knowledge",
-  build: "/portal/build",
-  connect: "/portal/connect",
-  legacy: "/portal/legacy",
+  knowledge: "/portal/ckos",
+  build: "/portal/workspace",
+  connect: "/portal/congdongai",
+  legacy: "/portal/hanhtrinhcuatoi",
 };
 
 const NEXT_OS: Record<PortalOS, PortalOS> = {

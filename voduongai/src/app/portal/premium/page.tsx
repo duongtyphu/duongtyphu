@@ -1,5 +1,4 @@
 import { Crown } from "lucide-react";
-import { premiumProducts } from "@/data/premium";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { CheckoutButton } from "@/components/portal/CheckoutModal";
@@ -258,19 +257,15 @@ export default async function PremiumPage() {
         </section>
       )}
 
-      <section>
-        <h2 className="text-lg font-bold text-gray-900">Danh mục Premium</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {premiumProducts.map((p) => (
-            <GemCard key={p.id} variant="locked">
-              <GemBadge tone="locked">{p.type}</GemBadge>
-              <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
-              <p className="mt-2 text-sm text-gray-600">{p.description}</p>
-              <GemLockedOverlay />
-            </GemCard>
-          ))}
-        </div>
-      </section>
+      {/* Portal 4.0 Content Reconstruction — Bug Premium đã sửa:
+       * "Danh mục Premium" tĩnh trước đây luôn hiển thị variant="locked" +
+       * GemLockedOverlay cho 5 sản phẩm tĩnh (pp1-pp5) không hề khớp với
+       * bảng `products` thật — nghĩa là những sản phẩm này KHÔNG BAO GIỜ có
+       * thể "mở khoá" được (không có CheckoutButton, không có id thật), mâu
+       * thuẫn ngay bên dưới section "Sản phẩm đang mở bán" (thật, có kiểm
+       * tra sở hữu đúng). Xoá hẳn section tĩnh này thay vì sửa thành nửa-vời
+       * — nguồn sự thật duy nhất về sản phẩm Premium giờ là bảng `products`
+       * thật ở trên. Xem PORTAL_CONTENT_RECONSTRUCTION_PLAN.md mục B.6. */}
 
       {/* FAQ */}
       <section>

@@ -1,75 +1,50 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import {
-  BookOpen,
-  GraduationCap,
-  PenTool,
-  Bookmark,
-  MessageCircleQuestion,
-  Heart,
-  Leaf,
-  Sun,
-  Droplet,
-  Star,
-  Sprout,
-  Quote,
-  type LucideIcon,
-} from "lucide-react";
+import { Leaf, Sun, Sprout, Heart, Quote } from "lucide-react";
 import { GardenScene } from "@/components/portal/garden/scene/GardenScene";
 import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
-import {
-  gardenStats,
-  RECENT_ACTIVITIES,
-  GARDEN_QUOTE_SMALL,
-  GARDEN_CARE_TIP,
-  CARE_SUGGESTIONS,
-  GARDEN_FOOTER_QUOTE,
-  type LeafActionKey,
-} from "@/data/portal/knowledge-garden";
+import { GARDEN_CARE_TIP, CARE_SUGGESTIONS, GARDEN_FOOTER_QUOTE } from "@/data/portal/knowledge-garden";
+import { getGardenSummary, getRecentActivity, type GardenSummary, type ActivityEntry } from "@/lib/portal/foundation/growth-view";
 
 /**
- * Khu vườn của bạn — được xây theo Official Design Reference
- * VDAI-GARDEN-001 (xem design-system/visual-dna/references/). Đây là
- * bản tái hiện (RECREATE MODE), không redesign — bố cục, màu sắc, vị
- * trí visual chính giữ đúng theo ảnh Founder đã duyệt.
+ * Portal 4.0 Content Reconstruction — Journey Garden (nguồn duy nhất).
+ *
+ * Trước đây trang này có 2 hệ thống dữ liệu KHU VƯỜN chạy song song: (1)
+ * `gardenStats`/`RECENT_ACTIVITIES` — 100% seed tĩnh (Lv. cố định, % lên cấp
+ * cố định, "12 ngày liên tiếp" cố định — tự nhận trong code cũ là "seed data
+ * mẫu"), và (2) `GrowthActivityPanel variant="garden"` — dữ liệu THẬT đọc từ
+ * `growth-view.ts`. Cộng thêm 1 bản thứ 3 ở `/portal/story`
+ * (`LivingGardenCard`). Theo PORTAL_CONTENT_RECONSTRUCTION_PLAN.md (mục
+ * B.3/B.7): chỉ giữ 1 Garden — dùng đúng `growth-view.ts` làm nguồn duy
+ * nhất, xoá mọi số liệu tĩnh giả. `GardenScene` (hình minh hoạ cây) giữ
+ * nguyên vì đây là art trang trí, không phải số liệu.
  */
 
-export const metadata = {
-  title: "Khu vườn của bạn",
-  description: "Mỗi hành động nhỏ, đều đang vun đắp cho sự trưởng thành.",
-};
-
-const LEAF_ICON: Record<LeafActionKey, LucideIcon> = {
-  read: BookOpen,
-  learn: GraduationCap,
-  practice: PenTool,
-  save: Bookmark,
-  ask: MessageCircleQuestion,
-  share: Heart,
-  challenge: Star,
-  explore: Sprout,
-};
-
-const STATS = [
-  { icon: Leaf, value: String(gardenStats.totalLeaves), label: "Chiếc lá", tone: "text-green-600" },
-  { icon: Sun, value: String(gardenStats.streakDays), label: "Ngày hoạt động", tone: "text-amber-500" },
-  { icon: Droplet, value: `${gardenStats.totalHours}h`, label: "Thời gian học", tone: "text-blue-500" },
-  { icon: Star, value: String(gardenStats.topicsCompleted), label: "Chủ đề khám phá", tone: "text-yellow-500" },
-];
-
-const RECENT_TONE: Record<LeafActionKey, string> = {
-  read: "text-green-600 bg-green-50",
-  learn: "text-green-600 bg-green-50",
-  practice: "text-blue-500 bg-blue-50",
-  save: "text-amber-500 bg-amber-50",
-  ask: "text-green-600 bg-green-50",
-  share: "text-rose-500 bg-rose-50",
-  challenge: "text-yellow-500 bg-yellow-50",
-  explore: "text-green-600 bg-green-50",
-};
+const CARE_ICONS = [Sun, Sprout, Heart];
 
 export default function KnowledgeGardenPage() {
+  const [garden, setGarden] = useState<GardenSummary | null>(null);
+  const [activity, setActivity] = useState<ActivityEntry[]>([]);
+
+  useEffect(() => {
+    document.title = "Khu vườn của bạn — VO DUONG AI";
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGarden(getGardenSummary());
+    setActivity(getRecentActivity(5));
+  }, []);
+
+  const STATS = garden
+    ? [
+        { icon: Leaf, value: String(garden.missionsCompleted), label: "Nhiệm vụ hoàn thành" },
+        { icon: Sprout, value: String(garden.journeysTouched), label: "Hành trình đã chạm" },
+        { icon: Sun, value: String(garden.competenciesPracticed), label: "Kỹ năng đã thực hành" },
+        { icon: Heart, value: String(garden.totalOutputs), label: "Kết quả đã tạo" },
+      ]
+    : [];
+
   return (
     <div className="garden-page relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <div className="garden-page-bg" aria-hidden="true" />
@@ -90,60 +65,41 @@ export default function KnowledgeGardenPage() {
               đều đang vun đắp cho sự trưởng thành.
             </p>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-500">
-              Đây là nơi Companion ghi nhận hành trình học tập, khám phá và trưởng thành của bạn mỗi
-              ngày.
+              Đây là nơi Companion ghi nhận hành trình học tập, khám phá và trưởng thành thật của bạn —
+              không phải cấp độ hay điểm số giả lập.
             </p>
 
-            {/* Card "Cây tri thức của bạn" */}
-            <div className="garden-glass-card gemos-gem-card mt-6 rounded-2xl p-5">
-              <div className="flex items-center justify-between">
-                <h3 className="gemos-card-title text-sm font-bold text-gray-900">
-                  Cây tri thức của bạn
-                </h3>
-                <span className="text-sm font-extrabold text-gray-900">Lv. {gardenStats.level}</span>
+            {/* Stats 2x2 — dữ liệu thật, không còn Level/Tier giả */}
+            {garden && (
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                {STATS.map((s) => (
+                  <div key={s.label} className="garden-glass-card gemos-gem-card rounded-2xl p-3 text-center">
+                    <s.icon className="mx-auto h-4 w-4 text-green-600" />
+                    <p className="mt-1 text-base font-extrabold text-gray-900">{s.value}</p>
+                    <p className="text-[10px] leading-snug text-gray-500">{s.label}</p>
+                  </div>
+                ))}
               </div>
-              <div className="mt-3 flex items-center justify-between text-xs">
-                <span className="text-gray-500">Đang lớn lên mỗi ngày 🌱</span>
-                <span className="font-semibold text-amber-500">{gardenStats.tierName}</span>
-              </div>
-              <div className="mt-2 flex items-center gap-3">
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-green-400 to-green-500"
-                    style={{ width: `${gardenStats.percentToNextLevel}%` }}
-                  />
-                </div>
-                <span className="text-xs font-semibold text-gray-500">
-                  {gardenStats.percentToNextLevel}%
-                </span>
-              </div>
-            </div>
-
-            {/* Stats 2x2 */}
-            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {STATS.map((s) => (
-                <div key={s.label} className="garden-glass-card gemos-gem-card rounded-2xl p-3 text-center">
-                  <s.icon className={`mx-auto h-4 w-4 ${s.tone}`} />
-                  <p className="mt-1 text-base font-extrabold text-gray-900">{s.value}</p>
-                  <p className="text-[10px] leading-snug text-gray-500">{s.label}</p>
-                </div>
-              ))}
-            </div>
+            )}
+            {garden && garden.totalOutputs === 0 && (
+              <p className="mt-3 text-xs text-gray-400">
+                Khu vườn còn trống — mỗi Nhiệm vụ bạn hoàn thành ở Workspace sẽ làm khu vườn lớn lên thật.
+              </p>
+            )}
 
             {/* Quote nhỏ */}
             <div className="mt-4 rounded-xl border border-green-100 bg-green-50/60 px-4 py-3">
               <p className="text-xs leading-relaxed text-green-800">
                 <span className="mr-1">🌱</span>
-                {GARDEN_QUOTE_SMALL}
+                Khu vườn của bạn phản chiếu đúng những gì bạn đã thật sự làm — không hơn, không kém.
               </p>
             </div>
           </div>
 
-          {/* RIGHT — cây thật, linh hồn của trang */}
+          {/* RIGHT — cây thật, linh hồn của trang (hình minh hoạ, không phải số liệu) */}
           <div className="relative">
             <GardenScene />
 
-            {/* Gợi ý chăm sóc khu vườn — nổi trên vùng cây */}
             <div className="garden-glass-card gemos-glass-card absolute -bottom-6 right-2 w-[88%] rounded-2xl p-4 sm:w-[80%] lg:right-4">
               <p className="flex items-start gap-2 text-xs leading-relaxed text-gray-700">
                 <span className="mt-0.5 shrink-0">🪴</span>
@@ -158,71 +114,53 @@ export default function KnowledgeGardenPage() {
 
         {/* Section dưới: 2 card */}
         <div className="grid gap-6 pt-8 lg:grid-cols-2">
-          {/* Những chiếc lá gần đây */}
+          {/* Những hoạt động gần đây — dữ liệu thật */}
           <div className="garden-glass-card gemos-gem-card rounded-2xl p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="gemos-card-title text-base font-bold text-gray-900">
-                Những chiếc lá gần đây
-              </h2>
-              <Link href="#" className="text-xs font-semibold text-blue-600 hover:underline">
-                Xem tất cả →
-              </Link>
-            </div>
+            <h2 className="gemos-card-title text-base font-bold text-gray-900">Hoạt động gần đây</h2>
             <div className="mt-4 space-y-2">
-              {RECENT_ACTIVITIES.map((a) => {
-                const Icon = LEAF_ICON[a.actionKey];
-                return (
-                  <div
-                    key={a.id}
-                    className="flex items-center gap-3 rounded-xl bg-gray-50 p-3"
-                  >
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${RECENT_TONE[a.actionKey]}`}>
-                      <Icon className="h-4 w-4" />
-                    </span>
-                    <p className="min-w-0 flex-1 text-xs text-gray-700 sm:text-sm">
-                      <span className="font-semibold text-gray-900">{a.label}:</span> {a.detail}
-                    </p>
+              {activity.length === 0 ? (
+                <p className="text-xs text-gray-400">
+                  Chưa có hoạt động nào được ghi nhận — hãy thử một Nhiệm vụ trong Học viện AI hoặc Workspace.
+                </p>
+              ) : (
+                activity.map((a, i) => (
+                  <div key={`${a.timestamp}-${i}`} className="flex items-center justify-between rounded-xl bg-gray-50 p-3">
+                    <p className="min-w-0 flex-1 text-xs text-gray-700 sm:text-sm">{a.label}</p>
+                    <span className="shrink-0 text-[10px] text-gray-400">{new Date(a.timestamp).toLocaleDateString("vi-VN")}</span>
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </div>
 
-          {/* Chăm sóc khu vườn */}
+          {/* Chăm sóc khu vườn — gợi ý chung, không phải số liệu cá nhân */}
           <div className="garden-glass-card gemos-gem-card relative overflow-hidden rounded-2xl p-5">
             <h2 className="gemos-card-title text-base font-bold text-gray-900">Chăm sóc khu vườn</h2>
             <p className="text-xs text-gray-400">Gợi ý cho hôm nay</p>
             <div className="relative mt-4 space-y-3 pr-20 sm:pr-28">
-              {CARE_SUGGESTIONS.map((c, i) => (
-                <div key={c.title} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
-                    {i === 0 && <Sun className="h-4 w-4" />}
-                    {i === 1 && <Sprout className="h-4 w-4" />}
-                    {i === 2 && <Heart className="h-4 w-4 text-rose-500" />}
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900">{c.title}</p>
-                    <p className="text-xs text-gray-500">{c.subtitle}</p>
+              {CARE_SUGGESTIONS.map((c, i) => {
+                const Icon = CARE_ICONS[i] ?? Sprout;
+                return (
+                  <div key={c.title} className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-50 text-amber-500">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{c.title}</p>
+                      <p className="text-xs text-gray-500">{c.subtitle}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="pointer-events-none absolute bottom-3 right-3 h-24 w-20 overflow-hidden rounded-xl opacity-90 sm:h-28 sm:w-24">
-              <Image
-                src="/images/garden/garden-care-visual.jpg"
-                alt=""
-                fill
-                sizes="120px"
-                className="object-cover"
-              />
+              <Image src="/images/garden/garden-care-visual.jpg" alt="" fill sizes="120px" className="object-cover" />
             </div>
           </div>
         </div>
 
-        {/* Sprint B4 — Portfolio & Growth Engine: khối bổ sung, không đổi GardenScene/thiết kế đã duyệt */}
         <GrowthActivityPanel variant="garden" />
 
-        {/* Footer riêng — không dùng Footer Portal */}
         <footer className="garden-glass-card gemos-glass-card mt-8 rounded-3xl p-8 text-center">
           <Quote className="mx-auto h-6 w-6 text-blue-200" />
           <p className="mx-auto mt-3 max-w-lg whitespace-pre-line text-sm leading-relaxed text-gray-700 sm:text-base">

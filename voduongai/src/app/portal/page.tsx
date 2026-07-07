@@ -14,19 +14,16 @@ import { Button } from "@/components/portal/ui/Button";
 import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { WelcomeHero } from "@/components/portal/gem-home/WelcomeHero";
-import { TodayMissionCard } from "@/components/portal/gem-home/TodayMissionCard";
 import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionCard";
 import { ProgressNarrativeCard } from "@/components/portal/gem-home/ProgressNarrativeCard";
-import { HumanMomentumCard } from "@/components/portal/gem-home/HumanMomentumCard";
 import { RecommendedResources } from "@/components/portal/gem-home/RecommendedResources";
 import { GardenSignalSync } from "@/components/portal/intelligence/GardenSignalSync";
 import { buildGardenState } from "@/lib/portal/living-garden/garden-model";
 import { GardenWidget } from "@/components/portal/garden/GardenWidget";
 import { TodayOpportunity } from "@/components/portal/gem-home/TodayOpportunity";
-import { LatestUpdates } from "@/components/portal/gem-home/LatestUpdates";
-import { todayMissions, recommendedItems, latestUpdates } from "@/data/portal/gem-home";
+import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
+import { recommendedItems } from "@/data/portal/gem-home";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
-import { humanMomentumSignals, livingPortalCopy } from "@/data/portal/living-portal";
 import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
 import { dominantChallenge } from "@/lib/portal/human-understanding";
 import type { Reflection } from "@/lib/portal/reflections";
@@ -162,14 +159,11 @@ export default async function GemHomePage() {
 
       <NextBestActionCard flow={flow} />
 
-      <div className="grid gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <TodayMissionCard missions={todayMissions} />
-        </div>
-        <div className="lg:col-span-5">
-          <HumanMomentumCard signals={humanMomentumSignals} closing={livingPortalCopy.momentumClosing} />
-        </div>
-      </div>
+      {/* Portal 4.0 Content Reconstruction: đã xoá TodayMissionCard (4 mission
+       * cố định) + HumanMomentumCard (số liệu momentum giả, tự nhận trong
+       * code cũ) — thay bằng dữ liệu Workspace thật (cùng nguồn growth-view.ts
+       * dùng ở Journey), xem PORTAL_CONTENT_RECONSTRUCTION_PLAN.md mục B.1. */}
+      <GrowthActivityPanel variant="journey" />
 
       {/* Continue Learning — Academy */}
       <section>
@@ -298,8 +292,6 @@ export default async function GemHomePage() {
           </Button>
         </GemCard>
       </section>
-
-      <LatestUpdates updates={latestUpdates} />
 
       <SavedRecent />
 

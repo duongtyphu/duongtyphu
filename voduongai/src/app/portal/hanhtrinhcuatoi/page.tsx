@@ -1,28 +1,32 @@
 import { HubModuleGrid } from "@/components/portal/ui/HubModuleGrid";
 import { getHub } from "@/lib/portal/hubs";
 import { JourneyHero } from "@/components/portal/journey/JourneyHero";
-import { CurrentJourneyCard } from "@/components/portal/journey/CurrentJourneyCard";
-import { GrowthPathTimeline } from "@/components/portal/journey/GrowthPathTimeline";
-import { Mission30DayCard } from "@/components/portal/journey/Mission30DayCard";
-import { HumanGrowthDetail } from "@/components/portal/journey/HumanGrowthDetail";
-import { MilestoneCard } from "@/components/portal/journey/MilestoneCard";
-import { AIJourneyCoach } from "@/components/portal/journey/AIJourneyCoach";
 import { RelatedActions } from "@/components/portal/journey/RelatedActions";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
-import {
-  currentJourney,
-  growthPathSteps,
-  mission30Day,
-  growthDetailDimensions,
-  milestone,
-  aiJourneyTip,
-  relatedActions,
-} from "@/data/portal/journey-hub";
+import { relatedActions } from "@/data/portal/journey-hub";
 
 export const metadata = { title: "Hành trình", description: "Mỗi viên ngọc quý cần thời gian để mài giũa — đây là lộ trình của riêng bạn." };
 
+/**
+ * Portal 4.0 Content Reconstruction — Journey Growth System.
+ *
+ * Trước đây trang này xếp chồng 5 khối dữ liệu TĨNH/GIẢ (CurrentJourneyCard
+ * 38% cố định, GrowthPathTimeline 7 bước cố định, Mission30DayCard cố định,
+ * HumanGrowthDetail 5 chỉ số % cố định, MilestoneCard chứng chỉ cố định) —
+ * không có khối nào phản ánh dữ liệu thật của người dùng. Đồng thời có 3 hệ
+ * thống "khu vườn" khác nhau (ở đây, ở /khuvuoncuaban, ở /story) và 2 hệ
+ * thống "Human Growth" khác nhau chạy song song.
+ *
+ * Theo PORTAL_CONTENT_RECONSTRUCTION_PLAN.md (mục B.7): hợp nhất về ĐÚNG 1
+ * "Growth System" và ĐÚNG 1 "Garden", cả hai đều dùng chung
+ * `growth-view.ts` (đọc WorkspaceSession/GrowthEvent thật, không có Supabase
+ * bịa, không có % giả) — đây là component `GrowthActivityPanel` đã tồn tại
+ * và đã đúng nguyên tắc trung thực từ trước, chỉ chưa được dùng làm nguồn
+ * DUY NHẤT. Toàn bộ nội dung tĩnh cũ (CurrentJourneyCard/GrowthPathTimeline/
+ * Mission30DayCard/HumanGrowthDetail/MilestoneCard/AIJourneyCoach) đã bị xoá.
+ */
 export default function JourneyHubPage() {
   const hub = getHub("journey")!;
 
@@ -30,26 +34,15 @@ export default function JourneyHubPage() {
     <div className="space-y-10">
       <JourneyHero />
 
-      <CurrentJourneyCard journey={currentJourney} />
-
-      <GrowthPathTimeline steps={growthPathSteps} />
-
-      <Mission30DayCard totalDays={mission30Day.totalDays} currentDay={mission30Day.currentDay} days={mission30Day.days} />
-
-      <HumanGrowthDetail dimensions={growthDetailDimensions} />
-
-      <div className="grid gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-6">
-          <MilestoneCard milestone={milestone} />
+      <section>
+        <SectionHeader eyebrow="Growth System" title="Tiến độ thật của bạn" description="Không phải % ước lượng — chỉ những gì bạn thực sự đã làm." />
+        <div className="grid gap-5 lg:grid-cols-2">
+          <GrowthActivityPanel variant="journey" />
+          <GrowthActivityPanel variant="garden" />
         </div>
-        <div className="lg:col-span-6">
-          <AIJourneyCoach tip={aiJourneyTip} />
-        </div>
-      </div>
+      </section>
 
       <RelatedActions actions={relatedActions} />
-
-      <GrowthActivityPanel variant="journey" />
 
       <section>
         <SectionHeader eyebrow="Growth Experience" title="Khám phá thêm trong hành trình" />

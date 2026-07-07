@@ -8,7 +8,6 @@ import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
 import { LivingCore, type LivingCoreState } from "@/components/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
-import { CompanionExperience } from "@/components/portal/companion/CompanionExperience";
 
 // ─────────────────────────────────────────────
 // Companion Genome — 12 gene, bố cục vòng tròn DNA
@@ -193,8 +192,9 @@ export default function CompanionHomePage() {
             </svg>
           </div>
 
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">Sứ mệnh Companion</p>
           <h1
-            className="mt-10 bg-clip-text text-6xl font-extrabold tracking-tight text-transparent sm:text-7xl"
+            className="mt-4 bg-clip-text text-6xl font-extrabold tracking-tight text-transparent sm:text-7xl"
             style={{ backgroundImage: "linear-gradient(90deg, #111827, #2563EB, #7C3AED, #F97316)" }}
           >
             Companion
@@ -216,14 +216,24 @@ export default function CompanionHomePage() {
         </section>
       </div>
 
-      {/* ═══════════════════ COMPANION EXPERIENCE — Portal 3.0 P.3 ═══════════════════
-       * Daily Focus / Next Best Action / Continue Learning / CKOS Suggestions /
-       * Journey Reflection / Workspace Suggestions / mỗi pillar một gợi ý / Quick
-       * Actions. Đặt ngay sau Hero, trước phần triết lý/Genome bên dưới — Companion
-       * phải xuất hiện như người đồng hành định hướng ngay từ đầu trang, không phải
-       * chờ đọc hết nội dung triết lý mới thấy hành động cụ thể. */}
-      <div className="relative z-10 py-4">
-        <CompanionExperience />
+      {/* Portal 4.0 Content Reconstruction — Sứ mệnh Companion.
+       *
+       * Trước đây <CompanionExperience/> (Daily Focus/NBA/Continue Learning/
+       * CKOS Suggestions/...) được nhúng ngay tại đây — nhưng khối này gọi
+       * cùng `getHumanFlowState()` và hiển thị gần như nguyên văn nội dung
+       * đã có ở Home (Gem Home), tạo cảm giác Companion "nói cùng một điều 2
+       * lần" chỉ cách nhau 1 cú click (xem PORTAL_CONTENT_RECONSTRUCTION_PLAN.md
+       * mục A.1/B.1). Trang này giờ là "Sứ mệnh Companion" — nơi DUY NHẤT giữ
+       * triết lý thương hiệu (Genome/Constitution/Timeline/Lời nhắn bên dưới,
+       * giữ nguyên 100% văn bản) — còn phần hành động/gợi ý hằng ngày thuộc
+       * về Home, nơi Companion đã đồng hành sẵn ngay khi mở Portal. */}
+      <div className="relative z-10 mx-auto max-w-xl px-6 pb-4 text-center sm:px-10">
+        <Link
+          href="/portal"
+          className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50/60 px-5 py-2 text-sm font-semibold text-blue-700 transition hover:border-blue-200 hover:bg-blue-50"
+        >
+          Companion đang chờ ở Home — mở Gem Home để xem gợi ý hôm nay →
+        </Link>
       </div>
 
       <div className="relative z-10 mx-auto max-w-3xl px-6 sm:px-10">
