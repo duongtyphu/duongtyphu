@@ -5,6 +5,7 @@ import { RelatedActions } from "@/components/portal/journey/RelatedActions";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { relatedActions } from "@/data/portal/journey-hub";
 
 export const metadata = { title: "Hành trình", description: "Mỗi viên ngọc quý cần thời gian để mài giũa — đây là lộ trình của riêng bạn." };
@@ -33,6 +34,11 @@ export default function JourneyHubPage() {
   return (
     <div className="space-y-10">
       <JourneyHero />
+
+      <CompanionGuide
+        message="Không phải mỗi ngày đều cần có gì đó mới để xem. Đôi khi nhìn lại quãng đường đã đi cũng là một hình thức tiến bộ."
+        action={{ label: "Xem hoạt động gần đây", href: "/portal/nhatkyhoctap" }}
+      />
 
       <section>
         <SectionHeader eyebrow="Growth System" title="Tiến độ thật của bạn" description="Không phải % ước lượng — chỉ những gì bạn thực sự đã làm." />

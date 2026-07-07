@@ -8,7 +8,6 @@ import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
-import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = {
@@ -87,8 +86,6 @@ const FAQ = [
 ];
 
 export default function OpportunitiesHubPage() {
-  const flow = getHumanFlowState("build");
-
   return (
     <div className="space-y-12">
       {/* Hero */}
@@ -103,20 +100,6 @@ export default function OpportunitiesHubPage() {
           { label: "Đọc bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" },
         ]}
       />
-
-      {/* Next Best Action */}
-      <GemCard variant="action" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-brand-blue">
-            Bước tiếp theo
-          </p>
-          <p className="mt-2 text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>
-          <p className="mt-1 text-sm text-gray-600">{flow.reason}</p>
-        </div>
-        <Button href={flow.recommendedRoute} variant="primary" className="shrink-0">
-          {flow.recommendedCTA}
-        </Button>
-      </GemCard>
 
       {/* Companion Guide */}
       <CompanionGuide

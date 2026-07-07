@@ -10,7 +10,7 @@ import { CkosQuickSearch } from "@/components/portal/ckos/CkosQuickSearch";
 import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
-import { getHumanFlowState } from "@/lib/portal/human-flow";
+import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 
 export const metadata = {
@@ -100,7 +100,6 @@ const COLLECTIONS = [
 
 export default async function CkosPage() {
   const categories = await getKnowledgeCategories();
-  const flow = getHumanFlowState("knowledge");
   const featuredTool: AdminTool | undefined = toolsAdminSeed.find((t) => t.status === "Published");
 
   return (
@@ -132,19 +131,15 @@ export default async function CkosPage() {
         <CkosQuickSearch />
       </section>
 
-      {/* Companion Recommendation */}
-      <section>
-        <SectionHeader eyebrow="Companion đề xuất" title="Việc đáng làm nhất lúc này" />
-        <GemCard variant="featured" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold text-gray-900">{flow.nextBestAction}</p>
-            <p className="mt-1 text-sm text-gray-600">{flow.reason}</p>
-          </div>
-          <Button href={flow.recommendedRoute} variant="primary" className="shrink-0">
-            {flow.recommendedCTA}
-          </Button>
-        </GemCard>
-      </section>
+      {/* Portal 4.0 Phase 2 — Companion Presence: giọng "tò mò", riêng cho
+       * CKOS. Trước đây khối này lặp lại y hệt flow.nextBestAction/reason đã
+       * hiển thị ở Home (cùng engine, cùng câu chữ) — xoá lặp, thay bằng 1
+       * câu Companion đúng ngữ cảnh "đang khám phá tri thức", không phải gợi
+       * ý hành động trong ngày (đó là việc của Home). */}
+      <CompanionGuide
+        message="Mỗi lần bạn tìm một Tool hay Prompt, thử nhìn thêm phần 'Tri thức liên quan' bên dưới — thường có một mảnh ghép bạn chưa nghĩ tới."
+        action={{ label: "Tìm trong CKOS", href: "/portal/ckos#search" }}
+      />
 
       {/* Dashboard: Continue Learning / Recently Viewed / Suggested Knowledge */}
       <section>
