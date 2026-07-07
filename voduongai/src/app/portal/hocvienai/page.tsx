@@ -148,6 +148,14 @@ export default function AcademyHubPage() {
       {/* Learning Journey — Academy Operating System */}
       <div className="space-y-4">
         <SectionHeader eyebrow="Journey" title="Hành trình của bạn" />
+        {journeys.length > 1 && (
+          <p className="-mt-2 text-sm text-gray-500">
+            Mỗi thẻ dưới đây hiển thị đúng giai đoạn thật của hành trình đó (Chuẩn bị/Luyện tập/Áp dụng...).
+            Nếu nhiều hành trình đều đang ở giai đoạn <span className="font-semibold text-gray-900">Chuẩn bị</span>,
+            chỉ chọn một để bắt đầu — mở nhiều hành trình cùng lúc là dấu hiệu bạn chưa sẵn sàng cho hành trình
+            đó, không phải dấu hiệu đang tiến bộ nhanh.
+          </p>
+        )}
         {journeys.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400">
             Chưa có hành trình nào sẵn sàng — quay lại sau nhé.

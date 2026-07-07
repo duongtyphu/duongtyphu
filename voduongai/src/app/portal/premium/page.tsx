@@ -180,6 +180,21 @@ export default async function PremiumPage() {
         <p className="mt-3 text-xs text-gray-400">
           Không chắc? Bắt đầu với V-Solo — hầu hết mọi người cần xây nền tảng vững trước khi nhân bản được gì.
         </p>
+
+        {/* Phase 4 — Guided Learning: dùng ownedCount thật để khuyên đúng
+         * bước tiếp theo, không mặc định đẩy lên gói đắt hơn. */}
+        {ownedCount === 0 ? (
+          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            Bạn chưa dùng thử sản phẩm nào của VO DUONG AI. Trước khi cân nhắc Premium, hãy học thử miễn phí
+            ở Học viện AI trước — nếu thấy cách làm việc phù hợp, quay lại đây sẽ dễ chọn đúng gói hơn nhiều.
+          </p>
+        ) : (
+          <p className="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            Bạn đã có {ownedCount} sản phẩm Premium. Nếu quy trình hiện tại vẫn đang một mình vận hành tốt,
+            chưa cần vội chuyển sang gói cao hơn — chỉ nâng cấp khi thực sự cần nhân bản hoặc chuyển giao
+            cho người khác.
+          </p>
+        )}
       </section>
 
       {/* Learning Path */}

@@ -185,6 +185,26 @@ export default function OpportunitiesHubPage() {
           Nếu bạn trả lời &ldquo;chưa&rdquo; cho bất kỳ câu nào ở trên, đó không phải là dấu hiệu xấu — đó là
           dấu hiệu nên đọc thêm trước khi quyết định.
         </p>
+
+        {/* Phase 4 — Guided Learning: chưa sẵn sàng → chỉ đúng nơi cần học,
+         * không phải một lời khuyên chung chung "hãy tìm hiểu thêm". */}
+        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+          <GemCard>
+            <p className="text-xs font-semibold text-gray-900">Chưa đọc tài liệu gốc lần nào?</p>
+            <p className="mt-1 text-xs text-gray-500">Học cách đọc whitepaper/tài liệu dự án trước khi đọc bất kỳ ecosystem nào ở đây.</p>
+            <Button href="/portal/hocvienai" variant="secondary" className="mt-2">Học viện AI</Button>
+          </GemCard>
+          <GemCard>
+            <p className="text-xs font-semibold text-gray-900">Chưa hình dung được rủi ro cụ thể?</p>
+            <p className="mt-1 text-xs text-gray-500">Đọc các bài học từ trải nghiệm thật — bao gồm cả những lần đã sai.</p>
+            <Button href="/portal/nhatkyhoctap" variant="secondary" className="mt-2">Nhật ký học tập</Button>
+          </GemCard>
+          <GemCard>
+            <p className="text-xs font-semibold text-gray-900">Không chắc nên bắt đầu từ đâu?</p>
+            <p className="mt-1 text-xs text-gray-500">Nhờ Companion phân tích cùng bạn trước khi đọc bất kỳ dự án nào.</p>
+            <Button href="/portal/companion" variant="secondary" className="mt-2">Hỏi Companion</Button>
+          </GemCard>
+        </div>
       </section>
 
       {/* Criteria */}

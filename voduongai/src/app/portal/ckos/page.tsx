@@ -161,6 +161,27 @@ export default async function CkosPage() {
           — nó cụ thể và dễ dùng ngay. Nếu bạn đã có công cụ nhưng chưa biết dùng hiệu quả, xem{" "}
           <span className="font-semibold text-gray-900">Prompt</span> và <span className="font-semibold text-gray-900">Workflow</span> tiếp theo.
         </p>
+
+        {/* Phase 4 — Guided Learning: hướng dẫn theo trình độ + theo tình
+         * huống dùng, không chỉ mô tả mỗi loại là gì. */}
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <GemCard>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">Người mới nên bắt đầu từ</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-600">
+              <span className="font-semibold text-gray-900">Tool → Lesson.</span> Dùng thử một công cụ cụ
+              thể trước, sau đó xem Lesson liên quan để hiểu vì sao nó hoạt động như vậy. Đừng bắt đầu từ
+              Workflow hay Best Practice khi bạn chưa từng dùng công cụ nào — sẽ khó hình dung.
+            </p>
+          </GemCard>
+          <GemCard>
+            <p className="gemos-card-title text-sm font-bold text-gray-900">Người đã có kinh nghiệm nên dùng</p>
+            <p className="mt-2 text-sm leading-relaxed text-gray-600">
+              <span className="font-semibold text-gray-900">Workflow → Best Practice → Case Study.</span> Bạn
+              đã biết công cụ, giờ cần quy trình lặp lại được, đối chiếu với cách người khác đã làm đúng, và
+              xem kết quả thực tế trước khi áp dụng vào việc lớn hơn.
+            </p>
+          </GemCard>
+        </div>
       </section>
 
       {/* Portal 4.0 Phase 2 — Companion Presence: giọng "tò mò", riêng cho

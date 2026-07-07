@@ -18,6 +18,25 @@ const WORKSPACE_TEMPLATES = [
   { title: "Lập kế hoạch bước", use: "Chia một việc lớn thành các bước nhỏ có thể làm ngay hôm nay." },
 ];
 
+const WORKING_SITUATIONS = [
+  {
+    title: "Chỉ có 15 phút",
+    guidance: "Đừng mở việc mới. Chọn đúng một câu hỏi nhỏ, cụ thể (một email, một câu trả lời) — không bắt đầu việc cần suy nghĩ sâu.",
+  },
+  {
+    title: "Có thời gian tập trung dài",
+    guidance: "Đây là lúc để làm việc cần suy nghĩ sâu: lập kế hoạch, viết nháp dài, phân tích một quyết định. Tắt thông báo, chọn một việc duy nhất.",
+  },
+  {
+    title: "Đang bị kẹt, không biết làm tiếp thế nào",
+    guidance: "Đừng cố nghĩ thêm một mình. Mô tả lại chính xác bạn đang kẹt ở đâu cho Companion — đôi khi viết ra vấn đề đã là một nửa câu trả lời.",
+  },
+  {
+    title: "Muốn xem lại việc đã làm",
+    guidance: "Đừng làm việc mới. Mở lại Output gần nhất, đọc lại như một người ngoài — thường bạn sẽ thấy điều cần sửa mà lúc viết không thấy.",
+  },
+];
+
 export const metadata = { title: "Workspace — VO DUONG AI" };
 
 /**
@@ -55,6 +74,20 @@ export default function WorkspacePage() {
             <GemCard key={s.step}>
               <p className="gemos-card-title text-sm font-bold text-gray-900">{s.step}</p>
               <p className="mt-2 text-xs leading-relaxed text-gray-500">{s.detail}</p>
+            </GemCard>
+          ))}
+        </div>
+      </section>
+
+      {/* Phase 4 — Guided Learning: hướng dẫn theo TÌNH HUỐNG làm việc thật,
+       * không chỉ liệt kê các bước chung cho mọi lúc. */}
+      <section>
+        <SectionHeader eyebrow="Tuỳ tình huống" title="Bạn đang ở tình huống nào?" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {WORKING_SITUATIONS.map((s) => (
+            <GemCard key={s.title}>
+              <p className="gemos-card-title text-sm font-bold text-gray-900">{s.title}</p>
+              <p className="mt-2 text-xs leading-relaxed text-gray-500">{s.guidance}</p>
             </GemCard>
           ))}
         </div>

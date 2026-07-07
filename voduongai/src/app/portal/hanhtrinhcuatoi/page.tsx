@@ -7,7 +7,27 @@ import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
+import { Button } from "@/components/portal/ui/Button";
 import { relatedActions } from "@/data/portal/journey-hub";
+
+const REFLECTION_PROMPTS = [
+  {
+    q: "Việc gì tuần này bạn làm khác đi so với một tháng trước?",
+    next: { label: "Ghi lại vào nhật ký học tập", href: "/portal/nhatkyhoctap" },
+  },
+  {
+    q: "Có Output nào bạn tạo ra mà chính bạn cũng bất ngờ vì nó tốt hơn mong đợi?",
+    next: { label: "Xem lại trong Workspace", href: "/portal/workspace" },
+  },
+  {
+    q: "Có việc nào bạn từng né tránh, giờ đã dám bắt đầu thử?",
+    next: { label: "Thử một bước tiếp theo", href: "/portal/duan-cohoi" },
+  },
+  {
+    q: "Nếu dừng lại hôm nay, điều gì bạn tự hào nhất về quãng đường đã đi?",
+    next: { label: "Chia sẻ với Companion", href: "/portal/companion" },
+  },
+];
 
 export const metadata = { title: "Hành trình", description: "Mỗi viên ngọc quý cần thời gian để mài giũa — đây là lộ trình của riêng bạn." };
 
@@ -53,17 +73,17 @@ export default function JourneyHubPage() {
       {/* Portal 4.0 Content Creation — trước đây trang này chỉ có số liệu
        * hoạt động thật, chưa có nội dung giúp người dùng CHIÊM NGHIỆM về
        * hoạt động đó. Câu hỏi tĩnh, không gắn với số liệu bịa nào. */}
+      {/* Phase 4 — Guided Learning: mỗi câu chiêm nghiệm đi kèm đúng một
+       * bước tiếp theo cụ thể, để phản tư không dừng lại ở một câu hỏi. */}
       <section>
         <SectionHeader eyebrow="Chiêm nghiệm" title="Vài câu hỏi đáng dừng lại để nghĩ" />
         <div className="grid gap-4 sm:grid-cols-2">
-          {[
-            "Việc gì tuần này bạn làm khác đi so với một tháng trước?",
-            "Có Output nào bạn tạo ra mà chính bạn cũng bất ngờ vì nó tốt hơn mong đợi?",
-            "Có việc nào bạn từng né tránh, giờ đã dám bắt đầu thử?",
-            "Nếu dừng lại hôm nay, điều gì bạn tự hào nhất về quãng đường đã đi?",
-          ].map((q) => (
-            <GemCard key={q}>
-              <p className="text-sm leading-relaxed text-gray-600">{q}</p>
+          {REFLECTION_PROMPTS.map((item) => (
+            <GemCard key={item.q}>
+              <p className="text-sm leading-relaxed text-gray-600">{item.q}</p>
+              <Button href={item.next.href} variant="secondary" className="mt-3">
+                {item.next.label}
+              </Button>
             </GemCard>
           ))}
         </div>
