@@ -1,28 +1,13 @@
-import Link from "next/link";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
-import { freeResources } from "@/data/resources";
 import { affiliateResources } from "@/data/affiliate";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { OnboardingSummary } from "@/components/portal/OnboardingSummary";
-import { SavedRecent } from "@/components/portal/SavedRecent";
-import { ToolCard } from "@/components/portal/ToolCard";
-import { ResourceCard } from "@/components/portal/ResourceCard";
 import { GemCard } from "@/components/portal/ui/GemCard";
-import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
-import { HumanGrowthIndex } from "@/components/portal/ui/HumanGrowthBar";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
-import { WelcomeHero } from "@/components/portal/gem-home/WelcomeHero";
-import { NextBestActionCard } from "@/components/portal/gem-home/NextBestActionCard";
-import { ProgressNarrativeCard } from "@/components/portal/gem-home/ProgressNarrativeCard";
-import { RecommendedResources } from "@/components/portal/gem-home/RecommendedResources";
-import { GardenSignalSync } from "@/components/portal/intelligence/GardenSignalSync";
-import { buildGardenState } from "@/lib/portal/living-garden/garden-model";
+import { CompanionPresenceBand } from "@/components/portal/gem-home/CompanionPresenceBand";
 import { GardenWidget } from "@/components/portal/garden/GardenWidget";
-import { TodayOpportunity } from "@/components/portal/gem-home/TodayOpportunity";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
-import { recommendedItems } from "@/data/portal/gem-home";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
 import { dominantChallenge } from "@/lib/portal/human-understanding";
@@ -30,12 +15,25 @@ import type { Reflection } from "@/lib/portal/reflections";
 
 export const metadata = { title: "Gem Home", description: "Gem Home — nơi bắt đầu hành trình trưởng thành mỗi ngày cùng VO DUONG AI.", robots: { index: false } };
 
+/**
+ * PORTAL_4_FINAL_PRODUCT_DESIGN.md — mục 1 (Home), Phase 1 implementation.
+ * Frozen spec: Home có ĐÚNG 5 khối, không hơn:
+ *   1. Companion Presence Band (chiếm ưu thế tuyệt đối)
+ *   2. Đang dang dở | Cơ hội hôm nay (2 cột cân bằng)
+ *   3. Tri thức đáng chú ý hôm nay (CKOS teaser, 2-3 card)
+ *   4. Trưởng thành gần đây (1 số liệu thật)
+ *   5. Quick Actions
+ * + 1 khối thoát luôn có ở cuối (Knowledge Journey Strip) — không tính vào 5.
+ * Đã xoá toàn bộ section thừa từ Portal 3.0 (Human Growth Index, Recommended
+ * Resources, "Công cụ nổi bật" riêng, "Tài nguyên mới nhất", Premium preview,
+ * Saved Recent, GardenSignalSync) — nội dung có giá trị thật trong số đó
+ * (nếu có) thuộc về đúng pillar của nó (CKOS/Premium/Journey), không phải Home.
+ */
+
 async function getProfileSummary() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return null;
   }
-  // A Supabase/cookie failure here must not 500 the whole dashboard —
-  // fall back to the logged-out view instead.
   try {
     return await fetchProfileSummary();
   } catch {
@@ -86,7 +84,7 @@ async function getRecentReflections(): Promise<Reflection[]> {
 
 async function getFeaturedTools(): Promise<AdminTool[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
+    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 3);
   }
   try {
     const supabase = await getSupabaseServer();
@@ -95,11 +93,11 @@ async function getFeaturedTools(): Promise<AdminTool[]> {
       .select("id, data")
       .eq("status", "Published")
       .order("order", { ascending: true })
-      .limit(4);
-    if (error || !data) return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
+      .limit(3);
+    if (error || !data) return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 3);
     return data.map((row) => ({ ...(row.data as AdminTool), id: row.id }));
   } catch {
-    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 4);
+    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 3);
   }
 }
 
@@ -112,27 +110,64 @@ export default async function GemHomePage() {
   const welcomeState = getWelcomeState({ createdAt: profile?.memberSince, lastSignInAt: profile?.lastSignInAt });
   const welcomeMessage = getWelcomeMessage(welcomeState);
   const reflectionPrompt = getWarmthLine("reflection");
-  const opportunityItems = affiliateResources.slice(0, 3).map((a) => ({
-    id: a.id,
-    title: a.title,
-    description: a.description,
-    href: "/portal/affiliate-hub",
-  }));
+  const opportunity = affiliateResources[0];
 
   return (
     <div className="space-y-10">
-      <WelcomeHero
+      {/* Khối 1 — Companion Presence Band */}
+      <CompanionPresenceBand
         name={profile?.fullName}
         welcomeMessage={welcomeMessage}
         reflectionPrompt={reflectionPrompt}
         state={welcomeState}
+        flow={flow}
       />
 
-      <div className="mt-1">
-        <OnboardingSummary />
+      {/* Khối 2 — Đang dang dở | Cơ hội hôm nay */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        <GrowthActivityPanel variant="journey" />
+        {opportunity && (
+          <GemCard>
+            <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
+              Cơ hội hôm nay
+            </p>
+            <h3 className="gemos-card-title mt-2 text-sm font-bold text-gray-900">{opportunity.title}</h3>
+            <p className="mt-1 text-sm text-gray-500">{opportunity.description}</p>
+            <Button href="/portal/duan-cohoi" variant="secondary" className="mt-3">
+              Xem cơ hội
+            </Button>
+          </GemCard>
+        )}
       </div>
 
-      {/* Quick Actions */}
+      {/* Khối 3 — Tri thức đáng chú ý hôm nay (CKOS teaser) */}
+      <section>
+        <SectionHeader
+          eyebrow="CKOS"
+          title="Tri thức đáng chú ý hôm nay"
+          action={
+            <Button href="/portal/ckos" variant="secondary">
+              Mở CKOS →
+            </Button>
+          }
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {featuredTools.map((t) => (
+            <GemCard key={t.id}>
+              <p className="gemos-card-title text-sm font-bold text-gray-900">{t.name}</p>
+              <p className="mt-1 text-xs text-gray-500 line-clamp-2">{t.shortDescription}</p>
+              <Button href={`/portal/tools/${t.slug}`} variant="secondary" className="mt-3">
+                Xem
+              </Button>
+            </GemCard>
+          ))}
+        </div>
+      </section>
+
+      {/* Khối 4 — Trưởng thành gần đây */}
+      <GardenWidget />
+
+      {/* Khối 5 — Quick Actions */}
       <div className="flex flex-wrap gap-3">
         <Button href="/portal/ckos" variant="secondary">Mở CKOS</Button>
         <Button href="/portal/hocvienai" variant="secondary">Vào Học viện</Button>
@@ -141,160 +176,7 @@ export default async function GemHomePage() {
         <Button href="/portal/premium" variant="secondary">Xem Premium</Button>
       </div>
 
-      {/* Companion highlight — Companion đồng hành, không phải chatbot rỗng */}
-      <GemCard variant="featured" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-brand-blue">
-            Người đồng hành, không phải trợ lý chờ lệnh
-          </p>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-gray-600">
-            {flow.momentumMessage} Bạn không cần hỏi Companion nên làm gì — Companion đã chuẩn bị sẵn câu
-            trả lời mỗi khi bạn mở Portal.
-          </p>
-        </div>
-        <Button href="/portal/companion" variant="primary" className="shrink-0">
-          Mở Companion
-        </Button>
-      </GemCard>
-
-      <NextBestActionCard flow={flow} />
-
-      {/* Portal 4.0 Content Reconstruction: đã xoá TodayMissionCard (4 mission
-       * cố định) + HumanMomentumCard (số liệu momentum giả, tự nhận trong
-       * code cũ) — thay bằng dữ liệu Workspace thật (cùng nguồn growth-view.ts
-       * dùng ở Journey), xem PORTAL_CONTENT_RECONSTRUCTION_PLAN.md mục B.1. */}
-      <GrowthActivityPanel variant="journey" />
-
-      {/* Continue Learning — Academy */}
-      <section>
-        <SectionHeader eyebrow="Academy" title="Tiếp tục học" />
-        <GemCard className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm leading-relaxed text-gray-600">
-            {flow.currentStage} — {flow.nextBestAction.toLowerCase()}.
-          </p>
-          <Button href="/portal/hocvienai" variant="secondary" className="shrink-0">
-            Vào Học viện AI
-          </Button>
-        </GemCard>
-      </section>
-
-      {/* CKOS quick access */}
-      <section>
-        <SectionHeader
-          eyebrow="CKOS"
-          title="Tri thức bạn cần, đã sắp xếp sẵn"
-          action={
-            <Link href="/portal/ckos" className="text-sm font-semibold text-blue-600 hover:underline">
-              Mở CKOS →
-            </Link>
-          }
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">Công cụ AI</p>
-            <p className="mt-1 text-xs text-gray-500">Danh sách công cụ đã tuyển chọn.</p>
-            <Button href="/portal/tools" variant="secondary" className="mt-3">Xem</Button>
-          </GemCard>
-          <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">Prompt</p>
-            <p className="mt-1 text-xs text-gray-500">Thư viện prompt thực chiến.</p>
-            <Button href="/portal/prompts" variant="secondary" className="mt-3">Xem</Button>
-          </GemCard>
-          <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">Quy trình & SOP</p>
-            <p className="mt-1 text-xs text-gray-500">Checklist, SOP chuẩn hoá.</p>
-            <Button href="/portal/sop" variant="secondary" className="mt-3">Xem</Button>
-          </GemCard>
-          <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">CKOS đầy đủ</p>
-            <p className="mt-1 text-xs text-gray-500">Dashboard, Search, Collections và Danh mục tri thức.</p>
-            <Button href="/portal/ckos" variant="secondary" className="mt-3">Xem</Button>
-          </GemCard>
-        </div>
-      </section>
-
-      {/* Journey / Progress preview */}
-      <div className="grid gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <GemCard variant="progress">
-            <h2 className="gemos-card-title mb-4 text-sm font-bold text-gray-900">Human Growth Index</h2>
-            <HumanGrowthIndex />
-          </GemCard>
-        </div>
-        <div className="lg:col-span-5">
-          <ProgressNarrativeCard flow={flow} />
-        </div>
-      </div>
-
-      <GardenWidget />
-      <GardenSignalSync
-        garden={buildGardenState({ reflectionsCount: recentReflections.length })}
-      />
-
-      <RecommendedResources items={recommendedItems} />
-
-      <section>
-        <SectionHeader
-          title="Công cụ nổi bật"
-          action={
-            <Link href="/portal/tools" className="text-sm font-semibold text-blue-600 hover:underline">
-              Xem tất cả →
-            </Link>
-          }
-        />
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
-          {featuredTools.map((t) => (
-            <ToolCard
-              key={t.id}
-              id={t.id}
-              href={`/portal/tools/${t.slug}`}
-              name={t.name}
-              description={t.shortDescription}
-              pricing={t.pricing}
-              iUseThis={t.badge === "Tôi đang dùng"}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Projects & Opportunities preview */}
-      <TodayOpportunity items={opportunityItems} />
-
-      <section>
-        <SectionHeader
-          title="Tài nguyên mới nhất"
-          action={
-            <Link href="/portal/resources" className="text-sm font-semibold text-blue-600 hover:underline">
-              Xem tất cả →
-            </Link>
-          }
-        />
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {freeResources.slice(0, 3).map((r) => (
-            <ResourceCard key={r.id} title={r.title} type={r.type} href={`/portal/resources/${r.id}`} />
-          ))}
-        </div>
-      </section>
-
-      {/* Premium preview */}
-      <section>
-        <SectionHeader eyebrow="Premium" title="Khi tự học một mình là chưa đủ" />
-        <GemCard variant="action" className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <GemBadge tone="premium" />
-            <p className="text-sm leading-relaxed text-gray-600">
-              Premium là nơi bạn có người đồng hành thật khi tự học không còn đủ — không phải thêm bài
-              giảng, mà thêm một người biết bạn đang mắc ở đâu.
-            </p>
-          </div>
-          <Button href="/portal/premium" variant="secondary" className="shrink-0">
-            Xem Premium
-          </Button>
-        </GemCard>
-      </section>
-
-      <SavedRecent />
-
+      {/* Khối thoát — luôn có, không tính vào 5 khối chính */}
       <KnowledgeJourneyStrip
         title="Chưa biết bắt đầu từ đâu?"
         steps={[
