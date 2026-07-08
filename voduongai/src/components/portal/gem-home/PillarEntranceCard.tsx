@@ -2,11 +2,41 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
-import { Sparkles, ArrowRight } from "lucide-react";
+import {
+  Sparkles,
+  ArrowRight,
+  Brain,
+  GraduationCap,
+  Cpu,
+  LineChart,
+  Crown,
+  Compass,
+  HeartHandshake,
+  type LucideIcon,
+} from "lucide-react";
 import { getModuleActivitySummary, getGardenSummary, getRecentActivity } from "@/lib/portal/foundation/growth-view";
 
 export type PillarAccent = "violet" | "blue" | "slate" | "emerald" | "amber" | "teal" | "rose";
+
+export type PillarIconKey = "brain" | "graduation-cap" | "cpu" | "line-chart" | "crown" | "compass" | "heart-handshake";
+
+/**
+ * Next.js RSC boundary: component/function references (như một icon
+ * component) không thể truyền từ Server Component sang Client Component
+ * qua props — chỉ dữ liệu tuần tự hoá được mới truyền được. Vì
+ * PillarEntranceCard là "use client", Home (server) chỉ truyền một
+ * string key; icon thật được import và resolve ngay trong file client
+ * này, không bao giờ đi qua ranh giới server/client.
+ */
+const ICONS: Record<PillarIconKey, LucideIcon> = {
+  brain: Brain,
+  "graduation-cap": GraduationCap,
+  cpu: Cpu,
+  "line-chart": LineChart,
+  crown: Crown,
+  compass: Compass,
+  "heart-handshake": HeartHandshake,
+};
 
 const ACCENT: Record<PillarAccent, { chip: string; icon: string; ring: string }> = {
   violet: { chip: "bg-violet-50", icon: "text-violet-600", ring: "hover:border-violet-200" },
@@ -29,7 +59,7 @@ const ACCENT: Record<PillarAccent, { chip: string; icon: string; ring: string }>
  * thị đúng sự thật đó, không suy diễn hay bịa số.
  */
 export function PillarEntranceCard({
-  icon: Icon,
+  icon,
   accent,
   title,
   what,
@@ -40,7 +70,7 @@ export function PillarEntranceCard({
   companionLine,
   ctaLabel,
 }: {
-  icon: LucideIcon;
+  icon: PillarIconKey;
   accent: PillarAccent;
   title: string;
   what: string;
@@ -55,6 +85,7 @@ export function PillarEntranceCard({
 }) {
   const [startedLine, setStartedLine] = useState<string | null>(startedOverride ?? null);
   const tone = ACCENT[accent];
+  const Icon = ICONS[icon];
 
   useEffect(() => {
     if (startedOverride) return;

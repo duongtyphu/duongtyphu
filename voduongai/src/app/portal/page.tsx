@@ -1,4 +1,3 @@
-import { Brain, GraduationCap, Cpu, LineChart, Crown, Compass, HeartHandshake } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { CompanionPresenceBand } from "@/components/portal/gem-home/CompanionPresenceBand";
@@ -108,7 +107,7 @@ export default async function GemHomePage() {
       {/* 7 Pillar Entrance Card — điểm đến sống, không phải menu */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <PillarEntranceCard
-          icon={Brain}
+          icon="brain"
           accent="violet"
           title="Hệ tri thức AI (CKOS)"
           what="Tool, Prompt, Quy trình và Bài học được kết nối với nhau — không phải một thư viện tĩnh để lướt qua."
@@ -119,7 +118,7 @@ export default async function GemHomePage() {
           ctaLabel="Mở Hệ tri thức AI (CKOS)"
         />
         <PillarEntranceCard
-          icon={GraduationCap}
+          icon="graduation-cap"
           accent="blue"
           title="Học viện AI"
           what="Biến tri thức thành năng lực qua thực hành thật — không phải một danh sách bài học để đọc hết."
@@ -130,7 +129,7 @@ export default async function GemHomePage() {
           ctaLabel="Vào Học viện"
         />
         <PillarEntranceCard
-          icon={Cpu}
+          icon="cpu"
           accent="slate"
           title="AI Workspace"
           what="Nơi một ý tưởng trở thành một Output thật — bản nháp, kế hoạch, kết quả dùng được ngay."
@@ -141,7 +140,7 @@ export default async function GemHomePage() {
           ctaLabel="Mở AI Workspace"
         />
         <PillarEntranceCard
-          icon={LineChart}
+          icon="line-chart"
           accent="emerald"
           title="Dự án & Cơ hội"
           what="Trung tâm cơ hội giúp bạn quyết định đúng — không phải một trang bán hàng."
@@ -152,7 +151,7 @@ export default async function GemHomePage() {
           ctaLabel="Xem Dự án & Cơ hội"
         />
         <PillarEntranceCard
-          icon={Crown}
+          icon="crown"
           accent="amber"
           title="Premium"
           what="Giai đoạn tiếp theo khi bạn đã sẵn sàng đi xa hơn — không phải một quảng cáo nâng cấp."
@@ -166,7 +165,7 @@ export default async function GemHomePage() {
           ctaLabel="Xem Premium"
         />
         <PillarEntranceCard
-          icon={Compass}
+          icon="compass"
           accent="teal"
           title="Hành trình của tôi"
           what="Nơi nhìn lại những gì thật sự đã xảy ra — không phải điểm số hay % ước lượng."
@@ -176,7 +175,7 @@ export default async function GemHomePage() {
           ctaLabel="Xem hành trình"
         />
         <PillarEntranceCard
-          icon={HeartHandshake}
+          icon="heart-handshake"
           accent="rose"
           title="Companion"
           what="Không phải chatbot — một sự hiện diện, nhớ những gì thật sự đã xảy ra với bạn."
