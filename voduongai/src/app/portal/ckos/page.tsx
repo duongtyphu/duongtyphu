@@ -4,7 +4,6 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
-import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { Button } from "@/components/portal/ui/Button";
 import { CkosQuickSearch } from "@/components/portal/ckos/CkosQuickSearch";
 import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
@@ -106,6 +105,50 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
   ];
 }
 
+/**
+ * Card Redesign — mỗi loại tri thức một "chất cảm" riêng, theo đúng gợi ý:
+ * Tool = thực dụng, Prompt = sáng tạo, Workflow = hệ thống, Lesson = giáo
+ * dục, Resource = hỗ trợ, Case Study = bằng chứng, Best Practice = kinh
+ * nghiệm chắt lọc. Không đổi ý nghĩa dữ liệu — chỉ đổi cách "cảm" của thẻ.
+ */
+const CATEGORY_SURFACE: Record<string, { card: string; badge: string; feel: string }> = {
+  tool: {
+    card: "border-slate-200 bg-white",
+    badge: "bg-slate-100 text-slate-700",
+    feel: "Thực dụng",
+  },
+  prompt: {
+    card: "border-violet-100 bg-[radial-gradient(circle_at_1px_1px,rgba(139,92,246,0.14)_1px,transparent_0)] bg-[length:12px_12px]",
+    badge: "bg-violet-100 text-violet-700",
+    feel: "Sáng tạo",
+  },
+  workflow: {
+    card: "border-blue-100 bg-[linear-gradient(rgba(37,99,235,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.06)_1px,transparent_1px)] bg-[length:16px_16px]",
+    badge: "bg-blue-100 text-blue-700",
+    feel: "Hệ thống",
+  },
+  resource: {
+    card: "border-emerald-100 bg-emerald-50/40",
+    badge: "bg-emerald-100 text-emerald-700",
+    feel: "Hỗ trợ",
+  },
+  lesson: {
+    card: "rounded-[1.5rem] border-teal-100 bg-teal-50/30",
+    badge: "bg-teal-100 text-teal-700",
+    feel: "Giáo dục",
+  },
+  best_practice: {
+    card: "border-gray-200 bg-gray-50/60",
+    badge: "bg-gray-200 text-gray-600",
+    feel: "Kinh nghiệm chắt lọc",
+  },
+  case_study: {
+    card: "border-2 border-amber-300 bg-amber-50/50",
+    badge: "bg-amber-200 text-amber-800",
+    feel: "Bằng chứng thực tế",
+  },
+};
+
 const COLLECTIONS = [
   { key: "ai-writing", title: "AI Writing", query: "viết", description: "Viết nội dung, email, kịch bản bằng AI." },
   { key: "productivity", title: "Productivity", query: "quy trình", description: "Làm việc nhanh hơn, ít sai sót hơn." },
@@ -201,20 +244,21 @@ export default async function CkosPage() {
         </div>
       </section>
 
-      {/* Portal 4.0 Phase 2 — Companion Presence: giọng "tò mò", riêng cho
-       * CKOS. Trước đây khối này lặp lại y hệt flow.nextBestAction/reason đã
-       * hiển thị ở Home (cùng engine, cùng câu chữ) — xoá lặp, thay bằng 1
-       * câu Companion đúng ngữ cảnh "đang khám phá tri thức", không phải gợi
-       * ý hành động trong ngày (đó là việc của Home). */}
+      {/* Companion trong CKOS = Knowledge Guide, không phải chatbot/search
+       * engine — luôn gợi ý ĐÚNG MỘT bước nhỏ nhất có giá trị, không bao
+       * giờ nói "hãy đọc hết mọi thứ". Giọng tò mò riêng cho CKOS, không
+       * lặp lại câu chữ đã dùng ở Home (cùng engine dữ liệu, khác câu). */}
       <CompanionMemoryLine
-        emptyMessage="Companion chưa biết bạn đã xem qua phần nào trong CKOS — cứ khám phá tự do, mỗi lần tìm một Tool hay Prompt, thử nhìn thêm phần 'Tri thức liên quan' bên dưới."
-        contextTemplate="Lần gần nhất bạn ở đây, bạn đã {activity}. Thử tìm một mảnh tri thức liên quan đến việc đó xem sao."
+        emptyMessage="Companion sẽ không bảo bạn đọc hết CKOS — cứ chọn một Tool bất kỳ để thử trước, đó luôn là bước nhỏ nhất đáng làm khi chưa biết bắt đầu từ đâu."
+        contextTemplate="Lần gần nhất bạn ở đây, bạn đã {activity}. Bước nhỏ nhất đáng làm tiếp theo: tìm một mảnh tri thức liên quan đến việc đó — không cần đọc thêm gì khác."
         action={{ label: "Tìm trong CKOS", href: "/portal/ckos#search" }}
       />
 
-      {/* Dashboard: Continue Learning / Recently Viewed / Suggested Knowledge */}
+      {/* Trung tâm điều khiển tri thức — không phải dashboard số liệu, chỉ
+       * trả lời đúng 3 câu: bạn đang dở gì, gần đây đã xem gì (trung thực
+       * nếu chưa có), và Companion chọn gì cho bạn hôm nay. */}
       <section>
-        <SectionHeader eyebrow="Ngay bây giờ" title="Bạn đang ở đâu trong hành trình tri thức" />
+        <SectionHeader eyebrow="Trung tâm điều khiển" title="Bạn đang ở đâu trong hành trình tri thức" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <JourneyStatusCard
             eyebrow="Continue Learning"
@@ -252,36 +296,47 @@ export default async function CkosPage() {
         </div>
       </section>
 
-      {/* Knowledge Categories */}
+      {/* Knowledge Categories — mỗi loại một "chất cảm" riêng (Card Redesign):
+       * Công cụ AI = thực dụng (phẳng, gọn); Prompt = sáng tạo (nền chấm nhẹ);
+       * Workflow = hệ thống (lưới kẻ); Lesson = giáo dục (bo tròn, dịu); Resource
+       * = hỗ trợ (nền mềm); Case Study = bằng chứng (viền đậm, số liệu nổi);
+       * Best Practice = kinh nghiệm chắt lọc (trung tính, trung thực). Người
+       * dùng nhận ra LOẠI trước khi đọc chữ, không còn 7 thẻ giống hệt nhau. */}
       <section id="danh-muc-tri-thuc">
         <SectionHeader eyebrow="7 Intelligence" title="Danh mục tri thức" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((c) => (
-            <GemCard key={c.key}>
-              <div className="flex items-center justify-between">
-                <p className="gemos-card-title text-sm font-bold text-gray-900">{c.label}</p>
-                <GemBadge tone={c.count > 0 ? "free" : "locked"}>{c.count > 0 ? `${c.count}` : "Trống"}</GemBadge>
-              </div>
-              {c.hasRoute ? (
-                <>
+          {categories.map((c) => {
+            const surface = CATEGORY_SURFACE[c.key] ?? CATEGORY_SURFACE.tool;
+            return (
+              <div key={c.key} className={`rounded-2xl border p-5 shadow-sm ${surface.card}`}>
+                <div className="flex items-center justify-between">
+                  <p className="gemos-card-title text-sm font-bold text-gray-900">{c.label}</p>
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${surface.badge}`}>
+                    {c.count > 0 ? c.count : "Trống"}
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400">{surface.feel}</p>
+                {c.hasRoute ? (
+                  <>
+                    <p className="mt-2 text-xs text-gray-500">
+                      {c.count > 0
+                        ? `${c.count} mục đã sẵn sàng.`
+                        : "Chưa có dữ liệu công khai cho danh mục này."}
+                    </p>
+                    <Button href={c.href} variant="secondary" className="mt-3">
+                      Xem
+                    </Button>
+                  </>
+                ) : (
                   <p className="mt-2 text-xs text-gray-500">
-                    {c.count > 0
-                      ? `${c.count} mục đã sẵn sàng.`
-                      : "Chưa có dữ liệu công khai cho danh mục này."}
+                    Chưa có nội dung Best Practice thật nào — hệ thống lưu trữ riêng cho loại tri thức này
+                    chưa được triển khai. Trong lúc chờ, cách gần nhất là xem Case Study (kết quả thực tế) hoặc
+                    hỏi Companion cách người khác đã làm đúng.
                   </p>
-                  <Button href={c.href} variant="secondary" className="mt-3">
-                    Xem
-                  </Button>
-                </>
-              ) : (
-                <p className="mt-2 text-xs text-gray-500">
-                  Chưa có nội dung Best Practice thật nào — hệ thống lưu trữ riêng cho loại tri thức này
-                  chưa được triển khai. Trong lúc chờ, cách gần nhất là xem Case Study (kết quả thực tế) hoặc
-                  hỏi Companion cách người khác đã làm đúng.
-                </p>
-              )}
-            </GemCard>
-          ))}
+                )}
+              </div>
+            );
+          })}
         </div>
       </section>
 
