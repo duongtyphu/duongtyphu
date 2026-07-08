@@ -36,18 +36,32 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/congdongai": Users,
 };
 
-/** Portal 4.0 Final Reconstruction — Menu Update: từ "Companion" trong cả
- * 2 mục ("Companion" và "Sứ mệnh Companion") dùng cùng màu nhấn đã có sẵn
- * trên chính trang Companion (text-blue-500) — không phát minh màu mới.
- * Giúp người dùng thấy 2 mục "liên quan" (cùng màu) nhưng không "giống
- * nhau" (icon và phần nhãn còn lại vẫn khác biệt rõ). */
-function renderLabel(label: string) {
+/** Gradient thương hiệu của chữ "Companion" — cùng gradient đã dùng ở
+ * hero "/portal/su-menh-companion" (linear-gradient #111827 → #2563EB →
+ * #7C3AED → #F97316), không phát minh màu mới. */
+const COMPANION_GRADIENT = "linear-gradient(90deg, #111827, #2563EB, #7C3AED, #F97316)";
+
+/** Portal 4.0 Menu Update: chữ "Companion" trong cả 2 mục ("Companion" và
+ * "Sứ mệnh Companion") dùng gradient thương hiệu khi mục đang KHÔNG active
+ * — để nổi bật giữa các mục còn lại. Khi người dùng đang ở đúng trang đó,
+ * chữ "Companion" trở về màu xanh giống mọi mục active khác trong menu,
+ * nhất quán với hành vi active-state chung của sidebar. */
+function renderLabel(label: string, active: boolean) {
   if (!label.includes("Companion")) return label;
   const [before, after] = label.split("Companion");
   return (
     <>
       {before}
-      <span className="text-blue-500">Companion</span>
+      {active ? (
+        <span>Companion</span>
+      ) : (
+        <span
+          className="bg-clip-text text-transparent"
+          style={{ backgroundImage: COMPANION_GRADIENT }}
+        >
+          Companion
+        </span>
+      )}
       {after}
     </>
   );
@@ -157,7 +171,7 @@ function NavLink({
       {Icon && <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />}
       {showLabel && (
         <span className="flex min-w-0 items-center truncate">
-          <span className="truncate">{renderLabel(item.label)}</span>
+          <span className="truncate">{renderLabel(item.label, active)}</span>
           {V_BADGE_ROUTES.has(item.href) && <VBrandBadge />}
         </span>
       )}
