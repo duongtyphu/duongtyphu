@@ -11,9 +11,8 @@ import {
   Rocket,
   Crown,
   Users,
-  Notebook,
   Compass,
-  Leaf,
+  Cloud,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -28,10 +27,9 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/hocvienai": GraduationCap,
   "/portal/duan-cohoi": Rocket,
   "/portal/premium": Crown,
-  "/portal/congdongai": Users,
-  "/portal/nhatkyhoctap": Notebook,
   "/portal/hanhtrinhcuatoi": Compass,
-  "/portal/khuvuoncuaban": Leaf,
+  "/portal/su-menh-companion": Cloud,
+  "/portal/congdongai": Users,
 };
 
 // Khu vườn của bạn dùng tông xanh lá riêng cho active state (đúng

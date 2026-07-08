@@ -73,6 +73,15 @@ export type NavSection = {
  * Mọi Project mới KHÔNG được thêm item vào đây từ page.tsx riêng
  * (theo Portal Architecture Freeze — docs/THE_PORTAL_ARCHITECTURE_FREEZE.md).
  */
+/**
+ * Portal 4.0 Final Reconstruction — Menu Reconstruction. Cấu trúc menu
+ * cuối cùng, đóng băng: 8 mục chính + 2 mục phụ sau dấu ngăn cách. "Nhật
+ * ký học tập" và "Khu vườn của bạn" không còn là mục nav riêng — cả hai
+ * giờ là 2 trong 5 thẻ của Journey Hub DUY NHẤT tại "Hành trình của tôi"
+ * (route của chúng vẫn tồn tại, chỉ không xuất hiện trực tiếp trên sidebar
+ * nữa). "Companion" trỏ tới trải nghiệm AI Presence mới; "Sứ mệnh
+ * Companion" (triết lý, không đụng vào) là mục riêng, tách biệt hẳn.
+ */
 export const portalNavSections: NavSection[] = [
   {
     group: null,
@@ -84,15 +93,14 @@ export const portalNavSections: NavSection[] = [
       { label: "AI Workspace", href: "/portal/aiworkspace" },
       { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
       { label: "Premium", href: "/portal/premium" },
-      { label: "Cộng đồng", href: "/portal/congdongai" },
+      { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
     ],
   },
   {
     group: null,
     items: [
-      { label: "Nhật ký học tập", href: "/portal/nhatkyhoctap" },
-      { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
-      { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
+      { label: "Sứ mệnh Companion", href: "/portal/su-menh-companion" },
+      { label: "Cộng đồng", href: "/portal/congdongai" },
     ],
   },
 ];

@@ -15,6 +15,7 @@ const routes = [
   "/refund-policy",
   "/portal",
   "/portal/companion",
+  "/portal/su-menh-companion",
   "/portal/hetrithucai",
   "/portal/hocvienai",
   "/portal/aiworkspace",
