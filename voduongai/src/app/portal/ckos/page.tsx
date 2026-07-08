@@ -128,8 +128,8 @@ export default async function CkosPage() {
         title="Mọi thứ bạn biết, nối lại thành một hệ thống"
         subtitle="Một Prompt hay không có giá trị nếu bạn không biết dùng nó với công cụ nào, theo quy trình nào, để đạt kết quả gì. CKOS tồn tại để làm đúng một việc: khi bạn tìm một mảnh tri thức, nó chỉ ra ngay những mảnh khác cần đi cùng — rồi Companion giúp bạn ráp chúng lại thành hành động."
         quickActions={[
-          { label: "Tìm trong CKOS", href: "/portal/ckos#search" },
-          { label: "Xem Công cụ AI", href: "/portal/tools" },
+          { label: "Tìm trong CKOS", href: "/portal/ckos#danh-muc-tri-thuc" },
+          { label: "Vào Thư viện AI", href: "/portal/ckos#thu-vien-ai" },
         ]}
       />
 
@@ -253,7 +253,7 @@ export default async function CkosPage() {
       </section>
 
       {/* Knowledge Categories */}
-      <section>
+      <section id="danh-muc-tri-thuc">
         <SectionHeader eyebrow="7 Intelligence" title="Danh mục tri thức" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {categories.map((c) => (
@@ -290,7 +290,7 @@ export default async function CkosPage() {
        * trình bày như lối vào một thư viện thật — không phải một link
        * "Xem" chung chung nữa. Nội dung bên dưới (2 Bộ sưu tập, số Lesson
        * thật) là xem trước thật của kệ sách bên trong, không phải trang trí. */}
-      <section>
+      <section id="thu-vien-ai">
         <div className="overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-blue-50 p-6 sm:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-500">📚 Mục con của Hệ tri thức AI (CKOS)</p>
           <h3 className="mt-2 text-xl font-extrabold text-gray-900">Thư viện AI</h3>
