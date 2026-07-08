@@ -64,14 +64,14 @@ const SOURCE_LABEL: Record<string, string> = {
   "task-entry": "Giao việc cho Companion",
   "academy-journey": "Hành trình Học viện AI",
   "academy-mission-pilot": "Nhiệm vụ — Học viện AI",
-  "knowledge-exercise": "Bài tập — Hệ tri thức AI",
-  "knowledge-next-step": "Bước tiếp theo — Hệ tri thức AI",
+  "knowledge-exercise": "Bài tập — Hệ tri thức AI (CKOS)",
+  "knowledge-next-step": "Bước tiếp theo — Hệ tri thức AI (CKOS)",
 };
 
 /** Module nào dẫn tới đây → route quay lại đúng module đó (breadcrumb + fallback link). */
 const MODULE_ROUTE: Record<PortalModule, { label: string; href: string }> = {
   "khong-gian-ai": { label: "AI Workspace", href: "/portal/aiworkspace" },
-  ckos: { label: "Hệ tri thức AI", href: "/portal/hetrithucai" },
+  ckos: { label: "Hệ tri thức AI (CKOS)", href: "/portal/hetrithucai" },
   academy: { label: "Học viện AI", href: "/portal/hocvienai" },
   opportunities: { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
   premium: { label: "Premium", href: "/portal/premium" },

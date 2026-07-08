@@ -7,7 +7,7 @@ const columns = [
     title: "Học viện AI",
     links: [
       { label: "Companion", href: "/portal/companion" },
-      { label: "Hệ tri thức AI", href: "/portal/hetrithucai" },
+      { label: "Hệ tri thức AI (CKOS)", href: "/portal/hetrithucai" },
       { label: "Kỹ năng AI", href: "/portal/hocvienai" },
       { label: "Thực hành AI - Dự án & Cơ hội", href: "/portal/duan-cohoi" },
       { label: "Premium", href: "/portal/premium" },

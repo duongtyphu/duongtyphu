@@ -55,7 +55,7 @@ export function KnowledgeLibrary() {
       <PageHeader
         icon={Library}
         tone="violet"
-        title="Hệ tri thức AI"
+        title="Hệ tri thức AI (CKOS)"
         titleGradient
         subtitle="Nơi lưu giữ tri thức, tài liệu, quy trình và nền tảng học tập giúp bạn ứng dụng AI hiệu quả hơn."
       />

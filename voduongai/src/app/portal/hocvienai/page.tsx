@@ -30,7 +30,7 @@ export const metadata = {
 const FAQ = [
   {
     q: "Học viện có phải là khoá học không?",
-    a: "Không. Học viện không bán khoá học — Học viện dẫn bạn qua một hành trình thực hành thật, dựa trên tri thức đã có trong Hệ tri thức AI.",
+    a: "Không. Học viện không bán khoá học — Học viện dẫn bạn qua một hành trình thực hành thật, dựa trên tri thức đã có trong Hệ tri thức AI (CKOS).",
   },
   {
     q: "Tôi cần hoàn thành bao nhiêu bài để 'xong'?",
@@ -56,7 +56,7 @@ export default function AcademyHubPage() {
         subtitle="Một bài học tốt không kết thúc bằng việc bạn đọc xong — nó kết thúc bằng việc bạn làm ra một kết quả mà tuần trước bạn chưa làm được. Academy chọn cho bạn đúng một bước tiếp theo, không phải một danh sách khoá học để tự bơi."
         quickActions={[
           { label: "Vào AI Workspace", href: "/portal/aiworkspace" },
-          { label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" },
+          { label: "Xem Hệ tri thức AI (CKOS)", href: "/portal/hetrithucai" },
         ]}
       />
 
@@ -73,7 +73,7 @@ export default function AcademyHubPage() {
       <CompanionMemoryLine
         emptyMessage="Bạn chưa bắt đầu hành trình học nào trong Workspace — chọn một lộ trình bên dưới, Companion sẽ bắt đầu đồng hành từ đó."
         contextTemplate="Lần gần nhất, bạn đã {activity}. Đừng cố học hết mọi thứ trong một ngày — làm tiếp đúng một bước từ đó rồi dừng lại."
-        action={{ label: "Xem Hệ tri thức AI", href: "/portal/hetrithucai" }}
+        action={{ label: "Xem Hệ tri thức AI (CKOS)", href: "/portal/hetrithucai" }}
       />
 
       {/* Learning / Progress */}
@@ -164,7 +164,7 @@ export default function AcademyHubPage() {
               CKOS chưa có Bộ sưu tập nào, Academy không tự tạo hành trình giả để lấp chỗ trống.
             </p>
             <Link href="/portal/hetrithucai" className="mt-4 inline-block text-sm font-semibold text-brand-blue hover:underline">
-              Xem Hệ tri thức AI →
+              Xem Hệ tri thức AI (CKOS) →
             </Link>
           </div>
         ) : (

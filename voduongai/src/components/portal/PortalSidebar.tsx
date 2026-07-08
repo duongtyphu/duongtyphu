@@ -12,13 +12,17 @@ import {
   Crown,
   Users,
   Compass,
-  Cloud,
+  Sparkles,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
 
 /** Companion dùng icon riêng, tách biệt hẳn khỏi icon user/profile — thể
- * hiện "người đồng hành", không phải tài khoản cá nhân. */
+ * hiện "người đồng hành", không phải tài khoản cá nhân. "Sứ mệnh Companion"
+ * dùng Sparkles — cùng biểu tượng đã dùng ngay trong chính trang đó (tâm
+ * The Companion Genome™) thay vì Cloud (dễ hiểu nhầm thành lưu trữ đám
+ * mây/thời tiết) — Sparkles gợi "ánh sáng dẫn đường/khởi nguồn", đúng tinh
+ * thần sứ mệnh/triết lý, không phải một tiện ích. */
 const navIcons: Record<string, LucideIcon> = {
   "/portal": Home,
   "/portal/companion": HeartHandshake,
@@ -28,9 +32,26 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/duan-cohoi": Rocket,
   "/portal/premium": Crown,
   "/portal/hanhtrinhcuatoi": Compass,
-  "/portal/su-menh-companion": Cloud,
+  "/portal/su-menh-companion": Sparkles,
   "/portal/congdongai": Users,
 };
+
+/** Portal 4.0 Final Reconstruction — Menu Update: từ "Companion" trong cả
+ * 2 mục ("Companion" và "Sứ mệnh Companion") dùng cùng màu nhấn đã có sẵn
+ * trên chính trang Companion (text-blue-500) — không phát minh màu mới.
+ * Giúp người dùng thấy 2 mục "liên quan" (cùng màu) nhưng không "giống
+ * nhau" (icon và phần nhãn còn lại vẫn khác biệt rõ). */
+function renderLabel(label: string) {
+  if (!label.includes("Companion")) return label;
+  const [before, after] = label.split("Companion");
+  return (
+    <>
+      {before}
+      <span className="text-blue-500">Companion</span>
+      {after}
+    </>
+  );
+}
 
 // Khu vườn của bạn dùng tông xanh lá riêng cho active state (đúng
 // Design Reference VDAI-GARDEN-001), khác với tông xanh dương mặc định
@@ -136,7 +157,7 @@ function NavLink({
       {Icon && <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />}
       {showLabel && (
         <span className="flex min-w-0 items-center truncate">
-          <span className="truncate">{item.label}</span>
+          <span className="truncate">{renderLabel(item.label)}</span>
           {V_BADGE_ROUTES.has(item.href) && <VBrandBadge />}
         </span>
       )}
