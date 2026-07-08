@@ -220,7 +220,9 @@ body {
  * loop only needs to translate to -50% for a seamless repeat — same
  * convention as `.notice-ticker-track` / `ticker-scroll` above. */
 .opportunities-companions-marquee {
-  animation: opportunities-companions-scroll 32s linear infinite;
+  /* 60s: tiles doubled in size (h-32 -> h-64) so the track is ~2x longer —
+   * a longer duration keeps the same calm px/s pace as the original 32s. */
+  animation: opportunities-companions-scroll 60s linear infinite;
 }
 
 @keyframes opportunities-companions-scroll {
