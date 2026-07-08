@@ -10,6 +10,8 @@ import {
   computeCollectionProgress,
   getNextSeedToLearn,
   getSeedCompletedStepIds,
+  getPrerequisiteGuidance,
+  getSuggestedNextCollection,
   type KnowledgeCollection,
   type KnowledgeSeed,
 } from "@/features/knowledge";
@@ -71,6 +73,45 @@ export function getCurrentSeedForJourney(journey: LearningJourney): KnowledgeSee
   const collection = getAllKnowledgeCollections().find((c) => c.slug === journey.collectionSlug);
   if (!collection) return null;
   return getNextSeedToLearn(collection, getSeedCompletedStepIds);
+}
+
+/**
+ * Phase 6 — Academy Experience. Academy KHÔNG tự tạo "Purpose/Who this is
+ * for/Prerequisites/Expected Output" — mọi field dưới đây đọc thẳng từ Seed
+ * hiện tại (CKOS, `features/knowledge`), không có nội dung mới nào được
+ * viết ra ở đây. Nếu Journey đã xong hết (không còn seed nào), field liên
+ * quan trả về rỗng một cách trung thực thay vì lấy tạm seed khác.
+ */
+export type JourneyLearnerProfile = {
+  persona: string[];
+  whatYouWillGain: string[];
+  expectedOutput: string | null;
+  prerequisiteGuidance: string | null;
+};
+
+export function getJourneyLearnerProfile(journey: LearningJourney): JourneyLearnerProfile {
+  const seed = getCurrentSeedForJourney(journey);
+  if (!seed) {
+    return { persona: [], whatYouWillGain: [], expectedOutput: null, prerequisiteGuidance: null };
+  }
+  return {
+    persona: seed.persona,
+    whatYouWillGain: seed.whatYouWillGain,
+    expectedOutput: seed.exercise || null,
+    prerequisiteGuidance: getPrerequisiteGuidance(seed, getSeedCompletedStepIds),
+  };
+}
+
+/**
+ * Next Journey (Feature 09, CKOS Collection Relationship) — chỉ gợi ý khi
+ * Journey hiện tại đã thật sự hoàn thành hoặc gần xong; không tạo Collection
+ * giả để luôn có gợi ý. Trả về null nếu CKOS chưa có Collection kế tiếp nào.
+ */
+export function getSuggestedNextJourney(journey: LearningJourney): LearningJourney | null {
+  const collection = getAllKnowledgeCollections().find((c) => c.slug === journey.collectionSlug);
+  if (!collection) return null;
+  const next = getSuggestedNextCollection(collection, getSeedCompletedStepIds);
+  return next ? toJourney(next) : null;
 }
 
 /**

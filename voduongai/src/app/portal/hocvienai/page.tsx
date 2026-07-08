@@ -157,8 +157,15 @@ export default function AcademyHubPage() {
           </p>
         )}
         {journeys.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400">
-            Chưa có hành trình nào sẵn sàng — quay lại sau nhé.
+          <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-600">
+            <p className="font-semibold text-gray-900">Chưa có hành trình nào ở đây.</p>
+            <p className="mx-auto mt-2 max-w-md">
+              Mỗi hành trình Academy chiếu trực tiếp từ một Bộ sưu tập trong Hệ tri thức AI (CKOS) — khi
+              CKOS chưa có Bộ sưu tập nào, Academy không tự tạo hành trình giả để lấp chỗ trống.
+            </p>
+            <Link href="/portal/hetrithucai" className="mt-4 inline-block text-sm font-semibold text-brand-blue hover:underline">
+              Xem Hệ tri thức AI →
+            </Link>
           </div>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2">

@@ -6,7 +6,12 @@ import { ArrowRight, Sparkles } from "lucide-react";
 import { JourneyTimeline } from "./JourneyTimeline";
 import { CompanionGuidance } from "./CompanionGuidance";
 import { GrowthCheckpoint } from "./GrowthCheckpoint";
-import { computeJourneyStatus, getCompanionJourneyGuidance } from "../services/journey.service";
+import {
+  computeJourneyStatus,
+  getCompanionJourneyGuidance,
+  getJourneyLearnerProfile,
+  getSuggestedNextJourney,
+} from "../services/journey.service";
 import { JOURNEY_STAGE_LABELS, JourneyStage } from "../types/journey.types";
 import type { LearningJourney } from "../types/journey.types";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
@@ -19,6 +24,9 @@ import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskE
 export function JourneyCard({ journey }: { journey: LearningJourney }) {
   const status = computeJourneyStatus(journey);
   const guidance = getCompanionJourneyGuidance(journey, status);
+  const profile = getJourneyLearnerProfile(journey);
+  const nextJourney = getSuggestedNextJourney(journey);
+  const isDone = status.stage === JourneyStage.GROWTH || status.stage === JourneyStage.READY;
   const router = useRouter();
 
   return (
@@ -29,14 +37,53 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
         </p>
         <h3 className="mt-1 text-lg font-extrabold text-gray-900">{journey.title}</h3>
         <p className="mt-1 text-sm text-gray-500">{journey.goal}</p>
+        {profile.persona.length > 0 && (
+          <p className="mt-2 text-xs text-gray-400">
+            Dành cho: <span className="font-semibold text-gray-600">{profile.persona.join(", ")}</span>
+          </p>
+        )}
       </div>
+
+      {profile.prerequisiteGuidance && (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+          {profile.prerequisiteGuidance}
+        </p>
+      )}
+
+      {profile.whatYouWillGain.length > 0 && (
+        <div className="rounded-lg bg-gray-50 px-3 py-2.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">Bạn sẽ làm được gì</p>
+          <ul className="mt-1.5 space-y-1 text-sm text-gray-600">
+            {profile.whatYouWillGain.map((g) => (
+              <li key={g}>• {g}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <JourneyTimeline currentStage={status.stage} />
 
       <CompanionGuidance message={guidance} />
 
-      {(status.stage === JourneyStage.GROWTH || status.stage === JourneyStage.READY) && (
-        <GrowthCheckpoint journeySlug={journey.slug} />
+      {profile.expectedOutput && !isDone && (
+        <div className="rounded-lg border border-blue-100 bg-blue-50 px-3 py-2.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-blue-700">Kết quả mong đợi</p>
+          <p className="mt-1 text-sm text-blue-900">{profile.expectedOutput}</p>
+        </div>
+      )}
+
+      {isDone && <GrowthCheckpoint journeySlug={journey.slug} />}
+
+      {isDone && nextJourney && (
+        <div className="rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2.5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Hành trình tiếp theo</p>
+          <Link
+            href={`/portal/hetrithucai/collection/${nextJourney.collectionSlug}`}
+            className="mt-1 inline-block text-sm font-semibold text-emerald-800 hover:underline"
+          >
+            {nextJourney.title} →
+          </Link>
+        </div>
       )}
 
       <div className="flex flex-wrap items-center gap-4">
@@ -44,7 +91,7 @@ export function JourneyCard({ journey }: { journey: LearningJourney }) {
           href={`/portal/hetrithucai/collection/${journey.collectionSlug}`}
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:underline"
         >
-          Tiếp tục hành trình
+          Xem tri thức CKOS liên quan
           <ArrowRight className="h-4 w-4" />
         </Link>
 
