@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck } from "lucide-react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
@@ -32,7 +31,6 @@ const ECOSYSTEMS = [
     status: "Đang theo dõi",
     whoFor: "Người mới muốn bắt đầu kiếm thu nhập số, chấp nhận vài tháng đầu chưa có kết quả rõ ràng.",
     whoNotReady: "Người cần thu nhập ngay lập tức, hoặc chưa từng dùng công cụ AI cơ bản nào.",
-    learnFirst: { label: "Học viện AI — nền tảng AI cơ bản", href: "/portal/hocvienai" },
     expectedOutcome: "Kỹ năng vận hành một kênh nội dung số bằng AI — không phải cam kết thu nhập cụ thể.",
   },
   {
@@ -44,44 +42,40 @@ const ECOSYSTEMS = [
     status: "Đang nghiên cứu",
     whoFor: "Người có vốn nhàn rỗi thật sự sẵn sàng để lâu dài, chấp nhận không rút được ngay khi cần.",
     whoNotReady: "Người cần thanh khoản ngắn hạn, hoặc chưa từng đọc một bản cáo bạch/whitepaper đầu tư nào.",
-    learnFirst: { label: "Đọc Tiêu chí chia sẻ trước khi xem", href: "#tieu-chi" },
     expectedOutcome: "Hiểu rõ hơn cách một mô hình cổ phần dài hạn vận hành — không phải cam kết lợi nhuận.",
   },
   {
     key: "crypto",
     icon: Bitcoin,
     title: "Blockchain & Crypto",
-    description: "Kiến thức nền tảng và các sàn giao dịch mình đã thử — bao gồm cả bài học từ sai lầm.",
+    description: "Kiến thức nền tảng về hai mảng Blockchain và Crypto — bao gồm cả bài học từ sai lầm.",
     href: "/portal/duan-cohoi/crypto",
     status: "Chia sẻ trải nghiệm",
     whoFor: "Người tò mò về công nghệ mới, chấp nhận rủi ro cao và biến động giá lớn.",
     whoNotReady: "Người chưa từng tự quản lý một ví số, hoặc coi đây là cách làm giàu nhanh.",
-    learnFirst: { label: "Nhật ký học tập — bài học từ sai lầm thật", href: "/portal/nhatkyhoctap" },
-    expectedOutcome: "Kiến thức nền về blockchain và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
+    expectedOutcome: "Kiến thức nền về blockchain/crypto và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
   },
   {
     key: "blockchain",
     icon: Link2,
-    title: "Blockchain Projects",
-    description: "Các dự án Blockchain mình đang theo dõi — tài liệu, whitepaper và đánh giá cá nhân.",
+    title: "Làm tiếp thị liên kết (Affiliate)",
+    description: "Các chương trình/khoá học tiếp thị liên kết mình đang tìm hiểu hoặc quảng bá.",
     href: "/portal/duan-cohoi/blockchain",
     status: "Đang theo dõi",
-    whoFor: "Người đã hiểu blockchain cơ bản, muốn theo dõi các dự án cụ thể.",
-    whoNotReady: "Người chưa đọc qua mục Blockchain & Crypto ở trên — nền tảng cần đi trước dự án cụ thể.",
-    learnFirst: { label: "Xem Blockchain & Crypto trước", href: "/portal/duan-cohoi/crypto" },
-    expectedOutcome: "Khả năng tự đọc và đánh giá whitepaper của một dự án — không phải khuyến nghị mua/bán.",
+    whoFor: "Người muốn tìm hiểu các chương trình tiếp thị liên kết cụ thể mình đang theo dõi.",
+    whoNotReady: "Người tìm kiếm một danh sách link tiếp thị đã có sẵn và hoạt động ngay hôm nay.",
+    expectedOutcome: "Biết rõ những chương trình affiliate mình đang tìm hiểu — không phải cam kết thu nhập.",
   },
   {
     key: "trading",
     icon: LineChart,
-    title: "Trading",
-    description: "Kiến thức và tài nguyên Trading — từ nền tảng đến chiến lược mình đã thử và rút ra bài học.",
+    title: "Các sàn giao dịch Crypto",
+    description: "Danh sách các sàn giao dịch crypto mình đang theo dõi hoặc đã dùng thử.",
     href: "/portal/duan-cohoi/trading",
     status: "Chia sẻ kiến thức",
-    whoFor: "Người muốn học giao dịch có kỷ luật, chấp nhận thua lỗ là một phần bình thường của quá trình học.",
-    whoNotReady: "Người muốn làm giàu nhanh, hoặc không chấp nhận được khả năng mất vốn.",
-    learnFirst: { label: "Nhật ký học tập — bài học quản lý vốn thật", href: "/portal/nhatkyhoctap" },
-    expectedOutcome: "Kỷ luật quản lý vốn và đọc thị trường cơ bản — không phải công thức thắng chắc chắn.",
+    whoFor: "Người đã hiểu kiến thức nền về crypto, muốn biết các sàn giao dịch cụ thể mình đang theo dõi.",
+    whoNotReady: "Người chưa hiểu kiến thức nền về crypto/ví số — nên đọc Blockchain & Crypto trước.",
+    expectedOutcome: "Biết rõ các sàn giao dịch mình đang theo dõi/đã dùng — không phải khuyến nghị nên chọn sàn nào.",
   },
 ] as const;
 
@@ -209,16 +203,25 @@ export default function OpportunitiesHubPage() {
                   <p className="text-xs text-gray-600">
                     <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
                   </p>
-                  <Link href={item.learnFirst.href} className="inline-block text-xs font-semibold text-blue-600 hover:underline">
-                    Nên học trước: {item.learnFirst.label} →
-                  </Link>
                 </div>
 
-                <OpportunityAgentActions
-                  projectName={item.title}
-                  opportunityType={item.status}
-                  riskContext={item.description}
-                />
+                {/* Rule #2 restructure: 2 real anchor-scroll links staying
+                 * entirely within this ecosystem's own page — no more
+                 * Companion-intent buttons. */}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link
+                    href={`${item.href}#phan-tich-tiem-nang`}
+                    className="rounded-full border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:border-emerald-400 hover:bg-emerald-50"
+                  >
+                    Phân tích dự án
+                  </Link>
+                  <Link
+                    href={`${item.href}#lien-ket-tiep-thi`}
+                    className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-blue-300 hover:text-blue-600"
+                  >
+                    Đường link liên kết dự án
+                  </Link>
+                </div>
               </div>
             );
           })}

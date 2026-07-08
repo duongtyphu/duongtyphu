@@ -3,21 +3,29 @@ import { Layers, Building2, Bitcoin, Link2, LineChart } from "lucide-react";
 import type { DigitalAssetCategoryKey } from "@/data/digitalAssets";
 
 /**
- * Portal 4.0 — Project Ecosystem Architecture (docs/PROJECT_ECOSYSTEM_ARCHITECTURE.md).
+ * Portal 4.0 — Project Ecosystem Architecture (docs/PROJECT_ECOSYSTEM_ARCHITECTURE.md),
+ * RESTRUCTURED per direct Product Owner instruction (supersedes doc's original
+ * 7-section template for this rebuild — see task instructions). `Ecosystem`
+ * is the CMS-shaped content model for a mini-site rendered at
+ * `/portal/duan-cohoi/[ecosystemSlug]`. Still a STATIC data file standing in
+ * for the future CMS collection described in docs/PROJECT_CMS_ARCHITECTURE.md
+ * (no admin/CRUD is built in this phase).
  *
- * `Ecosystem` is the CMS-shaped content model for a mini-site rendered at
- * `/portal/duan-cohoi/[ecosystemSlug]`. This is a STATIC data file standing
- * in for the future CMS collection described in docs/PROJECT_CMS_ARCHITECTURE.md
- * (no admin/CRUD is built in this phase — see that doc's §10 "What this
- * document does not authorize"). Field shapes intentionally mirror that
- * doc's §4 CMS field model so a future admin module can adopt this exact
- * shape without a migration.
+ * Five ecosystems now split into 3 structurally different template shapes,
+ * driven by `structureType`:
+ * - "sub-projects" (DigiU, SolarGroup): intro → marketing link box → sub-projects
+ *   grid → potential analysis → articles.
+ * - "two-field" (Blockchain & Crypto): intro → 2 field boxes (Blockchain /
+ *   Crypto), each with its own marketing link box → potential analysis → articles.
+ * - "affiliate-list" (Làm tiếp thị liên kết (Affiliate), formerly "Blockchain
+ *   Projects"): intro → affiliate offers list → potential analysis → articles.
+ * - "exchange-list" (Các sàn giao dịch Crypto, formerly "Trading"): intro →
+ *   exchange links list → potential analysis → articles.
  *
- * NO FAKE DATA: `video`/`products`/`resources` are honestly empty for all 5
- * ecosystems today — there is no real video, no real per-ecosystem product
- * breakdown, and no real resource files in this codebase. Do not add
- * illustrative/fictional entries here (see architecture doc §3.3's DigiU/
- * WebWisePay/AlphaMind example — that was illustrative only, never real).
+ * NO FAKE DATA: `marketingLinks`/`subProjects[].marketingLinks`/`affiliateOffers`/
+ * `exchanges` are honestly empty or honestly URL-less where no real link
+ * exists today — never a fabricated tracking/referral URL. `potentialAnalysis`
+ * is honestly "not-assessed" everywhere — no fabricated verdicts.
  */
 
 export type EcosystemStatusBadge =
@@ -27,51 +35,84 @@ export type EcosystemStatusBadge =
   | "Đang tham gia"
   | "Chia sẻ kiến thức";
 
-export type EcosystemProduct = {
-  id: string;
-  name: string;
-  shortDescription: string;
-  link?: string;
-  badge?: EcosystemStatusBadge;
-  order: number;
-  visible: boolean;
-};
+export type StructureType = "sub-projects" | "two-field" | "affiliate-list" | "exchange-list";
 
-export type EcosystemResource = {
-  id: string;
-  title: string;
-  type: "PDF" | "Presentation" | "Website" | "Document";
-  url: string;
-  order: number;
-};
-
-export type EcosystemCtaIconKind =
-  | "Official Website"
-  | "Register"
-  | "Affiliate"
-  | "Telegram"
-  | "Facebook"
-  | "YouTube"
-  | "Whitepaper"
-  | "Download App";
-
-export type EcosystemCta = {
+/** Admin-addable link (label + url), honestly empty when no real link exists. */
+export type MarketingLink = {
   id: string;
   label: string;
   url: string;
-  role: "primary" | "secondary";
-  iconKind: EcosystemCtaIconKind;
   order: number;
   visible: boolean;
 };
 
-export type EcosystemFaqItem = { question: string; answer: string };
+export type PotentialAnalysisStatus = "not-assessed" | "met" | "not-met" | "partial";
+
+export type PotentialAnalysisItem = {
+  criterion: string;
+  status: PotentialAnalysisStatus;
+  note?: string;
+};
+
+/** Generic, honest due-diligence checklist — every row "not-assessed" until a
+ * real analyst verdict is recorded for a specific ecosystem/sub-project. */
+export const DEFAULT_POTENTIAL_ANALYSIS: PotentialAnalysisItem[] = [
+  { criterion: "Có tài liệu/website chính thức công khai", status: "not-assessed" },
+  { criterion: "Đội ngũ/nguồn gốc dự án minh bạch", status: "not-assessed" },
+  { criterion: "Có cộng đồng đang hoạt động thực tế", status: "not-assessed" },
+  { criterion: "Rủi ro được nêu rõ, không chỉ nói về lợi ích", status: "not-assessed" },
+  { criterion: "Có kết quả/case study thực tế được công khai", status: "not-assessed" },
+  { criterion: "Mô hình vận hành dễ hiểu, không mập mờ", status: "not-assessed" },
+];
+
+/** Sub-project (Type A only) — each gets a distinct color via `colorIndex`
+ * cycling through `SUB_PROJECT_PALETTE` (see [ecosystemSlug]/page.tsx). */
+export type SubProject = {
+  id: string;
+  slug: string;
+  name: string;
+  shortDescription: string;
+  colorIndex: number;
+  marketingLinks: MarketingLink[];
+  potentialAnalysis?: PotentialAnalysisItem[];
+};
+
+/** Field box (Type B only — Blockchain & Crypto). */
+export type EcosystemFieldBox = {
+  id: string;
+  name: "Blockchain" | "Crypto";
+  description: string;
+  marketingLinks: MarketingLink[];
+};
+
+/** Affiliate offer entry (Type C only). URL is honestly absent when no real
+ * tracking/referral link exists yet — never a fabricated href. */
+export type AffiliateOffer = {
+  id: string;
+  name: string;
+  category: "Sàn TMĐT" | "Khoá học" | "Khác";
+  url?: string;
+  order: number;
+  visible: boolean;
+};
+
+/** Exchange entry (Type D only). Same honest-empty-URL rule as AffiliateOffer. */
+export type ExchangeLink = {
+  id: string;
+  name: string;
+  url?: string;
+  order: number;
+  visible: boolean;
+};
 
 export type Ecosystem = {
   id: string;
   slug: string;
   /** Matches DigitalAssetCategoryKey — used to scope real digitalAssetArticles by category. */
   articleCategory: DigitalAssetCategoryKey;
+  /** Only used by "two-field" (crypto) ecosystem, which combines two real
+   * DigitalAssetCategoryKey values ("blockchain" and "crypto"). */
+  extraArticleCategories?: DigitalAssetCategoryKey[];
   name: string;
   icon: LucideIcon;
   shortDescription: string;
@@ -80,16 +121,22 @@ export type Ecosystem = {
   statusBadge: EcosystemStatusBadge;
   whoFor: string;
   whoNotReady: string;
-  learnFirst: { label: string; href: string };
   expectedOutcome: string;
-  /** No real video exists for any ecosystem today — honest null, template omits the section. */
-  video: null;
-  /** No real per-ecosystem product breakdown exists today — honest empty, template renders the required empty-state line. */
-  products: EcosystemProduct[];
-  /** No real resource files exist today — honest empty, section omitted entirely. */
-  resources: EcosystemResource[];
-  faq: EcosystemFaqItem[];
-  ctas: EcosystemCta[];
+  structureType: StructureType;
+  /** Ecosystem-level marketing/affiliate link box — used directly by
+   * "sub-projects" (parent-level box) and unused (honestly empty) by the
+   * other structure types, which use their own scoped link lists instead. */
+  marketingLinks: MarketingLink[];
+  /** "sub-projects" only — honestly empty array if no real sub-project exists yet. */
+  subProjects?: SubProject[];
+  /** "two-field" only. */
+  fields?: EcosystemFieldBox[];
+  /** "affiliate-list" only. */
+  affiliateOffers?: AffiliateOffer[];
+  /** "exchange-list" only. */
+  exchanges?: ExchangeLink[];
+  /** Ecosystem-level potential analysis override; defaults to DEFAULT_POTENTIAL_ANALYSIS. */
+  potentialAnalysis?: PotentialAnalysisItem[];
   order: number;
   status: "Draft" | "Published" | "Hidden";
 };
@@ -112,43 +159,10 @@ export const ecosystems: Ecosystem[] = [
     statusBadge: "Đang theo dõi",
     whoFor: "Người mới muốn bắt đầu kiếm thu nhập số, chấp nhận vài tháng đầu chưa có kết quả rõ ràng.",
     whoNotReady: "Người cần thu nhập ngay lập tức, hoặc chưa từng dùng công cụ AI cơ bản nào.",
-    learnFirst: { label: "Học viện AI — nền tảng AI cơ bản", href: "/portal/hocvienai" },
     expectedOutcome: "Kỹ năng vận hành một kênh nội dung số bằng AI — không phải cam kết thu nhập cụ thể.",
-    video: null,
-    products: [],
-    resources: [],
-    faq: [
-      {
-        question: "Đây có phải lời khuyên đầu tư hay kiếm tiền không?",
-        answer:
-          "Không. Đây là chia sẻ trải nghiệm cá nhân của mình về DigiU — bạn tự nghiên cứu thêm và tự chịu trách nhiệm với quyết định của mình.",
-      },
-      {
-        question: "Vì sao chưa có bài viết/sản phẩm nào liệt kê ở đây?",
-        answer:
-          "Vì tới hiện tại mình chưa có nội dung thật đủ chi tiết để đăng riêng cho từng sản phẩm con trong DigiU — mình sẽ cập nhật khi có, không dựng nội dung tạm để lấp chỗ trống.",
-      },
-    ],
-    ctas: [
-      {
-        id: "cta_digiu_1",
-        label: "Xem các dự án DigiU đang theo dõi",
-        url: "/portal/digital-assets/category/digiu",
-        role: "primary",
-        iconKind: "Official Website",
-        order: 1,
-        visible: true,
-      },
-      {
-        id: "cta_digiu_2",
-        label: "Học viện AI — nền tảng AI cơ bản",
-        url: "/portal/hocvienai",
-        role: "secondary",
-        iconKind: "Register",
-        order: 2,
-        visible: true,
-      },
-    ],
+    structureType: "sub-projects",
+    marketingLinks: [],
+    subProjects: [],
     order: 1,
     status: "Published",
   },
@@ -169,43 +183,10 @@ export const ecosystems: Ecosystem[] = [
     statusBadge: "Đang nghiên cứu",
     whoFor: "Người có vốn nhàn rỗi thật sự sẵn sàng để lâu dài, chấp nhận không rút được ngay khi cần.",
     whoNotReady: "Người cần thanh khoản ngắn hạn, hoặc chưa từng đọc một bản cáo bạch/whitepaper đầu tư nào.",
-    learnFirst: { label: "Đọc Tiêu chí chia sẻ trước khi xem", href: "/portal/duan-cohoi#tieu-chi" },
     expectedOutcome: "Hiểu rõ hơn cách một mô hình cổ phần dài hạn vận hành — không phải cam kết lợi nhuận.",
-    video: null,
-    products: [],
-    resources: [],
-    faq: [
-      {
-        question: "SolarGroup có phải một khuyến nghị đầu tư từ VO DUONG AI không?",
-        answer:
-          "Không. Đây là góc nhìn cá nhân trong quá trình mình nghiên cứu — bạn cần tự đọc tài liệu gốc và tự quyết định, không dựa vào trang này để đầu tư.",
-      },
-      {
-        question: "Vì sao trạng thái vẫn là 'Đang nghiên cứu' chứ chưa 'Đang tham gia'?",
-        answer:
-          "Vì mình chưa đủ trải nghiệm thực tế để nâng mức độ chia sẻ lên — trạng thái này sẽ cập nhật trung thực khi có thay đổi thật, không nâng cấp trước để trông hấp dẫn hơn.",
-      },
-    ],
-    ctas: [
-      {
-        id: "cta_solargroup_1",
-        label: "Xem các dự án cổ phần đang theo dõi",
-        url: "/portal/digital-assets/category/equity",
-        role: "primary",
-        iconKind: "Official Website",
-        order: 1,
-        visible: true,
-      },
-      {
-        id: "cta_solargroup_2",
-        label: "Đọc Tiêu chí chia sẻ trước khi xem",
-        url: "/portal/duan-cohoi#tieu-chi",
-        role: "secondary",
-        iconKind: "Whitepaper",
-        order: 2,
-        visible: true,
-      },
-    ],
+    structureType: "sub-projects",
+    marketingLinks: [],
+    subProjects: [],
     order: 2,
     status: "Published",
   },
@@ -213,12 +194,13 @@ export const ecosystems: Ecosystem[] = [
     id: "eco_crypto",
     slug: "crypto",
     articleCategory: "crypto",
+    extraArticleCategories: ["blockchain"],
     name: "Blockchain & Crypto",
     icon: Bitcoin,
     shortDescription:
-      "Kiến thức nền tảng và các sàn giao dịch mình đã thử — bao gồm cả bài học từ sai lầm.",
+      "Kiến thức nền tảng về hai mảng Blockchain và Crypto — bao gồm cả bài học từ sai lầm.",
     fullIntro:
-      "Đây là nơi mình gom lại kiến thức nền về blockchain/crypto và trải nghiệm thật khi tự dùng ví, sàn giao dịch — kể cả những lần mình đã sai. Mục tiêu là giúp bạn hiểu đúng trước khi tự mình thử, không phải để bạn làm theo một chiến lược cụ thể nào.",
+      "Đây là nơi mình gom lại kiến thức nền về blockchain và crypto — hai mảng khác nhau nhưng liên quan chặt chẽ. Mục tiêu là giúp bạn hiểu đúng phạm vi từng mảng trước khi tự mình tìm hiểu sâu hơn, không phải để bạn làm theo một chiến lược cụ thể nào.",
     highlights: [
       "Bao gồm cả bài học từ những lần mình từng mất tiền hoặc thao tác sai.",
       "Biến động giá và rủi ro công nghệ ở đây cao hơn nhiều so với các hệ sinh thái khác trên trang.",
@@ -226,36 +208,23 @@ export const ecosystems: Ecosystem[] = [
     statusBadge: "Chia sẻ trải nghiệm",
     whoFor: "Người tò mò về công nghệ mới, chấp nhận rủi ro cao và biến động giá lớn.",
     whoNotReady: "Người chưa từng tự quản lý một ví số, hoặc coi đây là cách làm giàu nhanh.",
-    learnFirst: { label: "Nhật ký học tập — bài học từ sai lầm thật", href: "/portal/nhatkyhoctap" },
-    expectedOutcome: "Kiến thức nền về blockchain và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
-    video: null,
-    products: [],
-    resources: [],
-    faq: [
+    expectedOutcome: "Kiến thức nền về blockchain/crypto và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
+    structureType: "two-field",
+    marketingLinks: [],
+    fields: [
       {
-        question: "Mình có nên tham gia Crypto chỉ vì thấy hấp dẫn không?",
-        answer:
-          "Không nên. Nếu bạn coi đây là cách làm giàu nhanh hoặc chưa từng tự quản lý một ví số, hãy đọc phần 'Chưa nên tham gia nếu' ở trên trước khi đi tiếp.",
-      },
-    ],
-    ctas: [
-      {
-        id: "cta_crypto_1",
-        label: "Xem các dự án Crypto đang theo dõi",
-        url: "/portal/digital-assets/category/crypto",
-        role: "primary",
-        iconKind: "Official Website",
-        order: 1,
-        visible: true,
+        id: "field_blockchain",
+        name: "Blockchain",
+        description:
+          "Mảng công nghệ nền: cách một sổ cái phân tán vận hành, các loại nền tảng blockchain, ví và hợp đồng thông minh. Đây là kiến thức nền, không phải danh sách dự án cụ thể để tham gia.",
+        marketingLinks: [],
       },
       {
-        id: "cta_crypto_2",
-        label: "Nhật ký học tập — bài học từ sai lầm thật",
-        url: "/portal/nhatkyhoctap",
-        role: "secondary",
-        iconKind: "Register",
-        order: 2,
-        visible: true,
+        id: "field_crypto",
+        name: "Crypto",
+        description:
+          "Mảng tài sản số xây dựng trên nền blockchain: cách thị trường vận hành, cách tự quản lý và bảo vệ tài sản, cùng rủi ro biến động giá. Đây là kiến thức nền, không phải tín hiệu mua/bán.",
+        marketingLinks: [],
       },
     ],
     order: 3,
@@ -265,50 +234,27 @@ export const ecosystems: Ecosystem[] = [
     id: "eco_blockchain",
     slug: "blockchain",
     articleCategory: "blockchain",
-    name: "Blockchain Projects",
+    name: "Làm tiếp thị liên kết (Affiliate)",
     icon: Link2,
     shortDescription:
-      "Các dự án Blockchain mình đang theo dõi — tài liệu, whitepaper và đánh giá cá nhân.",
+      "Nơi mình liệt kê các chương trình/khoá học tiếp thị liên kết đang tìm hiểu hoặc quảng bá.",
     fullIntro:
-      "Sau khi đã hiểu nền tảng blockchain ở mục Blockchain & Crypto, đây là nơi mình theo dõi các dự án cụ thể — đọc whitepaper, ghi lại đánh giá cá nhân. Đây không phải danh sách khuyến nghị mua/bán, chỉ là nhật ký theo dõi của mình.",
+      "Đây là nơi mình liệt kê các chương trình tiếp thị liên kết (affiliate) thật — sàn thương mại điện tử, khoá học — mà mình đang tìm hiểu hoặc quảng bá. Danh sách này có thể thêm/bớt theo thời gian; mục nào chưa có link tiếp thị thật sẽ ghi rõ thay vì dùng link giả.",
     highlights: [
-      "Yêu cầu đã hiểu kiến thức nền ở Blockchain & Crypto trước khi đọc mục này.",
-      "Đánh giá ở đây là góc nhìn cá nhân tại thời điểm viết, có thể thay đổi khi dự án phát triển thêm.",
+      "Danh sách có thể thêm/bớt theo thời gian, không phải danh sách cố định.",
+      "Mục nào chưa có link tiếp thị thật sẽ ghi rõ 'chưa có link' thay vì dùng link giả.",
     ],
     statusBadge: "Đang theo dõi",
-    whoFor: "Người đã hiểu blockchain cơ bản, muốn theo dõi các dự án cụ thể.",
-    whoNotReady: "Người chưa đọc qua mục Blockchain & Crypto — nền tảng cần đi trước dự án cụ thể.",
-    learnFirst: { label: "Xem Blockchain & Crypto trước", href: "/portal/duan-cohoi/crypto" },
-    expectedOutcome: "Khả năng tự đọc và đánh giá whitepaper của một dự án — không phải khuyến nghị mua/bán.",
-    video: null,
-    products: [],
-    resources: [],
-    faq: [
-      {
-        question: "Cần đọc gì trước khi xem các dự án ở đây?",
-        answer:
-          "Nên đọc qua Blockchain & Crypto trước — mục đó giải thích kiến thức nền, còn mục này chỉ theo dõi các dự án cụ thể dựa trên nền tảng đó.",
-      },
-    ],
-    ctas: [
-      {
-        id: "cta_blockchain_1",
-        label: "Xem các dự án Blockchain đang theo dõi",
-        url: "/portal/digital-assets/category/blockchain",
-        role: "primary",
-        iconKind: "Official Website",
-        order: 1,
-        visible: true,
-      },
-      {
-        id: "cta_blockchain_2",
-        label: "Xem Blockchain & Crypto trước",
-        url: "/portal/duan-cohoi/crypto",
-        role: "secondary",
-        iconKind: "Whitepaper",
-        order: 2,
-        visible: true,
-      },
+    whoFor: "Người muốn tìm hiểu các chương trình tiếp thị liên kết cụ thể mình đang theo dõi.",
+    whoNotReady: "Người tìm kiếm một danh sách link tiếp thị đã có sẵn và hoạt động ngay hôm nay.",
+    expectedOutcome: "Biết rõ những chương trình affiliate mình đang tìm hiểu — không phải cam kết thu nhập.",
+    structureType: "affiliate-list",
+    marketingLinks: [],
+    affiliateOffers: [
+      { id: "aff_lazada", name: "Lazada", category: "Sàn TMĐT", order: 1, visible: true },
+      { id: "aff_shopee", name: "Shopee", category: "Sàn TMĐT", order: 2, visible: true },
+      { id: "aff_unica", name: "Unica (khoá học)", category: "Khoá học", order: 3, visible: true },
+      { id: "aff_khoi_nguyen_mmo", name: "Khởi Nguyên MMO (khoá học)", category: "Khoá học", order: 4, visible: true },
     ],
     order: 4,
     status: "Published",
@@ -317,50 +263,30 @@ export const ecosystems: Ecosystem[] = [
     id: "eco_trading",
     slug: "trading",
     articleCategory: "trading",
-    name: "Trading",
+    name: "Các sàn giao dịch Crypto",
     icon: LineChart,
     shortDescription:
-      "Kiến thức và tài nguyên Trading — từ nền tảng đến chiến lược mình đã thử và rút ra bài học.",
+      "Danh sách các sàn giao dịch crypto mình đang theo dõi hoặc đã dùng thử.",
     fullIntro:
-      "Trading ở đây là hành trình học có kỷ luật, không phải công thức thắng chắc chắn. Mình chia sẻ những gì mình đã thử, kể cả những lần thua lỗ, để bạn có cái nhìn thật trước khi tự mình bắt đầu.",
+      "Đây là danh sách các sàn giao dịch crypto thật, có thể thêm/bớt theo thời gian. Sàn nào chưa có link tiếp thị thật của mình sẽ ghi rõ thay vì dùng link giả — tự bạn vẫn nên vào trang chính thức của từng sàn để tìm hiểu kỹ trước khi dùng.",
     highlights: [
-      "Thua lỗ là một phần bình thường trong nội dung chia sẻ ở đây, không bị lược bỏ.",
-      "Trọng tâm là kỷ luật quản lý vốn, không phải một chiến lược 'thắng chắc'.",
+      "Danh sách có thể thêm/bớt theo thời gian, không phải một bảng xếp hạng 'tốt nhất'.",
+      "Sàn nào chưa có link tiếp thị thật sẽ ghi rõ 'chưa có link' thay vì dùng link giả.",
     ],
     statusBadge: "Chia sẻ kiến thức",
-    whoFor: "Người muốn học giao dịch có kỷ luật, chấp nhận thua lỗ là một phần bình thường của quá trình học.",
-    whoNotReady: "Người muốn làm giàu nhanh, hoặc không chấp nhận được khả năng mất vốn.",
-    learnFirst: { label: "Nhật ký học tập — bài học quản lý vốn thật", href: "/portal/nhatkyhoctap" },
-    expectedOutcome: "Kỷ luật quản lý vốn và đọc thị trường cơ bản — không phải công thức thắng chắc chắn.",
-    video: null,
-    products: [],
-    resources: [],
-    faq: [
-      {
-        question: "Trading ở đây có đảm bảo lợi nhuận không?",
-        answer:
-          "Không có gì được đảm bảo. Trang này chia sẻ kỷ luật và bài học thật, kể cả thua lỗ — không phải một công thức thắng chắc chắn.",
-      },
-    ],
-    ctas: [
-      {
-        id: "cta_trading_1",
-        label: "Xem các dự án Trading đang theo dõi",
-        url: "/portal/digital-assets/category/trading",
-        role: "primary",
-        iconKind: "Official Website",
-        order: 1,
-        visible: true,
-      },
-      {
-        id: "cta_trading_2",
-        label: "Nhật ký học tập — bài học quản lý vốn thật",
-        url: "/portal/nhatkyhoctap",
-        role: "secondary",
-        iconKind: "Register",
-        order: 2,
-        visible: true,
-      },
+    whoFor: "Người đã hiểu kiến thức nền về crypto, muốn biết các sàn giao dịch cụ thể mình đang theo dõi.",
+    whoNotReady: "Người chưa hiểu kiến thức nền về crypto/ví số — nên đọc Blockchain & Crypto trước.",
+    expectedOutcome: "Biết rõ các sàn giao dịch mình đang theo dõi/đã dùng — không phải khuyến nghị nên chọn sàn nào.",
+    structureType: "exchange-list",
+    marketingLinks: [],
+    exchanges: [
+      { id: "exc_binance", name: "Binance", order: 1, visible: true },
+      { id: "exc_okx", name: "OKX", order: 2, visible: true },
+      { id: "exc_mexc", name: "MEXC", order: 3, visible: true },
+      { id: "exc_bybit", name: "Bybit", order: 4, visible: true },
+      { id: "exc_kucoin", name: "Kucoin", order: 5, visible: true },
+      { id: "exc_gate", name: "Gate", order: 6, visible: true },
+      { id: "exc_bitget", name: "Bitget", order: 7, visible: true },
     ],
     order: 5,
     status: "Published",
@@ -371,16 +297,6 @@ export function getEcosystemBySlug(slug: string): Ecosystem | undefined {
   return ecosystems.find((e) => e.slug === slug && e.status === "Published");
 }
 
-/**
- * Defensive render-time safeguard (Ecosystem Architecture §10 / task
- * instruction #10): exactly one CTA renders as primary even if the data
- * mistakenly carries more than one `role: "primary"` — pick the first one
- * marked primary, demote the rest to secondary for rendering purposes only.
- */
-export function resolveCtas(ecosystem: Ecosystem): { primary: EcosystemCta | undefined; secondary: EcosystemCta[] } {
-  const visible = ecosystem.ctas.filter((c) => c.visible).sort((a, b) => a.order - b.order);
-  const firstPrimaryIndex = visible.findIndex((c) => c.role === "primary");
-  const primary = firstPrimaryIndex >= 0 ? visible[firstPrimaryIndex] : undefined;
-  const secondary = visible.filter((_, i) => i !== firstPrimaryIndex);
-  return { primary, secondary };
+export function getSubProjectBySlug(ecosystem: Ecosystem, subProjectSlug: string): SubProject | undefined {
+  return ecosystem.subProjects?.find((p) => p.slug === subProjectSlug);
 }
