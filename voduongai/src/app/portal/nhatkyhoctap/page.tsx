@@ -128,7 +128,7 @@ export default function LearningJournalPage() {
             Xem công cụ AI →
           </Link>
           <Link
-            href="/portal/hetrithucai"
+            href="/portal/resources"
             className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
           >
             Tải tài nguyên →

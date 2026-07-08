@@ -33,7 +33,7 @@ export function KnowledgeCollectionView({ collection }: { collection: KnowledgeC
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-blue-600"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        Quay lại Hệ tri thức AI (CKOS)
+        Quay lại Thư viện AI
       </Link>
 
       <CollectionHeader collection={collection} progress={progress} nextSeed={nextSeed} />

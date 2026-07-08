@@ -9,7 +9,8 @@
  */
 
 import { useMemo, useState } from "react";
-import { Search, Library } from "lucide-react";
+import Link from "next/link";
+import { Search, BookOpen, ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/portal/ui/PageHeader";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
@@ -52,13 +53,32 @@ export function KnowledgeLibrary() {
 
   return (
     <div className="space-y-8">
+      {/* Gộp trang — Thư viện AI giờ là mục con của Hệ tri thức AI (CKOS),
+       * không phải một trang ngang hàng riêng biệt nữa. Luôn có đường về
+       * trang mẹ ngay đầu trang để mối liên kết mẹ-con luôn rõ ràng. */}
+      <Link
+        href="/portal/ckos"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-blue-600"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Hệ tri thức AI (CKOS)
+      </Link>
+
       <PageHeader
-        icon={Library}
+        icon={BookOpen}
         tone="violet"
-        title="Hệ tri thức AI (CKOS)"
+        title="Thư viện AI"
         titleGradient
-        subtitle="Nơi lưu giữ tri thức, tài liệu, quy trình và nền tảng học tập giúp bạn ứng dụng AI hiệu quả hơn."
+        subtitle="Một mục con của Hệ tri thức AI (CKOS) — nơi tri thức được xếp lên kệ theo từng chủ đề, có thứ tự đọc rõ ràng như một cuốn sách thật."
       />
+
+      <div className="rounded-2xl border border-violet-100 bg-violet-50/40 p-5">
+        <p className="text-xs font-bold uppercase tracking-widest text-violet-600">Companion trong thư viện</p>
+        <p className="mt-1.5 text-sm leading-relaxed text-gray-600">
+          Chưa biết nên đọc cuốn nào? Chọn một mục tiêu bên dưới — Companion sẽ chỉ đúng &ldquo;cuốn
+          sách&rdquo; (Lesson) phù hợp nhất với việc bạn đang làm, thay vì để bạn tự lục qua cả kệ.
+        </p>
+      </div>
 
       <ContinueLearningBanner />
 
@@ -99,11 +119,13 @@ export function KnowledgeLibrary() {
           </div>
 
           <div className="space-y-3">
-            <SectionHeader title="Collection — học theo chủ đề" />
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {allCollections.map((collection) => (
-                <CollectionCard key={collection.id} collection={collection} />
-              ))}
+            <SectionHeader eyebrow="📚 Kệ sách" title="Bộ sưu tập theo chủ đề" />
+            <div className="rounded-2xl border-t-4 border-amber-200 bg-gradient-to-b from-amber-50/60 to-transparent p-4 sm:p-5">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {allCollections.map((collection) => (
+                  <CollectionCard key={collection.id} collection={collection} />
+                ))}
+              </div>
             </div>
           </div>
 

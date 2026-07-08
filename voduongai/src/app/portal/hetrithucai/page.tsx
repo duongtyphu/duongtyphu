@@ -1,8 +1,8 @@
 import { KnowledgeLibrary } from "@/features/knowledge/workspace/KnowledgeLibrary";
 
 export const metadata = {
-  title: "Hệ tri thức AI (CKOS)",
-  description: "Nơi lưu giữ tri thức, tài liệu, quy trình và nền tảng học tập giúp bạn ứng dụng AI hiệu quả hơn.",
+  title: "Thư viện AI — Hệ tri thức AI (CKOS)",
+  description: "Thư viện AI — một mục con của Hệ tri thức AI (CKOS), nơi Lesson được xếp lên kệ theo từng chủ đề, có thứ tự đọc rõ ràng.",
 };
 
 export default function KnowledgeLibraryPage() {

@@ -6,7 +6,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const seed = getKnowledgeSeedBySlug(slug);
   return {
-    title: seed ? `${seed.title} — Hệ tri thức AI (CKOS)` : "Hệ tri thức AI (CKOS)",
+    title: seed ? `${seed.title} — Thư viện AI` : "Thư viện AI",
     description: seed?.summary,
   };
 }

@@ -27,7 +27,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal": Home,
   "/portal/companion": HeartHandshake,
   "/portal/aiworkspace": Cpu,
-  "/portal/hetrithucai": Library,
+  "/portal/ckos": Library,
   "/portal/hocvienai": GraduationCap,
   "/portal/duan-cohoi": Rocket,
   "/portal/premium": Crown,

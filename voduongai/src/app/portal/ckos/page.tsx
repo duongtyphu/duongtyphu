@@ -18,8 +18,8 @@ import { sops } from "@/data/sop";
 import { freeResources } from "@/data/resources";
 
 export const metadata = {
-  title: "CKOS",
-  description: "CKOS — bộ não tri thức chuẩn hoá đứng sau Companion, không phải một thư viện tĩnh.",
+  title: "Hệ tri thức AI (CKOS)",
+  description: "Hệ tri thức AI (CKOS) — bộ não tri thức chuẩn hoá đứng sau Companion, không phải một thư viện tĩnh.",
 };
 
 // Portal 3.0 P.4 — CKOS Experience.
@@ -80,7 +80,7 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
 
   if (!configured) {
     return [
-      { key: "tool", label: "Tool", count: 0, href: "/portal/tools", configured: false, hasRoute: true },
+      { key: "tool", label: "Công cụ AI", count: 0, href: "/portal/tools", configured: false, hasRoute: true },
       { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: false, hasRoute: true },
       { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: false, hasRoute: true },
       { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: false, hasRoute: true },
@@ -96,7 +96,7 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
     safeCount(supabase, "case_studies", "active", true),
   ]);
   return [
-    { key: "tool", label: "Tool", count: tool, href: "/portal/tools", configured: true, hasRoute: true },
+    { key: "tool", label: "Công cụ AI", count: tool, href: "/portal/tools", configured: true, hasRoute: true },
     { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: true, hasRoute: true },
     { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: true, hasRoute: true },
     { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: true, hasRoute: true },
@@ -124,7 +124,7 @@ export default async function CkosPage() {
       <PillarHero
         icon={Brain}
         tone="knowledge"
-        eyebrow="CKOS — Nơi tri thức được kết nối"
+        eyebrow="Hệ tri thức AI (CKOS)"
         title="Mọi thứ bạn biết, nối lại thành một hệ thống"
         subtitle="Một Prompt hay không có giá trị nếu bạn không biết dùng nó với công cụ nào, theo quy trình nào, để đạt kết quả gì. CKOS tồn tại để làm đúng một việc: khi bạn tìm một mảnh tri thức, nó chỉ ra ngay những mảnh khác cần đi cùng — rồi Companion giúp bạn ráp chúng lại thành hành động."
         quickActions={[
@@ -159,7 +159,7 @@ export default async function CkosPage() {
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: "Tool", q: "Tôi nên dùng công cụ gì?" },
+            { label: "Công cụ AI", q: "Tôi nên dùng công cụ gì?" },
             { label: "Prompt", q: "Tôi nên yêu cầu AI thế nào?" },
             { label: "Workflow", q: "Các bước cần làm theo thứ tự nào?" },
             { label: "Resource", q: "Tôi cần đọc/xem thêm tài liệu gì?" },
@@ -174,7 +174,7 @@ export default async function CkosPage() {
           ))}
         </div>
         <p className="mt-4 text-sm text-gray-500">
-          Chưa biết bắt đầu từ đâu? Nếu bạn mới, hãy xem <span className="font-semibold text-gray-900">Tool</span> trước
+          Chưa biết bắt đầu từ đâu? Nếu bạn mới, hãy xem <span className="font-semibold text-gray-900">Công cụ AI</span> trước
           — nó cụ thể và dễ dùng ngay. Nếu bạn đã có công cụ nhưng chưa biết dùng hiệu quả, xem{" "}
           <span className="font-semibold text-gray-900">Prompt</span> và <span className="font-semibold text-gray-900">Workflow</span> tiếp theo.
         </p>
@@ -285,36 +285,40 @@ export default async function CkosPage() {
         </div>
       </section>
 
-      {/* Portal 4.0 CKOS Reconstruction — Lesson canonical (features/knowledge)
-       * hiển thị ngay tại đây thay vì chỉ là một thẻ "Xem" dẫn đi xa. Trước
-       * đây CKOS hub và Hệ tri thức AI (/portal/hetrithucai) cảm giác như 2
-       * hệ thống khác nhau — đây là cầu nối thật, không phải link chung
-       * chung: hiển thị đúng tên/mô tả thật của 2 Bộ sưu tập Lesson đang có. */}
+      {/* Gộp trang — "Thư viện AI" (trước đây là trang /portal/hetrithucai
+       * độc lập tên "Hệ tri thức AI") giờ là MỘT MỤC CON của trang mẹ này,
+       * trình bày như lối vào một thư viện thật — không phải một link
+       * "Xem" chung chung nữa. Nội dung bên dưới (2 Bộ sưu tập, số Lesson
+       * thật) là xem trước thật của kệ sách bên trong, không phải trang trí. */}
       <section>
-        <SectionHeader
-          eyebrow="Lesson"
-          title="Tri thức Lesson đang có trong Hệ tri thức AI"
-          description="Cùng một hệ thống — Lesson chỉ là một trong 7 loại tri thức của CKOS, được tổ chức thành các Bộ sưu tập có thứ tự học rõ ràng."
-          action={
-            <Button href="/portal/hetrithucai" variant="secondary">
-              Mở Hệ tri thức AI →
-            </Button>
-          }
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {getAllKnowledgeCollections().map((collection) => (
-            <GemCard key={collection.slug}>
-              <p className="gemos-card-title text-sm font-bold text-gray-900">{collection.title}</p>
-              <p className="mt-1 text-xs leading-relaxed text-gray-500">{collection.description}</p>
-              <p className="mt-2 text-xs text-gray-400">{collection.seedSlugs.length} Lesson trong bộ sưu tập này.</p>
-              <Link
-                href={`/portal/hetrithucai/collection/${collection.slug}`}
-                className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
-              >
-                Xem Bộ sưu tập →
-              </Link>
-            </GemCard>
-          ))}
+        <div className="overflow-hidden rounded-2xl border border-violet-100 bg-gradient-to-br from-violet-50 via-white to-blue-50 p-6 sm:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-500">📚 Mục con của Hệ tri thức AI (CKOS)</p>
+          <h3 className="mt-2 text-xl font-extrabold text-gray-900">Thư viện AI</h3>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">
+            Cùng một hệ thống, một góc riêng — Thư viện AI là nơi các Lesson được xếp lên &ldquo;kệ&rdquo;
+            theo từng Bộ sưu tập, có thứ tự đọc rõ ràng như một cuốn sách thật. Nếu bạn chưa biết nên bắt
+            đầu từ Lesson nào, Companion trong Thư viện AI sẽ giúp bạn tìm đúng &ldquo;cuốn sách&rdquo; cần đọc.
+          </p>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            {getAllKnowledgeCollections().map((collection) => (
+              <div key={collection.slug} className="rounded-xl border border-white/80 bg-white/70 p-4 shadow-sm backdrop-blur-sm">
+                <p className="gemos-card-title text-sm font-bold text-gray-900">{collection.title}</p>
+                <p className="mt-1 text-xs leading-relaxed text-gray-500">{collection.description}</p>
+                <p className="mt-2 text-xs text-gray-400">{collection.seedSlugs.length} Lesson trên kệ này.</p>
+                <Link
+                  href={`/portal/hetrithucai/collection/${collection.slug}`}
+                  className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
+                >
+                  Xem kệ sách này →
+                </Link>
+              </div>
+            ))}
+          </div>
+
+          <Button href="/portal/hetrithucai" variant="primary" className="mt-6">
+            Vào Thư viện AI →
+          </Button>
         </div>
       </section>
 
