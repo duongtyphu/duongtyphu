@@ -15,6 +15,14 @@ export const metadata = {
   description: "VO DUONG AI chia sẻ các hệ sinh thái đang nghiên cứu, góc nhìn, bài học và cơ hội đồng hành — không phải nơi khuyến nghị đầu tư.",
 };
 
+/**
+ * Portal 4.0 Phase 7 — Projects & Opportunities Experience. Mỗi hệ sinh
+ * thái giờ trả lời "ai phù hợp / ai chưa nên tham gia / nên học gì trước /
+ * kỳ vọng thực tế là gì" — theo hợp đồng CKOS đã đóng băng, Case Study là
+ * consumer chính của pillar này nhưng bảng `case_studies` hiện có 0 dòng,
+ * nên mỗi thẻ trỏ về trang Case Study chung với trạng thái trung thực thay
+ * vì bịa "câu chuyện thành công" hay ROI cho riêng hệ sinh thái này.
+ */
 const ECOSYSTEMS = [
   {
     icon: Layers,
@@ -24,6 +32,10 @@ const ECOSYSTEMS = [
     color: "text-blue-400",
     bg: "bg-blue-500/10",
     status: "Đang theo dõi",
+    whoFor: "Người mới muốn bắt đầu kiếm thu nhập số, chấp nhận vài tháng đầu chưa có kết quả rõ ràng.",
+    whoNotReady: "Người cần thu nhập ngay lập tức, hoặc chưa từng dùng công cụ AI cơ bản nào.",
+    learnFirst: { label: "Học viện AI — nền tảng AI cơ bản", href: "/portal/hocvienai" },
+    expectedOutcome: "Kỹ năng vận hành một kênh nội dung số bằng AI — không phải cam kết thu nhập cụ thể.",
   },
   {
     icon: Building2,
@@ -33,6 +45,10 @@ const ECOSYSTEMS = [
     color: "text-emerald-400",
     bg: "bg-emerald-500/10",
     status: "Đang nghiên cứu",
+    whoFor: "Người có vốn nhàn rỗi thật sự sẵn sàng để lâu dài, chấp nhận không rút được ngay khi cần.",
+    whoNotReady: "Người cần thanh khoản ngắn hạn, hoặc chưa từng đọc một bản cáo bạch/whitepaper đầu tư nào.",
+    learnFirst: { label: "Đọc Tiêu chí chia sẻ trước khi xem", href: "#tieu-chi" },
+    expectedOutcome: "Hiểu rõ hơn cách một mô hình cổ phần dài hạn vận hành — không phải cam kết lợi nhuận.",
   },
   {
     icon: Bitcoin,
@@ -42,6 +58,10 @@ const ECOSYSTEMS = [
     color: "text-orange-400",
     bg: "bg-orange-500/10",
     status: "Chia sẻ trải nghiệm",
+    whoFor: "Người tò mò về công nghệ mới, chấp nhận rủi ro cao và biến động giá lớn.",
+    whoNotReady: "Người chưa từng tự quản lý một ví số, hoặc coi đây là cách làm giàu nhanh.",
+    learnFirst: { label: "Nhật ký học tập — bài học từ sai lầm thật", href: "/portal/nhatkyhoctap" },
+    expectedOutcome: "Kiến thức nền về blockchain và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
   },
   {
     icon: Link2,
@@ -51,6 +71,10 @@ const ECOSYSTEMS = [
     color: "text-violet-400",
     bg: "bg-violet-500/10",
     status: "Đang theo dõi",
+    whoFor: "Người đã hiểu blockchain cơ bản, muốn theo dõi các dự án cụ thể.",
+    whoNotReady: "Người chưa đọc qua mục Blockchain & Crypto ở trên — nền tảng cần đi trước dự án cụ thể.",
+    learnFirst: { label: "Xem Blockchain & Crypto trước", href: "/portal/digital-assets/category/crypto" },
+    expectedOutcome: "Khả năng tự đọc và đánh giá whitepaper của một dự án — không phải khuyến nghị mua/bán.",
   },
   {
     icon: LineChart,
@@ -60,6 +84,10 @@ const ECOSYSTEMS = [
     color: "text-cyan-400",
     bg: "bg-cyan-500/10",
     status: "Chia sẻ kiến thức",
+    whoFor: "Người muốn học giao dịch có kỷ luật, chấp nhận thua lỗ là một phần bình thường của quá trình học.",
+    whoNotReady: "Người muốn làm giàu nhanh, hoặc không chấp nhận được khả năng mất vốn.",
+    learnFirst: { label: "Nhật ký học tập — bài học quản lý vốn thật", href: "/portal/nhatkyhoctap" },
+    expectedOutcome: "Kỷ luật quản lý vốn và đọc thị trường cơ bản — không phải công thức thắng chắc chắn.",
   },
 ];
 
@@ -222,7 +250,11 @@ export default function OpportunitiesHubPage() {
 
       {/* Ecosystem cards */}
       <section>
-        <SectionHeader eyebrow="Đang theo dõi" title="Các hệ sinh thái" />
+        <SectionHeader
+          eyebrow="Đang theo dõi"
+          title="Các hệ sinh thái"
+          description="Mỗi hệ sinh thái trả lời rõ: ai phù hợp, ai chưa nên tham gia, và kỳ vọng thực tế là gì — không phải một bảng xếp hạng."
+        />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {ECOSYSTEMS.map((item) => (
             <GemCard key={item.title}>
@@ -236,6 +268,22 @@ export default function OpportunitiesHubPage() {
                 <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
                 <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
               </Link>
+
+              <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
+                <p className="text-xs text-gray-600">
+                  <span className="font-semibold text-emerald-700">Phù hợp: </span>{item.whoFor}
+                </p>
+                <p className="text-xs text-gray-600">
+                  <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>{item.whoNotReady}
+                </p>
+                <p className="text-xs text-gray-600">
+                  <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
+                </p>
+                <Link href={item.learnFirst.href} className="inline-block text-xs font-semibold text-blue-600 hover:underline">
+                  Nên học trước: {item.learnFirst.label} →
+                </Link>
+              </div>
+
               <OpportunityAgentActions
                 projectName={item.title}
                 opportunityType={item.status}
@@ -244,6 +292,13 @@ export default function OpportunitiesHubPage() {
             </GemCard>
           ))}
         </div>
+        <p className="mt-3 text-xs text-gray-400">
+          Chưa có Case Study thật nào cho các hệ sinh thái này — xem{" "}
+          <Link href="/portal/case-studies" className="font-semibold text-blue-600 hover:underline">
+            trang Case Study
+          </Link>{" "}
+          để biết vì sao, thay vì tự tạo câu chuyện thành công ở đây.
+        </p>
       </section>
 
       {/* Learning / Progress — honest: no engagement-tracking exists for this page yet */}
