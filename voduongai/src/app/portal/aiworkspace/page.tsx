@@ -177,7 +177,7 @@ export default function KhongGianAiPage() {
             <SectionLabel>Công cụ AI</SectionLabel>
             <h2 className="text-xl font-bold text-gray-900">AI Toolbox theo nhiệm vụ</h2>
           </div>
-          <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+          <Link href="/portal/aiworkspace#ai-toolbox" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
             Tất cả công cụ <ChevronRight className="h-4 w-4" />
           </Link>
         </div>

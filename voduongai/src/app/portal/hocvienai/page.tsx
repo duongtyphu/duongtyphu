@@ -99,7 +99,7 @@ export default function AcademyHubPage() {
           eyebrow="Một cách khác để bắt đầu"
           title="Chưa biết học gì? Chọn theo công cụ bạn đã có sẵn"
           action={
-            <Link href="/portal/aiworkspace/cong-cu" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+            <Link href="/portal/aiworkspace#ai-toolbox" className="flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
               Xem tất cả công cụ <ChevronRight className="h-4 w-4" />
             </Link>
           }
