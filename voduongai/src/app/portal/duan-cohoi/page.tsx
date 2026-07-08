@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck } from "lucide-react";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
+import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, Users } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
@@ -124,6 +122,23 @@ const ECOSYSTEM_SURFACE: Record<
   },
 };
 
+/**
+ * Illustrative placeholder "photo" tiles for the "Những người bạn đồng hành
+ * theo năm tháng" marquee — NOT real photos (none exist yet). Reuses the
+ * same blues/violets/ambers/emeralds tint vocabulary as `ECOSYSTEM_SURFACE`
+ * above, no new hues invented.
+ */
+const COMPANION_PLACEHOLDERS = [
+  { surface: "border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600" },
+  { surface: "border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 text-amber-700" },
+  { surface: "border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 text-emerald-700" },
+  { surface: "border-violet-200 bg-gradient-to-br from-violet-50 to-blue-50 text-violet-700" },
+  { surface: "border-slate-200 bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600" },
+  { surface: "border-blue-200 bg-gradient-to-br from-indigo-50 to-blue-50 text-indigo-600" },
+  { surface: "border-amber-200 bg-gradient-to-br from-orange-50 to-amber-50 text-orange-700" },
+  { surface: "border-emerald-200 bg-gradient-to-br from-green-50 to-emerald-50 text-green-700" },
+] as const;
+
 const CRITERIA = [
   "Mình đã thực sự tham gia và có trải nghiệm trực tiếp",
   "Góc nhìn trung thực — bao gồm cả điểm yếu và rủi ro",
@@ -158,7 +173,7 @@ export default function OpportunitiesHubPage() {
         subtitle="Trang này không xếp hạng cơ hội nào tốt hơn cơ hội nào. Nó giúp bạn trả lời một câu hỏi trước khi đọc bất kỳ dự án nào: với tình huống của bạn hôm nay, nên bắt đầu tìm hiểu từ đâu — và cần biết trước điều gì để không mất tiền vì thiếu hiểu biết."
         quickActions={[
           { label: "Xem Tiêu chí đánh giá", href: "#tieu-chi" },
-          { label: "Đọc bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" },
+          { label: "Cơ hội đầu tư cùng Nhà sáng lập", href: "#he-sinh-thai" },
         ]}
       />
 
@@ -167,7 +182,7 @@ export default function OpportunitiesHubPage() {
        * quyết định/tiêu chí, nhưng mỗi thẻ vẫn giữ nguyên khung "ai phù hợp
        * / ai chưa nên tham gia / kỳ vọng thực tế" — không biến thành một
        * catalogue quảng cáo. */}
-      <section>
+      <section id="he-sinh-thai">
         <SectionHeader
           eyebrow="Đang theo dõi"
           title="Các hệ sinh thái"
@@ -226,56 +241,36 @@ export default function OpportunitiesHubPage() {
             );
           })}
         </div>
-        <p className="mt-3 text-xs text-gray-400">
-          Chưa có Case Study thật nào cho các hệ sinh thái này — xem{" "}
-          <Link href="/portal/case-studies" className="font-semibold text-blue-600 hover:underline">
-            trang Case Study
-          </Link>{" "}
-          để biết vì sao, thay vì tự tạo câu chuyện thành công ở đây.
-        </p>
       </section>
 
-      {/* Companion Guide */}
-      <CompanionGuide
-        message="Trước khi bấm vào bất kỳ hệ sinh thái nào ở trên, hãy đọc Tiêu chí chia sẻ trước — nó giải thích vì sao một hệ sinh thái xuất hiện ở đây và điều gì KHÔNG được đảm bảo."
-        action={{ label: "Xem bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" }}
-      />
-
-      {/* Companion Task Entry */}
-      <CompanionTaskEntry
-        module="opportunities"
-        heading="Phân tích cùng Companion"
-        placeholder="VD: Mình đang cân nhắc tham gia SolarGroup, giúp mình nhìn rõ hơn..."
-      />
-
-      {/* Decision Experience — không phải danh sách, mà giúp trả lời "tôi nên bắt đầu ở đâu?" */}
+      {/* Những người bạn đồng hành theo năm tháng — Product Owner explicitly
+       * asked for placeholder/illustrative photo tiles here BECAUSE no real
+       * photos exist yet. These are NOT real user photos — honestly labeled
+       * as illustrative placeholders per the project's no-fake-data rule,
+       * to be swapped for real photos later. Infinite right-to-left marquee
+       * built the same way as `.notice-ticker-track` (see globals.css):
+       * the list is duplicated once and animated via CSS keyframes
+       * (`.opportunities-companions-marquee` / `opportunities-companions-scroll`),
+       * respecting prefers-reduced-motion (animation disabled). */}
       <section>
-        <SectionHeader eyebrow="Quyết định" title="Tôi nên bắt đầu ở đâu?" />
-        <div className="grid gap-3 sm:grid-cols-2">
-          <GemCard>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">Muốn học và kiếm thu nhập online ngay?</span>
-              {" "}→ Bắt đầu với <span className="font-semibold text-blue-600">Hệ sinh thái DigiU</span>.
-            </p>
-          </GemCard>
-          <GemCard>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">Muốn đầu tư dài hạn, chấp nhận rủi ro thấp hơn?</span>
-              {" "}→ Xem <span className="font-semibold text-blue-600">SolarGroup</span>.
-            </p>
-          </GemCard>
-          <GemCard>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">Tò mò về công nghệ mới, chấp nhận rủi ro cao hơn?</span>
-              {" "}→ Đọc <span className="font-semibold text-blue-600">Blockchain &amp; Crypto</span>.
-            </p>
-          </GemCard>
-          <GemCard>
-            <p className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">Chưa chắc chắn điều gì cả?</span>
-              {" "}→ Bắt đầu bằng cách đọc <span className="font-semibold text-blue-600">Tiêu chí chia sẻ</span> bên dưới trước.
-            </p>
-          </GemCard>
+        <SectionHeader
+          eyebrow="Đồng hành"
+          title="Những người bạn đồng hành theo năm tháng"
+          description="Hình minh hoạ — ảnh thật sẽ được cập nhật sau."
+        />
+        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white py-6 shadow-token-sm">
+          <div className="flex w-max opportunities-companions-marquee">
+            {[...COMPANION_PLACEHOLDERS, ...COMPANION_PLACEHOLDERS].map((c, i) => (
+              <div
+                key={i}
+                className={`mx-2 flex h-32 w-32 shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border ${c.surface}`}
+                aria-hidden={i >= COMPANION_PLACEHOLDERS.length}
+              >
+                <Users className="h-8 w-8 opacity-70" />
+                <span className="text-[10px] font-medium text-gray-500">Ảnh minh hoạ</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -352,21 +347,6 @@ export default function OpportunitiesHubPage() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Learning / Progress — honest: no engagement-tracking exists for this page yet */}
-      <section>
-        <SectionHeader eyebrow="Của bạn" title="Mức độ quan tâm của bạn" />
-        <GemCard>
-          <p className="text-sm text-gray-500">
-            Portal chưa theo dõi bạn đã xem/quan tâm hệ sinh thái nào — tính năng này chưa tồn tại, nên
-            không hiển thị số liệu giả ở đây. Hiện tại, cách tốt nhất để &ldquo;lưu vết&rdquo; quan tâm
-            của bạn là ghi lại vào Nhật ký học tập.
-          </p>
-          <Button href="/portal/nhatkyhoctap" variant="secondary" className="mt-3">
-            Mở nhật ký học tập
-          </Button>
-        </GemCard>
       </section>
 
       {/* FAQ */}

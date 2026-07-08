@@ -328,11 +328,15 @@ export default async function EcosystemMiniSitePage({
         </>
       )}
 
+      {/* Blockchain & Crypto (two-field): Product Owner asked to remove the
+       * articles section entirely from this ecosystem page ("Bỏ 2 bài viết
+       * và link cũ") — underlying digitalAssetArticles records are kept
+       * (still legitimate content, e.g. Blog AI's merged feed), only this
+       * page stops rendering/linking to them. */}
       {eco.structureType === "two-field" && (
         <>
           <TwoFieldBoxes eco={eco} />
           <PotentialAnalysisTable items={potentialAnalysis} />
-          <ArticlesSection articles={articles} />
         </>
       )}
 
@@ -344,11 +348,12 @@ export default async function EcosystemMiniSitePage({
         </>
       )}
 
+      {/* Các sàn giao dịch Crypto (exchange-list): same instruction — remove
+       * article from this ecosystem's page without deleting the record. */}
       {eco.structureType === "exchange-list" && (
         <>
           <ExchangesList eco={eco} />
           <PotentialAnalysisTable items={potentialAnalysis} />
-          <ArticlesSection articles={articles} />
         </>
       )}
     </div>
