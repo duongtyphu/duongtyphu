@@ -3,8 +3,7 @@ export type OnboardingGoalId =
   | "apply-work"
   | "extra-income"
   | "personal-brand"
-  | "automation"
-  | "digital-assets";
+  | "automation";
 
 export type OnboardingLevelId = "none" | "beginner" | "basic" | "practicing" | "experienced";
 
@@ -22,7 +21,6 @@ export const ONBOARDING_GOALS: { id: OnboardingGoalId; label: string; href: stri
   { id: "extra-income", label: "Tôi muốn kiếm thêm thu nhập", href: "/portal/affiliate-hub", hint: "Affiliate Hub giúp bạn bắt đầu kiếm thu nhập cùng AI." },
   { id: "personal-brand", label: "Tôi muốn xây dựng thương hiệu cá nhân", href: "/portal/personal-brand", hint: "Lộ trình xây thương hiệu cá nhân trong kỷ nguyên AI." },
   { id: "automation", label: "Tôi muốn tự động hóa công việc / kinh doanh", href: "/portal/tools", hint: "Bộ công cụ AI giúp tự động hoá công việc và kinh doanh." },
-  { id: "digital-assets", label: "Tôi muốn phát triển tài sản & di sản số", href: "/portal/digital-assets", hint: "Khám phá ĐẦU TƯ CÙNG TÔI — xây tài sản số dài hạn." },
 ];
 
 export const ONBOARDING_LEVELS: { id: OnboardingLevelId; label: string }[] = [

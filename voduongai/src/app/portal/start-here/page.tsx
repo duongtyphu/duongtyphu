@@ -4,7 +4,15 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 
 export const metadata = { title: "Bắt đầu tại đây" };
 
-const STEPS = [
+type StartHereStep = {
+  step: number;
+  title: string;
+  description: string;
+  resource: { label: string; href: string };
+  tool?: { label: string; href: string };
+};
+
+const STEPS: StartHereStep[] = [
   {
     step: 1,
     title: "Làm quen với AI",
@@ -38,7 +46,6 @@ const STEPS = [
     title: "Tạo sản phẩm số và tài sản số",
     description: "Đóng gói kiến thức thành sản phẩm số, tích lũy tài sản số dài hạn.",
     resource: { label: "Sản phẩm số", href: "/portal/premium" },
-    tool: { label: "Tài sản số", href: "/portal/digital-assets" },
   },
 ];
 
@@ -66,13 +73,17 @@ export default function StartHerePage() {
                     {s.resource.label}
                   </Link>
                 </span>
-                <span>·</span>
-                <span>
-                  Công cụ đề xuất:{" "}
-                  <Link href={s.tool.href} className="font-semibold text-blue-600 hover:underline">
-                    {s.tool.label}
-                  </Link>
-                </span>
+                {s.tool && (
+                  <>
+                    <span>·</span>
+                    <span>
+                      Công cụ đề xuất:{" "}
+                      <Link href={s.tool.href} className="font-semibold text-blue-600 hover:underline">
+                        {s.tool.label}
+                      </Link>
+                    </span>
+                  </>
+                )}
               </div>
             </div>
             <Link

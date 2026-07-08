@@ -48,16 +48,4 @@ export const todayActionsSeed: TodayActionCard[] = [
     featured: false,
     status: "Published",
   },
-  {
-    id: "today_4",
-    title: "Đầu tư tài sản số",
-    description: "Khám phá DigiU, Blockchain, Crypto, Trading và tư duy tài sản số.",
-    icon: "💎",
-    gradient: "from-emerald-400/20 to-emerald-400/0",
-    ctaText: "Khám phá ngay",
-    ctaHref: "/portal/digital-assets",
-    order: 4,
-    featured: false,
-    status: "Published",
-  },
 ];

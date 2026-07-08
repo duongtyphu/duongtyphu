@@ -49,13 +49,6 @@ const steps: Step[] = [
   },
   {
     step: 6,
-    title: "Tạo tài sản số",
-    description: "Mở rộng sang các loại tài sản số khác để đa dạng nguồn lực.",
-    resource: { label: "Trung tâm Tài sản số", href: "/portal/digital-assets" },
-    action: "Tìm hiểu các loại tài sản số phù hợp với mục tiêu dài hạn.",
-  },
-  {
-    step: 7,
     title: "Mở rộng hệ sinh thái",
     description: "Nhân bản hệ thống, xây đội nhóm, mở rộng quy mô.",
     resource: { label: "V-SCALE", href: "/portal/vdai-academy" },

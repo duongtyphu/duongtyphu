@@ -59,15 +59,4 @@ export const userGoalsSeed: UserGoal[] = [
     order: 4,
     status: "Published",
   },
-  {
-    id: "goal_5",
-    goalKey: "assets",
-    label: "Đầu tư tài sản số",
-    description: "Tìm hiểu DigiU, Blockchain, Crypto, Trading.",
-    icon: "💎",
-    suggestionText: "Tìm hiểu DigiU, Blockchain, Crypto, Trading.",
-    suggestedRoute: "/portal/digital-assets",
-    order: 5,
-    status: "Published",
-  },
 ];

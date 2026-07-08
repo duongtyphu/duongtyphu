@@ -22,20 +22,13 @@ const CARDS = [
     href: "/portal/personal-brand",
     gradient: "from-brand-orange/20 to-brand-orange/0",
   },
-  {
-    icon: "💎",
-    title: "Đầu tư tài sản số",
-    description: "Khám phá DigiU, Blockchain, Crypto, Trading và tư duy tài sản số.",
-    href: "/portal/digital-assets",
-    gradient: "from-emerald-400/20 to-emerald-400/0",
-  },
 ];
 
 export function TodayGoals() {
   return (
     <section>
       <h2 className="text-lg font-bold text-gray-900">Hôm nay bạn muốn làm gì?</h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
         {CARDS.map((c) => (
           <Link
             key={c.title}
