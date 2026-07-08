@@ -5,6 +5,10 @@ export type Sop = {
   whenToUse: string;
   /** Các bước thật, không chỉ mô tả một câu. */
   steps: string[];
+  /** Portal 4.0 CKOS Reconstruction: id của Prompt (src/data/prompts.ts) thật
+   * sự dùng trong quy trình này — chỉ gán khi có liên hệ thật, không ép mọi
+   * SOP đều phải có một Prompt liên quan. */
+  relatedPromptId?: string;
 };
 
 export const sops: Sop[] = [
@@ -18,6 +22,7 @@ export const sops: Sop[] = [
       "Để bản nháp qua ít nhất 1 tiếng, sau đó đọc lại và sửa 1 lần.",
       "Đăng theo khung giờ cố định — nhất quán quan trọng hơn giờ vàng.",
     ],
+    relatedPromptId: "p3",
   },
   {
     title: "SOP chăm sóc khách hàng Affiliate",
@@ -29,6 +34,7 @@ export const sops: Sop[] = [
       "Gửi thông tin phù hợp với đúng câu hỏi đó, không gửi toàn bộ catalogue.",
       "Nếu khách chưa quyết định, đưa vào chuỗi email follow-up thay vì nhắn lại thủ công.",
     ],
+    relatedPromptId: "p10",
   },
   {
     title: "SOP đăng bài đa kênh",
@@ -40,6 +46,7 @@ export const sops: Sop[] = [
       "Điều chỉnh định dạng đúng chuẩn từng nền tảng (độ dài, ảnh/video, hashtag).",
       "Đăng lệch giờ giữa các kênh, không đăng cùng lúc để tránh trông như spam.",
     ],
+    relatedPromptId: "p2",
   },
   {
     title: "SOP onboarding cộng tác viên mới",
@@ -51,5 +58,7 @@ export const sops: Sop[] = [
       "Xem lại kết quả cùng nhau, chỉ ra đúng 1-2 điểm cần điều chỉnh — không sửa hết mọi thứ cùng lúc.",
       "Sau 2 tuần, đánh giá lại có nên giao thêm việc hay cần hỗ trợ thêm.",
     ],
+    // Không có Prompt nào trong bộ 12 Prompt hiện tại thật sự khớp với việc
+    // onboarding người — để trống thay vì gán ép.
   },
 ];

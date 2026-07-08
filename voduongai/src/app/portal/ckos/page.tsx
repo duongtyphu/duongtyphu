@@ -12,6 +12,10 @@ import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneySt
 import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
 import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
+import { getAllKnowledgeSeeds, getAllKnowledgeCollections } from "@/features/knowledge";
+import { prompts } from "@/data/prompts";
+import { sops } from "@/data/sop";
+import { freeResources } from "@/data/resources";
 
 export const metadata = {
   title: "CKOS",
@@ -35,6 +39,8 @@ type CategoryCount = {
   count: number;
   href: string;
   configured: boolean;
+  /** false = chưa có route thật để "Xem" (vd. Best Practice) — hiển thị lý do trung thực thay vì nút dẫn tới nội dung mượn tạm. */
+  hasRoute: boolean;
 };
 
 async function safeCount(
@@ -55,37 +61,48 @@ async function safeCount(
   }
 }
 
+/**
+ * Portal 4.0 CKOS Reconstruction — theo CKOS_KNOWLEDGE_OBJECT_ARCHITECTURE.md:
+ * Lesson canonical = features/knowledge (11 seed thật), KHÔNG phải bảng
+ * Supabase `lessons` (nguồn khác, không thuộc hợp đồng CKOS đã đóng băng).
+ * Prompt/Workflow/Resource cộng cả nội dung biên tập thật (src/data/*.ts)
+ * với bảng live (nếu có) — trước đây hub chỉ đếm bảng Supabase rỗng, nên
+ * hiển thị "Trống" cho cả Prompt dù thực tế đã có 12 Prompt thật. Best
+ * Practice KHÔNG có route thật (bảng chưa triển khai) — không mượn route
+ * Lesson để trông có nội dung.
+ */
 async function getKnowledgeCategories(): Promise<CategoryCount[]> {
   const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const lessonCount = getAllKnowledgeSeeds().length;
+  const promptCount = prompts.length;
+  const workflowCount = sops.length;
+  const resourceCount = freeResources.length;
+
   if (!configured) {
     return [
-      { key: "tool", label: "Tool", count: 0, href: "/portal/tools", configured: false },
-      { key: "prompt", label: "Prompt", count: 0, href: "/portal/prompts", configured: false },
-      { key: "workflow", label: "Workflow", count: 0, href: "/portal/sop", configured: false },
-      { key: "resource", label: "Resource", count: 0, href: "/portal/resources", configured: false },
-      { key: "lesson", label: "Lesson", count: 0, href: "/portal/hocvienai", configured: false },
-      { key: "best_practice", label: "Best Practice", count: 0, href: "/portal/hetrithucai", configured: false },
-      { key: "case_study", label: "Case Study", count: 0, href: "/portal/case-studies", configured: false },
+      { key: "tool", label: "Tool", count: 0, href: "/portal/tools", configured: false, hasRoute: true },
+      { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: false, hasRoute: true },
+      { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: false, hasRoute: true },
+      { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: false, hasRoute: true },
+      { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: false, hasRoute: true },
+      { key: "best_practice", label: "Best Practice", count: 0, href: "", configured: false, hasRoute: false },
+      { key: "case_study", label: "Case Study", count: 0, href: "/portal/case-studies", configured: false, hasRoute: true },
     ];
   }
   const supabase = await getSupabaseServer();
-  const [tool, prompt, workflow, resource, lesson, bestPractice, caseStudy] = await Promise.all([
+  const [tool, liveBestPractice, caseStudy] = await Promise.all([
     safeCount(supabase, "tools", "status", "Published"),
-    safeCount(supabase, "ckos_prompt_templates", "status", "Published"),
-    safeCount(supabase, "ckos_workflows", "status", "Published"),
-    safeCount(supabase, "ckos_resources", "status", "Published"),
-    safeCount(supabase, "lessons", "active", true),
     safeCount(supabase, "ckos_best_practices", "status", "Published"),
     safeCount(supabase, "case_studies", "active", true),
   ]);
   return [
-    { key: "tool", label: "Tool", count: tool, href: "/portal/tools", configured: true },
-    { key: "prompt", label: "Prompt", count: prompt, href: "/portal/prompts", configured: true },
-    { key: "workflow", label: "Workflow", count: workflow, href: "/portal/sop", configured: true },
-    { key: "resource", label: "Resource", count: resource, href: "/portal/resources", configured: true },
-    { key: "lesson", label: "Lesson", count: lesson, href: "/portal/hocvienai", configured: true },
-    { key: "best_practice", label: "Best Practice", count: bestPractice, href: "/portal/hetrithucai", configured: true },
-    { key: "case_study", label: "Case Study", count: caseStudy, href: "/portal/case-studies", configured: true },
+    { key: "tool", label: "Tool", count: tool, href: "/portal/tools", configured: true, hasRoute: true },
+    { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: true, hasRoute: true },
+    { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: true, hasRoute: true },
+    { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: true, hasRoute: true },
+    { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: true, hasRoute: true },
+    { key: "best_practice", label: "Best Practice", count: liveBestPractice, href: "", configured: true, hasRoute: false },
+    { key: "case_study", label: "Case Study", count: caseStudy, href: "/portal/case-studies", configured: true, hasRoute: true },
   ];
 }
 
@@ -245,14 +262,57 @@ export default async function CkosPage() {
                 <p className="gemos-card-title text-sm font-bold text-gray-900">{c.label}</p>
                 <GemBadge tone={c.count > 0 ? "free" : "locked"}>{c.count > 0 ? `${c.count}` : "Trống"}</GemBadge>
               </div>
-              <p className="mt-2 text-xs text-gray-500">
-                {c.count > 0
-                  ? `${c.count} mục đã sẵn sàng.`
-                  : "Chưa có dữ liệu công khai cho danh mục này."}
-              </p>
-              <Button href={c.href} variant="secondary" className="mt-3">
-                Xem
-              </Button>
+              {c.hasRoute ? (
+                <>
+                  <p className="mt-2 text-xs text-gray-500">
+                    {c.count > 0
+                      ? `${c.count} mục đã sẵn sàng.`
+                      : "Chưa có dữ liệu công khai cho danh mục này."}
+                  </p>
+                  <Button href={c.href} variant="secondary" className="mt-3">
+                    Xem
+                  </Button>
+                </>
+              ) : (
+                <p className="mt-2 text-xs text-gray-500">
+                  Chưa có nội dung Best Practice thật nào — hệ thống lưu trữ riêng cho loại tri thức này
+                  chưa được triển khai. Trong lúc chờ, cách gần nhất là xem Case Study (kết quả thực tế) hoặc
+                  hỏi Companion cách người khác đã làm đúng.
+                </p>
+              )}
+            </GemCard>
+          ))}
+        </div>
+      </section>
+
+      {/* Portal 4.0 CKOS Reconstruction — Lesson canonical (features/knowledge)
+       * hiển thị ngay tại đây thay vì chỉ là một thẻ "Xem" dẫn đi xa. Trước
+       * đây CKOS hub và Hệ tri thức AI (/portal/hetrithucai) cảm giác như 2
+       * hệ thống khác nhau — đây là cầu nối thật, không phải link chung
+       * chung: hiển thị đúng tên/mô tả thật của 2 Bộ sưu tập Lesson đang có. */}
+      <section>
+        <SectionHeader
+          eyebrow="Lesson"
+          title="Tri thức Lesson đang có trong Hệ tri thức AI"
+          description="Cùng một hệ thống — Lesson chỉ là một trong 7 loại tri thức của CKOS, được tổ chức thành các Bộ sưu tập có thứ tự học rõ ràng."
+          action={
+            <Button href="/portal/hetrithucai" variant="secondary">
+              Mở Hệ tri thức AI →
+            </Button>
+          }
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          {getAllKnowledgeCollections().map((collection) => (
+            <GemCard key={collection.slug}>
+              <p className="gemos-card-title text-sm font-bold text-gray-900">{collection.title}</p>
+              <p className="mt-1 text-xs leading-relaxed text-gray-500">{collection.description}</p>
+              <p className="mt-2 text-xs text-gray-400">{collection.seedSlugs.length} Lesson trong bộ sưu tập này.</p>
+              <Link
+                href={`/portal/hetrithucai/collection/${collection.slug}`}
+                className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
+              >
+                Xem Bộ sưu tập →
+              </Link>
             </GemCard>
           ))}
         </div>
