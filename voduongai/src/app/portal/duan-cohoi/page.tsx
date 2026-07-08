@@ -305,16 +305,21 @@ export default function OpportunitiesHubPage() {
           title="Những người bạn đồng hành theo năm tháng"
           description="Hình minh hoạ — ảnh thật sẽ được cập nhật sau."
         />
-        <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white py-6 shadow-token-sm">
+        {/* Product Owner: dải ảnh thiết kế RỘNG, ô ảnh tăng 100% (gấp đôi).
+         * Card phá lề trái/phải của cột nội dung (bù đúng px-4 md:px-8 của
+         * <main> trong PortalShell bằng -mx-4 md:-mx-8) thành một dải
+         * full-bleed viền trên/dưới; ô ảnh h-32 -> h-64, icon và nhãn
+         * phóng to tương ứng. */}
+        <div className="-mx-4 overflow-hidden border-y border-gray-100 bg-white py-8 shadow-token-sm md:-mx-8">
           <div className="flex w-max opportunities-companions-marquee">
             {[...COMPANION_PLACEHOLDERS, ...COMPANION_PLACEHOLDERS].map((c, i) => (
               <div
                 key={i}
-                className={`mx-2 flex h-32 w-32 shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border ${c.surface}`}
+                className={`mx-3 flex h-64 w-64 shrink-0 flex-col items-center justify-center gap-3 rounded-2xl border ${c.surface}`}
                 aria-hidden={i >= COMPANION_PLACEHOLDERS.length}
               >
-                <Users className="h-8 w-8 opacity-70" />
-                <span className="text-[10px] font-medium text-gray-500">Ảnh minh hoạ</span>
+                <Users className="h-16 w-16 opacity-70" />
+                <span className="text-xs font-medium text-gray-500">Ảnh minh hoạ</span>
               </div>
             ))}
           </div>
