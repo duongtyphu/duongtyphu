@@ -4,7 +4,6 @@ import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { OpportunityAgentActions } from "@/components/portal/opportunities/OpportunityAgentActions";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 import { GemCard } from "@/components/portal/ui/GemCard";
-import { GemBadge } from "@/components/portal/ui/GemBadge";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { Button } from "@/components/portal/ui/Button";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
@@ -25,12 +24,11 @@ export const metadata = {
  */
 const ECOSYSTEMS = [
   {
+    key: "digiu",
     icon: Layers,
     title: "Hệ sinh thái DigiU",
     description: "Nền tảng học và kiếm thu nhập số — mình đang đồng hành và chia sẻ trải nghiệm thực tế.",
     href: "/portal/digital-assets/category/digiu",
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
     status: "Đang theo dõi",
     whoFor: "Người mới muốn bắt đầu kiếm thu nhập số, chấp nhận vài tháng đầu chưa có kết quả rõ ràng.",
     whoNotReady: "Người cần thu nhập ngay lập tức, hoặc chưa từng dùng công cụ AI cơ bản nào.",
@@ -38,12 +36,11 @@ const ECOSYSTEMS = [
     expectedOutcome: "Kỹ năng vận hành một kênh nội dung số bằng AI — không phải cam kết thu nhập cụ thể.",
   },
   {
+    key: "solargroup",
     icon: Building2,
     title: "SolarGroup",
     description: "Cơ hội đầu tư cổ phần dài hạn — mình đang nghiên cứu và chia sẻ góc nhìn cá nhân.",
     href: "/portal/digital-assets/category/equity",
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10",
     status: "Đang nghiên cứu",
     whoFor: "Người có vốn nhàn rỗi thật sự sẵn sàng để lâu dài, chấp nhận không rút được ngay khi cần.",
     whoNotReady: "Người cần thanh khoản ngắn hạn, hoặc chưa từng đọc một bản cáo bạch/whitepaper đầu tư nào.",
@@ -51,12 +48,11 @@ const ECOSYSTEMS = [
     expectedOutcome: "Hiểu rõ hơn cách một mô hình cổ phần dài hạn vận hành — không phải cam kết lợi nhuận.",
   },
   {
+    key: "crypto",
     icon: Bitcoin,
     title: "Blockchain & Crypto",
     description: "Kiến thức nền tảng và các sàn giao dịch mình đã thử — bao gồm cả bài học từ sai lầm.",
     href: "/portal/digital-assets/category/crypto",
-    color: "text-orange-400",
-    bg: "bg-orange-500/10",
     status: "Chia sẻ trải nghiệm",
     whoFor: "Người tò mò về công nghệ mới, chấp nhận rủi ro cao và biến động giá lớn.",
     whoNotReady: "Người chưa từng tự quản lý một ví số, hoặc coi đây là cách làm giàu nhanh.",
@@ -64,12 +60,11 @@ const ECOSYSTEMS = [
     expectedOutcome: "Kiến thức nền về blockchain và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
   },
   {
+    key: "blockchain",
     icon: Link2,
     title: "Blockchain Projects",
     description: "Các dự án Blockchain mình đang theo dõi — tài liệu, whitepaper và đánh giá cá nhân.",
     href: "/portal/digital-assets/category/blockchain",
-    color: "text-violet-400",
-    bg: "bg-violet-500/10",
     status: "Đang theo dõi",
     whoFor: "Người đã hiểu blockchain cơ bản, muốn theo dõi các dự án cụ thể.",
     whoNotReady: "Người chưa đọc qua mục Blockchain & Crypto ở trên — nền tảng cần đi trước dự án cụ thể.",
@@ -77,19 +72,63 @@ const ECOSYSTEMS = [
     expectedOutcome: "Khả năng tự đọc và đánh giá whitepaper của một dự án — không phải khuyến nghị mua/bán.",
   },
   {
+    key: "trading",
     icon: LineChart,
     title: "Trading",
     description: "Kiến thức và tài nguyên Trading — từ nền tảng đến chiến lược mình đã thử và rút ra bài học.",
     href: "/portal/digital-assets/category/trading",
-    color: "text-cyan-400",
-    bg: "bg-cyan-500/10",
     status: "Chia sẻ kiến thức",
     whoFor: "Người muốn học giao dịch có kỷ luật, chấp nhận thua lỗ là một phần bình thường của quá trình học.",
     whoNotReady: "Người muốn làm giàu nhanh, hoặc không chấp nhận được khả năng mất vốn.",
     learnFirst: { label: "Nhật ký học tập — bài học quản lý vốn thật", href: "/portal/nhatkyhoctap" },
     expectedOutcome: "Kỷ luật quản lý vốn và đọc thị trường cơ bản — không phải công thức thắng chắc chắn.",
   },
-];
+] as const;
+
+/**
+ * Portal 4.0 Final Audit — visual reconstruction. Cùng khuôn 5 mẫu như
+ * `PillarEntranceCard`'s SURFACE (Home) và CKOS's CATEGORY_SURFACE: mỗi
+ * hệ sinh thái có một "bộ da" riêng (dải gradient đầu thẻ, chip icon, viền,
+ * badge) dùng lại đúng bảng màu Portal đã có (blue/indigo, amber/orange,
+ * slate/emerald, violet/blue, emerald/green) — không phải bịa hue mới.
+ * Nền vẫn là tint sáng (không phải nền tối) để giữ nguyên chữ
+ * text-gray-900/600/500 sẵn có, tránh lỗi tương phản khi đổi theme.
+ */
+const ECOSYSTEM_SURFACE: Record<
+  (typeof ECOSYSTEMS)[number]["key"],
+  { card: string; strip: string; chip: string; badge: string }
+> = {
+  digiu: {
+    card: "border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white hover:border-blue-400 hover:shadow-token-lg hover:-translate-y-1",
+    strip: "bg-gradient-to-r from-blue-600 to-indigo-600",
+    chip: "bg-gradient-to-br from-blue-600 to-indigo-600 text-white",
+    badge: "bg-blue-100 text-blue-700",
+  },
+  solargroup: {
+    card: "border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50/50 to-white hover:border-amber-400 hover:shadow-token-lg hover:-translate-y-1",
+    strip: "bg-gradient-to-r from-amber-500 to-orange-500",
+    chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white",
+    badge: "bg-amber-100 text-amber-800",
+  },
+  crypto: {
+    card: "border-slate-300 bg-gradient-to-br from-slate-100 via-slate-50 to-white hover:border-emerald-400 hover:shadow-token-lg hover:-translate-y-1",
+    strip: "bg-gradient-to-r from-slate-800 to-emerald-600",
+    chip: "bg-gradient-to-br from-slate-800 to-emerald-600 text-white",
+    badge: "bg-slate-200 text-slate-700",
+  },
+  blockchain: {
+    card: "border-violet-200 bg-gradient-to-br from-violet-50 via-blue-50/50 to-white hover:border-violet-400 hover:shadow-token-lg hover:-translate-y-1",
+    strip: "bg-gradient-to-r from-violet-600 to-blue-500",
+    chip: "bg-gradient-to-br from-violet-600 to-blue-500 text-white",
+    badge: "bg-violet-100 text-violet-700",
+  },
+  trading: {
+    card: "border-emerald-300 bg-gradient-to-br from-emerald-50 via-green-50/50 to-white hover:border-emerald-500 hover:shadow-token-lg hover:-translate-y-1",
+    strip: "bg-gradient-to-r from-emerald-700 to-green-600",
+    chip: "bg-gradient-to-br from-emerald-700 to-green-600 text-white",
+    badge: "bg-emerald-100 text-emerald-800",
+  },
+};
 
 const CRITERIA = [
   "Mình đã thực sự tham gia và có trải nghiệm trực tiếp",
@@ -141,41 +180,48 @@ export default function OpportunitiesHubPage() {
           description="Mỗi hệ sinh thái trả lời rõ: ai phù hợp, ai chưa nên tham gia, và kỳ vọng thực tế là gì — không phải một bảng xếp hạng."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ECOSYSTEMS.map((item) => (
-            <GemCard key={item.title}>
-              <Link href={item.href} className="block">
-                <div className="mb-4 flex items-start justify-between gap-2">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
-                    <item.icon className="h-5 w-5" />
+          {ECOSYSTEMS.map((item) => {
+            const surface = ECOSYSTEM_SURFACE[item.key];
+            return (
+              <div
+                key={item.title}
+                className={`overflow-hidden rounded-2xl border p-5 shadow-token-sm transition duration-200 sm:p-6 ${surface.card}`}
+              >
+                <div className={`-mx-5 -mt-5 mb-4 h-1.5 sm:-mx-6 sm:-mt-6 ${surface.strip}`} aria-hidden />
+                <Link href={item.href} className="block">
+                  <div className="mb-4 flex items-start justify-between gap-2">
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-sm ${surface.chip}`}>
+                      <item.icon className="h-5 w-5" />
+                    </div>
+                    <span className={`gemos-badge ${surface.badge}`}>{item.status}</span>
                   </div>
-                  <GemBadge tone="locked">{item.status}</GemBadge>
-                </div>
-                <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
-                <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
-              </Link>
-
-              <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-emerald-700">Phù hợp: </span>{item.whoFor}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>{item.whoNotReady}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
-                </p>
-                <Link href={item.learnFirst.href} className="inline-block text-xs font-semibold text-blue-600 hover:underline">
-                  Nên học trước: {item.learnFirst.label} →
+                  <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
+                  <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
                 </Link>
-              </div>
 
-              <OpportunityAgentActions
-                projectName={item.title}
-                opportunityType={item.status}
-                riskContext={item.description}
-              />
-            </GemCard>
-          ))}
+                <div className="mt-3 space-y-2 border-t border-gray-900/10 pt-3">
+                  <p className="text-xs text-gray-600">
+                    <span className="font-semibold text-emerald-700">Phù hợp: </span>{item.whoFor}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>{item.whoNotReady}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
+                  </p>
+                  <Link href={item.learnFirst.href} className="inline-block text-xs font-semibold text-blue-600 hover:underline">
+                    Nên học trước: {item.learnFirst.label} →
+                  </Link>
+                </div>
+
+                <OpportunityAgentActions
+                  projectName={item.title}
+                  opportunityType={item.status}
+                  riskContext={item.description}
+                />
+              </div>
+            );
+          })}
         </div>
         <p className="mt-3 text-xs text-gray-400">
           Chưa có Case Study thật nào cho các hệ sinh thái này — xem{" "}
@@ -188,7 +234,7 @@ export default function OpportunitiesHubPage() {
 
       {/* Companion Guide */}
       <CompanionGuide
-        message="Trước khi bấm vào bất kỳ dự án nào bên dưới, hãy đọc Tiêu chí chia sẻ trước — nó giải thích vì sao một hệ sinh thái xuất hiện ở đây và điều gì KHÔNG được đảm bảo."
+        message="Trước khi bấm vào bất kỳ hệ sinh thái nào ở trên, hãy đọc Tiêu chí chia sẻ trước — nó giải thích vì sao một hệ sinh thái xuất hiện ở đây và điều gì KHÔNG được đảm bảo."
         action={{ label: "Xem bài học từ trải nghiệm", href: "/portal/nhatkyhoctap" }}
       />
 
