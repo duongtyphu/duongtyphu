@@ -2,24 +2,24 @@
 
 import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
-import {
-  digitalAssetArticles,
-  digitalAssetProjects,
-  digitalAssetCategories,
-  type DigitalAssetArticle,
-  type DigitalAssetProject,
-} from "@/data/digitalAssets";
+import { digitalAssetArticles, digitalAssetCategories, type DigitalAssetArticle } from "@/data/digitalAssets";
+import { ecosystems } from "@/data/portal/ecosystems";
 import { useCollection } from "@/lib/admin/store";
-import { DigitalAssetDisclaimer } from "@/components/portal/DigitalAssetDisclaimer";
 import { SaveButton } from "@/components/portal/SaveButton";
 
-export default function DigitalAssetArticleDetailPage() {
+/**
+ * Bài viết của Dự án & Cơ hội — route thuộc riêng Ecosystem Platform
+ * (KHÔNG nằm dưới /portal/digital-assets). Theo yêu cầu Product Owner:
+ * từ nay không có trang/mục/bài viết nào của Portal được đi qua đường
+ * dẫn /portal/digital-assets nữa — nội dung bài viết vẫn đọc từ cùng
+ * dữ liệu thật `digitalAssetArticles`, chỉ đổi route hiển thị.
+ */
+export default function EcosystemArticleDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { items: articles, ready: articlesReady } = useCollection<DigitalAssetArticle>(
     "digital-asset-articles",
     digitalAssetArticles
   );
-  const { items: projects } = useCollection<DigitalAssetProject>("digital-asset-projects", digitalAssetProjects);
   const { items: categories } = useCollection("digital-asset-categories", digitalAssetCategories);
 
   const article = articles.find((a) => a.slug === slug && a.status === "Published");
@@ -27,8 +27,8 @@ export default function DigitalAssetArticleDetailPage() {
   if (articlesReady && !article) notFound();
   if (!article) return null;
 
-  const project = projects.find((p) => p.id === article.projectId);
   const category = categories.find((c) => c.key === article.category);
+  const ecosystem = ecosystems.find((e) => e.articleCategory === article.category || e.extraArticleCategories?.includes(article.category));
 
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
@@ -37,17 +37,17 @@ export default function DigitalAssetArticleDetailPage() {
       <div className="relative z-10 space-y-6 px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center justify-between">
           <Link
-            href={project ? `/portal/digital-assets/${project.slug}` : "/portal/digital-assets"}
+            href={ecosystem ? `/portal/duan-cohoi/${ecosystem.slug}` : "/portal/duan-cohoi"}
             className="text-sm font-semibold text-brand-blue hover:underline"
           >
-            ← {project ? project.name : "ĐẦU TƯ CÙNG TÔI"}
+            ← {ecosystem ? ecosystem.name : "Dự án & Cơ hội"}
           </Link>
           <SaveButton
             item={{
               id: `digital-asset-article_${article.id}`,
               kind: "resource",
               title: article.title,
-              href: `/portal/digital-assets/articles/${article.slug}`,
+              href: `/portal/duan-cohoi/bai-viet/${article.slug}`,
               meta: category?.name,
             }}
           />
@@ -77,7 +77,9 @@ export default function DigitalAssetArticleDetailPage() {
           )}
         </div>
 
-        <DigitalAssetDisclaimer />
+        <p className="text-xs leading-relaxed text-gray-500">
+          Nội dung chỉ nhằm mục đích chia sẻ thông tin và trải nghiệm cá nhân, không phải lời khuyên đầu tư.
+        </p>
       </div>
     </div>
   );

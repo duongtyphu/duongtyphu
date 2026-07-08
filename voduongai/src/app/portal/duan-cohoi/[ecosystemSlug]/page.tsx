@@ -16,9 +16,10 @@ import { getSubProjectSurface } from "@/components/portal/opportunities/subProje
  * sections the Product Owner specified — no FAQ, no repeated bottom CTA
  * band, no cross-pillar strip, nothing beyond what's listed per type.
  *
- * Rule #0: NOTHING here links to `/portal/digital-assets/**` except the
- * article-detail route (`/portal/digital-assets/articles/[slug]`), which is
- * the one explicit exception — it's the real article data source, not a CTA.
+ * Rule #0: NOTHING here links to `/portal/digital-assets/**` at all — per a
+ * later Product Owner instruction, even article detail pages were moved out
+ * of that namespace to `/portal/duan-cohoi/bai-viet/[slug]` (still reading
+ * the same real `digitalAssetArticles` data, just a different render route).
  * Rule #1: no CTA/button on this page links to a different ecosystem or a
  * different pillar (Academy/Workspace/CKOS/Journey) — every link stays
  * within this same ecosystem's own content.
@@ -149,7 +150,7 @@ function ArticlesSection({ articles }: { articles: (typeof digitalAssetArticles)
         {articles.map((a) => (
           <Link
             key={a.id}
-            href={`/portal/digital-assets/articles/${a.slug}`}
+            href={`/portal/duan-cohoi/bai-viet/${a.slug}`}
             className="block rounded-xl border border-gray-100 bg-white p-4 text-sm font-semibold text-gray-900 shadow-token-sm transition hover:border-blue-300 hover:text-brand-blue"
           >
             {a.title}

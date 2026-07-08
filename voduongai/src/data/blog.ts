@@ -1011,6 +1011,6 @@ export function fromDigitalAssetArticle(article: DigitalAssetArticleLike): BlogP
     ctaLabel: "Xem Dự án & Cơ hội →",
     ctaHref: "/portal/duan-cohoi",
     content: article.content.split("\n\n").filter(Boolean),
-    href: `/portal/digital-assets/articles/${article.slug}`,
+    href: `/portal/duan-cohoi/bai-viet/${article.slug}`,
   };
 }

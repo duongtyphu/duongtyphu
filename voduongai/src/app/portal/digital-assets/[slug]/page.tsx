@@ -144,13 +144,13 @@ export default function DigitalAssetDetailPage() {
           <h2 className="text-sm font-bold text-gray-900">Bài viết / Phân tích</h2>
           {projectArticles.map((a) => (
             <div key={a.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6">
-              <Link href={`/portal/digital-assets/articles/${a.slug}`} className="text-sm font-bold text-gray-900 hover:text-brand-blue">
+              <Link href={`/portal/duan-cohoi/bai-viet/${a.slug}`} className="text-sm font-bold text-gray-900 hover:text-brand-blue">
                 {a.title}
               </Link>
               <p className="mt-1 text-xs text-gray-400">{a.publishedAt}</p>
               <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">{a.excerpt}</p>
               <Link
-                href={`/portal/digital-assets/articles/${a.slug}`}
+                href={`/portal/duan-cohoi/bai-viet/${a.slug}`}
                 className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
               >
                 Đọc bài viết →

@@ -192,7 +192,7 @@ export default function DigitalAssetsHubPage() {
               return (
                 <Link
                   key={a.id}
-                  href={`/portal/digital-assets/articles/${a.slug}`}
+                  href={`/portal/duan-cohoi/bai-viet/${a.slug}`}
                   className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5 transition hover:-translate-y-0.5"
                 >
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">

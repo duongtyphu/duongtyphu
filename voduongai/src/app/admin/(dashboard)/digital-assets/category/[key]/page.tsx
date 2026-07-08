@@ -108,7 +108,7 @@ export default function DigitalAssetCategoryAdminPage() {
         seed={digitalAssetArticles}
         searchKeys={["title"]}
         lockedFilter={{ key: "category", value: categoryKey }}
-        viewHref={(a) => `/portal/digital-assets/articles/${a.slug}`}
+        viewHref={(a) => `/portal/duan-cohoi/bai-viet/${a.slug}`}
         columns={[
           { key: "title", label: "Tiêu đề" },
           {
