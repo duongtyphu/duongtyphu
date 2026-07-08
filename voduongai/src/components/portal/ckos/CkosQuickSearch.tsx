@@ -103,8 +103,8 @@ export function CkosQuickSearch({ initialQuery = "" }: { initialQuery?: string }
         )
       ) : (
         <p className="text-xs text-gray-400">
-          Search hiện đang ở mức nền tảng — tìm theo từ khoá xuất hiện trong tiêu đề, chưa xếp hạng
-          theo mức độ liên quan.
+          Search hiện đang ở mức nền tảng — tìm theo từ khoá xuất hiện trong tiêu đề hoặc mô tả, chưa
+          xếp hạng theo mức độ liên quan.
         </p>
       )}
     </div>

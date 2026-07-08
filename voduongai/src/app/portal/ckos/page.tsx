@@ -324,7 +324,7 @@ export default async function CkosPage() {
                         : "Chưa có dữ liệu công khai cho danh mục này."}
                     </p>
                     <Button href={c.href} variant="secondary" className="mt-3">
-                      Xem
+                      Xem {c.label} →
                     </Button>
                   </>
                 ) : (

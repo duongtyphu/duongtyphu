@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { sops } from "@/data/sop";
 import { prompts } from "@/data/prompts";
+import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = { title: "SOP", description: "Quy trình chuẩn (SOP) vận hành Affiliate Marketing và sản xuất nội dung của VO DUONG AI." };
 
@@ -51,6 +53,23 @@ export default function SopPage() {
           );
         })}
       </div>
+
+      {/* CKOS Navigation Audit — trang này trước đây không có gợi ý bước
+       * tiếp theo ở cấp trang (mỗi thẻ có link riêng, nhưng cả trang thì
+       * không dẫn đi đâu tiếp — dead end thật ở cấp trang). */}
+      <CompanionGuide
+        message="Một quy trình chỉ có giá trị khi bạn làm theo nó thật, không chỉ đọc qua. Nếu chưa chắc quy trình nào phù hợp, hỏi Companion trước khi chọn."
+        action={{ label: "Hỏi Companion", href: "/portal/companion" }}
+      />
+
+      <KnowledgeJourneyStrip
+        title="Chọn xong quy trình, tiếp theo là gì?"
+        steps={[
+          { label: "Thực hành ở Workspace", description: "Làm theo quy trình ngay trong một phiên làm việc thật.", href: "/portal/workspace" },
+          { label: "Xem Prompt liên quan", description: "Nhiều quy trình đi kèm một Prompt cụ thể để bắt đầu.", href: "/portal/prompts" },
+          { label: "Quay lại Hệ tri thức AI (CKOS)", description: "Xem toàn bộ 7 loại tri thức khác.", href: "/portal/ckos" },
+        ]}
+      />
     </div>
   );
 }

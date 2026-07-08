@@ -4,6 +4,8 @@ import { CopyPromptButton } from "@/components/portal/CopyPromptButton";
 import { AdminPromptsSection } from "@/components/portal/AdminPromptsSection";
 import { ResourceCard } from "@/components/portal/ResourceCard";
 import { GemCard } from "@/components/portal/ui/GemCard";
+import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = { title: "Thư viện Prompt" };
 
@@ -72,6 +74,22 @@ export default async function PromptsPage() {
           ))}
         </div>
       </div>
+
+      {/* CKOS Navigation Audit — trang này trước đây kết thúc ngay sau
+       * lưới Prompt, không có gợi ý bước tiếp theo (dead end thật). */}
+      <CompanionGuide
+        message="Một Prompt hay chỉ có giá trị khi dùng đúng công cụ và đúng quy trình. Nếu bạn chưa chắc dùng Prompt này với gì, xem Workflow liên quan."
+        action={{ label: "Xem Workflow", href: "/portal/sop" }}
+      />
+
+      <KnowledgeJourneyStrip
+        title="Có Prompt rồi, tiếp theo là gì?"
+        steps={[
+          { label: "Thực hành ở Workspace", description: "Dùng Prompt ngay trong một phiên làm việc thật.", href: "/portal/workspace" },
+          { label: "Xem Workflow liên quan", description: "Ghép Prompt vào một quy trình lặp lại được.", href: "/portal/sop" },
+          { label: "Quay lại Hệ tri thức AI (CKOS)", description: "Xem toàn bộ 7 loại tri thức khác.", href: "/portal/ckos" },
+        ]}
+      />
     </div>
   );
 }

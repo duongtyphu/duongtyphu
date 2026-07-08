@@ -1,6 +1,8 @@
 import { freeResources } from "@/data/resources";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { ResourceCard } from "@/components/portal/ResourceCard";
+import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = { title: "Tài nguyên miễn phí" };
 
@@ -73,6 +75,22 @@ export default async function ResourcesPage() {
           ))}
         </div>
       </section>
+
+      {/* CKOS Navigation Audit — trang này trước đây kết thúc ngay sau
+       * lưới Tài nguyên, không có gợi ý bước tiếp theo (dead end thật). */}
+      <CompanionGuide
+        message="Một tài nguyên chỉ có giá trị khi bạn thật sự dùng nó cho một việc cụ thể. Nếu đã tải xong, mang nó vào Workspace ngay khi còn nhớ vì sao bạn cần nó."
+        action={{ label: "Mở Workspace", href: "/portal/workspace" }}
+      />
+
+      <KnowledgeJourneyStrip
+        title="Tải xong rồi, tiếp theo là gì?"
+        steps={[
+          { label: "Thực hành ở Workspace", description: "Dùng tài nguyên ngay trong một phiên làm việc thật.", href: "/portal/workspace" },
+          { label: "Xem Prompt liên quan", description: "Nhiều tài nguyên đi kèm một Prompt phù hợp để bắt đầu.", href: "/portal/prompts" },
+          { label: "Quay lại Hệ tri thức AI (CKOS)", description: "Xem toàn bộ 7 loại tri thức khác.", href: "/portal/ckos" },
+        ]}
+      />
     </div>
   );
 }

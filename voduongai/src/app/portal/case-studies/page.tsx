@@ -1,4 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = { title: "Case Study" };
 
@@ -70,6 +71,19 @@ export default async function CaseStudiesPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {/* CKOS Navigation Audit — nhánh có dữ liệu trước đây không có gợi ý
+       * bước tiếp theo ở cấp trang (chỉ có link ngoài tuỳ chọn per-card). */}
+      {caseStudies.length > 0 && (
+        <KnowledgeJourneyStrip
+          title="Đọc xong Case Study, tiếp theo là gì?"
+          steps={[
+            { label: "Xem Lesson liên quan", description: "Học lại đúng kỹ năng đã tạo ra kết quả này.", href: "/portal/hetrithucai" },
+            { label: "Thực hành ở Workspace", description: "Áp dụng cách làm tương tự vào việc của bạn.", href: "/portal/workspace" },
+            { label: "Hỏi Companion", description: "Nhờ Companion gợi ý cách áp dụng vào tình huống của bạn.", href: "/portal/companion" },
+          ]}
+        />
       )}
     </div>
   );

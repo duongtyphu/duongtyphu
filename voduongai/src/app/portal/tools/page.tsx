@@ -60,7 +60,7 @@ export default function AiWorkspacePage() {
       {/* Companion Guide */}
       <CompanionGuide
         message="Nếu đây là lần đầu bạn khám phá AI, mình gợi ý bắt đầu từ AI Chat — đặc biệt là ChatGPT. Đây là nền tảng giúp bạn hiểu cách tương tác với AI hiệu quả nhất trước khi thử các công cụ chuyên biệt khác."
-        action={{ label: "Xem lộ trình học AI", href: "/portal/hanhtrinhcuatoi" }}
+        action={{ label: "Xem ChatGPT", href: "/portal/tools/chatgpt" }}
       />
 
       {/* Search */}
