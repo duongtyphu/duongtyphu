@@ -116,7 +116,7 @@ export default async function GemHomePage() {
           startedMode="module"
           module="ckos"
           companionLine="Thử tìm một Tool hoặc Prompt cho đúng việc bạn đang làm hôm nay."
-          ctaLabel="Mở Hệ tri thức AI"
+          ctaLabel="Mở Hệ tri thức AI (CKOS)"
         />
         <PillarEntranceCard
           icon={GraduationCap}
