@@ -45,9 +45,31 @@ export default async function PromptDetailPage({ params }: PageProps<"/portal/pr
           <p className="mt-2 text-sm leading-relaxed text-blue-900">{prompt.whenToUse}</p>
         </div>
 
+        <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 p-5">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Khi nào KHÔNG nên dùng</p>
+          <p className="mt-2 text-sm leading-relaxed text-amber-900">{prompt.whenNotToUse}</p>
+        </div>
+
         <div className="mt-4 rounded-xl border border-violet-100 bg-violet-50 p-5">
           <p className="text-xs font-semibold uppercase tracking-wide text-violet-700">Bước tiếp theo</p>
           <p className="mt-2 text-sm leading-relaxed text-violet-900">{prompt.nextStep}</p>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href="/portal/workspace"
+            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+          >
+            Thực hành ở Workspace →
+          </Link>
+          {prompt.relatedProjectHref && (
+            <Link
+              href={prompt.relatedProjectHref}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-emerald-300 hover:text-emerald-600"
+            >
+              Dự án liên quan →
+            </Link>
+          )}
         </div>
 
         <div className="mt-6">

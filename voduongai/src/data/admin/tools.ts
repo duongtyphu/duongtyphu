@@ -10,6 +10,8 @@ export type AdminTool = {
   audience: string;
   pros: string[];
   cons: string[];
+  /** Portal 4.0 Phase 4.2 — Knowledge Object Completion: khi nào KHÔNG nên dùng công cụ này. */
+  whenNotToUse?: string;
   pricing: string;
   link: string;
   affiliateUrl?: string;
@@ -40,6 +42,7 @@ export const toolsAdminSeed: AdminTool[] = [
     audience: "Người mới bắt đầu với AI",
     pros: ["Trả lời nhanh, hiểu tiếng Việt tốt", "Có app di động"],
     cons: ["Bản miễn phí giới hạn lượt hỏi"],
+    whenNotToUse: "Không phù hợp cho việc cần độ chính xác pháp lý/y tế tuyệt đối, hay khi bạn cần AI truy cập dữ liệu nội bộ riêng của công ty mà chưa có cấu hình bảo mật phù hợp.",
     pricing: "Freemium",
     link: "https://chatgpt.com",
     affiliateUrl: "",

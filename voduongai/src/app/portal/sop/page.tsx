@@ -22,6 +22,8 @@ export default function SopPage() {
               <p className="mt-2 text-sm text-gray-900">{s.description}</p>
               <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-blue-600">Khi nào dùng</p>
               <p className="mt-1 text-sm text-gray-600">{s.whenToUse}</p>
+              <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-amber-600">Khi nào KHÔNG nên dùng</p>
+              <p className="mt-1 text-sm text-gray-600">{s.whenNotToUse}</p>
               <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-blue-600">Các bước</p>
               <ol className="mt-1 space-y-1.5">
                 {s.steps.map((step, i) => (
@@ -34,11 +36,17 @@ export default function SopPage() {
               {relatedPrompt && (
                 <Link
                   href={`/portal/prompts/${relatedPrompt.id}`}
-                  className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
+                  className="mt-3 block text-xs font-semibold text-brand-blue hover:underline"
                 >
                   Prompt dùng trong quy trình này: {relatedPrompt.title} →
                 </Link>
               )}
+              <Link
+                href="/portal/workspace"
+                className="mt-3 block text-xs font-semibold text-gray-500 hover:text-blue-600"
+              >
+                Thực hành quy trình này ở Workspace →
+              </Link>
             </div>
           );
         })}

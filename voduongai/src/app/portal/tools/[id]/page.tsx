@@ -96,6 +96,13 @@ export default function ToolDetailPage() {
           </div>
         ) : null}
 
+        {tool.whenNotToUse && (
+          <div className="mt-4 rounded-xl border border-amber-100 bg-amber-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Khi nào KHÔNG nên dùng</p>
+            <p className="mt-1 text-sm text-amber-900">{tool.whenNotToUse}</p>
+          </div>
+        )}
+
         {tool.workflow && (
           <div className="mt-4 rounded-xl border border-brand-violet/20 bg-brand-violet/5 p-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-brand-violet">Quy trình thực tế</p>
