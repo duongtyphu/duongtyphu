@@ -1,6 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { CompanionPresenceBand } from "@/components/portal/gem-home/CompanionPresenceBand";
+import { CompanionThoughtLine } from "@/components/portal/gem-home/CompanionThoughtLine";
 import { PillarEntranceCard } from "@/components/portal/gem-home/PillarEntranceCard";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
@@ -94,7 +95,16 @@ export default async function GemHomePage() {
       : `Bạn đã sở hữu ${ownedCount} sản phẩm Premium.`;
 
   return (
-    <div className="space-y-10">
+    <div className="relative space-y-10">
+      {/* AI Operating System — ánh sáng nền rất nhẹ phía sau toàn trang,
+       * gợi cảm giác "một hệ điều hành có sự sống" thay vì nền trắng
+       * phẳng của dashboard. Cố ý mờ nhạt (opacity thấp), không cạnh
+       * tranh với nội dung. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-20 left-1/2 -z-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-gradient-to-br from-blue-200/25 via-violet-200/20 to-transparent blur-3xl"
+      />
+
       {/* Companion Presence Band — lời chào, giữ nguyên (đã duyệt) */}
       <CompanionPresenceBand
         name={profile?.fullName}
@@ -103,6 +113,10 @@ export default async function GemHomePage() {
         state={welcomeState}
         flow={flow}
       />
+
+      {/* Emotional Moment — một câu suy ngẫm nhỏ, chỉ một lần mỗi lượt ghé,
+       * cùng nguồn Thought Seed thật đã dùng ở /portal/companion. */}
+      <CompanionThoughtLine />
 
       {/* 7 Pillar Entrance Card — điểm đến sống, không phải menu */}
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

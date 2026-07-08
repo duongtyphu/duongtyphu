@@ -38,22 +38,73 @@ const ICONS: Record<PillarIconKey, LucideIcon> = {
   "heart-handshake": HeartHandshake,
 };
 
-const ACCENT: Record<PillarAccent, { chip: string; icon: string; ring: string }> = {
-  violet: { chip: "bg-violet-50", icon: "text-violet-600", ring: "hover:border-violet-200" },
-  blue: { chip: "bg-blue-50", icon: "text-blue-600", ring: "hover:border-blue-200" },
-  slate: { chip: "bg-slate-100", icon: "text-slate-600", ring: "hover:border-slate-300" },
-  emerald: { chip: "bg-emerald-50", icon: "text-emerald-600", ring: "hover:border-emerald-200" },
-  amber: { chip: "bg-amber-50", icon: "text-amber-600", ring: "hover:border-amber-200" },
-  teal: { chip: "bg-teal-50", icon: "text-teal-600", ring: "hover:border-teal-200" },
-  rose: { chip: "bg-rose-50", icon: "text-rose-600", ring: "hover:border-rose-200" },
+/**
+ * Portal 4.0 Home Emotional Experience — mỗi pillar card giờ có "nhịp"
+ * riêng, đúng theo PORTAL_DNA.md, thay vì 7 thẻ trắng giống hệt nhau chỉ
+ * khác icon/màu: CKOS (tò mò) có lưới chấm nhẹ; Academy (khích lệ) có
+ * dải gradient trên đầu; Workspace (tập trung) tối giản tuyệt đối, góc
+ * vuông hơn, không hoạ tiết; Projects (khách quan) phẳng, có vạch trái
+ * rõ ràng; Premium (tôn trọng) tông ấm, viền vàng nhạt; Journey (chiêm
+ * nghiệm) bo góc rộng hơn, nền dịu; Companion (sự sống) viền gradient
+ * chuyển động chậm, bo góc rộng nhất — cảm giác "cửa vào một thế giới
+ * khác nhau", không phải cùng một khuôn lặp lại 7 lần.
+ */
+const SURFACE: Record<
+  PillarAccent,
+  { card: string; iconChip: string; iconColor: string; accentText: string; radius: string }
+> = {
+  violet: {
+    card: "border-violet-100 bg-[radial-gradient(circle_at_1px_1px,rgba(139,92,246,0.14)_1px,transparent_0)] bg-[length:14px_14px] hover:border-violet-300",
+    iconChip: "bg-violet-100",
+    iconColor: "text-violet-600",
+    accentText: "text-violet-600",
+    radius: "rounded-2xl",
+  },
+  blue: {
+    card: "border-blue-100 bg-gradient-to-b from-blue-50/70 to-white hover:border-blue-300",
+    iconChip: "bg-blue-100",
+    iconColor: "text-blue-600",
+    accentText: "text-blue-600",
+    radius: "rounded-2xl",
+  },
+  slate: {
+    card: "border-slate-200 bg-white hover:border-slate-400",
+    iconChip: "bg-slate-100",
+    iconColor: "text-slate-700",
+    accentText: "text-slate-700",
+    radius: "rounded-lg",
+  },
+  emerald: {
+    card: "border-l-4 border-l-emerald-400 border-y border-r border-gray-100 bg-white hover:border-l-emerald-500",
+    iconChip: "bg-emerald-50",
+    iconColor: "text-emerald-600",
+    accentText: "text-emerald-600",
+    radius: "rounded-xl",
+  },
+  amber: {
+    card: "border-amber-200 bg-gradient-to-br from-amber-50/60 via-white to-white hover:border-amber-300",
+    iconChip: "bg-amber-100",
+    iconColor: "text-amber-600",
+    accentText: "text-amber-600",
+    radius: "rounded-2xl",
+  },
+  teal: {
+    card: "border-teal-100 bg-teal-50/30 hover:border-teal-300",
+    iconChip: "bg-teal-100",
+    iconColor: "text-teal-600",
+    accentText: "text-teal-600",
+    radius: "rounded-[1.5rem]",
+  },
+  rose: {
+    card: "border-transparent bg-white bg-clip-padding shadow-[0_0_0_1.5px_rgba(244,114,182,0.35)] hover:shadow-[0_0_0_1.5px_rgba(244,114,182,0.6)]",
+    iconChip: "bg-gradient-to-br from-blue-100 via-violet-100 to-rose-100",
+    iconColor: "text-violet-600",
+    accentText: "text-violet-600",
+    radius: "rounded-[1.75rem]",
+  },
 };
 
 /**
- * Portal 4.0 Home Reconstruction — Pillar Entrance Card. Mỗi pillar là một
- * "điểm đến sống", không phải mục menu hay dashboard widget: what is this /
- * why enter / what have I done / Companion gợi ý gì / dẫn tới đâu — tất cả
- * trong một thẻ nhỏ, thở được, không phải banner quảng cáo.
- *
  * "Đã bắt đầu" đọc thật từ WorkspaceSession theo `module` (growth-view.ts,
  * cùng nguồn dữ liệu duy nhất toàn Portal) — nếu chưa có phiên nào, hiển
  * thị đúng sự thật đó, không suy diễn hay bịa số.
@@ -84,7 +135,7 @@ export function PillarEntranceCard({
   ctaLabel: string;
 }) {
   const [startedLine, setStartedLine] = useState<string | null>(startedOverride ?? null);
-  const tone = ACCENT[accent];
+  const surface = SURFACE[accent];
   const Icon = ICONS[icon];
 
   useEffect(() => {
@@ -115,9 +166,9 @@ export function PillarEntranceCard({
   }, [module, startedMode, startedOverride]);
 
   return (
-    <div className={`group flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition ${tone.ring}`}>
-      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${tone.chip}`}>
-        <Icon className={`h-5 w-5 ${tone.icon}`} />
+    <div className={`group flex flex-col border p-6 shadow-sm transition ${surface.card} ${surface.radius}`}>
+      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${surface.iconChip}`}>
+        <Icon className={`h-5 w-5 ${surface.iconColor}`} />
       </div>
       <h3 className="gemos-card-title mt-4 text-base font-bold text-gray-900">{title}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{what}</p>
@@ -127,13 +178,13 @@ export function PillarEntranceCard({
       )}
 
       <p className="mt-3 flex items-start gap-1.5 text-xs leading-relaxed text-gray-500">
-        <Sparkles className={`mt-0.5 h-3 w-3 shrink-0 ${tone.icon}`} />
+        <Sparkles className={`mt-0.5 h-3 w-3 shrink-0 ${surface.accentText}`} />
         <span className="italic">{companionLine}</span>
       </p>
 
       <Link
         href={href}
-        className={`mt-4 inline-flex items-center gap-1 text-sm font-semibold ${tone.icon} hover:underline`}
+        className={`mt-4 inline-flex items-center gap-1 text-sm font-semibold ${surface.accentText} hover:underline`}
       >
         {ctaLabel}
         <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
