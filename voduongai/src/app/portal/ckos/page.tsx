@@ -236,9 +236,10 @@ export default async function CkosPage() {
           <GemCard>
             <p className="gemos-card-title text-sm font-bold text-gray-900">Người đã có kinh nghiệm nên dùng</p>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">
-              <span className="font-semibold text-gray-900">Workflow → Best Practice → Case Study.</span> Bạn
-              đã biết công cụ, giờ cần quy trình lặp lại được, đối chiếu với cách người khác đã làm đúng, và
-              xem kết quả thực tế trước khi áp dụng vào việc lớn hơn.
+              <span className="font-semibold text-gray-900">Workflow → Case Study.</span> Bạn đã biết công cụ,
+              giờ cần một quy trình lặp lại được và xem kết quả thực tế trước khi áp dụng vào việc lớn hơn.
+              (Best Practice ở CKOS hiện chưa có nội dung thật riêng — Case Study và hỏi Companion là cách
+              gần nhất để đối chiếu cách người khác đã làm, thay vì một danh mục Best Practice còn trống.)
             </p>
           </GemCard>
         </div>
