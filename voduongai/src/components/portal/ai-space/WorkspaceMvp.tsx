@@ -469,8 +469,14 @@ export function WorkspaceMvp() {
 
       {session && (
         <>
-          {/* Next Action — Companion chỉ gợi ý MỘT hành động tiếp theo. */}
-          {nextAction && (
+          {/* Next Action — Companion chỉ gợi ý MỘT hành động tiếp theo.
+           * Ẩn riêng nhãn "next_mission" — đây là gợi ý "Chuyển sang Nhiệm
+           * vụ tiếp theo" nhưng chưa có Mission Engine thật để chuyển tới
+           * (xem execution-orchestrator.ts) — hiện nhãn này sẽ là một gợi ý
+           * trỏ vào tính năng chưa tồn tại. Dải hoàn thành bên dưới (khi
+           * `session.status === "completed"`) đã là đúng MỘT gợi ý trung
+           * thực cho lúc phiên xong việc, nên không cần nhãn thay thế ở đây. */}
+          {nextAction && nextAction.kind !== "next_mission" && (
             <section className="flex items-center gap-2 rounded-2xl border border-blue-100 bg-blue-50/60 p-4 text-sm">
               <Sparkles className="h-4 w-4 shrink-0 text-blue-500" />
               <span className="text-gray-700">Companion gợi ý: </span>
@@ -509,13 +515,13 @@ export function WorkspaceMvp() {
           {currentStep && session.status !== "completed" && (
             <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
               <h2 className="text-lg font-bold text-gray-900">Việc đang thực hiện</h2>
+              {/* Mục tiêu/Kết quả mong đợi đã hiện ở đầu trang (session
+               * header ngay phía trên) — không lặp lại ở đây, chỉ giữ đúng
+               * thông tin riêng của bước này (relationship audit: một quan
+               * hệ không nên nói hai lần trên cùng một trang). */}
               <div className="mt-3 space-y-2 text-sm text-gray-700">
                 <p><span className="font-semibold text-gray-900">Bước hiện tại: </span>{currentStep.doing}</p>
                 <p><span className="font-semibold text-gray-900">Việc cần làm: </span>{currentStep.task}</p>
-                <p><span className="font-semibold text-gray-900">Mục tiêu: </span>{goal}</p>
-                {context?.expectedOutput && (
-                  <p><span className="font-semibold text-gray-900">Kết quả mong đợi: </span>{context.expectedOutput}</p>
-                )}
               </div>
               <button
                 type="button"
