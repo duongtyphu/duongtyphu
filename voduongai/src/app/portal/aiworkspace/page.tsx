@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, BookOpen, Zap, ArrowRight } from "lucide-react";
-import { GradientTitle } from "@/components/portal/ui/GradientTitle";
 import {
   type AiTool,
   type AiArticle,
@@ -122,29 +121,48 @@ export default function KhongGianAiPage() {
   return (
     <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-gray-100 bg-white p-6 md:p-8 shadow-sm space-y-4">
-        <SectionLabel>AI Workspace</SectionLabel>
-        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
-          <GradientTitle text="AI Workspace" />
+      {/* Nền gradient đậm cùng khuôn dải hero màu của các pillar khác (Học
+       * viện tri thức AI tone "knowledge", Học viện AI tone "learning" — xem
+       * `PillarHero`'s TONE_GRADIENT), nhưng dùng gradient THƯƠNG HIỆU
+       * Companion (#111827 → #2563EB → #7C3AED → #F97316 — cùng gradient chữ
+       * "Companion" ở sidebar và hero /portal/su-menh-companion) để AI
+       * Workspace có màu riêng, không trùng tone pillar nào. Chữ trắng thay
+       * cho GradientTitle (gradient chữ bắt đầu từ màu tối, không đọc được
+       * trên nền tối này); riêng chữ "AI" giữ màu cam thương hiệu #F97316. */}
+      <section
+        className="relative overflow-hidden rounded-2xl p-6 md:p-8 shadow-lg space-y-4 text-white"
+        style={{ backgroundImage: "linear-gradient(135deg, #111827 0%, #2563EB 40%, #7C3AED 72%, #F97316 100%)" }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl"
+        />
+        <p className="relative text-xs font-bold uppercase tracking-widest text-white/70">AI Workspace</p>
+        <h1 className="relative text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
+          <span style={{ color: "#F97316" }}>AI</span> Workspace
         </h1>
-        <p className="text-base font-semibold text-gray-700">
+        <p className="relative text-base font-semibold text-white/95">
           Nơi Companion và đội ngũ AI hỗ trợ bạn biến mục tiêu thành kết quả.
         </p>
-        <p className="text-base text-gray-600 max-w-2xl leading-relaxed">
+        <p className="relative text-base text-white/85 max-w-2xl leading-relaxed">
           Bạn không cần bắt đầu bằng việc chọn công cụ AI. Hãy bắt đầu bằng việc bạn muốn làm gì.
           Companion sẽ giúp bạn chọn đúng công cụ, đúng Prompt, đúng quy trình và đưa kết quả về
           Không gian làm việc.
         </p>
-        <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+        <div className="relative flex flex-col gap-3 pt-1 sm:flex-row">
           <a
             href="#companion-desk"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-blue-600 transition"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow hover:bg-white/90 transition"
           >
             Bắt đầu cùng Companion <ArrowRight className="h-4 w-4" />
           </a>
           <a
             href="#ai-toolbox"
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow hover:bg-gray-50 transition"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20 transition"
           >
             Khám phá công cụ AI
           </a>
