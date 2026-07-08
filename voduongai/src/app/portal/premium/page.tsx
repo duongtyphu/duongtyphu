@@ -1,23 +1,54 @@
-import { Crown } from "lucide-react";
+import Link from "next/link";
+import { Crown, ShieldCheck, ArrowRight } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
-import { CheckoutButton } from "@/components/portal/CheckoutModal";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { GemCard } from "@/components/portal/ui/GemCard";
-import { GemLockedOverlay } from "@/components/portal/ui/GemLockedOverlay";
-import { GemBadge } from "@/components/portal/ui/GemBadge";
-import { Button } from "@/components/portal/ui/Button";
-import { SectionHeader } from "@/components/portal/ui/SectionHeader";
-import { PillarHero } from "@/components/portal/ui/PillarHero";
-import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { PREMIUM_PROGRAMS, formatVnd } from "@/components/portal/premium/premium-programs";
+import { PremiumProgramCard, type PremiumCourseMatch } from "@/components/portal/premium/PremiumProgramCard";
+import { PremiumAdvisor } from "@/components/portal/premium/PremiumAdvisor";
+import { PremiumConsult } from "@/components/portal/premium/PremiumConsult";
+import { FounderSpotlight } from "@/components/portal/premium/FounderSpotlight";
 
 export const metadata = { title: "Premium | VO DUONG AI" };
+
+/**
+ * PORTAL 4.0 — PREMIUM EXPERIENCE RECONSTRUCTION (P0).
+ *
+ * Premium được thiết kế lại thành một khu vực có ngôn ngữ thị giác RIÊNG:
+ * canvas tối full-bleed (phá lề <main> px-4/px-8 py-6/py-8 của PortalShell),
+ * glow AI, card glass có chiều sâu, mỗi chương trình một accent màu — khác
+ * hẳn nền trắng card sáng của CKOS/Academy/Workspace. Không FOMO, không
+ * đếm ngược, không fake học viên/đánh giá/doanh thu.
+ *
+ * Dữ liệu thật:
+ * - Bảng `courses` (Supabase) là nguồn sự thật về GIÁ và việc một chương
+ *   trình đã mở đăng ký hay chưa (createOrder tra giá server-side từ đây).
+ *   Chương trình chưa có dòng `courses` khớp → CTA "Sắp mở đăng ký".
+ *   Admin chạy `supabase-premium-courses.sql` để mở đủ 5 chương trình.
+ * - `orders.status=confirmed` (getPurchasedIds) → trạng thái "Đã sở hữu".
+ * - Bảng `products` (nếu có sản phẩm active) hiển thị ở khối phụ, giữ
+ *   nguyên chức năng bán hàng thật sẵn có.
+ *
+ * Luồng thanh toán (route sẵn có, KHÔNG tạo mới):
+ * Card → /portal/checkout?type=course&id=… (bước 1: thông tin)
+ *      → /portal/checkout/order-received/[id] (bước 2: chuyển khoản)
+ *      → webhook SePay xác nhận → orders confirmed → mở khóa bài giảng.
+ */
+
+type CourseRow = { id: number; name: string; status: string; price: number };
+
+async function getCourses(): Promise<CourseRow[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
+  const supabase = await getSupabaseServer();
+  const { data } = await supabase.from("courses").select("id, name, status, price");
+  return data ?? [];
+}
 
 type LiveProduct = {
   id: number;
   title: string;
   description: string | null;
-  type: string;
   icon: string;
   price: number;
   video_url: string | null;
@@ -31,294 +62,266 @@ async function getLiveProducts(): Promise<LiveProduct[]> {
   const supabase = await getSupabaseServer();
   const { data } = await supabase
     .from("products")
-    .select("id, title, description, type, icon, price, video_url, pdf_url")
+    .select("id, title, description, icon, price, video_url, pdf_url")
     .eq("active", true)
     .order("created_at", { ascending: false });
   return data ?? [];
 }
 
-const PREMIUM_INCLUDES = [
-  {
-    emoji: "🚀",
-    title: "V-Solo",
-    description: "Lộ trình xây dựng hệ thống làm việc một mình với AI — từ số 0 đến có doanh thu đầu tiên.",
-  },
-  {
-    emoji: "📈",
-    title: "V-Scale",
-    description: "Nhân bản quy trình, xây đội nhóm và mở rộng hệ thống đã vận hành ổn định lên quy mô lớn hơn.",
-  },
-  {
-    emoji: "🎥",
-    title: "Bài giảng chuyên sâu",
-    description: "Thư viện video bài giảng chi tiết theo từng chủ đề, học theo tốc độ của riêng bạn.",
-  },
-  {
-    emoji: "🎓",
-    title: "Masterclass",
-    description: "Các buổi học chuyên đề chuyên sâu cùng chuyên gia, đi thẳng vào vấn đề thực chiến.",
-  },
-  {
-    emoji: "🛠️",
-    title: "Workshop Premium",
-    description: "Workshop thực hành trực tiếp, làm cùng và nhận phản hồi ngay trong buổi học.",
-  },
-];
+function matchCourse(
+  courses: CourseRow[],
+  patterns: string[],
+  purchasedCourseIds: Set<string>,
+): PremiumCourseMatch {
+  const row = courses.find((c) => {
+    const name = c.name.toLowerCase();
+    return patterns.some((p) => name.includes(p));
+  });
+  if (!row) return null;
+  return { id: row.id, price: row.price, owned: purchasedCourseIds.has(String(row.id)) };
+}
 
-const LEARNING_PATH = [
-  { emoji: "🌱", title: "Người mới bắt đầu", description: "Làm quen với AI, xây nền tảng tư duy và công cụ đúng ngay từ đầu." },
-  { emoji: "🏗️", title: "Xây hệ thống", description: "Biến kiến thức thành quy trình làm việc lặp lại được, có kết quả đo lường được." },
-  { emoji: "🔁", title: "Nhân bản quy trình", description: "Tối ưu và nhân bản quy trình đã chạy ổn định để tăng hiệu suất mà không tăng công sức." },
-  { emoji: "👥", title: "Phát triển đội nhóm", description: "Chuyển giao quy trình cho đội nhóm, xây dựng hệ thống vận hành không phụ thuộc một người." },
+const PAYMENT_STEPS = [
+  { step: "1", title: "Chọn chương trình", text: "Bấm CTA đăng ký trên card — bạn được đưa tới trang thanh toán với đúng chương trình đã chọn." },
+  { step: "2", title: "Xác nhận thông tin", text: "Điền họ tên, số điện thoại và xác nhận đơn hàng (giá được hệ thống kiểm tra lại phía máy chủ)." },
+  { step: "3", title: "Chuyển khoản", text: "Chuyển khoản theo hướng dẫn ở trang đơn hàng — hệ thống tự động ghi nhận thanh toán." },
+  { step: "4", title: "Mở khóa tự động", text: "Ngay khi thanh toán được xác nhận, bài giảng video của chương trình được mở khóa trong tài khoản của bạn." },
 ];
 
 const PREMIUM_FAQ = [
   {
-    q: "Premium gồm những gì?",
-    a: "Premium bao gồm V-Solo, V-Scale, thư viện bài giảng chuyên sâu, các buổi Masterclass và Workshop Premium — toàn bộ nội dung học chuyên sâu của VO DUONG AI.",
+    q: "Premium khác phần miễn phí ở đâu?",
+    a: "Phần miễn phí giúp bạn hiểu và thử. Premium là các chương trình có lộ trình, bài giảng video và kết quả đầu ra cụ thể — dành cho lúc bạn muốn biến AI thành năng lực làm việc thật sự, không chỉ kiến thức.",
   },
   {
-    q: "Tôi có thể học theo lộ trình nào?",
-    a: "Bạn có thể chọn lộ trình phù hợp với giai đoạn hiện tại: Người mới bắt đầu, Xây hệ thống, Nhân bản quy trình, hoặc Phát triển đội nhóm.",
+    q: "Thanh toán xong bao lâu thì được học?",
+    a: "Hệ thống ghi nhận chuyển khoản tự động. Ngay khi thanh toán được xác nhận, bài giảng của chương trình bạn mua được mở khóa trong mục Sản phẩm của tôi — không cần chờ duyệt tay.",
   },
   {
-    q: "Sau khi tham gia tôi được mở khóa nội dung nào?",
-    a: "Sau khi tham gia, bạn được mở khóa toàn bộ bài giảng, tài liệu, template và buổi học thuộc chương trình bạn đăng ký, cùng quyền truy cập các Workshop Premium định kỳ.",
+    q: "Tôi chưa chắc nên chọn chương trình nào?",
+    a: "Đừng chọn khi chưa chắc. Dùng Companion Advisor ở đầu trang để định vị giai đoạn của bạn, hoặc liên hệ Tư vấn 1:1 — trao đổi trước, quyết định sau.",
+  },
+  {
+    q: "Chính sách hoàn phí thế nào?",
+    a: "Điều khoản sử dụng, chính sách bảo mật và chính sách hoàn phí được hiển thị ngay tại bước thanh toán — bạn nên đọc trước khi xác nhận đơn hàng.",
   },
 ];
 
 export default async function PremiumPage() {
-  const [liveProducts, purchasedProductIds] = await Promise.all([
+  const [courses, purchasedCourseIds, liveProducts, purchasedProductIds] = await Promise.all([
+    getCourses(),
+    getPurchasedIds("course_id"),
     getLiveProducts(),
     getPurchasedIds("product_id"),
   ]);
-  const ownedCount = purchasedProductIds.size;
+
+  const programCards = PREMIUM_PROGRAMS.map((program) => ({
+    program,
+    course: matchCourse(courses, program.matchPatterns, purchasedCourseIds),
+  }));
+  const ownedProgramNames = programCards.filter((c) => c.course?.owned).map((c) => c.program.name);
+
+  const classPrograms = programCards.filter((c) =>
+    ["ai-coban", "ai-nangcao", "openclaw"].includes(c.program.key),
+  );
+  const systemPrograms = programCards.filter((c) => ["v-solo", "v-scale"].includes(c.program.key));
 
   return (
-    <div className="space-y-12">
-      {/* Hero */}
-      <PillarHero
-        icon={Crown}
-        tone="value"
-        eyebrow="Premium — Bước sau khi đã thử"
-        title="Miễn phí giúp bạn bắt đầu. Đây là phần giúp bạn không dừng lại"
-        subtitle="Bạn đã thấy AI có thể giúp gì. Câu hỏi tiếp theo không phải là học thêm gì nữa, mà là ai đi cùng khi mọi thứ không như kế hoạch. Premium là lộ trình có người đồng hành thật, không phải thêm một chồng bài giảng để tự xem."
-        quickActions={[
-          { label: "Tham gia Premium", href: "/portal/vdai-academy" },
-          { label: "Đi đến thanh toán", href: "/portal/checkout" },
-        ]}
-      />
+    // Canvas tối full-bleed — bù đúng padding của <main> trong PortalShell
+    // (px-4 py-6 md:px-8 md:py-8) để cả trang Premium là một không gian riêng.
+    <div className="-mx-4 -my-6 min-h-full md:-mx-8 md:-my-8">
+      <div
+        className="relative overflow-hidden px-4 py-8 md:px-8 md:py-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(59,76,222,0.35), transparent), linear-gradient(180deg, #0B1020 0%, #0E1428 45%, #0B1020 100%)",
+        }}
+      >
+        {/* Ánh sáng AI nền */}
+        <div aria-hidden className="pointer-events-none absolute left-1/4 top-40 h-96 w-96 rounded-full bg-violet-600/10 blur-[120px]" />
+        <div aria-hidden className="pointer-events-none absolute right-0 top-[60%] h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
 
-      {/* Companion Guide — dùng ownedCount thật (Supabase), không phải câu chung chung cho mọi người */}
-      <CompanionGuide
-        message={
-          ownedCount > 0
-            ? `Bạn đã có ${ownedCount} sản phẩm Premium — Companion nhớ điều đó. Bước tiếp theo có thể là một Workshop hoặc Masterclass để đi sâu hơn.`
-            : "Bạn chưa sở hữu sản phẩm Premium nào. Không cần chọn gói cao nhất để bắt đầu — chọn đúng giai đoạn bạn đang ở, Companion sẽ điều chỉnh gợi ý theo đó."
-        }
-        action={{ label: "Xem lộ trình học", href: "#lo-trinh" }}
-      />
+        <div className="relative mx-auto max-w-6xl space-y-12">
+          {/* ── 1. Hero Premium ─────────────────────────────────────────── */}
+          <section className="pt-4 text-center md:pt-8">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-400/20 to-orange-500/20 shadow-[0_0_40px_-5px_rgba(251,191,36,0.4)]">
+              <Crown className="h-7 w-7 text-amber-300" />
+            </div>
+            <p className="mt-5 text-xs font-bold uppercase tracking-[0.3em] text-white/40">
+              Premium — Bước tăng tốc khi bạn đã sẵn sàng
+            </p>
+            <h1 className="mx-auto mt-3 max-w-3xl text-3xl font-extrabold leading-tight text-white md:text-5xl">
+              Premium không dành cho việc học nhiều hơn.
+              <span className="mt-1 block bg-gradient-to-r from-blue-400 via-violet-400 to-orange-300 bg-clip-text text-transparent">
+                Premium dành cho lúc bạn muốn biến AI thành năng lực thật sự.
+              </span>
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
+              Không phải mua thêm một chồng bài giảng. Đây là nơi bạn chọn đúng một lộ trình — và đi hết
+              nó với người đồng hành thật.
+            </p>
+            <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <a
+                href="#chuong-trinh"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_30px_-5px_rgba(99,102,241,0.6)] transition hover:opacity-90"
+              >
+                Chọn lộ trình phù hợp <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#companion-advisor"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-white/75 backdrop-blur transition hover:bg-white/10 hover:text-white"
+              >
+                Tôi chưa chắc mình cần Premium
+              </a>
+            </div>
+          </section>
 
-      {/* Value Experience — không hỏi "mua gói nào", mà trả lời "tôi nhận được giá trị gì tiếp theo?" */}
-      <GemCard>
-        <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
-          Giá trị tiếp theo của bạn
-        </p>
-        {ownedCount > 0 ? (
-          <p className="mt-2 text-sm text-gray-600">
-            Bạn đã sở hữu <span className="font-semibold text-gray-900">{ownedCount}</span> sản phẩm Premium
-            — giá trị tiếp theo bạn có thể mở khoá là một Workshop Premium hoặc Masterclass chuyên sâu hơn
-            bên dưới.
-          </p>
-        ) : (
-          <p className="mt-2 text-sm text-gray-500">
-            Giá trị đầu tiên bạn nhận được khi tham gia: một lộ trình rõ ràng (V-Solo/V-Scale) thay vì tự
-            mò mẫm — xem bên dưới để chọn đúng giai đoạn của bạn.
-          </p>
-        )}
-      </GemCard>
+          {/* ── 2. Companion Advisor ────────────────────────────────────── */}
+          <PremiumAdvisor ownedProgramNames={ownedProgramNames} />
 
-      {/* Premium Includes */}
-      <section>
-        <SectionHeader title="Premium bao gồm" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {PREMIUM_INCLUDES.map((item) => (
-            <GemCard key={item.title}>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-violet-100 text-2xl">
-                {item.emoji}
+          {/* ── 3. 5 chương trình chính ─────────────────────────────────── */}
+          <section id="chuong-trinh" className="scroll-mt-24 space-y-8">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">Lớp học AI</p>
+              <h2 className="mt-1 text-xl font-extrabold text-white md:text-2xl">
+                Ba lớp học — ba cấp độ năng lực
+              </h2>
+              <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {classPrograms.map(({ program, course }) => (
+                  <PremiumProgramCard key={program.key} program={program} course={course} />
+                ))}
               </div>
-              <h3 className="gemos-card-title mt-3 font-bold text-gray-900">{item.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-gray-500">{item.description}</p>
-            </GemCard>
-          ))}
-        </div>
-      </section>
+            </div>
 
-      {/* Portal 4.0 Content Creation — trước đây "Premium bao gồm" liệt kê
-       * V-Solo/V-Scale cạnh nhau mà không giải thích khác nhau ra sao hay
-       * khi nào nên chuyển từ cái này sang cái kia. */}
-      <section>
-        <SectionHeader eyebrow="Chọn đúng lộ trình" title="V-Solo hay V-Scale?" />
-        <div className="grid gap-4 sm:grid-cols-2">
-          <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">Chọn V-Solo nếu...</p>
-            <ul className="mt-2 space-y-2 text-sm leading-relaxed text-gray-600">
-              <li>• Bạn đang làm việc một mình hoặc với đội rất nhỏ.</li>
-              <li>• Bạn chưa có quy trình làm việc ổn định — cần xây từ đầu.</li>
-              <li>• Mục tiêu là có doanh thu/kết quả đầu tiên, chưa cần mở rộng.</li>
-            </ul>
-          </GemCard>
-          <GemCard>
-            <p className="gemos-card-title text-sm font-bold text-gray-900">Chọn V-Scale nếu...</p>
-            <ul className="mt-2 space-y-2 text-sm leading-relaxed text-gray-600">
-              <li>• Quy trình của bạn đã chạy ổn định, giờ cần nhân bản.</li>
-              <li>• Bạn cần chuyển giao công việc cho người khác/đội nhóm.</li>
-              <li>• Mục tiêu là tăng quy mô mà không tăng công sức cá nhân tương ứng.</li>
-            </ul>
-          </GemCard>
-        </div>
-        <p className="mt-3 text-xs text-gray-400">
-          Không chắc? Bắt đầu với V-Solo — hầu hết mọi người cần xây nền tảng vững trước khi nhân bản được gì.
-        </p>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">Chương trình hệ thống</p>
+              <h2 className="mt-1 text-xl font-extrabold text-white md:text-2xl">
+                Xây hệ thống Affiliate bằng AI — một mình hoặc cùng đội nhóm
+              </h2>
+              <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                {systemPrograms.map(({ program, course }) => (
+                  <PremiumProgramCard key={program.key} program={program} course={course} featured />
+                ))}
+              </div>
+            </div>
+          </section>
 
-        {/* Phase 4 — Guided Learning: dùng ownedCount thật để khuyên đúng
-         * bước tiếp theo, không mặc định đẩy lên gói đắt hơn. */}
-        {ownedCount === 0 ? (
-          <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            Bạn chưa dùng thử sản phẩm nào của VO DUONG AI. Trước khi cân nhắc Premium, hãy học thử miễn phí
-            ở Học viện AI trước — nếu thấy cách làm việc phù hợp, quay lại đây sẽ dễ chọn đúng gói hơn nhiều.
-          </p>
-        ) : (
-          <p className="mt-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
-            Bạn đã có {ownedCount} sản phẩm Premium. Nếu quy trình hiện tại vẫn đang một mình vận hành tốt,
-            chưa cần vội chuyển sang gói cao hơn — chỉ nâng cấp khi thực sự cần nhân bản hoặc chuyển giao
-            cho người khác.
-          </p>
-        )}
-      </section>
+          {/* ── 4. Tư vấn 1:1 (khối riêng) ──────────────────────────────── */}
+          <PremiumConsult />
 
-      {/* Learning Path */}
-      <section id="lo-trinh">
-        <SectionHeader title="Lộ trình học" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {LEARNING_PATH.map((step, i) => (
-            <GemCard key={step.title}>
-              <span className="text-xs font-semibold text-blue-600">Bước {i + 1}</span>
-              <div className="mt-2 text-2xl">{step.emoji}</div>
-              <h3 className="gemos-card-title mt-2 font-bold text-gray-900">{step.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-gray-500">{step.description}</p>
-            </GemCard>
-          ))}
-        </div>
-      </section>
+          {/* ── 5. Người đồng hành cùng bạn ─────────────────────────────── */}
+          <FounderSpotlight />
 
-      {/* CTA */}
-      <section className="rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600 p-8 text-center">
-        <h2 className="text-xl font-bold text-white">Sẵn sàng tham gia Premium?</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-blue-100">
-          Chọn chương trình phù hợp và bắt đầu hành trình xây hệ thống làm việc với AI ngay hôm nay.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Button href="/portal/vdai-academy" variant="inverse">
-            Tham gia Premium
-          </Button>
-          <Button href="/portal/checkout" variant="inverse-ghost">
-            Đi đến thanh toán
-          </Button>
-        </div>
-      </section>
-
-      {/* Sản phẩm đang mở bán (live, Supabase-backed) */}
-      {liveProducts.length > 0 && (
-        <section>
-          <h2 className="text-lg font-bold text-gray-900">Sản phẩm đang mở bán</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {liveProducts.map((p) => {
-              const owned = purchasedProductIds.has(String(p.id));
-              return (
-                <GemCard key={p.id} variant={owned ? "success" : "locked"}>
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="text-2xl">{p.icon}</span>
-                    {owned ? (
-                      <GemBadge tone="free">Đã sở hữu</GemBadge>
-                    ) : (
-                      <GemBadge tone="premium">{`${p.price.toLocaleString("vi-VN")}đ`}</GemBadge>
-                    )}
-                  </div>
-                  <h3 className="gemos-card-title mt-3 text-sm font-bold text-gray-900">{p.title}</h3>
-                  {p.description && <p className="mt-2 text-sm text-gray-600">{p.description}</p>}
-                  {owned ? (
-                    <div className="mt-4 flex flex-wrap gap-3">
-                      {p.video_url && (
-                        <a
-                          href={p.video_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="gemos-btn-primary rounded-full px-5 py-2 text-sm font-semibold text-white"
-                        >
-                          Xem video →
-                        </a>
-                      )}
-                      {p.pdf_url && (
-                        <a
-                          href={p.pdf_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="gemos-btn-secondary rounded-full px-5 py-2 text-sm font-semibold text-gray-900"
-                        >
-                          Tải tài liệu →
-                        </a>
-                      )}
-                    </div>
-                  ) : (
-                    <>
-                      <div className="mt-4">
-                        <CheckoutButton
-                          target={{ itemType: "product", itemId: p.id, title: p.title, price: p.price }}
-                          label="Mua ngay"
-                        />
+          {/* ── 6. Sản phẩm đang mở bán (dữ liệu products thật, nếu có) ─── */}
+          {liveProducts.length > 0 && (
+            <section>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">Ngoài các chương trình chính</p>
+              <h2 className="mt-1 text-xl font-extrabold text-white">Sản phẩm đang mở bán</h2>
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                {liveProducts.map((p) => {
+                  const owned = purchasedProductIds.has(String(p.id));
+                  const checkoutHref = `/portal/checkout?${new URLSearchParams({
+                    type: "product",
+                    id: String(p.id),
+                    title: p.title,
+                    price: String(p.price),
+                  }).toString()}`;
+                  return (
+                    <article
+                      key={p.id}
+                      className="relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur transition hover:border-white/25"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="text-2xl">{p.icon}</span>
+                        {owned ? (
+                          <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                            Đã sở hữu
+                          </span>
+                        ) : (
+                          <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-300">
+                            {formatVnd(p.price)}
+                          </span>
+                        )}
                       </div>
-                      <GemLockedOverlay />
-                    </>
-                  )}
-                </GemCard>
-              );
-            })}
-          </div>
-        </section>
-      )}
+                      <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
+                      {p.description && (
+                        <p className="mt-2 text-xs leading-relaxed text-white/60">{p.description}</p>
+                      )}
+                      <div className="mt-auto pt-4">
+                        {owned ? (
+                          <div className="flex flex-wrap gap-2.5">
+                            {p.video_url && (
+                              <a
+                                href={p.video_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
+                              >
+                                Xem video →
+                              </a>
+                            )}
+                            {p.pdf_url && (
+                              <a
+                                href={p.pdf_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="rounded-xl border border-white/20 bg-white/[0.05] px-4 py-2 text-xs font-semibold text-white/80 transition hover:bg-white/10"
+                              >
+                                Tải tài liệu →
+                              </a>
+                            )}
+                          </div>
+                        ) : (
+                          <Link
+                            href={checkoutHref}
+                            className="inline-flex rounded-xl border border-white/20 bg-white/[0.05] px-4 py-2 text-xs font-semibold text-white/85 transition hover:bg-white/10"
+                          >
+                            Mua ngay →
+                          </Link>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
-      {/* Portal 4.0 Content Reconstruction — Bug Premium đã sửa:
-       * "Danh mục Premium" tĩnh trước đây luôn hiển thị variant="locked" +
-       * GemLockedOverlay cho 5 sản phẩm tĩnh (pp1-pp5) không hề khớp với
-       * bảng `products` thật — nghĩa là những sản phẩm này KHÔNG BAO GIỜ có
-       * thể "mở khoá" được (không có CheckoutButton, không có id thật), mâu
-       * thuẫn ngay bên dưới section "Sản phẩm đang mở bán" (thật, có kiểm
-       * tra sở hữu đúng). Xoá hẳn section tĩnh này thay vì sửa thành nửa-vời
-       * — nguồn sự thật duy nhất về sản phẩm Premium giờ là bảng `products`
-       * thật ở trên. Xem PORTAL_CONTENT_RECONSTRUCTION_PLAN.md mục B.6. */}
+          {/* ── 7. Ghi chú thanh toán + FAQ ─────────────────────────────── */}
+          <section>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                <h2 className="text-lg font-extrabold text-white">Thanh toán hoạt động thế nào</h2>
+              </div>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {PAYMENT_STEPS.map((s) => (
+                  <div key={s.step} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-bold text-white">
+                      {s.step}
+                    </span>
+                    <p className="mt-2.5 text-sm font-bold text-white">{s.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-white/55">{s.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-      {/* FAQ */}
-      <section>
-        <SectionHeader title="Câu hỏi thường gặp" />
-        <div className="space-y-3">
-          {PREMIUM_FAQ.map((item) => (
-            <GemCard key={item.q}>
-              <h3 className="gemos-card-title font-bold text-gray-900">{item.q}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-gray-600">{item.a}</p>
-            </GemCard>
-          ))}
+            <div className="mt-8 space-y-3">
+              <h2 className="text-lg font-extrabold text-white">Câu hỏi thường gặp</h2>
+              {PREMIUM_FAQ.map((item) => (
+                <details key={item.q} className="group rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-semibold text-white/85 [&::-webkit-details-marker]:hidden">
+                    {item.q}
+                    <span aria-hidden className="text-white/40 transition group-open:rotate-45">＋</span>
+                  </summary>
+                  <p className="px-5 pb-4 text-sm leading-relaxed text-white/60">{item.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
         </div>
-      </section>
-
-      <KnowledgeJourneyStrip
-        title="Chưa chắc Premium phù hợp?"
-        steps={[
-          { label: "Học thử miễn phí trước", description: "Bắt đầu từ Học viện AI — không cần trả phí để thử.", href: "/portal/hocvienai" },
-          { label: "Xem Workspace", description: "Trải nghiệm cách Companion đồng hành trong một phiên làm việc thật.", href: "/portal/workspace" },
-          { label: "Hỏi Companion", description: "Nhờ Companion tư vấn lộ trình phù hợp với bạn.", href: "/portal/companion" },
-        ]}
-      />
+      </div>
     </div>
   );
 }
