@@ -51,6 +51,7 @@ import { listAgentRuns, type AgentRunRecord } from "@/lib/portal/foundation/agen
 import { syncMemoryForPortfolioItem } from "@/lib/portal/foundation/memory-store";
 import { listCompanions, activateWave1Companions, type CompanionRecord } from "@/lib/portal/foundation/workforce-registry";
 import { getGoalMission, linkMissionToSession, completeGoalMission } from "@/lib/portal/foundation/goal-runtime";
+import { AI_RESOURCES } from "@/data/portal/ai-workspace";
 
 const SOURCE_LABEL: Record<string, string> = {
   "companion-desk": "Companion Desk",
@@ -79,6 +80,37 @@ const MODULE_ROUTE: Record<PortalModule, { label: string; href: string }> = {
   "my-journey": { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
   "living-garden": { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
 };
+
+/**
+ * CKOS Reference — Portal 4.0 Phase 6: khi một phiên bắt đầu từ một Tool /
+ * Prompt / Workflow / Tài nguyên CKOS cụ thể (context.itemType + itemId đã
+ * có sẵn từ `startCompanionWorkspace()` nhưng trước đây bị bỏ qua trong
+ * Workspace), hiển thị lại đúng liên kết thật về đối tượng CKOS đó — trả
+ * lời câu hỏi "Tool/Prompt/Workflow nào nên dùng" ngay trong phiên, không
+ * chỉ ở bước chọn trước khi vào Workspace. Chỉ hiện khi có itemId/itemType
+ * thật khớp một route CKOS thật — không suy diễn liên kết cho các itemType
+ * không có trang chi tiết (work_need, workspace, learning_path, mission).
+ */
+const CKOS_REFERENCE_ROUTE: Partial<Record<NonNullable<WorkspaceContext["itemType"]>, { label: string; hrefPrefix?: string; staticHref?: string }>> = {
+  tool: { label: "Công cụ (CKOS)", hrefPrefix: "/portal/aiworkspace/" },
+  prompt: { label: "Prompt (CKOS)", hrefPrefix: "/portal/prompts/" },
+  workflow: { label: "Quy trình (CKOS)", staticHref: "/portal/sop" },
+};
+
+/** Trả về liên kết CKOS thật cho context hiện tại, hoặc null nếu không có
+    (không suy diễn — chỉ trả khi có route thật khớp itemId/itemType). */
+function resolveCkosReference(context: WorkspaceContext | null): { label: string; title: string; href: string } | null {
+  if (!context?.itemType || !context.itemId) return null;
+  if (context.itemType === "resource") {
+    const resource = AI_RESOURCES.find((r) => r.id === context.itemId);
+    if (!resource) return null;
+    return { label: "Tài nguyên (CKOS)", title: resource.title, href: resource.href };
+  }
+  const route = CKOS_REFERENCE_ROUTE[context.itemType];
+  if (!route) return null;
+  const href = route.staticHref ?? `${route.hrefPrefix}${context.itemId}`;
+  return { label: route.label, title: context.title ?? context.itemId, href };
+}
 
 /** Knowledge Loop — nếu thiếu kiến thức, Companion gợi ý quay lại đúng module còn lại. */
 const COMPANION_SUGGESTION: Partial<Record<PortalModule, { message: string; label: string; href: string }>> = {
@@ -184,6 +216,7 @@ export function WorkspaceMvp() {
   const currentStep = session ? EXECUTION_STEP_TASKS[session.currentStepId] : null;
   const currentStepIndex = session ? EXECUTION_TIMELINE.findIndex((s) => s.id === session.currentStepId) : -1;
   const nextAction = session ? getNextAction(session) : null;
+  const ckosReference = resolveCkosReference(context);
 
   function handleAdvanceStep() {
     if (!session) return;
@@ -401,6 +434,14 @@ export function WorkspaceMvp() {
           <p className="mt-3 text-sm text-gray-600">
             <span className="font-semibold text-gray-800">Kết quả mong đợi: </span>
             {context.expectedOutput}
+          </p>
+        )}
+        {ckosReference && (
+          <p className="mt-3 text-sm text-gray-600">
+            <span className="font-semibold text-gray-800">{ckosReference.label}: </span>
+            <Link href={ckosReference.href} className="font-semibold text-blue-600 hover:underline">
+              {ckosReference.title} →
+            </Link>
           </p>
         )}
         {!context && (
