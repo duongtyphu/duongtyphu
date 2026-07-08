@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, Users } from "lucide-react";
+import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, Users, Quote } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
-import { Button } from "@/components/portal/ui/Button";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
-import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -137,6 +135,55 @@ const COMPANION_PLACEHOLDERS = [
   { surface: "border-blue-200 bg-gradient-to-br from-indigo-50 to-blue-50 text-indigo-600" },
   { surface: "border-amber-200 bg-gradient-to-br from-orange-50 to-amber-50 text-orange-700" },
   { surface: "border-emerald-200 bg-gradient-to-br from-green-50 to-emerald-50 text-green-700" },
+] as const;
+
+/**
+ * 5 lời nhắn của Companion khép lại trang — chủ đề Đầu tư thông minh &
+ * Thành công. Nội dung tĩnh do Companion "viết", không phải trích dẫn của
+ * người nổi tiếng (không gán tên ai) và không phải dữ liệu người dùng.
+ * Bảng màu dùng lại đúng tint vocabulary của `ECOSYSTEM_SURFACE` ở trên.
+ */
+const COMPANION_QUOTES = [
+  {
+    topic: "Đầu tư thông minh",
+    quote: "Khoản đầu tư khôn ngoan nhất không phải là khoản sinh lời nhanh nhất — mà là khoản bạn hiểu rõ nhất.",
+    card: "border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white text-blue-600",
+    strip: "bg-gradient-to-r from-blue-600 to-indigo-600",
+    chip: "bg-gradient-to-br from-blue-600 to-indigo-600 text-white",
+    badge: "bg-blue-100 text-blue-700",
+  },
+  {
+    topic: "Kỷ luật",
+    quote: "Đừng trả học phí đắt cho một bài học rẻ: hiểu trước, tham gia sau — và chỉ với số tiền bạn chấp nhận mất.",
+    card: "border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50/50 to-white text-amber-600",
+    strip: "bg-gradient-to-r from-amber-500 to-orange-500",
+    chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white",
+    badge: "bg-amber-100 text-amber-800",
+  },
+  {
+    topic: "Kiên nhẫn",
+    quote: "Thành công không đến từ việc nắm bắt mọi cơ hội, mà từ việc đủ kiên nhẫn chờ cơ hội thuộc về mình.",
+    card: "border-emerald-200 bg-gradient-to-br from-emerald-50 via-green-50/50 to-white text-emerald-600",
+    strip: "bg-gradient-to-r from-emerald-600 to-green-600",
+    chip: "bg-gradient-to-br from-emerald-600 to-green-600 text-white",
+    badge: "bg-emerald-100 text-emerald-800",
+  },
+  {
+    topic: "Thành công",
+    quote: "Người thành công không phải người chưa từng sai — họ là người biết dừng đúng lúc và bắt đầu lại đủ nhanh.",
+    card: "border-violet-200 bg-gradient-to-br from-violet-50 via-blue-50/50 to-white text-violet-600",
+    strip: "bg-gradient-to-r from-violet-600 to-blue-500",
+    chip: "bg-gradient-to-br from-violet-600 to-blue-500 text-white",
+    badge: "bg-violet-100 text-violet-700",
+  },
+  {
+    topic: "Tri thức",
+    quote: "Tài sản lớn nhất của bạn không nằm trong ví — nó nằm ở kiến thức bạn tích luỹ mỗi ngày.",
+    card: "border-slate-300 bg-gradient-to-br from-slate-100 via-slate-50 to-white text-slate-600",
+    strip: "bg-gradient-to-r from-slate-800 to-emerald-600",
+    chip: "bg-gradient-to-br from-slate-800 to-emerald-600 text-white",
+    badge: "bg-slate-200 text-slate-700",
+  },
 ] as const;
 
 const CRITERIA = [
@@ -289,53 +336,6 @@ export default function OpportunitiesHubPage() {
         </p>
       </GemCard>
 
-      {/* Portal 4.0 Content Creation — trước đây trang chỉ có tiêu chí chia
-       * sẻ (vì sao ecosystem xuất hiện ở đây), chưa có checklist giúp
-       * người đọc tự đánh giá sự sẵn sàng CỦA HỌ trước khi tham gia. */}
-      <section>
-        <SectionHeader eyebrow="Tự đánh giá" title="Bạn đã sẵn sàng tham gia một dự án chưa?" />
-        <div className="space-y-2">
-          {[
-            "Tôi đã đọc tài liệu gốc (whitepaper/trang chính thức) của dự án, không chỉ đọc bài chia sẻ ở đây.",
-            "Tôi biết rõ số tiền mình bỏ vào là số tiền tôi chấp nhận mất hoàn toàn.",
-            "Tôi hiểu ít nhất một rủi ro cụ thể của dự án này, không chỉ biết lợi ích.",
-            "Tôi không tham gia vì thấy người khác tham gia — tôi có lý do riêng của mình.",
-            "Tôi biết mình sẽ dừng lại ở đâu nếu mọi việc không như kỳ vọng.",
-          ].map((item, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-token-sm">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-50 text-xs font-bold text-blue-600">
-                {i + 1}
-              </span>
-              <p className="text-sm text-gray-600">{item}</p>
-            </div>
-          ))}
-        </div>
-        <p className="mt-3 text-xs text-gray-400">
-          Nếu bạn trả lời &ldquo;chưa&rdquo; cho bất kỳ câu nào ở trên, đó không phải là dấu hiệu xấu — đó là
-          dấu hiệu nên đọc thêm trước khi quyết định.
-        </p>
-
-        {/* Phase 4 — Guided Learning: chưa sẵn sàng → chỉ đúng nơi cần học,
-         * không phải một lời khuyên chung chung "hãy tìm hiểu thêm". */}
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <GemCard>
-            <p className="text-xs font-semibold text-gray-900">Chưa đọc tài liệu gốc lần nào?</p>
-            <p className="mt-1 text-xs text-gray-500">Học cách đọc whitepaper/tài liệu dự án trước khi đọc bất kỳ ecosystem nào ở đây.</p>
-            <Button href="/portal/hocvienai" variant="secondary" className="mt-2">Học viện AI</Button>
-          </GemCard>
-          <GemCard>
-            <p className="text-xs font-semibold text-gray-900">Chưa hình dung được rủi ro cụ thể?</p>
-            <p className="mt-1 text-xs text-gray-500">Đọc các bài học từ trải nghiệm thật — bao gồm cả những lần đã sai.</p>
-            <Button href="/portal/nhatkyhoctap" variant="secondary" className="mt-2">Nhật ký học tập</Button>
-          </GemCard>
-          <GemCard>
-            <p className="text-xs font-semibold text-gray-900">Không chắc nên bắt đầu từ đâu?</p>
-            <p className="mt-1 text-xs text-gray-500">Nhờ Companion phân tích cùng bạn trước khi đọc bất kỳ dự án nào.</p>
-            <Button href="/portal/companion" variant="secondary" className="mt-2">Hỏi Companion</Button>
-          </GemCard>
-        </div>
-      </section>
-
       {/* Criteria */}
       <section id="tieu-chi">
         <SectionHeader eyebrow="Nguyên tắc" title="Tiêu chí chia sẻ của tôi" />
@@ -362,26 +362,49 @@ export default function OpportunitiesHubPage() {
         </div>
       </section>
 
-      {/* Kiến thức cần học trước khi tham gia bất kỳ dự án nào */}
-      <KnowledgeJourneyStrip
-        title="Trước khi tham gia, nên học gì?"
-        steps={[
-          { label: "Học nền tảng", description: "Hiểu đúng về AI/Affiliate/Blockchain trước khi tham gia dự án nào.", href: "/portal/hocvienai" },
-          { label: "Công cụ hỗ trợ", description: "Các công cụ AI giúp bạn nghiên cứu dự án nhanh và kỹ hơn.", href: "/portal/tools" },
-          { label: "Hỏi Companion", description: "Nhờ Companion phân tích cùng bạn trước khi quyết định.", href: "/portal/companion" },
-        ]}
-      />
-
-      {/* Next step */}
-      <GemCard className="flex items-center justify-between gap-4">
-        <div>
-          <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-400">Tiếp theo bạn nên...</p>
-          <p className="text-sm text-gray-600">Đọc bài viết về các chủ đề liên quan trước khi quyết định bất cứ điều gì.</p>
+      {/* Companion gửi bạn — 5 lời nhắn tĩnh của Companion về Đầu tư thông
+       * minh & Thành công, khép lại trang thay cho các khối điều hướng cũ
+       * ("Companion dẫn đường" / "Tiếp theo bạn nên..."). Đây là lời nhắn
+       * do Companion viết sẵn, không phải dữ liệu người dùng — dùng lại đúng
+       * bảng tint blue/amber/emerald/violet đã có của trang, không bịa hue mới. */}
+      <section>
+        <SectionHeader
+          eyebrow="Companion gửi bạn"
+          title="5 điều Companion muốn bạn mang theo"
+          description="Không phải lời khuyên đầu tư — là những nguyên tắc để bạn tự tin hơn trước mọi quyết định."
+        />
+        <div className="grid gap-4 sm:grid-cols-2">
+          {COMPANION_QUOTES.map((item, i) => (
+            <figure
+              key={i}
+              className={`relative overflow-hidden rounded-2xl border p-6 shadow-token-sm transition duration-200 hover:-translate-y-1 hover:shadow-token-lg ${item.card} ${
+                i === 0 ? "sm:col-span-2" : ""
+              }`}
+            >
+              <div className={`-mx-6 -mt-6 mb-5 h-1.5 ${item.strip}`} aria-hidden />
+              <Quote
+                aria-hidden
+                className="pointer-events-none absolute -right-3 -bottom-3 h-24 w-24 rotate-12 opacity-[0.07]"
+              />
+              <div className="mb-4 flex items-center justify-between gap-2">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-sm ${item.chip}`}>
+                  <Quote className="h-5 w-5" />
+                </div>
+                <span className={`gemos-badge ${item.badge}`}>{item.topic}</span>
+              </div>
+              <blockquote
+                className={`font-semibold leading-relaxed text-gray-900 ${i === 0 ? "text-base sm:text-lg" : "text-sm"}`}
+              >
+                &ldquo;{item.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-4 flex items-center gap-2 text-xs font-semibold text-gray-500">
+                <span className={`inline-block h-1.5 w-6 rounded-full ${item.strip}`} aria-hidden />
+                Companion của bạn
+              </figcaption>
+            </figure>
+          ))}
         </div>
-        <Button href="/portal/nhatkyhoctap" variant="secondary" className="shrink-0">
-          Đọc bài viết →
-        </Button>
-      </GemCard>
+      </section>
     </div>
   );
 }

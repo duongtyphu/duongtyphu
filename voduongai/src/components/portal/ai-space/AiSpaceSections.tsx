@@ -47,7 +47,16 @@ function usePracticeAction() {
   };
 }
 
-/** Section 4 — Companion Desk. Khối quan trọng nhất, ngay sau Hero. */
+/** Section 4 — Companion Desk. Khối quan trọng nhất, ngay sau Hero.
+ * Nền gradient đậm cùng khuôn dải hero màu của các pillar khác (Học viện
+ * tri thức AI tone "knowledge", Học viện AI tone "learning" — xem
+ * `PillarHero`'s TONE_GRADIENT), nhưng dùng gradient THƯƠNG HIỆU Companion
+ * (#111827 → #2563EB → #7C3AED → #F97316 — cùng gradient chữ "Companion" ở
+ * sidebar và hero /portal/su-menh-companion) để mục Companion có màu riêng,
+ * không trùng tone pillar nào. */
+const COMPANION_DESK_GRADIENT =
+  "linear-gradient(135deg, #111827 0%, #2563EB 40%, #7C3AED 72%, #F97316 100%)";
+
 export function CompanionDesk() {
   const [goal, setGoal] = useState("");
   const practice = usePracticeAction();
@@ -60,23 +69,36 @@ export function CompanionDesk() {
   }
 
   return (
-    <section id="companion-desk" className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-blue-50 p-6 shadow-sm md:p-8">
-      <h2 className="text-2xl font-extrabold text-gray-900">Hôm nay bạn muốn AI giúp điều gì?</h2>
-      <p className="mt-2 max-w-xl text-sm leading-relaxed text-gray-600">
+    <section
+      id="companion-desk"
+      className="relative overflow-hidden rounded-2xl p-6 text-white shadow-lg md:p-8"
+      style={{ backgroundImage: COMPANION_DESK_GRADIENT }}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl"
+      />
+      <p className="relative text-xs font-bold uppercase tracking-[0.25em] text-white/70">Companion</p>
+      <h2 className="relative mt-2 text-2xl font-extrabold text-white">Hôm nay bạn muốn AI giúp điều gì?</h2>
+      <p className="relative mt-2 max-w-xl text-sm leading-relaxed text-white/85">
         Không cần chọn công cụ trước — chỉ cần nói bạn muốn làm gì, Companion sẽ điều phối phần còn lại.
       </p>
-      <form onSubmit={handleSubmit} className="mt-5 flex flex-col gap-3 sm:flex-row">
+      <form onSubmit={handleSubmit} className="relative mt-5 flex flex-col gap-3 sm:flex-row">
         <input
           type="text"
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
           placeholder="Ví dụ: viết bài Facebook, tạo banner, làm video, phân tích dữ liệu, viết email, lập kế hoạch…"
-          className="min-w-0 flex-1 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+          className="min-w-0 flex-1 rounded-xl border border-white/20 bg-white px-4 py-3 text-sm text-gray-900 placeholder-gray-400 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
         />
         <button
           type="submit"
           disabled={!goal.trim()}
-          className="shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+          className="shrink-0 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           Giao việc cho Companion
         </button>

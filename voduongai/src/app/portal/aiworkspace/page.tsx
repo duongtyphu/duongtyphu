@@ -121,13 +121,6 @@ export default function KhongGianAiPage() {
 
   return (
     <div className="rounded-3xl p-6 md:p-8 space-y-10">
-      {/* ── Breadcrumb ─────────────────────────────────────────────────────── */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-gray-700 transition">Học viện</Link>
-        <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-        <span className="text-gray-900 font-medium">AI Workspace</span>
-      </nav>
-
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
       <section className="rounded-2xl border border-gray-100 bg-white p-6 md:p-8 shadow-sm space-y-4">
         <SectionLabel>AI Workspace</SectionLabel>
