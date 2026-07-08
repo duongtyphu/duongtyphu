@@ -479,6 +479,21 @@ body {
   50% { transform: scale(1.05); }
 }
 
+/* ===== Companion Presence (Portal 4.0 Experience V2) — hơi thở rất chậm
+   quanh Living Core trên /portal/companion. KHÔNG sửa LivingCore.tsx
+   (Design Lock v1.2) — đây là một wrapper transform bên ngoài, độc lập
+   với hình học/màu sắc đã khoá của Core. Chậm và mờ có chủ đích: cảm
+   giác "có ai đó đang ở đây", không phải hiệu ứng game/cyberpunk. */
+.companion-presence-breathe {
+  display: inline-block;
+  animation: companion-presence-breathe 9s ease-in-out infinite;
+}
+
+@keyframes companion-presence-breathe {
+  0%, 100% { transform: scale(1) translateY(0); opacity: 1; }
+  50% { transform: scale(1.03) translateY(-4px); opacity: 0.92; }
+}
+
 /* ===== Companion Avatar — asset thật (Sprint 8.3), chiều sâu + nhịp thở
    sống (Sprint 8.5) ===== */
 
