@@ -185,7 +185,7 @@ export default async function GemHomePage() {
           what="Nơi nhìn lại những gì thật sự đã xảy ra — không phải điểm số hay % ước lượng."
           href="/portal/hanhtrinhcuatoi"
           startedMode="aggregate"
-          companionLine="Nếu muốn nhìn lại quãng đường đã đi, Companion có thể chờ ở đó."
+          companionLine="Ghé qua khi bạn muốn biết mình đã thực sự đi được bao xa, không chỉ đang làm gì hôm nay."
           ctaLabel="Xem hành trình"
         />
         <PillarEntranceCard

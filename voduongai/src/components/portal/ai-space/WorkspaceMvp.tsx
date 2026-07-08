@@ -723,6 +723,28 @@ export function WorkspaceMvp() {
             </section>
           )}
 
+          {/* Cross-Pillar Experience audit — trước đây một phiên "Hoàn thành"
+           * kết thúc bằng Lịch sử rồi hết, không có lối đi tiếp — người
+           * dùng chỉ có thể "Quay lại" module gốc. Đây là dữ liệu thật
+           * (session.status) nên thêm đúng MỘT bước tiếp theo trung thực:
+           * mời xem lại việc vừa làm ở Hành trình của tôi (không suy diễn
+           * thêm số liệu, chỉ dẫn tới nơi Journey đọc thật cùng nguồn
+           * WorkspaceSession này). */}
+          {session.status === "completed" && (
+            <section className="flex items-start gap-3 rounded-2xl border border-teal-100 bg-teal-50/60 p-5">
+              <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
+              <div className="space-y-1.5">
+                <p className="text-sm text-gray-700">
+                  Phiên này đã xong. Bước nhỏ tiếp theo đáng làm: nhìn lại việc vừa hoàn thành ở Hành trình của tôi,
+                  trước khi mở một phiên làm việc mới.
+                </p>
+                <Link href="/portal/hanhtrinhcuatoi" className="text-sm font-semibold text-teal-700 hover:underline">
+                  Xem trong Hành trình của tôi →
+                </Link>
+              </div>
+            </section>
+          )}
+
           {/* History */}
           <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
             <h2 className="text-lg font-bold text-gray-900">Lịch sử</h2>
