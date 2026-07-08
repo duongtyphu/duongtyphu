@@ -6,7 +6,7 @@ import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemo
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
-import { WorkNeedSection, LearningPathSection } from "@/components/portal/ai-space/AiSpaceSections";
+import { WorkNeedSection } from "@/components/portal/ai-space/AiSpaceSections";
 import { AI_TOOLS } from "@/data/khong-gian-ai";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
@@ -15,11 +15,17 @@ import { JourneyStatusCard } from "@/components/portal/ui/JourneyStatusCard";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 /**
- * Content Audit sprint: "Theo nhu cầu công việc" và "Lộ trình học AI" đã
- * chuyển từ AI Workspace sang đây (đúng vai trò HỌC) — xem
- * docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md. "Học AI theo công cụ" là
- * section mới, tái dùng dữ liệu AI_TOOLS ở dạng khám phá/tìm hiểu (không có
- * CTA "Dùng cùng Companion" — nút đó vẫn thuộc AI Toolbox bên Workspace).
+ * Content Audit sprint: "Theo nhu cầu công việc" đã chuyển từ AI Workspace
+ * sang đây (đúng vai trò HỌC) — xem docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md.
+ * "Học AI theo công cụ" là section mới, tái dùng dữ liệu AI_TOOLS ở dạng
+ * khám phá/tìm hiểu (không có CTA "Dùng cùng Companion" — nút đó vẫn thuộc
+ * AI Toolbox bên Workspace).
+ *
+ * Production Reconstruction (Phase 5): bỏ "Lộ trình học AI" (LearningPathSection) —
+ * đây là một curriculum tĩnh song song với hành trình thật (số "mission" ở mỗi
+ * cấp là số bịa, không chiếu từ dữ liệu thật nào, và một thẻ trỏ ngược lại
+ * chính trang này). Hành trình thật duy nhất của Academy là section "Hành
+ * trình của bạn" bên dưới, chiếu 1:1 từ CKOS Collection — xem journey.service.ts.
  */
 
 export const metadata = {
@@ -83,9 +89,6 @@ export default function AcademyHubPage() {
         ctaLabel="Xem lộ trình"
         ctaHref="/portal/roadmap"
       />
-
-      {/* Lộ trình học AI */}
-      <LearningPathSection />
 
       {/* Học AI theo nhu cầu */}
       <WorkNeedSection label="Học theo nhu cầu" title="Học AI theo nhu cầu" ctaLabel="Học và thực hành" />
