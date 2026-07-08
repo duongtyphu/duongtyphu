@@ -1,13 +1,8 @@
-import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
-import { affiliateResources } from "@/data/affiliate";
+import { Brain, GraduationCap, Cpu, LineChart, Crown, Compass, HeartHandshake } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { GemCard } from "@/components/portal/ui/GemCard";
-import { SectionHeader } from "@/components/portal/ui/SectionHeader";
-import { Button } from "@/components/portal/ui/Button";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { CompanionPresenceBand } from "@/components/portal/gem-home/CompanionPresenceBand";
-import { GardenWidget } from "@/components/portal/garden/GardenWidget";
-import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
+import { PillarEntranceCard } from "@/components/portal/gem-home/PillarEntranceCard";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
 import { dominantChallenge } from "@/lib/portal/human-understanding";
@@ -16,18 +11,21 @@ import type { Reflection } from "@/lib/portal/reflections";
 export const metadata = { title: "Gem Home", description: "Gem Home — nơi bắt đầu hành trình trưởng thành mỗi ngày cùng VO DUONG AI.", robots: { index: false } };
 
 /**
- * PORTAL_4_FINAL_PRODUCT_DESIGN.md — mục 1 (Home), Phase 1 implementation.
- * Frozen spec: Home có ĐÚNG 5 khối, không hơn:
- *   1. Companion Presence Band (chiếm ưu thế tuyệt đối)
- *   2. Đang dang dở | Cơ hội hôm nay (2 cột cân bằng)
- *   3. Tri thức đáng chú ý hôm nay (CKOS teaser, 2-3 card)
- *   4. Trưởng thành gần đây (1 số liệu thật)
- *   5. Quick Actions
- * + 1 khối thoát luôn có ở cuối (Knowledge Journey Strip) — không tính vào 5.
- * Đã xoá toàn bộ section thừa từ Portal 3.0 (Human Growth Index, Recommended
- * Resources, "Công cụ nổi bật" riêng, "Tài nguyên mới nhất", Premium preview,
- * Saved Recent, GardenSignalSync) — nội dung có giá trị thật trong số đó
- * (nếu có) thuộc về đúng pillar của nó (CKOS/Premium/Journey), không phải Home.
+ * Portal 4.0 Final Reconstruction — Home Reconstruction.
+ *
+ * Home không còn là dashboard 5-khối (Phase 1) — Home là Reception Hall:
+ * sau lời chào của Companion (Companion Presence Band, giữ nguyên, đã
+ * duyệt), Home giới thiệu ĐỦ 7 pillar dưới dạng "điểm đến sống"
+ * (PillarEntranceCard), mỗi thẻ tự trả lời what/why/đã làm gì/Companion
+ * gợi ý gì/dẫn tới đâu — không phải menu, không phải widget dashboard.
+ *
+ * "Đã làm gì" của mỗi pillar đọc thật (growth-view.ts theo module, hoặc
+ * ownedCount thật từ Supabase cho Premium) — không suy diễn, không % giả.
+ * Khối "Tri thức đáng chú ý hôm nay"/"Cơ hội hôm nay"/Garden riêng/Quick
+ * Actions của Phase 1 bị gộp vào: nội dung giá trị của chúng giờ nằm bên
+ * trong đúng thẻ pillar tương ứng (CKOS/Projects/Journey), không lặp lại
+ * ở Home nữa — giảm rợp mắt, tăng cảm giác "một sảnh đón tiếp", không
+ * phải "nhiều widget xếp chồng".
  */
 
 async function getProfileSummary() {
@@ -82,39 +80,23 @@ async function getRecentReflections(): Promise<Reflection[]> {
   }
 }
 
-async function getFeaturedTools(): Promise<AdminTool[]> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 3);
-  }
-  try {
-    const supabase = await getSupabaseServer();
-    const { data, error } = await supabase
-      .from("tools")
-      .select("id, data")
-      .eq("status", "Published")
-      .order("order", { ascending: true })
-      .limit(3);
-    if (error || !data) return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 3);
-    return data.map((row) => ({ ...(row.data as AdminTool), id: row.id }));
-  } catch {
-    return toolsAdminSeed.filter((t) => t.status === "Published").slice(0, 3);
-  }
-}
-
 export default async function GemHomePage() {
   const profile = await getProfileSummary();
-  const featuredTools = await getFeaturedTools();
-
   const recentReflections = await getRecentReflections();
   const flow = getHumanFlowState("knowledge", dominantChallenge(recentReflections));
   const welcomeState = getWelcomeState({ createdAt: profile?.memberSince, lastSignInAt: profile?.lastSignInAt });
   const welcomeMessage = getWelcomeMessage(welcomeState);
   const reflectionPrompt = getWarmthLine("reflection");
-  const opportunity = affiliateResources[0];
+
+  const ownedCount = profile?.purchasedCount ?? 0;
+  const premiumStarted =
+    ownedCount === 0
+      ? "Bạn chưa sở hữu sản phẩm Premium nào."
+      : `Bạn đã sở hữu ${ownedCount} sản phẩm Premium.`;
 
   return (
     <div className="space-y-10">
-      {/* Khối 1 — Companion Presence Band */}
+      {/* Companion Presence Band — lời chào, giữ nguyên (đã duyệt) */}
       <CompanionPresenceBand
         name={profile?.fullName}
         welcomeMessage={welcomeMessage}
@@ -123,60 +105,89 @@ export default async function GemHomePage() {
         flow={flow}
       />
 
-      {/* Khối 2 — Đang dang dở | Cơ hội hôm nay */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        <GrowthActivityPanel variant="journey" />
-        {opportunity && (
-          <GemCard>
-            <p className="gemos-card-title text-xs font-bold uppercase tracking-widest text-gray-400">
-              Cơ hội hôm nay
-            </p>
-            <h3 className="gemos-card-title mt-2 text-sm font-bold text-gray-900">{opportunity.title}</h3>
-            <p className="mt-1 text-sm text-gray-500">{opportunity.description}</p>
-            <Button href="/portal/duan-cohoi" variant="secondary" className="mt-3">
-              Xem cơ hội
-            </Button>
-          </GemCard>
-        )}
-      </div>
-
-      {/* Khối 3 — Tri thức đáng chú ý hôm nay (CKOS teaser) */}
-      <section>
-        <SectionHeader
-          eyebrow="CKOS"
-          title="Tri thức đáng chú ý hôm nay"
-          action={
-            <Button href="/portal/ckos" variant="secondary">
-              Mở CKOS →
-            </Button>
-          }
+      {/* 7 Pillar Entrance Card — điểm đến sống, không phải menu */}
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <PillarEntranceCard
+          icon={Brain}
+          accent="violet"
+          title="Hệ tri thức AI (CKOS)"
+          what="Tool, Prompt, Quy trình và Bài học được kết nối với nhau — không phải một thư viện tĩnh để lướt qua."
+          href="/portal/ckos"
+          startedMode="module"
+          module="ckos"
+          companionLine="Thử tìm một Tool hoặc Prompt cho đúng việc bạn đang làm hôm nay."
+          ctaLabel="Mở Hệ tri thức AI"
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredTools.map((t) => (
-            <GemCard key={t.id}>
-              <p className="gemos-card-title text-sm font-bold text-gray-900">{t.name}</p>
-              <p className="mt-1 text-xs text-gray-500 line-clamp-2">{t.shortDescription}</p>
-              <Button href={`/portal/tools/${t.slug}`} variant="secondary" className="mt-3">
-                Xem
-              </Button>
-            </GemCard>
-          ))}
-        </div>
-      </section>
-
-      {/* Khối 4 — Trưởng thành gần đây */}
-      <GardenWidget />
-
-      {/* Khối 5 — Quick Actions */}
-      <div className="flex flex-wrap gap-3">
-        <Button href="/portal/ckos" variant="secondary">Mở CKOS</Button>
-        <Button href="/portal/hocvienai" variant="secondary">Vào Học viện</Button>
-        <Button href="/portal/workspace" variant="secondary">Mở Workspace</Button>
-        <Button href="/portal/duan-cohoi" variant="secondary">Cơ hội hôm nay</Button>
-        <Button href="/portal/premium" variant="secondary">Xem Premium</Button>
+        <PillarEntranceCard
+          icon={GraduationCap}
+          accent="blue"
+          title="Học viện AI"
+          what="Biến tri thức thành năng lực qua thực hành thật — không phải một danh sách bài học để đọc hết."
+          href="/portal/hocvienai"
+          startedMode="module"
+          module="academy"
+          companionLine="Chọn một hành trình, làm đúng một bước hôm nay, rồi dừng lại."
+          ctaLabel="Vào Học viện"
+        />
+        <PillarEntranceCard
+          icon={Cpu}
+          accent="slate"
+          title="AI Workspace"
+          what="Nơi một ý tưởng trở thành một Output thật — bản nháp, kế hoạch, kết quả dùng được ngay."
+          href="/portal/aiworkspace"
+          startedMode="module"
+          module="khong-gian-ai"
+          companionLine="Mang theo một việc cụ thể — không cần chuẩn bị gì thêm."
+          ctaLabel="Mở AI Workspace"
+        />
+        <PillarEntranceCard
+          icon={LineChart}
+          accent="emerald"
+          title="Dự án & Cơ hội"
+          what="Trung tâm cơ hội giúp bạn quyết định đúng — không phải một trang bán hàng."
+          href="/portal/duan-cohoi"
+          startedMode="module"
+          module="opportunities"
+          companionLine="Đọc Tiêu chí chia sẻ trước khi xem bất kỳ dự án nào."
+          ctaLabel="Xem Dự án & Cơ hội"
+        />
+        <PillarEntranceCard
+          icon={Crown}
+          accent="amber"
+          title="Premium"
+          what="Giai đoạn tiếp theo khi bạn đã sẵn sàng đi xa hơn — không phải một quảng cáo nâng cấp."
+          href="/portal/premium"
+          startedOverride={premiumStarted}
+          companionLine={
+            ownedCount === 0
+              ? "Học thử miễn phí trước — Premium sẽ vẫn ở đây khi bạn thấy cách làm việc phù hợp."
+              : "Chỉ nâng cấp khi thực sự cần nhân bản hoặc chuyển giao cho người khác."
+          }
+          ctaLabel="Xem Premium"
+        />
+        <PillarEntranceCard
+          icon={Compass}
+          accent="teal"
+          title="Hành trình của tôi"
+          what="Nơi nhìn lại những gì thật sự đã xảy ra — không phải điểm số hay % ước lượng."
+          href="/portal/hanhtrinhcuatoi"
+          startedMode="aggregate"
+          companionLine="Nếu muốn nhìn lại quãng đường đã đi, Companion có thể chờ ở đó."
+          ctaLabel="Xem hành trình"
+        />
+        <PillarEntranceCard
+          icon={HeartHandshake}
+          accent="rose"
+          title="Companion"
+          what="Không phải chatbot — một sự hiện diện, nhớ những gì thật sự đã xảy ra với bạn."
+          href="/portal/companion"
+          startedMode="recent"
+          companionLine="Ghé qua khi bạn cần một khoảng lặng, không chỉ khi cần câu trả lời."
+          ctaLabel="Mở Companion"
+        />
       </div>
 
-      {/* Khối thoát — luôn có, không tính vào 5 khối chính */}
+      {/* Khối thoát — luôn có */}
       <KnowledgeJourneyStrip
         title="Chưa biết bắt đầu từ đâu?"
         steps={[

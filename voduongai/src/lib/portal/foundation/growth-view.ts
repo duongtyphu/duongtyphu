@@ -104,3 +104,22 @@ export function getGardenSummary(): GardenSummary {
 export function getPortfolioCount(): number {
   return listPortfolioItems().length;
 }
+
+export type ModuleActivitySummary = {
+  sessionCount: number;
+  outputCount: number;
+};
+
+/**
+ * Portal 4.0 Home Reconstruction — "bạn đã bắt đầu gì ở pillar này" cho
+ * mỗi Pillar Entrance Card ở Home. Đọc thẳng `context.module` đã có sẵn
+ * trên mỗi WorkspaceSession thật (không thêm bảng/field mới) — nếu chưa
+ * có phiên nào thuộc module này, trả về 0 một cách trung thực.
+ */
+export function getModuleActivitySummary(module: string): ModuleActivitySummary {
+  const sessions = listAllSessions().filter((s) => s.context.module === module);
+  return {
+    sessionCount: sessions.length,
+    outputCount: sessions.reduce((sum, s) => sum + s.outputs.length, 0),
+  };
+}
