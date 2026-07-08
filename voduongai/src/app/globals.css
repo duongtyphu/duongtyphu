@@ -1012,6 +1012,24 @@ body {
 }
 
 /* ============================================================
+ * BÀI VIẾT / PHÂN TÍCH — trang chi tiết một bài viết Digital Assets
+ * cần dễ đọc cho các khối văn bản dài, nên bỏ nền chìm caro
+ * (.gemos-bg) chỉ riêng trang này, giữ nguyên .gemos-bg cho mọi
+ * trang Portal khác — cùng cách làm với .garden-page-bg bên dưới.
+ * ============================================================ */
+
+.digital-asset-article-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px circle at 85% -5%, rgba(37, 99, 235, 0.05), transparent 60%),
+    radial-gradient(800px circle at 0% 100%, rgba(91, 140, 255, 0.04), transparent 60%),
+    linear-gradient(180deg, #F6F7F9 0%, #F1F5F9 100%);
+}
+
+/* ============================================================
  * KHU VƯỜN CỦA BẠN — Design Reference VDAI-GARDEN-001
  * Nền trắng ngọc pha nắng ấm (không caro), leaf chip glass xanh lá
  * đúng theo ảnh Founder đã duyệt.

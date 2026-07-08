@@ -148,13 +148,13 @@ export default function DigitalAssetDetailPage() {
                 {a.title}
               </Link>
               <p className="mt-1 text-xs text-gray-400">{a.publishedAt}</p>
-              <div className="mt-4 space-y-3 text-sm leading-relaxed text-gray-600">
-                {a.content.split("\n\n").map((para, i) => (
-                  <p key={i} className={para.startsWith(">") ? "border-l-2 border-brand-blue/40 pl-3 italic text-gray-500" : ""}>
-                    {para.replace(/^>\s*/, "")}
-                  </p>
-                ))}
-              </div>
+              <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-600">{a.excerpt}</p>
+              <Link
+                href={`/portal/digital-assets/articles/${a.slug}`}
+                className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
+              >
+                Đọc bài viết →
+              </Link>
             </div>
           ))}
         </div>

@@ -31,50 +31,54 @@ export default function DigitalAssetArticleDetailPage() {
   const category = categories.find((c) => c.key === article.category);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <Link
-          href={project ? `/portal/digital-assets/${project.slug}` : "/portal/digital-assets"}
-          className="text-sm font-semibold text-brand-blue hover:underline"
-        >
-          ← {project ? project.name : "ĐẦU TƯ CÙNG TÔI"}
-        </Link>
-        <SaveButton
-          item={{
-            id: `digital-asset-article_${article.id}`,
-            kind: "resource",
-            title: article.title,
-            href: `/portal/digital-assets/articles/${article.slug}`,
-            meta: category?.name,
-          }}
-        />
-      </div>
+    <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
+      <div className="digital-asset-article-bg" aria-hidden="true" />
 
-      <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">{category?.name}</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-gray-900">{article.title}</h1>
-        <p className="mt-2 text-sm text-gray-500">
-          {article.author} · {article.publishedAt}
-        </p>
-        <div className="mt-6 space-y-3 text-sm leading-relaxed text-gray-700">
-          {article.content.split("\n\n").map((para, i) => (
-            <p key={i} className={para.startsWith(">") ? "border-l-2 border-brand-blue/40 pl-3 italic text-gray-500" : ""}>
-              {para.replace(/^>\s*/, "")}
-            </p>
-          ))}
+      <div className="relative z-10 space-y-6 px-4 py-6 md:px-8 md:py-8">
+        <div className="flex items-center justify-between">
+          <Link
+            href={project ? `/portal/digital-assets/${project.slug}` : "/portal/digital-assets"}
+            className="text-sm font-semibold text-brand-blue hover:underline"
+          >
+            ← {project ? project.name : "ĐẦU TƯ CÙNG TÔI"}
+          </Link>
+          <SaveButton
+            item={{
+              id: `digital-asset-article_${article.id}`,
+              kind: "resource",
+              title: article.title,
+              href: `/portal/digital-assets/articles/${article.slug}`,
+              meta: category?.name,
+            }}
+          />
         </div>
-        {article.tags.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {article.tags.map((t) => (
-              <span key={t} className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-500">
-                #{t}
-              </span>
+
+        <div className="card-shine rounded-2xl border border-gray-200 bg-white p-8">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">{category?.name}</p>
+          <h1 className="mt-2 text-2xl font-extrabold text-gray-900">{article.title}</h1>
+          <p className="mt-2 text-sm text-gray-500">
+            {article.author} · {article.publishedAt}
+          </p>
+          <div className="mt-6 space-y-3 text-sm leading-relaxed text-gray-700">
+            {article.content.split("\n\n").map((para, i) => (
+              <p key={i} className={para.startsWith(">") ? "border-l-2 border-brand-blue/40 pl-3 italic text-gray-500" : ""}>
+                {para.replace(/^>\s*/, "")}
+              </p>
             ))}
           </div>
-        )}
-      </div>
+          {article.tags.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {article.tags.map((t) => (
+                <span key={t} className="rounded-full bg-gray-50 px-3 py-1 text-xs text-gray-500">
+                  #{t}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
 
-      <DigitalAssetDisclaimer />
+        <DigitalAssetDisclaimer />
+      </div>
     </div>
   );
 }

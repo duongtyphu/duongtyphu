@@ -24,6 +24,13 @@ export type BlogPost = {
   ctaLabel: string;
   ctaHref: string;
   content: string[];
+  /**
+   * Điểm đến khi bấm vào bài viết. Mặc định (undefined) là `/blogai/[slug]`
+   * — bài viết thuộc chính hệ Blog AI. Các nguồn bài viết khác trong Portal
+   * (vd: Bài viết / Phân tích ở Đầu tư cùng tôi) có trang chi tiết riêng
+   * của mình, nên override href để dẫn đúng về đó thay vì `/blogai/[slug]`.
+   */
+  href?: string;
 };
 
 export const blogPosts: BlogPost[] = [
@@ -966,5 +973,44 @@ export function fromAdminPost(post: AdminBlogPostLike): BlogPost {
     ctaLabel: "Xem Học viện →",
     ctaHref: "/portal/hocvienai",
     content: post.content.split("\n\n").filter(Boolean),
+  };
+}
+
+// Bài viết "Bài viết / Phân tích" của một hệ sinh thái ở Đầu tư cùng tôi
+// (DigitalAssetArticle, bảng Supabase digital_asset_articles) cũng phải xuất
+// hiện ở Blog AI — nhưng có trang chi tiết riêng của mình, nên href trỏ về
+// đó thay vì /blogai/[slug] mặc định.
+export type DigitalAssetArticleLike = {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  categoryName?: string;
+  tags: string[];
+  author: string;
+  status: "Draft" | "Published" | "Hidden";
+  publishedAt: string;
+};
+
+export function fromDigitalAssetArticle(article: DigitalAssetArticleLike): BlogPost {
+  const words = article.content.split(/\s+/).filter(Boolean).length;
+  return {
+    slug: article.slug,
+    title: article.title,
+    excerpt: article.excerpt,
+    category: article.categoryName ?? article.category,
+    tag: "Tài sản số",
+    emoji: "📊",
+    date: article.publishedAt,
+    readTime: `${Math.max(1, Math.round(words / 200))} phút đọc`,
+    tags: article.tags,
+    ctaTitle: "Muốn tự nghiên cứu hệ sinh thái này kỹ hơn?",
+    ctaDescription: "Xem toàn bộ góc nhìn và bài học thực tế tại Dự án & Cơ hội.",
+    ctaLabel: "Xem Dự án & Cơ hội →",
+    ctaHref: "/portal/duan-cohoi",
+    content: article.content.split("\n\n").filter(Boolean),
+    href: `/portal/digital-assets/articles/${article.slug}`,
   };
 }
