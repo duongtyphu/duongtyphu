@@ -129,6 +129,63 @@ export default function OpportunitiesHubPage() {
         ]}
       />
 
+      {/* Ecosystem cards — đưa lên đầu trang theo yêu cầu Product Owner:
+       * người dùng thấy ngay các hệ sinh thái thật trước khi đọc phần
+       * quyết định/tiêu chí, nhưng mỗi thẻ vẫn giữ nguyên khung "ai phù hợp
+       * / ai chưa nên tham gia / kỳ vọng thực tế" — không biến thành một
+       * catalogue quảng cáo. */}
+      <section>
+        <SectionHeader
+          eyebrow="Đang theo dõi"
+          title="Các hệ sinh thái"
+          description="Mỗi hệ sinh thái trả lời rõ: ai phù hợp, ai chưa nên tham gia, và kỳ vọng thực tế là gì — không phải một bảng xếp hạng."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {ECOSYSTEMS.map((item) => (
+            <GemCard key={item.title}>
+              <Link href={item.href} className="block">
+                <div className="mb-4 flex items-start justify-between gap-2">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  <GemBadge tone="locked">{item.status}</GemBadge>
+                </div>
+                <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
+                <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
+              </Link>
+
+              <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
+                <p className="text-xs text-gray-600">
+                  <span className="font-semibold text-emerald-700">Phù hợp: </span>{item.whoFor}
+                </p>
+                <p className="text-xs text-gray-600">
+                  <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>{item.whoNotReady}
+                </p>
+                <p className="text-xs text-gray-600">
+                  <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
+                </p>
+                <Link href={item.learnFirst.href} className="inline-block text-xs font-semibold text-blue-600 hover:underline">
+                  Nên học trước: {item.learnFirst.label} →
+                </Link>
+              </div>
+
+              <OpportunityAgentActions
+                projectName={item.title}
+                opportunityType={item.status}
+                riskContext={item.description}
+              />
+            </GemCard>
+          ))}
+        </div>
+        <p className="mt-3 text-xs text-gray-400">
+          Chưa có Case Study thật nào cho các hệ sinh thái này — xem{" "}
+          <Link href="/portal/case-studies" className="font-semibold text-blue-600 hover:underline">
+            trang Case Study
+          </Link>{" "}
+          để biết vì sao, thay vì tự tạo câu chuyện thành công ở đây.
+        </p>
+      </section>
+
       {/* Companion Guide */}
       <CompanionGuide
         message="Trước khi bấm vào bất kỳ dự án nào bên dưới, hãy đọc Tiêu chí chia sẻ trước — nó giải thích vì sao một hệ sinh thái xuất hiện ở đây và điều gì KHÔNG được đảm bảo."
@@ -246,59 +303,6 @@ export default function OpportunitiesHubPage() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Ecosystem cards */}
-      <section>
-        <SectionHeader
-          eyebrow="Đang theo dõi"
-          title="Các hệ sinh thái"
-          description="Mỗi hệ sinh thái trả lời rõ: ai phù hợp, ai chưa nên tham gia, và kỳ vọng thực tế là gì — không phải một bảng xếp hạng."
-        />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ECOSYSTEMS.map((item) => (
-            <GemCard key={item.title}>
-              <Link href={item.href} className="block">
-                <div className="mb-4 flex items-start justify-between gap-2">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full ${item.bg} ${item.color}`}>
-                    <item.icon className="h-5 w-5" />
-                  </div>
-                  <GemBadge tone="locked">{item.status}</GemBadge>
-                </div>
-                <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
-                <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
-              </Link>
-
-              <div className="mt-3 space-y-2 border-t border-gray-100 pt-3">
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-emerald-700">Phù hợp: </span>{item.whoFor}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>{item.whoNotReady}
-                </p>
-                <p className="text-xs text-gray-600">
-                  <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
-                </p>
-                <Link href={item.learnFirst.href} className="inline-block text-xs font-semibold text-blue-600 hover:underline">
-                  Nên học trước: {item.learnFirst.label} →
-                </Link>
-              </div>
-
-              <OpportunityAgentActions
-                projectName={item.title}
-                opportunityType={item.status}
-                riskContext={item.description}
-              />
-            </GemCard>
-          ))}
-        </div>
-        <p className="mt-3 text-xs text-gray-400">
-          Chưa có Case Study thật nào cho các hệ sinh thái này — xem{" "}
-          <Link href="/portal/case-studies" className="font-semibold text-blue-600 hover:underline">
-            trang Case Study
-          </Link>{" "}
-          để biết vì sao, thay vì tự tạo câu chuyện thành công ở đây.
-        </p>
       </section>
 
       {/* Learning / Progress — honest: no engagement-tracking exists for this page yet */}
