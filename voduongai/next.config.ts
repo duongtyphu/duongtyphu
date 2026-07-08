@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
       { source: "/privacy-policy", destination: "/privacy", permanent: true },
       { source: "/portal/growth", destination: "/portal/build", permanent: true },
       { source: "/portal/ecosystem", destination: "/portal/connect", permanent: true },
+      // Ecosystem slug rename — URL cũ redirect về URL mới đúng tên gọi, không để 404.
+      { source: "/portal/duan-cohoi/crypto", destination: "/portal/duan-cohoi/blockchain-crypto", permanent: true },
+      { source: "/portal/duan-cohoi/blockchain", destination: "/portal/duan-cohoi/lam-affilate", permanent: true },
+      { source: "/portal/duan-cohoi/trading", destination: "/portal/duan-cohoi/sangiaodich", permanent: true },
       // IA & Route Localization Refactor v1.0 — route cũ redirect về route mới, không để 404.
       { source: "/portal/academy", destination: "/portal/hocvienai", permanent: true },
       { source: "/portal/academy/:path*", destination: "/portal/hocvienai/:path*", permanent: true },

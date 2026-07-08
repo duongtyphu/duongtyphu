@@ -290,7 +290,9 @@ export const ecosystems: Ecosystem[] = [
   },
   {
     id: "eco_crypto",
-    slug: "crypto",
+    // Route Localization: URL đổi "crypto" -> "blockchain-crypto" cho đúng
+    // tên hiển thị "Blockchain & Crypto" (redirect cũ->mới ở next.config.ts).
+    slug: "blockchain-crypto",
     articleCategory: "crypto",
     extraArticleCategories: ["blockchain"],
     name: "Blockchain & Crypto",
@@ -330,7 +332,10 @@ export const ecosystems: Ecosystem[] = [
   },
   {
     id: "eco_blockchain",
-    slug: "blockchain",
+    // Route Localization: URL đổi "blockchain" -> "lam-affilate" cho đúng tên
+    // hiển thị "Làm tiếp thị liên kết (Affiliate)" (redirect ở next.config.ts).
+    // articleCategory "blockchain" là khoá dữ liệu, KHÔNG đổi theo URL.
+    slug: "lam-affilate",
     articleCategory: "blockchain",
     name: "Làm tiếp thị liên kết (Affiliate)",
     icon: Link2,
@@ -359,7 +364,9 @@ export const ecosystems: Ecosystem[] = [
   },
   {
     id: "eco_trading",
-    slug: "trading",
+    // Route Localization: URL đổi "trading" -> "sangiaodich" cho đúng tên
+    // hiển thị "Các sàn giao dịch Crypto" (redirect cũ->mới ở next.config.ts).
+    slug: "sangiaodich",
     articleCategory: "trading",
     name: "Các sàn giao dịch Crypto",
     icon: LineChart,

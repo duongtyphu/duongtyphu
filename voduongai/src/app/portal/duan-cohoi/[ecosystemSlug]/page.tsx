@@ -36,17 +36,17 @@ const SURFACE: Record<string, { chip: string; badge: string; strip: string }> = 
     badge: "bg-amber-100 text-amber-800",
     strip: "bg-gradient-to-r from-amber-500 to-orange-500",
   },
-  crypto: {
+  "blockchain-crypto": {
     chip: "bg-gradient-to-br from-slate-800 to-emerald-600 text-white",
     badge: "bg-slate-200 text-slate-700",
     strip: "bg-gradient-to-r from-slate-800 to-emerald-600",
   },
-  blockchain: {
+  "lam-affilate": {
     chip: "bg-gradient-to-br from-violet-600 to-blue-500 text-white",
     badge: "bg-violet-100 text-violet-700",
     strip: "bg-gradient-to-r from-violet-600 to-blue-500",
   },
-  trading: {
+  sangiaodich: {
     chip: "bg-gradient-to-br from-emerald-700 to-green-600 text-white",
     badge: "bg-emerald-100 text-emerald-800",
     strip: "bg-gradient-to-r from-emerald-700 to-green-600",
@@ -340,11 +340,15 @@ export default async function EcosystemMiniSitePage({
         </>
       )}
 
+      {/* Làm tiếp thị liên kết (affiliate-list): same instruction as the two
+       * pages above — Product Owner asked to remove the articles section
+       * ("Cách tôi tiếp cận một sàn giao dịch blockchain mới" no longer
+       * shown/linked anywhere in the Portal). The digitalAssetArticles
+       * record is kept — still legitimate content elsewhere (Blog AI). */}
       {eco.structureType === "affiliate-list" && (
         <>
           <AffiliateOffersList eco={eco} />
           <PotentialAnalysisTable items={potentialAnalysis} />
-          <ArticlesSection articles={articles} />
         </>
       )}
 
