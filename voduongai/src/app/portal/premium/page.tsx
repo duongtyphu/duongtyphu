@@ -1,4 +1,4 @@
-import { Crown, ArrowRight } from "lucide-react";
+import { Crown, ShieldCheck, ArrowRight } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { PREMIUM_PROGRAMS } from "@/components/portal/premium/premium-programs";
@@ -64,6 +64,19 @@ function matchCourse(
     open: row.status === "open",
   };
 }
+
+/**
+ * Khối thông tin "Thanh toán hoạt động thế nào" — Product Owner quyết định
+ * GIỮ LẠI (sau khi cân nhắc nguyên tắc payment-flow): đây là khối THÔNG TIN
+ * trấn an, không phải một luồng/trang thanh toán chung — mọi CTA thanh toán
+ * vẫn nằm trên từng card chương trình với course id riêng.
+ */
+const PAYMENT_STEPS = [
+  { step: "1", title: "Chọn chương trình", text: "Bấm CTA đăng ký trên card — bạn được đưa tới trang thanh toán với đúng chương trình đã chọn." },
+  { step: "2", title: "Xác nhận thông tin", text: "Điền họ tên, số điện thoại và xác nhận đơn hàng (giá được hệ thống kiểm tra lại phía máy chủ)." },
+  { step: "3", title: "Chuyển khoản", text: "Chuyển khoản theo hướng dẫn ở trang đơn hàng — hệ thống tự động ghi nhận thanh toán." },
+  { step: "4", title: "Mở khóa tự động", text: "Ngay khi thanh toán được xác nhận, bài giảng video của chương trình được mở khóa trong tài khoản của bạn." },
+];
 
 const PREMIUM_FAQ = [
   {
@@ -187,14 +200,30 @@ export default async function PremiumPage() {
           {/* ── 5. Người đồng hành cùng bạn ─────────────────────────────── */}
           <FounderSpotlight />
 
-          {/* ── 6. FAQ ──────────────────────────────────────────────────────
-           * PAYMENT FLOW (chỉ đạo Product Owner): KHÔNG có khối thanh toán
-           * chung trong Premium — mỗi chương trình sở hữu luồng thanh toán
-           * riêng qua CTA trên chính card của nó (checkout 2 bước sẵn có,
-           * mang đúng course id của chương trình đó). Khối "Thanh toán hoạt
-           * động thế nào" chung đã được gỡ theo nguyên tắc này. */}
+          {/* ── 6. Ghi chú thanh toán + FAQ ─────────────────────────────────
+           * PAYMENT FLOW: mọi CTA thanh toán vẫn thuộc về từng card chương
+           * trình (course id riêng, checkout 2 bước sẵn có). Khối 4 bước
+           * dưới đây chỉ là THÔNG TIN — Product Owner quyết định giữ lại. */}
           <section>
-            <div className="space-y-3">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
+              <div className="flex items-center gap-2.5">
+                <ShieldCheck className="h-5 w-5 text-emerald-400" />
+                <h2 className="text-lg font-extrabold text-white">Thanh toán hoạt động thế nào</h2>
+              </div>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {PAYMENT_STEPS.map((s) => (
+                  <div key={s.step} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-bold text-white">
+                      {s.step}
+                    </span>
+                    <p className="mt-2.5 text-sm font-bold text-white">{s.title}</p>
+                    <p className="mt-1 text-xs leading-relaxed text-white/55">{s.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 space-y-3">
               <h2 className="text-lg font-extrabold text-white">Câu hỏi thường gặp</h2>
               {PREMIUM_FAQ.map((item) => (
                 <details key={item.q} className="group rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur">
