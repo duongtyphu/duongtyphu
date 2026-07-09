@@ -6,13 +6,12 @@ import { GraduationCap, Zap, Bot, User, Network } from "lucide-react";
  *
  * Nội dung 5 chương trình Premium — copy chính thức do Product Owner cung
  * cấp (xem brief "PREMIUM EXPERIENCE RECONSTRUCTION"), KHÔNG phải dữ liệu
- * bịa. `listPrice` là giá niêm yết trong brief; giá THẬT dùng để thanh toán
- * luôn được đọc từ bảng `courses` (Supabase) lúc render — nếu chưa có dòng
- * `courses` khớp, card hiển thị giá niêm yết nhưng CTA chuyển sang trạng
- * thái "Sắp mở đăng ký" thay vì trỏ tới một checkout không thể hoàn tất
- * (createOrder tra giá server-side từ bảng `courses`, không tin giá client).
- * Admin chạy `supabase-premium-courses.sql` một lần để mở đăng ký đủ 5
- * chương trình.
+ * bịa. `listPrice` chỉ là giá niêm yết dự phòng khi bảng `courses` chưa có
+ * dòng khớp; giá THẬT và trạng thái mở bán luôn đọc từ bảng `courses`
+ * (Supabase) lúc render: `status='open'` → CTA thanh toán, ngược lại →
+ * "Sắp mở đăng ký". Admin bật/tắt mở bán và chỉnh giá tại
+ * /admin/course-pricing — không cần sửa code. Chạy
+ * `supabase-premium-courses.sql` một lần để tạo đủ 5 dòng khoá học.
  */
 
 export type PremiumTopic = {
@@ -38,13 +37,6 @@ export type PremiumProgram = {
   key: "ai-coban" | "ai-nangcao" | "openclaw" | "v-solo" | "v-scale";
   /** Chuỗi con (lowercase, không dấu cũng thử) để khớp `courses.name` thật trong Supabase. */
   matchPatterns: string[];
-  /**
-   * Ép trạng thái "Sắp mở đăng ký" dù bảng `courses` đã có dòng khớp —
-   * theo chỉ đạo Product Owner: V-Solo/V-Scale chưa mở bán trên trang
-   * Premium, việc mở đăng ký sẽ do trang Admin quản lý sau. Người đã mua
-   * từ trước (orders confirmed) vẫn thấy "Đã sở hữu" bình thường.
-   */
-  comingSoon?: boolean;
   icon: LucideIcon;
   level: string;
   name: string;
@@ -194,7 +186,6 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   {
     key: "v-solo",
     matchPatterns: ["solo"],
-    comingSoon: true,
     icon: User,
     level: "Hệ thống cá nhân",
     name: "V-Solo",
@@ -233,7 +224,6 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   {
     key: "v-scale",
     matchPatterns: ["scale"],
-    comingSoon: true,
     icon: Network,
     level: "Hệ thống đội nhóm",
     name: "V-Scale",

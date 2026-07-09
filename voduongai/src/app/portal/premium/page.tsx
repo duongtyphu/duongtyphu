@@ -19,10 +19,11 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  * đếm ngược, không fake học viên/đánh giá/doanh thu.
  *
  * Dữ liệu thật:
- * - Bảng `courses` (Supabase) là nguồn sự thật về GIÁ và việc một chương
- *   trình đã mở đăng ký hay chưa (createOrder tra giá server-side từ đây).
- *   Chương trình chưa có dòng `courses` khớp → CTA "Sắp mở đăng ký".
- *   Admin chạy `supabase-premium-courses.sql` để mở đủ 5 chương trình.
+ * - Bảng `courses` (Supabase) là nguồn sự thật về GIÁ và trạng thái mở
+ *   bán: CTA thanh toán chỉ hiện khi có dòng khớp VÀ status='open' —
+ *   Admin bật/tắt trực tiếp tại /admin/course-pricing, không cần sửa
+ *   code. Chưa có dòng khớp hoặc status khác → "Sắp mở đăng ký".
+ *   (createOrder tra giá server-side từ bảng này.)
  * - `orders.status=confirmed` (getPurchasedIds) → trạng thái "Đã sở hữu".
  *   (Khối "Sản phẩm đang mở bán" từ bảng `products` đã được Product Owner
  *   yêu cầu bỏ khỏi trang này — sản phẩm đã mua vẫn xem ở "Sản phẩm của tôi".)
@@ -54,7 +55,14 @@ function matchCourse(
     return patterns.some((p) => name.includes(p));
   });
   if (!row) return null;
-  return { id: row.id, price: row.price, owned: purchasedCourseIds.has(String(row.id)) };
+  return {
+    id: row.id,
+    price: row.price,
+    owned: purchasedCourseIds.has(String(row.id)),
+    // Admin bật/tắt mở bán qua cột status tại /admin/course-pricing:
+    // 'open' → CTA thanh toán; giá trị khác → "Sắp mở đăng ký".
+    open: row.status === "open",
+  };
 }
 
 const PAYMENT_STEPS = [

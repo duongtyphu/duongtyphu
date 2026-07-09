@@ -10,11 +10,12 @@ import { formatVnd } from "./premium-programs";
  * không cần JS.
  *
  * Trạng thái CTA (không fake dữ liệu):
- * - `course` có dòng thật trong bảng `courses` → CTA trỏ tới
- *   /portal/checkout (luồng 2 bước sẵn có), hiển thị GIÁ THẬT từ DB.
- * - Chưa có dòng `courses` khớp → hiển thị giá niêm yết từ brief + CTA
- *   "Sắp mở đăng ký" (disabled) — vì createOrder tra giá server-side từ
- *   bảng `courses`, một CTA checkout lúc này chắc chắn thất bại.
+ * - Dòng `courses` khớp và `status='open'` (Admin bật tại
+ *   /admin/course-pricing) → CTA trỏ tới /portal/checkout (luồng 2 bước
+ *   sẵn có), hiển thị GIÁ THẬT từ DB.
+ * - Chưa có dòng khớp, hoặc status khác 'open' → "Sắp mở đăng ký" — vì
+ *   createOrder tra giá server-side từ bảng `courses`, và việc mở bán do
+ *   Admin quản lý qua cột status, không hardcode trong code.
  * - Người dùng đã mua (orders.status=confirmed) → badge "Đã sở hữu" + CTA
  *   về "Sản phẩm của tôi".
  */
@@ -23,6 +24,8 @@ export type PremiumCourseMatch = {
   id: number;
   price: number;
   owned: boolean;
+  /** true khi courses.status = 'open' — Admin bật/tắt tại /admin/course-pricing. */
+  open: boolean;
 } | null;
 
 export function PremiumProgramCard({
@@ -38,11 +41,8 @@ export function PremiumProgramCard({
   const price = course ? course.price : program.listPrice;
   const owned = course?.owned ?? false;
 
-  // `comingSoon` (chỉ đạo Product Owner) ép "Sắp mở đăng ký" kể cả khi đã
-  // có dòng `courses` khớp — trang Admin sẽ quản lý việc mở bán sau.
-  // Người đã mua từ trước vẫn được nhận diện "Đã sở hữu" ở nhánh trên.
   const checkoutHref =
-    course && !program.comingSoon
+    course && course.open
       ? `/portal/checkout?${new URLSearchParams({
           type: "course",
           id: String(course.id),
