@@ -38,6 +38,13 @@ export type PremiumProgram = {
   key: "ai-coban" | "ai-nangcao" | "openclaw" | "v-solo" | "v-scale";
   /** Chuỗi con (lowercase, không dấu cũng thử) để khớp `courses.name` thật trong Supabase. */
   matchPatterns: string[];
+  /**
+   * Ép trạng thái "Sắp mở đăng ký" dù bảng `courses` đã có dòng khớp —
+   * theo chỉ đạo Product Owner: V-Solo/V-Scale chưa mở bán trên trang
+   * Premium, việc mở đăng ký sẽ do trang Admin quản lý sau. Người đã mua
+   * từ trước (orders confirmed) vẫn thấy "Đã sở hữu" bình thường.
+   */
+  comingSoon?: boolean;
   icon: LucideIcon;
   level: string;
   name: string;
@@ -187,6 +194,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   {
     key: "v-solo",
     matchPatterns: ["solo"],
+    comingSoon: true,
     icon: User,
     level: "Hệ thống cá nhân",
     name: "V-Solo",
@@ -212,7 +220,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
     outcome:
       "Hệ thống Affiliate cá nhân hoàn chỉnh có thể vận hành hàng ngày, cùng bộ trợ lý AI hỗ trợ từ nội dung đến chăm sóc khách hàng.",
     lessonCount: 6,
-    listPrice: 6_999_999,
+    listPrice: 7_800_000,
     ctaLabel: "Đăng ký V-Solo",
     accent: {
       gradient: "from-orange-500 to-amber-500",
@@ -225,6 +233,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   {
     key: "v-scale",
     matchPatterns: ["scale"],
+    comingSoon: true,
     icon: Network,
     level: "Hệ thống đội nhóm",
     name: "V-Scale",
@@ -250,7 +259,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
     outcome:
       "Học viện nội bộ, thư viện nội dung và prompt dùng chung; hệ thống KPI, dashboard đội nhóm và lộ trình leader kế thừa.",
     lessonCount: 6,
-    listPrice: 23_000_000,
+    listPrice: 26_000_000,
     ctaLabel: "Đăng ký V-Scale",
     accent: {
       gradient: "from-violet-600 via-fuchsia-500 to-amber-400",

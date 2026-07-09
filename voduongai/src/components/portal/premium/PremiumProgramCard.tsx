@@ -38,14 +38,18 @@ export function PremiumProgramCard({
   const price = course ? course.price : program.listPrice;
   const owned = course?.owned ?? false;
 
-  const checkoutHref = course
-    ? `/portal/checkout?${new URLSearchParams({
-        type: "course",
-        id: String(course.id),
-        title: program.name,
-        price: String(course.price),
-      }).toString()}`
-    : null;
+  // `comingSoon` (chỉ đạo Product Owner) ép "Sắp mở đăng ký" kể cả khi đã
+  // có dòng `courses` khớp — trang Admin sẽ quản lý việc mở bán sau.
+  // Người đã mua từ trước vẫn được nhận diện "Đã sở hữu" ở nhánh trên.
+  const checkoutHref =
+    course && !program.comingSoon
+      ? `/portal/checkout?${new URLSearchParams({
+          type: "course",
+          id: String(course.id),
+          title: program.name,
+          price: String(course.price),
+        }).toString()}`
+      : null;
 
   return (
     <article
