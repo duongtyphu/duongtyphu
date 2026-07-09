@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { Crown, ShieldCheck, ArrowRight } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
-import { PREMIUM_PROGRAMS, formatVnd } from "@/components/portal/premium/premium-programs";
+import { PREMIUM_PROGRAMS } from "@/components/portal/premium/premium-programs";
 import { PremiumProgramCard, type PremiumCourseMatch } from "@/components/portal/premium/PremiumProgramCard";
 import { PremiumAdvisor } from "@/components/portal/premium/PremiumAdvisor";
 import { PremiumConsult } from "@/components/portal/premium/PremiumConsult";
@@ -25,8 +24,8 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  *   Chương trình chưa có dòng `courses` khớp → CTA "Sắp mở đăng ký".
  *   Admin chạy `supabase-premium-courses.sql` để mở đủ 5 chương trình.
  * - `orders.status=confirmed` (getPurchasedIds) → trạng thái "Đã sở hữu".
- * - Bảng `products` (nếu có sản phẩm active) hiển thị ở khối phụ, giữ
- *   nguyên chức năng bán hàng thật sẵn có.
+ *   (Khối "Sản phẩm đang mở bán" từ bảng `products` đã được Product Owner
+ *   yêu cầu bỏ khỏi trang này — sản phẩm đã mua vẫn xem ở "Sản phẩm của tôi".)
  *
  * Luồng thanh toán (route sẵn có, KHÔNG tạo mới):
  * Card → /portal/checkout?type=course&id=… (bước 1: thông tin)
@@ -42,29 +41,6 @@ async function getCourses(): Promise<CourseRow[]> {
   }
   const supabase = await getSupabaseServer();
   const { data } = await supabase.from("courses").select("id, name, status, price");
-  return data ?? [];
-}
-
-type LiveProduct = {
-  id: number;
-  title: string;
-  description: string | null;
-  icon: string;
-  price: number;
-  video_url: string | null;
-  pdf_url: string | null;
-};
-
-async function getLiveProducts(): Promise<LiveProduct[]> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return [];
-  }
-  const supabase = await getSupabaseServer();
-  const { data } = await supabase
-    .from("products")
-    .select("id, title, description, icon, price, video_url, pdf_url")
-    .eq("active", true)
-    .order("created_at", { ascending: false });
   return data ?? [];
 }
 
@@ -108,11 +84,9 @@ const PREMIUM_FAQ = [
 ];
 
 export default async function PremiumPage() {
-  const [courses, purchasedCourseIds, liveProducts, purchasedProductIds] = await Promise.all([
+  const [courses, purchasedCourseIds] = await Promise.all([
     getCourses(),
     getPurchasedIds("course_id"),
-    getLiveProducts(),
-    getPurchasedIds("product_id"),
   ]);
 
   const programCards = PREMIUM_PROGRAMS.map((program) => ({
@@ -212,82 +186,7 @@ export default async function PremiumPage() {
           {/* ── 5. Người đồng hành cùng bạn ─────────────────────────────── */}
           <FounderSpotlight />
 
-          {/* ── 6. Sản phẩm đang mở bán (dữ liệu products thật, nếu có) ─── */}
-          {liveProducts.length > 0 && (
-            <section>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">Ngoài các chương trình chính</p>
-              <h2 className="mt-1 text-xl font-extrabold text-white">Sản phẩm đang mở bán</h2>
-              <div className="mt-5 grid gap-5 sm:grid-cols-2">
-                {liveProducts.map((p) => {
-                  const owned = purchasedProductIds.has(String(p.id));
-                  const checkoutHref = `/portal/checkout?${new URLSearchParams({
-                    type: "product",
-                    id: String(p.id),
-                    title: p.title,
-                    price: String(p.price),
-                  }).toString()}`;
-                  return (
-                    <article
-                      key={p.id}
-                      className="relative flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur transition hover:border-white/25"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="text-2xl">{p.icon}</span>
-                        {owned ? (
-                          <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
-                            Đã sở hữu
-                          </span>
-                        ) : (
-                          <span className="rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-amber-300">
-                            {formatVnd(p.price)}
-                          </span>
-                        )}
-                      </div>
-                      <h3 className="mt-3 text-sm font-bold text-white">{p.title}</h3>
-                      {p.description && (
-                        <p className="mt-2 text-xs leading-relaxed text-white/60">{p.description}</p>
-                      )}
-                      <div className="mt-auto pt-4">
-                        {owned ? (
-                          <div className="flex flex-wrap gap-2.5">
-                            {p.video_url && (
-                              <a
-                                href={p.video_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-xl bg-gradient-to-r from-blue-500 to-violet-600 px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90"
-                              >
-                                Xem video →
-                              </a>
-                            )}
-                            {p.pdf_url && (
-                              <a
-                                href={p.pdf_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="rounded-xl border border-white/20 bg-white/[0.05] px-4 py-2 text-xs font-semibold text-white/80 transition hover:bg-white/10"
-                              >
-                                Tải tài liệu →
-                              </a>
-                            )}
-                          </div>
-                        ) : (
-                          <Link
-                            href={checkoutHref}
-                            className="inline-flex rounded-xl border border-white/20 bg-white/[0.05] px-4 py-2 text-xs font-semibold text-white/85 transition hover:bg-white/10"
-                          >
-                            Mua ngay →
-                          </Link>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          )}
-
-          {/* ── 7. Ghi chú thanh toán + FAQ ─────────────────────────────── */}
+          {/* ── 6. Ghi chú thanh toán + FAQ ─────────────────────────────── */}
           <section>
             <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
               <div className="flex items-center gap-2.5">
