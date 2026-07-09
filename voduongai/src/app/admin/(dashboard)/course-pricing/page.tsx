@@ -7,9 +7,11 @@ export default async function CoursePricingAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-extrabold text-white">Học phí V-SOLO / V-SCALE</h1>
+        <h1 className="text-xl font-extrabold text-white">Khoá học Premium — giá &amp; mở bán</h1>
         <p className="mt-1 text-sm text-white/50">
-          Đổi giá tại đây sẽ cập nhật ngay trên trang Portal &gt; Học viện AI — không cần sửa code.
+          Đổi giá hoặc bật/tắt mở bán tại đây sẽ cập nhật ngay trên trang Premium và Học viện AI — không
+          cần sửa code. &ldquo;Đang mở bán&rdquo; = card Premium hiện nút thanh toán; &ldquo;Sắp mở đăng
+          ký&rdquo; = card hiển thị &ldquo;Sắp mở đăng ký&rdquo;.
         </p>
       </div>
 
