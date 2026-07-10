@@ -357,7 +357,7 @@ export default async function CommunityPage() {
             >
               Tham gia cộng đồng
             </span>
-            <p className="text-xs text-gray-400">Không gian cộng đồng riêng đang được xây dựng.</p>
+            <p className="text-xs text-gray-400">Không gian cộng đồng riêng đang được xây dựng — quay lại sớm nhé.</p>
           </div>
 
           <div className="mx-auto mt-8 max-w-sm border-t border-gray-100 pt-6">
