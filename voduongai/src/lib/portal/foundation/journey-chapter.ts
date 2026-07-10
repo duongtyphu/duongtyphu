@@ -1,10 +1,18 @@
 /**
  * JOURNEY PLATFORM — logic "Chương hiện tại" dùng CHUNG cho Journey Hub
- * (CurrentChapterCard) và My Story (Opening Page), để hai cửa không bao
- * giờ nói lệch nhau về chương người dùng đang ở. Phiên bản P1/P3 (subset
- * — chương 4-5 chờ engine Journey Map đầy đủ ở P6, xem
- * JOURNEY_PLATFORM_ARCHITECTURE.md mục 8). Chỉ dùng dữ liệu thật từ
- * growth-view (localStorage) — không %, không level, không suy đoán.
+ * (CurrentChapterCard), My Story (Opening Page) và Journey Map (Vị trí
+ * hiện tại), để không cửa nào bao giờ nói lệch nhau về chương người
+ * dùng đang ở. Chỉ dùng dữ liệu thật — không %, không level, không suy
+ * đoán.
+ *
+ * Chương 1-3: suy từ growth-view (localStorage — Workspace/Session thật).
+ * Chương 4 ("Xây hệ thống"): cần THÊM bằng chứng sở hữu Premium thật
+ * (Supabase, server-side) — gọi nơi nào có `premiumCount` (Hub/My
+ * Story/Journey Map đều tự truy vấn `getPurchasedIds("course_id")` ở
+ * server rồi truyền xuống, cùng pattern Mirror đã dùng ở P4).
+ * Chương 5 ("Giúp người khác"): CHƯA có nguồn dữ liệu thật nào (chưa
+ * tracking chia sẻ/cộng đồng) — cố tình luôn "chưa bắt đầu", đánh dấu
+ * future integration, KHÔNG suy đoán hay hiển thị giả.
  */
 
 import { getGardenSummary, getRecentActivity, type GardenSummary } from "./growth-view";
@@ -23,7 +31,18 @@ export type JourneyChapter = {
   evidence: string;
 } | null;
 
-export function resolveCurrentChapter(summary: GardenSummary, hasAnyActivity: boolean): JourneyChapter {
+export function resolveCurrentChapter(
+  summary: GardenSummary,
+  hasAnyActivity: boolean,
+  premiumCount = 0,
+): JourneyChapter {
+  if (premiumCount > 0 && summary.totalOutputs >= 3) {
+    return {
+      index: 4,
+      name: JOURNEY_CHAPTER_NAMES[3],
+      evidence: `Bạn đang đồng hành cùng ${premiumCount} chương trình Premium và đã tạo ${summary.totalOutputs} output thật — dấu hiệu của một hệ thống đang được xây.`,
+    };
+  }
   if (summary.totalOutputs >= 1) {
     return {
       index: 3,
@@ -51,9 +70,11 @@ export function resolveCurrentChapter(summary: GardenSummary, hasAnyActivity: bo
   return null;
 }
 
-/** Đọc thẳng growth-view (localStorage) — chỉ gọi được ở client sau mount. */
-export function getCurrentChapterFromClient(): JourneyChapter {
+/** Đọc thẳng growth-view (localStorage) — chỉ gọi được ở client sau mount.
+ * `premiumCount` (dữ liệu server, Supabase) truyền vào từ trang gọi vì
+ * client component không tự truy vấn được đơn hàng thật. */
+export function getCurrentChapterFromClient(premiumCount = 0): JourneyChapter {
   const summary = getGardenSummary();
   const hasAnyActivity = getRecentActivity(1).length > 0;
-  return resolveCurrentChapter(summary, hasAnyActivity);
+  return resolveCurrentChapter(summary, hasAnyActivity, premiumCount);
 }

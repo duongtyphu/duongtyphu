@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
       { source: "/portal/journey", destination: "/portal/hanhtrinhcuatoi", permanent: true },
       { source: "/portal/journey/:path*", destination: "/portal/hanhtrinhcuatoi/:path*", permanent: true },
       { source: "/portal/khu-vuon-cua-ban", destination: "/portal/khuvuoncuaban", permanent: true },
+      // Journey Platform P6 — Sanctuary archive hoàn tất (Product Owner
+      // Decision 2): Thought Seeds + câu hỏi Reflection đã MERGE vào Mirror
+      // (P4), nội dung định hướng hành trình đã MERGE vào Journey Map (P6).
+      // Route mồ côi cũ redirect về Hub — không còn 2 hệ Journey song song.
+      { source: "/portal/hanh-trinh-cua-toi", destination: "/portal/hanhtrinhcuatoi", permanent: true },
       { source: "/blog", destination: "/blogai", permanent: true },
       { source: "/blog/:path*", destination: "/blogai/:path*", permanent: true },
     ];

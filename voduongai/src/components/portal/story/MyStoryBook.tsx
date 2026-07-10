@@ -112,6 +112,7 @@ export function MyStoryBook({
   capsules: initialCapsules,
   milestones,
   firstPremium,
+  premiumCount = 0,
   storageReady,
 }: {
   memberSince: Date | null;
@@ -119,6 +120,7 @@ export function MyStoryBook({
   capsules: MemoryCapsule[];
   milestones: GrowthMilestone[];
   firstPremium: { title: string; occurredAt: string } | null;
+  premiumCount?: number;
   storageReady: boolean;
 }) {
   const [capsules, setCapsules] = useState(initialCapsules);
@@ -135,11 +137,11 @@ export function MyStoryBook({
       .filter((j) => j.outputCount > 0)
       .map((j) => ({ title: j.missionGoal, outputCount: j.outputCount }));
     // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setChapter(getCurrentChapterFromClient());
+    setChapter(getCurrentChapterFromClient(premiumCount));
     setFirstOutput(firstOut ? { date: firstOut.timestamp } : null);
     setFirstCompletedJourney(firstJourney ? { date: firstJourney.timestamp } : null);
     setCreatedWorks(works);
-  }, []);
+  }, [premiumCount]);
 
   const companionLine = useMemo(() => buildInsightMemoryLine(reflections), [reflections]);
   const understandingNote = useMemo(() => buildUnderstandingNote(reflections), [reflections]);
