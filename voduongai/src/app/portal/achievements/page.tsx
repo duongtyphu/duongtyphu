@@ -7,7 +7,7 @@ export const metadata = { title: "Thành tựu", description: "Case Study và th
 
 const ITEMS = [
   { icon: TrendingUp, title: "Case Study", description: "Những câu chuyện thực chiến và kết quả cụ thể.", href: "/portal/case-studies" },
-  { icon: BadgeCheck, title: "Thành công học viên", description: "Hành trình tỏa sáng của các học viên VO DUONG AI.", href: "/portal/student-success" },
+  { icon: BadgeCheck, title: "Câu chuyện cộng đồng", description: "Hành trình tỏa sáng của những người học cùng VO DUONG AI.", href: "/portal/congdongai" },
 ];
 
 export default function AchievementsHubPage() {

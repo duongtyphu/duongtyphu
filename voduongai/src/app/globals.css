@@ -2055,3 +2055,87 @@ body {
     animation: none;
   }
 }
+
+/* ============================================================
+ * COMMUNITY — AI Campus. Nền sáng ban ngày ấm áp, KHÔNG dùng
+ * `.gemos-bg` (nền caro chuẩn Portal) hay bất kỳ lưới/ca-rô nào —
+ * yêu cầu tuyệt đối của brief Community Campus Reconstruction.
+ * Khí quyển dựng bằng gradient/blur trừu tượng (kính, ánh sáng,
+ * mảng xanh lá) — KHÔNG dùng ảnh campus giả vì VO DUONG AI không có
+ * cơ sở vật chất thật để chụp (giữ đúng nguyên tắc NO-FAKE-DATA).
+ * ============================================================ */
+.campus-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(58% 50% at 12% -8%, rgba(56, 189, 248, 0.14), transparent 62%),
+    radial-gradient(52% 46% at 102% 8%, rgba(249, 115, 22, 0.10), transparent 60%),
+    radial-gradient(50% 55% at 32% 104%, rgba(52, 211, 153, 0.13), transparent 60%),
+    linear-gradient(180deg, #fffdf9 0%, #ffffff 45%, #f5faff 100%);
+}
+
+/* Mảng blur trừu tượng gợi kính/kiến trúc/tán lá — KHÔNG phải ảnh thật. */
+.campus-glow-a {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22), transparent 70%);
+}
+.campus-glow-b {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(52, 211, 153, 0.18), transparent 70%);
+}
+.campus-glow-c {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.14), transparent 70%);
+}
+
+.campus-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(240, 249, 255, 0.72)),
+    radial-gradient(85% 100% at 100% 0%, rgba(56, 189, 248, 0.16), transparent 60%),
+    radial-gradient(70% 85% at 0% 100%, rgba(52, 211, 153, 0.13), transparent 60%);
+}
+
+.campus-card {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.07);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 28px -18px rgba(15, 23, 42, 0.16);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.campus-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 20px 36px -18px rgba(15, 23, 42, 0.22);
+}
+
+.campus-marker-glow {
+  animation: campus-marker-breathe 4.5s ease-in-out infinite;
+}
+
+@keyframes campus-marker-breathe {
+  0%, 100% { filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8)); transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campus-card {
+    transition: none;
+  }
+  .campus-marker-glow {
+    animation: none;
+  }
+}

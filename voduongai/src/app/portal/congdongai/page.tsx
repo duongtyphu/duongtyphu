@@ -1,206 +1,409 @@
-import { Users, MessageCircle, PlayCircle, HelpCircle, ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
+import {
+  Sparkles,
+  Wand2,
+  Bot,
+  Rocket,
+  Network,
+  User,
+  Users,
+  BookOpen,
+  Calendar,
+  Newspaper,
+  ArrowRight,
+  MessageCircle,
+  PlayCircle,
+  Globe,
+} from "lucide-react";
+import { getSupabaseServer } from "@/lib/supabase-server";
 import { siteConfig } from "@/lib/site";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { PillarHero } from "@/components/portal/ui/PillarHero";
+import { CommunityGuides } from "@/components/portal/community/CommunityGuides";
+import { CommunityMapPanel } from "@/components/portal/community/CommunityMapPanel";
 
 export const metadata = {
   title: "Cộng đồng",
-  description: "Kết nối với những người cùng hành trình AI & Affiliate — học hỏi, chia sẻ và phát triển cùng nhau.",
+  description: "Cộng đồng VO DUONG AI — nơi những người học tập, sáng tạo và trưởng thành cùng AI gặp nhau.",
 };
 
-const COMMUNITIES = [
+/**
+ * COMMUNITY CAMPUS RECONSTRUCTION (Product Owner approved).
+ *
+ * Community KHÔNG phải Facebook/Forum/Discord/News Feed/trang Portal
+ * chung — là một "AI Campus" riêng biệt: khí quyển ban ngày ấm áp, KHÔNG
+ * dùng nền caro/lưới chuẩn Portal (`.gemos-bg`) — trang full-bleed với
+ * `.campus-bg` riêng để che hoàn toàn nền caro toàn cục, cùng cơ chế với
+ * Premium/Companion/Journey.
+ *
+ * CONTENT AUDIT (thay cho nội dung `congdongai` cũ):
+ * - PillarHero + khối "Bạn mới? Nên bắt đầu từ đây" (4 bước) + Rules +
+ *   FAQ → ARCHIVE. Không nằm trong 10 khối được duyệt của brief này
+ *   ("Do not add unrelated sections"), và không có khối nào trong 10
+ *   khối là nơi hợp lý để giữ lại nguyên trạng.
+ * - Khối "Các kênh cộng đồng" (Facebook/Zalo/YouTube, dữ liệu THẬT từ
+ *   `siteConfig.community`) → KEEP + MOVE: đây là kênh cộng đồng đang
+ *   hoạt động thật, nhưng brief cấm dùng Facebook/Telegram/Discord làm
+ *   CTA CHÍNH ("Do not fake a Facebook... link" — không biến Community
+ *   thành cổng redirect ra Facebook). Giữ lại như lối kết nối THỰC TẾ,
+ *   phụ, ở cuối trang — CTA chính "Tham gia cộng đồng" dùng trạng thái
+ *   coming-soon trung thực vì chưa có không gian cộng đồng sở hữu riêng.
+ * - `/portal/student-success` (câu chuyện học viên BỊA — không có ảnh
+ *   thật/xác thực) → ARCHIVE, không migrate nội dung (vi phạm
+ *   NO-FAKE-DATA). Route redirect sang Community Stories, dùng empty
+ *   state trung thực.
+ * - `/portal/updates` (tin tức sản phẩm — nội dung THẬT, chỉ là mảng
+ *   tĩnh chưa có CMS) → MOVE vào khối Community News bên dưới, giữ
+ *   nguyên nội dung thật, route cũ redirect vào đây.
+ * - `/portal/case-studies` (Supabase thật, đã có empty state trung
+ *   thực) → KEEP nguyên trang (CKOS/Academy vẫn trỏ tới), Community
+ *   Project Showcase đọc THÊM cùng bảng `case_studies` để hiển thị bản
+ *   xem trước thật, không tạo bảng trùng lặp.
+ *
+ * KHÔNG có nguồn dữ liệu thật cho: Community Stories cá nhân, Workshops
+ * & Events, vị trí thành viên trên bản đồ (bảng `members` không có cột
+ * city/location) — cả ba dùng đúng empty state trung thực brief đã duyệt,
+ * không suy diễn/bịa.
+ */
+
+type ShowcaseItem = {
+  id: number;
+  title: string;
+  client_name: string | null;
+  summary: string | null;
+  result_metric: string | null;
+  thumbnail_url: string | null;
+  link_url: string | null;
+};
+
+async function getShowcaseItems(): Promise<ShowcaseItem[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
+  try {
+    const supabase = await getSupabaseServer();
+    const { data } = await supabase
+      .from("case_studies")
+      .select("id, title, client_name, summary, result_metric, thumbnail_url, link_url")
+      .eq("active", true)
+      .order("created_at", { ascending: false })
+      .limit(3);
+    return data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+const LEARNING_SPACES = [
   {
+    key: "beginner",
+    icon: Sparkles,
+    title: "AI Beginner",
+    purpose: "Làm quen AI từ số 0 — không thuật ngữ khó, không cần nền tảng kỹ thuật.",
+    who: "Người mới bắt đầu, chưa từng dùng AI trong công việc.",
+    cta: { label: "Vào Học viện AI", href: "/portal/hocvienai" },
+    tint: "border-sky-200/70 bg-gradient-to-br from-sky-50/95 via-white/90 to-blue-50/70 hover:border-sky-300",
+    chip: "bg-gradient-to-br from-sky-500 to-blue-600 text-white",
+  },
+  {
+    key: "prompt",
+    icon: Wand2,
+    title: "Prompt Engineering",
+    purpose: "Luyện cách viết Prompt hiệu quả, tái sử dụng được cho công việc thật.",
+    who: "Người đã quen AI cơ bản, muốn ra kết quả tốt hơn mỗi lần hỏi.",
+    cta: { label: "Mở Thư viện Prompt", href: "/portal/prompts" },
+    tint: "border-violet-200/70 bg-gradient-to-br from-violet-50/95 via-white/90 to-indigo-50/70 hover:border-violet-300",
+    chip: "bg-gradient-to-br from-violet-600 to-indigo-600 text-white",
+  },
+  {
+    key: "automation",
+    icon: Bot,
+    title: "Automation",
+    purpose: "Ghép nhiều công cụ AI thành một quy trình chạy tự động cho công việc lặp lại.",
+    who: "Người đã có quy trình thủ công, muốn AI làm thay phần lặp lại.",
+    cta: { label: "Khám phá AI Workspace", href: "/portal/aiworkspace" },
+    tint: "border-emerald-200/70 bg-gradient-to-br from-emerald-50/95 via-white/90 to-green-50/70 hover:border-emerald-300",
+    chip: "bg-gradient-to-br from-emerald-600 to-green-600 text-white",
+  },
+  {
+    key: "affiliate",
+    icon: Rocket,
+    title: "Affiliate AI",
+    purpose: "Dùng AI để nghiên cứu, tạo nội dung và vận hành hệ thống Affiliate.",
+    who: "Người muốn xây thu nhập từ Affiliate Marketing bằng AI.",
+    cta: { label: "Xem hệ sinh thái Affiliate", href: "/portal/duan-cohoi/lam-affilate" },
+    tint: "border-amber-200/70 bg-gradient-to-br from-amber-50/95 via-white/90 to-orange-50/70 hover:border-amber-300",
+    chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white",
+  },
+  {
+    key: "openclaw",
+    icon: Network,
+    title: "OpenClaw",
+    purpose: "Xây một hệ trợ lý AI thực chiến: lịch, thư, tài liệu, nội dung, khách hàng.",
+    who: "Người muốn AI xử lý công việc thật, không phải demo.",
+    cta: { label: "Xem Lớp học OpenClaw", href: "/portal/premium#premium-openclaw" },
+    tint: "border-rose-200/70 bg-gradient-to-br from-rose-50/95 via-white/90 to-orange-50/70 hover:border-rose-300",
+    chip: "bg-gradient-to-br from-rose-500 to-orange-500 text-white",
+  },
+  {
+    key: "v-solo",
+    icon: User,
+    title: "V-Solo",
+    purpose: "Một người vận hành toàn bộ hệ thống Affiliate bằng AI — từ nghiên cứu đến chuyển đổi.",
+    who: "Người muốn tự vận hành, không cần đội nhóm.",
+    cta: { label: "Xem V-Solo", href: "/portal/premium#premium-v-solo" },
+    tint: "border-blue-200/70 bg-gradient-to-br from-blue-50/95 via-white/90 to-indigo-50/70 hover:border-blue-300",
+    chip: "bg-gradient-to-br from-blue-600 to-indigo-600 text-white",
+  },
+  {
+    key: "v-scale",
     icon: Users,
-    platform: "Facebook Group",
-    title: "Nhóm Facebook VO DUONG AI",
-    description: "Cộng đồng học viên AI & Affiliate lớn nhất — hỏi đáp, chia sẻ kết quả, cập nhật nội dung mới mỗi ngày.",
-    audience: "Dành cho tất cả học viên và người quan tâm đến AI, Affiliate, Marketing.",
-    activity: "Hoạt động mỗi ngày — bài đăng mới, hỏi đáp, case study thực tế.",
-    href: siteConfig.community.facebookGroup,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
-    cta: "Tham gia nhóm",
+    title: "V-Scale",
+    purpose: "Chuẩn hóa, nhân bản hệ thống và xây lộ trình leader kế thừa cho đội nhóm.",
+    who: "Người đã có hệ thống chạy, giờ cần đội nhóm làm được như mình.",
+    cta: { label: "Xem V-Scale", href: "/portal/premium#premium-v-scale" },
+    tint: "border-cyan-200/70 bg-gradient-to-br from-cyan-50/95 via-white/90 to-teal-50/70 hover:border-cyan-300",
+    chip: "bg-gradient-to-br from-cyan-600 to-teal-600 text-white",
   },
-  {
-    icon: MessageCircle,
-    platform: "Zalo Group",
-    title: "Cộng đồng Zalo",
-    description: "Kênh cập nhật nhanh — tin tức AI, cơ hội mới, tài nguyên miễn phí được chia sẻ trực tiếp.",
-    audience: "Dành cho người muốn cập nhật thông tin nhanh và kết nối trực tiếp.",
-    activity: "Cập nhật hàng ngày — nội dung mới, cơ hội, tài nguyên miễn phí.",
-    href: siteConfig.community.zaloGroup,
-    color: "text-cyan-400",
-    bg: "bg-cyan-500/10",
-    cta: "Tham gia Zalo",
-  },
-  {
-    icon: PlayCircle,
-    platform: "YouTube",
-    title: "Kênh YouTube VO DUONG",
-    description: "Video hướng dẫn AI thực chiến, review công cụ, case study Affiliate và chia sẻ hành trình thực tế.",
-    audience: "Dành cho người muốn học qua video — nội dung từ cơ bản đến nâng cao.",
-    activity: "Video mới mỗi tuần — tutorial, review, vlog hành trình.",
-    href: siteConfig.links.youtube,
-    color: "text-red-400",
-    bg: "bg-red-500/10",
-    cta: "Xem kênh YouTube",
-  },
-];
+] as const;
 
-const RULES = [
-  "Tôn trọng mọi người — không phân biệt cấp độ, kinh nghiệm hay quan điểm.",
-  "Chia sẻ thực tế — kết quả thật, câu hỏi thật, bài học thật.",
-  "Không spam, không quảng cáo chéo mà không được phép.",
-  "Đặt câu hỏi cụ thể — giúp người khác dễ hỗ trợ bạn hơn.",
-  "Ghi nhận khi bạn học được điều gì từ người khác.",
-];
+/** Nội dung thật, di dời nguyên vẹn từ /portal/updates (Phase F.2). */
+const NEWS = [
+  { date: "2026-06-20", title: "Thêm 3 Prompt mới cho Content & Affiliate", type: "Prompt" },
+  { date: "2026-06-15", title: "Cập nhật công cụ: thêm HeyGen vào Thư viện công cụ", type: "Công cụ" },
+  { date: "2026-06-10", title: "Ra mắt module Affiliate Hub mới với lộ trình từng bước", type: "Hệ sinh thái" },
+  { date: "2026-06-01", title: "Thêm bài học mới trong Học viện AI: Prompt Engineering cơ bản", type: "Khóa học" },
+  { date: "2026-05-25", title: "Cập nhật Template kế hoạch content 30 ngày", type: "Tài nguyên" },
+] as const;
 
-const FAQ = [
-  {
-    q: "Tôi mới bắt đầu — nên tham gia nhóm nào trước?",
-    a: "Bắt đầu với nhóm Facebook — đây là nơi hoạt động nhất với nội dung đa dạng nhất. Sau đó thêm Zalo để nhận cập nhật nhanh.",
-  },
-  {
-    q: "Có sự kiện offline không?",
-    a: "Có, thỉnh thoảng. Thông báo sự kiện được đăng trong nhóm Facebook và Zalo — hãy tham gia để không bỏ lỡ.",
-  },
-  {
-    q: "Tôi có thể chia sẻ kết quả của mình không?",
-    a: "Rất hoan nghênh! Chia sẻ kết quả thật — dù nhỏ — giúp cả cộng đồng có thêm động lực và bài học.",
-  },
-];
+export default async function CommunityPage() {
+  const showcaseItems = await getShowcaseItems();
 
-export default function CommunityPage() {
   return (
-    <div className="rounded-3xl p-6 md:p-8 space-y-12">
-      <PillarHero
-        icon={Users}
-        tone="community"
-        eyebrow="Cộng đồng"
-        title="Không ai tiến hóa một mình"
-        subtitle="Kết nối với những người cùng hành trình — học hỏi, chia sẻ kinh nghiệm thực tế, cập nhật kiến thức mới và phát triển cùng nhau."
-      />
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      <div className="campus-bg" aria-hidden />
+      <div className="campus-glow-a" style={{ width: 340, height: 340, top: -100, right: -80 }} aria-hidden />
+      <div className="campus-glow-b" style={{ width: 300, height: 300, bottom: 60, left: -100 }} aria-hidden />
+      <div className="campus-glow-c" style={{ width: 240, height: 240, bottom: -60, right: 140 }} aria-hidden />
 
-      {/* Companion Guide */}
-      <CompanionGuide
-        message="Nếu bạn mới tham gia, hãy giới thiệu bản thân trong nhóm Facebook — đó là cách nhanh nhất để kết nối với những người cùng mục tiêu và nhận được hỗ trợ phù hợp."
-        action={{ label: "Tham gia nhóm Facebook", href: siteConfig.community.facebookGroup }}
-      />
+      <div className="relative z-10 mx-auto max-w-5xl space-y-16 px-5 py-10 sm:px-8 md:py-14">
+        {/* ── 1. Campus Hero ───────────────────────────────────────────── */}
+        <section className="campus-hero p-8 text-center sm:p-12">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Cộng đồng</p>
+          <h1 className="mx-auto mt-3 max-w-2xl text-3xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-4xl">
+            Cộng đồng VO DUONG AI
+          </h1>
+          <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-gray-600">
+            Những con người đang cùng nhau học tập, sáng tạo và trưởng thành cùng AI.
+          </p>
+          <p className="mx-auto mt-6 max-w-md text-sm italic leading-relaxed text-gray-500">
+            Mỗi hành trình đều bắt đầu từ một người. Nhưng đôi khi, chính những người đồng hành sẽ giúp
+            hành trình ấy đi xa hơn.
+          </p>
 
-      {/* New member guide */}
-      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
-        <div className="mb-3 flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-amber-400" />
-          <p className="text-sm font-bold text-gray-900">Bạn mới? Nên bắt đầu từ đây</p>
-        </div>
-        <div className="space-y-2">
-          {[
-            { step: "1", text: "Tham gia nhóm Facebook — giới thiệu bản thân và mục tiêu của bạn" },
-            { step: "2", text: "Đọc bài ghim ở đầu nhóm — có tóm tắt tài nguyên và lộ trình học" },
-            { step: "3", text: "Thêm Zalo để nhận cập nhật nhanh mỗi ngày" },
-            { step: "4", text: "Đặt câu hỏi đầu tiên — đừng ngại, cộng đồng sẵn sàng hỗ trợ" },
-          ].map((item) => (
-            <div key={item.step} className="flex items-start gap-3">
-              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-[10px] font-bold text-amber-400">
-                {item.step}
-              </span>
-              <p className="text-sm text-gray-600">{item.text}</p>
+          <div className="mx-auto mt-8 flex max-w-xs flex-col items-center gap-2">
+            <span
+              aria-disabled="true"
+              className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-6 py-3 text-sm font-semibold text-gray-400"
+            >
+              Tham gia cộng đồng
+            </span>
+            <p className="text-xs text-gray-400">Không gian cộng đồng riêng đang được xây dựng — quay lại sớm nhé.</p>
+          </div>
+        </section>
+
+        {/* ── 2. Community Stories ─────────────────────────────────────── */}
+        <section>
+          <SectionEyebrow icon={BookOpen} label="Câu chuyện" title="Community Stories" />
+          <div className="campus-card mt-5 flex flex-col items-center gap-2 p-10 text-center">
+            <p className="max-w-sm text-sm leading-relaxed text-gray-500">
+              Câu chuyện đầu tiên của cộng đồng đang chờ được viết.
+            </p>
+          </div>
+        </section>
+
+        {/* ── 3. Learning Spaces ───────────────────────────────────────── */}
+        <section>
+          <SectionEyebrow icon={Sparkles} label="Nơi học cùng nhau" title="Learning Spaces" />
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {LEARNING_SPACES.map((space) => (
+              <div key={space.key} className={`rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_24px_-16px_rgba(15,23,42,0.16)] backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 ${space.tint}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${space.chip}`}>
+                  <space.icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-3 text-sm font-bold text-gray-900">{space.title}</h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-600">{space.purpose}</p>
+                <p className="mt-2 text-[11px] text-gray-400">
+                  <span className="font-semibold text-gray-500">Dành cho:</span> {space.who}
+                </p>
+                <Link
+                  href={space.cta.href}
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-gray-900/10 bg-white/80 px-4 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-gray-900/25 hover:text-gray-900"
+                >
+                  {space.cta.label} <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── 4. Community Project Showcase ────────────────────────────── */}
+        <section>
+          <SectionEyebrow icon={Rocket} label="Trưng bày" title="Community Project Showcase" />
+          {showcaseItems.length === 0 ? (
+            <div className="campus-card mt-5 flex flex-col items-center gap-2 p-10 text-center">
+              <p className="max-w-sm text-sm leading-relaxed text-gray-500">
+                Không gian này đang chờ sản phẩm đầu tiên từ cộng đồng.
+              </p>
             </div>
-          ))}
-        </div>
-      </div>
+          ) : (
+            <>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {showcaseItems.map((item) => (
+                  <div key={item.id} className="campus-card overflow-hidden">
+                    <div className="flex h-32 w-full items-center justify-center bg-gradient-to-br from-sky-100 via-white to-emerald-50">
+                      {item.thumbnail_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element -- ảnh do Admin nhập URL ngoài, không thuộc /public
+                        <img src={item.thumbnail_url} alt={item.title} className="h-full w-full object-cover" />
+                      ) : (
+                        <Rocket className="h-8 w-8 text-sky-300" />
+                      )}
+                    </div>
+                    <div className="p-5">
+                      <h3 className="text-sm font-bold text-gray-900">{item.title}</h3>
+                      {item.client_name && <p className="mt-1 text-xs text-gray-400">{item.client_name}</p>}
+                      {item.summary && <p className="mt-2 text-xs leading-relaxed text-gray-600">{item.summary}</p>}
+                      {item.result_metric && (
+                        <p className="mt-2 inline-flex rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-semibold text-orange-600">
+                          {item.result_metric}
+                        </p>
+                      )}
+                      {item.link_url && (
+                        <a href={item.link_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-xs font-semibold text-blue-600 hover:underline">
+                          Xem chi tiết →
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link href="/portal/case-studies" className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:underline">
+                Xem tất cả Case Study <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </>
+          )}
+        </section>
 
-      {/* Communities */}
-      <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các kênh cộng đồng</p>
-        <div className="space-y-4">
-          {COMMUNITIES.map((c) => (
-            <div key={c.title} className="gemos-gem-card rounded-2xl p-5">
-              <div className="mb-4 flex items-start gap-4">
-                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
-                  <c.icon className="h-6 w-6" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-gray-400">{c.platform}</p>
-                  <h3 className="gemos-card-title mt-0.5 text-sm font-bold text-gray-900">{c.title}</h3>
+        {/* ── 5. Workshops & Events ────────────────────────────────────── */}
+        <section>
+          <SectionEyebrow icon={Calendar} label="Sự kiện" title="Workshops & Events" />
+          <div className="campus-card mt-5 flex flex-col items-center gap-2 p-10 text-center">
+            <p className="max-w-sm text-sm leading-relaxed text-gray-500">
+              Sự kiện tiếp theo đang được chuẩn bị.
+            </p>
+          </div>
+        </section>
+
+        {/* ── 6. Community News ────────────────────────────────────────── */}
+        <section id="tin-tuc" className="scroll-mt-24">
+          <SectionEyebrow icon={Newspaper} label="Tin tức" title="Community News" />
+          <div className="mt-5 space-y-2.5">
+            {NEWS.map((n) => (
+              <div key={n.title} className="campus-card flex items-start gap-4 p-4">
+                <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600">
+                  {n.type}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-gray-900">{n.title}</p>
+                  <p className="mt-1 text-xs text-gray-400">{new Date(n.date).toLocaleDateString("vi-VN")}</p>
                 </div>
               </div>
-              <p className="mb-3 text-sm leading-relaxed text-gray-600">{c.description}</p>
-              <div className="mb-4 space-y-1.5">
-                <p className="text-xs text-gray-400">
-                  <span className="font-semibold text-gray-500">Dành cho:</span> {c.audience}
-                </p>
-                <p className="text-xs text-gray-400">
-                  <span className="font-semibold text-gray-500">Hoạt động:</span> {c.activity}
-                </p>
-              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── 7. Companion Corner ──────────────────────────────────────── */}
+        <section className="campus-card p-6 text-center sm:p-8">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400">Companion</p>
+          <p className="mx-auto mt-3 max-w-md text-base italic leading-relaxed text-gray-700">
+            &ldquo;Một cộng đồng không mạnh vì có nhiều người. Một cộng đồng mạnh vì có nhiều người cùng
+            giúp nhau trưởng thành.&rdquo;
+          </p>
+        </section>
+
+        {/* ── 8. People Who Accompany You ──────────────────────────────── */}
+        <section>
+          <SectionEyebrow icon={Users} label="Đồng hành" title="Người đồng hành cùng bạn" />
+          <div className="mt-5">
+            <CommunityGuides />
+          </div>
+        </section>
+
+        {/* ── 9. Community Map ─────────────────────────────────────────── */}
+        <section>
+          <SectionEyebrow icon={MessageCircle} label="Bản đồ" title="Community Map" />
+          <div className="mt-5">
+            <CommunityMapPanel />
+          </div>
+        </section>
+
+        {/* ── 10. Final Join Community CTA ─────────────────────────────── */}
+        <section className="campus-hero p-8 text-center sm:p-10">
+          <h2 className="text-xl font-extrabold text-gray-900 sm:text-2xl">Cùng bắt đầu một câu chuyện</h2>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-gray-600">
+            Hàng trăm người đang học và xây cùng AI mỗi ngày — hành trình của bạn có thể là câu chuyện tiếp theo.
+          </p>
+
+          <div className="mx-auto mt-6 flex max-w-xs flex-col items-center gap-2">
+            <span
+              aria-disabled="true"
+              className="inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border border-gray-200 bg-gray-100 px-6 py-3 text-sm font-semibold text-gray-400"
+            >
+              Tham gia cộng đồng
+            </span>
+            <p className="text-xs text-gray-400">Không gian cộng đồng riêng đang được xây dựng.</p>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-sm border-t border-gray-100 pt-6">
+            <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Kết nối ngay hôm nay</p>
+            <div className="mt-3 flex flex-wrap justify-center gap-3">
               <a
-                href={c.href}
+                href={siteConfig.community.facebookGroup}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition ${c.color} border border-current/20 hover:bg-gray-50`}
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
               >
-                {c.cta}
-                <ArrowRight className="h-3.5 w-3.5" />
+                <Globe className="h-3.5 w-3.5" /> Nhóm Facebook
+              </a>
+              <a
+                href={siteConfig.community.zaloGroup}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+              >
+                <MessageCircle className="h-3.5 w-3.5" /> Nhóm Zalo
+              </a>
+              <a
+                href={siteConfig.links.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+              >
+                <PlayCircle className="h-3.5 w-3.5" /> YouTube
               </a>
             </div>
-          ))}
-        </div>
+          </div>
+        </section>
       </div>
+    </div>
+  );
+}
 
-      {/* Rules */}
-      <div className="space-y-4">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Nội quy cộng đồng</p>
-        <div className="space-y-2">
-          {RULES.map((rule, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white px-4 py-3 shadow-sm">
-              <span className="mt-0.5 text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
-              <p className="text-sm text-gray-600">{rule}</p>
-            </div>
-          ))}
-        </div>
+function SectionEyebrow({ icon: Icon, label, title }: { icon: typeof BookOpen; label: string; title: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50">
+        <Icon className="h-4 w-4 text-blue-600" />
       </div>
-
-      {/* FAQ */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <HelpCircle className="h-4 w-4 text-gray-400" />
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Câu hỏi thường gặp</p>
-        </div>
-        <div className="space-y-3">
-          {FAQ.map((item) => (
-            <div key={item.q} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
-              <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* CTA */}
-      <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-6 text-center">
-        <h3 className="mb-2 text-base font-bold text-gray-900">Sẵn sàng tham gia?</h3>
-        <p className="mb-5 text-sm text-gray-500">Hàng trăm người đang học và chia sẻ mỗi ngày — đừng đi một mình.</p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <a
-            href={siteConfig.community.facebookGroup}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-500"
-          >
-            <Users className="h-4 w-4" />
-            Tham gia Facebook
-          </a>
-          <a
-            href={siteConfig.community.zaloGroup}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:border-gray-200 hover:text-gray-900"
-          >
-            <MessageCircle className="h-4 w-4" />
-            Tham gia Zalo
-          </a>
-        </div>
+      <div>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400">{label}</p>
+        <h2 className="text-lg font-bold text-gray-900">{title}</h2>
       </div>
     </div>
   );
