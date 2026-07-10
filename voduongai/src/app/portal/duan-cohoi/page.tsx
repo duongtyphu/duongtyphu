@@ -210,7 +210,7 @@ const FAQ = [
 
 export default function OpportunitiesHubPage() {
   return (
-    <div className="space-y-12">
+    <div className="rounded-3xl p-6 md:p-8 space-y-12">
       {/* Hero */}
       <PillarHero
         icon={LineChart}
@@ -306,11 +306,11 @@ export default function OpportunitiesHubPage() {
           description="Hình minh hoạ — ảnh thật sẽ được cập nhật sau."
         />
         {/* Product Owner: dải ảnh thiết kế RỘNG, ô ảnh tăng 100% (gấp đôi).
-         * Card phá lề trái/phải của cột nội dung (bù đúng px-4 md:px-8 của
-         * <main> trong PortalShell bằng -mx-4 md:-mx-8) thành một dải
-         * full-bleed viền trên/dưới; ô ảnh h-32 -> h-64, icon và nhãn
+         * Card phá lề trái/phải của cột nội dung (bù đúng p-6 md:p-8 của
+         * wrapper rounded-3xl bao ngoài trang bằng -mx-6 md:-mx-8) thành một
+         * dải full-bleed viền trên/dưới; ô ảnh h-32 -> h-64, icon và nhãn
          * phóng to tương ứng. */}
-        <div className="-mx-4 overflow-hidden border-y border-gray-100 bg-white py-8 shadow-token-sm md:-mx-8">
+        <div className="-mx-6 overflow-hidden border-y border-gray-100 bg-white py-8 shadow-token-sm md:-mx-8">
           <div className="flex w-max opportunities-companions-marquee">
             {[...COMPANION_PLACEHOLDERS, ...COMPANION_PLACEHOLDERS].map((c, i) => (
               <div

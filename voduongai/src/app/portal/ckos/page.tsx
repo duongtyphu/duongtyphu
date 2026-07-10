@@ -163,7 +163,7 @@ export default async function CkosPage() {
   const featuredTool: AdminTool | undefined = toolsAdminSeed.find((t) => t.status === "Published");
 
   return (
-    <div className="space-y-10">
+    <div className="rounded-3xl p-6 md:p-8 space-y-10">
       <PillarHero
         icon={Brain}
         tone="knowledge"
