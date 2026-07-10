@@ -12,6 +12,12 @@ Ngày: 2026-07-09 · Bổ sung cho `JOURNEY_PLATFORM_ARCHITECTURE.md` (mục 9)
 
 ---
 
+> **CẬP NHẬT (PO APPROVED):** Khu vườn có **chu kỳ ngày–đêm sống** —
+> 4 khí quyển (Bình minh / Ban ngày / Hoàng hôn / Đêm) đổi theo giờ
+> thiết bị của người dùng. Xem mục 13. Khí quyển ĐÊM ở mục 1–2 dưới đây
+> trở thành một trong bốn trạng thái — và là **hình ảnh chữ ký** của
+> Journey.
+
 ## 1. Khái niệm thị giác (Visual Concept)
 
 **Một khu vườn cổ tích dưới ánh trăng, được tinh luyện bằng thẩm mỹ AI
@@ -211,9 +217,12 @@ thay vị trí cây, ngọc mờ dưới đất chờ:
 
 1. Ngưỡng giai đoạn cây (bảng ở mục 4) chỉnh được không cần code.
 2. Bảng ánh xạ phần tử ↔ nghĩa ↔ nguồn dữ liệu (mục 3) quản trị được.
-3. Thư viện câu Companion trong vườn (chứng kiến/mùa vụ) thêm-sửa-tắt được.
+3. Thư viện câu Companion trong vườn (chứng kiến/mùa vụ, và theo 4 khí
+   quyển ngày–đêm — mục 13.1) thêm-sửa-tắt được.
 4. Bật/tắt từng lớp hiệu ứng (mist, bokeh, parallax) phục vụ hiệu năng.
 5. Nội dung empty state chỉnh được.
+6. Day/Night: override khí quyển để duyệt thiết kế + chỉnh băng giờ của
+   4 khí quyển (mục 13.5).
 
 ## 12. Ghi chú triển khai & Quality Gate
 
@@ -233,3 +242,121 @@ thay vị trí cây, ngọc mờ dưới đất chờ:
 Bài kiểm tra bỏ-logo: che logo đi, người xem vẫn nhận ra đây là một nơi
 đặc biệt, cá nhân, "earned", sống động, ma thuật nhưng chuyên nghiệp —
 và duy nhất của VO DUONG AI.
+
+---
+
+## 13. LIVING DAY & NIGHT CYCLE (PO APPROVED)
+
+Khu vườn **sống** — nó đổi khí quyển một cách tự nhiên theo thời gian
+trong ngày. Đây không phải hiệu ứng trang trí; nó là một phần của cách
+VO DUONG AI kể chuyện cảm xúc. Không fake growth, không game mechanics.
+
+### 13.1 Bốn khí quyển
+
+| Khí quyển | Khung giờ (giờ thiết bị) | Cảm xúc | Ánh sáng & màu | Hạt/chi tiết sống |
+|---|---|---|---|---|
+| 🌅 **Bình minh** | 05:00–07:59 | Hy vọng · Khởi đầu · Năng lượng tĩnh | Chân trời cam ấm mọc dần trên nền xanh thẫm còn sót; sương sáng mỏng; ánh sáng nghiêng thấp, dịu | Giọt sương lấp lánh trên cỏ (sparkle chậm); vài chấm "chim" mờ bay xa (tuỳ chọn, rất tiết chế) |
+| ☀️ **Ban ngày** | 08:00–16:59 | Trưởng thành · Học · Tạo ra | Trời trong sáng xanh nhạt; lục rực rỡ; không khí tươi | Lá lay nhẹ; nước lấp lánh (shimmer thoảng); sparkle thưa |
+| 🌇 **Hoàng hôn** | 17:00–18:59 | Chiêm nghiệm · Hoàn thành · Biết ơn | Ánh vàng kim; trời cam→tím; bóng đổ ấm và **dài dần** dưới gốc cây | Đèn lồng **bắt đầu thắp** (chỉ khi có dữ liệu suy ngẫm/ký ức thật — không thắp đèn giả) |
+| 🌙 **Đêm** | 19:00–04:59 | Ký ức · Kinh ngạc · Bình yên | Xanh nửa đêm sâu; sao; ánh trăng bạc; tán cây viền sáng | Đom đóm trôi; bụi sáng ma thuật; Ngọc "thở" rực nhất; phản chiếu trên nước — **hình ảnh chữ ký của Journey** |
+
+Giọng Companion đổi nhẹ theo khí quyển (vẫn CHỈ dữ liệu thật, im lặng
+vẫn hợp lệ):
+
+- Sáng — lời mời dịu: "Một ngày mới cho khu vườn. Bạn muốn gieo gì hôm nay?"
+- Ngày — nhắc tiếp tục: "Khu vườn lớn lên vào những giờ bạn làm việc thật."
+- Hoàng hôn — chiêm nghiệm: "Hôm nay đã trôi qua — có điều gì đáng giữ lại?"
+- Đêm — ký ức tĩnh: "Tôi vẫn giữ những khoảnh khắc của bạn, dưới ánh ngọc."
+
+(Câu cụ thể lấy từ thư viện; khi gắn dữ kiện thật — ví dụ hoạt động gần
+nhất — dùng đúng template nhân chứng hiện có.)
+
+### 13.2 Kiến trúc Day/Night — MỘT khu vườn, bốn lớp ánh sáng
+
+**Không tải 4 khung cảnh.** Cùng một Garden (Cây, Ngọc, bố cục, dữ liệu)
+— chỉ khí quyển đổi. Kiến trúc token hoá:
+
+```
+<GardenExperience data-garden-period="dawn|day|sunset|night">
+  ├── Sky stack: 4 lớp gradient bầu trời chồng nhau (div rẻ, CSS thuần)
+  │     → chỉ MỘT lớp opacity=1 theo period; các lớp khác opacity=0
+  ├── Lighting overlay: 1 lớp tint phủ khung cảnh (màu/độ mờ theo CSS var)
+  ├── Shadow layer: dải bóng gốc cây (scaleX/opacity theo period)
+  ├── Particle system: cùng bộ phần tử, đổi màu/mật độ/tốc độ theo var
+  ├── Gem glow: cường độ theo var (ngày dịu → đêm mạnh nhất, vẫn thanh lịch)
+  └── Scene (Tree + layer engine hiện có): KHÔNG ĐỔI
+```
+
+- Mỗi period = một bộ **CSS custom properties** (`--g-sky-*`,
+  `--g-tint`, `--g-glow`, `--g-particle-alpha`, `--g-shadow-scale`) gắn
+  qua `data-garden-period` trên container — đổi period là đổi biến,
+  không đổi DOM.
+- **Cây là mỏ neo thị giác — không bao giờ thay cây.** Ảnh cây chính
+  thức giữ nguyên mọi thời điểm; chỉ overlay ánh sáng phủ lên thay đổi.
+- **Ngọc tồn tại cả ngày.** Ban ngày glow dịu; đêm là trung tâm cảm xúc,
+  glow mạnh hơn nhưng có trần cường độ (không bao giờ loè loẹt).
+
+### 13.3 Chiến lược ánh sáng (Lighting Strategy)
+
+1. Nguồn sáng kể chuyện: bình minh = chân trời thấp phía đông (phải
+   khung); ngày = đỉnh trời; hoàng hôn = chân trời trái + đèn lồng; đêm
+   = trăng bạc + Ngọc + đom đóm.
+2. Ảnh cây (ánh nắng cố định trong ảnh) được "hoà" vào từng khí quyển
+   bằng lighting overlay (soft-light/multiply tint có biến độ mờ) — ảnh
+   không bị recolor, chỉ được "chiếu sáng" khác đi.
+3. Bóng đổ: một dải gradient ellipse dưới gốc cây — trưa ngắn mờ, hoàng
+   hôn dài và ấm (scaleX lớn), đêm tan vào nền.
+4. Glow không cộng dồn: mỗi period có ngân sách glow (tối đa 2 nguồn
+   glow lớn cùng lúc) để giữ thanh lịch.
+
+### 13.4 Quy tắc chuyển cảnh (Transition Rules)
+
+- **Không bao giờ đổi đột ngột.** Mọi thứ chuyển bằng nội suy
+  ánh sáng/màu: crossfade opacity giữa các lớp trời + transition trên
+  CSS variables, thời lượng **60–90 giây** khi ranh giới giờ xảy ra lúc
+  trang đang mở.
+- Khi TẢI trang: vào thẳng đúng khí quyển hiện tại (không fade từ
+  khí quyển sai).
+- Kiểm tra thời gian bằng interval nhẹ mỗi 60 giây (không rAF loop);
+  đổi period chỉ khi băng giờ thực sự đổi.
+- Chỉ animate `opacity`/`transform`/`filter` (GPU-friendly) — không
+  animate gradient trực tiếp (không nội suy được), đó là lý do dùng
+  sky-stack crossfade.
+
+### 13.5 Thời gian thực & Admin
+
+- Mặc định: **giờ địa phương của thiết bị người dùng**. Không có nút
+  chuyển tay cho người dùng.
+- Tương lai (Admin Platform): override khí quyển để duyệt thiết kế,
+  chỉnh băng giờ 4 khí quyển, bật/tắt từng lớp hiệu ứng — thêm vào danh
+  sách Admin ở mục 11.
+
+### 13.6 Hiệu năng (Performance Strategy)
+
+- MỘT khung cảnh, KHÔNG thêm ảnh/asset nào cho 4 khí quyển — toàn bộ
+  trời/ánh sáng/bóng là gradient + CSS thuần.
+- Sky stack 4 div gradient tĩnh (composite rẻ), chỉ opacity thay đổi.
+- Ngân sách hạt: ≤ 8 phần tử hạt hoạt động mỗi khí quyển (tái sử dụng
+  cùng bộ node — đổi màu/tốc độ bằng biến, không mount/unmount ồ ạt).
+- Không canvas/WebGL, không thư viện animation, không vòng lặp JS;
+  timer 60s là chi phí duy nhất ngoài CSS.
+- Mobile: giảm lớp trang trí trước (bỏ sương/bớt hạt) — giữ nguyên
+  trời + Cây + Ngọc (đúng chiến lược responsive mục 9).
+
+### 13.7 Trợ năng (Accessibility Strategy)
+
+- `prefers-reduced-motion: reduce`:
+  - **GIỮ** thay đổi ánh sáng theo giờ (đó là trạng thái, không phải
+    chuyển động) — nhưng đổi period tức thời thay vì crossfade dài.
+  - **GIẢM/TẮT** chuyển động hạt: đom đóm/bụi/sương đứng yên ở opacity
+    thấp hoặc ẩn; Ngọc ngừng "thở", giữ glow tĩnh.
+- Mọi lớp khí quyển là trang trí: `aria-hidden`, không nhận focus.
+- Tương phản chữ được kiểm ở CẢ 4 khí quyển (chữ trắng/nhạt phải đạt
+  chuẩn trên nền sáng của Ban ngày — dùng scrim cục bộ sau chữ khi cần).
+
+### 13.8 Trạng thái triển khai
+
+Phiên bản Garden P2 hiện tại đã dựng khí quyển ĐÊM (nền midnight, đom
+đóm, Ngọc thở). Ba khí quyển còn lại + hệ token/period/transition ở
+trên là bước triển khai kế tiếp của P2 — chờ lệnh Product Owner sau khi
+duyệt tài liệu này.
