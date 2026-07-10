@@ -31,16 +31,9 @@ export function CompanionPresenceBand({
       className="relative overflow-hidden rounded-2xl p-7 text-white shadow-token-lg sm:p-10"
       style={{ backgroundImage: "linear-gradient(135deg, #1E293B 0%, #2563EB 50%, #6D28D9 100%)" }}
     >
-      {/* AI grid rất nhẹ — gợi "AI Operating System", không phải hoạ tiết trang trí gaming */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-[0.07]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-        }}
-      />
+      {/* Global Background Reconstruction — đã bỏ hẳn lớp grid AI trước đây
+       * (không chỉ giảm opacity). Chiều sâu giờ chỉ đến từ 2 quầng sáng mềm
+       * bên dưới, cùng gradient nền — không hoạ tiết lặp lại. */}
       <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
 
