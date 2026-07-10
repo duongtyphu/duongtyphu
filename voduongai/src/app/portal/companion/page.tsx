@@ -43,7 +43,11 @@ export default function CompanionPresencePage() {
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
       <SanctuaryBackground />
 
-      <div className="relative z-10 mx-auto max-w-xl px-6 py-24 sm:px-10 sm:py-32">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — cùng khung rounded-3xl p-6 md:p-8 với các trang
+       * pillar khác, lộ khí quyển Sanctuary ở viền ngoài. */}
+      <div className="rounded-3xl p-6 md:p-8">
+      <div className="mx-auto max-w-xl px-6 py-24 sm:px-10 sm:py-32">
         {/* Presence — Core thở chậm, không chớp/không hiệu ứng gaming */}
         <section className="flex flex-col items-center text-center">
           <div className="companion-presence-breathe">
@@ -128,6 +132,8 @@ export default function CompanionPresencePage() {
             Sứ mệnh Companion →
           </Link>
         </footer>
+      </div>
+      </div>
       </div>
     </div>
   );

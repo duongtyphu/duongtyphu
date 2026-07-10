@@ -129,7 +129,11 @@ export default async function PremiumPage() {
         <div aria-hidden className="pointer-events-none absolute left-1/4 top-40 h-96 w-96 rounded-full bg-violet-600/10 blur-[120px]" />
         <div aria-hidden className="pointer-events-none absolute right-0 top-[60%] h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
 
-        <div className="relative mx-auto max-w-6xl space-y-12">
+        {/* Content Gutter — cùng khung rounded-3xl p-6 md:p-8 với các trang
+         * pillar khác (Home/CKOS/Academy/Projects/AI Workspace), lộ khí
+         * quyển Premium ở viền ngoài thay vì nội dung chạm sát mép. */}
+        <div className="relative rounded-3xl p-6 md:p-8">
+        <div className="mx-auto max-w-6xl space-y-12">
           {/* ── 1. Hero Premium ─────────────────────────────────────────── */}
           <section className="pt-4 text-center md:pt-8">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-400/20 to-orange-500/20 shadow-[0_0_40px_-5px_rgba(251,191,36,0.4)]">
@@ -236,6 +240,7 @@ export default async function PremiumPage() {
               ))}
             </div>
           </section>
+        </div>
         </div>
       </div>
     </div>

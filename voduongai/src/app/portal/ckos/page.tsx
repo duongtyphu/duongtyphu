@@ -169,7 +169,10 @@ export default async function CkosPage() {
        * rounded-3xl thu hẹp. */}
       <div className="ckos-atmosphere-bg" aria-hidden />
 
-      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8 space-y-10">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây (rounded-3xl
+       * p-6 md:p-8), chỉ khí quyển nền phía sau mới full-bleed. */}
+      <div className="rounded-3xl p-6 md:p-8 space-y-10">
       <PillarHero
         icon={Brain}
         tone="knowledge"
@@ -411,6 +414,7 @@ export default async function CkosPage() {
           { label: "Hỏi Companion", description: "Nhờ Companion gợi ý nên bắt đầu từ đâu.", href: "/portal/companion" },
         ]}
       />
+      </div>
       </div>
     </div>
   );

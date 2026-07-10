@@ -36,7 +36,9 @@ export default function EcosystemArticleDetailPage() {
        * tục ở trang bài viết — cùng khí quyển với /portal/duan-cohoi. */}
       <div className="projects-atmosphere-bg" aria-hidden="true" />
 
-      <div className="relative z-10 space-y-6 px-4 py-6 md:px-8 md:py-8">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — cùng khoảng cách với /portal/duan-cohoi. */}
+      <div className="rounded-3xl p-6 md:p-8 space-y-6">
         <div className="flex items-center justify-between">
           <PortalBackLink
             href={ecosystem ? `/portal/duan-cohoi/${ecosystem.slug}` : "/portal/duan-cohoi"}
@@ -81,6 +83,7 @@ export default function EcosystemArticleDetailPage() {
         <p className="text-xs leading-relaxed text-gray-500">
           Nội dung chỉ nhằm mục đích chia sẻ thông tin và trải nghiệm cá nhân, không phải lời khuyên đầu tư.
         </p>
+      </div>
       </div>
     </div>
   );

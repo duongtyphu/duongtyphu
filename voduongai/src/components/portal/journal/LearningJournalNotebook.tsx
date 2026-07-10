@@ -129,12 +129,15 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
   }
 
   return (
-    <div className="relative min-h-full overflow-hidden rounded-3xl">
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="journal-notebook-bg" aria-hidden />
       <div className="journal-notebook-lines" aria-hidden />
       <div className="journal-bookmark right-8 md:right-16" aria-hidden />
 
-      <div className="relative z-10 mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
+       * quyển nền phía sau mới full-bleed. */}
+      <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
         <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="light" />
 
         <header className="journal-page-fade mt-8">
@@ -279,6 +282,7 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
         <p className="journal-page-fade mx-auto mt-10 max-w-sm text-center text-[11px] leading-relaxed text-stone-400">
           Đây là bản ghi việc học của bạn — không phải nhật ký hoạt động của hệ thống.
         </p>
+      </div>
       </div>
     </div>
   );

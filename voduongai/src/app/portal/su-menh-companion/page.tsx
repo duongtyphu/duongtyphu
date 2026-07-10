@@ -182,7 +182,11 @@ export default function CompanionHomePage() {
         )}
       </AnimatePresence>
 
-      <div className="relative z-10 mx-auto max-w-3xl px-6 py-20 sm:px-10 sm:py-28">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — cùng khung rounded-3xl p-6 md:p-8 với các trang
+       * pillar khác, lộ khí quyển Sanctuary ở viền ngoài. */}
+      <div className="rounded-3xl p-6 md:p-8">
+      <div className="mx-auto max-w-3xl px-6 py-20 sm:px-10 sm:py-28">
         {/* ═══════════════════ HERO ═══════════════════ */}
         <section className="flex flex-col items-center text-center">
           <div className="sanctuary-glow-soft relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 via-violet-100 to-orange-50 shadow-[0_0_80px_-10px_rgba(124,58,237,0.35)]">
@@ -236,7 +240,7 @@ export default function CompanionHomePage() {
         </Link>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-3xl px-6 sm:px-10">
+      <div className="mx-auto max-w-3xl px-6 sm:px-10">
         {/* ═══════════════════ LIVING CORE™ — demo các size/state ═══════════════════ */}
         <Reveal className="mt-32">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">Living Core™</p>
@@ -548,6 +552,8 @@ export default function CompanionHomePage() {
             </p>
           )}
         </footer>
+      </div>
+      </div>
       </div>
     </div>
   );

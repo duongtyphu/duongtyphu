@@ -24,7 +24,10 @@ export default async function KnowledgeCollectionPage({
       {/* Khí quyển CKOS ("Knowledge library") tiếp tục ở trang con. */}
       <div className="ckos-atmosphere-bg" aria-hidden />
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
-        <KnowledgeCollectionView collection={collection} />
+        {/* Content Gutter — cùng khoảng cách với /portal/ckos. */}
+        <div className="rounded-3xl p-6 md:p-8">
+          <KnowledgeCollectionView collection={collection} />
+        </div>
       </div>
     </div>
   );

@@ -182,7 +182,12 @@ export default async function CommunityPage() {
       <div className="campus-glow-b" style={{ width: 300, height: 300, bottom: 60, left: -100 }} aria-hidden />
       <div className="campus-glow-c" style={{ width: 240, height: 240, bottom: -60, right: 140 }} aria-hidden />
 
-      <div className="relative z-10 mx-auto max-w-5xl space-y-16 px-5 py-10 sm:px-8 md:py-14">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — cùng khung rounded-3xl p-6 md:p-8 với các trang
+       * pillar khác (Home/CKOS/Academy/Projects/AI Workspace), lộ khí
+       * quyển Campus ở viền ngoài thay vì nội dung chạm sát mép. */}
+      <div className="rounded-3xl p-6 md:p-8">
+      <div className="mx-auto max-w-5xl space-y-16 px-5 py-10 sm:px-8 md:py-14">
         {/* ── 1. Campus Hero ───────────────────────────────────────────── */}
         <section className="campus-hero p-8 text-center sm:p-12">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Cộng đồng</p>
@@ -390,6 +395,8 @@ export default async function CommunityPage() {
             </div>
           </div>
         </section>
+      </div>
+      </div>
       </div>
     </div>
   );

@@ -72,12 +72,15 @@ export function MirrorChamber({
   const isFullyQuiet = !hasReflectionMaterial && !hasRealFacts;
 
   return (
-    <div className="relative min-h-full overflow-hidden rounded-3xl">
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="mirror-chamber-bg" aria-hidden />
       <div className="mirror-glass-veil" aria-hidden />
       <div className="mirror-reflection-line" aria-hidden />
 
-      <div className="relative z-10 mx-auto max-w-xl px-5 py-14 sm:px-8 md:py-20">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
+       * quyển nền phía sau mới full-bleed. */}
+      <div className="mx-auto max-w-xl px-5 py-14 sm:px-8 md:py-20">
         <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="dark" />
 
         <header className="mt-10 text-center">
@@ -201,6 +204,7 @@ export function MirrorChamber({
         <p className="mx-auto mt-28 max-w-xs text-center text-[11px] leading-relaxed text-white/20">
           Mirror không chấm điểm, không so sánh — chỉ phản chiếu đúng những gì bạn thật sự sống.
         </p>
+      </div>
       </div>
     </div>
   );

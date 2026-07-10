@@ -216,7 +216,10 @@ export default function OpportunitiesHubPage() {
        * với Premium, không còn khung rounded-3xl thu hẹp. */}
       <div className="projects-atmosphere-bg" aria-hidden />
 
-      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8 space-y-12">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây (rounded-3xl
+       * p-6 md:p-8), chỉ khí quyển nền phía sau mới full-bleed. */}
+      <div className="rounded-3xl p-6 md:p-8 space-y-12">
       {/* Hero */}
       <PillarHero
         icon={LineChart}
@@ -312,11 +315,11 @@ export default function OpportunitiesHubPage() {
           description="Hình minh hoạ — ảnh thật sẽ được cập nhật sau."
         />
         {/* Product Owner: dải ảnh thiết kế RỘNG, ô ảnh tăng 100% (gấp đôi).
-         * Card phá lề trái/phải của cột nội dung (bù đúng px-4 md:px-8 của
-         * wrapper full-bleed bao ngoài trang bằng -mx-4 md:-mx-8) thành một
-         * dải full-bleed viền trên/dưới; ô ảnh h-32 -> h-64, icon và nhãn
-         * phóng to tương ứng. */}
-        <div className="-mx-4 overflow-hidden border-y border-gray-100 bg-white py-8 shadow-token-sm md:-mx-8">
+         * Card phá lề trái/phải của cột nội dung (bù đúng p-6 md:p-8 của
+         * Content Gutter rounded-3xl bằng -mx-6 md:-mx-8) thành một dải
+         * full-bleed viền trên/dưới; ô ảnh h-32 -> h-64, icon và nhãn phóng
+         * to tương ứng. */}
+        <div className="-mx-6 overflow-hidden border-y border-gray-100 bg-white py-8 shadow-token-sm md:-mx-8">
           <div className="flex w-max opportunities-companions-marquee">
             {[...COMPANION_PLACEHOLDERS, ...COMPANION_PLACEHOLDERS].map((c, i) => (
               <div
@@ -416,6 +419,7 @@ export default function OpportunitiesHubPage() {
           ))}
         </div>
       </section>
+      </div>
       </div>
     </div>
   );
