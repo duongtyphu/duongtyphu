@@ -52,7 +52,7 @@ export default function AcademyHubPage() {
   const journeys = getAllLearningJourneys();
 
   return (
-    <div className="space-y-12">
+    <div className="rounded-3xl p-6 md:p-8 space-y-12">
       {/* Hero */}
       <PillarHero
         icon={GraduationCap}

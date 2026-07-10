@@ -95,7 +95,7 @@ export default async function GemHomePage() {
       : `Bạn đã sở hữu ${ownedCount} sản phẩm Premium.`;
 
   return (
-    <div className="relative space-y-10">
+    <div className="relative rounded-3xl p-6 md:p-8 space-y-10">
       {/* AI Operating System — ánh sáng nền rất nhẹ phía sau toàn trang,
        * gợi cảm giác "một hệ điều hành có sự sống" thay vì nền trắng
        * phẳng của dashboard. Cố ý mờ nhạt (opacity thấp), không cạnh
