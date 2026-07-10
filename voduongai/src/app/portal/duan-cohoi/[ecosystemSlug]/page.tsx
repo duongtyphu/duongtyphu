@@ -308,7 +308,11 @@ export default async function EcosystemMiniSitePage({
   const potentialAnalysis = eco.potentialAnalysis ?? DEFAULT_POTENTIAL_ANALYSIS;
 
   return (
-    <div className="space-y-10">
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      {/* Khí quyển Projects & Opportunities ("Opportunity center") tiếp tục
+       * ở trang con. */}
+      <div className="projects-atmosphere-bg" aria-hidden />
+      <div className="relative z-10 space-y-10 px-4 py-6 md:px-8 md:py-8">
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
@@ -360,6 +364,7 @@ export default async function EcosystemMiniSitePage({
           <PotentialAnalysisTable items={potentialAnalysis} />
         </>
       )}
+      </div>
     </div>
   );
 }

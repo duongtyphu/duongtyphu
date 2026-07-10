@@ -32,7 +32,9 @@ export default function EcosystemArticleDetailPage() {
 
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">
-      <div className="digital-asset-article-bg" aria-hidden="true" />
+      {/* Khí quyển Projects & Opportunities ("Opportunity center") tiếp
+       * tục ở trang bài viết — cùng khí quyển với /portal/duan-cohoi. */}
+      <div className="projects-atmosphere-bg" aria-hidden="true" />
 
       <div className="relative z-10 space-y-6 px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center justify-between">

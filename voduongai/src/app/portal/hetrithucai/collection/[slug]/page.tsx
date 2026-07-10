@@ -19,5 +19,13 @@ export default async function KnowledgeCollectionPage({
   const { slug } = await params;
   const collection = getKnowledgeCollectionBySlug(slug);
   if (!collection) notFound();
-  return <KnowledgeCollectionView collection={collection} />;
+  return (
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      {/* Khí quyển CKOS ("Knowledge library") tiếp tục ở trang con. */}
+      <div className="ckos-atmosphere-bg" aria-hidden />
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+        <KnowledgeCollectionView collection={collection} />
+      </div>
+    </div>
+  );
 }
