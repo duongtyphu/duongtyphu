@@ -163,7 +163,12 @@ export default async function CkosPage() {
   const featuredTool: AdminTool | undefined = toolsAdminSeed.find((t) => t.status === "Published");
 
   return (
-    <div className="rounded-3xl p-6 md:p-8 space-y-10">
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Global Visual Update — khí quyển riêng của CKOS ("Knowledge library"),
+       * thay cho nền caro chung trước đây. */}
+      <div className="ckos-atmosphere-bg" aria-hidden />
+
+      <div className="relative z-10 p-6 md:p-8 space-y-10">
       <PillarHero
         icon={Brain}
         tone="knowledge"
@@ -405,6 +410,7 @@ export default async function CkosPage() {
           { label: "Hỏi Companion", description: "Nhờ Companion gợi ý nên bắt đầu từ đâu.", href: "/portal/companion" },
         ]}
       />
+      </div>
     </div>
   );
 }

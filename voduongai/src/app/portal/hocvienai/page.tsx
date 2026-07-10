@@ -52,7 +52,12 @@ export default function AcademyHubPage() {
   const journeys = getAllLearningJourneys();
 
   return (
-    <div className="rounded-3xl p-6 md:p-8 space-y-12">
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Global Visual Update — khí quyển riêng của Academy ("Learning campus"),
+       * thay cho nền caro chung trước đây. */}
+      <div className="academy-atmosphere-bg" aria-hidden />
+
+      <div className="relative z-10 p-6 md:p-8 space-y-12">
       {/* Hero */}
       <PillarHero
         icon={GraduationCap}
@@ -215,6 +220,7 @@ export default function AcademyHubPage() {
           { label: "Xem Case Study", description: "Xem người khác đã áp dụng kiến thức này ra sao.", href: "/portal/case-studies" },
         ]}
       />
+      </div>
     </div>
   );
 }
