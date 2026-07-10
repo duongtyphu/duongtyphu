@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prompts } from "@/data/prompts";
 import { LeadGate } from "@/components/portal/LeadGate";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export function generateStaticParams() {
   return prompts.map((p) => ({ id: p.id }));
@@ -21,9 +22,7 @@ export default async function PromptDetailPage({ params }: PageProps<"/portal/pr
 
   return (
     <div className="space-y-6">
-      <Link href="/portal/prompts" className="text-sm font-semibold text-brand-blue hover:underline">
-        ← Thư viện Prompt
-      </Link>
+      <PortalBackLink href="/portal/prompts" label="Thư viện Prompt" tone="light" />
 
       <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">

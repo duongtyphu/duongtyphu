@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogPost } from "@/data/blog";
 import { AI_ARTICLES } from "@/data/khong-gian-ai";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export async function generateStaticParams() {
   return AI_ARTICLES.map((a) => ({ slug: a.slug }));
@@ -62,9 +63,7 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
         <span className="font-medium text-gray-900 line-clamp-1">{post.title}</span>
       </nav>
 
-      <Link href="/portal/aiworkspace" className="inline-block text-sm font-semibold text-blue-600 hover:underline">
-        ← Không gian AI
-      </Link>
+      <PortalBackLink href="/portal/aiworkspace" label="Không gian AI" tone="light" />
 
       {/* Header */}
       <div className="mt-6">

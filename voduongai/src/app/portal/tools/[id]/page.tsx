@@ -9,6 +9,7 @@ import { isSafeUrl } from "@/lib/urlSafety";
 import { SaveButton } from "@/components/portal/SaveButton";
 import { RelatedKnowledgePanel } from "@/components/portal/ckos/RelatedKnowledgePanel";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export default function ToolDetailPage() {
   const { id: slug } = useParams<{ id: string }>();
@@ -24,9 +25,7 @@ export default function ToolDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Link href="/portal/tools" className="text-sm font-semibold text-brand-blue hover:underline">
-          ← Thư viện công cụ
-        </Link>
+        <PortalBackLink href="/portal/tools" label="Thư viện công cụ" tone="light" />
         <SaveButton item={{ id: `tool_${tool.id}`, kind: "tool", title: tool.name, href: `/portal/tools/${tool.slug}`, meta: tool.category }} />
       </div>
 

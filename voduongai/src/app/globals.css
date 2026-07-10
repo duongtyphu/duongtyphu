@@ -1366,6 +1366,64 @@ body {
 }
 
 /* ============================================================
+ * JOURNEY HUB — Library / Museum / Beginning (mục 18.2)
+ * ============================================================ */
+.hub-museum-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 55% at 82% 6%, rgba(253, 224, 71, 0.12), transparent 62%),
+    linear-gradient(180deg, #fffdf7 0%, #fbf6ea 100%);
+}
+
+.hub-light-beam {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 38%, rgba(253, 224, 71, 0.09) 52%, transparent 68%);
+}
+
+.hub-dust-field {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Hạt bụi sáng trong vệt nắng — mật độ thấp hơn Garden, chỉ gợi cảm giác. */
+.hub-dust {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(217, 178, 79, 0.55) 0%, rgba(217, 178, 79, 0.18) 60%, transparent 100%);
+  animation: hub-dust-drift 46s linear infinite;
+  opacity: 0;
+}
+
+@keyframes hub-dust-drift {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: 0.55; }
+  50% { transform: translate(18px, -22px); opacity: 0.3; }
+  100% { transform: translate(-14px, -48px); opacity: 0; }
+}
+
+/* Khung tranh bảo tàng — chất liệu chung cho thẻ cửa/khối nội dung ở Hub,
+ * thay cho card gradient tint nhạt cũ. Góc vuông hơn (gợi khung tranh),
+ * viền mảnh màu đồng/vàng cũ, bóng rất nhẹ như tranh treo tường. */
+.hub-frame-card {
+  border-radius: 10px;
+  border: 1px solid rgba(180, 140, 60, 0.25);
+  background: rgba(255, 253, 247, 0.72);
+  box-shadow: 0 1px 2px rgba(120, 90, 40, 0.06), 0 10px 24px -16px rgba(120, 90, 40, 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hub-dust {
+    animation: none;
+    opacity: 0.25;
+  }
+}
+
+/* ============================================================
  * BÀI VIẾT / PHÂN TÍCH — trang chi tiết một bài viết Digital Assets
  * cần dễ đọc cho các khối văn bản dài, nên bỏ nền chìm caro
  * (.gemos-bg) chỉ riêng trang này, giữ nguyên .gemos-bg cho mọi

@@ -1,11 +1,11 @@
 "use client";
 
 import { useParams, notFound } from "next/navigation";
-import Link from "next/link";
 import { digitalAssetArticles, digitalAssetCategories, type DigitalAssetArticle } from "@/data/digitalAssets";
 import { ecosystems } from "@/data/portal/ecosystems";
 import { useCollection } from "@/lib/admin/store";
 import { SaveButton } from "@/components/portal/SaveButton";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 /**
  * Bài viết của Dự án & Cơ hội — route thuộc riêng Ecosystem Platform
@@ -36,12 +36,11 @@ export default function EcosystemArticleDetailPage() {
 
       <div className="relative z-10 space-y-6 px-4 py-6 md:px-8 md:py-8">
         <div className="flex items-center justify-between">
-          <Link
+          <PortalBackLink
             href={ecosystem ? `/portal/duan-cohoi/${ecosystem.slug}` : "/portal/duan-cohoi"}
-            className="text-sm font-semibold text-brand-blue hover:underline"
-          >
-            ← {ecosystem ? ecosystem.name : "Dự án & Cơ hội"}
-          </Link>
+            label={ecosystem ? ecosystem.name : "Dự án & Cơ hội"}
+            tone="light"
+          />
           <SaveButton
             item={{
               id: `digital-asset-article_${article.id}`,

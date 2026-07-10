@@ -13,6 +13,7 @@ import {
   buildInsightMemoryLine,
 } from "@/lib/portal/human-understanding";
 import { buildLetter, type MonthlyLetterStats } from "@/components/portal/story/MonthlyLetterCard";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { useReflections, type Reflection } from "@/lib/portal/reflections";
 import { useMemoryCapsules, deleteMemoryCapsule, type MemoryCapsule, type MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 import type { GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones";
@@ -194,6 +195,8 @@ export function MyStoryBook({
       <div className="story-book-bg" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
+        <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="light" />
+
         {/* ── Opening Page ─────────────────────────────────────────────── */}
         <header className="story-fade-in text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-orange-50 shadow-inner">
@@ -398,12 +401,6 @@ export function MyStoryBook({
               Mở Mirror
             </Link>
           </p>
-          <Link
-            href="/portal/hanhtrinhcuatoi"
-            className="story-serif mt-10 inline-block text-xs text-stone-400 underline decoration-stone-300 underline-offset-4 hover:text-stone-600"
-          >
-            ← Hành trình của tôi
-          </Link>
         </section>
       </div>
     </div>

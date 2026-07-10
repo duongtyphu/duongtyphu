@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LivingCore } from "@/components/LivingCore";
 import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 import { getGardenSummary, getRecentActivity, type ActivityEntry } from "@/lib/portal/foundation/growth-view";
 import { todaysMirrorQuestion } from "@/lib/portal/growth-map/mirror-question";
@@ -77,12 +78,7 @@ export function MirrorChamber({
       <div className="mirror-reflection-line" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-xl px-5 py-14 sm:px-8 md:py-20">
-        <Link
-          href="/portal/hanhtrinhcuatoi"
-          className="inline-flex items-center gap-1.5 text-xs font-medium tracking-wide text-white/35 transition hover:text-white/60"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Hành trình của tôi
-        </Link>
+        <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="dark" />
 
         <header className="mt-10 text-center">
           <LivingCore size={52} state="idle" intensity="low" showParticles={false} className="mx-auto" />

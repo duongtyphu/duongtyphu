@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ListX, ListChecks, Dumbbell, Clock } from "lucide-react";
+import { ListX, ListChecks, Dumbbell, Clock } from "lucide-react";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { LearningHero } from "../components/LearningHero";
 import { LearningOutcome } from "../components/LearningOutcome";
 import { WhyThisMatters } from "../components/WhyThisMatters";
@@ -88,13 +88,7 @@ export function KnowledgeWorkspace({ seed }: { seed: KnowledgeSeed }) {
 
   return (
     <div className="space-y-6">
-      <Link
-        href="/portal/hetrithucai"
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-blue-600"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Quay lại Thư viện AI
-      </Link>
+      <PortalBackLink href="/portal/hetrithucai" label="Thư viện AI" tone="light" />
 
       {/* Feature 04 — Knowledge Map (Learning Engine, không sửa) */}
       <KnowledgeMap collection={collection} seed={seed} next={next} isLastSeed={!next} />

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { freeResources } from "@/data/resources";
 import { LeadGate } from "@/components/portal/LeadGate";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export function generateStaticParams() {
   return freeResources.map((r) => ({ id: r.id }));
@@ -20,9 +21,7 @@ export default async function ResourceDetailPage({ params }: PageProps<"/portal/
 
   return (
     <div className="space-y-6">
-      <Link href="/portal/resources" className="text-sm font-semibold text-brand-blue hover:underline">
-        ← Tài nguyên miễn phí
-      </Link>
+      <PortalBackLink href="/portal/resources" label="Tài nguyên miễn phí" tone="light" />
 
       <div className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-8">
         <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
