@@ -133,7 +133,21 @@ export function RecommendedWorkspaceSection() {
       <SectionHeader label="Đề xuất cho bạn" title="Workspace đề xuất cho bạn" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {RECOMMENDED_WORKSPACES.map((ws) => (
-          <div key={ws.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <button
+            key={ws.id}
+            type="button"
+            onClick={() =>
+              practice({
+                source: "recommended-workspace",
+                itemId: ws.id,
+                itemType: "workspace",
+                title: ws.title,
+                expectedOutput: ws.expectedOutput,
+                missionId: RECOMMENDED_WORKSPACE_TO_MISSION[ws.id],
+              })
+            }
+            className="group flex cursor-pointer flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+          >
             <p className="font-semibold text-gray-900">{ws.title}</p>
             <p className="text-xs leading-relaxed text-gray-500">{ws.goal}</p>
             <div className="mt-1 flex flex-wrap gap-1.5 text-[10px] text-gray-400">
@@ -141,23 +155,10 @@ export function RecommendedWorkspaceSection() {
               <span className="rounded-full bg-gray-50 px-2 py-0.5">🎯 {ws.expectedOutput}</span>
             </div>
             <p className="text-[10px] text-gray-400">Công cụ gợi ý: {ws.suggestedTools.join(", ")}</p>
-            <button
-              type="button"
-              onClick={() =>
-                practice({
-                  source: "recommended-workspace",
-                  itemId: ws.id,
-                  itemType: "workspace",
-                  title: ws.title,
-                  expectedOutput: ws.expectedOutput,
-                  missionId: RECOMMENDED_WORKSPACE_TO_MISSION[ws.id],
-                })
-              }
-              className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
-            >
+            <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 transition group-hover:text-blue-700">
               Bắt đầu Workspace <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
     </section>
@@ -172,7 +173,12 @@ export function AiWorkflowSection() {
       <SectionHeader label="Quy trình" title="Quy trình AI theo công việc" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {AI_WORKFLOWS.map((flow) => (
-          <div key={flow.id} className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <button
+            key={flow.id}
+            type="button"
+            onClick={() => practice({ source: "workflow", itemId: flow.id, itemType: "workflow", title: flow.title })}
+            className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+          >
             <p className="font-semibold text-gray-900">{flow.title}</p>
             <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
               {flow.steps.map((step, i) => (
@@ -183,14 +189,10 @@ export function AiWorkflowSection() {
               ))}
             </div>
             <p className="text-[10px] text-gray-400">AI gợi ý: {flow.suggestedTools.join(", ")}</p>
-            <button
-              type="button"
-              onClick={() => practice({ source: "workflow", itemId: flow.id, itemType: "workflow", title: flow.title })}
-              className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
-            >
+            <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 transition group-hover:text-blue-700">
               Thực hành quy trình này <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
     </section>
@@ -217,7 +219,7 @@ export function PromptLibrarySection() {
       <SectionHeader label="Thư viện Prompt" title="Prompt Library" href="/portal/prompts" hrefLabel="Xem tất cả Prompt" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {prompts.slice(0, 9).map((prompt) => (
-          <div key={prompt.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div key={prompt.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
               {prompt.category}
             </span>
@@ -289,7 +291,7 @@ export function ResourceSection() {
       <SectionHeader label="Tài nguyên" title="Tài nguyên thực hành" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {AI_RESOURCES.map((resource) => (
-          <div key={resource.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <div key={resource.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
               {resource.type}
             </span>
