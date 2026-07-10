@@ -1034,6 +1034,113 @@ body {
 }
 
 /* ============================================================
+ * KHU VƯỜN 2.0 — GARDEN_VISUAL_DIRECTION.md (PO approved, P2)
+ * Khu vườn cổ tích: nền khí quyển midnight → bình minh nhiều lớp
+ * (không flat gradient), bụi sáng trôi chậm, Viên ngọc "thở" dưới
+ * gốc cây. Mọi chuyển động tôn trọng prefers-reduced-motion.
+ * ============================================================ */
+
+.garden-night-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 75% 45% at 50% 108%, rgba(251, 191, 36, 0.16), transparent 70%),
+    radial-gradient(ellipse 55% 40% at 78% 18%, rgba(124, 58, 237, 0.14), transparent 70%),
+    radial-gradient(ellipse 50% 45% at 15% 60%, rgba(20, 184, 166, 0.10), transparent 70%),
+    radial-gradient(ellipse 60% 35% at 50% -5%, rgba(37, 99, 235, 0.22), transparent 70%),
+    linear-gradient(180deg, #0A1128 0%, #0E1F3A 48%, #0B2A26 100%);
+}
+
+/* Sương mỏng trôi ngang rất chậm ở tầng thấp của trang. */
+.garden-mist {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 42%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(148, 163, 184, 0.07) 45%, rgba(148, 163, 184, 0.12));
+  filter: blur(18px);
+  animation: garden-mist-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes garden-mist-drift {
+  from { transform: translateX(-2.5%); opacity: 0.7; }
+  to { transform: translateX(2.5%); opacity: 1; }
+}
+
+/* Bụi sáng / đom đóm — chấm sáng nhỏ trôi lên rất chậm. */
+.garden-dust {
+  position: absolute;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(253, 230, 138, 0.95) 0%, rgba(253, 230, 138, 0.35) 55%, transparent 100%);
+  box-shadow: 0 0 8px 1px rgba(253, 230, 138, 0.45);
+  pointer-events: none;
+  animation: garden-dust-float 18s linear infinite;
+  opacity: 0;
+}
+
+@keyframes garden-dust-float {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  12% { opacity: 0.85; }
+  55% { transform: translateY(-46vh) translateX(14px); opacity: 0.5; }
+  100% { transform: translateY(-88vh) translateX(-8px); opacity: 0; }
+}
+
+/* Viên ngọc — glow "thở" 7s/chu kỳ + vầng sáng hắt xuống rễ/cỏ. */
+.garden-gem-core {
+  animation: garden-gem-breathe 7s ease-in-out infinite;
+}
+
+@keyframes garden-gem-breathe {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(94, 234, 212, 0.55)) drop-shadow(0 0 26px rgba(251, 191, 36, 0.30));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 18px rgba(94, 234, 212, 0.85)) drop-shadow(0 0 44px rgba(251, 191, 36, 0.50));
+    transform: scale(1.06);
+  }
+}
+
+.garden-gem-cast {
+  position: absolute;
+  left: 50%;
+  bottom: -46%;
+  width: 240%;
+  height: 100%;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 50% 55% at 50% 40%, rgba(253, 230, 138, 0.4), rgba(94, 234, 212, 0.14) 55%, transparent 75%);
+  filter: blur(8px);
+  pointer-events: none;
+  animation: garden-gem-cast-breathe 7s ease-in-out infinite;
+}
+
+@keyframes garden-gem-cast-breathe {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+/* Hạt mầm phát sáng — empty state của khu vườn trống. */
+.garden-seed-glow {
+  animation: garden-gem-breathe 6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .garden-mist,
+  .garden-dust,
+  .garden-gem-core,
+  .garden-gem-cast,
+  .garden-seed-glow {
+    animation: none;
+  }
+  .garden-dust {
+    opacity: 0.5;
+  }
+}
+
+/* ============================================================
  * BÀI VIẾT / PHÂN TÍCH — trang chi tiết một bài viết Digital Assets
  * cần dễ đọc cho các khối văn bản dài, nên bỏ nền chìm caro
  * (.gemos-bg) chỉ riêng trang này, giữ nguyên .gemos-bg cho mọi
