@@ -1366,21 +1366,26 @@ body {
 }
 
 /* ============================================================
- * JOURNEY HUB — Library / Museum / Beginning (mục 18.2)
+ * JOURNEY HUB — Bright Atrium (Product Owner color pass, thay cho
+ * bản museum/ivory trước đó): nền trắng-trong sắc nét pha ánh sáng
+ * thương hiệu (xanh dương/tím/cam) thay vì tông ngà/nâu cũ, thẻ cửa
+ * kính mờ (glass) màu riêng từng cửa thay vì chất liệu đồng nhất.
  * ============================================================ */
-.hub-museum-bg {
+.hub-atrium-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 55% 55% at 82% 6%, rgba(253, 224, 71, 0.12), transparent 62%),
-    linear-gradient(180deg, #fffdf7 0%, #fbf6ea 100%);
+    radial-gradient(60% 55% at 12% -5%, rgba(37, 99, 235, 0.10), transparent 62%),
+    radial-gradient(55% 50% at 105% 15%, rgba(124, 58, 237, 0.09), transparent 60%),
+    radial-gradient(45% 40% at 55% 105%, rgba(249, 115, 22, 0.06), transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #f7f9fd 100%);
 }
 
-.hub-light-beam {
+.hub-atrium-sheen {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(115deg, transparent 38%, rgba(253, 224, 71, 0.09) 52%, transparent 68%);
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.55) 52%, transparent 62%);
 }
 
 .hub-dust-field {
@@ -1390,36 +1395,39 @@ body {
   pointer-events: none;
 }
 
-/* Hạt bụi sáng trong vệt nắng — mật độ thấp hơn Garden, chỉ gợi cảm giác. */
+/* Hạt sáng lấp lánh rất nhẹ — sắc lạnh (xanh/tím thương hiệu) thay vì
+ * vàng ấm cũ, mật độ thấp, chỉ gợi cảm giác "trong". */
 .hub-dust {
   position: absolute;
   border-radius: 9999px;
-  background: radial-gradient(circle, rgba(217, 178, 79, 0.55) 0%, rgba(217, 178, 79, 0.18) 60%, transparent 100%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.55) 0%, rgba(99, 102, 241, 0.16) 60%, transparent 100%);
   animation: hub-dust-drift 46s linear infinite;
   opacity: 0;
 }
 
 @keyframes hub-dust-drift {
   0% { transform: translate(0, 0); opacity: 0; }
-  10% { opacity: 0.55; }
-  50% { transform: translate(18px, -22px); opacity: 0.3; }
+  10% { opacity: 0.5; }
+  50% { transform: translate(18px, -22px); opacity: 0.28; }
   100% { transform: translate(-14px, -48px); opacity: 0; }
 }
 
-/* Khung tranh bảo tàng — chất liệu chung cho thẻ cửa/khối nội dung ở Hub,
- * thay cho card gradient tint nhạt cũ. Góc vuông hơn (gợi khung tranh),
- * viền mảnh màu đồng/vàng cũ, bóng rất nhẹ như tranh treo tường. */
-.hub-frame-card {
-  border-radius: 10px;
-  border: 1px solid rgba(180, 140, 60, 0.25);
-  background: rgba(255, 253, 247, 0.72);
-  box-shadow: 0 1px 2px rgba(120, 90, 40, 0.06), 0 10px 24px -16px rgba(120, 90, 40, 0.18);
+/* Thẻ kính mờ dùng chung cho khối nội dung trung tính (câu hỏi suy ngẫm,
+ * CTA) — nền trắng trong pha blur, viền rất nhạt, bóng mềm sắc nét. Thẻ
+ * cửa (DOORS) không dùng class này — mỗi cửa có style kính màu riêng. */
+.hub-glass-card {
+  border-radius: 20px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 16px 32px -20px rgba(15, 23, 42, 0.16);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hub-dust {
     animation: none;
-    opacity: 0.25;
+    opacity: 0.2;
   }
 }
 

@@ -59,7 +59,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
   }, [premiumCount]);
 
   if (chapter === undefined || hasAnyJourney === null) {
-    return <div className="map-parchment-bg -mx-4 -my-6 min-h-[70vh] md:-mx-8 md:-my-8" aria-hidden />;
+    return <div className="map-parchment-bg min-h-[70vh] rounded-3xl" aria-hidden />;
   }
   // Gán lại thành hằng số mới để TypeScript giữ nguyên kiểu đã hẹp
   // (JourneyChapter, không còn `undefined`) bên trong các closure phía dưới.
@@ -84,7 +84,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
           : { text: "Tiếp tục thực hành trong Workspace.", href: "/portal/workspace" };
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+    <div className="relative min-h-full overflow-hidden rounded-3xl">
       <div className="map-parchment-bg" aria-hidden />
       <div className="map-topo-lines" aria-hidden />
 

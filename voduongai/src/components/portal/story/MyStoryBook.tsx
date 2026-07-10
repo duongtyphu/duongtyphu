@@ -187,11 +187,11 @@ export function MyStoryBook({
   }
 
   if (isBookLoading) {
-    return <div className="story-book-bg -mx-4 -my-6 min-h-[60vh] md:-mx-8 md:-my-8" aria-hidden />;
+    return <div className="story-book-bg min-h-[60vh] rounded-3xl" aria-hidden />;
   }
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full md:-mx-8 md:-my-8">
+    <div className="relative min-h-full overflow-hidden rounded-3xl">
       <div className="story-book-bg" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
