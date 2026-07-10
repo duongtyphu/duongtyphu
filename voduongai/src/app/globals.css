@@ -1859,3 +1859,73 @@ body {
     opacity: 0.5;
   }
 }
+
+/* ============================================================
+ * NHẬT KÝ HỌC TẬP — Personal Notebook (Journey Platform, Phase P5)
+ * Sổ tay cá nhân trên bàn viết: giấy xám ấm (khác nâu hổ phách của My
+ * Story, khác ivory của Hub), đường kẻ ngang cực mờ gợi giấy sổ tay,
+ * dải bookmark da/cam thương hiệu làm chi tiết nhận diện riêng.
+ * Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 18.6.
+ * ============================================================ */
+
+.journal-notebook-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px circle at 88% -6%, rgba(120, 113, 108, 0.06), transparent 60%),
+    linear-gradient(180deg, #F6F5F2 0%, #EEEBE4 100%);
+}
+
+/* Đường kẻ ngang rất mờ gợi giấy sổ tay — KHÔNG nổi bật, chỉ gợi cảm giác. */
+.journal-notebook-lines {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 34px,
+    rgba(87, 83, 78, 0.05) 34px,
+    rgba(87, 83, 78, 0.05) 35px
+  );
+}
+
+/* Dải bookmark — chi tiết nhận diện riêng của Nhật ký, không cửa nào
+ * khác có. Đổ bóng rất nhẹ như dây vải thật gắn vào mép trang. */
+.journal-bookmark {
+  position: absolute;
+  top: 0;
+  width: 22px;
+  height: 84px;
+  background: linear-gradient(180deg, #FF7A00 0%, #E86A00 85%, #E86A00 100%);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
+  box-shadow: 0 4px 10px -4px rgba(120, 53, 15, 0.35);
+  animation: journal-bookmark-sway 9s ease-in-out infinite;
+  transform-origin: top center;
+}
+
+@keyframes journal-bookmark-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(1.2deg); }
+}
+
+/* Trang hiện ra khi cuộn tới — mờ dần nhẹ, không dramatic. */
+@media (prefers-reduced-motion: no-preference) {
+  .journal-page-fade {
+    animation: journal-page-fade-in 0.8s ease-out both;
+  }
+}
+
+@keyframes journal-page-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal-bookmark {
+    animation: none;
+  }
+}
