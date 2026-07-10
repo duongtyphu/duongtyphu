@@ -263,9 +263,17 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
           </>
         )}
 
-        {/* ── 6. Ý định học tiếp theo — một lời mời duy nhất ─────────────── */}
+        {/* ── 6. Ý định học tiếp theo — một lời mời duy nhất + MỘT hành
+         * động tiếp theo (P7 polish: Journal là cửa duy nhất thiếu CTA
+         * khép trang, các cửa khác đều có) ──────────────────────────── */}
         <section className="journal-page-fade mt-14 text-center">
           <p className="text-sm italic leading-relaxed text-stone-600">{todaysJournalIntention()}</p>
+          <Link
+            href="/portal/workspace"
+            className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-700 underline decoration-orange-700/30 underline-offset-4 hover:decoration-orange-700"
+          >
+            Tiếp tục trong Workspace <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </section>
 
         <p className="journal-page-fade mx-auto mt-10 max-w-sm text-center text-[11px] leading-relaxed text-stone-400">

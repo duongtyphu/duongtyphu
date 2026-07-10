@@ -43,7 +43,7 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
   }, []);
 
   return (
-    <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+    <section className="hub-glass-card p-6 md:p-8">
       <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
         <Sparkles className="h-3.5 w-3.5 text-blue-400" />
         {VARIANT_TITLE[variant]}
