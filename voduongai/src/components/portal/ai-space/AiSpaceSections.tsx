@@ -104,20 +104,21 @@ export function WorkNeedSection({
       <SectionHeader label={label} title={title} />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {WORK_NEEDS.map((need) => (
-          <div key={need.id} className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+          <button
+            key={need.id}
+            type="button"
+            onClick={() => practice({ source: "work-need", itemId: need.id, itemType: "work_need", title: need.title })}
+            className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+          >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-2xl">{need.icon}</div>
             <div>
               <p className="font-semibold text-gray-900">{need.title}</p>
               <p className="mt-1 text-xs leading-relaxed text-gray-500">{need.description}</p>
             </div>
-            <button
-              type="button"
-              onClick={() => practice({ source: "work-need", itemId: need.id, itemType: "work_need", title: need.title })}
-              className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
-            >
+            <span className="mt-auto flex items-center gap-1 text-xs font-semibold text-blue-600 transition group-hover:text-blue-700">
               {ctaLabel} <ArrowRight className="h-3.5 w-3.5" />
-            </button>
-          </div>
+            </span>
+          </button>
         ))}
       </div>
     </section>
