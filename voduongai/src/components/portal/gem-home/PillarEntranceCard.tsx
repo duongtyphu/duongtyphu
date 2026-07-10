@@ -96,7 +96,7 @@ const SURFACE: Record<
     radius: "rounded-[1.5rem]",
   },
   rose: {
-    card: "border-transparent bg-white bg-clip-padding shadow-[0_0_0_1.5px_rgba(244,114,182,0.35)] hover:shadow-[0_0_0_1.5px_rgba(244,114,182,0.6)]",
+    card: "border-transparent bg-gradient-to-br from-rose-50/70 via-white to-white bg-clip-padding shadow-[0_0_0_1.5px_rgba(244,114,182,0.35)] hover:shadow-[0_0_0_1.5px_rgba(244,114,182,0.6)]",
     iconChip: "bg-gradient-to-br from-blue-100 via-violet-100 to-rose-100",
     iconColor: "text-violet-600",
     accentText: "text-violet-600",
