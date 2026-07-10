@@ -42,7 +42,6 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
   const [connections, setConnections] = useState<{ label: string; href: string; count: number }[]>([]);
   const [hasAnyJourney, setHasAnyJourney] = useState<boolean | null>(null);
-  const [totalOutputs, setTotalOutputs] = useState(0);
 
   useEffect(() => {
     const summary = getGardenSummary();
@@ -55,7 +54,6 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
     setChapter(getCurrentChapterFromClient(premiumCount));
     setConnections(conns);
     setHasAnyJourney(summary.journeysTouched > 0);
-    setTotalOutputs(summary.totalOutputs);
   }, [premiumCount]);
 
   if (chapter === undefined || hasAnyJourney === null) {
@@ -79,9 +77,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
       ? { text: "Viết suy ngẫm đầu tiên của bạn.", href: "/portal/story" }
       : !hasAnyJourney
         ? { text: "Bắt đầu hành trình học đầu tiên của bạn.", href: "/portal/hocvienai" }
-        : totalOutputs === 0
-          ? { text: "Tiếp tục thực hành trong Workspace.", href: "/portal/workspace" }
-          : { text: "Tiếp tục thực hành trong Workspace.", href: "/portal/workspace" };
+        : { text: "Tiếp tục thực hành trong Workspace.", href: "/portal/workspace" };
 
   return (
     <div className="relative min-h-full overflow-hidden rounded-3xl">

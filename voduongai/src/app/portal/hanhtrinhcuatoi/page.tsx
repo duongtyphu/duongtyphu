@@ -250,13 +250,11 @@ export default async function JourneyHubPage() {
           <GrowthActivityPanel variant="journey" />
         </section>
 
-        {/* ── 5. MỘT câu hỏi suy ngẫm ────────────────────────────────────── */}
+        {/* ── 5. MỘT câu hỏi suy ngẫm — chỉ để ngẫm, không kèm CTA riêng
+         * (P7 polish: tránh 2 CTA "cuối trang" cạnh nhau với khối 6) ───── */}
         <div className="hub-glass-card p-5 sm:p-6">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Câu hỏi hôm nay</p>
           <p className="mt-2 text-base font-semibold leading-relaxed text-gray-800">{todaysPrompt()}</p>
-          <Button href="/portal/mirror" variant="secondary" className="mt-4">
-            Ngẫm cùng Mirror →
-          </Button>
         </div>
 
         {/* ── 6. MỘT hành động tiếp tục ──────────────────────────────────── */}
