@@ -1,15 +1,16 @@
 /**
  * The Sanctuary of Companion™ — background riêng cho /portal/companion
- * và /portal/hanh-trinh-cua-toi. Mesh gradient nhẹ + grid caro chìm +
- * floating light + noise cực nhỏ. Không dùng ở bất kỳ trang Portal nào
- * khác. Đặt bên trong một wrapper `relative` để phủ toàn bộ nội dung
- * bên dưới (position: absolute, không phải fixed — chỉ che khu vực của
- * chính trang này, không ảnh hưởng Sidebar/Header).
+ * và /portal/su-menh-companion. Mesh gradient nhẹ + floating light +
+ * noise cực nhỏ (Global Visual Update: đã bỏ lớp grid caro chìm trước
+ * đây). Không dùng ở bất kỳ trang Portal nào khác. Đặt bên trong một
+ * wrapper `relative` để phủ toàn bộ nội dung bên dưới (position:
+ * absolute, không phải fixed — chỉ che khu vực của chính trang này,
+ * không ảnh hưởng Sidebar/Header).
  *
  * variant "default" — /portal/companion: Pearl White → Soft Blue →
  * Lavender → Warm Sunrise Orange → White.
- * variant "warm" — /portal/hanh-trinh-cua-toi: White → Soft Blue →
- * Warm Orange → White (bỏ mesh tím, ấm và nhẹ hơn).
+ * variant "warm" — không còn trang nào đang dùng (trước đây là
+ * /portal/hanh-trinh-cua-toi, nay đã archive) — giữ lại cho tương lai.
  */
 export function SanctuaryBackground({ variant = "default" }: { variant?: "default" | "warm" }) {
   const bgClass = variant === "warm" ? "sanctuary-bg-warm" : "sanctuary-bg";

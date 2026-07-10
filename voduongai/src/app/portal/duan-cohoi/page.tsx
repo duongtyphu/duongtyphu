@@ -210,7 +210,12 @@ const FAQ = [
 
 export default function OpportunitiesHubPage() {
   return (
-    <div className="rounded-3xl p-6 md:p-8 space-y-12">
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Global Visual Update — khí quyển riêng của Projects & Opportunities
+       * ("Opportunity center"), thay cho nền caro chung trước đây. */}
+      <div className="projects-atmosphere-bg" aria-hidden />
+
+      <div className="relative z-10 p-6 md:p-8 space-y-12">
       {/* Hero */}
       <PillarHero
         icon={LineChart}
@@ -410,6 +415,7 @@ export default function OpportunitiesHubPage() {
           ))}
         </div>
       </section>
+      </div>
     </div>
   );
 }

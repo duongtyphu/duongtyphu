@@ -29,10 +29,11 @@ export const metadata = {
  * dương/tím/cam), thẻ cửa kính mờ (glass) MÀU RIÊNG từng cửa (không còn
  * chất liệu đồng nhất "khung tranh bảo tàng"). Khung trang cũng đổi từ
  * full-bleed sang shell `rounded-3xl` thu hẹp — cùng khuôn với các trang
- * hub khác của Portal (Home/CKOS/Academy/Projects/AI Workspace), nền caro
- * chung của Portal lộ ra ở viền ngoài. 5 cửa con (Garden/Mirror/My
- * Story/Journal/Journey Map) giữ nguyên màu khí quyển riêng, chỉ đổi khung
- * ngoài sang shell tương tự.
+ * hub khác của Portal (Home/CKOS/Academy/Projects/AI Workspace). Global
+ * Visual Update: viền ngoài giờ không còn lộ nền caro (đã bỏ khỏi toàn
+ * Portal) — mỗi trang hub có khí quyển riêng của chính nó. 5 cửa con
+ * (Garden/Mirror/My Story/Journal/Journey Map) giữ nguyên màu khí quyển
+ * riêng, chỉ đổi khung ngoài sang shell tương tự.
  */
 
 type JourneyDoor = {

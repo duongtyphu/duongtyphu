@@ -95,16 +95,12 @@ export default async function GemHomePage() {
       : `Bạn đã sở hữu ${ownedCount} sản phẩm Premium.`;
 
   return (
-    <div className="relative rounded-3xl p-6 md:p-8 space-y-10">
-      {/* AI Operating System — ánh sáng nền rất nhẹ phía sau toàn trang,
-       * gợi cảm giác "một hệ điều hành có sự sống" thay vì nền trắng
-       * phẳng của dashboard. Cố ý mờ nhạt (opacity thấp), không cạnh
-       * tranh với nội dung. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-20 left-1/2 -z-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-gradient-to-br from-blue-200/25 via-violet-200/20 to-transparent blur-3xl"
-      />
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Global Visual Update — khí quyển riêng của Home ("Warm welcome"),
+       * thay cho nền caro chung trước đây. */}
+      <div className="home-atmosphere-bg" aria-hidden />
 
+      <div className="relative z-10 p-6 md:p-8 space-y-10">
       {/* Companion Presence Band — lời chào, giữ nguyên (đã duyệt) */}
       <CompanionPresenceBand
         name={profile?.fullName}
@@ -209,6 +205,7 @@ export default async function GemHomePage() {
           { label: "Mở Companion", description: "Để Companion dẫn bạn tới đúng nơi cần đến.", href: "/portal/companion" },
         ]}
       />
+      </div>
     </div>
   );
 }

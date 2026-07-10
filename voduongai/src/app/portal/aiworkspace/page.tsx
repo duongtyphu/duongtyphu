@@ -119,7 +119,12 @@ export default function KhongGianAiPage() {
   const featuredArticles = AI_ARTICLES.filter((a) => a.featured);
 
   return (
-    <div className="rounded-3xl p-6 md:p-8 space-y-10">
+    <div className="relative overflow-hidden rounded-3xl">
+      {/* Global Visual Update — khí quyển riêng của AI Workspace ("Creative
+       * studio"), thay cho nền caro chung trước đây. */}
+      <div className="workspace-atmosphere-bg" aria-hidden />
+
+      <div className="relative z-10 p-6 md:p-8 space-y-10">
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
       {/* Nền gradient đậm cùng khuôn dải hero màu của các pillar khác (Học
        * viện tri thức AI tone "knowledge", Học viện AI tone "learning" — xem
@@ -249,6 +254,7 @@ export default function KhongGianAiPage() {
           </Link>
         </div>
       </section>
+      </div>
     </div>
   );
 }
