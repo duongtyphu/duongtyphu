@@ -41,7 +41,7 @@ export function PortalHeader({
         <div className="ml-auto flex flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">
           <PortalSearch />
 
-          <Link href="/portal/updates" aria-label="Thông báo" title="Thông báo" className={iconButtonClass}>
+          <Link href="/portal/congdongai#tin-tuc" aria-label="Thông báo" title="Thông báo" className={iconButtonClass}>
             <Bell className="h-4 w-4" />
           </Link>
 

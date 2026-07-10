@@ -1,3 +1,14 @@
+// @archived — Community Campus Reconstruction (Product Owner approved).
+// Route này giờ REDIRECT vĩnh viễn về /portal/congdongai#tin-tuc (xem
+// next.config.ts) — component dưới đây không còn được render nữa.
+//
+// Nội dung KHÔNG bị bỏ (đây là dữ liệu thật về sản phẩm, không phải dữ
+// liệu bịa) — đã MOVE nguyên vẹn vào khối "Community News" tại
+// /portal/congdongai (mảng `NEWS`). Icon chuông ở PortalHeader cũng đã
+// trỏ thẳng sang đích mới.
+//
+// Giữ nguyên file (không xoá) chỉ để tham chiếu lịch sử.
+
 export const metadata = { title: "Tin tức & Cập nhật", description: "Cập nhật mới nhất về Prompt, công cụ và nội dung trong Học viện VO DUONG AI." };
 
 const UPDATES = [

@@ -1,3 +1,17 @@
+// @archived — Community Campus Reconstruction (Product Owner approved).
+// Route này giờ REDIRECT vĩnh viễn về /portal/congdongai (xem
+// next.config.ts) — component dưới đây không còn được render nữa.
+//
+// Lý do archive (không migrate nội dung): 3 "câu chuyện học viên" bên dưới
+// là dữ liệu BỊA — không có ảnh thật, không xác thực được danh tính/kết
+// quả — vi phạm trực tiếp nguyên tắc NO-FAKE-DATA của toàn dự án và yêu
+// cầu tường minh của brief Community Campus ("Use real data only").
+// Community Stories tại /portal/congdongai dùng đúng empty state trung
+// thực đã duyệt: "Câu chuyện đầu tiên của cộng đồng đang chờ được viết."
+// cho tới khi có câu chuyện thật đầu tiên (ảnh + tên + xác nhận thật).
+//
+// Giữ nguyên file (không xoá) chỉ để tham chiếu lịch sử.
+
 export const metadata = { title: "Thành công học viên" };
 
 const STORIES = [

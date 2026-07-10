@@ -4,13 +4,13 @@ import { Button } from "@/components/portal/ui/Button";
 // Portal 3.0 — Product Transformation Wave 1.
 //
 // Shared hero band used across the redesigned pillar pages (CKOS, Academy,
-// Projects & Opportunities, Community). Companion, Home, Premium and the
+// Projects & Opportunities). Companion, Home, Premium, Community and the
 // Journey doors keep their own bespoke heroes — each already went through
 // its own approved visual direction and intentionally diverges from this
 // shared band. One component = one shared design language for the pages
 // that use it; the `tone` gradient + copy give each page its own visual
 // identity, per the brief's "Visual Identity riêng, cùng Design Language."
-export type PillarTone = "brand" | "knowledge" | "learning" | "opportunity" | "value" | "community";
+export type PillarTone = "brand" | "knowledge" | "learning" | "opportunity" | "value";
 
 const TONE_GRADIENT: Record<PillarTone, string> = {
   brand: "linear-gradient(135deg, #2563EB 0%, #5B8CFF 45%, #7C3AED 100%)",
@@ -18,7 +18,6 @@ const TONE_GRADIENT: Record<PillarTone, string> = {
   learning: "linear-gradient(135deg, #2563EB 0%, #0891B2 55%, #10B981 100%)",
   opportunity: "linear-gradient(135deg, #059669 0%, #0D9488 45%, #F59E0B 100%)",
   value: "linear-gradient(135deg, #7C3AED 0%, #C026D3 50%, #FBBF24 100%)",
-  community: "linear-gradient(135deg, #0284C7 0%, #6366F1 50%, #EC4899 100%)",
 };
 
 export type PillarQuickAction = { label: string; href: string };

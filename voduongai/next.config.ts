@@ -33,6 +33,12 @@ const nextConfig: NextConfig = {
       { source: "/portal/hanh-trinh-cua-toi", destination: "/portal/hanhtrinhcuatoi", permanent: true },
       { source: "/blog", destination: "/blogai", permanent: true },
       { source: "/blog/:path*", destination: "/blogai/:path*", permanent: true },
+      // Community Campus Reconstruction — student-success (câu chuyện bịa,
+      // archived) gộp vào Community Stories thật; updates (tin tức thật)
+      // chuyển hẳn vào khối Community News trên trang Community mới. (experts
+      // giữ redirect ở page.tsx của chính nó, đã trỏ lại đích mới.)
+      { source: "/portal/student-success", destination: "/portal/congdongai", permanent: true },
+      { source: "/portal/updates", destination: "/portal/congdongai#tin-tuc", permanent: true },
     ];
   },
 };
