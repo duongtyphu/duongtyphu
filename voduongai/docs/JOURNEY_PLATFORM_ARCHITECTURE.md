@@ -5,9 +5,11 @@
 Ngày: 2026-07-09 · Chế độ: DESIGN FIRST — NO CODE
 
 > Tài liệu này là hợp đồng thiết kế. Sau khi Product Owner duyệt, việc
-> triển khai mới bắt đầu, theo đúng các phase ở mục 18. Mọi khẳng định về
+> triển khai mới bắt đầu, theo đúng các phase ở mục 19. Mọi khẳng định về
 > hiện trạng trong tài liệu đều đã được đối chiếu với code thật tại thời
-> điểm viết (đường dẫn file kèm theo).
+> điểm viết (đường dẫn file kèm theo). Mục 18 (Global Art Direction) là
+> đặc tả thị giác PO đã duyệt cho sáu không gian Journey — phải đối chiếu
+> trước khi triển khai P4 trở đi.
 
 ---
 
@@ -368,21 +370,183 @@ với Learning Platform, xem TECH_DEBT_LEARNING_PLATFORM.md):
 
 ---
 
-## 18. Các phase triển khai (sau khi tài liệu này được duyệt)
+## 18. GLOBAL ART DIRECTION — Sáu không gian cảm xúc
 
-| Phase | Nội dung | Phụ thuộc |
+**Trạng thái: PRODUCT OWNER APPROVED.** Cập nhật đúng theo brief "PORTAL 4.0
+— JOURNEY PLATFORM — GLOBAL ART DIRECTION". Nguyên tắc cốt lõi: **Journey
+không phải một trang — là sáu không gian cảm xúc khác nhau**, mỗi cửa một
+khí quyển/ánh sáng/nền/tông cảm xúc/nhận diện thị giác RIÊNG, nhưng tất cả
+vẫn thuộc cùng một ngôn ngữ thiết kế VO DUONG AI (bảng màu gốc
+brand-blue/brand-violet/brand-orange + hệ token GemOS đã có toàn Portal).
+**Chỉ đổi icon/màu là KHÔNG đủ** — mỗi cửa phải khác về ánh sáng, nền, kết
+cấu, không chỉ khác palette.
+
+**Quality Gate** (áp dụng cho cả sáu cửa, không chỉ Garden): đặt ảnh chụp
+màn hình sáu trang cạnh nhau, che hết chữ và logo — mỗi trang vẫn phải
+nhận ra được ngay lập tức nhờ đúng bố cục/ánh sáng/kết cấu riêng của nó.
+
+### 18.1 Bảng nhận diện sáu không gian
+
+| # | Không gian | Chủ đề | Trạng thái hiện tại |
+|---|---|---|---|
+| 1 | Journey Hub | Library · Museum · Beginning · Premium paper · Soft ivory · Warm sunlight | ⚠️ **CẦN REDESIGN** — hiện chỉ là 1 card gradient nhạt xám-xanh (`slate-50 → white → blue-50/40`), không mang khí chất "thư viện/bảo tàng" nào |
+| 2 | Garden | Fairy Garden · Moonlight · Emerald · Living nature | ✅ Đã duyệt & xây (P2) — xem `GARDEN_VISUAL_DIRECTION.md` |
+| 3 | My Story | Hardcover Book · Warm paper · Parchment · Elegant typography · Premium editorial | ✅ Đã xây (P3) — `.story-book-bg`/`.story-serif`/dấu phân chương, đã đúng tinh thần, giữ nguyên |
+| 4 | Mirror | Reflection · Smoky glass · Silver · Cold blue · Soft violet · Minimal light · Calm silence | ⚠️ **CẦN REDESIGN** — hiện dùng card trắng GemCard mặc định, chưa có khí quyển "gương" nào |
+| 5 | Nhật ký học tập | Notebook · Warm gray paper · Journal · Bookmarks · Writing desk · Thoughtful | ⚠️ **CẦN REDESIGN** — hiện là trang trắng tối giản (sau P1), chưa có kết cấu "sổ tay" |
+| 6 | Journey Map | Explorer Map · Old parchment · Compass · Topographic lines · Adventure · Direction | ⏳ Chưa xây (P6) — spec dưới đây áp dụng khi triển khai |
+
+Nguyên tắc GIỮ/REDESIGN: chỉ giữ thiết kế hiện có nếu nó ĐÃ đúng khí chất
+yêu cầu (Garden, My Story) — không giữ một layout cũ chỉ vì nó đã tồn tại.
+Hub/Mirror/Journal phải làm lại hoàn toàn phần thị giác ở phase tương ứng
+(P4 Mirror, P5 Journal) — Hub cần một phase REDESIGN bổ sung sau P7 hoặc
+lồng ngay khi bắt đầu P4 (xem ghi chú ở bảng phase, mục 19).
+
+### 18.2 Journey Hub — Library / Museum / Beginning
+
+- **Cảm giác**: bước vào một thư viện/bảo tàng ấm áp buổi sáng — nơi khởi
+  đầu trang trọng nhưng không lạnh, khác hẳn Garden (đêm huyền ảo) và My
+  Story (giấy cũ ấm nâu).
+- **Nền**: giấy ivory mềm (không phải trắng lạnh của Portal mặc định) +
+  ánh nắng ấm chéo góc như xuyên qua cửa sổ bảo tàng (một dải sáng vàng
+  nhạt chéo 15–20°, blur lớn, KHÔNG phải spotlight game).
+  Gợi ý gradient: `radial-gradient` ánh nắng góc trên-phải nhạt
+  (`rgba(253, 224, 71, 0.10)`) chồng lên nền `linear-gradient(#FFFDF7 →
+  #FBF6EA)` — khác tông với `.story-book-bg` (nâu hổ phách đậm hơn) và
+  khác `.garden-page-bg` cũ (đã bỏ).
+- **Kết cấu tối giản**: một lớp "hạt bụi sáng" cực nhẹ trôi rất chậm
+  trong vệt nắng (giống bụi trong bảo tàng khi có nắng chiếu qua) — mật
+  độ thấp hơn cả Garden's dust, gần như chỉ gợi cảm giác, không phải hiệu
+  ứng nổi bật.
+- **5 thẻ cửa**: giữ nguyên vị trí thông tin đã duyệt ở P1, nhưng đổi
+  chất liệu thẻ từ "card gradient tint nhạt" sang cảm giác "khung tranh
+  trong bảo tàng" — viền mảnh màu đồng/vàng cũ (`rgba(180,140,60,.25)`),
+  không bo góc quá tròn (giữ góc vuông hơn, gợi khung tranh/bìa catalogue
+  bảo tàng), đổ bóng rất nhẹ như tranh treo tường.
+- **Typography**: tiêu đề dùng font hệ thống hiện có (không cần serif như
+  My Story — Hub là "sảnh vào", trang trọng nhưng hiện đại hơn, giữ
+  sans-serif nhưng tăng letter-spacing cho cảm giác bảng tên bảo tàng).
+- **KHÔNG dùng**: gradient xanh dương chuẩn Portal, card bo tròn 2xl mặc
+  định, nền trắng phẳng.
+
+### 18.3 Garden — đã duyệt
+
+Không đổi. Toàn bộ spec ở `GARDEN_VISUAL_DIRECTION.md` (khí quyển
+ngày–đêm, Cây, Ngọc) là nguồn sự thật cho không gian này.
+
+### 18.4 My Story — đã xây, khớp yêu cầu
+
+Bản dựng P3 (`.story-book-bg`, `.story-serif`, `.story-chapter-divider`,
+`.story-page-block`) đã đúng tinh thần "Hardcover Book · Warm paper ·
+Parchment · Premium editorial" — **giữ nguyên, không đổi**. Đây là ví dụ
+tham chiếu cho việc một cửa "đã diễn đạt đúng khí quyển ngay từ đầu".
+
+### 18.5 Mirror — Reflection / Smoky Glass / Cold Blue
+
+- **Cảm giác**: một căn phòng yên tĩnh có gương khói — lạnh hơn, tĩnh hơn
+  My Story và Garden; đối lập có chủ đích với hơi ấm của Hub/My Story.
+- **Nền**: xanh lạnh sâu pha bạc, KHÁC tông midnight-emerald của Garden —
+  nghiêng xanh dương/xám-bạc/tím nhạt thay vì lục:
+  `linear-gradient(180deg, #0F1720 0%, #1B2536 55%, #232A3D 100%)` +
+  một lớp "sương kính" bạc rất mờ (`rgba(203, 213, 225, 0.06)` phủ toàn
+  khung, blend `soft-light`) tạo cảm giác nhìn qua mặt kính mờ hơi nước.
+- **Ánh sáng**: một nguồn sáng tím nhạt dịu duy nhất (`rgba(167, 139,
+  250, 0.12)`) từ phía trên — không rực, không có nguồn sáng thứ hai
+  (khác Garden vốn nhiều lớp glow) — đúng tinh thần "minimal light, calm
+  silence".
+- **Kết cấu đặc trưng**: một đường phản chiếu dọc rất mờ chạy nhẹ qua
+  khung nội dung (gợi mặt gương/kính), KHÔNG hoạt hình rung/gợn — tĩnh
+  tuyệt đối trừ một shimmer cực chậm (chu kỳ ~12s, biên độ rất nhỏ) để
+  không "chết cứng" nhưng vẫn giữ "calm silence".
+- **Chữ**: trắng/bạc trên nền tối (`--m-fg` tương tự pattern biến CSS đã
+  dùng ở Garden), không dùng serif ấm của My Story — dùng sans-serif hệ
+  thống, mảnh, letter-spacing rộng cho cảm giác lạnh/tối giản.
+- **KHÔNG dùng**: glow vàng/cam ấm (thuộc về Garden/My Story), card trắng
+  GemCard mặc định hiện tại, nhiều nguồn sáng rực.
+- Áp dụng khi triển khai Phase P4 (mục 19).
+
+### 18.6 Nhật ký học tập — Notebook / Writing Desk
+
+- **Cảm giác**: một cuốn sổ tay đang mở trên bàn viết — ấm nhưng khác
+  tông với My Story (My Story = sách bìa cứng trang trọng đã xuất bản;
+  Journal = sổ tay cá nhân đang viết dở, thực dụng hơn, ít trang trí hơn).
+- **Nền**: giấy xám ấm (không phải nâu hổ phách của My Story, không phải
+  ivory của Hub) — `linear-gradient(180deg, #F5F4F1 0%, #EDEBE5 100%)`,
+  có thể thêm gợi ý đường kẻ sổ tay RẤT mờ ở nền (các đường ngang mảnh
+  `rgba(0,0,0,0.03)` cách đều, opacity cực thấp — chỉ gợi cảm giác giấy
+  kẻ ngang, không được nổi bật gây rối mắt).
+- **Kết cấu đặc trưng**: một "dải bookmark" màu nhấn (cam thương hiệu
+  `#FF7A00` nhạt) gắn dọc mép trang như dây đánh dấu sách sổ tay thật —
+  chi tiết nhận diện riêng không cửa nào khác có.
+- **Chữ**: sans-serif hệ thống hiện tại (không cần serif — sổ tay viết
+  tay hiện đại, không phải sách in), nhưng cỡ chữ entry gần cảm giác viết
+  tay hơn (line-height rộng hơn, đoạn ngắn).
+- **KHÔNG dùng**: nền trắng phẳng hiện tại, serif của My Story, bất kỳ
+  glow tối màu nào (Journal là không gian SÁNG, ban ngày, thực dụng).
+- Áp dụng khi triển khai Phase P5 (mục 19).
+
+### 18.7 Journey Map — Explorer Map / Old Parchment
+
+- **Cảm giác**: một tấm bản đồ thám hiểm cũ trải trên bàn — phiêu lưu,
+  định hướng, khác hẳn 5 cửa còn lại (không có cửa nào khác dùng ẩn dụ
+  "bản đồ địa lý").
+- **Nền**: giấy da cũ màu vàng nâu nhạt hơn My Story (My Story nâu hổ
+  phách đậm/ấm; Map vàng cát/be nhạt hơn, cảm giác giấy đã phai màu theo
+  năm tháng) — `linear-gradient(160deg, #EDE0C4 0%, #E4D3A8 55%, #D9C593
+  100%)`, có thể thêm vệt "cháy mép bản đồ" rất nhẹ ở 4 góc (radial
+  gradient nâu sậm, opacity thấp, chỉ ở góc — không phủ giữa trang).
+- **Kết cấu đặc trưng**: đường đồng mức mờ (topographic lines — vài
+  đường cong mảnh lặp lại dạng vân gỗ/vân địa hình, `rgba(120, 90, 40,
+  0.05)`, KHÔNG dày đặc) + biểu tượng la bàn nhỏ (compass rose) đặt một
+  góc trang làm điểm neo thị giác (tương đương vai trò của Cây trong
+  Garden, Ngọc trong Garden, dấu phân chương trong My Story).
+- **5 Chương cuộc đời** hiển thị như các điểm dừng trên một tuyến đường
+  chấm-nét (dotted route) nối nhau trên bản đồ — chương đã qua = điểm
+  đã tô đậm, chương đang viết = điểm phát sáng nhẹ, chương chưa tới = nét
+  chấm mờ nhạt (đúng nguyên tắc 3 trạng thái không %, không đổi mục 8).
+- **Chữ**: sans-serif hệ thống, có thể nghiêng nhẹ cho tên chương (gợi
+  chữ viết tay trên bản đồ) nhưng KHÔNG lạm dụng — chỉ nhãn chương, không
+  áp cho toàn bộ văn bản.
+- **KHÔNG dùng**: xanh dương/tím của Portal chuẩn, kính mờ lạnh của
+  Mirror, tông nâu hổ phách trùng với My Story (phải nhạt/vàng cát hơn để
+  phân biệt).
+- Áp dụng khi triển khai Phase P6 (mục 19).
+
+### 18.8 Nguyên tắc chung giữ tất cả trong một hệ
+
+Dù mỗi cửa một khí quyển, tất cả PHẢI tuân thủ:
+
+1. Mọi màu accent đều xuất phát từ hoặc phối hài hoà với bảng gốc VO
+   DUONG AI (`brand-blue #2563EB`, `brand-violet #5B8CFF`, `brand-orange
+   #FF7A00`) — không phát minh hue hoàn toàn xa lạ (vd. không neon
+   hồng/xanh lá chói).
+2. Cùng một bộ nguyên tắc chuyển động: chậm, khí quyển, tôn trọng
+   `prefers-reduced-motion` (đổi trạng thái tức thời, tắt hạt/rung khi
+   người dùng bật).
+3. Cùng ngôn ngữ thành phần tương tác (nút/link) về HÀNH VI (hover,
+   focus-visible, kích thước chạm ≥44px) dù màu sắc khác nhau theo cửa.
+4. Companion luôn xuất hiện tối đa MỘT lần mỗi cửa, giọng điệu đổi theo
+   khí quyển nhưng không bao giờ phá vỡ nguyên tắc "nhân chứng, không
+   coach" đã chốt ở mục 12.
+5. Logo/header/sidebar Portal (khung ngoài) giữ nguyên nhận diện chuẩn —
+   chỉ vùng NỘI DUNG bên trong mỗi cửa đổi khí quyển.
+
+## 19. Các phase triển khai (sau khi tài liệu này được duyệt)
+
+| Phase | Nội dung | Trạng thái |
 |---|---|---|
-| **P0** | PO duyệt tài liệu này + chốt 2 quyết định mở: (a) số phận khối blog trong Journal, (b) MERGE Sanctuary | — |
-| **P1** | Journey Hub mới tại `/portal/hanhtrinhcuatoi` (greeting, chương hiện tại, 5 thẻ cửa, hoạt động ý nghĩa, prompt, CTA) | P0 |
-| **P2** | Journey Map engine (trạng thái 3 mức của chương, bằng chứng thật) + trang `/ban-do` | P1 |
-| **P3** | My Story tái bố cục "cuốn sách" + MOVE Garden card | P1 |
-| **P4** | Nhật ký học tập đổi bản chất (entry 4 câu, tuần nhật ký, blog xuống khối phụ) | P1 |
-| **P5** | Mirror 3 nhịp + MERGE Sanctuary + redirect route cũ | P2 |
-| **P6** | Garden tinh chỉnh (legend nghĩa, liên kết Journal, Companion mùa vụ) | P4 |
-| **P7** | Audit chéo toàn platform: giọng Companion, empty states, cross-links, responsive, NO-FAKE-DATA final check | P1–P6 |
+| **P0** | PO duyệt tài liệu này + chốt 2 quyết định mở: (a) số phận khối blog trong Journal, (b) MERGE Sanctuary | ✅ Done |
+| **P1** | Journey Hub tại `/portal/hanhtrinhcuatoi` (greeting, chương hiện tại, 5 thẻ cửa, hoạt động ý nghĩa, prompt, CTA) | ✅ Done — ⚠️ cần thêm lượt REDESIGN thị giác theo mục 18.2 |
+| **P2** | Garden — khí quyển ngày/đêm, Cây, Ngọc (đôn lên trước theo quyết định PO) | ✅ Done |
+| **P3** | My Story — "cuốn sách", MOVE Garden card khỏi Story | ✅ Done |
+| **P4** | Mirror — 3 nhịp (Nhìn lại/Nhận ra/Tự hỏi) + REDESIGN thị giác theo mục 18.5 + MERGE Sanctuary + redirect route cũ | Kế tiếp |
+| **P5** | Nhật ký học tập — đổi bản chất (entry 4 câu, tuần nhật ký, blog xuống khối phụ) + REDESIGN thị giác theo mục 18.6 | Sau P4 |
+| **P6** | Journey Map engine (trạng thái 3 mức của chương, bằng chứng thật) + trang `/ban-do` + thị giác theo mục 18.7 | Sau P4 |
+| **P7** | Audit chéo toàn platform: giọng Companion, empty states, cross-links, responsive, NO-FAKE-DATA final check, VÀ đối chiếu Quality Gate "che logo" của mục 18 cho cả 6 cửa | P1–P6 |
 
-Mỗi phase: build sạch + audit trung thực dữ liệu trước khi sang phase sau.
-Không phase nào đụng vào Learning Platform (nợ kỹ thuật đã phê duyệt).
+Mỗi phase: build sạch + audit trung thực dữ liệu + đối chiếu Global Art
+Direction (mục 18) trước khi sang phase sau. Không phase nào đụng vào
+Learning Platform (nợ kỹ thuật đã phê duyệt).
 
 ---
 
