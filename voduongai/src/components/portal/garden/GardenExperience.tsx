@@ -53,13 +53,38 @@ const GEM_KIND_LABEL: Record<GemMoment["kind"], string> = {
 
 /** Băng giờ 4 khí quyển — GARDEN_VISUAL_DIRECTION.md mục 13.1 (giờ
  * thiết bị người dùng; Admin tương lai chỉnh được — mục 13.5). */
-type GardenPeriod = "dawn" | "day" | "sunset" | "night";
+export type GardenPeriod = "dawn" | "day" | "sunset" | "night";
+
+/**
+ * Extension point — TIME-BAND CONFIGURATION (mục 13.5/13.9).
+ * Băng giờ gom về MỘT nơi duy nhất, dạng dữ liệu thuần (không hardcode
+ * rải rác) để Admin Platform sau này đọc/ghi trực tiếp mà không cần
+ * đụng vào logic render. `startHour` bao gồm, kết thúc là `startHour`
+ * của mục kế tiếp (vòng qua nửa đêm ở "night"). KHÔNG có UI Admin nào
+ * được xây ở bước này — đây chỉ là điểm nối sạch cho bước đó.
+ */
+export const GARDEN_TIME_BANDS: { period: GardenPeriod; startHour: number }[] = [
+  { period: "night", startHour: 0 }, // 00:00–04:59 vẫn thuộc khí quyển Đêm của hôm trước
+  { period: "dawn", startHour: 5 },
+  { period: "day", startHour: 8 },
+  { period: "sunset", startHour: 17 },
+  { period: "night", startHour: 19 },
+];
+
+function resolvePeriodFromBands(
+  hour: number,
+  bands: { period: GardenPeriod; startHour: number }[],
+): GardenPeriod {
+  const sorted = [...bands].sort((a, b) => a.startHour - b.startHour);
+  let current: GardenPeriod = sorted[sorted.length - 1].period;
+  for (const band of sorted) {
+    if (hour >= band.startHour) current = band.period;
+  }
+  return current;
+}
 
 function resolvePeriod(hour: number): GardenPeriod {
-  if (hour >= 5 && hour < 8) return "dawn";
-  if (hour >= 8 && hour < 17) return "day";
-  if (hour >= 17 && hour < 19) return "sunset";
-  return "night";
+  return resolvePeriodFromBands(hour, GARDEN_TIME_BANDS);
 }
 
 /** Giọng Companion đổi nhẹ theo khí quyển (13.1) — chỉ dữ liệu thật;
@@ -163,11 +188,20 @@ export function GardenExperience({
   reflectionCount,
   memoryCount,
   milestoneCount,
+  periodOverride = null,
 }: {
   serverMoments: GemMoment[];
   reflectionCount: number;
   memoryCount: number;
   milestoneCount: number;
+  /**
+   * Extension point — ATMOSPHERE OVERRIDE (mục 13.5/13.9). Khi truyền
+   * vào (ví dụ sau này từ Admin Platform để duyệt thiết kế), khí quyển
+   * cố định theo giá trị này thay vì giờ thiết bị. Mặc định `null` =
+   * hành vi thật (giờ thiết bị người dùng) — KHÔNG có UI nào gọi prop
+   * này ở bước hiện tại, đây chỉ là điểm nối sạch cho Admin sau này.
+   */
+  periodOverride?: GardenPeriod | null;
 }) {
   const [summary, setSummary] = useState<GardenSummary | null>(null);
   const [localMoments, setLocalMoments] = useState<GemMoment[]>([]);
@@ -175,13 +209,19 @@ export function GardenExperience({
   const [gemOpen, setGemOpen] = useState(false);
   const [momentIndex, setMomentIndex] = useState(0);
   const [selectedElement, setSelectedElement] = useState<GardenElement | null>(null);
-  const [period, setPeriod] = useState<GardenPeriod | null>(null);
+  const [period, setPeriod] = useState<GardenPeriod | null>(periodOverride);
   const [ready, setReady] = useState(false);
 
   // Khí quyển theo giờ thiết bị: áp ngay khi mount, kiểm lại mỗi 60s
   // (không rAF loop — 13.4/13.6). data-garden-ready bật SAU khi period
   // đầu tiên đã vẽ, để crossfade 75s chỉ chạy khi đổi băng giờ thật.
+  // `periodOverride` (Admin extension point) tắt hẳn nhịp đọc giờ thật
+  // khi có giá trị — chưa dùng ở bước này, mặc định null.
   useEffect(() => {
+    if (periodOverride) {
+      const readyTimer = setTimeout(() => setReady(true), 150);
+      return () => clearTimeout(readyTimer);
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect -- giờ thiết bị chỉ có ở client
     setPeriod(resolvePeriod(new Date().getHours()));
     const readyTimer = setTimeout(() => setReady(true), 150);
@@ -192,6 +232,11 @@ export function GardenExperience({
       clearTimeout(readyTimer);
       clearInterval(tick);
     };
+    // periodOverride không đổi trong vòng đời trang ở bước này (chưa có
+    // UI Admin nào set lại nó) — cố tình không đưa vào deps để tránh
+    // reset interval mỗi lần Admin override đổi trong tương lai; sẽ xét
+    // lại khi tính năng override thật sự được nối dây.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
