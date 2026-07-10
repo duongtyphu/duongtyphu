@@ -1,11 +1,24 @@
 "use client";
 
-// @archived — Phase D.5 (VO DUONG AI IA mapping).
-// Route mồ côi, KHÔNG liên kết từ bất kỳ nav/sidebar/footer nào — canonical
-// chính thức của module "Hành trình của tôi" là /portal/hanhtrinhcuatoi
-// (src/app/portal/hanhtrinhcuatoi/page.tsx). Nội dung "Sanctuary" ở file này
-// được GIỮ NGUYÊN theo quyết định Product Owner — không xoá, không redirect,
-// không merge — chờ đánh giá làm section/sub-feature của Journey ở phase sau.
+// @archived — Journey Platform P6 (Sanctuary migration hoàn tất).
+// Route này giờ REDIRECT vĩnh viễn về /portal/hanhtrinhcuatoi (xem
+// next.config.ts) — component dưới đây không còn được render nữa, giữ lại
+// nguyên trạng chỉ để tham chiếu lịch sử/khôi phục nếu cần, KHÔNG xoá file.
+//
+// Product Owner Decision 2 — nội dung có giá trị đã di dời:
+//   - Thought Seeds            -> Mirror (P4, lib/portal/foundation, xem
+//                                 MirrorChamber.tsx dùng getRandomThoughtSeed())
+//   - REFLECTION_QUESTIONS     -> Mirror "Tự hỏi" (P4,
+//                                 lib/portal/growth-map/mirror-question.ts)
+//   - Không khí tĩnh lặng      -> tinh thần thiết kế Mirror + Journey Map
+//   - JOURNEY_STAGES/CURRENT_STAGE_INDEX, PRACTICE_TRACKS, gợi ý "Companion
+//     gợi ý"/"Bước tiếp theo" -> ý niệm hấp thụ vào Journey Map (P6,
+//     /portal/hanhtrinhcuatoi/ban-do) dưới dạng "Năm chương cuộc đời" +
+//     "Hướng tiếp theo" THẬT (không copy nguyên văn vì dữ liệu cũ ở đây là
+//     tĩnh/giả — CURRENT_STAGE_INDEX cố định — vi phạm NO-FAKE-DATA)
+//   - LEGACY_SEEDS             -> ARCHIVE (không có dữ liệu thật hậu thuẫn,
+//                                 không migrate — xem JOURNEY_PLATFORM_
+//                                 FINAL_AUDIT.md mục bảo tồn nội dung)
 import { useEffect, useState } from "react";
 import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";

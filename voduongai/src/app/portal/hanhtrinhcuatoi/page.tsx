@@ -6,6 +6,7 @@ import { CurrentChapterCard } from "@/components/portal/journey/CurrentChapterCa
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { Button } from "@/components/portal/ui/Button";
+import { getPurchasedIds } from "@/lib/access";
 
 export const metadata = {
   title: "Hành trình của tôi",
@@ -90,9 +91,7 @@ const DOORS: JourneyDoor[] = [
     essence: "Bản đồ các Chương cuộc đời của bạn.",
     meaning: "Chương, cột mốc, output và hướng đang đi — không có thanh phần trăm nào.",
     realData: "Bằng chứng thật từ hoạt động của bạn (xem Chương hiện tại phía trên).",
-    // P2 sẽ mở trang bản đồ đầy đủ tại /portal/hanhtrinhcuatoi/ban-do —
-    // nói thật là đang xây thay vì đặt một link chết.
-    cta: { label: "Bản đồ đang được vẽ — mở ở giai đoạn tiếp theo", comingSoon: true },
+    cta: { label: "Mở bản đồ", href: "/portal/hanhtrinhcuatoi/ban-do" },
     surface: {
       card: "border-blue-200 bg-gradient-to-br from-blue-50 via-sky-50/40 to-white hover:border-blue-400",
       chip: "bg-gradient-to-br from-blue-600 to-sky-600 text-white",
@@ -117,7 +116,12 @@ function todaysPrompt(): string {
   return REFLECTION_PROMPTS[dayOfYear % REFLECTION_PROMPTS.length];
 }
 
-export default function JourneyHubPage() {
+export default async function JourneyHubPage() {
+  // Chương 4 ("Xây hệ thống") cần thêm bằng chứng sở hữu Premium thật
+  // (Supabase, server-side) — cùng pattern Mirror/My Story đã dùng.
+  const purchasedCourseIds = await getPurchasedIds("course_id");
+  const premiumCount = purchasedCourseIds.size;
+
   return (
     <div className="space-y-10">
       {/* ── Cổng vào Hub ─────────────────────────────────────────────── */}
@@ -140,7 +144,7 @@ export default function JourneyHubPage() {
       />
 
       {/* ── 2. Chương hiện tại (chỉ khi có dữ liệu thật) ───────────────── */}
-      <CurrentChapterCard />
+      <CurrentChapterCard premiumCount={premiumCount} />
 
       {/* ── 3. Năm cánh cửa ─────────────────────────────────────────────── */}
       <section>

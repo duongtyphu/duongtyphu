@@ -19,13 +19,13 @@ import {
  * → nói thật là chưa có chương nào được viết, không vẽ chương giả.
  */
 
-export function CurrentChapterCard() {
+export function CurrentChapterCard({ premiumCount = 0 }: { premiumCount?: number }) {
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setChapter(getCurrentChapterFromClient());
-  }, []);
+    setChapter(getCurrentChapterFromClient(premiumCount));
+  }, [premiumCount]);
 
   if (chapter === undefined) return null;
 

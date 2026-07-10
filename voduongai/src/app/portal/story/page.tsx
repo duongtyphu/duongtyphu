@@ -1,4 +1,5 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getPurchasedIds } from "@/lib/access";
 import { MyStoryBook } from "@/components/portal/story/MyStoryBook";
 import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones, type GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones";
@@ -31,21 +32,23 @@ async function getStoryData(): Promise<{
   capsules: MemoryCapsule[];
   milestones: GrowthMilestone[];
   firstPremium: FirstPremiumMoment;
+  premiumCount: number;
   storageReady: boolean;
 }> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, storageReady: true };
+    return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, premiumCount: 0, storageReady: true };
   }
   try {
     const supabase = await getSupabaseServer();
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
-    if (!user) return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, storageReady: true };
+    if (!user) return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, premiumCount: 0, storageReady: true };
 
     const [
       { data: reflectionRows, error: reflectionError },
       { data: capsuleRows, error: capsuleError },
       { data: orderRows },
+      purchasedCourseIds,
     ] = await Promise.all([
       supabase
         .from("reflections")
@@ -65,6 +68,7 @@ async function getStoryData(): Promise<{
         .not("course_id", "is", null)
         .order("created_at", { ascending: true })
         .limit(1),
+      getPurchasedIds("course_id"),
     ]);
 
     let storageReady = true;
@@ -104,10 +108,11 @@ async function getStoryData(): Promise<{
       capsules,
       milestones,
       firstPremium,
+      premiumCount: purchasedCourseIds.size,
       storageReady,
     };
   } catch {
-    return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, storageReady: true };
+    return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, premiumCount: 0, storageReady: true };
   }
 }
 
