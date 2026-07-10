@@ -125,7 +125,10 @@ export default function KhongGianAiPage() {
        * khung rounded-3xl thu hẹp. */}
       <div className="workspace-atmosphere-bg" aria-hidden />
 
-      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8 space-y-10">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây (rounded-3xl
+       * p-6 md:p-8), chỉ khí quyển nền phía sau mới full-bleed. */}
+      <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
       {/* Nền gradient đậm cùng khuôn dải hero màu của các pillar khác (Học
        * viện tri thức AI tone "knowledge", Học viện AI tone "learning" — xem
@@ -255,6 +258,7 @@ export default function KhongGianAiPage() {
           </Link>
         </div>
       </section>
+      </div>
       </div>
     </div>
   );

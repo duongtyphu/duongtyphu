@@ -312,7 +312,9 @@ export default async function EcosystemMiniSitePage({
       {/* Khí quyển Projects & Opportunities ("Opportunity center") tiếp tục
        * ở trang con. */}
       <div className="projects-atmosphere-bg" aria-hidden />
-      <div className="relative z-10 space-y-10 px-4 py-6 md:px-8 md:py-8">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — cùng khoảng cách với /portal/duan-cohoi. */}
+      <div className="rounded-3xl p-6 md:p-8 space-y-10">
       <Breadcrumb
         items={[
           { label: "Portal", href: "/portal" },
@@ -364,6 +366,7 @@ export default async function EcosystemMiniSitePage({
           <PotentialAnalysisTable items={potentialAnalysis} />
         </>
       )}
+      </div>
       </div>
     </div>
   );

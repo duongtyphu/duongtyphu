@@ -27,13 +27,15 @@ export const metadata = {
  * quyển "Library/Museum" (ivory/nâu đồng, mục 18.2 cũ) sang "Bright
  * Atrium" — nền trắng-trong sắc nét pha ánh sáng thương hiệu (xanh
  * dương/tím/cam), thẻ cửa kính mờ (glass) MÀU RIÊNG từng cửa (không còn
- * chất liệu đồng nhất "khung tranh bảo tàng"). Khung trang cũng đổi từ
- * full-bleed sang shell `rounded-3xl` thu hẹp — cùng khuôn với các trang
- * hub khác của Portal (Home/CKOS/Academy/Projects/AI Workspace). Global
- * Visual Update: viền ngoài giờ không còn lộ nền caro (đã bỏ khỏi toàn
- * Portal) — mỗi trang hub có khí quyển riêng của chính nó. 5 cửa con
- * (Garden/Mirror/My Story/Journal/Journey Map) giữ nguyên màu khí quyển
- * riêng, chỉ đổi khung ngoài sang shell tương tự.
+ * chất liệu đồng nhất "khung tranh bảo tàng"). 5 cửa con (Garden/Mirror/
+ * My Story/Journal/Journey Map) giữ nguyên màu khí quyển riêng.
+ *
+ * Full-bleed platform atmosphere: khí quyển Bright Atrium giờ kéo
+ * full-bleed hết chiều rộng cột nội dung (cùng khuôn với Home/CKOS/
+ * Academy/Workspace/Projects/Premium) thay vì bị viền `rounded-3xl` thu
+ * hẹp. Content Gutter (mx-auto max-w-3xl px-5 py-10 sm:px-8 md:py-14) giữ
+ * NGUYÊN không đổi theo yêu cầu Product Owner — chỉ nền phía sau mới
+ * full-bleed.
  */
 
 type JourneyDoor = {
@@ -129,7 +131,7 @@ export default async function JourneyHubPage() {
   const premiumCount = purchasedCourseIds.size;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl min-h-full">
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="hub-atrium-bg" aria-hidden />
       <div className="hub-atrium-sheen" aria-hidden />
       <div className="hub-dust-field" aria-hidden>
@@ -142,7 +144,10 @@ export default async function JourneyHubPage() {
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto max-w-3xl space-y-10 px-5 py-10 sm:px-8 md:py-14">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
+       * quyển nền phía sau mới full-bleed. */}
+      <div className="mx-auto max-w-3xl space-y-10 px-5 py-10 sm:px-8 md:py-14">
         {/* ── Cổng vào Hub — Bright Atrium ─────────────────────────────── */}
         <section>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Hành trình của tôi</p>
@@ -267,6 +272,7 @@ export default async function JourneyHubPage() {
             Tiếp tục hành trình →
           </Button>
         </section>
+      </div>
       </div>
     </div>
   );

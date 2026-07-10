@@ -56,7 +56,9 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       {/* Khí quyển AI Workspace ("Creative studio") tiếp tục ở trang con. */}
       <div className="workspace-atmosphere-bg" aria-hidden />
-      <div className="relative z-10 mx-auto max-w-3xl px-4 py-6 md:px-8 md:py-8">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — cùng khoảng cách với /portal/aiworkspace. */}
+      <div className="mx-auto max-w-3xl rounded-3xl p-6 md:p-8">
       {/* Breadcrumb */}
       <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
         <Link href="/portal" className="hover:text-blue-600 transition-colors">Học viện</Link>
@@ -134,6 +136,7 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
           </div>
         </div>
       )}
+      </div>
       </div>
     </div>
   );

@@ -25,7 +25,10 @@ export default async function KnowledgeSeedWorkspacePage({
        * khí quyển với /portal/ckos, không rơi về trang trắng mặc định. */}
       <div className="ckos-atmosphere-bg" aria-hidden />
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
-        <KnowledgeWorkspace seed={seed} />
+        {/* Content Gutter — cùng khoảng cách với /portal/ckos. */}
+        <div className="rounded-3xl p-6 md:p-8">
+          <KnowledgeWorkspace seed={seed} />
+        </div>
       </div>
     </div>
   );

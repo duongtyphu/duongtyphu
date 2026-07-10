@@ -283,7 +283,7 @@ export function GardenExperience({
     <div
       data-garden-period={period ?? "night"}
       data-garden-ready={ready ? "true" : "false"}
-      className="relative min-h-full overflow-hidden rounded-3xl"
+      className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8"
     >
       {/* Sky stack — 4 lớp trời, chỉ crossfade opacity (13.2) */}
       <div className="garden-sky garden-sky--dawn" aria-hidden />
@@ -302,7 +302,10 @@ export function GardenExperience({
         ))}
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl px-4 py-8 md:px-8 md:py-10">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
+       * quyển nền phía sau mới full-bleed. */}
+      <div className="mx-auto max-w-4xl px-4 py-8 md:px-8 md:py-10">
         {/* Lối về Hub — nút Back chuẩn hoá toàn Portal (Task 1) */}
         <PortalBackLink
           href="/portal/hanhtrinhcuatoi"
@@ -497,6 +500,7 @@ export function GardenExperience({
         <p className="g-fg-faint mx-auto mt-12 max-w-md pb-4 text-center text-xs italic leading-relaxed">
           Khu vườn của bạn phản chiếu đúng những gì bạn đã thật sự làm — không hơn, không kém.
         </p>
+      </div>
       </div>
     </div>
   );

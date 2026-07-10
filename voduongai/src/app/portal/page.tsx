@@ -101,7 +101,10 @@ export default async function GemHomePage() {
        * rounded-3xl thu hẹp. */}
       <div className="home-atmosphere-bg" aria-hidden />
 
-      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8 space-y-10">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+      {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây (rounded-3xl
+       * p-6 md:p-8), chỉ khí quyển nền phía sau mới full-bleed. */}
+      <div className="rounded-3xl p-6 md:p-8 space-y-10">
       {/* Companion Presence Band — lời chào, giữ nguyên (đã duyệt) */}
       <CompanionPresenceBand
         name={profile?.fullName}
@@ -206,6 +209,7 @@ export default async function GemHomePage() {
           { label: "Mở Companion", description: "Để Companion dẫn bạn tới đúng nơi cần đến.", href: "/portal/companion" },
         ]}
       />
+      </div>
       </div>
     </div>
   );
