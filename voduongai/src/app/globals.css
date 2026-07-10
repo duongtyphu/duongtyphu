@@ -1745,3 +1745,62 @@ body {
     animation: none !important;
   }
 }
+
+/* ============================================================
+ * MY STORY — cuốn sách cá nhân (Journey Platform, Phase P3)
+ * Ngôn ngữ thị giác RIÊNG, khác Garden (bức tranh đêm huyền ảo) và
+ * khác nền Portal chuẩn (.gemos-bg xám-ca-rô): giấy ấm, chữ serif,
+ * khoảng trắng rộng — cảm giác một cuốn sách bìa cứng, không phải
+ * dashboard hay feed. Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 5.
+ * ============================================================ */
+
+.story-book-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px circle at 12% -8%, rgba(180, 130, 60, 0.07), transparent 60%),
+    radial-gradient(900px circle at 92% 108%, rgba(37, 99, 235, 0.05), transparent 60%),
+    linear-gradient(180deg, #FBF8F1 0%, #F6F0E2 100%);
+}
+
+.story-serif {
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
+
+/* Dấu phân chương — một đường mảnh + hoa văn nhỏ ở giữa, thay cho
+ * đường kẻ ngang khô khan của dashboard. */
+.story-chapter-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: rgba(146, 106, 48, 0.55);
+}
+
+.story-chapter-divider::before,
+.story-chapter-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(146, 106, 48, 0.28), transparent);
+}
+
+/* Trang giấy mở — khối nội dung không viền/không shadow-card, chỉ có
+ * một đường phân cách rất mảnh phía trên để gợi mép trang, tránh cảm
+ * giác "card trắng xếp chồng" mà brief cấm. */
+.story-page-block + .story-page-block {
+  border-top: 1px solid rgba(146, 106, 48, 0.14);
+  padding-top: 2.25rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .story-fade-in {
+    animation: story-fade-in 0.9s ease-out both;
+  }
+}
+
+@keyframes story-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

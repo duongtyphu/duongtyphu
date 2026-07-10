@@ -1,60 +1,52 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { GemCard } from "@/components/portal/ui/GemCard";
-import { MyStoryTimeline, type StoryMoment } from "@/components/portal/story/MyStoryTimeline";
-import { MonthlyLetterCard } from "@/components/portal/story/MonthlyLetterCard";
-import { CompanionMemoryCard } from "@/components/portal/story/CompanionMemoryCard";
-import { ReflectionJournalCard } from "@/components/portal/story/ReflectionJournalCard";
-import { AddMemoryCapsuleForm } from "@/components/portal/story/AddMemoryCapsuleForm";
-import { UnderstandingNoteCard } from "@/components/portal/story/UnderstandingNoteCard";
-import { HumanGrowthDashboardCard } from "@/components/portal/story/HumanGrowthDashboardCard";
-import { LivingGardenCard } from "@/components/portal/living-garden/LivingGardenCard";
-import { GardenSignalSync } from "@/components/portal/intelligence/GardenSignalSync";
-import { buildGardenState } from "@/lib/portal/living-garden/garden-model";
+import { MyStoryBook } from "@/components/portal/story/MyStoryBook";
+import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
+import { detectGrowthMilestones, type GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones";
+import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
-import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
-import { buildUnderstandingNote, detectGrowthPattern, buildGrowingQualities } from "@/lib/portal/human-understanding";
-import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
-import { buildCompanionMirrorInvitation } from "@/lib/portal/companion/mirror-dialogue";
 
 export const metadata = {
   title: "My Story",
-  description: "Nơi Học viện kể lại hành trình trưởng thành của riêng bạn — không phải hồ sơ, không phải dashboard.",
+  description: "Cuốn sách cá nhân đang được viết bằng chính những điều bạn học, tạo ra và gìn giữ.",
   robots: { index: false },
 };
 
-const CAPSULE_EMOJI: Record<MemoryCapsuleKind, string> = {
-  milestone: "💎",
-  lesson: "📚",
-  decision: "🧭",
-  breakthrough: "🌱",
-  achievement: "🤝",
-  // Sprint 13.4 — capsule được lưu từ một Living Story.
-  living_story: "📖",
-  companion_story: "🫂",
-  wisdom_story: "🪶",
-  garden_story: "🌿",
-  first_footprint: "✨",
-  // Sprint 18.1 — Life Moments Engine.
-  birthday: "🎂",
-  annual_mirror: "🪞",
-  first_portal_day: "👣",
-  return_after_silence: "🤍",
-};
+/**
+ * JOURNEY PLATFORM — Phase P3: My Story Reconstruction.
+ * My Story KHÔNG phải blog/timeline/dashboard — đây là một CUỐN SÁCH.
+ * Server component chỉ gom dữ liệu THẬT (Supabase: reflections,
+ * memory_capsules, cột mốc, đơn hàng Premium đầu tiên) rồi giao toàn bộ
+ * trải nghiệm "đọc sách" cho `MyStoryBook` (client — nơi đọc thêm
+ * growth-view/localStorage: chương hiện tại, output thật, sự kiện thật
+ * đầu tiên). Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 5 và
+ * GARDEN_VISUAL_DIRECTION.md cho tinh thần "mỗi cửa một ngôn ngữ riêng".
+ */
 
-const STORY_CAPSULE_KINDS: MemoryCapsuleKind[] = ["living_story", "companion_story", "wisdom_story", "garden_story"];
+type FirstPremiumMoment = { title: string; occurredAt: string } | null;
 
-async function getStoryData() {
+async function getStoryData(): Promise<{
+  memberSince: Date | null;
+  reflections: Reflection[];
+  capsules: MemoryCapsule[];
+  milestones: GrowthMilestone[];
+  firstPremium: FirstPremiumMoment;
+  storageReady: boolean;
+}> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { memberSince: null as Date | null, reflections: [] as Reflection[], capsules: [] as MemoryCapsule[], storageReady: true };
+    return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, storageReady: true };
   }
   try {
     const supabase = await getSupabaseServer();
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
-    if (!user) return { memberSince: null, reflections: [], capsules: [], storageReady: true };
+    if (!user) return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, storageReady: true };
 
-    const [{ data: reflectionRows, error: reflectionError }, { data: capsuleRows, error: capsuleError }] = await Promise.all([
+    const [
+      { data: reflectionRows, error: reflectionError },
+      { data: capsuleRows, error: capsuleError },
+      { data: orderRows },
+    ] = await Promise.all([
       supabase
         .from("reflections")
         .select("id, question, answer, created_at")
@@ -65,6 +57,14 @@ async function getStoryData() {
         .select("id, kind, title, description, occurred_at, source")
         .eq("member_id", user.id)
         .order("occurred_at", { ascending: false }),
+      supabase
+        .from("orders")
+        .select("product_name, created_at")
+        .eq("member_email", user.email ?? "")
+        .eq("status", "confirmed")
+        .not("course_id", "is", null)
+        .order("created_at", { ascending: true })
+        .limit(1),
     ]);
 
     let storageReady = true;
@@ -77,169 +77,41 @@ async function getStoryData() {
       warnMissingTableOnce("memory_capsules");
     }
 
+    const reflections: Reflection[] = (reflectionRows ?? []).map((r) => ({
+      id: r.id,
+      question: r.question,
+      answer: r.answer,
+      createdAt: r.created_at,
+    }));
+    const capsules: MemoryCapsule[] = (capsuleRows ?? []).map((c) => ({
+      id: c.id,
+      kind: c.kind as MemoryCapsuleKind,
+      title: c.title,
+      description: c.description ?? undefined,
+      occurredAt: c.occurred_at,
+      source: c.source ?? undefined,
+    }));
+    const signals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
+    const milestones = detectGrowthMilestones(signals);
+    const firstOrder = (orderRows ?? [])[0];
+    const firstPremium: FirstPremiumMoment = firstOrder
+      ? { title: firstOrder.product_name ?? "Một chương trình Premium", occurredAt: firstOrder.created_at }
+      : null;
+
     return {
       memberSince: new Date(user.created_at),
-      reflections: (reflectionRows ?? []).map((r) => ({
-        id: r.id,
-        question: r.question,
-        answer: r.answer,
-        createdAt: r.created_at,
-      })),
-      capsules: (capsuleRows ?? []).map((c) => ({
-        id: c.id,
-        kind: c.kind as MemoryCapsuleKind,
-        title: c.title,
-        description: c.description ?? undefined,
-        occurredAt: c.occurred_at,
-        source: c.source ?? undefined,
-      })),
+      reflections,
+      capsules,
+      milestones,
+      firstPremium,
       storageReady,
     };
   } catch {
-    return { memberSince: null, reflections: [], capsules: [], storageReady: true };
+    return { memberSince: null, reflections: [], capsules: [], milestones: [], firstPremium: null, storageReady: true };
   }
 }
 
 export default async function MyStoryPage() {
-  const { memberSince, reflections, capsules, storageReady } = await getStoryData();
-
-  const now = new Date();
-  const thisMonthReflections = reflections.filter((r) => {
-    const d = new Date(r.createdAt);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
-  const thisMonthCapsules = capsules.filter((c) => {
-    const d = new Date(c.occurredAt);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
-
-  const moments: StoryMoment[] = [
-    ...(memberSince
-      ? [{ id: "day-one", emoji: "🌱", title: "Ngày đầu tiên bạn đến VO DUONG AI", date: memberSince }]
-      : []),
-    ...capsules.map((c) => ({
-      id: c.id,
-      emoji: CAPSULE_EMOJI[c.kind],
-      title: c.title,
-      description: c.description,
-      date: new Date(c.occurredAt),
-      source: STORY_CAPSULE_KINDS.includes(c.kind) ? "Companion · Living Story" : undefined,
-      deletable: true,
-    })),
-    ...reflections.map((r) => ({
-      id: r.id,
-      emoji: "🧠",
-      title: r.question,
-      description: r.answer,
-      date: new Date(r.createdAt),
-    })),
-  ].sort((a, b) => b.date.getTime() - a.date.getTime());
-
-  const growthSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
-
-  return (
-    <div className="space-y-8">
-      <GemCard variant="featured" className="!p-7 sm:!p-8">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">My Story</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">Cuốn sách hành trình của bạn</h1>
-        <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
-          Đây không phải hồ sơ. Đây là nơi Học viện kể lại những bước bạn đã đi qua.
-        </p>
-        <p className="mt-2 max-w-xl text-xs italic text-gray-900/45">
-          Giai đoạn REFLECT trong hành trình mài giũa của bạn.
-        </p>
-      </GemCard>
-
-      <div className="grid gap-5 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <ReflectionJournalCard />
-        </div>
-        <div className="lg:col-span-5">
-          <CompanionMemoryCard reflections={reflections} />
-        </div>
-      </div>
-
-      <AddMemoryCapsuleForm />
-
-      <UnderstandingNoteCard note={buildUnderstandingNote(reflections)} pattern={detectGrowthPattern(reflections)} />
-
-      <HumanGrowthDashboardCard qualities={buildGrowingQualities(reflections)} />
-
-      <GemCard>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Bản đồ trưởng thành</p>
-        <p className="mt-2 text-sm text-gray-600">
-          {growthSignals.length === 0
-            ? "Bản đồ trưởng thành của bạn đang chờ những dấu chân đầu tiên."
-            : "Nhìn lại những dấu chân nhỏ đã tạo nên hành trình của bạn."}
-        </p>
-        <a
-          href="#story-timeline"
-          className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline"
-        >
-          Xem My Story
-        </a>
-      </GemCard>
-
-      <GemCard>
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Bản Gương Trưởng Thành</p>
-        <p className="mt-2 text-sm text-gray-600">
-          {buildCompanionMirrorInvitation(growthSignals) ??
-            "Nhìn lại những dấu chân đã tạo nên con người hôm nay."}
-        </p>
-        <a
-          href="/portal/mirror"
-          className="mt-3 inline-block text-sm font-semibold text-blue-600 hover:underline"
-        >
-          Mở Mirror
-        </a>
-      </GemCard>
-
-      <section>
-        <div className="flex items-end justify-between">
-          <h2 className="text-lg font-bold text-gray-900">Khu vườn trưởng thành của bạn</h2>
-        </div>
-        <p className="mt-1 text-sm text-gray-500">
-          My Story lưu lại dấu chân của bạn. Khu vườn là nơi nhìn thấy dấu chân đó đang lớn lên.
-        </p>
-        <div className="mt-4">
-          <LivingGardenCard
-            compact
-            inputs={{
-              reflectionsCount: reflections.length,
-              memoriesSaved: capsules.length,
-            }}
-          />
-          <GardenSignalSync
-            garden={buildGardenState({
-              reflectionsCount: reflections.length,
-              memoriesSaved: capsules.length,
-            })}
-          />
-        </div>
-      </section>
-
-      <MonthlyLetterCard
-        stats={{
-          monthLabel: now.toLocaleDateString("vi-VN", { month: "long" }),
-          reflectionCount: thisMonthReflections.length,
-          capsuleCount: thisMonthCapsules.length,
-          hasAnyHistory: reflections.length > 0 || capsules.length > 0,
-        }}
-      />
-
-      <section id="story-timeline">
-        <h2 className="text-lg font-bold text-gray-900">Dòng thời gian của bạn</h2>
-        <div className="mt-4 space-y-3">
-          {!storageReady && (
-            <GemCard>
-              <p className="text-sm text-gray-600">
-                Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể xem hành trình của mình.
-              </p>
-            </GemCard>
-          )}
-          <MyStoryTimeline moments={moments} />
-        </div>
-      </section>
-    </div>
-  );
+  const data = await getStoryData();
+  return <MyStoryBook {...data} />;
 }
