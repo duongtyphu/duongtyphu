@@ -1804,3 +1804,58 @@ body {
   from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* ============================================================
+ * MIRROR — Reflection Chamber (Journey Platform, Phase P4)
+ * Kính khói, xanh lạnh, bạc, tím nhạt — đối lập có chủ đích với hơi ấm
+ * của Hub/My Story và màu lục của Garden. Gần như bất động: chỉ MỘT
+ * shimmer phản chiếu cực chậm, không hạt bay, không glow "thở".
+ * Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 18.5.
+ * ============================================================ */
+
+.mirror-chamber-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% -5%, rgba(167, 139, 250, 0.12), transparent 65%),
+    radial-gradient(ellipse 50% 35% at 85% 90%, rgba(148, 163, 184, 0.06), transparent 65%),
+    linear-gradient(180deg, #0F1720 0%, #1B2536 55%, #232A3D 100%);
+}
+
+/* Lớp "sương kính" bạc rất mờ phủ toàn khung — cảm giác nhìn qua mặt
+ * kính mờ hơi nước, không phải hiệu ứng nổi bật. */
+.mirror-glass-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgba(203, 213, 225, 0.05);
+  mix-blend-mode: soft-light;
+}
+
+/* Đường phản chiếu dọc rất mờ — MỘT chuyển động duy nhất của cả trang,
+ * chu kỳ dài (~12s), biên độ cực nhỏ để không phá vỡ "calm silence". */
+.mirror-reflection-line {
+  position: absolute;
+  top: 8%;
+  bottom: 8%;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(196, 181, 253, 0.16) 45%, transparent);
+  animation: mirror-shimmer 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes mirror-shimmer {
+  0%, 100% { opacity: 0.35; transform: translateX(-50%) scaleY(0.97); }
+  50% { opacity: 0.7; transform: translateX(-50%) scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mirror-reflection-line {
+    animation: none;
+    opacity: 0.5;
+  }
+}

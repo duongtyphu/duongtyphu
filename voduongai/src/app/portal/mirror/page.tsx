@@ -1,6 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { GemCard } from "@/components/portal/ui/GemCard";
-import { MirrorCeremony } from "@/components/portal/mirror/MirrorCeremony";
+import { getPurchasedIds } from "@/lib/access";
+import { MirrorChamber } from "@/components/portal/mirror/MirrorChamber";
 import { signalsFromReflections, signalsFromMemoryCapsules, deriveComebackSignals } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
 import { buildMirrorNarrative } from "@/lib/portal/growth-map/mirror-narrative";
@@ -14,21 +14,31 @@ import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsul
 
 export const metadata = {
   title: "Mirror",
-  description: "Tấm gương phản chiếu hành trình trưởng thành của bạn — không chấm điểm, không so sánh.",
+  description: "Một cuộc trò chuyện yên lặng giữa bạn và chính mình — không chấm điểm, không phân tích.",
   robots: { index: false },
 };
 
+/**
+ * JOURNEY PLATFORM — Phase P4: Mirror Reconstruction.
+ * Server component chỉ gom dữ liệu THẬT (Supabase: reflections,
+ * memory_capsules, sở hữu Premium) rồi chạy đúng các engine growth-map
+ * đã có (KHÔNG viết lại logic phản chiếu) để tạo NHẬN RA (patterns) —
+ * toàn bộ trải nghiệm "buồng gương" giao cho `MirrorChamber` (client —
+ * đọc thêm growth-view/localStorage cho NHÌN LẠI: hoạt động thật, output
+ * thật). Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 6 và 18.5.
+ */
+
 async function getMirrorData() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return { reflections: [] as Reflection[], capsules: [] as MemoryCapsule[] };
+    return { reflections: [] as Reflection[], capsules: [] as MemoryCapsule[], premiumCount: 0 };
   }
   try {
     const supabase = await getSupabaseServer();
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
-    if (!user) return { reflections: [], capsules: [] };
+    if (!user) return { reflections: [], capsules: [], premiumCount: 0 };
 
-    const [{ data: reflectionRows }, { data: capsuleRows }] = await Promise.all([
+    const [{ data: reflectionRows }, { data: capsuleRows }, purchasedCourseIds] = await Promise.all([
       supabase
         .from("reflections")
         .select("id, question, answer, created_at")
@@ -39,6 +49,7 @@ async function getMirrorData() {
         .select("id, kind, title, description, occurred_at, source")
         .eq("member_id", user.id)
         .order("occurred_at", { ascending: false }),
+      getPurchasedIds("course_id"),
     ]);
 
     return {
@@ -56,18 +67,19 @@ async function getMirrorData() {
         occurredAt: c.occurred_at,
         source: c.source ?? undefined,
       })),
+      premiumCount: purchasedCourseIds.size,
     };
   } catch {
-    return { reflections: [], capsules: [] };
+    return { reflections: [], capsules: [], premiumCount: 0 };
   }
 }
 
 export default async function MirrorPage() {
-  const { reflections, capsules } = await getMirrorData();
+  const { reflections, capsules, premiumCount } = await getMirrorData();
   const baseSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
   const growthSignals = [...baseSignals, ...deriveComebackSignals(baseSignals)];
 
-  const invitation = buildCompanionMirrorInvitation(growthSignals) ?? "Mình muốn cho bạn xem một điều.";
+  const invitation = buildCompanionMirrorInvitation(growthSignals);
   const narrativeLines = buildMirrorNarrative(growthSignals);
   const reflectionMoments = buildReflectionMoments(growthSignals);
   const firstFootprint = buildFirstFootprintMirrorView(capsules);
@@ -75,35 +87,23 @@ export default async function MirrorPage() {
   const hasQuietSeason = milestones.some((m) => m.id === "return-after-silence" || m.id === "quiet-season");
   const quietSeasonLine = hasQuietSeason ? "Có những khoảng lặng cũng là một phần của hành trình." : null;
 
-  // Sprint 18.10 — Ceremony Context Adapter (NHIỆM VỤ 4): Origin Line chỉ
-  // được gate khi mùa phản chiếu thật sự trống — không bao giờ thay vị trí
-  // của nội dung phản chiếu thật của người dùng.
+  // Ceremony Context Adapter — Origin Line chỉ được gate khi mùa phản
+  // chiếu thật sự trống, không bao giờ thay vị trí nội dung thật.
   const hasReflectionMaterial = narrativeLines.length > 0 || reflectionMoments.length > 0 || !!firstFootprint || !!quietSeasonLine;
   const mirrorContext = getOriginLineContextDefinition("mirror_of_growth");
-  const originLine = hasReflectionMaterial
-    ? null
-    : getOriginLineFromCoreMemory(mirrorContext.coreMemoryContext);
+  const originLine = hasReflectionMaterial ? null : getOriginLineFromCoreMemory(mirrorContext.coreMemoryContext);
 
   return (
-    <div className="space-y-8">
-      <GemCard variant="featured" className="!p-7 sm:!p-8">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Mirror</p>
-        <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">Tấm gương trưởng thành của bạn</h1>
-        <p className="mt-2 max-w-xl text-sm text-gray-600 sm:text-base">
-          Đây không phải dashboard, không phải bảng điểm. Đây là nơi Học viện phản chiếu lại điều bạn đã đi qua.
-        </p>
-      </GemCard>
-
-      <GemCard className="!p-0">
-        <MirrorCeremony
-          invitation={invitation}
-          narrativeLines={narrativeLines}
-          reflectionMoments={reflectionMoments}
-          firstFootprint={firstFootprint}
-          quietSeasonLine={quietSeasonLine}
-          originLine={originLine}
-        />
-      </GemCard>
-    </div>
+    <MirrorChamber
+      invitation={invitation}
+      narrativeLines={narrativeLines}
+      reflectionMoments={reflectionMoments}
+      firstFootprint={firstFootprint}
+      quietSeasonLine={quietSeasonLine}
+      originLine={originLine}
+      reflectionCount={reflections.length}
+      capsuleCount={capsules.length}
+      premiumCount={premiumCount}
+    />
   );
 }
