@@ -9,7 +9,10 @@ export type MonthlyLetterStats = {
   hasAnyHistory?: boolean;
 };
 
-function buildLetter(stats: MonthlyLetterStats): string {
+/** Export cho MyStoryBook (Journey P3) tái sử dụng logic viết thư —
+ * chỉ đổi CÁCH TRÌNH BÀY (không còn GemCard), nội dung/luật viết giữ
+ * nguyên một nguồn duy nhất ở đây. */
+export function buildLetter(stats: MonthlyLetterStats): string {
   const lines: string[] = [];
 
   if (stats.reflectionCount > 0) {

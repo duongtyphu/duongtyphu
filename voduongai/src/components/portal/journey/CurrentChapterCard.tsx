@@ -2,76 +2,32 @@
 
 import { useEffect, useState } from "react";
 import { BookOpen } from "lucide-react";
-import { getGardenSummary, getRecentActivity } from "@/lib/portal/foundation/growth-view";
+import {
+  JOURNEY_CHAPTER_NAMES,
+  getCurrentChapterFromClient,
+  type JourneyChapter,
+} from "@/lib/portal/foundation/journey-chapter";
 
 /**
  * Journey P1 — "Chương hiện tại" trên Journey Hub.
  *
- * Phiên bản P1 của Journey Map engine (engine đầy đủ là Phase P2 — xem
- * JOURNEY_PLATFORM_ARCHITECTURE.md mục 8): xác định chương ĐANG VIẾT từ
- * bằng chứng thật trong growth-view (localStorage — cùng nguồn với
- * Nhật ký/Khu vườn), theo đúng bảng bằng chứng của kiến trúc:
- *   Chương 1 — hoạt động thật đầu tiên tồn tại
- *   Chương 2 — có phiên làm việc/journey thật đã chạm tới
- *   Chương 3 — có output thật đầu tiên
- * (Chương 4-5 cần tín hiệu mà P1 chưa suy ra được một cách trung thực —
- * để engine P2 quyết định, không đoán.)
- *
- * KHÔNG %. KHÔNG level. Không có dữ liệu thật → nói thật là chưa có
- * chương nào được viết, không vẽ chương giả.
+ * Logic xác định chương (P1/P3 subset của Journey Map engine đầy đủ —
+ * Phase P6, xem JOURNEY_PLATFORM_ARCHITECTURE.md mục 8) SỐNG Ở
+ * `lib/portal/foundation/journey-chapter.ts` — dùng chung với Opening
+ * Page của My Story (P3) để hai cửa không bao giờ nói lệch nhau về
+ * chương người dùng đang ở. KHÔNG %. KHÔNG level. Không có dữ liệu thật
+ * → nói thật là chưa có chương nào được viết, không vẽ chương giả.
  */
 
-const CHAPTERS = [
-  "Bắt đầu làm quen với AI",
-  "Biết sử dụng AI",
-  "Tạo ra Output đầu tiên",
-  "Xây hệ thống",
-  "Giúp người khác",
-] as const;
-
-type ChapterState =
-  | { kind: "chapter"; index: number; name: string; evidence: string }
-  | { kind: "empty" };
-
 export function CurrentChapterCard() {
-  const [state, setState] = useState<ChapterState | null>(null);
+  const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
 
   useEffect(() => {
-    const summary = getGardenSummary();
-    const hasAnyActivity = getRecentActivity(1).length > 0;
-    let next: ChapterState;
-    if (summary.totalOutputs >= 1) {
-      next = {
-        kind: "chapter",
-        index: 3,
-        name: CHAPTERS[2],
-        evidence: `${summary.totalOutputs} output thật đã được tạo ra trong Workspace.`,
-      };
-    } else if (summary.missionsCompleted >= 1 || summary.journeysTouched >= 1) {
-      next = {
-        kind: "chapter",
-        index: 2,
-        name: CHAPTERS[1],
-        evidence:
-          summary.missionsCompleted >= 1
-            ? `${summary.missionsCompleted} phiên làm việc thật đã hoàn thành.`
-            : `${summary.journeysTouched} hành trình học đã được bạn chạm tới.`,
-      };
-    } else if (hasAnyActivity) {
-      next = {
-        kind: "chapter",
-        index: 1,
-        name: CHAPTERS[0],
-        evidence: "Hoạt động thật đầu tiên của bạn đã được ghi nhận.",
-      };
-    } else {
-      next = { kind: "empty" };
-    }
     // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setState(next);
+    setChapter(getCurrentChapterFromClient());
   }, []);
 
-  if (state === null) return null;
+  if (chapter === undefined) return null;
 
   return (
     <section className="rounded-2xl border border-gray-100 bg-white p-6 shadow-token-sm md:p-7">
@@ -84,10 +40,10 @@ export function CurrentChapterCard() {
        * qua), không thanh %: chương trước chương hiện tại coi là đã đi
        * qua, chương sau còn mờ "chưa viết". */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        {CHAPTERS.map((name, i) => {
+        {JOURNEY_CHAPTER_NAMES.map((name, i) => {
           const chapterNo = i + 1;
-          const current = state.kind === "chapter" && chapterNo === state.index;
-          const passed = state.kind === "chapter" && chapterNo < state.index;
+          const current = chapter !== null && chapterNo === chapter.index;
+          const passed = chapter !== null && chapterNo < chapter.index;
           return (
             <span
               key={name}
@@ -106,12 +62,12 @@ export function CurrentChapterCard() {
         })}
       </div>
 
-      {state.kind === "chapter" ? (
+      {chapter !== null ? (
         <>
           <h2 className="mt-4 text-lg font-extrabold text-gray-900">
-            Chương {state.index} — {state.name}
+            Chương {chapter.index} — {chapter.name}
           </h2>
-          <p className="mt-1 text-sm text-gray-500">{state.evidence}</p>
+          <p className="mt-1 text-sm text-gray-500">{chapter.evidence}</p>
         </>
       ) : (
         <p className="mt-4 text-sm leading-relaxed text-gray-500">
