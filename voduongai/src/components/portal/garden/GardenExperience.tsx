@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Gem, X } from "lucide-react";
+import { ArrowRight, Gem, X } from "lucide-react";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { TreeLayer } from "@/components/portal/garden/scene/TreeLayer";
 import { WindLayer } from "@/components/portal/garden/scene/WindLayer";
 import { SunlightLayer } from "@/components/portal/garden/scene/SunlightLayer";
@@ -302,13 +303,12 @@ export function GardenExperience({
       </div>
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 py-8 md:px-8 md:py-10">
-        {/* Lối về Hub — một chạm */}
-        <Link
+        {/* Lối về Hub — nút Back chuẩn hoá toàn Portal (Task 1) */}
+        <PortalBackLink
           href="/portal/hanhtrinhcuatoi"
-          className="g-fg-faint inline-flex items-center gap-1.5 text-xs font-semibold transition hover:opacity-80"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Hành trình của tôi
-        </Link>
+          label="Hành trình của tôi"
+          colorClassName="g-fg-faint hover:opacity-80"
+        />
 
         {/* Cổng vào — chữ ít, hiểu bằng thị giác trước */}
         <header className="mt-6 text-center">

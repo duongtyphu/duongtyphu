@@ -119,7 +119,7 @@ export default function KhongGianAiPage() {
   const featuredArticles = AI_ARTICLES.filter((a) => a.featured);
 
   return (
-    <div className="rounded-3xl p-6 md:p-8 space-y-10">
+    <div className="space-y-10">
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
       {/* Nền gradient đậm cùng khuôn dải hero màu của các pillar khác (Học
        * viện tri thức AI tone "knowledge", Học viện AI tone "learning" — xem

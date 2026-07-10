@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Compass } from "lucide-react";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { getCurrentChapterFromClient, JOURNEY_CHAPTER_NAMES, type JourneyChapter } from "@/lib/portal/foundation/journey-chapter";
 import { getGardenSummary, getModuleActivitySummary } from "@/lib/portal/foundation/growth-view";
 import type { Reflection } from "@/lib/portal/reflections";
@@ -88,12 +89,11 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
       <div className="map-topo-lines" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
-        <Link
+        <PortalBackLink
           href="/portal/hanhtrinhcuatoi"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-950/40 transition hover:text-amber-950/70"
-        >
-          <ArrowRight className="h-3.5 w-3.5 rotate-180" /> Hành trình của tôi
-        </Link>
+          label="Hành trình của tôi"
+          colorClassName="text-amber-950/40 hover:text-amber-950/70"
+        />
 
         {/* ── 1. La bàn ────────────────────────────────────────────────── */}
         <header className="mt-8 text-center">

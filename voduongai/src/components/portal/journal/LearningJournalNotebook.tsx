@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight, BookOpen } from "lucide-react";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { listAllSessions, type WorkspaceSessionRecord } from "@/lib/portal/foundation/workspace-session-store";
 import { listPortfolioItems, type PortfolioItemRecord } from "@/lib/portal/foundation/portfolio-store";
 import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
@@ -134,12 +135,7 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
       <div className="journal-bookmark right-8 md:right-16" aria-hidden />
 
       <div className="relative z-10 mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
-        <Link
-          href="/portal/hanhtrinhcuatoi"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-400 transition hover:text-stone-600"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" /> Hành trình của tôi
-        </Link>
+        <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="light" />
 
         <header className="journal-page-fade mt-8">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-orange-700/70">

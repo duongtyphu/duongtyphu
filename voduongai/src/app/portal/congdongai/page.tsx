@@ -1,7 +1,7 @@
 import { Users, MessageCircle, PlayCircle, HelpCircle, ArrowRight, Sparkles } from "lucide-react";
 import { siteConfig } from "@/lib/site";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { GradientTitle } from "@/components/portal/ui/GradientTitle";
+import { PillarHero } from "@/components/portal/ui/PillarHero";
 
 export const metadata = {
   title: "Cộng đồng",
@@ -73,19 +73,13 @@ const FAQ = [
 export default function CommunityPage() {
   return (
     <div className="space-y-12">
-      {/* Hero */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20">
-            <Users className="h-4 w-4 text-blue-400" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Cộng đồng</span>
-        </div>
-        <h1 className="text-2xl font-extrabold"><GradientTitle text="Không ai tiến hóa một mình" /></h1>
-        <p className="max-w-2xl text-gray-500">
-          Kết nối với những người cùng hành trình — học hỏi, chia sẻ kinh nghiệm thực tế, cập nhật kiến thức mới và phát triển cùng nhau.
-        </p>
-      </div>
+      <PillarHero
+        icon={Users}
+        tone="community"
+        eyebrow="Cộng đồng"
+        title="Không ai tiến hóa một mình"
+        subtitle="Kết nối với những người cùng hành trình — học hỏi, chia sẻ kinh nghiệm thực tế, cập nhật kiến thức mới và phát triển cùng nhau."
+      />
 
       {/* Companion Guide */}
       <CompanionGuide
@@ -94,7 +88,7 @@ export default function CommunityPage() {
       />
 
       {/* New member guide */}
-      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-5">
+      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5">
         <div className="mb-3 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-amber-400" />
           <p className="text-sm font-bold text-gray-900">Bạn mới? Nên bắt đầu từ đây</p>
@@ -121,7 +115,7 @@ export default function CommunityPage() {
         <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Các kênh cộng đồng</p>
         <div className="space-y-4">
           {COMMUNITIES.map((c) => (
-            <div key={c.title} className="gemos-gem-card rounded-xl p-5">
+            <div key={c.title} className="gemos-gem-card rounded-2xl p-5">
               <div className="mb-4 flex items-start gap-4">
                 <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.color}`}>
                   <c.icon className="h-6 w-6" />
@@ -175,7 +169,7 @@ export default function CommunityPage() {
         </div>
         <div className="space-y-3">
           {FAQ.map((item) => (
-            <div key={item.q} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div key={item.q} className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
               <p className="mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </div>
@@ -184,7 +178,7 @@ export default function CommunityPage() {
       </div>
 
       {/* CTA */}
-      <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-6 text-center">
+      <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-6 text-center">
         <h3 className="mb-2 text-base font-bold text-gray-900">Sẵn sàng tham gia?</h3>
         <p className="mb-5 text-sm text-gray-500">Hàng trăm người đang học và chia sẻ mỗi ngày — đừng đi một mình.</p>
         <div className="flex flex-wrap justify-center gap-3">
