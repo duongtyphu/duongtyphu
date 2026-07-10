@@ -372,18 +372,43 @@ với Learning Platform, xem TECH_DEBT_LEARNING_PLATFORM.md):
 
 ## 18. GLOBAL ART DIRECTION — Sáu không gian cảm xúc
 
-**Trạng thái: PRODUCT OWNER APPROVED.** Cập nhật đúng theo brief "PORTAL 4.0
-— JOURNEY PLATFORM — GLOBAL ART DIRECTION". Nguyên tắc cốt lõi: **Journey
-không phải một trang — là sáu không gian cảm xúc khác nhau**, mỗi cửa một
-khí quyển/ánh sáng/nền/tông cảm xúc/nhận diện thị giác RIÊNG, nhưng tất cả
-vẫn thuộc cùng một ngôn ngữ thiết kế VO DUONG AI (bảng màu gốc
-brand-blue/brand-violet/brand-orange + hệ token GemOS đã có toàn Portal).
-**Chỉ đổi icon/màu là KHÔNG đủ** — mỗi cửa phải khác về ánh sáng, nền, kết
-cấu, không chỉ khác palette.
+**Trạng thái: 🔒 PRODUCT OWNER APPROVED — VISUAL LANGUAGE FREEZE.** Mục
+này đã được PO duyệt hai lần (bản đầu "GLOBAL ART DIRECTION" và bản khoá
+"GLOBAL JOURNEY ART DIRECTION — VISUAL LANGUAGE FREEZE") và giờ **đóng
+băng** — đây là đặc tả thị giác cuối cùng cho P4–P6, không thiết kế lại
+từ đầu nữa, chỉ triển khai đúng theo mục này. Nguyên tắc cốt lõi: **Journey
+không phải một tập hợp trang — là một tập hợp không gian cảm xúc**, mỗi
+cửa đại diện một chương khác nhau trong quá trình trưởng thành của người
+dùng, cần khí quyển/ánh sáng/nền/tông cảm xúc/nhận diện thị giác/nhịp
+chuyển động RIÊNG, nhưng tất cả vẫn thuộc cùng một ngôn ngữ thiết kế VO
+DUONG AI (bảng màu gốc brand-blue/brand-violet/brand-orange + hệ token
+GemOS đã có toàn Portal). **Chỉ đổi icon/màu là KHÔNG đủ** — mỗi cửa phải
+khác về ánh sáng, nền, kết cấu, nhịp chuyển động, không chỉ khác palette.
 
-**Quality Gate** (áp dụng cho cả sáu cửa, không chỉ Garden): đặt ảnh chụp
-màn hình sáu trang cạnh nhau, che hết chữ và logo — mỗi trang vẫn phải
-nhận ra được ngay lập tức nhờ đúng bố cục/ánh sáng/kết cấu riêng của nó.
+### 18.0 Triết lý thiết kế
+
+Mỗi trang Journey phải trả lời ngay lập tức:
+
+> **"Tôi đang ở đâu về mặt CẢM XÚC?"**
+
+KHÔNG phải:
+
+> "Tôi đang dùng chức năng gì?"
+
+Người dùng phải cảm thấy họ đang **đi qua những không gian khác nhau bên
+trong một thế giới đẹp đẽ duy nhất** — không phải chuyển tab giữa các
+trang web có chức năng khác nhau.
+
+**Quality Gate cuối cùng**: Journey chỉ hoàn thành khi Product Owner cảm
+thấy:
+
+> "Tôi không chuyển giữa các trang web. Tôi đã đi qua những nơi khác
+> nhau bên trong một hành trình có ý nghĩa."
+
+Bài kiểm tra cụ thể (áp dụng cho cả sáu cửa, không chỉ Garden): đặt ảnh
+chụp màn hình sáu trang cạnh nhau, che hết logo/chữ/icon — Product Owner
+vẫn phải nhận ra ngay Journey Hub / Garden / My Story / Mirror / Nhật ký
+học tập / Journey Map chỉ nhờ KHÍ QUYỂN, không cần đọc gì.
 
 ### 18.1 Bảng nhận diện sáu không gian
 
@@ -512,41 +537,96 @@ tham chiếu cho việc một cửa "đã diễn đạt đúng khí quyển ngay
   phân biệt).
 - Áp dụng khi triển khai Phase P6 (mục 19).
 
-### 18.8 Nguyên tắc chung giữ tất cả trong một hệ
+### 18.8 Consistency — nguyên tắc chung giữ tất cả trong một hệ
 
-Dù mỗi cửa một khí quyển, tất cả PHẢI tuân thủ:
+Dù mỗi cửa một khí quyển RIÊNG, các thuộc tính sau PHẢI tiếp tục theo
+đúng Portal Design System hiện có — không phát minh hệ mới cho từng cửa:
 
-1. Mọi màu accent đều xuất phát từ hoặc phối hài hoà với bảng gốc VO
+1. **Typography** — cùng thang cỡ chữ/độ đậm của hệ thống; chỉ đổi
+   FONT-FAMILY khi có lý do cảm xúc rõ ràng (My Story dùng serif — xem
+   18.4; các cửa còn lại giữ sans-serif hệ thống).
+2. **Spacing** — cùng thang khoảng cách (Tailwind scale hiện có), không
+   tự chế đơn vị mới cho riêng một cửa.
+3. **Buttons** — cùng component `Button`/pattern link hiện có, chỉ đổi
+   MÀU theo khí quyển cửa đó.
+4. **Animations / Transitions** — cùng "họ chuyển động chậm, khí quyển"
+   (xem bảng Motion ở 18.9), cùng cách dùng `transition`/`@keyframes`,
+   tôn trọng `prefers-reduced-motion` (đổi trạng thái tức thời, tắt
+   hạt/rung khi người dùng bật) ở MỌI cửa không ngoại lệ.
+5. **Radius** — dùng đúng token `--radius-*` đã có (`rounded-token` v.v.),
+   không tự chọn bo góc tuỳ tiện theo cửa (Journey Map được phép bo góc
+   ít hơn để gợi "bản đồ giấy" — vẫn dùng token nhỏ nhất có sẵn, không
+   phát minh giá trị mới).
+6. **Elevation** — dùng đúng thang `--shadow-token-*` đã có; cửa tối
+   (Garden, Mirror) thay bóng đổ bằng glow/viền sáng thay vì shadow đen,
+   nhưng vẫn theo đúng CƯỜNG ĐỘ tương ứng của thang elevation gốc.
+7. **Interaction** — cùng ngôn ngữ hover/focus-visible/kích thước chạm
+   ≥44px dù màu sắc khác nhau theo cửa.
+8. **Accessibility** — xem 18.10, áp dụng như nhau cho cả sáu cửa.
+9. Mọi màu accent đều xuất phát từ hoặc phối hài hoà với bảng gốc VO
    DUONG AI (`brand-blue #2563EB`, `brand-violet #5B8CFF`, `brand-orange
    #FF7A00`) — không phát minh hue hoàn toàn xa lạ (vd. không neon
    hồng/xanh lá chói).
-2. Cùng một bộ nguyên tắc chuyển động: chậm, khí quyển, tôn trọng
-   `prefers-reduced-motion` (đổi trạng thái tức thời, tắt hạt/rung khi
-   người dùng bật).
-3. Cùng ngôn ngữ thành phần tương tác (nút/link) về HÀNH VI (hover,
-   focus-visible, kích thước chạm ≥44px) dù màu sắc khác nhau theo cửa.
-4. Companion luôn xuất hiện tối đa MỘT lần mỗi cửa, giọng điệu đổi theo
-   khí quyển nhưng không bao giờ phá vỡ nguyên tắc "nhân chứng, không
-   coach" đã chốt ở mục 12.
-5. Logo/header/sidebar Portal (khung ngoài) giữ nguyên nhận diện chuẩn —
-   chỉ vùng NỘI DUNG bên trong mỗi cửa đổi khí quyển.
+10. Companion luôn xuất hiện tối đa MỘT lần mỗi cửa, giọng điệu đổi theo
+    khí quyển nhưng không bao giờ phá vỡ nguyên tắc "nhân chứng, không
+    coach" đã chốt ở mục 12.
+11. Logo/header/sidebar Portal (khung ngoài) giữ nguyên nhận diện chuẩn —
+    chỉ vùng NỘI DUNG bên trong mỗi cửa đổi khí quyển.
+
+### 18.9 Motion — nhịp chuyển động riêng từng cửa
+
+Mỗi cửa một NHỊP chuyển động khác nhau (không chỉ khác hiệu ứng) — không
+bao giờ lạm dụng animation:
+
+| Cửa | Nhịp chuyển động | Đã triển khai |
+|---|---|---|
+| Journey Hub | **Rất tinh tế** — gần như tĩnh, chỉ hạt bụi sáng cực nhẹ trong vệt nắng | Chưa (chờ redesign 18.2) |
+| Garden | **Khí quyển sống** — sương trôi, đom đóm, Ngọc "thở", crossfade ngày/đêm 75s | ✅ Đã có (`.garden-*`, mục 13) |
+| My Story | **Cảm giác lật trang** — nội dung mờ dần hiện lên nhẹ khi cuộn tới (page-turn feeling), không phải fade chung chung | ✅ Đã có `.story-fade-in`, cần tinh chỉnh thêm cảm giác "lật trang" ở P3.1 nếu cần |
+| Mirror | **Gần như bất động** — chỉ một shimmer phản chiếu cực chậm (~12s), tuyệt đối không rung/nảy | Chưa (chờ P4, xem 18.5) |
+| Nhật ký học tập | **Nhịp viết** — con trỏ/dải bookmark có chuyển động rất nhỏ gợi "đang viết", không trôi nổi kiểu Garden | Chưa (chờ P5, xem 18.6) |
+| Journey Map | **Khám phá chậm rãi** — la bàn lay rất nhẹ, đường tuyến đường "vẽ dần" chậm khi vào trang, không zoom/pan tự động | Chưa (chờ P6, xem 18.7) |
+
+Quy tắc chung: KHÔNG BAO GIỜ over-animate — mỗi cửa chỉ 1–2 hiệu ứng
+chuyển động đặc trưng, không chồng nhiều hiệu ứng cùng lúc.
+
+### 18.10 Accessibility bắt buộc cho mọi khí quyển
+
+Khí quyển KHÔNG BAO GIỜ được làm giảm khả năng sử dụng. Cả sáu cửa phải
+giữ:
+
+1. **Tương phản đọc được** — chữ trên nền tối (Garden, Mirror) và nền
+   sáng (Hub, My Story, Journal, Map) đều đạt chuẩn tương phản; kiểm tra
+   riêng từng khí quyển, không suy từ một cửa sang cửa khác.
+2. **Điều hướng bàn phím** — mọi phần tử tương tác (Ngọc, chip phần tử,
+   thẻ cửa, điểm dừng trên Journey Map...) focus được, có `aria-label`
+   mô tả đúng ý nghĩa thật, không chỉ mô tả hình dạng.
+3. **Hỗ trợ `prefers-reduced-motion`** — bắt buộc ở cả sáu cửa (không chỉ
+   Garden đã làm): giữ đúng trạng thái ánh sáng/khí quyển hiện tại,
+   tắt/giảm hạt-rung-shimmer, không có chuyển động liên tục nào sống sót.
+4. **Đọc được trên mobile** — khí quyển đơn giản hoá lớp trang trí trước,
+   không bao giờ hy sinh khả năng đọc chữ hay chạm nút để giữ hiệu ứng.
 
 ## 19. Các phase triển khai (sau khi tài liệu này được duyệt)
+
+> **VISUAL LANGUAGE FREEZE**: mục 18 đã khoá. Từ P4 trở đi, KHÔNG thiết
+> kế lại khái niệm — chỉ triển khai đúng đặc tả đã duyệt. Riêng **Garden
+> tuyệt đối không redesign** (đã duyệt xong ở P2, giữ nguyên 100%).
 
 | Phase | Nội dung | Trạng thái |
 |---|---|---|
 | **P0** | PO duyệt tài liệu này + chốt 2 quyết định mở: (a) số phận khối blog trong Journal, (b) MERGE Sanctuary | ✅ Done |
 | **P1** | Journey Hub tại `/portal/hanhtrinhcuatoi` (greeting, chương hiện tại, 5 thẻ cửa, hoạt động ý nghĩa, prompt, CTA) | ✅ Done — ⚠️ cần thêm lượt REDESIGN thị giác theo mục 18.2 |
-| **P2** | Garden — khí quyển ngày/đêm, Cây, Ngọc (đôn lên trước theo quyết định PO) | ✅ Done |
-| **P3** | My Story — "cuốn sách", MOVE Garden card khỏi Story | ✅ Done |
-| **P4** | Mirror — 3 nhịp (Nhìn lại/Nhận ra/Tự hỏi) + REDESIGN thị giác theo mục 18.5 + MERGE Sanctuary + redirect route cũ | Kế tiếp |
-| **P5** | Nhật ký học tập — đổi bản chất (entry 4 câu, tuần nhật ký, blog xuống khối phụ) + REDESIGN thị giác theo mục 18.6 | Sau P4 |
-| **P6** | Journey Map engine (trạng thái 3 mức của chương, bằng chứng thật) + trang `/ban-do` + thị giác theo mục 18.7 | Sau P4 |
-| **P7** | Audit chéo toàn platform: giọng Companion, empty states, cross-links, responsive, NO-FAKE-DATA final check, VÀ đối chiếu Quality Gate "che logo" của mục 18 cho cả 6 cửa | P1–P6 |
+| **P2** | Garden — khí quyển ngày/đêm, Cây, Ngọc (đôn lên trước theo quyết định PO) | ✅ Done — 🔒 KHÔNG redesign lại |
+| **P3** | My Story — "cuốn sách", MOVE Garden card khỏi Story | ✅ Done — khớp đúng mục 18.4, giữ nguyên |
+| **P4** | Mirror — 3 nhịp (Nhìn lại/Nhận ra/Tự hỏi) + REDESIGN thị giác theo mục 18.5 (kính khói/cold blue/soft violet) + motion "gần như bất động" (18.9) + MERGE Sanctuary + redirect route cũ | Kế tiếp |
+| **P5** | Nhật ký học tập — đổi bản chất (entry 4 câu, tuần nhật ký, blog xuống khối phụ) + REDESIGN thị giác theo mục 18.6 (sổ tay/warm gray/bookmark) + motion "nhịp viết" (18.9) | Sau P4 |
+| **P6** | Journey Map engine (trạng thái 3 mức của chương, bằng chứng thật) + trang `/ban-do` + thị giác theo mục 18.7 (giấy da cũ/la bàn) + motion "khám phá chậm rãi" (18.9) | Sau P4 |
+| **P7** | Audit chéo toàn platform: giọng Companion, empty states, cross-links, responsive, NO-FAKE-DATA final check, đối chiếu Consistency (18.8) + Accessibility (18.10) cho cả 6 cửa, VÀ Quality Gate "che logo" cuối cùng của mục 18.0 | P1–P6 |
 
-Mỗi phase: build sạch + audit trung thực dữ liệu + đối chiếu Global Art
-Direction (mục 18) trước khi sang phase sau. Không phase nào đụng vào
-Learning Platform (nợ kỹ thuật đã phê duyệt).
+Mỗi phase: build sạch + audit trung thực dữ liệu + đối chiếu Global
+Journey Art Direction (mục 18, đã khoá) trước khi sang phase sau. Không
+phase nào đụng vào Learning Platform (nợ kỹ thuật đã phê duyệt).
 
 ---
 
