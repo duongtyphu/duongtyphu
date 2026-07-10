@@ -221,11 +221,18 @@ Nguyên tắc:
 
 ---
 
-## 9. Thiết kế Garden — giữ và tinh chỉnh
+## 9. Thiết kế Garden — giữ dữ liệu, dựng lại thị giác
 
-Garden (`/portal/khuvuoncuaban`) **giữ nguyên cấu trúc** — đã qua
+> **CẬP NHẬT (PO APPROVED, P0):** Product Owner đã duyệt định hướng thị
+> giác đặc biệt cho Khu vườn — xem **`GARDEN_VISUAL_DIRECTION.md`** (khu
+> vườn cổ tích dưới ánh trăng, Cây trung tâm theo giai đoạn thật, Viên
+> ngọc dưới gốc cây, bỏ nền grid/card trắng, motion khí quyển, responsive
+> giữ khung cảnh cảm xúc). Tài liệu đó THAY THẾ phần thị giác của mục
+> này; phần DỮ LIỆU dưới đây giữ nguyên hiệu lực.
+
+Garden (`/portal/khuvuoncuaban`) giữ nguyên **mô hình dữ liệu** — đã qua
 reconstruction, dùng `growth-view.ts` làm nguồn duy nhất, đã dọn seed giả.
-Chỉ cải thiện 4 điểm:
+Bốn nguyên tắc kết nối dữ liệu sau vẫn áp dụng bên trong art direction mới:
 
 1. **Rõ nghĩa từng thực thể**: mỗi cây/mầm/tín hiệu có tooltip "vì sao nó
    ở đây" trỏ về đúng hoạt động thật đã nuôi nó (legend of meaning).
