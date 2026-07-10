@@ -17,22 +17,22 @@ import {
 
 /**
  * KHU VƯỜN 2.0 — Journey Phase P2, triển khai trung thành theo
- * GARDEN_VISUAL_DIRECTION.md (PO approved):
+ * GARDEN_VISUAL_DIRECTION.md (PO approved), gồm LIVING DAY & NIGHT
+ * CYCLE (mục 13):
  *
- * - Canvas khí quyển midnight→bình minh phủ toàn trang (không nền grid,
- *   không card trắng, không dashboard/thống kê/game UI/checklist).
+ * - MỘT khu vườn, BỐN khí quyển (Bình minh/Ban ngày/Hoàng hôn/Đêm) theo
+ *   giờ thiết bị người dùng — không nút chuyển tay. Chỉ trời/ánh sáng/
+ *   bóng/hạt/glow đổi qua data-garden-period + CSS variables; Cây và
+ *   Ngọc không bao giờ bị thay. Chuyển cảnh crossfade 75s, vào trang là
+ *   đúng khí quyển ngay (data-garden-ready chặn transition ban đầu).
  * - TÁI SỬ DỤNG engine layer sẵn có (Tree/Wind/Sunlight/Bokeh/Sparkle —
- *   không viết lại engine); art direction dựng lại quanh nó. Ảnh cây
- *   chính thức (VDAI-GARDEN-001, ánh nắng bình minh) GIỮ NGUYÊN — định
- *   hướng cho phép "moonlight or sunrise light"; khung cảnh là ô cửa
- *   phát sáng giữa nền đêm. LeafChipLayer (8 chip hành động) tạm rút
- *   khỏi khung cảnh theo quy tắc TIẾT CHẾ của định hướng.
- * - Cây = trung tâm thị giác; giai đoạn cây gọi bằng LỜI từ ngưỡng dữ
- *   liệu thật (GARDEN_VISUAL_DIRECTION.md mục 4) — không "Lv.", không %.
- * - Ngọc = trung tâm cảm xúc: glow "thở", hắt sáng, chạm để mở ĐÚNG MỘT
- *   khoảnh khắc thật mỗi lần; không có dữ liệu → empty state thơ.
- * - Vườn trống (mọi chỉ số 0) → khung cảnh hạt mầm trung thực, không
- *   cây giả, không hoa giả.
+ *   không viết lại engine); ảnh cây chính thức (VDAI-GARDEN-001) GIỮ
+ *   NGUYÊN, chỉ được "chiếu sáng" khác đi bằng lighting overlay.
+ * - Cây = mỏ neo thị giác (giai đoạn bằng LỜI từ ngưỡng dữ liệu thật);
+ *   Ngọc = mỏ neo cảm xúc (thở chậm, hắt sáng, rực nhất về đêm nhưng có
+ *   trần thanh lịch — --g-gem-boost).
+ * - Đèn lồng chỉ thắp lúc hoàng hôn KHI có suy ngẫm/ký ức thật.
+ * - Không dashboard/game UI/card trắng; không fake growth/memory.
  */
 
 export type GemMoment = {
@@ -51,6 +51,41 @@ const GEM_KIND_LABEL: Record<GemMoment["kind"], string> = {
   summary: "Những gì bạn đã nuôi dưỡng",
 };
 
+/** Băng giờ 4 khí quyển — GARDEN_VISUAL_DIRECTION.md mục 13.1 (giờ
+ * thiết bị người dùng; Admin tương lai chỉnh được — mục 13.5). */
+type GardenPeriod = "dawn" | "day" | "sunset" | "night";
+
+function resolvePeriod(hour: number): GardenPeriod {
+  if (hour >= 5 && hour < 8) return "dawn";
+  if (hour >= 8 && hour < 17) return "day";
+  if (hour >= 17 && hour < 19) return "sunset";
+  return "night";
+}
+
+/** Giọng Companion đổi nhẹ theo khí quyển (13.1) — chỉ dữ liệu thật;
+ * chưa có hoạt động thì lời mời/tự sự trung thực, không bịa "nhớ". */
+function companionLineFor(period: GardenPeriod, lastActivity: string | null): string {
+  const act = lastActivity ? lastActivity.toLowerCase() : null;
+  switch (period) {
+    case "dawn":
+      return act
+        ? `Một ngày mới cho khu vườn. Gần nhất, bạn đã ${act} — hôm nay bạn muốn gieo gì tiếp?`
+        : "Một ngày mới cho khu vườn. Bạn muốn gieo gì hôm nay?";
+    case "day":
+      return act
+        ? `Khu vườn lớn lên vào những giờ bạn làm việc thật. Gần nhất, bạn đã ${act}.`
+        : "Khu vườn lớn lên vào những giờ bạn làm việc thật.";
+    case "sunset":
+      return act
+        ? `Hôm nay đã trôi qua — có điều gì đáng giữ lại? Gần nhất, bạn đã ${act}.`
+        : "Hôm nay đã trôi qua — có điều gì đáng giữ lại?";
+    case "night":
+      return act
+        ? `Tôi vẫn ở đây, dưới tán cây. Gần nhất, bạn đã ${act} — khu vườn đã nhận được nước tưới thật.`
+        : "Tôi vẫn giữ những khoảnh khắc của bạn, dưới ánh ngọc. Sự im lặng cũng là một phần của mùa vụ.";
+  }
+}
+
 /** Ngưỡng giai đoạn cây — GARDEN_VISUAL_DIRECTION.md mục 4. Giữ ở một
  * chỗ duy nhất để Admin Platform sau này quản trị được (mục 11). */
 function treeStage(s: GardenSummary): { name: string; line: string } | null {
@@ -68,7 +103,10 @@ function treeStage(s: GardenSummary): { name: string; line: string } | null {
  * (quy tắc tiết chế, mục 3). */
 type GardenElement = { key: string; emoji: string; name: string; meaning: string };
 
-function buildElements(s: GardenSummary, counts: { reflections: number; memories: number; milestones: number }): GardenElement[] {
+function buildElements(
+  s: GardenSummary,
+  counts: { reflections: number; memories: number; milestones: number },
+): GardenElement[] {
   const all: (GardenElement & { count: number })[] = [
     {
       key: "flowers",
@@ -114,6 +152,12 @@ const DUST_SPOTS = [
   { left: "93%", bottom: "8%", size: 3, delay: "7s" },
 ] as const;
 
+/** Vị trí 2 đèn lồng hoàng hôn trong khung cảnh (gần mặt đất). */
+const LANTERN_SPOTS = [
+  { left: "18%", bottom: "9%" },
+  { left: "78%", bottom: "12%" },
+] as const;
+
 export function GardenExperience({
   serverMoments,
   reflectionCount,
@@ -131,6 +175,24 @@ export function GardenExperience({
   const [gemOpen, setGemOpen] = useState(false);
   const [momentIndex, setMomentIndex] = useState(0);
   const [selectedElement, setSelectedElement] = useState<GardenElement | null>(null);
+  const [period, setPeriod] = useState<GardenPeriod | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Khí quyển theo giờ thiết bị: áp ngay khi mount, kiểm lại mỗi 60s
+  // (không rAF loop — 13.4/13.6). data-garden-ready bật SAU khi period
+  // đầu tiên đã vẽ, để crossfade 75s chỉ chạy khi đổi băng giờ thật.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- giờ thiết bị chỉ có ở client
+    setPeriod(resolvePeriod(new Date().getHours()));
+    const readyTimer = setTimeout(() => setReady(true), 150);
+    const tick = setInterval(() => {
+      setPeriod(resolvePeriod(new Date().getHours()));
+    }, 60_000);
+    return () => {
+      clearTimeout(readyTimer);
+      clearInterval(tick);
+    };
+  }, []);
 
   useEffect(() => {
     document.title = "Khu vườn của bạn — VO DUONG AI";
@@ -166,57 +228,58 @@ export function GardenExperience({
   const elements = summary
     ? buildElements(summary, { reflections: reflectionCount, memories: memoryCount, milestones: milestoneCount })
     : [];
+  const lanternsLit = reflectionCount + memoryCount > 0;
 
-  // Một câu chứng kiến của Companion — dữ liệu thật, im lặng cũng hợp lệ.
-  const companionLine =
-    summary === null
-      ? null
-      : lastActivity
-        ? `Tôi vẫn ở đây, dưới tán cây. Gần nhất, bạn đã ${lastActivity.toLowerCase()} — khu vườn đã nhận được nước tưới thật.`
-        : "Tuần này khu vườn yên tĩnh. Sự im lặng cũng là một phần của mùa vụ.";
-
+  const companionLine = summary === null || period === null ? null : companionLineFor(period, lastActivity);
   const currentMoment = moments.length > 0 ? moments[momentIndex % moments.length] : null;
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      {/* Khí quyển nền — nhiều lớp ánh sáng, không flat gradient */}
-      <div className="garden-night-bg" aria-hidden />
+    <div
+      data-garden-period={period ?? "night"}
+      data-garden-ready={ready ? "true" : "false"}
+      className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8"
+    >
+      {/* Sky stack — 4 lớp trời, chỉ crossfade opacity (13.2) */}
+      <div className="garden-sky garden-sky--dawn" aria-hidden />
+      <div className="garden-sky garden-sky--day" aria-hidden />
+      <div className="garden-sky garden-sky--sunset" aria-hidden />
+      <div className="garden-sky garden-sky--night" aria-hidden />
+      <div className="garden-stars" aria-hidden />
       <div className="garden-mist" aria-hidden />
-      {DUST_SPOTS.map((d, i) => (
-        <span
-          key={i}
-          className="garden-dust"
-          aria-hidden
-          style={{ left: d.left, bottom: d.bottom, width: d.size, height: d.size, animationDelay: d.delay }}
-        />
-      ))}
+      <div className="garden-dust-field" aria-hidden>
+        {DUST_SPOTS.map((d, i) => (
+          <span
+            key={i}
+            className="garden-dust"
+            style={{ left: d.left, bottom: d.bottom, width: d.size, height: d.size, animationDelay: d.delay }}
+          />
+        ))}
+      </div>
 
       <div className="relative z-10 mx-auto max-w-4xl px-4 py-8 md:px-8 md:py-10">
         {/* Lối về Hub — một chạm */}
         <Link
           href="/portal/hanhtrinhcuatoi"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/50 transition hover:text-white/80"
+          className="g-fg-faint inline-flex items-center gap-1.5 text-xs font-semibold transition hover:opacity-80"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Hành trình của tôi
         </Link>
 
         {/* Cổng vào — chữ ít, hiểu bằng thị giác trước */}
         <header className="mt-6 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight text-white md:text-4xl">Khu vườn của bạn</h1>
-          <p className="mx-auto mt-2 max-w-md text-sm italic leading-relaxed text-white/55">
+          <h1 className="g-fg text-3xl font-extrabold tracking-tight md:text-4xl">Khu vườn của bạn</h1>
+          <p className="g-fg-soft mx-auto mt-2 max-w-md text-sm italic leading-relaxed">
             Nơi những gì bạn đã học và nuôi dưỡng trở thành một khu vườn sống.
           </p>
         </header>
 
-        {/* Một câu chứng kiến của Companion */}
+        {/* Một câu chứng kiến của Companion — đổi giọng theo khí quyển */}
         {companionLine && (
-          <p className="mx-auto mt-6 max-w-lg text-center text-sm leading-relaxed text-emerald-100/70">
-            {companionLine}
-          </p>
+          <p className="g-companion mx-auto mt-6 max-w-lg text-center text-sm leading-relaxed">{companionLine}</p>
         )}
 
         {/* ── Khung cảnh vườn ─────────────────────────────────────────── */}
-        {/* summary === null: dữ liệu client chưa nạp — giữ khoảng trời đêm
+        {/* summary === null: dữ liệu client chưa nạp — giữ khoảng trời
          * tĩnh thay vì render nhầm cảnh cây cho người có vườn trống. */}
         <div className="relative mx-auto mt-8 max-w-3xl">
           {summary === null ? (
@@ -226,15 +289,15 @@ export function GardenExperience({
             <div className="relative flex min-h-[380px] flex-col items-center justify-end pb-16">
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-40 rounded-[50%] bg-gradient-to-t from-emerald-950/70 to-transparent blur-sm"
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-40 rounded-[50%] bg-gradient-to-t from-emerald-950/40 to-transparent blur-sm"
               />
               <div className="garden-seed-glow relative flex h-16 w-16 items-center justify-center">
-                <span className="absolute h-14 w-14 rounded-full bg-amber-300/20 blur-xl" aria-hidden />
+                <span className="absolute h-14 w-14 rounded-full bg-amber-300/25 blur-xl" aria-hidden />
                 <span className="relative text-3xl" role="img" aria-label="Hạt mầm đang chờ nảy">
                   🌱
                 </span>
               </div>
-              <p className="relative mt-6 max-w-sm text-center text-sm leading-relaxed text-white/65">
+              <p className="g-fg-soft relative mt-6 max-w-sm text-center text-sm leading-relaxed">
                 Khu vườn mọc từ việc học thật. Hạt mầm đầu tiên đang chờ bạn.
               </p>
             </div>
@@ -247,14 +310,30 @@ export function GardenExperience({
               <BokehLayer />
               <SparkleLayer />
 
+              {/* Ánh sáng khí quyển phủ khung cảnh + bóng gốc cây (13.3) */}
+              <div className="garden-scene-tint garden-scene-tint--dawn" aria-hidden />
+              <div className="garden-scene-tint garden-scene-tint--day" aria-hidden />
+              <div className="garden-scene-tint garden-scene-tint--sunset" aria-hidden />
+              <div className="garden-scene-tint garden-scene-tint--night" aria-hidden />
+              <div className="garden-tree-shadow" aria-hidden />
+
+              {/* Đèn lồng — bắt đầu thắp lúc hoàng hôn, CHỈ khi có suy
+               * ngẫm/ký ức thật (không thắp đèn giả). */}
+              {period === "sunset" &&
+                lanternsLit &&
+                LANTERN_SPOTS.map((l, i) => (
+                  <span key={i} className="garden-lantern" style={{ left: l.left, bottom: l.bottom }} aria-hidden />
+                ))}
+
               {/* Bảng gỗ — giai đoạn cây bằng LỜI, từ dữ liệu thật */}
               {stage && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-md border border-amber-800/20 bg-gradient-to-b from-amber-100/90 to-amber-50/90 px-3 py-1.5 text-center shadow-sm backdrop-blur-sm">
+                <div className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border border-amber-800/20 bg-gradient-to-b from-amber-100/90 to-amber-50/90 px-3 py-1.5 text-center shadow-sm backdrop-blur-sm">
                   <p className="text-[10px] font-semibold text-amber-900">{stage.name}</p>
                 </div>
               )}
 
-              {/* ── Viên ngọc dưới gốc cây — trung tâm cảm xúc ─────────── */}
+              {/* ── Viên ngọc dưới gốc cây — trung tâm cảm xúc, tồn tại cả
+               * ngày, rực nhất về đêm (--g-gem-boost) ─────────────────── */}
               <button
                 type="button"
                 onClick={() => {
@@ -263,7 +342,7 @@ export function GardenExperience({
                 }}
                 aria-expanded={gemOpen}
                 aria-label="Viên ngọc — mở một khoảnh khắc thật được gìn giữ"
-                className="group absolute bottom-[11%] left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70"
+                className="garden-gem-wrap group absolute bottom-[11%] left-1/2 z-10 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-amber-300/70"
               >
                 <span className="garden-gem-cast" aria-hidden />
                 <Gem className="garden-gem-core relative h-8 w-8 text-teal-200 transition group-hover:text-teal-100" />
@@ -271,7 +350,7 @@ export function GardenExperience({
 
               {/* Panel khoảnh khắc — nổi trong khung cảnh, không modal trắng */}
               {gemOpen && (
-                <div className="absolute bottom-[22%] left-1/2 w-[88%] max-w-sm -translate-x-1/2 rounded-2xl border border-amber-200/25 bg-slate-950/85 p-5 shadow-[0_0_40px_-8px_rgba(251,191,36,0.35)] backdrop-blur-md">
+                <div className="absolute bottom-[22%] left-1/2 z-20 w-[88%] max-w-sm -translate-x-1/2 rounded-2xl border border-amber-200/25 bg-slate-950/85 p-5 shadow-[0_0_40px_-8px_rgba(251,191,36,0.35)] backdrop-blur-md">
                   <button
                     type="button"
                     onClick={() => setGemOpen(false)}
@@ -315,45 +394,62 @@ export function GardenExperience({
         {/* ── Phần tử có nghĩa (tối đa 3, chỉ khi có dữ liệu thật) ─────── */}
         {elements.length > 0 && (
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
-            {elements.map((el) => (
-              <button
-                key={el.key}
-                type="button"
-                onClick={() => {
-                  setSelectedElement((cur) => (cur?.key === el.key ? null : el));
-                  setGemOpen(false);
-                }}
-                aria-pressed={selectedElement?.key === el.key}
-                className={`inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold backdrop-blur transition ${
-                  selectedElement?.key === el.key
-                    ? "border-amber-300/50 bg-amber-300/15 text-amber-100"
-                    : "border-white/15 bg-white/[0.05] text-white/70 hover:border-white/30 hover:text-white"
-                }`}
-              >
-                <span aria-hidden>{el.emoji}</span> {el.name}
-              </button>
-            ))}
+            {elements.map((el) => {
+              const active = selectedElement?.key === el.key;
+              return (
+                <button
+                  key={el.key}
+                  type="button"
+                  onClick={() => {
+                    setSelectedElement((cur) => (cur?.key === el.key ? null : el));
+                    setGemOpen(false);
+                  }}
+                  aria-pressed={active}
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border px-4 py-2 text-xs font-semibold backdrop-blur transition hover:opacity-85"
+                  style={
+                    active
+                      ? {
+                          color: "var(--g-accent-fg)",
+                          borderColor: "var(--g-accent-border)",
+                          background: "var(--g-accent-bg)",
+                        }
+                      : {
+                          color: "var(--g-chip-fg)",
+                          borderColor: "var(--g-chip-border)",
+                          background: "var(--g-chip-bg)",
+                        }
+                  }
+                >
+                  <span aria-hidden>{el.emoji}</span> {el.name}
+                </button>
+              );
+            })}
           </div>
         )}
         {selectedElement && (
-          <p className="mx-auto mt-3 max-w-md text-center text-xs leading-relaxed text-white/65">
+          <p className="g-fg-soft mx-auto mt-3 max-w-md text-center text-xs leading-relaxed">
             {selectedElement.meaning}
           </p>
         )}
 
         {/* ── Trạng thái vườn bằng lời + MỘT hành động kế tiếp ─────────── */}
         <div className="mt-10 text-center">
-          {stage && <p className="text-sm italic text-white/55">{stage.line}</p>}
+          {stage && <p className="g-fg-soft text-sm italic">{stage.line}</p>}
           <Link
             href={gardenEmpty ? "/portal/hocvienai" : "/portal/workspace"}
-            className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-6 py-2.5 text-sm font-semibold text-emerald-100 backdrop-blur transition hover:bg-emerald-400/20"
+            className="mt-4 inline-flex items-center gap-2 rounded-full border px-6 py-2.5 text-sm font-semibold backdrop-blur transition hover:opacity-85"
+            style={{
+              color: "var(--g-cta-fg)",
+              borderColor: "var(--g-cta-border)",
+              background: "var(--g-cta-bg)",
+            }}
           >
             {gardenEmpty ? "Gieo hạt mầm đầu tiên" : "Tưới cho khu vườn hôm nay"} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
-        {/* Lời khép — không card, chỉ một dòng tan vào màn đêm */}
-        <p className="mx-auto mt-12 max-w-md pb-4 text-center text-xs italic leading-relaxed text-white/35">
+        {/* Lời khép — không card, chỉ một dòng tan vào khí quyển */}
+        <p className="g-fg-faint mx-auto mt-12 max-w-md pb-4 text-center text-xs italic leading-relaxed">
           Khu vườn của bạn phản chiếu đúng những gì bạn đã thật sự làm — không hơn, không kém.
         </p>
       </div>

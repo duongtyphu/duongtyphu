@@ -1040,17 +1040,242 @@ body {
  * gốc cây. Mọi chuyển động tôn trọng prefers-reduced-motion.
  * ============================================================ */
 
-.garden-night-bg {
+/* ── LIVING DAY & NIGHT CYCLE (GARDEN_VISUAL_DIRECTION.md mục 13) ──
+ * MỘT khu vườn, BỐN lớp ánh sáng: 4 lớp trời gradient chồng nhau, chỉ
+ * crossfade opacity (GPU rẻ — gradient không nội suy trực tiếp được).
+ * Period gắn qua data-garden-period trên container gốc; mọi màu chữ/
+ * viền/glow đọc qua CSS variables để cùng một DOM đổi khí quyển. */
+
+.garden-sky {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  opacity: 0;
+}
+
+/* Chuyển cảnh mượt 75s CHỈ sau khi period đầu tiên đã áp (tránh
+ * crossfade dài từ khí quyển sai lúc mới tải trang). */
+[data-garden-ready="true"] .garden-sky {
+  transition: opacity 75s linear;
+}
+
+[data-garden-period="dawn"] .garden-sky--dawn,
+[data-garden-period="day"] .garden-sky--day,
+[data-garden-period="sunset"] .garden-sky--sunset,
+[data-garden-period="night"] .garden-sky--night {
+  opacity: 1;
+}
+
+.garden-sky--dawn {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 110%, rgba(251, 176, 100, 0.5), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 72% 90%, rgba(252, 211, 77, 0.28), transparent 70%),
+    linear-gradient(180deg, #1E2A4A 0%, #3D4E7E 38%, #B06A52 74%, #F0AE6D 100%);
+}
+
+.garden-sky--day {
+  background:
+    radial-gradient(ellipse 55% 40% at 70% -8%, rgba(255, 251, 235, 0.75), transparent 65%),
+    radial-gradient(ellipse 70% 45% at 50% 112%, rgba(187, 247, 208, 0.5), transparent 70%),
+    linear-gradient(180deg, #9CC8E4 0%, #C4E2F0 46%, #E4F2E6 100%);
+}
+
+.garden-sky--sunset {
+  background:
+    radial-gradient(ellipse 75% 50% at 28% 108%, rgba(249, 146, 69, 0.55), transparent 72%),
+    radial-gradient(ellipse 50% 40% at 80% 30%, rgba(124, 58, 237, 0.22), transparent 70%),
+    linear-gradient(180deg, #3A2E5F 0%, #6E4A7E 40%, #C96A44 76%, #EFA85C 100%);
+}
+
+.garden-sky--night {
   background:
     radial-gradient(ellipse 75% 45% at 50% 108%, rgba(251, 191, 36, 0.16), transparent 70%),
     radial-gradient(ellipse 55% 40% at 78% 18%, rgba(124, 58, 237, 0.14), transparent 70%),
     radial-gradient(ellipse 50% 45% at 15% 60%, rgba(20, 184, 166, 0.10), transparent 70%),
     radial-gradient(ellipse 60% 35% at 50% -5%, rgba(37, 99, 235, 0.22), transparent 70%),
     linear-gradient(180deg, #0A1128 0%, #0E1F3A 48%, #0B2A26 100%);
+}
+
+/* Sao — chỉ hiện về đêm (fade cùng nhịp trời). */
+.garden-stars {
+  position: absolute;
+  inset: 0 0 45% 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 28%, rgba(255, 255, 255, 0.9), transparent 100%),
+    radial-gradient(1px 1px at 34% 12%, rgba(255, 255, 255, 0.7), transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 34%, rgba(255, 255, 255, 0.8), transparent 100%),
+    radial-gradient(1px 1px at 71% 18%, rgba(255, 255, 255, 0.65), transparent 100%),
+    radial-gradient(1.5px 1.5px at 86% 40%, rgba(255, 255, 255, 0.85), transparent 100%),
+    radial-gradient(1px 1px at 24% 52%, rgba(255, 255, 255, 0.5), transparent 100%),
+    radial-gradient(1px 1px at 92% 8%, rgba(255, 255, 255, 0.6), transparent 100%);
+}
+
+[data-garden-ready="true"] .garden-stars {
+  transition: opacity 75s linear;
+}
+
+[data-garden-period="night"] .garden-stars {
+  opacity: 1;
+}
+
+/* Biến khí quyển — chữ/viền/glow/hạt đổi theo period, DOM giữ nguyên.
+ * Ban ngày trời sáng → chữ chuyển tối (13.7: kiểm tương phản cả 4
+ * khí quyển). */
+[data-garden-period] {
+  --g-fg: #FFFFFF;
+  --g-fg-soft: rgba(255, 255, 255, 0.65);
+  --g-fg-faint: rgba(255, 255, 255, 0.4);
+  --g-companion: rgba(209, 250, 229, 0.75);
+  --g-chip-fg: rgba(255, 255, 255, 0.75);
+  --g-chip-border: rgba(255, 255, 255, 0.18);
+  --g-chip-bg: rgba(255, 255, 255, 0.06);
+  --g-accent-fg: #FDE68A;
+  --g-accent-border: rgba(252, 211, 77, 0.5);
+  --g-accent-bg: rgba(252, 211, 77, 0.14);
+  --g-cta-fg: #D1FAE5;
+  --g-cta-border: rgba(52, 211, 153, 0.4);
+  --g-cta-bg: rgba(52, 211, 153, 0.12);
+  --g-gem-boost: 1;
+  --g-dust-o: 0.5;
+  --g-shadow-o: 0;
+  --g-shadow-scale: 1;
+}
+
+[data-garden-period="dawn"] {
+  --g-companion: rgba(254, 235, 200, 0.85);
+  --g-dust-o: 0.25;
+}
+
+[data-garden-period="day"] {
+  --g-fg: #10233B;
+  --g-fg-soft: rgba(16, 35, 59, 0.7);
+  --g-fg-faint: rgba(16, 35, 59, 0.45);
+  --g-companion: rgba(6, 78, 59, 0.75);
+  --g-chip-fg: rgba(16, 35, 59, 0.75);
+  --g-chip-border: rgba(16, 35, 59, 0.18);
+  --g-chip-bg: rgba(255, 255, 255, 0.4);
+  --g-accent-fg: #92400E;
+  --g-accent-border: rgba(180, 83, 9, 0.4);
+  --g-accent-bg: rgba(252, 211, 77, 0.25);
+  --g-cta-fg: #065F46;
+  --g-cta-border: rgba(5, 150, 105, 0.4);
+  --g-cta-bg: rgba(110, 231, 183, 0.25);
+  --g-gem-boost: 0.85;
+  --g-dust-o: 0;
+  --g-shadow-o: 0.25;
+  --g-shadow-scale: 0.9;
+}
+
+[data-garden-period="sunset"] {
+  --g-companion: rgba(254, 215, 170, 0.85);
+  --g-dust-o: 0.3;
+  --g-shadow-o: 0.4;
+  --g-shadow-scale: 1.6;
+}
+
+[data-garden-period="night"] {
+  --g-gem-boost: 1.25;
+  --g-dust-o: 0.85;
+}
+
+/* Ánh sáng khí quyển phủ lên khung cảnh cây — ảnh cây KHÔNG đổi, chỉ
+ * được "chiếu sáng" khác đi (13.3). */
+.garden-scene-tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0;
+  mix-blend-mode: soft-light;
+}
+
+[data-garden-ready="true"] .garden-scene-tint {
+  transition: opacity 75s linear;
+}
+
+.garden-scene-tint--dawn { background: linear-gradient(200deg, rgba(255, 179, 102, 0.55), rgba(30, 42, 74, 0.5)); }
+.garden-scene-tint--day { background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(187, 247, 208, 0.12)); }
+.garden-scene-tint--sunset { background: linear-gradient(210deg, rgba(249, 146, 69, 0.6), rgba(88, 60, 120, 0.55)); }
+.garden-scene-tint--night { background: linear-gradient(190deg, rgba(30, 58, 138, 0.55), rgba(10, 17, 40, 0.6)); }
+
+[data-garden-period="dawn"] .garden-scene-tint--dawn,
+[data-garden-period="day"] .garden-scene-tint--day,
+[data-garden-period="sunset"] .garden-scene-tint--sunset,
+[data-garden-period="night"] .garden-scene-tint--night {
+  opacity: 1;
+}
+
+/* Bóng gốc cây — trưa ngắn, hoàng hôn dài và ấm, đêm tan vào nền. */
+.garden-tree-shadow {
+  position: absolute;
+  bottom: 2%;
+  left: 50%;
+  width: 60%;
+  height: 7%;
+  transform: translateX(-42%) scaleX(var(--g-shadow-scale));
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(60, 34, 12, 0.55), transparent 75%);
+  filter: blur(6px);
+  opacity: var(--g-shadow-o);
+  pointer-events: none;
+  z-index: 4;
+}
+
+[data-garden-ready="true"] .garden-tree-shadow {
+  transition: opacity 75s linear, transform 75s linear;
+}
+
+/* Đèn lồng hoàng hôn — chỉ thắp khi có suy ngẫm/ký ức THẬT. */
+.garden-lantern {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 214, 130, 1) 0%, rgba(255, 170, 60, 0.6) 55%, transparent 100%);
+  box-shadow: 0 0 12px 3px rgba(255, 180, 80, 0.55);
+  pointer-events: none;
+  z-index: 6;
+  animation: garden-gem-cast-breathe 5s ease-in-out infinite;
+}
+
+/* Tiện ích màu theo khí quyển. */
+.g-fg { color: var(--g-fg); }
+.g-fg-soft { color: var(--g-fg-soft); }
+.g-fg-faint { color: var(--g-fg-faint); }
+.g-companion { color: var(--g-companion); }
+.garden-gem-wrap { filter: brightness(var(--g-gem-boost)); }
+[data-garden-ready="true"] .garden-gem-wrap { transition: filter 75s linear; }
+
+/* Mật độ đom đóm/bụi sáng theo khí quyển (đêm nhiều nhất, ban ngày tắt). */
+.garden-dust-field {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--g-dust-o);
+}
+
+[data-garden-ready="true"] .garden-dust-field {
+  transition: opacity 75s linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 13.7: GIỮ trạng thái ánh sáng theo giờ nhưng đổi TỨC THỜI; hạt và
+   * glow đứng yên. */
+  [data-garden-ready="true"] .garden-sky,
+  [data-garden-ready="true"] .garden-stars,
+  [data-garden-ready="true"] .garden-scene-tint,
+  [data-garden-ready="true"] .garden-tree-shadow,
+  [data-garden-ready="true"] .garden-gem-wrap,
+  [data-garden-ready="true"] .garden-dust-field {
+    transition: none;
+  }
+  .garden-lantern {
+    animation: none;
+  }
 }
 
 /* Sương mỏng trôi ngang rất chậm ở tầng thấp của trang. */
