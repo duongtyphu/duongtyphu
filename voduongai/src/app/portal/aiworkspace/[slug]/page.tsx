@@ -780,13 +780,24 @@ export default async function Page({
   const { slug } = await params;
 
   const tool = AI_TOOLS.find((t) => t.slug === slug);
-  if (tool) return <ToolDetailPage tool={tool} />;
-
   const category = NEED_CATEGORIES.find((c) => c.slug === slug);
-  if (category) return <NeedCategoryPage category={category} />;
-
   const profession = PROFESSION_GROUPS.find((p) => p.slug === slug);
-  if (profession) return <ProfessionDetailPage profession={profession} />;
 
-  return <NotFoundPage slug={slug} />;
+  const body = tool ? (
+    <ToolDetailPage tool={tool} />
+  ) : category ? (
+    <NeedCategoryPage category={category} />
+  ) : profession ? (
+    <ProfessionDetailPage profession={profession} />
+  ) : (
+    <NotFoundPage slug={slug} />
+  );
+
+  return (
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      {/* Khí quyển AI Workspace ("Creative studio") tiếp tục ở trang con. */}
+      <div className="workspace-atmosphere-bg" aria-hidden />
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">{body}</div>
+    </div>
+  );
 }

@@ -52,12 +52,13 @@ export default function AcademyHubPage() {
   const journeys = getAllLearningJourneys();
 
   return (
-    <div className="relative overflow-hidden rounded-3xl">
-      {/* Global Visual Update — khí quyển riêng của Academy ("Learning campus"),
-       * thay cho nền caro chung trước đây. */}
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      {/* Khí quyển riêng của Academy ("Learning campus") kéo full-bleed hết
+       * chiều rộng cột nội dung — cùng khuôn với Premium, không còn khung
+       * rounded-3xl thu hẹp. */}
       <div className="academy-atmosphere-bg" aria-hidden />
 
-      <div className="relative z-10 p-6 md:p-8 space-y-12">
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8 space-y-12">
       {/* Hero */}
       <PillarHero
         icon={GraduationCap}
