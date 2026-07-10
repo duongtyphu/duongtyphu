@@ -30,9 +30,9 @@ export function CurrentChapterCard({ premiumCount = 0 }: { premiumCount?: number
   if (chapter === undefined) return null;
 
   return (
-    <section className="hub-frame-card p-6 md:p-7">
-      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-amber-800/60">
-        <BookOpen className="h-3.5 w-3.5 text-amber-700/70" />
+    <section className="hub-glass-card p-6 md:p-7">
+      <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-blue-600">
+        <BookOpen className="h-3.5 w-3.5 text-blue-500" />
         Chương hiện tại
       </div>
 
@@ -50,10 +50,10 @@ export function CurrentChapterCard({ premiumCount = 0 }: { premiumCount?: number
               title={`Chương ${chapterNo} — ${name}`}
               className={`rounded-full border px-3 py-1 text-[11px] font-semibold transition ${
                 current
-                  ? "border-amber-400/60 bg-amber-100/70 text-amber-800"
+                  ? "border-blue-300 bg-blue-50 text-blue-700"
                   : passed
-                    ? "border-emerald-700/25 bg-emerald-50 text-emerald-700"
-                    : "border-amber-900/10 bg-amber-900/[0.03] text-amber-900/35"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-gray-200 bg-gray-50 text-gray-400"
               }`}
             >
               {current ? `Chương ${chapterNo} · đang viết` : passed ? `Chương ${chapterNo} · đã đi qua` : `Chương ${chapterNo}`}
@@ -64,13 +64,13 @@ export function CurrentChapterCard({ premiumCount = 0 }: { premiumCount?: number
 
       {chapter !== null ? (
         <>
-          <h2 className="mt-4 text-lg font-extrabold text-stone-900">
+          <h2 className="mt-4 text-lg font-extrabold text-gray-900">
             Chương {chapter.index} — {chapter.name}
           </h2>
-          <p className="mt-1 text-sm text-stone-500">{chapter.evidence}</p>
+          <p className="mt-1 text-sm text-gray-500">{chapter.evidence}</p>
         </>
       ) : (
-        <p className="mt-4 text-sm leading-relaxed text-stone-500">
+        <p className="mt-4 text-sm leading-relaxed text-gray-500">
           Chương đầu tiên của bạn chưa được viết — nó bắt đầu từ hoạt động thật đầu tiên,
           không phải từ một con số. Khi bạn học hoặc làm việc thật trong Portal, chương sẽ tự mở.
         </p>

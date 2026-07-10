@@ -62,7 +62,7 @@ export function MirrorChamber({
   }, []);
 
   if (clientFacts === null) {
-    return <div className="mirror-chamber-bg -mx-4 -my-6 min-h-[70vh] md:-mx-8 md:-my-8" aria-hidden />;
+    return <div className="mirror-chamber-bg min-h-[70vh] rounded-3xl" aria-hidden />;
   }
 
   const hasReflectionMaterial =
@@ -72,7 +72,7 @@ export function MirrorChamber({
   const isFullyQuiet = !hasReflectionMaterial && !hasRealFacts;
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+    <div className="relative min-h-full overflow-hidden rounded-3xl">
       <div className="mirror-chamber-bg" aria-hidden />
       <div className="mirror-glass-veil" aria-hidden />
       <div className="mirror-reflection-line" aria-hidden />

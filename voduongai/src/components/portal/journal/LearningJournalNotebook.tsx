@@ -125,11 +125,11 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
   const isFullyEmpty = !isLoading && entries.length === 0 && reflections.length === 0;
 
   if (isLoading) {
-    return <div className="journal-notebook-bg -mx-4 -my-6 min-h-[60vh] md:-mx-8 md:-my-8" aria-hidden />;
+    return <div className="journal-notebook-bg min-h-[60vh] rounded-3xl" aria-hidden />;
   }
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full md:-mx-8 md:-my-8">
+    <div className="relative min-h-full overflow-hidden rounded-3xl">
       <div className="journal-notebook-bg" aria-hidden />
       <div className="journal-notebook-lines" aria-hidden />
       <div className="journal-bookmark right-8 md:right-16" aria-hidden />

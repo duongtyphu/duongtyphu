@@ -283,7 +283,7 @@ export function GardenExperience({
     <div
       data-garden-period={period ?? "night"}
       data-garden-ready={ready ? "true" : "false"}
-      className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8"
+      className="relative min-h-full overflow-hidden rounded-3xl"
     >
       {/* Sky stack — 4 lớp trời, chỉ crossfade opacity (13.2) */}
       <div className="garden-sky garden-sky--dawn" aria-hidden />

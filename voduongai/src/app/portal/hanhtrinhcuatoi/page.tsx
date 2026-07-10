@@ -23,14 +23,16 @@ export const metadata = {
  *
  * KHÔNG dashboard. KHÔNG % giả. KHÔNG level giả. KHÔNG milestone giả.
  *
- * PORTAL STANDARDIZATION — Task 4: khí quyển "Library / Museum /
- * Beginning" theo mục 18.2 (đã đặc tả, chưa từng triển khai — Hub trước
- * đây vẫn dùng gradient nhạt xám-xanh chung của Portal). Nền giấy ivory +
- * vệt nắng ấm chéo góc + hạt bụi sáng cực nhẹ; 5 thẻ cửa đổi chất liệu từ
- * "card gradient tint" sang "khung tranh bảo tàng" (`.hub-frame-card`,
- * viền mảnh đồng/vàng cũ, góc vuông hơn) — cùng họ khí quyển với Garden/My
- * Story/Mirror/Journal/Map (mỗi cửa một không gian cảm xúc riêng, cùng
- * một thế giới Journey), không còn dùng gradient xanh dương chuẩn Portal.
+ * PORTAL STANDARDIZATION — Product Owner color pass: Hub đổi từ khí
+ * quyển "Library/Museum" (ivory/nâu đồng, mục 18.2 cũ) sang "Bright
+ * Atrium" — nền trắng-trong sắc nét pha ánh sáng thương hiệu (xanh
+ * dương/tím/cam), thẻ cửa kính mờ (glass) MÀU RIÊNG từng cửa (không còn
+ * chất liệu đồng nhất "khung tranh bảo tàng"). Khung trang cũng đổi từ
+ * full-bleed sang shell `rounded-3xl` thu hẹp — cùng khuôn với các trang
+ * hub khác của Portal (Home/CKOS/Academy/Projects/AI Workspace), nền caro
+ * chung của Portal lộ ra ở viền ngoài. 5 cửa con (Garden/Mirror/My
+ * Story/Journal/Journey Map) giữ nguyên màu khí quyển riêng, chỉ đổi khung
+ * ngoài sang shell tương tự.
  */
 
 type JourneyDoor = {
@@ -41,12 +43,10 @@ type JourneyDoor = {
   meaning: string;
   realData: string;
   cta: { label: string; href: string } | { label: string; comingSoon: true };
-  // Chất liệu thẻ giờ dùng chung `.hub-frame-card` (khung tranh bảo tàng —
-  // mục 18.2) cho cả 4 thẻ; chỉ icon chip + một vạch màu mảnh phía trên
-  // giữ lại nhận diện riêng từng cửa (màu này tiếp tục đúng bên trong
-  // chính cửa đó — amber ở My Story, violet ở Mirror, v.v).
+  // Mỗi cửa một style kính (glass) riêng — nền trắng trong pha tint màu +
+  // backdrop-blur, viền màu tương ứng, không còn dùng chất liệu đồng nhất.
+  card: string;
   chip: string;
-  accent: string;
 };
 
 const DOORS: JourneyDoor[] = [
@@ -58,8 +58,8 @@ const DOORS: JourneyDoor[] = [
     meaning: "Chương, khoảnh khắc và bước ngoặt — để bạn nhìn lại mình đã đi xa đến đâu.",
     realData: "Suy ngẫm, ký ức bạn tự lưu, thư tháng và lịch sử thật của bạn.",
     cta: { label: "Mở cuốn sách", href: "/portal/story" },
-    chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white",
-    accent: "bg-amber-500/70",
+    card: "border-amber-200/70 bg-gradient-to-br from-amber-50/95 via-white/90 to-orange-50/70 hover:border-amber-300",
+    chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-[0_6px_16px_-4px_rgba(249,115,22,0.45)]",
   },
   {
     key: "mirror",
@@ -69,8 +69,8 @@ const DOORS: JourneyDoor[] = [
     meaning: "Companion nhẹ nhàng phản chiếu bạn đang trở thành ai — chỉ khi có bằng chứng thật.",
     realData: "Tín hiệu trưởng thành, cột mốc và suy ngẫm thật của bạn.",
     cta: { label: "Soi chiếu", href: "/portal/mirror" },
-    chip: "bg-gradient-to-br from-violet-600 to-indigo-600 text-white",
-    accent: "bg-violet-600/70",
+    card: "border-violet-200/70 bg-gradient-to-br from-violet-50/95 via-white/90 to-indigo-50/70 hover:border-violet-300",
+    chip: "bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-[0_6px_16px_-4px_rgba(124,58,237,0.45)]",
   },
   {
     key: "journal",
@@ -80,8 +80,8 @@ const DOORS: JourneyDoor[] = [
     meaning: "Chuyện gì đã xảy ra, bạn học được gì, tạo ra gì, và nên tiếp tục gì.",
     realData: "Hoạt động học và làm việc thật của bạn trong Portal.",
     cta: { label: "Mở nhật ký", href: "/portal/nhatkyhoctap" },
-    chip: "bg-gradient-to-br from-emerald-600 to-green-600 text-white",
-    accent: "bg-emerald-600/70",
+    card: "border-emerald-200/70 bg-gradient-to-br from-emerald-50/95 via-white/90 to-green-50/70 hover:border-emerald-300",
+    chip: "bg-gradient-to-br from-emerald-600 to-green-600 text-white shadow-[0_6px_16px_-4px_rgba(5,150,105,0.45)]",
   },
   {
     key: "map",
@@ -91,13 +91,13 @@ const DOORS: JourneyDoor[] = [
     meaning: "Chương, cột mốc, output và hướng đang đi — không có thanh phần trăm nào.",
     realData: "Bằng chứng thật từ hoạt động của bạn (xem Chương hiện tại phía trên).",
     cta: { label: "Mở bản đồ", href: "/portal/hanhtrinhcuatoi/ban-do" },
-    chip: "bg-gradient-to-br from-blue-600 to-sky-600 text-white",
-    accent: "bg-blue-600/70",
+    card: "border-blue-200/70 bg-gradient-to-br from-blue-50/95 via-white/90 to-sky-50/70 hover:border-blue-300",
+    chip: "bg-gradient-to-br from-blue-600 to-sky-600 text-white shadow-[0_6px_16px_-4px_rgba(37,99,235,0.45)]",
   },
 ];
 
-/** Vị trí hạt bụi sáng trong vệt nắng bảo tàng (mục 18.2) — mật độ thấp,
- * chỉ gợi cảm giác, không phải hiệu ứng nổi bật. */
+/** Vị trí hạt sáng lấp lánh rất nhẹ trong nền Bright Atrium — mật độ
+ * thấp, chỉ gợi cảm giác "trong", không phải hiệu ứng nổi bật. */
 const HUB_DUST_SPOTS = [
   { left: "62%", top: "10%", size: 3, delay: "0s" },
   { left: "74%", top: "22%", size: 4, delay: "9s" },
@@ -128,9 +128,9 @@ export default async function JourneyHubPage() {
   const premiumCount = purchasedCourseIds.size;
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full md:-mx-8 md:-my-8">
-      <div className="hub-museum-bg" aria-hidden />
-      <div className="hub-light-beam" aria-hidden />
+    <div className="relative overflow-hidden rounded-3xl min-h-full">
+      <div className="hub-atrium-bg" aria-hidden />
+      <div className="hub-atrium-sheen" aria-hidden />
       <div className="hub-dust-field" aria-hidden>
         {HUB_DUST_SPOTS.map((d, i) => (
           <span
@@ -142,13 +142,13 @@ export default async function JourneyHubPage() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-3xl space-y-10 px-5 py-10 sm:px-8 md:py-14">
-        {/* ── Cổng vào Hub — Library / Museum / Beginning (mục 18.2) ──── */}
+        {/* ── Cổng vào Hub — Bright Atrium ─────────────────────────────── */}
         <section>
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-amber-800/60">Hành trình của tôi</p>
-          <h1 className="mt-3 max-w-2xl text-2xl font-extrabold leading-tight tracking-tight text-stone-900 sm:text-3xl">
+          <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-600">Hành trình của tôi</p>
+          <h1 className="mt-3 max-w-2xl text-2xl font-extrabold leading-tight tracking-tight text-gray-900 sm:text-3xl">
             Qua quá trình này, bạn đã trở thành ai?
           </h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-stone-600 sm:text-base">
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-gray-600 sm:text-base">
             Đây không phải trang tiến độ. Đây là nơi những gì bạn thực sự đã học, đã làm và đã
             suy ngẫm trở thành một câu chuyện của riêng bạn — được kể bằng năm cách khác nhau.
           </p>
@@ -175,27 +175,26 @@ export default async function JourneyHubPage() {
             {DOORS.map((door) => (
               <article
                 key={door.key}
-                className="hub-frame-card group relative overflow-hidden p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(120,90,40,0.08),0_18px_36px_-18px_rgba(120,90,40,0.3)] sm:p-6"
+                className={`group relative overflow-hidden rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_24px_-16px_rgba(15,23,42,0.18)] backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_20px_36px_-18px_rgba(15,23,42,0.24)] sm:p-6 ${door.card}`}
               >
-                <div className={`absolute inset-x-0 top-0 h-[3px] ${door.accent}`} aria-hidden />
-                <div className={`flex h-10 w-10 items-center justify-center rounded-lg shadow-sm ${door.chip}`}>
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${door.chip}`}>
                   <door.icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-3 text-sm font-bold text-stone-900">{door.title}</h3>
-                <p className="mt-1 text-xs font-semibold text-stone-700">{door.essence}</p>
-                <p className="mt-1.5 text-xs leading-relaxed text-stone-500">{door.meaning}</p>
-                <p className="mt-2 text-[11px] text-stone-400">
-                  <span className="font-semibold text-stone-500">Dữ liệu thật:</span> {door.realData}
+                <h3 className="mt-3 text-sm font-bold text-gray-900">{door.title}</h3>
+                <p className="mt-1 text-xs font-semibold text-gray-700">{door.essence}</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-gray-500">{door.meaning}</p>
+                <p className="mt-2 text-[11px] text-gray-400">
+                  <span className="font-semibold text-gray-500">Dữ liệu thật:</span> {door.realData}
                 </p>
                 <div className="mt-4">
                   {"comingSoon" in door.cta ? (
-                    <span className="inline-flex rounded-full border border-dashed border-amber-900/20 px-4 py-1.5 text-xs font-semibold text-amber-900/35">
+                    <span className="inline-flex rounded-full border border-dashed border-gray-300 px-4 py-1.5 text-xs font-semibold text-gray-400">
                       {door.cta.label}
                     </span>
                   ) : (
                     <Link
                       href={door.cta.href}
-                      className="inline-flex items-center gap-1.5 rounded-full border border-amber-900/15 bg-white/70 px-4 py-1.5 text-xs font-semibold text-stone-700 transition hover:border-amber-900/35 hover:text-stone-900"
+                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-900/10 bg-white/80 px-4 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-gray-900/25 hover:text-gray-900"
                     >
                       {door.cta.label} <ArrowRight className="h-3.5 w-3.5" />
                     </Link>
@@ -252,17 +251,17 @@ export default async function JourneyHubPage() {
         </section>
 
         {/* ── 5. MỘT câu hỏi suy ngẫm ────────────────────────────────────── */}
-        <div className="hub-frame-card p-5 sm:p-6">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-800/60">Câu hỏi hôm nay</p>
-          <p className="mt-2 text-base font-semibold leading-relaxed text-stone-800">{todaysPrompt()}</p>
+        <div className="hub-glass-card p-5 sm:p-6">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-600">Câu hỏi hôm nay</p>
+          <p className="mt-2 text-base font-semibold leading-relaxed text-gray-800">{todaysPrompt()}</p>
           <Button href="/portal/mirror" variant="secondary" className="mt-4">
             Ngẫm cùng Mirror →
           </Button>
         </div>
 
         {/* ── 6. MỘT hành động tiếp tục ──────────────────────────────────── */}
-        <section className="hub-frame-card p-6 text-center sm:p-7">
-          <p className="text-sm text-stone-600">
+        <section className="hub-glass-card p-6 text-center sm:p-7">
+          <p className="text-sm text-gray-600">
             Câu chuyện chỉ dài thêm bằng những việc thật.
           </p>
           <Button href="/portal/workspace" variant="primary" className="mt-3">
