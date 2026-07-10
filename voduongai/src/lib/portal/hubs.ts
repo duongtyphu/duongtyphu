@@ -26,15 +26,17 @@ export const portalHubs: PortalHub[] = [
     key: "journey",
     label: "Hành trình",
     href: "/portal/hanhtrinhcuatoi",
-    heroTitle: "Hành trình của bạn",
-    heroSubtitle: "Mỗi viên ngọc quý cần thời gian để mài giũa — đây là lộ trình của riêng bạn.",
+    heroTitle: "Hành trình của tôi",
+    heroSubtitle: "Nơi tiến bộ thật của bạn trở thành một câu chuyện có ý nghĩa.",
+    // Journey P1 — module list cũ chứa các mục không có href thật ("Human
+    // Growth", "30 ngày", "Chứng chỉ") đã thay bằng đúng 5 cánh cửa của
+    // Journey Platform (JOURNEY_PLATFORM_ARCHITECTURE.md mục 2).
     modules: [
-      { label: "Bắt đầu", description: "Lộ trình nhập môn dành cho người mới.", href: "/portal/start-here" },
-      { label: "Lộ trình cá nhân", description: "7 bước từ làm quen AI đến mở rộng hệ sinh thái.", href: "/portal/roadmap" },
-      { label: "Human Growth", description: "Theo dõi 5 chỉ số trưởng thành của bạn — xem ngay phía trên." },
-      { label: "30 ngày đầu tiên", description: "Các cột mốc nhỏ trên hành trình khởi động của bạn." },
-      { label: "Giai đoạn hiện tại", description: "Xem giai đoạn hiện tại và mục tiêu kế tiếp." },
-      { label: "Chứng chỉ", description: "Chứng chỉ ghi nhận hành trình bạn đã đi qua." },
+      { label: "My Story", description: "Cuốn sách cá nhân đang được viết theo thời gian.", href: "/portal/story" },
+      { label: "Mirror", description: "Không gian soi chiếu bình thản, không phán xét.", href: "/portal/mirror" },
+      { label: "Nhật ký học tập", description: "Bản ghi học tập cá nhân — không phải trang bài viết.", href: "/portal/nhatkyhoctap" },
+      { label: "Hành trình của tôi", description: "Bản đồ các Chương cuộc đời — không có phần trăm." },
+      { label: "Khu vườn của bạn", description: "Khu vườn sống mọc từ việc học thật.", href: "/portal/khuvuoncuaban" },
     ],
   },
 ];

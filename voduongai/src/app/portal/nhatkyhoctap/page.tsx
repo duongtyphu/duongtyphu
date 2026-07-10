@@ -1,171 +1,66 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import { Notebook, Clock, Tag } from "lucide-react";
-import { GradientTitle } from "@/components/portal/ui/GradientTitle";
-import { useCollection } from "@/lib/admin/store";
-import { blogPostsSeed, type AdminBlogPost } from "@/data/admin/content";
-import { CompanionGuide } from "@/components/portal/CompanionGuide";
+import { ArrowRight, Notebook } from "lucide-react";
 import { GrowthActivityPanel } from "@/components/portal/growth/GrowthActivityPanel";
 
-const CATEGORIES = [
-  "Tất cả",
-  "AI",
-  "Affiliate",
-  "Marketing",
-  "Kinh doanh",
-  "Blockchain",
-  "Crypto",
-  "Trading",
-  "Productivity",
-  "Tư duy",
-  "Kỹ năng",
-  "Hướng dẫn",
-];
+export const metadata = {
+  title: "Nhật ký học tập",
+  description: "Bản ghi học tập cá nhân của bạn — những gì đã xảy ra, đã học, đã tạo ra.",
+};
 
+/**
+ * JOURNEY PLATFORM — Product Owner DECISION 1 (P1):
+ * Toàn bộ bài viết do Admin đăng (blog/article) đã được đưa RA KHỎI trang
+ * này — quyền sở hữu bài viết thuộc về Blog AI, không nhân bản bài viết
+ * trong Journey. Nhật ký học tập là BẢN GHI HỌC TẬP CÁ NHÂN của người
+ * dùng, không phải một trang blog.
+ *
+ * P1 giữ trang ở dạng tối giản trung thực: bản ghi hoạt động thật
+ * (growth-view — cùng nguồn với Hub/Khu vườn) + lối về Hub + một con trỏ
+ * duy nhất về Blog AI. Trải nghiệm nhật ký đầy đủ (mỗi entry trả lời 4
+ * câu: chuyện gì / học gì / tạo gì / tiếp tục gì) là Phase P4 của
+ * JOURNEY_PLATFORM_ARCHITECTURE.md — không dựng trước ở đây.
+ */
 export default function LearningJournalPage() {
-  const { items, ready } = useCollection<AdminBlogPost>("blog", blogPostsSeed);
-  const [activeCategory, setActiveCategory] = useState("Tất cả");
-
-  const published = items.filter((p) => p.status === "Published");
-  const featured = published.filter((p) => p.featured);
-  const filtered =
-    activeCategory === "Tất cả"
-      ? published
-      : published.filter((p) => p.category === activeCategory);
-
   return (
-    <div className="space-y-10">
-      {/* Hero */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/20">
-            <Notebook className="h-4 w-4 text-amber-400" />
-          </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Nhật ký học tập</span>
+    <div className="space-y-8">
+      <nav className="text-sm text-gray-500">
+        <Link href="/portal/hanhtrinhcuatoi" className="font-semibold text-blue-600 transition hover:text-blue-700">
+          📖 Hành trình của tôi
+        </Link>{" "}
+        / Nhật ký học tập
+      </nav>
+
+      <section className="rounded-2xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-green-50/40 to-white p-7 shadow-token-sm sm:p-8">
+        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.25em] text-emerald-700">
+          <Notebook className="h-4 w-4" /> Nhật ký học tập
         </div>
-        <h1 className="text-2xl font-extrabold"><GradientTitle text="Nhật ký học tập" /></h1>
-        <p className="max-w-2xl text-gray-500">
-          Không gọi là Blog. Đây là nhật ký — những gì tôi đã học, đã ứng dụng thực tế và muốn chia sẻ lại. AI, Affiliate, Marketing, Tư duy và hành trình xây hệ thống.
+        <h1 className="mt-2 max-w-2xl text-2xl font-extrabold leading-tight text-gray-900 sm:text-3xl">
+          Bản ghi những gì bạn thực sự đã học và tạo ra
+        </h1>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-gray-600">
+          Đây là nhật ký CỦA BẠN — không phải trang bài viết. Mỗi hoạt động thật trong Portal
+          được ghi lại ở đây, theo thời gian, không tô vẽ.
         </p>
-      </div>
+      </section>
 
-      {/* Companion Guide */}
-      <CompanionGuide
-        message="Nếu chưa biết đọc bài nào trước, hãy thử lọc theo chủ đề bạn đang làm. Bài mình đánh dấu 'nổi bật' là những bài có ứng dụng thực tế cao nhất — đọc đó trước."
-        action={{ label: "Xem lộ trình học", href: "/portal/hanhtrinhcuatoi" }}
-      />
-
+      {/* Bản ghi thật — growth-view tự hiển thị trạng thái rỗng trung thực
+       * khi chưa có hoạt động nào. */}
       <GrowthActivityPanel variant="journal" />
 
-      {/* Category filter */}
-      <div className="space-y-3">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Danh mục</p>
-        <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              type="button"
-              onClick={() => setActiveCategory(cat)}
-              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                activeCategory === cat
-                  ? "bg-brand-blue text-white"
-                  : "border border-gray-200 bg-gray-50 text-gray-500 hover:border-gray-200 hover:text-gray-900"
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Featured */}
-      {activeCategory === "Tất cả" && featured.length > 0 && (
-        <div className="space-y-3">
-          <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Bài nổi bật</p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {featured.slice(0, 2).map((post) => (
-              <ArticleCard key={post.id} post={post} featured />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Article grid */}
-      <div className="space-y-3">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-400">
-          {activeCategory === "Tất cả" ? "Tất cả bài viết" : activeCategory}
+      {/* Con trỏ duy nhất về Blog AI — bài viết KHÔNG được nhân bản ở đây.
+       * Gợi ý bài viết theo ngữ cảnh (nếu có sau này) cũng chỉ tham chiếu
+       * về Blog AI, không trở thành trải nghiệm chính của Nhật ký. */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-token-sm">
+        <p className="text-sm text-gray-500">
+          Tìm bài viết và kiến thức từ VO DUONG AI? Chúng ở Blog AI — không còn nằm trong nhật ký này.
         </p>
-        {!ready ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-44 animate-pulse rounded-2xl bg-gray-50" />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center text-sm text-gray-400">
-            Chưa có bài viết trong danh mục này.
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((post) => (
-              <ArticleCard key={post.id} post={post} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Next step */}
-      <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-sm">
-        <p className="mb-1 text-xs font-bold uppercase tracking-widest text-gray-400">Tiếp theo bạn nên...</p>
-        <p className="mb-4 text-sm text-gray-600">Áp dụng những gì đọc được vào thực tế — bắt đầu từ một công cụ AI phù hợp với chủ đề bạn vừa đọc.</p>
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/portal/tools"
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-          >
-            Xem công cụ AI →
-          </Link>
-          <Link
-            href="/portal/resources"
-            className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-          >
-            Tải tài nguyên →
-          </Link>
-        </div>
+        <Link
+          href="/blogai"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+        >
+          Mở Blog AI <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </div>
-  );
-}
-
-function ArticleCard({ post, featured = false }: { post: AdminBlogPost; featured?: boolean }) {
-  const href = `/blogai/${post.slug}`;
-  return (
-    <Link
-      href={href}
-      className={`gemos-gem-card block rounded-2xl p-5 ${featured ? "border-violet-200 bg-violet-50/40" : ""}`}
-    >
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1 rounded-full bg-gray-50 px-2 py-0.5 text-[10px] font-semibold text-gray-500">
-          <Tag className="h-3 w-3" />
-          {post.category}
-        </span>
-        {post.publishedAt && (
-          <span className="flex items-center gap-1 text-[10px] text-gray-400">
-            <Clock className="h-3 w-3" />
-            {new Date(post.publishedAt).toLocaleDateString("vi-VN", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}
-          </span>
-        )}
-      </div>
-      <h3 className="gemos-card-title mb-2 text-sm font-bold leading-snug text-gray-900">
-        {post.title}
-      </h3>
-      <p className="line-clamp-2 text-xs leading-relaxed text-gray-500">{post.excerpt}</p>
-    </Link>
   );
 }
