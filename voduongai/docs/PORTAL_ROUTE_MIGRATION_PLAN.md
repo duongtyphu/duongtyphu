@@ -3,6 +3,13 @@
 **STATUS: AUDIT + PLAN ONLY — NOT IMPLEMENTED. NO ROUTE HAS BEEN CHANGED.**
 **Wait for explicit Product Owner approval before starting Phase 2 of this plan.**
 
+**PRODUCT OWNER DECISION — recorded:** defer the actual rename (Phases 2–5). Phase 1 groundwork (§6) — config-driven middleware, the two dead-redirect bugfixes, the new link-integrity test — proceeds now, independent of the deferred rename, since none of it changes any URL.
+
+**Phase 1 — DONE:**
+- `src/lib/protected-routes.ts` added (`PROTECTED_ROUTE_PREFIXES` + `isProtectedRoute()`); `src/middleware.ts`'s auth check now reads from it instead of an inline `pathname.startsWith("/portal")` literal. `config.matcher` is unchanged (Next.js requires it to stay static string literals) but now carries a comment pointing at the shared source of truth.
+- The two dead redirects (`/portal/growth → /portal/build`, `/portal/ecosystem → /portal/connect`) removed from `next.config.ts` — traced via `git log` to the very first commit that created the file; no evidence either destination ever existed as a real route, so per the project's no-fabricated-data standard they were removed rather than repointed to a guessed destination.
+- `src/__tests__/route-integrity.test.ts` added — a filesystem/regex-based static check (no new test-runner dependency) that (1) every hardcoded internal link literal in `src/**` resolves to a real route or a known redirect source, and (2) every `next.config.ts` redirect destination resolves to a real route. It would have caught the dead redirects above had it existed earlier. One legitimate finding on first run: `/solo` (Học viện AI page) links to the VDAI SOLO course page, which is real but lives outside this Next.js app's own route tree — added to an explicit, commented allowlist rather than silently ignored.
+
 ---
 
 ## 0. Executive Summary

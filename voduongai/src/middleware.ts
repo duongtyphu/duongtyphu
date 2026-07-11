@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isProtectedRoute } from "@/lib/protected-routes";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -33,7 +34,7 @@ export async function middleware(request: NextRequest) {
 
   const { data } = await supabase.auth.getUser();
 
-  const isPortalRoute = request.nextUrl.pathname.startsWith("/portal");
+  const isPortalRoute = isProtectedRoute(request.nextUrl.pathname);
   const isLoginRoute = request.nextUrl.pathname === "/login";
   const isAdminLoginRoute = request.nextUrl.pathname === "/admin/login";
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin") && !isAdminLoginRoute;
@@ -69,6 +70,8 @@ export async function middleware(request: NextRequest) {
   return response;
 }
 
+// Next.js requires matcher patterns to be static string literals — keep
+// this list in sync with PROTECTED_ROUTE_PREFIXES in src/lib/protected-routes.ts.
 export const config = {
   matcher: ["/portal/:path*", "/login", "/admin/:path*"],
 };
