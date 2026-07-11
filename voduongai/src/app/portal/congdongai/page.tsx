@@ -352,7 +352,7 @@ export default async function CommunityPage() {
         <section className="campus-hero p-8 text-center sm:p-10">
           <h2 className="text-xl font-extrabold text-gray-900 sm:text-2xl">Cùng bắt đầu một câu chuyện</h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-gray-600">
-            Hàng trăm người đang học và xây cùng AI mỗi ngày — hành trình của bạn có thể là câu chuyện tiếp theo.
+            Cộng đồng đang lớn lên mỗi ngày — hành trình của bạn có thể là câu chuyện tiếp theo.
           </p>
 
           <div className="mx-auto mt-6 flex max-w-xs flex-col items-center gap-2">

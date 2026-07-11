@@ -89,7 +89,7 @@ const DOORS: JourneyDoor[] = [
   {
     key: "map",
     icon: Compass,
-    title: "Hành trình của tôi",
+    title: "Bản đồ hành trình",
     essence: "Bản đồ các Chương cuộc đời của bạn.",
     meaning: "Chương, cột mốc, output và hướng đang đi — không có thanh phần trăm nào.",
     realData: "Bằng chứng thật từ hoạt động của bạn (xem Chương hiện tại phía trên).",

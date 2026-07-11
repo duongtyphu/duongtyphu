@@ -49,9 +49,9 @@ export default function AiWorkspacePage() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20">
             <Cpu className="h-4 w-4 text-blue-400" />
           </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Không gian AI</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Thư viện công cụ</span>
         </div>
-        <h1 className="text-2xl font-extrabold text-gray-900">AI Workspace</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900">Công cụ AI</h1>
         <p className="max-w-2xl text-gray-500">
           Không phải danh sách công cụ. Đây là không gian làm việc với AI — mỗi công cụ được chọn lọc, thử nghiệm thực tế và có hướng dẫn cụ thể để bạn dùng ngay.
         </p>
