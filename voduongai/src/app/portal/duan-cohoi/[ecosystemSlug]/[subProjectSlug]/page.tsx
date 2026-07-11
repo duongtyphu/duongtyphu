@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ecosystems, getEcosystemBySlug, getSubProjectBySlug, DEFAULT_POTENTIAL_ANALYSIS } from "@/data/portal/ecosystems";
 import { GemCard } from "@/components/portal/ui/GemCard";
+import { Breadcrumb } from "@/components/portal/ui/Breadcrumb";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
 import { PotentialAnalysisTable } from "@/components/portal/opportunities/PotentialAnalysisTable";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
@@ -16,25 +16,6 @@ import { getSubProjectSurface } from "@/components/portal/opportunities/subProje
  * state (there is no real per-sub-project article tagging in the data
  * today). Nothing else.
  */
-
-function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
-  return (
-    <nav className="mb-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-      {items.map((item, i) => (
-        <span key={i} className="flex items-center gap-2">
-          {i > 0 && <span className="text-gray-300">/</span>}
-          {item.href ? (
-            <Link href={item.href} className="transition-colors hover:text-blue-600">
-              {item.label}
-            </Link>
-          ) : (
-            <span className="font-medium text-gray-900">{item.label}</span>
-          )}
-        </span>
-      ))}
-    </nav>
-  );
-}
 
 export function generateStaticParams() {
   return ecosystems.flatMap((e) =>
@@ -78,6 +59,7 @@ export default async function SubProjectPage({
       {/* Content Gutter — cùng khoảng cách với /portal/duan-cohoi. */}
       <div className="rounded-3xl p-6 md:p-8 space-y-10">
       <Breadcrumb
+        className="mb-2"
         items={[
           { label: "Portal", href: "/portal" },
           { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },

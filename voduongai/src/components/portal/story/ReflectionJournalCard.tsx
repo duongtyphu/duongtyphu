@@ -21,7 +21,7 @@ export function ReflectionJournalCard() {
     return (
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
-          <Feather className="h-4 w-4 text-[#A78BFA]" />
+          <Feather className="h-4 w-4 text-gemos-soft-violet" />
           <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-2 text-sm text-gray-500 italic">{question}</p>
@@ -33,7 +33,7 @@ export function ReflectionJournalCard() {
     return (
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
-          <Feather className="h-4 w-4 text-[#A78BFA]" />
+          <Feather className="h-4 w-4 text-gemos-soft-violet" />
           <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-3 text-sm text-gray-600">
@@ -47,7 +47,7 @@ export function ReflectionJournalCard() {
     return (
       <GemCard className="h-full">
         <div className="flex items-center gap-2">
-          <Feather className="h-4 w-4 text-[#A78BFA]" />
+          <Feather className="h-4 w-4 text-gemos-soft-violet" />
           <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
         </div>
         <p className="mt-3 text-sm text-gray-600">
@@ -60,7 +60,7 @@ export function ReflectionJournalCard() {
   return (
     <GemCard className="h-full">
       <div className="flex items-center gap-2">
-        <Feather className="h-4 w-4 text-[#A78BFA]" />
+        <Feather className="h-4 w-4 text-gemos-soft-violet" />
         <h2 className="gemos-card-title text-sm font-bold text-gray-900">Một câu hỏi nhỏ hôm nay</h2>
       </div>
       <p className="mt-2 text-sm text-gray-600">{question}</p>

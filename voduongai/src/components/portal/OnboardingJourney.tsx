@@ -61,7 +61,7 @@ export function OnboardingJourney() {
     <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-y-auto bg-[#020817] p-4 py-10 sm:p-6">
       <div className="mesh-navy absolute inset-0" />
 
-      <div className="glass-dark glow-gem relative z-10 w-full max-w-2xl rounded-[28px] border border-gray-200 p-6 sm:p-10">
+      <div className="glass-dark glow-gem relative z-10 w-full max-w-2xl rounded-2xl border border-gray-200 p-6 sm:p-10">
         <div className="flex flex-col items-center text-center">
           <div className="relative flex h-16 w-16 items-center justify-center sm:h-20 sm:w-20">
             <div className="spin-slow absolute inset-0 rounded-full border border-dashed border-brand-purple/40" />

@@ -74,7 +74,7 @@ export function FounderSpotlight() {
 
         <div className="relative grid gap-6 p-6 md:grid-cols-[240px_1fr] md:items-center md:p-8">
           <div className="relative mx-auto w-full max-w-[240px]">
-            <div aria-hidden className="absolute -inset-4 rounded-[28px] bg-blue-500/20 blur-2xl" />
+            <div aria-hidden className="absolute -inset-4 rounded-2xl bg-blue-500/20 blur-2xl" />
             <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-[0_0_50px_-10px_rgba(37,99,235,0.5)]">
               <Image
                 src={FOUNDER.photo}

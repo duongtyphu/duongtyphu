@@ -42,7 +42,7 @@ function AdminLoginForm() {
         </div>
 
         {notAdmin && (
-          <p className="mb-4 rounded-lg border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+          <p className="mb-4 rounded-lg border border-gemos-danger/20 bg-gemos-danger/10 px-3 py-2 text-xs text-gemos-danger">
             Tài khoản này không có quyền Admin.
           </p>
         )}

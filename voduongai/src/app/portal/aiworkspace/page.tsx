@@ -246,7 +246,7 @@ export default function KhongGianAiPage() {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href="/solo"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-blue-600 transition"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-blue px-6 py-3 text-sm font-semibold text-white shadow hover:bg-blue-600 transition"
           >
             Xem khoá học VDAI SOLO <ArrowRight className="h-4 w-4" />
           </Link>

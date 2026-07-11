@@ -4,6 +4,7 @@ import { ecosystems, getEcosystemBySlug, DEFAULT_POTENTIAL_ANALYSIS, type Ecosys
 import { digitalAssetArticles } from "@/data/digitalAssets";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { Breadcrumb } from "@/components/portal/ui/Breadcrumb";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
 import { PotentialAnalysisTable } from "@/components/portal/opportunities/PotentialAnalysisTable";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
@@ -52,25 +53,6 @@ const SURFACE: Record<string, { chip: string; badge: string; strip: string }> = 
     strip: "bg-gradient-to-r from-emerald-700 to-green-600",
   },
 };
-
-function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
-  return (
-    <nav className="mb-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
-      {items.map((item, i) => (
-        <span key={i} className="flex items-center gap-2">
-          {i > 0 && <span className="text-gray-300">/</span>}
-          {item.href ? (
-            <Link href={item.href} className="transition-colors hover:text-blue-600">
-              {item.label}
-            </Link>
-          ) : (
-            <span className="font-medium text-gray-900">{item.label}</span>
-          )}
-        </span>
-      ))}
-    </nav>
-  );
-}
 
 export function generateStaticParams() {
   return ecosystems.map((e) => ({ ecosystemSlug: e.slug }));
@@ -316,6 +298,7 @@ export default async function EcosystemMiniSitePage({
       {/* Content Gutter — cùng khoảng cách với /portal/duan-cohoi. */}
       <div className="rounded-3xl p-6 md:p-8 space-y-10">
       <Breadcrumb
+        className="mb-2"
         items={[
           { label: "Portal", href: "/portal" },
           { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
