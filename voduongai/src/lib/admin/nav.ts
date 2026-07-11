@@ -20,7 +20,6 @@ export const adminNavGroups: AdminNavGroup[] = [
     group: "Content",
     items: [
       { label: "Blog AI", href: "/admin/blog" },
-      { label: "Case Study", href: "/admin/case-study" },
       { label: "Thành công học viên", href: "/admin/student-success" },
       { label: "Tin tức & Cập nhật", href: "/admin/updates" },
       { label: "Tin nội bộ", href: "/admin/news" },
@@ -28,7 +27,6 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Ebook", href: "/admin/ebooks" },
       { label: "Checklist", href: "/admin/checklists" },
       { label: "SOP", href: "/admin/sop" },
-      { label: "Tài nguyên", href: "/admin/resources" },
       { label: "Tài nguyên đã lưu", href: "/admin/saved" },
       { label: "Dashboard Portal", href: "/admin/portal-builder" },
       { label: "Bắt đầu tại đây", href: "/admin/portal-builder/start-here" },
@@ -42,9 +40,17 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     group: "CKOS",
     items: [
+      { label: "CKOS Dashboard", href: "/admin/ckos" },
+      { label: "Goals", href: "/admin/ckos/goals" },
+      { label: "Công cụ AI (Tools)", href: "/admin/tools" },
+      { label: "Prompt AI (Prompts)", href: "/admin/prompts" },
+      { label: "Workflows", href: "/admin/ckos/workflows" },
+      { label: "Evaluations", href: "/admin/ckos/evaluations" },
+      { label: "Tài nguyên (Resources)", href: "/admin/resources" },
+      { label: "Case Study", href: "/admin/case-study" },
+      { label: "Best Practices", href: "/admin/ckos/best-practices" },
+      { label: "FAQs", href: "/admin/ckos/faqs" },
       { label: "Knowledge Seed", href: "/admin/knowledge-seed" },
-      { label: "Prompt AI", href: "/admin/prompts" },
-      { label: "Công cụ AI", href: "/admin/tools" },
     ],
   },
   {
