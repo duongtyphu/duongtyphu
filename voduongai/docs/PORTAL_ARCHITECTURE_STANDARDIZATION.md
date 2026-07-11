@@ -230,6 +230,8 @@ Workspace   (read real tool names / session output titles, not just a
 
 ## 11. Architecture Decision Records (ADR)
 
+**Status update — Content Cleanup Sprint 7:** Sprint 7's brief assumed ADR-004 through ADR-008 had been confirmed and asked to implement them. PMO explicitly declined: *"Do NOT implement or assume any Product Owner decisions for: Purchasable Entity (ADR-004), Admin Ownership (ADR-007), Tool Catalog (ADR-006), Goal Model, Memory Ownership (ADR-008). Do not make architecture decisions on behalf of the Product Owner."* All five remain **OPEN, exactly as recorded below** — nothing in Sprint 7 touched the underlying schema, Admin system, Tool catalog, Goal model, or Memory model. Sprint 7 only executed the already-unambiguous content-layer item this document's own findings supported: Founder content duplication (§4's Founder-bio-duplication finding, unrelated to any of the 5 open ADRs) now has a single source of truth (`src/data/portal/founder.ts`). See `docs/PORTAL_CONTENT_CLEANUP.md` for the full Sprint 7 report.
+
 Decisions already made and confirmed correct by this audit (ratify, don't reopen):
 
 - **ADR-001 — Portal Shell is frozen.** One layout, one `PortalShell`, no per-platform overrides. Confirmed zero violations. *Status: RATIFIED.*
