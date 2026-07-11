@@ -54,7 +54,10 @@ export default function SavedPage() {
 
       {!ready ? null : items.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/15 bg-gray-50 p-10 text-center text-sm text-gray-600">
-          Bạn chưa lưu nội dung nào. Nhấn biểu tượng 🔖 trên Prompt, Công cụ hoặc Tài nguyên để lưu lại.
+          <p>Bạn chưa lưu nội dung nào. Nhấn biểu tượng 🔖 trên Prompt, Công cụ hoặc Tài nguyên để lưu lại.</p>
+          <Link href="/portal/prompts" className="mt-3 inline-block font-semibold text-brand-blue hover:underline">
+            Xem thư viện Prompt →
+          </Link>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
