@@ -4,8 +4,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/privacy-policy", destination: "/privacy", permanent: true },
-      { source: "/portal/growth", destination: "/portal/build", permanent: true },
-      { source: "/portal/ecosystem", destination: "/portal/connect", permanent: true },
       // Ecosystem slug rename — URL cũ redirect về URL mới đúng tên gọi, không để 404.
       { source: "/portal/duan-cohoi/crypto", destination: "/portal/duan-cohoi/blockchain-crypto", permanent: true },
       { source: "/portal/duan-cohoi/blockchain", destination: "/portal/duan-cohoi/lam-affilate", permanent: true },
