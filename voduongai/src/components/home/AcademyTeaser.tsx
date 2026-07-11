@@ -14,7 +14,7 @@ const modules = [
   {
     title: "AI Academy",
     description: "Lộ trình học AI từ nền tảng đến ứng dụng thực chiến.",
-    href: "/portal/ai-academy",
+    href: "/portal/hocvienai",
   },
   {
     title: "VO DUONG AI Academy",

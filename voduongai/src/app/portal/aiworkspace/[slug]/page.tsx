@@ -107,7 +107,7 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: "Học viện", href: "/portal" },
+          { label: "Portal", href: "/portal" },
           { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: tool.name },
         ]}
@@ -308,7 +308,7 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: "Học viện", href: "/portal" },
+          { label: "Portal", href: "/portal" },
           { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: category.title },
         ]}
@@ -476,7 +476,7 @@ function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup })
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: "Học viện", href: "/portal" },
+          { label: "Portal", href: "/portal" },
           { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: profession.title },
         ]}
@@ -739,7 +739,7 @@ function NotFoundPage({ slug }: { slug: string }) {
     <div className="rounded-3xl p-6 md:p-8">
       <Breadcrumb
         items={[
-          { label: "Học viện", href: "/portal" },
+          { label: "Portal", href: "/portal" },
           { label: "Không gian AI", href: "/portal/aiworkspace" },
           { label: slug },
         ]}

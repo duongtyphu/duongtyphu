@@ -16,10 +16,10 @@ export type OnboardingProfile = {
 };
 
 export const ONBOARDING_GOALS: { id: OnboardingGoalId; label: string; href: string; hint: string }[] = [
-  { id: "learn-ai", label: "Tôi muốn học AI từ nền tảng", href: "/portal/ai-academy", hint: "Bắt đầu từ Học viện AI — đi từng bước vững chắc." },
+  { id: "learn-ai", label: "Tôi muốn học AI từ nền tảng", href: "/portal/hocvienai", hint: "Bắt đầu từ Học viện AI — đi từng bước vững chắc." },
   { id: "apply-work", label: "Tôi muốn ứng dụng AI vào công việc", href: "/portal/prompts", hint: "Khám phá thư viện Prompt để áp dụng ngay vào công việc." },
   { id: "extra-income", label: "Tôi muốn kiếm thêm thu nhập", href: "/portal/affiliate-hub", hint: "Affiliate Hub giúp bạn bắt đầu kiếm thu nhập cùng AI." },
-  { id: "personal-brand", label: "Tôi muốn xây dựng thương hiệu cá nhân", href: "/portal/personal-brand", hint: "Lộ trình xây thương hiệu cá nhân trong kỷ nguyên AI." },
+  { id: "personal-brand", label: "Tôi muốn xây dựng thương hiệu cá nhân", href: "/portal/hocvienai", hint: "Lộ trình xây thương hiệu cá nhân trong kỷ nguyên AI." },
   { id: "automation", label: "Tôi muốn tự động hóa công việc / kinh doanh", href: "/portal/tools", hint: "Bộ công cụ AI giúp tự động hoá công việc và kinh doanh." },
 ];
 

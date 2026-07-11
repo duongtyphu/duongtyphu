@@ -98,7 +98,7 @@ export function PortalShell({
                   type="button"
                   aria-label="Đóng menu"
                   onClick={() => setDrawerOpen(false)}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 text-gray-500"
                 >
                   <X className="h-4 w-4" />
                 </button>

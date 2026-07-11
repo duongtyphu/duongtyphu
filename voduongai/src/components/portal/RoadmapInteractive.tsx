@@ -16,7 +16,7 @@ const steps: Step[] = [
     step: 1,
     title: "Làm quen AI",
     description: "Hiểu các công cụ AI phổ biến và cách viết prompt hiệu quả.",
-    resource: { label: "Học viện AI", href: "/portal/ai-academy" },
+    resource: { label: "Học viện AI", href: "/portal/hocvienai" },
     action: "Hoàn thành 4 bài học nền tảng trong Học viện AI.",
   },
   {
@@ -30,7 +30,7 @@ const steps: Step[] = [
     step: 3,
     title: "Xây thương hiệu cá nhân",
     description: "Định vị bản thân và xây hình ảnh nhất quán trên các kênh.",
-    resource: { label: "Thương hiệu cá nhân", href: "/portal/personal-brand" },
+    resource: { label: "Thương hiệu cá nhân", href: "/portal/hocvienai" },
     action: "Hoàn thành bài học định vị thương hiệu cá nhân.",
   },
   {
