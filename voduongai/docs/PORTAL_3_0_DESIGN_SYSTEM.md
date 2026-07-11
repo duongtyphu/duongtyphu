@@ -62,8 +62,10 @@ white. See `src/app/globals.css`, `.gemos-badge-free/-premium/-locked`.
 
 ## 3. Typography
 
-- Font: `Plus Jakarta Sans` (`next/font/google`, subsets `latin`+`vietnamese`, weights 400–800),
-  wired as `--font-sans` in `@theme`. No other font in the codebase — keep it that way.
+- Font: **Updated by IMP-2026-TYPO-001** — Plus Jakarta Sans (`next/font/google`) has been
+  removed. Portal now uses the System UI Font Stack, wired as `--font-sans`/`--font-display`
+  in `@theme` (`src/app/globals.css`), same stack as the static site. See
+  `src/design-system/03-typography/README.md` for the current standard.
 - **Gap found**: no shared heading scale component. 67 occurrences of hand-written
   `text-2xl font-bold`/`text-2xl font-extrabold`/`text-xl font-bold` across `src/app/portal/**`,
   each page picking its own weight/size for what is conceptually the same "page H1" or "section H2."

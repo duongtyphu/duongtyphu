@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
@@ -11,12 +10,6 @@ import { siteConfig } from "@/lib/site";
 import { getSiteSettings } from "@/lib/site-settings";
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
-
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600", "700", "800"],
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
@@ -72,7 +65,7 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="vi" className={`${jakarta.variable} h-full antialiased`}>
+    <html lang="vi" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans text-white">
         <style
           dangerouslySetInnerHTML={{

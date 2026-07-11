@@ -116,7 +116,7 @@ Journey's five "doors" (Mirror, My Story, Learning Journal, Journey Map, Garden)
 
 ## SECTION 4 — Typography
 
-- **Font**: Plus Jakarta Sans (`next/font/google`, subsets `latin`+`vietnamese`, weights 400–800), wired as `--font-sans`. No other font in the codebase, with one deliberate exception: `.story-serif` (`Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif`) used only in My Story, to give that one door a "handwritten book" register distinct from the rest of the Portal.
+- **Font**: **Updated by IMP-2026-TYPO-001** — Plus Jakarta Sans (`next/font/google`) has been removed. Portal now uses the System UI Font Stack (`-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`), wired as `--font-sans`/`--font-display` in `src/app/globals.css`, matching the static site. See `src/design-system/03-typography/README.md` for the current standard. One deliberate exception remains: `.story-serif` (`Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif`) used only in My Story, to give that one door a "handwritten book" register distinct from the rest of the Portal.
 
 | Role | Frozen pattern | Source |
 |---|---|---|
