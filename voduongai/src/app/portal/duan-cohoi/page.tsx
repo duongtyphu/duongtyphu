@@ -229,7 +229,7 @@ export default function OpportunitiesHubPage() {
         subtitle="Trang này không xếp hạng cơ hội nào tốt hơn cơ hội nào. Nó giúp bạn trả lời một câu hỏi trước khi đọc bất kỳ dự án nào: với tình huống của bạn hôm nay, nên bắt đầu tìm hiểu từ đâu — và cần biết trước điều gì để không mất tiền vì thiếu hiểu biết."
         quickActions={[
           { label: "Xem Tiêu chí đánh giá", href: "#tieu-chi" },
-          { label: "Cơ hội đầu tư cùng Nhà sáng lập", href: "#he-sinh-thai" },
+          { label: "Xem các hệ sinh thái cùng Nhà sáng lập", href: "#he-sinh-thai" },
         ]}
       />
 

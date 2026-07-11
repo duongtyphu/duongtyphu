@@ -33,9 +33,9 @@ const GUIDES: Guide[] = [
     role: "Nhà sáng lập VO DUONG AI",
     badge: "Nhà sáng lập",
     photo: "/images/founder-portrait.jpg",
-    tags: ["AI ứng dụng", "Affiliate Marketing", "Automation", "AI Strategy"],
+    tags: ["AI ứng dụng", "Affiliate Marketing", "Automation", "AI Strategy", "Phát triển hệ thống"],
     intro:
-      "Võ Đương là nhà sáng lập VO DUONG AI — nhà đầu tư và người ứng dụng AI thực chiến trong kinh doanh số. Anh xây VO DUONG AI thành một hệ sinh thái có lộ trình rõ ràng thay vì những thông tin rời rạc.",
+      "Võ Đương là nhà sáng lập VO DUONG AI — nhà đầu tư và người ứng dụng AI thực chiến trong kinh doanh số. Với nền tảng thực chiến trong Affiliate Marketing và xây dựng hệ thống tự động hóa, anh xây VO DUONG AI thành một hệ sinh thái có lộ trình rõ ràng thay vì những thông tin rời rạc.",
     expertise: [
       "Ứng dụng AI trong kinh doanh số và Affiliate Marketing",
       "Xây dựng hệ thống tự động hóa quy trình vận hành",

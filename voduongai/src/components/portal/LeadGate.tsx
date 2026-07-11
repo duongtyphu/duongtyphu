@@ -60,7 +60,7 @@ export function LeadGate({
   return (
     <form onSubmit={handleSubmit} className="max-w-sm">
       <p className="mb-3 text-sm text-brand-gray-500">
-        Nhập email để mở khoá tải miễn phí — bạn sẽ nhận thêm tài nguyên mới từ Võ Đương AI.
+        Nhập email để mở khoá tải miễn phí — bạn sẽ nhận thêm tài nguyên mới từ VO DUONG AI.
       </p>
       <div className="flex flex-col gap-2 sm:flex-row">
         <input
