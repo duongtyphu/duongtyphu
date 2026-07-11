@@ -36,3 +36,10 @@ Mỗi bài viết mới đăng ở trang Blog AI phải có liên kết (interna
    (VDAI SOLO cho nội dung vận hành một mình, VDAI SCALE cho nội dung mở rộng/đội nhóm).
 
 Áp dụng cho mọi bài viết Blog AI tạo ra từ nay về sau.
+
+## Ngôn ngữ báo cáo (bắt buộc)
+
+Mọi báo cáo sprint/audit (nội dung file `docs/*.md`, mô tả PR, tóm tắt gửi PMO/Founder)
+từ nay về sau phải viết bằng **tiếng Việt**, không viết bằng tiếng Anh — kể cả khi brief
+gốc hoặc trao đổi trong phiên làm việc bằng tiếng Anh. Áp dụng cho mọi báo cáo tạo ra
+từ nay về sau (không bắt buộc dịch lại các báo cáo cũ đã có).
