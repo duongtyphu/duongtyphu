@@ -3,6 +3,8 @@
 
 **STATUS: SPRINT COMPLETE, WITH AN EXPLICIT PMO-DIRECTED SCOPE REDUCTION. Tasks 1, 2, 3, 9, 10 executed. Tasks 4-8 (Tool Catalog, Goal Model, Memory Ownership, Admin Ownership, Purchasable Entity/ADR-004) are BLOCKED — PMO explicitly declined to authorize implementation of any of the five architecture-adjacent decisions this sprint's brief assumed were already confirmed.**
 
+**Update (IMP-ADR-001, later):** Founder/PMO have since officially approved ADR-004 (Course is the Canonical Purchasable Entity) and ADR-007 (`src/app/admin` is the Canonical Admin System). This document is preserved as-written for historical accuracy of what was blocked at the time this sprint ran; see `docs/PORTAL_ARCHITECTURE_STANDARDIZATION.md` §11 and `docs/PORTAL_FEATURE_FREEZE.md` for the current, authoritative status. ADR-006, ADR-008, and Goal Model remain open, unaffected by that later decision.
+
 Before starting, this sprint surfaced a real conflict: the brief's Tasks 4-8 instruct executing "confirmed" architecture decisions (Academy vs. Workspace ownership, a single canonical Tool catalog, a merged Goal model, resolved Memory ownership, ADR-004's purchasable entity) — but `docs/PORTAL_ARCHITECTURE_STANDARDIZATION.md` (Sprint 4) recorded these as **open ADRs requiring a Product Owner decision**, and no such decision had been communicated back into this session. Rather than guess at business-critical, hard-to-reverse decisions (which live commerce table is canonical, which of two Admin apps survives), this sprint asked PMO directly. **PMO's answer: treat Tasks 4-8 as blocked, do not assume or implement any of the five decisions, proceed only with the unambiguous content-layer tasks.** This report reflects that direction.
 
 ---
