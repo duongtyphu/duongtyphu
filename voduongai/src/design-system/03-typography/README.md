@@ -1,6 +1,40 @@
 # 03 — Typography
 
-Font gốc: `--font-sans: var(--font-jakarta)` (Plus Jakarta Sans), áp dụng toàn bộ Portal. Không dùng font thứ hai trừ khi Design Reference yêu cầu (ví dụ font script cho Companion — hiện chưa dùng, xem ghi chú cuối file).
+## Font gốc: System UI Font Stack
+
+Đây là chuẩn typography **bắt buộc** cho Website, Học viện AI, Admin CMS, Companion AI
+và các sản phẩm tương lai của VO DUONG AI (IMP-2026-TYPO-001).
+
+**Stack:**
+
+```css
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Roboto,
+Helvetica,
+Arial,
+sans-serif
+```
+
+Khai báo tại `--font-sans` trong `src/app/globals.css` (`@theme`); `--font-display` trỏ về
+cùng nguồn (`var(--font-sans)`) — không phải một font riêng.
+
+**Nguyên tắc:**
+
+1. **Một font stack duy nhất cho toàn hệ thống.** Website tĩnh (`assets/css/styles.css`) và
+   Portal Next.js dùng chung system stack này.
+2. **Không dùng font giao diện thứ hai.** Không thêm Google Font hay font ngoài nếu chưa có
+   quyết định kiến trúc mới từ Product Owner.
+3. **UI dùng weight 400–700** (`font-weight-regular: 400`, `medium: 500`, `semibold: 600`,
+   `bold: 700`). Hạn chế hoặc không dùng weight 300 cho nội dung chính, menu, button, card,
+   form, dashboard, Companion message.
+4. **Font monospace chỉ dành cho code và dữ liệu kỹ thuật** — không đổi khi không có lỗi.
+5. **Mọi module mới phải kế thừa typography token hiện tại** (`--font-sans`/`--font-display`),
+   không tự khai báo `font-family` rời rạc trong component.
+
+*(Lịch sử: Portal từng dùng Plus Jakarta Sans qua `next/font/google` — đã loại bỏ theo
+IMP-2026-TYPO-001 để đồng bộ với chuẩn system-stack toàn hệ thống.)*
 
 ## Type Scale
 

@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hồ sơ cá nhân — VO DUONG AI</title>
   <meta name="robots" content="noindex,nofollow">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -14,7 +13,7 @@
       --text:#E2E8F0; --muted:#94A3B8; --border:rgba(255,255,255,0.08);
       --card:rgba(255,255,255,0.04);
     }
-    body { background:var(--navy); font-family:'Inter',-apple-system,sans-serif; color:var(--text); min-height:100vh; }
+    body { background:var(--navy); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:var(--text); min-height:100vh; }
 
     /* NAV */
     .nav {
@@ -550,7 +549,7 @@
 document.body.insertAdjacentHTML('afterbegin',
   '<div id="authLoading" style="position:fixed;inset:0;background:#060C1A;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px">' +
   '<div style="width:40px;height:40px;border:3px solid rgba(255,255,255,0.1);border-top-color:#6D5DFB;border-radius:50%;animation:spin 0.7s linear infinite"></div>' +
-  '<p style="color:#64748B;font-size:0.88rem;font-family:Inter,sans-serif">Đang tải hồ sơ...</p>' +
+  '<p style="color:#64748B;font-size:0.88rem;font-family:inherit">Đang tải hồ sơ...</p>' +
   '<style>@keyframes spin{to{transform:rotate(360deg)}}</style></div>'
 );
 </script>

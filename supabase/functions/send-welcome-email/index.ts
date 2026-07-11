@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     const referralLink = `${SITE_URL}/register.html?ref=${member.referral_code ?? ""}`;
 
     const html = `
-      <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;color:#0F172A">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;color:#0F172A">
         <h2 style="color:#2563EB">Chào ${firstName}, chào mừng bạn đến với VO DUONG AI Academy! 🎉</h2>
         <p>Tài khoản của bạn đã được tạo thành công. Đăng nhập vào trang thành viên để nhận tài liệu, mini-course miễn phí và theo dõi lịch khai giảng V-SOLO &amp; SCALE.</p>
         <p style="margin:24px 0">

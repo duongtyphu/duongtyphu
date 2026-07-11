@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
     const firstName = (member?.full_name || order.member_email.split("@")[0]).split(" ")[0];
 
     const html = `
-      <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;color:#0F172A">
+      <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;color:#0F172A">
         <h2 style="color:#16A34A">Đơn hàng của bạn đã được xác nhận ✅</h2>
         <p>Chào ${firstName}, đơn hàng <b>${order.product_name ?? "sản phẩm"}</b> đã được xác nhận thành công.</p>
         <p style="margin:24px 0">
