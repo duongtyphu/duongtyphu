@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import {
   LayoutDashboard,
+  Globe,
+  Palette,
   LayoutPanelLeft,
   Rocket,
   ListChecks,
@@ -23,6 +25,7 @@ import {
   BookOpen,
   ClipboardCheck,
   Bookmark,
+  Library,
   Handshake,
   Package,
   Link2,
@@ -42,14 +45,18 @@ import {
   BadgeCheck,
   Megaphone,
   MessageCircle,
+  Bot,
+  Search,
   Settings,
   ChevronDown,
   type LucideIcon,
 } from "lucide-react";
-import { adminNavGroups } from "@/lib/admin/nav";
+import { adminNavGroups, type AdminNavItem } from "@/lib/admin/nav";
 
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
+  "/admin/website": Globe,
+  "/admin/brand-media": Palette,
   "/admin/portal-builder": LayoutPanelLeft,
   "/admin/portal-builder/start-here": Rocket,
   "/admin/portal-builder/today-actions": ListChecks,
@@ -68,8 +75,10 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/ebooks": BookOpen,
   "/admin/checklists": ClipboardCheck,
   "/admin/sop": ClipboardList,
+  "/admin/resources": Library,
   "/admin/saved": Bookmark,
   "/admin/affiliate-hub": Handshake,
+  "/admin/affiliate-hub/top-products": TrendingUp,
   "/admin/affiliate/products": Package,
   "/admin/affiliate/links": Link2,
   "/admin/affiliate/analytics": BarChart3,
@@ -80,6 +89,8 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/digital-assets/category/blockchain": Link2,
   "/admin/digital-assets/category/trading": LineChart,
   "/admin/digital-assets/links": Link2,
+  "/admin/digital-assets/projects": FolderKanban,
+  "/admin/digital-assets/articles": FileText,
   "/admin/digital-assets/categories": Layers,
   "/admin/digital-assets/analytics": FileBarChart,
   "/admin/premium": Crown,
@@ -87,14 +98,17 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/coupons": Percent,
   "/admin/services": Handshake,
   "/admin/support": LifeBuoy,
+  "/admin/leads": Target,
   "/admin/blog": Newspaper,
   "/admin/case-study": TrendingUp,
   "/admin/student-success": BadgeCheck,
   "/admin/updates": Megaphone,
+  "/admin/news": Newspaper,
   "/admin/community": MessageCircle,
+  "/admin/companion-studio": Bot,
   "/admin/users": Users,
-  "/admin/leads": Target,
   "/admin/reports": FileBarChart,
+  "/admin/seo": Search,
   "/admin/settings": Settings,
 };
 
@@ -204,7 +218,7 @@ function NavLink({
   showLabel,
   onNavigate,
 }: {
-  item: { label: string; href: string };
+  item: AdminNavItem;
   active: boolean;
   showLabel: boolean;
   onNavigate?: () => void;
@@ -224,10 +238,20 @@ function NavLink({
     >
       {active && <span className="absolute left-0 top-1/2 h-4 -translate-y-1/2 rounded-full bg-brand-blue" style={{ width: 3 }} />}
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
-      {showLabel && <span className="truncate">{item.label}</span>}
+      {showLabel && (
+        <span className="flex min-w-0 flex-1 items-center justify-between gap-2">
+          <span className="truncate">{item.label}</span>
+          {item.comingSoon && (
+            <span className="shrink-0 rounded-full border border-brand-orange/30 bg-brand-orange/10 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-brand-orange">
+              Sắp ra mắt
+            </span>
+          )}
+        </span>
+      )}
       {!showLabel && (
-        <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-white/10 bg-[#0B1F4D] px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-xl transition group-hover:opacity-100">
+        <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-white/10 bg-brand-navy-soft px-2.5 py-1.5 text-xs font-semibold text-white opacity-0 shadow-xl transition group-hover:opacity-100">
           {item.label}
+          {item.comingSoon ? " · Sắp ra mắt" : ""}
         </span>
       )}
     </Link>

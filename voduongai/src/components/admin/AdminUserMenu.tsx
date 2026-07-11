@@ -54,7 +54,7 @@ export function AdminUserMenu({ email }: { email: string }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-white/10 bg-[#0B1F4D] p-3 shadow-xl"
+          className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-white/10 bg-brand-navy-soft p-3 shadow-xl"
         >
           <p className="truncate px-1 text-sm font-bold text-white">Quản trị viên</p>
           <p className="truncate px-1 text-xs text-white/60">{email}</p>
@@ -73,7 +73,7 @@ export function AdminUserMenu({ email }: { email: string }) {
               type="button"
               role="menuitem"
               onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-white/70 hover:bg-red-400/10 hover:text-red-300"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-white/70 hover:bg-gemos-danger/10 hover:text-gemos-danger"
             >
               <LogOut className="h-4 w-4" />
               Đăng xuất

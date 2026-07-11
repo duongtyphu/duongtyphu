@@ -95,7 +95,7 @@ export function AdminSearch() {
       </button>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#06142D]/98 p-4 md:hidden">
+        <div className="fixed inset-0 z-[60] bg-brand-navy/98 p-4 md:hidden">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
@@ -153,8 +153,8 @@ function AdminSearchDropdown({
   static?: boolean;
 }) {
   const wrapperClass = isStatic
-    ? "rounded-2xl border border-white/10 bg-[#0B1F4D]/95 p-2"
-    : "absolute left-0 top-full z-50 mt-2 w-[24rem] max-w-[90vw] rounded-2xl border border-white/10 bg-[#0B1F4D]/98 p-2 shadow-2xl backdrop-blur-md max-h-[70vh] overflow-y-auto";
+    ? "rounded-2xl border border-white/10 bg-brand-navy-soft/95 p-2"
+    : "absolute left-0 top-full z-50 mt-2 w-[24rem] max-w-[90vw] rounded-2xl border border-white/10 bg-brand-navy-soft/98 p-2 shadow-2xl backdrop-blur-md max-h-[70vh] overflow-y-auto";
 
   const grouped = results.reduce<Record<string, AdminSearchResult[]>>((acc, r) => {
     acc[r.group] = acc[r.group] || [];

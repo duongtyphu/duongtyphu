@@ -1,11 +1,35 @@
-export type AdminNavItem = { label: string; href: string };
+export type AdminNavItem = { label: string; href: string; comingSoon?: boolean };
 export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
 
+/**
+ * Canonical Admin sidebar structure — the 14 top-level groups approved by
+ * PMO (ADM-SPR-002). Groups with no built module yet render a single
+ * `comingSoon` entry pointing at a minimal placeholder page instead of a
+ * business module. Item placement within multi-item groups (Content, CKOS,
+ * Academy, Premium, Projects & Opportunities) reflects the current data-
+ * ownership reality documented in docs/admin/ADMIN_SHELL.md §2 — some pages
+ * (Portal Builder, Affiliate, Leads, roadmap/daily-missions) don't map to a
+ * single obvious group and were placed using the closest-fit judgment call
+ * recorded there, not a new business decision.
+ */
 export const adminNavGroups: AdminNavGroup[] = [
-  { group: null, items: [{ label: "Tổng quan", href: "/admin/dashboard" }] },
+  { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
+  { group: null, items: [{ label: "Website", href: "/admin/website", comingSoon: true }] },
+  { group: null, items: [{ label: "Brand & Media", href: "/admin/brand-media", comingSoon: true }] },
   {
-    group: "Portal Builder",
+    group: "Content",
     items: [
+      { label: "Blog AI", href: "/admin/blog" },
+      { label: "Case Study", href: "/admin/case-study" },
+      { label: "Thành công học viên", href: "/admin/student-success" },
+      { label: "Tin tức & Cập nhật", href: "/admin/updates" },
+      { label: "Tin nội bộ", href: "/admin/news" },
+      { label: "Template", href: "/admin/templates" },
+      { label: "Ebook", href: "/admin/ebooks" },
+      { label: "Checklist", href: "/admin/checklists" },
+      { label: "SOP", href: "/admin/sop" },
+      { label: "Tài nguyên", href: "/admin/resources" },
+      { label: "Tài nguyên đã lưu", href: "/admin/saved" },
       { label: "Dashboard Portal", href: "/admin/portal-builder" },
       { label: "Bắt đầu tại đây", href: "/admin/portal-builder/start-here" },
       { label: "Hôm nay bạn muốn làm gì", href: "/admin/portal-builder/today-actions" },
@@ -16,35 +40,31 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   {
-    group: "Lộ trình",
-    items: [
-      { label: "Lộ trình thành công", href: "/admin/roadmap" },
-      { label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
-    ],
-  },
-  {
-    group: "Học tập",
-    items: [
-      { label: "Học phí V-SOLO / V-SCALE", href: "/admin/course-pricing" },
-      { label: "Dự án thực chiến", href: "/admin/projects" },
-    ],
-  },
-  {
-    group: "Thư viện",
+    group: "CKOS",
     items: [
       { label: "Knowledge Seed", href: "/admin/knowledge-seed" },
       { label: "Prompt AI", href: "/admin/prompts" },
       { label: "Công cụ AI", href: "/admin/tools" },
-      { label: "Template", href: "/admin/templates" },
-      { label: "Ebook", href: "/admin/ebooks" },
-      { label: "Checklist", href: "/admin/checklists" },
-      { label: "SOP", href: "/admin/sop" },
-      { label: "Tài nguyên đã lưu", href: "/admin/saved" },
     ],
   },
   {
-    group: "Affiliate",
+    group: "Academy",
     items: [
+      { label: "Lộ trình thành công", href: "/admin/roadmap" },
+      { label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
+      { label: "Dự án thực chiến", href: "/admin/projects" },
+    ],
+  },
+  {
+    group: "Premium",
+    items: [
+      { label: "Sản phẩm số", href: "/admin/premium" },
+      { label: "Học phí V-SOLO / V-SCALE", href: "/admin/course-pricing" },
+      { label: "Đơn hàng", href: "/admin/orders" },
+      { label: "Mã giảm giá", href: "/admin/coupons" },
+      { label: "Dịch vụ", href: "/admin/services" },
+      { label: "Hỗ trợ", href: "/admin/support" },
+      { label: "Leads", href: "/admin/leads" },
       { label: "Affiliate Hub", href: "/admin/affiliate-hub" },
       { label: "Top sản phẩm Affiliate", href: "/admin/affiliate-hub/top-products" },
       { label: "Sản phẩm Affiliate", href: "/admin/affiliate/products" },
@@ -53,7 +73,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   {
-    group: "ĐẦU TƯ CÙNG TÔI",
+    group: "Projects & Opportunities",
     items: [
       { label: "Tổng quan", href: "/admin/digital-assets" },
       { label: "Hệ sinh thái DigiU", href: "/admin/digital-assets/category/digiu" },
@@ -68,29 +88,10 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Báo cáo", href: "/admin/digital-assets/analytics" },
     ],
   },
-  {
-    group: "Cửa hàng",
-    items: [
-      { label: "Sản phẩm số", href: "/admin/premium" },
-      { label: "Đơn hàng", href: "/admin/orders" },
-      { label: "Mã giảm giá", href: "/admin/coupons" },
-      { label: "Dịch vụ", href: "/admin/services" },
-      { label: "Hỗ trợ", href: "/admin/support" },
-    ],
-  },
-  {
-    group: "Nội dung",
-    items: [
-      { label: "Blog AI", href: "/admin/blog" },
-      { label: "Case Study", href: "/admin/case-study" },
-      { label: "Thành công học viên", href: "/admin/student-success" },
-      { label: "Tin tức & Cập nhật", href: "/admin/updates" },
-      { label: "Tin nội bộ", href: "/admin/news" },
-    ],
-  },
-  { group: null, items: [{ label: "Cộng đồng", href: "/admin/community" }] },
-  { group: null, items: [{ label: "Người dùng", href: "/admin/users" }] },
-  { group: null, items: [{ label: "Leads", href: "/admin/leads" }] },
-  { group: null, items: [{ label: "Báo cáo", href: "/admin/reports" }] },
-  { group: null, items: [{ label: "Cài đặt", href: "/admin/settings" }] },
+  { group: null, items: [{ label: "Community", href: "/admin/community" }] },
+  { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio", comingSoon: true }] },
+  { group: null, items: [{ label: "Users & Access", href: "/admin/users" }] },
+  { group: null, items: [{ label: "Analytics", href: "/admin/reports" }] },
+  { group: null, items: [{ label: "SEO", href: "/admin/seo", comingSoon: true }] },
+  { group: null, items: [{ label: "System Settings", href: "/admin/settings" }] },
 ];

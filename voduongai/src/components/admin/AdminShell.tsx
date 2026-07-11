@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { AdminHeader } from "@/components/admin/AdminHeader";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 
@@ -49,7 +50,7 @@ export function AdminShell({ email, children }: { email: string; children: React
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#06142D] text-white">
+    <div className="flex min-h-screen flex-col bg-brand-navy text-white">
       <AdminHeader email={email} onToggleSidebar={handleToggleSidebar} />
 
       <div className="flex flex-1">
@@ -71,7 +72,7 @@ export function AdminShell({ email, children }: { email: string; children: React
               onClick={() => setDrawerOpen(false)}
               className="absolute inset-0 bg-black/60"
             />
-            <div className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-white/10 bg-[#0B1F4D] p-4 shadow-2xl">
+            <div className="absolute left-0 top-0 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-white/10 bg-brand-navy-soft p-4 shadow-2xl">
               <div className="mb-3 flex items-center justify-between">
                 <span className="text-sm font-extrabold text-white">Menu Admin</span>
                 <button
@@ -88,7 +89,12 @@ export function AdminShell({ email, children }: { email: string; children: React
           </div>
         )}
 
-        <main className="min-w-0 flex-1 p-6">{children}</main>
+        <main className="min-w-0 flex-1 p-6">
+          <div className="mb-4">
+            <AdminBreadcrumb />
+          </div>
+          {children}
+        </main>
       </div>
     </div>
   );

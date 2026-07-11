@@ -26,12 +26,12 @@ function AdminLoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#06142D] px-4 text-white">
-      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#0B1F4D] p-8 shadow-2xl">
+    <div className="flex min-h-screen items-center justify-center bg-brand-navy px-4 text-white">
+      <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-brand-navy-soft p-8 shadow-2xl">
         <div className="mb-6 flex items-center gap-2">
           <svg width="30" height="30" viewBox="0 0 32 32" fill="none" className="shrink-0">
-            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-            <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
+            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" className="fill-brand-blue" />
+            <circle cx="27" cy="7.5" r="3" className="fill-brand-orange" />
           </svg>
           <div>
             <p className="text-sm font-extrabold text-white">
@@ -75,7 +75,7 @@ function AdminLoginForm() {
             >
               {status === "sending" ? "Đang gửi..." : "Gửi liên kết đăng nhập"}
             </button>
-            {status === "error" && <p className="text-sm text-red-300">Không gửi được liên kết, vui lòng thử lại.</p>}
+            {status === "error" && <p className="text-sm text-gemos-danger">Không gửi được liên kết, vui lòng thử lại.</p>}
           </form>
         )}
 
