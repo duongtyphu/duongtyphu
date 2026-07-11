@@ -27,22 +27,21 @@ export function RelationshipPicker({
   relatedIds: string[];
   onChange: (next: string[]) => void;
 }) {
-  const { byModule, caseStudies, ready } = useAllKnowledgeCollections();
+  const { byModule, ready } = useAllKnowledgeCollections();
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 
   const allItems: RelatedRef[] = useMemo(() => {
     const items: RelatedRef[] = [];
     for (const [moduleKey, collection] of Object.entries(byModule)) {
+      const titleKey = moduleByKey(moduleKey)?.titleKey ?? "title";
       for (const it of collection.items) {
-        items.push({ moduleKey, id: it.id, title: it.title || "(chưa đặt tiêu đề)" });
+        const title = String(it[titleKey] ?? it.title ?? "") || "(chưa đặt tiêu đề)";
+        items.push({ moduleKey, id: it.id, title });
       }
     }
-    for (const cs of caseStudies) {
-      items.push({ moduleKey: "case-studies", id: String(cs.id), title: cs.title });
-    }
     return items;
-  }, [byModule, caseStudies]);
+  }, [byModule]);
 
   const selected = relatedIds
     .map((ref) => {

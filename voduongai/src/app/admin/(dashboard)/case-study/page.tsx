@@ -1,43 +1,32 @@
-import { listCaseStudies } from "./actions";
-import { NewCaseStudyForm, CaseStudyCard } from "./CaseStudyForm";
+"use client";
 
-// Phase F.2 — this page now writes/reads `case_studies` (typed) directly via
-// dedicated server actions, matching what /portal/case-studies + the search
-// index actually read. Previously used the generic ContentManager/CrudPage
-// path, which wrote to the legacy `case_study` (jsonb) table instead — that
-// table is preserved untouched (not deleted), see supabase-phase-e-sync-*.
+import { KnowledgeCrudPage } from "@/components/admin/ckos/KnowledgeCrudPage";
+import { Badge } from "@/components/admin/ui/Badge";
 
-export default async function CaseStudyAdminPage() {
-  const { caseStudies, configured } = await listCaseStudies();
-
+export default function CaseStudyAdminPage() {
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-xl font-extrabold text-white">Case Study</h1>
-        <p className="mt-1 text-sm text-white/50">
-          Quản lý case study hiển thị tại Portal → Case Study (dữ liệu thật từ Supabase, bảng <code>case_studies</code>).
-        </p>
-      </div>
-
-      {!configured && (
-        <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/5 p-5 text-sm text-white/80">
-          Chưa cấu hình <code className="text-brand-orange">SUPABASE_SERVICE_ROLE_KEY</code> trong{" "}
-          <code className="text-brand-orange">.env.local</code> — cần quyền service role để quản lý case study.
-        </div>
-      )}
-
-      {configured && (
-        <>
-          <NewCaseStudyForm />
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {caseStudies.map((c) => (
-              <CaseStudyCard key={c.id} caseStudy={c} />
-            ))}
-            {caseStudies.length === 0 && <p className="text-sm text-white/40">Chưa có case study nào.</p>}
-          </div>
-        </>
-      )}
-    </div>
+    <KnowledgeCrudPage
+      title="Case Studies"
+      description={
+        'Canonical CKOS module (ADM-SPR-004) — dùng bảng jsonb "case_study" đã có sẵn (trước đây orphan). ' +
+        'LƯU Ý: trang công khai /portal/case-studies vẫn đọc từ bảng typed "case_studies" (khác), nên case study soạn mới từ đây CHƯA hiển thị công khai cho tới khi có sprint riêng cập nhật đường đọc của Portal — case study cũ đã publish trước đây vẫn hiển thị bình thường. Xem docs/admin/CKOS_MANAGEMENT.md §12.'
+      }
+      collectionKey="case-study"
+      extraColumns={[
+        { key: "client_name", label: "Khách hàng" },
+        {
+          key: "featured",
+          label: "Nổi bật",
+          render: (it) => (it.featured ? <Badge tone="orange">Featured</Badge> : <span className="text-white/30">—</span>),
+        },
+      ]}
+      extraFields={[
+        { key: "client_name", label: "Tên khách hàng", type: "text" },
+        { key: "result_metric", label: "Kết quả nổi bật (số liệu)", type: "text" },
+        { key: "thumbnail_url", label: "Ảnh thumbnail", type: "text" },
+        { key: "link_url", label: "Link ngoài (nếu có)", type: "text" },
+        { key: "featured", label: "Featured", type: "boolean" },
+      ]}
+    />
   );
 }

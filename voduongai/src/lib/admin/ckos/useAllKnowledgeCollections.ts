@@ -1,65 +1,54 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useCollection } from "@/lib/admin/store";
-import { listCaseStudies, type CaseStudy } from "@/app/admin/(dashboard)/case-study/actions";
-import type { KnowledgeItem } from "@/lib/admin/ckos/metadata";
+import type { KnowledgeItem, KnowledgeModuleKey } from "@/lib/admin/ckos/metadata";
 
-type LegacyStatusItem = { id: string; status?: string };
+type Item = KnowledgeItem & Record<string, unknown>;
 
 /**
- * Reads CKOS module data in one place — used by the CKOS Dashboard
+ * Reads all 13 CKOS collections (9 modules; Resources splits into 5
+ * sibling collections) in one place — used by the CKOS Dashboard
  * (aggregate counts) and RelationshipPicker (cross-module search).
  *
- * Only the 5 modules built this sprint (Goals/Workflows/Evaluations/
- * Best Practices/FAQs) actually store the shared `KnowledgeItem` shape —
- * Tools/Prompts/Resources keep their own pre-existing, purpose-built field
- * shapes (name/pricing/content/fileUrl/etc., not title/summary/body), and
- * Case Studies keeps its own typed-table shape. Casting those to
- * `KnowledgeItem` would silently show wrong/blank titles everywhere they're
- * used, so this hook deliberately does NOT include them in the
- * KnowledgeItem-shaped collections — it only reads their `status` field
- * (which does exist with the same meaning) for the Dashboard's separate
- * legacy-modules reference row. Full relationship-linking to those 4
- * modules is out of this sprint's scope — see docs/admin/CKOS_MANAGEMENT.md.
+ * Canonicalized in ADM-SPR-004: every collection now stores the shared
+ * KnowledgeItem shape (Title/Summary/Body aliased onto whatever field name
+ * Portal/Runtime already reads for that module — see metadata.ts), so this
+ * hook can read all 13 uniformly through the same `useCollection()` call,
+ * no more split between "canonical" and "legacy" shapes. React hooks can't
+ * be called in a loop, so each collection gets one explicit call.
  */
 export function useAllKnowledgeCollections() {
-  const goals = useCollection<KnowledgeItem>("ckos-goals", []);
-  const workflows = useCollection<KnowledgeItem>("ckos-workflows", []);
-  const evaluations = useCollection<KnowledgeItem>("ckos-evaluations", []);
-  const bestPractices = useCollection<KnowledgeItem>("ckos-best-practices", []);
-  const faqs = useCollection<KnowledgeItem>("ckos-faqs", []);
+  const goals = useCollection<Item>("ckos-goals", []);
+  const tools = useCollection<Item>("tools", []);
+  const prompts = useCollection<Item>("prompts", []);
+  const workflows = useCollection<Item>("ckos-workflows", []);
+  const evaluations = useCollection<Item>("ckos-evaluations", []);
+  const resources = useCollection<Item>("resources", []);
+  const templates = useCollection<Item>("templates", []);
+  const ebooks = useCollection<Item>("ebooks", []);
+  const checklists = useCollection<Item>("checklists", []);
+  const sop = useCollection<Item>("sop", []);
+  const caseStudies = useCollection<Item>("case-study", []);
+  const bestPractices = useCollection<Item>("ckos-best-practices", []);
+  const faqs = useCollection<Item>("ckos-faqs", []);
 
-  const tools = useCollection<LegacyStatusItem>("tools", []);
-  const prompts = useCollection<LegacyStatusItem>("prompts", []);
-  const resources = useCollection<LegacyStatusItem>("resources", []);
-
-  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
-  const [caseStudiesReady, setCaseStudiesReady] = useState(false);
-
-  useEffect(() => {
-    // Server Action fetch-on-mount — no render-time equivalent for a remote load.
-    listCaseStudies().then(({ caseStudies }) => {
-      setCaseStudies(caseStudies);
-      setCaseStudiesReady(true);
-    });
-  }, []);
-
-  const byModule: Record<"goals" | "workflows" | "evaluations" | "best-practices" | "faqs", ReturnType<typeof useCollection<KnowledgeItem>>> = {
+  const byModule: Record<KnowledgeModuleKey, ReturnType<typeof useCollection<Item>>> = {
     goals,
+    tools,
+    prompts,
     workflows,
     evaluations,
+    resources,
+    templates,
+    ebooks,
+    checklists,
+    sop,
+    "case-studies": caseStudies,
     "best-practices": bestPractices,
     faqs,
   };
 
-  const legacyByModule: Record<"tools" | "prompts" | "resources", ReturnType<typeof useCollection<LegacyStatusItem>>> = {
-    tools,
-    prompts,
-    resources,
-  };
+  const ready = Object.values(byModule).every((c) => c.ready);
 
-  const ready = Object.values(byModule).every((c) => c.ready) && Object.values(legacyByModule).every((c) => c.ready) && caseStudiesReady;
-
-  return { byModule, legacyByModule, caseStudies, caseStudiesReady, ready };
+  return { byModule, ready };
 }

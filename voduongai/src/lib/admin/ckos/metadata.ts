@@ -1,11 +1,17 @@
 /**
- * CKOS Management — shared metadata + lifecycle standard (ADM-SPR-003).
+ * CKOS Management — shared metadata + lifecycle standard.
+ * Canonicalized in ADM-SPR-004 per Founder's explicit "discard legacy,
+ * architecture quality over compatibility" mandate — all CKOS modules now
+ * share ONE framework (KnowledgeCrudPage), ONE editor (KnowledgeEditor),
+ * ONE metadata standard, ONE 6-state lifecycle, ONE relationship model.
  *
- * CKOS is the single source of truth for knowledge content. All 9 module
- * types (Goals, Tools, Prompts, Workflows, Evaluations, Resources, Case
- * Studies, Best Practices, FAQs) use this same metadata shape and the same
- * 6-state lifecycle, so admins get one consistent editing experience
- * regardless of which knowledge type they're managing.
+ * A module's *underlying storage* can still differ (some are real Supabase
+ * tables Portal/CKOS Runtime already read, some are new local-tier
+ * collections — see `storage` below) — but the UI, form, editor, lifecycle,
+ * and relationship model are identical everywhere. Modules whose existing
+ * Supabase table has its own presentation fields (e.g. Tools' `pricing`,
+ * `ctaLink`) keep those as `extraFields` on top of the shared standard,
+ * via `titleKey`/`summaryKey`/`bodyKey` aliasing — see KnowledgeCrudPage.tsx.
  */
 
 export const KNOWLEDGE_STATUSES = [
@@ -25,10 +31,10 @@ export type KnowledgeDifficulty = (typeof KNOWLEDGE_DIFFICULTIES)[number];
 export type ChangelogEntry = { version: number; date: string; note: string };
 
 /**
- * Base shape every CKOS knowledge item shares. Individual modules may carry
- * a few extra fields (e.g. Evaluations' pass threshold) on top of this, but
- * every module's list/detail/create/edit/search/relationship UI is driven by
- * this shared shape via KnowledgeCrudPage — no per-module bespoke form.
+ * Base shape every CKOS knowledge item shares — no exceptions (ADM-SPR-004
+ * Task 3). Modules may carry additional presentation fields on top (see
+ * `extraFields` in KnowledgeCrudPage), but every module's item has at least
+ * this shape, always under the same key names.
  */
 export type KnowledgeItem = {
   id: string;
@@ -46,7 +52,7 @@ export type KnowledgeItem = {
   publishedDate: string;
   updatedDate: string;
   changelog: ChangelogEntry[];
-  /** Relationship Model (Task 6) — ids of related items, format `${moduleKey}:${id}`. */
+  /** Relationship Model (Task 5) — ids of related items, format `${moduleKey}:${id}`. */
   relatedIds: string[];
   /** Main content, authored via the shared KnowledgeEditor (markdown). */
   body: string;
@@ -81,6 +87,10 @@ export type KnowledgeModuleKey =
   | "workflows"
   | "evaluations"
   | "resources"
+  | "templates"
+  | "ebooks"
+  | "checklists"
+  | "sop"
   | "case-studies"
   | "best-practices"
   | "faqs";
@@ -92,19 +102,20 @@ export type KnowledgeModuleDef = {
   collectionKey: string;
   route: string;
   description: string;
+  /** Underlying field name for the canonical Title, if different from `title` (preserves what Portal/Runtime already read). */
+  titleKey?: string;
+  summaryKey?: string;
+  bodyKey?: string;
   /**
-   * "supabase" = already backed by a real, existing Supabase table via
-   * SUPABASE_COLLECTIONS (Tools/Prompts/Resources — reused as-is, no schema
-   * change). "local" = new module this sprint with no existing safe table to
-   * write to without a schema change/migration (out of scope per brief), so
-   * it persists via the existing per-browser localStorage tier that
-   * useCollection() already falls back to for any key not in the Supabase
-   * allowlist. Wiring these to real tables is a follow-up sprint's job (see
-   * docs/admin/CKOS_MANAGEMENT.md §9 Runtime Readiness). "custom" = Case
-   * Studies, which keeps its existing dedicated typed-table CRUD unchanged
-   * this sprint (not migrated to KnowledgeCrudPage — see report).
+   * "supabase" = real Supabase table, persisted immediately.
+   * "local" = per-browser localStorage tier (useCollection()'s established
+   * fallback for any key not yet in SUPABASE_COLLECTIONS) — these modules
+   * had no existing table; wiring them to a real one later is a one-line
+   * allowlist change, no UI change needed (see §9 Runtime Readiness).
    */
-  storage: "supabase" | "local" | "custom";
+  storage: "supabase" | "local";
+  /** True if this module belongs to the Resources family (5 sibling collections sharing one concept). */
+  resourceFamily?: boolean;
 };
 
 export const KNOWLEDGE_MODULES: KnowledgeModuleDef[] = [
@@ -121,7 +132,10 @@ export const KNOWLEDGE_MODULES: KnowledgeModuleDef[] = [
     label: "Tools",
     collectionKey: "tools",
     route: "/admin/tools",
-    description: "Danh mục công cụ AI — bảng Supabase thật, đã là nguồn CKOS Runtime đọc trực tiếp.",
+    description: "Danh mục công cụ AI — bảng Supabase thật, CKOS Runtime đọc trực tiếp. Title/Summary/Body map vào field gốc (name/shortDescription/longDescription) để Portal tiếp tục hoạt động bình thường.",
+    titleKey: "name",
+    summaryKey: "shortDescription",
+    bodyKey: "longDescription",
     storage: "supabase",
   },
   {
@@ -129,7 +143,9 @@ export const KNOWLEDGE_MODULES: KnowledgeModuleDef[] = [
     label: "Prompts",
     collectionKey: "prompts",
     route: "/admin/prompts",
-    description: "Thư viện prompt do Admin biên soạn — bảng Supabase thật, đã hiển thị trên /portal/prompts.",
+    description: "Thư viện prompt do Admin biên soạn — bảng Supabase thật, hiển thị trên /portal/prompts. Summary/Body map vào field gốc (description/content).",
+    summaryKey: "description",
+    bodyKey: "content",
     storage: "supabase",
   },
   {
@@ -153,16 +169,63 @@ export const KNOWLEDGE_MODULES: KnowledgeModuleDef[] = [
     label: "Resources",
     collectionKey: "resources",
     route: "/admin/resources",
-    description: "Tài nguyên tham khảo — bảng Supabase thật (lưu ý: trang công khai /portal/resources hiện đọc từ bảng `documents` khác, xem Risk trong ADMIN_CMS_FOUNDATION.md §13 R5).",
+    description: "Tài nguyên tham khảo chung — bảng Supabase thật. Cùng họ với Template/Ebook/Checklist/SOP (4 collection anh em, mỗi loại 1 route riêng, cùng kiến trúc canonical).",
+    titleKey: "name",
+    summaryKey: "description",
     storage: "supabase",
+    resourceFamily: true,
+  },
+  {
+    key: "templates",
+    label: "Template",
+    collectionKey: "templates",
+    route: "/admin/templates",
+    description: "Họ Resources — Template.",
+    titleKey: "name",
+    summaryKey: "description",
+    storage: "supabase",
+    resourceFamily: true,
+  },
+  {
+    key: "ebooks",
+    label: "Ebook",
+    collectionKey: "ebooks",
+    route: "/admin/ebooks",
+    description: "Họ Resources — Ebook.",
+    titleKey: "name",
+    summaryKey: "description",
+    storage: "supabase",
+    resourceFamily: true,
+  },
+  {
+    key: "checklists",
+    label: "Checklist",
+    collectionKey: "checklists",
+    route: "/admin/checklists",
+    description: "Họ Resources — Checklist.",
+    titleKey: "name",
+    summaryKey: "description",
+    storage: "supabase",
+    resourceFamily: true,
+  },
+  {
+    key: "sop",
+    label: "SOP",
+    collectionKey: "sop",
+    route: "/admin/sop",
+    description: "Họ Resources — SOP.",
+    titleKey: "name",
+    summaryKey: "description",
+    storage: "supabase",
+    resourceFamily: true,
   },
   {
     key: "case-studies",
     label: "Case Studies",
-    collectionKey: "case_studies",
+    collectionKey: "case-study",
     route: "/admin/case-study",
-    description: "Case study thực chiến — giữ nguyên CRUD kiểu riêng (typed table `case_studies`) trong sprint này, chưa áp dụng Metadata/Lifecycle chuẩn CKOS.",
-    storage: "custom",
+    description: "Case study thực chiến — dùng lại bảng jsonb `case_study` đã có sẵn trong hệ thống (trước đây orphan, không admin UI nào ghi vào). LƯU Ý: trang công khai /portal/case-studies vẫn đọc từ bảng typed `case_studies` (khác) — case study soạn mới qua Admin từ sprint này sẽ CHƯA hiển thị công khai cho tới khi có sprint riêng cập nhật đường đọc của Portal. Case study cũ đã publish trước đây vẫn hiển thị bình thường (bảng cũ không bị xóa/đổi). Xem §12.",
+    storage: "supabase",
   },
   {
     key: "best-practices",
