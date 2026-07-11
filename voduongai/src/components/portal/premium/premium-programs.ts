@@ -80,7 +80,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
       "Hiểu cách sử dụng AI trong công việc hằng ngày, viết prompt tốt hơn, chọn đúng công cụ và bắt đầu tạo trợ lý AI cá nhân.",
     lessonCount: 8,
     listPrice: 1_500_000,
-    ctaLabel: "Đăng ký khóa học",
+    ctaLabel: "Đăng ký AI Cơ bản",
     accent: {
       gradient: "from-sky-400 to-blue-500",
       glow: "bg-sky-500/20",
@@ -118,7 +118,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
       "Ứng dụng AI vào tiếp thị, nội dung, quản lý, đàm phán, nghiên cứu và xây dựng tài liệu chuyên nghiệp.",
     lessonCount: 6,
     listPrice: 3_999_999,
-    ctaLabel: "Đăng ký khóa học",
+    ctaLabel: "Đăng ký AI Nâng cao",
     accent: {
       gradient: "from-indigo-500 to-violet-600",
       glow: "bg-violet-500/20",
@@ -174,7 +174,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
       "Ứng dụng OpenClaw vào công việc cá nhân, tiếp thị, chăm sóc khách hàng và các tình huống đời sống thực tế.",
     lessonCount: 6,
     listPrice: 599_999,
-    ctaLabel: "Đăng ký khóa học",
+    ctaLabel: "Đăng ký OpenClaw",
     accent: {
       gradient: "from-cyan-400 to-emerald-500",
       glow: "bg-cyan-500/20",

@@ -22,11 +22,11 @@ export type WarmthCategory =
 export const welcomeCopy: Record<WelcomeState, string[]> = {
   first: [
     "Chào mừng bạn đến với VO DUONG AI.\nMỗi hành trình đều bắt đầu từ một bước đầu tiên.",
-    "Rất vui được gặp bạn ở đây.\nHãy bắt đầu từ một bước nhỏ, mọi thứ khác sẽ đến đúng lúc của nó.",
+    "Rất vui được gặp bạn ở đây.\nMột bước nhỏ là đủ để bắt đầu, mọi thứ khác sẽ đến đúng lúc của nó.",
   ],
   recent: [
     "Rất vui vì bạn đã quay lại.\nHôm nay chúng ta tiếp tục nhé.",
-    "Bạn đang giữ một nhịp độ tốt.\nHãy tiếp tục cùng nhau nhé.",
+    "Bạn đang giữ một nhịp độ tốt.\nMình tiếp tục cùng nhau nhé.",
   ],
   comeback: [
     "Chào mừng bạn trở về.\nKhông sao nếu bạn phải nghỉ một thời gian.\nHành trình vẫn luôn ở đây.",

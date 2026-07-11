@@ -65,7 +65,7 @@ const FLOW_STAGES: Record<PortalOS, Omit<HumanFlowState, "currentOS" | "nextOS" 
     currentStage: "Đang mở rộng mạng lưới kết nối",
     nextBestAction: "Lưu lại thành tựu và bài học vào My Legacy",
     reason: "Những gì bạn học được từ cộng đồng đáng được giữ lại như một phần di sản của riêng bạn.",
-    progressNarrative: "Bạn đang ở giai đoạn KẾT NỐI → LƯU GIỮ. Hãy biến những trải nghiệm vừa qua thành tài sản lâu dài.",
+    progressNarrative: "Bạn đang ở giai đoạn KẾT NỐI → LƯU GIỮ. Những trải nghiệm vừa qua có thể trở thành tài sản lâu dài.",
     momentumMessage: "Viên ngọc của bạn đang sáng hơn qua từng kết nối ý nghĩa.",
     recommendedCTA: "Lưu vào di sản",
   },

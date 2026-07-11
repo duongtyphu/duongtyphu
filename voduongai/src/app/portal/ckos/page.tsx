@@ -285,6 +285,9 @@ export default async function CkosPage() {
               Companion chưa nhớ được bạn vừa xem gì — tính năng ghi nhớ lịch sử sẽ tới trong một bản cập
               nhật sau. Cho tới lúc đó, dùng ô tìm kiếm phía trên mỗi khi muốn quay lại thứ vừa đọc.
             </p>
+            <a href="#search" className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline">
+              Đi tới ô tìm kiếm →
+            </a>
           </GemCard>
 
           <GemCard>
