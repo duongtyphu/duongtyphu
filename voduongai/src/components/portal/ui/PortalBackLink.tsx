@@ -42,7 +42,7 @@ export function PortalBackLink({
   return (
     <Link
       href={href}
-      className={`group mb-6 inline-flex items-center gap-1.5 text-xs font-semibold transition-colors duration-200 ${colorClassName ?? TONE_CLASS[tone]}`}
+      className={`group -mt-2 mb-4 inline-flex items-center gap-1.5 py-2 text-xs font-semibold transition-colors duration-200 ${colorClassName ?? TONE_CLASS[tone]}`}
     >
       <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" />
       {label}

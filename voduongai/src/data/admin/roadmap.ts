@@ -36,7 +36,7 @@ export type DailyMission = {
 };
 
 export const dailyMissionsSeed: DailyMission[] = [
-  { id: "mission_1", title: "Đọc 1 bài trong Học viện AI hoặc Affiliate", description: "Mở rộng kiến thức mỗi ngày.", taskType: "Học", points: 10, link: "/portal/ai-academy", status: "Active", repeatsDaily: true, order: 1 },
+  { id: "mission_1", title: "Đọc 1 bài trong Học viện AI hoặc Affiliate", description: "Mở rộng kiến thức mỗi ngày.", taskType: "Học", points: 10, link: "/portal/hocvienai", status: "Active", repeatsDaily: true, order: 1 },
   { id: "mission_2", title: "Copy 1 prompt và áp dụng ngay vào công việc", description: "Thực hành với Prompt AI.", taskType: "Copy Prompt", points: 10, link: "/portal/prompts", status: "Active", repeatsDaily: true, order: 2 },
   { id: "mission_3", title: "Xem lại bước hiện tại trong Lộ trình thành công", description: "Theo dõi tiến độ lộ trình.", taskType: "Hoàn thành bài học", points: 5, link: "/portal/roadmap", status: "Active", repeatsDaily: true, order: 3 },
 ];

@@ -17,7 +17,7 @@ const STEPS: StartHereStep[] = [
     step: 1,
     title: "Làm quen với AI",
     description: "Hiểu các công cụ AI phổ biến và cách viết prompt hiệu quả.",
-    resource: { label: "Học viện AI", href: "/portal/ai-academy" },
+    resource: { label: "Học viện AI", href: "/portal/hocvienai" },
     tool: { label: "ChatGPT", href: "/portal/tools/chatgpt" },
   },
   {
@@ -31,7 +31,7 @@ const STEPS: StartHereStep[] = [
     step: 3,
     title: "Xây nội dung và thương hiệu cá nhân",
     description: "Lên kế hoạch nội dung, định vị và xây hình ảnh cá nhân nhất quán.",
-    resource: { label: "Thương hiệu cá nhân", href: "/portal/personal-brand" },
+    resource: { label: "Thương hiệu cá nhân", href: "/portal/hocvienai" },
     tool: { label: "Canva", href: "/portal/tools/canva" },
   },
   {

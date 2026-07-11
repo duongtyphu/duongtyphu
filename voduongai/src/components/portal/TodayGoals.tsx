@@ -5,7 +5,7 @@ const CARDS = [
     icon: "🤖",
     title: "Học AI",
     description: "Bắt đầu với các bài học AI cơ bản và Prompt thực chiến.",
-    href: "/portal/ai-academy",
+    href: "/portal/hocvienai",
     gradient: "from-brand-blue/20 to-brand-blue/0",
   },
   {
@@ -19,7 +19,7 @@ const CARDS = [
     icon: "👤",
     title: "Xây thương hiệu cá nhân",
     description: "Lên kế hoạch nội dung, xây hình ảnh cá nhân và phát triển cộng đồng.",
-    href: "/portal/personal-brand",
+    href: "/portal/hocvienai",
     gradient: "from-brand-orange/20 to-brand-orange/0",
   },
 ];

@@ -380,7 +380,7 @@ export function WorkspaceMvp() {
   return (
     <div className="space-y-8 rounded-3xl p-6 md:p-8">
       <nav className="flex items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-gray-700 transition">Học viện</Link>
+        <Link href="/portal" className="hover:text-gray-700 transition">Portal</Link>
         <span className="text-gray-300">/</span>
         <Link href={originModule?.href ?? "/portal/aiworkspace"} className="hover:text-gray-700 transition">
           {originModule?.label ?? "AI Workspace"}

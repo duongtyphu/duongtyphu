@@ -72,7 +72,7 @@ export type LearningPath = {
 };
 
 export const LEARNING_PATHS: LearningPath[] = [
-  { id: "nguoi-moi-bat-dau", level: 1, title: "Người mới bắt đầu", goal: "Làm quen AI Chat, viết prompt đầu tiên.", missionCount: 6, href: "/portal/ai-academy" },
+  { id: "nguoi-moi-bat-dau", level: 1, title: "Người mới bắt đầu", goal: "Làm quen AI Chat, viết prompt đầu tiên.", missionCount: 6, href: "/portal/hocvienai" },
   { id: "ung-dung-cong-viec", level: 2, title: "Ứng dụng AI vào công việc", goal: "Dùng AI cho các công việc hàng ngày.", missionCount: 8, href: "/portal/hocvienai" },
   { id: "he-thong-noi-dung", level: 3, title: "Xây hệ thống nội dung bằng AI", goal: "Lên quy trình sản xuất nội dung đều đặn.", missionCount: 10, href: "/portal/roadmap" },
   { id: "tu-dong-hoa", level: 4, title: "Tự động hóa với AI", goal: "Kết nối công cụ, giảm việc lặp lại thủ công.", missionCount: 6, href: "/portal/aiworkspace/tu-dong-hoa" },

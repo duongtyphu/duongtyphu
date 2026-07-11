@@ -61,7 +61,7 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
       <div className="mx-auto max-w-3xl rounded-3xl p-6 md:p-8">
       {/* Breadcrumb */}
       <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
-        <Link href="/portal" className="hover:text-blue-600 transition-colors">Học viện</Link>
+        <Link href="/portal" className="hover:text-blue-600 transition-colors">Portal</Link>
         <span className="text-gray-300">/</span>
         <Link href="/portal/aiworkspace" className="hover:text-blue-600 transition-colors">Không gian AI</Link>
         <span className="text-gray-300">/</span>

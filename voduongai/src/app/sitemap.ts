@@ -20,7 +20,6 @@ const routes = [
   "/portal/hocvienai",
   "/portal/aiworkspace",
   "/portal/duan-cohoi",
-  "/portal/ai-academy",
   "/portal/vdai-academy",
   "/portal/affiliate-hub",
   "/portal/tools",
