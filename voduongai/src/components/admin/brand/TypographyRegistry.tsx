@@ -7,6 +7,7 @@ import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
 import { Badge, STATUS_TONE } from "@/components/admin/ui/Badge";
 import {
   TYPOGRAPHY_STATUSES,
+  TYPOGRAPHY_ROLES,
   TYPOGRAPHY_TOKENS_COLLECTION_KEY,
   TYPOGRAPHY_TOKENS_SEED,
   emptyTypographyToken,
@@ -25,8 +26,12 @@ export function TypographyRegistry() {
   const [editing, setEditing] = useState<TypographyToken | null>(null);
   const [form, setForm] = useState<TypographyToken>({ id: "", ...emptyTypographyToken() });
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<"all" | TypographyToken["role"]>("all");
 
-  const sorted = useMemo(() => [...items].sort((a, b) => a.sortOrder - b.sortOrder), [items]);
+  const sorted = useMemo(() => {
+    const list = roleFilter === "all" ? items : items.filter((t) => t.role === roleFilter);
+    return [...list].sort((a, b) => a.sortOrder - b.sortOrder);
+  }, [items, roleFilter]);
 
   function openCreate() {
     setEditing(null);
@@ -62,11 +67,23 @@ export function TypographyRegistry() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center gap-3">
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value as "all" | TypographyToken["role"])}
+          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+        >
+          <option value="all">Role: Tất cả</option>
+          {TYPOGRAPHY_ROLES.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
         <span className="text-xs text-white/40">{sorted.length} token</span>
         <button
           onClick={openCreate}
-          className="rounded-full bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
+          className="ml-auto rounded-full bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
         >
           + Thêm Token
         </button>
@@ -92,6 +109,9 @@ export function TypographyRegistry() {
                     <button onClick={() => openEdit(token)} className="font-semibold text-white hover:text-brand-blue">
                       {token.name || "(chưa đặt tên)"}
                     </button>
+                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] font-semibold text-white/50">
+                      {token.role}
+                    </span>
                     <Badge tone={STATUS_TONE[token.status] ?? "gray"}>{token.status}</Badge>
                   </div>
                   <p className="mt-1 text-xs text-white/40">{token.fontFamily}</p>
@@ -132,6 +152,20 @@ export function TypographyRegistry() {
               onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
               className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
             />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Role</label>
+            <select
+              value={form.role}
+              onChange={(e) => setForm((s) => ({ ...s, role: e.target.value as TypographyToken["role"] }))}
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+            >
+              {TYPOGRAPHY_ROLES.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">

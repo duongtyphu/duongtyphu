@@ -112,3 +112,83 @@ Lint phát hiện 1 lỗi thật (`react-hooks/set-state-in-effect` ở `GlobalB
 **Foundation hoàn chỉnh cho BRAND-SPR-001.** Brand Studio xuất hiện trong Admin (nhóm "Brand Studio", 10 route thật), Dashboard hoạt động (mock data đúng Task 2), Brand Asset Registry + Typography + Color Palette + Theme + Global Brand Settings đều có Registry CRUD thật, Shared Structure nhất quán với Website Workspace, không ảnh hưởng Workspace khác, build/test đều pass. **Không có P0.**
 
 **Consumer = 0** cho toàn bộ Registry (Portal/site công khai chưa đọc từ đây) — đúng đặc điểm giai đoạn Foundation, giống mọi Registry của Website Workspace tính đến nay. Việc nối Brand Studio Registry vào Portal thật (đổi màu/font/theme thật khi Founder cập nhật Registry) là quyết định của Sprint kỹ thuật tương lai.
+
+---
+
+# BRAND-SPR-201 — Brand Studio Foundation mở rộng (EPIC-02 Phase 2, brief IMP-BRAND-201)
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+## Bối cảnh và phát hiện mở đầu
+
+Brief IMP-BRAND-201 mô tả lại 9 mục Scope gần như trùng khớp 9/10 mục đã xây xong ở BRAND-SPR-001 (thiếu "Theme" trong danh sách — xem xử lý ở dưới). Theo đúng tiền lệ đã áp dụng cho WEB-SPR-201 (cùng sprint, cùng pattern brief): **audit trước, không xây lại từ đầu**, chỉ triển khai đúng phần việc mới mà Task list của brief chỉ rõ nhưng schema/UI hiện tại chưa có. Audit (Task tương ứng #214) xác nhận: toàn bộ 9 module đã có Registry hoạt động thật từ BRAND-SPR-001, nhưng ở mức **thô** so với Task list chi tiết của BRAND-SPR-201 — thiếu phân loại Role (Color/Typography), thiếu 3 category Brand Asset, thiếu 2 field Global Brand Settings, và một số sub-item (Logo sáng/tối, App Icon, Wordmark guideline, Social Preview) chưa có entry nào dù được liệt kê trong Task.
+
+## Xử lý mục "Theme" vắng mặt trong Scope mới
+
+Theo đúng tiền lệ ADM-SPR-201 (nav.ts groups): một Scope-list mới **không xoá** module đã xây nếu module đó vắng mặt trong danh sách — chỉ bổ sung phần được yêu cầu mới. Theme Foundation (Task 6, BRAND-SPR-001) giữ nguyên không đổi, vẫn route `/admin/brand/theme` hoạt động bình thường. Đã ghi chú rõ trong `docs/admin/workspaces/brand-studio.md` Mục 3.
+
+## 1. Logo + Wordmark (Task 2-3) — bổ sung gap thật
+
+`src/lib/admin/brand/assetRegistry.ts`: `ASSET_CATEGORIES` mở rộng từ 4 → **7** (thêm `BrandImage`/`BrandVideo`/`IdentityFile` cho Task 8, xem Mục 4). Thêm 4 entry mới theo đúng quy ước "khoảng trống thật" (không bịa dữ liệu):
+- `asset_seed_logo_light`/`asset_seed_logo_dark` (category Logo) — Task 2 yêu cầu quản lý Logo sáng/tối nhưng code chỉ có 1 logo dùng chung mọi nền.
+- `asset_seed_wordmark_guideline` (category Wordmark) — Task 3 yêu cầu Quy chuẩn sử dụng, chưa có văn bản chính thức ngoài mẫu code trong root `CLAUDE.md`.
+- `asset_seed_app_icon` (category Icon) — Task 2 yêu cầu App Icon, chưa tìm thấy asset riêng (apple-touch-icon, PWA manifest icon) trong code.
+
+## 2. Typography — thêm Role (Task 4)
+
+`src/lib/admin/brand/typographyRegistry.ts` viết lại: thêm `TYPOGRAPHY_ROLES = ["System", "Heading", "Body", "Caption", "Display"]` + field `role` trên `TypographyToken`. Seed mở rộng từ 2 → 6 entry (`typo_seed_system/body/heading/caption/display/wordmark`) — tất cả role non-wordmark dùng chung 1 font stack thật (`--font-sans`), chỉ khác weight/size qua class Tailwind theo đúng hiện trạng code; riêng `typo_seed_display` ghi nhận **khoảng trống thật**: `--font-display` trong `globals.css` trỏ thẳng về `--font-sans`, chưa có font display riêng. `TypographyRegistry.tsx` thêm dropdown filter Role + badge Role trên mỗi token + select Role trong form.
+
+## 3. Color Palette — thêm Role + Semantic Colors (Task 5)
+
+`src/lib/admin/brand/colorRegistry.ts` viết lại: thêm `COLOR_ROLES = ["Primary", "Secondary", "Accent", "Semantic"]` + field `role`. Retrofit 8 entry cũ với role phù hợp, thêm 3 entry Semantic mới (`color_seed_semantic_success/warning/danger`, #10B981/#F59E0B/#F43F5E) lấy từ nhóm GemOS Design System thật trong `globals.css` (`--color-gemos-success/warning/danger`) — **đảo ngược quyết định loại trừ nhóm này của BRAND-SPR-001** (khi đó bị coi là "token nội bộ UI"), vì Task 5 của BRAND-SPR-201 liệt kê rõ "Semantic Colors" là 1 trong 4 mục Color Palette Management — chỉ thị Founder/PMO ghi đè quyết định loại trừ trước đó. `ColorPaletteRegistry.tsx` thêm dropdown filter Role + hiển thị Role cạnh hex value + select Role trong form.
+
+## 4. Brand Asset Registry — mở rộng 4 → 7 category (Task 8)
+
+`ASSET_CATEGORIES` thêm `BrandImage`/`BrandVideo`/`IdentityFile`. Mỗi category mới seed 1 entry "(Chưa có)" ghi nhận khoảng trống thật (`asset_seed_brand_image_gap`/`brand_video_gap`/`identity_file_gap`) — không có Brand Image/Video/File nhận diện chính thức nào trong repo tại thời điểm audit (kể cả `founder.png` dùng trong `FounderStory.tsx` cũng chưa được đăng ký vào Registry). `BrandAssetRegistry.tsx` **không cần sửa** — component đã map generic qua `ASSET_CATEGORIES` từ BRAND-SPR-001, 3 category mới tự động hoạt động ở filter/form.
+
+**Ranh giới ghi nhận:** "Brand Image/Video/File nhận diện" chỉ áp dụng cho tài sản mang tính nhận diện thương hiệu — không phải thư viện media nội dung chung (vẫn thuộc `media-center.md`, chưa xây). Suy luận hợp lý từ Mission "Single Source of Brand Truth", chưa có PMO Clarification xác nhận riêng bằng văn bản.
+
+## 5. Global Brand Settings — thêm Brand Name + Copyright (Task 9)
+
+`src/lib/admin/brand/globalBrandSettings.ts`: thêm `brandName`/`copyrightText` — cùng với 2 field đã có (`primaryLogoNote`, `primaryColorName`/`accentColorName` = "Default Branding") đáp ứng đúng 4 mục Task 9 yêu cầu (Brand Name/Tagline/Copyright/Default Branding). Seed `brandName: "VO DUONG AI"` (từ `siteConfig`), `copyrightText` mô tả trung thực pattern động thật trong `Footer.tsx` (`Copyright © {new Date().getFullYear()} {settings.siteName}` — tính theo năm hiện tại + tên site từ Supabase, không phải chuỗi tĩnh) thay vì bịa văn bản copyright cố định. `GlobalBrandSettingsForm.tsx` thêm 2 field vào mảng `FIELDS` dùng chung (không cần sửa logic form — component đã generic hoá từ BRAND-SPR-001).
+
+## Dashboard + Page Descriptions
+
+Cập nhật `MOCK_OVERVIEW` ở `/admin/brand/page.tsx`: `totalAssets` 5→13, `colorTokens` 8→11, `typographyTokens` 2→6 (khớp số seed thật sau sprint này). Cập nhật mô tả ở 8 route page (`logo`, `wordmark`, `typography`, `color-palette`, `icons`, `open-graph`, `assets`, `settings`) để phản ánh Role/category/field mới và các khoảng trống vừa phát hiện.
+
+## Shared Structure (giữ nguyên nguyên tắc)
+
+- Status tiếp tục dùng chung `NAVIGATION_STATUSES` — không định nghĩa Status riêng cho `role`.
+- Field `role` theo đúng khuôn mẫu `const` array + union type đã dùng cho `ASSET_CATEGORIES`/`NAVIGATION_LOCATIONS` — không tạo Registry song song.
+- Không chạm `Badge.tsx`, `Modal.tsx`, `src/app/globals.css` (chỉ đọc để sưu tầm dữ liệu mẫu).
+- Không đổi Website Workspace, CKOS, Admin shell, hay bất kỳ Workspace nào khác.
+
+## Sự cố đã xử lý
+
+Một lần dùng nhầm HTML entity `&quot;` bên trong chuỗi string của `assetRegistry.ts` (file `.ts` thuần, không phải JSX) — phát hiện qua grep, sửa thành `\"` (escape chuẩn JS/TS), nhất quán với phần còn lại của file.
+
+## Verification
+
+- **Lint (`npm run lint`):** sạch — 0 lỗi, 5 warning `<img>` có từ trước (không liên quan, không thuộc phạm vi sprint).
+- **Type-check (`npx tsc --noEmit`):** sạch.
+- **Build (`npm run build`):** thành công, toàn bộ route `/admin/brand/*` build bình thường.
+- **Test (`npm run test`):** 139/139 pass, không regression.
+
+## Acceptance (theo brief IMP-BRAND-201)
+
+| # | Tiêu chí | Trạng thái |
+|---|---|---|
+| 1 | Founder xem/quản lý Logo (gồm sáng/tối/favicon/App Icon) | ✅ — sáng/tối/App Icon ghi nhận khoảng trống thật |
+| 2 | Founder xem/quản lý Wordmark + Biến thể + Quy chuẩn sử dụng | ✅ — Quy chuẩn sử dụng ghi nhận khoảng trống thật |
+| 3 | Founder xem/quản lý Typography theo Role (System/Heading/Body/Caption/Display) | ✅ — Display ghi nhận khoảng trống thật |
+| 4 | Founder xem/quản lý Color Palette theo Role (Primary/Secondary/Accent/Semantic) | ✅ |
+| 5 | Founder xem/quản lý Icon | ✅ |
+| 6 | Founder xem/quản lý Open Graph Image + Social Preview | ✅ — Social Preview ghi nhận khoảng trống thật |
+| 7 | Brand Asset Registry bao phủ Logo/Hình ảnh/Video/File nhận diện | ✅ — 3 category mới đều khoảng trống thật, không bịa dữ liệu |
+| 8 | Founder xem/quản lý Global Brand Settings (Brand Name/Tagline/Copyright/Default Branding) | ✅ |
+| 9 | Không kế thừa Legacy Admin / dữ liệu test cũ | ✅ |
+| 10 | Verification pass (lint/typecheck/build/test) | ✅ |
+
+## EPIC-02 Phase 2 Readiness
+
+Cùng với WEB-SPR-201, Brand Studio nay đã có đủ độ chi tiết Founder-facing theo đúng Task list của Product Package Phase 2 — Registry hoạt động thật, phân loại rõ ràng (Role), và mọi khoảng trống thật (Logo sáng/tối, Display font, Social Preview, Brand Image/Video/File nhận diện, App Icon, Wordmark guideline) đều được ghi nhận minh bạch thay vì che giấu bằng dữ liệu giả. **Consumer vẫn = 0** — Portal/site công khai chưa đọc từ Registry, giữ nguyên đặc điểm giai đoạn Foundation. Việc nối Registry vào Portal thật (Publish Bridge) vẫn là quyết định của Sprint kỹ thuật tương lai, chưa nằm trong phạm vi sprint này.

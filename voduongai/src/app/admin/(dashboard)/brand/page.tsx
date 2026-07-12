@@ -7,7 +7,9 @@ import { BrandWorkspaceShell } from "@/components/admin/brand/BrandWorkspaceShel
 // thật ở WEB-SPR-006 audit sau 4 sprint xây Registry), Brand Studio xây
 // toàn bộ Registry ngay trong CÙNG sprint này — nhưng Task 2 vẫn yêu cầu
 // rõ Mock Data cho Dashboard, nên KHÔNG tự ý nối vào Registry thật ở đây.
-const MOCK_OVERVIEW = { totalAssets: 5, colorTokens: 8, typographyTokens: 2, themeProfiles: 2 };
+// Số liệu cập nhật theo BRAND-SPR-201: 13 Brand Asset (7 category), 11
+// Color Token, 6 Typography Token.
+const MOCK_OVERVIEW = { totalAssets: 13, colorTokens: 11, typographyTokens: 6, themeProfiles: 2 };
 
 const QUICK_ACTIONS = [
   { label: "Logo", href: "/admin/brand/logo", icon: ImageIcon },

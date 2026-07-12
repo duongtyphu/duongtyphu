@@ -1,6 +1,8 @@
 # Brand Studio — Workspace Canonical Specification
 
 > ℹ️ **Cập nhật BRAND-SPR-001:** Brief IMP-BRAND-001 xác nhận rõ *"Brand Studio Product Package v1.0 đã được Founder và PMO phê duyệt"* và cung cấp Scope 10 mục cụ thể (Dashboard/Logo/Wordmark/Typography/Color Palette/Theme/Icons/Open Graph/Brand Assets Registry/Global Brand Settings). Đây là chỉ thị Founder/PMO rõ ràng, giải quyết dứt điểm cảnh báo "chưa có Product Package" của bản Draft trước (IMP-GOV-001). WCS này được viết lại theo đúng Update Rules của `docs/admin/workspaces/README.md`: Status chuyển **Draft → Approved**, Scope/IA cập nhật theo Product Package thật thay vì suy luận. Câu hỏi còn treo từ bản Draft — "Brand Studio và Media Center tách hay gộp?" — nay **đã có câu trả lời**: BRAND-SPR-001 xây Brand Studio như một Workspace **độc lập**, route thật `/admin/brand/*`; Media Center vẫn tách riêng, chưa có Product Package, vẫn Draft/ComingSoon (`/admin/media-center`).
+>
+> ℹ️ **Cập nhật BRAND-SPR-201:** Brief IMP-BRAND-201 liệt kê lại 9/10 mục Scope đã xây ở BRAND-SPR-001 (bỏ "Theme" khỏi danh sách — xử lý theo tiền lệ ADM-SPR-201: **giữ nguyên**, không xoá vì vắng mặt trong danh sách mới, xem Mục 3) và yêu cầu làm sâu hơn từng mục: thêm phân loại **Role** cho Typography (System/Heading/Body/Caption/Display) và Color (Primary/Secondary/Accent/Semantic), mở rộng Brand Asset Registry từ 4 lên **7 category** (thêm Brand Image/Brand Video/File nhận diện), mở rộng Global Brand Settings (thêm Brand Name/Copyright). Không xây lại từ đầu — audit trước, chỉ bổ sung phần thiếu thật (xem báo cáo BRAND-SPR-201 trong `docs/admin/BRAND_STUDIO_FOUNDATION.md`).
 
 ## 1. Executive Summary
 
@@ -15,15 +17,15 @@ Brand Studio là nơi quản trị nhận diện thương hiệu VO DUONG AI —
 Đúng 10 mục theo Product Package v1.0 (brief BRAND-SPR-001, khóa — không tự đổi tên/thêm/bớt):
 
 1. **Dashboard** — tổng quan Brand Studio (mock data ở Foundation, xem Mục 9).
-2. **Logo** — metadata các phiên bản logo (Brand Asset Registry, category Logo).
-3. **Wordmark** — metadata chữ lockup thương hiệu (Brand Asset Registry, category Wordmark).
-4. **Typography** — token font family/weight dùng trong thương hiệu.
-5. **Color Palette** — token màu chính thức.
-6. **Theme** — ghi nhận tổ hợp nền/chữ/accent đang tồn tại trong code (không phải Theme Builder).
+2. **Logo** — metadata các phiên bản logo, gồm biến thể sáng/tối và App Icon (Brand Asset Registry, category Logo/Icon — biến thể sáng/tối và App Icon hiện là khoảng trống thật, BRAND-SPR-201).
+3. **Wordmark** — metadata chữ lockup thương hiệu + Quy chuẩn sử dụng (Brand Asset Registry, category Wordmark — Quy chuẩn sử dụng hiện là khoảng trống thật, BRAND-SPR-201).
+4. **Typography** — token font family/weight, phân loại theo **Role** (System/Heading/Body/Caption/Display — thêm BRAND-SPR-201; Display hiện là khoảng trống thật, `--font-display` = `--font-sans`).
+5. **Color Palette** — token màu chính thức, phân loại theo **Role** (Primary/Secondary/Accent/Semantic — thêm BRAND-SPR-201, Semantic lấy từ nhóm GemOS Design System trong `globals.css`).
+6. **Theme** — ghi nhận tổ hợp nền/chữ/accent đang tồn tại trong code (không phải Theme Builder). *Không có trong Scope liệt kê của brief BRAND-SPR-201 (9 mục) — giữ nguyên không xoá theo tiền lệ ADM-SPR-201 (danh sách mới không xoá module đã xây, chỉ bổ sung).*
 7. **Icons** — metadata icon thương hiệu (Brand Asset Registry, category Icon).
-8. **Open Graph** — metadata ảnh Open Graph mặc định cấp thương hiệu (Brand Asset Registry, category Open Graph Image).
-9. **Brand Assets Registry** — danh sách tổng hợp mọi Brand Asset (Logo/Wordmark/Icon/Open Graph Image), 1 schema dùng chung.
-10. **Global Brand Settings** — cấu hình thương hiệu tổng thể, 1 record duy nhất.
+8. **Open Graph** — metadata ảnh Open Graph mặc định và Social Preview (Twitter Card) cấp thương hiệu (Brand Asset Registry, category Open Graph Image — Social Preview thêm BRAND-SPR-201, khoảng trống thật).
+9. **Brand Assets Registry** — danh sách tổng hợp mọi Brand Asset, **7 category** (Logo/Wordmark/Icon/Open Graph Image/Brand Image/Brand Video/File nhận diện — 3 category cuối thêm BRAND-SPR-201, Task 8, đều là khoảng trống thật), 1 schema dùng chung.
+10. **Global Brand Settings** — cấu hình thương hiệu tổng thể, 1 record duy nhất, gồm Brand Name/Logo/Favicon/Color/Tagline/**Copyright**/Brand Voice/Open Graph mặc định (Brand Name/Copyright thêm BRAND-SPR-201, Task 9).
 
 ## 4. Out of Scope
 
@@ -62,6 +64,9 @@ BRAND-SPR-001 phát hiện các bất nhất thương hiệu thật khi sưu t�
 | **2 "theme" song song, chưa hợp nhất** | `:root` định nghĩa theme sáng (`--background: #F8FAFC`) nhưng Portal/Admin dùng nền tối hardcode trực tiếp (`bg-[#0B1F4D]`), không qua token nào |
 | **Chưa có Open Graph Image mặc định** | `layout.tsx` `generateMetadata()` không set `openGraph.images` — chia sẻ link lên mạng xã hội không có ảnh preview |
 | **Favicon đã có Admin CRUD ở nơi khác** | `settings.faviconUrl` qua System Settings (`/admin/settings`) — chồng lấn với Icons (Mục 3) |
+| **Chưa có font "Display" riêng** (BRAND-SPR-201) | `--font-display` trong `globals.css` trỏ thẳng về `--font-sans` — chưa có font hiển thị riêng cho heading/display |
+| **Chưa có biến thể Logo sáng/tối, App Icon** (BRAND-SPR-201) | Chỉ có 1 phiên bản logo dùng chung mọi nền; không có asset App Icon (apple-touch-icon, PWA manifest icon) riêng trong code |
+| **Chưa có Twitter Card image (Social Preview)** (BRAND-SPR-201) | `layout.tsx` khai báo `twitter.card = "summary_large_image"` nhưng không set `twitter.images` |
 
 ## 7. Content Ownership
 
@@ -123,9 +128,12 @@ Founder mở Brand Studio Dashboard và thấy ngay: số lượng Brand Asset/C
 
 ## 13. Product Decisions
 
-- Brand Asset dùng **một schema chung** cho cả 4 category (Logo/Wordmark/Icon/Open Graph Image), phân biệt bằng `category` — cùng nguyên tắc Shared Structure đã dùng cho Website Page Registry.
+- Brand Asset dùng **một schema chung** cho cả 7 category (Logo/Wordmark/Icon/Open Graph Image/Brand Image/Brand Video/File nhận diện — 3 category cuối thêm BRAND-SPR-201), phân biệt bằng `category` — cùng nguyên tắc Shared Structure đã dùng cho Website Page Registry.
 - Status dùng lại **đúng** model 4 trạng thái của Navigation Registry (Website Workspace) — không định nghĩa Status riêng cho từng Registry mới của Brand Studio.
 - Theme Foundation **ghi nhận hiện trạng** (kể cả khi có 2 theme song song chưa hợp nhất), không tự "sửa" thành 1 theme hay tự chọn theme nào là đúng.
+- **(BRAND-SPR-201)** Khi brief yêu cầu phân loại chi tiết hơn schema hiện có (Color/Typography "Role"), thêm field `role` (`const` array + union type, cùng khuôn mẫu `ASSET_CATEGORIES`/`NAVIGATION_LOCATIONS`) thay vì tạo Registry song song — retrofit toàn bộ seed cũ với role phù hợp.
+- **(BRAND-SPR-201)** Khi brief yêu cầu quản lý thứ không có trong code thật (Logo sáng/tối, App Icon, Wordmark guideline, Display font, Brand Image/Video/File nhận diện, Social Preview), seed một entry "khoảng trống" có `usageNote` trung thực — không bịa dữ liệu để lấp đầy Scope.
+- **(BRAND-SPR-201)** Ranh giới Brand Image/Video/File nhận diện: CHỈ tài sản mang tính nhận diện thương hiệu (ảnh founder chính thức, video giới thiệu thương hiệu, file logo/guideline đóng gói) — không phải thư viện media nội dung chung, vẫn thuộc `media-center.md` (chưa xây). Suy luận hợp lý từ Mission "Single Source of Brand Truth", chưa có PMO Clarification xác nhận riêng.
 
 ## 14. Founder Decisions
 
@@ -142,11 +150,11 @@ Founder mở Brand Studio Dashboard và thấy ngay: số lượng Brand Asset/C
 
 ## Status
 
-**Approved** — Product Package v1.0 xác nhận qua brief IMP-BRAND-001 (Founder Directive). WCS này (viết lại theo WCS Standard v1.0) thay thế bản Draft trước (IMP-GOV-001), phản ánh Scope/IA thật đã triển khai ở BRAND-SPR-001.
+**Approved** — Product Package v1.0 xác nhận qua brief IMP-BRAND-001 (Founder Directive). WCS này (viết lại theo WCS Standard v1.0) thay thế bản Draft trước (IMP-GOV-001), phản ánh Scope/IA thật đã triển khai ở BRAND-SPR-001, mở rộng ở BRAND-SPR-201.
 
 ## Version
 
-1.0
+1.1 — BRAND-SPR-201 mở rộng Scope (Role cho Color/Typography, 3 category Brand Asset mới, Global Brand Settings mở rộng), không đổi Status/kiến trúc nền.
 
 ## Approval Date
 
@@ -154,4 +162,4 @@ Founder mở Brand Studio Dashboard và thấy ngay: số lượng Brand Asset/C
 
 ## Last Updated
 
-2026-07-12 (BRAND-SPR-001 — viết lại từ Draft, cập nhật Status/Scope/IA/Dependency theo Product Package thật).
+2026-07-12 (BRAND-SPR-201 — mở rộng Mục 3/6/13, version bump theo Update Rules của `docs/admin/workspaces/README.md` do mở rộng ownership/scope).

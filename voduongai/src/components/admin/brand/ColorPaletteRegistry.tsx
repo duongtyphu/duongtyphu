@@ -7,6 +7,7 @@ import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
 import { Badge, STATUS_TONE } from "@/components/admin/ui/Badge";
 import {
   COLOR_STATUSES,
+  COLOR_ROLES,
   COLOR_TOKENS_COLLECTION_KEY,
   COLOR_TOKENS_SEED,
   emptyColorToken,
@@ -26,8 +27,12 @@ export function ColorPaletteRegistry() {
   const [editing, setEditing] = useState<ColorToken | null>(null);
   const [form, setForm] = useState<ColorToken>({ id: "", ...emptyColorToken() });
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [roleFilter, setRoleFilter] = useState<"all" | ColorToken["role"]>("all");
 
-  const sorted = useMemo(() => [...items].sort((a, b) => a.sortOrder - b.sortOrder), [items]);
+  const sorted = useMemo(() => {
+    const list = roleFilter === "all" ? items : items.filter((t) => t.role === roleFilter);
+    return [...list].sort((a, b) => a.sortOrder - b.sortOrder);
+  }, [items, roleFilter]);
 
   function openCreate() {
     setEditing(null);
@@ -63,11 +68,23 @@ export function ColorPaletteRegistry() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center gap-3">
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value as "all" | ColorToken["role"])}
+          className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+        >
+          <option value="all">Role: Tất cả</option>
+          {COLOR_ROLES.map((r) => (
+            <option key={r} value={r}>
+              {r}
+            </option>
+          ))}
+        </select>
         <span className="text-xs text-white/40">{sorted.length} màu</span>
         <button
           onClick={openCreate}
-          className="rounded-full bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
+          className="ml-auto rounded-full bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
         >
           + Thêm Màu
         </button>
@@ -95,7 +112,9 @@ export function ColorPaletteRegistry() {
                   </button>
                   <Badge tone={STATUS_TONE[token.status] ?? "gray"}>{token.status}</Badge>
                 </div>
-                <p className="mt-0.5 font-mono text-xs text-white/50">{token.hexValue}</p>
+                <p className="mt-0.5 font-mono text-xs text-white/50">
+                  {token.hexValue} <span className="text-white/30">· {token.role}</span>
+                </p>
                 {token.usageNote && <p className="mt-1 text-[11px] text-white/40">{token.usageNote}</p>}
                 <div className="mt-2 flex gap-1.5">
                   <button
@@ -145,6 +164,20 @@ export function ColorPaletteRegistry() {
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-brand-blue focus:outline-none"
               />
             </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Role</label>
+            <select
+              value={form.role}
+              onChange={(e) => setForm((s) => ({ ...s, role: e.target.value as ColorToken["role"] }))}
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+            >
+              {COLOR_ROLES.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Usage Note</label>

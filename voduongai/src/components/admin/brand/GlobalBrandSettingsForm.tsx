@@ -13,12 +13,14 @@ import {
 } from "@/lib/admin/brand/globalBrandSettings";
 
 const FIELDS: { key: keyof GlobalBrandSettings; label: string; multiline?: boolean }[] = [
+  { key: "brandName", label: "Brand Name" },
   { key: "primaryLogoNote", label: "Primary Logo (ghi chú)" },
   { key: "faviconNote", label: "Favicon (ghi chú)" },
   { key: "primaryColorName", label: "Primary Color" },
   { key: "accentColorName", label: "Accent Color" },
   { key: "tagline", label: "Tagline" },
   { key: "taglineSecondary", label: "Tagline Secondary", multiline: true },
+  { key: "copyrightText", label: "Copyright", multiline: true },
   { key: "brandVoiceNote", label: "Brand Voice Note", multiline: true },
   { key: "defaultOgImageNote", label: "Default Open Graph Image (ghi chú)" },
 ];
