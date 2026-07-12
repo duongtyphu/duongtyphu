@@ -8,7 +8,7 @@ export default function WebsiteGlobalSettingsPage() {
       <WorkspaceSectionFoundation
         icon={Settings}
         title="Global Settings"
-        scope="Cấu hình tổng thể của Website Workspace: Website Settings, Global Presentation Settings, Homepage Configuration, Visibility Configuration. LƯU Ý: sidebar Admin đã có sẵn mục 'System Settings' đứng độc lập (/admin/settings) với một phần nội dung trùng lặp (tên site, logo, favicon, SEO mặc định, social link, footer text). Đây là khác biệt giữa Product Package và cấu trúc Admin đã duyệt trước đó — đã ghi nhận, KHÔNG tự gộp hai trang, trình PMO quyết định ở WEB-SPR-002."
+        scope="Cấu hình tổng thể của Website Workspace: Website Settings, Global Presentation Settings, Homepage Configuration, Visibility Configuration. LƯU Ý: sidebar Admin đã có sẵn mục 'System Settings' đứng độc lập (/admin/settings) với một phần nội dung trùng lặp (tên site, logo, favicon, SEO mặc định, social link, footer text). Đây là khác biệt giữa Product Package và cấu trúc Admin đã duyệt trước đó — đã ghi nhận từ WEB-SPR-001, nhắc lại ở WEB-SPR-002 đến WEB-SPR-006, vẫn CHƯA được PMO quyết định — KHÔNG tự gộp hai trang."
         willManage={[
           "Website Settings (cấu hình riêng Website Workspace)",
           "Global Presentation Settings (theme/layout mặc định cho trang công khai)",

@@ -1,13 +1,14 @@
 import type { LucideIcon } from "lucide-react";
 
 /**
- * Foundation-status content block for the 9 non-Dashboard Website Workspace
- * sections (WEB-SPR-001) — richer than the generic <ComingSoon/> used for
- * entirely-unbuilt Workspaces (Brand & Media, Companion Studio, SEO,
- * Website itself before this sprint): it states exactly what the section
- * will manage, grounded in the real Portal content found in
- * docs/admin/PORTAL_COVERAGE_AUDIT.md, without offering any CRUD — Task 1
- * explicitly forbids that in this sprint.
+ * Foundation-status content block, originally used by all 9 non-Dashboard
+ * Website Workspace sections (WEB-SPR-001). WEB-SPR-002 through WEB-SPR-005
+ * replaced 5 of those 9 with real Registries (Pages/Homepage/Landing
+ * Pages/Static Pages share one Page Registry, plus Navigation/Shared
+ * Sections/SEO/Redirect) — as of WEB-SPR-006, only Global Settings still
+ * renders this placeholder. States exactly what the section will manage,
+ * grounded in the real Portal content found in
+ * docs/admin/PORTAL_COVERAGE_AUDIT.md, without offering any CRUD.
  */
 export function WorkspaceSectionFoundation({
   icon: Icon,
@@ -39,7 +40,7 @@ export function WorkspaceSectionFoundation({
           <p className="mt-1.5 text-sm text-white/60">{scope}</p>
 
           <div className="mt-5">
-            <p className="text-xs font-bold uppercase tracking-wide text-white/40">Sẽ quản lý (WEB-SPR-002+)</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-white/40">Sẽ quản lý (sprint tương lai)</p>
             <ul className="mt-2 space-y-1.5">
               {willManage.map((item) => (
                 <li key={item} className="flex items-start gap-2 text-sm text-white/70">

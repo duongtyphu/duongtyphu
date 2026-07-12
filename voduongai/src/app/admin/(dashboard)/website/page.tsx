@@ -1,13 +1,30 @@
+"use client";
+
+import { useMemo } from "react";
 import Link from "next/link";
 import { FileText, Navigation, Home, Rocket, File, LayoutGrid, Search, ArrowRightLeft, Settings } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
-
-// Mock data only (Task 4 — "Không cần dữ liệu thật. Có thể dùng Mock.").
-// No collection/table is read here; real counts arrive with WEB-SPR-002's
-// CRUD implementation.
-const MOCK_OVERVIEW = { totalItems: 0, draft: 0, published: 0, pendingReview: 0 };
-
-const MOCK_RECENT_CHANGES: { title: string; section: string; date: string }[] = [];
+import { useCollection } from "@/lib/admin/store";
+import { WEBSITE_PAGES_COLLECTION_KEY, type WebsitePage } from "@/lib/admin/website/pageRegistry";
+import {
+  NAVIGATION_GROUPS_COLLECTION_KEY,
+  NAVIGATION_ITEMS_COLLECTION_KEY,
+  NAVIGATION_GROUPS_SEED,
+  NAVIGATION_ITEMS_SEED,
+  type NavigationGroup,
+  type NavigationItem,
+} from "@/lib/admin/website/navigationRegistry";
+import {
+  SHARED_SECTIONS_COLLECTION_KEY,
+  SHARED_SECTIONS_SEED,
+  type SharedSection,
+} from "@/lib/admin/website/sharedSectionRegistry";
+import { SEO_ENTRIES_COLLECTION_KEY, SEO_ENTRIES_SEED, type SEOEntry } from "@/lib/admin/website/seoRegistry";
+import {
+  REDIRECT_ENTRIES_COLLECTION_KEY,
+  REDIRECT_ENTRIES_SEED,
+  type RedirectEntry,
+} from "@/lib/admin/website/redirectRegistry";
 
 const QUICK_ACTIONS = [
   { label: "Pages", href: "/admin/website/pages", icon: FileText },
@@ -30,7 +47,67 @@ function StatCard({ label, value }: { label: string; value: number }) {
   );
 }
 
+type RecentChange = { key: string; title: string; section: string; date: string };
+
+/**
+ * Website Overview (WEB-SPR-006 — hoàn thiện, không phải feature mới):
+ * WEB-SPR-001 dựng Dashboard bằng dữ liệu mẫu toàn số 0 với ghi chú "sẽ
+ * thay bằng dữ liệu thật ở WEB-SPR-002" — nhưng WEB-SPR-002 đến WEB-SPR-005
+ * đều dựng Registry thật (Pages/Navigation/Shared Sections/SEO/Redirect)
+ * mà không có Sprint nào quay lại nối Dashboard vào các Registry đó. Phát
+ * hiện này (P1) được ghi nhận và sửa ở WEB-SPR-006 — chỉ đọc dữ liệu từ
+ * các Registry đã tồn tại, không thêm entity/tính năng mới nào.
+ *
+ * Quy ước gộp trạng thái: Page/Shared Section dùng 5 trạng thái
+ * (Draft/Review/Approved/Published/Archived), Navigation/SEO/Redirect
+ * dùng 4 trạng thái (Draft/Active/Inactive/Archived). "Published" (thẻ
+ * hiển thị) = Published HOẶC Active (cả hai đều nghĩa "đang dùng thật").
+ * "Pending Review" chỉ tính Page/Shared Section vì chỉ 2 loại đó có trạng
+ * thái Review.
+ */
 export default function WebsiteDashboardPage() {
+  const pages = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, []);
+  const navGroups = useCollection<NavigationGroup>(NAVIGATION_GROUPS_COLLECTION_KEY, NAVIGATION_GROUPS_SEED);
+  const navItems = useCollection<NavigationItem>(NAVIGATION_ITEMS_COLLECTION_KEY, NAVIGATION_ITEMS_SEED);
+  const sections = useCollection<SharedSection>(SHARED_SECTIONS_COLLECTION_KEY, SHARED_SECTIONS_SEED);
+  const seoEntries = useCollection<SEOEntry>(SEO_ENTRIES_COLLECTION_KEY, SEO_ENTRIES_SEED);
+  const redirects = useCollection<RedirectEntry>(REDIRECT_ENTRIES_COLLECTION_KEY, REDIRECT_ENTRIES_SEED);
+
+  const ready =
+    pages.ready && navGroups.ready && navItems.ready && sections.ready && seoEntries.ready && redirects.ready;
+
+  const stats = useMemo(() => {
+    const all: { status: string }[] = [
+      ...pages.items,
+      ...navGroups.items,
+      ...navItems.items,
+      ...sections.items,
+      ...seoEntries.items,
+      ...redirects.items,
+    ];
+    const draft = all.filter((i) => i.status === "Draft").length;
+    const published = all.filter((i) => i.status === "Published" || i.status === "Active").length;
+    const pendingReview = [...pages.items, ...sections.items].filter((i) => i.status === "Review").length;
+    return { totalItems: all.length, draft, published, pendingReview };
+  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items]);
+
+  const recentChanges = useMemo<RecentChange[]>(() => {
+    const combined: RecentChange[] = [
+      ...pages.items.map((p) => ({ key: p.id, title: p.title || "(chưa đặt tiêu đề)", section: "Pages", date: p.updatedDate })),
+      ...navGroups.items.map((g) => ({ key: g.id, title: g.name || "(chưa đặt tên)", section: "Navigation", date: g.updatedDate })),
+      ...navItems.items.map((i) => ({ key: i.id, title: i.label || "(chưa đặt label)", section: "Navigation", date: i.updatedDate })),
+      ...sections.items.map((s) => ({ key: s.id, title: s.title || "(chưa đặt tiêu đề)", section: "Shared Sections", date: s.updatedDate })),
+      ...seoEntries.items.map((s) => ({ key: s.id, title: s.title || "(chưa đặt tiêu đề)", section: "SEO", date: s.updatedDate })),
+      ...redirects.items.map((r) => ({
+        key: r.id,
+        title: r.fromPath && r.toPath ? `${r.fromPath} → ${r.toPath}` : "(chưa nhập)",
+        section: "Redirect",
+        date: r.updatedDate,
+      })),
+    ];
+    return combined.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items]);
+
   return (
     <WebsiteWorkspaceShell>
       <div className="space-y-6">
@@ -38,28 +115,39 @@ export default function WebsiteDashboardPage() {
           <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-white/40">
             Website Overview
             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold normal-case text-white/40">
-              Dữ liệu mẫu — thay bằng dữ liệu thật ở WEB-SPR-002
+              Tính từ Page/Navigation/Shared Section/SEO/Redirect Registry — Global Settings chưa có Registry
             </span>
           </p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label="Tổng số mục" value={MOCK_OVERVIEW.totalItems} />
-            <StatCard label="Draft" value={MOCK_OVERVIEW.draft} />
-            <StatCard label="Published" value={MOCK_OVERVIEW.published} />
-            <StatCard label="Pending Review" value={MOCK_OVERVIEW.pendingReview} />
-          </div>
+          {!ready ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-20 animate-pulse rounded-2xl bg-white/5" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <StatCard label="Tổng số mục" value={stats.totalItems} />
+              <StatCard label="Draft" value={stats.draft} />
+              <StatCard label="Published / Active" value={stats.published} />
+              <StatCard label="Pending Review" value={stats.pendingReview} />
+            </div>
+          )}
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <h2 className="text-sm font-bold text-white">Recent Changes</h2>
-          {MOCK_RECENT_CHANGES.length === 0 ? (
-            <p className="mt-3 text-sm text-white/40">
-              Chưa có thay đổi nào — Website Workspace hiện ở trạng thái Foundation, chưa có CRUD để tạo thay đổi
-              thật.
-            </p>
+          {!ready ? (
+            <div className="mt-3 space-y-2">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-6 animate-pulse rounded-lg bg-white/5" />
+              ))}
+            </div>
+          ) : recentChanges.length === 0 ? (
+            <p className="mt-3 text-sm text-white/40">Chưa có thay đổi nào.</p>
           ) : (
             <ul className="mt-3 space-y-2">
-              {MOCK_RECENT_CHANGES.map((c) => (
-                <li key={c.title} className="flex items-center justify-between gap-2 text-sm">
+              {recentChanges.map((c) => (
+                <li key={c.key} className="flex items-center justify-between gap-2 text-sm">
                   <span className="truncate text-white/80">
                     {c.title} <span className="text-white/40">· {c.section}</span>
                   </span>

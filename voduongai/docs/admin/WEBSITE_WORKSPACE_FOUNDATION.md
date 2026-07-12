@@ -373,3 +373,87 @@ Hai kiểm tra độc lập, cả hai đều rõ ràng gắn nhãn "Placeholder"
 - Global Settings vs. System Settings — vẫn chưa PMO quyết định (từ WEB-SPR-001).
 - Banner vs. Announcement (từ WEB-SPR-004) — vẫn chưa PMO quyết định.
 - Registry chưa nối dây để Portal/`next.config.ts` đọc từ đây — thuộc phạm vi một Sprint "Website Publish Bridge" tương lai, chưa nằm trong WEB-SPR-005.
+
+---
+---
+
+# WEB-SPR-006 — Website Workspace Feature Freeze Candidate
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+Objective: rà soát toàn bộ Website Workspace Foundation (WEB-SPR-001 đến 005) trước Feature Freeze — **không thêm feature mới**, chỉ chuẩn hóa/đồng bộ/hoàn thiện/kiểm thử. Không triển khai Builder/AI/Runtime/Visual Editor/Landing Editor.
+
+## Task 1 — Audit toàn bộ Website Workspace
+
+Đọc lại toàn bộ 10 route (`/admin/website/*`), 5 Registry lib (`pageRegistry.ts`, `navigationRegistry.ts`, `sharedSectionRegistry.ts`, `seoRegistry.ts`, `redirectRegistry.ts`), toàn bộ component Registry/Preview, `WebsiteWorkspaceShell.tsx`, `WorkspaceSectionFoundation.tsx`, `nav.ts`, `AdminSidebar.tsx`.
+
+## Task 2 — Information Architecture
+
+Đối chiếu `nav.ts` (nhóm `"Website"`) với `WEBSITE_WORKSPACE_SECTIONS` (`src/lib/admin/website/navigation.ts`) — **khớp 100%**, đúng 10 cặp label/href, không thiếu/thừa/lệch thứ tự. Không có vấn đề.
+
+## Task 3 — Shared Components
+
+Cả 5 Registry (Page/Navigation/Shared Section/SEO/Redirect) dùng nhất quán: `useCollection` (2 tầng), `genId`, `useAdminToast`, `Modal`/`ConfirmDialog`, `Badge`/`STATUS_TONE`. Không phát hiện lệch pattern. Xác nhận **6 collection key** (`website-pages`, `website-navigation-groups`, `website-navigation-items`, `website-shared-sections`, `website-seo-entries`, `website-redirect-entries`) — không trùng nhau (grep xác nhận).
+
+## Task 4 — Navigation
+
+`NavigationRegistry`/`NavigationPreview` hoạt động đúng theo thiết kế WEB-SPR-003, không phát hiện lỗi.
+
+## Task 5 — SEO Foundation
+
+`SEORegistry`/`SEOPreviewPlaceholder` hoạt động đúng theo thiết kế WEB-SPR-005, Validation Placeholder (đếm ký tự) hoạt động đúng, không phát hiện lỗi.
+
+## Task 6 — Redirect Foundation
+
+`RedirectRegistry` hoạt động đúng, Validation Placeholder (From=To, trùng From Path) hoạt động đúng, không phát hiện lỗi.
+
+## Task 7 — Shared Page Structure
+
+`WebsitePage` (1 schema, discriminator `pageType`) được dùng nhất quán ở cả 3 route type-specific (`homepage`/`landing-pages`/`static-pages`, đều qua `lockedPageType`) và route tổng hợp `pages`. Không phát hiện lỗi.
+
+## Task 8 — Mock Data
+
+Không có xung đột: 6 collection key duy nhất (Task 3), mọi `genId(...)` dùng đúng collection key làm prefix nên không trùng ID giữa các Registry.
+
+## Phát hiện & Đã sửa (P1 — Acceptance yêu cầu "Không có P0/P1")
+
+1. **Dashboard hiển thị dữ liệu mẫu toàn số 0.** `src/app/admin/(dashboard)/website/page.tsx` (WEB-SPR-001) có `MOCK_OVERVIEW`/`MOCK_RECENT_CHANGES` hardcode với ghi chú "sẽ thay bằng dữ liệu thật ở WEB-SPR-002" — nhưng WEB-SPR-002 đến 005 đều dựng Registry thật mà không Sprint nào quay lại nối Dashboard vào đó. **Đã sửa:** Dashboard giờ đọc thật từ cả 6 collection (Page/Navigation Group/Navigation Item/Shared Section/SEO/Redirect), tính `Tổng số mục`/`Draft`/`Published hoặc Active`/`Pending Review`, và `Recent Changes` lấy 5 thay đổi gần nhất thật (gộp theo `updatedDate`). Không thêm entity/tính năng mới — chỉ đọc dữ liệu đã tồn tại.
+2. **Text lỗi thời tham chiếu "WEB-SPR-002" như mốc tương lai.** `WorkspaceSectionFoundation.tsx` ("Sẽ quản lý (WEB-SPR-002+)"), `global-settings/page.tsx` ("trình PMO quyết định ở WEB-SPR-002"), `WebsiteWorkspaceShell.tsx` ("CRUD chi tiết sẽ triển khai ở WEB-SPR-002 trở đi") — cả 3 đều viết ở WEB-SPR-001 khi WEB-SPR-002 còn là tương lai; nay đã qua 5 Sprint. **Đã sửa:** cập nhật text phản ánh đúng hiện trạng (5/10 nhóm đã có Registry thật, Global Settings còn Foundation placeholder, chồng lấn System Settings vẫn mở — không gắn với số Sprint cụ thể nào nữa).
+
+Không phát hiện P0 nào.
+
+## Task 9 — Đề xuất danh sách còn thiếu trước Feature Freeze
+
+**Cần một Sprint kỹ thuật riêng:**
+- **Global Settings** — nhóm IA cuối cùng (10/10) chưa có Registry thật, vẫn Foundation placeholder.
+
+**Cần PMO/Founder quyết định trước khi Sprint tiếp theo động vào các khu vực này (đã ghi nhận nhiều lần, nhắc lại lần cuối ở đây):**
+- SEO (Website Workspace) vs. mục "SEO" độc lập cấp cao nhất (`/admin/seo`).
+- Global Settings vs. System Settings (`/admin/settings`).
+- Banner vs. Announcement (Shared Sections) — cùng dùng `portal_banners`.
+- Testimonial/FAQ marketing công khai — chưa tồn tại thật trên Portal, cần quyết định xây mới hay bỏ category.
+- Brand Studio/Media Center tách hay gộp (ảnh hưởng Shared Sections — cần media từ đó cho OG Image/Founder photo...).
+
+**Khoảng cách lớn nhất, chưa nằm trong bất kỳ WEB-SPR nào tính đến nay:** cả 5 Registry (Page/Navigation/Shared Section/SEO/Redirect) đều **Consumer = 0** — Portal công khai và `next.config.ts` vẫn đọc trực tiếp từ code (`site.ts`, `hubs.ts`, `home/*.tsx`, `Footer.tsx`), chưa Sprint nào nối Registry vào Portal thật. Đây là điều kiện để đạt đúng Mission đã ghi trong `docs/admin/workspaces/website-workspace.md` ("Founder tự vận hành toàn bộ trải nghiệm website công khai... không cần deploy code") — đề xuất một Sprint "Website Publish Bridge" làm bước tiếp theo sau Feature Freeze.
+
+## Files Changed
+
+- `src/app/admin/(dashboard)/website/page.tsx` — Dashboard: dữ liệu mẫu → dữ liệu thật từ 6 collection
+- `src/components/admin/website/WorkspaceSectionFoundation.tsx` — sửa text lỗi thời + comment
+- `src/components/admin/website/WebsiteWorkspaceShell.tsx` — sửa text intro lỗi thời
+- `src/app/admin/(dashboard)/website/global-settings/page.tsx` — sửa text lỗi thời
+
+**Không đổi:** mọi Registry/schema/route khác giữ nguyên hành vi — sprint này chỉ audit + sửa text/dữ liệu hiển thị, không thêm entity/CRUD/route mới.
+
+## Verification
+
+- **Lint (`npm run lint`):** sạch — 0 lỗi, 5 warning có từ trước (không liên quan).
+- **Type-check (`npx tsc --noEmit`):** sạch.
+- **Build (`npm run build`):** thành công (toàn bộ 10 route `/admin/website/*` build ở dạng `ƒ` — dynamic, đúng vì nằm sau Admin auth middleware).
+- **Test (`npm run test`):** 139/139 pass, không regression.
+
+## Kết luận — Feature Freeze Readiness
+
+**SẴN SÀNG FEATURE FREEZE ở cấp Foundation.** Không có P0. Không có P1 còn tồn đọng (2 P1 phát hiện đã sửa ngay trong sprint này). 9/10 nhóm IA có Registry hoạt động thật với Shared Structure nhất quán; 1/10 (Global Settings) còn Foundation placeholder — không phải lỗi, mà là phạm vi chưa được giao ở bất kỳ WEB-SPR nào tính đến nay.
+
+**Lưu ý về phạm vi "Feature Freeze":** đóng băng đúng những gì đã xây (Foundation — Registry + Shell + Preview/Validation Placeholder), **không phải** xác nhận Portal đã thực sự chạy bằng dữ liệu từ các Registry này (Consumer = 0 cho cả 5 Registry, xem Task 9). Founder/PMO cần quyết định rõ: Feature Freeze ở đây đóng băng scope Foundation hiện tại, việc nối Registry vào Portal thật là quyết định của Sprint tiếp theo, không tự động đi kèm Feature Freeze.
