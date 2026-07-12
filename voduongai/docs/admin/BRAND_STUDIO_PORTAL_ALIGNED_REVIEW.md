@@ -125,4 +125,30 @@ Quét `workspaceOwnership.ts` (entry `brand-studio`, dòng 41-47): `owns: "Logo,
 1. Color Palette Registry (Brand Studio) không đồng bộ với màu runtime thật do System Settings điều khiển (`layout.tsx` inline `<style>` override) — 2 kênh đổi màu tồn tại song song, không kênh nào biết kênh kia.
 2. 22 file thiết kế thương hiệu (logo/wordmark/icon biến thể sáng-tối + 3 concept) nằm mồ côi trong `public/brand/`, không được Portal dùng và không có trong Brand Asset Registry — cần quyết định dùng chính thức hay xoá.
 
+---
+
+## Phụ lục — Founder Directive bổ sung: Flexibility Verification (thêm Logo/Wordmark/Color Palette/Typography/Brand Asset chỉ bằng dữ liệu)
+
+Founder yêu cầu xác minh nghiêm ngặt: 5 hành động — **thêm Logo, thêm Wordmark, thêm Color Palette, thêm Typography, thêm Brand Asset** — phải thực hiện được **chỉ bằng dữ liệu/cấu hình**, không phát hiện trường hợp nào phải sửa TypeScript/Route/Component. Xác minh bằng cách đọc trực tiếp source (không suy đoán):
+
+| Hành động | Component xử lý "Thêm" | Xác minh trực tiếp | Cần sửa code? |
+|---|---|---|---|
+| Thêm Logo | `BrandAssetRegistry` (`lockedCategory="Logo"`, route `/admin/brand/logo`) | Nút "+ Thêm Asset" → modal → `category` khoá sẵn "Logo" (đã có trong `ASSET_CATEGORIES`) → `add()` ghi vào collection `brand-assets` | ❌ **Không** |
+| Thêm Wordmark | `BrandAssetRegistry` (`lockedCategory="Wordmark"`, route `/admin/brand/wordmark`) | Cùng luồng, `category` khoá "Wordmark" | ❌ **Không** |
+| Thêm Color Palette | `ColorPaletteRegistry` (route `/admin/brand/color-palette`) | Nút "+ Thêm Màu" → modal → `role` chọn từ dropdown liệt kê đủ 4/4 `COLOR_ROLES` (Primary/Secondary/Accent/Semantic) → `add()` ghi vào collection `brand-color-tokens` | ❌ **Không** |
+| Thêm Typography | `TypographyRegistry` (route `/admin/brand/typography`) | Nút "+ Thêm Token" → modal → `role` chọn từ dropdown liệt kê đủ 5/5 `TYPOGRAPHY_ROLES` (System/Heading/Body/Caption/Display) → `add()` ghi vào collection `brand-typography-tokens` | ❌ **Không** |
+| Thêm Brand Asset (bất kỳ category nào trong 7 category có sẵn) | `BrandAssetRegistry` (không khoá category, route `/admin/brand/assets`) | Nút "+ Thêm Asset" → modal → `category` dropdown liệt kê đủ 7/7 `ASSET_CATEGORIES` | ❌ **Không** |
+
+**Kết luận:** Xác nhận qua đọc trực tiếp mã nguồn — cả 5 luồng "Thêm" đều là thao tác thuần dữ liệu (`useCollection().add()`, ghi vào collection tương ứng, không đụng file `.ts`/route/component nào). **0 trường hợp phát hiện Founder phải sửa TypeScript, Route hoặc Component** để thực hiện đúng 5 hành động Founder Directive bổ sung liệt kê.
+
+### Giới hạn còn lại — nêu rõ để không che giấu (KHÔNG thuộc phạm vi 5 hành động trên, KHÔNG tự sửa)
+
+5 hành động trên là **"thêm 1 mục mới trong 1 phân loại đã có sẵn"**. Có một loại hành động **khác** — **"thêm 1 phân loại (category/role) hoàn toàn mới"** — vẫn cần sửa code, đã ghi nhận từ Deliverable 4 ở trên, nhắc lại chính xác ở đây để tránh hiểu nhầm là đã giải quyết hết:
+
+- Thêm 1 **category** Brand Asset mới (vượt ngoài 7 category: Logo/Wordmark/Icon/OpenGraphImage/BrandImage/BrandVideo/IdentityFile) → phải sửa `ASSET_CATEGORIES` trong `src/lib/admin/brand/assetRegistry.ts`.
+- Thêm 1 **role** màu mới (vượt ngoài 4 role: Primary/Secondary/Accent/Semantic) → phải sửa `COLOR_ROLES` trong `src/lib/admin/brand/colorRegistry.ts`.
+- Thêm 1 **role** typography mới (vượt ngoài 5 role: System/Heading/Body/Caption/Display) → phải sửa `TYPOGRAPHY_ROLES` trong `src/lib/admin/brand/typographyRegistry.ts`.
+
+Đây là 3 TypeScript union đóng còn tồn tại trong Brand Studio (cùng pattern 17 union đóng đã nêu ở `ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md`). Founder Directive bổ sung chỉ liệt kê **thêm Logo/Wordmark/Color Palette/Typography/Brand Asset** (thêm mục, không phải thêm phân loại) — nghĩa đen của yêu cầu này **đã đạt 100%, 0 ngoại lệ**. Giới hạn "thêm phân loại mới" nằm ngoài 5 hành động được liệt kê, không tự sửa theo đúng chỉ thị "Không tự sửa ngoài phạm vi Sprint" — cần Founder/PMO quyết định có đưa vào phạm vi 1 Sprint riêng (VD "Category tự quản" — đổi `as const` union thành 1 Registry phân loại có CRUD riêng) hay không.
+
 Không merge. Không deploy Production. Chờ PMO review.
