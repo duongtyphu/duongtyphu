@@ -1,6 +1,8 @@
 # Media Center — Workspace Canonical Specification
 
 > ℹ️ **Cập nhật MEDIA-SPR-201:** Brief IMP-MEDIA-201 xác nhận rõ *"Workspace Canonical Specification (WCS) và Product Package của Media Center đã được Founder và PMO phê duyệt"* và cung cấp Scope 10 mục cụ thể (Dashboard/Media Library/Images/Videos/Documents/Audio/Folder Management/Collections/Tags/Media Settings). Đây là chỉ thị Founder/PMO rõ ràng, giải quyết dứt điểm cảnh báo "chưa có Product Package" ghi nhận từ IMP-GOV-001 và nhắc lại ở BRAND-SPR-001/ADM-SPR-201. WCS này được viết lại theo đúng Update Rules của `docs/admin/workspaces/README.md`: Status chuyển **Draft (skeleton) → Approved**, Scope/IA điền đầy đủ theo Product Package thật thay vì TBD. Khác Website/Brand Studio (đã có Foundation từ trước, sprint sau chỉ mở rộng), Media Center **chưa có route/CRUD nào** trước sprint này — đây là Sprint kỹ thuật đầu tiên thật sự, không phải "audit lại việc đã làm".
+>
+> ℹ️ **Cập nhật MEDIA-SPR-202 (Portal-aligned Management):** Đối chiếu lại trực tiếp Portal — xác nhận cấu trúc 10 route hiện tại **sạch, không route/menu/module Legacy nào cần loại bỏ**. Đính chính 2 chỗ sai trong dữ liệu mock MEDIA-SPR-201 (`usedByNote` của `founder-portrait.jpg` và `garden-tree-scene.jpg` — route/component thật khác claim cũ, xem báo cáo đầy đủ). Đánh dấu `garden-care-visual.jpg` là `UNUSED MEDIA` (không tự xoá). Phát hiện mới: chưa có Visibility riêng theo từng Media Object (chỉ có Visibility toàn cục 1 record) — NEEDS PMO DECISION. Không đổi Scope/IA, không version bump. Xem `docs/admin/MEDIA_CENTER_PORTAL_ALIGNED_REVIEW.md`.
 
 ## 1. Executive Summary
 
