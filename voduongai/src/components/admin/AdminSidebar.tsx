@@ -55,6 +55,11 @@ import {
   Gauge,
   Award,
   HelpCircle,
+  Navigation,
+  Home,
+  File,
+  LayoutGrid,
+  ArrowRightLeft,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups, type AdminNavItem } from "@/lib/admin/nav";
@@ -62,6 +67,15 @@ import { adminNavGroups, type AdminNavItem } from "@/lib/admin/nav";
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
   "/admin/website": Globe,
+  "/admin/website/pages": FileText,
+  "/admin/website/navigation": Navigation,
+  "/admin/website/homepage": Home,
+  "/admin/website/landing-pages": Rocket,
+  "/admin/website/static-pages": File,
+  "/admin/website/shared-sections": LayoutGrid,
+  "/admin/website/seo": Search,
+  "/admin/website/redirect": ArrowRightLeft,
+  "/admin/website/global-settings": Settings,
   "/admin/brand-media": Palette,
   "/admin/portal-builder": LayoutPanelLeft,
   "/admin/portal-builder/start-here": Rocket,

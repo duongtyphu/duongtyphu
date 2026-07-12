@@ -14,7 +14,21 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
  */
 export const adminNavGroups: AdminNavGroup[] = [
   { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
-  { group: null, items: [{ label: "Website", href: "/admin/website", comingSoon: true }] },
+  {
+    group: "Website",
+    items: [
+      { label: "Dashboard", href: "/admin/website" },
+      { label: "Pages", href: "/admin/website/pages" },
+      { label: "Navigation", href: "/admin/website/navigation" },
+      { label: "Homepage", href: "/admin/website/homepage" },
+      { label: "Landing Pages", href: "/admin/website/landing-pages" },
+      { label: "Static Pages", href: "/admin/website/static-pages" },
+      { label: "Shared Sections", href: "/admin/website/shared-sections" },
+      { label: "SEO", href: "/admin/website/seo" },
+      { label: "Redirect", href: "/admin/website/redirect" },
+      { label: "Global Settings", href: "/admin/website/global-settings" },
+    ],
+  },
   { group: null, items: [{ label: "Brand & Media", href: "/admin/brand-media", comingSoon: true }] },
   {
     group: "Content",
