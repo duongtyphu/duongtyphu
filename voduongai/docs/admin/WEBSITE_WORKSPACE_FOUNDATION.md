@@ -245,3 +245,69 @@ Seed trong `navigationRegistry.ts` (`NAVIGATION_GROUPS_SEED`/`NAVIGATION_ITEMS_S
 **SẴN SÀNG.** Navigation Foundation hoàn chỉnh (Registry + Preview + Status + Visibility Rule metadata), Shared Structure nhất quán với Page Registry (cùng dùng `useCollection`, cùng pattern Badge/Modal/ConfirmDialog), không ảnh hưởng Workspace nào khác, build/test đều pass.
 
 **Nhắc lại các điểm chưa xử lý:** 2 điểm SEO/Global Settings (từ WEB-SPR-001) vẫn chưa được PMO quyết định. Ngoài ra, Navigation Registry hiện tách biệt hoàn toàn với `site.ts`/`hubs.ts` — khi nào Portal thật sự đọc menu từ Registry này (thay vì hardcode) là quyết định của một Sprint "Website Publish Bridge" tương lai, chưa nằm trong phạm vi WEB-SPR-003.
+
+---
+---
+
+# WEB-SPR-004 — Website Shared Sections Foundation
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+Objective: xây **Shared Sections Management Foundation** — **không Section Builder, không Landing Builder, không AI Generator, không Dynamic Layout Engine, không Drag & Drop**. Registry quản lý NỘI DUNG/COPY (headline/body/CTA) của khối dùng chung, không quản lý bố cục/thiết kế trực quan.
+
+## 1. Shared Section Registry (Task 1)
+
+`src/lib/admin/website/sharedSectionRegistry.ts` — MỘT schema `SharedSection` duy nhất dùng chung cho cả 9 category (Task 2), đúng nguyên tắc Shared Structure đã áp dụng cho Page Registry (WEB-SPR-002) và Navigation Registry (WEB-SPR-003). Persist qua `useCollection()` hai tầng có sẵn (tầng localStorage — `website-shared-sections` chưa nằm trong `SUPABASE_COLLECTIONS`).
+
+## 2. Section Categories (Task 2)
+
+Đúng 9 category theo Scope của brief, khóa, không tự thêm/bớt: **Hero, CTA, Banner, Feature, Founder, Testimonial, FAQ, Footer, Announcement**.
+
+## 3. Section Status (Task 3)
+
+`SECTION_STATUSES = ["Draft", "Review", "Approved", "Published", "Archived"]` — vòng đời **riêng** của Shared Section, khác 4 trạng thái Draft/Active/Inactive/Archived của Navigation (WEB-SPR-003). Nội dung Section là copy marketing thật (Hero/CTA/Founder Story...), cần bước xem xét trước khi lên production — gần bản chất Website Page hơn cấu trúc menu thuần túy, nên dùng lại đúng 5 trạng thái Page Lifecycle (WEB-SPR-002). Dùng lại đúng các tone Badge đã có sẵn (`Review`/`Approved` đã thêm từ trước) — **không cần thêm tone mới**.
+
+## 4. Visibility Rule Foundation (Task 4)
+
+Dùng lại **đúng** `VisibilityRule`/`VISIBILITY_RULES` (Everyone/Logged-in Only/Admin Only) đã định nghĩa ở Navigation Registry (WEB-SPR-003) — import trực tiếp, không định nghĩa lại. Cùng giới hạn đã ghi nhận: **chỉ là metadata, không có Permission Engine** thực thi.
+
+## 5. Preview Placeholder (Task 5)
+
+`SharedSectionPreviewPlaceholder.tsx` — **cố ý nhẹ hơn** Navigation Preview (WEB-SPR-003). Navigation Preview dựng lại đúng hình dạng thật vì cấu trúc menu đơn giản (hàng ngang/danh sách dọc); Section có bố cục/thiết kế trực quan riêng cho từng loại — dựng lại đúng bố cục đó là việc của Visual Builder, ngoài phạm vi Foundation này. Vì vậy đây chỉ là khung nét đứt hiển thị Headline/Body/CTA dạng **văn bản thuần** (chỉ Section đang `Published`) — xem trước NỘI DUNG, không phải xem trước GIAO DIỆN.
+
+## 6. Mock Data (Task 6)
+
+Seed 9 mục (1/category) trong `sharedSectionRegistry.ts`. Theo đúng lưu ý "bám sát portal đang có ở hiện tại" của Founder:
+
+- **Có nguồn hardcode thật, sao chép sát nội dung:** Hero (`Hero.tsx`/`siteConfig`), CTA (`FinalCTA.tsx`), Feature (`Solution.tsx`, pillar "AI ứng dụng"), Founder (`FounderStory.tsx`), Footer (`Footer.tsx`, đoạn mô tả thương hiệu).
+- **Không có nguồn hardcode 1-1, đánh dấu rõ "minh họa" trong chính nội dung seed** (không phải copy nguyên văn để tránh gây hiểu nhầm là nội dung thật đã tồn tại):
+  - **Banner** — nội dung banner thật đã có Admin CRUD và đã nối dây thật (`portal_banners` → `NotificationTicker.tsx`), Registry mới này KHÔNG thay thế nó.
+  - **Testimonial** — Portal hiện chỉ có `TrustStats.tsx` (số liệu cộng đồng), không có trích dẫn khách hàng thật nào trên Home.
+  - **FAQ** — chưa tìm thấy khối FAQ marketing công khai nào trên Home (CKOS có FAQs riêng nhưng thuộc CKOS Workspace, khác phạm vi).
+  - **Announcement** — Portal hiện không phân biệt Banner và Announcement (cùng qua `portal_banners`); ranh giới 2 category này cần PMO xác nhận.
+
+## Files Changed
+
+- `src/lib/admin/website/sharedSectionRegistry.ts` — mới, data model + seed
+- `src/components/admin/website/SharedSectionRegistry.tsx` — mới, CRUD (list + filter theo category/status + modal)
+- `src/components/admin/website/SharedSectionPreviewPlaceholder.tsx` — mới, Preview Placeholder chỉ đọc
+- `src/app/admin/(dashboard)/website/shared-sections/page.tsx` — thay `WorkspaceSectionFoundation` placeholder bằng `SharedSectionRegistry` + `SharedSectionPreviewPlaceholder` thật
+
+**Không đổi:** Pages/Homepage/Landing Pages/Static Pages (WEB-SPR-002), Navigation (WEB-SPR-003), Dashboard/SEO/Redirect/Global Settings (vẫn Foundation placeholder). `nav.ts`/`AdminSidebar.tsx` không đổi (route Shared Sections đã tồn tại từ WEB-SPR-001). `Badge.tsx` không đổi (dùng lại tone có sẵn). Mọi Workspace khác, Portal, database — không đổi. `src/components/home/*.tsx`/`Footer.tsx` (nội dung thật của Portal) **không bị đụng vào** — chỉ đọc để sao chép làm mock data.
+
+## Verification
+
+- **Lint (`npm run lint`):** sạch — 0 lỗi, 5 warning có từ trước (không liên quan).
+- **Type-check (`npx tsc --noEmit`):** sạch.
+- **Build (`npm run build`):** thành công.
+- **Test (`npm run test`):** 139/139 pass, không regression.
+
+## WEB-SPR-005 Readiness
+
+**SẴN SÀNG.** Shared Section Foundation hoàn chỉnh (Registry hoạt động thật, Shared Structure nhất quán với Page/Navigation Registry, Status/Visibility Rule/Preview Placeholder đều có), không ảnh hưởng Workspace nào khác, build/test đều pass.
+
+**Cần PMO quyết định (mới phát hiện ở sprint này):**
+- Ranh giới **Banner vs Announcement** — Portal hiện chỉ có 1 cơ chế (`portal_banners`) cho cả hai, chưa rõ đây là 2 khái niệm sản phẩm khác nhau hay 1 khái niệm duy nhất bị brief liệt kê thành 2 category.
+- **Testimonial và FAQ marketing công khai** — hiện không tồn tại trên Home, cần Founder xác nhận có phải xây nội dung mới (ngoài phạm vi Registry, đây là quyết định content) hay bỏ 2 category này khỏi Shared Sections.
+
+**Nhắc lại các điểm chưa xử lý:** 2 điểm SEO/Global Settings (từ WEB-SPR-001) vẫn chưa được PMO quyết định.
