@@ -457,3 +457,85 @@ Không phát hiện P0 nào.
 **SẴN SÀNG FEATURE FREEZE ở cấp Foundation.** Không có P0. Không có P1 còn tồn đọng (2 P1 phát hiện đã sửa ngay trong sprint này). 9/10 nhóm IA có Registry hoạt động thật với Shared Structure nhất quán; 1/10 (Global Settings) còn Foundation placeholder — không phải lỗi, mà là phạm vi chưa được giao ở bất kỳ WEB-SPR nào tính đến nay.
 
 **Lưu ý về phạm vi "Feature Freeze":** đóng băng đúng những gì đã xây (Foundation — Registry + Shell + Preview/Validation Placeholder), **không phải** xác nhận Portal đã thực sự chạy bằng dữ liệu từ các Registry này (Consumer = 0 cho cả 5 Registry, xem Task 9). Founder/PMO cần quyết định rõ: Feature Freeze ở đây đóng băng scope Foundation hiện tại, việc nối Registry vào Portal thật là quyết định của Sprint tiếp theo, không tự động đi kèm Feature Freeze.
+
+---
+---
+
+# WEB-SPR-201 — Website Workspace Foundation (EPIC-02 Phase 2, IMP-WEB-201)
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+> ⚠️ **Phát hiện tiền đề:** Brief IMP-WEB-201 mô tả 10 module Scope như thể triển khai từ đầu, nhưng đối chiếu code cho thấy **9/10 module đã hoàn thành từ WEB-SPR-001 đến WEB-SPR-006** (cùng session này) — Dashboard, Pages/Homepage/Landing Pages/Static Pages (Page Registry), Navigation, Shared Sections, SEO, Redirect đều đã có Registry thật hoạt động. Không tự rebuild từ đầu (rủi ro regression không cần thiết) — đã audit hiện trạng, xác nhận khớp Scope, và triển khai đúng **2 khoảng trống thật** mà brief này lần đầu chỉ rõ: (1) Navigation cần thêm Footer Menu/External Links (trước đó chỉ Header/Sidebar); (2) Global Settings — module duy nhất còn là Foundation placeholder (WEB-SPR-006 đã ghi nhận) — nay có Registry thật.
+
+## Task 1-2, 4-9 — Đã hoàn thành từ trước, xác nhận lại
+
+Dashboard (WEB-SPR-001, hoàn thiện dữ liệu thật WEB-SPR-006), Pages/Homepage/Landing Pages/Static Pages (WEB-SPR-002, Page Registry dùng chung 1 schema), Shared Sections (WEB-SPR-004, 9 category), SEO (WEB-SPR-005), Redirect (WEB-SPR-005) — build/test xác nhận vẫn hoạt động đúng sau các thay đổi của sprint này, không có regression.
+
+## Task 3 — Navigation Management: mở rộng Footer Menu + External Links
+
+`navigationRegistry.ts`: `NAVIGATION_LOCATIONS` mở rộng từ `["Header", "Sidebar"]` thành `["Header", "Sidebar", "Footer", "External"]`. Seed thêm 3 Group/13 Item mới, bám sát nguồn thật:
+- **Footer — Học viện AI** + **Footer — Tài nguyên** (2 cột, 9 link) — nguồn `src/components/site/Footer.tsx`.
+- **External — Mạng xã hội** (4 link) — nguồn `siteConfig.links` (`src/lib/site.ts`).
+
+**Phát hiện mới khi seed dữ liệu:** Footer link "Hệ tri thức AI (CKOS)" trỏ `/portal/hetrithucai`, **KHÁC** với `/portal/ckos` dùng ở Sidebar — cùng khái niệm CKOS nhưng 2 route khác nhau trong CHÍNH menu công khai (không chỉ giữa các trang riêng lẻ như ADM-SPR-200 phát hiện) — củng cố mạnh phát hiện đã ghi nhận, cho thấy đây là bất nhất thật trong điều hướng Portal, không phải trùng hợp ngẫu nhiên.
+
+`NavigationPreview.tsx` được viết lại tổng quát — lặp qua `NAVIGATION_LOCATIONS` thay vì 2 khối hardcode Header/Sidebar, tự động hỗ trợ Footer/External mà không cần sửa lại nếu có location mới trong tương lai.
+
+**Ranh giới Navigation vs Shared Sections cho Footer:** Navigation sở hữu MENU chân trang (danh sách link); Shared Sections tiếp tục sở hữu COPY/branding của khối Footer (đã có category "Footer" từ WEB-SPR-004) — 2 khái niệm khác nhau dùng chung tên, không chồng lấn dữ liệu, đã ghi rõ trong code + WCS.
+
+## Task 10 — Global Website Settings (module mới hoàn toàn)
+
+`globalSettings.ts` + `GlobalWebsiteSettingsForm.tsx` — **1 record duy nhất** (singleton, cùng pattern `globalBrandSettings.ts`/`GlobalBrandSettingsForm` của Brand Studio, BRAND-SPR-001). Đúng 4 mục Task 10 yêu cầu:
+- **Website Announcement** — text + cờ bật/tắt (chỉ metadata, chưa nối `NotificationTicker` thật).
+- **Default Homepage** — ghi chú tham chiếu Page Registry (hiện trống — chưa có Page nào được seed).
+- **Visibility** — `SITE_VISIBILITY_MODES` (Public/Maintenance Mode/Coming Soon), Foundation only — đổi giá trị KHÔNG bật/tắt site thật.
+- **Presentation Settings** — ghi chú tham chiếu Theme Registry của Brand Studio (`/admin/brand/theme`) — không sao chép dữ liệu, chỉ tham chiếu.
+
+**Sự cố đã tránh:** áp dụng ngay bài học `react-hooks/set-state-in-effect` (phát hiện ở `GlobalBrandSettingsForm`, BRAND-SPR-001) — `GlobalWebsiteSettingsForm` viết đúng từ đầu (`form = localEdits ?? record`, không dùng `useEffect`), không phát sinh lỗi lint.
+
+## Website Dashboard — cập nhật đủ 6/6 collection
+
+Thêm `globalSettings` vào tổng hợp số liệu (`stats`/`recentChanges`) — trước đó (WEB-SPR-006) chỉ 5 collection vì Global Settings chưa tồn tại. `WebsiteWorkspaceShell.tsx` cập nhật text: "5/10 nhóm có Registry" → **"10/10 nhóm có Registry"**.
+
+## Cập nhật WCS
+
+`docs/admin/workspaces/website-workspace.md`: **Version 1.0 → 1.1** (đúng Update Rules — mở rộng ownership Navigation cần tăng Version + xác nhận Founder/PMO qua brief, không tự suy luận). Cập nhật Mục 3 (Navigation 4 vị trí), Mục 7 (Content Ownership), Mục 13 (Product Decisions — ranh giới Footer), Mục 14 (Founder Decisions — ghi nhận WEB-SPR-201 Directive).
+
+## Files Changed
+
+**Mới:** `src/lib/admin/website/globalSettings.ts`, `src/components/admin/website/GlobalWebsiteSettingsForm.tsx`
+
+**Sửa:** `src/lib/admin/website/navigationRegistry.ts` (Footer/External locations + seed), `src/components/admin/website/NavigationPreview.tsx` (tổng quát hóa), `src/app/admin/(dashboard)/website/navigation/page.tsx`, `src/app/admin/(dashboard)/website/global-settings/page.tsx` (placeholder → form thật), `src/app/admin/(dashboard)/website/page.tsx` (Dashboard, thêm collection thứ 6), `src/components/admin/website/WebsiteWorkspaceShell.tsx` (text), `docs/admin/workspaces/website-workspace.md` (Version 1.1)
+
+**Không đổi:** Pages/Homepage/Landing Pages/Static Pages/Shared Sections/SEO/Redirect component logic (chỉ Dashboard đọc thêm 1 collection), mọi Workspace khác, `Badge.tsx`.
+
+## Verification
+
+- **Lint (`npm run lint`):** sạch — 0 lỗi, 5 warning có từ trước.
+- **Type-check (`npx tsc --noEmit`):** sạch.
+- **Build (`npm run build`):** thành công.
+- **Test (`npm run test`):** 139/139 pass, không regression.
+
+## Acceptance Criteria — đối chiếu
+
+| Acceptance | Đáp ứng |
+|---|---|
+| Website Workspace hoạt động | ✅ |
+| Dashboard hoàn chỉnh | ✅ Đủ 6/6 collection (thêm Global Settings) |
+| Quản lý được Homepage/Landing Pages/Static Pages | ✅ Đã có từ WEB-SPR-002, xác nhận không regression |
+| Quản lý được Navigation | ✅ Mở rộng Header/Sidebar/Footer/External |
+| Quản lý được Shared Sections | ✅ Đã có từ WEB-SPR-004 |
+| Quản lý được SEO | ✅ Đã có từ WEB-SPR-005 |
+| Quản lý được Redirect | ✅ Đã có từ WEB-SPR-005 |
+| Quản lý được Website Settings | ✅ **Mới** — Registry thật lần đầu |
+| Build thành công | ✅ |
+| Tests pass | ✅ 139/139 |
+
+## EPIC-02 Phase 3 Readiness
+
+**SẴN SÀNG.** Website Workspace nay đạt đúng 10/10 module Registry thật — module cuối cùng còn thiếu (Global Settings) đã hoàn thành. Không CRUD nghiệp vụ/Database Migration/Visual Builder/Landing Builder nào được thêm, đúng giới hạn brief.
+
+**Cần PMO quyết định (tổng hợp, không mới — nhắc lại có căn cứ mạnh hơn):**
+- SEO/Global Settings vs mục độc lập cấp cao nhất — vẫn treo từ WEB-SPR-001.
+- Banner vs Announcement — vẫn treo từ WEB-SPR-004.
+- **Mới:** `/portal/hetrithucai` vs `/portal/ckos` — nay xác nhận bất nhất tồn tại NGAY TRONG Footer thật (không chỉ đơn lẻ), cần Founder quyết định route nào là chính thức trước khi Website Workspace tự tin khẳng định "Navigation phản ánh đúng Portal thật".

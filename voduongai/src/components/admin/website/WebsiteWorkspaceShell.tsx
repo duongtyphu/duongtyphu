@@ -27,9 +27,9 @@ export function WebsiteWorkspaceShell({ children }: { children: React.ReactNode 
       <div>
         <h1 className="text-xl font-extrabold text-white">Website Workspace</h1>
         <p className="mt-1 text-sm text-white/50">
-          Quản lý toàn bộ nội dung trang web công khai. Foundation của 5/10 nhóm đã có Registry hoạt động thật
-          (Pages/Homepage/Landing Pages/Static Pages dùng chung Page Registry, Navigation, Shared Sections, SEO,
-          Redirect) — Global Settings vẫn ở dạng Foundation placeholder.
+          Quản lý toàn bộ nội dung trang web công khai — không sở hữu dữ liệu nghiệp vụ, chỉ quản lý phần hiển thị và
+          trải nghiệm (WEB-SPR-201). Cả 10/10 nhóm đã có Registry hoạt động thật (Pages/Homepage/Landing Pages/Static
+          Pages dùng chung Page Registry, Navigation, Shared Sections, SEO, Redirect, Global Settings).
         </p>
       </div>
 

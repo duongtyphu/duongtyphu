@@ -25,6 +25,11 @@ import {
   REDIRECT_ENTRIES_SEED,
   type RedirectEntry,
 } from "@/lib/admin/website/redirectRegistry";
+import {
+  GLOBAL_WEBSITE_SETTINGS_COLLECTION_KEY,
+  GLOBAL_WEBSITE_SETTINGS_SEED,
+  type GlobalWebsiteSettings,
+} from "@/lib/admin/website/globalSettings";
 
 const QUICK_ACTIONS = [
   { label: "Pages", href: "/admin/website/pages", icon: FileText },
@@ -72,9 +77,14 @@ export default function WebsiteDashboardPage() {
   const sections = useCollection<SharedSection>(SHARED_SECTIONS_COLLECTION_KEY, SHARED_SECTIONS_SEED);
   const seoEntries = useCollection<SEOEntry>(SEO_ENTRIES_COLLECTION_KEY, SEO_ENTRIES_SEED);
   const redirects = useCollection<RedirectEntry>(REDIRECT_ENTRIES_COLLECTION_KEY, REDIRECT_ENTRIES_SEED);
+  const globalSettings = useCollection<GlobalWebsiteSettings>(
+    GLOBAL_WEBSITE_SETTINGS_COLLECTION_KEY,
+    GLOBAL_WEBSITE_SETTINGS_SEED
+  );
 
   const ready =
-    pages.ready && navGroups.ready && navItems.ready && sections.ready && seoEntries.ready && redirects.ready;
+    pages.ready && navGroups.ready && navItems.ready && sections.ready && seoEntries.ready && redirects.ready &&
+    globalSettings.ready;
 
   const stats = useMemo(() => {
     const all: { status: string }[] = [
@@ -84,12 +94,13 @@ export default function WebsiteDashboardPage() {
       ...sections.items,
       ...seoEntries.items,
       ...redirects.items,
+      ...globalSettings.items,
     ];
     const draft = all.filter((i) => i.status === "Draft").length;
     const published = all.filter((i) => i.status === "Published" || i.status === "Active").length;
     const pendingReview = [...pages.items, ...sections.items].filter((i) => i.status === "Review").length;
     return { totalItems: all.length, draft, published, pendingReview };
-  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items]);
+  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items]);
 
   const recentChanges = useMemo<RecentChange[]>(() => {
     const combined: RecentChange[] = [
@@ -104,9 +115,10 @@ export default function WebsiteDashboardPage() {
         section: "Redirect",
         date: r.updatedDate,
       })),
+      ...globalSettings.items.map((g) => ({ key: g.id, title: "Global Settings", section: "Global Settings", date: g.updatedDate })),
     ];
     return combined.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
-  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items]);
+  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items]);
 
   return (
     <WebsiteWorkspaceShell>
@@ -115,7 +127,7 @@ export default function WebsiteDashboardPage() {
           <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-white/40">
             Website Overview
             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold normal-case text-white/40">
-              Tính từ Page/Navigation/Shared Section/SEO/Redirect Registry — Global Settings chưa có Registry
+              Tính từ Page/Navigation/Shared Section/SEO/Redirect/Global Settings Registry (WEB-SPR-201: đủ 6/6)
             </span>
           </p>
           {!ready ? (

@@ -14,7 +14,7 @@ Website Workspace là nơi quản trị toàn bộ nội dung "mặt tiền" cô
 
 1. **Dashboard** — tổng quan Website Workspace (số liệu, thay đổi gần nhất, lối tắt).
 2. **Pages** — Website Page Registry, danh sách tổng hợp mọi trang (Homepage/Landing Pages/Static Pages).
-3. **Navigation** — menu điều hướng site công khai và sidebar Portal.
+3. **Navigation** — menu điều hướng site công khai và sidebar Portal, gồm 4 vị trí (WEB-SPR-201 mở rộng): Header, Sidebar (= Portal Navigation thật), Footer (menu chân trang — chỉ danh sách link, không phải copy/branding của khối Footer), External (link mạng xã hội/bên ngoài).
 4. **Homepage** — trang chủ marketing công khai (Hero, Trust Stats, Founder Story, Problem/Solution, Academy Teaser, Final CTA).
 5. **Landing Pages** — trang landing chuyên biệt (chương trình, chiến dịch).
 6. **Static Pages** — trang tĩnh (Giới thiệu, Liên hệ; trang pháp lý xem Mục 4).
@@ -71,7 +71,7 @@ Coverage Score hiện tại (ADM-SPR-005): **~10%** — thấp nhất trong 15 W
 | Entity | Editable Workspace | Consumer Workspace/Portal | Publish Target | Visibility Rule |
 |---|---|---|---|---|
 | Website Page (registry metadata) | Website Workspace | Portal rendering (chưa nối dây — WEB-SPR-002 chỉ có metadata) | Route tương ứng loại trang | `visible` field trên từng Page |
-| Navigation menu | Website Workspace | Toàn Portal + site công khai | Header/Sidebar | Luôn hiển thị khi Published |
+| Navigation menu (Header/Sidebar/Footer/External) | Website Workspace | Toàn Portal + site công khai | Header/Sidebar/Footer/External | Luôn hiển thị khi Active |
 | Footer/CTA/Banner (Shared Sections) | Website Workspace | Toàn Portal + site công khai | Vị trí tương ứng trên trang | Theo trạng thái Published của từng khối |
 | SEO metadata | Website Workspace | Search engine, social preview | `<head>` từng trang | Không áp dụng (luôn public) |
 | Redirect rule | Website Workspace | Toàn site (middleware/routing) | N/A | Không áp dụng |
@@ -132,11 +132,14 @@ Founder mở Website Workspace Dashboard và thấy ngay: tổng số trang đan
 - Page Registry dùng **một schema chung** cho cả 3 loại trang (Homepage/Landing/Static), phân biệt bằng `pageType` — không tạo schema riêng từng loại (WEB-SPR-002 Task 2).
 - Trang pháp lý nằm trong IA "Static Pages" nhưng nội dung không mở CRUD tự do (Mục 4).
 - Lifecycle Page dùng đúng 5 trạng thái (không có "Changes Requested" như CKOS) — mỗi Workspace có lifecycle riêng phù hợp nội dung của mình.
+- **Ranh giới Navigation vs Shared Sections cho Footer (WEB-SPR-201):** Navigation sở hữu MENU chân trang (danh sách link, vị trí "Footer"); Shared Sections tiếp tục sở hữu COPY/branding của khối Footer (mô tả thương hiệu, category "Footer" đã có từ WEB-SPR-004) — 2 khái niệm khác nhau dùng chung tên "Footer", không chồng lấn dữ liệu.
+- **Global Website Settings dùng 1 record duy nhất** (singleton qua `useCollection`), cùng pattern `GlobalBrandSettingsForm` của Brand Studio (BRAND-SPR-001) — không dựng cơ chế lưu trữ mới.
 
 ## 14. Founder Decisions
 
 - **Website Workspace Product Package v1.0 — Approved.** Đây là Workspace đầu tiên được phép triển khai kỹ thuật trong EPIC-WEB-001 (WEB-SPR-001 Founder Directive).
 - **Greenfield Admin Architecture** áp dụng cho toàn bộ Website Workspace — không kế thừa Legacy Admin/Portal Builder cũ, không giữ compatibility với dữ liệu test (`docs/admin/FOUNDER_DIRECTIVE_GREENFIELD_ADMIN.md`).
+- **WEB-SPR-201 Founder Directive:** brief IMP-WEB-201 xác nhận lại "WCS và Product Package của Website Workspace đã được Founder và PMO phê duyệt", đồng thời mở rộng Navigation (thêm Footer Menu/External Links) và yêu cầu hoàn thiện Global Website Settings — coi là chỉ thị chính thức cho phép tăng Version WCS này lên 1.1.
 
 ## 15. PMO Decisions
 
@@ -148,11 +151,11 @@ Founder mở Website Workspace Dashboard và thấy ngay: tổng số trang đan
 
 ## Status
 
-**Approved** — Product Package v1.0 đã được Founder/PMO phê duyệt trước WEB-SPR-001. WCS này (định dạng theo WCS Standard v1.0) tổng hợp lại quyết định đã có, không phải một quyết định mới.
+**Approved** — Product Package v1.0 đã được Founder/PMO phê duyệt trước WEB-SPR-001, xác nhận lại ở WEB-SPR-201.
 
 ## Version
 
-1.0
+1.1 — tăng từ 1.0 (WEB-SPR-201 mở rộng ownership Navigation thêm Footer Menu/External Links, đúng Update Rules của `docs/admin/workspaces/README.md`: thay đổi ownership đã duyệt cần tăng Version + PMO xác nhận qua brief, không tự suy luận).
 
 ## Approval Date
 
@@ -160,4 +163,4 @@ Trước khi WEB-SPR-001 bắt đầu (ngày chính xác không được ghi l�
 
 ## Last Updated
 
-2026-07-12 (IMP-GOV-001, WCS Standard v1.0 hóa lần đầu — tổng hợp từ WEB-SPR-001 + WEB-SPR-002 + PORTAL_COVERAGE_AUDIT.md).
+2026-07-12 (WEB-SPR-201 — tăng Version 1.0 → 1.1: mở rộng Navigation Footer/External, hoàn thiện Global Website Settings, cả 10/10 nhóm IA nay đều có Registry hoạt động thật).

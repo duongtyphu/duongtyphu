@@ -17,7 +17,18 @@
  *   (flat — không có Mega Menu/sub-menu ở Foundation này).
  */
 
-export const NAVIGATION_LOCATIONS = ["Header", "Sidebar"] as const;
+/**
+ * WEB-SPR-201 (Website Workspace Foundation, brief Task 3 "Navigation
+ * Management" yêu cầu rõ: Header Menu, Footer Menu, Portal Navigation,
+ * External Links) mở rộng thêm "Footer" và "External" — trước đó
+ * (WEB-SPR-003) chỉ có "Header" (mainNav) và "Sidebar" (đã là Portal
+ * Navigation thật — portalNavSections). "Footer" trước đây cố ý để
+ * Shared Sections sở hữu (WEB-SPR-004) — nay Navigation Management sở
+ * hữu MENU chân trang (link danh sách), Shared Sections vẫn sở hữu phần
+ * COPY/branding của khối Footer (mô tả thương hiệu) — ranh giới rõ:
+ * Navigation = link, Shared Sections = nội dung văn bản.
+ */
+export const NAVIGATION_LOCATIONS = ["Header", "Sidebar", "Footer", "External"] as const;
 export type NavigationLocation = (typeof NAVIGATION_LOCATIONS)[number];
 
 /**
@@ -112,6 +123,33 @@ export const NAVIGATION_GROUPS_SEED: NavigationGroup[] = [
     status: "Active",
     updatedDate: "2026-07-12",
   },
+  {
+    id: "navgroup_seed_footer_hocvienai",
+    name: "Footer — Học viện AI",
+    location: "Footer",
+    description: "Cột 1 menu chân trang — nguồn: src/components/site/Footer.tsx (columns[0]).",
+    sortOrder: 4,
+    status: "Active",
+    updatedDate: "2026-07-12",
+  },
+  {
+    id: "navgroup_seed_footer_tainguyen",
+    name: "Footer — Tài nguyên",
+    location: "Footer",
+    description: "Cột 2 menu chân trang — nguồn: src/components/site/Footer.tsx (columns[1]).",
+    sortOrder: 5,
+    status: "Active",
+    updatedDate: "2026-07-12",
+  },
+  {
+    id: "navgroup_seed_external_social",
+    name: "External — Mạng xã hội",
+    location: "External",
+    description: "Link mạng xã hội chính thức — nguồn: src/lib/site.ts (siteConfig.links).",
+    sortOrder: 6,
+    status: "Active",
+    updatedDate: "2026-07-12",
+  },
 ];
 
 export const NAVIGATION_ITEMS_SEED: NavigationItem[] = [
@@ -132,4 +170,23 @@ export const NAVIGATION_ITEMS_SEED: NavigationItem[] = [
   // Portal Sidebar — Phụ — src/lib/portal/hubs.ts portalNavSections[1].items.
   { id: "navitem_seed_13", groupId: "navgroup_seed_sidebar_secondary", label: "Sứ mệnh Companion", url: "/portal/su-menh-companion", sortOrder: 1, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
   { id: "navitem_seed_14", groupId: "navgroup_seed_sidebar_secondary", label: "Cộng đồng", url: "/portal/congdongai", sortOrder: 2, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  // Footer — Học viện AI — src/components/site/Footer.tsx columns[0].links.
+  // ⚠️ Phát hiện: link "Hệ tri thức AI (CKOS)" ở Footer trỏ /portal/hetrithucai,
+  // KHÁC với /portal/ckos dùng ở Sidebar (navitem_seed_7) — cùng khái niệm CKOS
+  // nhưng 2 route khác nhau, củng cố phát hiện đã ghi nhận ở ADM-SPR-200.
+  { id: "navitem_seed_15", groupId: "navgroup_seed_footer_hocvienai", label: "Companion", url: "/portal/companion", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_16", groupId: "navgroup_seed_footer_hocvienai", label: "Hệ tri thức AI (CKOS)", url: "/portal/hetrithucai", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_17", groupId: "navgroup_seed_footer_hocvienai", label: "Kỹ năng AI", url: "/portal/hocvienai", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_18", groupId: "navgroup_seed_footer_hocvienai", label: "Thực hành AI - Dự án & Cơ hội", url: "/portal/duan-cohoi", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_19", groupId: "navgroup_seed_footer_hocvienai", label: "Premium", url: "/portal/premium", sortOrder: 5, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  // Footer — Tài nguyên — src/components/site/Footer.tsx columns[1].links.
+  { id: "navitem_seed_20", groupId: "navgroup_seed_footer_tainguyen", label: "Nhật ký học tập", url: "/portal/nhatkyhoctap", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_21", groupId: "navgroup_seed_footer_tainguyen", label: "Hành trình của tôi", url: "/portal/hanhtrinhcuatoi", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_22", groupId: "navgroup_seed_footer_tainguyen", label: "Khu vườn của bạn", url: "/portal/khuvuoncuaban", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_23", groupId: "navgroup_seed_footer_tainguyen", label: "Cộng đồng AI", url: "/portal/congdongai", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  // External — Mạng xã hội — src/lib/site.ts siteConfig.links.
+  { id: "navitem_seed_24", groupId: "navgroup_seed_external_social", label: "Facebook", url: "https://www.facebook.com/duong.vv", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_25", groupId: "navgroup_seed_external_social", label: "YouTube", url: "https://www.youtube.com/@voduongofficial", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_26", groupId: "navgroup_seed_external_social", label: "TikTok", url: "https://www.tiktok.com/@vdai_academy", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_27", groupId: "navgroup_seed_external_social", label: "Zalo", url: "https://zalo.me/0909150587", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
 ];
