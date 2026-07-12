@@ -79,7 +79,21 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Global Brand Settings", href: "/admin/brand/settings" },
     ],
   },
-  { group: null, items: [{ label: "Media Center", href: "/admin/media-center", comingSoon: true }] },
+  {
+    group: "Media Center",
+    items: [
+      { label: "Dashboard", href: "/admin/media-center" },
+      { label: "Media Library", href: "/admin/media-center/library" },
+      { label: "Images", href: "/admin/media-center/images" },
+      { label: "Videos", href: "/admin/media-center/videos" },
+      { label: "Documents", href: "/admin/media-center/documents" },
+      { label: "Audio", href: "/admin/media-center/audio" },
+      { label: "Folder Management", href: "/admin/media-center/folders" },
+      { label: "Collections", href: "/admin/media-center/collections" },
+      { label: "Tags", href: "/admin/media-center/tags" },
+      { label: "Media Settings", href: "/admin/media-center/settings" },
+    ],
+  },
   {
     group: "CKOS",
     items: [

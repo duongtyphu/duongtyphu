@@ -97,9 +97,9 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     key: "media-center",
     name: "Media Center",
     href: "/admin/media-center",
-    maturity: "Not Started",
-    wcsStatus: "Draft",
-    owns: "(Chưa xây) — dự kiến: thư viện media dùng chung",
+    maturity: "Canonical",
+    wcsStatus: "Approved",
+    owns: "Media Asset (Image/Video/Document/Audio) metadata, Folder, Collection, Tag, Media Settings",
   },
   {
     key: "ai-workspace",

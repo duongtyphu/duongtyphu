@@ -3,7 +3,9 @@
  *
  * Foundation only: KHÔNG Asset Editor, KHÔNG AI Brand Generator. Registry
  * chỉ lưu METADATA của asset (tên, category, ghi chú nguồn/định dạng) —
- * KHÔNG có upload/thư viện file thật (Media Center chưa tồn tại, xem
+ * KHÔNG có upload/thư viện file thật (Media Center nay đã có Registry
+ * thật từ MEDIA-SPR-201, nhưng Brand Studio vẫn không dùng chung cơ chế
+ * upload nào với Media Center — 2 Registry độc lập, xem
  * docs/admin/workspaces/media-center.md). `fileNote` là mô tả văn bản
  * (đường dẫn file tĩnh hiện có, VD "/founder.png", hoặc mã SVG inline hiện
  * dùng trong code) — không phải asset URL từ một thư viện media thật.
@@ -26,7 +28,9 @@
  * (ảnh chụp founder, video giới thiệu thương hiệu, file logo/guideline
  * đóng gói) — không phải thư viện media nội dung chung (ảnh minh hoạ bài
  * viết, ảnh khoá học...), vẫn thuộc Media Center (`media-center.md`,
- * chưa xây). Ranh giới này là suy luận hợp lý từ tên "Brand Studio =
+ * nay đã xây ở MEDIA-SPR-201 — xem `src/lib/admin/media/assetRegistry.ts`,
+ * category "Image"/"BrandImage" boundary đã áp dụng đúng ranh giới này).
+ * Ranh giới này là suy luận hợp lý từ tên "Brand Studio =
  * Single Source of Brand Truth" trong Objective của brief, chưa có PMO
  * Clarification xác nhận bằng văn bản riêng.
  */
