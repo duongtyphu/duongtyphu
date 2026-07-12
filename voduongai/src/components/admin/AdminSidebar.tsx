@@ -67,6 +67,7 @@ import {
   Music,
   Folder,
   Tag,
+  Waypoints,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups, type AdminNavItem } from "@/lib/admin/nav";
@@ -103,6 +104,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/website/seo": Search,
   "/admin/website/redirect": ArrowRightLeft,
   "/admin/website/global-settings": Settings,
+  "/admin/website/portal-mapping": Waypoints,
   "/admin/brand": Palette,
   "/admin/brand/logo": ImageIcon,
   "/admin/brand/wordmark": Type,

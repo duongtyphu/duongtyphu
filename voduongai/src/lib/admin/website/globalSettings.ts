@@ -1,5 +1,8 @@
 /**
- * Global Website Settings — singleton record (WEB-SPR-201 Task 10).
+ * Global Website Settings — singleton record (WEB-SPR-201 Task 10, mở
+ * rộng WEB-SPR-202 Task 7: thêm `websiteName`/`tagline` — đúng 5 mục brief
+ * yêu cầu Website Name/Tagline/Default Homepage/Announcement/Maintenance
+ * (Maintenance = `visibilityMode: "Maintenance Mode"` đã có sẵn).
  *
  * Cấu hình tổng thể của Website Workspace — dùng lại đúng `useCollection()`
  * hai tầng (không dựng cơ chế lưu trữ mới), luôn đúng 1 record duy nhất
@@ -27,6 +30,8 @@ export type SiteVisibilityMode = (typeof SITE_VISIBILITY_MODES)[number];
 
 export type GlobalWebsiteSettings = {
   id: string;
+  websiteName: string;
+  tagline: string;
   announcementText: string;
   announcementActive: boolean;
   defaultHomepageNote: string;
@@ -47,10 +52,12 @@ export const GLOBAL_WEBSITE_SETTINGS_COLLECTION_KEY = "website-global-settings";
 export const GLOBAL_WEBSITE_SETTINGS_SEED: GlobalWebsiteSettings[] = [
   {
     id: GLOBAL_WEBSITE_SETTINGS_ID,
+    websiteName: "VO DUONG AI",
+    tagline: "Học AI • Xây hệ thống • Tạo tài sản số",
     announcementText: "",
     announcementActive: false,
     defaultHomepageNote:
-      "Chưa có Page nào trong Page Registry (/admin/website/pages) được đánh dấu Homepage chính thức — registry hiện trống (WEB-SPR-002 không seed Page nào).",
+      "\"Trang chủ\" (slug \"/\", pageType Homepage) trong Page Registry (/admin/website/pages) — page_seed_home, nối vào WEBSITE_PAGES_SEED từ WEB-SPR-202.",
     visibilityMode: "Public",
     presentationThemeNote:
       "Tham chiếu Theme Registry của Brand Studio (/admin/brand/theme) — hiện có \"Portal / Admin (Dark, hardcode)\" là theme thật đang chạy.",

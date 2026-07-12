@@ -62,6 +62,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "SEO", href: "/admin/website/seo" },
       { label: "Redirect", href: "/admin/website/redirect" },
       { label: "Global Settings", href: "/admin/website/global-settings" },
+      { label: "Portal Mapping", href: "/admin/website/portal-mapping" },
     ],
   },
   {

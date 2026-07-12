@@ -74,6 +74,25 @@ export function GlobalWebsiteSettingsForm() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Website Name</label>
+          <input
+            value={form.websiteName}
+            onChange={(e) => setForm((s) => ({ ...s, websiteName: e.target.value }))}
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Tagline</label>
+          <input
+            value={form.tagline}
+            onChange={(e) => setForm((s) => ({ ...s, tagline: e.target.value }))}
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
+          />
+        </div>
+      </div>
+
       <div>
         <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
           Website Announcement

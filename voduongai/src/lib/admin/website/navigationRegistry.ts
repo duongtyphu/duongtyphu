@@ -61,11 +61,26 @@ export type NavigationGroup = {
   updatedDate: string;
 };
 
+/**
+ * `icon` (WEB-SPR-202, Task 2 "chỉnh icon") — tên icon Lucide (VD "Home",
+ * "HeartHandshake") hoặc ghi chú icon inline SVG thật, KHÔNG phải component
+ * — Registry chỉ lưu metadata, không render icon thật (không Icon Picker
+ * trực quan). Để trống với mục không có icon thật trong code (VD Header
+ * mainNav — text-only, không icon).
+ *
+ * `visible` (Task 2 "ẩn/hiện") — tách RIÊNG khỏi `status` ("trạng thái
+ * publish"): trước WEB-SPR-202, Registry chỉ có `status`
+ * (Draft/Active/Inactive/Archived) gộp chung 2 khái niệm. Nay `visible`
+ * là toggle ẩn/hiện độc lập (cùng field `visible: boolean` đã dùng ở
+ * WebsitePage — WEB-SPR-002), `status` tiếp tục là vòng đời publish.
+ */
 export type NavigationItem = {
   id: string;
   groupId: string;
   label: string;
   url: string;
+  icon: string;
+  visible: boolean;
   sortOrder: number;
   visibilityRule: VisibilityRule;
   status: NavigationStatus;
@@ -79,7 +94,17 @@ export function emptyNavigationGroup(location: NavigationLocation = "Header"): O
 
 export function emptyNavigationItem(groupId: string): Omit<NavigationItem, "id"> {
   const today = new Date().toISOString().slice(0, 10);
-  return { groupId, label: "", url: "", sortOrder: 0, visibilityRule: "Everyone", status: "Draft", updatedDate: today };
+  return {
+    groupId,
+    label: "",
+    url: "",
+    icon: "",
+    visible: true,
+    sortOrder: 0,
+    visibilityRule: "Everyone",
+    status: "Draft",
+    updatedDate: today,
+  };
 }
 
 export const NAVIGATION_GROUPS_COLLECTION_KEY = "website-navigation-groups";
@@ -145,7 +170,8 @@ export const NAVIGATION_GROUPS_SEED: NavigationGroup[] = [
     id: "navgroup_seed_external_social",
     name: "External — Mạng xã hội",
     location: "External",
-    description: "Link mạng xã hội chính thức — nguồn: src/lib/site.ts (siteConfig.links).",
+    description:
+      "Link mạng xã hội chính thức. Nguồn thật (WEB-SPR-202, sửa lại từ WEB-SPR-201): src/components/site/Footer.tsx render ĐỘNG từ settings.facebookUrl/youtubeUrl/tiktokUrl/zaloUrl (Supabase SiteSettings, Admin-editable qua /admin/settings) — mặc định lấy giá trị từ siteConfig.links (src/lib/site.ts) nếu Founder chưa đổi. Cùng bộ giá trị này còn được render độc lập ở Footer.tsx, /contact, /portal/congdongai, TrustStats.tsx (nhiều nơi hardcode cùng 1 nguồn, không qua Registry này).",
     sortOrder: 6,
     status: "Active",
     updatedDate: "2026-07-12",
@@ -153,40 +179,61 @@ export const NAVIGATION_GROUPS_SEED: NavigationGroup[] = [
 ];
 
 export const NAVIGATION_ITEMS_SEED: NavigationItem[] = [
-  // Main Nav (Header) — src/lib/site.ts mainNav, đúng thứ tự.
-  { id: "navitem_seed_1", groupId: "navgroup_seed_main_nav", label: "Trang chủ", url: "/", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_2", groupId: "navgroup_seed_main_nav", label: "Học viện AI", url: "/portal/hocvienai", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_3", groupId: "navgroup_seed_main_nav", label: "AI Workspace", url: "/portal/aiworkspace", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_4", groupId: "navgroup_seed_main_nav", label: "Blog AI", url: "/blogai", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  // Main Nav (Header) — src/lib/site.ts mainNav, đúng thứ tự. Không có icon
+  // trong code thật (text-only).
+  { id: "navitem_seed_1", groupId: "navgroup_seed_main_nav", label: "Trang chủ", url: "/", icon: "", visible: true, sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_2", groupId: "navgroup_seed_main_nav", label: "Học viện AI", url: "/portal/hocvienai", icon: "", visible: true, sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_3", groupId: "navgroup_seed_main_nav", label: "AI Workspace", url: "/portal/aiworkspace", icon: "", visible: true, sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_4", groupId: "navgroup_seed_main_nav", label: "Blog AI", url: "/blogai", icon: "", visible: true, sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
   // Portal Sidebar — Chính — src/lib/portal/hubs.ts portalNavSections[0].items.
-  { id: "navitem_seed_5", groupId: "navgroup_seed_sidebar_main", label: "Trang chủ Học viện", url: "/portal", sortOrder: 1, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_6", groupId: "navgroup_seed_sidebar_main", label: "Companion", url: "/portal/companion", sortOrder: 2, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_7", groupId: "navgroup_seed_sidebar_main", label: "Hệ tri thức AI (CKOS)", url: "/portal/ckos", sortOrder: 3, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_8", groupId: "navgroup_seed_sidebar_main", label: "Học viện AI", url: "/portal/hocvienai", sortOrder: 4, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_9", groupId: "navgroup_seed_sidebar_main", label: "AI Workspace", url: "/portal/aiworkspace", sortOrder: 5, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_10", groupId: "navgroup_seed_sidebar_main", label: "Dự án & Cơ hội", url: "/portal/duan-cohoi", sortOrder: 6, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_11", groupId: "navgroup_seed_sidebar_main", label: "Premium", url: "/portal/premium", sortOrder: 7, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_12", groupId: "navgroup_seed_sidebar_main", label: "Hành trình của tôi", url: "/portal/hanhtrinhcuatoi", sortOrder: 8, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  // `icon` = tên Lucide THẬT lấy từ navIcons map trong PortalSidebar.tsx —
+  // phát hiện WEB-SPR-202: Registry trước đó không có field icon dù Portal
+  // Sidebar render icon per-item thật, khác Header (text-only).
+  { id: "navitem_seed_5", groupId: "navgroup_seed_sidebar_main", label: "Trang chủ Học viện", url: "/portal", icon: "Home", visible: true, sortOrder: 1, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_6", groupId: "navgroup_seed_sidebar_main", label: "Companion", url: "/portal/companion", icon: "HeartHandshake", visible: true, sortOrder: 2, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_7", groupId: "navgroup_seed_sidebar_main", label: "Hệ tri thức AI (CKOS)", url: "/portal/ckos", icon: "Library", visible: true, sortOrder: 3, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_8", groupId: "navgroup_seed_sidebar_main", label: "Học viện AI", url: "/portal/hocvienai", icon: "GraduationCap", visible: true, sortOrder: 4, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_9", groupId: "navgroup_seed_sidebar_main", label: "AI Workspace", url: "/portal/aiworkspace", icon: "Cpu", visible: true, sortOrder: 5, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_10", groupId: "navgroup_seed_sidebar_main", label: "Dự án & Cơ hội", url: "/portal/duan-cohoi", icon: "Rocket", visible: true, sortOrder: 6, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_11", groupId: "navgroup_seed_sidebar_main", label: "Premium", url: "/portal/premium", icon: "Crown", visible: true, sortOrder: 7, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_12", groupId: "navgroup_seed_sidebar_main", label: "Hành trình của tôi", url: "/portal/hanhtrinhcuatoi", icon: "Compass", visible: true, sortOrder: 8, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
   // Portal Sidebar — Phụ — src/lib/portal/hubs.ts portalNavSections[1].items.
-  { id: "navitem_seed_13", groupId: "navgroup_seed_sidebar_secondary", label: "Sứ mệnh Companion", url: "/portal/su-menh-companion", sortOrder: 1, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_14", groupId: "navgroup_seed_sidebar_secondary", label: "Cộng đồng", url: "/portal/congdongai", sortOrder: 2, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_13", groupId: "navgroup_seed_sidebar_secondary", label: "Sứ mệnh Companion", url: "/portal/su-menh-companion", icon: "Sparkles", visible: true, sortOrder: 1, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_14", groupId: "navgroup_seed_sidebar_secondary", label: "Cộng đồng", url: "/portal/congdongai", icon: "Users", visible: true, sortOrder: 2, visibilityRule: "Logged-in Only", status: "Active", updatedDate: "2026-07-12" },
   // Footer — Học viện AI — src/components/site/Footer.tsx columns[0].links.
   // ⚠️ Phát hiện: link "Hệ tri thức AI (CKOS)" ở Footer trỏ /portal/hetrithucai,
   // KHÁC với /portal/ckos dùng ở Sidebar (navitem_seed_7) — cùng khái niệm CKOS
   // nhưng 2 route khác nhau, củng cố phát hiện đã ghi nhận ở ADM-SPR-200.
-  { id: "navitem_seed_15", groupId: "navgroup_seed_footer_hocvienai", label: "Companion", url: "/portal/companion", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_16", groupId: "navgroup_seed_footer_hocvienai", label: "Hệ tri thức AI (CKOS)", url: "/portal/hetrithucai", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_17", groupId: "navgroup_seed_footer_hocvienai", label: "Kỹ năng AI", url: "/portal/hocvienai", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_18", groupId: "navgroup_seed_footer_hocvienai", label: "Thực hành AI - Dự án & Cơ hội", url: "/portal/duan-cohoi", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_19", groupId: "navgroup_seed_footer_hocvienai", label: "Premium", url: "/portal/premium", sortOrder: 5, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_15", groupId: "navgroup_seed_footer_hocvienai", label: "Companion", url: "/portal/companion", icon: "", visible: true, sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_16", groupId: "navgroup_seed_footer_hocvienai", label: "Hệ tri thức AI (CKOS)", url: "/portal/hetrithucai", icon: "", visible: true, sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_17", groupId: "navgroup_seed_footer_hocvienai", label: "Kỹ năng AI", url: "/portal/hocvienai", icon: "", visible: true, sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_18", groupId: "navgroup_seed_footer_hocvienai", label: "Thực hành AI - Dự án & Cơ hội", url: "/portal/duan-cohoi", icon: "", visible: true, sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_19", groupId: "navgroup_seed_footer_hocvienai", label: "Premium", url: "/portal/premium", icon: "", visible: true, sortOrder: 5, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
   // Footer — Tài nguyên — src/components/site/Footer.tsx columns[1].links.
-  { id: "navitem_seed_20", groupId: "navgroup_seed_footer_tainguyen", label: "Nhật ký học tập", url: "/portal/nhatkyhoctap", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_21", groupId: "navgroup_seed_footer_tainguyen", label: "Hành trình của tôi", url: "/portal/hanhtrinhcuatoi", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_22", groupId: "navgroup_seed_footer_tainguyen", label: "Khu vườn của bạn", url: "/portal/khuvuoncuaban", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_23", groupId: "navgroup_seed_footer_tainguyen", label: "Cộng đồng AI", url: "/portal/congdongai", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  // External — Mạng xã hội — src/lib/site.ts siteConfig.links.
-  { id: "navitem_seed_24", groupId: "navgroup_seed_external_social", label: "Facebook", url: "https://www.facebook.com/duong.vv", sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_25", groupId: "navgroup_seed_external_social", label: "YouTube", url: "https://www.youtube.com/@voduongofficial", sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_26", groupId: "navgroup_seed_external_social", label: "TikTok", url: "https://www.tiktok.com/@vdai_academy", sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
-  { id: "navitem_seed_27", groupId: "navgroup_seed_external_social", label: "Zalo", url: "https://zalo.me/0909150587", sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_20", groupId: "navgroup_seed_footer_tainguyen", label: "Nhật ký học tập", url: "/portal/nhatkyhoctap", icon: "", visible: true, sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_21", groupId: "navgroup_seed_footer_tainguyen", label: "Hành trình của tôi", url: "/portal/hanhtrinhcuatoi", icon: "", visible: true, sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_22", groupId: "navgroup_seed_footer_tainguyen", label: "Khu vườn của bạn", url: "/portal/khuvuoncuaban", icon: "", visible: true, sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_23", groupId: "navgroup_seed_footer_tainguyen", label: "Cộng đồng AI", url: "/portal/congdongai", icon: "", visible: true, sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  // External — Mạng xã hội — src/components/site/Footer.tsx getSocials()
+  // (WEB-SPR-202, sửa lại từ WEB-SPR-201: nguồn thật là Footer.tsx động
+  // theo settings.*Url, không phải literal siteConfig.links). `icon` ghi
+  // chú màu nền + loại icon SVG thật (không lưu SVG thật — Registry chỉ
+  // metadata). Thêm "Email" — bị bỏ sót ở WEB-SPR-201 dù có trong
+  // getSocials() thật.
+  { id: "navitem_seed_24", groupId: "navgroup_seed_external_social", label: "Facebook", url: "https://www.facebook.com/duong.vv", icon: "SVG inline, nền #1877F2", visible: true, sortOrder: 1, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_25", groupId: "navgroup_seed_external_social", label: "YouTube", url: "https://www.youtube.com/@voduongofficial", icon: "SVG inline, nền #FF0000", visible: true, sortOrder: 2, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_26", groupId: "navgroup_seed_external_social", label: "TikTok", url: "https://www.tiktok.com/@vdai_academy", icon: "SVG inline, nền #000000", visible: true, sortOrder: 3, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  { id: "navitem_seed_27", groupId: "navgroup_seed_external_social", label: "Zalo", url: "https://zalo.me/0909150587", icon: "SVG chữ \"Z\", nền #0068FF", visible: true, sortOrder: 4, visibilityRule: "Everyone", status: "Active", updatedDate: "2026-07-12" },
+  {
+    id: "navitem_seed_28",
+    groupId: "navgroup_seed_external_social",
+    label: "Email",
+    url: "mailto:{settings.adminEmailNotify}",
+    icon: "SVG phong bì, nền rgba(255,255,255,0.12)",
+    visible: true,
+    sortOrder: 5,
+    visibilityRule: "Everyone",
+    status: "Active",
+    updatedDate: "2026-07-12",
+  },
 ];

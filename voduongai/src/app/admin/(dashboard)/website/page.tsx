@@ -2,10 +2,10 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { FileText, Navigation, Home, Rocket, File, LayoutGrid, Search, ArrowRightLeft, Settings } from "lucide-react";
+import { FileText, Navigation, Home, Rocket, File, LayoutGrid, Search, ArrowRightLeft, Settings, Waypoints } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
 import { useCollection } from "@/lib/admin/store";
-import { WEBSITE_PAGES_COLLECTION_KEY, type WebsitePage } from "@/lib/admin/website/pageRegistry";
+import { WEBSITE_PAGES_COLLECTION_KEY, WEBSITE_PAGES_SEED, type WebsitePage } from "@/lib/admin/website/pageRegistry";
 import {
   NAVIGATION_GROUPS_COLLECTION_KEY,
   NAVIGATION_ITEMS_COLLECTION_KEY,
@@ -30,6 +30,11 @@ import {
   GLOBAL_WEBSITE_SETTINGS_SEED,
   type GlobalWebsiteSettings,
 } from "@/lib/admin/website/globalSettings";
+import {
+  HOMEPAGE_SECTIONS_COLLECTION_KEY,
+  HOMEPAGE_SECTIONS_SEED,
+  type HomepageSection,
+} from "@/lib/admin/website/homepageSectionRegistry";
 
 const QUICK_ACTIONS = [
   { label: "Pages", href: "/admin/website/pages", icon: FileText },
@@ -41,6 +46,7 @@ const QUICK_ACTIONS = [
   { label: "SEO", href: "/admin/website/seo", icon: Search },
   { label: "Redirect", href: "/admin/website/redirect", icon: ArrowRightLeft },
   { label: "Global Settings", href: "/admin/website/global-settings", icon: Settings },
+  { label: "Portal Mapping", href: "/admin/website/portal-mapping", icon: Waypoints },
 ];
 
 function StatCard({ label, value }: { label: string; value: number }) {
@@ -71,7 +77,7 @@ type RecentChange = { key: string; title: string; section: string; date: string 
  * thái Review.
  */
 export default function WebsiteDashboardPage() {
-  const pages = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, []);
+  const pages = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, WEBSITE_PAGES_SEED);
   const navGroups = useCollection<NavigationGroup>(NAVIGATION_GROUPS_COLLECTION_KEY, NAVIGATION_GROUPS_SEED);
   const navItems = useCollection<NavigationItem>(NAVIGATION_ITEMS_COLLECTION_KEY, NAVIGATION_ITEMS_SEED);
   const sections = useCollection<SharedSection>(SHARED_SECTIONS_COLLECTION_KEY, SHARED_SECTIONS_SEED);
@@ -81,10 +87,11 @@ export default function WebsiteDashboardPage() {
     GLOBAL_WEBSITE_SETTINGS_COLLECTION_KEY,
     GLOBAL_WEBSITE_SETTINGS_SEED
   );
+  const homeSections = useCollection<HomepageSection>(HOMEPAGE_SECTIONS_COLLECTION_KEY, HOMEPAGE_SECTIONS_SEED);
 
   const ready =
     pages.ready && navGroups.ready && navItems.ready && sections.ready && seoEntries.ready && redirects.ready &&
-    globalSettings.ready;
+    globalSettings.ready && homeSections.ready;
 
   const stats = useMemo(() => {
     const all: { status: string }[] = [
@@ -95,12 +102,13 @@ export default function WebsiteDashboardPage() {
       ...seoEntries.items,
       ...redirects.items,
       ...globalSettings.items,
+      ...homeSections.items,
     ];
     const draft = all.filter((i) => i.status === "Draft").length;
     const published = all.filter((i) => i.status === "Published" || i.status === "Active").length;
     const pendingReview = [...pages.items, ...sections.items].filter((i) => i.status === "Review").length;
     return { totalItems: all.length, draft, published, pendingReview };
-  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items]);
+  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items, homeSections.items]);
 
   const recentChanges = useMemo<RecentChange[]>(() => {
     const combined: RecentChange[] = [
@@ -116,9 +124,10 @@ export default function WebsiteDashboardPage() {
         date: r.updatedDate,
       })),
       ...globalSettings.items.map((g) => ({ key: g.id, title: "Global Settings", section: "Global Settings", date: g.updatedDate })),
+      ...homeSections.items.map((h) => ({ key: h.id, title: h.label || "(chưa đặt tên)", section: "Homepage Section", date: h.updatedDate })),
     ];
     return combined.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
-  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items]);
+  }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items, homeSections.items]);
 
   return (
     <WebsiteWorkspaceShell>
@@ -127,7 +136,8 @@ export default function WebsiteDashboardPage() {
           <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-white/40">
             Website Overview
             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold normal-case text-white/40">
-              Tính từ Page/Navigation/Shared Section/SEO/Redirect/Global Settings Registry (WEB-SPR-201: đủ 6/6)
+              Tính từ Page/Navigation/Shared Section/SEO/Redirect/Global Settings/Homepage Section Registry
+              (WEB-SPR-202: đủ 7/7, Page Registry nay có 9 trang thật)
             </span>
           </p>
           {!ready ? (

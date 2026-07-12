@@ -89,6 +89,13 @@ export function NavigationRegistry() {
     push("Đã xóa Group và toàn bộ Item bên trong.", "info");
     setDeleteGroupId(null);
   }
+  function moveGroup(group: NavigationGroup, direction: -1 | 1) {
+    const idx = sortedGroups.findIndex((g) => g.id === group.id);
+    const neighbor = sortedGroups[idx + direction];
+    if (!neighbor) return;
+    updateGroup(group.id, { sortOrder: neighbor.sortOrder });
+    updateGroup(neighbor.id, { sortOrder: group.sortOrder });
+  }
 
   // ── Item modal state ──
   const [itemModalOpen, setItemModalOpen] = useState(false);
@@ -127,6 +134,16 @@ export function NavigationRegistry() {
     removeItem(deleteItemId);
     push("Đã xóa.", "info");
     setDeleteItemId(null);
+  }
+  function moveItem(item: NavigationItem, direction: -1 | 1) {
+    const idx = groupItems.findIndex((it) => it.id === item.id);
+    const neighbor = groupItems[idx + direction];
+    if (!neighbor) return;
+    updateItem(item.id, { sortOrder: neighbor.sortOrder });
+    updateItem(neighbor.id, { sortOrder: item.sortOrder });
+  }
+  function toggleItemVisible(item: NavigationItem) {
+    updateItem(item.id, { visible: !item.visible });
   }
 
   return (
@@ -188,6 +205,22 @@ export function NavigationRegistry() {
                     <td className="px-4 py-3 text-white/60">{itemCountFor(group.id)}</td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
                       <button
+                        onClick={() => moveGroup(group, -1)}
+                        disabled={sortedGroups[0]?.id === group.id}
+                        title="Đưa lên trên"
+                        className="mr-1 rounded-lg border border-white/10 px-2 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        onClick={() => moveGroup(group, 1)}
+                        disabled={sortedGroups[sortedGroups.length - 1]?.id === group.id}
+                        title="Đưa xuống dưới"
+                        className="mr-1.5 rounded-lg border border-white/10 px-2 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↓
+                      </button>
+                      <button
                         onClick={() => setSelectedGroupId(group.id)}
                         className="mr-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10"
                       >
@@ -245,9 +278,10 @@ export function NavigationRegistry() {
                 <tr className="border-b border-white/10 text-white/40">
                   <th className="px-4 py-3 font-semibold">Label</th>
                   <th className="px-4 py-3 font-semibold">URL</th>
+                  <th className="px-4 py-3 font-semibold">Icon</th>
+                  <th className="px-4 py-3 font-semibold">Ẩn/Hiện</th>
                   <th className="px-4 py-3 font-semibold">Visibility Rule</th>
                   <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold">Sort Order</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
@@ -260,12 +294,38 @@ export function NavigationRegistry() {
                       </button>
                     </td>
                     <td className="px-4 py-3 text-white/60">{item.url || "—"}</td>
+                    <td className="px-4 py-3 text-white/60">{item.icon || "—"}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => toggleItemVisible(item)}
+                        className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                          item.visible ? "bg-emerald-500/15 text-emerald-300" : "bg-white/5 text-white/40"
+                        }`}
+                      >
+                        {item.visible ? "Hiện" : "Ẩn"}
+                      </button>
+                    </td>
                     <td className="px-4 py-3 text-white/60">{item.visibilityRule}</td>
                     <td className="px-4 py-3">
                       <Badge tone={STATUS_TONE[item.status] ?? "gray"}>{item.status}</Badge>
                     </td>
-                    <td className="px-4 py-3 text-white/60">{item.sortOrder}</td>
                     <td className="px-4 py-3 text-right whitespace-nowrap">
+                      <button
+                        onClick={() => moveItem(item, -1)}
+                        disabled={groupItems[0]?.id === item.id}
+                        title="Đưa lên trên"
+                        className="mr-1 rounded-lg border border-white/10 px-2 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        onClick={() => moveItem(item, 1)}
+                        disabled={groupItems[groupItems.length - 1]?.id === item.id}
+                        title="Đưa xuống dưới"
+                        className="mr-1.5 rounded-lg border border-white/10 px-2 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30"
+                      >
+                        ↓
+                      </button>
                       <button
                         onClick={() => openEditItem(item)}
                         className="mr-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10"
@@ -398,6 +458,26 @@ export function NavigationRegistry() {
               className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-brand-blue focus:outline-none"
             />
           </div>
+          <div>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
+              Icon (tên Lucide, VD &quot;Home&quot; — để trống nếu không có icon)
+            </label>
+            <input
+              value={itemForm.icon}
+              onChange={(e) => setItemForm((s) => ({ ...s, icon: e.target.value }))}
+              placeholder="Home"
+              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-brand-blue focus:outline-none"
+            />
+          </div>
+          <label className="flex items-center gap-2 text-sm text-white/80">
+            <input
+              type="checkbox"
+              checked={itemForm.visible}
+              onChange={(e) => setItemForm((s) => ({ ...s, visible: e.target.checked }))}
+              className="h-4 w-4 rounded border-white/20 bg-white/5"
+            />
+            Hiển thị (ẩn/hiện — tách riêng khỏi Status)
+          </label>
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Visibility Rule</label>
             <select

@@ -539,3 +539,106 @@ Thêm `globalSettings` vào tổng hợp số liệu (`stats`/`recentChanges`) �
 - SEO/Global Settings vs mục độc lập cấp cao nhất — vẫn treo từ WEB-SPR-001.
 - Banner vs Announcement — vẫn treo từ WEB-SPR-004.
 - **Mới:** `/portal/hetrithucai` vs `/portal/ckos` — nay xác nhận bất nhất tồn tại NGAY TRONG Footer thật (không chỉ đơn lẻ), cần Founder quyết định route nào là chính thức trước khi Website Workspace tự tin khẳng định "Navigation phản ánh đúng Portal thật".
+
+---
+
+# WEB-SPR-202 — Website Workspace Management Foundation (EPIC-02 Phase 2, brief IMP-WEB-202)
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.** Sprint đầu tiên tuân thủ **PMO Directive FOUNDER-001** (`docs/admin/PMO_DIRECTIVE_FOUNDER-001_PORTAL_COVERAGE.md`) — audit trực tiếp Portal trước khi kết luận, không dựa vào tài liệu/trí nhớ cũ.
+
+## Phát hiện P0 mở đầu Sprint
+
+Audit trực tiếp `src/components/admin/website/PageRegistry.tsx` và `PageOverviewStats.tsx` phát hiện: **từ WEB-SPR-002 tới nay, `WEBSITE_PAGES_SEED` không tồn tại** — cả 2 component gọi `useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, [])`, seed rỗng. `/admin/website/pages`, `/homepage`, `/landing-pages`, `/static-pages` hiển thị bảng RỖNG kể từ khi xây — vi phạm trực tiếp Acceptance "Founder nhìn thấy toàn bộ Website" mà chính brief WEB-SPR-001/002 đã đặt ra. `globalSettings.ts`'s `defaultHomepageNote` thậm chí tự ghi nhận: *"Chưa có Page nào... registry hiện trống"* — gap đã được biết nhưng chưa Sprint nào quay lại sửa. Đây là ưu tiên số 1 của Sprint này.
+
+## 1. Website Registry (Task 1) — sửa lỗ hổng P0
+
+`src/lib/admin/website/pageRegistry.ts`: thêm `WEBSITE_PAGES_SEED`, **9 trang thật** audit trực tiếp `src/app/*` (không kể `/portal/*`, `/admin/*`, `/api/*`, `/auth/*`, `/login`, `/reset-password` — ngoài phạm vi Website Presentation Layer công khai):
+- Homepage (1): `/`.
+- Static Pages (7): `/about`, `/contact`, `/disclaimer`, `/privacy`, `/refund-policy`, `/terms`, `/blogai` (trang chỉ mục — bài viết `/blogai/[slug]` thuộc Content Registry).
+- Landing Page (0 thật — 1 entry gap): không tìm thấy route Landing Page/campaign nào trong `src/app/*`.
+
+Wire `PageRegistry.tsx`, `PageOverviewStats.tsx`, và Website Dashboard (`page.tsx`) đọc từ `WEBSITE_PAGES_SEED` thay vì `[]`.
+
+## 2. Navigation Management (Task 2) — Icon, Ẩn/hiện, đổi thứ tự
+
+Audit `PortalSidebar.tsx` xác nhận Portal Sidebar render icon THẬT per-item (`navIcons: Record<string, LucideIcon>`, 10 icon: Home/HeartHandshake/Cpu/Library/GraduationCap/Rocket/Crown/Compass/Sparkles/Users) — Registry trước đó không có field `icon`. Thêm `icon: string` + `visible: boolean` (tách khỏi `status`, cùng pattern `WebsitePage.visible`) vào `NavigationItem`. Seed 10 icon Sidebar đúng tên Lucide thật.
+
+**Phát hiện thêm khi audit `Footer.tsx`:** External/Social group (WEB-SPR-201) seed từ `siteConfig.links` — thực tế Footer render ĐỘNG từ `settings.facebookUrl/youtubeUrl/tiktokUrl/zaloUrl` (Supabase, Admin-editable qua `/admin/settings`, mặc định = `siteConfig.links`) và có **5 link, không phải 4** — bỏ sót "Email" (`mailto:{settings.adminEmailNotify}`). Đã sửa mô tả Group + thêm `navitem_seed_28` (Email) + ghi chú icon/màu nền thật (VD Facebook `#1877F2`) cho cả 5 item.
+
+`NavigationRegistry.tsx`: thêm cột Icon + toggle Ẩn/Hiện (button riêng, không qua Status dropdown) + nút ↑/↓ đổi thứ tự (swap `sortOrder` với hàng kề, không kéo-thả) cho cả Group và Item.
+
+## 3. Homepage Management (Task 3) — Section → Block → Content → CTA → Visibility
+
+Audit trực tiếp `src/app/page.tsx` xác nhận Homepage có **11 section thật** theo đúng thứ tự render: Hero → PortalPreview → FreeResources → ToolsIUse → Problem → Solution → AcademyTeaser → TrustStats → Ecosystem → FounderStory → FinalCTA. Shared Section Registry (WEB-SPR-004) chỉ có 9 CATEGORY minh hoạ (không phải danh sách đầy đủ theo trang) — không đáp ứng yêu cầu "Founder thấy toàn bộ cấu trúc Section của Homepage".
+
+Xây mới `src/lib/admin/website/homepageSectionRegistry.ts` + `HomepageSectionRegistry.tsx` — entity `HomepageSection` riêng (không gộp Shared Section): `componentName`, `label`, `hasCta`, `sharedSectionId` (liên kết một chiều khi có Shared Section tương ứng — 3/11: Hero/AcademyTeaser/FounderStory/FinalCTA), `visible`, `sortOrder`, `status`. Reorder ↑/↓, toggle Ẩn/Hiện, CRUD đầy đủ. Wire vào `/admin/website/homepage` (dưới Page Registry đã lọc Homepage).
+
+## 4-5. Landing Page Registry + Static Page Registry (Task 4-5)
+
+Không cần component mới — dùng chung `PageRegistry` (`lockedPageType`) đã có từ WEB-SPR-002, nay có dữ liệu thật nhờ Task 1.
+
+## 6. Shared Section Registry (Task 6)
+
+Đã audit — 9 category hiện có (Hero/CTA/Banner/Feature/Founder/Testimonial/FAQ/Footer/Announcement) bao phủ đủ 6 mục brief liệt kê (Hero/CTA/FAQ/Founder Section/Footer/Announcement). Không cần thay đổi cấu trúc.
+
+## 7. Website Settings (Task 7)
+
+`globalSettings.ts`: thêm `websiteName`/`tagline` (đúng 5 mục brief: Website Name/Tagline/Default Homepage/Announcement/Maintenance — Maintenance = `visibilityMode: "Maintenance Mode"` đã có). Seed giá trị thật từ `siteConfig` (`src/lib/site.ts`). `GlobalWebsiteSettingsForm.tsx` thêm 2 input tương ứng. Đồng thời sửa `defaultHomepageNote` (không còn mô tả registry rỗng — nay trỏ đúng `page_seed_home`).
+
+## 8. Portal Mapping (Task 8) — mục IA mới
+
+Brief yêu cầu "Mỗi Website Object phải hiển thị Current Route → Workspace Owner → Publish Status → Last Updated" — không map vào 1 trong 10 mục IA cũ, nên thêm mục thứ 11 "Portal Mapping" (`WEBSITE_WORKSPACE_SECTIONS`, additive, không đổi 10 mục đã khoá).
+
+`PortalMappingTable.tsx` — **VIEW derive, không phải Registry mới** (đúng FOUNDER-001 Nguyên tắc 5): tổng hợp Page + Navigation Item + Shared Section + Homepage Section (4 Registry đã tồn tại) thành 1 bảng, filter theo loại, link "Quản lý" trỏ về đúng Registry gốc để sửa (không sửa trực tiếp trên bảng mapping).
+
+## Shared Structure (nguyên tắc xuyên suốt sprint)
+
+- `visible: boolean` tách khỏi `status` áp dụng nhất quán cho Navigation Item và Homepage Section — cùng pattern `WebsitePage.visible` đã có từ WEB-SPR-002.
+- Reorder ↑/↓ (swap `sortOrder`) là pattern mới, dùng cho Navigation Group/Item và Homepage Section — không kéo-thả, không thư viện mới.
+- Portal Mapping không lưu dữ liệu riêng — chỉ derive, đúng nguyên tắc "Portal Management không sở hữu dữ liệu nghiệp vụ mới" (FOUNDER-001 #5).
+
+## Files Changed
+
+**Lib (mới):** `src/lib/admin/website/homepageSectionRegistry.ts`
+**Lib (sửa):** `pageRegistry.ts` (thêm SEED), `navigationRegistry.ts` (icon/visible fields + seed sửa External), `globalSettings.ts` (websiteName/tagline), `navigation.ts` (thêm Portal Mapping)
+**Components (mới):** `HomepageSectionRegistry.tsx`, `PortalMappingTable.tsx`
+**Components (sửa):** `NavigationRegistry.tsx` (icon/visible/reorder UI), `PageRegistry.tsx`, `PageOverviewStats.tsx` (wire SEED), `GlobalWebsiteSettingsForm.tsx` (2 field mới), `WebsiteWorkspaceShell.tsx` (11/11)
+**Routes (mới):** `src/app/admin/(dashboard)/website/portal-mapping/page.tsx`
+**Routes (sửa):** `website/page.tsx` (Dashboard, wire SEED + Homepage Section stats), `website/homepage/page.tsx` (thêm HomepageSectionRegistry), `website/navigation/page.tsx` (mô tả cập nhật)
+**Sửa khác:** `src/lib/admin/nav.ts`, `src/components/admin/AdminSidebar.tsx` (icon Portal Mapping)
+**Docs:** `docs/admin/workspaces/website-workspace.md` (Version 1.1 → 1.2), `docs/admin/WEBSITE_WORKSPACE_FOUNDATION.md` (file này)
+**Không đổi:** Brand Studio, Media Center, CKOS, mọi Workspace khác.
+
+## Verification
+
+- **Lint:** phát hiện 2 vấn đề thật (JSX quote chưa escape, biến `group` khai báo nhưng chưa dùng ở `PortalMappingTable.tsx`) — sửa bằng cách dùng `group.location` để làm rõ tên Navigation Item thay vì xoá biến. Sau sửa: sạch, 5 warning `<img>` có từ trước.
+- **Type-check:** sạch.
+- **Build:** thành công — đủ 11 route `/admin/website/*` (thêm `/portal-mapping`).
+- **Test:** 139/139 pass, không regression.
+
+## Self-check Nguyên tắc 6 (PMO Directive FOUNDER-001, bắt buộc)
+
+**Câu hỏi:** "Founder có thể quản lý toàn bộ nội dung của Portal hiện tại mà không cần sửa code hay chưa?"
+
+**Đã đạt (không cần sửa code):**
+- Xem/sửa metadata 9 trang thật (Title/Slug/Status/Visibility/SEO) — Pages/Homepage/Landing Pages/Static Pages.
+- Xem/sửa/đổi thứ tự/ẩn-hiện/đổi icon/route/trạng thái publish của Navigation (Header/Sidebar/Footer/External).
+- Xem/đổi thứ tự/ẩn-hiện 11 section Homepage + liên kết nội dung Shared Section tương ứng.
+- Sửa Website Name/Tagline/Announcement/Default Homepage/Maintenance qua Global Settings.
+- Tra cứu tổng hợp mọi Website Object qua Portal Mapping.
+
+**CHƯA đạt (còn cần sửa code — ghi nhận trung thực, không che giấu):**
+1. **Nội dung/bố cục BÊN TRONG mỗi Homepage section** (VD copy thật của `PortalPreview`/`Problem`/`Solution`/`Ecosystem`) — chỉ 4/11 section có Shared Section liên kết quản lý được copy; 7 section còn lại vẫn 100% hardcode trong `src/components/home/*.tsx`. Nằm ngoài phạm vi Foundation này ("Không triển khai: Visual Builder").
+2. **Nội dung trang pháp lý** (Terms/Privacy/Refund/Disclaimer) — cố ý giữ ngoài CRUD tự do (Mục 4 WCS, khuyến nghị từ PORTAL_COVERAGE_AUDIT.md §5), chỉ metadata quản lý được.
+3. **Bài viết Blog AI** (`/blogai/[slug]`) — thuộc Content Registry (Workspace khác), Website Workspace chỉ đăng ký trang chỉ mục.
+4. **Icon/màu thật của social link** (Footer.tsx SVG inline) — Registry chỉ có ghi chú mô tả, không đổi được icon/màu thật qua Admin (chỉ đổi được URL qua System Settings).
+5. **Chưa nối Portal đọc dữ liệu thật từ Registry** (Consumer = 0, xem WCS Mục 7) — mọi thay đổi trong Admin chưa phản ánh lên site công khai; đây là "Website Publish Bridge" của một Sprint kỹ thuật tương lai.
+
+**Kết luận:** CHƯA đạt 100% theo đúng tinh thần Nguyên tắc 6 — Sprint này thu hẹp đáng kể khoảng cách (đặc biệt xoá lỗ hổng P0 Page Registry rỗng) nhưng 5 điểm trên vẫn cần sửa bằng code hoặc thuộc phạm vi cố ý loại trừ (pháp lý). Không tự nhận "hoàn thành 100%" khi chưa đúng — báo cáo trung thực theo đúng yêu cầu PMO Directive.
+
+## Cần PMO/Founder quyết định (tổng hợp)
+
+1. **2 ảnh founder / bất nhất route CKOS** — vẫn treo từ các Sprint trước, không mới.
+2. **Landing Pages Registry sẵn sàng nhưng Portal chưa có route nào** — có nằm trong roadmap nội dung gần để ưu tiên xây không?
+3. **7/11 Homepage section chưa có Shared Section liên kết** — có cần mở rộng Shared Section category để phủ hết, hay giữ nguyên hiện trạng (chỉ quản lý thứ tự/ẩn-hiện, không quản lý copy)?
+4. **Consumer = 0 kéo dài qua nhiều Sprint** — có nên ưu tiên 1 Sprint "Website Publish Bridge" tiếp theo thay vì tiếp tục mở rộng Registry?

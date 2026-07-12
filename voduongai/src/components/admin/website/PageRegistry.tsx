@@ -9,6 +9,7 @@ import {
   PAGE_LIFECYCLE_STATUSES,
   PAGE_TYPES,
   WEBSITE_PAGES_COLLECTION_KEY,
+  WEBSITE_PAGES_SEED,
   emptyWebsitePage,
   type WebsitePage,
   type PageType,
@@ -41,7 +42,7 @@ type DetailTab = (typeof DETAIL_TABS)[number];
  * per Task 6.
  */
 export function PageRegistry({ lockedPageType }: { lockedPageType?: PageType }) {
-  const { items, ready, add, update, remove } = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, []);
+  const { items, ready, add, update, remove } = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, WEBSITE_PAGES_SEED);
   const { push } = useAdminToast();
 
   const [query, setQuery] = useState("");

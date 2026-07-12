@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useCollection } from "@/lib/admin/store";
-import { WEBSITE_PAGES_COLLECTION_KEY, type WebsitePage, type PageType } from "@/lib/admin/website/pageRegistry";
+import { WEBSITE_PAGES_COLLECTION_KEY, WEBSITE_PAGES_SEED, type WebsitePage, type PageType } from "@/lib/admin/website/pageRegistry";
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
@@ -15,12 +15,13 @@ function StatCard({ label, value }: { label: string; value: number }) {
 
 /**
  * Page Overview (Task 3) — Draft/Published/Archived/Recently Updated,
- * computed from the real Page Registry collection (starts empty, so
- * "Mock Data được phép" is satisfied by simply not seeding fake rows
- * rather than hardcoding fake counts).
+ * computed from the real Page Registry collection. WEB-SPR-202: nối vào
+ * `WEBSITE_PAGES_SEED` (9 trang thật audit từ src/app/*) — trước đó seed
+ * rỗng khiến số liệu luôn = 0, không phản ánh Website thật (xem báo cáo
+ * WEB-SPR-202).
  */
 export function PageOverviewStats({ lockedPageType }: { lockedPageType?: PageType }) {
-  const { items, ready } = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, []);
+  const { items, ready } = useCollection<WebsitePage>(WEBSITE_PAGES_COLLECTION_KEY, WEBSITE_PAGES_SEED);
 
   const scoped = useMemo(
     () => (lockedPageType ? items.filter((p) => p.pageType === lockedPageType) : items),
