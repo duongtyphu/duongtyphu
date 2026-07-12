@@ -184,3 +184,64 @@ Không có Visual Builder, Block Editor, Section Editor, Landing Builder, hay AI
 **Nhắc lại 2 điểm chưa xử lý từ WEB-SPR-001** (SEO và Global Settings trùng tên với mục cấp cao nhất sẵn có) — vẫn chưa được PMO quyết định, chưa ảnh hưởng gì tới WEB-SPR-002 vì sprint này không đụng 2 khu vực đó, nhưng cần giải quyết trước khi Sprint nào đó động vào SEO/Global Settings thật.
 
 **Gợi ý cho WEB-SPR-003** (không phải quyết định, chỉ là input): registry hiện chưa seed Page nào — khi PMO sẵn sàng, có thể cân nhắc tạo sẵn 1 bản ghi "Trang chủ" (Homepage) khớp với Portal thật để Dashboard/Overview có số liệu khác 0 ngay từ đầu, thay vì registry trống hoàn toàn.
+
+---
+---
+
+# WEB-SPR-003 — Website Navigation Management Foundation
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+Objective: xây **Navigation Management Foundation** — **không Menu Builder, không Drag & Drop** (và không Mega Menu Builder/Dynamic Menu Engine/AI Menu/Permission Engine, theo đúng brief). Foundation quản lý cấu trúc Navigation Group + Navigation Item bằng CRUD thường và field số `Sort Order` nhập tay, không có UI kéo-thả nào.
+
+## 1. Navigation Registry (Task 1)
+
+`src/lib/admin/website/navigationRegistry.ts` — data model chung, dùng cơ chế `useCollection()` hai tầng có sẵn (tầng localStorage — `website-navigation-groups`/`website-navigation-items` chưa nằm trong `SUPABASE_COLLECTIONS`, cùng bridge pattern đã dùng cho Website Page Registry ở WEB-SPR-002).
+
+## 2. Navigation Group (Task 2)
+
+`NavigationGroup`: `id, name, location (Header|Sidebar), description, sortOrder, status, updatedDate`. Một Group tương ứng một menu thật — VD "Main Nav (Header)" tương ứng `mainNav` trong `src/lib/site.ts`, "Portal Sidebar — Chính/Phụ" tương ứng 2 nhóm trong `portalNavSections` (`src/lib/portal/hubs.ts`).
+
+**Location chỉ có `Header`/`Sidebar`** — không thêm `Footer`, vì link Footer đã thuộc "Shared Sections" theo `docs/admin/workspaces/website-workspace.md` §3 (mục 7) — tránh chồng lấn phạm vi giữa 2 nhóm IA.
+
+## 3. Navigation Item (Task 3)
+
+`NavigationItem`: `id, groupId, label, url, sortOrder, visibilityRule, status, updatedDate`. Phẳng, không có cấp con/sub-menu (đúng "không Mega Menu Builder").
+
+## 4. Visibility Rule Foundation (Task 4)
+
+Field `visibilityRule` (`Everyone` / `Logged-in Only` / `Admin Only`) trên mỗi Item — **chỉ là metadata mô tả ý định hiển thị, không có Permission Engine đứng sau thực thi** (không route Portal nào đọc/kiểm tra field này). Ghi rõ trực tiếp trong UI (`NavigationRegistry.tsx`) để tránh hiểu nhầm đây là access control đang hoạt động — đúng "không triển khai Permission Engine" trong brief.
+
+## 5. Navigation Preview (Task 5)
+
+`src/components/admin/website/NavigationPreview.tsx` — bản xem thử **chỉ đọc**: Header hiển thị dạng hàng ngang, Sidebar hiển thị dạng danh sách dọc theo từng Group (có dấu ngăn cách giữa các Group, giống thật), chỉ lấy Group/Item ở trạng thái `Active`. Không kéo-thả, không sửa trực tiếp trên Preview. Đây **không phải Portal thật** — Portal công khai vẫn đọc trực tiếp từ `site.ts`/`hubs.ts`, Registry này Consumer = 0 (giống Page Registry ở WEB-SPR-002/website-workspace.md §7).
+
+## 6. Navigation Status (Task 6)
+
+`NAVIGATION_STATUSES = ["Draft", "Active", "Inactive", "Archived"]` — vòng đời **riêng** của Navigation, khác 5 trạng thái Draft→Review→Approved→Published→Archived của Website Page (WEB-SPR-002), vì Navigation là kết cấu điều hướng không cần approval nội dung nhiều bước. Dùng lại đúng 4 tone đã có sẵn trong `Badge.tsx` (`Draft`/`Active`/`Inactive`/`Archived`) — **không cần thêm tone mới**, không đụng `STATUS_TONE`.
+
+## 7. Mock Data (Task 7)
+
+Seed trong `navigationRegistry.ts` (`NAVIGATION_GROUPS_SEED`/`NAVIGATION_ITEMS_SEED`) sao chép **đúng nội dung menu thật** đang chạy trên Portal — 4 mục `mainNav` (Header) và 10 mục `portalNavSections` (Sidebar, tách 2 Group "Chính"/"Phụ" đúng cấu trúc code hiện tại có dấu ngăn cách) — không phải dữ liệu bịa/test ngẫu nhiên. Quyết định này theo đúng lưu ý của Founder trước đó ("Trang Admin mới phải bám sát portal đang có ở hiện tại! Dữ liệu cũ của mình chỉ là tự test chứ chưa phải là thật") — Registry khởi tạo bằng bản sao có thể chỉnh sửa của menu thật, không phải placeholder vô nghĩa.
+
+## Files Changed
+
+- `src/lib/admin/website/navigationRegistry.ts` — mới, data model + seed
+- `src/components/admin/website/NavigationRegistry.tsx` — mới, CRUD Group + Item (2 bảng, chọn Group để quản lý Item của Group đó)
+- `src/components/admin/website/NavigationPreview.tsx` — mới, Preview chỉ đọc
+- `src/app/admin/(dashboard)/website/navigation/page.tsx` — thay `WorkspaceSectionFoundation` placeholder bằng `NavigationRegistry` + `NavigationPreview` thật
+
+**Không đổi:** Pages/Homepage/Landing Pages/Static Pages (WEB-SPR-002), Dashboard/Shared Sections/SEO/Redirect/Global Settings (vẫn Foundation placeholder). `nav.ts`/`AdminSidebar.tsx` không đổi (route Navigation đã tồn tại từ WEB-SPR-001). Mọi Workspace khác, Portal, database — không đổi. `src/lib/site.ts`/`src/lib/portal/hubs.ts` (menu thật của Portal) **không bị đụng vào** — chỉ đọc để sao chép làm mock data, Registry chưa nối dây ngược lại Portal.
+
+## Verification
+
+- **Lint (`npm run lint`):** phát hiện 1 lỗi thật (`react-hooks/set-state-in-effect` — gọi `setState` đồng bộ trong `useEffect` để chọn Group mặc định đầu tiên), đã sửa bằng cách suy ra `selectedGroupId` trực tiếp trong lúc render (`explicitSelectedGroupId ?? sortedGroups[0]?.id ?? null`) thay vì effect. Sau khi sửa: 0 lỗi, 5 warning có từ trước (không liên quan).
+- **Type-check (`npx tsc --noEmit`):** sạch.
+- **Build (`npm run build`):** thành công.
+- **Test (`npm run test`):** 139/139 pass, không regression.
+
+## WEB-SPR-004 Readiness
+
+**SẴN SÀNG.** Navigation Foundation hoàn chỉnh (Registry + Preview + Status + Visibility Rule metadata), Shared Structure nhất quán với Page Registry (cùng dùng `useCollection`, cùng pattern Badge/Modal/ConfirmDialog), không ảnh hưởng Workspace nào khác, build/test đều pass.
+
+**Nhắc lại các điểm chưa xử lý:** 2 điểm SEO/Global Settings (từ WEB-SPR-001) vẫn chưa được PMO quyết định. Ngoài ra, Navigation Registry hiện tách biệt hoàn toàn với `site.ts`/`hubs.ts` — khi nào Portal thật sự đọc menu từ Registry này (thay vì hardcode) là quyết định của một Sprint "Website Publish Bridge" tương lai, chưa nằm trong phạm vi WEB-SPR-003.

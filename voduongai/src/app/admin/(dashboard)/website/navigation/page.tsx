@@ -1,21 +1,24 @@
-import { Navigation } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
-import { WorkspaceSectionFoundation } from "@/components/admin/website/WorkspaceSectionFoundation";
+import { NavigationRegistry } from "@/components/admin/website/NavigationRegistry";
+import { NavigationPreview } from "@/components/admin/website/NavigationPreview";
 
 export default function WebsiteNavigationPage() {
   return (
     <WebsiteWorkspaceShell>
-      <WorkspaceSectionFoundation
-        icon={Navigation}
-        title="Navigation"
-        scope="Quản lý menu điều hướng của trang web công khai và sidebar Portal — hiện cả hai đều là mảng hardcode trong code, cần deploy để đổi một mục menu."
-        willManage={[
-          "Menu header trang công khai (mainNav — Trang chủ/Học viện AI/AI Workspace/Blog AI...)",
-          "Sidebar Portal (portalNavSections — 10 mục hiện có)",
-          "Thêm/sửa/xóa/sắp xếp mục menu, không cần deploy code",
-        ]}
-        portalSource="src/lib/site.ts (mainNav, menu công khai) và src/lib/portal/hubs.ts (portalNavSections, sidebar Portal) — cả hai đều hardcoded TypeScript, không có bảng dữ liệu. Xem docs/admin/PORTAL_COVERAGE_AUDIT.md §1.2."
-      />
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-bold text-white">Navigation</h2>
+          <p className="mt-1 text-sm text-white/60">
+            Navigation Registry — quản lý Group (Header/Sidebar) và Item bên trong (WEB-SPR-003 Foundation). Sắp xếp
+            bằng &quot;Sort Order&quot; nhập tay, không có Menu Builder/kéo-thả. Dữ liệu khởi tạo bên dưới sao chép đúng
+            menu THẬT đang chạy trên Portal (src/lib/site.ts &quot;mainNav&quot;, src/lib/portal/hubs.ts
+            &quot;portalNavSections&quot;) — chỉnh sửa ở đây hiện CHƯA ảnh hưởng menu thật, xem
+            docs/admin/WEBSITE_WORKSPACE_FOUNDATION.md phần WEB-SPR-003.
+          </p>
+        </div>
+        <NavigationRegistry />
+        <NavigationPreview />
+      </div>
     </WebsiteWorkspaceShell>
   );
 }
