@@ -29,7 +29,22 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Global Settings", href: "/admin/website/global-settings" },
     ],
   },
-  { group: null, items: [{ label: "Brand & Media", href: "/admin/brand-media", comingSoon: true }] },
+  {
+    group: "Brand Studio",
+    items: [
+      { label: "Dashboard", href: "/admin/brand" },
+      { label: "Logo", href: "/admin/brand/logo" },
+      { label: "Wordmark", href: "/admin/brand/wordmark" },
+      { label: "Typography", href: "/admin/brand/typography" },
+      { label: "Color Palette", href: "/admin/brand/color-palette" },
+      { label: "Theme", href: "/admin/brand/theme" },
+      { label: "Icons", href: "/admin/brand/icons" },
+      { label: "Open Graph", href: "/admin/brand/open-graph" },
+      { label: "Brand Assets Registry", href: "/admin/brand/assets" },
+      { label: "Global Brand Settings", href: "/admin/brand/settings" },
+    ],
+  },
+  { group: null, items: [{ label: "Media Center", href: "/admin/media-center", comingSoon: true }] },
   {
     group: "Content",
     items: [

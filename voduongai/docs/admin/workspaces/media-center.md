@@ -1,6 +1,8 @@
 # Media Center — Workspace Canonical Specification
 
-> ⚠️ **Skeleton — chưa có Product Package.** Theo IMP-GOV-001 Task 2: *"Nếu Product Package của Media Center chưa hoàn thành thì chỉ tạo skeleton với trạng thái Draft."* Không tìm thấy Product Package nào cho Media Center trong repository hoặc phiên làm việc trước đó — không có route, không có nav item riêng, không có nhắc tới trong `docs/admin/PORTAL_COVERAGE_AUDIT.md` ngoài việc "thư viện media" được nêu như một nhu cầu chưa xây (`nav.ts` dòng 32 gộp chung "Brand & Media"; audit dòng 125 ghi "Admin mới (Media/Brand Studio)"). Mọi mục dưới đây là khung (skeleton) — nội dung thật (TBD) cần một Product Package hoặc PMO Clarification riêng trước khi điền.
+> ⚠️ **Skeleton — chưa có Product Package.** Theo IMP-GOV-001 Task 2: *"Nếu Product Package của Media Center chưa hoàn thành thì chỉ tạo skeleton với trạng thái Draft."* Không tìm thấy Product Package nào cho Media Center trong repository hoặc phiên làm việc trước đó. Mọi mục dưới đây là khung (skeleton) — nội dung thật (TBD) cần một Product Package hoặc PMO Clarification riêng trước khi điền.
+>
+> **Cập nhật BRAND-SPR-001:** câu hỏi "Media Center có tách khỏi Brand Studio không?" (Mục 8/15 cũ) **đã được trả lời** — brief IMP-BRAND-001 xác nhận Brand Studio là Workspace độc lập với Product Package riêng, route thật `/admin/brand/*` (xem `brand-studio.md`, nay Status Approved). Media Center vẫn tách riêng nhưng **vẫn chưa có Product Package** — nav item cũ `/admin/brand-media` (gộp cả hai) đã được thay bằng `/admin/media-center` (ComingSoon) dành riêng cho Media Center.
 
 ## 1. Executive Summary
 
@@ -20,7 +22,7 @@ TBD. Dự kiến không quản lý: nhận diện thương hiệu (Logo/Favicon/
 
 ## 5. Information Architecture
 
-TBD — chưa có route nào tồn tại riêng cho Media Center trong code (`nav.ts` chỉ có nhóm gộp `"Brand & Media"` → `/admin/brand-media`, ComingSoon).
+TBD — chỉ có 1 route placeholder `/admin/media-center` (ComingSoon, `nav.ts`), chưa có IA con nào được xác nhận.
 
 ## 6. Portal Coverage
 
@@ -32,7 +34,7 @@ TBD.
 
 ## 8. Dependency
 
-TBD. Điểm cần làm rõ khi có Product Package: ranh giới với Brand Studio (xem `brand-studio.md` Mục 8 — cùng route gộp hiện tại, chưa xác định tách hay gộp).
+TBD. Ranh giới với Brand Studio **đã rõ** (BRAND-SPR-001): Brand Studio quản lý metadata/token thương hiệu (Logo/Wordmark/Typography/Color/Theme/Icons/Open Graph), Media Center (dự kiến) quản lý thư viện file media dùng chung — 2 Workspace độc lập, không còn chung 1 route.
 
 ## 9. Workflow
 
@@ -60,7 +62,8 @@ Chưa có Founder Decision riêng cho Media Center. Founder Directive Greenfield
 
 ## 15. PMO Decisions
 
-Chưa có. Câu hỏi đang chờ PMO: Media Center có phải Workspace độc lập không, hay là một phần của Brand Studio/"Brand & Media" gộp chung theo đúng code hiện tại?
+- **Media Center là Workspace độc lập, tách khỏi Brand Studio — đã xác nhận** (BRAND-SPR-001, giải quyết câu hỏi treo trước đó).
+- Câu hỏi còn treo: Media Center vẫn chưa có Product Package chính thức — cần PMO cung cấp trước khi có Sprint kỹ thuật đầu tiên.
 
 ---
 
@@ -78,4 +81,4 @@ Chưa có (Draft).
 
 ## Last Updated
 
-2026-07-12 (IMP-GOV-001, khởi tạo skeleton lần đầu).
+2026-07-12 (BRAND-SPR-001 — cập nhật Mục 5/8/15: xác nhận tách khỏi Brand Studio, route đổi sang `/admin/media-center`; vẫn Draft, vẫn chưa có Product Package).
