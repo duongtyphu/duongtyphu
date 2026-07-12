@@ -94,7 +94,7 @@ export function KnowledgeCrudPage({
   viewHref?: (item: Item) => string;
   aiAssist?: AiAssistConfig;
 }) {
-  const { items, ready, add, update, remove } = useCollection<Item>(collectionKey, []);
+  const { items, ready, add, update, remove, set } = useCollection<Item>(collectionKey, []);
   const { push } = useAdminToast();
 
   const [query, setQuery] = useState("");
@@ -102,6 +102,8 @@ export function KnowledgeCrudPage({
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [authorFilter, setAuthorFilter] = useState("all");
   const [sortDesc, setSortDesc] = useState(true);
+  const [sortMode, setSortMode] = useState<"date" | "manual">("date");
+  const noFiltersActive = !query.trim() && statusFilter === "all" && categoryFilter === "all" && authorFilter === "all";
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Item | null>(null);
@@ -136,14 +138,34 @@ export function KnowledgeCrudPage({
     if (statusFilter !== "all") list = list.filter((it) => it.status === statusFilter);
     if (categoryFilter !== "all") list = list.filter((it) => it.category === categoryFilter);
     if (authorFilter !== "all") list = list.filter((it) => it.author === authorFilter);
-    list.sort((a, b) =>
-      sortDesc
-        ? String(b.updatedDate ?? "").localeCompare(String(a.updatedDate ?? ""))
-        : String(a.updatedDate ?? "").localeCompare(String(b.updatedDate ?? ""))
-    );
+    if (sortMode === "manual" && noFiltersActive) {
+      // Giữ nguyên thứ tự thủ công (mảng items) — không sort lại theo ngày.
+    } else {
+      list.sort((a, b) =>
+        sortDesc
+          ? String(b.updatedDate ?? "").localeCompare(String(a.updatedDate ?? ""))
+          : String(a.updatedDate ?? "").localeCompare(String(b.updatedDate ?? ""))
+      );
+    }
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [items, query, statusFilter, categoryFilter, authorFilter, sortDesc]);
+  }, [items, query, statusFilter, categoryFilter, authorFilter, sortDesc, sortMode, noFiltersActive]);
+
+  /**
+   * Task 2 (CKOS-SPR-401) — "sắp xếp" bằng dữ liệu, không sửa code. Dùng lại
+   * `set()` đã có sẵn trong `useCollection` (cùng cơ chế `reorder`/`order`
+   * column dùng cho Portal Builder trước đây) — hoán đổi vị trí trong mảng
+   * `items` gốc (không phải `filtered`) để không bao giờ xóa nhầm bản ghi
+   * đang bị ẩn bởi bộ lọc khi `set()` ghi đè toàn bộ collection.
+   */
+  function move(item: Item, dir: -1 | 1) {
+    const idx = items.findIndex((it) => it.id === item.id);
+    const swapIdx = idx + dir;
+    if (idx === -1 || swapIdx < 0 || swapIdx >= items.length) return;
+    const next = [...items];
+    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+    set(next);
+  }
 
   function openCreate() {
     setEditing(null);
@@ -383,11 +405,25 @@ export function KnowledgeCrudPage({
           </select>
         )}
         <button
-          onClick={() => setSortDesc((v) => !v)}
-          className="rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-white/70 hover:bg-white/10"
+          onClick={() => setSortMode((m) => (m === "manual" ? "date" : "manual"))}
+          className={`rounded-lg border px-3 py-2 text-sm font-semibold hover:bg-white/10 ${
+            sortMode === "manual" ? "border-brand-blue/40 text-brand-blue" : "border-white/10 text-white/70"
+          }`}
         >
-          Cập nhật {sortDesc ? "Mới→Cũ" : "Cũ→Mới"}
+          {sortMode === "manual" ? "✓ Thứ tự thủ công" : "Sắp xếp thủ công"}
         </button>
+        {sortMode === "date" ? (
+          <button
+            onClick={() => setSortDesc((v) => !v)}
+            className="rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-white/70 hover:bg-white/10"
+          >
+            Cập nhật {sortDesc ? "Mới→Cũ" : "Cũ→Mới"}
+          </button>
+        ) : (
+          !noFiltersActive && (
+            <span className="text-xs text-brand-orange">Xóa bộ lọc/tìm kiếm để dùng nút ↑/↓ sắp xếp thủ công</span>
+          )
+        )}
         <span className="text-xs text-white/40">{filtered.length} mục</span>
       </div>
 
@@ -444,6 +480,24 @@ export function KnowledgeCrudPage({
                     </td>
                   ))}
                   <td className="px-4 py-3 text-right whitespace-nowrap">
+                    {sortMode === "manual" && noFiltersActive && (
+                      <>
+                        <button
+                          onClick={() => move(item, -1)}
+                          disabled={items.findIndex((it) => it.id === item.id) === 0}
+                          className="mr-1 rounded-lg border border-white/10 px-2 py-1.5 text-xs text-white/70 hover:bg-white/10 disabled:opacity-30"
+                        >
+                          ↑
+                        </button>
+                        <button
+                          onClick={() => move(item, 1)}
+                          disabled={items.findIndex((it) => it.id === item.id) === items.length - 1}
+                          className="mr-1.5 rounded-lg border border-white/10 px-2 py-1.5 text-xs text-white/70 hover:bg-white/10 disabled:opacity-30"
+                        >
+                          ↓
+                        </button>
+                      </>
+                    )}
                     {viewHref && (
                       <a
                         href={viewHref(item)}
