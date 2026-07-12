@@ -1,21 +1,22 @@
-import { Rocket } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
-import { WorkspaceSectionFoundation } from "@/components/admin/website/WorkspaceSectionFoundation";
+import { PageOverviewStats } from "@/components/admin/website/PageOverviewStats";
+import { PageRegistry } from "@/components/admin/website/PageRegistry";
 
 export default function WebsiteLandingPagesPage() {
   return (
     <WebsiteWorkspaceShell>
-      <WorkspaceSectionFoundation
-        icon={Rocket}
-        title="Landing Pages"
-        scope="Quản lý các trang landing chuyên biệt (chương trình, chiến dịch, hệ sinh thái đầu tư...). Portal hiện tại chưa có khái niệm 'Landing Page' tách biệt — các trang gần nhất với vai trò này (Premium, các trang hệ sinh thái) đang là trang hub cố định, không phải landing page có thể tạo mới tự do."
-        willManage={[
-          "Trang chương trình Premium (hiện: copy hardcoded trong premium-programs.ts)",
-          "Trang hệ sinh thái đầu tư (hiện: ecosystems.ts — tự ghi chú là 'CMS placeholder')",
-          "Landing page chiến dịch tạo mới tự do (chưa tồn tại khái niệm này trên Portal)",
-        ]}
-        portalSource="Chưa có landing-page builder nào trên Portal. Nội dung gần nhất: src/components/portal/premium/premium-programs.ts, src/data/portal/ecosystems.ts — cả hai đều hardcoded. Xem docs/admin/PORTAL_COVERAGE_AUDIT.md §3 (Premium, Projects & Opportunities)."
-      />
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-bold text-white">Landing Pages</h2>
+          <p className="mt-1 text-sm text-white/60">
+            Quản lý metadata landing page (chương trình/chiến dịch) — dùng chung Website Page Registry, lọc theo
+            loại &quot;Landing Page&quot;. Không có Landing Builder trong sprint này — đăng ký metadata trang trước, xây
+            công cụ dựng nội dung landing page ở sprint sau.
+          </p>
+        </div>
+        <PageOverviewStats lockedPageType="Landing Page" />
+        <PageRegistry lockedPageType="Landing Page" />
+      </div>
     </WebsiteWorkspaceShell>
   );
 }

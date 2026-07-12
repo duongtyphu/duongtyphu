@@ -1,6 +1,8 @@
-# WEBSITE WORKSPACE FOUNDATION — IMP-WEB-001 (WEB-SPR-001, EPIC-WEB-001)
+# WEBSITE WORKSPACE FOUNDATION — IMP-WEB-001 + IMP-WEB-002 (WEB-SPR-001/002, EPIC-WEB-001)
 
 **TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+**Cập nhật WEB-SPR-002 (Website Page Management Foundation) ở cuối tài liệu, từ "## WEB-SPR-002" trở xuống. Mục 1-9 bên dưới là báo cáo gốc của WEB-SPR-001, giữ nguyên không sửa.**
 
 Workspace đầu tiên được phép triển khai kỹ thuật sau khi Website Workspace Product Package v1.0 được Founder/PMO phê duyệt. Sprint này chỉ xây **Foundation** — khung/shell/navigation/dashboard mock/settings placeholder — **không CRUD, không Page Editor, không Landing Builder, không SEO Editor**. Theo đúng `docs/admin/FOUNDER_DIRECTIVE_GREENFIELD_ADMIN.md`: Greenfield Architecture, không kế thừa Legacy Admin/Portal Builder cũ, không giữ compatibility với dữ liệu test.
 
@@ -116,3 +118,69 @@ Trang **Global Settings** (`/admin/website/global-settings`) liệt kê đúng 4
 2. Mối quan hệ giữa "Global Settings" của Website Workspace và "System Settings" đã có sẵn.
 
 **Không có gì chặn** việc bắt đầu WEB-SPR-002 (Website Page Management) — cả 2 điểm trên là quyết định về phạm vi/đặt tên, không phải lỗi kỹ thuật, có thể xử lý song song với việc bắt đầu xây CRUD.
+
+---
+---
+
+# WEB-SPR-002 — Website Page Management Foundation
+
+Context: WEB-SPR-001 đã được PMO phê duyệt, Canonical IA đã khóa. Sprint này xây nền tảng quản lý Page — **không Landing Builder, không Visual Builder, không Block/Section Editor, không AI Generator** (Task 6). 2 điểm khác biệt SEO/Global Settings nêu ở Mục 2 chưa được PMO xử lý — không chặn sprint này vì phạm vi WEB-SPR-002 không đụng đến 2 mục đó.
+
+## Task 1 — Website Page Registry
+
+`src/components/admin/website/PageRegistry.tsx` — registry hoạt động thật (không phải mock tĩnh): List + Create + Edit + Delete, đọc/ghi qua `useCollection("website-pages", [])` (tầng localStorage, chưa có trong `SUPABASE_COLLECTIONS` — đúng mẫu "cầu nối 2 tầng" đã dùng cho 5 module CKOS mới ở ADM-SPR-003, không đổi schema Supabase nào). Mỗi Page có đúng 5 field Registry yêu cầu — Title, Slug, Status, Visibility, Updated Date — cộng thêm Page Type (discriminator) và SEO/Publish/Revision fields phục vụ Task 5.
+
+`/admin/website/pages` hiển thị registry đầy đủ (không lọc loại trang) — đúng "quản lý toàn bộ Homepage/Landing Pages/Static Pages."
+
+## Task 2 — Shared Page Structure
+
+**Một schema duy nhất** (`WebsitePage` — `src/lib/admin/website/pageRegistry.ts`) cho cả 3 loại trang, phân biệt bằng field `pageType` — không có `HomepageSchema`/`LandingPageSchema`/`StaticPageSchema` riêng biệt. `/admin/website/homepage`, `/admin/website/landing-pages`, `/admin/website/static-pages` đều dùng lại đúng component `PageRegistry` với prop `lockedPageType` — chỉ lọc view và khóa Page Type khi tạo mới, không phải 3 hệ thống khác nhau.
+
+## Task 3 — Page Overview
+
+`src/components/admin/website/PageOverviewStats.tsx` — hiển thị Draft/Published/Archived (3 stat card) + Recently Updated (5 mục gần nhất), tính toán thật từ registry (không phải số hardcode). "Mock Data được phép" được đáp ứng bằng cách không seed dữ liệu giả — registry bắt đầu rỗng, số liệu là 0 cho tới khi có Page thật được tạo, thay vì hiển thị số liệu bịa. Xuất hiện trên cả `/admin/website/pages` (toàn bộ) và 3 trang loại riêng (đã lọc theo `lockedPageType`).
+
+**Lưu ý:** brief liệt kê Draft/Published/Archived/Recently Updated cho Page Overview (không có Pending Review như Dashboard Workspace ở WEB-SPR-001) — đã làm đúng theo danh sách này, không tự thêm Pending Review vào Page Overview dù Lifecycle có trạng thái "Review".
+
+## Task 4 — Page Lifecycle
+
+`PAGE_LIFECYCLE_STATUSES` — đúng 5 trạng thái theo brief: **Draft → Review → Approved → Published → Archived** (khác với Lifecycle 6 trạng thái của CKOS ở ADM-SPR-003/004, vốn có thêm "Changes Requested" — hai Workspace có 2 lifecycle riêng biệt, đúng tinh thần "mỗi content type có thể bổ sung field đặc thù"). Đã thêm tông màu `Review` (xanh dương) vào `Badge.tsx` `STATUS_TONE` — cộng thêm, không đổi các key có sẵn (kể cả `Approved`/`Archived` đã có từ CKOS, tái sử dụng đúng ý nghĩa). **Chưa có Workflow Engine** — chuyển trạng thái là một dropdown chọn tay trong tab Publish, không có gate/duyệt tự động, đúng yêu cầu "Chưa cần Workflow Engine."
+
+## Task 5 — Page Detail Placeholder
+
+Form Sửa/Thêm Page có đúng 5 tab theo brief: **General** (Title/Slug/Page Type), **SEO** (SEO Title/SEO Description — chỉ 2 field đơn giản, không có công cụ SEO nâng cao), **Visibility** (nút bật/tắt Visible), **Publish** (Status + Published Date), **Revision** (Updated Date tự động + ghi chú thay đổi dạng nhật ký, không có diff engine — cùng mẫu changelog đã dùng ở CKOS). **Chỉ Foundation** — không có field nào chỉnh nội dung/bố cục trang thật (không body, không section, không block).
+
+## Task 6 — Giới hạn đã tuân thủ
+
+Không có Visual Builder, Block Editor, Section Editor, Landing Builder, hay AI Generator ở bất kỳ đâu trong sprint này — xác nhận bằng cách rà lại toàn bộ file mới: chỉ có input/select/textarea đơn giản cho metadata, không có trình soạn thảo nội dung nào (kể cả `KnowledgeEditor` của CKOS cũng không được tái sử dụng ở đây, vì Task 5 chỉ yêu cầu Foundation, không yêu cầu soạn nội dung).
+
+## Files Changed
+
+**Mới (3 file):**
+- `src/lib/admin/website/pageRegistry.ts` — schema `WebsitePage`, 5-state lifecycle, 3 page type
+- `src/components/admin/website/PageRegistry.tsx` — list + tabbed detail form (Task 1, 2, 5)
+- `src/components/admin/website/PageOverviewStats.tsx` — Task 3
+
+**Sửa đổi (5 file, đều cộng thêm):**
+- `src/components/admin/ui/Badge.tsx` — thêm tông `Review`
+- `src/app/admin/(dashboard)/website/pages/page.tsx` — Foundation placeholder → Registry đầy đủ + Overview
+- `src/app/admin/(dashboard)/website/homepage/page.tsx` — → Registry lọc "Homepage"
+- `src/app/admin/(dashboard)/website/landing-pages/page.tsx` — → Registry lọc "Landing Page"
+- `src/app/admin/(dashboard)/website/static-pages/page.tsx` — → Registry lọc "Static Page", giữ nguyên lưu ý về trang pháp lý từ WEB-SPR-001
+
+**Không đổi:** Navigation/Shared Sections/SEO/Redirect/Global Settings (5 trang còn lại) vẫn là Foundation placeholder như WEB-SPR-001 — đúng Scope sprint này chỉ giới hạn ở Pages/Homepage/Landing Pages/Static Pages. `nav.ts` không đổi (IA đã khóa, không có route mới cần thêm). Mọi Workspace khác, Portal, database — không đổi.
+
+## Verification
+
+- **Lint (`npm run lint`):** phát hiện 6 lỗi thật (`react/no-unescaped-entities` — dấu ngoặc kép thẳng trong JSX text ở 3 file), đã sửa bằng `&quot;`. Sau khi sửa: 0 lỗi, 5 warning có từ trước.
+- **Type-check + Build (`npm run build`):** thành công.
+- **Test (`npm run test`):** 139/139 pass, không regression.
+- **Route (curl qua dev server):** cả 4 route (`pages`/`homepage`/`landing-pages`/`static-pages`) trả về 200, không lỗi 500.
+
+## WEB-SPR-003 Readiness
+
+**SẴN SÀNG.** Page Registry hoạt động thật, Shared Page Structure thống nhất (1 schema, 3 loại), Lifecycle Foundation tồn tại (5 trạng thái, không workflow engine), không ảnh hưởng Workspace nào khác, build/test đều pass.
+
+**Nhắc lại 2 điểm chưa xử lý từ WEB-SPR-001** (SEO và Global Settings trùng tên với mục cấp cao nhất sẵn có) — vẫn chưa được PMO quyết định, chưa ảnh hưởng gì tới WEB-SPR-002 vì sprint này không đụng 2 khu vực đó, nhưng cần giải quyết trước khi Sprint nào đó động vào SEO/Global Settings thật.
+
+**Gợi ý cho WEB-SPR-003** (không phải quyết định, chỉ là input): registry hiện chưa seed Page nào — khi PMO sẵn sàng, có thể cân nhắc tạo sẵn 1 bản ghi "Trang chủ" (Homepage) khớp với Portal thật để Dashboard/Overview có số liệu khác 0 ngay từ đầu, thay vì registry trống hoàn toàn.

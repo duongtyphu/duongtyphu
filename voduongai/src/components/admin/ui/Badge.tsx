@@ -32,4 +32,6 @@ export const STATUS_TONE: Record<string, keyof typeof tones> = {
   "Changes Requested": "orange",
   Approved: "violet",
   Archived: "red",
+  // Website Page lifecycle (WEB-SPR-002) — additive only, existing keys unchanged.
+  Review: "blue",
 };

@@ -1,21 +1,22 @@
-import { FileText } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
-import { WorkspaceSectionFoundation } from "@/components/admin/website/WorkspaceSectionFoundation";
+import { PageOverviewStats } from "@/components/admin/website/PageOverviewStats";
+import { PageRegistry } from "@/components/admin/website/PageRegistry";
 
 export default function WebsitePagesPage() {
   return (
     <WebsiteWorkspaceShell>
-      <WorkspaceSectionFoundation
-        icon={FileText}
-        title="Pages"
-        scope="Danh sách tổng hợp mọi trang thuộc Website Workspace — gộp Homepage, Landing Pages, Static Pages vào một chỗ để xem tổng quan trạng thái (Draft/Published/Pending Review) trước khi đi vào từng loại trang riêng."
-        willManage={[
-          "Bảng tổng hợp tất cả trang (loại trang, trạng thái, cập nhật gần nhất)",
-          "Tìm kiếm/lọc theo loại trang, trạng thái",
-          "Điều hướng nhanh sang Homepage / Landing Pages / Static Pages",
-        ]}
-        portalSource="Chưa có khái niệm 'Pages' tổng hợp nào trên Portal hiện tại — mỗi loại trang (Home, Premium, Academy...) là route riêng lẻ, không có danh sách quản trị chung. Đây là khái niệm mới của Admin, không kế thừa từ Portal."
-      />
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-bold text-white">Pages</h2>
+          <p className="mt-1 text-sm text-white/60">
+            Website Page Registry — danh sách tổng hợp mọi trang thuộc Website Workspace (Homepage, Landing Pages,
+            Static Pages) dùng chung một cấu trúc dữ liệu (WEB-SPR-002). Quản lý metadata trang (Title/Slug/Status/
+            Visibility/SEO) — chưa quản lý nội dung/bố cục trang (không có Visual Builder/Block Editor).
+          </p>
+        </div>
+        <PageOverviewStats />
+        <PageRegistry />
+      </div>
     </WebsiteWorkspaceShell>
   );
 }
