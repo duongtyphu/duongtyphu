@@ -182,7 +182,6 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/companion-studio": Bot,
   "/admin/users": Users,
   "/admin/reports": FileBarChart,
-  "/admin/seo": Search,
   "/admin/settings": Settings,
 };
 

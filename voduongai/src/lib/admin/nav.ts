@@ -10,9 +10,16 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
  * → Premium → Journey → Companion Studio → Community) — 2 nhóm mới "AI
  * Workspace" và "Journey" được thêm lần đầu ở sprint này. Các nhóm không
  * nằm trong 2 danh sách bắt buộc (Content, Users & Access, Analytics,
- * SEO, System Settings) được GIỮ NGUYÊN, không xóa — brief chỉ yêu cầu
- * đảm bảo 2 danh sách bắt buộc tồn tại, không yêu cầu loại bỏ phần còn
- * lại (xem docs/admin/ADMIN_CMS_MAIN_SHELL_FOUNDATION.md).
+ * System Settings) được GIỮ NGUYÊN, không xóa — brief chỉ yêu cầu đảm
+ * bảo 2 danh sách bắt buộc tồn tại, không yêu cầu loại bỏ phần còn lại
+ * (xem docs/admin/ADMIN_CMS_MAIN_SHELL_FOUNDATION.md).
+ *
+ * WEB-SPR-201R: đã xoá mục "SEO" độc lập cấp cao nhất (`/admin/seo`,
+ * ComingSoon rỗng) — bị thay thế hoàn toàn bởi `/admin/website/seo`
+ * (SEO Registry thật, WEB-SPR-005), theo đúng khuyến nghị REMOVE của
+ * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md` (mục #3, verdict rõ
+ * ràng không mơ hồ, khác các mục "NEEDS PMO DECISION" khác trong cùng
+ * báo cáo).
  */
 export const adminNavGroups: AdminNavGroup[] = [
   { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
@@ -179,6 +186,5 @@ export const adminNavGroups: AdminNavGroup[] = [
   },
   { group: null, items: [{ label: "Users & Access", href: "/admin/users" }] },
   { group: null, items: [{ label: "Analytics", href: "/admin/reports" }] },
-  { group: null, items: [{ label: "SEO", href: "/admin/seo", comingSoon: true }] },
   { group: null, items: [{ label: "System Settings", href: "/admin/settings" }] },
 ];
