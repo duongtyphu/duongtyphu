@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCollection } from "@/lib/admin/store";
 import { usersSeed } from "@/data/admin/people";
 import { leadsSeed } from "@/data/admin/people";
@@ -42,6 +43,19 @@ export default function AdminDashboardPage() {
         <h1 className="text-xl font-extrabold text-white">Tổng quan</h1>
         <p className="mt-1 text-sm text-white/50">Trung tâm điều hành hệ sinh thái VO DUONG AI.</p>
       </div>
+
+      <Link
+        href="/admin/founder"
+        className="flex items-center justify-between gap-3 rounded-2xl border border-brand-blue/30 bg-brand-blue/10 p-4 transition hover:bg-brand-blue/15"
+      >
+        <div>
+          <p className="text-sm font-bold text-white">Founder Workspace</p>
+          <p className="mt-0.5 text-xs text-white/60">
+            Governance Overview, Open PMO Questions, và toàn cảnh Portal/Workspace — điểm vào duy nhất cho Founder.
+          </p>
+        </div>
+        <span className="shrink-0 text-sm font-semibold text-brand-blue">Mở →</span>
+      </Link>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
         <StatCard label="Người dùng" value={users.length} />

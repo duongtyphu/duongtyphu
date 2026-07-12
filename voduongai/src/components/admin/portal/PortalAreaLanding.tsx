@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { PORTAL_AREAS } from "@/lib/admin/portal/areas";
 import { PORTAL_PAGES } from "@/lib/admin/portal/pages";
 
@@ -9,10 +10,16 @@ import { PORTAL_PAGES } from "@/lib/admin/portal/pages";
  * READ-ONLY, chọn 1 Area để xem chi tiết (pattern chọn-Group giống
  * NavigationRegistry, WEB-SPR-003) thay vì 10 route tĩnh riêng biệt —
  * cùng nội dung, ít route hơn, dễ bảo trì hơn.
+ *
+ * ADM-SPR-201 Task 6: hỗ trợ deep-link `?area=<key>` từ Portal Navigation
+ * (Sidebar) — cho phép Founder bấm thẳng vào 1 Area cụ thể từ menu thay vì
+ * luôn rơi vào Area đầu tiên.
  */
 export function PortalAreaLanding() {
+  const searchParams = useSearchParams();
+  const areaFromQuery = searchParams.get("area");
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
-  const effectiveKey = selectedKey ?? PORTAL_AREAS[0]?.key ?? null;
+  const effectiveKey = selectedKey ?? areaFromQuery ?? PORTAL_AREAS[0]?.key ?? null;
   const selectedArea = PORTAL_AREAS.find((a) => a.key === effectiveKey) ?? null;
 
   const pagesInArea = useMemo(
@@ -65,9 +72,14 @@ export function PortalAreaLanding() {
               Xem trên Portal thật →
             </a>
           </div>
-          <p className="mt-1 text-xs text-white/40">
-            Owner Workspace: {selectedArea.ownerWorkspace ?? "Chưa xác định — cần PMO/Founder quyết định"}
-          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-white/40">
+            <span>Owner Workspace: {selectedArea.ownerWorkspace ?? "Chưa xác định — cần PMO/Founder quyết định"}</span>
+            {selectedArea.ownerWorkspaceHref && (
+              <a href={selectedArea.ownerWorkspaceHref} className="font-semibold text-brand-blue hover:underline">
+                Đi tới Workspace →
+              </a>
+            )}
+          </div>
           <div className="mt-4">
             {pagesInArea.length === 0 ? (
               <p className="text-sm text-white/40">Không có route con nào khớp tiền tố Area này.</p>

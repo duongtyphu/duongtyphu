@@ -54,8 +54,9 @@ export default function PortalDashboardPage() {
               nhưng là route khác — chưa xác nhận quan hệ giữa 2 route này.
             </li>
             <li>
-              • <strong>4/10 Portal Area</strong> chưa có Workspace Admin nào sở hữu rõ ràng (Trang chủ Học viện, Học
-              viện AI, AI Workspace, Hành trình của tôi).
+              • <strong>1/10 Portal Area</strong> (&quot;Trang chủ Học viện&quot;) vẫn chưa có Workspace Admin sở hữu rõ
+              ràng — giảm từ 4/10 (ADM-SPR-200) sau khi Workspace Navigation bắt buộc (ADM-SPR-201) chính thức hóa
+              &quot;AI Workspace&quot;/&quot;Journey&quot;.
             </li>
           </ul>
         </div>
@@ -66,7 +67,7 @@ export default function PortalDashboardPage() {
             {PORTAL_AREAS.map((area) => (
               <Link
                 key={area.key}
-                href="/admin/portal/areas"
+                href={`/admin/portal/areas?area=${area.key}`}
                 className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-brand-blue/40 hover:bg-white/[0.05]"
               >
                 <span className="text-sm font-semibold text-white/80">{area.label}</span>

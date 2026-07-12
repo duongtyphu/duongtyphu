@@ -1,6 +1,10 @@
 /**
  * Workspace Ownership catalog — ADM-SPR-200 Task 5 (Workspace Owner
- * Panel). READ-ONLY, sourced từ `docs/admin/workspaces/*.md` (WCS) và
+ * Panel), cập nhật ADM-SPR-201: thêm "AI Workspace" và "Journey" — 2
+ * Workspace mới được chính thức hóa bởi "Workspace Navigation bắt buộc"
+ * của brief ADM-SPR-201 (trước đó không tồn tại ở ADM-SPR-200). Danh
+ * sách 11 entry dưới đây khớp ĐÚNG thứ tự Workspace Navigation bắt buộc.
+ * READ-ONLY, sourced từ `docs/admin/workspaces/*.md` (WCS) và
  * `docs/admin/ADMIN_INFORMATION_ARCHITECTURE_V2.md` (bảng maturity,
  * IMP-ADM-100 Task 1/2) — không suy diễn thêm dữ liệu mới.
  */
@@ -96,5 +100,21 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     maturity: "Not Started",
     wcsStatus: "Draft",
     owns: "(Chưa xây) — dự kiến: thư viện media dùng chung",
+  },
+  {
+    key: "ai-workspace",
+    name: "AI Workspace",
+    href: "/admin/ai-workspace",
+    maturity: "Not Started",
+    wcsStatus: "Chưa có",
+    owns: "(Chưa xây) — sở hữu Portal Area \"AI Workspace\" (/portal/aiworkspace + 3 route con)",
+  },
+  {
+    key: "journey",
+    name: "Journey",
+    href: "/admin/journey",
+    maturity: "Not Started",
+    wcsStatus: "Chưa có",
+    owns: "(Chưa xây) — sở hữu Portal Area \"Hành trình của tôi\" (/portal/hanhtrinhcuatoi + Journey Hub 5 cửa)",
   },
 ];

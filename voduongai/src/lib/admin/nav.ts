@@ -2,15 +2,17 @@ export type AdminNavItem = { label: string; href: string; comingSoon?: boolean }
 export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
 
 /**
- * Canonical Admin sidebar structure — the 14 top-level groups approved by
- * PMO (ADM-SPR-002). Groups with no built module yet render a single
- * `comingSoon` entry pointing at a minimal placeholder page instead of a
- * business module. Item placement within multi-item groups (Content, CKOS,
- * Academy, Premium, Projects & Opportunities) reflects the current data-
- * ownership reality documented in docs/admin/ADMIN_SHELL.md §2 — some pages
- * (Portal Builder, Affiliate, Leads, roadmap/daily-missions) don't map to a
- * single obvious group and were placed using the closest-fit judgment call
- * recorded there, not a new business decision.
+ * Canonical Admin sidebar structure. Từ ADM-SPR-201 (Main Shell
+ * Foundation), thứ tự nhóm được tổ chức theo đúng "Portal Navigation bắt
+ * buộc" (10 mục, khớp portalNavSections) và "Workspace Navigation bắt
+ * buộc" (11 mục, đúng thứ tự brief liệt kê: Website → Brand Studio →
+ * Media Center → CKOS → Academy → AI Workspace → Projects & Opportunities
+ * → Premium → Journey → Companion Studio → Community) — 2 nhóm mới "AI
+ * Workspace" và "Journey" được thêm lần đầu ở sprint này. Các nhóm không
+ * nằm trong 2 danh sách bắt buộc (Content, Users & Access, Analytics,
+ * SEO, System Settings) được GIỮ NGUYÊN, không xóa — brief chỉ yêu cầu
+ * đảm bảo 2 danh sách bắt buộc tồn tại, không yêu cầu loại bỏ phần còn
+ * lại (xem docs/admin/ADMIN_CMS_MAIN_SHELL_FOUNDATION.md).
  */
 export const adminNavGroups: AdminNavGroup[] = [
   { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
@@ -30,6 +32,21 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Portal Areas", href: "/admin/portal/areas" },
       { label: "Page Registry", href: "/admin/portal/pages" },
       { label: "Content Registry", href: "/admin/portal/content" },
+    ],
+  },
+  {
+    group: "Portal Navigation",
+    items: [
+      { label: "Trang chủ Học viện", href: "/admin/portal/areas?area=home" },
+      { label: "Companion", href: "/admin/portal/areas?area=companion" },
+      { label: "Hệ tri thức AI (CKOS)", href: "/admin/portal/areas?area=ckos" },
+      { label: "Học viện AI", href: "/admin/portal/areas?area=hocvienai" },
+      { label: "AI Workspace", href: "/admin/portal/areas?area=aiworkspace" },
+      { label: "Dự án & Cơ hội", href: "/admin/portal/areas?area=duan-cohoi" },
+      { label: "Premium", href: "/admin/portal/areas?area=premium" },
+      { label: "Hành trình của tôi", href: "/admin/portal/areas?area=hanhtrinh" },
+      { label: "Sứ mệnh Companion", href: "/admin/portal/areas?area=su-menh-companion" },
+      { label: "Cộng đồng", href: "/admin/portal/areas?area=congdongai" },
     ],
   },
   {
@@ -64,27 +81,6 @@ export const adminNavGroups: AdminNavGroup[] = [
   },
   { group: null, items: [{ label: "Media Center", href: "/admin/media-center", comingSoon: true }] },
   {
-    group: "Content",
-    items: [
-      { label: "Blog AI", href: "/admin/blog" },
-      { label: "Thành công học viên", href: "/admin/student-success" },
-      { label: "Tin tức & Cập nhật", href: "/admin/updates" },
-      { label: "Tin nội bộ", href: "/admin/news" },
-      { label: "Template", href: "/admin/templates" },
-      { label: "Ebook", href: "/admin/ebooks" },
-      { label: "Checklist", href: "/admin/checklists" },
-      { label: "SOP", href: "/admin/sop" },
-      { label: "Tài nguyên đã lưu", href: "/admin/saved" },
-      { label: "Dashboard Portal", href: "/admin/portal-builder" },
-      { label: "Bắt đầu tại đây", href: "/admin/portal-builder/start-here" },
-      { label: "Hôm nay bạn muốn làm gì", href: "/admin/portal-builder/today-actions" },
-      { label: "Banner", href: "/admin/portal-builder/banner" },
-      { label: "Nội dung nổi bật", href: "/admin/portal-builder/featured" },
-      { label: "CTA", href: "/admin/portal-builder/cta" },
-      { label: "Mục tiêu người dùng", href: "/admin/portal-builder/user-goals" },
-    ],
-  },
-  {
     group: "CKOS",
     items: [
       { label: "CKOS Dashboard", href: "/admin/ckos" },
@@ -108,6 +104,23 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Dự án thực chiến", href: "/admin/projects" },
     ],
   },
+  { group: null, items: [{ label: "AI Workspace", href: "/admin/ai-workspace", comingSoon: true }] },
+  {
+    group: "Projects & Opportunities",
+    items: [
+      { label: "Tổng quan", href: "/admin/digital-assets" },
+      { label: "Hệ sinh thái DigiU", href: "/admin/digital-assets/category/digiu" },
+      { label: "Đầu tư cổ phần tại SolarGroup", href: "/admin/digital-assets/category/equity" },
+      { label: "Sàn giao dịch Crypto", href: "/admin/digital-assets/category/crypto" },
+      { label: "Blockchain", href: "/admin/digital-assets/category/blockchain" },
+      { label: "Trading", href: "/admin/digital-assets/category/trading" },
+      { label: "Link dự án (tất cả)", href: "/admin/digital-assets/links" },
+      { label: "Dự án", href: "/admin/digital-assets/projects" },
+      { label: "Bài viết", href: "/admin/digital-assets/articles" },
+      { label: "Cấu hình danh mục", href: "/admin/digital-assets/categories" },
+      { label: "Báo cáo", href: "/admin/digital-assets/analytics" },
+    ],
+  },
   {
     group: "Premium",
     items: [
@@ -125,24 +138,30 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Báo cáo Affiliate", href: "/admin/affiliate/analytics" },
     ],
   },
+  { group: null, items: [{ label: "Journey", href: "/admin/journey", comingSoon: true }] },
+  { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio", comingSoon: true }] },
+  { group: null, items: [{ label: "Community", href: "/admin/community" }] },
   {
-    group: "Projects & Opportunities",
+    group: "Content",
     items: [
-      { label: "Tổng quan", href: "/admin/digital-assets" },
-      { label: "Hệ sinh thái DigiU", href: "/admin/digital-assets/category/digiu" },
-      { label: "Đầu tư cổ phần tại SolarGroup", href: "/admin/digital-assets/category/equity" },
-      { label: "Sàn giao dịch Crypto", href: "/admin/digital-assets/category/crypto" },
-      { label: "Blockchain", href: "/admin/digital-assets/category/blockchain" },
-      { label: "Trading", href: "/admin/digital-assets/category/trading" },
-      { label: "Link dự án (tất cả)", href: "/admin/digital-assets/links" },
-      { label: "Dự án", href: "/admin/digital-assets/projects" },
-      { label: "Bài viết", href: "/admin/digital-assets/articles" },
-      { label: "Cấu hình danh mục", href: "/admin/digital-assets/categories" },
-      { label: "Báo cáo", href: "/admin/digital-assets/analytics" },
+      { label: "Blog AI", href: "/admin/blog" },
+      { label: "Thành công học viên", href: "/admin/student-success" },
+      { label: "Tin tức & Cập nhật", href: "/admin/updates" },
+      { label: "Tin nội bộ", href: "/admin/news" },
+      { label: "Template", href: "/admin/templates" },
+      { label: "Ebook", href: "/admin/ebooks" },
+      { label: "Checklist", href: "/admin/checklists" },
+      { label: "SOP", href: "/admin/sop" },
+      { label: "Tài nguyên đã lưu", href: "/admin/saved" },
+      { label: "Dashboard Portal", href: "/admin/portal-builder" },
+      { label: "Bắt đầu tại đây", href: "/admin/portal-builder/start-here" },
+      { label: "Hôm nay bạn muốn làm gì", href: "/admin/portal-builder/today-actions" },
+      { label: "Banner", href: "/admin/portal-builder/banner" },
+      { label: "Nội dung nổi bật", href: "/admin/portal-builder/featured" },
+      { label: "CTA", href: "/admin/portal-builder/cta" },
+      { label: "Mục tiêu người dùng", href: "/admin/portal-builder/user-goals" },
     ],
   },
-  { group: null, items: [{ label: "Community", href: "/admin/community" }] },
-  { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio", comingSoon: true }] },
   { group: null, items: [{ label: "Users & Access", href: "/admin/users" }] },
   { group: null, items: [{ label: "Analytics", href: "/admin/reports" }] },
   { group: null, items: [{ label: "SEO", href: "/admin/seo", comingSoon: true }] },
