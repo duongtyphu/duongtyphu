@@ -11,11 +11,11 @@ const OPEN_PMO_QUESTIONS = [
   "Theme kép (Portal/Admin dark hardcode vs. root token sáng) chưa hợp nhất — có đáng chuẩn hóa không (BRAND-SPR-001).",
   "Danh sách \"7 Workspace hoàn thành Product\" trong brief IMP-ADM-100 sai lệch với code thật — Media Center/Companion Studio chưa xây gì (IMP-ADM-100).",
   "Content group hiện tại (Blog AI/Template/Ebook...) — tách Workspace riêng, gộp CKOS, hay gộp Website? (IMP-ADM-100)",
-  "Portal Builder (7/8 bảng orphan) — nối dây thật hay deprecate? (IMP-ADM-100, gốc từ ADM-SPR-005; xem chi tiết mới nhất ở IMP-ADM-001R Deliverable 2 #1-2).",
   "/portal/hetrithucai (3 route) trùng tên khái niệm với /portal/ckos nhưng khác route — quan hệ giữa 2 route chưa xác nhận (ADM-SPR-200).",
-  "4/10 Portal Area (Trang chủ Học viện, Học viện AI, AI Workspace, Hành trình của tôi) chưa có Workspace Admin sở hữu rõ ràng (ADM-SPR-200).",
+  "1/10 Portal Area (Trang chủ Học viện) chưa có Workspace Admin sở hữu rõ ràng — không Workspace nào trong \"Workspace Navigation bắt buộc\" khớp rõ ràng (ADM-SPR-200/201, xác nhận lại PORTAL-SPR-301).",
   "case_study (Admin ghi) vs case_studies (Portal đọc) — 2 bảng Supabase khác nhau, Case Study tạo mới trong Admin không lên Portal (IMP-ADM-001R, ưu tiên P0).",
   "Digital Assets CRUD (11 route) quản lý /portal/digital-assets — route đã bị Product Owner khai tử, route thật /portal/duan-cohoi vẫn 100% hardcode (IMP-ADM-001R, ưu tiên P0).",
+  "Banner (portal_banners/NotificationTicker.tsx) — component đã có sẵn, chỉ thiếu 1 dòng mount vào Portal, chưa quyết định có nối dây hay deprecate (IMP-ADM-001R; 6/7 mục Portal Builder còn lại đã xoá ở PORTAL-SPR-301, chỉ Banner còn treo).",
 ];
 
 /**
@@ -24,6 +24,15 @@ const OPEN_PMO_QUESTIONS = [
  * (ComingSoon rỗng), giữ `/admin/website/seo` làm bản chính thức duy
  * nhất, theo đúng khuyến nghị REMOVE (không mơ hồ) của
  * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md`.
+ *
+ * PORTAL-SPR-301: đã xoá câu hỏi "Portal Builder (7/8 bảng orphan)" —
+ * giải quyết dứt điểm bằng cách xoá 6/7 route (Dashboard Portal/Bắt đầu
+ * tại đây/Hôm nay bạn muốn làm gì/Nội dung nổi bật/CTA/Mục tiêu người
+ * dùng), xác nhận độc lập 0 Portal consumer cho mỗi bảng. Chỉ giữ lại
+ * Banner (verdict khác — NEEDS PMO DECISION, không phải REMOVE), tách
+ * thành câu hỏi riêng. Đồng thời sửa số liệu sai "4/10 Portal Area chưa
+ * có Owner" — con số đúng đã là 1/10 từ ADM-SPR-201 (`areas.ts` cũ đã ghi
+ * chú rõ), founder/page.tsx trước đó chưa cập nhật theo.
  */
 
 /**

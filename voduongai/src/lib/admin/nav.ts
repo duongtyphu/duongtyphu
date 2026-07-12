@@ -20,6 +20,18 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
  * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md` (mục #3, verdict rõ
  * ràng không mơ hồ, khác các mục "NEEDS PMO DECISION" khác trong cùng
  * báo cáo).
+ *
+ * PORTAL-SPR-301: đã xoá 6/7 mục "Portal Builder" (Dashboard Portal,
+ * Bắt đầu tại đây, Hôm nay bạn muốn làm gì, Nội dung nổi bật, CTA, Mục
+ * tiêu người dùng) — CRUD thật nhưng ghi vào 6 bảng Supabase
+ * (`portal_sections`/`portal_welcome`/`start_here_steps`/
+ * `today_action_cards`/`portal_featured`/`portal_cta`/`user_goals`)
+ * không route Portal nào đọc, xác nhận lại độc lập ở sprint này (0 kết
+ * quả grep `src/app/portal/**`), khớp khuyến nghị REMOVE của
+ * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md` (mục #1, verdict rõ
+ * ràng — "CRUD thật nhưng ghi vào khoảng không"). Giữ lại "Banner"
+ * (`portal_banners`) — verdict khác (NEEDS PMO DECISION, không phải
+ * REMOVE, vì `NotificationTicker.tsx` đã có sẵn chỉ thiếu 1 dòng mount).
  */
 export const adminNavGroups: AdminNavGroup[] = [
   { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
@@ -175,13 +187,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Checklist", href: "/admin/checklists" },
       { label: "SOP", href: "/admin/sop" },
       { label: "Tài nguyên đã lưu", href: "/admin/saved" },
-      { label: "Dashboard Portal", href: "/admin/portal-builder" },
-      { label: "Bắt đầu tại đây", href: "/admin/portal-builder/start-here" },
-      { label: "Hôm nay bạn muốn làm gì", href: "/admin/portal-builder/today-actions" },
       { label: "Banner", href: "/admin/portal-builder/banner" },
-      { label: "Nội dung nổi bật", href: "/admin/portal-builder/featured" },
-      { label: "CTA", href: "/admin/portal-builder/cta" },
-      { label: "Mục tiêu người dùng", href: "/admin/portal-builder/user-goals" },
     ],
   },
   { group: null, items: [{ label: "Users & Access", href: "/admin/users" }] },
