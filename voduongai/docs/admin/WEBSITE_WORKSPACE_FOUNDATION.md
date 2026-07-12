@@ -311,3 +311,65 @@ Seed 9 mục (1/category) trong `sharedSectionRegistry.ts`. Theo đúng lưu ý 
 - **Testimonial và FAQ marketing công khai** — hiện không tồn tại trên Home, cần Founder xác nhận có phải xây nội dung mới (ngoài phạm vi Registry, đây là quyết định content) hay bỏ 2 category này khỏi Shared Sections.
 
 **Nhắc lại các điểm chưa xử lý:** 2 điểm SEO/Global Settings (từ WEB-SPR-001) vẫn chưa được PMO quyết định.
+
+---
+---
+
+# WEB-SPR-005 — Website SEO & Redirect Foundation
+
+**TRẠNG THÁI: NỘP CHO PMO REVIEW. Không tự merge.**
+
+Objective: xây **SEO Foundation** + **Redirect Foundation** — **không SEO Generator, không AI SEO, không Sitemap Generator, không Robots Generator, không Redirect Engine Runtime**.
+
+> ⚠️ **Nhắc lại chồng lấn đã ghi nhận từ WEB-SPR-001 (chưa PMO xử lý):** sidebar Admin đã có sẵn một mục "SEO" độc lập ở cấp cao nhất (`/admin/seo`, ADM-SPR-002, ComingSoon) — phạm vi rộng hơn nhóm "SEO" của Website Workspace (chỉ SEO cho nội dung Website). Sprint này xây đúng theo Scope Website Workspace đã khóa (nhóm IA #8), KHÔNG tự gộp/xóa mục `/admin/seo` — vẫn chờ PMO quyết định.
+
+## 1. SEO Registry Foundation (Task 1) + 3. Shared SEO Structure (Task 3)
+
+`src/lib/admin/website/seoRegistry.ts` — MỘT schema `SEOEntry` áp dụng cho bất kỳ URL nào thuộc Website, phân biệt bằng `targetUrl` (không dùng khóa ngoại tới Page Registry, tránh phụ thuộc cứng). Đúng phạm vi Scope: Meta Title, Meta Description, Open Graph (title/description/image ghi chú), Canonical URL, Robots (index/follow dạng checkbox), Sitemap (Foundation — chỉ cờ `sitemapInclude`, không có Sitemap Generator thật).
+
+**"Shared SEO Structure" (Task 3)** được hiện thực hóa theo 2 cách: (1) một schema `SEOEntry` duy nhất dùng chung mọi URL — không tạo schema riêng theo loại trang; (2) SEO Registry và Redirect Registry (Task 2) **dùng lại đúng một Status model** — cả hai cùng import `NAVIGATION_STATUSES`/`NavigationStatus` từ `navigationRegistry.ts` (WEB-SPR-003) thay vì mỗi Registry tự định nghĩa Status riêng.
+
+## 2. Redirect Registry Foundation (Task 2)
+
+`src/lib/admin/website/redirectRegistry.ts` — `RedirectEntry`: `fromPath, toPath, redirectType (301|302), note, status, sortOrder`. **Không có Redirect Engine Runtime** — Registry chỉ lưu danh sách, không có middleware/route nào đọc Registry này để thực sự chuyển hướng request thật; toàn bộ redirect thật của Portal vẫn khai báo tĩnh trong `next.config.ts` (Consumer = 0, giống mọi Registry khác của Website Workspace).
+
+## 4. Validation Placeholder (Task 4)
+
+Hai kiểm tra độc lập, cả hai đều rõ ràng gắn nhãn "Placeholder" trong UI — **không phải Audit/Validation Engine đầy đủ**:
+
+- **SEO:** đếm ký tự Meta Title (khuyến nghị ≤60) và Meta Description (khuyến nghị ≤160), hiển thị badge xanh/cam ngay trong bảng và trong form. Không kiểm tra keyword, không kiểm tra trùng lặp nội dung.
+- **Redirect:** cảnh báo (a) `From Path` = `To Path` (vòng lặp tự redirect chính nó) và (b) `From Path` bị khai báo trùng ở nhiều rule đang `Active` (xung đột). Không kiểm tra vòng lặp gián tiếp nhiều bước, không đối chiếu với `next.config.ts` thật.
+
+## 5. Preview Placeholder (Task 5)
+
+`SEOPreviewPlaceholder.tsx` — minh họa dạng kết quả tìm kiếm Google (Title xanh/URL xanh lá/Description xám) dựng từ Meta Title/Description của SEO Entry đang `Active`. Ghi rõ đây là hình dạng **gần đúng**, không phải render pixel-perfect của Google SERP thật. (Redirect không có Preview riêng — bản chất là danh sách rule, không có gì để "xem trước" ngoài chính bảng Registry.)
+
+## 6. Mock Data (Task 6)
+
+- **SEO:** 3 mục sao chép sát Meta Title/Description THẬT đang hardcode — Trang chủ (SEO mặc định toàn site, tham chiếu `settings.seoTitle`/`settings.seoDescription` từ `layout.tsx`, **không trùng lặp/thay thế** `SiteSettings`), Blog AI (`src/app/blogai/page.tsx`), Giới thiệu (`src/app/about/page.tsx`).
+- **Redirect:** 4 rule sao chép đúng từ `next.config.ts` (`redirects()`) — gồm 2 route đã xác nhận "chết" ở ADM-SPR-005 (`student-success`, `updates`). Sao chép chỉ để Founder xem/quản lý danh sách, **không** thay thế `next.config.ts` thật.
+
+## Files Changed
+
+- `src/lib/admin/website/seoRegistry.ts`, `redirectRegistry.ts` — mới, data model + seed
+- `src/components/admin/website/SEORegistry.tsx`, `SEOPreviewPlaceholder.tsx`, `RedirectRegistry.tsx` — mới
+- `src/app/admin/(dashboard)/website/seo/page.tsx`, `redirect/page.tsx` — thay Foundation placeholder bằng UI thật
+
+**Không đổi:** Pages/Homepage/Landing Pages/Static Pages (WEB-SPR-002), Navigation (WEB-SPR-003), Shared Sections (WEB-SPR-004), Dashboard/Global Settings (vẫn Foundation placeholder). `nav.ts`/`AdminSidebar.tsx`/`Badge.tsx` không đổi. Mọi Workspace khác, Portal, database, `next.config.ts` — không đổi.
+
+## Verification
+
+- **Lint (`npm run lint`):** sạch — 0 lỗi, 5 warning có từ trước (không liên quan).
+- **Type-check (`npx tsc --noEmit`):** sạch.
+- **Build (`npm run build`):** thành công.
+- **Test (`npm run test`):** 139/139 pass, không regression.
+
+## WEB-SPR-006 Readiness
+
+**SẴN SÀNG.** SEO Foundation + Redirect Foundation đều hoàn chỉnh, Shared Structure nhất quán (Status model dùng chung, cùng pattern Badge/Modal/ConfirmDialog/useCollection với các Registry trước), không ảnh hưởng Workspace nào khác, build/test đều pass.
+
+**Nhắc lại các điểm chưa xử lý:**
+- SEO (Website Workspace) vs. mục "SEO" độc lập cấp cao nhất — vẫn chưa PMO quyết định (từ WEB-SPR-001, nhắc lại ở đây).
+- Global Settings vs. System Settings — vẫn chưa PMO quyết định (từ WEB-SPR-001).
+- Banner vs. Announcement (từ WEB-SPR-004) — vẫn chưa PMO quyết định.
+- Registry chưa nối dây để Portal/`next.config.ts` đọc từ đây — thuộc phạm vi một Sprint "Website Publish Bridge" tương lai, chưa nằm trong WEB-SPR-005.

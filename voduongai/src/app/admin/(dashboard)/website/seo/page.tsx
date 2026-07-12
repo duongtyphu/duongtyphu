@@ -1,20 +1,24 @@
-import { Search } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
-import { WorkspaceSectionFoundation } from "@/components/admin/website/WorkspaceSectionFoundation";
+import { SEORegistry } from "@/components/admin/website/SEORegistry";
+import { SEOPreviewPlaceholder } from "@/components/admin/website/SEOPreviewPlaceholder";
 
 export default function WebsiteSeoPage() {
   return (
     <WebsiteWorkspaceShell>
-      <WorkspaceSectionFoundation
-        icon={Search}
-        title="SEO"
-        scope="Quản lý metadata SEO (title/description/OG) cho từng trang thuộc Website Workspace (Homepage/Landing/Static). LƯU Ý: sidebar Admin đã có sẵn một mục 'SEO' đứng độc lập ở cấp cao nhất (/admin/seo, đặt ở ADM-SPR-002, hiện là ComingSoon) — có thể có phạm vi rộng hơn (SEO cho mọi nội dung, không riêng Website). Đây là khác biệt giữa Product Package (Website Workspace có SEO riêng) và cấu trúc Admin đã duyệt trước đó — đã ghi nhận, KHÔNG tự gộp/xóa mục nào, trình PMO quyết định ở WEB-SPR-002."
-        willManage={[
-          "Title/description/OG image cho từng trang trong Pages",
-          "SEO mặc định toàn site (hiện: một phần đã có ở /admin/settings)",
-        ]}
-        portalSource="Metadata hardcoded literal trong từng page.tsx (VD: src/app/portal/premium/page.tsx). Chỉ SEO mặc định toàn site đã admin-editable qua SiteSettings (/admin/settings). Xem docs/admin/PORTAL_COVERAGE_AUDIT.md §5."
-      />
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-bold text-white">SEO</h2>
+          <p className="mt-1 text-sm text-white/60">
+            SEO Registry — Meta Title/Description, Open Graph, Canonical URL, Robots, Sitemap (Foundation) cho từng
+            URL thuộc Website (WEB-SPR-005). Không SEO Generator, không AI SEO, không Sitemap/Robots Generator thật —
+            chỉ lưu metadata Founder tự nhập. <strong>Lưu ý:</strong> sidebar Admin đã có sẵn một mục &quot;SEO&quot;
+            đứng độc lập ở cấp cao nhất (/admin/seo, ComingSoon) — chồng lấn phạm vi với nhóm này chưa được PMO xử lý,
+            xem docs/admin/WEBSITE_WORKSPACE_FOUNDATION.md phần WEB-SPR-005.
+          </p>
+        </div>
+        <SEORegistry />
+        <SEOPreviewPlaceholder />
+      </div>
     </WebsiteWorkspaceShell>
   );
 }
