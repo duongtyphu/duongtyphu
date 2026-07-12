@@ -69,6 +69,14 @@ import { adminNavGroups, type AdminNavItem } from "@/lib/admin/nav";
 
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
+  "/admin/founder": Crown,
+  "/admin/founder/owners": Users,
+  "/admin/founder/search": Search,
+  "/admin/founder/review-queue": ClipboardCheck,
+  "/admin/portal": LayoutDashboard,
+  "/admin/portal/areas": Map,
+  "/admin/portal/pages": FileText,
+  "/admin/portal/content": Library,
   "/admin/website": Globe,
   "/admin/website/pages": FileText,
   "/admin/website/navigation": Navigation,

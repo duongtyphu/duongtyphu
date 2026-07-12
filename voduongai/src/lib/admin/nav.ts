@@ -15,6 +15,24 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
 export const adminNavGroups: AdminNavGroup[] = [
   { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
   {
+    group: "Founder",
+    items: [
+      { label: "Founder Workspace", href: "/admin/founder" },
+      { label: "Workspace Owner Panel", href: "/admin/founder/owners" },
+      { label: "Global Search", href: "/admin/founder/search" },
+      { label: "Review Queue", href: "/admin/founder/review-queue" },
+    ],
+  },
+  {
+    group: "Portal Management",
+    items: [
+      { label: "Portal Dashboard", href: "/admin/portal" },
+      { label: "Portal Areas", href: "/admin/portal/areas" },
+      { label: "Page Registry", href: "/admin/portal/pages" },
+      { label: "Content Registry", href: "/admin/portal/content" },
+    ],
+  },
+  {
     group: "Website",
     items: [
       { label: "Dashboard", href: "/admin/website" },
