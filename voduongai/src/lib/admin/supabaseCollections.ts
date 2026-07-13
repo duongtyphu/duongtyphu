@@ -79,6 +79,20 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // phía Admin, không phải tính năng mới.
   "website-global-settings": "website_global_settings",
   "media-assets": "media_assets",
+
+  // Phase 8 (PMO-HARDENING-CONT — Production Hardening tiếp tục theo PMO
+  // Resolution: "Admin Management cho chức năng Portal đã tồn tại KHÔNG
+  // phải tính năng mới"). Chạy supabase-pmo-hardening-continue-migration.sql
+  // trước khi merge/deploy.
+  "mission-presentation": "mission_presentation", // Workstream 3 — /portal/su-menh-companion
+  "ai-workspace-recommended": "ai_workspace_recommended", // Workstream 1
+  "ai-workspace-workflow": "ai_workspace_workflow",
+  "ai-workspace-prompts": "ai_workspace_prompts",
+  "ai-workspace-resource": "ai_workspace_resource",
+  "ai-workspace-settings": "ai_workspace_settings", // Hero + Footer CTA (singleton)
+  "companion-persona": "companion_persona", // Workstream 2 — singleton, chỉ field text an toàn
+  "companion-conversation-strategy": "companion_conversation_strategy", // singleton, 5 nhóm câu
+  "knowledge-seed": "knowledge_seed", // Workstream 4 — CKOS Lesson (Admin CRUD đã có, trước đây chưa nối Supabase)
 };
 
 export function tableForCollection(key: string): string | null {

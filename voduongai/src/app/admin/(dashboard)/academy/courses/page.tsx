@@ -120,6 +120,8 @@ function ModuleBlock({ module: mod, onChange }: { module: CourseModule; onChange
   const [lessons, setLessons] = useState<CourseLesson[]>([]);
   const [ready, setReady] = useState(false);
   const [title, setTitle] = useState(mod.title);
+  const [visible, setVisible] = useState(mod.visible);
+  const [sortOrder, setSortOrder] = useState(mod.sort_order);
   const [newLessonTitle, setNewLessonTitle] = useState("");
 
   async function load() {
@@ -133,7 +135,7 @@ function ModuleBlock({ module: mod, onChange }: { module: CourseModule; onChange
   }, [mod.id]);
 
   async function saveTitle() {
-    const { error } = await updateModule(mod.id, { title });
+    const { error } = await updateModule(mod.id, { title, visible, sort_order: sortOrder });
     if (error) push(error, "error");
     else push("Đã lưu chủ đề/chương.");
   }
@@ -159,10 +161,21 @@ function ModuleBlock({ module: mod, onChange }: { module: CourseModule; onChange
 
   return (
     <div className="space-y-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <input value={title} onChange={(e) => setTitle(e.target.value)} className={`${inputClass} flex-1`} />
+        <label className="flex items-center gap-1.5 text-xs text-white/60">
+          <input type="checkbox" checked={visible} onChange={(e) => setVisible(e.target.checked)} />
+          Hiện
+        </label>
+        <input
+          type="number"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(Number(e.target.value))}
+          aria-label="Thứ tự chủ đề/chương"
+          className={`${inputClass} w-20`}
+        />
         <button onClick={saveTitle} className="rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold text-white/70 hover:bg-white/10">
-          Lưu tên
+          Lưu
         </button>
         <button onClick={removeModule} className="rounded-lg p-1.5 text-red-300 hover:bg-red-500/10" aria-label="Xóa chủ đề">
           <Trash2 className="h-4 w-4" />

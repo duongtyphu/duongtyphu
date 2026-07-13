@@ -17,15 +17,15 @@ type ContentMapping = {
  * sau — xem `docs/admin/AI_WORKSPACE_MANAGEMENT_AIWS-SPR-501.md`.
  */
 const CONTENT_MAPPING: ContentMapping[] = [
-  { section: "1. Hero", source: "Hardcode trong page.tsx", count: "—", note: "Text tĩnh, không phải danh sách nội dung." },
+  { section: "1. Hero", source: "collection ai-workspace-settings (/admin/ai-workspace/settings)", count: "—", note: "[ĐÃ XỬ LÝ — PMO-HARDENING-CONT] Text + CTA nay quản lý qua Admin." },
   { section: "2. Companion Desk", source: "Form nhập tự do", count: "—", note: "Không có danh sách — chuyển hướng /portal/workspace qua startCompanionWorkspace()." },
-  { section: "3. Recommended Workspace", source: "src/data/portal/ai-workspace.ts → RECOMMENDED_WORKSPACES", count: "8 mục", note: "Hardcode, chưa có CRUD." },
-  { section: "4. AI Workflow", source: "src/data/portal/ai-workspace.ts → AI_WORKFLOWS", count: "4 mục", note: "Hardcode, chưa có CRUD." },
-  { section: "5. Prompt Library", source: "src/data/prompts.ts → prompts", count: "12 mục (hiện 9)", note: "⚠️ Mảng RIÊNG, không phải bảng Supabase `prompts` do CKOS sở hữu (/admin/prompts) và cũng không phải AI_PROMPTS bên dưới. 3 nguồn Prompt khác nhau trùng tên trong toàn hệ thống." },
-  { section: "6. AI Toolbox theo nhiệm vụ", source: "src/data/khong-gian-ai/index.ts → AI_TOOLS", count: "10 mục (6 featured hiện ở trang chính)", note: "Hardcode, chưa có CRUD." },
-  { section: "7. Resource", source: "src/data/portal/ai-workspace.ts → AI_RESOURCES", count: "4 mục", note: "Hardcode, chưa có CRUD." },
-  { section: "8. Blog AI", source: "src/data/khong-gian-ai/index.ts → AI_ARTICLES", count: "23 mục (10 featured hiện ở trang chính)", note: "Nội dung bài viết đọc qua getBlogPost() (src/data/blog.ts) — cũng hardcode." },
-  { section: "9. Footer CTA", source: "Hardcode trong page.tsx", count: "—", note: "Text + link tĩnh." },
+  { section: "3. Recommended Workspace", source: "collection ai-workspace-recommended (/admin/ai-workspace/recommended)", count: "8 mục", note: "[ĐÃ XỬ LÝ — PMO-HARDENING-CONT] CRUD thật." },
+  { section: "4. AI Workflow", source: "collection ai-workspace-workflow (/admin/ai-workspace/workflow)", count: "4 mục", note: "[ĐÃ XỬ LÝ — PMO-HARDENING-CONT] CRUD thật." },
+  { section: "5. Prompt Library", source: "collection ai-workspace-prompts (/admin/ai-workspace/prompts)", count: "12 mục (hiện 9)", note: "[ĐÃ XỬ LÝ — PMO-HARDENING-CONT] CRUD thật, collection RIÊNG — cố ý không gộp vào bảng `prompts` (CKOS) hay AI_PROMPTS để tránh rủi ro hỏng dữ liệu 2 nguồn cũ." },
+  { section: "6. AI Toolbox theo nhiệm vụ", source: "src/data/khong-gian-ai/index.ts → AI_TOOLS", count: "10 mục (6 featured hiện ở trang chính)", note: "Vẫn hardcode — dùng chung generateStaticParams() với route con /portal/aiworkspace/[slug], cần tách Server/Client trước khi CMS-hoá (như đã làm cho case-study/ecosystems) — ngoài phạm vi lượt PMO-HARDENING-CONT này." },
+  { section: "7. Resource", source: "collection ai-workspace-resource (/admin/ai-workspace/resource)", count: "4 mục", note: "[ĐÃ XỬ LÝ — PMO-HARDENING-CONT] CRUD thật." },
+  { section: "8. Blog AI", source: "src/data/khong-gian-ai/index.ts → AI_ARTICLES", count: "23 mục (10 featured hiện ở trang chính)", note: "Vẫn hardcode — cùng lý do AI Toolbox (dùng chung route con bai-viet/[slug])." },
+  { section: "9. Footer CTA", source: "collection ai-workspace-settings (/admin/ai-workspace/settings)", count: "—", note: "[ĐÃ XỬ LÝ — PMO-HARDENING-CONT] Text + CTA nay quản lý qua Admin." },
 ];
 
 const CHILD_ROUTE_MAPPING: ContentMapping[] = [
@@ -39,7 +39,7 @@ export default function AiWorkspaceAdminPage() {
   return (
     <AdminWorkspaceShell
       title="AI Workspace"
-      description="Không gian thực hành AI của Portal (/portal/aiworkspace) — 9 Section + 3 route con thật, đối chiếu trực tiếp bên dưới (AIWS-SPR-501). Toàn bộ nội dung hiện là TypeScript hardcode, chưa có Registry/CRUD nào — xem Deliverable 4 (Future Flexibility) trong báo cáo."
+      description="Không gian thực hành AI của Portal (/portal/aiworkspace) — 9 Section + 3 route con thật, đối chiếu trực tiếp bên dưới (AIWS-SPR-501, cập nhật PMO-HARDENING-CONT). 5/9 Section (Hero/Recommended Workspace/AI Workflow/Prompt Library/Resource/Footer CTA) nay có CRUD thật — 2/9 (AI Toolbox, Blog AI) vẫn hardcode do dùng chung generateStaticParams với route con."
       rootHref="/admin/ai-workspace"
       sections={AI_WORKSPACE_SECTIONS}
     >

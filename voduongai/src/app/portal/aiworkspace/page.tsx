@@ -17,6 +17,12 @@ import {
   PromptLibrarySection,
   ResourceSection,
 } from "@/components/portal/ai-space/AiSpaceSections";
+import { useCollection } from "@/lib/admin/store";
+import {
+  AI_WORKSPACE_SETTINGS_COLLECTION_KEY,
+  AI_WORKSPACE_SETTINGS_ID,
+  AI_WORKSPACE_SETTINGS_SEED,
+} from "@/lib/admin/aiWorkspace/settings";
 
 /**
  * EPIC 02 — Content Audit sprint: Kiến trúc AI Workspace = LÀM/THỰC HÀNH.
@@ -117,6 +123,8 @@ function ArticleCard({ article }: { article: AiArticle }) {
 export default function KhongGianAiPage() {
   const featuredTools = AI_TOOLS.filter((t) => t.featured);
   const featuredArticles = AI_ARTICLES.filter((a) => a.featured);
+  const { items: settingsItems } = useCollection(AI_WORKSPACE_SETTINGS_COLLECTION_KEY, AI_WORKSPACE_SETTINGS_SEED);
+  const settings = settingsItems.find((r) => r.id === AI_WORKSPACE_SETTINGS_ID) ?? AI_WORKSPACE_SETTINGS_SEED[0];
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -154,26 +162,20 @@ export default function KhongGianAiPage() {
         <h1 className="relative text-3xl md:text-4xl font-extrabold leading-tight tracking-tight">
           <span style={{ color: "#F97316" }}>AI</span> Workspace
         </h1>
-        <p className="relative text-base font-semibold text-white/95">
-          Nơi Companion và đội ngũ AI hỗ trợ bạn biến mục tiêu thành kết quả.
-        </p>
-        <p className="relative text-base text-white/85 max-w-2xl leading-relaxed">
-          Bạn không cần bắt đầu bằng việc chọn công cụ AI. Hãy bắt đầu bằng việc bạn muốn làm gì.
-          Companion sẽ giúp bạn chọn đúng công cụ, đúng Prompt, đúng quy trình và đưa kết quả về
-          Không gian làm việc.
-        </p>
+        <p className="relative text-base font-semibold text-white/95">{settings.heroSubtitle}</p>
+        <p className="relative text-base text-white/85 max-w-2xl leading-relaxed">{settings.heroDescription}</p>
         <div className="relative flex flex-col gap-3 pt-1 sm:flex-row">
           <a
             href="#companion-desk"
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-semibold text-gray-900 shadow hover:bg-white/90 transition"
           >
-            Bắt đầu cùng Companion <ArrowRight className="h-4 w-4" />
+            {settings.heroPrimaryCtaLabel} <ArrowRight className="h-4 w-4" />
           </a>
           <a
             href="#ai-toolbox"
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20 transition"
           >
-            Khám phá công cụ AI
+            {settings.heroSecondaryCtaLabel}
           </a>
         </div>
       </section>
@@ -237,24 +239,21 @@ export default function KhongGianAiPage() {
           </div>
         </div>
         <div className="space-y-1">
-          <h3 className="text-xl font-bold text-gray-900">Muốn học AI có hệ thống hơn?</h3>
-          <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
-            Khoá học VDAI SOLO hướng dẫn từng bước — từ AI Chat đến Prompt và Tự động hóa — với ví
-            dụ thực chiến phù hợp với người Việt.
-          </p>
+          <h3 className="text-xl font-bold text-gray-900">{settings.footerTitle}</h3>
+          <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">{settings.footerDescription}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/solo"
+            href={settings.footerPrimaryHref}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-blue px-6 py-3 text-sm font-semibold text-white shadow hover:bg-blue-600 transition"
           >
-            Xem khoá học VDAI SOLO <ArrowRight className="h-4 w-4" />
+            {settings.footerPrimaryLabel} <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
-            href="/portal/aiworkspace/bai-viet/lo-trinh-hoc-ai-cho-nguoi-moi-bat-dau"
+            href={settings.footerSecondaryHref}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-6 py-3 text-sm font-semibold text-gray-700 shadow hover:bg-gray-50 transition"
           >
-            Đọc lộ trình miễn phí
+            {settings.footerSecondaryLabel}
           </Link>
         </div>
       </section>
