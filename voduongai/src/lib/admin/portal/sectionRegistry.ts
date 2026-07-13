@@ -112,10 +112,16 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   { id: "sec_premium_founder_spotlight", pageId: "page_premium", name: "Founder Spotlight", visible: true, sortOrder: 5, ctaNote: "Không có.", mediaNote: "founder-portrait.jpg (Media Center — đính chính route ở MEDIA-SPR-202).", status: "Active", updatedDate: "2026-07-13" },
   { id: "sec_premium_payment_faq", pageId: "page_premium", name: "Thanh toán hoạt động thế nào + FAQ", visible: true, sortOrder: 6, ctaNote: "Không có — khối thông tin, không phải luồng thanh toán riêng.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
-  // Hành trình của tôi (src/app/portal/hanhtrinhcuatoi/page.tsx)
-  { id: "sec_hanhtrinh_current_chapter", pageId: "page_hanhtrinh", name: "Current Chapter Card", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_hanhtrinh_growth_activity", pageId: "page_hanhtrinh", name: "Growth Activity Panel", visible: true, sortOrder: 2, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_hanhtrinh_companion_memory", pageId: "page_hanhtrinh", name: "Companion Memory Line", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
+  // Hành trình của tôi (src/app/portal/hanhtrinhcuatoi/page.tsx) — đính chính
+  // JOURNEY-SPR-901 Task 1: bản cũ (PORTAL-SPR-301) chỉ ghi 3 section, đối
+  // chiếu lại JSX thật có đúng 7 khối theo thứ tự render.
+  { id: "sec_hanhtrinh_gateway", pageId: "page_hanhtrinh", name: "Cổng vào Hub (Hero)", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_hanhtrinh_companion_memory", pageId: "page_hanhtrinh", name: "Companion Memory Line", visible: true, sortOrder: 2, ctaNote: "Link \"Tiếp tục trong Workspace\" → /portal/workspace.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_hanhtrinh_current_chapter", pageId: "page_hanhtrinh", name: "Current Chapter Card", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_hanhtrinh_five_doors", pageId: "page_hanhtrinh", name: "Năm cánh cửa (Journey Hub)", visible: true, sortOrder: 4, ctaNote: "4 link Story/Mirror/Nhật ký/Bản đồ + 1 link Khu vườn — tới 5 route con.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_hanhtrinh_growth_activity", pageId: "page_hanhtrinh", name: "Growth Activity Panel", visible: true, sortOrder: 5, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_hanhtrinh_reflection_question", pageId: "page_hanhtrinh", name: "Câu hỏi hôm nay (Reflection)", visible: true, sortOrder: 6, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_hanhtrinh_continue_cta", pageId: "page_hanhtrinh", name: "Một hành động tiếp tục (CTA)", visible: true, sortOrder: 7, ctaNote: "Link \"Tiếp tục hành trình\" → /portal/workspace.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
   // Sứ mệnh Companion (src/app/portal/su-menh-companion/page.tsx)
   { id: "sec_sumenh_sanctuary_bg", pageId: "page_su_menh_companion", name: "Sanctuary Background", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
@@ -128,8 +134,17 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   // nút "Trò chuyện" trong đó dẫn tới đây.
   { id: "sec_ai_assistant_waiting_room", pageId: "page_ai_assistant", name: "Companion Waiting Room", visible: true, sortOrder: 1, ctaNote: "Nút \"Tiếp tục hành trình\" → /portal.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
-  // Cộng đồng (src/app/portal/congdongai/page.tsx)
-  { id: "sec_congdong_guides", pageId: "page_congdongai", name: "Community Guides", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "founder-portrait.jpg (FOUNDER.photo, đính chính route ở MEDIA-SPR-202).", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_congdong_map", pageId: "page_congdongai", name: "Community Map Panel", visible: true, sortOrder: 2, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_congdong_showcase", pageId: "page_congdongai", name: "Showcase Item List", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
+  // Cộng đồng (src/app/portal/congdongai/page.tsx) — đính chính JOURNEY-SPR-901
+  // Task 1: bản cũ (PORTAL-SPR-301) chỉ ghi 3 section, đối chiếu lại JSX
+  // thật ("COMMUNITY CAMPUS RECONSTRUCTION") có đúng 10 khối.
+  { id: "sec_congdong_hero", pageId: "page_congdongai", name: "Campus Hero", visible: true, sortOrder: 1, ctaNote: "CTA \"Tham gia cộng đồng\" — disabled, trạng thái coming-soon trung thực (chưa có không gian cộng đồng riêng).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_stories", pageId: "page_congdongai", name: "Community Stories", visible: true, sortOrder: 2, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_learning_spaces", pageId: "page_congdongai", name: "Learning Spaces", visible: true, sortOrder: 3, ctaNote: "7 link tới Học viện AI/Prompt/AI Workspace/Affiliate/Premium (không phải nội dung Community sở hữu).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_showcase", pageId: "page_congdongai", name: "Community Project Showcase", visible: true, sortOrder: 4, ctaNote: "Link \"Xem tất cả Case Study\" → /portal/case-studies.", mediaNote: "Không có — thumbnail_url do Admin nhập URL ngoài.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_workshops", pageId: "page_congdongai", name: "Workshops & Events", visible: true, sortOrder: 5, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_news", pageId: "page_congdongai", name: "Community News", visible: true, sortOrder: 6, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_companion_corner", pageId: "page_congdongai", name: "Companion Corner", visible: true, sortOrder: 7, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_guides", pageId: "page_congdongai", name: "Người đồng hành cùng bạn (Community Guides)", visible: true, sortOrder: 8, ctaNote: "Không có.", mediaNote: "founder-portrait.jpg (FOUNDER.photo, đính chính route ở MEDIA-SPR-202).", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_map", pageId: "page_congdongai", name: "Community Map Panel", visible: true, sortOrder: 9, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_congdong_final_cta", pageId: "page_congdongai", name: "Final Join Community CTA", visible: true, sortOrder: 10, ctaNote: "CTA \"Tham gia cộng đồng\" (disabled) + 3 external link thật (Facebook Group/Zalo Group/YouTube).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 ];

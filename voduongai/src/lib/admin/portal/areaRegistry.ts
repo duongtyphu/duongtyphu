@@ -46,7 +46,7 @@ export const PORTAL_AREAS_SEED: PortalArea[] = [
   { id: "aiworkspace", label: "AI Workspace", href: "/portal/aiworkspace", ownerWorkspace: "AI Workspace", visible: true, sortOrder: 5, status: "Active", updatedDate: "2026-07-12" },
   { id: "duan-cohoi", label: "Dự án & Cơ hội", href: "/portal/duan-cohoi", ownerWorkspace: "Projects & Opportunities", visible: true, sortOrder: 6, status: "Active", updatedDate: "2026-07-12" },
   { id: "premium", label: "Premium", href: "/portal/premium", ownerWorkspace: "Premium", visible: true, sortOrder: 7, status: "Active", updatedDate: "2026-07-12" },
-  { id: "hanhtrinh", label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi", ownerWorkspace: "Journey", visible: true, sortOrder: 8, status: "Active", updatedDate: "2026-07-12" },
-  { id: "su-menh-companion", label: "Sứ mệnh Companion", href: "/portal/su-menh-companion", ownerWorkspace: "Companion Studio", visible: true, sortOrder: 9, status: "Active", updatedDate: "2026-07-12" },
-  { id: "congdongai", label: "Cộng đồng", href: "/portal/congdongai", ownerWorkspace: "Community", visible: true, sortOrder: 10, status: "Active", updatedDate: "2026-07-12" },
+  { id: "hanhtrinh", label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi", ownerWorkspace: "Journey & Community", visible: true, sortOrder: 8, status: "Active", updatedDate: "2026-07-13" },
+  { id: "su-menh-companion", label: "Sứ mệnh Companion", href: "/portal/su-menh-companion", ownerWorkspace: "Journey & Community", visible: true, sortOrder: 9, status: "Active", updatedDate: "2026-07-13" },
+  { id: "congdongai", label: "Cộng đồng", href: "/portal/congdongai", ownerWorkspace: "Journey & Community", visible: true, sortOrder: 10, status: "Active", updatedDate: "2026-07-13" },
 ];

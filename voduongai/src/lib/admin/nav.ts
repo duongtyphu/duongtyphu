@@ -21,6 +21,15 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
  * ràng không mơ hồ, khác các mục "NEEDS PMO DECISION" khác trong cùng
  * báo cáo).
  *
+ * JOURNEY-SPR-901: gộp 2 mục "Journey" (comingSoon) + "Community" (CRUD
+ * thật) thành 1 nhóm "Journey & Community" — Founder Directive Phase 9
+ * xác nhận đây là 1 Workspace (Journey Experience + Community Experience +
+ * Mission Presentation), không phải 2 Workspace riêng. Không tạo route
+ * mới — chỉ gộp nhóm nav, 2 href /admin/journey và /admin/community giữ
+ * nguyên. "Sứ mệnh Companion" (trước thuộc Companion Studio, xem
+ * COMPANION-SPR-801) nay thuộc Workspace này (Mission Presentation) — xem
+ * `docs/admin/JOURNEY_COMMUNITY_MANAGEMENT_JOURNEY-SPR-901.md`.
+ *
  * PORTAL-SPR-301: đã xoá 6/7 mục "Portal Builder" (Dashboard Portal,
  * Bắt đầu tại đây, Hôm nay bạn muốn làm gì, Nội dung nổi bật, CTA, Mục
  * tiêu người dùng) — CRUD thật nhưng ghi vào 6 bảng Supabase
@@ -174,9 +183,14 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Báo cáo Affiliate", href: "/admin/affiliate/analytics" },
     ],
   },
-  { group: null, items: [{ label: "Journey", href: "/admin/journey", comingSoon: true }] },
   { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio" }] },
-  { group: null, items: [{ label: "Community", href: "/admin/community" }] },
+  {
+    group: "Journey & Community",
+    items: [
+      { label: "Dashboard", href: "/admin/journey" },
+      { label: "Cộng đồng", href: "/admin/community" },
+    ],
+  },
   {
     group: "Content",
     items: [

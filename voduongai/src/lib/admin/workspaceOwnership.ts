@@ -2,11 +2,16 @@
  * Workspace Ownership catalog — ADM-SPR-200 Task 5 (Workspace Owner
  * Panel), cập nhật ADM-SPR-201: thêm "AI Workspace" và "Journey" — 2
  * Workspace mới được chính thức hóa bởi "Workspace Navigation bắt buộc"
- * của brief ADM-SPR-201 (trước đó không tồn tại ở ADM-SPR-200). Danh
- * sách 11 entry dưới đây khớp ĐÚNG thứ tự Workspace Navigation bắt buộc.
+ * của brief ADM-SPR-201 (trước đó không tồn tại ở ADM-SPR-200).
  * READ-ONLY, sourced từ `docs/admin/workspaces/*.md` (WCS) và
  * `docs/admin/ADMIN_INFORMATION_ARCHITECTURE_V2.md` (bảng maturity,
  * IMP-ADM-100 Task 1/2) — không suy diễn thêm dữ liệu mới.
+ *
+ * JOURNEY-SPR-901: gộp 2 entry "journey" + "community" thành 1
+ * "journey-community" — Founder Directive Phase 9 xác nhận đây là 1
+ * Workspace (Journey Experience + Community Experience + Mission
+ * Presentation), khớp nav.ts đã gộp nhóm. Danh sách còn 10 entry (trước
+ * 11) — xem `docs/admin/JOURNEY_COMMUNITY_MANAGEMENT_JOURNEY-SPR-901.md`.
  */
 
 export const WORKSPACE_MATURITY_LEVELS = [
@@ -78,20 +83,12 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     owns: "CRUD thật (Supabase) cho Digital Asset Category/Project/Link/Article/Settings — nhưng KHÔNG sở hữu 5 Ecosystem (DigiU/SolarGroup/Crypto/Blockchain/Trading) hiển thị trên /portal/duan-cohoi (100% hardcode trong ecosystems.ts, 0% CRUD, PROJECTS-SPR-601). Consumer thật hẹp: chỉ Category+Article đọc live tại /portal/duan-cohoi/bai-viet/[slug]; Project/Link/Settings Consumer = 0 (chỉ đọc bởi route /portal/digital-assets đã khai tử).",
   },
   {
-    key: "community",
-    name: "Community",
-    href: "/admin/community",
-    maturity: "Mixed-Legacy",
-    wcsStatus: "Chưa có",
-    owns: "Nội dung Cộng đồng (Scope thật chưa xác nhận — chỉ 1 route hiện có)",
-  },
-  {
     key: "companion-studio",
     name: "Companion Studio",
     href: "/admin/companion-studio",
     maturity: "Not Started",
     wcsStatus: "Chưa có",
-    owns: "AI Mentor Experience (COMPANION-SPR-801): 3 trang Portal (/portal/companion 9 section, /portal/su-menh-companion + child, /portal/ai-assistant) + Companion Presence toàn cục (mount PortalShell, mọi route) + Persona/Identity + Agent Registry metadata (32 agent, 8 module, 100% \"planned\") + Orchestration Rules + Conversation/Inner-life library + Character/Core/Origin/Story Memory. Dashboard chỉ đọc, chưa có CRUD nào (100% TypeScript hardcode). KHÔNG sở hữu Knowledge/CKOS (Tools/Prompts/Seed thật), Learning/Academy (Mission/Journey/Roadmap thật), Commercial/Premium (Pricing/Order/Entitlement), Website (Page/Nav/SEO), Media (Asset), Brand (Logo/Theme), Reflection Meaning Engine (dùng chung toàn Portal).",
+    owns: "Mentor Runtime (JOURNEY-SPR-901 Task 6): /portal/companion (9 section) + /portal/ai-assistant + Companion Presence toàn cục (mount PortalShell, mọi route) + Persona/Identity + Agent Registry metadata (32 agent, 8 module, 100% \"planned\") + Orchestration Rules + Conversation/Inner-life library + Character/Core/Origin/Story Memory. Dashboard chỉ đọc, chưa có CRUD nào (100% TypeScript hardcode). KHÔNG sở hữu Knowledge/CKOS, Learning/Academy, Commercial/Premium, Website, Media, Brand, Reflection Meaning Engine (dùng chung toàn Portal). ĐÍNH CHÍNH JOURNEY-SPR-901: /portal/su-menh-companion (Mission Presentation) đã chuyển sang \"Journey & Community\" — trang đó chỉ trình bày câu chuyện, không chứa Runtime AI nào của Companion Studio.",
   },
   {
     key: "media-center",
@@ -110,11 +107,11 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     owns: "9 Section + 3 route con của Portal Area \"AI Workspace\" (/portal/aiworkspace) — Recommended Workspace/AI Workflow/Prompt Library/AI Toolbox/Resource/Blog AI (AIWS-SPR-501, xem báo cáo). 100% TypeScript hardcode, chưa có CRUD/collection nào — Dashboard chỉ đọc, chưa quản lý được. KHÔNG sở hữu WorkNeedSection (mount ở /portal/hocvienai, thuộc Academy dù data cùng file ai-workspace.ts).",
   },
   {
-    key: "journey",
-    name: "Journey",
+    key: "journey-community",
+    name: "Journey & Community",
     href: "/admin/journey",
-    maturity: "Not Started",
+    maturity: "Mixed-Legacy",
     wcsStatus: "Chưa có",
-    owns: "(Chưa xây) — sở hữu Portal Area \"Hành trình của tôi\" (/portal/hanhtrinhcuatoi + Journey Hub 5 cửa)",
+    owns: "Đúng Task 6 (JOURNEY-SPR-901): Journey Experience (/portal/hanhtrinhcuatoi, 7 section + 5 route con — Bản đồ/My Story/Mirror/Nhật ký/Khu vườn, toàn bộ dữ liệu runtime thật của user, không phải CMS content) + Community Experience (/portal/congdongai, 10 section — 1 CRUD thật cho kênh cộng đồng, nay đã nối dây Portal) + Mission Presentation (/portal/su-menh-companion + child — trình bày câu chuyện/triết lý Companion, KHÔNG bao gồm Persona/Agent Registry/Runtime, vẫn thuộc Companion Studio). KHÔNG sở hữu Knowledge/CKOS, Learning/Academy, Commercial/Premium, Mentor Runtime (Companion Studio), Media, Brand, Website. Community Project Showcase đọc THÊM case_studies (CKOS/Academy sở hữu), không tạo bảng trùng lặp.",
   },
 ];

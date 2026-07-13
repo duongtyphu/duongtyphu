@@ -12,12 +12,10 @@ import {
   Newspaper,
   ArrowRight,
   MessageCircle,
-  PlayCircle,
-  Globe,
 } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { siteConfig } from "@/lib/site";
 import { CommunityGuides } from "@/components/portal/community/CommunityGuides";
+import { CommunityExternalLinks } from "@/components/portal/community/CommunityExternalLinks";
 import { CommunityMapPanel } from "@/components/portal/community/CommunityMapPanel";
 
 export const metadata = {
@@ -39,9 +37,11 @@ export const metadata = {
  *   FAQ → ARCHIVE. Không nằm trong 10 khối được duyệt của brief này
  *   ("Do not add unrelated sections"), và không có khối nào trong 10
  *   khối là nơi hợp lý để giữ lại nguyên trạng.
- * - Khối "Các kênh cộng đồng" (Facebook/Zalo/YouTube, dữ liệu THẬT từ
- *   `siteConfig.community`) → KEEP + MOVE: đây là kênh cộng đồng đang
- *   hoạt động thật, nhưng brief cấm dùng Facebook/Telegram/Discord làm
+ * - Khối "Các kênh cộng đồng" (Facebook/Zalo/YouTube, dữ liệu THẬT — trước
+ *   JOURNEY-SPR-901 hardcode `siteConfig.community`, nay đọc trực tiếp
+ *   collection Admin `community` qua `CommunityExternalLinks.tsx`) →
+ *   KEEP + MOVE: đây là kênh cộng đồng đang hoạt động thật, nhưng brief
+ *   cấm dùng Facebook/Telegram/Discord làm
  *   CTA CHÍNH ("Do not fake a Facebook... link" — không biến Community
  *   thành cổng redirect ra Facebook). Giữ lại như lối kết nối THỰC TẾ,
  *   phụ, ở cuối trang — CTA chính "Tham gia cộng đồng" dùng trạng thái
@@ -367,32 +367,9 @@ export default async function CommunityPage() {
 
           <div className="mx-auto mt-8 max-w-sm border-t border-gray-100 pt-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Kết nối ngay hôm nay</p>
-            <div className="mt-3 flex flex-wrap justify-center gap-3">
-              <a
-                href={siteConfig.community.facebookGroup}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-              >
-                <Globe className="h-3.5 w-3.5" /> Nhóm Facebook
-              </a>
-              <a
-                href={siteConfig.community.zaloGroup}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-              >
-                <MessageCircle className="h-3.5 w-3.5" /> Nhóm Zalo
-              </a>
-              <a
-                href={siteConfig.links.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-              >
-                <PlayCircle className="h-3.5 w-3.5" /> YouTube
-              </a>
-            </div>
+            {/* JOURNEY-SPR-901 Task 4: trước đây hardcode siteConfig.community —
+             * nay đọc trực tiếp collection Admin thật (/admin/community). */}
+            <CommunityExternalLinks />
           </div>
         </section>
       </div>
