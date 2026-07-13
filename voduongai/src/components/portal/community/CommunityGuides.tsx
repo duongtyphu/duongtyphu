@@ -3,47 +3,23 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { X, ArrowRight } from "lucide-react";
+import { FOUNDER, type FounderProfile } from "@/data/portal/founder";
 
 /**
  * COMMUNITY CAMPUS — mục 8: "Người đồng hành cùng bạn".
  *
- * Chỉ chứa NGƯỜI THẬT, hồ sơ thật — hiện tại là Founder (cùng dữ liệu
- * thật đã dùng ở `FounderSpotlight.tsx` của Premium, không bịa thêm
- * thành tựu/con số). Cấu trúc mảng `GUIDES` để sẵn sàng thêm Mentor/
- * Community Guide thật khi có (CMS-ready — chỉ cần thêm phần tử, không
- * cần đổi cấu trúc component).
+ * Chỉ chứa NGƯỜI THẬT, hồ sơ thật — hiện tại là Founder, đọc từ
+ * `@/data/portal/founder` (Single Source of Truth, Content Cleanup
+ * Sprint 7 — cùng nguồn với `FounderSpotlight.tsx` của Premium, không
+ * còn khai báo trùng ở đây). `GUIDES` vẫn là một mảng để sẵn sàng thêm
+ * Mentor/Community Guide thật khi có (CMS-ready — chỉ cần thêm phần tử,
+ * không cần đổi cấu trúc component); `philosophy` là field tuỳ chọn cho
+ * các Guide tương lai chưa chắc có triết lý riêng để hiển thị.
  */
 
-type Guide = {
-  id: string;
-  name: string;
-  role: string;
-  badge: string;
-  photo: string;
-  tags: string[];
-  intro: string;
-  expertise: string[];
-  philosophy?: string;
-};
+type Guide = Omit<FounderProfile, "philosophy" | "achievements"> & { philosophy?: string };
 
-const GUIDES: Guide[] = [
-  {
-    id: "vo-duong",
-    name: "Võ Đương",
-    role: "Nhà sáng lập VO DUONG AI",
-    badge: "Nhà sáng lập",
-    photo: "/images/founder-portrait.jpg",
-    tags: ["AI ứng dụng", "Affiliate Marketing", "Automation", "AI Strategy", "Phát triển hệ thống"],
-    intro:
-      "Võ Đương là nhà sáng lập VO DUONG AI — nhà đầu tư và người ứng dụng AI thực chiến trong kinh doanh số. Với nền tảng thực chiến trong Affiliate Marketing và xây dựng hệ thống tự động hóa, anh xây VO DUONG AI thành một hệ sinh thái có lộ trình rõ ràng thay vì những thông tin rời rạc.",
-    expertise: [
-      "Ứng dụng AI trong kinh doanh số và Affiliate Marketing",
-      "Xây dựng hệ thống tự động hóa quy trình vận hành",
-      "Phát triển kênh nội dung và chiến lược phân phối",
-    ],
-    philosophy: "Học AI không phải để biết — mà để làm được ngay. Mỗi buổi học là một kết quả thực tế.",
-  },
-];
+const GUIDES: Guide[] = [FOUNDER];
 
 export function CommunityGuides() {
   const [openId, setOpenId] = useState<string | null>(null);

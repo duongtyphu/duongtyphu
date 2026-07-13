@@ -1,3 +1,5 @@
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { PREMIUM_WORKSPACE_SECTIONS } from "@/lib/admin/premium/navigation";
 import { listCoupons } from "./actions";
 import { CouponRow } from "./CouponRow";
 import { CouponForm } from "./CouponForm";
@@ -6,6 +8,7 @@ export default async function CouponsAdminPage() {
   const { coupons, configured } = await listCoupons();
 
   return (
+    <AdminWorkspaceShell title="Premium" description="" rootHref="/admin/premium" sections={PREMIUM_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-extrabold text-white">Mã giảm giá</h1>
@@ -47,5 +50,6 @@ export default async function CouponsAdminPage() {
         </>
       )}
     </div>
+    </AdminWorkspaceShell>
   );
 }

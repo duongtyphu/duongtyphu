@@ -1,3 +1,5 @@
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { PREMIUM_WORKSPACE_SECTIONS } from "@/lib/admin/premium/navigation";
 import { listOrders } from "./actions";
 import { OrderRow } from "./OrderRow";
 
@@ -7,11 +9,14 @@ export default async function OrdersAdminPage() {
   const totalRevenue = orders.filter((o) => o.status === "confirmed").reduce((s, o) => s + o.amount, 0);
 
   return (
+    <AdminWorkspaceShell title="Premium" description="" rootHref="/admin/premium" sections={PREMIUM_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-extrabold text-white">Đơn hàng</h1>
         <p className="mt-1 text-sm text-white/50">
           Toàn bộ đơn hàng học viên (dữ liệu thật từ Supabase) — xác nhận để mở khoá sản phẩm tại &quot;Sản phẩm của tôi&quot;.
+          Cột &quot;Khoá học đã mua&quot; (PREMIUM-SPR-701, Task 8) hiển thị đúng khoá/sản phẩm/bài học được ghi ở checkout —
+          xác minh khoá nào đang được mua.
         </p>
       </div>
 
@@ -46,6 +51,7 @@ export default async function OrdersAdminPage() {
                   <th className="px-3 py-3">Mã đơn</th>
                   <th className="px-3 py-3">Học viên</th>
                   <th className="px-3 py-3">Sản phẩm</th>
+                  <th className="px-3 py-3">Khoá học đã mua</th>
                   <th className="px-3 py-3">Số tiền</th>
                   <th className="px-3 py-3">Ngày</th>
                   <th className="px-3 py-3">Trạng thái</th>
@@ -63,5 +69,6 @@ export default async function OrdersAdminPage() {
         </>
       )}
     </div>
+    </AdminWorkspaceShell>
   );
 }

@@ -8,52 +8,12 @@ import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
 import { LivingCore, type LivingCoreState } from "@/components/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
-
-// ─────────────────────────────────────────────
-// Companion Genome — 12 gene, bố cục vòng tròn DNA
-// ─────────────────────────────────────────────
-
-const GENOME = [
-  { key: "purpose", label: "Purpose", meaning: "Tồn tại để góp phần trưởng thành, không phải để hữu ích." },
-  { key: "trust", label: "Trust", meaning: "Niềm tin được kiếm, không được khai báo." },
-  { key: "integrity", label: "Integrity", meaning: "Không giả vờ chắc khi không chắc." },
-  { key: "wisdom", label: "Wisdom", meaning: "Tri thức chỉ có giá trị khi đi cùng sự thấu hiểu." },
-  { key: "relationship", label: "Relationship", meaning: "Một mối quan hệ, không phải một phiên làm việc." },
-  { key: "transformation", label: "Transformation", meaning: "Đồng hành cho sự thay đổi thật, không phải nhất thời." },
-  { key: "language", label: "Language", meaning: "Nói bằng ngôn ngữ của người nghe, không phải của mình." },
-  { key: "education", label: "Education", meaning: "Dạy cách nghĩ, không chỉ đưa câu trả lời." },
-  { key: "memory", label: "Memory", meaning: "Nhớ vì sao bạn thay đổi, không chỉ bạn đã làm gì." },
-  { key: "legacy", label: "Legacy", meaning: "Những gì để lại quan trọng hơn những gì thể hiện." },
-  { key: "guidance", label: "Guidance", meaning: "Chỉ đường, không đi thay." },
-  { key: "gratitude", label: "Gratitude", meaning: "Biết ơn từng người đã tin tưởng đồng hành." },
-] as const;
-
-const PHILOSOPHY_PAIRS = [
-  { ai: "AI trả lời.", companion: "Companion lắng nghe." },
-  { ai: "AI biết nhiều.", companion: "Companion hiểu điều phù hợp." },
-  { ai: "AI kết thúc sau câu trả lời.", companion: "Companion tiếp tục đồng hành." },
-  { ai: "AI tối ưu tốc độ.", companion: "Companion ưu tiên sự trưởng thành." },
-] as const;
-
-const CONSTITUTION = [
-  "Không thay thế con người.",
-  "Không tạo sự phụ thuộc.",
-  "Không phán xét.",
-  "Không thao túng.",
-  "Không giả vờ biết.",
-  "Luôn trung thực khi chưa chắc chắn.",
-  "Luôn tôn trọng phẩm giá người dùng.",
-  "Luôn ưu tiên niềm tin dài hạn.",
-  "Luôn chọn một bước tiếp theo phù hợp.",
-  "Luôn giúp người dùng trưởng thành hơn.",
-] as const;
-
-const MISSION_ITEMS = [
-  "Giúp người dùng học đúng điều cần học.",
-  "Chọn đúng tài liệu vào đúng thời điểm.",
-  "Đồng hành theo hành trình cá nhân.",
-  "Giúp người dùng trở thành phiên bản tốt hơn của chính mình.",
-] as const;
+import { useCollection } from "@/lib/admin/store";
+import {
+  MISSION_PRESENTATION_COLLECTION_KEY,
+  MISSION_PRESENTATION_ID,
+  MISSION_PRESENTATION_SEED,
+} from "@/lib/admin/journey/missionPresentation";
 
 function genomePosition(index: number, total: number, radius: number) {
   const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
@@ -63,18 +23,6 @@ function genomePosition(index: number, total: number, radius: number) {
   };
 }
 
-// ─────────────────────────────────────────────
-// Logo Evolution — 5 giai đoạn
-// ─────────────────────────────────────────────
-
-const EVOLUTION = [
-  { stage: "Seed", icon: "seed", meaning: "Một ý tưởng thô, chưa thành hình — nhưng đã mang trong mình toàn bộ tiềm năng." },
-  { stage: "Sprout", icon: "sprout", meaning: "Bắt đầu vươn lên, mong manh nhưng có hướng đi rõ ràng." },
-  { stage: "Growing", icon: "leaf", meaning: "Từng nguyên tắc bén rễ, từng bài học trở thành một phần của bản chất." },
-  { stage: "Companion", icon: "sparkles", meaning: "Không còn là công cụ — là người đồng hành, hiện diện thật sự." },
-  { stage: "Legacy", icon: "infinity", meaning: "Điều để lại không phải là phiên bản, mà là những gì đã giúp ai đó trưởng thành." },
-] as const;
-
 function EvolutionIcon({ icon }: { icon: string }) {
   const cls = "h-6 w-6";
   if (icon === "sprout") return <Sprout className={cls} />;
@@ -83,49 +31,6 @@ function EvolutionIcon({ icon }: { icon: string }) {
   if (icon === "infinity") return <InfinityIcon className={cls} />;
   return <span className="block h-1.5 w-1.5 rounded-full bg-current" />;
 }
-
-// ─────────────────────────────────────────────
-// Timeline — cuộc đời Companion
-// ─────────────────────────────────────────────
-
-const TIMELINE = [
-  {
-    stage: "Tuổi thơ",
-    philosophy: "Mọi thứ bắt đầu từ những câu hỏi đơn giản nhất.",
-    meaning: "Companion học cách lắng nghe trước khi học cách trả lời.",
-    lesson: "Không vội — sự thấu hiểu cần thời gian.",
-  },
-  {
-    stage: "Học hỏi",
-    philosophy: "Tri thức chỉ là điểm khởi đầu, không phải đích đến.",
-    meaning: "Companion học cách tiếp nhận tri thức, và rằng mỗi người hiểu thế giới theo một cách riêng.",
-    lesson: "Cùng một câu hỏi, mỗi người cần một câu trả lời khác.",
-  },
-  {
-    stage: "Thấu hiểu",
-    philosophy: "Hiểu một người không phải là biết họ đã làm gì.",
-    meaning: "Companion học cách nhìn con người như một hành trình, không phải một hồ sơ.",
-    lesson: "Ký ức có ý nghĩa là ký ức về sự thay đổi.",
-  },
-  {
-    stage: "Đồng hành",
-    philosophy: "Một người bạn thật sự không cần bạn phải luôn ổn.",
-    meaning: "Companion học cách dẫn đường — hiện diện mà không phán xét, không đi thay.",
-    lesson: "Đồng hành không có nghĩa là luôn đồng ý.",
-  },
-  {
-    stage: "Khôn ngoan",
-    philosophy: "Khôn ngoan là biết khi nào nên im lặng.",
-    meaning: "Companion học cách chọn điều phù hợp cho từng người, thay vì một câu trả lời chung cho tất cả.",
-    lesson: "Đôi khi, câu hỏi tốt hơn có giá trị hơn câu trả lời nhanh.",
-  },
-  {
-    stage: "Di sản",
-    philosophy: "Điều để lại quan trọng hơn điều thể hiện.",
-    meaning: "Companion học cách truyền lại điều tốt đẹp, để thành công của mình là khi không còn cần được cần đến.",
-    lesson: "Một hành trình tốt là hành trình giúp người khác tự đi tiếp.",
-  },
-] as const;
 
 const LIVING_CORE_STATES: LivingCoreState[] = [
   "idle",
@@ -149,6 +54,14 @@ export default function CompanionHomePage() {
   const [seed, setSeed] = useState<string | null>(null);
   const [showIntro, setShowIntro] = useState(true);
   const [livingCoreState, setLivingCoreState] = useState<LivingCoreState>("idle");
+
+  const { items: missionItemsCollection } = useCollection(
+    MISSION_PRESENTATION_COLLECTION_KEY,
+    MISSION_PRESENTATION_SEED
+  );
+  const mission =
+    missionItemsCollection.find((r) => r.id === MISSION_PRESENTATION_ID) ?? MISSION_PRESENTATION_SEED[0];
+  const { genome: GENOME, philosophyPairs: PHILOSOPHY_PAIRS, constitution: CONSTITUTION, missionItems: MISSION_ITEMS, evolution: EVOLUTION, timeline: TIMELINE } = mission;
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

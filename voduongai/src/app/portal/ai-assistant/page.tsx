@@ -10,7 +10,7 @@ export default function AiAssistantPage() {
     <div className="space-y-8">
       <PageHeader title="Companion" description="Không phải một công cụ. Một người đồng hành." />
       <GemCard variant="featured" className="flex flex-col items-center gap-5 py-14 text-center">
-        <span className="h-2 w-2 rounded-full bg-[#22D3EE]" />
+        <span className="h-2 w-2 rounded-full bg-brand-cyan" />
         <div className="max-w-md space-y-3">
           <p className="text-base font-semibold text-gray-900">{firstConversationOpening.greeting}</p>
           <p className="text-sm text-gray-600">{firstConversationOpening.framing}</p>

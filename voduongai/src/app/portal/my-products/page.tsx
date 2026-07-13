@@ -8,6 +8,7 @@ type Order = {
   amount: number;
   status: string;
   created_at: string;
+  course_id: string | null;
   products: { title: string; icon: string | null; video_url: string | null; pdf_url: string | null } | null;
   lessons: { title: string; video_url: string | null; pdf_url: string | null } | null;
 };
@@ -29,7 +30,7 @@ async function getUserOrders(): Promise<{ email: string | null; orders: Order[] 
 
   const { data } = await supabase
     .from("orders")
-    .select("id, product_name, amount, status, created_at, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
+    .select("id, product_name, amount, status, created_at, course_id, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
     .eq("member_email", email)
     .order("created_at", { ascending: false });
 
@@ -98,6 +99,14 @@ export default async function MyProductsPage() {
                       </a>
                     )}
                   </div>
+                )}
+                {o.status === "confirmed" && o.course_id && !video && !pdf && (
+                  <a
+                    href={`/portal/premium/hoc/${o.course_id}`}
+                    className="mt-3 block rounded-lg bg-brand-blue/10 px-3 py-2 text-xs font-semibold text-brand-blue hover:bg-brand-blue/20"
+                  >
+                    Vào học →
+                  </a>
                 )}
               </div>
             );
