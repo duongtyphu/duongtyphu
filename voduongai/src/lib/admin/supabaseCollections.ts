@@ -59,6 +59,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
 
   // Phase 5 — Services (was localStorage-only)
   services: "services",
+
+  // Phase 6 (PROJECTS-SPR-602) — Ecosystem CMS thật cho /portal/duan-cohoi
+  // (Canonical Product theo Founder Directive), thay thế hoàn toàn model
+  // digital_asset_projects/digital_asset_links cũ (Consumer = 0 trên Portal
+  // thật). Chạy supabase-projects-opportunities-migration.sql trước khi
+  // merge/deploy — nếu chưa chạy, /portal/duan-cohoi sẽ hiển thị rỗng.
+  ecosystems: "ecosystems",
 };
 
 export function tableForCollection(key: string): string | null {

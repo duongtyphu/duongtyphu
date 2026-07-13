@@ -40,14 +40,13 @@ const OPEN_PMO_QUESTIONS = [
   "/portal/hetrithucai (3 route) trùng tên khái niệm với /portal/ckos nhưng khác route — quan hệ giữa 2 route chưa xác nhận (ADM-SPR-200).",
   "1/10 Portal Area (Trang chủ Học viện) chưa có Workspace Admin sở hữu rõ ràng — không Workspace nào trong \"Workspace Navigation bắt buộc\" khớp rõ ràng (ADM-SPR-200/201, xác nhận lại PORTAL-SPR-301).",
   "case_study (Admin ghi) vs case_studies (Portal đọc) — 2 bảng Supabase khác nhau, Case Study tạo mới trong Admin không lên Portal (IMP-ADM-001R, ưu tiên P0).",
-  "Digital Assets CRUD (11 route) quản lý /portal/digital-assets — route đã bị Product Owner khai tử, route thật /portal/duan-cohoi vẫn 100% hardcode (IMP-ADM-001R, ưu tiên P0).",
+  "[ĐÃ XỬ LÝ — PROJECTS-SPR-602] Digital Assets CRUD (11 route) quản lý /portal/digital-assets đã khai tử — thay bằng Ecosystem CRUD thật (/admin/projects-opportunities/ecosystems) bám đúng /portal/duan-cohoi (Canonical Product theo Founder Directive).",
   "Banner (portal_banners/NotificationTicker.tsx) — component đã có sẵn, chỉ thiếu 1 dòng mount vào Portal, chưa quyết định có nối dây hay deprecate (IMP-ADM-001R; 6/7 mục Portal Builder còn lại đã xoá ở PORTAL-SPR-301, chỉ Banner còn treo).",
 ];
 
 const OPEN_BLOCKERS = [
   { title: "Premium: 3 \"Lớp học\" mua thành công nhưng không có nội dung", detail: "`courses` không có cột/bảng nội dung học (chủ đề/chương/bài học/video/tài liệu), `orders.course_id` là TEXT không phải FK — cần migration schema, chưa tự chạy (PREMIUM-SPR-701, P0)." },
   { title: "case_study vs case_studies", detail: "Admin ghi vào 1 bảng, Portal đọc bảng khác — Case Study tạo mới trong Admin không bao giờ lên Portal thật (IMP-ADM-001R, P0)." },
-  { title: "Digital Assets CRUD quản lý route đã khai tử", detail: "11 route Admin quản lý /portal/digital-assets (Product Owner đã khai tử) thay vì /portal/duan-cohoi (route thật, 100% hardcode) (IMP-ADM-001R, P0)." },
 ];
 
 const TECHNICAL_DEBT = [
@@ -64,6 +63,7 @@ const FOUNDER_DECISIONS = [
   "5 nhóm Projects & Opportunities cố định (DigiU/SolarGroup/Crypto/Blockchain/Trading) — PROJECTS-SPR-601.",
   "\"Sứ mệnh Companion\" (Mission Presentation) chuyển ownership từ Companion Studio sang Journey & Community, tách bạch khỏi Mentor Runtime — JOURNEY-SPR-901.",
   "Journey + Community hợp nhất thành 1 Workspace duy nhất (không giữ 2 Workspace riêng như ADM-SPR-201 từng dự kiến) — JOURNEY-SPR-901.",
+  "/portal/duan-cohoi là Canonical Product của Projects & Opportunities — Admin CRUD cũ (Digital Asset Project/Link, Consumer = 0) gỡ bỏ hoàn toàn, thay bằng Ecosystem CRUD bám đúng Portal thật — PROJECTS-SPR-602 (Founder Directive).",
 ];
 
 function Table<T extends Record<string, string>>({ columns, rows }: { columns: { key: keyof T; label: string; mono?: boolean }[]; rows: T[] }) {

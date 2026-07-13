@@ -150,20 +150,20 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   { group: null, items: [{ label: "AI Workspace", href: "/admin/ai-workspace" }] },
+  // PROJECTS-SPR-602 (Founder Directive: Projects & Opportunities Canonical
+  // Product) — thay toàn bộ 11 mục cũ (Dự án/Link/category[key]/Báo cáo —
+  // quản lý model DigitalAssetProject/Link Consumer = 0, chỉ phục vụ route
+  // /portal/digital-assets/** đã khai tử) bằng 4 mục bám đúng cấu trúc
+  // /portal/duan-cohoi (Canonical Product) thật: Ecosystem (mới, thay Dự
+  // án+Link+5 category page cũ), Bài viết + Danh mục (giữ nguyên, Consumer
+  // thật). Xem docs/admin/PROJECTS_OPPORTUNITIES_CANONICAL_PROJECTS-SPR-602.md.
   {
     group: "Projects & Opportunities",
     items: [
-      { label: "Tổng quan", href: "/admin/digital-assets" },
-      { label: "Hệ sinh thái DigiU", href: "/admin/digital-assets/category/digiu" },
-      { label: "Đầu tư cổ phần tại SolarGroup", href: "/admin/digital-assets/category/equity" },
-      { label: "Sàn giao dịch Crypto", href: "/admin/digital-assets/category/crypto" },
-      { label: "Blockchain", href: "/admin/digital-assets/category/blockchain" },
-      { label: "Trading", href: "/admin/digital-assets/category/trading" },
-      { label: "Link dự án (tất cả)", href: "/admin/digital-assets/links" },
-      { label: "Dự án", href: "/admin/digital-assets/projects" },
-      { label: "Bài viết", href: "/admin/digital-assets/articles" },
-      { label: "Cấu hình danh mục", href: "/admin/digital-assets/categories" },
-      { label: "Báo cáo", href: "/admin/digital-assets/analytics" },
+      { label: "Tổng quan", href: "/admin/projects-opportunities" },
+      { label: "Hệ sinh thái", href: "/admin/projects-opportunities/ecosystems" },
+      { label: "Bài viết", href: "/admin/projects-opportunities/articles" },
+      { label: "Danh mục", href: "/admin/projects-opportunities/categories" },
     ],
   },
   {

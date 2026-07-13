@@ -77,10 +77,10 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
   {
     key: "projects-opportunities",
     name: "Projects & Opportunities",
-    href: "/admin/digital-assets",
-    maturity: "Mixed-Legacy",
+    href: "/admin/projects-opportunities",
+    maturity: "Consistent-Legacy",
     wcsStatus: "Chưa có",
-    owns: "CRUD thật (Supabase) cho Digital Asset Category/Project/Link/Article/Settings — nhưng KHÔNG sở hữu 5 Ecosystem (DigiU/SolarGroup/Crypto/Blockchain/Trading) hiển thị trên /portal/duan-cohoi (100% hardcode trong ecosystems.ts, 0% CRUD, PROJECTS-SPR-601). Consumer thật hẹp: chỉ Category+Article đọc live tại /portal/duan-cohoi/bai-viet/[slug]; Project/Link/Settings Consumer = 0 (chỉ đọc bởi route /portal/digital-assets đã khai tử).",
+    owns: "Đúng Founder Directive (PROJECTS-SPR-602): CRUD thật (Supabase \"ecosystems\") cho Ecosystem/Sub-project/CTA-Link/Tiêu chí đánh giá/FAQ/Bài viết liên quan/Publish — bám 100% cấu trúc /portal/duan-cohoi (Canonical Product). Category + Article (Supabase digital_asset_categories/digital_asset_articles) giữ nguyên, Consumer thật. Đã GỠ BỎ CRUD Digital Asset Project/Link cũ (Consumer = 0, chỉ phục vụ route /portal/digital-assets đã khai tử) — không còn dấu vết mô hình Admin cũ.",
   },
   {
     key: "companion-studio",

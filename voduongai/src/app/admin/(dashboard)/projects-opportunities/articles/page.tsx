@@ -1,7 +1,7 @@
 "use client";
 
 import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
-import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
+import { PROJECTS_OPPORTUNITIES_SECTIONS } from "@/lib/admin/projectsOpportunities/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import { DigitalAssetCategoryTabs } from "@/components/admin/DigitalAssetCategoryTabs";
 import {
@@ -15,16 +15,28 @@ function projectName(projectId: string) {
   return digitalAssetProjects.find((p) => p.id === projectId)?.name ?? projectId;
 }
 
-export default function DigitalAssetArticlesAdminPage() {
+/**
+ * PROJECTS-SPR-602: chuyển từ /admin/digital-assets/articles sang đây
+ * (Consumer thật của Article không đổi — vẫn /portal/duan-cohoi/bai-viet/[slug]
+ * + giờ còn được Ecosystem chọn làm "Bài viết liên quan" qua field
+ * `relatedArticleIds`, xem /admin/projects-opportunities/ecosystems).
+ *
+ * `projectId` là field cũ trên DigitalAssetArticle (thuộc model
+ * DigitalAssetProject đã gỡ CRUD khỏi Admin — không route Portal thật nào
+ * đọc field này). Giữ nguyên field/select này (không đổi schema Article,
+ * ngoài phạm vi sprint) — options vẫn lấy từ danh sách project cũ có sẵn,
+ * không bịa danh sách mới.
+ */
+export default function ProjectsOpportunitiesArticlesPage() {
   return (
-    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/projects-opportunities" sections={PROJECTS_OPPORTUNITIES_SECTIONS}>
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-white">Bài viết dự án ĐẦU TƯ CÙNG TÔI</h1>
+        <h1 className="text-xl font-extrabold text-white">Bài viết Dự án & Cơ hội</h1>
         <p className="mt-1 text-sm text-white/50">
-          Chọn danh mục bên dưới để quản lý riêng bài viết của từng danh mục — bài viết luôn theo đúng danh mục
-          của dự án đã chọn. Xem trực tiếp tại <code>/portal/duan-cohoi/bai-viet/[slug]</code> (Consumer thật, PROJECTS-SPR-601) —
-          ⚠️ chưa hiển thị trong khu vực &quot;Bài viết liên quan&quot; của trang Hệ sinh thái tương ứng (đọc mảng tĩnh riêng), xem Dashboard.
+          Chọn danh mục bên dưới để quản lý bài viết theo từng danh mục. Xem trực tiếp tại{" "}
+          <code>/portal/duan-cohoi/bai-viet/[slug]</code>. Bài viết Published còn có thể được chọn làm
+          &quot;Bài viết liên quan&quot; trong từng Hệ sinh thái.
         </p>
       </div>
 
@@ -45,7 +57,7 @@ export default function DigitalAssetArticlesAdminPage() {
               viewHref={(a) => `/portal/duan-cohoi/bai-viet/${a.slug}`}
               columns={[
                 { key: "title", label: "Tiêu đề" },
-                { key: "projectId", label: "Dự án", render: (a) => projectName(a.projectId) },
+                { key: "projectId", label: "Dự án (cũ)", render: (a) => projectName(a.projectId) },
                 { key: "status", label: "Trạng thái" },
                 { key: "featured", label: "Nổi bật", render: (a) => (a.featured ? "✅" : "—") },
                 { key: "publishedAt", label: "Ngày đăng" },
@@ -53,7 +65,7 @@ export default function DigitalAssetArticlesAdminPage() {
               fields={[
                 { key: "title", label: "Tiêu đề", type: "text", required: true, full: true },
                 { key: "slug", label: "Slug", type: "text", required: true },
-                { key: "projectId", label: "Dự án", type: "select", options: projectOptions, required: true },
+                { key: "projectId", label: "Dự án (cũ, không quản lý ở đây)", type: "select", options: projectOptions, required: true },
                 { key: "image", label: "Ảnh bài viết (URL)", type: "text" },
                 { key: "author", label: "Tác giả", type: "text", required: true },
                 { key: "excerpt", label: "Mô tả ngắn", type: "textarea", required: true, full: true },
