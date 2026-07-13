@@ -67,7 +67,7 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     href: "/admin/premium",
     maturity: "Mixed-Legacy",
     wcsStatus: "Chưa có",
-    owns: "Sản phẩm số, Học phí, Đơn hàng, Mã giảm giá, Dịch vụ, Hỗ trợ, Leads, Affiliate Hub",
+    owns: "Đúng Task 6 (PREMIUM-SPR-701): Pricing + Checkout + Order + Access Entitlement cho 6 chương trình (courses table, /admin/course-pricing + /admin/orders). KHÔNG sở hữu Course Structure/Learning Objects (Academy) hay Video/Image/Document (Media Center) — hiện chưa tồn tại cho 3 \"Lớp học\" (0% content model, xem báo cáo). \"Sản phẩm số\" (products table) Consumer = 0, giữ CRUD không tự xoá. Dịch vụ/Hỗ trợ/Leads/Affiliate Hub vẫn thuộc nhóm nav Premium nhưng ngoài phạm vi Course Commerce Task 6.",
   },
   {
     key: "projects-opportunities",

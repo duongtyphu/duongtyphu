@@ -89,11 +89,18 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   { id: "sec_duancohoi_faq", pageId: "page_duan_cohoi", name: "Câu hỏi thường gặp", visible: true, sortOrder: 6, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
   { id: "sec_duancohoi_companion_quotes", pageId: "page_duan_cohoi", name: "5 điều Companion muốn bạn mang theo", visible: true, sortOrder: 7, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
-  // Premium (src/app/portal/premium/page.tsx)
-  { id: "sec_premium_programs", pageId: "page_premium", name: "Premium Program Card List", visible: true, sortOrder: 1, ctaNote: "CTA mua/xem chi tiết sản phẩm.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_premium_course_row", pageId: "page_premium", name: "Course Row", visible: true, sortOrder: 2, ctaNote: "Link khoá học.", mediaNote: "Course PDF (URL động, Media Center).", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_premium_advisor", pageId: "page_premium", name: "Premium Advisor + Premium Consult", visible: true, sortOrder: 3, ctaNote: "CTA tư vấn.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_premium_founder_spotlight", pageId: "page_premium", name: "Founder Spotlight", visible: true, sortOrder: 4, ctaNote: "Không có.", mediaNote: "founder-portrait.jpg (Media Center — đính chính route ở MEDIA-SPR-202).", status: "Active", updatedDate: "2026-07-12" },
+  // Premium (src/app/portal/premium/page.tsx) — đính chính PREMIUM-SPR-701:
+  // đối chiếu lại trực tiếp JSX thật, đúng 6 section theo thứ tự render
+  // (bản seed cũ PORTAL-SPR-301 thiếu Hero/Payment+FAQ, gộp sai Advisor với
+  // Consult thành 1 section dù 2 component không liền kề trong JSX, và có
+  // "Course Row" không tồn tại — CourseRow.tsx thật ra là component Admin
+  // tại /admin/course-pricing, không phải section Portal).
+  { id: "sec_premium_hero", pageId: "page_premium", name: "Hero", visible: true, sortOrder: 1, ctaNote: "2 CTA neo nội bộ: #chuong-trinh, #companion-advisor.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_premium_advisor", pageId: "page_premium", name: "Companion Advisor", visible: true, sortOrder: 2, ctaNote: "Không có CTA riêng.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_premium_programs", pageId: "page_premium", name: "Program Grid (5 chương trình: 3 Lớp học AI + 2 Chương trình hệ thống V-Solo/V-Scale)", visible: true, sortOrder: 3, ctaNote: "CTA thanh toán riêng từng card (/portal/checkout?type=course&id=...), chỉ hiện khi có dòng `courses` khớp và status='open'.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_premium_consult", pageId: "page_premium", name: "Tư vấn 1:1", visible: true, sortOrder: 4, ctaNote: "Link tel: + Zalo, không có checkout.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_premium_founder_spotlight", pageId: "page_premium", name: "Founder Spotlight", visible: true, sortOrder: 5, ctaNote: "Không có.", mediaNote: "founder-portrait.jpg (Media Center — đính chính route ở MEDIA-SPR-202).", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_premium_payment_faq", pageId: "page_premium", name: "Thanh toán hoạt động thế nào + FAQ", visible: true, sortOrder: 6, ctaNote: "Không có — khối thông tin, không phải luồng thanh toán riêng.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
   // Hành trình của tôi (src/app/portal/hanhtrinhcuatoi/page.tsx)
   { id: "sec_hanhtrinh_current_chapter", pageId: "page_hanhtrinh", name: "Current Chapter Card", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
