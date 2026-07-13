@@ -91,7 +91,7 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     href: "/admin/companion-studio",
     maturity: "Not Started",
     wcsStatus: "Chưa có",
-    owns: "(Chưa xây) — dự kiến: Companion, Sứ mệnh Companion",
+    owns: "AI Mentor Experience (COMPANION-SPR-801): 3 trang Portal (/portal/companion 9 section, /portal/su-menh-companion + child, /portal/ai-assistant) + Companion Presence toàn cục (mount PortalShell, mọi route) + Persona/Identity + Agent Registry metadata (32 agent, 8 module, 100% \"planned\") + Orchestration Rules + Conversation/Inner-life library + Character/Core/Origin/Story Memory. Dashboard chỉ đọc, chưa có CRUD nào (100% TypeScript hardcode). KHÔNG sở hữu Knowledge/CKOS (Tools/Prompts/Seed thật), Learning/Academy (Mission/Journey/Roadmap thật), Commercial/Premium (Pricing/Order/Entitlement), Website (Page/Nav/SEO), Media (Asset), Brand (Logo/Theme), Reflection Meaning Engine (dùng chung toàn Portal).",
   },
   {
     key: "media-center",

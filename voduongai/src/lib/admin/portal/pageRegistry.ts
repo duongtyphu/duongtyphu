@@ -54,9 +54,12 @@ export const PORTAL_PAGES_COLLECTION_KEY = "portal-mgmt-pages";
  * `PORTAL_AREAS_SEED`) + Child Page cho các Area có route con THẬT đã xác
  * nhận trong `pages.ts` cũ (route động `[slug]` giữ nguyên cú pháp thật,
  * không đổi thành placeholder khác). Area không có route con thật
- * (companion/ckos/hocvienai/premium/congdongai — kiểm tra lại `pages.ts`:
- * mỗi Area này chỉ có đúng 1 route khớp, không có route con) — không bịa
- * Child Page cho các Area này.
+ * (ckos/hocvienai/premium/congdongai — kiểm tra lại `pages.ts`: mỗi Area
+ * này chỉ có đúng 1 route khớp, không có route con) — không bịa Child Page
+ * cho các Area này. ĐÍNH CHÍNH (COMPANION-SPR-801 Task 1): "companion" ĐÃ
+ * có 1 route con thật — /portal/ai-assistant — comment gốc bỏ sót vì trang
+ * này không nằm trong `pages.ts` cũ, chỉ được link từ component Companion
+ * Presence toàn cục (CompanionSpace.tsx), không phải từ điều hướng Area.
  *
  * Route "chết" (redirect 301 xác nhận ở ADM-SPR-005: /portal/hanh-trinh-cua-toi,
  * /portal/student-success, /portal/updates) KHÔNG đưa vào đây — không phải
@@ -95,4 +98,11 @@ export const PORTAL_PAGES_SEED: PortalPageEntry[] = [
 
   // Child Pages — Sứ mệnh Companion (1 route con thật)
   { id: "page_sumenh_hinhanh", areaId: "su-menh-companion", parentPageId: "page_su_menh_companion", title: "Companion qua hình ảnh", route: "/portal/su-menh-companion/companion-qua-hinh-anh", visible: true, sortOrder: 1, publishStatus: "Active", seoContextNote: "Không áp dụng.", workspaceOwner: "Companion Studio", updatedDate: "2026-07-12" },
+
+  // Child Page — Companion (1 route con thật, đính chính COMPANION-SPR-801
+  // Task 1 — comment gốc dòng 57 claim Area "companion" không có route con,
+  // SAI: /portal/ai-assistant là trang thật, được link từ CompanionSpace.tsx
+  // (nút "Trò chuyện" trong panel Companion Presence toàn cục) + companion-identity.ts
+  // (route-state map) — chỉ chưa từng được ghi vào Registry này.
+  { id: "page_ai_assistant", areaId: "companion", parentPageId: "page_companion", title: "Companion (phòng chờ trò chuyện)", route: "/portal/ai-assistant", visible: true, sortOrder: 1, publishStatus: "Active", seoContextNote: "Không áp dụng — trang sau đăng nhập.", workspaceOwner: "Companion Studio", updatedDate: "2026-07-13" },
 ];

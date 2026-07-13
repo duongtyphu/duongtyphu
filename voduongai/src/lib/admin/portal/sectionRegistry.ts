@@ -47,10 +47,20 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   { id: "sec_home_companion_thought", pageId: "page_home", name: "Companion Thought Line", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
   { id: "sec_home_knowledge_journey", pageId: "page_home", name: "Knowledge Journey Strip", visible: true, sortOrder: 4, ctaNote: "Link tới CKOS/Học viện AI (theo tiến độ tri thức).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
 
-  // Companion (src/app/portal/companion/page.tsx)
-  { id: "sec_companion_sanctuary_bg", pageId: "page_companion", name: "Sanctuary Background", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Nền hiệu ứng, không phải file ảnh tĩnh trong Media Center.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_companion_living_core", pageId: "page_companion", name: "Living Core (Companion sống)", visible: true, sortOrder: 2, ctaNote: "Không có CTA cố định — tương tác trực tiếp.", mediaNote: "Companion Avatar Set (Media Center).", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_companion_task_entry", pageId: "page_companion", name: "Companion Task Entry", visible: true, sortOrder: 3, ctaNote: "Lối vào nhiệm vụ Companion.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
+  // Companion (src/app/portal/companion/page.tsx) — đính chính COMPANION-SPR-801
+  // Task 1: bản cũ (PORTAL-SPR-301) chỉ ghi 3 section, đối chiếu lại JSX thật
+  // có đúng 9 <section>/<footer> theo thứ tự render (Presence → Thought →
+  // Memory → Thinking → Mission gợi ý → Conversation → Reflection → Silence
+  // → Footer link Sứ mệnh Companion).
+  { id: "sec_companion_presence", pageId: "page_companion", name: "Presence (Living Core thở)", visible: true, sortOrder: 1, ctaNote: "Không có — tương tác trực tiếp với Living Core.", mediaNote: "Companion Avatar Set (Media Center).", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_thought", pageId: "page_companion", name: "Thought (Hôm nay)", visible: true, sortOrder: 2, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_memory", pageId: "page_companion", name: "Memory (Trí nhớ)", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_musing", pageId: "page_companion", name: "Thinking (Mình đang nghĩ...)", visible: true, sortOrder: 4, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_mission_suggestion", pageId: "page_companion", name: "Một gợi ý cho hôm nay", visible: true, sortOrder: 5, ctaNote: "Không có CTA riêng — gợi ý bằng văn bản.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_task_entry", pageId: "page_companion", name: "Conversation (Companion Task Entry)", visible: true, sortOrder: 6, ctaNote: "Lối vào nhiệm vụ Companion — điều hướng /portal/workspace.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_reflection", pageId: "page_companion", name: "Reflection (Chiêm nghiệm)", visible: true, sortOrder: 7, ctaNote: "Link \"Xem hành trình của bạn\" → /portal/hanhtrinhcuatoi.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_silence", pageId: "page_companion", name: "Silence (khoảng lặng chủ đích)", visible: true, sortOrder: 8, ctaNote: "Không có CTA — chủ đích.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_companion_footer", pageId: "page_companion", name: "Footer (link Sứ mệnh Companion)", visible: true, sortOrder: 9, ctaNote: "Link lặng lẽ → /portal/su-menh-companion.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
   // Hệ tri thức AI — CKOS (src/app/portal/ckos/page.tsx)
   { id: "sec_ckos_hero", pageId: "page_ckos", name: "Pillar Hero", visible: true, sortOrder: 1, ctaNote: "CTA vào Tools/Prompts.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
@@ -111,6 +121,12 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   { id: "sec_sumenh_sanctuary_bg", pageId: "page_su_menh_companion", name: "Sanctuary Background", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
   { id: "sec_sumenh_living_core", pageId: "page_su_menh_companion", name: "Living Core", visible: true, sortOrder: 2, ctaNote: "Không có.", mediaNote: "Companion Avatar Set (Media Center).", status: "Active", updatedDate: "2026-07-12" },
   { id: "sec_sumenh_companion_experience", pageId: "page_su_menh_companion", name: "Companion Experience", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
+
+  // AI Assistant — "phòng chờ" Companion (src/app/portal/ai-assistant/page.tsx),
+  // route con thật của Companion, chưa từng có trong Registry (COMPANION-SPR-801
+  // Task 1) — bấm vào Companion Presence (widget toàn cục) mở CompanionSpace,
+  // nút "Trò chuyện" trong đó dẫn tới đây.
+  { id: "sec_ai_assistant_waiting_room", pageId: "page_ai_assistant", name: "Companion Waiting Room", visible: true, sortOrder: 1, ctaNote: "Nút \"Tiếp tục hành trình\" → /portal.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
   // Cộng đồng (src/app/portal/congdongai/page.tsx)
   { id: "sec_congdong_guides", pageId: "page_congdongai", name: "Community Guides", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "founder-portrait.jpg (FOUNDER.photo, đính chính route ở MEDIA-SPR-202).", status: "Active", updatedDate: "2026-07-12" },

@@ -175,7 +175,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   { group: null, items: [{ label: "Journey", href: "/admin/journey", comingSoon: true }] },
-  { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio", comingSoon: true }] },
+  { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio" }] },
   { group: null, items: [{ label: "Community", href: "/admin/community" }] },
   {
     group: "Content",
