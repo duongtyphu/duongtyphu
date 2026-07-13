@@ -9,11 +9,29 @@ import {
   type AiNeedCategory,
   type AiProfessionGroup,
 } from "@/data/khong-gian-ai";
-import { Breadcrumb } from "@/components/portal/ui/Breadcrumb";
 
 // ─────────────────────────────────────────────
 // Shared UI primitives
 // ─────────────────────────────────────────────
+
+function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
+  return (
+    <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+      {items.map((item, i) => (
+        <span key={i} className="flex items-center gap-2">
+          {i > 0 && <span className="text-gray-300">/</span>}
+          {item.href ? (
+            <Link href={item.href} className="hover:text-blue-600 transition-colors">
+              {item.label}
+            </Link>
+          ) : (
+            <span className="text-gray-900 font-medium">{item.label}</span>
+          )}
+        </span>
+      ))}
+    </nav>
+  );
+}
 
 function PricingBadge({ pricing }: { pricing: AiTool["pricing"] }) {
   const styles: Record<AiTool["pricing"], string> = {

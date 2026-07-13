@@ -2,7 +2,7 @@
 
 import { useParams, notFound } from "next/navigation";
 import { digitalAssetArticles, digitalAssetCategories, type DigitalAssetArticle } from "@/data/digitalAssets";
-import { ecosystemsSeed, ECOSYSTEMS_COLLECTION_KEY, type Ecosystem } from "@/data/portal/ecosystems";
+import { ecosystems } from "@/data/portal/ecosystems";
 import { useCollection } from "@/lib/admin/store";
 import { SaveButton } from "@/components/portal/SaveButton";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
@@ -21,7 +21,6 @@ export default function EcosystemArticleDetailPage() {
     digitalAssetArticles
   );
   const { items: categories } = useCollection("digital-asset-categories", digitalAssetCategories);
-  const { items: ecosystems } = useCollection<Ecosystem>(ECOSYSTEMS_COLLECTION_KEY, ecosystemsSeed);
 
   const article = articles.find((a) => a.slug === slug && a.status === "Published");
 
@@ -29,9 +28,7 @@ export default function EcosystemArticleDetailPage() {
   if (!article) return null;
 
   const category = categories.find((c) => c.key === article.category);
-  const ecosystem = ecosystems.find(
-    (e: Ecosystem) => e.articleCategory === article.category || e.extraArticleCategories?.includes(article.category)
-  );
+  const ecosystem = ecosystems.find((e) => e.articleCategory === article.category || e.extraArticleCategories?.includes(article.category));
 
   return (
     <div className="relative -mx-4 -my-6 md:-mx-8 md:-my-8">

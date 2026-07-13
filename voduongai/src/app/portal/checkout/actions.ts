@@ -24,17 +24,6 @@ async function lookupAuthoritativePrice(
   itemId: string | number,
 ): Promise<number | null> {
   if (!admin) return null;
-
-  // PMO-HARDENING-CONT Workstream 5: một khoá "coming" (chưa mở bán) trước đây
-  // chỉ bị ẩn CTA ở UI (PremiumProgramCard.tsx) — không có gì chặn ở tầng dữ
-  // liệu, nên ai gọi thẳng /portal/checkout?type=course&id=N vẫn tạo được đơn
-  // và xem được nội dung sau xác nhận. Chặn thật ở đây.
-  if (itemType === "course") {
-    const { data, error } = await admin.from("courses").select("price, status").eq("id", itemId).maybeSingle();
-    if (error || !data || typeof data.price !== "number" || data.status !== "open") return null;
-    return data.price;
-  }
-
   const { data, error } = await admin
     .from(ITEM_TABLE[itemType])
     .select("price")

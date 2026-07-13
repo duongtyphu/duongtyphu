@@ -38,16 +38,12 @@ export function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = "Xóa",
-  tone = "danger",
   onCancel,
   onConfirm,
 }: {
   open: boolean;
   title: string;
   description: string;
-  confirmLabel?: string;
-  tone?: "danger" | "neutral";
   onCancel: () => void;
   onConfirm: () => void;
 }) {
@@ -66,11 +62,9 @@ export function ConfirmDialog({
           </button>
           <button
             onClick={onConfirm}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white ${
-              tone === "danger" ? "bg-red-500 hover:bg-red-600" : "bg-brand-blue hover:opacity-90"
-            }`}
+            className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600"
           >
-            {confirmLabel}
+            Xóa
           </button>
         </div>
       </div>

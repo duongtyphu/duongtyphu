@@ -12,9 +12,6 @@ export type Order = {
   status: string;
   order_code: string | null;
   created_at: string;
-  course_id: string | null;
-  product_id: number | null;
-  lesson_id: number | null;
 };
 
 export async function listOrders(): Promise<{ orders: Order[]; configured: boolean }> {
@@ -23,7 +20,7 @@ export async function listOrders(): Promise<{ orders: Order[]; configured: boole
 
   const { data } = await supabase
     .from("orders")
-    .select("id, member_email, product_name, amount, status, order_code, created_at, course_id, product_id, lesson_id")
+    .select("id, member_email, product_name, amount, status, order_code, created_at")
     .order("created_at", { ascending: false });
 
   return { orders: data ?? [], configured: true };

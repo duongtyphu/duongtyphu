@@ -22,13 +22,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   sop: "sop",
   resources: "resources",
   blog: "blog",
-  // CANONICAL (STABILIZATION-SPR-1101 Task 1, corrects a stale Phase F.2
-  // comment that wrongly claimed a dedicated actions.ts writes to the typed
-  // `case_studies` table — no such file ever existed). The Case Study admin
-  // page still writes here via this generic collection route, and
-  // /portal/case-studies + /portal/congdongai + the search index now all
-  // read this SAME table (filter status="Published") — one Case Study
-  // source, not two. The old typed `case_studies` table is legacy/unread.
+  // LEGACY (Phase F.2): no longer written to by any Admin UI. The Case Study
+  // admin page (app/admin/(dashboard)/case-study/page.tsx) now writes
+  // directly to the typed `case_studies` table via dedicated actions.ts,
+  // matching what /portal/case-studies + the search index actually read.
+  // Kept in the map (not removed) per "không xóa entry cũ nếu chưa chắc an toàn".
   "case-study": "case_study",
   news: "news",
   updates: "updates",
@@ -61,38 +59,6 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
 
   // Phase 5 — Services (was localStorage-only)
   services: "services",
-
-  // Phase 6 (PROJECTS-SPR-602) — Ecosystem CMS thật cho /portal/duan-cohoi
-  // (Canonical Product theo Founder Directive), thay thế hoàn toàn model
-  // digital_asset_projects/digital_asset_links cũ (Consumer = 0 trên Portal
-  // thật). Chạy supabase-projects-opportunities-migration.sql trước khi
-  // merge/deploy — nếu chưa chạy, /portal/duan-cohoi sẽ hiển thị rỗng.
-  ecosystems: "ecosystems",
-
-  // Phase 7 (IMP-PRODUCTION-HARDENING-1201) — sửa lỗi: 2 collection này đã
-  // có UI ghi thật (useCollection) từ WEB-SPR-201/MEDIA-SPR-201 nhưng chưa
-  // từng được đăng ký ở đây → mọi lần Founder lưu chỉ ghi vào localStorage
-  // trình duyệt hiện tại (mất khi đổi máy/xoá cache, không đồng bộ giữa
-  // các phiên Admin). Chạy supabase-production-hardening-collections-
-  // migration.sql trước khi merge/deploy. Hiện chưa có Portal Consumer nào
-  // đọc 2 bảng này (xác nhận qua audit) — đây thuần là sửa lỗi mất dữ liệu
-  // phía Admin, không phải tính năng mới.
-  "website-global-settings": "website_global_settings",
-  "media-assets": "media_assets",
-
-  // Phase 8 (PMO-HARDENING-CONT — Production Hardening tiếp tục theo PMO
-  // Resolution: "Admin Management cho chức năng Portal đã tồn tại KHÔNG
-  // phải tính năng mới"). Chạy supabase-pmo-hardening-continue-migration.sql
-  // trước khi merge/deploy.
-  "mission-presentation": "mission_presentation", // Workstream 3 — /portal/su-menh-companion
-  "ai-workspace-recommended": "ai_workspace_recommended", // Workstream 1
-  "ai-workspace-workflow": "ai_workspace_workflow",
-  "ai-workspace-prompts": "ai_workspace_prompts",
-  "ai-workspace-resource": "ai_workspace_resource",
-  "ai-workspace-settings": "ai_workspace_settings", // Hero + Footer CTA (singleton)
-  "companion-persona": "companion_persona", // Workstream 2 — singleton, chỉ field text an toàn
-  "companion-conversation-strategy": "companion_conversation_strategy", // singleton, 5 nhóm câu
-  "knowledge-seed": "knowledge_seed", // Workstream 4 — CKOS Lesson (Admin CRUD đã có, trước đây chưa nối Supabase)
 };
 
 export function tableForCollection(key: string): string | null {

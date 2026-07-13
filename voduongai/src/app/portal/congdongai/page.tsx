@@ -12,10 +12,12 @@ import {
   Newspaper,
   ArrowRight,
   MessageCircle,
+  PlayCircle,
+  Globe,
 } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { siteConfig } from "@/lib/site";
 import { CommunityGuides } from "@/components/portal/community/CommunityGuides";
-import { CommunityExternalLinks } from "@/components/portal/community/CommunityExternalLinks";
 import { CommunityMapPanel } from "@/components/portal/community/CommunityMapPanel";
 
 export const metadata = {
@@ -37,11 +39,9 @@ export const metadata = {
  *   FAQ → ARCHIVE. Không nằm trong 10 khối được duyệt của brief này
  *   ("Do not add unrelated sections"), và không có khối nào trong 10
  *   khối là nơi hợp lý để giữ lại nguyên trạng.
- * - Khối "Các kênh cộng đồng" (Facebook/Zalo/YouTube, dữ liệu THẬT — trước
- *   JOURNEY-SPR-901 hardcode `siteConfig.community`, nay đọc trực tiếp
- *   collection Admin `community` qua `CommunityExternalLinks.tsx`) →
- *   KEEP + MOVE: đây là kênh cộng đồng đang hoạt động thật, nhưng brief
- *   cấm dùng Facebook/Telegram/Discord làm
+ * - Khối "Các kênh cộng đồng" (Facebook/Zalo/YouTube, dữ liệu THẬT từ
+ *   `siteConfig.community`) → KEEP + MOVE: đây là kênh cộng đồng đang
+ *   hoạt động thật, nhưng brief cấm dùng Facebook/Telegram/Discord làm
  *   CTA CHÍNH ("Do not fake a Facebook... link" — không biến Community
  *   thành cổng redirect ra Facebook). Giữ lại như lối kết nối THỰC TẾ,
  *   phụ, ở cuối trang — CTA chính "Tham gia cộng đồng" dùng trạng thái
@@ -65,7 +65,7 @@ export const metadata = {
  */
 
 type ShowcaseItem = {
-  id: string;
+  id: number;
   title: string;
   client_name: string | null;
   summary: string | null;
@@ -74,42 +74,17 @@ type ShowcaseItem = {
   link_url: string | null;
 };
 
-type ShowcaseRow = {
-  id: string;
-  data: {
-    title?: string;
-    client_name?: string;
-    summary?: string;
-    result_metric?: string;
-    thumbnail_url?: string;
-    link_url?: string;
-  };
-};
-
-/**
- * STABILIZATION-SPR-1101 Task 1 — đọc từ bảng jsonb `case_study` (canonical,
- * Admin CRUD ghi thật vào đây), không còn đọc `case_studies` (bảng không có
- * đường ghi từ Admin). Cùng nguồn dữ liệu với /portal/case-studies.
- */
 async function getShowcaseItems(): Promise<ShowcaseItem[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
   try {
     const supabase = await getSupabaseServer();
     const { data } = await supabase
-      .from("case_study")
-      .select("id, data")
-      .eq("status", "Published")
+      .from("case_studies")
+      .select("id, title, client_name, summary, result_metric, thumbnail_url, link_url")
+      .eq("active", true)
       .order("created_at", { ascending: false })
       .limit(3);
-    return ((data ?? []) as ShowcaseRow[]).map((row) => ({
-      id: row.id,
-      title: row.data.title ?? "",
-      client_name: row.data.client_name ?? null,
-      summary: row.data.summary ?? null,
-      result_metric: row.data.result_metric ?? null,
-      thumbnail_url: row.data.thumbnail_url ?? null,
-      link_url: row.data.link_url ?? null,
-    }));
+    return data ?? [];
   } catch {
     return [];
   }
@@ -392,9 +367,32 @@ export default async function CommunityPage() {
 
           <div className="mx-auto mt-8 max-w-sm border-t border-gray-100 pt-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Kết nối ngay hôm nay</p>
-            {/* JOURNEY-SPR-901 Task 4: trước đây hardcode siteConfig.community —
-             * nay đọc trực tiếp collection Admin thật (/admin/community). */}
-            <CommunityExternalLinks />
+            <div className="mt-3 flex flex-wrap justify-center gap-3">
+              <a
+                href={siteConfig.community.facebookGroup}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+              >
+                <Globe className="h-3.5 w-3.5" /> Nhóm Facebook
+              </a>
+              <a
+                href={siteConfig.community.zaloGroup}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+              >
+                <MessageCircle className="h-3.5 w-3.5" /> Nhóm Zalo
+              </a>
+              <a
+                href={siteConfig.links.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+              >
+                <PlayCircle className="h-3.5 w-3.5" /> YouTube
+              </a>
+            </div>
           </div>
         </section>
       </div>

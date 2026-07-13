@@ -15,7 +15,6 @@ type Order = {
   status: string;
   created_at: string;
   confirmed_at: string | null;
-  course_id: string | null;
   products: { title: string; icon: string | null; video_url: string | null; pdf_url: string | null } | null;
   lessons: { title: string; video_url: string | null; pdf_url: string | null } | null;
 };
@@ -34,7 +33,7 @@ async function getAccountData() {
   const [{ data }, { data: memberRow }] = await Promise.all([
     supabase
       .from("orders")
-      .select("id, product_name, status, created_at, confirmed_at, course_id, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
+      .select("id, product_name, status, created_at, confirmed_at, products(title, icon, video_url, pdf_url), lessons(title, video_url, pdf_url)")
       .eq("member_email", user.email)
       .order("created_at", { ascending: false }),
     supabase.from("members").select("date_of_birth, date_of_birth_hidden").eq("id", user.id).single(),
@@ -144,14 +143,6 @@ export default async function AccountPage() {
                           </a>
                         )}
                       </div>
-                      {o.course_id && !video && !pdf && (
-                        <a
-                          href={`/portal/premium/hoc/${o.course_id}`}
-                          className="mt-2 block rounded-lg bg-brand-blue/10 px-2.5 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/20"
-                        >
-                          Vào học →
-                        </a>
-                      )}
                     </div>
                     <span className="shrink-0 rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-semibold text-green-400">
                       Đã sở hữu

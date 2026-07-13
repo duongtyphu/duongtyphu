@@ -1,8 +1,0 @@
-<svg width="480" height="90" viewBox="0 0 480 90" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <g transform="translate(4,13) scale(2)">
-    <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB"/>
-    <circle cx="27" cy="7.5" r="3" fill="#F97316"/>
-  </g>
-  <text x="78" y="42" font-family="Inter, 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="30" letter-spacing="0.3" fill="#0B1220">Võ Đương <tspan fill="#2563EB">AI</tspan></text>
-  <text x="79" y="62" font-family="Inter, system-ui, sans-serif" font-weight="600" font-size="9.5" letter-spacing="2.8" fill="#94A3B8">HỌC AI · XÂY HỆ THỐNG · TẠO TÀI SẢN SỐ</text>
-</svg>
