@@ -68,6 +68,17 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // thật). Chạy supabase-projects-opportunities-migration.sql trước khi
   // merge/deploy — nếu chưa chạy, /portal/duan-cohoi sẽ hiển thị rỗng.
   ecosystems: "ecosystems",
+
+  // Phase 7 (IMP-PRODUCTION-HARDENING-1201) — sửa lỗi: 2 collection này đã
+  // có UI ghi thật (useCollection) từ WEB-SPR-201/MEDIA-SPR-201 nhưng chưa
+  // từng được đăng ký ở đây → mọi lần Founder lưu chỉ ghi vào localStorage
+  // trình duyệt hiện tại (mất khi đổi máy/xoá cache, không đồng bộ giữa
+  // các phiên Admin). Chạy supabase-production-hardening-collections-
+  // migration.sql trước khi merge/deploy. Hiện chưa có Portal Consumer nào
+  // đọc 2 bảng này (xác nhận qua audit) — đây thuần là sửa lỗi mất dữ liệu
+  // phía Admin, không phải tính năng mới.
+  "website-global-settings": "website_global_settings",
+  "media-assets": "media_assets",
 };
 
 export function tableForCollection(key: string): string | null {
