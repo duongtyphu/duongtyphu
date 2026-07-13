@@ -107,7 +107,7 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     href: "/admin/ai-workspace",
     maturity: "Not Started",
     wcsStatus: "Chưa có",
-    owns: "(Chưa xây) — sở hữu Portal Area \"AI Workspace\" (/portal/aiworkspace + 3 route con)",
+    owns: "9 Section + 3 route con của Portal Area \"AI Workspace\" (/portal/aiworkspace) — Recommended Workspace/AI Workflow/Prompt Library/AI Toolbox/Resource/Blog AI (AIWS-SPR-501, xem báo cáo). 100% TypeScript hardcode, chưa có CRUD/collection nào — Dashboard chỉ đọc, chưa quản lý được. KHÔNG sở hữu WorkNeedSection (mount ở /portal/hocvienai, thuộc Academy dù data cùng file ai-workspace.ts).",
   },
   {
     key: "journey",

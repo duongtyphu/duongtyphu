@@ -64,12 +64,19 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   { id: "sec_hocvienai_journey_card", pageId: "page_hocvienai", name: "Journey Card + Journey Status Card", visible: true, sortOrder: 3, ctaNote: "Link tiếp tục lộ trình (Academy).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
   { id: "sec_hocvienai_mission_pilot", pageId: "page_hocvienai", name: "Landing Page Mission Pilot", visible: true, sortOrder: 4, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
 
-  // AI Workspace (src/app/portal/aiworkspace/page.tsx)
-  { id: "sec_aiworkspace_workflow", pageId: "page_aiworkspace", name: "AI Workflow Section", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_aiworkspace_prompt_library", pageId: "page_aiworkspace", name: "Prompt Library Section", visible: true, sortOrder: 2, ctaNote: "Link chi tiết prompt.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_aiworkspace_recommended", pageId: "page_aiworkspace", name: "Recommended Workspace Section", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_aiworkspace_resource", pageId: "page_aiworkspace", name: "Resource Section (Article/Tool Card)", visible: true, sortOrder: 4, ctaNote: "Link tới Article/Tool.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_aiworkspace_companion_desk", pageId: "page_aiworkspace", name: "Companion Desk", visible: true, sortOrder: 5, ctaNote: "Không có.", mediaNote: "Companion Avatar Set (Media Center).", status: "Active", updatedDate: "2026-07-12" },
+  // AI Workspace (src/app/portal/aiworkspace/page.tsx) — đính chính AIWS-SPR-501:
+  // đối chiếu lại trực tiếp JSX thật, đúng 9 section theo đúng thứ tự render
+  // (bản seed cũ PORTAL-SPR-301 thiếu Hero/AI Toolbox/Blog AI/Footer CTA và
+  // sai thứ tự Companion Desk).
+  { id: "sec_aiworkspace_hero", pageId: "page_aiworkspace", name: "Hero", visible: true, sortOrder: 1, ctaNote: "2 CTA nội bộ neo tới #companion-desk và #ai-toolbox.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_companion_desk", pageId: "page_aiworkspace", name: "Companion Desk", visible: true, sortOrder: 2, ctaNote: "Form nhập mục tiêu tự do → startCompanionWorkspace() → điều hướng /portal/workspace.", mediaNote: "Companion Avatar Set (Media Center).", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_recommended", pageId: "page_aiworkspace", name: "Recommended Workspace Section", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_workflow", pageId: "page_aiworkspace", name: "AI Workflow Section", visible: true, sortOrder: 4, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_prompt_library", pageId: "page_aiworkspace", name: "Prompt Library Section", visible: true, sortOrder: 5, ctaNote: "Link ngoài tới /portal/prompts.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_toolbox", pageId: "page_aiworkspace", name: "AI Toolbox theo nhiệm vụ", visible: true, sortOrder: 6, ctaNote: "Link chi tiết Tool (/portal/aiworkspace/[slug]).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_resource", pageId: "page_aiworkspace", name: "Resource Section", visible: true, sortOrder: 7, ctaNote: "Link tới Resource.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_blog", pageId: "page_aiworkspace", name: "Blog AI", visible: true, sortOrder: 8, ctaNote: "Link bài viết (/portal/aiworkspace/bai-viet/[slug]).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_aiworkspace_footer_cta", pageId: "page_aiworkspace", name: "Footer CTA", visible: true, sortOrder: 9, ctaNote: "CTA /solo + 1 bài viết cụ thể.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
   // Dự án & Cơ hội (src/app/portal/duan-cohoi/page.tsx)
   { id: "sec_duancohoi_hero", pageId: "page_duan_cohoi", name: "Pillar Hero", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },

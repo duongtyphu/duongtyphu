@@ -140,7 +140,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Learning Journeys (đọc)", href: "/admin/academy/journeys" },
     ],
   },
-  { group: null, items: [{ label: "AI Workspace", href: "/admin/ai-workspace", comingSoon: true }] },
+  { group: null, items: [{ label: "AI Workspace", href: "/admin/ai-workspace" }] },
   {
     group: "Projects & Opportunities",
     items: [
