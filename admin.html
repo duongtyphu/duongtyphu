@@ -638,10 +638,6 @@
 <!-- Shell -->
 <div class="admin-shell" id="adminShell" style="display:none">
 
-  <div style="position:sticky;top:0;z-index:9999;background:#7f1d1d;color:#fff;padding:10px 16px;font-size:0.85rem;font-weight:600;text-align:center">
-    ⚠️ admin.html đã ngừng ghi dữ liệu (Production Hardening, IMP-PRODUCTION-HARDENING-1201). Chỉ còn xem, mọi thao tác lưu/sửa/xoá sẽ bị chặn. Dùng Next.js Admin CMS tại <a href="/admin" style="color:#fecaca;text-decoration:underline">/admin</a>.
-  </div>
-
   <button class="admin-sidebar-toggle" id="adminSidebarToggle" onclick="toggleAdminSidebar()">☰ Menu</button>
   <div class="admin-sidebar-overlay" id="adminSidebarOverlay" onclick="toggleAdminSidebar()"></div>
 
@@ -1520,47 +1516,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="assets/js/supabase-config.js"></script>
 <script>
-/**
- * IMP-PRODUCTION-HARDENING-1201 (Workstream H) — Founder Decision:
- * admin.html không còn là Admin chính thức (Next.js Admin CMS tại /admin
- * đã thay thế), nhưng CHƯA xóa file — chỉ vô hiệu hoá toàn bộ khả năng ghi
- * dữ liệu trước, xác nhận không còn dependency, mới xóa hoàn toàn ở sprint
- * sau. Patch này CHỈ áp dụng trong runtime của admin.html (không đụng
- * assets/js/supabase-config.js dùng chung bởi login.html/register.html/
- * portal.html/profile.html — các trang đó vẫn cần ghi thật). Đọc dữ liệu
- * (.select) và auth session vẫn hoạt động để trang còn xem được, không bị
- * chặn màn hình trắng.
- */
-(function lockAdminHtmlWrites() {
-  if (typeof _supabase === 'undefined' || !_supabase) return;
-  const READ_ONLY_NOTICE = 'admin.html đã ngừng ghi dữ liệu (Production Hardening). Vui lòng dùng Next.js Admin CMS tại /admin.';
-  const blockedQueryMethods = ['insert', 'update', 'upsert', 'delete'];
-  const originalFrom = _supabase.from.bind(_supabase);
-  _supabase.from = function (table) {
-    const query = originalFrom(table);
-    blockedQueryMethods.forEach((method) => {
-      query[method] = function () {
-        window.alert(READ_ONLY_NOTICE);
-        return Promise.resolve({ data: null, error: { message: READ_ONLY_NOTICE } });
-      };
-    });
-    return query;
-  };
-  if (_supabase.storage && typeof _supabase.storage.from === 'function') {
-    const originalStorageFrom = _supabase.storage.from.bind(_supabase.storage);
-    _supabase.storage.from = function (bucket) {
-      const bucketApi = originalStorageFrom(bucket);
-      ['upload', 'update', 'remove'].forEach((method) => {
-        bucketApi[method] = function () {
-          window.alert(READ_ONLY_NOTICE);
-          return Promise.resolve({ data: null, error: { message: READ_ONLY_NOTICE } });
-        };
-      });
-      return bucketApi;
-    };
-  }
-})();
-
 const ADMIN_EMAIL = 'duongvv.vn@gmail.com';
 
 // ── Current section ──

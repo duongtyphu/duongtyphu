@@ -12,10 +12,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronRight, Copy, Check } from "lucide-react";
 import { startCompanionWorkspace, type WorkspaceItemType } from "@/lib/portal/companion-workspace";
-import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, AI_RESOURCES, type RecommendedWorkspace, type AiWorkflow, type AiResource } from "@/data/portal/ai-workspace";
+import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
 import { RECOMMENDED_WORKSPACE_TO_MISSION } from "@/lib/portal/foundation/mission-catalog";
-import { prompts, type Prompt } from "@/data/prompts";
-import { useCollection } from "@/lib/admin/store";
+import { prompts } from "@/data/prompts";
 
 function SectionHeader({ label, title, href, hrefLabel }: { label: string; title: string; href?: string; hrefLabel?: string }) {
   return (
@@ -126,19 +125,14 @@ export function WorkNeedSection({
   );
 }
 
-/**
- * Section 6 — Workspace đề xuất. PMO-HARDENING-CONT Workstream 1: đọc từ
- * collection Admin thật (`ai-workspace-recommended`), seed = nguyên văn
- * RECOMMENDED_WORKSPACES cũ — Founder sửa được qua Admin, không cần sửa code.
- */
+/** Section 6 — Workspace đề xuất. */
 export function RecommendedWorkspaceSection() {
   const practice = usePracticeAction();
-  const { items } = useCollection<RecommendedWorkspace>("ai-workspace-recommended", RECOMMENDED_WORKSPACES);
   return (
     <section className="space-y-4">
       <SectionHeader label="Đề xuất cho bạn" title="Workspace đề xuất cho bạn" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {items.map((ws) => (
+        {RECOMMENDED_WORKSPACES.map((ws) => (
           <button
             key={ws.id}
             type="button"
@@ -171,18 +165,14 @@ export function RecommendedWorkspaceSection() {
   );
 }
 
-/**
- * Section 7 — AI Workflows. PMO-HARDENING-CONT Workstream 1: đọc từ
- * collection Admin thật (`ai-workspace-workflow`).
- */
+/** Section 7 — AI Workflows. */
 export function AiWorkflowSection() {
   const practice = usePracticeAction();
-  const { items } = useCollection<AiWorkflow>("ai-workspace-workflow", AI_WORKFLOWS);
   return (
     <section className="space-y-4">
       <SectionHeader label="Quy trình" title="Quy trình AI theo công việc" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {items.map((flow) => (
+        {AI_WORKFLOWS.map((flow) => (
           <button
             key={flow.id}
             type="button"
@@ -209,18 +199,9 @@ export function AiWorkflowSection() {
   );
 }
 
-/**
- * Section 8 — Prompt Library. PMO-HARDENING-CONT Workstream 1: đọc từ
- * collection Admin thật (`ai-workspace-prompts`) — collection RIÊNG, không
- * trộn với bảng `prompts` (CKOS, `/admin/prompts`) hay `AI_PROMPTS`
- * (khong-gian-ai/index.ts) — 2 nguồn Prompt trùng tên khác đã tồn tại từ
- * trước (STABILIZATION-SPR-1101 Task 4 đếm được 4 nguồn), tạo thêm 1 CRUD
- * ghi đè lên 1 trong 2 nguồn cũ rủi ro hỏng dữ liệu — giữ tách biệt, ghi rõ
- * trong báo cáo thay vì tự ý hợp nhất.
- */
+/** Section 8 — Prompt Library (dùng lại `prompts` từ src/data/prompts.ts). */
 export function PromptLibrarySection() {
   const practice = usePracticeAction();
-  const { items: promptItems } = useCollection<Prompt>("ai-workspace-prompts", prompts);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   async function handleCopy(id: string, text: string) {
@@ -237,7 +218,7 @@ export function PromptLibrarySection() {
     <section className="space-y-4">
       <SectionHeader label="Thư viện Prompt" title="Prompt Library" href="/portal/prompts" hrefLabel="Xem tất cả Prompt" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {promptItems.slice(0, 9).map((prompt) => (
+        {prompts.slice(0, 9).map((prompt) => (
           <div key={prompt.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
               {prompt.category}
@@ -268,18 +249,48 @@ export function PromptLibrarySection() {
   );
 }
 
-/**
- * Section 11 — Tài nguyên AI. PMO-HARDENING-CONT Workstream 1: đọc từ
- * collection Admin thật (`ai-workspace-resource`).
- */
+/** Section — Lộ trình học AI. Chuyển sang Học viện AI (đúng vai trò "học"). */
+export function LearningPathSection() {
+  const practice = usePracticeAction();
+  return (
+    <section className="space-y-4">
+      <SectionHeader label="Lộ trình" title="Lộ trình học AI" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {LEARNING_PATHS.map((path) => (
+          <div key={path.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+            <span className="w-fit rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-700">
+              Cấp {path.level}
+            </span>
+            <p className="font-semibold text-gray-900">{path.title}</p>
+            <p className="text-xs leading-relaxed text-gray-500">{path.goal}</p>
+            <p className="text-[10px] text-gray-400">{path.missionCount} bài / mission</p>
+            <div className="mt-auto flex items-center gap-4 pt-1">
+              <Link href={path.href} className="flex items-center gap-1 text-xs font-semibold text-gray-700 hover:text-gray-900 transition">
+                Bắt đầu học <ChevronRight className="h-3.5 w-3.5" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => practice({ source: "learning-path", itemId: path.id, itemType: "learning_path", title: path.title })}
+                className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
+              >
+                Thực hành cùng Companion <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Section 11 — Tài nguyên AI. */
 export function ResourceSection() {
   const practice = usePracticeAction();
-  const { items } = useCollection<AiResource>("ai-workspace-resource", AI_RESOURCES);
   return (
     <section className="space-y-4">
       <SectionHeader label="Tài nguyên" title="Tài nguyên thực hành" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
-        {items.map((resource) => (
+        {AI_RESOURCES.map((resource) => (
           <div key={resource.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
               {resource.type}

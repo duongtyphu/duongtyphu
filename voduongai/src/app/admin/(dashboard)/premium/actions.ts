@@ -3,7 +3,6 @@
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
-import { PREMIUM_PROGRAMS } from "@/components/portal/premium/premium-programs";
 
 export type Product = {
   id: number;
@@ -86,47 +85,6 @@ export async function updateProduct(id: number, input: ProductInput) {
 
   revalidatePath("/admin/premium");
   return { error: null };
-}
-
-export type ProgramRegistryRow = {
-  key: string;
-  name: string;
-  matched: boolean;
-  courseId: number | null;
-  price: number | null;
-  listPrice: number;
-  status: string | null;
-  lessonCount: number;
-};
-
-/**
- * Premium Program Registry (Task 2, PREMIUM-SPR-701) — đúng 6 chương
- * trình Founder xác nhận, đối chiếu trực tiếp với `courses` bằng cùng
- * logic khớp tên (`matchPatterns`) mà /portal/premium/page.tsx dùng để
- * hiển thị giá/trạng thái thật — không suy diễn.
- */
-export async function listProgramRegistry(): Promise<{ programs: ProgramRegistryRow[]; configured: boolean }> {
-  const supabase = getSupabaseAdmin();
-  if (!supabase) return { programs: [], configured: false };
-
-  const { data } = await supabase.from("courses").select("id, name, status, price");
-  const courses = data ?? [];
-
-  const programs: ProgramRegistryRow[] = PREMIUM_PROGRAMS.map((p) => {
-    const row = courses.find((c) => p.matchPatterns.some((pattern) => c.name.toLowerCase().includes(pattern)));
-    return {
-      key: p.key,
-      name: p.name,
-      matched: !!row,
-      courseId: row?.id ?? null,
-      price: row?.price ?? null,
-      listPrice: p.listPrice,
-      status: row?.status ?? null,
-      lessonCount: p.lessonCount,
-    };
-  });
-
-  return { programs, configured: true };
 }
 
 export async function deleteProduct(id: number) {

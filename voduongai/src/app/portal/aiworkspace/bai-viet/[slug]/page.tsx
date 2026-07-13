@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { getBlogPost } from "@/data/blog";
 import { AI_ARTICLES } from "@/data/khong-gian-ai";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
-import { Breadcrumb } from "@/components/portal/ui/Breadcrumb";
 
 export async function generateStaticParams() {
   return AI_ARTICLES.map((a) => ({ slug: a.slug }));
@@ -60,13 +59,14 @@ export default async function PortalArticlePage({ params }: { params: Promise<{ 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
       {/* Content Gutter — cùng khoảng cách với /portal/aiworkspace. */}
       <div className="mx-auto max-w-3xl rounded-3xl p-6 md:p-8">
-      <Breadcrumb
-        items={[
-          { label: "Portal", href: "/portal" },
-          { label: "Không gian AI", href: "/portal/aiworkspace" },
-          { label: post.title },
-        ]}
-      />
+      {/* Breadcrumb */}
+      <nav className="mb-6 flex flex-wrap items-center gap-1.5 text-sm text-gray-500">
+        <Link href="/portal" className="hover:text-blue-600 transition-colors">Portal</Link>
+        <span className="text-gray-300">/</span>
+        <Link href="/portal/aiworkspace" className="hover:text-blue-600 transition-colors">Không gian AI</Link>
+        <span className="text-gray-300">/</span>
+        <span className="font-medium text-gray-900 line-clamp-1">{post.title}</span>
+      </nav>
 
       <PortalBackLink href="/portal/aiworkspace" label="Không gian AI" tone="light" />
 

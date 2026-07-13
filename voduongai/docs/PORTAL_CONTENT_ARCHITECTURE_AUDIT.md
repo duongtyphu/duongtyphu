@@ -61,7 +61,7 @@ Progressive disclosure is used correctly in most places (accordions on FAQ secti
 
 | Content | Locations | Classification | Action |
 |---|---|---|---|
-| Founder biography | `FounderSpotlight.tsx` (Premium) vs. `CommunityGuides.tsx` (Community) | **MERGE** (same real person, same facts, but independently hand-maintained and drifted) | **Fixed this sprint** — synced `CommunityGuides`'s `intro`/`tags` to match `FounderSpotlight`'s wording (added back a dropped clause and the "Phát triển hệ thống" tag). Not extracted to a shared data file at the time — flagged as a P2 follow-up. **Update (Content Cleanup Sprint 7): extracted to `src/data/portal/founder.ts`, both components now import the same source — no more duplicate declarations.** |
+| Founder biography | `FounderSpotlight.tsx` (Premium) vs. `CommunityGuides.tsx` (Community) | **MERGE** (same real person, same facts, but independently hand-maintained and drifted) | **Fixed this sprint** — synced `CommunityGuides`'s `intro`/`tags` to match `FounderSpotlight`'s wording (added back a dropped clause and the "Phát triển hệ thống" tag). Not extracted to a shared data file — that would be an architecture change outside this sprint's scope, flagged as a P2 follow-up. |
 | Premium program descriptions | `premium-programs.ts` copy vs. equivalent copy on the corresponding checkout/detail pages | **KEEP** — intentional restatement at different funnel stages, wording consistent, not contradictory | No action needed |
 | FAQ answer on refund/guarantee terms | Appears with materially different wording in two FAQ blocks (Premium page vs. `refund-policy.html`) | **REWRITE** (contradiction risk) | **Flagged, not fixed** — reconciling exact refund terms is a legal/policy content decision, not a safe wording tweak; recommended as a P1 follow-up |
 | Companion introduction copy | Consistent single source (`warmth-engine.ts` / `human-flow.ts`), reused correctly, no duplication found | **KEEP** | No action needed |
@@ -170,8 +170,8 @@ No newly-discovered hardcoded content changed this classification from the Sprin
 2. Academy's density, driven by non-original AI-Workspace-origin content with no clear Academy-specific purpose — needs a decision on which pillar owns this content (§5, §6).
 
 **P1 — Major**
-1. ~~Founder bio duplication between `FounderSpotlight.tsx` and `CommunityGuides.tsx`~~ — **Resolved in Content Cleanup Sprint 7**: both now import from one shared `src/data/portal/founder.ts`, no more independently-maintained copies. See `docs/PORTAL_CONTENT_CLEANUP.md`.
-2. ~~FAQ/refund-terms wording differs between the Premium page and `refund-policy.html`~~ — **Resolved in Content Cleanup Sprint 7**: found the actual contradiction (the static `refund-policy.html` internally contradicted its own stated terms — §7 called the policy "chưa công bố chính thức" while §3 stated concrete active terms; the live Next.js `/refund-policy` page was already correct). Fixed the stale static page to match. See `docs/PORTAL_CONTENT_CLEANUP.md`.
+1. Founder bio duplication between `FounderSpotlight.tsx` and `CommunityGuides.tsx` is content-synced this sprint but still architecturally two independently-maintained copies — recommend extracting to a shared data source in a future sprint (§4, §9).
+2. FAQ/refund-terms wording differs between the Premium page and `refund-policy.html` — a legal/policy reconciliation, not a safe content tweak (§4).
 
 **P2 — Improvement**
 1. `CommunityGuides`'s `Guide` type has no `achievements` field, so Founder's real achievements (shown on Premium) don't appear on Community — a structural type change, flagged not fixed (§9).
@@ -188,12 +188,12 @@ No newly-discovered hardcoded content changed this classification from the Sprin
 
 Ranked by leverage; none of these were implemented beyond what's listed in the Appendix (each requires either a Product Owner content decision or exceeds "fix, don't build" scope):
 
-1. ~~Decide how to resolve Home's heading hierarchy (P0)~~ — **Resolved in UI Consistency Sprint 6**: `PillarEntranceCard`'s heading promoted `h3`→`h2`, Home is now a clean `h1→h2×7→h2`.
-2. ~~Decide Academy vs. AI Workspace content ownership (P0)~~ — **Investigated in Content Cleanup Sprint 7**: turns out this was already a deliberate, documented decision from an earlier "Content Audit sprint" (`docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md`) — `WorkNeedSection`/the AI_TOOLS-based tool-discovery section were intentionally classified as HỌC (learning/discovery) content and placed on Academy, distinct from Workspace's execution-focused Toolbox. Verified still correctly implemented (no duplication on Workspace's own page). This sprint's original framing (§5-6) was based on incomplete information; no fix was needed.
-3. ~~Reconcile refund/guarantee FAQ wording~~ — **Resolved in Content Cleanup Sprint 7**: see the P1 note above — the actual defect was an internal self-contradiction in the static `refund-policy.html`, now fixed to match the already-correct live Next.js page.
-4. ~~Plan a shared Founder-data source~~ — **Resolved in Content Cleanup Sprint 7**: `src/data/portal/founder.ts` is now the single source, both components import from it.
-5. **Add an `achievements` field to `CommunityGuides`'s `Guide` type** if Founder's real achievements should also surface on Community (P2) — still open; a content-scope decision (what should Community show), not touched this sprint.
-6. **Run a dedicated dead-code/fake-data sweep of `src/data/`** beyond `knowledge-garden.ts` (P2) — **Partially addressed in Content Cleanup Sprint 7**: found and removed one further orphaned component (`ReflectionJournalCard.tsx`, confirmed superseded by `MyStoryBook.tsx`'s own `WriteNook`); `UnderstandingNoteCard.tsx` was investigated and found to be a real, working, but currently-unmounted component — left in place (not clearly dead, possibly an intentionally-incomplete feature) rather than guessed at.
+1. **Decide how to resolve Home's heading hierarchy (P0)** — either restructure `PillarEntranceCard`'s heading level or move `KnowledgeJourneyStrip`'s section earlier; needs a call on which shared component changes.
+2. **Decide Academy vs. AI Workspace content ownership (P0)** — the reused, non-original content on Academy should either be trimmed to a link/teaser back to its origin, or Academy's identity should be explicitly widened to include it on purpose.
+3. **Reconcile refund/guarantee FAQ wording** between the Premium page and `refund-policy.html` (P1) — a policy-accuracy issue, not a copy-polish one.
+4. **Plan a shared Founder-data source** so Premium and Community stop hand-syncing the same bio (P1) — this sprint's fix keeps them consistent today but doesn't prevent future drift.
+5. **Add an `achievements` field to `CommunityGuides`'s `Guide` type** if Founder's real achievements should also surface on Community (P2).
+6. **Run a dedicated dead-code/fake-data sweep of `src/data/`** beyond `knowledge-garden.ts` — this sprint found one orphaned file with fabricated per-user data; there may be others (P2).
 
 ---
 
