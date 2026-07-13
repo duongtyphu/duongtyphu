@@ -1,3 +1,5 @@
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { ACADEMY_WORKSPACE_SECTIONS } from "@/lib/admin/academy/navigation";
 import { listSubmissions } from "./actions";
 import { SubmissionRow } from "./SubmissionRow";
 
@@ -7,6 +9,7 @@ export default async function ProjectsAdminPage() {
   const reviewed = submissions.filter((s) => s.status === "reviewed");
 
   return (
+    <AdminWorkspaceShell title="Academy Workspace" description="" rootHref="/admin/academy" sections={ACADEMY_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-extrabold text-white">Dự án thực chiến</h1>
@@ -49,5 +52,6 @@ export default async function ProjectsAdminPage() {
         </div>
       )}
     </div>
+    </AdminWorkspaceShell>
   );
 }

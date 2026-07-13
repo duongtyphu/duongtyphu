@@ -133,9 +133,11 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     group: "Academy",
     items: [
+      { label: "Academy Dashboard", href: "/admin/academy" },
       { label: "Lộ trình thành công", href: "/admin/roadmap" },
       { label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
       { label: "Dự án thực chiến", href: "/admin/projects" },
+      { label: "Learning Journeys (đọc)", href: "/admin/academy/journeys" },
     ],
   },
   { group: null, items: [{ label: "AI Workspace", href: "/admin/ai-workspace", comingSoon: true }] },

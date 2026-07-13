@@ -56,10 +56,10 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
   {
     key: "academy",
     name: "Academy",
-    href: "/admin/roadmap",
+    href: "/admin/academy",
     maturity: "Mixed-Legacy",
     wcsStatus: "Chưa có",
-    owns: "Lộ trình thành công, Nhiệm vụ hôm nay, Dự án thực chiến",
+    owns: "Lộ trình thành công, Nhiệm vụ hôm nay, Dự án thực chiến (dữ liệu sở hữu thật). Learning Journeys là view đọc, chiếu 1:1 từ CKOS Collection — KHÔNG phải dữ liệu Academy sở hữu (ACADEMY-SPR-401 Task 4). Không sở hữu Course/Module/Quiz/Certificate/Instructor — các object này không tồn tại trong Portal hiện tại.",
   },
   {
     key: "premium",

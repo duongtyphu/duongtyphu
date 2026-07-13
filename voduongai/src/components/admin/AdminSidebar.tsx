@@ -64,6 +64,7 @@ import {
   Folder,
   Tag,
   Waypoints,
+  Route,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups, type AdminNavItem } from "@/lib/admin/nav";
@@ -122,10 +123,12 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/media-center/tags": Tag,
   "/admin/media-center/settings": Settings,
   "/admin/portal-builder/banner": ImageIcon,
+  "/admin/academy": LayoutDashboard,
   "/admin/roadmap": Map,
   "/admin/daily-missions": ClipboardList,
   "/admin/course-pricing": Wallet,
   "/admin/projects": FolderKanban,
+  "/admin/academy/journeys": Route,
   "/admin/knowledge-seed": Sparkles,
   "/admin/ckos": Brain,
   "/admin/ckos/goals": Flag,
