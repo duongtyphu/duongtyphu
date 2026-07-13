@@ -22,19 +22,16 @@
 -- Rollback: drop table course_lessons; drop table course_modules;
 --           alter table orders drop column course_ref_id;
 
--- [ĐÍNH CHÍNH] courses.id trên Production là kiểu text (không phải bigint
--- như giả định ban đầu — Postgres báo lỗi 42804 khi chạy bản gốc). Đổi
--- course_ref_id/course_modules.course_id sang text cho khớp.
-alter table orders add column if not exists course_ref_id text references courses(id);
+alter table orders add column if not exists course_ref_id bigint references courses(id);
 
 update orders
-set course_ref_id = course_id
+set course_ref_id = course_id::bigint
 where course_id ~ '^[0-9]+$'
   and course_ref_id is null;
 
 create table if not exists course_modules (
   id bigint generated always as identity primary key,
-  course_id text not null references courses(id) on delete cascade,
+  course_id bigint not null references courses(id) on delete cascade,
   title text not null,
   sort_order int not null default 0,
   visible boolean not null default true,
