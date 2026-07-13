@@ -224,7 +224,7 @@ export const KNOWLEDGE_MODULES: KnowledgeModuleDef[] = [
     label: "Case Studies",
     collectionKey: "case-study",
     route: "/admin/case-study",
-    description: "Case study thực chiến — dùng lại bảng jsonb `case_study` đã có sẵn trong hệ thống (trước đây orphan, không admin UI nào ghi vào). LƯU Ý: trang công khai /portal/case-studies vẫn đọc từ bảng typed `case_studies` (khác) — case study soạn mới qua Admin từ sprint này sẽ CHƯA hiển thị công khai cho tới khi có sprint riêng cập nhật đường đọc của Portal. Case study cũ đã publish trước đây vẫn hiển thị bình thường (bảng cũ không bị xóa/đổi). Xem §12.",
+    description: "[ĐÃ XỬ LÝ — STABILIZATION-SPR-1101] Case study thực chiến — bảng jsonb `case_study` là Canonical, Admin ghi và Portal (/portal/case-studies, /portal/congdongai) đọc cùng bảng, filter status=\"Published\". Không còn hai nguồn Case Study song song.",
     storage: "supabase",
   },
   {

@@ -148,7 +148,7 @@ export default function JourneyAdminPage() {
             <code className="text-brand-orange">community</code>) có Consumer = 0 — Founder sửa link ở Admin không ảnh hưởng Portal. Đã
             nối dây trang Portal đọc trực tiếp collection thật (xem <code className="text-brand-orange">CommunityExternalLinks.tsx</code>).{" "}
             <strong className="text-white/80">Community Section</strong> — 10 section đối chiếu ở Portal Mapping, 8/10 hardcode, 2/10 đọc
-            dữ liệu thật (Showcase từ <code className="text-brand-orange">case_studies</code>, External Links từ{" "}
+            dữ liệu thật (Showcase từ <code className="text-brand-orange">case_study</code>, External Links từ{" "}
             <code className="text-brand-orange">community</code>).
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function JourneyAdminPage() {
             thuộc Companion Studio). <strong className="text-white/80">Không sở hữu</strong>: Knowledge (CKOS), Learning
             (Academy), Commercial (Premium), Mentor Runtime (Companion Studio — Persona/Agent/Orchestration/Memory Systems),
             Media (Media Center), Brand (Brand Studio), Website (Website Workspace). Community Project Showcase đọc THÊM từ
-            bảng <code className="text-brand-orange">case_studies</code> (CKOS/Academy sở hữu) — không tạo bảng trùng lặp,
+            bảng <code className="text-brand-orange">case_study</code> (CKOS/Academy sở hữu) — không tạo bảng trùng lặp,
             không sở hữu dữ liệu đó.
           </p>
         </div>

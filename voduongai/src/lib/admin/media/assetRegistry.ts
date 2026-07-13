@@ -99,9 +99,8 @@ export const MEDIA_ASSETS_COLLECTION_KEY = "media-assets";
  *   `FounderStory.tsx`, trang chủ) vs `/images/founder-portrait.jpg`
  *   (dùng ở `src/data/portal/founder.ts`, trang Portal Founder) — không
  *   rõ có chủ đích (2 bối cảnh khác nhau) hay trùng lặp ngoài ý muốn.
- * - **`garden-care-visual.jpg` tồn tại trong `public/images/garden/`
- *   nhưng KHÔNG tìm thấy nơi nào tham chiếu trong code** — asset mồ côi,
- *   ứng viên dọn dẹp hoặc chưa được dùng tới.
+ * - **[ĐÃ XỬ LÝ — STABILIZATION-SPR-1101] `garden-care-visual.jpg`** từng mồ
+ *   côi (0 tham chiếu code) — đã xóa file thật + entry Registry.
  * - **`founder.png` trước đó là "khoảng trống" trong Brand Asset Registry**
  *   (`asset_seed_brand_image_gap`, BRAND-SPR-201: "founder.png tồn tại
  *   trong code nhưng chưa được đăng ký") — nay đã có entry thật ở đây,
@@ -197,26 +196,10 @@ export const MEDIA_ASSETS_SEED: MediaAsset[] = [
     createdDate: "2026-07-12",
     updatedDate: "2026-07-12",
   },
-  {
-    id: "media_seed_garden_care_visual",
-    name: "Garden Care Visual",
-    category: "Image",
-    subType: "Gallery",
-    fileNote: "/images/garden/garden-care-visual.jpg",
-    formatNote: "JPG",
-    sizeNote: "Chưa đo.",
-    dimensionsNote: "Chưa xác nhận.",
-    folderId: "folder_garden",
-    collectionId: "",
-    tags: ["garden", "unused"],
-    usedByNote:
-      "🚫 UNUSED MEDIA (MEDIA-SPR-202, Task 6) — xác nhận lại: không tìm thấy tham chiếu nào trong code (grep toàn repo). Tồn tại trong public/ nhưng không được Portal sử dụng. Không tự xoá — cần Founder quyết định giữ (dự phòng) hay xoá.",
-    workspaceOwnerNote: "Không có Workspace Owner nào tham chiếu — Portal không dùng.",
-    status: "Draft",
-    sortOrder: 5,
-    createdDate: "2026-07-12",
-    updatedDate: "2026-07-12",
-  },
+  // "Garden Care Visual" (media_seed_garden_care_visual) — [ĐÃ XỬ LÝ,
+  // STABILIZATION-SPR-1101 Task 13] xác nhận lại 0 tham chiếu trong toàn
+  // repo, không phải brand source asset cần giữ → đã xóa file thật
+  // (public/images/garden/garden-care-visual.jpg) và gỡ entry khỏi Registry.
   {
     id: "media_seed_vendor_tool_logos",
     name: "Vendor Tool Logos (11 file)",

@@ -97,7 +97,7 @@ export default function MediaDashboardPage() {
               • <strong>2 ảnh founder khác nhau</strong> cho cùng chủ đề (`/founder.png` vs `/images/founder-portrait.jpg`) — xem Images.
             </li>
             <li>
-              • <strong>`garden-care-visual.jpg` không có nơi nào tham chiếu</strong> trong code — asset mồ côi, ứng viên dọn dẹp.
+              • <strong>[ĐÃ XỬ LÝ] `garden-care-visual.jpg`</strong> — asset mồ côi đã xóa (STABILIZATION-SPR-1101 Task 13).
             </li>
             <li>
               • <strong>Không có Video/Audio nào tồn tại</strong> trong Portal — 2 module này hiện 100% là khoảng trống.

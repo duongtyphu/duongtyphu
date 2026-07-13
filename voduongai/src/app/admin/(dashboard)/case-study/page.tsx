@@ -8,8 +8,7 @@ export default function CaseStudyAdminPage() {
     <KnowledgeCrudPage
       title="Case Studies"
       description={
-        'Canonical CKOS module (ADM-SPR-004) — dùng bảng jsonb "case_study" đã có sẵn (trước đây orphan). ' +
-        'LƯU Ý: trang công khai /portal/case-studies vẫn đọc từ bảng typed "case_studies" (khác), nên case study soạn mới từ đây CHƯA hiển thị công khai cho tới khi có sprint riêng cập nhật đường đọc của Portal — case study cũ đã publish trước đây vẫn hiển thị bình thường. Xem docs/admin/CKOS_MANAGEMENT.md §12.'
+        '[STABILIZATION-SPR-1101] Canonical Case Study — bảng jsonb "case_study" là nguồn DUY NHẤT, Admin ghi và Portal (/portal/case-studies, /portal/congdongai) đọc cùng bảng này, filter status="Published". Bảng "case_studies" (typed, số nhiều) không còn được Portal đọc — legacy, không xóa nhưng không còn Consumer.'
       }
       collectionKey="case-study"
       extraColumns={[

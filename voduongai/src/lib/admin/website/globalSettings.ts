@@ -14,8 +14,10 @@
  *
  * LƯU Ý CHỒNG LẤN: `announcementActive`/`announcementText` có thể trùng
  * với Shared Sections category "Announcement" (WEB-SPR-004) và với
- * `portal_banners`/NotificationTicker (đã nối dây thật) — ghi nhận,
- * KHÔNG tự gộp. `presentationThemeNote` tham chiếu Theme Registry của
+ * `portal_banners` (STABILIZATION-SPR-1101: NotificationTicker.tsx, component
+ * dự kiến mount `portal_banners`, đã xác nhận orphan — 0 import thật, chưa
+ * từng mount — và đã bị xóa) — ghi nhận, KHÔNG tự gộp. `presentationThemeNote`
+ * tham chiếu Theme Registry của
  * Brand Studio (BRAND-SPR-001) — không sao chép lại dữ liệu, chỉ ghi chú
  * tham chiếu bằng text.
  */

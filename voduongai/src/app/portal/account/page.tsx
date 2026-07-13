@@ -145,9 +145,12 @@ export default async function AccountPage() {
                         )}
                       </div>
                       {o.course_id && !video && !pdf && (
-                        <p className="mt-2 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs text-amber-800">
-                          Nội dung khoá học đang được chuẩn bị — Founder sẽ liên hệ trực tiếp để cấp quyền truy cập.
-                        </p>
+                        <a
+                          href={`/portal/premium/hoc/${o.course_id}`}
+                          className="mt-2 block rounded-lg bg-brand-blue/10 px-2.5 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue/20"
+                        >
+                          Vào học →
+                        </a>
                       )}
                     </div>
                     <span className="shrink-0 rounded-full bg-green-500/10 px-2.5 py-0.5 text-xs font-semibold text-green-400">

@@ -65,7 +65,7 @@ export const metadata = {
  */
 
 type ShowcaseItem = {
-  id: number;
+  id: string;
   title: string;
   client_name: string | null;
   summary: string | null;
@@ -74,17 +74,42 @@ type ShowcaseItem = {
   link_url: string | null;
 };
 
+type ShowcaseRow = {
+  id: string;
+  data: {
+    title?: string;
+    client_name?: string;
+    summary?: string;
+    result_metric?: string;
+    thumbnail_url?: string;
+    link_url?: string;
+  };
+};
+
+/**
+ * STABILIZATION-SPR-1101 Task 1 — đọc từ bảng jsonb `case_study` (canonical,
+ * Admin CRUD ghi thật vào đây), không còn đọc `case_studies` (bảng không có
+ * đường ghi từ Admin). Cùng nguồn dữ liệu với /portal/case-studies.
+ */
 async function getShowcaseItems(): Promise<ShowcaseItem[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
   try {
     const supabase = await getSupabaseServer();
     const { data } = await supabase
-      .from("case_studies")
-      .select("id, title, client_name, summary, result_metric, thumbnail_url, link_url")
-      .eq("active", true)
+      .from("case_study")
+      .select("id, data")
+      .eq("status", "Published")
       .order("created_at", { ascending: false })
       .limit(3);
-    return data ?? [];
+    return ((data ?? []) as ShowcaseRow[]).map((row) => ({
+      id: row.id,
+      title: row.data.title ?? "",
+      client_name: row.data.client_name ?? null,
+      summary: row.data.summary ?? null,
+      result_metric: row.data.result_metric ?? null,
+      thumbnail_url: row.data.thumbnail_url ?? null,
+      link_url: row.data.link_url ?? null,
+    }));
   } catch {
     return [];
   }

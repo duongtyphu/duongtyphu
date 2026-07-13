@@ -38,9 +38,13 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
  * không route Portal nào đọc, xác nhận lại độc lập ở sprint này (0 kết
  * quả grep `src/app/portal/**`), khớp khuyến nghị REMOVE của
  * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md` (mục #1, verdict rõ
- * ràng — "CRUD thật nhưng ghi vào khoảng không"). Giữ lại "Banner"
- * (`portal_banners`) — verdict khác (NEEDS PMO DECISION, không phải
- * REMOVE, vì `NotificationTicker.tsx` đã có sẵn chỉ thiếu 1 dòng mount).
+ * ràng — "CRUD thật nhưng ghi vào khoảng không"). [ĐÍNH CHÍNH —
+ * STABILIZATION-SPR-1101] "Banner" (`portal_banners`) từng được giữ lại vì
+ * claim cũ "`NotificationTicker.tsx` đã có sẵn chỉ thiếu 1 dòng mount" —
+ * claim đó SAI (xác nhận lại: 0 import thật, chưa từng mount). Component đã
+ * bị xóa (orphan, Task 11/12). `portal_banners` collection vẫn giữ lại
+ * (không phải data giả, chỉ chưa có consumer) — cần PMO quyết định
+ * mount thật hay archive collection.
  */
 export const adminNavGroups: AdminNavGroup[] = [
   { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
@@ -145,6 +149,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Academy Dashboard", href: "/admin/academy" },
       { label: "Lộ trình thành công", href: "/admin/roadmap" },
       { label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
+      { label: "Nội dung khoá học", href: "/admin/academy/courses" },
       { label: "Dự án thực chiến", href: "/admin/projects" },
       { label: "Learning Journeys (đọc)", href: "/admin/academy/journeys" },
     ],

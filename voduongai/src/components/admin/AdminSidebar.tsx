@@ -123,6 +123,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/academy": LayoutDashboard,
   "/admin/roadmap": Map,
   "/admin/daily-missions": ClipboardList,
+  "/admin/academy/courses": BookOpen,
   "/admin/course-pricing": Wallet,
   "/admin/projects": FolderKanban,
   "/admin/academy/journeys": Route,

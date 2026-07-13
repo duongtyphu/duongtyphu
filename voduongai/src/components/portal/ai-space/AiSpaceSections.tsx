@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronRight, Copy, Check } from "lucide-react";
 import { startCompanionWorkspace, type WorkspaceItemType } from "@/lib/portal/companion-workspace";
-import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
+import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, AI_RESOURCES } from "@/data/portal/ai-workspace";
 import { RECOMMENDED_WORKSPACE_TO_MISSION } from "@/lib/portal/foundation/mission-catalog";
 import { prompts } from "@/data/prompts";
 
@@ -240,40 +240,6 @@ export function PromptLibrarySection() {
                 className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-gray-600 transition"
               >
                 {copiedId === prompt.id ? <Check className="h-3.5 w-3.5 text-green-600" /> : <Copy className="h-3.5 w-3.5" />}
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/** Section — Lộ trình học AI. Chuyển sang Học viện AI (đúng vai trò "học"). */
-export function LearningPathSection() {
-  const practice = usePracticeAction();
-  return (
-    <section className="space-y-4">
-      <SectionHeader label="Lộ trình" title="Lộ trình học AI" />
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {LEARNING_PATHS.map((path) => (
-          <div key={path.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-            <span className="w-fit rounded-full bg-green-50 px-2 py-0.5 text-[10px] font-semibold text-green-700">
-              Cấp {path.level}
-            </span>
-            <p className="font-semibold text-gray-900">{path.title}</p>
-            <p className="text-xs leading-relaxed text-gray-500">{path.goal}</p>
-            <p className="text-[10px] text-gray-400">{path.missionCount} bài / mission</p>
-            <div className="mt-auto flex items-center gap-4 pt-1">
-              <Link href={path.href} className="flex items-center gap-1 text-xs font-semibold text-gray-700 hover:text-gray-900 transition">
-                Bắt đầu học <ChevronRight className="h-3.5 w-3.5" />
-              </Link>
-              <button
-                type="button"
-                onClick={() => practice({ source: "learning-path", itemId: path.id, itemType: "learning_path", title: path.title })}
-                className="flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
-              >
-                Thực hành cùng Companion <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
           </div>

@@ -109,8 +109,8 @@ export default function AiWorkspaceAdminPage() {
             thật ra được mount tại <code className="text-brand-orange">/portal/hocvienai</code> (Academy), không phải
             <code className="text-brand-orange"> /portal/aiworkspace</code> — tên file gây nhầm lẫn nhưng AI Workspace không sở hữu
             nội dung đó. <code className="text-brand-orange">LearningPathSection</code>/<code className="text-brand-orange">LEARNING_PATHS</code> đã
-            bị gỡ khỏi cả 2 Portal Area (comment gốc: &quot;Production Reconstruction (Phase 5): bỏ Lộ trình học AI&quot;) — dữ liệu mồ côi,
-            đánh dấu Legacy, không tự xoá (Founder Directive).
+            bị gỡ khỏi cả 2 Portal Area (comment gốc: &quot;Production Reconstruction (Phase 5): bỏ Lộ trình học AI&quot;) — xác nhận
+            0 import thật, đã xóa code chết ở STABILIZATION-SPR-1101 (Task 12).
           </p>
         </div>
       </div>

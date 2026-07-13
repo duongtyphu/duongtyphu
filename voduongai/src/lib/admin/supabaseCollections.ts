@@ -22,11 +22,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   sop: "sop",
   resources: "resources",
   blog: "blog",
-  // LEGACY (Phase F.2): no longer written to by any Admin UI. The Case Study
-  // admin page (app/admin/(dashboard)/case-study/page.tsx) now writes
-  // directly to the typed `case_studies` table via dedicated actions.ts,
-  // matching what /portal/case-studies + the search index actually read.
-  // Kept in the map (not removed) per "không xóa entry cũ nếu chưa chắc an toàn".
+  // CANONICAL (STABILIZATION-SPR-1101 Task 1, corrects a stale Phase F.2
+  // comment that wrongly claimed a dedicated actions.ts writes to the typed
+  // `case_studies` table — no such file ever existed). The Case Study admin
+  // page still writes here via this generic collection route, and
+  // /portal/case-studies + /portal/congdongai + the search index now all
+  // read this SAME table (filter status="Published") — one Case Study
+  // source, not two. The old typed `case_studies` table is legacy/unread.
   "case-study": "case_study",
   news: "news",
   updates: "updates",

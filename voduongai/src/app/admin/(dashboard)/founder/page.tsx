@@ -39,14 +39,13 @@ const OPEN_PMO_QUESTIONS = [
   "Content group hiện tại (Blog AI/Template/Ebook...) — tách Workspace riêng, gộp CKOS, hay gộp Website? (IMP-ADM-100)",
   "/portal/hetrithucai (3 route) trùng tên khái niệm với /portal/ckos nhưng khác route — quan hệ giữa 2 route chưa xác nhận (ADM-SPR-200).",
   "1/10 Portal Area (Trang chủ Học viện) chưa có Workspace Admin sở hữu rõ ràng — không Workspace nào trong \"Workspace Navigation bắt buộc\" khớp rõ ràng (ADM-SPR-200/201, xác nhận lại PORTAL-SPR-301).",
-  "case_study (Admin ghi) vs case_studies (Portal đọc) — 2 bảng Supabase khác nhau, Case Study tạo mới trong Admin không lên Portal (IMP-ADM-001R, ưu tiên P0).",
+  "[ĐÃ XỬ LÝ — STABILIZATION-SPR-1101] case_study vs case_studies — đã hợp nhất về 1 nguồn Canonical (case_study, jsonb), Portal đọc cùng bảng Admin ghi.",
   "[ĐÃ XỬ LÝ — PROJECTS-SPR-602] Digital Assets CRUD (11 route) quản lý /portal/digital-assets đã khai tử — thay bằng Ecosystem CRUD thật (/admin/projects-opportunities/ecosystems) bám đúng /portal/duan-cohoi (Canonical Product theo Founder Directive).",
   "Banner (portal_banners/NotificationTicker.tsx) — component đã có sẵn, chỉ thiếu 1 dòng mount vào Portal, chưa quyết định có nối dây hay deprecate (IMP-ADM-001R; 6/7 mục Portal Builder còn lại đã xoá ở PORTAL-SPR-301, chỉ Banner còn treo).",
 ];
 
 const OPEN_BLOCKERS = [
-  { title: "Premium: 3 \"Lớp học\" mua thành công nhưng không có nội dung", detail: "`courses` không có cột/bảng nội dung học (chủ đề/chương/bài học/video/tài liệu), `orders.course_id` là TEXT không phải FK — cần migration schema, chưa tự chạy (PREMIUM-SPR-701, P0)." },
-  { title: "case_study vs case_studies", detail: "Admin ghi vào 1 bảng, Portal đọc bảng khác — Case Study tạo mới trong Admin không bao giờ lên Portal thật (IMP-ADM-001R, P0)." },
+  { title: "Migration chưa chạy trên Production", detail: "supabase-premium-learning-content-migration.sql (course_modules/course_lessons/orders.course_ref_id) và supabase-projects-opportunities-migration.sql (bảng ecosystems) đã viết nhưng CHƯA tự chạy (thiếu credentials) — Founder phải chạy trong Supabase SQL Editor trước khi merge/deploy, nếu không /admin/academy/courses và /portal/duan-cohoi sẽ trống (STABILIZATION-SPR-1101, PROJECTS-SPR-602)." },
 ];
 
 const TECHNICAL_DEBT = [
@@ -54,7 +53,7 @@ const TECHNICAL_DEBT = [
   "Social link tồn tại ở nhiều nơi: siteConfig.community/links (site.ts, nguồn thật cho hầu hết trang) — chỉ /portal/congdongai đã nối dây sang collection \"community\" thật (JOURNEY-SPR-901); các trang khác (Header/Footer) vẫn đọc siteConfig trực tiếp, chưa đồng bộ.",
   "3 nguồn \"Prompt\" trùng tên độc lập: bảng Supabase prompts (CKOS), src/data/prompts.ts (AI Workspace Prompt Library), AI_PROMPTS (AI Workspace Related Prompts) — AIWS-SPR-501.",
   "Brand Orange 2 mã màu khác nhau (#FF7A00 vs #F97316), Theme kép Portal/Admin chưa hợp nhất — BRAND-SPR-001/202.",
-  "22 file thiết kế thương hiệu mồ côi trong public/brand/ — 0 tham chiếu, chưa quyết định KEEP hay xoá — BRAND-SPR-202.",
+  "[ĐÃ XỬ LÝ — STABILIZATION-SPR-1101] 22 file thiết kế thương hiệu mồ côi — không xóa (source asset thật), đã chuyển từ public/brand/ (runtime-served) sang design-source/brand/ (không public) — BRAND-SPR-202/STABILIZATION-SPR-1101.",
   "34+ collection thật trong Admin (đếm trực tiếp qua source), nhưng chỉ 15 có pipeline Draft→Review→Published→Archived — phần còn lại chỉ Active/Inactive, không đồng nhất giữa các Workspace.",
 ];
 
@@ -64,6 +63,8 @@ const FOUNDER_DECISIONS = [
   "\"Sứ mệnh Companion\" (Mission Presentation) chuyển ownership từ Companion Studio sang Journey & Community, tách bạch khỏi Mentor Runtime — JOURNEY-SPR-901.",
   "Journey + Community hợp nhất thành 1 Workspace duy nhất (không giữ 2 Workspace riêng như ADM-SPR-201 từng dự kiến) — JOURNEY-SPR-901.",
   "/portal/duan-cohoi là Canonical Product của Projects & Opportunities — Admin CRUD cũ (Digital Asset Project/Link, Consumer = 0) gỡ bỏ hoàn toàn, thay bằng Ecosystem CRUD bám đúng Portal thật — PROJECTS-SPR-602 (Founder Directive).",
+  "Case Study canonical = bảng jsonb case_study (Admin ghi, Portal đọc cùng bảng) — bảng typed case_studies cũ không còn Consumer — STABILIZATION-SPR-1101.",
+  "Premium Learning Content: Course (Premium sở hữu giá/checkout/entitlement) tách khỏi Course Structure (Academy sở hữu Module/Lesson/Video/PDF, /admin/academy/courses) — course_modules/course_lessons mới, /portal/premium/hoc/[courseId] là trang xem bài học thật đầu tiên — STABILIZATION-SPR-1101.",
 ];
 
 function Table<T extends Record<string, string>>({ columns, rows }: { columns: { key: keyof T; label: string; mono?: boolean }[]; rows: T[] }) {
