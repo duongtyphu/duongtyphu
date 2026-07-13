@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { useCollection } from "@/lib/admin/store";
 import {
   digitalAssetCategories,
@@ -21,6 +23,29 @@ function StatCard({ label, value, sub }: { label: string; value: string | number
     </div>
   );
 }
+
+type MappingRow = { object: string; source: string; consumer: string; note: string };
+
+/**
+ * Portal Mapping (Task 1, PROJECTS-SPR-601) — đối chiếu trực tiếp
+ * `/portal/duan-cohoi/**`. `ecosystems.ts` (Ecosystem/SubProject/
+ * MarketingLink/AffiliateOffer/ExchangeLink) 100% hardcode, 0% CRUD.
+ * `digitalAssets.ts` (Project/Category/Link/Article) là CRUD thật (Supabase)
+ * nhưng Consumer khác nhau hoàn toàn theo từng object — xem báo cáo
+ * docs/admin/PROJECTS_WORKSPACE_MANAGEMENT_PROJECTS-SPR-601.md.
+ */
+const OBJECT_CONSUMER_MAPPING: MappingRow[] = [
+  { object: "Ecosystem (DigiU/SolarGroup/Crypto/Blockchain/Trading)", source: "src/data/portal/ecosystems.ts (hardcode, 5 mục)", consumer: "❌ 0% CRUD", note: "Đối tượng Founder thấy là \"nhóm\" trên Portal — không Admin nào chạm được." },
+  { object: "Sub-project (con của Ecosystem)", source: "ecosystems.ts (hardcode, 5 mục)", consumer: "❌ 0% CRUD", note: "3 dưới DigiU, 2 dưới SolarGroup." },
+  { object: "Marketing Link / Affiliate Offer / Exchange Link (\"External Link\")", source: "ecosystems.ts (hardcode)", consumer: "❌ 0% CRUD", note: "Gần nhất với \"CTA\"/\"External Link\" trong Scope brief — không tồn tại dạng Admin-editable." },
+  { object: "Ecosystem.status (\"Publish\"/\"Visibility\")", source: "ecosystems.ts (hardcode)", consumer: "❌ 0% CRUD", note: "Field có tồn tại trong type nhưng không Admin nào ghi được." },
+  { object: "Digital Asset Project", source: "digitalAssets.ts → Supabase digital_asset_projects", consumer: "✅ CRUD thật · ❌ Consumer = 0", note: "Chỉ được đọc bởi route /portal/digital-assets/** đã khai tử — không route sống nào của /portal/duan-cohoi đọc Project." },
+  { object: "Digital Asset Link", source: "digitalAssets.ts → Supabase digital_asset_links", consumer: "✅ CRUD thật · ❌ Consumer = 0", note: "Chỉ đọc bởi DigitalAssetProjectCard.tsx, chỉ mount trong route /portal/digital-assets/** đã khai tử." },
+  { object: "Digital Asset Category", source: "digitalAssets.ts → Supabase digital_asset_categories", consumer: "✅ CRUD thật · ⚠️ Consumer thật (hẹp)", note: "Đọc live tại /portal/duan-cohoi/bai-viet/[slug] (gắn nhãn danh mục cho bài viết)." },
+  { object: "Digital Asset Article", source: "digitalAssets.ts → Supabase digital_asset_articles", consumer: "✅ CRUD thật · ⚠️ Consumer thật (hẹp)", note: "Đọc live tại /portal/duan-cohoi/bai-viet/[slug] (useCollection) — NHƯNG trang Ecosystem lọc bài viết từ mảng tĩnh import cứng, không phải collection sống, nên bài mới Founder thêm KHÔNG xuất hiện trong lưới \"Bài viết liên quan\" của Ecosystem, chỉ truy cập được qua URL trực tiếp." },
+  { object: "Digital Asset Settings (disclaimer)", source: "digitalAssets.ts → Supabase digital_asset_settings", consumer: "✅ CRUD thật · ❌ Consumer = 0", note: "0 kết quả khi grep toàn bộ src/app/portal cho việc render field này." },
+  { object: "FAQ theo Ecosystem", source: "Không tồn tại", consumer: "❌ 0% CRUD", note: "Chỉ có 1 FAQ tĩnh cấp trang (3 câu, page.tsx), không có FAQ riêng theo từng Ecosystem như Scope brief mô tả." },
+];
 
 export default function DigitalAssetsAdminDashboardPage() {
   const { items: categories } = useCollection("digital-asset-categories", digitalAssetCategories);
@@ -59,12 +84,14 @@ export default function DigitalAssetsAdminDashboardPage() {
   }
 
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-extrabold text-white">ĐẦU TƯ CÙNG TÔI — Tổng quan</h1>
           <p className="mt-1 text-sm text-white/50">
-            Quản lý toàn bộ danh mục, dự án, link và bài viết của mục ĐẦU TƯ CÙNG TÔI trên Portal.
+            Quản lý toàn bộ danh mục, dự án, link và bài viết của mục ĐẦU TƯ CÙNG TÔI trên Portal (route thật:
+            /portal/duan-cohoi — xem bảng Portal Mapping bên dưới).
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -158,6 +185,37 @@ export default function DigitalAssetsAdminDashboardPage() {
           Lưu disclaimer
         </button>
       </div>
+
+      <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/5 p-5">
+        <h2 className="text-sm font-bold text-white">⚠️ Portal Mapping — đối chiếu trực tiếp /portal/duan-cohoi (PROJECTS-SPR-601)</h2>
+        <p className="mt-1 text-xs text-white/50">
+          Đối tượng brief liệt kê (Project/Category/Article/CTA/External Link/Resource/FAQ/Visibility/Publish) đối chiếu
+          với thực tế Consumer trên Portal — không bịa CRUD cho object không có Consumer thật.
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-white/40">
+                <th className="py-2 pr-4 font-semibold">Object</th>
+                <th className="py-2 pr-4 font-semibold">Nguồn dữ liệu</th>
+                <th className="py-2 pr-4 font-semibold">CRUD / Consumer</th>
+                <th className="py-2 font-semibold">Ghi chú</th>
+              </tr>
+            </thead>
+            <tbody>
+              {OBJECT_CONSUMER_MAPPING.map((row) => (
+                <tr key={row.object} className="border-b border-white/5 align-top">
+                  <td className="py-2 pr-4 font-semibold text-white/80 whitespace-nowrap">{row.object}</td>
+                  <td className="py-2 pr-4 font-mono text-xs text-white/60">{row.source}</td>
+                  <td className="py-2 pr-4 whitespace-nowrap text-white/70">{row.consumer}</td>
+                  <td className="py-2 text-xs text-white/50">{row.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+    </AdminWorkspaceShell>
   );
 }

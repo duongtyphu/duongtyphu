@@ -75,7 +75,7 @@ export const WORKSPACE_OWNERS: WorkspaceOwnerEntry[] = [
     href: "/admin/digital-assets",
     maturity: "Mixed-Legacy",
     wcsStatus: "Chưa có",
-    owns: "Hệ sinh thái DigiU, SolarGroup, Crypto, Blockchain, Trading, Dự án, Bài viết",
+    owns: "CRUD thật (Supabase) cho Digital Asset Category/Project/Link/Article/Settings — nhưng KHÔNG sở hữu 5 Ecosystem (DigiU/SolarGroup/Crypto/Blockchain/Trading) hiển thị trên /portal/duan-cohoi (100% hardcode trong ecosystems.ts, 0% CRUD, PROJECTS-SPR-601). Consumer thật hẹp: chỉ Category+Article đọc live tại /portal/duan-cohoi/bai-viet/[slug]; Project/Link/Settings Consumer = 0 (chỉ đọc bởi route /portal/digital-assets đã khai tử).",
   },
   {
     key: "community",

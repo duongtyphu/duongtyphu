@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { digitalAssetStats } from "@/data/digitalAssets";
 import { MiniBarChart } from "@/components/admin/ui/MiniBarChart";
 
@@ -24,11 +26,12 @@ export default function DigitalAssetAnalyticsPage() {
   const stats = digitalAssetStats;
 
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-extrabold text-white">Báo cáo ĐẦU TƯ CÙNG TÔI</h1>
         <p className="mt-1 text-sm text-white/50">
-          Phân tích tương tác (mock) trên các dự án, link và bài viết trong mục ĐẦU TƯ CÙNG TÔI.
+          ⚠️ PROJECTS-SPR-601: 100% mock (`digitalAssetStats`, dữ liệu tĩnh) — không đọc từ collection thật nào, không phải báo cáo thời gian thực.
         </p>
       </div>
 
@@ -85,5 +88,6 @@ export default function DigitalAssetAnalyticsPage() {
         <p className="text-sm text-white/40">Chưa có dữ liệu thống kê.</p>
       )}
     </div>
+    </AdminWorkspaceShell>
   );
 }

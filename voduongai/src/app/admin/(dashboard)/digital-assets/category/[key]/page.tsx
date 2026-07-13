@@ -2,6 +2,8 @@
 
 import { useParams, notFound } from "next/navigation";
 import Link from "next/link";
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import {
   digitalAssetCategories,
@@ -28,6 +30,7 @@ export default function DigitalAssetCategoryAdminPage() {
   const projectOptions = projectsInCategory.map((p) => p.id);
 
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -60,7 +63,6 @@ export default function DigitalAssetCategoryAdminPage() {
         seed={digitalAssetProjects}
         searchKeys={["name", "slug"]}
         lockedFilter={{ key: "category", value: categoryKey }}
-        viewHref={(p) => `/portal/digital-assets/${p.slug}`}
         columns={[
           {
             key: "name",
@@ -152,5 +154,6 @@ export default function DigitalAssetCategoryAdminPage() {
         </Link>
       </div>
     </div>
+    </AdminWorkspaceShell>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import { Badge } from "@/components/admin/ui/Badge";
 import { digitalAssetLinks, digitalAssetProjects, type DigitalAssetLink } from "@/data/digitalAssets";
@@ -24,9 +26,10 @@ function projectName(projectId: string) {
 
 export default function DigitalAssetLinksAdminPage() {
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <CrudPage<DigitalAssetLink>
       title="Link dự án ĐẦU TƯ CÙNG TÔI"
-      description="Quản lý các link (website, affiliate, cộng đồng...) gắn với từng dự án."
+      description="⚠️ PROJECTS-SPR-601: Link ở đây chưa hiển thị ở bất kỳ đâu trên Portal thật (Consumer = 0, component đọc dữ liệu này chỉ mount ở route /portal/digital-assets đã khai tử) — xem Dashboard Portal Mapping."
       collectionKey="digital-asset-links"
       seed={digitalAssetLinks}
       searchKeys={["title"]}
@@ -57,5 +60,6 @@ export default function DigitalAssetLinksAdminPage() {
         { key: "status", label: "Trạng thái", type: "select", options: ["Active", "Inactive"] },
       ]}
     />
+    </AdminWorkspaceShell>
   );
 }

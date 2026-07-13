@@ -1,13 +1,16 @@
 "use client";
 
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import { digitalAssetCategories, type DigitalAssetCategory } from "@/data/digitalAssets";
 
 export default function DigitalAssetCategoriesAdminPage() {
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <CrudPage<DigitalAssetCategory>
       title="Danh mục ĐẦU TƯ CÙNG TÔI"
-      description="Quản lý các lĩnh vực/danh mục trong mục ĐẦU TƯ CÙNG TÔI trên Portal."
+      description="Quản lý các lĩnh vực/danh mục trong mục ĐẦU TƯ CÙNG TÔI trên Portal. Consumer thật: gắn nhãn danh mục cho Bài viết tại /portal/duan-cohoi/bai-viet/[slug] (PROJECTS-SPR-601)."
       collectionKey="digital-asset-categories"
       seed={digitalAssetCategories}
       searchKeys={["name", "slug"]}
@@ -37,5 +40,6 @@ export default function DigitalAssetCategoriesAdminPage() {
         { key: "status", label: "Trạng thái", type: "select", options: ["Active", "Inactive"] },
       ]}
     />
+    </AdminWorkspaceShell>
   );
 }

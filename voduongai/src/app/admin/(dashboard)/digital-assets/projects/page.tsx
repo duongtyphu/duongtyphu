@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import { DigitalAssetCategoryTabs } from "@/components/admin/DigitalAssetCategoryTabs";
 import { digitalAssetProjects, digitalAssetCategories, type DigitalAssetProject } from "@/data/digitalAssets";
@@ -8,11 +10,13 @@ const BADGE_OPTIONS = ["Đang theo dõi", "Đang tham gia", "Đề xuất", "M�
 
 export default function DigitalAssetProjectsAdminPage() {
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-extrabold text-white">Dự án ĐẦU TƯ CÙNG TÔI</h1>
         <p className="mt-1 text-sm text-white/50">
           Chọn danh mục bên dưới để quản lý riêng dự án của từng danh mục — tránh nhầm dự án giữa các mục.
+          ⚠️ PROJECTS-SPR-601: Dự án ở đây chưa hiển thị ở bất kỳ đâu trên Portal thật (Consumer = 0) — xem Dashboard Portal Mapping.
         </p>
       </div>
 
@@ -27,7 +31,6 @@ export default function DigitalAssetProjectsAdminPage() {
               seed={digitalAssetProjects}
               searchKeys={["name", "slug"]}
               lockedFilter={{ key: "category", value: categoryKey }}
-              viewHref={(p) => `/portal/digital-assets/${p.slug}`}
               columns={[
                 {
                   key: "name",
@@ -73,5 +76,6 @@ export default function DigitalAssetProjectsAdminPage() {
         }}
       </DigitalAssetCategoryTabs>
     </div>
+    </AdminWorkspaceShell>
   );
 }

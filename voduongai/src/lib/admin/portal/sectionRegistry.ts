@@ -78,9 +78,16 @@ export const PORTAL_SECTIONS_SEED: PortalSection[] = [
   { id: "sec_aiworkspace_blog", pageId: "page_aiworkspace", name: "Blog AI", visible: true, sortOrder: 8, ctaNote: "Link bài viết (/portal/aiworkspace/bai-viet/[slug]).", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
   { id: "sec_aiworkspace_footer_cta", pageId: "page_aiworkspace", name: "Footer CTA", visible: true, sortOrder: 9, ctaNote: "CTA /solo + 1 bài viết cụ thể.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
-  // Dự án & Cơ hội (src/app/portal/duan-cohoi/page.tsx)
-  { id: "sec_duancohoi_hero", pageId: "page_duan_cohoi", name: "Pillar Hero", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
-  { id: "sec_duancohoi_gem_cards", pageId: "page_duan_cohoi", name: "Gem Card List (Ecosystem: DigiU/SolarGroup/Crypto/Blockchain/Trading)", visible: true, sortOrder: 2, ctaNote: "Link chi tiết Ecosystem/Sub-project.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },
+  // Dự án & Cơ hội (src/app/portal/duan-cohoi/page.tsx) — đính chính
+  // PROJECTS-SPR-601: đối chiếu lại trực tiếp JSX thật, đúng 7 section theo
+  // thứ tự render (bản seed cũ PORTAL-SPR-301 thiếu 5 section).
+  { id: "sec_duancohoi_hero", pageId: "page_duan_cohoi", name: "Pillar Hero", visible: true, sortOrder: 1, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_duancohoi_gem_cards", pageId: "page_duan_cohoi", name: "Gem Card List (Ecosystem: DigiU/SolarGroup/Crypto/Blockchain/Trading)", visible: true, sortOrder: 2, ctaNote: "Link chi tiết Ecosystem/Sub-project.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_duancohoi_companion_marquee", pageId: "page_duan_cohoi", name: "Companion Marquee (\"Những người bạn đồng hành theo năm tháng\")", visible: true, sortOrder: 3, ctaNote: "Không có.", mediaNote: "8 tile minh hoạ — không phải ảnh thật (comment gốc xác nhận).", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_duancohoi_why_page_exists", pageId: "page_duan_cohoi", name: "Gem Card (\"Vì sao trang này tồn tại\")", visible: true, sortOrder: 4, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_duancohoi_criteria", pageId: "page_duan_cohoi", name: "Tiêu chí chia sẻ của tôi", visible: true, sortOrder: 5, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_duancohoi_faq", pageId: "page_duan_cohoi", name: "Câu hỏi thường gặp", visible: true, sortOrder: 6, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
+  { id: "sec_duancohoi_companion_quotes", pageId: "page_duan_cohoi", name: "5 điều Companion muốn bạn mang theo", visible: true, sortOrder: 7, ctaNote: "Không có.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-13" },
 
   // Premium (src/app/portal/premium/page.tsx)
   { id: "sec_premium_programs", pageId: "page_premium", name: "Premium Program Card List", visible: true, sortOrder: 1, ctaNote: "CTA mua/xem chi tiết sản phẩm.", mediaNote: "Không có.", status: "Active", updatedDate: "2026-07-12" },

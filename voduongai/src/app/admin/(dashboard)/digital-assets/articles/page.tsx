@@ -1,5 +1,7 @@
 "use client";
 
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { DIGITAL_ASSETS_WORKSPACE_SECTIONS } from "@/lib/admin/digitalAssets/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import { DigitalAssetCategoryTabs } from "@/components/admin/DigitalAssetCategoryTabs";
 import {
@@ -15,12 +17,14 @@ function projectName(projectId: string) {
 
 export default function DigitalAssetArticlesAdminPage() {
   return (
+    <AdminWorkspaceShell title="Projects & Opportunities" description="" rootHref="/admin/digital-assets" sections={DIGITAL_ASSETS_WORKSPACE_SECTIONS}>
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-extrabold text-white">Bài viết dự án ĐẦU TƯ CÙNG TÔI</h1>
         <p className="mt-1 text-sm text-white/50">
           Chọn danh mục bên dưới để quản lý riêng bài viết của từng danh mục — bài viết luôn theo đúng danh mục
-          của dự án đã chọn.
+          của dự án đã chọn. Xem trực tiếp tại <code>/portal/duan-cohoi/bai-viet/[slug]</code> (Consumer thật, PROJECTS-SPR-601) —
+          ⚠️ chưa hiển thị trong khu vực &quot;Bài viết liên quan&quot; của trang Hệ sinh thái tương ứng (đọc mảng tĩnh riêng), xem Dashboard.
         </p>
       </div>
 
@@ -67,5 +71,6 @@ export default function DigitalAssetArticlesAdminPage() {
         }}
       </DigitalAssetCategoryTabs>
     </div>
+    </AdminWorkspaceShell>
   );
 }
