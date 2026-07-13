@@ -1,6 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
+import { AdminNotifications } from "@/components/admin/AdminNotifications";
 import { AdminSearch } from "@/components/admin/AdminSearch";
 import { AdminUserMenu } from "@/components/admin/AdminUserMenu";
 
@@ -12,7 +13,7 @@ export function AdminHeader({
   onToggleSidebar: () => void;
 }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#06142D]/90 backdrop-blur-md">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-navy/90 backdrop-blur-md">
       <div className="flex h-16 items-center gap-3 px-4 md:px-6">
         <button
           type="button"
@@ -26,8 +27,8 @@ export function AdminHeader({
 
         <div className="flex shrink-0 items-center gap-2">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
-            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-            <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
+            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" className="fill-brand-blue" />
+            <circle cx="27" cy="7.5" r="3" className="fill-brand-orange" />
           </svg>
           <span className="hidden flex-col leading-tight sm:flex">
             <span className="text-sm font-extrabold tracking-tight text-white">
@@ -41,6 +42,7 @@ export function AdminHeader({
 
         <div className="ml-auto flex flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">
           <AdminSearch />
+          <AdminNotifications />
           <AdminUserMenu email={email} />
         </div>
       </div>

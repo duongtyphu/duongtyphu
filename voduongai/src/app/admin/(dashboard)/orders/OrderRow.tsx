@@ -25,11 +25,20 @@ export function OrderRow({ order }: { order: Order }) {
     push(status === "confirmed" ? "Đã xác nhận đơn hàng." : status === "rejected" ? "Đã từ chối đơn hàng." : "Đã lưu.");
   }
 
+  const itemRef = order.course_id
+    ? `Khoá học #${order.course_id}`
+    : order.product_id
+      ? `Sản phẩm #${order.product_id}`
+      : order.lesson_id
+        ? `Bài học #${order.lesson_id}`
+        : "—";
+
   return (
     <tr className="border-b border-white/5">
       <td className="px-3 py-3 text-sm text-white/80">{order.order_code ?? `#${order.id}`}</td>
       <td className="px-3 py-3 text-sm text-white/80">{order.member_email}</td>
       <td className="px-3 py-3 text-sm text-white/80">{order.product_name ?? "—"}</td>
+      <td className="px-3 py-3 text-xs text-white/50">{itemRef}</td>
       <td className="px-3 py-3 text-sm font-semibold text-brand-orange">{order.amount.toLocaleString("vi-VN")}đ</td>
       <td className="px-3 py-3 text-xs text-white/40">{new Date(order.created_at).toLocaleDateString("vi-VN")}</td>
       <td className="px-3 py-3">

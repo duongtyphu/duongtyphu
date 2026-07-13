@@ -36,3 +36,24 @@ Mỗi bài viết mới đăng ở trang Blog AI phải có liên kết (interna
    (VDAI SOLO cho nội dung vận hành một mình, VDAI SCALE cho nội dung mở rộng/đội nhóm).
 
 Áp dụng cho mọi bài viết Blog AI tạo ra từ nay về sau.
+
+## Ngôn ngữ báo cáo (bắt buộc)
+
+Mọi báo cáo sprint/audit (nội dung file `docs/*.md`, mô tả PR, tóm tắt gửi PMO/Founder)
+từ nay về sau phải viết bằng **tiếng Việt**, không viết bằng tiếng Anh — kể cả khi brief
+gốc hoặc trao đổi trong phiên làm việc bằng tiếng Anh. Áp dụng cho mọi báo cáo tạo ra
+từ nay về sau (không bắt buộc dịch lại các báo cáo cũ đã có).
+
+## Admin CMS (EPIC-02) — Greenfield Admin cho Portal hiện tại (bắt buộc)
+
+Mọi Sprint Admin CMS (EPIC-02) từ nay về sau phải tuân theo
+`voduongai/docs/admin/FOUNDER_DIRECTIVE_GREENFIELD_ADMIN.md` — chỉ thị đầy đủ của Founder,
+tóm tắt: (1) phải audit trực tiếp codebase Portal hiện tại trước khi thiết kế bất kỳ
+Workspace Admin nào, không dựa vào tài liệu cũ; (2) Admin CMS mới là Greenfield — không cần
+giữ Legacy Admin/CRUD cũ/alias field tương thích dữ liệu test; (3) không được redesign hay
+đổi navigation/UX của Portal; (4) quy trình bắt buộc "Portal Coverage First" (audit → coverage
+matrix → schema sạch → kết nối → xác minh Portal → mới loại bỏ nguồn cũ) cho mỗi Workspace;
+(5) dùng Content Core chuẩn (title/slug/summary/body/metadata/status/visibility/sort_order/
+version/author/reviewer/published_at/created_at/updated_at), không giữ alias field kiểu
+`titleKey`/`summaryKey`/`bodyKey`; (6) Admin cuối cùng phải bao phủ 100% nội dung đang hiển
+thị trên Portal, không được để nội dung nào chỉ sửa được bằng code.

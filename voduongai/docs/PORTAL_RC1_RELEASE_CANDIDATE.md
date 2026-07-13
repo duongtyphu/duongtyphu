@@ -133,6 +133,8 @@ learning spaces, community map locations, v.v.) mà không cần chạm code,
 đúng nguyên tắc CMS đã đặt ra ở `VO_DUONG_AI_EXPERIENCE_PRINCIPLES.md`
 mục 12.
 
+*(Ghi chú bổ sung sau IMP-ADR-001, tài liệu này viết trước khi ADR-007 được duyệt: Theo ADR-007 [đã được Founder/PMO phê duyệt], Phase 4 chỉ triển khai trên Admin chính thức [`src/app/admin`]; `admin.html` là Legacy, chỉ tham chiếu, không phát triển tính năng mới — xem `docs/PORTAL_ARCHITECTURE_STANDARDIZATION.md` §11 và `docs/admin/ADMIN_CMS_FOUNDATION.md`.)*
+
 ---
 
 ## 7. Quy tắc nghiêm ngặt cho toàn bộ RC1

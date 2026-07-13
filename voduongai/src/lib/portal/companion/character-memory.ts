@@ -114,10 +114,9 @@ function writeCounts(counts: CharacterCountMap): void {
 }
 
 /**
- * Gọi mỗi khi một Reflection mới được lưu (`ReflectionJournalCard.tsx`).
- * Không lưu nội dung Reflection thật, không lưu Lesson dưới dạng câu
- * Companion đã nói — chỉ cộng thêm một lần xuất hiện cho hướng Character
- * mà ý nghĩa đó thuộc về.
+ * Gọi mỗi khi một Reflection mới được lưu. Không lưu nội dung Reflection
+ * thật, không lưu Lesson dưới dạng câu Companion đã nói — chỉ cộng thêm
+ * một lần xuất hiện cho hướng Character mà ý nghĩa đó thuộc về.
  */
 /**
  * Sprint 22.0 — "The Transformation Engine" (`docs/TRANSFORMATION_ENGINE.md`).
