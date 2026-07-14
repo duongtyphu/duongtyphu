@@ -16,7 +16,6 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
-import { createNavigationFallbackHandler } from "@/lib/portal/navigationFallback";
 
 /** Companion dùng icon riêng, tách biệt hẳn khỏi icon user/profile — thể
  * hiện "người đồng hành", không phải tài khoản cá nhân. "Sứ mệnh Companion"
@@ -151,7 +150,6 @@ function NavLink({
   const activeOverride = activeToneOverrides[item.href];
   const activeClass = activeOverride ?? "gemos-nav-active font-bold text-blue-700";
   const idleClass = "font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900";
-  const handleFallback = createNavigationFallbackHandler(item.href);
   return (
     // prefetch={false}: mọi item sidebar cùng vào viewport một lúc nên Next.js
     // prefetch hàng loạt route đồng thời — mỗi lần đều chạy qua middleware và
@@ -160,10 +158,7 @@ function NavLink({
     // redirect về /login trên Production thật (xác nhận qua Vercel Runtime Logs).
     <Link
       href={item.href}
-      onClick={(e) => {
-        onNavigate?.();
-        handleFallback(e);
-      }}
+      onClick={onNavigate}
       prefetch={false}
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}

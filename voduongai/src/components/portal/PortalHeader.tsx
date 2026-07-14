@@ -5,7 +5,6 @@ import { Menu, Bell, Bookmark } from "lucide-react";
 import { PortalSearch } from "@/components/portal/PortalSearch";
 import { PortalUserMenu } from "@/components/portal/PortalUserMenu";
 import { TopbarGlass } from "@/components/portal/ui/TopbarGlass";
-import { createNavigationFallbackHandler } from "@/lib/portal/navigationFallback";
 
 export function PortalHeader({
   user,
@@ -31,7 +30,7 @@ export function PortalHeader({
           <Menu className="h-4.5 w-4.5" />
         </button>
 
-        <Link href="/portal" prefetch={false} onClick={createNavigationFallbackHandler("/portal")} className="flex shrink-0 items-center gap-2">
+        <Link href="/portal" prefetch={false} className="flex shrink-0 items-center gap-2">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
@@ -45,21 +44,13 @@ export function PortalHeader({
           {/* prefetch={false} trên toàn bộ Link ở Header: xem giải thích ở
               PortalSidebar.tsx NavLink — tránh dồn nhiều prefetch cùng lúc
               gây tranh chấp refresh token qua middleware. */}
-          <Link
-            href="/portal/congdongai#tin-tuc"
-            prefetch={false}
-            onClick={createNavigationFallbackHandler("/portal/congdongai#tin-tuc")}
-            aria-label="Thông báo"
-            title="Thông báo"
-            className={iconButtonClass}
-          >
+          <Link href="/portal/congdongai#tin-tuc" prefetch={false} aria-label="Thông báo" title="Thông báo" className={iconButtonClass}>
             <Bell className="h-4 w-4" />
           </Link>
 
           <Link
             href="/portal/saved"
             prefetch={false}
-            onClick={createNavigationFallbackHandler("/portal/saved")}
             aria-label="Nội dung đã lưu"
             title="Nội dung đã lưu"
             className={`hidden sm:flex ${iconButtonBase}`}
