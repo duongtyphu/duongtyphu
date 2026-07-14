@@ -1,6 +1,0 @@
-<svg width="320" height="420" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="42" fill="#FFFFFF"/>
-  <text x="16" y="8" text-anchor="middle" font-family="Inter, 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="5.5" letter-spacing="1.5" fill="#0B1220">AI</text>
-  <path d="M3 14L16 37L29 14H23L16 27L9 14Z" fill="#2563EB"/>
-  <circle cx="27" cy="16.5" r="3" fill="#F97316"/>
-</svg>

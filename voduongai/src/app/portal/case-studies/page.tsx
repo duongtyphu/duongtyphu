@@ -4,7 +4,7 @@ import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneySt
 export const metadata = { title: "Case Study" };
 
 type CaseStudy = {
-  id: string;
+  id: number;
   title: string;
   client_name: string | null;
   summary: string | null;
@@ -13,44 +13,17 @@ type CaseStudy = {
   link_url: string | null;
 };
 
-type CaseStudyRow = {
-  id: string;
-  data: {
-    title?: string;
-    client_name?: string;
-    summary?: string;
-    result_metric?: string;
-    thumbnail_url?: string;
-    link_url?: string;
-  };
-};
-
-/**
- * STABILIZATION-SPR-1101 Task 1 — canonical Case Study source is the jsonb
- * `case_study` table (Admin CRUD writes here, `/admin/case-study`), not the
- * typed `case_studies` table this page previously read (a second table with
- * no Admin write path — Case Study tạo mới trong Admin trước đây không bao
- * giờ lên Portal thật). Không còn hai nguồn Case Study song song.
- */
 async function getCaseStudies(): Promise<CaseStudy[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
   const supabase = await getSupabaseServer();
   const { data } = await supabase
-    .from("case_study")
-    .select("id, data")
-    .eq("status", "Published")
+    .from("case_studies")
+    .select("id, title, client_name, summary, result_metric, thumbnail_url, link_url")
+    .eq("active", true)
     .order("created_at", { ascending: false });
-  return ((data ?? []) as CaseStudyRow[]).map((row) => ({
-    id: row.id,
-    title: row.data.title ?? "",
-    client_name: row.data.client_name ?? null,
-    summary: row.data.summary ?? null,
-    result_metric: row.data.result_metric ?? null,
-    thumbnail_url: row.data.thumbnail_url ?? null,
-    link_url: row.data.link_url ?? null,
-  }));
+  return data ?? [];
 }
 
 export default async function CaseStudiesPage() {

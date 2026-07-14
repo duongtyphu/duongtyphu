@@ -16,7 +16,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
-import { Breadcrumb } from "@/components/portal/ui/Breadcrumb";
 import {
   getGoal,
   listEpics,
@@ -150,12 +149,11 @@ export function GoalDetail({ goalId }: { goalId: string }) {
 
   return (
     <div className="space-y-6 rounded-3xl p-6 md:p-8">
-      <Breadcrumb
-        items={[
-          { label: "Bảng Mục tiêu", href: "/portal/goals" },
-          { label: goal.title },
-        ]}
-      />
+      <nav className="flex items-center gap-1.5 text-sm text-gray-500">
+        <Link href="/portal/goals" className="hover:text-gray-700 transition">Bảng Mục tiêu</Link>
+        <span className="text-gray-300">/</span>
+        <span className="font-medium text-gray-900">{goal.title}</span>
+      </nav>
 
       {/* Goal Information + Current Status + Progress */}
       <section className="rounded-2xl border border-blue-100 bg-white p-6 shadow-sm md:p-8">

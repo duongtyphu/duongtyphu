@@ -3,17 +3,40 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { X, ArrowRight } from "lucide-react";
-import { FOUNDER } from "@/data/portal/founder";
 
 /**
  * Section "Người đồng hành cùng bạn" — dựa trên ý tưởng section "Đội ngũ
  * chuyên gia" của V-Academy cũ (index.html gốc) nhưng thiết kế lại theo
  * ngôn ngữ Premium của VO DUONG AI: nền tối, glow AI, glass, depth.
  *
- * Dữ liệu Founder đọc từ `@/data/portal/founder` (Single Source of Truth,
- * Content Cleanup Sprint 7) — cùng nguồn với `CommunityGuides.tsx`, không
- * còn khai báo trùng ở đây.
+ * Chỉ hiển thị Founder (người thật, ảnh thật `/images/founder-portrait.jpg`
+ * — chính là instructor-vo-duong.jpg của V-Academy cũ). Nội dung modal
+ * (giới thiệu / chuyên môn / triết lý) kế thừa từ dữ liệu V-Academy cũ,
+ * phần "thành tựu" chỉ giữ các dữ kiện đã công bố trên chính website này
+ * (FounderStory ở trang chủ) — không thêm con số học viên/doanh thu không
+ * kiểm chứng được.
  */
+
+const FOUNDER = {
+  name: "Võ Đương",
+  role: "Nhà sáng lập VO DUONG AI",
+  photo: "/images/founder-portrait.jpg",
+  tags: ["AI ứng dụng", "Affiliate Marketing", "Automation", "AI Strategy", "Phát triển hệ thống"],
+  intro:
+    "Võ Đương là nhà sáng lập VO DUONG AI — nhà đầu tư và người ứng dụng AI thực chiến trong kinh doanh số. Với nền tảng thực chiến trong Affiliate Marketing và xây dựng hệ thống tự động hóa, anh xây VO DUONG AI thành một hệ sinh thái có lộ trình rõ ràng thay vì những thông tin rời rạc.",
+  expertise: [
+    "Ứng dụng AI trong kinh doanh số và Affiliate Marketing",
+    "Xây dựng hệ thống tự động hóa quy trình vận hành",
+    "Phát triển kênh nội dung và chiến lược phân phối",
+  ],
+  philosophy:
+    "Học AI không phải để biết — mà để làm được ngay. Mỗi buổi học là một kết quả thực tế.",
+  achievements: [
+    "Sáng lập và trực tiếp xây dựng hệ sinh thái VO DUONG AI: Portal, Companion, hệ tri thức CKOS và các chương trình đào tạo.",
+    "Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam.",
+    "Nhiều năm đầu tư và vận hành hệ thống Affiliate/tài sản số bằng AI — nội dung giảng dạy lấy từ chính trải nghiệm này.",
+  ],
+};
 
 export function FounderSpotlight() {
   const [open, setOpen] = useState(false);
@@ -51,7 +74,7 @@ export function FounderSpotlight() {
 
         <div className="relative grid gap-6 p-6 md:grid-cols-[240px_1fr] md:items-center md:p-8">
           <div className="relative mx-auto w-full max-w-[240px]">
-            <div aria-hidden className="absolute -inset-4 rounded-2xl bg-blue-500/20 blur-2xl" />
+            <div aria-hidden className="absolute -inset-4 rounded-[28px] bg-blue-500/20 blur-2xl" />
             <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-[0_0_50px_-10px_rgba(37,99,235,0.5)]">
               <Image
                 src={FOUNDER.photo}

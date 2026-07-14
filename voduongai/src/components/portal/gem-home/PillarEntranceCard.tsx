@@ -170,7 +170,7 @@ export function PillarEntranceCard({
       <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${surface.iconChip}`}>
         <Icon className={`h-5 w-5 ${surface.iconColor}`} />
       </div>
-      <h2 className="gemos-card-title mt-4 text-base font-bold text-gray-900">{title}</h2>
+      <h3 className="gemos-card-title mt-4 text-base font-bold text-gray-900">{title}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{what}</p>
 
       {(startedMode || startedOverride) && (
