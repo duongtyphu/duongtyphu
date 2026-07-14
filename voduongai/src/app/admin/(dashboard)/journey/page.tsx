@@ -89,7 +89,7 @@ const FUTURE_FLEXIBILITY: Row[] = [
 export default function JourneyAdminPage() {
   return (
     <AdminWorkspaceShell
-      title="Journey & Community"
+      title="Hành trình & Cộng đồng"
       description="Journey Experience + Community Experience + Mission Presentation — 3 Portal Area đối chiếu trực tiếp (JOURNEY-SPR-901). Phần lớn nội dung Journey là dữ liệu runtime thật của người dùng (không phải CMS content); Mission + phần lớn Community là TypeScript hardcode, chưa có CRUD."
       rootHref="/admin/journey"
       sections={JOURNEY_COMMUNITY_SECTIONS}

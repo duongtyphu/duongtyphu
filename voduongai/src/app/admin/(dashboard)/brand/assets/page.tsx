@@ -6,12 +6,11 @@ export default function BrandAssetsPage() {
     <BrandWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Brand Assets Registry</h2>
+          <h2 className="text-lg font-bold text-white">Thư viện nhận diện</h2>
           <p className="mt-1 text-sm text-white/60">
-            Danh sách tổng hợp toàn bộ Brand Asset thuộc mọi category (Logo/Wordmark/Icon/Open Graph Image/Brand
-            Image/Brand Video/File nhận diện) — dùng chung 1 schema, không lọc. Xem từng mục riêng ở
-            Logo/Wordmark/Icons/Open Graph. 3 category cuối (Brand Image/Brand Video/File nhận diện) mới thêm ở
-            BRAND-SPR-201, Task 8 — hiện đều là khoảng trống thật (chưa có asset), chỉ hiển thị ở đây.
+            Toàn bộ hình ảnh nhận diện thương hiệu ở một nơi — Logo, chữ lockup thương hiệu, icon (favicon/app
+            icon), ảnh chia sẻ mạng xã hội (Open Graph), ảnh/video thương hiệu và file nhận diện khác. Bảng bên
+            dưới nhóm và sắp xếp theo loại, có ô tìm kiếm theo tên.
           </p>
         </div>
         <BrandAssetRegistry />

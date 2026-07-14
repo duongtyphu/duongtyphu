@@ -18,16 +18,22 @@ export type WebsiteWorkspaceSection = {
   href: string;
 };
 
+/**
+ * PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 1/3, PMO APPROVAL) —
+ * tiếng Việt, gộp Homepage/Landing Pages/Static Pages vào tab "Trang" (đều
+ * đọc chung Website Page Registry, chỉ khác bộ lọc pageType — trang
+ * `/admin/website/pages` giờ hiển thị đủ cả 3 loại + Cấu trúc Section
+ * trang chủ), gộp Redirect vào tab "SEO & Chuyển hướng". Route cũ
+ * (`/admin/website/homepage`, `/landing-pages`, `/static-pages`,
+ * `/redirect`) vẫn hoạt động khi truy cập trực tiếp, chỉ không còn hiện ở
+ * tab bar (đúng Task 10 — không tạo route mới, ưu tiên gộp/ẩn).
+ */
 export const WEBSITE_WORKSPACE_SECTIONS: WebsiteWorkspaceSection[] = [
-  { key: "dashboard", label: "Dashboard", href: "/admin/website" },
-  { key: "pages", label: "Pages", href: "/admin/website/pages" },
-  { key: "navigation", label: "Navigation", href: "/admin/website/navigation" },
-  { key: "homepage", label: "Homepage", href: "/admin/website/homepage" },
-  { key: "landing-pages", label: "Landing Pages", href: "/admin/website/landing-pages" },
-  { key: "static-pages", label: "Static Pages", href: "/admin/website/static-pages" },
-  { key: "shared-sections", label: "Shared Sections", href: "/admin/website/shared-sections" },
-  { key: "seo", label: "SEO", href: "/admin/website/seo" },
-  { key: "redirect", label: "Redirect", href: "/admin/website/redirect" },
-  { key: "global-settings", label: "Global Settings", href: "/admin/website/global-settings" },
-  { key: "portal-mapping", label: "Portal Mapping", href: "/admin/website/portal-mapping" },
+  { key: "dashboard", label: "Tổng quan", href: "/admin/website" },
+  { key: "pages", label: "Trang", href: "/admin/website/pages" },
+  { key: "navigation", label: "Điều hướng", href: "/admin/website/navigation" },
+  { key: "shared-sections", label: "Nội dung dùng chung", href: "/admin/website/shared-sections" },
+  { key: "seo", label: "SEO & Chuyển hướng", href: "/admin/website/seo" },
+  { key: "portal-mapping", label: "Liên kết Portal", href: "/admin/website/portal-mapping" },
+  { key: "global-settings", label: "Cài đặt", href: "/admin/website/global-settings" },
 ];

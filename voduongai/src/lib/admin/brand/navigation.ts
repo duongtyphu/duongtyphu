@@ -13,15 +13,17 @@ export type BrandWorkspaceSection = {
   href: string;
 };
 
+/**
+ * PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 1/3, PMO APPROVAL) —
+ * tiếng Việt, không hiện riêng Wordmark/Typography/Color Palette/Theme/
+ * Icon/Open Graph/Brand Assets như tab riêng — gộp vào 2 tab "Thư viện
+ * nhận diện" (Logo/Wordmark/Icon/Open Graph, đều đọc chung Brand Asset
+ * Registry) và "Màu & Kiểu chữ" (Typography/Color Palette/Theme). Route cũ
+ * vẫn hoạt động khi truy cập trực tiếp, chỉ không còn hiện ở tab bar.
+ */
 export const BRAND_WORKSPACE_SECTIONS: BrandWorkspaceSection[] = [
-  { key: "dashboard", label: "Dashboard", href: "/admin/brand" },
-  { key: "logo", label: "Logo", href: "/admin/brand/logo" },
-  { key: "wordmark", label: "Wordmark", href: "/admin/brand/wordmark" },
-  { key: "typography", label: "Typography", href: "/admin/brand/typography" },
-  { key: "color-palette", label: "Color Palette", href: "/admin/brand/color-palette" },
-  { key: "theme", label: "Theme", href: "/admin/brand/theme" },
-  { key: "icons", label: "Icons", href: "/admin/brand/icons" },
-  { key: "open-graph", label: "Open Graph", href: "/admin/brand/open-graph" },
-  { key: "assets", label: "Brand Assets Registry", href: "/admin/brand/assets" },
-  { key: "settings", label: "Global Brand Settings", href: "/admin/brand/settings" },
+  { key: "dashboard", label: "Tổng quan", href: "/admin/brand" },
+  { key: "assets", label: "Thư viện nhận diện", href: "/admin/brand/assets" },
+  { key: "typography", label: "Màu & Kiểu chữ", href: "/admin/brand/typography" },
+  { key: "settings", label: "Cài đặt", href: "/admin/brand/settings" },
 ];

@@ -6,12 +6,10 @@ export default function BrandSettingsPage() {
     <BrandWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Global Brand Settings</h2>
+          <h2 className="text-lg font-bold text-white">Cài đặt</h2>
           <p className="mt-1 text-sm text-white/60">
-            Cấu hình thương hiệu tổng thể (1 record duy nhất) — Brand Name/Logo/Favicon/Color/Tagline/Copyright/Brand
-            Voice/Open Graph mặc định. <strong>Lưu ý:</strong> một phần field (logo/favicon, tagline) chồng lấn với
-            System Settings hiện có (/admin/settings) — đã ghi nhận, KHÔNG tự gộp 2 trang, xem báo cáo
-            BRAND-SPR-001.
+            Cấu hình thương hiệu tổng thể (1 bản ghi duy nhất) — Tên thương hiệu/Logo/Favicon/Màu/Khẩu hiệu/Bản
+            quyền/Giọng thương hiệu/Ảnh chia sẻ mặc định.
           </p>
         </div>
         <GlobalBrandSettingsForm />

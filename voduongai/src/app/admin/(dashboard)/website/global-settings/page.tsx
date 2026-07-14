@@ -6,12 +6,11 @@ export default function WebsiteGlobalSettingsPage() {
     <WebsiteWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Global Settings</h2>
+          <h2 className="text-lg font-bold text-white">Cài đặt</h2>
           <p className="mt-1 text-sm text-white/60">
-            Cấu hình tổng thể Website Workspace (1 record duy nhất): Website Announcement, Default Homepage,
-            Visibility, Presentation Settings (WEB-SPR-201 Task 10). <strong>Lưu ý:</strong> sidebar Admin đã có sẵn
-            mục &quot;System Settings&quot; đứng độc lập (/admin/settings) với một phần nội dung trùng lặp — đã ghi
-            nhận từ WEB-SPR-001, nhắc lại nhiều sprint, vẫn CHƯA được PMO quyết định — KHÔNG tự gộp hai trang.
+            Cấu hình tổng thể cho Website (1 bản ghi duy nhất): Thông báo, Trang chủ mặc định, Hiển thị, cấu hình
+            trình bày. Riêng với mục &quot;Cài đặt&quot; chung của toàn Admin — mỗi khu vực giữ đúng cấu hình thuộc
+            phạm vi của mình, không gộp chung một trang.
           </p>
         </div>
         <GlobalWebsiteSettingsForm />

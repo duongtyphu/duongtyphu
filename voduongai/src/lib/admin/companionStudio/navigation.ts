@@ -10,5 +10,5 @@ import type { AdminWorkspaceSection } from "@/components/admin/AdminWorkspaceShe
  * tạo route/menu con giả cho đến khi có CRUD thật đứng sau.
  */
 export const COMPANION_STUDIO_SECTIONS: AdminWorkspaceSection[] = [
-  { key: "dashboard", label: "Companion Studio Dashboard", href: "/admin/companion-studio" },
+  { key: "dashboard", label: "Tổng quan", href: "/admin/companion-studio" },
 ];

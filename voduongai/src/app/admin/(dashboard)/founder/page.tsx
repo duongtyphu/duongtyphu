@@ -165,17 +165,17 @@ export default function FounderWorkspacePage() {
 
   return (
     <AdminWorkspaceShell
-      title="Founder Operation Center"
-      description="Trung tâm điều hành duy nhất — gộp Workspace Health/Publish Center/Review Queue/Activity Timeline/Audit Center/System Health/Founder Decision/Ownership Matrix của toàn hệ thống (FOUNDER-SPR-1001). Không tạo Workspace mới, không đổi Ownership."
+      title="Tổng quan"
+      description="Trung tâm điều hành duy nhất — tình trạng từng khu vực, hàng chờ xuất bản, và hoạt động gần đây của toàn hệ thống."
       rootHref="/admin/founder"
       sections={FOUNDER_SECTIONS}
     >
       <div className="space-y-6">
         {/* Task 1 — Workspace Health */}
         <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/5 p-5">
-          <h2 className="text-sm font-bold text-white">Workspace Health (Task 1)</h2>
+          <h2 className="text-sm font-bold text-white">Tình trạng các khu vực</h2>
           <p className="mt-1 text-xs text-white/50">
-            10 Workspace thật (workspaceOwnership.ts) + Portal Management (lớp cấu trúc chéo, không phải 1 Workspace nội dung — brief liệt kê riêng &quot;Portal&quot;).
+            10 khu vực quản trị thật + Portal (lớp cấu trúc chéo, không phải nội dung riêng của khu vực nào).
           </p>
           <div className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03]">
             <table className="w-full text-left text-sm">
@@ -220,7 +220,7 @@ export default function FounderWorkspacePage() {
 
         {/* Task 2 — Publish Center */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">Publish Center (Task 2)</h2>
+          <h2 className="text-sm font-bold text-white">Trung tâm xuất bản</h2>
           <p className="mt-1 text-xs text-white/50">
             {publishReady
               ? `Gộp ${publishItems.length} item thật từ ${trackedCollectionCount} collection có pipeline Draft→Review→Published→Archived (13 CKOS + Website Pages + Shared Sections).`
@@ -238,7 +238,7 @@ export default function FounderWorkspacePage() {
         {/* Task 3 — Review Queue summary */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white">Review Queue (Task 3)</h2>
+            <h2 className="text-sm font-bold text-white">Hàng chờ duyệt</h2>
             <Link href="/admin/founder/review-queue" className="text-xs text-brand-blue hover:underline">Xem danh sách đầy đủ →</Link>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Image as ImageIcon, Type, Palette, Sparkles, Shapes, Share2, Library, Settings } from "lucide-react";
+import { Library, Palette, Settings } from "lucide-react";
 import { BrandWorkspaceShell } from "@/components/admin/brand/BrandWorkspaceShell";
 
 // Mock data (Task 2 — "Brand Dashboard (Mock Data)"), theo đúng chỉ thị
@@ -11,16 +11,13 @@ import { BrandWorkspaceShell } from "@/components/admin/brand/BrandWorkspaceShel
 // Color Token, 6 Typography Token.
 const MOCK_OVERVIEW = { totalAssets: 13, colorTokens: 11, typographyTokens: 6, themeProfiles: 2 };
 
+// PMO APPROVAL Task 3 — chỉ còn 3 điểm đến gộp (khớp BRAND_WORKSPACE_SECTIONS),
+// không liệt kê lại 8 mục cũ (Logo/Wordmark/Typography/Color Palette/Theme/
+// Icons/Open Graph/Global Brand Settings) đã ẩn khỏi tab nav.
 const QUICK_ACTIONS = [
-  { label: "Logo", href: "/admin/brand/logo", icon: ImageIcon },
-  { label: "Wordmark", href: "/admin/brand/wordmark", icon: Type },
-  { label: "Typography", href: "/admin/brand/typography", icon: Type },
-  { label: "Color Palette", href: "/admin/brand/color-palette", icon: Palette },
-  { label: "Theme", href: "/admin/brand/theme", icon: Sparkles },
-  { label: "Icons", href: "/admin/brand/icons", icon: Shapes },
-  { label: "Open Graph", href: "/admin/brand/open-graph", icon: Share2 },
-  { label: "Brand Assets Registry", href: "/admin/brand/assets", icon: Library },
-  { label: "Global Brand Settings", href: "/admin/brand/settings", icon: Settings },
+  { label: "Thư viện nhận diện", href: "/admin/brand/assets", icon: Library },
+  { label: "Màu & Kiểu chữ", href: "/admin/brand/typography", icon: Palette },
+  { label: "Cài đặt", href: "/admin/brand/settings", icon: Settings },
 ];
 
 function StatCard({ label, value }: { label: string; value: number }) {
@@ -38,16 +35,16 @@ export default function BrandDashboardPage() {
       <div className="space-y-6">
         <div>
           <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-white/40">
-            Brand Overview
+            Tổng quan thương hiệu
             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold normal-case text-white/40">
-              Dữ liệu mẫu (Task 2) — số liệu thật xem trực tiếp ở từng Registry bên dưới
+              Dữ liệu mẫu — số liệu thật xem trực tiếp ở từng mục bên dưới
             </span>
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <StatCard label="Brand Assets" value={MOCK_OVERVIEW.totalAssets} />
-            <StatCard label="Color Tokens" value={MOCK_OVERVIEW.colorTokens} />
-            <StatCard label="Typography Tokens" value={MOCK_OVERVIEW.typographyTokens} />
-            <StatCard label="Theme Profiles" value={MOCK_OVERVIEW.themeProfiles} />
+            <StatCard label="Tài sản nhận diện" value={MOCK_OVERVIEW.totalAssets} />
+            <StatCard label="Mã màu" value={MOCK_OVERVIEW.colorTokens} />
+            <StatCard label="Kiểu chữ" value={MOCK_OVERVIEW.typographyTokens} />
+            <StatCard label="Giao diện" value={MOCK_OVERVIEW.themeProfiles} />
           </div>
         </div>
 
@@ -68,8 +65,8 @@ export default function BrandDashboardPage() {
         </div>
 
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Quick Actions</p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Truy cập nhanh</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {QUICK_ACTIONS.map(({ label, href, icon: Icon }) => (
               <Link
                 key={href}

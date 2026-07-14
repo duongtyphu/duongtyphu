@@ -7,7 +7,7 @@ export default function WebsiteNavigationPage() {
     <WebsiteWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Navigation</h2>
+          <h2 className="text-lg font-bold text-white">Điều hướng</h2>
           <p className="mt-1 text-sm text-white/60">
             Navigation Registry — quản lý Group (Header/Sidebar/Footer/External) và Item bên trong: xem/đổi thứ tự
             (nút ↑/↓)/ẩn hiện/chỉnh tiêu đề/icon/route/trạng thái publish (WEB-SPR-003 Foundation, mở rộng

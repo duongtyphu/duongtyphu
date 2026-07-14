@@ -1,6 +1,7 @@
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
 import { SEORegistry } from "@/components/admin/website/SEORegistry";
 import { SEOPreviewPlaceholder } from "@/components/admin/website/SEOPreviewPlaceholder";
+import { RedirectRegistry } from "@/components/admin/website/RedirectRegistry";
 
 export default function WebsiteSeoPage() {
   return (
@@ -9,15 +10,21 @@ export default function WebsiteSeoPage() {
         <div>
           <h2 className="text-lg font-bold text-white">SEO</h2>
           <p className="mt-1 text-sm text-white/60">
-            SEO Registry — Meta Title/Description, Open Graph, Canonical URL, Robots, Sitemap (Foundation) cho từng
-            URL thuộc Website (WEB-SPR-005). Không SEO Generator, không AI SEO, không Sitemap/Robots Generator thật —
-            chỉ lưu metadata Founder tự nhập. <strong>Lưu ý:</strong> sidebar Admin đã có sẵn một mục &quot;SEO&quot;
-            đứng độc lập ở cấp cao nhất (/admin/seo, ComingSoon) — chồng lấn phạm vi với nhóm này chưa được PMO xử lý,
-            xem docs/admin/WEBSITE_WORKSPACE_FOUNDATION.md phần WEB-SPR-005.
+            Tiêu đề/Mô tả Meta, Open Graph, Canonical URL, Robots, Sitemap cho từng đường dẫn thuộc Website. Chỉ lưu
+            metadata Founder tự nhập, chưa tự sinh SEO/Sitemap/Robots.
           </p>
         </div>
         <SEORegistry />
         <SEOPreviewPlaceholder />
+
+        <div>
+          <h2 className="text-lg font-bold text-white">Chuyển hướng</h2>
+          <p className="mt-1 text-sm text-white/60">
+            Danh sách rule chuyển hướng 301/302. Chưa nối dây để tự chuyển hướng request thật — chuyển hướng thật của
+            Portal vẫn khai báo tĩnh trong code.
+          </p>
+        </div>
+        <RedirectRegistry />
       </div>
     </WebsiteWorkspaceShell>
   );

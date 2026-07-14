@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { Image as ImageIcon, Video, FileText, Music, Folder, Layers, Tag, Settings } from "lucide-react";
+import { Layers, Folder, Settings } from "lucide-react";
 import { MediaWorkspaceShell } from "@/components/admin/media/MediaWorkspaceShell";
 import { useCollection } from "@/lib/admin/store";
 import { MEDIA_ASSETS_COLLECTION_KEY, MEDIA_ASSETS_SEED, type MediaAsset, type MediaCategory } from "@/lib/admin/media/assetRegistry";
@@ -10,17 +10,21 @@ import { MEDIA_FOLDERS_COLLECTION_KEY, MEDIA_FOLDERS_SEED, type MediaFolder } fr
 import { MEDIA_COLLECTIONS_COLLECTION_KEY, MEDIA_COLLECTIONS_SEED, type MediaCollection } from "@/lib/admin/media/collectionRegistry";
 import { MEDIA_TAGS_COLLECTION_KEY, MEDIA_TAGS_SEED, type MediaTag } from "@/lib/admin/media/tagRegistry";
 
+// PMO APPROVAL Task 3/10 — chỉ còn 3 điểm đến gộp (khớp
+// MEDIA_WORKSPACE_SECTIONS), không liệt kê lại Images/Videos/Documents/
+// Audio/Collections/Tags — nay gộp vào Thư viện / Thư mục & Bộ sưu tập.
 const QUICK_ACTIONS = [
-  { label: "Media Library", href: "/admin/media-center/library", icon: Layers },
-  { label: "Images", href: "/admin/media-center/images", icon: ImageIcon },
-  { label: "Videos", href: "/admin/media-center/videos", icon: Video },
-  { label: "Documents", href: "/admin/media-center/documents", icon: FileText },
-  { label: "Audio", href: "/admin/media-center/audio", icon: Music },
-  { label: "Folder Management", href: "/admin/media-center/folders", icon: Folder },
-  { label: "Collections", href: "/admin/media-center/collections", icon: Layers },
-  { label: "Tags", href: "/admin/media-center/tags", icon: Tag },
-  { label: "Media Settings", href: "/admin/media-center/settings", icon: Settings },
+  { label: "Thư viện", href: "/admin/media-center/library", icon: Layers },
+  { label: "Thư mục & Bộ sưu tập", href: "/admin/media-center/folders", icon: Folder },
+  { label: "Cài đặt", href: "/admin/media-center/settings", icon: Settings },
 ];
+
+const CATEGORY_LABELS: Record<MediaCategory, string> = {
+  Image: "Ảnh",
+  Video: "Video",
+  Document: "Tài liệu",
+  Audio: "Âm thanh",
+};
 
 function StatCard({ label, value }: { label: string; value: number | string }) {
   return (
@@ -69,9 +73,9 @@ export default function MediaDashboardPage() {
       <div className="space-y-6">
         <div>
           <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-white/40">
-            Media Overview
+            Tổng quan Media
             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold normal-case text-white/40">
-              Dữ liệu thật từ Media Asset Registry (MEDIA-SPR-201)
+              Dữ liệu thật từ Thư viện Media
             </span>
           </p>
           {!ready ? (
@@ -82,10 +86,10 @@ export default function MediaDashboardPage() {
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <StatCard label="Tổng số Digital Assets" value={assets.items.length} />
-              <StatCard label="Active" value={activeCount} />
+              <StatCard label="Tổng số Media" value={assets.items.length} />
+              <StatCard label="Đang dùng" value={activeCount} />
               <StatCard label="Khoảng trống (Chưa có)" value={gapCount} />
-              <StatCard label="Storage Usage" value="Chưa đo" />
+              <StatCard label="Dung lượng" value="Chưa đo" />
             </div>
           )}
         </div>
@@ -109,7 +113,7 @@ export default function MediaDashboardPage() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">Asset Distribution</h2>
+          <h2 className="text-sm font-bold text-white">Phân bố theo loại</h2>
           {!ready ? (
             <div className="mt-3 h-16 animate-pulse rounded-lg bg-white/5" />
           ) : (
@@ -117,19 +121,19 @@ export default function MediaDashboardPage() {
               {(Object.entries(distribution) as [MediaCategory, number][]).map(([cat, count]) => (
                 <div key={cat} className="rounded-xl border border-white/10 p-3 text-center">
                   <p className="text-lg font-extrabold text-white">{count}</p>
-                  <p className="text-[11px] text-white/40">{cat}</p>
+                  <p className="text-[11px] text-white/40">{CATEGORY_LABELS[cat]}</p>
                 </div>
               ))}
             </div>
           )}
           <p className="mt-3 text-xs text-white/40">
-            {folders.items.length} Folder · {collections.items.length} Collection · {tags.items.length} Tag
+            {folders.items.length} Thư mục · {collections.items.length} Bộ sưu tập · {tags.items.length} Nhãn
           </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <h2 className="text-sm font-bold text-white">Recently Uploaded</h2>
+            <h2 className="text-sm font-bold text-white">Mới tải lên</h2>
             {!ready ? (
               <div className="mt-3 space-y-2">
                 {[1, 2, 3].map((i) => (
@@ -153,7 +157,7 @@ export default function MediaDashboardPage() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <h2 className="text-sm font-bold text-white">Recently Used</h2>
+            <h2 className="text-sm font-bold text-white">Mới sử dụng</h2>
             {!ready ? (
               <div className="mt-3 space-y-2">
                 {[1, 2, 3].map((i) => (
@@ -176,8 +180,8 @@ export default function MediaDashboardPage() {
         </div>
 
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Quick Actions</p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Truy cập nhanh</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {QUICK_ACTIONS.map(({ label, href, icon: Icon }) => (
               <Link
                 key={href}

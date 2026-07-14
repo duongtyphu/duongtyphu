@@ -1,107 +1,56 @@
-"use client";
+import Link from "next/link";
+import { Users, ShieldCheck, Plug } from "lucide-react";
+import { ComingSoon } from "@/components/admin/ComingSoon";
 
-import { useEffect, useState } from "react";
-import { useCollection } from "@/lib/admin/store";
-import { useAdminToast } from "@/lib/admin/toast";
-import { settingsSeed, type SiteSettings } from "@/data/admin/settings";
-
-const fieldGroups: { title: string; fields: { key: keyof SiteSettings; label: string }[] }[] = [
-  {
-    title: "Thông tin chung",
-    fields: [
-      { key: "siteName", label: "Tên website" },
-      { key: "slogan", label: "Slogan" },
-      { key: "logoUrl", label: "Logo URL" },
-      { key: "faviconUrl", label: "Favicon URL" },
-    ],
-  },
-  {
-    title: "Màu thương hiệu",
-    fields: [
-      { key: "primaryColor", label: "Primary color" },
-      { key: "secondaryColor", label: "Secondary color" },
-      { key: "accentColor", label: "Accent color" },
-    ],
-  },
-  {
-    title: "SEO mặc định",
-    fields: [
-      { key: "seoTitle", label: "SEO Title" },
-      { key: "seoDescription", label: "SEO Description" },
-    ],
-  },
-  {
-    title: "Footer & Social",
-    fields: [
-      { key: "footerText", label: "Footer text" },
-      { key: "facebookUrl", label: "Facebook" },
-      { key: "youtubeUrl", label: "YouTube" },
-      { key: "tiktokUrl", label: "TikTok" },
-      { key: "zaloUrl", label: "Zalo" },
-    ],
-  },
-  {
-    title: "Thông báo",
-    fields: [{ key: "adminEmailNotify", label: "Email nhận thông báo" }],
-  },
-];
-
+/**
+ * PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 9, PMO APPROVAL) —
+ * "Cài đặt" chỉ giữ 3 mục: Tài khoản & quyền, Bảo mật, Tích hợp. Bản CRUD
+ * cũ (Tên website/Slogan/Logo/Favicon/Màu/SEO/Footer/Social) không có nơi
+ * đọc thật (0 consumer, xem ADMIN_CMS_SIDEBAR_SIMPLIFICATION.md #4) — đã
+ * loại bỏ khỏi Sidebar theo đúng chỉ thị. Các cấu hình đó thật ra thuộc
+ * đúng khu vực sở hữu riêng, đã có sẵn: Thương hiệu (Logo/Favicon/Màu/
+ * Khẩu hiệu) và Website (SEO/Footer/Social) — không tạo lại ở đây.
+ */
 export default function SettingsPage() {
-  const { items, ready, set } = useCollection<SiteSettings & { id: string }>("settings", [
-    { id: "settings", ...settingsSeed },
-  ]);
-  const { push } = useAdminToast();
-  const [form, setForm] = useState(items[0]);
-
-  useEffect(() => {
-    // Syncs the edit form once the async collection load resolves; no pure
-    // render-time source for this value.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (items[0]) setForm(items[0]);
-    else if (ready) setForm({ id: "settings", ...settingsSeed });
-  }, [items, ready]);
-
-  function save() {
-    if (!form) return;
-    set([form]);
-    push("Đã lưu cài đặt.");
-  }
-
-  if (!form) return <p className="text-sm text-white/50">Đang tải cài đặt...</p>;
-
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-extrabold text-white">Cài đặt</h1>
-        <p className="mt-1 text-sm text-white/50">Cấu hình thông tin chung của hệ sinh thái VO DUONG AI.</p>
+        <p className="mt-1 text-sm text-white/50">
+          Cấu hình chung của toàn Admin. Cấu hình theo từng khu vực (thương hiệu, trình bày website, thương mại
+          Premium, cấu hình Companion) nằm ngay trong khu vực đó — xem tab &quot;Cài đặt&quot; của Website, Thương
+          hiệu, Premium, Companion.
+        </p>
       </div>
 
-      {fieldGroups.map((group) => (
-        <section key={group.title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-          <h2 className="text-sm font-bold text-white">{group.title}</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {group.fields.map((f) => (
-              <div key={f.key}>
-                <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
-                  {f.label}
-                </label>
-                <input
-                  value={String(form[f.key] ?? "")}
-                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-brand-blue focus:outline-none"
-                />
-              </div>
-            ))}
+      <section className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
+            <Users className="h-5 w-5" />
           </div>
-        </section>
-      ))}
+          <div>
+            <h2 className="text-sm font-bold text-white">Tài khoản & quyền</h2>
+            <p className="text-xs text-white/50">Quản lý người dùng, khoá/mở tài khoản.</p>
+          </div>
+        </div>
+        <Link
+          href="/admin/users"
+          className="mt-4 inline-block rounded-lg bg-brand-blue px-4 py-2 text-xs font-bold text-white hover:opacity-90"
+        >
+          Mở trang Người dùng →
+        </Link>
+      </section>
 
-      <button
-        onClick={save}
-        className="rounded-lg bg-brand-blue px-6 py-2.5 text-sm font-bold text-white hover:opacity-90"
-      >
-        Lưu cài đặt
-      </button>
+      <ComingSoon
+        icon={ShieldCheck}
+        title="Bảo mật"
+        description="Chưa triển khai — chưa có cấu hình bảo mật riêng (đăng nhập 2 lớp, nhật ký truy cập, chính sách mật khẩu) ngoài phạm vi Supabase Auth mặc định."
+      />
+      <ComingSoon
+        icon={Plug}
+        title="Tích hợp"
+        description="Chưa triển khai — chưa có tích hợp bên thứ ba nào (thanh toán/email/CRM) cần cấu hình riêng ngoài phạm vi đã nối dây trong từng khu vực."
+      />
     </div>
   );
 }

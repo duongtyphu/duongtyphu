@@ -46,10 +46,10 @@ export default function ReviewQueuePage() {
 
   return (
     <AdminWorkspaceShell
-      title="Review Queue"
+      title="Duyệt & Xuất bản"
       description={
         ready
-          ? `Gộp thật từ ${trackedCollectionCount} collection có khái niệm Review (13 CKOS + Website Pages + Shared Sections) — 34+ collection khác trong Admin chỉ Active/Inactive, không có bước Review, không xuất hiện ở đây.`
+          ? `Gộp thật từ ${trackedCollectionCount} khu vực có bước duyệt nội dung (Hệ tri thức AI + Trang Website + Nội dung dùng chung) — các khu vực khác chỉ Bật/Tắt, không có bước duyệt, không xuất hiện ở đây.`
           : "Đang tải..."
       }
       rootHref="/admin/founder"

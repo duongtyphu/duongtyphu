@@ -12,15 +12,16 @@ export type MediaWorkspaceSection = {
   href: string;
 };
 
+/**
+ * PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 1/3, PMO APPROVAL) —
+ * tiếng Việt, gộp Images/Videos/Documents/Audio vào tab "Thư viện" (đều đọc
+ * chung Media Asset Registry, hiển thị đủ mọi loại), gộp Collections/Tags
+ * vào tab "Thư mục & Bộ sưu tập". Route cũ vẫn hoạt động khi truy cập trực
+ * tiếp, chỉ không còn hiện ở tab bar.
+ */
 export const MEDIA_WORKSPACE_SECTIONS: MediaWorkspaceSection[] = [
-  { key: "dashboard", label: "Dashboard", href: "/admin/media-center" },
-  { key: "library", label: "Media Library", href: "/admin/media-center/library" },
-  { key: "images", label: "Images", href: "/admin/media-center/images" },
-  { key: "videos", label: "Videos", href: "/admin/media-center/videos" },
-  { key: "documents", label: "Documents", href: "/admin/media-center/documents" },
-  { key: "audio", label: "Audio", href: "/admin/media-center/audio" },
-  { key: "folders", label: "Folder Management", href: "/admin/media-center/folders" },
-  { key: "collections", label: "Collections", href: "/admin/media-center/collections" },
-  { key: "tags", label: "Tags", href: "/admin/media-center/tags" },
-  { key: "settings", label: "Media Settings", href: "/admin/media-center/settings" },
+  { key: "dashboard", label: "Tổng quan", href: "/admin/media-center" },
+  { key: "library", label: "Thư viện", href: "/admin/media-center/library" },
+  { key: "folders", label: "Thư mục & Bộ sưu tập", href: "/admin/media-center/folders" },
+  { key: "settings", label: "Cài đặt", href: "/admin/media-center/settings" },
 ];

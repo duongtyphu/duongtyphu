@@ -22,10 +22,10 @@ export function BrandWorkspaceShell({ children }: { children: React.ReactNode })
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-white">Brand Studio</h1>
+        <h1 className="text-xl font-extrabold text-white">Thương hiệu</h1>
         <p className="mt-1 text-sm text-white/50">
-          Quản lý nhận diện thương hiệu VO DUONG AI — Logo, Wordmark, Typography, Color Palette, Theme, Icons, Open
-          Graph. Foundation (BRAND-SPR-001) — không có Theme Builder/Logo Editor/AI Brand Generator/Asset Editor.
+          Quản lý nhận diện thương hiệu VO DUONG AI — Logo, chữ lockup, kiểu chữ, màu sắc, giao diện, icon, ảnh chia
+          sẻ mạng xã hội. Chưa có công cụ dựng theme/logo/tạo thương hiệu bằng AI.
         </p>
       </div>
 

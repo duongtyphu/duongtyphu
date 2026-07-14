@@ -6,7 +6,7 @@ export default function WebsitePortalMappingPage() {
     <WebsiteWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Portal Mapping</h2>
+          <h2 className="text-lg font-bold text-white">Liên kết Portal</h2>
           <p className="mt-1 text-sm text-white/60">
             Bảng tra cứu tổng hợp (Task 8, WEB-SPR-202) — gộp mọi Website Object đã có Registry thật (Page/
             Navigation Item/Shared Section/Homepage Section) thành 1 hàng/object với Current Route → Workspace

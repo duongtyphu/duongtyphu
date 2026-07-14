@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import { FileText, Navigation, Home, Rocket, File, LayoutGrid, Search, ArrowRightLeft, Settings, Waypoints } from "lucide-react";
+import { FileText, Navigation, LayoutGrid, Search, Settings, Waypoints } from "lucide-react";
 import { WebsiteWorkspaceShell } from "@/components/admin/website/WebsiteWorkspaceShell";
 import { useCollection } from "@/lib/admin/store";
 import { WEBSITE_PAGES_COLLECTION_KEY, WEBSITE_PAGES_SEED, type WebsitePage } from "@/lib/admin/website/pageRegistry";
@@ -36,17 +36,16 @@ import {
   type HomepageSection,
 } from "@/lib/admin/website/homepageSectionRegistry";
 
+// PMO APPROVAL Task 3/10 — chỉ còn 6 điểm đến gộp (khớp
+// WEBSITE_WORKSPACE_SECTIONS), không liệt kê lại Homepage/Landing Pages/
+// Static Pages/Redirect đã gộp vào Trang / SEO & Chuyển hướng.
 const QUICK_ACTIONS = [
-  { label: "Pages", href: "/admin/website/pages", icon: FileText },
-  { label: "Navigation", href: "/admin/website/navigation", icon: Navigation },
-  { label: "Homepage", href: "/admin/website/homepage", icon: Home },
-  { label: "Landing Pages", href: "/admin/website/landing-pages", icon: Rocket },
-  { label: "Static Pages", href: "/admin/website/static-pages", icon: File },
-  { label: "Shared Sections", href: "/admin/website/shared-sections", icon: LayoutGrid },
-  { label: "SEO", href: "/admin/website/seo", icon: Search },
-  { label: "Redirect", href: "/admin/website/redirect", icon: ArrowRightLeft },
-  { label: "Global Settings", href: "/admin/website/global-settings", icon: Settings },
-  { label: "Portal Mapping", href: "/admin/website/portal-mapping", icon: Waypoints },
+  { label: "Trang", href: "/admin/website/pages", icon: FileText },
+  { label: "Điều hướng", href: "/admin/website/navigation", icon: Navigation },
+  { label: "Nội dung dùng chung", href: "/admin/website/shared-sections", icon: LayoutGrid },
+  { label: "SEO & Chuyển hướng", href: "/admin/website/seo", icon: Search },
+  { label: "Liên kết Portal", href: "/admin/website/portal-mapping", icon: Waypoints },
+  { label: "Cài đặt", href: "/admin/website/global-settings", icon: Settings },
 ];
 
 function StatCard({ label, value }: { label: string; value: number }) {
@@ -112,19 +111,19 @@ export default function WebsiteDashboardPage() {
 
   const recentChanges = useMemo<RecentChange[]>(() => {
     const combined: RecentChange[] = [
-      ...pages.items.map((p) => ({ key: p.id, title: p.title || "(chưa đặt tiêu đề)", section: "Pages", date: p.updatedDate })),
-      ...navGroups.items.map((g) => ({ key: g.id, title: g.name || "(chưa đặt tên)", section: "Navigation", date: g.updatedDate })),
-      ...navItems.items.map((i) => ({ key: i.id, title: i.label || "(chưa đặt label)", section: "Navigation", date: i.updatedDate })),
-      ...sections.items.map((s) => ({ key: s.id, title: s.title || "(chưa đặt tiêu đề)", section: "Shared Sections", date: s.updatedDate })),
+      ...pages.items.map((p) => ({ key: p.id, title: p.title || "(chưa đặt tiêu đề)", section: "Trang", date: p.updatedDate })),
+      ...navGroups.items.map((g) => ({ key: g.id, title: g.name || "(chưa đặt tên)", section: "Điều hướng", date: g.updatedDate })),
+      ...navItems.items.map((i) => ({ key: i.id, title: i.label || "(chưa đặt label)", section: "Điều hướng", date: i.updatedDate })),
+      ...sections.items.map((s) => ({ key: s.id, title: s.title || "(chưa đặt tiêu đề)", section: "Nội dung dùng chung", date: s.updatedDate })),
       ...seoEntries.items.map((s) => ({ key: s.id, title: s.title || "(chưa đặt tiêu đề)", section: "SEO", date: s.updatedDate })),
       ...redirects.items.map((r) => ({
         key: r.id,
         title: r.fromPath && r.toPath ? `${r.fromPath} → ${r.toPath}` : "(chưa nhập)",
-        section: "Redirect",
+        section: "Chuyển hướng",
         date: r.updatedDate,
       })),
-      ...globalSettings.items.map((g) => ({ key: g.id, title: "Global Settings", section: "Global Settings", date: g.updatedDate })),
-      ...homeSections.items.map((h) => ({ key: h.id, title: h.label || "(chưa đặt tên)", section: "Homepage Section", date: h.updatedDate })),
+      ...globalSettings.items.map((g) => ({ key: g.id, title: "Cài đặt", section: "Cài đặt", date: g.updatedDate })),
+      ...homeSections.items.map((h) => ({ key: h.id, title: h.label || "(chưa đặt tên)", section: "Cấu trúc trang chủ", date: h.updatedDate })),
     ];
     return combined.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
   }, [pages.items, navGroups.items, navItems.items, sections.items, seoEntries.items, redirects.items, globalSettings.items, homeSections.items]);
@@ -134,10 +133,9 @@ export default function WebsiteDashboardPage() {
       <div className="space-y-6">
         <div>
           <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-white/40">
-            Website Overview
+            Tổng quan Website
             <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold normal-case text-white/40">
-              Tính từ Page/Navigation/Shared Section/SEO/Redirect/Global Settings/Homepage Section Registry
-              (WEB-SPR-202: đủ 7/7, Page Registry nay có 9 trang thật)
+              Tính từ Trang/Điều hướng/Nội dung dùng chung/SEO/Chuyển hướng/Cài đặt/Cấu trúc trang chủ
             </span>
           </p>
           {!ready ? (
@@ -149,15 +147,15 @@ export default function WebsiteDashboardPage() {
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <StatCard label="Tổng số mục" value={stats.totalItems} />
-              <StatCard label="Draft" value={stats.draft} />
-              <StatCard label="Published / Active" value={stats.published} />
-              <StatCard label="Pending Review" value={stats.pendingReview} />
+              <StatCard label="Bản nháp" value={stats.draft} />
+              <StatCard label="Đã xuất bản" value={stats.published} />
+              <StatCard label="Chờ duyệt" value={stats.pendingReview} />
             </div>
           )}
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">Recent Changes</h2>
+          <h2 className="text-sm font-bold text-white">Thay đổi gần đây</h2>
           {!ready ? (
             <div className="mt-3 space-y-2">
               {[1, 2, 3].map((i) => (
@@ -181,8 +179,8 @@ export default function WebsiteDashboardPage() {
         </div>
 
         <div>
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Quick Actions</p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Truy cập nhanh</p>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {QUICK_ACTIONS.map(({ label, href, icon: Icon }) => (
               <Link
                 key={href}

@@ -2,216 +2,36 @@ export type AdminNavItem = { label: string; href: string; comingSoon?: boolean }
 export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
 
 /**
- * Canonical Admin sidebar structure. Từ ADM-SPR-201 (Main Shell
- * Foundation), thứ tự nhóm được tổ chức theo đúng "Portal Navigation bắt
- * buộc" (10 mục, khớp portalNavSections) và "Workspace Navigation bắt
- * buộc" (11 mục, đúng thứ tự brief liệt kê: Website → Brand Studio →
- * Media Center → CKOS → Academy → AI Workspace → Projects & Opportunities
- * → Premium → Journey → Companion Studio → Community) — 2 nhóm mới "AI
- * Workspace" và "Journey" được thêm lần đầu ở sprint này. Các nhóm không
- * nằm trong 2 danh sách bắt buộc (Content, Users & Access, Analytics,
- * System Settings) được GIỮ NGUYÊN, không xóa — brief chỉ yêu cầu đảm
- * bảo 2 danh sách bắt buộc tồn tại, không yêu cầu loại bỏ phần còn lại
- * (xem docs/admin/ADMIN_CMS_MAIN_SHELL_FOUNDATION.md).
+ * Sidebar Admin — PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 2,
+ * PMO APPROVAL). 13 mục cấp 1, tiếng Việt, đi theo Portal thật thay vì tên
+ * Workspace/Registry kỹ thuật — xem docs/admin/ADMIN_CMS_INFORMATION_ARCHITECTURE_v2.md,
+ * ADMIN_CMS_SIDEBAR_SIMPLIFICATION.md, ADMIN_CMS_ROUTE_MAPPING.md,
+ * ADMIN_CMS_MENU_RENAME.md (đã PMO duyệt).
  *
- * WEB-SPR-201R: đã xoá mục "SEO" độc lập cấp cao nhất (`/admin/seo`,
- * ComingSoon rỗng) — bị thay thế hoàn toàn bởi `/admin/website/seo`
- * (SEO Registry thật, WEB-SPR-005), theo đúng khuyến nghị REMOVE của
- * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md` (mục #3, verdict rõ
- * ràng không mơ hồ, khác các mục "NEEDS PMO DECISION" khác trong cùng
- * báo cáo).
- *
- * JOURNEY-SPR-901: gộp 2 mục "Journey" (comingSoon) + "Community" (CRUD
- * thật) thành 1 nhóm "Journey & Community" — Founder Directive Phase 9
- * xác nhận đây là 1 Workspace (Journey Experience + Community Experience +
- * Mission Presentation), không phải 2 Workspace riêng. Không tạo route
- * mới — chỉ gộp nhóm nav, 2 href /admin/journey và /admin/community giữ
- * nguyên. "Sứ mệnh Companion" (trước thuộc Companion Studio, xem
- * COMPANION-SPR-801) nay thuộc Workspace này (Mission Presentation) — xem
- * `docs/admin/JOURNEY_COMMUNITY_MANAGEMENT_JOURNEY-SPR-901.md`.
- *
- * PORTAL-SPR-301: đã xoá 6/7 mục "Portal Builder" (Dashboard Portal,
- * Bắt đầu tại đây, Hôm nay bạn muốn làm gì, Nội dung nổi bật, CTA, Mục
- * tiêu người dùng) — CRUD thật nhưng ghi vào 6 bảng Supabase
- * (`portal_sections`/`portal_welcome`/`start_here_steps`/
- * `today_action_cards`/`portal_featured`/`portal_cta`/`user_goals`)
- * không route Portal nào đọc, xác nhận lại độc lập ở sprint này (0 kết
- * quả grep `src/app/portal/**`), khớp khuyến nghị REMOVE của
- * `docs/admin/ADMIN_BASELINE_AUDIT_IMP-ADM-001R.md` (mục #1, verdict rõ
- * ràng — "CRUD thật nhưng ghi vào khoảng không"). [ĐÍNH CHÍNH —
- * STABILIZATION-SPR-1101] "Banner" (`portal_banners`) từng được giữ lại vì
- * claim cũ "`NotificationTicker.tsx` đã có sẵn chỉ thiếu 1 dòng mount" —
- * claim đó SAI (xác nhận lại: 0 import thật, chưa từng mount). Component đã
- * bị xóa (orphan, Task 11/12). `portal_banners` collection vẫn giữ lại
- * (không phải data giả, chỉ chưa có consumer) — cần PMO quyết định
- * mount thật hay archive collection.
+ * Không route nào bị xoá URL — mục ẩn khỏi Sidebar vẫn hoạt động khi truy
+ * cập trực tiếp (đúng Task 10: ưu tiên gộp/ẩn/đổi tên, không tạo route mới
+ * chỉ để chia menu). Danh sách đầy đủ mục đã ẩn/gộp: xem báo cáo PMO đính
+ * kèm sprint này.
  */
 export const adminNavGroups: AdminNavGroup[] = [
-  { group: null, items: [{ label: "Dashboard", href: "/admin/dashboard" }] },
+  { group: null, items: [{ label: "Tổng quan", href: "/admin/founder" }] },
   {
-    group: "Founder",
+    group: "Website & Thương hiệu",
     items: [
-      { label: "Founder Workspace", href: "/admin/founder" },
-      { label: "Workspace Owner Panel", href: "/admin/founder/owners" },
-      { label: "Global Search", href: "/admin/founder/search" },
-      { label: "Review Queue", href: "/admin/founder/review-queue" },
+      { label: "Website", href: "/admin/website" },
+      { label: "Thương hiệu", href: "/admin/brand" },
+      { label: "Thư viện Media", href: "/admin/media-center" },
     ],
   },
-  {
-    group: "Portal Management",
-    items: [
-      { label: "Portal Dashboard", href: "/admin/portal" },
-      { label: "Portal Areas", href: "/admin/portal/areas" },
-      { label: "Page Registry", href: "/admin/portal/pages" },
-      { label: "Content Registry", href: "/admin/portal/content" },
-    ],
-  },
-  {
-    group: "Portal Navigation",
-    items: [
-      { label: "Trang chủ Học viện", href: "/admin/portal/areas?area=home" },
-      { label: "Companion", href: "/admin/portal/areas?area=companion" },
-      { label: "Hệ tri thức AI (CKOS)", href: "/admin/portal/areas?area=ckos" },
-      { label: "Học viện AI", href: "/admin/portal/areas?area=hocvienai" },
-      { label: "AI Workspace", href: "/admin/portal/areas?area=aiworkspace" },
-      { label: "Dự án & Cơ hội", href: "/admin/portal/areas?area=duan-cohoi" },
-      { label: "Premium", href: "/admin/portal/areas?area=premium" },
-      { label: "Hành trình của tôi", href: "/admin/portal/areas?area=hanhtrinh" },
-      { label: "Sứ mệnh Companion", href: "/admin/portal/areas?area=su-menh-companion" },
-      { label: "Cộng đồng", href: "/admin/portal/areas?area=congdongai" },
-    ],
-  },
-  {
-    group: "Website",
-    items: [
-      { label: "Dashboard", href: "/admin/website" },
-      { label: "Pages", href: "/admin/website/pages" },
-      { label: "Navigation", href: "/admin/website/navigation" },
-      { label: "Homepage", href: "/admin/website/homepage" },
-      { label: "Landing Pages", href: "/admin/website/landing-pages" },
-      { label: "Static Pages", href: "/admin/website/static-pages" },
-      { label: "Shared Sections", href: "/admin/website/shared-sections" },
-      { label: "SEO", href: "/admin/website/seo" },
-      { label: "Redirect", href: "/admin/website/redirect" },
-      { label: "Global Settings", href: "/admin/website/global-settings" },
-      { label: "Portal Mapping", href: "/admin/website/portal-mapping" },
-    ],
-  },
-  {
-    group: "Brand Studio",
-    items: [
-      { label: "Dashboard", href: "/admin/brand" },
-      { label: "Logo", href: "/admin/brand/logo" },
-      { label: "Wordmark", href: "/admin/brand/wordmark" },
-      { label: "Typography", href: "/admin/brand/typography" },
-      { label: "Color Palette", href: "/admin/brand/color-palette" },
-      { label: "Theme", href: "/admin/brand/theme" },
-      { label: "Icons", href: "/admin/brand/icons" },
-      { label: "Open Graph", href: "/admin/brand/open-graph" },
-      { label: "Brand Assets Registry", href: "/admin/brand/assets" },
-      { label: "Global Brand Settings", href: "/admin/brand/settings" },
-    ],
-  },
-  {
-    group: "Media Center",
-    items: [
-      { label: "Dashboard", href: "/admin/media-center" },
-      { label: "Media Library", href: "/admin/media-center/library" },
-      { label: "Images", href: "/admin/media-center/images" },
-      { label: "Videos", href: "/admin/media-center/videos" },
-      { label: "Documents", href: "/admin/media-center/documents" },
-      { label: "Audio", href: "/admin/media-center/audio" },
-      { label: "Folder Management", href: "/admin/media-center/folders" },
-      { label: "Collections", href: "/admin/media-center/collections" },
-      { label: "Tags", href: "/admin/media-center/tags" },
-      { label: "Media Settings", href: "/admin/media-center/settings" },
-    ],
-  },
-  {
-    group: "CKOS",
-    items: [
-      { label: "CKOS Dashboard", href: "/admin/ckos" },
-      { label: "Goals", href: "/admin/ckos/goals" },
-      { label: "Công cụ AI (Tools)", href: "/admin/tools" },
-      { label: "Prompt AI (Prompts)", href: "/admin/prompts" },
-      { label: "Workflows", href: "/admin/ckos/workflows" },
-      { label: "Evaluations", href: "/admin/ckos/evaluations" },
-      { label: "Tài nguyên (Resources)", href: "/admin/resources" },
-      { label: "Case Study", href: "/admin/case-study" },
-      { label: "Best Practices", href: "/admin/ckos/best-practices" },
-      { label: "FAQs", href: "/admin/ckos/faqs" },
-      { label: "Knowledge Seed", href: "/admin/knowledge-seed" },
-    ],
-  },
-  {
-    group: "Academy",
-    items: [
-      { label: "Academy Dashboard", href: "/admin/academy" },
-      { label: "Lộ trình thành công", href: "/admin/roadmap" },
-      { label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
-      { label: "Nội dung khoá học", href: "/admin/academy/courses" },
-      { label: "Dự án thực chiến", href: "/admin/projects" },
-      { label: "Learning Journeys (đọc)", href: "/admin/academy/journeys" },
-    ],
-  },
+  { group: null, items: [{ label: "Portal", href: "/admin/portal" }] },
+  { group: null, items: [{ label: "Hệ tri thức AI", href: "/admin/ckos" }] },
+  { group: null, items: [{ label: "Học viện AI", href: "/admin/academy" }] },
   { group: null, items: [{ label: "AI Workspace", href: "/admin/ai-workspace" }] },
-  // PROJECTS-SPR-602 (Founder Directive: Projects & Opportunities Canonical
-  // Product) — thay toàn bộ 11 mục cũ (Dự án/Link/category[key]/Báo cáo —
-  // quản lý model DigitalAssetProject/Link Consumer = 0, chỉ phục vụ route
-  // /portal/digital-assets/** đã khai tử) bằng 4 mục bám đúng cấu trúc
-  // /portal/duan-cohoi (Canonical Product) thật: Ecosystem (mới, thay Dự
-  // án+Link+5 category page cũ), Bài viết + Danh mục (giữ nguyên, Consumer
-  // thật). Xem docs/admin/PROJECTS_OPPORTUNITIES_CANONICAL_PROJECTS-SPR-602.md.
-  {
-    group: "Projects & Opportunities",
-    items: [
-      { label: "Tổng quan", href: "/admin/projects-opportunities" },
-      { label: "Hệ sinh thái", href: "/admin/projects-opportunities/ecosystems" },
-      { label: "Bài viết", href: "/admin/projects-opportunities/articles" },
-      { label: "Danh mục", href: "/admin/projects-opportunities/categories" },
-    ],
-  },
-  {
-    group: "Premium",
-    items: [
-      { label: "Sản phẩm số", href: "/admin/premium" },
-      { label: "Học phí V-SOLO / V-SCALE", href: "/admin/course-pricing" },
-      { label: "Đơn hàng", href: "/admin/orders" },
-      { label: "Mã giảm giá", href: "/admin/coupons" },
-      { label: "Dịch vụ", href: "/admin/services" },
-      { label: "Hỗ trợ", href: "/admin/support" },
-      { label: "Leads", href: "/admin/leads" },
-      { label: "Affiliate Hub", href: "/admin/affiliate-hub" },
-      { label: "Top sản phẩm Affiliate", href: "/admin/affiliate-hub/top-products" },
-      { label: "Sản phẩm Affiliate", href: "/admin/affiliate/products" },
-      { label: "Link Affiliate", href: "/admin/affiliate/links" },
-      { label: "Báo cáo Affiliate", href: "/admin/affiliate/analytics" },
-    ],
-  },
-  { group: null, items: [{ label: "Companion Studio", href: "/admin/companion-studio" }] },
-  {
-    group: "Journey & Community",
-    items: [
-      { label: "Dashboard", href: "/admin/journey" },
-      { label: "Cộng đồng", href: "/admin/community" },
-    ],
-  },
-  {
-    group: "Content",
-    items: [
-      { label: "Blog AI", href: "/admin/blog" },
-      { label: "Thành công học viên", href: "/admin/student-success" },
-      { label: "Tin tức & Cập nhật", href: "/admin/updates" },
-      { label: "Tin nội bộ", href: "/admin/news" },
-      { label: "Template", href: "/admin/templates" },
-      { label: "Ebook", href: "/admin/ebooks" },
-      { label: "Checklist", href: "/admin/checklists" },
-      { label: "SOP", href: "/admin/sop" },
-      { label: "Tài nguyên đã lưu", href: "/admin/saved" },
-      { label: "Banner", href: "/admin/portal-builder/banner" },
-    ],
-  },
-  { group: null, items: [{ label: "Users & Access", href: "/admin/users" }] },
-  { group: null, items: [{ label: "Analytics", href: "/admin/reports" }] },
-  { group: null, items: [{ label: "System Settings", href: "/admin/settings" }] },
+  { group: null, items: [{ label: "Dự án & Cơ hội", href: "/admin/projects-opportunities" }] },
+  { group: null, items: [{ label: "Premium", href: "/admin/premium" }] },
+  { group: null, items: [{ label: "Companion", href: "/admin/companion-studio" }] },
+  { group: null, items: [{ label: "Hành trình & Cộng đồng", href: "/admin/journey" }] },
+  { group: null, items: [{ label: "Người dùng", href: "/admin/users" }] },
+  { group: null, items: [{ label: "Duyệt & Xuất bản", href: "/admin/founder/review-queue" }] },
+  { group: null, items: [{ label: "Cài đặt", href: "/admin/settings" }] },
 ];

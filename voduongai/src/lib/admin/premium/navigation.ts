@@ -12,17 +12,24 @@ import type { AdminWorkspaceSection } from "@/components/admin/AdminWorkspaceShe
  * nhưng ngoài phạm vi "Course Commerce" của brief, không sửa (xem báo cáo
  * docs/admin/PREMIUM_WORKSPACE_MANAGEMENT_PREMIUM-SPR-701.md).
  */
+/**
+ * PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 6/7, PMO APPROVAL) —
+ * trình bày như hệ thống khoá học & thương mại: Khoá học/Giá & mở bán/
+ * Đơn hàng/Mã giảm giá là lõi Course Commerce. "Đơn hàng" không còn là mục
+ * Sidebar cấp 1 (chuyển vào đây theo đúng Task 6). Ghi chú thật: chưa có
+ * màn hình quản trị riêng cho Nội dung học/Chương & bài học/Video & tài
+ * liệu/Quyền truy cập — Portal hiện chưa có Course Structure/Learning
+ * Object nào (0% content model, xem docs/admin/workspaces/premium
+ * report PREMIUM-SPR-701) — không tạo màn hình giả cho các mục này.
+ * 5 mục Affiliate (Task 7) ẩn khỏi tab bar — chưa xây thêm chức năng
+ * Affiliate mới, tương lai thuộc đây (Premium → Affiliate) khi được giao.
+ */
 export const PREMIUM_WORKSPACE_SECTIONS: AdminWorkspaceSection[] = [
-  { key: "premium", label: "Sản phẩm số", href: "/admin/premium" },
-  { key: "course-pricing", label: "Học phí V-SOLO / V-SCALE", href: "/admin/course-pricing" },
+  { key: "premium", label: "Khoá học", href: "/admin/premium" },
+  { key: "course-pricing", label: "Giá & mở bán", href: "/admin/course-pricing" },
   { key: "orders", label: "Đơn hàng", href: "/admin/orders" },
   { key: "coupons", label: "Mã giảm giá", href: "/admin/coupons" },
   { key: "services", label: "Dịch vụ", href: "/admin/services" },
   { key: "support", label: "Hỗ trợ", href: "/admin/support" },
   { key: "leads", label: "Leads", href: "/admin/leads" },
-  { key: "affiliate-hub", label: "Affiliate Hub", href: "/admin/affiliate-hub" },
-  { key: "affiliate-hub-top-products", label: "Top sản phẩm Affiliate", href: "/admin/affiliate-hub/top-products" },
-  { key: "affiliate-products", label: "Sản phẩm Affiliate", href: "/admin/affiliate/products" },
-  { key: "affiliate-links", label: "Link Affiliate", href: "/admin/affiliate/links" },
-  { key: "affiliate-analytics", label: "Báo cáo Affiliate", href: "/admin/affiliate/analytics" },
 ];

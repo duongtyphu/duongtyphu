@@ -7,7 +7,7 @@ export default function WebsiteSharedSectionsPage() {
     <WebsiteWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Shared Sections</h2>
+          <h2 className="text-lg font-bold text-white">Nội dung dùng chung</h2>
           <p className="mt-1 text-sm text-white/60">
             Shared Section Registry — quản lý nội dung/copy của 9 khối dùng chung: Hero, CTA, Banner, Feature,
             Founder, Testimonial, FAQ, Footer, Announcement (WEB-SPR-004 Foundation). Quản lý headline/body/CTA —

@@ -42,25 +42,25 @@ export default function PortalDashboardPage() {
 
   return (
     <AdminWorkspaceShell
-      title="Portal Management"
-      description="Toàn cảnh Portal thật (không phải Website Workspace — đây là toàn bộ ứng dụng Portal sau đăng nhập). Chuỗi quản lý: Portal Area → Page → Child Page → Section → Content → Workspace Owner, tất cả bằng dữ liệu."
+      title="Portal"
+      description="Toàn cảnh Portal thật (toàn bộ ứng dụng sau đăng nhập của học viên). Đi theo đúng luồng Founder làm việc: Khu vực → Trang → Section → Nội dung → Xuất bản."
       rootHref="/admin/portal"
       sections={PORTAL_MANAGEMENT_SECTIONS}
     >
       <div className="space-y-6">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-          <StatCard label="Portal Area" value={areas.items.length} sub="Cố định, khớp sidebar Portal thật" />
-          <StatCard label="Page (Parent + Child)" value={pages.items.length} />
+          <StatCard label="Khu vực" value={areas.items.length} sub="Cố định, khớp sidebar Portal thật" />
+          <StatCard label="Trang (chính + con)" value={pages.items.length} />
           <StatCard label="Section" value={sections.items.length} />
-          <StatCard label="Content" value={content.items.length} sub={unownedContent > 0 ? `${unownedContent} chưa có Owner` : "100% có Owner"} />
-          <StatCard label="Area có Owner" value={ownedAreas} sub={`${areas.items.length - ownedAreas} chưa xác định`} />
+          <StatCard label="Nội dung" value={content.items.length} sub={unownedContent > 0 ? `${unownedContent} chưa có nơi phụ trách` : "100% có nơi phụ trách"} />
+          <StatCard label="Khu vực có nơi phụ trách" value={ownedAreas} sub={`${areas.items.length - ownedAreas} chưa xác định`} />
         </div>
 
         {!ready ? (
           <div className="h-24 animate-pulse rounded-2xl bg-white/5" />
         ) : (
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Portal Areas</p>
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">Khu vực</p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {[...areas.items]
                 .sort((a, b) => a.sortOrder - b.sortOrder)

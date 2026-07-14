@@ -25,11 +25,10 @@ export function WebsiteWorkspaceShell({ children }: { children: React.ReactNode 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-white">Website Workspace</h1>
+        <h1 className="text-xl font-extrabold text-white">Website</h1>
         <p className="mt-1 text-sm text-white/50">
-          Quản lý toàn bộ nội dung trang web công khai — không sở hữu dữ liệu nghiệp vụ, chỉ quản lý phần hiển thị và
-          trải nghiệm (WEB-SPR-202). Cả 11/11 nhóm đã có Registry hoạt động thật (Pages/Homepage/Landing Pages/Static
-          Pages dùng chung Page Registry, Navigation, Shared Sections, SEO, Redirect, Global Settings, Portal Mapping).
+          Quản lý toàn bộ nội dung trang web công khai — Trang, Điều hướng, Nội dung dùng chung, SEO & Chuyển hướng,
+          Liên kết Portal, Cài đặt.
         </p>
       </div>
 

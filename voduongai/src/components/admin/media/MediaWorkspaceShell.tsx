@@ -22,11 +22,10 @@ export function MediaWorkspaceShell({ children }: { children: React.ReactNode })
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-xl font-extrabold text-white">Media Center</h1>
+        <h1 className="text-xl font-extrabold text-white">Thư viện Media</h1>
         <p className="mt-1 text-sm text-white/50">
-          Single Source of Digital Assets — quản lý metadata Image/Video/Document/Audio, Folder, Collection, Tag
-          dùng chung toàn hệ thống. Foundation (MEDIA-SPR-201) — không có Upload/Media File Manager/Image-Video
-          Editor/AI Image/AI Video thật.
+          Quản lý ảnh, video, tài liệu, âm thanh dùng chung toàn hệ thống — thư mục, bộ sưu tập, nhãn. Chưa có tải
+          file lên thật, chưa có công cụ chỉnh sửa ảnh/video bằng AI.
         </p>
       </div>
 
