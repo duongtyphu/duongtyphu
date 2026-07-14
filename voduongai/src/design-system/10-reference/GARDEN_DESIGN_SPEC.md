@@ -1,9 +1,9 @@
 # Garden Design Spec
 
 **Tên thiết kế:** THE GARDEN OF GROWTH™
-**Trang áp dụng:** `/portal/khu-vuon-cua-ban`
+**Trang áp dụng:** `/portal/khuvuoncuaban` *(đường dẫn đã đổi từ `/portal/khu-vuon-cua-ban` — spec dưới đây chưa được cập nhật đầy đủ theo lần triển khai lại gần nhất, xem ghi chú Content Cleanup Sprint 7)*
 **Reference chính:** `design-references/garden-reference-v1.png` *(chờ Founder import — xem mục "Bước tiếp theo" trong báo cáo sprint)*
-**Component hiện tại triển khai spec này:**
+**Component hiện tại triển khai spec này** *(danh sách bên dưới đã lỗi thời — component thật hiện nay là `GardenExperience.tsx` + `garden/scene/*`; `GardenTreeVisual.tsx` và `src/data/portal/knowledge-garden.ts` không còn tồn tại, đã bị xoá ở Sprint 3 (dữ liệu giả, orphaned) — danh sách gốc giữ nguyên bên dưới chỉ để tham chiếu lịch sử, cần một sprint riêng để viết lại đầy đủ theo implementation thật)*:
 - `src/app/portal/khu-vuon-cua-ban/page.tsx`
 - `src/components/portal/garden/GardenTreeVisual.tsx`
 - `src/components/portal/garden/GardenProgressRing.tsx`

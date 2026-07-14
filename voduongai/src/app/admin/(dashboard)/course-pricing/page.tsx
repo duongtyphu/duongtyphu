@@ -1,3 +1,5 @@
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { PREMIUM_WORKSPACE_SECTIONS } from "@/lib/admin/premium/navigation";
 import { listCoursePricing } from "./actions";
 import { CourseRow } from "./CourseRow";
 
@@ -5,6 +7,7 @@ export default async function CoursePricingAdminPage() {
   const { courses, configured } = await listCoursePricing();
 
   return (
+    <AdminWorkspaceShell title="Premium" description="" rootHref="/admin/premium" sections={PREMIUM_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-extrabold text-white">Khoá học Premium — giá &amp; mở bán</h1>
@@ -51,5 +54,6 @@ export default async function CoursePricingAdminPage() {
         </div>
       )}
     </div>
+    </AdminWorkspaceShell>
   );
 }

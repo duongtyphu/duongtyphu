@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useCollection } from "@/lib/admin/store";
 import { templatesSeed, checklistsSeed } from "@/data/admin/resources";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
-import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { PortalSearchResult } from "@/lib/portal/search";
 
-type CaseStudyRow = { id: number; title: string; summary: string | null };
+type CaseStudyItem = { id: string; title: string; summary?: string; status?: string };
 
 /**
+ * STABILIZATION-SPR-1101 Task 1 — Case Study canonical source is the jsonb
+ * `case_study` table (Admin CRUD, `/admin/case-study`, collectionKey
+ * "case-study") — not the typed `case_studies` table this file previously
+ * queried directly (a second, write-less table Admin never wrote to). Reads
+ * via the same `useCollection` mechanism as Templates/Checklists/Tools above
+ * instead of a raw Supabase query, so search results and case-study-page
+ * content are now guaranteed to be the same data.
+ *
  * Loads the search-relevant fields from Supabase/admin-managed collections
  * that can't be statically imported (Templates, Checklists, Case Study).
  * Returned alongside the static index in PortalSearch so all Portal content
@@ -19,19 +26,8 @@ export function usePortalSearchExtras(): PortalSearchResult[] {
   const { items: templates } = useCollection("templates", templatesSeed);
   const { items: checklists } = useCollection("checklists", checklistsSeed);
   const { items: tools } = useCollection<AdminTool>("tools", toolsAdminSeed);
-  const [caseStudies, setCaseStudies] = useState<CaseStudyRow[]>([]);
-
-  useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return;
-    getSupabaseBrowser()
-      .from("case_studies")
-      .select("id, title, summary")
-      .eq("active", true)
-      .then(
-        ({ data }) => setCaseStudies(data ?? []),
-        () => setCaseStudies([]),
-      );
-  }, []);
+  const { items: caseStudyItems } = useCollection<CaseStudyItem>("case-study", []);
+  const caseStudies = caseStudyItems.filter((c) => c.status === "Published");
 
   return useMemo(
     () => [

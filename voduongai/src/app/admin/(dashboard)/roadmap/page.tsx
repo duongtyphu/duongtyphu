@@ -1,13 +1,16 @@
 "use client";
 
+import { AdminWorkspaceShell } from "@/components/admin/AdminWorkspaceShell";
+import { ACADEMY_WORKSPACE_SECTIONS } from "@/lib/admin/academy/navigation";
 import { CrudPage } from "@/components/admin/CrudPage";
 import { roadmapSeed, type RoadmapStep } from "@/data/admin/roadmap";
 
 export default function RoadmapManagerPage() {
   return (
+    <AdminWorkspaceShell title="Academy Workspace" description="" rootHref="/admin/academy" sections={ACADEMY_WORKSPACE_SECTIONS}>
     <CrudPage<RoadmapStep>
       title="Lộ trình thành công"
-      description="Quản lý các bước trong Lộ trình thành công hiển thị trên Portal."
+      description="Quản lý các bước trong Lộ trình thành công hiển thị trên Portal (/portal/roadmap, đã xác nhận có Consumer thật)."
       collectionKey="roadmap-steps"
       seed={roadmapSeed}
       searchKeys={["title", "description"]}
@@ -31,5 +34,6 @@ export default function RoadmapManagerPage() {
         { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"] },
       ]}
     />
+    </AdminWorkspaceShell>
   );
 }

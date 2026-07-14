@@ -1,5 +1,5 @@
 import { ExternalLink } from "lucide-react";
-import type { MarketingLink } from "@/data/portal/ecosystems";
+import type { EcosystemLink } from "@/data/portal/ecosystems";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 
 /**
@@ -13,11 +13,11 @@ export function MarketingLinkBox({
   id = "lien-ket-tiep-thi",
   title = "Đường link liên kết dự án",
 }: {
-  links: MarketingLink[];
+  links: EcosystemLink[];
   id?: string;
   title?: string;
 }) {
-  const visible = links.filter((l) => l.visible).sort((a, b) => a.order - b.order);
+  const visible = links.filter((l) => l.visible && l.url.trim()).sort((a, b) => a.order - b.order);
 
   return (
     <section id={id}>
