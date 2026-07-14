@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { PortalHeader } from "@/components/portal/PortalHeader";
 import { PortalSidebar } from "@/components/portal/PortalSidebar";
+import { PortalNavigationGuard } from "@/components/portal/PortalNavigationGuard";
 import { GemBackground } from "@/components/portal/ui/GemBackground";
 import { CompanionPresence } from "@/components/portal/companion/CompanionPresence";
 import { LocaleProvider } from "@/lib/i18n/use-locale";
@@ -69,6 +70,7 @@ export function PortalShell({
   return (
     <LocaleProvider>
     <div className="flex min-h-screen flex-col">
+      <PortalNavigationGuard />
       <GemBackground />
       <PortalHeader user={user} onToggleSidebar={handleToggleSidebar} />
 

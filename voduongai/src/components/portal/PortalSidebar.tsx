@@ -151,9 +151,15 @@ function NavLink({
   const activeClass = activeOverride ?? "gemos-nav-active font-bold text-blue-700";
   const idleClass = "font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900";
   return (
+    // prefetch={false}: mọi item sidebar cùng vào viewport một lúc nên Next.js
+    // prefetch hàng loạt route đồng thời — mỗi lần đều chạy qua middleware và
+    // gọi getUser(), gây tranh chấp refresh token (Supabase xoay vòng token
+    // sau mỗi lần dùng) dẫn tới lỗi 400 "Refresh Token Not Found" và vòng lặp
+    // redirect về /login trên Production thật (xác nhận qua Vercel Runtime Logs).
     <Link
       href={item.href}
       onClick={onNavigate}
+      prefetch={false}
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}
       className={`group relative flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition ${

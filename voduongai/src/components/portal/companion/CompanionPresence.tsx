@@ -158,27 +158,20 @@ export function CompanionPresence({
 } = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [minimized, setMinimized] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return window.localStorage.getItem(MINIMIZED_STORAGE_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
+  // Hydration-safe: getAvatarBoxSize/clampPosition/localStorage phụ thuộc
+  // window nên phải trả về cùng giá trị ở SSR và lượt hydrate đầu tiên trên
+  // client (false/null) — đọc giá trị thật sau mount trong useEffect bên
+  // dưới, cùng pattern với lifeMomentEligible/returnAfterSilenceEligible.
+  const [minimized, setMinimized] = useState(false);
   const [scrollShrink, setScrollShrink] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(getInitialPosition);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [settling, setSettling] = useState(false);
   const [pulsing, setPulsing] = useState(false);
   const [comeback, setComeback] = useState(false);
-  const [gardenStage, setGardenStage] = useState<GardenStage | undefined>(() =>
-    readStoredGardenStage()
-  );
-  const [reflectionMeaning, setReflectionMeaning] = useState<string | undefined>(() =>
-    readStoredReflectionMeaning()
-  );
+  const [gardenStage, setGardenStage] = useState<GardenStage | undefined>(undefined);
+  const [reflectionMeaning, setReflectionMeaning] = useState<string | undefined>(undefined);
   const [thought, setThought] = useState<CompanionThought | null>(null);
   const [story, setStory] = useState<LivingStory | null>(null);
   const [typingInput, setTypingInput] = useState(false);
@@ -205,11 +198,29 @@ export function CompanionPresence({
   const avatarWrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGardenStage(readStoredGardenStage());
     return subscribeToGardenStage(setGardenStage);
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReflectionMeaning(readStoredReflectionMeaning());
     return subscribeToReflectionMeaning(setReflectionMeaning);
+  }, []);
+
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMinimized(window.localStorage.getItem(MINIMIZED_STORAGE_KEY) === "1");
+    } catch {
+      // localStorage không khả dụng — giữ mặc định false.
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPosition(getInitialPosition());
   }, []);
 
   // NV04 — tôn trọng prefers-reduced-motion: không nghiêng theo con trỏ/chạm.
