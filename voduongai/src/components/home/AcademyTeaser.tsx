@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const lessons = [
   "Affiliate Marketing là gì?",
   "Cách chọn ngách bằng AI",
@@ -14,17 +12,14 @@ const modules = [
   {
     title: "AI Academy",
     description: "Lộ trình học AI từ nền tảng đến ứng dụng thực chiến.",
-    href: "/portal/hocvienai",
   },
   {
     title: "VO DUONG AI Academy",
     description: "Hệ thống Affiliate Marketing ứng dụng AI, từ SOLO đến SCALE.",
-    href: "/portal/vdai-academy",
   },
   {
     title: "Affiliate Hub",
     description: "Tài liệu và công cụ giúp bạn xây hệ thống Affiliate bằng AI.",
-    href: "/portal/affiliate-hub",
   },
 ];
 
@@ -44,19 +39,15 @@ export function AcademyTeaser() {
 
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {modules.map((m) => (
-            <Link
+            <div
               key={m.title}
-              href={m.href}
               className="card-shine rounded-[20px] border border-white/10 bg-white/[0.04] p-6"
             >
               <h3 className="text-lg font-bold text-white">{m.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-white">
                 {m.description}
               </p>
-              <span className="mt-4 inline-flex text-xs font-semibold text-brand-violet">
-                Khám phá →
-              </span>
-            </Link>
+            </div>
           ))}
         </div>
 

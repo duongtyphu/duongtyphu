@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 
 type TagColor = "gold" | "teal" | "violet" | "coral";
@@ -12,7 +11,6 @@ type Pillar = {
   tagLabel: string;
   desc: string;
   stats: [string, string];
-  href: string;
 };
 
 const PILLARS: Pillar[] = [
@@ -23,7 +21,6 @@ const PILLARS: Pillar[] = [
     tagLabel: "12 Prompt",
     desc: "7 loại tri thức được kết nối – không phải thư viện rời rạc.",
     stats: ["📌 4 Workflow", "📚 11 Lesson"],
-    href: "/portal/ckos",
   },
   {
     icon: "⚙️",
@@ -32,7 +29,6 @@ const PILLARS: Pillar[] = [
     tagLabel: "6 Output",
     desc: "Biến ý tưởng thành Output thật trong 15–60 phút.",
     stats: ["📊 18 phiên", "✅ 5 kết quả thật"],
-    href: "/portal/aiworkspace",
   },
   {
     icon: "🤖",
@@ -41,7 +37,6 @@ const PILLARS: Pillar[] = [
     tagLabel: "Luôn ở bên",
     desc: "Đồng hành, không phải chatbot. Một sự hiện diện thật.",
     stats: ["💬 Trò chuyện", "🧭 Dẫn đường"],
-    href: "/portal/companion",
   },
   {
     icon: "📚",
@@ -50,7 +45,6 @@ const PILLARS: Pillar[] = [
     tagLabel: "8 bài học",
     desc: "Học cách làm việc khác đi, không phải học công cụ.",
     stats: ["🎯 Thực hành", "📈 Trưởng thành"],
-    href: "/portal/hocvienai",
   },
   {
     icon: "🚀",
@@ -59,7 +53,6 @@ const PILLARS: Pillar[] = [
     tagLabel: "5 hệ sinh thái",
     desc: "Chọn đúng điểm bắt đầu trước khi quyết định.",
     stats: ["📌 Đang nghiên cứu", "📋 Tiêu chí rõ ràng"],
-    href: "/portal/duan-cohoi",
   },
 ];
 
@@ -70,7 +63,6 @@ const PREMIUM = {
   desc: "Dành cho người muốn đi xa hơn – tài nguyên chuyên sâu, lộ trình riêng và hỗ trợ 1-1.",
   features: ["Lộ trình cá nhân hóa", "Tài nguyên độc quyền", "Hỗ trợ 1-1", "Cập nhật sớm"],
   stats: ["🔓 Mở khóa ngay", "🚀 Ưu đãi đặc biệt"] as [string, string],
-  href: "/portal/premium",
 };
 
 export function EcosystemPillars() {
@@ -99,11 +91,7 @@ export function EcosystemPillars() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {PILLARS.map((pillar) => (
-            <Link
-              key={pillar.title}
-              href={pillar.href}
-              className="ecosystem-card card-shine"
-            >
+            <div key={pillar.title} className="ecosystem-card card-shine">
               <div className="flex items-start justify-between gap-3">
                 <span className="ecosystem-card-icon" aria-hidden="true">
                   {pillar.icon}
@@ -120,13 +108,10 @@ export function EcosystemPillars() {
                 <span>{pillar.stats[0]}</span>
                 <span>{pillar.stats[1]}</span>
               </div>
-            </Link>
+            </div>
           ))}
 
-          <Link
-            href={PREMIUM.href}
-            className="ecosystem-card ecosystem-card--premium card-shine"
-          >
+          <div className="ecosystem-card ecosystem-card--premium card-shine">
             <span className="ecosystem-premium-badge">⭐ Premium</span>
             <div className="flex items-start justify-between gap-3">
               <span className="ecosystem-card-icon" aria-hidden="true">
@@ -151,7 +136,7 @@ export function EcosystemPillars() {
               <span>{PREMIUM.stats[0]}</span>
               <span>{PREMIUM.stats[1]}</span>
             </div>
-          </Link>
+          </div>
         </div>
 
         <p className="mt-6 text-center text-[10px] text-white/15">

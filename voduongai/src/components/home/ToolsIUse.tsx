@@ -54,12 +54,6 @@ export function ToolsIUse() {
               <p className="mt-2 text-[11px] font-medium text-white">
                 {t.audience}
               </p>
-              <Link
-                href={`/portal/tools/${t.id}`}
-                className="mt-3 inline-flex text-xs font-semibold text-brand-violet hover:underline"
-              >
-                Xem chi tiết →
-              </Link>
             </div>
           ))}
         </div>
