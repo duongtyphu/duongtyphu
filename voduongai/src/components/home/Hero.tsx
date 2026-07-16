@@ -81,9 +81,9 @@ export function Hero() {
             AI không thay thế bạn.
             <br />
             <span className="bg-gradient-to-r from-brand-violet to-brand-orange bg-clip-text text-transparent">
-              Nhưng người biết dùng AI
+              Nhưng người biết dùng AI sẽ
               <br />
-              sẽ thay thế người không biết dùng AI.
+              thay thế người không biết dùng AI.
             </span>
           </h1>
 
@@ -135,7 +135,7 @@ export function Hero() {
               <div className="hero-vortex pointer-events-none" aria-hidden="true">
                 {vortexQuestions.map((question, i) => {
                   const angleOffset = (360 / vortexQuestions.length) * i;
-                  const duration = 8 + (i % 5) * 0.7;
+                  const duration = 17 + (i % 5) * 1.8;
                   const delay = -((duration / vortexQuestions.length) * i);
 
                   return (
