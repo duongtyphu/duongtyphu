@@ -2480,3 +2480,61 @@ body {
     animation: none;
   }
 }
+
+/* ============================================================
+ * COMMUNITY & SOCIAL PROOF — "Bạn không học một mình" section.
+ * Orange (#FF6B35) accent throughout, per the unified landing-page
+ * accent color.
+ * ============================================================ */
+.trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.community-stat-card {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.5rem 1rem;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.community-stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 107, 53, 0.3);
+  box-shadow: 0 20px 45px -20px rgba(255, 107, 53, 0.3);
+}
+
+.stat-number {
+  display: inline-block;
+  font-weight: 800;
+  font-size: 2.2rem;
+  line-height: 1.1;
+  background-image: linear-gradient(135deg, #ff6b35, #f97316);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@media (min-width: 768px) {
+  .stat-number {
+    font-size: 2.8rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-stat-card {
+    transition: none;
+  }
+}
