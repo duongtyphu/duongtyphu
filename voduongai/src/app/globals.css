@@ -2447,3 +2447,36 @@ body {
     animation: none;
   }
 }
+
+/* ============================================================
+ * TOOLS I USE — continuous right-to-left logo marquee. The track
+ * renders the tool list twice back-to-back and animates exactly one
+ * copy-width (-50%) so the loop is seamless; hovering anywhere in the
+ * track (bubbles up from any tile) pauses it in place.
+ * ============================================================ */
+.tools-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 6%, black 94%, transparent);
+}
+
+.tools-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: tools-marquee-scroll 50s linear infinite;
+}
+
+.tools-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes tools-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tools-marquee-track {
+    animation: none;
+  }
+}
