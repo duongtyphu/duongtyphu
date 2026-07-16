@@ -104,9 +104,11 @@ export function QuizAssessment() {
   const [answers, setAnswers] = useState<(number | null)[]>(
     Array(QUESTIONS.length).fill(null)
   );
+  const [revealed, setRevealed] = useState(false);
 
   const isLastStep = step === QUESTIONS.length - 1;
-  const resultReady = isLastStep && answers[step] !== null;
+  const lastAnswered = isLastStep && answers[step] !== null;
+  const resultReady = revealed;
   const totalScore = answers.reduce<number>((sum, a) => sum + (a ?? 0) + 1, 0);
   const levelIndex = scoreToLevelIndex(totalScore);
   const level = LEVELS[levelIndex];
@@ -126,6 +128,11 @@ export function QuizAssessment() {
 
   const goBack = () => setStep((s) => Math.max(0, s - 1));
 
+  const showResult = () => {
+    if (!lastAnswered) return;
+    setRevealed(true);
+  };
+
   return (
     <section className="py-7 text-white md:py-9">
       <div className="mx-auto max-w-6xl px-5">
@@ -139,7 +146,7 @@ export function QuizAssessment() {
           </h2>
         </div>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-2 lg:items-start">
+        <div className="mt-6 grid gap-5 lg:grid-cols-2">
           {/* Left: quiz card — layout animates so it grows smoothly once
               the result is appended, instead of everything being
               stretched to equal height upfront. */}
@@ -254,20 +261,18 @@ export function QuizAssessment() {
                 >
                   ← Quay lại
                 </button>
-                {!isLastStep && (
-                  <button
-                    type="button"
-                    onClick={goNext}
-                    disabled={answers[step] === null}
-                    className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-                    style={{
-                      background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
-                      boxShadow: `0 10px 30px -10px ${ACCENT}66`,
-                    }}
-                  >
-                    Tiếp theo →
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={isLastStep ? showResult : goNext}
+                  disabled={answers[step] === null}
+                  className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                  style={{
+                    background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
+                    boxShadow: `0 10px 30px -10px ${ACCENT}66`,
+                  }}
+                >
+                  {isLastStep ? "Xem kết quả" : "Tiếp theo →"}
+                </button>
               </div>
             )}
           </motion.div>
@@ -292,13 +297,13 @@ export function QuizAssessment() {
               )}
             </div>
 
-            <div className="mt-3.5 space-y-2">
+            <div className="mt-3 space-y-1.5">
               {LEVELS.map((lvl, i) => {
                 const active = resultReady && i === levelIndex;
                 return (
                   <div
                     key={lvl.label}
-                    className="rounded-xl border p-3"
+                    className="rounded-xl border p-2.5"
                     style={
                       active
                         ? {
@@ -326,7 +331,7 @@ export function QuizAssessment() {
                       </span>
                     </div>
                     <p className="mt-0.5 text-xs text-white/40">{lvl.subtitle}</p>
-                    <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                       <div
                         className="h-full rounded-full transition-all duration-700"
                         style={{
@@ -342,7 +347,7 @@ export function QuizAssessment() {
               })}
             </div>
             {!resultReady && (
-              <p className="mt-4 text-center text-xs text-white/40">
+              <p className="mt-3 text-center text-xs text-white/40">
                 📍 Cấp độ sẽ được xác định sau khi bạn hoàn thành bài test.
               </p>
             )}

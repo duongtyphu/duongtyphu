@@ -166,20 +166,6 @@ body {
   border-color: rgba(37, 99, 235, 0.35);
 }
 
-.card-shine::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.55) 38%, transparent 55%);
-  transform: translateX(-120%);
-  transition: transform 0.7s ease;
-  pointer-events: none;
-}
-
-.card-shine:hover::after {
-  transform: translateX(120%);
-}
-
 .glow-blue {
   box-shadow: 0 0 60px -10px rgba(37, 99, 235, 0.45), 0 0 0 1px rgba(37, 99, 235, 0.25) inset;
 }
