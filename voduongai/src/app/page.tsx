@@ -1,4 +1,5 @@
 import { Hero } from "@/components/home/Hero";
+import { IntroVideo } from "@/components/home/IntroVideo";
 import { PortalPreview } from "@/components/home/PortalPreview";
 import { FreeResources } from "@/components/home/FreeResources";
 import { ToolsIUse } from "@/components/home/ToolsIUse";
@@ -14,6 +15,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <IntroVideo />
       <PortalPreview />
       <FreeResources />
       <ToolsIUse />
