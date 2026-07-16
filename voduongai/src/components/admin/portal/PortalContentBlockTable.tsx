@@ -49,7 +49,7 @@ export function PortalContentBlockTable({ sectionId }: { sectionId: string }) {
       return;
     }
     if (!form.workspaceOwner.trim() && form.status !== "Draft") {
-      push("Content ở trạng thái khác Draft bắt buộc phải có đúng 1 Workspace Owner.", "error");
+      push("Content ở trạng thái khác Draft bắt buộc phải có đúng 1 nơi phụ trách.", "error");
       return;
     }
     const today = new Date().toISOString().slice(0, 10);
@@ -103,7 +103,7 @@ export function PortalContentBlockTable({ sectionId }: { sectionId: string }) {
             <thead>
               <tr className="border-b border-white/10 text-white/40">
                 <th className="px-4 py-3 font-semibold">Content</th>
-                <th className="px-4 py-3 font-semibold">Workspace Owner</th>
+                <th className="px-4 py-3 font-semibold">Nơi phụ trách</th>
                 <th className="px-4 py-3 font-semibold">Ẩn/Hiện</th>
                 <th className="px-4 py-3 font-semibold">Status</th>
                 <th className="px-4 py-3" />
@@ -167,7 +167,7 @@ export function PortalContentBlockTable({ sectionId }: { sectionId: string }) {
           </div>
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
-              Workspace Owner <span className="text-brand-orange">*</span> (đúng 1)
+              Nơi phụ trách <span className="text-brand-orange">*</span> (đúng 1)
             </label>
             <input
               list="content-workspace-owner-options"

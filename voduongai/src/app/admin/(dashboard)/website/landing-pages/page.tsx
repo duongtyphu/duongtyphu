@@ -9,8 +9,8 @@ export default function WebsiteLandingPagesPage() {
         <div>
           <h2 className="text-lg font-bold text-white">Landing Pages</h2>
           <p className="mt-1 text-sm text-white/60">
-            Quản lý metadata landing page (chương trình/chiến dịch) — dùng chung Website Page Registry, lọc theo
-            loại &quot;Landing Page&quot;. Không có Landing Builder trong sprint này — đăng ký metadata trang trước, xây
+            Quản lý metadata landing page (chương trình/chiến dịch) — dùng chung danh sách Trang của Website, lọc theo
+            loại &quot;Landing Page&quot;. Không có công cụ dựng Landing Page tự động trong sprint này — đăng ký metadata trang trước, xây
             công cụ dựng nội dung landing page ở sprint sau.
           </p>
         </div>

@@ -107,7 +107,7 @@ export default function MediaDashboardPage() {
               • <strong>Không có Video/Audio nào tồn tại</strong> trong Portal — 2 module này hiện 100% là khoảng trống.
             </li>
             <li>
-              • <strong>PDF khoá học là URL động</strong> (`products.pdf_url`), không đi qua Media Center — Founder tự nhập URL ngoài ở Premium Workspace.
+              • <strong>PDF khoá học là URL động</strong> (`products.pdf_url`), không đi qua Media Center — Founder tự nhập URL ngoài ở khu vực Premium.
             </li>
           </ul>
         </div>

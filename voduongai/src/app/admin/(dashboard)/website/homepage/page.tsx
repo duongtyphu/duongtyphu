@@ -10,8 +10,8 @@ export default function WebsiteHomepagePage() {
         <div>
           <h2 className="text-lg font-bold text-white">Homepage</h2>
           <p className="mt-1 text-sm text-white/60">
-            Quản lý metadata trang chủ marketing công khai (Title/Slug/Status/Visibility/SEO) — dùng chung Website
-            Page Registry, lọc theo loại &quot;Homepage&quot;.
+            Quản lý metadata trang chủ marketing công khai (Title/Slug/Status/Visibility/SEO) — dùng chung danh
+            sách Trang của Website, lọc theo loại &quot;Homepage&quot;.
           </p>
         </div>
         <PageOverviewStats lockedPageType="Homepage" />

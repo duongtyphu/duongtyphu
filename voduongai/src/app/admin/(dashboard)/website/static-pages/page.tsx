@@ -9,8 +9,8 @@ export default function WebsiteStaticPagesPage() {
         <div>
           <h2 className="text-lg font-bold text-white">Static Pages</h2>
           <p className="mt-1 text-sm text-white/60">
-            Quản lý metadata trang tĩnh (Giới thiệu, Liên hệ...) — dùng chung Website Page Registry, lọc theo loại
-            &quot;Static Page&quot;. <strong>Lưu ý riêng cho trang pháp lý</strong> (Terms/Privacy/Refund/Disclaimer): Registry
+            Quản lý metadata trang tĩnh (Giới thiệu, Liên hệ...) — dùng chung danh sách Trang của Website, lọc theo loại
+            &quot;Static Page&quot;. <strong>Lưu ý riêng cho trang pháp lý</strong> (Terms/Privacy/Refund/Disclaimer): Mục
             này chỉ theo dõi metadata (trạng thái/hiển thị), không chỉnh nội dung pháp lý — nội dung pháp lý vẫn nên
             qua code review, đúng khuyến nghị của docs/admin/PORTAL_COVERAGE_AUDIT.md §5.
           </p>

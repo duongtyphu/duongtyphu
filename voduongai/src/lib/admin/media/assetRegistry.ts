@@ -300,7 +300,7 @@ export const MEDIA_ASSETS_SEED: MediaAsset[] = [
     name: "Course PDF (URL động — Premium)",
     category: "Document",
     subType: "PDF",
-    fileNote: "Không phải file tĩnh — products.pdf_url/lessons.pdf_url (Supabase, nhập URL ngoài qua ProductForm.tsx ở Premium Workspace)",
+    fileNote: "Không phải file tĩnh — products.pdf_url/lessons.pdf_url (Supabase, nhập URL ngoài ở khu vực Premium)",
     formatNote: "PDF (qua URL ngoài, không host trong repo)",
     dimensionsNote: "N/A",
     sizeNote: "N/A — không kiểm soát dung lượng vì là URL ngoài.",

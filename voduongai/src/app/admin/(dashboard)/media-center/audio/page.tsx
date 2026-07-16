@@ -8,7 +8,7 @@ export default function MediaAudioPage() {
         <div>
           <h2 className="text-lg font-bold text-white">Audio</h2>
           <p className="mt-1 text-sm text-white/60">
-            Metadata audio, dùng chung Media Asset Registry, lọc theo category &quot;Audio&quot;.{" "}
+            Metadata audio, dùng chung thư viện Media, lọc theo category &quot;Audio&quot;.{" "}
             <strong className="text-brand-orange">Khoảng trống thật:</strong> Portal hiện KHÔNG có nội dung âm
             thanh nào (không &lt;audio&gt; tag, không file audio trong `public/`). Brief không cho danh sách
             sub-type Audio cụ thể — không tự bịa danh mục.

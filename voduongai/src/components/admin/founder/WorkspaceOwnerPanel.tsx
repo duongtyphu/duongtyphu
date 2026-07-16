@@ -28,9 +28,9 @@ export function WorkspaceOwnerPanel() {
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-white/10 text-white/40">
-            <th className="px-4 py-3 font-semibold">Workspace</th>
-            <th className="px-4 py-3 font-semibold">Maturity</th>
-            <th className="px-4 py-3 font-semibold">WCS</th>
+            <th className="px-4 py-3 font-semibold">Khu vực</th>
+            <th className="px-4 py-3 font-semibold">Mức độ hoàn thiện</th>
+            <th className="px-4 py-3 font-semibold">Tài liệu</th>
             <th className="px-4 py-3 font-semibold">Sở hữu nội dung gì</th>
             <th className="px-4 py-3" />
           </tr>

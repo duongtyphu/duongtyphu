@@ -22,5 +22,5 @@ export const ACADEMY_WORKSPACE_SECTIONS: AdminWorkspaceSection[] = [
   { key: "daily-missions", label: "Nhiệm vụ hôm nay", href: "/admin/daily-missions" },
   { key: "courses", label: "Nội dung khoá học", href: "/admin/academy/courses" },
   { key: "projects", label: "Dự án thực chiến", href: "/admin/projects" },
-  { key: "journeys", label: "Learning Journeys (đọc)", href: "/admin/academy/journeys" },
+  { key: "journeys", label: "Hành trình học tập (đọc)", href: "/admin/academy/journeys" },
 ];

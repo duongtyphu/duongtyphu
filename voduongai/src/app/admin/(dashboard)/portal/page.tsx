@@ -71,7 +71,7 @@ export default function PortalDashboardPage() {
                     className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-brand-blue/40 hover:bg-white/[0.05]"
                   >
                     <span className="text-sm font-semibold text-white/80">{area.label}</span>
-                    <span className="text-xs text-white/40">{area.ownerWorkspace || "Chưa xác định Owner"}</span>
+                    <span className="text-xs text-white/40">{area.ownerWorkspace || "Chưa xác định nơi phụ trách"}</span>
                   </Link>
                 ))}
             </div>

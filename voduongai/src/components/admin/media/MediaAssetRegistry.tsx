@@ -337,7 +337,7 @@ export function MediaAssetRegistry({ lockedCategory }: { lockedCategory?: MediaC
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Workspace Owner</label>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Nơi phụ trách</label>
             <input
               value={form.workspaceOwnerNote}
               onChange={(e) => setForm((s) => ({ ...s, workspaceOwnerNote: e.target.value }))}

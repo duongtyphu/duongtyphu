@@ -13,19 +13,18 @@ import type { AdminWorkspaceSection } from "@/components/admin/AdminWorkspaceShe
  * docs/admin/PREMIUM_WORKSPACE_MANAGEMENT_PREMIUM-SPR-701.md).
  */
 /**
- * PMO DIRECTIVE "ADMIN CMS v1.1 UI REFINEMENT" (Task 6/7, PMO APPROVAL) —
- * trình bày như hệ thống khoá học & thương mại: Khoá học/Giá & mở bán/
- * Đơn hàng/Mã giảm giá là lõi Course Commerce. "Đơn hàng" không còn là mục
- * Sidebar cấp 1 (chuyển vào đây theo đúng Task 6). Ghi chú thật: chưa có
- * màn hình quản trị riêng cho Nội dung học/Chương & bài học/Video & tài
- * liệu/Quyền truy cập — Portal hiện chưa có Course Structure/Learning
- * Object nào (0% content model, xem docs/admin/workspaces/premium
- * report PREMIUM-SPR-701) — không tạo màn hình giả cho các mục này.
- * 5 mục Affiliate (Task 7) ẩn khỏi tab bar — chưa xây thêm chức năng
- * Affiliate mới, tương lai thuộc đây (Premium → Affiliate) khi được giao.
+ * FOUNDER DIRECTIVE "PORTAL EXACT MIRROR ADMIN" (mục 5) — Premium quản lý
+ * như hệ thống khóa học/thương mại quanh 6 chương trình thật. "Nội dung
+ * học" trỏ về route quản lý chương/bài học/video/tài liệu ĐÃ CÓ THẬT
+ * (/admin/academy/courses — bảng course_modules/course_lessons, thêm ở
+ * STABILIZATION-SPR-1101), không tạo route mới, không tạo màn hình giả.
+ * Ghi chú cũ "0% content model" (PREMIUM-SPR-701) đã lỗi thời — đính chính
+ * tại đây. Bảng products cũ ẩn khỏi Founder (0 consumer checkout Portal).
+ * 5 mục Affiliate vẫn ẩn khỏi tab bar — tương lai thuộc Premium → Affiliate.
  */
 export const PREMIUM_WORKSPACE_SECTIONS: AdminWorkspaceSection[] = [
   { key: "premium", label: "Khoá học", href: "/admin/premium" },
+  { key: "course-content", label: "Nội dung học", href: "/admin/academy/courses" },
   { key: "course-pricing", label: "Giá & mở bán", href: "/admin/course-pricing" },
   { key: "orders", label: "Đơn hàng", href: "/admin/orders" },
   { key: "coupons", label: "Mã giảm giá", href: "/admin/coupons" },

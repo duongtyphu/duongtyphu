@@ -8,9 +8,9 @@ export default function MediaDocumentsPage() {
         <div>
           <h2 className="text-lg font-bold text-white">Documents</h2>
           <p className="mt-1 text-sm text-white/60">
-            Metadata tài liệu — PDF/DOCX/XLSX/PPTX (Task 5), dùng chung Media Asset Registry, lọc theo category
+            Metadata tài liệu — PDF/DOCX/XLSX/PPTX (Task 5), dùng chung thư viện Media, lọc theo category
             &quot;Document&quot;. <strong className="text-brand-orange">Phát hiện kiến trúc:</strong> PDF khoá học
-            hiện là URL động (`products.pdf_url`/`lessons.pdf_url`, nhập tay ở Premium Workspace), không phải file
+            hiện là URL động (`products.pdf_url`/`lessons.pdf_url`, nhập tay ở khu vực Premium), không phải file
             do Media Center quản lý. DOCX/XLSX/PPTX chưa có ví dụ nào trong repo.
           </p>
         </div>

@@ -28,14 +28,14 @@ type MappingRow = { object: string; source: string; consumer: string };
  * `src/data/portal/ecosystems.ts` mà /portal/duan-cohoi đọc trực tiếp.
  */
 const OBJECT_CONSUMER_MAPPING: MappingRow[] = [
-  { object: "Ecosystem (Project Detail)", source: "Supabase \"ecosystems\" (Admin CRUD)", consumer: "✅ CRUD thật · Consumer thật (/portal/duan-cohoi + mini-site)" },
-  { object: "Dự án con (Child Project)", source: "Ecosystem.subProjects[]", consumer: "✅ CRUD thật · Consumer thật (mini-site dự án con)" },
-  { object: "CTA / Project Link", source: "Ecosystem.links[] / subProjects[].links[] / fields[].links[]", consumer: "✅ CRUD thật · Consumer thật (nút CTA trên Portal)" },
-  { object: "Tiêu chí đánh giá (Evaluation)", source: "Ecosystem.potentialAnalysis[] (fallback: bộ mặc định)", consumer: "✅ CRUD thật · Consumer thật (bảng Phân tích tiềm năng)" },
-  { object: "FAQ theo Ecosystem", source: "Ecosystem.faq[] (mới — trước đây không tồn tại)", consumer: "✅ CRUD thật · Consumer thật (mục FAQ trên mini-site, mới thêm)" },
-  { object: "Bài viết liên quan (Related Content)", source: "Ecosystem.relatedArticleIds[] (fallback: khớp Danh mục)", consumer: "✅ CRUD thật · Consumer thật (Founder tự chọn qua Bài viết liên quan)" },
-  { object: "Danh mục (Category)", source: "Supabase \"digital-asset-categories\"", consumer: "✅ CRUD thật · Consumer thật (nhãn Bài viết + fallback lọc)" },
-  { object: "Bài viết (Article)", source: "Supabase \"digital-asset-articles\"", consumer: "✅ CRUD thật · Consumer thật (/portal/duan-cohoi/bai-viet/[slug])" },
+  { object: "Ecosystem (Project Detail)", source: "Supabase \"ecosystems\" (quản lý trong Admin)", consumer: "✅ Quản lý thật · Portal đọc thật (/portal/duan-cohoi + mini-site)" },
+  { object: "Dự án con (Child Project)", source: "Ecosystem.subProjects[]", consumer: "✅ Quản lý thật · Portal đọc thật (mini-site dự án con)" },
+  { object: "CTA / Project Link", source: "Ecosystem.links[] / subProjects[].links[] / fields[].links[]", consumer: "✅ Quản lý thật · Portal đọc thật (nút CTA trên Portal)" },
+  { object: "Tiêu chí đánh giá (Evaluation)", source: "Ecosystem.potentialAnalysis[] (fallback: bộ mặc định)", consumer: "✅ Quản lý thật · Portal đọc thật (bảng Phân tích tiềm năng)" },
+  { object: "FAQ theo Ecosystem", source: "Ecosystem.faq[] (mới — trước đây không tồn tại)", consumer: "✅ Quản lý thật · Portal đọc thật (mục FAQ trên mini-site, mới thêm)" },
+  { object: "Bài viết liên quan (Related Content)", source: "Ecosystem.relatedArticleIds[] (fallback: khớp Danh mục)", consumer: "✅ Quản lý thật · Portal đọc thật (Founder tự chọn qua Bài viết liên quan)" },
+  { object: "Danh mục (Category)", source: "Supabase \"digital-asset-categories\"", consumer: "✅ Quản lý thật · Portal đọc thật (nhãn Bài viết + fallback lọc)" },
+  { object: "Bài viết (Article)", source: "Supabase \"digital-asset-articles\"", consumer: "✅ Quản lý thật · Portal đọc thật (/portal/duan-cohoi/bai-viet/[slug])" },
 ];
 
 export default function ProjectsOpportunitiesDashboardPage() {

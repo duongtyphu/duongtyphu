@@ -12,21 +12,21 @@ import { WorkspaceSectionFoundation } from "@/components/admin/website/Workspace
 export default function GlobalSearchPage() {
   return (
     <AdminWorkspaceShell
-      title="Global Search"
+      title="Tìm kiếm toàn Admin"
       description="Placeholder — chưa triển khai tìm kiếm thật."
       rootHref="/admin/founder"
       sections={FOUNDER_SECTIONS}
     >
       <WorkspaceSectionFoundation
         icon={Search}
-        title="Global Search"
-        scope="Tìm kiếm xuyên mọi Workspace (Page/Asset/Prompt/Lead...) mà không cần biết trước nó thuộc Workspace nào. Đề xuất kỹ thuật đầy đủ: docs/admin/ADMIN_FOUNDATION_V2.md Task 6."
+        title="Tìm kiếm toàn Admin"
+        scope="Tìm kiếm xuyên mọi khu vực (trang/media/prompt/lead...) mà không cần biết trước nó thuộc khu vực nào. Đề xuất kỹ thuật đầy đủ: docs/admin/ADMIN_FOUNDATION_V2.md Task 6."
         willManage={[
-          "Search Index Contract — mỗi Registry tự khai báo toSearchEntry(item)",
-          "Gộp kết quả client-side (không cần search engine/AI riêng ở Foundation)",
-          "Chỉ tìm được nội dung từ Registry đã canonical hóa (Website, Brand Studio) — CKOS/Academy/Premium chưa tham gia được tới khi canonical hóa",
+          "Chuẩn chỉ mục tìm kiếm — mỗi nhóm dữ liệu tự khai báo toSearchEntry(item)",
+          "Gộp kết quả phía trình duyệt (không cần công cụ tìm kiếm/AI riêng ở giai đoạn nền)",
+          "Chỉ tìm được nội dung từ nhóm dữ liệu đã chuẩn hóa (Website, Thương hiệu) — Hệ tri thức AI/Học viện AI/Premium tham gia sau khi chuẩn hóa",
         ]}
-        portalSource="Chưa có implementation nào — đây là Placeholder mô tả phạm vi tương lai, không phải tính năng hoạt động. Xem Content Registry (/admin/portal/content) để tìm thủ công trong lúc chờ."
+        portalSource="Chưa triển khai — đây là phần giữ chỗ mô tả phạm vi tương lai, không phải tính năng hoạt động."
       />
     </AdminWorkspaceShell>
   );

@@ -74,8 +74,6 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/founder/review-queue": ClipboardCheck,
   "/admin/portal": LayoutDashboard,
   "/admin/portal/areas": Map,
-  "/admin/portal/pages": FileText,
-  "/admin/portal/content": Library,
   "/admin/portal/areas?area=home": Home,
   "/admin/portal/areas?area=companion": Bot,
   "/admin/portal/areas?area=ckos": Brain,

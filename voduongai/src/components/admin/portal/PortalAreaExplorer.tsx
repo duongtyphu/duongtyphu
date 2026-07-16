@@ -45,14 +45,14 @@ export function PortalAreaExplorer() {
   return (
     <div className="space-y-6">
       <div>
-        <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">1. Portal Area</p>
+        <p className="mb-2 text-xs font-bold uppercase tracking-wide text-white/40">1. Khu vực Portal</p>
         <PortalAreaTable selectedId={effectiveAreaId} onSelect={handleSelectArea} />
       </div>
 
       {selectedArea && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-sm font-bold text-white">2. Page — {selectedArea.label}</h3>
+            <h3 className="text-sm font-bold text-white">2. Trang — {selectedArea.label}</h3>
             <a href={selectedArea.href} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-blue hover:underline">
               Xem trên Portal thật →
             </a>
@@ -65,14 +65,14 @@ export function PortalAreaExplorer() {
 
       {pageId && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h3 className="mb-4 text-sm font-bold text-white">3. Section</h3>
+          <h3 className="mb-4 text-sm font-bold text-white">3. Phần nội dung</h3>
           <PortalSectionTable pageId={pageId} selectedId={sectionId} onSelect={setSectionId} />
         </div>
       )}
 
       {sectionId && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h3 className="mb-4 text-sm font-bold text-white">4. Content → Workspace Owner</h3>
+          <h3 className="mb-4 text-sm font-bold text-white">4. Nội dung → Nơi phụ trách</h3>
           <PortalContentBlockTable sectionId={sectionId} />
         </div>
       )}

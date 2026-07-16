@@ -6,8 +6,8 @@ import { PortalAreaExplorer } from "@/components/admin/portal/PortalAreaExplorer
 export default function PortalAreasPage() {
   return (
     <AdminWorkspaceShell
-      title="Portal Areas"
-      description="10 Area thật theo đúng sidebar Portal hiện tại (portalNavSections, src/lib/portal/hubs.ts). Chọn 1 Area để quản lý Page → Child Page → Section → Content → Workspace Owner, chỉ bằng dữ liệu."
+      title="Khu vực Portal"
+      description="Đúng 10 khu vực thật theo menu Portal hiện tại, đúng thứ tự. Chọn 1 khu vực để quản lý Trang → Trang con → Phần nội dung → Nội dung → Nơi phụ trách, chỉ bằng dữ liệu."
       rootHref="/admin/portal"
       sections={PORTAL_MANAGEMENT_SECTIONS}
     >

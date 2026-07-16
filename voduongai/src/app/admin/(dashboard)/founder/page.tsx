@@ -31,17 +31,17 @@ const MATURITY_HEALTH: Record<WorkspaceMaturity, string> = {
 };
 
 const OPEN_PMO_QUESTIONS = [
-  "Global Settings (Website)/Global Brand Settings (Brand Studio) vs. System Settings — chồng lấn field logo/favicon/tagline (WEB-SPR-001, BRAND-SPR-001).",
+  "Cài đặt Website/Cài đặt Thương hiệu vs. màn hình cài đặt hệ thống cũ — chồng lấn field logo/favicon/tagline (WEB-SPR-001, BRAND-SPR-001).",
   "Banner vs. Announcement (Website Shared Sections) — cùng dùng portal_banners, chưa rõ có phải 2 khái niệm khác nhau (WEB-SPR-004). Lưu ý (IMP-ADM-001R): portal_banners/NotificationTicker.tsx thực ra chưa được mount ở bất kỳ đâu trong Portal — \"đã nối dây thật\" ghi ở WEB-SPR-004 là sai, cần đính chính.",
   "Brand Orange có 2 mã màu khác nhau (#FF7A00 vs #F97316) — cần chọn 1 giá trị chính thức (BRAND-SPR-001).",
   "Theme kép (Portal/Admin dark hardcode vs. root token sáng) chưa hợp nhất — có đáng chuẩn hóa không (BRAND-SPR-001).",
-  "Danh sách \"7 Workspace hoàn thành Product\" trong brief IMP-ADM-100 sai lệch với code thật — Media Center/Companion Studio chưa xây gì (IMP-ADM-100).",
-  "Content group hiện tại (Blog AI/Template/Ebook...) — tách Workspace riêng, gộp CKOS, hay gộp Website? (IMP-ADM-100)",
+  "Danh sách \"7 khu vực hoàn thành sản phẩm\" trong brief IMP-ADM-100 sai lệch với code thật — Thư viện Media/Companion khi đó chưa xây gì (IMP-ADM-100).",
+  "Nhóm nội dung hiện tại (Blog AI/Template/Ebook...) — tách khu vực riêng, gộp vào Hệ tri thức AI, hay gộp vào Website? (IMP-ADM-100)",
   "/portal/hetrithucai (3 route) trùng tên khái niệm với /portal/ckos nhưng khác route — quan hệ giữa 2 route chưa xác nhận (ADM-SPR-200).",
-  "1/10 Portal Area (Trang chủ Học viện) chưa có Workspace Admin sở hữu rõ ràng — không Workspace nào trong \"Workspace Navigation bắt buộc\" khớp rõ ràng (ADM-SPR-200/201, xác nhận lại PORTAL-SPR-301).",
+  "1/10 khu vực Portal (Trang chủ Học viện) chưa có nơi phụ trách rõ ràng trong Admin — không khu vực quản trị nào khớp rõ ràng (ADM-SPR-200/201, xác nhận lại PORTAL-SPR-301).",
   "[ĐÃ XỬ LÝ — STABILIZATION-SPR-1101] case_study vs case_studies — đã hợp nhất về 1 nguồn Canonical (case_study, jsonb), Portal đọc cùng bảng Admin ghi.",
-  "[ĐÃ XỬ LÝ — PROJECTS-SPR-602] Digital Assets CRUD (11 route) quản lý /portal/digital-assets đã khai tử — thay bằng Ecosystem CRUD thật (/admin/projects-opportunities/ecosystems) bám đúng /portal/duan-cohoi (Canonical Product theo Founder Directive).",
-  "Banner (portal_banners/NotificationTicker.tsx) — component đã có sẵn, chỉ thiếu 1 dòng mount vào Portal, chưa quyết định có nối dây hay deprecate (IMP-ADM-001R; 6/7 mục Portal Builder còn lại đã xoá ở PORTAL-SPR-301, chỉ Banner còn treo).",
+  "[ĐÃ XỬ LÝ — PROJECTS-SPR-602] Trang quản lý Tài sản số cũ (11 route) cho /portal/digital-assets đã khai tử — thay bằng trang quản lý Hệ sinh thái thật (/admin/projects-opportunities/ecosystems) bám đúng /portal/duan-cohoi (Canonical Product theo Founder Directive).",
+  "Banner (portal_banners/NotificationTicker.tsx) — component đã có sẵn, chỉ thiếu 1 dòng mount vào Portal, chưa quyết định có nối dây hay deprecate (IMP-ADM-001R; toàn bộ 7 route dựng-Portal cũ đã xoá hẳn (FOUNDER PORTAL EXACT MIRROR), component Banner vẫn còn trong code, chưa mount).",
 ];
 
 const OPEN_BLOCKERS = [
@@ -49,20 +49,20 @@ const OPEN_BLOCKERS = [
 ];
 
 const TECHNICAL_DEBT = [
-  "Companion Memory: 6 hệ thống bộ nhớ song song chưa hợp nhất (Workspace Runtime/Memory Capsule/Character/Core/Origin/Story Memory) — COMPANION-SPR-801.",
+  "Companion Memory: 6 hệ thống bộ nhớ song song chưa hợp nhất (bộ nhớ phiên AI Workspace/Memory Capsule/Character/Core/Origin/Story Memory) — COMPANION-SPR-801.",
   "Social link tồn tại ở nhiều nơi: siteConfig.community/links (site.ts, nguồn thật cho hầu hết trang) — chỉ /portal/congdongai đã nối dây sang collection \"community\" thật (JOURNEY-SPR-901); các trang khác (Header/Footer) vẫn đọc siteConfig trực tiếp, chưa đồng bộ.",
   "3 nguồn \"Prompt\" trùng tên độc lập: bảng Supabase prompts (CKOS), src/data/prompts.ts (AI Workspace Prompt Library), AI_PROMPTS (AI Workspace Related Prompts) — AIWS-SPR-501.",
   "Brand Orange 2 mã màu khác nhau (#FF7A00 vs #F97316), Theme kép Portal/Admin chưa hợp nhất — BRAND-SPR-001/202.",
   "[ĐÃ XỬ LÝ — STABILIZATION-SPR-1101] 22 file thiết kế thương hiệu mồ côi — không xóa (source asset thật), đã chuyển từ public/brand/ (runtime-served) sang design-source/brand/ (không public) — BRAND-SPR-202/STABILIZATION-SPR-1101.",
-  "34+ collection thật trong Admin (đếm trực tiếp qua source), nhưng chỉ 15 có pipeline Draft→Review→Published→Archived — phần còn lại chỉ Active/Inactive, không đồng nhất giữa các Workspace.",
+  "34+ collection thật trong Admin (đếm trực tiếp qua source), nhưng chỉ 15 có pipeline Draft→Review→Published→Archived — phần còn lại chỉ Active/Inactive, không đồng nhất giữa các khu vực.",
 ];
 
 const FOUNDER_DECISIONS = [
   "6 chương trình Premium cố định (Lớp AI Cơ bản/Nâng cao/OpenClaw, V-Solo, V-Scale, Tư vấn 1:1) — không đổi tên/gộp/tạo mới (PREMIUM-SPR-701).",
   "5 nhóm Projects & Opportunities cố định (DigiU/SolarGroup/Crypto/Blockchain/Trading) — PROJECTS-SPR-601.",
-  "\"Sứ mệnh Companion\" (Mission Presentation) chuyển ownership từ Companion Studio sang Journey & Community, tách bạch khỏi Mentor Runtime — JOURNEY-SPR-901.",
-  "Journey + Community hợp nhất thành 1 Workspace duy nhất (không giữ 2 Workspace riêng như ADM-SPR-201 từng dự kiến) — JOURNEY-SPR-901.",
-  "/portal/duan-cohoi là Canonical Product của Projects & Opportunities — Admin CRUD cũ (Digital Asset Project/Link, Consumer = 0) gỡ bỏ hoàn toàn, thay bằng Ecosystem CRUD bám đúng Portal thật — PROJECTS-SPR-602 (Founder Directive).",
+  "\"Sứ mệnh Companion\" (Mission Presentation) chuyển nơi phụ trách từ Companion sang Hành trình & Cộng đồng, tách bạch khỏi hệ thống AI Mentor — JOURNEY-SPR-901.",
+  "Hành trình + Cộng đồng hợp nhất thành 1 khu vực quản trị duy nhất (không giữ 2 khu vực riêng như ADM-SPR-201 từng dự kiến) — JOURNEY-SPR-901.",
+  "/portal/duan-cohoi là Canonical Product của Projects & Opportunities — trang quản lý cũ (Digital Asset Project/Link, Consumer = 0) gỡ bỏ hoàn toàn, thay bằng trang quản lý Hệ sinh thái bám đúng Portal thật — PROJECTS-SPR-602 (Founder Directive).",
   "Case Study canonical = bảng jsonb case_study (Admin ghi, Portal đọc cùng bảng) — bảng typed case_studies cũ không còn Consumer — STABILIZATION-SPR-1101.",
   "Premium Learning Content: Course (Premium sở hữu giá/checkout/entitlement) tách khỏi Course Structure (Academy sở hữu Module/Lesson/Video/PDF, /admin/academy/courses) — course_modules/course_lessons mới, /portal/premium/hoc/[courseId] là trang xem bài học thật đầu tiên — STABILIZATION-SPR-1101.",
 ];
@@ -182,20 +182,20 @@ export default function FounderWorkspacePage() {
               <thead>
                 <tr className="border-b border-white/10 text-white/40">
                   <th className="px-4 py-2 font-semibold">Health</th>
-                  <th className="px-4 py-2 font-semibold">Workspace</th>
-                  <th className="px-4 py-2 font-semibold">Maturity</th>
-                  <th className="px-4 py-2 font-semibold">WCS</th>
+                  <th className="px-4 py-2 font-semibold">Khu vực</th>
+                  <th className="px-4 py-2 font-semibold">Mức độ hoàn thiện</th>
+                  <th className="px-4 py-2 font-semibold">Tài liệu</th>
                   <th className="px-4 py-2" />
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-white/5">
                   <td className="px-4 py-2">🟡</td>
-                  <td className="px-4 py-2 font-semibold text-white">Portal Management</td>
+                  <td className="px-4 py-2 font-semibold text-white">Portal</td>
                   <td className="px-4 py-2 text-white/60">
-                    {ownedAreas}/{areas.items.length} Area có Owner · {content.items.length - unownedContent}/{content.items.length} Content có Owner
+                    {ownedAreas}/{areas.items.length} khu vực có nơi phụ trách · {content.items.length - unownedContent}/{content.items.length} nội dung có nơi phụ trách
                   </td>
-                  <td className="px-4 py-2 text-white/40">Không có WCS riêng (lớp cấu trúc)</td>
+                  <td className="px-4 py-2 text-white/40">Không có tài liệu riêng (lớp cấu trúc)</td>
                   <td className="px-4 py-2 text-right">
                     <Link href="/admin/portal" className="text-xs text-brand-blue hover:underline">Mở →</Link>
                   </td>
@@ -223,9 +223,9 @@ export default function FounderWorkspacePage() {
           <h2 className="text-sm font-bold text-white">Trung tâm xuất bản</h2>
           <p className="mt-1 text-xs text-white/50">
             {publishReady
-              ? `Gộp ${publishItems.length} item thật từ ${trackedCollectionCount} collection có pipeline Draft→Review→Published→Archived (13 CKOS + Website Pages + Shared Sections).`
+              ? `Gộp ${publishItems.length} mục thật từ ${trackedCollectionCount} nhóm dữ liệu có quy trình Draft→Review→Published→Archived (13 Hệ tri thức AI + Trang Website + Nội dung dùng chung).`
               : "Đang tải..."}{" "}
-            34+ collection khác trong Admin chỉ dùng Active/Inactive — không có khái niệm Publish pipeline, không gộp vào đây để tránh ép sai dữ liệu.
+            34+ nhóm dữ liệu khác trong Admin chỉ dùng Active/Inactive — không có quy trình xuất bản, không gộp vào đây để tránh ép sai dữ liệu.
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatCard label="Draft" value={draftCount} />
@@ -251,50 +251,50 @@ export default function FounderWorkspacePage() {
 
         {/* Task 4 — Activity Timeline */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">Activity Timeline (Task 4)</h2>
+          <h2 className="text-sm font-bold text-white">Dòng thời gian hoạt động</h2>
           <p className="mt-2 text-sm text-white/60">
             <strong className="text-white/80">Không tồn tại.</strong> Xác nhận qua grep trực tiếp — 0 kết quả cho{" "}
             <code className="text-brand-orange">activity_log</code>/<code className="text-brand-orange">audit_log</code>/
             <code className="text-brand-orange">ActivityLog</code> trong toàn bộ codebase. Không có bảng nào ghi lại &quot;ai sửa gì lúc nào&quot; —
-            mỗi Registry chỉ có <code className="text-brand-orange">updatedDate</code> (ngày sửa cuối, không phải log đầy đủ). Không tự dựng
+            mỗi bảng dữ liệu chỉ có <code className="text-brand-orange">updatedDate</code> (ngày sửa cuối, không phải log đầy đủ). Không tự dựng
             Activity Log giả cho sprint này (đúng &quot;Không tạo tài liệu Product mới&quot; — đây là quyết định kiến trúc, không phải hiển thị).
           </p>
         </div>
 
         {/* Task 5 — Audit Center */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">Audit Center (Task 5)</h2>
+          <h2 className="text-sm font-bold text-white">Trung tâm rà soát</h2>
           <p className="mt-1 text-xs text-white/50">
-            Workspace → Content → Owner → Last Update → Publish, gộp theo Owner từ {content.items.length} Content Block thật (Portal Management). Nội dung nghiệp vụ nằm ngoài Portal Management (Premium/Academy/CKOS...) không nằm trong bảng này — xem từng Workspace riêng.
+            Khu vực → Nội dung → Nơi phụ trách → Sửa cuối → Xuất bản, gộp theo nơi phụ trách từ {content.items.length} khối nội dung thật của Portal. Nội dung nghiệp vụ nằm ngoài lớp cấu trúc Portal (Premium/Học viện AI/Hệ tri thức AI...) không nằm trong bảng này — xem từng khu vực riêng.
           </p>
           <Table
             columns={[
-              { key: "workspace", label: "Workspace" },
-              { key: "content", label: "Content" },
-              { key: "owner", label: "Owner" },
-              { key: "lastUpdate", label: "Last Update" },
-              { key: "publish", label: "Publish" },
+              { key: "workspace", label: "Khu vực" },
+              { key: "content", label: "Nội dung" },
+              { key: "owner", label: "Nơi phụ trách" },
+              { key: "lastUpdate", label: "Sửa cuối" },
+              { key: "publish", label: "Xuất bản" },
             ]}
             rows={auditByWorkspace}
           />
-          {!portalReady && <p className="mt-2 text-xs text-white/40">Đang tải dữ liệu Portal Management...</p>}
+          {!portalReady && <p className="mt-2 text-xs text-white/40">Đang tải dữ liệu Portal...</p>}
         </div>
 
         {/* Task 6 — System Health */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">System Health (Task 6)</h2>
+          <h2 className="text-sm font-bold text-white">Sức khỏe hệ thống</h2>
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-white/40">Portal Coverage</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-white/40">Độ phủ Portal</p>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <StatCard label="Area" value={areas.items.length} />
                 <StatCard label="Page" value={pages.items.length} />
                 <StatCard label="Section" value={sections.items.length} />
-                <StatCard label="Content" value={content.items.length} sub={unownedContent > 0 ? `${unownedContent} chưa Owner` : "100% có Owner"} />
+                <StatCard label="Content" value={content.items.length} sub={unownedContent > 0 ? `${unownedContent} chưa có nơi phụ trách` : "100% có nơi phụ trách"} />
               </div>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-white/40">Workspace Coverage</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-white/40">Độ phủ các khu vực</p>
               <div className="mt-2 grid grid-cols-2 gap-2">
                 <StatCard label="Canonical" value={maturityCounts.Canonical} />
                 <StatCard label="Consistent-Legacy" value={maturityCounts["Consistent-Legacy"]} />
@@ -303,12 +303,12 @@ export default function FounderWorkspacePage() {
               </div>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-white/40">Content Coverage</p>
+              <p className="text-xs font-bold uppercase tracking-wide text-white/40">Độ phủ nội dung</p>
               <div className="mt-2 grid grid-cols-2 gap-2">
-                <StatCard label="WCS Approved" value={approvedWcs} />
-                <StatCard label="WCS Draft" value={draftWcs} />
-                <StatCard label="Chưa có WCS" value={missingWcs} />
-                <StatCard label="Publish pipeline" value={`${trackedCollectionCount}/34+`} sub="Collection có Draft→Review→Published→Archived" />
+                <StatCard label="Tài liệu đã duyệt" value={approvedWcs} />
+                <StatCard label="Tài liệu nháp" value={draftWcs} />
+                <StatCard label="Chưa có tài liệu" value={missingWcs} />
+                <StatCard label="Quy trình xuất bản" value={`${trackedCollectionCount}/34+`} sub="Nhóm dữ liệu có Draft→Review→Published→Archived" />
               </div>
             </div>
           </div>
@@ -328,7 +328,7 @@ export default function FounderWorkspacePage() {
             </ul>
           </div>
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <h2 className="text-sm font-bold text-white">Technical Debt</h2>
+            <h2 className="text-sm font-bold text-white">Nợ kỹ thuật</h2>
             <ul className="mt-3 space-y-2">
               {TECHNICAL_DEBT.map((t) => (
                 <li key={t} className="flex items-start gap-2 text-sm text-white/70">
@@ -365,7 +365,7 @@ export default function FounderWorkspacePage() {
         {/* Task 8 — Workspace Ownership Matrix */}
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-xs font-bold uppercase tracking-wide text-white/40">Workspace Ownership — Single Ownership Matrix (Task 8)</p>
+            <p className="text-xs font-bold uppercase tracking-wide text-white/40">Nơi phụ trách nội dung — mỗi nội dung đúng 1 nơi</p>
             <Link href="/admin/founder/owners" className="text-xs text-brand-blue hover:underline">Xem đầy đủ →</Link>
           </div>
           <WorkspaceOwnerPanel />
@@ -373,27 +373,27 @@ export default function FounderWorkspacePage() {
 
         {/* Task 9 — Future Flexibility */}
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-          <h2 className="text-sm font-bold text-white">Future Flexibility Review (Task 9)</h2>
+          <h2 className="text-sm font-bold text-white">Khả năng mở rộng tương lai</h2>
           <ul className="mt-3 space-y-2 text-sm text-white/70">
             <li>
-              <strong className="text-white/80">Quản lý toàn bộ Portal:</strong> ⚠️ một phần — Portal Area/Page/Section/Content Registry
-              quản lý được cấu trúc + metadata, nhưng nội dung nghiệp vụ thật vẫn 100% hardcode ở AI Workspace, Projects Ecosystem, Mission
-              Presentation.
+              <strong className="text-white/80">Quản lý toàn bộ Portal:</strong> ⚠️ một phần — cấu trúc Khu vực/Trang/Phần/Nội dung của Portal
+              quản lý được cấu trúc + metadata, nhưng một phần nội dung nghiệp vụ thật vẫn hardcode ở AI Workspace và trang Sứ mệnh
+              Companion.
             </li>
             <li>
-              <strong className="text-white/80">Theo dõi toàn bộ Workspace:</strong> ✅ đạt — Founder Operation Center hiển thị đủ 10
-              Workspace + Portal Management tại 1 nơi, không cần sửa code để xem trạng thái.
+              <strong className="text-white/80">Theo dõi toàn bộ các khu vực:</strong> ✅ đạt — trang Tổng quan hiển thị đủ 10
+              khu vực + lớp cấu trúc Portal tại 1 nơi, không cần sửa code để xem trạng thái.
             </li>
             <li>
-              <strong className="text-white/80">Publish:</strong> ⚠️ một phần — chỉ {trackedCollectionCount}/34+ collection có pipeline
+              <strong className="text-white/80">Xuất bản:</strong> ⚠️ một phần — chỉ {trackedCollectionCount}/34+ nhóm dữ liệu có quy trình
               Draft→Review→Published→Archived thật; phần còn lại chỉ Active/Inactive.
             </li>
             <li>
-              <strong className="text-white/80">Review:</strong> ⚠️ một phần — cùng giới hạn {trackedCollectionCount}/34+ ở trên.
+              <strong className="text-white/80">Duyệt:</strong> ⚠️ một phần — cùng giới hạn {trackedCollectionCount}/34+ ở trên.
             </li>
             <li>
-              <strong className="text-white/80">Audit:</strong> ✅ đạt cho Portal Management (đầy đủ Workspace→Content→Owner→LastUpdate→
-              Publish); ⚠️ hạn chế cho nội dung nghiệp vụ ngoài Portal Management (Premium/Academy/CKOS...) — phải vào từng Workspace riêng,
+              <strong className="text-white/80">Rà soát:</strong> ✅ đạt cho lớp cấu trúc Portal (đầy đủ Khu vực→Nội dung→Nơi phụ trách→Sửa cuối→
+              Xuất bản); ⚠️ hạn chế cho nội dung nghiệp vụ ngoài lớp này (Premium/Học viện AI/Hệ tri thức AI...) — phải vào từng khu vực riêng,
               chưa gộp về 1 bảng.
             </li>
           </ul>

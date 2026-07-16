@@ -168,7 +168,7 @@ export function PortalMappingTable() {
                 <th className="px-4 py-3 font-semibold">Object</th>
                 <th className="px-4 py-3 font-semibold">Type</th>
                 <th className="px-4 py-3 font-semibold">Current Route</th>
-                <th className="px-4 py-3 font-semibold">Workspace Owner</th>
+                <th className="px-4 py-3 font-semibold">Nơi phụ trách</th>
                 <th className="px-4 py-3 font-semibold">Publish Status</th>
                 <th className="px-4 py-3 font-semibold">Last Updated</th>
                 <th className="px-4 py-3" />

@@ -9,7 +9,7 @@ export default async function ProjectsAdminPage() {
   const reviewed = submissions.filter((s) => s.status === "reviewed");
 
   return (
-    <AdminWorkspaceShell title="Academy Workspace" description="" rootHref="/admin/academy" sections={ACADEMY_WORKSPACE_SECTIONS}>
+    <AdminWorkspaceShell title="Học viện AI" description="" rootHref="/admin/academy" sections={ACADEMY_WORKSPACE_SECTIONS}>
     <div className="space-y-8">
       <div>
         <h1 className="text-xl font-extrabold text-white">Dự án thực chiến</h1>

@@ -144,7 +144,7 @@ export function PortalPageTable({ areaId, selectedId, onSelect }: { areaId: stri
             <thead>
               <tr className="border-b border-white/10 text-white/40">
                 <th className="px-4 py-3 font-semibold">Page / Route</th>
-                <th className="px-4 py-3 font-semibold">Workspace Owner</th>
+                <th className="px-4 py-3 font-semibold">Nơi phụ trách</th>
                 <th className="px-4 py-3 font-semibold">Ẩn/Hiện</th>
                 <th className="px-4 py-3 font-semibold">Publish Status</th>
                 <th className="px-4 py-3" />
@@ -210,7 +210,7 @@ export function PortalPageTable({ areaId, selectedId, onSelect }: { areaId: stri
             </div>
           )}
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Workspace Owner</label>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Nơi phụ trách</label>
             <input
               list="page-workspace-owner-options"
               value={form.workspaceOwner}
@@ -225,7 +225,7 @@ export function PortalPageTable({ areaId, selectedId, onSelect }: { areaId: stri
             </datalist>
           </div>
           <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">SEO Context (ghi chú — chưa liên kết SEO Registry thật)</label>
+            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Ghi chú SEO (chưa liên kết với dữ liệu SEO thật)</label>
             <textarea
               value={form.seoContextNote}
               onChange={(e) => setForm((s) => ({ ...s, seoContextNote: e.target.value }))}

@@ -8,8 +8,8 @@ export default function BrandThemePage() {
         <div>
           <h2 className="text-lg font-bold text-white">Theme</h2>
           <p className="mt-1 text-sm text-white/60">
-            Ghi nhận các theme (tổ hợp nền/chữ/accent) đang thực sự tồn tại trong code — không phải Theme Builder,
-            không có cơ chế switch theme thật. Phát hiện: Portal/Admin dùng nền tối hardcode trực tiếp trong từng
+            Ghi nhận các theme (tổ hợp nền/chữ/accent) đang thực sự tồn tại trong code — không phải công cụ dựng theme
+            tự động, không có cơ chế switch theme thật. Phát hiện: Portal/Admin dùng nền tối hardcode trực tiếp trong từng
             component, không đi qua token --background/--foreground định nghĩa ở :root.
           </p>
         </div>

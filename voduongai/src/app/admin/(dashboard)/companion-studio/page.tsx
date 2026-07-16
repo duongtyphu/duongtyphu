@@ -139,7 +139,7 @@ export default function CompanionStudioAdminPage() {
   return (
     <AdminWorkspaceShell
       title="Companion"
-      description="AI Mentor Experience của Portal — Presence toàn cục + 4 trang chuyên dụng. Toàn bộ nội dung hiện là hardcode (nhân cách/đội ngũ chuyên gia/quy tắc điều phối), rule-based hoàn toàn — chưa gọi AI thật, chưa có CRUD nào."
+      description="AI Mentor Experience của Portal — Presence toàn cục + 4 trang chuyên dụng. Toàn bộ nội dung hiện là hardcode (nhân cách/đội ngũ chuyên gia/quy tắc điều phối), rule-based hoàn toàn — chưa gọi AI thật, chưa sửa được bằng Admin."
       rootHref="/admin/companion-studio"
       sections={COMPANION_STUDIO_SECTIONS}
     >
@@ -176,7 +176,7 @@ export default function CompanionStudioAdminPage() {
         {tab === "persona" && (
           <Card
             title="Nhân cách Companion"
-            note="Nguồn: src/lib/portal/companion/companion-identity.ts. Chỉ hiển thị — chỉnh sửa yêu cầu sửa code, chưa có CRUD đứng sau."
+            note="Nguồn: src/lib/portal/companion/companion-identity.ts. Chỉ hiển thị — chỉnh sửa yêu cầu sửa code, chưa có form quản lý đứng sau."
           >
             <Table columns={[{ key: "field", label: "Trường" }, { key: "value", label: "Giá trị hiện tại" }]} rows={PERSONA} />
           </Card>
@@ -185,7 +185,7 @@ export default function CompanionStudioAdminPage() {
         {tab === "conversation" && (
           <Card
             title="Chiến lược hội thoại & điều phối"
-            note="Điều phối rule-based (8 quy tắc) chọn chuyên gia theo từ khoá, không gọi AI. Thư viện câu: 5 nhóm × 100 câu + 7 Thought + 7 Musing — toàn bộ hardcode, chưa có CRUD."
+            note="Điều phối rule-based (8 quy tắc) chọn chuyên gia theo từ khoá, không gọi AI. Thư viện câu: 5 nhóm × 100 câu + 7 Thought + 7 Musing — toàn bộ hardcode, chưa sửa được bằng Admin."
           >
             <Table
               columns={[
@@ -260,7 +260,7 @@ export default function CompanionStudioAdminPage() {
         {tab === "config" && (
           <Card
             title="Cấu hình vận hành"
-            note="Chưa tồn tại. Không có Prompt Strategy/Model/Temperature/Công cụ/Nguồn tri thức/An toàn nào được cấu hình ở bất kỳ đâu — toàn bộ 32 chuyên gia + 8 quy tắc điều phối đều rule-based, 0 lời gọi AI Provider API. Không xây form/CRUD giả cho mục này."
+            note="Chưa tồn tại. Không có Prompt Strategy/Model/Temperature/Công cụ/Nguồn tri thức/An toàn nào được cấu hình ở bất kỳ đâu — toàn bộ 32 chuyên gia + 8 quy tắc điều phối đều rule-based, 0 lời gọi AI Provider API. Không xây form quản lý giả cho mục này."
           />
         )}
 

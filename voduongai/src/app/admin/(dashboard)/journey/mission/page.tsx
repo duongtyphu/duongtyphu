@@ -40,7 +40,7 @@ export default function MissionPresentationPage() {
 
   if (!ready || !form) {
     return (
-      <AdminWorkspaceShell title="Journey & Community Workspace" description="" rootHref="/admin/journey" sections={JOURNEY_COMMUNITY_SECTIONS}>
+      <AdminWorkspaceShell title="Hành trình & Cộng đồng" description="" rootHref="/admin/journey" sections={JOURNEY_COMMUNITY_SECTIONS}>
         <div className="h-40 animate-pulse rounded-2xl border border-white/10 bg-white/5" />
       </AdminWorkspaceShell>
     );
@@ -60,7 +60,7 @@ export default function MissionPresentationPage() {
   }
 
   return (
-    <AdminWorkspaceShell title="Journey & Community Workspace" description="" rootHref="/admin/journey" sections={JOURNEY_COMMUNITY_SECTIONS}>
+    <AdminWorkspaceShell title="Hành trình & Cộng đồng" description="" rootHref="/admin/journey" sections={JOURNEY_COMMUNITY_SECTIONS}>
       <div className="space-y-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>

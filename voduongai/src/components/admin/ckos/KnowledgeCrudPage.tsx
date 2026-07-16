@@ -780,7 +780,7 @@ export function KnowledgeCrudPage({
       <ConfirmDialog
         open={!!archiveId}
         title="Lưu trữ tri thức này?"
-        description="Mục sẽ chuyển sang trạng thái Archived và không còn được CKOS Runtime đọc. Có thể khôi phục sau bằng cách sửa lại Status."
+        description="Mục sẽ chuyển sang trạng thái Archived và không còn được Hệ tri thức AI đọc. Có thể khôi phục sau bằng cách sửa lại Status."
         confirmLabel="Lưu trữ"
         tone="neutral"
         onCancel={() => setArchiveId(null)}

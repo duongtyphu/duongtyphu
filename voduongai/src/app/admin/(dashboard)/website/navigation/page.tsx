@@ -9,7 +9,7 @@ export default function WebsiteNavigationPage() {
         <div>
           <h2 className="text-lg font-bold text-white">Điều hướng</h2>
           <p className="mt-1 text-sm text-white/60">
-            Navigation Registry — quản lý Group (Header/Sidebar/Footer/External) và Item bên trong: xem/đổi thứ tự
+            Danh sách Điều hướng — quản lý Group (Header/Sidebar/Footer/External) và Item bên trong: xem/đổi thứ tự
             (nút ↑/↓)/ẩn hiện/chỉnh tiêu đề/icon/route/trạng thái publish (WEB-SPR-003 Foundation, mở rộng
             Footer/External ở WEB-SPR-201, thêm Icon/Visible/reorder ở WEB-SPR-202). Dữ liệu khởi tạo bên dưới sao
             chép đúng menu THẬT đang chạy trên Portal (src/lib/site.ts &quot;mainNav&quot;, src/lib/portal/hubs.ts

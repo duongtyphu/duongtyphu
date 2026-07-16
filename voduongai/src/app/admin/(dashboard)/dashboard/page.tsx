@@ -49,9 +49,9 @@ export default function AdminDashboardPage() {
         className="flex items-center justify-between gap-3 rounded-2xl border border-brand-blue/30 bg-brand-blue/10 p-4 transition hover:bg-brand-blue/15"
       >
         <div>
-          <p className="text-sm font-bold text-white">Founder Workspace</p>
+          <p className="text-sm font-bold text-white">Khu vực Founder</p>
           <p className="mt-0.5 text-xs text-white/60">
-            Governance Overview, Open PMO Questions, và toàn cảnh Portal/Workspace — điểm vào duy nhất cho Founder.
+            Tổng quan điều hành, câu hỏi PMO đang mở, và toàn cảnh Portal/các khu vực — điểm vào duy nhất cho Founder.
           </p>
         </div>
         <span className="shrink-0 text-sm font-semibold text-brand-blue">Mở →</span>

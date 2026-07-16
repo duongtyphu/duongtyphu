@@ -21,12 +21,12 @@ type ObjectMapping = {
  * docs/admin/ACADEMY_WORKSPACE_MANAGEMENT_ACADEMY-SPR-401.md.
  */
 const OBJECT_MAPPING: ObjectMapping[] = [
-  { object: "Learning Path", status: "renamed", note: "= \"Learning Journey\", chiếu 1:1 từ CKOS Collection (đọc, không sở hữu). Xem tab \"Learning Journeys\"." },
-  { object: "Course", status: "removed", note: "Đã bị loại bỏ khỏi Academy theo Product Decision (\"Academy Reset\", /portal/ai-academy). \"Course\" còn tồn tại nhưng thuộc Premium Workspace (bảng courses, /admin/course-pricing) — không phải Academy." },
+  { object: "Learning Path", status: "renamed", note: "= \"Hành trình học tập\", chiếu 1:1 từ bộ sưu tập CKOS (đọc, không sở hữu). Xem tab \"Hành trình học tập\"." },
+  { object: "Course", status: "removed", note: "Đã bị loại bỏ khỏi Academy theo Product Decision (\"Academy Reset\", /portal/ai-academy). \"Course\" còn tồn tại nhưng thuộc mảng Premium (bảng courses, /admin/course-pricing) — không phải Academy." },
   { object: "Module", status: "absent", note: "Không tồn tại ở bất kỳ đâu trong Portal — 0 route, 0 component, 0 bảng dữ liệu." },
-  { object: "Lesson", status: "absent", note: "Không có object có cấu trúc. Chỉ xuất hiện dạng nhãn text tự do (Roadmap.relatedLesson, Daily Mission taskType \"Hoàn thành bài học\") — không phải Registry thật." },
+  { object: "Lesson", status: "absent", note: "Không có object có cấu trúc. Chỉ xuất hiện dạng nhãn text tự do (Roadmap.relatedLesson, Daily Mission taskType \"Hoàn thành bài học\") — không phải dữ liệu thật." },
   { object: "Quiz", status: "absent", note: "0 tham chiếu trong toàn bộ Portal." },
-  { object: "Assignment", status: "renamed", note: "= \"Dự án thực chiến\" (Project Submissions) — nhưng là hộp thư chấm bài học viên tự nộp tự do, KHÔNG phải Registry Assignment do Founder định nghĩa trước." },
+  { object: "Assignment", status: "renamed", note: "= \"Dự án thực chiến\" (Project Submissions) — nhưng là hộp thư chấm bài học viên tự nộp tự do, KHÔNG phải một Assignment chính thức do Founder định nghĩa trước." },
   { object: "Exercise", status: "renamed", note: "Tồn tại dạng field `exercise` trên Knowledge Seed (CKOS, features/knowledge) — thuộc CKOS sở hữu, không phải Academy." },
   { object: "Certificate", status: "absent", note: "0 tham chiếu trong toàn bộ Portal." },
   { object: "Instructor", status: "absent", note: "0 tham chiếu trong toàn bộ Portal." },
@@ -65,8 +65,8 @@ export default function AcademyDashboardPage() {
 
   return (
     <AdminWorkspaceShell
-      title="Academy Workspace"
-      description="Toàn bộ Learning Experience thật của Portal — Lộ trình thành công, Nhiệm vụ hôm nay, Dự án thực chiến, và Learning Journeys (view đọc, chiếu từ CKOS). Không quản lý Course/Module/Quiz/Certificate/Instructor — các khái niệm này không tồn tại trong Portal hiện tại, xem bảng đối chiếu bên dưới."
+      title="Học viện AI"
+      description="Toàn bộ Learning Experience thật của Portal — Lộ trình thành công, Nhiệm vụ hôm nay, Dự án thực chiến, và Hành trình học tập (chỉ đọc, chiếu từ Hệ tri thức AI). Không quản lý Course/Module/Quiz/Certificate/Instructor — các khái niệm này không tồn tại trong Portal hiện tại, xem bảng đối chiếu bên dưới."
       rootHref="/admin/academy"
       sections={ACADEMY_WORKSPACE_SECTIONS}
     >
@@ -74,14 +74,14 @@ export default function AcademyDashboardPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <StatCard label="Bước Lộ trình" value={roadmap.items.length} sub={ready ? `${roadmap.items.filter((s) => s.status === "Published").length} đã Published` : undefined} />
           <StatCard label="Nhiệm vụ hôm nay" value={missions.items.length} sub="⚠️ 0 Portal consumer, xem báo cáo" />
-          <StatCard label="Learning Journeys" value={journeys.length} sub="Chiếu từ CKOS, không phải Academy sở hữu" />
+          <StatCard label="Hành trình học tập" value={journeys.length} sub="Chiếu từ Hệ tri thức AI, nơi khác sở hữu" />
           <StatCard label="Dự án thực chiến" value={0} sub="Xem trực tiếp tại tab Dự án thực chiến (Server Component)" />
         </div>
 
         <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/5 p-5">
           <h2 className="text-sm font-bold text-white">⚠️ Đối chiếu 10 Learning Object (brief IMP-ACADEMY-401) với Portal thật</h2>
           <p className="mt-1 text-xs text-white/50">
-            Task 1 yêu cầu hiển thị toàn bộ Learning Object — bảng dưới là câu trả lời trung thực, không bịa Registry cho object không tồn tại.
+            Task 1 yêu cầu hiển thị toàn bộ Learning Object — bảng dưới là câu trả lời trung thực, không bịa dữ liệu cho object không tồn tại.
           </p>
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-left text-sm">

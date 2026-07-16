@@ -49,7 +49,7 @@ export function MediaCollectionRegistry() {
       push("Đã lưu thay đổi.");
     } else {
       add({ ...form, id: genId(MEDIA_COLLECTIONS_COLLECTION_KEY), updatedDate: today });
-      push("Đã thêm Collection mới.");
+      push("Đã thêm bộ sưu tập mới.");
     }
     setModalOpen(false);
   }
@@ -68,7 +68,7 @@ export function MediaCollectionRegistry() {
           onClick={openCreate}
           className="ml-auto rounded-full bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
         >
-          + Thêm Collection
+          + Thêm bộ sưu tập
         </button>
       </div>
 
@@ -79,7 +79,7 @@ export function MediaCollectionRegistry() {
           ))}
         </div>
       ) : sorted.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center text-sm text-white/40">Chưa có Collection nào.</div>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center text-sm text-white/40">Chưa có bộ sưu tập nào.</div>
       ) : (
         <div className="space-y-2">
           {sorted.map((collection) => (
@@ -112,7 +112,7 @@ export function MediaCollectionRegistry() {
         </div>
       )}
 
-      <Modal open={modalOpen} title={editing ? "Sửa Collection" : "Thêm Collection mới"} onClose={() => setModalOpen(false)} width="max-w-lg">
+      <Modal open={modalOpen} title={editing ? "Sửa bộ sưu tập" : "Thêm bộ sưu tập mới"} onClose={() => setModalOpen(false)} width="max-w-lg">
         <div className="space-y-4">
           <div>
             <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">
@@ -174,7 +174,7 @@ export function MediaCollectionRegistry() {
 
       <ConfirmDialog
         open={!!deleteId}
-        title="Xóa Collection này?"
+        title="Xóa bộ sưu tập này?"
         description="Hành động này không thể hoàn tác."
         onCancel={() => setDeleteId(null)}
         onConfirm={handleDelete}

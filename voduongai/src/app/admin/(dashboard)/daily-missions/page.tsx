@@ -7,7 +7,7 @@ import { dailyMissionsSeed, type DailyMission } from "@/data/admin/roadmap";
 
 export default function DailyMissionsPage() {
   return (
-    <AdminWorkspaceShell title="Academy Workspace" description="" rootHref="/admin/academy" sections={ACADEMY_WORKSPACE_SECTIONS}>
+    <AdminWorkspaceShell title="Học viện AI" description="" rootHref="/admin/academy" sections={ACADEMY_WORKSPACE_SECTIONS}>
     <CrudPage<DailyMission>
       title="Nhiệm vụ hôm nay"
       description="⚠️ Đính chính ACADEMY-SPR-401: mô tả cũ ghi 'hiển thị trên Portal Dashboard' — xác nhận lại trực tiếp: 0 route/component Portal nào đọc collection này. Vẫn quản lý được đầy đủ ở đây, nhưng thay đổi CHƯA hiển thị ra Portal thật."

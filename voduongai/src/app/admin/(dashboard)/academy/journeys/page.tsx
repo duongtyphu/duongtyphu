@@ -31,23 +31,23 @@ export default function AcademyJourneysPage() {
 
   return (
     <AdminWorkspaceShell
-      title="Learning Journeys"
-      description="Chỉ đọc — mỗi Journey chiếu 1:1 từ 1 CKOS Collection (features/academy/services/journey.service.ts). Sửa nội dung Journey phải thực hiện ở CKOS (Knowledge Seed/Collection), không phải ở đây."
+      title="Hành trình học tập"
+      description="Chỉ đọc — mỗi hành trình học chiếu 1:1 từ 1 bộ sưu tập của Hệ tri thức AI. Sửa nội dung hành trình phải thực hiện ở Hệ tri thức AI (kho tri thức/bộ sưu tập), không phải ở đây."
       rootHref="/admin/academy"
       sections={ACADEMY_WORKSPACE_SECTIONS}
     >
       <div className="space-y-4">
         {journeys.length === 0 ? (
           <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center text-sm text-white/40">
-            Chưa có Learning Journey nào — CKOS chưa có Collection nào (xem `src/features/knowledge/data/knowledge-collections.ts`).
+            Chưa có hành trình học nào — Hệ tri thức AI chưa có bộ sưu tập nào.
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.03]">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-white/10 text-white/40">
-                  <th className="px-4 py-3 font-semibold">Journey</th>
-                  <th className="px-4 py-3 font-semibold">CKOS Collection (slug)</th>
+                  <th className="px-4 py-3 font-semibold">Hành trình</th>
+                  <th className="px-4 py-3 font-semibold">Bộ sưu tập CKOS (slug)</th>
                   <th className="px-4 py-3 font-semibold">Giai đoạn hiện tại</th>
                   <th className="px-4 py-3 font-semibold">Tiến độ nội bộ</th>
                 </tr>

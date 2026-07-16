@@ -6,9 +6,9 @@ export default function MediaCollectionsPage() {
     <MediaWorkspaceShell>
       <div className="space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-white">Collections</h2>
+          <h2 className="text-lg font-bold text-white">Bộ sưu tập</h2>
           <p className="mt-1 text-sm text-white/60">
-            Nhóm tuyển chọn linh hoạt (Task 6) — khác Folder (cấu trúc phân cấp cố định), Collection dùng cho mục
+            Nhóm tuyển chọn linh hoạt (Task 6) — khác Folder (cấu trúc phân cấp cố định), Bộ sưu tập dùng cho mục
             đích cụ thể (VD &quot;Homepage Hero Assets&quot;). Dùng làm giá trị `collectionId` cho Media Asset.
           </p>
         </div>

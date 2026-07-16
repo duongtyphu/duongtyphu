@@ -57,9 +57,9 @@ export function PortalAreaTable({ selectedId, onSelect }: { selectedId: string |
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b border-white/10 text-white/40">
-            <th className="px-4 py-3 font-semibold">Portal Area</th>
+            <th className="px-4 py-3 font-semibold">Khu vực Portal</th>
             <th className="px-4 py-3 font-semibold">Href</th>
-            <th className="px-4 py-3 font-semibold">Workspace Owner</th>
+            <th className="px-4 py-3 font-semibold">Nơi phụ trách</th>
             <th className="px-4 py-3 font-semibold">Ẩn/Hiện</th>
             <th className="px-4 py-3 font-semibold">Status</th>
             <th className="px-4 py-3" />
@@ -99,7 +99,7 @@ export function PortalAreaTable({ selectedId, onSelect }: { selectedId: string |
       </table>
 
       {form && (
-        <Modal open={!!editing} title={`Sửa Portal Area — ${editing?.label}`} onClose={() => setEditing(null)}>
+        <Modal open={!!editing} title={`Sửa Khu vực Portal — ${editing?.label}`} onClose={() => setEditing(null)}>
           <div className="space-y-4">
             <div>
               <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Tên hiển thị</label>
@@ -110,7 +110,7 @@ export function PortalAreaTable({ selectedId, onSelect }: { selectedId: string |
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Workspace Owner</label>
+              <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-white/40">Nơi phụ trách</label>
               <input
                 list="workspace-owner-options"
                 value={form.ownerWorkspace}
