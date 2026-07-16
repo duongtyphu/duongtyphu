@@ -1,10 +1,10 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { HeroNeuralBackground } from "@/components/home/HeroNeuralBackground";
+import { HeroQuestionBubbles } from "@/components/home/HeroQuestionBubbles";
 
 const floatingBadges = [
   {
@@ -130,51 +130,10 @@ export function Hero() {
             <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-gradient-to-br from-white/[0.08] via-transparent to-transparent" />
             <div className="pointer-events-none absolute -inset-px rounded-[30px] ring-1 ring-inset ring-white/10" />
 
-            <div className="relative h-[320px] overflow-hidden rounded-[20px] sm:h-[360px]">
+            <div className="hero-vortex-cosmic relative h-[320px] overflow-hidden rounded-[20px] sm:h-[360px]">
               <div className="hero-vortex-core" aria-hidden="true" />
-              <div className="hero-vortex pointer-events-none" aria-hidden="true">
-                {vortexQuestions.map((question, i) => {
-                  // Jittered angle + alternating radius bands so neighboring
-                  // questions don't settle on the same circle (which is what
-                  // caused labels to overlap) — each item gets its own lane.
-                  const angleOffset =
-                    (360 / vortexQuestions.length) * i + (i % 2 === 0 ? -7 : 7);
-                  const radius = 100 + (i % 3) * 28;
-                  const duration = 20 + (i % 5) * 2.4;
-                  const delay = -((duration / vortexQuestions.length) * i);
-
-                  return (
-                    <div
-                      key={question}
-                      className="hero-vortex-arm"
-                      style={{ transform: `rotate(${angleOffset}deg)` }}
-                    >
-                      <div
-                        className="hero-vortex-path"
-                        style={
-                          {
-                            "--vortex-radius": `${radius}px`,
-                            animationDuration: `${duration}s`,
-                            animationDelay: `${delay}s`,
-                          } as CSSProperties
-                        }
-                      >
-                        <span
-                          className="hero-vortex-label"
-                          style={
-                            {
-                              "--vortex-offset": `${angleOffset}deg`,
-                              animationDuration: `${duration}s`,
-                              animationDelay: `${delay}s`,
-                            } as CSSProperties
-                          }
-                        >
-                          {question}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                <HeroQuestionBubbles questions={vortexQuestions} />
               </div>
             </div>
           </motion.div>

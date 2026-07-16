@@ -2248,15 +2248,16 @@ body {
   66% { transform: translate(-24px, 20px) scale(0.92); }
 }
 
-/* Question vortex — spirals outward from a glowing core, like a tornado
- * of the questions students actually ask. Position is driven by a polar
- * transform (rotate then translateX from a zero-size anchor point), so
- * the browser interpolates angle and radius together into a real spiral
- * path; the label counter-rotates by the same amount (offset included
- * via --vortex-offset) so the text itself always stays upright. */
-.hero-vortex {
-  position: absolute;
-  inset: 0;
+/* Deep-space background for the question card — layered nebula smudges
+ * (violet top-left, cyan bottom-right) over a dark indigo-to-near-black
+ * vignette, instead of the flat white-tint glass used elsewhere, so this
+ * box reads as a window into something deep and a little mysterious. */
+.hero-vortex-cosmic {
+  background:
+    radial-gradient(60% 50% at 26% 20%, rgba(124, 58, 237, 0.28), transparent 65%),
+    radial-gradient(55% 50% at 80% 82%, rgba(34, 211, 238, 0.16), transparent 65%),
+    radial-gradient(120% 100% at 50% 12%, rgba(49, 58, 133, 0.55), rgba(18, 22, 48, 0.85) 55%, rgba(4, 6, 16, 0.97) 100%);
+  box-shadow: inset 0 0 70px 18px rgba(0, 0, 0, 0.55);
 }
 
 .hero-vortex-core {
@@ -2277,84 +2278,46 @@ body {
   50% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
 }
 
-.hero-vortex-arm {
+/* Question bubbles — fixed, hand-placed slots in a ring around the core
+ * (positions set inline per slot in HeroQuestionBubbles.tsx). Content
+ * cross-fades in place instead of traveling, so bubbles can never drift
+ * into each other and overlap no matter how long a question is; only a
+ * small vertical bob keeps them feeling alive. */
+.hero-bubble-slot {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-}
-
-.hero-vortex-path {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform-origin: 0 0;
-  animation-name: hero-vortex-spiral;
-  animation-timing-function: linear;
+  transform: translate(-50%, -50%);
+  animation-name: hero-bubble-float;
+  animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
 }
 
-/* Rotate and translateX stay perfectly linear across the whole timeline
- * (their only two stops are 0% and 50%/100%, at exactly proportional
- * values) so hero-vortex-counter-spin's simple 2-point animation still
- * cancels them out exactly. Scale/opacity/blur get their own easing so
- * each question feels like it emerges from the depth of the core —
- * small, blurred and invisible, then popping into sharp focus — before
- * settling into a slow, readable drift out to the rim. */
-/* translateX is deliberately front-loaded (fast 0 -> ~0.7x radius in the
- * first quarter, then a slow crawl to 1x) while still invisible/blurred,
- * so each question already has real distance from the core — and from
- * its neighbors — by the time it fades into view. Without this, every
- * question is born at the exact same point (the core) and a few always
- * end up overlapping there regardless of angle. Rotate stays an exact
- * straight line (3.6deg per 1% at every stop below) so it keeps
- * cancelling out with hero-vortex-counter-spin's plain 0->-360 tween. */
-@keyframes hero-vortex-spiral {
-  0%   { transform: rotate(0deg) translateX(0px) scale(0.3); opacity: 0; filter: blur(3px); }
-  10%  { transform: rotate(36deg) translateX(calc(var(--vortex-radius, 128px) * 0.42)) scale(0.75); opacity: 0.6; filter: blur(1px); }
-  25%  { transform: rotate(90deg) translateX(calc(var(--vortex-radius, 128px) * 0.68)) scale(1); opacity: 1; filter: blur(0px); }
-  60%  { transform: rotate(216deg) translateX(calc(var(--vortex-radius, 128px) * 0.88)) scale(1); }
-  80%  { opacity: 0.9; }
-  100% { transform: rotate(360deg) translateX(var(--vortex-radius, 128px)) scale(1.05); opacity: 0; }
+@keyframes hero-bubble-float {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-5px); }
 }
 
-.hero-vortex-label {
+.hero-bubble-pill {
   display: inline-block;
+  max-width: 148px;
+  overflow: hidden;
   white-space: nowrap;
-  padding: 3px 8px;
+  text-overflow: ellipsis;
+  padding: 4px 9px;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.07);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.4);
-  font-size: 9.5px;
+  box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.45);
+  font-size: 10px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.88);
-  animation-name: hero-vortex-counter-spin;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-@keyframes hero-vortex-counter-spin {
-  0%   { transform: rotate(calc(-1 * var(--vortex-offset, 0deg))); }
-  100% { transform: rotate(calc(-1 * var(--vortex-offset, 0deg) - 360deg)); }
+  color: rgba(255, 255, 255, 0.9);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-glow-orb,
-  .hero-vortex-core {
+  .hero-vortex-core,
+  .hero-bubble-slot {
     animation: none;
-  }
-
-  .hero-vortex-path,
-  .hero-vortex-label {
-    animation: none !important;
-  }
-
-  .hero-vortex-path {
-    opacity: 0.85;
-    transform: rotate(140deg) translateX(90px) scale(0.9);
   }
 }
