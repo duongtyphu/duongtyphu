@@ -1,20 +1,10 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Wrench, Wand2, Rocket, FolderOpen, Sparkles } from "lucide-react";
-import { siteConfig } from "@/lib/site";
-
-const displayUrl = `${siteConfig.url.replace(/^https?:\/\//, "")}/portal/hocvienai`;
-
-const navItems = ["Tổng quan", "Học viện AI", "Affiliate Hub", "Thư viện công cụ", "Cộng đồng"];
-
-const tiles = [
-  { label: "Bộ công cụ AI", icon: Wrench },
-  { label: "Thư viện Prompt", icon: Wand2 },
-  { label: "VO DUONG AI Academy", icon: Rocket },
-  { label: "Tài nguyên miễn phí", icon: FolderOpen },
-];
+import { Sparkles } from "lucide-react";
+import { HeroNeuralBackground } from "@/components/home/HeroNeuralBackground";
 
 const floatingBadges = [
   {
@@ -49,9 +39,30 @@ const floatingBadges = [
   },
 ];
 
+const vortexQuestions = [
+  "Học ChatGPT như thế nào?",
+  "Bắt đầu với AI từ đâu?",
+  "Cách viết prompt hiệu quả?",
+  "DeepSeek là gì? Bắt đầu ra sao?",
+  "Claude khác ChatGPT thế nào?",
+  "Top công cụ AI miễn phí?",
+  "Dùng AI phân tích dữ liệu?",
+  "AI tạo hình ảnh bằng gì?",
+  "Viết content bằng AI?",
+  "Xây trợ lý AI cá nhân?",
+  "AI giúp Affiliate ra sao?",
+  "AI Agent hoạt động ra sao?",
+  "Học AI có kiếm được tiền?",
+];
+
 export function Hero() {
   return (
     <section className="relative overflow-hidden pt-16 pb-10 text-white md:pt-20 md:pb-12">
+      <HeroNeuralBackground className="absolute inset-0 -z-10" />
+      <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--a" />
+      <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--b" />
+      <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--c" />
+
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1.2fr_1fr] md:items-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -59,35 +70,43 @@ export function Hero() {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-brand-violet">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-orange" />
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+            </span>
             Thương hiệu cá nhân · Hệ sinh thái AI
           </span>
 
-          <h1 className="mt-6 text-3xl font-extrabold leading-tight tracking-tight md:text-5xl">
-            AI không thay thế bạn.{" "}
+          <h1 className="mt-6 text-2xl font-extrabold leading-[1.25] tracking-tight sm:text-3xl md:text-4xl lg:text-[42px]">
+            AI không thay thế bạn.
+            <br />
             <span className="bg-gradient-to-r from-brand-violet to-brand-orange bg-clip-text text-transparent">
-              Người biết dùng AI sẽ thay thế người không biết dùng AI.
+              Nhưng người biết dùng AI
+              <br />
+              sẽ thay thế người không biết dùng AI.
             </span>
           </h1>
 
-          <p className="mt-6 max-w-lg text-base leading-relaxed text-white">
-            Tôi là Võ Đương AI. Tôi chia sẻ những công cụ, tài liệu, lộ trình và
-            hệ thống giúp bạn học AI, xây thương hiệu cá nhân, làm Affiliate
-            Marketing và tạo tài sản số bền vững.
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-white">
+            Giữa vô số công cụ AI, bạn đang loay hoay không biết bắt đầu từ
+            đâu? VO DUONG AI là hệ sinh thái giúp bạn học AI đúng hướng, xây
+            dựng thương hiệu cá nhân, phát triển Affiliate Marketing và tạo
+            tài sản số bền vững. AI là kỹ năng sống còn của thế kỷ 21 — và
+            hành trình của bạn có thể bắt đầu từ đây.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/portal/hetrithucai"
-              className="rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
+              href="/portal/hocvienai"
+              className="rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_45px_-5px_rgba(37,99,235,0.7)]"
             >
-              Học AI miễn phí
+              🚀 Bước vào Học viện
             </Link>
             <Link
-              href="/portal/hocvienai"
-              className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
+              href="#cong-cu-toi-dung"
+              className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:bg-brand-blue hover:shadow-lg hover:shadow-brand-blue/40"
             >
-              Khám phá Học viện AI →
+              Xem công cụ tôi dùng
             </Link>
           </div>
         </motion.div>
@@ -111,42 +130,43 @@ export function Hero() {
             <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-gradient-to-br from-white/[0.08] via-transparent to-transparent" />
             <div className="pointer-events-none absolute -inset-px rounded-[30px] ring-1 ring-inset ring-white/10" />
 
-            <div className="relative flex items-center gap-1.5 border-b border-white/10 px-2.5 pb-2.5">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-400/80" />
-              <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/80" />
-              <span className="h-2.5 w-2.5 rounded-full bg-green-400/80" />
-              <span className="ml-3 text-xs font-medium text-white">
-                {displayUrl}
-              </span>
-            </div>
-            <div className="relative flex gap-3 p-3.5">
-              <div className="hidden w-28 flex-shrink-0 space-y-1.5 sm:block">
-                {navItems.map((m, i) => (
-                  <div
-                    key={m}
-                    className={`cursor-pointer rounded-lg px-2.5 py-2 text-[11px] font-medium transition hover:bg-white/10 hover:text-white ${
-                      i === 0 ? "bg-white/10 text-white" : "text-white"
-                    }`}
-                  >
-                    {m}
-                  </div>
-                ))}
-              </div>
-              <div className="grid flex-1 grid-cols-2 gap-3">
-                {tiles.map(({ label, icon: Icon }) => (
-                  <div
-                    key={label}
-                    className="card-shine rounded-xl border border-white/10 bg-white/[0.035] p-4"
-                  >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-blue/25 to-brand-violet/15 text-brand-violet">
-                      <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+            <div className="relative h-[320px] overflow-hidden rounded-[20px] sm:h-[360px]">
+              <div className="hero-vortex-core" aria-hidden="true" />
+              <div className="hero-vortex pointer-events-none" aria-hidden="true">
+                {vortexQuestions.map((question, i) => {
+                  const angleOffset = (360 / vortexQuestions.length) * i;
+                  const duration = 8 + (i % 5) * 0.7;
+                  const delay = -((duration / vortexQuestions.length) * i);
+
+                  return (
+                    <div
+                      key={question}
+                      className="hero-vortex-arm"
+                      style={{ transform: `rotate(${angleOffset}deg)` }}
+                    >
+                      <div
+                        className="hero-vortex-path"
+                        style={{
+                          animationDuration: `${duration}s`,
+                          animationDelay: `${delay}s`,
+                        }}
+                      >
+                        <span
+                          className="hero-vortex-label"
+                          style={
+                            {
+                              "--vortex-offset": `${angleOffset}deg`,
+                              animationDuration: `${duration}s`,
+                              animationDelay: `${delay}s`,
+                            } as CSSProperties
+                          }
+                        >
+                          {question}
+                        </span>
+                      </div>
                     </div>
-                    <p className="mt-3 text-sm font-semibold text-white">{label}</p>
-                    <span className="mt-2 inline-flex rounded-full bg-brand-orange/15 px-2 py-0.5 text-[10px] font-semibold text-brand-orange">
-                      Miễn phí
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </motion.div>

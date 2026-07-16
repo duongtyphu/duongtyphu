@@ -5,7 +5,7 @@ import { logoUrl } from "@/lib/logo";
 
 export function ToolsIUse() {
   return (
-    <section className="py-9 md:py-12">
+    <section id="cong-cu-toi-dung" className="scroll-mt-24 py-9 md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
