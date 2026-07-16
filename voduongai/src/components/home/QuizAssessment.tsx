@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -40,7 +40,6 @@ const QUESTIONS = [
 
 // Accent orange for this section — unify with #FF6B35 going forward.
 const ACCENT = "#FF6B35";
-const STORAGE_KEY = "vdai-quiz-result-v1";
 
 const LEVELS = [
   {
@@ -100,101 +99,22 @@ function scoreToLevelIndex(total: number) {
   return 4;
 }
 
-function readStoredLevelIndex(): number | null {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    const parsed = raw !== null ? Number(raw) : NaN;
-    return Number.isInteger(parsed) && parsed >= 0 && parsed < LEVELS.length
-      ? parsed
-      : null;
-  } catch {
-    return null;
-  }
-}
-
-function readServerLevelIndex(): number | null {
-  return null;
-}
-
-function subscribeToNothing() {
-  return () => {};
-}
-
-function ResultCard({ level }: { level: (typeof LEVELS)[number] }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className="rounded-2xl border p-4"
-      style={{ borderColor: `${ACCENT}66`, backgroundColor: `${ACCENT}0D` }}
-    >
-      <p className="text-sm font-bold" style={{ color: ACCENT }}>
-        🎯 Kết quả của bạn
-      </p>
-      <p className="mt-1.5 text-sm leading-relaxed text-white/80">
-        {level.emoji} Trình độ của bạn: <strong>{level.label}</strong>.{" "}
-        {level.intro} Hãy bắt đầu với lộ trình &quot;{level.path}&quot; –{" "}
-        {level.pathDetail}.
-      </p>
-
-      <Link
-        href="#cta-cuoi"
-        className="mt-3.5 inline-flex rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90"
-        style={{
-          background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
-          boxShadow: `0 10px 30px -10px ${ACCENT}66`,
-        }}
-      >
-        Nhập lộ trình phù hợp →
-      </Link>
-    </motion.div>
-  );
-}
-
 export function QuizAssessment() {
-  // Reads localStorage safely across SSR/hydration: getServerSnapshot (null)
-  // is used for the render that must match the server, then React corrects
-  // to the real client value right after — the canonical way to sync with
-  // a browser-only external store without setState-in-effect.
-  const storedLevelIndex = useSyncExternalStore(
-    subscribeToNothing,
-    readStoredLevelIndex,
-    readServerLevelIndex
-  );
-
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(
     Array(QUESTIONS.length).fill(null)
   );
 
   const isLastStep = step === QUESTIONS.length - 1;
-  const justCompleted = isLastStep && answers[step] !== null;
+  const resultReady = isLastStep && answers[step] !== null;
   const totalScore = answers.reduce<number>((sum, a) => sum + (a ?? 0) + 1, 0);
-  const liveLevelIndex = scoreToLevelIndex(totalScore);
-
-  const alreadyDone = storedLevelIndex !== null;
-  const resultReady = alreadyDone || justCompleted;
-  const activeLevelIndex = alreadyDone ? storedLevelIndex : liveLevelIndex;
-  const level = LEVELS[activeLevelIndex];
+  const levelIndex = scoreToLevelIndex(totalScore);
+  const level = LEVELS[levelIndex];
 
   const selectAnswer = (answerIndex: number) => {
-    if (alreadyDone) return;
     setAnswers((prev) => {
       const next = [...prev];
       next[step] = answerIndex;
-
-      // Answering the last question completes the quiz — persist the
-      // result right here, in the event handler, instead of an effect.
-      if (step === QUESTIONS.length - 1) {
-        const total = next.reduce<number>((sum, a) => sum + (a ?? 0) + 1, 0);
-        try {
-          window.localStorage.setItem(STORAGE_KEY, String(scoreToLevelIndex(total)));
-        } catch {
-          // ignore — result just won't persist across reloads
-        }
-      }
-
       return next;
     });
   };
@@ -203,6 +123,8 @@ export function QuizAssessment() {
     if (answers[step] === null || isLastStep) return;
     setStep((s) => s + 1);
   };
+
+  const goBack = () => setStep((s) => Math.max(0, s - 1));
 
   return (
     <section className="py-7 text-white md:py-9">
@@ -217,117 +139,162 @@ export function QuizAssessment() {
           </h2>
         </div>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
-          {/* Left: quiz card */}
-          <div className="flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5 transition-transform duration-300 hover:-translate-y-1 md:p-6">
-            {alreadyDone ? (
-              <ResultCard level={level} />
-            ) : (
-              <>
-                <div className="flex items-center justify-center gap-2">
-                  {QUESTIONS.map((_, i) => (
-                    <span
-                      key={i}
-                      className="h-2.5 w-2.5 rounded-full transition"
-                      style={{
-                        backgroundColor:
-                          i === step
-                            ? ACCENT
-                            : i < step || answers[i] !== null
-                              ? `${ACCENT}99`
-                              : "rgba(255,255,255,0.15)",
-                        transform: i === step ? "scale(1.25)" : undefined,
-                      }}
-                    />
-                  ))}
+        <div className="mt-6 grid gap-5 lg:grid-cols-2 lg:items-start">
+          {/* Left: quiz card — layout animates so it grows smoothly once
+              the result is appended, instead of everything being
+              stretched to equal height upfront. */}
+          <motion.div
+            layout
+            whileHover={{ y: -4 }}
+            transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
+            className="flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+          >
+            <div className="flex items-center justify-center gap-2">
+              {QUESTIONS.map((_, i) => (
+                <span
+                  key={i}
+                  className="h-2.5 w-2.5 rounded-full transition"
+                  style={{
+                    backgroundColor:
+                      i === step
+                        ? ACCENT
+                        : i < step || answers[i] !== null
+                          ? `${ACCENT}99`
+                          : "rgba(255,255,255,0.15)",
+                    transform: i === step ? "scale(1.25)" : undefined,
+                  }}
+                />
+              ))}
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -16 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                <p className="mt-4 text-xs text-white/40">
+                  Câu hỏi {step + 1}/{QUESTIONS.length}
+                </p>
+                <h3 className="mt-1.5 text-base font-bold text-white md:text-lg">
+                  {QUESTIONS[step].question}
+                </h3>
+
+                <div className="mt-3.5 space-y-2">
+                  {QUESTIONS[step].answers.map((answer, i) => {
+                    const selected = answers[step] === i;
+                    return (
+                      <button
+                        key={answer}
+                        type="button"
+                        onClick={() => selectAnswer(i)}
+                        className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-left text-sm text-white/80 transition hover:border-white/25 hover:bg-white/[0.05]"
+                        style={
+                          selected
+                            ? {
+                                borderColor: ACCENT,
+                                backgroundColor: `${ACCENT}1A`,
+                                color: "#fff",
+                              }
+                            : undefined
+                        }
+                      >
+                        {String.fromCharCode(65 + i)}. {answer}
+                      </button>
+                    );
+                  })}
                 </div>
+              </motion.div>
+            </AnimatePresence>
 
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={step}
-                    initial={{ opacity: 0, x: 16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -16 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
+            <AnimatePresence>
+              {resultReady && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, ease: "easeOut", delay: 0.1 }}
+                  className="mt-4 rounded-2xl border p-4"
+                  style={{
+                    borderColor: `${ACCENT}66`,
+                    backgroundColor: `${ACCENT}0D`,
+                  }}
+                >
+                  <p className="text-sm font-bold" style={{ color: ACCENT }}>
+                    🎯 Kết quả của bạn
+                  </p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-white/80">
+                    {level.emoji} Trình độ của bạn: <strong>{level.label}</strong>.{" "}
+                    {level.intro} Hãy bắt đầu với lộ trình &quot;{level.path}&quot; –{" "}
+                    {level.pathDetail}.
+                  </p>
+
+                  <Link
+                    href="#cta-cuoi"
+                    className="mt-3.5 inline-flex rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90"
+                    style={{
+                      background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
+                      boxShadow: `0 10px 30px -10px ${ACCENT}66`,
+                    }}
                   >
-                    <p className="mt-4 text-xs text-white/40">
-                      Câu hỏi {step + 1}/{QUESTIONS.length}
-                    </p>
-                    <h3 className="mt-1.5 text-base font-bold text-white md:text-lg">
-                      {QUESTIONS[step].question}
-                    </h3>
+                    Nhập lộ trình phù hợp →
+                  </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-                    <div className="mt-3.5 space-y-2">
-                      {QUESTIONS[step].answers.map((answer, i) => {
-                        const selected = answers[step] === i;
-                        return (
-                          <button
-                            key={answer}
-                            type="button"
-                            onClick={() => selectAnswer(i)}
-                            className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-left text-sm text-white/80 transition hover:border-white/25 hover:bg-white/[0.05]"
-                            style={
-                              selected
-                                ? {
-                                    borderColor: ACCENT,
-                                    backgroundColor: `${ACCENT}1A`,
-                                    color: "#fff",
-                                  }
-                                : undefined
-                            }
-                          >
-                            {String.fromCharCode(65 + i)}. {answer}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-
-                <AnimatePresence>
-                  {justCompleted && (
-                    <div className="mt-4">
-                      <ResultCard level={level} />
-                    </div>
-                  )}
-                </AnimatePresence>
-
+            {!resultReady && (
+              <div className="mt-4 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={goBack}
+                  disabled={step === 0}
+                  className="text-sm font-semibold text-white/60 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  ← Quay lại
+                </button>
                 {!isLastStep && (
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      type="button"
-                      onClick={goNext}
-                      disabled={answers[step] === null}
-                      className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
-                      style={{
-                        background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
-                        boxShadow: `0 10px 30px -10px ${ACCENT}66`,
-                      }}
-                    >
-                      Tiếp theo →
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={goNext}
+                    disabled={answers[step] === null}
+                    className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                    style={{
+                      background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
+                      boxShadow: `0 10px 30px -10px ${ACCENT}66`,
+                    }}
+                  >
+                    Tiếp theo →
+                  </button>
                 )}
-              </>
+              </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Right: level scale */}
-          <div className="flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5 transition-transform duration-300 hover:-translate-y-1 md:p-6">
+          <motion.div
+            layout
+            whileHover={{ y: -4 }}
+            transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
+            className="flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+          >
             <div className="flex items-center justify-between gap-2">
               <p className="text-sm font-semibold text-white/80">
                 📊 Thang đánh giá năng lực
               </p>
-              {resultReady && (
+              {resultReady ? (
                 <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70">
                   ✅ Cấp độ: {level.label}
                 </span>
+              ) : (
+                <span className="text-xs text-white/30">Chưa có dữ liệu</span>
               )}
             </div>
 
             <div className="mt-3.5 space-y-2">
               {LEVELS.map((lvl, i) => {
-                const active = resultReady && i === activeLevelIndex;
+                const active = resultReady && i === levelIndex;
                 return (
                   <div
                     key={lvl.label}
@@ -379,7 +346,7 @@ export function QuizAssessment() {
                 📍 Cấp độ sẽ được xác định sau khi bạn hoàn thành bài test.
               </p>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
