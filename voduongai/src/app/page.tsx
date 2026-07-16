@@ -2,7 +2,7 @@ import { Hero } from "@/components/home/Hero";
 import { IntroVideo } from "@/components/home/IntroVideo";
 import { PortalPreview } from "@/components/home/PortalPreview";
 import { QuizAssessment } from "@/components/home/QuizAssessment";
-import { FreeResources } from "@/components/home/FreeResources";
+import { EcosystemPillars } from "@/components/home/EcosystemPillars";
 import { ToolsIUse } from "@/components/home/ToolsIUse";
 import { Problem } from "@/components/home/Problem";
 import { Solution } from "@/components/home/Solution";
@@ -19,7 +19,7 @@ export default function Home() {
       <IntroVideo />
       <PortalPreview />
       <QuizAssessment />
-      <FreeResources />
+      <EcosystemPillars />
       <ToolsIUse />
       <Problem />
       <Solution />

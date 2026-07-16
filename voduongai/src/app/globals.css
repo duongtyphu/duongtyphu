@@ -2307,3 +2307,179 @@ body {
     animation: none;
   }
 }
+
+/* ============================================================
+ * ECOSYSTEM PILLARS — "Một hệ sinh thái được kết nối" section.
+ * 5 pillar cards + 1 Premium card, dark glass with a warm gold hover
+ * glow. Pure CSS hover (no JS) so the cards work the same server- or
+ * client-rendered.
+ * ============================================================ */
+.ecosystem-card {
+  position: relative;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1rem;
+  text-decoration: none;
+  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+}
+
+@media (min-width: 640px) {
+  .ecosystem-card {
+    padding: 1.2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ecosystem-card {
+    padding: 1.5rem;
+  }
+}
+
+.ecosystem-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(245, 166, 35, 0.08);
+  pointer-events: none;
+  transition: border-color 0.35s ease;
+}
+
+.ecosystem-card::after {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(circle at 30% 20%, rgba(245, 166, 35, 0.18), transparent 60%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.ecosystem-card:hover {
+  transform: translateY(-10px) scale(1.01);
+  border-color: rgba(245, 166, 35, 0.15);
+  box-shadow: 0 20px 60px -20px rgba(245, 166, 35, 0.15);
+}
+
+.ecosystem-card:hover::before {
+  border-color: rgba(245, 166, 35, 0.2);
+}
+
+.ecosystem-card:hover::after {
+  opacity: 1;
+}
+
+.ecosystem-card-icon {
+  display: inline-block;
+  font-size: 2.2rem;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.ecosystem-card:hover .ecosystem-card-icon {
+  transform: scale(1.1) rotate(-3deg);
+}
+
+.ecosystem-tag {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  border-radius: 50px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ecosystem-tag--gold {
+  background: rgba(245, 166, 35, 0.12);
+  color: #f5a623;
+}
+
+.ecosystem-tag--teal {
+  background: rgba(6, 214, 160, 0.12);
+  color: #06d6a0;
+}
+
+.ecosystem-tag--violet {
+  background: rgba(139, 92, 246, 0.12);
+  color: #8b5cf6;
+}
+
+.ecosystem-tag--coral {
+  background: rgba(255, 107, 53, 0.12);
+  color: #ff6b35;
+}
+
+.ecosystem-card-stats {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.ecosystem-card--premium {
+  background: linear-gradient(145deg, rgba(245, 166, 35, 0.06), rgba(139, 92, 246, 0.04));
+  border-color: rgba(245, 166, 35, 0.15);
+}
+
+.ecosystem-card--premium .ecosystem-card-stats {
+  border-top-color: rgba(139, 92, 246, 0.15);
+}
+
+.ecosystem-premium-badge {
+  position: absolute;
+  top: -0.6rem;
+  right: 1rem;
+  border-radius: 9999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #f5a623, #ff6b35);
+  color: #0a0a0a;
+  animation: ecosystem-pulse-badge 2.4s ease-in-out infinite;
+}
+
+@keyframes ecosystem-pulse-badge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.ecosystem-feature-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.15rem 0.6rem;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ecosystem-feature-chip strong {
+  color: #f5a623;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecosystem-card,
+  .ecosystem-card-icon,
+  .ecosystem-premium-badge {
+    transition: none;
+    animation: none;
+  }
+}
