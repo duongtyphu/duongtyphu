@@ -92,14 +92,18 @@ export function EcosystemPillars() {
             để dẫn lối bạn
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-white/50">
-            5 trụ cột – mỗi trụ cột là một mảnh ghép trong hành trình làm chủ AI
-            của bạn.
+            5 +1 trụ cột – mỗi trụ cột là một mảnh ghép trong hành trình làm chủ
+            AI của bạn.
           </p>
         </motion.div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {PILLARS.map((pillar) => (
-            <Link key={pillar.title} href={pillar.href} className="ecosystem-card">
+            <Link
+              key={pillar.title}
+              href={pillar.href}
+              className="ecosystem-card card-shine"
+            >
               <div className="flex items-start justify-between gap-3">
                 <span className="ecosystem-card-icon" aria-hidden="true">
                   {pillar.icon}
@@ -121,7 +125,7 @@ export function EcosystemPillars() {
 
           <Link
             href={PREMIUM.href}
-            className="ecosystem-card ecosystem-card--premium"
+            className="ecosystem-card ecosystem-card--premium card-shine"
           >
             <span className="ecosystem-premium-badge">⭐ Premium</span>
             <div className="flex items-start justify-between gap-3">

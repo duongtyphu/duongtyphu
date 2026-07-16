@@ -2310,9 +2310,10 @@ body {
 
 /* ============================================================
  * ECOSYSTEM PILLARS — "Một hệ sinh thái được kết nối" section.
- * 5 pillar cards + 1 Premium card, dark glass with a warm gold hover
- * glow. Pure CSS hover (no JS) so the cards work the same server- or
- * client-rendered.
+ * 5 pillar cards + 1 Premium card. Hover lift is the shared
+ * `.card-shine` treatment (same as "Những công cụ tôi thực sự đang
+ * dùng") for consistency across the landing page — this class only
+ * carries the card's own layout/base look plus the icon wiggle.
  * ============================================================ */
 .ecosystem-card {
   position: relative;
@@ -2326,7 +2327,6 @@ body {
   -webkit-backdrop-filter: blur(12px);
   padding: 1rem;
   text-decoration: none;
-  transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
 }
 
 @media (min-width: 640px) {
@@ -2339,42 +2339,6 @@ body {
   .ecosystem-card {
     padding: 1.5rem;
   }
-}
-
-.ecosystem-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(245, 166, 35, 0.08);
-  pointer-events: none;
-  transition: border-color 0.35s ease;
-}
-
-.ecosystem-card::after {
-  content: "";
-  position: absolute;
-  inset: -20%;
-  z-index: -1;
-  border-radius: inherit;
-  background: radial-gradient(circle at 30% 20%, rgba(245, 166, 35, 0.18), transparent 60%);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
-}
-
-.ecosystem-card:hover {
-  transform: translateY(-10px) scale(1.01);
-  border-color: rgba(245, 166, 35, 0.15);
-  box-shadow: 0 20px 60px -20px rgba(245, 166, 35, 0.15);
-}
-
-.ecosystem-card:hover::before {
-  border-color: rgba(245, 166, 35, 0.2);
-}
-
-.ecosystem-card:hover::after {
-  opacity: 1;
 }
 
 .ecosystem-card-icon {
@@ -2439,9 +2403,9 @@ body {
 }
 
 .ecosystem-premium-badge {
-  position: absolute;
-  top: -0.6rem;
-  right: 1rem;
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
   border-radius: 9999px;
   padding: 0.2rem 0.6rem;
   font-size: 0.55rem;
