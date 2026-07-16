@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function FinalCTA() {
   return (
-    <section className="relative overflow-hidden py-9 text-white md:py-12">
+    <section id="cta-cuoi" className="relative scroll-mt-24 overflow-hidden py-9 text-white md:py-12">
       <div className="mx-auto max-w-3xl px-5 text-center">
         <h2 className="whitespace-nowrap text-lg font-extrabold sm:text-2xl md:text-3xl">
           Bắt đầu hành trình AI của bạn hôm nay

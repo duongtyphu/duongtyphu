@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/Hero";
 import { IntroVideo } from "@/components/home/IntroVideo";
 import { PortalPreview } from "@/components/home/PortalPreview";
+import { QuizAssessment } from "@/components/home/QuizAssessment";
 import { FreeResources } from "@/components/home/FreeResources";
 import { ToolsIUse } from "@/components/home/ToolsIUse";
 import { Problem } from "@/components/home/Problem";
@@ -17,6 +18,7 @@ export default function Home() {
       <Hero />
       <IntroVideo />
       <PortalPreview />
+      <QuizAssessment />
       <FreeResources />
       <ToolsIUse />
       <Problem />
