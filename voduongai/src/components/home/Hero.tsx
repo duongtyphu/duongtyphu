@@ -77,7 +77,7 @@ export function Hero() {
             Thương hiệu cá nhân · Hệ sinh thái AI
           </span>
 
-          <h1 className="mt-6 text-2xl font-extrabold leading-[1.25] tracking-tight sm:text-3xl md:text-4xl lg:text-[42px]">
+          <h1 className="mt-6 text-xl font-extrabold leading-[1.3] tracking-tight sm:text-2xl md:text-3xl lg:text-4xl">
             AI không thay thế bạn.
             <br />
             <span className="bg-gradient-to-r from-brand-violet to-brand-orange bg-clip-text text-transparent">
@@ -134,8 +134,13 @@ export function Hero() {
               <div className="hero-vortex-core" aria-hidden="true" />
               <div className="hero-vortex pointer-events-none" aria-hidden="true">
                 {vortexQuestions.map((question, i) => {
-                  const angleOffset = (360 / vortexQuestions.length) * i;
-                  const duration = 17 + (i % 5) * 1.8;
+                  // Jittered angle + alternating radius bands so neighboring
+                  // questions don't settle on the same circle (which is what
+                  // caused labels to overlap) — each item gets its own lane.
+                  const angleOffset =
+                    (360 / vortexQuestions.length) * i + (i % 2 === 0 ? -7 : 7);
+                  const radius = 100 + (i % 3) * 28;
+                  const duration = 20 + (i % 5) * 2.4;
                   const delay = -((duration / vortexQuestions.length) * i);
 
                   return (
@@ -146,10 +151,13 @@ export function Hero() {
                     >
                       <div
                         className="hero-vortex-path"
-                        style={{
-                          animationDuration: `${duration}s`,
-                          animationDelay: `${delay}s`,
-                        }}
+                        style={
+                          {
+                            "--vortex-radius": `${radius}px`,
+                            animationDuration: `${duration}s`,
+                            animationDelay: `${delay}s`,
+                          } as CSSProperties
+                        }
                       >
                         <span
                           className="hero-vortex-label"

@@ -2302,26 +2302,34 @@ body {
  * each question feels like it emerges from the depth of the core —
  * small, blurred and invisible, then popping into sharp focus — before
  * settling into a slow, readable drift out to the rim. */
+/* translateX is deliberately front-loaded (fast 0 -> ~0.7x radius in the
+ * first quarter, then a slow crawl to 1x) while still invisible/blurred,
+ * so each question already has real distance from the core — and from
+ * its neighbors — by the time it fades into view. Without this, every
+ * question is born at the exact same point (the core) and a few always
+ * end up overlapping there regardless of angle. Rotate stays an exact
+ * straight line (3.6deg per 1% at every stop below) so it keeps
+ * cancelling out with hero-vortex-counter-spin's plain 0->-360 tween. */
 @keyframes hero-vortex-spiral {
   0%   { transform: rotate(0deg) translateX(0px) scale(0.3); opacity: 0; filter: blur(3px); }
-  8%   { opacity: 0.5; filter: blur(1.5px); }
-  22%  { opacity: 1; filter: blur(0px); }
-  50%  { transform: rotate(180deg) translateX(64px) scale(1); }
-  86%  { opacity: 0.92; }
-  100% { transform: rotate(360deg) translateX(128px) scale(1.05); opacity: 0; }
+  10%  { transform: rotate(36deg) translateX(calc(var(--vortex-radius, 128px) * 0.42)) scale(0.75); opacity: 0.6; filter: blur(1px); }
+  25%  { transform: rotate(90deg) translateX(calc(var(--vortex-radius, 128px) * 0.68)) scale(1); opacity: 1; filter: blur(0px); }
+  60%  { transform: rotate(216deg) translateX(calc(var(--vortex-radius, 128px) * 0.88)) scale(1); }
+  80%  { opacity: 0.9; }
+  100% { transform: rotate(360deg) translateX(var(--vortex-radius, 128px)) scale(1.05); opacity: 0; }
 }
 
 .hero-vortex-label {
   display: inline-block;
   white-space: nowrap;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   box-shadow: 0 4px 14px -6px rgba(0, 0, 0, 0.4);
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.88);
   animation-name: hero-vortex-counter-spin;
