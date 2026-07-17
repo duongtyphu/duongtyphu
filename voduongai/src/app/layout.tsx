@@ -67,6 +67,12 @@ export default async function RootLayout({
   return (
     <html lang="vi" className="h-full antialiased">
       <body className="min-h-full flex flex-col font-sans text-white">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900"
+        >
+          Bỏ qua tới nội dung chính
+        </a>
         <style
           dangerouslySetInnerHTML={{
             __html: `:root{--color-brand-blue:${settings.primaryColor};--color-brand-violet:${settings.secondaryColor};--color-brand-orange:${settings.accentColor};}`,

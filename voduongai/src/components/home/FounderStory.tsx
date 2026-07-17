@@ -6,7 +6,7 @@ import { RevealText } from "@/components/home/RevealText";
 
 export function FounderStory() {
   return (
-    <section className="py-9 text-white md:py-12">
+    <section className="overflow-hidden py-9 text-white md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

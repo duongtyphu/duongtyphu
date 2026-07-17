@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
 import { siteConfig } from "@/lib/site";
-import { tools } from "@/data/tools";
-import { prompts } from "@/data/prompts";
-import { freeResources } from "@/data/resources";
 import { blogPosts } from "@/data/blog";
 
+// Every "/portal/*" route requires authentication (see PROTECTED_ROUTE_PREFIXES
+// in src/lib/protected-routes.ts) — middleware redirects anonymous visitors,
+// including crawlers, straight to /login. Listing them here would only get
+// them indexed as redirects, wasting crawl budget. Keep this sitemap to
+// routes that are actually publicly reachable.
 const routes = [
   "/",
   "/about",
@@ -13,27 +15,6 @@ const routes = [
   "/privacy",
   "/terms",
   "/refund-policy",
-  "/portal",
-  "/portal/companion",
-  "/portal/su-menh-companion",
-  "/portal/hetrithucai",
-  "/portal/hocvienai",
-  "/portal/aiworkspace",
-  "/portal/duan-cohoi",
-  "/portal/vdai-academy",
-  "/portal/affiliate-hub",
-  "/portal/tools",
-  "/portal/prompts",
-  "/portal/resources",
-  "/portal/premium",
-  "/portal/my-products",
-  "/portal/congdongai",
-  "/portal/nhatkyhoctap",
-  "/portal/hanhtrinhcuatoi",
-  "/portal/khuvuoncuaban",
-  ...tools.map((t) => `/portal/tools/${t.id}`),
-  ...prompts.map((p) => `/portal/prompts/${p.id}`),
-  ...freeResources.map((r) => `/portal/resources/${r.id}`),
   ...blogPosts.map((p) => `/blogai/${p.slug}`),
 ];
 

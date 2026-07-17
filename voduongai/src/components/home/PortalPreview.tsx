@@ -103,7 +103,7 @@ export function PortalPreview() {
   }, []);
 
   return (
-    <section id="trai-nghiem-hoc-vien-ai" className="scroll-mt-24 py-9 text-white md:py-12">
+    <section id="trai-nghiem-hoc-vien-ai" className="scroll-mt-24 overflow-hidden py-9 text-white md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

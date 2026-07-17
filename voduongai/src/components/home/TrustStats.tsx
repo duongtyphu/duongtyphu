@@ -45,7 +45,7 @@ export function TrustStats() {
               ))}
             </div>
 
-            <p className="mt-6 text-xs text-white/15">
+            <p className="mt-6 text-xs text-white/50">
               📌 Cộng đồng đang phát triển cùng nhau mỗi ngày
             </p>
           </motion.div>
@@ -62,7 +62,7 @@ export function TrustStats() {
               <div key={s.label} className="community-stat-card text-center">
                 <div className="stat-number">{s.value}</div>
                 <p className="mt-2 text-xs text-white/50">{s.label}</p>
-                <p className="mt-1 text-[10px] text-white/15">{s.sub}</p>
+                <p className="mt-1 text-[10px] text-white/50">{s.sub}</p>
               </div>
             ))}
           </motion.div>

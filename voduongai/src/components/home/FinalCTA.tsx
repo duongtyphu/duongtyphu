@@ -19,7 +19,7 @@ export function FinalCTA() {
             Bắt đầu hành trình AI của bạn <span className="text-brand-orange">hôm nay</span>
           </RevealText>
         </h2>
-        <p className="mt-4 whitespace-nowrap text-[11px] text-white sm:text-sm md:text-base">
+        <p className="mt-4 text-[11px] text-white sm:text-sm md:text-base">
           Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Học viện AI. Việc của bạn là bắt đầu.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

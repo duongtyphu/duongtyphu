@@ -112,9 +112,9 @@ export function Footer({ settings }: { settings: SiteSettings }) {
 
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-xs font-bold uppercase tracking-wider text-brand-violet">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-brand-violet">
                 {col.title}
-              </h4>
+              </h3>
               <ul className="mt-4 space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
@@ -131,14 +131,17 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           ))}
 
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-brand-violet">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-brand-violet">
               Kết nối
-            </h4>
+            </h3>
             <ul className="mt-4 space-y-3">
               {socials.map((s) => (
                 <li key={s.label}>
                   <a
                     href={s.href}
+                    {...(s.href.startsWith("mailto:")
+                      ? {}
+                      : { target: "_blank", rel: "noopener noreferrer" })}
                     className="flex items-center gap-2.5 text-sm text-white/50 transition hover:text-white"
                   >
                     <span

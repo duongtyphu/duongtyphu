@@ -142,7 +142,7 @@ export function EcosystemPillars() {
           </div>
         </div>
 
-        <p className="mt-6 text-center text-[10px] text-white/15">
+        <p className="mt-6 text-center text-[10px] text-white/50">
           🔹 Di chuột vào từng card để cảm nhận hiệu ứng 3D nhô lên
         </p>
       </div>
