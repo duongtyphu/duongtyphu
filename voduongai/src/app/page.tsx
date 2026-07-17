@@ -4,6 +4,7 @@ import { PortalPreview } from "@/components/home/PortalPreview";
 import { QuizAssessment } from "@/components/home/QuizAssessment";
 import { EcosystemPillars } from "@/components/home/EcosystemPillars";
 import { ToolsIUse } from "@/components/home/ToolsIUse";
+import { AudienceProblem } from "@/components/home/AudienceProblem";
 import { Roadmap } from "@/components/home/Roadmap";
 import { TrustStats } from "@/components/home/TrustStats";
 import { Ecosystem } from "@/components/home/Ecosystem";
@@ -19,6 +20,7 @@ export default function Home() {
       <QuizAssessment />
       <EcosystemPillars />
       <ToolsIUse />
+      <AudienceProblem />
       <Roadmap />
       <TrustStats />
       <Ecosystem />

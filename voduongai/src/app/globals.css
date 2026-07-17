@@ -2610,3 +2610,52 @@ body {
     transition: none;
   }
 }
+
+/* ============================================================
+ * AUDIENCE & PROBLEM — "Đối tượng & vấn đề" section. 3 audience
+ * banners, a problem list, and the orange-tinted "VO DUONG AI" answer
+ * card side by side.
+ * ============================================================ */
+.audience-card {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1.25rem;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.audience-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.audience-question {
+  position: relative;
+  margin-top: 0.6rem;
+  padding-left: 1.1rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.audience-question::before {
+  content: "\201C";
+  position: absolute;
+  left: -0.1rem;
+  top: -0.3rem;
+  font-size: 1.4rem;
+  font-style: normal;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.solution-card {
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 107, 53, 0.25);
+  background: linear-gradient(160deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.02));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audience-card {
+    transition: none;
+  }
+}
