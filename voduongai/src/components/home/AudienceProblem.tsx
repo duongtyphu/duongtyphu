@@ -4,6 +4,7 @@
 // stays the section's primary color (heading highlight, ✕ marks, the
 // "VO DUONG AI" answer card).
 const ACCENT = "#FF6B35";
+const PROBLEM_COLOR = "#F87171";
 
 const AUDIENCES = [
   {
@@ -23,26 +24,58 @@ const AUDIENCES = [
   {
     icon: "📈",
     label: "Người muốn xây Affiliate",
-    desc: "",
+    desc: "Muốn xây dựng hệ thống thu nhập thụ động bằng Affiliate, nhưng không có lộ trình rõ ràng.",
     question: "Affiliate có dành cho người mới?",
     color: "#06D6A0",
   },
 ];
 
 const PROBLEMS = [
-  { lead: "AI quá nhiều", rest: "không biết bắt đầu từ đâu." },
-  { lead: "Tool quá nhiều", rest: "không biết nên chọn cái gì." },
-  { lead: "Affiliate quá rối", rest: "không có lộ trình rõ ràng." },
-  { lead: "Nội dung phân tán", rest: "không có nơi học tập trung." },
+  "Học rải rác, không có lộ trình.",
+  "Tự mò mẫm, mất hàng tháng mà vẫn chưa ra kết quả.",
+  "AI quá nhiều – không biết bắt đầu từ đâu.",
+  "Tool quá nhiều – không biết nên chọn cái gì.",
+  "Nội dung phân tán – không có nơi học tập trung.",
 ];
 
 const STRENGTHS = [
-  "Lộ trình rõ ràng theo từng cấp độ — từ mới bắt đầu đến thực chiến.",
-  "Công cụ AI được chọn lọc sẵn — không mất thời gian thử sai.",
-  "Hệ thống Affiliate có hướng dẫn từng bước, kể cả người mới.",
-  "Toàn bộ tài nguyên tập trung trong một Học viện duy nhất.",
-  "Học đi đôi với hành — mỗi bước đều có sản phẩm/kết quả thật.",
+  { pre: "Học theo lộ trình: ", bold: "CKOS → Workspace → Companion", post: "" },
+  { pre: "Chọn ", bold: "đúng công cụ", post: " cho từng mục tiêu cụ thể" },
+  { pre: "Có quy trình rõ ràng, ", bold: "biến ý tưởng thành output thật", post: "" },
+  { pre: "Tri thức được ", bold: "kết nối trong một hệ thống", post: " duy nhất" },
+  { pre: "Có ", bold: "Companion", post: " đồng hành, hỗ trợ mọi lúc" },
 ];
+
+function WarningIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 3.5L21 19.5H3L12 3.5Z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+      <path d="M12 9.5V14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="12" cy="16.8" r="0.9" fill="currentColor" />
+    </svg>
+  );
+}
+
+function NetworkIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path
+        d="M12 7.4L6.2 15M12 7.4L17.8 15M7.4 17H16.6"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+      <circle cx="12" cy="5" r="2.4" fill="currentColor" />
+      <circle cx="5" cy="17" r="2.4" fill="currentColor" />
+      <circle cx="19" cy="17" r="2.4" fill="currentColor" />
+    </svg>
+  );
+}
 
 export function AudienceProblem() {
   return (
@@ -64,71 +97,100 @@ export function AudienceProblem() {
           {AUDIENCES.map((a) => (
             <div key={a.label} className="audience-card">
               <span
-                className="flex h-11 w-11 items-center justify-center rounded-full text-xl"
+                className="icon-glow-badge h-14 w-14 text-2xl"
                 style={{ backgroundColor: `${a.color}26`, color: a.color }}
               >
                 {a.icon}
               </span>
-              <p className="mt-3 text-sm font-bold text-white">{a.label}</p>
-              {a.desc && (
-                <p className="mt-1.5 text-xs leading-relaxed text-white/55">
-                  {a.desc}
-                </p>
-              )}
-              <p className="audience-question">{a.question}</p>
+              <p className="mt-3.5 text-sm font-bold text-white">{a.label}</p>
+              <p className="mt-2 text-xs leading-relaxed text-white/55">{a.desc}</p>
+              <p
+                className="audience-question"
+                style={{
+                  borderColor: `${a.color}40`,
+                  backgroundColor: `${a.color}12`,
+                  color: a.color,
+                }}
+              >
+                &ldquo;{a.question}&rdquo;
+              </p>
             </div>
           ))}
         </div>
 
         {/* Problems vs. solution */}
         <div className="mt-6 grid gap-5 lg:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
-              Những gì đang cản bạn lại
-            </p>
-            <ul className="mt-4 space-y-3.5">
-              {PROBLEMS.map((p) => (
-                <li key={p.lead} className="flex items-start gap-3">
-                  <span
-                    className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
-                    style={{ backgroundColor: `${ACCENT}26`, color: ACCENT }}
-                  >
-                    ✕
+          <div className="problem-panel">
+            <div className="flex items-center gap-3">
+              <span
+                className="icon-glow-badge h-11 w-11 text-lg"
+                style={{ backgroundColor: `${PROBLEM_COLOR}22`, color: PROBLEM_COLOR }}
+              >
+                <WarningIcon />
+              </span>
+              <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
+                Những vấn đề bạn đang gặp phải?
+              </p>
+            </div>
+            <ul className="mt-5 space-y-3.5">
+              {PROBLEMS.map((p) => {
+                const [lead, ...restParts] = p.split(" – ");
+                const rest = restParts.join(" – ");
+                return (
+                  <li key={p} className="flex items-start gap-3">
+                    <span
+                      className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
+                      style={{ backgroundColor: `${ACCENT}26`, color: ACCENT }}
+                    >
+                      ✕
+                    </span>
+                    <p className="text-sm leading-relaxed text-white/70">
+                      {rest ? (
+                        <>
+                          <strong className="font-bold text-white">{lead}</strong> – {rest}
+                        </>
+                      ) : (
+                        lead
+                      )}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div className="solution-card">
+            <div className="flex items-center gap-3">
+              <span
+                className="icon-glow-badge h-11 w-11 text-lg"
+                style={{ backgroundColor: `${ACCENT}22`, color: ACCENT }}
+              >
+                <NetworkIcon />
+              </span>
+              <div>
+                <p className="text-lg font-extrabold" style={{ color: ACCENT }}>
+                  VO DUONG AI
+                </p>
+                <p className="text-xs text-white/40">Hệ sinh thái tri thức số</p>
+              </div>
+            </div>
+            <div className="my-4 border-t border-white/10" />
+            <ul className="space-y-3">
+              {STRENGTHS.map((s) => (
+                <li key={s.pre + s.bold} className="flex items-start gap-3">
+                  <span className="mt-0.5 text-sm font-bold" style={{ color: ACCENT }}>
+                    ✓
                   </span>
-                  <p className="text-sm leading-relaxed text-white/70">
-                    <strong className="font-bold text-white">{p.lead}</strong> –{" "}
-                    {p.rest}
+                  <p className="text-sm leading-relaxed text-white/75">
+                    {s.pre}
+                    {s.bold && <strong className="font-bold text-white">{s.bold}</strong>}
+                    {s.post}
                   </p>
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div className="solution-card p-6">
-            <span
-              className="flex h-11 w-11 items-center justify-center rounded-full text-xl"
-              style={{ backgroundColor: `${ACCENT}26`, color: ACCENT }}
-            >
-              ✨
-            </span>
-            <p className="mt-3 text-lg font-extrabold" style={{ color: ACCENT }}>
-              VO DUONG AI
-            </p>
-            <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
-              Cách của Võ Dương
-            </p>
-            <ul className="mt-4 space-y-3">
-              {STRENGTHS.map((s) => (
-                <li key={s} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-emerald-400/15 text-[10px] font-bold text-emerald-400">
-                    ✓
-                  </span>
-                  <p className="text-sm leading-relaxed text-white/75">{s}</p>
-                </li>
-              ))}
-            </ul>
             <p
-              className="mt-5 border-t pt-4 text-sm font-semibold"
+              className="mt-5 border-t pt-4 text-center text-sm font-semibold"
               style={{ borderColor: `${ACCENT}33`, color: `${ACCENT}CC` }}
             >
               🚀 Kết quả: Tiết kiệm thời gian, có kết quả thật, xây dựng tài
