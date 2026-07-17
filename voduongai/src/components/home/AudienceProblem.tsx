@@ -9,18 +9,21 @@ const AUDIENCES = [
   {
     icon: "🧑‍🎓",
     label: "Người mới học AI",
+    desc: "Bị quá tải bởi hàng nghìn video, bài viết, khoá học – không biết đâu là lộ trình đúng.",
     question: "Tôi nên bắt đầu từ đâu?",
     color: "#2563EB",
   },
   {
     icon: "💼",
     label: "Người đã biết AI cơ bản",
+    desc: "Đã dùng ChatGPT, Canva, nhưng chưa biết ứng dụng AI vào công việc và kinh doanh thực tế.",
     question: "Làm sao để AI tạo ra giá trị?",
     color: "#8B5CF6",
   },
   {
     icon: "📈",
     label: "Người muốn xây Affiliate",
+    desc: "",
     question: "Affiliate có dành cho người mới?",
     color: "#06D6A0",
   },
@@ -67,6 +70,11 @@ export function AudienceProblem() {
                 {a.icon}
               </span>
               <p className="mt-3 text-sm font-bold text-white">{a.label}</p>
+              {a.desc && (
+                <p className="mt-1.5 text-xs leading-relaxed text-white/55">
+                  {a.desc}
+                </p>
+              )}
               <p className="audience-question">{a.question}</p>
             </div>
           ))}
