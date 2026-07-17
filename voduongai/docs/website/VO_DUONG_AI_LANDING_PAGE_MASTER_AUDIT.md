@@ -7,6 +7,8 @@
 
 > Tài liệu này chỉ audit. Không có thay đổi code, nội dung, cấu hình hay dữ liệu nào được thực hiện trong quá trình này.
 
+> **Ghi chú cập nhật (PMO Correction, sau ngày audit gốc):** Founder xác nhận thành phần "🎁 Nhận tài liệu AI" trong FinalCTA được **cố ý** thiết kế là nhãn trang trí (decorative label), không phải CTA và không có destination. Phát hiện F-02 trong toàn bộ tài liệu này đã được cập nhật lại theo xác nhận đó — hạ từ **P1 xuống P2**, đổi khung phân loại từ "CTA chết cần gắn hành vi" sang "decorative element đang mang affordance tương tác sai" (code hiện dùng `<button>` với `hover:bg-red-500`, có thể nhận keyboard focus — đây là lý do giữ mức P2 thay vì hạ tiếp, theo đúng điều kiện ngoại lệ mà PMO đặt ra). Không có sửa code nào được thực hiện kèm theo cập nhật tài liệu này.
+
 ---
 
 ## 1. Executive Summary
@@ -99,7 +101,7 @@ Môi trường thực thi của tôi có **egress network được kiểm soát 
 ├─ Ecosystem.tsx (client)         → không có CTA (solar-system minh hoạ)
 ├─ FounderStory.tsx (client)      → không có CTA
 └─ FinalCTA.tsx (client)          → CTA chính: "Vào Học viện miễn phí" → /login
-                                   → CTA phụ: "🎁 Nhận tài liệu AI" → không có href/onClick (nút tĩnh)
+                                   → Nhãn trang trí: "🎁 Nhận tài liệu AI" → cố ý không có destination (xác nhận Founder); hiện dùng `<button>` có hover state — cần đổi sang phần tử phi tương tác
 
 Header.tsx  → mainNav: Trang chủ(/) · Học viện AI(#trai-nghiem-hoc-vien-ai) · AI Workspace(#danh-gia-nang-luc-ai) · Blog AI(/blogai)
             → CTA: "Vào Học viện" → /login
@@ -139,7 +141,7 @@ Toàn bộ route đích (`/portal/*`, `/login`, `/blogai`, `/privacy`, `/terms`,
 - **EcosystemPillars, Roadmap, TrustStats, Ecosystem (solar-system)** — 4 section này có sự **trùng lặp khái niệm đáng kể**: đều đang cố truyền tải "hệ sinh thái gồm nhiều module liên kết", chỉ khác hình thức trình bày (card lưới, timeline, số liệu, solar-system). Người dùng phải xem lại ý tưởng "hệ sinh thái" dưới 3-4 hình thức khác nhau trong cùng 1 lần cuộn trang — tăng tải nhận thức (cognitive load) mà không thêm nhiều giá trị mới mỗi lần.
 - **AudienceProblem** — Nội dung mạnh, đúng nỗi đau, nhưng vị trí (sau EcosystemPillars + ToolsIUse) khá muộn — đây lẽ ra là 1 trong những section sớm nhất để xác nhận "tôi có đúng đối tượng không" trước khi được giới thiệu sâu về hệ sinh thái.
 - **FounderStory** — Nội dung chân thực, có brand tagline lặp lại hợp lý, nhưng đặt sát cuối (ngay trước FinalCTA) trong khi "niềm tin vào người dẫn dắt" thường phát huy tác dụng tốt hơn nếu xuất hiện **trước** khi yêu cầu hành động chuyển đổi, không phải ngay sát nút bấm.
-- **FinalCTA** — Rõ ràng, có 2 CTA phân vai chính/phụ tốt. Tuy vậy CTA phụ "🎁 Nhận tài liệu AI" hiện là **nút tĩnh không có hành vi** (xem mục 8) — rủi ro trải nghiệm nếu người dùng click.
+- **FinalCTA** — Rõ ràng, có 1 CTA chính rõ destination. Bên cạnh đó là 1 nhãn trang trí "🎁 Nhận tài liệu AI" (theo xác nhận Founder, cố ý không phải CTA) — hiện đang dựng bằng `<button>` có hover state, mang affordance tương tác dễ gây hiểu lầm là 1 nút bấm được (xem mục 8).
 
 **Đề xuất cấu trúc mục tiêu** (chỉ đề xuất, chưa triển khai) — xem mục 20.
 
@@ -190,7 +192,7 @@ Xem đề xuất cấu trúc mục tiêu đầy đủ tại mục 20.
 | Nút Play video | IntroVideo | Nhúng YouTube (`L4DZsW6OCpg`), không điều hướng | Hoạt động | Tương tác nội dung | Video ID là placeholder theo comment trong code ("Placeholder intro video — swap this ID via Admin once..."); **chưa xác minh được** đây có phải video chính thức cuối cùng hay không | P2: Founder xác nhận video ID đã là bản final |
 | "Nhập lộ trình phù hợp →" | QuizAssessment (sau khi trả lời hết) | `#cta-cuoi` | Hoạt động (anchor) | Chuyển tiếp funnel | Không |  |
 | "Vào Học viện miễn phí" | FinalCTA | `/login` | Hoạt động, auth-gated | CTA chính cuối trang | Không |  |
-| "🎁 Nhận tài liệu AI" | FinalCTA | **Không có `href` hoặc `onClick`** — `<button type="button">` tĩnh | Không hoạt động | CTA phụ (lead magnet) | **Click không có bất kỳ phản hồi nào** — nhãn hứa hẹn ("nhận tài liệu") nhưng không giao hàng | **P1**: gắn hành vi thật (form thu email, link tải, hoặc modal) hoặc tạm ẩn nút này |
+| "🎁 Nhận tài liệu AI" | FinalCTA | **Cố ý không có destination** (xác nhận Founder — đây là nhãn trang trí, không phải CTA) | Đúng theo thiết kế | Nhãn trang trí (decorative label), không phải CTA | Markup hiện tại là `<button type="button">` với `hover:bg-red-500` — có affordance/hover/keyboard-focus giống 1 nút bấm thật, gây hiểu lầm cho người dùng dù không phải chủ đích | **P2**: đổi sang phần tử phi tương tác (`<span>`/`<div>`), bỏ hover/focus/pointer-cursor, chỉnh style theo hướng badge/eyebrow thay vì nút. Không gắn link giả, không tạo lead magnet/form. Đổi nội dung (đề xuất: "Công cụ • Prompt • Tài liệu") cần Founder duyệt riêng trước khi triển khai |
 | "Vào Học viện" | Header (toàn site) | `/login` | Hoạt động, auth-gated | CTA chính header | Không |  |
 | Học viện AI / AI Workspace | Header `mainNav` | `#trai-nghiem-hoc-vien-ai`, `#danh-gia-nang-luc-ai` | Hoạt động (anchor, đã có cơ chế xử lý scroll khi điều hướng từ trang khác) | Điều hướng nội dung | Nhãn menu "Học viện AI"/"AI Workspace" trỏ tới section landing page minh hoạ, **không phải** trang thật cùng tên trong Học viện — có thể gây hiểu lầm nhẹ về đích đến khi đọc nhãn | P3: cân nhắc phụ đề hoặc để rõ đây là "xem trước" |
 | Cột Footer "Học viện AI" (Companion/CKOS/Kỹ năng AI/Dự án & Cơ hội/Premium) | Footer | `/portal/*` (5 link) | Route tồn tại, **auth-gated**, redirect `/login` | Điều hướng | Người dùng ẩn danh click bất kỳ link nào trong cột này đều bị đưa thẳng tới màn hình đăng nhập mà không có cảnh báo/preview — trải nghiệm có thể gây bất ngờ ("tôi bấm xem Companion sao lại ra trang đăng nhập") | **P2**: cân nhắc thêm dấu hiệu nhỏ (icon khoá) hoặc để các link này trỏ về section landing page tương ứng nếu có, thay vì thẳng vào route auth-gated |
@@ -205,12 +207,12 @@ Landing Page
  → Khám phá giá trị       (Hero, IntroVideo, PortalPreview)         — ổn, có thể rút ngắn
  → Tin tưởng              (TrustStats, FounderStory, AudienceProblem) — FounderStory đặt hơi muộn
  → Chọn điểm bắt đầu      (QuizAssessment, Roadmap)                  — quiz đặt trước khi rõ "dành cho ai"
- → Vào Học viện/đăng ký   (Header CTA, Hero CTA, FinalCTA)           — 2/3 CTA trỏ đúng, 1 CTA phụ (Nhận tài liệu AI) chết
+ → Vào Học viện/đăng ký   (Header CTA, Hero CTA, FinalCTA)           — CTA trỏ đúng destination; nhãn trang trí "Nhận tài liệu AI" cạnh đó cần sửa affordance (không phải CTA chết)
  → Thực hiện hành động đầu tiên → ngoài phạm vi Landing Page (bên trong /portal sau khi đăng nhập)
 ```
 
 **Điểm rơi/bối rối có khả năng cao nhất:**
-1. Nút "🎁 Nhận tài liệu AI" không hoạt động — rủi ro mất niềm tin ngay tại bước CTA cuối cùng, quan trọng nhất của trang.
+1. Nhãn trang trí "🎁 Nhận tài liệu AI" dựng bằng `<button>` có hover state — người dùng có thể hiểu nhầm đây là 1 CTA bấm được và thử click, dù không phải chủ đích thiết kế.
 2. Click bất kỳ link Footer nào vào Học viện khi chưa đăng nhập → bất ngờ bị chuyển sang màn hình đăng nhập không có cảnh báo trước.
 3. Quiz xuất hiện tương đối sớm (trước AudienceProblem) có thể khiến người dùng chưa đủ ngữ cảnh để trả lời có ý nghĩa.
 
@@ -363,7 +365,7 @@ Nguyên nhân: 3 vị trí trên dùng `text-white/10` hoặc `text-white/15` (1
 
 - Không phát hiện API key/secret nào bị hardcode trong bất kỳ file Landing Page nào đã đọc.
 - Biến môi trường dùng trong code Landing Page: chỉ `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_GA_ID` — đều là biến `NEXT_PUBLIC_*` cố ý public (anon key Supabase là thiết kế an toàn tiêu chuẩn khi có Row Level Security phía sau, **không** thuộc phạm vi audit này để xác minh RLS).
-- **Không có form thu thập email/thông tin cá nhân nào trên Landing Page hiện tại** (nút "🎁 Nhận tài liệu AI" chưa gắn form — xem mục 8) → không có rủi ro validation/spam ở form vì chưa tồn tại.
+- **Không có form thu thập email/thông tin cá nhân nào trên Landing Page hiện tại** ("🎁 Nhận tài liệu AI" là nhãn trang trí, cố ý không gắn form/lead magnet theo xác nhận Founder — xem mục 8) → không có rủi ro validation/spam ở form vì chưa tồn tại và không được lên kế hoạch tạo trong Sprint 0.
 - Google Analytics: chỉ inject script khi `NEXT_PUBLIC_GA_ID` tồn tại — không thấy cơ chế cookie-consent banner nào trước khi GA chạy. Với người dùng tại Việt Nam, đây thường không bắt buộc theo luật hiện hành nhưng đáng lưu ý nếu mở rộng thị trường.
 - External links (Footer social, `href={s.href}`): **chưa xác nhận được** `rel="noopener noreferrer"` hoặc `target="_blank"` tường minh trên các thẻ `<a>` social trong `Footer.tsx` — cần bổ sung `rel="noopener"` tối thiểu nếu các link này mở tab mới, để tránh rủi ro `window.opener` (tabnabbing).
 - Không phát hiện thông tin nhạy cảm trong bất kỳ phần code/comment nào đã đọc.
@@ -401,7 +403,7 @@ Nguyên nhân: 3 vị trí trên dùng `text-white/10` hoặc `text-white/15` (1
 | ID | Nhóm | Mức độ | Vị trí | File/Component | Viewport | Mô tả | Bằng chứng | Tác động | Nguyên nhân gốc | Khuyến nghị | Độ phức tạp | Trạng thái xác minh |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | F-01 | Responsive | **P1** | PortalPreview, FounderStory | `PortalPreview.tsx`, `FounderStory.tsx` | 320–1024px | Trang bị tràn ngang (horizontal scroll) do glow div `-inset-N` không được `overflow-hidden` chứa | Đo `scrollWidth` 44–79px vượt `clientWidth` ở 6/8 viewport; bisection xác định chính xác 2 file | Thanh cuộn ngang xuất hiện trên mọi thiết bị mobile/tablet — trải nghiệm production-blocking | Section bao ngoài thiếu `overflow-hidden` (khác với `Hero.tsx` cùng kỹ thuật nhưng có `overflow-hidden`) | Thêm `overflow-hidden` vào 2 section | S | Đã xác minh trong code + đo lường |
-| F-02 | CTA/Conversion | **P1** | FinalCTA | `FinalCTA.tsx` | Mọi viewport | Nút "🎁 Nhận tài liệu AI" không có `href`/`onClick` — click không phản hồi | Đọc code trực tiếp | CTA phụ tại vị trí chuyển đổi quan trọng nhất của trang hoàn toàn chết | Chưa gắn hành vi khi thêm nút | Gắn form/link thật, hoặc tạm ẩn nút | S–M (tuỳ hành vi mong muốn) | Đã xác minh trong code |
+| F-02 | UI/Semantics | **P2** *(hạ từ P1 theo PMO Correction — xem ghi chú đầu tài liệu)* | FinalCTA | `FinalCTA.tsx` | Mọi viewport | "🎁 Nhận tài liệu AI" là nhãn trang trí cố ý (xác nhận Founder, không phải CTA, không có destination), nhưng markup hiện tại là `<button type="button">` có `hover:bg-red-500` — mang affordance/keyboard-focus giống 1 nút tương tác thật | Đọc code trực tiếp; xác nhận bằng văn bản từ Founder về chủ đích thiết kế | Người dùng có thể hiểu nhầm đây là CTA bấm được, thử click và không nhận được phản hồi nào — rủi ro UX dù không phải "CTA chết" theo đúng nghĩa | Dùng nhầm phần tử tương tác (`<button>`) cho một nhãn vốn chỉ mang tính trang trí | Đổi sang phần tử phi tương tác (`<span>`/`<div>`), bỏ hover/focus/pointer-cursor, style theo hướng badge/eyebrow. Không gắn link giả, không tạo lead magnet/form/email automation. Đổi nội dung (đề xuất "Công cụ • Prompt • Tài liệu") cần Founder duyệt riêng | S | Đã xác minh trong code + xác nhận chủ đích từ Founder |
 | F-03 | SEO | **P1** | Toàn site | `sitemap.ts`, `middleware.ts` | — | Sitemap khai báo ~13+ URL `/portal/*` bị middleware redirect sang `/login` cho người dùng/crawler chưa đăng nhập | Đối chiếu `sitemap.ts` với `middleware.ts`/`protected-routes.ts`; xác nhận sitemap.xml Production khớp code | Lãng phí crawl budget, rủi ro cảnh báo Search Console, nội dung `/portal/*` không thể index | Sitemap được sinh từ danh sách route tĩnh, không loại trừ route auth-gated | Loại bỏ toàn bộ `/portal/*` khỏi `sitemap.ts`, chỉ giữ URL công khai thật sự | S | Đã xác minh trong code + Production |
 | F-04 | SEO | **P1** | Toàn site | `site.ts` (`siteConfig.url`), `robots.ts` | — | Domain chính thức `voduongai.com` (dùng cho canonical/OG/JSON-LD/sitemap directive) hiện không phân giải | `curl https://voduongai.com/` thất bại (connection failure), đối chiếu với `voduongai.vercel.app` đang chạy thật | Chia sẻ link mạng xã hội từ bản hiện tại sẽ không hiện ảnh preview (OG image trỏ domain chết) | Domain custom chưa trỏ DNS / chưa gắn vào Vercel project | Founder xác nhận tiến độ domain; tạm thời cân nhắc set `siteConfig.url` theo domain đang hoạt động cho tới khi domain chính thức live | S (kỹ thuật) / phụ thuộc bên ngoài (domain) | Đã xác minh qua curl |
 | F-05 | Brand/Strategic | **P1** | Toàn Landing Page | Toàn bộ 12 section + `layout.tsx` | — | Landing Page dùng dark-theme (nền navy, chữ trắng) xuyên suốt, mâu thuẫn với định hướng "nền sáng/trắng là hệ nền chính" trong bối cảnh audit | Đọc `globals.css` (`.mesh-navy`, `--background`/`--foreground` bị ghi đè bởi mesh-navy phủ toàn màn hình) + xác nhận trực quan mọi section | Ảnh hưởng toàn bộ hệ thống thiết kế, không thể "sửa nhanh" nếu cần đổi hướng | Landing Page được xây theo định hướng dark-theme ở các vòng thiết kế trước; bối cảnh audit lần này nêu định hướng khác | **Cần Founder quyết định** giữ dark-theme hay chuyển light-theme (xem mục 10, 23) — KHÔNG tự ý sửa | L (nếu đổi theme) / 0 (nếu giữ nguyên + cập nhật lại brief) | Đã xác minh trong code, đây là nhận định chiến lược cần phê duyệt |
@@ -449,11 +451,11 @@ Nguyên nhân: 3 vị trí trên dùng `text-white/10` hoặc `text-white/15` (1
 
 **Kết luận: CONDITIONALLY READY.**
 
-Không phải NOT READY — kiến trúc, code quality, và phần lớn nội dung đã ở mức Production thực sự. Không phải READY FOR PRODUCTION ngay — vì có 5 phát hiện P1 (F-01 đến F-05) cần xử lý hoặc ít nhất được Founder ra quyết định rõ ràng (đặc biệt F-05, quyết định màu nền, có thể thay đổi toàn bộ lộ trình tiếp theo) trước khi gắn domain chính thức và đưa người dùng thật vào ồ ạt.
+Không phải NOT READY — kiến trúc, code quality, và phần lớn nội dung đã ở mức Production thực sự. Không phải READY FOR PRODUCTION ngay — vì có 4 phát hiện P1 (F-01, F-03, F-04, F-05) cần xử lý hoặc ít nhất được Founder ra quyết định rõ ràng (đặc biệt F-05, quyết định màu nền, có thể thay đổi toàn bộ lộ trình tiếp theo) trước khi gắn domain chính thức và đưa người dùng thật vào ồ ạt.
 
 **Điều kiện để chuyển sang READY FOR PRODUCTION:**
 1. Sửa xong F-01 (tràn ngang) — kỹ thuật thuần, không cần quyết định thiết kế.
-2. Xử lý F-02 (CTA chết) — gắn hành vi thật hoặc ẩn tạm.
+2. Xử lý F-02 (P2, không chặn release) — sửa affordance của nhãn trang trí "Nhận tài liệu AI" về đúng semantics phi tương tác.
 3. Xử lý F-03, F-04 (sitemap auth-gated, domain chết) — có thể làm ngay hoặc chờ domain lên.
 4. **Founder ra quyết định rõ ràng về F-05** (giữ dark-theme hay chuyển light-theme) — đây là điều kiện quan trọng nhất vì nó định hình liệu các phát hiện P2 (contrast, token màu) có cần làm lại từ đầu theo theme mới hay không.
 
@@ -473,7 +475,7 @@ Không phải NOT READY — kiến trúc, code quality, và phần lớn nội d
 9. TrustStats                 — giữ, cân nhắc thêm nguồn/ngày cho số liệu
 10. QuizAssessment             — giữ nhưng đặt SAU AudienceProblem/FounderStory để có ngữ cảnh
 11. ToolsIUse                  — giữ nguyên, vị trí hợp lý (bằng chứng cụ thể trước CTA)
-12. FinalCTA                   — giữ, sửa CTA phụ chết (F-02)
+12. FinalCTA                   — giữ, sửa affordance nhãn trang trí "Nhận tài liệu AI" (F-02)
 ```
 
 Đây là đề xuất dựa trên nguyên tắc giảm tải nhận thức và củng cố niềm tin trước khi yêu cầu hành động — **không phải** một cấu trúc bắt buộc, cần thảo luận và phê duyệt trước khi triển khai bất kỳ thay đổi thứ tự nào.
@@ -484,7 +486,7 @@ Không phải NOT READY — kiến trúc, code quality, và phần lớn nội d
 
 Xem chi tiết đầy đủ (mục tiêu, phạm vi, dependency, acceptance criteria, rủi ro, ước tính) tại `docs/website/VO_DUONG_AI_LANDING_PAGE_AUDIT_BACKLOG.md`. Tóm tắt:
 
-- **Sprint 0** — P0/P1 Release Blockers: F-01, F-02, F-03, F-04, và chốt quyết định F-05.
+- **Sprint 0** — P0/P1 Release Blockers (+ F-02 kèm theo vì cùng file, độ phức tạp S, không phải blocker): F-01, F-03, F-04, F-02 (P2), và chốt quyết định F-05.
 - **Sprint 1** — Product Message và Conversion: cấu trúc lại thứ tự section (mục 20), sửa F-10, F-15, F-16, F-20.
 - **Sprint 2** — Visual System và Responsive: triển khai quyết định F-05 (nếu đổi theme) hoặc chuẩn hoá token màu F-14, sửa F-11.
 - **Sprint 3** — SEO, Accessibility và Performance: F-06, F-07, F-08, F-09, F-17, F-18, F-19.
@@ -498,7 +500,7 @@ Xem chi tiết đầy đủ (mục tiêu, phạm vi, dependency, acceptance crit
 Các mục có thể sửa trong vài giờ, tác động tức thì, độ phức tạp S, không phụ thuộc quyết định chiến lược:
 
 - F-01: thêm `overflow-hidden` vào section của `PortalPreview.tsx` và `FounderStory.tsx`.
-- F-02: ẩn tạm nút "🎁 Nhận tài liệu AI" cho tới khi có hành vi thật, tránh CTA chết.
+- F-02: đổi "🎁 Nhận tài liệu AI" từ `<button>` sang `<span>`/`<div>` phi tương tác, bỏ hover/focus/pointer-cursor — giữ nguyên vai trò trang trí, không gắn destination.
 - F-03: loại `/portal/*` khỏi `sitemap.ts`.
 - F-06: tăng opacity 3 vị trí contrast fail lên mức đạt AA.
 - F-07: thêm canonical URL vào metadata.
@@ -515,7 +517,7 @@ Các mục có thể sửa trong vài giờ, tác động tức thì, độ ph�
 3. **F-15 — Tên thương hiệu:** "VO DUONG AI" và "Võ Đương AI" dùng song song có phải chủ đích (brand vs. cá nhân founder) hay cần chuẩn hoá về 1 cách viết?
 4. **F-16 — Số liệu TrustStats:** các con số (10K+, 97%, 4.9/5...) hiện có còn chính xác? Có nguồn nào để trích dẫn không?
 5. **Mục 20 — Thứ tự section:** có phê duyệt đề xuất cấu trúc lại (đưa AudienceProblem/FounderStory lên sớm hơn, gộp bớt 4 section "hệ sinh thái") hay không?
-6. **F-02 — CTA "Nhận tài liệu AI":** nội dung/lead magnet thật sự là gì? Cần trước khi gắn hành vi cho nút.
+6. **F-02 — Nhãn trang trí "Nhận tài liệu AI":** *(đã giải quyết một phần — Founder xác nhận đây là nhãn trang trí, không phải CTA/lead magnet)*. Còn lại: phê duyệt nội dung thay thế đề xuất "Công cụ • Prompt • Tài liệu" trước khi triển khai đổi chữ; phần sửa markup (bỏ semantics tương tác) không cần chờ phê duyệt nội dung, có thể làm ngay.
 7. **Mục 17 — CMS:** có cần đầu tư để nội dung Landing Page (không chỉ site-settings) chỉnh được qua Admin CMS trong giai đoạn tới, hay tiếp tục hardcode?
 
 ---
@@ -535,7 +537,7 @@ Các mục có thể sửa trong vài giờ, tác động tức thì, độ ph�
 
 ## 25. Final Recommendation
 
-Landing Page VO DUONG AI có nền tảng kỹ thuật vững (code sạch, kiến trúc rõ, routing đúng) và nội dung có chiều sâu, đúng nỗi đau người dùng — đây là một landing page **đã được đầu tư nghiêm túc**, không phải bản nháp. Điều kiện để tiến lên giai đoạn tiếp theo không nằm ở việc "làm thêm" mà ở việc **giải quyết dứt điểm 5 phát hiện P1** (F-01 đến F-05) và có **một quyết định rõ ràng từ Founder về định hướng màu nền** trước khi đầu tư thêm vào visual polish — vì mọi công sức polish thêm trên nền dark-theme hiện tại có thể phải làm lại nếu quyết định cuối cùng là chuyển sang light-theme.
+Landing Page VO DUONG AI có nền tảng kỹ thuật vững (code sạch, kiến trúc rõ, routing đúng) và nội dung có chiều sâu, đúng nỗi đau người dùng — đây là một landing page **đã được đầu tư nghiêm túc**, không phải bản nháp. Điều kiện để tiến lên giai đoạn tiếp theo không nằm ở việc "làm thêm" mà ở việc **giải quyết dứt điểm 4 phát hiện P1** (F-01, F-03, F-04, F-05) và có **một quyết định rõ ràng từ Founder về định hướng màu nền** trước khi đầu tư thêm vào visual polish — vì mọi công sức polish thêm trên nền dark-theme hiện tại có thể phải làm lại nếu quyết định cuối cùng là chuyển sang light-theme.
 
 Khuyến nghị: xử lý Sprint 0 (P0/P1) trong 1–3 ngày làm việc, đồng thời đưa mục 23 (7 quyết định) lên Founder/PMO ngay để không chặn tiến độ các sprint tiếp theo. Sau khi Sprint 0 hoàn tất và mục 23.1 (màu nền) có quyết định, Landing Page có thể an toàn gắn domain chính thức và bắt đầu tiếp nhận traffic thật ở quy mô kiểm soát (soft launch), song song với việc triển khai Sprint 1–3 để đạt chất lượng Production đầy đủ.
 
@@ -549,13 +551,13 @@ Khuyến nghị: xử lý Sprint 0 (P0/P1) trong 1–3 ngày làm việc, đồn
    Next.js 16.2.9 (App Router, không phải Pages Router), React 19, TypeScript, Tailwind CSS v4, Framer Motion. Đã xác minh trực tiếp trong `package.json` và cấu trúc `src/app/`.
 
 2. **Landing Page hiện đã hoàn thiện khoảng bao nhiêu phần trăm?**
-   **68–72%** theo đánh giá tổng hợp (mục 19). Nền tảng kỹ thuật và nội dung đã ở mức cao (code sạch, đúng nỗi đau người dùng); phần còn thiếu chủ yếu là 5 phát hiện P1 và 1 quyết định chiến lược về màu nền.
+   **68–72%** theo đánh giá tổng hợp (mục 19). Nền tảng kỹ thuật và nội dung đã ở mức cao (code sạch, đúng nỗi đau người dùng); phần còn thiếu chủ yếu là 4 phát hiện P1 và 1 quyết định chiến lược về màu nền.
 
 3. **Có đủ điều kiện gắn domain chính thức và tiếp nhận người dùng thật chưa?**
    **Chưa nên ngay lập tức.** Cần xử lý xong Sprint 0 (F-01 đến F-04) trước — đặc biệt F-04 (domain hiện không phân giải, ảnh hưởng trực tiếp tới chia sẻ mạng xã hội) và F-03 (sitemap khai báo URL auth-gated). Sau Sprint 0, có thể soft-launch ở quy mô kiểm soát trong khi tiếp tục Sprint 1–3.
 
 4. **Ba vấn đề nghiêm trọng nhất hiện nay là gì?**
-   (a) F-05 — mâu thuẫn chiến lược giữa dark-theme hiện tại và định hướng "nền sáng làm chủ đạo" trong brief audit này. (b) F-01 — lỗi tràn ngang xác nhận trên 6/8 viewport phổ biến. (c) F-02 — CTA phụ "Nhận tài liệu AI" không hoạt động, nằm ngay tại vị trí chuyển đổi quan trọng nhất của trang.
+   (a) F-05 — mâu thuẫn chiến lược giữa dark-theme hiện tại và định hướng "nền sáng làm chủ đạo" trong brief audit này. (b) F-01 — lỗi tràn ngang xác nhận trên 6/8 viewport phổ biến. (c) F-03 — sitemap khai báo ~13+ URL `/portal/*` mà middleware sẽ redirect sang `/login`, lãng phí crawl budget và có nguy cơ bị Search Console gắn cờ cảnh báo.
 
 5. **Hero hiện tại có nói rõ VO DUONG AI là gì không?**
    Có nói khá rõ "đây là gì" và "vấn đề gì" (đúng 2/4 tiêu chí trong khung đánh giá), nhưng **chưa nêu rõ "dành cho ai"** ngay tại Hero — thông tin này chỉ xuất hiện rõ ràng ở AudienceProblem, section thứ 7/12 trên trang.
@@ -570,7 +572,7 @@ Khuyến nghị: xử lý Sprint 0 (P0/P1) trong 1–3 ngày làm việc, đồn
    Không đề xuất bỏ hẳn section nào. Đề xuất **gộp/rút gọn** 4 section đang lặp khái niệm "hệ sinh thái" (EcosystemPillars, Roadmap, TrustStats, Ecosystem solar-system) xuống còn ít hình thức trình bày hơn, và **di chuyển** AudienceProblem + FounderStory lên sớm hơn (mục 5, 7, 20).
 
 9. **Có nội dung quan trọng nào còn thiếu không?**
-   Có: (a) một câu trả lời "dành cho ai" ngay tại Hero; (b) nguồn/ngày cập nhật cho số liệu TrustStats; (c) nội dung thật cho lead magnet "Nhận tài liệu AI".
+   Có: (a) một câu trả lời "dành cho ai" ngay tại Hero; (b) nguồn/ngày cập nhật cho số liệu TrustStats; (c) phê duyệt nội dung thay thế cho nhãn trang trí "Nhận tài liệu AI" (đề xuất: "Công cụ • Prompt • Tài liệu") — *đã xác nhận đây không phải lead magnet, chỉ cần duyệt copy*.
 
 10. **Landing Page nên giữ nền trắng/sáng hay chia nhiều màu?**
     Đây là câu hỏi đã có sẵn câu trả lời rõ trong hiện trạng: Landing Page **không** mắc lỗi "chia mỗi section một màu mạnh khác nhau" — toàn bộ trang nhất quán 1 nền tối (dark navy) duy nhất. Vấn đề thực sự là nền tối này **mâu thuẫn với yêu cầu "nền sáng/trắng làm chủ đạo"** trong brief. Đây là quyết định Founder cần chốt (mục 23.1), không phải lỗi kỹ thuật.
@@ -585,10 +587,10 @@ Khuyến nghị: xử lý Sprint 0 (P0/P1) trong 1–3 ngày làm việc, đồn
     **Chưa hoàn toàn.** Điểm mạnh: OG image động, Twitter Card, robots.txt/sitemap.xml tồn tại đúng cấu trúc. Điểm thiếu: không có canonical URL, không có manifest, chỉ có Person schema (thiếu Organization/WebSite), và quan trọng nhất — domain chính thức dùng cho OG/canonical hiện không phân giải được.
 
 14. **Những lỗi nào phải sửa trước khi chạy quảng bá?**
-    Toàn bộ 5 phát hiện P1 (F-01 đến F-05) — trong đó F-04 (domain chết) đặc biệt quan trọng nếu quảng bá có yếu tố chia sẻ mạng xã hội, vì ảnh preview sẽ không hiển thị.
+    Toàn bộ 4 phát hiện P1 (F-01, F-03, F-04, F-05) — trong đó F-04 (domain chết) đặc biệt quan trọng nếu quảng bá có yếu tố chia sẻ mạng xã hội, vì ảnh preview sẽ không hiển thị.
 
 15. **Có thể đưa Landing Page vào Feature Freeze chưa?**
     Chưa toàn bộ. Có thể freeze các phần không phụ thuộc quyết định màu nền (routing, CTA logic, SEO metadata) ngay, nhưng phần visual cần chờ quyết định F-05.
 
 16. **Sprint triển khai đầu tiên nên gồm chính xác những hạng mục nào?**
-    Sprint 0 theo backlog: F-01 (overflow-hidden cho `PortalPreview.tsx`/`FounderStory.tsx`), F-02 (gắn hành vi hoặc ẩn nút "Nhận tài liệu AI"), F-03 (loại `/portal/*` khỏi sitemap), F-04 (xác nhận tiến độ domain), và trình quyết định F-05 lên Founder song song (không chặn 4 mục còn lại). Chi tiết đầy đủ tại `VO_DUONG_AI_LANDING_PAGE_AUDIT_BACKLOG.md`, Sprint 0.
+    Sprint 0 theo backlog: F-01 (overflow-hidden cho `PortalPreview.tsx`/`FounderStory.tsx`), F-03 (loại `/portal/*` khỏi sitemap), F-04 (xác nhận tiến độ domain), F-02 (sửa affordance nhãn trang trí "Nhận tài liệu AI" — P2, đi kèm vì cùng file, không phải blocker), và trình quyết định F-05 lên Founder song song (không chặn các mục còn lại). Chi tiết đầy đủ tại `VO_DUONG_AI_LANDING_PAGE_AUDIT_BACKLOG.md`, Sprint 0.

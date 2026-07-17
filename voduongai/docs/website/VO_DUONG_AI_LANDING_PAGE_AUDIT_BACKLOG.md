@@ -4,35 +4,37 @@ Tài liệu này là backlog triển khai đi kèm `VO_DUONG_AI_LANDING_PAGE_MAS
 
 **Trạng thái:** Chưa triển khai. Đây là kế hoạch đề xuất, chờ Founder/PMO phê duyệt trước khi bất kỳ sprint nào bắt đầu.
 
+> **Ghi chú cập nhật (PMO Correction, sau bản backlog gốc):** F-02 ("🎁 Nhận tài liệu AI") đã được Founder xác nhận là nhãn trang trí cố ý, không phải CTA/lead magnet — hạ từ P1 xuống P2, phạm vi công việc chỉ còn là sửa affordance (đổi phần tử phi tương tác, bỏ hover/focus), **không** gắn link giả, **không** tạo lead magnet/form/email automation. Nội dung Sprint 0 bên dưới đã được cập nhật theo đúng quyết định này; chưa có code nào được sửa.
+
 ---
 
 ## Sprint 0 — P0/P1 Release Blockers
 
 **Mục tiêu:** Loại bỏ mọi rào cản kỹ thuật chặn việc gắn domain chính thức và tiếp nhận traffic thật ở quy mô kiểm soát.
 
-**Phạm vi:** F-01, F-02, F-03, F-04, và ra quyết định (không triển khai) cho F-05.
+**Phạm vi:** F-01, F-03, F-04 (P1 blockers thật sự) + F-02 (P2, đi kèm vì cùng file `FinalCTA.tsx`, độ phức tạp thấp, không phải blocker) + ra quyết định (không triển khai) cho F-05.
 
 **Danh sách issue:**
 - F-01 — Thêm `overflow-hidden` vào section bao ngoài của `PortalPreview.tsx` và `FounderStory.tsx` để chứa các div glow `-inset-N`, loại bỏ tràn ngang 320–1024px.
-- F-02 — Gắn hành vi thật cho nút "🎁 Nhận tài liệu AI" (form/link/modal) hoặc tạm ẩn nút cho tới khi có nội dung.
+- F-02 *(P2 — không phải blocker, xem ghi chú PMO Correction đầu tài liệu)* — "🎁 Nhận tài liệu AI" là nhãn trang trí cố ý, **không** cần gắn destination/hành vi. Việc cần làm: đổi `<button>` hiện tại sang phần tử phi tương tác (`<span>`/`<div>`), bỏ `hover:bg-red-500`, bỏ khả năng nhận keyboard focus, chỉnh style theo hướng badge/eyebrow thay vì nút bấm. **Không** gắn link giả, **không** tạo lead magnet, **không** xây form, **không** kết nối email automation. Đổi nội dung chữ (đề xuất "Công cụ • Prompt • Tài liệu") là việc **tách riêng**, cần Founder duyệt copy trước, không làm chung với phần sửa markup.
 - F-03 — Loại bỏ toàn bộ URL `/portal/*` khỏi `sitemap.ts` (chỉ giữ route thực sự công khai: `/`, `/about`, `/blogai`, `/contact`, `/privacy`, `/terms`, `/refund-policy`, và các URL blog/tools/prompts/resources công khai không yêu cầu đăng nhập).
 - F-04 — Founder xác nhận tiến độ domain `voduongai.com`; nếu chưa live trong thời gian ngắn, cân nhắc tạm trỏ `siteConfig.url` về domain đang hoạt động để OG/canonical không tham chiếu domain chết.
 
-**Dependency:** Không có dependency chặn — cả 4 issue có thể làm song song, độc lập với nhau.
+**Dependency:** Không có dependency chặn — 4 issue có thể làm song song, độc lập với nhau. Riêng việc đổi **nội dung chữ** của F-02 (không phải phần sửa markup) phụ thuộc Founder duyệt copy trước.
 
 **Acceptance criteria:**
 - Không còn horizontal scroll ở bất kỳ viewport nào trong dải 320–1440px (đo bằng `document.documentElement.scrollWidth === clientWidth`).
-- Không còn CTA nào trên Landing Page thiếu `href`/hành vi khi click.
+- "🎁 Nhận tài liệu AI" không còn là phần tử tương tác (không `<button>`/`<a>`, không hover/focus/pointer-cursor, không nhận keyboard focus) — vẫn giữ nguyên vai trò trang trí, không có destination.
 - `sitemap.xml` không chứa bất kỳ URL nào bị middleware redirect khi truy cập ẩn danh.
 - `og:image`/canonical trỏ về domain đang thực sự phân giải được.
 
 **Rủi ro:** F-04 phụ thuộc hành động ngoài code (cấu hình DNS/Vercel domain) — đội kỹ thuật không tự quyết định được, cần Founder xác nhận trước.
 
-**Ước tính:** S (F-01, F-02, F-03) + phụ thuộc bên ngoài (F-04).
+**Ước tính:** S (F-01, F-02 phần markup, F-03) + phụ thuộc bên ngoài (F-04).
 
 **Cần Founder duyệt trước khi bắt đầu:**
-- F-05 (mục 23.1 báo cáo audit) — quyết định giữ dark-theme hay chuyển light-theme. Sprint 0 **không** chờ quyết định này để bắt đầu (F-01–F-04 độc lập với màu nền), nhưng Sprint 2 không thể bắt đầu nếu chưa có quyết định.
-- Nội dung/lead magnet thật cho F-02.
+- F-05 (mục 23.1 báo cáo audit) — quyết định giữ dark-theme hay chuyển light-theme. Sprint 0 **không** chờ quyết định này để bắt đầu (F-01, F-03, F-04 độc lập với màu nền), nhưng Sprint 2 không thể bắt đầu nếu chưa có quyết định.
+- F-02 phần **nội dung chữ thay thế** ("Công cụ • Prompt • Tài liệu") — cần duyệt trước khi triển khai đổi copy; phần sửa markup/affordance không cần chờ, có thể làm ngay.
 
 ---
 
@@ -186,7 +188,7 @@ Sprint 4 (độc lập, phần CMS phụ thuộc mục 23.7) ┘
 ## Những mục cần Founder duyệt trước khi bắt đầu bất kỳ Sprint nào
 
 Xem đầy đủ tại mục 23 của `VO_DUONG_AI_LANDING_PAGE_MASTER_AUDIT.md`. Tóm tắt theo Sprint:
-- **Trước Sprint 0:** không cần phê duyệt gì thêm ngoài việc đồng ý bắt đầu — F-01/F-02/F-03 là sửa lỗi kỹ thuật thuần tuý.
+- **Trước Sprint 0:** không cần phê duyệt gì thêm ngoài việc đồng ý bắt đầu — F-01/F-03 là sửa lỗi kỹ thuật thuần tuý, phần markup của F-02 là dọn dẹp semantics thuần tuý (nội dung chữ thay thế của F-02 thì chờ duyệt riêng, xem Sprint 0 ở trên).
 - **Trước Sprint 1:** phê duyệt đề xuất cấu trúc mục 20; xác nhận số liệu F-16; xác nhận quy ước tên thương hiệu F-15.
 - **Trước Sprint 2:** **bắt buộc** có quyết định F-05 (màu nền).
 - **Trước Sprint 4 (phần CMS):** xác nhận có muốn đầu tư CMS cho nội dung landing page hay không (mục 23.7).
