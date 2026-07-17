@@ -85,7 +85,7 @@ export function AudienceProblem() {
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
             🎯 Đối tượng & vấn đề
           </span>
-          <h2 className="mt-4 text-2xl font-bold sm:text-3xl md:text-4xl">
+          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
             Nếu bạn đang <span style={{ color: ACCENT }}>gặp những điều này</span>,
             <br />
             bạn đang ở đúng nơi.

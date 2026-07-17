@@ -74,7 +74,10 @@ export function Ecosystem() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
-          <h2 className="text-2xl font-extrabold md:text-3xl">
+          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+            🌌 <span className="text-brand-orange">VO DUONG AI</span>
+          </span>
+          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
             Hệ sinh thái VO DUONG AI
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
@@ -130,7 +133,7 @@ export function Ecosystem() {
                   x2={x}
                   y2={y}
                   vectorEffect="non-scaling-stroke"
-                  stroke={active ? "#FFC57A" : "#5B8CFF"}
+                  stroke={active ? "#FF6B35" : "#5B8CFF"}
                   strokeWidth={active ? 1 : 0.6}
                   strokeLinecap="round"
                   strokeDasharray="2 4"

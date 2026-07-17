@@ -79,8 +79,8 @@ export function EcosystemPillars() {
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
             🌐 Hệ sinh thái
           </span>
-          <h2 className="mt-4 text-3xl font-extrabold sm:text-4xl md:text-5xl">
-            Một hệ sinh thái <span style={{ color: "#F5A623" }}>được kết nối</span>{" "}
+          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
+            Một hệ sinh thái <span className="text-brand-orange">được kết nối</span>{" "}
             để dẫn lối bạn
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-white/50">

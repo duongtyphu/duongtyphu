@@ -17,7 +17,7 @@ export function TrustStats() {
             <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
               🌐 Cộng đồng
             </span>
-            <h2 className="mt-4 text-3xl font-bold sm:text-4xl md:text-5xl">
+            <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
               Bạn <span style={{ color: "#FF6B35" }}>không học một mình</span>
             </h2>
             <p className="mt-3 max-w-md text-sm text-white/50">

@@ -71,8 +71,8 @@ export function Hero() {
         >
           <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-brand-violet">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-amber-400" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-orange opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-orange" />
             </span>
             Thương hiệu cá nhân · Hệ sinh thái AI
           </span>

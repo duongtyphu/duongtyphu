@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Home,
@@ -103,7 +102,7 @@ export function PortalPreview() {
   }, []);
 
   return (
-    <section className="py-9 text-white md:py-12">
+    <section id="trai-nghiem-hoc-vien-ai" className="scroll-mt-24 py-9 text-white md:py-12">
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -112,7 +111,10 @@ export function PortalPreview() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
-          <h2 className="text-2xl font-extrabold md:text-3xl">
+          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+            🧭 Khám phá Học Viện
+          </span>
+          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
             Trải nghiệm bên trong <span className="text-brand-orange">Học viện AI</span>
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
@@ -330,32 +332,6 @@ export function PortalPreview() {
               </motion.div>
             </div>
           </motion.div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="mt-10 flex flex-col items-center gap-3 text-center"
-        >
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/portal/hocvienai"
-              className="inline-flex rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition hover:opacity-90"
-            >
-              Truy cập Học viện
-            </Link>
-            <Link
-              href="/portal/duan-cohoi"
-              className="inline-flex rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-brand-violet hover:text-brand-violet"
-            >
-              Xem kho tài nguyên
-            </Link>
-          </div>
-          <p className="text-xs text-white/50">
-            Miễn phí bắt đầu. Nâng cấp khi bạn cần nhiều tài nguyên chuyên sâu hơn.
-          </p>
         </motion.div>
       </div>
     </section>

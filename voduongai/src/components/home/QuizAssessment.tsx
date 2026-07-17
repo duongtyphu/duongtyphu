@@ -134,13 +134,13 @@ export function QuizAssessment() {
   };
 
   return (
-    <section className="py-7 text-white md:py-9">
+    <section id="danh-gia-nang-luc-ai" className="scroll-mt-24 py-7 text-white md:py-9">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto max-w-2xl text-center">
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
             🧠 Đánh giá năng lực AI
           </span>
-          <h2 className="mt-3.5 text-xl font-extrabold md:text-2xl">
+          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
             Bạn đang ở đâu trong{" "}
             <span style={{ color: ACCENT }}>hành trình AI</span>?
           </h2>

@@ -17,8 +17,7 @@ export function ToolsIUse() {
           <span className="text-brand-orange">thực sự đang dùng</span>
         </h2>
         <p className="mx-auto mt-2 max-w-lg text-white">
-          Không phải danh sách chung chung — đây là những gì tôi đang dùng
-          thật, mỗi ngày.
+          Danh sách những công cụ tôi đang trải nghiệm mỗi ngày
         </p>
       </div>
 

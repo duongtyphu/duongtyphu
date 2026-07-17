@@ -175,7 +175,7 @@ body {
 }
 
 .shimmer-gold {
-  background-image: linear-gradient(100deg, #fef9c3 0%, #ffffff 25%, #fde68a 50%, #ffffff 75%, #fef9c3 100%);
+  background-image: linear-gradient(100deg, #ffe4d6 0%, #ffffff 25%, #ffb199 50%, #ffffff 75%, #ffe4d6 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -2364,8 +2364,8 @@ body {
 }
 
 .ecosystem-tag--gold {
-  background: rgba(245, 166, 35, 0.12);
-  color: #f5a623;
+  background: rgba(249, 115, 22, 0.12);
+  color: #f97316;
 }
 
 .ecosystem-tag--teal {
@@ -2394,8 +2394,8 @@ body {
 }
 
 .ecosystem-card--premium {
-  background: linear-gradient(145deg, rgba(245, 166, 35, 0.06), rgba(139, 92, 246, 0.04));
-  border-color: rgba(245, 166, 35, 0.15);
+  background: linear-gradient(145deg, rgba(249, 115, 22, 0.06), rgba(139, 92, 246, 0.04));
+  border-color: rgba(249, 115, 22, 0.15);
 }
 
 .ecosystem-card--premium .ecosystem-card-stats {
@@ -2412,7 +2412,7 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  background: linear-gradient(135deg, #f5a623, #ff6b35);
+  background: linear-gradient(135deg, #f97316, #ff6b35);
   color: #0a0a0a;
   animation: ecosystem-pulse-badge 2.4s ease-in-out infinite;
 }
@@ -2435,7 +2435,7 @@ body {
 }
 
 .ecosystem-feature-chip strong {
-  color: #f5a623;
+  color: #ff6b35;
   font-weight: 700;
 }
 

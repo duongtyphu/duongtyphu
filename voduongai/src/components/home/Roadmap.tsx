@@ -41,7 +41,7 @@ export function Roadmap() {
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
             🗺️ Lộ trình của bạn
           </span>
-          <h2 className="mt-4 text-3xl font-bold sm:text-4xl md:text-5xl">
+          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
             Từ <span style={{ color: ACCENT }}>tò mò</span> đến{" "}
             <span style={{ color: ACCENT }}>làm chủ AI</span>
           </h2>

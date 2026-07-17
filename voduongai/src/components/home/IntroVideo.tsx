@@ -18,7 +18,7 @@ export function IntroVideo() {
             🎬 Xem ngay
           </span>
 
-          <h2 className="mt-5 text-2xl font-extrabold md:text-4xl">
+          <h2 className="mt-5 text-2xl font-extrabold md:text-3xl">
             Hành trình xây <span className="text-brand-orange">VO DUONG AI</span>
           </h2>
         </div>
@@ -46,7 +46,7 @@ export function IntroVideo() {
                 🎬 Video giới thiệu
               </span>
 
-              <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-orange to-amber-500 shadow-[0_0_50px_10px_rgba(255,122,0,0.4)] transition-transform duration-300 group-hover:scale-110">
+              <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-orange to-orange-600 shadow-[0_0_50px_10px_rgba(255,122,0,0.4)] transition-transform duration-300 group-hover:scale-110">
                 <Play className="h-8 w-8 translate-x-0.5 fill-white" strokeWidth={0} />
               </span>
               <span className="relative text-sm font-medium text-white/70">
@@ -76,7 +76,7 @@ export function IntroVideo() {
         </div>
 
         <div className="mx-auto mt-6 max-w-2xl text-center">
-          <p className="text-sm text-amber-200/80">
+          <p className="text-sm text-orange-200/80">
             💡 Video giới thiệu về hành trình xây dựng hệ sinh thái tri thức AI
           </p>
           <p className="mt-1.5 text-xs text-white/40">
