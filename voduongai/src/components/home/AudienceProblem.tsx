@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 // Unified landing-page accent (orange). The 3 audience cards each get one
 // of the site's existing brand colors (blue/violet/emerald) purely to tell
 // them apart at a glance — not a departure from the orange accent, which
@@ -81,7 +85,13 @@ export function AudienceProblem() {
   return (
     <section className="border-t border-white/5 py-9 text-white md:py-12">
       <div className="mx-auto max-w-6xl px-5">
-        <div className="mx-auto max-w-2xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mx-auto max-w-2xl text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
             🎯 Đối tượng & vấn đề
           </span>
@@ -90,10 +100,16 @@ export function AudienceProblem() {
             <br />
             bạn đang ở đúng nơi.
           </h2>
-        </div>
+        </motion.div>
 
         {/* 3 audience banners */}
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          className="mt-10 grid gap-4 sm:grid-cols-3"
+        >
           {AUDIENCES.map((a) => (
             <div key={a.label} className="audience-card">
               <span
@@ -116,10 +132,16 @@ export function AudienceProblem() {
               </p>
             </div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Problems vs. solution */}
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          className="mt-6 grid gap-5 lg:grid-cols-2"
+        >
           <div className="problem-panel">
             <div className="flex items-center gap-3">
               <span
@@ -197,7 +219,7 @@ export function AudienceProblem() {
               sản số.
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

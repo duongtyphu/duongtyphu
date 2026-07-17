@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
 
@@ -8,7 +11,13 @@ const marqueeTools = [...tools, ...tools];
 export function ToolsIUse() {
   return (
     <section id="cong-cu-toi-dung" className="scroll-mt-24 overflow-hidden py-9 md:py-12">
-      <div className="mx-auto max-w-6xl px-5 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="mx-auto max-w-6xl px-5 text-center"
+      >
         <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
           🛠️ Thực chiến
         </span>
@@ -19,9 +28,15 @@ export function ToolsIUse() {
         <p className="mx-auto mt-2 max-w-lg text-white">
           Danh sách những công cụ tôi đang trải nghiệm mỗi ngày
         </p>
-      </div>
+      </motion.div>
 
-      <div className="tools-marquee mt-10">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+        className="tools-marquee mt-10"
+      >
         <div className="tools-marquee-track gap-4 py-2">
           {marqueeTools.map((t, i) => (
             <div
@@ -46,7 +61,7 @@ export function ToolsIUse() {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

@@ -75,10 +75,10 @@ export function Ecosystem() {
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
-            🌌 <span className="text-brand-orange">VO DUONG AI</span>
+            🌌 VO DUONG AI
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
-            Hệ sinh thái VO DUONG AI
+            Hệ sinh thái <span className="text-brand-orange">VO DUONG AI</span>
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
             Một hệ sinh thái đang vận hành và phát triển — không phải một

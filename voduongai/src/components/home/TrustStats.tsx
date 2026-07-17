@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 const STATS = [
   { value: "10K+", label: "Người theo dõi", sub: "Từ hoạt động thực" },
   { value: "50+", label: "Tài liệu & công cụ", sub: "Sử dụng được ngay" },
@@ -13,7 +17,12 @@ export function TrustStats() {
       <div className="mx-auto max-w-6xl px-5">
         <div className="grid items-center gap-8 md:grid-cols-2">
           {/* Left column */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
               🌐 Cộng đồng
             </span>
@@ -36,10 +45,16 @@ export function TrustStats() {
             <p className="mt-6 text-xs text-white/15">
               📌 Cộng đồng đang phát triển cùng nhau mỗi ngày
             </p>
-          </div>
+          </motion.div>
 
           {/* Right column */}
-          <div className="grid grid-cols-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            className="grid grid-cols-2 gap-4"
+          >
             {STATS.map((s) => (
               <div key={s.label} className="community-stat-card text-center">
                 <div className="stat-number">{s.value}</div>
@@ -47,7 +62,7 @@ export function TrustStats() {
                 <p className="mt-1 text-[10px] text-white/15">{s.sub}</p>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

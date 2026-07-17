@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+
 // Unified landing-page accent (orange), replacing the spec's yellow.
 const ACCENT = "#FF6B35";
 const OUTPUT_COLOR = "#06D6A0";
@@ -37,7 +41,13 @@ export function Roadmap() {
   return (
     <section className="border-t border-white/5 py-9 text-white md:py-12">
       <div className="mx-auto max-w-4xl px-5">
-        <div className="text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
             🗺️ Lộ trình của bạn
           </span>
@@ -48,9 +58,15 @@ export function Roadmap() {
           <p className="mt-3 text-sm text-white/50">
             4 chặng đường – mỗi chặng bạn đạt được một cột mốc cụ thể
           </p>
-        </div>
+        </motion.div>
 
-        <div className="roadmap-glass-card mt-10">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          className="roadmap-glass-card mt-10"
+        >
           {STEPS.map((step) => (
             <div key={step.number} className="roadmap-timeline-item">
               <p className="text-[10px] font-bold uppercase tracking-widest text-white/35">
@@ -70,7 +86,7 @@ export function Roadmap() {
               </p>
             </div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

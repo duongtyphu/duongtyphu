@@ -1,9 +1,18 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export function FinalCTA() {
   return (
     <section id="cta-cuoi" className="relative scroll-mt-24 overflow-hidden py-9 text-white md:py-12">
-      <div className="mx-auto max-w-3xl px-5 text-center">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="mx-auto max-w-3xl px-5 text-center"
+      >
         <h2 className="text-2xl font-extrabold md:text-3xl">
           Bắt đầu hành trình AI của bạn <span className="text-brand-orange">hôm nay</span>
         </h2>
@@ -24,7 +33,7 @@ export function FinalCTA() {
             🎁 Nhận tài liệu AI
           </button>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

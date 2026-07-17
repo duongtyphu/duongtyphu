@@ -136,7 +136,13 @@ export function QuizAssessment() {
   return (
     <section id="danh-gia-nang-luc-ai" className="scroll-mt-24 py-7 text-white md:py-9">
       <div className="mx-auto max-w-6xl px-5">
-        <div className="mx-auto max-w-2xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mx-auto max-w-2xl text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
             🧠 Đánh giá năng lực AI
           </span>
@@ -144,9 +150,15 @@ export function QuizAssessment() {
             Bạn đang ở đâu trong{" "}
             <span style={{ color: ACCENT }}>hành trình AI</span>?
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          className="mt-6 grid gap-5 lg:grid-cols-2"
+        >
           {/* Left: quiz card — layout animates so it grows smoothly once
               the result is appended, instead of everything being
               stretched to equal height upfront. */}
@@ -352,7 +364,7 @@ export function QuizAssessment() {
               </p>
             )}
           </motion.div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

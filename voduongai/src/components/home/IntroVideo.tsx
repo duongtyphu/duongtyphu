@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { Maximize, MoreVertical, Play, Volume2 } from "lucide-react";
 
 // Placeholder intro video — swap this ID via Admin once video management
@@ -13,7 +14,13 @@ export function IntroVideo() {
   return (
     <section className="py-9 text-white md:py-12">
       <div className="mx-auto max-w-4xl px-5">
-        <div className="flex flex-col items-center text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex flex-col items-center text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 backdrop-blur-md">
             🎬 Xem ngay
           </span>
@@ -21,9 +28,15 @@ export function IntroVideo() {
           <h2 className="mt-5 text-2xl font-extrabold md:text-3xl">
             Hành trình xây <span className="text-brand-orange">VO DUONG AI</span>
           </h2>
-        </div>
+        </motion.div>
 
-        <div className="group relative mx-auto mt-9 aspect-video w-full overflow-hidden rounded-[1.2rem] border border-white/12 bg-black/60 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.75)] backdrop-blur-xl md:mt-11">
+        <motion.div
+          initial={{ opacity: 0, y: 32, scale: 0.98 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+          className="group relative mx-auto mt-9 aspect-video w-full overflow-hidden rounded-[1.2rem] border border-white/12 bg-black/60 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.75)] backdrop-blur-xl md:mt-11"
+        >
           {playing ? (
             <iframe
               src={`https://www.youtube.com/embed/${INTRO_YOUTUBE_ID}?autoplay=1&rel=0`}
@@ -73,7 +86,7 @@ export function IntroVideo() {
               </div>
             </button>
           )}
-        </div>
+        </motion.div>
 
         <div className="mx-auto mt-6 max-w-2xl text-center">
           <p className="text-sm text-orange-200/80">
