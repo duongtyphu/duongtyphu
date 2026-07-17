@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import { RevealText } from "@/components/home/RevealText";
 
 const QUESTIONS = [
   {
@@ -140,15 +141,16 @@ export function QuizAssessment() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center"
         >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
             🧠 Đánh giá năng lực AI
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
-            Bạn đang ở đâu trong{" "}
-            <span style={{ color: ACCENT }}>hành trình AI</span>?
+            <RevealText>
+              Bạn đang ở đâu trong <span style={{ color: ACCENT }}>hành trình AI</span>?
+            </RevealText>
           </h2>
         </motion.div>
 
@@ -156,7 +158,7 @@ export function QuizAssessment() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="mt-6 grid gap-5 lg:grid-cols-2"
         >
           {/* Left: quiz card — layout animates so it grows smoothly once

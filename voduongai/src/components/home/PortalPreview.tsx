@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { siteConfig } from "@/lib/site";
+import { RevealText } from "@/components/home/RevealText";
 
 const displayUrl = `${siteConfig.url.replace(/^https?:\/\//, "")}/portal`;
 
@@ -108,14 +109,16 @@ export function PortalPreview() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
             🧭 Khám phá Học Viện
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
-            Trải nghiệm bên trong <span className="text-brand-orange">Học viện AI</span>
+            <RevealText>
+              Trải nghiệm bên trong <span className="text-brand-orange">Học viện AI</span>
+            </RevealText>
           </h2>
           <p className="mt-3 text-white md:whitespace-nowrap">
             Một không gian duy nhất để học AI, khám phá công cụ, lưu trữ tài
@@ -127,7 +130,7 @@ export function PortalPreview() {
           initial={{ opacity: 0, y: 32, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           className="relative mx-auto mt-10 w-full max-w-[1040px] [perspective:1600px] md:mt-14"
         >
           {/* Mesh gradient + glow behind dashboard */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { RevealText } from "@/components/home/RevealText";
 
 const STATS = [
   { value: "10K+", label: "Người theo dõi", sub: "Từ hoạt động thực" },
@@ -21,13 +22,15 @@ export function TrustStats() {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
               🌐 Cộng đồng
             </span>
             <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
-              Bạn <span style={{ color: "#FF6B35" }}>không học một mình</span>
+              <RevealText>
+                Bạn <span style={{ color: "#FF6B35" }}>không học một mình</span>
+              </RevealText>
             </h2>
             <p className="mt-3 max-w-md text-sm text-white/50">
               Tham gia cộng đồng để học hỏi, chia sẻ và cập nhật cùng những
@@ -52,7 +55,7 @@ export function TrustStats() {
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
             className="grid grid-cols-2 gap-4"
           >
             {STATS.map((s) => (

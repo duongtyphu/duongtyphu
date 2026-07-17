@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { RevealText } from "@/components/home/RevealText";
 
 type TagColor = "gold" | "teal" | "violet" | "coral";
 
@@ -73,15 +74,17 @@ export function EcosystemPillars() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
             🌐 Hệ sinh thái
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
-            Một hệ sinh thái <span className="text-brand-orange">được kết nối</span>{" "}
-            để dẫn lối bạn
+            <RevealText>
+              Một hệ sinh thái <span className="text-brand-orange">được kết nối</span> để dẫn lối
+              bạn
+            </RevealText>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-white/50">
             5 +1 trụ cột – mỗi trụ cột là một mảnh ghép trong hành trình làm chủ

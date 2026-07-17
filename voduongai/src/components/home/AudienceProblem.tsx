@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { RevealText } from "@/components/home/RevealText";
 
 // Unified landing-page accent (orange). The 3 audience cards each get one
 // of the site's existing brand colors (blue/violet/emerald) purely to tell
@@ -89,16 +90,18 @@ export function AudienceProblem() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center"
         >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
             🎯 Đối tượng & vấn đề
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
-            Nếu bạn đang <span style={{ color: ACCENT }}>gặp những điều này</span>,
-            <br />
-            bạn đang ở đúng nơi.
+            <RevealText>
+              Nếu bạn đang <span style={{ color: ACCENT }}>gặp những điều này</span>,
+              <br />
+              bạn đang ở đúng nơi.
+            </RevealText>
           </h2>
         </motion.div>
 
@@ -107,7 +110,7 @@ export function AudienceProblem() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="mt-10 grid gap-4 sm:grid-cols-3"
         >
           {AUDIENCES.map((a) => (
@@ -139,7 +142,7 @@ export function AudienceProblem() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           className="mt-6 grid gap-5 lg:grid-cols-2"
         >
           <div className="problem-panel">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Maximize, MoreVertical, Play, Volume2 } from "lucide-react";
+import { RevealText } from "@/components/home/RevealText";
 
 // Placeholder intro video — swap this ID via Admin once video management
 // for the homepage ships. For now it's a hardcoded constant.
@@ -18,7 +19,7 @@ export function IntroVideo() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center text-center"
         >
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 backdrop-blur-md">
@@ -26,7 +27,9 @@ export function IntroVideo() {
           </span>
 
           <h2 className="mt-5 text-2xl font-extrabold md:text-3xl">
-            Hành trình xây <span className="text-brand-orange">VO DUONG AI</span>
+            <RevealText>
+              Hành trình xây <span className="text-brand-orange">VO DUONG AI</span>
+            </RevealText>
           </h2>
         </motion.div>
 
@@ -34,7 +37,7 @@ export function IntroVideo() {
           initial={{ opacity: 0, y: 32, scale: 0.98 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.7, ease: "easeOut", delay: 0.1 }}
+          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="group relative mx-auto mt-9 aspect-video w-full overflow-hidden rounded-[1.2rem] border border-white/12 bg-black/60 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.75)] backdrop-blur-xl md:mt-11"
         >
           {playing ? (

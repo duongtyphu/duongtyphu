@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
+import { RevealText } from "@/components/home/RevealText";
 
 // Duplicated once so the marquee track can loop seamlessly at -50%.
 const marqueeTools = [...tools, ...tools];
@@ -15,15 +16,16 @@ export function ToolsIUse() {
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto max-w-6xl px-5 text-center"
       >
         <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
           🛠️ Thực chiến
         </span>
         <h2 className="mt-4 text-2xl font-extrabold text-white md:text-3xl">
-          Những công cụ tôi{" "}
-          <span className="text-brand-orange">thực sự đang dùng</span>
+          <RevealText>
+            Những công cụ tôi <span className="text-brand-orange">thực sự đang dùng</span>
+          </RevealText>
         </h2>
         <p className="mx-auto mt-2 max-w-lg text-white">
           Danh sách những công cụ tôi đang trải nghiệm mỗi ngày
@@ -34,7 +36,7 @@ export function ToolsIUse() {
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
         className="tools-marquee mt-10"
       >
         <div className="tools-marquee-track gap-4 py-2">

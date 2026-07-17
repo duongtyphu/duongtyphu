@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { HeroNeuralBackground } from "@/components/home/HeroNeuralBackground";
 import { HeroQuestionBubbles } from "@/components/home/HeroQuestionBubbles";
@@ -56,12 +56,20 @@ const vortexQuestions = [
 ];
 
 export function Hero() {
+  // Parallax: the background (neural mesh + glow orbs) drifts slower than
+  // the foreground content as the hero scrolls out of view, so the two
+  // layers separate a little instead of moving as one flat sheet.
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 800], [0, 180]);
+
   return (
     <section className="relative overflow-hidden pt-16 pb-10 text-white md:pt-20 md:pb-12">
-      <HeroNeuralBackground className="absolute inset-0 -z-10" />
-      <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--a" />
-      <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--b" />
-      <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--c" />
+      <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
+        <HeroNeuralBackground className="absolute inset-0" />
+        <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--a" />
+        <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--b" />
+        <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--c" />
+      </motion.div>
 
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1.2fr_1fr] md:items-center">
         <motion.div

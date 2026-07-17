@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { RevealText } from "@/components/home/RevealText";
 
 export function FounderStory() {
   return (
@@ -11,7 +12,7 @@ export function FounderStory() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="grid gap-10 md:grid-cols-[minmax(0,520px)_1fr] md:items-center"
         >
           <div className="relative mx-auto flex w-full max-w-[520px] flex-col">
@@ -63,7 +64,7 @@ export function FounderStory() {
 
           <div className="rounded-[24px] border border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] backdrop-blur md:p-8">
             <h2 className="text-xl font-extrabold md:text-2xl">
-              Tại sao tôi xây Võ Đương AI?
+              <RevealText>Tại sao tôi xây Võ Đương AI?</RevealText>
             </h2>
 
             <div className="mt-5 space-y-3.5 text-sm leading-relaxed text-white">
