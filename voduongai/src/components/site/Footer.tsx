@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { SiteSettings } from "@/lib/site-settings";
 import { brandMain, brandAccent } from "@/lib/brand-name";
 
@@ -108,6 +109,13 @@ export function Footer({ settings }: { settings: SiteSettings }) {
               sinh thái duy nhất, đồng hành cùng bạn từ người mới đến nhà đầu
               tư thực chiến trong kỷ nguyên mới.
             </p>
+            <Image
+              src="/images/ai-uy-tin-badge.png"
+              alt="Chứng nhận AI Uy Tín — Học thật, giá trị thật"
+              width={112}
+              height={112}
+              className="mt-3 h-28 w-28"
+            />
           </div>
 
           {columns.map((col) => (
