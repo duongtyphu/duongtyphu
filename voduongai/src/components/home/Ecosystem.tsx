@@ -67,7 +67,9 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
 
   return (
     <section className={`relative isolate overflow-hidden py-12 md:py-16 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}>
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_30%,rgba(37,99,235,0.12),transparent_60%)]" />
+      {isLight && (
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_30%,rgba(37,99,235,0.12),transparent_60%)]" />
+      )}
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

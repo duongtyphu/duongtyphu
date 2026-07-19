@@ -17,14 +17,6 @@ export function FounderStory({ variant = "dark" }: { variant?: "dark" | "light" 
           className="grid gap-10 md:grid-cols-[minmax(0,520px)_1fr] md:items-center"
         >
           <div className="relative mx-auto flex w-full max-w-[520px] flex-col">
-            {!isLight && (
-              <>
-                <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/25 blur-3xl" />
-                <div className="absolute -inset-16 -z-10 rounded-[56px] bg-brand-violet/20 blur-[80px]" />
-                <div className="absolute -inset-8 -z-10 rounded-[44px] bg-brand-orange/10 blur-2xl" />
-              </>
-            )}
-
             <div
               className={`relative w-full overflow-hidden rounded-[36px] border backdrop-blur ${
                 isLight
