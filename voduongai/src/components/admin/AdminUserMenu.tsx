@@ -43,7 +43,7 @@ export function AdminUserMenu({ email }: { email: string }) {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label="Tài khoản"
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1.5 text-sm font-semibold text-white transition hover:border-brand-violet"
+        className="flex items-center gap-2 rounded-full border border-gray-200 bg-white px-2 py-1.5 text-sm font-semibold text-gray-900 transition hover:border-brand-blue"
       >
         <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-orange/20 text-xs font-bold text-brand-orange">
           {initial}
@@ -54,26 +54,26 @@ export function AdminUserMenu({ email }: { email: string }) {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-white/10 bg-[#0B1F4D] p-3 shadow-xl"
+          className="absolute right-0 top-full z-50 mt-2 w-60 rounded-2xl border border-gray-200 bg-white p-3 shadow-xl"
         >
-          <p className="truncate px-1 text-sm font-bold text-white">Quản trị viên</p>
-          <p className="truncate px-1 text-xs text-white/60">{email}</p>
+          <p className="truncate px-1 text-sm font-bold text-gray-900">Quản trị viên</p>
+          <p className="truncate px-1 text-xs text-gray-500">{email}</p>
 
-          <div className="mt-3 space-y-1 border-t border-white/10 pt-3">
+          <div className="mt-3 space-y-1 border-t border-gray-200 pt-3">
             <Link
               href="/portal"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-white hover:bg-white/10"
+              className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-gray-900 hover:bg-gray-50"
             >
-              <ExternalLink className="h-4 w-4 text-white/60" />
+              <ExternalLink className="h-4 w-4 text-gray-400" />
               Về trang Portal
             </Link>
             <button
               type="button"
               role="menuitem"
               onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-white/70 hover:bg-red-400/10 hover:text-red-300"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-gray-500 hover:bg-red-50 hover:text-red-600"
             >
               <LogOut className="h-4 w-4" />
               Đăng xuất

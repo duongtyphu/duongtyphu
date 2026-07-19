@@ -68,7 +68,7 @@ export function AdminSearch() {
   return (
     <>
       <div ref={wrapRef} className="relative hidden w-full max-w-xs md:block">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
           type="text"
           value={query}
@@ -77,7 +77,7 @@ export function AdminSearch() {
           onKeyDown={handleKeyDown}
           placeholder="Tìm trong Admin..."
           aria-label="Tìm kiếm toàn Admin"
-          className="w-full rounded-full border border-white/10 bg-white/5 py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/40 focus:border-brand-blue/50 focus:outline-none"
+          className="gemos-search-glass w-full rounded-full py-2 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none"
         />
         {open && query.trim() && (
           <AdminSearchDropdown results={results} activeIndex={activeIndex} onSelect={() => setOpen(false)} />
@@ -89,16 +89,16 @@ export function AdminSearch() {
         aria-label="Tìm kiếm"
         title="Tìm kiếm"
         onClick={() => setMobileOpen(true)}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition hover:border-brand-blue/40 hover:text-white md:hidden"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-gray-50 text-gray-700 transition hover:border-brand-blue/40 hover:text-gray-900 md:hidden"
       >
         <Search className="h-4 w-4" />
       </button>
 
       {mobileOpen && (
-        <div className="fixed inset-0 z-[60] bg-[#06142D]/98 p-4 md:hidden">
+        <div className="fixed inset-0 z-[60] bg-brand-navy/98 p-4 md:hidden">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <input
                 autoFocus
                 type="text"
@@ -107,7 +107,7 @@ export function AdminSearch() {
                 onKeyDown={handleKeyDown}
                 placeholder="Tìm trong Admin..."
                 aria-label="Tìm kiếm toàn Admin"
-                className="w-full rounded-full border border-white/10 bg-white/5 py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-white/40 focus:border-brand-blue/50 focus:outline-none"
+                className="w-full rounded-full border border-gray-200 bg-gray-50 py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 focus:border-brand-blue/50 focus:outline-none"
               />
             </div>
             <button
@@ -117,7 +117,7 @@ export function AdminSearch() {
                 setMobileOpen(false);
                 setQuery("");
               }}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 text-white/70"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-600"
             >
               <X className="h-4 w-4" />
             </button>
@@ -153,8 +153,8 @@ function AdminSearchDropdown({
   static?: boolean;
 }) {
   const wrapperClass = isStatic
-    ? "rounded-2xl border border-white/10 bg-[#0B1F4D]/95 p-2"
-    : "absolute left-0 top-full z-50 mt-2 w-[24rem] max-w-[90vw] rounded-2xl border border-white/10 bg-[#0B1F4D]/98 p-2 shadow-2xl backdrop-blur-md max-h-[70vh] overflow-y-auto";
+    ? "rounded-2xl border border-gray-200 bg-white/95 p-2"
+    : "absolute left-0 top-full z-50 mt-2 w-[24rem] max-w-[90vw] rounded-2xl border border-gray-200 bg-white/98 p-2 shadow-2xl backdrop-blur-md max-h-[70vh] overflow-y-auto";
 
   const grouped = results.reduce<Record<string, AdminSearchResult[]>>((acc, r) => {
     acc[r.group] = acc[r.group] || [];
@@ -165,11 +165,11 @@ function AdminSearchDropdown({
   return (
     <div className={wrapperClass}>
       {results.length === 0 ? (
-        <p className="p-4 text-center text-sm text-white/50">Không tìm thấy kết quả phù hợp.</p>
+        <p className="p-4 text-center text-sm text-gray-500">Không tìm thấy kết quả phù hợp.</p>
       ) : (
         Object.entries(grouped).map(([group, items]) => (
           <div key={group} className="mb-1">
-            <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-wider text-white/40">{group}</p>
+            <p className="px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-wider text-gray-400">{group}</p>
             {items.map((item) => {
               const flatIndex = results.indexOf(item);
               return (
@@ -177,8 +177,8 @@ function AdminSearchDropdown({
                   key={item.id}
                   href={item.href}
                   onClick={onSelect}
-                  className={`block rounded-lg px-3 py-2 text-sm font-semibold text-white transition ${
-                    flatIndex === activeIndex ? "bg-white/10" : "hover:bg-white/5"
+                  className={`block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 transition ${
+                    flatIndex === activeIndex ? "bg-gray-100" : "hover:bg-gray-50"
                   }`}
                 >
                   {item.title}
