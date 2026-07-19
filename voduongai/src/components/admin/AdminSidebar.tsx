@@ -44,12 +44,14 @@ import {
   MessageCircle,
   Settings,
   ChevronDown,
+  Bot,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
 
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
+  "/admin/companion": Bot,
   "/admin/portal-builder": LayoutPanelLeft,
   "/admin/portal-builder/start-here": Rocket,
   "/admin/portal-builder/today-actions": ListChecks,

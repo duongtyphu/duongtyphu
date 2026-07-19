@@ -8,7 +8,13 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
  * riêng, không thêm trước để tránh link chết trong chính sidebar.
  */
 export const adminNavGroups: AdminNavGroup[] = [
-  { group: null, items: [{ label: "Tổng quan", href: "/admin/dashboard" }] },
+  {
+    group: null,
+    items: [
+      { label: "Tổng quan", href: "/admin/dashboard" },
+      { label: "Companion", href: "/admin/companion" },
+    ],
+  },
   {
     group: "Nội dung",
     items: [

@@ -3,20 +3,10 @@
 import { useEffect, useState } from "react";
 import { useCollection, genId } from "@/lib/admin/store";
 import { SlideOver } from "@/components/admin/ui/SlideOver";
-import type { FieldConfig } from "@/lib/admin/fields";
+import { FieldInput } from "@/components/admin/FieldInput";
+import { emptyFromFields, type FieldConfig } from "@/lib/admin/fields";
 
 type BaseItem = { id: string };
-
-function emptyFromFields(fields: FieldConfig[]): Record<string, unknown> {
-  const obj: Record<string, unknown> = {};
-  for (const f of fields) {
-    if (f.type === "boolean") obj[f.key] = false;
-    else if (f.type === "tags") obj[f.key] = [];
-    else if (f.type === "number") obj[f.key] = 0;
-    else obj[f.key] = f.options?.[0] ?? "";
-  }
-  return obj;
-}
 
 /**
  * Slide-over sửa/thêm 1 dòng — "use client", dùng useCollection().add/update
@@ -95,71 +85,7 @@ export function DataTableRowPanel<T extends BaseItem>({
               {f.label}
               {f.required && <span className="text-red-500"> *</span>}
             </label>
-
-            {f.type === "textarea" && (
-              <textarea
-                value={String(form[f.key] ?? "")}
-                onChange={(e) => setField(f.key, e.target.value)}
-                required={f.required}
-                placeholder={f.placeholder}
-                rows={4}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-blue focus:outline-none"
-              />
-            )}
-
-            {f.type === "select" && (
-              <select
-                value={String(form[f.key] ?? "")}
-                onChange={(e) => setField(f.key, e.target.value)}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-blue focus:outline-none"
-              >
-                {(f.options ?? []).map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
-            )}
-
-            {f.type === "boolean" && (
-              <input
-                type="checkbox"
-                checked={Boolean(form[f.key])}
-                onChange={(e) => setField(f.key, e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300"
-              />
-            )}
-
-            {f.type === "number" && (
-              <input
-                type="number"
-                value={Number(form[f.key] ?? 0)}
-                onChange={(e) => setField(f.key, Number(e.target.value))}
-                required={f.required}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-blue focus:outline-none"
-              />
-            )}
-
-            {f.type === "tags" && (
-              <input
-                type="text"
-                value={Array.isArray(form[f.key]) ? (form[f.key] as string[]).join(", ") : ""}
-                onChange={(e) => setField(f.key, e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
-                placeholder={f.placeholder ?? "Ngăn cách bằng dấu phẩy"}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-blue focus:outline-none"
-              />
-            )}
-
-            {(f.type === "text" || f.type === "date") && (
-              <input
-                type={f.type === "date" ? "date" : "text"}
-                value={String(form[f.key] ?? "")}
-                onChange={(e) => setField(f.key, e.target.value)}
-                required={f.required}
-                placeholder={f.placeholder}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-brand-blue focus:outline-none"
-              />
-            )}
+            <FieldInput field={f} value={form[f.key]} onChange={(value) => setField(f.key, value)} />
           </div>
         ))}
 

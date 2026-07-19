@@ -64,6 +64,22 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "home-cards": "home_cards",
   projects: "projects",
   "founder-profile": "founder_profile",
+
+  // Phase 7 — Companion Admin CMS (AI Mentor). companion_persona/
+  // companion_conversation_strategy đã tồn tại từ trước (0 dòng, mồ côi —
+  // xem CLAUDE.md), tái sử dụng lại đây. 9 bảng còn lại mới, tạo qua
+  // supabase-phase7-companion-admin.sql (chưa apply, chờ Founder duyệt).
+  "companion-persona": "companion_persona",
+  "companion-conversation-strategy": "companion_conversation_strategy",
+  "companion-conversation-examples": "companion_conversation_examples",
+  "companion-knowledge-refs": "companion_knowledge_refs",
+  "companion-memory-policy": "companion_memory_policy",
+  "companion-coaching-strategy": "companion_coaching_strategy",
+  "companion-training-scenarios": "companion_training_scenarios",
+  "companion-capabilities": "companion_capabilities",
+  "companion-safety-rules": "companion_safety_rules",
+  "companion-test-sessions": "companion_test_sessions",
+  "companion-versions": "companion_versions",
 };
 
 export function tableForCollection(key: string): string | null {
