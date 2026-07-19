@@ -59,6 +59,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
 
   // Phase 5 — Services (was localStorage-only)
   services: "services",
+
+  // Phase 6 — Admin rebuild: home_cards, projects, founder_profile
+  "home-cards": "home_cards",
+  projects: "projects",
+  "founder-profile": "founder_profile",
 };
 
 export function tableForCollection(key: string): string | null {
