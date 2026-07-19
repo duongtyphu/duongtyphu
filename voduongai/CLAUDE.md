@@ -1,10 +1,21 @@
 @AGENTS.md
 
+## Stack
+- Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
+- React 19, TypeScript
+- Tailwind CSS v4 — token màu/spacing khai báo trong `app/globals.css` qua `@theme`
+- Framer Motion cho animation
+- Supabase làm backend cho admin + portal (đã có sẵn tầng dữ liệu đang chạy,
+  xem mục "Tầng dữ liệu hiện có" bên dưới)
+
 ## Nguyên tắc giao diện Admin
 
 Admin mới (`src/app/admin/**`, `src/components/admin/**`) phải dùng **NỀN
 SÁNG, giống hệt `/portal`** — không dùng nền tối navy (đó là thiết kế Admin
-cũ, đã bỏ). Màu nhấn CTA chính vẫn là `brand-blue`.
+cũ, đã bỏ). Màu nhấn CTA chính vẫn là `brand-blue`. Trước khi build bất kỳ
+trang/component UI nào trong `/admin`, luôn đọc lại component thật tương ứng
+ở `/portal` để lấy đúng class Tailwind/bố cục/token — luôn dùng class
+Tailwind token có sẵn, không viết hex thô.
 
 - **Nền chính (background của toàn shell):** tái sử dụng thẳng component
   `<GemBackground />` (`src/components/portal/ui/GemBackground.tsx`) — render
@@ -21,9 +32,7 @@ cũ, đã bỏ). Màu nhấn CTA chính vẫn là `brand-blue`.
   `backdrop-filter: blur(18px)` + `border-bottom: #E2E8F0` (đúng như
   `TopbarGlass.tsx`).
 - **Màu CTA/nhấn chính:** `--color-brand-blue` (`#2563EB`) — dùng qua
-  `bg-brand-blue` / `text-brand-blue` / `border-brand-blue`. Không đổi so
-  với quyết định trước (căn cứ grep 2026-07-19: ~35 chỗ trong `/admin/`,
-  ~70 chỗ trong `/portal/` dùng đúng token này cho CTA).
+  `bg-brand-blue` / `text-brand-blue` / `border-brand-blue`.
 - **`gemos-bg` (qua `<GemBackground />`) LÀ nền sáng chủ đạo của toàn bộ
   `/portal`** — không phải một phần của "tiểu hệ thống styling card", mà là
   cơ chế tạo nền thật (phủ lên `.mesh-navy` tối ở layout gốc) cho mọi route
@@ -48,3 +57,37 @@ sản phẩm (trừ Landing/marketing) là sáng, không phải navy. Quyết đ
 
 Nếu Admin cần thêm 1 sắc thái chưa có token/class (ví dụ nền phụ nhạt hơn),
 phải hỏi trước — không tự bịa hex mới.
+
+## Tầng dữ liệu hiện có — QUAN TRỌNG, không xây trùng
+
+Dự án ĐÃ CÓ SẴN 1 tầng dữ liệu admin↔portal đang chạy thật, không phải xây
+lại từ đầu:
+- `src/lib/admin/store.ts` (hook `useCollection`) — Portal gọi hook này để
+  đọc dữ liệu do admin quản lý.
+- `src/lib/admin/supabaseCollections.ts`, `requireAdmin.ts`,
+  `collectionValidation.ts` — tầng backend mà `useCollection` gọi tới qua
+  `src/app/api/admin/collections/**`.
+- 14+ file `/portal` đang phụ thuộc trực tiếp vào chuỗi này: `tools`,
+  `templates`, `digital-assets`, `affiliate-hub`, `checklists`,
+  `duan-cohoi/bai-viet`, và các component `AdminPromptsSection`,
+  `AdminServicesSection`, `AdminRoadmapSection`, `NotificationTicker`,
+  `DigitalAssetProjectCard`.
+- **TUYỆT ĐỐI KHÔNG xoá/sửa 4 file trên khi rebuild admin** — chỉ xây UI mới
+  phía trên tầng dữ liệu này.
+- `src/middleware.ts` xử lý chung route `/admin/*` và `/portal/*` — chỉ sửa
+  phần liên quan `/admin` khi cần, không đụng phần `/portal`.
+
+## Cấu trúc dự án
+- Landing page: `src/app/page.tsx` + `src/components/home/**`
+- Portal: `src/app/portal/**` + `src/components/portal/**`
+- Admin: `src/app/admin/**` (đã xoá phần UI cũ ở nhánh `admin-rebuild`, giữ
+  nguyên tầng dữ liệu ở mục "Tầng dữ liệu hiện có" bên trên)
+
+## Quy ước dữ liệu
+- Mọi bảng nội dung Supabase MỚI: `id`, `title`, `order_index`, `status`,
+  `created_at`, `updated_at` (bảng đã có sẵn qua `supabaseCollections.ts` giữ
+  nguyên cấu trúc hiện tại, không đổi để tránh vỡ Portal).
+- Ghi dữ liệu dùng Server Actions (`"use server"`) cho phần build mới; phần
+  cũ đã có API route riêng (`/api/admin/collections/**`) thì giữ nguyên,
+  không viết lại trừ khi thật cần.
+- Bảng `transactions` (nếu có): CHỈ ĐỌC trong admin.
