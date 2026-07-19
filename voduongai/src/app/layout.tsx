@@ -4,7 +4,6 @@ import { cookies } from "next/headers";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { AntiCopy } from "@/components/site/AntiCopy";
 import { BackToTop } from "@/components/site/BackToTop";
 import { ChromeGate } from "@/components/site/ChromeGate";
 import { LandingThemeProvider } from "@/components/site/LandingThemeProvider";
@@ -97,7 +96,6 @@ export default async function RootLayout({
           </>
         )}
         <div className="mesh-navy fixed inset-0 -z-10" aria-hidden="true" />
-        <AntiCopy />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
