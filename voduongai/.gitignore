@@ -47,3 +47,6 @@ yarn-error.log*
 # Supabase local
 supabase/.branches
 supabase/.temp
+
+# Local DB backups — chứa dữ liệu thật, không commit
+backups/
