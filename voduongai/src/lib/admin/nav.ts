@@ -16,4 +16,20 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Trang chủ Học viện", href: "/admin/home-cards" },
     ],
   },
+  {
+    // Thứ tự bám theo đúng thứ tự hiển thị của hub /portal/ckos
+    // (getKnowledgeCategories()): Prompt, Workflow(SOP), Resource — sau đó
+    // nối thêm Template/Ebook/Checklist (cùng họ schema AdminResource,
+    // không có card riêng trên hub nhưng có bảng Supabase + route quản lý
+    // riêng).
+    group: "Hệ tri thức (CKOS)",
+    items: [
+      { label: "Prompt", href: "/admin/ckos/prompts" },
+      { label: "SOP / Workflow", href: "/admin/ckos/sop" },
+      { label: "Resource", href: "/admin/ckos/resources" },
+      { label: "Template", href: "/admin/ckos/templates" },
+      { label: "Ebook", href: "/admin/ckos/ebooks" },
+      { label: "Checklist", href: "/admin/ckos/checklists" },
+    ],
+  },
 ];

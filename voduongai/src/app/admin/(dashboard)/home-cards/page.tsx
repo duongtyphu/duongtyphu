@@ -1,6 +1,7 @@
 "use client";
 
 import { VisualEditor } from "@/components/admin/VisualEditor";
+import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { FieldConfig } from "@/lib/admin/fields";
 
 type HomeCard = {
@@ -32,27 +33,20 @@ const fields: FieldConfig[] = [
 
 export default function AdminHomeCardsPage() {
   return (
-    // Khí quyển riêng của Home ("home-atmosphere-bg", globals.css) xếp chồng
-    // lên GemBackground của AdminShell — đúng cách /portal/page.tsx (trang
-    // Home thật) đang làm, để tông nền khớp Portal thay vì chỉ có gemos-bg
-    // xám lạnh. -m-6/p-6 khớp đúng padding p-6 của <main> trong AdminShell.
-    <div className="relative -m-6 min-h-full overflow-hidden">
-      <div className="home-atmosphere-bg" aria-hidden />
-      <div className="relative z-10 p-6">
-        <VisualEditor<HomeCard>
-          collectionKey="home-cards"
-          title="Trang chủ Học viện"
-          itemNoun="thẻ"
-          fields={fields}
-          renderCard={(item) => (
-            <div>
-              <p className="text-sm font-bold text-gray-900">{item.title}</p>
-              <p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.description}</p>
-              <p className="mt-1.5 text-[11px] font-semibold text-brand-blue">{item.href}</p>
-            </div>
-          )}
-        />
-      </div>
-    </div>
+    <AdminAtmosphere atmosphereClassName="home-atmosphere-bg">
+      <VisualEditor<HomeCard>
+        collectionKey="home-cards"
+        title="Trang chủ Học viện"
+        itemNoun="thẻ"
+        fields={fields}
+        renderCard={(item) => (
+          <div>
+            <p className="text-sm font-bold text-gray-900">{item.title}</p>
+            <p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.description}</p>
+            <p className="mt-1.5 text-[11px] font-semibold text-brand-blue">{item.href}</p>
+          </div>
+        )}
+      />
+    </AdminAtmosphere>
   );
 }
