@@ -66,10 +66,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
   const activeIndex = hovered;
 
   return (
-    <section className={`relative isolate overflow-hidden py-12 md:py-16 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}>
-      {isLight && (
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_30%,rgba(37,99,235,0.12),transparent_60%)]" />
-      )}
+    <section className={`relative isolate overflow-hidden py-12 md:py-16 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -80,7 +77,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
         >
           <span
             className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
-              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
             }`}
           >
             🌌 VO DUONG AI
