@@ -1,17 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Maximize, MoreVertical, Play, Volume2 } from "lucide-react";
 import { RevealText } from "@/components/home/RevealText";
 
 // Placeholder intro video — swap this ID via Admin once video management
 // for the homepage ships. For now it's a hardcoded constant.
-const INTRO_YOUTUBE_ID = "L4DZsW6OCpg";
+const INTRO_YOUTUBE_ID = "5eJK7AZi6ZA";
 
 export function IntroVideo({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
-  const [playing, setPlaying] = useState(false);
 
   return (
     <section className={`py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
@@ -43,57 +40,15 @@ export function IntroVideo({ variant = "dark" }: { variant?: "dark" | "light" })
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          className="group relative mx-auto mt-9 aspect-video w-full overflow-hidden rounded-[1.2rem] border border-white/12 bg-black/60 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.75)] backdrop-blur-xl md:mt-11"
+          className="relative mx-auto mt-9 aspect-video w-full overflow-hidden rounded-[1.2rem] border border-white/12 bg-black/60 shadow-[0_50px_120px_-40px_rgba(0,0,0,0.75)] backdrop-blur-xl md:mt-11"
         >
-          {playing ? (
-            <iframe
-              src={`https://www.youtube.com/embed/${INTRO_YOUTUBE_ID}?autoplay=1&rel=0`}
-              title="Hành trình xây VO DUONG AI"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="absolute inset-0 h-full w-full"
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setPlaying(true)}
-              className="absolute inset-0 flex h-full w-full flex-col items-center justify-center gap-4"
-              aria-label="Phát video Hành trình xây VO DUONG AI"
-            >
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-lg font-semibold text-white/10 md:text-2xl"
-              >
-                🎬 Video giới thiệu
-              </span>
-
-              <span className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-orange to-orange-600 shadow-[0_0_50px_10px_rgba(255,122,0,0.4)] transition-transform duration-300 group-hover:scale-110">
-                <Play className="h-8 w-8 translate-x-0.5 fill-white" strokeWidth={0} />
-              </span>
-              <span className="relative text-sm font-medium text-white/70">
-                Nhấn để xem video
-              </span>
-
-              {/* Decorative fake video-control chrome — matches the design
-                  reference, purely visual until the real player takes over. */}
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-3">
-                <div className="h-1 w-full rounded-full bg-white/15">
-                  <div className="h-full w-0 rounded-full bg-white/40" />
-                </div>
-                <div className="mt-2 flex items-center justify-between text-white/40">
-                  <div className="flex items-center gap-3">
-                    <Play className="h-3.5 w-3.5" strokeWidth={2} />
-                    <span className="text-[11px]">0:00</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Volume2 className="h-3.5 w-3.5" strokeWidth={2} />
-                    <Maximize className="h-3.5 w-3.5" strokeWidth={2} />
-                    <MoreVertical className="h-3.5 w-3.5" strokeWidth={2} />
-                  </div>
-                </div>
-              </div>
-            </button>
-          )}
+          <iframe
+            src={`https://www.youtube.com/embed/${INTRO_YOUTUBE_ID}?autoplay=1&mute=1&playsinline=1&rel=0`}
+            title="Hành trình xây VO DUONG AI"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="absolute inset-0 h-full w-full"
+          />
         </motion.div>
 
         <div className="mx-auto mt-6 max-w-2xl text-center">
