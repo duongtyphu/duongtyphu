@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { cookies } from "next/headers";
 import "./globals.css";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -54,6 +55,8 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const settings = await getSiteSettings();
+  const cookieStore = await cookies();
+  const initialTheme = cookieStore.get("vdai-landing-theme")?.value === "dark" ? "dark" : "light";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -99,7 +102,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <LandingThemeProvider>
+        <LandingThemeProvider initialTheme={initialTheme}>
           <ChromeGate header={<Header settings={settings} />} footer={<Footer settings={settings} />}>
             {children}
           </ChromeGate>
