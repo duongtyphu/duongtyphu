@@ -1,37 +1,32 @@
-import { headers } from "next/headers";
+import { getSupabaseAdmin } from "@/lib/supabase";
+import { tableForCollection } from "@/lib/admin/supabaseCollections";
+import { requireMember } from "@/lib/admin/requireAdmin";
 
 /**
- * Base URL của chính deployment đang chạy — không hardcode domain nào.
- * Trên Vercel (Preview lẫn Production), `VERCEL_URL` luôn đúng domain thật
- * của deployment hiện tại, tự khác nhau giữa các môi trường. Fallback (local
- * `next dev`/`next start`, hoặc self-host ngoài Vercel) suy ra từ header của
- * chính request đang xử lý.
- */
-async function getBaseUrl() {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? (process.env.NODE_ENV === "production" ? "https" : "http");
-  return `${proto}://${host}`;
-}
-
-/**
- * Server-side fetch tới /api/admin/collections/[table] — dùng trong
- * Server Component (vd. DataTable), forward cookie phiên đăng nhập để
- * requireMember() phía route nhận đúng session của request gốc.
+ * Đọc dữ liệu 1 collection trực tiếp trong Server Component — gọi thẳng
+ * requireMember()/getSupabaseAdmin()/tableForCollection(), đúng những hàm mà
+ * GET /api/admin/collections/[table] cũng dùng, KHÔNG tự fetch() tới chính
+ * API route của app. Self-referential fetch tới cùng deployment đã xác nhận
+ * không đáng tin cậy trên Vercel serverless — Supabase API logs cho thấy
+ * request chưa từng chạm bảng khi dùng cách cũ (fetch() nội bộ fail trước
+ * khi tới Supabase, khiến DataTable crash ở /admin/tools).
  */
 export async function fetchCollection<T = Record<string, unknown>>(collectionKey: string): Promise<T[]> {
-  const [baseUrl, h] = await Promise.all([getBaseUrl(), headers()]);
-  const cookie = h.get("cookie") ?? "";
+  if (!(await requireMember())) return [];
 
-  const res = await fetch(`${baseUrl}/api/admin/collections/${collectionKey}`, {
-    headers: { cookie },
-    cache: "no-store",
-  });
+  const table = tableForCollection(collectionKey);
+  if (!table) return [];
 
-  if (!res.ok) return [];
-  const json = await res.json();
-  return Array.isArray(json.items) ? json.items : [];
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from(table)
+    .select("id, data, order")
+    .order("order", { ascending: true })
+    .order("created_at", { ascending: true });
+
+  if (error) return [];
+
+  return (data ?? []).map((row) => ({ ...(row.data as Record<string, unknown>), id: row.id })) as T[];
 }
