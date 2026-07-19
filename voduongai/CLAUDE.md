@@ -17,9 +17,11 @@ trang/component UI nào trong `/admin`, luôn đọc lại component thật tư�
 ở `/portal` để lấy đúng class Tailwind/bố cục/token — luôn dùng class
 Tailwind token có sẵn, không viết hex thô.
 
-- **Nền chính (background của toàn shell):** tái sử dụng thẳng component
-  `<GemBackground />` (`src/components/portal/ui/GemBackground.tsx`) — render
-  y hệt cách `PortalShell.tsx` đang làm. Component này chỉ là `<div
+- **Nền GỐC dùng chung toàn Shell (không phải toàn bộ nền — xem mục
+  "atmosphere riêng từng trang" ngay dưới):** tái sử dụng thẳng component
+  `<GemBackground />` (`src/components/portal/ui/GemBackground.tsx`) ở tầng
+  Shell (`AdminShell.tsx`/`PortalShell.tsx`) — giữ nguyên vị trí này, KHÔNG
+  xoá khi thêm atmosphere riêng cho từng trang. Component này chỉ là `<div
   className="gemos-bg" />`; class `.gemos-bg` (`globals.css` dòng ~243) là
   layer `position: fixed; inset: 0; z-index: -1;` với `background-color:
   #F6F7F9` + gradient `#F6F7F9 → #F1F5F9`. **Lưu ý:** `#F6F7F9`/`#F1F5F9`
@@ -58,20 +60,48 @@ sản phẩm (trừ Landing/marketing) là sáng, không phải navy. Quyết đ
 Nếu Admin cần thêm 1 sắc thái chưa có token/class (ví dụ nền phụ nhạt hơn),
 phải hỏi trước — không tự bịa hex mới.
 
-**QUAN TRỌNG — `gemos-bg` không còn là nền DUY NHẤT của mọi trang `/portal`:**
-sau quyết định `gemos-bg` ở trên, `globals.css` có 1 đợt cập nhật riêng
-("GLOBAL VISUAL UPDATE — mỗi Platform có khí quyển riêng", dòng ~2120) —
-Home/CKOS/Academy/AI Workspace/Projects/Community mỗi trang giờ phủ THÊM 1
-lớp `*-atmosphere-bg`/`*-bg` riêng (`home-atmosphere-bg`, `ckos-atmosphere-bg`,
-`campus-bg`, `story-book-bg`...) full-bleed đè lên trên `gemos-bg`, mỗi lớp
-1 tông màu/gradient khác nhau — KHÔNG phải chỉ xám lạnh như `gemos-bg` gốc.
-Vì vậy: **trước khi build `page.tsx` cho từng collection Admin (CKOS, Academy,
-Workspace, Premium, Community...), PHẢI đọc đúng trang `/portal` tương ứng để
-xác nhận (1) trang đó có dùng chung `gemos-bg` hay có lớp khí quyển riêng
-khác biệt, và (2) nếu có sắc thái riêng, trang Admin tương ứng phải phản ánh
-đúng sắc thái đó** — không mặc định 1 kiểu nền `gemos-bg` chung cho tất cả
-các trang Admin. Không tự suy ra từ tên trang — luôn grep/đọc trực tiếp
-`page.tsx` + class CSS liên quan trong `globals.css` trước khi code.
+**QUAN TRỌNG — `gemos-bg` CHỈ là lớp nền GỐC dùng chung, KHÔNG phải toàn bộ
+nền của mọi trang `/portal`:** sau quyết định `gemos-bg` ở trên, `globals.css`
+có 1 đợt cập nhật riêng ("GLOBAL VISUAL UPDATE — mỗi Platform có khí quyển
+riêng", dòng ~2120) — mỗi platform chính giờ phủ THÊM 1 lớp `*-atmosphere-bg`
+full-bleed đè lên trên `gemos-bg` (2 lớp cùng tồn tại, không thay thế nhau),
+mỗi lớp 1 tông màu/gradient riêng — KHÔNG phải chỉ xám lạnh như `gemos-bg`
+gốc. Case thực tế đã gặp: `/admin/home-cards` chỉ có `gemos-bg` (thiếu
+`home-atmosphere-bg`) → lệch tông rõ so với `/portal` thật, phải sửa lại.
+
+Danh sách đầy đủ các class `*-atmosphere-bg` (họ "Global Visual Update",
+`globals.css` dòng ~2129 trở đi) và trang `/portal` đang dùng — tra cứu
+nhanh khi build từng module Admin (Bước 6 trở đi):
+
+| Class (`globals.css`) | Trang `/portal` đang dùng | Module Admin tương ứng |
+|---|---|---|
+| `.home-atmosphere-bg` | `portal/page.tsx` (trang chủ Học viện) | `home-cards` (đã áp, xem commit fix nền) |
+| `.ckos-atmosphere-bg` | `portal/ckos/page.tsx`, `portal/hetrithucai/[slug]/page.tsx`, `portal/hetrithucai/collection/[slug]/page.tsx` | CKOS / Hệ tri thức AI |
+| `.academy-atmosphere-bg` | `portal/hocvienai/page.tsx` | Học viện AI |
+| `.workspace-atmosphere-bg` | `portal/aiworkspace/page.tsx`, `portal/aiworkspace/[slug]/page.tsx`, `portal/aiworkspace/bai-viet/[slug]/page.tsx` | AI Workspace |
+| `.projects-atmosphere-bg` | `portal/duan-cohoi/page.tsx`, `portal/duan-cohoi/[ecosystemSlug]/page.tsx`, `portal/duan-cohoi/[ecosystemSlug]/[subProjectSlug]/page.tsx`, `portal/duan-cohoi/bai-viet/[slug]/page.tsx` | Dự án & Cơ hội / `projects` |
+
+Ngoài họ `*-atmosphere-bg` này, một số platform khác dùng hệ bespoke RIÊNG
+(khác tên, KHÔNG thuộc họ trên, mỗi hệ có comment giải thích ngay trên định
+nghĩa trong `globals.css`) — nếu sau này build trang Admin cho các module
+này, phải đọc kỹ trang/component tương ứng trước, không suy đoán từ bảng
+trên: `.campus-bg` (`portal/congdongai/page.tsx` — Cộng đồng), `.hub-atrium-bg`
+(`portal/hanhtrinhcuatoi/page.tsx` — Hành trình của tôi), `.story-book-bg`
+(`components/portal/story/MyStoryBook.tsx` — My Story), `.mirror-chamber-bg`
+(`components/portal/mirror/MirrorChamber.tsx`), `.journal-notebook-bg`
+(`components/portal/journal/LearningJournalNotebook.tsx`), `.map-parchment-bg`
+(`components/portal/journey-map/JourneyMapAtlas.tsx`), `.sanctuary-bg`
+(`components/portal/sanctuary/SanctuaryBackground.tsx`).
+
+**Nguyên tắc bắt buộc:** trước khi build `page.tsx` cho từng collection Admin,
+PHẢI đọc đúng trang `/portal` tương ứng để xác nhận (1) trang đó có dùng
+chung `gemos-bg` hay có lớp khí quyển riêng khác biệt (tra bảng trên trước,
+grep lại nếu module chưa có trong bảng), và (2) nếu có sắc thái riêng, trang
+Admin tương ứng phải phản ánh đúng sắc thái đó bằng ĐÚNG CLASS có sẵn trong
+`globals.css` — KHÔNG copy giá trị gradient/hex ra viết tay ở component
+Admin (copy giá trị thay vì dùng class khiến Admin lệch màu ngay khi Portal
+đổi gradient sau này — đúng lỗi đã gặp). Không mặc định 1 kiểu nền chung cho
+tất cả các trang Admin, không tự suy ra từ tên trang.
 
 ## Tầng dữ liệu hiện có — QUAN TRỌNG, không xây trùng
 
