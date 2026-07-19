@@ -142,8 +142,12 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
           className="relative mx-auto mt-10 w-full max-w-[1040px] [perspective:1600px] md:mt-14"
         >
           {/* Mesh gradient + glow behind dashboard */}
-          <div className="absolute -inset-10 -z-10 rounded-[48px] bg-brand-blue/15 blur-[80px]" />
-          <div className="absolute -inset-16 -z-10 rounded-[52px] bg-[radial-gradient(circle_at_20%_10%,rgba(91,140,255,0.22),transparent_55%),radial-gradient(circle_at_85%_85%,rgba(37,99,235,0.16),transparent_55%)] blur-2xl" />
+          {!isLight && (
+            <>
+              <div className="absolute -inset-10 -z-10 rounded-[48px] bg-brand-blue/15 blur-[80px]" />
+              <div className="absolute -inset-16 -z-10 rounded-[52px] bg-[radial-gradient(circle_at_20%_10%,rgba(91,140,255,0.22),transparent_55%),radial-gradient(circle_at_85%_85%,rgba(37,99,235,0.16),transparent_55%)] blur-2xl" />
+            </>
+          )}
 
           <motion.div
             animate={{ y: [0, -6, 0] }}
