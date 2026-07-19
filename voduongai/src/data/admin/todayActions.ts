@@ -31,7 +31,7 @@ export const todayActionsSeed: TodayActionCard[] = [
     icon: "🤝",
     gradient: "from-brand-violet/20 to-brand-violet/0",
     ctaText: "Khám phá ngay",
-    ctaHref: "/portal/affiliate-hub",
+    ctaHref: "/portal/duan-cohoi",
     order: 2,
     featured: true,
     status: "Published",

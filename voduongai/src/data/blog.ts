@@ -220,9 +220,9 @@ export const blogPosts: BlogPost[] = [
     readTime: "7 phút đọc",
     tags: ["AI ứng dụng", "Affiliate Marketing", "Content Review"],
     ctaTitle: "Xây hệ thống Affiliate với AI từ số 0",
-    ctaDescription: "Affiliate Hub của VO DUONG AI hướng dẫn toàn bộ quy trình từ chọn sản phẩm đến ra đơn đầu tiên, tích hợp AI ở mọi bước.",
-    ctaLabel: "Vào Affiliate Hub →",
-    ctaHref: "/portal/affiliate-hub",
+    ctaDescription: "Dự án & Cơ hội của VO DUONG AI hướng dẫn toàn bộ quy trình từ chọn sản phẩm đến ra đơn đầu tiên, tích hợp AI ở mọi bước.",
+    ctaLabel: "Vào Dự án & Cơ hội →",
+    ctaHref: "/portal/duan-cohoi",
     content: [
       "Affiliate Marketing là ngành mà tốc độ tạo nội dung và chất lượng nghiên cứu quyết định trực tiếp đến thu nhập. AI đang làm thay đổi cuộc chơi: những người biết dùng AI đang tạo ra nhiều nội dung hơn, chất lượng hơn và tiếp cận thị trường nhanh hơn đối thủ không dùng AI.",
       "Đây là bài viết thực chiến — không phải lý thuyết. Mọi quy trình dưới đây đều đã được áp dụng trong cộng đồng [VO DUONG AI](/portal/aiworkspace) với kết quả đo được.",
@@ -239,7 +239,7 @@ export const blogPosts: BlogPost[] = [
       "Khi đã có quy trình, bạn có thể dùng [n8n](/portal/aiworkspace/n8n) để tự động hóa: theo dõi sản phẩm mới từ sàn affiliate, tạo bản nháp review tự động và thông báo cho bạn review và đăng. Đây là cách những Affiliate top earner vận hành hàng chục website với ít nhân lực.",
       "## Xem thêm về Affiliate Marketing với AI",
       "Bài viết liên quan: [Ứng dụng AI trong Affiliate Marketing](/blogai/ung-dung-ai-trong-affiliate-marketing) — kiến thức nền tảng về chiến lược.",
-      "Để xây dựng hệ thống hoàn chỉnh, vào [Affiliate Hub](/portal/affiliate-hub) để xem toàn bộ tài nguyên và lộ trình.",
+      "Để xây dựng hệ thống hoàn chỉnh, vào [Dự án & Cơ hội](/portal/duan-cohoi) để xem toàn bộ tài nguyên và lộ trình.",
     ],
   },
   {

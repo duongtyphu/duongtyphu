@@ -60,7 +60,7 @@ export type CtaItem = {
 
 export const ctaSeed: CtaItem[] = [
   { id: "cta_1", text: "Xem lộ trình của tôi", href: "/portal/roadmap", type: "Primary", buttonStyle: "Pill", location: "Dashboard", status: "Active" },
-  { id: "cta_2", text: "Xem Affiliate Hub", href: "/portal/affiliate-hub", type: "Secondary", buttonStyle: "Pill", location: "Dashboard", status: "Active" },
+  { id: "cta_2", text: "Xem Dự án & Cơ hội", href: "/portal/duan-cohoi", type: "Secondary", buttonStyle: "Pill", location: "Dashboard", status: "Active" },
 ];
 
 export type PortalSection = {

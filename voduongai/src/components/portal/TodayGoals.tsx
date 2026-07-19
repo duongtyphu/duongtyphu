@@ -12,7 +12,7 @@ const CARDS = [
     icon: "🤝",
     title: "Làm Affiliate",
     description: "Tìm lộ trình, công cụ và sản phẩm phù hợp để bắt đầu tiếp thị liên kết.",
-    href: "/portal/affiliate-hub",
+    href: "/portal/duan-cohoi",
     gradient: "from-brand-violet/20 to-brand-violet/0",
   },
   {

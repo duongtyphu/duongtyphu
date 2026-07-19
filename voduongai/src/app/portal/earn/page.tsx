@@ -6,7 +6,7 @@ import { GemCard } from "@/components/portal/ui/GemCard";
 export const metadata = { title: "Kiếm thu nhập", description: "Affiliate Hub, hoa hồng giới thiệu, sản phẩm và dịch vụ — các cách tạo thu nhập cùng AI." };
 
 const ITEMS = [
-  { icon: Users, title: "Affiliate Hub", description: "Chọn ngách, chọn sản phẩm và xây hệ thống Affiliate đầu tiên.", href: "/portal/affiliate-hub" },
+  { icon: Users, title: "Dự án & Cơ hội", description: "Chọn ngách, chọn sản phẩm và xây hệ thống Affiliate đầu tiên.", href: "/portal/duan-cohoi" },
   { icon: Percent, title: "Hoa hồng giới thiệu", description: "Theo dõi hoa hồng từ việc giới thiệu khóa học, sản phẩm.", href: "/portal/referral" },
   { icon: Package, title: "Sản phẩm của tôi", description: "Quản lý các sản phẩm số bạn đã sở hữu.", href: "/portal/my-products" },
   { icon: Handshake, title: "Dịch vụ", description: "Các dịch vụ đồng hành cùng VO DUONG AI.", href: "/portal/services" },

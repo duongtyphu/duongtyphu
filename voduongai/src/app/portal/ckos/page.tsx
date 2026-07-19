@@ -79,7 +79,7 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
 
   if (!configured) {
     return [
-      { key: "tool", label: "Công cụ AI", count: 0, href: "/portal/tools", configured: false, hasRoute: true },
+      { key: "tool", label: "Công cụ AI", count: 0, href: "/portal/aiworkspace", configured: false, hasRoute: true },
       { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: false, hasRoute: true },
       { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: false, hasRoute: true },
       { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: false, hasRoute: true },
@@ -95,7 +95,7 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
     safeCount(supabase, "case_studies", "active", true),
   ]);
   return [
-    { key: "tool", label: "Công cụ AI", count: tool, href: "/portal/tools", configured: true, hasRoute: true },
+    { key: "tool", label: "Công cụ AI", count: tool, href: "/portal/aiworkspace", configured: true, hasRoute: true },
     { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: true, hasRoute: true },
     { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: true, hasRoute: true },
     { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: true, hasRoute: true },
@@ -298,7 +298,7 @@ export default async function CkosPage() {
               <>
                 <p className="mt-2 text-sm font-semibold text-gray-900">{featuredTool.name}</p>
                 <p className="mt-1 text-xs text-gray-500">{featuredTool.shortDescription}</p>
-                <Button href={`/portal/tools/${featuredTool.slug}`} variant="secondary" className="mt-3">
+                <Button href="/portal/aiworkspace" variant="secondary" className="mt-3">
                   Xem công cụ
                 </Button>
               </>

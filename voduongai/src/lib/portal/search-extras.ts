@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCollection } from "@/lib/admin/store";
 import { templatesSeed, checklistsSeed } from "@/data/admin/resources";
-import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { PortalSearchResult } from "@/lib/portal/search";
 
@@ -18,7 +17,6 @@ type CaseStudyRow = { id: number; title: string; summary: string | null };
 export function usePortalSearchExtras(): PortalSearchResult[] {
   const { items: templates } = useCollection("templates", templatesSeed);
   const { items: checklists } = useCollection("checklists", checklistsSeed);
-  const { items: tools } = useCollection<AdminTool>("tools", toolsAdminSeed);
   const [caseStudies, setCaseStudies] = useState<CaseStudyRow[]>([]);
 
   useEffect(() => {
@@ -60,16 +58,7 @@ export function usePortalSearchExtras(): PortalSearchResult[] {
         href: "/portal/case-studies",
         type: "Case Study",
       })),
-      ...tools
-        .filter((t) => t.status === "Published")
-        .map((t) => ({
-          id: `tool-${t.id}`,
-          title: t.name,
-          description: t.shortDescription,
-          href: `/portal/tools/${t.slug}`,
-          type: "Công cụ AI",
-        })),
     ],
-    [templates, checklists, tools, caseStudies]
+    [templates, checklists, caseStudies]
   );
 }

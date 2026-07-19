@@ -1,5 +1,4 @@
 import { freeResources } from "@/data/resources";
-import { affiliateResources } from "@/data/affiliate";
 import { prompts } from "@/data/prompts";
 import { sops } from "@/data/sop";
 import { portalNav } from "@/lib/site";
@@ -16,7 +15,7 @@ let cachedIndex: PortalSearchResult[] | null = null;
 
 /**
  * Client-side search index built from the statically-imported data sources
- * (tools, free resources, affiliate resources, prompts, SOP) plus
+ * (free resources, prompts, SOP) plus
  * the Portal nav map. Templates/Checklists/Case Study are managed via
  * Supabase (admin/store collections or dedicated tables) and are loaded
  * separately at query time by `usePortalSearchExtras` (see search-extras.ts)
@@ -37,13 +36,6 @@ export function getPortalSearchIndex(): PortalSearchResult[] {
       description: r.description,
       href: `/portal/resources/${r.id}`,
       type: r.type,
-    })),
-    ...affiliateResources.map((a) => ({
-      id: `affiliate-${a.id}`,
-      title: a.title,
-      description: a.description,
-      href: "/portal/affiliate-hub",
-      type: "Affiliate",
     })),
     ...prompts.map((p) => ({
       id: `prompt-${p.id}`,

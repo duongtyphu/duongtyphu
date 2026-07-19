@@ -56,10 +56,10 @@ export const startHereSeed: StartHereStep[] = [
     description: "Chọn ngách, chọn sản phẩm phù hợp và xây hệ thống Affiliate đầu tiên.",
     icon: "🤝",
     order: 4,
-    relatedResource: "/portal/affiliate-hub",
+    relatedResource: "/portal/duan-cohoi",
     relatedTool: "hostinger",
     ctaText: "Bắt đầu bước này",
-    ctaHref: "/portal/affiliate-hub",
+    ctaHref: "/portal/duan-cohoi",
     status: "Published",
   },
   {

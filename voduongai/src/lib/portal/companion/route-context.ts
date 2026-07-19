@@ -29,7 +29,7 @@ const ROUTE_CONTEXTS: { prefix: string; context: RouteContext }[] = [
       nudge: "Mình ở đây để cùng bạn thử ý tưởng với AI.",
       quickActions: [
         { label: "Thử một ý tưởng mới", href: "/portal/aiworkspace" },
-        { label: "Xem công cụ AI", href: "/portal/tools" },
+        { label: "Xem công cụ AI", href: "/portal/aiworkspace#ai-toolbox" },
         KHONG_GIAN_AI,
       ],
     },
