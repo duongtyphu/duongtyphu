@@ -5,7 +5,10 @@ import { useEffect } from "react";
 export function AntiCopy() {
   useEffect(() => {
     const blockContextMenu = (e: MouseEvent) => e.preventDefault();
-    const blockDragStart = (e: DragEvent) => e.preventDefault();
+    const blockDragStart = (e: DragEvent) => {
+      if (window.location.pathname.startsWith("/admin")) return;
+      e.preventDefault();
+    };
 
     const blockKeys = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
