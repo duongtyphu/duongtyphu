@@ -104,7 +104,7 @@ export async function GET(request: Request) {
           id: String(row.id),
           title: data.name ?? "",
           description: data.shortDescription ?? null,
-          href: "/portal/aiworkspace",
+          href: "/portal/aiworkspace#ai-toolbox",
         };
       })
       .filter((it) => !params.q || it.title.toLowerCase().includes(params.q.toLowerCase()));

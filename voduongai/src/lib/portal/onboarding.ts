@@ -20,7 +20,7 @@ export const ONBOARDING_GOALS: { id: OnboardingGoalId; label: string; href: stri
   { id: "apply-work", label: "Tôi muốn ứng dụng AI vào công việc", href: "/portal/prompts", hint: "Khám phá thư viện Prompt để áp dụng ngay vào công việc." },
   { id: "extra-income", label: "Tôi muốn kiếm thêm thu nhập", href: "/portal/duan-cohoi", hint: "Dự án & Cơ hội giúp bạn bắt đầu kiếm thu nhập cùng AI." },
   { id: "personal-brand", label: "Tôi muốn xây dựng thương hiệu cá nhân", href: "/portal/hocvienai", hint: "Lộ trình xây thương hiệu cá nhân trong kỷ nguyên AI." },
-  { id: "automation", label: "Tôi muốn tự động hóa công việc / kinh doanh", href: "/portal/aiworkspace", hint: "Bộ công cụ AI giúp tự động hoá công việc và kinh doanh." },
+  { id: "automation", label: "Tôi muốn tự động hóa công việc / kinh doanh", href: "/portal/aiworkspace#ai-toolbox", hint: "Bộ công cụ AI giúp tự động hoá công việc và kinh doanh." },
 ];
 
 export const ONBOARDING_LEVELS: { id: OnboardingLevelId; label: string }[] = [
