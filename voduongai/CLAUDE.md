@@ -58,6 +58,21 @@ sản phẩm (trừ Landing/marketing) là sáng, không phải navy. Quyết đ
 Nếu Admin cần thêm 1 sắc thái chưa có token/class (ví dụ nền phụ nhạt hơn),
 phải hỏi trước — không tự bịa hex mới.
 
+**QUAN TRỌNG — `gemos-bg` không còn là nền DUY NHẤT của mọi trang `/portal`:**
+sau quyết định `gemos-bg` ở trên, `globals.css` có 1 đợt cập nhật riêng
+("GLOBAL VISUAL UPDATE — mỗi Platform có khí quyển riêng", dòng ~2120) —
+Home/CKOS/Academy/AI Workspace/Projects/Community mỗi trang giờ phủ THÊM 1
+lớp `*-atmosphere-bg`/`*-bg` riêng (`home-atmosphere-bg`, `ckos-atmosphere-bg`,
+`campus-bg`, `story-book-bg`...) full-bleed đè lên trên `gemos-bg`, mỗi lớp
+1 tông màu/gradient khác nhau — KHÔNG phải chỉ xám lạnh như `gemos-bg` gốc.
+Vì vậy: **trước khi build `page.tsx` cho từng collection Admin (CKOS, Academy,
+Workspace, Premium, Community...), PHẢI đọc đúng trang `/portal` tương ứng để
+xác nhận (1) trang đó có dùng chung `gemos-bg` hay có lớp khí quyển riêng
+khác biệt, và (2) nếu có sắc thái riêng, trang Admin tương ứng phải phản ánh
+đúng sắc thái đó** — không mặc định 1 kiểu nền `gemos-bg` chung cho tất cả
+các trang Admin. Không tự suy ra từ tên trang — luôn grep/đọc trực tiếp
+`page.tsx` + class CSS liên quan trong `globals.css` trước khi code.
+
 ## Tầng dữ liệu hiện có — QUAN TRỌNG, không xây trùng
 
 Dự án ĐÃ CÓ SẴN 1 tầng dữ liệu admin↔portal đang chạy thật, không phải xây
