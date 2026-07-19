@@ -14,7 +14,7 @@ export function IntroVideo({ variant = "dark" }: { variant?: "dark" | "light" })
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className={`py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}>
+    <section className={`py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-4xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -25,7 +25,7 @@ export function IntroVideo({ variant = "dark" }: { variant?: "dark" | "light" })
         >
           <span
             className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] backdrop-blur-md ${
-              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
             }`}
           >
             🎬 Xem ngay

@@ -15,7 +15,7 @@ const LandingThemeContext = createContext<{
 // Admin, other public pages) simply never read this context, so wrapping
 // the whole app here has no visual effect outside the toggle's own usage.
 export function LandingThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<LandingTheme>("dark");
+  const [theme, setTheme] = useState<LandingTheme>("light");
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);

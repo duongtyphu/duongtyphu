@@ -7,7 +7,7 @@ import { RevealText } from "@/components/home/RevealText";
 export function FounderStory({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section className={`overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#FFF9F5] text-[#0F172A]" : "text-white"}`}>
+    <section className={`overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

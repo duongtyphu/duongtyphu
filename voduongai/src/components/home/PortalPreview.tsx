@@ -106,7 +106,7 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
   return (
     <section
       id="trai-nghiem-hoc-vien-ai"
-      className={`relative isolate scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}
+      className={`relative isolate scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
@@ -118,7 +118,7 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
         >
           <span
             className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
-              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
             }`}
           >
             🧭 Khám phá Học Viện

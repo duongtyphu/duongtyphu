@@ -85,7 +85,7 @@ function NetworkIcon() {
 export function AudienceProblem({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-white text-[#0F172A]" : "border-white/5 text-white"}`}>
+    <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}>
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -96,7 +96,7 @@ export function AudienceProblem({ variant = "dark" }: { variant?: "dark" | "ligh
         >
           <span
             className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest backdrop-blur-md ${
-              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
             }`}
           >
             🎯 Đối tượng & vấn đề

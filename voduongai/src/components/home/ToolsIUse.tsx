@@ -14,7 +14,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
   return (
     <section
       id="cong-cu-toi-dung"
-      className={`scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : ""}`}
+      className={`scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : ""}`}
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -25,7 +25,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
       >
         <span
           className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
-            isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
           }`}
         >
           🛠️ Thực chiến
