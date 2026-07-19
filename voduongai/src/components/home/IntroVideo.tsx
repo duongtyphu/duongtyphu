@@ -9,11 +9,12 @@ import { RevealText } from "@/components/home/RevealText";
 // for the homepage ships. For now it's a hardcoded constant.
 const INTRO_YOUTUBE_ID = "L4DZsW6OCpg";
 
-export function IntroVideo() {
+export function IntroVideo({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className="py-9 text-white md:py-12">
+    <section className={`py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-4xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -22,7 +23,11 @@ export function IntroVideo() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center text-center"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🎬 Xem ngay
           </span>
 
@@ -92,10 +97,10 @@ export function IntroVideo() {
         </motion.div>
 
         <div className="mx-auto mt-6 max-w-2xl text-center">
-          <p className="text-sm text-orange-200/80">
+          <p className={`text-sm ${isLight ? "text-[#C2410C]" : "text-orange-200/80"}`}>
             💡 Video giới thiệu về hành trình xây dựng hệ sinh thái tri thức AI
           </p>
-          <p className="mt-1.5 text-xs text-white/40">
+          <p className={`mt-1.5 text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>
             ⏱️ 2-3 phút · Xem để hiểu hành trình phía sau VO DUONG AI
           </p>
         </div>

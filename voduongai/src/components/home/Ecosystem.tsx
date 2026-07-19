@@ -59,13 +59,14 @@ const particles = [
   { top: "8%", left: "55%", size: 2.5, duration: 6.5 },
 ];
 
-export function Ecosystem() {
+export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const [hovered, setHovered] = useState<number | null>(null);
+  const isLight = variant === "light";
 
   const activeIndex = hovered;
 
   return (
-    <section className="relative overflow-hidden py-12 text-white md:py-16">
+    <section className={`relative isolate overflow-hidden py-12 md:py-16 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}>
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_30%,rgba(37,99,235,0.12),transparent_60%)]" />
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
@@ -75,7 +76,11 @@ export function Ecosystem() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🌌 VO DUONG AI
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
@@ -83,7 +88,7 @@ export function Ecosystem() {
               Hệ sinh thái <span className="text-brand-orange">VO DUONG AI</span>
             </RevealText>
           </h2>
-          <p className="mt-3 text-white md:whitespace-nowrap">
+          <p className={`mt-3 md:whitespace-nowrap ${isLight ? "text-[#334155]" : "text-white"}`}>
             Một hệ sinh thái đang vận hành và phát triển — không phải một
             website tĩnh.
           </p>
@@ -117,7 +122,7 @@ export function Ecosystem() {
                   x2={x}
                   y2={y}
                   vectorEffect="non-scaling-stroke"
-                  stroke={active ? "#5B8CFF" : "rgba(255,255,255,0.12)"}
+                  stroke={active ? "#5B8CFF" : isLight ? "rgba(15,23,42,0.14)" : "rgba(255,255,255,0.12)"}
                   strokeWidth={active ? 1.4 : 1}
                   style={{ transition: "stroke 0.3s ease, stroke-width 0.3s ease" }}
                 />
@@ -164,7 +169,11 @@ export function Ecosystem() {
               </svg>
               <span className="text-[11px] font-extrabold tracking-wide text-white">VO DUONG AI</span>
             </div>
-            <p className="shimmer-gold mt-3 text-center text-[10px] font-semibold">
+            <p
+              className={`mt-3 text-center text-[10px] font-semibold ${
+                isLight ? "text-[#C2410C]" : "shimmer-gold"
+              }`}
+            >
               Học AI • Xây hệ thống • Tạo tài sản số
             </p>
           </div>
@@ -217,13 +226,15 @@ export function Ecosystem() {
             return (
               <div
                 key={m.label}
-                className="card-shine flex min-w-[200px] flex-shrink-0 flex-col gap-2 snap-start rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                className={`card-shine flex min-w-[200px] flex-shrink-0 flex-col gap-2 snap-start rounded-2xl border p-4 ${
+                  isLight ? "border-[#E2E8F0] bg-white shadow-[0_8px_24px_-16px_rgba(15,23,42,0.25)]" : "border-white/10 bg-white/[0.04]"
+                }`}
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-blue/25 to-brand-violet/15 text-brand-violet">
                   <Icon className="h-5 w-5" strokeWidth={2} />
                 </div>
-                <p className="text-sm font-bold text-white">{m.label}</p>
-                <p className="text-xs leading-relaxed text-white/60">{m.desc}</p>
+                <p className={`text-sm font-bold ${isLight ? "text-[#0F172A]" : "text-white"}`}>{m.label}</p>
+                <p className={`text-xs leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/60"}`}>{m.desc}</p>
               </div>
             );
           })}

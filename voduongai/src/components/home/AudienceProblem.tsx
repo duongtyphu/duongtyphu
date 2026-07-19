@@ -82,9 +82,10 @@ function NetworkIcon() {
   );
 }
 
-export function AudienceProblem() {
+export function AudienceProblem({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   return (
-    <section className="border-t border-white/5 py-9 text-white md:py-12">
+    <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-white text-[#0F172A]" : "border-white/5 text-white"}`}>
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -93,7 +94,11 @@ export function AudienceProblem() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🎯 Đối tượng & vấn đề
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
@@ -114,15 +119,15 @@ export function AudienceProblem() {
           className="mt-10 grid gap-4 sm:grid-cols-3"
         >
           {AUDIENCES.map((a) => (
-            <div key={a.label} className="audience-card">
+            <div key={a.label} className={`audience-card ${isLight ? "audience-card--light" : ""}`}>
               <span
                 className="icon-glow-badge h-14 w-14 text-2xl"
                 style={{ backgroundColor: `${a.color}26`, color: a.color }}
               >
                 {a.icon}
               </span>
-              <p className="mt-3.5 text-sm font-bold text-white">{a.label}</p>
-              <p className="mt-2 text-xs leading-relaxed text-white/55">{a.desc}</p>
+              <p className={`mt-3.5 text-sm font-bold ${isLight ? "text-[#0F172A]" : "text-white"}`}>{a.label}</p>
+              <p className={`mt-2 text-xs leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/55"}`}>{a.desc}</p>
               <p
                 className="audience-question"
                 style={{
@@ -145,7 +150,7 @@ export function AudienceProblem() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           className="mt-6 grid gap-5 lg:grid-cols-2"
         >
-          <div className="problem-panel">
+          <div className={`problem-panel ${isLight ? "problem-panel--light" : ""}`}>
             <div className="flex items-center gap-3">
               <span
                 className="icon-glow-badge h-11 w-11 text-lg"
@@ -153,7 +158,7 @@ export function AudienceProblem() {
               >
                 <WarningIcon />
               </span>
-              <p className="text-xs font-semibold uppercase tracking-wide text-white/40">
+              <p className={`text-xs font-semibold uppercase tracking-wide ${isLight ? "text-[#54637A]" : "text-white/40"}`}>
                 Những vấn đề bạn đang gặp phải?
               </p>
             </div>
@@ -169,10 +174,10 @@ export function AudienceProblem() {
                     >
                       ✕
                     </span>
-                    <p className="text-sm leading-relaxed text-white/70">
+                    <p className={`text-sm leading-relaxed ${isLight ? "text-[#334155]" : "text-white/70"}`}>
                       {rest ? (
                         <>
-                          <strong className="font-bold text-white">{lead}</strong> – {rest}
+                          <strong className={`font-bold ${isLight ? "text-[#0F172A]" : "text-white"}`}>{lead}</strong> – {rest}
                         </>
                       ) : (
                         lead
@@ -184,7 +189,7 @@ export function AudienceProblem() {
             </ul>
           </div>
 
-          <div className="solution-card">
+          <div className={`solution-card ${isLight ? "solution-card--light" : ""}`}>
             <div className="flex items-center gap-3">
               <span
                 className="icon-glow-badge h-11 w-11 text-lg"
@@ -196,19 +201,19 @@ export function AudienceProblem() {
                 <p className="text-lg font-extrabold" style={{ color: ACCENT }}>
                   VO DUONG AI
                 </p>
-                <p className="text-xs text-white/40">Hệ sinh thái tri thức số</p>
+                <p className={`text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>Hệ sinh thái tri thức số</p>
               </div>
             </div>
-            <div className="my-4 border-t border-white/10" />
+            <div className={`my-4 border-t ${isLight ? "border-[#E2E8F0]" : "border-white/10"}`} />
             <ul className="space-y-3">
               {STRENGTHS.map((s) => (
                 <li key={s.pre + s.bold} className="flex items-start gap-3">
                   <span className="mt-0.5 text-sm font-bold" style={{ color: ACCENT }}>
                     ✓
                   </span>
-                  <p className="text-sm leading-relaxed text-white/75">
+                  <p className={`text-sm leading-relaxed ${isLight ? "text-[#334155]" : "text-white/75"}`}>
                     {s.pre}
-                    {s.bold && <strong className="font-bold text-white">{s.bold}</strong>}
+                    {s.bold && <strong className={`font-bold ${isLight ? "text-[#0F172A]" : "text-white"}`}>{s.bold}</strong>}
                     {s.post}
                   </p>
                 </li>

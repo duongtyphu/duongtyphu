@@ -1,3 +1,6 @@
+"use client";
+
+import { useLandingTheme } from "@/components/site/LandingThemeProvider";
 import { Hero } from "@/components/home/Hero";
 import { IntroVideo } from "@/components/home/IntroVideo";
 import { PortalPreview } from "@/components/home/PortalPreview";
@@ -12,20 +15,22 @@ import { FounderStory } from "@/components/home/FounderStory";
 import { FinalCTA } from "@/components/home/FinalCTA";
 
 export default function Home() {
+  const { theme } = useLandingTheme();
+
   return (
-    <>
-      <Hero />
-      <IntroVideo />
-      <PortalPreview />
-      <QuizAssessment />
-      <EcosystemPillars />
-      <ToolsIUse />
-      <AudienceProblem />
-      <Roadmap />
-      <TrustStats />
-      <Ecosystem />
-      <FounderStory />
-      <FinalCTA />
-    </>
+    <div className={theme === "light" ? "bg-white" : ""}>
+      <Hero variant={theme} />
+      <IntroVideo variant={theme} />
+      <PortalPreview variant={theme} />
+      <QuizAssessment variant={theme} />
+      <EcosystemPillars variant={theme} />
+      <ToolsIUse variant={theme} />
+      <AudienceProblem variant={theme} />
+      <Roadmap variant={theme} />
+      <TrustStats variant={theme} />
+      <Ecosystem variant={theme} />
+      <FounderStory variant={theme} />
+      <FinalCTA variant={theme} />
+    </div>
   );
 }

@@ -38,9 +38,10 @@ const STEPS = [
   },
 ];
 
-export function Roadmap() {
+export function Roadmap({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   return (
-    <section className="border-t border-white/5 py-9 text-white md:py-12">
+    <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-white text-[#0F172A]" : "border-white/5 text-white"}`}>
       <div className="mx-auto max-w-4xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -49,7 +50,11 @@ export function Roadmap() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🗺️ Lộ trình của bạn
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
@@ -58,7 +63,7 @@ export function Roadmap() {
               <span style={{ color: ACCENT }}>làm chủ AI</span>
             </RevealText>
           </h2>
-          <p className="mt-3 text-sm text-white/50">
+          <p className={`mt-3 text-sm ${isLight ? "text-[#54637A]" : "text-white/50"}`}>
             4 chặng đường – mỗi chặng bạn đạt được một cột mốc cụ thể
           </p>
         </motion.div>
@@ -68,17 +73,17 @@ export function Roadmap() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          className="roadmap-glass-card mt-10"
+          className={`roadmap-glass-card mt-10 ${isLight ? "roadmap-glass-card--light" : ""}`}
         >
           {STEPS.map((step) => (
             <div key={step.number} className="roadmap-timeline-item">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-white/35">
+              <p className={`text-[10px] font-bold uppercase tracking-widest ${isLight ? "text-[#94A3B8]" : "text-white/35"}`}>
                 {step.number}
               </p>
-              <p className="mt-1 text-base font-bold text-white sm:text-lg">
+              <p className={`mt-1 text-base font-bold sm:text-lg ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 {step.icon} {step.title}
               </p>
-              <p className="mt-1.5 text-sm leading-relaxed text-white/60">
+              <p className={`mt-1.5 text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/60"}`}>
                 {step.desc}
               </p>
               <p

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Sparkles } from "lucide-react";
-import { HeroNeuralBackground } from "@/components/home/HeroNeuralBackground";
 import { HeroQuestionBubbles } from "@/components/home/HeroQuestionBubbles";
 
 const floatingBadges = [
@@ -55,7 +54,8 @@ const vortexQuestions = [
   "Học AI có kiếm được tiền?",
 ];
 
-export function Hero() {
+export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   // Parallax: the background (neural mesh + glow orbs) drifts slower than
   // the foreground content as the hero scrolls out of view, so the two
   // layers separate a little instead of moving as one flat sheet.
@@ -63,12 +63,16 @@ export function Hero() {
   const bgY = useTransform(scrollY, [0, 800], [0, 180]);
 
   return (
-    <section className="relative overflow-hidden pt-16 pb-10 text-white md:pt-20 md:pb-12">
+    <section
+      className={`relative isolate overflow-hidden pt-16 pb-10 md:pt-20 md:pb-12 ${
+        isLight ? "bg-white text-[#0F172A]" : "text-white"
+      }`}
+    >
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">
-        <HeroNeuralBackground className="absolute inset-0" />
-        <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--a" />
-        <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--b" />
-        <div aria-hidden="true" className="hero-glow-orb hero-glow-orb--c" />
+        <div aria-hidden="true" className={`hero-grid-layer ${isLight ? "hero-grid-layer--light" : ""}`} />
+        <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--blue ${isLight ? "hero-mesh-blob--light" : ""}`} />
+        <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--violet ${isLight ? "hero-mesh-blob--light" : ""}`} />
+        <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--orange ${isLight ? "hero-mesh-blob--light" : ""}`} />
       </motion.div>
 
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1.2fr_1fr] md:items-center">
@@ -77,7 +81,11 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-brand-violet">
+          <span
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold text-brand-violet ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9]" : "border-white/15 bg-white/5"
+            }`}
+          >
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-orange opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-orange" />
@@ -95,7 +103,7 @@ export function Hero() {
             </span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-white">
+          <p className={`mt-6 max-w-xl text-base leading-relaxed ${isLight ? "text-[#334155]" : "text-white"}`}>
             Giữa vô số công cụ AI, bạn đang loay hoay không biết bắt đầu từ
             đâu? VO DUONG AI là hệ sinh thái giúp bạn học AI đúng hướng, xây
             dựng thương hiệu cá nhân, phát triển Affiliate Marketing và tạo
@@ -112,7 +120,9 @@ export function Hero() {
             </Link>
             <Link
               href="#cong-cu-toi-dung"
-              className="rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:bg-brand-blue hover:shadow-lg hover:shadow-brand-blue/40"
+              className={`rounded-full border px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:bg-brand-blue hover:text-white hover:shadow-lg hover:shadow-brand-blue/40 ${
+                isLight ? "border-[#E2E8F0] text-[#0F172A]" : "border-white/20 text-white"
+              }`}
             >
               Xem công cụ tôi dùng
             </Link>
@@ -126,13 +136,19 @@ export function Hero() {
           className="relative [perspective:1200px]"
         >
           {/* Mesh gradient + glow behind dashboard */}
-          <div className="absolute -inset-10 -z-10 rounded-[40px] bg-brand-blue/20 blur-[70px]" />
-          <div className="absolute -inset-16 -z-10 rounded-[44px] bg-[radial-gradient(circle_at_30%_20%,rgba(91,140,255,0.25),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(37,99,235,0.18),transparent_55%)] blur-2xl" />
+          {!isLight && (
+            <>
+              <div className="absolute -inset-10 -z-10 rounded-[40px] bg-brand-blue/20 blur-[70px]" />
+              <div className="absolute -inset-16 -z-10 rounded-[44px] bg-[radial-gradient(circle_at_30%_20%,rgba(91,140,255,0.25),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(37,99,235,0.18),transparent_55%)] blur-2xl" />
+            </>
+          )}
 
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="group relative overflow-hidden rounded-[26px] border border-white/12 bg-white/[0.045] p-3 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-3.5"
+            className={`group relative overflow-hidden rounded-[26px] border p-3 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-3.5 ${
+              isLight ? "border-[#E2E8F0] bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)]" : "border-white/12 bg-white/[0.045]"
+            }`}
           >
             {/* Light reflection */}
             <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-gradient-to-br from-white/[0.08] via-transparent to-transparent" />
@@ -157,15 +173,17 @@ export function Hero() {
                 delay: i * 0.4,
               }}
               whileHover={{ y: -12 }}
-              className={`absolute z-20 hidden cursor-default rounded-[20px] border border-white/15 bg-white/[0.08] px-4 py-2.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-md transition-shadow hover:shadow-[0_0_30px_-2px_rgba(91,140,255,0.5)] sm:block ${badge.className}`}
+              className={`absolute z-20 hidden cursor-default rounded-[20px] border px-4 py-2.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-md transition-shadow hover:shadow-[0_0_30px_-2px_rgba(91,140,255,0.5)] sm:block ${
+                isLight ? "border-[#E2E8F0] bg-white shadow-[0_12px_30px_-15px_rgba(15,23,42,0.25)]" : "border-white/15 bg-white/[0.08]"
+              } ${badge.className}`}
             >
               {badge.subtitle ? (
                 <>
-                  <p className="text-base font-extrabold leading-none text-white">{badge.title}</p>
-                  <p className="mt-0.5 text-[11px] font-medium text-white/70">{badge.subtitle}</p>
+                  <p className={`text-base font-extrabold leading-none ${isLight ? "text-[#0F172A]" : "text-white"}`}>{badge.title}</p>
+                  <p className={`mt-0.5 text-[11px] font-medium ${isLight ? "text-[#54637A]" : "text-white/70"}`}>{badge.subtitle}</p>
                 </>
               ) : (
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-white">
+                <p className={`flex items-center gap-1.5 text-xs font-semibold ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                   <Sparkles className="h-3.5 w-3.5 text-brand-violet" strokeWidth={2} />
                   {badge.title}
                 </p>

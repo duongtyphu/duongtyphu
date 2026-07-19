@@ -4,9 +4,13 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { RevealText } from "@/components/home/RevealText";
 
-export function FinalCTA() {
+export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   return (
-    <section id="cta-cuoi" className="relative scroll-mt-24 overflow-hidden py-9 text-white md:py-12">
+    <section
+      id="cta-cuoi"
+      className={`relative scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -19,7 +23,7 @@ export function FinalCTA() {
             Bắt đầu hành trình AI của bạn <span className="text-brand-orange">hôm nay</span>
           </RevealText>
         </h2>
-        <p className="mt-4 text-[11px] text-white sm:text-sm md:text-base">
+        <p className={`mt-4 text-[11px] sm:text-sm md:text-base ${isLight ? "text-[#334155]" : "text-white"}`}>
           Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Học viện AI. Việc của bạn là bắt đầu.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

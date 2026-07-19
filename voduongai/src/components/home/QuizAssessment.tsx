@@ -100,7 +100,8 @@ function scoreToLevelIndex(total: number) {
   return 4;
 }
 
-export function QuizAssessment() {
+export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(
     Array(QUESTIONS.length).fill(null)
@@ -135,7 +136,10 @@ export function QuizAssessment() {
   };
 
   return (
-    <section id="danh-gia-nang-luc-ai" className="scroll-mt-24 py-7 text-white md:py-9">
+    <section
+      id="danh-gia-nang-luc-ai"
+      className={`scroll-mt-24 py-7 md:py-9 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}
+    >
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -144,7 +148,13 @@ export function QuizAssessment() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
+              isLight
+                ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]"
+                : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🧠 Đánh giá năng lực AI
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
@@ -168,7 +178,9 @@ export function QuizAssessment() {
             layout
             whileHover={{ y: -4 }}
             transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
-            className="flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+            className={`flex flex-col rounded-[20px] border p-5 md:p-6 ${
+              isLight ? "border-[#E2E8F0] bg-white shadow-[var(--shadow-token-sm)]" : "border-white/10 bg-white/[0.04]"
+            }`}
           >
             <div className="flex items-center justify-center gap-2">
               {QUESTIONS.map((_, i) => (
@@ -181,7 +193,9 @@ export function QuizAssessment() {
                         ? ACCENT
                         : i < step || answers[i] !== null
                           ? `${ACCENT}99`
-                          : "rgba(255,255,255,0.15)",
+                          : isLight
+                            ? "rgba(15,23,42,0.12)"
+                            : "rgba(255,255,255,0.15)",
                     transform: i === step ? "scale(1.25)" : undefined,
                   }}
                 />
@@ -196,10 +210,12 @@ export function QuizAssessment() {
                 exit={{ opacity: 0, x: -16 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                <p className="mt-4 text-xs text-white/40">
+                <p className={`mt-4 text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>
                   Câu hỏi {step + 1}/{QUESTIONS.length}
                 </p>
-                <h3 className="mt-1.5 text-base font-bold text-white md:text-lg">
+                <h3
+                  className={`mt-1.5 text-base font-bold md:text-lg ${isLight ? "text-[#0F172A]" : "text-white"}`}
+                >
                   {QUESTIONS[step].question}
                 </h3>
 
@@ -211,13 +227,17 @@ export function QuizAssessment() {
                         key={answer}
                         type="button"
                         onClick={() => selectAnswer(i)}
-                        className="w-full rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-left text-sm text-white/80 transition hover:border-white/25 hover:bg-white/[0.05]"
+                        className={`w-full rounded-xl border px-3.5 py-2.5 text-left text-sm transition ${
+                          isLight
+                            ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#334155] hover:border-[#CBD5E1] hover:bg-white"
+                            : "border-white/10 bg-white/[0.02] text-white/80 hover:border-white/25 hover:bg-white/[0.05]"
+                        }`}
                         style={
                           selected
                             ? {
                                 borderColor: ACCENT,
                                 backgroundColor: `${ACCENT}1A`,
-                                color: "#fff",
+                                color: isLight ? "#0F172A" : "#fff",
                               }
                             : undefined
                         }
@@ -245,7 +265,7 @@ export function QuizAssessment() {
                   <p className="text-sm font-bold" style={{ color: ACCENT }}>
                     🎯 Kết quả của bạn
                   </p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-white/80">
+                  <p className={`mt-1.5 text-sm leading-relaxed ${isLight ? "text-[#334155]" : "text-white/80"}`}>
                     {level.emoji} Trình độ của bạn: <strong>{level.label}</strong>.{" "}
                     {level.intro} Hãy bắt đầu với lộ trình &quot;{level.path}&quot; –{" "}
                     {level.pathDetail}.
@@ -271,7 +291,9 @@ export function QuizAssessment() {
                   type="button"
                   onClick={goBack}
                   disabled={step === 0}
-                  className="text-sm font-semibold text-white/60 transition hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                  className={`text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-30 ${
+                    isLight ? "text-[#54637A] hover:text-[#0F172A]" : "text-white/60 hover:text-white"
+                  }`}
                 >
                   ← Quay lại
                 </button>
@@ -296,18 +318,24 @@ export function QuizAssessment() {
             layout
             whileHover={{ y: -4 }}
             transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
-            className="flex flex-col rounded-[20px] border border-white/10 bg-white/[0.04] p-5 md:p-6"
+            className={`flex flex-col rounded-[20px] border p-5 md:p-6 ${
+              isLight ? "border-[#E2E8F0] bg-white shadow-[var(--shadow-token-sm)]" : "border-white/10 bg-white/[0.04]"
+            }`}
           >
             <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-white/80">
+              <p className={`text-sm font-semibold ${isLight ? "text-[#334155]" : "text-white/80"}`}>
                 📊 Thang đánh giá năng lực
               </p>
               {resultReady ? (
-                <span className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-xs text-white/70">
+                <span
+                  className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs ${
+                    isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+                  }`}
+                >
                   ✅ Cấp độ: {level.label}
                 </span>
               ) : (
-                <span className="text-xs text-white/30">Chưa có dữ liệu</span>
+                <span className={`text-xs ${isLight ? "text-[#94A3B8]" : "text-white/30"}`}>Chưa có dữ liệu</span>
               )}
             </div>
 
@@ -325,34 +353,42 @@ export function QuizAssessment() {
                             backgroundColor: `${ACCENT}1A`,
                             boxShadow: `0 0 30px -8px ${ACCENT}73`,
                           }
-                        : {
-                            borderColor: "rgba(255,255,255,0.1)",
-                            backgroundColor: "rgba(255,255,255,0.02)",
-                          }
+                        : isLight
+                          ? { borderColor: "#E2E8F0", backgroundColor: "#F6F7F9" }
+                          : {
+                              borderColor: "rgba(255,255,255,0.1)",
+                              backgroundColor: "rgba(255,255,255,0.02)",
+                            }
                     }
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span
-                        className={`text-sm font-semibold ${active ? "text-white" : "text-white/75"}`}
+                        className={`text-sm font-semibold ${
+                          active ? (isLight ? "text-[#0F172A]" : "text-white") : isLight ? "text-[#334155]" : "text-white/75"
+                        }`}
                       >
                         {lvl.emoji} {lvl.label}
                       </span>
                       <span
                         className="text-xs font-medium"
-                        style={{ color: active ? ACCENT : "rgba(255,255,255,0.4)" }}
+                        style={{ color: active ? ACCENT : isLight ? "#94A3B8" : "rgba(255,255,255,0.4)" }}
                       >
                         {lvl.score}/10
                       </span>
                     </div>
-                    <p className="mt-0.5 text-xs text-white/40">{lvl.subtitle}</p>
-                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+                    <p className={`mt-0.5 text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>{lvl.subtitle}</p>
+                    <div
+                      className={`mt-1.5 h-1.5 w-full overflow-hidden rounded-full ${isLight ? "bg-[#E2E8F0]" : "bg-white/10"}`}
+                    >
                       <div
                         className="h-full rounded-full transition-all duration-700"
                         style={{
                           width: `${lvl.score * 10}%`,
                           background: active
                             ? `linear-gradient(90deg, ${ACCENT}, #FFB199)`
-                            : "rgba(255,255,255,0.2)",
+                            : isLight
+                              ? "#CBD5E1"
+                              : "rgba(255,255,255,0.2)",
                         }}
                       />
                     </div>
@@ -361,7 +397,7 @@ export function QuizAssessment() {
               })}
             </div>
             {!resultReady && (
-              <p className="mt-3 text-center text-xs text-white/40">
+              <p className={`mt-3 text-center text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>
                 📍 Cấp độ sẽ được xác định sau khi bạn hoàn thành bài test.
               </p>
             )}

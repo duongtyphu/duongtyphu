@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { RevealText } from "@/components/home/RevealText";
 
-export function FounderStory() {
+export function FounderStory({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   return (
-    <section className="overflow-hidden py-9 text-white md:py-12">
+    <section className={`overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#FFF9F5] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -16,11 +17,21 @@ export function FounderStory() {
           className="grid gap-10 md:grid-cols-[minmax(0,520px)_1fr] md:items-center"
         >
           <div className="relative mx-auto flex w-full max-w-[520px] flex-col">
-            <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/25 blur-3xl" />
-            <div className="absolute -inset-16 -z-10 rounded-[56px] bg-brand-violet/20 blur-[80px]" />
-            <div className="absolute -inset-8 -z-10 rounded-[44px] bg-brand-orange/10 blur-2xl" />
+            {!isLight && (
+              <>
+                <div className="absolute -inset-12 -z-10 rounded-[52px] bg-brand-blue/25 blur-3xl" />
+                <div className="absolute -inset-16 -z-10 rounded-[56px] bg-brand-violet/20 blur-[80px]" />
+                <div className="absolute -inset-8 -z-10 rounded-[44px] bg-brand-orange/10 blur-2xl" />
+              </>
+            )}
 
-            <div className="relative w-full overflow-hidden rounded-[36px] border border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_0_70px_-5px_rgba(37,99,235,0.55),0_40px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur">
+            <div
+              className={`relative w-full overflow-hidden rounded-[36px] border backdrop-blur ${
+                isLight
+                  ? "border-[#E2E8F0] bg-white shadow-[0_30px_70px_-30px_rgba(15,23,42,0.25)]"
+                  : "border-white/15 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_0_70px_-5px_rgba(37,99,235,0.55),0_40px_80px_-20px_rgba(0,0,0,0.7)]"
+              }`}
+            >
               <Image
                 src="/founder.png"
                 alt="Võ Đương — Người sáng lập, Võ Đương AI"
@@ -33,28 +44,40 @@ export function FounderStory() {
               />
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 flex flex-wrap items-center justify-center gap-x-10 gap-y-16 overflow-hidden opacity-[0.08]"
+                className={`pointer-events-none absolute inset-0 flex flex-wrap items-center justify-center gap-x-10 gap-y-16 overflow-hidden ${
+                  isLight ? "opacity-[0.04]" : "opacity-[0.08]"
+                }`}
                 style={{ transform: "rotate(-24deg) scale(1.4)" }}
               >
                 {Array.from({ length: 12 }).map((_, i) => (
                   <span
                     key={i}
-                    className="whitespace-nowrap text-sm font-extrabold uppercase tracking-widest text-white"
+                    className={`whitespace-nowrap text-sm font-extrabold uppercase tracking-widest ${
+                      isLight ? "text-[#0F172A]" : "text-white"
+                    }`}
                   >
                     VO DUONG AI
                   </span>
                 ))}
               </div>
-              <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-white/10" />
+              {!isLight && (
+                <div className="absolute inset-0 rounded-[36px] ring-1 ring-inset ring-white/10" />
+              )}
             </div>
 
             <div className="mt-5 flex justify-center">
-              <div className="inline-flex items-center gap-2.5 rounded-full border border-brand-orange/30 bg-gradient-to-r from-brand-orange/15 via-white/[0.04] to-brand-blue/15 px-5 py-2 shadow-[0_0_24px_rgba(255,122,0,0.15)] backdrop-blur">
+              <div
+                className={`inline-flex items-center gap-2.5 rounded-full border px-5 py-2 backdrop-blur ${
+                  isLight
+                    ? "border-brand-orange/30 bg-white shadow-[0_8px_24px_-16px_rgba(255,122,0,0.35)]"
+                    : "border-brand-orange/30 bg-gradient-to-r from-brand-orange/15 via-white/[0.04] to-brand-blue/15 shadow-[0_0_24px_rgba(255,122,0,0.15)]"
+                }`}
+              >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-orange opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-orange" />
                 </span>
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-white">
+                <p className={`text-[11px] font-bold uppercase tracking-[0.12em] ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                   Đại diện Quốc gia khu vực Miền Nam
                   <span className="text-red-500"> — DigiU Việt Nam</span>
                 </p>
@@ -62,12 +85,18 @@ export function FounderStory() {
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent p-6 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] backdrop-blur md:p-8">
+          <div
+            className={`rounded-[24px] border p-6 backdrop-blur md:p-8 ${
+              isLight
+                ? "border-[#E2E8F0] bg-white shadow-[0_30px_60px_-30px_rgba(15,23,42,0.2)]"
+                : "border-white/15 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-transparent shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)]"
+            }`}
+          >
             <h2 className="text-xl font-extrabold md:text-2xl">
               <RevealText>Tại sao tôi xây Võ Đương AI?</RevealText>
             </h2>
 
-            <div className="mt-5 space-y-3.5 text-sm leading-relaxed text-white">
+            <div className={`mt-5 space-y-3.5 text-sm leading-relaxed ${isLight ? "text-[#334155]" : "text-white"}`}>
               <p>
                 Tôi là Võ Đương — nhà đầu tư, người ứng dụng AI thực chiến và
                 hiện đang đồng hành phát triển cộng đồng DigiU Việt Nam với
@@ -86,7 +115,7 @@ export function FounderStory() {
                 dụng mỗi ngày trong công việc, kinh doanh, AI và Affiliate
                 Marketing.
               </p>
-              <p className="font-semibold text-white">
+              <p className={`font-semibold ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 Mục tiêu của tôi rất đơn giản: giúp bạn học AI nhanh hơn, xây
                 hệ thống hiệu quả hơn và từng bước tạo ra tài sản số bền vững
                 cho tương lai.

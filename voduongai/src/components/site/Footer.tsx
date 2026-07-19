@@ -1,7 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import type { SiteSettings } from "@/lib/site-settings";
 import { brandMain, brandAccent } from "@/lib/brand-name";
+import { useLandingTheme } from "@/components/site/LandingThemeProvider";
 
 const columns = [
   {
@@ -25,7 +29,7 @@ const columns = [
   },
 ];
 
-function getSocials(settings: SiteSettings) {
+function getSocials(settings: SiteSettings, isLight: boolean) {
   return [
     {
       label: "Facebook",
@@ -72,11 +76,11 @@ function getSocials(settings: SiteSettings) {
     {
       label: "Email",
       href: `mailto:${settings.adminEmailNotify}`,
-      bg: "rgba(255,255,255,0.12)",
+      bg: isLight ? "rgba(15,23,42,0.08)" : "rgba(255,255,255,0.12)",
       icon: (
         <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
-          <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke="#fff" strokeWidth="1.4" />
-          <path d="M4.5 7 12 12.5 19.5 7" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" />
+          <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke={isLight ? "#0F172A" : "#fff"} strokeWidth="1.4" />
+          <path d="M4.5 7 12 12.5 19.5 7" stroke={isLight ? "#0F172A" : "#fff"} strokeWidth="1.4" strokeLinecap="round" />
         </svg>
       ),
     },
@@ -84,9 +88,13 @@ function getSocials(settings: SiteSettings) {
 }
 
 export function Footer({ settings }: { settings: SiteSettings }) {
-  const socials = getSocials(settings);
+  const pathname = usePathname();
+  const { theme } = useLandingTheme();
+  const isLight = pathname === "/" && theme === "light";
+  const socials = getSocials(settings, isLight);
+
   return (
-    <footer className="relative">
+    <footer className={`relative ${isLight ? "bg-white text-[#0F172A]" : ""}`}>
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-blue/70 to-transparent shadow-[0_0_24px_2px_rgba(91,140,255,0.55)]" />
       <div className="mx-auto max-w-6xl px-5 py-16">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
@@ -96,7 +104,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
-              <span className="text-base font-extrabold tracking-tight text-white">
+              <span className={`text-base font-extrabold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 {brandMain(settings.siteName)}
                 <span className="text-brand-orange">{brandAccent(settings.siteName)}</span>
               </span>
@@ -104,7 +112,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">
               {settings.slogan}
             </p>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
+            <p className={`mt-4 max-w-xs text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/50"}`}>
               Nơi học AI, xây hệ thống và tạo tài sản số hội tụ trong một hệ
               sinh thái duy nhất, đồng hành cùng bạn từ người mới đến nhà đầu
               tư thực chiến trong kỷ nguyên mới.
@@ -128,7 +136,11 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="-mx-2 block rounded-lg px-2 py-1 text-sm text-white/50 transition hover:bg-white/10 hover:text-white"
+                      className={`-mx-2 block rounded-lg px-2 py-1 text-sm transition ${
+                        isLight
+                          ? "text-[#54637A] hover:bg-[#0F172A]/5 hover:text-[#0F172A]"
+                          : "text-white/50 hover:bg-white/10 hover:text-white"
+                      }`}
                     >
                       {link.label}
                     </Link>
@@ -150,7 +162,9 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                     {...(s.href.startsWith("mailto:")
                       ? {}
                       : { target: "_blank", rel: "noopener noreferrer" })}
-                    className="flex items-center gap-2.5 text-sm text-white/50 transition hover:text-white"
+                    className={`flex items-center gap-2.5 text-sm transition ${
+                      isLight ? "text-[#54637A] hover:text-[#0F172A]" : "text-white/50 hover:text-white"
+                    }`}
                   >
                     <span
                       className="flex h-6 w-6 items-center justify-center rounded-full"
@@ -166,18 +180,22 @@ export function Footer({ settings }: { settings: SiteSettings }) {
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs text-white/40 md:flex-row">
+        <div
+          className={`mt-14 flex flex-col items-center justify-between gap-4 border-t pt-6 text-xs md:flex-row ${
+            isLight ? "border-[#E2E8F0] text-[#94A3B8]" : "border-white/10 text-white/40"
+          }`}
+        >
           <span>
             Copyright © {new Date().getFullYear()} {settings.siteName}
           </span>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/privacy" className="hover:text-white">
+            <Link href="/privacy" className={isLight ? "hover:text-[#0F172A]" : "hover:text-white"}>
               Chính sách bảo mật
             </Link>
-            <Link href="/terms" className="hover:text-white">
+            <Link href="/terms" className={isLight ? "hover:text-[#0F172A]" : "hover:text-white"}>
               Điều khoản sử dụng
             </Link>
-            <Link href="/refund-policy" className="hover:text-white">
+            <Link href="/refund-policy" className={isLight ? "hover:text-[#0F172A]" : "hover:text-white"}>
               Chính sách hoàn phí
             </Link>
           </div>

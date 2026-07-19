@@ -23,9 +23,11 @@ type NavItem = { label: string; href: string };
 export function MobileNavDrawer({
   navItems,
   user,
+  isLight = false,
 }: {
   navItems: NavItem[];
   user: { email: string; fullName?: string } | null;
+  isLight?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -65,7 +67,9 @@ export function MobileNavDrawer({
         onClick={() => setOpen(true)}
         aria-label="Mở menu"
         aria-expanded={open}
-        className="flex shrink-0 items-center justify-center rounded-lg p-2 text-white transition hover:bg-white/10 lg:hidden"
+        className={`flex shrink-0 items-center justify-center rounded-lg p-2 transition lg:hidden ${
+          isLight ? "text-[#0F172A] hover:bg-[#0F172A]/5" : "text-white hover:bg-white/10"
+        }`}
       >
         <Menu className="h-6 w-6" />
       </button>

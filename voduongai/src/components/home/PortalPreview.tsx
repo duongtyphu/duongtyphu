@@ -92,7 +92,8 @@ const CURSOR_STOPS = [
 const CURSOR_STOP_MS = 2600;
 const CURSOR_TRAVEL_S = 1.1;
 
-export function PortalPreview() {
+export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -103,7 +104,10 @@ export function PortalPreview() {
   }, []);
 
   return (
-    <section id="trai-nghiem-hoc-vien-ai" className="scroll-mt-24 overflow-hidden py-9 text-white md:py-12">
+    <section
+      id="trai-nghiem-hoc-vien-ai"
+      className={`relative isolate scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}
+    >
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -112,7 +116,11 @@ export function PortalPreview() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🧭 Khám phá Học Viện
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
@@ -120,7 +128,7 @@ export function PortalPreview() {
               Trải nghiệm bên trong <span className="text-brand-orange">Học viện AI</span>
             </RevealText>
           </h2>
-          <p className="mt-3 text-white md:whitespace-nowrap">
+          <p className={`mt-3 md:whitespace-nowrap ${isLight ? "text-[#334155]" : "text-white"}`}>
             Một không gian duy nhất để học AI, khám phá công cụ, lưu trữ tài
             nguyên, xây hệ thống và từng bước tạo tài sản số.
           </p>

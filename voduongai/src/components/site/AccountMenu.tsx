@@ -8,9 +8,10 @@ import { getSupabaseBrowser } from "@/lib/supabase-browser";
 type AccountMenuProps = {
   email: string;
   fullName?: string;
+  isLight?: boolean;
 };
 
-export function AccountMenu({ email, fullName }: AccountMenuProps) {
+export function AccountMenu({ email, fullName, isLight = false }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -39,7 +40,9 @@ export function AccountMenu({ email, fullName }: AccountMenuProps) {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2 py-1.5 text-sm font-semibold text-white transition hover:border-brand-violet"
+        className={`flex items-center gap-2 rounded-full border px-2 py-1.5 text-sm font-semibold transition hover:border-brand-violet ${
+          isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/10 bg-white/5 text-white"
+        }`}
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-orange/20 text-xs font-bold text-brand-orange">
           {initial}

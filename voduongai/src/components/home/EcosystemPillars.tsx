@@ -66,9 +66,10 @@ const PREMIUM = {
   stats: ["🔓 Mở khóa ngay", "🚀 Ưu đãi đặc biệt"] as [string, string],
 };
 
-export function EcosystemPillars() {
+export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   return (
-    <section className="py-9 text-white md:py-12">
+    <section className={`py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-6xl px-5">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -77,7 +78,11 @@ export function EcosystemPillars() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto max-w-2xl text-center md:max-w-none"
         >
-          <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/70 backdrop-blur-md">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🌐 Hệ sinh thái
           </span>
           <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
@@ -86,7 +91,7 @@ export function EcosystemPillars() {
               bạn
             </RevealText>
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-white/50">
+          <p className={`mx-auto mt-3 max-w-xl text-sm ${isLight ? "text-[#54637A]" : "text-white/50"}`}>
             5 +1 trụ cột – mỗi trụ cột là một mảnh ghép trong hành trình làm chủ
             AI của bạn.
           </p>
@@ -94,7 +99,7 @@ export function EcosystemPillars() {
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6">
           {PILLARS.map((pillar) => (
-            <div key={pillar.title} className="ecosystem-card card-shine">
+            <div key={pillar.title} className={`ecosystem-card card-shine ${isLight ? "ecosystem-card--light" : ""}`}>
               <div className="flex items-start justify-between gap-3">
                 <span className="ecosystem-card-icon" aria-hidden="true">
                   {pillar.icon}
@@ -103,18 +108,18 @@ export function EcosystemPillars() {
                   {pillar.tagLabel}
                 </span>
               </div>
-              <h3 className="mt-3 text-base font-bold text-white">{pillar.title}</h3>
-              <p className="mt-1.5 flex-1 text-sm leading-relaxed text-white/60">
+              <h3 className={`mt-3 text-base font-bold ${isLight ? "text-[#0F172A]" : "text-white"}`}>{pillar.title}</h3>
+              <p className={`mt-1.5 flex-1 text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/60"}`}>
                 {pillar.desc}
               </p>
-              <div className="ecosystem-card-stats">
+              <div className={`ecosystem-card-stats ${isLight ? "ecosystem-card-stats--light" : ""}`}>
                 <span>{pillar.stats[0]}</span>
                 <span>{pillar.stats[1]}</span>
               </div>
             </div>
           ))}
 
-          <div className="ecosystem-card ecosystem-card--premium card-shine">
+          <div className={`ecosystem-card ecosystem-card--premium card-shine ${isLight ? "ecosystem-card--light" : ""}`}>
             <span className="ecosystem-premium-badge">⭐ Premium</span>
             <div className="flex items-start justify-between gap-3">
               <span className="ecosystem-card-icon" aria-hidden="true">
@@ -124,25 +129,25 @@ export function EcosystemPillars() {
                 {PREMIUM.tagLabel}
               </span>
             </div>
-            <h3 className="mt-3 text-base font-bold text-white">{PREMIUM.title}</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-white/60">
+            <h3 className={`mt-3 text-base font-bold ${isLight ? "text-[#0F172A]" : "text-white"}`}>{PREMIUM.title}</h3>
+            <p className={`mt-1.5 text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/60"}`}>
               {PREMIUM.desc}
             </p>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {PREMIUM.features.map((feature) => (
-                <span key={feature} className="ecosystem-feature-chip">
+                <span key={feature} className={`ecosystem-feature-chip ${isLight ? "ecosystem-feature-chip--light" : ""}`}>
                   <strong>✓</strong> {feature}
                 </span>
               ))}
             </div>
-            <div className="ecosystem-card-stats mt-auto">
+            <div className={`ecosystem-card-stats mt-auto ${isLight ? "ecosystem-card-stats--light" : ""}`}>
               <span>{PREMIUM.stats[0]}</span>
               <span>{PREMIUM.stats[1]}</span>
             </div>
           </div>
         </div>
 
-        <p className="mt-6 text-center text-[10px] text-white/50">
+        <p className={`mt-6 text-center text-[10px] ${isLight ? "text-[#54637A]" : "text-white/50"}`}>
           🔹 Di chuột vào từng card để cảm nhận hiệu ứng 3D nhô lên
         </p>
       </div>

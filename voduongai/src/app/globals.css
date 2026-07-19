@@ -2186,52 +2186,86 @@ body {
 }
 
 /* ============================================================
- * HOME HERO — glow orbs + question vortex (redesign section 1)
+ * HOME HERO — mesh + grid background (replaces the WebGL neural
+ * network). CSS-only: one grid-line layer + three drifting gradient
+ * blobs (blue/violet/orange), same technique for both themes — only
+ * the alpha values change via the --light modifier classes. Used for
+ * both dark and light mode (approved: see chat 2026-07-19).
  * ============================================================ */
 
-.hero-glow-orb {
+.hero-grid-layer {
+  position: absolute;
+  inset: 0;
+  z-index: -6;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 50px 50px;
+  -webkit-mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 55%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 90% at 50% 50%, black 55%, transparent 100%);
+}
+
+.hero-grid-layer--light {
+  background-image:
+    linear-gradient(rgba(15, 23, 42, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 23, 42, 0.13) 1px, transparent 1px);
+}
+
+.hero-mesh-blob {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(110px);
+  filter: blur(90px);
   pointer-events: none;
   z-index: -5;
-  opacity: 0.55;
-  animation: hero-orb-drift 18s ease-in-out infinite;
+  animation: hero-orb-drift 22s ease-in-out infinite;
 }
 
-.hero-glow-orb--a {
-  top: -12%;
-  left: -8%;
-  width: 480px;
-  height: 480px;
-  background: radial-gradient(circle, rgba(37, 99, 235, 0.55), transparent 70%);
-  animation-duration: 18s;
+.hero-mesh-blob--blue {
+  top: -18%;
+  left: -10%;
+  width: 560px;
+  height: 560px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.61), transparent 70%);
+  animation-duration: 24s;
 }
 
-.hero-glow-orb--b {
-  top: 18%;
-  right: -12%;
+.hero-mesh-blob--blue.hero-mesh-blob--light {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.22), transparent 70%);
+}
+
+.hero-mesh-blob--violet {
+  top: 6%;
+  right: -14%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.53), transparent 70%);
+  animation-duration: 28s;
+  animation-delay: -8s;
+}
+
+.hero-mesh-blob--violet.hero-mesh-blob--light {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.20), transparent 70%);
+}
+
+.hero-mesh-blob--orange {
+  bottom: -20%;
+  left: 34%;
   width: 420px;
   height: 420px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.5), transparent 70%);
-  animation-duration: 22s;
-  animation-delay: -6s;
+  background: radial-gradient(circle, rgba(255, 122, 0, 0.35), transparent 70%);
+  animation-duration: 26s;
+  animation-delay: -14s;
 }
 
-.hero-glow-orb--c {
-  bottom: -16%;
-  left: 30%;
-  width: 460px;
-  height: 460px;
-  background: radial-gradient(circle, rgba(255, 122, 0, 0.35), transparent 70%);
-  animation-duration: 20s;
-  animation-delay: -11s;
+.hero-mesh-blob--orange.hero-mesh-blob--light {
+  background: radial-gradient(circle, rgba(255, 122, 0, 0.15), transparent 70%);
 }
 
 @keyframes hero-orb-drift {
   0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(30px, -24px) scale(1.12); }
-  66% { transform: translate(-24px, 20px) scale(0.92); }
+  33% { transform: translate(26px, -20px) scale(1.08); }
+  66% { transform: translate(-20px, 16px) scale(0.94); }
 }
 
 /* Deep-space background for the question card — layered nebula smudges
@@ -2301,7 +2335,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-glow-orb,
+  .hero-mesh-blob,
   .hero-vortex-core,
   .hero-bubble-slot {
     animation: none;
@@ -2746,3 +2780,77 @@ body {
     transform: none;
   }
 }
+
+/* ============================================================
+ * LANDING PAGE LIGHT MODE — additive-only light-mode surface variants
+ * for the "/" route's light/dark toggle. Every class below is a NEW,
+ * separate class — none of the existing dark-mode classes above are
+ * modified, so default (no variant / dark) output is unchanged.
+ * ============================================================ */
+.ecosystem-card--light {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  box-shadow: var(--shadow-token-sm, 0 1px 4px rgba(15, 23, 42, 0.07));
+}
+
+.ecosystem-card--light.ecosystem-card--premium {
+  background: linear-gradient(145deg, rgba(249, 115, 22, 0.08), rgba(139, 92, 246, 0.06));
+  border-color: rgba(249, 115, 22, 0.25);
+}
+
+.ecosystem-card-stats--light {
+  border-top-color: #e2e8f0;
+  color: #54637a;
+}
+
+.ecosystem-feature-chip--light {
+  border-color: #e2e8f0;
+  background: #f6f7f9;
+  color: #54637a;
+}
+
+.audience-card--light {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  box-shadow: var(--shadow-token-sm, 0 1px 4px rgba(15, 23, 42, 0.07));
+}
+
+.audience-card--light:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 20px 45px -28px rgba(15, 23, 42, 0.25);
+}
+
+.problem-panel--light {
+  border-color: rgba(248, 113, 113, 0.25);
+  background: linear-gradient(160deg, rgba(248, 113, 113, 0.06), rgba(255, 255, 255, 0.9));
+}
+
+.solution-card--light {
+  border-color: rgba(255, 107, 53, 0.3);
+  background: linear-gradient(160deg, rgba(255, 107, 53, 0.08), rgba(255, 255, 255, 0.9));
+}
+
+.roadmap-glass-card--light {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  box-shadow: var(--shadow-token-sm, 0 1px 4px rgba(15, 23, 42, 0.07));
+}
+
+.community-stat-card--light {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.community-stat-card--light:hover {
+  border-color: rgba(255, 107, 53, 0.35);
+  box-shadow: 0 20px 45px -25px rgba(255, 107, 53, 0.25);
+}
+
+.trust-badge--light {
+  border-color: rgba(5, 150, 105, 0.3);
+  background: rgba(5, 150, 105, 0.08);
+  color: #047857;
+}
+
