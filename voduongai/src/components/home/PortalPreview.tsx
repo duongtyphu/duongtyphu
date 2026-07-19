@@ -154,7 +154,11 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             whileHover={{ scale: 1.01 }}
             style={{ transform: "rotateX(1deg)" }}
-            className="group relative overflow-hidden rounded-[32px] border border-white/12 bg-[#0B1220] shadow-[0_60px_140px_-40px_rgba(0,0,0,0.7)] transition-shadow duration-300 hover:shadow-[0_0_100px_-10px_rgba(37,99,235,0.4),0_60px_140px_-40px_rgba(0,0,0,0.7)]"
+            className={`group relative overflow-hidden rounded-[32px] border border-white/12 bg-[#0B1220] transition-shadow duration-300 ${
+              isLight
+                ? "shadow-[0_30px_70px_-35px_rgba(15,23,42,0.35)] hover:shadow-[0_0_70px_-15px_rgba(37,99,235,0.35),0_30px_70px_-35px_rgba(15,23,42,0.35)]"
+                : "shadow-[0_60px_140px_-40px_rgba(0,0,0,0.7)] hover:shadow-[0_0_100px_-10px_rgba(37,99,235,0.4),0_60px_140px_-40px_rgba(0,0,0,0.7)]"
+            }`}
           >
             {/* Light reflection + ring */}
             <div className="pointer-events-none absolute inset-0 z-10 rounded-[32px] bg-gradient-to-br from-white/[0.06] via-transparent to-transparent" />
