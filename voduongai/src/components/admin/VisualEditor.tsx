@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, GripVertical } from "lucide-react";
+import { Pencil, Trash2, GripVertical } from "lucide-react";
 import { useCollection } from "@/lib/admin/store";
 import { DataTableRowPanel } from "@/components/admin/DataTableRowPanel";
 import type { FieldConfig } from "@/lib/admin/fields";
@@ -11,22 +11,24 @@ type BaseItem = { id: string; status?: string };
 /**
  * Hover-to-edit + kéo-thả — dùng riêng cho collection có thứ tự hiển thị
  * quan trọng (home-cards, projects). Toàn client, dùng thẳng
- * useCollection().items/reorder (đã gọi đúng API PUT bulk-replace có sẵn,
- * không viết Server Action mới). Form sửa chi tiết tái dùng
+ * useCollection().items/reorder/remove (đã gọi đúng API PUT bulk-replace/
+ * DELETE có sẵn, không viết Server Action mới). Form sửa chi tiết tái dùng
  * DataTableRowPanel — không viết form riêng lần 2.
  */
 export function VisualEditor<T extends BaseItem>({
   collectionKey,
   title,
+  itemNoun = "mục",
   fields,
   renderCard,
 }: {
   collectionKey: string;
   title: string;
+  itemNoun?: string;
   fields: FieldConfig[];
   renderCard: (item: T) => React.ReactNode;
 }) {
-  const { items, ready, add, update, reorder } = useCollection<T>(collectionKey, []);
+  const { items, ready, add, update, remove, reorder } = useCollection<T>(collectionKey, []);
   const [panelOpen, setPanelOpen] = useState(false);
   const [editing, setEditing] = useState<T | null>(null);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -39,6 +41,11 @@ export function VisualEditor<T extends BaseItem>({
   function openEdit(item: T) {
     setEditing(item);
     setPanelOpen(true);
+  }
+
+  async function handleDelete(item: T) {
+    if (!window.confirm(`Xoá "${item.id}"? Không thể hoàn tác.`)) return;
+    await remove(item.id);
   }
 
   function handleDrop(targetIndex: number) {
@@ -56,7 +63,10 @@ export function VisualEditor<T extends BaseItem>({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-extrabold text-gray-900">{title}</h1>
+        <h1 className="text-lg font-extrabold text-gray-900">
+          {title}
+          {ready ? ` — ${items.length} ${itemNoun}` : ""}
+        </h1>
         <button
           type="button"
           onClick={openCreate}
@@ -85,14 +95,24 @@ export function VisualEditor<T extends BaseItem>({
             >
               <GripVertical className="mt-0.5 h-4 w-4 shrink-0 cursor-grab text-gray-300" />
               <div className="min-w-0 flex-1">{renderCard(item)}</div>
-              <button
-                type="button"
-                onClick={() => openEdit(item)}
-                aria-label="Sửa"
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-gray-200 text-gray-500 opacity-0 transition hover:border-brand-blue hover:text-brand-blue group-hover:opacity-100"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </button>
+              <div className="flex shrink-0 flex-col gap-1 opacity-0 transition group-hover:opacity-100">
+                <button
+                  type="button"
+                  onClick={() => openEdit(item)}
+                  aria-label="Sửa"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:border-brand-blue hover:text-brand-blue"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(item)}
+                  aria-label="Xoá"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:border-red-400 hover:text-red-500"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           ))}
         </div>

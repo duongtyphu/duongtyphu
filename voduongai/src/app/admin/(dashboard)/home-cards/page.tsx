@@ -34,7 +34,8 @@ export default function AdminHomeCardsPage() {
   return (
     <VisualEditor<HomeCard>
       collectionKey="home-cards"
-      title="Trang chủ Học viện — 7 thẻ"
+      title="Trang chủ Học viện"
+      itemNoun="thẻ"
       fields={fields}
       renderCard={(item) => (
         <div>
