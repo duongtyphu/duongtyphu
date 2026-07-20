@@ -21,18 +21,7 @@ const fields: FieldConfig[] = [
   { key: "description", label: "Mô tả", type: "textarea", full: true },
   { key: "whenToUse", label: "Khi nào nên dùng", type: "textarea", full: true },
   { key: "whenNotToUse", label: "Khi nào KHÔNG nên dùng", type: "textarea", full: true },
-  {
-    key: "steps",
-    label: "Các bước (mỗi dòng 1 bước)",
-    type: "textarea",
-    full: true,
-    toFormValue: (v) => (Array.isArray(v) ? (v as string[]).join("\n") : ""),
-    fromFormValue: (v) =>
-      String(v ?? "")
-        .split("\n")
-        .map((s) => s.trim())
-        .filter(Boolean),
-  },
+  { key: "steps", label: "Các bước (mỗi dòng 1 bước)", type: "textarea", full: true, transform: "newline-list" },
   { key: "relatedPromptId", label: "ID Prompt liên quan (nếu có)", type: "text" },
   { key: "fileUrl", label: "Link file", type: "text" },
   { key: "downloadLink", label: "Link tải khác (nếu có)", type: "text" },

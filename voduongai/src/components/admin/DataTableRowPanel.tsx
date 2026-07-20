@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { useCollection, genId } from "@/lib/admin/store";
 import { SlideOver } from "@/components/admin/ui/SlideOver";
 import { FieldInput } from "@/components/admin/FieldInput";
-import { emptyFromFields, type FieldConfig } from "@/lib/admin/fields";
+import { emptyFromFields, toFormValueFor, fromFormValueFor, type FieldConfig } from "@/lib/admin/fields";
 
 type BaseItem = { id: string };
 
 function toFormState<T extends BaseItem>(fields: FieldConfig[], source: T): Record<string, unknown> {
   const next: Record<string, unknown> = { ...(source as unknown as Record<string, unknown>) };
   for (const f of fields) {
-    if (f.toFormValue) next[f.key] = f.toFormValue((source as Record<string, unknown>)[f.key]);
+    if (f.transform) next[f.key] = toFormValueFor(f, (source as Record<string, unknown>)[f.key]);
   }
   return next;
 }
@@ -76,7 +76,7 @@ export function DataTableRowPanel<T extends BaseItem>({
     try {
       const payload: Record<string, unknown> = { ...form };
       for (const f of fields) {
-        if (f.fromFormValue) payload[f.key] = f.fromFormValue(payload[f.key]);
+        if (f.transform) payload[f.key] = fromFormValueFor(f, payload[f.key]);
       }
       if (item) {
         await update(item.id, payload as Partial<T>);
