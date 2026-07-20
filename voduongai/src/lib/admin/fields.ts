@@ -10,6 +10,13 @@ export type FieldConfig = {
   required?: boolean;
   placeholder?: string;
   full?: boolean;
+  /** Chuyển giá trị đã lưu (vd. mảng string) thành giá trị hiển thị trong
+   * form — dùng để bọc 1 FieldType có sẵn (vd. "textarea") cho kiểu dữ liệu
+   * khác, không tạo FieldType mới. Bỏ trống = hiển thị nguyên giá trị lưu. */
+  toFormValue?: (value: unknown) => unknown;
+  /** Chuyển giá trị vừa nhập trong form ngược lại đúng kiểu sẽ lưu, chạy
+   * ngay trước khi add/update. Bỏ trống = lưu nguyên giá trị đã nhập. */
+  fromFormValue?: (value: unknown) => unknown;
 };
 
 export type ColumnConfig<T> = {

@@ -8,6 +8,14 @@ import { emptyFromFields, type FieldConfig } from "@/lib/admin/fields";
 
 type BaseItem = { id: string };
 
+function toFormState<T extends BaseItem>(fields: FieldConfig[], source: T): Record<string, unknown> {
+  const next: Record<string, unknown> = { ...(source as unknown as Record<string, unknown>) };
+  for (const f of fields) {
+    if (f.toFormValue) next[f.key] = f.toFormValue((source as Record<string, unknown>)[f.key]);
+  }
+  return next;
+}
+
 /**
  * Slide-over sửa/thêm 1 dòng — "use client", dùng useCollection().add/update
  * (đã gọi đúng API /api/admin/collections/[table] có sẵn, không viết fetch
@@ -45,7 +53,9 @@ export function DataTableRowPanel<T extends BaseItem>({
   const ownCollection = useCollection<T>(collectionKey, []);
   const add = mutators?.add ?? ownCollection.add;
   const update = mutators?.update ?? ownCollection.update;
-  const [form, setForm] = useState<Record<string, unknown>>(() => (item ? { ...item } : emptyFromFields(fields)));
+  const [form, setForm] = useState<Record<string, unknown>>(() =>
+    item ? toFormState(fields, item) : emptyFromFields(fields),
+  );
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -53,7 +63,7 @@ export function DataTableRowPanel<T extends BaseItem>({
     // (or switches create/edit) — no render-time equivalent since `item`
     // arrives as a prop from the parent's own click handler, not derivable.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setForm(item ? { ...item } : emptyFromFields(fields));
+    setForm(item ? toFormState(fields, item) : emptyFromFields(fields));
   }, [item, fields]);
 
   function setField(key: string, value: unknown) {
@@ -64,10 +74,14 @@ export function DataTableRowPanel<T extends BaseItem>({
     e.preventDefault();
     setSaving(true);
     try {
+      const payload: Record<string, unknown> = { ...form };
+      for (const f of fields) {
+        if (f.fromFormValue) payload[f.key] = f.fromFormValue(payload[f.key]);
+      }
       if (item) {
-        await update(item.id, form as Partial<T>);
+        await update(item.id, payload as Partial<T>);
       } else {
-        await add({ id: genId(collectionKey), ...form } as T);
+        await add({ id: genId(collectionKey), ...payload } as T);
       }
       onSaved?.();
       onClose();
