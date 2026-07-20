@@ -1,12 +1,49 @@
 import Link from "next/link";
-import { sops } from "@/data/sop";
 import { prompts } from "@/data/prompts";
+import { getSupabaseServer } from "@/lib/supabase-server";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
 export const metadata = { title: "SOP", description: "Quy trình chuẩn (SOP) vận hành Affiliate Marketing và sản xuất nội dung của VO DUONG AI." };
 
-export default function SopPage() {
+type LiveSop = {
+  id: string;
+  title: string;
+  description: string;
+  whenToUse: string;
+  whenNotToUse: string;
+  steps: string[];
+  relatedPromptId?: string;
+};
+
+async function getLiveSops(): Promise<LiveSop[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
+  const supabase = await getSupabaseServer();
+  const { data, error } = await supabase
+    .from("sop")
+    .select("id, data")
+    .eq("status", "Published")
+    .order("order", { ascending: true });
+  if (error || !data) return [];
+  return data.map((row) => {
+    const d = (row.data ?? {}) as Record<string, unknown>;
+    return {
+      id: row.id as string,
+      title: String(d.name ?? ""),
+      description: String(d.description ?? ""),
+      whenToUse: String(d.whenToUse ?? ""),
+      whenNotToUse: String(d.whenNotToUse ?? ""),
+      steps: Array.isArray(d.steps) ? (d.steps as string[]) : [],
+      relatedPromptId: d.relatedPromptId ? String(d.relatedPromptId) : undefined,
+    };
+  });
+}
+
+export default async function SopPage() {
+  const sops = await getLiveSops();
+
   return (
     <div className="space-y-6">
       <div>
@@ -15,11 +52,16 @@ export default function SopPage() {
           Quy trình chuẩn hoá để bạn (và đội nhóm) làm việc nhất quán, không phụ thuộc cảm hứng.
         </p>
       </div>
+      {sops.length === 0 && (
+        <p className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">
+          Chưa có SOP nào được đăng.
+        </p>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         {sops.map((s) => {
           const relatedPrompt = s.relatedPromptId ? prompts.find((p) => p.id === s.relatedPromptId) : undefined;
           return (
-            <div key={s.title} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
+            <div key={s.id} className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-5">
               <h3 className="text-sm font-bold text-gray-900">{s.title}</h3>
               <p className="mt-2 text-sm text-gray-900">{s.description}</p>
               <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-blue-600">Khi nào dùng</p>

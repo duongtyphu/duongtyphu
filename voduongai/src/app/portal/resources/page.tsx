@@ -1,5 +1,5 @@
-import { freeResources } from "@/data/resources";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getLiveResources } from "@/lib/portal/live-resources";
 import { ResourceCard } from "@/components/portal/ResourceCard";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
@@ -29,6 +29,7 @@ async function getLiveDocuments(): Promise<LiveDocument[]> {
 
 export default async function ResourcesPage() {
   const liveDocuments = await getLiveDocuments();
+  const resources = await getLiveResources();
 
   return (
     <div className="space-y-10">
@@ -63,8 +64,13 @@ export default async function ResourcesPage() {
         <p className="mt-1 text-sm text-gray-500">
           Bộ tài nguyên biên tập sẵn của VO DUONG AI — mỗi mục có ghi rõ khi nào nên dùng, không chỉ mô tả nội dung.
         </p>
+        {resources.length === 0 && (
+          <p className="mt-4 rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">
+            Chưa có tài nguyên nào được đăng.
+          </p>
+        )}
         <div className="mt-4 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
-          {freeResources.map((r) => (
+          {resources.map((r) => (
             <ResourceCard
               key={r.id}
               title={r.title}

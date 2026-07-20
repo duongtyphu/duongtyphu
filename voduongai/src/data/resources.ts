@@ -1,3 +1,11 @@
+/**
+ * @deprecated Từ Bước C (migrate Resource sang Supabase) — cả
+ * `/portal/resources` lẫn `/portal/resources/[id]` giờ đọc từ bảng
+ * `resources` (Supabase), không còn dùng `freeResources` bên dưới. Giữ
+ * nguyên mảng này 1-2 tuần phòng hờ rollback nhanh (đổi 2 file đó quay lại
+ * import `freeResources` từ đây thay vì phải khôi phục từ git history).
+ * Xoá hẳn sau khi xác nhận nguồn Supabase ổn định.
+ */
 export type FreeResource = {
   id: string;
   title: string;

@@ -1,3 +1,10 @@
+/**
+ * @deprecated Từ Bước C (migrate SOP sang Supabase) — /portal/sop giờ đọc
+ * từ bảng `sop` (Supabase), không còn dùng `sops` bên dưới. Giữ nguyên
+ * mảng này 1-2 tuần phòng hờ rollback nhanh (đổi `/portal/sop/page.tsx`
+ * quay lại import `sops` từ đây thay vì phải khôi phục từ git history).
+ * Xoá hẳn sau khi xác nhận nguồn Supabase ổn định.
+ */
 export type Sop = {
   title: string;
   description: string;

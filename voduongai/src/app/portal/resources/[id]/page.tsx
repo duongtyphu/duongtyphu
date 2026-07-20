@@ -1,22 +1,25 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { freeResources } from "@/data/resources";
+import { getLiveResources } from "@/lib/portal/live-resources";
 import { LeadGate } from "@/components/portal/LeadGate";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
-export function generateStaticParams() {
-  return freeResources.map((r) => ({ id: r.id }));
+export async function generateStaticParams() {
+  const resources = await getLiveResources();
+  return resources.map((r) => ({ id: r.id }));
 }
 
 export async function generateMetadata({ params }: PageProps<"/portal/resources/[id]">) {
   const { id } = await params;
-  const resource = freeResources.find((r) => r.id === id);
+  const resources = await getLiveResources();
+  const resource = resources.find((r) => r.id === id);
   return { title: resource?.title ?? "Tài nguyên" };
 }
 
 export default async function ResourceDetailPage({ params }: PageProps<"/portal/resources/[id]">) {
   const { id } = await params;
-  const resource = freeResources.find((r) => r.id === id);
+  const resources = await getLiveResources();
+  const resource = resources.find((r) => r.id === id);
   if (!resource) notFound();
 
   return (
