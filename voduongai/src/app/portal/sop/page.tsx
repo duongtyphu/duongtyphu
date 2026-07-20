@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prompts } from "@/data/prompts";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabasePublic } from "@/lib/supabase";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 
@@ -17,10 +17,8 @@ type LiveSop = {
 };
 
 async function getLiveSops(): Promise<LiveSop[]> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return [];
-  }
-  const supabase = await getSupabaseServer();
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("sop")
     .select("id, data")

@@ -1,5 +1,5 @@
 import { cache } from "react";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabasePublic } from "@/lib/supabase";
 
 export type LiveResource = {
   id: string;
@@ -16,12 +16,16 @@ export type LiveResource = {
  * Supabase `resources`, quản lý qua /admin/ckos/resources). Bọc `cache()`
  * vì trang chi tiết gọi hàm này tới 3 lần trong cùng 1 request/build
  * (generateStaticParams + generateMetadata + page) — tránh 3 lượt query.
+ *
+ * Dùng getSupabasePublic() (không cookies()) chứ không phải
+ * getSupabaseServer() — generateStaticParams() chạy lúc build, ngoài mọi
+ * request context, gọi cookies() ở đó sẽ crash build (đã xảy ra thật khi
+ * deploy, sandbox không phát hiện được vì thiếu env Supabase nên chưa bao
+ * giờ chạy tới nhánh code này).
  */
 export const getLiveResources = cache(async (): Promise<LiveResource[]> => {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    return [];
-  }
-  const supabase = await getSupabaseServer();
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("resources")
     .select("id, data")
