@@ -1,203 +1,77 @@
 "use client";
 
-import { useState } from "react";
-import { useCollection, genId } from "@/lib/admin/store";
+import { VisualEditor } from "@/components/admin/VisualEditor";
+import type { FieldConfig } from "@/lib/admin/fields";
 
-type KnowledgeRef = { id: string; sourceLabel: string; enabled: boolean };
-type SafetyRule = { id: string; title: string; status: string };
-type VersionLog = { id: string; version: number; status: string };
-type TestSession = {
+type TestCase = {
   id: string;
-  version: string;
+  title: string;
   question: string;
-  verdict: string;
-  notes: string;
+  expectedBehavior: string;
+  passCriteria: string;
+  importance: string;
+  scenarioGroup: string;
+  versionTested: string;
+  result: string;
+  reviewNotes: string;
   status: string;
 };
 
+const fields: FieldConfig[] = [
+  { key: "title", label: "Tên tình huống", type: "text", required: true },
+  { key: "question", label: "Câu hỏi thử", type: "textarea", full: true, required: true },
+  { key: "expectedBehavior", label: "Hành vi mong đợi", type: "textarea", full: true },
+  { key: "passCriteria", label: "Tiêu chí đạt", type: "textarea", full: true },
+  { key: "importance", label: "Mức độ quan trọng", type: "select", options: ["Thấp", "Trung bình", "Cao"] },
+  { key: "scenarioGroup", label: "Nhóm tình huống", type: "text" },
+  { key: "versionTested", label: "Phiên bản đã kiểm tra", type: "text", placeholder: "vd. v3 hoặc Bản nháp" },
+  { key: "result", label: "Kết quả", type: "select", options: ["Chưa chạy", "Đạt", "Chưa đạt"] },
+  { key: "reviewNotes", label: "Ghi chú đánh giá", type: "textarea", full: true },
+  { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published"], required: true },
+];
+
 /**
- * Tab "Kiểm tra Companion" — CHƯA có Chat runtime nào cho Companion
- * end-user (đã xác nhận qua rà soát toàn bộ codebase), nên KHÔNG giả lập
- * phản hồi. Chỉ hiển thị đúng trạng thái "Chưa kết nối" + những gì SẼ áp
- * dụng (nguồn tri thức đang bật, quy tắc an toàn) nếu runtime tồn tại. Log
- * kiểm thử ghi vào companion-test-sessions — KHÔNG đụng reflections/
- * memory_capsules (bảng người dùng thật).
+ * Tab "Kiểm tra Companion" — quản lý THƯ VIỆN test case (tái sử dụng được
+ * qua nhiều lần kiểm tra), không phải log 1 lần dùng xong bỏ. CHƯA có Chat
+ * runtime nào cho Companion end-user (đã xác nhận qua rà soát toàn bộ
+ * codebase) nên KHÔNG giả lập phản hồi — Founder tự đánh giá "Kết quả" dựa
+ * trên phán đoán riêng. Lưu vào companion-test-sessions — KHÔNG đụng
+ * reflections/memory_capsules (bảng người dùng thật).
  */
 export function TestTab() {
-  const { items: versions } = useCollection<VersionLog>("companion-versions", []);
-  const { items: refs } = useCollection<KnowledgeRef>("companion-knowledge-refs", []);
-  const { items: rules } = useCollection<SafetyRule>("companion-safety-rules", []);
-  const { items: sessions, add, ready } = useCollection<TestSession>("companion-test-sessions", []);
-
-  const [version, setVersion] = useState("draft");
-  const [question, setQuestion] = useState("");
-  const [verdict, setVerdict] = useState<"" | "Đạt" | "Chưa đạt">("");
-  const [notes, setNotes] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const enabledRefs = refs.filter((r) => r.enabled);
-  const publishedVersions = versions.filter((v) => v.status === "Published");
-
-  async function handleSave() {
-    if (!question.trim() || !verdict) return;
-    setSaving(true);
-    try {
-      await add({
-        id: genId("companion-test-sessions"),
-        version,
-        question,
-        verdict,
-        notes,
-        status: "Published",
-      });
-      setQuestion("");
-      setVerdict("");
-      setNotes("");
-    } finally {
-      setSaving(false);
-    }
-  }
-
   return (
-    <div className="space-y-6">
-      <div className="rounded-2xl border border-gray-200 bg-white p-5">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Phiên bản kiểm tra
-            </label>
-            <select
-              value={version}
-              onChange={(e) => setVersion(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
-            >
-              <option value="draft">Bản nháp hiện tại</option>
-              {publishedVersions.map((v) => (
-                <option key={v.id} value={String(v.version)}>
-                  Phiên bản đã xuất bản v{v.version}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <label className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">
-            Câu hỏi thử
-          </label>
-          <textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            rows={3}
-            placeholder="Nhập câu hỏi để hình dung Companion sẽ phản hồi thế nào..."
-            className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
-          />
-        </div>
-
-        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <strong>Chưa kết nối hệ thống trả lời.</strong> Companion hiện chưa có hệ thống trò chuyện/AI thật nào
-          để tạo phản hồi — khu vực này chỉ mô phỏng ngữ cảnh (nguồn tri thức + quy tắc an toàn sẽ áp dụng), không
-          tạo câu trả lời giả.
-        </div>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Nguồn tri thức sẽ áp dụng ({enabledRefs.length})
-            </p>
-            {enabledRefs.length === 0 ? (
-              <p className="mt-1 text-xs text-gray-400">Chưa bật nguồn tri thức nào ở tab Tri thức.</p>
-            ) : (
-              <ul className="mt-1 space-y-1 text-sm text-gray-700">
-                {enabledRefs.map((r) => (
-                  <li key={r.id}>· {r.sourceLabel}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-              Quy tắc an toàn sẽ áp dụng ({rules.length})
-            </p>
-            {rules.length === 0 ? (
-              <p className="mt-1 text-xs text-gray-400">Chưa có quy tắc an toàn nào ở tab An toàn.</p>
-            ) : (
-              <ul className="mt-1 space-y-1 text-sm text-gray-700">
-                {rules.map((r) => (
-                  <li key={r.id}>· {r.title}</li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-4 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setVerdict("Đạt")}
-            className={`rounded-lg px-4 py-2 text-sm font-bold ${
-              verdict === "Đạt" ? "bg-emerald-600 text-white" : "border border-gray-200 text-gray-600"
-            }`}
-          >
-            Đạt
-          </button>
-          <button
-            type="button"
-            onClick={() => setVerdict("Chưa đạt")}
-            className={`rounded-lg px-4 py-2 text-sm font-bold ${
-              verdict === "Chưa đạt" ? "bg-red-600 text-white" : "border border-gray-200 text-gray-600"
-            }`}
-          >
-            Chưa đạt
-          </button>
-        </div>
-
-        <textarea
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          rows={2}
-          placeholder="Ghi chú / yêu cầu chỉnh sửa (nếu có)"
-          className="mt-3 w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-brand-blue focus:outline-none"
-        />
-
-        <button
-          type="button"
-          disabled={saving || !question.trim() || !verdict}
-          onClick={handleSave}
-          className="mt-3 rounded-lg bg-brand-blue px-5 py-2.5 text-sm font-bold text-white disabled:opacity-40"
-        >
-          {saving ? "Đang lưu..." : "Ghi lại kết quả kiểm tra"}
-        </button>
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+        <strong>Chưa kết nối hệ thống trả lời.</strong> Companion hiện chưa có hệ thống trò chuyện/AI thật nào để
+        tạo phản hồi — soạn test case ở đây trước, tự đánh giá Đạt/Chưa đạt bằng phán đoán riêng khi có hệ thống
+        trả lời thật để chạy thử.
       </div>
-
-      <div>
-        <h3 className="text-sm font-bold text-gray-700">Lịch sử kiểm tra ({sessions.length})</h3>
-        {!ready ? (
-          <p className="mt-2 text-sm text-gray-500">Đang tải...</p>
-        ) : sessions.length === 0 ? (
-          <p className="mt-2 rounded-2xl border border-gray-200 bg-white px-4 py-10 text-center text-sm text-gray-500">
-            Chưa có lần kiểm tra nào.
-          </p>
-        ) : (
-          <div className="mt-2 space-y-2">
-            {sessions.map((s) => (
-              <div key={s.id} className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-900">{s.question}</p>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${
-                      s.verdict === "Đạt" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {s.verdict}
-                  </span>
-                </div>
-                {s.notes && <p className="mt-1 text-xs text-gray-500">{s.notes}</p>}
-              </div>
-            ))}
+      <VisualEditor<TestCase>
+        collectionKey="companion-test-sessions"
+        title="Test case"
+        itemNoun="tình huống"
+        fields={fields}
+        renderCard={(item) => (
+          <div>
+            <p className="text-sm font-bold text-gray-900">{item.title}</p>
+            <p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.question}</p>
+            <div className="mt-1.5 flex items-center gap-2">
+              <span
+                className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${
+                  item.result === "Đạt"
+                    ? "bg-emerald-100 text-emerald-700"
+                    : item.result === "Chưa đạt"
+                      ? "bg-red-100 text-red-700"
+                      : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                {item.result || "Chưa chạy"}
+              </span>
+              {item.scenarioGroup && <span className="text-[11px] text-gray-400">{item.scenarioGroup}</span>}
+            </div>
           </div>
         )}
-      </div>
+      />
     </div>
   );
 }

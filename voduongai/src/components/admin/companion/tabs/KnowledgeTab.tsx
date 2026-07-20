@@ -14,6 +14,7 @@ type KnowledgeRef = {
   enabled: boolean;
   note: string;
   status: string;
+  updatedAt?: string;
 };
 
 type PickItem = { id: string; label: string };
@@ -61,9 +62,20 @@ const UNAVAILABLE_SOURCES: { label: string; reason: string }[] = [
  */
 export function KnowledgeTab() {
   const { items: refs, ready, add, update, remove } = useCollection<KnowledgeRef>("companion-knowledge-refs", []);
+  const [validIds, setValidIds] = useState<Record<string, Set<string>>>({});
 
   function findRef(sourceCollection: string, sourceId: string) {
     return refs.find((r) => r.sourceCollection === sourceCollection && r.sourceId === sourceId) ?? null;
+  }
+
+  function reportValidIds(sourceCollection: string, ids: string[]) {
+    setValidIds((prev) => ({ ...prev, [sourceCollection]: new Set(ids) }));
+  }
+
+  function isInvalid(r: KnowledgeRef) {
+    const set = validIds[r.sourceCollection];
+    if (!set) return false; // chưa tải xong nguồn gốc — chưa kết luận được
+    return !set.has(r.sourceId);
   }
 
   async function toggleRef(sourceCollection: string, sourceId: string, sourceLabel: string) {
@@ -80,6 +92,7 @@ export function KnowledgeTab() {
         enabled: true,
         note: "",
         status: "Published",
+        updatedAt: new Date().toISOString(),
       });
     }
   }
@@ -94,7 +107,12 @@ export function KnowledgeTab() {
       enabled: false,
       note: "Đề xuất — chờ duyệt",
       status: "Review",
+      updatedAt: new Date().toISOString(),
     });
+  }
+
+  async function toggleEnabled(r: KnowledgeRef) {
+    await update(r.id, { enabled: !r.enabled, updatedAt: new Date().toISOString() } as Partial<KnowledgeRef>);
   }
 
   return (
@@ -116,6 +134,7 @@ export function KnowledgeTab() {
               isSelected={(id) => Boolean(findRef(source.key, id))}
               onToggle={(id, label) => toggleRef(source.key, id, label)}
               onSendToReview={(id, label) => sendToReviewQueue(source.key, id, label)}
+              onLoaded={(ids) => reportValidIds(source.key, ids)}
             />
           ))}
 
@@ -123,12 +142,14 @@ export function KnowledgeTab() {
             isSelected={(id) => Boolean(findRef("lesson", id))}
             onToggle={(id, label) => toggleRef("lesson", id, label)}
             onSendToReview={(id, label) => sendToReviewQueue("lesson", id, label)}
+            onLoaded={(ids) => reportValidIds("lesson", ids)}
           />
 
           <CaseStudySourceSection
             isSelected={(id) => Boolean(findRef("case_studies", id))}
             onToggle={(id, label) => toggleRef("case_studies", id, label)}
             onSendToReview={(id, label) => sendToReviewQueue("case_studies", id, label)}
+            onLoaded={(ids) => reportValidIds("case_studies", ids)}
           />
 
           <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-5">
@@ -152,26 +173,52 @@ export function KnowledgeTab() {
                     <tr className="border-b border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-500">
                       <th className="px-4 py-3">Nguồn</th>
                       <th className="px-4 py-3">Nội dung</th>
-                      <th className="px-4 py-3">Trạng thái đề xuất</th>
+                      <th className="px-4 py-3">Trạng thái</th>
+                      <th className="px-4 py-3">Bật</th>
                       <th className="px-4 py-3">Ưu tiên</th>
+                      <th className="px-4 py-3">Cập nhật</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {refs.map((r) => (
-                      <tr key={r.id} className="border-b border-gray-100 last:border-0">
-                        <td className="px-4 py-3 text-gray-500">{SOURCE_LABELS[r.sourceCollection] ?? r.sourceCollection}</td>
-                        <td className="px-4 py-3 font-semibold text-gray-900">{r.sourceLabel}</td>
-                        <td className="px-4 py-3 text-gray-500">{r.status === "Review" ? "Chờ duyệt" : "Đang bật"}</td>
-                        <td className="px-4 py-3">
-                          <input
-                            type="number"
-                            value={r.priority}
-                            onChange={(e) => update(r.id, { priority: Number(e.target.value) } as Partial<KnowledgeRef>)}
-                            className="w-16 rounded-lg border border-gray-200 px-2 py-1 text-sm"
-                          />
-                        </td>
-                      </tr>
-                    ))}
+                    {refs.map((r) => {
+                      const invalid = isInvalid(r);
+                      return (
+                        <tr key={r.id} className="border-b border-gray-100 last:border-0">
+                          <td className="px-4 py-3 text-gray-500">{SOURCE_LABELS[r.sourceCollection] ?? r.sourceCollection}</td>
+                          <td className="px-4 py-3">
+                            <p className="font-semibold text-gray-900">{r.sourceLabel}</p>
+                            {invalid && (
+                              <span className="mt-0.5 inline-block rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-bold text-red-700">
+                                Không hợp lệ / đã gỡ khỏi nguồn gốc
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-gray-500">{r.status === "Review" ? "Chờ duyệt" : "Đã publish"}</td>
+                          <td className="px-4 py-3">
+                            <button
+                              type="button"
+                              onClick={() => toggleEnabled(r)}
+                              className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+                                r.enabled ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-500"
+                              }`}
+                            >
+                              {r.enabled ? "Đang bật" : "Đã tắt"}
+                            </button>
+                          </td>
+                          <td className="px-4 py-3">
+                            <input
+                              type="number"
+                              value={r.priority}
+                              onChange={(e) => update(r.id, { priority: Number(e.target.value) } as Partial<KnowledgeRef>)}
+                              className="w-16 rounded-lg border border-gray-200 px-2 py-1 text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-3 text-xs text-gray-400">
+                            {r.updatedAt ? new Date(r.updatedAt).toLocaleDateString("vi-VN") : "—"}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -254,15 +301,23 @@ function CollectionSourceSection({
   isSelected,
   onToggle,
   onSendToReview,
+  onLoaded,
 }: {
   sourceKey: string;
   sourceLabel: string;
   isSelected: (id: string) => boolean;
   onToggle: (id: string, label: string) => void;
   onSendToReview: (id: string, label: string) => void;
+  onLoaded: (ids: string[]) => void;
 }) {
   const { items, ready } = useCollection<{ id: string; name?: string; title?: string }>(sourceKey, []);
   const picks: PickItem[] = items.map((item) => ({ id: item.id, label: item.title ?? item.name ?? item.id }));
+
+  useEffect(() => {
+    if (ready) onLoaded(picks.map((p) => p.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, items.length]);
+
   return (
     <SourcePickerShell
       title={sourceLabel}
@@ -279,12 +334,20 @@ function LessonSourceSection({
   isSelected,
   onToggle,
   onSendToReview,
+  onLoaded,
 }: {
   isSelected: (id: string) => boolean;
   onToggle: (id: string, label: string) => void;
   onSendToReview: (id: string, label: string) => void;
+  onLoaded: (ids: string[]) => void;
 }) {
   const picks: PickItem[] = getAllKnowledgeSeeds().map((seed) => ({ id: seed.id, label: seed.title }));
+
+  useEffect(() => {
+    onLoaded(picks.map((p) => p.id));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <SourcePickerShell
       title="Lesson"
@@ -301,10 +364,12 @@ function CaseStudySourceSection({
   isSelected,
   onToggle,
   onSendToReview,
+  onLoaded,
 }: {
   isSelected: (id: string) => boolean;
   onToggle: (id: string, label: string) => void;
   onSendToReview: (id: string, label: string) => void;
+  onLoaded: (ids: string[]) => void;
 }) {
   const [picks, setPicks] = useState<PickItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -315,14 +380,17 @@ function CaseStudySourceSection({
       const supabase = getSupabaseBrowser();
       const { data } = await supabase.from("case_studies").select("id, title").order("id");
       if (!cancelled) {
-        setPicks((data ?? []).map((row) => ({ id: String(row.id), label: row.title as string })));
+        const loaded = (data ?? []).map((row) => ({ id: String(row.id), label: row.title as string }));
+        setPicks(loaded);
         setLoading(false);
+        onLoaded(loaded.map((p) => p.id));
       }
     }
     load();
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- chỉ tải 1 lần khi mount, onLoaded đổi ref mỗi lần cha re-render
   }, []);
 
   return (

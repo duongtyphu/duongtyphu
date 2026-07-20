@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminTabs, type AdminTab } from "@/components/admin/AdminTabs";
+import { AdminTabs, type AdminTab, type AdminTabGroup } from "@/components/admin/AdminTabs";
 import { OverviewTab } from "@/components/admin/companion/tabs/OverviewTab";
 import { PersonaTab } from "@/components/admin/companion/tabs/PersonaTab";
 import { ConversationTab } from "@/components/admin/companion/tabs/ConversationTab";
@@ -27,6 +27,12 @@ function buildTabs(aiConfigured: boolean): AdminTab[] {
   ];
 }
 
+const TAB_GROUPS: AdminTabGroup[] = [
+  { label: "Nền tảng", keys: ["overview", "persona", "conversation"] },
+  { label: "Năng lực", keys: ["knowledge", "memory", "coaching", "capabilities"] },
+  { label: "Quản trị", keys: ["safety", "test", "versions"] },
+];
+
 /**
  * 1 mục sidebar duy nhất ("Companion") chứa 10 tab — không tạo 10 route
  * riêng, không lộ thuật ngữ kỹ thuật (key nội bộ tiếng Anh, nhãn hiển thị
@@ -45,7 +51,7 @@ export function CompanionAdminShell({ aiConfigured }: { aiConfigured: boolean })
           Trung tâm quản trị và nuôi dưỡng AI Mentor của VO DUONG AI.
         </p>
       </div>
-      <AdminTabs tabs={buildTabs(aiConfigured)} />
+      <AdminTabs tabs={buildTabs(aiConfigured)} groups={TAB_GROUPS} />
     </div>
   );
 }

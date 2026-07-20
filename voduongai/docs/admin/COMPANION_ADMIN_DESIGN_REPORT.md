@@ -137,3 +137,40 @@ không phải thiếu sót.
   `.env.local`/Supabase credentials nên không khởi động được server ở
   trạng thái đăng nhập Admin thật để chạy Playwright. Đã xác nhận đúng cấu
   trúc/route qua build output thay thế.
+
+## 9. Đợt hardening theo PMO Review (trước khi apply migration)
+
+Sau khi bản dựng đầu tiên (mục 1-8) được review, PMO yêu cầu 10 việc hardening
+UI/UX **trước khi** cho phép `apply_migration` — không thêm tính năng mới,
+không thêm bảng, không đổi schema. Toàn bộ 10 việc đã hoàn thành trên nhánh
+`admin-rebuild`, chưa merge `main`, chưa deploy, chưa apply migration.
+
+| # | Yêu cầu PMO | Đã làm |
+|---|---|---|
+| 1 | Data Model Review, so sánh Option A/B | `docs/admin/COMPANION_ADMIN_DATA_MODEL_REVIEW.md` — phân tích đủ 11 bảng, khuyến nghị giữ Option A (generic hiện tại), không sửa migration. |
+| 2 | Bỏ nút gộp "Gửi duyệt/Xuất bản", khoá sửa trực tiếp bản active | `SingletonEditor.tsx`: thêm `isLocked` (khoá khi `status !== "Draft"`), `<fieldset disabled>` chỉ-đọc, nút "Tạo bản nháp mới" tường minh trước khi sửa tiếp — vá đúng lỗi kiến trúc tự phát hiện: bản build đầu chưa thực sự chặn ghi đè bản Published. |
+| 3 | Dashboard dữ liệu thật/empty-state trung thực, thẻ bấm được, phân loại thông báo, hạ cấp cảnh báo AI | `OverviewTab.tsx` viết lại: 8 `StatCard` bấm được (đều `goToTab()`), danh sách "Phần chưa hoàn thành" trỏ đúng tab, `Notification` phân 4 loại (Lỗi/Cảnh báo/Thông tin/Sắp phát triển) — "chưa cấu hình AI" chuyển xuống loại Thông tin, không còn là cảnh báo chặn soạn nội dung. |
+| 4 | Sửa lỗi cắt tab cuối, giữ 1 route `?tab=`, thêm nhóm + điều hướng bàn phím | `AdminTabs.tsx` viết lại: `pr-6` chống cắt tab cuối, `scrollIntoView` cho tab đang chọn, `groups?: AdminTabGroup[]` (Nền tảng/Năng lực/Quản trị, chỉ là divider + label, không route mới), điều hướng ArrowLeft/ArrowRight/Home/End với `tabIndex` roving. |
+| 5 | Trạng thái lưu theo từng tab + cảnh báo rời trang khi có thay đổi chưa lưu | `SingletonEditor.tsx`: state machine `idle/dirty/saving/saved/error` hiển thị qua `SaveStateBadge`, so sánh field-by-field để phát hiện dirty, `beforeunload` chặn rời trang khi còn thay đổi chưa lưu. Không bật autosave (chưa đủ an toàn với cơ chế khoá bản active ở mục 2). |
+| 6 | Version tab: phân biệt active/draft, diff, ghi chú phát hành, lịch sử duyệt, rollback | `VersionsTab.tsx`: thêm `approvedBy`/`releaseNotes` vào `VersionLog` + form nhập khi publish, `DiffView` so 4 field nhân cách với bản Published gần nhất, lịch sử hiển thị đầy đủ người duyệt/ghi chú, rollback ghi thêm 1 dòng lịch sử (không sửa/xoá dòng cũ). Không bịa lịch sử nếu bảng rỗng — hiển thị empty-state thật. |
+| 7 | Kiểm tra Companion: bộ test case tái sử dụng thật, không phải log dùng 1 lần | `TestTab.tsx` viết lại hoàn toàn từ form nhập 1 lần thành `VisualEditor` CRUD đầy đủ trên `companion_test_sessions` (title/question/expectedBehavior/passCriteria/importance/scenarioGroup/versionTested/result/reviewNotes/status) — vẫn giữ đúng trạng thái "Chưa kết nối hệ thống trả lời" (không giả lập AI), không đụng `reflections`/`memory_capsules`. |
+| 8 | Tri thức: phân biệt nguồn còn tồn tại/không, cờ tham chiếu hỏng | `KnowledgeTab.tsx`: thêm cơ chế `validIds` (Set ID thật lấy từ từng nguồn qua callback `onLoaded`), đánh dấu "Không hợp lệ / đã gỡ khỏi nguồn gốc" cho tham chiếu mồ côi, tách `toggleEnabled()` khỏi xoá, thêm cột Bật/Cập nhật vào bảng tổng hợp, stamp `updatedAt`. |
+| 9 | Xác nhận cấu hình AI Provider không nằm trong Companion, không secret nào lộ ra JSONB/form | Rà lại bằng grep (`apiKey|api_key|secret|token`) trên toàn bộ `src/components/admin/companion/` — 0 kết quả. Xác nhận `isAiConfigured()` chỉ đọc biến môi trường phía server, trả về `boolean`, không truyền giá trị secret nào xuống Client Component. Cấu hình AI Provider thật thuộc phạm vi Settings hệ thống, không phải nội dung Companion — đúng như PMO yêu cầu, không cần sửa gì thêm. |
+| 10 | Verification + báo cáo | Xem mục dưới. |
+
+### Kết quả verification (đợt hardening)
+
+- `npx tsc --noEmit` — sạch.
+- `npx eslint .` — sạch (0 lỗi; chỉ còn 2 warning `<img>` có sẵn từ trước, không liên quan tới Companion).
+- `npm run build` — sạch, route `/admin/companion` vẫn xuất hiện đúng.
+- `npm test` (vitest run) — 139/139 test pass.
+- Đã thử khởi động `next start` + gọi `curl`/Playwright để chụp ảnh redirect
+  chưa đăng nhập — xác nhận `/admin/companion` trả `307` (redirect) đúng như
+  kỳ vọng khi chưa đăng nhập. **Không chụp được ảnh màn hình có dữ liệu
+  thật** vì 2 lý do độc lập: (a) sandbox không có `.env.local`/Supabase
+  credentials nên không đăng nhập được để vào các tab có dữ liệu; (b) gói
+  `playwright` không tồn tại trong `node_modules` của dự án (không phải lỗi
+  cấu hình `NODE_PATH` — kiểm tra trực tiếp `node_modules/playwright` xác
+  nhận package chưa từng được cài, dự án không khai báo `playwright` như một
+  dependency). Đây là giới hạn môi trường sandbox, không phải lỗi code — ghi
+  nhận trung thực thay vì cố lách qua.
