@@ -8,7 +8,7 @@
  * cả hai đều là công cụ phụ, không phải trải nghiệm chính.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Search, BookOpen, ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/portal/ui/PageHeader";
@@ -20,28 +20,62 @@ import { KnowledgeSeedCard } from "../components/KnowledgeSeedCard";
 import { CollectionCard } from "../components/CollectionCard";
 import { ContinueLearningBanner } from "../components/ContinueLearningBanner";
 import { getPublishedKnowledgeAssets } from "../services/knowledge.service";
-import { getAllKnowledgeSeeds, getKnowledgeSeedsByGoal, searchKnowledgeSeeds } from "../services/knowledge-seed.service";
-import { getAllKnowledgeCollections } from "../services/knowledge-collection.service";
+import { getLiveKnowledgeSeeds, getLiveKnowledgeCollections } from "@/lib/portal/live-knowledge";
 import { DISCOVERY_GOAL_TO_SEED_GOAL } from "../data/discovery-goals";
 import { KNOWLEDGE_TYPE_LABELS, KNOWLEDGE_PERSONAS, KNOWLEDGE_GOALS } from "../utils/knowledge-labels";
 import type { KnowledgeAsset, KnowledgeType } from "../types/knowledge.types";
+import type { KnowledgeSeed } from "../types/knowledge-seed.types";
+import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
 const ALL = "Tất cả";
+
+/** Cùng logic lọc theo goal như getKnowledgeSeedsByGoal (service cũ, đọc mảng
+ * tĩnh) — viết lại tại đây để lọc trên dữ liệu Supabase vừa fetch được. */
+function filterSeedsByGoal(seeds: KnowledgeSeed[], goal: string): KnowledgeSeed[] {
+  return seeds.filter((seed) => seed.goal.includes(goal));
+}
+
+/** Cùng logic tìm kiếm như searchKnowledgeSeeds (service cũ) — viết lại để
+ * tìm trên dữ liệu Supabase thay vì mảng tĩnh knowledgeSeedJourneys. */
+function searchSeeds(seeds: KnowledgeSeed[], query: string): KnowledgeSeed[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return [];
+  return seeds.filter(
+    (seed) =>
+      seed.title.toLowerCase().includes(q) ||
+      seed.summary.toLowerCase().includes(q) ||
+      seed.goal.some((g) => g.toLowerCase().includes(q))
+  );
+}
 
 export function KnowledgeLibrary() {
   const [activeGoalId, setActiveGoalId] = useState<string | null>(null);
   const [unifiedQuery, setUnifiedQuery] = useState("");
-  const allSeeds = useMemo(() => getAllKnowledgeSeeds(), []);
-  const allCollections = useMemo(() => getAllKnowledgeCollections(), []);
+  const [allSeeds, setAllSeeds] = useState<KnowledgeSeed[]>([]);
+  const [allCollections, setAllCollections] = useState<KnowledgeCollection[]>([]);
+  const [knowledgeReady, setKnowledgeReady] = useState(false);
   const allAssets = useMemo(() => getPublishedKnowledgeAssets(), []);
 
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([getLiveKnowledgeSeeds(), getLiveKnowledgeCollections()]).then(([seeds, collections]) => {
+      if (cancelled) return;
+      setAllSeeds(seeds);
+      setAllCollections(collections);
+      setKnowledgeReady(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const seedGoal = activeGoalId ? DISCOVERY_GOAL_TO_SEED_GOAL[activeGoalId] : null;
-  const relevantSeeds = seedGoal ? getKnowledgeSeedsByGoal(seedGoal) : allSeeds;
+  const relevantSeeds = seedGoal ? filterSeedsByGoal(allSeeds, seedGoal) : allSeeds;
 
   const q = unifiedQuery.trim().toLowerCase();
   const searching = q.length > 0;
   const matchedCollections = searching ? allCollections.filter((c) => c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)) : [];
-  const matchedSeeds = searching ? searchKnowledgeSeeds(q) : [];
+  const matchedSeeds = searching ? searchSeeds(allSeeds, q) : [];
   const matchedAssets = searching
     ? allAssets.filter(
         (a) =>
@@ -105,7 +139,11 @@ export function KnowledgeLibrary() {
               eyebrow="CKOS · Knowledge"
               title={activeGoalId ? "Hành trình phù hợp với bạn" : "Tất cả hành trình tri thức"}
             />
-            {relevantSeeds.length === 0 ? (
+            {!knowledgeReady ? (
+              <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400 backdrop-blur-sm">
+                Đang tải...
+              </div>
+            ) : relevantSeeds.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-gray-200 bg-white/70 p-8 text-center text-sm text-gray-400 backdrop-blur-sm">
                 Chưa có hành trình phù hợp — mình sẽ chuẩn bị thêm sớm. Xem tất cả hành trình bên dưới nhé.
               </div>
@@ -141,8 +179,8 @@ function SearchResults({
   seeds,
   assets,
 }: {
-  collections: ReturnType<typeof getAllKnowledgeCollections>;
-  seeds: ReturnType<typeof getAllKnowledgeSeeds>;
+  collections: KnowledgeCollection[];
+  seeds: KnowledgeSeed[];
   assets: KnowledgeAsset[];
 }) {
   const nothingFound = collections.length === 0 && seeds.length === 0 && assets.length === 0;

@@ -1,5 +1,14 @@
 import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
+/**
+ * @deprecated Không còn là nguồn hiển thị "Thư viện AI" (2 Collection) ở
+ * /portal/hetrithucai — đã chuyển sang bảng Supabase `knowledge_collections`
+ * (xem src/lib/portal/live-knowledge.ts, quản lý qua
+ * /admin/ckos/knowledge-collections). Giữ lại mảng này để rollback + vì
+ * knowledge-collection.service.ts (getSeedsInCollection/
+ * computeCollectionProgress, dùng bởi CollectionCard) vẫn đọc trực tiếp —
+ * chưa nối hết sang Supabase, xem CLAUDE.md.
+ */
 export const knowledgeCollections: KnowledgeCollection[] = [
   {
     id: "collection-ai-office",

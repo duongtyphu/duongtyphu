@@ -164,17 +164,46 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   `AI_TOOLS` (`src/data/khong-gian-ai/index.ts`, đã đánh dấu `@deprecated`).
   `NEED_CATEGORIES`/`PROFESSION_GROUPS`/`AI_ARTICLES`/`AI_PROMPTS` vẫn tĩnh
   — tương thích vì tra cứu chéo theo `slug`, không theo id.
-- **Lesson: Giai đoạn 1 (đã có bảng + migrate + UI sửa nội dung, CHƯA đổi
-  nguồn đọc Portal).** Bảng `knowledge_seeds` (**không phải `lessons`** —
-  tên đó đã bị chiếm bởi bảng khoá học trả phí VDAI SOLO/SCALE thật,
-  `id bigint/course_id/title/video_url/pdf_url/price`, dùng thật ở
-  `/portal/vdai-academy` + `checkout/actions.ts` — gặp lỗi `relation
-  "lessons" already exists` khi tạo bảng, phải đổi tên. **Luôn kiểm tra
-  tên bảng có bị trùng trước khi tạo bảng mới cho module CKOS khác** —
-  không giả định tên hiển nhiên còn trống). Admin sửa qua
-  `/admin/ckos/lessons` (editor riêng, không phải DataTable chung — ~30
-  field không vừa slide-over). `/portal/hetrithucai` vẫn đọc
-  `knowledgeSeedJourneys` tĩnh — chưa đổi, chờ duyệt riêng.
+- **Lesson: Full cho phần hiển thị chính (danh sách 11 Lesson).** Bảng
+  `knowledge_seeds` (**không phải `lessons`** — tên đó đã bị chiếm bởi bảng
+  khoá học trả phí VDAI SOLO/SCALE thật, `id bigint/course_id/title/
+  video_url/pdf_url/price`, dùng thật ở `/portal/vdai-academy` +
+  `checkout/actions.ts` — gặp lỗi `relation "lessons" already exists` khi
+  tạo bảng, phải đổi tên. **Luôn kiểm tra tên bảng có bị trùng trước khi
+  tạo bảng mới cho module CKOS khác** — không giả định tên hiển nhiên còn
+  trống). Admin sửa qua `/admin/ckos/lessons` (editor riêng, không phải
+  DataTable chung — ~30 field không vừa slide-over). `/portal/hetrithucai`
+  (`KnowledgeLibrary.tsx`) đọc `knowledge_seeds` qua
+  `src/lib/portal/live-knowledge.ts` (`getLiveKnowledgeSeeds()`, fetch
+  client-side, `status=Published`) cho lưới 11 Lesson + kết quả tìm kiếm —
+  không còn dùng `knowledgeSeedJourneys` tĩnh cho phần này (đã đánh dấu
+  `@deprecated`, giữ tạm để rollback).
+  **Chưa Full ở phần liên quan:** trang chi tiết 1 Lesson
+  (`/portal/hetrithucai/[slug]`), `ContinueLearningBanner`, và
+  `CollectionCard` (đếm/progress seed trong Collection) vẫn gọi
+  `knowledge-seed.service.ts` (`getKnowledgeSeedBySlug`, `computeSeedProgress`
+  qua đường cũ...) — service này vẫn đọc thẳng mảng tĩnh
+  `knowledgeSeedJourneys`, CHƯA nối sang Supabase. Hiện đúng vì 11 slug đã
+  migrate khớp 1:1 mảng tĩnh; nếu Founder sửa nội dung/slug qua
+  `/admin/ckos/lessons` mà không đồng thời sửa mảng tĩnh, các phần chưa Full
+  này sẽ lệch dữ liệu — cần Giai đoạn 2 nối toàn bộ `knowledge-seed.service.ts`
+  sang Supabase nếu muốn triệt để.
+- **Thư viện AI (Knowledge Collection): Full cho phần hiển thị chính (lưới
+  2 Collection).** Bảng `knowledge_collections`, schema đơn giản hoá theo
+  yêu cầu Founder (chỉ `name`/`description`/`seedSlugs` — KHÔNG khớp 1:1
+  type `KnowledgeCollection` thật vốn có `slug`/`title`/`relatedCollections`).
+  Admin sửa qua `/admin/ckos/knowledge-collections` (DataTable, field
+  `seedSlugs` là multi-select chọn từ `knowledge_seeds` thật). `id` của
+  dòng chính là slug thật (`ai-office`, `ai-research-presentation` — đã
+  xác nhận khớp mảng tĩnh cũ). `/portal/hetrithucai` đọc qua
+  `getLiveKnowledgeCollections()` (cùng file `live-knowledge.ts`), map
+  `data.name → title`, `id → slug`, `relatedCollections: []` (không có
+  trong schema đơn giản hoá). Không còn dùng `knowledgeCollections` tĩnh
+  cho phần này (đã đánh dấu `@deprecated`).
+  **Chưa Full:** `CollectionCard` (đếm seed/progress trong từng Collection)
+  vẫn gọi `getSeedsInCollection`/`computeCollectionProgress`
+  (`knowledge-collection.service.ts`), đọc thẳng mảng tĩnh cũ để resolve
+  từng seedSlug — cùng giới hạn như Lesson ở trên.
 - **Best Practice, Case Study:** chưa Full — Best Practice chưa có bảng
   Supabase nào tồn tại; Case Study có bảng `case_studies` (typed riêng,
   không phải schema generic) nhưng chưa có admin CRUD.

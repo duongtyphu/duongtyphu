@@ -22,6 +22,14 @@ function step(
   return { id: `${assetId ?? type.toLowerCase()}-step-${order}`, type, assetId, title, order, required };
 }
 
+/**
+ * @deprecated Không còn là nguồn hiển thị 11 Lesson ở /portal/hetrithucai —
+ * đã chuyển sang bảng Supabase `knowledge_seeds` (xem
+ * src/lib/portal/live-knowledge.ts, quản lý qua /admin/ckos/lessons). Giữ
+ * lại mảng này để rollback + vì một số service/component khác
+ * (getKnowledgeSeedBySlug, ContinueLearningBanner, CollectionCard...) vẫn
+ * đọc trực tiếp — chưa nối hết sang Supabase, xem CLAUDE.md.
+ */
 export const knowledgeSeedJourneys: KnowledgeSeed[] = [
   {
     id: "seed-viet-email-chuyen-nghiep",
