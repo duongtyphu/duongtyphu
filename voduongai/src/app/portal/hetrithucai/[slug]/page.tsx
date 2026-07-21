@@ -1,10 +1,15 @@
 import { notFound } from "next/navigation";
 import { KnowledgeWorkspace } from "@/features/knowledge/workspace/KnowledgeWorkspace";
-import { getKnowledgeSeedBySlug } from "@/features/knowledge/services/knowledge-seed.service";
+import { getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
 
+// Không có generateStaticParams() ở trang này (khác /portal/aiworkspace/[slug])
+// — render theo request thật, nên getLiveKnowledgeSeeds() (getSupabasePublic())
+// gọi trực tiếp ở đây an toàn, không gặp bug build-time cookies() đã ghi ở
+// CLAUDE.md.
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const seed = getKnowledgeSeedBySlug(slug);
+  const seeds = await getLiveKnowledgeSeeds();
+  const seed = seeds.find((s) => s.slug === slug);
   return {
     title: seed ? `${seed.title} — Thư viện AI` : "Thư viện AI",
     description: seed?.summary,
@@ -17,7 +22,8 @@ export default async function KnowledgeSeedWorkspacePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const seed = getKnowledgeSeedBySlug(slug);
+  const seeds = await getLiveKnowledgeSeeds();
+  const seed = seeds.find((s) => s.slug === slug);
   if (!seed) notFound();
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">

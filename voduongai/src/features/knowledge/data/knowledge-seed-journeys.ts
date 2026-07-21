@@ -23,12 +23,17 @@ function step(
 }
 
 /**
- * @deprecated Không còn là nguồn hiển thị 11 Lesson ở /portal/hetrithucai —
+ * @deprecated Không còn là nguồn hiển thị chính của Lesson ở
+ * /portal/hetrithucai — trang danh sách, trang chi tiết
+ * (/portal/hetrithucai/[slug]), ContinueLearningBanner và CollectionCard đều
  * đã chuyển sang bảng Supabase `knowledge_seeds` (xem
  * src/lib/portal/live-knowledge.ts, quản lý qua /admin/ckos/lessons). Giữ
- * lại mảng này để rollback + vì một số service/component khác
- * (getKnowledgeSeedBySlug, ContinueLearningBanner, CollectionCard...) vẫn
- * đọc trực tiếp — chưa nối hết sang Supabase, xem CLAUDE.md.
+ * lại mảng này để rollback + vì các hàm cross-reference trong
+ * knowledge-seed.service.ts (getAdjacentSeeds/getRelatedSeedObjects/
+ * getPrerequisiteGuidance/searchKnowledgeSeeds...) và knowledge-graph.service.ts
+ * vẫn đọc trực tiếp — đây là phần "Learning Engine" trong KnowledgeWorkspace.tsx
+ * đã được đánh dấu "giữ nguyên, không sửa" từ trước, ngoài phạm vi đợt
+ * Bước C này. Xem CLAUDE.md.
  */
 export const knowledgeSeedJourneys: KnowledgeSeed[] = [
   {

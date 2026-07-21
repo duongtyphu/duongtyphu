@@ -1,13 +1,16 @@
 import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
 /**
- * @deprecated Không còn là nguồn hiển thị "Thư viện AI" (2 Collection) ở
- * /portal/hetrithucai — đã chuyển sang bảng Supabase `knowledge_collections`
- * (xem src/lib/portal/live-knowledge.ts, quản lý qua
+ * @deprecated Không còn là nguồn hiển thị chính của "Thư viện AI" ở
+ * /portal/hetrithucai — lưới Collection và số đếm/progress trong
+ * CollectionCard đều đã chuyển sang bảng Supabase `knowledge_collections` +
+ * `knowledge_seeds` (xem src/lib/portal/live-knowledge.ts, quản lý qua
  * /admin/ckos/knowledge-collections). Giữ lại mảng này để rollback + vì
  * knowledge-collection.service.ts (getSeedsInCollection/
- * computeCollectionProgress, dùng bởi CollectionCard) vẫn đọc trực tiếp —
- * chưa nối hết sang Supabase, xem CLAUDE.md.
+ * computeCollectionProgress/getSuggestedNextCollection) vẫn đọc trực tiếp —
+ * dùng bởi KnowledgeWorkspace.tsx (Learning Engine, đã đánh dấu "giữ nguyên,
+ * không sửa" từ trước) và KnowledgeCollectionView.tsx, ngoài phạm vi đợt
+ * Bước C này. Xem CLAUDE.md.
  */
 export const knowledgeCollections: KnowledgeCollection[] = [
   {
