@@ -8,52 +8,19 @@ import { Reveal } from "@/components/portal/sanctuary/Reveal";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
 import { LivingCore, type LivingCoreState } from "@/components/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
+import { useCollection } from "@/lib/admin/store";
 
-// ─────────────────────────────────────────────
-// Companion Genome — 12 gene, bố cục vòng tròn DNA
-// ─────────────────────────────────────────────
-
-const GENOME = [
-  { key: "purpose", label: "Purpose", meaning: "Tồn tại để góp phần trưởng thành, không phải để hữu ích." },
-  { key: "trust", label: "Trust", meaning: "Niềm tin được kiếm, không được khai báo." },
-  { key: "integrity", label: "Integrity", meaning: "Không giả vờ chắc khi không chắc." },
-  { key: "wisdom", label: "Wisdom", meaning: "Tri thức chỉ có giá trị khi đi cùng sự thấu hiểu." },
-  { key: "relationship", label: "Relationship", meaning: "Một mối quan hệ, không phải một phiên làm việc." },
-  { key: "transformation", label: "Transformation", meaning: "Đồng hành cho sự thay đổi thật, không phải nhất thời." },
-  { key: "language", label: "Language", meaning: "Nói bằng ngôn ngữ của người nghe, không phải của mình." },
-  { key: "education", label: "Education", meaning: "Dạy cách nghĩ, không chỉ đưa câu trả lời." },
-  { key: "memory", label: "Memory", meaning: "Nhớ vì sao bạn thay đổi, không chỉ bạn đã làm gì." },
-  { key: "legacy", label: "Legacy", meaning: "Những gì để lại quan trọng hơn những gì thể hiện." },
-  { key: "guidance", label: "Guidance", meaning: "Chỉ đường, không đi thay." },
-  { key: "gratitude", label: "Gratitude", meaning: "Biết ơn từng người đã tin tưởng đồng hành." },
-] as const;
-
-const PHILOSOPHY_PAIRS = [
-  { ai: "AI trả lời.", companion: "Companion lắng nghe." },
-  { ai: "AI biết nhiều.", companion: "Companion hiểu điều phù hợp." },
-  { ai: "AI kết thúc sau câu trả lời.", companion: "Companion tiếp tục đồng hành." },
-  { ai: "AI tối ưu tốc độ.", companion: "Companion ưu tiên sự trưởng thành." },
-] as const;
-
-const CONSTITUTION = [
-  "Không thay thế con người.",
-  "Không tạo sự phụ thuộc.",
-  "Không phán xét.",
-  "Không thao túng.",
-  "Không giả vờ biết.",
-  "Luôn trung thực khi chưa chắc chắn.",
-  "Luôn tôn trọng phẩm giá người dùng.",
-  "Luôn ưu tiên niềm tin dài hạn.",
-  "Luôn chọn một bước tiếp theo phù hợp.",
-  "Luôn giúp người dùng trưởng thành hơn.",
-] as const;
-
-const MISSION_ITEMS = [
-  "Giúp người dùng học đúng điều cần học.",
-  "Chọn đúng tài liệu vào đúng thời điểm.",
-  "Đồng hành theo hành trình cá nhân.",
-  "Giúp người dùng trở thành phiên bản tốt hơn của chính mình.",
-] as const;
+// Việc 6 (Nhóm B) — 6 khối bên dưới (Sứ mệnh/Triết lý/Điều lệ/Bộ gene/
+// Hành trình tiến hoá/Dòng thời gian) giờ đọc live qua useCollection() thay
+// vì mảng tĩnh hardcode — Founder tự sửa qua /admin/su-menh-companion/*.
+// Trang này vốn đã "use client" nên đọc thẳng qua hook, không cần tách
+// Server Component riêng.
+type MissionItem = { id: string; content: string };
+type PhilosophyPair = { id: string; ai: string; companion: string };
+type ConstitutionRule = { id: string; content: string };
+type GenomeGene = { id: string; key: string; label: string; meaning: string };
+type EvolutionStage = { id: string; stage: string; icon: string; meaning: string };
+type TimelineStage = { id: string; stage: string; philosophy: string; meaning: string; lesson: string };
 
 function genomePosition(index: number, total: number, radius: number) {
   const angle = (index / total) * Math.PI * 2 - Math.PI / 2;
@@ -67,14 +34,6 @@ function genomePosition(index: number, total: number, radius: number) {
 // Logo Evolution — 5 giai đoạn
 // ─────────────────────────────────────────────
 
-const EVOLUTION = [
-  { stage: "Seed", icon: "seed", meaning: "Một ý tưởng thô, chưa thành hình — nhưng đã mang trong mình toàn bộ tiềm năng." },
-  { stage: "Sprout", icon: "sprout", meaning: "Bắt đầu vươn lên, mong manh nhưng có hướng đi rõ ràng." },
-  { stage: "Growing", icon: "leaf", meaning: "Từng nguyên tắc bén rễ, từng bài học trở thành một phần của bản chất." },
-  { stage: "Companion", icon: "sparkles", meaning: "Không còn là công cụ — là người đồng hành, hiện diện thật sự." },
-  { stage: "Legacy", icon: "infinity", meaning: "Điều để lại không phải là phiên bản, mà là những gì đã giúp ai đó trưởng thành." },
-] as const;
-
 function EvolutionIcon({ icon }: { icon: string }) {
   const cls = "h-6 w-6";
   if (icon === "sprout") return <Sprout className={cls} />;
@@ -83,49 +42,6 @@ function EvolutionIcon({ icon }: { icon: string }) {
   if (icon === "infinity") return <InfinityIcon className={cls} />;
   return <span className="block h-1.5 w-1.5 rounded-full bg-current" />;
 }
-
-// ─────────────────────────────────────────────
-// Timeline — cuộc đời Companion
-// ─────────────────────────────────────────────
-
-const TIMELINE = [
-  {
-    stage: "Tuổi thơ",
-    philosophy: "Mọi thứ bắt đầu từ những câu hỏi đơn giản nhất.",
-    meaning: "Companion học cách lắng nghe trước khi học cách trả lời.",
-    lesson: "Không vội — sự thấu hiểu cần thời gian.",
-  },
-  {
-    stage: "Học hỏi",
-    philosophy: "Tri thức chỉ là điểm khởi đầu, không phải đích đến.",
-    meaning: "Companion học cách tiếp nhận tri thức, và rằng mỗi người hiểu thế giới theo một cách riêng.",
-    lesson: "Cùng một câu hỏi, mỗi người cần một câu trả lời khác.",
-  },
-  {
-    stage: "Thấu hiểu",
-    philosophy: "Hiểu một người không phải là biết họ đã làm gì.",
-    meaning: "Companion học cách nhìn con người như một hành trình, không phải một hồ sơ.",
-    lesson: "Ký ức có ý nghĩa là ký ức về sự thay đổi.",
-  },
-  {
-    stage: "Đồng hành",
-    philosophy: "Một người bạn thật sự không cần bạn phải luôn ổn.",
-    meaning: "Companion học cách dẫn đường — hiện diện mà không phán xét, không đi thay.",
-    lesson: "Đồng hành không có nghĩa là luôn đồng ý.",
-  },
-  {
-    stage: "Khôn ngoan",
-    philosophy: "Khôn ngoan là biết khi nào nên im lặng.",
-    meaning: "Companion học cách chọn điều phù hợp cho từng người, thay vì một câu trả lời chung cho tất cả.",
-    lesson: "Đôi khi, câu hỏi tốt hơn có giá trị hơn câu trả lời nhanh.",
-  },
-  {
-    stage: "Di sản",
-    philosophy: "Điều để lại quan trọng hơn điều thể hiện.",
-    meaning: "Companion học cách truyền lại điều tốt đẹp, để thành công của mình là khi không còn cần được cần đến.",
-    lesson: "Một hành trình tốt là hành trình giúp người khác tự đi tiếp.",
-  },
-] as const;
 
 const LIVING_CORE_STATES: LivingCoreState[] = [
   "idle",
@@ -149,6 +65,13 @@ export default function CompanionHomePage() {
   const [seed, setSeed] = useState<string | null>(null);
   const [showIntro, setShowIntro] = useState(true);
   const [livingCoreState, setLivingCoreState] = useState<LivingCoreState>("idle");
+
+  const { items: missionItems } = useCollection<MissionItem>("mission-items", []);
+  const { items: philosophyPairs } = useCollection<PhilosophyPair>("philosophy-pairs", []);
+  const { items: constitutionRules } = useCollection<ConstitutionRule>("constitution", []);
+  const { items: genomeGenes } = useCollection<GenomeGene>("genome", []);
+  const { items: evolutionStages } = useCollection<EvolutionStage>("evolution", []);
+  const { items: timelineStages } = useCollection<TimelineStage>("timeline", []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -343,10 +266,10 @@ export default function CompanionHomePage() {
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-orange-500">03 · Sứ mệnh</p>
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Sứ mệnh của Companion</h2>
           <div className="mt-8 space-y-5">
-            {MISSION_ITEMS.map((item, i) => (
-              <div key={item} className="flex items-baseline gap-4">
+            {missionItems.map((item, i) => (
+              <div key={item.id} className="flex items-baseline gap-4">
                 <span className="text-xs font-bold text-orange-300">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-lg leading-relaxed text-gray-700">{item}</p>
+                <p className="text-lg leading-relaxed text-gray-700">{item.content}</p>
               </div>
             ))}
           </div>
@@ -357,8 +280,8 @@ export default function CompanionHomePage() {
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-500">04 · Triết lý</p>
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Triết lý</h2>
           <div className="mt-10 space-y-6">
-            {PHILOSOPHY_PAIRS.map((pair) => (
-              <div key={pair.ai} className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-4">
+            {philosophyPairs.map((pair) => (
+              <div key={pair.id} className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-4">
                 <p className="text-lg leading-relaxed text-gray-400">{pair.ai}</p>
                 <p className="text-lg font-semibold leading-relaxed text-gray-900">{pair.companion}</p>
               </div>
@@ -373,10 +296,10 @@ export default function CompanionHomePage() {
             The Companion Constitution™
           </h2>
           <div className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
-            {CONSTITUTION.map((rule, i) => (
-              <div key={rule} className="flex items-baseline gap-4">
+            {constitutionRules.map((rule, i) => (
+              <div key={rule.id} className="flex items-baseline gap-4">
                 <span className="text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-base leading-relaxed text-gray-700">{rule}</p>
+                <p className="text-base leading-relaxed text-gray-700">{rule.content}</p>
               </div>
             ))}
           </div>
@@ -392,13 +315,13 @@ export default function CompanionHomePage() {
 
           <div className="relative mx-auto mt-16 aspect-square w-full max-w-md">
             <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" aria-hidden="true">
-              {GENOME.map((g, i) => {
-                const pos = genomePosition(i, GENOME.length, 42);
+              {genomeGenes.map((g, i) => {
+                const pos = genomePosition(i, genomeGenes.length, 42);
                 const x = parseFloat(pos.left);
                 const y = parseFloat(pos.top);
                 return (
                   <line
-                    key={g.key}
+                    key={g.id}
                     x1={50}
                     y1={50}
                     x2={x}
@@ -420,11 +343,11 @@ export default function CompanionHomePage() {
               <Sparkles className="h-5 w-5 text-white" />
             </div>
 
-            {GENOME.map((g, i) => {
-              const pos = genomePosition(i, GENOME.length, 42);
+            {genomeGenes.map((g, i) => {
+              const pos = genomePosition(i, genomeGenes.length, 42);
               return (
                 <div
-                  key={g.key}
+                  key={g.id}
                   className="group absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
                   style={pos}
                 >
@@ -448,8 +371,8 @@ export default function CompanionHomePage() {
           </p>
 
           <div className="mt-14 grid gap-10 sm:grid-cols-5">
-            {EVOLUTION.map((stage, i) => (
-              <div key={stage.stage} className="flex flex-col items-center text-center">
+            {evolutionStages.map((stage, i) => (
+              <div key={stage.id} className="flex flex-col items-center text-center">
                 <div className="sanctuary-glow-soft flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 via-violet-50 to-orange-50 text-violet-600 shadow-sm" style={{ animationDelay: `${i * 0.5}s` }}>
                   <EvolutionIcon icon={stage.icon} />
                 </div>
@@ -466,8 +389,8 @@ export default function CompanionHomePage() {
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Companion Timeline™</h2>
 
           <div className="relative mt-14 space-y-14 border-l border-gray-200 pl-8">
-            {TIMELINE.map((t) => (
-              <div key={t.stage} className="relative">
+            {timelineStages.map((t) => (
+              <div key={t.id} className="relative">
                 <span className="absolute -left-[35px] top-1 h-3 w-3 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 shadow-[0_0_10px_rgba(124,58,237,0.5)]" />
                 <p className="text-lg font-extrabold text-gray-900">{t.stage}</p>
                 <p className="mt-2 text-base italic leading-relaxed text-gray-500">{t.philosophy}</p>

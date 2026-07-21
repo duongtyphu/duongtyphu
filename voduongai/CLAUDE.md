@@ -550,3 +550,44 @@ blockchain/trading`) nếu muốn giữ đúng màu/dải màu riêng — key l�
 đúng 1 trong 4 route tĩnh có sẵn ở `/portal/duan-cohoi/[ecosystemSlug]`
 (theo `ecosystems.ts`) — sửa `href` thành giá trị không khớp sẽ tạo link
 404 khi bấm vào thẻ.
+
+## Sứ mệnh Companion (`/portal/su-menh-companion`) — Việc 6, Phần 1: 6 collection
+
+Founder xác nhận: 6 khối nội dung ở trang này (khác hẳn `/portal/companion`
+— xem phân biệt "2 hệ thống Companion" trong lịch sử phiên) cần tự sửa
+được, không phải brand manifesto cố định. Đã tạo 6 bảng Supabase mới (cùng
+khuôn generic `id/data jsonb/status/order` như Phase 2-7, migration
+`supabase-phase8-companion-mission.sql`), thay 6 mảng hardcode trong
+`su-menh-companion/page.tsx`:
+
+| Bảng | Thay mảng | Số dòng | Shape `data` |
+|---|---|---|---|
+| `mission_items` | `MISSION_ITEMS` | 4 | `{content}` |
+| `philosophy_pairs` | `PHILOSOPHY_PAIRS` | 4 | `{ai, companion}` |
+| `constitution` | `CONSTITUTION` | 10 | `{content}` |
+| `genome` | `GENOME` | 12 | `{key, label, meaning}` |
+| `evolution` | `EVOLUTION` | 5 | `{stage, icon, meaning}` |
+| `timeline` | `TIMELINE` | 6 | `{stage, philosophy, meaning, lesson}` |
+
+Admin: 6 trang riêng dùng `VisualEditor` (không DataTable — nội dung ít,
+thứ tự hiển thị quan trọng), nhóm sidebar mới "Sứ mệnh Companion" (`nav.ts`)
+với nhãn tiếng Việt Founder-friendly, không lộ tên field kỹ thuật:
+`/admin/su-menh-companion/{mission,philosophy,constitution,genome,evolution,timeline}`
+→ "Sứ mệnh"/"Triết lý"/"Điều lệ"/"Bộ gene"/"Hành trình tiến hoá"/"Dòng thời
+gian". Atmosphere dùng `<SanctuaryBackground/>` (qua `AdminAtmosphere`'s
+`atmosphere` prop) — đúng nền thật của `/portal/su-menh-companion`, không
+phải 1 class `*-atmosphere-bg`.
+
+Portal `page.tsx` (đã là `"use client"` từ trước) đọc live qua
+`useCollection()` cho cả 6 khối, không tách Server Component riêng.
+`genome.key` giữ theo shape gốc (tên gene tiếng Anh, vd. "purpose") dù
+Portal đổi sang dùng `id` của dòng làm React key (an toàn hơn key trùng
+lặp của bản tĩnh cũ). `evolution.icon` giới hạn 5 slug cố định
+(`seed/sprout/leaf/sparkles/infinity`, khớp `EvolutionIcon` trong
+page.tsx) qua `select`, không cho gõ tay tự do.
+
+**Lưu ý đặt tên:** khối `timeline` (6 giai đoạn "cuộc đời Companion") đặt
+tên admin là "Dòng thời gian" — tránh nhầm với 1 artwork RIÊNG cũng tên
+"Cuộc đời Companion" ở 7 trang flipbook (Phần 2, bảng
+`companion_flipbook_pages` khác hẳn, xem mục riêng bên dưới khi Phần 2
+hoàn thành).

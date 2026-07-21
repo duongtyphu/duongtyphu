@@ -56,4 +56,18 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Thực hành tốt (Folder)", href: "/admin/ckos/best-practices" },
     ],
   },
+  {
+    // Việc 6 (Nhóm B) — Founder xác nhận cần tự sửa 6 khối nội dung ở
+    // /portal/su-menh-companion. Tên hiển thị tiếng Việt Founder-friendly,
+    // không lộ tên field kỹ thuật (mission-items/constitution/genome...).
+    group: "Sứ mệnh Companion",
+    items: [
+      { label: "Sứ mệnh", href: "/admin/su-menh-companion/mission" },
+      { label: "Triết lý", href: "/admin/su-menh-companion/philosophy" },
+      { label: "Điều lệ", href: "/admin/su-menh-companion/constitution" },
+      { label: "Bộ gene", href: "/admin/su-menh-companion/genome" },
+      { label: "Hành trình tiến hoá", href: "/admin/su-menh-companion/evolution" },
+      { label: "Dòng thời gian", href: "/admin/su-menh-companion/timeline" },
+    ],
+  },
 ];

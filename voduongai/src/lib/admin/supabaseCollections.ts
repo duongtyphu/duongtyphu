@@ -103,6 +103,16 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // liên quan) cho lý do vì sao "case-studies" KHÔNG có trong map này —
   // bảng case_studies là typed, không phải schema generic này.
   "best-practices": "best_practices",
+
+  // Việc 6 (Nhóm B) — "Sứ mệnh Companion", Phần 1. 6 bảng, mỗi bảng thay 1
+  // mảng hardcode trong src/app/portal/su-menh-companion/page.tsx. Founder
+  // xác nhận cần tự sửa (không phải brand manifesto cố định).
+  "mission-items": "mission_items",
+  "philosophy-pairs": "philosophy_pairs",
+  constitution: "constitution",
+  genome: "genome",
+  evolution: "evolution",
+  timeline: "timeline",
 };
 
 export function tableForCollection(key: string): string | null {

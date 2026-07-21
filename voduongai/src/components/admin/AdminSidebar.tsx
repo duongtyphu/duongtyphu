@@ -45,6 +45,8 @@ import {
   Settings,
   ChevronDown,
   Bot,
+  Dna,
+  History,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -98,6 +100,12 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/leads": Target,
   "/admin/reports": FileBarChart,
   "/admin/settings": Settings,
+  "/admin/su-menh-companion/mission": Rocket,
+  "/admin/su-menh-companion/philosophy": MessageCircle,
+  "/admin/su-menh-companion/constitution": ClipboardCheck,
+  "/admin/su-menh-companion/genome": Dna,
+  "/admin/su-menh-companion/evolution": TrendingUp,
+  "/admin/su-menh-companion/timeline": History,
 };
 
 function isItemActive(pathname: string, href: string) {
