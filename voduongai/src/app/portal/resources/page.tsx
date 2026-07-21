@@ -3,6 +3,7 @@ import { getLiveResources } from "@/lib/portal/live-resources";
 import { ResourceCard } from "@/components/portal/ResourceCard";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export const metadata = { title: "Tài nguyên miễn phí" };
 
@@ -33,6 +34,7 @@ export default async function ResourcesPage() {
 
   return (
     <div className="space-y-10">
+      <PortalBackLink href="/portal/ckos" label="Hệ tri thức AI (CKOS)" tone="light" />
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">Tài nguyên miễn phí</h1>
         <p className="mt-2 text-gray-900">

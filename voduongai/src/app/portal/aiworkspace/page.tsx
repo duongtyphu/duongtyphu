@@ -11,6 +11,7 @@ import {
 } from "@/data/khong-gian-ai";
 import { getLiveTools } from "@/lib/portal/live-tools";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import {
   CompanionDesk,
   RecommendedWorkspaceSection,
@@ -139,6 +140,7 @@ export default function KhongGianAiPage() {
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây (rounded-3xl
        * p-6 md:p-8), chỉ khí quyển nền phía sau mới full-bleed. */}
       <div className="rounded-3xl p-6 md:p-8 space-y-10">
+      <PortalBackLink href="/portal/ckos" label="Hệ tri thức AI (CKOS)" tone="light" />
       {/* ── 1. Hero ────────────────────────────────────────────────────────── */}
       {/* Nền gradient đậm cùng khuôn dải hero màu của các pillar khác (Học
        * viện tri thức AI tone "knowledge", Học viện AI tone "learning" — xem

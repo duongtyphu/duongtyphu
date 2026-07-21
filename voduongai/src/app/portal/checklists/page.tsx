@@ -2,6 +2,7 @@
 
 import { useCollection } from "@/lib/admin/store";
 import { checklistsSeed } from "@/data/admin/resources";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export default function ChecklistsPage() {
   const { items, ready } = useCollection("checklists", checklistsSeed);
@@ -9,6 +10,7 @@ export default function ChecklistsPage() {
 
   return (
     <div className="space-y-6">
+      <PortalBackLink href="/portal/ckos" label="Hệ tri thức AI (CKOS)" tone="light" />
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">Checklist</h1>
         <p className="mt-2 text-gray-900">

@@ -1,5 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export const metadata = { title: "Case Study" };
 
@@ -31,6 +32,7 @@ export default async function CaseStudiesPage() {
 
   return (
     <div className="space-y-6">
+      <PortalBackLink href="/portal/ckos" label="Hệ tri thức AI (CKOS)" tone="light" />
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">Case Study</h1>
         <p className="mt-2 text-gray-900">Kết quả thực tế từ học viên và khách hàng đã triển khai hệ thống.</p>

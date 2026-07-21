@@ -3,6 +3,7 @@ import { prompts } from "@/data/prompts";
 import { getSupabasePublic } from "@/lib/supabase";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
+import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 export const metadata = { title: "SOP", description: "Quy trình chuẩn (SOP) vận hành Affiliate Marketing và sản xuất nội dung của VO DUONG AI." };
 
@@ -44,6 +45,7 @@ export default async function SopPage() {
 
   return (
     <div className="space-y-6">
+      <PortalBackLink href="/portal/ckos" label="Hệ tri thức AI (CKOS)" tone="light" />
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">SOP — Quy trình vận hành</h1>
         <p className="mt-2 text-gray-900">
