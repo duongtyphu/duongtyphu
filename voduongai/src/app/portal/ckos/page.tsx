@@ -24,21 +24,26 @@ export const metadata = {
 // Portal 3.0 P.4 — CKOS Experience.
 //
 // 7 canonical Intelligence types. Counts below are REAL, queried live —
-// most CKOS tables (ckos_prompt_templates/ckos_workflows/ckos_best_practices/
-// ckos_resources) do not exist in production yet (Phase H schema/seed SQL
-// was written but never applied — confirmed via live anon-key query,
-// PGRST205 "could not find the table"). Tool reuses the production `tools`
-// table (has real data); Lesson reuses `lessons` (has real data); Case
-// Study reuses `case_studies` (canonical table exists, currently 0 rows —
-// Phase H.7's 8-item dry-run was never applied). Every zero below is a
-// real zero, not a placeholder number.
+// most CKOS tables (ckos_prompt_templates/ckos_workflows/ckos_resources)
+// do not exist in production yet (Phase H schema/seed SQL was written but
+// never applied — confirmed via live anon-key query, PGRST205 "could not
+// find the table"). Tool reuses the production `tools` table (has real
+// data); Lesson reuses `knowledge_seeds`; Case Study reuses `case_studies`
+// (canonical table, has real Admin CRUD — xem CLAUDE.md "Case Study").
+// Best Practice reuses `best_practices` (bảng mới, generic
+// id/data/status/order — KHÔNG phải `ckos_best_practices`, tên bảng đó
+// thuộc kiến trúc Phase G/H cũ chưa từng apply, xem CLAUDE.md mục "Best
+// Practice"). Every zero below is a real zero, not a placeholder number.
 type CategoryCount = {
   key: string;
   label: string;
   count: number;
   href: string;
   configured: boolean;
-  /** false = chưa có route thật để "Xem" (vd. Best Practice) — hiển thị lý do trung thực thay vì nút dẫn tới nội dung mượn tạm. */
+  /** false = chưa có route thật để "Xem" — hiển thị lý do trung thực thay
+   * vì nút dẫn tới nội dung mượn tạm. Không còn category nào dùng false ở
+   * đợt này (Best Practice đã có route thật) nhưng giữ cơ chế cho tương
+   * lai (vd. nếu thêm Goals sau này mà chưa có route). */
   hasRoute: boolean;
 };
 
@@ -66,9 +71,7 @@ async function safeCount(
  * Supabase `lessons` (nguồn khác, không thuộc hợp đồng CKOS đã đóng băng).
  * Prompt/Workflow/Resource cộng cả nội dung biên tập thật (src/data/*.ts)
  * với bảng live (nếu có) — trước đây hub chỉ đếm bảng Supabase rỗng, nên
- * hiển thị "Trống" cho cả Prompt dù thực tế đã có 12 Prompt thật. Best
- * Practice KHÔNG có route thật (bảng chưa triển khai) — không mượn route
- * Lesson để trông có nội dung.
+ * hiển thị "Trống" cho cả Prompt dù thực tế đã có 12 Prompt thật.
  */
 async function getKnowledgeCategories(): Promise<CategoryCount[]> {
   const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
@@ -84,14 +87,14 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
       { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: false, hasRoute: true },
       { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: false, hasRoute: true },
       { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: false, hasRoute: true },
-      { key: "best_practice", label: "Best Practice", count: 0, href: "", configured: false, hasRoute: false },
+      { key: "best_practice", label: "Best Practice", count: 0, href: "/portal/ckos/best-practices", configured: false, hasRoute: true },
       { key: "case_study", label: "Case Study", count: 0, href: "/portal/case-studies", configured: false, hasRoute: true },
     ];
   }
   const supabase = await getSupabaseServer();
   const [tool, liveBestPractice, caseStudy] = await Promise.all([
     safeCount(supabase, "tools", "status", "Published"),
-    safeCount(supabase, "ckos_best_practices", "status", "Published"),
+    safeCount(supabase, "best_practices", "status", "Published"),
     safeCount(supabase, "case_studies", "active", true),
   ]);
   return [
@@ -100,7 +103,7 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
     { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: true, hasRoute: true },
     { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: true, hasRoute: true },
     { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: true, hasRoute: true },
-    { key: "best_practice", label: "Best Practice", count: liveBestPractice, href: "", configured: true, hasRoute: false },
+    { key: "best_practice", label: "Best Practice", count: liveBestPractice, href: "/portal/ckos/best-practices", configured: true, hasRoute: true },
     { key: "case_study", label: "Case Study", count: caseStudy, href: "/portal/case-studies", configured: true, hasRoute: true },
   ];
 }
@@ -236,10 +239,9 @@ export default async function CkosPage() {
           <GemCard>
             <p className="gemos-card-title text-sm font-bold text-gray-900">Người đã có kinh nghiệm nên dùng</p>
             <p className="mt-2 text-sm leading-relaxed text-gray-600">
-              <span className="font-semibold text-gray-900">Workflow → Case Study.</span> Bạn đã biết công cụ,
-              giờ cần một quy trình lặp lại được và xem kết quả thực tế trước khi áp dụng vào việc lớn hơn.
-              (Best Practice ở CKOS hiện chưa có nội dung thật riêng — Case Study và hỏi Companion là cách
-              gần nhất để đối chiếu cách người khác đã làm, thay vì một danh mục Best Practice còn trống.)
+              <span className="font-semibold text-gray-900">Workflow → Best Practice → Case Study.</span> Bạn đã
+              biết công cụ, giờ cần một quy trình lặp lại được, đối chiếu với kinh nghiệm đã kiểm chứng, rồi
+              xem kết quả thực tế trước khi áp dụng vào việc lớn hơn.
             </p>
           </GemCard>
         </div>

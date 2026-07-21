@@ -217,11 +217,8 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   ở trên (Learning Engine, chưa mở khoá đợt này).
 - **Case Study:** Admin CRUD Full (`/admin/ckos/case-studies`, xem mục
   "Case Study" riêng bên dưới) — `/portal/case-studies` đọc đúng bảng
-  `case_studies`. Chưa Full: `CkosQuickSearch.tsx` và
-  `/api/v1/ckos/search/route.ts` không liên quan Case Study (chúng đọc
-  `ckos_best_practices`, xem mục Best Practice).
-- **Best Practice: Giai đoạn 1 (đã có bảng + migrate + admin CRUD, CHƯA đổi
-  nguồn đọc Portal).** Bảng mới `best_practices` (generic
+  `case_studies`.
+- **Best Practice: Full.** Bảng mới `best_practices` (generic
   `id/data jsonb/status/order`, đã kiểm tra không trùng tên bảng nào đang
   chạy — kể cả `ckos_best_practices` của kiến trúc Phase G/H cũ, bảng đó
   không tồn tại). Migrate 13 dòng GUIDE thật từ `knowledgeSeedData`
@@ -242,11 +239,16 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   `listCaseStudies()` đã có sẵn, dùng chung UI checkbox
   (`MultiSelectChecklist`) với nhánh generic — không tạo UI/FieldType mới,
   chỉ khác nguồn lấy dữ liệu.
-  **CHƯA đổi ở đợt này:** `/portal/ckos` (phần "Best Practice — TRỐNG"),
-  `CkosQuickSearch.tsx`, `/api/v1/ckos/search/route.ts` — cả 3 vẫn query
-  `ckos_best_practices` (tên bảng SAI, không tồn tại) thay vì
-  `best_practices` — cần sửa tên bảng + đổi nguồn đọc khi làm Bước C riêng
-  (đã được duyệt sẽ làm sau, có báo cáo lại trước khi đổi).
+  **Bước C (đã hoàn tất):** `/portal/ckos` (`getKnowledgeCategories()`) đọc
+  đếm thật từ `best_practices` (`status=Published`), `hasRoute: true`, trỏ
+  tới trang danh sách mới `/portal/ckos/best-practices` (tối giản — chỉ
+  liệt kê title/description/principle, chưa có filter riêng, có thể mở
+  rộng sau). `CkosQuickSearch.tsx` không cần sửa gì — type/label
+  `"best_practice"` đã có sẵn từ trước, chỉ cần nguồn dữ liệu thật.
+  `/api/v1/ckos/search/route.ts`: sửa bug tên bảng
+  (`ckos_best_practices` → `best_practices`) + đổi cách đọc cột (title/
+  description nằm trong `data` jsonb, không phải cột phẳng — cùng kỹ thuật
+  đã dùng cho `tools`).
 
 **Bài học rút ra (áp dụng cho mọi module CKOS sau này):** "có trang
 `/admin/*` chạy được" KHÔNG đồng nghĩa "Portal đã đọc đúng dữ liệu đó" —

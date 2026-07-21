@@ -9,15 +9,22 @@ import { freeResources } from "@/data/resources";
 //
 // Portal 4.0 Final Reconstruction — CKOS Experience Reconstruction: this
 // endpoint previously only fanned out over Supabase tables that mostly
-// don't exist yet in production (ckos_prompt_templates/ckos_workflows/
-// ckos_best_practices are all PGRST205 — never migrated). That meant
-// searching CKOS silently never surfaced the 12 real curated Prompts, 4
-// real SOPs, 10 real Resources, or the 11 real Lesson seeds — exactly the
-// "feels like two systems" gap this reconstruction exists to close.
-// Static, always-real content (features/knowledge + src/data/*.ts) is now
+// don't exist yet in production (ckos_prompt_templates/ckos_workflows are
+// PGRST205 — never migrated; `ckos_goals` likewise). That meant searching
+// CKOS silently never surfaced the 12 real curated Prompts, 4 real SOPs,
+// 10 real Resources, or the 11 real Lesson seeds — exactly the "feels
+// like two systems" gap this reconstruction exists to close. Static,
+// always-real content (features/knowledge + src/data/*.ts) is now
 // searched directly and merged in, and stays available even when Supabase
 // isn't configured — only the genuinely Supabase-backed sources (goals,
 // Best Practice, Case Study, live Tool rows) are skipped in that case.
+//
+// BUG FIX (audit, xem CLAUDE.md "Best Practice"): route này từng query
+// bảng "ckos_best_practices" — tên đó KHÔNG tồn tại (thuộc kiến trúc
+// Phase G/H cũ, chưa từng apply). Best Practice thật nằm ở bảng
+// `best_practices` (generic id/data/status/order, tạo ở Bước A/B) — đổi
+// tên bảng + đổi cách đọc cột (title/description nằm trong `data` jsonb,
+// không phải cột phẳng) giống hệt cách `tools` đã xử lý bên dưới.
 //
 // Foundation-level implementation: still an in-memory merge, not a
 // relevance-ranked/indexed search — acceptable for a foundation endpoint.
@@ -87,9 +94,9 @@ export async function GET(request: Request) {
   if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     const supabase = await getSupabaseServer();
 
-    const [goals, bestPractices, caseStudies, toolRows] = await Promise.all([
+    const [goals, bestPracticeRows, caseStudies, toolRows] = await Promise.all([
       safeSelect(supabase, "ckos_goals", "id, title, description", "status", params.q),
-      safeSelect(supabase, "ckos_best_practices", "id, title, description", "status", params.q),
+      safeSelect(supabase, "best_practices", "id, data", "status", null),
       safeSelect(supabase, "case_studies", "id, title, summary", "status", params.q),
       safeSelect(supabase, "tools", "id, data", "status", null),
     ]);
@@ -109,9 +116,25 @@ export async function GET(request: Request) {
       })
       .filter((it) => !params.q || it.title.toLowerCase().includes(params.q.toLowerCase()));
 
+    // `best_practices` là schema generic (id/data jsonb/status/order) — title/
+    // description nằm trong `data`, không phải cột phẳng, nên đọc `id, data`
+    // (không dùng ilike trong safeSelect) rồi tự lọc theo title, giống tools.
+    const bestPracticeResults: SearchResult[] = bestPracticeRows
+      .map((row) => {
+        const data = (row.data ?? {}) as { title?: string; description?: string };
+        return {
+          type: "best_practice" as const,
+          id: String(row.id),
+          title: data.title ?? "",
+          description: data.description ?? null,
+          href: "/portal/ckos/best-practices",
+        };
+      })
+      .filter((it) => !params.q || it.title.toLowerCase().includes(params.q.toLowerCase()));
+
     supabaseResults = [
       ...goals.map((r) => ({ type: "goal" as const, id: String(r.id), title: String(r.title ?? ""), description: (r.description as string) ?? null, href: "/portal/ckos" })),
-      ...bestPractices.map((r) => ({ type: "best_practice" as const, id: String(r.id), title: String(r.title ?? ""), description: (r.description as string) ?? null, href: "/portal/ckos" })),
+      ...bestPracticeResults,
       ...caseStudies.map((r) => ({ type: "case_study" as const, id: String(r.id), title: String(r.title ?? ""), description: (r.summary as string) ?? null, href: "/portal/case-studies" })),
       ...toolResults,
     ];
