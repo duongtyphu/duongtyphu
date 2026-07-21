@@ -21,6 +21,7 @@ type LessonRow = KnowledgeSeed & { status?: string };
  * (Giai đoạn 2).
  */
 const EDITABLE_FIELDS: FieldConfig[] = [
+  { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
   { key: "title", label: "Tiêu đề", type: "text", required: true },
   { key: "subtitle", label: "Phụ đề", type: "text" },
   { key: "summary", label: "Tóm tắt", type: "textarea", full: true },
