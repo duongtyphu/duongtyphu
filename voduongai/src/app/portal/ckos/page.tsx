@@ -149,15 +149,6 @@ const CATEGORY_SURFACE: Record<string, { card: string; badge: string; feel: stri
   },
 };
 
-const COLLECTIONS = [
-  { key: "ai-writing", title: "AI Writing", query: "viết", description: "Viết nội dung, email, kịch bản bằng AI." },
-  { key: "productivity", title: "Productivity", query: "quy trình", description: "Làm việc nhanh hơn, ít sai sót hơn." },
-  { key: "affiliate", title: "Affiliate", query: "affiliate", description: "Kiếm thu nhập với Affiliate Marketing." },
-  { key: "prompt-engineering", title: "Prompt Engineering", query: "prompt", description: "Viết prompt hiệu quả cho từng mục tiêu." },
-  { key: "marketing", title: "Marketing", query: "marketing", description: "Tiếp thị và xây thương hiệu cá nhân." },
-  { key: "automation", title: "Automation", query: "tự động", description: "Tự động hoá công việc lặp lại." },
-] as const;
-
 export default async function CkosPage() {
   const categories = await getKnowledgeCategories();
   const featuredTool: AdminTool | undefined = toolsAdminSeed.find((t) => t.status === "Published");
@@ -387,25 +378,6 @@ export default async function CkosPage() {
           <Button href="/portal/hetrithucai" variant="primary" className="mt-6">
             Vào Thư viện AI →
           </Button>
-        </div>
-      </section>
-
-      {/* Featured Collections */}
-      <section>
-        <SectionHeader eyebrow="Collections" title="Bộ sưu tập theo chủ đề" description="Không chỉ phân loại theo kiểu nội dung — mà theo mục tiêu bạn đang theo đuổi." />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {COLLECTIONS.map((c) => (
-            <GemCard key={c.key}>
-              <p className="gemos-card-title text-sm font-bold text-gray-900">{c.title}</p>
-              <p className="mt-1 text-xs leading-relaxed text-gray-500">{c.description}</p>
-              <Link
-                href={`/portal/ckos?q=${encodeURIComponent(c.query)}#search`}
-                className="mt-3 inline-block text-xs font-semibold text-brand-blue hover:underline"
-              >
-                Khám phá {c.title} →
-              </Link>
-            </GemCard>
-          ))}
         </div>
       </section>
 
