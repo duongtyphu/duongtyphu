@@ -32,6 +32,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     // không đổi route/collectionKey/schema. Mỗi mục dưới đây là 1 "Folder".
     group: "Hệ tri thức (CKOS)",
     items: [
+      { label: "CKOS Dashboard", href: "/admin/ckos" },
       { label: "Prompt (Folder)", href: "/admin/ckos/prompts" },
       { label: "SOP / Workflow (Folder)", href: "/admin/ckos/sop" },
       { label: "Resource (Folder)", href: "/admin/ckos/resources" },

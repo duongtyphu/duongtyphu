@@ -336,3 +336,34 @@ tồn tại rồi bị xoá, và schema thật hẹp hơn những gì code cũ g
 - Comment lỗi thời trong `src/lib/admin/supabaseCollections.ts` (nhắc tới
   trang Admin case-study đã xoá như thể còn tồn tại) — đã sửa lại khi build
   Admin CRUD mới.
+
+## CKOS Dashboard
+
+`/admin/ckos` (trước đây 404 — nhóm sidebar "Hệ tri thức (CKOS)" chỉ có
+sub-route, không có index page riêng). Tổng hợp số liệu THẬT, không mock,
+từ toàn bộ 7 Intelligence:
+
+- **9 bảng generic** (`prompts, sop, resources, templates, ebooks,
+  checklists, tools, knowledge_seeds, knowledge_collections,
+  best_practices`) — đã xác nhận qua `information_schema.columns` là
+  **chung hệt một schema** (`id/data jsonb/status/order/created_at/
+  updated_at`) trước khi code, không suy đoán. Field tên hiển thị trong
+  `data` khác nhau giữa các bảng (`title` cho prompts/knowledge_seeds/
+  best_practices, `name` cho các bảng còn lại) — khai báo tường minh trong
+  `GENERIC_SOURCES` (`src/app/admin/(dashboard)/ckos/page.tsx`), không suy
+  đoán chung 1 tên.
+- **Case Study xử lý riêng** — bảng `case_studies` không có cột `status`
+  (chỉ có `active` boolean) và không có `updated_at` (chỉ `created_at`).
+  Dashboard gọi thẳng `listCaseStudies()` (Server Action có sẵn ở
+  `case-studies/actions.ts`), báo cáo "đang hiển thị/đã ẩn" riêng biệt,
+  KHÔNG gộp vào khối Published/Draft của 9 bảng generic.
+- **Published/Draft tổng hợp**: cộng dồn theo giá trị `status` THẬT xuất
+  hiện (không hardcode chỉ 2 loại — hiện tại chỉ có `Draft`/`Published`
+  tồn tại thật, `Hidden` là option hợp lệ nhưng chưa có dòng nào dùng; nếu
+  sau này có dòng `Hidden`, khối này tự hiện thêm cột tương ứng).
+- **Cập nhật gần đây** (8 mục): gộp từ 9 bảng generic theo `updated_at`
+  giảm dần. Case Study bị loại khỏi mục này (không có `updated_at`) — có
+  ghi chú giải thích ngay trong UI, không âm thầm bỏ qua.
+- Không có mẫu dashboard admin nào có sẵn trong repo để soi theo
+  (`/admin/dashboard` chỉ là 2 dòng chào mừng) — dùng lưới card đơn giản,
+  đúng token đã dùng xuyên suốt các trang `/admin/ckos/*`.
