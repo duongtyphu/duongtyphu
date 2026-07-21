@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useCollection } from "@/lib/admin/store";
 import { DataTableRowPanel } from "@/components/admin/DataTableRowPanel";
-import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
+import { isRowIncomplete, type ColumnConfig, type FieldConfig } from "@/lib/admin/fields";
 
 type BaseItem = { id: string; status?: string };
 
@@ -91,7 +91,15 @@ export function DataTableClient<T extends BaseItem>({
                 <tr key={item.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                   {columns.map((col) => (
                     <td key={col.key} className="px-4 py-3 text-gray-700">
-                      {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}
+                      {isRowIncomplete(col, item) ? (
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                          {col.emptyLabel ?? "Thiếu thông tin"}
+                        </span>
+                      ) : col.render ? (
+                        col.render(item)
+                      ) : (
+                        String((item as Record<string, unknown>)[col.key] ?? "")
+                      )}
                     </td>
                   ))}
                   <td className="px-4 py-3">

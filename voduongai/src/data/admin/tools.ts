@@ -27,6 +27,15 @@ export type AdminTool = {
   tier: "Free" | "Paid";
   status: "Draft" | "Published" | "Hidden";
   order: number;
+  /** Portal /portal/aiworkspace — khớp field AiTool tương ứng, thêm để chuẩn
+   * bị migrate AI_TOOLS (tĩnh) vào bảng `tools`, chưa đổi code đọc Portal. */
+  tagline?: string;
+  companionSummary?: string;
+  pricingNote?: string;
+  bestFor?: string[];
+  notGoodFor?: string[];
+  relatedArticleSlugs?: string[];
+  relatedNeedSlugs?: string[];
 };
 
 export const toolsAdminSeed: AdminTool[] = [

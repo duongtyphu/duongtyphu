@@ -28,8 +28,33 @@ export type FieldConfig = {
 export type ColumnConfig<T> = {
   key: string;
   label: string;
+  /** CHỈ dùng khi page.tsx định nghĩa columns là "use client" (Client
+   * Component) — function không serialize được qua Server→Client Component
+   * (đúng lỗi đã gặp ở FieldConfig.toFormValue/fromFormValue cũ, xem
+   * FieldTransform ở trên). DataTable.tsx (page.tsx thường dùng) là Server
+   * Component nên KHÔNG được truyền function vào đây. */
   render?: (item: T) => ReactNode;
+  /** Cột "trạng thái đầy đủ dữ liệu" — khai báo thuần (mảng key), tính toán
+   * ngay trong DataTableClient thay vì nhận function qua props. Nếu bất kỳ
+   * key nào trong danh sách rỗng/thiếu ở dòng đó, cột hiển thị `emptyLabel`
+   * thay vì giá trị field key chính. */
+  requiredForComplete?: string[];
+  emptyLabel?: string;
 };
+
+function isFieldEmpty(value: unknown): boolean {
+  if (value == null) return true;
+  if (typeof value === "string") return value.trim().length === 0;
+  if (Array.isArray(value)) return value.length === 0;
+  return false;
+}
+
+/** true nếu item thiếu bất kỳ field nào trong col.requiredForComplete. */
+export function isRowIncomplete<T>(col: ColumnConfig<T>, item: T): boolean {
+  if (!col.requiredForComplete || col.requiredForComplete.length === 0) return false;
+  const record = item as Record<string, unknown>;
+  return col.requiredForComplete.some((key) => isFieldEmpty(record[key]));
+}
 
 /** Giá trị lưu (jsonb) → giá trị hiển thị trong form, theo field.transform. */
 export function toFormValueFor(field: FieldConfig, value: unknown): unknown {
