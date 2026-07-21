@@ -158,11 +158,26 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   `src/data/resources.ts` (đã đánh dấu `@deprecated`, giữ tạm để rollback
   nhanh). Khối "Tài liệu từ VO DUONG AI Academy" (bảng `documents`) là nội
   dung khác, tách biệt, không thuộc CKOS Resource.
-- **Công cụ AI (tools), Lesson, Best Practice, Case Study:** chưa Full —
-  xem báo cáo audit riêng khi build từng mục (Tool đã có admin CRUD
-  `/admin/tools` nhưng trang đích Portal `/portal/aiworkspace#ai-toolbox`
-  vẫn render mảng tĩnh `AI_TOOLS` khác hẳn bảng `tools`; Lesson/Best
-  Practice/Case Study chưa có admin CRUD).
+- **Công cụ AI (tools): Full.** Admin sửa bảng `tools` (`/admin/tools`) →
+  `/portal/aiworkspace` + `/portal/aiworkspace/[slug]` đọc trực tiếp bảng
+  này qua `src/lib/portal/live-tools.ts`, không còn dùng mảng tĩnh
+  `AI_TOOLS` (`src/data/khong-gian-ai/index.ts`, đã đánh dấu `@deprecated`).
+  `NEED_CATEGORIES`/`PROFESSION_GROUPS`/`AI_ARTICLES`/`AI_PROMPTS` vẫn tĩnh
+  — tương thích vì tra cứu chéo theo `slug`, không theo id.
+- **Lesson: Giai đoạn 1 (đã có bảng + migrate + UI sửa nội dung, CHƯA đổi
+  nguồn đọc Portal).** Bảng `knowledge_seeds` (**không phải `lessons`** —
+  tên đó đã bị chiếm bởi bảng khoá học trả phí VDAI SOLO/SCALE thật,
+  `id bigint/course_id/title/video_url/pdf_url/price`, dùng thật ở
+  `/portal/vdai-academy` + `checkout/actions.ts` — gặp lỗi `relation
+  "lessons" already exists` khi tạo bảng, phải đổi tên. **Luôn kiểm tra
+  tên bảng có bị trùng trước khi tạo bảng mới cho module CKOS khác** —
+  không giả định tên hiển nhiên còn trống). Admin sửa qua
+  `/admin/ckos/lessons` (editor riêng, không phải DataTable chung — ~30
+  field không vừa slide-over). `/portal/hetrithucai` vẫn đọc
+  `knowledgeSeedJourneys` tĩnh — chưa đổi, chờ duyệt riêng.
+- **Best Practice, Case Study:** chưa Full — Best Practice chưa có bảng
+  Supabase nào tồn tại; Case Study có bảng `case_studies` (typed riêng,
+  không phải schema generic) nhưng chưa có admin CRUD.
 
 **Bài học rút ra (áp dụng cho mọi module CKOS sau này):** "có trang
 `/admin/*` chạy được" KHÔNG đồng nghĩa "Portal đã đọc đúng dữ liệu đó" —

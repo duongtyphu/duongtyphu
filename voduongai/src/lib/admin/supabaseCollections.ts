@@ -80,6 +80,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "companion-safety-rules": "companion_safety_rules",
   "companion-test-sessions": "companion_test_sessions",
   "companion-versions": "companion_versions",
+
+  // Việc 3 — Lesson (CKOS Knowledge Seed), Giai đoạn 1. Bảng mới, tên
+  // "knowledge_seeds" (không phải "lessons" — tên đó đã bị chiếm bởi bảng
+  // khoá học trả phí VDAI SOLO/SCALE, course_id/video_url/pdf_url, đang
+  // dùng thật ở /portal/vdai-academy — xem CLAUDE.md). Khớp đúng tên type
+  // KnowledgeSeed trong src/features/knowledge/types/knowledge-seed.types.ts.
+  "knowledge-seeds": "knowledge_seeds",
 };
 
 export function tableForCollection(key: string): string | null {

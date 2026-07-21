@@ -38,6 +38,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Template (Folder)", href: "/admin/ckos/templates" },
       { label: "Ebook (Folder)", href: "/admin/ckos/ebooks" },
       { label: "Checklist (Folder)", href: "/admin/ckos/checklists" },
+      { label: "Lesson (Folder)", href: "/admin/ckos/lessons" },
     ],
   },
 ];
