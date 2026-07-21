@@ -11,7 +11,7 @@ import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneySt
 import { ExperienceFlow } from "@/components/portal/ui/ExperienceFlow";
 import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemoryLine";
 import { toolsAdminSeed, type AdminTool } from "@/data/admin/tools";
-import { getAllKnowledgeSeeds, getAllKnowledgeCollections } from "@/features/knowledge";
+import { getLiveKnowledgeSeeds, getLiveKnowledgeCollections } from "@/lib/portal/live-knowledge";
 import { prompts } from "@/data/prompts";
 import { sops } from "@/data/sop";
 import { freeResources } from "@/data/resources";
@@ -70,7 +70,10 @@ async function safeCount(
  */
 async function getKnowledgeCategories(): Promise<CategoryCount[]> {
   const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
-  const lessonCount = getAllKnowledgeSeeds().length;
+  // Đếm Lesson thật (status='Published') từ knowledge_seeds — trước đây
+  // dùng getAllKnowledgeSeeds() (mảng tĩnh, luôn ra 11 bất kể Admin có sửa/
+  // thêm/bớt gì), không phản ánh đúng dữ liệu Admin đang quản lý.
+  const lessonCount = (await getLiveKnowledgeSeeds()).length;
   const promptCount = prompts.length;
   const workflowCount = sops.length;
   const resourceCount = freeResources.length;
@@ -149,6 +152,7 @@ const CATEGORY_SURFACE: Record<string, { card: string; badge: string; feel: stri
 
 export default async function CkosPage() {
   const categories = await getKnowledgeCategories();
+  const knowledgeCollections = await getLiveKnowledgeCollections();
   const featuredTool: AdminTool | undefined = toolsAdminSeed.find((t) => t.status === "Published");
 
   return (
@@ -345,7 +349,7 @@ export default async function CkosPage() {
           </p>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            {getAllKnowledgeCollections().map((collection) => (
+            {knowledgeCollections.map((collection) => (
               <div key={collection.slug} className="rounded-xl border border-white/80 bg-white/70 p-4 shadow-sm backdrop-blur-sm">
                 <p className="gemos-card-title text-sm font-bold text-gray-900">{collection.title}</p>
                 <p className="mt-1 text-xs leading-relaxed text-gray-500">{collection.description}</p>

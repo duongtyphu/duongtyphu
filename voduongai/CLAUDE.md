@@ -215,6 +215,15 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   (`knowledge-collection.service.ts`) và `getRelatedCollectionObjects`
   (`knowledge-graph.service.ts`) — cùng lý do và cùng giới hạn như Lesson
   ở trên (Learning Engine, chưa mở khoá đợt này).
+  **Gap đã tìm và sửa (test Founder phát hiện):** `/portal/ckos/page.tsx`
+  (trang hub CKOS, khác `/portal/hetrithucai`) có 1 khu vực riêng ("Thư viện
+  AI" preview + số đếm Lesson ở lưới "7 Intelligence") vẫn gọi
+  `getAllKnowledgeSeeds()`/`getAllKnowledgeCollections()` tĩnh — sót lại từ
+  trước, không nằm trong phạm vi migrate `/portal/hetrithucai` nên sửa sau
+  vẫn không phản ánh. Đã đổi sang `getLiveKnowledgeSeeds()`/
+  `getLiveKnowledgeCollections()` (cùng `live-knowledge.ts`) — sửa nội dung/
+  status qua Admin giờ phản ánh đúng trên `/portal/ckos` lẫn
+  `/portal/hetrithucai`.
 - **Case Study:** Admin CRUD Full (`/admin/ckos/case-studies`, xem mục
   "Case Study" riêng bên dưới) — `/portal/case-studies` đọc đúng bảng
   `case_studies` (đã đọc lại code + query trực tiếp bảng để xác nhận theo
@@ -433,3 +442,42 @@ mới `*Live` mirror lại đúng logic cũ, không sửa các hàm dùng chung 
 CKOS vì Learning Engine còn phụ thuộc chúng). `journey.service.test.ts`
 vẫn dùng 2 mảng tĩnh `@deprecated` làm fixture cho unit test (khớp 1:1 dữ
 liệu đã migrate lên Supabase, không cần Supabase thật để test logic).
+
+## Bug đã sửa: `/api/admin/collections/[table]` GET không trả `status`
+
+Phát hiện lúc Founder verify VIỆC 3 (Academy Journey Engine): sửa nội dung
+1 Lesson/Knowledge Collection qua Admin xong, mục đó **biến mất khỏi mọi
+nơi đọc `status='Published'`** (`/portal/hetrithucai`, `/portal/ckos`,
+Journey card ở `/portal/hocvienai`).
+
+**Nguyên nhân:** GET (`src/app/api/admin/collections/[table]/route.ts`)
+chỉ `select("id, data, order")` — không lấy cột `status` (cột riêng, không
+nằm trong `data` jsonb). Mọi editor (LessonEditor, DataTableRowPanel...)
+đọc dữ liệu để sửa qua route này nên `item.status` luôn `undefined`. Khi
+Lưu, patch gửi lên thiếu `status` → PATCH (`[id]/route.ts`) tự mặc định
+`status: "Draft"` (dòng `typeof merged.status === "string" ? merged.status
+: "Draft"`) — âm thầm unpublish dòng đó dù chỉ sửa nội dung không liên quan.
+
+**Đã sửa:** GET giờ `select("id, data, status, order")`, merge `status:
+row.status` vào item (đè sau `data` để không bị key trùng tên che mất).
+Không cần đổi PATCH/POST/PUT — mọi form (LessonEditor, DataTableRowPanel)
+đều spread toàn bộ item hiện có làm state gốc nên round-trip tự đúng khi
+GET đã trả đúng `status`.
+
+**Bug này ảnh hưởng MỌI collection dùng route chung này** (`tools`,
+`prompts`, `resources`, `ebooks`, `checklists`, `sop`, `templates`,
+`best-practices`, `home-cards`, `knowledge-seeds`, `knowledge-collections`,
+Companion CMS...), không riêng CKOS — bất kỳ lần Lưu nào trước bản fix này
+đều có rủi ro rơi status về Draft. Đã rà nhanh (`execute_sql` các bảng
+chính) — hầu hết vẫn `Published` bình thường, riêng 2 dòng xác nhận bị ảnh
+hưởng thật (`knowledge_collections.ai-office`,
+`knowledge_seeds.viet-email-chuyen-nghiep`) và 2 dòng khác (`checklists`,
+`templates`, mỗi bảng 1 dòng Draft) **chưa rõ có phải bug hay Draft có chủ
+đích** — cần Founder tự kiểm tra lại nếu nghi ngờ nội dung nào "biến mất"
+sau khi từng sửa qua Admin trước đây.
+
+**Đã sửa thêm cùng đợt:** `LessonEditor.tsx` (`/admin/ckos/lessons`) trước
+đó **hoàn toàn thiếu field "Trạng thái"** trong `EDITABLE_FIELDS` — không
+có cách nào sửa status của 1 Lesson qua Admin (khác mọi editor CKOS khác
+đều có field này). Đã thêm field `status` (select Draft/Published/Hidden)
+làm field đầu tiên.
