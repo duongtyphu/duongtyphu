@@ -217,7 +217,11 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   ở trên (Learning Engine, chưa mở khoá đợt này).
 - **Case Study:** Admin CRUD Full (`/admin/ckos/case-studies`, xem mục
   "Case Study" riêng bên dưới) — `/portal/case-studies` đọc đúng bảng
-  `case_studies`.
+  `case_studies` (đã đọc lại code + query trực tiếp bảng để xác nhận theo
+  yêu cầu Founder — `.from("case_studies").select(...).eq("active", true)`,
+  khớp đúng bảng admin quản lý). Hiện bảng có **0 dòng** (Founder chưa tạo
+  Case Study nào qua Admin mới) nên trang hiển thị đúng empty state — đây
+  là trạng thái ĐÚNG, không phải lỗi nối sai nguồn.
 - **Best Practice: Full.** Bảng mới `best_practices` (generic
   `id/data jsonb/status/order`, đã kiểm tra không trùng tên bảng nào đang
   chạy — kể cả `ckos_best_practices` của kiến trúc Phase G/H cũ, bảng đó
@@ -239,16 +243,22 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   `listCaseStudies()` đã có sẵn, dùng chung UI checkbox
   (`MultiSelectChecklist`) với nhánh generic — không tạo UI/FieldType mới,
   chỉ khác nguồn lấy dữ liệu.
-  **Bước C (đã hoàn tất):** `/portal/ckos` (`getKnowledgeCategories()`) đọc
-  đếm thật từ `best_practices` (`status=Published`), `hasRoute: true`, trỏ
-  tới trang danh sách mới `/portal/ckos/best-practices` (tối giản — chỉ
-  liệt kê title/description/principle, chưa có filter riêng, có thể mở
-  rộng sau). `CkosQuickSearch.tsx` không cần sửa gì — type/label
-  `"best_practice"` đã có sẵn từ trước, chỉ cần nguồn dữ liệu thật.
+  **Bước C (đã hoàn tất, 2 đợt):** `/portal/ckos` (`getKnowledgeCategories()`)
+  đọc đếm thật từ `best_practices` (`status=Published`); field `hasRoute`
+  đã bỏ hẳn (không còn category nào cần trạng thái "chưa có route" nữa).
+  `/portal/ckos/best-practices` (`src/lib/portal/live-best-practices.ts`,
+  `getLiveBestPractices()`) — danh sách 13 mục thật, bố cục bám đúng
+  `/portal/sop` (h1+mô tả đơn giản, `card-shine`, `CompanionGuide` +
+  `KnowledgeJourneyStrip` ở cuối — không dựng layout mới). Mỗi thẻ chỉ
+  hiện title/description, bấm "Xem đầy đủ →" sang trang chi tiết mới
+  `/portal/ckos/best-practices/[id]` (bố cục bám `/portal/prompts/[id]`)
+  hiển thị `principle` đầy đủ. `CkosQuickSearch.tsx` không cần sửa —
+  type/label `"best_practice"` đã có sẵn từ trước.
   `/api/v1/ckos/search/route.ts`: sửa bug tên bảng
   (`ckos_best_practices` → `best_practices`) + đổi cách đọc cột (title/
   description nằm trong `data` jsonb, không phải cột phẳng — cùng kỹ thuật
-  đã dùng cho `tools`).
+  đã dùng cho `tools`) + href mỗi kết quả trỏ đúng trang chi tiết
+  `/portal/ckos/best-practices/[id]`.
 
 **Bài học rút ra (áp dụng cho mọi module CKOS sau này):** "có trang
 `/admin/*` chạy được" KHÔNG đồng nghĩa "Portal đã đọc đúng dữ liệu đó" —

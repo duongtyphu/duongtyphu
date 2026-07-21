@@ -127,7 +127,7 @@ export async function GET(request: Request) {
           id: String(row.id),
           title: data.title ?? "",
           description: data.description ?? null,
-          href: "/portal/ckos/best-practices",
+          href: `/portal/ckos/best-practices/${row.id}`,
         };
       })
       .filter((it) => !params.q || it.title.toLowerCase().includes(params.q.toLowerCase()));

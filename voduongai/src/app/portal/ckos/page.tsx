@@ -40,11 +40,6 @@ type CategoryCount = {
   count: number;
   href: string;
   configured: boolean;
-  /** false = chưa có route thật để "Xem" — hiển thị lý do trung thực thay
-   * vì nút dẫn tới nội dung mượn tạm. Không còn category nào dùng false ở
-   * đợt này (Best Practice đã có route thật) nhưng giữ cơ chế cho tương
-   * lai (vd. nếu thêm Goals sau này mà chưa có route). */
-  hasRoute: boolean;
 };
 
 async function safeCount(
@@ -82,13 +77,13 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
 
   if (!configured) {
     return [
-      { key: "tool", label: "Công cụ AI", count: 0, href: "/portal/aiworkspace#ai-toolbox", configured: false, hasRoute: true },
-      { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: false, hasRoute: true },
-      { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: false, hasRoute: true },
-      { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: false, hasRoute: true },
-      { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: false, hasRoute: true },
-      { key: "best_practice", label: "Best Practice", count: 0, href: "/portal/ckos/best-practices", configured: false, hasRoute: true },
-      { key: "case_study", label: "Case Study", count: 0, href: "/portal/case-studies", configured: false, hasRoute: true },
+      { key: "tool", label: "Công cụ AI", count: 0, href: "/portal/aiworkspace#ai-toolbox", configured: false },
+      { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: false },
+      { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: false },
+      { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: false },
+      { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: false },
+      { key: "best_practice", label: "Best Practice", count: 0, href: "/portal/ckos/best-practices", configured: false },
+      { key: "case_study", label: "Case Study", count: 0, href: "/portal/case-studies", configured: false },
     ];
   }
   const supabase = await getSupabaseServer();
@@ -98,13 +93,13 @@ async function getKnowledgeCategories(): Promise<CategoryCount[]> {
     safeCount(supabase, "case_studies", "active", true),
   ]);
   return [
-    { key: "tool", label: "Công cụ AI", count: tool, href: "/portal/aiworkspace#ai-toolbox", configured: true, hasRoute: true },
-    { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: true, hasRoute: true },
-    { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: true, hasRoute: true },
-    { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: true, hasRoute: true },
-    { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: true, hasRoute: true },
-    { key: "best_practice", label: "Best Practice", count: liveBestPractice, href: "/portal/ckos/best-practices", configured: true, hasRoute: true },
-    { key: "case_study", label: "Case Study", count: caseStudy, href: "/portal/case-studies", configured: true, hasRoute: true },
+    { key: "tool", label: "Công cụ AI", count: tool, href: "/portal/aiworkspace#ai-toolbox", configured: true },
+    { key: "prompt", label: "Prompt", count: promptCount, href: "/portal/prompts", configured: true },
+    { key: "workflow", label: "Workflow", count: workflowCount, href: "/portal/sop", configured: true },
+    { key: "resource", label: "Resource", count: resourceCount, href: "/portal/resources", configured: true },
+    { key: "lesson", label: "Lesson", count: lessonCount, href: "/portal/hetrithucai", configured: true },
+    { key: "best_practice", label: "Best Practice", count: liveBestPractice, href: "/portal/ckos/best-practices", configured: true },
+    { key: "case_study", label: "Case Study", count: caseStudy, href: "/portal/case-studies", configured: true },
   ];
 }
 
@@ -322,24 +317,12 @@ export default async function CkosPage() {
                   </span>
                 </div>
                 <p className="mt-2 text-[11px] font-semibold uppercase tracking-widest text-gray-400">{surface.feel}</p>
-                {c.hasRoute ? (
-                  <>
-                    <p className="mt-2 text-xs text-gray-500">
-                      {c.count > 0
-                        ? `${c.count} mục đã sẵn sàng.`
-                        : "Chưa có dữ liệu công khai cho danh mục này."}
-                    </p>
-                    <Button href={c.href} variant="secondary" className="mt-3">
-                      Xem {c.label} →
-                    </Button>
-                  </>
-                ) : (
-                  <p className="mt-2 text-xs text-gray-500">
-                    Chưa có nội dung Best Practice thật nào — hệ thống lưu trữ riêng cho loại tri thức này
-                    chưa được triển khai. Trong lúc chờ, cách gần nhất là xem Case Study (kết quả thực tế) hoặc
-                    hỏi Companion cách người khác đã làm đúng.
-                  </p>
-                )}
+                <p className="mt-2 text-xs text-gray-500">
+                  {c.count > 0 ? `${c.count} mục đã sẵn sàng.` : "Chưa có dữ liệu công khai cho danh mục này."}
+                </p>
+                <Button href={c.href} variant="secondary" className="mt-3">
+                  Xem {c.label} →
+                </Button>
               </div>
             );
           })}
