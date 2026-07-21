@@ -26,6 +26,11 @@ export const adminNavGroups: AdminNavGroup[] = [
       // trong AdminSidebar.tsx navIcons["/admin/course-pricing"], không
       // cần thêm.
       { label: "Giá khoá học Premium", href: "/admin/course-pricing" },
+      // Việc 5 (Nhóm B), phương án (a): chỉ quản 9 field hiện có của bảng
+      // `projects`, đã nối lại đúng nguồn đọc ở /portal/duan-cohoi (trang
+      // hub). Trang chi tiết [ecosystemSlug]/[subProjectSlug] vẫn tĩnh —
+      // xem CLAUDE.md mục "Dự án & Cơ hội".
+      { label: "Dự án & Cơ hội", href: "/admin/projects" },
     ],
   },
   {

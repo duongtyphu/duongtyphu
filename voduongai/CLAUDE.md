@@ -501,3 +501,52 @@ import `FolderKanban` không dùng nữa.
 **Việc rebuild admin đầy đủ cho "Dự án & Cơ hội"** (bảng `projects`,
 schema, trang quản lý) là việc khác, lớn hơn, cần quyết định mở rộng
 schema riêng — chưa làm trong đợt này.
+
+**Cập nhật (Việc 5, Nhóm B):** `/admin/projects` giờ là route THẬT (xem mục
+"Dự án & Cơ hội" bên dưới) — đoạn "không tồn tại" ở trên chỉ đúng tại thời
+điểm Việc 4, không còn đúng nữa.
+
+## Dự án & Cơ hội (`/portal/duan-cohoi`) — bảng `projects`, phương án (a)
+
+Audit Việc 5 phát hiện: bảng `projects` (Supabase, schema generic
+`id/data/status/order`, 5 dòng, đúng 9 field:
+`key/href/icon/name/description/expectation/fitCriteria/statusLabel/avoidCriteria`)
+**trước đó không được trang nào đọc cả** — kể cả trang hub. Có 3 bản dữ liệu
+song song cho cùng 5 hệ sinh thái: `/portal/duan-cohoi/page.tsx` (hub) tự
+hardcode 1 mảng `ECOSYSTEMS` riêng trong JSX; `src/data/portal/ecosystems.ts`
+(407 dòng, đầy đủ nhất — `highlights[]`/`subProjects[]`/`marketingLinks[]`/
+`potentialAnalysis[]`... theo 4 `structureType` khác nhau) dùng bởi trang chi
+tiết `[ecosystemSlug]`/`[subProjectSlug]`/`bai-viet/[slug]`; và bảng
+`projects` mồ côi.
+
+**Founder chọn phương án (a):** chỉ quản đúng 9 field hiện có của `projects`,
+KHÔNG mở schema cho trang chi tiết (trang chi tiết vẫn đọc `ecosystems.ts`
+tĩnh như trước — ngoài phạm vi việc này).
+
+Đã làm:
+- `/admin/projects` (`src/app/admin/(dashboard)/projects/page.tsx`) —
+  `DataTable` chuẩn (schema generic nên không cần Server Actions riêng như
+  Case Study/courses), 9 field + `status` (Draft/Published/Hidden).
+- `src/lib/portal/live-projects.ts` (`getLiveProjects()`, cùng pattern
+  `live-tools.ts`/`live-knowledge.ts`) — map field DB (`expectation`/
+  `fitCriteria`/`avoidCriteria`) sang tên dùng ở Portal
+  (`expectedOutcome`/`whoFor`/`whoNotReady`).
+- `/portal/duan-cohoi/page.tsx` (hub) — bỏ mảng `ECOSYSTEMS` hardcode, đọc
+  `getLiveProjects()`. `icon` lưu dạng string slug (`"layers"`,
+  `"building-2"`...) trong DB — map qua `ICON_MAP` sang component Lucide
+  thật, fallback `Layers` nếu slug lạ. `ECOSYSTEM_SURFACE` (bảng màu theo
+  `key`) đổi từ `Record<literal-key>` (compile-time an toàn khi còn
+  `as const`) sang `Record<string, ...>` + `DEFAULT_SURFACE` fallback xám
+  trung tính — vì `key` giờ đến từ DB (`string` thường), Founder có thể gõ
+  key lạ không khớp style nào, không được để crash.
+- Nối `/admin/projects` vào `nav.ts` (nhóm "Nội dung") +
+  `navIcons["/admin/projects"]` (`FolderKanban`, add lại sau khi đã dọn ở
+  Việc 4 vì lúc đó route chưa tồn tại).
+
+**Lưu ý khi Founder sửa qua Admin:** field `key` phải khớp đúng 1 trong 5
+key đã định nghĩa style ở `ECOSYSTEM_SURFACE` (`digiu/solargroup/crypto/
+blockchain/trading`) nếu muốn giữ đúng màu/dải màu riêng — key lạ vẫn hoạt
+động (không crash) nhưng hiển thị màu xám mặc định. Field `href` phải khớp
+đúng 1 trong 4 route tĩnh có sẵn ở `/portal/duan-cohoi/[ecosystemSlug]`
+(theo `ecosystems.ts`) — sửa `href` thành giá trị không khớp sẽ tạo link
+404 khi bấm vào thẻ.

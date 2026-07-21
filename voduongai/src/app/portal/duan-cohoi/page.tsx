@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, Users, Quote } from "lucide-react";
+import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, Users, Quote, type LucideIcon } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
+import { getLiveProjects } from "@/lib/portal/live-projects";
 
 export const metadata = {
   title: "Dự án & Cơ hội",
@@ -17,63 +18,24 @@ export const metadata = {
  * nên mỗi thẻ trỏ về trang Case Study chung với trạng thái trung thực thay
  * vì bịa "câu chuyện thành công" hay ROI cho riêng hệ sinh thái này.
  */
-const ECOSYSTEMS = [
-  {
-    key: "digiu",
-    icon: Layers,
-    title: "Hệ sinh thái DigiU",
-    description: "Nền tảng học và kiếm thu nhập số — mình đang đồng hành và chia sẻ trải nghiệm thực tế.",
-    href: "/portal/duan-cohoi/digiu",
-    status: "Đang theo dõi",
-    whoFor: "Người mới muốn bắt đầu kiếm thu nhập số, chấp nhận vài tháng đầu chưa có kết quả rõ ràng.",
-    whoNotReady: "Người cần thu nhập ngay lập tức, hoặc chưa từng dùng công cụ AI cơ bản nào.",
-    expectedOutcome: "Kỹ năng vận hành một kênh nội dung số bằng AI — không phải cam kết thu nhập cụ thể.",
-  },
-  {
-    key: "solargroup",
-    icon: Building2,
-    title: "SolarGroup",
-    description: "Cơ hội đầu tư cổ phần dài hạn — mình đang nghiên cứu và chia sẻ góc nhìn cá nhân.",
-    href: "/portal/duan-cohoi/solargroup",
-    status: "Đang nghiên cứu",
-    whoFor: "Người có vốn nhàn rỗi thật sự sẵn sàng để lâu dài, chấp nhận không rút được ngay khi cần.",
-    whoNotReady: "Người cần thanh khoản ngắn hạn, hoặc chưa từng đọc một bản cáo bạch/whitepaper đầu tư nào.",
-    expectedOutcome: "Hiểu rõ hơn cách một mô hình cổ phần dài hạn vận hành — không phải cam kết lợi nhuận.",
-  },
-  {
-    key: "crypto",
-    icon: Bitcoin,
-    title: "Blockchain & Crypto",
-    description: "Kiến thức nền tảng về hai mảng Blockchain và Crypto — bao gồm cả bài học từ sai lầm.",
-    href: "/portal/duan-cohoi/blockchain-crypto",
-    status: "Chia sẻ trải nghiệm",
-    whoFor: "Người tò mò về công nghệ mới, chấp nhận rủi ro cao và biến động giá lớn.",
-    whoNotReady: "Người chưa từng tự quản lý một ví số, hoặc coi đây là cách làm giàu nhanh.",
-    expectedOutcome: "Kiến thức nền về blockchain/crypto và cách tự bảo vệ tài sản số — không phải lợi nhuận giao dịch.",
-  },
-  {
-    key: "blockchain",
-    icon: Link2,
-    title: "Làm tiếp thị liên kết (Affiliate)",
-    description: "Các chương trình/khoá học tiếp thị liên kết mình đang tìm hiểu hoặc quảng bá.",
-    href: "/portal/duan-cohoi/lam-affilate",
-    status: "Đang theo dõi",
-    whoFor: "Người muốn tìm hiểu các chương trình tiếp thị liên kết cụ thể mình đang theo dõi.",
-    whoNotReady: "Người tìm kiếm một danh sách link tiếp thị đã có sẵn và hoạt động ngay hôm nay.",
-    expectedOutcome: "Biết rõ những chương trình affiliate mình đang tìm hiểu — không phải cam kết thu nhập.",
-  },
-  {
-    key: "trading",
-    icon: LineChart,
-    title: "Các sàn giao dịch Crypto",
-    description: "Danh sách các sàn giao dịch crypto mình đang theo dõi hoặc đã dùng thử.",
-    href: "/portal/duan-cohoi/sangiaodich",
-    status: "Chia sẻ kiến thức",
-    whoFor: "Người đã hiểu kiến thức nền về crypto, muốn biết các sàn giao dịch cụ thể mình đang theo dõi.",
-    whoNotReady: "Người chưa hiểu kiến thức nền về crypto/ví số — nên đọc Blockchain & Crypto trước.",
-    expectedOutcome: "Biết rõ các sàn giao dịch mình đang theo dõi/đã dùng — không phải khuyến nghị nên chọn sàn nào.",
-  },
-] as const;
+// Việc 5 (Nhóm B) — trước đây là mảng hardcode tại đây, không đọc từ đâu
+// cả (bản sao thứ 3, song song với ecosystems.ts VÀ bảng Supabase `projects`
+// mồ côi chưa ai đọc). Giờ đọc thật từ getLiveProjects() (bảng `projects`,
+// quản lý qua /admin/projects) — xem CLAUDE.md mục "Dự án & Cơ hội".
+const ICON_MAP: Record<string, LucideIcon> = {
+  layers: Layers,
+  "building-2": Building2,
+  bitcoin: Bitcoin,
+  "link-2": Link2,
+  "line-chart": LineChart,
+};
+
+const DEFAULT_SURFACE = {
+  card: "border-gray-200 bg-white hover:border-gray-400 hover:shadow-token-lg hover:-translate-y-1",
+  strip: "bg-gray-400",
+  chip: "bg-gray-500 text-white",
+  badge: "bg-gray-100 text-gray-700",
+};
 
 /**
  * Portal 4.0 Final Audit — visual reconstruction. Cùng khuôn 5 mẫu như
@@ -84,10 +46,7 @@ const ECOSYSTEMS = [
  * Nền vẫn là tint sáng (không phải nền tối) để giữ nguyên chữ
  * text-gray-900/600/500 sẵn có, tránh lỗi tương phản khi đổi theme.
  */
-const ECOSYSTEM_SURFACE: Record<
-  (typeof ECOSYSTEMS)[number]["key"],
-  { card: string; strip: string; chip: string; badge: string }
-> = {
+const ECOSYSTEM_SURFACE: Record<string, { card: string; strip: string; chip: string; badge: string }> = {
   digiu: {
     card: "border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white hover:border-blue-400 hover:shadow-token-lg hover:-translate-y-1",
     strip: "bg-gradient-to-r from-blue-600 to-indigo-600",
@@ -208,7 +167,8 @@ const FAQ = [
   },
 ];
 
-export default function OpportunitiesHubPage() {
+export default async function OpportunitiesHubPage() {
+  const projects = await getLiveProjects();
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       {/* Khí quyển riêng của Projects & Opportunities ("Opportunity
@@ -245,22 +205,23 @@ export default function OpportunitiesHubPage() {
           description="Mỗi hệ sinh thái trả lời rõ: ai phù hợp, ai chưa nên tham gia, và kỳ vọng thực tế là gì — không phải một bảng xếp hạng."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {ECOSYSTEMS.map((item) => {
-            const surface = ECOSYSTEM_SURFACE[item.key];
+          {projects.map((item) => {
+            const surface = ECOSYSTEM_SURFACE[item.key] ?? DEFAULT_SURFACE;
+            const Icon = ICON_MAP[item.icon] ?? Layers;
             return (
               <div
-                key={item.title}
+                key={item.key}
                 className={`overflow-hidden rounded-2xl border p-5 shadow-token-sm transition duration-200 sm:p-6 ${surface.card}`}
               >
                 <div className={`-mx-5 -mt-5 mb-4 h-1.5 sm:-mx-6 sm:-mt-6 ${surface.strip}`} aria-hidden />
                 <Link href={item.href} className="block">
                   <div className="mb-4 flex items-start justify-between gap-2">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-sm ${surface.chip}`}>
-                      <item.icon className="h-5 w-5" />
+                      <Icon className="h-5 w-5" />
                     </div>
-                    <span className={`gemos-badge ${surface.badge}`}>{item.status}</span>
+                    <span className={`gemos-badge ${surface.badge}`}>{item.statusLabel}</span>
                   </div>
-                  <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.title}</h3>
+                  <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.name}</h3>
                   <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
                 </Link>
 
