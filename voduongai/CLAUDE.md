@@ -136,3 +136,35 @@ lại từ đầu:
   cũ đã có API route riêng (`/api/admin/collections/**`) thì giữ nguyên,
   không viết lại trừ khi thật cần.
 - Bảng `transactions` (nếu có): CHỈ ĐỌC trong admin.
+
+## CKOS Coverage — trạng thái đọc/ghi thật giữa Admin và Portal
+
+Theo dõi từng danh mục trong 7 "Intelligence" của CKOS (`/portal/ckos`) đã
+thực sự nối Admin → Portal hay chưa — tránh lặp lại lỗi đã gặp (build UI
+Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
+
+- **Prompt: Full.** Admin sửa bảng `prompts` (`/admin/prompts`) → Portal
+  hiển thị đúng qua `<AdminPromptsSection/>` (`useCollection("prompts")`)
+  trên `/portal/prompts`. (Trang này còn 2 khối tĩnh khác không do Admin
+  quản — `prompts` mảng tĩnh `src/data/prompts.ts` và bảng `prompt_templates`
+  — cả 2 nằm ngoài phạm vi "Prompt" của CKOS admin, không phải lỗi.)
+- **Workflow (sop): Full.** Admin sửa bảng `sop` (`/admin/ckos/sop`) →
+  `/portal/sop` đọc trực tiếp bảng này (`status=Published`), không còn dùng
+  mảng tĩnh `src/data/sop.ts` (đã đánh dấu `@deprecated`, giữ tạm để
+  rollback nhanh).
+- **Resource: Full.** Admin sửa bảng `resources` (`/admin/ckos/resources`)
+  → `/portal/resources` + `/portal/resources/[id]` đọc trực tiếp bảng này
+  qua `src/lib/portal/live-resources.ts`, không còn dùng mảng tĩnh
+  `src/data/resources.ts` (đã đánh dấu `@deprecated`, giữ tạm để rollback
+  nhanh). Khối "Tài liệu từ VO DUONG AI Academy" (bảng `documents`) là nội
+  dung khác, tách biệt, không thuộc CKOS Resource.
+- **Công cụ AI (tools), Lesson, Best Practice, Case Study:** chưa Full —
+  xem báo cáo audit riêng khi build từng mục (Tool đã có admin CRUD
+  `/admin/tools` nhưng trang đích Portal `/portal/aiworkspace#ai-toolbox`
+  vẫn render mảng tĩnh `AI_TOOLS` khác hẳn bảng `tools`; Lesson/Best
+  Practice/Case Study chưa có admin CRUD).
+
+**Bài học rút ra (áp dụng cho mọi module CKOS sau này):** "có trang
+`/admin/*` chạy được" KHÔNG đồng nghĩa "Portal đã đọc đúng dữ liệu đó" —
+luôn đọc trực tiếp code trang Portal đích (không suy đoán từ tên) để xác
+nhận nó thực sự query đúng bảng Admin quản lý, trước khi báo "Full".
