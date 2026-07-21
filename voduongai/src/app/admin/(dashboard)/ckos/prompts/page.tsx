@@ -3,7 +3,7 @@ import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
 import type { AdminPrompt } from "@/data/admin/prompts";
 
-export const metadata = { title: "Prompt · Admin" };
+export const metadata = { title: "Prompt (Folder) · Admin" };
 
 const columns: ColumnConfig<AdminPrompt>[] = [
   { key: "title", label: "Tiêu đề" },
@@ -32,7 +32,15 @@ const fields: FieldConfig[] = [
 export default function AdminCkosPromptsPage() {
   return (
     <AdminAtmosphere atmosphereClassName="ckos-atmosphere-bg">
-      <DataTable<AdminPrompt> collectionKey="prompts" title="Prompt" columns={columns} fields={fields} />
+      <DataTable<AdminPrompt>
+        collectionKey="prompts"
+        title="Prompt (Folder)"
+        columns={columns}
+        fields={fields}
+        itemNoun="Knowledge Card"
+        addButtonLabel="+ Thêm Card"
+        panelLabel="Nội dung tri thức"
+      />
     </AdminAtmosphere>
   );
 }

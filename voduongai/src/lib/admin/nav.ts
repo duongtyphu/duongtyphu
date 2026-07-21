@@ -28,14 +28,16 @@ export const adminNavGroups: AdminNavGroup[] = [
     // nối thêm Template/Ebook/Checklist (cùng họ schema AdminResource,
     // không có card riêng trên hub nhưng có bảng Supabase + route quản lý
     // riêng).
+    // UI language layer (Folder → Card → Content) — chỉ đổi nhãn hiển thị,
+    // không đổi route/collectionKey/schema. Mỗi mục dưới đây là 1 "Folder".
     group: "Hệ tri thức (CKOS)",
     items: [
-      { label: "Prompt", href: "/admin/ckos/prompts" },
-      { label: "SOP / Workflow", href: "/admin/ckos/sop" },
-      { label: "Resource", href: "/admin/ckos/resources" },
-      { label: "Template", href: "/admin/ckos/templates" },
-      { label: "Ebook", href: "/admin/ckos/ebooks" },
-      { label: "Checklist", href: "/admin/ckos/checklists" },
+      { label: "Prompt (Folder)", href: "/admin/ckos/prompts" },
+      { label: "SOP / Workflow (Folder)", href: "/admin/ckos/sop" },
+      { label: "Resource (Folder)", href: "/admin/ckos/resources" },
+      { label: "Template (Folder)", href: "/admin/ckos/templates" },
+      { label: "Ebook (Folder)", href: "/admin/ckos/ebooks" },
+      { label: "Checklist (Folder)", href: "/admin/ckos/checklists" },
     ],
   },
 ];

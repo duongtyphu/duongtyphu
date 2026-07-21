@@ -25,11 +25,23 @@ export async function DataTable<T extends BaseItem>({
   title,
   columns,
   fields,
+  itemNoun,
+  addButtonLabel,
+  panelLabel,
 }: {
   collectionKey: string;
   title: string;
   columns: ColumnConfig<T>[];
   fields: FieldConfig[];
+  /** Nhãn số nhiều hiển thị cạnh tiêu đề (vd. "Knowledge Card") — bỏ trống
+   * giữ nguyên hành vi cũ (không hiện số đếm). Tuỳ chọn, riêng cho từng
+   * page.tsx — KHÔNG đổi hành vi mặc định của các collection khác. */
+  itemNoun?: string;
+  /** Nhãn nút thêm mới (vd. "+ Thêm Card") — bỏ trống dùng "Thêm mới". */
+  addButtonLabel?: string;
+  /** Nhãn khu vực chỉnh trong slide-over (vd. "Nội dung tri thức") — bỏ
+   * trống dùng "Sửa"/"Thêm mới" như cũ. */
+  panelLabel?: string;
 }) {
   const admin = await requireAdmin();
   if (!admin) redirect("/admin/login");
@@ -43,6 +55,9 @@ export async function DataTable<T extends BaseItem>({
       columns={columns}
       fields={fields}
       initialItems={items}
+      itemNoun={itemNoun}
+      addButtonLabel={addButtonLabel}
+      panelLabel={panelLabel}
     />
   );
 }

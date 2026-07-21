@@ -35,6 +35,7 @@ export function DataTableRowPanel<T extends BaseItem>({
   open,
   collectionKey,
   title,
+  panelLabel,
   fields,
   item,
   onClose,
@@ -44,6 +45,9 @@ export function DataTableRowPanel<T extends BaseItem>({
   open: boolean;
   collectionKey: string;
   title: string;
+  /** Nhãn khu vực chỉnh (vd. "Nội dung tri thức") — bỏ trống dùng
+   * "Sửa"/"Thêm mới" như mặc định (không đổi hành vi collection khác). */
+  panelLabel?: string;
   fields: FieldConfig[];
   item: T | null;
   onClose: () => void;
@@ -90,8 +94,16 @@ export function DataTableRowPanel<T extends BaseItem>({
     }
   }
 
+  const panelTitle = panelLabel
+    ? item
+      ? `${panelLabel}: ${title}`
+      : `${panelLabel} mới: ${title}`
+    : item
+      ? `Sửa: ${title}`
+      : `Thêm mới: ${title}`;
+
   return (
-    <SlideOver open={open} title={item ? `Sửa: ${title}` : `Thêm mới: ${title}`} onClose={onClose}>
+    <SlideOver open={open} title={panelTitle} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {fields.map((f) => (
           <div key={f.key} className={f.full ? "col-span-2" : ""}>

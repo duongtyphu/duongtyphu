@@ -3,7 +3,7 @@ import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
 import type { AdminResource } from "@/data/admin/resources";
 
-export const metadata = { title: "Checklist · Admin" };
+export const metadata = { title: "Checklist (Folder) · Admin" };
 
 const columns: ColumnConfig<AdminResource>[] = [
   { key: "name", label: "Tên" },
@@ -31,7 +31,15 @@ const fields: FieldConfig[] = [
 export default function AdminCkosChecklistsPage() {
   return (
     <AdminAtmosphere atmosphereClassName="ckos-atmosphere-bg">
-      <DataTable<AdminResource> collectionKey="checklists" title="Checklist" columns={columns} fields={fields} />
+      <DataTable<AdminResource>
+        collectionKey="checklists"
+        title="Checklist (Folder)"
+        columns={columns}
+        fields={fields}
+        itemNoun="Knowledge Card"
+        addButtonLabel="+ Thêm Card"
+        panelLabel="Nội dung tri thức"
+      />
     </AdminAtmosphere>
   );
 }

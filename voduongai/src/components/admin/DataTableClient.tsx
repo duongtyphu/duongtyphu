@@ -21,12 +21,18 @@ export function DataTableClient<T extends BaseItem>({
   columns,
   fields,
   initialItems,
+  itemNoun,
+  addButtonLabel,
+  panelLabel,
 }: {
   collectionKey: string;
   title: string;
   columns: ColumnConfig<T>[];
   fields: FieldConfig[];
   initialItems: T[];
+  itemNoun?: string;
+  addButtonLabel?: string;
+  panelLabel?: string;
 }) {
   const router = useRouter();
   const { remove } = useCollection<T>(collectionKey, []);
@@ -56,14 +62,17 @@ export function DataTableClient<T extends BaseItem>({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-extrabold text-gray-900">{title}</h1>
+        <h1 className="text-lg font-extrabold text-gray-900">
+          {title}
+          {itemNoun ? ` — ${initialItems.length} ${itemNoun}` : ""}
+        </h1>
         <button
           type="button"
           onClick={openCreate}
           className="flex items-center gap-1.5 rounded-lg bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
         >
           <Plus className="h-4 w-4" />
-          Thêm mới
+          {addButtonLabel ?? "Thêm mới"}
         </button>
       </div>
 
@@ -133,6 +142,7 @@ export function DataTableClient<T extends BaseItem>({
         open={panelOpen}
         collectionKey={collectionKey}
         title={title}
+        panelLabel={panelLabel}
         fields={fields}
         item={editing}
         onClose={() => setPanelOpen(false)}

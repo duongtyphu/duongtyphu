@@ -3,7 +3,7 @@ import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
 import type { AdminResource } from "@/data/admin/resources";
 
-export const metadata = { title: "Resource · Admin" };
+export const metadata = { title: "Resource (Folder) · Admin" };
 
 const columns: ColumnConfig<AdminResource>[] = [
   { key: "name", label: "Tên" },
@@ -40,7 +40,15 @@ const fields: FieldConfig[] = [
 export default function AdminCkosResourcesPage() {
   return (
     <AdminAtmosphere atmosphereClassName="ckos-atmosphere-bg">
-      <DataTable<AdminResource> collectionKey="resources" title="Resource" columns={columns} fields={fields} />
+      <DataTable<AdminResource>
+        collectionKey="resources"
+        title="Resource (Folder)"
+        columns={columns}
+        fields={fields}
+        itemNoun="Knowledge Card"
+        addButtonLabel="+ Thêm Card"
+        panelLabel="Nội dung tri thức"
+      />
     </AdminAtmosphere>
   );
 }
