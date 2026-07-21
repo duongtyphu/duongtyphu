@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  AI_TOOLS,
   NEED_CATEGORIES,
   AI_ARTICLES,
   AI_PROMPTS,
@@ -9,6 +8,7 @@ import {
   type AiNeedCategory,
   type AiProfessionGroup,
 } from "@/data/khong-gian-ai";
+import { getLiveTools } from "@/lib/portal/live-tools";
 
 // ─────────────────────────────────────────────
 // Shared UI primitives
@@ -298,8 +298,8 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
 // Need Category Page
 // ─────────────────────────────────────────────
 
-function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
-  const tools = AI_TOOLS.filter((t) => category.recommendedToolSlugs.includes(t.slug));
+function NeedCategoryPage({ category, allTools }: { category: AiNeedCategory; allTools: AiTool[] }) {
+  const tools = allTools.filter((t) => category.recommendedToolSlugs.includes(t.slug));
   const articles = AI_ARTICLES.filter((a) => a.relatedNeedSlugs.includes(category.slug));
   const prompts = AI_PROMPTS.filter((p) => p.needSlug === category.slug);
 
@@ -468,8 +468,8 @@ function NeedCategoryPage({ category }: { category: AiNeedCategory }) {
 // Profession Detail Page
 // ─────────────────────────────────────────────
 
-function ProfessionDetailPage({ profession }: { profession: AiProfessionGroup }) {
-  const tools = AI_TOOLS.filter((t) => profession.recommendedToolSlugs.includes(t.slug));
+function ProfessionDetailPage({ profession, allTools }: { profession: AiProfessionGroup; allTools: AiTool[] }) {
+  const tools = allTools.filter((t) => profession.recommendedToolSlugs.includes(t.slug));
 
   return (
     <div className="rounded-3xl p-6 md:p-8 space-y-10">
@@ -766,7 +766,8 @@ function NotFoundPage({ slug }: { slug: string }) {
 // ─────────────────────────────────────────────
 
 export async function generateStaticParams() {
-  const toolSlugs = AI_TOOLS.map((t) => ({ slug: t.slug }));
+  const liveTools = await getLiveTools();
+  const toolSlugs = liveTools.map((t) => ({ slug: t.slug }));
   const needSlugs = NEED_CATEGORIES.map((c) => ({ slug: c.slug }));
   const professionSlugs = PROFESSION_GROUPS.map((p) => ({ slug: p.slug }));
   return [...toolSlugs, ...needSlugs, ...professionSlugs];
@@ -779,16 +780,17 @@ export default async function Page({
 }) {
   const { slug } = await params;
 
-  const tool = AI_TOOLS.find((t) => t.slug === slug);
+  const liveTools = await getLiveTools();
+  const tool = liveTools.find((t) => t.slug === slug);
   const category = NEED_CATEGORIES.find((c) => c.slug === slug);
   const profession = PROFESSION_GROUPS.find((p) => p.slug === slug);
 
   const body = tool ? (
     <ToolDetailPage tool={tool} />
   ) : category ? (
-    <NeedCategoryPage category={category} />
+    <NeedCategoryPage category={category} allTools={liveTools} />
   ) : profession ? (
-    <ProfessionDetailPage profession={profession} />
+    <ProfessionDetailPage profession={profession} allTools={liveTools} />
   ) : (
     <NotFoundPage slug={slug} />
   );

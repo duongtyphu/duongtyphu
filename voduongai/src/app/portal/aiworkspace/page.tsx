@@ -1,14 +1,15 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, BookOpen, Zap, ArrowRight } from "lucide-react";
 import {
   type AiTool,
   type AiArticle,
-  AI_TOOLS,
   AI_ARTICLES,
 } from "@/data/khong-gian-ai";
+import { getLiveTools } from "@/lib/portal/live-tools";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import {
   CompanionDesk,
@@ -24,7 +25,10 @@ import {
  * (xem docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md). Kiến trúc hiện tại:
  * Hero → Companion Desk → Workspace đề xuất → Quy trình AI theo công việc →
  * Prompt Library → AI Toolbox theo nhiệm vụ → Tài nguyên thực hành →
- * Blog AI. AI_TOOLS/AI_ARTICLES cũ vẫn dùng nguyên — không xoá dữ liệu cũ.
+ * Blog AI. AI_ARTICLES cũ vẫn dùng nguyên. AI Toolbox (mục 6) từ Bước C đọc
+ * bảng Supabase `tools` qua getLiveTools() (client-side, "use client" ở
+ * trên) — không còn dùng mảng tĩnh AI_TOOLS (giữ lại @deprecated phòng
+ * rollback, xem src/data/khong-gian-ai/index.ts).
  */
 
 // ─── Tool category badge color ────────────────────────────────────────────────
@@ -115,7 +119,13 @@ function ArticleCard({ article }: { article: AiArticle }) {
 }
 
 export default function KhongGianAiPage() {
-  const featuredTools = AI_TOOLS.filter((t) => t.featured);
+  const [liveTools, setLiveTools] = useState<AiTool[]>([]);
+
+  useEffect(() => {
+    getLiveTools().then(setLiveTools);
+  }, []);
+
+  const featuredTools = liveTools.filter((t) => t.featured);
   const featuredArticles = AI_ARTICLES.filter((a) => a.featured);
 
   return (

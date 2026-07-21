@@ -672,6 +672,16 @@ export type AiTool = {
   relatedNeedSlugs: string[];
 };
 
+/**
+ * @deprecated Từ Bước C (migrate Công cụ AI sang Supabase) —
+ * /portal/aiworkspace và /portal/aiworkspace/[slug] giờ đọc từ bảng
+ * Supabase `tools` qua src/lib/portal/live-tools.ts (getLiveTools()),
+ * không còn dùng mảng này. Giữ nguyên 1-2 tuần phòng hờ rollback nhanh
+ * (đổi lại import ở 2 file đó thay vì phải khôi phục từ git history).
+ * NEED_CATEGORIES/PROFESSION_GROUPS/AI_ARTICLES/AI_PROMPTS vẫn dùng mảng
+ * này để tra cứu chéo theo slug (recommendedToolSlugs/relatedToolSlugs) —
+ * KHÔNG xoá, chỉ đánh dấu không còn là nguồn hiển thị chính.
+ */
 export const AI_TOOLS: AiTool[] = [
   {
     slug: "chatgpt",
