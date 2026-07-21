@@ -183,3 +183,37 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
 `/admin/*` chạy được" KHÔNG đồng nghĩa "Portal đã đọc đúng dữ liệu đó" —
 luôn đọc trực tiếp code trang Portal đích (không suy đoán từ tên) để xác
 nhận nó thực sự query đúng bảng Admin quản lý, trước khi báo "Full".
+
+## CKOS — Knowledge Asset (80 mục, chưa xử lý)
+
+Founder từng báo "Thư viện AI có khoảng 80 mục dang dở, chỉ có tiêu đề" —
+con số này KHÔNG khớp 11 Lesson đã biết, đã audit riêng và xác nhận:
+
+- **File:** `src/features/knowledge/data/knowledge-seed-data.ts`
+  (`knowledgeSeedData: KnowledgeAsset[]`, đúng **80 mục**, đếm trực tiếp
+  qua code — không suy đoán).
+- Đây là tầng **NỀN TẢNG** của Thư viện AI (Sprint 01 "Knowledge Asset") —
+  **11 Lesson** (bảng `knowledge_seeds`, Sprint 02 "Knowledge Journey")
+  chỉ là hành trình đã tuyển chọn, tham chiếu vào MỘT PHẦN của 80 mục này
+  qua `step.assetId` (74 step tổng cộng trong 11 Lesson, 3 `assetId=null`
+  "sắp có", ~71-72 tham chiếu thật vào 80 mục này). 80 mục là tập lớn hơn
+  hẳn, không phải suy ra từ 11 Lesson.
+- Dữ liệu 80 mục **KHÔNG rỗng** — mỗi mục có đủ `content`/`practice`/
+  `reflectionQuestions`/`nextStep`... nhưng UI hiện tại
+  (`KnowledgeAssetCard`, `KnowledgeLibrary.tsx`, section "Tìm tri thức lẻ
+  theo bộ lọc" trên `/portal/hetrithucai`) **không có link/onClick** nào
+  để mở xem nội dung đầy đủ — chỉ hiện title + tóm tắt 2 dòng + "Bước
+  tiếp theo". Vì vậy trải nghiệm thật đúng như Founder mô tả ("dang dở")
+  dù dữ liệu gốc không thiếu.
+- `ckos_best_practices` **KHÔNG liên quan** tới 80 mục này — bảng chưa
+  tồn tại trong Supabase (`to_regclass()` → `null`), seed SQL trên đĩa
+  chỉ có 13 dòng (chỉ loại GUIDE, 1 phần nhỏ của 80 mục), chưa từng chạy.
+
+**QUYẾT ĐỊNH (Founder):** chưa đưa 80 Knowledge Asset vào Supabase/admin ở
+đợt này — ưu tiên Case Study, Best Practice, CKOS Dashboard trước. Nếu làm
+sau, cần: (1) audit đầy đủ field `KnowledgeAsset` trước khi thiết kế
+schema, (2) migrate **giữ nguyên `assetId`** (74 điểm tham chiếu từ
+`knowledge_seeds.steps` phụ thuộc trực tiếp vào các id này — đổi id là gãy
+liên kết Lesson→Asset), (3) sửa UI Portal để có trang/cách xem nội dung
+đầy đủ (hiện hoàn toàn chưa có, đây là gap UX thật, không chỉ là gap dữ
+liệu).
