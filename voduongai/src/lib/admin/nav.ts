@@ -20,6 +20,12 @@ export const adminNavGroups: AdminNavGroup[] = [
     items: [
       { label: "Công cụ AI", href: "/admin/tools" },
       { label: "Trang chủ Học viện", href: "/admin/home-cards" },
+      // Vị trí cũ (trước đợt xoá admin df156f3): giữa Daily Missions và
+      // Projects trong sidebar cũ — nhóm "Nội dung" hiện tại là chỗ khớp
+      // nhất (không thuộc 7 Intelligence của CKOS). Icon Wallet đã có sẵn
+      // trong AdminSidebar.tsx navIcons["/admin/course-pricing"], không
+      // cần thêm.
+      { label: "Giá khoá học Premium", href: "/admin/course-pricing" },
     ],
   },
   {

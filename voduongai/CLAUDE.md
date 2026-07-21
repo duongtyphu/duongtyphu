@@ -396,6 +396,11 @@ nhầm là bug nếu thấy khác `listPrice` sau này. `name` mỗi dòng mới
 không xử lý dấu — vd. "Lớp học AI Cơ bản" chứa chuỗi "cơ bản" khớp pattern
 `["cơ bản", "co ban", "ai basic", "basic"]`).
 
-**Admin UI cho bảng này chưa tồn tại** — `/admin/course-pricing` (cho phép
-sửa `price`/`status`) đã bị xoá cùng đợt dọn `/admin` cũ (commit `df156f3`),
-cần rebuild (việc riêng, xem lịch sử trò chuyện "VIỆC 2").
+**Admin UI đã rebuild** — `/admin/course-pricing` (Server Actions riêng
+`actions.ts` — bảng typed, không qua `/api/admin/collections/[table]` —
+`requireAdmin()` + `getSupabaseAdmin()`, cùng mẫu `case-studies/actions.ts`),
+sửa `price`/`status` (`open`/`coming`) cho từng dòng. Bản cũ đã xoá cùng
+`df156f3` dùng `id: number` — **KHÔNG khớp thực tế** (`id` live là `text`),
+nên không copy nguyên bản cũ, viết lại với `id: string`. Nối vào sidebar
+nhóm "Nội dung" (`nav.ts`), label "Giá khoá học Premium", tái dùng icon
+`Wallet` đã có sẵn trong `AdminSidebar.tsx` (`navIcons["/admin/course-pricing"]`).
