@@ -481,3 +481,23 @@ sau khi từng sửa qua Admin trước đây.
 có cách nào sửa status của 1 Lesson qua Admin (khác mọi editor CKOS khác
 đều có field này). Đã thêm field `status` (select Draft/Published/Hidden)
 làm field đầu tiên.
+
+## `/admin/projects` — đính chính: KHÔNG phải link chết trong sidebar
+
+Audit "Nhóm A" (phần Dự án & Cơ hội) từng báo "sidebar Admin có link chết
+trỏ /admin/projects (404)". Re-verify lại `src/lib/admin/nav.ts` (nguồn sự
+thật duy nhất cho `AdminSidebar`/`AdminSearch`, theo đúng comment đầu file)
+— **không có entry `/admin/projects` nào cả**, nên sidebar thật KHÔNG hiển
+thị link này, không có gì để bấm vào 404. Route `/admin/projects` cũng
+không tồn tại (`src/app/admin/**` không có thư mục `projects`).
+
+Nguồn gốc báo cáo sai: `AdminSidebar.tsx`'s `navIcons` (lookup icon theo
+href, KHÔNG phải danh sách nav) có sẵn 1 dòng mồ côi
+`"/admin/projects": FolderKanban` — object này chỉ được tra cứu bởi các
+href đã có trong `adminNavGroups`, entry không khớp href nào thì không có
+tác dụng gì (không phải dead link, chỉ là dead code). Đã dọn dòng này +
+import `FolderKanban` không dùng nữa.
+
+**Việc rebuild admin đầy đủ cho "Dự án & Cơ hội"** (bảng `projects`,
+schema, trang quản lý) là việc khác, lớn hơn, cần quyết định mở rộng
+schema riêng — chưa làm trong đợt này.
