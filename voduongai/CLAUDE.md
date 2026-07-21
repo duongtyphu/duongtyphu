@@ -367,3 +367,35 @@ từ toàn bộ 7 Intelligence:
 - Không có mẫu dashboard admin nào có sẵn trong repo để soi theo
   (`/admin/dashboard` chỉ là 2 dòng chào mừng) — dùng lưới card đơn giản,
   đúng token đã dùng xuyên suốt các trang `/admin/ckos/*`.
+
+## Premium (`/portal/premium`) — bảng `courses`
+
+Audit "Nhóm A" phát hiện bảng `courses` (đọc bởi `/portal/premium`,
+`/portal/vdai-academy`, `checkout/actions.ts`) chỉ có 2/5 dòng đúng ra phải
+có (khớp 5 chương trình trong `premium-programs.ts`), và 2 dòng đó sai giá
+(V-Solo = 0đ, V-Scale = 5.999.999đ) — không chương trình nào bán được vì
+cả 2 đều `status='coming'`. Đã sửa qua `execute_sql` (dữ liệu, không phải
+migration/schema), sau khi Founder xác nhận từng con số — không tự đoán
+giá:
+
+| id | name | status | price |
+|---|---|---|---|
+| `ai-coban` (mới) | Lớp học AI Cơ bản | `open` | 1.500.000đ |
+| `ai-nangcao` (mới) | Lớp học AI Nâng cao | `open` | 3.999.999đ |
+| `openclaw` (mới) | Lớp học OpenClaw | `open` | 999.999đ |
+| `solo` | VDAI SOLO | `coming` | 5.900.000đ |
+| `scale` | VDAI SCALE | `coming` | 7.999.999đ |
+
+Lưu ý: giá V-Scale (7.999.999đ) hiện **thấp hơn** V-Solo (5.900.000đ) —
+ngược thứ tự "cá nhân &lt; đội nhóm" so với `listPrice` tham chiếu cũ trong
+`premium-programs.ts` (V-Solo 7.8tr &lt; V-Scale 26tr). Đây là giá thật do
+Founder xác nhận trực tiếp, không phải lỗi — chỉ ghi chú lại để không ai
+nhầm là bug nếu thấy khác `listPrice` sau này. `name` mỗi dòng mới được
+đặt sao cho khớp đúng `matchPatterns` của `matchCourse()` trong
+`src/app/portal/premium/page.tsx` (so khớp `name.toLowerCase().includes(p)`,
+không xử lý dấu — vd. "Lớp học AI Cơ bản" chứa chuỗi "cơ bản" khớp pattern
+`["cơ bản", "co ban", "ai basic", "basic"]`).
+
+**Admin UI cho bảng này chưa tồn tại** — `/admin/course-pricing` (cho phép
+sửa `price`/`status`) đã bị xoá cùng đợt dọn `/admin` cũ (commit `df156f3`),
+cần rebuild (việc riêng, xem lịch sử trò chuyện "VIỆC 2").
