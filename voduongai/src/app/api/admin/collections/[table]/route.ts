@@ -16,13 +16,22 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tab
 
   const { data, error } = await supabase
     .from(table)
-    .select("id, data, order")
+    .select("id, data, status, order")
     .order("order", { ascending: true })
     .order("created_at", { ascending: true });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  const items = (data ?? []).map((row) => ({ ...(row.data as Record<string, unknown>), id: row.id }));
+  // status là cột riêng (không nằm trong `data` jsonb) — phải merge sau
+  // cùng, đè lên bất kỳ key "status" nào lỡ có trong `data`, để mọi editor
+  // (LessonEditor, DataTableRowPanel...) đọc đúng trạng thái Published/Draft
+  // thật. Thiếu dòng này khiến mọi lần Lưu không kèm status → PATCH tự rơi
+  // về "Draft" (unpublish ngoài ý muốn) vì `existing.status` luôn undefined.
+  const items = (data ?? []).map((row) => ({
+    ...(row.data as Record<string, unknown>),
+    id: row.id,
+    status: row.status,
+  }));
   return NextResponse.json({ items });
 }
 
