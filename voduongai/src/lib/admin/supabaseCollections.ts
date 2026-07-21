@@ -22,11 +22,15 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   sop: "sop",
   resources: "resources",
   blog: "blog",
-  // LEGACY (Phase F.2): no longer written to by any Admin UI. The Case Study
-  // admin page (app/admin/(dashboard)/case-study/page.tsx) now writes
-  // directly to the typed `case_studies` table via dedicated actions.ts,
-  // matching what /portal/case-studies + the search index actually read.
-  // Kept in the map (not removed) per "không xóa entry cũ nếu chưa chắc an toàn".
+  // LEGACY (Phase F.2): singular `case_study` (jsonb) — no longer written to
+  // by any Admin UI. NOT the same table as the typed, plural `case_studies`
+  // that /portal/case-studies actually reads (that one has its own dedicated
+  // Server Actions at /admin/ckos/case-studies/actions.ts, not this generic
+  // route — see CLAUDE.md "Case Study"). The admin page this comment used to
+  // reference (app/admin/(dashboard)/case-study/page.tsx) was deleted in the
+  // old-admin teardown and, per CLAUDE.md, never actually worked (it wrote to
+  // columns that don't exist on the real table). Kept in the map (not
+  // removed) per "không xóa entry cũ nếu chưa chắc an toàn".
   "case-study": "case_study",
   news: "news",
   updates: "updates",

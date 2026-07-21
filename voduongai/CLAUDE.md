@@ -257,3 +257,41 @@ schema, (2) migrate **giữ nguyên `assetId`** (74 điểm tham chiếu từ
 liên kết Lesson→Asset), (3) sửa UI Portal để có trang/cách xem nội dung
 đầy đủ (hiện hoàn toàn chưa có, đây là gap UX thật, không chỉ là gap dữ
 liệu).
+
+## Case Study
+
+Bảng `case_studies` (typed, không phải schema generic `id/data/status/order`)
+đã tồn tại thật, `/portal/case-studies` đã đọc đúng — nhưng Admin CRUD từng
+tồn tại rồi bị xoá, và schema thật hẹp hơn những gì code cũ giả định:
+
+- **Schema live thật** (xác nhận qua `information_schema.columns`, không
+  suy đoán): đúng 9 cột — `id (bigint), title (text, not null), client_name,
+  summary, result_metric, thumbnail_url, link_url (text, nullable),
+  active (boolean, default true), created_at (timestamptz, default now())`.
+- Từng có 1 trang Admin CRUD thật cho bảng này
+  (`app/admin/(dashboard)/case-study/{page.tsx,CaseStudyForm.tsx,actions.ts}`,
+  dùng `requireAdmin()` + `getSupabaseAdmin()`, mẫu giống `premium/actions.ts`)
+  — bị xoá cùng đợt dọn `/admin` cũ (commit `df156f3: "chore: xoá admin cũ,
+  giữ nguyên tầng dữ liệu dùng chung"`), không phải vì hỏng mà vì xoá sạch cả
+  `/admin` để dựng lại.
+  **Quan trọng:** `actions.ts` cũ đó viết vào cột `slug/body/featured/
+  published_at` — các cột này **KHÔNG tồn tại** trên bảng thật (chỉ có trong
+  file SQL `supabase-phase-f-case-studies-extend-schema.sql`, chưa từng
+  `apply_migration`). Nghĩa là bản Admin CRUD cũ này **chưa bao giờ hoạt
+  động được** nếu ai đó thực sự bấm Lưu — sẽ lỗi Postgres "column does not
+  exist". Không nên khôi phục lại nguyên bản cũ.
+- `supabase-phase-g-case-studies-ckos-standard-columns.sql` (status/version/
+  language/difficulty/tags/metadata/updated_at) — cũng chỉ là file SQL, chưa
+  áp dụng, và ngay cả bản Admin cũ (dù sai) cũng chưa từng dùng tới các cột
+  này.
+- **Phạm vi Admin CRUD mới** (`/admin/ckos/case-studies`, "Câu chuyện thành
+  công (Folder)"): đúng 7 field live thật — `title, client_name, summary,
+  result_metric, thumbnail_url, link_url, active` — khớp chính xác những gì
+  `/portal/case-studies` đọc. KHÔNG áp dụng Phase F/G ở đợt này.
+- Nếu sau này muốn Case Study có `slug`/trang chi tiết riêng (dùng cột
+  `slug`/`body` đã có sẵn trong Phase F), đây là **quyết định migrate riêng,
+  cần duyệt tách biệt** — không tự động áp dụng theo file SQL cũ đã viết sẵn
+  từ trước, vì file đó viết cho một kế hoạch (form Admin cũ) đã bị xoá.
+- Comment lỗi thời trong `src/lib/admin/supabaseCollections.ts` (nhắc tới
+  trang Admin case-study đã xoá như thể còn tồn tại) — đã sửa lại khi build
+  Admin CRUD mới.

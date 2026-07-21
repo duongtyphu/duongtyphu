@@ -5,10 +5,9 @@ import { useCollection } from "@/lib/admin/store";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { FieldInput } from "@/components/admin/FieldInput";
 import { emptyFromFields, type FieldConfig } from "@/lib/admin/fields";
+import { SaveStateBadge, type SaveState } from "@/components/admin/SaveStateBadge";
 
 type BaseItem = { id: string; status?: string };
-
-type SaveState = "idle" | "dirty" | "saving" | "saved" | "error";
 
 /**
  * Form sửa TOÀN TRANG (không slide-over) cho collection chỉ có đúng 1 dòng
@@ -156,22 +155,4 @@ export function SingletonEditor<T extends BaseItem>({
       )}
     </form>
   );
-}
-
-function SaveStateBadge({ state, isDirty }: { state: SaveState; isDirty: boolean }) {
-  if (state === "saving") return <Badge color="gray">Đang lưu...</Badge>;
-  if (state === "error") return <Badge color="red">Lưu thất bại — thử lại</Badge>;
-  if (isDirty) return <Badge color="amber">Có thay đổi chưa lưu</Badge>;
-  if (state === "saved") return <Badge color="emerald">Đã lưu</Badge>;
-  return null;
-}
-
-function Badge({ color, children }: { color: "gray" | "red" | "amber" | "emerald"; children: React.ReactNode }) {
-  const styles: Record<string, string> = {
-    gray: "bg-gray-100 text-gray-600",
-    red: "bg-red-100 text-red-700",
-    amber: "bg-amber-100 text-amber-700",
-    emerald: "bg-emerald-100 text-emerald-700",
-  };
-  return <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${styles[color]}`}>{children}</span>;
 }
