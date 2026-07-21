@@ -39,6 +39,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Ebook (Folder)", href: "/admin/ckos/ebooks" },
       { label: "Checklist (Folder)", href: "/admin/ckos/checklists" },
       { label: "Lesson (Folder)", href: "/admin/ckos/lessons" },
+      { label: "Thư viện AI (Folder)", href: "/admin/ckos/knowledge-collections" },
     ],
   },
 ];

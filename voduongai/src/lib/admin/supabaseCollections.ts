@@ -87,6 +87,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // dùng thật ở /portal/vdai-academy — xem CLAUDE.md). Khớp đúng tên type
   // KnowledgeSeed trong src/features/knowledge/types/knowledge-seed.types.ts.
   "knowledge-seeds": "knowledge_seeds",
+
+  // Việc 4 — "Thư viện AI" (Knowledge Collection), gom nhóm Lesson theo bộ
+  // sưu tập. Khớp tên type KnowledgeCollection trong
+  // src/features/knowledge/types/knowledge-collection.types.ts.
+  "knowledge-collections": "knowledge_collections",
 };
 
 export function tableForCollection(key: string): string | null {

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type FieldType = "text" | "textarea" | "number" | "select" | "boolean" | "tags" | "date";
+export type FieldType = "text" | "textarea" | "number" | "select" | "boolean" | "tags" | "date" | "multi-select";
 
 /**
  * Cách chuyển đổi giá trị lưu (jsonb) ↔ giá trị hiển thị trong form, cho
@@ -23,6 +23,12 @@ export type FieldConfig = {
   placeholder?: string;
   full?: boolean;
   transform?: FieldTransform;
+  /** CHỈ dùng khi type="multi-select" — collectionKey (trong
+   * SUPABASE_COLLECTIONS) để nạp danh sách chọn thật từ Supabase thay vì
+   * gõ tay tự do, tránh sai 1 slug làm gãy tham chiếu (chuỗi khai báo
+   * thuần, an toàn qua Server→Client Component). Component hiển thị dùng
+   * field `slug` (ưu tiên) hoặc `id` của item làm giá trị lưu. */
+  optionsSource?: string;
 };
 
 export type ColumnConfig<T> = {
@@ -80,7 +86,7 @@ export function emptyFromFields(fields: FieldConfig[]): Record<string, unknown> 
   const obj: Record<string, unknown> = {};
   for (const f of fields) {
     if (f.type === "boolean") obj[f.key] = false;
-    else if (f.type === "tags") obj[f.key] = [];
+    else if (f.type === "tags" || f.type === "multi-select") obj[f.key] = [];
     else if (f.type === "number") obj[f.key] = 0;
     else obj[f.key] = f.options?.[0] ?? "";
   }
