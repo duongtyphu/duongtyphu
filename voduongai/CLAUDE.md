@@ -404,3 +404,32 @@ sửa `price`/`status` (`open`/`coming`) cho từng dòng. Bản cũ đã xoá c
 nên không copy nguyên bản cũ, viết lại với `id: string`. Nối vào sidebar
 nhóm "Nội dung" (`nav.ts`), label "Giá khoá học Premium", tái dùng icon
 `Wallet` đã có sẵn trong `AdminSidebar.tsx` (`navIcons["/admin/course-pricing"]`).
+
+## Academy Journey Engine (`journey.service.ts`) — đã nối Supabase thật
+
+**Không nhầm với CKOS "Learning Engine"** (mục "Ngoại lệ đã biết, chưa
+Full" ở trên, `KnowledgeWorkspace.tsx`/`KnowledgeCollectionView.tsx`) —
+đó là 2 hệ thống khác nhau, cùng bệnh (đọc mảng tĩnh) nhưng chỉ 1 cái được
+sửa ở việc này:
+
+- **CKOS Learning Engine** (`KnowledgeWorkspace.tsx`/`KnowledgeCollectionView.tsx`,
+  điều hướng Previous/Next/Related/Prerequisite trong trang chi tiết
+  Lesson/Collection) — **vẫn giữ nguyên, chưa đụng**, vẫn đọc
+  `knowledgeSeedJourneys`/`knowledgeCollections` tĩnh như mô tả ở trên.
+- **Academy Journey Engine** (`src/features/academy/services/journey.service.ts`,
+  dùng bởi `JourneyCard` ở `/portal/hocvienai`) — **đã sửa xong**, giờ đọc
+  Supabase thật qua `getLiveKnowledgeCollections()`/`getLiveKnowledgeSeeds()`
+  (`live-knowledge.ts`), không còn đọc `knowledgeCollections`/
+  `knowledgeSeedJourneys` tĩnh.
+
+Vì per-user progress (`getSeedCompletedStepIds`) chỉ đọc được ở Client, còn
+CKOS data giờ cần fetch async từ Supabase, kiến trúc đổi thành: fetch 1 lần
+ở `AcademyHubPage` (Server Component, giờ `async`), truyền `collections`/
+`seeds` xuống `JourneyCard` (Client) qua props thuần, mọi hàm export trong
+`journey.service.ts` nhận `collections`/`seeds`/`getSeedCompletedStepIds`
+làm tham số thay vì tự đọc/import. Logic điều hướng/thứ tự/ngưỡng tính
+progress giữ nguyên 100% — chỉ đổi nguồn đọc dữ liệu (viết các hàm nội bộ
+mới `*Live` mirror lại đúng logic cũ, không sửa các hàm dùng chung của
+CKOS vì Learning Engine còn phụ thuộc chúng). `journey.service.test.ts`
+vẫn dùng 2 mảng tĩnh `@deprecated` làm fixture cho unit test (khớp 1:1 dữ
+liệu đã migrate lên Supabase, không cần Supabase thật để test logic).

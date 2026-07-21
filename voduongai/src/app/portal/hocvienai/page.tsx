@@ -6,6 +6,7 @@ import { CompanionMemoryLine } from "@/components/portal/companion/CompanionMemo
 import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
+import { getLiveKnowledgeCollections, getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
 import { WorkNeedSection } from "@/components/portal/ai-space/AiSpaceSections";
 import { AI_TOOLS } from "@/data/khong-gian-ai";
 import { GemCard } from "@/components/portal/ui/GemCard";
@@ -48,8 +49,14 @@ const FAQ = [
   },
 ];
 
-export default function AcademyHubPage() {
-  const journeys = getAllLearningJourneys();
+export default async function AcademyHubPage() {
+  // VIỆC 3 (Nhóm A audit) — trước đây getAllLearningJourneys() tự đọc
+  // knowledgeCollections tĩnh (@deprecated) bên trong journey.service.ts,
+  // nên Founder sửa Lesson/Collection qua Admin CKOS không phản ánh gì ở
+  // đây. Giờ fetch 1 lần ở đây (Server Component) từ Supabase thật, truyền
+  // xuống JourneyCard qua props — xem journey.service.ts.
+  const [collections, seeds] = await Promise.all([getLiveKnowledgeCollections(), getLiveKnowledgeSeeds()]);
+  const journeys = getAllLearningJourneys(collections);
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -182,7 +189,7 @@ export default function AcademyHubPage() {
         ) : (
           <div className="grid gap-5 sm:grid-cols-2">
             {journeys.map((journey) => (
-              <JourneyCard key={journey.id} journey={journey} />
+              <JourneyCard key={journey.id} journey={journey} collections={collections} seeds={seeds} />
             ))}
           </div>
         )}

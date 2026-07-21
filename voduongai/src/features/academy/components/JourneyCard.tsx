@@ -14,18 +14,32 @@ import {
 } from "../services/journey.service";
 import { JOURNEY_STAGE_LABELS, JourneyStage } from "../types/journey.types";
 import type { LearningJourney } from "../types/journey.types";
+import { getSeedCompletedStepIds, type KnowledgeCollection, type KnowledgeSeed } from "@/features/knowledge";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
 /**
  * Feature 03 — Journey Card. KHÔNG hiển thị Progress Bar kiểu LMS — chỉ
  * hiển thị: Tên Journey, Mục tiêu, đang ở bước nào, nên làm gì tiếp theo.
+ *
+ * `collections`/`seeds` — dữ liệu CKOS LIVE (Supabase, lấy 1 lần ở
+ * AcademyHubPage qua getLiveKnowledgeCollections()/getLiveKnowledgeSeeds()
+ * rồi truyền xuống props, tránh mỗi JourneyCard tự fetch riêng) — thay cho
+ * việc journey.service.ts tự đọc mảng tĩnh @deprecated như trước (VIỆC 3).
  */
-export function JourneyCard({ journey }: { journey: LearningJourney }) {
-  const status = computeJourneyStatus(journey);
-  const guidance = getCompanionJourneyGuidance(journey, status);
-  const profile = getJourneyLearnerProfile(journey);
-  const nextJourney = getSuggestedNextJourney(journey);
+export function JourneyCard({
+  journey,
+  collections,
+  seeds,
+}: {
+  journey: LearningJourney;
+  collections: KnowledgeCollection[];
+  seeds: KnowledgeSeed[];
+}) {
+  const status = computeJourneyStatus(journey, collections, seeds, getSeedCompletedStepIds);
+  const guidance = getCompanionJourneyGuidance(journey, status, collections, seeds, getSeedCompletedStepIds);
+  const profile = getJourneyLearnerProfile(journey, collections, seeds, getSeedCompletedStepIds);
+  const nextJourney = getSuggestedNextJourney(journey, collections, seeds, getSeedCompletedStepIds);
   const isDone = status.stage === JourneyStage.GROWTH || status.stage === JourneyStage.READY;
   const router = useRouter();
 
