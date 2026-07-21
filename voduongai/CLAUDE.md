@@ -589,5 +589,40 @@ page.tsx) qua `select`, không cho gõ tay tự do.
 **Lưu ý đặt tên:** khối `timeline` (6 giai đoạn "cuộc đời Companion") đặt
 tên admin là "Dòng thời gian" — tránh nhầm với 1 artwork RIÊNG cũng tên
 "Cuộc đời Companion" ở 7 trang flipbook (Phần 2, bảng
-`companion_flipbook_pages` khác hẳn, xem mục riêng bên dưới khi Phần 2
-hoàn thành).
+`companion_flipbook_pages` khác hẳn, xem mục ngay dưới đây).
+
+## Sứ mệnh Companion — Việc 6, Phần 2: 7 trang flipbook (title/thứ tự)
+
+7 trang flipbook "Companion qua hình ảnh"
+(`/portal/su-menh-companion/companion-qua-hinh-anh`,
+`CompanionFlipbook.tsx`) khác bản chất hẳn 6 khối ở Phần 1 — mỗi trang là
+**1 ảnh nghệ thuật đã thiết kế sẵn (webp) + 1 tiêu đề**, không phải nội
+dung văn bản. Founder xác nhận: tách riêng, chỉ quản title/thứ tự hiển
+thị, **không quản/upload ảnh qua Admin** (ảnh vẫn qua quy trình thiết
+kế/upload asset riêng như hiện tại).
+
+Bảng mới `companion_flipbook_pages` (migration
+`supabase-phase9-companion-flipbook.sql`, đã áp dụng, 7 dòng, cùng khuôn
+generic) — giữ nguyên `id` = đúng slug trong `COMPANION_ARTWORK_SEQUENCE`
+cũ (`companion-home`, `nhung-dieu-minh-tin`...). `data` có 3 field:
+`title` (sửa được), `src` (đường dẫn ảnh — **có lưu nhưng KHÔNG có trong
+`fields` của trang Admin**, chỉ hiển thị đọc trong `renderCard` để Founder
+đối chiếu, không có ô nhập), và cột ngoài `status`/`order` như mọi bảng
+khác.
+
+Admin: `/admin/su-menh-companion/flipbook` ("Ảnh Companion (thứ tự &
+tiêu đề)", cùng nhóm sidebar "Sứ mệnh Companion" với 6 mục Phần 1),
+`VisualEditor`, atmosphere `<SanctuaryBackground/>` như Phần 1.
+
+**Lưu ý quan trọng chưa xử lý:** `VisualEditor` là component dùng chung,
+không có tuỳ chọn ẩn nút "Thêm mới"/"Xoá" theo từng collection. Bấm "Thêm
+mới" ở trang này sẽ tạo 1 dòng KHÔNG có `src` (vì field đó không nằm trong
+form) — tức 1 trang flipbook không có ảnh. Chưa thêm giới hạn này vào
+component (ngoài phạm vi yêu cầu gốc) — Founder tự biết KHÔNG dùng "Thêm
+mới"/"Xoá" ở trang riêng này, chỉ sửa tiêu đề + kéo-thả đổi thứ tự 7 dòng
+có sẵn.
+
+`CompanionFlipbook.tsx` đọc qua `useCollection("companion-flipbook-pages")`
+thay cho mảng tĩnh `COMPANION_ARTWORK_SEQUENCE`
+(`src/lib/companion-world/artwork-pages.ts`, đã đánh dấu `@deprecated`,
+giữ lại tham khảo/rollback, không còn consumer nào import).

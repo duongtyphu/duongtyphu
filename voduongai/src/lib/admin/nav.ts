@@ -68,6 +68,9 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Bộ gene", href: "/admin/su-menh-companion/genome" },
       { label: "Hành trình tiến hoá", href: "/admin/su-menh-companion/evolution" },
       { label: "Dòng thời gian", href: "/admin/su-menh-companion/timeline" },
+      // Phần 2 — tách riêng khỏi 6 khối văn bản trên (bản chất khác hẳn:
+      // ảnh nghệ thuật có sẵn, chỉ quản title/thứ tự, không quản ảnh).
+      { label: "Ảnh Companion (thứ tự & tiêu đề)", href: "/admin/su-menh-companion/flipbook" },
     ],
   },
 ];

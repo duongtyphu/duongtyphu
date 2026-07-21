@@ -47,6 +47,7 @@ import {
   Bot,
   Dna,
   History,
+  Images,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -106,6 +107,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/su-menh-companion/genome": Dna,
   "/admin/su-menh-companion/evolution": TrendingUp,
   "/admin/su-menh-companion/timeline": History,
+  "/admin/su-menh-companion/flipbook": Images,
 };
 
 function isItemActive(pathname: string, href: string) {

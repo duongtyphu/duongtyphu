@@ -1,4 +1,10 @@
 /**
+ * @deprecated Việc 6 (Nhóm B), Phần 2 — CompanionFlipbook.tsx giờ đọc
+ * title/thứ tự/src live qua bảng Supabase `companion_flipbook_pages`
+ * (useCollection("companion-flipbook-pages")), quản qua
+ * /admin/su-menh-companion/flipbook. Giữ file này lại làm tham khảo/
+ * rollback — KHÔNG còn consumer nào import từ đây.
+ *
  * Companion World™ — "Companion qua hình ảnh". Companion Home giờ là nội
  * dung Sanctuary gốc (trước đây ở /portal/companion/y-nghia-companion) —
  * 7 artwork đã duyệt không còn là các trang riêng, mà gộp thành MỘT trang

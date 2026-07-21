@@ -113,6 +113,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   genome: "genome",
   evolution: "evolution",
   timeline: "timeline",
+
+  // Việc 6 (Nhóm B), Phần 2 — 7 trang flipbook "Companion qua hình ảnh".
+  // CHỈ quản title/thứ tự — `src` hiển thị đối chiếu, không sửa qua Admin
+  // này (không có trong danh sách field chỉnh sửa của trang Admin).
+  "companion-flipbook-pages": "companion_flipbook_pages",
 };
 
 export function tableForCollection(key: string): string | null {

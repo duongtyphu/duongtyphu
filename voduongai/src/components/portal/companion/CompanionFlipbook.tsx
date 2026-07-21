@@ -5,7 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { COMPANION_ARTWORK_SEQUENCE } from "@/lib/companion-world/artwork-pages";
+import { useCollection } from "@/lib/admin/store";
+
+/**
+ * Việc 6 (Nhóm B), Phần 2 — title/thứ tự đọc live qua useCollection()
+ * (bảng companion_flipbook_pages, quản qua /admin/su-menh-companion/flipbook).
+ * `src` cũng đọc từ bảng này (migrate đúng path tĩnh hiện có) nhưng Admin
+ * KHÔNG cho sửa field này — ảnh vẫn qua quy trình thiết kế/upload asset
+ * riêng, không đổi. Thay cho mảng tĩnh COMPANION_ARTWORK_SEQUENCE
+ * (src/lib/companion-world/artwork-pages.ts, giữ @deprecated tham khảo).
+ */
+type FlipbookPage = { id: string; title: string; src: string };
 
 /** Biến thể lật trang — rotateY dương/âm tuỳ hướng lật, theo đúng pattern
     "custom" chính thức của framer-motion cho carousel/lật trang. */
@@ -38,8 +48,9 @@ const fadeVariants = {
 export function CompanionFlipbook() {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
-  const total = COMPANION_ARTWORK_SEQUENCE.length;
-  const page = COMPANION_ARTWORK_SEQUENCE[index];
+  const { items: pages, ready } = useCollection<FlipbookPage>("companion-flipbook-pages", []);
+  const total = pages.length;
+  const page = pages[index];
   const prefersReducedMotion = useReducedMotion();
   const variants = prefersReducedMotion ? fadeVariants : pageVariants;
 
@@ -48,8 +59,9 @@ export function CompanionFlipbook() {
     // `priority` bên dưới, đúng yêu cầu "preload 2 artwork đầu tiên".
     if (total > 1) {
       const preload = new window.Image();
-      preload.src = COMPANION_ARTWORK_SEQUENCE[1].src;
+      preload.src = pages[1].src;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [total]);
 
   useEffect(() => {
@@ -70,6 +82,16 @@ export function CompanionFlipbook() {
   function goPrev() {
     setDirection(-1);
     setIndex((i) => Math.max(i - 1, 0));
+  }
+
+  if (!ready || !page) {
+    return (
+      <div className="companion-flipbook-stage relative -mx-4 -my-6 flex min-h-screen flex-col items-center justify-center overflow-x-hidden bg-[#010425] px-4 py-6 md:-mx-8 md:-my-8 sm:py-8">
+        <Link href="/portal/companion" className="companion-artwork-back" style={{ zIndex: 30 }}>
+          ← Quay lại Companion
+        </Link>
+      </div>
+    );
   }
 
   return (
