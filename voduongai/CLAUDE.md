@@ -215,9 +215,38 @@ Admin nhưng Portal vẫn đọc mảng tĩnh, tưởng xong nhưng chưa xong).
   (`knowledge-collection.service.ts`) và `getRelatedCollectionObjects`
   (`knowledge-graph.service.ts`) — cùng lý do và cùng giới hạn như Lesson
   ở trên (Learning Engine, chưa mở khoá đợt này).
-- **Best Practice, Case Study:** chưa Full — Best Practice chưa có bảng
-  Supabase nào tồn tại; Case Study có bảng `case_studies` (typed riêng,
-  không phải schema generic) nhưng chưa có admin CRUD.
+- **Case Study:** Admin CRUD Full (`/admin/ckos/case-studies`, xem mục
+  "Case Study" riêng bên dưới) — `/portal/case-studies` đọc đúng bảng
+  `case_studies`. Chưa Full: `CkosQuickSearch.tsx` và
+  `/api/v1/ckos/search/route.ts` không liên quan Case Study (chúng đọc
+  `ckos_best_practices`, xem mục Best Practice).
+- **Best Practice: Giai đoạn 1 (đã có bảng + migrate + admin CRUD, CHƯA đổi
+  nguồn đọc Portal).** Bảng mới `best_practices` (generic
+  `id/data jsonb/status/order`, đã kiểm tra không trùng tên bảng nào đang
+  chạy — kể cả `ckos_best_practices` của kiến trúc Phase G/H cũ, bảng đó
+  không tồn tại). Migrate 13 dòng GUIDE thật từ `knowledgeSeedData`
+  (title/description=summary/principle=content/legacySourceId=id gốc,
+  không bịa nội dung — đối chiếu với
+  `scripts/phase-h7-seed-best-practices-case-studies.ts`, dry-run cũ chưa
+  từng apply). `id` mỗi dòng = slug-hoá từ `title` (khác cách file cũ làm,
+  file cũ slug-hoá từ `legacy_source_id`). 2 field
+  `relatedToolSlugs`/`relatedCaseStudyIds` để RỖNG khi migrate (seed gốc
+  không có dữ liệu này), Founder điền dần qua Admin. Admin sửa qua
+  `/admin/ckos/best-practices` ("Thực hành tốt (Folder)", DataTable
+  chung — 6 field phẳng, không cần SingletonEditor).
+  **`relatedCaseStudyIds` cần 1 cơ chế lấy dữ liệu riêng:** bảng
+  `case_studies` là typed (không phải schema generic), nên
+  `optionsSource: "case-studies"` KHÔNG đọc qua `useCollection()`/
+  `/api/admin/collections/[table]` như "tools" — `FieldInput.tsx` có 1
+  nhánh riêng (`CaseStudyMultiSelectField`) gọi thẳng Server Action
+  `listCaseStudies()` đã có sẵn, dùng chung UI checkbox
+  (`MultiSelectChecklist`) với nhánh generic — không tạo UI/FieldType mới,
+  chỉ khác nguồn lấy dữ liệu.
+  **CHƯA đổi ở đợt này:** `/portal/ckos` (phần "Best Practice — TRỐNG"),
+  `CkosQuickSearch.tsx`, `/api/v1/ckos/search/route.ts` — cả 3 vẫn query
+  `ckos_best_practices` (tên bảng SAI, không tồn tại) thay vì
+  `best_practices` — cần sửa tên bảng + đổi nguồn đọc khi làm Bước C riêng
+  (đã được duyệt sẽ làm sau, có báo cáo lại trước khi đổi).
 
 **Bài học rút ra (áp dụng cho mọi module CKOS sau này):** "có trang
 `/admin/*` chạy được" KHÔNG đồng nghĩa "Portal đã đọc đúng dữ liệu đó" —

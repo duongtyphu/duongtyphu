@@ -96,6 +96,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // sưu tập. Khớp tên type KnowledgeCollection trong
   // src/features/knowledge/types/knowledge-collection.types.ts.
   "knowledge-collections": "knowledge_collections",
+
+  // Best Practice — bảng mới "best_practices" (đã kiểm tra không trùng tên
+  // với bảng nào đang chạy, kể cả "ckos_best_practices" chưa tồn tại của
+  // kiến trúc Phase G/H cũ chưa apply). Xem CLAUDE.md "Case Study" (mục
+  // liên quan) cho lý do vì sao "case-studies" KHÔNG có trong map này —
+  // bảng case_studies là typed, không phải schema generic này.
+  "best-practices": "best_practices",
 };
 
 export function tableForCollection(key: string): string | null {

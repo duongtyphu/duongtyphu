@@ -41,6 +41,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Lesson (Folder)", href: "/admin/ckos/lessons" },
       { label: "Thư viện AI (Folder)", href: "/admin/ckos/knowledge-collections" },
       { label: "Câu chuyện thành công (Folder)", href: "/admin/ckos/case-studies" },
+      { label: "Thực hành tốt (Folder)", href: "/admin/ckos/best-practices" },
     ],
   },
 ];
