@@ -14,7 +14,15 @@ import { ArrowRight, ChevronRight, Copy, Check } from "lucide-react";
 import { startCompanionWorkspace, type WorkspaceItemType } from "@/lib/portal/companion-workspace";
 import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
 import { RECOMMENDED_WORKSPACE_TO_MISSION } from "@/lib/portal/foundation/mission-catalog";
-import { prompts } from "@/data/prompts";
+import { useCollection } from "@/lib/admin/store";
+
+// Việc 7 (Nhóm B) — PromptLibrarySection đọc live qua useCollection() thay
+// vì mảng tĩnh @/data/prompts, cùng bảng `prompts` mà /admin/ckos/prompts
+// quản lý (mirror đúng field mapping đã dùng ở AdminPromptsSection.tsx:
+// category/title/content — KHÔNG dùng `description` cho phần preview vì
+// đó là bản tóm tắt ngắn, còn `content` mới là nội dung prompt thật, đúng
+// vai trò của `preview` cũ).
+type LivePrompt = { id: string; title: string; category: string; content: string; status: string };
 
 function SectionHeader({ label, title, href, hrefLabel }: { label: string; title: string; href?: string; hrefLabel?: string }) {
   return (
@@ -203,6 +211,8 @@ export function AiWorkflowSection() {
 export function PromptLibrarySection() {
   const practice = usePracticeAction();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const { items: promptItems } = useCollection<LivePrompt>("prompts", []);
+  const publishedPrompts = promptItems.filter((p) => p.status === "Published");
 
   async function handleCopy(id: string, text: string) {
     try {
@@ -218,13 +228,13 @@ export function PromptLibrarySection() {
     <section className="space-y-4">
       <SectionHeader label="Thư viện Prompt" title="Prompt Library" href="/portal/prompts" hrefLabel="Xem tất cả Prompt" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {prompts.slice(0, 9).map((prompt) => (
+        {publishedPrompts.slice(0, 9).map((prompt) => (
           <div key={prompt.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
               {prompt.category}
             </span>
             <p className="font-semibold text-gray-900">{prompt.title}</p>
-            <p className="line-clamp-2 text-xs leading-relaxed text-gray-500">{prompt.preview}</p>
+            <p className="line-clamp-2 text-xs leading-relaxed text-gray-500">{prompt.content}</p>
             <div className="mt-auto flex items-center justify-between pt-1">
               <button
                 type="button"
@@ -235,7 +245,7 @@ export function PromptLibrarySection() {
               </button>
               <button
                 type="button"
-                onClick={() => handleCopy(prompt.id, prompt.preview)}
+                onClick={() => handleCopy(prompt.id, prompt.content)}
                 aria-label="Copy prompt"
                 className="flex items-center gap-1 text-xs font-medium text-gray-400 hover:text-gray-600 transition"
               >

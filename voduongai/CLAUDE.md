@@ -626,3 +626,44 @@ có sẵn.
 thay cho mảng tĩnh `COMPANION_ARTWORK_SEQUENCE`
 (`src/lib/companion-world/artwork-pages.ts`, đã đánh dấu `@deprecated`,
 giữ lại tham khảo/rollback, không còn consumer nào import).
+
+## AI Workspace (`/portal/aiworkspace`) — Việc 7, Nhóm B
+
+Việc nhỏ nhất trong Nhóm B — hạ tầng Admin CRUD đã có sẵn, chỉ cần đổi
+nguồn đọc từng phần trong `AiSpaceSections.tsx`.
+
+**Đã làm — `PromptLibrarySection`:** đổi từ mảng tĩnh `@/data/prompts`
+sang `useCollection("prompts")` (bảng thật, quản qua
+`/admin/ckos/prompts`), lọc `status === "Published"`. Mirror đúng field
+mapping đã dùng ở `AdminPromptsSection.tsx` (component live-prompt khác đã
+có sẵn trên `/portal/prompts`) — `category`/`title` giữ nguyên tên,
+`content` (nội dung prompt thật) thay cho `preview` cũ (preview cũ thực ra
+là bản rút gọn của prompt, không phải mô tả — `description` trong bảng
+thật mới là mô tả ngắn, không phù hợp thay `preview`). Cả phần hiển thị
+(`line-clamp-2`) và phần Copy đều dùng `content`.
+
+**Lưu ý quan trọng — sụt số lượng hiển thị:** bảng `prompts` hiện chỉ có
+**2 dòng `Published`** (so với 12 dòng trong mảng tĩnh cũ, section này
+trước đó hiển thị tối đa 9). Đây là đúng trạng thái dữ liệu thật (không
+phải bug) — Founder cần thêm Prompt qua `/admin/ckos/prompts` nếu muốn
+section này đầy hơn.
+
+**Còn lại, CHƯA làm (chờ quyết định phạm vi):**
+- `ResourceSection` (4 field điều hướng tĩnh, xem `AI_RESOURCES` trong
+  `src/data/portal/ai-workspace.ts`) — mỗi thẻ hiện tại chỉ là 1 link điều
+  hướng sang trang khác (`/portal/checklists`, `/portal/templates`,
+  `/portal/resources`, `/portal/sop`), không phải nội dung thật của chính
+  nó — cần Founder quyết định giữ nguyên hay đổi thành danh sách nội dung
+  thật từ bảng `resources`.
+- Blog AI (`AI_ARTICLES`, `src/data/khong-gian-ai/index.ts`) — audit phát
+  hiện **không phải 1-đổi-1 đơn giản như giả định ban đầu**:
+  `AiArticle` có `relatedToolSlugs`/`relatedNeedSlugs` (dùng để lọc bài
+  viết liên quan theo Tool/theo Need category ở `[slug]/page.tsx`) —
+  2 field này KHÔNG tồn tại trong `BlogPost`/`AdminBlogPostLike`
+  (`src/data/blog.ts`, nguồn thật của `/blogai`). Đổi thẳng nguồn sẽ làm
+  gãy tính năng lọc bài liên quan theo Tool/Need mà không có cách map lại.
+  `AI_ARTICLES` còn được dùng ở 3 nơi: `aiworkspace/page.tsx` (bài nổi
+  bật), `aiworkspace/[slug]/page.tsx` (bài liên quan theo Tool/Need), và
+  `aiworkspace/bai-viet/[slug]/page.tsx` (trang chi tiết RIÊNG, song song
+  với `/blogai/[slug]` — 2 trang chi tiết khác nhau cho cùng khái niệm
+  "bài viết"). Cần Founder quyết định hướng trước khi code.
