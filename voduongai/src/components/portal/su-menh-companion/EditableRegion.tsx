@@ -64,13 +64,18 @@ export function EditableRegion<T extends { id: string }>({
   const Wrapper = as;
 
   return (
-    <Wrapper className={`group/editable relative ${as === "span" ? "inline" : ""} ${className ?? ""}`}>
+    <Wrapper className={`relative ${as === "span" ? "inline" : ""} ${className ?? ""}`}>
+      {/* Bút sửa hiện LUÔN (không chờ hover) — pilot ở Genome ban đầu dùng
+       * group-hover trên label 11px rất nhỏ, chen giữa 12 gene quanh vòng
+       * tròn, thực tế khó hover trúng/dễ tưởng không có. Route này CHỈ
+       * render cho admin (/admin/su-menh-companion/live-edit), không phải
+       * Portal thật, nên ưu tiên "chắc chắn thấy được" hơn tinh tế thẩm mỹ. */}
       <Wrapper
         onClick={openPopover}
-        className={`cursor-pointer rounded outline-dashed outline-1 outline-transparent transition hover:outline-blue-400 hover:bg-blue-50/40 ${as === "span" ? "inline" : "block"}`}
+        className={`cursor-pointer rounded outline-dashed outline-1 outline-blue-300/70 transition hover:outline-blue-500 hover:bg-blue-50/40 ${as === "span" ? "inline" : "block"}`}
       >
         {children}
-        <Pencil className="ml-1 inline-block h-3 w-3 -translate-y-0.5 text-blue-400 opacity-0 transition group-hover/editable:opacity-100" />
+        <Pencil className="ml-1 inline-block h-3 w-3 -translate-y-0.5 text-blue-500" />
       </Wrapper>
 
       {open && (

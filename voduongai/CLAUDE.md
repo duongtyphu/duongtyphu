@@ -746,3 +746,9 @@ có sẵn) — không viết API mới.
 
 **Không thay thế `/admin/su-menh-companion/*`** (6 trang VisualEditor +
 1 trang flipbook từ Việc 6) — vẫn hoạt động song song, không đổi.
+
+**Fix sau khi Founder test:** bút sửa ở Bộ gene lúc đầu chỉ hiện khi hover
+đúng label 11px (dùng `group-hover/editable`) — thực tế label rất nhỏ, chen
+giữa 12 gene quanh vòng tròn, dễ không thấy/không hover trúng. Đổi sang
+hiện bút sửa LUÔN (không chờ hover) cho cả 2 vùng pilot — route này chỉ
+admin dùng, ưu tiên chắc chắn thấy được hơn tinh tế thẩm mỹ.
