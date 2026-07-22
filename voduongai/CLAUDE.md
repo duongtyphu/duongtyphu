@@ -1391,15 +1391,22 @@ khi chạy vitest. Đổi sang `/portal/premium` (trang khoá học thật) — 
 route, đúng ý nghĩa CTA, không phải thêm redirect (Founder muốn 404 thật,
 không muốn redirect).
 
-**CHƯA xử lý (ngoài phạm vi yêu cầu, KHÔNG bị test chặn vì không phải JSX
-`href="..."` — chỉ ghi nhận, không tự sửa):** 3 nơi khác vẫn còn
-href/link tĩnh trỏ `/portal/vdai-academy` (dạng `href: "..."`/`ctaHref:
-"..."` trong object dữ liệu, ra 404 khi bấm vào nhưng không phải lỗi
-build/route khác):
+**Đã sửa nốt 4 chỗ còn lại (Founder yêu cầu riêng, sau khi báo cáo lần
+trước)** — dạng `href: "..."`/`link: "..."`/`ctaHref: "..."` trong object
+dữ liệu (KHÔNG bị `route-integrity.test.ts` bắt vì không phải JSX literal
+`href="..."`, nhưng vẫn là link chết thật khi bấm) — đổi cả 4 sang
+`/portal/premium`, cùng đích với `account/page.tsx` ở trên:
 - `src/components/portal/RoadmapInteractive.tsx` (2 bước lộ trình: "Học
   viện Affiliate", "V-SCALE").
 - `src/data/admin/portalBuilder.ts` (1 entry — công cụ Portal Builder cũ).
 - `src/data/blog.ts` (4 bài viết, field `ctaHref`).
+- `src/data/portal/ai-workspace.ts` (`LEARNING_PATHS` level 5, "AI cho
+  kinh doanh / đội nhóm") — **sót ở báo cáo lần trước**: có trong grep gốc
+  nhưng bị bỏ sót khỏi danh sách 3 file báo cáo, chỉ phát hiện lại khi
+  re-grep để verify ở lần này — đúng lý do phải chạy lại grep xác nhận
+  thay vì tin vào danh sách đã liệt kê trước đó.
 
-Nếu Founder muốn sửa các link này trỏ sang đâu (`/portal/premium`? xoá
-hẳn CTA?), đây là việc riêng cần quyết định từng chỗ, chưa tự ý đổi.
+Đã re-run `route-integrity.test.ts` + toàn bộ vitest sau khi sửa, và grep
+thủ công `"vdai-academy"` toàn bộ `src/` (không giới hạn theo test, vì test
+chỉ bắt JSX `href="..."`) để xác nhận 0 kết quả còn lại — kể cả dạng
+object-literal test không bắt được.

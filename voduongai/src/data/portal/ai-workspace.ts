@@ -86,7 +86,7 @@ export const LEARNING_PATHS: LearningPath[] = [
   { id: "ung-dung-cong-viec", level: 2, title: "Ứng dụng AI vào công việc", goal: "Dùng AI cho các công việc hàng ngày.", missionCount: 8, href: "/portal/hocvienai" },
   { id: "he-thong-noi-dung", level: 3, title: "Xây hệ thống nội dung bằng AI", goal: "Lên quy trình sản xuất nội dung đều đặn.", missionCount: 10, href: "/portal/roadmap" },
   { id: "tu-dong-hoa", level: 4, title: "Tự động hóa với AI", goal: "Kết nối công cụ, giảm việc lặp lại thủ công.", missionCount: 6, href: "/portal/aiworkspace/tu-dong-hoa" },
-  { id: "ai-cho-doanh-nghiep", level: 5, title: "AI cho kinh doanh / đội nhóm", goal: "Áp dụng AI ở quy mô đội nhóm/doanh nghiệp.", missionCount: 8, href: "/portal/vdai-academy" },
+  { id: "ai-cho-doanh-nghiep", level: 5, title: "AI cho kinh doanh / đội nhóm", goal: "Áp dụng AI ở quy mô đội nhóm/doanh nghiệp.", missionCount: 8, href: "/portal/premium" },
 ];
 
 export type AiResource = {

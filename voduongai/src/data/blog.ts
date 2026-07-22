@@ -49,7 +49,7 @@ export const blogPosts: BlogPost[] = [
     ctaDescription:
       "V-SOLO hướng dẫn chi tiết quy trình nghiên cứu sản phẩm bằng AI từ A đến Z, kèm thực hành trực tiếp trên ngách của bạn.",
     ctaLabel: "Xem chương trình V-SOLO →",
-    ctaHref: "/portal/vdai-academy",
+    ctaHref: "/portal/premium",
     content: [
       "Một trong những công việc tốn thời gian nhất khi làm Affiliate Marketing là nghiên cứu sản phẩm: tìm ngách phù hợp, đánh giá đối thủ, kiểm tra mức độ cạnh tranh và dự đoán khả năng chuyển đổi. Theo cách làm truyền thống, một người mới thường mất 3–5 giờ cho mỗi sản phẩm để có đủ dữ liệu ra quyết định. Với AI, quy trình này có thể rút ngắn xuống còn 20–30 phút mà độ chính xác không giảm — thậm chí còn tốt hơn vì AI xử lý được lượng dữ liệu lớn hơn con người.",
       "## 1. Dùng AI để lọc ngách trước khi đi sâu",
@@ -80,7 +80,7 @@ export const blogPosts: BlogPost[] = [
     ctaDescription:
       "V-SOLO cung cấp thư viện prompt thực chiến cùng hướng dẫn tinh chỉnh theo từng ngách sản phẩm.",
     ctaLabel: "Xem chương trình V-SOLO →",
-    ctaHref: "/portal/vdai-academy",
+    ctaHref: "/portal/premium",
     content: [
       "Viết content bán hàng là việc lặp đi lặp lại mỗi ngày — và cũng là việc dễ \"cạn ý tưởng\" nhất. Thay vì ngồi nhìn màn hình trắng, bạn có thể dùng AI như một trợ lý viết draft đầu tiên, sau đó chỉnh sửa theo giọng văn của riêng mình. Dưới đây là 5 cấu trúc prompt đã được kiểm chứng hiệu quả trong thực tế.",
       "## 1. Prompt theo công thức AIDA",
@@ -115,7 +115,7 @@ export const blogPosts: BlogPost[] = [
     ctaDescription:
       "V-SCALE hướng dẫn xây dựng hệ thống chatbot tích hợp đơn hàng, giúp đội nhóm vận hành tự động và hiệu quả hơn.",
     ctaLabel: "Xem chương trình V-SCALE →",
-    ctaHref: "/portal/vdai-academy",
+    ctaHref: "/portal/premium",
     content: [
       "Một trong những lý do khiến nhiều người bán hàng online \"burnout\" là phải trả lời cùng những câu hỏi lặp đi lặp lại: giá bao nhiêu, còn hàng không, ship mất bao lâu. Chatbot AI giải quyết đúng vấn đề này — và tin tốt là bạn không cần biết lập trình để dựng một chatbot cơ bản hoạt động hiệu quả.",
       "## 1. Xác định những câu hỏi chatbot cần trả lời",
@@ -150,7 +150,7 @@ export const blogPosts: BlogPost[] = [
     ctaDescription:
       "V-SOLO và V-SCALE là hai lộ trình giúp bạn từ vận hành cá nhân đến nhân bản hệ thống cùng đội nhóm.",
     ctaLabel: "Khám phá lộ trình VO DUONG AI →",
-    ctaHref: "/portal/vdai-academy",
+    ctaHref: "/portal/premium",
     content: [
       "Trong nhiều năm, làm Affiliate Marketing đồng nghĩa với việc phải đánh đổi thời gian để có doanh thu: nhiều content hơn, nhiều sản phẩm hơn, nhiều giờ làm việc hơn. AI đang thay đổi phương trình đó. Một cá nhân với hệ thống đúng có thể vận hành ở quy mô mà trước đây cần cả một đội nhóm — đây chính là tinh thần \"vận hành tinh gọn, nhân bản mạnh mẽ\" mà VO DUONG AI Academy theo đuổi.",
       "## 1. Từ làm việc theo giờ sang làm việc theo hệ thống",

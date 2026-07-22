@@ -28,7 +28,7 @@ export const bannersSeed: Banner[] = [
     id: "banner_1",
     message: "Chào mừng các học viên đến với các khoá học tại V-Academy! Chúc các bạn tiếp thu được tất cả kiến thức.",
     icon: "🔔",
-    link: "/portal/vdai-academy",
+    link: "/portal/premium",
     type: "Info",
     status: "Active",
   },

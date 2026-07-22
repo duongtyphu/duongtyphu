@@ -37,7 +37,7 @@ const steps: Step[] = [
     step: 4,
     title: "Affiliate Marketing",
     description: "Chọn ngách, chọn sản phẩm và bắt đầu hệ thống Affiliate.",
-    resource: { label: "Học viện Affiliate", href: "/portal/vdai-academy" },
+    resource: { label: "Học viện Affiliate", href: "/portal/premium" },
     action: "Chọn ngách và 1 sản phẩm để bắt đầu giới thiệu.",
   },
   {
@@ -51,7 +51,7 @@ const steps: Step[] = [
     step: 6,
     title: "Mở rộng hệ sinh thái",
     description: "Nhân bản hệ thống, xây đội nhóm, mở rộng quy mô.",
-    resource: { label: "V-SCALE", href: "/portal/vdai-academy" },
+    resource: { label: "V-SCALE", href: "/portal/premium" },
     action: "Đánh giá hệ thống hiện tại và lên kế hoạch nhân bản.",
   },
 ];
