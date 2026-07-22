@@ -1267,3 +1267,92 @@ bản — chỉ tách phần chữ hiển thị thuần tuý, cố định, khô
 không index-bound. 2 cửa cuối (Bản đồ hành trình, Khu vườn) đều phát
 hiện ranh giới không rõ như brief gốc dự kiến — cả 2 lần đều STOP báo cụ
 thể trước khi build, không tự quyết định.
+
+## Course Builder (Premium) — Bước 1: Audit (bắt buộc trước khi build)
+
+**Schema `courses` hiện tại** (xác nhận qua `information_schema.columns`, đã
+sửa giá/status ở Việc 1/2, xem mục "Premium" ở trên): đúng 6 cột — `id
+(text)`, `name`, `status`, `description`, `updated_at`, `price` — đúng 5
+dòng (`ai-coban`, `ai-nangcao`, `openclaw`, `solo`, `scale`). **Lưu ý phát
+hiện thêm (không sửa, ngoài phạm vi):** `src/app/portal/premium/page.tsx`'s
+`type CourseRow = { id: number; ... }` khai sai kiểu (`id` thật là `text`,
+`course-pricing/actions.ts` đã dùng đúng `id: string`) — không crash vì
+Supabase client không ép kiểu chặt, nhưng là nợ kỹ thuật có sẵn từ trước
+Course Builder, không phải lỗi do việc này gây ra.
+
+**`/portal/premium`/`/portal/vdai-academy` — CHƯA có trang xem nội dung
+khoá học nào.** Cả 2 route chỉ có đúng 1 `page.tsx` (không có route con/
+`[slug]` nào) — `/portal/premium` là landing/mua (CTA thanh toán theo
+`courses.status='open'`), `/portal/vdai-academy` đọc bảng **`lessons`**
+(hoàn toàn khác — id bigint/title/video_url/pdf_url/price, "buổi học thật"
+độc lập, KHÔNG phải nội dung của 5 khoá Premium). → Bước 4 (trang xem
+lesson cho học viên) là phần bắt buộc phải build mới, không phải nối vào
+trang có sẵn.
+
+**Cơ chế xác thực đã mua:** `src/lib/access.ts`'s `getPurchasedIds(column)`
+— đọc bảng `orders` (`member_email`, `status='confirmed'`, cột
+`course_id`/`lesson_id`/`product_id` tuỳ loại), so khớp qua email của user
+đang đăng nhập (`supabase.auth.getUser()`). Không dùng `members.is_admin`
+(đó là quyền Admin, khác quyền "đã mua"). Middleware đã gate `/portal/*`
+yêu cầu đăng nhập; việc "đã mua khoá X chưa" là truy vấn riêng qua
+`getPurchasedIds("course_id")`, dùng lại y hệt ở `/portal/premium` — Bước 4
+tái sử dụng đúng hàm này để khoá/mở nội dung lesson.
+
+### Phát hiện ngoài dự kiến — đã STOP hỏi Founder trước khi tạo bảng mới
+
+Bảng `course_modules` (0 dòng) và `course_lessons` (0 dòng) **đã tồn tại sẵn
+trong Supabase trước khi việc này bắt đầu** — đúng cấu trúc Section→Lesson
+(`course_modules.course_id` FK `courses`, `course_lessons.module_id` FK
+`course_modules`, `ON DELETE CASCADE` cả 2) nhưng: (1) thiếu
+`content`/`duration_minutes`/`is_free_preview` đề bài yêu cầu; (2) dùng
+`visible` (boolean) thay vì `status` (text) như convention chung của dự án;
+(3) có 7 field thừa không nằm trong đặc tả (`pdf_url`/`document_url`/
+`download_url`/`prompt_ref`/`template_ref`/`exercise_note`/`bonus_note`);
+(4) **0 RLS policy** dù RLS đã bật (không ai đọc được, kể cả Published);
+(5) **không có trong lịch sử `list_migrations`** — không rõ ai/khi nào tạo;
+(6) **0 kết quả grep** toàn bộ `src/` — chưa từng có code nào tham chiếu.
+Tên `course_lessons` trùng thẳng tên bảng đề bài yêu cầu tạo mới, không thể
+tạo trùng — đây là điểm buộc phải dừng hỏi trước khi làm Bước 2.
+
+**Quyết định Founder:** tái sử dụng (không xoá công sức đã có), điều chỉnh
+cho khớp convention + đủ field, từ nay track qua migration:
+
+- `course_modules` → **`course_sections`** (đổi tên bảng).
+- `course_lessons.module_id` → **`section_id`** (đổi tên cột, khớp bảng mới).
+- `visible` (boolean) → **`status`** (text, default `'Draft'`) ở **cả 2
+  bảng** — `course_sections` trước đó chỉ có `visible` (đã đổi hẳn sang
+  `status`); `course_lessons` hoá ra ĐÃ SẴN CÓ cột `status` từ trước (dư
+  thừa cùng `visible`) — chỉnh này chỉ cần xoá cột `visible` dư, giữ
+  nguyên `status` có sẵn.
+- Bổ sung 3 cột còn thiếu vào `course_lessons`: `content` (text, nullable —
+  nội dung markdown), `duration_minutes` (integer, default 0),
+  `is_free_preview` (boolean, default false).
+- **Giữ nguyên** 7 field thừa (không xoá, có thể dùng cho tài liệu đính kèm
+  lesson sau này) — **KHÔNG dùng trong Course Builder UI lần này** (ngoài
+  phạm vi).
+- **Giữ nguyên** tên cột `sort_order` (không đổi thành `order` dù đề bài
+  gốc gợi ý tên này) — Founder chỉ yêu cầu đổi 3 điểm trên, không yêu cầu
+  đổi tên cột thứ tự.
+- Thêm RLS **`"public read published" ... FOR SELECT USING (status =
+  'Published')`** cho cả 2 bảng — mirror ĐÚNG pattern `projects`/
+  `best_practices` đang dùng (không tự nghĩ pattern mới). Gate theo
+  purchase (`owned`/`is_free_preview`) là việc ở tầng Portal Server
+  Component (Bước 4), không phải RLS — cùng cách `courses`/`case_studies`
+  đang xử lý (đọc rộng ở DB, ẩn/hiện nội dung ở tầng UI).
+
+Migration đã apply trực tiếp qua Supabase MCP + file track lại trong repo:
+`supabase-phase17-course-builder-baseline.sql`.
+
+**Schema cuối cùng sau baseline:**
+
+`course_sections`: `id (bigint)`, `course_id (text, FK courses.id cascade)`,
+`title (text)`, `sort_order (int, default 0)`, `status (text, default
+'Draft')`, `created_at`, `updated_at`.
+
+`course_lessons`: `id (bigint)`, `section_id (bigint, FK course_sections.id
+cascade)`, `title (text)`, `video_url`, `pdf_url`, `document_url`,
+`download_url`, `prompt_ref`, `template_ref`, `exercise_note`,
+`bonus_note` (7 field thừa, giữ nguyên không dùng), `sort_order (int)`,
+`status (text, default 'Draft')`, `content (text, nullable)`,
+`duration_minutes (int, default 0)`, `is_free_preview (bool, default
+false)`, `created_at`, `updated_at`.
