@@ -130,7 +130,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Mirror (Live-edit)", href: "/admin/hanh-trinh-cua-toi/mirror" },
       { label: "Nhật ký học tập (Live-edit)", href: "/admin/hanh-trinh-cua-toi/journal" },
       { label: "My Story (Live-edit)", href: "/admin/hanh-trinh-cua-toi/story" },
-      { label: "Bản đồ hành trình — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/map-chrome" },
+      { label: "Bản đồ hành trình (Live-edit)", href: "/admin/hanh-trinh-cua-toi/map" },
       { label: "Khu vườn của bạn — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/garden-chrome" },
     ],
   },

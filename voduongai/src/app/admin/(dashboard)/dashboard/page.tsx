@@ -79,7 +79,6 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/su-menh-companion/evolution": "evolution",
   "/admin/su-menh-companion/timeline": "timeline",
   "/admin/su-menh-companion/flipbook": "companion_flipbook_pages",
-  "/admin/hanh-trinh-cua-toi/map-chrome": "map_chrome",
   "/admin/hanh-trinh-cua-toi/garden-chrome": "garden_chrome",
   "/admin/community": "community",
   "/admin/updates": "updates",

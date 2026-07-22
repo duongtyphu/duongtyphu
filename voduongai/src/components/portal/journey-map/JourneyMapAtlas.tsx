@@ -7,6 +7,10 @@ import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { getCurrentChapterFromClient, JOURNEY_CHAPTER_NAMES, type JourneyChapter } from "@/lib/portal/foundation/journey-chapter";
 import { getGardenSummary, getModuleActivitySummary } from "@/lib/portal/foundation/growth-view";
 import type { Reflection } from "@/lib/portal/reflections";
+import { useCollection } from "@/lib/admin/store";
+import { useEditMode } from "@/components/portal/journey-map/EditModeContext";
+import { EditableRegion } from "@/components/portal/journey-map/EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
  * JOURNEY PLATFORM — Phase P6: Journey Map, "Ancient Atlas".
@@ -29,6 +33,8 @@ type ChapterState = "not-yet" | "current" | "walked";
  * CHAPTER_DESTINATIONS/PORTAL_CONNECTIONS (xem audit trong CLAUDE.md —
  * cả 2 gắn index/key thật, không phải chrome). */
 export type MapChrome = {
+  id: string;
+  status: string;
   title: string;
   subtitle: string;
   emptyStateLine: string;
@@ -58,15 +64,46 @@ const PORTAL_CONNECTIONS = [
   { module: "opportunities" as const, href: "/portal/duan-cohoi", label: "Dự án & Cơ hội" },
 ];
 
+/** Nhóm field cho panel Live-edit luôn hiện — `isFullyEmpty` và
+ * `currentChapter === null` là 2 điều kiện runtime khác nhau, phụ thuộc
+ * dữ liệu thật của phiên đang xem; không đảm bảo 100% reachability nếu
+ * chỉ bọc EditableRegion tại vị trí hiển thị tự nhiên. */
+const HEADER_FIELDS: FieldConfig[] = [
+  { key: "title", label: "Tiêu đề", type: "text", required: true },
+  { key: "subtitle", label: "Câu phụ đề", type: "textarea", full: true, required: true },
+];
+const EMPTY_STATE_FIELDS: FieldConfig[] = [
+  { key: "emptyStateLine", label: "Trạng thái trống — dòng chữ", type: "textarea", full: true, required: true },
+  { key: "emptyStateCtaLabel", label: "Nhãn nút ở trạng thái trống", type: "text", required: true },
+];
+const SECTION_LABEL_FIELDS: FieldConfig[] = [
+  { key: "currentPositionLabel", label: "Nhãn mục 'Vị trí hiện tại'", type: "text", required: true },
+  { key: "noChapterYetLine", label: "Dòng chữ khi chưa có chương nào", type: "textarea", full: true, required: true },
+  { key: "chaptersSectionLabel", label: "Nhãn mục 'Năm chương cuộc đời'", type: "text", required: true },
+  { key: "statesCaption", label: "Chú thích 3 trạng thái", type: "textarea", full: true, required: true },
+  { key: "connectionsSectionLabel", label: "Nhãn mục 'Kết nối tới Portal'", type: "text", required: true },
+  { key: "premiumConnectionLabel", label: "Nhãn khối 'Premium'", type: "text", required: true },
+  { key: "nextDirectionSectionLabel", label: "Nhãn mục 'Hướng tiếp theo'", type: "text", required: true },
+];
+const FOOTER_FIELDS: FieldConfig[] = [
+  { key: "closingLine", label: "Lời khép của Companion", type: "textarea", full: true, required: true },
+  { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
+
 export function JourneyMapAtlas({
   reflections,
   premiumCount,
-  chrome,
+  seedChrome,
 }: {
   reflections: Reflection[];
   premiumCount: number;
-  chrome: MapChrome;
+  seedChrome: MapChrome;
 }) {
+  const editMode = useEditMode();
+  const { items: chromeItems, update: updateChrome } = useCollection<MapChrome>("map-chrome", [seedChrome], {
+    enabled: editMode,
+  });
+  const chrome = chromeItems[0] ?? seedChrome;
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
   const [connections, setConnections] = useState<{ label: string; href: string; count: number }[]>([]);
   const [hasAnyJourney, setHasAnyJourney] = useState<boolean | null>(null);
@@ -121,6 +158,24 @@ export function JourneyMapAtlas({
           label="Hành trình của tôi"
           colorClassName="text-amber-950/40 hover:text-amber-950/70"
         />
+
+        {editMode && (
+          <div className="mt-6 space-y-4 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 text-left">
+            <p className="text-xs font-bold uppercase tracking-wide text-blue-600">Live-edit — Nội dung Bản đồ hành trình</p>
+            <EditableRegion record={chrome} fields={HEADER_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Tiêu đề &amp; câu phụ đề</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={EMPTY_STATE_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Trạng thái trống (dòng chữ + CTA)</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={SECTION_LABEL_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">7 nhãn mục nội dung</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={FOOTER_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Lời khép Companion + trạng thái: {chrome.status}</p>
+            </EditableRegion>
+          </div>
+        )}
 
         {/* ── 1. La bàn ────────────────────────────────────────────────── */}
         <header className="mt-8 text-center">

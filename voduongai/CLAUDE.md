@@ -2079,3 +2079,67 @@ reflections/capsules/growth-view.ts) — giữ nguyên 100% như Việc 9 đã a
 **Verify:** `rm -rf .next && npm run build` (route
 `/admin/hanh-trinh-cua-toi/story` xuất hiện đúng, route cũ đã biến mất),
 `tsc`/`eslint` sạch, `vitest run` 139/139.
+
+## Nhóm 3, Phần A — Bản đồ hành trình: chuyển từ props sang useCollection({enabled})
+
+Module thứ 4 của Phần A, RỦI RO CAO NHẤT — đã audit lại kỹ
+`JourneyMapAtlas.tsx` trước khi sửa, đúng như cảnh báo Founder đưa ra và
+đúng như Việc 9 đã ghi nhận trước đó (không phát hiện gì mới, không cần
+STOP hỏi lại):
+
+- `CHAPTER_DESTINATIONS` — mảng `{href, label}` **không có key**, gắn với
+  chương chỉ bằng VỊ TRÍ INDEX (`CHAPTER_DESTINATIONS[i]` khớp
+  `JOURNEY_CHAPTER_NAMES[i]`). Giữ nguyên 100% trong code, không đưa vào
+  `useCollection()`.
+- `PORTAL_CONNECTIONS` — field `module` là KEY TRA CỨU THẬT vào
+  `getModuleActivitySummary(c.module)` (so khớp `===` với
+  `WorkspaceSession.context.module` thật). Giữ nguyên 100% trong code.
+
+Chỉ tách đúng 12 field `map_chrome` đã có sẵn từ Việc 9 — không mở rộng
+phạm vi.
+
+**Áp dụng ngay bài học shape (`description`/`what`) từ đầu:**
+`getLiveMapChrome()` trước đó `select("data")`, trả về `MapChrome` không
+có `id`/`status`. Đã sửa: thêm `id`/`status` vào type + query
+(`select("id, data, status")`), gán trực tiếp từ cột top-level (không qua
+vòng lặp `STRING_KEYS` — vòng lặp đó lọc bỏ `id`/`status` để chỉ đọc từ
+`data.data` jsonb), cùng cách đã làm ở My Story.
+
+**Reachability:** `isFullyEmpty` (gate khối empty-state) và
+`currentChapter === null` (gate `noChapterYetLine`) là 2 điều kiện runtime
+khác nhau, phụ thuộc dữ liệu thật của phiên đang xem (rất có thể phiên
+Admin không rơi vào 1 trong 2 trạng thái này) — cùng lý do 3 module trước,
+thêm 1 panel Live-edit luôn hiện khi `editMode=true` (ngay dưới
+`PortalBackLink`), nhóm 12 field thành 4 `EditableRegion`: tiêu đề+phụ đề
+(luôn hiện tự nhiên, vẫn gộp vào panel cho nhất quán); trạng thái trống (2
+field); 7 nhãn mục nội dung; lời khép Companion + trạng thái. Portal thật
+(`editMode=false`) — khối này hoàn toàn không render. **Không có
+kéo-thả** — `map_chrome` là singleton.
+
+**File mới:** `src/components/portal/journey-map/EditModeContext.tsx` +
+`EditableRegion.tsx` (y hệt pattern 3 module trước, chỉ đổi import).
+
+**File sửa:**
+- `src/lib/portal/live-map.ts` — thêm `id`/`status` như trên.
+- `src/components/portal/journey-map/JourneyMapAtlas.tsx` — đổi prop
+  `chrome` → `seedChrome`; gọi `useCollection("map-chrome", [seedChrome],
+  {enabled: useEditMode()})`; thêm panel Live-edit; **KHÔNG đụng**
+  `CHAPTER_DESTINATIONS`/`PORTAL_CONNECTIONS`/`currentChapter`/
+  `connections[].count`/`nextDirection` (dữ liệu/cấu trúc động thật, giữ
+  nguyên 100%).
+- `src/app/portal/hanhtrinhcuatoi/ban-do/page.tsx` — đổi tên prop truyền
+  xuống (`seedChrome`), không đổi logic fetch.
+- `src/app/admin/(dashboard)/hanh-trinh-cua-toi/map/page.tsx` (mới) —
+  render lại `JourneyMapPage` (`/portal/hanhtrinhcuatoi/ban-do/page.tsx`
+  thật) bọc `<EditModeProvider>`, cùng pattern 3 module trước.
+- **Đã xoá** `hanh-trinh-cua-toi/map-chrome/` (1 route VisualEditor cũ) —
+  gộp vào route Live-edit duy nhất `hanh-trinh-cua-toi/map/`.
+- `nav.ts` — đổi label + href: `"Bản đồ hành trình (Live-edit)"` →
+  `/admin/hanh-trinh-cua-toi/map`.
+- `AdminSidebar.tsx` — đổi key `navIcons` từ `map-chrome` sang `map` (icon
+  `Compass` giữ nguyên).
+- `dashboard/page.tsx` — xoá dòng `TABLE_FOR_HREF` cho `map-chrome`.
+
+**Verify:** `rm -rf .next && npm run build` (route
+`/admin/hanh-trinh-cua-toi/map` xuất hiện đúng, route cũ đã biến mất),
+`tsc` sạch, `vitest run` 139/139.

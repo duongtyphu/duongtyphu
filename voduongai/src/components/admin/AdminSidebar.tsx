@@ -99,7 +99,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/hanh-trinh-cua-toi/mirror": Eye,
   "/admin/hanh-trinh-cua-toi/journal": BookOpen,
   "/admin/hanh-trinh-cua-toi/story": Feather,
-  "/admin/hanh-trinh-cua-toi/map-chrome": Compass,
+  "/admin/hanh-trinh-cua-toi/map": Compass,
   "/admin/hanh-trinh-cua-toi/garden-chrome": Sprout,
   "/admin/community": Users,
   "/admin/updates": Newspaper,

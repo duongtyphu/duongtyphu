@@ -17,6 +17,8 @@ import type { MapChrome } from "@/components/portal/journey-map/JourneyMapAtlas"
  * live-journal.ts/live-story.ts.
  */
 const DEFAULT_CHROME: MapChrome = {
+  id: "map",
+  status: "Published",
   title: "Bản đồ hành trình của bạn",
   subtitle: "Không đo tốc độ. Chỉ cho biết bạn đang ở đâu, và hướng nào đang mở ra tiếp theo.",
   emptyStateLine: "Mỗi cuộc hành trình đều bắt đầu trước khi có dấu chân đầu tiên.",
@@ -31,15 +33,17 @@ const DEFAULT_CHROME: MapChrome = {
   closingLine: "Con đường này có vẻ đã sẵn sàng, bất cứ khi nào bạn sẵn sàng.",
 };
 
-const STRING_KEYS = Object.keys(DEFAULT_CHROME) as (keyof MapChrome)[];
+const STRING_KEYS = (Object.keys(DEFAULT_CHROME) as (keyof MapChrome)[]).filter(
+  (key) => key !== "id" && key !== "status",
+);
 
 export const getLiveMapChrome = cache(async (): Promise<MapChrome> => {
   const supabase = getSupabasePublic();
   if (!supabase) return DEFAULT_CHROME;
-  const { data, error } = await supabase.from("map_chrome").select("data").eq("id", "map").eq("status", "Published").maybeSingle();
+  const { data, error } = await supabase.from("map_chrome").select("id, data, status").eq("id", "map").eq("status", "Published").maybeSingle();
   if (error || !data) return DEFAULT_CHROME;
   const d = (data.data ?? {}) as Record<string, unknown>;
-  const result = { ...DEFAULT_CHROME };
+  const result = { ...DEFAULT_CHROME, id: data.id, status: data.status };
   for (const key of STRING_KEYS) {
     if (typeof d[key] === "string") result[key] = d[key] as string;
   }

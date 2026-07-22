@@ -53,5 +53,5 @@ async function getMapData(): Promise<{ reflections: Reflection[]; premiumCount: 
 
 export default async function JourneyMapPage() {
   const [{ reflections, premiumCount }, chrome] = await Promise.all([getMapData(), getLiveMapChrome()]);
-  return <JourneyMapAtlas reflections={reflections} premiumCount={premiumCount} chrome={chrome} />;
+  return <JourneyMapAtlas reflections={reflections} premiumCount={premiumCount} seedChrome={chrome} />;
 }
