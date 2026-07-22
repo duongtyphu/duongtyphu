@@ -2332,10 +2332,85 @@ lý "không có ở đây" như Companion CMS/CKOS Dashboard.
 Admin đã nêu nhiều lần) — Founder tự test 5 route
 `/admin/duan-cohoi/{5 slug}` trên Preview URL.
 
+## Nhóm 3, Phần C — Sứ mệnh Companion: mở rộng pilot thành Live-edit chính thức
+
+Tiếp tục Nhóm 3 sau Phần D — Phần C (mở rộng THÍ ĐIỂM pilot ở
+`/portal/su-menh-companion` từ 2 vùng đại diện lên đủ 6 khối, gộp 6 route
+VisualEditor cũ thành 1) không nằm trong batch trước đó (không rõ chủ
+đích bỏ qua hay chỉ sót), tiếp tục hoàn tất luôn để đóng nốt Nhóm 3.
+
+**Audit trước khi sửa:** `page.tsx` đã **"use client" từ trước** (không
+phải Server Component như 5 Cửa Hành trình) — mọi `useCollection()` cho 6
+khối gọi 2-tham số, mặc định `enabled: true`, tức Portal thật ĐÃ LUÔN fetch
+live 100% từ trước (không cần cơ chế `seed`/`enabled: editMode` như Phần
+A/D — kiến trúc khác hẳn, không có gap "Server Component không dùng được
+useCollection" ở đây). Pilot đã bọc `constitution`/`genome` bằng
+`EditableRegion` — chỉ cần MỞ RỘNG thêm 4 khối còn lại
+(`mission-items`/`philosophy-pairs`/`evolution`/`timeline`), không cần xây
+lại từ đầu.
+
+**Quyết định KHÔNG merge Flipbook vào cùng route** (khác biệt so với các
+module trước, có lý do kỹ thuật, không phải bỏ sót): Flipbook
+(`/portal/su-menh-companion/companion-qua-hinh-anh`, bảng
+`companion_flipbook_pages`) là 1 carousel 3D xem ĐÚNG 1 trang/lần — kéo-thả
+đổi thứ tự 7 trang cần nhìn thấy TẤT CẢ trang cùng lúc, việc VisualEditor
+(card grid) đã làm tốt. Chuyển carousel sang Cách A (render lại đúng trang
+carousel + EditableRegion) sẽ làm UX đổi thứ tự TỆ HƠN, không phải tốt
+hơn — giữ nguyên `/admin/su-menh-companion/flipbook` (VisualEditor) như 1
+route riêng, không gộp. "Sứ mệnh Companion" group giờ còn đúng 2 route
+(giảm từ 8), mỗi route khớp đúng 1 UI phù hợp với bản chất nội dung của nó
+— không cứng nhắc ép mọi thứ về 1 route nếu UX thật sự tệ hơn.
+
+**Không mất khả năng Add/Xoá/Kéo-thả cho 4 khối mới** (`mission-items`/
+`philosophy-pairs`/`evolution`/`timeline`) — VisualEditor cũ có các thao
+tác này, `EditableRegion` không có. Chấp nhận cùng đánh đổi đã áp dụng cho
+`mirror_questions`/`journal_intentions` ở Phần A (không add/xoá/kéo-thả
+qua Live-edit) — các khối này là danh sách nội dung tương đối cố định
+(4-6 dòng mỗi khối), không phải danh sách Founder cần thêm/bớt thường
+xuyên như `home_cards`.
+
+**File sửa (không có file mới — mọi hạ tầng `EditModeContext.tsx`/
+`EditableRegion.tsx` đã có sẵn từ pilot):**
+- `src/app/portal/su-menh-companion/page.tsx` — thêm 4 `FieldConfig`
+  (`MISSION_FIELDS`/`PHILOSOPHY_FIELDS`/`EVOLUTION_FIELDS`/
+  `TIMELINE_FIELDS`), lấy thêm `update` từ 4 `useCollection()` hiện có,
+  bọc `EditableRegion` quanh khối render của `missionItems`/
+  `philosophyPairs`/`evolutionStages`/`timelineStages` — mỗi khối bọc CẢ
+  card (không cần tách field riêng như Genome pilot vì không có positioning
+  `%` tuyệt đối nào bị ảnh hưởng).
+- `src/app/admin/(dashboard)/su-menh-companion/live-edit/page.tsx` — cập
+  nhật comment: từ "THÍ ĐIỂM, không thay thế" → "Live-edit CHÍNH THỨC,
+  thay thế hẳn 6 route cũ", giải thích rõ lý do không gộp Flipbook.
+- **Đã xoá** 6 route VisualEditor cũ: `su-menh-companion/{mission,
+  philosophy,constitution,genome,evolution,timeline}/`.
+- `src/lib/admin/nav.ts` — gộp 6 entry + entry pilot "🧪 Sửa trực tiếp
+  (Thí điểm)" thành 1: `"6 khối nội dung (Live-edit)"` →
+  `/admin/su-menh-companion/live-edit`; giữ nguyên "Ảnh Companion (thứ tự
+  & tiêu đề)".
+- `src/components/admin/AdminSidebar.tsx` — gộp 8 `navIcons` key cũ (6
+  route + pilot `FlaskConical`) thành 2: `live-edit` (`Dna`) + `flipbook`
+  (`Images`, giữ nguyên); xoá 4 import icon không dùng nữa (`Rocket`/
+  `MessageCircle`/`History`/`FlaskConical`).
+- `dashboard/page.tsx` — xoá 6 dòng `TABLE_FOR_HREF` cũ, cập nhật comment
+  chung thêm "6 khối nội dung Sứ mệnh Companion" vào danh sách ví dụ route
+  Live-edit không có số đếm.
+
+**Verify:** `rm -rf .next && npm run build` (route
+`/admin/su-menh-companion/live-edit` + `/admin/su-menh-companion/flipbook`
+xuất hiện đúng, 6 route cũ đã biến mất), `tsc`/`eslint` sạch, `vitest run`
+139/139.
+
+**Chưa tự test qua UI thật** (cùng giới hạn sandbox) — Founder tự test
+`/admin/su-menh-companion/live-edit` (đủ 6 khối sửa được) trên Preview
+URL.
+
 ---
 
-**NHÓM 3 HOÀN TẤT** (Phần A — 5 Cửa Hành trình + Phần B — Trang chủ Học
-viện + Phần D — Dự án & Cơ hội, cả hub và 5 trang chi tiết theo yêu cầu
-mở rộng riêng của Founder). Phần C (Sứ mệnh Companion mở rộng 6 khối +
-flipbook) KHÔNG nằm trong đợt này — Founder chưa yêu cầu, để việc riêng
-sau nếu cần.
+**NHÓM 3 HOÀN TẤT TOÀN BỘ** (Phần A — 5 Cửa Hành trình, Phần B — Trang chủ
+Học viện, Phần C — Sứ mệnh Companion 6 khối, Phần D — Dự án & Cơ hội cả
+hub và 5 trang chi tiết theo yêu cầu mở rộng riêng của Founder). Mỗi
+module đều theo đúng nguyên tắc "1 module = đúng 1 route Live-edit chính
+thức, không VisualEditor chạy song song" — trừ 2 ngoại lệ có lý do kỹ
+thuật rõ ràng, đã ghi chú tại chỗ: Flipbook (Sứ mệnh Companion) và
+`/admin/projects` (Dự án & Cơ hội, DataTable quản danh sách entity thật,
+không phải chrome đơn dòng).

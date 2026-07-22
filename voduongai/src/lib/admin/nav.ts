@@ -151,24 +151,19 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     // Portal #9 — "Sứ mệnh Companion" (/portal/su-menh-companion, triết lý
     // thương hiệu — KHÔNG phải mục #2 "Companion" ở trên). Việc 6 (Nhóm B)
-    // — Founder xác nhận cần tự sửa 6 khối nội dung. Tên hiển thị tiếng
-    // Việt Founder-friendly, không lộ tên field kỹ thuật (mission-items/
-    // constitution/genome...).
+    // — Founder xác nhận cần tự sửa 6 khối nội dung.
+    //
+    // Nhóm 3, Phần C — pilot inline-edit (Điều lệ + Bộ gene) đã mở rộng
+    // thành Live-edit CHÍNH THỨC cho đủ 6 khối, gộp 6 route VisualEditor
+    // cũ (Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời
+    // gian) thành 1 route duy nhất. "Ảnh Companion" (Flipbook) GIỮ NGUYÊN
+    // route riêng (VisualEditor) — carousel xem 1 trang/lần không phù hợp
+    // kéo-thả qua Cách A, xem comment trong
+    // `su-menh-companion/live-edit/page.tsx`.
     group: "Sứ mệnh Companion",
     items: [
-      { label: "Sứ mệnh", href: "/admin/su-menh-companion/mission" },
-      { label: "Triết lý", href: "/admin/su-menh-companion/philosophy" },
-      { label: "Điều lệ", href: "/admin/su-menh-companion/constitution" },
-      { label: "Bộ gene", href: "/admin/su-menh-companion/genome" },
-      { label: "Hành trình tiến hoá", href: "/admin/su-menh-companion/evolution" },
-      { label: "Dòng thời gian", href: "/admin/su-menh-companion/timeline" },
-      // Phần 2 — tách riêng khỏi 6 khối văn bản trên (bản chất khác hẳn:
-      // ảnh nghệ thuật có sẵn, chỉ quản title/thứ tự, không quản ảnh).
+      { label: "6 khối nội dung (Live-edit)", href: "/admin/su-menh-companion/live-edit" },
       { label: "Ảnh Companion (thứ tự & tiêu đề)", href: "/admin/su-menh-companion/flipbook" },
-      // THÍ ĐIỂM (pilot) — inline editing cách A, chỉ 2 vùng đại diện
-      // (Điều lệ, Bộ gene). KHÔNG thay thế 2 mục VisualEditor ở trên —
-      // Founder tự đánh giá có đáng nhân rộng cho các module khác không.
-      { label: "🧪 Sửa trực tiếp (Thí điểm)", href: "/admin/su-menh-companion/live-edit" },
     ],
   },
   {

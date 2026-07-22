@@ -12,11 +12,19 @@ import { useCollection } from "@/lib/admin/store";
 import { EditableRegion } from "@/components/portal/su-menh-companion/EditableRegion";
 import type { FieldConfig } from "@/lib/admin/fields";
 
-// THÍ ĐIỂM (pilot) — Inline editing cách A, chỉ 2 vùng đại diện (Điều lệ:
-// field string đơn; Bộ gene: object 3 field) để đánh giá — xem
-// EditableRegion.tsx. Ngoài edit mode (Portal thật), EditableRegion render
-// y hệt children, không đổi gì. Chỉ kích hoạt qua
-// /admin/su-menh-companion/live-edit.
+// Nhóm 3, Phần C — mở rộng pilot (chỉ Điều lệ + Bộ gene) thành LIVE-EDIT
+// CHÍNH THỨC cho đủ 6 khối, thay thế hẳn 6 trang VisualEditor cũ (Sứ mệnh/
+// Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian — đã xoá,
+// gộp vào route Live-edit duy nhất /admin/su-menh-companion/live-edit).
+// Ngoài edit mode (Portal thật), EditableRegion render y hệt children,
+// không đổi gì — xem EditableRegion.tsx.
+const MISSION_FIELDS: FieldConfig[] = [
+  { key: "content", label: "Nội dung", type: "textarea", full: true, required: true },
+];
+const PHILOSOPHY_FIELDS: FieldConfig[] = [
+  { key: "ai", label: 'Vế "AI"', type: "text", required: true },
+  { key: "companion", label: 'Vế "Companion"', type: "text", required: true },
+];
 const CONSTITUTION_FIELDS: FieldConfig[] = [
   { key: "content", label: "Nguyên tắc", type: "textarea", full: true, required: true },
 ];
@@ -24,6 +32,17 @@ const GENOME_FIELDS: FieldConfig[] = [
   { key: "key", label: "Key nội bộ", type: "text", required: true },
   { key: "label", label: "Tên gene hiển thị", type: "text", required: true },
   { key: "meaning", label: "Ý nghĩa", type: "textarea", full: true, required: true },
+];
+const EVOLUTION_FIELDS: FieldConfig[] = [
+  { key: "stage", label: 'Tên giai đoạn (vd. "Seed")', type: "text", required: true },
+  { key: "icon", label: "Icon", type: "select", options: ["seed", "sprout", "leaf", "sparkles", "infinity"], required: true },
+  { key: "meaning", label: "Ý nghĩa", type: "textarea", full: true, required: true },
+];
+const TIMELINE_FIELDS: FieldConfig[] = [
+  { key: "stage", label: 'Tên giai đoạn (vd. "Tuổi thơ")', type: "text", required: true },
+  { key: "philosophy", label: "Câu triết lý", type: "textarea", full: true, required: true },
+  { key: "meaning", label: "Ý nghĩa", type: "textarea", full: true, required: true },
+  { key: "lesson", label: "Điều học được", type: "textarea", full: true, required: true },
 ];
 
 // Việc 6 (Nhóm B) — 6 khối bên dưới (Sứ mệnh/Triết lý/Điều lệ/Bộ gene/
@@ -82,12 +101,12 @@ export default function CompanionHomePage() {
   const [showIntro, setShowIntro] = useState(true);
   const [livingCoreState, setLivingCoreState] = useState<LivingCoreState>("idle");
 
-  const { items: missionItems } = useCollection<MissionItem>("mission-items", []);
-  const { items: philosophyPairs } = useCollection<PhilosophyPair>("philosophy-pairs", []);
+  const { items: missionItems, update: updateMissionItem } = useCollection<MissionItem>("mission-items", []);
+  const { items: philosophyPairs, update: updatePhilosophyPair } = useCollection<PhilosophyPair>("philosophy-pairs", []);
   const { items: constitutionRules, update: updateConstitutionRule } = useCollection<ConstitutionRule>("constitution", []);
   const { items: genomeGenes, update: updateGenomeGene } = useCollection<GenomeGene>("genome", []);
-  const { items: evolutionStages } = useCollection<EvolutionStage>("evolution", []);
-  const { items: timelineStages } = useCollection<TimelineStage>("timeline", []);
+  const { items: evolutionStages, update: updateEvolutionStage } = useCollection<EvolutionStage>("evolution", []);
+  const { items: timelineStages, update: updateTimelineStage } = useCollection<TimelineStage>("timeline", []);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -283,10 +302,12 @@ export default function CompanionHomePage() {
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Sứ mệnh của Companion</h2>
           <div className="mt-8 space-y-5">
             {missionItems.map((item, i) => (
-              <div key={item.id} className="flex items-baseline gap-4">
-                <span className="text-xs font-bold text-orange-300">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-lg leading-relaxed text-gray-700">{item.content}</p>
-              </div>
+              <EditableRegion key={item.id} record={item} fields={MISSION_FIELDS} update={updateMissionItem}>
+                <div className="flex items-baseline gap-4">
+                  <span className="text-xs font-bold text-orange-300">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="text-lg leading-relaxed text-gray-700">{item.content}</p>
+                </div>
+              </EditableRegion>
             ))}
           </div>
         </Reveal>
@@ -297,10 +318,12 @@ export default function CompanionHomePage() {
           <h2 className="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">Triết lý</h2>
           <div className="mt-10 space-y-6">
             {philosophyPairs.map((pair) => (
-              <div key={pair.id} className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-4">
-                <p className="text-lg leading-relaxed text-gray-400">{pair.ai}</p>
-                <p className="text-lg font-semibold leading-relaxed text-gray-900">{pair.companion}</p>
-              </div>
+              <EditableRegion key={pair.id} record={pair} fields={PHILOSOPHY_FIELDS} update={updatePhilosophyPair}>
+                <div className="flex flex-col gap-1.5 sm:flex-row sm:items-baseline sm:gap-4">
+                  <p className="text-lg leading-relaxed text-gray-400">{pair.ai}</p>
+                  <p className="text-lg font-semibold leading-relaxed text-gray-900">{pair.companion}</p>
+                </div>
+              </EditableRegion>
             ))}
           </div>
         </Reveal>
@@ -401,13 +424,15 @@ export default function CompanionHomePage() {
 
           <div className="mt-14 grid gap-10 sm:grid-cols-5">
             {evolutionStages.map((stage, i) => (
-              <div key={stage.id} className="flex flex-col items-center text-center">
-                <div className="sanctuary-glow-soft flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 via-violet-50 to-orange-50 text-violet-600 shadow-sm" style={{ animationDelay: `${i * 0.5}s` }}>
-                  <EvolutionIcon icon={stage.icon} />
+              <EditableRegion key={stage.id} record={stage} fields={EVOLUTION_FIELDS} update={updateEvolutionStage}>
+                <div className="flex flex-col items-center text-center">
+                  <div className="sanctuary-glow-soft flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-blue-50 via-violet-50 to-orange-50 text-violet-600 shadow-sm" style={{ animationDelay: `${i * 0.5}s` }}>
+                    <EvolutionIcon icon={stage.icon} />
+                  </div>
+                  <p className="mt-4 text-sm font-bold text-gray-900">{stage.stage}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-gray-500">{stage.meaning}</p>
                 </div>
-                <p className="mt-4 text-sm font-bold text-gray-900">{stage.stage}</p>
-                <p className="mt-2 text-xs leading-relaxed text-gray-500">{stage.meaning}</p>
-              </div>
+              </EditableRegion>
             ))}
           </div>
         </Reveal>
@@ -419,19 +444,21 @@ export default function CompanionHomePage() {
 
           <div className="relative mt-14 space-y-14 border-l border-gray-200 pl-8">
             {timelineStages.map((t) => (
-              <div key={t.id} className="relative">
-                <span className="absolute -left-[35px] top-1 h-3 w-3 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 shadow-[0_0_10px_rgba(124,58,237,0.5)]" />
-                <p className="text-lg font-extrabold text-gray-900">{t.stage}</p>
-                <p className="mt-2 text-base italic leading-relaxed text-gray-500">{t.philosophy}</p>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  <span className="font-semibold text-blue-600">Ý nghĩa. </span>
-                  {t.meaning}
-                </p>
-                <p className="mt-1 text-sm leading-relaxed text-gray-600">
-                  <span className="font-semibold text-orange-500">Điều học được. </span>
-                  {t.lesson}
-                </p>
-              </div>
+              <EditableRegion key={t.id} record={t} fields={TIMELINE_FIELDS} update={updateTimelineStage}>
+                <div className="relative">
+                  <span className="absolute -left-[35px] top-1 h-3 w-3 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 shadow-[0_0_10px_rgba(124,58,237,0.5)]" />
+                  <p className="text-lg font-extrabold text-gray-900">{t.stage}</p>
+                  <p className="mt-2 text-base italic leading-relaxed text-gray-500">{t.philosophy}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                    <span className="font-semibold text-blue-600">Ý nghĩa. </span>
+                    {t.meaning}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                    <span className="font-semibold text-orange-500">Điều học được. </span>
+                    {t.lesson}
+                  </p>
+                </div>
+              </EditableRegion>
             ))}
           </div>
         </Reveal>

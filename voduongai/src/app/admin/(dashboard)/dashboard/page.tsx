@@ -49,14 +49,14 @@ const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
 
 // href Admin → tên bảng Supabase generic thật (khớp collectionKey trong
 // supabaseCollections.ts). Item không có ở đây (Companion CMS - nhiều tab
-// nội bộ riêng, CKOS Dashboard - trang tổng hợp, live-edit - công cụ thí
-// điểm, không phải collection) hiển thị không kèm số đếm. Cả 5 module
-// "Hành trình của tôi" (Mirror/Nhật ký học tập/My Story/Bản đồ hành
-// trình/Khu vườn của bạn — Live-edit, Nhóm 3) cũng không có ở đây dù có
-// collection thật đứng sau (Mirror/Journal: 2 bảng mỗi route; 3 module
-// còn lại: 1 bảng) — 1 route giờ quản lý qua render lại trang Portal
-// thật, không map 1-1 được vào cấu trúc Record<href, 1 table> đơn giản
-// này.
+// nội bộ riêng, CKOS Dashboard - trang tổng hợp) hiển thị không kèm số
+// đếm. Cả 5 module "Hành trình của tôi" (Mirror/Nhật ký học tập/My Story/
+// Bản đồ hành trình/Khu vườn của bạn) và "6 khối nội dung" của Sứ mệnh
+// Companion (Live-edit, Nhóm 3) cũng không có ở đây dù có collection thật
+// đứng sau (Mirror/Journal: 2 bảng; 6 khối Companion: 6 bảng; 3 module
+// Hành trình còn lại: 1 bảng mỗi module) — 1 route giờ quản lý qua render
+// lại trang Portal thật, không map 1-1 được vào cấu trúc Record<href, 1
+// table> đơn giản này.
 const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/home-cards": "home_cards",
   "/admin/ckos/prompts": "prompts",
@@ -74,12 +74,6 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/aiworkspace/recommended-workspace": "recommended_workspace",
   "/admin/aiworkspace/ai-workflow-sections": "ai_workflow_sections",
   "/admin/projects": "projects",
-  "/admin/su-menh-companion/mission": "mission_items",
-  "/admin/su-menh-companion/philosophy": "philosophy_pairs",
-  "/admin/su-menh-companion/constitution": "constitution",
-  "/admin/su-menh-companion/genome": "genome",
-  "/admin/su-menh-companion/evolution": "evolution",
-  "/admin/su-menh-companion/timeline": "timeline",
   "/admin/su-menh-companion/flipbook": "companion_flipbook_pages",
   "/admin/community": "community",
   "/admin/updates": "updates",
