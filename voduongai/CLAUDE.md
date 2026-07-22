@@ -1410,3 +1410,70 @@ dữ liệu (KHÔNG bị `route-integrity.test.ts` bắt vì không phải JSX l
 thủ công `"vdai-academy"` toàn bộ `src/` (không giới hạn theo test, vì test
 chỉ bắt JSX `href="..."`) để xác nhận 0 kết quả còn lại — kể cả dạng
 object-literal test không bắt được.
+
+## Course Builder (Premium) — Bước 2: kết nối tầng dữ liệu
+
+**Không đăng ký `course_sections`/`course_lessons` vào `SUPABASE_COLLECTIONS`
+— đọc code `/api/admin/collections/[table]/route.ts` xác nhận route này
+KHÔNG dùng được cho 2 bảng này, không chỉ ở phần cây lồng 2 cấp mà ở CẢ
+CRUD CƠ BẢN:**
+- GET hard-code `select("id, data, status, order")` + `.order("order", ...)`
+  — 2 bảng này không có cột `data` (jsonb) hay `order` (có `sort_order`,
+  không phải `order`).
+- POST/PUT hard-code `upsert({ id: item.id, data: item, status, order })`
+  — cũng dùng cột `data`/`order` không tồn tại; đồng thời route giả định
+  `id` là **string do client tự đặt** (check `typeof item.id !== "string"`),
+  trong khi `course_sections.id`/`course_lessons.id` là **bigint tự tăng**
+  do Postgres cấp — không client nào tự đặt được.
+- `SUPABASE_COLLECTIONS`'s comment đầu file tự mô tả đây là "the security
+  boundary for the generic route" cho đúng 1 schema (`id/data/status/
+  order`) — đăng ký 1 bảng lệch schema vào đây sẽ tạo endpoint gọi là
+  chạy nhưng vỡ ngay khi query (lỗi "column does not exist"), không phải
+  chỉ thiếu tính năng.
+
+→ Đúng con đường đã áp dụng cho `courses`/`case_studies` (2 bảng typed
+khác trong dự án): viết Server Actions riêng, không qua route chung.
+
+**Đã tạo:** `src/app/admin/(dashboard)/premium/courses/[courseId]/builder/actions.ts`
+(chỉ tầng dữ liệu — Server Actions, `"use server"` — **CHƯA có `page.tsx`**,
+đúng yêu cầu chưa build UI ở bước này; thư mục vẫn build được bình thường,
+không tạo route nào cho tới khi có `page.tsx`). Các hàm:
+
+- `getCourseBuilderTree(courseId)` — đọc `course_sections` (`eq
+  course_id`, `order sort_order`) rồi `course_lessons` (`in section_id`,
+  `order sort_order`), gộp lại thành cây `{ sections: [{ ...section,
+  lessons: [...] }] }` trong 1 lần gọi.
+- `createSection`/`updateSection`/`deleteSection` — `sort_order` mới =
+  đếm số dòng hiện có của khoá đó; xoá section KHÔNG cần tự xoá lesson
+  con (`ON DELETE CASCADE` đã có sẵn từ Bước 1).
+- `createLesson`/`updateLesson`/`deleteLesson` — cùng logic, phạm vi field
+  đúng 6 cột Course Builder cần (`title/video_url/content/
+  duration_minutes/is_free_preview/status`), KHÔNG động tới 7 field thừa
+  (`pdf_url`...).
+- `reorderCourseTree(courseId, sections: {id, lessonIds[]}[])` — nhận
+  nguyên trạng thái cây mong muốn sau khi kéo-thả (thứ tự section + với
+  mỗi section, thứ tự + danh sách lesson thuộc về nó), ghi lại toàn bộ
+  `sort_order` (cả 2 cấp) và `section_id` (khi lesson đổi section) trong 1
+  lần gọi — xử lý luôn cả 3 tình huống kéo-thả (đổi thứ tự section, đổi
+  thứ tự lesson trong section, kéo lesson sang section khác) bằng 1 hàm.
+
+Mọi hàm ghi đều `requireAdmin()` gate + `revalidatePath()` route builder
+tương ứng (route Bước 3 chưa tồn tại nhưng `revalidatePath` không lỗi khi
+gọi trên path chưa từng render — vô hại, sẽ có tác dụng khi Bước 3 xong).
+
+**Verify đã chạy:**
+- `npx tsc --noEmit`, `npx eslint`, `npm run build` — sạch, thư mục
+  `builder/` (chỉ có `actions.ts`, chưa có `page.tsx`) build được bình
+  thường, không tạo route lạ.
+- `npx vitest run` — 139/139 pass.
+- **Test trực tiếp qua `execute_sql`** (mirror chính xác từng câu lệnh
+  trong `actions.ts`, vì Server Actions dùng `revalidatePath()` — hàm này
+  cần ngữ cảnh request thật của Next.js, không gọi standalone ngoài
+  server được) trên khoá `ai-coban` thật: tạo 1 section + 2 lesson (đúng
+  shape `createSection`/`createLesson` insert) → đọc lại đúng thứ tự
+  `sort_order` (đúng shape `getCourseBuilderTree` select) → đổi thứ tự 2
+  lesson (đúng shape `reorderCourseTree` update) → xác nhận thứ tự đảo
+  đúng → xoá section (đúng shape `deleteSection`) → xác nhận cascade tự
+  xoá cả 2 lesson con (0 dòng còn lại). Đã dọn sạch dữ liệu test này sau
+  khi xác nhận — `ai-coban` hiện lại 0 section/lesson, sẵn sàng cho Bước
+  3 test từ đầu.
