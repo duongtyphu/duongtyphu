@@ -17,6 +17,8 @@ import type { GardenChrome } from "@/components/portal/garden/GardenExperience";
  * live-journal.ts/live-story.ts/live-map.ts.
  */
 const DEFAULT_CHROME: GardenChrome = {
+  id: "garden",
+  status: "Published",
   title: "Khu vườn của bạn",
   subtitle: "Nơi những gì bạn đã học và nuôi dưỡng trở thành một khu vườn sống.",
   footer: "Khu vườn của bạn phản chiếu đúng những gì bạn đã thật sự làm — không hơn, không kém.",
@@ -24,15 +26,17 @@ const DEFAULT_CHROME: GardenChrome = {
   emptyStateNoMoments: "Viên ngọc vẫn đang chờ những trải nghiệm đầu tiên của bạn.",
 };
 
-const STRING_KEYS = Object.keys(DEFAULT_CHROME) as (keyof GardenChrome)[];
+const STRING_KEYS = (Object.keys(DEFAULT_CHROME) as (keyof GardenChrome)[]).filter(
+  (key) => key !== "id" && key !== "status",
+);
 
 export const getLiveGardenChrome = cache(async (): Promise<GardenChrome> => {
   const supabase = getSupabasePublic();
   if (!supabase) return DEFAULT_CHROME;
-  const { data, error } = await supabase.from("garden_chrome").select("data").eq("id", "garden").eq("status", "Published").maybeSingle();
+  const { data, error } = await supabase.from("garden_chrome").select("id, data, status").eq("id", "garden").eq("status", "Published").maybeSingle();
   if (error || !data) return DEFAULT_CHROME;
   const d = (data.data ?? {}) as Record<string, unknown>;
-  const result = { ...DEFAULT_CHROME };
+  const result = { ...DEFAULT_CHROME, id: data.id, status: data.status };
   for (const key of STRING_KEYS) {
     if (typeof d[key] === "string") result[key] = d[key] as string;
   }

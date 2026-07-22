@@ -2143,3 +2143,84 @@ kéo-thả** — `map_chrome` là singleton.
 **Verify:** `rm -rf .next && npm run build` (route
 `/admin/hanh-trinh-cua-toi/map` xuất hiện đúng, route cũ đã biến mất),
 `tsc` sạch, `vitest run` 139/139.
+
+## Nhóm 3, Phần A — Khu vườn của bạn: chuyển từ props sang useCollection({enabled}) (HOÀN TẤT PHẦN A)
+
+Module thứ 5 và cuối cùng của Phần A (5 Cửa Hành trình), RỦI RO CAO NHẤT
+theo audit gốc — re-audit `GardenExperience.tsx` xác nhận đúng y hệt phát
+hiện của Việc 9, không có gì mới, không cần STOP:
+
+- `companionLineFor(period, lastActivity)` — template nội suy `${act}` +
+  gate theo `period`. Giữ nguyên 100% trong code.
+- `treeStage(s)` — ngưỡng số liệu thật (`missionsCompleted`/
+  `journeysTouched`/`competenciesPracticed`). Giữ nguyên 100%.
+- `buildElements(s, counts)` — mảng phần tử vườn, mỗi `meaning` nội suy
+  đếm số thật. Giữ nguyên 100%.
+- Cặp CTA (`<Link href={gardenEmpty ? "/portal/hocvienai" :
+  "/portal/workspace"}>{gardenEmpty ? "Gieo hạt mầm đầu tiên" : "Tưới cho
+  khu vườn hôm nay"}</Link>`) — 1 `<Link>` DUY NHẤT, nhãn VÀ href cùng đổi
+  theo 1 điều kiện. Giữ nguyên 100% trong code, không tách bất kỳ phần
+  nào — đúng quyết định đã chốt ở Việc 9 (nhất quán với
+  `nextDirection.text` ở Bản đồ hành trình).
+
+Chỉ tách đúng 5 field `garden_chrome` đã chốt từ Việc 9 (title/subtitle/
+footer/2 empty-state) — không mở rộng phạm vi.
+
+**Áp dụng ngay bài học shape (`description`/`what`) từ đầu:**
+`getLiveGardenChrome()` trước đó `select("data")`, trả về `GardenChrome`
+không có `id`/`status`. Đã sửa: thêm `id`/`status` vào type + query
+(`select("id, data, status")`), gán trực tiếp từ cột top-level (không qua
+vòng lặp `STRING_KEYS`), cùng cách đã làm ở 3 module trước.
+
+**Reachability:** `emptyStateNoTree` chỉ hiện khi `gardenEmpty`
+(`treeStage` rỗng), `emptyStateNoMoments` chỉ hiện khi mở Viên ngọc mà
+chưa có khoảnh khắc nào — cả 2 phụ thuộc dữ liệu runtime thật của phiên
+đang xem. Thêm panel Live-edit luôn hiện khi `editMode=true` (ngay dưới
+`PortalBackLink`), nhóm 5 field thành 3 `EditableRegion`: tiêu đề+phụ đề;
+2 dòng trạng thái trống; lời khép cuối trang + trạng thái. Portal thật
+(`editMode=false`) — khối này hoàn toàn không render. **Không có
+kéo-thả** — `garden_chrome` là singleton.
+
+**Atmosphere khác 4 module trước — không cần dựng riêng:** route Admin
+Live-edit render lại component thật `GardenExperience` (đã tự có đủ 4 lớp
+`garden-sky` + `data-garden-period` theo giờ thiết bị thật ngay trong
+JSX) — khác VisualEditor cũ phải tự dựng `GardenAdminAtmosphere` giả lập
+period cố định "sunset". Route Live-edit mới không cần component
+atmosphere riêng nào.
+
+**File mới:** `src/components/portal/garden/EditModeContext.tsx` +
+`EditableRegion.tsx` (y hệt pattern 4 module trước, chỉ đổi import).
+
+**File sửa:**
+- `src/lib/portal/live-garden.ts` — thêm `id`/`status` như trên.
+- `src/components/portal/garden/GardenExperience.tsx` — đổi prop `chrome`
+  → `seedChrome`; gọi `useCollection("garden-chrome", [seedChrome],
+  {enabled: useEditMode()})`; thêm panel Live-edit; **KHÔNG đụng**
+  `companionLineFor`/`treeStage`/`buildElements`/cặp CTA.
+- `src/app/portal/khuvuoncuaban/page.tsx` — đổi tên prop truyền xuống
+  (`seedChrome`), không đổi logic fetch.
+- `src/app/admin/(dashboard)/hanh-trinh-cua-toi/garden/page.tsx` (mới) —
+  render lại `KnowledgeGardenPage` (`/portal/khuvuoncuaban/page.tsx`
+  thật) bọc `<EditModeProvider>`, cùng pattern 4 module trước.
+- **Đã xoá** `hanh-trinh-cua-toi/garden-chrome/` (1 route VisualEditor
+  cũ, kể cả `GardenAdminAtmosphere` giả lập của nó) — gộp vào route
+  Live-edit duy nhất `hanh-trinh-cua-toi/garden/`.
+- `nav.ts` — đổi label + href: `"Khu vườn của bạn (Live-edit)"` →
+  `/admin/hanh-trinh-cua-toi/garden`.
+- `AdminSidebar.tsx` — đổi key `navIcons` từ `garden-chrome` sang `garden`
+  (icon `Sprout` giữ nguyên).
+- `dashboard/page.tsx` — xoá dòng `TABLE_FOR_HREF` cho `garden-chrome`,
+  cập nhật comment chung thành "cả 5 module Hành trình của tôi".
+
+**Verify:** `rm -rf .next && npm run build` (route
+`/admin/hanh-trinh-cua-toi/garden` xuất hiện đúng cùng cả 4 route
+Live-edit khác của Hành trình của tôi, route cũ đã biến mất), `tsc`/
+`eslint` sạch, `vitest run` 139/139.
+
+---
+
+**PHẦN A HOÀN TẤT CẢ 5 CỬA HÀNH TRÌNH** (Mirror → Nhật ký học tập → My
+Story → Bản đồ hành trình → Khu vườn của bạn), mỗi cửa 1 route Live-edit
+duy nhất dưới `/admin/hanh-trinh-cua-toi/{mirror,journal,story,map,garden}`,
+không còn VisualEditor nào chạy song song cho nhóm này. Tiếp theo: Phần D
+(hub Dự án & Cơ hội).

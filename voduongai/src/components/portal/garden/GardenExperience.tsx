@@ -15,6 +15,10 @@ import {
   getJourneyProgress,
   type GardenSummary,
 } from "@/lib/portal/foundation/growth-view";
+import { useCollection } from "@/lib/admin/store";
+import { useEditMode } from "@/components/portal/garden/EditModeContext";
+import { EditableRegion } from "@/components/portal/garden/EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
  * KHU VƯỜN 2.0 — Journey Phase P2, triển khai trung thành theo
@@ -176,6 +180,8 @@ function buildElements(
  * CTA (nhãn+href cùng đổi theo gardenEmpty — xem audit trong CLAUDE.md,
  * giữ nguyên cả khối trong code, nhất quán với nextDirection.text ở Cửa 4). */
 export type GardenChrome = {
+  id: string;
+  status: string;
   title: string;
   subtitle: string;
   footer: string;
@@ -198,19 +204,37 @@ const LANTERN_SPOTS = [
   { left: "78%", bottom: "12%" },
 ] as const;
 
+/** Nhóm field cho panel Live-edit luôn hiện — `emptyStateNoTree` chỉ
+ * hiện khi `gardenEmpty` (treeStage rỗng), `emptyStateNoMoments` chỉ hiện
+ * khi mở Viên ngọc mà chưa có khoảnh khắc nào — cả 2 phụ thuộc dữ liệu
+ * runtime thật của phiên đang xem, không đảm bảo reachability nếu chỉ
+ * bọc EditableRegion tại vị trí hiển thị tự nhiên. */
+const HEADER_FIELDS: FieldConfig[] = [
+  { key: "title", label: "Tiêu đề", type: "text", required: true },
+  { key: "subtitle", label: "Câu phụ đề", type: "textarea", full: true, required: true },
+];
+const EMPTY_STATE_FIELDS: FieldConfig[] = [
+  { key: "emptyStateNoTree", label: "Dòng chữ khi vườn chưa có cây (treeStage rỗng)", type: "textarea", full: true, required: true },
+  { key: "emptyStateNoMoments", label: "Dòng chữ khi Viên ngọc chưa có khoảnh khắc nào", type: "textarea", full: true, required: true },
+];
+const FOOTER_FIELDS: FieldConfig[] = [
+  { key: "footer", label: "Lời khép cuối trang", type: "textarea", full: true, required: true },
+  { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
+
 export function GardenExperience({
   serverMoments,
   reflectionCount,
   memoryCount,
   milestoneCount,
-  chrome,
+  seedChrome,
   periodOverride = null,
 }: {
   serverMoments: GemMoment[];
   reflectionCount: number;
   memoryCount: number;
   milestoneCount: number;
-  chrome: GardenChrome;
+  seedChrome: GardenChrome;
   /**
    * Extension point — ATMOSPHERE OVERRIDE (mục 13.5/13.9). Khi truyền
    * vào (ví dụ sau này từ Admin Platform để duyệt thiết kế), khí quyển
@@ -220,6 +244,11 @@ export function GardenExperience({
    */
   periodOverride?: GardenPeriod | null;
 }) {
+  const editMode = useEditMode();
+  const { items: chromeItems, update: updateChrome } = useCollection<GardenChrome>("garden-chrome", [seedChrome], {
+    enabled: editMode,
+  });
+  const chrome = chromeItems[0] ?? seedChrome;
   const [summary, setSummary] = useState<GardenSummary | null>(null);
   const [localMoments, setLocalMoments] = useState<GemMoment[]>([]);
   const [lastActivity, setLastActivity] = useState<string | null>(null);
@@ -328,6 +357,21 @@ export function GardenExperience({
           label="Hành trình của tôi"
           colorClassName="g-fg-faint hover:opacity-80"
         />
+
+        {editMode && (
+          <div className="mt-6 space-y-4 rounded-2xl border border-blue-200 bg-blue-50/80 p-4 text-left">
+            <p className="text-xs font-bold uppercase tracking-wide text-blue-600">Live-edit — Nội dung Khu vườn của bạn</p>
+            <EditableRegion record={chrome} fields={HEADER_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Tiêu đề &amp; câu phụ đề</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={EMPTY_STATE_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">2 dòng trạng thái trống (vườn/Viên ngọc)</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={FOOTER_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Lời khép cuối trang + trạng thái: {chrome.status}</p>
+            </EditableRegion>
+          </div>
+        )}
 
         {/* Cổng vào — chữ ít, hiểu bằng thị giác trước */}
         <header className="mt-6 text-center">

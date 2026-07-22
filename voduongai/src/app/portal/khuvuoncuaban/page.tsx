@@ -119,7 +119,7 @@ export default async function KnowledgeGardenPage() {
       reflectionCount={reflections.length}
       memoryCount={capsules.length}
       milestoneCount={milestones.length}
-      chrome={chrome}
+      seedChrome={chrome}
     />
   );
 }

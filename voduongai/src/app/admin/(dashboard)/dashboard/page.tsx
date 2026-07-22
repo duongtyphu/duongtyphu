@@ -50,11 +50,13 @@ const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
 // href Admin → tên bảng Supabase generic thật (khớp collectionKey trong
 // supabaseCollections.ts). Item không có ở đây (Companion CMS - nhiều tab
 // nội bộ riêng, CKOS Dashboard - trang tổng hợp, live-edit - công cụ thí
-// điểm, không phải collection) hiển thị không kèm số đếm. Mirror/Nhật ký
-// học tập/My Story (Live-edit, Nhóm 3) cũng không có ở đây dù có collection
-// thật đứng sau (Mirror/Journal: 2 bảng mỗi route; My Story: 1 bảng) — 1
-// route giờ quản lý qua render lại trang Portal thật, không map 1-1 được
-// vào cấu trúc Record<href, 1 table> đơn giản này.
+// điểm, không phải collection) hiển thị không kèm số đếm. Cả 5 module
+// "Hành trình của tôi" (Mirror/Nhật ký học tập/My Story/Bản đồ hành
+// trình/Khu vườn của bạn — Live-edit, Nhóm 3) cũng không có ở đây dù có
+// collection thật đứng sau (Mirror/Journal: 2 bảng mỗi route; 3 module
+// còn lại: 1 bảng) — 1 route giờ quản lý qua render lại trang Portal
+// thật, không map 1-1 được vào cấu trúc Record<href, 1 table> đơn giản
+// này.
 const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/home-cards": "home_cards",
   "/admin/ckos/prompts": "prompts",
@@ -79,7 +81,6 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/su-menh-companion/evolution": "evolution",
   "/admin/su-menh-companion/timeline": "timeline",
   "/admin/su-menh-companion/flipbook": "companion_flipbook_pages",
-  "/admin/hanh-trinh-cua-toi/garden-chrome": "garden_chrome",
   "/admin/community": "community",
   "/admin/updates": "updates",
   "/admin/student-success-stories": "student_success_stories",
