@@ -12,9 +12,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronRight, Copy, Check } from "lucide-react";
 import { startCompanionWorkspace, type WorkspaceItemType } from "@/lib/portal/companion-workspace";
-import { WORK_NEEDS, RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
+import { RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
 import { RECOMMENDED_WORKSPACE_TO_MISSION } from "@/lib/portal/foundation/mission-catalog";
 import { useCollection } from "@/lib/admin/store";
+
+// Việc 10 — WORK_NEEDS đọc live qua useCollection() thay vì mảng tĩnh
+// @/data/portal/ai-workspace (giữ lại @deprecated trong file đó để tham
+// khảo/rollback), cùng pattern PromptLibrarySection đã dùng cho `prompts`.
+type LiveWorkNeed = { id: string; title: string; description: string; icon: string; status: string };
 
 // Việc 7 (Nhóm B) — PromptLibrarySection đọc live qua useCollection() thay
 // vì mảng tĩnh @/data/prompts, cùng bảng `prompts` mà /admin/ckos/prompts
@@ -107,11 +112,13 @@ export function WorkNeedSection({
   ctaLabel?: string;
 }) {
   const practice = usePracticeAction();
+  const { items: workNeedItems } = useCollection<LiveWorkNeed>("work-needs", []);
+  const workNeeds = workNeedItems.filter((n) => n.status === "Published");
   return (
     <section className="space-y-4">
       <SectionHeader label={label} title={title} />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {WORK_NEEDS.map((need) => (
+        {workNeeds.map((need) => (
           <button
             key={need.id}
             type="button"

@@ -53,6 +53,9 @@ import {
   Feather,
   Compass,
   Sprout,
+  Briefcase,
+  HelpCircle,
+  Workflow,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -121,6 +124,10 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/hanh-trinh-cua-toi/story-chrome": Feather,
   "/admin/hanh-trinh-cua-toi/map-chrome": Compass,
   "/admin/hanh-trinh-cua-toi/garden-chrome": Sprout,
+  "/admin/hocvienai/work-needs": Briefcase,
+  "/admin/hocvienai/faq": HelpCircle,
+  "/admin/aiworkspace/recommended-workspace": Sparkles,
+  "/admin/aiworkspace/ai-workflow-sections": Workflow,
 };
 
 function isItemActive(pathname: string, href: string) {

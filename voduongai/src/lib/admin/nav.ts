@@ -93,4 +93,17 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Khu vườn của bạn — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/garden-chrome" },
     ],
   },
+  {
+    // Việc 10 (hocvienai) + Việc 11 (aiworkspace) — cùng nguồn dữ liệu gốc
+    // src/data/portal/ai-workspace.ts, tách theo đúng trang portal hiển
+    // thị (WORK_NEEDS/FAQ thuộc /portal/hocvienai; RECOMMENDED_WORKSPACES/
+    // AI_WORKFLOWS thuộc /portal/aiworkspace — xem CLAUDE.md).
+    group: "Học viện AI & AI Workspace",
+    items: [
+      { label: "Học viện AI — Theo nhu cầu công việc", href: "/admin/hocvienai/work-needs" },
+      { label: "Học viện AI — Câu hỏi thường gặp", href: "/admin/hocvienai/faq" },
+      { label: "AI Workspace — Workspace đề xuất", href: "/admin/aiworkspace/recommended-workspace" },
+      { label: "AI Workspace — Quy trình AI (Workflow)", href: "/admin/aiworkspace/ai-workflow-sections" },
+    ],
+  },
 ];

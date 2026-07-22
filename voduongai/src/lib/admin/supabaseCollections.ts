@@ -146,6 +146,15 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // liệu thật) hay cặp CTA (nhãn+href cùng đổi theo gardenEmpty, giữ
   // nguyên cả khối trong code — nhất quán với nextDirection.text ở Cửa 4).
   "garden-chrome": "garden_chrome",
+  // Việc 10 — /portal/hocvienai (khác src/data/portal/ai-workspace.ts vẫn
+  // giữ LEARNING_PATHS/AI_RESOURCES, chưa migrate ở việc này).
+  "work-needs": "work_needs",
+  "hocvienai-faq": "hocvienai_faq",
+  // Việc 11 — /portal/aiworkspace. `ai-workflow-sections` KHÁC bảng `sop`
+  // (Workflow/SOP đầy đủ đã Full ở /admin/ckos/sop) — đã xác nhận qua
+  // audit, 2 khái niệm khác nhau, không trùng id.
+  "recommended-workspace": "recommended_workspace",
+  "ai-workflow-sections": "ai_workflow_sections",
 };
 
 export function tableForCollection(key: string): string | null {

@@ -7,6 +7,7 @@ import { JourneyCard } from "@/features/academy/components/JourneyCard";
 import { LandingPageMissionPilot } from "@/features/academy/components/LandingPageMissionPilot";
 import { getAllLearningJourneys } from "@/features/academy/services/journey.service";
 import { getLiveKnowledgeCollections, getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
+import { getLiveHocvienaiFaq } from "@/lib/portal/live-hocvienai-faq";
 import { WorkNeedSection } from "@/components/portal/ai-space/AiSpaceSections";
 import { AI_TOOLS } from "@/data/khong-gian-ai";
 import { GemCard } from "@/components/portal/ui/GemCard";
@@ -34,6 +35,9 @@ export const metadata = {
   description: "Học AI có hệ thống. Hiểu đúng, luyện đúng và thực hành cùng Companion.",
 };
 
+/** @deprecated Việc 10 — thay bằng bảng `hocvienai_faq` (getLiveHocvienaiFaq()),
+ * giữ lại tham khảo/rollback. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- giữ lại tham khảo/rollback, không còn consumer nào trong file này
 const FAQ = [
   {
     q: "Học viện có phải là khoá học không?",
@@ -55,7 +59,11 @@ export default async function AcademyHubPage() {
   // nên Founder sửa Lesson/Collection qua Admin CKOS không phản ánh gì ở
   // đây. Giờ fetch 1 lần ở đây (Server Component) từ Supabase thật, truyền
   // xuống JourneyCard qua props — xem journey.service.ts.
-  const [collections, seeds] = await Promise.all([getLiveKnowledgeCollections(), getLiveKnowledgeSeeds()]);
+  const [collections, seeds, faq] = await Promise.all([
+    getLiveKnowledgeCollections(),
+    getLiveKnowledgeSeeds(),
+    getLiveHocvienaiFaq(),
+  ]);
   const journeys = getAllLearningJourneys(collections);
 
   return (
@@ -214,8 +222,8 @@ export default async function AcademyHubPage() {
       <div className="space-y-4">
         <SectionHeader title="Câu hỏi thường gặp" />
         <div className="space-y-3">
-          {FAQ.map((item) => (
-            <GemCard key={item.q}>
+          {faq.map((item) => (
+            <GemCard key={item.id}>
               <p className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.q}</p>
               <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
             </GemCard>

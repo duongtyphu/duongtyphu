@@ -13,6 +13,8 @@ export type WorkNeed = {
   icon: string;
 };
 
+/** @deprecated Việc 10 — thay bằng bảng `work_needs` (WorkNeedSection đọc
+ * qua useCollection()), giữ lại tham khảo/rollback. */
 export const WORK_NEEDS: WorkNeed[] = [
   { id: "viet-noi-dung", title: "Viết nội dung", description: "Bài viết, caption, kịch bản, email — nhanh và đúng giọng văn.", icon: "✍️" },
   { id: "thiet-ke-hinh-anh", title: "Thiết kế hình ảnh", description: "Banner, hình minh hoạ, ảnh sản phẩm bằng AI.", icon: "🎨" },

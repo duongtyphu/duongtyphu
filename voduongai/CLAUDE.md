@@ -712,6 +712,77 @@ phải dạng URL-safe `ve-he-sinh-thai-digiu`) — vấn đề dữ liệu có 
 trước (không phải do Việc 7 gây ra, `/blogai` cũng gặp y hệt), ngoài phạm
 vi việc này.
 
+## Việc 10 (`/portal/hocvienai`) + Việc 11 (`/portal/aiworkspace`) — cùng nguồn `ai-workspace.ts`
+
+2 việc gộp, audit 1 lần vì cùng chung nguồn dữ liệu gốc
+`src/data/portal/ai-workspace.ts` (file này còn giữ `LEARNING_PATHS`/
+`AI_RESOURCES`, CHƯA migrate ở 2 việc này) — tách theo đúng trang portal
+hiển thị, không theo file nguồn.
+
+### Việc 10 — `/portal/hocvienai`: `WORK_NEEDS` (12) + FAQ (3)
+
+- **`work_needs`** (migration `supabase-phase15-hocvienai-work-needs-faq.sql`,
+  đã áp dụng, 12 dòng) — thay `WORK_NEEDS`
+  (`src/data/portal/ai-workspace.ts`, đánh dấu `@deprecated`, giữ tham
+  khảo/rollback). `WorkNeedSection` (`AiSpaceSections.tsx`, dùng ở
+  `/portal/hocvienai` — xác nhận KHÔNG render ở `/portal/aiworkspace`,
+  code đã có comment "chuyển sang Học viện AI") đọc qua
+  `useCollection("work-needs", [])`, lọc `status === "Published"` — cùng
+  pattern `PromptLibrarySection` đã dùng cho `prompts`. `need.id` chỉ dùng
+  làm React key + `itemId` cho Companion workspace, KHÔNG dùng làm khoá
+  tra cứu chỗ nào khác (đã grep xác nhận).
+- **`hocvienai_faq`** (3 dòng, id synthesize `faq-1/2/3` vì mảng gốc
+  không có field `id`) — thay mảng `FAQ` khai báo **inline trong
+  `src/app/portal/hocvienai/page.tsx`** (không phải file dữ liệu riêng,
+  đánh dấu `@deprecated` + `eslint-disable-next-line no-unused-vars` tại
+  chỗ vì không còn consumer nào trong file nhưng vẫn giữ để tham khảo/
+  rollback). `src/lib/portal/live-hocvienai-faq.ts` (mới,
+  `getLiveHocvienaiFaq()`, cùng pattern `live-tools.ts`) fetch ở
+  `AcademyHubPage` (Server Component, `Promise.all` cùng
+  `getLiveKnowledgeCollections/Seeds`). **Đính chính đặt tên:** đây KHÔNG
+  liên quan tới "Goals/FAQ" của CKOS mà audit Companion Admin từng xác
+  nhận không tồn tại thật trong hệ thống — 2 khái niệm khác hẳn.
+  Admin: `/admin/hocvienai/work-needs`, `/admin/hocvienai/faq` (nhóm
+  sidebar mới "Học viện AI & AI Workspace").
+
+### Việc 11 — `/portal/aiworkspace`: `RECOMMENDED_WORKSPACES` (8) + `AI_WORKFLOWS` (4)
+
+- **`recommended_workspace`** (8 dòng) — thay `RECOMMENDED_WORKSPACES`.
+  **Lưu ý quan trọng khi Founder sửa `id` qua Admin:**
+  `src/lib/portal/foundation/mission-catalog.ts`'s
+  `RECOMMENDED_WORKSPACE_TO_MISSION` là map TĨNH RIÊNG (không migrate ở
+  việc này) khoá theo đúng `id` gốc (5/8 id có map:
+  `viet-bai-facebook/tao-landing-page/viet-email-ban-hang/
+  phan-tich-khach-hang/ke-hoach-30-ngay`) — đổi `id` qua Admin sẽ làm
+  `missionId` rơi về `undefined` (không crash, chỉ mất liên kết Mission
+  của phiên Companion workspace đó). Giữ nguyên các `id` gốc khi migrate.
+  `RecommendedWorkspaceSection` (`/portal/aiworkspace` — xác nhận KHÔNG
+  render ở `/portal/hocvienai`) đọc qua
+  `useCollection("recommended-workspace", [])`.
+- **`ai_workflow_sections`** (4 dòng) — thay `AI_WORKFLOWS`.
+  **Đính chính quan trọng (Founder đã hỏi trước khi build):** xác nhận
+  qua audit **KHÁC HẲN** bảng `sop` (Workflow/SOP đầy đủ, đã Full ở
+  `/admin/ckos/sop` — xem mục "CKOS Coverage"). `sop` là tài liệu quy
+  trình đầy đủ (`title/description/whenToUse/whenNotToUse/steps/
+  relatedPromptId`, trang riêng `/portal/sop`); `AiWorkflow` chỉ là thẻ
+  CTA nhẹ 4 mục (`id/title/steps[]/suggestedTools[]`, không mô tả/không
+  tham chiếu Prompt) để mở phiên Companion workspace, render ở
+  `/portal/aiworkspace`. Không trùng `id`, không chung schema — an toàn
+  tạo bảng mới `ai_workflow_sections` (KHÔNG đặt tên `sop`/`ai_workflows`
+  trùng ý nghĩa cũ). `AiWorkflowSection` đọc qua
+  `useCollection("ai-workflow-sections", [])`.
+  Admin: `/admin/aiworkspace/recommended-workspace`,
+  `/admin/aiworkspace/ai-workflow-sections` (cùng nhóm sidebar "Học viện
+  AI & AI Workspace" với Việc 10).
+
+`RECOMMENDED_WORKSPACES`/`AI_WORKFLOWS`
+(`src/data/portal/ai-workspace.ts`) đánh dấu `@deprecated`, giữ tham
+khảo/rollback — không còn consumer nào import.
+
+**Không đụng (ngoài phạm vi 2 việc này):** Journey Engine (`journey.service.ts`,
+đã nối Supabase thật ở Việc 3), AI Toolbox (`AI_TOOLS` → bảng `tools`, đã
+Full), `LEARNING_PATHS`/`AI_RESOURCES` (vẫn tĩnh, chưa migrate).
+
 ## THÍ ĐIỂM (pilot) — Inline editing tại `/portal/su-menh-companion`
 
 **Trạng thái: đang thử nghiệm, CHƯA phải phong cách UI chính thức thứ 3**
