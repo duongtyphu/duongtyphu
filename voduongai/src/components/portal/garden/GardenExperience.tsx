@@ -169,6 +169,20 @@ function buildElements(
     .slice(0, 3);
 }
 
+/** Việc 9 — 5 field static chrome đã tách khỏi hardcode (title/subtitle/
+ * footer/2 empty-state), đọc live từ bảng `garden_chrome` (1 dòng,
+ * id='garden'), fetch ở page.tsx rồi truyền props xuống — cùng cách
+ * Mirror/Nhật ký học tập/My Story/Bản đồ hành trình. KHÔNG bao gồm cặp
+ * CTA (nhãn+href cùng đổi theo gardenEmpty — xem audit trong CLAUDE.md,
+ * giữ nguyên cả khối trong code, nhất quán với nextDirection.text ở Cửa 4). */
+export type GardenChrome = {
+  title: string;
+  subtitle: string;
+  footer: string;
+  emptyStateNoTree: string;
+  emptyStateNoMoments: string;
+};
+
 const DUST_SPOTS = [
   { left: "8%", bottom: "12%", size: 4, delay: "0s" },
   { left: "22%", bottom: "6%", size: 3, delay: "4s" },
@@ -189,12 +203,14 @@ export function GardenExperience({
   reflectionCount,
   memoryCount,
   milestoneCount,
+  chrome,
   periodOverride = null,
 }: {
   serverMoments: GemMoment[];
   reflectionCount: number;
   memoryCount: number;
   milestoneCount: number;
+  chrome: GardenChrome;
   /**
    * Extension point — ATMOSPHERE OVERRIDE (mục 13.5/13.9). Khi truyền
    * vào (ví dụ sau này từ Admin Platform để duyệt thiết kế), khí quyển
@@ -315,9 +331,9 @@ export function GardenExperience({
 
         {/* Cổng vào — chữ ít, hiểu bằng thị giác trước */}
         <header className="mt-6 text-center">
-          <h1 className="g-fg text-3xl font-extrabold tracking-tight md:text-4xl">Khu vườn của bạn</h1>
+          <h1 className="g-fg text-3xl font-extrabold tracking-tight md:text-4xl">{chrome.title}</h1>
           <p className="g-fg-soft mx-auto mt-2 max-w-md text-sm italic leading-relaxed">
-            Nơi những gì bạn đã học và nuôi dưỡng trở thành một khu vườn sống.
+            {chrome.subtitle}
           </p>
         </header>
 
@@ -346,7 +362,7 @@ export function GardenExperience({
                 </span>
               </div>
               <p className="g-fg-soft relative mt-6 max-w-sm text-center text-sm leading-relaxed">
-                Khu vườn mọc từ việc học thật. Hạt mầm đầu tiên đang chờ bạn.
+                {chrome.emptyStateNoTree}
               </p>
             </div>
           ) : (
@@ -430,7 +446,7 @@ export function GardenExperience({
                   ) : (
                     /* Empty state thơ và trung thực — không bịa thành tựu */
                     <p className="text-sm italic leading-relaxed text-white/75">
-                      Viên ngọc vẫn đang chờ những trải nghiệm đầu tiên của bạn.
+                      {chrome.emptyStateNoMoments}
                     </p>
                   )}
                 </div>
@@ -498,7 +514,7 @@ export function GardenExperience({
 
         {/* Lời khép — không card, chỉ một dòng tan vào khí quyển */}
         <p className="g-fg-faint mx-auto mt-12 max-w-md pb-4 text-center text-xs italic leading-relaxed">
-          Khu vườn của bạn phản chiếu đúng những gì bạn đã thật sự làm — không hơn, không kém.
+          {chrome.footer}
         </p>
       </div>
       </div>

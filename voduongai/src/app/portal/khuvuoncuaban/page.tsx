@@ -2,6 +2,7 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { GardenExperience, type GemMoment } from "@/components/portal/garden/GardenExperience";
 import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones } from "@/lib/portal/growth-map/growth-milestones";
+import { getLiveGardenChrome } from "@/lib/portal/live-garden";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 
@@ -71,7 +72,7 @@ function formatDate(iso: string): string {
 }
 
 export default async function KnowledgeGardenPage() {
-  const { reflections, capsules } = await getGemData();
+  const [{ reflections, capsules }, chrome] = await Promise.all([getGemData(), getLiveGardenChrome()]);
   const signals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
   const milestones = detectGrowthMilestones(signals);
 
@@ -118,6 +119,7 @@ export default async function KnowledgeGardenPage() {
       reflectionCount={reflections.length}
       memoryCount={capsules.length}
       milestoneCount={milestones.length}
+      chrome={chrome}
     />
   );
 }

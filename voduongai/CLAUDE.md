@@ -927,7 +927,72 @@ dòng) cho `CHAPTER_DESTINATIONS`, và field `module` hiển thị CHỈ ĐỌC
 (giống `flipbook.src` ở Sứ mệnh Companion) cho `PORTAL_CONNECTIONS` —
 không phải pattern VisualEditor generic mặc định.
 
-**Còn lại — Khu vườn của bạn — CHƯA làm**, cửa cuối cùng, rủi ro cao
-nhất trong 5 cửa — STOP và hỏi lại nếu audit phát hiện ranh giới
-tĩnh/động không rõ ràng (đặc biệt companionLine/treeStage/buildElements
-— template nội suy biến runtime, theo brief gốc).
+### Cửa 5 — Khu vườn của bạn (đã xong — HOÀN TẤT CẢ 5 CỬA VIỆC 9)
+
+Audit kỹ trước khi sửa (đúng như Cửa 4) phát hiện ranh giới KHÔNG rõ như
+brief gốc dự kiến — đã STOP, báo phát hiện cụ thể, chờ Founder xác nhận
+trước khi build (không tự quyết định):
+
+- **2 "empty-state" thực ra là 2 dòng độc lập, mỗi dòng gated bởi 1 điều
+  kiện dữ liệu thật KHÁC NHAU** (không phải 1 cặp như brief giả định):
+  dòng "Khu vườn mọc từ việc học thật..." chỉ hiện khi
+  `treeStage(summary) === null` (`gardenEmpty`); dòng "Viên ngọc vẫn đang
+  chờ..." chỉ hiện khi `moments.length === 0` (mảng gộp reflections/
+  capsules/milestones/output thật) — điều kiện khác hẳn. Founder xác nhận
+  **tách cả 2** thành field riêng (`emptyStateNoTree`/
+  `emptyStateNoMoments`), giữ nguyên 2 điều kiện gate trong code — đúng
+  pattern an toàn đã dùng ở 4 cửa trước (1 chuỗi cố định + gate ở code).
+- **"2 CTA" thực ra là 1 `<Link>` DUY NHẤT, nhãn VÀ href cùng đổi theo
+  `gardenEmpty`** (dẫn xuất từ `treeStage`): `{gardenEmpty ? "Gieo hạt
+  mầm đầu tiên" : "Tưới cho khu vườn hôm nay"}`, href cũng đổi cặp
+  `/portal/hocvienai` ↔ `/portal/workspace`. Founder xác nhận **GIỮ
+  NGUYÊN 100% TRONG CODE, không tách bất kỳ phần nào** — nhất quán với
+  quyết định đã áp dụng cho `nextDirection.text` ở Cửa 4: tránh rủi ro
+  Admin sửa 1 nửa cặp nhãn+href mà không hiểu nó gắn liền với nửa kia
+  (sửa lệch → nhãn nói "Gieo hạt mầm" nhưng href lại trỏ `/portal/workspace`).
+
+Cũng KHÔNG đụng (không có gì mơ hồ, đúng như brief gốc):
+`companionLineFor()` (8 biến thể, nội suy `${act}` = hoạt động gần nhất
+thật + gate theo `period` — giờ thiết bị), `treeStage()`/`stage.name`/
+`stage.line` (ngưỡng số liệu thật: `missionsCompleted`/`journeysTouched`/
+`competenciesPracticed`/`totalOutputs`), `buildElements()` (mảng phần tử
+vườn, mỗi `meaning` nội suy đếm số thật, `name`/`emoji` gắn liền logic
+chọn — cùng lý do `TODAY_PRIORITY`/`CHAPTER_DESTINATIONS`).
+
+Bảng mới (migration `supabase-phase14-garden-chrome.sql`, đã áp dụng):
+`garden_chrome` — 1 dòng (id='garden'), 5 field: `title`, `subtitle`,
+`footer`, `emptyStateNoTree`, `emptyStateNoMoments`.
+
+`src/lib/portal/live-garden.ts` (mới, cùng pattern 4 cửa trước) —
+`getLiveGardenChrome()`. `GardenExperience.tsx` nhận thêm prop `chrome`
+(type `GardenChrome`, export ra để `live-garden.ts` dùng chung).
+
+**Atmosphere khác 4 cửa trước:** Garden KHÔNG có 1 class
+`*-atmosphere-bg` đơn giản — nền thật là hệ nhiều lớp `garden-sky` x4 +
+attribute `data-garden-period` (xem `GardenExperience.tsx` dòng 283-303).
+Trang Admin (`/admin/hanh-trinh-cua-toi/garden-chrome`) dùng prop
+`atmosphere` (ReactNode) của `AdminAtmosphere` — component nhỏ
+`GardenAdminAtmosphere` cố định `data-garden-period="sunset"` bọc 4 lớp
+`garden-sky` thật (không bịa 1 class mới, không cần chu kỳ ngày/đêm thật
+ở Admin).
+
+---
+
+**VIỆC 9 HOÀN TẤT CẢ 5 CỬA** (Mirror → Nhật ký học tập → My Story → Bản
+đồ hành trình → Khu vườn của bạn). Tổng kết:
+
+| Cửa | Bảng | Số field | Route Admin | Không tách (lý do) |
+|---|---|---|---|---|
+| Mirror | `mirror_chrome` + `mirror_questions` | 5 + 7 câu | `/admin/hanh-trinh-cua-toi/mirror-chrome`, `mirror-questions` | `invitation` — dữ liệu động thật |
+| Nhật ký học tập | `journal_chrome` + `journal_intentions` | 13 + 5 câu | `journal-chrome`, `journal-intentions` | `MODULE_LABEL`/`TODAY_PRIORITY` (enum map/thứ tự ưu tiên) |
+| My Story | `story_chrome` | 30 | `story-chrome` | `JOURNEY_CHAPTER_NAMES` (5, dùng chung 3 cửa)/`KIND_LABEL` (enum map) |
+| Bản đồ hành trình | `map_chrome` | 12 | `map-chrome` | `CHAPTER_DESTINATIONS` (không key, index-bound)/`PORTAL_CONNECTIONS` (`module` là key tra cứu thật) |
+| Khu vườn của bạn | `garden_chrome` | 5 | `garden-chrome` | `companionLine`/`treeStage`/`buildElements` (template nội suy runtime); cặp CTA (nhãn+href gắn liền 1 điều kiện) |
+
+Nguyên tắc bất biến xuyên suốt cả 5 cửa: KHÔNG đụng dữ liệu động thật
+(Supabase reflections/memory_capsules, localStorage growth-view.ts) và
+KHÔNG đụng bất kỳ cấu trúc nào gắn index/key/enum/điều kiện thật với văn
+bản — chỉ tách phần chữ hiển thị thuần tuý, cố định, không nội suy biến,
+không index-bound. 2 cửa cuối (Bản đồ hành trình, Khu vườn) đều phát
+hiện ranh giới không rõ như brief gốc dự kiến — cả 2 lần đều STOP báo cụ
+thể trước khi build, không tự quyết định.

@@ -141,6 +141,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // getModuleActivitySummary(), không phải chỉ để hiển thị) — cả 2 giữ
   // nguyên 100% trong code, xem CLAUDE.md mục "Hành trình của tôi".
   "map-chrome": "map_chrome",
+  // Cửa 5 — Khu vườn của bạn (cuối cùng). KHÔNG đụng companionLine/
+  // treeStage/buildElements (template nội suy biến runtime + ngưỡng dữ
+  // liệu thật) hay cặp CTA (nhãn+href cùng đổi theo gardenEmpty, giữ
+  // nguyên cả khối trong code — nhất quán với nextDirection.text ở Cửa 4).
+  "garden-chrome": "garden_chrome",
 };
 
 export function tableForCollection(key: string): string | null {
