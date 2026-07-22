@@ -877,6 +877,57 @@ Admin: `/admin/hanh-trinh-cua-toi/story-chrome` (1 dòng, 30 field),
 `VisualEditor`, cùng nhóm sidebar "Hành trình của tôi", atmosphere
 `story-book-bg` (đúng class thật `MyStoryBook.tsx` dùng).
 
-**Còn lại — Bản đồ hành trình, Khu vườn của bạn — CHƯA làm**, theo đúng
-thứ tự đã thống nhất (2 cửa cuối rủi ro cao nhất — STOP và hỏi lại nếu
-audit phát hiện ranh giới tĩnh/động không rõ ràng).
+### Cửa 4 — Bản đồ hành trình (đã xong, RỦI RO CAO NHẤT đã audit kỹ trước khi sửa)
+
+Audit code thật xác nhận đúng 2 rủi ro Founder đã cảnh báo trước — **KHÔNG
+tách, giữ nguyên 100% trong code:**
+- `CHAPTER_DESTINATIONS` (`JourneyMapAtlas.tsx`) — mảng `{href, label}`,
+  **KHÔNG có key/id nào cả**, gắn với chương chỉ bằng **vị trí index**
+  (`CHAPTER_DESTINATIONS[i]` khớp `JOURNEY_CHAPTER_NAMES[i]`, `i` = 0-4).
+  Nếu đưa vào bảng CMS generic (VisualEditor cho kéo-thả/xoá như mọi
+  collection khác) — kéo-thả sẽ lặng lẽ gán sai chương↔đích (không lỗi,
+  chỉ sai); xoá 1 dòng sẽ **crash trang** vì
+  `CHAPTER_DESTINATIONS[i].href` không có bounds check, ra
+  `undefined.href`.
+- `PORTAL_CONNECTIONS` — field `module` (không phải `label`) là **key
+  tra cứu thật** vào `getModuleActivitySummary(c.module)`
+  (`growth-view.ts`, so khớp `===` với `WorkspaceSession.context.module`
+  thật). Nếu để `module` là ô nhập tự do chung dòng với `label` trong
+  CMS — Founder gõ nhầm sẽ KHÔNG crash, chỉ âm thầm báo "Chưa chạm tới"
+  vĩnh viễn dù người dùng có hoạt động thật — nguy hiểm hơn crash vì
+  không ai biết đã sai.
+
+Cả 2 cấu trúc chỉ dùng nội bộ trong đúng 1 file (`JourneyMapAtlas.tsx`),
+grep toàn bộ `src/` xác nhận không nơi nào khác import.
+
+**Chỉ tách phần chữ hiển thị an toàn** (không phải key, không index-bound)
+— bảng mới `map_chrome` (migration `supabase-phase13-map-chrome.sql`, đã
+áp dụng), 1 dòng (id='map'), 12 field: title, subtitle, dòng+CTA trạng
+thái trống, nhãn "Vị trí hiện tại", dòng "chưa có chương", nhãn "Năm
+chương cuộc đời", chú thích 3 trạng thái, nhãn "Kết nối tới Portal", nhãn
+"Premium" (khối hardcode RIÊNG ở cuối, không thuộc `PORTAL_CONNECTIONS`),
+nhãn "Hướng tiếp theo", lời khép Companion.
+
+Giữ nguyên trong code (ngoài 2 cấu trúc trên): `JOURNEY_CHAPTER_NAMES`
+(dùng chung 3 cửa, đã loại trừ từ Cửa 3), `currentChapter.name/evidence`,
+`connections[].count` + "Đã chạm tới/Chưa chạm tới", "Đang đồng hành/Chưa
+tham gia" (đếm `premiumCount` thật), `nextDirection.text` (3 biến thể
+theo `reflections.length`/`hasAnyJourney`) — toàn bộ dữ liệu/template
+động thật.
+
+`src/lib/portal/live-map.ts` (mới, cùng pattern 3 cửa trước) —
+`getLiveMapChrome()`. Admin: `/admin/hanh-trinh-cua-toi/map-chrome`,
+`VisualEditor`, atmosphere `map-parchment-bg`.
+
+**Ghi chú cho tương lai (không làm ở việc này):** nếu Founder sau này
+muốn `CHAPTER_DESTINATIONS`/`PORTAL_CONNECTIONS` sửa được qua Admin, đây
+là quyết định thiết kế riêng, lớn hơn — cần 1 editor CỐ ĐỊNH 5 dòng
+(không kéo-thả/xoá được, index lưu tường minh chứ không suy ra từ thứ tự
+dòng) cho `CHAPTER_DESTINATIONS`, và field `module` hiển thị CHỈ ĐỌC
+(giống `flipbook.src` ở Sứ mệnh Companion) cho `PORTAL_CONNECTIONS` —
+không phải pattern VisualEditor generic mặc định.
+
+**Còn lại — Khu vườn của bạn — CHƯA làm**, cửa cuối cùng, rủi ro cao
+nhất trong 5 cửa — STOP và hỏi lại nếu audit phát hiện ranh giới
+tĩnh/động không rõ ràng (đặc biệt companionLine/treeStage/buildElements
+— template nội suy biến runtime, theo brief gốc).

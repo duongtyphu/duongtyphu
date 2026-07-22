@@ -1,6 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { JourneyMapAtlas } from "@/components/portal/journey-map/JourneyMapAtlas";
+import { getLiveMapChrome } from "@/lib/portal/live-map";
 import type { Reflection } from "@/lib/portal/reflections";
 
 export const metadata = {
@@ -51,6 +52,6 @@ async function getMapData(): Promise<{ reflections: Reflection[]; premiumCount: 
 }
 
 export default async function JourneyMapPage() {
-  const { reflections, premiumCount } = await getMapData();
-  return <JourneyMapAtlas reflections={reflections} premiumCount={premiumCount} />;
+  const [{ reflections, premiumCount }, chrome] = await Promise.all([getMapData(), getLiveMapChrome()]);
+  return <JourneyMapAtlas reflections={reflections} premiumCount={premiumCount} chrome={chrome} />;
 }

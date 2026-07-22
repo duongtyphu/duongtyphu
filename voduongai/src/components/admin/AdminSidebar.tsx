@@ -51,6 +51,7 @@ import {
   FlaskConical,
   Eye,
   Feather,
+  Compass,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -117,6 +118,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/hanh-trinh-cua-toi/journal-chrome": BookOpen,
   "/admin/hanh-trinh-cua-toi/journal-intentions": BookOpen,
   "/admin/hanh-trinh-cua-toi/story-chrome": Feather,
+  "/admin/hanh-trinh-cua-toi/map-chrome": Compass,
 };
 
 function isItemActive(pathname: string, href: string) {

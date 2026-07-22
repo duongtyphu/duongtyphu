@@ -89,6 +89,7 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "Nhật ký học tập — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/journal-chrome" },
       { label: "Nhật ký học tập — Ý định học tiếp", href: "/admin/hanh-trinh-cua-toi/journal-intentions" },
       { label: "My Story — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/story-chrome" },
+      { label: "Bản đồ hành trình — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/map-chrome" },
     ],
   },
 ];

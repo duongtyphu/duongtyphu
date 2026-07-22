@@ -134,6 +134,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // hay KIND_LABEL (enum map MemoryCapsuleKind→label) — cả 2 giữ nguyên
   // trong code.
   "story-chrome": "story_chrome",
+  // Cửa 4 — Bản đồ hành trình (RỦI RO CAO NHẤT). KHÔNG đụng
+  // CHAPTER_DESTINATIONS (mảng không key, gắn chương bằng vị trí index —
+  // kéo-thả/xoá qua CMS generic sẽ gán sai hoặc crash) hay
+  // PORTAL_CONNECTIONS (field `module` là key tra cứu thật vào
+  // getModuleActivitySummary(), không phải chỉ để hiển thị) — cả 2 giữ
+  // nguyên 100% trong code, xem CLAUDE.md mục "Hành trình của tôi".
+  "map-chrome": "map_chrome",
 };
 
 export function tableForCollection(key: string): string | null {

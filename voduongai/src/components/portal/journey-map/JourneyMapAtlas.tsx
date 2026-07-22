@@ -23,6 +23,26 @@ import type { Reflection } from "@/lib/portal/reflections";
 
 type ChapterState = "not-yet" | "current" | "walked";
 
+/** Việc 9 — static chrome AN TOÀN đã tách khỏi hardcode, đọc live từ bảng
+ * `map_chrome` (1 dòng, id='map'), fetch ở page.tsx rồi truyền props
+ * xuống — cùng cách Mirror/Nhật ký học tập/My Story. KHÔNG bao gồm
+ * CHAPTER_DESTINATIONS/PORTAL_CONNECTIONS (xem audit trong CLAUDE.md —
+ * cả 2 gắn index/key thật, không phải chrome). */
+export type MapChrome = {
+  title: string;
+  subtitle: string;
+  emptyStateLine: string;
+  emptyStateCtaLabel: string;
+  currentPositionLabel: string;
+  noChapterYetLine: string;
+  chaptersSectionLabel: string;
+  statesCaption: string;
+  connectionsSectionLabel: string;
+  premiumConnectionLabel: string;
+  nextDirectionSectionLabel: string;
+  closingLine: string;
+};
+
 const CHAPTER_DESTINATIONS = [
   { href: "/portal/hocvienai", label: "Học viện AI" },
   { href: "/portal/aiworkspace", label: "AI Workspace" },
@@ -38,7 +58,15 @@ const PORTAL_CONNECTIONS = [
   { module: "opportunities" as const, href: "/portal/duan-cohoi", label: "Dự án & Cơ hội" },
 ];
 
-export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Reflection[]; premiumCount: number }) {
+export function JourneyMapAtlas({
+  reflections,
+  premiumCount,
+  chrome,
+}: {
+  reflections: Reflection[];
+  premiumCount: number;
+  chrome: MapChrome;
+}) {
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
   const [connections, setConnections] = useState<{ label: string; href: string; count: number }[]>([]);
   const [hasAnyJourney, setHasAnyJourney] = useState<boolean | null>(null);
@@ -98,30 +126,30 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
         <header className="mt-8 text-center">
           <Compass className="map-compass mx-auto h-12 w-12 text-amber-800/70" strokeWidth={1.25} />
           <h1 className="mt-5 text-2xl font-bold tracking-tight text-amber-950/90 sm:text-3xl">
-            Bản đồ hành trình của bạn
+            {chrome.title}
           </h1>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-amber-950/55">
-            Không đo tốc độ. Chỉ cho biết bạn đang ở đâu, và hướng nào đang mở ra tiếp theo.
+            {chrome.subtitle}
           </p>
         </header>
 
         {isFullyEmpty ? (
           <div className="mt-20 text-center">
             <p className="mx-auto max-w-sm text-base italic leading-relaxed text-amber-950/60">
-              Mỗi cuộc hành trình đều bắt đầu trước khi có dấu chân đầu tiên.
+              {chrome.emptyStateLine}
             </p>
             <Link
               href="/portal/hocvienai"
               className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 underline decoration-amber-800/30 underline-offset-4 hover:decoration-amber-800"
             >
-              Đặt dấu chân đầu tiên <ArrowRight className="h-3.5 w-3.5" />
+              {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         ) : (
           <>
             {/* ── 2. Vị trí hiện tại ─────────────────────────────────────── */}
             <section className="mt-12 text-center">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">Vị trí hiện tại</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">{chrome.currentPositionLabel}</p>
               {currentChapter ? (
                 <>
                   <p className="mt-2 text-xl font-bold text-amber-950/90">{currentChapter.name}</p>
@@ -129,7 +157,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
                 </>
               ) : (
                 <p className="mx-auto mt-2 max-w-sm text-sm italic leading-relaxed text-amber-950/55">
-                  Chương đầu tiên của bạn chưa được viết — nó bắt đầu từ hoạt động thật đầu tiên.
+                  {chrome.noChapterYetLine}
                 </p>
               )}
             </section>
@@ -137,7 +165,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
             {/* ── 3. Năm Chương cuộc đời — tuyến đường trên bản đồ ───────── */}
             <section className="mt-14">
               <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">
-                Năm chương cuộc đời
+                {chrome.chaptersSectionLabel}
               </p>
               <div className="relative mt-8">
                 <svg
@@ -197,13 +225,13 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
                 </ol>
               </div>
               <p className="mx-auto mt-6 max-w-sm text-center text-[11px] leading-relaxed text-amber-950/40">
-                Ba trạng thái duy nhất: chưa bắt đầu, đang sống, đã đi qua — không phần trăm, không XP, không Level.
+                {chrome.statesCaption}
               </p>
             </section>
 
             {/* ── 4. Kết nối tới Portal ──────────────────────────────────── */}
             <section className="mt-14">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">Kết nối tới Portal</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">{chrome.connectionsSectionLabel}</p>
               <div className="mt-4 space-y-2.5">
                 {connections.map((c) => (
                   <Link
@@ -221,7 +249,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
                   href="/portal/premium"
                   className="flex items-center justify-between rounded-lg border border-amber-900/10 bg-white/30 px-4 py-2.5 text-sm transition hover:border-amber-900/25 hover:bg-white/50"
                 >
-                  <span className="font-semibold text-amber-950/80">Premium</span>
+                  <span className="font-semibold text-amber-950/80">{chrome.premiumConnectionLabel}</span>
                   <span className="text-xs text-amber-950/45">
                     {premiumCount > 0 ? `Đang đồng hành — ${premiumCount} chương trình` : "Chưa tham gia"}
                   </span>
@@ -231,7 +259,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
 
             {/* ── 5. Hướng tiếp theo — một gợi ý duy nhất ─────────────────── */}
             <section className="mt-14 text-center">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">Hướng tiếp theo</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">{chrome.nextDirectionSectionLabel}</p>
               <Link
                 href={nextDirection.href}
                 className="mt-3 inline-flex items-center gap-1.5 text-base font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 hover:decoration-amber-900"
@@ -244,7 +272,7 @@ export function JourneyMapAtlas({ reflections, premiumCount }: { reflections: Re
 
         {/* ── 6. Lời khép của Companion ──────────────────────────────────── */}
         <p className="mx-auto mt-16 max-w-sm text-center text-sm italic leading-relaxed text-amber-950/45">
-          Con đường này có vẻ đã sẵn sàng, bất cứ khi nào bạn sẵn sàng.
+          {chrome.closingLine}
         </p>
       </div>
       </div>
