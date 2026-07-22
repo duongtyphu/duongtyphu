@@ -1935,3 +1935,74 @@ seed, không fetch), `publishedQuestions` tính từ `questionItems` (=
 `seedQuestions`, đã lọc Published sẵn từ `getLiveMirrorQuestions()`) cho
 kết quả TEXT giống hệt mảng `questions` cũ — Portal thật
 (`/portal/mirror`) không đổi DOM output.
+
+## Nhóm 3, Phần A — Nhật ký học tập: chuyển từ props sang useCollection({enabled})
+
+Module thứ 2 của Phần A, đúng pattern Mirror. Audit xác nhận
+`LearningJournalNotebook.tsx` nhận `chrome: JournalChrome`/
+`intentions: string[]` qua props từ `/portal/nhatkyhoctap/page.tsx`
+(Server Component, tự fetch `getLiveJournalChrome()`/
+`getLiveJournalIntentions()`) — cùng kiến trúc Mirror.
+
+**Áp dụng ngay bài học shape (`description`/`what`) từ đầu, không chờ
+lỗi xảy ra:** `getLiveJournalChrome()` sửa để trả thêm `id`/`status`
+(trước đó không có); thêm type mới `JournalIntentionRow = {id, content,
+status}`, `getLiveJournalIntentions()` trả mảng object thay vì
+`string[]` đã flatten sẵn — việc flatten về `string[]` (cho
+`todaysJournalIntention()`) chuyển vào TRONG
+`LearningJournalNotebook.tsx` (`intentionItems.filter(status===
+"Published").map(content)`), không phụ thuộc `enabled`.
+
+**Cùng vấn đề reachability như Mirror:** các mục "Journal entries thật"/
+"khoảnh khắc"/"tác phẩm"/"bài học" chỉ hiện khi phiên đăng nhập của Admin
+tình cờ có dữ liệu đó, và `journal_intentions` chỉ hiện ĐÚNG 1 câu xoay
+vòng theo NGÀY — không có cách nào chắc chắn chạm được mọi field qua vị
+trí hiển thị tự nhiên.
+
+**Giải quyết:** thêm 1 panel Live-edit LUÔN hiện khi `editMode=true`
+(ngay dưới `PortalBackLink`, không phụ thuộc dữ liệu runtime nào), gồm 4
+vùng `EditableRegion` (tiêu đề/eyebrow; trạng thái trống; 7 nhãn mục —
+today/entries/highlights/created/lessons; chân trang + continueCta +
+status) + danh sách đầy đủ 5 câu ý định, mỗi câu 1 `EditableRegion`
+riêng. Portal thật (`editMode=false`) — khối này hoàn toàn KHÔNG render.
+**Không có kéo-thả** — cùng lý do Mirror (`journal_chrome` singleton,
+`journal_intentions` xoay theo ngày, không theo vị trí).
+
+**KHÔNG đụng** `MODULE_LABEL` (enum map `PortalModule→label`),
+`TODAY_PRIORITY` (mảng gắn với thứ tự enum `GrowthEventType`),
+`isSameDay`/`formatDate`/`buildEntries`, dòng nội suy
+`{totalRawOutputs} kết quả thật...` — toàn bộ dữ liệu/logic động giữ
+nguyên 100% như trước, đúng nguyên tắc bất biến Việc 9.
+
+**File mới:** `src/components/portal/journal/EditModeContext.tsx` +
+`EditableRegion.tsx` (y hệt pattern Mirror/gem-home, chỉ đổi import;
+màu hover theo theme sáng — giống bản gem-home hơn bản tối của Mirror,
+đúng `.journal-notebook-bg` là nền sáng).
+
+**File sửa:**
+- `src/lib/portal/live-journal.ts` — sửa shape như trên.
+- `src/components/portal/journal/LearningJournalNotebook.tsx` — đổi prop
+  `chrome`/`intentions` → `seedChrome`/`seedIntentions`; gọi
+  `useCollection("journal-chrome", [seedChrome], {enabled: useEditMode()})`
+  + `useCollection("journal-intentions", seedIntentions, {enabled: ...})`;
+  thêm panel Live-edit.
+- `src/app/portal/nhatkyhoctap/page.tsx` — đổi tên prop truyền xuống
+  (`seedChrome`/`seedIntentions`), không đổi logic fetch.
+- `src/app/admin/(dashboard)/hanh-trinh-cua-toi/journal/page.tsx` (mới) —
+  render lại `LearningJournalPage` (`/portal/nhatkyhoctap/page.tsx`
+  thật) bọc `<EditModeProvider>`, cùng pattern Mirror/`/admin/home-cards`.
+- **Đã xoá** `hanh-trinh-cua-toi/journal-chrome/` +
+  `hanh-trinh-cua-toi/journal-intentions/` (2 route VisualEditor cũ) —
+  gộp vào route Live-edit duy nhất `hanh-trinh-cua-toi/journal/`.
+- `nav.ts` — gộp 2 entry cũ thành 1: `"Nhật ký học tập (Live-edit)"` →
+  `/admin/hanh-trinh-cua-toi/journal`.
+- `AdminSidebar.tsx` — gộp 2 icon key cũ thành 1.
+- `dashboard/page.tsx` — xoá 2 dòng `TABLE_FOR_HREF` cũ, cập nhật comment
+  chung nhắc cả Mirror lẫn Nhật ký học tập làm ví dụ route gộp không có
+  số đếm.
+
+**Verify:** `rm -rf .next && npm run build` (route
+`/admin/hanh-trinh-cua-toi/journal` xuất hiện đúng, 2 route cũ đã biến
+mất — `.next/types` stale reference sau khi xoá route, đã gặp 3 lần liên
+tiếp vdai-academy/Mirror/Journal, fix bằng rebuild sạch), `tsc`/`eslint`
+sạch sau đó, `vitest run` 139/139.

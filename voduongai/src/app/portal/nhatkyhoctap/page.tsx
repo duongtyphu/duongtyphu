@@ -53,5 +53,5 @@ export default async function LearningJournalPage() {
     getLiveJournalChrome(),
     getLiveJournalIntentions(),
   ]);
-  return <LearningJournalNotebook reflections={reflections} chrome={chrome} intentions={intentions} />;
+  return <LearningJournalNotebook reflections={reflections} seedChrome={chrome} seedIntentions={intentions} />;
 }

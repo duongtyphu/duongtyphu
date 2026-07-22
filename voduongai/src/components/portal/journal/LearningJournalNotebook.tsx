@@ -11,6 +11,10 @@ import { buildBehaviorLessons } from "@/lib/portal/foundation/learning-lessons";
 import { todaysJournalIntention } from "@/lib/portal/growth-map/journal-intention";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { GrowthEventType } from "@/lib/portal/foundation/data-model";
+import { useCollection } from "@/lib/admin/store";
+import { useEditMode } from "./EditModeContext";
+import { EditableRegion } from "./EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
  * JOURNEY PLATFORM — Phase P5: Learning Journal, "cuốn sổ học tập cá nhân".
@@ -24,9 +28,11 @@ import type { GrowthEventType } from "@/lib/portal/foundation/data-model";
  */
 
 /** Việc 9 — static chrome đã tách khỏi hardcode, đọc live từ bảng
- * `journal_chrome` (1 dòng, id='journal'), fetch ở page.tsx (Server
- * Component) rồi truyền props xuống — cùng cách đã làm cho Mirror. */
+ * `journal_chrome` (1 dòng, id='journal'). Nhóm 3 (Live-edit): thêm
+ * `id`/`status` để khớp đúng shape RAW `useCollection()` fetch thật khi
+ * `enabled:true` (xem live-journal.ts). */
 export type JournalChrome = {
+  id: string;
   eyebrowLabel: string;
   title: string;
   emptyStateLine: string;
@@ -40,7 +46,45 @@ export type JournalChrome = {
   lessonsSectionLabel: string;
   continueCtaLabel: string;
   footer: string;
+  status: string;
 };
+
+export type JournalIntentionRow = {
+  id: string;
+  content: string;
+  status: string;
+};
+
+const CHROME_HEADER_FIELDS: FieldConfig[] = [
+  { key: "eyebrowLabel", label: "Nhãn nhỏ trên tiêu đề", type: "text", required: true },
+  { key: "title", label: "Tiêu đề", type: "text", required: true },
+];
+
+const CHROME_EMPTY_STATE_FIELDS: FieldConfig[] = [
+  { key: "emptyStateLine", label: "Trạng thái trống — dòng chữ", type: "textarea", full: true, required: true },
+  { key: "emptyStateCtaLabel", label: "Nhãn nút ở trạng thái trống", type: "text", required: true },
+];
+
+const CHROME_SECTION_LABEL_FIELDS: FieldConfig[] = [
+  { key: "todaySectionLabel", label: "Nhãn mục 'Hôm nay'", type: "text", required: true },
+  { key: "todayFallbackLine", label: "Dòng chữ khi hôm nay chưa có gì", type: "textarea", full: true, required: true },
+  { key: "entriesSectionLabel", label: "Nhãn mục 'Các trang đã viết'", type: "text", required: true },
+  { key: "highlightsSectionLabel", label: "Nhãn mục 'Khoảnh khắc đáng nhớ'", type: "text", required: true },
+  { key: "createdSectionLabel", label: "Nhãn mục 'Những gì đã tạo ra'", type: "text", required: true },
+  { key: "createdEmptyLine", label: "Dòng chữ khi chưa có tác phẩm nào", type: "textarea", full: true, required: true },
+  { key: "lessonsSectionLabel", label: "Nhãn mục 'Những bài học đáng nhớ'", type: "text", required: true },
+];
+
+const CHROME_FOOTER_FIELDS: FieldConfig[] = [
+  { key: "continueCtaLabel", label: "Nhãn nút 'Tiếp tục trong Workspace'", type: "text", required: true },
+  { key: "footer", label: "Dòng chân trang", type: "textarea", full: true, required: true },
+  { key: "status", label: "Trạng thái xuất bản", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
+
+const INTENTION_FIELDS: FieldConfig[] = [
+  { key: "content", label: "Lời mời", type: "textarea", full: true, required: true },
+  { key: "status", label: "Trạng thái xuất bản", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
 
 const MODULE_LABEL: Record<string, string> = {
   "khong-gian-ai": "AI Workspace",
@@ -101,13 +145,25 @@ function buildEntries(sessions: WorkspaceSessionRecord[], reflections: Reflectio
 
 export function LearningJournalNotebook({
   reflections,
-  chrome,
-  intentions,
+  seedChrome,
+  seedIntentions,
 }: {
   reflections: Reflection[];
-  chrome: JournalChrome;
-  intentions: string[];
+  seedChrome: JournalChrome;
+  seedIntentions: JournalIntentionRow[];
 }) {
+  const editMode = useEditMode();
+  const { items: chromeItems, update: updateChrome } = useCollection<JournalChrome>("journal-chrome", [seedChrome], {
+    enabled: editMode,
+  });
+  const { items: intentionItems, update: updateIntention } = useCollection<JournalIntentionRow>(
+    "journal-intentions",
+    seedIntentions,
+    { enabled: editMode },
+  );
+  const chrome = chromeItems[0] ?? seedChrome;
+  const publishedIntentions = intentionItems.filter((i) => i.status === "Published").map((i) => i.content);
+
   const [sessions, setSessions] = useState<WorkspaceSessionRecord[] | null>(null);
   const [portfolio, setPortfolio] = useState<PortfolioItemRecord[]>([]);
   const [todayHighlight, setTodayHighlight] = useState<string | null>(null);
@@ -166,6 +222,48 @@ export function LearningJournalNotebook({
        * quyển nền phía sau mới full-bleed. */}
       <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
         <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="light" />
+
+        {/* Nhóm 3, Live-edit — panel LUÔN hiện khi editMode, không phụ
+         * thuộc trạng thái động thật (nhiều section chỉ render khi
+         * entries/highlights/portfolio/behaviorLessons có dữ liệu thật
+         * của member đang đăng nhập — không đảm bảo mọi field chạm tới
+         * được nếu chỉ bọc tại vị trí hiển thị tự nhiên, cùng lý do đã
+         * gặp ở Mirror). Portal thật (editMode=false) — khối này hoàn
+         * toàn không render. */}
+        {editMode && (
+          <section className="mt-6 space-y-3 rounded-2xl border border-dashed border-stone-300 bg-white/70 p-5 text-left">
+            <p className="text-xs font-bold uppercase tracking-wide text-stone-500">Live-edit — Nội dung Nhật ký học tập</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <EditableRegion record={chrome} fields={CHROME_HEADER_FIELDS} update={updateChrome}>
+                <p className="text-sm text-stone-600">{chrome.eyebrowLabel} — {chrome.title}</p>
+              </EditableRegion>
+              <EditableRegion record={chrome} fields={CHROME_EMPTY_STATE_FIELDS} update={updateChrome}>
+                <p className="text-sm text-stone-600">Trạng thái trống: {chrome.emptyStateLine}</p>
+              </EditableRegion>
+              <EditableRegion record={chrome} fields={CHROME_SECTION_LABEL_FIELDS} update={updateChrome} className="sm:col-span-2">
+                <p className="text-sm text-stone-600">
+                  Nhãn các mục: {chrome.todaySectionLabel} / {chrome.entriesSectionLabel} / {chrome.highlightsSectionLabel} /{" "}
+                  {chrome.createdSectionLabel} / {chrome.lessonsSectionLabel}
+                </p>
+              </EditableRegion>
+              <EditableRegion record={chrome} fields={CHROME_FOOTER_FIELDS} update={updateChrome} className="sm:col-span-2">
+                <p className="text-sm text-stone-600">Chân trang &amp; nút tiếp tục: {chrome.continueCtaLabel} — {chrome.footer}</p>
+              </EditableRegion>
+            </div>
+            <div>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-stone-400">
+                Ý định học tiếp theo ({intentionItems.length} lời mời, xoay vòng theo ngày)
+              </p>
+              <div className="mt-2 space-y-1.5">
+                {intentionItems.map((i) => (
+                  <EditableRegion key={i.id} record={i} fields={INTENTION_FIELDS} update={updateIntention}>
+                    <p className="text-sm text-stone-600">{i.content}</p>
+                  </EditableRegion>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <header className="journal-page-fade mt-8">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-orange-700/70">
@@ -297,7 +395,7 @@ export function LearningJournalNotebook({
          * động tiếp theo (P7 polish: Journal là cửa duy nhất thiếu CTA
          * khép trang, các cửa khác đều có) ──────────────────────────── */}
         <section className="journal-page-fade mt-14 text-center">
-          <p className="text-sm italic leading-relaxed text-stone-600">{todaysJournalIntention(intentions)}</p>
+          <p className="text-sm italic leading-relaxed text-stone-600">{todaysJournalIntention(publishedIntentions)}</p>
           <Link
             href="/portal/workspace"
             className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-700 underline decoration-orange-700/30 underline-offset-4 hover:decoration-orange-700"
