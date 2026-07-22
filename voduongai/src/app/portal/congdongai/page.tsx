@@ -14,11 +14,27 @@ import {
   MessageCircle,
   PlayCircle,
   Globe,
+  Music2,
+  Send,
+  type LucideIcon,
 } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
-import { siteConfig } from "@/lib/site";
+import { getLiveUpdates } from "@/lib/portal/live-updates";
+import { getLiveCommunityChannels } from "@/lib/portal/live-community";
 import { CommunityGuides } from "@/components/portal/community/CommunityGuides";
 import { CommunityMapPanel } from "@/components/portal/community/CommunityMapPanel";
+
+/** Việc 8 — icon theo `platform` của bảng `community` (không có brand logo
+ * chính thức trong lucide-react — dùng icon gợi ý chung, cùng tinh thần
+ * Facebook/YouTube/Zalo trước đây cũng dùng icon chung (Globe/PlayCircle/
+ * MessageCircle), không phải logo thật). */
+const PLATFORM_ICON: Record<string, LucideIcon> = {
+  Facebook: Globe,
+  YouTube: PlayCircle,
+  TikTok: Music2,
+  Zalo: MessageCircle,
+  Telegram: Send,
+};
 
 export const metadata = {
   title: "Cộng đồng",
@@ -62,6 +78,25 @@ export const metadata = {
  * & Events, vị trí thành viên trên bản đồ (bảng `members` không có cột
  * city/location) — cả ba dùng đúng empty state trung thực brief đã duyệt,
  * không suy diễn/bịa.
+ *
+ * VIỆC 8 (cập nhật, không sửa lịch sử ở trên) — 2/4 bảng Admin đã seed sẵn
+ * (`community`, `updates`, `news`, `student_success_stories`) được nối vào
+ * đây:
+ * - `updates` (5 dòng) → thay mảng tĩnh `NEWS` ở khối Community News, đọc
+ *   qua `getLiveUpdates()`.
+ * - `community` (5 kênh) → thay 3 href tĩnh `siteConfig.community.*`/
+ *   `siteConfig.links.youtube` ở khối "Kết nối ngay hôm nay", đọc qua
+ *   `getLiveCommunityChannels()` (lọc `status="Active"` — TikTok là kênh
+ *   thật chưa từng hiển thị trước đây, Telegram chưa có URL nên tự ẩn).
+ * - `student_success_stories` (3 dòng) — dữ liệu Y HỆT 3 câu chuyện BỊA đã
+ *   archive ở `/portal/student-success` (dòng 65-68 ở trên). Founder xác
+ *   nhận: build Admin DataTable để tự dọn/nhập chuyện thật sau này, nhưng
+ *   KHÔNG nối vào Community Stories ở việc này — mục đó VẪN giữ nguyên
+ *   empty state trung thực, không đảo ngược quyết định NO-FAKE-DATA.
+ * - `news` (1 dòng, dạng thông báo đơn lẻ) — audit xác nhận không có UI
+ *   nào tiêu thụ bảng này ở bất kỳ đâu (không phải Community News, đó là
+ *   `updates`). Founder xác nhận: bỏ qua hoàn toàn ở việc này, không build
+ *   Admin, không nối Portal — quyết định sau nếu cần.
  */
 
 type ShowcaseItem = {
@@ -163,7 +198,10 @@ const LEARNING_SPACES = [
   },
 ] as const;
 
-/** Nội dung thật, di dời nguyên vẹn từ /portal/updates (Phase F.2). */
+/** @deprecated Việc 8 — thay bằng bảng `updates` (getLiveUpdates()), giữ
+ * lại tham khảo/rollback. Nội dung thật, di dời nguyên vẹn từ
+ * /portal/updates (Phase F.2). */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- giữ lại tham khảo/rollback, không còn consumer nào trong file này
 const NEWS = [
   { date: "2026-06-20", title: "Thêm 3 Prompt mới cho Content & Affiliate", type: "Prompt" },
   { date: "2026-06-15", title: "Cập nhật công cụ: thêm HeyGen vào Thư viện công cụ", type: "Công cụ" },
@@ -173,7 +211,11 @@ const NEWS = [
 ] as const;
 
 export default async function CommunityPage() {
-  const showcaseItems = await getShowcaseItems();
+  const [showcaseItems, updates, channels] = await Promise.all([
+    getShowcaseItems(),
+    getLiveUpdates(),
+    getLiveCommunityChannels(),
+  ]);
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -309,8 +351,8 @@ export default async function CommunityPage() {
         <section id="tin-tuc" className="scroll-mt-24">
           <SectionEyebrow icon={Newspaper} label="Tin tức" title="Community News" />
           <div className="mt-5 space-y-2.5">
-            {NEWS.map((n) => (
-              <div key={n.title} className="campus-card flex items-start gap-4 p-4">
+            {updates.map((n) => (
+              <div key={n.id} className="campus-card flex items-start gap-4 p-4">
                 <span className="shrink-0 rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-600">
                   {n.type}
                 </span>
@@ -368,30 +410,20 @@ export default async function CommunityPage() {
           <div className="mx-auto mt-8 max-w-sm border-t border-gray-100 pt-6">
             <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Kết nối ngay hôm nay</p>
             <div className="mt-3 flex flex-wrap justify-center gap-3">
-              <a
-                href={siteConfig.community.facebookGroup}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-              >
-                <Globe className="h-3.5 w-3.5" /> Nhóm Facebook
-              </a>
-              <a
-                href={siteConfig.community.zaloGroup}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-              >
-                <MessageCircle className="h-3.5 w-3.5" /> Nhóm Zalo
-              </a>
-              <a
-                href={siteConfig.links.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
-              >
-                <PlayCircle className="h-3.5 w-3.5" /> YouTube
-              </a>
+              {channels.map((c) => {
+                const Icon = PLATFORM_ICON[c.platform] ?? Globe;
+                return (
+                  <a
+                    key={c.id}
+                    href={c.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-xs font-semibold text-gray-700 transition hover:border-blue-300 hover:text-blue-600"
+                  >
+                    <Icon className="h-3.5 w-3.5" /> {c.label}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </section>

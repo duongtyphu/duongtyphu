@@ -891,6 +891,58 @@ trang tổng hợp), `/admin/su-menh-companion/live-edit` (công cụ thí đi�
 hiển thị không kèm số đếm — không phải 1 collection đơn, không có bảng
 để đếm.
 
+## Việc 8 — Cộng đồng (`/portal/congdongai`), Phần 1: nối Portal
+
+Audit rút gọn (spot-check 3 điểm so với audit gốc) khớp đúng cả 3
+(`community/news/updates/student_success_stories` vẫn 5/1/5/3 dòng;
+mảng `NEWS` hardcode vẫn tồn tại; chưa có route Admin nào cho 4 bảng
+này) — nhưng đọc thêm NỘI DUNG thật (không chỉ đếm dòng, đúng bài học
+Việc 5) phát hiện 3 điểm brief gốc không lường tới, đã dừng hỏi Founder
+trước khi build (không tự quyết định):
+
+1. **`news`** (1 dòng) — không có UI consumer nào đọc bảng này (grep xác
+   nhận), mồ côi thật sự. Founder quyết định: **bỏ qua hoàn toàn** ở việc
+   này (không nối Portal, không build Admin).
+2. **`student_success_stories`** (3 dòng) — nội dung TRÙNG hệt 3 "câu
+   chuyện học viên" đã bị archive ở `/portal/student-success/page.tsx`
+   (Minh Anh/Quốc Huy/Thanh Trúc) — chính là dữ liệu BỊA đã vi phạm
+   NO-FAKE-DATA, giờ nằm sẵn trong Supabase. Founder quyết định: **không
+   nối vào Portal** (route redirect vẫn giữ empty state trung thực hiện
+   tại), **chỉ build Admin DataTable** (Phần 2) để Founder tự quản/xoá/
+   sửa thành nội dung thật sau này — không xoá bảng, không tự ý xoá dữ
+   liệu.
+3. **`community`** (5 dòng: Facebook/YouTube/TikTok/Zalo/Telegram) —
+   dùng vocabulary trạng thái riêng `"Active"/"Inactive"` (không phải
+   chuẩn `Draft/Published/Hidden` như mọi bảng generic khác — đã có sẵn
+   từ đợt seed trước, giữ nguyên không migrate). TikTok là kênh THẬT có
+   URL thật, chưa từng hiển thị trên Portal trước đây. Telegram
+   `status="Inactive"`, tự ẩn qua filter. Founder quyết định: **nối đủ**,
+   chỉ hiện kênh `status="Active"`.
+
+**Đã làm (Phần 1 — Portal, KHÔNG đụng `news`/`student_success_stories`):**
+- `src/lib/portal/live-updates.ts` (mới) — `getLiveUpdates()`, đọc bảng
+  `updates` (`status="Published"`, order theo cột `order`), map
+  `data.publishedAt/title/type` → `{id, date, title, type}`.
+- `src/lib/portal/live-community.ts` (mới) — `getLiveCommunityChannels()`,
+  đọc bảng `community` (`status="Active"`), map `data.platform/label/url`
+  → `{id, platform, label, url}`, lọc thêm `url.length > 0` (phòng dòng
+  thiếu URL).
+- `src/app/portal/congdongai/page.tsx` — khối "Community News" (id
+  `tin-tuc`): `NEWS.map()` → `updates.map()` (mảng `NEWS` đánh dấu
+  `@deprecated` + eslint-disable, giữ tham khảo/rollback, không còn
+  consumer). Khối "Kết nối ngay hôm nay": 3 href tĩnh
+  (`siteConfig.community.facebookGroup/zaloGroup`,
+  `siteConfig.links.youtube`) → `channels.map()` dùng `PLATFORM_ICON`
+  (map `platform` string → icon Lucide: Facebook→Globe, YouTube→PlayCircle,
+  TikTok→Music2, Zalo→MessageCircle, Telegram→Send — không có brand logo
+  chính thức trong lucide-react, cùng tinh thần dùng icon gợi ý chung đã
+  áp dụng từ trước cho Facebook/YouTube/Zalo).
+
+**Chưa làm (Phần 2 — Admin, việc kế tiếp):** 3 trang DataTable
+(`community`, `updates`, `student_success_stories` — KHÔNG có `news`) +
+group sidebar mới `"Cộng đồng"` (Portal mục #10, sau `"Sứ mệnh
+Companion"`).
+
 ## THÍ ĐIỂM (pilot) — Inline editing tại `/portal/su-menh-companion`
 
 **Trạng thái: đang thử nghiệm, CHƯA phải phong cách UI chính thức thứ 3**
