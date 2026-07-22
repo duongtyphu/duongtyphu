@@ -8,16 +8,23 @@ import { getSupabasePublic } from "@/lib/supabase";
  * quản lý (cùng loại bug đã gặp ở Journey Engine Việc 3, hub Dự án & Cơ
  * hội Việc 5 — Admin sửa xong, Portal không thấy gì).
  *
- * `description` (tên cột thật trong `data` jsonb) đổi tên thành `what`
- * (đúng tên prop `PillarEntranceCard` đang dùng) — chỉ khác tên, cùng nội
- * dung, không phải lệch dữ liệu.
+ * QUAN TRỌNG (Nhóm 3, Live-edit — sửa lại so với bản nối dây đầu tiên):
+ * giữ NGUYÊN tên field `description` (đúng tên cột thật trong `data`
+ * jsonb) thay vì đổi thành `what` ở đây — vì khi Live-edit bật
+ * `useCollection(..., {enabled:true})`, hook sẽ fetch thật qua
+ * `/api/admin/collections/home-cards` và trả về đúng shape RAW (spread
+ * `data` jsonb, có `description`, KHÔNG có `what`). Nếu đổi tên ở lớp
+ * này, `seed` (enabled=false) và dữ liệu fetch thật (enabled=true) sẽ
+ * LỆCH SHAPE — `card.what` sẽ `undefined` ngay khi vào chế độ sửa. Việc
+ * đổi `description` → prop `what` của `PillarEntranceCard` chỉ làm ở
+ * bước cuối (`HomePillarCards.tsx`), không phụ thuộc `enabled`.
  */
 export type LiveHomeCard = {
   id: string;
   icon: string;
   accent: string;
   title: string;
-  what: string;
+  description: string;
   href: string;
   startedMode: string | null;
   module: string | null;
@@ -26,6 +33,7 @@ export type LiveHomeCard = {
    * (thay cho `companionLine` mặc định khi ownedCount > 0). */
   companionLineOwned: string | null;
   ctaLabel: string;
+  status: string;
 };
 
 export const getLiveHomeCards = cache(async (): Promise<LiveHomeCard[]> => {
@@ -33,7 +41,7 @@ export const getLiveHomeCards = cache(async (): Promise<LiveHomeCard[]> => {
   if (!supabase) return [];
   const { data, error } = await supabase
     .from("home_cards")
-    .select("id, data")
+    .select("id, data, status")
     .eq("status", "Published")
     .order("order", { ascending: true });
   if (error || !data) return [];
@@ -44,13 +52,14 @@ export const getLiveHomeCards = cache(async (): Promise<LiveHomeCard[]> => {
       icon: String(d.icon ?? ""),
       accent: String(d.accent ?? ""),
       title: String(d.title ?? ""),
-      what: String(d.description ?? ""),
+      description: String(d.description ?? ""),
       href: String(d.href ?? ""),
       startedMode: d.startedMode ? String(d.startedMode) : null,
       module: d.module ? String(d.module) : null,
       companionLine: String(d.companionLine ?? ""),
       companionLineOwned: d.companionLineOwned ? String(d.companionLineOwned) : null,
       ctaLabel: String(d.ctaLabel ?? ""),
+      status: row.status as string,
     };
   });
 });

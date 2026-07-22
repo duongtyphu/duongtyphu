@@ -1,52 +1,39 @@
-"use client";
+import { redirect } from "next/navigation";
+import GemHomePage from "@/app/portal/page";
+import { EditModeProvider } from "@/components/portal/gem-home/EditModeContext";
+import { requireAdmin } from "@/lib/admin/requireAdmin";
 
-import { VisualEditor } from "@/components/admin/VisualEditor";
-import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
-import type { FieldConfig } from "@/lib/admin/fields";
+export const metadata = { title: "Trang chủ Học viện · Admin" };
 
-type HomeCard = {
-  id: string;
-  icon: string;
-  accent: string;
-  title: string;
-  description: string;
-  href: string;
-  companionLine: string;
-  ctaLabel: string;
-  status: string;
-};
+/**
+ * Nhóm 3 — Live-edit (Cách A), thay thế hẳn VisualEditor cũ của
+ * `home_cards`. Render lại ĐÚNG component gốc `/portal/page.tsx`
+ * (`GemHomePage`, import thẳng, không copy/không iframe), bọc
+ * `<EditModeProvider>` để bật affordance sửa tại chỗ (`EditableRegion`
+ * nhúng trong `PillarEntranceCard`, xem `HomePillarCards.tsx`) + kéo-thả
+ * đổi thứ tự 7 card.
+ *
+ * `GemHomePage` là Server Component (`async function`, gọi
+ * `getSupabaseServer()`) — page.tsx này CŨNG là Server Component (không
+ * "use client"), truyền `<GemHomePage/>` (đã render sẵn ở server) làm
+ * `children` vào `EditModeProvider` (Client) — React hỗ trợ đúng pattern
+ * này (Server Component làm con của Client Component). Khác Companion
+ * pilot (page.tsx đó "use client" vì `/portal/su-menh-companion/page.tsx`
+ * vốn đã "use client" toàn bộ) — ở đây bắt buộc giữ Server Component vì
+ * `/portal/page.tsx` cần chạy async fetch thật (profile/reflections/
+ * home_cards) trước khi render.
+ *
+ * requireAdmin() tự gate riêng (2 lớp phòng hộ, cùng nguyên tắc
+ * `DataTable.tsx`) dù layout nhóm `(dashboard)` đã gate — không dựa hoàn
+ * toàn vào layout do Partial Rendering.
+ */
+export default async function HomeCardsLiveEditPage() {
+  const admin = await requireAdmin();
+  if (!admin) redirect("/admin/login");
 
-const fields: FieldConfig[] = [
-  { key: "title", label: "Tiêu đề", type: "text", required: true },
-  { key: "description", label: "Mô tả", type: "textarea", full: true },
-  { key: "href", label: "Đường dẫn", type: "text", required: true },
-  { key: "ctaLabel", label: "Nhãn nút bấm", type: "text" },
-  { key: "companionLine", label: "Câu gợi ý Companion", type: "textarea", full: true },
-  {
-    key: "accent",
-    label: "Màu chủ đạo",
-    type: "select",
-    options: ["violet", "blue", "slate", "emerald", "amber", "teal", "rose"],
-  },
-  { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published"], required: true },
-];
-
-export default function AdminHomeCardsPage() {
   return (
-    <AdminAtmosphere atmosphereClassName="home-atmosphere-bg">
-      <VisualEditor<HomeCard>
-        collectionKey="home-cards"
-        title="Trang chủ Học viện"
-        itemNoun="thẻ"
-        fields={fields}
-        renderCard={(item) => (
-          <div>
-            <p className="text-sm font-bold text-gray-900">{item.title}</p>
-            <p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.description}</p>
-            <p className="mt-1.5 text-[11px] font-semibold text-brand-blue">{item.href}</p>
-          </div>
-        )}
-      />
-    </AdminAtmosphere>
+    <EditModeProvider>
+      <GemHomePage />
+    </EditModeProvider>
   );
 }

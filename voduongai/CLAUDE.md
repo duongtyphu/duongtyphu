@@ -1781,3 +1781,81 @@ này):** chỉ cần dựng `/admin/.../home-cards/live-edit/page.tsx` bọc
 `EditableRegion` vào `HomePillarCards.tsx`/`PillarEntranceCard.tsx` cho
 đúng field an toàn — không cần sửa lại `useCollection()` hay luồng dữ
 liệu đã dựng ở bước này.
+
+## Nhóm 3, Phần B — Live-edit Trang chủ Học viện (home_cards), thay hẳn VisualEditor
+
+Tiếp theo bước nối dây `home_cards` (mục trên) — xây Live-edit + xoá hẳn
+VisualEditor cũ, route Live-edit trở thành route DUY NHẤT (`/admin/home-cards`,
+giữ nguyên href để Dashboard/navIcons không cần sửa).
+
+**Field text cần sửa qua Admin trước đây (VisualEditor cũ):** title,
+description, href, ctaLabel, companionLine, accent, status — 7 field,
+KHÔNG có `icon` (VisualEditor cũ cũng không cho sửa icon tự do, tránh gõ
+sai làm vỡ `ICONS` lookup). Live-edit giữ ĐÚNG 7 field này, bổ sung thêm
+`companionLineOwned` (field thật đã có trong DB — dùng cho nhãn Companion
+khi đã sở hữu Premium — trước đây VisualEditor cũ KHÔNG có ô sửa field
+này) cho đúng yêu cầu "toàn bộ field text".
+
+**Kéo-thả đổi thứ tự:** `EditableRegion` (pattern pilot) tự nó KHÔNG hỗ
+trợ kéo-thả — chỉ là popover sửa field của 1 record. Kéo-thả được thêm
+riêng ở `HomePillarCards.tsx` (không phải trong `EditableRegion`), dùng
+lại ĐÚNG `reorder()` (alias `set()`) đã có sẵn trong `useCollection()` —
+cùng cơ chế PUT bulk-replace mà `VisualEditor.tsx` đã dùng, không viết
+logic reorder mới. Native HTML5 drag (`draggable`/`onDragStart`/
+`onDragOver`/`onDrop`), chỉ kích hoạt khi `editMode=true` (Portal thật
+không có `draggable` nào, không đổi hành vi).
+
+**Sửa lại 1 chỗ từ bước nối dây trước (bug tiềm ẩn, phát hiện khi build
+Live-edit):** `getLiveHomeCards()` trước đó đổi tên `description`→`what`
+ngay ở lớp fetch — vô hại khi `enabled` luôn `false` (bước nối dây), NHƯNG
+khi Live-edit bật `enabled:true`, `useCollection()` sẽ fetch RAW qua
+`/api/admin/collections/home-cards` (trả về đúng field `description`,
+không có `what`) — `seed` (đã đổi tên) và dữ liệu live-fetch (chưa đổi
+tên) sẽ LỆCH SHAPE, `card.what` thành `undefined` ngay khi vào edit mode.
+Đã sửa: `LiveHomeCard`/`getLiveHomeCards()` giữ nguyên tên `description`
+(khớp raw DB shape) — việc đổi sang prop `what` của `PillarEntranceCard`
+chỉ làm ở bước cuối cùng trong `HomePillarCards.tsx`
+(`what={card.description}`), không phụ thuộc `enabled`.
+
+**File mới:**
+- `src/components/portal/gem-home/EditableRegion.tsx` — y hệt
+  `su-menh-companion/EditableRegion.tsx` (pilot), chỉ đổi import
+  `useEditMode` sang bản riêng gem-home.
+
+**File sửa:**
+- `src/lib/portal/live-home-cards.ts` — giữ tên field `description` (xem
+  lý do ở trên), thêm field `status`.
+- `src/components/portal/gem-home/PillarEntranceCard.tsx` — thêm prop tuỳ
+  chọn `editable?: {record, fields, update}` (mặc định `undefined`, KHÔNG
+  đổi hành vi khi không truyền — đã xác nhận JSX render giống hệt cũ khi
+  `editable` rỗng). Khi có `editable`, bọc khối tiêu đề+mô tả (`title`+
+  `what`) trong `<EditableRegion>` — popover hiện đủ 8 field (title/
+  description/href/ctaLabel/companionLine/companionLineOwned/accent/
+  status), không chỉ 2 field visually wrapped (cùng kỹ thuật Genome pilot
+  — 1 vùng click mở popover nhiều field).
+- `src/components/portal/gem-home/HomePillarCards.tsx` — dùng
+  `useEditMode()` thay vì luôn `false`; thêm kéo-thả (chỉ khi
+  `editMode=true`, bọc thêm 1 `<div draggable>` quanh mỗi
+  `PillarEntranceCard` — Portal thật KHÔNG có div bọc thêm này, giữ đúng
+  cấu trúc DOM cũ 100%).
+- `src/app/admin/(dashboard)/home-cards/page.tsx` — XOÁ HẲN nội dung
+  VisualEditor cũ, thay bằng render lại `<GemHomePage/>`
+  (`/portal/page.tsx` thật, import thẳng) bọc `<EditModeProvider>`. Khác
+  Companion pilot (page.tsx đó "use client" vì trang gốc vốn "use
+  client") — ở đây PHẢI giữ Server Component (không "use client") vì
+  `GemHomePage` là `async function` cần fetch thật trước khi render;
+  Next.js hỗ trợ Server Component làm `children` của Client Component
+  (`EditModeProvider`) — đã build/tsc xác nhận hoạt động đúng.
+- `src/lib/admin/nav.ts` — giữ nguyên href `/admin/home-cards` (Dashboard/
+  navIcons không cần sửa gì), chỉ đổi label thành "Thẻ trang chủ
+  (Live-edit)" + thêm comment giải thích.
+
+**Verify:** `tsc`/`eslint`/`npm run build` sạch (route `/admin/home-cards`
+vẫn xuất hiện đúng, nội dung đổi bên trong), `vitest run` 139/139. Đã
+xác nhận lại JSX của `PillarEntranceCard` khi `editable` rỗng render y hệt
+bản gốc (không có wrapper thừa) — Portal thật (`/portal/`) không đổi DOM
+output so với bước nối dây trước.
+
+**Chưa tự test kéo-thả/sửa field qua UI thật** (cùng giới hạn sandbox
+không có tài khoản Admin đã nêu nhiều lần) — Founder tự test trên Preview
+URL theo checklist.

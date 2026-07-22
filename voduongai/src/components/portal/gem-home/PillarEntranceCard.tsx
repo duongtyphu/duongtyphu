@@ -15,6 +15,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getModuleActivitySummary, getGardenSummary, getRecentActivity } from "@/lib/portal/foundation/growth-view";
+import { EditableRegion } from "./EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
 
 export type PillarAccent = "violet" | "blue" | "slate" | "emerald" | "amber" | "teal" | "rose";
 
@@ -120,6 +122,7 @@ export function PillarEntranceCard({
   startedOverride,
   companionLine,
   ctaLabel,
+  editable,
 }: {
   icon: PillarIconKey;
   accent: PillarAccent;
@@ -133,6 +136,14 @@ export function PillarEntranceCard({
   startedOverride?: string;
   companionLine: string;
   ctaLabel: string;
+  /** Nhóm 3, Live-edit — CHỈ truyền khi render qua route live-edit của
+   * Trang chủ Học viện (`HomePillarCards.tsx`). Bỏ trống (mặc định) giữ
+   * nguyên 100% hành vi cũ — Portal thật không bao giờ truyền prop này. */
+  editable?: {
+    record: { id: string } & Record<string, unknown>;
+    fields: FieldConfig[];
+    update: (id: string, patch: Record<string, unknown>) => void | Promise<void>;
+  };
 }) {
   const [startedLine, setStartedLine] = useState<string | null>(startedOverride ?? null);
   const surface = SURFACE[accent];
@@ -165,13 +176,25 @@ export function PillarEntranceCard({
     }
   }, [module, startedMode, startedOverride]);
 
+  const textBlock = (
+    <>
+      <h3 className="gemos-card-title mt-4 text-base font-bold text-gray-900">{title}</h3>
+      <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{what}</p>
+    </>
+  );
+
   return (
     <div className={`group flex flex-col border p-6 shadow-sm transition ${surface.card} ${surface.radius}`}>
       <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${surface.iconChip}`}>
         <Icon className={`h-5 w-5 ${surface.iconColor}`} />
       </div>
-      <h3 className="gemos-card-title mt-4 text-base font-bold text-gray-900">{title}</h3>
-      <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{what}</p>
+      {editable ? (
+        <EditableRegion record={editable.record} fields={editable.fields} update={editable.update}>
+          {textBlock}
+        </EditableRegion>
+      ) : (
+        textBlock
+      )}
 
       {(startedMode || startedOverride) && (
         <p className="mt-3 text-xs text-gray-400">{startedLine ?? " "}</p>

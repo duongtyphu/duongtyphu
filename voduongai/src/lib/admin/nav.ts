@@ -28,8 +28,14 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     // Portal #1 — "Trang chủ Học viện" (/portal). Bảng `home-cards` là nội
     // dung duy nhất Admin quản được của trang chủ Portal.
+    //
+    // Nhóm 3 — thay VisualEditor cũ bằng Live-edit (Cách A): route giữ
+    // nguyên href (không đổi để Dashboard/navIcons không cần sửa gì
+    // thêm), NHƯNG page.tsx tại route này giờ render lại đúng
+    // /portal/page.tsx thật (bọc EditModeProvider) thay vì form
+    // VisualEditor tách biệt — sửa tại chỗ, xem trước y hệt Portal thật.
     group: "Trang chủ Học viện",
-    items: [{ label: "Thẻ trang chủ (Home Cards)", href: "/admin/home-cards" }],
+    items: [{ label: "Thẻ trang chủ (Live-edit)", href: "/admin/home-cards" }],
   },
   {
     // Portal #2 — "Companion" (/portal/companion, trải nghiệm AI Presence).
