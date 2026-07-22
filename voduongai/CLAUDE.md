@@ -752,3 +752,49 @@ có sẵn) — không viết API mới.
 giữa 12 gene quanh vòng tròn, dễ không thấy/không hover trúng. Đổi sang
 hiện bút sửa LUÔN (không chờ hover) cho cả 2 vùng pilot — route này chỉ
 admin dùng, ưu tiên chắc chắn thấy được hơn tinh tế thẩm mỹ.
+
+## Hành trình của tôi — Việc 9: tách static chrome cho 5 cửa
+
+5 cửa: My Story, Mirror, Nhật ký học tập, Bản đồ hành trình, Khu vườn của
+bạn. **Nguyên tắc bất biến cho cả 5 cửa:** KHÔNG đụng dữ liệu động
+(`reflections`/`memory_capsules` qua Supabase, `growth-view.ts`/
+localStorage per-user) — chỉ tách phần chrome tĩnh (title/subtitle/
+empty-state/footer/mảng câu hỏi cố định...), giữ nguyên 100% logic kỹ
+thuật (enum map, index gắn bản đồ, template nội suy biến runtime).
+
+### Cửa 1 — Mirror (đã xong, an toàn nhất, làm trước để định hình pattern)
+
+Audit code thật (không đoán theo tên biến) phát hiện: `invitation` (dòng
+mở của Companion, `buildCompanionMirrorInvitation(growthSignals)`) tưởng
+như "subtitle" tĩnh nhưng thực ra là dữ liệu ĐỘNG thật — không tách, không
+có trong 2 bảng mới. Mirror thực chất không có "subtitle" tĩnh nào để tách.
+
+2 bảng mới (migration `supabase-phase10-mirror-chrome.sql`, đã áp dụng):
+- `mirror_chrome` — 1 dòng (id='mirror'): `title`, `emptyStateLine1`,
+  `emptyStateLine2`, `emptyStateCtaLabel`, `footer`. Thay các chuỗi
+  hardcode trong `MirrorChamber.tsx` (h1 "Mirror", 2 dòng empty-state, CTA
+  label, dòng chân trang).
+- `mirror_questions` — 7 dòng, thay `MIRROR_QUESTIONS`
+  (`src/lib/portal/growth-map/mirror-question.ts`, giữ lại `@deprecated`
+  làm fallback khi bảng live rỗng). `todaysMirrorQuestion()` đổi sang nhận
+  `questions: string[]` làm tham số (mặc định `MIRROR_QUESTIONS` nếu không
+  truyền — không breaking cho call site khác nếu có sau này), giữ nguyên
+  100% logic xoay vòng theo ngày (`dayIndex % pool.length`).
+
+`src/lib/portal/live-mirror.ts` (mới, cùng pattern `live-tools.ts`) —
+`getLiveMirrorChrome()`/`getLiveMirrorQuestions()`, dùng
+`getSupabasePublic()`. `MirrorChamber.tsx` nhận thêm prop `chrome`
+(type `MirrorChrome`, export ra để `live-mirror.ts` dùng chung type) và
+`questions: string[]` — fetch 1 lần ở `page.tsx` (Server Component, cùng
+`Promise.all` với `getMirrorData()` hiện có), truyền props xuống, không
+tự fetch trong Client Component.
+
+Admin: `/admin/hanh-trinh-cua-toi/mirror-chrome` (1 dòng) +
+`/admin/hanh-trinh-cua-toi/mirror-questions` (7 dòng), `VisualEditor`,
+nhóm sidebar mới "Hành trình của tôi", atmosphere `mirror-chamber-bg`
+(đúng class thật `MirrorChamber.tsx` dùng).
+
+**Còn lại — Nhật ký học tập, My Story, Bản đồ hành trình, Khu vườn của
+bạn — CHƯA làm**, theo đúng thứ tự đã thống nhất (Mirror → Nhật ký học
+tập → My Story → Bản đồ hành trình → Khu vườn của bạn, 2 cửa cuối rủi ro
+cao nhất).

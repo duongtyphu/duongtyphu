@@ -49,6 +49,7 @@ import {
   History,
   Images,
   FlaskConical,
+  Eye,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -110,6 +111,8 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/su-menh-companion/timeline": History,
   "/admin/su-menh-companion/flipbook": Images,
   "/admin/su-menh-companion/live-edit": FlaskConical,
+  "/admin/hanh-trinh-cua-toi/mirror-chrome": Eye,
+  "/admin/hanh-trinh-cua-toi/mirror-questions": Eye,
 };
 
 function isItemActive(pathname: string, href: string) {

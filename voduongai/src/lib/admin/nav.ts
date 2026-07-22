@@ -77,4 +77,15 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "🧪 Sửa trực tiếp (Thí điểm)", href: "/admin/su-menh-companion/live-edit" },
     ],
   },
+  {
+    // Việc 9 — 5 cửa của "Hành trình của tôi", tách dần từng cửa (Mirror
+    // trước, an toàn nhất). CHỈ static chrome — KHÔNG đụng dữ liệu động
+    // (reflections/memory_capsules/growth-view.ts/localStorage) — xem
+    // CLAUDE.md mục "Hành trình của tôi".
+    group: "Hành trình của tôi",
+    items: [
+      { label: "Mirror — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/mirror-chrome" },
+      { label: "Mirror — Câu hỏi", href: "/admin/hanh-trinh-cua-toi/mirror-questions" },
+    ],
+  },
 ];

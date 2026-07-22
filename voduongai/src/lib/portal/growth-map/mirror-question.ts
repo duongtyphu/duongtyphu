@@ -7,11 +7,14 @@
  * `todaysPrompt` ở Journey Hub) để mỗi lần ghé Mirror không lặp lại y
  * hệt hôm trước.
  *
- * Nguồn: brief P4 (3 câu gốc) + 4 câu "Reflection" từ Sanctuary cũ
- * (`/portal/hanh-trinh-cua-toi`) theo Product Owner Decision 2 — "Reflection
- * questions → Mirror" — MERGE vào đây, không hiển thị trùng lặp ở Sanctuary.
+ * Việc 9 — kho câu hỏi giờ đọc live từ bảng Supabase `mirror_questions`
+ * (quản qua /admin/hanh-trinh-cua-toi/mirror-questions), truyền vào
+ * `todaysMirrorQuestion()` làm tham số thay vì tự đọc mảng tĩnh
+ * MIRROR_QUESTIONS (giữ lại @deprecated làm fallback/tham khảo — dùng khi
+ * bảng live rỗng, vd. lúc chưa migrate xong hoặc Supabase lỗi).
  */
 
+/** @deprecated Chỉ dùng làm fallback khi bảng `mirror_questions` rỗng — xem todaysMirrorQuestion(). */
 export const MIRROR_QUESTIONS: string[] = [
   "Bạn muốn tiếp tục nuôi dưỡng điều gì?",
   "Điều gì khiến bạn bất ngờ nhất về chính mình?",
@@ -22,7 +25,8 @@ export const MIRROR_QUESTIONS: string[] = [
   "Điều gì bạn muốn Companion đồng hành tiếp?",
 ];
 
-export function todaysMirrorQuestion(): string {
+export function todaysMirrorQuestion(questions: string[] = MIRROR_QUESTIONS): string {
+  const pool = questions.length > 0 ? questions : MIRROR_QUESTIONS;
   const dayIndex = Math.floor(Date.now() / 86_400_000);
-  return MIRROR_QUESTIONS[dayIndex % MIRROR_QUESTIONS.length];
+  return pool[dayIndex % pool.length];
 }

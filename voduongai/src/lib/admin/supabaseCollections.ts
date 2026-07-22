@@ -118,6 +118,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // CHỈ quản title/thứ tự — `src` hiển thị đối chiếu, không sửa qua Admin
   // này (không có trong danh sách field chỉnh sửa của trang Admin).
   "companion-flipbook-pages": "companion_flipbook_pages",
+
+  // Việc 9 — "Hành trình của tôi", cửa Mirror. CHỈ static chrome (title/
+  // empty-state/footer/câu hỏi xoay vòng) — KHÔNG đụng `invitation` (dòng
+  // mở Companion, tính động từ growthSignals thật) hay bất kỳ dữ liệu
+  // reflections/memory_capsules/growth-view.ts nào khác.
+  "mirror-chrome": "mirror_chrome",
+  "mirror-questions": "mirror_questions",
 };
 
 export function tableForCollection(key: string): string | null {

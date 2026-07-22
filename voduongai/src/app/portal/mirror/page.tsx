@@ -9,6 +9,7 @@ import { buildFirstFootprintMirrorView } from "@/lib/portal/growth-map/first-foo
 import { buildCompanionMirrorInvitation } from "@/lib/portal/companion/mirror-dialogue";
 import { getOriginLineFromCoreMemory } from "@/lib/portal/companion/core-memory";
 import { getOriginLineContextDefinition } from "@/lib/portal/companion/origin-line-context";
+import { getLiveMirrorChrome, getLiveMirrorQuestions } from "@/lib/portal/live-mirror";
 import type { Reflection } from "@/lib/portal/reflections";
 import type { MemoryCapsule, MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 
@@ -75,7 +76,11 @@ async function getMirrorData() {
 }
 
 export default async function MirrorPage() {
-  const { reflections, capsules, premiumCount } = await getMirrorData();
+  const [{ reflections, capsules, premiumCount }, chrome, questions] = await Promise.all([
+    getMirrorData(),
+    getLiveMirrorChrome(),
+    getLiveMirrorQuestions(),
+  ]);
   const baseSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
   const growthSignals = [...baseSignals, ...deriveComebackSignals(baseSignals)];
 
@@ -104,6 +109,8 @@ export default async function MirrorPage() {
       reflectionCount={reflections.length}
       capsuleCount={capsules.length}
       premiumCount={premiumCount}
+      chrome={chrome}
+      questions={questions}
     />
   );
 }

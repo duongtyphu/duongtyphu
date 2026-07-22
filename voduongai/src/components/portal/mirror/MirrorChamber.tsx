@@ -30,6 +30,18 @@ import type { FirstFootprintMirrorView } from "@/lib/portal/growth-map/first-foo
  * design" thay vì một wizard.
  */
 
+/** Việc 9 — static chrome đã tách khỏi hardcode, đọc live từ bảng
+ * `mirror_chrome` (1 dòng, id='mirror'), fetch ở page.tsx (Server
+ * Component) rồi truyền props xuống — cùng cách đã làm cho
+ * collections/seeds ở Academy Journey Engine (Việc 3). */
+export type MirrorChrome = {
+  title: string;
+  emptyStateLine1: string;
+  emptyStateLine2: string;
+  emptyStateCtaLabel: string;
+  footer: string;
+};
+
 export function MirrorChamber({
   invitation,
   narrativeLines,
@@ -40,6 +52,8 @@ export function MirrorChamber({
   reflectionCount,
   capsuleCount,
   premiumCount,
+  chrome,
+  questions,
 }: {
   invitation: string | null;
   narrativeLines: MirrorNarrativeLine[];
@@ -50,6 +64,8 @@ export function MirrorChamber({
   reflectionCount: number;
   capsuleCount: number;
   premiumCount: number;
+  chrome: MirrorChrome;
+  questions: string[];
 }) {
   const [clientFacts, setClientFacts] = useState<{ activity: ActivityEntry[]; outputCount: number } | null>(null);
   const [thoughtSeed, setThoughtSeed] = useState<string | null>(null);
@@ -85,7 +101,7 @@ export function MirrorChamber({
 
         <header className="mt-10 text-center">
           <LivingCore size={52} state="idle" intensity="low" showParticles={false} className="mx-auto" />
-          <h1 className="mt-8 text-2xl font-semibold tracking-tight text-white/90 sm:text-3xl">Mirror</h1>
+          <h1 className="mt-8 text-2xl font-semibold tracking-tight text-white/90 sm:text-3xl">{chrome.title}</h1>
           {invitation && (
             <p className="mx-auto mt-5 max-w-md text-base leading-loose text-white/60">{invitation}</p>
           )}
@@ -94,9 +110,9 @@ export function MirrorChamber({
         {isFullyQuiet ? (
           <div className="mt-24 text-center">
             <p className="mx-auto max-w-sm text-lg leading-loose text-white/70">
-              Hôm nay chiếc gương vẫn còn rất yên tĩnh.
+              {chrome.emptyStateLine1}
               <br />
-              Nó sẽ phản chiếu những điều bạn thật sự sống.
+              {chrome.emptyStateLine2}
             </p>
             {thoughtSeed && (
               <p className="mx-auto mt-8 max-w-xs text-sm italic leading-relaxed text-white/35">
@@ -108,7 +124,7 @@ export function MirrorChamber({
               href="/portal/hocvienai"
               className="mt-12 inline-flex items-center gap-1.5 text-sm font-medium text-violet-200/70 underline decoration-violet-200/25 underline-offset-4 transition hover:text-violet-100"
             >
-              Bắt đầu để lại dấu chân đầu tiên <ArrowRight className="h-3.5 w-3.5" />
+              {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         ) : (
@@ -189,7 +205,7 @@ export function MirrorChamber({
             <section className="mt-24 text-center">
               <p className="text-[11px] font-medium uppercase tracking-[0.35em] text-white/30">Tự hỏi</p>
               <p className="mx-auto mt-6 max-w-sm text-lg italic leading-loose text-white/80">
-                {todaysMirrorQuestion()}
+                {todaysMirrorQuestion(questions)}
               </p>
               <Link
                 href="/portal/story"
@@ -202,7 +218,7 @@ export function MirrorChamber({
         )}
 
         <p className="mx-auto mt-28 max-w-xs text-center text-[11px] leading-relaxed text-white/20">
-          Mirror không chấm điểm, không so sánh — chỉ phản chiếu đúng những gì bạn thật sự sống.
+          {chrome.footer}
         </p>
       </div>
       </div>
