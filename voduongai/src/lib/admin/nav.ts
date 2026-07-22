@@ -94,16 +94,24 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   {
-    // Việc 10 (hocvienai) + Việc 11 (aiworkspace) — cùng nguồn dữ liệu gốc
-    // src/data/portal/ai-workspace.ts, tách theo đúng trang portal hiển
-    // thị (WORK_NEEDS/FAQ thuộc /portal/hocvienai; RECOMMENDED_WORKSPACES/
-    // AI_WORKFLOWS thuộc /portal/aiworkspace — xem CLAUDE.md).
-    group: "Học viện AI & AI Workspace",
+    // Việc 10 — nguồn gốc src/data/portal/ai-workspace.ts (WORK_NEEDS/FAQ),
+    // tách theo đúng trang portal hiển thị /portal/hocvienai — xem CLAUDE.md
+    // mục "Việc 10 + Việc 11". Tách thành nhóm riêng, khớp cách Portal tự
+    // tách "Học viện AI" và "AI Workspace" thành 2 mục riêng trong menu
+    // (portalNavSections, src/lib/portal/hubs.ts), không gộp chung 1 nhóm.
+    group: "Học viện AI",
     items: [
-      { label: "Học viện AI — Theo nhu cầu công việc", href: "/admin/hocvienai/work-needs" },
-      { label: "Học viện AI — Câu hỏi thường gặp", href: "/admin/hocvienai/faq" },
-      { label: "AI Workspace — Workspace đề xuất", href: "/admin/aiworkspace/recommended-workspace" },
-      { label: "AI Workspace — Quy trình AI (Workflow)", href: "/admin/aiworkspace/ai-workflow-sections" },
+      { label: "Theo nhu cầu công việc", href: "/admin/hocvienai/work-needs" },
+      { label: "Câu hỏi thường gặp", href: "/admin/hocvienai/faq" },
+    ],
+  },
+  {
+    // Việc 11 — cùng nguồn ai-workspace.ts (RECOMMENDED_WORKSPACES/
+    // AI_WORKFLOWS), thuộc /portal/aiworkspace — xem CLAUDE.md.
+    group: "AI Workspace",
+    items: [
+      { label: "Workspace đề xuất", href: "/admin/aiworkspace/recommended-workspace" },
+      { label: "Quy trình AI (Workflow)", href: "/admin/aiworkspace/ai-workflow-sections" },
     ],
   },
 ];
