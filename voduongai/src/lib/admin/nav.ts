@@ -122,10 +122,12 @@ export const adminNavGroups: AdminNavGroup[] = [
     // 5 cửa, tách dần từng cửa. CHỈ static chrome — KHÔNG đụng dữ liệu
     // động (reflections/memory_capsules/growth-view.ts/localStorage) —
     // xem CLAUDE.md mục "Hành trình của tôi".
+    //
+    // Nhóm 3 — Mirror: gộp 2 route VisualEditor cũ (mirror-chrome,
+    // mirror-questions) thành 1 route Live-edit duy nhất.
     group: "Hành trình của tôi",
     items: [
-      { label: "Mirror — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/mirror-chrome" },
-      { label: "Mirror — Câu hỏi", href: "/admin/hanh-trinh-cua-toi/mirror-questions" },
+      { label: "Mirror (Live-edit)", href: "/admin/hanh-trinh-cua-toi/mirror" },
       { label: "Nhật ký học tập — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/journal-chrome" },
       { label: "Nhật ký học tập — Ý định học tiếp", href: "/admin/hanh-trinh-cua-toi/journal-intentions" },
       { label: "My Story — Nội dung tĩnh", href: "/admin/hanh-trinh-cua-toi/story-chrome" },

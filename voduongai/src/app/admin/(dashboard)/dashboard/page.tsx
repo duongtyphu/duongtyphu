@@ -50,7 +50,10 @@ const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
 // href Admin → tên bảng Supabase generic thật (khớp collectionKey trong
 // supabaseCollections.ts). Item không có ở đây (Companion CMS - nhiều tab
 // nội bộ riêng, CKOS Dashboard - trang tổng hợp, live-edit - công cụ thí
-// điểm, không phải collection) hiển thị không kèm số đếm.
+// điểm, không phải collection) hiển thị không kèm số đếm. Mirror
+// (Live-edit, Nhóm 3) cũng không có ở đây dù có collection thật đứng sau
+// (mirror_chrome + mirror_questions) — 1 route giờ gộp 2 bảng, không map
+// 1-1 được vào cấu trúc Record<href, 1 table> này.
 const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/home-cards": "home_cards",
   "/admin/ckos/prompts": "prompts",
@@ -75,8 +78,6 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/su-menh-companion/evolution": "evolution",
   "/admin/su-menh-companion/timeline": "timeline",
   "/admin/su-menh-companion/flipbook": "companion_flipbook_pages",
-  "/admin/hanh-trinh-cua-toi/mirror-chrome": "mirror_chrome",
-  "/admin/hanh-trinh-cua-toi/mirror-questions": "mirror_questions",
   "/admin/hanh-trinh-cua-toi/journal-chrome": "journal_chrome",
   "/admin/hanh-trinh-cua-toi/journal-intentions": "journal_intentions",
   "/admin/hanh-trinh-cua-toi/story-chrome": "story_chrome",

@@ -109,8 +109,8 @@ export default async function MirrorPage() {
       reflectionCount={reflections.length}
       capsuleCount={capsules.length}
       premiumCount={premiumCount}
-      chrome={chrome}
-      questions={questions}
+      seedChrome={chrome}
+      seedQuestions={questions}
     />
   );
 }

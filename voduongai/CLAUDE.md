@@ -1859,3 +1859,79 @@ output so với bước nối dây trước.
 **Chưa tự test kéo-thả/sửa field qua UI thật** (cùng giới hạn sandbox
 không có tài khoản Admin đã nêu nhiều lần) — Founder tự test trên Preview
 URL theo checklist.
+
+## Nhóm 3, Phần A — Mirror: chuyển từ props sang useCollection({enabled})
+
+Module đầu tiên của Phần A (5 Cửa Hành trình). Audit xác nhận
+`MirrorChamber.tsx` nhận `chrome: MirrorChrome`/`questions: string[]` qua
+props từ `/portal/mirror/page.tsx` (Server Component, tự fetch
+`getLiveMirrorChrome()`/`getLiveMirrorQuestions()`) — đúng kiến trúc đã
+audit ở bước hạ tầng chung, không dùng `useCollection()`.
+
+**Sửa lại 1 lần nữa bài học `description`/`what` (home_cards):**
+`getLiveMirrorChrome()` trước đây trả về `MirrorChrome` KHÔNG có `id`;
+`getLiveMirrorQuestions()` trả về `string[]` đã flatten sẵn (mất hẳn
+`id`/`status`). Cả 2 đều sẽ lệch shape với dữ liệu RAW mà
+`useCollection()` fetch thật khi `enabled:true`. Đã sửa: `MirrorChrome`
+thêm `id`/`status`; thêm type mới `MirrorQuestionRow = {id, content,
+status}`, `getLiveMirrorQuestions()` trả mảng object thay vì
+`string[]` — việc flatten về `string[]` (cho `todaysMirrorQuestion()`)
+chuyển vào TRONG `MirrorChamber.tsx` (`questionItems.filter(status===
+"Published").map(content)`), không phụ thuộc `enabled`.
+
+**Vấn đề UX riêng của Mirror (khác `home_cards`):** `mirror_questions`
+chỉ hiện ĐÚNG 1 câu xoay vòng theo NGÀY (`todaysMirrorQuestion()`), không
+phải danh sách hiển thị — không có cách nào "click đúng câu cần sửa"
+trong 6 ngày còn lại. Tương tự, khối "trạng thái trống"
+(`emptyStateLine1/2/ctaLabel`) chỉ render khi `isFullyQuiet` — phụ thuộc
+dữ liệu THẬT của member đang đăng nhập (rất có thể tài khoản Admin không
+"trống" nên khối này không bao giờ hiện). Cả 2 trường hợp đều KHÔNG đảm
+bảo "toàn bộ field text editable" nếu chỉ bọc `EditableRegion` tại đúng
+vị trí hiển thị tự nhiên.
+
+**Giải quyết:** thêm 1 panel "Live-edit — Nội dung Mirror" LUÔN hiện khi
+`editMode=true` (đặt ngay dưới `PortalBackLink`, KHÔNG phụ thuộc
+`isFullyQuiet`/ngày nào), gồm 3 vùng `EditableRegion` (tiêu đề; chân
+trang + status; 3 field trạng thái trống) + danh sách đầy đủ 7 câu hỏi,
+mỗi câu 1 `EditableRegion` riêng. Portal thật (`editMode=false`) — khối
+này hoàn toàn KHÔNG render (`{editMode && (...)}`), 0 ảnh hưởng DOM.
+**Không có kéo-thả** cho Mirror — `mirror_chrome` là singleton,
+`mirror_questions` xoay vòng theo NGÀY (không theo vị trí hiển thị danh
+sách), không có nhu cầu đổi thứ tự như `home_cards`.
+
+**File mới:** `src/components/portal/mirror/EditModeContext.tsx` +
+`EditableRegion.tsx` (y hệt pattern `gem-home`/Companion, chỉ đổi
+import).
+
+**File sửa:**
+- `src/lib/portal/live-mirror.ts` — sửa shape như trên.
+- `src/components/portal/mirror/MirrorChamber.tsx` — đổi prop
+  `chrome`/`questions` → `seedChrome`/`seedQuestions`; gọi
+  `useCollection("mirror-chrome", [seedChrome], {enabled: useEditMode()})`
+  + `useCollection("mirror-questions", seedQuestions, {enabled: ...})`;
+  thêm panel Live-edit; **KHÔNG đụng** `invitation`/`narrativeLines`/
+  `reflectionMoments`/`firstFootprint`/`quietSeasonLine`/`originLine`
+  (dữ liệu động thật, vẫn nhận qua props như cũ).
+- `src/app/portal/mirror/page.tsx` — đổi tên prop truyền xuống
+  (`seedChrome`/`seedQuestions`), không đổi logic fetch.
+- `src/app/admin/(dashboard)/hanh-trinh-cua-toi/mirror/page.tsx` (mới) —
+  render lại `<MirrorPage/>` (`/portal/mirror/page.tsx` thật) bọc
+  `<EditModeProvider>`, cùng pattern `/admin/home-cards` (Phần B).
+- **Đã xoá** `hanh-trinh-cua-toi/mirror-chrome/` +
+  `hanh-trinh-cua-toi/mirror-questions/` (2 route VisualEditor cũ) — gộp
+  vào route Live-edit duy nhất `hanh-trinh-cua-toi/mirror/`.
+- `nav.ts` — gộp 2 entry cũ thành 1: `"Mirror (Live-edit)"` →
+  `/admin/hanh-trinh-cua-toi/mirror`.
+- `AdminSidebar.tsx` — gộp 2 icon key cũ thành 1.
+- `dashboard/page.tsx` — xoá 2 dòng `TABLE_FOR_HREF` cũ (route giờ gộp 2
+  bảng, không map 1-1 được vào cấu trúc `Record<href, 1 table>` — cùng
+  cách xử lý "không có số đếm" như Companion CMS/CKOS Dashboard).
+
+**Verify:** `tsc`/`eslint`/`npm run build` sạch (route
+`/admin/hanh-trinh-cua-toi/mirror` xuất hiện đúng, 2 route cũ đã biến
+mất), `vitest run` 139/139. Xác nhận qua code review: khi `editMode=false`,
+`chrome = chromeItems[0] ?? seedChrome` = đúng `seedChrome` (pass-through
+seed, không fetch), `publishedQuestions` tính từ `questionItems` (=
+`seedQuestions`, đã lọc Published sẵn từ `getLiveMirrorQuestions()`) cho
+kết quả TEXT giống hệt mảng `questions` cũ — Portal thật
+(`/portal/mirror`) không đổi DOM output.

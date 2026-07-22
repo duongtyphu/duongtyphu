@@ -12,6 +12,10 @@ import { todaysMirrorQuestion } from "@/lib/portal/growth-map/mirror-question";
 import type { MirrorNarrativeLine } from "@/lib/portal/growth-map/mirror-narrative";
 import type { ReflectionMoment } from "@/lib/portal/growth-map/growth-reflection-engine";
 import type { FirstFootprintMirrorView } from "@/lib/portal/growth-map/first-footprint-mirror";
+import { useCollection } from "@/lib/admin/store";
+import { useEditMode } from "./EditModeContext";
+import { EditableRegion } from "./EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
  * JOURNEY PLATFORM — Phase P4: Mirror, "Reflection Chamber".
@@ -31,16 +35,42 @@ import type { FirstFootprintMirrorView } from "@/lib/portal/growth-map/first-foo
  */
 
 /** Việc 9 — static chrome đã tách khỏi hardcode, đọc live từ bảng
- * `mirror_chrome` (1 dòng, id='mirror'), fetch ở page.tsx (Server
- * Component) rồi truyền props xuống — cùng cách đã làm cho
- * collections/seeds ở Academy Journey Engine (Việc 3). */
+ * `mirror_chrome` (1 dòng, id='mirror'). Nhóm 3 (Live-edit): thêm
+ * `id`/`status` để khớp đúng shape RAW `useCollection()` fetch thật khi
+ * `enabled:true` (xem live-mirror.ts). */
 export type MirrorChrome = {
+  id: string;
   title: string;
   emptyStateLine1: string;
   emptyStateLine2: string;
   emptyStateCtaLabel: string;
   footer: string;
+  status: string;
 };
+
+export type MirrorQuestionRow = {
+  id: string;
+  content: string;
+  status: string;
+};
+
+const CHROME_TITLE_FIELDS: FieldConfig[] = [{ key: "title", label: "Tiêu đề (Mirror)", type: "text", required: true }];
+
+const CHROME_EMPTY_STATE_FIELDS: FieldConfig[] = [
+  { key: "emptyStateLine1", label: "Trạng thái trống — dòng 1", type: "textarea", full: true, required: true },
+  { key: "emptyStateLine2", label: "Trạng thái trống — dòng 2", type: "textarea", full: true, required: true },
+  { key: "emptyStateCtaLabel", label: "Nhãn nút CTA (trạng thái trống)", type: "text", required: true },
+];
+
+const CHROME_FOOTER_FIELDS: FieldConfig[] = [
+  { key: "footer", label: "Chân trang", type: "textarea", full: true, required: true },
+  { key: "status", label: "Trạng thái xuất bản", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
+
+const QUESTION_FIELDS: FieldConfig[] = [
+  { key: "content", label: "Câu hỏi", type: "textarea", full: true, required: true },
+  { key: "status", label: "Trạng thái xuất bản", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
 
 export function MirrorChamber({
   invitation,
@@ -52,8 +82,8 @@ export function MirrorChamber({
   reflectionCount,
   capsuleCount,
   premiumCount,
-  chrome,
-  questions,
+  seedChrome,
+  seedQuestions,
 }: {
   invitation: string | null;
   narrativeLines: MirrorNarrativeLine[];
@@ -64,9 +94,21 @@ export function MirrorChamber({
   reflectionCount: number;
   capsuleCount: number;
   premiumCount: number;
-  chrome: MirrorChrome;
-  questions: string[];
+  seedChrome: MirrorChrome;
+  seedQuestions: MirrorQuestionRow[];
 }) {
+  const editMode = useEditMode();
+  const { items: chromeItems, update: updateChrome } = useCollection<MirrorChrome>("mirror-chrome", [seedChrome], {
+    enabled: editMode,
+  });
+  const { items: questionItems, update: updateQuestion } = useCollection<MirrorQuestionRow>(
+    "mirror-questions",
+    seedQuestions,
+    { enabled: editMode },
+  );
+  const chrome = chromeItems[0] ?? seedChrome;
+  const publishedQuestions = questionItems.filter((q) => q.status === "Published").map((q) => q.content);
+
   const [clientFacts, setClientFacts] = useState<{ activity: ActivityEntry[]; outputCount: number } | null>(null);
   const [thoughtSeed, setThoughtSeed] = useState<string | null>(null);
 
@@ -98,6 +140,45 @@ export function MirrorChamber({
        * quyển nền phía sau mới full-bleed. */}
       <div className="mx-auto max-w-xl px-5 py-14 sm:px-8 md:py-20">
         <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="dark" />
+
+        {/* Nhóm 3, Live-edit — panel LUÔN hiện khi editMode, không phụ
+         * thuộc trạng thái động thật (isFullyQuiet chỉ đúng khi tài
+         * khoản admin đang test tình cờ "trống" — không thể dùng làm
+         * điều kiện duy nhất để chạm tới 3 field trạng thái trống, và
+         * mirror_questions chỉ hiện ĐÚNG 1 câu xoay vòng mỗi ngày nên
+         * cần 1 nơi luôn thấy đủ cả 7 câu để quản lý). Portal thật
+         * (editMode=false) — khối này hoàn toàn không render, 0 ảnh
+         * hưởng DOM. */}
+        {editMode && (
+          <section className="mt-8 space-y-3 rounded-2xl border border-dashed border-white/20 bg-white/5 p-5 text-left">
+            <p className="text-xs font-bold uppercase tracking-wide text-white/50">Live-edit — Nội dung Mirror</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <EditableRegion record={chrome} fields={CHROME_TITLE_FIELDS} update={updateChrome}>
+                <p className="text-sm text-white/70">Tiêu đề: {chrome.title}</p>
+              </EditableRegion>
+              <EditableRegion record={chrome} fields={CHROME_FOOTER_FIELDS} update={updateChrome}>
+                <p className="text-sm text-white/70">Chân trang: {chrome.footer}</p>
+              </EditableRegion>
+              <EditableRegion record={chrome} fields={CHROME_EMPTY_STATE_FIELDS} update={updateChrome} className="sm:col-span-2">
+                <p className="text-sm text-white/70">
+                  Trạng thái trống: {chrome.emptyStateLine1} / {chrome.emptyStateLine2} / &ldquo;{chrome.emptyStateCtaLabel}&rdquo;
+                </p>
+              </EditableRegion>
+            </div>
+            <div>
+              <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-white/40">
+                7 câu hỏi &quot;Tự hỏi&quot; (xoay vòng theo ngày)
+              </p>
+              <div className="mt-2 space-y-1.5">
+                {questionItems.map((q) => (
+                  <EditableRegion key={q.id} record={q} fields={QUESTION_FIELDS} update={updateQuestion}>
+                    <p className="text-sm text-white/70">{q.content}</p>
+                  </EditableRegion>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <header className="mt-10 text-center">
           <LivingCore size={52} state="idle" intensity="low" showParticles={false} className="mx-auto" />
@@ -205,7 +286,7 @@ export function MirrorChamber({
             <section className="mt-24 text-center">
               <p className="text-[11px] font-medium uppercase tracking-[0.35em] text-white/30">Tự hỏi</p>
               <p className="mx-auto mt-6 max-w-sm text-lg italic leading-loose text-white/80">
-                {todaysMirrorQuestion(questions)}
+                {todaysMirrorQuestion(publishedQuestions)}
               </p>
               <Link
                 href="/portal/story"
