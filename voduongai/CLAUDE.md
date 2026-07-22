@@ -783,6 +783,84 @@ khảo/rollback — không còn consumer nào import.
 đã nối Supabase thật ở Việc 3), AI Toolbox (`AI_TOOLS` → bảng `tools`, đã
 Full), `LEARNING_PATHS`/`AI_RESOURCES` (vẫn tĩnh, chưa migrate).
 
+## Admin — Audit menu điều hướng (`nav.ts` + `AdminSidebar.tsx`)
+
+**Nguyên tắc bắt buộc, áp dụng vĩnh viễn cho mọi group Admin sau này:**
+mỗi group (trừ `group: null`) PHẢI ánh xạ 1:1 với ĐÚNG MỘT mục trong menu
+Portal thật (`portalNavSections`, `src/lib/portal/hubs.ts`), cùng tên
+gọi, cùng thứ tự Portal đang hiển thị:
+
+```
+Trang chủ Học viện → Companion → Hệ tri thức AI (CKOS) → Học viện AI
+→ AI Workspace → Dự án & Cơ hội → Premium → Hành trình của tôi
+→ Sứ mệnh Companion → Cộng đồng
+```
+
+**KHÔNG được gộp 2 mục Portal khác nhau vào 1 group Admin dù chúng dùng
+chung file dữ liệu nguồn hay lý do kỹ thuật nào khác** — dùng chung nguồn
+dữ liệu là chi tiết triển khai, không phải lý do gộp menu. Đây chính là
+lỗi đã phát hiện và sửa trong đợt audit này.
+
+### Lỗi đã sửa
+
+1. **Việc 10+11 gộp sai** — nhóm `"Học viện AI & AI Workspace"` gộp 4
+   trang quản trị (work-needs/faq thuộc `/portal/hocvienai`,
+   recommended-workspace/ai-workflow-sections thuộc `/portal/aiworkspace`)
+   thành 1 group, dù đây là 2 mục Portal RIÊNG BIỆT (2 và cách nhau đúng 1
+   vị trí trong menu thật). Đã tách thành 2 group: `"Học viện AI"` (2
+   item) và `"AI Workspace"` (nay có 3 item — xem mục 2 dưới).
+2. **`"Nội dung"` gộp 4 mục Portal khác nhau vào 1 group** — phát hiện
+   thêm khi audit lại toàn bộ (không chỉ tin audit gốc): nhóm `"Nội dung"`
+   chứa `Công cụ AI` (nuôi `/portal/aiworkspace` — xác nhận qua CLAUDE.md
+   mục CKOS Coverage, "Công cụ AI (tools): Full"), `Trang chủ Học viện`
+   (nuôi `/portal` — trang chủ, KHÁC hẳn `/portal/hocvienai` dù tên rất
+   giống), `Giá khoá học Premium` (nuôi `/portal/premium`), `Dự án & Cơ
+   hội` (nuôi `/portal/duan-cohoi`) — 4 mục Portal khác nhau. Đã xoá
+   nhóm `"Nội dung"`, tách 4 item vào đúng 4 group riêng: `Công cụ AI` →
+   nhập vào group `"AI Workspace"` (cùng `Workspace đề xuất`/`Quy trình AI`);
+   `Trang chủ Học viện`, `Premium`, `Dự án & Cơ hội` → mỗi mục 1 group
+   riêng cùng tên Portal.
+3. **Tên nhóm CKOS sai lệch nhẹ** — `"Hệ tri thức (CKOS)"` thiếu chữ "AI"
+   so với tên Portal thật `"Hệ tri thức AI (CKOS)"`. Đã sửa tên group
+   khớp chính xác.
+4. **`/admin/companion` tách thành group riêng** — trước đây nằm chung
+   `group: null` với `"Tổng quan"` (Admin's own dashboard, không map vào
+   Portal item nào). Đã tách `/admin/companion` thành group `"Companion"`
+   riêng (Portal mục #2), chỉ giữ lại `"Tổng quan"` ở `group: null` vì đây
+   là trang nội bộ Admin, không thuộc menu Portal.
+
+### Gap thật đã phát hiện (không phải lỗi tách nhóm — chưa xây, không tự xây thêm)
+
+- **`"Cộng đồng"` (Portal mục #10, `/portal/congdongai`) — CHƯA có route
+  Admin nào quản lý nội dung trang này.** Không tự thêm group giả — theo
+  đúng nguyên tắc "chỉ liệt kê route THẬT SỰ tồn tại" của `nav.ts`.
+- **`AdminSidebar.tsx`'s `navIcons` thiếu icon cho 12 route THẬT đang
+  chạy:** `/admin/home-cards` và toàn bộ 11 route `/admin/ckos/*` (kể cả
+  `/admin/ckos` — CKOS Dashboard) không có icon nào từ trước tới giờ —
+  item vẫn hiển thị đúng (không crash), chỉ thiếu hình icon. Đã bổ sung
+  đủ 12 icon còn thiếu.
+- **`navIcons` có ~26 entry mồ côi** trỏ route Admin cũ đã xoá từ đợt dọn
+  `df156f3` (`/admin/portal-builder/*`, `/admin/roadmap`,
+  `/admin/daily-missions`, `/admin/prompts`/`/admin/templates`/
+  `/admin/ebooks`/`/admin/checklists`/`/admin/sop` (bản cũ, chưa có tiền
+  tố `/ckos/`), `/admin/saved`, `/admin/affiliate*`,
+  `/admin/digital-assets*`, `/admin/premium`, `/admin/orders`,
+  `/admin/coupons`, `/admin/services`, `/admin/support`, `/admin/blog`,
+  `/admin/case-study`/`/admin/student-success` (bản cũ), `/admin/updates`,
+  `/admin/community`, `/admin/users`, `/admin/leads`, `/admin/reports`,
+  `/admin/settings`). **Không phải link chết** (`navIcons` chỉ tra icon
+  cho item đã có trong `nav.ts`, không tự render thành link) nhưng là
+  rác — đã xoá sạch, `navIcons` giờ khớp 1:1 với `nav.ts` (đã verify bằng
+  script đối chiếu 3 chiều: route thật trên đĩa ↔ href trong `nav.ts` ↔
+  key trong `navIcons` — cả 3 tập khớp chính xác, 0 lệch).
+
+### Cấu trúc cuối cùng (10 group theo đúng thứ tự Portal + `Tổng quan` đứng đầu)
+
+`Tổng quan` (ungrouped) → `Trang chủ Học viện` → `Companion` → `Hệ tri
+thức AI (CKOS)` → `Học viện AI` → `AI Workspace` → `Dự án & Cơ hội` →
+`Premium` → `Hành trình của tôi` → `Sứ mệnh Companion` → (không có group
+`Cộng đồng`, xem gap ở trên).
+
 ## THÍ ĐIỂM (pilot) — Inline editing tại `/portal/su-menh-companion`
 
 **Trạng thái: đang thử nghiệm, CHƯA phải phong cách UI chính thức thứ 3**
