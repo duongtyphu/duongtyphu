@@ -794,7 +794,49 @@ Admin: `/admin/hanh-trinh-cua-toi/mirror-chrome` (1 dòng) +
 nhóm sidebar mới "Hành trình của tôi", atmosphere `mirror-chamber-bg`
 (đúng class thật `MirrorChamber.tsx` dùng).
 
-**Còn lại — Nhật ký học tập, My Story, Bản đồ hành trình, Khu vườn của
-bạn — CHƯA làm**, theo đúng thứ tự đã thống nhất (Mirror → Nhật ký học
-tập → My Story → Bản đồ hành trình → Khu vườn của bạn, 2 cửa cuối rủi ro
-cao nhất).
+### Cửa 2 — Nhật ký học tập (đã xong)
+
+Audit code thật phát hiện 3 chỗ KHÔNG được tách (giữ nguyên trong code):
+- `MODULE_LABEL` (`LearningJournalNotebook.tsx`) — enum map
+  `PortalModule → label`, key là union đóng, không phải prose tĩnh rời
+  rạc. (Ghi chú thêm: trùng `MODULE_LABELS` ở
+  `src/companion/agents/module-agent-map.ts` — dedupe là việc khác, ngoài
+  phạm vi Việc 9.)
+- `TODAY_PRIORITY` — mảng `{type: GrowthEventType, sentence}` theo đúng
+  THỨ TỰ ưu tiên gắn với enum `GrowthEventType`; tách riêng `sentence` ra
+  CMS trong khi `type`/thứ tự vẫn ở code có rủi ro desync ưu tiên khỏi
+  câu chữ — giữ nguyên cả mảng trong code (cùng tinh thần với `invitation`
+  ở Cửa 1).
+- Dòng "`{totalRawOutputs} kết quả thật trong Workspace...`" — template
+  nội suy biến runtime thật (`totalRawOutputs`), không phải chuỗi tĩnh.
+
+Bảng mới (migration `supabase-phase11-journal-chrome.sql`, đã áp dụng):
+- `journal_chrome` — 1 dòng (id='journal'): `eyebrowLabel`, `title`,
+  `emptyStateLine`, `emptyStateCtaLabel`, `todaySectionLabel`,
+  `todayFallbackLine`, `entriesSectionLabel`, `highlightsSectionLabel`,
+  `createdSectionLabel`, `createdEmptyLine`, `lessonsSectionLabel`,
+  `continueCtaLabel`, `footer`. Thay các chuỗi hardcode trong
+  `LearningJournalNotebook.tsx` (eyebrow, h1, empty-state, 5 nhãn mục,
+  CTA cuối trang, chân trang). CTA href (`/portal/hocvienai`,
+  `/portal/workspace`) giữ nguyên trong code, CMS chỉ quản nhãn — đúng
+  quyết định đã áp dụng ở Mirror.
+- `journal_intentions` — 5 dòng, thay `JOURNAL_INTENTIONS`
+  (`src/lib/portal/growth-map/journal-intention.ts`, giữ `@deprecated`
+  làm fallback). `todaysJournalIntention()` đổi sang nhận
+  `intentions: string[]` làm tham số (mặc định `JOURNAL_INTENTIONS`),
+  giữ nguyên 100% logic xoay vòng theo ngày.
+
+`src/lib/portal/live-journal.ts` (mới, cùng pattern `live-mirror.ts`) —
+`getLiveJournalChrome()`/`getLiveJournalIntentions()`.
+`LearningJournalNotebook.tsx` nhận thêm prop `chrome` (type
+`JournalChrome`, export ra để `live-journal.ts` dùng chung) và
+`intentions: string[]` — fetch 1 lần ở `page.tsx`
+(`/portal/nhatkyhoctap`, `Promise.all` cùng `getJournalReflections()`).
+
+Admin: `/admin/hanh-trinh-cua-toi/journal-chrome` (1 dòng) +
+`/admin/hanh-trinh-cua-toi/journal-intentions` (5 dòng), `VisualEditor`,
+cùng nhóm sidebar "Hành trình của tôi", atmosphere `journal-notebook-bg`
+(đúng class thật `LearningJournalNotebook.tsx` dùng).
+
+**Còn lại — My Story, Bản đồ hành trình, Khu vườn của bạn — CHƯA làm**,
+theo đúng thứ tự đã thống nhất (2 cửa cuối rủi ro cao nhất).

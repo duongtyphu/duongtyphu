@@ -1,5 +1,6 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { LearningJournalNotebook } from "@/components/portal/journal/LearningJournalNotebook";
+import { getLiveJournalChrome, getLiveJournalIntentions } from "@/lib/portal/live-journal";
 import type { Reflection } from "@/lib/portal/reflections";
 
 export const metadata = {
@@ -47,6 +48,10 @@ async function getJournalReflections(): Promise<Reflection[]> {
 }
 
 export default async function LearningJournalPage() {
-  const reflections = await getJournalReflections();
-  return <LearningJournalNotebook reflections={reflections} />;
+  const [reflections, chrome, intentions] = await Promise.all([
+    getJournalReflections(),
+    getLiveJournalChrome(),
+    getLiveJournalIntentions(),
+  ]);
+  return <LearningJournalNotebook reflections={reflections} chrome={chrome} intentions={intentions} />;
 }

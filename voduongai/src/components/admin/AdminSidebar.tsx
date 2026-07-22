@@ -113,6 +113,8 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/su-menh-companion/live-edit": FlaskConical,
   "/admin/hanh-trinh-cua-toi/mirror-chrome": Eye,
   "/admin/hanh-trinh-cua-toi/mirror-questions": Eye,
+  "/admin/hanh-trinh-cua-toi/journal-chrome": BookOpen,
+  "/admin/hanh-trinh-cua-toi/journal-intentions": BookOpen,
 };
 
 function isItemActive(pathname: string, href: string) {

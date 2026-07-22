@@ -125,6 +125,11 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // reflections/memory_capsules/growth-view.ts nào khác.
   "mirror-chrome": "mirror_chrome",
   "mirror-questions": "mirror_questions",
+  // Cửa 2 — Nhật ký học tập. KHÔNG đụng MODULE_LABEL/TODAY_PRIORITY (enum
+  // map) hay dòng "{totalRawOutputs} kết quả thật..." (template nội suy
+  // biến runtime) — cả 3 giữ nguyên trong code.
+  "journal-chrome": "journal_chrome",
+  "journal-intentions": "journal_intentions",
 };
 
 export function tableForCollection(key: string): string | null {

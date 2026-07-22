@@ -23,6 +23,25 @@ import type { GrowthEventType } from "@/lib/portal/foundation/data-model";
  * điểm, không tạo áp lực.
  */
 
+/** Việc 9 — static chrome đã tách khỏi hardcode, đọc live từ bảng
+ * `journal_chrome` (1 dòng, id='journal'), fetch ở page.tsx (Server
+ * Component) rồi truyền props xuống — cùng cách đã làm cho Mirror. */
+export type JournalChrome = {
+  eyebrowLabel: string;
+  title: string;
+  emptyStateLine: string;
+  emptyStateCtaLabel: string;
+  todaySectionLabel: string;
+  todayFallbackLine: string;
+  entriesSectionLabel: string;
+  highlightsSectionLabel: string;
+  createdSectionLabel: string;
+  createdEmptyLine: string;
+  lessonsSectionLabel: string;
+  continueCtaLabel: string;
+  footer: string;
+};
+
 const MODULE_LABEL: Record<string, string> = {
   "khong-gian-ai": "AI Workspace",
   ckos: "Hệ tri thức AI",
@@ -80,7 +99,15 @@ function buildEntries(sessions: WorkspaceSessionRecord[], reflections: Reflectio
     });
 }
 
-export function LearningJournalNotebook({ reflections }: { reflections: Reflection[] }) {
+export function LearningJournalNotebook({
+  reflections,
+  chrome,
+  intentions,
+}: {
+  reflections: Reflection[];
+  chrome: JournalChrome;
+  intentions: string[];
+}) {
   const [sessions, setSessions] = useState<WorkspaceSessionRecord[] | null>(null);
   const [portfolio, setPortfolio] = useState<PortfolioItemRecord[]>([]);
   const [todayHighlight, setTodayHighlight] = useState<string | null>(null);
@@ -142,39 +169,39 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
 
         <header className="journal-page-fade mt-8">
           <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-orange-700/70">
-            <BookOpen className="h-4 w-4" /> Nhật ký học tập
+            <BookOpen className="h-4 w-4" /> {chrome.eyebrowLabel}
           </div>
           <h1 className="mt-2 text-2xl font-extrabold leading-tight text-stone-800 sm:text-3xl">
-            Bản ghi những gì tôi thực sự đã học
+            {chrome.title}
           </h1>
         </header>
 
         {isFullyEmpty ? (
           <div className="journal-page-fade mt-16 text-center">
             <p className="text-base italic leading-relaxed text-stone-500">
-              Trang đầu tiên luôn là trang nhiều hy vọng nhất.
+              {chrome.emptyStateLine}
             </p>
             <Link
               href="/portal/hocvienai"
               className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-700 underline decoration-orange-700/30 underline-offset-4 hover:decoration-orange-700"
             >
-              Bắt đầu bài học đầu tiên <ArrowRight className="h-3.5 w-3.5" />
+              {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         ) : (
           <>
             {/* ── 1. Reflection hôm nay ──────────────────────────────────── */}
             <section className="journal-page-fade mt-10">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">Hôm nay</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">{chrome.todaySectionLabel}</p>
               <p className="mt-2 text-base leading-relaxed text-stone-700">
-                {todayHighlight ?? "Hôm nay chưa có gì để ghi lại — cuốn sổ vẫn đang mở, chờ bạn."}
+                {todayHighlight ?? chrome.todayFallbackLine}
               </p>
             </section>
 
             {/* ── 2. Journal Entries — mỗi entry 4 câu hỏi ──────────────── */}
             {entries.length > 0 && (
               <section className="journal-page-fade mt-12">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">Các trang đã viết</p>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">{chrome.entriesSectionLabel}</p>
                 <div className="mt-4 space-y-5">
                   {entries.map((e) => (
                     <article key={e.id} className="rounded-xl border border-stone-900/8 bg-white/50 p-4">
@@ -213,7 +240,7 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
             {/* ── 3. Learning Highlights — chỉ những lần đầu có ý nghĩa ─── */}
             {highlights.length > 0 && (
               <section className="journal-page-fade mt-12">
-                <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">Khoảnh khắc đáng nhớ</p>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">{chrome.highlightsSectionLabel}</p>
                 <div className="mt-4 space-y-2">
                   {highlights.map((h, i) => (
                     <p key={i} className="text-sm leading-relaxed text-stone-700">
@@ -227,7 +254,7 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
 
             {/* ── 4. Created Outputs — tách khỏi "học", chỉ tác phẩm thật ── */}
             <section className="journal-page-fade mt-12">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">Những gì đã tạo ra</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">{chrome.createdSectionLabel}</p>
               {portfolio.length > 0 ? (
                 <div className="mt-4 space-y-2">
                   {portfolio.slice(0, 8).map((p) => (
@@ -243,7 +270,7 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
                 </p>
               ) : (
                 <p className="mt-3 text-sm italic leading-relaxed text-stone-400">
-                  Chưa có tác phẩm nào — trang này sẽ tự viết khi bạn tạo ra kết quả đầu tiên.
+                  {chrome.createdEmptyLine}
                 </p>
               )}
             </section>
@@ -252,7 +279,7 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
             {behaviorLessons.length > 0 && (
               <section className="journal-page-fade mt-12">
                 <p className="text-[11px] font-bold uppercase tracking-widest text-stone-400">
-                  Những bài học đáng nhớ
+                  {chrome.lessonsSectionLabel}
                 </p>
                 <div className="mt-4 space-y-2">
                   {behaviorLessons.map((l) => (
@@ -270,17 +297,17 @@ export function LearningJournalNotebook({ reflections }: { reflections: Reflecti
          * động tiếp theo (P7 polish: Journal là cửa duy nhất thiếu CTA
          * khép trang, các cửa khác đều có) ──────────────────────────── */}
         <section className="journal-page-fade mt-14 text-center">
-          <p className="text-sm italic leading-relaxed text-stone-600">{todaysJournalIntention()}</p>
+          <p className="text-sm italic leading-relaxed text-stone-600">{todaysJournalIntention(intentions)}</p>
           <Link
             href="/portal/workspace"
             className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-700 underline decoration-orange-700/30 underline-offset-4 hover:decoration-orange-700"
           >
-            Tiếp tục trong Workspace <ArrowRight className="h-3.5 w-3.5" />
+            {chrome.continueCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </section>
 
         <p className="journal-page-fade mx-auto mt-10 max-w-sm text-center text-[11px] leading-relaxed text-stone-400">
-          Đây là bản ghi việc học của bạn — không phải nhật ký hoạt động của hệ thống.
+          {chrome.footer}
         </p>
       </div>
       </div>
