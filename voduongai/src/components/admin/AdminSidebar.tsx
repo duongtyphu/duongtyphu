@@ -35,6 +35,9 @@ import {
   Briefcase,
   HelpCircle,
   Workflow,
+  Users,
+  Newspaper,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -57,6 +60,11 @@ import { adminNavGroups } from "@/lib/admin/nav";
  * route `/admin/ckos/*` (kể cả `/admin/ckos` — CKOS Dashboard) trước đó
  * KHÔNG có icon nào — item hiện lên trong sidebar không có icon (không
  * crash, chỉ thiếu hình). Đã bổ sung đủ.
+ *
+ * Cập nhật (Việc 8): `/admin/updates`/`/admin/community` giờ là route
+ * THẬT (nhóm "Cộng đồng") — đoạn "route cũ đã xoá" liệt kê ở trên chỉ
+ * đúng tại thời điểm audit menu, không còn đúng nữa (cùng tình huống đã
+ * gặp với `/admin/projects`, xem CLAUDE.md).
  */
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
@@ -95,6 +103,9 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/hanh-trinh-cua-toi/story-chrome": Feather,
   "/admin/hanh-trinh-cua-toi/map-chrome": Compass,
   "/admin/hanh-trinh-cua-toi/garden-chrome": Sprout,
+  "/admin/community": Users,
+  "/admin/updates": Newspaper,
+  "/admin/student-success-stories": Star,
 };
 
 function isItemActive(pathname: string, href: string) {

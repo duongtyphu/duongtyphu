@@ -938,10 +938,50 @@ trước khi build (không tự quyết định):
   chính thức trong lucide-react, cùng tinh thần dùng icon gợi ý chung đã
   áp dụng từ trước cho Facebook/YouTube/Zalo).
 
-**Chưa làm (Phần 2 — Admin, việc kế tiếp):** 3 trang DataTable
-(`community`, `updates`, `student_success_stories` — KHÔNG có `news`) +
-group sidebar mới `"Cộng đồng"` (Portal mục #10, sau `"Sứ mệnh
-Companion"`).
+## Việc 8 — Cộng đồng, Phần 2: Admin DataTable + group sidebar
+
+**`news` (1 dòng) — mồ côi CÓ CHỦ ĐÍCH, không phải bỏ sót.** Đã xác nhận
+qua grep toàn bộ `src/`: không có component/page nào import hay đọc bảng
+này — không nuôi bất kỳ khối nào ở `/portal/congdongai` hay nơi khác
+(khác `updates`, cũng "tin tức" nhưng thực sự nuôi khối "Community News").
+Founder quyết định (Phần 1): bỏ qua hoàn toàn ở Việc 8 — không nối Portal,
+không build Admin, không xoá bảng. Nếu sau này cần dùng, đây là việc
+riêng cần thiết kế UI Portal trước (bảng hiện không có consumer nào).
+
+**Đã làm — 3 trang Admin DataTable** (cùng `AdminAtmosphere
+atmosphereClassName="campus-bg"`, đúng nền thật `/portal/congdongai`):
+
+- `/admin/community` (`src/app/admin/(dashboard)/community/page.tsx`) —
+  5 field: `platform`/`label`/`url`/`status` (select `Active`/`Inactive` —
+  giữ đúng vocabulary riêng của bảng này, không đổi sang chuẩn
+  Draft/Published/Hidden).
+- `/admin/updates` (`.../updates/page.tsx`) — 9 field:
+  `title`/`slug`/`type`/`author`/`publishedAt`(date)/`shortContent`/
+  `content`/`featured`(boolean)/`status` (select chuẩn
+  Draft/Published/Hidden).
+- `/admin/student-success-stories` (`.../student-success-stories/page.tsx`)
+  — 9 field: `studentName`/`title`/`result`/`shortDescription`/`content`/
+  `toolsUsed`(tags)/`relatedResource`/`featured`(boolean)/`status` (select
+  chuẩn). **KHÔNG nối hiển thị lên Portal** (xem lý do NO-FAKE-DATA ở mục
+  Phần 1 trên) — trang này chỉ để Founder tự xoá 3 dòng bịa (Minh Anh/Quốc
+  Huy/Thanh Trúc) + nhập câu chuyện thật khi có, có comment cảnh báo ngay
+  đầu file.
+
+**`nav.ts`** — thêm group `"Cộng đồng"` (Portal mục #10, sau `"Sứ mệnh
+Companion"`, đúng nguyên tắc 1:1 đã chốt ở đợt audit menu), 3 item trên
+(không có `news`). **`AdminSidebar.tsx`** — thêm 3 icon
+(`Users`/`Newspaper`/`Star`) cho 3 route mới; đồng thời sửa chú thích cũ
+(từng liệt kê `/admin/updates`/`/admin/community` là "route cũ đã xoá" —
+giờ là route THẬT, cùng tình huống đã gặp với `/admin/projects`).
+
+**Dashboard `/admin`** — cấu trúc group/item tự động ăn theo `nav.ts`
+(không cần sửa gì thêm cho phần này, đã đúng từ Phần 2 đợt audit menu
+trước). Số đếm quản lý qua 2 map tĩnh trong chính `dashboard/page.tsx`
+(`TABLE_FOR_HREF`, `PORTAL_HREF_FOR_GROUP`) — cùng 1 lượt sửa nhỏ như mọi
+group trước đó (Premium, Dự án & Cơ hội...) khi mới thêm: bổ sung
+`"Cộng đồng": "/portal/congdongai"` + 3 dòng
+`community/updates/student_success_stories` → tên bảng thật. Không viết
+API/Server Action mới — dùng lại đúng cơ chế đếm generic sẵn có.
 
 ## THÍ ĐIỂM (pilot) — Inline editing tại `/portal/su-menh-companion`
 

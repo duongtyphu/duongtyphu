@@ -33,7 +33,7 @@ export const metadata = { title: "Tổng quan · Admin" };
 
 // Ánh xạ tên group (đúng `adminNavGroups`) → href Portal thật tương ứng
 // (`portalNavSections`, src/lib/portal/hubs.ts) — cùng nguyên tắc 1:1 đã
-// chốt ở Phần 1. "Cộng đồng" không có ở đây vì chưa có group Admin nào.
+// chốt ở Phần 1. Việc 8: đã thêm "Cộng đồng" (group Admin mới nay đã có).
 const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
   "Trang chủ Học viện": "/portal",
   Companion: "/portal/companion",
@@ -44,6 +44,7 @@ const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
   Premium: "/portal/premium",
   "Hành trình của tôi": "/portal/hanhtrinhcuatoi",
   "Sứ mệnh Companion": "/portal/su-menh-companion",
+  "Cộng đồng": "/portal/congdongai",
 };
 
 // href Admin → tên bảng Supabase generic thật (khớp collectionKey trong
@@ -81,6 +82,9 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/hanh-trinh-cua-toi/story-chrome": "story_chrome",
   "/admin/hanh-trinh-cua-toi/map-chrome": "map_chrome",
   "/admin/hanh-trinh-cua-toi/garden-chrome": "garden_chrome",
+  "/admin/community": "community",
+  "/admin/updates": "updates",
+  "/admin/student-success-stories": "student_success_stories",
 };
 
 type ItemCount = { href: string; count: number | null };

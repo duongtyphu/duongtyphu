@@ -145,8 +145,18 @@ export const adminNavGroups: AdminNavGroup[] = [
       { label: "🧪 Sửa trực tiếp (Thí điểm)", href: "/admin/su-menh-companion/live-edit" },
     ],
   },
-  // Portal #10 — "Cộng đồng" (/portal/congdongai): CHƯA có route Admin nào
-  // quản lý nội dung trang này. Không tự thêm group giả — xem CLAUDE.md
-  // mục "Admin — Audit menu điều hướng" để biết đây là gap thật, không
-  // phải lỗi tách nhóm.
+  {
+    // Portal #10 — "Cộng đồng" (/portal/congdongai). Việc 8 — lấp gap đã ghi
+    // nhận ở đợt audit menu trước. "Câu chuyện học viên" CHƯA nối hiển thị
+    // lên Portal (dữ liệu bịa trùng trang đã archive, chờ Founder nhập nội
+    // dung thật) — chỉ để Founder tự quản qua Admin, xem CLAUDE.md mục
+    // "Việc 8 — Cộng đồng". Bảng `news` (mồ côi, không consumer nào) CHỦ
+    // ĐÍCH không có route ở đây — xem CLAUDE.md, không phải bỏ sót.
+    group: "Cộng đồng",
+    items: [
+      { label: "Kênh cộng đồng", href: "/admin/community" },
+      { label: "Tin tức cộng đồng", href: "/admin/updates" },
+      { label: "Câu chuyện học viên (chưa hiển thị Portal)", href: "/admin/student-success-stories" },
+    ],
+  },
 ];
