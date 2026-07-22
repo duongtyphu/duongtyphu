@@ -861,6 +861,36 @@ thức AI (CKOS)` → `Học viện AI` → `AI Workspace` → `Dự án & Cơ h
 `Premium` → `Hành trình của tôi` → `Sứ mệnh Companion` → (không có group
 `Cộng đồng`, xem gap ở trên).
 
+### Phần 2 — Dashboard tổng quan (`/admin`, thật ra là `/admin/dashboard`)
+
+`/admin` vẫn `redirect("/admin/dashboard")` như cũ (không đổi route).
+Thay nội dung placeholder 2 dòng cũ bằng Dashboard thật:
+`src/app/admin/(dashboard)/dashboard/page.tsx` đọc thẳng `adminNavGroups`
+(nav.ts) làm nguồn duy nhất cho danh sách 9 group + module con (KHÔNG
+định nghĩa lại danh sách module ở trang này — tự động ăn theo mọi thay
+đổi nav.ts sau này, không lệch tay). Mỗi group card có link "Xem trên
+Portal" (map tĩnh `PORTAL_HREF_FOR_GROUP` trong chính file — cùng cặp
+group↔href Portal đã chốt ở Phần 1) và số dòng dữ liệu nhanh cho từng
+module con.
+
+**Cách lấy số dòng — KHÔNG viết API mới:** dùng đúng tầng dữ liệu mà
+`/api/admin/collections/[table]` cũng dùng (`getSupabaseAdmin()` +
+tên bảng thật, map tĩnh `TABLE_FOR_HREF` trong file) — KHÔNG tự
+`fetch()` HTTP vào route của chính app (đã xác nhận không đáng tin cậy
+trên serverless, xem comment gốc trong `fetchCollection.ts`), cùng cách
+CKOS Dashboard (`/admin/ckos`) đã làm. Dùng `.select("id", {count:
+"exact", head: true})` (đếm thuần, không tải cả `data` jsonb — nhẹ hơn
+`fetchCollection()`/`DataTable` vì trang này chỉ cần con số). 2 bảng
+TYPED riêng (`courses`, `case_studies`, không theo schema generic) tái
+dùng thẳng `listCoursePricing()`/`listCaseStudies()` đã có sẵn — không
+viết hàm đếm mới. Chỉ đếm TỔNG số dòng (không tách Published/Draft như
+CKOS Dashboard) — đúng mức "không cần biểu đồ phức tạp" Founder yêu cầu.
+
+`/admin/companion` (nhiều tab nội bộ riêng), `/admin/ckos` (chính nó là
+trang tổng hợp), `/admin/su-menh-companion/live-edit` (công cụ thí điểm)
+hiển thị không kèm số đếm — không phải 1 collection đơn, không có bảng
+để đếm.
+
 ## THÍ ĐIỂM (pilot) — Inline editing tại `/portal/su-menh-companion`
 
 **Trạng thái: đang thử nghiệm, CHƯA phải phong cách UI chính thức thứ 3**
