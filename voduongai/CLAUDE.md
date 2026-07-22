@@ -2474,3 +2474,82 @@ field, 5 dòng, có `order` thật):
 xuất hiện đúng, `/admin/projects` đã biến mất), `tsc`/`eslint` sạch (1
 warning tự phát hiện — `Link` import không dùng nữa ở `page.tsx` sau khi
 tách `ProjectCards.tsx`, đã xoá), `vitest run` 139/139.
+
+## Bug đã sửa — 5 trang chi tiết hệ sinh thái crash + popup Live-edit bị cắt cụt
+
+Founder báo "5 trang con hệ sinh thái đang bị lỗi" ngay sau khi build
+xong. Test thật (chạy `next dev`, tạm bỏ biến môi trường Supabase để
+`/portal/*` công khai theo đúng fallback đã có sẵn trong
+`middleware.ts` — "Portal is intentionally left public when Supabase
+isn't configured", vì sandbox không có tài khoản đăng nhập thật) phát
+hiện 2 lỗi thật, cả 2 đều tự gây ra khi xây `EcosystemOverview.tsx`/
+`EditableRegion.tsx`:
+
+**Lỗi 1 — crash thật, cả 5 trang đều 500:** `Error: Functions cannot be
+passed directly to Client Components`. Nguyên nhân: `Ecosystem.icon` có
+kiểu `LucideIcon` (1 component/function reference, gán trực tiếp — vd.
+`icon: Layers` trong `ecosystems.ts`) — `[ecosystemSlug]/page.tsx` (Server
+Component) truyền thẳng cả `eco` (chứa `icon`) xuống `EcosystemOverview`
+("use client") khi tách component. Function KHÔNG serialize được qua
+ranh giới Server→Client — đúng loại lỗi đã có sẵn tiền lệ tránh ở
+`PillarEntranceCard.tsx` (`home_cards`, xem comment gốc "Next.js RSC
+boundary") nhưng bị bỏ sót khi tách `EcosystemOverview.tsx` lần này.
+
+**Đã sửa:** `[ecosystemSlug]/page.tsx` tách `icon` ra khỏi `eco` bằng
+destructuring (`const { icon: _ecoIcon, ...ecoWithoutIcon } = eco`) trước
+khi truyền xuống Client Component, truyền thêm `iconSlug={eco.slug}`
+(chuỗi thuần). `EcosystemOverview.tsx` nhận `eco: Omit<Ecosystem, "icon">`
++ `iconSlug: string`, tự resolve icon thật qua `ICON_BY_SLUG` (map cục bộ
+trong chính file client, cùng kỹ thuật `PillarEntranceCard`'s `ICONS`).
+
+**Lỗi 2 — popup "Sửa nhanh" bị cắt cụt, không kéo xuống xem hết field
+được, kèm giật hình khi bấm bút:** phát hiện khi test popup thật (dựng 1
+route dev-preview tạm thời ngoài `/portal`/`/admin` để bọc
+`EditModeProvider` mà không cần đăng nhập, dùng Playwright chụp + thao
+tác click/scroll, xoá route này ngay sau khi xác nhận xong — không phải
+tính năng, chỉ là công cụ test tạm). Nguyên nhân: MỌI trang Portal
+Live-edit đều có 1 wrapper ngoài cùng `overflow-hidden` (kỹ thuật
+full-bleed khí quyển nền — `-mx-4 -my-6 min-h-full overflow-hidden
+md:-mx-8 md:-my-8` ở `MirrorChamber`/`LearningJournalNotebook`/
+`MyStoryBook`/`JourneyMapAtlas`/`GardenExperience`, và card
+`overflow-hidden rounded-2xl` ở `ProjectCards`/`EcosystemOverview`).
+`EditableRegion`'s popup cũ dùng `position: absolute` NẰM BÊN TRONG cây
+DOM bị `overflow-hidden` này — bị cắt cụt theo đúng khung `overflow-hidden`
+gần nhất, không có cách nào cuộn xem phần bị cắt. Đây là lỗi **hệ thống**,
+tồn tại ở cả 8 bản sao `EditableRegion.tsx` (mirror/journal/story/
+journey-map/garden/gem-home/su-menh-companion/opportunities) — không
+phải riêng module Dự án & Cơ hội, chỉ là module này lộ ra rõ nhất vì có
+nhiều field nhất (9-10 field/popup) nên chiều cao popup chắc chắn vượt
+quá phần còn lại nhìn thấy được trong khung `overflow-hidden`.
+
+**Đã sửa (áp dụng đồng loạt cho cả 8 file, giữ đúng nguyên tắc "8 bản sao
+byte-for-byte, chỉ khác import"):** popup giờ render qua React
+`createPortal` thẳng vào `document.body` — thoát khỏi MỌI
+`overflow-hidden`/stacking context của tổ tiên. Định vị bằng
+`position: absolute` (không phải `fixed`, để popup cuộn tự nhiên theo
+trang) tính từ toạ độ thật của vùng trigger
+(`getBoundingClientRect() + window.scrollX/scrollY`), kèm
+`max-h-[70vh] overflow-y-auto` để tự cuộn bên trong khi danh sách field
+dài hơn màn hình, và tự kẹp lại trong chiều ngang viewport (không tràn
+phải khi trigger nằm sát mép phải). Đã verify bằng Playwright: bounding
+box popup đúng `max-h-[70vh]` (420px ở viewport 600px cao), cuộn bên
+trong panel đến tận nút "Lưu" ở cuối danh sách field — xác nhận `visible:
+true`.
+
+**Chưa xử lý — Founder cũng báo "không có mục xoá":** đúng như thiết kế
+(nhất quán với Mirror/Journal/`home_cards` — Live-edit Cách A chỉ sửa
+field + kéo-thự tự, không add/xoá record), KHÔNG phải bug. Cần Founder
+xác nhận có muốn thêm khả năng xoá 1 hệ sinh thái qua
+`ProjectCards.tsx`/hub Live-edit hay không trước khi xây — chưa tự thêm.
+
+**File sửa:** `src/components/portal/opportunities/EcosystemOverview.tsx`,
+`src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx`, và cả 8 file
+`EditableRegion.tsx` (mirror/journal/story/journey-map/garden/gem-home/
+su-menh-companion/opportunities — nội dung giờ byte-for-byte giống hệt
+nhau, xác nhận qua `md5sum`).
+
+**Verify:** test thật qua `next dev` (không chỉ `tsc`/`build`) — xác nhận
+cả 5 trang chi tiết hệ sinh thái trả `200` + render đúng nội dung thật từ
+`ecosystem_chrome` (không còn lỗi trong log dev server), popup Live-edit
+cuộn được đầy đủ qua Playwright. `tsc`/`eslint` sạch, `rm -rf .next && npm
+run build` sạch, `vitest run` 139/139.

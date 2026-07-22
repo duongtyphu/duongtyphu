@@ -1,5 +1,6 @@
 "use client";
 
+import { Layers, Building2, Bitcoin, Link2, LineChart, type LucideIcon } from "lucide-react";
 import type { Ecosystem } from "@/data/portal/ecosystems";
 import { useCollection } from "@/lib/admin/store";
 import { useEditMode } from "@/components/portal/opportunities/EditModeContext";
@@ -14,9 +15,27 @@ import type { FieldConfig } from "@/lib/admin/fields";
  * `EditableRegion` — cùng pattern Cách A đã dùng cho 5 Cửa Hành trình.
  *
  * Mọi field khác (`fullIntro`/`highlights`/`whoFor`/`whoNotReady`/
- * `expectedOutcome`/`statusBadge`/`icon`) vẫn đọc thẳng từ `eco` (tĩnh,
- * KHÔNG qua useCollection) — giữ nguyên 100% như cũ.
+ * `expectedOutcome`/`statusBadge`) vẫn đọc thẳng từ `eco` (tĩnh, KHÔNG qua
+ * useCollection) — giữ nguyên 100% như cũ.
+ *
+ * BUG ĐÃ SỬA: `eco.icon` (kiểu `LucideIcon`, tức 1 function/component
+ * reference) KHÔNG serialize được qua ranh giới Server→Client Component —
+ * truyền thẳng `eco` (chứa `icon`) từ `[ecosystemSlug]/page.tsx` (Server)
+ * vào Client Component này gây crash thật ("Functions cannot be passed
+ * directly to Client Components") trên cả 5 trang chi tiết hệ sinh thái.
+ * Đã sửa: nhận `iconSlug: string` (tính từ `eco.slug` ở Server Component,
+ * chuỗi thuần serialize được) thay vì `eco.icon`, resolve về component
+ * Lucide thật NGAY TRONG file client này — cùng kỹ thuật/lý do đã áp dụng
+ * cho `PillarEntranceCard.tsx` (`home_cards`) từ trước.
  */
+const ICON_BY_SLUG: Record<string, LucideIcon> = {
+  digiu: Layers,
+  solargroup: Building2,
+  "blockchain-crypto": Bitcoin,
+  "lam-affilate": Link2,
+  sangiaodich: LineChart,
+};
+
 const NAME_FIELDS: FieldConfig[] = [{ key: "name", label: "Tiêu đề", type: "text", required: true }];
 const DESCRIPTION_FIELDS: FieldConfig[] = [
   { key: "shortDescription", label: "Mô tả ngắn", type: "textarea", full: true, required: true },
@@ -24,10 +43,12 @@ const DESCRIPTION_FIELDS: FieldConfig[] = [
 
 export function EcosystemOverview({
   eco,
+  iconSlug,
   surface,
   seedChrome,
 }: {
-  eco: Ecosystem;
+  eco: Omit<Ecosystem, "icon">;
+  iconSlug: string;
   surface: { chip: string; badge: string; strip: string };
   seedChrome: EcosystemChrome;
 }) {
@@ -38,7 +59,7 @@ export function EcosystemOverview({
     { enabled: editMode },
   );
   const chrome = chromeItems.find((c) => c.id === seedChrome.id) ?? seedChrome;
-  const Icon = eco.icon;
+  const Icon = ICON_BY_SLUG[iconSlug] ?? Layers;
 
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-token-sm">

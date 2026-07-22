@@ -264,6 +264,12 @@ export default async function EcosystemMiniSitePage({
   );
   const potentialAnalysis = eco.potentialAnalysis ?? DEFAULT_POTENTIAL_ANALYSIS;
   const chrome = await getLiveEcosystemChrome(eco.id);
+  // `eco.icon` là 1 component/function reference (LucideIcon) — KHÔNG
+  // serialize được qua ranh giới Server→Client Component. Tách riêng
+  // trước khi truyền xuống `EcosystemOverview` ("use client"), thay bằng
+  // `iconSlug` (chuỗi thuần) để component đó tự resolve icon thật.
+  const { icon: _ecoIcon, ...ecoWithoutIcon } = eco;
+  void _ecoIcon;
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -281,7 +287,7 @@ export default async function EcosystemMiniSitePage({
         ]}
       />
 
-      <EcosystemOverview eco={eco} surface={surface} seedChrome={chrome} />
+      <EcosystemOverview eco={ecoWithoutIcon} iconSlug={eco.slug} surface={surface} seedChrome={chrome} />
 
       {eco.structureType === "sub-projects" && (
         <>
