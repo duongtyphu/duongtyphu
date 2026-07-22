@@ -1627,3 +1627,82 @@ khác. Founder tự verify trực tiếp trên Preview URL (xem checklist trong
 báo cáo) — bảo đảm về mặt code: RLS policy (Bước 1) + filter tường minh
 trong `getLiveCourseContent()` + không có đường nào khác đọc 2 bảng này ở
 Portal ngoài file này.
+
+## Nhóm 3 — Mở rộng Live-edit: audit kiến trúc trước khi build (bắt buộc)
+
+Trước khi build bất kỳ module nào trong Nhóm 3 (mở rộng Live-edit "Cách A"
+thay VisualEditor cũ cho 5 Cửa Hành trình + Trang chủ Học viện + Sứ mệnh
+Companion + hub Dự án & Cơ hội), đã audit kiến trúc thật của từng khu vực
+— phát hiện 2 vấn đề buộc dừng hỏi trước khi build (không tự quyết định):
+
+1. **5 Cửa Hành trình + hub Dự án & Cơ hội — kiến trúc KHÁC Companion đã
+   pilot.** Companion's `/portal/su-menh-companion/page.tsx` là "use
+   client" thuần, tự gọi `useCollection()` cho cả 6 khối — nên pilot chỉ
+   cần bọc `<EditableRegion>` trực tiếp trong JSX của chính trang đó,
+   không cần sửa gì khác. Nhưng `MirrorChamber`/`LearningJournalNotebook`/
+   `MyStoryBook`/`JourneyMapAtlas`/`GardenExperience` và hub
+   `/portal/duan-cohoi` đều là (hoặc được render bởi) **Server Component**
+   nhận `chrome`/dữ liệu qua PROPS từ `page.tsx` (đã tự fetch server-side
+   qua `getLiveMirrorChrome()`/`getLiveProjects()`...) — hoàn toàn không
+   dùng `useCollection()`. Nhúng `EditableRegion` trực tiếp cần
+   `record`+`update` phản ứng từ `useCollection()`, nhưng gọi hook này
+   luôn (bắt buộc theo Rules of Hooks, không được gọi có điều kiện) sẽ
+   thêm 1 request mạng thừa cho MỌI khách Portal thật ghé Mirror/Journal/
+   Story/Map/Garden/Dự án — dù họ không bao giờ vào chế độ sửa.
+
+2. **Trang chủ Học viện (`home_cards`) — gap sâu hơn, không chỉ kiến
+   trúc.** `/portal/page.tsx` (GemHomePage) THẬT hoàn toàn KHÔNG đọc bảng
+   `home_cards` — cả 7 `<PillarEntranceCard>` đều hardcode JSX trực tiếp
+   trong file. `/admin/home-cards` (VisualEditor) đang quản 1 bảng mồ côi,
+   sửa gì cũng không ảnh hưởng trang chủ thật.
+
+**Quyết định Founder (cả 2 điểm):**
+
+- **Kiến trúc A/D:** thêm tham số thứ 3 `options?: { enabled?: boolean }`
+  vào `useCollection()` (`src/lib/admin/store.ts`), mặc định `true` —
+  KHÔNG đổi hành vi ~30+ nơi gọi 2-tham số hiện có. Khi `enabled: false`,
+  `useSupabaseCollection` bỏ qua hẳn `fetch()` (dùng thẳng `seed` — chính
+  là prop server đã truyền — làm dữ liệu hiển thị, `ready` ngay lập tức).
+  5 component Portal thật (Mirror.../hub Dự án) sẽ gọi
+  `useCollection(key, seed, { enabled: editMode })` — Portal thật
+  (`editMode=false`) zero request mạng thừa; qua route live-edit tương
+  ứng (`editMode=true`) mới thật sự fetch/phản ứng để sửa.
+- **`home_cards`:** nối dây trước — sửa `/portal/page.tsx` đọc thật từ
+  `home_cards` (cache()-wrapped Server fetch, cùng pattern
+  `getLiveProjects()`) TRƯỚC khi áp Live-edit, vì sửa editor cho 1 bảng
+  chẳng ai đọc là vô nghĩa. (Việc nối dây này làm ở module Trang chủ Học
+  viện, chưa làm ở bước hạ tầng chung này.)
+
+**Đã làm (bước hạ tầng chung, TRƯỚC MỌI module Nhóm 3 — đây là thay đổi
+hạ tầng dùng chung ĐẦU TIÊN trong toàn bộ admin-rebuild, ảnh hưởng
+`useCollection()` — hook lõi dùng bởi ~30+ nơi: mọi `VisualEditor`,
+`SingletonEditor`, `DataTableRowPanel`, `FieldInput` (multi-select), và
+nhiều Portal section đọc admin-authored content):**
+
+`src/lib/admin/store.ts` — thêm tham số thứ 3 như trên. Verify theo đúng
+4 điều kiện Founder yêu cầu trước khi cho phép dùng:
+1. Implement đúng như đề xuất — `enabled` mặc định `true`.
+2. `npx vitest run` toàn bộ — **139/139 pass**, không regression.
+3. Code review 3 nơi bất kỳ đã có từ trước, xác nhận KHÔNG bị ảnh hưởng:
+   - `AdminPromptsSection.tsx` (CKOS, Portal đọc `prompts`) —
+     `useCollection("prompts", promptsSeed)` 2 tham số, `options`
+     `undefined` → `enabled` mặc định `true`, hành vi y hệt trước.
+   - `su-menh-companion/mission/page.tsx` (Sứ mệnh Companion cũ, qua
+     `VisualEditor`) — `VisualEditor` tự gọi `useCollection<T>(collectionKey,
+     [])` 2 tham số, cùng kết luận.
+   - `course-pricing/{page,CourseRow,actions}.tsx` (Premium) — grep xác
+     nhận **0 lần gọi `useCollection`** ở cả 3 file (bảng `courses` là
+     typed, dùng Server Actions riêng) — hoàn toàn không tiếp xúc hook
+     này, cách ly tuyệt đối khỏi thay đổi.
+4. Ghi lại đầy đủ mục này trong CLAUDE.md (lý do, phạm vi, cách verify).
+
+`tsc`/`eslint` sạch sau khi sửa (1 lỗi cú pháp tự gây ra khi viết comment
+— chuỗi `/admin/*/live-edit` vô tình chứa literal `*/` đóng sớm khối
+JSDoc `/** ... */`, gây hàng loạt lỗi parse phía sau — đã sửa lại thành
+"route live-edit tương ứng", tránh mọi literal `*/` trong comment JSDoc
+từ nay).
+
+**Chưa build module nào của Nhóm 3 ở bước này** — đây thuần là bước hạ
+tầng chung, mở khoá kỹ thuật cho Phần A/D. Tiếp theo: build từng module
+theo đúng thứ tự Founder chọn (nối dây `home_cards` trước, rồi Live-edit
+Trang chủ Học viện, Phần A 5 Cửa, Phần C Companion, Phần D hub Dự án).

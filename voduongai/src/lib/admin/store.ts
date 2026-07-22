@@ -11,22 +11,39 @@ import { tableForCollection } from "@/lib/admin/supabaseCollections";
  * tables via the generic `/api/admin/collections/[table]` route. Everything
  * else still falls back to localStorage — this is the same hook either way,
  * so no consumer (CrudPage, portal sections, reports...) needs to change.
+ *
+ * `options.enabled` (Nhóm 3, Live-edit mở rộng — mặc định `true`, KHÔNG đổi
+ * hành vi ~30+ nơi gọi 2-tham số hiện có): dùng cho component Portal THẬT
+ * (Mirror/Journal/Story/Map/Garden/hub Dự án — Server Component truyền
+ * chrome/dữ liệu qua props, không tự dùng `useCollection()` như Companion)
+ * cần nhúng `EditableRegion` nhưng KHÔNG được phép tự fetch mạng cho khách
+ * Portal thật (`useEditMode() === false`). Rules of Hooks bắt buộc gọi hook
+ * này KHÔNG điều kiện ở mọi lần render — `enabled: false` khiến
+ * `useSupabaseCollection` bỏ qua hẳn `fetch()` (dùng thẳng `seed` — chính
+ * là prop server đã truyền — làm dữ liệu thật, `ready` ngay lập tức), chỉ
+ * kích hoạt fetch/phản ứng thật khi gọi qua route live-edit tương ứng
+ * (`enabled: editMode`).
  */
-export function useCollection<T extends { id: string }>(key: string, seed: T[]) {
+export function useCollection<T extends { id: string }>(
+  key: string,
+  seed: T[],
+  options?: { enabled?: boolean },
+) {
+  const enabled = options?.enabled ?? true;
   const table = tableForCollection(key);
   const localStore = useLocalCollection<T>(key, seed);
-  const supabaseStore = useSupabaseCollection<T>(key);
+  const supabaseStore = useSupabaseCollection<T>(key, seed, enabled);
   return table ? supabaseStore : localStore;
 }
 
-function useSupabaseCollection<T extends { id: string }>(key: string) {
-  const [items, setItems] = useState<T[]>([]);
-  const [ready, setReady] = useState(false);
+function useSupabaseCollection<T extends { id: string }>(key: string, seed: T[], enabled: boolean) {
+  const [items, setItems] = useState<T[]>(enabled ? [] : seed);
+  const [ready, setReady] = useState(!enabled);
   const table = tableForCollection(key);
   const endpoint = `/api/admin/collections/${key}`;
 
   const load = useCallback(async () => {
-    if (!table) return;
+    if (!table || !enabled) return;
     try {
       const res = await fetch(endpoint);
       const json = await res.json();
@@ -36,14 +53,15 @@ function useSupabaseCollection<T extends { id: string }>(key: string) {
     } finally {
       setReady(true);
     }
-  }, [endpoint, table]);
+  }, [endpoint, table, enabled]);
 
   useEffect(() => {
+    if (!enabled) return; // Portal thật (editMode=false) — không fetch mạng nào, dùng seed.
     // Fetch-on-mount from Supabase via the generic collections API; no pure
     // render-time equivalent exists for this remote data load.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     load();
-  }, [load]);
+  }, [load, enabled]);
 
   const add = useCallback(
     async (item: T) => {
