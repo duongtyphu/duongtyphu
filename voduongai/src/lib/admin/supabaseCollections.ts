@@ -87,8 +87,9 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
 
   // Việc 3 — Lesson (CKOS Knowledge Seed), Giai đoạn 1. Bảng mới, tên
   // "knowledge_seeds" (không phải "lessons" — tên đó đã bị chiếm bởi bảng
-  // khoá học trả phí VDAI SOLO/SCALE, course_id/video_url/pdf_url, đang
-  // dùng thật ở /portal/vdai-academy — xem CLAUDE.md). Khớp đúng tên type
+  // id/title/video_url/pdf_url/price. Route Portal từng đọc bảng này
+  // (/portal/vdai-academy) đã bị xoá theo yêu cầu Founder — bảng vẫn giữ
+  // nguyên, mồ côi có chủ đích, xem CLAUDE.md). Khớp đúng tên type
   // KnowledgeSeed trong src/features/knowledge/types/knowledge-seed.types.ts.
   "knowledge-seeds": "knowledge_seeds",
 

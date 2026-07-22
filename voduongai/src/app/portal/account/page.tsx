@@ -113,7 +113,7 @@ export default async function AccountPage() {
           {confirmedOrders.length === 0 ? (
             <p className="mt-4 text-center text-sm text-gray-500">
               Bạn chưa mua sản phẩm nào.{" "}
-              <a href="/portal/vdai-academy" className="font-semibold text-brand-blue hover:underline">
+              <a href="/portal/premium" className="font-semibold text-brand-blue hover:underline">
                 Xem khoá học →
               </a>
             </p>

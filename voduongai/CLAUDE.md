@@ -1356,3 +1356,50 @@ cascade)`, `title (text)`, `video_url`, `pdf_url`, `document_url`,
 `status (text, default 'Draft')`, `content (text, nullable)`,
 `duration_minutes (int, default 0)`, `is_free_preview (bool, default
 false)`, `created_at`, `updated_at`.
+
+## Đã xoá `/portal/vdai-academy` (theo yêu cầu Founder, không liên quan Course Builder)
+
+Founder yêu cầu xoá hẳn route này — portal cũ, không audit trước, xoá luôn
+(tách biệt hoàn toàn khỏi Course Builder Premium đang làm dở ở mục trên).
+
+**Đã xoá:** `src/app/portal/vdai-academy/page.tsx` (toàn bộ route). Đã kiểm
+tra `nav.ts`/`AdminSidebar.tsx`/`src/lib/portal/hubs.ts` (menu Portal
+chính) — **không có entry nào** trỏ route này (route này chưa từng nằm
+trong menu chính thức, chỉ được link rải rác từ vài nơi — xem "Chưa xử lý"
+bên dưới).
+
+**Bảng `lessons`** (Supabase) — **GIỮ NGUYÊN**, không xoá dữ liệu/bảng
+thật. Bảng này giờ **mồ côi có chủ đích** (không còn route Portal nào đọc)
+— xoá hẳn bảng (nếu Founder muốn) là quyết định riêng, sau này, ngoài
+phạm vi việc này.
+
+**Dọn dẹp trực tiếp do xoá route (không phải scope creep — hệ quả bắt
+buộc của việc xoá):**
+- `src/app/admin/(dashboard)/course-pricing/actions.ts` — xoá 2 dòng
+  `revalidatePath("/portal/vdai-academy")` (route không còn tồn tại,
+  gọi revalidate 1 path chết là dead code).
+- `src/lib/admin/supabaseCollections.ts` — cập nhật lại comment lịch sử
+  (dòng ~88-92, giải thích vì sao bảng CKOS đặt tên `knowledge_seeds` thay
+  vì `lessons`) cho khớp thực tế mới: bảng `lessons` giờ mồ côi, không còn
+  route nào đọc.
+
+**Đã sửa 1 chỗ (bắt buộc — test tự động chặn):** `src/app/portal/account/page.tsx`
+có `<a href="/portal/vdai-academy">Xem khoá học →</a>` ở empty-state "Sản
+phẩm đã mua" — bị `src/__tests__/route-integrity.test.ts` (kiểm tra mọi
+`href="..."` literal phải trỏ route thật/redirect đã biết) bắt fail ngay
+khi chạy vitest. Đổi sang `/portal/premium` (trang khoá học thật) — đúng
+route, đúng ý nghĩa CTA, không phải thêm redirect (Founder muốn 404 thật,
+không muốn redirect).
+
+**CHƯA xử lý (ngoài phạm vi yêu cầu, KHÔNG bị test chặn vì không phải JSX
+`href="..."` — chỉ ghi nhận, không tự sửa):** 3 nơi khác vẫn còn
+href/link tĩnh trỏ `/portal/vdai-academy` (dạng `href: "..."`/`ctaHref:
+"..."` trong object dữ liệu, ra 404 khi bấm vào nhưng không phải lỗi
+build/route khác):
+- `src/components/portal/RoadmapInteractive.tsx` (2 bước lộ trình: "Học
+  viện Affiliate", "V-SCALE").
+- `src/data/admin/portalBuilder.ts` (1 entry — công cụ Portal Builder cũ).
+- `src/data/blog.ts` (4 bài viết, field `ctaHref`).
+
+Nếu Founder muốn sửa các link này trỏ sang đâu (`/portal/premium`? xoá
+hẳn CTA?), đây là việc riêng cần quyết định từng chỗ, chưa tự ý đổi.

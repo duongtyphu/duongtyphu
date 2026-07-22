@@ -42,7 +42,6 @@ export async function updateCoursePrice(id: string, price: number) {
   if (error) return { error: "Không thể cập nhật giá, vui lòng thử lại." };
 
   revalidatePath("/admin/course-pricing");
-  revalidatePath("/portal/vdai-academy");
   revalidatePath("/portal/premium");
   return { error: null };
 }
@@ -66,7 +65,6 @@ export async function updateCourseStatus(id: string, status: string) {
   if (error) return { error: "Không thể cập nhật trạng thái, vui lòng thử lại." };
 
   revalidatePath("/admin/course-pricing");
-  revalidatePath("/portal/vdai-academy");
   revalidatePath("/portal/premium");
   return { error: null };
 }
