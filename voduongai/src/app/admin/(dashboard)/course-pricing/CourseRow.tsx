@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { updateCoursePrice, updateCourseStatus, type CoursePricing } from "./actions";
 import { SaveStateBadge, type SaveState } from "@/components/admin/SaveStateBadge";
 
@@ -72,6 +73,12 @@ export function CourseRow({ course }: { course: CoursePricing }) {
             {saveState === "saving" ? "Đang lưu..." : "Lưu"}
           </button>
           <SaveStateBadge state={saveState} isDirty={isDirty} />
+          <Link
+            href={`/admin/premium/courses/${course.id}/builder`}
+            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:border-brand-blue hover:text-brand-blue"
+          >
+            Quản lý nội dung
+          </Link>
         </div>
       </td>
     </tr>

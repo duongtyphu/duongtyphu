@@ -1477,3 +1477,74 @@ gọi trên path chưa từng render — vô hại, sẽ có tác dụng khi Bư
   xoá cả 2 lesson con (0 dòng còn lại). Đã dọn sạch dữ liệu test này sau
   khi xác nhận — `ai-coban` hiện lại 0 section/lesson, sẵn sàng cho Bước
   3 test từ đầu.
+
+## Course Builder (Premium) — Bước 3: Admin UI
+
+UI riêng (không phải VisualEditor/DataTable — quan hệ lồng 2 cấp
+Section→Lesson không khớp 2 pattern generic đó), dùng đúng 8 Server
+Actions đã có ở Bước 2 (`./actions.ts`), không viết thêm tầng dữ liệu.
+
+**File mới** (cùng thư mục route `/admin/premium/courses/[courseId]/builder/`
+đã tạo actions.ts ở Bước 2):
+- `page.tsx` (Server Component) — `requireAdmin()` gate riêng (2 lớp
+  phòng hộ, cùng nguyên tắc `DataTable.tsx`), fetch song song
+  `listCoursePricing()` (lấy tên khoá hiển thị, tái dùng Server Action có
+  sẵn — không viết hàm mới) + `getCourseBuilderTree(courseId)`, render
+  `<CourseBuilderClient>`.
+- `CourseBuilderClient.tsx` ("use client") — cây Section→Lesson cột trái +
+  kéo-thả HTML5 native (`draggable`/`onDragStart`/`onDragOver`/`onDrop`,
+  cùng kỹ thuật `VisualEditor.tsx` đã dùng, không thêm thư viện DnD mới).
+  Khác `VisualEditor` ở chỗ cần 2 cấp lồng nhau — xử lý bằng 1 hàm chung
+  `computeLessonMove()` + `commitTree()` gọi `reorderCourseTree()`:
+  - Kéo section (chỉ phần header draggable) thả vào section khác → đổi
+    thứ tự section.
+  - Kéo lesson thả vào lesson khác (cùng hoặc khác section) → chèn đúng vị
+    trí, đổi `section_id` nếu khác section.
+  - Kéo lesson thả vào vùng trống của 1 section (kể cả section rỗng) →
+    nối vào cuối section đó.
+  - Mỗi tầng đều `e.stopPropagation()` ở `onDrop` để tránh 1 lần thả bị 2-3
+    handler xử lý chồng (lesson row → lesson-list container → section
+    wrapper).
+  - Cập nhật local state ngay (optimistic) trước khi gọi Server Action, để
+    kéo-thả mượt; nếu action lỗi thì gọi lại `getCourseBuilderTree()` để
+    đồng bộ lại đúng trạng thái server (không dùng `router.refresh()` —
+    gọi thẳng `getCourseBuilderTree()` như 1 Server Action bình thường vì
+    nó cũng export từ file `"use server"`, không cần refetch qua props).
+  - Xoá Section: `window.confirm` (cùng pattern `VisualEditor.handleDelete`)
+    với cảnh báo rõ số lesson bên trong nếu > 0 ("Sẽ xoá cả X bài học bên
+    trong") — cascade tự động đã có từ Bước 1, không cần xoá tay lesson
+    trước.
+  - Tiêu đề Section sửa trực tiếp (input inline trong header, `onBlur` mới
+    gọi `updateSection`) — cột phải CHỈ dành cho form Lesson theo đúng yêu
+    cầu, không có 1 "form Section" riêng.
+- `LessonEditorPanel.tsx` ("use client") — form cột phải, tái dùng
+  `FieldInput` (đã tách khỏi `DataTableRowPanel` từ trước cho đúng mục
+  đích dùng chung) cho 6 field (`title/video_url/content/
+  duration_minutes/is_free_preview/status`) — không viết lại switch JSX
+  theo `FieldType` lần 2. Chưa chọn Lesson nào → empty state rõ ràng, không
+  lỗi (đặt SAU mọi hook, tuân thủ Rules of Hooks).
+
+**Nối vào `/admin/course-pricing`:** `CourseRow.tsx` thêm nút "Quản lý nội
+dung" (Link) cạnh nút Lưu, dẫn đúng `/admin/premium/courses/${course.id}/builder`.
+
+**`nav.ts`:** KHÔNG thêm href mới — chỉ thêm comment giải thích trong group
+"Premium" đã có: route builder có `[courseId]` động, vào qua nút "Quản lý
+nội dung" ở `/admin/course-pricing` (entry `nav.ts` đã có sẵn), không liệt
+kê 5 khoá riêng trong sidebar. Vì không có href mới, Dashboard `/admin`
+không cần sửa gì thêm (đã tự hiện đúng entry "Giá khoá học Premium" từ
+trước).
+
+**Verify đã chạy:** `tsc`/`eslint`/`npm run build` sạch (route
+`/admin/premium/courses/[courseId]/builder` xuất hiện đúng trong build
+output), `vitest run` 139/139 pass.
+
+**Giới hạn thật của sandbox này (không phải bỏ qua — capability gap thật):**
+đã thử dựng `next dev` cục bộ + xác nhận middleware redirect đúng
+(`/admin/premium/courses/ai-coban/builder` và `/admin/course-pricing` đều
+307 → `/admin/login` khi chưa đăng nhập, không crash) — nhưng **không thể
+test tương tác thật** (tạo Section/Lesson, kéo-thả, sửa, xoá qua UI) vì
+sandbox không có `SUPABASE_SERVICE_ROLE_KEY` thật (chỉ `.env.example` có
+sẵn anon key public, không có service role key hay tài khoản Admin thật
+nào để đăng nhập) — đây là giới hạn quyền truy cập thật của môi trường
+sandbox, không phải lựa chọn bỏ qua bước test. Founder cần tự làm phần
+"tạo thử qua UI thật" trên Preview URL — xem checklist trong báo cáo.

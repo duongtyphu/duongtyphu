@@ -103,6 +103,11 @@ export const adminNavGroups: AdminNavGroup[] = [
     // trong nhóm "Nội dung" dưới tên "Giá khoá học Premium" làm cả group
     // lẫn item — tách group riêng đúng tên Portal ("Premium"), giữ tên
     // item mô tả rõ nội dung quản lý.
+    //
+    // Course Builder (Bước 3): KHÔNG liệt kê 5 khoá riêng ở đây — route
+    // builder có [courseId] động, vào qua nút "Quản lý nội dung" ở mỗi
+    // dòng trong /admin/course-pricing (đã có), không cần entry sidebar
+    // riêng cho từng khoá.
     group: "Premium",
     items: [{ label: "Giá khoá học Premium", href: "/admin/course-pricing" }],
   },
