@@ -12,14 +12,25 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ChevronRight, Copy, Check } from "lucide-react";
 import { startCompanionWorkspace, type WorkspaceItemType } from "@/lib/portal/companion-workspace";
-import { RECOMMENDED_WORKSPACES, AI_WORKFLOWS, LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
+import { LEARNING_PATHS, AI_RESOURCES } from "@/data/portal/ai-workspace";
 import { RECOMMENDED_WORKSPACE_TO_MISSION } from "@/lib/portal/foundation/mission-catalog";
 import { useCollection } from "@/lib/admin/store";
 
-// Việc 10 — WORK_NEEDS đọc live qua useCollection() thay vì mảng tĩnh
-// @/data/portal/ai-workspace (giữ lại @deprecated trong file đó để tham
-// khảo/rollback), cùng pattern PromptLibrarySection đã dùng cho `prompts`.
+// Việc 10/11 — WORK_NEEDS/RECOMMENDED_WORKSPACES/AI_WORKFLOWS đọc live qua
+// useCollection() thay vì mảng tĩnh @/data/portal/ai-workspace (giữ lại
+// @deprecated trong file đó để tham khảo/rollback), cùng pattern
+// PromptLibrarySection đã dùng cho `prompts`.
 type LiveWorkNeed = { id: string; title: string; description: string; icon: string; status: string };
+type LiveRecommendedWorkspace = {
+  id: string;
+  title: string;
+  goal: string;
+  expectedOutput: string;
+  estimatedTime: string;
+  suggestedTools: string[];
+  status: string;
+};
+type LiveAiWorkflow = { id: string; title: string; steps: string[]; suggestedTools: string[]; status: string };
 
 // Việc 7 (Nhóm B) — PromptLibrarySection đọc live qua useCollection() thay
 // vì mảng tĩnh @/data/prompts, cùng bảng `prompts` mà /admin/ckos/prompts
@@ -143,11 +154,13 @@ export function WorkNeedSection({
 /** Section 6 — Workspace đề xuất. */
 export function RecommendedWorkspaceSection() {
   const practice = usePracticeAction();
+  const { items: recommendedItems } = useCollection<LiveRecommendedWorkspace>("recommended-workspace", []);
+  const recommendedWorkspaces = recommendedItems.filter((w) => w.status === "Published");
   return (
     <section className="space-y-4">
       <SectionHeader label="Đề xuất cho bạn" title="Workspace đề xuất cho bạn" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {RECOMMENDED_WORKSPACES.map((ws) => (
+        {recommendedWorkspaces.map((ws) => (
           <button
             key={ws.id}
             type="button"
@@ -183,11 +196,13 @@ export function RecommendedWorkspaceSection() {
 /** Section 7 — AI Workflows. */
 export function AiWorkflowSection() {
   const practice = usePracticeAction();
+  const { items: workflowItems } = useCollection<LiveAiWorkflow>("ai-workflow-sections", []);
+  const workflows = workflowItems.filter((f) => f.status === "Published");
   return (
     <section className="space-y-4">
       <SectionHeader label="Quy trình" title="Quy trình AI theo công việc" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {AI_WORKFLOWS.map((flow) => (
+        {workflows.map((flow) => (
           <button
             key={flow.id}
             type="button"

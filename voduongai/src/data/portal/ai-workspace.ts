@@ -39,6 +39,10 @@ export type RecommendedWorkspace = {
   suggestedTools: string[];
 };
 
+/** @deprecated Việc 11 — thay bằng bảng `recommended_workspace`
+ * (RecommendedWorkspaceSection đọc qua useCollection()), giữ lại tham
+ * khảo/rollback. Lưu ý: mission-catalog.ts's RECOMMENDED_WORKSPACE_TO_MISSION
+ * vẫn khoá theo id của mảng này — không đổi id nếu migrate dữ liệu. */
 export const RECOMMENDED_WORKSPACES: RecommendedWorkspace[] = [
   { id: "viet-bai-facebook", title: "Viết bài Facebook", goal: "Viết một bài đăng thu hút tương tác cho trang/nhóm của bạn.", expectedOutput: "1 bài đăng Facebook hoàn chỉnh", estimatedTime: "15 phút", suggestedTools: ["ChatGPT", "Claude"] },
   { id: "tao-landing-page", title: "Tạo Landing Page", goal: "Dựng nội dung + bố cục cho một trang đích bán sản phẩm/dịch vụ.", expectedOutput: "Outline landing page + copy từng phần", estimatedTime: "45 phút", suggestedTools: ["ChatGPT", "Gamma"] },
@@ -57,6 +61,10 @@ export type AiWorkflow = {
   suggestedTools: string[];
 };
 
+/** @deprecated Việc 11 — thay bằng bảng `ai_workflow_sections`
+ * (AiWorkflowSection đọc qua useCollection()), giữ lại tham khảo/rollback.
+ * KHÁC bảng `sop` (Workflow/SOP đầy đủ, đã Full ở /admin/ckos/sop) — xem
+ * CLAUDE.md mục "Việc 10 + Việc 11". */
 export const AI_WORKFLOWS: AiWorkflow[] = [
   { id: "lam-video-ngan", title: "Làm video ngắn", steps: ["Nghiên cứu", "Kịch bản", "Thu âm", "Hình ảnh", "Dựng video", "Phụ đề", "Đăng bài"], suggestedTools: ["ChatGPT", "Canva"] },
   { id: "viet-ebook", title: "Viết Ebook", steps: ["Ý tưởng", "Dàn ý", "Nghiên cứu", "Bản nháp", "Thiết kế", "Xuất bản"], suggestedTools: ["ChatGPT", "NotebookLM", "Canva"] },
