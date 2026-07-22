@@ -711,3 +711,38 @@ có `slug` chứa dấu cách + tiếng Việt có dấu (`"Về hệ sinh thái
 phải dạng URL-safe `ve-he-sinh-thai-digiu`) — vấn đề dữ liệu có sẵn từ
 trước (không phải do Việc 7 gây ra, `/blogai` cũng gặp y hệt), ngoài phạm
 vi việc này.
+
+## THÍ ĐIỂM (pilot) — Inline editing tại `/portal/su-menh-companion`
+
+**Trạng thái: đang thử nghiệm, CHƯA phải phong cách UI chính thức thứ 3**
+(bên cạnh VisualEditor/DataTable) — chờ Founder đánh giá trước khi quyết
+định có nhân rộng cho các module khác không. Không xoá 2 mục dưới đây nếu
+Founder quyết định KHÔNG nhân rộng — tự dọn khi có quyết định cuối.
+
+Route `/admin/su-menh-companion/live-edit` render lại ĐÚNG component gốc
+`src/app/portal/su-menh-companion/page.tsx` (import thẳng, cách A — không
+copy, không iframe), bọc thêm `EditModeProvider`
+(`src/components/portal/su-menh-companion/EditModeContext.tsx`) để bật
+affordance sửa tại chỗ. Ngoài edit mode (Portal thật
+`/portal/su-menh-companion`), `EditableRegion`
+(`src/components/portal/su-menh-companion/EditableRegion.tsx`) render
+`<>{children}</>` — không thêm phần tử DOM nào, zero rủi ro layout.
+
+Chỉ 2 vùng đại diện đã bọc (không làm hết cả trang):
+- **Điều lệ** (`constitution`) — field string đơn (`content`), bọc cả
+  `<div>` row (an toàn, không bị định vị tuyệt đối).
+- **Bộ gene** (`genome`) — object 3 field (`key/label/meaning`), CHỈ bọc
+  `<span>` label bên trong, KHÔNG bọc `<div>` cha có `style={pos}` (định vị
+  % tuyệt đối cho vòng tròn DNA) — bọc cả div cha sẽ đổi ngữ cảnh
+  positioning, có rủi ro vỡ layout vòng tròn.
+
+Lưu ý kỹ thuật quan trọng: `EditableRegion` nhận `record`/`update` qua
+props từ CHÍNH `useCollection()` instance của `page.tsx` (không tự gọi
+`useCollection()` riêng bên trong) — tránh 2 instance không đồng bộ sau
+khi Lưu (đúng lý do `DataTableRowPanel.tsx` có prop `mutators`).
+
+Lưu gọi thẳng `update()` của `useCollection()` (tức `/api/admin/collections/[table]`
+có sẵn) — không viết API mới.
+
+**Không thay thế `/admin/su-menh-companion/*`** (6 trang VisualEditor +
+1 trang flipbook từ Việc 6) — vẫn hoạt động song song, không đổi.

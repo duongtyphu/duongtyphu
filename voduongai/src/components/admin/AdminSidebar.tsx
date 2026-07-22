@@ -48,6 +48,7 @@ import {
   Dna,
   History,
   Images,
+  FlaskConical,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -108,6 +109,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/su-menh-companion/evolution": TrendingUp,
   "/admin/su-menh-companion/timeline": History,
   "/admin/su-menh-companion/flipbook": Images,
+  "/admin/su-menh-companion/live-edit": FlaskConical,
 };
 
 function isItemActive(pathname: string, href: string) {

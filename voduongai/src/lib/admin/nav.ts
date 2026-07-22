@@ -71,6 +71,10 @@ export const adminNavGroups: AdminNavGroup[] = [
       // Phần 2 — tách riêng khỏi 6 khối văn bản trên (bản chất khác hẳn:
       // ảnh nghệ thuật có sẵn, chỉ quản title/thứ tự, không quản ảnh).
       { label: "Ảnh Companion (thứ tự & tiêu đề)", href: "/admin/su-menh-companion/flipbook" },
+      // THÍ ĐIỂM (pilot) — inline editing cách A, chỉ 2 vùng đại diện
+      // (Điều lệ, Bộ gene). KHÔNG thay thế 2 mục VisualEditor ở trên —
+      // Founder tự đánh giá có đáng nhân rộng cho các module khác không.
+      { label: "🧪 Sửa trực tiếp (Thí điểm)", href: "/admin/su-menh-companion/live-edit" },
     ],
   },
 ];

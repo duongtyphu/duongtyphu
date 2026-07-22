@@ -9,6 +9,22 @@ import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBack
 import { LivingCore, type LivingCoreState } from "@/components/LivingCore";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 import { useCollection } from "@/lib/admin/store";
+import { EditableRegion } from "@/components/portal/su-menh-companion/EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+// THÍ ĐIỂM (pilot) — Inline editing cách A, chỉ 2 vùng đại diện (Điều lệ:
+// field string đơn; Bộ gene: object 3 field) để đánh giá — xem
+// EditableRegion.tsx. Ngoài edit mode (Portal thật), EditableRegion render
+// y hệt children, không đổi gì. Chỉ kích hoạt qua
+// /admin/su-menh-companion/live-edit.
+const CONSTITUTION_FIELDS: FieldConfig[] = [
+  { key: "content", label: "Nguyên tắc", type: "textarea", full: true, required: true },
+];
+const GENOME_FIELDS: FieldConfig[] = [
+  { key: "key", label: "Key nội bộ", type: "text", required: true },
+  { key: "label", label: "Tên gene hiển thị", type: "text", required: true },
+  { key: "meaning", label: "Ý nghĩa", type: "textarea", full: true, required: true },
+];
 
 // Việc 6 (Nhóm B) — 6 khối bên dưới (Sứ mệnh/Triết lý/Điều lệ/Bộ gene/
 // Hành trình tiến hoá/Dòng thời gian) giờ đọc live qua useCollection() thay
@@ -68,8 +84,8 @@ export default function CompanionHomePage() {
 
   const { items: missionItems } = useCollection<MissionItem>("mission-items", []);
   const { items: philosophyPairs } = useCollection<PhilosophyPair>("philosophy-pairs", []);
-  const { items: constitutionRules } = useCollection<ConstitutionRule>("constitution", []);
-  const { items: genomeGenes } = useCollection<GenomeGene>("genome", []);
+  const { items: constitutionRules, update: updateConstitutionRule } = useCollection<ConstitutionRule>("constitution", []);
+  const { items: genomeGenes, update: updateGenomeGene } = useCollection<GenomeGene>("genome", []);
   const { items: evolutionStages } = useCollection<EvolutionStage>("evolution", []);
   const { items: timelineStages } = useCollection<TimelineStage>("timeline", []);
 
@@ -297,10 +313,17 @@ export default function CompanionHomePage() {
           </h2>
           <div className="mt-8 grid gap-x-8 gap-y-5 sm:grid-cols-2">
             {constitutionRules.map((rule, i) => (
-              <div key={rule.id} className="flex items-baseline gap-4">
-                <span className="text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
-                <p className="text-base leading-relaxed text-gray-700">{rule.content}</p>
-              </div>
+              <EditableRegion
+                key={rule.id}
+                record={rule}
+                fields={CONSTITUTION_FIELDS}
+                update={updateConstitutionRule}
+              >
+                <div className="flex items-baseline gap-4">
+                  <span className="text-xs font-bold text-gray-300">{String(i + 1).padStart(2, "0")}</span>
+                  <p className="text-base leading-relaxed text-gray-700">{rule.content}</p>
+                </div>
+              </EditableRegion>
             ))}
           </div>
         </Reveal>
@@ -352,7 +375,13 @@ export default function CompanionHomePage() {
                   style={pos}
                 >
                   <span className="sanctuary-glow-soft h-3 w-3 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 shadow-[0_0_12px_rgba(124,58,237,0.5)]" />
-                  <span className="mt-2 whitespace-nowrap text-[11px] font-bold text-gray-700">{g.label}</span>
+                  {/* EditableRegion bọc CHỈ span label (inline, nằm trong
+                   * luồng bình thường của div cha) — KHÔNG bọc div cha
+                   * `style={pos}` để tránh đổi ngữ cảnh positioning tuyệt
+                   * đối theo % (xem comment trong EditableRegion.tsx). */}
+                  <EditableRegion as="span" record={g} fields={GENOME_FIELDS} update={updateGenomeGene}>
+                    <span className="mt-2 whitespace-nowrap text-[11px] font-bold text-gray-700">{g.label}</span>
+                  </EditableRegion>
                   <span className="pointer-events-none absolute top-full mt-1 hidden w-40 -translate-x-1/2 rounded-lg border border-gray-100 bg-white p-2 text-center text-[11px] leading-snug text-gray-500 shadow-lg group-hover:block">
                     {g.meaning}
                   </span>
