@@ -2224,3 +2224,118 @@ Story → Bản đồ hành trình → Khu vườn của bạn), mỗi cửa 1 r
 duy nhất dưới `/admin/hanh-trinh-cua-toi/{mirror,journal,story,map,garden}`,
 không còn VisualEditor nào chạy song song cho nhóm này. Tiếp theo: Phần D
 (hub Dự án & Cơ hội).
+
+## Nhóm 3, Phần D — Dự án & Cơ hội: audit + mở rộng theo yêu cầu riêng
+
+**Audit bắt buộc trước khi build (theo đúng yêu cầu gốc "xác nhận
+/admin/projects hiện tại là kiểu UI nào trước khi quyết định thay thế"):**
+`/admin/projects` là **`DataTable`** (KHÔNG phải VisualEditor) — quản lý
+1 danh sách 5 dòng hệ sinh thái thật (`digiu/solargroup/crypto/blockchain/
+trading`), mỗi dòng 9 field, có sẵn Add/Edit/Xoá qua slide-over. Đây là
+kiến trúc KHÁC HẲN 5 module Phần A (mỗi module đó là 1 dòng "chrome" đơn,
+không phải danh sách entity thật với `key`/`icon`/`href` gắn logic routing
+thật) — đã STOP báo cáo phát hiện này, không tự quyết định thay thế.
+
+**Founder xác nhận qua 3 vòng hỏi đáp — phạm vi cuối cùng khác brief gốc:**
+Founder cho biết `/admin/projects` (DataTable quản 5 thẻ hệ sinh thái ở
+trang hub) đã đủ dùng, **không cần đổi** — nhưng phát hiện thêm 1 gap
+thật: **5 trang CHI TIẾT hệ sinh thái** (`/portal/duan-cohoi/[ecosystemSlug]`
+— digiu/solargroup/blockchain-crypto/lam-affilate/sangiaodich), trước đây
+chủ động để NGOÀI phạm vi (Việc 5, phương án a — đọc tĩnh 100% từ
+`src/data/portal/ecosystems.ts`), Founder giờ muốn tự sửa được. Founder
+xác nhận rõ: **CHỈ 2 field an toàn — tiêu đề (`name`) và mô tả ngắn
+(`shortDescription`)** — KHÔNG đụng `highlights`/`whoFor`/`whoNotReady`/
+`expectedOutcome`/`fullIntro`/`statusBadge` hay bất kỳ cấu trúc lồng nào
+(`marketingLinks`/`subProjects`/`fields`/`affiliateOffers`/`exchanges`/
+`potentialAnalysis`) — các phần đó vẫn đọc tĩnh 100% từ `ecosystems.ts`
+như cũ, ngoài phạm vi việc này. 2 CTA neo (`quickActions`) ở Hero trang
+hub và toàn bộ nội dung tĩnh khác của hub (Tiêu chí chia sẻ, FAQ, 5 lời
+nhắn Companion, ảnh minh hoạ đồng hành) Founder xác nhận **giữ nguyên
+tĩnh**, không cần quản qua Admin.
+
+**Kiến trúc:** bảng mới `ecosystem_chrome` (migration
+`supabase-phase18-ecosystem-chrome.sql`, đã áp dụng qua Supabase MCP — 5
+dòng, `id` = đúng `id` gốc trong `ecosystems.ts` (`eco_digiu`/
+`eco_solargroup`/`eco_crypto`/`eco_blockchain`/`eco_trading`, ổn định,
+KHÔNG đổi theo `slug` — `slug` từng đổi qua "Route Localization" trong
+quá khứ, `id` thì không). 1 route Admin **dynamic** duy nhất
+`/admin/duan-cohoi/[ecosystemSlug]` phục vụ cả 5 trang — cùng kỹ thuật
+`[courseId]` đã dùng ở Course Builder — render lại ĐÚNG component gốc
+`/portal/duan-cohoi/[ecosystemSlug]/page.tsx` (`EcosystemMiniSitePage`,
+import thẳng) bọc `<EditModeProvider>`, cùng pattern Cách A đã dùng cho 5
+Cửa Hành trình.
+
+**Tách riêng phần render 2 field an toàn thành Client Component mới**
+(`EcosystemOverview.tsx`) — hàm `Overview()` cũ (Server-rendered, nằm
+trong chính `page.tsx`) được tách ra vì cần `useState`/`useCollection`
+(client-only), phần còn lại của trang (`ArticlesSection`/`SubProjectsGrid`/
+`AffiliateOffersList`/`ExchangesList`/`TwoFieldBoxes`/`MarketingLinkBox`/
+`PotentialAnalysisTable`) giữ nguyên 100%, không đụng.
+
+**`src/lib/portal/live-ecosystem-chrome.ts`** (mới) —
+`getLiveEcosystemChrome(ecosystemId)` nhận `id` (không phải `slug`) làm
+tham số, đúng `id, data, status` (đã áp dụng ngay từ đầu bài học shape
+`description`/`what` — không cần sửa lại lần 2). Fallback về đúng nội
+dung tĩnh gốc trong `ecosystems.ts` nếu Supabase chưa cấu hình/lỗi/chưa
+Published. Dùng cả ở `generateMetadata()` (title/description SEO) và
+`Breadcrumb` (thay `eco.name` bằng `chrome.name`) để tránh lệch chữ giữa
+breadcrumb/SEO và tiêu đề H1 sau khi Founder sửa qua Admin.
+
+**Xác nhận zero-regression về SSG/dynamic rendering:** trang
+`[ecosystemSlug]/page.tsx` vẫn giữ `generateStaticParams()` (không đổi)
+— audit qua `git stash` xác nhận route này **đã là `ƒ` (Dynamic)** từ
+trước khi có bất kỳ thay đổi nào của việc này (không phải do thêm
+`getLiveEcosystemChrome()` gây ra) — nhiều khả năng do layout `/portal`
+dùng `cookies()`/session check chung, ép toàn bộ cây route `/portal/*`
+thành dynamic bất kể `generateStaticParams`. Không phải regression.
+
+**File mới:**
+- `supabase-phase18-ecosystem-chrome.sql` — bảng + seed 5 dòng khớp đúng
+  `name`/`shortDescription` tĩnh gốc (không đổi nội dung hiển thị mặc định).
+- `src/lib/admin/supabaseCollections.ts` — thêm `"ecosystem-chrome":
+  "ecosystem_chrome"`.
+- `src/lib/portal/live-ecosystem-chrome.ts`.
+- `src/components/portal/opportunities/EditModeContext.tsx` +
+  `EditableRegion.tsx` (y hệt pattern 5 module Phần A, chỉ đổi import).
+- `src/components/portal/opportunities/EcosystemOverview.tsx` — tách từ
+  `Overview()` cũ, bọc `name`/`shortDescription` bằng `EditableRegion`,
+  mọi field khác đọc thẳng từ `eco` (tĩnh).
+- `src/app/admin/(dashboard)/duan-cohoi/[ecosystemSlug]/page.tsx` — route
+  Live-edit dynamic duy nhất cho cả 5 trang chi tiết.
+
+**File sửa:**
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — xoá hàm
+  `Overview()` cũ, gọi `<EcosystemOverview eco={eco} surface={surface}
+  seedChrome={chrome} />` thay thế; `generateMetadata()` + `Breadcrumb`
+  dùng `chrome.name`/`chrome.shortDescription` thay `eco.name`/
+  `eco.shortDescription`.
+- `src/lib/admin/nav.ts` — nhóm "Dự án & Cơ hội" giữ nguyên
+  `{label: "Hệ sinh thái", href: "/admin/projects"}`, thêm 5 entry tường
+  minh (không phải 1 link chung chung) trỏ 5 slug thật:
+  `/admin/duan-cohoi/{digiu,solargroup,blockchain-crypto,lam-affilate,sangiaodich}`.
+- `src/components/admin/AdminSidebar.tsx` — thêm 5 icon (`Layers`/
+  `Building2`/`Bitcoin`/`Link2`/`LineChart`, khớp đúng icon thật mỗi hệ
+  sinh thái dùng ở `ecosystems.ts`) cho 5 href mới.
+
+**Không có số đếm ở Dashboard** cho 5 route chi tiết mới (`dashboard/
+page.tsx`'s `TABLE_FOR_HREF` không thêm gì) — mỗi route là 1 trang nội
+dung cụ thể (không phải danh sách collection để đếm dòng), cùng cách xử
+lý "không có ở đây" như Companion CMS/CKOS Dashboard.
+
+**Verify:** `git stash` + rebuild để xác nhận zero-regression SSG/dynamic
+(xem trên); `rm -rf .next && npm run build` (route
+`/admin/duan-cohoi/[ecosystemSlug]` xuất hiện đúng), `tsc`/`eslint` sạch,
+`vitest run` 139/139. Migration đã áp dụng qua Supabase MCP
+(`apply_migration`), xác nhận `success: true`.
+
+**Chưa tự test qua UI thật** (cùng giới hạn sandbox không có tài khoản
+Admin đã nêu nhiều lần) — Founder tự test 5 route
+`/admin/duan-cohoi/{5 slug}` trên Preview URL.
+
+---
+
+**NHÓM 3 HOÀN TẤT** (Phần A — 5 Cửa Hành trình + Phần B — Trang chủ Học
+viện + Phần D — Dự án & Cơ hội, cả hub và 5 trang chi tiết theo yêu cầu
+mở rộng riêng của Founder). Phần C (Sứ mệnh Companion mở rộng 6 khối +
+flipbook) KHÔNG nằm trong đợt này — Founder chưa yêu cầu, để việc riêng
+sau nếu cần.

@@ -7,6 +7,8 @@ import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
 import { PotentialAnalysisTable } from "@/components/portal/opportunities/PotentialAnalysisTable";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
+import { EcosystemOverview } from "@/components/portal/opportunities/EcosystemOverview";
+import { getLiveEcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 
 /**
  * Ecosystem mini-site — RESTRUCTURED per direct Product Owner instruction,
@@ -80,56 +82,11 @@ export async function generateMetadata({ params }: { params: Promise<{ ecosystem
   const { ecosystemSlug } = await params;
   const eco = getEcosystemBySlug(ecosystemSlug);
   if (!eco) return { title: "Không tìm thấy hệ sinh thái" };
+  const chrome = await getLiveEcosystemChrome(eco.id);
   return {
-    title: eco.name,
-    description: eco.shortDescription,
+    title: chrome.name,
+    description: chrome.shortDescription,
   };
-}
-
-function Overview({ eco, surface }: { eco: Ecosystem; surface: { chip: string; badge: string; strip: string } }) {
-  const Icon = eco.icon;
-  return (
-    <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-token-sm">
-      <div className={`h-1.5 ${surface.strip}`} aria-hidden />
-      <div className="bg-white p-6 sm:p-8">
-        <div className="mb-4 flex items-start justify-between gap-2">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-xl shadow-sm ${surface.chip}`}>
-            <Icon className="h-6 w-6" />
-          </div>
-          <span className={`gemos-badge ${surface.badge}`}>{eco.statusBadge}</span>
-        </div>
-        <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">{eco.name}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">{eco.shortDescription}</p>
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-600">{eco.fullIntro}</p>
-
-        {eco.highlights.length > 0 && (
-          <ul className="mt-4 space-y-1.5">
-            {eco.highlights.map((h, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-gray-500">
-                <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-gray-400" />
-                {h}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <div className="mt-6 grid gap-3 border-t border-gray-100 pt-5 sm:grid-cols-3">
-          <div>
-            <p className="text-xs font-semibold text-emerald-700">Phù hợp</p>
-            <p className="mt-1 text-xs leading-relaxed text-gray-600">{eco.whoFor}</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-amber-700">Chưa nên tham gia nếu</p>
-            <p className="mt-1 text-xs leading-relaxed text-gray-600">{eco.whoNotReady}</p>
-          </div>
-          <div>
-            <p className="text-xs font-semibold text-gray-900">Kỳ vọng thực tế</p>
-            <p className="mt-1 text-xs leading-relaxed text-gray-600">{eco.expectedOutcome}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 function ArticlesSection({ articles }: { articles: (typeof digitalAssetArticles)[number][] }) {
@@ -306,6 +263,7 @@ export default async function EcosystemMiniSitePage({
     (a) => categories.includes(a.category) && a.status === "Published"
   );
   const potentialAnalysis = eco.potentialAnalysis ?? DEFAULT_POTENTIAL_ANALYSIS;
+  const chrome = await getLiveEcosystemChrome(eco.id);
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -319,11 +277,11 @@ export default async function EcosystemMiniSitePage({
         items={[
           { label: "Portal", href: "/portal" },
           { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
-          { label: eco.name },
+          { label: chrome.name },
         ]}
       />
 
-      <Overview eco={eco} surface={surface} />
+      <EcosystemOverview eco={eco} surface={surface} seedChrome={chrome} />
 
       {eco.structureType === "sub-projects" && (
         <>

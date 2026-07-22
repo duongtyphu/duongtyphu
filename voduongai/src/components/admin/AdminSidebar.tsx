@@ -38,6 +38,11 @@ import {
   Users,
   Newspaper,
   Star,
+  Layers,
+  Building2,
+  Bitcoin,
+  Link2,
+  LineChart,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -87,6 +92,11 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/aiworkspace/recommended-workspace": Sparkles,
   "/admin/aiworkspace/ai-workflow-sections": Workflow,
   "/admin/projects": FolderKanban,
+  "/admin/duan-cohoi/digiu": Layers,
+  "/admin/duan-cohoi/solargroup": Building2,
+  "/admin/duan-cohoi/blockchain-crypto": Bitcoin,
+  "/admin/duan-cohoi/lam-affilate": Link2,
+  "/admin/duan-cohoi/sangiaodich": LineChart,
   "/admin/course-pricing": Wallet,
   "/admin/su-menh-companion/mission": Rocket,
   "/admin/su-menh-companion/philosophy": MessageCircle,

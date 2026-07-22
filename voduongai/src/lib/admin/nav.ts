@@ -99,10 +99,24 @@ export const adminNavGroups: AdminNavGroup[] = [
     // nằm lẫn trong nhóm "Nội dung" — tách thành group riêng đúng tên
     // Portal. Việc 5 (Nhóm B), phương án (a): chỉ quản 9 field hiện có của
     // bảng `projects`, đã nối lại đúng nguồn đọc ở /portal/duan-cohoi
-    // (trang hub). Trang chi tiết [ecosystemSlug]/[subProjectSlug] vẫn
-    // tĩnh — xem CLAUDE.md mục "Dự án & Cơ hội".
+    // (trang hub).
+    //
+    // Nhóm 3, Phần D (mở rộng, theo yêu cầu riêng của Founder) — 5 trang
+    // chi tiết hệ sinh thái [ecosystemSlug] giờ CÓ route Live-edit riêng
+    // (CHỈ 2 field an toàn: tiêu đề/mô tả ngắn — không đụng highlights/
+    // subProjects/marketingLinks/... phức tạp, vẫn tĩnh từ ecosystems.ts).
+    // 1 route dynamic `/admin/duan-cohoi/[ecosystemSlug]` phục vụ cả 5,
+    // liệt kê tường minh 5 slug thật ở đây (ổn định, không đổi thường
+    // xuyên) thay vì chỉ có 1 link chung chung.
     group: "Dự án & Cơ hội",
-    items: [{ label: "Hệ sinh thái", href: "/admin/projects" }],
+    items: [
+      { label: "Hệ sinh thái", href: "/admin/projects" },
+      { label: "Chi tiết: DigiU (Live-edit)", href: "/admin/duan-cohoi/digiu" },
+      { label: "Chi tiết: SolarGroup (Live-edit)", href: "/admin/duan-cohoi/solargroup" },
+      { label: "Chi tiết: Blockchain & Crypto (Live-edit)", href: "/admin/duan-cohoi/blockchain-crypto" },
+      { label: "Chi tiết: Affiliate (Live-edit)", href: "/admin/duan-cohoi/lam-affilate" },
+      { label: "Chi tiết: Sàn giao dịch Crypto (Live-edit)", href: "/admin/duan-cohoi/sangiaodich" },
+    ],
   },
   {
     // Portal #7 — "Premium" (/portal/premium). SỬA: trước đây nằm lẫn

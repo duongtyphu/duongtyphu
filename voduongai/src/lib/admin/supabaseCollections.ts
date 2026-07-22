@@ -156,6 +156,14 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // audit, 2 khái niệm khác nhau, không trùng id.
   "recommended-workspace": "recommended_workspace",
   "ai-workflow-sections": "ai_workflow_sections",
+  // Nhóm 3, Phần D (mở rộng) — 5 trang chi tiết hệ sinh thái
+  // (/portal/duan-cohoi/[ecosystemSlug]). CHỈ 2 field an toàn (name/
+  // shortDescription) — id mỗi dòng = đúng `id` gốc trong ecosystems.ts
+  // (eco_digiu/eco_solargroup/eco_crypto/eco_blockchain/eco_trading).
+  // KHÔNG đụng highlights/whoFor/whoNotReady/expectedOutcome/fullIntro/
+  // statusBadge hay marketingLinks/subProjects/fields/affiliateOffers/
+  // exchanges/potentialAnalysis — vẫn đọc tĩnh từ ecosystems.ts.
+  "ecosystem-chrome": "ecosystem_chrome",
 };
 
 export function tableForCollection(key: string): string | null {
