@@ -838,5 +838,45 @@ Admin: `/admin/hanh-trinh-cua-toi/journal-chrome` (1 dòng) +
 cùng nhóm sidebar "Hành trình của tôi", atmosphere `journal-notebook-bg`
 (đúng class thật `LearningJournalNotebook.tsx` dùng).
 
-**Còn lại — My Story, Bản đồ hành trình, Khu vườn của bạn — CHƯA làm**,
-theo đúng thứ tự đã thống nhất (2 cửa cuối rủi ro cao nhất).
+### Cửa 3 — My Story (đã xong)
+
+Founder xác nhận mở rộng phạm vi (thay vì chỉ title/subtitle/2 dòng
+empty-state như brief gốc) — tách **toàn bộ** chrome tĩnh, đồng bộ cách
+làm với Mirror/Nhật ký học tập (30 field, 1 bảng, 1 dòng).
+
+Audit code thật phát hiện KHÔNG tách (giữ nguyên trong code):
+- `JOURNEY_CHAPTER_NAMES` (`journey-chapter.ts`) — **5 tên** (không phải 6
+  như brief gốc ước lượng — đối chiếu code thật, không đoán). Dùng CHUNG 3
+  cửa (Journey Hub/My Story/Bản đồ hành trình), index gắn với câu bằng
+  chứng động (evidence sentence nội suy số liệu thật) — cùng lý do với
+  `invitation`/`TODAY_PRIORITY` ở 2 cửa trước.
+- `KIND_LABEL` (`MyStoryBook.tsx`) — enum map `MemoryCapsuleKind` (14 giá
+  trị đóng, từ cột `memory_capsules.kind` thật) → label.
+- `companionLine`/`understandingNote`/`growthPattern`/`qualities`/
+  `buildLetter(monthlyStats)`/`importantMoments`/milestones/`createdWorks`
+  — toàn bộ dữ liệu động thật từ reflections/capsules/growth-view.ts.
+- "Lá thư tháng `{monthLabel}`" — chỉ tiền tố "Lá thư tháng" là chrome
+  tĩnh (`monthlyLetterLabel`), `{monthLabel}` (tên tháng) vẫn nội suy động
+  trong code.
+
+Bảng mới (migration `supabase-phase12-story-chrome.sql`, đã áp dụng):
+`story_chrome` — 1 dòng (id='story'), 30 field: title/subtitle/2 dòng
+empty-state, 8 nhãn mục (thư tháng/khoảnh khắc/bước ngoặt/bài học/tác
+phẩm/rỗng-tác-phẩm/tự gìn giữ/lưu trữ chưa sẵn sàng/viết trang mới), 2
+dòng+2 CTA phần "Chương tiếp theo", và toàn bộ chuỗi trong 2
+sub-component `WriteNook` (7 field: dòng chưa sẵn sàng/cảm ơn/placeholder
+suy ngẫm/CTA lưu/lời mời khoảnh khắc/placeholder khoảnh khắc/CTA lưu+đã
+lưu/dòng chưa có suy ngẫm) và `RemovableEntry` (4 field: nhãn gỡ/xác
+nhận/CTA xoá/CTA giữ lại) — cả 2 sub-component giờ nhận `chrome` qua prop
+(trước đó là component thuần không biết chrome).
+
+`src/lib/portal/live-story.ts` (mới, cùng pattern `live-mirror.ts`/
+`live-journal.ts`) — `getLiveStoryChrome()`.
+
+Admin: `/admin/hanh-trinh-cua-toi/story-chrome` (1 dòng, 30 field),
+`VisualEditor`, cùng nhóm sidebar "Hành trình của tôi", atmosphere
+`story-book-bg` (đúng class thật `MyStoryBook.tsx` dùng).
+
+**Còn lại — Bản đồ hành trình, Khu vườn của bạn — CHƯA làm**, theo đúng
+thứ tự đã thống nhất (2 cửa cuối rủi ro cao nhất — STOP và hỏi lại nếu
+audit phát hiện ranh giới tĩnh/động không rõ ràng).

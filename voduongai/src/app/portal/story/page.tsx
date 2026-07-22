@@ -1,6 +1,7 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { MyStoryBook } from "@/components/portal/story/MyStoryBook";
+import { getLiveStoryChrome } from "@/lib/portal/live-story";
 import { signalsFromReflections, signalsFromMemoryCapsules } from "@/lib/portal/growth-map/growth-signals";
 import { detectGrowthMilestones, type GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones";
 import { isMissingTableError, warnMissingTableOnce } from "@/lib/portal/storyTableStatus";
@@ -117,6 +118,6 @@ async function getStoryData(): Promise<{
 }
 
 export default async function MyStoryPage() {
-  const data = await getStoryData();
-  return <MyStoryBook {...data} />;
+  const [data, chrome] = await Promise.all([getStoryData(), getLiveStoryChrome()]);
+  return <MyStoryBook {...data} chrome={chrome} />;
 }

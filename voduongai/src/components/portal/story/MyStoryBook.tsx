@@ -31,6 +31,42 @@ import type { GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones"
  * State), không giả vờ đã có nội dung.
  */
 
+/** Việc 9 — static chrome đã tách khỏi hardcode, đọc live từ bảng
+ * `story_chrome` (1 dòng, id='story'), fetch ở page.tsx (Server Component)
+ * rồi truyền props xuống — cùng cách đã làm cho Mirror/Nhật ký học tập. */
+export type StoryChrome = {
+  title: string;
+  subtitle: string;
+  emptyStateLine1: string;
+  emptyStateLine2: string;
+  monthlyLetterLabel: string;
+  momentsSectionLabel: string;
+  turningPointsSectionLabel: string;
+  lessonsSectionLabel: string;
+  createdSectionLabel: string;
+  createdEmptyLine: string;
+  capsulesSectionLabel: string;
+  storageNotReadyLine: string;
+  writeNookSectionLabel: string;
+  nextChapterPrompt: string;
+  nextChapterCtaLabel: string;
+  mirrorPromptPrefix: string;
+  mirrorLinkLabel: string;
+  writeNookNotReadyLine: string;
+  thankYouLine: string;
+  reflectionPlaceholder: string;
+  saveReflectionCtaLabel: string;
+  momentPrompt: string;
+  momentPlaceholder: string;
+  saveMomentCtaLabel: string;
+  savedMomentLabel: string;
+  noReflectionsLine: string;
+  removeLabel: string;
+  removeConfirmLabel: string;
+  removeCtaLabel: string;
+  keepCtaLabel: string;
+};
+
 const KIND_LABEL: Record<MemoryCapsuleKind, string> = {
   milestone: "Cột mốc",
   lesson: "Bài học",
@@ -60,10 +96,12 @@ type ImportantMoment = { id: string; label: string; title: string; date: Date };
 function RemovableEntry({
   capsuleId,
   onRemoved,
+  chrome,
   children,
 }: {
   capsuleId: string;
   onRemoved: () => void;
+  chrome: Pick<StoryChrome, "removeLabel" | "removeConfirmLabel" | "removeCtaLabel" | "keepCtaLabel">;
   children: React.ReactNode;
 }) {
   const [confirming, setConfirming] = useState(false);
@@ -78,11 +116,11 @@ function RemovableEntry({
           onClick={() => setConfirming(true)}
           className="story-serif mt-1 text-[11px] italic text-amber-900/0 transition group-hover/entry:text-amber-900/40 hover:!text-amber-900/70"
         >
-          Gỡ khỏi cuốn sách
+          {chrome.removeLabel}
         </button>
       ) : (
         <p className="story-serif mt-1 text-[11px] italic text-amber-900/60">
-          Chắc chắn?{" "}
+          {chrome.removeConfirmLabel}{" "}
           <button
             type="button"
             disabled={busy}
@@ -95,11 +133,11 @@ function RemovableEntry({
             }}
             className="font-semibold underline hover:text-amber-900"
           >
-            Xoá
+            {chrome.removeCtaLabel}
           </button>{" "}
           ·{" "}
           <button type="button" onClick={() => setConfirming(false)} className="underline hover:text-amber-900">
-            Giữ lại
+            {chrome.keepCtaLabel}
           </button>
         </p>
       )}
@@ -115,6 +153,7 @@ export function MyStoryBook({
   firstPremium,
   premiumCount = 0,
   storageReady,
+  chrome,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -123,6 +162,7 @@ export function MyStoryBook({
   firstPremium: { title: string; occurredAt: string } | null;
   premiumCount?: number;
   storageReady: boolean;
+  chrome: StoryChrome;
 }) {
   const [capsules, setCapsules] = useState(initialCapsules);
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
@@ -205,9 +245,9 @@ export function MyStoryBook({
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-100 to-orange-50 shadow-inner">
             <BookOpen className="h-6 w-6 text-amber-800/70" />
           </div>
-          <h1 className="story-serif mt-5 text-3xl font-bold text-stone-900 sm:text-4xl">My Story</h1>
+          <h1 className="story-serif mt-5 text-3xl font-bold text-stone-900 sm:text-4xl">{chrome.title}</h1>
           <p className="story-serif mx-auto mt-3 max-w-md text-sm italic leading-relaxed text-stone-500 sm:text-base">
-            Câu chuyện đang được viết bằng chính những điều bạn học, tạo ra và gìn giữ.
+            {chrome.subtitle}
           </p>
 
           {chapter && (
@@ -226,12 +266,12 @@ export function MyStoryBook({
         {bookIsEmpty ? (
           <div className="story-page-block story-fade-in mt-14 text-center">
             <p className="story-serif text-base italic leading-relaxed text-stone-500">
-              Mọi cuốn sách hay đều bắt đầu bằng một trang đầu còn trắng.
+              {chrome.emptyStateLine1}
             </p>
             <p className="story-serif mt-3 text-sm leading-relaxed text-stone-400">
-              Trang này sẽ tự viết khi bạn học, tạo ra hoặc gìn giữ điều gì đó thật trong Portal.
+              {chrome.emptyStateLine2}
             </p>
-            <WriteNook reflections={reflections} />
+            <WriteNook reflections={reflections} chrome={chrome} />
           </div>
         ) : (
           <>
@@ -241,7 +281,7 @@ export function MyStoryBook({
                 <div className="story-chapter-divider">
                   <Mail className="h-3.5 w-3.5 shrink-0" />
                   <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">
-                    Lá thư tháng {monthlyStats.monthLabel}
+                    {chrome.monthlyLetterLabel} {monthlyStats.monthLabel}
                   </span>
                 </div>
                 <p className="story-serif mt-4 text-sm italic leading-relaxed text-stone-600">
@@ -255,7 +295,7 @@ export function MyStoryBook({
               <section className="story-page-block story-fade-in mt-14">
                 <div className="story-chapter-divider">
                   <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">
-                    Những khoảnh khắc quan trọng
+                    {chrome.momentsSectionLabel}
                   </span>
                 </div>
                 <div className="mt-5 space-y-4">
@@ -273,7 +313,7 @@ export function MyStoryBook({
             {milestones.length > 0 && (
               <section className="story-page-block story-fade-in mt-14">
                 <div className="story-chapter-divider">
-                  <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">Bước ngoặt</span>
+                  <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">{chrome.turningPointsSectionLabel}</span>
                 </div>
                 <div className="mt-5 space-y-6">
                   {milestones.map((m) => (
@@ -292,7 +332,7 @@ export function MyStoryBook({
               <section className="story-page-block story-fade-in mt-14">
                 <div className="story-chapter-divider">
                   <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">
-                    Những bài học đã thay đổi tôi
+                    {chrome.lessonsSectionLabel}
                   </span>
                 </div>
                 <div className="mt-5 space-y-3">
@@ -320,7 +360,7 @@ export function MyStoryBook({
             <section className="story-page-block story-fade-in mt-14">
               <div className="story-chapter-divider">
                 <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">
-                  Những gì tôi đã tạo ra
+                  {chrome.createdSectionLabel}
                 </span>
               </div>
               {createdWorks.length > 0 ? (
@@ -333,7 +373,7 @@ export function MyStoryBook({
                 </div>
               ) : (
                 <p className="story-serif mt-5 text-sm italic leading-relaxed text-stone-400">
-                  Chưa có tác phẩm nào — trang này sẽ tự viết khi bạn tạo ra kết quả đầu tiên trong Workspace.
+                  {chrome.createdEmptyLine}
                 </p>
               )}
             </section>
@@ -344,12 +384,12 @@ export function MyStoryBook({
               <section className="story-page-block story-fade-in mt-14">
                 <div className="story-chapter-divider">
                   <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">
-                    Những điều bạn tự gìn giữ
+                    {chrome.capsulesSectionLabel}
                   </span>
                 </div>
                 <div className="mt-5 space-y-4">
                   {capsules.map((c) => (
-                    <RemovableEntry key={c.id} capsuleId={c.id} onRemoved={() => handleRemoved(c.id)}>
+                    <RemovableEntry key={c.id} capsuleId={c.id} onRemoved={() => handleRemoved(c.id)} chrome={chrome}>
                       <div className="flex items-baseline gap-3">
                         <span className="story-serif w-24 shrink-0 text-xs text-stone-400">{formatDate(c.occurredAt)}</span>
                         <div>
@@ -370,7 +410,7 @@ export function MyStoryBook({
 
             {!storageReady && (
               <p className="story-serif mt-8 text-center text-xs italic text-stone-400">
-                Khu vực lưu ký ức đang được chuẩn bị. Bạn vẫn có thể đọc lại hành trình của mình.
+                {chrome.storageNotReadyLine}
               </p>
             )}
 
@@ -379,10 +419,10 @@ export function MyStoryBook({
               <div className="story-chapter-divider">
                 <Feather className="h-3.5 w-3.5 shrink-0" />
                 <span className="story-serif whitespace-nowrap text-xs uppercase tracking-widest">
-                  Viết một trang mới
+                  {chrome.writeNookSectionLabel}
                 </span>
               </div>
-              <WriteNook reflections={reflections} />
+              <WriteNook reflections={reflections} chrome={chrome} />
             </section>
           </>
         )}
@@ -390,18 +430,18 @@ export function MyStoryBook({
         {/* ── What Comes Next — một lời mời duy nhất, không checklist ──── */}
         <section className="story-page-block story-fade-in mt-14 text-center">
           <p className="story-serif text-base italic leading-relaxed text-stone-600">
-            Chương tiếp theo bạn muốn bắt đầu là gì?
+            {chrome.nextChapterPrompt}
           </p>
           <Link
             href="/portal/workspace"
             className="story-serif mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 transition hover:decoration-amber-900"
           >
-            Bắt đầu viết tiếp <ArrowRight className="h-3.5 w-3.5" />
+            {chrome.nextChapterCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <p className="story-serif mt-6 text-xs text-stone-400">
-            Muốn nhìn sâu hơn?{" "}
+            {chrome.mirrorPromptPrefix}{" "}
             <Link href="/portal/mirror" className="underline decoration-stone-300 underline-offset-4 hover:text-stone-600">
-              Mở Mirror
+              {chrome.mirrorLinkLabel}
             </Link>
           </p>
         </section>
@@ -416,7 +456,7 @@ export function MyStoryBook({
  * cuốn sách, không viết hộ". Hai hook tự quản lý vòng đời dữ liệu riêng
  * (đọc/ghi Supabase trực tiếp) — mục đã lưu chỉ hiện lại đầy đủ trong các
  * chương phía trên sau khi tải lại trang, giống các cửa Journey khác. */
-function WriteNook({ reflections }: { reflections: Reflection[] }) {
+function WriteNook({ reflections, chrome }: { reflections: Reflection[]; chrome: StoryChrome }) {
   const { question, answeredToday, submitAnswer, signedIn, ready, tableReady } = useReflections();
   const { addCapsule, ready: capsuleReady, tableReady: capsuleTableReady } = useMemoryCapsules();
   const [draft, setDraft] = useState("");
@@ -428,7 +468,7 @@ function WriteNook({ reflections }: { reflections: Reflection[] }) {
   if (!tableReady || !capsuleReady || !capsuleTableReady) {
     return (
       <p className="story-serif mt-5 text-sm italic text-stone-400">
-        Khu vực lưu ký ức đang được chuẩn bị — bạn có thể quay lại viết sau.
+        {chrome.writeNookNotReadyLine}
       </p>
     );
   }
@@ -437,7 +477,7 @@ function WriteNook({ reflections }: { reflections: Reflection[] }) {
     <div className="mt-5 space-y-6">
       {answeredToday || savedReflection ? (
         <p className="story-serif text-sm italic leading-relaxed text-stone-500">
-          Cảm ơn bạn đã dành chút thời gian để suy ngẫm hôm nay — dòng đó đã được cất vào cuốn sách.
+          {chrome.thankYouLine}
         </p>
       ) : (
         <div>
@@ -445,7 +485,7 @@ function WriteNook({ reflections }: { reflections: Reflection[] }) {
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Không cần dài, chỉ cần thật..."
+            placeholder={chrome.reflectionPlaceholder}
             rows={2}
             className="story-serif mt-2 w-full rounded-lg border border-amber-900/15 bg-white/50 p-3 text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-700/30"
           />
@@ -458,17 +498,17 @@ function WriteNook({ reflections }: { reflections: Reflection[] }) {
             }}
             className="story-serif mt-2 text-sm font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 transition hover:decoration-amber-900 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            Lưu dòng này vào cuốn sách
+            {chrome.saveReflectionCtaLabel}
           </button>
         </div>
       )}
 
       <div>
-        <p className="story-serif text-sm italic text-stone-500">Có một khoảnh khắc khác đáng giữ lại hôm nay?</p>
+        <p className="story-serif text-sm italic text-stone-500">{chrome.momentPrompt}</p>
         <input
           value={memoryTitle}
           onChange={(e) => setMemoryTitle(e.target.value)}
-          placeholder="Điều gì đáng nhớ với bạn?"
+          placeholder={chrome.momentPlaceholder}
           className="story-serif mt-2 w-full rounded-lg border border-amber-900/15 bg-white/50 p-3 text-sm text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-1 focus:ring-amber-700/30"
         />
         <button
@@ -482,12 +522,12 @@ function WriteNook({ reflections }: { reflections: Reflection[] }) {
           }}
           className="story-serif mt-2 text-sm font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 transition hover:decoration-amber-900 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {savedMemory ? "Đã cất giữ" : "Cất giữ vào cuốn sách"}
+          {savedMemory ? chrome.savedMomentLabel : chrome.saveMomentCtaLabel}
         </button>
       </div>
       {reflections.length === 0 && (
         <p className="story-serif text-xs italic text-stone-400">
-          Chưa có suy ngẫm nào được lưu — dòng đầu tiên luôn là dòng khó viết nhất.
+          {chrome.noReflectionsLine}
         </p>
       )}
     </div>

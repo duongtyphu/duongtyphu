@@ -130,6 +130,10 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // biến runtime) — cả 3 giữ nguyên trong code.
   "journal-chrome": "journal_chrome",
   "journal-intentions": "journal_intentions",
+  // Cửa 3 — My Story. KHÔNG đụng JOURNEY_CHAPTER_NAMES (dùng chung 3 cửa)
+  // hay KIND_LABEL (enum map MemoryCapsuleKind→label) — cả 2 giữ nguyên
+  // trong code.
+  "story-chrome": "story_chrome",
 };
 
 export function tableForCollection(key: string): string | null {
