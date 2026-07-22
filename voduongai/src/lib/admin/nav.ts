@@ -97,9 +97,11 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     // Portal #6 — "Dự án & Cơ hội" (/portal/duan-cohoi). SỬA: trước đây
     // nằm lẫn trong nhóm "Nội dung" — tách thành group riêng đúng tên
-    // Portal. Việc 5 (Nhóm B), phương án (a): chỉ quản 9 field hiện có của
-    // bảng `projects`, đã nối lại đúng nguồn đọc ở /portal/duan-cohoi
-    // (trang hub).
+    // Portal.
+    //
+    // Nhóm 3 — Live-edit hub: `/admin/projects` (DataTable cũ) đã XOÁ,
+    // thay bằng `/admin/duan-cohoi` (Cách A — render lại đúng trang hub
+    // thật, sửa 9 field + kéo-thả đổi thứ tự qua ProjectCards.tsx).
     //
     // Nhóm 3, Phần D (mở rộng, theo yêu cầu riêng của Founder) — 5 trang
     // chi tiết hệ sinh thái [ecosystemSlug] giờ CÓ route Live-edit riêng
@@ -110,7 +112,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     // xuyên) thay vì chỉ có 1 link chung chung.
     group: "Dự án & Cơ hội",
     items: [
-      { label: "Hệ sinh thái", href: "/admin/projects" },
+      { label: "Hệ sinh thái (Live-edit)", href: "/admin/duan-cohoi" },
       { label: "Chi tiết: DigiU (Live-edit)", href: "/admin/duan-cohoi/digiu" },
       { label: "Chi tiết: SolarGroup (Live-edit)", href: "/admin/duan-cohoi/solargroup" },
       { label: "Chi tiết: Blockchain & Crypto (Live-edit)", href: "/admin/duan-cohoi/blockchain-crypto" },

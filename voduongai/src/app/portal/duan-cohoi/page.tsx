@@ -1,8 +1,8 @@
-import Link from "next/link";
-import { Layers, Building2, Bitcoin, Link2, LineChart, ShieldCheck, Users, Quote, type LucideIcon } from "lucide-react";
+import { LineChart, ShieldCheck, Users, Quote } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
+import { ProjectCards } from "@/components/portal/opportunities/ProjectCards";
 import { getLiveProjects } from "@/lib/portal/live-projects";
 
 export const metadata = {
@@ -21,69 +21,16 @@ export const metadata = {
 // Việc 5 (Nhóm B) — trước đây là mảng hardcode tại đây, không đọc từ đâu
 // cả (bản sao thứ 3, song song với ecosystems.ts VÀ bảng Supabase `projects`
 // mồ côi chưa ai đọc). Giờ đọc thật từ getLiveProjects() (bảng `projects`,
-// quản lý qua /admin/projects) — xem CLAUDE.md mục "Dự án & Cơ hội".
-const ICON_MAP: Record<string, LucideIcon> = {
-  layers: Layers,
-  "building-2": Building2,
-  bitcoin: Bitcoin,
-  "link-2": Link2,
-  "line-chart": LineChart,
-};
-
-const DEFAULT_SURFACE = {
-  card: "border-gray-200 bg-white hover:border-gray-400 hover:shadow-token-lg hover:-translate-y-1",
-  strip: "bg-gray-400",
-  chip: "bg-gray-500 text-white",
-  badge: "bg-gray-100 text-gray-700",
-};
-
-/**
- * Portal 4.0 Final Audit — visual reconstruction. Cùng khuôn 5 mẫu như
- * `PillarEntranceCard`'s SURFACE (Home) và CKOS's CATEGORY_SURFACE: mỗi
- * hệ sinh thái có một "bộ da" riêng (dải gradient đầu thẻ, chip icon, viền,
- * badge) dùng lại đúng bảng màu Portal đã có (blue/indigo, amber/orange,
- * slate/emerald, violet/blue, emerald/green) — không phải bịa hue mới.
- * Nền vẫn là tint sáng (không phải nền tối) để giữ nguyên chữ
- * text-gray-900/600/500 sẵn có, tránh lỗi tương phản khi đổi theme.
- */
-const ECOSYSTEM_SURFACE: Record<string, { card: string; strip: string; chip: string; badge: string }> = {
-  digiu: {
-    card: "border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white hover:border-blue-400 hover:shadow-token-lg hover:-translate-y-1",
-    strip: "bg-gradient-to-r from-blue-600 to-indigo-600",
-    chip: "bg-gradient-to-br from-blue-600 to-indigo-600 text-white",
-    badge: "bg-blue-100 text-blue-700",
-  },
-  solargroup: {
-    card: "border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50/50 to-white hover:border-amber-400 hover:shadow-token-lg hover:-translate-y-1",
-    strip: "bg-gradient-to-r from-amber-500 to-orange-500",
-    chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white",
-    badge: "bg-amber-100 text-amber-800",
-  },
-  crypto: {
-    card: "border-slate-300 bg-gradient-to-br from-slate-100 via-slate-50 to-white hover:border-emerald-400 hover:shadow-token-lg hover:-translate-y-1",
-    strip: "bg-gradient-to-r from-slate-800 to-emerald-600",
-    chip: "bg-gradient-to-br from-slate-800 to-emerald-600 text-white",
-    badge: "bg-slate-200 text-slate-700",
-  },
-  blockchain: {
-    card: "border-violet-200 bg-gradient-to-br from-violet-50 via-blue-50/50 to-white hover:border-violet-400 hover:shadow-token-lg hover:-translate-y-1",
-    strip: "bg-gradient-to-r from-violet-600 to-blue-500",
-    chip: "bg-gradient-to-br from-violet-600 to-blue-500 text-white",
-    badge: "bg-violet-100 text-violet-700",
-  },
-  trading: {
-    card: "border-emerald-300 bg-gradient-to-br from-emerald-50 via-green-50/50 to-white hover:border-emerald-500 hover:shadow-token-lg hover:-translate-y-1",
-    strip: "bg-gradient-to-r from-emerald-700 to-green-600",
-    chip: "bg-gradient-to-br from-emerald-700 to-green-600 text-white",
-    badge: "bg-emerald-100 text-emerald-800",
-  },
-};
+// quản lý qua /admin/duan-cohoi — Live-edit, Nhóm 3) — xem CLAUDE.md mục
+// "Dự án & Cơ hội". ICON_MAP/ECOSYSTEM_SURFACE/DEFAULT_SURFACE đã chuyển
+// vào `ProjectCards.tsx` (Client Component, cần useCollection) cùng phần
+// render lưới card.
 
 /**
  * Illustrative placeholder "photo" tiles for the "Những người bạn đồng hành
  * theo năm tháng" marquee — NOT real photos (none exist yet). Reuses the
  * same blues/violets/ambers/emeralds tint vocabulary as `ECOSYSTEM_SURFACE`
- * above, no new hues invented.
+ * (giờ ở `ProjectCards.tsx`) above, no new hues invented.
  */
 const COMPANION_PLACEHOLDERS = [
   { surface: "border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600" },
@@ -204,60 +151,7 @@ export default async function OpportunitiesHubPage() {
           title="Các hệ sinh thái"
           description="Mỗi hệ sinh thái trả lời rõ: ai phù hợp, ai chưa nên tham gia, và kỳ vọng thực tế là gì — không phải một bảng xếp hạng."
         />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((item) => {
-            const surface = ECOSYSTEM_SURFACE[item.key] ?? DEFAULT_SURFACE;
-            const Icon = ICON_MAP[item.icon] ?? Layers;
-            return (
-              <div
-                key={item.key}
-                className={`overflow-hidden rounded-2xl border p-5 shadow-token-sm transition duration-200 sm:p-6 ${surface.card}`}
-              >
-                <div className={`-mx-5 -mt-5 mb-4 h-1.5 sm:-mx-6 sm:-mt-6 ${surface.strip}`} aria-hidden />
-                <Link href={item.href} className="block">
-                  <div className="mb-4 flex items-start justify-between gap-2">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-xl shadow-sm ${surface.chip}`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <span className={`gemos-badge ${surface.badge}`}>{item.statusLabel}</span>
-                  </div>
-                  <h3 className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.name}</h3>
-                  <p className="text-xs leading-relaxed text-gray-500">{item.description}</p>
-                </Link>
-
-                <div className="mt-3 space-y-2 border-t border-gray-900/10 pt-3">
-                  <p className="text-xs text-gray-600">
-                    <span className="font-semibold text-emerald-700">Phù hợp: </span>{item.whoFor}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>{item.whoNotReady}
-                  </p>
-                  <p className="text-xs text-gray-600">
-                    <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>{item.expectedOutcome}
-                  </p>
-                </div>
-
-                {/* Rule #2 restructure: 2 real anchor-scroll links staying
-                 * entirely within this ecosystem's own page — no more
-                 * Companion-intent buttons. */}
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <Link
-                    href={`${item.href}#phan-tich-tiem-nang`}
-                    className="rounded-full border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:border-emerald-400 hover:bg-emerald-50"
-                  >
-                    Phân tích dự án
-                  </Link>
-                  <Link
-                    href={`${item.href}#lien-ket-tiep-thi`}
-                    className="rounded-full border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:border-blue-300 hover:text-blue-600"
-                  >
-                    Đường link liên kết dự án
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ProjectCards seed={projects} />
       </section>
 
       {/* Những người bạn đồng hành theo năm tháng — Product Owner explicitly

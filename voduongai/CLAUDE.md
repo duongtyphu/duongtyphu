@@ -2410,7 +2410,67 @@ URL.
 Học viện, Phần C — Sứ mệnh Companion 6 khối, Phần D — Dự án & Cơ hội cả
 hub và 5 trang chi tiết theo yêu cầu mở rộng riêng của Founder). Mỗi
 module đều theo đúng nguyên tắc "1 module = đúng 1 route Live-edit chính
-thức, không VisualEditor chạy song song" — trừ 2 ngoại lệ có lý do kỹ
-thuật rõ ràng, đã ghi chú tại chỗ: Flipbook (Sứ mệnh Companion) và
-`/admin/projects` (Dự án & Cơ hội, DataTable quản danh sách entity thật,
-không phải chrome đơn dòng).
+thức, không VisualEditor chạy song song" — trừ 1 ngoại lệ có lý do kỹ
+thuật rõ ràng, đã ghi chú tại chỗ: Flipbook (Sứ mệnh Companion, carousel
+xem 1 trang/lần không phù hợp kéo-thả qua Cách A).
+
+## Dự án & Cơ hội — Live-edit cho hub (`/admin/projects` → `/admin/duan-cohoi`)
+
+Founder yêu cầu riêng, sau khi Nhóm 3 đã đóng: chuyển nốt hub
+`/admin/projects` (DataTable, ngoại lệ còn lại chưa theo Cách A) sang
+Live-edit — giờ **cả hub lẫn 5 trang chi tiết hệ sinh thái đều dùng Cách
+A**, không còn ngoại lệ DataTable nào trong "Dự án & Cơ hội".
+
+**Kiến trúc:** đúng kiến trúc `home_cards` (Server Component +7 card
+hardcode → tách Client Component riêng), áp dụng cho hub `projects` (9
+field, 5 dòng, có `order` thật):
+
+- **Sửa lại bài học shape (`description`/`what`) ngay từ đầu** cho
+  `getLiveProjects()` — trước đó đổi tên field ngay ở lớp fetch
+  (`expectation`→`expectedOutcome`, `fitCriteria`→`whoFor`,
+  `avoidCriteria`→`whoNotReady`) VÀ không có `id`/`status`. Đã sửa: giữ
+  nguyên tên field thô đúng shape DB (`expectation`/`fitCriteria`/
+  `avoidCriteria`), thêm `id`/`status`, `select("id, data, status")` —
+  việc đổi tên hiển thị (nếu cần) chỉ làm ở component render cuối cùng
+  (ở đây thực ra giữ nguyên tên thô luôn, không đổi tên gì cả khi hiển
+  thị — nhãn tiếng Việt "Phù hợp"/"Chưa nên tham gia nếu"/"Kỳ vọng thực
+  tế" đã đủ rõ nghĩa, không cần alias field JS).
+- **`src/components/portal/opportunities/ProjectCards.tsx`** (mới) —
+  tách từ khối JSX render lưới ecosystem cũ (`ICON_MAP`/`ECOSYSTEM_SURFACE`/
+  `DEFAULT_SURFACE` chuyển vào đây nguyên vẹn, không đổi giá trị nào).
+  Nhận `seed: LiveProject[]`, gọi `useCollection("projects", seed,
+  {enabled: useEditMode()})`. Portal thật (`editMode=false`) — mỗi card
+  vẫn `<Link href={item.href}>` bọc icon+badge+title+description như cũ
+  (điều hướng đúng như trước). Edit mode — thay `<Link>` bằng `<div>`
+  không điều hướng, bọc icon+badge+title+description trong
+  `EditableRegion` (mở popover đủ 9 field + status, cùng kỹ thuật "1 vùng
+  click mở nhiều field" đã dùng cho `home_cards`); 2 link neo cuối thẻ
+  ("Phân tích dự án"/"Đường link liên kết dự án") giữ nguyên hoạt động cả
+  2 chế độ (không phải phần nội dung sửa được). Kéo-thả đổi thứ tự dùng
+  đúng `reorder()` có sẵn — cùng cơ chế `HomePillarCards.tsx`.
+- **Tái dùng** `src/components/portal/opportunities/EditModeContext.tsx`
+  + `EditableRegion.tsx` đã có sẵn từ việc Live-edit 5 trang chi tiết hệ
+  sinh thái (cùng module `opportunities`, không tạo bản sao thứ 3).
+- **`src/app/portal/duan-cohoi/page.tsx`** — bỏ khối JSX render lưới
+  ecosystem cũ (~50 dòng) + 3 hằng số đã chuyển, thay bằng
+  `<ProjectCards seed={projects} />`. `getLiveProjects()`/props khác
+  không đổi.
+- **`src/app/admin/(dashboard)/duan-cohoi/page.tsx`** (mới) — render lại
+  `OpportunitiesHubPage` (`/portal/duan-cohoi/page.tsx` thật) bọc
+  `<EditModeProvider>`, cùng pattern `/admin/home-cards`.
+- **Đã xoá** `/admin/projects` (DataTable cũ).
+- `nav.ts` — đổi href `"Hệ sinh thái"` từ `/admin/projects` →
+  `/admin/duan-cohoi` (nhãn thêm "(Live-edit)"), giữ nguyên 5 entry chi
+  tiết hệ sinh thái không đổi.
+- `AdminSidebar.tsx` — đổi key `navIcons` từ `/admin/projects` →
+  `/admin/duan-cohoi` (icon `FolderKanban` giữ nguyên).
+- `dashboard/page.tsx` — đổi key `TABLE_FOR_HREF` từ `/admin/projects` →
+  `/admin/duan-cohoi` (vẫn map đúng 1 bảng `projects`, giữ số đếm — cùng
+  cách `home-cards` giữ số đếm dù đã chuyển sang Live-edit, vì đây vẫn là
+  route 1:1 với đúng 1 bảng, khác các route Live-edit merge-2-bảng như
+  Mirror/Journal).
+
+**Verify:** `rm -rf .next && npm run build` (route `/admin/duan-cohoi`
+xuất hiện đúng, `/admin/projects` đã biến mất), `tsc`/`eslint` sạch (1
+warning tự phát hiện — `Link` import không dùng nữa ở `page.tsx` sau khi
+tách `ProjectCards.tsx`, đã xoá), `vitest run` 139/139.

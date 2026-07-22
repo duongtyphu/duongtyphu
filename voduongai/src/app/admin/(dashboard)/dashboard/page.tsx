@@ -73,7 +73,7 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/tools": "tools",
   "/admin/aiworkspace/recommended-workspace": "recommended_workspace",
   "/admin/aiworkspace/ai-workflow-sections": "ai_workflow_sections",
-  "/admin/projects": "projects",
+  "/admin/duan-cohoi": "projects",
   "/admin/su-menh-companion/flipbook": "companion_flipbook_pages",
   "/admin/community": "community",
   "/admin/updates": "updates",

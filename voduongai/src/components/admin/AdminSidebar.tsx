@@ -87,7 +87,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/tools": Wrench,
   "/admin/aiworkspace/recommended-workspace": Sparkles,
   "/admin/aiworkspace/ai-workflow-sections": Workflow,
-  "/admin/projects": FolderKanban,
+  "/admin/duan-cohoi": FolderKanban,
   "/admin/duan-cohoi/digiu": Layers,
   "/admin/duan-cohoi/solargroup": Building2,
   "/admin/duan-cohoi/blockchain-crypto": Bitcoin,
