@@ -17,6 +17,8 @@ import type { StoryChrome } from "@/components/portal/story/MyStoryBook";
  * live-journal.ts.
  */
 const DEFAULT_CHROME: StoryChrome = {
+  id: "story",
+  status: "Published",
   title: "My Story",
   subtitle: "Câu chuyện đang được viết bằng chính những điều bạn học, tạo ra và gìn giữ.",
   emptyStateLine1: "Mọi cuốn sách hay đều bắt đầu bằng một trang đầu còn trắng.",
@@ -49,15 +51,17 @@ const DEFAULT_CHROME: StoryChrome = {
   keepCtaLabel: "Giữ lại",
 };
 
-const STRING_KEYS = Object.keys(DEFAULT_CHROME) as (keyof StoryChrome)[];
+const STRING_KEYS = (Object.keys(DEFAULT_CHROME) as (keyof StoryChrome)[]).filter(
+  (key) => key !== "id" && key !== "status",
+);
 
 export const getLiveStoryChrome = cache(async (): Promise<StoryChrome> => {
   const supabase = getSupabasePublic();
   if (!supabase) return DEFAULT_CHROME;
-  const { data, error } = await supabase.from("story_chrome").select("data").eq("id", "story").eq("status", "Published").maybeSingle();
+  const { data, error } = await supabase.from("story_chrome").select("id, data, status").eq("id", "story").eq("status", "Published").maybeSingle();
   if (error || !data) return DEFAULT_CHROME;
   const d = (data.data ?? {}) as Record<string, unknown>;
-  const result = { ...DEFAULT_CHROME };
+  const result = { ...DEFAULT_CHROME, id: data.id, status: data.status };
   for (const key of STRING_KEYS) {
     if (typeof d[key] === "string") result[key] = d[key] as string;
   }

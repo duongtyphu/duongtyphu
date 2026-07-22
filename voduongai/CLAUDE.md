@@ -2006,3 +2006,76 @@ màu hover theo theme sáng — giống bản gem-home hơn bản tối của Mi
 mất — `.next/types` stale reference sau khi xoá route, đã gặp 3 lần liên
 tiếp vdai-academy/Mirror/Journal, fix bằng rebuild sạch), `tsc`/`eslint`
 sạch sau đó, `vitest run` 139/139.
+
+## Nhóm 3, Phần A — My Story: chuyển từ props sang useCollection({enabled})
+
+Module thứ 3 của Phần A, đúng pattern Mirror/Journal. Audit xác nhận
+`MyStoryBook.tsx` nhận `chrome: StoryChrome` qua props từ
+`/portal/story/page.tsx` (Server Component, tự fetch
+`getLiveStoryChrome()`) — cùng kiến trúc 2 module trước, chỉ khác `story_chrome`
+là bảng chrome DUY NHẤT (không có bảng danh sách câu hỏi/ý định thứ 2 đi
+kèm như Mirror/Journal).
+
+**Áp dụng ngay bài học shape (`description`/`what`) từ đầu:**
+`getLiveStoryChrome()` trước đó `select("data")` và trả về `StoryChrome`
+không có `id`/`status`. Đã sửa: thêm `id`/`status` vào type + query
+(`select("id, data, status")`), gán trực tiếp từ cột top-level
+(`result.id = data.id`, `result.status = data.status`) — KHÔNG qua vòng
+lặp `STRING_KEYS` (vòng lặp đó chỉ đọc từ `data.data` jsonb, `id`/`status`
+là cột riêng) để tránh bug tương tự đã gặp nếu lỡ để 2 key này lọt vào
+`STRING_KEYS`.
+
+**Reachability — nhiều field HƠN Mirror/Journal chỉ hiện có điều kiện:**
+My Story có `bookIsEmpty` (ẩn toàn bộ 7 section nội dung nếu trống),
+`monthlyStats.hasAnyHistory`, `importantMoments.length>0`,
+`milestones.length>0`, khối "Lessons" (3 điều kiện OR), `createdWorks`
+(if/else — 2 field khác nhau tuỳ nhánh), `capsules.length>0` (kéo theo cả
+4 field của `RemovableEntry`), `!storageReady`, và toàn bộ 9 field trong
+`WriteNook` (ẩn hẳn nếu `!signedIn`, hoặc hiện bản "chưa sẵn sàng" nếu
+`!tableReady`) — tổng cộng nhiều nhánh hiển thị hơn hẳn 2 module trước,
+không có cách nào đảm bảo 100% reachability qua vị trí hiển thị tự nhiên.
+
+**Giải quyết:** cùng cơ chế panel Live-edit luôn hiện khi `editMode=true`
+(ngay dưới `PortalBackLink`), nhóm 30 field thành 7 `EditableRegion`:
+tiêu đề+phụ đề; 2 dòng trạng thái trống; 9 nhãn mục nội dung; khối
+"Chương tiếp theo"+link Mirror (4 field); WriteNook (9 field); nhãn gỡ ký
+ức tự lưu (4 field); trạng thái (`status`). Portal thật (`editMode=false`)
+— khối này hoàn toàn không render. **Không có kéo-thả** — `story_chrome`
+là singleton (1 dòng), không có danh sách nào cần đổi thứ tự (khác Mirror/
+Journal nhưng cũng không có gì để kéo-thả cả).
+
+**KHÔNG đụng** `JOURNEY_CHAPTER_NAMES` (dùng chung 3 cửa, index-bound —
+không nằm trong file này, `chapter.name` chỉ đọc qua
+`getCurrentChapterFromClient()`), `KIND_LABEL` (enum map
+`MemoryCapsuleKind→label`, 14 giá trị đóng), `companionLine`/
+`understandingNote`/`growthPattern`/`qualities`/`buildLetter(monthlyStats)`/
+`importantMoments`/`milestones`/`createdWorks` (dữ liệu động thật từ
+reflections/capsules/growth-view.ts) — giữ nguyên 100% như Việc 9 đã audit.
+
+**File mới:** `src/components/portal/story/EditModeContext.tsx` +
+`EditableRegion.tsx` (y hệt pattern Mirror/Journal, chỉ đổi import).
+
+**File sửa:**
+- `src/lib/portal/live-story.ts` — thêm `id`/`status` như trên.
+- `src/components/portal/story/MyStoryBook.tsx` — đổi prop `chrome` →
+  `seedChrome`; gọi `useCollection("story-chrome", [seedChrome], {enabled:
+  useEditMode()})`; thêm panel Live-edit; **KHÔNG đụng** logic
+  `useEffect`/`useMemo` tính dữ liệu động (giữ nguyên 100%).
+- `src/app/portal/story/page.tsx` — đổi tên prop truyền xuống
+  (`seedChrome`), không đổi logic fetch.
+- `src/app/admin/(dashboard)/hanh-trinh-cua-toi/story/page.tsx` (mới) —
+  render lại `MyStoryPage` (`/portal/story/page.tsx` thật) bọc
+  `<EditModeProvider>`, cùng pattern Mirror/Journal.
+- **Đã xoá** `hanh-trinh-cua-toi/story-chrome/` (1 route VisualEditor cũ)
+  — gộp vào route Live-edit duy nhất `hanh-trinh-cua-toi/story/`.
+- `nav.ts` — đổi label + href: `"My Story (Live-edit)"` →
+  `/admin/hanh-trinh-cua-toi/story`.
+- `AdminSidebar.tsx` — đổi key `navIcons` từ `story-chrome` sang `story`
+  (icon `Feather` giữ nguyên).
+- `dashboard/page.tsx` — xoá dòng `TABLE_FOR_HREF` cho `story-chrome`, cập
+  nhật comment chung nhắc cả Mirror/Journal/My Story làm ví dụ route
+  Live-edit không có số đếm.
+
+**Verify:** `rm -rf .next && npm run build` (route
+`/admin/hanh-trinh-cua-toi/story` xuất hiện đúng, route cũ đã biến mất),
+`tsc`/`eslint` sạch, `vitest run` 139/139.

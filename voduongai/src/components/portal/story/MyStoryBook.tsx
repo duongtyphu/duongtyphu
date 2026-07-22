@@ -17,6 +17,10 @@ import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { useReflections, type Reflection } from "@/lib/portal/reflections";
 import { useMemoryCapsules, deleteMemoryCapsule, type MemoryCapsule, type MemoryCapsuleKind } from "@/lib/portal/memoryCapsules";
 import type { GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones";
+import { useCollection } from "@/lib/admin/store";
+import { useEditMode } from "@/components/portal/story/EditModeContext";
+import { EditableRegion } from "@/components/portal/story/EditableRegion";
+import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
  * JOURNEY PLATFORM — Phase P3: My Story, cuốn sách cá nhân.
@@ -35,6 +39,8 @@ import type { GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones"
  * `story_chrome` (1 dòng, id='story'), fetch ở page.tsx (Server Component)
  * rồi truyền props xuống — cùng cách đã làm cho Mirror/Nhật ký học tập. */
 export type StoryChrome = {
+  id: string;
+  status: string;
   title: string;
   subtitle: string;
   emptyStateLine1: string;
@@ -66,6 +72,56 @@ export type StoryChrome = {
   removeCtaLabel: string;
   keepCtaLabel: string;
 };
+
+/** Nhóm field cho panel Live-edit luôn hiện (xem lý do ở `MyStoryBook`
+ * bên dưới — phần lớn field chỉ render tự nhiên khi có dữ liệu động
+ * thật, không đảm bảo 100% reachability nếu chỉ bọc EditableRegion tại
+ * vị trí hiển thị). */
+const HEADER_FIELDS: FieldConfig[] = [
+  { key: "title", label: "Tiêu đề", type: "text", required: true },
+  { key: "subtitle", label: "Câu phụ đề", type: "textarea", full: true, required: true },
+];
+const EMPTY_STATE_FIELDS: FieldConfig[] = [
+  { key: "emptyStateLine1", label: "Trạng thái trống — dòng 1", type: "textarea", full: true, required: true },
+  { key: "emptyStateLine2", label: "Trạng thái trống — dòng 2", type: "textarea", full: true, required: true },
+];
+const SECTION_LABEL_FIELDS: FieldConfig[] = [
+  { key: "monthlyLetterLabel", label: "Tiền tố 'Lá thư tháng'", type: "text", required: true },
+  { key: "momentsSectionLabel", label: "Nhãn mục 'Những khoảnh khắc quan trọng'", type: "text", required: true },
+  { key: "turningPointsSectionLabel", label: "Nhãn mục 'Bước ngoặt'", type: "text", required: true },
+  { key: "lessonsSectionLabel", label: "Nhãn mục 'Những bài học đã thay đổi tôi'", type: "text", required: true },
+  { key: "createdSectionLabel", label: "Nhãn mục 'Những gì tôi đã tạo ra'", type: "text", required: true },
+  { key: "createdEmptyLine", label: "Dòng chữ khi chưa có tác phẩm nào", type: "textarea", full: true, required: true },
+  { key: "capsulesSectionLabel", label: "Nhãn mục 'Những điều bạn tự gìn giữ'", type: "text", required: true },
+  { key: "storageNotReadyLine", label: "Dòng chữ khi lưu trữ chưa sẵn sàng", type: "textarea", full: true, required: true },
+  { key: "writeNookSectionLabel", label: "Nhãn mục 'Viết một trang mới'", type: "text", required: true },
+];
+const NEXT_CHAPTER_FIELDS: FieldConfig[] = [
+  { key: "nextChapterPrompt", label: "Lời mời 'Chương tiếp theo...'", type: "textarea", full: true, required: true },
+  { key: "nextChapterCtaLabel", label: "Nhãn nút 'Bắt đầu viết tiếp'", type: "text", required: true },
+  { key: "mirrorPromptPrefix", label: "Tiền tố dòng mời mở Mirror", type: "text", required: true },
+  { key: "mirrorLinkLabel", label: "Nhãn link 'Mở Mirror'", type: "text", required: true },
+];
+const WRITE_NOOK_FIELDS: FieldConfig[] = [
+  { key: "writeNookNotReadyLine", label: "WriteNook — dòng khi khu lưu ký ức chưa sẵn sàng", type: "textarea", full: true, required: true },
+  { key: "thankYouLine", label: "WriteNook — dòng cảm ơn sau khi đã suy ngẫm hôm nay", type: "textarea", full: true, required: true },
+  { key: "reflectionPlaceholder", label: "WriteNook — placeholder ô suy ngẫm", type: "text", required: true },
+  { key: "saveReflectionCtaLabel", label: "WriteNook — nhãn nút lưu suy ngẫm", type: "text", required: true },
+  { key: "momentPrompt", label: "WriteNook — lời mời lưu khoảnh khắc khác", type: "text", required: true },
+  { key: "momentPlaceholder", label: "WriteNook — placeholder ô khoảnh khắc", type: "text", required: true },
+  { key: "saveMomentCtaLabel", label: "WriteNook — nhãn nút lưu khoảnh khắc", type: "text", required: true },
+  { key: "savedMomentLabel", label: "WriteNook — nhãn nút sau khi đã lưu", type: "text", required: true },
+  { key: "noReflectionsLine", label: "WriteNook — dòng khi chưa có suy ngẫm nào", type: "textarea", full: true, required: true },
+];
+const REMOVABLE_ENTRY_FIELDS: FieldConfig[] = [
+  { key: "removeLabel", label: "Nhãn nút 'Gỡ khỏi cuốn sách'", type: "text", required: true },
+  { key: "removeConfirmLabel", label: "Dòng xác nhận 'Chắc chắn?'", type: "text", required: true },
+  { key: "removeCtaLabel", label: "Nhãn nút 'Xoá' (xác nhận gỡ)", type: "text", required: true },
+  { key: "keepCtaLabel", label: "Nhãn nút 'Giữ lại' (huỷ gỡ)", type: "text", required: true },
+];
+const STATUS_FIELDS: FieldConfig[] = [
+  { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
+];
 
 const KIND_LABEL: Record<MemoryCapsuleKind, string> = {
   milestone: "Cột mốc",
@@ -153,7 +209,7 @@ export function MyStoryBook({
   firstPremium,
   premiumCount = 0,
   storageReady,
-  chrome,
+  seedChrome,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -162,8 +218,13 @@ export function MyStoryBook({
   firstPremium: { title: string; occurredAt: string } | null;
   premiumCount?: number;
   storageReady: boolean;
-  chrome: StoryChrome;
+  seedChrome: StoryChrome;
 }) {
+  const editMode = useEditMode();
+  const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
+    enabled: editMode,
+  });
+  const chrome = chromeItems[0] ?? seedChrome;
   const [capsules, setCapsules] = useState(initialCapsules);
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
   const [firstOutput, setFirstOutput] = useState<{ date: string } | null | undefined>(undefined);
@@ -239,6 +300,33 @@ export function MyStoryBook({
        * quyển nền phía sau mới full-bleed. */}
       <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
         <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="light" />
+
+        {editMode && (
+          <div className="story-page-block mt-6 space-y-4 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 text-left">
+            <p className="text-xs font-bold uppercase tracking-wide text-blue-600">Live-edit — Nội dung My Story</p>
+            <EditableRegion record={chrome} fields={HEADER_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Tiêu đề &amp; câu phụ đề</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={EMPTY_STATE_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Trạng thái trống (2 dòng)</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={SECTION_LABEL_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">9 nhãn mục nội dung</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={NEXT_CHAPTER_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Khối &quot;Chương tiếp theo&quot; + link Mirror</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={WRITE_NOOK_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">WriteNook — 9 chuỗi (suy ngẫm/khoảnh khắc)</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={REMOVABLE_ENTRY_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Nhãn gỡ ký ức tự lưu (4 chuỗi)</p>
+            </EditableRegion>
+            <EditableRegion record={chrome} fields={STATUS_FIELDS} update={updateChrome}>
+              <p className="text-sm text-gray-700">Trạng thái: {chrome.status}</p>
+            </EditableRegion>
+          </div>
+        )}
 
         {/* ── Opening Page ─────────────────────────────────────────────── */}
         <header className="story-fade-in text-center">

@@ -119,5 +119,5 @@ async function getStoryData(): Promise<{
 
 export default async function MyStoryPage() {
   const [data, chrome] = await Promise.all([getStoryData(), getLiveStoryChrome()]);
-  return <MyStoryBook {...data} chrome={chrome} />;
+  return <MyStoryBook {...data} seedChrome={chrome} />;
 }
