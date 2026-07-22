@@ -1548,3 +1548,82 @@ sẵn anon key public, không có service role key hay tài khoản Admin thật
 nào để đăng nhập) — đây là giới hạn quyền truy cập thật của môi trường
 sandbox, không phải lựa chọn bỏ qua bước test. Founder cần tự làm phần
 "tạo thử qua UI thật" trên Preview URL — xem checklist trong báo cáo.
+
+## Course Builder (Premium) — Bước 4: trang xem nội dung cho học viên
+
+Route MỚI HOÀN TOÀN (Bước 1 đã xác nhận `/portal/premium` chỉ là landing/
+mua, không có route con nào từ trước).
+
+**Đặt tên route:** audit nhanh convention Portal hiện có
+(`duan-cohoi/[ecosystemSlug]`, `aiworkspace/bai-viet/[slug]`,
+`aiworkspace/nghe/[slug]`) — dùng `[courseId]` (khớp param đã dùng ở Admin
+builder Bước 3, `courses.id` là text slug-like — cùng kiểu
+`[ecosystemSlug]`) + segment hành động tiếng Việt `hoc` (cùng phong cách
+`bai-viet`/`nghe`) → `/portal/premium/[courseId]/hoc`.
+
+**Kiểm soát truy cập** — đúng 3 lớp yêu cầu, KHÔNG viết cơ chế mới:
+1. Chưa đăng nhập → `middleware.ts` đã gate toàn bộ `/portal/*`
+   (`src/lib/protected-routes.ts`, không có ngoại lệ) — tự động redirect
+   `/login?next=...` TRƯỚC KHI route này chạy, không cần tự kiểm tra.
+2. Đã đăng nhập, CHƯA mua → `getPurchasedIds("course_id")` (có sẵn,
+   `src/lib/access.ts`, đã dùng ở `/portal/premium`) trả về
+   `Set<string>` rỗng cho khoá này → mỗi lesson chỉ xem được nếu
+   `is_free_preview=true`; lesson khác hiện icon khoá + nhãn xám + CTA
+   "Mua khoá học này →" (`/portal/premium`) khi bấm chọn.
+3. Đã mua → `purchasedCourseIds.has(courseId)` true → mọi lesson
+   Published xem được toàn bộ.
+
+**Ẩn Draft/Hidden khỏi học viên — 2 lớp, không chỉ lọc ở code:**
+`src/lib/portal/live-course-content.ts` (mới, `getLiveCourseContent()`,
+cùng pattern mọi `live-*.ts` khác — `cache()` + `getSupabasePublic()`)
+lọc `.eq("status", "Published")` cho cả `course_sections` và
+`course_lessons` — NHƯNG lớp thật sự chặn là RLS `"public read published"`
+đã tạo ở Bước 1 (`USING (status = 'Published')`): với client anon key
+(`getSupabasePublic()` dùng), Postgres tự chặn Draft/Hidden ở tầng
+database, không phải chỉ ẩn ở tầng hiển thị — kể cả nếu code quên filter,
+RLS vẫn không trả Draft/Hidden về.
+
+**File mới:**
+- `src/lib/portal/live-course-content.ts` — `getLiveCourseContent(courseId)`,
+  trả về cây `{sections: [{id, title, lessons: [...]}]}`, mỗi lesson có
+  `id/section_id/title/video_url/content/duration_minutes/is_free_preview`.
+- `src/app/portal/premium/[courseId]/hoc/page.tsx` (Server Component) —
+  lấy tên khoá qua `getSupabasePublic()` (bảng `courses` public-read hoàn
+  toàn, RLS `courses_read` đã có từ trước), `notFound()` nếu courseId
+  không khớp khoá nào; fetch song song `getLiveCourseContent()` +
+  `getPurchasedIds("course_id")`; dùng `PortalBackLink` chuẩn (đã có sẵn
+  toàn Portal, không viết link Back riêng).
+- `src/app/portal/premium/[courseId]/hoc/CourseLearnClient.tsx`
+  ("use client") — CHỈ ĐỌC (không kéo-thả, không CRUD — khác hẳn Admin
+  builder). Cột trái: cây Section→Lesson (icon khoá/PlayCircle theo
+  `viewable`, badge thời lượng). Cột phải: lesson đang chọn — video nhúng
+  (chuyển URL YouTube watch/youtu.be sang dạng `/embed/`, URL khác không
+  đoán được cấu trúc nhúng chung nên fallback sang link mở tab mới, cùng
+  cách `/portal/account` đã xử lý `video_url` bất kỳ từ trước) + `content`
+  hiển thị dạng text thuần (`whitespace-pre-wrap`, KHÔNG render markdown —
+  dự án chưa có thư viện markdown nào, không thêm dependency mới cho việc
+  này) + badge thời lượng. Mặc định tự chọn sẵn bài xem được đầu tiên
+  (đã mua → bài đầu; chưa mua → bài xem thử đầu tiên nếu có) để trang
+  không trống khi vừa vào.
+- **KHÔNG xây course progress** — đúng quyết định để sau, trang này không
+  lưu/đọc tiến độ học nào.
+
+**Nối "Vào học ngay":** audit `PremiumProgramCard.tsx` phát hiện đã CÓ SẴN
+đúng chỗ cần — khi `owned=true`, card đã render nút "Vào học ngay →" (trước
+đó trỏ `/portal/my-products`, trang danh sách sản phẩm đã mua chung
+chung). Đổi thẳng href sang `/portal/premium/${course?.id}/hoc` — vào
+thẳng nội dung khoá thay vì phải qua 1 bước trung gian, không thêm
+button/layout mới, không phá cấu trúc card.
+
+**Verify đã chạy:** `tsc`/`eslint`/`npm run build` sạch (route
+`/portal/premium/[courseId]/hoc` xuất hiện đúng), `vitest run` 139/139.
+
+**Giới hạn thật, không tự chèn dữ liệu test:** định verify thêm bằng cách
+chèn 1 dòng test vào `course_sections`/`course_lessons` (khoá `ai-coban`)
+rồi đọc lại qua REST API bằng anon key để xác nhận RLS thật sự chặn
+Draft — Founder từ chối cả 2 lần (insert test data, và cả câu hỏi xin
+xác nhận cách xử lý) → đã dừng ngay, không tự ý thử lại dưới hình thức
+khác. Founder tự verify trực tiếp trên Preview URL (xem checklist trong
+báo cáo) — bảo đảm về mặt code: RLS policy (Bước 1) + filter tường minh
+trong `getLiveCourseContent()` + không có đường nào khác đọc 2 bảng này ở
+Portal ngoài file này.
