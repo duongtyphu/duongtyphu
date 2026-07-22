@@ -2553,3 +2553,101 @@ cả 5 trang chi tiết hệ sinh thái trả `200` + render đúng nội dung t
 `ecosystem_chrome` (không còn lỗi trong log dev server), popup Live-edit
 cuộn được đầy đủ qua Playwright. `tsc`/`eslint` sạch, `rm -rf .next && npm
 run build` sạch, `vitest run` 139/139.
+
+## Premium — Dashboard Live-edit (mới, theo yêu cầu riêng của Founder)
+
+Founder yêu cầu thêm 1 trang Admin mới cho nhóm "Premium": "Dashboard
+thiết kế Live-edit", **giữ nguyên `/admin/course-pricing`** ("Giá khoá học
+Premium" — bảng `courses`, giá + trạng thái mở bán) không đổi gì.
+
+**Audit trước khi build:** `/portal/premium/page.tsx` (Server Component,
+248 dòng) có nhiều khối chữ tĩnh: Hero (eyebrow/title 2 dòng/subtitle + 2
+CTA neo anchor), 2 nhãn section ("Lớp học AI"/"Ba lớp học..." và "Chương
+trình hệ thống"/"Xây hệ thống Affiliate..."), khối "Thanh toán hoạt động
+thế nào" (4 bước — `PAYMENT_STEPS`), khối FAQ (4 câu —
+`PREMIUM_FAQ`)... cộng thêm 3 sub-component riêng
+(`PremiumAdvisor`/`PremiumConsult`/`FounderSpotlight`) và `PREMIUM_PROGRAMS`
+(5 chương trình, `icon: LucideIcon` + accent màu — cùng rủi ro
+`ecosystems.ts`/`eco.icon` đã gặp ở Phần D). Đã hỏi Founder phạm vi cụ
+thể trước khi build (theo đúng nguyên tắc "STOP khi ranh giới không rõ") —
+Founder chọn phạm vi **an toàn nhất**: chỉ Hero + 2 nhãn section + 4 bước
+thanh toán + FAQ. KHÔNG đụng `PREMIUM_PROGRAMS`/`PremiumAdvisor`
+(targetHref gắn anchor thật)/`PremiumConsult` (số điện thoại/Zalo)/
+`FounderSpotlight` (hồ sơ Founder) — tất cả vẫn tĩnh 100% trong code.
+
+**Phát hiện kiến trúc mới (khác mọi module trước) — 1 bảng chrome cần
+hiển thị ở NHIỀU vị trí rải rác trong 1 trang:** `premium_chrome` (10
+field: Hero 4 field + 2 cặp nhãn section + 2 tiêu đề khối) cần xuất hiện
+ở ít nhất 4 vị trí khác nhau trong JSX (Hero, trước lưới lớp học, trước
+lưới hệ thống, trong khối thanh toán, trong khối FAQ) — xen kẽ với
+`PremiumAdvisor`/`PremiumConsult`/`FounderSpotlight` (không đụng). Nếu để
+MỖI vị trí tự gọi `useCollection("premium-chrome", ...)` riêng, mỗi vị trí
+giữ 1 bản sao state cục bộ KHÔNG đồng bộ — sửa Hero xong, nhãn section vẫn
+hiện giá trị cũ tới khi tải lại trang.
+
+**Giải quyết — pattern MỚI (chưa dùng ở module nào trước đây trong dự
+án):** `PremiumChromeContext.tsx` — 1 Context Provider gọi DUY NHẤT 1 lần
+`useCollection("premium-chrome", [seedChrome], {enabled: useEditMode()})`,
+chia sẻ `{chrome, update}` qua React Context cho mọi component con
+(`PremiumHeroBlock`/`PremiumSectionHeading`/tiêu đề trong
+`PremiumPaymentSteps`/`PremiumFaqList`) qua hook `usePremiumChrome()` —
+luôn đồng bộ ngay sau khi lưu, không cần tải lại trang. Đây là giải pháp
+chung có thể tái dùng cho module tương lai nào cũng gặp tình huống "1
+bảng chrome, nhiều vị trí hiển thị rải rác".
+
+**`PremiumSectionHeading.tsx` — component dùng chung cho 2 nhãn section**
+(nhận `eyebrowKey`/`titleKey` làm tham số thay vì viết lặp lại 2 lần) —
+tránh trùng lặp vì cả 2 section dùng chung 1 cấu trúc eyebrow+title.
+
+**File mới:**
+- `supabase-phase19-premium-chrome.sql` — 3 bảng: `premium_chrome`
+  (singleton), `premium_payment_steps` (4 dòng), `premium_faq` (4 dòng).
+  Đã áp dụng qua Supabase MCP (`apply_migration`, `success: true`).
+- `src/lib/portal/live-premium.ts` — `getLivePremiumChrome()`/
+  `getLivePremiumPaymentSteps()`/`getLivePremiumFaq()`, đúng shape thô
+  (`id`/`status` + field gốc) ngay từ đầu — áp dụng bài học
+  `description`/`what` mà không cần sửa lại lần 2.
+- `src/components/portal/premium/EditModeContext.tsx` +
+  `EditableRegion.tsx` (bản sao thứ 9, byte-for-byte giống 8 bản còn lại —
+  đã xác nhận qua `md5sum`, cùng cập nhật cả 9 file lên "9 bản sao" trong
+  comment).
+- `src/components/portal/premium/PremiumChromeContext.tsx` — Context
+  Provider chia sẻ chrome/update (pattern mới, xem trên).
+- `src/components/portal/premium/PremiumHeroBlock.tsx`,
+  `PremiumSectionHeading.tsx`, `PremiumPaymentSteps.tsx`,
+  `PremiumFaqList.tsx` — tách khỏi JSX hardcode cũ trong `page.tsx`.
+- `src/app/admin/(dashboard)/premium/dashboard/page.tsx` — route Live-edit
+  mới, render lại `PremiumPage` (`/portal/premium/page.tsx` thật) bọc
+  `<EditModeProvider>`.
+
+**File sửa:**
+- `src/app/portal/premium/page.tsx` — xoá `PAYMENT_STEPS`/`PREMIUM_FAQ`
+  hardcode, bọc phần nội dung liên quan trong
+  `<PremiumChromeProvider seedChrome={chrome}>`, thay khối Hero/2 nhãn
+  section/khối thanh toán/FAQ bằng 4 component mới. 2 CTA neo Hero VÀ
+  `PremiumAdvisor`/`PremiumConsult`/`FounderSpotlight`/`PREMIUM_PROGRAMS`
+  giữ nguyên 100%, không đụng.
+- `src/lib/admin/supabaseCollections.ts` — thêm 3 dòng
+  `premium-chrome`/`premium-payment-steps`/`premium-faq`.
+- `src/lib/admin/nav.ts` — nhóm "Premium" thêm entry mới `"Dashboard
+  (Live-edit)"` → `/admin/premium/dashboard`, GIỮ NGUYÊN entry "Giá khoá
+  học Premium" → `/admin/course-pricing` không đổi.
+- `src/components/admin/AdminSidebar.tsx` — thêm icon `Crown` cho
+  `/admin/premium/dashboard`.
+- `dashboard/page.tsx` — không thêm `TABLE_FOR_HREF` (route merge 3 bảng,
+  cùng cách Mirror/Journal/6-khối-Companion), cập nhật comment chung.
+
+**Verify:** test thật qua `next dev` (Supabase env tạm bỏ để `/portal/*`
+công khai theo đúng fallback có sẵn) — `/portal/premium` trả `200`, nội
+dung Hero/nhãn section/payment/FAQ render đúng, 0 lỗi log server. Test
+riêng cơ chế Context chia sẻ (dựng route dev-preview tạm bỏ ngay sau khi
+xong, không phải tính năng) qua Playwright: sửa Hero → popup hiện đầy đủ,
+không giật/không cắt cụt (đúng bản vá `EditableRegion` trước đó); lỗi
+mạng 500 khi lưu là do sandbox không có Supabase thật cấu hình (giới hạn
+đã biết, không phải bug — cơ chế optimistic update của `useCollection()`
+là hạ tầng có sẵn, không đổi). `tsc`/`eslint` sạch, `rm -rf .next && npm
+run build` sạch, `vitest run` 139/139.
+
+**Chưa tự test được:** lưu thật qua Admin UI có tài khoản đăng nhập
+(cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview
+URL `/admin/premium/dashboard`.

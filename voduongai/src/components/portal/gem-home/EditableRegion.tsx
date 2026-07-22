@@ -11,7 +11,7 @@ import { useEditMode } from "./EditModeContext";
 /**
  * Nhóm 3 — Live-edit (pattern pilot dùng chung cho mọi module: mirror/
  * journal/story/journey-map/garden/gem-home/su-menh-companion/
- * opportunities — 8 bản sao byte-for-byte, chỉ khác import
+ * opportunities/premium — 9 bản sao byte-for-byte, chỉ khác import
  * `useEditMode`).
  *
  * BUG ĐÃ SỬA (phát hiện qua test thật trên 5 trang chi tiết hệ sinh

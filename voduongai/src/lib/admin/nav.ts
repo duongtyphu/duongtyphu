@@ -130,8 +130,16 @@ export const adminNavGroups: AdminNavGroup[] = [
     // builder có [courseId] động, vào qua nút "Quản lý nội dung" ở mỗi
     // dòng trong /admin/course-pricing (đã có), không cần entry sidebar
     // riêng cho từng khoá.
+    //
+    // Premium Dashboard (Live-edit, theo yêu cầu riêng của Founder) — thêm
+    // MỚI bên cạnh "Giá khoá học Premium", KHÔNG thay thế/đổi route đó.
+    // Chỉ quản chữ tĩnh an toàn (Hero/2 nhãn section/4 bước thanh toán/FAQ)
+    // của /portal/premium — xem CLAUDE.md mục "Premium — Dashboard Live-edit".
     group: "Premium",
-    items: [{ label: "Giá khoá học Premium", href: "/admin/course-pricing" }],
+    items: [
+      { label: "Giá khoá học Premium", href: "/admin/course-pricing" },
+      { label: "Dashboard (Live-edit)", href: "/admin/premium/dashboard" },
+    ],
   },
   {
     // Portal #8 — "Hành trình của tôi" (/portal/hanhtrinhcuatoi). Việc 9 —

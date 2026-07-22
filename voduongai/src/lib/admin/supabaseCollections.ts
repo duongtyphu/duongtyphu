@@ -164,6 +164,14 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // statusBadge hay marketingLinks/subProjects/fields/affiliateOffers/
   // exchanges/potentialAnalysis — vẫn đọc tĩnh từ ecosystems.ts.
   "ecosystem-chrome": "ecosystem_chrome",
+  // Premium — Dashboard Live-edit. CHỈ chữ tĩnh an toàn (Hero/2 nhãn
+  // section/4 bước thanh toán/FAQ) — KHÔNG đụng bảng `courses` (giá/trạng
+  // thái mở bán, quản qua /admin/course-pricing riêng, giữ nguyên) hay
+  // PREMIUM_PROGRAMS/PremiumAdvisor/PremiumConsult/FounderSpotlight (vẫn
+  // tĩnh trong code).
+  "premium-chrome": "premium_chrome",
+  "premium-payment-steps": "premium_payment_steps",
+  "premium-faq": "premium_faq",
 };
 
 export function tableForCollection(key: string): string | null {

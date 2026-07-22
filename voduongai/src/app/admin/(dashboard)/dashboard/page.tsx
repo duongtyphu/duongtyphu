@@ -51,11 +51,13 @@ const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
 // supabaseCollections.ts). Item không có ở đây (Companion CMS - nhiều tab
 // nội bộ riêng, CKOS Dashboard - trang tổng hợp) hiển thị không kèm số
 // đếm. Cả 5 module "Hành trình của tôi" (Mirror/Nhật ký học tập/My Story/
-// Bản đồ hành trình/Khu vườn của bạn) và "6 khối nội dung" của Sứ mệnh
-// Companion (Live-edit, Nhóm 3) cũng không có ở đây dù có collection thật
-// đứng sau (Mirror/Journal: 2 bảng; 6 khối Companion: 6 bảng; 3 module
-// Hành trình còn lại: 1 bảng mỗi module) — 1 route giờ quản lý qua render
-// lại trang Portal thật, không map 1-1 được vào cấu trúc Record<href, 1
+// Bản đồ hành trình/Khu vườn của bạn), "6 khối nội dung" của Sứ mệnh
+// Companion, và "Dashboard (Live-edit)" của Premium (Nhóm 3 + sau đó)
+// cũng không có ở đây dù có collection thật đứng sau (Mirror/Journal: 2
+// bảng; 6 khối Companion: 6 bảng; Premium Dashboard: 3 bảng
+// `premium_chrome`/`premium_payment_steps`/`premium_faq`; 3 module Hành
+// trình còn lại: 1 bảng mỗi module) — 1 route giờ quản lý qua render lại
+// trang Portal thật, không map 1-1 được vào cấu trúc Record<href, 1
 // table> đơn giản này.
 const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/home-cards": "home_cards",

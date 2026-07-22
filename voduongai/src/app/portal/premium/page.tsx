@@ -1,4 +1,4 @@
-import { Crown, ShieldCheck, ArrowRight } from "lucide-react";
+import { Crown, ArrowRight } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { PREMIUM_PROGRAMS } from "@/components/portal/premium/premium-programs";
@@ -6,6 +6,12 @@ import { PremiumProgramCard, type PremiumCourseMatch } from "@/components/portal
 import { PremiumAdvisor } from "@/components/portal/premium/PremiumAdvisor";
 import { PremiumConsult } from "@/components/portal/premium/PremiumConsult";
 import { FounderSpotlight } from "@/components/portal/premium/FounderSpotlight";
+import { PremiumChromeProvider } from "@/components/portal/premium/PremiumChromeContext";
+import { PremiumHeroBlock } from "@/components/portal/premium/PremiumHeroBlock";
+import { PremiumSectionHeading } from "@/components/portal/premium/PremiumSectionHeading";
+import { PremiumPaymentSteps } from "@/components/portal/premium/PremiumPaymentSteps";
+import { PremiumFaqList } from "@/components/portal/premium/PremiumFaqList";
+import { getLivePremiumChrome, getLivePremiumPaymentSteps, getLivePremiumFaq } from "@/lib/portal/live-premium";
 
 export const metadata = { title: "Premium | VO DUONG AI" };
 
@@ -65,42 +71,13 @@ function matchCourse(
   };
 }
 
-/**
- * Khối thông tin "Thanh toán hoạt động thế nào" — Product Owner quyết định
- * GIỮ LẠI (sau khi cân nhắc nguyên tắc payment-flow): đây là khối THÔNG TIN
- * trấn an, không phải một luồng/trang thanh toán chung — mọi CTA thanh toán
- * vẫn nằm trên từng card chương trình với course id riêng.
- */
-const PAYMENT_STEPS = [
-  { step: "1", title: "Chọn chương trình", text: "Bấm CTA đăng ký trên card — bạn được đưa tới trang thanh toán với đúng chương trình đã chọn." },
-  { step: "2", title: "Xác nhận thông tin", text: "Điền họ tên, số điện thoại và xác nhận đơn hàng (giá được hệ thống kiểm tra lại phía máy chủ)." },
-  { step: "3", title: "Chuyển khoản", text: "Chuyển khoản theo hướng dẫn ở trang đơn hàng — hệ thống tự động ghi nhận thanh toán." },
-  { step: "4", title: "Mở khóa tự động", text: "Ngay khi thanh toán được xác nhận, bài giảng video của chương trình được mở khóa trong tài khoản của bạn." },
-];
-
-const PREMIUM_FAQ = [
-  {
-    q: "Premium khác phần miễn phí ở đâu?",
-    a: "Phần miễn phí giúp bạn hiểu và thử. Premium là các chương trình có lộ trình, bài giảng video và kết quả đầu ra cụ thể — dành cho lúc bạn muốn biến AI thành năng lực làm việc thật sự, không chỉ kiến thức.",
-  },
-  {
-    q: "Thanh toán xong bao lâu thì được học?",
-    a: "Hệ thống ghi nhận chuyển khoản tự động. Ngay khi thanh toán được xác nhận, bài giảng của chương trình bạn mua được mở khóa trong mục Sản phẩm của tôi — không cần chờ duyệt tay.",
-  },
-  {
-    q: "Tôi chưa chắc nên chọn chương trình nào?",
-    a: "Đừng chọn khi chưa chắc. Dùng Companion Advisor ở đầu trang để định vị giai đoạn của bạn, hoặc liên hệ Tư vấn 1:1 — trao đổi trước, quyết định sau.",
-  },
-  {
-    q: "Chính sách hoàn phí thế nào?",
-    a: "Điều khoản sử dụng, chính sách bảo mật và chính sách hoàn phí được hiển thị ngay tại bước thanh toán — bạn nên đọc trước khi xác nhận đơn hàng.",
-  },
-];
-
 export default async function PremiumPage() {
-  const [courses, purchasedCourseIds] = await Promise.all([
+  const [courses, purchasedCourseIds, chrome, paymentSteps, faq] = await Promise.all([
     getCourses(),
     getPurchasedIds("course_id"),
+    getLivePremiumChrome(),
+    getLivePremiumPaymentSteps(),
+    getLivePremiumFaq(),
   ]);
 
   const programCards = PREMIUM_PROGRAMS.map((program) => ({
@@ -133,25 +110,14 @@ export default async function PremiumPage() {
          * pillar khác (Home/CKOS/Academy/Projects/AI Workspace), lộ khí
          * quyển Premium ở viền ngoài thay vì nội dung chạm sát mép. */}
         <div className="relative rounded-3xl p-6 md:p-8">
+        <PremiumChromeProvider seedChrome={chrome}>
         <div className="mx-auto max-w-6xl space-y-12">
           {/* ── 1. Hero Premium ─────────────────────────────────────────── */}
           <section className="pt-4 text-center md:pt-8">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-amber-400/30 bg-gradient-to-br from-amber-400/20 to-orange-500/20 shadow-[0_0_40px_-5px_rgba(251,191,36,0.4)]">
               <Crown className="h-7 w-7 text-amber-300" />
             </div>
-            <p className="mt-5 text-xs font-bold uppercase tracking-[0.3em] text-white/40">
-              Premium — Bước tăng tốc khi bạn đã sẵn sàng
-            </p>
-            <h1 className="mx-auto mt-3 max-w-3xl text-3xl font-extrabold leading-tight text-white md:text-5xl">
-              Premium không dành cho việc học nhiều hơn.
-              <span className="mt-1 block bg-gradient-to-r from-blue-400 via-violet-400 to-orange-300 bg-clip-text text-transparent">
-                Premium dành cho lúc bạn muốn biến AI thành năng lực thật sự.
-              </span>
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
-              Không phải mua thêm một chồng bài giảng. Đây là nơi bạn chọn đúng một lộ trình — và đi hết
-              nó với người đồng hành thật.
-            </p>
+            <PremiumHeroBlock />
             <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <a
                 href="#chuong-trinh"
@@ -174,10 +140,7 @@ export default async function PremiumPage() {
           {/* ── 3. 5 chương trình chính ─────────────────────────────────── */}
           <section id="chuong-trinh" className="scroll-mt-24 space-y-8">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">Lớp học AI</p>
-              <h2 className="mt-1 text-xl font-extrabold text-white md:text-2xl">
-                Ba lớp học — ba cấp độ năng lực
-              </h2>
+              <PremiumSectionHeading eyebrowKey="classSectionEyebrow" titleKey="classSectionTitle" />
               <div className="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
                 {classPrograms.map(({ program, course }) => (
                   <PremiumProgramCard key={program.key} program={program} course={course} />
@@ -186,10 +149,7 @@ export default async function PremiumPage() {
             </div>
 
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">Chương trình hệ thống</p>
-              <h2 className="mt-1 text-xl font-extrabold text-white md:text-2xl">
-                Xây hệ thống Affiliate bằng AI — một mình hoặc cùng đội nhóm
-              </h2>
+              <PremiumSectionHeading eyebrowKey="systemSectionEyebrow" titleKey="systemSectionTitle" />
               <div className="mt-5 grid gap-5 lg:grid-cols-2">
                 {systemPrograms.map(({ program, course }) => (
                   <PremiumProgramCard key={program.key} program={program} course={course} featured />
@@ -209,38 +169,11 @@ export default async function PremiumPage() {
            * trình (course id riêng, checkout 2 bước sẵn có). Khối 4 bước
            * dưới đây chỉ là THÔNG TIN — Product Owner quyết định giữ lại. */}
           <section>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 backdrop-blur md:p-8">
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                <h2 className="text-lg font-extrabold text-white">Thanh toán hoạt động thế nào</h2>
-              </div>
-              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {PAYMENT_STEPS.map((s) => (
-                  <div key={s.step} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-xs font-bold text-white">
-                      {s.step}
-                    </span>
-                    <p className="mt-2.5 text-sm font-bold text-white">{s.title}</p>
-                    <p className="mt-1 text-xs leading-relaxed text-white/55">{s.text}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-8 space-y-3">
-              <h2 className="text-lg font-extrabold text-white">Câu hỏi thường gặp</h2>
-              {PREMIUM_FAQ.map((item) => (
-                <details key={item.q} className="group rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-sm font-semibold text-white/85 [&::-webkit-details-marker]:hidden">
-                    {item.q}
-                    <span aria-hidden className="text-white/40 transition group-open:rotate-45">＋</span>
-                  </summary>
-                  <p className="px-5 pb-4 text-sm leading-relaxed text-white/60">{item.a}</p>
-                </details>
-              ))}
-            </div>
+            <PremiumPaymentSteps seed={paymentSteps} />
+            <PremiumFaqList seed={faq} />
           </section>
         </div>
+        </PremiumChromeProvider>
         </div>
       </div>
     </div>
