@@ -2,7 +2,8 @@ import { getSupabaseServer } from "@/lib/supabase-server";
 import { KnowledgeJourneyStrip } from "@/components/portal/ui/KnowledgeJourneyStrip";
 import { CompanionPresenceBand } from "@/components/portal/gem-home/CompanionPresenceBand";
 import { CompanionThoughtLine } from "@/components/portal/gem-home/CompanionThoughtLine";
-import { PillarEntranceCard } from "@/components/portal/gem-home/PillarEntranceCard";
+import { HomePillarCards } from "@/components/portal/gem-home/HomePillarCards";
+import { getLiveHomeCards } from "@/lib/portal/live-home-cards";
 import { getHumanFlowState } from "@/lib/portal/human-flow";
 import { getWelcomeState, getWelcomeMessage, getWarmthLine } from "@/lib/portal/warmth-engine";
 import { dominantChallenge } from "@/lib/portal/human-understanding";
@@ -83,6 +84,7 @@ async function getRecentReflections(): Promise<Reflection[]> {
 export default async function GemHomePage() {
   const profile = await getProfileSummary();
   const recentReflections = await getRecentReflections();
+  const homeCards = await getLiveHomeCards();
   const flow = getHumanFlowState("knowledge", dominantChallenge(recentReflections));
   const welcomeState = getWelcomeState({ createdAt: profile?.memberSince, lastSignInAt: profile?.lastSignInAt });
   const welcomeMessage = getWelcomeMessage(welcomeState);
@@ -118,87 +120,10 @@ export default async function GemHomePage() {
        * cùng nguồn Thought Seed thật đã dùng ở /portal/companion. */}
       <CompanionThoughtLine />
 
-      {/* 7 Pillar Entrance Card — điểm đến sống, không phải menu */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <PillarEntranceCard
-          icon="brain"
-          accent="violet"
-          title="Hệ tri thức AI (CKOS)"
-          what="Tool, Prompt, Quy trình và Bài học được kết nối với nhau — không phải một thư viện tĩnh để lướt qua."
-          href="/portal/ckos"
-          startedMode="module"
-          module="ckos"
-          companionLine="Thử tìm một Tool hoặc Prompt cho đúng việc bạn đang làm hôm nay."
-          ctaLabel="Mở Hệ tri thức AI (CKOS)"
-        />
-        <PillarEntranceCard
-          icon="graduation-cap"
-          accent="blue"
-          title="Học viện AI"
-          what="Biến tri thức thành năng lực qua thực hành thật — không phải một danh sách bài học để đọc hết."
-          href="/portal/hocvienai"
-          startedMode="module"
-          module="academy"
-          companionLine="Chọn một hành trình, làm đúng một bước hôm nay, rồi dừng lại."
-          ctaLabel="Vào Học viện"
-        />
-        <PillarEntranceCard
-          icon="cpu"
-          accent="slate"
-          title="AI Workspace"
-          what="Nơi một ý tưởng trở thành một Output thật — bản nháp, kế hoạch, kết quả dùng được ngay."
-          href="/portal/aiworkspace"
-          startedMode="module"
-          module="khong-gian-ai"
-          companionLine="Mang theo một việc cụ thể — không cần chuẩn bị gì thêm."
-          ctaLabel="Mở AI Workspace"
-        />
-        <PillarEntranceCard
-          icon="line-chart"
-          accent="emerald"
-          title="Dự án & Cơ hội"
-          what="Trung tâm cơ hội giúp bạn quyết định đúng — không phải một trang bán hàng."
-          href="/portal/duan-cohoi"
-          startedMode="module"
-          module="opportunities"
-          companionLine="Đọc Tiêu chí chia sẻ trước khi xem bất kỳ dự án nào."
-          ctaLabel="Xem Dự án & Cơ hội"
-        />
-        <PillarEntranceCard
-          icon="crown"
-          accent="amber"
-          title="Premium"
-          what="Giai đoạn tiếp theo khi bạn đã sẵn sàng đi xa hơn — không phải một quảng cáo nâng cấp."
-          href="/portal/premium"
-          startedOverride={premiumStarted}
-          companionLine={
-            ownedCount === 0
-              ? "Học thử miễn phí trước — Premium sẽ vẫn ở đây khi bạn thấy cách làm việc phù hợp."
-              : "Chỉ nâng cấp khi thực sự cần nhân bản hoặc chuyển giao cho người khác."
-          }
-          ctaLabel="Xem Premium"
-        />
-        <PillarEntranceCard
-          icon="compass"
-          accent="teal"
-          title="Hành trình của tôi"
-          what="Nơi nhìn lại những gì thật sự đã xảy ra — không phải điểm số hay % ước lượng."
-          href="/portal/hanhtrinhcuatoi"
-          startedMode="aggregate"
-          companionLine="Ghé qua khi bạn muốn biết mình đã thực sự đi được bao xa, không chỉ đang làm gì hôm nay."
-          ctaLabel="Xem hành trình"
-        />
-        <PillarEntranceCard
-          icon="heart-handshake"
-          accent="rose"
-          title="Companion"
-          what="Không phải chatbot — một sự hiện diện, nhớ những gì thật sự đã xảy ra với bạn."
-          href="/portal/companion"
-          startedMode="recent"
-          companionLine="Ghé qua khi bạn cần một khoảng lặng, không chỉ khi cần câu trả lời."
-          ctaLabel="Mở Companion"
-        />
-      </div>
+      {/* 7 Pillar Entrance Card — điểm đến sống, không phải menu. Đọc thật
+       * từ bảng home_cards (nối dây — xem CLAUDE.md mục "Nhóm 3 — Nối dây
+       * home_cards"), không còn hardcode JSX. */}
+      <HomePillarCards seed={homeCards} ownedCount={ownedCount} premiumStarted={premiumStarted} />
 
       {/* Khối thoát — luôn có */}
       <KnowledgeJourneyStrip

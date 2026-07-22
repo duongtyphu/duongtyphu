@@ -1706,3 +1706,78 @@ từ nay).
 tầng chung, mở khoá kỹ thuật cho Phần A/D. Tiếp theo: build từng module
 theo đúng thứ tự Founder chọn (nối dây `home_cards` trước, rồi Live-edit
 Trang chủ Học viện, Phần A 5 Cửa, Phần C Companion, Phần D hub Dự án).
+
+## Nhóm 3 — Nối dây `home_cards` (trước khi áp Live-edit)
+
+**Bước 1 — Audit:** `/portal/page.tsx` (GemHomePage) là Server Component
+(`export default async function`, không `"use client"`; `robots:
+{index:false}` nên SEO không phải mối lo chính, hiệu năng vẫn cẩn trọng
+vì đây là trang khách vãng lai thấy đầu tiên). Đối chiếu 7 dòng
+`home_cards` với 7 card hardcode: khớp đúng nội dung ở mọi field — chỉ
+khác tên `description` (DB) vs `what` (prop `PillarEntranceCard`), mapping
+đơn giản không phải lỗi. **Phát hiện 1 lỗi thật:** cột `"order"` của
+`card_academy` (Học viện AI) là `3` thay vì `1` — sắp theo đúng cột này sẽ
+đảo thứ tự "Học viện AI" ↔ "AI Workspace" so với hiển thị thật hiện tại.
+Đã sửa bằng 1 `UPDATE home_cards SET "order"=1 WHERE id='card_academy'`
+(dữ liệu, không phải schema) — xác nhận lại thứ tự sort đúng khớp 100%
+thứ tự JSX gốc trước khi code bất kỳ dòng nào.
+
+**Phát hiện thiết kế quan trọng khi làm Bước 2:** nếu chỉ đổi
+`useCollection(key, seed, {enabled: editMode})` với `editMode` luôn
+`false` ở Portal thật (đúng nguyên tắc `enabled` đã xây ở bước hạ tầng),
+Portal thật sẽ KHÔNG BAO GIỜ fetch — nghĩa là sửa qua Admin sẽ không bao
+giờ phản ánh lên trang chủ thật, mâu thuẫn với yêu cầu verify "sửa qua
+Admin, F5 thấy ngay". **Giải quyết:** tách 2 lớp — lớp lấy dữ liệu THẬT
+(freshness) là 1 hàm Server-side mới `getLiveHomeCards()` (cùng pattern
+mọi `live-*.ts` khác, chạy lại mỗi request nên luôn thấy bản mới nhất);
+lớp `useCollection(..., {enabled: editMode})` chỉ để CHUẨN BỊ SẴN cấu
+trúc cho Live-edit sau này (pass-through `seed` — chính là kết quả
+`getLiveHomeCards()` — khi `editMode=false`, không phải nguồn freshness
+chính).
+
+**Đã làm:**
+- `src/lib/portal/live-home-cards.ts` (mới) — `getLiveHomeCards()`
+  (`cache()` + `getSupabasePublic()`, `.eq("status","Published").order("order")`),
+  map `description`→`what`, giữ `companionLineOwned` (chỉ `card_premium`
+  có giá trị) làm field riêng để chọn đúng nhãn theo `ownedCount` lúc
+  render (không gộp cứng vào `companionLine`).
+- `src/components/portal/gem-home/EditModeContext.tsx` (mới) — y hệt
+  pattern `su-menh-companion/EditModeContext.tsx`, mặc định `false`. Dựng
+  sẵn để module Live-edit kế tiếp không cần sửa lại `HomePillarCards.tsx`.
+- `src/components/portal/gem-home/HomePillarCards.tsx` (mới, "use
+  client") — nhận `seed` (kết quả `getLiveHomeCards()`) +
+  `ownedCount`/`premiumStarted` (dữ liệu per-user thật, tính sẵn ở
+  server, KHÔNG lưu trong `home_cards`). Gọi
+  `useCollection("home-cards", seed, {enabled: useEditMode()})` —
+  `editMode=false` (Portal thật) → pass-through `seed`, 0 request mạng
+  (đã code-review xác nhận: `useEffect` trong `useSupabaseCollection` có
+  `if (!enabled) return;` trước khi gọi `load()`, không có đường nào khác
+  gọi `fetch()`). Card `card_premium` chọn `companionLineOwned` thay
+  `companionLine` khi `ownedCount > 0` — giữ đúng logic ternary gốc.
+- `src/app/portal/page.tsx` — bỏ hẳn 7 khối `<PillarEntranceCard>`
+  hardcode, thay bằng `<HomePillarCards seed={homeCards} .../>`.
+  `GemHomePage` KHÔNG đổi kiến trúc (vẫn Server Component 100%).
+
+**Verify NGHIÊM NGẶT đã chạy:**
+- Diff CHÍNH XÁC từng field (không suy đoán) giữa 7 dòng `home_cards`
+  (sau khi sửa `order`) và nội dung hardcode gốc (lấy từ git history
+  `HEAD:src/app/portal/page.tsx` trước khi sửa) — **khớp 100%, không lệch
+  1 ký tự** ở mọi field (title/what↔description/href/icon/accent/
+  companionLine/companionLineOwned/ctaLabel/module/startedMode) và đúng
+  thứ tự 7 card.
+- `tsc`/`eslint`/`npm run build` sạch, `vitest run` 139/139.
+- Xác nhận zero-request qua code review (không phải Network tab thật —
+  sandbox không đăng nhập được, xem giới hạn đã ghi ở Course Builder Bước
+  3/4): `enabled=false` chặn `load()` ở cả 2 lớp guard trong
+  `useSupabaseCollection`.
+- **CHƯA tự test "sửa qua Admin, F5 thấy ngay"** bằng thao tác UI thật
+  (cùng giới hạn sandbox không có tài khoản Admin) — cơ chế giống hệt các
+  `live-*.ts` khác đã chạy thật trong dự án (Dự án & Cơ hội, CKOS...),
+  Founder tự bấm thử trên Preview URL.
+
+**Kiến trúc sẵn sàng cho Live-edit (module kế tiếp, CHƯA build ở bước
+này):** chỉ cần dựng `/admin/.../home-cards/live-edit/page.tsx` bọc
+`<EditModeProvider><GemHomePage /></EditModeProvider>` + nhúng
+`EditableRegion` vào `HomePillarCards.tsx`/`PillarEntranceCard.tsx` cho
+đúng field an toàn — không cần sửa lại `useCollection()` hay luồng dữ
+liệu đã dựng ở bước này.
