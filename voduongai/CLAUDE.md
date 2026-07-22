@@ -667,3 +667,47 @@ section này đầy hơn.
   `aiworkspace/bai-viet/[slug]/page.tsx` (trang chi tiết RIÊNG, song song
   với `/blogai/[slug]` — 2 trang chi tiết khác nhau cho cùng khái niệm
   "bài viết"). Cần Founder quyết định hướng trước khi code.
+
+**Đã làm — Blog AI (`AI_ARTICLES` → bảng `blog` thật):** Founder chọn bỏ
+hẳn tính năng lọc theo Tool/Need — nơi từng lọc giờ hiển thị bài mới nhất
+từ bảng `blog` (đã `order by created_at desc`) thay thế, không cố map lại
+quan hệ không có thật.
+
+- `src/lib/portal/live-blog.ts` (mới) — `getLiveBlogPosts()` (cùng pattern
+  `live-tools.ts`, dùng `getSupabasePublic()` để an toàn trong
+  `generateStaticParams()`/Client Component) trả về `BlogPost[]` qua
+  `fromAdminPost()` (adapter có sẵn trong `src/data/blog.ts`, cùng dùng ở
+  `/blogai` — dùng chung 1 shape, không tạo type song song).
+  `getLiveBlogPostBySlug()` tra 1 bài theo slug (dùng cho trang chi tiết).
+- `aiworkspace/page.tsx` (hub, "use client") — `featuredArticles` đổi từ
+  `AI_ARTICLES.filter(featured)` sang 3 bài mới nhất từ
+  `getLiveBlogPosts()` (gọi qua `useEffect`, cùng pattern `getLiveTools()`
+  đã có sẵn trong file này). `ArticleCard` đổi type sang `BlogPost`,
+  `article.publishedAt` → `article.date` (field tên khác trong `BlogPost`).
+  **Lưu ý:** `BlogPost` (qua `fromAdminPost()`) không mang field `featured`
+  qua — đúng hành vi `/blogai` đã có từ trước (không tự mở rộng type dùng
+  chung), nên "nổi bật" ở đây thực chất là "mới nhất".
+- `aiworkspace/[slug]/page.tsx` (Server Component) — `ToolDetailPage`/
+  `NeedCategoryPage` nhận thêm prop `articles: BlogPost[]` (fetch 1 lần ở
+  `Page()`, `getLiveBlogPosts()` có `cache()` nên dedupe nếu gọi lại).
+  `relatedArticles`/`articles` (theo Tool/Need) đổi thành `articles.slice(0,3)`
+  — bỏ lọc quan hệ, hiển thị bài mới nhất.
+- `aiworkspace/bai-viet/[slug]/page.tsx` — mirror đúng pattern
+  `getAnyBlogPost()` đã có ở `/blogai/[slug]/page.tsx` (bài tĩnh `blogPosts`
+  ưu tiên trước, không thấy mới tra `getLiveBlogPostBySlug()`).
+  `generateStaticParams()` đổi từ `AI_ARTICLES.map(slug)` sang
+  `blogPosts.map(slug)` (khớp đúng cách `/blogai/[slug]` tự làm — không
+  liệt kê bài Admin-authored trong static params, dựa vào
+  `dynamicParams=true` mặc định của Next.js để SSR on-demand cho slug live
+  không nằm trong danh sách tĩnh). `related` gộp `blogPosts` + bài live,
+  loại bài hiện tại, lấy 3 bài đầu.
+- `AI_ARTICLES`/`AiArticle` (`src/data/khong-gian-ai/index.ts`) đánh dấu
+  `@deprecated`, giữ lại tham khảo/rollback — không còn consumer nào
+  import.
+
+**Lưu ý dữ liệu thật đã thấy khi audit (không phải bug, chỉ ghi nhận):**
+bảng `blog` hiện có 2 dòng Published, 1 dòng (`blog_1782479231604_rwoxu5`)
+có `slug` chứa dấu cách + tiếng Việt có dấu (`"Về hệ sinh thái DigiU"`, không
+phải dạng URL-safe `ve-he-sinh-thai-digiu`) — vấn đề dữ liệu có sẵn từ
+trước (không phải do Việc 7 gây ra, `/blogai` cũng gặp y hệt), ngoài phạm
+vi việc này.

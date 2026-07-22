@@ -946,6 +946,14 @@ export const AI_TOOLS: AiTool[] = [
 // 4. AiArticle
 // ─────────────────────────────────────────────
 
+/**
+ * @deprecated Việc 7 (Nhóm B) — Blog AI trong AI Workspace giờ đọc bảng
+ * `blog` thật qua getLiveBlogPosts() (src/lib/portal/live-blog.ts), không
+ * còn dùng AI_ARTICLES/AiArticle. `relatedToolSlugs`/`relatedNeedSlugs`
+ * không có tương đương trong bảng thật — Founder xác nhận bỏ hẳn tính
+ * năng lọc bài liên quan theo Tool/Need. Giữ lại type + mảng dữ liệu này
+ * làm tham khảo/rollback, không còn consumer nào import.
+ */
 export type AiArticle = {
   id: string;
   slug: string;

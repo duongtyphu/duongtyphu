@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   NEED_CATEGORIES,
-  AI_ARTICLES,
   AI_PROMPTS,
   PROFESSION_GROUPS,
   type AiTool,
@@ -9,6 +8,8 @@ import {
   type AiProfessionGroup,
 } from "@/data/khong-gian-ai";
 import { getLiveTools } from "@/lib/portal/live-tools";
+import { getLiveBlogPosts } from "@/lib/portal/live-blog";
+import type { BlogPost } from "@/data/blog";
 
 // ─────────────────────────────────────────────
 // Shared UI primitives
@@ -60,7 +61,7 @@ function BadgePill({ badge }: { badge: AiTool["badge"] }) {
   );
 }
 
-function ArticleCard({ article }: { article: (typeof AI_ARTICLES)[number] }) {
+function ArticleCard({ article }: { article: BlogPost }) {
   return (
     <Link
       href={`/portal/aiworkspace/bai-viet/${article.slug}`}
@@ -98,8 +99,11 @@ function PromptCard({ prompt }: { prompt: (typeof AI_PROMPTS)[number] }) {
 // Tool Detail Page
 // ─────────────────────────────────────────────
 
-function ToolDetailPage({ tool }: { tool: AiTool }) {
-  const relatedArticles = AI_ARTICLES.filter((a) => a.relatedToolSlugs.includes(tool.slug));
+function ToolDetailPage({ tool, articles }: { tool: AiTool; articles: BlogPost[] }) {
+  // Việc 7 (Nhóm B): AI_ARTICLES.relatedToolSlugs không có tương đương ở
+  // bảng blog thật — Founder chọn bỏ lọc theo Tool, hiển thị bài mới nhất
+  // thay thế (articles đã order theo created_at desc từ getLiveBlogPosts()).
+  const relatedArticles = articles.slice(0, 3);
   const relatedPrompts = AI_PROMPTS.filter((p) => p.toolSlug === tool.slug).slice(0, 3);
 
   return (
@@ -235,7 +239,7 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Bài viết liên quan</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {relatedArticles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+              <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
         </section>
@@ -298,9 +302,20 @@ function ToolDetailPage({ tool }: { tool: AiTool }) {
 // Need Category Page
 // ─────────────────────────────────────────────
 
-function NeedCategoryPage({ category, allTools }: { category: AiNeedCategory; allTools: AiTool[] }) {
+function NeedCategoryPage({
+  category,
+  allTools,
+  articles: allArticles,
+}: {
+  category: AiNeedCategory;
+  allTools: AiTool[];
+  articles: BlogPost[];
+}) {
   const tools = allTools.filter((t) => category.recommendedToolSlugs.includes(t.slug));
-  const articles = AI_ARTICLES.filter((a) => a.relatedNeedSlugs.includes(category.slug));
+  // Việc 7 (Nhóm B): AI_ARTICLES.relatedNeedSlugs không có tương đương ở
+  // bảng blog thật — Founder chọn bỏ lọc theo Need, hiển thị bài mới nhất
+  // thay thế.
+  const articles = allArticles.slice(0, 3);
   const prompts = AI_PROMPTS.filter((p) => p.needSlug === category.slug);
 
   return (
@@ -407,7 +422,7 @@ function NeedCategoryPage({ category, allTools }: { category: AiNeedCategory; al
           <h2 className="text-xl font-bold text-gray-900 mb-4">Bài viết liên quan</h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {articles.map((article) => (
-              <ArticleCard key={article.id} article={article} />
+              <ArticleCard key={article.slug} article={article} />
             ))}
           </div>
         </section>
@@ -781,14 +796,15 @@ export default async function Page({
   const { slug } = await params;
 
   const liveTools = await getLiveTools();
+  const articles = await getLiveBlogPosts();
   const tool = liveTools.find((t) => t.slug === slug);
   const category = NEED_CATEGORIES.find((c) => c.slug === slug);
   const profession = PROFESSION_GROUPS.find((p) => p.slug === slug);
 
   const body = tool ? (
-    <ToolDetailPage tool={tool} />
+    <ToolDetailPage tool={tool} articles={articles} />
   ) : category ? (
-    <NeedCategoryPage category={category} allTools={liveTools} />
+    <NeedCategoryPage category={category} allTools={liveTools} articles={articles} />
   ) : profession ? (
     <ProfessionDetailPage profession={profession} allTools={liveTools} />
   ) : (

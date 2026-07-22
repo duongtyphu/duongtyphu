@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, BookOpen, Zap, ArrowRight } from "lucide-react";
-import {
-  type AiTool,
-  type AiArticle,
-  AI_ARTICLES,
-} from "@/data/khong-gian-ai";
+import { type AiTool } from "@/data/khong-gian-ai";
 import { getLiveTools } from "@/lib/portal/live-tools";
+import { getLiveBlogPosts } from "@/lib/portal/live-blog";
+import type { BlogPost } from "@/data/blog";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import {
@@ -26,10 +24,12 @@ import {
  * (xem docs/AI_WORKSPACE_ACADEMY_CONTENT_AUDIT.md). Kiến trúc hiện tại:
  * Hero → Companion Desk → Workspace đề xuất → Quy trình AI theo công việc →
  * Prompt Library → AI Toolbox theo nhiệm vụ → Tài nguyên thực hành →
- * Blog AI. AI_ARTICLES cũ vẫn dùng nguyên. AI Toolbox (mục 6) từ Bước C đọc
- * bảng Supabase `tools` qua getLiveTools() (client-side, "use client" ở
- * trên) — không còn dùng mảng tĩnh AI_TOOLS (giữ lại @deprecated phòng
- * rollback, xem src/data/khong-gian-ai/index.ts).
+ * Blog AI. AI Toolbox (mục 6) từ Bước C đọc bảng Supabase `tools` qua
+ * getLiveTools() (client-side, "use client" ở trên) — không còn dùng mảng
+ * tĩnh AI_TOOLS (giữ lại @deprecated phòng rollback, xem
+ * src/data/khong-gian-ai/index.ts). Blog AI (mục 8, Việc 7 Nhóm B) đọc
+ * bảng `blog` thật qua getLiveBlogPosts() (src/lib/portal/live-blog.ts),
+ * không còn dùng AI_ARTICLES.
  */
 
 // ─── Tool category badge color ────────────────────────────────────────────────
@@ -95,7 +95,7 @@ function ToolCard({ tool }: { tool: AiTool }) {
   );
 }
 
-function ArticleCard({ article }: { article: AiArticle }) {
+function ArticleCard({ article }: { article: BlogPost }) {
   return (
     <Link
       href={`/portal/aiworkspace/bai-viet/${article.slug}`}
@@ -107,7 +107,7 @@ function ArticleCard({ article }: { article: AiArticle }) {
       <div className="flex items-center gap-2">
         <span className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-semibold text-blue-600">{article.category}</span>
         <span className="text-[10px] text-gray-400">
-          {new Date(article.publishedAt).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
+          {new Date(article.date).toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" })}
         </span>
       </div>
       <p className="font-semibold text-gray-900 leading-snug group-hover:text-blue-600 transition line-clamp-2">{article.title}</p>
@@ -121,13 +121,20 @@ function ArticleCard({ article }: { article: AiArticle }) {
 
 export default function KhongGianAiPage() {
   const [liveTools, setLiveTools] = useState<AiTool[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
     getLiveTools().then(setLiveTools);
+    getLiveBlogPosts().then(setBlogPosts);
   }, []);
 
   const featuredTools = liveTools.filter((t) => t.featured);
-  const featuredArticles = AI_ARTICLES.filter((a) => a.featured);
+  // Việc 7 (Nhóm B): bảng blog thật thay AI_ARTICLES. `featured` không có
+  // trong BlogPost (fromAdminPost() không mang field này qua — đúng hành
+  // vi /blogai đang dùng, không tự mở rộng type dùng chung) nên hiển thị
+  // bài mới nhất thay cho lọc "featured" cũ, khớp getLiveBlogPosts() đã
+  // order theo created_at desc.
+  const featuredArticles = blogPosts.slice(0, 3);
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -236,7 +243,7 @@ export default function KhongGianAiPage() {
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           {featuredArticles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+            <ArticleCard key={article.slug} article={article} />
           ))}
         </div>
       </section>

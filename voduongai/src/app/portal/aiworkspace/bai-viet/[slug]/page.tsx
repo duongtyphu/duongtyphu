@@ -1,16 +1,27 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getBlogPost } from "@/data/blog";
-import { AI_ARTICLES } from "@/data/khong-gian-ai";
+import { blogPosts, getBlogPost, type BlogPost } from "@/data/blog";
+import { getLiveBlogPosts, getLiveBlogPostBySlug } from "@/lib/portal/live-blog";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
+/**
+ * Việc 7 (Nhóm B) — thay AI_ARTICLES (mảng tĩnh riêng cho AI Workspace)
+ * bằng bảng `blog` thật, cùng nguồn /blogai đang đọc (xem
+ * src/lib/portal/live-blog.ts). Mirror đúng pattern getAnyBlogPost() đã có
+ * ở /blogai/[slug]/page.tsx — bài tĩnh (blogPosts) ưu tiên trước, không
+ * thấy mới tra bảng Admin thật.
+ */
+async function getAnyBlogPost(slug: string): Promise<BlogPost | null> {
+  return getBlogPost(slug) ?? (await getLiveBlogPostBySlug(slug));
+}
+
 export async function generateStaticParams() {
-  return AI_ARTICLES.map((a) => ({ slug: a.slug }));
+  return blogPosts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getAnyBlogPost(slug);
   if (!post) return {};
   return {
     title: `${post.title} | Không gian AI — VO DUONG AI`,
@@ -47,10 +58,14 @@ function ContentBlock({ block }: { block: string }) {
 
 export default async function PortalArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = await getAnyBlogPost(slug);
   if (!post) notFound();
 
-  const related = AI_ARTICLES.filter((a) => a.slug !== slug).slice(0, 3);
+  // Việc 7 (Nhóm B): trước đây lọc theo AI_ARTICLES riêng, giờ dùng chung
+  // nguồn bài mới nhất từ bảng blog thật (không còn relatedToolSlugs/
+  // relatedNeedSlugs để lọc theo — xem live-blog.ts).
+  const liveArticles = await getLiveBlogPosts();
+  const related = [...blogPosts, ...liveArticles].filter((a) => a.slug !== slug).slice(0, 3);
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
