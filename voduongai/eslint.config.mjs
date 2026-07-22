@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Claude Code skill scripts (installed via CLI, e.g. `uipro`) — standalone
+    // Node/CommonJS tooling scripts, not application source. Not meant to be
+    // linted against the app's TypeScript/React rules (they legitimately use
+    // `require()`, unlike app code).
+    ".claude/**",
   ]),
 ]);
 
