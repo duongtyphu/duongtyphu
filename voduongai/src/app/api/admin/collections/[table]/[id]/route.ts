@@ -24,7 +24,7 @@ export async function PATCH(
 
   const { data: existing, error: fetchError } = await supabase
     .from(table)
-    .select("data")
+    .select("data, status")
     .eq("id", id)
     .single();
 
@@ -35,11 +35,35 @@ export async function PATCH(
   const urlError = validateAndNormalizeUrls(key, merged);
   if (urlError) return NextResponse.json({ error: urlError.error }, { status: 400 });
 
+  // BUG ĐÃ SỬA: bản cũ chỉ select("data") — KHÔNG biết cột `status` ngoài
+  // hiện tại của dòng, nên khi patch không kèm `status` (mọi editor
+  // EditableRegion chỉ sửa 1-2 field text, không quản status), route tự
+  // rơi về "Draft" — âm thầm unpublish dòng đó dù chỉ sửa nội dung không
+  // liên quan. Đã gặp/vá tạm ở PotentialAnalysisLive.tsx (ép status:
+  // "Published" thủ công mỗi lần gọi update()) nhưng đó chỉ là 1 điểm vá,
+  // không sửa gốc — EcosystemOverview/EcosystemLinksBox/SubProjectOverview/
+  // SubProjectLinksBox (và mọi module Live-edit khác dùng EditableRegion:
+  // Mirror/Journal/Story/JourneyMap/Garden/Trang chủ/Sứ mệnh Companion/
+  // Premium) vẫn dính bug này — xác nhận thật qua execute_sql:
+  // `ecosystem_chrome.eco_digiu` đã bị rơi về Draft sau 1 lần Founder sửa
+  // tên thử. Giờ ưu tiên `patch.status` (nếu client CÓ gửi, giữ nguyên
+  // hành vi các editor tự quản status như ProjectCards/ArticlesAdminPanel/
+  // SubProjectsAdminPanel), nếu không có thì giữ ĐÚNG `existing.status`
+  // (giá trị thật hiện tại), chỉ rơi về "Draft" khi dòng thực sự chưa có
+  // status nào (trường hợp không nên xảy ra với schema `not null default
+  // 'Draft'`).
+  const nextStatus =
+    typeof patch.status === "string"
+      ? patch.status
+      : typeof existing.status === "string"
+        ? existing.status
+        : "Draft";
+
   const { error } = await supabase
     .from(table)
     .update({
       data: merged,
-      status: typeof merged.status === "string" ? merged.status : "Draft",
+      status: nextStatus,
     })
     .eq("id", id);
 

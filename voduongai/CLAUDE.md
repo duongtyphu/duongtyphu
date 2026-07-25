@@ -3035,6 +3035,99 @@ nhận riêng nếu Founder muốn).
 và `/admin/duan-cohoi/digiu/alphamind`, xác nhận nút Lưu chỉ bật khi có
 thay đổi và badge "Đã lưu" hiện đúng sau khi bấm.
 
+## BUG NGHIÊM TRỌNG ĐÃ SỬA TẬN GỐC — PATCH route âm thầm rơi status về Draft khi patch không kèm status
+
+Founder yêu cầu rà lại toàn bộ "Dự án & Cơ hội": Admin sửa/thêm/lưu/xoá
+phải phản ánh đúng trên Portal. Audit code từng file (không chỉ đọc lại
+report cũ) phát hiện **bug tái diễn của đúng lớp lỗi đã "vá" cho
+`ecosystem_ratings`** (mục "Bug đã sửa: PATCH route generic" ở trên) —
+nhưng lần này ở TẦNG GỐC (route dùng chung), không phải 1 điểm vá riêng lẻ.
+
+**Nguyên nhân thật (đọc lại chính route, không suy đoán):**
+`/api/admin/collections/[table]/[id]/route.ts`'s PATCH handler trước đó
+`select("data")` — KHÔNG lấy cột `status` ngoài hiện tại của dòng. Khi
+tính `status` mới để ghi xuống, code cũ đọc `merged.status` (tức
+`{...existing.data, ...patch}.status`) — chỉ tồn tại nếu `status` VÔ
+TÌNH nằm bên trong `data` jsonb (hiếm, chỉ đúng với vài bảng như
+`ecosystem_subprojects`/`projects` nơi form Admin có field `status` rõ
+ràng) — không tồn tại thì rơi thẳng về `"Draft"`. Đây CHÍNH LÀ bug đã ghi
+nhận và "vá" cho `ecosystem_ratings` trước đó, nhưng bản vá đó chỉ sửa 1
+điểm gọi (`PotentialAnalysisLive.tsx` ép `status: "Published"` thủ công
+mỗi lần `update()`) — không sửa gốc route, nên MỌI component Live-edit
+khác dùng `EditableRegion` (chỉ patch 1-2 field text, không quản
+`status`) đều vẫn dính đúng bug này.
+
+**Xác nhận THẬT qua Supabase MCP (không chỉ suy luận trên code):**
+`ecosystem_chrome.eco_digiu` đã thật sự rơi về `status='Draft'` sau khi
+Founder tự test sửa tên qua `EcosystemOverview` (tên hiện là "Hệ sinh
+thái DigiU----", link nhãn "Đăng ký / đăng nhập DigiUbb" — rõ ràng chuỗi
+test gõ thử, không phải nội dung thật) — đúng ngay lúc Founder báo cáo
+"admin chỉnh sửa xong portal không hiển thị đúng". Kiểm tra chéo
+`ecosystem_subprojects`/`projects`/`ecosystem_articles`/`ecosystem_ratings`
+— tất cả vẫn `Published` (chưa bị dính, vì các form đó đều có field
+`status` tường minh trong `fields`/form — chỉ 4 component MỚI xây trong
+đợt Dự án & Cơ hội gần đây, `EcosystemOverview`/`EcosystemLinksBox`/
+`SubProjectOverview`/`SubProjectLinksBox`, dùng `EditableRegion`/`update()`
+KHÔNG kèm `status`, nên có nguy cơ dính — `SubProjectOverview`/
+`SubProjectLinksBox` chưa dính vì Founder chưa kịp test, nhưng lần sửa
+tiếp theo chắc chắn sẽ dính giống `eco_digiu`).
+
+**Đã sửa TẬN GỐC (1 route dùng chung, không vá từng component):**
+PATCH handler giờ `select("data, status")` (lấy cả cột `status` thật hiện
+tại), tính `nextStatus` theo thứ tự ưu tiên: `patch.status` (nếu client
+CÓ gửi tường minh — giữ nguyên hành vi mọi form tự quản `status` như
+`ProjectCards`/`ArticlesAdminPanel`/`SubProjectsAdminPanel`) → nếu không,
+`existing.status` (giá trị THẬT hiện tại của dòng, vừa fetch) → chỉ rơi
+về `"Draft"` nếu dòng thực sự không có status nào (không nên xảy ra với
+schema `not null default 'Draft'`). Không còn đường nào patch thiếu
+`status` mà bị âm thầm unpublish nữa.
+
+**Ảnh hưởng RỘNG HƠN phạm vi "Dự án & Cơ hội" (ghi nhận, chưa audit từng
+điểm):** route này dùng CHUNG cho MỌI collection generic — sửa 1 lần ở
+đây tự động bảo vệ luôn mọi module Live-edit khác dùng cùng `EditableRegion`/
+`update()` không kèm status: 5 Cửa Hành trình (Mirror/Nhật ký học tập/My
+Story/Bản đồ hành trình/Khu vườn của bạn), Trang chủ Học viện
+(`home_cards` — nhưng field đó CÓ `status` trong `EditableRegion` fields
+nên vốn đã an toàn), Sứ mệnh Companion (6 khối), Premium Dashboard
+(`premium_chrome`) — các module này CHƯA được audit dữ liệu thật riêng
+lẻ trong đợt này (ngoài phạm vi "Dự án & Cơ hội" Founder yêu cầu), nhưng
+fix ở route dùng chung này bảo vệ chúng ngay lập tức, không cần sửa thêm.
+Nếu Founder muốn xác nhận dữ liệu các module đó có dòng nào đã bị dính
+Draft oan trước khi có bản vá này, cần 1 lượt audit riêng (như đã làm cho
+`eco_digiu` ở đây).
+
+**Đã sửa dữ liệu (chỉ metadata, KHÔNG tự sửa nội dung):** `ecosystem_chrome.eco_digiu`
+đưa `status` về lại `'Published'` qua `execute_sql` — Portal hiện lại
+đúng. **CHƯA tự sửa nội dung** (`name`/link label vẫn còn "----"/"bb" từ
+lần test của Founder, `url` link cũng có 1 chữ số khác bản gốc trong
+`ecosystems.ts`, "660" thay vì "668" — có thể Founder đã cố ý sửa thành
+link đúng thật, không đoán) — Founder tự kiểm tra và sửa lại qua
+`/admin/duan-cohoi/digiu` nếu cần (bug tạo Save đã hoạt động đúng từ giờ,
+lần sửa tiếp theo sẽ giữ đúng Published).
+
+**Rà soát toàn bộ trạng thái Published/Draft của "Dự án & Cơ hội" sau khi
+sửa (qua `execute_sql`, không suy đoán):** `ecosystem_chrome` 5/5
+Published, `ecosystem_subprojects` 5/5 Published, `ecosystem_articles`
+3/3 Published, `ecosystem_ratings` 60/60 Published, `projects` 5/5
+Published — toàn bộ sạch, không còn dòng nào bị Draft oan.
+
+**File sửa:** `src/app/api/admin/collections/[table]/[id]/route.ts` (duy
+nhất — root cause).
+
+**Verify:** `tsc`/`eslint` sạch. Test thật với anon key thật qua route
+dev-preview tạm (`getLiveEcosystemChrome("eco_digiu")` + toàn bộ
+`getAllLiveSubProjects()`, xoá route ngay sau khi xác nhận) — xác nhận
+`chrome.status === "Published"` sau khi repair. Test lại không có
+Supabase (mặc định sandbox) — 4 route Portal (`duan-cohoi`,
+`duan-cohoi/digiu`, `duan-cohoi/digiu/alphamind`,
+`duan-cohoi/solargroup/sovelmash`) trả `200`, `/admin/duan-cohoi/digiu`
+trả `307` đúng (chưa đăng nhập), 0 lỗi log server ở cả 2 lượt test.
+
+**Chưa tự test được:** thao tác sửa thật qua Admin UI có tài khoản đăng
+nhập để xác nhận trực quan (cùng giới hạn sandbox) — nhưng lần này ĐÃ
+XÁC NHẬN qua dữ liệu thật (`eco_digiu` từng dính đúng bug này) nên độ tin
+cậy của bản vá cao hơn các lần verify chỉ dựa vào code review trước đó.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng
