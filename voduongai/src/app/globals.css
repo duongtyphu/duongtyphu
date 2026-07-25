@@ -2553,6 +2553,22 @@ body {
   }
 }
 
+/* Ảnh trong RichTextEditor (Admin) và bài viết đã xuất bản (`.prose`,
+ * Portal) — Tailwind Preflight đặt `img { height: auto }`, nên 1 ảnh lỗi/
+ * không tải được (URL sai, bị chặn hotlink, hết hạn...) co về ĐÚNG 0x0,
+ * hoàn toàn vô hình — khác hẳn hành vi mặc định của trình duyệt (thường
+ * vẫn hiện khung + icon vỡ ảnh + alt text). Đặt min-height/nền/viền để ảnh
+ * LUÔN có khung nhìn thấy được dù đang tải, tải xong, hay bị lỗi — sửa
+ * đúng bug "chèn hình ảnh lỗi không hiển thị" (ảnh chèn vào biến mất hoàn
+ * toàn, không có dấu hiệu gì báo lỗi).
+ */
+.ProseMirror img,
+.prose img {
+  min-height: 60px;
+  background-color: #F3F4F6;
+  border: 1px solid #E5E7EB;
+}
+
 /* ============================================================
  * COMMUNITY & SOCIAL PROOF — "Bạn không học một mình" section.
  * Orange (#FF6B35) accent throughout, per the unified landing-page

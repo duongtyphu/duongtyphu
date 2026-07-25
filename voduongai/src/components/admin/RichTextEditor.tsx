@@ -130,9 +130,10 @@ export function RichTextEditor({
 
   function addImage() {
     if (!editor) return;
-    const url = window.prompt("URL ảnh:");
+    const url = window.prompt("URL ảnh (dán link ảnh trực tiếp, ví dụ kết thúc bằng .jpg/.png — không phải link trang web):");
     if (!url) return;
-    editor.chain().focus().setImage({ src: url }).run();
+    const alt = window.prompt("Mô tả ngắn cho ảnh (không bắt buộc — hiện ra nếu ảnh lỗi không tải được):") ?? "";
+    editor.chain().focus().setImage({ src: url, alt }).run();
   }
 
   return (

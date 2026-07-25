@@ -3705,3 +3705,80 @@ Supabase browser client bị crash vì sandbox không có biến môi trường
 Supabase thật (giới hạn sandbox đã nêu nhiều lần) — `curl` xác nhận
 `/portal/duan-cohoi` VÀ `/portal/duan-cohoi/digiu` (trang khác, không đụng
 gì) đều trả `200` như nhau, không phải lỗi riêng của thay đổi này.
+
+## Dự án & Cơ hội — Sửa: chèn ảnh trong RichTextEditor "biến mất" (không hiển thị)
+
+Founder báo 2 lỗi cùng lúc: (1) "Link các bài viết ở ... Cập nhật thông tin
+mới đang bị lỗi", (2) "Trình soạn thảo NỘI DUNG ĐẦY ĐỦ: khi chèn hình ảnh
+lỗi không hiển thị".
+
+**(2) Đã tìm ra root cause thật và sửa.** Test bằng Playwright (trang
+devtest tạm, đã xoá sau khi xong) + dữ liệu Supabase THẬT (anon key tạm
+qua env, không ghi `.env.local` — đúng convention sandbox đã dùng nhiều
+lần): chèn ảnh qua nút "Chèn ảnh" TẠO ĐÚNG thẻ `<img>` trong DOM (xác nhận
+qua `editor.getHTML()`), nhưng khi ảnh lỗi tải (URL sai/bị chặn hotlink/
+hết hạn — tình huống RẤT dễ gặp vì dự án không có upload file, Admin phải
+tự dán URL đã host sẵn ở nơi khác), ảnh co về ĐÚNG kích thước 0×0 — hoàn
+toàn vô hình, không icon vỡ ảnh, không alt text, khác hẳn hành vi mặc định
+trình duyệt. Nguyên nhân: Tailwind Preflight (bật mặc định qua `@import
+"tailwindcss"`) đặt `img { height: auto }` toàn cục — với 1 ảnh lỗi (không
+có kích thước gốc), `height: auto` tính ra 0, xoá luôn khung ảnh mặc định
+trình duyệt vẫn giữ. Verify bằng cách so sánh boundingBox() trước/sau: ảnh
+lỗi co về `{width:0, height:0}` trước khi sửa.
+
+**Sửa (2 phần, `globals.css` + `RichTextEditor.tsx`):**
+- CSS mới `.ProseMirror img, .prose img { min-height: 60px; background-color:
+  #F3F4F6; border: 1px solid #E5E7EB; }` — ép khung LUÔN nhìn thấy được dù
+  ảnh đang tải/tải xong/lỗi, không phụ thuộc `height: auto` co về 0.
+  `.ProseMirror` = khung soạn thảo (Admin), `.prose` = bài viết đã xuất bản
+  (Portal, cùng khối HTML content) — sửa cả 2 nơi consumer của HTML content
+  vì cùng 1 lỗi CSS hệ thống, không riêng Admin.
+- `addImage()` giờ hỏi thêm "Mô tả ngắn cho ảnh" (không bắt buộc) → set
+  `alt` khi `setImage({src, alt})` — trước đây KHÔNG set alt, nên dù có
+  sửa CSS, ảnh lỗi vẫn không có gì để hiện ngoài khung trống. Có alt text,
+  trình duyệt hiện luôn text đó cạnh icon vỡ ảnh khi lỗi — Admin biết ngay
+  ảnh nào lỗi và lỗi gì thay vì đoán.
+- Đổi prompt URL ảnh thêm gợi ý "dán link ảnh trực tiếp — không phải link
+  trang web" — hướng dẫn đúng loại URL cần dán (nguyên nhân phổ biến nhất
+  của ảnh lỗi khi không có upload: dán nhầm link trang xem ảnh thay vì
+  link ảnh trực tiếp).
+
+Verify bằng Playwright thật: ảnh URL local hợp lệ → hiển thị đúng kích
+thước gốc (960px width thật, không bị min-height/border phá hỏng — 60px
+chỉ là SÀN tối thiểu, ảnh thật luôn lớn hơn nên không bị ảnh hưởng). Ảnh
+URL cố tình lỗi (domain không tồn tại) → trước khi sửa: 0×0 vô hình; sau
+khi sửa: khung 60px cao, nền xám, viền, icon vỡ ảnh + alt text hiện rõ.
+Chụp màn hình xác nhận bằng mắt.
+
+**(1) CHƯA xác định được lỗi thật — đã điều tra kỹ nhưng không tái hiện
+được.** Đã kiểm tra bằng dữ liệu Supabase THẬT (không phải seed sandbox):
+`getAllLiveEcosystemArticles()`/`getLiveEcosystemArticleBySlug()` fetch/lọc
+đúng cả 3 bài đã Published của DigiU; `href` trong `ArticleTicker.tsx`
+(`/portal/duan-cohoi/${ecosystemSlug}/cap-nhat/${a.slug}`) khớp đúng route
+`[ecosystemSlug]/cap-nhat/[articleSlug]/page.tsx` cho cả bài cấp hệ sinh
+thái VÀ cấp dự án con (`ecosystemSlug` luôn là slug hệ sinh thái CHA, xác
+nhận đúng ở cả 2 nơi gọi `EcosystemArticlesSection`). Test trực tiếp
+`EcosystemArticleDetailPage` (component thật, gọi thẳng qua trang devtest
+tạm để bỏ qua middleware yêu cầu đăng nhập — sandbox không có tài khoản
+thật) với đúng bài `digiu-la-gi-he-sinh-thai-cong-nghe` (bài Founder đã
+test sửa qua RichTextEditor, nội dung giờ là HTML thật) — render THÀNH
+CÔNG, không lỗi, `sanitizeArticleHtml()`/DOMPurify hoạt động đúng trên
+server (Next.js 16 custom build này), ảnh bìa + link CTA đều hiện đúng.
+Không tìm được bug ở tầng routing/data/render với dữ liệu thật hiện có.
+
+**Cần Founder cung cấp thêm để sửa tiếp:** bài viết cụ thể nào bị lỗi khi
+bấm, lỗi hiện ra là gì (trang trắng? "Không tìm thấy bài viết"? lỗi khác?
+hay đường link không mở được luôn?), thiết bị/trình duyệt nào. Có thể liên
+quan tới lỗi (2) nếu bài viết đó có ảnh chèn qua RichTextEditor bị lỗi
+hiển thị khiến trông như "cả trang lỗi" dù thực ra trang vẫn tải đúng, chỉ
+1 ảnh trong bài bị vô hình — nếu đúng vậy, bản sửa (2) ở trên khắc phục
+luôn (branch `admin-rebuild`, cần Founder pull bản mới nhất và test lại).
+
+**File sửa:** `globals.css` (CSS mới), `RichTextEditor.tsx` (`addImage()`
+thêm alt + prompt rõ hơn).
+
+**Verify:** `tsc`/`eslint`/`vitest run` (139 pass)/`rm -rf .next && npm run
+build` sạch. Test thật bằng Playwright + Supabase thật (anon key tạm qua
+env, không ghi file) — cả ảnh thành công và ảnh lỗi đều verify bằng
+boundingBox()/computed style thật, không đoán. Trang devtest tạm đã xoá
+sau khi xong, không commit.
