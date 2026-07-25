@@ -3283,6 +3283,95 @@ toàn nhờ `getLiveEcosystemChrome()`/`getAllLiveSubProjects()` parse
 phòng thủ ở server, chỉ riêng con đường live-fetch phía Admin mới lộ ra
 raw jsonb).
 
+## Dự án & Cơ hội — Session đầu tiên (DigiU): sửa được Nhãn trạng thái/Ghi chú/Phù hợp/Chưa nên tham gia/Kỳ vọng thực tế
+
+Founder muốn sửa được TOÀN BỘ nội dung chữ ở khối "Overview" đầu trang
+chi tiết hệ sinh thái (`EcosystemOverview.tsx`) — trước đó chỉ có
+`name`/`shortDescription`/`fullIntro` sửa được qua Admin, còn
+`statusBadge` (nhãn góc phải)/`highlights` (danh sách ghi chú nhỏ)/
+`whoFor` ("Phù hợp")/`whoNotReady` ("Chưa nên tham gia nếu")/
+`expectedOutcome` ("Kỳ vọng thực tế") vẫn đọc tĩnh từ `ecosystems.ts`
+(quyết định phạm vi cũ ở Nhóm 3 Phần D, giờ Founder mở rộng thêm).
+
+**`highlights` cần cơ chế input MỚI (không dùng `type: "tags"` sẵn
+có):** field này là mảng câu ghi chú ĐẦY ĐỦ (không phải từ khoá ngắn),
+nhiều câu có dấu phẩy bên trong câu (vd. "Đang trong giai đoạn mình trực
+tiếp theo dõi và sử dụng, chưa phải đánh giá dài hạn.") — nếu dùng
+`type: "tags"` (tách theo dấu phẩy, đang dùng cho `toolsUsed`/`tags`/
+`suggestedTools`... ở nơi khác) sẽ CẮT SAI ngay giữa câu. Phát hiện
+`fields.ts` đã có sẵn cơ chế đúng nhu cầu này (`FieldTransform:
+"newline-list"`, `toFormValueFor`/`fromFormValueFor` — mảng string ↔
+textarea nhiều dòng) nhưng CHƯA TỪNG được nối vào `EditableRegion.tsx`
+(chỉ `DataTableRowPanel.tsx`/`LessonEditor.tsx` dùng) — đã nối thêm vào
+`EditableRegion.tsx` (chỉ bản `opportunities`, KHÔNG sửa 8 bản
+byte-for-byte còn lại vì chưa module nào khác cần `transform`) — hoàn
+toàn tương thích ngược (field không khai báo `transform` thì 2 hàm này
+trả nguyên giá trị, hành vi y hệt cũ).
+
+**Data:** `EcosystemChrome` (`live-ecosystem-chrome.ts`) thêm
+`statusBadge: string`/`highlights: string[]`/`whoFor: string`/
+`whoNotReady: string`/`expectedOutcome: string`. `statusBadge` giới hạn
+đúng 5 giá trị `EcosystemStatusBadge` (select, không gõ tay tự do —
+tránh Admin gõ 1 nhãn lạ phá vỡ ý nghĩa hệ thống 5 trạng thái).
+
+**`EcosystemOverview.tsx`:** đổi từ đọc `eco.statusBadge`/`eco.highlights`/
+`eco.whoFor`/`eco.whoNotReady`/`eco.expectedOutcome` (tĩnh) sang
+`chrome.*` (live), có FALLBACK về `eco.*` khi `chrome.*` rỗng (`||`/
+`.length > 0 ? ... : eco...`) — phòng thủ kép cùng bug "trang Admin 4 hệ
+sinh thái crash" vừa sửa trước đó (không chỉ tin vào backfill). Mỗi field
+bọc `EditableRegion` riêng (`statusBadge` — `as="span"`, chỉ bọc đúng cái
+badge; `highlights` — bọc `<ul>`, hiện placeholder "Chưa có ghi chú — bấm
+để thêm" khi rỗng VÀ đang edit mode để Admin có chỗ bấm thêm lần đầu;
+`whoFor`/`whoNotReady`/`expectedOutcome` — gộp CHUNG 1 `EditableRegion`
+bọc cả khối lưới 3 cột, 1 popover sửa cả 3 field cùng lúc, giống cách
+`ProjectCards.tsx` gộp field).
+
+**Bug tự phát hiện khi code (chưa từng xuất bản, sửa trước khi commit):**
+`EditableRegion`'s `className` prop CHỈ áp dụng khi `editMode=true` (khi
+`editMode=false` component return thẳng `<>{children}</>`, bỏ qua hoàn
+toàn `className`) — nếu đặt class margin (`mt-4`/`mt-6`) trên
+`EditableRegion` thay vì trên chính phần tử con, margin đó sẽ BIẾN MẤT
+trên Portal thật (chỉ còn đúng trong Admin edit mode). Đã đặt đúng
+`mt-4 space-y-1.5` trực tiếp trên `<ul>` (highlights) và `mt-6 grid...`
+trực tiếp trên `<div>` lưới 3 cột (criteria) — không đặt trên
+`EditableRegion` nữa. (Ghi chú: `DESCRIPTION_FIELDS`/`INTRO_FIELDS` ở
+cùng file này đã có sẵn từ trước, dùng đúng pattern SAI này — NGOÀI PHẠM
+VI đợt sửa này, chưa đụng, có thể là 1 lỗi hiển thị nhỏ có sẵn cần kiểm
+tra riêng nếu Founder thấy khoảng cách đoạn văn không đúng trên Portal
+thật.)
+
+**Dữ liệu thật đã backfill cho CẢ 5 hệ sinh thái** (qua `execute_sql`,
+copy verbatim từ `ecosystems.ts` — không chỉ DigiU lần này, đúng bài học
+"đừng chỉ backfill dòng đang test" vừa rút ra, và 5 field này vốn ĐÃ có
+nội dung thật sẵn có, không phải trống mới như video/tài liệu) —
+`statusBadge`/`highlights`/`whoFor`/`whoNotReady`/`expectedOutcome` cho
+DigiU/SolarGroup/Blockchain & Crypto/Affiliate/Sàn giao dịch.
+
+**File sửa:** `src/lib/admin/fields.ts` (không đổi — cơ chế transform
+đã có sẵn), `EditableRegion.tsx` (nối `toFormValueFor`/`fromFormValueFor`,
+chỉ bản `opportunities`), `live-ecosystem-chrome.ts` (5 field mới),
+`EcosystemOverview.tsx` (chuyển 5 field sang `chrome.*` + EditableRegion
++ sửa bug margin).
+
+**Verify:** `tsc`/`eslint` sạch, `npx vitest run` 139/139 pass. Test thật
+qua anon key thật (route dev-preview tạm, xoá ngay sau khi xong) — xác
+nhận `getLiveEcosystemChrome("eco_digiu")` VÀ `getLiveEcosystemChrome("eco_trading")`
+đều trả đúng 5 field mới với nội dung thật (không rỗng, không lỗi parse).
+**Phát hiện phụ khi test:** dữ liệu DigiU đã được Founder tự sửa qua
+Admin thật trong lúc mình đang làm việc này — tên đã sạch (không còn
+"----"), nhãn link đã sạch (không còn "bb"), và có thêm 1 tài liệu mới
+Founder tự thêm ("Lộ trình DigiU") — xác nhận tính năng "Video dự án"/
+"Link tải tài liệu" + bản vá crash trước đó đã hoạt động đúng trên môi
+trường thật của Founder. Test lại không có Supabase (mặc định sandbox) —
+6 route (5 hệ sinh thái + `/admin/duan-cohoi/digiu`) trả đúng `200`/`307`,
+0 lỗi log server.
+
+**Chưa tự test được:** sửa 5 field mới qua Admin UI thật có tài khoản
+đăng nhập (cùng giới hạn sandbox) — Founder tự test tại
+`/admin/duan-cohoi/digiu`, xác nhận bút sửa (✎) hiện đúng ở nhãn trạng
+thái/danh sách ghi chú/khối 3 cột Phù hợp-Chưa nên tham gia-Kỳ vọng thực
+tế, và ô "Ghi chú" (textarea nhiều dòng) không cắt sai câu có dấu phẩy.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng

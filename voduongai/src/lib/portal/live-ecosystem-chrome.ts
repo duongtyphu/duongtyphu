@@ -18,10 +18,15 @@ import { ecosystems, type MarketingLink } from "@/data/portal/ecosystems";
  * exchange-list) vẫn đọc tĩnh `fields[].marketingLinks`/`affiliateOffers`/
  * `exchanges`, ngoài phạm vi mở rộng này.
  *
- * KHÔNG dùng cho highlights/whoFor/whoNotReady/expectedOutcome/
- * statusBadge/icon hay subProjects (xem `live-subprojects.ts`)/fields/
- * affiliateOffers/exchanges/potentialAnalysis — các phần đó vẫn đọc trực
- * tiếp từ src/data/portal/ecosystems.ts (Ecosystem tĩnh) như cũ.
+ * Mở rộng thêm lần nữa: `statusBadge`/`highlights`/`whoFor`/
+ * `whoNotReady`/`expectedOutcome` (xem comment ở `EcosystemChrome` type)
+ * — Founder xác nhận muốn sửa được toàn bộ nội dung chữ ở "session đầu
+ * tiên" của trang chi tiết. KHÔNG dùng cho `icon` (function reference,
+ * không serialize được — vẫn đọc `eco.slug` resolve icon ở
+ * `EcosystemOverview.tsx`) hay `subProjects` (xem `live-subprojects.ts`)/
+ * `fields`/`affiliateOffers`/`exchanges`/`potentialAnalysis` — các phần
+ * đó vẫn đọc trực tiếp từ src/data/portal/ecosystems.ts (Ecosystem tĩnh)
+ * như cũ.
  *
  * Dùng getSupabasePublic() (không cookies()) — cùng pattern
  * live-mirror.ts/live-journal.ts/live-story.ts/live-map.ts/live-garden.ts.
@@ -43,6 +48,20 @@ export type EcosystemChrome = {
    * Admin thêm — không bịa nội dung. */
   videos: MarketingLink[];
   documents: MarketingLink[];
+  /** Mở rộng riêng (theo yêu cầu Founder "chỉnh sửa được tất cả các
+   * trường có nội dung chữ ở session đầu tiên") — 5 field trước đó CHỈ
+   * đọc tĩnh từ `eco.*` (xem comment cũ ở trên, giờ không còn đúng nữa).
+   * `statusBadge` giới hạn đúng 5 giá trị của `EcosystemStatusBadge`
+   * (`ecosystems.ts`) — Admin chọn qua select, không gõ tay tự do.
+   * `highlights` — mảng câu ghi chú (có thể chứa dấu phẩy trong câu), sửa
+   * qua textarea nhiều dòng (`transform: "newline-list"`, xem
+   * `EditableRegion.tsx`), KHÔNG dùng `type: "tags"` (tags tách theo dấu
+   * phẩy, sẽ cắt sai giữa câu). */
+  statusBadge: string;
+  highlights: string[];
+  whoFor: string;
+  whoNotReady: string;
+  expectedOutcome: string;
 };
 
 function toLinks(value: unknown): MarketingLink[] {
@@ -73,6 +92,11 @@ function staticFallback(ecosystemId: string): EcosystemChrome {
     links: eco?.marketingLinks ?? [],
     videos: [],
     documents: [],
+    statusBadge: eco?.statusBadge ?? "",
+    highlights: eco?.highlights ?? [],
+    whoFor: eco?.whoFor ?? "",
+    whoNotReady: eco?.whoNotReady ?? "",
+    expectedOutcome: eco?.expectedOutcome ?? "",
   };
 }
 
@@ -101,5 +125,10 @@ export const getLiveEcosystemChrome = cache(async (ecosystemId: string): Promise
     links: Array.isArray(d.links) ? toLinks(d.links) : defaultResult.links,
     videos: Array.isArray(d.videos) ? toLinks(d.videos) : defaultResult.videos,
     documents: Array.isArray(d.documents) ? toLinks(d.documents) : defaultResult.documents,
+    statusBadge: typeof d.statusBadge === "string" ? d.statusBadge : defaultResult.statusBadge,
+    highlights: Array.isArray(d.highlights) ? d.highlights.filter((h): h is string => typeof h === "string") : defaultResult.highlights,
+    whoFor: typeof d.whoFor === "string" ? d.whoFor : defaultResult.whoFor,
+    whoNotReady: typeof d.whoNotReady === "string" ? d.whoNotReady : defaultResult.whoNotReady,
+    expectedOutcome: typeof d.expectedOutcome === "string" ? d.expectedOutcome : defaultResult.expectedOutcome,
   };
 });

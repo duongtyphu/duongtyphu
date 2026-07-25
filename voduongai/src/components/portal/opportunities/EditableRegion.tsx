@@ -5,14 +5,26 @@ import { createPortal } from "react-dom";
 import { Pencil } from "lucide-react";
 import { FieldInput } from "@/components/admin/FieldInput";
 import { SaveStateBadge, type SaveState } from "@/components/admin/SaveStateBadge";
-import type { FieldConfig } from "@/lib/admin/fields";
+import { toFormValueFor, fromFormValueFor, type FieldConfig } from "@/lib/admin/fields";
 import { useEditMode } from "./EditModeContext";
 
 /**
  * Nhóm 3 — Live-edit (pattern pilot dùng chung cho mọi module: mirror/
  * journal/story/journey-map/garden/gem-home/su-menh-companion/
- * opportunities/premium — 9 bản sao byte-for-byte, chỉ khác import
- * `useEditMode`).
+ * opportunities/premium — trước đây 9 bản sao byte-for-byte, chỉ khác
+ * import `useEditMode`).
+ *
+ * LỆCH KHỎI 8 BẢN CÒN LẠI (có chủ đích, ghi chú lại để không ai tưởng lộn
+ * xộn khi so `md5sum`): bản này (`opportunities`) thêm
+ * `toFormValueFor`/`fromFormValueFor` (đã có sẵn trong `fields.ts`, dùng
+ * cho `DataTableRowPanel`/`LessonEditor` từ trước nhưng chưa từng nối vào
+ * `EditableRegion`) để hỗ trợ field `transform: "newline-list"` — cần cho
+ * `EcosystemOverview.tsx`'s `highlights` (mảng string, mỗi câu có thể
+ * chứa dấu phẩy — dùng `type: "tags"` sẵn có sẽ cắt sai vị trí vì tags
+ * tách theo dấu phẩy). Hoàn toàn tương thích ngược: field không khai báo
+ * `transform` thì `toFormValueFor`/`fromFormValueFor` trả nguyên giá trị,
+ * hành vi y hệt bản cũ — 8 bản còn lại chưa cần đổi vì chưa module nào
+ * dùng `transform`.
  *
  * BUG ĐÃ SỬA (phát hiện qua test thật trên 5 trang chi tiết hệ sinh
  * thái): mọi trang Portal Live-edit đều có 1 wrapper ngoài cùng
@@ -70,7 +82,11 @@ export function EditableRegion<T extends { id: string }>({
       );
       setPopoverPos({ top: rect.bottom + window.scrollY + 8, left: Math.max(margin, left) });
     }
-    setForm(Object.fromEntries(fields.map((f) => [f.key, (record as Record<string, unknown>)[f.key] ?? ""])));
+    setForm(
+      Object.fromEntries(
+        fields.map((f) => [f.key, toFormValueFor(f, (record as Record<string, unknown>)[f.key] ?? "")]),
+      ),
+    );
     setSaveState("idle");
     setOpen(true);
   }
@@ -78,7 +94,8 @@ export function EditableRegion<T extends { id: string }>({
   async function handleSave() {
     setSaveState("saving");
     try {
-      await update(record.id, form as Partial<T>);
+      const patch = Object.fromEntries(fields.map((f) => [f.key, fromFormValueFor(f, form[f.key])]));
+      await update(record.id, patch as Partial<T>);
       setSaveState("saved");
       setOpen(false);
     } catch {
