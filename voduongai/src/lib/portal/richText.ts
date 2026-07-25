@@ -1,4 +1,4 @@
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 
 /**
  * "NỘI DUNG ĐẦY ĐỦ" của bài viết (ecosystem_articles.content) — Founder
@@ -52,13 +52,29 @@ export function toEditableHtml(content: string): string {
  * (đúng nguyên tắc an toàn khi render HTML thô). Cho phép đúng các
  * thẻ/attribute `RichTextEditor` (TipTap) có thể tạo ra — `style` cần
  * giữ lại cho màu chữ/cỡ chữ (`Color`/`FontSize` extension render qua
- * inline style, không phải class). */
+ * inline style, không phải class).
+ *
+ * BUG THẬT đã xảy ra trên Preview (Founder báo "Link các bài viết ... bị
+ * lỗi" — cả 3 bài Published đều lỗi 500, kể cả 2 bài plain text không hề
+ * gọi hàm này): dùng `isomorphic-dompurify` (bọc `jsdom`, phụ thuộc native/
+ * dynamic require) trước đây — import module này ở ĐẦU FILE là
+ * unconditional, nên riêng việc `import` lỗi trên môi trường serverless
+ * của Vercel (khác `next dev` cục bộ, nơi vẫn chạy được) đã sập TOÀN BỘ
+ * route `cap-nhat/[articleSlug]` (vì import cả `looksLikeHtml` từ file
+ * này) — không riêng bài có nội dung HTML. Đổi sang `sanitize-html` — pure
+ * JS, không phụ thuộc `jsdom`/native, an toàn cho serverless. Đã verify
+ * lại hành vi chặn XSS (thẻ `<script>` bị xoá, `<strong>/<em>/<h2>/<ul>`
+ * giữ nguyên) tương đương bản DOMPurify cũ. */
 export function sanitizeArticleHtml(html: string): string {
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
+  return sanitizeHtml(html, {
+    allowedTags: [
       "p", "br", "strong", "em", "u", "s", "mark", "a", "img",
       "h2", "h3", "ul", "ol", "li", "blockquote", "hr", "span", "code", "pre",
     ],
-    ALLOWED_ATTR: ["href", "target", "rel", "src", "alt", "style", "class"],
+    allowedAttributes: {
+      "*": ["style", "class"],
+      a: ["href", "target", "rel"],
+      img: ["src", "alt"],
+    },
   });
 }

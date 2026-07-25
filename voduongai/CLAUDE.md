@@ -3750,35 +3750,56 @@ URL cố tình lỗi (domain không tồn tại) → trước khi sửa: 0×0 v�
 khi sửa: khung 60px cao, nền xám, viền, icon vỡ ảnh + alt text hiện rõ.
 Chụp màn hình xác nhận bằng mắt.
 
-**(1) CHƯA xác định được lỗi thật — đã điều tra kỹ nhưng không tái hiện
-được.** Đã kiểm tra bằng dữ liệu Supabase THẬT (không phải seed sandbox):
-`getAllLiveEcosystemArticles()`/`getLiveEcosystemArticleBySlug()` fetch/lọc
-đúng cả 3 bài đã Published của DigiU; `href` trong `ArticleTicker.tsx`
-(`/portal/duan-cohoi/${ecosystemSlug}/cap-nhat/${a.slug}`) khớp đúng route
-`[ecosystemSlug]/cap-nhat/[articleSlug]/page.tsx` cho cả bài cấp hệ sinh
-thái VÀ cấp dự án con (`ecosystemSlug` luôn là slug hệ sinh thái CHA, xác
-nhận đúng ở cả 2 nơi gọi `EcosystemArticlesSection`). Test trực tiếp
-`EcosystemArticleDetailPage` (component thật, gọi thẳng qua trang devtest
-tạm để bỏ qua middleware yêu cầu đăng nhập — sandbox không có tài khoản
-thật) với đúng bài `digiu-la-gi-he-sinh-thai-cong-nghe` (bài Founder đã
-test sửa qua RichTextEditor, nội dung giờ là HTML thật) — render THÀNH
-CÔNG, không lỗi, `sanitizeArticleHtml()`/DOMPurify hoạt động đúng trên
-server (Next.js 16 custom build này), ảnh bìa + link CTA đều hiện đúng.
-Không tìm được bug ở tầng routing/data/render với dữ liệu thật hiện có.
+**(1) Ban đầu KHÔNG tái hiện được trên sandbox (`next dev`) — Founder gửi
+tiếp ảnh chụp Preview Vercel thật, cho thấy CẢ 3 bài đã Published (kể cả 2
+bài plain text, không hề chạm `sanitizeArticleHtml()`) đều lỗi 500 "This
+page couldn't load / A server error occurred" khi bấm — dấu hiệu quyết
+định: lỗi xảy ra ở TẦNG IMPORT/MODULE, không phải ở nội dung từng bài.**
 
-**Cần Founder cung cấp thêm để sửa tiếp:** bài viết cụ thể nào bị lỗi khi
-bấm, lỗi hiện ra là gì (trang trắng? "Không tìm thấy bài viết"? lỗi khác?
-hay đường link không mở được luôn?), thiết bị/trình duyệt nào. Có thể liên
-quan tới lỗi (2) nếu bài viết đó có ảnh chèn qua RichTextEditor bị lỗi
-hiển thị khiến trông như "cả trang lỗi" dù thực ra trang vẫn tải đúng, chỉ
-1 ảnh trong bài bị vô hình — nếu đúng vậy, bản sửa (2) ở trên khắc phục
-luôn (branch `admin-rebuild`, cần Founder pull bản mới nhất và test lại).
+**Root cause thật:** `src/lib/portal/richText.ts` import
+`isomorphic-dompurify` (bọc `jsdom` — dependency nặng, có phần native/
+dynamic-require) Ở ĐẦU FILE, không điều kiện. `EcosystemArticleDetailPage`
+import `looksLikeHtml`/`sanitizeArticleHtml` từ đúng file này — nên nếu
+riêng việc `import` module `isomorphic-dompurify` lỗi trên runtime
+serverless của Vercel (khác hẳn `next dev` cục bộ — nơi mọi thứ chạy được
+bình thường, đây chính là lý do sandbox không tái hiện được), TOÀN BỘ
+route `cap-nhat/[articleSlug]` sập ngay từ lúc load module, trước khi kịp
+chạy dòng code nào — giải thích đúng vì sao CẢ 3 bài lỗi giống hệt nhau dù
+2 bài không phải HTML.
 
-**File sửa:** `globals.css` (CSS mới), `RichTextEditor.tsx` (`addImage()`
-thêm alt + prompt rõ hơn).
+**Đã sửa:** thay `isomorphic-dompurify` bằng `sanitize-html` — pure JS,
+không phụ thuộc `jsdom`/native, an toàn cho môi trường serverless. Gỡ hẳn
+`isomorphic-dompurify` khỏi `package.json` (không còn dùng ở đâu khác).
+`sanitizeArticleHtml()` viết lại dùng API `sanitize-html`
+(`allowedTags`/`allowedAttributes`), giữ đúng danh sách thẻ/attribute cho
+phép như bản cũ.
 
-**Verify:** `tsc`/`eslint`/`vitest run` (139 pass)/`rm -rf .next && npm run
-build` sạch. Test thật bằng Playwright + Supabase thật (anon key tạm qua
-env, không ghi file) — cả ảnh thành công và ảnh lỗi đều verify bằng
-boundingBox()/computed style thật, không đoán. Trang devtest tạm đã xoá
-sau khi xong, không commit.
+**Verify (2 phần):**
+- Viết 1 file test tạm (`richText.devtest.test.ts`, đã xoá sau khi xong,
+  không commit) xác nhận `sanitize-html` giữ đúng hành vi bảo mật tương
+  đương bản DOMPurify cũ: `<script>` bị xoá hoàn toàn, `onerror=` trên
+  `<img>` bị xoá, thẻ định dạng (`<h2>`/`<strong>`/`<em>`/`<ul>`) và
+  attribute cho phép (`href`/`target`/`rel`/`src`/`alt`) đều giữ nguyên.
+- Test thật với dữ liệu Supabase THẬT (anon key tạm qua env, không ghi
+  file) qua trang devtest tạm (gọi thẳng component `EcosystemArticleDetailPage`
+  thật, bỏ qua middleware — sandbox không có tài khoản đăng nhập): cả 3
+  bài Published của DigiU (kể cả 2 bài plain text) đều render `200` với
+  đúng nội dung CTA thật ("Nhận tài liệu DigiU"/"Xem bản đồ sản phẩm"/
+  "Nhận Checklist"), không còn `notFound()`/lỗi.
+
+**Chưa tự verify được:** không thể deploy/kiểm tra lại trực tiếp trên
+Vercel Preview từ sandbox này — Founder cần pull nhánh `admin-rebuild` mới
+nhất, chờ Preview build lại, và bấm thử đúng 3 link đã lỗi trong ảnh chụp
+để xác nhận hết lỗi 500.
+
+**File sửa:** `package.json`/`package-lock.json` (gỡ `isomorphic-dompurify`,
+thêm `sanitize-html` + `@types/sanitize-html`), `src/lib/portal/richText.ts`
+(viết lại `sanitizeArticleHtml()`), `globals.css` (CSS ảnh lỗi — mục (2)),
+`RichTextEditor.tsx` (`addImage()` thêm alt + prompt rõ hơn — mục (2)).
+
+**Verify chung:** `tsc`/`eslint`/`vitest run` (139 pass)/`rm -rf .next &&
+npm run build` sạch (bao gồm đúng route `cap-nhat/[articleSlug]` build
+thành công — trước đây build LOCAL vẫn luôn thành công dù lỗi chỉ lộ ra ở
+runtime serverless của Vercel, nên `npm run build` sạch không đủ chứng
+minh hết bug này, phải test bằng dữ liệu thật + devtest như trên). Trang
+devtest tạm đã xoá sau khi xong, không commit.
