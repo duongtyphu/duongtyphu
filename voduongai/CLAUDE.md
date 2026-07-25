@@ -3217,6 +3217,72 @@ có tài khoản đăng nhập (cùng giới hạn sandbox) — Founder tự tes
 tải tài liệu mở đúng Google Drive) trước khi lặp lại cho 4 hệ sinh thái
 + dự án con còn lại.
 
+## Bug đã sửa — trang Admin của 4 hệ sinh thái + TẤT CẢ dự án con bị crash (chỉ DigiU hoạt động)
+
+Founder báo ngay sau khi build "Video dự án"/"Link tải tài liệu": link
+Admin của SolarGroup/Blockchain & Crypto/Affiliate/Sàn giao dịch và toàn
+bộ dự án con đều lỗi, chỉ DigiU (cấp hệ sinh thái) hoạt động.
+
+**Nguyên nhân:** đợt backfill dữ liệu thật trước đó CHỈ chạy cho đúng 1
+dòng `ecosystem_chrome.eco_digiu` (theo đúng yêu cầu "chạy DigiU trước") —
+4 dòng `ecosystem_chrome` còn lại và cả 5 dòng `ecosystem_subprojects`
+chưa từng có key `videos`/`documents` trong `data` jsonb. Fetch LIVE qua
+route generic (Admin, `editMode=true`) trả về RAW jsonb — không đi qua
+lớp parse phòng thủ của `getLiveEcosystemChrome()`/`getAllLiveSubProjects()`
+(2 hàm đó chỉ dùng cho SEED, phía server) — nên `chrome.videos`/
+`chrome.documents`/`sub.videos`/`sub.documents` là `undefined` (không
+phải mảng rỗng) cho mọi dòng chưa migrate. `EcosystemVideosBox.tsx`/
+`EcosystemDocumentsBox.tsx`/`SubProjectVideosBox.tsx`/
+`SubProjectDocumentsBox.tsx` gọi thẳng `.filter()` lên giá trị đó → crash
+toàn trang Admin (Next.js render lỗi 500) cho mọi hệ sinh thái/dự án con
+KHÔNG PHẢI eco_digiu.
+
+**Đã sửa 2 lớp (không chỉ vá dữ liệu):**
+1. **Code phòng thủ** (lớp chính, bền vững) — cả 4 component đổi
+   `chrome.videos`/`chrome.documents`/`sub.videos`/`sub.documents` sang
+   `?? []` trước khi `.filter()`. Quan trọng vì: dòng dự án con MỚI Admin
+   tự thêm qua `SubProjectsAdminPanel` (`emptySubProject()`) cũng KHÔNG
+   có 2 key này — nếu chỉ vá dữ liệu (backfill) mà không sửa code, dự án
+   con thêm sau này sẽ lại crash y hệt.
+2. **Backfill dữ liệu còn thiếu** (qua `execute_sql`, chỉ thêm key rỗng
+   `[]` nếu chưa có, KHÔNG đè lên dữ liệu đã có của `eco_digiu`) — 4 dòng
+   `ecosystem_chrome` + 5 dòng `ecosystem_subprojects` giờ đều có đủ
+   `videos: []`/`documents: []` — khớp đúng convention "mọi dòng có đủ
+   key hiện tại của bảng" đã áp dụng cho `links`/`fullIntro` trước đó.
+
+**File sửa:** `EcosystemVideosBox.tsx`, `EcosystemDocumentsBox.tsx`,
+`SubProjectVideosBox.tsx`, `SubProjectDocumentsBox.tsx` (mỗi file thêm
+đúng 1 dòng `?? []`).
+
+**Cùng đợt — tăng kích thước hiển thị video lên 90% (yêu cầu riêng):**
+"Video dự án" đổi từ lưới 2 cột (`sm:grid-cols-2`, mỗi video ~50% chiều
+rộng) sang xếp dọc 1 cột, mỗi video rộng `w-[90%]` căn giữa (`mx-auto`)
+— áp dụng cả `EcosystemVideosBox.tsx` lẫn `SubProjectVideosBox.tsx`.
+"Link tải tài liệu" giữ nguyên lưới 2 cột (không phải video, không có
+yêu cầu đổi).
+
+**Verify:** `tsc`/`eslint` sạch. Xác nhận qua `execute_sql`: cả 5 dòng
+`ecosystem_chrome` và cả 5 dòng `ecosystem_subprojects` đều có
+`videos`/`documents` (`has_videos`/`has_documents = true`), `status` mọi
+dòng vẫn `Published` (không bị ảnh hưởng). Test qua `next dev` (không có
+Supabase) — 7 route Portal (`digiu`, `digiu/alphamind`, `solargroup`,
+`solargroup/sovelmash`, `blockchain-crypto`, `lam-affilate`,
+`sangiaodich`) trả `200`; 3 route Admin
+(`/admin/duan-cohoi/solargroup`, `/admin/duan-cohoi/blockchain-crypto`,
+`/admin/duan-cohoi/digiu/alphamind` — đúng 3 route Founder báo lỗi) trả
+`307` redirect login đúng như kỳ vọng (chưa đăng nhập, KHÔNG còn crash
+500 nữa), 0 lỗi trong log server.
+
+**Bài học:** khi thêm field mới vào 1 collection đã có sẵn dòng cũ
+(jsonb generic), KHÔNG được chỉ backfill dòng đang test — phải backfill
+(hoặc code phòng thủ `?? []`, ưu tiên cách này vì bền hơn) cho MỌI dòng
+hiện có VÀ đảm bảo path tạo dòng mới (`emptySubProject()`,
+`emptyArticle()`...) cũng khởi tạo đủ key, nếu không dòng nào thiếu key
+đó sẽ crash ngay khi vào edit mode (khác Portal thật — Portal luôn an
+toàn nhờ `getLiveEcosystemChrome()`/`getAllLiveSubProjects()` parse
+phòng thủ ở server, chỉ riêng con đường live-fetch phía Admin mới lộ ra
+raw jsonb).
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng

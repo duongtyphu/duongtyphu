@@ -25,7 +25,10 @@ export function EcosystemDocumentsBox({
 }) {
   const editMode = useEditMode();
   const { chrome, update } = useEcosystemChrome();
-  const documents = chrome.documents;
+  // `?? []` — cùng bug đã sửa ở EcosystemVideosBox.tsx: raw jsonb fetch
+  // trả `undefined` cho dòng chưa có key `documents`, không phải mảng
+  // rỗng — `.filter()` trên `undefined` crash trang.
+  const documents = chrome.documents ?? [];
   const visible = documents.filter((d) => d.visible).sort((a, b) => a.order - b.order);
 
   const [draft, setDraft] = useState<MarketingLink[]>(documents);

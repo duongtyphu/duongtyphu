@@ -27,7 +27,13 @@ export function EcosystemVideosBox({
 }) {
   const editMode = useEditMode();
   const { chrome, update } = useEcosystemChrome();
-  const videos = chrome.videos;
+  // `?? []` — BUG ĐÃ SỬA: fetch live qua route generic trả về RAW jsonb,
+  // dòng nào chưa từng có key `videos`/`documents` (mọi hệ sinh thái
+  // ngoài eco_digiu — chỉ dòng đó được backfill trước) cho `undefined`,
+  // không phải mảng rỗng — gọi `.filter()` thẳng lên `undefined` crash cả
+  // trang Admin. Không chỉ dựa vào backfill dữ liệu (dòng mới thêm sau
+  // này cũng sẽ thiếu key này) — phải phòng thủ ở code.
+  const videos = chrome.videos ?? [];
   const visible = videos.filter((v) => v.visible).sort((a, b) => a.order - b.order);
 
   const [draft, setDraft] = useState<MarketingLink[]>(videos);
@@ -57,11 +63,14 @@ export function EcosystemVideosBox({
 
       {!editMode ? (
         visible.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-4">
             {visible.map((v) => {
               const embedUrl = toYouTubeEmbedUrl(v.url);
               return (
-                <div key={v.id} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-token-sm">
+                <div
+                  key={v.id}
+                  className="mx-auto w-[90%] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-token-sm"
+                >
                   {embedUrl ? (
                     <div className="aspect-video w-full">
                       <iframe

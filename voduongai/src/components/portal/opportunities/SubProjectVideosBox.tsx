@@ -24,7 +24,10 @@ export function SubProjectVideosBox({
 }) {
   const editMode = useEditMode();
   const { sub, update } = useSubProjectChrome();
-  const videos = sub.videos;
+  // `?? []` — cùng bug/lý do đã sửa ở EcosystemVideosBox.tsx: raw jsonb
+  // fetch trả `undefined` cho dòng chưa có key `videos`, không phải mảng
+  // rỗng — `.filter()` trên `undefined` crash trang.
+  const videos = sub.videos ?? [];
   const visible = videos.filter((v) => v.visible).sort((a, b) => a.order - b.order);
 
   const [draft, setDraft] = useState<MarketingLink[]>(videos);
@@ -54,11 +57,14 @@ export function SubProjectVideosBox({
 
       {!editMode ? (
         visible.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="space-y-4">
             {visible.map((v) => {
               const embedUrl = toYouTubeEmbedUrl(v.url);
               return (
-                <div key={v.id} className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-token-sm">
+                <div
+                  key={v.id}
+                  className="mx-auto w-[90%] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-token-sm"
+                >
                   {embedUrl ? (
                     <div className="aspect-video w-full">
                       <iframe
