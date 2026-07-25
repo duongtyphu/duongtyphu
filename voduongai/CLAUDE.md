@@ -3477,6 +3477,40 @@ tài khoản đăng nhập, bấm Lưu, xác nhận hiển thị đúng trên Po
 `/admin/duan-cohoi/digiu`, thử đủ các nút trong thanh công cụ trên 1 bài
 viết thật trước khi dùng rộng rãi.
 
+## Dự án & Cơ hội — Bỏ "Phù hợp/Chưa nên tham gia nếu/Kỳ vọng thực tế" khỏi 5 thẻ hệ sinh thái ở trang hub
+
+Founder yêu cầu bỏ 3 field này khỏi **5 thẻ hệ sinh thái ở trang hub**
+(`/portal/duan-cohoi`) — KHÁC với 3 field cùng tên/ý nghĩa vừa mở rộng
+sửa được ở trang CHI TIẾT hệ sinh thái (`EcosystemOverview.tsx`, mục
+trên) — 2 nơi đọc từ 2 bảng khác nhau hoàn toàn (`projects` cho trang
+hub qua `ProjectCards.tsx`, `ecosystem_chrome` cho trang chi tiết), yêu
+cầu này CHỈ áp dụng cho trang hub, không đụng trang chi tiết.
+
+**Đã bỏ cả 2 nơi theo đúng yêu cầu:**
+- **Hiển thị** — xoá khối JSX render "Phù hợp"/"Chưa nên tham gia nếu"/
+  "Kỳ vọng thực tế" trong `ProjectCards.tsx` (dưới tiêu đề+mô tả, trên 2
+  nút "Phân tích dự án"/"Đường link liên kết dự án" — đường viền phân
+  cách (`border-t`) chuyển xuống bọc trực tiếp 2 nút đó để giữ khoảng
+  cách hợp lý sau khi bỏ khối giữa).
+- **Admin** — xoá 3 dòng `expectation`/`fitCriteria`/`avoidCriteria` khỏi
+  `PROJECT_FIELDS` (danh sách field trong popover "Sửa nhanh" ở
+  `/admin/duan-cohoi`) — Admin không còn thấy/sửa được 3 field này nữa.
+
+**KHÔNG xoá cột dữ liệu/schema** — `LiveProject` type
+(`live-projects.ts`) và logic parse 3 field này vẫn giữ nguyên, chỉ
+ngừng đọc/hiển thị ở `ProjectCards.tsx` — dữ liệu cũ trong bảng `projects`
+không mất, có thể khôi phục hiển thị dễ dàng (1 dòng JSX) nếu Founder
+đổi ý sau này, không cần chạy lại migration.
+
+**File sửa:** `ProjectCards.tsx` (xoá field khỏi `PROJECT_FIELDS` + khối
+JSX hiển thị), `live-projects.ts` (thêm comment giải thích, không đổi
+logic).
+
+**Verify:** `tsc`/`eslint` sạch. Test thật qua `next dev` (không có
+Supabase) — `/portal/duan-cohoi` trả `200`, grep xác nhận 0 lần xuất
+hiện "Phù hợp"/"Chưa nên tham gia nếu"/"Kỳ vọng thực tế" trong HTML trả
+về, 0 lỗi log server.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng

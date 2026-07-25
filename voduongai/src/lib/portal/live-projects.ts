@@ -22,6 +22,13 @@ import { getSupabasePublic } from "@/lib/supabase";
  *
  * Dùng getSupabasePublic() (không cookies()) — an toàn gọi ở Server
  * Component, cùng pattern đã dùng cho live-tools.ts/live-knowledge.ts.
+ *
+ * `expectation`/`fitCriteria`/`avoidCriteria` — Founder yêu cầu bỏ hẳn
+ * 3 field này khỏi hiển thị VÀ khỏi form sửa ở `ProjectCards.tsx`
+ * (không còn "Phù hợp"/"Chưa nên tham gia nếu"/"Kỳ vọng thực tế" trên 5
+ * thẻ hệ sinh thái ở trang hub). Giữ nguyên type/parse ở đây (không xoá
+ * cột DB, không đổi schema) — chỉ ngừng đọc/hiển thị, dữ liệu cũ vẫn còn
+ * nguyên nếu sau này cần dùng lại.
  */
 export type LiveProject = {
   id: string;

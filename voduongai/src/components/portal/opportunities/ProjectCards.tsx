@@ -74,9 +74,6 @@ const PROJECT_FIELDS: FieldConfig[] = [
   },
   { key: "icon", label: "Icon", type: "select", options: ["layers", "building-2", "bitcoin", "link-2", "line-chart"], required: true },
   { key: "statusLabel", label: "Nhãn trạng thái hiển thị (vd. \"Đang theo dõi\")", type: "text", required: true },
-  { key: "expectation", label: "Kỳ vọng thực tế (expectedOutcome)", type: "textarea", full: true },
-  { key: "fitCriteria", label: "Phù hợp với ai (whoFor)", type: "textarea", full: true },
-  { key: "avoidCriteria", label: "Chưa phù hợp với ai (whoNotReady)", type: "textarea", full: true },
   { key: "status", label: "Trạng thái xuất bản", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
 ];
 
@@ -145,26 +142,11 @@ export function ProjectCards({ seed }: { seed: LiveProject[] }) {
               </Link>
             )}
 
-            <div className="mt-3 space-y-2 border-t border-gray-900/10 pt-3">
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold text-emerald-700">Phù hợp: </span>
-                {item.fitCriteria}
-              </p>
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold text-amber-700">Chưa nên tham gia nếu: </span>
-                {item.avoidCriteria}
-              </p>
-              <p className="text-xs text-gray-600">
-                <span className="font-semibold text-gray-900">Kỳ vọng thực tế: </span>
-                {item.expectation}
-              </p>
-            </div>
-
             {/* Rule #2 restructure: 2 real anchor-scroll links staying
              * entirely within this ecosystem's own page — no more
              * Companion-intent buttons. Giữ nguyên luôn cả trong edit
              * mode (không phải phần sửa được, chỉ là link điều hướng). */}
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3 flex flex-wrap gap-2 border-t border-gray-900/10 pt-3">
               <Link
                 href={`${item.href}#phan-tich-tiem-nang`}
                 className="rounded-full border border-emerald-200 px-3 py-1.5 text-xs font-semibold text-emerald-600 transition hover:border-emerald-400 hover:bg-emerald-50"
