@@ -1,4 +1,5 @@
-import { LineChart, ShieldCheck, Users, Quote } from "lucide-react";
+import Image from "next/image";
+import { LineChart, ShieldCheck, Quote } from "lucide-react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { PillarHero } from "@/components/portal/ui/PillarHero";
@@ -27,20 +28,19 @@ export const metadata = {
 // render lưới card.
 
 /**
- * Illustrative placeholder "photo" tiles for the "Những người bạn đồng hành
- * theo năm tháng" marquee — NOT real photos (none exist yet). Reuses the
- * same blues/violets/ambers/emeralds tint vocabulary as `ECOSYSTEM_SURFACE`
- * (giờ ở `ProjectCards.tsx`) above, no new hues invented.
+ * Ảnh thật cộng đồng/sự kiện digiU cho marquee "Những người bạn đồng hành
+ * theo năm tháng" — Founder gửi 5 ảnh gốc (~2-5MB, 7952x5304), đã nén qua
+ * sharp còn ~55-86KB/ảnh, cắt 640x640 (fit "cover", giữ vùng chính giữa
+ * ảnh) tại `public/images/duan-cohoi/dong-hanh/`. Thay hẳn bộ tile icon
+ * placeholder trước đây (Product Owner xác nhận đây là ảnh thật, không còn
+ * cần honest-placeholder nữa).
  */
-const COMPANION_PLACEHOLDERS = [
-  { surface: "border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 text-blue-600" },
-  { surface: "border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 text-amber-700" },
-  { surface: "border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 text-emerald-700" },
-  { surface: "border-violet-200 bg-gradient-to-br from-violet-50 to-blue-50 text-violet-700" },
-  { surface: "border-slate-200 bg-gradient-to-br from-slate-100 to-slate-50 text-slate-600" },
-  { surface: "border-blue-200 bg-gradient-to-br from-indigo-50 to-blue-50 text-indigo-600" },
-  { surface: "border-amber-200 bg-gradient-to-br from-orange-50 to-amber-50 text-orange-700" },
-  { surface: "border-emerald-200 bg-gradient-to-br from-green-50 to-emerald-50 text-green-700" },
+const COMPANION_PHOTOS = [
+  { src: "/images/duan-cohoi/dong-hanh/digiu-doi-ngu-01.jpg", alt: "Đội ngũ digiU" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-hoi-thao-ai-blockchain.jpg", alt: "Hội thảo Trí tuệ nhân tạo & Blockchain cùng cộng đồng digiU" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-dai-dien-hoi-thao.jpg", alt: "Đại diện digiU tại hội thảo" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-5-nam-thanh-lap.jpg", alt: "Sự kiện kỷ niệm 5 năm thành lập digiU" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-doi-ngu-02.jpg", alt: "Đội ngũ digiU tại sự kiện cộng đồng" },
 ] as const;
 
 /**
@@ -154,20 +154,18 @@ export default async function OpportunitiesHubPage() {
         <ProjectCards seed={projects} />
       </section>
 
-      {/* Những người bạn đồng hành theo năm tháng — Product Owner explicitly
-       * asked for placeholder/illustrative photo tiles here BECAUSE no real
-       * photos exist yet. These are NOT real user photos — honestly labeled
-       * as illustrative placeholders per the project's no-fake-data rule,
-       * to be swapped for real photos later. Infinite right-to-left marquee
-       * built the same way as `.notice-ticker-track` (see globals.css):
-       * the list is duplicated once and animated via CSS keyframes
+      {/* Những người bạn đồng hành theo năm tháng — ảnh thật cộng đồng/sự
+       * kiện digiU (xem COMPANION_PHOTOS ở trên), thay cho bộ tile icon
+       * placeholder trước đây. Infinite right-to-left marquee built the
+       * same way as `.notice-ticker-track` (see globals.css): the list is
+       * duplicated once and animated via CSS keyframes
        * (`.opportunities-companions-marquee` / `opportunities-companions-scroll`),
        * respecting prefers-reduced-motion (animation disabled). */}
       <section>
         <SectionHeader
           eyebrow="Đồng hành"
           title="Những người bạn đồng hành theo năm tháng"
-          description="Hình minh hoạ — ảnh thật sẽ được cập nhật sau."
+          description="Khoảnh khắc cùng cộng đồng digiU qua các sự kiện."
         />
         {/* Product Owner: dải ảnh thiết kế RỘNG, ô ảnh tăng 100% (gấp đôi).
          * Card phá lề trái/phải của cột nội dung (bù đúng p-6 md:p-8 của
@@ -176,14 +174,19 @@ export default async function OpportunitiesHubPage() {
          * to tương ứng. */}
         <div className="-mx-6 overflow-hidden border-y border-gray-100 bg-white py-8 shadow-token-sm md:-mx-8">
           <div className="flex w-max opportunities-companions-marquee">
-            {[...COMPANION_PLACEHOLDERS, ...COMPANION_PLACEHOLDERS].map((c, i) => (
+            {[...COMPANION_PHOTOS, ...COMPANION_PHOTOS].map((p, i) => (
               <div
                 key={i}
-                className={`mx-3 flex h-64 w-64 shrink-0 flex-col items-center justify-center gap-3 rounded-2xl border ${c.surface}`}
-                aria-hidden={i >= COMPANION_PLACEHOLDERS.length}
+                className="mx-3 h-64 w-64 shrink-0 overflow-hidden rounded-2xl border border-gray-100 shadow-token-sm"
+                aria-hidden={i >= COMPANION_PHOTOS.length}
               >
-                <Users className="h-16 w-16 opacity-70" />
-                <span className="text-xs font-medium text-gray-500">Ảnh minh hoạ</span>
+                <Image
+                  src={p.src}
+                  alt={p.alt}
+                  width={640}
+                  height={640}
+                  className="h-full w-full object-cover"
+                />
               </div>
             ))}
           </div>

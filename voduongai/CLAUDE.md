@@ -3660,3 +3660,48 @@ sửa giới thiệu/link, đổi trạng thái Đánh giá) có tài khoản đ
 URL, đặc biệt xác nhận lại: 2 tiêu chí "Đạt" đã sửa trước đó cho DigiU giờ
 hiện đúng trên Portal (bug đã sửa), và thử thêm 1 dự án con mới ở
 `/admin/duan-cohoi/digiu` để xác nhận CRUD hoạt động đúng.
+
+## Dự án & Cơ hội — Ảnh thật cho "Những người bạn đồng hành theo năm tháng"
+
+Founder gửi 5 ảnh thật (sự kiện/đội ngũ digiU) để thay bộ tile icon
+placeholder ở marquee "Đồng hành" trên trang hub (`/portal/duan-cohoi`) —
+khối này trước đó chủ động dùng icon `Users` + nhãn "Ảnh minh hoạ", có
+comment giải thích rõ "chưa có ảnh thật, sẽ thay sau" (đúng nguyên tắc
+"không bịa dữ liệu"). Đây là lúc hoàn tất đúng TODO đó, không phải tiền lệ
+mới.
+
+**Xử lý ảnh:** 5 ảnh gốc Founder gửi (~1.9-5.0MB/ảnh, độ phân giải DSLR gốc
+~7952x5304) — dùng `sharp` (đã có sẵn trong `node_modules`, dependency của
+Next.js Image, không thêm package mới) resize/cắt còn 640x640 (`fit:
+"cover", position: "attention"`), nén JPEG quality 78 → còn ~55-86KB/ảnh.
+Lưu tại `public/images/duan-cohoi/dong-hanh/` (thư mục mới, cùng cấp
+`digiu/` đã có), đặt tên theo nội dung ảnh (`digiu-doi-ngu-01.jpg`,
+`digiu-hoi-thao-ai-blockchain.jpg`, `digiu-dai-dien-hoi-thao.jpg`,
+`digiu-5-nam-thanh-lap.jpg`, `digiu-doi-ngu-02.jpg`).
+
+**Code:** `src/app/portal/duan-cohoi/page.tsx` — đổi `COMPANION_PLACEHOLDERS`
+(mảng màu nền, không có ảnh) thành `COMPANION_PHOTOS` (mảng `{src, alt}`
+trỏ tới 5 ảnh trên); JSX marquee đổi từ tile icon+nhãn sang `<Image>` (Next
+`next/image`, `object-cover` lấp đầy khung `h-64 w-64` cũ, giữ nguyên cơ chế
+marquee lặp vô hạn/`prefers-reduced-motion` không đổi). Xoá import `Users`
+(không còn dùng). Đổi mô tả section từ "Hình minh hoạ — ảnh thật sẽ được
+cập nhật sau." thành "Khoảnh khắc cùng cộng đồng digiU qua các sự kiện."
+(không còn placeholder nên bỏ câu xin lỗi cũ).
+
+**KHÔNG làm Admin-editable** — Founder không yêu cầu CMS cho khối này (khác
+mọi việc khác trong session), giữ đúng phạm vi hẹp: chỉ thay ảnh tĩnh.
+
+**File sửa:** `src/app/portal/duan-cohoi/page.tsx`. **File mới:** 5 ảnh
+JPEG tại `public/images/duan-cohoi/dong-hanh/`.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 139 test pass, `npm run
+build` sạch (route `/portal/duan-cohoi` xuất hiện đúng). Test thật qua
+`next dev`: `curl` xác nhận HTML server-render chứa đủ 5 `src` ảnh (kèm
+`srcset` 1x/2x qua `/_next/image`), endpoint `/_next/image` cho cả 5 ảnh
+trả `200`. Chụp màn hình qua Playwright bị lỗi hiển thị "Đã có lỗi xảy ra"
+— xác nhận đây là lỗi client-side CÓ SẴN, không liên quan thay đổi này:
+`CompanionPresence` (widget nổi toàn Portal, không phải phần việc này) gọi
+Supabase browser client bị crash vì sandbox không có biến môi trường
+Supabase thật (giới hạn sandbox đã nêu nhiều lần) — `curl` xác nhận
+`/portal/duan-cohoi` VÀ `/portal/duan-cohoi/digiu` (trang khác, không đụng
+gì) đều trả `200` như nhau, không phải lỗi riêng của thay đổi này.
