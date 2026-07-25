@@ -181,7 +181,7 @@ export default async function JourneyHubPage() {
             {DOORS.map((door) => (
               <article
                 key={door.key}
-                className={`group relative overflow-hidden rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_24px_-16px_rgba(15,23,42,0.18)] backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_20px_36px_-18px_rgba(15,23,42,0.24)] sm:p-6 ${door.card}`}
+                className={`group relative overflow-hidden rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_24px_-16px_rgba(15,23,42,0.18)] backdrop-blur-sm transition duration-200 hover:shadow-[0_1px_2px_rgba(15,23,42,0.06),0_20px_36px_-18px_rgba(15,23,42,0.24)] sm:p-6 ${door.card}`}
               >
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${door.chip}`}>
                   <door.icon className="h-5 w-5" />
@@ -212,7 +212,7 @@ export default async function JourneyHubPage() {
             {/* Cánh cửa 5 — Khu vườn: nền riêng biệt theo GARDEN_VISUAL_DIRECTION.md
              * (midnight + emerald + ánh ngọc), không nền grid/ca-rô. Cấu trúc
              * và dữ liệu Garden thật hiện có được giữ nguyên. */}
-            <article className="relative overflow-hidden rounded-2xl border border-emerald-900/40 p-5 shadow-token-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-token-lg sm:col-span-2 sm:p-6"
+            <article className="relative overflow-hidden rounded-2xl border border-emerald-900/40 p-5 shadow-token-sm transition duration-200 hover:shadow-token-lg sm:col-span-2 sm:p-6"
               style={{
                 backgroundImage:
                   "radial-gradient(ellipse 60% 70% at 75% 20%, rgba(52,211,153,0.16), transparent), radial-gradient(ellipse 40% 50% at 20% 85%, rgba(251,191,36,0.14), transparent), linear-gradient(150deg, #0A1128 0%, #0E1F3A 55%, #0B2A26 100%)",

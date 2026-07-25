@@ -84,8 +84,14 @@ export const DEFAULT_POTENTIAL_ANALYSIS: PotentialAnalysisItem[] = [
   { id: "pa_clear_model", criterion: "Mô hình vận hành dễ hiểu, không mập mờ", status: "not-assessed" },
 ];
 
-/** Sub-project (Type A only) — each gets a distinct color via `colorIndex`
- * cycling through `SUB_PROJECT_PALETTE` (see [ecosystemSlug]/page.tsx). */
+/**
+ * @deprecated Mở rộng riêng "Thêm được các dự án con" đã chuyển hẳn dữ
+ * liệu dự án con sang bảng Supabase `ecosystem_subprojects` (xem
+ * `src/lib/portal/live-subprojects.ts`) — không còn consumer nào đọc
+ * `Ecosystem.subProjects`/`getSubProjectBySlug()` nữa. Giữ lại type + 2
+ * ecosystem có `subProjects` thật bên dưới làm tham khảo/rollback (đúng
+ * dữ liệu gốc đã migrate, không xoá để dễ đối chiếu).
+ */
 export type SubProject = {
   id: string;
   slug: string;

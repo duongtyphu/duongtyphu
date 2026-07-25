@@ -23,7 +23,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 const DEFAULT_SURFACE = {
-  card: "border-gray-200 bg-white hover:border-gray-400 hover:shadow-token-lg hover:-translate-y-1",
+  card: "border-gray-200 bg-white hover:border-gray-400 hover:shadow-token-lg",
   strip: "bg-gray-400",
   chip: "bg-gray-500 text-white",
   badge: "bg-gray-100 text-gray-700",
@@ -31,31 +31,31 @@ const DEFAULT_SURFACE = {
 
 const ECOSYSTEM_SURFACE: Record<string, { card: string; strip: string; chip: string; badge: string }> = {
   digiu: {
-    card: "border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white hover:border-blue-400 hover:shadow-token-lg hover:-translate-y-1",
+    card: "border-blue-200 bg-gradient-to-br from-blue-50 via-indigo-50/50 to-white hover:border-blue-400 hover:shadow-token-lg",
     strip: "bg-gradient-to-r from-blue-600 to-indigo-600",
     chip: "bg-gradient-to-br from-blue-600 to-indigo-600 text-white",
     badge: "bg-blue-100 text-blue-700",
   },
   solargroup: {
-    card: "border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50/50 to-white hover:border-amber-400 hover:shadow-token-lg hover:-translate-y-1",
+    card: "border-amber-200 bg-gradient-to-br from-amber-50 via-orange-50/50 to-white hover:border-amber-400 hover:shadow-token-lg",
     strip: "bg-gradient-to-r from-amber-500 to-orange-500",
     chip: "bg-gradient-to-br from-amber-500 to-orange-500 text-white",
     badge: "bg-amber-100 text-amber-800",
   },
   crypto: {
-    card: "border-slate-300 bg-gradient-to-br from-slate-100 via-slate-50 to-white hover:border-emerald-400 hover:shadow-token-lg hover:-translate-y-1",
+    card: "border-slate-300 bg-gradient-to-br from-slate-100 via-slate-50 to-white hover:border-emerald-400 hover:shadow-token-lg",
     strip: "bg-gradient-to-r from-slate-800 to-emerald-600",
     chip: "bg-gradient-to-br from-slate-800 to-emerald-600 text-white",
     badge: "bg-slate-200 text-slate-700",
   },
   blockchain: {
-    card: "border-violet-200 bg-gradient-to-br from-violet-50 via-blue-50/50 to-white hover:border-violet-400 hover:shadow-token-lg hover:-translate-y-1",
+    card: "border-violet-200 bg-gradient-to-br from-violet-50 via-blue-50/50 to-white hover:border-violet-400 hover:shadow-token-lg",
     strip: "bg-gradient-to-r from-violet-600 to-blue-500",
     chip: "bg-gradient-to-br from-violet-600 to-blue-500 text-white",
     badge: "bg-violet-100 text-violet-700",
   },
   trading: {
-    card: "border-emerald-300 bg-gradient-to-br from-emerald-50 via-green-50/50 to-white hover:border-emerald-500 hover:shadow-token-lg hover:-translate-y-1",
+    card: "border-emerald-300 bg-gradient-to-br from-emerald-50 via-green-50/50 to-white hover:border-emerald-500 hover:shadow-token-lg",
     strip: "bg-gradient-to-r from-emerald-700 to-green-600",
     chip: "bg-gradient-to-br from-emerald-700 to-green-600 text-white",
     badge: "bg-emerald-100 text-emerald-800",

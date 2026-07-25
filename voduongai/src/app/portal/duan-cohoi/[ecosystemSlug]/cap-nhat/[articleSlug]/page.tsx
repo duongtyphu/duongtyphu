@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getEcosystemBySlug } from "@/data/portal/ecosystems";
 import { getLiveEcosystemArticleBySlug } from "@/lib/portal/live-ecosystem-articles";
+import { getAllLiveSubProjects } from "@/lib/portal/live-subprojects";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 
 /**
@@ -41,7 +42,8 @@ export default async function EcosystemArticleDetailPage({
   const article = await getLiveEcosystemArticleBySlug(eco.id, articleSlug);
   if (!article) notFound();
 
-  const subProject = eco.subProjects?.find((p) => p.id === article.subProjectId);
+  const allSubProjects = await getAllLiveSubProjects();
+  const subProject = allSubProjects.find((p) => p.id === article.subProjectId);
   const backHref = subProject ? `/portal/duan-cohoi/${eco.slug}/${subProject.slug}` : `/portal/duan-cohoi/${eco.slug}`;
   const backLabel = subProject ? subProject.name : eco.name;
 

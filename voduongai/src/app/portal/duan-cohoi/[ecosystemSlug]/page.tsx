@@ -4,13 +4,16 @@ import { ecosystems, getEcosystemBySlug, type Ecosystem } from "@/data/portal/ec
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
-import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
 import { EcosystemOverview } from "@/components/portal/opportunities/EcosystemOverview";
+import { EcosystemChromeProvider } from "@/components/portal/opportunities/EcosystemChromeContext";
+import { EcosystemLinksBox } from "@/components/portal/opportunities/EcosystemLinksBox";
+import { SubProjectsSection } from "@/components/portal/opportunities/SubProjectsSection";
 import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
 import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
 import { getLiveEcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 import { getAllLiveEcosystemArticles } from "@/lib/portal/live-ecosystem-articles";
 import { getLiveEcosystemRatingRows } from "@/lib/portal/live-ecosystem-ratings";
+import { getAllLiveSubProjects } from "@/lib/portal/live-subprojects";
 
 /**
  * Ecosystem mini-site — RESTRUCTURED per direct Product Owner instruction,
@@ -89,42 +92,6 @@ export async function generateMetadata({ params }: { params: Promise<{ ecosystem
     title: chrome.name,
     description: chrome.shortDescription,
   };
-}
-
-function SubProjectsGrid({ eco }: { eco: Ecosystem }) {
-  const subProjects = eco.subProjects ?? [];
-  return (
-    <section id="du-an-con">
-      <SectionHeader eyebrow="Dự án con" title="Các dự án con" />
-      {subProjects.length > 0 ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {subProjects.map((p) => {
-            const surface = getSubProjectSurface(p.colorIndex);
-            return (
-              <Link
-                key={p.id}
-                href={`/portal/duan-cohoi/${eco.slug}/${p.slug}`}
-                className={`block overflow-hidden rounded-2xl border p-5 shadow-token-sm transition hover:-translate-y-1 hover:shadow-token-lg ${surface.card}`}
-              >
-                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm ${surface.chip}`}>
-                  🧩
-                </div>
-                <p className="gemos-card-title text-sm font-bold text-gray-900">{p.name}</p>
-                <p className="mt-1 text-xs leading-relaxed text-gray-500">{p.shortDescription}</p>
-              </Link>
-            );
-          })}
-        </div>
-      ) : (
-        <GemCard>
-          <p className="text-sm text-gray-500">
-            Chưa có dự án con thật nào cho {eco.name} — mình chưa có nội dung thật đủ chi tiết để tách theo
-            từng dự án con, nên chưa hiển thị mục này thay vì bịa tên dự án.
-          </p>
-        </GemCard>
-      )}
-    </section>
-  );
 }
 
 function AffiliateOffersList({ eco }: { eco: Ecosystem }) {
@@ -239,6 +206,8 @@ export default async function EcosystemMiniSitePage({
   // vẫn giữ nguyên, đọc dữ liệu khác, không đụng).
   const allArticlesSeed = await getAllLiveEcosystemArticles();
   const ratingSeed = await getLiveEcosystemRatingRows(eco.id);
+  // "Thêm được các dự án con" (mở rộng riêng) — thay eco.subProjects tĩnh.
+  const allSubProjectsSeed = await getAllLiveSubProjects();
   // `eco.icon` là 1 component/function reference (LucideIcon) — KHÔNG
   // serialize được qua ranh giới Server→Client Component. Tách riêng
   // trước khi truyền xuống `EcosystemOverview` ("use client"), thay bằng
@@ -262,42 +231,49 @@ export default async function EcosystemMiniSitePage({
         ]}
       />
 
-      <EcosystemOverview eco={ecoWithoutIcon} iconSlug={eco.slug} surface={surface} seedChrome={chrome} />
+      <EcosystemChromeProvider seedChrome={chrome}>
+        <EcosystemOverview eco={ecoWithoutIcon} iconSlug={eco.slug} surface={surface} />
 
-      {eco.structureType === "sub-projects" && (
-        <>
-          <MarketingLinkBox links={eco.marketingLinks} />
-          <SubProjectsGrid eco={eco} />
-          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
-        </>
-      )}
+        {eco.structureType === "sub-projects" && (
+          <>
+            <EcosystemLinksBox />
+            <SubProjectsSection
+              allSeed={allSubProjectsSeed}
+              ecosystemId={eco.id}
+              ecosystemSlug={eco.slug}
+              ecosystemName={chrome.name}
+            />
+            <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
+          </>
+        )}
 
-      {eco.structureType === "two-field" && (
-        <>
-          <TwoFieldBoxes eco={eco} />
-          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
-        </>
-      )}
+        {eco.structureType === "two-field" && (
+          <>
+            <TwoFieldBoxes eco={eco} />
+            <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
+          </>
+        )}
 
-      {eco.structureType === "affiliate-list" && (
-        <>
-          <AffiliateOffersList eco={eco} />
-          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
-        </>
-      )}
+        {eco.structureType === "affiliate-list" && (
+          <>
+            <AffiliateOffersList eco={eco} />
+            <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
+          </>
+        )}
 
-      {eco.structureType === "exchange-list" && (
-        <>
-          <ExchangesList eco={eco} />
-          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
-        </>
-      )}
+        {eco.structureType === "exchange-list" && (
+          <>
+            <ExchangesList eco={eco} />
+            <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
+          </>
+        )}
 
-      {/* "Cập nhật thông tin mới" — áp dụng cho CẢ 4 loại structureType
-       * (Founder xác nhận áp dụng lại cho tất cả 5 hệ sinh thái), đặt
-       * ngoài khối if/else theo structureType vì không phụ thuộc loại
-       * trang. */}
-      <EcosystemArticlesSection allSeed={allArticlesSeed} ecosystemId={eco.id} ecosystemSlug={eco.slug} />
+        {/* "Cập nhật thông tin mới" — áp dụng cho CẢ 4 loại structureType
+         * (Founder xác nhận áp dụng lại cho tất cả 5 hệ sinh thái), đặt
+         * ngoài khối if/else theo structureType vì không phụ thuộc loại
+         * trang. */}
+        <EcosystemArticlesSection allSeed={allArticlesSeed} ecosystemId={eco.id} ecosystemSlug={eco.slug} />
+      </EcosystemChromeProvider>
       </div>
       </div>
     </div>

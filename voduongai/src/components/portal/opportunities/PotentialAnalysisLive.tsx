@@ -62,9 +62,20 @@ export function PotentialAnalysisLive({
   const myRows = items.filter((r) => r.entityId === entityId);
 
   async function saveCriterion(rowId: string, patch: Partial<EcosystemRatingRow>) {
+    // BUG ĐÃ SỬA: PATCH route generic (`/api/admin/collections/[table]/[id]`)
+    // suy ra cột `status` (Draft/Published) ngoài `data` từ
+    // `merged.status` — nếu patch KHÔNG có `status` (đúng trường hợp
+    // này, `RATING_FIELDS` cố ý không có field `status` để Admin khỏi
+    // thao tác nhầm) và `existing.data` cũng không có (đã đổi tên
+    // "status" bên trong data thành "ratingStatus" để tránh trùng tên
+    // đúng cột này), route tự rơi về "Draft" — Admin xem vẫn đúng (fetch
+    // qua service role, bỏ qua RLS) nhưng RLS `USING (status =
+    // 'Published')` chặn Portal thật đọc dòng đó, dòng lặng lẽ "biến
+    // mất" khỏi Portal dù Admin vừa lưu thành công. Luôn ép `status:
+    // "Published"` trong mọi patch để giữ dòng hiển thị công khai.
     const existing = myRows.find((r) => r.id === rowId);
     if (existing) {
-      await update(rowId, patch);
+      await update(rowId, { ...patch, status: "Published" });
       return;
     }
     const criterionId = rowId.slice(entityId.length + 2);

@@ -172,6 +172,9 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // tách bảng riêng theo từng hệ sinh thái.
   "ecosystem-articles": "ecosystem_articles",
   "ecosystem-ratings": "ecosystem_ratings",
+  // Mở rộng riêng — "Thêm được các dự án con" — thay hẳn eco.subProjects
+  // tĩnh trong ecosystems.ts, dùng chung cho mọi hệ sinh thái.
+  "ecosystem-subprojects": "ecosystem_subprojects",
   // Premium — Dashboard Live-edit. CHỈ chữ tĩnh an toàn (Hero/2 nhãn
   // section/4 bước thanh toán/FAQ) — KHÔNG đụng bảng `courses` (giá/trạng
   // thái mở bán, quản qua /admin/course-pricing riêng, giữ nguyên) hay

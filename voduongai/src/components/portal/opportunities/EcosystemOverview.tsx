@@ -2,21 +2,25 @@
 
 import { Layers, Building2, Bitcoin, Link2, LineChart, type LucideIcon } from "lucide-react";
 import type { Ecosystem } from "@/data/portal/ecosystems";
-import { useCollection } from "@/lib/admin/store";
-import { useEditMode } from "@/components/portal/opportunities/EditModeContext";
 import { EditableRegion } from "@/components/portal/opportunities/EditableRegion";
-import type { EcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
+import { useEcosystemChrome } from "@/components/portal/opportunities/EcosystemChromeContext";
 import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
  * Nhóm 3, Phần D (mở rộng) — tách khỏi hàm `Overview()` cũ (Server-rendered,
- * nằm trong `[ecosystemSlug]/page.tsx`) thành Client Component riêng, CHỈ
- * để bọc 2 field an toàn (`name`/`shortDescription`) qua `useCollection` +
- * `EditableRegion` — cùng pattern Cách A đã dùng cho 5 Cửa Hành trình.
+ * nằm trong `[ecosystemSlug]/page.tsx`) thành Client Component riêng, bọc
+ * các field an toàn qua `EditableRegion` — cùng pattern Cách A đã dùng cho
+ * 5 Cửa Hành trình.
  *
- * Mọi field khác (`fullIntro`/`highlights`/`whoFor`/`whoNotReady`/
- * `expectedOutcome`/`statusBadge`) vẫn đọc thẳng từ `eco` (tĩnh, KHÔNG qua
- * useCollection) — giữ nguyên 100% như cũ.
+ * Mở rộng riêng (theo yêu cầu Founder): `fullIntro` (giới thiệu hệ sinh
+ * thái) giờ CŨNG sửa được qua Admin — chuyển từ đọc `eco.fullIntro` (tĩnh)
+ * sang `chrome.fullIntro` (live). `chrome`/`update` giờ lấy qua
+ * `useEcosystemChrome()` (Context dùng chung với `EcosystemLinksBox`, xem
+ * `EcosystemChromeContext.tsx`) thay vì tự gọi `useCollection()` riêng.
+ *
+ * Vẫn đọc thẳng từ `eco` (tĩnh, KHÔNG qua chrome): `highlights`/`whoFor`/
+ * `whoNotReady`/`expectedOutcome`/`statusBadge` — ngoài phạm vi mở rộng
+ * này, Founder chưa yêu cầu.
  *
  * BUG ĐÃ SỬA: `eco.icon` (kiểu `LucideIcon`, tức 1 function/component
  * reference) KHÔNG serialize được qua ranh giới Server→Client Component —
@@ -40,25 +44,20 @@ const NAME_FIELDS: FieldConfig[] = [{ key: "name", label: "Tiêu đề", type: "
 const DESCRIPTION_FIELDS: FieldConfig[] = [
   { key: "shortDescription", label: "Mô tả ngắn", type: "textarea", full: true, required: true },
 ];
+const INTRO_FIELDS: FieldConfig[] = [
+  { key: "fullIntro", label: "Giới thiệu hệ sinh thái", type: "textarea", full: true, required: true },
+];
 
 export function EcosystemOverview({
   eco,
   iconSlug,
   surface,
-  seedChrome,
 }: {
   eco: Omit<Ecosystem, "icon">;
   iconSlug: string;
   surface: { chip: string; badge: string; strip: string };
-  seedChrome: EcosystemChrome;
 }) {
-  const editMode = useEditMode();
-  const { items: chromeItems, update: updateChrome } = useCollection<EcosystemChrome>(
-    "ecosystem-chrome",
-    [seedChrome],
-    { enabled: editMode },
-  );
-  const chrome = chromeItems.find((c) => c.id === seedChrome.id) ?? seedChrome;
+  const { chrome, update: updateChrome } = useEcosystemChrome();
   const Icon = ICON_BY_SLUG[iconSlug] ?? Layers;
 
   return (
@@ -79,7 +78,9 @@ export function EcosystemOverview({
           <p className="max-w-2xl text-sm leading-relaxed text-gray-600">{chrome.shortDescription}</p>
         </EditableRegion>
 
-        <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-600">{eco.fullIntro}</p>
+        <EditableRegion record={chrome} fields={INTRO_FIELDS} update={updateChrome} className="mt-4">
+          <p className="max-w-2xl text-sm leading-relaxed text-gray-600">{chrome.fullIntro}</p>
+        </EditableRegion>
 
         {eco.highlights.length > 0 && (
           <ul className="mt-4 space-y-1.5">

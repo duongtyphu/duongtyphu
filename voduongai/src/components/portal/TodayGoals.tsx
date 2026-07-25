@@ -33,7 +33,7 @@ export function TodayGoals() {
           <Link
             key={c.title}
             href={c.href}
-            className={`card-shine group rounded-[20px] border border-gray-200 bg-gradient-to-br ${c.gradient} bg-white/[0.04] p-5 transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30`}
+            className={`card-shine group rounded-[20px] border border-gray-200 bg-gradient-to-br ${c.gradient} bg-white/[0.04] p-5 transition hover:shadow-lg hover:shadow-black/30`}
           >
             <span className="text-2xl">{c.icon}</span>
             <h3 className="mt-3 text-sm font-bold text-gray-900">{c.title}</h3>

@@ -2858,3 +2858,153 @@ vẫn `200`, 0 lỗi log server (mảng rỗng không crash render gallery/link)
 **Chưa tự test được:** thêm ảnh/link qua Admin UI thật có tài khoản đăng
 nhập (cùng giới hạn sandbox) — Founder tự test trên Preview URL
 `/admin/duan-cohoi/digiu`.
+
+## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
+
+Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng
+xác nhận rõ **áp dụng cho TẤT CẢ hệ sinh thái, dự án con khác** — không
+riêng DigiU.
+
+### 1. Bỏ hiệu ứng nhô lên (hover-lift) khỏi mọi thẻ bài viết/nội dung, chỉ giữ cho CTA
+
+Audit `grep -rn "hover:-translate-y\|whileHover.*y:"` toàn `src/` — sửa 13
+file, bỏ `hover:-translate-y-1`/`hover:-translate-y-0.5` khỏi mọi thẻ
+card/article/tile (giữ `hover:shadow-token-lg` nếu có):
+`portal/congdongai/page.tsx`, `TodayGoals.tsx`,
+`duan-cohoi/[ecosystemSlug]/page.tsx` (thẻ dự án con, nay nằm trong
+`SubProjectsSection`), `duan-cohoi/page.tsx` (figure trích dẫn),
+`RoadmapInteractive.tsx` (2 nút chọn cấp độ), `hanhtrinhcuatoi/page.tsx`
+(2 thẻ "cửa"), `aiworkspace/page.tsx` + `aiworkspace/[slug]/page.tsx` (thẻ
+công cụ/bài viết), `ArticleTicker.tsx`, `ProjectCards.tsx` (6 chỗ),
+`AiSpaceSections.tsx` (5 chỗ).
+
+**Cố ý KHÔNG đụng** (CTA thật hoặc động tác trang trí ngoài phạm vi
+"bài viết" Portal): `Hero.tsx`/`FinalCTA.tsx` (nút CTA hình viên thuốc,
+đã `hover:-translate-y-0.5` — đúng loại hiệu ứng được giữ lại theo yêu
+cầu), `Hero.tsx`'s badge nổi trang trí (`whileHover={{y:-12}}`),
+`QuizAssessment.tsx` (2 chỗ, thẻ quiz Landing page, không phải "bài viết"
+Portal).
+
+### 2-3. Admin sửa được "giới thiệu hệ sinh thái" + "Đường link liên kết dự án"
+
+`ecosystem_chrome` (bảng đã có từ Nhóm 3 Phần D, trước đó chỉ quản
+`name`/`shortDescription`) mở rộng thêm 2 field: `fullIntro` (đoạn giới
+thiệu dài) và `links` (thay `eco.marketingLinks` tĩnh). Backfill nội dung
+thật cho cả 5 dòng qua `execute_sql` trước khi Admin mở popover (tránh
+Admin thấy trống — bài học đã áp dụng từ các module trước).
+
+**`EcosystemChromeContext.tsx`** (mới, `src/components/portal/opportunities/`)
+— pattern Context chia sẻ giống `PremiumChromeContext` (1 `useCollection()`
+duy nhất, chia sẻ `{chrome, update}` qua Context cho nhiều vị trí JSX
+dùng), khác biệt: `ecosystem_chrome` có **5 dòng** (1/hệ sinh thái, không
+phải singleton 1 dòng như Premium) nên Provider phải
+`items.find(c => c.id === seedChrome.id)` thay vì `items[0]`.
+
+`EcosystemOverview.tsx` (đã có từ Nhóm 3 Phần D) bỏ `useCollection()`
+riêng, chuyển sang đọc `useEcosystemChrome()` — thêm field `fullIntro` vào
+`EditableRegion`. `EcosystemLinksBox.tsx` (mới) thay `MarketingLinkBox`
+tĩnh cho hệ sinh thái loại `structureType === "sub-projects"` — đọc/ghi
+qua `useEcosystemChrome()`, edit mode dùng `MarketingLinksFieldEditor.tsx`
+(mới, dùng chung với sub-project — xem mục 4).
+
+**`Array.isArray` không phải `length > 0`:** `getLiveEcosystemChrome()`
+(field `links`) phân biệt "chưa migrate" (fallback tĩnh) với "Admin chủ
+động xoá hết link" (tôn trọng mảng rỗng thật) — cùng nguyên tắc đã áp
+dụng cho các field mảng khác trong dự án.
+
+### 4. Admin thêm được dự án con mới (không chỉ sửa 5 dòng có sẵn)
+
+`subProjects` trong `ecosystems.ts` trước đây là mảng TĨNH cố định — Admin
+không thể thêm dòng mới. Migrate sang bảng Supabase mới
+`ecosystem_subprojects` (`supabase-phase22-ecosystem-subprojects.sql`,
+schema generic `id/data/status/order`), seed 5 dòng thật (3 DigiU:
+AlphaMind/WebWisePay/Deposits, 2 SolarGroup: Sovelmash/AeroNova) với đúng
+nội dung/link đăng ký thật lấy nguyên văn từ `ecosystems.ts`.
+
+`src/lib/portal/live-subprojects.ts` (mới) — `getAllLiveSubProjects()`
+(toàn bảng, dùng làm `seed`), `getLiveSubProjects(ecosystemId)` (đã lọc
+Published+sort `displayOrder`), `getLiveSubProjectBySlug()`.
+
+**Màu thẻ suy ra từ VỊ TRÍ, không lưu `colorIndex`:** `getSubProjectSurface(index)`
+nhận `index` = vị trí trong danh sách đã Published+sort `displayOrder` —
+tránh Admin phải quản 1 field kỹ thuật không cần thiết. Trang chi tiết dự
+án con (`[subProjectSlug]/page.tsx`) và lưới hub
+(`SubProjectsSection.tsx`) PHẢI tính đúng cùng 1 logic sort+index để màu
+khớp nhau giữa 2 nơi — cả 2 đều gọi `getLiveSubProjects()`/lọc giống hệt.
+
+`SubProjectsSection.tsx` (mới) — cùng pattern
+`EcosystemArticlesSection.tsx`: 1 `useCollection("ecosystem-subprojects",
+allSeed, {enabled: editMode})` chia sẻ giữa lưới hiển thị (luôn có) và
+`SubProjectsAdminPanel.tsx` (mới — form add/edit/xoá đầy đủ, field
+name/slug/shortDescription/displayOrder/status +
+`MarketingLinksFieldEditor` cho `links`, chỉ hiện khi `editMode=true`).
+
+`[ecosystemSlug]/page.tsx` — xoá hẳn `SubProjectsGrid` tĩnh cũ, bọc
+`EcosystemOverview`+`EcosystemLinksBox`+`SubProjectsSection` trong
+`<EcosystemChromeProvider>`. `[subProjectSlug]/page.tsx` — bỏ hẳn
+`getSubProjectBySlug()` tĩnh, đọc `getLiveSubProjects()`, suy `surface`
+từ `subIndex`; **bỏ `generateStaticParams()`** (dự án con giờ động, Admin
+tự thêm — route `/portal/*` vốn đã luôn render dynamic bất kể có hàm này
+hay không, xác nhận qua audit trước đó ở Nhóm 3 Phần D).
+
+`ecosystems.ts`'s `SubProject`/`subProjects`/`getSubProjectBySlug()` đánh
+dấu `@deprecated`, giữ tham khảo/rollback — không còn consumer nào import
+(kể cả `cap-nhat/[articleSlug]/page.tsx`, đã sửa dùng
+`getAllLiveSubProjects()` để dựng link "Quay lại" đúng).
+
+### Bug đã sửa — sửa Đánh giá qua Admin bị âm thầm rơi về Draft, biến mất khỏi Portal
+
+Đúng loại bug đã ghi ở mục "Bug đã sửa: GET không trả status" (áp dụng
+CHO MỌI collection dùng route generic, không chỉ CKOS) — nhưng đây là 1
+biến thể MỚI, xảy ra ở PATCH chứ không phải GET:
+`PotentialAnalysisLive.tsx`'s `saveCriterion()` gọi `update(rowId, patch)`
+mà KHÔNG bao giờ gửi kèm `status` trong patch — PATCH route
+(`/api/admin/collections/[table]/[id]/route.ts`) tự suy cột `status`
+ngoài từ `merged.status` (`{...existing.data, ...patch}`), mặc định
+`"Draft"` nếu thiếu. Kết quả: **MỌI LẦN Founder đổi trạng thái tiêu chí
+Đánh giá qua Admin, dòng đó tự động rơi về Draft** — Admin vẫn thấy đúng
+(service-role bypass RLS) nhưng Portal (RLS `USING (status='Published')`)
+không đọc được nữa → đúng hiện tượng Founder báo "đã cập nhật trong admin
+nhưng chưa hiển thị trang portal".
+
+**Đã sửa:** `saveCriterion()` luôn ép `status: "Published"` vào patch
+(cả nhánh `update()` dòng có sẵn lẫn nhánh `add()` dòng mới). Repair dữ
+liệu qua `execute_sql`: xác nhận 2 dòng thật bị ảnh hưởng
+(`eco_digiu__pa_public_docs`, `eco_digiu__pa_team_transparent`, cả 2
+`ratingStatus: "met"` — đúng 2 tiêu chí Founder từng đổi thành "Đạt" cho
+DigiU) — đã cập nhật lại `status='Published'`, xác nhận qua route
+dev-preview tạm thời (đọc thật qua `getLiveEcosystemRatingRows()`, xoá
+route ngay sau khi verify) rằng 2 dòng này giờ hiện đúng trên Portal.
+
+**Bài học chung (áp dụng khi thêm collection mới trong tương lai):** field
+tri-state/trạng thái riêng bên trong `data` KHÔNG được đặt tên `status`
+(trùng cột ngoài — đã áp dụng, `ratingStatus`) VÀ mọi lời gọi `update()`
+từ UI phải luôn kèm `status: "Published"` tường minh nếu không có ý định
+đổi trạng thái publish — route generic không tự giữ nguyên giá trị cũ khi
+patch thiếu field này.
+
+**File sửa:** `PotentialAnalysisLive.tsx` (fix bug), 13 file hover-lift
+(mục 1), `live-ecosystem-chrome.ts`/`EcosystemChromeContext.tsx` (mới)/
+`EcosystemOverview.tsx`/`EcosystemLinksBox.tsx` (mới)/
+`MarketingLinksFieldEditor.tsx` (mới, dùng chung mục 3+4) (mục 2-3),
+`supabase-phase22-ecosystem-subprojects.sql` (mới)/`live-subprojects.ts`
+(mới)/`SubProjectsSection.tsx` (mới)/`SubProjectsAdminPanel.tsx` (mới)/
+`[ecosystemSlug]/page.tsx`/`[subProjectSlug]/page.tsx`/
+`cap-nhat/[articleSlug]/page.tsx`/`ecosystems.ts` (mục 4),
+`supabaseCollections.ts` (thêm `ecosystem-subprojects`).
+
+**Verify:** `tsc`/`eslint`/`rm -rf .next && npm run build` sạch,
+`vitest run` (toàn bộ pass, không regression). Test thật qua `next dev`
+(không cấu hình Supabase — fallback tĩnh, xác nhận không crash) — cả 5
+route Portal liên quan (`duan-cohoi/digiu`, `duan-cohoi/digiu/alphamind`,
+`duan-cohoi/solargroup/sovelmash`) trả `200`, 2 route Admin tương ứng
+(`/admin/duan-cohoi/digiu`, `/admin/duan-cohoi/digiu/alphamind`) trả
+`307` redirect `/admin/login` đúng như kỳ vọng (chưa đăng nhập), 0 lỗi
+trong log server.
+
+**Chưa tự test được:** thao tác Admin UI thật (thêm/sửa/xoá dự án con,
+sửa giới thiệu/link, đổi trạng thái Đánh giá) có tài khoản đăng nhập
+(cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview
+URL, đặc biệt xác nhận lại: 2 tiêu chí "Đạt" đã sửa trước đó cho DigiU giờ
+hiện đúng trên Portal (bug đã sửa), và thử thêm 1 dự án con mới ở
+`/admin/duan-cohoi/digiu` để xác nhận CRUD hoạt động đúng.

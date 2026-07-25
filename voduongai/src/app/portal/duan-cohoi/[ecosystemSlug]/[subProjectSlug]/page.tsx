@@ -1,17 +1,30 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ecosystems, getEcosystemBySlug, getSubProjectBySlug } from "@/data/portal/ecosystems";
+import { getEcosystemBySlug } from "@/data/portal/ecosystems";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
 import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
 import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
 import { getAllLiveEcosystemArticles } from "@/lib/portal/live-ecosystem-articles";
 import { getLiveEcosystemRatingRows } from "@/lib/portal/live-ecosystem-ratings";
+import { getLiveSubProjects } from "@/lib/portal/live-subprojects";
 
 /**
  * Sub-project detail page — only meaningful for Type A ("sub-projects")
  * ecosystems (digiu, solargroup). `notFound()`s gracefully for any ecosystem
  * with no sub-projects or an unmatched slug, per task instructions.
+ *
+ * Mở rộng riêng ("Thêm được các dự án con") — sub-project giờ đọc từ bảng
+ * `ecosystem_subprojects` sống qua `getLiveSubProjects()` (KHÔNG còn
+ * `getSubProjectBySlug()` tĩnh trong ecosystems.ts nữa — bảng đó vẫn giữ
+ * `subProjects` làm tham khảo/rollback nhưng không còn consumer nào đọc).
+ * Màu thẻ (`colorIndex`) suy ra từ VỊ TRÍ trong danh sách đã Published+sắp
+ * `displayOrder` — khớp đúng màu đã hiện ở lưới "Các dự án con" của trang
+ * hệ sinh thái cha.
+ *
+ * Route này KHÔNG còn `generateStaticParams()` — dự án con giờ động (Admin
+ * tự thêm), route `/portal/*` vốn đã luôn render dynamic bất kể có
+ * generateStaticParams hay không (xem ghi chú ở live-ecosystem-chrome.ts).
  *
  * Renders: title + intro, Marketing/Affiliate Link Box, Đánh giá (Live-edit,
  * dùng chung `ecosystem_ratings` với cấp hệ sinh thái, khoá theo `sub.id`),
@@ -39,12 +52,6 @@ function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
   );
 }
 
-export function generateStaticParams() {
-  return ecosystems.flatMap((e) =>
-    (e.subProjects ?? []).map((p) => ({ ecosystemSlug: e.slug, subProjectSlug: p.slug }))
-  );
-}
-
 export async function generateMetadata({
   params,
 }: {
@@ -52,8 +59,10 @@ export async function generateMetadata({
 }) {
   const { ecosystemSlug, subProjectSlug } = await params;
   const eco = getEcosystemBySlug(ecosystemSlug);
-  const sub = eco ? getSubProjectBySlug(eco, subProjectSlug) : undefined;
-  if (!eco || !sub) return { title: "Không tìm thấy dự án con" };
+  if (!eco) return { title: "Không tìm thấy dự án con" };
+  const subProjects = await getLiveSubProjects(eco.id);
+  const sub = subProjects.find((p) => p.slug === subProjectSlug);
+  if (!sub) return { title: "Không tìm thấy dự án con" };
   return { title: `${sub.name} — ${eco.name}`, description: sub.shortDescription };
 }
 
@@ -66,10 +75,12 @@ export default async function SubProjectPage({
   const eco = getEcosystemBySlug(ecosystemSlug);
   if (!eco || eco.structureType !== "sub-projects") notFound();
 
-  const sub = getSubProjectBySlug(eco, subProjectSlug);
-  if (!sub) notFound();
+  const subProjects = await getLiveSubProjects(eco.id);
+  const subIndex = subProjects.findIndex((p) => p.slug === subProjectSlug);
+  if (subIndex === -1) notFound();
+  const sub = subProjects[subIndex];
 
-  const surface = getSubProjectSurface(sub.colorIndex);
+  const surface = getSubProjectSurface(subIndex);
   const allArticlesSeed = await getAllLiveEcosystemArticles();
   const ratingSeed = await getLiveEcosystemRatingRows(sub.id);
 
@@ -98,7 +109,7 @@ export default async function SubProjectPage({
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">{sub.shortDescription}</p>
       </div>
 
-      <MarketingLinkBox links={sub.marketingLinks} />
+      <MarketingLinkBox links={sub.links} />
 
       <PotentialAnalysisLive entityId={sub.id} seedRows={ratingSeed} />
 

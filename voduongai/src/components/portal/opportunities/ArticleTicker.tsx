@@ -49,7 +49,7 @@ export function ArticleTicker({
             <Link
               key={`${a.id}-${i}`}
               href={`/portal/duan-cohoi/${ecosystemSlug}/cap-nhat/${a.slug}`}
-              className="group block w-64 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-token-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-token-lg"
+              className="group block w-64 shrink-0 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-token-sm transition hover:border-blue-300 hover:shadow-token-lg"
             >
               <div className="relative h-36 w-full bg-gray-100">
                 {a.imageUrl ? (
