@@ -62,9 +62,28 @@ export type EcosystemChrome = {
   whoFor: string;
   whoNotReady: string;
   expectedOutcome: string;
+  /** Mở rộng riêng — "Lấy format DigiU làm chuẩn áp dụng cho các dự án
+   * khác" (Founder yêu cầu đồng bộ TÍNH NĂNG, giữ bố cục riêng từng loại
+   * `structureType`). 3 field dưới đây là bản Admin-editable của 3 danh
+   * sách link trước đây CHỈ đọc tĩnh từ `ecosystems.ts`
+   * (`eco.affiliateOffers`/`eco.exchanges`/`eco.fields[].marketingLinks`),
+   * y hệt cách `links` ở trên đã thay `eco.marketingLinks` tĩnh cho loại
+   * "sub-projects". Dùng chung shape `MarketingLink[]` (dùng lại
+   * `MarketingLinksFieldEditor`) — `AffiliateOffer.name`/`ExchangeLink.name`
+   * map vào `label`. `fieldLinks` khoá theo `EcosystemFieldBox.id` (chỉ
+   * loại "two-field" có 2 khoá cố định `field_blockchain`/`field_crypto`). */
+  affiliateOffers: MarketingLink[];
+  exchanges: MarketingLink[];
+  fieldLinks: Record<string, MarketingLink[]>;
 };
 
-function toLinks(value: unknown): MarketingLink[] {
+/** `requireUrl` mặc định `true` (đúng hành vi cũ của `links`/`videos`/
+ * `documents`/`fieldLinks` — bỏ qua dòng chưa có URL). `false` dành riêng
+ * cho `affiliateOffers`/`exchanges` — 2 danh sách này CỐ TÌNH hiện tên dù
+ * chưa có URL thật (khung "Chưa có link tiếp thị thật, sẽ cập nhật khi
+ * có." — đúng nguyên tắc no-fake-data đã áp dụng từ `ecosystems.ts` cũ),
+ * lọc theo URL ở đây sẽ âm thầm xoá mất các dòng đó. */
+function toLinks(value: unknown, requireUrl = true): MarketingLink[] {
   if (!Array.isArray(value)) return [];
   return value
     .filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null)
@@ -74,8 +93,16 @@ function toLinks(value: unknown): MarketingLink[] {
       url: typeof v.url === "string" ? v.url : "",
       order: typeof v.order === "number" ? v.order : i,
       visible: v.visible !== false,
+      ...(typeof v.category === "string" ? { category: v.category } : {}),
     }))
-    .filter((l) => l.url.length > 0);
+    .filter((l) => (requireUrl ? l.url.length > 0 : l.label.length > 0));
+}
+
+function toFieldLinks(value: unknown): Record<string, MarketingLink[]> {
+  if (typeof value !== "object" || value === null || Array.isArray(value)) return {};
+  return Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).map(([fieldId, links]) => [fieldId, toLinks(links)]),
+  );
 }
 
 /** Fallback tĩnh — lấy TRỰC TIẾP từ `ecosystems.ts` (nguồn thật duy nhất
@@ -97,6 +124,22 @@ function staticFallback(ecosystemId: string): EcosystemChrome {
     whoFor: eco?.whoFor ?? "",
     whoNotReady: eco?.whoNotReady ?? "",
     expectedOutcome: eco?.expectedOutcome ?? "",
+    affiliateOffers: (eco?.affiliateOffers ?? []).map((o) => ({
+      id: o.id,
+      label: o.name,
+      url: o.url ?? "",
+      order: o.order,
+      visible: o.visible,
+      category: o.category,
+    })),
+    exchanges: (eco?.exchanges ?? []).map((x) => ({
+      id: x.id,
+      label: x.name,
+      url: x.url ?? "",
+      order: x.order,
+      visible: x.visible,
+    })),
+    fieldLinks: Object.fromEntries((eco?.fields ?? []).map((f) => [f.id, f.marketingLinks])),
   };
 }
 
@@ -130,5 +173,11 @@ export const getLiveEcosystemChrome = cache(async (ecosystemId: string): Promise
     whoFor: typeof d.whoFor === "string" ? d.whoFor : defaultResult.whoFor,
     whoNotReady: typeof d.whoNotReady === "string" ? d.whoNotReady : defaultResult.whoNotReady,
     expectedOutcome: typeof d.expectedOutcome === "string" ? d.expectedOutcome : defaultResult.expectedOutcome,
+    affiliateOffers: Array.isArray(d.affiliateOffers) ? toLinks(d.affiliateOffers, false) : defaultResult.affiliateOffers,
+    exchanges: Array.isArray(d.exchanges) ? toLinks(d.exchanges, false) : defaultResult.exchanges,
+    fieldLinks:
+      typeof d.fieldLinks === "object" && d.fieldLinks !== null && !Array.isArray(d.fieldLinks)
+        ? toFieldLinks(d.fieldLinks)
+        : defaultResult.fieldLinks,
   };
 });

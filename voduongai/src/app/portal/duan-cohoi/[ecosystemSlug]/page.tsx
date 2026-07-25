@@ -3,10 +3,12 @@ import { notFound } from "next/navigation";
 import { ecosystems, getEcosystemBySlug, type Ecosystem } from "@/data/portal/ecosystems";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
-import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
 import { EcosystemOverview } from "@/components/portal/opportunities/EcosystemOverview";
 import { EcosystemChromeProvider } from "@/components/portal/opportunities/EcosystemChromeContext";
 import { EcosystemLinksBox } from "@/components/portal/opportunities/EcosystemLinksBox";
+import { EcosystemFieldLinksBox } from "@/components/portal/opportunities/EcosystemFieldLinksBox";
+import { EcosystemAffiliateOffersBox } from "@/components/portal/opportunities/EcosystemAffiliateOffersBox";
+import { EcosystemExchangesBox } from "@/components/portal/opportunities/EcosystemExchangesBox";
 import { EcosystemVideosBox } from "@/components/portal/opportunities/EcosystemVideosBox";
 import { EcosystemDocumentsBox } from "@/components/portal/opportunities/EcosystemDocumentsBox";
 import { SubProjectsSection } from "@/components/portal/opportunities/SubProjectsSection";
@@ -96,78 +98,15 @@ export async function generateMetadata({ params }: { params: Promise<{ ecosystem
   };
 }
 
-function AffiliateOffersList({ eco }: { eco: Ecosystem }) {
-  const offers = (eco.affiliateOffers ?? []).filter((o) => o.visible).sort((a, b) => a.order - b.order);
-  return (
-    <section id="lien-ket-tiep-thi">
-      <SectionHeader eyebrow="Danh sách" title="Các chương trình tiếp thị liên kết" />
-      {offers.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {offers.map((o) =>
-            o.url ? (
-              <a
-                key={o.id}
-                href={o.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl border border-gray-100 bg-white p-4 shadow-token-sm transition hover:border-blue-300"
-              >
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{o.category}</p>
-                <p className="mt-1 text-sm font-bold text-gray-900">{o.name}</p>
-              </a>
-            ) : (
-              <div key={o.id} className="rounded-xl border border-dashed border-gray-200 bg-gray-50/60 p-4">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-gray-400">{o.category}</p>
-                <p className="mt-1 text-sm font-bold text-gray-900">{o.name}</p>
-                <p className="mt-1 text-xs text-gray-500">Chưa có link tiếp thị thật cho mục này, sẽ cập nhật khi có.</p>
-              </div>
-            )
-          )}
-        </div>
-      ) : (
-        <GemCard>
-          <p className="text-sm text-gray-500">Chưa có chương trình tiếp thị liên kết nào ở đây, sẽ cập nhật khi có.</p>
-        </GemCard>
-      )}
-    </section>
-  );
-}
-
-function ExchangesList({ eco }: { eco: Ecosystem }) {
-  const exchanges = (eco.exchanges ?? []).filter((x) => x.visible).sort((a, b) => a.order - b.order);
-  return (
-    <section id="lien-ket-tiep-thi">
-      <SectionHeader eyebrow="Danh sách" title="Các sàn giao dịch" />
-      {exchanges.length > 0 ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {exchanges.map((x) =>
-            x.url ? (
-              <a
-                key={x.id}
-                href={x.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl border border-gray-100 bg-white p-4 text-sm font-bold text-gray-900 shadow-token-sm transition hover:border-blue-300"
-              >
-                {x.name}
-              </a>
-            ) : (
-              <div key={x.id} className="rounded-xl border border-dashed border-gray-200 bg-gray-50/60 p-4">
-                <p className="text-sm font-bold text-gray-900">{x.name}</p>
-                <p className="mt-1 text-xs text-gray-500">Chưa có link tiếp thị thật, sẽ cập nhật khi có.</p>
-              </div>
-            )
-          )}
-        </div>
-      ) : (
-        <GemCard>
-          <p className="text-sm text-gray-500">Chưa có sàn giao dịch nào ở đây, sẽ cập nhật khi có.</p>
-        </GemCard>
-      )}
-    </section>
-  );
-}
-
+/** Mở rộng riêng ("Lấy format DigiU làm chuẩn áp dụng cho các dự án
+ * khác") — 3 hàm bọc mỏng dưới đây chỉ còn giữ khung `<section>`/tiêu đề
+ * cấp cao nhất riêng của từng loại `structureType`; phần danh sách +
+ * khả năng sửa qua Admin nằm trong `EcosystemAffiliateOffersBox`/
+ * `EcosystemExchangesBox`/`EcosystemFieldLinksBox` ("use client", đọc/ghi
+ * qua `useEcosystemChrome()`) — cùng cơ chế `EcosystemLinksBox` đã dùng
+ * cho loại "sub-projects", KHÔNG còn đọc thẳng `eco.affiliateOffers`/
+ * `eco.exchanges`/`eco.fields[].marketingLinks` tĩnh nữa (vẫn giữ nguyên
+ * trong `ecosystems.ts` làm fallback/tham khảo, xem `live-ecosystem-chrome.ts`). */
 function TwoFieldBoxes({ eco }: { eco: Ecosystem }) {
   const fields = eco.fields ?? [];
   return (
@@ -178,11 +117,7 @@ function TwoFieldBoxes({ eco }: { eco: Ecosystem }) {
           <GemCard key={f.id}>
             <p className="gemos-card-title mb-2 text-base font-bold text-gray-900">{f.name}</p>
             <p className="mb-4 text-sm leading-relaxed text-gray-600">{f.description}</p>
-            <MarketingLinkBox
-              links={f.marketingLinks}
-              id={`lien-ket-tiep-thi-${f.id}`}
-              title={`Đường link liên kết — ${f.name}`}
-            />
+            <EcosystemFieldLinksBox fieldId={f.id} title={`Đường link liên kết — ${f.name}`} />
           </GemCard>
         ))}
       </div>
@@ -262,7 +197,7 @@ export default async function EcosystemMiniSitePage({
 
         {eco.structureType === "affiliate-list" && (
           <>
-            <AffiliateOffersList eco={eco} />
+            <EcosystemAffiliateOffersBox />
             <EcosystemVideosBox />
             <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
@@ -271,7 +206,7 @@ export default async function EcosystemMiniSitePage({
 
         {eco.structureType === "exchange-list" && (
           <>
-            <ExchangesList eco={eco} />
+            <EcosystemExchangesBox />
             <EcosystemVideosBox />
             <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />

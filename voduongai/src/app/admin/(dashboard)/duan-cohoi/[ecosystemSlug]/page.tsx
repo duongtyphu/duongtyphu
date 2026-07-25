@@ -13,11 +13,20 @@ export const metadata = { title: "Trang chi tiết hệ sinh thái (Live-edit) �
  *
  * Render lại ĐÚNG component gốc `/portal/duan-cohoi/[ecosystemSlug]/page.tsx`
  * (`EcosystemMiniSitePage`, import thẳng), bọc `<EditModeProvider>` — cùng
- * pattern 5 Cửa Hành trình. CHỈ 2 field an toàn (name/shortDescription của
- * `EcosystemOverview`) sửa được — KHÔNG đụng highlights/whoFor/whoNotReady/
- * expectedOutcome/fullIntro/statusBadge hay marketingLinks/subProjects/
- * fields/affiliateOffers/exchanges/potentialAnalysis (vẫn đọc tĩnh từ
- * src/data/portal/ecosystems.ts, ngoài phạm vi việc này — Founder xác nhận).
+ * pattern 5 Cửa Hành trình.
+ *
+ * (Comment cũ ở đây từng ghi "CHỈ 2 field an toàn sửa được" — không còn
+ * đúng, đã mở rộng qua nhiều việc riêng sau đó. Tính tới "Lấy format DigiU
+ * làm chuẩn áp dụng cho các dự án khác" — TẤT CẢ nội dung "session đầu
+ * tiên" (tên/mô tả/giới thiệu/statusBadge/highlights/whoFor/whoNotReady/
+ * expectedOutcome), "Đường link liên kết dự án" (mọi loại structureType —
+ * sub-projects/two-field/affiliate-list/exchange-list), "Video dự án",
+ * "Link tải tài liệu", "Cập nhật thông tin mới" (bài viết), dự án con (chỉ
+ * loại sub-projects), và Đánh giá tiềm năng đều sửa được qua Admin, đồng
+ * bộ TÍNH NĂNG như nhau cho cả 5 hệ sinh thái — mỗi loại vẫn giữ đúng bố
+ * cục riêng theo `structureType` (không đổi cấu trúc trang, xem
+ * `page.tsx`). `icon`/`fields[].name`/`fields[].description` vẫn tĩnh
+ * (ngoài phạm vi, không phải nội dung "đường link").
  */
 export default async function EcosystemLiveEditPage({
   params,

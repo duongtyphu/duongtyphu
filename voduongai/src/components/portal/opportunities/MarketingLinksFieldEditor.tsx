@@ -13,15 +13,26 @@ const inputClass =
  * án"): `EcosystemLinksBox.tsx` (cấp hệ sinh thái) và
  * `SubProjectsAdminPanel.tsx` (cấp dự án con) — tách ra đây để không viết
  * lại cùng 1 UI lần thứ 2.
+ *
+ * `categories` (tuỳ chọn, mới) — khi truyền vào, hiện thêm 1 `<select>`
+ * chọn `category` mỗi dòng, dùng cho `EcosystemAffiliateOffersBox.tsx`
+ * (danh sách "Các chương trình tiếp thị liên kết", trước đây là
+ * `AffiliateOffer` riêng — giờ dùng chung shape `MarketingLink` +
+ * `category?: string` để tái dùng đúng editor này, không viết lần 2).
+ * Bỏ trống ở mọi nơi khác (`EcosystemLinksBox`/`EcosystemVideosBox`/
+ * `EcosystemDocumentsBox`/`SubProjectsAdminPanel`...) — hành vi cũ giữ
+ * nguyên 100%.
  */
 export function MarketingLinksFieldEditor({
   links,
   onChange,
   label = "Đường link liên kết",
+  categories,
 }: {
   links: MarketingLink[];
   onChange: (next: MarketingLink[]) => void;
   label?: string;
+  categories?: readonly string[];
 }) {
   function update(i: number, patch: Partial<MarketingLink>) {
     onChange(links.map((l, idx) => (idx === i ? { ...l, ...patch } : l)));
@@ -30,7 +41,17 @@ export function MarketingLinksFieldEditor({
     onChange(links.filter((_, idx) => idx !== i));
   }
   function add() {
-    onChange([...links, { id: genId("link"), label: "", url: "", order: links.length, visible: true }]);
+    onChange([
+      ...links,
+      {
+        id: genId("link"),
+        label: "",
+        url: "",
+        order: links.length,
+        visible: true,
+        ...(categories ? { category: categories[0] } : {}),
+      },
+    ]);
   }
 
   return (
@@ -47,6 +68,19 @@ export function MarketingLinksFieldEditor({
                 placeholder="Nhãn hiển thị"
                 className={inputClass}
               />
+              {categories && (
+                <select
+                  value={l.category ?? categories[0]}
+                  onChange={(e) => update(i, { category: e.target.value })}
+                  className={inputClass}
+                >
+                  {categories.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+              )}
               <input
                 type="text"
                 value={l.url}

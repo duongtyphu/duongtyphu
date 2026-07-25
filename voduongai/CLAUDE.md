@@ -3803,3 +3803,102 @@ thành công — trước đây build LOCAL vẫn luôn thành công dù lỗi c
 runtime serverless của Vercel, nên `npm run build` sạch không đủ chứng
 minh hết bug này, phải test bằng dữ liệu thật + devtest như trên). Trang
 devtest tạm đã xoá sau khi xong, không commit.
+
+## Dự án & Cơ hội — "Lấy format DigiU làm chuẩn" áp dụng cho 4 hệ sinh thái còn lại
+
+Founder yêu cầu lấy DigiU làm chuẩn, áp dụng cho Solargroup/Blockchain &
+Crypto/Làm tiếp thị liên kết/Các sàn giao dịch Crypto, cả Portal lẫn
+Admin. Đã hỏi rõ trước khi làm (2 lựa chọn: đổi hẳn bố cục 4 hệ sinh thái
+sang dạng "dự án con" như DigiU, HAY đồng bộ tính năng/khả năng sửa Admin
+nhưng giữ nguyên bố cục riêng từng loại) — Founder chọn **đồng bộ tính
+năng, giữ bố cục riêng**.
+
+**Audit trước khi sửa (qua Supabase + đọc code):** `EcosystemOverview`
+(session đầu tiên)/`EcosystemVideosBox`/`EcosystemDocumentsBox`/
+`EcosystemArticlesSection`/`PotentialAnalysisLive` đã render + Admin-sửa
+được cho CẢ 4 loại `structureType` từ những việc trước đó — không có gì
+thiếu ở đây. Khoảng trống DUY NHẤT: mục "Đường link liên kết" —
+`structureType === "sub-projects"` (DigiU/Solargroup) đã có
+`EcosystemLinksBox` Admin-editable qua `ecosystem_chrome.links`; 3 loại
+còn lại (`two-field`/`affiliate-list`/`exchange-list`) vẫn đọc THẲNG dữ
+liệu TĨNH trong `ecosystems.ts` (`eco.fields[].marketingLinks`/
+`eco.affiliateOffers`/`eco.exchanges`) — Admin không sửa được, phải deploy
+code mới đổi được nội dung.
+
+**Đã sửa — làm đúng phần khoảng trống đó, không đụng gì khác:**
+- `MarketingLink` (`ecosystems.ts`) thêm field tuỳ chọn `category?: string`
+  — để dùng chung 1 shape cho cả `AffiliateOffer` cũ (name+category+url)
+  thay vì tạo type/editor riêng.
+- `MarketingLinksFieldEditor.tsx` thêm prop tuỳ chọn `categories?:
+  readonly string[]` — khi truyền vào mới hiện thêm `<select>` chọn
+  category mỗi dòng; mọi nơi khác (Links/Video/Tài liệu box, dự án con)
+  không truyền prop này, hành vi cũ giữ nguyên 100%.
+- `EcosystemChrome` (`live-ecosystem-chrome.ts`) thêm 3 field mới:
+  `affiliateOffers`/`exchanges` (`MarketingLink[]`)/`fieldLinks`
+  (`Record<fieldId, MarketingLink[]>`, khoá theo `field_blockchain`/
+  `field_crypto`). `toLinks()` thêm tham số `requireUrl` (mặc định `true`,
+  giữ đúng hành vi cũ cho `links`/`videos`/`documents`/`fieldLinks`) —
+  `affiliateOffers`/`exchanges` dùng `requireUrl=false` vì 2 danh sách này
+  CỐ TÌNH hiện tên dù chưa có URL thật (khung "Chưa có link tiếp thị thật,
+  sẽ cập nhật khi có." — đúng nguyên tắc no-fake-data đã có sẵn từ
+  `ecosystems.ts`), lọc theo URL sẽ âm thầm xoá mất các dòng đó.
+  `staticFallback()` convert từ `AffiliateOffer`/`ExchangeLink`/
+  `EcosystemFieldBox` tĩnh sang shape `MarketingLink` mới (name→label).
+- 3 component mới (`EcosystemAffiliateOffersBox.tsx`/
+  `EcosystemExchangesBox.tsx`/`EcosystemFieldLinksBox.tsx`) — cùng
+  pattern draft cục bộ + nút "Lưu" + `SaveStateBadge` đã dùng cho
+  `EcosystemLinksBox`, đọc/ghi qua `useEcosystemChrome()`. Portal thật giữ
+  NGUYÊN visual cũ (card có/không URL, khung trống trung thực) — chỉ thêm
+  khả năng sửa khi `editMode=true`.
+- `page.tsx` (`[ecosystemSlug]`) — xoá hẳn `AffiliateOffersList`/
+  `ExchangesList` (2 hàm tĩnh cũ), thay bằng gọi thẳng 2 component mới
+  (không cần prop, đọc Context); `TwoFieldBoxes` giữ khung `GemCard`
+  name/description tĩnh, thay `MarketingLinkBox` (tĩnh) bằng
+  `EcosystemFieldLinksBox` (mới) bên trong mỗi field.
+- Xoá hẳn `MarketingLinkBox.tsx` — không còn nơi nào import (dead code
+  sau khi thay hết 3 chỗ dùng).
+- Backfill Supabase (`execute_sql`, không tạo migration mới — chỉ merge
+  thêm key vào `data` jsonb có sẵn) — cả 5 dòng `ecosystem_chrome` đều có
+  đủ 3 field mới (rỗng cho loại không dùng), 3 dòng dùng thật
+  (`eco_blockchain`: 4 chương trình affiliate tên thật/URL rỗng;
+  `eco_trading`: 7 sàn tên thật/URL rỗng; `eco_crypto`: 2 khoá
+  `field_blockchain`/`field_crypto` rỗng, đúng dữ liệu tĩnh hiện có) —
+  COPY VERBATIM tên/category từ `ecosystems.ts`, không bịa dữ liệu mới.
+  Lý do backfill (không chỉ dựa `?? []` code-level): đúng bài học "seed IS
+  the live data" đã gặp ở việc "Video dự án"/"Tài liệu" trước đó — khi
+  `editMode=true`, `useCollection()` fetch RAW từ Supabase, dòng thiếu key
+  sẽ trả `undefined` chứ không phải `[]`/`{}`.
+- Cập nhật comment cũ (đã lỗi thời) ở
+  `/admin/duan-cohoi/[ecosystemSlug]/page.tsx` — từng ghi "chỉ 2 field an
+  toàn sửa được", giờ liệt kê đúng toàn bộ tính năng đã đồng bộ.
+
+**KHÔNG đổi bố cục trang** — đúng lựa chọn Founder: 4 hệ sinh thái vẫn
+hiện đúng loại UI riêng (`AffiliateOffersList`-style card 2 cột, danh
+sách sàn 3 cột, 2 khối Blockchain/Crypto song song) — chỉ thêm khả năng
+Admin sửa nội dung bên trong, không có "lưới dự án con" nào xuất hiện ở 4
+trang này.
+
+**File sửa:** `ecosystems.ts` (thêm `category?`), `MarketingLinksFieldEditor.tsx`
+(thêm `categories` prop), `live-ecosystem-chrome.ts` (3 field mới +
+`toLinks(requireUrl)` + `toFieldLinks()`), `page.tsx` (`[ecosystemSlug]`),
+`/admin/duan-cohoi/[ecosystemSlug]/page.tsx` (comment). **File mới:**
+`EcosystemAffiliateOffersBox.tsx`/`EcosystemExchangesBox.tsx`/
+`EcosystemFieldLinksBox.tsx`. **File xoá:** `MarketingLinkBox.tsx` (dead
+code).
+
+**Verify:** `tsc`/`eslint`/`vitest run` (139 pass)/`rm -rf .next && npm
+run build` sạch. Test thật với dữ liệu Supabase production (anon key tạm
+qua env, không ghi file) qua trang devtest tạm (đã xoá, gọi thẳng
+`EcosystemMiniSitePage` thật, bỏ qua middleware): cả 5 route hệ sinh thái
+trả `200`, đúng nội dung thật hiện ra (Lazada/Shopee/Unica/Khởi Nguyên
+MMO có category đúng; Binance/OKX/MEXC/Bybit/Kucoin/Gate/Bitget; khối
+Blockchain/Crypto rỗng trung thực). Chụp màn hình qua Playwright ở chế độ
+`editMode=true` (bọc `<EditModeProvider>` tạm trong devtest, không qua
+`requireAdmin()` thật) xác nhận cả 3 box mới hiện đúng form sửa (category
+`<select>`, nút "Thêm liên kết"/"Lưu"), 0 lỗi console/page error.
+
+**Chưa tự test được:** lưu thật qua Admin có tài khoản đăng nhập (giới
+hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview URL, đặc
+biệt xác nhận: bấm "Lưu" sau khi thêm URL thật cho 1-2 mục (ví dụ dán link
+Lazada thật) → tải lại trang → link hiện đúng dạng nút bấm được (không
+còn khung "Chưa có link tiếp thị thật").

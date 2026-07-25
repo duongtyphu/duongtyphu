@@ -44,6 +44,10 @@ export type MarketingLink = {
   url: string;
   order: number;
   visible: boolean;
+  /** Chỉ dùng khi hiển thị như danh sách chương trình tiếp thị liên kết
+   * (`AffiliateOffer` cũ, giờ dùng chung shape `MarketingLink` để tái dùng
+   * `MarketingLinksFieldEditor`) — bỏ trống ở mọi nơi khác. */
+  category?: string;
 };
 
 /**
