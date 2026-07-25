@@ -2986,6 +2986,55 @@ test tại `/admin/duan-cohoi/digiu/alphamind` (và 3 dự án con khác), xác
 nhận bút sửa (✎) hiện ngay trên tên/mô tả/link, không cần quay lại trang
 DigiU cha nữa.
 
+## Thêm nút "Lưu" tường minh cho "Đường link liên kết dự án"
+
+Founder báo thiếu nút "Lưu" ở mục LIÊN KẾT. Nguyên nhân:
+`MarketingLinksFieldEditor`'s `onChange` trước đó gọi thẳng `update()`
+(PATCH mạng thật) ngay trên MỖI LẦN gõ phím (label/URL) hoặc tick
+ẩn/hiện — không có staging cục bộ, không có nút Lưu tường minh, không có
+chỉ báo "đã lưu"/"chưa lưu" nào — dễ gây cảm giác không lưu được hoặc
+giật khi gõ nhanh.
+
+**Đã sửa** cả 2 nơi đang dùng pattern auto-save này:
+- `EcosystemLinksBox.tsx` (cấp hệ sinh thái chính — DigiU, SolarGroup).
+- `SubProjectLinksBox.tsx` (cấp dự án con — AlphaMind/WebWisePay/Deposits/
+  Sovelmash/AeroNova).
+
+Cả 2 đổi sang: `draft` (state cục bộ, khởi tạo từ `chrome.links`/`sub.links`,
+đồng bộ lại khi chuyển sang hệ sinh thái/dự án con khác) — mọi thao tác
+thêm/sửa/xoá/ẩn-hiện trong `MarketingLinksFieldEditor` giờ chỉ đổi `draft`
+cục bộ, KHÔNG gọi mạng. Thêm nút **"Lưu"** tường minh (chỉ bật khi
+`draft` khác `chrome.links`/`sub.links` — so sánh qua `JSON.stringify`,
+mảng nhỏ nên đủ nhẹ) + `SaveStateBadge` (cùng component dùng ở
+`EditableRegion`, hiện "Có thay đổi chưa lưu"/"Đang lưu..."/"Đã lưu"/"Lưu
+thất bại — thử lại") — chỉ thật sự PATCH khi bấm Lưu.
+
+**Không đụng** `MarketingLinksFieldEditor.tsx` (giữ nguyên `onChange` gọi
+ngay mỗi thay đổi — đúng, vì nơi dùng thứ 3 của nó,
+`SubProjectsAdminPanel.tsx`, đã có sẵn nút Lưu ở CẤP FORM cha (`form.links`
+chỉ là state cục bộ của form Add/Edit dự án con, PATCH thật chỉ chạy khi
+bấm Lưu của form đó) — không cần sửa, tránh 2 lớp nút Lưu lồng nhau.
+
+**Lưu ý phạm vi:** đây là component DÙNG CHUNG, không hardcode theo từng
+hệ sinh thái — áp dụng ngay cho MỌI hệ sinh thái loại `structureType ===
+"sub-projects"` (hiện tại DigiU + SolarGroup, cả cấp chính lẫn dự án con)
+và tự động áp dụng cho hệ sinh thái mới cùng loại sau này. 3 hệ sinh thái
+còn lại (Blockchain & Crypto/Affiliate/Sàn giao dịch) hiện KHÔNG có mục
+"Đường link liên kết dự án" editable qua Admin ở cấp hệ sinh thái (dùng
+cấu trúc khác — "Hai mảng"/"Chương trình tiếp thị"/"Sàn giao dịch", vẫn
+đọc tĩnh từ `ecosystems.ts` theo đúng quyết định phương án (a) đã chốt ở
+mục "Dự án & Cơ hội — bảng projects" — chưa mở rộng ở việc này, cần xác
+nhận riêng nếu Founder muốn).
+
+**Verify:** `tsc`/`eslint` sạch. Test thật qua `next dev` — 4 route
+(`duan-cohoi/digiu`, `duan-cohoi/digiu/alphamind`, `duan-cohoi/solargroup`,
+`duan-cohoi/solargroup/sovelmash`) trả `200`, 0 lỗi log server.
+
+**Chưa tự test được:** bấm Lưu qua Admin UI thật có tài khoản đăng nhập
+(cùng giới hạn sandbox) — Founder tự test tại `/admin/duan-cohoi/digiu`
+và `/admin/duan-cohoi/digiu/alphamind`, xác nhận nút Lưu chỉ bật khi có
+thay đổi và badge "Đã lưu" hiện đúng sau khi bấm.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng

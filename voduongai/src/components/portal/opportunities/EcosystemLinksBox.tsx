@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ExternalLink } from "lucide-react";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
+import { SaveStateBadge, type SaveState } from "@/components/admin/SaveStateBadge";
 import { useEditMode } from "./EditModeContext";
 import { useEcosystemChrome } from "./EcosystemChromeContext";
 import { MarketingLinksFieldEditor } from "./MarketingLinksFieldEditor";
@@ -19,6 +21,13 @@ import type { MarketingLink } from "@/data/portal/ecosystems";
  * (`editMode=true`) — dùng `MarketingLinksFieldEditor` dùng chung (thêm/
  * sửa/xoá/ẩn-hiện từng link), LUÔN hiện (không cần EditableRegion vì đây
  * là danh sách cần thêm/xoá, không phải 1 record đơn).
+ *
+ * BUG ĐÃ SỬA (Founder báo thiếu nút "Lưu"): trước đó `MarketingLinksFieldEditor`'s
+ * `onChange` gọi thẳng `update()` (PATCH mạng) trên MỖI LẦN gõ phím —
+ * không có staging cục bộ, không có nút Lưu tường minh, dễ gây cảm giác
+ * "không lưu được"/giật lag khi gõ nhanh. Đổi sang staging cục bộ (`draft`)
+ * + nút "Lưu" tường minh + `SaveStateBadge` (cùng cơ chế `EditableRegion`
+ * đã dùng) — chỉ thật sự PATCH khi bấm Lưu.
  */
 export function EcosystemLinksBox({
   id = "lien-ket-tiep-thi",
@@ -32,8 +41,25 @@ export function EcosystemLinksBox({
   const links = chrome.links;
   const visible = links.filter((l) => l.visible).sort((a, b) => a.order - b.order);
 
-  function save(next: MarketingLink[]) {
-    update(chrome.id, { links: next });
+  const [draft, setDraft] = useState<MarketingLink[]>(links);
+  const [saveState, setSaveState] = useState<SaveState>("idle");
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setDraft(links);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chrome.id, links]);
+
+  const isDirty = JSON.stringify(draft) !== JSON.stringify(links);
+
+  async function handleSave() {
+    setSaveState("saving");
+    try {
+      await update(chrome.id, { links: draft });
+      setSaveState("saved");
+    } catch {
+      setSaveState("error");
+    }
   }
 
   return (
@@ -63,7 +89,18 @@ export function EcosystemLinksBox({
         )
       ) : (
         <div className="rounded-xl border border-dashed border-blue-300 bg-blue-50/40 p-4">
-          <MarketingLinksFieldEditor links={links} onChange={save} label="Các link (thêm/sửa/xoá)" />
+          <MarketingLinksFieldEditor links={draft} onChange={setDraft} label="Các link (thêm/sửa/xoá)" />
+          <div className="mt-3 flex items-center justify-end gap-2">
+            <SaveStateBadge state={saveState} isDirty={isDirty} />
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saveState === "saving" || !isDirty}
+              className="rounded-lg bg-brand-blue px-4 py-1.5 text-xs font-bold text-white transition hover:opacity-90 disabled:opacity-40"
+            >
+              {saveState === "saving" ? "Đang lưu..." : "Lưu"}
+            </button>
+          </div>
         </div>
       )}
     </section>
