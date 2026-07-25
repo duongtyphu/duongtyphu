@@ -7,6 +7,8 @@ import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLin
 import { EcosystemOverview } from "@/components/portal/opportunities/EcosystemOverview";
 import { EcosystemChromeProvider } from "@/components/portal/opportunities/EcosystemChromeContext";
 import { EcosystemLinksBox } from "@/components/portal/opportunities/EcosystemLinksBox";
+import { EcosystemVideosBox } from "@/components/portal/opportunities/EcosystemVideosBox";
+import { EcosystemDocumentsBox } from "@/components/portal/opportunities/EcosystemDocumentsBox";
 import { SubProjectsSection } from "@/components/portal/opportunities/SubProjectsSection";
 import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
 import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
@@ -243,6 +245,8 @@ export default async function EcosystemMiniSitePage({
               ecosystemSlug={eco.slug}
               ecosystemName={chrome.name}
             />
+            <EcosystemVideosBox />
+            <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
           </>
         )}
@@ -250,6 +254,8 @@ export default async function EcosystemMiniSitePage({
         {eco.structureType === "two-field" && (
           <>
             <TwoFieldBoxes eco={eco} />
+            <EcosystemVideosBox />
+            <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
           </>
         )}
@@ -257,6 +263,8 @@ export default async function EcosystemMiniSitePage({
         {eco.structureType === "affiliate-list" && (
           <>
             <AffiliateOffersList eco={eco} />
+            <EcosystemVideosBox />
+            <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
           </>
         )}
@@ -264,6 +272,8 @@ export default async function EcosystemMiniSitePage({
         {eco.structureType === "exchange-list" && (
           <>
             <ExchangesList eco={eco} />
+            <EcosystemVideosBox />
+            <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
           </>
         )}

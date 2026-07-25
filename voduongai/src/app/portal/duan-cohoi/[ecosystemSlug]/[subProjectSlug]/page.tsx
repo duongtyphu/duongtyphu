@@ -4,6 +4,8 @@ import { getEcosystemBySlug } from "@/data/portal/ecosystems";
 import { SubProjectChromeProvider } from "@/components/portal/opportunities/SubProjectChromeContext";
 import { SubProjectOverview } from "@/components/portal/opportunities/SubProjectOverview";
 import { SubProjectLinksBox } from "@/components/portal/opportunities/SubProjectLinksBox";
+import { SubProjectVideosBox } from "@/components/portal/opportunities/SubProjectVideosBox";
+import { SubProjectDocumentsBox } from "@/components/portal/opportunities/SubProjectDocumentsBox";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
 import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
 import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
@@ -107,6 +109,9 @@ export default async function SubProjectPage({
         <SubProjectOverview surface={surface} />
 
         <SubProjectLinksBox />
+
+        <SubProjectVideosBox />
+        <SubProjectDocumentsBox />
 
         <PotentialAnalysisLive entityId={sub.id} seedRows={ratingSeed} />
 

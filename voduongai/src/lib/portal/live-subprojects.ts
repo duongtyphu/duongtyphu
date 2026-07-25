@@ -25,6 +25,11 @@ export type SubProjectRow = {
    * khi có nội dung, không bắt buộc. */
   fullIntro: string;
   links: MarketingLink[];
+  /** "Video dự án" + "Link tải tài liệu" (mở rộng riêng, theo yêu cầu
+   * Founder, áp dụng cả cấp dự án con) — cùng shape với
+   * `live-ecosystem-chrome.ts`, xem comment gốc ở đó. */
+  videos: MarketingLink[];
+  documents: MarketingLink[];
   displayOrder: number;
 };
 
@@ -53,6 +58,8 @@ function toRow(row: { id: string; data: unknown; status: string }): SubProjectRo
     shortDescription: typeof d.shortDescription === "string" ? d.shortDescription : "",
     fullIntro: typeof d.fullIntro === "string" ? d.fullIntro : "",
     links: toLinks(d.links),
+    videos: toLinks(d.videos),
+    documents: toLinks(d.documents),
     displayOrder: typeof d.displayOrder === "number" ? d.displayOrder : 0,
   };
 }

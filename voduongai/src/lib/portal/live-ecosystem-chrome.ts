@@ -36,6 +36,13 @@ export type EcosystemChrome = {
   shortDescription: string;
   fullIntro: string;
   links: MarketingLink[];
+  /** "Video dự án" + "Link tải tài liệu" (mở rộng riêng, theo yêu cầu
+   * Founder — 2 section mới dưới "Các dự án con") — cùng shape
+   * `MarketingLink[]` để tái dùng `MarketingLinksFieldEditor` (label/url/
+   * visible/order) không cần kiểu dữ liệu mới. Honestly rỗng cho tới khi
+   * Admin thêm — không bịa nội dung. */
+  videos: MarketingLink[];
+  documents: MarketingLink[];
 };
 
 function toLinks(value: unknown): MarketingLink[] {
@@ -64,6 +71,8 @@ function staticFallback(ecosystemId: string): EcosystemChrome {
     shortDescription: eco?.shortDescription ?? "",
     fullIntro: eco?.fullIntro ?? "",
     links: eco?.marketingLinks ?? [],
+    videos: [],
+    documents: [],
   };
 }
 
@@ -90,5 +99,7 @@ export const getLiveEcosystemChrome = cache(async (ecosystemId: string): Promise
     // này" (fallback tĩnh) với "Admin đã chủ động xoá hết link" (tôn
     // trọng mảng rỗng thật, không âm thầm khôi phục lại link cũ).
     links: Array.isArray(d.links) ? toLinks(d.links) : defaultResult.links,
+    videos: Array.isArray(d.videos) ? toLinks(d.videos) : defaultResult.videos,
+    documents: Array.isArray(d.documents) ? toLinks(d.documents) : defaultResult.documents,
   };
 });

@@ -3128,6 +3128,95 @@ nhập để xác nhận trực quan (cùng giới hạn sandbox) — nhưng l�
 XÁC NHẬN qua dữ liệu thật (`eco_digiu` từng dính đúng bug này) nên độ tin
 cậy của bản vá cao hơn các lần verify chỉ dựa vào code review trước đó.
 
+## Dự án & Cơ hội — 2 section mới: "Video dự án" + "Link tải tài liệu"
+
+Founder yêu cầu thêm 2 mục mới ngay dưới "Các dự án con" ở
+`/portal/duan-cohoi/digiu`, áp dụng cho **cả 5 hệ sinh thái và dự án con**
+(không riêng DigiU — DigiU chỉ là nơi chạy thật trước). Admin cần
+chỉnh sửa/thêm/xoá/ẩn/Lưu cho cả 2 mục.
+
+**Data shape:** cùng kiểu `MarketingLink[]` (id/label/url/order/visible —
+type có sẵn từ `ecosystems.ts`, không tạo type mới) — `videos` và
+`documents` thêm vào `data` jsonb của cả `ecosystem_chrome` (cấp hệ sinh
+thái) và `ecosystem_subprojects` (cấp dự án con), không cần migration
+schema (jsonb generic, giống mọi field mở rộng trước đó của 2 bảng này).
+Tái dùng NGUYÊN `MarketingLinksFieldEditor.tsx` cho cả 2 mục edit (đã hỗ
+trợ label/url/visible/thêm/xoá) — không viết editor mới.
+
+**Hiển thị khác nhau giữa 2 mục (lý do dùng chung shape nhưng khác UI):**
+- **Video dự án** — mỗi video Published nhúng trực tiếp dạng iframe
+  16:9 (chuyển URL YouTube qua `toYouTubeEmbedUrl()`, tách thành util
+  dùng chung mới `src/lib/portal/videoEmbed.ts` — trước đó chỉ có 1 bản
+  cục bộ trong `CourseLearnClient.tsx` (Premium), giờ refactor
+  `CourseLearnClient.tsx` import từ util chung, không đổi hành vi). URL
+  không phải YouTube (Vimeo/Loom/mp4 trực tiếp...) không đoán được cấu
+  trúc nhúng chung, fallback sang link "Mở video ↗" mở tab mới — cùng
+  nguyên tắc `CourseLearnClient.tsx` đã áp dụng.
+- **Link tải tài liệu** — mỗi tài liệu Published hiện thành nút tải
+  xuống (icon `Download`, không phải `ExternalLink` như `MarketingLinkBox`)
+  — về hành vi thực tế vẫn là mở link trong tab mới (không có xử lý tải
+  file thật phía server, đúng bản chất "link tải" trỏ ra ngoài, ví dụ
+  Google Drive).
+
+**"Ẩn" = field `visible` sẵn có trong `MarketingLink`** (không thêm field
+mới) — bỏ tick "Hiển thị trên Portal" trong `MarketingLinksFieldEditor`
+là ẩn khỏi Portal ngay, không cần trạng thái riêng. "Xoá" = bấm nút xoá
+dòng trong editor. "Lưu" = nút Lưu tường minh + staging cục bộ, cùng cơ
+chế `EcosystemLinksBox.tsx` đã sửa ở mục trên.
+
+**File mới:**
+- `src/lib/portal/videoEmbed.ts` — `toYouTubeEmbedUrl()` (tách từ
+  `CourseLearnClient.tsx`).
+- `src/components/portal/opportunities/EcosystemVideosBox.tsx`,
+  `EcosystemDocumentsBox.tsx` — cấp hệ sinh thái, qua
+  `useEcosystemChrome()`.
+- `src/components/portal/opportunities/SubProjectVideosBox.tsx`,
+  `SubProjectDocumentsBox.tsx` — cấp dự án con, qua
+  `useSubProjectChrome()`, byte-for-byte cùng logic 2 file trên.
+
+**File sửa:**
+- `src/lib/portal/live-ecosystem-chrome.ts` — `EcosystemChrome` thêm
+  `videos`/`documents`, parse qua `toLinks()` có sẵn (đã dùng cho
+  `links`), cùng nguyên tắc `Array.isArray` (không phải `length>0`) để
+  phân biệt "chưa migrate" với "Admin chủ động xoá hết".
+- `src/lib/portal/live-subprojects.ts` — `SubProjectRow` thêm
+  `videos`/`documents`, cùng cách.
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — thêm
+  `<EcosystemVideosBox/>`+`<EcosystemDocumentsBox/>` vào CẢ 4 nhánh
+  `structureType` (sub-projects/two-field/affiliate-list/exchange-list —
+  Founder xác nhận áp dụng tất cả 5 hệ sinh thái, không giới hạn như
+  quyết định phương án (a) cũ chỉ áp dụng cho `marketingLinks`), đặt sau
+  khối nội dung chính của từng loại (với `sub-projects`: sau "Các dự án
+  con", đúng vị trí Founder chỉ định), trước "Đánh giá".
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/[subProjectSlug]/page.tsx`
+  — thêm 2 component tương ứng sau `SubProjectLinksBox`, trước "Đánh giá".
+- `src/app/portal/premium/[courseId]/hoc/CourseLearnClient.tsx` — xoá bản
+  `toYouTubeEmbedUrl()` cục bộ, import từ util chung mới (refactor thuần,
+  0 đổi hành vi).
+
+**Dữ liệu thật đã backfill cho DigiU** (qua `execute_sql`, theo đúng yêu
+cầu "chạy dự án DigiU trước"): 1 video
+(`https://youtu.be/FP-hiDgI024?si=AfGMlP5ChLk368q2`) + 1 tài liệu
+(`https://drive.google.com/file/d/108n-cqf2_N0s4bLcUNPsqs8LodM73fCh/view?usp=drive_link`,
+nhãn "Tài liệu DigiU"). **4 hệ sinh thái còn lại + mọi dự án con giữ
+honestly rỗng** (2 section hiện empty-state trung thực "Chưa có... sẽ
+cập nhật khi có") — đúng nguyên tắc NO-FAKE-DATA, Founder tự thêm qua
+Admin khi có nội dung thật.
+
+**Verify:** `tsc`/`eslint` sạch. Test thật qua anon key thật (route
+dev-preview tạm, xoá ngay sau khi xong) — xác nhận
+`getLiveEcosystemChrome("eco_digiu")` trả đúng `videos`/`documents` vừa
+backfill, `toYouTubeEmbedUrl()` chuyển đúng
+`https://youtu.be/FP-hiDgI024...` → `https://www.youtube.com/embed/FP-hiDgI024`.
+Test không có Supabase (mặc định sandbox) — cả 8 route (5 hệ sinh thái +
+3 dự án con mẫu) trả `200`, 0 lỗi log server.
+
+**Chưa tự test được:** thêm/sửa/xoá/ẩn video-tài liệu qua Admin UI thật
+có tài khoản đăng nhập (cùng giới hạn sandbox) — Founder tự test tại
+`/admin/duan-cohoi/digiu` (xác nhận video YouTube nhúng phát được, nút
+tải tài liệu mở đúng Google Drive) trước khi lặp lại cho 4 hệ sinh thái
++ dự án con còn lại.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng
