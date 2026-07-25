@@ -1,20 +1,23 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ecosystems, getEcosystemBySlug, getSubProjectBySlug, DEFAULT_POTENTIAL_ANALYSIS } from "@/data/portal/ecosystems";
-import { GemCard } from "@/components/portal/ui/GemCard";
+import { ecosystems, getEcosystemBySlug, getSubProjectBySlug } from "@/data/portal/ecosystems";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
-import { PotentialAnalysisTable } from "@/components/portal/opportunities/PotentialAnalysisTable";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
+import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
+import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
+import { getAllLiveEcosystemArticles } from "@/lib/portal/live-ecosystem-articles";
+import { getLiveEcosystemRatingRows } from "@/lib/portal/live-ecosystem-ratings";
 
 /**
  * Sub-project detail page — only meaningful for Type A ("sub-projects")
  * ecosystems (digiu, solargroup). `notFound()`s gracefully for any ecosystem
  * with no sub-projects or an unmatched slug, per task instructions.
  *
- * Renders ONLY: title + intro, Marketing/Affiliate Link Box, Potential
- * Analysis table, and an honest "chưa có bài viết riêng" articles empty
- * state (there is no real per-sub-project article tagging in the data
- * today). Nothing else.
+ * Renders: title + intro, Marketing/Affiliate Link Box, Đánh giá (Live-edit,
+ * dùng chung `ecosystem_ratings` với cấp hệ sinh thái, khoá theo `sub.id`),
+ * và "Cập nhật thông tin mới" — băng bài viết RIÊNG của dự án con này
+ * (`ecosystem_articles`, lọc `subProjectId === sub.id`, không lẫn với băng
+ * bài viết cấp hệ sinh thái cha).
  */
 
 function Breadcrumb({ items }: { items: { label: string; href?: string }[] }) {
@@ -67,7 +70,8 @@ export default async function SubProjectPage({
   if (!sub) notFound();
 
   const surface = getSubProjectSurface(sub.colorIndex);
-  const potentialAnalysis = sub.potentialAnalysis ?? DEFAULT_POTENTIAL_ANALYSIS;
+  const allArticlesSeed = await getAllLiveEcosystemArticles();
+  const ratingSeed = await getLiveEcosystemRatingRows(sub.id);
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -96,13 +100,14 @@ export default async function SubProjectPage({
 
       <MarketingLinkBox links={sub.marketingLinks} />
 
-      <PotentialAnalysisTable items={potentialAnalysis} />
+      <PotentialAnalysisLive entityId={sub.id} seedRows={ratingSeed} />
 
-      <section id="bai-viet">
-        <GemCard>
-          <p className="text-sm text-gray-500">Chưa có bài viết riêng cho dự án con này, sẽ cập nhật khi có.</p>
-        </GemCard>
-      </section>
+      <EcosystemArticlesSection
+        allSeed={allArticlesSeed}
+        ecosystemId={eco.id}
+        ecosystemSlug={eco.slug}
+        subProjectId={sub.id}
+      />
       </div>
       </div>
     </div>

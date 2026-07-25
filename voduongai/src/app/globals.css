@@ -2516,6 +2516,43 @@ body {
 }
 
 /* ============================================================
+ * ECOSYSTEM ARTICLES ("Cập nhật thông tin mới") — continuous
+ * right-to-left card marquee, dùng chung cho mọi hệ sinh thái/dự án con
+ * (ArticleTicker.tsx). Cùng kỹ thuật `.tools-marquee` ở trên (track render
+ * 2 lần, animate đúng -50% để loop liền mạch; hover dừng lại) — tách class
+ * riêng (không dùng chung `.tools-marquee`) vì đây là 1 khu vực khác
+ * (Portal Dự án & Cơ hội, không phải Landing) và có thể tuỳ biến độc lập
+ * sau này mà không ảnh hưởng landing page.
+ * ============================================================ */
+.eco-article-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 4%, black 96%, transparent);
+}
+
+.eco-article-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: eco-article-marquee-scroll 38s linear infinite;
+}
+
+.eco-article-marquee-track:hover,
+.eco-article-marquee-track:focus-within {
+  animation-play-state: paused;
+}
+
+@keyframes eco-article-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eco-article-marquee-track {
+    animation: none;
+  }
+}
+
+/* ============================================================
  * COMMUNITY & SOCIAL PROOF — "Bạn không học một mình" section.
  * Orange (#FF6B35) accent throughout, per the unified landing-page
  * accent color.

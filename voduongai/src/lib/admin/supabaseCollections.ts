@@ -164,6 +164,14 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // statusBadge hay marketingLinks/subProjects/fields/affiliateOffers/
   // exchanges/potentialAnalysis — vẫn đọc tĩnh từ ecosystems.ts.
   "ecosystem-chrome": "ecosystem_chrome",
+  // Nhóm 3, Phần D (mở rộng riêng, sau khi Nhóm 3 đã đóng) — "Cập nhật
+  // thông tin mới" (băng bài viết chạy) + "Đánh giá" (Phân tích tiềm
+  // năng, trạng thái theo tiêu chí). Dùng chung cho MỌI hệ sinh thái/dự
+  // án con hiện có và tương lai (không hardcode theo từng hệ sinh thái) —
+  // lọc theo entityId/ecosystemId+subProjectId trong data jsonb, không
+  // tách bảng riêng theo từng hệ sinh thái.
+  "ecosystem-articles": "ecosystem_articles",
+  "ecosystem-ratings": "ecosystem_ratings",
   // Premium — Dashboard Live-edit. CHỈ chữ tĩnh an toàn (Hero/2 nhãn
   // section/4 bước thanh toán/FAQ) — KHÔNG đụng bảng `courses` (giá/trạng
   // thái mở bán, quản qua /admin/course-pricing riêng, giữ nguyên) hay

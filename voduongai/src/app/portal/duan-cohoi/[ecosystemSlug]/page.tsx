@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ecosystems, getEcosystemBySlug, DEFAULT_POTENTIAL_ANALYSIS, type Ecosystem } from "@/data/portal/ecosystems";
-import { digitalAssetArticles } from "@/data/digitalAssets";
+import { ecosystems, getEcosystemBySlug, type Ecosystem } from "@/data/portal/ecosystems";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { SectionHeader } from "@/components/portal/ui/SectionHeader";
 import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
-import { PotentialAnalysisTable } from "@/components/portal/opportunities/PotentialAnalysisTable";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
 import { EcosystemOverview } from "@/components/portal/opportunities/EcosystemOverview";
+import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
+import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
 import { getLiveEcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
+import { getAllLiveEcosystemArticles } from "@/lib/portal/live-ecosystem-articles";
+import { getLiveEcosystemRatingRows } from "@/lib/portal/live-ecosystem-ratings";
 
 /**
  * Ecosystem mini-site — RESTRUCTURED per direct Product Owner instruction,
@@ -87,35 +89,6 @@ export async function generateMetadata({ params }: { params: Promise<{ ecosystem
     title: chrome.name,
     description: chrome.shortDescription,
   };
-}
-
-function ArticlesSection({ articles }: { articles: (typeof digitalAssetArticles)[number][] }) {
-  if (articles.length === 0) {
-    return (
-      <section id="bai-viet">
-        <SectionHeader eyebrow="Bài viết" title="Bài viết liên quan" />
-        <GemCard>
-          <p className="text-sm text-gray-500">Chưa có bài viết nào ở đây, sẽ cập nhật khi có.</p>
-        </GemCard>
-      </section>
-    );
-  }
-  return (
-    <section id="bai-viet">
-      <SectionHeader eyebrow="Bài viết" title="Bài viết liên quan" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {articles.map((a) => (
-          <Link
-            key={a.id}
-            href={`/portal/duan-cohoi/bai-viet/${a.slug}`}
-            className="block rounded-xl border border-gray-100 bg-white p-4 text-sm font-semibold text-gray-900 shadow-token-sm transition hover:border-blue-300 hover:text-brand-blue"
-          >
-            {a.title}
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
 }
 
 function SubProjectsGrid({ eco }: { eco: Ecosystem }) {
@@ -258,12 +231,14 @@ export default async function EcosystemMiniSitePage({
   if (!eco) notFound();
 
   const surface = SURFACE[eco.slug] ?? SURFACE.digiu;
-  const categories = [eco.articleCategory, ...(eco.extraArticleCategories ?? [])];
-  const articles = digitalAssetArticles.filter(
-    (a) => categories.includes(a.category) && a.status === "Published"
-  );
-  const potentialAnalysis = eco.potentialAnalysis ?? DEFAULT_POTENTIAL_ANALYSIS;
   const chrome = await getLiveEcosystemChrome(eco.id);
+  // "Cập nhật thông tin mới" (mở rộng riêng, sau Nhóm 3) — Founder xác
+  // nhận áp dụng lại cho CẢ 5 hệ sinh thái (kể cả 3 trang từng bị bỏ băng
+  // bài viết cũ trước đây), dùng bảng `ecosystem_articles` mới — không
+  // liên quan `digitalAssetArticles` (route cũ `/duan-cohoi/bai-viet/[slug]`
+  // vẫn giữ nguyên, đọc dữ liệu khác, không đụng).
+  const allArticlesSeed = await getAllLiveEcosystemArticles();
+  const ratingSeed = await getLiveEcosystemRatingRows(eco.id);
   // `eco.icon` là 1 component/function reference (LucideIcon) — KHÔNG
   // serialize được qua ranh giới Server→Client Component. Tách riêng
   // trước khi truyền xuống `EcosystemOverview` ("use client"), thay bằng
@@ -293,43 +268,36 @@ export default async function EcosystemMiniSitePage({
         <>
           <MarketingLinkBox links={eco.marketingLinks} />
           <SubProjectsGrid eco={eco} />
-          <PotentialAnalysisTable items={potentialAnalysis} />
-          <ArticlesSection articles={articles} />
+          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
         </>
       )}
 
-      {/* Blockchain & Crypto (two-field): Product Owner asked to remove the
-       * articles section entirely from this ecosystem page ("Bỏ 2 bài viết
-       * và link cũ") — underlying digitalAssetArticles records are kept
-       * (still legitimate content, e.g. Blog AI's merged feed), only this
-       * page stops rendering/linking to them. */}
       {eco.structureType === "two-field" && (
         <>
           <TwoFieldBoxes eco={eco} />
-          <PotentialAnalysisTable items={potentialAnalysis} />
+          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
         </>
       )}
 
-      {/* Làm tiếp thị liên kết (affiliate-list): same instruction as the two
-       * pages above — Product Owner asked to remove the articles section
-       * ("Cách tôi tiếp cận một sàn giao dịch blockchain mới" no longer
-       * shown/linked anywhere in the Portal). The digitalAssetArticles
-       * record is kept — still legitimate content elsewhere (Blog AI). */}
       {eco.structureType === "affiliate-list" && (
         <>
           <AffiliateOffersList eco={eco} />
-          <PotentialAnalysisTable items={potentialAnalysis} />
+          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
         </>
       )}
 
-      {/* Các sàn giao dịch Crypto (exchange-list): same instruction — remove
-       * article from this ecosystem's page without deleting the record. */}
       {eco.structureType === "exchange-list" && (
         <>
           <ExchangesList eco={eco} />
-          <PotentialAnalysisTable items={potentialAnalysis} />
+          <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />
         </>
       )}
+
+      {/* "Cập nhật thông tin mới" — áp dụng cho CẢ 4 loại structureType
+       * (Founder xác nhận áp dụng lại cho tất cả 5 hệ sinh thái), đặt
+       * ngoài khối if/else theo structureType vì không phụ thuộc loại
+       * trang. */}
+      <EcosystemArticlesSection allSeed={allArticlesSeed} ecosystemId={eco.id} ecosystemSlug={eco.slug} />
       </div>
       </div>
     </div>

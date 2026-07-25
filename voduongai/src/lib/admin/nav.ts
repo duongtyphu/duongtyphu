@@ -110,11 +110,22 @@ export const adminNavGroups: AdminNavGroup[] = [
     // 1 route dynamic `/admin/duan-cohoi/[ecosystemSlug]` phục vụ cả 5,
     // liệt kê tường minh 5 slug thật ở đây (ổn định, không đổi thường
     // xuyên) thay vì chỉ có 1 link chung chung.
+    //
+    // Mở rộng riêng (sau khi Nhóm 3 đóng) — "Cập nhật thông tin mới" +
+    // "Đánh giá" cấp DỰ ÁN CON: 1 route dynamic
+    // `/admin/duan-cohoi/[ecosystemSlug]/[subProjectSlug]` phục vụ cả 5 dự
+    // án con hiện có (3 DigiU + 2 SolarGroup) — liệt kê tường minh, cùng
+    // cách làm với 5 trang chi tiết hệ sinh thái ở trên.
     group: "Dự án & Cơ hội",
     items: [
       { label: "Hệ sinh thái (Live-edit)", href: "/admin/duan-cohoi" },
       { label: "Chi tiết: DigiU (Live-edit)", href: "/admin/duan-cohoi/digiu" },
+      { label: "  → Dự án con: Alphamind", href: "/admin/duan-cohoi/digiu/alphamind" },
+      { label: "  → Dự án con: WebWisePay", href: "/admin/duan-cohoi/digiu/webwisepay" },
+      { label: "  → Dự án con: Deposits", href: "/admin/duan-cohoi/digiu/deposits" },
       { label: "Chi tiết: SolarGroup (Live-edit)", href: "/admin/duan-cohoi/solargroup" },
+      { label: "  → Dự án con: Sovelmash", href: "/admin/duan-cohoi/solargroup/sovelmash" },
+      { label: "  → Dự án con: AERONOVA", href: "/admin/duan-cohoi/solargroup/aeronova" },
       { label: "Chi tiết: Blockchain & Crypto (Live-edit)", href: "/admin/duan-cohoi/blockchain-crypto" },
       { label: "Chi tiết: Affiliate (Live-edit)", href: "/admin/duan-cohoi/lam-affilate" },
       { label: "Chi tiết: Sàn giao dịch Crypto (Live-edit)", href: "/admin/duan-cohoi/sangiaodich" },

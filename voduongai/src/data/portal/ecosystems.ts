@@ -46,23 +46,42 @@ export type MarketingLink = {
   visible: boolean;
 };
 
-export type PotentialAnalysisStatus = "not-assessed" | "met" | "not-met" | "partial";
+/**
+ * Dự án & Cơ hội — Đánh giá (mở rộng riêng, sau khi Nhóm 3 đã đóng).
+ * Founder chốt đúng 3 trạng thái (bỏ "partial" cũ, không dòng dữ liệu thật
+ * nào từng dùng "partial" nên xoá an toàn): "Đạt" (kèm mức sao 1-5), "Chưa
+ * đạt" (kèm lý do: thiếu thông tin/đang thẩm định), "Chưa đánh giá" (mặc
+ * định trung thực). Danh sách 6 tiêu chí GIỮ NGUYÊN cố định trong code
+ * (Founder chọn "chỉ đổi trạng thái, không tự thêm/sửa/xoá tiêu chí qua
+ * Admin") — chỉ trạng thái/sao/lý do/ghi chú mỗi tiêu chí sửa được qua
+ * Live-edit (bảng `ecosystem_ratings`, khoá theo `${entityId}__${criterionId}`).
+ */
+export type PotentialAnalysisStatus = "not-assessed" | "met" | "not-met";
+export type NotMetReason = "thieu-thong-tin" | "dang-tham-dinh";
 
 export type PotentialAnalysisItem = {
+  /** Id CỐ ĐỊNH, dùng làm criterionId khoá vào bảng ecosystem_ratings —
+   * KHÔNG đổi giá trị các id này (đổi id sẽ làm mất liên kết dữ liệu đã
+   * lưu qua Admin cho mọi hệ sinh thái/dự án con). */
+  id: string;
   criterion: string;
   status: PotentialAnalysisStatus;
+  /** CHỈ có ý nghĩa khi status === "met", 1-5. */
+  stars?: number;
+  /** CHỈ có ý nghĩa khi status === "not-met". */
+  notMetReason?: NotMetReason;
   note?: string;
 };
 
 /** Generic, honest due-diligence checklist — every row "not-assessed" until a
  * real analyst verdict is recorded for a specific ecosystem/sub-project. */
 export const DEFAULT_POTENTIAL_ANALYSIS: PotentialAnalysisItem[] = [
-  { criterion: "Có tài liệu/website chính thức công khai", status: "not-assessed" },
-  { criterion: "Đội ngũ/nguồn gốc dự án minh bạch", status: "not-assessed" },
-  { criterion: "Có cộng đồng đang hoạt động thực tế", status: "not-assessed" },
-  { criterion: "Rủi ro được nêu rõ, không chỉ nói về lợi ích", status: "not-assessed" },
-  { criterion: "Có kết quả/case study thực tế được công khai", status: "not-assessed" },
-  { criterion: "Mô hình vận hành dễ hiểu, không mập mờ", status: "not-assessed" },
+  { id: "pa_public_docs", criterion: "Có tài liệu/website chính thức công khai", status: "not-assessed" },
+  { id: "pa_team_transparent", criterion: "Đội ngũ/nguồn gốc dự án minh bạch", status: "not-assessed" },
+  { id: "pa_active_community", criterion: "Có cộng đồng đang hoạt động thực tế", status: "not-assessed" },
+  { id: "pa_risks_disclosed", criterion: "Rủi ro được nêu rõ, không chỉ nói về lợi ích", status: "not-assessed" },
+  { id: "pa_case_studies", criterion: "Có kết quả/case study thực tế được công khai", status: "not-assessed" },
+  { id: "pa_clear_model", criterion: "Mô hình vận hành dễ hiểu, không mập mờ", status: "not-assessed" },
 ];
 
 /** Sub-project (Type A only) — each gets a distinct color via `colorIndex`

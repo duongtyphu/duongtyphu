@@ -2651,3 +2651,155 @@ run build` sạch, `vitest run` 139/139.
 **Chưa tự test được:** lưu thật qua Admin UI có tài khoản đăng nhập
 (cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview
 URL `/admin/premium/dashboard`.
+
+## Dự án & Cơ hội — "Cập nhật thông tin mới" (băng bài viết) + "Đánh giá" nâng cấp (mới, theo yêu cầu riêng)
+
+Founder yêu cầu: (1) đổi "Bài viết liên quan" thành "Cập nhật thông tin
+mới" — băng bài viết ảnh+chữ chạy liên tục phải→trái, dừng khi chạm/hover,
+bấm vào đi tới trang chi tiết; áp dụng cho CẢ hệ sinh thái và từng dự án
+con, dùng CHUNG 1 form cho mọi hệ sinh thái hiện có và tương lai (6, 7,
+8...); (2) nâng cấp mục "Đánh giá" (Phân tích tiềm năng) — Admin chọn
+trạng thái Đạt (kèm sao 1-5) / Chưa đạt (kèm lý do: thiếu thông tin/đang
+thẩm định) / Chưa đánh giá cho từng tiêu chí, áp dụng cả cấp hệ sinh thái
+và dự án con. Đã hỏi 4 điểm mơ hồ trước khi build (không tự quyết định):
+
+1. **"Đường link liên kết" của bài viết** — Founder xác nhận là link CTA
+   cuối bài, trỏ thẳng link đăng ký thật của hệ sinh thái/dự án con đó
+   (không phải đích điều hướng chính — điều hướng chính là trang chi tiết
+   tự động theo slug, hiển thị đầy đủ "nội dung").
+2. **Ảnh** — dán URL ảnh đã host sẵn (cùng pattern `thumbnail_url` của
+   `case_studies`), KHÔNG xây upload ảnh thật (ngoài phạm vi). 3 ảnh
+   Founder gửi cho DigiU lưu làm file tĩnh trong `public/images/duan-cohoi/digiu/`.
+3. **Phạm vi "Đánh giá"** — Founder chọn "chỉ đổi trạng thái, giữ nguyên
+   danh sách tiêu chí" — 6 tiêu chí GIỮ NGUYÊN cố định trong code
+   (`DEFAULT_POTENTIAL_ANALYSIS`, mỗi tiêu chí có `id` ổn định), Admin
+   không tự thêm/sửa/xoá tiêu chí qua UI.
+4. **3 hệ sinh thái từng bị bỏ băng bài viết** (Blockchain & Crypto,
+   Affiliate, Sàn giao dịch — Product Owner từng yêu cầu bỏ hẳn "Bài viết
+   liên quan" ở 3 trang này) — Founder xác nhận **đảo ngược quyết định
+   cũ**, áp dụng lại băng bài viết mới cho **cả 5 hệ sinh thái**.
+
+**Kiến trúc dữ liệu — 2 bảng generic MỚI, dùng chung cho MỌI hệ sinh thái
+(không hardcode theo từng hệ sinh thái, đúng yêu cầu mở rộng 6/7/8...):**
+
+- `ecosystem_articles` (migration `supabase-phase20-ecosystem-articles-ratings.sql`)
+  — schema `id/data jsonb/status/order`, mỗi dòng có `ecosystemId`
+  (`eco.id`) + `subProjectId` (`""` = cấp hệ sinh thái, khác rỗng = CHỈ
+  của đúng 1 dự án con đó — không lẫn 2 cấp) + `slug/title/content/
+  imageUrl/linkLabel/linkUrl/seoTitle/metaDescription/displayOrder`.
+  `displayOrder` là field THƯỜNG trong `data` (không phải cột `order`
+  ngoài — cột đó không trả về qua GET route generic, xem comment trong
+  route) — Admin tự nhập số thứ tự, KHÔNG kéo-thả (tránh phức tạp
+  `reorder()` bulk-replace ảnh hưởng chéo giữa nhiều hệ sinh thái cùng
+  chung 1 bảng).
+- `ecosystem_ratings` — mỗi dòng khoá `${entityId}__${criterionId}`
+  (entityId = `eco.id` hoặc `sub.id`, criterionId = 1 trong 6 id cố định
+  của `DEFAULT_POTENTIAL_ANALYSIS`). Pre-seed sẵn 60 dòng (10 thực thể ×
+  6 tiêu chí, migration) — `update()` (PATCH) luôn tìm thấy dòng có sẵn
+  cho 10 thực thể hiện có; hệ sinh thái/dự án con MỚI thêm sau (chưa có
+  dòng seed) — `PotentialAnalysisLive.tsx`'s `saveCriterion()` tự `add()`
+  dòng mới thay vì `update()`, không cần chạy lại migration khi mở rộng.
+
+**Bug tự phát hiện và sửa TRƯỚC khi có code nào đọc (không phải bug đã
+xuất bản):** field tri-state của `ecosystem_ratings` ban đầu đặt tên
+`"status"` bên trong `data` — trùng tên với cột `status` (Draft/Published)
+ngoài `data` mà GET route generic merge ĐÈ SAU CÙNG lên `data` (đúng bug
+đã ghi trong CLAUDE.md mục "Bug đã sửa: GET không trả status"). Phát hiện
+ngay khi viết `live-ecosystem-ratings.ts`, sửa bằng `execute_sql` đổi tên
+thành `"ratingStatus"` (60 dòng) trước khi build bất kỳ component nào đọc
+field này — đã verify lại qua Supabase MCP xác nhận đổi tên đúng.
+
+**`PotentialAnalysisStatus` đổi taxonomy** (`ecosystems.ts`): từ
+`"not-assessed"|"met"|"not-met"|"partial"` (4 trạng thái, không sao)
+sang `"not-assessed"|"met"|"not-met"` (3 trạng thái — bỏ "partial", không
+dòng dữ liệu thật nào từng dùng nên xoá an toàn) + field mới
+`stars?: number` (1-5, chỉ có ý nghĩa khi `met`) + `notMetReason?:
+"thieu-thong-tin"|"dang-tham-dinh"` (chỉ có ý nghĩa khi `not-met`). Mỗi
+`PotentialAnalysisItem` giờ có `id` ổn định (criterionId). Hàm mới
+`statusBadgeLabel()` (`PotentialAnalysisTable.tsx`, export dùng chung cho
+cả bản tĩnh và bản Live) render "Đạt ★★★☆☆" / "Chưa đạt — Đang thẩm định" /
+"Chưa đánh giá".
+
+**File mới:**
+- `supabase-phase20-ecosystem-articles-ratings.sql` — 2 bảng + seed 60
+  dòng đánh giá mặc định + 3 bài viết thật DigiU (nội dung đầy đủ, không
+  rút gọn — plain text, KHÔNG markdown syntax, đúng convention dự án
+  "chưa có thư viện markdown, không thêm dependency mới"). Đã áp dụng qua
+  Supabase MCP + sửa `ratingStatus` qua `execute_sql` (xem trên).
+- `src/lib/portal/live-ecosystem-articles.ts` — `getAllLiveEcosystemArticles()`
+  (toàn bảng, dùng làm `seed`), `getLiveEcosystemArticles(ecosystemId,
+  subProjectId?)` (đã lọc Published+scope, dùng cho băng chạy thật),
+  `getLiveEcosystemArticleBySlug()` (trang chi tiết).
+- `src/lib/portal/live-ecosystem-ratings.ts` — `getAllLiveEcosystemRatings()`,
+  `getLiveEcosystemRatingRows(entityId)`.
+- `src/components/portal/opportunities/ArticleTicker.tsx` — Component
+  THUẦN HIỂN THỊ (không hook), băng chạy CSS (`.eco-article-marquee*`,
+  `globals.css`, cùng kỹ thuật `.tools-marquee` ở Landing — track render 2
+  lần, animate `-50%` loop liền mạch, dừng khi hover/focus).
+- `src/components/portal/opportunities/ArticlesAdminPanel.tsx` — panel
+  thêm/sửa/xoá bài viết, CHỈ hiện khi `editMode=true`, dùng
+  `add`/`update`/`remove` truyền vào từ ngoài (không tự gọi
+  `useCollection()` riêng).
+- `src/components/portal/opportunities/EcosystemArticlesSection.tsx` — 1
+  `useCollection("ecosystem-articles", allSeed, {enabled: editMode})` DUY
+  NHẤT chia sẻ giữa `ArticleTicker` (hiển thị) và `ArticlesAdminPanel`
+  (CRUD) — tránh 2 instance không đồng bộ (cùng lý do
+  `PremiumChromeContext`).
+- `src/components/portal/opportunities/PotentialAnalysisLive.tsx` — bản
+  Live-edit của "Đánh giá", dùng `EditableRegion` có sẵn (module
+  `opportunities`, không tạo bản sao thứ 10) bọc từng ô trạng thái tiêu
+  chí; `saveCriterion()` tự chọn `update()`/`add()` tuỳ dòng đã tồn tại
+  hay chưa (xem "mở rộng" ở trên).
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/cap-nhat/[articleSlug]/page.tsx`
+  — trang chi tiết bài viết, 1 route DÙNG CHUNG cho mọi hệ sinh thái/dự án
+  con (không nhân bản). KHÁC route cũ `/portal/duan-cohoi/bai-viet/[slug]`
+  (đọc `digitalAssetArticles`, dữ liệu khác hẳn, vẫn giữ nguyên).
+- `src/app/admin/(dashboard)/duan-cohoi/[ecosystemSlug]/[subProjectSlug]/page.tsx`
+  — Live-edit (Cách A) cấp dự án con, 1 route dynamic phục vụ cả 5 dự án
+  con hiện có (3 DigiU + 2 SolarGroup).
+- `public/images/duan-cohoi/digiu/*.png` — 3 ảnh thật Founder gửi.
+
+**File sửa:**
+- `src/data/portal/ecosystems.ts` — taxonomy `PotentialAnalysisStatus`
+  mới + `id` ổn định cho 6 tiêu chí (xem trên).
+- `src/components/portal/opportunities/PotentialAnalysisTable.tsx` — bản
+  ĐỌC TĨNH (giữ làm fallback/tham khảo, không còn dùng trực tiếp ở 2 trang
+  thật), cập nhật taxonomy, export `STATUS_STYLE`/`STATUS_ICON`/
+  `statusBadgeLabel` cho `PotentialAnalysisLive.tsx` dùng chung.
+- `src/lib/admin/supabaseCollections.ts` — thêm `ecosystem-articles`/
+  `ecosystem-ratings`.
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — xoá hẳn
+  `ArticlesSection` cũ (digitalAssetArticles-based) + biến
+  `categories`/`articles`/`potentialAnalysis`; cả 4 nhánh `structureType`
+  giờ đều gọi `PotentialAnalysisLive` + `EcosystemArticlesSection` (áp
+  dụng lại băng bài viết cho tất cả 5 hệ sinh thái, theo yêu cầu #4).
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/[subProjectSlug]/page.tsx`
+  — thay `PotentialAnalysisTable`/empty-state "Chưa có bài viết riêng" cũ
+  bằng `PotentialAnalysisLive`/`EcosystemArticlesSection`
+  (`subProjectId={sub.id}` — băng bài viết RIÊNG của dự án con, không lẫn
+  cấp hệ sinh thái cha).
+- `src/lib/admin/nav.ts` — nhóm "Dự án & Cơ hội" thêm 5 entry con "→ Dự án
+  con: ..." dưới mỗi hệ sinh thái loại `sub-projects` (DigiU/SolarGroup).
+
+**Verify:** `tsc`/`eslint`/`rm -rf .next && npm run build` sạch (route
+`/portal/duan-cohoi/[ecosystemSlug]/cap-nhat/[articleSlug]`,
+`/portal/duan-cohoi/[ecosystemSlug]/[subProjectSlug]`,
+`/admin/duan-cohoi/[ecosystemSlug]/[subProjectSlug]` xuất hiện đúng),
+`vitest run` 139/139. **Test thật qua `next dev` với anon key thật** (dán
+tạm vào biến môi trường process, xoá ngay sau khi test xong, không commit
+— route dev-preview tạm `devtest-eco` ngoài `/portal`/`/admin` để đọc
+thẳng qua `getLiveEcosystemArticles()`/`getLiveEcosystemArticleBySlug()`/
+`getLiveEcosystemRatingRows()` mà không cần đăng nhập, xoá route này ngay
+sau khi xác nhận xong): xác nhận cả 3 bài viết DigiU đọc đúng
+(title/content 6938 ký tự/imageUrl/linkLabel/linkUrl), `getLiveEcosystemArticleBySlug()`
+tìm đúng bài theo slug, cả 6 dòng `ecosystem_ratings` của `eco_digiu` đọc
+đúng field `ratingStatus` (xác nhận bug field-collision đã sửa đúng, xem
+trên). Cũng test không có Supabase (mặc định sandbox) — mọi route mới
+trả `200`, 0 lỗi log server, băng bài viết/bảng đánh giá hiện đúng trạng
+thái honest-empty ("Chưa có bài viết nào"/"Chưa đánh giá" cho toàn bộ 6
+tiêu chí).
+
+**Chưa tự test được:** thêm/sửa/xoá bài viết + sửa Đánh giá qua Admin UI
+thật có tài khoản đăng nhập (cùng giới hạn sandbox đã nêu nhiều lần) —
+Founder tự test trên Preview URL `/admin/duan-cohoi/digiu` (và 4 hệ sinh
+thái khác + 5 route dự án con).
