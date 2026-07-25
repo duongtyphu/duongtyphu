@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { FieldInput } from "@/components/admin/FieldInput";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import type { FieldConfig } from "@/lib/admin/fields";
 import { genId } from "@/lib/admin/store";
+import { toEditableHtml } from "@/lib/portal/richText";
 import type { EcosystemArticleRow, ArticleImage, ArticleLink } from "@/lib/portal/live-ecosystem-articles";
 
 /**
@@ -25,8 +27,16 @@ import type { EcosystemArticleRow, ArticleImage, ArticleLink } from "@/lib/porta
  * lượng, KHÔNG dùng `FieldInput`/`FieldConfig` chuẩn (kiểu đó chỉ hỗ trợ
  * `string[]` phẳng qua `type: "tags"`, không hỗ trợ mảng object) — tự
  * dựng 2 sub-editor lặp lại (thêm dòng/xoá dòng) ngay trong form này.
+ *
+ * `content` (mở rộng riêng — Founder gửi ảnh chụp thanh công cụ kiểu
+ * Google Docs, yêu cầu trình soạn thảo chuyên nghiệp thay vì textarea
+ * thuần) — tách khỏi `ARTICLE_FIELDS`/`FieldInput` chung (không hỗ trợ
+ * rich text), render `RichTextEditor` (TipTap) riêng — xem
+ * `RichTextEditor.tsx`. Lưu dưới dạng HTML thay vì plain text
+ * `\n\n`-separated cũ; `toEditableHtml()` (`richText.ts`) tự chuyển bài
+ * viết CŨ (plain text) sang HTML khi mở sửa, không mất nội dung cũ.
  */
-const ARTICLE_FIELDS: FieldConfig[] = [
+const ARTICLE_FIELDS_BEFORE_CONTENT: FieldConfig[] = [
   { key: "title", label: "Tiêu đề", type: "text", required: true, full: true },
   {
     key: "slug",
@@ -36,7 +46,8 @@ const ARTICLE_FIELDS: FieldConfig[] = [
     placeholder: "vd. digiu-la-gi-he-sinh-thai-cong-nghe",
   },
   { key: "displayOrder", label: "Thứ tự hiển thị (số nhỏ hơn hiện trước)", type: "number" },
-  { key: "content", label: "Nội dung đầy đủ (hiện ở trang chi tiết)", type: "textarea", full: true, required: true },
+];
+const ARTICLE_FIELDS_AFTER_CONTENT: FieldConfig[] = [
   { key: "imageUrl", label: "URL ảnh bìa (thẻ trong băng chạy + đầu trang chi tiết)", type: "text", full: true },
   { key: "seoTitle", label: "SEO Title (để trống dùng luôn Tiêu đề)", type: "text", full: true },
   { key: "metaDescription", label: "Meta Description", type: "textarea", full: true },
@@ -270,7 +281,27 @@ export function ArticlesAdminPanel({
 
       {editingId !== null ? (
         <div className="space-y-3 rounded-lg border border-blue-200 bg-white p-4">
-          {ARTICLE_FIELDS.map((f) => (
+          {ARTICLE_FIELDS_BEFORE_CONTENT.map((f) => (
+            <div key={f.key}>
+              <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+                {f.label}
+              </label>
+              <FieldInput field={f} value={form[f.key]} onChange={(value) => setForm((prev) => ({ ...prev, [f.key]: value }))} />
+            </div>
+          ))}
+
+          <div>
+            <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500">
+              Nội dung đầy đủ (hiện ở trang chi tiết)
+            </label>
+            <RichTextEditor
+              key={editingId}
+              value={toEditableHtml(typeof form.content === "string" ? form.content : "")}
+              onChange={(html) => setForm((prev) => ({ ...prev, content: html }))}
+            />
+          </div>
+
+          {ARTICLE_FIELDS_AFTER_CONTENT.map((f) => (
             <div key={f.key}>
               <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-gray-500">
                 {f.label}

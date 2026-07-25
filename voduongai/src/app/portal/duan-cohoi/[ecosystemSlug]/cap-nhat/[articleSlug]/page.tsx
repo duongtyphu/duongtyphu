@@ -5,6 +5,7 @@ import { getEcosystemBySlug } from "@/data/portal/ecosystems";
 import { getLiveEcosystemArticleBySlug } from "@/lib/portal/live-ecosystem-articles";
 import { getAllLiveSubProjects } from "@/lib/portal/live-subprojects";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
+import { looksLikeHtml, sanitizeArticleHtml } from "@/lib/portal/richText";
 
 /**
  * Trang chi tiết bài viết "Cập nhật thông tin mới" — 1 route DÙNG CHUNG
@@ -64,13 +65,20 @@ export default async function EcosystemArticleDetailPage({
               <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-blue">{eco.name}</p>
               <h1 className="mt-2 text-2xl font-extrabold text-gray-900 sm:text-3xl">{article.title}</h1>
 
-              <div className="mt-6 space-y-4 text-sm leading-relaxed text-gray-700">
-                {article.content.split("\n\n").map((para, i) => (
-                  <p key={i} className="whitespace-pre-line">
-                    {para}
-                  </p>
-                ))}
-              </div>
+              {looksLikeHtml(article.content) ? (
+                <div
+                  className="prose prose-sm mt-6 max-w-none text-gray-700 prose-headings:text-gray-900 prose-a:text-brand-blue prose-img:rounded-xl"
+                  dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(article.content) }}
+                />
+              ) : (
+                <div className="mt-6 space-y-4 text-sm leading-relaxed text-gray-700">
+                  {article.content.split("\n\n").map((para, i) => (
+                    <p key={i} className="whitespace-pre-line">
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              )}
 
               {article.images.length > 0 && (
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">

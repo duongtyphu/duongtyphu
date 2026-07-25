@@ -3372,6 +3372,111 @@ trường thật của Founder. Test lại không có Supabase (mặc định sa
 thái/danh sách ghi chú/khối 3 cột Phù hợp-Chưa nên tham gia-Kỳ vọng thực
 tế, và ô "Ghi chú" (textarea nhiều dòng) không cắt sai câu có dấu phẩy.
 
+## Dự án & Cơ hội — Trình soạn thảo chuyên nghiệp cho "Nội dung đầy đủ" (RichTextEditor)
+
+Founder gửi ảnh chụp thanh công cụ kiểu Google Docs, yêu cầu mục "NỘI
+DUNG ĐẦY ĐỦ (HIỂN THỊ Ở TRANG CHI TIẾT)" ở "QUẢN LÝ BÀI VIẾT (LIVE-EDIT)"
+phải là trình soạn thảo chuyên nghiệp (đậm/nghiêng/cỡ chữ/canh giữa/chèn
+ảnh...) thay vì textarea thuần.
+
+**Dependency mới (lần đầu trong dự án — trước đó CLAUDE.md từng ghi
+"chưa có thư viện markdown nào, không thêm dependency mới" cho việc HIỂN
+THỊ nội dung admin-viết; yêu cầu lần này đổi bản chất bài toán — cần
+soạn thảo, không chỉ hiển thị — nên hợp lý để thêm dependency thật sự
+cần thiết):**
+- `@tiptap/react`/`@tiptap/pm`/`@tiptap/starter-kit` (framework rich-text
+  chuẩn cho React, hỗ trợ chính thức React 19 — đã kiểm tra peer deps
+  trước khi cài) + `@tiptap/extension-image`/`extension-text-align`/
+  `extension-text-style`/`extension-color`/`extension-highlight`.
+  `starter-kit` v3 đã TỰ bundle sẵn bold/italic/strike/underline/link/
+  heading/bulletList/orderedList/blockquote/horizontalRule/undo-redo —
+  không cần cài thêm gói riêng cho các field này.
+- `isomorphic-dompurify` — khử độc HTML trước khi render (`dangerouslySetInnerHTML`)
+  trên Portal, dù nội dung do Admin tự viết (không phải input công khai)
+  vẫn chặn được `<script>`/thẻ lạ lỡ dán vào khi copy-paste — đã test
+  thật (chèn `<script>alert(1)</script>` vào 1 dòng test, xác nhận bị
+  lọc, giữ nguyên `<strong>`/`<em>`/`<h2>`/`<ul>` hợp lệ).
+- `@tailwindcss/typography` (`@plugin "@tailwindcss/typography";` trong
+  `globals.css`, cú pháp Tailwind v4) — cấp class `prose` để hiển thị
+  HTML soạn ra đúng kiểu chữ mà không phải tự viết CSS cho từng thẻ
+  (h2/ul/blockquote/img...).
+- **Cỡ chữ KHÔNG cài package riêng** — gói chính thức
+  `@tiptap/extension-font-size` mới ở tag "next" (`3.0.0-next.3`, chưa
+  ổn định cho production) — tự viết 1 Extension nhỏ (~25 dòng, mở rộng
+  mark `textStyle` có sẵn, đúng pattern tài liệu TipTap khuyến nghị)
+  ngay trong `RichTextEditor.tsx`, không thêm dependency.
+
+**Không xây upload file** — chèn ảnh/link đều dán URL đã host sẵn qua
+`window.prompt()`, đúng convention xuyên suốt dự án (`imageUrl`/
+`ArticleImage.url`/`MarketingLink.url`... đều dán URL, không có hạ tầng
+upload nào từng tồn tại).
+
+**Lưu dưới dạng HTML thay vì plain text `\n\n`-separated cũ** — đổi bản
+chất field `content`. **Lớp tương thích ngược** (`src/lib/portal/richText.ts`,
+mới): `looksLikeHtml()` nhận diện bài CŨ (plain text, không thẻ mở đầu
+hợp lệ như `<p`/`<h2`...) khác bài MỚI (HTML từ `RichTextEditor`);
+`plainTextToHtml()`/`toEditableHtml()` tự chuyển bài cũ sang HTML đúng
+lúc Admin MỞ SỬA (escape ký tự đặc biệt trước khi bọc `<p>`, không mất/
+sai nội dung cũ) — Admin không cần tự làm gì, bài cũ tự "nâng cấp"
+đúng lúc chỉnh sửa lần đầu qua trình soạn thảo mới.
+
+**File mới:**
+- `src/components/admin/RichTextEditor.tsx` — component dùng chung
+  (`src/components/admin/`, không riêng module Dự án & Cơ hội — tái
+  dùng được cho field rich-text khác sau này), toolbar đủ:
+  Hoàn tác/Làm lại, dropdown Tiêu đề (Bình thường/H2/H3), dropdown Cỡ
+  chữ, Đậm/Nghiêng/Gạch chân/Gạch ngang, Màu chữ, Đánh dấu (highlight),
+  4 kiểu canh (trái/giữa/phải/đều), Danh sách gạch đầu dòng/đánh số,
+  Trích dẫn, Đường kẻ ngang, Chèn liên kết, Chèn ảnh, Xoá định dạng.
+  `immediatelyRender: false` (bắt buộc với Next.js App Router, tránh lỗi
+  hydration mismatch đã biết của TipTap).
+- `src/lib/portal/richText.ts` — `looksLikeHtml()`/`plainTextToHtml()`/
+  `toEditableHtml()` (dùng ở Admin khi mở sửa)/`sanitizeArticleHtml()`
+  (dùng ở Portal khi render).
+
+**File sửa:**
+- `src/components/portal/opportunities/ArticlesAdminPanel.tsx` — tách
+  `content` khỏi `ARTICLE_FIELDS` (đổi tên `ARTICLE_FIELDS_BEFORE_CONTENT`/
+  `ARTICLE_FIELDS_AFTER_CONTENT`, render `RichTextEditor` xen giữa —
+  cùng vị trí cũ trong form), `key={editingId}` đảm bảo mount mới đúng
+  bài đang sửa mỗi lần (tránh nội dung bài trước sót lại khi chuyển sửa
+  bài khác).
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/cap-nhat/[articleSlug]/page.tsx`
+  — render có điều kiện: `looksLikeHtml(article.content)` → HTML đã khử
+  độc qua `prose` class; không → giữ nguyên logic `.split("\n\n")` cũ
+  (bài cũ chưa từng mở qua trình soạn thảo mới vẫn hiển thị đúng y hệt
+  trước đây, không cần chạy migration nào).
+- `src/app/globals.css` — thêm `@plugin "@tailwindcss/typography";`.
+
+**Verify:** `tsc`/`eslint`/`npm run build` sạch (route
+`/portal/duan-cohoi/[ecosystemSlug]/cap-nhat/[articleSlug]` build đúng),
+`npx vitest run` 139/139 pass. **Test trình soạn thảo thật qua trình
+duyệt** (Playwright, route dev-preview tạm chỉ render `RichTextEditor`
+độc lập — không qua Admin auth, xoá ngay sau khi xong) — xác nhận: gõ
+chữ → bôi đen → bấm Đậm → ra đúng `<strong>`; bấm Canh giữa → ra đúng
+`style="text-align: center"`; bấm Chèn ảnh → `window.prompt()` hiện
+đúng, dán URL → ra đúng `<img>`; đổi dropdown Tiêu đề sang H2 → ra đúng
+`<h2>`; nút Đậm/Canh giữa hiện đúng trạng thái "đang bật" (nền xanh) khi
+con trỏ nằm trong đoạn đã áp dụng. Chụp ảnh xác nhận giao diện toolbar
+khớp đúng ảnh Founder gửi (Hoàn tác/Làm lại/2 dropdown/Đậm-Nghiêng-Gạch
+chân-Gạch ngang/Màu/Highlight/4 canh/2 danh sách/Trích dẫn/Kẻ ngang/
+Link/Ảnh/Xoá định dạng).
+
+**Test tương thích ngược qua dữ liệu thật** (route dev-preview tạm gọi
+thẳng `getLiveEcosystemArticleBySlug()`, xoá ngay sau khi xong): bài
+viết DigiU seed thật (`digiu-la-gi-he-sinh-thai-cong-nghe`, plain text
+từ trước) → `looksLikeHtml()` trả `false` đúng như kỳ vọng, vẫn dùng
+render cũ. Chèn 1 dòng test HTML thật (kèm `<script>alert(1)</script>`
+cố ý) → `looksLikeHtml()` trả `true`, `sanitizeArticleHtml()` xác nhận
+lọc sạch `<script>`, giữ nguyên định dạng hợp lệ — đã xoá dòng test này
+ngay sau khi xác nhận.
+
+**Chưa tự test được:** soạn 1 bài viết thật hoàn chỉnh qua Admin UI có
+tài khoản đăng nhập, bấm Lưu, xác nhận hiển thị đúng trên Portal thật
+(cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự test tại
+`/admin/duan-cohoi/digiu`, thử đủ các nút trong thanh công cụ trên 1 bài
+viết thật trước khi dùng rộng rãi.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng
