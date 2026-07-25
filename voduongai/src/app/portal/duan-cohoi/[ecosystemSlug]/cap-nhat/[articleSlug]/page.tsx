@@ -54,7 +54,7 @@ export default async function EcosystemArticleDetailPage({
         <div className="rounded-3xl p-6 md:p-8 space-y-6">
           <PortalBackLink href={backHref} label={backLabel} tone="light" />
 
-          <article className="card-shine overflow-hidden rounded-2xl border border-gray-200 bg-white">
+          <article className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
             {article.imageUrl && (
               <div className="relative h-56 w-full sm:h-72">
                 <Image src={article.imageUrl} alt={article.title} fill sizes="100vw" className="object-cover" priority />

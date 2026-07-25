@@ -2916,6 +2916,76 @@ hình Supabase) — cả 7 route liên quan (`duan-cohoi`, `duan-cohoi/digiu`,
 nhập (cùng giới hạn sandbox) — Founder tự test tại
 `/admin/duan-cohoi/digiu` → khối "Quản lý dự án con".
 
+## Bug đã sửa — hover-lift còn sót ở trang chi tiết bài viết + Admin dự án con chưa sửa được trực tiếp
+
+Founder test lại và báo 2 vấn đề, cả 2 đều là bug thật (không phải hiểu
+sai phạm vi):
+
+**1. Hover-lift còn sót ở `/portal/duan-cohoi/[ecosystemSlug]/cap-nhat/[articleSlug]`.**
+Đợt audit trước chỉ grep theo `hover:-translate-y` (Tailwind utility) nên
+bỏ sót `card-shine` — 1 class CSS RIÊNG (`globals.css` dòng ~157, dùng ở
+hàng chục trang khác trong Portal như login/case-studies/prompts...) có
+`transform: translateY(-5px) scale(1.015)` trên `:hover`, không hiện ra
+qua grep `hover:` vì không phải Tailwind utility literal trong JSX. Trang
+chi tiết bài viết bọc `<article className="card-shine ...">` — đây chính
+là hiệu ứng nhô lên Founder vẫn thấy. **Không sửa CSS `.card-shine` dùng
+chung** (ảnh hưởng hàng chục trang khác, ngoài phạm vi) — chỉ bỏ đúng
+class này khỏi 1 dòng `<article>` ở trang chi tiết bài viết. Route này
+DÙNG CHUNG cho cả 5 hệ sinh thái (`cap-nhat/[articleSlug]/page.tsx`,
+không nhân bản theo từng hệ sinh thái) nên sửa 1 lần áp dụng cho DigiU,
+SolarGroup, Blockchain & Crypto, Affiliate, Sàn giao dịch cùng lúc.
+
+**Bài học:** khi audit "còn sót hiệu ứng nhô lên ở đâu", không được chỉ
+grep theo `hover:-translate-y` (Tailwind) — phải tính cả các class CSS
+riêng định nghĩa `transform` trên `:hover` trong `globals.css`
+(`card-shine`, `card-tilt`...).
+
+**2. Admin dự án con (AlphaMind/WebWisePay/Sovelmash/AeroNova) chưa sửa
+được tên/mô tả/link đăng ký TRỰC TIẾP trên trang riêng của nó.** Trước đó
+`/admin/duan-cohoi/[ecosystemSlug]/[subProjectSlug]` (Live-edit dự án con)
+chỉ render lại `SubProjectPage` — phần tên/mô tả/`fullIntro`/link đăng ký
+hoàn toàn TĨNH, không hề bọc `EditableRegion`. Cách DUY NHẤT sửa được các
+field này trước đó là quay lại trang hệ sinh thái CHA
+(`/admin/duan-cohoi/digiu`), cuộn tới panel danh sách "Quản lý dự án con"
+— không nhất quán với mọi module Live-edit khác (Cách A: sửa TRỰC TIẾP
+đúng tại vị trí hiển thị, không cần rời trang).
+
+**Đã sửa:** `SubProjectChromeContext.tsx` (mới) — cùng pattern
+`EcosystemChromeContext`/`PremiumChromeContext`: 1 `useCollection(
+"ecosystem-subprojects", [seedSub], {enabled: editMode})` DUY NHẤT, lọc
+`.find(s => s.id === seedSub.id)` (bảng có nhiều dòng, không phải
+singleton). `SubProjectOverview.tsx` (mới, thay khối tiêu đề tĩnh) —
+`EditableRegion` cho `name`/`shortDescription`/`fullIntro` (field
+`fullIntro` hiện cả khi rỗng nếu đang ở edit mode, kèm placeholder "Chưa
+có giới thiệu chi tiết — bấm để thêm" để Admin có chỗ bấm ADD, không chỉ
+sửa khi đã có sẵn nội dung — Portal thật vẫn ẩn hẳn khi rỗng). `SubProjectLinksBox.tsx`
+(mới, thay `<MarketingLinkBox links={sub.links}/>` tĩnh) — byte-for-byte
+cùng logic `EcosystemLinksBox.tsx` (đọc/ghi qua Context, `MarketingLinksFieldEditor`
+khi edit mode), chỉ khác nguồn Context. `[subProjectSlug]/page.tsx` bọc
+`<SubProjectChromeProvider seedSub={sub}>` quanh cả 2 component mới +
+`PotentialAnalysisLive`/`EcosystemArticlesSection` (giữ nguyên).
+
+**Không đụng** `SubProjectsAdminPanel.tsx` (panel danh sách ở trang hệ
+sinh thái cha, dùng cho Add/Xoá dự án con — vẫn cần, vì
+`SubProjectChromeContext` mới chỉ sửa 1 dòng đã biết `id`, không tạo mới
+được) — giờ Admin có CẢ 2 cách: sửa nhanh trực tiếp trên trang riêng của
+dự án con (mới, ưu tiên dùng), hoặc quản lý danh sách/thêm/xoá ở trang hệ
+sinh thái cha (giữ nguyên).
+
+**Verify:** `tsc`/`eslint` sạch. Test thật qua `next dev` (không cấu hình
+Supabase) — 4 trang dự án con
+(`duan-cohoi/digiu/alphamind`, `duan-cohoi/digiu/webwisepay`,
+`duan-cohoi/solargroup/sovelmash`, `duan-cohoi/solargroup/aeronova`) +
+1 trang bài viết (`duan-cohoi/digiu/cap-nhat/digiu-la-gi-he-sinh-thai-cong-nghe`)
+trả `200`, `/admin/duan-cohoi/digiu/alphamind` trả `307` redirect login
+đúng như kỳ vọng (chưa đăng nhập), 0 lỗi log server.
+
+**Chưa tự test được:** sửa tên/mô tả/giới thiệu/link qua Admin UI thật có
+tài khoản đăng nhập (cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự
+test tại `/admin/duan-cohoi/digiu/alphamind` (và 3 dự án con khác), xác
+nhận bút sửa (✎) hiện ngay trên tên/mô tả/link, không cần quay lại trang
+DigiU cha nữa.
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng

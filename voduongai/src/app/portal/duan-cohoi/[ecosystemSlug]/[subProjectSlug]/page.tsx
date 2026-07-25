@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getEcosystemBySlug } from "@/data/portal/ecosystems";
-import { MarketingLinkBox } from "@/components/portal/opportunities/MarketingLinkBox";
+import { SubProjectChromeProvider } from "@/components/portal/opportunities/SubProjectChromeContext";
+import { SubProjectOverview } from "@/components/portal/opportunities/SubProjectOverview";
+import { SubProjectLinksBox } from "@/components/portal/opportunities/SubProjectLinksBox";
 import { getSubProjectSurface } from "@/components/portal/opportunities/subProjectPalette";
 import { EcosystemArticlesSection } from "@/components/portal/opportunities/EcosystemArticlesSection";
 import { PotentialAnalysisLive } from "@/components/portal/opportunities/PotentialAnalysisLive";
@@ -101,27 +103,20 @@ export default async function SubProjectPage({
         ]}
       />
 
-      <div className={`overflow-hidden rounded-2xl border p-6 shadow-token-sm sm:p-8 ${surface.card}`}>
-        <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl text-xl shadow-sm ${surface.chip}`}>
-          🧩
-        </div>
-        <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">{sub.name}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">{sub.shortDescription}</p>
-        {sub.fullIntro && (
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-600">{sub.fullIntro}</p>
-        )}
-      </div>
+      <SubProjectChromeProvider seedSub={sub}>
+        <SubProjectOverview surface={surface} />
 
-      <MarketingLinkBox links={sub.links} />
+        <SubProjectLinksBox />
 
-      <PotentialAnalysisLive entityId={sub.id} seedRows={ratingSeed} />
+        <PotentialAnalysisLive entityId={sub.id} seedRows={ratingSeed} />
 
-      <EcosystemArticlesSection
-        allSeed={allArticlesSeed}
-        ecosystemId={eco.id}
-        ecosystemSlug={eco.slug}
-        subProjectId={sub.id}
-      />
+        <EcosystemArticlesSection
+          allSeed={allArticlesSeed}
+          ecosystemId={eco.id}
+          ecosystemSlug={eco.slug}
+          subProjectId={sub.id}
+        />
+      </SubProjectChromeProvider>
       </div>
       </div>
     </div>
