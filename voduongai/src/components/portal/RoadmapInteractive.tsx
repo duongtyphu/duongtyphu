@@ -67,7 +67,7 @@ export function RoadmapInteractive() {
         <div className="grid gap-4 sm:grid-cols-2">
           <button
             onClick={() => setLevel("new")}
-            className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-left transition hover:shadow-lg hover:shadow-black/30"
+            className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-left transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
           >
             <p className="text-base font-bold text-gray-900">Tôi là người mới</p>
             <p className="mt-2 text-sm text-gray-600">
@@ -76,7 +76,7 @@ export function RoadmapInteractive() {
           </button>
           <button
             onClick={() => setLevel("experienced")}
-            className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-left transition hover:shadow-lg hover:shadow-black/30"
+            className="card-shine rounded-2xl border border-gray-200 bg-white/[0.04] p-6 text-left transition hover:-translate-y-1 hover:shadow-lg hover:shadow-black/30"
           >
             <p className="text-base font-bold text-gray-900">Tôi đã có kinh nghiệm</p>
             <p className="mt-2 text-sm text-gray-600">

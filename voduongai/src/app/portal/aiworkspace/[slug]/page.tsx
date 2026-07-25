@@ -65,7 +65,7 @@ function ArticleCard({ article }: { article: BlogPost }) {
   return (
     <Link
       href={`/portal/aiworkspace/bai-viet/${article.slug}`}
-      className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition group"
+      className="block bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group"
     >
       <span className="inline-block text-xs font-semibold text-blue-600 bg-blue-50 rounded-full px-2.5 py-0.5 mb-2">
         {article.category}
@@ -394,7 +394,7 @@ function NeedCategoryPage({
               <Link
                 key={tool.slug}
                 href={`/portal/aiworkspace/${tool.slug}`}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition group block"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group block"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>
@@ -663,7 +663,7 @@ function ProfessionDetailPage({ profession, allTools }: { profession: AiProfessi
               <Link
                 key={tool.slug}
                 href={`/portal/aiworkspace/${tool.slug}`}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition group block"
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:-translate-y-1 hover:shadow-md transition group block"
               >
                 <div className="flex items-start justify-between gap-2 mb-3">
                   <div>

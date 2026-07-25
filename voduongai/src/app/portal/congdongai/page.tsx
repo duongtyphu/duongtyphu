@@ -270,7 +270,7 @@ export default async function CommunityPage() {
           <SectionEyebrow icon={Sparkles} label="Nơi học cùng nhau" title="Learning Spaces" />
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {LEARNING_SPACES.map((space) => (
-              <div key={space.key} className={`rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_24px_-16px_rgba(15,23,42,0.16)] backdrop-blur-sm transition duration-200 ${space.tint}`}>
+              <div key={space.key} className={`rounded-2xl border p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_10px_24px_-16px_rgba(15,23,42,0.16)] backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 ${space.tint}`}>
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${space.chip}`}>
                   <space.icon className="h-5 w-5" />
                 </div>

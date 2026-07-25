@@ -25,6 +25,7 @@ const SUBPROJECT_FIELDS: FieldConfig[] = [
     placeholder: "vd. alphamind",
   },
   { key: "shortDescription", label: "Mô tả ngắn", type: "textarea", full: true, required: true },
+  { key: "fullIntro", label: "Giới thiệu chi tiết (hiện trên trang chi tiết dự án con, không bắt buộc)", type: "textarea", full: true },
   { key: "displayOrder", label: "Thứ tự hiển thị (số nhỏ hơn hiện trước)", type: "number" },
   { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
 ];
@@ -35,6 +36,7 @@ function emptySubProject(ecosystemId: string): Record<string, unknown> {
     name: "",
     slug: "",
     shortDescription: "",
+    fullIntro: "",
     displayOrder: 0,
     status: "Draft",
     links: [] as MarketingLink[],

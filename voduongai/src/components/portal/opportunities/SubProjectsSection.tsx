@@ -50,7 +50,7 @@ export function SubProjectsSection({
               <Link
                 key={p.id}
                 href={`/portal/duan-cohoi/${ecosystemSlug}/${p.slug}`}
-                className={`block overflow-hidden rounded-2xl border p-5 shadow-token-sm transition hover:shadow-token-lg ${surface.card}`}
+                className={`block overflow-hidden rounded-2xl border p-5 shadow-token-sm transition hover:-translate-y-1 hover:shadow-token-lg ${surface.card}`}
               >
                 <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl text-lg shadow-sm ${surface.chip}`}>
                   🧩

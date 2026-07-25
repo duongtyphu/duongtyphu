@@ -246,7 +246,7 @@ export default async function OpportunitiesHubPage() {
           {COMPANION_QUOTES.map((item, i) => (
             <figure
               key={i}
-              className={`relative overflow-hidden rounded-2xl border p-6 shadow-token-sm transition duration-200 hover:shadow-token-lg ${item.card} ${
+              className={`relative overflow-hidden rounded-2xl border p-6 shadow-token-sm transition duration-200 hover:-translate-y-1 hover:shadow-token-lg ${item.card} ${
                 i === 0 ? "sm:col-span-2" : ""
               }`}
             >

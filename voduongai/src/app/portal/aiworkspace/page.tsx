@@ -65,7 +65,7 @@ function ToolCard({ tool }: { tool: AiTool }) {
   const router = useRouter();
   const catColor = TOOL_CAT_COLOR[tool.category] ?? "bg-gray-100 text-gray-700";
   return (
-    <div className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md">
+    <div className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
       <Link href={`/portal/aiworkspace/${tool.slug}`} className="flex flex-col gap-3">
         <div className="flex items-start justify-between gap-2">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 text-lg font-bold text-blue-700">
@@ -99,7 +99,7 @@ function ArticleCard({ article }: { article: BlogPost }) {
   return (
     <Link
       href={`/portal/aiworkspace/bai-viet/${article.slug}`}
-      className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:shadow-md"
+      className="group flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
       <div className="h-32 w-full rounded-xl bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
         <BookOpen className="h-8 w-8 text-indigo-300" />

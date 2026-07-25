@@ -107,6 +107,9 @@ export default async function SubProjectPage({
         </div>
         <h1 className="text-2xl font-extrabold text-gray-900 sm:text-3xl">{sub.name}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-gray-600">{sub.shortDescription}</p>
+        {sub.fullIntro && (
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-gray-600">{sub.fullIntro}</p>
+        )}
       </div>
 
       <MarketingLinkBox links={sub.links} />

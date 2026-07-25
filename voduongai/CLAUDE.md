@@ -2859,6 +2859,63 @@ vẫn `200`, 0 lỗi log server (mảng rỗng không crash render gallery/link)
 nhập (cùng giới hạn sandbox) — Founder tự test trên Preview URL
 `/admin/duan-cohoi/digiu`.
 
+## Đính chính — phạm vi bỏ hover-lift thực ra hẹp hơn ban đầu
+
+Sau khi báo cáo xong việc "bỏ hover-lift" ở mục trên, Founder xác nhận
+phạm vi thật hẹp hơn nhiều so với cách hiểu ban đầu ("mọi thẻ bài
+viết/nội dung trong portal"):
+
+- **Khôi phục lại hover-lift ở TOÀN BỘ 10 file site-wide** đã lỡ bỏ
+  (`congdongai/page.tsx`, `TodayGoals.tsx`, `SubProjectsSection.tsx`,
+  `duan-cohoi/page.tsx`, `RoadmapInteractive.tsx`, `hanhtrinhcuatoi/page.tsx`,
+  `aiworkspace/page.tsx`, `aiworkspace/[slug]/page.tsx`, `ProjectCards.tsx`,
+  `AiSpaceSections.tsx`) — 24 vị trí, đưa lại đúng
+  `hover:-translate-y-1`/`hover:-translate-y-0.5` như trước đợt sửa trước.
+  Các thẻ này (thẻ hệ sinh thái, thẻ công cụ AI, thẻ mục tiêu, nút lộ
+  trình, thẻ "cửa" Hành trình...) **không phải "bài viết"** theo đúng ý
+  Founder — hover-lift ở đây vẫn được giữ.
+- **Hiệu ứng băng chạy tự động phải→trái** (`.eco-article-marquee-track`,
+  CSS animation liên tục của `ArticleTicker`) — **giữ nguyên, không đụng**
+  (đã có ý định bỏ ở 1 phương án nhưng Founder xác nhận không cần).
+- **Chỉ đúng 1 chỗ KHÔNG dùng hover-lift:** thẻ bài viết bên trong băng
+  "Cập nhật thông tin mới" (`ArticleTicker.tsx`) — khi khách bấm vào 1 thẻ
+  để đọc từng bài, thẻ đó không "nhô lên" khi hover. Đây là component DÙNG
+  CHUNG cho mọi hệ sinh thái + dự án con (không hardcode riêng từng nơi),
+  nên áp dụng tự động cho DigiU/SolarGroup/... và mọi hệ sinh thái/dự án
+  con tương lai mà không cần sửa thêm gì.
+
+**Bài học:** yêu cầu gốc "bỏ hiệu ứng nhô lên cho tất cả các bài viết
+trong portal" đã bị hiểu quá rộng thành "mọi thẻ nội dung" — đúng ra chỉ
+áp dụng cho đúng khái niệm "bài viết" (khối "Cập nhật thông tin mới"),
+không phải mọi loại thẻ khác trong Portal.
+
+## Dự án con — thêm field "Giới thiệu chi tiết" (fullIntro) cho ngang bằng dự án chính
+
+Founder xác nhận Admin dự án con (AlphaMind, WebWisePay...) cần sửa được
+thông tin tương tự dự án chính (DigiU, SolarGroup...) — trước đó
+`ecosystem_subprojects` chỉ có `name`/`shortDescription`/`links`, thiếu
+đúng 1 field so với hệ sinh thái chính: đoạn giới thiệu dài
+(`fullIntro`, đã có ở `ecosystem_chrome` từ trước — xem mục "Nhóm 3, Phần D").
+
+Đã thêm `fullIntro: string` vào `SubProjectRow`
+(`live-subprojects.ts`, đọc từ `data.fullIntro`, mặc định chuỗi rỗng —
+KHÔNG bắt buộc, khác `fullIntro` của hệ sinh thái chính vốn `required:
+true`, vì 5 dự án con hiện có chưa có nội dung này) +
+`SUBPROJECT_FIELDS` (`SubProjectsAdminPanel.tsx`, textarea) + hiển thị
+trên trang chi tiết dự án con
+(`[subProjectSlug]/page.tsx`, ngay dưới `shortDescription`, CHỈ hiện khi
+có nội dung — tránh đoạn trống cho 5 dự án con hiện có chưa điền).
+`links` (đăng ký/liên kết) và `name` đã có sẵn từ trước, không cần thêm.
+
+**Verify:** `tsc`/`eslint` sạch, `rm -rf .next && npm run dev` (không cấu
+hình Supabase) — cả 7 route liên quan (`duan-cohoi`, `duan-cohoi/digiu`,
+`duan-cohoi/digiu/alphamind`, `duan-cohoi/solargroup/sovelmash`,
+`aiworkspace`, `hanhtrinhcuatoi`, `congdongai`) trả `200`, 0 lỗi log.
+
+**Chưa tự test được:** sửa field mới qua Admin UI thật có tài khoản đăng
+nhập (cùng giới hạn sandbox) — Founder tự test tại
+`/admin/duan-cohoi/digiu` → khối "Quản lý dự án con".
+
 ## Dự án & Cơ hội — Bỏ hiệu ứng nhô lên toàn portal + sửa 3 gap Admin (dự án con, giới thiệu, Đánh giá không hiện Portal)
 
 Founder yêu cầu 4 việc cùng lúc, đang test tại "Hệ sinh thái DigiU" nhưng

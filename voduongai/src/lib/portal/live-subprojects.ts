@@ -20,6 +20,10 @@ export type SubProjectRow = {
   slug: string;
   name: string;
   shortDescription: string;
+  /** Giới thiệu chi tiết (tương tự `fullIntro` của hệ sinh thái chính, xem
+   * `live-ecosystem-chrome.ts`) — chỉ hiện trên trang chi tiết dự án con
+   * khi có nội dung, không bắt buộc. */
+  fullIntro: string;
   links: MarketingLink[];
   displayOrder: number;
 };
@@ -47,6 +51,7 @@ function toRow(row: { id: string; data: unknown; status: string }): SubProjectRo
     slug: typeof d.slug === "string" ? d.slug : "",
     name: typeof d.name === "string" ? d.name : "",
     shortDescription: typeof d.shortDescription === "string" ? d.shortDescription : "",
+    fullIntro: typeof d.fullIntro === "string" ? d.fullIntro : "",
     links: toLinks(d.links),
     displayOrder: typeof d.displayOrder === "number" ? d.displayOrder : 0,
   };

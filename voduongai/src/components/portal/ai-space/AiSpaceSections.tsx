@@ -134,7 +134,7 @@ export function WorkNeedSection({
             key={need.id}
             type="button"
             onClick={() => practice({ source: "work-need", itemId: need.id, itemType: "work_need", title: need.title })}
-            className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:border-blue-200 hover:shadow-md"
+            className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
           >
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-2xl">{need.icon}</div>
             <div>
@@ -174,7 +174,7 @@ export function RecommendedWorkspaceSection() {
                 missionId: RECOMMENDED_WORKSPACE_TO_MISSION[ws.id],
               })
             }
-            className="group flex cursor-pointer flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:border-blue-200 hover:shadow-md"
+            className="group flex cursor-pointer flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
           >
             <p className="font-semibold text-gray-900">{ws.title}</p>
             <p className="text-xs leading-relaxed text-gray-500">{ws.goal}</p>
@@ -207,7 +207,7 @@ export function AiWorkflowSection() {
             key={flow.id}
             type="button"
             onClick={() => practice({ source: "workflow", itemId: flow.id, itemType: "workflow", title: flow.title })}
-            className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:border-blue-200 hover:shadow-md"
+            className="group flex cursor-pointer flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
           >
             <p className="font-semibold text-gray-900">{flow.title}</p>
             <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500">
@@ -251,7 +251,7 @@ export function PromptLibrarySection() {
       <SectionHeader label="Thư viện Prompt" title="Prompt Library" href="/portal/prompts" hrefLabel="Xem tất cả Prompt" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         {publishedPrompts.slice(0, 9).map((prompt) => (
-          <div key={prompt.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:border-blue-200 hover:shadow-md">
+          <div key={prompt.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
               {prompt.category}
             </span>
@@ -323,7 +323,7 @@ export function ResourceSection() {
       <SectionHeader label="Tài nguyên" title="Tài nguyên thực hành" />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
         {AI_RESOURCES.map((resource) => (
-          <div key={resource.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:border-blue-200 hover:shadow-md">
+          <div key={resource.id} className="flex flex-col gap-2 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md">
             <span className="w-fit rounded-full bg-orange-50 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
               {resource.type}
             </span>
