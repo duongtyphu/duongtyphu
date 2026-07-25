@@ -70,16 +70,39 @@ export default async function EcosystemArticleDetailPage({
                 ))}
               </div>
 
-              {article.linkUrl && (
-                <div className="mt-8">
-                  <a
-                    href={article.linkUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-brand-blue px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
-                  >
-                    {article.linkLabel || "Xem thêm"}
-                  </a>
+              {article.images.length > 0 && (
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  {article.images.map((img, i) => (
+                    <figure key={i} className="overflow-hidden rounded-xl border border-gray-100">
+                      <div className="relative h-48 w-full bg-gray-100">
+                        <Image src={img.url} alt={img.caption || article.title} fill sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
+                      </div>
+                      {img.caption && (
+                        <figcaption className="bg-gray-50 px-3 py-2 text-xs text-gray-500">{img.caption}</figcaption>
+                      )}
+                    </figure>
+                  ))}
+                </div>
+              )}
+
+              {article.links.length > 0 && (
+                <div className="mt-8 flex flex-wrap gap-3">
+                  {article.links.map((link, i) => (
+                    <a
+                      key={i}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full bg-brand-blue px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
+                    >
+                      {link.label || "Xem thêm"}
+                      {link.affiliate && (
+                        <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                          Affiliate
+                        </span>
+                      )}
+                    </a>
+                  ))}
                 </div>
               )}
             </div>

@@ -2803,3 +2803,58 @@ tiêu chí).
 thật có tài khoản đăng nhập (cùng giới hạn sandbox đã nêu nhiều lần) —
 Founder tự test trên Preview URL `/admin/duan-cohoi/digiu` (và 4 hệ sinh
 thái khác + 5 route dự án con).
+
+## Dự án & Cơ hội — Bài viết: ảnh phụ + nhiều link (kể cả affiliate) (mở rộng riêng)
+
+Founder yêu cầu riêng ngay sau mục trên: "chèn hình ảnh, link bên ngoài
+vào... để admin linh động và tuỳ biến bài viết hơn" + "có thể thay đổi
+được tất cả các link liên kết và link affiliate". Đã hỏi trước khi build
+(dự án chưa có trình soạn thảo dạng khối/markdown nào) — Founder chọn
+phương án đơn giản: **gắn theo bài** (danh sách ảnh phụ + danh sách link
+không giới hạn số lượng, hiển thị ở khu vực riêng trong trang chi tiết),
+**không** chèn tại đúng vị trí con trỏ trong nội dung (sẽ cần xây block
+editor mới, việc lớn hơn hẳn, ngoài phạm vi).
+
+**Đổi shape `data` của `ecosystem_articles`** (không đổi schema bảng,
+vẫn `id/data jsonb/status/order`):
+- `images: {url, caption}[]` — MỚI, ảnh phụ hiện dưới nội dung bài (khác
+  `imageUrl` — ảnh bìa/thumbnail cho thẻ trong băng chạy, giữ nguyên tách
+  biệt, không gộp 2 khái niệm).
+- `links: {label, url, affiliate}[]` — THAY THẾ hẳn 2 field đơn
+  `linkLabel`/`linkUrl` cũ (không giới hạn số lượng/bài, hiện thành dãy
+  nút ở cuối bài). Mỗi link tự đánh dấu `affiliate` — hiện nhãn
+  "Affiliate" ngoài Portal khi bật, đúng tinh thần minh bạch NO-FAKE-DATA
+  đã áp dụng xuyên suốt dự án.
+
+**Migrate 3 bài viết seed DigiU** (`supabase-phase21-ecosystem-articles-images-links.sql`,
+đã áp dụng qua `execute_sql`): mỗi bài đang có 1 `linkLabel`/`linkUrl` →
+chuyển thành `links: [{label, url, affiliate: false}]` (affiliate mặc
+định `false` — link đăng ký DigiU hiện có, Founder tự bật `true` qua
+Admin nếu xác nhận đây thực sự là link tiếp thị liên kết/referral, không
+tự suy đoán), `images: []`. Đã verify lại qua Supabase MCP + qua
+`getLiveEcosystemArticleBySlug()` thật (route dev-preview tạm, xoá ngay
+sau khi test) — cả 3 bài đọc đúng shape mới.
+
+**`ArticlesAdminPanel.tsx`** — thêm 2 sub-editor lặp lại tự dựng
+(`ImagesEditor`/`LinksEditor`, không dùng `FieldInput`/`FieldConfig`
+chuẩn vì kiểu đó chỉ hỗ trợ `string[]` phẳng qua `type: "tags"`, không hỗ
+trợ mảng object): mỗi dòng ảnh có URL + chú thích + nút xoá; mỗi dòng
+link có nhãn + URL + checkbox Affiliate + nút xoá; cả 2 đều có nút
+"Thêm ảnh"/"Thêm liên kết" ở cuối. Bỏ hẳn 2 field đơn `linkLabel`/
+`linkUrl` khỏi `ARTICLE_FIELDS`.
+
+**Trang chi tiết bài viết** — ảnh phụ hiện dạng lưới 2 cột dưới nội dung
+(mỗi ảnh có `<figcaption>` nếu có chú thích); link hiện thành dãy nút màu
+`brand-blue` ở cuối bài, link nào `affiliate: true` có thêm badge nhỏ
+"Affiliate" ngay trên nút.
+
+**Verify:** `tsc`/`eslint`/`rm -rf .next && npm run build` sạch,
+`vitest run` 139/139. Test thật qua `next dev` với anon key thật (cùng kỹ
+thuật route dev-preview tạm, xoá ngay sau khi xong) — xác nhận
+`getLiveEcosystemArticleBySlug()` trả đúng `images: []`/`links: [...]`
+sau migrate; test không có Supabase (mặc định sandbox) — route chi tiết
+vẫn `200`, 0 lỗi log server (mảng rỗng không crash render gallery/link).
+
+**Chưa tự test được:** thêm ảnh/link qua Admin UI thật có tài khoản đăng
+nhập (cùng giới hạn sandbox) — Founder tự test trên Preview URL
+`/admin/duan-cohoi/digiu`.

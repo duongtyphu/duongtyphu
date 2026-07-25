@@ -16,7 +16,24 @@ import { getSupabasePublic } from "@/lib/supabase";
  * xem route đó) — Admin tự nhập số thứ tự, không kéo-thả (đơn giản hoá,
  * tránh phức tạp reorder() bulk-replace ảnh hưởng chéo giữa các hệ sinh
  * thái khác nhau cùng bảng).
+ *
+ * `images`/`links` (mở rộng riêng, theo yêu cầu Founder "để admin linh
+ * động và tuỳ biến bài viết hơn") — danh sách KHÔNG giới hạn số lượng,
+ * KHÔNG chèn tại vị trí con trỏ trong `content` (dự án chưa có trình
+ * soạn thảo dạng khối/markdown nào, Founder xác nhận chọn phương án đơn
+ * giản: gắn theo bài, hiển thị ở khu vực riêng trong trang chi tiết —
+ * ảnh phụ hiện dưới nội dung, link hiện thành dãy nút ở cuối bài).
+ * `imageUrl` (ảnh bìa/thumbnail cho thẻ trong băng chạy) GIỮ NGUYÊN tách
+ * biệt với `images[]` (ảnh phụ trong bài) — không gộp 2 khái niệm.
+ * `links[]` THAY THẾ hẳn 2 field đơn `linkLabel`/`linkUrl` cũ (bài viết
+ * seed trước đó đã migrate qua `execute_sql`, xem migration file) — mỗi
+ * link có cờ `affiliate` để Admin tự đánh dấu link nào là link tiếp thị
+ * liên kết (hiển thị nhãn "Affiliate" ngoài Portal cho minh bạch, đúng
+ * tinh thần NO-FAKE-DATA/minh bạch đã áp dụng xuyên suốt dự án).
  */
+export type ArticleImage = { url: string; caption: string };
+export type ArticleLink = { label: string; url: string; affiliate: boolean };
+
 export type EcosystemArticleRow = {
   id: string;
   status: "Draft" | "Published" | "Hidden";
@@ -26,12 +43,35 @@ export type EcosystemArticleRow = {
   title: string;
   content: string;
   imageUrl: string;
-  linkLabel: string;
-  linkUrl: string;
+  images: ArticleImage[];
+  links: ArticleLink[];
   seoTitle: string;
   metaDescription: string;
   displayOrder: number;
 };
+
+function toImages(value: unknown): ArticleImage[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null)
+    .map((v) => ({
+      url: typeof v.url === "string" ? v.url : "",
+      caption: typeof v.caption === "string" ? v.caption : "",
+    }))
+    .filter((img) => img.url.length > 0);
+}
+
+function toLinks(value: unknown): ArticleLink[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((v): v is Record<string, unknown> => typeof v === "object" && v !== null)
+    .map((v) => ({
+      label: typeof v.label === "string" ? v.label : "",
+      url: typeof v.url === "string" ? v.url : "",
+      affiliate: v.affiliate === true,
+    }))
+    .filter((link) => link.url.length > 0);
+}
 
 function toRow(row: { id: string; data: unknown; status: string }): EcosystemArticleRow {
   const d = (row.data ?? {}) as Record<string, unknown>;
@@ -44,8 +84,8 @@ function toRow(row: { id: string; data: unknown; status: string }): EcosystemArt
     title: typeof d.title === "string" ? d.title : "",
     content: typeof d.content === "string" ? d.content : "",
     imageUrl: typeof d.imageUrl === "string" ? d.imageUrl : "",
-    linkLabel: typeof d.linkLabel === "string" ? d.linkLabel : "",
-    linkUrl: typeof d.linkUrl === "string" ? d.linkUrl : "",
+    images: toImages(d.images),
+    links: toLinks(d.links),
     seoTitle: typeof d.seoTitle === "string" ? d.seoTitle : "",
     metaDescription: typeof d.metaDescription === "string" ? d.metaDescription : "",
     displayOrder: typeof d.displayOrder === "number" ? d.displayOrder : 0,
