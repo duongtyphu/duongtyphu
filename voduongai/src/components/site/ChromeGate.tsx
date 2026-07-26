@@ -15,6 +15,9 @@ export function ChromeGate({
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
   const isPortal = pathname?.startsWith("/portal");
+  // Standalone design preview — ships its own header/footer, must not be
+  // wrapped by the site chrome (see /landing-preview/page.tsx).
+  const isLandingPreview = pathname?.startsWith("/landing-preview");
 
   // Next.js resets scroll to top after hydrating a fresh navigation, which
   // races with (and wins over) the browser's native "#hash" scroll-into-view
@@ -48,7 +51,7 @@ export function ChromeGate({
     };
   }, [pathname]);
 
-  if (isAdmin || isPortal) return <>{children}</>;
+  if (isAdmin || isPortal || isLandingPreview) return <>{children}</>;
 
   return (
     <>
