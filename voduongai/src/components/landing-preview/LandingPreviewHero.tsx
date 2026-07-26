@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CompanionRobotSvg } from "./CompanionRobotSvg";
+import Image from "next/image";
 
 const BADGES = [
   { icon: "⚙️", label: "Học AI", bg: "bg-[#1D3A66]", border: "border-[#2E4E8A]", style: "left-[4%] top-[10%]" },
@@ -62,7 +62,16 @@ export function LandingPreviewHero() {
             </svg>
 
             <div className="absolute inset-0 flex items-center justify-center">
-              <CompanionRobotSvg className="h-[78%] w-auto drop-shadow-[0_20px_40px_rgba(91,33,214,.45)]" />
+              <div className="h-[82%] w-[82%] overflow-hidden rounded-[28px] drop-shadow-[0_20px_40px_rgba(91,33,214,.45)] sm:h-[70%] sm:w-[70%]">
+                <Image
+                  src="/images/landing-preview/companion-mascot.jpg"
+                  alt="Companion AI — trợ lý AI đồng hành cùng VO DUONG AI"
+                  width={1000}
+                  height={1000}
+                  priority
+                  className="h-full w-full object-cover"
+                />
+              </div>
             </div>
 
             {BADGES.map((b) => (
