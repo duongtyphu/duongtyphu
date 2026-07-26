@@ -3,37 +3,37 @@ import Image from "next/image";
 const ITEMS = [
   {
     id: "hoc-vien-ai",
-    icon: "/images/landing-preview/icons/eco-hoc-vien-ai.jpg",
+    icon: "/images/landing-preview/icons/eco-hoc-vien-ai.png",
     title: "Học viện AI",
     desc: "Lộ trình bài bản từ cơ bản đến nâng cao, học đi đôi với thực hành.",
   },
   {
     id: "companion-ai",
-    icon: "/images/landing-preview/icons/eco-companion-ai.jpg",
+    icon: "/images/landing-preview/icons/eco-companion-ai.png",
     title: "Companion AI",
     desc: "AI Mentor cá nhân hóa, hiểu bạn, nhớ bạn và đồng hành cùng bạn mỗi ngày.",
   },
   {
     id: "ckos",
-    icon: "/images/landing-preview/icons/eco-ckos.jpg",
+    icon: "/images/landing-preview/icons/eco-ckos.png",
     title: "Hệ tri thức AI (CKOS)",
     desc: "Thư viện tri thức chọn lọc, cập nhật liên tục, sẵn sàng cho mọi nhu cầu.",
   },
   {
     id: "ai-workspace",
-    icon: "/images/landing-preview/icons/eco-ai-workspace.jpg",
+    icon: "/images/landing-preview/icons/eco-ai-workspace.png",
     title: "AI Workspace",
     desc: "Nơi bạn thực hành, lưu trữ và triển khai ý tưởng thành sản phẩm thực tế.",
   },
   {
     id: "du-an-co-hoi",
-    icon: "/images/landing-preview/icons/eco-du-an-co-hoi.jpg",
+    icon: "/images/landing-preview/icons/eco-du-an-co-hoi.png",
     title: "Dự án & Cơ hội",
     desc: "Cơ hội hợp tác, đầu tư và đồng hành trong các dự án công nghệ AI.",
   },
   {
     id: "premium",
-    icon: "/images/landing-preview/icons/eco-premium.jpg",
+    icon: "/images/landing-preview/icons/eco-premium.png",
     title: "Premium",
     desc: "Nội dung chuyên sâu, công cụ cao cấp và tư vấn 1:1 cùng chuyên gia.",
   },
@@ -55,8 +55,14 @@ export function LandingPreviewEcosystem() {
               key={id}
               className="flex w-[200px] scroll-mt-24 flex-1 flex-col items-center gap-3 rounded-2xl border border-[#ECEDF5] bg-white px-5 py-7 text-center shadow-[0_4px_20px_rgba(15,23,60,.05)] transition-all hover:-translate-y-1 hover:shadow-[0_10px_28px_rgba(15,23,60,.10)]"
             >
-              <div className="h-16 w-16 overflow-hidden rounded-2xl shadow-[0_6px_16px_rgba(15,23,60,.18)]">
-                <Image src={icon} alt={title} width={300} height={300} className="h-full w-full object-cover" />
+              <div className="flex h-[77px] w-[77px] items-center justify-center">
+                <Image
+                  src={icon}
+                  alt={title}
+                  width={400}
+                  height={400}
+                  className="h-full w-full object-contain drop-shadow-[0_8px_14px_rgba(15,23,60,.22)]"
+                />
               </div>
               <h3 className="text-[.9rem] font-bold leading-snug text-[#0B0F2E]">{title}</h3>
               <p className="text-[.78rem] leading-[1.55] text-[#5B6B85]">{desc}</p>

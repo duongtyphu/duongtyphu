@@ -1,11 +1,11 @@
 import Image from "next/image";
 
 const STATS = [
-  { icon: "/images/landing-preview/icons/stat-prompt.jpg", num: "200+", label: "Prompt & Template" },
-  { icon: "/images/landing-preview/icons/stat-tools.jpg", num: "50+", label: "AI Tools thực chiến" },
-  { icon: "/images/landing-preview/icons/stat-resources.jpg", num: "100+", label: "Tài liệu & Resources" },
-  { icon: "/images/landing-preview/icons/stat-members.jpg", num: "10,000+", label: "Thành viên học tập" },
-  { icon: "/images/landing-preview/icons/stat-support.jpg", num: "24/7", label: "Companion đồng hành" },
+  { icon: "/images/landing-preview/icons/stat-prompt.png", num: "200+", label: "Prompt & Template" },
+  { icon: "/images/landing-preview/icons/stat-tools.png", num: "50+", label: "AI Tools thực chiến" },
+  { icon: "/images/landing-preview/icons/stat-resources.png", num: "100+", label: "Tài liệu & Resources" },
+  { icon: "/images/landing-preview/icons/stat-members.png", num: "10,000+", label: "Thành viên học tập" },
+  { icon: "/images/landing-preview/icons/stat-support.png", num: "24/7", label: "Companion đồng hành" },
 ];
 
 /**
@@ -23,8 +23,14 @@ export function LandingPreviewStatsBar() {
           <div className="flex flex-wrap justify-between gap-4 rounded-[20px] bg-white px-6 py-7 shadow-[0_20px_50px_rgba(10,14,40,.18)] sm:px-10">
             {STATS.map(({ icon, num, label }) => (
               <div key={label} className="flex min-w-[150px] flex-1 items-center gap-3.5">
-                <div className="h-[46px] w-[46px] shrink-0 overflow-hidden rounded-xl shadow-[0_4px_10px_rgba(15,23,60,.15)]">
-                  <Image src={icon} alt="" width={300} height={300} className="h-full w-full object-cover" />
+                <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center">
+                  <Image
+                    src={icon}
+                    alt=""
+                    width={400}
+                    height={400}
+                    className="h-full w-full object-contain drop-shadow-[0_6px_10px_rgba(15,23,60,.18)]"
+                  />
                 </div>
                 <div>
                   <div className="text-[1.4rem] font-extrabold leading-tight text-[#5b21c9]">{num}</div>
