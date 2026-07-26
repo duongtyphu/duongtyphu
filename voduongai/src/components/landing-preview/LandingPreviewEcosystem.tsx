@@ -18,11 +18,15 @@ export function LandingPreviewEcosystem() {
             Tất cả những gì bạn cần, trong một hệ sinh thái
           </h2>
         </div>
-        <div className="flex flex-wrap items-start justify-center gap-x-6 gap-y-8 sm:gap-x-10 lg:flex-nowrap lg:justify-between">
+        <div className="flex flex-wrap items-stretch justify-center gap-4 lg:flex-nowrap">
           {ITEMS.map(({ id, Icon, title }) => (
-            <div id={id} key={id} className="flex w-[110px] scroll-mt-24 flex-col items-center text-center">
-              <Icon className="h-16 w-16 transition-transform hover:-translate-y-1" />
-              <h3 className="mt-3 text-[.84rem] font-bold leading-snug text-[#0B0F2E]">{title}</h3>
+            <div
+              id={id}
+              key={id}
+              className="flex w-[140px] scroll-mt-24 flex-1 flex-col items-center gap-3 rounded-2xl border border-[#ECEDF5] bg-white px-4 py-6 text-center shadow-[0_4px_20px_rgba(15,23,60,.05)] transition-all hover:-translate-y-1 hover:shadow-[0_10px_28px_rgba(15,23,60,.10)]"
+            >
+              <Icon className="h-14 w-14" />
+              <h3 className="text-[.84rem] font-bold leading-snug text-[#0B0F2E]">{title}</h3>
             </div>
           ))}
         </div>
