@@ -53,7 +53,7 @@ export function LandingPreviewEcosystem() {
             <div
               id={id}
               key={id}
-              className="flex w-[200px] scroll-mt-24 flex-1 flex-col items-center gap-3 rounded-2xl border border-[#ECEDF5] bg-white px-5 py-7 text-center shadow-[0_4px_20px_rgba(15,23,60,.05)] transition-all hover:-translate-y-1 hover:shadow-[0_10px_28px_rgba(15,23,60,.10)]"
+              className="flex w-[200px] scroll-mt-24 flex-1 flex-col items-center gap-3 rounded-xl border border-[#ECEDF5] bg-white px-5 py-7 text-center shadow-[0_4px_20px_rgba(15,23,60,.05)] transition-all hover:-translate-y-1 hover:shadow-[0_10px_28px_rgba(15,23,60,.10)]"
             >
               <div className="flex h-[77px] w-[77px] items-center justify-center">
                 <Image

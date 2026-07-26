@@ -12,7 +12,7 @@ export function LandingPreviewRoadmap() {
   return (
     <section className="bg-[#F7F8FC] pb-24">
       <div className="mx-auto max-w-[1280px] px-6">
-        <div className="grid gap-8 rounded-3xl border border-[#ECEDF5] bg-white p-8 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:grid-cols-[280px_1fr] md:p-11">
+        <div className="grid gap-8 rounded-2xl border border-[#ECEDF5] bg-white p-8 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:grid-cols-[280px_1fr] md:p-11">
           <div>
             <h2 className="text-[1.5rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.65rem]">
               Lộ trình học tập dành cho mọi người

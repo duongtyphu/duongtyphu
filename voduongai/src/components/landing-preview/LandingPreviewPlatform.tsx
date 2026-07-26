@@ -14,7 +14,7 @@ export function LandingPreviewPlatform() {
     <section className="bg-white py-24">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="grid items-center gap-10 md:grid-cols-[1.15fr_1fr]">
-          <div className="overflow-hidden rounded-[18px] border border-[#ECEDF5] shadow-[0_20px_50px_rgba(15,23,60,.14)]">
+          <div className="overflow-hidden rounded-xl border border-[#ECEDF5] shadow-[0_20px_50px_rgba(15,23,60,.14)]">
             <Image
               src="/images/landing-preview/dashboard-mockup.jpg"
               alt="Giao diện Portal học tập VO DUONG AI"

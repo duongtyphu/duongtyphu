@@ -68,7 +68,7 @@ export function LandingPreviewNewsletter() {
         </div>
         <div className="mt-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {STATS.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-[#ECEDF5] bg-white px-4 py-[22px] text-center">
+            <div key={s.label} className="rounded-xl border border-[#ECEDF5] bg-white px-4 py-[22px] text-center">
               <div className="text-[1.5rem] font-extrabold text-[#5b21c9]">{s.num}</div>
               <div className="mt-1 text-[.82rem] font-semibold text-[#5B6B85]">{s.label}</div>
             </div>

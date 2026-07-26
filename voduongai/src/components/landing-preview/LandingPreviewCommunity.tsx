@@ -33,7 +33,7 @@ export function LandingPreviewCommunity() {
             </ul>
           </div>
           <div className="grid grid-cols-[1.3fr_1fr] gap-4">
-            <div className="overflow-hidden rounded-[18px] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+            <div className="overflow-hidden rounded-xl shadow-[0_4px_24px_rgba(15,23,60,.06)]">
               <Image
                 src="/images/landing-preview/community-main.jpg"
                 alt="Cùng nhau học tập, chia sẻ và tạo ra giá trị bền vững"
@@ -43,7 +43,7 @@ export function LandingPreviewCommunity() {
               />
             </div>
             <div className="flex flex-col gap-4">
-              <div className="flex-1 overflow-hidden rounded-[18px] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+              <div className="flex-1 overflow-hidden rounded-xl shadow-[0_4px_24px_rgba(15,23,60,.06)]">
                 <Image
                   src="/images/landing-preview/community-workshop.jpg"
                   alt="Hội thảo & Workshop — cập nhật xu hướng AI mới nhất"
@@ -52,7 +52,7 @@ export function LandingPreviewCommunity() {
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="flex-1 overflow-hidden rounded-[18px] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+              <div className="flex-1 overflow-hidden rounded-xl shadow-[0_4px_24px_rgba(15,23,60,.06)]">
                 <Image
                   src="/images/landing-preview/community-project.jpg"
                   alt="Dự án thực tế — học đi đôi với ứng dụng"

@@ -20,7 +20,7 @@ export function LandingPreviewStatsBar() {
     <div className="relative z-10">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="-translate-y-1/2">
-          <div className="flex flex-wrap justify-between gap-4 rounded-[20px] bg-white px-6 py-7 shadow-[0_20px_50px_rgba(10,14,40,.18)] sm:px-10">
+          <div className="flex flex-wrap justify-between gap-4 rounded-xl bg-white px-6 py-7 shadow-[0_20px_50px_rgba(10,14,40,.18)] sm:px-10">
             {STATS.map(({ icon, num, label }) => (
               <div key={label} className="flex min-w-[150px] flex-1 items-center gap-3.5">
                 <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center">

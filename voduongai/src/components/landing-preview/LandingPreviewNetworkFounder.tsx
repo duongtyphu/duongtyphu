@@ -47,13 +47,13 @@ export function LandingPreviewNetworkFounder() {
             ))}
           </div>
 
-          <div className="grid grid-cols-[150px_1fr] items-center gap-[22px] rounded-[22px] border border-[#ECEDF5] bg-white p-2 shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+          <div className="grid grid-cols-[150px_1fr] items-center gap-[22px] rounded-2xl border border-[#ECEDF5] bg-white p-2 shadow-[0_4px_24px_rgba(15,23,60,.06)]">
             <Image
               src="/images/landing-preview/founder-vo-duong.jpg"
               alt="Võ Dương — Nhà sáng lập VO DUONG AI"
               width={400}
               height={412}
-              className="aspect-[1/1.05] w-full rounded-2xl object-cover"
+              className="aspect-[1/1.05] w-full rounded-xl object-cover"
             />
             <div className="py-4 pr-5">
               <h3 className="text-[1.1rem] font-extrabold leading-[1.4] text-[#0B0F2E]">

@@ -62,7 +62,7 @@ export function LandingPreviewHero() {
             </svg>
 
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-[82%] w-[82%] overflow-hidden rounded-[28px] drop-shadow-[0_20px_40px_rgba(91,33,214,.45)] sm:h-[70%] sm:w-[70%]">
+              <div className="h-[82%] w-[82%] overflow-hidden rounded-2xl drop-shadow-[0_20px_40px_rgba(91,33,214,.45)] sm:h-[70%] sm:w-[70%]">
                 <Image
                   src="/images/landing-preview/companion-mascot.jpg"
                   alt="Companion AI — trợ lý AI đồng hành cùng VO DUONG AI"
@@ -84,7 +84,7 @@ export function LandingPreviewHero() {
               </div>
             ))}
 
-            <div className="absolute bottom-[6%] right-[-4%] max-w-[190px] rounded-2xl rounded-br-sm border border-[#3B2A66] bg-[#241A4A]/85 px-3.5 py-2.5 text-[.72rem] font-semibold leading-snug text-[#DCD6F5] shadow-lg backdrop-blur-sm">
+            <div className="absolute bottom-[6%] right-[-4%] max-w-[190px] rounded-xl rounded-br-sm border border-[#3B2A66] bg-[#241A4A]/85 px-3.5 py-2.5 text-[.72rem] font-semibold leading-snug text-[#DCD6F5] shadow-lg backdrop-blur-sm">
               Companion AI luôn ở đây để đồng hành cùng bạn! 💜
             </div>
           </div>

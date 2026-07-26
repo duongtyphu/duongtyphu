@@ -10,7 +10,7 @@ export function LandingPreviewQuoteBar() {
     <section id="gia-tri" className="scroll-mt-20 bg-[#F7F8FC] pb-24">
       <div className="mx-auto max-w-[1280px] px-6">
         <div
-          className="grid gap-8 rounded-3xl p-8 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-12"
+          className="grid gap-8 rounded-2xl p-8 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-12"
           style={{ background: "linear-gradient(120deg,#0B1140 0%,#171154 100%)" }}
         >
           <div>
