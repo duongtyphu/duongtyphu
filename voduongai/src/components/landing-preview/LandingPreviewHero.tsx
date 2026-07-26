@@ -1,12 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
+import { CompanionRobotSvg } from "./CompanionRobotSvg";
 
-const STATS = [
-  { icon: "💟", bg: "bg-[#E6F3FD]", num: "200+", label: "Prompt & Template" },
-  { icon: "🧩", bg: "bg-[#FCE9F3]", num: "50+", label: "AI Tools thực chiến" },
-  { icon: "📋", bg: "bg-[#E6F8EE]", num: "100+", label: "Tài liệu & Resources" },
-  { icon: "👥", bg: "bg-[#FDEFE0]", num: "10,000+", label: "Thành viên học tập" },
-  { icon: "🕐", bg: "bg-[#EDE9FE]", num: "24/7", label: "Companion đồng hành" },
+const BADGES = [
+  { icon: "⚙️", label: "Học AI", bg: "bg-[#1D3A66]", border: "border-[#2E4E8A]", style: "left-[4%] top-[10%]" },
+  { icon: "🧩", label: "Xây hệ thống", bg: "bg-[#3B2A66]", border: "border-[#5B3EA0]", style: "right-[2%] top-[16%]" },
+  { icon: "🧪", label: "Thực hành", bg: "bg-[#3B2A66]", border: "border-[#5B3EA0]", style: "left-[-2%] top-[42%]" },
+  { icon: "💰", label: "Tạo tài sản số", bg: "bg-[#5A3418]", border: "border-[#8A5327]", style: "right-[-2%] top-[46%]" },
 ];
 
 export function LandingPreviewHero() {
@@ -19,7 +18,7 @@ export function LandingPreviewHero() {
           "radial-gradient(700px 420px at 78% 30%, rgba(124,92,252,.28), transparent 60%), radial-gradient(600px 500px at 60% 95%, rgba(124,92,252,.35), transparent 60%), linear-gradient(180deg,#05061a 0%,#0a0c2e 55%,#0b0d33 100%)",
       }}
     >
-      <div className="mx-auto max-w-[1280px] px-6 pb-14">
+      <div className="mx-auto max-w-[1280px] px-6 pb-24 md:pb-28">
         <div className="grid items-center gap-8 md:grid-cols-[1.05fr_1fr]">
           <div>
             <h1 className="text-[2.1rem] font-extrabold leading-[1.16] tracking-[-0.5px] text-white md:text-[2.7rem]">
@@ -54,33 +53,31 @@ export function LandingPreviewHero() {
               Miễn phí tham gia • Học mọi lúc • Đồng hành cùng Companion AI
             </div>
           </div>
-          <div className="flex items-center justify-center">
-            <Image
-              src="/images/landing-preview/hero-companion.jpg"
-              alt="Companion AI — trợ lý AI đồng hành cùng VO DUONG AI"
-              width={1368}
-              height={870}
-              priority
-              className="w-full max-w-[560px] rounded-[20px]"
-            />
-          </div>
-        </div>
-      </div>
 
-      <div className="mx-auto max-w-[1280px] px-6">
-        <div className="relative z-[5] -mt-[46px]">
-          <div className="flex flex-wrap justify-between gap-3 rounded-[20px] bg-white px-6 py-7 shadow-[0_20px_50px_rgba(10,14,40,.18)] sm:px-10">
-            {STATS.map((s) => (
-              <div key={s.label} className="flex min-w-[150px] flex-1 items-center gap-3.5">
-                <div className={`flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-xl text-[22px] ${s.bg}`}>
-                  {s.icon}
-                </div>
-                <div>
-                  <div className="text-[1.4rem] font-extrabold leading-tight text-[#5b21c9]">{s.num}</div>
-                  <div className="mt-0.5 text-[.8rem] font-semibold text-[#5B6B85]">{s.label}</div>
-                </div>
+          <div className="relative mx-auto aspect-[3/2] w-full max-w-[560px]">
+            {/* connecting orbit lines */}
+            <svg viewBox="0 0 400 267" className="absolute inset-0 h-full w-full" aria-hidden="true">
+              <ellipse cx="200" cy="150" rx="180" ry="70" fill="none" stroke="#3D3470" strokeWidth="1" opacity=".5" />
+              <ellipse cx="210" cy="120" rx="150" ry="55" fill="none" stroke="#3D3470" strokeWidth="1" opacity=".4" />
+            </svg>
+
+            <div className="absolute inset-0 flex items-center justify-center">
+              <CompanionRobotSvg className="h-[78%] w-auto drop-shadow-[0_20px_40px_rgba(91,33,214,.45)]" />
+            </div>
+
+            {BADGES.map((b) => (
+              <div
+                key={b.label}
+                className={`absolute inline-flex items-center gap-2 whitespace-nowrap rounded-xl border ${b.border} ${b.bg}/70 px-3 py-2 text-[.78rem] font-bold text-white shadow-lg backdrop-blur-sm ${b.style}`}
+              >
+                <span className="text-base leading-none">{b.icon}</span>
+                {b.label}
               </div>
             ))}
+
+            <div className="absolute bottom-[6%] right-[-4%] max-w-[190px] rounded-2xl rounded-br-sm border border-[#3B2A66] bg-[#241A4A]/85 px-3.5 py-2.5 text-[.72rem] font-semibold leading-snug text-[#DCD6F5] shadow-lg backdrop-blur-sm">
+              Companion AI luôn ở đây để đồng hành cùng bạn! 💜
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LandingPreviewHeader } from "@/components/landing-preview/LandingPreviewHeader";
 import { LandingPreviewHero } from "@/components/landing-preview/LandingPreviewHero";
+import { LandingPreviewStatsBar } from "@/components/landing-preview/LandingPreviewStatsBar";
 import { LandingPreviewEcosystem } from "@/components/landing-preview/LandingPreviewEcosystem";
 import { LandingPreviewRoadmap } from "@/components/landing-preview/LandingPreviewRoadmap";
 import { LandingPreviewPlatform } from "@/components/landing-preview/LandingPreviewPlatform";
@@ -24,6 +25,7 @@ export default function LandingPreviewPage() {
     <div className="bg-[#F7F8FC]">
       <LandingPreviewHeader />
       <LandingPreviewHero />
+      <LandingPreviewStatsBar />
       <LandingPreviewEcosystem />
       <LandingPreviewRoadmap />
       <LandingPreviewPlatform />
