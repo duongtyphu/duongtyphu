@@ -22,7 +22,7 @@ export default function Home() {
       <Hero variant={theme} />
       <IntroVideo variant={theme} />
       <EcosystemPillars />
-      <PortalPreview variant={theme} />
+      <PortalPreview />
       <QuizAssessment variant={theme} />
       <ToolsIUse variant={theme} />
       <AudienceProblem variant={theme} />
