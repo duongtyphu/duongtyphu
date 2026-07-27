@@ -34,20 +34,20 @@ export function LandingPreviewRoadmap() {
     <section className="bg-[#F7F8FC] pb-24">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:w-[300px] lg:shrink-0 lg:p-7">
-            <h2 className="text-[1.5rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.65rem]">
+          <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:w-[300px] lg:shrink-0 lg:p-8">
+            <h2 className="text-[1.15rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.25rem]">
               Lộ trình học tập dành cho mọi người
             </h2>
-            <p className="mt-3.5 text-[.92rem] leading-[1.7] text-[#5B6B85]">
+            <p className="mt-2.5 text-[.82rem] leading-[1.6] text-[#5B6B85]">
               Dù bạn là người mới bắt đầu hay đã có kinh nghiệm, chúng tôi có lộ trình phù hợp để bạn tiến xa
               hơn mỗi ngày.
             </p>
             <Link
               href="/login"
-              className="mt-[22px] inline-flex items-center justify-center gap-2 rounded-xl border-[1.5px] border-[#DADCF0] bg-white px-6 py-3.5 text-[.95rem] font-bold text-[#0B0F2E] transition-colors hover:border-[#7C5CFC] hover:text-[#5b21c9]"
+              className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl border-[1.5px] border-[#DADCF0] bg-white px-5 py-3 text-[.85rem] font-bold text-[#0B0F2E] transition-colors hover:border-[#7C5CFC] hover:text-[#5b21c9]"
             >
               Xem tất cả lộ trình
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
