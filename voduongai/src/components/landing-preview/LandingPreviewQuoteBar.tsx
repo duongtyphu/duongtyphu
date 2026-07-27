@@ -24,7 +24,7 @@ export function LandingPreviewQuoteBar() {
           <ul className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
             {VALUES.map((v) => (
               <li key={v.title} className="text-center">
-                <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(124,92,252,.18)] text-lg">
+                <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#7C5CFC] text-lg">
                   {v.icon}
                 </div>
                 <h5 className="text-[.86rem] font-bold text-white">{v.title}</h5>
