@@ -79,7 +79,10 @@ export function EcosystemPillars() {
     <section id="ecosystem" className="bg-[#F7F8FC] py-16">
       <div className="mx-auto max-w-6xl px-5">
         <div className="mx-auto mb-10 max-w-[760px] text-center">
-          <h2 className="text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
+          <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
+            🌐 Hệ sinh thái
+          </span>
+          <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
             Tất cả những gì bạn cần, trong một hệ sinh thái
           </h2>
         </div>
