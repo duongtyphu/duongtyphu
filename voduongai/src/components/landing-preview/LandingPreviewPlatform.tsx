@@ -14,7 +14,7 @@ export function LandingPreviewPlatform() {
   return (
     <section className="bg-white py-24">
       <div className="mx-auto max-w-[1280px] px-6">
-        <div className="grid items-stretch gap-6 md:grid-cols-2">
+        <div className="grid items-stretch gap-6 md:grid-cols-[4fr_1fr]">
           <div className="overflow-hidden rounded-xl border border-[#ECEDF5] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
             <LandingPreviewPortalMockup />
           </div>
