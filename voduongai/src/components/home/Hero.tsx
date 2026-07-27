@@ -72,7 +72,6 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
         <div aria-hidden="true" className={`hero-grid-layer ${isLight ? "hero-grid-layer--light" : ""}`} />
         <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--blue ${isLight ? "hero-mesh-blob--light" : ""}`} />
         <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--violet ${isLight ? "hero-mesh-blob--light" : ""}`} />
-        <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--orange ${isLight ? "hero-mesh-blob--light" : ""}`} />
       </motion.div>
 
       <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1.2fr_1fr] md:items-center">
@@ -87,45 +86,39 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
             }`}
           >
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-orange opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand-orange" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7C5CFC] opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7C5CFC]" />
             </span>
             Thương hiệu cá nhân · Hệ sinh thái AI
           </span>
 
           <h1 className="mt-6 text-xl font-extrabold leading-[1.3] tracking-tight sm:text-2xl md:text-3xl lg:text-4xl">
-            AI không thay thế bạn.
-            <br />
-            <span className="bg-gradient-to-r from-brand-violet to-brand-orange bg-clip-text text-transparent">
-              Nhưng người biết dùng AI sẽ
+            <span className={isLight ? "text-[#0F172A]" : "text-white"}>
+              Học AI đúng hướng.
               <br />
-              thay thế người không biết dùng AI.
+              Ứng dụng thực tế.
             </span>
+            <br />
+            <span className="text-[#7C5CFC]">Tạo giá trị bền vững.</span>
           </h1>
 
-          <p className={`mt-6 max-w-xl text-base leading-relaxed ${isLight ? "text-[#334155]" : "text-white"}`}>
-            Giữa vô số công cụ AI, bạn đang loay hoay không biết bắt đầu từ
-            đâu? VO DUONG AI là hệ sinh thái giúp bạn học AI đúng hướng, xây
-            dựng thương hiệu cá nhân, phát triển Affiliate Marketing và tạo
-            tài sản số bền vững. AI là kỹ năng sống còn của thế kỷ 21 — và
-            hành trình của bạn có thể bắt đầu từ đây.
+          <p className={`mt-6 max-w-xl text-base leading-relaxed ${isLight ? "text-[#334155]" : "text-[#AEB4D8]"}`}>
+            VO DUONG AI là hệ sinh thái học tập AI giúp bạn học đúng, thực
+            hành đúng và từng bước xây dựng hệ thống làm việc, thương hiệu cá
+            nhân và tài sản số bền vững trong kỷ nguyên trí tuệ nhân tạo.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/portal/hocvienai"
-              className="rounded-full gradient-surface px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_45px_-5px_rgba(37,99,235,0.7)]"
+              className="rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_45px_-5px_rgba(91,33,214,0.7)]"
             >
-              🚀 Bước vào Học viện
+              Bắt đầu ngay hôm nay
             </Link>
-            <Link
-              href="#cong-cu-toi-dung"
-              className={`rounded-full border px-6 py-3 text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:border-transparent hover:bg-brand-blue hover:text-white hover:shadow-lg hover:shadow-brand-blue/40 ${
-                isLight ? "border-[#E2E8F0] text-[#0F172A]" : "border-white/20 text-white"
-              }`}
-            >
-              Xem công cụ tôi dùng
-            </Link>
+          </div>
+
+          <div className={`mt-5 text-[.85rem] font-semibold ${isLight ? "text-[#54637A]" : "text-[#7C84B0]"}`}>
+            Miễn phí tham gia • Học mọi lúc • Đồng hành cùng Companion AI
           </div>
         </motion.div>
 
@@ -138,8 +131,8 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
           {/* Mesh gradient + glow behind dashboard */}
           {!isLight && (
             <>
-              <div className="absolute -inset-10 -z-10 rounded-[40px] bg-brand-blue/20 blur-[70px]" />
-              <div className="absolute -inset-16 -z-10 rounded-[44px] bg-[radial-gradient(circle_at_30%_20%,rgba(91,140,255,0.25),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(37,99,235,0.18),transparent_55%)] blur-2xl" />
+              <div className="absolute -inset-10 -z-10 rounded-[40px] bg-[#5B21D6]/20 blur-[70px]" />
+              <div className="absolute -inset-16 -z-10 rounded-[44px] bg-[radial-gradient(circle_at_30%_20%,rgba(91,140,255,0.25),transparent_55%),radial-gradient(circle_at_80%_80%,rgba(124,92,252,0.28),transparent_55%)] blur-2xl" />
             </>
           )}
 
