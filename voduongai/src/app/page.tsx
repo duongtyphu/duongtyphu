@@ -21,9 +21,9 @@ export default function Home() {
     <div className={theme === "light" ? "bg-white" : ""}>
       <Hero variant={theme} />
       <IntroVideo variant={theme} />
+      <EcosystemPillars />
       <PortalPreview variant={theme} />
       <QuizAssessment variant={theme} />
-      <EcosystemPillars variant={theme} />
       <ToolsIUse variant={theme} />
       <AudienceProblem variant={theme} />
       <Roadmap variant={theme} />
