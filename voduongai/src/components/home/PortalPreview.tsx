@@ -14,11 +14,13 @@ const LIST = [
  * "Khám phá Học Viện" section — only the eyebrow badge is kept from the
  * old page; everything else is ported verbatim from the new landing
  * preview (LandingPreviewPlatform): the animated portal mockup + the
- * "Nền tảng toàn diện, trải nghiệm liền mạch" feature list box.
+ * "Nền tảng toàn diện, trải nghiệm liền mạch" feature list box. No section
+ * background here on purpose — the old page's background must stay one
+ * continuous, unbroken sweep behind every section.
  */
 export function PortalPreview() {
   return (
-    <section id="trai-nghiem-hoc-vien-ai" className="scroll-mt-24 bg-white py-16">
+    <section id="trai-nghiem-hoc-vien-ai" className="scroll-mt-24 py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
