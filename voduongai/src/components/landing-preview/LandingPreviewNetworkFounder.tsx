@@ -11,8 +11,8 @@ export function LandingPreviewNetworkFounder() {
             <LandingPreviewSolarSystem />
           </div>
 
-          <div className="grid items-stretch overflow-hidden rounded-2xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] md:grid-cols-[1fr_1.3fr]">
-            <div className="relative aspect-[4/3] w-full md:aspect-auto md:min-h-[320px]">
+          <div className="flex flex-col overflow-hidden rounded-2xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+            <div className="relative aspect-[3/2] w-full shrink-0 overflow-hidden">
               <Image
                 src="/founder.png"
                 alt="Võ Đương — Nhà sáng lập VO DUONG AI"
@@ -20,7 +20,7 @@ export function LandingPreviewNetworkFounder() {
                 className="object-cover"
               />
             </div>
-            <div className="flex flex-col justify-center p-5 md:p-6">
+            <div className="flex flex-1 flex-col justify-center p-5 md:p-6">
               <p className="text-[.98rem] font-extrabold leading-[1.5] md:text-[1.02rem]">
                 <span className="text-[#0B0F2E]">
                   &ldquo;AI không thay thế bạn, nhưng những người biết sử dụng AI sẽ thay thế bạn&rdquo;
