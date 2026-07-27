@@ -140,7 +140,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className={`group relative overflow-hidden rounded-[26px] border p-3 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-3.5 ${
-              isLight ? "border-[#E2E8F0] bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)]" : "border-white/12 bg-white/[0.045]"
+              isLight ? "border-[#7C5CFC] bg-white shadow-[0_20px_60px_-30px_rgba(15,23,42,0.25)]" : "border-white/12 bg-white/[0.045]"
             }`}
           >
             {/* Light reflection */}
