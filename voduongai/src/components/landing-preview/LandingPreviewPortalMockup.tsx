@@ -67,13 +67,12 @@ export function LandingPreviewPortalMockup() {
   }, []);
 
   return (
-    <div className="@container">
-      <div className="relative overflow-hidden rounded-2xl border border-white/12 bg-[#0B1220] shadow-[0_30px_70px_-35px_rgba(15,23,42,.45)]">
-        <div className="pointer-events-none absolute inset-0 z-10 rounded-2xl bg-gradient-to-br from-white/[0.06] via-transparent to-transparent" />
-        <div className="pointer-events-none absolute -inset-px z-10 rounded-2xl ring-1 ring-inset ring-white/10" />
+    <div className="@container flex h-full flex-col bg-[#0B1220]">
+      <div className="relative flex h-full flex-col">
+        <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent" />
 
         {/* Browser chrome bar */}
-        <div className="relative flex items-center gap-1.5 border-b border-white/10 bg-[#0B1220] px-4 py-3">
+        <div className="relative flex shrink-0 items-center gap-1.5 border-b border-white/10 bg-[#0B1220] px-4 py-3">
           <span className="h-2 w-2 rounded-full bg-red-400/80" />
           <span className="h-2 w-2 rounded-full bg-yellow-400/80" />
           <span className="h-2 w-2 rounded-full bg-green-400/80" />
@@ -84,7 +83,7 @@ export function LandingPreviewPortalMockup() {
         </div>
 
         {/* Portal surface */}
-        <div className="relative flex text-slate-900" style={{ background: "#F6F7F9" }}>
+        <div className="relative flex flex-1 text-slate-900" style={{ background: "#F6F7F9" }}>
           {/* Sidebar — only when the box is wide enough to fit it */}
           <div className="hidden w-[168px] shrink-0 space-y-1 border-r border-slate-200/80 bg-white/70 p-3 @lg:block">
             {sidebar.map(({ label, icon: Icon }, i) => {
@@ -104,7 +103,7 @@ export function LandingPreviewPortalMockup() {
           </div>
 
           {/* Main content */}
-          <div className="min-w-0 flex-1 p-4">
+          <div className="flex min-w-0 flex-1 flex-col justify-center p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Chào mừng trở lại</h3>
