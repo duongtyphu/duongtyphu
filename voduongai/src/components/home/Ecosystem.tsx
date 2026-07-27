@@ -29,7 +29,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
           </div>
 
           <div className="mx-auto flex w-full flex-col overflow-hidden rounded-2xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] md:w-[95%]">
-            <div className="relative aspect-[3/2] w-full shrink-0 overflow-hidden">
+            <div className="relative aspect-[3/1.9] w-full shrink-0 overflow-hidden">
               <Image
                 src="/founder.png"
                 alt="Võ Đương — Nhà sáng lập VO DUONG AI"
@@ -37,7 +37,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
                 className="object-cover"
               />
             </div>
-            <div className="flex flex-1 flex-col justify-center p-5 md:p-6">
+            <div className="flex flex-1 flex-col justify-center px-5 py-[19px] md:px-6 md:py-[23px]">
               <p className="text-[.98rem] font-extrabold leading-[1.5] md:text-[1.02rem]">
                 <span className="text-[#0B0F2E]">
                   &ldquo;AI không thay thế bạn, nhưng những người biết sử dụng AI sẽ thay thế bạn&rdquo;
