@@ -20,10 +20,10 @@ export function LandingPreviewStatsBar() {
     <div className="relative z-10">
       <div className="mx-auto max-w-[1280px] px-6">
         <div className="-translate-y-1/2">
-          <div className="flex flex-wrap justify-between gap-4 rounded-xl bg-white px-6 py-7 shadow-[0_20px_50px_rgba(10,14,40,.18)] sm:px-10">
+          <div className="flex flex-wrap justify-between gap-4 rounded-xl bg-white px-6 py-5 shadow-[0_20px_50px_rgba(10,14,40,.18)] sm:px-10">
             {STATS.map(({ icon, num, label }) => (
               <div key={label} className="flex min-w-[150px] flex-1 items-center gap-3.5">
-                <div className="flex h-[55px] w-[55px] shrink-0 items-center justify-center">
+                <div className="flex h-[50px] w-[50px] shrink-0 items-center justify-center">
                   <Image
                     src={icon}
                     alt=""
@@ -33,8 +33,8 @@ export function LandingPreviewStatsBar() {
                   />
                 </div>
                 <div>
-                  <div className="text-[1.4rem] font-extrabold leading-tight text-[#5b21c9]">{num}</div>
-                  <div className="mt-0.5 text-[.8rem] font-semibold text-[#5B6B85]">{label}</div>
+                  <div className="text-[1.26rem] font-extrabold leading-tight text-[#5b21c9]">{num}</div>
+                  <div className="mt-0.5 text-[.72rem] font-semibold text-[#5B6B85]">{label}</div>
                 </div>
               </div>
             ))}

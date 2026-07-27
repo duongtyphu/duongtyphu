@@ -33,8 +33,8 @@ export function LandingPreviewRoadmap() {
   return (
     <section className="bg-[#F7F8FC] pb-24">
       <div className="mx-auto max-w-[1280px] px-6">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
-          <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-8 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:w-[300px] lg:shrink-0 lg:p-9">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:w-[300px] lg:shrink-0 lg:p-7">
             <h2 className="text-[1.5rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.65rem]">
               Lộ trình học tập dành cho mọi người
             </h2>
@@ -53,8 +53,8 @@ export function LandingPreviewRoadmap() {
             </Link>
           </div>
 
-          <div className="flex-1 rounded-xl border border-[#ECEDF5] bg-white p-8 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:p-11">
-            <div className="relative grid h-full grid-cols-2 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:items-start">
+          <div className="flex-1 rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:p-7">
+            <div className="relative grid grid-cols-2 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:items-start">
               <div className="absolute left-[10%] right-[10%] top-[18px] hidden h-[2px] bg-[#ECEDF5] lg:block" />
               {STEPS.map((s, i) => (
                 <div key={s.title} className="relative z-[1] px-1.5 text-center">
