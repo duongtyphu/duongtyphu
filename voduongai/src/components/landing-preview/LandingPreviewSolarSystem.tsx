@@ -96,12 +96,16 @@ export function LandingPreviewSolarSystem() {
         })}
       </svg>
 
-      <div className="absolute left-1/2 top-1/2 z-[2] flex h-[15%] w-[15%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-0.5 rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] text-center text-white shadow-[0_12px_28px_rgba(91,33,214,.4)]">
-        <svg width="30%" height="30%" viewBox="0 0 32 32" fill="none" className="shrink-0">
-          <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#fff" />
-          <circle cx="27" cy="7.5" r="3" fill="#F97316" />
-        </svg>
-        <span className="text-[.5rem] font-extrabold tracking-wide md:text-[.6rem]">VO DUONG AI</span>
+      <div className="group absolute left-1/2 top-1/2 z-[2] h-[15%] w-[15%] -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute -inset-2 -z-10 animate-pulse rounded-full bg-[#7C5CFC]/40 blur-xl transition-all duration-500 group-hover:bg-[#7C5CFC]/70 group-hover:blur-2xl md:-inset-3" />
+        <div className="spin-slow absolute -inset-1 rounded-full bg-[conic-gradient(from_0deg,rgba(124,92,252,0),rgba(124,92,252,.9),rgba(249,115,22,.6),rgba(124,92,252,0))] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        <div className="relative flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-full border border-white/20 bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] text-center text-white shadow-[0_12px_28px_rgba(91,33,214,.4)] transition-shadow duration-500 group-hover:shadow-[0_0_32px_-2px_rgba(124,92,252,1)]">
+          <svg width="30%" height="30%" viewBox="0 0 32 32" fill="none" className="shrink-0">
+            <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#fff" />
+            <circle cx="27" cy="7.5" r="3" fill="#F97316" />
+          </svg>
+          <span className="text-[.5rem] font-extrabold tracking-wide md:text-[.6rem]">VO DUONG AI</span>
+        </div>
       </div>
 
       {MODULES.map((m, i) => {
