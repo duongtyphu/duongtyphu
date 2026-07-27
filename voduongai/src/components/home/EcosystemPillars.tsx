@@ -108,7 +108,7 @@ export function EcosystemPillars() {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-start">
+        <div className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-stretch">
           <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:w-[300px] lg:shrink-0 lg:p-8">
             <h3 className="text-[1.15rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.25rem]">
               Lộ trình học tập dành cho mọi người
@@ -132,8 +132,8 @@ export function EcosystemPillars() {
             <div className="relative grid grid-cols-2 gap-y-8 sm:grid-cols-3 lg:grid-cols-5 lg:items-start">
               <div className="absolute left-[10%] right-[10%] top-[18px] hidden h-[2px] bg-[#ECEDF5] lg:block" />
               {STEPS.map((s, i) => (
-                <div key={s.title} className="relative z-[1] px-1.5 text-center">
-                  <div className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#7C5CFC] text-[.9rem] font-extrabold text-white">
+                <div key={s.title} className="group relative z-[1] px-1.5 text-center">
+                  <div className="mx-auto mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-[#7C5CFC] text-[.9rem] font-extrabold text-white transition-transform duration-300 ease-out group-hover:-translate-y-1.5">
                     {i + 1}
                   </div>
                   <div className="mx-auto mb-2.5 flex h-14 w-14 items-center justify-center">
