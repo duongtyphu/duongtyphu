@@ -2,7 +2,6 @@
 
 import { useLandingTheme } from "@/components/site/LandingThemeProvider";
 import { Hero } from "@/components/home/Hero";
-import { StatsBar } from "@/components/home/StatsBar";
 import { IntroVideo } from "@/components/home/IntroVideo";
 import { PortalPreview } from "@/components/home/PortalPreview";
 import { QuizAssessment } from "@/components/home/QuizAssessment";
@@ -21,7 +20,6 @@ export default function Home() {
   return (
     <div className={theme === "light" ? "bg-white" : ""}>
       <Hero variant={theme} />
-      <StatsBar />
       <IntroVideo variant={theme} />
       <PortalPreview variant={theme} />
       <QuizAssessment variant={theme} />
