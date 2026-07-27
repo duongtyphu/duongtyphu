@@ -67,12 +67,12 @@ export function LandingPreviewPortalMockup() {
   }, []);
 
   return (
-    <div className="@container flex h-full flex-col bg-[#0B1220]">
+    <div className="@container flex h-full flex-col bg-[#5B21D6]">
       <div className="relative flex h-full flex-col">
         <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent" />
 
         {/* Browser chrome bar */}
-        <div className="relative flex shrink-0 items-center gap-1.5 border-b border-white/10 bg-[#0B1220] px-4 py-3">
+        <div className="relative flex shrink-0 items-center gap-1.5 border-b border-white/10 bg-gradient-to-r from-[#8B6BF2] to-[#5B21D6] px-4 py-3">
           <span className="h-2 w-2 rounded-full bg-red-400/80" />
           <span className="h-2 w-2 rounded-full bg-yellow-400/80" />
           <span className="h-2 w-2 rounded-full bg-green-400/80" />
@@ -85,7 +85,7 @@ export function LandingPreviewPortalMockup() {
         {/* Portal surface */}
         <div className="relative flex flex-1 text-slate-900" style={{ background: "#F6F7F9" }}>
           {/* Sidebar — only when the box is wide enough to fit it */}
-          <div className="hidden w-[168px] shrink-0 space-y-1 border-r border-slate-200/80 p-3 @lg:block">
+          <div className="hidden w-[168px] shrink-0 space-y-1 border-r border-slate-200/80 bg-white p-3 @lg:block">
             {sidebar.map(({ label, icon: Icon }, i) => {
               const active = i === 0 || (step === 0 && i === 3);
               return (
@@ -154,7 +154,7 @@ export function LandingPreviewPortalMockup() {
                 return (
                   <div
                     key={c.title}
-                    className={`rounded-xl border p-2.5 shadow-sm transition-all duration-300 ${
+                    className={`rounded-xl border bg-white p-2.5 shadow-sm transition-all duration-300 ${
                       active ? "-translate-y-0.5 border-brand-blue/40 shadow-md" : "border-slate-200"
                     }`}
                   >
