@@ -65,7 +65,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
   return (
     <section
       className={`relative isolate overflow-hidden pt-16 pb-10 md:pt-20 md:pb-12 ${
-        isLight ? "bg-white text-[#0F172A]" : "text-white"
+        isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"
       }`}
     >
       <motion.div style={{ y: bgY }} className="absolute inset-0 -z-10">

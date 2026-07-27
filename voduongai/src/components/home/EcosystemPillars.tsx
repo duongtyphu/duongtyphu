@@ -71,19 +71,21 @@ const STEPS = [
 /**
  * "Hệ sinh thái" section — content ported verbatim from the new landing
  * preview (LandingPreviewEcosystem + LandingPreviewRoadmap), replacing the
- * old pillar-card content. No section background here on purpose — the old
- * page's background must stay one continuous, unbroken sweep behind every
- * section, so this section is transparent like its neighbors.
+ * old pillar-card content. Section background follows the same
+ * theme-aware pattern as IntroVideo (light: bg-[#F6F7F9], dark:
+ * transparent) so the old page's background stays one continuous,
+ * unbroken sweep behind every section.
  */
-export function EcosystemPillars() {
+export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "light" }) {
+  const isLight = variant === "light";
   return (
-    <section id="ecosystem" className="py-16">
+    <section id="ecosystem" className={`py-16 ${isLight ? "bg-[#F6F7F9]" : ""}`}>
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-10 max-w-[760px] text-center">
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
             🌐 Hệ sinh thái
           </span>
-          <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
+          <h2 className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${isLight ? "text-[#0B0F2E]" : "text-white"}`}>
             Tất cả những gì bạn cần, trong một hệ sinh thái
           </h2>
         </div>

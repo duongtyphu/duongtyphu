@@ -14,7 +14,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
   return (
     <section
       id="cong-cu-toi-dung"
-      className={`scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : ""}`}
+      className={`scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
