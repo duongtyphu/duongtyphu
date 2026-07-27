@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   GraduationCap,
@@ -21,10 +22,10 @@ import {
 // src/components/home/Ecosystem.tsx for the original, full-size version —
 // that file is part of the live homepage and is never edited here). Same
 // percentage-based planetPosition() trick so the diagram scales naturally
-// with whatever box it's placed in. Unlike the original, module labels
-// float up on a slow, continuous loop instead of appearing on hover — this
-// is a decorative panel with no card wrapper, so the animation itself needs
-// to carry the "alive" feeling.
+// with whatever box it's placed in. Module labels float up on a slow,
+// continuous loop when idle, and mouse hover keeps the original page's
+// interactive effect — the hovered planet/line lights up and its label
+// stays fully visible, same behavior as Ecosystem.tsx.
 type Module = { label: string; icon: LucideIcon; ring: 0 | 1 };
 
 const MODULES: Module[] = [
@@ -49,11 +50,14 @@ function planetPosition(i: number, total: number, ring: 0 | 1) {
 }
 
 export function LandingPreviewSolarSystem() {
+  const [hovered, setHovered] = useState<number | null>(null);
+
   return (
     <div className="relative mx-auto aspect-square w-full" aria-hidden="true">
       <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
         {MODULES.map((m, i) => {
           const { x, y } = planetPosition(i, MODULES.length, m.ring);
+          const active = hovered === i;
           return (
             <line
               key={`line-${i}`}
@@ -62,13 +66,15 @@ export function LandingPreviewSolarSystem() {
               x2={x}
               y2={y}
               vectorEffect="non-scaling-stroke"
-              stroke="rgba(124,92,252,.18)"
-              strokeWidth={1}
+              stroke={active ? "#7C5CFC" : "rgba(124,92,252,.18)"}
+              strokeWidth={active ? 1.4 : 1}
+              style={{ transition: "stroke 0.3s ease, stroke-width 0.3s ease" }}
             />
           );
         })}
         {MODULES.map((m, i) => {
           const { x, y } = planetPosition(i, MODULES.length, m.ring);
+          const active = hovered === i;
           return (
             <motion.line
               key={`flow-${i}`}
@@ -77,13 +83,14 @@ export function LandingPreviewSolarSystem() {
               x2={x}
               y2={y}
               vectorEffect="non-scaling-stroke"
-              stroke="#A78BFA"
-              strokeWidth={0.6}
+              stroke={active ? "#5B21D6" : "#A78BFA"}
+              strokeWidth={active ? 1 : 0.6}
               strokeLinecap="round"
               strokeDasharray="2 4"
-              opacity={0.55}
+              opacity={active ? 0.95 : 0.55}
               animate={{ strokeDashoffset: [0, 24] }}
-              transition={{ duration: 4.5, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: active ? 1.2 : 4.5, repeat: Infinity, ease: "linear" }}
+              style={{ transition: "stroke 0.3s ease, opacity 0.3s ease" }}
             />
           );
         })}
@@ -102,23 +109,37 @@ export function LandingPreviewSolarSystem() {
         const Icon = m.icon;
         const pulseDuration = 4 + (i % 5) * 0.8;
         const labelDuration = 7 + (i % 4) * 1.4;
+        const isHovered = hovered === i;
         return (
           <motion.div
             key={`planet-${i}`}
-            className="absolute z-[2] -translate-x-1/2 -translate-y-1/2"
+            className="absolute z-[2] -translate-x-1/2 -translate-y-1/2 cursor-default"
             style={{ left: `${x}%`, top: `${y}%` }}
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ duration: pulseDuration, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }}
+            animate={isHovered ? { scale: 1.15 } : { scale: [1, 1.08, 1] }}
+            transition={
+              isHovered
+                ? { duration: 0.25, ease: "easeOut" }
+                : { duration: pulseDuration, repeat: Infinity, ease: "easeInOut", delay: i * 0.2 }
+            }
+            onMouseEnter={() => setHovered(i)}
+            onMouseLeave={() => setHovered(null)}
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] shadow-[0_4px_14px_-2px_rgba(91,33,214,.55)] md:h-12 md:w-12">
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] shadow-[0_4px_14px_-2px_rgba(91,33,214,.55)] transition-shadow md:h-12 md:w-12 ${
+                isHovered ? "shadow-[0_0_22px_-2px_rgba(91,33,214,.9)]" : ""
+              }`}
+            >
               <Icon className="h-4 w-4 text-white md:h-5 md:w-5" strokeWidth={2} />
             </div>
 
             <motion.span
               className="pointer-events-none absolute left-1/2 top-[calc(100%+6px)] z-30 -translate-x-1/2 whitespace-nowrap rounded-full border border-[#ECEDF5] bg-white px-2 py-0.5 text-[7px] font-bold text-[#5B21D6] shadow-sm md:px-2.5 md:py-1 md:text-[9.5px]"
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: [0, 1, 0], y: [4, 0, -4] }}
-              transition={{ duration: labelDuration, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 }}
+              animate={isHovered ? { opacity: 1, y: 0 } : { opacity: [0, 1, 0], y: [4, 0, -4] }}
+              transition={
+                isHovered
+                  ? { duration: 0.2 }
+                  : { duration: labelDuration, repeat: Infinity, ease: "easeInOut", delay: i * 0.6 }
+              }
             >
               {m.label}
             </motion.span>
