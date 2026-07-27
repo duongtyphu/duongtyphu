@@ -85,7 +85,7 @@ export function LandingPreviewPortalMockup() {
         {/* Portal surface */}
         <div className="relative flex flex-1 text-slate-900" style={{ background: "#F6F7F9" }}>
           {/* Sidebar — only when the box is wide enough to fit it */}
-          <div className="hidden w-[168px] shrink-0 space-y-1 border-r border-slate-200/80 bg-white/70 p-3 @lg:block">
+          <div className="hidden w-[168px] shrink-0 space-y-1 border-r border-slate-200/80 p-3 @lg:block">
             {sidebar.map(({ label, icon: Icon }, i) => {
               const active = i === 0 || (step === 0 && i === 3);
               return (
@@ -110,7 +110,7 @@ export function LandingPreviewPortalMockup() {
                 <p className="mt-0.5 text-[10px] text-slate-500">Bạn muốn bắt đầu với tài nguyên nào?</p>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 text-slate-400">
                   <Bell className="h-3 w-3" strokeWidth={2} />
                 </span>
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue to-brand-violet text-[9px] font-bold text-white">
@@ -123,8 +123,8 @@ export function LandingPreviewPortalMockup() {
             <div
               className={`mt-3 flex items-center gap-2 rounded-xl border px-3 py-2 text-[11px] transition-all duration-300 ${
                 step === 1
-                  ? "border-brand-blue/50 bg-white text-slate-700 shadow-[0_0_0_3px_rgba(37,99,235,.12)]"
-                  : "border-slate-200 bg-slate-50 text-slate-400"
+                  ? "border-brand-blue/50 text-slate-700 shadow-[0_0_0_3px_rgba(37,99,235,.12)]"
+                  : "border-slate-200 text-slate-400"
               }`}
             >
               <Search className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
@@ -139,7 +139,7 @@ export function LandingPreviewPortalMockup() {
                   className={`rounded-full px-2.5 py-1 text-[9.5px] font-semibold ${
                     i === 0
                       ? "bg-gradient-to-r from-brand-blue to-brand-violet text-white shadow-sm"
-                      : "border border-slate-200 bg-white text-slate-500"
+                      : "border border-slate-200 text-slate-500"
                   }`}
                 >
                   {t}
@@ -155,7 +155,7 @@ export function LandingPreviewPortalMockup() {
                   <div
                     key={c.title}
                     className={`rounded-xl border p-2.5 shadow-sm transition-all duration-300 ${
-                      active ? "-translate-y-0.5 border-brand-blue/40 bg-white shadow-md" : "border-slate-200 bg-white"
+                      active ? "-translate-y-0.5 border-brand-blue/40 shadow-md" : "border-slate-200"
                     }`}
                   >
                     <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[7.5px] font-bold tracking-wide ${badgeStyle[c.badge]}`}>
