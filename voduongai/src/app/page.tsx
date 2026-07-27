@@ -11,7 +11,6 @@ import { AudienceProblem } from "@/components/home/AudienceProblem";
 import { Roadmap } from "@/components/home/Roadmap";
 import { TrustStats } from "@/components/home/TrustStats";
 import { Ecosystem } from "@/components/home/Ecosystem";
-import { FounderStory } from "@/components/home/FounderStory";
 import { FinalCTA } from "@/components/home/FinalCTA";
 
 export default function Home() {
@@ -29,7 +28,6 @@ export default function Home() {
       <Roadmap variant={theme} />
       <TrustStats variant={theme} />
       <Ecosystem variant={theme} />
-      <FounderStory variant={theme} />
       <FinalCTA variant={theme} />
     </div>
   );
