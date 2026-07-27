@@ -16,7 +16,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
   const isLight = variant === "light";
   return (
     <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}>
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-7xl px-6">
         <div className="grid items-center gap-8 md:grid-cols-2">
           {/* Left column */}
           <motion.div

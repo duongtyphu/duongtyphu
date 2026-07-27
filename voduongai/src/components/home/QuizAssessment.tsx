@@ -140,7 +140,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
       id="danh-gia-nang-luc-ai"
       className={`scroll-mt-24 py-7 md:py-9 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-7xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -108,7 +108,7 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
       id="trai-nghiem-hoc-vien-ai"
       className={`relative isolate scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-7xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}

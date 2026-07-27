@@ -86,7 +86,7 @@ export function AudienceProblem({ variant = "dark" }: { variant?: "dark" | "ligh
   const isLight = variant === "light";
   return (
     <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}>
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-7xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}

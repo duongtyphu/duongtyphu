@@ -21,7 +21,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className="mx-auto max-w-6xl px-5 text-center"
+        className="mx-auto max-w-7xl px-6 text-center"
       >
         <span
           className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${

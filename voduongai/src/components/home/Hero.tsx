@@ -74,7 +74,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
         <div aria-hidden="true" className={`hero-mesh-blob hero-mesh-blob--violet ${isLight ? "hero-mesh-blob--light" : ""}`} />
       </motion.div>
 
-      <div className="mx-auto grid max-w-6xl gap-14 px-5 md:grid-cols-[1.2fr_1fr] md:items-center">
+      <div className="mx-auto grid max-w-7xl gap-14 px-6 md:grid-cols-[1.2fr_1fr] md:items-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

@@ -77,7 +77,7 @@ const STEPS = [
 export function EcosystemPillars() {
   return (
     <section id="ecosystem" className="bg-[#F7F8FC] py-16">
-      <div className="mx-auto max-w-6xl px-5">
+      <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-10 max-w-[760px] text-center">
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
             🌐 Hệ sinh thái
