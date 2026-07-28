@@ -51,7 +51,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
           {marqueeTools.map((t, i) => (
             <div
               key={`${t.id}-${i}`}
-              className={`card-shine flex w-36 flex-shrink-0 flex-col items-center gap-2.5 rounded-2xl border px-3 py-4 text-center sm:w-40 ${
+              className={`card-shine flex w-36 flex-shrink-0 flex-col items-center gap-2.5 rounded-xl border px-3 py-4 text-center sm:w-40 ${
                 isLight ? "border-[#E2E8F0] bg-white shadow-[0_8px_24px_-16px_rgba(15,23,42,0.25)]" : "border-white/10 bg-white/[0.04]"
               }`}
             >

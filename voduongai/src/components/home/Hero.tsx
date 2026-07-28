@@ -139,15 +139,15 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
           <motion.div
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className={`group relative overflow-hidden rounded-[26px] border p-3 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-3.5 ${
+            className={`group relative overflow-hidden rounded-xl border p-3 shadow-[0_50px_120px_-30px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-shadow duration-300 hover:shadow-[0_0_90px_-10px_rgba(37,99,235,0.45),0_50px_120px_-30px_rgba(0,0,0,0.65)] md:p-3.5 ${
               isLight ? "border-[#7C5CFC] bg-[#5B21D6] shadow-[0_20px_60px_-30px_rgba(91,33,214,0.35)]" : "border-white/12 bg-white/[0.045]"
             }`}
           >
             {/* Light reflection */}
-            <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-gradient-to-br from-white/[0.08] via-transparent to-transparent" />
-            <div className="pointer-events-none absolute -inset-px rounded-[30px] ring-1 ring-inset ring-white/10" />
+            <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.08] via-transparent to-transparent" />
+            <div className="pointer-events-none absolute -inset-px rounded-xl ring-1 ring-inset ring-white/10" />
 
-            <div className="hero-vortex-cosmic relative h-[320px] overflow-hidden rounded-[20px] sm:h-[360px]">
+            <div className="hero-vortex-cosmic relative h-[320px] overflow-hidden rounded-xl sm:h-[360px]">
               <div className="hero-vortex-core" aria-hidden="true" />
               <div className="pointer-events-none absolute inset-0" aria-hidden="true">
                 <HeroQuestionBubbles questions={vortexQuestions} />
@@ -166,7 +166,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
                 delay: i * 0.4,
               }}
               whileHover={{ y: -12 }}
-              className={`absolute z-20 hidden cursor-default rounded-[20px] border px-4 py-2.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-md transition-shadow hover:shadow-[0_0_30px_-2px_rgba(91,140,255,0.5)] sm:block ${
+              className={`absolute z-20 hidden cursor-default rounded-xl border px-4 py-2.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-md transition-shadow hover:shadow-[0_0_30px_-2px_rgba(91,140,255,0.5)] sm:block ${
                 isLight ? "border-[#E2E8F0] bg-white shadow-[0_12px_30px_-15px_rgba(15,23,42,0.25)]" : "border-white/15 bg-white/[0.08]"
               } ${badge.className}`}
             >

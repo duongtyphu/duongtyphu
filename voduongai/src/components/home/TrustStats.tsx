@@ -105,7 +105,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
         </div>
 
         <div
-          className="mt-8 grid gap-6 rounded-2xl p-6 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-8"
+          className="mt-8 grid gap-6 rounded-xl p-6 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-8"
           style={{ background: "linear-gradient(120deg,#0B1140 0%,#171154 100%)" }}
         >
           <div>

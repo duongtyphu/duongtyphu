@@ -28,7 +28,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
             <LandingPreviewSolarSystem />
           </div>
 
-          <div className="mx-auto flex w-full flex-col overflow-hidden rounded-2xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] md:w-[95%]">
+          <div className="mx-auto flex w-full flex-col overflow-hidden rounded-xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] md:w-[95%]">
             <div className="relative aspect-[3/1.9] w-full shrink-0 overflow-hidden">
               <Image
                 src="/founder.png"

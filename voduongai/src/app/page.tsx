@@ -2,9 +2,9 @@
 
 import { useLandingTheme } from "@/components/site/LandingThemeProvider";
 import { Hero } from "@/components/home/Hero";
-import { IntroVideo } from "@/components/home/IntroVideo";
 import { PortalPreview } from "@/components/home/PortalPreview";
 import { QuizAssessment } from "@/components/home/QuizAssessment";
+import { SkillsShowcase } from "@/components/home/SkillsShowcase";
 import { EcosystemPillars } from "@/components/home/EcosystemPillars";
 import { ToolsIUse } from "@/components/home/ToolsIUse";
 import { TrustStats } from "@/components/home/TrustStats";
@@ -17,10 +17,10 @@ export default function Home() {
   return (
     <div className={theme === "light" ? "bg-white" : ""}>
       <Hero variant={theme} />
-      <IntroVideo variant={theme} />
       <EcosystemPillars variant={theme} />
       <PortalPreview variant={theme} />
       <QuizAssessment variant={theme} />
+      <SkillsShowcase variant={theme} />
       <ToolsIUse variant={theme} />
       <TrustStats variant={theme} />
       <Ecosystem variant={theme} />

@@ -178,7 +178,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
             layout
             whileHover={{ y: -4 }}
             transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
-            className={`flex flex-col rounded-[20px] border p-5 md:p-6 ${
+            className={`flex flex-col rounded-xl border p-5 md:p-6 ${
               isLight ? "border-[#E2E8F0] bg-white shadow-[var(--shadow-token-sm)]" : "border-white/10 bg-white/[0.04]"
             }`}
           >
@@ -256,7 +256,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut", delay: 0.1 }}
-                  className="mt-4 rounded-2xl border p-4"
+                  className="mt-4 rounded-xl border p-4"
                   style={{
                     borderColor: `${ACCENT}66`,
                     backgroundColor: `${ACCENT}0D`,
@@ -318,7 +318,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
             layout
             whileHover={{ y: -4 }}
             transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
-            className={`flex flex-col rounded-[20px] border p-5 md:p-6 ${
+            className={`flex flex-col rounded-xl border p-5 md:p-6 ${
               isLight ? "border-[#E2E8F0] bg-white shadow-[var(--shadow-token-sm)]" : "border-white/10 bg-white/[0.04]"
             }`}
           >
