@@ -14,7 +14,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
   return (
     <section
       id="cong-cu-toi-dung"
-      className={`scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
+      className={`scroll-mt-24 overflow-hidden py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -30,7 +30,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
         >
           🛠️ Thực chiến
         </span>
-        <h2 className={`mt-4 text-2xl font-extrabold md:text-3xl ${isLight ? "text-[#0F172A]" : "text-white"}`}>
+        <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
           <RevealText>
             Những công cụ tôi <span className="text-[#7C5CFC]">thực sự đang dùng</span>
           </RevealText>

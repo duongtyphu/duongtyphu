@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { LandingPreviewPortalMockup } from "@/components/landing-preview/LandingPreviewPortalMockup";
 
 const LIST = [
@@ -22,20 +25,32 @@ const LIST = [
 export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section id="trai-nghiem-hoc-vien-ai" className={`scroll-mt-24 py-9 md:py-12 ${isLight ? "bg-[#F6F7F9]" : ""}`}>
+    <section id="trai-nghiem-hoc-vien-ai" className={`scroll-mt-24 py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9]" : ""}`}>
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto mb-10 max-w-2xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mb-10 max-w-2xl text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
             🧭 Khám phá Học Viện
           </span>
-        </div>
+        </motion.div>
 
-        <div className="grid items-stretch gap-6 md:grid-cols-[65fr_35fr]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="grid items-stretch gap-6 md:grid-cols-[65fr_35fr]"
+        >
           <div className="card-shine overflow-hidden rounded-[10.8px] border border-[#ECEDF5] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
             <LandingPreviewPortalMockup />
           </div>
           <div className="card-shine flex flex-col justify-center rounded-[10.8px] border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
-            <h2 className="text-[1.5rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.75rem]">
+            <h2 className="text-[1.4rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.6rem]">
               Nền tảng toàn diện, trải nghiệm liền mạch
             </h2>
             <ul className="mt-[26px] flex flex-col gap-4">
@@ -56,7 +71,7 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
             </ul>
             <Link
               href="/login"
-              className="mt-[26px] inline-flex items-center gap-2 self-start rounded-[10.8px] bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-[26px] py-3.5 text-[.95rem] font-bold text-white shadow-[0_8px_20px_rgba(91,33,214,.35)]"
+              className="mt-[26px] inline-flex items-center gap-2 self-start rounded-[10.8px] bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-[26px] py-3.5 text-[.95rem] font-bold text-white shadow-[0_8px_20px_rgba(91,33,214,.35)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
             >
               Khám phá nền tảng
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
@@ -64,7 +79,7 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
               </svg>
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

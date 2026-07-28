@@ -138,7 +138,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
   return (
     <section
       id="danh-gia-nang-luc-ai"
-      className={`scroll-mt-24 py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
+      className={`scroll-mt-24 py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
       <div className="mx-auto max-w-7xl px-6">
         <motion.div
@@ -157,7 +157,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
           >
             🧠 Đánh giá năng lực AI
           </span>
-          <h2 className="mt-4 text-2xl font-extrabold md:text-3xl">
+          <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
             <RevealText>
               Bạn đang ở đâu trong <span style={{ color: ACCENT }}>hành trình AI</span>?
             </RevealText>
@@ -272,7 +272,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
 
                   <Link
                     href="#cta-cuoi"
-                    className="mt-3.5 inline-flex rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90"
+                    className="mt-3.5 inline-flex rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
                     style={{
                       background: `linear-gradient(135deg, ${ACCENT}, #A78BFA)`,
                       boxShadow: `0 10px 30px -10px ${ACCENT}66`,
@@ -300,7 +300,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                   type="button"
                   onClick={isLastStep ? showResult : goNext}
                   disabled={answers[step] === null}
-                  className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                   style={{
                     background: `linear-gradient(135deg, ${ACCENT}, #A78BFA)`,
                     boxShadow: `0 10px 30px -10px ${ACCENT}66`,

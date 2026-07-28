@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const ITEMS = [
   {
@@ -79,17 +82,29 @@ const STEPS = [
 export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section id="ecosystem" className={`py-9 md:py-12 ${isLight ? "bg-[#F6F7F9]" : ""}`}>
+    <section id="ecosystem" className={`py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9]" : ""}`}>
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto mb-10 max-w-[760px] text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mb-10 max-w-[760px] text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
             🌐 Hệ sinh thái
           </span>
           <h2 className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${isLight ? "text-[#0B0F2E]" : "text-white"}`}>
             Tất cả những gì bạn cần, trong một hệ sinh thái
           </h2>
-        </div>
-        <div className="flex flex-wrap items-stretch justify-center gap-4 xl:flex-nowrap">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-wrap items-stretch justify-center gap-4 xl:flex-nowrap"
+        >
           {ITEMS.map(({ id, icon, title, desc }) => (
             <div
               id={id}
@@ -109,9 +124,15 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
               <p className="text-[.78rem] leading-[1.55] text-[#5B6B85]">{desc}</p>
             </div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-stretch">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="mt-10 flex flex-col gap-6 lg:flex-row lg:items-stretch"
+        >
           <div className="card-shine flex flex-col justify-center rounded-[10.8px] border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:w-[300px] lg:shrink-0 lg:p-8">
             <h3 className="text-[1.15rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.25rem]">
               Lộ trình học tập dành cho mọi người
@@ -154,7 +175,7 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

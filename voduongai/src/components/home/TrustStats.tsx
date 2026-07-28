@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 const FEATURES = [
   {
@@ -35,17 +38,29 @@ const VALUES = [
 export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section className={`border-t py-9 md:py-12 ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}>
+    <section className={`border-t py-[32.4px] md:py-[43.2px] ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}>
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto mb-10 max-w-2xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mb-10 max-w-2xl text-center"
+        >
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
             🌐 Cộng đồng
           </span>
-        </div>
+        </motion.div>
 
-        <div className="grid items-stretch gap-6 md:grid-cols-[1fr_1.2fr]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="grid items-stretch gap-6 md:grid-cols-[1fr_1.2fr]"
+        >
           <div className="card-shine flex flex-col justify-center rounded-[10.8px] border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
-            <h2 className="text-[1.6rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.9rem]">
+            <h2 className="text-[1.4rem] font-extrabold leading-[1.3] tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
               Hệ sinh thái dành cho người Việt
             </h2>
             <p className="mt-3.5 leading-[1.7] text-[#5B6B85]">
@@ -102,9 +117,13 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
           className="card-shine mt-8 grid gap-6 rounded-[10.8px] p-6 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-8"
           style={{ background: "linear-gradient(120deg,#0B1140 0%,#171154 100%)" }}
         >
@@ -127,7 +146,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
               </li>
             ))}
           </ul>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

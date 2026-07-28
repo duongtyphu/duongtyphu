@@ -64,7 +64,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
   return (
     <section
-      className={`relative isolate overflow-hidden pt-16 pb-9 md:pt-20 md:pb-12 ${
+      className={`relative isolate overflow-hidden pt-16 pb-[32.4px] md:pt-20 md:pb-[43.2px] ${
         isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"
       }`}
     >
@@ -81,7 +81,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <span
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold text-brand-violet ${
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold text-[#5B21D6] ${
               isLight ? "border-[#E2E8F0] bg-[#F6F7F9]" : "border-white/15 bg-white/5"
             }`}
           >
@@ -111,7 +111,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/portal/hocvienai"
-              className="rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_45px_-5px_rgba(91,33,214,0.7)]"
+              className="rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
             >
               Bắt đầu ngay hôm nay
             </Link>

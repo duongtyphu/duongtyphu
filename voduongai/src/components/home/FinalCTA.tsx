@@ -9,7 +9,7 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
   return (
     <section
       id="cta-cuoi"
-      className={`relative scroll-mt-24 overflow-hidden py-9 md:py-12 ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}
+      className={`relative scroll-mt-24 overflow-hidden py-[32.4px] md:py-[43.2px] ${isLight ? "bg-white text-[#0F172A]" : "text-white"}`}
     >
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -18,7 +18,7 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto max-w-3xl px-5 text-center"
       >
-        <h2 className="text-2xl font-extrabold md:text-3xl">
+        <h2 className="text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
           <RevealText>
             Bắt đầu hành trình AI của bạn <span className="text-[#7C5CFC]">hôm nay</span>
           </RevealText>

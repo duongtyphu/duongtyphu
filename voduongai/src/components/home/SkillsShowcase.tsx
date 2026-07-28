@@ -34,7 +34,7 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className={`py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
+    <section className={`py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-8 max-w-2xl text-center">
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
@@ -50,7 +50,7 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           className="card-shine grid overflow-hidden rounded-[10.8px] border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr]"
         >
           <div className="flex flex-col justify-center p-6 md:p-8">
-            <h2 className="text-[1.35rem] font-extrabold leading-[1.35] text-[#0B0F2E] md:text-[1.55rem]">
+            <h2 className="text-[1.4rem] font-extrabold leading-[1.35] tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
               Những kỹ năng thiết yếu giúp bạn tạo lợi thế cạnh tranh trong kỷ nguyên AI.
             </h2>
             <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-3.5">

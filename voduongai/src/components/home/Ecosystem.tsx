@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { Crown, Orbit } from "lucide-react";
+import { motion } from "framer-motion";
 import { LandingPreviewSolarSystem } from "@/components/landing-preview/LandingPreviewSolarSystem";
 
 /**
@@ -14,16 +17,28 @@ import { LandingPreviewSolarSystem } from "@/components/landing-preview/LandingP
 export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section className={`overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
+    <section className={`overflow-hidden py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto mb-10 max-w-2xl text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto mb-10 max-w-2xl text-center"
+        >
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#5B21D6]">
             <Orbit className="h-3.5 w-3.5" strokeWidth={2.25} />
             Hệ sinh thái của tôi
           </span>
-        </div>
+        </motion.div>
 
-        <div className="grid items-center gap-8 md:grid-cols-2">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          className="grid items-center gap-8 md:grid-cols-2"
+        >
           <div className="flex items-center justify-center">
             <LandingPreviewSolarSystem />
           </div>
@@ -56,7 +71,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
