@@ -73,7 +73,7 @@ export function HeaderClient({
             href="/login"
             className="hidden shrink-0 rounded-[10.8px] bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90 min-[400px]:inline-flex"
           >
-            Đăng ký miễn phí
+            Đăng nhập
           </Link>
           {userEmail && <AccountMenu email={userEmail} fullName={fullName} isLight={isLight} />}
           <MobileNavDrawer

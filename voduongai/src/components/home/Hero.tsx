@@ -110,7 +110,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
-              href="/portal/hocvienai"
+              href="/login"
               className="rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
             >
               Bắt đầu ngay hôm nay
