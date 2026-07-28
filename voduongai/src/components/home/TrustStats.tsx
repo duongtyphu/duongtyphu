@@ -50,7 +50,11 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-2xl text-center"
         >
-          <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🌐 Cộng đồng
           </span>
         </motion.div>
@@ -62,11 +66,21 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="grid items-stretch gap-6 md:grid-cols-[1fr_1.2fr]"
         >
-          <div className="card-shine flex flex-col justify-center rounded-[10.8px] border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
-            <h2 className="text-[1.4rem] font-extrabold leading-[1.3] tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
+          <div
+            className={`card-shine flex flex-col justify-center rounded-[10.8px] border p-6 md:p-8 ${
+              isLight
+                ? "border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)]"
+                : "border-white/10 bg-white/[0.04]"
+            }`}
+          >
+            <h2
+              className={`text-[1.4rem] font-extrabold leading-[1.3] tracking-[-.3px] md:text-[1.6rem] ${
+                isLight ? "text-[#0B0F2E]" : "text-white"
+              }`}
+            >
               Hệ sinh thái dành cho người Việt
             </h2>
-            <p className="mt-3.5 leading-[1.7] text-[#5B6B85]">
+            <p className={`mt-3.5 leading-[1.7] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
               Kết nối tri thức, công cụ, cơ hội và cộng đồng để cùng nhau phát triển và tạo ra tác động tích cực.
             </p>
             <ul className="mt-[26px] flex flex-col gap-5">
@@ -82,8 +96,12 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
                     />
                   </span>
                   <div>
-                    <h4 className="text-[.98rem] font-extrabold text-[#0B0F2E]">{f.title}</h4>
-                    <p className="mt-1 text-[.86rem] leading-[1.6] text-[#5B6B85]">{f.desc}</p>
+                    <h4 className={`text-[.98rem] font-extrabold ${isLight ? "text-[#0B0F2E]" : "text-white"}`}>
+                      {f.title}
+                    </h4>
+                    <p className={`mt-1 text-[.86rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
+                      {f.desc}
+                    </p>
                   </div>
                 </li>
               ))}

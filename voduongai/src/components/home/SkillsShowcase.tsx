@@ -40,7 +40,11 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-8 max-w-2xl text-center">
-          <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
+          <span
+            className={`inline-flex items-center rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🎯 10 Kỹ năng AI cần có
           </span>
         </div>
@@ -50,10 +54,18 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="card-shine grid overflow-hidden rounded-[10.8px] border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr]"
+          className={`card-shine grid overflow-hidden rounded-[10.8px] border lg:grid-cols-[55fr_45fr] ${
+            isLight
+              ? "border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)]"
+              : "border-white/10 bg-white/[0.04]"
+          }`}
         >
           <div className="flex flex-col justify-center p-6 md:p-8">
-            <h2 className="text-[1.4rem] font-extrabold leading-[1.35] tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
+            <h2
+              className={`text-[1.4rem] font-extrabold leading-[1.35] tracking-[-.3px] md:text-[1.6rem] ${
+                isLight ? "text-[#0B0F2E]" : "text-white"
+              }`}
+            >
               Những kỹ năng thiết yếu giúp bạn tạo lợi thế cạnh tranh trong kỷ nguyên AI.
             </h2>
             <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-3.5">
@@ -63,7 +75,11 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#7C5CFC]">
                       <Check className="h-3 w-3 text-white" strokeWidth={3} />
                     </span>
-                    <span className="text-[.88rem] font-semibold leading-snug text-[#334155]">
+                    <span
+                      className={`text-[.88rem] font-semibold leading-snug ${
+                        isLight ? "text-[#334155]" : "text-white/80"
+                      }`}
+                    >
                       {i + 1}. {skill}
                     </span>
                   </li>
@@ -75,7 +91,11 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
                     <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#7C5CFC]">
                       <Check className="h-3 w-3 text-white" strokeWidth={3} />
                     </span>
-                    <span className="text-[.88rem] font-semibold leading-snug text-[#334155]">
+                    <span
+                      className={`text-[.88rem] font-semibold leading-snug ${
+                        isLight ? "text-[#334155]" : "text-white/80"
+                      }`}
+                    >
                       {i + 6}. {skill}
                     </span>
                   </li>
@@ -84,7 +104,11 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
             </div>
           </div>
 
-          <div className="relative aspect-video border-t border-[#ECEDF5] bg-black lg:aspect-auto lg:border-l lg:border-t-0">
+          <div
+            className={`relative aspect-video border-t bg-black lg:aspect-auto lg:border-l lg:border-t-0 ${
+              isLight ? "border-[#ECEDF5]" : "border-white/10"
+            }`}
+          >
             {playing ? (
               <iframe
                 src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3`}

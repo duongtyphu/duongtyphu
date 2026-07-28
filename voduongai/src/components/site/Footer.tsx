@@ -95,10 +95,14 @@ export function Footer({ settings }: { settings: SiteSettings }) {
               </svg>
               <span className="text-base font-extrabold tracking-tight">
                 <span className="text-[#2563EB]">{brandMain(settings.siteName)}</span>
-                <span className="text-[#5B21D6]">{brandAccent(settings.siteName)}</span>
+                <span className={isLight ? "text-[#5B21D6]" : "text-white"}>{brandAccent(settings.siteName)}</span>
               </span>
             </Link>
-            <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-[#5B21D6]">
+            <p
+              className={`mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider ${
+                isLight ? "text-[#5B21D6]" : "text-white"
+              }`}
+            >
               {settings.slogan}
             </p>
             <p className={`mt-4 max-w-xs text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/50"}`}>

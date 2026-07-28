@@ -36,7 +36,11 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-2xl text-center"
         >
-          <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
             🧭 Khám phá Học Viện
           </span>
         </motion.div>
@@ -48,16 +52,35 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           className="grid items-stretch gap-6 md:grid-cols-[65fr_35fr]"
         >
-          <div className="card-shine overflow-hidden rounded-[10.8px] border border-[#ECEDF5] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+          <div
+            className={`card-shine overflow-hidden rounded-[10.8px] border shadow-[0_4px_24px_rgba(15,23,60,.06)] ${
+              isLight ? "border-[#ECEDF5]" : "border-white/10"
+            }`}
+          >
             <LandingPreviewPortalMockup />
           </div>
-          <div className="card-shine flex flex-col justify-center rounded-[10.8px] border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
-            <h2 className="text-[1.4rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.6rem]">
+          <div
+            className={`card-shine flex flex-col justify-center rounded-[10.8px] border p-6 md:p-8 ${
+              isLight
+                ? "border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)]"
+                : "border-white/10 bg-white/[0.04]"
+            }`}
+          >
+            <h2
+              className={`text-[1.4rem] font-extrabold leading-[1.3] md:text-[1.6rem] ${
+                isLight ? "text-[#0B0F2E]" : "text-white"
+              }`}
+            >
               Nền tảng toàn diện, trải nghiệm liền mạch
             </h2>
             <ul className="mt-[26px] flex flex-col gap-4">
               {LIST.map((item) => (
-                <li key={item.label} className="flex items-center gap-3.5 text-[.95rem] font-semibold text-[#0B0F2E]">
+                <li
+                  key={item.label}
+                  className={`flex items-center gap-3.5 text-[.95rem] font-semibold ${
+                    isLight ? "text-[#0B0F2E]" : "text-white"
+                  }`}
+                >
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center">
                     <Image
                       src={item.icon}

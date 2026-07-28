@@ -81,8 +81,8 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <span
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold text-[#5B21D6] ${
-              isLight ? "border-[#E2E8F0] bg-[#F6F7F9]" : "border-white/15 bg-white/5"
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold ${
+              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#5B21D6]" : "border-white/15 bg-white/5 text-white"
             }`}
           >
             <span className="relative flex h-2 w-2">

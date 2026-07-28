@@ -39,9 +39,13 @@ export function HeaderClient({
           <span className="flex flex-col leading-tight">
             <span className="text-sm font-extrabold tracking-tight">
               <span className="text-[#2563EB]">{brandMain(siteName)}</span>
-              <span className="text-[#5B21D6]">{brandAccent(siteName)}</span>
+              <span className={isLight ? "text-[#5B21D6]" : "text-white"}>{brandAccent(siteName)}</span>
             </span>
-            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-[#5B21D6] sm:block">
+            <span
+              className={`hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider sm:block ${
+                isLight ? "text-[#5B21D6]" : "text-white"
+              }`}
+            >
               {slogan}
             </span>
           </span>
