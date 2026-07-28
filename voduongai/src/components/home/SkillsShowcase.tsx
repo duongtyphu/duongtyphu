@@ -24,9 +24,11 @@ const YOUTUBE_ID = "zH5IvC-A6iI";
 
 /**
  * "10 Kỹ năng AI cần có" section — sits between QuizAssessment and
- * ToolsIUse. Video is a click-to-play facade (thumbnail + purple play
- * button) so nothing autoplays or overlays text on load; once clicked the
- * real YouTube iframe takes over and autoplays with minimal chrome.
+ * ToolsIUse. A single card split 55/45 (text/video). Video is a
+ * click-to-play facade (thumbnail + purple play button) so nothing
+ * autoplays or shows a title on load; once clicked the real YouTube
+ * iframe takes over and autoplays with minimal chrome. Only the channel
+ * name is ever shown as text over the video, never a video title.
  */
 export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
@@ -46,9 +48,9 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="grid items-stretch gap-6 lg:grid-cols-[1fr_1.1fr]"
+          className="grid overflow-hidden rounded-xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr]"
         >
-          <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
+          <div className="flex flex-col justify-center p-6 md:p-8">
             <h2 className="text-[1.35rem] font-extrabold leading-[1.35] text-[#0B0F2E] md:text-[1.55rem]">
               Những kỹ năng thiết yếu giúp bạn tạo lợi thế cạnh tranh trong kỷ nguyên AI.
             </h2>
@@ -80,11 +82,14 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
             </div>
           </div>
 
-          <div className="relative aspect-video overflow-hidden rounded-xl border border-[#ECEDF5] bg-black shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:aspect-auto">
+          <div className="relative aspect-video border-t border-[#ECEDF5] bg-black lg:aspect-auto lg:border-l lg:border-t-0">
+            <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              Võ Đương Official
+            </span>
             {playing ? (
               <iframe
                 src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3`}
-                title="10 kỹ năng AI cần có"
+                title="Võ Đương Official"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="absolute inset-0 h-full w-full"
