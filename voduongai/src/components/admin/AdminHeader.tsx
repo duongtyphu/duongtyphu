@@ -27,7 +27,7 @@ export function AdminHeader({
         <div className="flex shrink-0 items-center gap-2">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-            <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
+            <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <span className="hidden flex-col leading-tight sm:flex">
             <span className="text-sm font-extrabold tracking-tight text-gray-900">

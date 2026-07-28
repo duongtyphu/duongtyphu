@@ -102,11 +102,11 @@ export function Footer({ settings }: { settings: SiteSettings }) {
             <Link href="/" className="flex items-center gap-2">
               <svg width="34" height="34" viewBox="0 0 32 32" fill="none" className="shrink-0">
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-                <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
+                <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
               <span className={`text-base font-extrabold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
                 {brandMain(settings.siteName)}
-                <span className="text-[#5B21D6]">{brandAccent(settings.siteName)}</span>
+                <span className="text-brand-orange">{brandAccent(settings.siteName)}</span>
               </span>
             </Link>
             <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">

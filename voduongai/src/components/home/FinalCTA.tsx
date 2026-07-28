@@ -23,9 +23,6 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
             Bắt đầu hành trình chinh phục các kỹ năng AI của bạn ngay hôm nay.
           </RevealText>
         </h2>
-        <p className={`mt-4 text-[11px] sm:text-sm md:text-base ${isLight ? "text-[#334155]" : "text-white"}`}>
-          Tôi đã chuẩn bị sẵn tài nguyên, công cụ và lộ trình bên trong Học viện AI. Việc của bạn là bắt đầu.
-        </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
             href="/login"
