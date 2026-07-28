@@ -37,17 +37,11 @@ export function HeaderClient({
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <span className="flex flex-col leading-tight">
-            <span
-              className={`text-sm font-extrabold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}
-            >
-              {brandMain(siteName)}
-              <span className="text-brand-orange">{brandAccent(siteName)}</span>
+            <span className="text-sm font-extrabold tracking-tight">
+              <span className="text-[#2563EB]">{brandMain(siteName)}</span>
+              <span className="text-[#5B21D6]">{brandAccent(siteName)}</span>
             </span>
-            <span
-              className={`hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider sm:block ${
-                isLight ? "text-brand-blue" : "text-brand-blue"
-              }`}
-            >
+            <span className="hidden whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-[#5B21D6] sm:block">
               {slogan}
             </span>
           </span>

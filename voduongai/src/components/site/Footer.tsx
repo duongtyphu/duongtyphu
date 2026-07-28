@@ -104,12 +104,12 @@ export function Footer({ settings }: { settings: SiteSettings }) {
                 <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
                 <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
               </svg>
-              <span className={`text-base font-extrabold tracking-tight ${isLight ? "text-[#0F172A]" : "text-white"}`}>
-                {brandMain(settings.siteName)}
-                <span className="text-brand-orange">{brandAccent(settings.siteName)}</span>
+              <span className="text-base font-extrabold tracking-tight">
+                <span className="text-[#2563EB]">{brandMain(settings.siteName)}</span>
+                <span className="text-[#5B21D6]">{brandAccent(settings.siteName)}</span>
               </span>
             </Link>
-            <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-brand-violet">
+            <p className="mt-2 whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-[#5B21D6]">
               {settings.slogan}
             </p>
             <p className={`mt-4 max-w-xs text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/50"}`}>

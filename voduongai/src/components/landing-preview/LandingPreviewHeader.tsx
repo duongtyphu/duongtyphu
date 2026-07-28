@@ -22,8 +22,8 @@ function LogoMark({ small }: { small?: boolean }) {
         <circle cx="27" cy="7.5" r="3" fill="#F97316" />
       </svg>
       <span className="flex flex-col leading-none">
-        <b className="text-[15px] font-extrabold tracking-[1.5px] text-white">VO DUONG</b>
-        <small className="text-[8px] font-semibold tracking-[3px] text-slate-400">AI</small>
+        <b className="text-[15px] font-extrabold tracking-[1.5px] text-[#2563EB]">VO DUONG</b>
+        <small className="text-[8px] font-semibold tracking-[3px] text-[#5B21D6]">AI</small>
       </span>
     </span>
   );

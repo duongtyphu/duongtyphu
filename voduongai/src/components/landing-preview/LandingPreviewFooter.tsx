@@ -9,8 +9,8 @@ function LogoMark() {
         <circle cx="27" cy="7.5" r="3" fill="#F97316" />
       </svg>
       <span className="flex flex-col leading-none">
-        <b className="text-[18px] font-extrabold tracking-[1.5px] text-[#0B0F2E]">VO DUONG</b>
-        <small className="text-[9px] font-semibold tracking-[3px] text-[#94A3B8]">AI</small>
+        <b className="text-[18px] font-extrabold tracking-[1.5px] text-[#2563EB]">VO DUONG</b>
+        <small className="text-[9px] font-semibold tracking-[3px] text-[#5B21D6]">AI</small>
       </span>
     </span>
   );
