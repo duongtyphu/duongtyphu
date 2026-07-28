@@ -1,35 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { SiteSettings } from "@/lib/site-settings";
 import { brandMain, brandAccent } from "@/lib/brand-name";
 import { useLandingTheme } from "@/components/site/LandingThemeProvider";
+import { siteConfig } from "@/lib/site";
 
 const columns = [
   {
-    title: "Học viện AI",
+    title: "Khám phá",
     links: [
-      { label: "Companion", href: "/portal/companion" },
-      { label: "Hệ tri thức AI (CKOS)", href: "/portal/hetrithucai" },
-      { label: "Kỹ năng AI", href: "/portal/hocvienai" },
-      { label: "Thực hành AI - Dự án & Cơ hội", href: "/portal/duan-cohoi" },
-      { label: "Premium", href: "/portal/premium" },
+      { label: "Học viện AI", href: "/login" },
+      { label: "Hệ tri thức AI (CKOS)", href: "/login" },
+      { label: "Dự án & Cơ hội", href: "/login" },
+      { label: "Premium", href: "/login" },
     ],
   },
   {
-    title: "Tài nguyên",
+    title: "Hành trình",
     links: [
+      { label: "My Story", href: "/portal/story" },
       { label: "Nhật ký học tập", href: "/portal/nhatkyhoctap" },
-      { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
+      { label: "Bản đồ hành trình", href: "/portal/hanhtrinhcuatoi/ban-do" },
       { label: "Khu vườn của bạn", href: "/portal/khuvuoncuaban" },
-      { label: "Cộng đồng AI", href: "/portal/congdongai" },
     ],
   },
 ];
 
-function getSocials(settings: SiteSettings, isLight: boolean) {
+function getSocials(settings: SiteSettings) {
   return [
     {
       label: "Facebook",
@@ -73,17 +72,6 @@ function getSocials(settings: SiteSettings, isLight: boolean) {
         </svg>
       ),
     },
-    {
-      label: "Email",
-      href: `mailto:${settings.adminEmailNotify}`,
-      bg: isLight ? "rgba(15,23,42,0.08)" : "rgba(255,255,255,0.12)",
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5">
-          <rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke={isLight ? "#0F172A" : "#fff"} strokeWidth="1.4" />
-          <path d="M4.5 7 12 12.5 19.5 7" stroke={isLight ? "#0F172A" : "#fff"} strokeWidth="1.4" strokeLinecap="round" />
-        </svg>
-      ),
-    },
   ];
 }
 
@@ -91,7 +79,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
   const pathname = usePathname();
   const { theme } = useLandingTheme();
   const isLight = pathname === "/" && theme === "light";
-  const socials = getSocials(settings, isLight);
+  const socials = getSocials(settings);
 
   return (
     <footer className={`relative ${isLight ? "bg-white text-[#0F172A]" : ""}`}>
@@ -113,17 +101,24 @@ export function Footer({ settings }: { settings: SiteSettings }) {
               {settings.slogan}
             </p>
             <p className={`mt-4 max-w-xs text-sm leading-relaxed ${isLight ? "text-[#54637A]" : "text-white/50"}`}>
-              Nơi học AI, xây hệ thống và tạo tài sản số hội tụ trong một hệ
-              sinh thái duy nhất, đồng hành cùng bạn từ người mới đến nhà đầu
-              tư thực chiến trong kỷ nguyên mới.
+              Hệ sinh thái học tập AI, bổ sung các kỹ năng AI, ứng dụng vào
+              công việc thực tế và đồng hành cùng bạn trong kỷ nguyên mới.
             </p>
-            <Image
-              src="/images/ai-uy-tin-badge.png"
-              alt="Chứng nhận AI Uy Tín — Học thật, giá trị thật"
-              width={112}
-              height={112}
-              className="mt-3 h-28 w-28"
-            />
+            <div className="mt-4 flex items-center gap-2.5">
+              {socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={s.label}
+                  className="flex h-8 w-8 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+                  style={{ backgroundColor: s.bg }}
+                >
+                  {s.icon}
+                </a>
+              ))}
+            </div>
           </div>
 
           {columns.map((col) => (
@@ -152,30 +147,55 @@ export function Footer({ settings }: { settings: SiteSettings }) {
 
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-brand-violet">
-              Kết nối
+              Liên hệ
             </h3>
             <ul className="mt-4 space-y-3">
-              {socials.map((s) => (
-                <li key={s.label}>
-                  <a
-                    href={s.href}
-                    {...(s.href.startsWith("mailto:")
-                      ? {}
-                      : { target: "_blank", rel: "noopener noreferrer" })}
-                    className={`flex items-center gap-2.5 text-sm transition ${
-                      isLight ? "text-[#54637A] hover:text-[#0F172A]" : "text-white/50 hover:text-white"
-                    }`}
-                  >
-                    <span
-                      className="flex h-6 w-6 items-center justify-center rounded-full"
-                      style={{ backgroundColor: s.bg }}
-                    >
-                      {s.icon}
-                    </span>
-                    {s.label}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a
+                  href={`mailto:${settings.adminEmailNotify}`}
+                  className={`flex items-center gap-2.5 text-sm transition ${
+                    isLight ? "text-[#54637A] hover:text-[#0F172A]" : "text-white/50 hover:text-white"
+                  }`}
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-violet/10 text-brand-violet">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="5" width="18" height="14" rx="2" />
+                      <path d="m3 7 9 6 9-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </span>
+                  {settings.adminEmailNotify}
+                </a>
+              </li>
+              <li>
+                <a
+                  href={`tel:+84${siteConfig.contact.phone.replace(/^0/, "")}`}
+                  className={`flex items-center gap-2.5 text-sm transition ${
+                    isLight ? "text-[#54637A] hover:text-[#0F172A]" : "text-white/50 hover:text-white"
+                  }`}
+                >
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-violet/10 text-brand-violet">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path
+                        d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.4 2.1L8.1 10a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.6 2Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  (+84) {siteConfig.contact.phone}
+                </a>
+              </li>
+              <li
+                className={`flex items-center gap-2.5 text-sm ${isLight ? "text-[#54637A]" : "text-white/50"}`}
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand-violet/10 text-brand-violet">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" strokeLinecap="round" strokeLinejoin="round" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </span>
+                TP. Hồ Chí Minh, Việt Nam
+              </li>
             </ul>
           </div>
         </div>
