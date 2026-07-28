@@ -50,7 +50,7 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="card-shine grid overflow-hidden rounded-[10.8px] border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr]"
+          className="card-shine grid overflow-hidden rounded-[10.8px] border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr] lg:min-h-[484px] xl:min-h-[385px]"
         >
           <div className="flex flex-col justify-center p-6 md:p-8">
             <h2 className="text-[1.4rem] font-extrabold leading-[1.35] tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
