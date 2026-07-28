@@ -20,7 +20,7 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
       >
         <h2 className="text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
           <RevealText>
-            Bắt đầu hành trình AI của bạn <span className="text-[#7C5CFC]">hôm nay</span>
+            Bắt đầu hành trình chinh phục các kỹ năng AI của bạn ngay hôm nay.
           </RevealText>
         </h2>
         <p className={`mt-4 text-[11px] sm:text-sm md:text-base ${isLight ? "text-[#334155]" : "text-white"}`}>
@@ -31,7 +31,7 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
             href="/login"
             className="inline-flex h-[52px] items-center rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-8 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
           >
-            Vào Học viện miễn phí
+            Bắt đầu ngay hôm nay
           </Link>
         </div>
       </motion.div>

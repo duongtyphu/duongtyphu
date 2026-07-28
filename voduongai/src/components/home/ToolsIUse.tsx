@@ -31,9 +31,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
           🛠️ Thực chiến
         </span>
         <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
-          <RevealText>
-            Những công cụ tôi <span className="text-[#7C5CFC]">thực sự đang dùng</span>
-          </RevealText>
+          <RevealText>Những công cụ tôi thực sự đang dùng</RevealText>
         </h2>
         <p className={`mx-auto mt-2 max-w-lg ${isLight ? "text-[#334155]" : "text-white"}`}>
           Danh sách những công cụ tôi đang trải nghiệm mỗi ngày

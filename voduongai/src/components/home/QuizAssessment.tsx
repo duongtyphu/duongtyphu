@@ -158,9 +158,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
             🧠 Đánh giá năng lực AI
           </span>
           <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
-            <RevealText>
-              Bạn đang ở đâu trong <span style={{ color: ACCENT }}>hành trình AI</span>?
-            </RevealText>
+            <RevealText>Bạn đang ở đâu trong hành trình AI?</RevealText>
           </h2>
         </motion.div>
 
