@@ -102,7 +102,7 @@ export function LandingPreviewSolarSystem() {
         <div className="relative flex h-full w-full flex-col items-center justify-center gap-0.5 rounded-full border border-white/20 bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] text-center text-white shadow-[0_12px_28px_rgba(91,33,214,.4)] transition-shadow duration-500 group-hover:shadow-[0_0_32px_-2px_rgba(124,92,252,1)]">
           <svg width="30%" height="30%" viewBox="0 0 32 32" fill="none" className="shrink-0">
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#fff" />
-            <circle cx="27" cy="7.5" r="3" fill="#F97316" />
+            <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
           </svg>
           <span className="text-[.5rem] font-extrabold tracking-wide md:text-[.6rem]">VO DUONG AI</span>
         </div>

@@ -6,7 +6,7 @@ function LogoMark() {
     <span className="inline-flex items-center gap-2">
       <svg width="40" height="40" viewBox="0 0 32 32" fill="none" className="shrink-0">
         <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-        <circle cx="27" cy="7.5" r="3" fill="#F97316" />
+        <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
       </svg>
       <span className="flex flex-col leading-none">
         <b className="text-[18px] font-extrabold tracking-[1.5px] text-[#0B0F2E]">VO DUONG</b>

@@ -38,7 +38,10 @@ const VALUES = [
 export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section className={`border-t py-[32.4px] md:py-[43.2px] ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}>
+    <section
+      id="cong-dong"
+      className={`scroll-mt-24 border-t py-[32.4px] md:py-[43.2px] ${isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#0F172A]" : "border-white/5 text-white"}`}
+    >
       <div className="mx-auto max-w-7xl px-6">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

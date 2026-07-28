@@ -22,7 +22,7 @@ export default function OpengraphImage() {
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <svg width="84" height="84" viewBox="0 0 32 32" fill="none">
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-            <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
+            <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
           </svg>
           <span style={{ fontSize: 56, fontWeight: 800, color: "#FFFFFF" }}>
             Võ Đương AI

@@ -150,7 +150,7 @@ export default function CompanionHomePage() {
           <div className="sanctuary-glow-soft relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 via-violet-100 to-orange-50 shadow-[0_0_80px_-10px_rgba(124,58,237,0.35)]">
             <svg width="40" height="40" viewBox="0 0 32 32" fill="none">
               <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-              <circle cx="27" cy="7.5" r="3" fill="#F97316" />
+              <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
             </svg>
           </div>
 
@@ -515,7 +515,7 @@ export default function CompanionHomePage() {
           <div className="mx-auto flex h-10 w-10 items-center justify-center">
             <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
               <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-              <circle cx="27" cy="7.5" r="3" fill="#F97316" />
+              <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
             </svg>
           </div>
           <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-gray-500">

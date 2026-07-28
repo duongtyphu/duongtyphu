@@ -34,7 +34,10 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
   const [playing, setPlaying] = useState(false);
 
   return (
-    <section className={`py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
+    <section
+      id="ky-nang-ai"
+      className={`scroll-mt-24 py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
+    >
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-8 max-w-2xl text-center">
           <span className="inline-flex items-center rounded-full border border-[#E2E8F0] bg-white px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#54637A]">

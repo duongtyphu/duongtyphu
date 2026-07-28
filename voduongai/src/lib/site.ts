@@ -34,9 +34,12 @@ export const bankConfig = {
 
 export const mainNav = [
   { label: "Trang chủ", href: "/" },
+  { label: "Companion", href: "/#companion-ai" },
   { label: "Học viện AI", href: "/#trai-nghiem-hoc-vien-ai" },
-  { label: "AI Workspace", href: "/#danh-gia-nang-luc-ai" },
-  { label: "Blog AI", href: "/blogai" },
+  { label: "Kỹ năng AI", href: "/#ky-nang-ai" },
+  { label: "Công cụ AI", href: "/#cong-cu-toi-dung" },
+  { label: "Cộng đồng", href: "/#cong-dong" },
+  { label: "Hành trình của tôi", href: "/#he-sinh-thai-cua-toi" },
 ];
 
 // Portal Knowledge Architecture — 3 hành trình: Học hỏi / Xây dựng / Trưởng thành.

@@ -19,7 +19,7 @@ function LogoMark({ small }: { small?: boolean }) {
     <span className="inline-flex items-center gap-[7px]">
       <svg width={size} height={size} viewBox="0 0 32 32" fill="none" className="shrink-0">
         <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
-        <circle cx="27" cy="7.5" r="3" fill="#F97316" />
+        <circle cx="27" cy="7.5" r="3" fill="#5B21D6" />
       </svg>
       <span className="flex flex-col leading-none">
         <b className="text-[15px] font-extrabold tracking-[1.5px] text-white">VO DUONG</b>
