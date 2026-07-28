@@ -26,9 +26,8 @@ const YOUTUBE_ID = "zH5IvC-A6iI";
  * "10 Kỹ năng AI cần có" section — sits between QuizAssessment and
  * ToolsIUse. A single card split 55/45 (text/video). Video is a
  * click-to-play facade (thumbnail + purple play button) so nothing
- * autoplays or shows a title on load; once clicked the real YouTube
- * iframe takes over and autoplays with minimal chrome. Only the channel
- * name is ever shown as text over the video, never a video title.
+ * autoplays or shows a title/channel name on load; once clicked the real
+ * YouTube iframe takes over and autoplays with minimal chrome.
  */
 export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
@@ -48,7 +47,7 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="grid overflow-hidden rounded-xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr]"
+          className="card-shine grid overflow-hidden rounded-[10.8px] border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] lg:grid-cols-[55fr_45fr]"
         >
           <div className="flex flex-col justify-center p-6 md:p-8">
             <h2 className="text-[1.35rem] font-extrabold leading-[1.35] text-[#0B0F2E] md:text-[1.55rem]">
@@ -83,9 +82,6 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           </div>
 
           <div className="relative aspect-video border-t border-[#ECEDF5] bg-black lg:aspect-auto lg:border-l lg:border-t-0">
-            <span className="pointer-events-none absolute left-3 top-3 z-10 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
-              Võ Đương Official
-            </span>
             {playing ? (
               <iframe
                 src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3`}

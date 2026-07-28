@@ -39,8 +39,8 @@ const QUESTIONS = [
   },
 ];
 
-// Accent orange for this section — unify with #FF6B35 going forward.
-const ACCENT = "#FF6B35";
+// Accent purple for this section, matching the page-wide brand accent.
+const ACCENT = "#7C5CFC";
 
 const LEVELS = [
   {
@@ -138,7 +138,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
   return (
     <section
       id="danh-gia-nang-luc-ai"
-      className={`scroll-mt-24 py-7 md:py-9 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
+      className={`scroll-mt-24 py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}
     >
       <div className="mx-auto max-w-7xl px-6">
         <motion.div
@@ -176,9 +176,8 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
               stretched to equal height upfront. */}
           <motion.div
             layout
-            whileHover={{ y: -4 }}
-            transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
-            className={`flex flex-col rounded-xl border p-5 md:p-6 ${
+            transition={{ layout: { duration: 0.4, ease: "easeInOut" } }}
+            className={`card-shine flex flex-col rounded-[10.8px] border p-5 md:p-6 ${
               isLight ? "border-[#E2E8F0] bg-white shadow-[var(--shadow-token-sm)]" : "border-white/10 bg-white/[0.04]"
             }`}
           >
@@ -227,7 +226,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                         key={answer}
                         type="button"
                         onClick={() => selectAnswer(i)}
-                        className={`w-full rounded-xl border px-3.5 py-2.5 text-left text-sm transition ${
+                        className={`w-full rounded-[10.8px] border px-3.5 py-2.5 text-left text-sm transition ${
                           isLight
                             ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#334155] hover:border-[#CBD5E1] hover:bg-white"
                             : "border-white/10 bg-white/[0.02] text-white/80 hover:border-white/25 hover:bg-white/[0.05]"
@@ -256,7 +255,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, ease: "easeOut", delay: 0.1 }}
-                  className="mt-4 rounded-xl border p-4"
+                  className="mt-4 rounded-[10.8px] border p-4"
                   style={{
                     borderColor: `${ACCENT}66`,
                     backgroundColor: `${ACCENT}0D`,
@@ -275,7 +274,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                     href="#cta-cuoi"
                     className="mt-3.5 inline-flex rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90"
                     style={{
-                      background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
+                      background: `linear-gradient(135deg, ${ACCENT}, #A78BFA)`,
                       boxShadow: `0 10px 30px -10px ${ACCENT}66`,
                     }}
                   >
@@ -303,7 +302,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                   disabled={answers[step] === null}
                   className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                   style={{
-                    background: `linear-gradient(135deg, ${ACCENT}, #FFB199)`,
+                    background: `linear-gradient(135deg, ${ACCENT}, #A78BFA)`,
                     boxShadow: `0 10px 30px -10px ${ACCENT}66`,
                   }}
                 >
@@ -316,9 +315,8 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
           {/* Right: level scale */}
           <motion.div
             layout
-            whileHover={{ y: -4 }}
-            transition={{ layout: { duration: 0.4, ease: "easeInOut" }, y: { duration: 0.2 } }}
-            className={`flex flex-col rounded-xl border p-5 md:p-6 ${
+            transition={{ layout: { duration: 0.4, ease: "easeInOut" } }}
+            className={`card-shine flex flex-col rounded-[10.8px] border p-5 md:p-6 ${
               isLight ? "border-[#E2E8F0] bg-white shadow-[var(--shadow-token-sm)]" : "border-white/10 bg-white/[0.04]"
             }`}
           >
@@ -345,7 +343,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                 return (
                   <div
                     key={lvl.label}
-                    className="rounded-xl border p-2.5"
+                    className="rounded-[10.8px] border p-2.5"
                     style={
                       active
                         ? {
@@ -385,7 +383,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                         style={{
                           width: `${lvl.score * 10}%`,
                           background: active
-                            ? `linear-gradient(90deg, ${ACCENT}, #FFB199)`
+                            ? `linear-gradient(90deg, ${ACCENT}, #A78BFA)`
                             : isLight
                               ? "#CBD5E1"
                               : "rgba(255,255,255,0.2)",

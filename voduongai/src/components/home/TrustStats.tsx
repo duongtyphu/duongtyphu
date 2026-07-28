@@ -44,7 +44,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
         </div>
 
         <div className="grid items-stretch gap-6 md:grid-cols-[1fr_1.2fr]">
-          <div className="flex flex-col justify-center rounded-xl border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
+          <div className="card-shine flex flex-col justify-center rounded-[10.8px] border border-[#ECEDF5] bg-white p-6 shadow-[0_4px_24px_rgba(15,23,60,.06)] md:p-8">
             <h2 className="text-[1.6rem] font-extrabold leading-[1.3] text-[#0B0F2E] md:text-[1.9rem]">
               Hệ sinh thái dành cho người Việt
             </h2>
@@ -72,7 +72,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
             </ul>
           </div>
           <div className="grid grid-cols-[1.3fr_1fr] gap-2">
-            <div className="overflow-hidden rounded-xl shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+            <div className="card-shine overflow-hidden rounded-[10.8px] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
               <Image
                 src="/images/landing-preview/community-main.jpg"
                 alt="Cùng nhau học tập, chia sẻ và tạo ra giá trị bền vững"
@@ -82,7 +82,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
               />
             </div>
             <div className="flex flex-col gap-2">
-              <div className="flex-1 overflow-hidden rounded-xl shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+              <div className="card-shine flex-1 overflow-hidden rounded-[10.8px] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
                 <Image
                   src="/images/landing-preview/community-workshop.jpg"
                   alt="Hội thảo & Workshop — cập nhật xu hướng AI mới nhất"
@@ -91,7 +91,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
                   className="h-full w-full object-cover"
                 />
               </div>
-              <div className="flex-1 overflow-hidden rounded-xl shadow-[0_4px_24px_rgba(15,23,60,.06)]">
+              <div className="card-shine flex-1 overflow-hidden rounded-[10.8px] shadow-[0_4px_24px_rgba(15,23,60,.06)]">
                 <Image
                   src="/images/landing-preview/community-project.jpg"
                   alt="Dự án thực tế — học đi đôi với ứng dụng"
@@ -105,7 +105,7 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
         </div>
 
         <div
-          className="mt-8 grid gap-6 rounded-xl p-6 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-8"
+          className="card-shine mt-8 grid gap-6 rounded-[10.8px] p-6 text-white md:grid-cols-[1.1fr_1.6fr] md:items-center md:p-8"
           style={{ background: "linear-gradient(120deg,#0B1140 0%,#171154 100%)" }}
         >
           <div>

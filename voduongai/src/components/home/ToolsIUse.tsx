@@ -32,7 +32,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
         </span>
         <h2 className={`mt-4 text-2xl font-extrabold md:text-3xl ${isLight ? "text-[#0F172A]" : "text-white"}`}>
           <RevealText>
-            Những công cụ tôi <span className="text-brand-orange">thực sự đang dùng</span>
+            Những công cụ tôi <span className="text-[#7C5CFC]">thực sự đang dùng</span>
           </RevealText>
         </h2>
         <p className={`mx-auto mt-2 max-w-lg ${isLight ? "text-[#334155]" : "text-white"}`}>
@@ -51,11 +51,11 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
           {marqueeTools.map((t, i) => (
             <div
               key={`${t.id}-${i}`}
-              className={`card-shine flex w-36 flex-shrink-0 flex-col items-center gap-2.5 rounded-xl border px-3 py-4 text-center sm:w-40 ${
+              className={`card-shine flex w-36 flex-shrink-0 flex-col items-center gap-2.5 rounded-[10.8px] border px-3 py-4 text-center sm:w-40 ${
                 isLight ? "border-[#E2E8F0] bg-white shadow-[0_8px_24px_-16px_rgba(15,23,42,0.25)]" : "border-white/10 bg-white/[0.04]"
               }`}
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white/90 p-2 sm:h-16 sm:w-16">
+              <div className="flex h-14 w-14 items-center justify-center rounded-[10.8px] bg-white/90 p-2 sm:h-16 sm:w-16">
                 <Image
                   src={logoUrl(t.id)}
                   alt={`${t.name} logo`}
@@ -66,7 +66,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
               </div>
               <p className={`text-xs font-bold sm:text-sm ${isLight ? "text-[#0F172A]" : "text-white"}`}>{t.name}</p>
               {t.iUseThis && (
-                <span className="rounded-full bg-brand-orange/15 px-2 py-0.5 text-[9px] font-semibold text-brand-orange">
+                <span className="rounded-full bg-[#7C5CFC]/15 px-2 py-0.5 text-[9px] font-semibold text-[#7C5CFC]">
                   Tôi đang dùng
                 </span>
               )}

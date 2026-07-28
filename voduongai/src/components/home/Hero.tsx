@@ -64,7 +64,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
 
   return (
     <section
-      className={`relative isolate overflow-hidden pt-16 pb-10 md:pt-20 md:pb-12 ${
+      className={`relative isolate overflow-hidden pt-16 pb-9 md:pt-20 md:pb-12 ${
         isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"
       }`}
     >
@@ -166,7 +166,7 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
                 delay: i * 0.4,
               }}
               whileHover={{ y: -12 }}
-              className={`absolute z-20 hidden cursor-default rounded-xl border px-4 py-2.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-md transition-shadow hover:shadow-[0_0_30px_-2px_rgba(91,140,255,0.5)] sm:block ${
+              className={`absolute z-20 hidden cursor-default rounded-[10.8px] border px-4 py-2.5 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.5)] backdrop-blur-md transition-shadow hover:shadow-[0_0_30px_-2px_rgba(91,140,255,0.5)] sm:block ${
                 isLight ? "border-[#E2E8F0] bg-white shadow-[0_12px_30px_-15px_rgba(15,23,42,0.25)]" : "border-white/15 bg-white/[0.08]"
               } ${badge.className}`}
             >

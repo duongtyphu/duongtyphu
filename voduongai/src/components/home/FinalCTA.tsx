@@ -20,7 +20,7 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
       >
         <h2 className="text-2xl font-extrabold md:text-3xl">
           <RevealText>
-            Bắt đầu hành trình AI của bạn <span className="text-brand-orange">hôm nay</span>
+            Bắt đầu hành trình AI của bạn <span className="text-[#7C5CFC]">hôm nay</span>
           </RevealText>
         </h2>
         <p className={`mt-4 text-[11px] sm:text-sm md:text-base ${isLight ? "text-[#334155]" : "text-white"}`}>
@@ -29,7 +29,7 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link
             href="/login"
-            className="inline-flex h-[52px] items-center rounded-full gradient-surface px-8 text-sm font-semibold text-white shadow-lg shadow-brand-blue/30 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
+            className="inline-flex h-[52px] items-center rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-8 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
           >
             Vào Học viện miễn phí
           </Link>

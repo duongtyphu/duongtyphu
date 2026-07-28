@@ -14,7 +14,7 @@ import { LandingPreviewSolarSystem } from "@/components/landing-preview/LandingP
 export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   return (
-    <section className={`overflow-hidden py-12 md:py-16 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
+    <section className={`overflow-hidden py-9 md:py-12 ${isLight ? "bg-[#F6F7F9] text-[#0F172A]" : "text-white"}`}>
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-10 max-w-2xl text-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E2E8F0] bg-white px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#5B21D6]">
@@ -28,7 +28,7 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
             <LandingPreviewSolarSystem />
           </div>
 
-          <div className="mx-auto flex w-full flex-col overflow-hidden rounded-xl border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] md:w-[95%]">
+          <div className="card-shine mx-auto flex w-full flex-col overflow-hidden rounded-[10.8px] border border-[#ECEDF5] bg-white shadow-[0_4px_24px_rgba(15,23,60,.06)] md:w-[95%]">
             <div className="relative aspect-[3/1.9] w-full shrink-0 overflow-hidden">
               <Image
                 src="/founder.png"
