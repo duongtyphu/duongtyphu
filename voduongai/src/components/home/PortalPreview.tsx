@@ -15,12 +15,14 @@ const LIST = [
 
 /**
  * "Khám phá Học Viện" section — only the eyebrow badge is kept from the
- * old page; everything else is ported verbatim from the new landing
- * preview (LandingPreviewPlatform): the animated portal mockup + the
- * "Nền tảng toàn diện, trải nghiệm liền mạch" feature list box. Section
- * background follows the same theme-aware pattern as IntroVideo (light:
- * bg-[#F6F7F9], dark: transparent) so the old page's background stays one
- * continuous, unbroken sweep behind every section.
+ * old page; everything else is the animated portal mockup + the "Nền
+ * tảng toàn diện, trải nghiệm liền mạch" feature list box.
+ * `LandingPreviewPortalMockup` is a shared component (also historically
+ * used by the now-removed /landing-preview design preview) — do not
+ * delete it when cleaning up unrelated code. Section background follows
+ * the same theme-aware pattern as IntroVideo (light: bg-[#F6F7F9], dark:
+ * transparent) so the old page's background stays one continuous,
+ * unbroken sweep behind every section.
  */
 export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";

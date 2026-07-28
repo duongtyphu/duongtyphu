@@ -72,12 +72,11 @@ const STEPS = [
 ];
 
 /**
- * "Hệ sinh thái" section — content ported verbatim from the new landing
- * preview (LandingPreviewEcosystem + LandingPreviewRoadmap), replacing the
- * old pillar-card content. Section background follows the same
- * theme-aware pattern as IntroVideo (light: bg-[#F6F7F9], dark:
- * transparent) so the old page's background stays one continuous,
- * unbroken sweep behind every section.
+ * "Hệ sinh thái" section — content ported verbatim from the now-removed
+ * /landing-preview design preview, replacing the old pillar-card content.
+ * Section background follows the same theme-aware pattern as IntroVideo
+ * (light: bg-[#F6F7F9], dark: transparent) so the old page's background
+ * stays one continuous, unbroken sweep behind every section.
  */
 export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";

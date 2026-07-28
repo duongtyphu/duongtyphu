@@ -30,10 +30,10 @@ const VALUES = [
 
 /**
  * "Cộng đồng" section — only the eyebrow badge is kept from the old page;
- * everything else is ported from the new landing preview
- * (LandingPreviewCommunity + LandingPreviewQuoteBar). Section background
- * follows the same theme-aware pattern as the rest of the page so the
- * background stays one continuous, unbroken sweep.
+ * everything else was ported from the now-removed /landing-preview
+ * design preview. Section background follows the same theme-aware
+ * pattern as the rest of the page so the background stays one
+ * continuous, unbroken sweep.
  */
 export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";

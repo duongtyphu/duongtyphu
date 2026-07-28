@@ -6,13 +6,14 @@ import { motion } from "framer-motion";
 import { LandingPreviewSolarSystem } from "@/components/landing-preview/LandingPreviewSolarSystem";
 
 /**
- * "Hệ sinh thái của tôi" section — content ported from the new landing
- * preview (LandingPreviewNetworkFounder): the solar-system ecosystem
- * diagram + the founder card, replacing the old page's solar diagram and
- * the entire former FounderStory section (image, "Tại sao tôi xây...",
- * "Đại diện Quốc gia..."). Section background follows the same
- * theme-aware pattern as the rest of the page so the background stays one
- * continuous, unbroken sweep.
+ * "Hệ sinh thái của tôi" section — the solar-system ecosystem diagram +
+ * the founder card, replacing the old page's solar diagram and the
+ * entire former FounderStory section (image, "Tại sao tôi xây...", "Đại
+ * diện Quốc gia..."). `LandingPreviewSolarSystem` is a shared component
+ * (also historically used by the now-removed /landing-preview design
+ * preview) — do not delete it when cleaning up unrelated code. Section
+ * background follows the same theme-aware pattern as the rest of the
+ * page so the background stays one continuous, unbroken sweep.
  */
 export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
