@@ -30,7 +30,11 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
         >
           🛠️ Thực chiến
         </span>
-        <h2 className="mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
+        <h2
+          className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${
+            isLight ? "text-[#0B0F2E]" : "text-white"
+          }`}
+        >
           <RevealText>Những công cụ tôi thực sự đang dùng</RevealText>
         </h2>
       </motion.div>

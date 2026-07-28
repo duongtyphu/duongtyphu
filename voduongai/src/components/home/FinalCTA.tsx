@@ -18,7 +18,11 @@ export function FinalCTA({ variant = "dark" }: { variant?: "dark" | "light" }) {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto max-w-3xl px-5 text-center"
       >
-        <h2 className="text-[1.4rem] font-extrabold tracking-[-.3px] text-[#0B0F2E] md:text-[1.6rem]">
+        <h2
+          className={`text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${
+            isLight ? "text-[#0B0F2E]" : "text-white"
+          }`}
+        >
           <RevealText>
             Bắt đầu hành trình chinh phục các kỹ năng AI của bạn ngay hôm nay.
           </RevealText>
