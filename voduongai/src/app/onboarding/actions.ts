@@ -28,7 +28,12 @@ export async function completeOnboarding(formData: FormData) {
   // Giữ đồng bộ với auth.users.user_metadata.full_name — cùng convention
   // /portal/account/actions.ts's updateProfile() đã dùng cho full_name.
   const { error: authError } = await supabase.auth.updateUser({ data: { full_name: fullName } });
-  if (authError) return { error: "Không thể lưu thông tin, vui lòng thử lại." };
+  if (authError) {
+    // Log để Founder tra được nguyên nhân thật qua Vercel Function Logs —
+    // message lỗi Postgres/Auth không chứa secret, an toàn để log.
+    console.error("[onboarding] auth.updateUser failed:", authError.message);
+    return { error: "Không thể lưu thông tin, vui lòng thử lại." };
+  }
 
   const { error: memberError } = await supabase
     .from("members")
@@ -42,7 +47,10 @@ export async function completeOnboarding(formData: FormData) {
     })
     .eq("id", user.id);
 
-  if (memberError) return { error: "Không thể lưu thông tin, vui lòng thử lại." };
+  if (memberError) {
+    console.error("[onboarding] members.update failed:", memberError.message, memberError.details, memberError.hint);
+    return { error: "Không thể lưu thông tin, vui lòng thử lại." };
+  }
 
   redirect(next);
 }
