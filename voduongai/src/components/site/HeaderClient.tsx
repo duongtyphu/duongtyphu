@@ -7,6 +7,7 @@ import { AccountMenu } from "@/components/site/AccountMenu";
 import { MobileNavDrawer } from "@/components/site/MobileNavDrawer";
 import { ThemeToggleButton } from "@/components/site/ThemeToggleButton";
 import { useLandingTheme } from "@/components/site/LandingThemeProvider";
+import { isThemeAwareRoute } from "@/lib/site/theme-routes";
 import { brandMain, brandAccent } from "@/lib/brand-name";
 
 export function HeaderClient({
@@ -22,7 +23,7 @@ export function HeaderClient({
 }) {
   const pathname = usePathname();
   const { theme } = useLandingTheme();
-  const isLight = pathname === "/" && theme === "light";
+  const isLight = isThemeAwareRoute(pathname) && theme === "light";
 
   return (
     <header

@@ -3,9 +3,8 @@
 import { useState, useTransition } from "react";
 import { completeOnboarding } from "@/app/onboarding/actions";
 import { INTEREST_OPTIONS, type InterestId } from "@/lib/portal/identity-onboarding";
-
-const inputClass =
-  "w-full rounded-[10.8px] border border-white/15 bg-white/5 px-4 py-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-[#7C5CFC]";
+import { useLandingTheme } from "@/components/site/LandingThemeProvider";
+import { authTheme } from "@/lib/site/auth-theme";
 
 export function OnboardingIdentityForm({
   next,
@@ -14,6 +13,10 @@ export function OnboardingIdentityForm({
   next: string;
   initialFullName: string;
 }) {
+  const { theme } = useLandingTheme();
+  const t = authTheme[theme];
+  const inputClass = `w-full rounded-[10.8px] border px-4 py-3 text-sm ${t.input}`;
+
   const [fullName, setFullName] = useState(initialFullName);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [occupation, setOccupation] = useState("");
@@ -41,7 +44,7 @@ export function OnboardingIdentityForm({
       <input type="hidden" name="next" value={next} />
 
       <div>
-        <label htmlFor="full_name" className="mb-1.5 block text-xs font-semibold text-white/50">
+        <label htmlFor="full_name" className={`mb-1.5 block text-xs font-semibold ${t.faint}`}>
           Họ và tên
         </label>
         <input
@@ -58,7 +61,7 @@ export function OnboardingIdentityForm({
       </div>
 
       <div>
-        <label htmlFor="avatar_url" className="mb-1.5 block text-xs font-semibold text-white/50">
+        <label htmlFor="avatar_url" className={`mb-1.5 block text-xs font-semibold ${t.faint}`}>
           Ảnh đại diện (không bắt buộc)
         </label>
         <input
@@ -73,7 +76,7 @@ export function OnboardingIdentityForm({
       </div>
 
       <div>
-        <label htmlFor="occupation" className="mb-1.5 block text-xs font-semibold text-white/50">
+        <label htmlFor="occupation" className={`mb-1.5 block text-xs font-semibold ${t.faint}`}>
           Nghề nghiệp
         </label>
         <input
@@ -89,7 +92,7 @@ export function OnboardingIdentityForm({
       </div>
 
       <div>
-        <label htmlFor="ai_goal" className="mb-1.5 block text-xs font-semibold text-white/50">
+        <label htmlFor="ai_goal" className={`mb-1.5 block text-xs font-semibold ${t.faint}`}>
           Mục tiêu học AI của bạn
         </label>
         <textarea
@@ -105,7 +108,7 @@ export function OnboardingIdentityForm({
       </div>
 
       <fieldset>
-        <legend className="mb-2 text-xs font-semibold text-white/50">
+        <legend className={`mb-2 text-xs font-semibold ${t.faint}`}>
           Bạn muốn dùng AI cho việc gì? (chọn ít nhất 1)
         </legend>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -116,8 +119,8 @@ export function OnboardingIdentityForm({
                 key={opt.id}
                 className={`cursor-pointer rounded-[10.8px] border p-3 text-center text-xs font-semibold transition ${
                   checked
-                    ? "border-[#7C5CFC] bg-[#7C5CFC]/15 text-white"
-                    : "border-white/15 text-white/60 hover:border-[#7C5CFC]/50"
+                    ? "border-[#7C5CFC] bg-[#7C5CFC]/15 " + t.heading
+                    : `${t.border} ${t.subtext} hover:border-[#7C5CFC]/50`
                 }`}
               >
                 <input
