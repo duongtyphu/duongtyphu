@@ -3960,3 +3960,69 @@ Preview URL của nhánh này với tài khoản Admin thật (giới hạn sand
 nêu nhiều lần) — Founder tự thử 1 email thật chưa từng dùng để xác nhận
 trực quan lần cuối, đặc biệt kiểm tra bước onboarding (`interests`/
 `ai_goal`...) chạy đúng sau khi trigger tạo `members` thành công.
+
+## BUG P0 ĐÃ SỬA — `members` thiếu RLS UPDATE cho user tự sửa hồ sơ, kẹt vĩnh viễn ở `/onboarding`
+
+Phát hiện khi test trực tiếp luồng Register → Onboarding → Portal bằng
+API thật (tài khoản QA disposable, domain `.invalid`) theo yêu cầu
+Founder "test luồng đăng nhập vào portal". Nghiêm trọng hơn cả bug
+trigger thiếu `email` đã sửa trước đó — bug này chặn **mọi user mới sau
+khi đăng ký thành công**, không phải chỉ chặn lúc tạo tài khoản.
+
+**Nguyên nhân:** `members` bật RLS nhưng chỉ có 2 policy SELECT cho user
+thường (`auth.uid() = id`) + 1 policy `admin_all` (`FOR ALL USING
+(is_app_admin())`) cho Admin — **không có policy UPDATE nào cho user tự
+sửa hồ sơ của chính mình**. `completeOnboarding()`
+(`src/app/onboarding/actions.ts`) và `updateProfile()`
+(`src/app/portal/account/actions.ts`) đều gọi
+`.from("members").update(...).eq("id", user.id)` qua client anon-key +
+cookie session (`src/lib/supabase-server.ts`) — RLS **âm thầm lọc bỏ
+dòng khỏi UPDATE (0 dòng bị ảnh hưởng, KHÔNG trả lỗi)**, code tưởng
+thành công → `redirect(next)`. `middleware.ts`'s onboarding gate kiểm
+tra lại `onboarding_completed_at` (vẫn `null`) → đá ngược `/onboarding`
+→ **vòng lặp vô hạn, không bao giờ vào được `/portal`**. Founder chưa
+từng gặp vì tài khoản Founder `is_admin=true` luôn khớp `admin_all`,
+bypass hoàn toàn lỗi này.
+
+**Đã sửa qua `apply_migration`** — thêm policy UPDATE cho user tự sửa hồ
+sơ, kèm 1 trigger `BEFORE UPDATE` khoá cứng các cột nhạy cảm
+(`id`/`email`/`is_admin`/`status`/`created_at`/`referral_code`/
+`referred_by`) về giá trị cũ nếu người thực hiện không phải app-admin
+hoặc `service_role` (đảm bảo Admin panel qua `getSupabaseAdmin()` không
+bị ảnh hưởng, đồng thời chặn user tự nâng quyền admin qua chính API
+onboarding/account này):
+```sql
+create policy "users can update own profile" on public.members
+  for update using (auth.uid() = id) with check (auth.uid() = id);
+-- + trigger guard_members_self_update (xem supabase-phase24-...sql)
+```
+
+**Verify thật qua API** (cùng tài khoản QA disposable dùng để phát hiện
+bug, đã xoá sạch sau test):
+1. Đăng nhập, gọi đúng câu update y hệt `completeOnboarding()` →
+   TRƯỚC khi sửa: `error: null`, `0 dòng bị ảnh hưởng`, đọc lại
+   `onboarding_completed_at` vẫn `null` (tái hiện bug). SAU khi sửa:
+   `1 dòng bị ảnh hưởng`, đọc lại đúng dữ liệu đã lưu.
+2. Thử tự nâng quyền (`update({is_admin: true, email: "hacked@evil.com"})`
+   trên chính dòng của mình) → bị trigger chặn hoàn toàn, đọc lại vẫn
+   `is_admin: false`, email gốc không đổi — xác nhận không có lỗ hổng
+   leo thang đặc quyền mới phát sinh từ bản fix.
+3. Google OAuth: xác nhận provider đã cấu hình đúng trên project (gọi
+   thẳng `GET /auth/v1/authorize?provider=google` → redirect 302 tới
+   `accounts.google.com` với `client_id` thật, không phải lỗi "provider
+   not enabled") — không tự test được toàn bộ luồng consent thật (cần
+   tương tác trình duyệt + tài khoản Google thật).
+4. Đọc code xác nhận `auth/callback/route.ts` dùng chung đúng cho cả
+   Google OAuth/magic-link/password-reset, `sanitizeNextParam()` chặn
+   open-redirect, mặc định `/portal`; Hero CTA trỏ `/login` (đúng thiết
+   kế "vào thẳng portal" — middleware tự redirect `/login`→`/portal` nếu
+   đã đăng nhập).
+
+**File tracking:** `supabase-phase24-members-self-update-rls.sql`.
+
+**Chưa tự test được:** click-through thật qua trình duyệt (Register →
+verify email nếu Confirm-email đang bật → Onboarding → Portal, và toàn
+bộ luồng Google OAuth) với tài khoản thật (giới hạn sandbox không có
+inbox email/trình duyệt tương tác được) — Founder tự thử trên Preview
+URL, đặc biệt xác nhận nút "Lưu" ở `/portal/account` giờ lưu được (bug
+này ảnh hưởng cả trang đó, không riêng onboarding).
