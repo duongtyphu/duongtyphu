@@ -6,6 +6,27 @@ kiến trúc, các file đã thay đổi, migration, hướng dẫn cấu hình 
 OAuth, kết quả kiểm thử, và rủi ro/việc cần Founder phê duyệt trước khi
 đưa lên Production.
 
+## Trạng thái duyệt
+
+**Approved for Integration Review** (Founder) — kiến trúc đáp ứng đúng
+định hướng đã thống nhất: tái sử dụng Supabase Auth, không tạo hệ thống
+auth song song, một tài khoản cho toàn hệ sinh thái, Onboarding/User
+Profile tách biệt Authentication, route protection đúng phạm vi.
+
+- Commit giữ lại: `6f5859a`, branch `claude/landing-preview-nextjs`.
+- **CHƯA merge vào `main`.**
+- Điều kiện bắt buộc trước khi tạo Release Candidate để merge `main` +
+  deploy Production (mọi mục PASS mới được merge):
+  1. Apply migration lên Supabase Production.
+  2. Cấu hình Google OAuth đầy đủ (xem mục 4).
+  3. Hoàn thành end-to-end test trên Preview với Supabase thật (xem mục 5).
+  4. Xác nhận PASS từng luồng: Đăng ký Email, Verify Email, Login Email,
+     Google Login, Forgot Password, Logout, Session Restore, Onboarding,
+     Route Protection, Admin Users.
+- **Không merge Production trước khi hoàn thành toàn bộ checklist trên.**
+
+---
+
 **KHÔNG nhầm với** `docs/FOUNDER_IDENTITY_FOUNDATION.md` /
 `docs/FUTURE_LIVING_IDENTITY.md` / `docs/THE_EVOLUTION_WITH_IDENTITY.md` /
 `src/lib/portal/identity/identity-layer.ts` — nhóm tài liệu/file đó nói về
