@@ -3902,3 +3902,76 @@ hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview URL, 
 biệt xác nhận: bấm "Lưu" sau khi thêm URL thật cho 1-2 mục (ví dụ dán link
 Lazada thật) → tải lại trang → link hiện đúng dạng nút bấm được (không
 còn khung "Chưa có link tiếp thị thật").
+
+## BUG P0 ĐÃ SỬA — Đăng ký mới (magic-link) hoàn toàn không hoạt động, trigger thiếu cột `email`
+
+Được phát hiện khi audit toàn bộ luồng Login/Signup theo yêu cầu Founder
+("audit kỹ ở khía cạnh Login và Signup"). Đây là bug **đang live trên
+production tại thời điểm phát hiện** — không phải giả định.
+
+**Nguyên nhân:** trigger `handle_new_auth_user()` (chạy `AFTER INSERT ON
+auth.users`, tạo dòng `public.members` tương ứng cho mọi user mới) chỉ
+insert `(id, full_name)`, KHÔNG có `email` — trong khi `members.email` là
+`NOT NULL`. Postgres raise lỗi ngay tại trigger → toàn bộ transaction tạo
+`auth.users` bị rollback → GoTrue trả lỗi 500 cho client. Kết quả: **bất kỳ
+ai bấm "Gửi liên kết đăng nhập" (magic-link) với email CHƯA từng tồn tại
+đều nhận lỗi, không tạo được tài khoản** — đây là con đường DUY NHẤT để
+tạo tài khoản mới trong hệ thống (không có `/register`, không có
+`signUp()` nào trong code, không có Google OAuth — xác nhận qua grep toàn
+bộ `src/`; đăng nhập password chỉ dùng được SAU KHI đã có tài khoản qua
+magic-link và tự đặt mật khẩu ở `/portal/account` → `SecurityPanel.tsx`).
+
+**Bằng chứng:** tái hiện trực tiếp qua SQL insert đúng shape GoTrue dùng
+(`auth.users` + `auth.identities`) — nhận đúng lỗi `null value in column
+"email" of relation "members" violates not-null constraint`, xác nhận
+transaction rollback sạch (không rác `auth.users`/`public.members`).
+**Tìm thấy 1 nạn nhân thật:** `hhhgmail@gmail.com` (tạo 2026-06-15) tồn
+tại trong `auth.users` nhưng KHÔNG có dòng `public.members` — tài khoản mồ
+côi, chắc chắn gặp lỗi khi dùng Portal.
+
+**Đã sửa (xin phép Founder trước khi đụng production DB — Founder đồng
+ý):** `apply_migration` sửa `handle_new_auth_user()` thêm `email` vào
+insert:
+```sql
+insert into public.members (id, email, full_name)
+values (new.id, new.email, coalesce(new.raw_user_meta_data->>'full_name', new.email))
+on conflict (id) do nothing;
+```
+**Đã backfill nạn nhân:** insert bù dòng `public.members` còn thiếu cho
+`hhhgmail@gmail.com` (giữ nguyên `full_name` thật đã có trong
+`raw_user_meta_data`, không bịa).
+
+**Verify (test thật qua API Supabase, không chỉ đọc code):**
+- Tái tạo đúng flow GoTrue (`auth.users` + `auth.identities`) sau khi sửa
+  trigger → thành công, `public.members` được tạo đúng kèm `email`.
+- Dùng `@supabase/supabase-js` (anon key thật, script tạm
+  `auth-test.devtest.mjs`, xoá ngay sau khi chạy — không commit) test 1
+  tài khoản QA disposable (`claude-qa-test-*@voduongai-test.invalid`, domain
+  `.invalid` theo RFC 2606 — không bao giờ gửi email thật tới ai):
+  - `signInWithPassword` sai mật khẩu → đúng lỗi "Invalid login
+    credentials", không lộ thông tin tài khoản có tồn tại hay không.
+  - `signInWithPassword` đúng mật khẩu → có session, `getUser(accessToken)`
+    xác nhận đúng session.
+  - `refreshSession(refresh_token)` → làm mới session thành công (cơ chế
+    nền cho session persistence qua cookie của `@supabase/ssr`).
+  - `resetPasswordForEmail` báo lỗi "Email address ... is invalid" —
+    **không phải bug**, chỉ vì domain test `.invalid` không có MX record
+    nên GoTrue chặn trước khi gửi mail; logic code (`/login` →
+    `resetPasswordForEmail` → `/auth/callback?next=/reset-password` →
+    `/reset-password` gọi `updateUser({password})`) đã đọc và xác nhận
+    đúng, domain thật (gmail.com...) sẽ không gặp lỗi này.
+- Đọc code xác nhận `middleware.ts` (`isProtectedRoute()`,
+  `protected-routes.ts` — chỉ `/portal` là prefix bảo vệ) redirect đúng
+  `/login?next=...` khi chưa đăng nhập, redirect ngược `/portal` khi đã
+  đăng nhập mà vào `/login`; nhóm `/admin/*` check thêm
+  `members.is_admin` riêng, sai quyền → `/admin/login?error=not_admin`.
+- Dọn sạch: xoá tài khoản QA (`auth.identities`/`auth.users`/
+  `public.members`) sau khi test xong — xác nhận qua `execute_sql`
+  `auth.users`/`public.members` về lại đúng 16/16 dòng như trước khi audit.
+
+**Ảnh hưởng:** đây là bug chặn ĐĂNG KÝ MỚI cho MỌI người dùng tiềm năng —
+mức độ nghiêm trọng cao nhất có thể gặp trong 1 audit auth. Không rõ bug
+tồn tại từ bao lâu (chỉ có 1 nạn nhân xác nhận được qua dữ liệu hiện có,
+`hhhgmail@gmail.com` — không loại trừ khả năng có người khác thử signup
+thất bại và không quay lại, không có cách nào biết số lượng thật vì lỗi
+xảy ra trước khi có dòng nào ghi lại).
