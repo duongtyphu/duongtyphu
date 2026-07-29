@@ -112,7 +112,7 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
             <div
               id={id}
               key={id}
-              className={`card-shine flex w-[200px] scroll-mt-24 flex-1 flex-col items-center gap-3 rounded-[10.8px] border px-5 py-7 text-center ${
+              className={`card-shine flex w-[200px] scroll-mt-24 flex-col items-center gap-3 rounded-[10.8px] border px-5 py-7 text-center ${
                 isLight
                   ? "border-[#ECEDF5] bg-white shadow-[0_4px_20px_rgba(15,23,60,.05)]"
                   : "border-white/10 bg-white/[0.04]"
