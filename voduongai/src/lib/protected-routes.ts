@@ -12,7 +12,7 @@
  * ever removed, this is the one array that needs a second entry (the new
  * prefix) while both old and new routes are served in parallel.
  */
-export const PROTECTED_ROUTE_PREFIXES = ["/portal"] as const;
+export const PROTECTED_ROUTE_PREFIXES = ["/portal", "/onboarding"] as const;
 
 export function isProtectedRoute(pathname: string): boolean {
   return PROTECTED_ROUTE_PREFIXES.some((prefix) => pathname.startsWith(prefix));

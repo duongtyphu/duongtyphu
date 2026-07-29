@@ -23,7 +23,12 @@ export type AdminNavGroup = { group: string | null; items: AdminNavItem[] };
 export const adminNavGroups: AdminNavGroup[] = [
   {
     group: null,
-    items: [{ label: "Tổng quan", href: "/admin/dashboard" }],
+    items: [
+      { label: "Tổng quan", href: "/admin/dashboard" },
+      // Identity Hub v1.0 — quản lý tài khoản toàn hệ sinh thái, không map
+      // vào 1 mục Portal cụ thể nào (giống "Tổng quan"), nên ở group null.
+      { label: "Người dùng", href: "/admin/users" },
+    ],
   },
   {
     // Portal #1 — "Trang chủ Học viện" (/portal). Bảng `home-cards` là nội

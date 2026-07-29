@@ -40,6 +40,7 @@ import {
   Bitcoin,
   Link2,
   LineChart,
+  UserCog,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -67,9 +68,14 @@ import { adminNavGroups } from "@/lib/admin/nav";
  * THẬT (nhóm "Cộng đồng") — đoạn "route cũ đã xoá" liệt kê ở trên chỉ
  * đúng tại thời điểm audit menu, không còn đúng nữa (cùng tình huống đã
  * gặp với `/admin/projects`, xem CLAUDE.md).
+ *
+ * Cập nhật (Identity Hub v1.0): `/admin/users` cũng giờ là route THẬT
+ * (trang quản lý người dùng toàn hệ sinh thái, `group: null` cùng "Tổng
+ * quan") — cùng tình huống trên, không còn là entry mồ côi nữa.
  */
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
+  "/admin/users": UserCog,
   "/admin/home-cards": Home,
   "/admin/companion": Bot,
   "/admin/ckos": Library,
