@@ -3902,3 +3902,61 @@ hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview URL, 
 biệt xác nhận: bấm "Lưu" sau khi thêm URL thật cho 1-2 mục (ví dụ dán link
 Lazada thật) → tải lại trang → link hiện đúng dạng nút bấm được (không
 còn khung "Chưa có link tiếp thị thật").
+
+## BUG P0 ĐÃ SỬA — trigger tạo `members` thiếu cột `email`, chặn TOÀN BỘ đăng ký mới
+
+Phát hiện khi audit riêng luồng Login/Signup trên nhánh `admin-rebuild`
+(trước khi nhánh này được chốt là "đã gộp vào" `claude/landing-preview-nextjs`
+— xem lịch sử: `claude/landing-preview-nextjs` được tạo ra TỪ chính
+`admin-rebuild`, `admin-rebuild` đã bị xoá sau khi xác nhận không còn nội
+dung nào chưa có ở đây). Ghi lại nguyên vẹn ở đây vì đây là bug thật, ảnh
+hưởng CHÍNH nhánh này (`landing-preview-nextjs` giờ có cả Identity Hub —
+`/register`, Google OAuth — tất cả đều đi qua đúng trigger này).
+
+**Nguyên nhân:** trigger `handle_new_auth_user()` (`AFTER INSERT ON
+auth.users`, tự tạo dòng `public.members` cho mọi user mới) chỉ insert
+`(id, full_name)` — thiếu `email`, trong khi `members.email` là `NOT
+NULL`. Postgres raise lỗi ngay tại trigger → cả transaction tạo
+`auth.users` rollback → GoTrue trả lỗi 500. Kết quả: **mọi lần đăng ký
+email chưa từng tồn tại (dù qua Register/password, Google OAuth, hay
+magic-link) đều thất bại.**
+
+**Đã sửa trực tiếp trên Supabase (project `uosxpxolsvwcafxvnroy`, dùng
+chung cho mọi nhánh/deploy)** — `apply_migration` sửa trigger thêm
+`email`:
+```sql
+insert into public.members (id, email, full_name)
+values (new.id, new.email, coalesce(new.raw_user_meta_data->>'full_name', new.email))
+on conflict (id) do nothing;
+```
+**Đã backfill 1 nạn nhân thật** đã bị rollback trước khi có bản fix:
+`hhhgmail@gmail.com` (tạo 2026-06-15) — tồn tại trong `auth.users` nhưng
+mồ côi trong `members`, đã insert bù, giữ nguyên `full_name` thật đã có
+sẵn trong `raw_user_meta_data`.
+
+**Đã sửa thêm 1 landmine trên chính nhánh này:** `supabase-phase23-identity-hub.sql`
+(migration Identity Hub, staged — Founder tự chạy tay, chưa auto-apply)
+tái tạo LẠI đúng trigger này với cùng lỗi thiếu `email` — nếu chạy như
+bản gốc sẽ ghi đè bản fix, làm Register/Google OAuth/magic-link lại hỏng
+hết. Đã sửa file `supabase-phase23-identity-hub.sql` thêm `email` vào
+insert TRƯỚC KHI Founder chạy migration này. Đã sửa luôn
+`supabase-admin-auth.sql` (script bootstrap admin) — cùng lỗi thiếu
+`email`, hiện vô hại vì đã chạy thành công từ trước (row Founder đã tồn
+tại), nhưng sẽ fail nếu chạy lại trên project mới/reset.
+
+**Verify (test API thật qua `@supabase/supabase-js`, tài khoản QA
+disposable domain `.invalid` — không gửi email tới ai thật, đã xoá sạch
+sau test):** `signInWithPassword` đúng/sai mật khẩu → đúng hành vi;
+`getUser`/`refreshSession` → session hợp lệ, refresh hoạt động (cơ chế
+nền cho session persistence qua cookie `@supabase/ssr`);
+`resetPasswordForEmail` báo lỗi domain `.invalid` không hợp lệ — đúng vì
+GoTrue chặn trước khi gửi mail cho domain không có MX record, KHÔNG phải
+bug, domain thật (gmail.com...) không gặp lỗi này. Đọc code xác nhận
+`middleware.ts`/`protected-routes.ts` gate `/portal/*` đúng, `/admin/*`
+check thêm `members.is_admin` riêng.
+
+**Chưa tự test được:** đăng ký thật qua `/register`/Google OAuth trên
+Preview URL của nhánh này với tài khoản Admin thật (giới hạn sandbox đã
+nêu nhiều lần) — Founder tự thử 1 email thật chưa từng dùng để xác nhận
+trực quan lần cuối, đặc biệt kiểm tra bước onboarding (`interests`/
+`ai_goal`...) chạy đúng sau khi trigger tạo `members` thành công.
