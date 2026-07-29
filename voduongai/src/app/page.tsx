@@ -1,30 +1,16 @@
-"use client";
+import type { Metadata } from "next";
+import { HomeClient } from "@/components/home/HomeClient";
 
-import { useLandingTheme } from "@/components/site/LandingThemeProvider";
-import { Hero } from "@/components/home/Hero";
-import { PortalPreview } from "@/components/home/PortalPreview";
-import { QuizAssessment } from "@/components/home/QuizAssessment";
-import { SkillsShowcase } from "@/components/home/SkillsShowcase";
-import { EcosystemPillars } from "@/components/home/EcosystemPillars";
-import { ToolsIUse } from "@/components/home/ToolsIUse";
-import { TrustStats } from "@/components/home/TrustStats";
-import { Ecosystem } from "@/components/home/Ecosystem";
-import { FinalCTA } from "@/components/home/FinalCTA";
+// Static canonical scoped to just "/" — the root layout's metadata is
+// shared by every route (about, contact, blogai, privacy...), so setting
+// canonical there would wrongly point all of them at the homepage. This
+// page is a Server Component specifically so it can carry its own
+// metadata; the actual UI (which needs the client-only theme context)
+// lives in HomeClient.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function Home() {
-  const { theme } = useLandingTheme();
-
-  return (
-    <div className={theme === "light" ? "bg-white" : ""}>
-      <Hero variant={theme} />
-      <EcosystemPillars variant={theme} />
-      <PortalPreview variant={theme} />
-      <QuizAssessment variant={theme} />
-      <SkillsShowcase variant={theme} />
-      <ToolsIUse variant={theme} />
-      <TrustStats variant={theme} />
-      <Ecosystem variant={theme} />
-      <FinalCTA variant={theme} />
-    </div>
-  );
+  return <HomeClient />;
 }

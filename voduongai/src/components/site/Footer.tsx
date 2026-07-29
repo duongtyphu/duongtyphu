@@ -207,7 +207,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
 
         <div
           className={`mt-14 flex flex-col items-center justify-between gap-4 border-t pt-6 text-xs md:flex-row ${
-            isLight ? "border-[#E2E8F0] text-[#94A3B8]" : "border-white/10 text-white/40"
+            isLight ? "border-[#E2E8F0] text-[#94A3B8]" : "border-white/10 text-white/60"
           }`}
         >
           <span>

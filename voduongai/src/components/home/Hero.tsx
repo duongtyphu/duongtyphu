@@ -96,10 +96,10 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
             <span className={isLight ? "text-[#0F172A]" : "text-white"}>
               Học AI đúng hướng.
               <br />
-              Ứng dụng thực tế.
+              Xây hệ thống vững chắc.
             </span>
             <br />
-            <span className="text-[#7C5CFC]">Tạo giá trị bền vững.</span>
+            <span className="text-[#7C5CFC]">Tạo tài sản số bền vững.</span>
           </h1>
 
           <p className={`mt-6 max-w-xl text-base leading-relaxed ${isLight ? "text-[#334155]" : "text-[#AEB4D8]"}`}>

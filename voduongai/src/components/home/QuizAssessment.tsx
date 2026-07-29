@@ -211,7 +211,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                 exit={{ opacity: 0, x: -16 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                <p className={`mt-4 text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>
+                <p className={`mt-4 text-xs ${isLight ? "text-[#54637A]" : "text-white/60"}`}>
                   Câu hỏi {step + 1}/{QUESTIONS.length}
                 </p>
                 <h3
@@ -335,7 +335,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                   ✅ Cấp độ: {level.label}
                 </span>
               ) : (
-                <span className={`text-xs ${isLight ? "text-[#94A3B8]" : "text-white/30"}`}>Chưa có dữ liệu</span>
+                <span className={`text-xs ${isLight ? "text-[#94A3B8]" : "text-white/60"}`}>Chưa có dữ liệu</span>
               )}
             </div>
 
@@ -376,7 +376,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
                         {lvl.score}/10
                       </span>
                     </div>
-                    <p className={`mt-0.5 text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>{lvl.subtitle}</p>
+                    <p className={`mt-0.5 text-xs ${isLight ? "text-[#54637A]" : "text-white/60"}`}>{lvl.subtitle}</p>
                     <div
                       className={`mt-1.5 h-1.5 w-full overflow-hidden rounded-full ${isLight ? "bg-[#E2E8F0]" : "bg-white/10"}`}
                     >
@@ -397,7 +397,7 @@ export function QuizAssessment({ variant = "dark" }: { variant?: "dark" | "light
               })}
             </div>
             {!resultReady && (
-              <p className={`mt-3 text-center text-xs ${isLight ? "text-[#54637A]" : "text-white/40"}`}>
+              <p className={`mt-3 text-center text-xs ${isLight ? "text-[#54637A]" : "text-white/60"}`}>
                 📍 Cấp độ sẽ được xác định sau khi bạn hoàn thành bài test.
               </p>
             )}
