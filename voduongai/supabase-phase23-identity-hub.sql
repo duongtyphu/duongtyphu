@@ -65,9 +65,17 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.members (id, full_name)
+  -- `members.email` is `not null` — omitting it here raises a not-null
+  -- violation inside this AFTER INSERT trigger, which rolls back the
+  -- whole `auth.users` insert and breaks EVERY new signup (Register,
+  -- Google OAuth, magic-link alike) with a generic 500 from GoTrue.
+  -- Confirmed live on this same Supabase project (uosxpxolsvwcafxvnroy,
+  -- shared with the admin-rebuild branch) before this fix — see
+  -- admin-rebuild's CLAUDE.md "BUG P0 ĐÃ SỬA" entry for the full repro.
+  insert into public.members (id, email, full_name)
   values (
     new.id,
+    new.email,
     coalesce(new.raw_user_meta_data->>'full_name', new.email)
   )
   on conflict (id) do nothing;

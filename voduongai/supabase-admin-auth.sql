@@ -12,8 +12,10 @@ create policy "members can read own row"
 
 -- Grant admin access to the account that owns this project.
 -- Inserts a members row if one doesn't exist yet (in case no signup trigger created it).
-insert into members (id, full_name, is_admin)
-select u.id, u.email, true
+-- `email` is `not null` on this table — must be included or this insert
+-- fails outright on a fresh/reset project where the row doesn't exist yet.
+insert into members (id, email, full_name, is_admin)
+select u.id, u.email, u.email, true
 from auth.users u
 where u.email = 'duongvv.vn@gmail.com'
 on conflict (id) do update set is_admin = true;
