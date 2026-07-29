@@ -30,8 +30,8 @@ export function AdminHeader({
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <span className="hidden flex-col leading-tight sm:flex">
-            <span className="text-sm font-extrabold tracking-tight text-gray-900">
-              VO DUONG <span className="text-brand-orange">AI</span>
+            <span className="text-sm font-extrabold tracking-tight">
+              <span className="text-[#2563EB]">VO DUONG</span> <span className="text-[#5B21D6]">AI</span>
             </span>
             <span className="whitespace-nowrap text-[9px] font-semibold uppercase tracking-wider text-brand-blue">
               Admin

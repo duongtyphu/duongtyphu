@@ -45,6 +45,9 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: settings.faviconUrl,
+      // Explicitly setting `icons` here overrides Next.js's auto-merge of
+      // the file-convention apple-icon.tsx, so it has to be listed by hand.
+      apple: "/apple-icon",
     },
     robots: { index: true, follow: true },
   };
@@ -63,7 +66,8 @@ export default async function RootLayout({
     name: siteConfig.displayName,
     alternateName: settings.siteName,
     url: siteConfig.url,
-    description: settings.seoDescription,
+    description:
+      "Nhà sáng lập VO DUONG AI — chia sẻ kiến thức và kinh nghiệm thực chiến về AI, xây dựng hệ sinh thái học tập giúp người Việt ứng dụng AI hiệu quả vào công việc và cuộc sống.",
     sameAs: [settings.facebookUrl, settings.youtubeUrl, settings.tiktokUrl, settings.zaloUrl],
   };
 

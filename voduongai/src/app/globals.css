@@ -130,11 +130,11 @@ body {
 }
 
 .mesh-navy {
-  background-color: #020817;
+  background-color: #06040f;
   background-image:
-    radial-gradient(900px circle at 100% 0%, rgba(11, 92, 255, 0.18), transparent 70%),
-    radial-gradient(700px circle at 0% 100%, rgba(53, 194, 255, 0.12), transparent 70%),
-    linear-gradient(165deg, #020817 0%, #041224 50%, #06142B 100%);
+    radial-gradient(900px circle at 100% 0%, rgba(37, 99, 235, 0.16), transparent 70%),
+    radial-gradient(750px circle at 0% 100%, rgba(124, 58, 237, 0.18), transparent 70%),
+    linear-gradient(165deg, #020817 0%, #0B0F2E 42%, #1B0B33 78%, #150A29 100%);
   background-attachment: scroll;
 }
 
@@ -165,6 +165,12 @@ body {
   transform: translateY(-5px) scale(1.015);
   box-shadow: 0 24px 50px -18px rgba(37, 99, 235, 0.35);
   border-color: rgba(37, 99, 235, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-shine:hover {
+    transform: none;
+  }
 }
 
 .glow-blue {

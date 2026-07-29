@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Pause, Play } from "lucide-react";
 
 // Fixed, hand-placed slots arranged in a ring around the glowing core.
 // Positions never move — only their content cross-fades — so bubbles can
@@ -27,6 +28,16 @@ export function HeroQuestionBubbles({ questions }: { questions: string[] }) {
   const [indices, setIndices] = useState<number[]>(() =>
     BUBBLE_SLOTS.map((_, slot) => slot % questions.length)
   );
+  // WCAG 2.2.2 (Pause, Stop, Hide) — the bubbles cross-fade to new content
+  // indefinitely with no built-in way to stop them; `pausedRef` (not just
+  // state) lets the still-running interval callbacks below check the latest
+  // value without needing to tear down/restart the timers on every toggle.
+  const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(paused);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -39,14 +50,17 @@ export function HeroQuestionBubbles({ questions }: { questions: string[] }) {
       const cadence = SLOT_INTERVAL_MS[slot % SLOT_INTERVAL_MS.length];
 
       const timeout = setTimeout(() => {
-        setIndices((prev) => {
-          const next = [...prev];
-          next[slot] = (next[slot] + slotCount) % questions.length;
-          return next;
-        });
+        if (!pausedRef.current) {
+          setIndices((prev) => {
+            const next = [...prev];
+            next[slot] = (next[slot] + slotCount) % questions.length;
+            return next;
+          });
+        }
 
         intervals.push(
           setInterval(() => {
+            if (pausedRef.current) return;
             setIndices((prev) => {
               const next = [...prev];
               next[slot] = (next[slot] + slotCount) % questions.length;
@@ -67,6 +81,15 @@ export function HeroQuestionBubbles({ questions }: { questions: string[] }) {
 
   return (
     <>
+      <button
+        type="button"
+        onClick={() => setPaused((p) => !p)}
+        aria-pressed={paused}
+        aria-label={paused ? "Tiếp tục đổi câu hỏi" : "Tạm dừng đổi câu hỏi"}
+        className="hero-bubble-pause pointer-events-auto absolute bottom-1 right-1 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white/70 backdrop-blur-md transition hover:text-white"
+      >
+        {paused ? <Play className="h-3 w-3" strokeWidth={2.25} /> : <Pause className="h-3 w-3" strokeWidth={2.25} />}
+      </button>
       {BUBBLE_SLOTS.map((pos, slot) => (
         <div
           key={slot}

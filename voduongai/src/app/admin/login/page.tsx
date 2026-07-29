@@ -36,8 +36,8 @@ function AdminLoginForm() {
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
           </svg>
           <div>
-            <p className="text-sm font-extrabold text-gray-900">
-              VO DUONG <span className="text-brand-orange">AI</span>
+            <p className="text-sm font-extrabold">
+              <span className="text-[#2563EB]">VO DUONG</span> <span className="text-[#5B21D6]">AI</span>
             </p>
             <p className="text-xs text-gray-500">Admin Console</p>
           </div>
