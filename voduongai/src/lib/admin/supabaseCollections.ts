@@ -172,6 +172,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // tách bảng riêng theo từng hệ sinh thái.
   "ecosystem-articles": "ecosystem_articles",
   "ecosystem-ratings": "ecosystem_ratings",
+  // Landing Page CMS (Phase 25) — 8 dòng (1/section: hero/ecosystem-pillars/
+  // portal-preview/skills-showcase/tools-i-use/trust-stats/ecosystem/
+  // final-cta). CHỈ field text an toàn (eyebrow/tiêu đề/mô tả/CTA label) —
+  // xem comment đầu `supabase-phase25-landing-chrome.sql` cho danh sách đầy
+  // đủ những gì KHÔNG đụng (ITEMS/STEPS/FEATURES/VALUES gắn icon cố định,
+  // QuizAssessment, danh sách `tools`, ảnh founder.png, mọi href).
+  "landing-chrome": "landing_chrome",
   // Mở rộng riêng — "Thêm được các dự án con" — thay hẳn eco.subProjects
   // tĩnh trong ecosystems.ts, dùng chung cho mọi hệ sinh thái.
   "ecosystem-subprojects": "ecosystem_subprojects",

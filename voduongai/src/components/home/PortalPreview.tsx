@@ -4,6 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { LandingPreviewPortalMockup } from "@/components/landing-preview/LandingPreviewPortalMockup";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const PORTAL_PREVIEW_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên", type: "text", required: true },
+  { key: "heading", label: "Tiêu đề khối bên phải", type: "text", required: true },
+  { key: "ctaLabel", label: "Nhãn nút CTA", type: "text", required: true },
+];
 
 const LIST = [
   { icon: "/images/landing-preview/icons/platform-interface.png", label: "Giao diện hiện đại, dễ sử dụng" },
@@ -26,6 +35,7 @@ const LIST = [
  */
 export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
+  const chrome = useLandingChrome("portal-preview");
   return (
     <section id="trai-nghiem-hoc-vien-ai" className={`scroll-mt-24 py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9]" : ""}`}>
       <div className="mx-auto max-w-7xl px-6">
@@ -36,13 +46,15 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-2xl text-center"
         >
-          <span
-            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
-              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
-            }`}
-          >
-            🧭 Khám phá Học Viện
-          </span>
+          <EditableRegion record={chrome} fields={PORTAL_PREVIEW_FIELDS} update={chrome.update} as="span">
+            <span
+              className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+                isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              }`}
+            >
+              {chrome.eyebrowBadge}
+            </span>
+          </EditableRegion>
         </motion.div>
 
         <motion.div
@@ -66,13 +78,15 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
                 : "border-white/10 bg-white/[0.04]"
             }`}
           >
-            <h2
-              className={`text-[1.4rem] font-extrabold leading-[1.3] md:text-[1.6rem] ${
-                isLight ? "text-[#0B0F2E]" : "text-white"
-              }`}
-            >
-              Nền tảng toàn diện, trải nghiệm liền mạch
-            </h2>
+            <EditableRegion record={chrome} fields={PORTAL_PREVIEW_FIELDS} update={chrome.update}>
+              <h2
+                className={`text-[1.4rem] font-extrabold leading-[1.3] md:text-[1.6rem] ${
+                  isLight ? "text-[#0B0F2E]" : "text-white"
+                }`}
+              >
+                {chrome.heading}
+              </h2>
+            </EditableRegion>
             <ul className="mt-[26px] flex flex-col gap-4">
               {LIST.map((item) => (
                 <li
@@ -98,7 +112,7 @@ export function PortalPreview({ variant = "dark" }: { variant?: "dark" | "light"
               href="/login"
               className="mt-[26px] inline-flex items-center gap-2 self-start rounded-[10.8px] bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-[26px] py-3.5 text-[.95rem] font-bold text-white shadow-[0_8px_20px_rgba(91,33,214,.35)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
             >
-              Khám phá nền tảng
+              {chrome.ctaLabel}
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

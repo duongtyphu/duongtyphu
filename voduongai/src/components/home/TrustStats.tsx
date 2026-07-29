@@ -2,6 +2,15 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const TRUST_STATS_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên", type: "text", required: true },
+  { key: "heading", label: "Tiêu đề khối bên trái", type: "text", required: true },
+  { key: "description", label: "Mô tả khối bên trái", type: "textarea", full: true, required: true },
+];
 
 const FEATURES = [
   {
@@ -37,6 +46,7 @@ const VALUES = [
  */
 export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
+  const chrome = useLandingChrome("trust-stats");
   return (
     <section
       id="cong-dong"
@@ -50,13 +60,15 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-2xl text-center"
         >
-          <span
-            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
-              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
-            }`}
-          >
-            🌐 Cộng đồng
-          </span>
+          <EditableRegion record={chrome} fields={TRUST_STATS_FIELDS} update={chrome.update} as="span">
+            <span
+              className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+                isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              }`}
+            >
+              {chrome.eyebrowBadge}
+            </span>
+          </EditableRegion>
         </motion.div>
 
         <motion.div
@@ -73,16 +85,18 @@ export function TrustStats({ variant = "dark" }: { variant?: "dark" | "light" })
                 : "border-white/10 bg-white/[0.04]"
             }`}
           >
-            <h2
-              className={`text-[1.4rem] font-extrabold leading-[1.3] tracking-[-.3px] md:text-[1.6rem] ${
-                isLight ? "text-[#0B0F2E]" : "text-white"
-              }`}
-            >
-              Hệ sinh thái dành cho người Việt
-            </h2>
-            <p className={`mt-3.5 leading-[1.7] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
-              Kết nối tri thức, công cụ, cơ hội và cộng đồng để cùng nhau phát triển và tạo ra tác động tích cực.
-            </p>
+            <EditableRegion record={chrome} fields={TRUST_STATS_FIELDS} update={chrome.update}>
+              <h2
+                className={`text-[1.4rem] font-extrabold leading-[1.3] tracking-[-.3px] md:text-[1.6rem] ${
+                  isLight ? "text-[#0B0F2E]" : "text-white"
+                }`}
+              >
+                {chrome.heading}
+              </h2>
+              <p className={`mt-3.5 leading-[1.7] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
+                {chrome.description}
+              </p>
+            </EditableRegion>
             <ul className="mt-[26px] flex flex-col gap-5">
               {FEATURES.map((f) => (
                 <li key={f.title} className="flex items-center gap-3.5">

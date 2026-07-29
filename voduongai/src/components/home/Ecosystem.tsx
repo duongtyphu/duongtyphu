@@ -4,6 +4,21 @@ import Image from "next/image";
 import { Crown, Orbit } from "lucide-react";
 import { motion } from "framer-motion";
 import { LandingPreviewSolarSystem } from "@/components/landing-preview/LandingPreviewSolarSystem";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const ECOSYSTEM_BADGE_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên", type: "text", required: true },
+];
+
+const FOUNDER_FIELDS: FieldConfig[] = [
+  { key: "founderQuote", label: "Câu trích dẫn", type: "textarea", full: true, required: true },
+  { key: "founderQuoteAttribution", label: "Người trích dẫn (vd. — Võ Đương)", type: "text", required: true },
+  { key: "founderBioParagraph1", label: "Đoạn giới thiệu 1", type: "textarea", full: true, required: true },
+  { key: "founderBioParagraph2", label: "Đoạn giới thiệu 2", type: "textarea", full: true, required: true },
+  { key: "founderTitle", label: "Chức danh Nhà sáng lập", type: "text", required: true },
+];
 
 /**
  * "Hệ sinh thái của tôi" section — the solar-system ecosystem diagram +
@@ -17,6 +32,7 @@ import { LandingPreviewSolarSystem } from "@/components/landing-preview/LandingP
  */
 export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
+  const chrome = useLandingChrome("ecosystem");
   return (
     <section
       id="he-sinh-thai-cua-toi"
@@ -30,14 +46,16 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-2xl text-center"
         >
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
-              isLight ? "border-[#E2E8F0] bg-white text-[#5B21D6]" : "border-white/15 bg-white/5 text-[#A78BFA]"
-            }`}
-          >
-            <Orbit className="h-3.5 w-3.5" strokeWidth={2.25} />
-            Hệ sinh thái của tôi
-          </span>
+          <EditableRegion record={chrome} fields={ECOSYSTEM_BADGE_FIELDS} update={chrome.update} as="span">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+                isLight ? "border-[#E2E8F0] bg-white text-[#5B21D6]" : "border-white/15 bg-white/5 text-[#A78BFA]"
+              }`}
+            >
+              <Orbit className="h-3.5 w-3.5" strokeWidth={2.25} />
+              {chrome.eyebrowBadge}
+            </span>
+          </EditableRegion>
         </motion.div>
 
         <motion.div
@@ -67,26 +85,28 @@ export function Ecosystem({ variant = "dark" }: { variant?: "dark" | "light" }) 
               />
             </div>
             <div className="flex flex-1 flex-col justify-center px-5 py-[19px] md:px-6 md:py-[23px]">
-              <p className="text-[.98rem] font-extrabold leading-[1.5] md:text-[1.02rem]">
-                <span className={isLight ? "text-[#0B0F2E]" : "text-white"}>
-                  &ldquo;AI không thay thế bạn, nhưng những người biết sử dụng AI sẽ thay thế bạn&rdquo;
-                </span>{" "}
-                <span className={isLight ? "text-[#5B21D6]" : "text-[#A78BFA]"}>— Võ Đương</span>
-              </p>
-              <p className={`mt-2.5 text-[.83rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
-                Tôi là một nhà đầu tư vào các dự án công nghệ, tôi tin rằng AI sẽ là một trong những kỹ năng sống còn trong thế kỷ 21. Tôi xây dựng VO DUONG AI như một hệ sinh thái cá nhân nơi tập hợp những kiến thức, tài liệu, công cụ và bao gồm những kinh nghiệm mà chính tôi đã từng trải nghiệm mỗi ngày trong công việc và sự nghiệp.
-              </p>
-              <p className={`mt-2 text-[.83rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
-                Mục tiêu của tôi rất đơn giản: giúp bạn tiếp cận với AI nhanh hơn, dễ hiểu hơn, xây dựng hệ thống online bền vững và từng bước tạo ra tài sản số cho tương lai.
-              </p>
-              <div
-                className={`mt-2.5 flex items-center gap-1.5 text-[.83rem] font-bold ${
-                  isLight ? "text-[#5B21D6]" : "text-[#A78BFA]"
-                }`}
-              >
-                <Crown className="h-4 w-4 shrink-0" strokeWidth={2.5} />
-                Nhà sáng lập VÕ ĐƯƠNG AI
-              </div>
+              <EditableRegion record={chrome} fields={FOUNDER_FIELDS} update={chrome.update}>
+                <p className="text-[.98rem] font-extrabold leading-[1.5] md:text-[1.02rem]">
+                  <span className={isLight ? "text-[#0B0F2E]" : "text-white"}>
+                    &ldquo;{chrome.founderQuote}&rdquo;
+                  </span>{" "}
+                  <span className={isLight ? "text-[#5B21D6]" : "text-[#A78BFA]"}>{chrome.founderQuoteAttribution}</span>
+                </p>
+                <p className={`mt-2.5 text-[.83rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
+                  {chrome.founderBioParagraph1}
+                </p>
+                <p className={`mt-2 text-[.83rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
+                  {chrome.founderBioParagraph2}
+                </p>
+                <div
+                  className={`mt-2.5 flex items-center gap-1.5 text-[.83rem] font-bold ${
+                    isLight ? "text-[#5B21D6]" : "text-[#A78BFA]"
+                  }`}
+                >
+                  <Crown className="h-4 w-4 shrink-0" strokeWidth={2.5} />
+                  {chrome.founderTitle}
+                </div>
+              </EditableRegion>
             </div>
           </div>
         </motion.div>

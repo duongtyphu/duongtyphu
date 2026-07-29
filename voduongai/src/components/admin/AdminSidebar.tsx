@@ -41,6 +41,7 @@ import {
   Link2,
   LineChart,
   UserCog,
+  Globe,
   type LucideIcon,
 } from "lucide-react";
 import { adminNavGroups } from "@/lib/admin/nav";
@@ -76,6 +77,7 @@ import { adminNavGroups } from "@/lib/admin/nav";
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
   "/admin/users": UserCog,
+  "/admin/landing": Globe,
   "/admin/home-cards": Home,
   "/admin/companion": Bot,
   "/admin/ckos": Library,

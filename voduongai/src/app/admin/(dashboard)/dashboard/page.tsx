@@ -35,6 +35,7 @@ export const metadata = { title: "Tổng quan · Admin" };
 // (`portalNavSections`, src/lib/portal/hubs.ts) — cùng nguyên tắc 1:1 đã
 // chốt ở Phần 1. Việc 8: đã thêm "Cộng đồng" (group Admin mới nay đã có).
 const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
+  "Landing Page": "/",
   "Trang chủ Học viện": "/portal",
   Companion: "/portal/companion",
   "Hệ tri thức AI (CKOS)": "/portal/ckos",
@@ -58,7 +59,8 @@ const PORTAL_HREF_FOR_GROUP: Record<string, string> = {
 // `premium_chrome`/`premium_payment_steps`/`premium_faq`; 3 module Hành
 // trình còn lại: 1 bảng mỗi module) — 1 route giờ quản lý qua render lại
 // trang Portal thật, không map 1-1 được vào cấu trúc Record<href, 1
-// table> đơn giản này.
+// table> đơn giản này. "Trang Landing (Live-edit)" (`landing_chrome`, 8
+// dòng) cùng lý do — không có ở đây.
 const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/home-cards": "home_cards",
   "/admin/ckos/prompts": "prompts",

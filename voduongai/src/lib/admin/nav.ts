@@ -31,6 +31,16 @@ export const adminNavGroups: AdminNavGroup[] = [
     ],
   },
   {
+    // NGOẠI LỆ có ghi chú với nguyên tắc 1:1 Portal ở trên — trang này là
+    // Landing Page marketing công khai TRƯỚC đăng nhập (`/`, chưa vào
+    // Portal), không thuộc `portalNavSections` (10 mục sau khi đã vào
+    // Portal). Landing Page CMS (Phase 25) — Live-edit (Cách A) cho 8
+    // section "an toàn" của trang chủ marketing, xem
+    // `src/lib/portal/live-landing-chrome.ts`.
+    group: "Landing Page",
+    items: [{ label: "Trang Landing (Live-edit)", href: "/admin/landing" }],
+  },
+  {
     // Portal #1 — "Trang chủ Học viện" (/portal). Bảng `home-cards` là nội
     // dung duy nhất Admin quản được của trang chủ Portal.
     //

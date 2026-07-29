@@ -4026,3 +4026,133 @@ bộ luồng Google OAuth) với tài khoản thật (giới hạn sandbox khôn
 inbox email/trình duyệt tương tác được) — Founder tự thử trên Preview
 URL, đặc biệt xác nhận nút "Lưu" ở `/portal/account` giờ lưu được (bug
 này ảnh hưởng cả trang đó, không riêng onboarding).
+
+## Landing Page CMS (Phase 25) — Live-edit cho trang chủ marketing công khai (`/`)
+
+Founder yêu cầu: "Xây Quản lý Landing Page hiện tại" — Tier 2 của kế
+hoạch Admin tổng thể (Tier 1 là Portal, đã xong qua toàn bộ Nhóm 3 ở
+trên; Tier 2 là trang Landing Page marketing công khai trước đăng nhập,
+`/`, chưa từng có Admin CMS nào). Dùng đúng kiến trúc "Live-edit Cách A"
+đã chốt cho Portal (render lại component thật + `EditableRegion`), phạm
+vi **Tier 1 "An toàn"**: chỉ field text (eyebrow badge/tiêu đề/mô tả/CTA
+label) của 8 trong 9 section trên `HomeClient.tsx`.
+
+**Đã audit từng section trước khi build** (đọc full code, không suy
+đoán) — loại trừ khỏi phạm vi, giữ nguyên 100% trong code:
+- Toàn bộ `QuizAssessment.tsx` (`QUESTIONS`/`LEVELS`) — có logic tính
+  điểm dựa trên vị trí/số lượng câu trả lời, rủi ro cao nếu cho sửa tự do
+  qua UI generic (đúng nguyên tắc đã áp dụng cho CKOS Learning Engine).
+- Mảng `ITEMS`/`STEPS` (`EcosystemPillars`), `LIST` (`PortalPreview`),
+  `FEATURES`/`VALUES` (`TrustStats`) — mỗi phần tử gắn 1 icon PNG cố định
+  trong `public/images/landing-preview/icons/`, số lượng phần tử khớp
+  đúng bố cục lưới cố định (vd. `xl:flex-nowrap` 6 cột) — sửa tự do có
+  rủi ro lệch layout/thiếu icon, cùng lý do các mảng icon-bound khác
+  trong dự án (`CHAPTER_DESTINATIONS`...).
+- `floatingBadges`/`vortexQuestions` (`Hero.tsx`) — trang trí động, không
+  phải nội dung chính.
+- Danh sách `tools` (`ToolsIUse.tsx`, import `@/data/tools`) — dữ liệu
+  dùng chung toàn dự án, không riêng Landing Page.
+- Ảnh tĩnh (`founder.png`, 3 ảnh cộng đồng) — dự án chưa có hạ tầng
+  upload.
+- MỌI `href` (kể cả CTA `/login`) — giữ hardcode trong code, tránh Admin
+  gõ sai tạo link chết trên trang lưu lượng cao nhất hệ thống (cùng
+  quyết định đã áp dụng cho `home_cards`/Premium Dashboard).
+
+**Dữ liệu:** bảng mới `landing_chrome` (migration
+`supabase-phase25-landing-chrome.sql`, đã áp dụng qua Supabase MCP —
+schema generic `id/data jsonb/status/order`, 8 dòng, 1/section theo đúng
+thứ tự hiển thị trong `HomeClient.tsx`: hero/ecosystem-pillars/
+portal-preview/skills-showcase/tools-i-use/trust-stats/ecosystem/
+final-cta). `src/lib/portal/live-landing-chrome.ts` — `LandingChromeRow`
+type (tất cả field optional trừ `id`/`status`, vì mỗi section chỉ dùng
+1 tập con field khác nhau) + `DEFAULT_LANDING_CHROME` (seed verbatim,
+khớp 100% nội dung hardcode gốc — đã diff xác nhận qua test HTML
+server-render) + `getLiveLandingChrome()` (`cache()` + `getSupabasePublic()`,
+merge từng field string từ `data` jsonb đè lên default, fallback toàn bộ
+default nếu Supabase chưa cấu hình/lỗi/rỗng).
+
+**Kiến trúc chia sẻ 1 Context cho 8 component** — đúng tình huống đã gặp
+với `EcosystemChromeContext`/`PremiumChromeContext` (1 bảng nhiều dòng,
+cần đọc/sửa từ nhiều component khác nhau trong CÙNG 1 trang): 1 lệnh gọi
+`useCollection()` duy nhất ở `LandingChromeProvider`
+(`src/components/home/LandingChromeContext.tsx`, bọc quanh toàn bộ
+`HomeClient`), mỗi section tự lọc đúng dòng của mình qua
+`useLandingChrome(sectionId)`. `EditModeContext.tsx`/`EditableRegion.tsx`
+(`src/components/home/`) — bản sao thứ 10 của pattern popover đã dùng
+xuyên suốt dự án (portal thật + `home`/`premium`/`companion`...), giữ
+đúng byte-for-byte kỹ thuật `createPortal` vào `document.body` +
+`max-h-[70vh] overflow-y-auto`.
+
+**8 component sửa** (`src/components/home/`, mỗi file thêm
+`useLandingChrome(sectionId)` + `FieldConfig[]` + bọc `EditableRegion`
+quanh đúng khối text hiển thị, thay text hardcode bằng `{chrome.field}`):
+`Hero.tsx` (7 field: eyebrowBadge/headlineLine1/headlineLine2/
+headlineHighlight/subheadline/ctaLabel/tagline — 3 vùng `EditableRegion`
+riêng vì tagline nằm sau CTA hardcode ở giữa),
+`EcosystemPillars.tsx` (5 field: eyebrowBadge/heading + roadmapHeading/
+roadmapDesc/roadmapCtaLabel — 2 vùng),
+`PortalPreview.tsx` (3 field: eyebrowBadge/heading/ctaLabel — 2 vùng),
+`SkillsShowcase.tsx` (3 field: eyebrowBadge/heading/youtubeId — 2 vùng,
+`YOUTUBE_ID` hardcode cũ xoá hẳn, thay `${chrome.youtubeId}` trong URL
+embed/thumbnail),
+`ToolsIUse.tsx` (2 field: eyebrowBadge/heading, heading vẫn bọc trong
+`RevealText` gốc),
+`TrustStats.tsx` (3 field: eyebrowBadge/heading/description),
+`Ecosystem.tsx` (6 field: eyebrowBadge riêng + 5 field khối Founder —
+founderQuote/founderQuoteAttribution/founderBioParagraph1/
+founderBioParagraph2/founderTitle),
+`FinalCTA.tsx` (2 field: heading/ctaLabel).
+
+**Bug tự phát hiện và sửa trước khi commit (đúng lớp lỗi đã ghi ở mục
+"popup Live-edit bị cắt cụt"/"bug margin `EditableRegion`" trước đó):**
+lúc đầu đặt `className="mt-5 ..."` trực tiếp trên `EditableRegion` bọc
+tagline (`Hero.tsx`) và `className="flex flex-1 flex-col justify-center
+px-5 py-[19px]..."` trên `EditableRegion` bọc khối Founder
+(`Ecosystem.tsx`) — `className` của `EditableRegion` CHỈ áp dụng khi
+`editMode=true` (khi `false`, component return thẳng `<>{children}</>`,
+bỏ qua hoàn toàn `className`), nên các class layout/margin đó sẽ biến
+mất trên Landing Page thật. Đã sửa: mọi margin/layout class giữ nguyên
+trên phần tử con thật bên trong (`<div className="mt-5 ...">`/giữ lại
+`<div className="flex flex-1 flex-col justify-center ...">` bao ngoài
+`EditableRegion`), không đặt trên chính `EditableRegion`.
+
+**`page.tsx`/`HomeClient.tsx`:** `page.tsx` đổi thành `async function`,
+gọi `getLiveLandingChrome()`, truyền `seedChrome` xuống `HomeClient`.
+`HomeClient.tsx` nhận thêm prop `seedChrome: LandingChromeRow[]`, bọc
+toàn bộ 9 section trong `<LandingChromeProvider seedChrome={seedChrome}>`
+(giữ nguyên `QuizAssessment` không đụng — không cần chrome). Portal thật
+(`editMode=false` mặc định) — `useCollection(key, seed, {enabled: false})`
+pass-through `seedChrome`, KHÔNG fetch mạng thêm (đã verify qua code
+review + test HTML server-render, cùng cơ chế đã dùng cho `home_cards`/
+5 Cửa Hành trình).
+
+**Admin route mới** `/admin/landing`
+(`src/app/admin/(dashboard)/landing/page.tsx`) — render lại ĐÚNG
+`HomePage` (`@/app/page`, import thẳng) bọc `<EditModeProvider>`, cùng
+pattern `/admin/home-cards`/`/admin/premium/dashboard`. `nav.ts` thêm
+group MỚI `"Landing Page"` (ngoại lệ có ghi chú với nguyên tắc 1:1 Portal
+— trang này là marketing công khai trước đăng nhập, không thuộc 10 mục
+`portalNavSections`), đặt trước "Trang chủ Học viện". `AdminSidebar.tsx`
+thêm icon `Globe` cho `/admin/landing`. `dashboard/page.tsx` thêm
+`PORTAL_HREF_FOR_GROUP["Landing Page"] = "/"` (nút "Xem trên Portal" trỏ
+đúng trang chủ marketing) — không thêm vào `TABLE_FOR_HREF` (route merge
+8 dòng của 1 bảng qua render lại trang thật, không map 1-1 vào cấu trúc
+`Record<href, 1 table>` đơn giản — cùng cách xử lý Mirror/Journal/6 khối
+Companion/Premium Dashboard).
+
+**Verify:** `rm -rf .next && npm run build` sạch (route `/admin/landing`
+xuất hiện đúng), `tsc --noEmit`/`eslint` sạch, `vitest run` 139/139 pass.
+Test thật qua `next start` (production build, không phải `next dev`) —
+`curl "/"` trả `200`, HTML server-render chứa đúng cả 3 chuỗi tiêu biểu
+đã đối chiếu verbatim với bản hardcode gốc ("Học AI đúng hướng"/"Tất cả
+những gì bạn cần, trong một hệ sinh thái"/"Bắt đầu hành trình chinh phục
+các kỹ năng AI của bạn ngay hôm nay.") — xác nhận fallback
+`DEFAULT_LANDING_CHROME` render đúng khi Supabase chưa cấu hình (sandbox).
+`curl "/admin/landing"` trả `307` redirect `/admin/login` đúng như kỳ
+vọng (chưa đăng nhập, cùng hành vi mọi route Live-edit khác).
+
+**Chưa tự test được:** sửa field qua Admin UI thật có tài khoản đăng
+nhập (cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài
+khoản Admin thật đã nêu nhiều lần) — Founder tự test tại
+`/admin/landing`, xác nhận bút sửa (✎) hiện đúng ở cả 8 section, lưu
+xong `/` (Portal thật, không qua edit mode) phản ánh đúng nội dung mới.
