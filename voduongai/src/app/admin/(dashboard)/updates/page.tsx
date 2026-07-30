@@ -50,6 +50,11 @@ export default function AdminUpdatesPage() {
         fields={fields}
         itemNoun="Tin"
         addButtonLabel="+ Thêm tin"
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Cộng đồng", href: "/admin/community" },
+          { label: "Tin tức cộng đồng" },
+        ]}
       />
     </AdminAtmosphere>
   );

@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { fetchCollection } from "@/lib/admin/fetchCollection";
 import { DataTableClient } from "@/components/admin/DataTableClient";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
+import type { AdminBreadcrumbItem } from "@/components/admin/AdminBreadcrumb";
 
 type BaseItem = { id: string; status?: string };
 
@@ -28,6 +29,7 @@ export async function DataTable<T extends BaseItem>({
   itemNoun,
   addButtonLabel,
   panelLabel,
+  breadcrumb,
 }: {
   collectionKey: string;
   title: string;
@@ -42,6 +44,10 @@ export async function DataTable<T extends BaseItem>({
   /** Nhãn khu vực chỉnh trong slide-over (vd. "Nội dung tri thức") — bỏ
    * trống dùng "Sửa"/"Thêm mới" như cũ. */
   panelLabel?: string;
+  /** ADM-V2-07 — trail cho AdminBreadcrumb (Workspace → SubGroup → Trang).
+   * Bỏ trống = không hiện breadcrumb (hành vi cũ, không đổi cho page.tsx
+   * chưa truyền). Truyền tường minh từ mỗi page.tsx, không tra cứu ngầm. */
+  breadcrumb?: AdminBreadcrumbItem[];
 }) {
   const admin = await requireAdmin();
   if (!admin) redirect("/admin/login");
@@ -58,6 +64,7 @@ export async function DataTable<T extends BaseItem>({
       itemNoun={itemNoun}
       addButtonLabel={addButtonLabel}
       panelLabel={panelLabel}
+      breadcrumb={breadcrumb}
     />
   );
 }

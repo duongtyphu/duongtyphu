@@ -4910,3 +4910,96 @@ khớp đúng số lead/đơn hàng thật.
 **ĐÃ DỪNG SAU SPRINT 6 theo đúng chỉ đạo** — chưa động tới Học viện (còn
 lại đúng 1 Workspace cuối cùng trong kế hoạch 8 sprint), chờ Founder/PMO
 duyệt báo cáo sprint trước khi tiếp tục.
+
+## ADM-V2-07 — Sprint 7 (cuối cùng): Học viện
+
+Founder chọn tiếp tục với Workspace cuối cùng trong kế hoạch 8-sprint —
+"Học viện" (10 subGroup, 38 route). Khác 6 sprint trước, sprint này KHÔNG
+có `comingSoon: true` nào để gỡ.
+
+### Audit — 0 comingSoon, workspace đã 100% thật từ trước
+
+Grep `comingSoon` trong `nav.ts` xác nhận cả 38 route dưới workspace "Học
+viện" đều KHÔNG có cờ này — toàn bộ đã là module thật (CRUD/Live-edit/
+Read-only) từ các đợt Nhóm 3/CKOS/Live-edit trước khi chương trình ADM-V2
+bắt đầu. Đã phân loại đầy đủ cả 38 route theo kiểu render trước khi quyết
+định phạm vi sprint:
+- **DataTable** (17 route: 8 CKOS + `tools`/`community`/`updates`/
+  `student-success-stories` + 5 route khác) — Server+Client split, đã có
+  `breadcrumb` optional prop chưa được dùng.
+- **VisualEditor** (5 route: `hocvienai/work-needs`, `hocvienai/faq`,
+  `aiworkspace/recommended-workspace`, `aiworkspace/ai-workflow-sections`,
+  `su-menh-companion/flipbook`) — cùng tình trạng thiếu breadcrumb.
+- **Bespoke Server Component** (5 route: `ckos` dashboard, `ckos/lessons`,
+  `ckos/case-studies`, `course-pricing`, `companion`) — không dùng
+  `DataTable`/`VisualEditor`, tự viết `<h1>`/shell riêng.
+- **Live-edit Cách A** (~19 route: `home-cards`, `duan-cohoi` + 10 sub-route,
+  `hanh-trinh-cua-toi` 5 cửa, `su-menh-companion/live-edit`,
+  `premium/dashboard`) — render lại NGUYÊN component `/portal/*` thật.
+
+### Quyết định phạm vi: retrofit breadcrumb, không CRUD/Empty State mới
+
+Vì mục tiêu gốc (xoá "Sắp triển khai") đã đạt 100% từ trước, đóng góp
+trung thực của sprint này là dọn 1 điểm thiếu nhất quán còn sót:
+`AdminBreadcrumb` (dùng ở Sprint 1-6) chưa từng có mặt ở bất kỳ route Học
+viện nào — Founder điều hướng sâu (vd. `/admin/ckos/best-practices`)
+không thấy đường dẫn `Học viện → Hệ tri thức AI (CKOS) → ...`.
+
+**Đã làm — retrofit qua props dùng chung (3 sửa component → tự động phủ
+17 trang):**
+- `src/components/admin/DataTable.tsx`/`DataTableClient.tsx` — thêm
+  `breadcrumb?: AdminBreadcrumbItem[]` (import type từ `AdminBreadcrumb`),
+  truyền xuyên Server→Client, render `<AdminBreadcrumb trail={breadcrumb}/>`
+  ngay trong `<div className="space-y-4">`, trước `<h1>`. Optional, không
+  đổi hành vi trang nào chưa truyền prop.
+- `src/components/admin/VisualEditor.tsx` — cùng prop/pattern (component
+  "use client" đơn, không có bản Server riêng).
+- Đã truyền `breadcrumb` vào cả 17 trang DataTable + 5 trang VisualEditor,
+  mỗi trail đúng 3 cấp: Workspace ("Học viện") → SubGroup (khớp đúng label
+  trong `nav.ts`, href trỏ route đầu tiên của subGroup vì phần lớn subGroup
+  không có trang index riêng — ngoại lệ CKOS đã có `/admin/ckos`) → trang
+  hiện tại.
+- 5 trang bespoke (`ckos` dashboard, `ckos/lessons`, `ckos/case-studies`,
+  `course-pricing`, `companion`) — thêm `<AdminBreadcrumb trail={...}/>`
+  trực tiếp (không qua props component dùng chung, vì các trang này tự
+  viết JSX riêng).
+
+**Chủ động KHÔNG thêm breadcrumb cho ~19 route Live-edit Cách A** — các
+route này render lại NGUYÊN VẸN cây component `/portal/*` thật (không copy,
+import thẳng) bọc `<EditModeProvider>`, để đảm bảo pixel-perfect giữa chế
+độ sửa và trang công khai thật. Thêm bất kỳ phần tử Admin-only nào (kể cả
+1 dòng breadcrumb) vào giữa cây component đó sẽ vi phạm chính nguyên tắc
+kiến trúc "Live-edit Cách A" đã áp dụng xuyên suốt Nhóm 3 (rò rỉ UI Admin
+vào trang Portal thật nếu lỡ đặt sai vị trí, hoặc phải sửa component Portal
+gốc chỉ để thêm chrome Admin — cả 2 đều vi phạm "không đụng Portal/Landing
+Page ngoài phạm vi đã duyệt"). AdminShell's sidebar đã đủ để định vị route
+Live-edit đang ở đâu (label rõ ràng, vd. "Mirror (Live-edit)").
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (toàn bộ 22 route sửa + route Live-edit khác xuất hiện
+đúng, 0 route biến mất). Playwright qua route `devtest-adm-v2-07` tạm
+(bọc `<AdminShell email="test@example.com">`, `next start` cổng 4551) —
+mở "Học viện" trong sidebar: 0 badge "Sắp ra mắt" còn sót, đủ "Học viện
+AI"/"Hệ tri thức AI (CKOS)"/"Cộng đồng" hiện đúng, `page.on("pageerror")`
+rỗng — đã xoá route devtest + `rm -rf .next && npm run build` lại để xác
+nhận gỡ sạch (0 tham chiếu `devtest-adm-v2-07` trong output build).
+
+**Chưa tự test được:** xem breadcrumb hiển thị đúng qua Admin UI thật có
+tài khoản đăng nhập (cùng giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test tại vài
+route mẫu (`/admin/ckos/best-practices`, `/admin/tools`,
+`/admin/hocvienai/faq`), xác nhận breadcrumb hiện đúng 3 cấp và link cấp
+giữa dẫn đúng route.
+
+**ĐÃ DỪNG SAU SPRINT 7 theo đúng chỉ đạo — đây là sprint cuối cùng trong
+kế hoạch 8-sprint ADM-V2.0.** Toàn bộ 8 Workspace (Tổng quan/Người dùng/
+Website/Học viện/Vận hành/Marketing/Thương hiệu & Media/Hệ thống) giờ
+không còn badge "Sắp triển khai" nào cho module đã có cách triển khai
+trung thực — module nào còn thiếu hạ tầng thật (Media Center, Chiến dịch,
+Email Marketing...) đều hiển thị `AdminEmptyState` trung thực kèm lý do,
+không CRUD giả. Chờ Founder/PMO duyệt báo cáo Sprint 7 — đây cũng là mốc
+đóng chương trình ADM-V2.0 tổng thể nếu Founder xác nhận không còn sprint
+bổ sung nào khác.

@@ -45,6 +45,11 @@ export default function AdminRecommendedWorkspacePage() {
         title="AI Workspace — Workspace đề xuất"
         itemNoun="mục"
         fields={fields}
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "AI Workspace", href: "/admin/tools" },
+          { label: "Workspace đề xuất" },
+        ]}
         renderCard={(item) => (
           <div>
             <p className="text-sm font-bold text-gray-900">{item.title}</p>

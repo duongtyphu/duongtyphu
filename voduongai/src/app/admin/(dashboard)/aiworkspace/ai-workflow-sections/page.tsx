@@ -38,6 +38,11 @@ export default function AdminAiWorkflowSectionsPage() {
         title="AI Workspace — Quy trình AI (Workflow)"
         itemNoun="quy trình"
         fields={fields}
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "AI Workspace", href: "/admin/tools" },
+          { label: "Quy trình AI (Workflow)" },
+        ]}
         renderCard={(item) => (
           <div>
             <p className="text-sm font-bold text-gray-900">{item.title}</p>

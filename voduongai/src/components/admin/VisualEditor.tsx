@@ -5,6 +5,7 @@ import { Pencil, Trash2, GripVertical } from "lucide-react";
 import { useCollection } from "@/lib/admin/store";
 import { DataTableRowPanel } from "@/components/admin/DataTableRowPanel";
 import type { FieldConfig } from "@/lib/admin/fields";
+import { AdminBreadcrumb, type AdminBreadcrumbItem } from "@/components/admin/AdminBreadcrumb";
 
 type BaseItem = { id: string; status?: string };
 
@@ -21,12 +22,16 @@ export function VisualEditor<T extends BaseItem>({
   itemNoun = "mục",
   fields,
   renderCard,
+  breadcrumb,
 }: {
   collectionKey: string;
   title: string;
   itemNoun?: string;
   fields: FieldConfig[];
   renderCard: (item: T) => React.ReactNode;
+  /** ADM-V2-07 — trail cho AdminBreadcrumb, bỏ trống = không hiện (hành
+   * vi cũ, không đổi cho page.tsx chưa truyền). */
+  breadcrumb?: AdminBreadcrumbItem[];
 }) {
   const { items, ready, add, update, remove, reorder } = useCollection<T>(collectionKey, []);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -62,6 +67,7 @@ export function VisualEditor<T extends BaseItem>({
 
   return (
     <div className="space-y-4">
+      {breadcrumb && <AdminBreadcrumb trail={breadcrumb} />}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-extrabold text-gray-900">
           {title}

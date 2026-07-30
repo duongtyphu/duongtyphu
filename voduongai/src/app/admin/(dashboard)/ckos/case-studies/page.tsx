@@ -1,4 +1,5 @@
 import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { listCaseStudies } from "./actions";
 import { NewCaseStudyForm, CaseStudyCard } from "./CaseStudyForm";
 
@@ -13,6 +14,13 @@ export default async function AdminCkosCaseStudiesPage() {
   return (
     <AdminAtmosphere atmosphereClassName="ckos-atmosphere-bg">
       <div className="space-y-8">
+        <AdminBreadcrumb
+          trail={[
+            { label: "Học viện" },
+            { label: "Hệ tri thức AI (CKOS)", href: "/admin/ckos" },
+            { label: "Câu chuyện thành công (Folder)" },
+          ]}
+        />
         <div>
           <h1 className="text-xl font-extrabold text-gray-900">Câu chuyện thành công (Folder)</h1>
           <p className="mt-1 text-sm text-gray-500">

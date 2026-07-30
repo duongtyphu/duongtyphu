@@ -34,6 +34,11 @@ export default function AdminCompanionFlipbookPage() {
         title="Ảnh Companion (thứ tự & tiêu đề)"
         itemNoun="trang"
         fields={fields}
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Sứ mệnh Companion", href: "/admin/su-menh-companion/live-edit" },
+          { label: "Ảnh Companion (thứ tự & tiêu đề)" },
+        ]}
         renderCard={(item) => (
           <div>
             <p className="text-sm font-bold text-gray-900">{item.title}</p>

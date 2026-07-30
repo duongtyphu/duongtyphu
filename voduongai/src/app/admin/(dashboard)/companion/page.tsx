@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { isAiConfigured } from "@/ai/agents/companion.agent";
 import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { SanctuaryBackground } from "@/components/portal/sanctuary/SanctuaryBackground";
 import { CompanionAdminShell } from "@/components/admin/companion/CompanionAdminShell";
 
@@ -22,9 +23,14 @@ export default async function AdminCompanionPage() {
 
   return (
     <AdminAtmosphere atmosphere={<SanctuaryBackground />}>
-      <Suspense>
-        <CompanionAdminShell aiConfigured={isAiConfigured()} />
-      </Suspense>
+      <div className="space-y-4">
+        <AdminBreadcrumb
+          trail={[{ label: "Học viện" }, { label: "Companion" }, { label: "Companion (CMS quản trị AI Mentor)" }]}
+        />
+        <Suspense>
+          <CompanionAdminShell aiConfigured={isAiConfigured()} />
+        </Suspense>
+      </div>
     </AdminAtmosphere>
   );
 }

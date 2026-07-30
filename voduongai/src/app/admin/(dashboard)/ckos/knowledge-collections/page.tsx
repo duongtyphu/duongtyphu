@@ -48,6 +48,11 @@ export default function AdminCkosKnowledgeCollectionsPage() {
         itemNoun="Knowledge Card"
         addButtonLabel="+ Thêm Card"
         panelLabel="Nội dung tri thức"
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Hệ tri thức AI (CKOS)", href: "/admin/ckos" },
+          { label: "Thư viện AI (Folder)" },
+        ]}
       />
     </AdminAtmosphere>
   );

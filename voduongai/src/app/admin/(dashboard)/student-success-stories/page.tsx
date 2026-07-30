@@ -57,6 +57,11 @@ export default function AdminStudentSuccessStoriesPage() {
         fields={fields}
         itemNoun="Câu chuyện"
         addButtonLabel="+ Thêm câu chuyện"
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Cộng đồng", href: "/admin/community" },
+          { label: "Câu chuyện học viên" },
+        ]}
       />
     </AdminAtmosphere>
   );

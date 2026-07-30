@@ -1,3 +1,4 @@
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { listCoursePricing } from "./actions";
 import { CourseRow } from "./CourseRow";
 
@@ -8,6 +9,9 @@ export default async function CoursePricingAdminPage() {
 
   return (
     <div className="space-y-8">
+      <AdminBreadcrumb
+        trail={[{ label: "Học viện" }, { label: "Premium", href: "/admin/course-pricing" }, { label: "Giá khoá học Premium" }]}
+      />
       <div>
         <h1 className="text-xl font-extrabold text-gray-900">Khoá học Premium — giá &amp; mở bán</h1>
         <p className="mt-1 text-sm text-gray-500">
