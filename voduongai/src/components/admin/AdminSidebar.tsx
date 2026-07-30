@@ -60,6 +60,10 @@ import {
   KeyRound,
   Smartphone,
   Activity,
+  Navigation,
+  PanelTop,
+  Megaphone,
+  Search,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -103,6 +107,11 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/nguoi-dung/thiet-bi": Smartphone,
   "/admin/nguoi-dung/hoat-dong-nguoi-dung": Activity,
   "/admin/landing": Globe,
+  "/admin/website/noi-dung-website": FileText,
+  "/admin/website/dieu-huong": Navigation,
+  "/admin/website/header-footer": PanelTop,
+  "/admin/website/popup-banner": Megaphone,
+  "/admin/website/seo-website": Search,
   "/admin/home-cards": Home,
   "/admin/companion": Bot,
   "/admin/ckos": Library,

@@ -4501,3 +4501,106 @@ Preview URL khớp đúng Supabase Production.
 **ĐÃ DỪNG SAU SPRINT 1 theo đúng chỉ đạo** — chưa động tới Sprint 2
 (Website) hay bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo
 sprint trước khi tiếp tục.
+
+## ADM-V2-02 — Sprint 2: Website Workspace (Founder đã duyệt tiếp tục)
+
+### Audit trước khi code — phát hiện quan trọng nhất: `settings` đã có sẵn, chỉ thiếu UI
+
+Đọc code (không suy đoán) phát hiện bảng `settings` (schema generic
+`id/data/status/order`, ĐÃ đăng ký trong `SUPABASE_COLLECTIONS`) đã tồn
+tại từ trước và đã được `getSiteSettings()` (`src/lib/site-settings.ts`)
+đọc THẬT (`getSupabaseAdmin()`, KHÔNG cache — mỗi request) để render
+`<Header/>`/`<Footer/>` + metadata gốc site-wide (`src/app/layout.tsx`) —
+CHỈ THIẾU 1 trang Admin để ghi vào bảng này (route `/admin/settings` cũ
+từng bị dọn khỏi `navIcons` như mồ côi ở đợt audit trước — đúng lúc đó vì
+chưa có route thật). Giống hệt tình huống `home_cards` đã gặp ở Nhóm 3:
+"có bảng, có code đọc, chỉ thiếu UI viết" — không phải "chưa có gì".
+
+Đã grep xác nhận field nào thật sự được dùng trước khi liệt kê vào form
+(tránh tạo control "sửa không có tác dụng"): `siteName`/`slogan` (Header
++ Footer), `seoTitle`/`seoDescription` (metadata gốc), `primaryColor`/
+`secondaryColor`/`accentColor` (CSS custom properties `--color-brand-*`
+toàn site, `layout.tsx`), `faviconUrl` (metadata icon), `facebookUrl`/
+`youtubeUrl`/`tiktokUrl`/`zaloUrl`/`adminEmailNotify` (Footer). **2 field
+tồn tại trong schema nhưng KHÔNG nơi nào đọc** (`logoUrl` — Header/Footer
+vẽ logo SVG cứng; `footerText` — Footer hardcode dòng Copyright riêng) —
+CHỦ ĐỘNG loại khỏi form, không đưa vào để tránh CRUD giả.
+
+Audit 4 module còn lại: `mainNav` (Header, `src/lib/site.ts`) + `columns`
+(Footer, `Footer.tsx`) hardcode, KHÔNG bảng nào quản — cần migration mới.
+Không có component popup/banner nào tồn tại ở tầng hiển thị (không chỉ
+thiếu bảng). 6 trang tĩnh (`/about`...`/refund-policy`) là component React
+nội dung dài/có cấu trúc, khác hẳn các "chrome" 1-vài-field đã Live-edit
+trước đây — rủi ro pháp lý nếu sửa sai qua UI generic.
+
+### Đã làm — 2 module thật, không cần migration
+
+- **Header & Footer** (`/admin/website/header-footer`) — `SingletonEditor`
+  (component có sẵn từ trước, dùng chung với Companion CMS) trên bảng
+  `settings`, 13 field đã audit đúng như trên. Không cần migration.
+- **SEO Website** (`/admin/website/seo-website`) — CHỈ ĐỌC, đúng nguyên
+  tắc bắt buộc "SEO kỹ thuật không sửa tự do qua UI". Gọi TRỰC TIẾP
+  `sitemap()`/`robots()` (import thẳng từ `src/app/sitemap.ts`/`robots.ts`)
+  + `metadata` export của 6 trang tĩnh (import thẳng, cùng kỹ thuật "import
+  page module để lấy 1 export" đã dùng cho Live-edit Cách A) — hiển thị
+  ĐÚNG cấu hình đang chạy thật, tự động đồng bộ nếu code thay đổi sau này,
+  không phải bản sao chép tay.
+
+### Đã làm — 3 module còn lại: Empty State trung thực, KHÔNG comingSoon
+
+- **Điều hướng** — thiếu đúng 1 bảng (giống Header & Footer) nhưng KHÁC ở
+  mức rủi ro: Header/Footer xuất hiện ở MỌI trang công khai (Landing Page,
+  lưu lượng cao nhất hệ thống), nên đã lập riêng **đề xuất migration CHƯA
+  APPLY** — `supabase-phase26-site-navigation.sql` (bảng generic
+  `site_navigation`, phân biệt Header/Footer qua field `location`/
+  `groupLabel` trong `data`) kèm báo cáo rủi ro ngay trong file: (1) 1 href
+  sai lan rộng toàn site, không giới hạn 1 trang; (2) cần sửa
+  `HeaderClient.tsx`/`Footer.tsx` (tầng Shell dùng chung) để đọc bảng mới —
+  rủi ro hồi quy cao hơn 1 trang con; (3) cần fallback tĩnh an toàn khi
+  Supabase lỗi/rỗng; (4) đề xuất tách thành 1 việc RIÊNG, không gộp chung
+  Sprint 2. **Chờ Founder xác nhận riêng trước khi `apply_migration`.**
+- **Popup & Banner** — khác Điều hướng: không chỉ thiếu bảng, KHÔNG có
+  component hiển thị nào ở tầng Landing Page/Portal (đã grep xác nhận).
+  Phạm vi lớn hơn 1 migration đơn thuần (thời gian hiệu lực/vị trí hiển
+  thị/kiểu banner) — cần Founder quyết định phạm vi cụ thể trước, CHƯA lập
+  đề xuất migration.
+- **Nội dung Website** — 6 trang tĩnh là component có cấu trúc/nội dung
+  dài (không phải vài field chrome đơn giản), đặc biệt có 3 trang pháp lý
+  (Điều khoản/Chính sách bảo mật/Hoàn phí) — sai sót khi CMS hoá có rủi ro
+  pháp lý thật. Cần Founder quyết định phạm vi (rich-text nguyên trang hay
+  tách theo section) trước khi thiết kế schema.
+
+Cả 3 dùng `AdminEmptyState` (không badge "Sắp ra mắt"), mô tả trung thực
+lý do + link liên quan — đúng pattern đã áp dụng cho "Thiết bị" ở Sprint 1
+(module cũng cần schema mới nhưng vẫn bỏ khung "Sắp triển khai").
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục Website (Landing Page vốn đã không có từ
+Sprint 0). Thêm 5 icon (`FileText`/`Navigation`/`PanelTop`/`Megaphone`/
+`Search`) — không còn item nào trong Workspace này rơi vào fallback
+`Hourglass`.
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (5 route Website xuất hiện đúng, 0 warning mới). `next
+start` — 5 route trả `307` đúng (chưa đăng nhập), `/` vẫn `200`, log
+server sạch. Playwright qua route devtest tạm (xoá + rebuild sạch sau khi
+xác nhận) — mở "Website" trong sidebar: 0 badge "Sắp ra mắt" còn sót, đủ 6
+mục (kể cả Landing Page) hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** sửa Header & Footer qua Admin UI thật (cùng giới
+hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại
+`/admin/website/header-footer`, xác nhận đổi `siteName`/màu/social link
+phản ánh đúng ngay trên Website (không cần deploy lại, vì `getSiteSettings()`
+đọc mỗi request).
+
+**MIGRATION CHỜ DUYỆT RIÊNG (chưa apply):**
+`supabase-phase26-site-navigation.sql` — bảng `site_navigation` cho module
+"Điều hướng". Xem báo cáo rủi ro đầy đủ trong chính file SQL.
+
+**ĐÃ DỪNG SAU SPRINT 2 theo đúng chỉ đạo** — chưa động tới Sprint 3 (Học
+viện) hay bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint
++ xác nhận riêng về đề xuất migration "Điều hướng" trước khi tiếp tục.

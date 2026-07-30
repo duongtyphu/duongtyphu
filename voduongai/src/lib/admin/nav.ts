@@ -76,11 +76,11 @@ export const adminWorkspaces: AdminWorkspace[] = [
     items: [
       // Landing Page CMS (Phase 25) — Live-edit Cách A, giữ nguyên 100%.
       { label: "Landing Page", href: "/admin/landing" },
-      { label: "Nội dung Website", href: "/admin/website/noi-dung-website", comingSoon: true },
-      { label: "Điều hướng", href: "/admin/website/dieu-huong", comingSoon: true },
-      { label: "Header & Footer", href: "/admin/website/header-footer", comingSoon: true },
-      { label: "Popup & Banner", href: "/admin/website/popup-banner", comingSoon: true },
-      { label: "SEO Website", href: "/admin/website/seo-website", comingSoon: true },
+      { label: "Nội dung Website", href: "/admin/website/noi-dung-website" },
+      { label: "Điều hướng", href: "/admin/website/dieu-huong" },
+      { label: "Header & Footer", href: "/admin/website/header-footer" },
+      { label: "Popup & Banner", href: "/admin/website/popup-banner" },
+      { label: "SEO Website", href: "/admin/website/seo-website" },
     ],
   },
   {
