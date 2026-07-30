@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowUpRight, Zap } from "lucide-react";
+import { AlertTriangle, ArrowUpRight, Receipt, ShieldAlert, Users, Wallet, Zap } from "lucide-react";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { adminWorkspaces, flattenAdminNav } from "@/lib/admin/nav";
@@ -118,24 +118,124 @@ async function getGenericCounts(supabase: NonNullable<ReturnType<typeof getSupab
   );
 }
 
+type Kpis = {
+  membersTotal: number | null;
+  adminCount: number | null;
+  ordersTotal: number | null;
+  ordersConfirmed: number | null;
+  revenueConfirmed: number | null;
+  premiumMembersConfirmed: number | null;
+};
+
+type OperationalWarning = { key: string; label: string; count: number; href: string };
+
+const STALE_ORDER_HOURS = 48;
+const STALE_TICKET_HOURS = 72;
+
+/**
+ * ADM-V2-01 — KPI thật cho Dashboard (Người dùng/Premium/Đơn hàng/Doanh
+ * thu) + tín hiệu "Cảnh báo vận hành" tính từ dữ liệu thật (KHÔNG bịa
+ * ngưỡng cảnh báo tuỳ tiện — chỉ 3 tín hiệu khách quan: đơn hàng pending
+ * quá 48h, ticket mở quá 72h, và chỉ có đúng 1 tài khoản Admin — điểm yếu
+ * thật của mô hình phân quyền nhị phân hiện tại).
+ */
+async function getKpisAndWarnings(
+  supabase: NonNullable<ReturnType<typeof getSupabaseAdmin>>,
+): Promise<{ kpis: Kpis; warnings: OperationalWarning[] }> {
+  const staleOrderCutoff = new Date(Date.now() - STALE_ORDER_HOURS * 3600_000).toISOString();
+  const staleTicketCutoff = new Date(Date.now() - STALE_TICKET_HOURS * 3600_000).toISOString();
+
+  const [
+    membersTotal,
+    adminCount,
+    ordersTotal,
+    ordersConfirmed,
+    confirmedAmounts,
+    premiumConfirmed,
+    staleOrders,
+    staleTickets,
+  ] = await Promise.all([
+    supabase.from("members").select("id", { count: "exact", head: true }),
+    supabase.from("members").select("id", { count: "exact", head: true }).eq("is_admin", true),
+    supabase.from("orders").select("id", { count: "exact", head: true }),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "confirmed"),
+    supabase.from("orders").select("amount").eq("status", "confirmed"),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "confirmed").not("course_id", "is", null),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending").lt("created_at", staleOrderCutoff),
+    supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "open").lt("created_at", staleTicketCutoff),
+  ]);
+
+  const revenueConfirmed = confirmedAmounts.error
+    ? null
+    : (confirmedAmounts.data ?? []).reduce((sum, o) => sum + (o.amount ?? 0), 0);
+
+  const warnings: OperationalWarning[] = [];
+  if ((staleOrders.count ?? 0) > 0) {
+    warnings.push({
+      key: "stale-orders",
+      label: `${staleOrders.count} đơn hàng chờ xác nhận quá ${STALE_ORDER_HOURS} giờ`,
+      count: staleOrders.count ?? 0,
+      href: "/admin/van-hanh/don-hang",
+    });
+  }
+  if ((staleTickets.count ?? 0) > 0) {
+    warnings.push({
+      key: "stale-tickets",
+      label: `${staleTickets.count} ticket hỗ trợ mở quá ${STALE_TICKET_HOURS} giờ chưa trả lời`,
+      count: staleTickets.count ?? 0,
+      href: "/admin/van-hanh/ho-tro-khach-hang",
+    });
+  }
+  if ((adminCount.count ?? 0) === 1) {
+    warnings.push({
+      key: "single-admin",
+      label: "Chỉ có đúng 1 tài khoản Admin — không có phương án dự phòng nếu mất quyền truy cập",
+      count: 1,
+      href: "/admin/nguoi-dung/vai-tro-phan-quyen",
+    });
+  }
+
+  return {
+    kpis: {
+      membersTotal: membersTotal.error ? null : (membersTotal.count ?? 0),
+      adminCount: adminCount.error ? null : (adminCount.count ?? 0),
+      ordersTotal: ordersTotal.error ? null : (ordersTotal.count ?? 0),
+      ordersConfirmed: ordersConfirmed.error ? null : (ordersConfirmed.count ?? 0),
+      revenueConfirmed,
+      premiumMembersConfirmed: premiumConfirmed.error ? null : (premiumConfirmed.count ?? 0),
+    },
+    warnings,
+  };
+}
+
+function formatMoney(n: number) {
+  return n.toLocaleString("vi-VN") + "đ";
+}
+
 export default async function AdminDashboardPage() {
   const admin = await requireAdmin();
   if (!admin) redirect("/admin/login");
 
   const supabase = getSupabaseAdmin();
 
-  const [genericCounts, coursePricing, caseStudies, pendingOrders, openTickets, recentActivity] = await Promise.all([
-    supabase ? getGenericCounts(supabase) : Promise.resolve([] as CountRow[]),
-    listCoursePricing(),
-    listCaseStudies(),
-    supabase
-      ? supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending")
-      : Promise.resolve({ count: null }),
-    supabase
-      ? supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "open")
-      : Promise.resolve({ count: null }),
-    supabase ? getRecentActivity(supabase) : Promise.resolve([] as ActivityRow[]),
-  ]);
+  const [genericCounts, coursePricing, caseStudies, pendingOrders, openTickets, recentActivity, kpisAndWarnings] =
+    await Promise.all([
+      supabase ? getGenericCounts(supabase) : Promise.resolve([] as CountRow[]),
+      listCoursePricing(),
+      listCaseStudies(),
+      supabase
+        ? supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "pending")
+        : Promise.resolve({ count: null }),
+      supabase
+        ? supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "open")
+        : Promise.resolve({ count: null }),
+      supabase ? getRecentActivity(supabase) : Promise.resolve([] as ActivityRow[]),
+      supabase
+        ? getKpisAndWarnings(supabase)
+        : Promise.resolve({ kpis: null as Kpis | null, warnings: [] as OperationalWarning[] }),
+    ]);
+
+  const { kpis, warnings } = kpisAndWarnings;
 
   const countByHref = new Map<string, number>(
     genericCounts.filter((c): c is { href: string; count: number } => c.count !== null).map((c) => [c.href, c.count]),
@@ -167,6 +267,75 @@ export default async function AdminDashboardPage() {
           <div className="mt-4 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-sm text-gray-700">
             Chưa cấu hình <code className="text-orange-600">SUPABASE_SERVICE_ROLE_KEY</code> — số liệu bên
             dưới có thể chưa chính xác.
+          </div>
+        )}
+      </div>
+
+      {/* Lớp KPI — số liệu thật (Người dùng/Premium/Đơn hàng/Doanh thu) */}
+      {kpis && (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Users className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase tracking-wide">Người dùng</span>
+            </div>
+            <p className="mt-1.5 text-2xl font-extrabold text-gray-900">{kpis.membersTotal ?? "—"}</p>
+            <p className="mt-0.5 text-xs text-gray-400">{kpis.adminCount ?? "—"} admin</p>
+          </div>
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-400">
+              <ShieldAlert className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase tracking-wide">Premium Membership</span>
+            </div>
+            <p className="mt-1.5 text-2xl font-extrabold text-gray-900">{kpis.premiumMembersConfirmed ?? "—"}</p>
+            <p className="mt-0.5 text-xs text-gray-400">giao dịch đã xác nhận</p>
+          </div>
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Receipt className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase tracking-wide">Đơn hàng</span>
+            </div>
+            <p className="mt-1.5 text-2xl font-extrabold text-gray-900">{kpis.ordersTotal ?? "—"}</p>
+            <p className="mt-0.5 text-xs text-gray-400">{kpis.ordersConfirmed ?? "—"} đã xác nhận</p>
+          </div>
+          <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="flex items-center gap-2 text-gray-400">
+              <Wallet className="h-4 w-4" />
+              <span className="text-xs font-bold uppercase tracking-wide">Doanh thu</span>
+            </div>
+            <p className="mt-1.5 text-2xl font-extrabold text-gray-900">
+              {kpis.revenueConfirmed !== null ? formatMoney(kpis.revenueConfirmed) : "—"}
+            </p>
+            <p className="mt-0.5 text-xs text-gray-400">từ đơn hàng đã xác nhận</p>
+          </div>
+        </div>
+      )}
+
+      {/* Cảnh báo vận hành — tín hiệu rủi ro tính từ dữ liệu thật, KHÁC khối
+          "Việc cần xử lý" (đó là việc cần làm ngay; đây là rủi ro cần lưu ý). */}
+      <div>
+        <h2 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-gray-400">
+          <AlertTriangle className="h-3.5 w-3.5" /> Cảnh báo vận hành
+        </h2>
+        {warnings.length === 0 ? (
+          <p className="mt-2 rounded-2xl border border-gray-200 bg-white p-4 text-sm text-gray-500">
+            Không có cảnh báo vận hành nào.
+          </p>
+        ) : (
+          <div className="mt-2 space-y-2">
+            {warnings.map((w) => (
+              <Link
+                key={w.key}
+                href={w.href}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 text-sm text-gray-700 shadow-sm transition hover:border-orange-300"
+              >
+                <span className="flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4 shrink-0 text-orange-500" />
+                  {w.label}
+                </span>
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-orange-500" />
+              </Link>
+            ))}
           </div>
         )}
       </div>

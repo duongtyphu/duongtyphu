@@ -50,9 +50,9 @@ export const adminWorkspaces: AdminWorkspace[] = [
     label: "Tổng quan",
     items: [
       { label: "Tổng quan", href: "/admin/dashboard" },
-      { label: "Công việc", href: "/admin/tong-quan/cong-viec", comingSoon: true },
-      { label: "Thông báo", href: "/admin/tong-quan/thong-bao", comingSoon: true },
-      { label: "Hoạt động gần đây", href: "/admin/tong-quan/hoat-dong-gan-day", comingSoon: true },
+      { label: "Công việc", href: "/admin/tong-quan/cong-viec" },
+      { label: "Thông báo", href: "/admin/tong-quan/thong-bao" },
+      { label: "Hoạt động gần đây", href: "/admin/tong-quan/hoat-dong-gan-day" },
     ],
   },
   {
@@ -61,9 +61,13 @@ export const adminWorkspaces: AdminWorkspace[] = [
     items: [
       // Identity Hub v1.0 — danh sách thật (auth.users + members), chỉ đọc.
       { label: "Danh sách người dùng", href: "/admin/users" },
-      { label: "Vai trò & Phân quyền", href: "/admin/nguoi-dung/vai-tro-phan-quyen", comingSoon: true },
-      { label: "Thành viên", href: "/admin/nguoi-dung/thanh-vien", comingSoon: true },
-      { label: "Phiên đăng nhập", href: "/admin/nguoi-dung/phien-dang-nhap", comingSoon: true },
+      { label: "Hồ sơ của tôi", href: "/admin/nguoi-dung/ho-so" },
+      { label: "Vai trò & Phân quyền", href: "/admin/nguoi-dung/vai-tro-phan-quyen" },
+      { label: "Thành viên", href: "/admin/nguoi-dung/thanh-vien" },
+      { label: "Premium Membership", href: "/admin/nguoi-dung/premium-membership" },
+      { label: "Phiên đăng nhập", href: "/admin/nguoi-dung/phien-dang-nhap" },
+      { label: "Thiết bị", href: "/admin/nguoi-dung/thiet-bi" },
+      { label: "Hoạt động người dùng", href: "/admin/nguoi-dung/hoat-dong-nguoi-dung" },
     ],
   },
   {

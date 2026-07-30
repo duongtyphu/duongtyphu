@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { listIdentityUsers } from "@/lib/admin/identity-users";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { UsersTable } from "./UsersTable";
 
 export const metadata = { title: "Người dùng · Admin" };
@@ -14,6 +15,7 @@ export default async function AdminUsersPage() {
 
   return (
     <div className="space-y-8">
+      <AdminBreadcrumb trail={[{ label: "Người dùng" }, { label: "Danh sách người dùng" }]} />
       <div>
         <h1 className="text-xl font-extrabold text-gray-900">Người dùng</h1>
         <p className="mt-1 text-sm text-gray-500">

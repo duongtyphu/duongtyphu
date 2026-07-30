@@ -66,3 +66,36 @@ export async function listIdentityUsers(): Promise<IdentityUserRow[]> {
     })
     .sort((a, b) => (b.registeredAt ?? "").localeCompare(a.registeredAt ?? ""));
 }
+
+/**
+ * 1 user cho /admin/users/[id] (trang chi tiết drill-down). Dùng
+ * `auth.admin.getUserById()` (tra đúng 1 dòng, không phân trang toàn bộ
+ * `auth.users` như `listIdentityUsers()`) + join `members` cùng cách.
+ */
+export async function getIdentityUserById(id: string): Promise<IdentityUserRow | null> {
+  const admin = getSupabaseAdmin();
+  if (!admin) return null;
+
+  const { data, error } = await admin.auth.admin.getUserById(id);
+  if (error || !data?.user) return null;
+  const u = data.user;
+
+  const { data: member } = await admin
+    .from("members")
+    .select("id, full_name, is_admin, onboarding_completed_at")
+    .eq("id", u.id)
+    .maybeSingle();
+
+  const isBanned = Boolean(u.banned_until && new Date(u.banned_until) > new Date());
+  return {
+    id: u.id,
+    email: u.email ?? null,
+    fullName: member?.full_name ?? null,
+    isAdmin: Boolean(member?.is_admin),
+    status: isBanned ? "banned" : u.email_confirmed_at ? "confirmed" : "unconfirmed",
+    provider: u.app_metadata?.provider ?? "email",
+    registeredAt: u.created_at ?? null,
+    lastSignInAt: u.last_sign_in_at ?? null,
+    onboardingCompleted: Boolean(member?.onboarding_completed_at),
+  };
+}

@@ -4351,3 +4351,153 @@ xong): xem mục "AdminSidebar.tsx" ở trên.
 Admin thật đã nêu nhiều lần) — đặc biệt 3 trang đọc dữ liệu thật (Đơn
 hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng) cần Founder tự xác nhận số
 liệu hiển thị đúng khớp Supabase Production trên Preview URL.
+
+## ADM-V2-01 — Sprint 1: hoàn thiện Tổng quan + Người dùng (bỏ "Sắp triển khai")
+
+Tiếp nối KIẾN TRÚC ADMIN V2.0 ở trên — Founder duyệt kế hoạch 8-sprint
+hoàn thiện toàn bộ 8 Workspace thành module quản trị thật, bỏ hẳn khung
+"Sắp triển khai" cho mọi mục nay đã có cách triển khai trung thực (Empty
+State chuyên nghiệp thay vì badge). Sprint 1 (ADM-V2-01) phạm vi: Tổng
+quan + Người dùng — 2 Workspace đầu tiên, đúng lệnh bắt đầu của Founder.
+
+### Audit trước khi code (không blocker nghiêm trọng)
+
+Qua Supabase MCP (`execute_sql` trên project thật, không suy đoán):
+- `members`: không có cột role/permission nào ngoài `is_admin` (boolean).
+  Không có bảng role/permission/session/device nào tồn tại trong
+  `information_schema.tables` — xác nhận "Vai trò & Phân quyền"/"Thiết bị"
+  phải dùng Empty State trung thực hoặc hiển thị đúng mô hình nhị phân
+  hiện có, KHÔNG mở schema mới ở sprint này.
+- `orders`: có dữ liệu thật nhưng **0 dòng `status='confirmed'`** tại thời
+  điểm audit — "Thành viên"/"Premium Membership" (định nghĩa dựa trên đơn
+  hàng đã xác nhận) sẽ hiển thị Empty State trung thực cho tới khi có đơn
+  đầu tiên được xác nhận (không phải lỗi, không bịa dữ liệu để "trông đầy
+  hơn").
+- Không có blocker nghiêm trọng → triển khai trong cùng sprint theo đúng
+  chỉ đạo "nếu không có blocker, triển khai luôn".
+
+### `nav.ts` + `AdminSidebar.tsx` — bỏ `comingSoon`, thêm 4 mục Người dùng
+
+Bỏ `comingSoon: true` khỏi 3 mục Tổng quan (Công việc/Thông báo/Hoạt động
+gần đây) và 3 mục Người dùng cũ (Vai trò & Phân quyền/Thành viên/Phiên
+đăng nhập). Thêm 4 mục mới vào Người dùng: Hồ sơ của tôi, Premium
+Membership, Thiết bị, Hoạt động người dùng — cả 7 mục Người dùng (ngoài
+"Danh sách người dùng" đã có từ Identity Hub v1.0) đều có route thật.
+`AdminSidebar.tsx`'s `navIcons` bổ sung 10 icon tương ứng (không còn item
+nào trong 2 Workspace này rơi vào nhánh fallback `Hourglass`).
+
+### `AdminEmptyState.tsx` (mới) — Empty State chuyên nghiệp, KHÁC `WorkspacePlaceholder`
+
+`WorkspacePlaceholder` (Hourglass + badge "Sắp triển khai" + "Phạm vi dự
+kiến") giữ nguyên, vẫn dùng cho 29 module Sprint 2-8 chưa tới lượt. Module
+Sprint 1 đã triển khai nhưng honestly rỗng dùng `AdminEmptyState.tsx` mới
+(icon trung tính + tiêu đề + mô tả + action tuỳ chọn, KHÔNG badge/khung
+"sắp ra mắt") — đúng yêu cầu "Nếu chưa có dữ liệu, dùng Empty State
+chuyên nghiệp... không dùng badge 'Sắp ra mắt'".
+
+### `AdminBreadcrumb.tsx` (mới) — breadcrumb dùng chung
+
+Nhận `trail: {label, href?}[]` tường minh từ mỗi `page.tsx` (không tra
+cứu ngầm từ `nav.ts`, tránh phụ thuộc ẩn giữa cấu trúc sidebar và nội
+dung trang). Đã thêm vào toàn bộ trang mới/sửa trong sprint này +
+`/admin/users`.
+
+### Workspace "Tổng quan" — 3 trang thật
+
+- **Công việc** (`/admin/tong-quan/cong-viec`) — gộp đơn hàng
+  `status=pending` + ticket `status=open` + lead `status=new` thành 1
+  danh sách, mỗi dòng có badge loại + link ra đúng trang Vận hành sở hữu
+  dữ liệu. CHỈ ĐỌC.
+- **Thông báo** (`/admin/tong-quan/thong-bao`) — `AdminEmptyState` trung
+  thực: hệ thống chưa có bảng `notifications`/cơ chế Realtime nào (đã
+  grep xác nhận) — không bịa danh sách thông báo.
+- **Hoạt động gần đây** (`/admin/tong-quan/hoat-dong-gan-day`) — bản đầy
+  đủ hơn khối rút gọn 8 dòng ở Dashboard: gộp tới 60 dòng/bảng (orders/
+  leads/support_tickets, MỌI trạng thái), tối đa 100 dòng hiển thị.
+
+### Workspace "Người dùng" — 7 trang (3 sửa lại + 4 mới) + trang chi tiết `/admin/users/[id]`
+
+- **Vai trò & Phân quyền** — hiển thị TRUNG THỰC mô hình nhị phân
+  `is_admin` hiện có (đếm Admin/User + danh sách Admin), không bịa ra hệ
+  vai trò chi tiết không tồn tại.
+- **Thành viên** — thành viên = có ≥1 đơn hàng `confirmed`, gộp theo
+  email + tổng chi tiêu + sản phẩm đã mua. Hiện Empty State trung thực
+  (0 đơn confirmed tại thời điểm audit).
+- **Premium Membership** (mới) — góc nhìn THEO TỪNG GIAO DỊCH mua khoá
+  (`orders.course_id` khác rỗng + `confirmed`), join tên khoá từ bảng
+  `courses` — khác "Thành viên" (gộp theo người, mọi sản phẩm). Tránh 2
+  menu cùng sở hữu 1 câu hỏi nghiệp vụ bằng cách tách rõ 2 góc nhìn
+  (theo NGƯỜI vs theo GIAO DỊCH), không tách CRUD/nguồn dữ liệu riêng.
+- **Phiên đăng nhập** — `listIdentityUsers()` sắp theo `lastSignInAt`
+  giảm dần, KHÔNG có nút thu hồi phiên (Supabase Auth cũng không có API
+  liệt kê phiên theo thiết bị — hành động nhạy cảm, chủ động loại khỏi
+  phạm vi).
+- **Thiết bị** (mới) — `AdminEmptyState` trung thực: không có bảng
+  sessions/devices nào, Supabase Auth không expose thông tin thiết bị.
+  Cần schema mới nếu triển khai thật — sẽ lập báo cáo/chờ duyệt riêng,
+  CHƯA tự tạo bảng ở sprint này.
+- **Hồ sơ của tôi** (mới) — hồ sơ CHÍNH tài khoản Admin đang đăng nhập,
+  đọc `members` theo đúng `id` phiên hiện tại. CHỈ ĐỌC — sửa hồ sơ vẫn ở
+  `/portal/account` như cũ, không tạo hệ thống sửa hồ sơ song song.
+- **Hoạt động người dùng** (mới) — gộp sự kiện "Đăng ký mới" +
+  "Đăng nhập" từ `listIdentityUsers()`, tối đa 100 dòng, mỗi dòng link
+  sang trang chi tiết người dùng.
+- **`/admin/users/[id]`** (mới) — trang chi tiết drill-down: hồ sơ đầy đủ
+  + lịch sử đơn hàng của đúng email đó. `identity-users.ts` thêm hàm
+  `getIdentityUserById()` (dùng `auth.admin.getUserById()`, không phân
+  trang lại toàn bộ `auth.users`). Cột Email ở `UsersTable.tsx` giờ là
+  `Link` sang trang này.
+
+### Dashboard — KPI thật + "Cảnh báo vận hành"
+
+Thêm 4 ô KPI (Người dùng + số Admin, Premium Membership theo giao dịch
+confirmed, Đơn hàng tổng/đã xác nhận, Doanh thu — tổng `amount` các đơn
+`confirmed`, cộng dồn JS sau khi `select("amount")`, không dùng RPC mới).
+Thêm khối "Cảnh báo vận hành" (`getKpisAndWarnings()`), KHÁC khối "Việc
+cần xử lý" đã có (đó là việc cần làm ngay; đây là rủi ro cần lưu ý) — 3
+tín hiệu khách quan tính từ dữ liệu thật, không bịa ngưỡng tuỳ tiện: đơn
+hàng `pending` quá 48 giờ, ticket `open` quá 72 giờ, và chỉ có đúng 1 tài
+khoản Admin (không có phương án dự phòng quyền truy cập). Không cảnh báo
+nào → hiển thị "Không có cảnh báo vận hành nào" (trung thực, không giấu
+khối đi).
+
+### Diễn giải "loading/error/unauthorized state" cho sprint này
+
+Toàn bộ ~40 route Admin hiện có (trước sprint này) đều KHÔNG có
+`loading.tsx`/`error.tsx` riêng — chỉ dựa vào `src/app/loading.tsx`/
+`error.tsx` gốc (Error/Suspense boundary ở root layout) + `redirect(
+"/admin/login")` cho unauthorized + render lỗi Postgres inline (pattern
+`{error && (...)}` đã dùng xuyên suốt, ví dụ `van-hanh/don-hang`). Để
+nhất quán với toàn bộ codebase (không tạo 1 pattern loading/error riêng
+chỉ cho 11 trang sprint này), 11 trang mới/sửa dùng ĐÚNG 4 trạng thái này
+— **không** thêm `loading.tsx`/`error.tsx` cấp route mới. Ghi chú lại vì
+`loading.tsx`/`error.tsx` gốc hiện đang style nền tối (`text-white`,
+dùng cho Landing/Portal) — lệch tông với nền sáng Admin nếu lỗi/loading
+thật sự trigger ở route Admin. Đây là vấn đề CÓ SẴN, áp dụng đồng đều cho
+mọi route Admin từ trước tới nay (không phải regression của sprint này)
+— nếu Founder muốn Admin có Error/Loading boundary riêng theo đúng nền
+sáng, đây là việc riêng, cần quyết định tách biệt.
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (11 route mới/route con `[id]` xuất hiện đúng, 0 warning
+mới). `next start` (cổng 4550) — 12 route Admin mẫu (10 route sprint này
++ dashboard + `/admin/users/[id]` với UUID giả) đều trả `307` redirect
+`/admin/login` đúng như kỳ vọng (chưa đăng nhập), `/` trả `200`, log
+server sạch. Playwright qua route `devtest-adm-v2-01` tạm (bọc
+`<AdminShell email="test@example.com">`, xoá ngay sau khi xác nhận, rồi
+rebuild sạch để xác nhận đã xoá hết) — mở "Người dùng"/"Tổng quan" trong
+sidebar: 0 badge "Sắp ra mắt" còn sót, đủ 8 mục Người dùng + 4 mục Tổng
+quan hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** thao tác Admin UI thật có tài khoản đăng nhập +
+dữ liệu Production thật (cùng giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — đặc biệt số liệu KPI/
+Cảnh báo vận hành và nội dung 11 trang mới cần Founder xác nhận trên
+Preview URL khớp đúng Supabase Production.
+
+**ĐÃ DỪNG SAU SPRINT 1 theo đúng chỉ đạo** — chưa động tới Sprint 2
+(Website) hay bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo
+sprint trước khi tiếp tục.

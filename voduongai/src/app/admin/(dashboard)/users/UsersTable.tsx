@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { IdentityUserRow } from "@/lib/admin/identity-users";
 
@@ -106,7 +107,11 @@ export function UsersTable({ users }: { users: IdentityUserRow[] }) {
           <tbody>
             {filtered.map((u) => (
               <tr key={u.id} className="border-b border-gray-100 last:border-0">
-                <td className="px-4 py-3 text-gray-900">{u.email ?? "—"}</td>
+                <td className="px-4 py-3">
+                  <Link href={`/admin/users/${u.id}`} className="font-semibold text-brand-blue hover:underline">
+                    {u.email ?? "—"}
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-gray-600">{u.fullName ?? "—"}</td>
                 <td className="px-4 py-3">
                   {u.isAdmin ? (
