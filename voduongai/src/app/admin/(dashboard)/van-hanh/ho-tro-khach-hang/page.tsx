@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/requireAdmin";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 
 export const metadata = { title: "Hỗ trợ khách hàng · Admin" };
 
@@ -54,6 +55,7 @@ export default async function HoTroKhachHangPage() {
 
   return (
     <div className="space-y-6">
+      <AdminBreadcrumb trail={[{ label: "Vận hành", href: "/admin/van-hanh/don-hang" }, { label: "Hỗ trợ khách hàng" }]} />
       <div>
         <h1 className="text-xl font-extrabold text-gray-900">Hỗ trợ khách hàng</h1>
         <p className="mt-1 text-sm text-gray-500">

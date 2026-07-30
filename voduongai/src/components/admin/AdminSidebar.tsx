@@ -64,6 +64,9 @@ import {
   PanelTop,
   Megaphone,
   Search,
+  CreditCard,
+  Ticket,
+  Users2,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -150,7 +153,10 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/student-success-stories": Star,
   // Vận hành — 3 route mới có dữ liệu thật (Admin v2.0).
   "/admin/van-hanh/don-hang": Receipt,
+  "/admin/van-hanh/thanh-toan": CreditCard,
+  "/admin/van-hanh/ma-giam-gia": Ticket,
   "/admin/van-hanh/khach-hang-tiem-nang": UserPlus,
+  "/admin/van-hanh/tiep-thi-lien-ket": Users2,
   "/admin/van-hanh/ho-tro-khach-hang": LifeBuoy,
 };
 

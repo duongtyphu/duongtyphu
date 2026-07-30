@@ -182,22 +182,21 @@ export const adminWorkspaces: AdminWorkspace[] = [
     id: "van-hanh",
     label: "Vận hành",
     items: [
-      // Bảng `orders` đã có dữ liệu thật (checkout + webhook SePay) nhưng
-      // trước đây KHÔNG có trang Admin nào đọc — chỉ đọc, không action.
+      // Bảng `orders` đã có dữ liệu thật (checkout + webhook SePay).
       { label: "Đơn hàng", href: "/admin/van-hanh/don-hang" },
       // Trạng thái thanh toán đã hiển thị trong cột "status" của Đơn hàng ở
       // trên — không tạo trang thứ 2 cùng sở hữu 1 nguồn dữ liệu.
-      { label: "Thanh toán", href: "/admin/van-hanh/thanh-toan", comingSoon: true },
-      // Bảng `coupons` tồn tại trong schema nhưng KHÔNG có code nào (kể cả
-      // checkout) đọc/ghi — chưa phải chức năng thật, chỉ là schema mồ côi.
-      { label: "Mã giảm giá", href: "/admin/van-hanh/ma-giam-gia", comingSoon: true },
-      // Bảng `leads` đã có dữ liệu thật (/api/leads) nhưng chưa có Admin UI.
+      { label: "Thanh toán", href: "/admin/van-hanh/thanh-toan" },
+      // ADM-V2-03: đính chính — checkout ĐÃ đọc/ghi bảng `coupons` thật
+      // (applyCoupon(), src/app/portal/checkout/actions.ts) — CRUD thật.
+      { label: "Mã giảm giá", href: "/admin/van-hanh/ma-giam-gia" },
+      // Bảng `leads` đã có dữ liệu thật (/api/leads).
       { label: "Khách hàng tiềm năng", href: "/admin/van-hanh/khach-hang-tiem-nang" },
-      // Không có bảng/tracking affiliate thật (chỉ có nội dung tĩnh Portal
-      // + `ecosystem_chrome.affiliateOffers`, đã thuộc Workspace Học viện).
-      { label: "Tiếp thị liên kết", href: "/admin/van-hanh/tiep-thi-lien-ket", comingSoon: true },
-      // Bảng `support_tickets` đã có dữ liệu thật (/portal/support) nhưng
-      // chưa có Admin UI.
+      // ADM-V2-03: đính chính — bảng `referrals` (đọc thật ở
+      // /portal/referral) là hệ hoa hồng giới thiệu thật, khác
+      // `ecosystem_chrome.affiliateOffers` (Workspace Học viện).
+      { label: "Tiếp thị liên kết", href: "/admin/van-hanh/tiep-thi-lien-ket" },
+      // Bảng `support_tickets` đã có dữ liệu thật (/portal/support).
       { label: "Hỗ trợ khách hàng", href: "/admin/van-hanh/ho-tro-khach-hang" },
     ],
   },

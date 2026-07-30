@@ -4604,3 +4604,87 @@ phản ánh đúng ngay trên Website (không cần deploy lại, vì `getSiteSe
 **ĐÃ DỪNG SAU SPRINT 2 theo đúng chỉ đạo** — chưa động tới Sprint 3 (Học
 viện) hay bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint
 + xác nhận riêng về đề xuất migration "Điều hướng" trước khi tiếp tục.
+
+## ADM-V2-03 — Sprint 3: Vận hành (Operations) — Founder chọn làm trước Học viện
+
+Founder duyệt tiếp tục nhưng chỉ định đổi thứ tự: Vận hành trước, không
+theo đúng thứ tự Học viện đã nêu ở báo cáo Sprint 2. 3/6 mục
+(Đơn hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng) đã thật từ Sprint 0 —
+sprint này hoàn thiện 3 mục còn lại + thêm breadcrumb cho cả 6.
+
+### Audit — 2 ĐÍNH CHÍNH QUAN TRỌNG lật ngược ghi chú cũ (không tin ghi chú, grep lại trực tiếp)
+
+**"Mã giảm giá" — ghi chú cũ SAI.** `nav.ts`/`WorkspacePlaceholder` cũ ghi
+"bảng `coupons` không có code nào (kể cả checkout) đọc/ghi". Grep trực
+tiếp `src/app/portal/checkout/actions.ts` phát hiện `applyCoupon()` ĐÃ
+đọc/validate (`active`/`expires_at`/`max_uses`)/trừ tiền vào
+`orders.amount`/tăng `used_count` — tính năng THẬT đang chạy. Xác nhận
+qua Supabase MCP: 2 mã thật tồn tại, 1 mã (`VODUONG68`) đã
+`used_count=2`. Vì có nghiệp vụ thật tiêu thụ dữ liệu này, xây CRUD thật
+ở đây là ĐÚNG (không phải CRUD giả) — khác các trường hợp Sprint 1/2 nơi
+Empty State là lựa chọn đúng vì chưa có nghiệp vụ nào tiêu thụ.
+
+**"Tiếp thị liên kết" — ghi chú cũ THIẾU.** Ghi chú cũ chỉ biết tới nội
+dung tĩnh affiliate ở Dự án & Cơ hội (`ecosystem_chrome.affiliateOffers`).
+Audit lại phát hiện bảng `referrals` (`referrer_id`/`referred_email`/
+`referred_id`/`order_id`/`commission_rate`/`commission_amount`/`status`
+pending-confirmed-paid/`paid_at`) + `members.referral_code`/`referred_by`
+— một hệ HOA HỒNG GIỚI THIỆU THẬT của chính VDAI, đã được
+`/portal/referral` ("Hoa hồng giới thiệu") đọc từ trước — hoàn toàn khác
+affiliate bên ngoài (Lazada/Shopee) ở Dự án & Cơ hội. Chỉ CHƯA có Admin UI
+nào đọc bảng này. 0 dòng dữ liệu tại thời điểm audit.
+
+**"Thanh toán" — re-audit xác nhận ghi chú cũ ĐÚNG**, không phát hiện gì
+mới: chỉ là cột `orders.status`, cập nhật qua webhook SePay
+(`src/app/api/webhooks/sepay/route.ts`), không có thực thể giao dịch
+riêng nào khác.
+
+### Đã làm
+
+- **Mã giảm giá** (`/admin/van-hanh/ma-giam-gia`) — CRUD THẬT (Server
+  Actions riêng, bảng `coupons` typed — cùng pattern `case_studies`/
+  `courses`, không qua `/api/admin/collections/[table]`): tạo/sửa/xoá mã
+  (code/loại giảm %/số tiền/giới hạn lượt dùng/ngày hết hạn/bật-tắt).
+  `used_count` CHỈ ĐỌC (do `applyCoupon()` tự tăng, Admin không sửa tay).
+  KHÔNG đụng `applyCoupon()`/luồng checkout.
+- **Tiếp thị liên kết** (`/admin/van-hanh/tiep-thi-lien-ket`) — CHỈ ĐỌC
+  bảng `referrals` (join email người giới thiệu qua `members`), badge
+  trạng thái pending/confirmed/paid. Cùng mức thận trọng như Đơn hàng/Hỗ
+  trợ khách hàng — KHÔNG thêm hành động "đánh dấu đã trả hoa hồng" (ngoài
+  phạm vi đã duyệt, đây là hành động chi tiền thật). 0 dòng hiện tại →
+  `AdminEmptyState`.
+- **Thanh toán** (`/admin/van-hanh/thanh-toan`) — `AdminEmptyState` (bỏ
+  badge "Sắp ra mắt"), giải thích rõ không tạo trang riêng, trỏ sang Đơn
+  hàng.
+- **Breadcrumb** — thêm `AdminBreadcrumb` vào cả 3 trang thật cũ (Đơn
+  hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng, xây từ Sprint 0 trước khi
+  `AdminBreadcrumb` tồn tại) để cả 6 mục Vận hành đồng nhất.
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi 3 mục còn lại (Thanh toán/Mã giảm giá/Tiếp thị liên
+kết). Thêm 3 icon (`CreditCard`/`Ticket`/`Users2`).
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (6 route Vận hành xuất hiện đúng). `next start` — 6 route
+trả `307` đúng, `/` vẫn `200`, log sạch. Playwright qua route devtest tạm
+(xoá + rebuild sạch sau khi xác nhận) — mở "Vận hành": 0 badge "Sắp ra
+mắt" còn sót, đủ 6 mục hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** tạo/sửa/xoá mã giảm giá qua Admin UI thật (cùng
+giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test
+tại `/admin/van-hanh/ma-giam-gia`, xác nhận mã mới tạo áp dụng được ngay ở
+`/portal/checkout`.
+
+**Bài học (áp dụng cho các sprint sau):** ghi chú "chưa có code nào đọc/
+ghi bảng X" trong `nav.ts`/`WorkspacePlaceholder` cũ là NHẬN ĐỊNH TẠI THỜI
+ĐIỂM VIẾT, không phải sự thật vĩnh viễn — sprint nào động tới module đó
+PHẢI tự grep lại từ đầu (không tin ghi chú), như đã làm với `coupons`/
+`referrals` ở đây.
+
+**ĐÃ DỪNG SAU SPRINT 3 theo đúng chỉ đạo** — chưa động tới Học viện hay
+bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint trước khi
+tiếp tục.
