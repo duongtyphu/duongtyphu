@@ -215,11 +215,14 @@ export const adminWorkspaces: AdminWorkspace[] = [
     id: "thuong-hieu-media",
     label: "Thương hiệu & Media",
     items: [
-      { label: "Brand Studio", href: "/admin/thuong-hieu-media/brand-studio", comingSoon: true },
-      { label: "Media Center", href: "/admin/thuong-hieu-media/media-center", comingSoon: true },
-      { label: "Logo & Nhận diện", href: "/admin/thuong-hieu-media/logo-nhan-dien", comingSoon: true },
-      { label: "Tài nguyên thương hiệu", href: "/admin/thuong-hieu-media/tai-nguyen-thuong-hieu", comingSoon: true },
-      { label: "Tài liệu", href: "/admin/thuong-hieu-media/tai-lieu", comingSoon: true },
+      { label: "Brand Studio", href: "/admin/thuong-hieu-media/brand-studio" },
+      { label: "Media Center", href: "/admin/thuong-hieu-media/media-center" },
+      { label: "Logo & Nhận diện", href: "/admin/thuong-hieu-media/logo-nhan-dien" },
+      { label: "Tài nguyên thương hiệu", href: "/admin/thuong-hieu-media/tai-nguyen-thuong-hieu" },
+      // ADM-V2-04: đính chính — bảng `documents` (đọc thật ở
+      // /portal/resources) là tài liệu tải xuống cho Portal, khác ý tưởng
+      // gốc "đọc file Markdown docs/" (chưa từng có gì backing thật).
+      { label: "Tài liệu", href: "/admin/thuong-hieu-media/tai-lieu" },
     ],
   },
   {

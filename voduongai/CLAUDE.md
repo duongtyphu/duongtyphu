@@ -4688,3 +4688,72 @@ PHẢI tự grep lại từ đầu (không tin ghi chú), như đã làm với `
 **ĐÃ DỪNG SAU SPRINT 3 theo đúng chỉ đạo** — chưa động tới Học viện hay
 bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint trước khi
 tiếp tục.
+
+## ADM-V2-04 — Sprint 4: Thương hiệu & Media (Brand Studio & Media Center)
+
+Founder chọn tiếp tục với Workspace "Thương hiệu & Media" (5 mục, cả 5
+đều `comingSoon` từ Sprint 0).
+
+### Audit — 1 đính chính phạm vi quan trọng
+
+**"Tài liệu" — đổi phạm vi so với ý tưởng gốc.** Ghi chú gốc mô tả "đọc
+lại file Markdown trong `docs/` ngay trong Admin" — ý tưởng này CHƯA từng
+có gì backing thật (không có UI đọc file nào, giá trị thấp vì Founder có
+thể mở repo trực tiếp). Audit phát hiện bảng `documents` (typed:
+title/description/url/icon/bg_color/display_order/active) đã có **4 dòng
+dữ liệu thật** và đã được `/portal/resources` ("Tài nguyên miễn phí" →
+khối "Tài liệu từ VO DUONG AI Academy") đọc thật từ trước — nhưng CHƯA
+từng có Admin UI. Vì đây là gap thật giá trị cao hơn hẳn ý tưởng gốc, ưu
+tiên xây CRUD cho đúng bảng `documents` thay vì ý tưởng "đọc file
+Markdown" (đã đổi tên field mô tả trong `nav.ts`, giữ nguyên href/label).
+
+**Đã kiểm tra thêm, không phát hiện gì dùng được:** `digital_asset_settings`
+(đăng ký trong `SUPABASE_COLLECTIONS` nhưng 0 code nào đọc — mồ côi thật,
+khác `coupons` ở Sprint 3), `affiliateHub.ts`/`DigitalAssetProjectCard`
+(file dữ liệu tĩnh cũ, không còn consumer nào import — tàn dư từ trước đợt
+dọn admin cũ). Không có file brand voice guide nào trong `voduongai/`
+(khác `BRAND_VOICE_GUIDE.md` ở gốc repo — đó là tài liệu của website tĩnh
+CŨ `duongtyphu/`, KHÔNG thuộc phạm vi Admin CMS Next.js này).
+
+### Đã làm
+
+- **Tài liệu** (`/admin/thuong-hieu-media/tai-lieu`) — CRUD thật (Server
+  Actions riêng, bảng `documents` typed, cùng pattern `case_studies`/
+  `coupons`): title/description/url/icon/bg_color/display_order/active.
+- **Logo & Nhận diện** (`/admin/thuong-hieu-media/logo-nhan-dien`) — CHỈ
+  ĐỌC, đúng phạm vi thật của nav item ("xem trước + xuất mã SVG chuẩn"):
+  render lại ĐÚNG mã HTML/SVG logo Nav/Footer copy verbatim từ quy ước bắt
+  buộc trong CLAUDE.md (không tự chỉnh), kèm nút sao chép — không sửa qua
+  UI (logo là chuẩn nhận diện cố định). Trỏ sang Header & Footer (Website)
+  cho màu thương hiệu — không lặp lại ở đây.
+- **Brand Studio / Media Center / Tài nguyên thương hiệu** —
+  `AdminEmptyState` (bỏ badge "Sắp ra mắt"), mỗi trang giải thích trung
+  thực lý do riêng: Brand Studio cần Founder xác nhận phạm vi nội dung
+  giọng điệu/quy chuẩn viết trước khi thiết kế schema (màu + logo đã có
+  chỗ quản); Media Center chưa có hạ tầng upload/lưu trữ nào (dự án chưa
+  có upload thật ở bất kỳ đâu); Tài nguyên thương hiệu phụ thuộc Media
+  Center làm nền trước.
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục. Thêm 5 icon (`Palette`/`Images`/
+`Fingerprint`/`PackageOpen`/`FileText` — 1 số icon tái dùng từ workspace
+khác theo đúng convention đã có).
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (5 route xuất hiện đúng). `next start` — 5 route trả
+`307` đúng, `/` vẫn `200`, log sạch. Playwright qua route devtest tạm
+(xoá + rebuild sạch sau khi xác nhận) — mở "Thương hiệu & Media": 0 badge
+"Sắp ra mắt" còn sót, đủ 5 mục hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** tạo/sửa/xoá tài liệu qua Admin UI thật + xác nhận
+sao chép mã logo hoạt động đúng trên trình duyệt thật (cùng giới hạn
+sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại
+`/admin/thuong-hieu-media/tai-lieu` và `/logo-nhan-dien`.
+
+**ĐÃ DỪNG SAU SPRINT 4 theo đúng chỉ đạo** — chưa động tới Học viện hay
+bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint trước khi
+tiếp tục.

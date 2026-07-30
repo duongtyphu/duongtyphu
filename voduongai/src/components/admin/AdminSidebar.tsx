@@ -67,6 +67,8 @@ import {
   CreditCard,
   Ticket,
   Users2,
+  Fingerprint,
+  PackageOpen,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -158,6 +160,11 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/van-hanh/khach-hang-tiem-nang": UserPlus,
   "/admin/van-hanh/tiep-thi-lien-ket": Users2,
   "/admin/van-hanh/ho-tro-khach-hang": LifeBuoy,
+  "/admin/thuong-hieu-media/brand-studio": Palette,
+  "/admin/thuong-hieu-media/media-center": Images,
+  "/admin/thuong-hieu-media/logo-nhan-dien": Fingerprint,
+  "/admin/thuong-hieu-media/tai-nguyen-thuong-hieu": PackageOpen,
+  "/admin/thuong-hieu-media/tai-lieu": FileText,
 };
 
 function isItemActive(pathname: string, href: string) {
