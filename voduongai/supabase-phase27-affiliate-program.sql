@@ -1,8 +1,8 @@
 -- ============================================================================
--- ĐỀ XUẤT MIGRATION — CHƯA APPLY. Chờ Founder xác nhận riêng trước khi chạy
--- (theo đúng nguyên tắc dự án: mọi migration phải có báo cáo rủi ro + được
--- duyệt tách biệt trước khi apply_migration, kể cả khi việc lớn hơn đã được
--- duyệt tổng thể).
+-- ĐÃ APPLY (Founder duyệt 2026-07-30). Giữ file này làm hồ sơ tham chiếu —
+-- không chạy lại nguyên khối (các create table dùng "if not exists" nên vô
+-- hại nếu chạy lại, nhưng 2 create or replace function sẽ ghi đè lại đúng
+-- định nghĩa hiện tại, không có tác dụng phụ).
 --
 -- Chương trình Affiliate chính thức VO DUONG AI — đóng 4 khoảng trống audit
 -- xác nhận thực sự cần thiết, sau khi đã xác nhận toàn bộ phần còn lại
