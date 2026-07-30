@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/admin/DataTable";
-import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
 
 export const metadata = { title: "Affiliate Hub — Nội dung hướng dẫn · Admin" };
@@ -10,6 +9,13 @@ export const metadata = { title: "Affiliate Hub — Nội dung hướng dẫn ·
  * Study/Top sản phẩm), đăng ký sẵn trong SUPABASE_COLLECTIONS, nhưng chưa
  * từng có Admin UI nào quản trước đợt này. Portal đọc tại
  * /portal/affiliate-hub (src/lib/portal/live-affiliate-hub.ts).
+ *
+ * KHÔNG bọc `AdminAtmosphere` — đã đọc lại đúng /portal/affiliate-hub thật
+ * (trang vừa xây) và xác nhận nó KHÔNG có lớp khí quyển riêng nào (chỉ
+ * `gemos-bg` mặc định, giống /portal/earn), khác hẳn `/portal/duan-cohoi`
+ * (dùng `.projects-atmosphere-bg`). Nhóm sidebar "Dự án & Cơ hội" chỉ là
+ * cách TỔ CHỨC menu — không có nghĩa trang này phải copy màu nền của các
+ * trang khác trong cùng nhóm.
  */
 type AdminAffiliateHubSection = {
   id: string;
@@ -50,20 +56,18 @@ const fields: FieldConfig[] = [
 
 export default function AdminAffiliateHubSectionsPage() {
   return (
-    <AdminAtmosphere atmosphereClassName="projects-atmosphere-bg">
-      <DataTable<AdminAffiliateHubSection>
-        collectionKey="affiliate-hub-sections"
-        title="Affiliate Hub — Nội dung hướng dẫn"
-        columns={columns}
-        fields={fields}
-        itemNoun="Mục hướng dẫn"
-        addButtonLabel="+ Thêm mục"
-        breadcrumb={[
-          { label: "Học viện" },
-          { label: "Dự án & Cơ hội", href: "/admin/duan-cohoi" },
-          { label: "Affiliate Hub — Nội dung hướng dẫn" },
-        ]}
-      />
-    </AdminAtmosphere>
+    <DataTable<AdminAffiliateHubSection>
+      collectionKey="affiliate-hub-sections"
+      title="Affiliate Hub — Nội dung hướng dẫn"
+      columns={columns}
+      fields={fields}
+      itemNoun="Mục hướng dẫn"
+      addButtonLabel="+ Thêm mục"
+      breadcrumb={[
+        { label: "Học viện" },
+        { label: "Dự án & Cơ hội", href: "/admin/duan-cohoi" },
+        { label: "Affiliate Hub — Nội dung hướng dẫn" },
+      ]}
+    />
   );
 }

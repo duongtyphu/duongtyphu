@@ -14,8 +14,14 @@ Admin mới (`src/app/admin/**`, `src/components/admin/**`) phải dùng **NỀN
 SÁNG, giống hệt `/portal`** — không dùng nền tối navy (đó là thiết kế Admin
 cũ, đã bỏ). Màu nhấn CTA chính vẫn là `brand-blue`. Trước khi build bất kỳ
 trang/component UI nào trong `/admin`, luôn đọc lại component thật tương ứng
-ở `/portal` để lấy đúng class Tailwind/bố cục/token — luôn dùng class
-Tailwind token có sẵn, không viết hex thô.
+ở `/portal` **VÀ ở Landing Page bản chính thức (`/`, `src/app/page.tsx` +
+`src/components/home/**`/`src/components/site/**`)** để lấy đúng class
+Tailwind/bố cục/token/màu — luôn dùng class Tailwind token có sẵn, không
+viết hex thô, không bịa lại 1 phiên bản khác của thứ đã có thật. Việc build
+Logo & Nhận diện (ADM-V2-04) từng vi phạm chính nguyên tắc này — copy
+nguyên mẫu logo tĩnh của website HTML CŨ (`duongtyphu/` ở repo root, ngoài
+dự án Next.js này) thay vì đọc `HeaderClient.tsx`/`Footer.tsx` thật — đã
+sửa lại, xem mục "Logo & Nhận diện — sửa snippet lệch" bên dưới.
 
 - **Nền GỐC dùng chung toàn Shell (không phải toàn bộ nền — xem mục
   "atmosphere riêng từng trang" ngay dưới):** tái sử dụng thẳng component
@@ -5107,3 +5113,24 @@ chưa cấu hình.
 khoản đăng nhập (cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự
 test tại 3 route Admin mới, xác nhận sửa xong phản ánh đúng lên
 `/portal/affiliate-hub`.
+
+## Sửa ngay sau đó — 3 trang Admin Affiliate Hub lỡ dùng sai atmosphere
+
+Founder nhắc lại nguyên tắc bắt buộc "mọi thứ thiết kế ở Admin phải lấy
+Landing Page bản chính thức và Portal hiện tại làm căn cứ". Tự audit lại
+đúng 3 trang vừa xây ở mục trên phát hiện đúng 1 vi phạm: cả 3 trang
+(`affiliate-hub-sections`/`affiliate-products`/`affiliate-hub-top-products`)
+bọc `<AdminAtmosphere atmosphereClassName="projects-atmosphere-bg">` —
+copy nhầm lớp khí quyển của `/portal/duan-cohoi` (vì xếp cùng nhóm sidebar
+"Dự án & Cơ hội") thay vì đọc lại đúng trang Portal thật mà 3 bảng này
+backing (`/portal/affiliate-hub`, tự viết ở mục trên) — trang đó KHÔNG có
+lớp khí quyển riêng nào (chỉ `gemos-bg` mặc định, giống `/portal/earn`).
+
+**Đã sửa:** bỏ hẳn `<AdminAtmosphere>` khỏi cả 3 trang (cùng pattern
+`/admin/tools` — không bọc gì khi Portal không có atmosphere riêng).
+**Bài học:** nhóm sidebar là cách TỔ CHỨC menu, không phải căn cứ để suy
+ra màu nền — luôn đọc đúng trang Portal/Landing Page THẬT mà module đó
+backing, không suy từ nhóm/route lân cận.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 139/139, `rm -rf .next && npm
+run build` sạch.

@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/admin/DataTable";
-import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
 
 export const metadata = { title: "Affiliate Hub — Nổi bật tháng này · Admin" };
@@ -11,6 +10,9 @@ export const metadata = { title: "Affiliate Hub — Nổi bật tháng này · A
  * Mỗi dòng CHỈ tham chiếu `productId` sang bảng "Affiliate Hub — Sản phẩm
  * đề xuất" (nhập đúng id, không multi-select vì đây tham chiếu 1-1) —
  * KHÔNG copy nội dung sản phẩm sang đây.
+ *
+ * KHÔNG bọc `AdminAtmosphere` — /portal/affiliate-hub thật không có lớp
+ * khí quyển riêng (chỉ `gemos-bg` mặc định), khác `/portal/duan-cohoi`.
  */
 type AdminAffiliateHubTopProductRow = {
   id: string;
@@ -46,20 +48,18 @@ const fields: FieldConfig[] = [
 
 export default function AdminAffiliateHubTopProductsPage() {
   return (
-    <AdminAtmosphere atmosphereClassName="projects-atmosphere-bg">
-      <DataTable<AdminAffiliateHubTopProductRow>
-        collectionKey="affiliate-hub-top-products"
-        title="Affiliate Hub — Nổi bật tháng này"
-        columns={columns}
-        fields={fields}
-        itemNoun="Mục nổi bật"
-        addButtonLabel="+ Thêm mục nổi bật"
-        breadcrumb={[
-          { label: "Học viện" },
-          { label: "Dự án & Cơ hội", href: "/admin/duan-cohoi" },
-          { label: "Affiliate Hub — Nổi bật tháng này" },
-        ]}
-      />
-    </AdminAtmosphere>
+    <DataTable<AdminAffiliateHubTopProductRow>
+      collectionKey="affiliate-hub-top-products"
+      title="Affiliate Hub — Nổi bật tháng này"
+      columns={columns}
+      fields={fields}
+      itemNoun="Mục nổi bật"
+      addButtonLabel="+ Thêm mục nổi bật"
+      breadcrumb={[
+        { label: "Học viện" },
+        { label: "Dự án & Cơ hội", href: "/admin/duan-cohoi" },
+        { label: "Affiliate Hub — Nổi bật tháng này" },
+      ]}
+    />
   );
 }

@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/admin/DataTable";
-import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { ColumnConfig, FieldConfig } from "@/lib/admin/fields";
 
 export const metadata = { title: "Affiliate Hub — Sản phẩm đề xuất · Admin" };
@@ -9,6 +8,9 @@ export const metadata = { title: "Affiliate Hub — Sản phẩm đề xuất ·
  * thật: Hostinger), đăng ký sẵn trong SUPABASE_COLLECTIONS, chưa từng có
  * Admin UI. Portal đọc tại /portal/affiliate-hub +
  * /portal/affiliate-hub/[slug] (trang chi tiết từng sản phẩm).
+ *
+ * KHÔNG bọc `AdminAtmosphere` — /portal/affiliate-hub thật không có lớp
+ * khí quyển riêng (chỉ `gemos-bg` mặc định), khác `/portal/duan-cohoi`.
  */
 type AdminAffiliateProductRow = {
   id: string;
@@ -57,20 +59,18 @@ const fields: FieldConfig[] = [
 
 export default function AdminAffiliateProductsPage() {
   return (
-    <AdminAtmosphere atmosphereClassName="projects-atmosphere-bg">
-      <DataTable<AdminAffiliateProductRow>
-        collectionKey="affiliate-products"
-        title="Affiliate Hub — Sản phẩm đề xuất"
-        columns={columns}
-        fields={fields}
-        itemNoun="Sản phẩm"
-        addButtonLabel="+ Thêm sản phẩm"
-        breadcrumb={[
-          { label: "Học viện" },
-          { label: "Dự án & Cơ hội", href: "/admin/duan-cohoi" },
-          { label: "Affiliate Hub — Sản phẩm đề xuất" },
-        ]}
-      />
-    </AdminAtmosphere>
+    <DataTable<AdminAffiliateProductRow>
+      collectionKey="affiliate-products"
+      title="Affiliate Hub — Sản phẩm đề xuất"
+      columns={columns}
+      fields={fields}
+      itemNoun="Sản phẩm"
+      addButtonLabel="+ Thêm sản phẩm"
+      breadcrumb={[
+        { label: "Học viện" },
+        { label: "Dự án & Cơ hội", href: "/admin/duan-cohoi" },
+        { label: "Affiliate Hub — Sản phẩm đề xuất" },
+      ]}
+    />
   );
 }
