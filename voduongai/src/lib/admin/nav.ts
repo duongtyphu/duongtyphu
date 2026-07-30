@@ -142,6 +142,14 @@ export const adminWorkspaces: AdminWorkspace[] = [
           { label: "Chi tiết: Blockchain & Crypto (Live-edit)", href: "/admin/duan-cohoi/blockchain-crypto" },
           { label: "Chi tiết: Affiliate (Live-edit)", href: "/admin/duan-cohoi/lam-affilate" },
           { label: "Chi tiết: Sàn giao dịch Crypto (Live-edit)", href: "/admin/duan-cohoi/sangiaodich" },
+          // Affiliate Hub — 3 bảng generic có sẵn từ trước (seed thật),
+          // lần đầu nối Admin UI + Portal (/portal/affiliate-hub). Khác
+          // "Chi tiết: Affiliate" ở trên (đó là hệ sinh thái/cơ hội kinh
+          // doanh Affiliate bên ngoài — Lazada/Shopee...); đây là hướng
+          // dẫn thực chiến + công cụ đề xuất khi làm Affiliate.
+          { label: "Affiliate Hub — Nội dung hướng dẫn", href: "/admin/duan-cohoi/affiliate-hub-sections" },
+          { label: "Affiliate Hub — Sản phẩm đề xuất", href: "/admin/duan-cohoi/affiliate-products" },
+          { label: "Affiliate Hub — Nổi bật tháng này", href: "/admin/duan-cohoi/affiliate-hub-top-products" },
         ],
       },
       {

@@ -5003,3 +5003,107 @@ Email Marketing...) đều hiển thị `AdminEmptyState` trung thực kèm lý 
 không CRUD giả. Chờ Founder/PMO duyệt báo cáo Sprint 7 — đây cũng là mốc
 đóng chương trình ADM-V2.0 tổng thể nếu Founder xác nhận không còn sprint
 bổ sung nào khác.
+
+## Logo & Nhận diện — sửa snippet lệch với logo thật (sau khi RC được duyệt)
+
+Founder báo trang `/admin/thuong-hieu-media/logo-nhan-dien` đang dùng logo
+"cũ". Audit xác nhận: trang này (ADM-V2-04) copy nguyên mẫu logo TĨNH của
+website HTML CŨ (`duongtyphu/`, thuộc CLAUDE.md gốc ở repo root — ngoài
+phạm vi Admin CMS Next.js này), KHÁC hẳn logo THẬT đang chạy trên Landing
+Page/Portal (`HeaderClient.tsx`/`Footer.tsx`): cam `#F97316` (cũ) →
+`#FF7A00` (thật); chữ tĩnh "VDAI"/"ACADEMY" xếp chồng, luôn trắng (cũ) →
+tên site tách `brandMain`/`brandAccent` từ `settings.siteName` (đọc live ở
+Header & Footer), màu accent tím `#5B21D6` khi nền sáng / trắng khi nền
+tối (theme-aware, cũ luôn trắng cố định) — sai lệch từ chính đợt build
+ADM-V2-04, không phải do Landing Page đổi sau đó.
+
+**Đã sửa** `LogoSnippets.tsx` — đổi từ HTML tĩnh (`href="index.html"`,
+style inline) sang đúng JSX thật copy từ `HeaderClient.tsx`/`Footer.tsx`
+(dự án này là Next.js/React, dán JSX vào component mới, không phải file
+`.html`). Preview trực quan (qua `dangerouslySetInnerHTML`) dùng HTML
+tương đương để hiển thị đúng màu/bố cục thật, tách riêng khỏi code JSX
+copy được (2 hằng số khác nhau: `*_PREVIEW_HTML` để xem, `*_SNIPPET` để
+copy) — tránh nhầm copy nhầm HTML tĩnh như bản cũ.
+
+## Affiliate Hub — nối dây Portal + Admin (dữ liệu có sẵn, bị bỏ dở)
+
+Founder yêu cầu "cập nhật mục chương trình affiliate cho Portal và quản
+lý tại Admin". Audit phát hiện dự án đã có SẴN 1 bộ nội dung "Affiliate
+Hub" (hướng dẫn thực chiến làm Affiliate Marketing) được thiết kế từ
+trước — 3 bảng generic Supabase đã tồn tại thật, đăng ký sẵn trong
+`SUPABASE_COLLECTIONS`, có seed dữ liệu thật (không phải rỗng), RLS đã
+cấu hình đúng — nhưng **KHÔNG có trang Portal nào đọc, KHÔNG có Admin UI
+nào quản** trước đợt này:
+
+| Bảng | Số dòng seed | Vai trò |
+|---|---|---|
+| `affiliate_hub_sections` | 7 | 7 bước hướng dẫn (Bắt đầu/Chọn ngách/Chọn sản phẩm/Xây nội dung/Công cụ/Case Study/Top sản phẩm) |
+| `affiliate_products` | 1 (Hostinger) | Sản phẩm Affiliate đề xuất — đầy đủ audience/useCase/workflow/pros/cons/pricing/affiliateUrl |
+| `affiliate_hub_top_products` | 1 | Featured/join — tham chiếu `productId` sang `affiliate_products`, vocabulary `Active/Inactive` riêng (giữ nguyên, cùng kiểu bảng `community`) |
+
+**Đã hỏi Founder trước khi build (không đoán):** có 3 hệ thống khác nhau
+đều gọi là "affiliate" trong dự án — (1) Affiliate Hub bị bỏ dở ở trên,
+(2) "Hoa hồng giới thiệu" (`/portal/referral`, bảng `referrals`, đã hoạt
+động từ trước), (3) hệ sinh thái "Làm tiếp thị liên kết"
+(`/portal/duan-cohoi/lam-affilate`, đã có Admin quản lý đầy đủ từ Nhóm
+3). Founder xác nhận chọn (1).
+
+**Chủ động KHÔNG nối bảng thứ 4 cùng nhóm — `affiliate_links`** (0 dòng,
+có field `clicks`/`conversions`): không có cơ chế click-tracking thật nào
+tồn tại trong dự án (không route `/go/[code]` hay tương tự) — hiển thị 2
+field này sẽ là số liệu bịa, vi phạm NO-FAKE-DATA. Để nguyên mồ côi, cần
+quyết định riêng nếu sau này muốn xây tracking thật.
+
+**Đã làm:**
+- `src/lib/portal/live-affiliate-hub.ts` (mới) — `getLiveAffiliateHubSections()`/
+  `getLiveAffiliateProducts()`/`getLiveAffiliateProductBySlug()`/
+  `getLiveAffiliateHubTopProducts()`, cùng pattern `live-tools.ts`
+  (`getSupabasePublic()` + `cache()`). Sắp xếp theo `data.order` (JS-side
+  sort) — KHÔNG dùng cột `order` ngoài (cột đó không trả về qua GET route
+  generic, đúng bài học đã ghi ở "Chuyển đổi"/ecosystem articles).
+- `/portal/affiliate-hub` (mới) — hub page: 7 bước hướng dẫn (grid card +
+  CTA), "Nổi bật tháng này" (badge + link hướng dẫn nội bộ + link dùng
+  thử ngoài), "Sản phẩm Affiliate đề xuất" (grid, mỗi thẻ dẫn sang trang
+  chi tiết). Cả 3 khối đều có Empty State trung thực nếu rỗng.
+- `/portal/affiliate-hub/[slug]` (mới) — trang chi tiết sản phẩm: audience/
+  useCase/pricing/workflow/pros/cons + nút "Dùng thử" trỏ `affiliateUrl`
+  thật (`target="_blank" rel="noopener noreferrer"`, cùng convention
+  `EcosystemAffiliateOffersBox`), kèm badge minh bạch "Affiliate — VO
+  DUONG AI nhận hoa hồng nếu bạn mua qua link này" khi `isAffiliate=true`.
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — thêm 1 banner CTA
+  "Xem Affiliate Hub →" trong đúng nhánh `structureType === "affiliate-list"`
+  (chỉ ảnh hưởng trang `lam-affilate`, không đụng 4 hệ sinh thái khác) —
+  điểm khám phá tự nhiên từ hệ sinh thái Affiliate hiện có sang Affiliate
+  Hub mới, không cần thêm mục nav Portal cấp cao mới.
+- Admin: 3 trang `DataTable` mới dưới nhóm sidebar "Dự án & Cơ hội"
+  (cùng nhóm với hệ sinh thái Affiliate, vì nội dung bổ trợ trực tiếp,
+  không trùng lặp — hệ sinh thái là "cơ hội kinh doanh ngoài" như
+  Lazada/Shopee, Affiliate Hub là "hướng dẫn thực chiến + công cụ đề
+  xuất"): `/admin/duan-cohoi/affiliate-hub-sections`,
+  `/admin/duan-cohoi/affiliate-products`,
+  `/admin/duan-cohoi/affiliate-hub-top-products`. `productId` ở trang thứ
+  3 là ô nhập text đơn giản (không multi-select) vì đây tham chiếu 1-1,
+  ghi rõ hướng dẫn "nhập đúng id" trong label field.
+- `nav.ts`/`AdminSidebar.tsx` (3 icon mới: `Route`/`ShoppingBag`/`Award`)/
+  `dashboard/page.tsx` (`TABLE_FOR_HREF`, 3 dòng mới) — wire đầy đủ.
+
+**Verify:** `tsc`/`eslint` sạch (0 lỗi/warning trên toàn bộ file mới/sửa),
+`vitest run` 139/139 pass, `rm -rf .next && npm run build` sạch (5 route
+mới xuất hiện đúng: `/portal/affiliate-hub`, `/portal/affiliate-hub/[slug]`,
+3 route Admin). **Test thật với anon key thật** (route dev-preview tạm,
+render trực tiếp component `AffiliateHubPage`/`AffiliateProductDetailPage`/
+`EcosystemPage` không qua middleware — cùng kỹ thuật đã dùng nhiều lần
+trước đó, xoá ngay sau khi xác nhận): xác nhận cả 7 section + Hostinger
+(cả ở "Nổi bật tháng này" lẫn "Sản phẩm Affiliate đề xuất") + trang chi
+tiết (đầy đủ audience/useCase/pricing/workflow/pros/cons/nút "Dùng thử
+Hostinger ↗" trỏ đúng `https://hostinger.com?ref=voduongai`) đều render
+đúng dữ liệu thật. Banner CTA trên trang hệ sinh thái `lam-affilate` cũng
+xác nhận render đúng (200, không crash). Test lại không có Supabase (mặc
+định sandbox) — route Admin trả `307` đúng như mọi route khác,
+`/portal/affiliate-hub` fallback công khai đúng thiết kế khi Supabase
+chưa cấu hình.
+
+**Chưa tự test được:** thêm/sửa/xoá nội dung qua Admin UI thật có tài
+khoản đăng nhập (cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự
+test tại 3 route Admin mới, xác nhận sửa xong phản ánh đúng lên
+`/portal/affiliate-hub`.

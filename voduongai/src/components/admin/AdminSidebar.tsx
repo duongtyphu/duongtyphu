@@ -77,6 +77,9 @@ import {
   Mail,
   MousePointerClick,
   BarChart3,
+  Route,
+  ShoppingBag,
+  Award,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -149,6 +152,9 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/duan-cohoi/blockchain-crypto": Bitcoin,
   "/admin/duan-cohoi/lam-affilate": Link2,
   "/admin/duan-cohoi/sangiaodich": LineChart,
+  "/admin/duan-cohoi/affiliate-hub-sections": Route,
+  "/admin/duan-cohoi/affiliate-products": ShoppingBag,
+  "/admin/duan-cohoi/affiliate-hub-top-products": Award,
   "/admin/course-pricing": Wallet,
   "/admin/premium/dashboard": Crown,
   "/admin/su-menh-companion/live-edit": Dna,
