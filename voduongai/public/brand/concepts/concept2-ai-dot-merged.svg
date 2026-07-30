@@ -1,7 +1,0 @@
-<svg width="320" height="420" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="42" fill="#FFFFFF"/>
-  <text x="11.5" y="9.5" text-anchor="middle" font-family="Inter, 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="800" font-size="6" letter-spacing="0.5" fill="#0B1220">A</text>
-  <rect x="16.6" y="3.4" width="1.7" height="6.3" rx="0.85" fill="#0B1220"/>
-  <circle cx="17.45" cy="2" r="2.05" fill="#F97316"/>
-  <path d="M3 14L16 37L29 14H23L16 27L9 14Z" fill="#2563EB"/>
-</svg>

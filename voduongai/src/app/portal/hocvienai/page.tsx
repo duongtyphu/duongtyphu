@@ -35,24 +35,6 @@ export const metadata = {
   description: "Học AI có hệ thống. Hiểu đúng, luyện đúng và thực hành cùng Companion.",
 };
 
-/** @deprecated Việc 10 — thay bằng bảng `hocvienai_faq` (getLiveHocvienaiFaq()),
- * giữ lại tham khảo/rollback. */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- giữ lại tham khảo/rollback, không còn consumer nào trong file này
-const FAQ = [
-  {
-    q: "Học viện có phải là khoá học không?",
-    a: "Không. Học viện không bán khoá học — Học viện dẫn bạn qua một hành trình thực hành thật, dựa trên tri thức đã có trong Hệ tri thức AI (CKOS).",
-  },
-  {
-    q: "Tôi cần hoàn thành bao nhiêu bài để 'xong'?",
-    a: "Học viện không đếm số bài đã hoàn thành. Học viện quan tâm bạn có đang làm việc khác đi so với trước không — đó mới là dấu hiệu trưởng thành thật.",
-  },
-  {
-    q: "Companion có chấm điểm tôi không?",
-    a: "Không. Companion đồng hành và gợi ý bước tiếp theo, không chấm điểm, không xếp hạng.",
-  },
-];
-
 export default async function AcademyHubPage() {
   // VIỆC 3 (Nhóm A audit) — trước đây getAllLearningJourneys() tự đọc
   // knowledgeCollections tĩnh (@deprecated) bên trong journey.service.ts,
