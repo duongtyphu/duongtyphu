@@ -3,21 +3,22 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X } from "lucide-react";
-import { adminNavGroups } from "@/lib/admin/nav";
+import { flattenAdminNav } from "@/lib/admin/nav";
 
-type AdminSearchResult = { id: string; title: string; group: string; href: string };
+type AdminSearchResult = { id: string; title: string; group: string; href: string; comingSoon?: boolean };
 
 export function AdminSearch() {
+  // Tìm theo tên Workspace, tên SubGroup/Module VÀ tên route — flattenAdminNav()
+  // đã gộp cả 3 tầng (Workspace > SubGroup > Item) thành 1 danh sách phẳng.
   const allItems = useMemo<AdminSearchResult[]>(
     () =>
-      adminNavGroups.flatMap((section) =>
-        section.items.map((item) => ({
-          id: item.href,
-          title: item.label,
-          group: section.group ?? "Khác",
-          href: item.href,
-        }))
-      ),
+      flattenAdminNav().map((entry) => ({
+        id: entry.href,
+        title: entry.label,
+        group: entry.workspaceLabel === entry.groupLabel ? entry.workspaceLabel : `${entry.workspaceLabel} · ${entry.groupLabel}`,
+        href: entry.href,
+        comingSoon: entry.comingSoon,
+      })),
     []
   );
 
@@ -31,7 +32,10 @@ export function AdminSearch() {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return allItems.filter(
-      (item) => item.title.toLowerCase().includes(q) || item.group.toLowerCase().includes(q)
+      (item) =>
+        item.title.toLowerCase().includes(q) ||
+        item.group.toLowerCase().includes(q) ||
+        item.href.toLowerCase().includes(q)
     );
   }, [query, allItems]);
 
@@ -177,11 +181,16 @@ function AdminSearchDropdown({
                   key={item.id}
                   href={item.href}
                   onClick={onSelect}
-                  className={`block rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 transition ${
+                  className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-gray-900 transition ${
                     flatIndex === activeIndex ? "bg-gray-100" : "hover:bg-gray-50"
                   }`}
                 >
-                  {item.title}
+                  <span className="min-w-0 truncate">{item.title}</span>
+                  {item.comingSoon && (
+                    <span className="shrink-0 rounded-full bg-gray-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gray-500">
+                      Sắp ra mắt
+                    </span>
+                  )}
                 </Link>
               );
             })}

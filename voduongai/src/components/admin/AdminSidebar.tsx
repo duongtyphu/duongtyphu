@@ -42,38 +42,43 @@ import {
   LineChart,
   UserCog,
   Globe,
+  MonitorSmartphone,
+  Landmark,
+  Palette,
+  Settings,
+  Hourglass,
+  Receipt,
+  UserPlus,
+  LifeBuoy,
   type LucideIcon,
 } from "lucide-react";
-import { adminNavGroups } from "@/lib/admin/nav";
+import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
 
 /**
- * Đã dọn (audit menu Admin) — chỉ giữ icon cho route THẬT SỰ có trong
- * `adminNavGroups` (nav.ts). Trước đây có ~26 entry mồ côi trỏ route
- * admin cũ đã xoá (`/admin/portal-builder/*`, `/admin/roadmap`,
- * `/admin/daily-missions`, `/admin/prompts` (bản cũ, chưa có `/ckos/`),
- * `/admin/templates`, `/admin/ebooks`, `/admin/checklists`, `/admin/sop`,
- * `/admin/saved`, `/admin/affiliate*`, `/admin/digital-assets*`,
- * `/admin/premium`, `/admin/orders`, `/admin/coupons`, `/admin/services`,
- * `/admin/support`, `/admin/blog`, `/admin/case-study` (bản cũ),
- * `/admin/student-success` (bản cũ), `/admin/updates`, `/admin/community`,
- * `/admin/users`, `/admin/leads`, `/admin/reports`, `/admin/settings`) —
- * không phải link chết (object này chỉ tra icon cho item đã có trong
- * nav.ts, không tự render), nhưng là rác không dùng, đã xoá.
+ * KIẾN TRÚC ADMIN V2.0 — sidebar giờ có 3 tầng: Workspace (8 mục, icon
+ * riêng, `workspaceIcons` bên dưới) → SubGroup (chỉ "Học viện" có, 10 mục,
+ * dùng lại đúng 10 nhóm Portal cũ) → Item (đúng href/label cũ, KHÔNG đổi).
  *
- * Đồng thời PHÁT HIỆN VÀ SỬA gap thật: `/admin/home-cards` và toàn bộ 11
- * route `/admin/ckos/*` (kể cả `/admin/ckos` — CKOS Dashboard) trước đó
- * KHÔNG có icon nào — item hiện lên trong sidebar không có icon (không
- * crash, chỉ thiếu hình). Đã bổ sung đủ.
+ * Item nào `comingSoon: true` (xem `nav.ts`) dùng icon `Hourglass` chung +
+ * badge nhỏ "Sắp ra mắt" — không cần khai icon riêng cho từng route
+ * placeholder (29 route). 3 route MỚI có chức năng thật (Đơn hàng/Khách
+ * hàng tiềm năng/Hỗ trợ khách hàng) có icon riêng trong `navIcons`.
  *
- * Cập nhật (Việc 8): `/admin/updates`/`/admin/community` giờ là route
- * THẬT (nhóm "Cộng đồng") — đoạn "route cũ đã xoá" liệt kê ở trên chỉ
- * đúng tại thời điểm audit menu, không còn đúng nữa (cùng tình huống đã
- * gặp với `/admin/projects`, xem CLAUDE.md).
- *
- * Cập nhật (Identity Hub v1.0): `/admin/users` cũng giờ là route THẬT
- * (trang quản lý người dùng toàn hệ sinh thái, `group: null` cùng "Tổng
- * quan") — cùng tình huống trên, không còn là entry mồ côi nữa.
+ * Lịch sử dọn dẹp `navIcons` (audit menu Admin, trước Admin v2.0): đã xoá
+ * ~26 entry mồ côi trỏ route cũ đã xoá từ lâu — không lặp lại lịch sử đó ở
+ * đây, xem CLAUDE.md nếu cần tra cứu.
  */
+const workspaceIcons: Record<string, LucideIcon> = {
+  "tong-quan": LayoutDashboard,
+  "nguoi-dung": Users,
+  website: MonitorSmartphone,
+  "hoc-vien": Landmark,
+  "van-hanh": Briefcase,
+  marketing: TrendingUp,
+  "thuong-hieu-media": Palette,
+  "he-thong": Settings,
+};
+
 const navIcons: Record<string, LucideIcon> = {
   "/admin/dashboard": LayoutDashboard,
   "/admin/users": UserCog,
@@ -114,11 +119,33 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/community": Users,
   "/admin/updates": Newspaper,
   "/admin/student-success-stories": Star,
+  // Vận hành — 3 route mới có dữ liệu thật (Admin v2.0).
+  "/admin/van-hanh/don-hang": Receipt,
+  "/admin/van-hanh/khach-hang-tiem-nang": UserPlus,
+  "/admin/van-hanh/ho-tro-khach-hang": LifeBuoy,
 };
 
 function isItemActive(pathname: string, href: string) {
   if (href === "/admin/dashboard") return pathname === "/admin/dashboard";
   return pathname === href || pathname.startsWith(href + "/");
+}
+
+// Hàm thuần (không phải hook) — đặt ngoài component để tránh React Compiler
+// không tối ưu được `useMemo` có nhiều điểm `return` sớm lồng trong vòng lặp.
+function findActiveNav(pathname: string): { activeWorkspaceId: string | null; activeSubGroupKey: string | null } {
+  for (const ws of adminWorkspaces) {
+    for (const item of ws.items ?? []) {
+      if (isItemActive(pathname, item.href)) return { activeWorkspaceId: ws.id, activeSubGroupKey: null };
+    }
+    for (const sg of ws.subGroups ?? []) {
+      for (const item of sg.items) {
+        if (isItemActive(pathname, item.href)) {
+          return { activeWorkspaceId: ws.id, activeSubGroupKey: `${ws.id}::${sg.label}` };
+        }
+      }
+    }
+  }
+  return { activeWorkspaceId: null, activeSubGroupKey: null };
 }
 
 type AdminSidebarProps = {
@@ -129,76 +156,64 @@ type AdminSidebarProps = {
 
 export function AdminSidebar({ collapsed = false, variant = "desktop", onNavigate }: AdminSidebarProps) {
   const pathname = usePathname() || "/admin/dashboard";
+  const showLabels = variant === "mobile" || !collapsed;
 
-  const activeGroupName = useMemo(() => {
-    for (const section of adminNavGroups) {
-      if (section.group && section.items.some((item) => isItemActive(pathname, item.href))) {
-        return section.group;
-      }
-    }
-    return null;
-  }, [pathname]);
+  const { activeWorkspaceId, activeSubGroupKey } = useMemo(() => findActiveNav(pathname), [pathname]);
 
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+  const [openWorkspaces, setOpenWorkspaces] = useState<Record<string, boolean>>({});
+  const [openSubGroups, setOpenSubGroups] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    // Auto-expands the group containing the active route on navigation;
-    // this is a reaction to a route change, not a pure render computation.
-    if (activeGroupName) {
+    // Tự mở Workspace/SubGroup chứa route đang active khi điều hướng — phản
+    // ứng theo thay đổi route, không phải tính toán thuần lúc render.
+    if (activeWorkspaceId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpenGroups((prev) => ({ ...prev, [activeGroupName]: true }));
+      setOpenWorkspaces((prev) => ({ ...prev, [activeWorkspaceId]: true }));
     }
-  }, [activeGroupName]);
+    if (activeSubGroupKey) {
+      setOpenSubGroups((prev) => ({ ...prev, [activeSubGroupKey]: true }));
+    }
+  }, [activeWorkspaceId, activeSubGroupKey]);
 
-  function toggleGroup(name: string) {
-    setOpenGroups((prev) => ({ ...prev, [name]: !prev[name] }));
+  function toggleWorkspace(id: string) {
+    setOpenWorkspaces((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
-  const showLabels = variant === "mobile" || !collapsed;
+  function toggleSubGroup(key: string) {
+    setOpenSubGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  }
 
   return (
     <nav className="space-y-1" aria-label="Điều hướng Admin">
-      {adminNavGroups.map((section, i) => {
-        if (!section.group) {
-          return (
-            <div key={`top-${i}`} className="space-y-1 pb-1">
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.href}
-                  item={item}
-                  active={isItemActive(pathname, item.href)}
-                  showLabel={showLabels}
-                  onNavigate={onNavigate}
-                />
-              ))}
-            </div>
-          );
-        }
-
-        const groupName = section.group;
-        const isOpen = showLabels ? (openGroups[groupName] ?? section.group === activeGroupName) : true;
-        const hasActive = section.items.some((item) => isItemActive(pathname, item.href));
+      {adminWorkspaces.map((ws) => {
+        const WsIcon = workspaceIcons[ws.id];
+        const hasActive = ws.id === activeWorkspaceId;
+        const isOpen = showLabels ? (openWorkspaces[ws.id] ?? hasActive) : true;
 
         return (
-          <div key={groupName}>
+          <div key={ws.id}>
             {showLabels ? (
               <button
                 type="button"
-                onClick={() => toggleGroup(groupName)}
+                onClick={() => toggleWorkspace(ws.id)}
                 aria-expanded={isOpen}
-                className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
-                  hasActive ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
+                className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider transition ${
+                  hasActive ? "text-gray-900" : "text-gray-500 hover:text-gray-700"
                 }`}
               >
-                {section.group}
-                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+                {WsIcon && <WsIcon className="h-4 w-4 shrink-0" />}
+                <span className="flex-1 truncate text-left">{ws.label}</span>
+                <ChevronDown className={`h-3.5 w-3.5 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
               </button>
             ) : (
-              <div className="my-2 h-px bg-gray-200" />
+              <div className="my-2 flex justify-center" title={ws.label}>
+                {WsIcon && <WsIcon className={`h-4 w-4 ${hasActive ? "text-blue-700" : "text-gray-400"}`} />}
+              </div>
             )}
+
             {isOpen && (
-              <div className="space-y-1">
-                {section.items.map((item) => (
+              <div className={showLabels ? "space-y-0.5 pl-1" : "space-y-1"}>
+                {(ws.items ?? []).map((item) => (
                   <NavLink
                     key={item.href}
                     item={item}
@@ -207,6 +222,45 @@ export function AdminSidebar({ collapsed = false, variant = "desktop", onNavigat
                     onNavigate={onNavigate}
                   />
                 ))}
+
+                {(ws.subGroups ?? []).map((sg) => {
+                  const key = `${ws.id}::${sg.label}`;
+                  const sgHasActive = key === activeSubGroupKey;
+                  const sgOpen = showLabels ? (openSubGroups[key] ?? sgHasActive) : true;
+
+                  return (
+                    <div key={key}>
+                      {showLabels ? (
+                        <button
+                          type="button"
+                          onClick={() => toggleSubGroup(key)}
+                          aria-expanded={sgOpen}
+                          className={`flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition ${
+                            sgHasActive ? "text-gray-900" : "text-gray-400 hover:text-gray-600"
+                          }`}
+                        >
+                          <span className="truncate">{sg.label}</span>
+                          <ChevronDown className={`h-3.5 w-3.5 shrink-0 transition-transform ${sgOpen ? "rotate-180" : ""}`} />
+                        </button>
+                      ) : (
+                        <div className="my-1.5 h-px bg-gray-200" />
+                      )}
+                      {sgOpen && (
+                        <div className="space-y-0.5">
+                          {sg.items.map((item) => (
+                            <NavLink
+                              key={item.href}
+                              item={item}
+                              active={isItemActive(pathname, item.href)}
+                              showLabel={showLabels}
+                              onNavigate={onNavigate}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -222,12 +276,12 @@ function NavLink({
   showLabel,
   onNavigate,
 }: {
-  item: { label: string; href: string };
+  item: AdminNavItem;
   active: boolean;
   showLabel: boolean;
   onNavigate?: () => void;
 }) {
-  const Icon = navIcons[item.href];
+  const Icon = navIcons[item.href] ?? (item.comingSoon ? Hourglass : undefined);
   return (
     <Link
       href={item.href}
@@ -242,10 +296,16 @@ function NavLink({
     >
       {active && <span className="gemos-nav-active-bar absolute left-0 top-1/2 h-4 -translate-y-1/2 rounded-full" style={{ width: 3 }} />}
       {Icon && <Icon className="h-4 w-4 shrink-0" />}
-      {showLabel && <span className="truncate">{item.label}</span>}
+      {showLabel && <span className="min-w-0 flex-1 truncate">{item.label}</span>}
+      {showLabel && item.comingSoon && (
+        <span className="shrink-0 rounded-full bg-gray-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gray-500">
+          Sắp ra mắt
+        </span>
+      )}
       {!showLabel && (
         <span className="pointer-events-none absolute left-full top-1/2 z-50 ml-2 -translate-y-1/2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-gray-900 opacity-0 shadow-lg transition group-hover:opacity-100">
           {item.label}
+          {item.comingSoon && <span className="ml-1 text-gray-400">(Sắp ra mắt)</span>}
         </span>
       )}
     </Link>

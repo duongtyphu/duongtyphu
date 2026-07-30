@@ -4204,3 +4204,150 @@ giờ dùng thẳng `items` (hoặc `items[0]`) làm nguồn duy nhất, vì
 (trước khi fetch xong) theo đúng thiết kế của `store.ts`.
 
 **File sửa:** `src/components/home/LandingChromeContext.tsx` (duy nhất).
+
+## KIẾN TRÚC ADMIN V2.0 — tái cấu trúc sidebar thành 8 Workspace
+
+Founder yêu cầu tái cấu trúc Admin thành trung tâm quản trị thống nhất: 8
+Workspace cấp cao bằng tiếng Việt (Tổng quan/Người dùng/Website/Học viện/
+Vận hành/Marketing/Thương hiệu & Media/Hệ thống), audit trực tiếp trước khi
+sửa, không xây lại từ đầu, không đổi URL route đang hoạt động, không tạo
+CRUD giả cho module chưa có chức năng thật.
+
+### Audit trước khi sửa (bắt buộc, đã làm đầy đủ)
+
+- **Toàn bộ route `/admin/*`**: 37 `page.tsx` (không tính `dashboard`/
+  `login`/top-level redirect) — đã lập bảng phân loại đầy đủ: Live-edit
+  Cách A (14 route: home-cards, landing, premium/dashboard, 5 Hành trình
+  của tôi, su-menh-companion/live-edit, duan-cohoi + 5 chi tiết hệ sinh
+  thái + 5 dự án con), DataTable/VisualEditor CRUD (~15 route), Editor
+  riêng (companion, course-pricing, ckos/lessons, ckos/case-studies,
+  premium/courses/.../builder), Read-only (ckos Dashboard, users).
+- **Tìm code nghiệp vụ nằm NGOÀI `/admin`** trước khi khai "Sắp triển
+  khai" (tránh khai nhầm cái đã có): phát hiện quan trọng nhất — bảng
+  `orders`/`leads`/`support_tickets` đã có DỮ LIỆU THẬT chảy vào liên tục
+  (checkout+webhook SePay, `/api/leads`, `/portal/support`) nhưng **chưa
+  từng có trang Admin nào đọc** — đây là gap thật, không phải "chưa có
+  chức năng". Ngược lại, bảng `coupons` có schema nhưng **0 dòng code**
+  (kể cả checkout) đọc/ghi — đây mới đúng nghĩa "chưa có chức năng thật".
+  Không có Brand Studio/Media Center/campaign/email marketing nào tồn
+  tại (đã grep xác nhận) — "Companion Studio™" (`src/ai/**`) là tầng AI
+  Provider viết nội dung, KHÔNG phải quản lý thương hiệu, dễ nhầm tên.
+- **Cơ chế auth**: `middleware.ts` gate mọi `/admin/:path*` (trừ
+  `/admin/login`) qua `members.is_admin`, không có route nào bypass được
+  — mọi route mới tự động được bảo vệ, không cần sửa middleware.
+  `requireAdmin()` là lớp phòng hộ thứ 2 (page.tsx tự gọi), giữ nguyên.
+
+### Cấu trúc dữ liệu mới — `src/lib/admin/nav.ts`
+
+Đổi từ `adminNavGroups: AdminNavGroup[]` (2 tầng: group → item, 11 group
+phẳng) sang `adminWorkspaces: AdminWorkspace[]` (`id`/`label`/`items?`/
+`subGroups?`) — **CHỈ workspace "Học viện" dùng `subGroups`** (đúng 10
+group Portal cũ, giữ nguyên 100% label/href), 7 workspace còn lại dùng
+`items` phẳng. Thêm `AdminNavItem.comingSoon?: boolean` đánh dấu module
+"Sắp triển khai". Hàm mới `flattenAdminNav()` làm phẳng cả 3 tầng
+(Workspace/SubGroup/Item) → dùng chung cho `AdminSearch`/Dashboard.
+
+**KHÔNG đổi 1 href nào của route đang hoạt động** — chỉ đổi cách NHÓM
+hiển thị. Đã verify bằng build: toàn bộ route cũ (`/admin/ckos/*`,
+`/admin/duan-cohoi/*`, `/admin/hanh-trinh-cua-toi/*`...) xuất hiện y hệt
+trong output `next build`, không route nào biến mất/redirect.
+
+### `AdminSidebar.tsx` — 3 tầng thay vì 2 tầng
+
+Workspace (icon riêng, `workspaceIcons`) → SubGroup (chỉ "Học viện" có) →
+Item (icon theo href, `navIcons`, giữ nguyên toàn bộ mapping cũ + thêm 3
+icon route mới). Item `comingSoon` dùng icon `Hourglass` chung + badge
+nhỏ "Sắp ra mắt" (ẩn khi sidebar thu gọn, hiện trong tooltip). State 2 cấp
+độc lập (`openWorkspaces`/`openSubGroups`), tự mở đúng Workspace+SubGroup
+chứa route active khi điều hướng (tách hàm thuần `findActiveNav()` ra
+ngoài component — tránh lỗi React Compiler "Could not preserve existing
+memoization" khi `useMemo` có nhiều điểm `return` sớm lồng trong vòng
+lặp). Khi sidebar thu gọn (chỉ icon) — bỏ qua mọi header Workspace/
+SubGroup, liệt kê phẳng toàn bộ item kèm tooltip hover, giữ đúng hành vi
+cũ.
+
+**Verify bằng Playwright thật** (qua `next start`, không phải `next dev`
+— HMR WebSocket qua proxy sandbox gây remount silent, đã ghi nhận từ
+trước, dùng `next dev` cho ra kết quả sai là "click không có tác dụng"):
+click "Học viện" → hiện đúng 10 SubGroup; click "Hệ tri thức AI (CKOS)"
+→ hiện đúng 11 item gốc; mở "Website" → hiện đúng 5 badge "Sắp ra mắt"
+(6 item, chỉ Landing Page là thật); thu gọn sidebar → 76 link vẫn hiện
+đủ dạng icon rail, 0 lỗi console/page error.
+
+### `AdminSearch.tsx` — tìm theo Workspace/SubGroup/route
+
+Đổi sang dùng `flattenAdminNav()`, hiển thị nhãn nhóm dạng `Workspace ·
+SubGroup` khi có subGroup (vd. "Học viện · Hệ tri thức AI (CKOS)"). Thêm
+tìm theo `href` (trước chỉ tìm theo `label`/`group`) — gõ 1 phần đường
+dẫn route cũng ra kết quả. Kết quả có `comingSoon` hiện badge "Sắp ra
+mắt" ngay trong dropdown.
+
+### 32 route mới — 3 route THẬT (chỉ đọc) + 29 route "Sắp triển khai"
+
+**3 route thật, chỉ đọc** (Vận hành — data đã tồn tại, chỉ thiếu UI đọc,
+KHÔNG thêm action tạo/sửa/xoá/hoàn tiền/đổi trạng thái nào, không đụng
+checkout/webhook SePay):
+- `/admin/van-hanh/don-hang` — đọc bảng `orders` (`member_email`/
+  `product_name`/`amount`/`status`/`order_code`/`customer_name`/
+  `course_id`/`created_at`), badge trạng thái pending/confirmed/rejected.
+- `/admin/van-hanh/khach-hang-tiem-nang` — đọc bảng `leads`.
+- `/admin/van-hanh/ho-tro-khach-hang` — đọc bảng `support_tickets`, hiện
+  cả `reply` nếu đã có.
+
+**29 route "Sắp triển khai"** — dùng chung component mới
+`src/components/admin/WorkspacePlaceholder.tsx` (tiêu đề + mô tả + danh
+sách "Phạm vi dự kiến" + ghi chú lý do/nguồn dữ liệu liên quan +
+`relatedLink` nếu có module thật gần đó) — KHÔNG CRUD giả, KHÔNG dữ liệu
+mẫu bịa, mỗi trang ghi rõ vì sao chưa làm (bảng mồ côi, chưa tích hợp
+dịch vụ ngoài, hành động nhạy cảm ngoài phạm vi, hoặc cần thiết kế mới):
+Tổng quan (Công việc/Thông báo/Hoạt động gần đây — 3), Người dùng (Vai
+trò & Phân quyền/Thành viên/Phiên đăng nhập — 3), Website (Nội dung
+Website/Điều hướng/Header & Footer/Popup & Banner/SEO Website — 5), Vận
+hành (Thanh toán/Mã giảm giá/Tiếp thị liên kết — 3, tránh trùng sở hữu
+dữ liệu với Đơn hàng), Marketing (5), Thương hiệu & Media (5), Hệ thống
+(5, KHÔNG hiển thị bất kỳ giá trị biến môi trường/secret nào).
+
+### Dashboard v2 — `src/app/admin/(dashboard)/dashboard/page.tsx`
+
+Viết lại hoàn toàn theo 5 lớp: (1) Tổng quan hệ thống (đếm module thật/
+Sắp triển khai từ `flattenAdminNav()`), (2) Việc cần xử lý (đơn hàng
+pending + ticket open, số thật), (3) Quick Actions (6 nút, CHỈ trỏ route
+đã tồn tại thật — Landing Page/CKOS/Lesson/bài viết Dự án & Cơ hội/Quản
+lý dự án/Đơn hàng), (4) 7 Workspace dạng card (bỏ "Tổng quan" — chính là
+trang này; "Học viện" liệt kê 10 SubGroup thay vì 27 item lẻ, mỗi
+SubGroup cộng dồn số đếm các item con), (5) Hoạt động gần đây (gộp
+`orders`/`leads`/`support_tickets` mới nhất theo `created_at`, không
+phải dữ liệu giả). Link "Xem trên..." CHỈ gắn cho Website (`/`) và Học
+viện (`/portal`) — 5 Workspace còn lại không có URL công khai, không gắn
+link giả.
+
+### Đính chính rủi ro đã cân nhắc, quyết định giữ nguyên (không mở rộng)
+
+- "Thành viên" (Người dùng) KHÔNG tách UI riêng — cùng bảng `members`
+  với "Danh sách người dùng", tránh 2 menu cùng sở hữu 1 nguồn dữ liệu.
+- "Thanh toán" (Vận hành) KHÔNG có trang riêng — trạng thái nằm sẵn
+  trong cột `status` của Đơn hàng.
+- "Tiếp thị liên kết" (Vận hành) KHÔNG đụng `ecosystem_chrome.affiliateOffers`
+  (đã thuộc Workspace Học viện từ trước) — chỉ trỏ link tham chiếu.
+- "CTA" (Marketing) KHÔNG sửa nội dung CTA của bất kỳ module nào — chỉ
+  dự kiến đọc số liệu hiệu suất, việc sửa nội dung vẫn ở đúng module sở
+  hữu (Landing Page, Premium...).
+
+### Verify
+
+`tsc --noEmit`/`eslint src` sạch (0 lỗi mới — 18 warning còn lại đều có
+từ trước, không liên quan đợt này), `rm -rf .next && npm run build`
+sạch (32 route mới + toàn bộ route cũ xuất hiện đúng), `vitest run`
+139/139 pass. Test thật qua `next start` (curl, không cần đăng nhập):
+Landing Page `/` vẫn `200` + nội dung y hệt trước; `/portal` `200`
+(fallback công khai đúng thiết kế khi sandbox không cấu hình Supabase);
+mọi route `/admin/*` (cả cũ lẫn mới, 16 route mẫu) đều `307` redirect
+`/admin/login` — không route nào 404. Test tương tác Sidebar qua route
+devtest tạm (`AdminShell` bọc, không cần đăng nhập — đã xoá ngay sau khi
+xong): xem mục "AdminSidebar.tsx" ở trên.
+
+**Chưa tự test được:** thao tác Admin UI thật có tài khoản đăng nhập
+(cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài khoản
+Admin thật đã nêu nhiều lần) — đặc biệt 3 trang đọc dữ liệu thật (Đơn
+hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng) cần Founder tự xác nhận số
+liệu hiển thị đúng khớp Supabase Production trên Preview URL.
