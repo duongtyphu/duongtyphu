@@ -4843,3 +4843,70 @@ nhận không có giá trị secret nào bị lộ dù nhìn kỹ DOM/View Sourc
 
 **ĐÃ DỪNG SAU SPRINT 5 theo đúng chỉ đạo** — chưa động tới Học viện hay
 Marketing, chờ Founder/PMO duyệt báo cáo sprint trước khi tiếp tục.
+
+## ADM-V2-06 — Sprint 6: Marketing
+
+Founder chọn tiếp tục với Workspace "Marketing" (5 mục, cả 5 đều
+`comingSoon` từ Sprint 0).
+
+### Audit — 4/5 ghi chú gốc xác nhận ĐÚNG, 1 phát hiện mới cho "Chuyển đổi"
+
+Re-audit toàn bộ 5 mục (grep + Supabase `to_regclass()`):
+- Không có bảng `campaigns`/`email_campaigns`/`cta_events`/
+  `analytics_events` nào tồn tại.
+- Không có dịch vụ gửi email hàng loạt nào tích hợp (không
+  Resend/SendGrid/Nodemailer/SMTP). `EmailOptInForm` (`/contact`) chỉ
+  POST vào bảng `leads` (thu thập, không gửi).
+- Không có cơ chế tracking click CTA nào (không gtag custom event/bảng
+  riêng).
+- Google Analytics chỉ chạy script frontend (`NEXT_PUBLIC_GA_ID`) — đọc
+  lại số liệu cần Google Analytics Data API + quyền riêng, không tự tích
+  hợp được.
+
+→ 4/5 ghi chú gốc (Chiến dịch/Email Marketing/CTA/Phân tích Marketing)
+đều ĐÚNG, không có gì mới — giữ Empty State, chỉ đổi khung hiển thị (bỏ
+badge "Sắp ra mắt").
+
+**"Chuyển đổi" — phát hiện 1 phễu nội bộ tính được KHÔNG cần GA:** ghi
+chú gốc đúng là chưa có phễu đầy đủ "Landing Page → đăng ký → onboarding
+→ mua khoá học" (cần page-view analytics từ GA). Nhưng có 1 phễu HẸP hơn
+tính được ngay từ dữ liệu thật đã có: khách hàng tiềm năng (`leads`, có
+`source`) → có trở thành khách mua hàng không (khớp `email` với
+`orders.status='confirmed'`). 8 lead thật, 3 nguồn khác nhau tại thời
+điểm audit. Đây là góc nhìn TỔNG HỢP theo nguồn (khác "Khách hàng tiềm
+năng"/"Đơn hàng" ở Vận hành — 2 trang đó là danh sách RAW từng dòng),
+không tạo 2 nơi cùng quản 1 danh sách.
+
+### Đã làm
+
+- **Chuyển đổi** (`/admin/marketing/chuyen-doi`) — REAL: bảng tổng hợp
+  theo nguồn (số lead/số đã mua/tỷ lệ %) + 2 ô KPI (tổng lead, tỷ lệ
+  chuyển đổi tổng). Join `leads.email` với `orders.member_email` (đã
+  `confirmed`) bằng JS sau khi fetch cả 2 (không cần RPC/view SQL mới).
+- **Chiến dịch / Email Marketing / CTA / Phân tích Marketing** —
+  `AdminEmptyState` (bỏ badge "Sắp ra mắt"), mỗi trang giữ đúng lý do
+  trung thực đã audit lại, thêm `relatedLink` sang module thật gần nhất
+  (Mã giảm giá, Khách hàng tiềm năng, Landing Page, Chuyển đổi).
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục. Thêm 3 icon mới (`Mail`/`MousePointerClick`/
+`BarChart3`), tái dùng `Megaphone`/`TrendingUp` đã có sẵn.
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (5 route xuất hiện đúng). `next start` — 5 route trả
+`307` đúng, `/` vẫn `200`, log sạch. Playwright qua route devtest tạm
+(xoá + rebuild sạch sau khi xác nhận) — mở "Marketing": 0 badge "Sắp ra
+mắt" còn sót, đủ 5 mục hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** xem bảng Chuyển đổi qua Admin UI thật với dữ liệu
+Production (cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) —
+Founder tự test tại `/admin/marketing/chuyen-doi`, xác nhận tỷ lệ %
+khớp đúng số lead/đơn hàng thật.
+
+**ĐÃ DỪNG SAU SPRINT 6 theo đúng chỉ đạo** — chưa động tới Học viện (còn
+lại đúng 1 Workspace cuối cùng trong kế hoạch 8 sprint), chờ Founder/PMO
+duyệt báo cáo sprint trước khi tiếp tục.

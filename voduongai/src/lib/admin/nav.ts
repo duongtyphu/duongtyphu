@@ -204,11 +204,13 @@ export const adminWorkspaces: AdminWorkspace[] = [
     id: "marketing",
     label: "Marketing",
     items: [
-      { label: "Chiến dịch", href: "/admin/marketing/chien-dich", comingSoon: true },
-      { label: "Email Marketing", href: "/admin/marketing/email-marketing", comingSoon: true },
-      { label: "CTA", href: "/admin/marketing/cta", comingSoon: true },
-      { label: "Chuyển đổi", href: "/admin/marketing/chuyen-doi", comingSoon: true },
-      { label: "Phân tích Marketing", href: "/admin/marketing/phan-tich-marketing", comingSoon: true },
+      { label: "Chiến dịch", href: "/admin/marketing/chien-dich" },
+      { label: "Email Marketing", href: "/admin/marketing/email-marketing" },
+      { label: "CTA", href: "/admin/marketing/cta" },
+      // ADM-V2-06: đọc thật — phễu chuyển đổi leads→khách mua hàng theo
+      // nguồn (khớp email với orders.status=confirmed), không cần GA.
+      { label: "Chuyển đổi", href: "/admin/marketing/chuyen-doi" },
+      { label: "Phân tích Marketing", href: "/admin/marketing/phan-tich-marketing" },
     ],
   },
   {

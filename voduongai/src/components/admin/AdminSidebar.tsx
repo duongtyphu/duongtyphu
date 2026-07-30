@@ -74,6 +74,9 @@ import {
   ScrollText,
   DatabaseBackup,
   Server,
+  Mail,
+  MousePointerClick,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -175,6 +178,11 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/he-thong/nhat-ky-he-thong": ScrollText,
   "/admin/he-thong/sao-luu": DatabaseBackup,
   "/admin/he-thong/moi-truong": Server,
+  "/admin/marketing/chien-dich": Megaphone,
+  "/admin/marketing/email-marketing": Mail,
+  "/admin/marketing/cta": MousePointerClick,
+  "/admin/marketing/chuyen-doi": TrendingUp,
+  "/admin/marketing/phan-tich-marketing": BarChart3,
 };
 
 function isItemActive(pathname: string, href: string) {
