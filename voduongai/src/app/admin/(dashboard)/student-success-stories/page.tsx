@@ -60,7 +60,7 @@ export default function AdminStudentSuccessStoriesPage() {
         breadcrumb={[
           { label: "Học viện" },
           { label: "Cộng đồng", href: "/admin/community" },
-          { label: "Câu chuyện học viên" },
+          { label: "Câu chuyện học viên (chưa hiển thị Portal)" },
         ]}
       />
     </AdminAtmosphere>
