@@ -229,11 +229,17 @@ export const adminWorkspaces: AdminWorkspace[] = [
     id: "he-thong",
     label: "Hệ thống",
     items: [
-      { label: "Cấu hình chung", href: "/admin/he-thong/cau-hinh-chung", comingSoon: true },
-      { label: "API & Tích hợp", href: "/admin/he-thong/api-tich-hop", comingSoon: true },
-      { label: "Nhật ký hệ thống", href: "/admin/he-thong/nhat-ky-he-thong", comingSoon: true },
-      { label: "Sao lưu", href: "/admin/he-thong/sao-luu", comingSoon: true },
-      { label: "Môi trường", href: "/admin/he-thong/moi-truong", comingSoon: true },
+      { label: "Cấu hình chung", href: "/admin/he-thong/cau-hinh-chung" },
+      // ADM-V2-05: đọc thật AI Service Registry (checkAllProvidersHealth())
+      // — chỉ boolean đã cấu hình/chưa, KHÔNG hiển thị giá trị secret.
+      { label: "API & Tích hợp", href: "/admin/he-thong/api-tich-hop" },
+      // ADM-V2-05: đọc thật log AI Provider (provider-execution-log.ts,
+      // process-local) — khác "log lỗi server chung" (vẫn chưa có).
+      { label: "Nhật ký hệ thống", href: "/admin/he-thong/nhat-ky-he-thong" },
+      { label: "Sao lưu", href: "/admin/he-thong/sao-luu" },
+      // ADM-V2-05: boolean cấu hình hạ tầng lõi (Supabase) + NODE_ENV —
+      // KHÔNG hiển thị giá trị biến môi trường nào.
+      { label: "Môi trường", href: "/admin/he-thong/moi-truong" },
     ],
   },
 ];

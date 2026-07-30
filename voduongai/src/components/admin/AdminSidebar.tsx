@@ -69,6 +69,11 @@ import {
   Users2,
   Fingerprint,
   PackageOpen,
+  SlidersHorizontal,
+  Plug,
+  ScrollText,
+  DatabaseBackup,
+  Server,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -165,6 +170,11 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/thuong-hieu-media/logo-nhan-dien": Fingerprint,
   "/admin/thuong-hieu-media/tai-nguyen-thuong-hieu": PackageOpen,
   "/admin/thuong-hieu-media/tai-lieu": FileText,
+  "/admin/he-thong/cau-hinh-chung": SlidersHorizontal,
+  "/admin/he-thong/api-tich-hop": Plug,
+  "/admin/he-thong/nhat-ky-he-thong": ScrollText,
+  "/admin/he-thong/sao-luu": DatabaseBackup,
+  "/admin/he-thong/moi-truong": Server,
 };
 
 function isItemActive(pathname: string, href: string) {

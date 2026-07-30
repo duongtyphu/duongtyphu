@@ -4757,3 +4757,89 @@ sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại
 **ĐÃ DỪNG SAU SPRINT 4 theo đúng chỉ đạo** — chưa động tới Học viện hay
 bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint trước khi
 tiếp tục.
+
+## ADM-V2-05 — Sprint 5: Hệ thống (System)
+
+Founder chọn tiếp tục với Workspace "Hệ thống" (5 mục, cả 5 đều
+`comingSoon` từ Sprint 0) — workspace nhạy cảm nhất: mọi ghi chú gốc đều
+nhắc rõ "KHÔNG hiển thị bất kỳ giá trị biến môi trường/secret nào". Sprint
+này giữ đúng ràng buộc đó tuyệt đối — mọi trang chỉ hiển thị BOOLEAN
+đã cấu hình/chưa hoặc TÊN biến môi trường, KHÔNG BAO GIỜ giá trị thật.
+
+### Audit — phát hiện 1 hạ tầng thật đã có sẵn, chưa từng lộ ra Admin
+
+Audit `src/ai/**` (AI Service Registry, Phase 4 Epic 01 — hạ tầng có sẵn
+từ trước, không phải xây mới) phát hiện:
+- `checkAllProvidersHealth()` (`provider-health-check.ts`) — kiểm tra 10
+  AI Provider đã đăng ký (OpenAI/Anthropic/Gemini/DeepSeek/Grok/Mistral/
+  Ollama/Perplexity/Cohere/Mock) qua `adapter.healthCheck()` — MỖI adapter
+  chỉ tự xác nhận ENV có giá trị hay không (`isAvailable()`), KHÔNG gọi
+  mạng thật, `reason` trả về CHỈ LÀ TÊN biến môi trường thiếu (vd "Thiếu
+  ANTHROPIC_API_KEY."), không bao giờ chứa giá trị — đã đọc code từng
+  adapter xác nhận. Hạ tầng này đã phục vụ `/api/ai/provider-health` từ
+  trước (chỉ 3/10 provider), nhưng CHƯA từng có Admin UI nào gọi.
+- `provider-execution-log.ts` — log mỗi lần gọi AI Provider (provider/
+  capability/success/latency/lỗi), KHÔNG log nội dung prompt/raw (đã ghi
+  rõ trong chính file). **Lưu ý trung thực quan trọng:** log này lưu
+  TRONG BỘ NHỚ TIẾN TRÌNH (process-local), KHÔNG phải database — tự ghi
+  rõ trong file nguồn là "đủ cho dev/sandbox", cần thay bằng lưu trữ bền
+  vững nếu chạy nhiều instance/serverless (ngoài phạm vi sprint này).
+  Hiển thị ĐÚNG thực trạng này, không giả vờ đây là audit log đầy đủ.
+
+Không có bảng `system_config`/`feature_flags`/`audit_log`/`app_config`
+nào tồn tại (`to_regclass()` → null cả 4). `documents`/`digital_asset_settings`
+kiểm tra lại — không liên quan Hệ thống. `BRAND_VOICE_GUIDE.md` không có
+trong `voduongai/` (đã ghi từ Sprint 4).
+
+### Đã làm
+
+- **API & Tích hợp** (`/admin/he-thong/api-tich-hop`) — REAL: gọi
+  `checkAllProvidersHealth()` hiển thị 10 AI Provider (đã cấu hình/chưa,
+  BOOLEAN — text "Đã cấu hình" hoặc TÊN biến thiếu, không giá trị) + 2
+  dịch vụ khác (SePay Webhook, Google Analytics — cùng cách boolean).
+- **Nhật ký hệ thống** (`/admin/he-thong/nhat-ky-he-thong`) — REAL nhưng
+  phạm vi hẹp hơn ý tưởng gốc ("log lỗi server chung" — vẫn chưa có, chỉ
+  qua Vercel Dashboard): hiển thị `listExecutions()` (log AI Provider),
+  kèm cảnh báo rõ "process-local, có thể rỗng giữa các lần deploy".
+- **Môi trường** (`/admin/he-thong/moi-truong`) — REAL: `NODE_ENV` +
+  checklist boolean cấu hình Supabase lõi (4 biến: `SUPABASE_URL`/
+  `SUPABASE_SERVICE_ROLE_KEY`/`NEXT_PUBLIC_SUPABASE_URL`/
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY` — chỉ tên biến, không giá trị). Tách rõ
+  khỏi "API & Tích hợp" (AI Provider/dịch vụ khác) để không 2 trang cùng
+  sở hữu 1 nội dung.
+- **Cấu hình chung / Sao lưu** — `AdminEmptyState` (bỏ badge "Sắp ra
+  mắt"), re-audit xác nhận đúng ghi chú gốc (không có feature-flag nào;
+  sao lưu do Supabase quản lý hạ tầng, ứng dụng không có quyền đọc lại).
+  Cấu hình chung trỏ sang Header & Footer (nơi đã quản site-wide settings
+  thật) tránh trùng sở hữu dữ liệu.
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục. Thêm 5 icon (`SlidersHorizontal`/`Plug`/
+`ScrollText`/`DatabaseBackup`/`Server`).
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch (1 lỗi `react/no-unescaped-entities` tự phát hiện và
+sửa ngay — dấu ngoặc kép thẳng trong JSX text, đổi sang `&quot;`), `npx
+vitest run` 139/139 pass, `rm -rf .next && npm run build` sạch (5 route
+xuất hiện đúng). `next start` — 5 route trả `307` đúng, `/` vẫn `200`,
+log sạch. Playwright qua route devtest tạm (xoá + rebuild sạch sau khi
+xác nhận) — mở "Hệ thống": 0 badge "Sắp ra mắt" còn sót, đủ 5 mục hiện
+đúng, `page.on("pageerror")` rỗng.
+
+**Đã tự kiểm tra kỹ (khác các sprint trước):** vì đây là workspace nhạy
+cảm nhất, đã đọc lại TỪNG dòng code hiển thị trước khi build — xác nhận
+không có `console.log`/JSX nào in ra `process.env.X` (chỉ
+`Boolean(process.env.X)` hoặc so sánh y hệt pattern đã dùng an toàn xuyên
+suốt dự án từ trước).
+
+**Chưa tự test được:** xem trạng thái AI Provider/Môi trường qua Admin UI
+thật có tài khoản đăng nhập + Supabase thật (cùng giới hạn sandbox không
+có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại 3 trang REAL
+(`api-tich-hop`/`nhat-ky-he-thong`/`moi-truong`) trên Preview URL, xác
+nhận không có giá trị secret nào bị lộ dù nhìn kỹ DOM/View Source.
+
+**ĐÃ DỪNG SAU SPRINT 5 theo đúng chỉ đạo** — chưa động tới Học viện hay
+Marketing, chờ Founder/PMO duyệt báo cáo sprint trước khi tiếp tục.
