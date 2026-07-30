@@ -4156,3 +4156,51 @@ nhập (cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài
 khoản Admin thật đã nêu nhiều lần) — Founder tự test tại
 `/admin/landing`, xác nhận bút sửa (✎) hiện đúng ở cả 8 section, lưu
 xong `/` (Portal thật, không qua edit mode) phản ánh đúng nội dung mới.
+
+## BUG ĐÃ SỬA — `/admin/landing` crash ngay khi vào trang (client-side exception)
+
+Founder báo "Lỗi Admin - Landing page" ngay sau khi Landing Page CMS vừa
+deploy. Kiểm tra Vercel: deployment `READY`, không có runtime error/log
+lỗi nào (mọi request `/admin/landing` đều trả `200`) — nghĩa là lỗi xảy
+ra ở tầng client (crash trong trình duyệt), không lộ ra qua log server.
+
+**Nguyên nhân:** `LandingChromeContext.tsx`'s `LandingChromeProvider`
+trước đó dùng thẳng `rows: items` từ `useCollection()` — nhưng
+`useSupabaseCollection` khởi tạo `items = []` khi `enabled=true` (Admin
+edit mode) cho tới khi fetch xong (xem `store.ts`:
+`useState<T[]>(enabled ? [] : seed)`). Nghĩa là ở LẦN RENDER ĐẦU TIÊN
+tại `/admin/landing`, `rows=[]` — `useLandingChrome(sectionId)` (gọi
+trong cả 8 section: Hero/EcosystemPillars/PortalPreview/SkillsShowcase/
+ToolsIUse/TrustStats/Ecosystem/FinalCTA) không tìm thấy dòng nào và
+`throw new Error(...)` NGAY LẬP TỨC — crash toàn trang. Đây đúng là bug
+đã "vá" cho `EcosystemChromeContext`/`PremiumChromeContext` (fallback
+`items.find(...) ?? seedChrome`) nhưng bị bỏ sót khi viết
+`LandingChromeContext.tsx` mới cho Landing Page.
+
+**Đã sửa:** `LandingChromeProvider` giờ merge `items` đè lên
+`seedChrome` theo đúng `id`
+(`seedChrome.map((seed) => items.find((r) => r.id === seed.id) ?? seed)`)
+— luôn có đủ 8 dòng ngay từ lần render đầu (dùng seed làm fallback), chỉ
+thay bằng dữ liệu Supabase thật sau khi fetch xong. Trên Portal thật
+(`editMode=false`), `items` vốn đã bằng `seedChrome` (pass-through) nên
+merge này là no-op — 0 thay đổi hành vi/hiển thị công khai.
+
+**Verify NGHIÊM NGẶT (before/after, không chỉ đọc code):** dựng 1 route
+`devtest-landing-admin` tạm (render `<EditModeProvider><HomePage/></EditModeProvider>`
+không cần đăng nhập, xoá ngay sau khi xong) + test qua Playwright thật
+(`next dev`, Chromium proxy args). **Trước khi sửa** (`git stash` tạm
+file để tái hiện đúng code cũ): trang thiếu hẳn thẻ `<h1>` (đếm được 0),
+nội dung Hero bị thay bằng "Đang tải..." — xác nhận đúng bug. **Sau khi
+sửa:** `<h1>` xuất hiện đúng 1 lần, nội dung Hero/toàn trang render đầy
+đủ, `page.on("pageerror")` rỗng, không có chữ "Application error" nào
+trong DOM. `tsc`/`eslint` sạch, `rm -rf .next && npm run build` sạch
+(route `/admin/landing` vẫn xuất hiện đúng), `vitest run` 139/139 pass.
+
+**Bài học (áp dụng cho mọi Context multi-row tương lai):** khi viết 1
+Context chia sẻ `useCollection()` cho nhiều dòng (`ecosystem_chrome`,
+`landing_chrome`...), LUÔN fallback về seed theo từng `id` — không bao
+giờ dùng thẳng `items` (hoặc `items[0]`) làm nguồn duy nhất, vì
+`useCollection({enabled:true})` cố ý trả mảng rỗng ở lần render đầu tiên
+(trước khi fetch xong) theo đúng thiết kế của `store.ts`.
+
+**File sửa:** `src/components/home/LandingChromeContext.tsx` (duy nhất).

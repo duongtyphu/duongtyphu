@@ -12,6 +12,16 @@ import type { LandingChromeRow } from "@/lib/portal/live-landing-chrome";
  * gọi `useCollection()` ở `LandingChromeProvider` (bọc quanh toàn bộ
  * `HomeClient`), chia sẻ qua Context — mỗi section tự lọc đúng dòng của
  * mình qua `useLandingChrome(sectionId)`.
+ *
+ * BUG ĐÃ SỬA: `useSupabaseCollection` khởi tạo `items = []` khi
+ * `enabled=true` (Admin edit mode) cho tới khi fetch xong — nếu chỉ dùng
+ * thẳng `items` (bản đầu tiên của file này), MỌI lần render đầu tiên tại
+ * `/admin/landing` đều có `rows=[]`, khiến `useLandingChrome(sectionId)`
+ * không tìm thấy dòng nào và `throw Error` ngay lập tức → crash toàn
+ * trang. Đã sửa bằng cách merge `items` đè lên `seedChrome` theo đúng
+ * `id` (cùng kỹ thuật fallback `items.find(...) ?? seedChrome` đã dùng ở
+ * `EcosystemChromeContext`/`PremiumChromeContext`) — luôn có đủ 8 dòng
+ * ngay từ lần render đầu, không bao giờ throw.
  */
 type LandingChromeContextValue = {
   rows: LandingChromeRow[];
@@ -29,8 +39,9 @@ export function LandingChromeProvider({
 }) {
   const editMode = useEditMode();
   const { items, update } = useCollection<LandingChromeRow>("landing-chrome", seedChrome, { enabled: editMode });
+  const rows = seedChrome.map((seed) => items.find((r) => r.id === seed.id) ?? seed);
 
-  return <LandingChromeCtx.Provider value={{ rows: items, update }}>{children}</LandingChromeCtx.Provider>;
+  return <LandingChromeCtx.Provider value={{ rows, update }}>{children}</LandingChromeCtx.Provider>;
 }
 
 export function useLandingChrome(sectionId: string): LandingChromeRow & { update: LandingChromeContextValue["update"] } {
