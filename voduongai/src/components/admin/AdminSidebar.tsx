@@ -80,6 +80,9 @@ import {
   Route,
   ShoppingBag,
   Award,
+  Share2,
+  ShoppingCart,
+  Percent,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -104,6 +107,7 @@ const workspaceIcons: Record<string, LucideIcon> = {
   website: MonitorSmartphone,
   "hoc-vien": Landmark,
   "van-hanh": Briefcase,
+  affiliate: Share2,
   marketing: TrendingUp,
   "thuong-hieu-media": Palette,
   "he-thong": Settings,
@@ -172,7 +176,16 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/van-hanh/thanh-toan": CreditCard,
   "/admin/van-hanh/ma-giam-gia": Ticket,
   "/admin/van-hanh/khach-hang-tiem-nang": UserPlus,
-  "/admin/van-hanh/tiep-thi-lien-ket": Users2,
+  // "/admin/van-hanh/tiep-thi-lien-ket" đã chuyển sang Workspace "Affiliate"
+  // (route cũ giờ redirect, không còn nav item riêng — xem nav.ts).
+  "/admin/affiliate": Share2,
+  "/admin/affiliate/thanh-vien": IdCard,
+  "/admin/affiliate/referral": Users2,
+  "/admin/affiliate/don-hang": ShoppingCart,
+  "/admin/affiliate/hoa-hong": Wallet,
+  "/admin/affiliate/cau-hinh-hoa-hong": Percent,
+  "/admin/affiliate/yeu-cau-thanh-toan": CreditCard,
+  "/admin/affiliate/bao-cao": BarChart3,
   "/admin/van-hanh/ho-tro-khach-hang": LifeBuoy,
   "/admin/thuong-hieu-media/brand-studio": Palette,
   "/admin/thuong-hieu-media/media-center": Images,

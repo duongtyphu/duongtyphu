@@ -7,7 +7,7 @@ export const metadata = { title: "Kiếm thu nhập", description: "Affiliate Hu
 
 const ITEMS = [
   { icon: Users, title: "Dự án & Cơ hội", description: "Chọn ngách, chọn sản phẩm và xây hệ thống Affiliate đầu tiên.", href: "/portal/duan-cohoi" },
-  { icon: Percent, title: "Hoa hồng giới thiệu", description: "Theo dõi hoa hồng từ việc giới thiệu khóa học, sản phẩm.", href: "/portal/referral" },
+  { icon: Percent, title: "Chương trình Affiliate", description: "Theo dõi hoa hồng từ việc giới thiệu khóa học, sản phẩm.", href: "/portal/affiliate" },
   { icon: Package, title: "Sản phẩm của tôi", description: "Quản lý các sản phẩm số bạn đã sở hữu.", href: "/portal/my-products" },
   { icon: Handshake, title: "Dịch vụ", description: "Các dịch vụ đồng hành cùng VO DUONG AI.", href: "/portal/services" },
 ];

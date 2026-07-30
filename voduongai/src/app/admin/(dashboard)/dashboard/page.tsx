@@ -54,6 +54,10 @@ const TABLE_FOR_HREF: Record<string, string> = {
   "/admin/van-hanh/don-hang": "orders",
   "/admin/van-hanh/khach-hang-tiem-nang": "leads",
   "/admin/van-hanh/ho-tro-khach-hang": "support_tickets",
+  // Affiliate — chỉ "Referral" map 1:1 vào 1 bảng (referrals); các trang
+  // khác trong Workspace này (Thành viên/Đơn hàng/Hoa hồng/Báo cáo) là góc
+  // nhìn gộp/join từ cùng bảng đó, không đếm riêng để tránh 4 con số trùng.
+  "/admin/affiliate/referral": "referrals",
 };
 
 // Workspace nào có 1 trang công khai đại diện thật sự (không phải Portal
@@ -63,6 +67,7 @@ const TABLE_FOR_HREF: Record<string, string> = {
 const PUBLIC_URL_FOR_WORKSPACE: Record<string, { label: string; href: string }> = {
   website: { label: "Xem Landing Page", href: "/" },
   "hoc-vien": { label: "Xem trên Học viện", href: "/portal" },
+  affiliate: { label: "Xem trang Affiliate của thành viên", href: "/portal/affiliate" },
 };
 
 const QUICK_ACTIONS = [

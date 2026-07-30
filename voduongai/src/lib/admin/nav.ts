@@ -200,12 +200,33 @@ export const adminWorkspaces: AdminWorkspace[] = [
       { label: "Mã giảm giá", href: "/admin/van-hanh/ma-giam-gia" },
       // Bảng `leads` đã có dữ liệu thật (/api/leads).
       { label: "Khách hàng tiềm năng", href: "/admin/van-hanh/khach-hang-tiem-nang" },
-      // ADM-V2-03: đính chính — bảng `referrals` (đọc thật ở
-      // /portal/referral) là hệ hoa hồng giới thiệu thật, khác
-      // `ecosystem_chrome.affiliateOffers` (Workspace Học viện).
-      { label: "Tiếp thị liên kết", href: "/admin/van-hanh/tiep-thi-lien-ket" },
+      // "Tiếp thị liên kết" (bảng `referrals`) chuyển hẳn sang Workspace
+      // "Affiliate" (mục Referral) — tránh 2 nơi cùng sở hữu 1 nguồn dữ
+      // liệu (Single Ownership) khi Chương trình Affiliate được xây đầy đủ.
+      // Route cũ /admin/van-hanh/tiep-thi-lien-ket redirect sang đó.
       // Bảng `support_tickets` đã có dữ liệu thật (/portal/support).
       { label: "Hỗ trợ khách hàng", href: "/admin/van-hanh/ho-tro-khach-hang" },
+    ],
+  },
+  {
+    id: "affiliate",
+    label: "Affiliate",
+    // Chương trình Affiliate chính thức VO DUONG AI — tái sử dụng
+    // `members.referral_code`/`referrals` (đã tồn tại + đang chạy qua các
+    // trigger `set_referral_code`/`on_member_referred`/
+    // `handle_order_confirmed_commission`), mở rộng đúng 4 điểm audit xác
+    // nhận còn thiếu (capture ref_code lúc đăng ký, cấu hình hoa hồng theo
+    // sản phẩm, theo dõi lượt truy cập, yêu cầu thanh toán — xem
+    // `supabase-phase27-affiliate-program.sql`, ĐỀ XUẤT, chưa apply).
+    items: [
+      { label: "Tổng quan", href: "/admin/affiliate" },
+      { label: "Thành viên", href: "/admin/affiliate/thanh-vien" },
+      { label: "Referral", href: "/admin/affiliate/referral" },
+      { label: "Đơn hàng", href: "/admin/affiliate/don-hang" },
+      { label: "Hoa hồng", href: "/admin/affiliate/hoa-hong" },
+      { label: "Cấu hình hoa hồng theo sản phẩm", href: "/admin/affiliate/cau-hinh-hoa-hong" },
+      { label: "Yêu cầu thanh toán", href: "/admin/affiliate/yeu-cau-thanh-toan" },
+      { label: "Báo cáo", href: "/admin/affiliate/bao-cao" },
     ],
   },
   {

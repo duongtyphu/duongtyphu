@@ -5134,3 +5134,196 @@ backing, không suy từ nhóm/route lân cận.
 
 **Verify:** `tsc`/`eslint` sạch, `vitest run` 139/139, `rm -rf .next && npm
 run build` sạch.
+
+## Chương trình Affiliate — module đầy đủ (Portal + Admin), theo yêu cầu riêng
+
+Founder yêu cầu module hoa hồng giới thiệu CHÍNH THỨC (khác Affiliate Hub
+ở trên — đó là nội dung HƯỚNG DẪN cách làm affiliate ngoài, module này là
+CHƯƠNG TRÌNH GIỚI THIỆU của chính VDAI): mỗi user có mã/link giới thiệu
+riêng, tự động ghi nhận + tính hoa hồng khi người được giới thiệu mua hàng.
+
+### Phát hiện quan trọng nhất — audit trực tiếp Supabase (không suy đoán)
+
+Trước khi thiết kế bất kỳ schema nào, đã đọc trực tiếp trigger/function
+thật qua Supabase MCP — phát hiện **toàn bộ động cơ hoa hồng đã tồn tại
+sẵn và đang chạy**, chỉ 1 mắt xích bị thiếu:
+
+- `members.referral_code` — tự sinh cho MỌI user mới qua trigger
+  `set_referral_code` (`BEFORE INSERT ON members`).
+- `members.referred_by` — cột đã có từ trước nhưng **0/16 dòng có giá
+  trị** — chưa từng có nơi nào trong luồng đăng ký (`/register`, Google
+  OAuth) capture mã giới thiệu để ghi vào đây.
+- Trigger `on_member_referred` (`AFTER INSERT ON members`, hàm
+  `handle_new_referral()`) — ĐÃ CÓ SẴN: nếu `referred_by` khớp
+  `referral_code` của 1 member khác, tự tạo 1 dòng `referrals`
+  (`status='pending'`).
+- Trigger `on_order_confirmed` (`AFTER UPDATE ON orders`, hàm
+  `handle_order_confirmed_commission()`) — ĐÃ CÓ SẴN: khi
+  `orders.status` chuyển sang `'confirmed'`, tự tìm dòng `referrals`
+  pending khớp `referred_email`, tính `commission_amount = amount *
+  commission_rate` (mặc định 10%), chuyển `status='confirmed'`.
+
+→ Kết luận: **KHÔNG cần xây lại cơ chế ghi nhận/tính hoa hồng** — chỉ cần
+(1) vá đúng 1 chỗ hở (capture `ref_code` lúc đăng ký), (2) thêm cấu hình
+hoa hồng theo sản phẩm (audit xác nhận trigger hiện tại dùng CHUNG 1 mức
+10% cho mọi sản phẩm, không phân biệt), (3) thêm theo dõi lượt truy cập
+(chưa có cơ chế nào), (4) thêm yêu cầu thanh toán (chưa có bảng nào phù
+hợp tái dùng) — đúng nguyên tắc Reuse First/Single Source of Truth Founder
+yêu cầu.
+
+### Migration đề xuất — CHƯA APPLY, chờ Founder duyệt riêng
+
+`supabase-phase27-affiliate-program.sql` — 4 phần, mỗi phần có báo cáo rủi
+ro riêng ngay trong file:
+1. Sửa `handle_new_auth_user()` (trigger `auth.users` lõi) — thêm đúng 1
+   field `referred_by` vào insert có sẵn, đọc từ
+   `raw_user_meta_data->>'ref_code'`. Additive-only, fallback về hành vi
+   y hệt hiện tại nếu không có `ref_code`.
+2. Bảng mới `affiliate_commission_rules` (product_type/product_id/
+   commission_rate) + sửa `handle_order_confirmed_commission()` — thêm
+   bước tra cứu rate theo sản phẩm TRƯỚC khi tính hoa hồng, fallback về
+   10% mặc định nếu không có rule nào khớp.
+3. Bảng mới `affiliate_link_visits` (referral_code/visited_at/
+   landing_path) — theo dõi lượt truy cập, RLS chỉ admin đọc/ghi (ghi qua
+   service-role, không public insert).
+4. Bảng mới `affiliate_payout_requests` (member_id/amount_requested/
+   bank_info/status/admin_note) — yêu cầu rút hoa hồng, RLS
+   member chỉ đọc/tạo dòng của chính mình + admin toàn quyền.
+
+**2 rủi ro cao nhất đã ghi rõ trong file:** sửa 2 trigger ĐANG CHẠY THẬT
+(auth signup, order confirmation) — cả 2 đều thiết kế additive, có
+fallback về hành vi hiện tại, nhưng đây là đường DUY NHẤT mọi user/đơn
+hàng đi qua nên rủi ro hồi quy không phải bằng 0. Khuyến nghị Founder tự
+test đăng ký 1 tài khoản có `?ref=<code>` trên Preview URL sau khi apply.
+
+**Toàn bộ code Portal/Admin đã viết để hoạt động đúng cả TRƯỚC và SAU khi
+migration được duyệt** — mọi truy vấn tới 3 bảng mới đều bắt lỗi
+`42P01`/kiểm tra `error` từ Supabase (không throw), hiển thị thông báo
+trung thực "chưa được kích hoạt — chờ Founder duyệt migration" thay vì
+crash.
+
+### Portal — `/portal/affiliate` (thay thế `/portal/referral` cũ)
+
+Phát hiện: đã có sẵn `/portal/referral/page.tsx` (149 dòng, đọc đúng
+`referral_code`/`referrals`, KHÔNG có trong `portalNavSections`, chỉ được
+link mồ côi từ `/portal/earn`) làm gần hết việc Founder yêu cầu — **đã
+CHUYỂN (không tạo trang song song)** thành `/portal/affiliate`, mở rộng
+thêm QR code/lượt truy cập/khách hàng/đơn hàng/doanh thu/yêu cầu thanh
+toán theo đúng yêu cầu đầy đủ. Route cũ xoá hẳn (không redirect — chưa
+từng nằm trong nav chính thức nên không có rủi ro link chết ngoài 2 chỗ đã
+cập nhật: `/portal/earn`, comment trong `nav.ts`).
+
+- `src/lib/portal/live-affiliate.ts` (mới) — `getAffiliateOverview()`:
+  dùng session client (`getSupabaseServer()`) cho `members`/`referrals`
+  (đã có RLS "đọc dữ liệu của chính mình"); dùng `getSupabaseAdmin()` CHỈ
+  cho 2 việc hẹp đã scope đúng theo dữ liệu người dùng có quyền thấy — tra
+  `orders.amount` theo `order_id` đã có sẵn trong `referrals` của chính
+  mình (RLS `orders` không cho referrer đọc đơn của người khác, nhưng
+  referrer có quyền biết SỐ TIỀN đơn đã giới thiệu vì hoa hồng phụ thuộc
+  trực tiếp), và đếm `affiliate_link_visits` theo `referral_code` của
+  chính mình (bảng đó chỉ có policy admin). Giữ nguyên env-var guard
+  (`NEXT_PUBLIC_SUPABASE_URL`/`ANON_KEY`) TRƯỚC khi gọi
+  `getSupabaseServer()` — đúng convention `getPurchasedIds()`/
+  `getReferralData()` cũ, tự phát hiện và sửa (xem mục Bug bên dưới).
+- `src/app/portal/affiliate/page.tsx` — link giới thiệu + QR code (SVG,
+  sinh server-side qua package `qrcode` — dependency MỚI, pure JS, không
+  cần canvas/native, an toàn serverless) + 6 thẻ số liệu (lượt truy cập/
+  đăng ký/khách hàng/đơn hàng/doanh thu/hoa hồng) + khối trạng thái thanh
+  toán (số dư chờ/đã trả + nút "Yêu cầu thanh toán") + bảng lịch sử giao
+  dịch đầy đủ.
+- `src/app/portal/affiliate/actions.ts` — `requestAffiliatePayout()`, ghi
+  qua session client (KHÔNG dùng `getSupabaseAdmin()`) để RLS
+  `member_insert_own` tự bảo vệ — Security First, không có đường nào để 1
+  thành viên tạo yêu cầu đứng tên người khác.
+- `src/lib/portal/hubs.ts` — thêm `"Chương trình Affiliate"` (href
+  `/portal/affiliate`) ngay sau `"Premium"` trong `portalNavSections`
+  (đúng yêu cầu "đặt ở mục Premium" — cấu trúc nav Portal hiện tại là
+  danh sách phẳng 1 tầng, không có submenu lồng, nên vị trí liền kề là
+  cách thể hiện gần nhất).
+- `src/components/portal/PortalSidebar.tsx` — icon `Share2` cho
+  `/portal/affiliate`.
+
+### Admin — Workspace "Affiliate" mới (8 trang)
+
+Workspace TOÀN QUYỀN mới (`nav.ts`, id `affiliate`), đứng sau "Vận hành":
+Tổng quan, Thành viên, Referral, Đơn hàng, Hoa hồng, Cấu hình hoa hồng
+theo sản phẩm, Yêu cầu thanh toán, Báo cáo.
+
+- `src/lib/affiliate/admin-data.ts` — `loadAdminReferrals()` (join
+  `referrals`+`members`+`orders` 1 lần) + `summarizeByReferrer()` (gộp
+  theo người giới thiệu) — DÙNG CHUNG cho cả 6 trang đọc (Tổng quan/Thành
+  viên/Referral/Đơn hàng/Hoa hồng/Báo cáo), tránh 2 trang tính ra 2 con số
+  khác nhau cho cùng 1 câu hỏi.
+- `/admin/affiliate` (Tổng quan) — 4 KPI + top 5 người giới thiệu.
+- `/admin/affiliate/thanh-vien` — người ĐÃ giới thiệu thành công (khác
+  "Thành viên"/"Danh sách người dùng" ở Workspace Người dùng — góc nhìn
+  theo VAI TRÒ GIỚI THIỆU, không trùng).
+- `/admin/affiliate/referral` — danh sách đầy đủ, **thay thế hẳn**
+  `/admin/van-hanh/tiep-thi-lien-ket` cũ (route đó giờ `redirect()` sang
+  đây — tránh 2 nơi cùng sở hữu bảng `referrals`, đúng Single Ownership).
+- `/admin/affiliate/don-hang` — đơn hàng lọc theo có `order_id` trong
+  referrals (khác "Đơn hàng" ở Vận hành — danh sách RAW toàn bộ, không
+  phân biệt nguồn).
+- `/admin/affiliate/hoa-hong` — sổ giao dịch tiền (chỉ dòng đã phát sinh
+  hoa hồng, khác Referral liệt kê cả lượt đăng ký chưa mua).
+- `/admin/affiliate/cau-hinh-hoa-hong` — CRUD `affiliate_commission_rules`
+  (Server Actions riêng, bảng typed, cùng pattern `coupons`/`case_studies`
+  — không qua `/api/admin/collections/[table]`).
+- `/admin/affiliate/yeu-cau-thanh-toan` — duyệt/từ chối yêu cầu rút hoa
+  hồng. "Xác nhận đã thanh toán" là hành động THỦ CÔNG (Admin xác nhận đã
+  chuyển khoản thật ngoài hệ thống, giống cách `orders.status` được xác
+  nhận qua webhook SePay — sự kiện ngoài hệ thống, không phải trigger tự
+  suy luận) — đồng thời chuyển TOÀN BỘ dòng `referrals.status='confirmed'`
+  của đúng referrer đó sang `'paid'` (thiết kế đơn giản hoá: 1 lần duyệt =
+  thanh toán trọn gói số dư hiện có, không chia theo từng phần tiền lẻ).
+- `/admin/affiliate/bao-cao` — xu hướng theo tháng + bảng xếp hạng đầy đủ.
+
+`AdminSidebar.tsx` — thêm `workspaceIcons.affiliate = Share2` + 8
+`navIcons` tương ứng. `dashboard/page.tsx` — thêm
+`TABLE_FOR_HREF["/admin/affiliate/referral"] = "referrals"` (chỉ trang
+này map 1:1 vào đúng 1 bảng, 5 trang còn lại là góc nhìn gộp/join, không
+đếm riêng để tránh nhiều con số trùng nhau) +
+`PUBLIC_URL_FOR_WORKSPACE.affiliate` trỏ `/portal/affiliate`.
+
+### Bug tự phát hiện và sửa trước khi commit (chưa từng xuất bản)
+
+`getAffiliateOverview()` lúc đầu THIẾU guard kiểm tra
+`NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` trước khi gọi
+`getSupabaseServer()` — khác với `getPurchasedIds()`
+(`src/lib/access.ts`)/`getReferralData()` cũ (`/portal/referral`) đều có
+guard này. Khi Supabase chưa cấu hình (đúng trạng thái sandbox),
+`createServerClient()` bên trong ném lỗi "Your project's URL and Key are
+required..." — phát hiện qua test `next start` thật (so sánh log trước/
+sau khi hit `/portal/premium` (không lỗi) vs `/portal/affiliate` (có lỗi)
+để xác nhận đây là lỗi CỦA RIÊNG trang mới, không phải noise có sẵn toàn
+hệ thống). Đã thêm lại đúng guard, verify lại qua `next start` — 0 dòng
+lỗi trong log sau khi sửa.
+
+### Verify
+
+`npx tsc --noEmit`, `npx eslint src` (0 lỗi mới, 18 warning còn lại đều có
+từ trước), `npx vitest run` 139/139 pass, `rm -rf .next && npm run build`
+sạch (9 route mới xuất hiện đúng: `/portal/affiliate` + 8 route
+`/admin/affiliate/*`). Test thật qua `next start` (không cấu hình
+Supabase, đúng trạng thái sandbox) — `/portal/affiliate` trả `200` không
+lỗi log; cả 8 route `/admin/affiliate/*` + `/admin/van-hanh/tiep-thi-
+lien-ket` (redirect cũ) đều trả `307` redirect `/admin/login` đúng như kỳ
+vọng (chưa đăng nhập). Xác nhận qua Supabase MCP: `referrals` 0 dòng thật
+(Empty State đúng, không phải lỗi), `members.referred_by` 0/16 dòng có
+giá trị (xác nhận đúng gap đã audit), 2 bảng mới
+(`affiliate_commission_rules`/`affiliate_payout_requests`) chưa tồn tại
+(xác nhận migration đúng là CHƯA apply, code xử lý honest đúng như thiết
+kế).
+
+**Chưa tự test được (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/
+tài khoản đăng nhập thật đã nêu nhiều lần):** toàn bộ luồng thật có dữ
+liệu (đăng ký qua `?ref=`, mua hàng, xem thống kê, yêu cầu thanh toán,
+Admin duyệt) — phụ thuộc migration `supabase-phase27-affiliate-program.sql`
+được Founder duyệt và apply trước. Founder tự test trên Preview URL sau
+khi duyệt migration: (1) đăng ký 1 tài khoản mới qua link
+`?ref=<mã của tài khoản khác>`, xác nhận `members.referred_by` được set +
+1 dòng `referrals` mới xuất hiện; (2) mua 1 sản phẩm bằng tài khoản đó,
+xác nhận dòng `referrals` chuyển `confirmed` + `commission_amount` đúng;
+(3) `/portal/affiliate` của người giới thiệu hiện đúng số liệu; (4) tạo 1
+yêu cầu thanh toán, Admin duyệt ở `/admin/affiliate/yeu-cau-thanh-toan`,
+xác nhận referrals chuyển `paid`.
