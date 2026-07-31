@@ -13,6 +13,7 @@ import {
   Users,
   Compass,
   Sparkles,
+  Share2,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -31,6 +32,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/hocvienai": GraduationCap,
   "/portal/duan-cohoi": Rocket,
   "/portal/premium": Crown,
+  "/portal/affiliate": Share2,
   "/portal/hanhtrinhcuatoi": Compass,
   "/portal/su-menh-companion": Sparkles,
   "/portal/congdongai": Users,

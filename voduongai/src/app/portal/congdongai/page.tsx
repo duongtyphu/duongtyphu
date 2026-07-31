@@ -198,18 +198,6 @@ const LEARNING_SPACES = [
   },
 ] as const;
 
-/** @deprecated Việc 8 — thay bằng bảng `updates` (getLiveUpdates()), giữ
- * lại tham khảo/rollback. Nội dung thật, di dời nguyên vẹn từ
- * /portal/updates (Phase F.2). */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- giữ lại tham khảo/rollback, không còn consumer nào trong file này
-const NEWS = [
-  { date: "2026-06-20", title: "Thêm 3 Prompt mới cho Content & Affiliate", type: "Prompt" },
-  { date: "2026-06-15", title: "Cập nhật công cụ: thêm HeyGen vào Thư viện công cụ", type: "Công cụ" },
-  { date: "2026-06-10", title: "Ra mắt module Affiliate Hub mới với lộ trình từng bước", type: "Hệ sinh thái" },
-  { date: "2026-06-01", title: "Thêm bài học mới trong Học viện AI: Prompt Engineering cơ bản", type: "Khóa học" },
-  { date: "2026-05-25", title: "Cập nhật Template kế hoạch content 30 ngày", type: "Tài nguyên" },
-] as const;
-
 export default async function CommunityPage() {
   const [showcaseItems, updates, channels] = await Promise.all([
     getShowcaseItems(),

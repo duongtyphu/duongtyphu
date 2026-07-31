@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HomeClient } from "@/components/home/HomeClient";
+import { getLiveLandingChrome } from "@/lib/portal/live-landing-chrome";
 
 // Static canonical scoped to just "/" — the root layout's metadata is
 // shared by every route (about, contact, blogai, privacy...), so setting
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export default function Home() {
-  return <HomeClient />;
+export default async function Home() {
+  const seedChrome = await getLiveLandingChrome();
+  return <HomeClient seedChrome={seedChrome} />;
 }

@@ -33,6 +33,11 @@ export default function AdminWorkNeedsPage() {
         title="Học viện AI — Theo nhu cầu công việc"
         itemNoun="nhu cầu"
         fields={fields}
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Học viện AI", href: "/admin/hocvienai/work-needs" },
+          { label: "Theo nhu cầu công việc" },
+        ]}
         renderCard={(item) => (
           <div className="flex items-center gap-2">
             <span className="text-xl">{item.icon}</span>

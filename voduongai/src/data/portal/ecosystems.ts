@@ -88,24 +88,6 @@ export const DEFAULT_POTENTIAL_ANALYSIS: PotentialAnalysisItem[] = [
   { id: "pa_clear_model", criterion: "Mô hình vận hành dễ hiểu, không mập mờ", status: "not-assessed" },
 ];
 
-/**
- * @deprecated Mở rộng riêng "Thêm được các dự án con" đã chuyển hẳn dữ
- * liệu dự án con sang bảng Supabase `ecosystem_subprojects` (xem
- * `src/lib/portal/live-subprojects.ts`) — không còn consumer nào đọc
- * `Ecosystem.subProjects`/`getSubProjectBySlug()` nữa. Giữ lại type + 2
- * ecosystem có `subProjects` thật bên dưới làm tham khảo/rollback (đúng
- * dữ liệu gốc đã migrate, không xoá để dễ đối chiếu).
- */
-export type SubProject = {
-  id: string;
-  slug: string;
-  name: string;
-  shortDescription: string;
-  colorIndex: number;
-  marketingLinks: MarketingLink[];
-  potentialAnalysis?: PotentialAnalysisItem[];
-};
-
 /** Field box (Type B only — Blockchain & Crypto). */
 export type EcosystemFieldBox = {
   id: string;
@@ -156,8 +138,6 @@ export type Ecosystem = {
    * "sub-projects" (parent-level box) and unused (honestly empty) by the
    * other structure types, which use their own scoped link lists instead. */
   marketingLinks: MarketingLink[];
-  /** "sub-projects" only — honestly empty array if no real sub-project exists yet. */
-  subProjects?: SubProject[];
   /** "two-field" only. */
   fields?: EcosystemFieldBox[];
   /** "affiliate-list" only. */
@@ -199,56 +179,6 @@ export const ecosystems: Ecosystem[] = [
         visible: true,
       },
     ],
-    subProjects: [
-      {
-        id: "sub_digiu_alphamind",
-        slug: "alphamind",
-        name: "Khoá học Alphamind",
-        shortDescription: "Một sản phẩm học trong hệ sinh thái DigiU — đăng ký qua cùng cổng tài khoản DigiU.",
-        colorIndex: 0,
-        marketingLinks: [
-          {
-            id: "link_alphamind",
-            label: "Đăng ký Khoá học Alphamind",
-            url: "https://lk.digiu.ai/auth/registration/6845205668",
-            order: 1,
-            visible: true,
-          },
-        ],
-      },
-      {
-        id: "sub_digiu_webwisepay",
-        slug: "webwisepay",
-        name: "Mở thẻ WebWisePay",
-        shortDescription: "Sản phẩm thẻ trong hệ sinh thái DigiU — đăng ký qua Telegram bot riêng.",
-        colorIndex: 1,
-        marketingLinks: [
-          {
-            id: "link_webwisepay",
-            label: "Mở thẻ WebWisePay (Telegram)",
-            url: "https://t.me/WebWisePay_bot?start=ref_49419218-1eac-4683-ab3e-74a7ca266da0",
-            order: 1,
-            visible: true,
-          },
-        ],
-      },
-      {
-        id: "sub_digiu_deposits",
-        slug: "deposits",
-        name: "Mở khoản tiền gửi (Deposits)",
-        shortDescription: "Sản phẩm tiền gửi trong hệ sinh thái DigiU — đăng ký qua cùng cổng tài khoản DigiU.",
-        colorIndex: 2,
-        marketingLinks: [
-          {
-            id: "link_deposits",
-            label: "Mở khoản tiền gửi (Deposits)",
-            url: "https://lk.digiu.ai/auth/registration/6845205668",
-            order: 1,
-            visible: true,
-          },
-        ],
-      },
-    ],
     order: 1,
     status: "Published",
   },
@@ -278,40 +208,6 @@ export const ecosystems: Ecosystem[] = [
         url: "https://reg.solargroup.pro/vi/user/ref/plan/my-status?ref_code=frp116",
         order: 1,
         visible: true,
-      },
-    ],
-    subProjects: [
-      {
-        id: "sub_solargroup_sovelmash",
-        slug: "sovelmash",
-        name: "Nhà máy Sovelmash",
-        shortDescription: "Một dự án con trong hệ sinh thái SolarGroup — đăng ký qua link riêng của dự án.",
-        colorIndex: 0,
-        marketingLinks: [
-          {
-            id: "link_sovelmash",
-            label: "Xem dự án Nhà máy Sovelmash",
-            url: "https://reg.solargroup.pro/frp116/solargroup",
-            order: 1,
-            visible: true,
-          },
-        ],
-      },
-      {
-        id: "sub_solargroup_aeronova",
-        slug: "aeronova",
-        name: "Dự án Khí cầu thế hệ mới AERONOVA",
-        shortDescription: "Một dự án con trong hệ sinh thái SolarGroup — đăng ký qua link riêng của dự án.",
-        colorIndex: 1,
-        marketingLinks: [
-          {
-            id: "link_aeronova",
-            label: "Xem dự án Khí cầu AERONOVA",
-            url: "https://reg.solargroup.pro/frp116/airships",
-            order: 1,
-            visible: true,
-          },
-        ],
       },
     ],
     order: 2,
@@ -431,6 +327,3 @@ export function getEcosystemBySlug(slug: string): Ecosystem | undefined {
   return ecosystems.find((e) => e.slug === slug && e.status === "Published");
 }
 
-export function getSubProjectBySlug(ecosystem: Ecosystem, subProjectSlug: string): SubProject | undefined {
-  return ecosystem.subProjects?.find((p) => p.slug === subProjectSlug);
-}

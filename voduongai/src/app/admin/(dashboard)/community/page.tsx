@@ -44,6 +44,11 @@ export default function AdminCommunityPage() {
         fields={fields}
         itemNoun="Kênh"
         addButtonLabel="+ Thêm kênh"
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Cộng đồng", href: "/admin/community" },
+          { label: "Kênh cộng đồng" },
+        ]}
       />
     </AdminAtmosphere>
   );

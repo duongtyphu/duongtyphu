@@ -198,6 +198,20 @@ export default async function EcosystemMiniSitePage({
         {eco.structureType === "affiliate-list" && (
           <>
             <EcosystemAffiliateOffersBox />
+            <GemCard className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900">Affiliate Hub — hướng dẫn thực chiến</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Lộ trình bắt đầu, chọn ngách, chọn sản phẩm, xây nội dung và công cụ đề xuất.
+                </p>
+              </div>
+              <Link
+                href="/portal/affiliate-hub"
+                className="shrink-0 rounded-xl bg-brand-blue px-4 py-2 text-sm font-bold text-white transition hover:opacity-90"
+              >
+                Xem Affiliate Hub →
+              </Link>
+            </GemCard>
             <EcosystemVideosBox />
             <EcosystemDocumentsBox />
             <PotentialAnalysisLive entityId={eco.id} seedRows={ratingSeed} />

@@ -34,19 +34,39 @@ export async function middleware(request: NextRequest) {
 
   const { data } = await supabase.auth.getUser();
 
-  const isPortalRoute = isProtectedRoute(request.nextUrl.pathname);
-  const isLoginRoute = request.nextUrl.pathname === "/login";
-  const isAdminLoginRoute = request.nextUrl.pathname === "/admin/login";
-  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin") && !isAdminLoginRoute;
+  const pathname = request.nextUrl.pathname;
+  const isPortalRoute = isProtectedRoute(pathname);
+  const isOnboardingRoute = pathname === "/onboarding";
+  const isPortalOnlyRoute = isPortalRoute && !isOnboardingRoute;
+  const isLoginRoute = pathname === "/login" || pathname === "/register";
+  const isAdminLoginRoute = pathname === "/admin/login";
+  const isAdminRoute = pathname.startsWith("/admin") && !isAdminLoginRoute;
 
   if (isPortalRoute && !data.user) {
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("next", request.nextUrl.pathname);
+    loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   if (isLoginRoute && data.user) {
     return NextResponse.redirect(new URL("/portal", request.url));
+  }
+
+  // Onboarding gate: user mới (chưa có members.onboarding_completed_at)
+  // phải hoàn tất hồ sơ trước khi vào bất kỳ trang /portal/* nào — không
+  // áp dụng cho chính /onboarding (tránh redirect loop) hay /admin/*.
+  if (isPortalOnlyRoute && data.user) {
+    const { data: member } = await supabase
+      .from("members")
+      .select("onboarding_completed_at")
+      .eq("id", data.user.id)
+      .single();
+
+    if (!member?.onboarding_completed_at) {
+      const onboardingUrl = new URL("/onboarding", request.url);
+      onboardingUrl.searchParams.set("next", pathname);
+      return NextResponse.redirect(onboardingUrl);
+    }
   }
 
   if (isAdminRoute || isAdminLoginRoute) {
@@ -73,5 +93,5 @@ export async function middleware(request: NextRequest) {
 // Next.js requires matcher patterns to be static string literals — keep
 // this list in sync with PROTECTED_ROUTE_PREFIXES in src/lib/protected-routes.ts.
 export const config = {
-  matcher: ["/portal/:path*", "/login", "/admin/:path*"],
+  matcher: ["/portal/:path*", "/onboarding", "/login", "/register", "/admin/:path*"],
 };

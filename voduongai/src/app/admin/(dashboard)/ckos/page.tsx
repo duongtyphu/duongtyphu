@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
+import { AdminBreadcrumb } from "@/components/admin/AdminBreadcrumb";
 import { listCaseStudies } from "./case-studies/actions";
 
 export const metadata = { title: "CKOS Dashboard · Admin" };
@@ -102,6 +103,9 @@ export default async function CkosDashboardPage() {
   return (
     <AdminAtmosphere atmosphereClassName="ckos-atmosphere-bg">
       <div className="space-y-8">
+        <AdminBreadcrumb
+          trail={[{ label: "Học viện" }, { label: "Hệ tri thức AI (CKOS)" }, { label: "CKOS Dashboard" }]}
+        />
         <div>
           <h1 className="text-xl font-extrabold text-gray-900">CKOS Dashboard</h1>
           <p className="mt-1 text-sm text-gray-500">

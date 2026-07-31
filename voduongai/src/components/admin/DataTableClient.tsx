@@ -6,6 +6,7 @@ import { Plus, Pencil, Trash2 } from "lucide-react";
 import { useCollection } from "@/lib/admin/store";
 import { DataTableRowPanel } from "@/components/admin/DataTableRowPanel";
 import { isRowIncomplete, type ColumnConfig, type FieldConfig } from "@/lib/admin/fields";
+import { AdminBreadcrumb, type AdminBreadcrumbItem } from "@/components/admin/AdminBreadcrumb";
 
 type BaseItem = { id: string; status?: string };
 
@@ -24,6 +25,7 @@ export function DataTableClient<T extends BaseItem>({
   itemNoun,
   addButtonLabel,
   panelLabel,
+  breadcrumb,
 }: {
   collectionKey: string;
   title: string;
@@ -33,6 +35,7 @@ export function DataTableClient<T extends BaseItem>({
   itemNoun?: string;
   addButtonLabel?: string;
   panelLabel?: string;
+  breadcrumb?: AdminBreadcrumbItem[];
 }) {
   const router = useRouter();
   const { remove } = useCollection<T>(collectionKey, []);
@@ -61,6 +64,7 @@ export function DataTableClient<T extends BaseItem>({
 
   return (
     <div className="space-y-4">
+      {breadcrumb && <AdminBreadcrumb trail={breadcrumb} />}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-extrabold text-gray-900">
           {title}

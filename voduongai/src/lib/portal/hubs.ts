@@ -95,6 +95,7 @@ export const portalNavSections: NavSection[] = [
       { label: "AI Workspace", href: "/portal/aiworkspace" },
       { label: "Dự án & Cơ hội", href: "/portal/duan-cohoi" },
       { label: "Premium", href: "/portal/premium" },
+      { label: "Chương trình Affiliate", href: "/portal/affiliate" },
       { label: "Hành trình của tôi", href: "/portal/hanhtrinhcuatoi" },
     ],
   },

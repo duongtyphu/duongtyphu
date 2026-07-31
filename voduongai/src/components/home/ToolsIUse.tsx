@@ -7,6 +7,14 @@ import { Pause, Play } from "lucide-react";
 import { tools } from "@/data/tools";
 import { logoUrl } from "@/lib/logo";
 import { RevealText } from "@/components/home/RevealText";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const TOOLS_I_USE_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên", type: "text", required: true },
+  { key: "heading", label: "Tiêu đề section", type: "text", required: true },
+];
 
 // Duplicated once so the marquee track can loop seamlessly at -50%.
 const marqueeTools = [...tools, ...tools];
@@ -17,6 +25,7 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
   // and previously only paused on :hover, leaving keyboard/touch users with
   // no way to stop it. This button gives everyone an explicit control.
   const [paused, setPaused] = useState(false);
+  const chrome = useLandingChrome("tools-i-use");
   return (
     <section
       id="cong-cu-toi-dung"
@@ -29,20 +38,22 @@ export function ToolsIUse({ variant = "dark" }: { variant?: "dark" | "light" }) 
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto max-w-7xl px-6 text-center"
       >
-        <span
-          className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
-            isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
-          }`}
-        >
-          🛠️ Thực chiến
-        </span>
-        <h2
-          className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${
-            isLight ? "text-[#0B0F2E]" : "text-white"
-          }`}
-        >
-          <RevealText>Những công cụ tôi thực sự đang dùng</RevealText>
-        </h2>
+        <EditableRegion record={chrome} fields={TOOLS_I_USE_FIELDS} update={chrome.update}>
+          <span
+            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] backdrop-blur-md ${
+              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+            }`}
+          >
+            {chrome.eyebrowBadge}
+          </span>
+          <h2
+            className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${
+              isLight ? "text-[#0B0F2E]" : "text-white"
+            }`}
+          >
+            <RevealText>{chrome.heading ?? ""}</RevealText>
+          </h2>
+        </EditableRegion>
       </motion.div>
 
       <motion.div

@@ -3,6 +3,15 @@
 import { useState } from "react";
 import { Check, Play } from "lucide-react";
 import { motion } from "framer-motion";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const SKILLS_SHOWCASE_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên", type: "text", required: true },
+  { key: "heading", label: "Tiêu đề section", type: "textarea", full: true, required: true },
+  { key: "youtubeId", label: "YouTube video ID", type: "text", required: true },
+];
 
 const LEFT_SKILLS = [
   "Viết Prompt hiệu quả",
@@ -20,8 +29,6 @@ const RIGHT_SKILLS = [
   "Tư duy và giải quyết vấn đề",
 ];
 
-const YOUTUBE_ID = "zH5IvC-A6iI";
-
 /**
  * "10 Kỹ năng AI cần có" section — sits between QuizAssessment and
  * ToolsIUse. A single card split 55/45 (text/video). Video is a
@@ -32,6 +39,7 @@ const YOUTUBE_ID = "zH5IvC-A6iI";
 export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
   const [playing, setPlaying] = useState(false);
+  const chrome = useLandingChrome("skills-showcase");
 
   return (
     <section
@@ -40,13 +48,15 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
     >
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto mb-8 max-w-2xl text-center">
-          <span
-            className={`inline-flex items-center rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] ${
-              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
-            }`}
-          >
-            🎯 10 Kỹ năng AI cần có
-          </span>
+          <EditableRegion record={chrome} fields={SKILLS_SHOWCASE_FIELDS} update={chrome.update} as="span">
+            <span
+              className={`inline-flex items-center rounded-full border px-3.5 py-1 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+                isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              }`}
+            >
+              {chrome.eyebrowBadge}
+            </span>
+          </EditableRegion>
         </div>
 
         <motion.div
@@ -61,13 +71,15 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           }`}
         >
           <div className="flex flex-col justify-center p-6 md:p-8">
-            <h2
-              className={`text-[1.4rem] font-extrabold leading-[1.35] tracking-[-.3px] md:text-[1.6rem] ${
-                isLight ? "text-[#0B0F2E]" : "text-white"
-              }`}
-            >
-              Những kỹ năng thiết yếu giúp bạn tạo lợi thế cạnh tranh trong kỷ nguyên AI.
-            </h2>
+            <EditableRegion record={chrome} fields={SKILLS_SHOWCASE_FIELDS} update={chrome.update}>
+              <h2
+                className={`text-[1.4rem] font-extrabold leading-[1.35] tracking-[-.3px] md:text-[1.6rem] ${
+                  isLight ? "text-[#0B0F2E]" : "text-white"
+                }`}
+              >
+                {chrome.heading}
+              </h2>
+            </EditableRegion>
             <div className="mt-6 grid grid-cols-2 gap-x-5 gap-y-3.5">
               <ul className="flex flex-col gap-3.5">
                 {LEFT_SKILLS.map((skill, i) => (
@@ -111,7 +123,7 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
           >
             {playing ? (
               <iframe
-                src={`https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3`}
+                src={`https://www.youtube.com/embed/${chrome.youtubeId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3`}
                 title="Võ Đương Official"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -126,7 +138,7 @@ export function SkillsShowcase({ variant = "dark" }: { variant?: "dark" | "light
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- external YouTube thumbnail, no remote pattern configured for next/image */}
                 <img
-                  src={`https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`}
+                  src={`https://img.youtube.com/vi/${chrome.youtubeId}/maxresdefault.jpg`}
                   alt=""
                   className="absolute inset-0 h-full w-full object-cover"
                 />

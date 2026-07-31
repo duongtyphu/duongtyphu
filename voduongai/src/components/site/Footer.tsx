@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import type { SiteSettings } from "@/lib/site-settings";
 import { brandMain, brandAccent } from "@/lib/brand-name";
 import { useLandingTheme } from "@/components/site/LandingThemeProvider";
+import { isThemeAwareRoute } from "@/lib/site/theme-routes";
 import { siteConfig } from "@/lib/site";
 
 const columns = [
@@ -79,7 +80,7 @@ function getSocials(settings: SiteSettings) {
 export function Footer({ settings }: { settings: SiteSettings }) {
   const pathname = usePathname();
   const { theme } = useLandingTheme();
-  const isLight = pathname === "/" && theme === "light";
+  const isLight = isThemeAwareRoute(pathname) && theme === "light";
   const socials = getSocials(settings);
 
   return (

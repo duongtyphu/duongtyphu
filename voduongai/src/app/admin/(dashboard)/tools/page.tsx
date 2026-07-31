@@ -70,5 +70,17 @@ const fields: FieldConfig[] = [
 ];
 
 export default function AdminToolsPage() {
-  return <DataTable<AdminTool> collectionKey="tools" title="Công cụ AI" columns={columns} fields={fields} />;
+  return (
+    <DataTable<AdminTool>
+      collectionKey="tools"
+      title="Công cụ AI"
+      columns={columns}
+      fields={fields}
+      breadcrumb={[
+        { label: "Học viện" },
+        { label: "AI Workspace", href: "/admin/tools" },
+        { label: "Công cụ AI" },
+      ]}
+    />
+  );
 }

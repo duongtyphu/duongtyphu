@@ -14,8 +14,14 @@ Admin mới (`src/app/admin/**`, `src/components/admin/**`) phải dùng **NỀN
 SÁNG, giống hệt `/portal`** — không dùng nền tối navy (đó là thiết kế Admin
 cũ, đã bỏ). Màu nhấn CTA chính vẫn là `brand-blue`. Trước khi build bất kỳ
 trang/component UI nào trong `/admin`, luôn đọc lại component thật tương ứng
-ở `/portal` để lấy đúng class Tailwind/bố cục/token — luôn dùng class
-Tailwind token có sẵn, không viết hex thô.
+ở `/portal` **VÀ ở Landing Page bản chính thức (`/`, `src/app/page.tsx` +
+`src/components/home/**`/`src/components/site/**`)** để lấy đúng class
+Tailwind/bố cục/token/màu — luôn dùng class Tailwind token có sẵn, không
+viết hex thô, không bịa lại 1 phiên bản khác của thứ đã có thật. Việc build
+Logo & Nhận diện (ADM-V2-04) từng vi phạm chính nguyên tắc này — copy
+nguyên mẫu logo tĩnh của website HTML CŨ (`duongtyphu/` ở repo root, ngoài
+dự án Next.js này) thay vì đọc `HeaderClient.tsx`/`Footer.tsx` thật — đã
+sửa lại, xem mục "Logo & Nhận diện — sửa snippet lệch" bên dưới.
 
 - **Nền GỐC dùng chung toàn Shell (không phải toàn bộ nền — xem mục
   "atmosphere riêng từng trang" ngay dưới):** tái sử dụng thẳng component
@@ -3902,3 +3908,1422 @@ hạn sandbox đã nêu nhiều lần) — Founder tự test trên Preview URL, 
 biệt xác nhận: bấm "Lưu" sau khi thêm URL thật cho 1-2 mục (ví dụ dán link
 Lazada thật) → tải lại trang → link hiện đúng dạng nút bấm được (không
 còn khung "Chưa có link tiếp thị thật").
+
+## BUG P0 ĐÃ SỬA — trigger tạo `members` thiếu cột `email`, chặn TOÀN BỘ đăng ký mới
+
+Phát hiện khi audit riêng luồng Login/Signup trên nhánh `admin-rebuild`
+(trước khi nhánh này được chốt là "đã gộp vào" `claude/landing-preview-nextjs`
+— xem lịch sử: `claude/landing-preview-nextjs` được tạo ra TỪ chính
+`admin-rebuild`, `admin-rebuild` đã bị xoá sau khi xác nhận không còn nội
+dung nào chưa có ở đây). Ghi lại nguyên vẹn ở đây vì đây là bug thật, ảnh
+hưởng CHÍNH nhánh này (`landing-preview-nextjs` giờ có cả Identity Hub —
+`/register`, Google OAuth — tất cả đều đi qua đúng trigger này).
+
+**Nguyên nhân:** trigger `handle_new_auth_user()` (`AFTER INSERT ON
+auth.users`, tự tạo dòng `public.members` cho mọi user mới) chỉ insert
+`(id, full_name)` — thiếu `email`, trong khi `members.email` là `NOT
+NULL`. Postgres raise lỗi ngay tại trigger → cả transaction tạo
+`auth.users` rollback → GoTrue trả lỗi 500. Kết quả: **mọi lần đăng ký
+email chưa từng tồn tại (dù qua Register/password, Google OAuth, hay
+magic-link) đều thất bại.**
+
+**Đã sửa trực tiếp trên Supabase (project `uosxpxolsvwcafxvnroy`, dùng
+chung cho mọi nhánh/deploy)** — `apply_migration` sửa trigger thêm
+`email`:
+```sql
+insert into public.members (id, email, full_name)
+values (new.id, new.email, coalesce(new.raw_user_meta_data->>'full_name', new.email))
+on conflict (id) do nothing;
+```
+**Đã backfill 1 nạn nhân thật** đã bị rollback trước khi có bản fix:
+`hhhgmail@gmail.com` (tạo 2026-06-15) — tồn tại trong `auth.users` nhưng
+mồ côi trong `members`, đã insert bù, giữ nguyên `full_name` thật đã có
+sẵn trong `raw_user_meta_data`.
+
+**Đã sửa thêm 1 landmine trên chính nhánh này:** `supabase-phase23-identity-hub.sql`
+(migration Identity Hub, staged — Founder tự chạy tay, chưa auto-apply)
+tái tạo LẠI đúng trigger này với cùng lỗi thiếu `email` — nếu chạy như
+bản gốc sẽ ghi đè bản fix, làm Register/Google OAuth/magic-link lại hỏng
+hết. Đã sửa file `supabase-phase23-identity-hub.sql` thêm `email` vào
+insert TRƯỚC KHI Founder chạy migration này. Đã sửa luôn
+`supabase-admin-auth.sql` (script bootstrap admin) — cùng lỗi thiếu
+`email`, hiện vô hại vì đã chạy thành công từ trước (row Founder đã tồn
+tại), nhưng sẽ fail nếu chạy lại trên project mới/reset.
+
+**Verify (test API thật qua `@supabase/supabase-js`, tài khoản QA
+disposable domain `.invalid` — không gửi email tới ai thật, đã xoá sạch
+sau test):** `signInWithPassword` đúng/sai mật khẩu → đúng hành vi;
+`getUser`/`refreshSession` → session hợp lệ, refresh hoạt động (cơ chế
+nền cho session persistence qua cookie `@supabase/ssr`);
+`resetPasswordForEmail` báo lỗi domain `.invalid` không hợp lệ — đúng vì
+GoTrue chặn trước khi gửi mail cho domain không có MX record, KHÔNG phải
+bug, domain thật (gmail.com...) không gặp lỗi này. Đọc code xác nhận
+`middleware.ts`/`protected-routes.ts` gate `/portal/*` đúng, `/admin/*`
+check thêm `members.is_admin` riêng.
+
+**Chưa tự test được:** đăng ký thật qua `/register`/Google OAuth trên
+Preview URL của nhánh này với tài khoản Admin thật (giới hạn sandbox đã
+nêu nhiều lần) — Founder tự thử 1 email thật chưa từng dùng để xác nhận
+trực quan lần cuối, đặc biệt kiểm tra bước onboarding (`interests`/
+`ai_goal`...) chạy đúng sau khi trigger tạo `members` thành công.
+
+## BUG P0 ĐÃ SỬA — `members` thiếu RLS UPDATE cho user tự sửa hồ sơ, kẹt vĩnh viễn ở `/onboarding`
+
+Phát hiện khi test trực tiếp luồng Register → Onboarding → Portal bằng
+API thật (tài khoản QA disposable, domain `.invalid`) theo yêu cầu
+Founder "test luồng đăng nhập vào portal". Nghiêm trọng hơn cả bug
+trigger thiếu `email` đã sửa trước đó — bug này chặn **mọi user mới sau
+khi đăng ký thành công**, không phải chỉ chặn lúc tạo tài khoản.
+
+**Nguyên nhân:** `members` bật RLS nhưng chỉ có 2 policy SELECT cho user
+thường (`auth.uid() = id`) + 1 policy `admin_all` (`FOR ALL USING
+(is_app_admin())`) cho Admin — **không có policy UPDATE nào cho user tự
+sửa hồ sơ của chính mình**. `completeOnboarding()`
+(`src/app/onboarding/actions.ts`) và `updateProfile()`
+(`src/app/portal/account/actions.ts`) đều gọi
+`.from("members").update(...).eq("id", user.id)` qua client anon-key +
+cookie session (`src/lib/supabase-server.ts`) — RLS **âm thầm lọc bỏ
+dòng khỏi UPDATE (0 dòng bị ảnh hưởng, KHÔNG trả lỗi)**, code tưởng
+thành công → `redirect(next)`. `middleware.ts`'s onboarding gate kiểm
+tra lại `onboarding_completed_at` (vẫn `null`) → đá ngược `/onboarding`
+→ **vòng lặp vô hạn, không bao giờ vào được `/portal`**. Founder chưa
+từng gặp vì tài khoản Founder `is_admin=true` luôn khớp `admin_all`,
+bypass hoàn toàn lỗi này.
+
+**Đã sửa qua `apply_migration`** — thêm policy UPDATE cho user tự sửa hồ
+sơ, kèm 1 trigger `BEFORE UPDATE` khoá cứng các cột nhạy cảm
+(`id`/`email`/`is_admin`/`status`/`created_at`/`referral_code`/
+`referred_by`) về giá trị cũ nếu người thực hiện không phải app-admin
+hoặc `service_role` (đảm bảo Admin panel qua `getSupabaseAdmin()` không
+bị ảnh hưởng, đồng thời chặn user tự nâng quyền admin qua chính API
+onboarding/account này):
+```sql
+create policy "users can update own profile" on public.members
+  for update using (auth.uid() = id) with check (auth.uid() = id);
+-- + trigger guard_members_self_update (xem supabase-phase24-...sql)
+```
+
+**Verify thật qua API** (cùng tài khoản QA disposable dùng để phát hiện
+bug, đã xoá sạch sau test):
+1. Đăng nhập, gọi đúng câu update y hệt `completeOnboarding()` →
+   TRƯỚC khi sửa: `error: null`, `0 dòng bị ảnh hưởng`, đọc lại
+   `onboarding_completed_at` vẫn `null` (tái hiện bug). SAU khi sửa:
+   `1 dòng bị ảnh hưởng`, đọc lại đúng dữ liệu đã lưu.
+2. Thử tự nâng quyền (`update({is_admin: true, email: "hacked@evil.com"})`
+   trên chính dòng của mình) → bị trigger chặn hoàn toàn, đọc lại vẫn
+   `is_admin: false`, email gốc không đổi — xác nhận không có lỗ hổng
+   leo thang đặc quyền mới phát sinh từ bản fix.
+3. Google OAuth: xác nhận provider đã cấu hình đúng trên project (gọi
+   thẳng `GET /auth/v1/authorize?provider=google` → redirect 302 tới
+   `accounts.google.com` với `client_id` thật, không phải lỗi "provider
+   not enabled") — không tự test được toàn bộ luồng consent thật (cần
+   tương tác trình duyệt + tài khoản Google thật).
+4. Đọc code xác nhận `auth/callback/route.ts` dùng chung đúng cho cả
+   Google OAuth/magic-link/password-reset, `sanitizeNextParam()` chặn
+   open-redirect, mặc định `/portal`; Hero CTA trỏ `/login` (đúng thiết
+   kế "vào thẳng portal" — middleware tự redirect `/login`→`/portal` nếu
+   đã đăng nhập).
+
+**File tracking:** `supabase-phase24-members-self-update-rls.sql`.
+
+**Chưa tự test được:** click-through thật qua trình duyệt (Register →
+verify email nếu Confirm-email đang bật → Onboarding → Portal, và toàn
+bộ luồng Google OAuth) với tài khoản thật (giới hạn sandbox không có
+inbox email/trình duyệt tương tác được) — Founder tự thử trên Preview
+URL, đặc biệt xác nhận nút "Lưu" ở `/portal/account` giờ lưu được (bug
+này ảnh hưởng cả trang đó, không riêng onboarding).
+
+## Landing Page CMS (Phase 25) — Live-edit cho trang chủ marketing công khai (`/`)
+
+Founder yêu cầu: "Xây Quản lý Landing Page hiện tại" — Tier 2 của kế
+hoạch Admin tổng thể (Tier 1 là Portal, đã xong qua toàn bộ Nhóm 3 ở
+trên; Tier 2 là trang Landing Page marketing công khai trước đăng nhập,
+`/`, chưa từng có Admin CMS nào). Dùng đúng kiến trúc "Live-edit Cách A"
+đã chốt cho Portal (render lại component thật + `EditableRegion`), phạm
+vi **Tier 1 "An toàn"**: chỉ field text (eyebrow badge/tiêu đề/mô tả/CTA
+label) của 8 trong 9 section trên `HomeClient.tsx`.
+
+**Đã audit từng section trước khi build** (đọc full code, không suy
+đoán) — loại trừ khỏi phạm vi, giữ nguyên 100% trong code:
+- Toàn bộ `QuizAssessment.tsx` (`QUESTIONS`/`LEVELS`) — có logic tính
+  điểm dựa trên vị trí/số lượng câu trả lời, rủi ro cao nếu cho sửa tự do
+  qua UI generic (đúng nguyên tắc đã áp dụng cho CKOS Learning Engine).
+- Mảng `ITEMS`/`STEPS` (`EcosystemPillars`), `LIST` (`PortalPreview`),
+  `FEATURES`/`VALUES` (`TrustStats`) — mỗi phần tử gắn 1 icon PNG cố định
+  trong `public/images/landing-preview/icons/`, số lượng phần tử khớp
+  đúng bố cục lưới cố định (vd. `xl:flex-nowrap` 6 cột) — sửa tự do có
+  rủi ro lệch layout/thiếu icon, cùng lý do các mảng icon-bound khác
+  trong dự án (`CHAPTER_DESTINATIONS`...).
+- `floatingBadges`/`vortexQuestions` (`Hero.tsx`) — trang trí động, không
+  phải nội dung chính.
+- Danh sách `tools` (`ToolsIUse.tsx`, import `@/data/tools`) — dữ liệu
+  dùng chung toàn dự án, không riêng Landing Page.
+- Ảnh tĩnh (`founder.png`, 3 ảnh cộng đồng) — dự án chưa có hạ tầng
+  upload.
+- MỌI `href` (kể cả CTA `/login`) — giữ hardcode trong code, tránh Admin
+  gõ sai tạo link chết trên trang lưu lượng cao nhất hệ thống (cùng
+  quyết định đã áp dụng cho `home_cards`/Premium Dashboard).
+
+**Dữ liệu:** bảng mới `landing_chrome` (migration
+`supabase-phase25-landing-chrome.sql`, đã áp dụng qua Supabase MCP —
+schema generic `id/data jsonb/status/order`, 8 dòng, 1/section theo đúng
+thứ tự hiển thị trong `HomeClient.tsx`: hero/ecosystem-pillars/
+portal-preview/skills-showcase/tools-i-use/trust-stats/ecosystem/
+final-cta). `src/lib/portal/live-landing-chrome.ts` — `LandingChromeRow`
+type (tất cả field optional trừ `id`/`status`, vì mỗi section chỉ dùng
+1 tập con field khác nhau) + `DEFAULT_LANDING_CHROME` (seed verbatim,
+khớp 100% nội dung hardcode gốc — đã diff xác nhận qua test HTML
+server-render) + `getLiveLandingChrome()` (`cache()` + `getSupabasePublic()`,
+merge từng field string từ `data` jsonb đè lên default, fallback toàn bộ
+default nếu Supabase chưa cấu hình/lỗi/rỗng).
+
+**Kiến trúc chia sẻ 1 Context cho 8 component** — đúng tình huống đã gặp
+với `EcosystemChromeContext`/`PremiumChromeContext` (1 bảng nhiều dòng,
+cần đọc/sửa từ nhiều component khác nhau trong CÙNG 1 trang): 1 lệnh gọi
+`useCollection()` duy nhất ở `LandingChromeProvider`
+(`src/components/home/LandingChromeContext.tsx`, bọc quanh toàn bộ
+`HomeClient`), mỗi section tự lọc đúng dòng của mình qua
+`useLandingChrome(sectionId)`. `EditModeContext.tsx`/`EditableRegion.tsx`
+(`src/components/home/`) — bản sao thứ 10 của pattern popover đã dùng
+xuyên suốt dự án (portal thật + `home`/`premium`/`companion`...), giữ
+đúng byte-for-byte kỹ thuật `createPortal` vào `document.body` +
+`max-h-[70vh] overflow-y-auto`.
+
+**8 component sửa** (`src/components/home/`, mỗi file thêm
+`useLandingChrome(sectionId)` + `FieldConfig[]` + bọc `EditableRegion`
+quanh đúng khối text hiển thị, thay text hardcode bằng `{chrome.field}`):
+`Hero.tsx` (7 field: eyebrowBadge/headlineLine1/headlineLine2/
+headlineHighlight/subheadline/ctaLabel/tagline — 3 vùng `EditableRegion`
+riêng vì tagline nằm sau CTA hardcode ở giữa),
+`EcosystemPillars.tsx` (5 field: eyebrowBadge/heading + roadmapHeading/
+roadmapDesc/roadmapCtaLabel — 2 vùng),
+`PortalPreview.tsx` (3 field: eyebrowBadge/heading/ctaLabel — 2 vùng),
+`SkillsShowcase.tsx` (3 field: eyebrowBadge/heading/youtubeId — 2 vùng,
+`YOUTUBE_ID` hardcode cũ xoá hẳn, thay `${chrome.youtubeId}` trong URL
+embed/thumbnail),
+`ToolsIUse.tsx` (2 field: eyebrowBadge/heading, heading vẫn bọc trong
+`RevealText` gốc),
+`TrustStats.tsx` (3 field: eyebrowBadge/heading/description),
+`Ecosystem.tsx` (6 field: eyebrowBadge riêng + 5 field khối Founder —
+founderQuote/founderQuoteAttribution/founderBioParagraph1/
+founderBioParagraph2/founderTitle),
+`FinalCTA.tsx` (2 field: heading/ctaLabel).
+
+**Bug tự phát hiện và sửa trước khi commit (đúng lớp lỗi đã ghi ở mục
+"popup Live-edit bị cắt cụt"/"bug margin `EditableRegion`" trước đó):**
+lúc đầu đặt `className="mt-5 ..."` trực tiếp trên `EditableRegion` bọc
+tagline (`Hero.tsx`) và `className="flex flex-1 flex-col justify-center
+px-5 py-[19px]..."` trên `EditableRegion` bọc khối Founder
+(`Ecosystem.tsx`) — `className` của `EditableRegion` CHỈ áp dụng khi
+`editMode=true` (khi `false`, component return thẳng `<>{children}</>`,
+bỏ qua hoàn toàn `className`), nên các class layout/margin đó sẽ biến
+mất trên Landing Page thật. Đã sửa: mọi margin/layout class giữ nguyên
+trên phần tử con thật bên trong (`<div className="mt-5 ...">`/giữ lại
+`<div className="flex flex-1 flex-col justify-center ...">` bao ngoài
+`EditableRegion`), không đặt trên chính `EditableRegion`.
+
+**`page.tsx`/`HomeClient.tsx`:** `page.tsx` đổi thành `async function`,
+gọi `getLiveLandingChrome()`, truyền `seedChrome` xuống `HomeClient`.
+`HomeClient.tsx` nhận thêm prop `seedChrome: LandingChromeRow[]`, bọc
+toàn bộ 9 section trong `<LandingChromeProvider seedChrome={seedChrome}>`
+(giữ nguyên `QuizAssessment` không đụng — không cần chrome). Portal thật
+(`editMode=false` mặc định) — `useCollection(key, seed, {enabled: false})`
+pass-through `seedChrome`, KHÔNG fetch mạng thêm (đã verify qua code
+review + test HTML server-render, cùng cơ chế đã dùng cho `home_cards`/
+5 Cửa Hành trình).
+
+**Admin route mới** `/admin/landing`
+(`src/app/admin/(dashboard)/landing/page.tsx`) — render lại ĐÚNG
+`HomePage` (`@/app/page`, import thẳng) bọc `<EditModeProvider>`, cùng
+pattern `/admin/home-cards`/`/admin/premium/dashboard`. `nav.ts` thêm
+group MỚI `"Landing Page"` (ngoại lệ có ghi chú với nguyên tắc 1:1 Portal
+— trang này là marketing công khai trước đăng nhập, không thuộc 10 mục
+`portalNavSections`), đặt trước "Trang chủ Học viện". `AdminSidebar.tsx`
+thêm icon `Globe` cho `/admin/landing`. `dashboard/page.tsx` thêm
+`PORTAL_HREF_FOR_GROUP["Landing Page"] = "/"` (nút "Xem trên Portal" trỏ
+đúng trang chủ marketing) — không thêm vào `TABLE_FOR_HREF` (route merge
+8 dòng của 1 bảng qua render lại trang thật, không map 1-1 vào cấu trúc
+`Record<href, 1 table>` đơn giản — cùng cách xử lý Mirror/Journal/6 khối
+Companion/Premium Dashboard).
+
+**Verify:** `rm -rf .next && npm run build` sạch (route `/admin/landing`
+xuất hiện đúng), `tsc --noEmit`/`eslint` sạch, `vitest run` 139/139 pass.
+Test thật qua `next start` (production build, không phải `next dev`) —
+`curl "/"` trả `200`, HTML server-render chứa đúng cả 3 chuỗi tiêu biểu
+đã đối chiếu verbatim với bản hardcode gốc ("Học AI đúng hướng"/"Tất cả
+những gì bạn cần, trong một hệ sinh thái"/"Bắt đầu hành trình chinh phục
+các kỹ năng AI của bạn ngay hôm nay.") — xác nhận fallback
+`DEFAULT_LANDING_CHROME` render đúng khi Supabase chưa cấu hình (sandbox).
+`curl "/admin/landing"` trả `307` redirect `/admin/login` đúng như kỳ
+vọng (chưa đăng nhập, cùng hành vi mọi route Live-edit khác).
+
+**Chưa tự test được:** sửa field qua Admin UI thật có tài khoản đăng
+nhập (cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài
+khoản Admin thật đã nêu nhiều lần) — Founder tự test tại
+`/admin/landing`, xác nhận bút sửa (✎) hiện đúng ở cả 8 section, lưu
+xong `/` (Portal thật, không qua edit mode) phản ánh đúng nội dung mới.
+
+## BUG ĐÃ SỬA — `/admin/landing` crash ngay khi vào trang (client-side exception)
+
+Founder báo "Lỗi Admin - Landing page" ngay sau khi Landing Page CMS vừa
+deploy. Kiểm tra Vercel: deployment `READY`, không có runtime error/log
+lỗi nào (mọi request `/admin/landing` đều trả `200`) — nghĩa là lỗi xảy
+ra ở tầng client (crash trong trình duyệt), không lộ ra qua log server.
+
+**Nguyên nhân:** `LandingChromeContext.tsx`'s `LandingChromeProvider`
+trước đó dùng thẳng `rows: items` từ `useCollection()` — nhưng
+`useSupabaseCollection` khởi tạo `items = []` khi `enabled=true` (Admin
+edit mode) cho tới khi fetch xong (xem `store.ts`:
+`useState<T[]>(enabled ? [] : seed)`). Nghĩa là ở LẦN RENDER ĐẦU TIÊN
+tại `/admin/landing`, `rows=[]` — `useLandingChrome(sectionId)` (gọi
+trong cả 8 section: Hero/EcosystemPillars/PortalPreview/SkillsShowcase/
+ToolsIUse/TrustStats/Ecosystem/FinalCTA) không tìm thấy dòng nào và
+`throw new Error(...)` NGAY LẬP TỨC — crash toàn trang. Đây đúng là bug
+đã "vá" cho `EcosystemChromeContext`/`PremiumChromeContext` (fallback
+`items.find(...) ?? seedChrome`) nhưng bị bỏ sót khi viết
+`LandingChromeContext.tsx` mới cho Landing Page.
+
+**Đã sửa:** `LandingChromeProvider` giờ merge `items` đè lên
+`seedChrome` theo đúng `id`
+(`seedChrome.map((seed) => items.find((r) => r.id === seed.id) ?? seed)`)
+— luôn có đủ 8 dòng ngay từ lần render đầu (dùng seed làm fallback), chỉ
+thay bằng dữ liệu Supabase thật sau khi fetch xong. Trên Portal thật
+(`editMode=false`), `items` vốn đã bằng `seedChrome` (pass-through) nên
+merge này là no-op — 0 thay đổi hành vi/hiển thị công khai.
+
+**Verify NGHIÊM NGẶT (before/after, không chỉ đọc code):** dựng 1 route
+`devtest-landing-admin` tạm (render `<EditModeProvider><HomePage/></EditModeProvider>`
+không cần đăng nhập, xoá ngay sau khi xong) + test qua Playwright thật
+(`next dev`, Chromium proxy args). **Trước khi sửa** (`git stash` tạm
+file để tái hiện đúng code cũ): trang thiếu hẳn thẻ `<h1>` (đếm được 0),
+nội dung Hero bị thay bằng "Đang tải..." — xác nhận đúng bug. **Sau khi
+sửa:** `<h1>` xuất hiện đúng 1 lần, nội dung Hero/toàn trang render đầy
+đủ, `page.on("pageerror")` rỗng, không có chữ "Application error" nào
+trong DOM. `tsc`/`eslint` sạch, `rm -rf .next && npm run build` sạch
+(route `/admin/landing` vẫn xuất hiện đúng), `vitest run` 139/139 pass.
+
+**Bài học (áp dụng cho mọi Context multi-row tương lai):** khi viết 1
+Context chia sẻ `useCollection()` cho nhiều dòng (`ecosystem_chrome`,
+`landing_chrome`...), LUÔN fallback về seed theo từng `id` — không bao
+giờ dùng thẳng `items` (hoặc `items[0]`) làm nguồn duy nhất, vì
+`useCollection({enabled:true})` cố ý trả mảng rỗng ở lần render đầu tiên
+(trước khi fetch xong) theo đúng thiết kế của `store.ts`.
+
+**File sửa:** `src/components/home/LandingChromeContext.tsx` (duy nhất).
+
+## KIẾN TRÚC ADMIN V2.0 — tái cấu trúc sidebar thành 8 Workspace
+
+Founder yêu cầu tái cấu trúc Admin thành trung tâm quản trị thống nhất: 8
+Workspace cấp cao bằng tiếng Việt (Tổng quan/Người dùng/Website/Học viện/
+Vận hành/Marketing/Thương hiệu & Media/Hệ thống), audit trực tiếp trước khi
+sửa, không xây lại từ đầu, không đổi URL route đang hoạt động, không tạo
+CRUD giả cho module chưa có chức năng thật.
+
+### Audit trước khi sửa (bắt buộc, đã làm đầy đủ)
+
+- **Toàn bộ route `/admin/*`**: 37 `page.tsx` (không tính `dashboard`/
+  `login`/top-level redirect) — đã lập bảng phân loại đầy đủ: Live-edit
+  Cách A (14 route: home-cards, landing, premium/dashboard, 5 Hành trình
+  của tôi, su-menh-companion/live-edit, duan-cohoi + 5 chi tiết hệ sinh
+  thái + 5 dự án con), DataTable/VisualEditor CRUD (~15 route), Editor
+  riêng (companion, course-pricing, ckos/lessons, ckos/case-studies,
+  premium/courses/.../builder), Read-only (ckos Dashboard, users).
+- **Tìm code nghiệp vụ nằm NGOÀI `/admin`** trước khi khai "Sắp triển
+  khai" (tránh khai nhầm cái đã có): phát hiện quan trọng nhất — bảng
+  `orders`/`leads`/`support_tickets` đã có DỮ LIỆU THẬT chảy vào liên tục
+  (checkout+webhook SePay, `/api/leads`, `/portal/support`) nhưng **chưa
+  từng có trang Admin nào đọc** — đây là gap thật, không phải "chưa có
+  chức năng". Ngược lại, bảng `coupons` có schema nhưng **0 dòng code**
+  (kể cả checkout) đọc/ghi — đây mới đúng nghĩa "chưa có chức năng thật".
+  Không có Brand Studio/Media Center/campaign/email marketing nào tồn
+  tại (đã grep xác nhận) — "Companion Studio™" (`src/ai/**`) là tầng AI
+  Provider viết nội dung, KHÔNG phải quản lý thương hiệu, dễ nhầm tên.
+- **Cơ chế auth**: `middleware.ts` gate mọi `/admin/:path*` (trừ
+  `/admin/login`) qua `members.is_admin`, không có route nào bypass được
+  — mọi route mới tự động được bảo vệ, không cần sửa middleware.
+  `requireAdmin()` là lớp phòng hộ thứ 2 (page.tsx tự gọi), giữ nguyên.
+
+### Cấu trúc dữ liệu mới — `src/lib/admin/nav.ts`
+
+Đổi từ `adminNavGroups: AdminNavGroup[]` (2 tầng: group → item, 11 group
+phẳng) sang `adminWorkspaces: AdminWorkspace[]` (`id`/`label`/`items?`/
+`subGroups?`) — **CHỈ workspace "Học viện" dùng `subGroups`** (đúng 10
+group Portal cũ, giữ nguyên 100% label/href), 7 workspace còn lại dùng
+`items` phẳng. Thêm `AdminNavItem.comingSoon?: boolean` đánh dấu module
+"Sắp triển khai". Hàm mới `flattenAdminNav()` làm phẳng cả 3 tầng
+(Workspace/SubGroup/Item) → dùng chung cho `AdminSearch`/Dashboard.
+
+**KHÔNG đổi 1 href nào của route đang hoạt động** — chỉ đổi cách NHÓM
+hiển thị. Đã verify bằng build: toàn bộ route cũ (`/admin/ckos/*`,
+`/admin/duan-cohoi/*`, `/admin/hanh-trinh-cua-toi/*`...) xuất hiện y hệt
+trong output `next build`, không route nào biến mất/redirect.
+
+### `AdminSidebar.tsx` — 3 tầng thay vì 2 tầng
+
+Workspace (icon riêng, `workspaceIcons`) → SubGroup (chỉ "Học viện" có) →
+Item (icon theo href, `navIcons`, giữ nguyên toàn bộ mapping cũ + thêm 3
+icon route mới). Item `comingSoon` dùng icon `Hourglass` chung + badge
+nhỏ "Sắp ra mắt" (ẩn khi sidebar thu gọn, hiện trong tooltip). State 2 cấp
+độc lập (`openWorkspaces`/`openSubGroups`), tự mở đúng Workspace+SubGroup
+chứa route active khi điều hướng (tách hàm thuần `findActiveNav()` ra
+ngoài component — tránh lỗi React Compiler "Could not preserve existing
+memoization" khi `useMemo` có nhiều điểm `return` sớm lồng trong vòng
+lặp). Khi sidebar thu gọn (chỉ icon) — bỏ qua mọi header Workspace/
+SubGroup, liệt kê phẳng toàn bộ item kèm tooltip hover, giữ đúng hành vi
+cũ.
+
+**Verify bằng Playwright thật** (qua `next start`, không phải `next dev`
+— HMR WebSocket qua proxy sandbox gây remount silent, đã ghi nhận từ
+trước, dùng `next dev` cho ra kết quả sai là "click không có tác dụng"):
+click "Học viện" → hiện đúng 10 SubGroup; click "Hệ tri thức AI (CKOS)"
+→ hiện đúng 11 item gốc; mở "Website" → hiện đúng 5 badge "Sắp ra mắt"
+(6 item, chỉ Landing Page là thật); thu gọn sidebar → 76 link vẫn hiện
+đủ dạng icon rail, 0 lỗi console/page error.
+
+### `AdminSearch.tsx` — tìm theo Workspace/SubGroup/route
+
+Đổi sang dùng `flattenAdminNav()`, hiển thị nhãn nhóm dạng `Workspace ·
+SubGroup` khi có subGroup (vd. "Học viện · Hệ tri thức AI (CKOS)"). Thêm
+tìm theo `href` (trước chỉ tìm theo `label`/`group`) — gõ 1 phần đường
+dẫn route cũng ra kết quả. Kết quả có `comingSoon` hiện badge "Sắp ra
+mắt" ngay trong dropdown.
+
+### 32 route mới — 3 route THẬT (chỉ đọc) + 29 route "Sắp triển khai"
+
+**3 route thật, chỉ đọc** (Vận hành — data đã tồn tại, chỉ thiếu UI đọc,
+KHÔNG thêm action tạo/sửa/xoá/hoàn tiền/đổi trạng thái nào, không đụng
+checkout/webhook SePay):
+- `/admin/van-hanh/don-hang` — đọc bảng `orders` (`member_email`/
+  `product_name`/`amount`/`status`/`order_code`/`customer_name`/
+  `course_id`/`created_at`), badge trạng thái pending/confirmed/rejected.
+- `/admin/van-hanh/khach-hang-tiem-nang` — đọc bảng `leads`.
+- `/admin/van-hanh/ho-tro-khach-hang` — đọc bảng `support_tickets`, hiện
+  cả `reply` nếu đã có.
+
+**29 route "Sắp triển khai"** — dùng chung component mới
+`src/components/admin/WorkspacePlaceholder.tsx` (tiêu đề + mô tả + danh
+sách "Phạm vi dự kiến" + ghi chú lý do/nguồn dữ liệu liên quan +
+`relatedLink` nếu có module thật gần đó) — KHÔNG CRUD giả, KHÔNG dữ liệu
+mẫu bịa, mỗi trang ghi rõ vì sao chưa làm (bảng mồ côi, chưa tích hợp
+dịch vụ ngoài, hành động nhạy cảm ngoài phạm vi, hoặc cần thiết kế mới):
+Tổng quan (Công việc/Thông báo/Hoạt động gần đây — 3), Người dùng (Vai
+trò & Phân quyền/Thành viên/Phiên đăng nhập — 3), Website (Nội dung
+Website/Điều hướng/Header & Footer/Popup & Banner/SEO Website — 5), Vận
+hành (Thanh toán/Mã giảm giá/Tiếp thị liên kết — 3, tránh trùng sở hữu
+dữ liệu với Đơn hàng), Marketing (5), Thương hiệu & Media (5), Hệ thống
+(5, KHÔNG hiển thị bất kỳ giá trị biến môi trường/secret nào).
+
+### Dashboard v2 — `src/app/admin/(dashboard)/dashboard/page.tsx`
+
+Viết lại hoàn toàn theo 5 lớp: (1) Tổng quan hệ thống (đếm module thật/
+Sắp triển khai từ `flattenAdminNav()`), (2) Việc cần xử lý (đơn hàng
+pending + ticket open, số thật), (3) Quick Actions (6 nút, CHỈ trỏ route
+đã tồn tại thật — Landing Page/CKOS/Lesson/bài viết Dự án & Cơ hội/Quản
+lý dự án/Đơn hàng), (4) 7 Workspace dạng card (bỏ "Tổng quan" — chính là
+trang này; "Học viện" liệt kê 10 SubGroup thay vì 27 item lẻ, mỗi
+SubGroup cộng dồn số đếm các item con), (5) Hoạt động gần đây (gộp
+`orders`/`leads`/`support_tickets` mới nhất theo `created_at`, không
+phải dữ liệu giả). Link "Xem trên..." CHỈ gắn cho Website (`/`) và Học
+viện (`/portal`) — 5 Workspace còn lại không có URL công khai, không gắn
+link giả.
+
+### Đính chính rủi ro đã cân nhắc, quyết định giữ nguyên (không mở rộng)
+
+- "Thành viên" (Người dùng) KHÔNG tách UI riêng — cùng bảng `members`
+  với "Danh sách người dùng", tránh 2 menu cùng sở hữu 1 nguồn dữ liệu.
+- "Thanh toán" (Vận hành) KHÔNG có trang riêng — trạng thái nằm sẵn
+  trong cột `status` của Đơn hàng.
+- "Tiếp thị liên kết" (Vận hành) KHÔNG đụng `ecosystem_chrome.affiliateOffers`
+  (đã thuộc Workspace Học viện từ trước) — chỉ trỏ link tham chiếu.
+- "CTA" (Marketing) KHÔNG sửa nội dung CTA của bất kỳ module nào — chỉ
+  dự kiến đọc số liệu hiệu suất, việc sửa nội dung vẫn ở đúng module sở
+  hữu (Landing Page, Premium...).
+
+### Verify
+
+`tsc --noEmit`/`eslint src` sạch (0 lỗi mới — 18 warning còn lại đều có
+từ trước, không liên quan đợt này), `rm -rf .next && npm run build`
+sạch (32 route mới + toàn bộ route cũ xuất hiện đúng), `vitest run`
+139/139 pass. Test thật qua `next start` (curl, không cần đăng nhập):
+Landing Page `/` vẫn `200` + nội dung y hệt trước; `/portal` `200`
+(fallback công khai đúng thiết kế khi sandbox không cấu hình Supabase);
+mọi route `/admin/*` (cả cũ lẫn mới, 16 route mẫu) đều `307` redirect
+`/admin/login` — không route nào 404. Test tương tác Sidebar qua route
+devtest tạm (`AdminShell` bọc, không cần đăng nhập — đã xoá ngay sau khi
+xong): xem mục "AdminSidebar.tsx" ở trên.
+
+**Chưa tự test được:** thao tác Admin UI thật có tài khoản đăng nhập
+(cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài khoản
+Admin thật đã nêu nhiều lần) — đặc biệt 3 trang đọc dữ liệu thật (Đơn
+hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng) cần Founder tự xác nhận số
+liệu hiển thị đúng khớp Supabase Production trên Preview URL.
+
+## ADM-V2-01 — Sprint 1: hoàn thiện Tổng quan + Người dùng (bỏ "Sắp triển khai")
+
+Tiếp nối KIẾN TRÚC ADMIN V2.0 ở trên — Founder duyệt kế hoạch 8-sprint
+hoàn thiện toàn bộ 8 Workspace thành module quản trị thật, bỏ hẳn khung
+"Sắp triển khai" cho mọi mục nay đã có cách triển khai trung thực (Empty
+State chuyên nghiệp thay vì badge). Sprint 1 (ADM-V2-01) phạm vi: Tổng
+quan + Người dùng — 2 Workspace đầu tiên, đúng lệnh bắt đầu của Founder.
+
+### Audit trước khi code (không blocker nghiêm trọng)
+
+Qua Supabase MCP (`execute_sql` trên project thật, không suy đoán):
+- `members`: không có cột role/permission nào ngoài `is_admin` (boolean).
+  Không có bảng role/permission/session/device nào tồn tại trong
+  `information_schema.tables` — xác nhận "Vai trò & Phân quyền"/"Thiết bị"
+  phải dùng Empty State trung thực hoặc hiển thị đúng mô hình nhị phân
+  hiện có, KHÔNG mở schema mới ở sprint này.
+- `orders`: có dữ liệu thật nhưng **0 dòng `status='confirmed'`** tại thời
+  điểm audit — "Thành viên"/"Premium Membership" (định nghĩa dựa trên đơn
+  hàng đã xác nhận) sẽ hiển thị Empty State trung thực cho tới khi có đơn
+  đầu tiên được xác nhận (không phải lỗi, không bịa dữ liệu để "trông đầy
+  hơn").
+- Không có blocker nghiêm trọng → triển khai trong cùng sprint theo đúng
+  chỉ đạo "nếu không có blocker, triển khai luôn".
+
+### `nav.ts` + `AdminSidebar.tsx` — bỏ `comingSoon`, thêm 4 mục Người dùng
+
+Bỏ `comingSoon: true` khỏi 3 mục Tổng quan (Công việc/Thông báo/Hoạt động
+gần đây) và 3 mục Người dùng cũ (Vai trò & Phân quyền/Thành viên/Phiên
+đăng nhập). Thêm 4 mục mới vào Người dùng: Hồ sơ của tôi, Premium
+Membership, Thiết bị, Hoạt động người dùng — cả 7 mục Người dùng (ngoài
+"Danh sách người dùng" đã có từ Identity Hub v1.0) đều có route thật.
+`AdminSidebar.tsx`'s `navIcons` bổ sung 10 icon tương ứng (không còn item
+nào trong 2 Workspace này rơi vào nhánh fallback `Hourglass`).
+
+### `AdminEmptyState.tsx` (mới) — Empty State chuyên nghiệp, KHÁC `WorkspacePlaceholder`
+
+`WorkspacePlaceholder` (Hourglass + badge "Sắp triển khai" + "Phạm vi dự
+kiến") giữ nguyên, vẫn dùng cho 29 module Sprint 2-8 chưa tới lượt. Module
+Sprint 1 đã triển khai nhưng honestly rỗng dùng `AdminEmptyState.tsx` mới
+(icon trung tính + tiêu đề + mô tả + action tuỳ chọn, KHÔNG badge/khung
+"sắp ra mắt") — đúng yêu cầu "Nếu chưa có dữ liệu, dùng Empty State
+chuyên nghiệp... không dùng badge 'Sắp ra mắt'".
+
+### `AdminBreadcrumb.tsx` (mới) — breadcrumb dùng chung
+
+Nhận `trail: {label, href?}[]` tường minh từ mỗi `page.tsx` (không tra
+cứu ngầm từ `nav.ts`, tránh phụ thuộc ẩn giữa cấu trúc sidebar và nội
+dung trang). Đã thêm vào toàn bộ trang mới/sửa trong sprint này +
+`/admin/users`.
+
+### Workspace "Tổng quan" — 3 trang thật
+
+- **Công việc** (`/admin/tong-quan/cong-viec`) — gộp đơn hàng
+  `status=pending` + ticket `status=open` + lead `status=new` thành 1
+  danh sách, mỗi dòng có badge loại + link ra đúng trang Vận hành sở hữu
+  dữ liệu. CHỈ ĐỌC.
+- **Thông báo** (`/admin/tong-quan/thong-bao`) — `AdminEmptyState` trung
+  thực: hệ thống chưa có bảng `notifications`/cơ chế Realtime nào (đã
+  grep xác nhận) — không bịa danh sách thông báo.
+- **Hoạt động gần đây** (`/admin/tong-quan/hoat-dong-gan-day`) — bản đầy
+  đủ hơn khối rút gọn 8 dòng ở Dashboard: gộp tới 60 dòng/bảng (orders/
+  leads/support_tickets, MỌI trạng thái), tối đa 100 dòng hiển thị.
+
+### Workspace "Người dùng" — 7 trang (3 sửa lại + 4 mới) + trang chi tiết `/admin/users/[id]`
+
+- **Vai trò & Phân quyền** — hiển thị TRUNG THỰC mô hình nhị phân
+  `is_admin` hiện có (đếm Admin/User + danh sách Admin), không bịa ra hệ
+  vai trò chi tiết không tồn tại.
+- **Thành viên** — thành viên = có ≥1 đơn hàng `confirmed`, gộp theo
+  email + tổng chi tiêu + sản phẩm đã mua. Hiện Empty State trung thực
+  (0 đơn confirmed tại thời điểm audit).
+- **Premium Membership** (mới) — góc nhìn THEO TỪNG GIAO DỊCH mua khoá
+  (`orders.course_id` khác rỗng + `confirmed`), join tên khoá từ bảng
+  `courses` — khác "Thành viên" (gộp theo người, mọi sản phẩm). Tránh 2
+  menu cùng sở hữu 1 câu hỏi nghiệp vụ bằng cách tách rõ 2 góc nhìn
+  (theo NGƯỜI vs theo GIAO DỊCH), không tách CRUD/nguồn dữ liệu riêng.
+- **Phiên đăng nhập** — `listIdentityUsers()` sắp theo `lastSignInAt`
+  giảm dần, KHÔNG có nút thu hồi phiên (Supabase Auth cũng không có API
+  liệt kê phiên theo thiết bị — hành động nhạy cảm, chủ động loại khỏi
+  phạm vi).
+- **Thiết bị** (mới) — `AdminEmptyState` trung thực: không có bảng
+  sessions/devices nào, Supabase Auth không expose thông tin thiết bị.
+  Cần schema mới nếu triển khai thật — sẽ lập báo cáo/chờ duyệt riêng,
+  CHƯA tự tạo bảng ở sprint này.
+- **Hồ sơ của tôi** (mới) — hồ sơ CHÍNH tài khoản Admin đang đăng nhập,
+  đọc `members` theo đúng `id` phiên hiện tại. CHỈ ĐỌC — sửa hồ sơ vẫn ở
+  `/portal/account` như cũ, không tạo hệ thống sửa hồ sơ song song.
+- **Hoạt động người dùng** (mới) — gộp sự kiện "Đăng ký mới" +
+  "Đăng nhập" từ `listIdentityUsers()`, tối đa 100 dòng, mỗi dòng link
+  sang trang chi tiết người dùng.
+- **`/admin/users/[id]`** (mới) — trang chi tiết drill-down: hồ sơ đầy đủ
+  + lịch sử đơn hàng của đúng email đó. `identity-users.ts` thêm hàm
+  `getIdentityUserById()` (dùng `auth.admin.getUserById()`, không phân
+  trang lại toàn bộ `auth.users`). Cột Email ở `UsersTable.tsx` giờ là
+  `Link` sang trang này.
+
+### Dashboard — KPI thật + "Cảnh báo vận hành"
+
+Thêm 4 ô KPI (Người dùng + số Admin, Premium Membership theo giao dịch
+confirmed, Đơn hàng tổng/đã xác nhận, Doanh thu — tổng `amount` các đơn
+`confirmed`, cộng dồn JS sau khi `select("amount")`, không dùng RPC mới).
+Thêm khối "Cảnh báo vận hành" (`getKpisAndWarnings()`), KHÁC khối "Việc
+cần xử lý" đã có (đó là việc cần làm ngay; đây là rủi ro cần lưu ý) — 3
+tín hiệu khách quan tính từ dữ liệu thật, không bịa ngưỡng tuỳ tiện: đơn
+hàng `pending` quá 48 giờ, ticket `open` quá 72 giờ, và chỉ có đúng 1 tài
+khoản Admin (không có phương án dự phòng quyền truy cập). Không cảnh báo
+nào → hiển thị "Không có cảnh báo vận hành nào" (trung thực, không giấu
+khối đi).
+
+### Diễn giải "loading/error/unauthorized state" cho sprint này
+
+Toàn bộ ~40 route Admin hiện có (trước sprint này) đều KHÔNG có
+`loading.tsx`/`error.tsx` riêng — chỉ dựa vào `src/app/loading.tsx`/
+`error.tsx` gốc (Error/Suspense boundary ở root layout) + `redirect(
+"/admin/login")` cho unauthorized + render lỗi Postgres inline (pattern
+`{error && (...)}` đã dùng xuyên suốt, ví dụ `van-hanh/don-hang`). Để
+nhất quán với toàn bộ codebase (không tạo 1 pattern loading/error riêng
+chỉ cho 11 trang sprint này), 11 trang mới/sửa dùng ĐÚNG 4 trạng thái này
+— **không** thêm `loading.tsx`/`error.tsx` cấp route mới. Ghi chú lại vì
+`loading.tsx`/`error.tsx` gốc hiện đang style nền tối (`text-white`,
+dùng cho Landing/Portal) — lệch tông với nền sáng Admin nếu lỗi/loading
+thật sự trigger ở route Admin. Đây là vấn đề CÓ SẴN, áp dụng đồng đều cho
+mọi route Admin từ trước tới nay (không phải regression của sprint này)
+— nếu Founder muốn Admin có Error/Loading boundary riêng theo đúng nền
+sáng, đây là việc riêng, cần quyết định tách biệt.
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (11 route mới/route con `[id]` xuất hiện đúng, 0 warning
+mới). `next start` (cổng 4550) — 12 route Admin mẫu (10 route sprint này
++ dashboard + `/admin/users/[id]` với UUID giả) đều trả `307` redirect
+`/admin/login` đúng như kỳ vọng (chưa đăng nhập), `/` trả `200`, log
+server sạch. Playwright qua route `devtest-adm-v2-01` tạm (bọc
+`<AdminShell email="test@example.com">`, xoá ngay sau khi xác nhận, rồi
+rebuild sạch để xác nhận đã xoá hết) — mở "Người dùng"/"Tổng quan" trong
+sidebar: 0 badge "Sắp ra mắt" còn sót, đủ 8 mục Người dùng + 4 mục Tổng
+quan hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** thao tác Admin UI thật có tài khoản đăng nhập +
+dữ liệu Production thật (cùng giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — đặc biệt số liệu KPI/
+Cảnh báo vận hành và nội dung 11 trang mới cần Founder xác nhận trên
+Preview URL khớp đúng Supabase Production.
+
+**ĐÃ DỪNG SAU SPRINT 1 theo đúng chỉ đạo** — chưa động tới Sprint 2
+(Website) hay bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo
+sprint trước khi tiếp tục.
+
+## ADM-V2-02 — Sprint 2: Website Workspace (Founder đã duyệt tiếp tục)
+
+### Audit trước khi code — phát hiện quan trọng nhất: `settings` đã có sẵn, chỉ thiếu UI
+
+Đọc code (không suy đoán) phát hiện bảng `settings` (schema generic
+`id/data/status/order`, ĐÃ đăng ký trong `SUPABASE_COLLECTIONS`) đã tồn
+tại từ trước và đã được `getSiteSettings()` (`src/lib/site-settings.ts`)
+đọc THẬT (`getSupabaseAdmin()`, KHÔNG cache — mỗi request) để render
+`<Header/>`/`<Footer/>` + metadata gốc site-wide (`src/app/layout.tsx`) —
+CHỈ THIẾU 1 trang Admin để ghi vào bảng này (route `/admin/settings` cũ
+từng bị dọn khỏi `navIcons` như mồ côi ở đợt audit trước — đúng lúc đó vì
+chưa có route thật). Giống hệt tình huống `home_cards` đã gặp ở Nhóm 3:
+"có bảng, có code đọc, chỉ thiếu UI viết" — không phải "chưa có gì".
+
+Đã grep xác nhận field nào thật sự được dùng trước khi liệt kê vào form
+(tránh tạo control "sửa không có tác dụng"): `siteName`/`slogan` (Header
++ Footer), `seoTitle`/`seoDescription` (metadata gốc), `primaryColor`/
+`secondaryColor`/`accentColor` (CSS custom properties `--color-brand-*`
+toàn site, `layout.tsx`), `faviconUrl` (metadata icon), `facebookUrl`/
+`youtubeUrl`/`tiktokUrl`/`zaloUrl`/`adminEmailNotify` (Footer). **2 field
+tồn tại trong schema nhưng KHÔNG nơi nào đọc** (`logoUrl` — Header/Footer
+vẽ logo SVG cứng; `footerText` — Footer hardcode dòng Copyright riêng) —
+CHỦ ĐỘNG loại khỏi form, không đưa vào để tránh CRUD giả.
+
+Audit 4 module còn lại: `mainNav` (Header, `src/lib/site.ts`) + `columns`
+(Footer, `Footer.tsx`) hardcode, KHÔNG bảng nào quản — cần migration mới.
+Không có component popup/banner nào tồn tại ở tầng hiển thị (không chỉ
+thiếu bảng). 6 trang tĩnh (`/about`...`/refund-policy`) là component React
+nội dung dài/có cấu trúc, khác hẳn các "chrome" 1-vài-field đã Live-edit
+trước đây — rủi ro pháp lý nếu sửa sai qua UI generic.
+
+### Đã làm — 2 module thật, không cần migration
+
+- **Header & Footer** (`/admin/website/header-footer`) — `SingletonEditor`
+  (component có sẵn từ trước, dùng chung với Companion CMS) trên bảng
+  `settings`, 13 field đã audit đúng như trên. Không cần migration.
+- **SEO Website** (`/admin/website/seo-website`) — CHỈ ĐỌC, đúng nguyên
+  tắc bắt buộc "SEO kỹ thuật không sửa tự do qua UI". Gọi TRỰC TIẾP
+  `sitemap()`/`robots()` (import thẳng từ `src/app/sitemap.ts`/`robots.ts`)
+  + `metadata` export của 6 trang tĩnh (import thẳng, cùng kỹ thuật "import
+  page module để lấy 1 export" đã dùng cho Live-edit Cách A) — hiển thị
+  ĐÚNG cấu hình đang chạy thật, tự động đồng bộ nếu code thay đổi sau này,
+  không phải bản sao chép tay.
+
+### Đã làm — 3 module còn lại: Empty State trung thực, KHÔNG comingSoon
+
+- **Điều hướng** — thiếu đúng 1 bảng (giống Header & Footer) nhưng KHÁC ở
+  mức rủi ro: Header/Footer xuất hiện ở MỌI trang công khai (Landing Page,
+  lưu lượng cao nhất hệ thống), nên đã lập riêng **đề xuất migration CHƯA
+  APPLY** — `supabase-phase26-site-navigation.sql` (bảng generic
+  `site_navigation`, phân biệt Header/Footer qua field `location`/
+  `groupLabel` trong `data`) kèm báo cáo rủi ro ngay trong file: (1) 1 href
+  sai lan rộng toàn site, không giới hạn 1 trang; (2) cần sửa
+  `HeaderClient.tsx`/`Footer.tsx` (tầng Shell dùng chung) để đọc bảng mới —
+  rủi ro hồi quy cao hơn 1 trang con; (3) cần fallback tĩnh an toàn khi
+  Supabase lỗi/rỗng; (4) đề xuất tách thành 1 việc RIÊNG, không gộp chung
+  Sprint 2. **Chờ Founder xác nhận riêng trước khi `apply_migration`.**
+- **Popup & Banner** — khác Điều hướng: không chỉ thiếu bảng, KHÔNG có
+  component hiển thị nào ở tầng Landing Page/Portal (đã grep xác nhận).
+  Phạm vi lớn hơn 1 migration đơn thuần (thời gian hiệu lực/vị trí hiển
+  thị/kiểu banner) — cần Founder quyết định phạm vi cụ thể trước, CHƯA lập
+  đề xuất migration.
+- **Nội dung Website** — 6 trang tĩnh là component có cấu trúc/nội dung
+  dài (không phải vài field chrome đơn giản), đặc biệt có 3 trang pháp lý
+  (Điều khoản/Chính sách bảo mật/Hoàn phí) — sai sót khi CMS hoá có rủi ro
+  pháp lý thật. Cần Founder quyết định phạm vi (rich-text nguyên trang hay
+  tách theo section) trước khi thiết kế schema.
+
+Cả 3 dùng `AdminEmptyState` (không badge "Sắp ra mắt"), mô tả trung thực
+lý do + link liên quan — đúng pattern đã áp dụng cho "Thiết bị" ở Sprint 1
+(module cũng cần schema mới nhưng vẫn bỏ khung "Sắp triển khai").
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục Website (Landing Page vốn đã không có từ
+Sprint 0). Thêm 5 icon (`FileText`/`Navigation`/`PanelTop`/`Megaphone`/
+`Search`) — không còn item nào trong Workspace này rơi vào fallback
+`Hourglass`.
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (5 route Website xuất hiện đúng, 0 warning mới). `next
+start` — 5 route trả `307` đúng (chưa đăng nhập), `/` vẫn `200`, log
+server sạch. Playwright qua route devtest tạm (xoá + rebuild sạch sau khi
+xác nhận) — mở "Website" trong sidebar: 0 badge "Sắp ra mắt" còn sót, đủ 6
+mục (kể cả Landing Page) hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** sửa Header & Footer qua Admin UI thật (cùng giới
+hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại
+`/admin/website/header-footer`, xác nhận đổi `siteName`/màu/social link
+phản ánh đúng ngay trên Website (không cần deploy lại, vì `getSiteSettings()`
+đọc mỗi request).
+
+**MIGRATION CHỜ DUYỆT RIÊNG (chưa apply):**
+`supabase-phase26-site-navigation.sql` — bảng `site_navigation` cho module
+"Điều hướng". Xem báo cáo rủi ro đầy đủ trong chính file SQL.
+
+**ĐÃ DỪNG SAU SPRINT 2 theo đúng chỉ đạo** — chưa động tới Sprint 3 (Học
+viện) hay bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint
++ xác nhận riêng về đề xuất migration "Điều hướng" trước khi tiếp tục.
+
+## ADM-V2-03 — Sprint 3: Vận hành (Operations) — Founder chọn làm trước Học viện
+
+Founder duyệt tiếp tục nhưng chỉ định đổi thứ tự: Vận hành trước, không
+theo đúng thứ tự Học viện đã nêu ở báo cáo Sprint 2. 3/6 mục
+(Đơn hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng) đã thật từ Sprint 0 —
+sprint này hoàn thiện 3 mục còn lại + thêm breadcrumb cho cả 6.
+
+### Audit — 2 ĐÍNH CHÍNH QUAN TRỌNG lật ngược ghi chú cũ (không tin ghi chú, grep lại trực tiếp)
+
+**"Mã giảm giá" — ghi chú cũ SAI.** `nav.ts`/`WorkspacePlaceholder` cũ ghi
+"bảng `coupons` không có code nào (kể cả checkout) đọc/ghi". Grep trực
+tiếp `src/app/portal/checkout/actions.ts` phát hiện `applyCoupon()` ĐÃ
+đọc/validate (`active`/`expires_at`/`max_uses`)/trừ tiền vào
+`orders.amount`/tăng `used_count` — tính năng THẬT đang chạy. Xác nhận
+qua Supabase MCP: 2 mã thật tồn tại, 1 mã (`VODUONG68`) đã
+`used_count=2`. Vì có nghiệp vụ thật tiêu thụ dữ liệu này, xây CRUD thật
+ở đây là ĐÚNG (không phải CRUD giả) — khác các trường hợp Sprint 1/2 nơi
+Empty State là lựa chọn đúng vì chưa có nghiệp vụ nào tiêu thụ.
+
+**"Tiếp thị liên kết" — ghi chú cũ THIẾU.** Ghi chú cũ chỉ biết tới nội
+dung tĩnh affiliate ở Dự án & Cơ hội (`ecosystem_chrome.affiliateOffers`).
+Audit lại phát hiện bảng `referrals` (`referrer_id`/`referred_email`/
+`referred_id`/`order_id`/`commission_rate`/`commission_amount`/`status`
+pending-confirmed-paid/`paid_at`) + `members.referral_code`/`referred_by`
+— một hệ HOA HỒNG GIỚI THIỆU THẬT của chính VDAI, đã được
+`/portal/referral` ("Hoa hồng giới thiệu") đọc từ trước — hoàn toàn khác
+affiliate bên ngoài (Lazada/Shopee) ở Dự án & Cơ hội. Chỉ CHƯA có Admin UI
+nào đọc bảng này. 0 dòng dữ liệu tại thời điểm audit.
+
+**"Thanh toán" — re-audit xác nhận ghi chú cũ ĐÚNG**, không phát hiện gì
+mới: chỉ là cột `orders.status`, cập nhật qua webhook SePay
+(`src/app/api/webhooks/sepay/route.ts`), không có thực thể giao dịch
+riêng nào khác.
+
+### Đã làm
+
+- **Mã giảm giá** (`/admin/van-hanh/ma-giam-gia`) — CRUD THẬT (Server
+  Actions riêng, bảng `coupons` typed — cùng pattern `case_studies`/
+  `courses`, không qua `/api/admin/collections/[table]`): tạo/sửa/xoá mã
+  (code/loại giảm %/số tiền/giới hạn lượt dùng/ngày hết hạn/bật-tắt).
+  `used_count` CHỈ ĐỌC (do `applyCoupon()` tự tăng, Admin không sửa tay).
+  KHÔNG đụng `applyCoupon()`/luồng checkout.
+- **Tiếp thị liên kết** (`/admin/van-hanh/tiep-thi-lien-ket`) — CHỈ ĐỌC
+  bảng `referrals` (join email người giới thiệu qua `members`), badge
+  trạng thái pending/confirmed/paid. Cùng mức thận trọng như Đơn hàng/Hỗ
+  trợ khách hàng — KHÔNG thêm hành động "đánh dấu đã trả hoa hồng" (ngoài
+  phạm vi đã duyệt, đây là hành động chi tiền thật). 0 dòng hiện tại →
+  `AdminEmptyState`.
+- **Thanh toán** (`/admin/van-hanh/thanh-toan`) — `AdminEmptyState` (bỏ
+  badge "Sắp ra mắt"), giải thích rõ không tạo trang riêng, trỏ sang Đơn
+  hàng.
+- **Breadcrumb** — thêm `AdminBreadcrumb` vào cả 3 trang thật cũ (Đơn
+  hàng/Khách hàng tiềm năng/Hỗ trợ khách hàng, xây từ Sprint 0 trước khi
+  `AdminBreadcrumb` tồn tại) để cả 6 mục Vận hành đồng nhất.
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi 3 mục còn lại (Thanh toán/Mã giảm giá/Tiếp thị liên
+kết). Thêm 3 icon (`CreditCard`/`Ticket`/`Users2`).
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (6 route Vận hành xuất hiện đúng). `next start` — 6 route
+trả `307` đúng, `/` vẫn `200`, log sạch. Playwright qua route devtest tạm
+(xoá + rebuild sạch sau khi xác nhận) — mở "Vận hành": 0 badge "Sắp ra
+mắt" còn sót, đủ 6 mục hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** tạo/sửa/xoá mã giảm giá qua Admin UI thật (cùng
+giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test
+tại `/admin/van-hanh/ma-giam-gia`, xác nhận mã mới tạo áp dụng được ngay ở
+`/portal/checkout`.
+
+**Bài học (áp dụng cho các sprint sau):** ghi chú "chưa có code nào đọc/
+ghi bảng X" trong `nav.ts`/`WorkspacePlaceholder` cũ là NHẬN ĐỊNH TẠI THỜI
+ĐIỂM VIẾT, không phải sự thật vĩnh viễn — sprint nào động tới module đó
+PHẢI tự grep lại từ đầu (không tin ghi chú), như đã làm với `coupons`/
+`referrals` ở đây.
+
+**ĐÃ DỪNG SAU SPRINT 3 theo đúng chỉ đạo** — chưa động tới Học viện hay
+bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint trước khi
+tiếp tục.
+
+## ADM-V2-04 — Sprint 4: Thương hiệu & Media (Brand Studio & Media Center)
+
+Founder chọn tiếp tục với Workspace "Thương hiệu & Media" (5 mục, cả 5
+đều `comingSoon` từ Sprint 0).
+
+### Audit — 1 đính chính phạm vi quan trọng
+
+**"Tài liệu" — đổi phạm vi so với ý tưởng gốc.** Ghi chú gốc mô tả "đọc
+lại file Markdown trong `docs/` ngay trong Admin" — ý tưởng này CHƯA từng
+có gì backing thật (không có UI đọc file nào, giá trị thấp vì Founder có
+thể mở repo trực tiếp). Audit phát hiện bảng `documents` (typed:
+title/description/url/icon/bg_color/display_order/active) đã có **4 dòng
+dữ liệu thật** và đã được `/portal/resources` ("Tài nguyên miễn phí" →
+khối "Tài liệu từ VO DUONG AI Academy") đọc thật từ trước — nhưng CHƯA
+từng có Admin UI. Vì đây là gap thật giá trị cao hơn hẳn ý tưởng gốc, ưu
+tiên xây CRUD cho đúng bảng `documents` thay vì ý tưởng "đọc file
+Markdown" (đã đổi tên field mô tả trong `nav.ts`, giữ nguyên href/label).
+
+**Đã kiểm tra thêm, không phát hiện gì dùng được:** `digital_asset_settings`
+(đăng ký trong `SUPABASE_COLLECTIONS` nhưng 0 code nào đọc — mồ côi thật,
+khác `coupons` ở Sprint 3), `affiliateHub.ts`/`DigitalAssetProjectCard`
+(file dữ liệu tĩnh cũ, không còn consumer nào import — tàn dư từ trước đợt
+dọn admin cũ). Không có file brand voice guide nào trong `voduongai/`
+(khác `BRAND_VOICE_GUIDE.md` ở gốc repo — đó là tài liệu của website tĩnh
+CŨ `duongtyphu/`, KHÔNG thuộc phạm vi Admin CMS Next.js này).
+
+### Đã làm
+
+- **Tài liệu** (`/admin/thuong-hieu-media/tai-lieu`) — CRUD thật (Server
+  Actions riêng, bảng `documents` typed, cùng pattern `case_studies`/
+  `coupons`): title/description/url/icon/bg_color/display_order/active.
+- **Logo & Nhận diện** (`/admin/thuong-hieu-media/logo-nhan-dien`) — CHỈ
+  ĐỌC, đúng phạm vi thật của nav item ("xem trước + xuất mã SVG chuẩn"):
+  render lại ĐÚNG mã HTML/SVG logo Nav/Footer copy verbatim từ quy ước bắt
+  buộc trong CLAUDE.md (không tự chỉnh), kèm nút sao chép — không sửa qua
+  UI (logo là chuẩn nhận diện cố định). Trỏ sang Header & Footer (Website)
+  cho màu thương hiệu — không lặp lại ở đây.
+- **Brand Studio / Media Center / Tài nguyên thương hiệu** —
+  `AdminEmptyState` (bỏ badge "Sắp ra mắt"), mỗi trang giải thích trung
+  thực lý do riêng: Brand Studio cần Founder xác nhận phạm vi nội dung
+  giọng điệu/quy chuẩn viết trước khi thiết kế schema (màu + logo đã có
+  chỗ quản); Media Center chưa có hạ tầng upload/lưu trữ nào (dự án chưa
+  có upload thật ở bất kỳ đâu); Tài nguyên thương hiệu phụ thuộc Media
+  Center làm nền trước.
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục. Thêm 5 icon (`Palette`/`Images`/
+`Fingerprint`/`PackageOpen`/`FileText` — 1 số icon tái dùng từ workspace
+khác theo đúng convention đã có).
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (5 route xuất hiện đúng). `next start` — 5 route trả
+`307` đúng, `/` vẫn `200`, log sạch. Playwright qua route devtest tạm
+(xoá + rebuild sạch sau khi xác nhận) — mở "Thương hiệu & Media": 0 badge
+"Sắp ra mắt" còn sót, đủ 5 mục hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** tạo/sửa/xoá tài liệu qua Admin UI thật + xác nhận
+sao chép mã logo hoạt động đúng trên trình duyệt thật (cùng giới hạn
+sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại
+`/admin/thuong-hieu-media/tai-lieu` và `/logo-nhan-dien`.
+
+**ĐÃ DỪNG SAU SPRINT 4 theo đúng chỉ đạo** — chưa động tới Học viện hay
+bất kỳ Workspace nào khác, chờ Founder/PMO duyệt báo cáo sprint trước khi
+tiếp tục.
+
+## ADM-V2-05 — Sprint 5: Hệ thống (System)
+
+Founder chọn tiếp tục với Workspace "Hệ thống" (5 mục, cả 5 đều
+`comingSoon` từ Sprint 0) — workspace nhạy cảm nhất: mọi ghi chú gốc đều
+nhắc rõ "KHÔNG hiển thị bất kỳ giá trị biến môi trường/secret nào". Sprint
+này giữ đúng ràng buộc đó tuyệt đối — mọi trang chỉ hiển thị BOOLEAN
+đã cấu hình/chưa hoặc TÊN biến môi trường, KHÔNG BAO GIỜ giá trị thật.
+
+### Audit — phát hiện 1 hạ tầng thật đã có sẵn, chưa từng lộ ra Admin
+
+Audit `src/ai/**` (AI Service Registry, Phase 4 Epic 01 — hạ tầng có sẵn
+từ trước, không phải xây mới) phát hiện:
+- `checkAllProvidersHealth()` (`provider-health-check.ts`) — kiểm tra 10
+  AI Provider đã đăng ký (OpenAI/Anthropic/Gemini/DeepSeek/Grok/Mistral/
+  Ollama/Perplexity/Cohere/Mock) qua `adapter.healthCheck()` — MỖI adapter
+  chỉ tự xác nhận ENV có giá trị hay không (`isAvailable()`), KHÔNG gọi
+  mạng thật, `reason` trả về CHỈ LÀ TÊN biến môi trường thiếu (vd "Thiếu
+  ANTHROPIC_API_KEY."), không bao giờ chứa giá trị — đã đọc code từng
+  adapter xác nhận. Hạ tầng này đã phục vụ `/api/ai/provider-health` từ
+  trước (chỉ 3/10 provider), nhưng CHƯA từng có Admin UI nào gọi.
+- `provider-execution-log.ts` — log mỗi lần gọi AI Provider (provider/
+  capability/success/latency/lỗi), KHÔNG log nội dung prompt/raw (đã ghi
+  rõ trong chính file). **Lưu ý trung thực quan trọng:** log này lưu
+  TRONG BỘ NHỚ TIẾN TRÌNH (process-local), KHÔNG phải database — tự ghi
+  rõ trong file nguồn là "đủ cho dev/sandbox", cần thay bằng lưu trữ bền
+  vững nếu chạy nhiều instance/serverless (ngoài phạm vi sprint này).
+  Hiển thị ĐÚNG thực trạng này, không giả vờ đây là audit log đầy đủ.
+
+Không có bảng `system_config`/`feature_flags`/`audit_log`/`app_config`
+nào tồn tại (`to_regclass()` → null cả 4). `documents`/`digital_asset_settings`
+kiểm tra lại — không liên quan Hệ thống. `BRAND_VOICE_GUIDE.md` không có
+trong `voduongai/` (đã ghi từ Sprint 4).
+
+### Đã làm
+
+- **API & Tích hợp** (`/admin/he-thong/api-tich-hop`) — REAL: gọi
+  `checkAllProvidersHealth()` hiển thị 10 AI Provider (đã cấu hình/chưa,
+  BOOLEAN — text "Đã cấu hình" hoặc TÊN biến thiếu, không giá trị) + 2
+  dịch vụ khác (SePay Webhook, Google Analytics — cùng cách boolean).
+- **Nhật ký hệ thống** (`/admin/he-thong/nhat-ky-he-thong`) — REAL nhưng
+  phạm vi hẹp hơn ý tưởng gốc ("log lỗi server chung" — vẫn chưa có, chỉ
+  qua Vercel Dashboard): hiển thị `listExecutions()` (log AI Provider),
+  kèm cảnh báo rõ "process-local, có thể rỗng giữa các lần deploy".
+- **Môi trường** (`/admin/he-thong/moi-truong`) — REAL: `NODE_ENV` +
+  checklist boolean cấu hình Supabase lõi (4 biến: `SUPABASE_URL`/
+  `SUPABASE_SERVICE_ROLE_KEY`/`NEXT_PUBLIC_SUPABASE_URL`/
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY` — chỉ tên biến, không giá trị). Tách rõ
+  khỏi "API & Tích hợp" (AI Provider/dịch vụ khác) để không 2 trang cùng
+  sở hữu 1 nội dung.
+- **Cấu hình chung / Sao lưu** — `AdminEmptyState` (bỏ badge "Sắp ra
+  mắt"), re-audit xác nhận đúng ghi chú gốc (không có feature-flag nào;
+  sao lưu do Supabase quản lý hạ tầng, ứng dụng không có quyền đọc lại).
+  Cấu hình chung trỏ sang Header & Footer (nơi đã quản site-wide settings
+  thật) tránh trùng sở hữu dữ liệu.
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục. Thêm 5 icon (`SlidersHorizontal`/`Plug`/
+`ScrollText`/`DatabaseBackup`/`Server`).
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch (1 lỗi `react/no-unescaped-entities` tự phát hiện và
+sửa ngay — dấu ngoặc kép thẳng trong JSX text, đổi sang `&quot;`), `npx
+vitest run` 139/139 pass, `rm -rf .next && npm run build` sạch (5 route
+xuất hiện đúng). `next start` — 5 route trả `307` đúng, `/` vẫn `200`,
+log sạch. Playwright qua route devtest tạm (xoá + rebuild sạch sau khi
+xác nhận) — mở "Hệ thống": 0 badge "Sắp ra mắt" còn sót, đủ 5 mục hiện
+đúng, `page.on("pageerror")` rỗng.
+
+**Đã tự kiểm tra kỹ (khác các sprint trước):** vì đây là workspace nhạy
+cảm nhất, đã đọc lại TỪNG dòng code hiển thị trước khi build — xác nhận
+không có `console.log`/JSX nào in ra `process.env.X` (chỉ
+`Boolean(process.env.X)` hoặc so sánh y hệt pattern đã dùng an toàn xuyên
+suốt dự án từ trước).
+
+**Chưa tự test được:** xem trạng thái AI Provider/Môi trường qua Admin UI
+thật có tài khoản đăng nhập + Supabase thật (cùng giới hạn sandbox không
+có `SUPABASE_SERVICE_ROLE_KEY`) — Founder tự test tại 3 trang REAL
+(`api-tich-hop`/`nhat-ky-he-thong`/`moi-truong`) trên Preview URL, xác
+nhận không có giá trị secret nào bị lộ dù nhìn kỹ DOM/View Source.
+
+**ĐÃ DỪNG SAU SPRINT 5 theo đúng chỉ đạo** — chưa động tới Học viện hay
+Marketing, chờ Founder/PMO duyệt báo cáo sprint trước khi tiếp tục.
+
+## ADM-V2-06 — Sprint 6: Marketing
+
+Founder chọn tiếp tục với Workspace "Marketing" (5 mục, cả 5 đều
+`comingSoon` từ Sprint 0).
+
+### Audit — 4/5 ghi chú gốc xác nhận ĐÚNG, 1 phát hiện mới cho "Chuyển đổi"
+
+Re-audit toàn bộ 5 mục (grep + Supabase `to_regclass()`):
+- Không có bảng `campaigns`/`email_campaigns`/`cta_events`/
+  `analytics_events` nào tồn tại.
+- Không có dịch vụ gửi email hàng loạt nào tích hợp (không
+  Resend/SendGrid/Nodemailer/SMTP). `EmailOptInForm` (`/contact`) chỉ
+  POST vào bảng `leads` (thu thập, không gửi).
+- Không có cơ chế tracking click CTA nào (không gtag custom event/bảng
+  riêng).
+- Google Analytics chỉ chạy script frontend (`NEXT_PUBLIC_GA_ID`) — đọc
+  lại số liệu cần Google Analytics Data API + quyền riêng, không tự tích
+  hợp được.
+
+→ 4/5 ghi chú gốc (Chiến dịch/Email Marketing/CTA/Phân tích Marketing)
+đều ĐÚNG, không có gì mới — giữ Empty State, chỉ đổi khung hiển thị (bỏ
+badge "Sắp ra mắt").
+
+**"Chuyển đổi" — phát hiện 1 phễu nội bộ tính được KHÔNG cần GA:** ghi
+chú gốc đúng là chưa có phễu đầy đủ "Landing Page → đăng ký → onboarding
+→ mua khoá học" (cần page-view analytics từ GA). Nhưng có 1 phễu HẸP hơn
+tính được ngay từ dữ liệu thật đã có: khách hàng tiềm năng (`leads`, có
+`source`) → có trở thành khách mua hàng không (khớp `email` với
+`orders.status='confirmed'`). 8 lead thật, 3 nguồn khác nhau tại thời
+điểm audit. Đây là góc nhìn TỔNG HỢP theo nguồn (khác "Khách hàng tiềm
+năng"/"Đơn hàng" ở Vận hành — 2 trang đó là danh sách RAW từng dòng),
+không tạo 2 nơi cùng quản 1 danh sách.
+
+### Đã làm
+
+- **Chuyển đổi** (`/admin/marketing/chuyen-doi`) — REAL: bảng tổng hợp
+  theo nguồn (số lead/số đã mua/tỷ lệ %) + 2 ô KPI (tổng lead, tỷ lệ
+  chuyển đổi tổng). Join `leads.email` với `orders.member_email` (đã
+  `confirmed`) bằng JS sau khi fetch cả 2 (không cần RPC/view SQL mới).
+- **Chiến dịch / Email Marketing / CTA / Phân tích Marketing** —
+  `AdminEmptyState` (bỏ badge "Sắp ra mắt"), mỗi trang giữ đúng lý do
+  trung thực đã audit lại, thêm `relatedLink` sang module thật gần nhất
+  (Mã giảm giá, Khách hàng tiềm năng, Landing Page, Chuyển đổi).
+
+### `nav.ts` + `AdminSidebar.tsx`
+
+Bỏ `comingSoon` khỏi cả 5 mục. Thêm 3 icon mới (`Mail`/`MousePointerClick`/
+`BarChart3`), tái dùng `Megaphone`/`TrendingUp` đã có sẵn.
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (5 route xuất hiện đúng). `next start` — 5 route trả
+`307` đúng, `/` vẫn `200`, log sạch. Playwright qua route devtest tạm
+(xoá + rebuild sạch sau khi xác nhận) — mở "Marketing": 0 badge "Sắp ra
+mắt" còn sót, đủ 5 mục hiện đúng, `page.on("pageerror")` rỗng.
+
+**Chưa tự test được:** xem bảng Chuyển đổi qua Admin UI thật với dữ liệu
+Production (cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`) —
+Founder tự test tại `/admin/marketing/chuyen-doi`, xác nhận tỷ lệ %
+khớp đúng số lead/đơn hàng thật.
+
+**ĐÃ DỪNG SAU SPRINT 6 theo đúng chỉ đạo** — chưa động tới Học viện (còn
+lại đúng 1 Workspace cuối cùng trong kế hoạch 8 sprint), chờ Founder/PMO
+duyệt báo cáo sprint trước khi tiếp tục.
+
+## ADM-V2-07 — Sprint 7 (cuối cùng): Học viện
+
+Founder chọn tiếp tục với Workspace cuối cùng trong kế hoạch 8-sprint —
+"Học viện" (10 subGroup, 38 route). Khác 6 sprint trước, sprint này KHÔNG
+có `comingSoon: true` nào để gỡ.
+
+### Audit — 0 comingSoon, workspace đã 100% thật từ trước
+
+Grep `comingSoon` trong `nav.ts` xác nhận cả 38 route dưới workspace "Học
+viện" đều KHÔNG có cờ này — toàn bộ đã là module thật (CRUD/Live-edit/
+Read-only) từ các đợt Nhóm 3/CKOS/Live-edit trước khi chương trình ADM-V2
+bắt đầu. Đã phân loại đầy đủ cả 38 route theo kiểu render trước khi quyết
+định phạm vi sprint:
+- **DataTable** (17 route: 8 CKOS + `tools`/`community`/`updates`/
+  `student-success-stories` + 5 route khác) — Server+Client split, đã có
+  `breadcrumb` optional prop chưa được dùng.
+- **VisualEditor** (5 route: `hocvienai/work-needs`, `hocvienai/faq`,
+  `aiworkspace/recommended-workspace`, `aiworkspace/ai-workflow-sections`,
+  `su-menh-companion/flipbook`) — cùng tình trạng thiếu breadcrumb.
+- **Bespoke Server Component** (5 route: `ckos` dashboard, `ckos/lessons`,
+  `ckos/case-studies`, `course-pricing`, `companion`) — không dùng
+  `DataTable`/`VisualEditor`, tự viết `<h1>`/shell riêng.
+- **Live-edit Cách A** (~19 route: `home-cards`, `duan-cohoi` + 10 sub-route,
+  `hanh-trinh-cua-toi` 5 cửa, `su-menh-companion/live-edit`,
+  `premium/dashboard`) — render lại NGUYÊN component `/portal/*` thật.
+
+### Quyết định phạm vi: retrofit breadcrumb, không CRUD/Empty State mới
+
+Vì mục tiêu gốc (xoá "Sắp triển khai") đã đạt 100% từ trước, đóng góp
+trung thực của sprint này là dọn 1 điểm thiếu nhất quán còn sót:
+`AdminBreadcrumb` (dùng ở Sprint 1-6) chưa từng có mặt ở bất kỳ route Học
+viện nào — Founder điều hướng sâu (vd. `/admin/ckos/best-practices`)
+không thấy đường dẫn `Học viện → Hệ tri thức AI (CKOS) → ...`.
+
+**Đã làm — retrofit qua props dùng chung (3 sửa component → tự động phủ
+17 trang):**
+- `src/components/admin/DataTable.tsx`/`DataTableClient.tsx` — thêm
+  `breadcrumb?: AdminBreadcrumbItem[]` (import type từ `AdminBreadcrumb`),
+  truyền xuyên Server→Client, render `<AdminBreadcrumb trail={breadcrumb}/>`
+  ngay trong `<div className="space-y-4">`, trước `<h1>`. Optional, không
+  đổi hành vi trang nào chưa truyền prop.
+- `src/components/admin/VisualEditor.tsx` — cùng prop/pattern (component
+  "use client" đơn, không có bản Server riêng).
+- Đã truyền `breadcrumb` vào cả 17 trang DataTable + 5 trang VisualEditor,
+  mỗi trail đúng 3 cấp: Workspace ("Học viện") → SubGroup (khớp đúng label
+  trong `nav.ts`, href trỏ route đầu tiên của subGroup vì phần lớn subGroup
+  không có trang index riêng — ngoại lệ CKOS đã có `/admin/ckos`) → trang
+  hiện tại.
+- 5 trang bespoke (`ckos` dashboard, `ckos/lessons`, `ckos/case-studies`,
+  `course-pricing`, `companion`) — thêm `<AdminBreadcrumb trail={...}/>`
+  trực tiếp (không qua props component dùng chung, vì các trang này tự
+  viết JSX riêng).
+
+**Chủ động KHÔNG thêm breadcrumb cho ~19 route Live-edit Cách A** — các
+route này render lại NGUYÊN VẸN cây component `/portal/*` thật (không copy,
+import thẳng) bọc `<EditModeProvider>`, để đảm bảo pixel-perfect giữa chế
+độ sửa và trang công khai thật. Thêm bất kỳ phần tử Admin-only nào (kể cả
+1 dòng breadcrumb) vào giữa cây component đó sẽ vi phạm chính nguyên tắc
+kiến trúc "Live-edit Cách A" đã áp dụng xuyên suốt Nhóm 3 (rò rỉ UI Admin
+vào trang Portal thật nếu lỡ đặt sai vị trí, hoặc phải sửa component Portal
+gốc chỉ để thêm chrome Admin — cả 2 đều vi phạm "không đụng Portal/Landing
+Page ngoài phạm vi đã duyệt"). AdminShell's sidebar đã đủ để định vị route
+Live-edit đang ở đâu (label rõ ràng, vd. "Mirror (Live-edit)").
+
+### Verify
+
+`npx tsc --noEmit` sạch, `npx eslint src/app/admin src/components/admin
+src/lib/admin` sạch, `npx vitest run` 139/139 pass, `rm -rf .next && npm
+run build` sạch (toàn bộ 22 route sửa + route Live-edit khác xuất hiện
+đúng, 0 route biến mất). Playwright qua route `devtest-adm-v2-07` tạm
+(bọc `<AdminShell email="test@example.com">`, `next start` cổng 4551) —
+mở "Học viện" trong sidebar: 0 badge "Sắp ra mắt" còn sót, đủ "Học viện
+AI"/"Hệ tri thức AI (CKOS)"/"Cộng đồng" hiện đúng, `page.on("pageerror")`
+rỗng — đã xoá route devtest + `rm -rf .next && npm run build` lại để xác
+nhận gỡ sạch (0 tham chiếu `devtest-adm-v2-07` trong output build).
+
+**Chưa tự test được:** xem breadcrumb hiển thị đúng qua Admin UI thật có
+tài khoản đăng nhập (cùng giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test tại vài
+route mẫu (`/admin/ckos/best-practices`, `/admin/tools`,
+`/admin/hocvienai/faq`), xác nhận breadcrumb hiện đúng 3 cấp và link cấp
+giữa dẫn đúng route.
+
+**ĐÃ DỪNG SAU SPRINT 7 theo đúng chỉ đạo — đây là sprint cuối cùng trong
+kế hoạch 8-sprint ADM-V2.0.** Toàn bộ 8 Workspace (Tổng quan/Người dùng/
+Website/Học viện/Vận hành/Marketing/Thương hiệu & Media/Hệ thống) giờ
+không còn badge "Sắp triển khai" nào cho module đã có cách triển khai
+trung thực — module nào còn thiếu hạ tầng thật (Media Center, Chiến dịch,
+Email Marketing...) đều hiển thị `AdminEmptyState` trung thực kèm lý do,
+không CRUD giả. Chờ Founder/PMO duyệt báo cáo Sprint 7 — đây cũng là mốc
+đóng chương trình ADM-V2.0 tổng thể nếu Founder xác nhận không còn sprint
+bổ sung nào khác.
+
+## Logo & Nhận diện — sửa snippet lệch với logo thật (sau khi RC được duyệt)
+
+Founder báo trang `/admin/thuong-hieu-media/logo-nhan-dien` đang dùng logo
+"cũ". Audit xác nhận: trang này (ADM-V2-04) copy nguyên mẫu logo TĨNH của
+website HTML CŨ (`duongtyphu/`, thuộc CLAUDE.md gốc ở repo root — ngoài
+phạm vi Admin CMS Next.js này), KHÁC hẳn logo THẬT đang chạy trên Landing
+Page/Portal (`HeaderClient.tsx`/`Footer.tsx`): cam `#F97316` (cũ) →
+`#FF7A00` (thật); chữ tĩnh "VDAI"/"ACADEMY" xếp chồng, luôn trắng (cũ) →
+tên site tách `brandMain`/`brandAccent` từ `settings.siteName` (đọc live ở
+Header & Footer), màu accent tím `#5B21D6` khi nền sáng / trắng khi nền
+tối (theme-aware, cũ luôn trắng cố định) — sai lệch từ chính đợt build
+ADM-V2-04, không phải do Landing Page đổi sau đó.
+
+**Đã sửa** `LogoSnippets.tsx` — đổi từ HTML tĩnh (`href="index.html"`,
+style inline) sang đúng JSX thật copy từ `HeaderClient.tsx`/`Footer.tsx`
+(dự án này là Next.js/React, dán JSX vào component mới, không phải file
+`.html`). Preview trực quan (qua `dangerouslySetInnerHTML`) dùng HTML
+tương đương để hiển thị đúng màu/bố cục thật, tách riêng khỏi code JSX
+copy được (2 hằng số khác nhau: `*_PREVIEW_HTML` để xem, `*_SNIPPET` để
+copy) — tránh nhầm copy nhầm HTML tĩnh như bản cũ.
+
+## Affiliate Hub — nối dây Portal + Admin (dữ liệu có sẵn, bị bỏ dở)
+
+Founder yêu cầu "cập nhật mục chương trình affiliate cho Portal và quản
+lý tại Admin". Audit phát hiện dự án đã có SẴN 1 bộ nội dung "Affiliate
+Hub" (hướng dẫn thực chiến làm Affiliate Marketing) được thiết kế từ
+trước — 3 bảng generic Supabase đã tồn tại thật, đăng ký sẵn trong
+`SUPABASE_COLLECTIONS`, có seed dữ liệu thật (không phải rỗng), RLS đã
+cấu hình đúng — nhưng **KHÔNG có trang Portal nào đọc, KHÔNG có Admin UI
+nào quản** trước đợt này:
+
+| Bảng | Số dòng seed | Vai trò |
+|---|---|---|
+| `affiliate_hub_sections` | 7 | 7 bước hướng dẫn (Bắt đầu/Chọn ngách/Chọn sản phẩm/Xây nội dung/Công cụ/Case Study/Top sản phẩm) |
+| `affiliate_products` | 1 (Hostinger) | Sản phẩm Affiliate đề xuất — đầy đủ audience/useCase/workflow/pros/cons/pricing/affiliateUrl |
+| `affiliate_hub_top_products` | 1 | Featured/join — tham chiếu `productId` sang `affiliate_products`, vocabulary `Active/Inactive` riêng (giữ nguyên, cùng kiểu bảng `community`) |
+
+**Đã hỏi Founder trước khi build (không đoán):** có 3 hệ thống khác nhau
+đều gọi là "affiliate" trong dự án — (1) Affiliate Hub bị bỏ dở ở trên,
+(2) "Hoa hồng giới thiệu" (`/portal/referral`, bảng `referrals`, đã hoạt
+động từ trước), (3) hệ sinh thái "Làm tiếp thị liên kết"
+(`/portal/duan-cohoi/lam-affilate`, đã có Admin quản lý đầy đủ từ Nhóm
+3). Founder xác nhận chọn (1).
+
+**Chủ động KHÔNG nối bảng thứ 4 cùng nhóm — `affiliate_links`** (0 dòng,
+có field `clicks`/`conversions`): không có cơ chế click-tracking thật nào
+tồn tại trong dự án (không route `/go/[code]` hay tương tự) — hiển thị 2
+field này sẽ là số liệu bịa, vi phạm NO-FAKE-DATA. Để nguyên mồ côi, cần
+quyết định riêng nếu sau này muốn xây tracking thật.
+
+**Đã làm:**
+- `src/lib/portal/live-affiliate-hub.ts` (mới) — `getLiveAffiliateHubSections()`/
+  `getLiveAffiliateProducts()`/`getLiveAffiliateProductBySlug()`/
+  `getLiveAffiliateHubTopProducts()`, cùng pattern `live-tools.ts`
+  (`getSupabasePublic()` + `cache()`). Sắp xếp theo `data.order` (JS-side
+  sort) — KHÔNG dùng cột `order` ngoài (cột đó không trả về qua GET route
+  generic, đúng bài học đã ghi ở "Chuyển đổi"/ecosystem articles).
+- `/portal/affiliate-hub` (mới) — hub page: 7 bước hướng dẫn (grid card +
+  CTA), "Nổi bật tháng này" (badge + link hướng dẫn nội bộ + link dùng
+  thử ngoài), "Sản phẩm Affiliate đề xuất" (grid, mỗi thẻ dẫn sang trang
+  chi tiết). Cả 3 khối đều có Empty State trung thực nếu rỗng.
+- `/portal/affiliate-hub/[slug]` (mới) — trang chi tiết sản phẩm: audience/
+  useCase/pricing/workflow/pros/cons + nút "Dùng thử" trỏ `affiliateUrl`
+  thật (`target="_blank" rel="noopener noreferrer"`, cùng convention
+  `EcosystemAffiliateOffersBox`), kèm badge minh bạch "Affiliate — VO
+  DUONG AI nhận hoa hồng nếu bạn mua qua link này" khi `isAffiliate=true`.
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — thêm 1 banner CTA
+  "Xem Affiliate Hub →" trong đúng nhánh `structureType === "affiliate-list"`
+  (chỉ ảnh hưởng trang `lam-affilate`, không đụng 4 hệ sinh thái khác) —
+  điểm khám phá tự nhiên từ hệ sinh thái Affiliate hiện có sang Affiliate
+  Hub mới, không cần thêm mục nav Portal cấp cao mới.
+- Admin: 3 trang `DataTable` mới dưới nhóm sidebar "Dự án & Cơ hội"
+  (cùng nhóm với hệ sinh thái Affiliate, vì nội dung bổ trợ trực tiếp,
+  không trùng lặp — hệ sinh thái là "cơ hội kinh doanh ngoài" như
+  Lazada/Shopee, Affiliate Hub là "hướng dẫn thực chiến + công cụ đề
+  xuất"): `/admin/duan-cohoi/affiliate-hub-sections`,
+  `/admin/duan-cohoi/affiliate-products`,
+  `/admin/duan-cohoi/affiliate-hub-top-products`. `productId` ở trang thứ
+  3 là ô nhập text đơn giản (không multi-select) vì đây tham chiếu 1-1,
+  ghi rõ hướng dẫn "nhập đúng id" trong label field.
+- `nav.ts`/`AdminSidebar.tsx` (3 icon mới: `Route`/`ShoppingBag`/`Award`)/
+  `dashboard/page.tsx` (`TABLE_FOR_HREF`, 3 dòng mới) — wire đầy đủ.
+
+**Verify:** `tsc`/`eslint` sạch (0 lỗi/warning trên toàn bộ file mới/sửa),
+`vitest run` 139/139 pass, `rm -rf .next && npm run build` sạch (5 route
+mới xuất hiện đúng: `/portal/affiliate-hub`, `/portal/affiliate-hub/[slug]`,
+3 route Admin). **Test thật với anon key thật** (route dev-preview tạm,
+render trực tiếp component `AffiliateHubPage`/`AffiliateProductDetailPage`/
+`EcosystemPage` không qua middleware — cùng kỹ thuật đã dùng nhiều lần
+trước đó, xoá ngay sau khi xác nhận): xác nhận cả 7 section + Hostinger
+(cả ở "Nổi bật tháng này" lẫn "Sản phẩm Affiliate đề xuất") + trang chi
+tiết (đầy đủ audience/useCase/pricing/workflow/pros/cons/nút "Dùng thử
+Hostinger ↗" trỏ đúng `https://hostinger.com?ref=voduongai`) đều render
+đúng dữ liệu thật. Banner CTA trên trang hệ sinh thái `lam-affilate` cũng
+xác nhận render đúng (200, không crash). Test lại không có Supabase (mặc
+định sandbox) — route Admin trả `307` đúng như mọi route khác,
+`/portal/affiliate-hub` fallback công khai đúng thiết kế khi Supabase
+chưa cấu hình.
+
+**Chưa tự test được:** thêm/sửa/xoá nội dung qua Admin UI thật có tài
+khoản đăng nhập (cùng giới hạn sandbox đã nêu nhiều lần) — Founder tự
+test tại 3 route Admin mới, xác nhận sửa xong phản ánh đúng lên
+`/portal/affiliate-hub`.
+
+## Sửa ngay sau đó — 3 trang Admin Affiliate Hub lỡ dùng sai atmosphere
+
+Founder nhắc lại nguyên tắc bắt buộc "mọi thứ thiết kế ở Admin phải lấy
+Landing Page bản chính thức và Portal hiện tại làm căn cứ". Tự audit lại
+đúng 3 trang vừa xây ở mục trên phát hiện đúng 1 vi phạm: cả 3 trang
+(`affiliate-hub-sections`/`affiliate-products`/`affiliate-hub-top-products`)
+bọc `<AdminAtmosphere atmosphereClassName="projects-atmosphere-bg">` —
+copy nhầm lớp khí quyển của `/portal/duan-cohoi` (vì xếp cùng nhóm sidebar
+"Dự án & Cơ hội") thay vì đọc lại đúng trang Portal thật mà 3 bảng này
+backing (`/portal/affiliate-hub`, tự viết ở mục trên) — trang đó KHÔNG có
+lớp khí quyển riêng nào (chỉ `gemos-bg` mặc định, giống `/portal/earn`).
+
+**Đã sửa:** bỏ hẳn `<AdminAtmosphere>` khỏi cả 3 trang (cùng pattern
+`/admin/tools` — không bọc gì khi Portal không có atmosphere riêng).
+**Bài học:** nhóm sidebar là cách TỔ CHỨC menu, không phải căn cứ để suy
+ra màu nền — luôn đọc đúng trang Portal/Landing Page THẬT mà module đó
+backing, không suy từ nhóm/route lân cận.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 139/139, `rm -rf .next && npm
+run build` sạch.
+
+## Chương trình Affiliate — module đầy đủ (Portal + Admin), theo yêu cầu riêng
+
+Founder yêu cầu module hoa hồng giới thiệu CHÍNH THỨC (khác Affiliate Hub
+ở trên — đó là nội dung HƯỚNG DẪN cách làm affiliate ngoài, module này là
+CHƯƠNG TRÌNH GIỚI THIỆU của chính VDAI): mỗi user có mã/link giới thiệu
+riêng, tự động ghi nhận + tính hoa hồng khi người được giới thiệu mua hàng.
+
+### Phát hiện quan trọng nhất — audit trực tiếp Supabase (không suy đoán)
+
+Trước khi thiết kế bất kỳ schema nào, đã đọc trực tiếp trigger/function
+thật qua Supabase MCP — phát hiện **toàn bộ động cơ hoa hồng đã tồn tại
+sẵn và đang chạy**, chỉ 1 mắt xích bị thiếu:
+
+- `members.referral_code` — tự sinh cho MỌI user mới qua trigger
+  `set_referral_code` (`BEFORE INSERT ON members`).
+- `members.referred_by` — cột đã có từ trước nhưng **0/16 dòng có giá
+  trị** — chưa từng có nơi nào trong luồng đăng ký (`/register`, Google
+  OAuth) capture mã giới thiệu để ghi vào đây.
+- Trigger `on_member_referred` (`AFTER INSERT ON members`, hàm
+  `handle_new_referral()`) — ĐÃ CÓ SẴN: nếu `referred_by` khớp
+  `referral_code` của 1 member khác, tự tạo 1 dòng `referrals`
+  (`status='pending'`).
+- Trigger `on_order_confirmed` (`AFTER UPDATE ON orders`, hàm
+  `handle_order_confirmed_commission()`) — ĐÃ CÓ SẴN: khi
+  `orders.status` chuyển sang `'confirmed'`, tự tìm dòng `referrals`
+  pending khớp `referred_email`, tính `commission_amount = amount *
+  commission_rate` (mặc định 10%), chuyển `status='confirmed'`.
+
+→ Kết luận: **KHÔNG cần xây lại cơ chế ghi nhận/tính hoa hồng** — chỉ cần
+(1) vá đúng 1 chỗ hở (capture `ref_code` lúc đăng ký), (2) thêm cấu hình
+hoa hồng theo sản phẩm (audit xác nhận trigger hiện tại dùng CHUNG 1 mức
+10% cho mọi sản phẩm, không phân biệt), (3) thêm theo dõi lượt truy cập
+(chưa có cơ chế nào), (4) thêm yêu cầu thanh toán (chưa có bảng nào phù
+hợp tái dùng) — đúng nguyên tắc Reuse First/Single Source of Truth Founder
+yêu cầu.
+
+### Migration đề xuất — CHƯA APPLY, chờ Founder duyệt riêng
+
+`supabase-phase27-affiliate-program.sql` — 4 phần, mỗi phần có báo cáo rủi
+ro riêng ngay trong file:
+1. Sửa `handle_new_auth_user()` (trigger `auth.users` lõi) — thêm đúng 1
+   field `referred_by` vào insert có sẵn, đọc từ
+   `raw_user_meta_data->>'ref_code'`. Additive-only, fallback về hành vi
+   y hệt hiện tại nếu không có `ref_code`.
+2. Bảng mới `affiliate_commission_rules` (product_type/product_id/
+   commission_rate) + sửa `handle_order_confirmed_commission()` — thêm
+   bước tra cứu rate theo sản phẩm TRƯỚC khi tính hoa hồng, fallback về
+   10% mặc định nếu không có rule nào khớp.
+3. Bảng mới `affiliate_link_visits` (referral_code/visited_at/
+   landing_path) — theo dõi lượt truy cập, RLS chỉ admin đọc/ghi (ghi qua
+   service-role, không public insert).
+4. Bảng mới `affiliate_payout_requests` (member_id/amount_requested/
+   bank_info/status/admin_note) — yêu cầu rút hoa hồng, RLS
+   member chỉ đọc/tạo dòng của chính mình + admin toàn quyền.
+
+**2 rủi ro cao nhất đã ghi rõ trong file:** sửa 2 trigger ĐANG CHẠY THẬT
+(auth signup, order confirmation) — cả 2 đều thiết kế additive, có
+fallback về hành vi hiện tại, nhưng đây là đường DUY NHẤT mọi user/đơn
+hàng đi qua nên rủi ro hồi quy không phải bằng 0. Khuyến nghị Founder tự
+test đăng ký 1 tài khoản có `?ref=<code>` trên Preview URL sau khi apply.
+
+**Toàn bộ code Portal/Admin đã viết để hoạt động đúng cả TRƯỚC và SAU khi
+migration được duyệt** — mọi truy vấn tới 3 bảng mới đều bắt lỗi
+`42P01`/kiểm tra `error` từ Supabase (không throw), hiển thị thông báo
+trung thực "chưa được kích hoạt — chờ Founder duyệt migration" thay vì
+crash.
+
+### Portal — `/portal/affiliate` (thay thế `/portal/referral` cũ)
+
+Phát hiện: đã có sẵn `/portal/referral/page.tsx` (149 dòng, đọc đúng
+`referral_code`/`referrals`, KHÔNG có trong `portalNavSections`, chỉ được
+link mồ côi từ `/portal/earn`) làm gần hết việc Founder yêu cầu — **đã
+CHUYỂN (không tạo trang song song)** thành `/portal/affiliate`, mở rộng
+thêm QR code/lượt truy cập/khách hàng/đơn hàng/doanh thu/yêu cầu thanh
+toán theo đúng yêu cầu đầy đủ. Route cũ xoá hẳn (không redirect — chưa
+từng nằm trong nav chính thức nên không có rủi ro link chết ngoài 2 chỗ đã
+cập nhật: `/portal/earn`, comment trong `nav.ts`).
+
+- `src/lib/portal/live-affiliate.ts` (mới) — `getAffiliateOverview()`:
+  dùng session client (`getSupabaseServer()`) cho `members`/`referrals`
+  (đã có RLS "đọc dữ liệu của chính mình"); dùng `getSupabaseAdmin()` CHỈ
+  cho 2 việc hẹp đã scope đúng theo dữ liệu người dùng có quyền thấy — tra
+  `orders.amount` theo `order_id` đã có sẵn trong `referrals` của chính
+  mình (RLS `orders` không cho referrer đọc đơn của người khác, nhưng
+  referrer có quyền biết SỐ TIỀN đơn đã giới thiệu vì hoa hồng phụ thuộc
+  trực tiếp), và đếm `affiliate_link_visits` theo `referral_code` của
+  chính mình (bảng đó chỉ có policy admin). Giữ nguyên env-var guard
+  (`NEXT_PUBLIC_SUPABASE_URL`/`ANON_KEY`) TRƯỚC khi gọi
+  `getSupabaseServer()` — đúng convention `getPurchasedIds()`/
+  `getReferralData()` cũ, tự phát hiện và sửa (xem mục Bug bên dưới).
+- `src/app/portal/affiliate/page.tsx` — link giới thiệu + QR code (SVG,
+  sinh server-side qua package `qrcode` — dependency MỚI, pure JS, không
+  cần canvas/native, an toàn serverless) + 6 thẻ số liệu (lượt truy cập/
+  đăng ký/khách hàng/đơn hàng/doanh thu/hoa hồng) + khối trạng thái thanh
+  toán (số dư chờ/đã trả + nút "Yêu cầu thanh toán") + bảng lịch sử giao
+  dịch đầy đủ.
+- `src/app/portal/affiliate/actions.ts` — `requestAffiliatePayout()`, ghi
+  qua session client (KHÔNG dùng `getSupabaseAdmin()`) để RLS
+  `member_insert_own` tự bảo vệ — Security First, không có đường nào để 1
+  thành viên tạo yêu cầu đứng tên người khác.
+- `src/lib/portal/hubs.ts` — thêm `"Chương trình Affiliate"` (href
+  `/portal/affiliate`) ngay sau `"Premium"` trong `portalNavSections`
+  (đúng yêu cầu "đặt ở mục Premium" — cấu trúc nav Portal hiện tại là
+  danh sách phẳng 1 tầng, không có submenu lồng, nên vị trí liền kề là
+  cách thể hiện gần nhất).
+- `src/components/portal/PortalSidebar.tsx` — icon `Share2` cho
+  `/portal/affiliate`.
+
+### Admin — Workspace "Affiliate" mới (8 trang)
+
+Workspace TOÀN QUYỀN mới (`nav.ts`, id `affiliate`), đứng sau "Vận hành":
+Tổng quan, Thành viên, Referral, Đơn hàng, Hoa hồng, Cấu hình hoa hồng
+theo sản phẩm, Yêu cầu thanh toán, Báo cáo.
+
+- `src/lib/affiliate/admin-data.ts` — `loadAdminReferrals()` (join
+  `referrals`+`members`+`orders` 1 lần) + `summarizeByReferrer()` (gộp
+  theo người giới thiệu) — DÙNG CHUNG cho cả 6 trang đọc (Tổng quan/Thành
+  viên/Referral/Đơn hàng/Hoa hồng/Báo cáo), tránh 2 trang tính ra 2 con số
+  khác nhau cho cùng 1 câu hỏi.
+- `/admin/affiliate` (Tổng quan) — 4 KPI + top 5 người giới thiệu.
+- `/admin/affiliate/thanh-vien` — người ĐÃ giới thiệu thành công (khác
+  "Thành viên"/"Danh sách người dùng" ở Workspace Người dùng — góc nhìn
+  theo VAI TRÒ GIỚI THIỆU, không trùng).
+- `/admin/affiliate/referral` — danh sách đầy đủ, **thay thế hẳn**
+  `/admin/van-hanh/tiep-thi-lien-ket` cũ (route đó giờ `redirect()` sang
+  đây — tránh 2 nơi cùng sở hữu bảng `referrals`, đúng Single Ownership).
+- `/admin/affiliate/don-hang` — đơn hàng lọc theo có `order_id` trong
+  referrals (khác "Đơn hàng" ở Vận hành — danh sách RAW toàn bộ, không
+  phân biệt nguồn).
+- `/admin/affiliate/hoa-hong` — sổ giao dịch tiền (chỉ dòng đã phát sinh
+  hoa hồng, khác Referral liệt kê cả lượt đăng ký chưa mua).
+- `/admin/affiliate/cau-hinh-hoa-hong` — CRUD `affiliate_commission_rules`
+  (Server Actions riêng, bảng typed, cùng pattern `coupons`/`case_studies`
+  — không qua `/api/admin/collections/[table]`).
+- `/admin/affiliate/yeu-cau-thanh-toan` — duyệt/từ chối yêu cầu rút hoa
+  hồng. "Xác nhận đã thanh toán" là hành động THỦ CÔNG (Admin xác nhận đã
+  chuyển khoản thật ngoài hệ thống, giống cách `orders.status` được xác
+  nhận qua webhook SePay — sự kiện ngoài hệ thống, không phải trigger tự
+  suy luận) — đồng thời chuyển TOÀN BỘ dòng `referrals.status='confirmed'`
+  của đúng referrer đó sang `'paid'` (thiết kế đơn giản hoá: 1 lần duyệt =
+  thanh toán trọn gói số dư hiện có, không chia theo từng phần tiền lẻ).
+- `/admin/affiliate/bao-cao` — xu hướng theo tháng + bảng xếp hạng đầy đủ.
+
+`AdminSidebar.tsx` — thêm `workspaceIcons.affiliate = Share2` + 8
+`navIcons` tương ứng. `dashboard/page.tsx` — thêm
+`TABLE_FOR_HREF["/admin/affiliate/referral"] = "referrals"` (chỉ trang
+này map 1:1 vào đúng 1 bảng, 5 trang còn lại là góc nhìn gộp/join, không
+đếm riêng để tránh nhiều con số trùng nhau) +
+`PUBLIC_URL_FOR_WORKSPACE.affiliate` trỏ `/portal/affiliate`.
+
+### Bug tự phát hiện và sửa trước khi commit (chưa từng xuất bản)
+
+`getAffiliateOverview()` lúc đầu THIẾU guard kiểm tra
+`NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` trước khi gọi
+`getSupabaseServer()` — khác với `getPurchasedIds()`
+(`src/lib/access.ts`)/`getReferralData()` cũ (`/portal/referral`) đều có
+guard này. Khi Supabase chưa cấu hình (đúng trạng thái sandbox),
+`createServerClient()` bên trong ném lỗi "Your project's URL and Key are
+required..." — phát hiện qua test `next start` thật (so sánh log trước/
+sau khi hit `/portal/premium` (không lỗi) vs `/portal/affiliate` (có lỗi)
+để xác nhận đây là lỗi CỦA RIÊNG trang mới, không phải noise có sẵn toàn
+hệ thống). Đã thêm lại đúng guard, verify lại qua `next start` — 0 dòng
+lỗi trong log sau khi sửa.
+
+### Verify
+
+`npx tsc --noEmit`, `npx eslint src` (0 lỗi mới, 18 warning còn lại đều có
+từ trước), `npx vitest run` 139/139 pass, `rm -rf .next && npm run build`
+sạch (9 route mới xuất hiện đúng: `/portal/affiliate` + 8 route
+`/admin/affiliate/*`). Test thật qua `next start` (không cấu hình
+Supabase, đúng trạng thái sandbox) — `/portal/affiliate` trả `200` không
+lỗi log; cả 8 route `/admin/affiliate/*` + `/admin/van-hanh/tiep-thi-
+lien-ket` (redirect cũ) đều trả `307` redirect `/admin/login` đúng như kỳ
+vọng (chưa đăng nhập). Xác nhận qua Supabase MCP: `referrals` 0 dòng thật
+(Empty State đúng, không phải lỗi), `members.referred_by` 0/16 dòng có
+giá trị (xác nhận đúng gap đã audit), 2 bảng mới
+(`affiliate_commission_rules`/`affiliate_payout_requests`) chưa tồn tại
+(xác nhận migration đúng là CHƯA apply, code xử lý honest đúng như thiết
+kế).
+
+**Chưa tự test được (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/
+tài khoản đăng nhập thật đã nêu nhiều lần):** toàn bộ luồng thật có dữ
+liệu (đăng ký qua `?ref=`, mua hàng, xem thống kê, yêu cầu thanh toán,
+Admin duyệt) — phụ thuộc migration `supabase-phase27-affiliate-program.sql`
+được Founder duyệt và apply trước. Founder tự test trên Preview URL sau
+khi duyệt migration: (1) đăng ký 1 tài khoản mới qua link
+`?ref=<mã của tài khoản khác>`, xác nhận `members.referred_by` được set +
+1 dòng `referrals` mới xuất hiện; (2) mua 1 sản phẩm bằng tài khoản đó,
+xác nhận dòng `referrals` chuyển `confirmed` + `commission_amount` đúng;
+(3) `/portal/affiliate` của người giới thiệu hiện đúng số liệu; (4) tạo 1
+yêu cầu thanh toán, Admin duyệt ở `/admin/affiliate/yeu-cau-thanh-toan`,
+xác nhận referrals chuyển `paid`.

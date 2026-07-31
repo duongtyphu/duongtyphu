@@ -33,6 +33,11 @@ export default function AdminHocvienaiFaqPage() {
         title="Học viện AI — Câu hỏi thường gặp"
         itemNoun="câu hỏi"
         fields={fields}
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Học viện AI", href: "/admin/hocvienai/work-needs" },
+          { label: "Câu hỏi thường gặp" },
+        ]}
         renderCard={(item) => (
           <div>
             <p className="text-sm font-bold text-gray-900">{item.q}</p>

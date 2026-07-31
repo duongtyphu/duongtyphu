@@ -3,6 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const ECOSYSTEM_PILLARS_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên tiêu đề", type: "text", required: true },
+  { key: "heading", label: "Tiêu đề section", type: "text", required: true },
+];
+
+const ROADMAP_FIELDS: FieldConfig[] = [
+  { key: "roadmapHeading", label: "Tiêu đề khối lộ trình", type: "text", required: true },
+  { key: "roadmapDesc", label: "Mô tả khối lộ trình", type: "textarea", full: true, required: true },
+  { key: "roadmapCtaLabel", label: "Nhãn nút CTA lộ trình", type: "text", required: true },
+];
 
 const ITEMS = [
   {
@@ -80,6 +94,7 @@ const STEPS = [
  */
 export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
+  const chrome = useLandingChrome("ecosystem-pillars");
   return (
     <section id="ecosystem" className={`py-[32.4px] md:py-[43.2px] ${isLight ? "bg-[#F6F7F9]" : ""}`}>
       <div className="mx-auto max-w-7xl px-6">
@@ -90,16 +105,18 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto mb-10 max-w-[760px] text-center"
         >
-          <span
-            className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
-              isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
-            }`}
-          >
-            🌐 Hệ sinh thái
-          </span>
-          <h2 className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${isLight ? "text-[#0B0F2E]" : "text-white"}`}>
-            Tất cả những gì bạn cần, trong một hệ sinh thái
-          </h2>
+          <EditableRegion record={chrome} fields={ECOSYSTEM_PILLARS_FIELDS} update={chrome.update}>
+            <span
+              className={`inline-flex items-center rounded-full border px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] ${
+                isLight ? "border-[#E2E8F0] bg-white text-[#54637A]" : "border-white/15 bg-white/5 text-white/70"
+              }`}
+            >
+              {chrome.eyebrowBadge}
+            </span>
+            <h2 className={`mt-4 text-[1.4rem] font-extrabold tracking-[-.3px] md:text-[1.6rem] ${isLight ? "text-[#0B0F2E]" : "text-white"}`}>
+              {chrome.heading}
+            </h2>
+          </EditableRegion>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -151,17 +168,18 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
                 : "border-white/10 bg-white/[0.04]"
             }`}
           >
-            <h3
-              className={`text-[1.15rem] font-extrabold leading-[1.3] md:text-[1.25rem] ${
-                isLight ? "text-[#0B0F2E]" : "text-white"
-              }`}
-            >
-              Lộ trình học tập dành cho mọi người
-            </h3>
-            <p className={`mt-2.5 text-[.82rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
-              Dù bạn là người mới bắt đầu hay đã có kinh nghiệm, chúng tôi có lộ trình phù hợp để bạn tiến xa
-              hơn mỗi ngày.
-            </p>
+            <EditableRegion record={chrome} fields={ROADMAP_FIELDS} update={chrome.update}>
+              <h3
+                className={`text-[1.15rem] font-extrabold leading-[1.3] md:text-[1.25rem] ${
+                  isLight ? "text-[#0B0F2E]" : "text-white"
+                }`}
+              >
+                {chrome.roadmapHeading}
+              </h3>
+              <p className={`mt-2.5 text-[.82rem] leading-[1.6] ${isLight ? "text-[#5B6B85]" : "text-white/60"}`}>
+                {chrome.roadmapDesc}
+              </p>
+            </EditableRegion>
             <Link
               href="/login"
               className={`mt-4 inline-flex items-center justify-center gap-2 rounded-[10.8px] border-[1.5px] px-5 py-3 text-[.85rem] font-bold transition-colors ${
@@ -170,7 +188,7 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
                   : "border-white/15 bg-white/5 text-white hover:border-[#7C5CFC] hover:text-[#A78BFA]"
               }`}
             >
-              Xem tất cả lộ trình
+              {chrome.roadmapCtaLabel}
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

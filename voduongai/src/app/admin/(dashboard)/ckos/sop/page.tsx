@@ -43,6 +43,11 @@ export default function AdminCkosSopPage() {
         itemNoun="Knowledge Card"
         addButtonLabel="+ Thêm Card"
         panelLabel="Nội dung tri thức"
+        breadcrumb={[
+          { label: "Học viện" },
+          { label: "Hệ tri thức AI (CKOS)", href: "/admin/ckos" },
+          { label: "SOP / Workflow (Folder)" },
+        ]}
       />
     </AdminAtmosphere>
   );

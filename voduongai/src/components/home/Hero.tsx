@@ -4,6 +4,19 @@ import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { HeroQuestionBubbles } from "@/components/home/HeroQuestionBubbles";
+import { EditableRegion } from "@/components/home/EditableRegion";
+import { useLandingChrome } from "@/components/home/LandingChromeContext";
+import type { FieldConfig } from "@/lib/admin/fields";
+
+const HERO_FIELDS: FieldConfig[] = [
+  { key: "eyebrowBadge", label: "Badge nhỏ phía trên tiêu đề", type: "text", required: true },
+  { key: "headlineLine1", label: "Tiêu đề — dòng 1", type: "text", required: true },
+  { key: "headlineLine2", label: "Tiêu đề — dòng 2", type: "text", required: true },
+  { key: "headlineHighlight", label: "Tiêu đề — dòng nhấn màu tím", type: "text", required: true },
+  { key: "subheadline", label: "Đoạn mô tả dưới tiêu đề", type: "textarea", full: true, required: true },
+  { key: "ctaLabel", label: "Nhãn nút CTA", type: "text", required: true },
+  { key: "tagline", label: "Dòng chữ nhỏ dưới nút CTA", type: "text", full: true, required: true },
+];
 
 const floatingBadges = [
   {
@@ -56,6 +69,7 @@ const vortexQuestions = [
 
 export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
   const isLight = variant === "light";
+  const chrome = useLandingChrome("hero");
   // Parallax: the background (neural mesh + glow orbs) drifts slower than
   // the foreground content as the hero scrolls out of view, so the two
   // layers separate a little instead of moving as one flat sheet.
@@ -80,46 +94,48 @@ export function Hero({ variant = "dark" }: { variant?: "dark" | "light" }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
-          <span
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold ${
-              isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#5B21D6]" : "border-white/15 bg-white/5 text-white"
-            }`}
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7C5CFC] opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7C5CFC]" />
+          <EditableRegion record={chrome} fields={HERO_FIELDS} update={chrome.update}>
+            <span
+              className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-semibold ${
+                isLight ? "border-[#E2E8F0] bg-[#F6F7F9] text-[#5B21D6]" : "border-white/15 bg-white/5 text-white"
+              }`}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#7C5CFC] opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#7C5CFC]" />
+              </span>
+              {chrome.eyebrowBadge}
             </span>
-            Thương hiệu cá nhân · Hệ sinh thái AI
-          </span>
 
-          <h1 className="mt-6 text-xl font-extrabold leading-[1.3] tracking-tight sm:text-2xl md:text-3xl lg:text-4xl">
-            <span className={isLight ? "text-[#0F172A]" : "text-white"}>
-              Học AI đúng hướng.
+            <h1 className="mt-6 text-xl font-extrabold leading-[1.3] tracking-tight sm:text-2xl md:text-3xl lg:text-4xl">
+              <span className={isLight ? "text-[#0F172A]" : "text-white"}>
+                {chrome.headlineLine1}
+                <br />
+                {chrome.headlineLine2}
+              </span>
               <br />
-              Xây hệ thống vững chắc.
-            </span>
-            <br />
-            <span className="text-[#7C5CFC]">Tạo tài sản số bền vững.</span>
-          </h1>
+              <span className="text-[#7C5CFC]">{chrome.headlineHighlight}</span>
+            </h1>
 
-          <p className={`mt-6 max-w-xl text-base leading-relaxed ${isLight ? "text-[#334155]" : "text-[#AEB4D8]"}`}>
-            VO DUONG AI là hệ sinh thái học tập AI giúp bạn học đúng, thực
-            hành đúng và từng bước xây dựng hệ thống làm việc, thương hiệu cá
-            nhân và tài sản số bền vững trong kỷ nguyên trí tuệ nhân tạo.
-          </p>
+            <p className={`mt-6 max-w-xl text-base leading-relaxed ${isLight ? "text-[#334155]" : "text-[#AEB4D8]"}`}>
+              {chrome.subheadline}
+            </p>
+          </EditableRegion>
 
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/login"
               className="rounded-full bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#5B21D6]/30 transition-all duration-300 hover:-translate-y-0.5 hover:opacity-90"
             >
-              Bắt đầu ngay hôm nay
+              {chrome.ctaLabel}
             </Link>
           </div>
 
-          <div className={`mt-5 text-[.85rem] font-semibold ${isLight ? "text-[#54637A]" : "text-[#7C84B0]"}`}>
-            Miễn phí tham gia • Học mọi lúc • Đồng hành cùng Companion AI
-          </div>
+          <EditableRegion record={chrome} fields={HERO_FIELDS} update={chrome.update}>
+            <div className={`mt-5 text-[.85rem] font-semibold ${isLight ? "text-[#54637A]" : "text-[#7C84B0]"}`}>
+              {chrome.tagline}
+            </div>
+          </EditableRegion>
         </motion.div>
 
         <motion.div
