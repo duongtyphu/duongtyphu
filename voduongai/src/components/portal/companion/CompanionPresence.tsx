@@ -665,6 +665,14 @@ export function CompanionPresence({
     }
   }
 
+  // EPIC-UX-003 — Presence Logic: ẩn hoàn toàn Floating Companion (nút nổi,
+  // bubble, Quick Panel, Quick Chat...) khi đang ở chính trang Companion đầy
+  // đủ (/portal/companion) — tránh 2 Companion cùng hiện diện. Đặt SAU mọi
+  // hook (Rules of Hooks), chỉ ảnh hưởng phần render — mọi effect/state
+  // (garden stage, mood, timers...) vẫn chạy bình thường phía sau, không đổi
+  // Runtime/Provider/API/Conversation/Database.
+  if (pathname === "/portal/companion") return null;
+
   if (keyboardOpen && !open) return null;
   if (!position) return null;
 

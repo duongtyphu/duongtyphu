@@ -66,8 +66,9 @@ export function CompanionChatHeader({
           )}
           <Link
             href="/portal/companion"
+            aria-label="Mở Companion đầy đủ"
             className="flex items-center gap-1 rounded-lg border border-gray-200 px-2 py-1.5 text-xs font-medium text-gray-500 transition hover:border-blue-300 hover:text-blue-600"
-            title="Mở đầy đủ ở /portal/companion"
+            title="Mở Companion đầy đủ"
           >
             <ExternalLink className="h-3.5 w-3.5" />
           </Link>
