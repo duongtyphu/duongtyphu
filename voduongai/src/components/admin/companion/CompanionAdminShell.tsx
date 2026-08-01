@@ -11,6 +11,7 @@ import { CapabilitiesTab } from "@/components/admin/companion/tabs/CapabilitiesT
 import { SafetyTab } from "@/components/admin/companion/tabs/SafetyTab";
 import { TestTab } from "@/components/admin/companion/tabs/TestTab";
 import { VersionsTab } from "@/components/admin/companion/tabs/VersionsTab";
+import { RuntimeTab } from "@/components/admin/companion/tabs/RuntimeTab";
 
 function buildTabs(aiConfigured: boolean): AdminTab[] {
   return [
@@ -22,6 +23,7 @@ function buildTabs(aiConfigured: boolean): AdminTab[] {
     { key: "coaching", label: "Dẫn dắt & Huấn luyện", content: <CoachingTab /> },
     { key: "capabilities", label: "Công cụ", content: <CapabilitiesTab /> },
     { key: "safety", label: "An toàn", content: <SafetyTab /> },
+    { key: "runtime", label: "Chat Runtime", content: <RuntimeTab /> },
     { key: "test", label: "Kiểm tra Companion", content: <TestTab /> },
     { key: "versions", label: "Phiên bản & Xuất bản", content: <VersionsTab /> },
   ];
@@ -30,7 +32,7 @@ function buildTabs(aiConfigured: boolean): AdminTab[] {
 const TAB_GROUPS: AdminTabGroup[] = [
   { label: "Nền tảng", keys: ["overview", "persona", "conversation"] },
   { label: "Năng lực", keys: ["knowledge", "memory", "coaching", "capabilities"] },
-  { label: "Quản trị", keys: ["safety", "test", "versions"] },
+  { label: "Quản trị", keys: ["safety", "runtime", "test", "versions"] },
 ];
 
 /**
