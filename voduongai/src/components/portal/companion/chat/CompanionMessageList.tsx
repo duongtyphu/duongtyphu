@@ -16,6 +16,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { MarkdownLite } from "./MarkdownLite";
+import { LivingCore } from "@/components/LivingCore";
 import type { ChatMessage } from "./types";
 
 /** Empty State — Action Card (EPIC-UX-001). 5 thẻ điều hướng sang đúng
@@ -81,9 +82,7 @@ export function CompanionMessageList({
   if (messages.length === 0 && !isGenerating) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 py-10 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-2xl shadow-lg shadow-blue-500/25">
-          🤖
-        </div>
+        <LivingCore size={64} />
         <h1 className="mt-5 text-2xl font-bold leading-tight text-gray-900">
           Xin chào!
           <br />
@@ -187,9 +186,7 @@ function AssistantBubble({
 
   return (
     <div className="group flex items-start gap-3">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm shadow-sm">
-        🤖
-      </div>
+      <LivingCore size={32} className="mt-0.5 shrink-0" />
       <div className="min-w-0 flex-1 pt-0.5">
         <div className="text-sm leading-relaxed text-gray-800">
           <MarkdownLite text={message.content} />
@@ -226,9 +223,7 @@ function ActionIcon({ label, icon: Icon, onClick }: { label: string; icon: Lucid
 function TypingIndicator() {
   return (
     <div className="flex items-start gap-3">
-      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-sm shadow-sm">
-        🤖
-      </div>
+      <LivingCore size={32} state="thinking" className="mt-0.5 shrink-0" />
       <div className="flex items-center gap-1 rounded-2xl border border-gray-200 bg-white px-4 py-3">
         <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.3s]" />
         <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-blue-400 [animation-delay:-0.15s]" />

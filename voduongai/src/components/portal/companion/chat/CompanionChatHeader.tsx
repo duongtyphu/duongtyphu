@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { History, X, Sparkles, ExternalLink } from "lucide-react";
+import { LivingCore } from "@/components/LivingCore";
 
 /**
- * Header nhận diện Companion (EPIC-UX-001) — LUÔN hiện "🤖 Companion / AI
- * Mentor của VO DUONG AI", không bao giờ lộ Gemini/Claude/GPT/Model/
- * Provider/API/Runtime/Token/Latency — toàn bộ hạ tầng AI ẩn khỏi người
- * dùng, đúng định vị chính thức "Companion – AI Mentor của VO DUONG AI".
- * Dùng chung cho cả 2 variant (`full`/`compact`) của `CompanionChatShell`.
+ * Header nhận diện Companion (EPIC-UX-001) — LUÔN hiện logo Companion
+ * (Living Core™, `src/components/LivingCore.tsx` — thiết kế đã khoá,
+ * KHÔNG dùng icon robot) / "AI Mentor của VO DUONG AI", không bao giờ lộ
+ * Gemini/Claude/GPT/Model/Provider/API/Runtime/Token/Latency — toàn bộ hạ
+ * tầng AI ẩn khỏi người dùng, đúng định vị chính thức "Companion – AI
+ * Mentor của VO DUONG AI". Dùng chung cho cả 2 variant (`full`/`compact`)
+ * của `CompanionChatShell`.
  */
 export function CompanionChatHeader({
   compact,
@@ -37,9 +40,7 @@ export function CompanionChatHeader({
       </button>
 
       <div className="flex min-w-0 flex-1 items-center gap-2.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-base shadow-sm shadow-blue-500/20">
-          🤖
-        </div>
+        <LivingCore size={32} className="shrink-0" />
         <div className="min-w-0">
           <p className="truncate text-sm font-bold leading-tight text-gray-900">Companion</p>
           {/* Panel nổi (compact) luôn hẹp bất kể viewport desktop/mobile —
