@@ -1,6 +1,9 @@
 /**
- * EPIC-A01 — Companion Brain Foundation — A03: Conversation Intelligence
+ * EPIC-A01 — Companion Core Foundation — A03: Conversation Intelligence
  * Foundation.
+ * (FIX EPIC-A01: thư mục đổi từ `src/ai/companion-brain/` sang
+ * `src/companion/core/`, thuật ngữ "Companion Brain" đổi thành
+ * "Companion Core" trong toàn bộ chú thích — schema giữ nguyên 100%.)
  *
  * THUẦN KIẾN TRÚC — 6 Policy đúng đề bài (Greeting/Clarification/
  * Reasoning/Guidance/Reflection/Closing), mỗi Policy có Name/Description/
@@ -13,6 +16,10 @@
  * KHÔNG phải quy tắc hành vi/giọng văn cụ thể của Companion (đó là nội
  * dung Prompt thật, ngoài phạm vi Sprint này, và là quyết định của
  * Founder/PMO). `status: "draft"` cho cả 6 — chưa Published.
+ *
+ * DRAFT NOTICE (FIX EPIC-A01, mục 4): danh sách 6 Policy VÀ toàn bộ nội
+ * dung `description` dưới đây đều là DRAFT — chờ Founder/PMO biên tập và
+ * phê duyệt trước khi Published. Không coi đây là quyết định cuối cùng.
  */
 
 export type PolicyStatus = "draft" | "published";

@@ -17,7 +17,11 @@ import type {
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
 
-const DEFAULT_MODEL = "gemini-1.5-flash";
+// gemini-1.5-flash đã bị Google retire (shutdown) — đổi sang
+// gemini-3.5-flash (đang được khuyến nghị cho production, chưa có ngày
+// shutdown công bố, 1M context window). Cập nhật lại nếu Google công bố
+// deprecation mới cho model này trong tương lai.
+const DEFAULT_MODEL = "gemini-3.5-flash";
 const ENV_VAR = "GEMINI_API_KEY";
 
 export class GeminiProviderAdapter implements ProviderAdapter {
@@ -27,7 +31,7 @@ export class GeminiProviderAdapter implements ProviderAdapter {
   readonly providerType = "llm" as const;
   readonly supportedModels = [DEFAULT_MODEL];
   readonly supportedCapabilities = ALL_TEXT_CAPABILITIES;
-  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 1_000_000, description: "Gemini — context window lớn, mạnh về research/tổng hợp." }];
+  readonly modelRegistry = [{ modelId: DEFAULT_MODEL, contextWindow: 1_000_000, description: "Gemini 3.5 Flash — context window 1M token, mạnh về research/tổng hợp." }];
   readonly costProfile = { inputPer1kTokens: 0.000075, outputPer1kTokens: 0.0003, currency: "USD" as const };
   readonly qualityProfile = { reportedQuality: 82 };
   readonly speedProfile = { reportedSpeed: 80 };

@@ -1,5 +1,8 @@
 /**
- * EPIC-A01 — Companion Brain Foundation — A01: Companion Identity.
+ * EPIC-A01 — Companion Core Foundation — A01: Companion Identity.
+ * (FIX EPIC-A01: thư mục đổi từ `src/ai/companion-brain/` sang
+ * `src/companion/core/`, thuật ngữ "Companion Brain" đổi thành
+ * "Companion Core" trong toàn bộ chú thích — schema giữ nguyên 100%.)
  *
  * THUẦN KIẾN TRÚC/DỮ LIỆU NỀN TẢNG — KHÔNG kết nối AI, KHÔNG đổi System
  * Prompt (`companion-chat.system.prompt.ts` giữ nguyên 100%, không import

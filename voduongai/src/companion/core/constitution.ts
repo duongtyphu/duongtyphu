@@ -1,5 +1,8 @@
 /**
- * EPIC-A01 — Companion Brain Foundation — A02: Companion Constitution.
+ * EPIC-A01 — Companion Core Foundation — A02: Companion Constitution.
+ * (FIX EPIC-A01: thư mục đổi từ `src/ai/companion-brain/` sang
+ * `src/companion/core/`, thuật ngữ "Companion Brain" đổi thành
+ * "Companion Core" trong toàn bộ chú thích — schema giữ nguyên 100%.)
  *
  * THUẦN KIẾN TRÚC — chuẩn bị cấu trúc cho ~20-30 Điều (Article), KHÔNG
  * viết toàn bộ nội dung thật (đúng yêu cầu). Độc lập hoàn toàn khỏi
@@ -11,6 +14,18 @@
  * Giới hạn hành động/Bảo mật/Chất lượng phản hồi/Leo thang). NỘI DUNG
  * từng điều khoản (title/content thật) vẫn để trung thực "Chưa biên
  * tập" — đó là quyết định của Founder/PMO, không tự soạn.
+ *
+ * DRAFT NOTICE (FIX EPIC-A01, mục 4) — ghi rõ lại, không suy diễn ngầm:
+ * CẢ 2 phần dưới đây đều là DRAFT, chưa phải quyết định cuối cùng:
+ *   1. TAXONOMY — 6 category (`ConstitutionCategory`) + số lượng điều/
+ *      category (`ARTICLES_PER_CATEGORY = 4`) là đề xuất kiến trúc, CHƯA
+ *      được Founder/PMO xác nhận là cấu trúc chính thức của Hiến pháp.
+ *      Founder/PMO có thể đổi tên category, gộp/tách category, hoặc đổi
+ *      số điều mỗi nhóm khi biên tập nội dung thật.
+ *   2. NỘI DUNG — toàn bộ 24 điều trong `COMPANION_CONSTITUTION_DRAFT`
+ *      (title lẫn `content`) chỉ là khung sườn placeholder
+ *      ("chưa đặt tên" / "Chưa biên tập"), chờ Founder/PMO biên tập và
+ *      phê duyệt (Draft → Published) trước khi xem là nội dung thật.
  */
 
 export type ConstitutionStatus = "draft" | "published";

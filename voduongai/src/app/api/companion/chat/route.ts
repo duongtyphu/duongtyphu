@@ -123,7 +123,7 @@ export async function POST(request: Request) {
     if (!providerManager.hasAvailableRealProvider()) {
       isMock = true;
       replyText =
-        "[MOCK — chưa cấu hình ANTHROPIC_API_KEY/OPENAI_API_KEY] Mình đã nhận được câu hỏi của bạn, nhưng Companion chưa được kết nối AI thật để trả lời đầy đủ. Founder cần cấu hình API key trước.";
+        "[MOCK — chưa cấu hình AI Provider thật nào (vd ANTHROPIC_API_KEY/OPENAI_API_KEY/GEMINI_API_KEY...)] Mình đã nhận được câu hỏi của bạn, nhưng Companion chưa được kết nối AI thật để trả lời đầy đủ. Founder cần cấu hình ít nhất 1 API key trước.";
     } else {
       const result = await providerManager.execute({
         capability: "growth.goal-coaching",

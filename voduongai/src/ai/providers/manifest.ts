@@ -140,7 +140,7 @@ const PROVIDER_MANIFEST: ProviderManifestEntry[] = [
     websiteUrl: null,
     pricingUrl: null,
     registeredInRuntime: true,
-    models: { chatModel: "gemini-1.5-flash", reasoningModel: null, visionModel: null, embeddingModel: null },
+    models: { chatModel: "gemini-3.5-flash", reasoningModel: null, visionModel: null, embeddingModel: null },
     capabilities: UNKNOWN_CAPABILITIES,
     limits: { contextWindow: 1_000_000, maxOutput: null, recommendedUse: "Gemini — context window lớn, mạnh về research/tổng hợp." },
     connection: { authenticationType: "api-key", environmentVariableName: "GEMINI_API_KEY", supportsBaseUrl: false, supportsLocalRuntime: false },
