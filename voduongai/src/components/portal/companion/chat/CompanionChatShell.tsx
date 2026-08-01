@@ -7,6 +7,7 @@ import { CompanionChatHeader } from "./CompanionChatHeader";
 import { CompanionSidebar } from "./CompanionSidebar";
 import { CompanionMessageList } from "./CompanionMessageList";
 import { CompanionComposer } from "./CompanionComposer";
+import { CompanionContextPanel } from "./CompanionContextPanel";
 import type { ChatMessage } from "./types";
 import {
   listConversations,
@@ -288,6 +289,14 @@ export function CompanionChatShell({
           inputRef={composerRef}
         />
       </div>
+
+      {/* Context Panel (EPIC-UX-002) — chỉ Desktop (lg+), chỉ variant="full"
+          (panel nổi compact quá hẹp cho cột thứ 3), ẩn hẳn trên Mobile/Tablet. */}
+      {!compact && (
+        <aside className="hidden w-72 shrink-0 border-l border-gray-200 bg-white/70 backdrop-blur lg:block">
+          <CompanionContextPanel />
+        </aside>
+      )}
     </div>
   );
 }

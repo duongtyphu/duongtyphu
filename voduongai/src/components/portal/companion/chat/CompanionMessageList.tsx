@@ -13,11 +13,22 @@ import {
   MessageCircleQuestion,
   RotateCcw,
   ArrowDownToLine,
+  Bookmark,
+  Pin,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 import { MarkdownLite } from "./MarkdownLite";
 import { LivingCore } from "@/components/LivingCore";
+import { CompanionNextStepCard } from "./CompanionNextStepCard";
 import type { ChatMessage } from "./types";
+
+/** EPIC-UX-002 fix (PMO) — Save/Ghim/Đánh dấu quan trọng chưa có persistence
+    thật (Sprint Memory chưa xây, không Database/migration nào tồn tại cho
+    3 hành động này). Ẩn khỏi production qua cờ local này — bật lại `true`
+    khi Sprint Memory sẵn sàng lưu thật. Component/state bên dưới GIỮ NGUYÊN
+    để tái dùng ngay, không cần viết lại. */
+const MESSAGE_ACTIONS_ENABLED = false;
 
 /** Empty State — Action Card (EPIC-UX-001). 5 thẻ điều hướng sang đúng
     khu vực Portal thật + 1 thẻ "Hỏi Companion" (focus composer, không
@@ -130,13 +141,18 @@ export function CompanionMessageList({
         const isLast = index === lastAssistantIndex;
 
         return (
-          <AssistantBubble
-            key={m.id}
-            message={m}
-            showActions={isLast && !isGenerating}
-            onRetry={precedingUser ? () => onRetry(precedingUser.content) : undefined}
-            onContinue={onContinue}
-          />
+          <div key={m.id}>
+            <AssistantBubble
+              message={m}
+              showActions={isLast && !isGenerating}
+              onRetry={precedingUser ? () => onRetry(precedingUser.content) : undefined}
+              onContinue={onContinue}
+            />
+            {/* Next Step Card (EPIC-UX-002, sửa lại theo PMO) — chỉ render khi
+                Runtime trả `nextSteps` thật qua message; hiện tại Runtime
+                chưa có field này nên card ẩn hoàn toàn ở production. */}
+            <CompanionNextStepCard steps={m.nextSteps} />
+          </div>
         );
       })}
       {isGenerating && <TypingIndicator />}
@@ -173,6 +189,12 @@ function AssistantBubble({
   onContinue: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  // Save/Pin/Đánh dấu quan trọng (EPIC-UX-002) — React state cục bộ theo
+  // từng bubble, KHÔNG lưu Database/API nào (đúng yêu cầu "Hiện tại: React
+  // State. Không Database.").
+  const [saved, setSaved] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const [important, setImportant] = useState(false);
 
   async function handleCopy() {
     try {
@@ -192,11 +214,33 @@ function AssistantBubble({
           <MarkdownLite text={message.content} />
         </div>
         <div
-          className={`mt-1.5 flex items-center gap-3 text-gray-400 transition ${
+          className={`mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-gray-400 transition ${
             showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
           }`}
         >
           <ActionIcon label={copied ? "Đã sao chép" : "Sao chép"} icon={copied ? Check : Copy} onClick={handleCopy} />
+          {MESSAGE_ACTIONS_ENABLED && (
+            <>
+              <ActionIcon
+                label={saved ? "Bỏ lưu" : "Lưu"}
+                icon={Bookmark}
+                active={saved}
+                onClick={() => setSaved((v) => !v)}
+              />
+              <ActionIcon
+                label={pinned ? "Bỏ ghim" : "Ghim"}
+                icon={Pin}
+                active={pinned}
+                onClick={() => setPinned((v) => !v)}
+              />
+              <ActionIcon
+                label={important ? "Bỏ đánh dấu quan trọng" : "Đánh dấu quan trọng"}
+                icon={Star}
+                active={important}
+                onClick={() => setImportant((v) => !v)}
+              />
+            </>
+          )}
           {showActions && onRetry && <ActionIcon label="Thử lại" icon={RotateCcw} onClick={onRetry} />}
           {showActions && <ActionIcon label="Tiếp tục" icon={ArrowDownToLine} onClick={onContinue} />}
         </div>
@@ -205,17 +249,32 @@ function AssistantBubble({
   );
 }
 
-function ActionIcon({ label, icon: Icon, onClick }: { label: string; icon: LucideIcon; onClick: () => void }) {
+function ActionIcon({
+  label,
+  icon: Icon,
+  onClick,
+  active = false,
+}: {
+  label: string;
+  icon: LucideIcon;
+  onClick: () => void;
+  /** Trạng thái bật/tắt (Save/Pin/Đánh dấu quan trọng) — tô màu xanh + icon
+      đặc khi đang bật, khác hành động tức thời (Sao chép/Thử lại/Tiếp tục). */
+  active?: boolean;
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       title={label}
       aria-label={label}
-      className="flex items-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-medium transition hover:bg-gray-100 hover:text-gray-700"
+      aria-pressed={active}
+      className={`flex items-center gap-1 rounded-lg px-1.5 py-1 text-[11px] font-medium transition hover:bg-gray-100 ${
+        active ? "text-blue-600" : "hover:text-gray-700"
+      }`}
     >
-      <Icon className="h-3.5 w-3.5" />
-      {label}
+      <Icon className="h-3.5 w-3.5 shrink-0" fill={active ? "currentColor" : "none"} />
+      <span className="hidden sm:inline">{label}</span>
     </button>
   );
 }
