@@ -2,8 +2,8 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { History, X, Sparkles, ExternalLink } from "lucide-react";
+import { X } from "lucide-react";
+import { CompanionChatHeader } from "./CompanionChatHeader";
 import { CompanionSidebar } from "./CompanionSidebar";
 import { CompanionMessageList } from "./CompanionMessageList";
 import { CompanionComposer } from "./CompanionComposer";
@@ -59,6 +59,7 @@ export function CompanionChatShell({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const composerRef = useRef<HTMLTextAreaElement | null>(null);
 
   const refreshConversations = useCallback(async () => {
     setConversations(await listConversations());
@@ -190,6 +191,26 @@ export function CompanionChatShell({
     abortRef.current?.abort();
   }
 
+  /** "Hỏi Companion" (Empty State) — focus thẳng composer, không điều hướng. */
+  function handleFocusComposer() {
+    composerRef.current?.focus();
+  }
+
+  /** Message action "Thử lại" — gửi lại đúng nội dung user liền trước làm
+      1 lượt mới (không có endpoint "regenerate" nào tồn tại — Conversation/
+      API giữ nguyên 100%, đây chỉ là gọi lại `handleSend` đã có sẵn). */
+  function handleRetry(text: string) {
+    if (isGenerating) return;
+    handleSend(text);
+  }
+
+  /** Message action "Tiếp tục" — cùng cơ chế trên, gửi 1 lượt mới yêu cầu
+      Companion tiếp tục nội dung vừa trả lời. */
+  function handleContinue() {
+    if (isGenerating) return;
+    handleSend("Tiếp tục nội dung phía trên, đừng lặp lại những gì đã nói.");
+  }
+
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
       {/* Sidebar desktop — ẩn hẳn ở compact (panel nổi không đủ rộng), giữ nguyên ở full */}
@@ -241,59 +262,21 @@ export function CompanionChatShell({
 
       {/* Khu vực trò chuyện chính */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <div
-          className={`flex items-center gap-2 border-b border-gray-200 bg-white/70 px-4 py-2.5 backdrop-blur ${compact ? "" : "md:hidden"}`}
-        >
-          <button
-            type="button"
-            onClick={() => setDrawerOpen(true)}
-            aria-label="Mở lịch sử trò chuyện"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-gray-200 text-gray-500"
-          >
-            <History className="h-4 w-4" />
-          </button>
-          <span className="min-w-0 flex-1 truncate text-sm font-semibold text-gray-800">
-            {conversations.find((c) => c.id === activeId)?.title ?? "Companion"}
-          </span>
-          {compact && (
-            <div className="flex shrink-0 items-center gap-1">
-              {onOpenSpace && (
-                <button
-                  type="button"
-                  onClick={onOpenSpace}
-                  className="flex items-center gap-1 rounded-lg border border-gray-200 px-2 py-1.5 text-xs font-medium text-gray-500 transition hover:border-blue-300 hover:text-blue-600"
-                  title="Mở Không gian Companion (trải nghiệm cũ, không phải chat AI)"
-                >
-                  <Sparkles className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Không gian Companion</span>
-                </button>
-              )}
-              <Link
-                href="/portal/companion"
-                className="flex items-center gap-1 rounded-lg border border-gray-200 px-2 py-1.5 text-xs font-medium text-gray-500 transition hover:border-blue-300 hover:text-blue-600"
-                title="Mở đầy đủ ở /portal/companion"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-              </Link>
-              {onClose && (
-                <button
-                  type="button"
-                  onClick={onClose}
-                  aria-label="Đóng Companion"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:text-gray-900"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+        <CompanionChatHeader
+          compact={compact}
+          onOpenDrawer={() => setDrawerOpen(true)}
+          onOpenSpace={compact ? onOpenSpace : undefined}
+          onClose={compact ? onClose : undefined}
+        />
 
         <CompanionMessageList
           messages={messages}
           isGenerating={isGenerating}
           errorMessage={errorMessage}
-          onStarterClick={setComposerValue}
+          onFocusComposer={handleFocusComposer}
+          onNavigate={compact ? onClose : undefined}
+          onRetry={handleRetry}
+          onContinue={handleContinue}
         />
 
         <CompanionComposer
@@ -302,6 +285,7 @@ export function CompanionChatShell({
           onStop={handleStop}
           value={composerValue}
           onValueChange={setComposerValue}
+          inputRef={composerRef}
         />
       </div>
     </div>
