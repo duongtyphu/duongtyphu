@@ -13,6 +13,7 @@ import { TestTab } from "@/components/admin/companion/tabs/TestTab";
 import { VersionsTab } from "@/components/admin/companion/tabs/VersionsTab";
 import { RuntimeTab } from "@/components/admin/companion/tabs/RuntimeTab";
 import { InferenceTab } from "@/components/admin/companion/tabs/InferenceTab";
+import { ManifestTab } from "@/components/admin/companion/tabs/ManifestTab";
 
 function buildTabs(aiConfigured: boolean): AdminTab[] {
   return [
@@ -26,6 +27,7 @@ function buildTabs(aiConfigured: boolean): AdminTab[] {
     { key: "safety", label: "An toàn", content: <SafetyTab /> },
     { key: "runtime", label: "Chat Runtime", content: <RuntimeTab /> },
     { key: "inference", label: "Nhà cung cấp AI (Inference)", content: <InferenceTab /> },
+    { key: "manifest", label: "Provider Manifest", content: <ManifestTab /> },
     { key: "test", label: "Kiểm tra Companion", content: <TestTab /> },
     { key: "versions", label: "Phiên bản & Xuất bản", content: <VersionsTab /> },
   ];
@@ -34,18 +36,19 @@ function buildTabs(aiConfigured: boolean): AdminTab[] {
 const TAB_GROUPS: AdminTabGroup[] = [
   { label: "Nền tảng", keys: ["overview", "persona", "conversation"] },
   { label: "Năng lực", keys: ["knowledge", "memory", "coaching", "capabilities"] },
-  { label: "Quản trị", keys: ["safety", "runtime", "inference", "test", "versions"] },
+  { label: "Quản trị", keys: ["safety", "runtime", "inference", "manifest", "test", "versions"] },
 ];
 
 /**
- * 1 mục sidebar duy nhất ("Companion") chứa 10 tab CMS gốc + 2 tab Runtime
- * ("Chat Runtime" — EPIC-CS-001, "Nhà cung cấp AI (Inference)" — Sprint
- * CS-01) — không tạo route riêng, không lộ thuật ngữ kỹ thuật (key nội bộ
- * tiếng Anh, nhãn hiển thị tiếng Việt). Mỗi tab tự đọc dữ liệu qua
- * useCollection()/Server Action riêng của chính nó — không cần prefetch
- * server. `aiConfigured` là giá trị thật từ isAiConfigured() (server-only,
- * đọc biến môi trường) — page.tsx tính sẵn rồi truyền xuống, Client
- * Component không tự đọc được process.env phía server.
+ * 1 mục sidebar duy nhất ("Companion") chứa 10 tab CMS gốc + 3 tab Runtime
+ * ("Chat Runtime" — EPIC-CS-001, "Nhà cung cấp AI (Inference)" — CS-01/
+ * CS-02, "Provider Manifest" — CS-03) — không tạo route riêng, không lộ
+ * thuật ngữ kỹ thuật (key nội bộ tiếng Anh, nhãn hiển thị tiếng Việt).
+ * Mỗi tab tự đọc dữ liệu qua useCollection()/Server Action riêng của
+ * chính nó — không cần prefetch server. `aiConfigured` là giá trị thật từ
+ * isAiConfigured() (server-only, đọc biến môi trường) — page.tsx tính sẵn
+ * rồi truyền xuống, Client Component không tự đọc được process.env phía
+ * server.
  */
 export function CompanionAdminShell({ aiConfigured }: { aiConfigured: boolean }) {
   return (
