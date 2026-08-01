@@ -2,6 +2,10 @@
 
 /**
  * Sprint CS-01 — Companion Studio: Inference Layer (Foundation).
+ * Sprint CS-02 — thêm "Xem chi tiết" mỗi Provider (`ProviderDetailPanel.tsx`,
+ * 6 nhóm Overview/Models/Capabilities/Connection/Health/Configuration) —
+ * PHỤ THÊM dưới khối điều khiển CS-01 đã có, KHÔNG sửa/xoá bất kỳ control
+ * nào CS-01 đã xây (Kích hoạt/Độ ưu tiên/Mặc định/API Key vẫn y hệt).
  *
  * Khung UI + kiến trúc quản trị AI Provider — KHÔNG lưu API key thật,
  * KHÔNG kết nối vào Runtime thật. Mọi ràng buộc đã xác nhận trước khi
@@ -25,6 +29,7 @@ import { useEffect, useState } from "react";
 import { listProviderMetadata, type ProviderMetadata } from "@/app/admin/(dashboard)/companion/inference-actions";
 import { getCompanionProviderHealth } from "@/app/admin/(dashboard)/companion/runtime-actions";
 import type { ProviderHealth } from "@/ai/providers/types";
+import { ProviderDetailPanel } from "@/components/admin/companion/tabs/ProviderDetailPanel";
 
 type LocalProviderConfig = {
   enabled: boolean;
@@ -53,6 +58,7 @@ export function InferenceTab() {
   const [config, setConfig] = useState<Record<string, LocalProviderConfig>>({});
   const [defaultProviderId, setDefaultProviderId] = useState<string | null>(null);
   const [checkingHealth, setCheckingHealth] = useState(false);
+  const [expandedProviderId, setExpandedProviderId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -243,6 +249,26 @@ export function InferenceTab() {
                           ? `Provider local runtime — dùng ${provider.optionalEnvVar} (Base URL), không phải API key.`
                           : "Không gọi mạng — không cần key."}
                       </p>
+                    )}
+                  </div>
+
+                  <div className="mt-4 border-t border-gray-100 pt-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedProviderId((prev) => (prev === provider.providerId ? null : provider.providerId))
+                      }
+                      className="text-xs font-semibold text-brand-blue hover:underline"
+                    >
+                      {expandedProviderId === provider.providerId ? "Ẩn chi tiết ▲" : "Xem chi tiết (CS-02) →"}
+                    </button>
+                    {expandedProviderId === provider.providerId && (
+                      <ProviderDetailPanel
+                        provider={provider}
+                        health={providerHealth}
+                        configSummary={{ enabled: cfg.enabled, priority: cfg.priority }}
+                        isDefault={isDefault}
+                      />
                     )}
                   </div>
                 </div>
