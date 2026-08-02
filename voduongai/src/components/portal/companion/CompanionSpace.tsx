@@ -22,10 +22,18 @@ export function CompanionSpace({
   state,
   onClose,
   insight,
+  onOpenChat,
 }: {
   state: CompanionState;
   onClose: () => void;
   insight?: string | null;
+  /**
+   * EPIC-CS-001 — khi truyền vào, "Chia sẻ với Companion" mở Chat AI thật
+   * (panel nổi) thay vì điều hướng tới `/portal/ai-assistant` (trang tĩnh
+   * cũ, còn nguyên câu "Companion đang được chuẩn bị..." — lỗi thời từ
+   * trước khi Companion Chat MVP tồn tại). Không truyền → giữ hành vi cũ.
+   */
+  onOpenChat?: () => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -126,9 +134,19 @@ export function CompanionSpace({
 
         {/* 6. Continue — lối đi tiếp, không phải khung chat */}
         <section aria-label="Continue" className="flex flex-col gap-2">
-          <Button href="/portal/ai-assistant" variant="primary" className="w-full">
-            Chia sẻ với Companion
-          </Button>
+          {onOpenChat ? (
+            <button
+              type="button"
+              onClick={onOpenChat}
+              className="w-full rounded-full gradient-surface px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:opacity-90"
+            >
+              Chia sẻ với Companion
+            </button>
+          ) : (
+            <Button href="/portal/ai-assistant" variant="primary" className="w-full">
+              Chia sẻ với Companion
+            </Button>
+          )}
           <Button href="/portal/story" variant="secondary" className="w-full">
             Mở My Story
           </Button>

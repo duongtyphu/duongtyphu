@@ -89,7 +89,7 @@ export const portalNavSections: NavSection[] = [
     group: null,
     items: [
       { label: "Trang chủ Học viện", href: "/portal" },
-      { label: "Companion", href: "/portal/companion" },
+      { label: "Companion (AI Mentor)", href: "/portal/companion" },
       { label: "Hệ tri thức AI (CKOS)", href: "/portal/ckos" },
       { label: "Học viện AI", href: "/portal/hocvienai" },
       { label: "AI Workspace", href: "/portal/aiworkspace" },

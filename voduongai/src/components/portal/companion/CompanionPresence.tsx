@@ -4,8 +4,10 @@
  * Companion Presence (Sprint 8.2 — Nhiệm vụ 03; nâng cấp Sprint 8.3,
  * Sprint 8.3.1: nền trong suốt thật + tăng size 20% + kéo-thả tự do).
  * Một sự hiện diện ấm áp, không phải nút chat nổi kiểu support widget.
- * Luôn ở đó, rất tinh tế, không tự popup, không badge thông báo. Bấm vào
- * để mở `CompanionSpace`.
+ * Luôn ở đó, rất tinh tế, không tự popup, không badge thông báo. Bấm 2 lần/
+ * double-click để mở surface chính (EPIC-CS-001 — mặc định `CompanionFloatingChat`,
+ * Chat AI thật; `CompanionSpace` — trải nghiệm kịch bản cũ — vẫn còn, là
+ * lựa chọn phụ có nhãn rõ ràng bên trong panel chat).
  *
  * Sprint 8.3 bổ sung: asset thật (CompanionAvatar), kích thước lớn hơn và
  * responsive theo breakpoint, safe zone theo thiết bị, floating/anchored
@@ -31,6 +33,7 @@ import { LivingCore, type LivingCoreSize } from "@/components/LivingCore";
 import { displayName, states } from "@/lib/portal/companion/companion-identity";
 import { toLivingCoreState } from "@/lib/portal/companion/living-core-state";
 import { CompanionSpace } from "@/components/portal/companion/CompanionSpace";
+import { CompanionFloatingChat } from "@/components/portal/companion/CompanionFloatingChat";
 import { CompanionNest } from "@/components/portal/companion/CompanionNest";
 import { CompanionGreetingBubble } from "@/components/portal/companion/CompanionGreetingBubble";
 import { CompanionThoughtBubble } from "@/components/portal/companion/CompanionThoughtBubble";
@@ -158,6 +161,13 @@ export function CompanionPresence({
 } = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  /**
+   * EPIC-CS-001 — surface nào đang mở khi `open=true`. Mặc định "chat" (ưu
+   * tiên mở Chat AI thật khi bấm vào Companion, theo quyết định Founder) —
+   * `CompanionSpace` (trải nghiệm kịch bản cũ) vẫn còn, chỉ là lựa chọn phụ
+   * có nhãn rõ ràng bên trong panel chat/qua nút riêng.
+   */
+  const [surface, setSurface] = useState<"space" | "chat">("chat");
   const [minimized, setMinimized] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -582,7 +592,7 @@ export function CompanionPresence({
     });
   }
 
-  function openSpace() {
+  function openSurface(which: "space" | "chat") {
     if (secondClickTimer.current) {
       clearTimeout(secondClickTimer.current);
       secondClickTimer.current = null;
@@ -592,6 +602,7 @@ export function CompanionPresence({
     setComeback(false);
     setThought(null);
     setStory(null);
+    setSurface(which);
     setOpen(true);
   }
 
@@ -614,7 +625,7 @@ export function CompanionPresence({
     setTimeout(() => setPulsing(false), 500);
 
     if (secondClickTimer.current) {
-      openSpace();
+      openSurface("chat");
       return;
     }
 
@@ -628,7 +639,7 @@ export function CompanionPresence({
   }
 
   function handleAvatarDoubleClick() {
-    openSpace();
+    openSurface("chat");
   }
 
   // Bàn phím kích hoạt giống như click — mở Quick Panel.
@@ -639,7 +650,7 @@ export function CompanionPresence({
     }
   }
 
-  function handleCloseSpace() {
+  function handleCloseSurface() {
     setOpen(false);
     setComeback(true);
     setTimeout(() => setComeback(false), 5000);
@@ -653,6 +664,14 @@ export function CompanionPresence({
       // bỏ qua nếu localStorage không khả dụng
     }
   }
+
+  // EPIC-UX-003 — Presence Logic: ẩn hoàn toàn Floating Companion (nút nổi,
+  // bubble, Quick Panel, Quick Chat...) khi đang ở chính trang Companion đầy
+  // đủ (/portal/companion) — tránh 2 Companion cùng hiện diện. Đặt SAU mọi
+  // hook (Rules of Hooks), chỉ ảnh hưởng phần render — mọi effect/state
+  // (garden stage, mood, timers...) vẫn chạy bình thường phía sau, không đổi
+  // Runtime/Provider/API/Conversation/Database.
+  if (pathname === "/portal/companion") return null;
 
   if (keyboardOpen && !open) return null;
   if (!position) return null;
@@ -781,12 +800,16 @@ export function CompanionPresence({
         </div>
       </div>
 
-      {open && (
+      {open && surface === "space" && (
         <CompanionSpace
           state={state}
-          onClose={handleCloseSpace}
+          onClose={handleCloseSurface}
           insight={decision.companionInsight}
+          onOpenChat={() => setSurface("chat")}
         />
+      )}
+      {open && surface === "chat" && (
+        <CompanionFloatingChat onClose={handleCloseSurface} onOpenSpace={() => setSurface("space")} />
       )}
 
       {/* Sprint 18.8 — Presence Coordinator: Life Moment/Return After
