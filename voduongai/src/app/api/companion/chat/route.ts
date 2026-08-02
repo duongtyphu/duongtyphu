@@ -1,18 +1,46 @@
 import { NextResponse } from "next/server";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { providerManager } from "@/ai/providers/provider-manager";
-import { COMPANION_CHAT_SYSTEM_PROMPT_V1 } from "@/ai/prompts/companion-chat.system.prompt";
-import {
-  COMPANION_MESSAGE_MAX_LENGTH,
-  buildConversationTitle,
-  buildCompanionChatPrompt,
-  type CompanionHistoryItem,
-} from "@/lib/portal/companion-chat";
+import { COMPANION_MESSAGE_MAX_LENGTH, buildConversationTitle, type CompanionHistoryItem } from "@/lib/portal/companion-chat";
+import { runCompanionRuntimeEngine } from "@/ai/runtime/companion-runtime-engine";
+import { buildCompanionPrompt } from "@/ai/runtime/companion-prompt-builder";
+import { buildPublicChatResponse } from "@/ai/runtime/public-chat-response";
+import type { RuntimeConversation } from "@/ai/runtime/runtime-context";
+import { publishedCatalogProvider } from "@/ai/catalog/catalog-provider";
 
 /**
  * Companion Chat MVP — API DUY NHẤT gửi/nhận tin nhắn thật ở
  * `/portal/companion`. Khác hẳn `/api/ai/companion` (Companion Studio™,
  * viết nội dung cho Admin) — không liên quan, không tái dùng.
+ *
+ * SPRINT R01 — Runtime Integration: route.ts CHỈ còn 4 nhiệm vụ — validate
+ * request, gọi `CompanionRuntimeEngine` (dựng `RuntimeContext` từ toàn bộ
+ * Companion Brain A02-A06), gọi `ProviderManager`, trả response. Toàn bộ
+ * Goal/Memory/Platform/Knowledge Logic đã chuyển vào
+ * `src/ai/runtime/companion-runtime-engine.ts` — route.ts KHÔNG còn gọi
+ * thẳng bất kỳ module `ai/mentor`/`ai/platform`/`ai/knowledge`/`ai/memory`
+ * nào.
+ *
+ * SPRINT R01-FIX — Runtime Boundary & Public Response: `RuntimeContext`
+ * (goal/strategy/learningPlan/knowledgeRouting/memory/reflection) và
+ * `prompt` là DỮ LIỆU NỘI BỘ, không bao giờ đi vào response public. Response
+ * cuối cùng luôn đi qua `buildPublicChatResponse()`
+ * (`@/ai/runtime/public-chat-response`) — hàm đó không nhận
+ * `RuntimeContext`/`RuntimeResponse` làm tham số nên không có đường nào rò
+ * rỉ, kể cả vô ý. Contract public giữ nguyên đúng 4 field đã có từ trước
+ * R01: `conversationId`, `userMessage`, `assistantMessage`, `isMock`.
+ *
+ * SPRINT R02 — CKOS & Platform Data Integration: Runtime Engine giờ trả
+ * thêm `mentorContext` (tri thức Published/đã kiểm tra quyền, chỉ
+ * metadata) — truyền vào `buildCompanionPrompt()` cùng `runtimeContext`.
+ * route.ts KHÔNG tự đọc CKOS/Catalog/Supabase cho mục đích này.
+ *
+ * SPRINT FIX-R02 — Published Knowledge Adapter: route.ts giờ gọi
+ * `publishedCatalogProvider.getCatalog()` (`ai/catalog/catalog-provider.ts`)
+ * TRƯỚC khi gọi Engine — Catalog không còn luôn `[]` như giới hạn đã biết
+ * ở R02. route.ts vẫn KHÔNG tự query Supabase cho việc này — Provider nội
+ * bộ dùng lại các hàm `getLive*()` (Published/Live layer) đã có sẵn của dự
+ * án, không phải 1 query mới do route.ts viết ra.
  *
  * Không streaming (kiến trúc Provider Layer hiện tại chỉ trả JSON đầy đủ,
  * không có SDK/stream nào cài sẵn — đúng phạm vi Sprint cho phép).
@@ -110,11 +138,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Không thể lưu tin nhắn. Vui lòng thử lại." }, { status: 500 });
   }
 
-  const prompt = buildCompanionChatPrompt({
-    systemPrompt: COMPANION_CHAT_SYSTEM_PROMPT_V1,
-    history,
-    userMessage: trimmedMessage,
+  if (!activeConversationId) {
+    return NextResponse.json({ error: "Không thể xác định cuộc trò chuyện." }, { status: 500 });
+  }
+
+  // Runtime Engine: Conversation → Goal Detection → Learning Plan →
+  // Conversation Strategy → Platform Intelligence → Knowledge Routing →
+  // Memory Pipeline → Reflection → RuntimeContext (Companion Brain A02-A06).
+  const runtimeConversation: RuntimeConversation = {
+    turns: [...history, { role: "user", content: trimmedMessage }],
+  };
+  const catalog = await publishedCatalogProvider.getCatalog();
+  const { context: runtimeContext, mentorContext } = runCompanionRuntimeEngine({
+    conversationId: activeConversationId,
+    conversation: runtimeConversation,
+    catalog,
   });
+
+  const { prompt } = buildCompanionPrompt(runtimeContext, mentorContext, history, trimmedMessage);
 
   let replyText = "";
   let isMock = false;
@@ -175,10 +216,15 @@ export async function POST(request: Request) {
     );
   }
 
-  return NextResponse.json({
-    conversationId: activeConversationId,
-    userMessage,
-    assistantMessage,
-    isMock,
-  });
+  // R01-FIX — response public đi qua đúng 1 ranh giới duy nhất, không
+  // nhận RuntimeContext làm tham số nên không thể vô tình trả thêm field
+  // nội bộ nào ra ngoài (xem `public-chat-response.ts`).
+  return NextResponse.json(
+    buildPublicChatResponse({
+      conversationId: activeConversationId,
+      userMessage,
+      assistantMessage,
+      isMock,
+    })
+  );
 }
