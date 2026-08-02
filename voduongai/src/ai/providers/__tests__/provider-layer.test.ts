@@ -23,6 +23,9 @@ const ENV_KEYS = [
   "OLLAMA_BASE_URL",
   "PERPLEXITY_API_KEY",
   "COHERE_API_KEY",
+  "GROQ_API_KEY",
+  "CEREBRAS_API_KEY",
+  "OPENROUTER_API_KEY",
 ] as const;
 
 function clearProviderEnv() {
@@ -41,19 +44,22 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
     clearProviderEnv();
   });
 
-  it("1. ProviderRegistry đăng ký đúng 10 Provider Wave 1, đúng 4 Tier", async () => {
+  it("1. ProviderRegistry đăng ký đúng 13 Provider (10 Wave 1 + 3 INF-01), đúng 4 Tier", async () => {
     const { providerRegistry } = await import("../registry");
     const ids = providerRegistry.list().map((a) => a.providerId).sort();
     expect(ids).toEqual([
       "anthropic",
+      "cerebras",
       "cohere",
       "deepseek",
       "gemini",
       "grok",
+      "groq",
       "mistral",
       "mock",
       "ollama",
       "openai",
+      "openrouter",
       "perplexity",
     ]);
     expect(providerRegistry.get("mock")).toBeDefined();
@@ -61,7 +67,13 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
 
     expect(providerRegistry.listByTier("core").map((a) => a.providerId).sort()).toEqual(["anthropic", "deepseek", "gemini", "openai"]);
     expect(providerRegistry.listByTier("recommended").map((a) => a.providerId).sort()).toEqual(["grok", "mistral", "ollama"]);
-    expect(providerRegistry.listByTier("specialized").map((a) => a.providerId).sort()).toEqual(["cohere", "perplexity"]);
+    expect(providerRegistry.listByTier("specialized").map((a) => a.providerId).sort()).toEqual([
+      "cerebras",
+      "cohere",
+      "groq",
+      "openrouter",
+      "perplexity",
+    ]);
     expect(providerRegistry.listByTier("development").map((a) => a.providerId)).toEqual(["mock"]);
   });
 
@@ -69,7 +81,7 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
     const { providerRegistry, aiServiceRegistry } = await import("../registry");
     expect(aiServiceRegistry).toBe(providerRegistry); // cùng 1 instance, chỉ khác tên export
     expect(providerRegistry.list().every((a) => a.providerType === "llm")).toBe(true);
-    expect(providerRegistry.listByType("llm")).toHaveLength(10);
+    expect(providerRegistry.listByType("llm")).toHaveLength(13);
     expect(providerRegistry.listByType("image")).toHaveLength(0); // chưa tích hợp — Registry vẫn trả mảng rỗng, không lỗi
   });
 
@@ -126,7 +138,7 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
     expect(() => selectAdapter({ capability: "writing.draft", fallbackAllowed: false })).toThrow();
   });
 
-  it("4. Tất cả 9 Adapter thật (Wave 1) không crash khi thiếu key — isAvailable()=false, execute() ném lỗi rõ ràng, healthCheck() báo lý do", async () => {
+  it("4. Tất cả 12 Adapter thật (9 Wave 1 + 3 INF-01) không crash khi thiếu key — isAvailable()=false, execute() ném lỗi rõ ràng, healthCheck() báo lý do", async () => {
     const { AnthropicProviderAdapter } = await import("../anthropic-provider-adapter");
     const { OpenAIProviderAdapter } = await import("../openai-provider-adapter");
     const { GeminiProviderAdapter } = await import("../gemini-provider-adapter");
@@ -136,6 +148,9 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
     const { OllamaProviderAdapter } = await import("../ollama-provider-adapter");
     const { PerplexityProviderAdapter } = await import("../perplexity-provider-adapter");
     const { CohereProviderAdapter } = await import("../cohere-provider-adapter");
+    const { GroqProviderAdapter } = await import("../groq-provider-adapter");
+    const { CerebrasProviderAdapter } = await import("../cerebras-provider-adapter");
+    const { OpenRouterProviderAdapter } = await import("../openrouter-provider-adapter");
 
     for (const AdapterClass of [
       AnthropicProviderAdapter,
@@ -147,6 +162,9 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
       OllamaProviderAdapter,
       PerplexityProviderAdapter,
       CohereProviderAdapter,
+      GroqProviderAdapter,
+      CerebrasProviderAdapter,
+      OpenRouterProviderAdapter,
     ]) {
       const adapter = new AdapterClass();
       expect(adapter.isAvailable()).toBe(false);
@@ -182,7 +200,7 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
   it("ProviderHealthCheck kiểm tra được toàn bộ Provider đã đăng ký, không gọi mạng thật", async () => {
     const { checkAllProvidersHealth } = await import("../provider-health-check");
     const results = await checkAllProvidersHealth();
-    expect(results).toHaveLength(10);
+    expect(results).toHaveLength(13);
     expect(results.find((r) => r.providerId === "mock")?.available).toBe(true);
   });
 
@@ -198,7 +216,7 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
   it("Capability Matching: matchCapability trả về mọi Provider đã đăng ký hỗ trợ capability, kể cả chưa khả dụng", async () => {
     const { matchCapability } = await import("../model-router");
     const matched = matchCapability("writing.draft");
-    expect(matched.length).toBe(10); // Wave 1 — mọi Provider tổng quát đều khai báo hỗ trợ capability text-generation
+    expect(matched.length).toBe(13); // Wave 1 + INF-01 — mọi Provider tổng quát đều khai báo hỗ trợ capability text-generation
     expect(matched.map((a) => a.providerId)).toContain("mock");
   });
 
