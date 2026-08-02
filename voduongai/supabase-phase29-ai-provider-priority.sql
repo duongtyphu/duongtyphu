@@ -41,16 +41,19 @@ create policy "public read published" on ai_provider_priority
 
 -- Seed: đúng 12 providerId thật đã đăng ký trong registry.ts (không tính
 -- "mock" — Provider nội bộ, luôn là lựa chọn cuối cùng, không cho Admin
--- sắp xếp). Thứ tự khởi tạo giữ nguyên xếp hạng overallScore hiện có
--- (không đổi hành vi routing ngay khi apply migration) — Founder tự kéo
--- thả lại theo API key thật đã cấu hình trên Vercel.
+-- sắp xếp). Thứ tự khởi tạo do Founder xác nhận trực tiếp — Gemini mặc
+-- định → Groq (fallback nhanh) → OpenRouter (fallback nhiều model) →
+-- phần còn lại làm lưới an toàn mở rộng (chỉ chạm tới nếu cả 3 provider
+-- trên đều lỗi/hết quota) → Mock chỉ khi mọi Provider thật đều không khả
+-- dụng. Khớp đúng `DEFAULT_PRIORITY_ORDER` trong `priority-store.ts` (đang
+-- active NGAY CẢ KHI bảng này chưa apply) — 2 nơi phải luôn đồng bộ.
 insert into ai_provider_priority (id, data, status, "order") values
-  ('anthropic', '{"displayName":"Anthropic (Claude)"}'::jsonb, 'Published', 1),
-  ('openai', '{"displayName":"OpenAI (GPT)"}'::jsonb, 'Published', 2),
-  ('gemini', '{"displayName":"Google Gemini"}'::jsonb, 'Published', 3),
-  ('groq', '{"displayName":"Groq"}'::jsonb, 'Published', 4),
-  ('cerebras', '{"displayName":"Cerebras"}'::jsonb, 'Published', 5),
-  ('openrouter', '{"displayName":"OpenRouter"}'::jsonb, 'Published', 6),
+  ('gemini', '{"displayName":"Google Gemini"}'::jsonb, 'Published', 1),
+  ('groq', '{"displayName":"Groq"}'::jsonb, 'Published', 2),
+  ('openrouter', '{"displayName":"OpenRouter"}'::jsonb, 'Published', 3),
+  ('cerebras', '{"displayName":"Cerebras"}'::jsonb, 'Published', 4),
+  ('anthropic', '{"displayName":"Anthropic (Claude)"}'::jsonb, 'Published', 5),
+  ('openai', '{"displayName":"OpenAI (GPT)"}'::jsonb, 'Published', 6),
   ('deepseek', '{"displayName":"DeepSeek"}'::jsonb, 'Published', 7),
   ('grok', '{"displayName":"Grok (xAI)"}'::jsonb, 'Published', 8),
   ('perplexity', '{"displayName":"Perplexity"}'::jsonb, 'Published', 9),
