@@ -42,6 +42,17 @@ const ACTION_CARDS: { label: string; icon: LucideIcon; href?: string }[] = [
   { label: "Hỏi Companion", icon: MessageCircleQuestion },
 ];
 
+/** Định dạng ngày giờ hiển thị dưới mỗi tin nhắn — dùng `message.createdAt`
+    (dữ liệu thật, ISO string, đã có sẵn trong `ChatMessage`/DB, chỉ chưa
+    hiển thị ra UI). Ngày/giờ theo giờ thiết bị của người xem. */
+function formatMessageTimestamp(createdAt: string): string {
+  const d = new Date(createdAt);
+  if (Number.isNaN(d.getTime())) return "";
+  const time = d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  const date = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return `${time} · ${date}`;
+}
+
 export function CompanionMessageList({
   messages,
   isGenerating,
@@ -165,7 +176,7 @@ export function CompanionMessageList({
 
 function UserBubble({ message }: { message: ChatMessage }) {
   return (
-    <div className="flex justify-end">
+    <div className="flex flex-col items-end">
       <div
         className={`max-w-[85%] rounded-2xl rounded-br-md bg-blue-600 px-4 py-2.5 text-sm leading-relaxed text-white sm:max-w-[75%] ${
           message.pending ? "opacity-70" : ""
@@ -173,6 +184,9 @@ function UserBubble({ message }: { message: ChatMessage }) {
       >
         <span className="whitespace-pre-wrap">{message.content}</span>
       </div>
+      {!message.pending && (
+        <span className="mt-1 mr-1 text-[11px] text-gray-400">{formatMessageTimestamp(message.createdAt)}</span>
+      )}
     </div>
   );
 }
@@ -213,6 +227,7 @@ function AssistantBubble({
         <div className="text-sm leading-relaxed text-gray-800">
           <MarkdownLite text={message.content} />
         </div>
+        <span className="mt-1 block text-[11px] text-gray-400">{formatMessageTimestamp(message.createdAt)}</span>
         <div
           className={`mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-gray-400 transition ${
             showActions ? "opacity-100" : "opacity-0 group-hover:opacity-100"
