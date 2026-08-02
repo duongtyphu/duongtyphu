@@ -190,6 +190,12 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "premium-chrome": "premium_chrome",
   "premium-payment-steps": "premium_payment_steps",
   "premium-faq": "premium_faq",
+  // AI Provider Priority — Founder tự sắp thứ tự ưu tiên AI Provider (trên
+  // xuống = ưu tiên cao xuống thấp) qua VisualEditor, đọc bởi
+  // src/ai/providers/priority-store.ts (server-only). `id` mỗi dòng PHẢI
+  // khớp đúng providerId trong src/ai/providers/registry.ts — xem chi tiết
+  // trong supabase-phase29-ai-provider-priority.sql.
+  "ai-provider-priority": "ai_provider_priority",
 };
 
 export function tableForCollection(key: string): string | null {

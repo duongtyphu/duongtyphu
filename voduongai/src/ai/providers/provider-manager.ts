@@ -18,6 +18,7 @@ import { providerRegistry } from "./registry";
 import { selectAdapter, matchCapability, type OptimizeFor } from "./model-router";
 import { recordExecution } from "./provider-execution-log";
 import { checkAllProvidersHealth } from "./provider-health-check";
+import { getProviderPriorityOrder } from "./priority-store";
 
 export type ProviderManagerRequest = {
   capability: string;
@@ -39,12 +40,14 @@ export type ProviderManagerRequest = {
 };
 
 async function execute(request: ProviderManagerRequest): Promise<ProviderExecuteResult> {
+  const priorityOrder = await getProviderPriorityOrder();
   const adapter = selectAdapter({
     capability: request.capability,
     preferredProvider: request.preferredProvider,
     fallbackProvider: request.fallbackProvider,
     fallbackAllowed: request.fallbackAllowed,
     optimizeFor: request.optimizeFor,
+    priorityOrder,
   });
   const startedAt = Date.now();
 
