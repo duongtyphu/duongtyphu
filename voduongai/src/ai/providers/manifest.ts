@@ -258,26 +258,72 @@ const PROVIDER_MANIFEST: ProviderManifestEntry[] = [
     connection: { authenticationType: "none", environmentVariableName: null, supportsBaseUrl: false, supportsLocalRuntime: false },
   },
   {
-    // Đề bài CS-03 liệt kê "Groq" (khác "Grok" đã có ở trên, xem tách bạch
-    // trong báo cáo) như 1 Provider mẫu — CHƯA có Adapter/Registry thật
-    // (grep xác nhận `src/ai/providers/` không có file nào cho Groq).
-    // Khai báo trước trong Manifest (đúng mục tiêu "chuẩn bị cho Runtime
-    // Binding") nhưng KHÔNG bịa bất kỳ field kỹ thuật nào chưa xác nhận
-    // được (env var/context window/model...) — để trống trung thực.
+    // INF-01 — Additional AI Provider Integration: Groq giờ ĐÃ có
+    // Adapter/Registry thật (`groq-provider-adapter.ts`) — cập nhật từ
+    // entry placeholder cũ (từng khai "chưa có Adapter" ở Sprint CS-03,
+    // khác "Grok"/xAI đã có ở trên, xem tách bạch trong báo cáo INF-01).
+    // Field kỹ thuật điền đúng SỰ THẬT đã biết trong dự án (env var/model
+    // đã đăng ký/context window đã khai báo/tier đã gán) — description/
+    // category/URL/capabilities vẫn để null/unknown (chưa xác nhận được,
+    // không suy đoán theo hiểu biết chung về vendor).
     providerId: "groq",
-    displayName: "Groq (chưa có Adapter/Registry)",
+    displayName: "Groq Provider",
     description: null,
     category: null,
-    tier: null,
+    tier: "specialized",
     logoPlaceholder: "GQ",
     documentationUrl: null,
     websiteUrl: null,
     pricingUrl: null,
-    registeredInRuntime: false,
-    models: { chatModel: null, reasoningModel: null, visionModel: null, embeddingModel: null },
+    registeredInRuntime: true,
+    models: { chatModel: "llama-3.3-70b-versatile", reasoningModel: null, visionModel: null, embeddingModel: null },
     capabilities: UNKNOWN_CAPABILITIES,
-    limits: { contextWindow: null, maxOutput: null, recommendedUse: null },
-    connection: { authenticationType: null, environmentVariableName: null, supportsBaseUrl: false, supportsLocalRuntime: false },
+    // FIX INF-01 — contextWindow cập nhật đúng giá trị công bố của
+    // llama-3.3-70b-versatile trên Groq (131072). maxOutput đặt 32768 theo
+    // yêu cầu duyệt có điều kiện (field này hỗ trợ null — chỉ điền khi có
+    // giá trị xác nhận, không suy đoán cho Provider khác).
+    limits: { contextWindow: 131_072, maxOutput: 32_768, recommendedUse: "Groq — suy luận cực nhanh (LPU), chi phí thấp." },
+    connection: { authenticationType: "api-key", environmentVariableName: "GROQ_API_KEY", supportsBaseUrl: false, supportsLocalRuntime: false },
+  },
+  {
+    // INF-01 — Additional AI Provider Integration: Cerebras, Adapter thật
+    // đã đăng ký (`cerebras-provider-adapter.ts`).
+    // FIX INF-01 — model đổi thành gpt-oss-120b (đúng theo duyệt có điều
+    // kiện). contextWindow để `null` — CHƯA có nguồn chính thức xác nhận,
+    // đúng convention unknown/null đã có sẵn trong Manifest (field này hỗ
+    // trợ `number | null`), không suy đoán 1 con số cụ thể.
+    providerId: "cerebras",
+    displayName: "Cerebras Provider",
+    description: null,
+    category: null,
+    tier: "specialized",
+    logoPlaceholder: "CB",
+    documentationUrl: null,
+    websiteUrl: null,
+    pricingUrl: null,
+    registeredInRuntime: true,
+    models: { chatModel: "gpt-oss-120b", reasoningModel: null, visionModel: null, embeddingModel: null },
+    capabilities: UNKNOWN_CAPABILITIES,
+    limits: { contextWindow: null, maxOutput: null, recommendedUse: "Cerebras — suy luận cực nhanh (wafer-scale), chi phí thấp." },
+    connection: { authenticationType: "api-key", environmentVariableName: "CEREBRAS_API_KEY", supportsBaseUrl: false, supportsLocalRuntime: false },
+  },
+  {
+    // INF-01 — Additional AI Provider Integration: OpenRouter, Adapter
+    // thật đã đăng ký (`openrouter-provider-adapter.ts`).
+    providerId: "openrouter",
+    displayName: "OpenRouter Provider",
+    description: null,
+    category: null,
+    tier: "specialized",
+    logoPlaceholder: "OR",
+    documentationUrl: null,
+    websiteUrl: null,
+    pricingUrl: null,
+    registeredInRuntime: true,
+    models: { chatModel: "openai/gpt-4o-mini", reasoningModel: null, visionModel: null, embeddingModel: null },
+    capabilities: UNKNOWN_CAPABILITIES,
+    limits: { contextWindow: 128_000, maxOutput: null, recommendedUse: "OpenRouter — router/aggregator, truy cập nhiều model qua 1 API." },
+    connection: { authenticationType: "api-key", environmentVariableName: "OPENROUTER_API_KEY", supportsBaseUrl: false, supportsLocalRuntime: false },
   },
 ];
 

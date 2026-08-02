@@ -33,6 +33,9 @@ import { MistralProviderAdapter } from "./mistral-provider-adapter";
 import { OllamaProviderAdapter } from "./ollama-provider-adapter";
 import { PerplexityProviderAdapter } from "./perplexity-provider-adapter";
 import { CohereProviderAdapter } from "./cohere-provider-adapter";
+import { GroqProviderAdapter } from "./groq-provider-adapter";
+import { CerebrasProviderAdapter } from "./cerebras-provider-adapter";
+import { OpenRouterProviderAdapter } from "./openrouter-provider-adapter";
 
 class AIServiceRegistry {
   private readonly adapters = new Map<string, AIServiceAdapter>();
@@ -72,7 +75,8 @@ export const providerRegistry = new AIServiceRegistry();
 /** Tên chính thức từ Sprint "AI Service Registry" trở đi — cùng 1 instance. */
 export const aiServiceRegistry = providerRegistry;
 
-// Provider Wave 1 — 10 Provider chính thức, đăng ký theo đúng 4 Tier.
+// Provider Wave 1 — 10 Provider chính thức + Wave 2 (INF-01 — 3 Provider
+// bổ sung: Groq/Cerebras/OpenRouter), đăng ký theo đúng 4 Tier.
 // Core:
 providerRegistry.register(new OpenAIProviderAdapter());
 providerRegistry.register(new AnthropicProviderAdapter());
@@ -85,5 +89,9 @@ providerRegistry.register(new OllamaProviderAdapter());
 // Specialized:
 providerRegistry.register(new PerplexityProviderAdapter());
 providerRegistry.register(new CohereProviderAdapter());
+// Specialized (INF-01 — Additional AI Provider Integration):
+providerRegistry.register(new GroqProviderAdapter());
+providerRegistry.register(new CerebrasProviderAdapter());
+providerRegistry.register(new OpenRouterProviderAdapter());
 // Development:
 providerRegistry.register(new MockProviderAdapter());
