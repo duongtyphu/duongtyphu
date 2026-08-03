@@ -22,12 +22,17 @@ const INTEGRATION_CHECKS: Array<{ label: string; envVar: string; configured: boo
  * ADM-V2-05 — "API & Tích hợp" (Hệ thống). REAL — nhưng theo đúng nguyên
  * tắc bắt buộc: KHÔNG hiển thị giá trị secret/API key nào, chỉ boolean
  * đã cấu hình/chưa. Dùng lại ĐÚNG `checkAllProvidersHealth()` (AI Service
- * Registry, `src/ai/providers/provider-health-check.ts` — đã có sẵn từ
- * trước, phục vụ `/api/ai/provider-health`) — mỗi Adapter tự xác nhận ENV
- * qua `isAvailable()`, KHÔNG gọi mạng thật, `reason` chỉ ghi TÊN biến môi
- * trường thiếu (vd "Thiếu ANTHROPIC_API_KEY."), không bao giờ chứa giá
- * trị. 10 Provider đăng ký trong `providerRegistry` (OpenAI/Anthropic/
- * Gemini/DeepSeek/Grok/Mistral/Ollama/Perplexity/Cohere/Mock).
+ * Registry, `src/ai/providers/provider-health-check.ts`) — mỗi Adapter tự
+ * xác nhận ENV qua `isAvailable()`, KHÔNG gọi mạng thật, `reason` chỉ ghi
+ * TÊN biến môi trường thiếu (vd "Thiếu ANTHROPIC_API_KEY."), không bao
+ * giờ chứa giá trị. 12 Provider thật đăng ký trong `providerRegistry`
+ * (OpenAI/Anthropic/Gemini/DeepSeek/Grok/Mistral/Ollama/Perplexity/
+ * Cohere/Groq/Cerebras/OpenRouter) + Mock.
+ *
+ * FIX INF-02: đây là trang DUY NHẤT hiển thị chi tiết per-Provider (yêu
+ * cầu đăng nhập Admin qua `requireAdmin()`) — `/api/ai/provider-health`
+ * (endpoint public) đã được thu hẹp chỉ còn trả trạng thái tổng quát
+ * "ready"/"degraded"/"unavailable", không còn liệt kê từng Provider nữa.
  */
 export default async function ApiTichHopPage() {
   const admin = await requireAdmin();

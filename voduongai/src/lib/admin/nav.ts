@@ -264,6 +264,10 @@ export const adminWorkspaces: AdminWorkspace[] = [
       // ADM-V2-05: đọc thật AI Service Registry (checkAllProvidersHealth())
       // — chỉ boolean đã cấu hình/chưa, KHÔNG hiển thị giá trị secret.
       { label: "API & Tích hợp", href: "/admin/he-thong/api-tich-hop" },
+      // Founder tự kéo-thả đổi thứ tự ưu tiên AI Provider (bảng
+      // ai_provider_priority) — áp dụng ngay cho mọi lời gọi AI thật qua
+      // providerManager.execute(), xem priority-store.ts.
+      { label: "Ưu tiên AI Provider", href: "/admin/he-thong/uu-tien-ai" },
       // ADM-V2-05: đọc thật log AI Provider (provider-execution-log.ts,
       // process-local) — khác "log lỗi server chung" (vẫn chưa có).
       { label: "Nhật ký hệ thống", href: "/admin/he-thong/nhat-ky-he-thong" },

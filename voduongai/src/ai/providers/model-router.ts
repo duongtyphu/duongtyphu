@@ -37,6 +37,13 @@ export type SelectAdapterParams = {
   fallbackAllowed?: boolean; // mặc định true — giữ nguyên hành vi cũ
   /** "Cost Optimization"/"Benchmark Selection" — mặc định "quality". */
   optimizeFor?: OptimizeFor;
+  /** Thứ tự ưu tiên Provider do Founder tự cấu hình qua Admin
+      (`getProviderPriorityOrder()`, `priority-store.ts`) — khi có (và
+      không rỗng), THAY THẾ `CAPABILITY_FAMILY_PREFERENCE[family]` ở bước
+      3 (chỉ áp dụng trong nhánh `optimizeFor === "quality"`, giữ nguyên ý
+      nghĩa "bảng ưu tiên mặc định của hệ thống"). Không truyền/rỗng → giữ
+      nguyên hành vi cũ (bảng ưu tiên cố định theo nhóm capability). */
+  priorityOrder?: string[];
 };
 
 /**
@@ -103,7 +110,7 @@ function rankByOptimizeFor(candidates: ProviderAdapter[], optimizeFor: OptimizeF
 }
 
 export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
-  const { capability, preferredProvider, fallbackProvider, fallbackAllowed = true, optimizeFor = "quality" } = params;
+  const { capability, preferredProvider, fallbackProvider, fallbackAllowed = true, optimizeFor = "quality", priorityOrder } = params;
 
   if (preferredProvider) {
     const preferred = providerRegistry.get(preferredProvider);
@@ -126,7 +133,7 @@ export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
   // theo tiêu chí cụ thể, bỏ qua bảng ưu tiên cố định).
   if (optimizeFor === "quality") {
     const family = capabilityFamily(capability);
-    const preferenceOrder = CAPABILITY_FAMILY_PREFERENCE[family];
+    const preferenceOrder = priorityOrder && priorityOrder.length > 0 ? priorityOrder : CAPABILITY_FAMILY_PREFERENCE[family];
     if (preferenceOrder) {
       for (const providerId of preferenceOrder) {
         if (providerId === "mock") continue; // Mock chỉ được chọn ở bước fallback cuối
