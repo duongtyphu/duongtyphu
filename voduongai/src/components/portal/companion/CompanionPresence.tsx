@@ -168,27 +168,18 @@ export function CompanionPresence({
    * có nhãn rõ ràng bên trong panel chat/qua nút riêng.
    */
   const [surface, setSurface] = useState<"space" | "chat">("chat");
-  const [minimized, setMinimized] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return window.localStorage.getItem(MINIMIZED_STORAGE_KEY) === "1";
-    } catch {
-      return false;
-    }
-  });
+  // FIX-P0 — hydration-safe: mặc định cố định (khớp SSR), giá trị thật từ
+  // localStorage chỉ đọc trong useEffect sau mount (tránh React #418).
+  const [minimized, setMinimized] = useState(false);
   const [scrollShrink, setScrollShrink] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(getInitialPosition);
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const [settling, setSettling] = useState(false);
   const [pulsing, setPulsing] = useState(false);
   const [comeback, setComeback] = useState(false);
-  const [gardenStage, setGardenStage] = useState<GardenStage | undefined>(() =>
-    readStoredGardenStage()
-  );
-  const [reflectionMeaning, setReflectionMeaning] = useState<string | undefined>(() =>
-    readStoredReflectionMeaning()
-  );
+  const [gardenStage, setGardenStage] = useState<GardenStage | undefined>(undefined);
+  const [reflectionMeaning, setReflectionMeaning] = useState<string | undefined>(undefined);
   const [thought, setThought] = useState<CompanionThought | null>(null);
   const [story, setStory] = useState<LivingStory | null>(null);
   const [typingInput, setTypingInput] = useState(false);
@@ -215,11 +206,31 @@ export function CompanionPresence({
   const avatarWrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setGardenStage(readStoredGardenStage());
     return subscribeToGardenStage(setGardenStage);
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setReflectionMeaning(readStoredReflectionMeaning());
     return subscribeToReflectionMeaning(setReflectionMeaning);
+  }, []);
+
+  // FIX-P0 — hydration-safe: minimized/position đọc localStorage thật sau
+  // mount (khớp mẫu reducedMotion/livingCoreSize đã có sẵn trong file này).
+  useEffect(() => {
+    try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMinimized(window.localStorage.getItem(MINIMIZED_STORAGE_KEY) === "1");
+    } catch {
+      // bỏ qua nếu localStorage không khả dụng
+    }
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPosition(getInitialPosition());
   }, []);
 
   // NV04 — tôn trọng prefers-reduced-motion: không nghiêng theo con trỏ/chạm.
@@ -483,8 +494,9 @@ export function CompanionPresence({
     ? "anchored"
     : "floating";
 
-  // Kẹp lại vị trí mỗi khi resize cửa sổ (vị trí khởi điểm đã có ngay từ
-  // lazy initializer của useState, không cần set lại ở đây).
+  // Kẹp lại vị trí mỗi khi resize cửa sổ. Vị trí khởi điểm giờ do effect
+  // riêng ở trên set sau mount (hydration-safe) — effect này chỉ kẹp lại
+  // khi đã có `position` (bỏ qua nếu còn `null`, effect kia sẽ set ngay).
   useEffect(() => {
     function handleResize() {
       setPosition((prev) => (prev ? clampPosition(prev.x, prev.y, getAvatarBoxSize()) : prev));

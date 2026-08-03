@@ -155,6 +155,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
+      prefetch={false}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       title={!showLabel ? item.label : undefined}
