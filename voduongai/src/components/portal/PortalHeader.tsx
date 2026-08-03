@@ -30,7 +30,7 @@ export function PortalHeader({
           <Menu className="h-4.5 w-4.5" />
         </button>
 
-        <Link href="/portal" className="flex shrink-0 items-center gap-2">
+        <Link href="/portal" prefetch={false} className="flex shrink-0 items-center gap-2">
           <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="shrink-0">
             <path d="M3 5L16 28L29 5H23L16 18L9 5Z" fill="#2563EB" />
             <circle cx="27" cy="7.5" r="3" fill="#FF7A00" />
@@ -41,12 +41,19 @@ export function PortalHeader({
         <div className="ml-auto flex flex-1 items-center justify-end gap-2 md:flex-none md:gap-3">
           <PortalSearch />
 
-          <Link href="/portal/congdongai#tin-tuc" aria-label="Thông báo" title="Thông báo" className={iconButtonClass}>
+          <Link
+            href="/portal/congdongai#tin-tuc"
+            prefetch={false}
+            aria-label="Thông báo"
+            title="Thông báo"
+            className={iconButtonClass}
+          >
             <Bell className="h-4 w-4" />
           </Link>
 
           <Link
             href="/portal/saved"
+            prefetch={false}
             aria-label="Nội dung đã lưu"
             title="Nội dung đã lưu"
             className={`hidden sm:flex ${iconButtonBase}`}
