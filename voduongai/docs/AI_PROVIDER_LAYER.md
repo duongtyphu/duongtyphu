@@ -257,6 +257,19 @@ Không key nào được hard-code trong code, không key nào bị log (Executi
 Log chỉ ghi metadata: `providerId`/`capability`/`taskType`/`success`/
 `latencyMs`/`error` — không bao giờ ghi `raw`/prompt/API key).
 
+**FIX INF-02 — `KIE_API_KEY`/`POLLINATIONS_API_KEY` KHÔNG thuộc danh sách
+này:** dù 2 biến này đã được cấu hình trên Vercel, audit INF-02 xác nhận
+qua grep toàn bộ `src/` — **0 kết quả** tham chiếu 2 biến này ở bất kỳ
+đâu. Không có `KieProviderAdapter`/`PollinationsProviderAdapter` nào tồn
+tại, không được đăng ký trong `registry.ts`, không tham gia
+`getProviderPriorityOrder()`/`selectAdapter()`. Kết luận: **`KIE_API_KEY`
+và `POLLINATIONS_API_KEY` không thuộc Companion text-chat routing ở
+v1.0** — Companion/`providerManager.execute()` không có khả năng dùng 2
+provider này cho tới khi có 1 adapter thật được viết + đăng ký (việc
+riêng, chưa làm). Giữ nguyên 2 ENV trên Vercel (không xoá) — có thể phục
+vụ mục đích khác ngoài phạm vi AI Provider Layer (ví dụ sinh ảnh/video),
+chưa xác nhận.
+
 ## 9. Benchmark Framework
 
 `src/ai/providers/benchmark-utils.ts` (`runAdapterBenchmark`, dùng
