@@ -214,23 +214,11 @@ export function CompanionChatShell({
 
   return (
     <div className="flex min-h-0 flex-1 overflow-hidden">
-      {/* Sidebar desktop — ẩn hẳn ở compact (panel nổi không đủ rộng), giữ nguyên ở full */}
-      {!compact && (
-        <aside className="hidden w-64 shrink-0 border-r border-gray-200 bg-white/70 backdrop-blur md:block">
-          <CompanionSidebar
-            conversations={conversations}
-            activeConversationId={activeId}
-            onSelect={handleSelectConversation}
-            onNew={handleNewConversation}
-            onRename={handleRename}
-            onDelete={handleDelete}
-          />
-        </aside>
-      )}
-
-      {/* Drawer lịch sử (mobile ở full, mọi kích thước ở compact) */}
+      {/* Lịch sử trò chuyện + nút "Cuộc trò chuyện mới" — không còn hiện
+          thành cột cố định bên trái, chỉ mở dạng drawer khi bấm icon Lịch
+          sử ở header (cả desktop lẫn mobile, cả 2 variant). */}
       {drawerOpen && (
-        <div className={`fixed inset-0 z-50 ${compact ? "" : "md:hidden"}`}>
+        <div className="fixed inset-0 z-50">
           <button
             type="button"
             aria-label="Đóng lịch sử trò chuyện"
