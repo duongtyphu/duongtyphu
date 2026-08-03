@@ -33,9 +33,22 @@ import { usePathname } from "next/navigation";
  *    bọc try/catch toàn bộ, khôi phục nguyên bản khi unmount. Nếu API
  *    này biến mất/đổi shape ở bản Next.js sau này, lớp này tự no-op —
  *    guard vẫn hoạt động đầy đủ qua cơ chế (1), không phụ thuộc lẫn nhau.
+ *
+ * FIX sau khi Founder báo "trang portal/companion hơi giật, tự động load
+ * lại trang" trên Preview: nguyên nhân là NGƯỠNG CŨ 2500ms quá chặt so
+ * với điều kiện thật (cold start serverless của Vercel Preview + việc
+ * tắt `prefetch` ở Header/Sidebar khiến MỌI lần click đều là 1 lượt fetch
+ * lạnh, không còn cache prefetch) — điều hướng vẫn thành công nhưng đôi
+ * khi chậm hơn 2500ms, khiến guard hiểu nhầm là "bị nuốt" và ép hard
+ * reload dù không có gì hỏng. Đã: (1) tăng ngưỡng lên 4500ms — đủ rộng
+ * cho cold start thật, vẫn đủ ngắn để bắt được trường hợp thật sự kẹt;
+ * (2) huỷ fallback đang chờ ngay khi tab chuyển sang nền (`visibilitychange`
+ * → `hidden`) — trình duyệt có thể đóng băng/dồn `setTimeout` của tab nền
+ * rồi bắn dồn khi quay lại, gây cảm giác "tự nhiên bị load lại trang"
+ * ngay lúc người dùng quay lại tab dù điều hướng đã xong từ lâu.
  */
 
-const FALLBACK_WINDOW_MS = 2500;
+const FALLBACK_WINDOW_MS = 4500;
 
 function isSameOriginNavigation(url: URL): boolean {
   if (url.origin !== window.location.origin) return false;
@@ -71,6 +84,19 @@ export function PortalNavigationGuard() {
   useEffect(() => {
     clearPendingFallback();
   }, [pathname]);
+
+  // Tab chuyển sang nền — huỷ fallback đang chờ, không đoán được điều
+  // hướng có thành công hay không trong lúc tab bị đóng băng (trình duyệt
+  // có thể dồn `setTimeout` rồi bắn khi quay lại, gây hard-reload giả).
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.visibilityState === "hidden") {
+        clearPendingFallback();
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
   useEffect(() => {
     function handleClick(event: MouseEvent) {
