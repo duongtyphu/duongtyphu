@@ -46,7 +46,12 @@ export async function middleware(request: NextRequest) {
   const isAdminLoginRoute = pathname === ADMIN_LOGIN_PATH;
   const onAdminRoute = isAdminRoute(pathname);
 
-  if (isPortalRoute && !data.user) {
+  // Loại `/v2/admin/*` khỏi nhánh này: nó nằm dưới tiền tố `/v2` (đã là route
+  // cần đăng nhập) nên nếu không loại ra, quản trị viên chưa đăng nhập sẽ bị
+  // đẩy về `/login` (trang đăng nhập học viên) thay vì `/admin/login` như
+  // `/admin/*`. Nhánh kiểm tra quyền admin bên dưới đã tự xử lý trường hợp
+  // chưa đăng nhập (`isAdmin` = false khi không có user).
+  if (isPortalRoute && !onAdminRoute && !data.user) {
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(loginUrl);
