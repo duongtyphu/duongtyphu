@@ -277,6 +277,30 @@ export const adminWorkspaces: AdminWorkspace[] = [
       { label: "Môi trường", href: "/admin/he-thong/moi-truong" },
     ],
   },
+  /**
+   * Portal & Admin 2.0 — bản dựng lại theo bộ thiết kế mới, chạy SONG SONG
+   * dưới tiền tố `/v2`, CHƯA thay thế 1.0. Đây là ngoại lệ có chủ đích so
+   * với 8 Workspace nghiệp vụ ở trên: không sở hữu dữ liệu nào, chỉ là lối
+   * vào để review bản thử.
+   *
+   * Vì sao cần: `ChromeGate` ẩn hoàn toàn header marketing trong `/admin`
+   * và `/portal`, mà mục "Vào Portal 2.0" lại nằm trong menu tài khoản của
+   * chính header đó — nên khi đã đăng nhập và ở trong 1.0 thì không còn
+   * đường nào sang 2.0 ngoài gõ tay URL. Mọi người vào được `/admin/*` đều
+   * đã qua cổng `members.is_admin` của middleware nên không cần kiểm tra
+   * quyền lần nữa ở đây (khác `PortalSidebar`, nơi học viên thường cũng vào
+   * được nên phải tự lọc theo `isAdmin`).
+   *
+   * XOÁ workspace này khi 2.0 được chốt thay thế 1.0 (hoặc bị huỷ).
+   */
+  {
+    id: "ban-thu-2-0",
+    label: "Bản thử 2.0",
+    items: [
+      { label: "Portal 2.0", href: "/v2/trang-chu" },
+      { label: "Admin 2.0", href: "/v2/admin/dashboard" },
+    ],
+  },
 ];
 
 export type FlatAdminNavEntry = {

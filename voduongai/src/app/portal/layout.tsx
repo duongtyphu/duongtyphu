@@ -17,12 +17,15 @@ type PortalLayoutData = {
   user: { email: string; fullName?: string } | null;
   returnAfterSilenceMilestone: string | null;
   lifeMoment: LifeMoment | null;
+  /** Quyết định có hiện lối vào Portal 2.0 (bản thử) trong sidebar hay không. */
+  isAdmin: boolean;
 };
 
 const EMPTY_PORTAL_LAYOUT_DATA: PortalLayoutData = {
   user: null,
   returnAfterSilenceMilestone: null,
   lifeMoment: null,
+  isAdmin: false,
 };
 
 /**
@@ -64,7 +67,10 @@ async function getPortalLayoutData(): Promise<PortalLayoutData> {
           .order("occurred_at", { ascending: false }),
         supabase
           .from("members")
-          .select("created_at, date_of_birth, date_of_birth_hidden")
+          // `is_admin` chỉ dùng để quyết định có hiện lối vào Portal 2.0 (bản
+          // thử) ở cuối sidebar hay không — thêm vào đúng query members đã có
+          // sẵn, không phát sinh round-trip mới.
+          .select("created_at, date_of_birth, date_of_birth_hidden, is_admin")
           .eq("id", authUser.id)
           .single(),
         supabase.from("memory_capsules").select("id", { count: "exact", head: true }).eq("member_id", authUser.id),
@@ -105,7 +111,7 @@ async function getPortalLayoutData(): Promise<PortalLayoutData> {
       });
     }
 
-    return { user, returnAfterSilenceMilestone, lifeMoment };
+    return { user, returnAfterSilenceMilestone, lifeMoment, isAdmin: Boolean(memberRow?.is_admin) };
   } catch {
     return EMPTY_PORTAL_LAYOUT_DATA;
   }
@@ -114,7 +120,7 @@ async function getPortalLayoutData(): Promise<PortalLayoutData> {
 export default async function PortalLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { user, returnAfterSilenceMilestone, lifeMoment } = await getPortalLayoutData();
+  const { user, returnAfterSilenceMilestone, lifeMoment, isAdmin } = await getPortalLayoutData();
 
   // Sprint 18.5 — The Daily Thought: tái dùng tín hiệu đã có sẵn ở trên
   // (không query lại DB) để dựng `ThoughtContext` cho Thought Selector.
@@ -129,6 +135,7 @@ export default async function PortalLayout({
   return (
     <PortalShell
       user={user}
+      isAdmin={isAdmin}
       dailyThoughtContext={dailyThoughtContext}
       lifeMoment={lifeMoment}
       returnAfterSilenceMilestone={returnAfterSilenceMilestone}

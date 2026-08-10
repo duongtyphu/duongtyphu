@@ -16,12 +16,15 @@ const COLLAPSE_KEY = "vdai_portal_sidebar_collapsed";
 
 export function PortalShell({
   user,
+  isAdmin = false,
   dailyThoughtContext,
   lifeMoment,
   returnAfterSilenceMilestone,
   children,
 }: {
   user: { email: string; fullName?: string } | null;
+  /** Chỉ Admin mới thấy lối vào Portal 2.0 (bản thử) ở cuối sidebar. */
+  isAdmin?: boolean;
   dailyThoughtContext?: ThoughtContext;
   /** Sprint 18.8 — Presence Coordinator: tín hiệu server, thread xuống CompanionPresence. */
   lifeMoment?: LifeMoment | null;
@@ -81,7 +84,7 @@ export function PortalShell({
           }`}
         >
           <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-6">
-            <PortalSidebar collapsed={collapsed} variant="desktop" />
+            <PortalSidebar collapsed={collapsed} variant="desktop" isAdmin={isAdmin} />
           </div>
         </aside>
 
@@ -105,7 +108,7 @@ export function PortalShell({
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              <PortalSidebar variant="mobile" onNavigate={() => setDrawerOpen(false)} />
+              <PortalSidebar variant="mobile" isAdmin={isAdmin} onNavigate={() => setDrawerOpen(false)} />
             </div>
           </div>
         )}

@@ -14,6 +14,7 @@ import {
   Compass,
   Sparkles,
   Share2,
+  FlaskConical,
   type LucideIcon,
 } from "lucide-react";
 import { portalNavGroups } from "@/lib/site";
@@ -36,6 +37,9 @@ const navIcons: Record<string, LucideIcon> = {
   "/portal/hanhtrinhcuatoi": Compass,
   "/portal/su-menh-companion": Sparkles,
   "/portal/congdongai": Users,
+  // Portal 2.0 (bản thử) — FlaskConical, cùng icon "thí điểm" đã dùng cho
+  // route pilot trước đây trong Admin, không phát minh quy ước mới.
+  "/v2/trang-chu": FlaskConical,
 };
 
 /** Gradient thương hiệu của chữ "Companion" — cùng gradient đã dùng ở
@@ -95,13 +99,30 @@ function isItemActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
+/**
+ * Lối vào Portal 2.0 (`/v2`) — bản dựng lại theo bộ thiết kế mới, chạy SONG
+ * SONG với 1.0, chưa thay thế. CHỈ hiện với `is_admin` vì 2.0 còn chạy mock
+ * data, form Admin chưa lưu thật và chưa responsive mobile — học viên thật
+ * không được thấy. Header marketing (nơi có mục "Vào Portal 2.0" trong menu
+ * tài khoản) bị `ChromeGate` ẩn hoàn toàn trong `/portal`, nên nếu không có
+ * mục này thì từ trong Portal 1.0 không còn đường nào sang 2.0 ngoài gõ tay
+ * URL — đúng vấn đề Founder gặp khi review Preview.
+ */
+const V2_PREVIEW_ITEM = { label: "Portal 2.0 (bản thử)", href: "/v2/trang-chu" };
+
 type PortalSidebarProps = {
   collapsed?: boolean;
   variant?: "desktop" | "mobile";
+  isAdmin?: boolean;
   onNavigate?: () => void;
 };
 
-export function PortalSidebar({ collapsed = false, variant = "desktop", onNavigate }: PortalSidebarProps) {
+export function PortalSidebar({
+  collapsed = false,
+  variant = "desktop",
+  isAdmin = false,
+  onNavigate,
+}: PortalSidebarProps) {
   const pathname = usePathname() || "/portal";
   const showLabels = variant === "mobile" || !collapsed;
 
@@ -133,6 +154,28 @@ export function PortalSidebar({ collapsed = false, variant = "desktop", onNaviga
           </div>
         </div>
       ))}
+
+      {isAdmin && (
+        <div className="relative mt-5 pt-4">
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-brand-blue/90 to-transparent shadow-[0_0_14px_1.5px_rgba(91,140,255,0.65)]"
+          />
+          {showLabels && (
+            <p className="mb-1 px-3 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
+              Chỉ Admin
+            </p>
+          )}
+          <div className="space-y-0.5">
+            <NavLink
+              item={V2_PREVIEW_ITEM}
+              active={isItemActive(pathname, V2_PREVIEW_ITEM.href)}
+              showLabel={showLabels}
+              onNavigate={onNavigate}
+            />
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

@@ -84,6 +84,7 @@ import {
   ShoppingCart,
   Percent,
   ArrowUpDown,
+  FlaskConical,
   type LucideIcon,
 } from "lucide-react";
 import { adminWorkspaces, type AdminNavItem } from "@/lib/admin/nav";
@@ -112,6 +113,7 @@ const workspaceIcons: Record<string, LucideIcon> = {
   marketing: TrendingUp,
   "thuong-hieu-media": Palette,
   "he-thong": Settings,
+  "ban-thu-2-0": FlaskConical,
 };
 
 const navIcons: Record<string, LucideIcon> = {
@@ -199,6 +201,9 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/he-thong/nhat-ky-he-thong": ScrollText,
   "/admin/he-thong/sao-luu": DatabaseBackup,
   "/admin/he-thong/moi-truong": Server,
+  // Bản thử 2.0 — 2 lối vào `/v2`, xem workspace "ban-thu-2-0" trong nav.ts.
+  "/v2/trang-chu": Home,
+  "/v2/admin/dashboard": LayoutDashboard,
   "/admin/marketing/chien-dich": Megaphone,
   "/admin/marketing/email-marketing": Mail,
   "/admin/marketing/cta": MousePointerClick,
