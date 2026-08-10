@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isProtectedRoute } from "@/lib/protected-routes";
+import { ADMIN_LOGIN_PATH, isAdminRoute, isProtectedRoute } from "@/lib/protected-routes";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -11,8 +11,9 @@ export async function middleware(request: NextRequest) {
   if (!supabaseUrl || !supabaseAnonKey) {
     // Portal is intentionally left public when Supabase isn't configured (local/demo use).
     // Admin must never be reachable in that state — there's no safe "open admin" fallback.
-    if (request.nextUrl.pathname.startsWith("/admin") && request.nextUrl.pathname !== "/admin/login") {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
+    // `isAdminRoute()` covers both /admin (1.0) and /v2/admin (2.0).
+    if (isAdminRoute(request.nextUrl.pathname)) {
+      return NextResponse.redirect(new URL(ADMIN_LOGIN_PATH, request.url));
     }
     return response;
   }
@@ -37,10 +38,13 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isPortalRoute = isProtectedRoute(pathname);
   const isOnboardingRoute = pathname === "/onboarding";
-  const isPortalOnlyRoute = isPortalRoute && !isOnboardingRoute;
+  // `/v2/admin/*` nằm dưới tiền tố `/v2` (đã là route cần đăng nhập) nhưng
+  // vẫn phải được loại khỏi cổng onboarding, giống hệt `/admin/*` — quản trị
+  // viên không phải hoàn tất hồ sơ học viên mới vào được khu vực quản trị.
+  const isPortalOnlyRoute = isPortalRoute && !isOnboardingRoute && !isAdminRoute(pathname);
   const isLoginRoute = pathname === "/login" || pathname === "/register";
-  const isAdminLoginRoute = pathname === "/admin/login";
-  const isAdminRoute = pathname.startsWith("/admin") && !isAdminLoginRoute;
+  const isAdminLoginRoute = pathname === ADMIN_LOGIN_PATH;
+  const onAdminRoute = isAdminRoute(pathname);
 
   if (isPortalRoute && !data.user) {
     const loginUrl = new URL("/login", request.url);
@@ -69,15 +73,15 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (isAdminRoute || isAdminLoginRoute) {
+  if (onAdminRoute || isAdminLoginRoute) {
     let isAdmin = false;
     if (data.user) {
       const { data: member } = await supabase.from("members").select("is_admin").eq("id", data.user.id).single();
       isAdmin = Boolean(member?.is_admin);
     }
 
-    if (isAdminRoute && !isAdmin) {
-      const loginUrl = new URL("/admin/login", request.url);
+    if (onAdminRoute && !isAdmin) {
+      const loginUrl = new URL(ADMIN_LOGIN_PATH, request.url);
       if (data.user) loginUrl.searchParams.set("error", "not_admin");
       return NextResponse.redirect(loginUrl);
     }
@@ -93,5 +97,14 @@ export async function middleware(request: NextRequest) {
 // Next.js requires matcher patterns to be static string literals — keep
 // this list in sync with PROTECTED_ROUTE_PREFIXES in src/lib/protected-routes.ts.
 export const config = {
-  matcher: ["/portal/:path*", "/onboarding", "/login", "/register", "/admin/:path*"],
+  matcher: [
+    "/portal/:path*",
+    "/onboarding",
+    "/login",
+    "/register",
+    "/admin/:path*",
+    // Portal & Admin 2.0. `/v2/admin/:path*` nằm trong `/v2/:path*` nên không
+    // cần khai riêng — `isAdminRoute()` phân biệt hai khu vực ở runtime.
+    "/v2/:path*",
+  ],
 };

@@ -169,8 +169,28 @@ export const STATUS_COLOR: Record<PortalUser["status"], string> = {
   suspended: "var(--v2-red)",
 };
 
-export async function listUsers(): Promise<PortalUser[]> {
-  return mockFetch(USERS);
+/** "2026-08-10T10:28+07:00" -> "2 phút trước" / "3 giờ trước" / "12 ngày trước" */
+function lastSeenLabel(iso: string, now: number): string {
+  const minutes = Math.max(1, Math.round((now - new Date(iso).getTime()) / 60000));
+  if (minutes < 60) return `${minutes} phút trước`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  return `${Math.round(hours / 24)} ngày trước`;
+}
+
+export type PortalUserRow = PortalUser & { lastActiveLabel: string };
+
+/**
+ * Nhãn "hoạt động cuối" được tính SẴN ở đây thay vì trong component.
+ * `Date.now()` là hàm không thuần — gọi nó trong thân một component (kể cả
+ * Server Component) vi phạm quy tắc render thuần của React. Ở lớp dữ liệu thì
+ * hợp lệ, và cả bảng dùng chung một mốc thời gian nên không có dòng nào lệch.
+ */
+export async function listUsers(): Promise<PortalUserRow[]> {
+  const now = Date.now();
+  return mockFetch(
+    USERS.map((user) => ({ ...user, lastActiveLabel: lastSeenLabel(user.lastActiveAt, now) })),
+  );
 }
 
 export async function getUser(id: string): Promise<PortalUser | null> {

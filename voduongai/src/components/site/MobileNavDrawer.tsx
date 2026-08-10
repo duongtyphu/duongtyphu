@@ -114,6 +114,15 @@ export function MobileNavDrawer({
                 {user ? (
                   <div className="flex flex-col gap-1">
                     <p className="truncate px-3 text-xs text-white/50">{user.fullName || user.email}</p>
+                    {/* Portal 2.0 chạy song song với Portal 1.0 — nhãn ghi rõ
+                        phiên bản để không lẫn với "Bảng điều khiển" bên dưới. */}
+                    <Link
+                      href="/v2/trang-chu"
+                      onClick={() => setOpen(false)}
+                      className="rounded-lg bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-3 py-3 text-base font-semibold text-white transition hover:opacity-90"
+                    >
+                      Vào Portal 2.0
+                    </Link>
                     <Link href="/portal/account" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-base font-semibold text-white transition hover:bg-white/10">
                       Hồ sơ
                     </Link>

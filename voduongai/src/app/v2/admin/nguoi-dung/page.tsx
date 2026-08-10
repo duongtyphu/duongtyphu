@@ -17,18 +17,8 @@ import {
 
 export const metadata = { title: "Người dùng — Admin" };
 
-/** "2026-08-10T10:28+07:00" -> "2 phút trước" / "3 giờ trước" / "12 ngày trước" */
-function lastSeen(iso: string, now: number): string {
-  const minutes = Math.max(1, Math.round((now - new Date(iso).getTime()) / 60000));
-  if (minutes < 60) return `${minutes} phút trước`;
-  const hours = Math.round(minutes / 60);
-  if (hours < 24) return `${hours} giờ trước`;
-  return `${Math.round(hours / 24)} ngày trước`;
-}
-
 export default async function AdminUsersPage() {
   const [users, total] = await Promise.all([listUsers(), countUsers()]);
-  const now = Date.now();
 
   const rows: TableRow[] = users.map((user) => ({
     id: user.id,
@@ -44,7 +34,7 @@ export default async function AdminUsersPage() {
       },
       { t: "status", label: STATUS_LABEL[user.status], color: STATUS_COLOR[user.status] },
       { t: "text", v: formatDate(user.joinedAt) },
-      { t: "muted", v: lastSeen(user.lastActiveAt, now) },
+      { t: "muted", v: user.lastActiveLabel },
     ],
   }));
 

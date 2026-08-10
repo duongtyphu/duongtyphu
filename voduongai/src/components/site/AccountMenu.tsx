@@ -32,7 +32,9 @@ export function AccountMenu({ email, fullName, isLight = false }: AccountMenuPro
     router.refresh();
   }
 
-  if (pathname?.startsWith("/portal")) return null;
+  // Ẩn menu tài khoản khi đang ở trong khu vực sau đăng nhập — cả Portal 1.0
+  // lẫn Portal & Admin 2.0 (`/v2`) đều có shell riêng với hồ sơ ở topbar.
+  if (pathname?.startsWith("/portal") || pathname?.startsWith("/v2")) return null;
 
   const initial = (fullName || email).trim().charAt(0).toUpperCase();
 
@@ -55,7 +57,17 @@ export function AccountMenu({ email, fullName, isLight = false }: AccountMenuPro
           <p className="truncate px-1 text-sm font-bold text-white">{fullName || "Học viên"}</p>
           <p className="truncate px-1 text-xs text-white/60">{email}</p>
 
-          <div className="mt-3 flex items-center gap-2 border-t border-white/10 pt-3">
+          {/* Lối vào Portal 2.0. Đặt riêng phía trên hàng Hồ sơ/Đăng xuất để
+              phân biệt rõ với Portal 1.0 — hai bản đang chạy song song. */}
+          <Link
+            href="/v2/trang-chu"
+            onClick={() => setOpen(false)}
+            className="mt-3 block rounded-lg bg-gradient-to-br from-[#8B6BF2] to-[#5B21D6] px-3 py-2 text-center text-xs font-semibold text-white transition hover:opacity-90"
+          >
+            Vào Portal 2.0
+          </Link>
+
+          <div className="mt-2 flex items-center gap-2 border-t border-white/10 pt-3">
             <Link
               href="/portal/account"
               onClick={() => setOpen(false)}
