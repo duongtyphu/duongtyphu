@@ -15,6 +15,9 @@ export function ChromeGate({
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
   const isPortal = pathname?.startsWith("/portal");
+  // Portal & Admin 2.0 mang shell riêng (sidebar + topbar của bộ thiết kế mới),
+  // không dùng header/footer marketing — giống /portal và /admin hiện tại.
+  const isV2 = pathname?.startsWith("/v2");
 
   // Next.js resets scroll to top after hydrating a fresh navigation, which
   // races with (and wins over) the browser's native "#hash" scroll-into-view
@@ -48,7 +51,7 @@ export function ChromeGate({
     };
   }, [pathname]);
 
-  if (isAdmin || isPortal) return <>{children}</>;
+  if (isAdmin || isPortal || isV2) return <>{children}</>;
 
   return (
     <>

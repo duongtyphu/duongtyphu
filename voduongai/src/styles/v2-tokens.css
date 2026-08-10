@@ -1,0 +1,247 @@
+/* =============================================================================
+ * VO DUONG AI — Portal & Admin 2.0 design tokens + primitives
+ * -----------------------------------------------------------------------------
+ * Chép nguyên bộ token từ gói handoff `design_handoff_vo_duong_ai/` (khai báo
+ * trong `:root` của cả 46 file mockup). KHÔNG thêm token mới ngoài danh sách
+ * README đã liệt kê.
+ *
+ * Toàn bộ được scope dưới `[data-ui="v2"]` — portal/admin 1.0 hiện tại dùng bộ
+ * token khác hẳn (GemOS xanh/cam trong `globals.css`), scope này giữ hai hệ
+ * hoàn toàn tách biệt để dựng 2.0 song song mà không đụng Production.
+ * ========================================================================== */
+
+[data-ui="v2"] {
+  /* Nền / ink */
+  --v2-ink: #171132;
+  --v2-ink-2: #241c46;
+  --v2-sidebar: #150f2e;
+  --v2-sidebar-hover: #231a48;
+  --v2-bg: #f7f6fc;
+  --v2-text: #1c1830;
+  --v2-muted: #6b6685;
+  --v2-line: #ece9f7;
+  /* Nền của card/topbar. Mockup hard-code `#fff`; tách thành token để chế độ
+   * tối đổi được mà không phải sửa từng component. */
+  --v2-surface: #ffffff;
+
+  /* Thương hiệu */
+  --v2-violet: #6d4aff;
+  --v2-violet-dark: #5a37e6;
+  --v2-violet-light: #efe9ff;
+
+  /* Phụ */
+  --v2-gold: #e2b23c;
+  --v2-green: #16a34a;
+  --v2-green-alt: #189a52;
+  --v2-red: #e0455a;
+
+  /* Bo góc — 9px nút/input, 13–14px card, 18px hero/section lớn */
+  --v2-radius-sm: 9px;
+  --v2-radius-md: 13px;
+  --v2-radius-card: 14px;
+  --v2-radius-lg: 18px;
+
+  /* Sidebar rộng cố định */
+  --v2-sidebar-w: 224px;
+
+  /* Màu chuỗi dữ liệu cho biểu đồ. KHÔNG dùng thẳng `--v2-violet`/`--v2-gold`:
+   * vàng thương hiệu #e2b23c chỉ đạt 1,92:1 trên nền trắng nên nét vẽ mảnh sẽ
+   * mờ. `#a9822c` là bậc vàng đậm đã có sẵn trong bộ thiết kế (màu chữ nút
+   * "Nâng cấp Premium"). Cặp màu đạt cả 6 kiểm tra: lightness band, chroma,
+   * tách biệt mù màu (ΔE 33,6 protan / 20,1 tritan) và tương phản nền ≥ 3:1. */
+  --v2-chart-1: #6d4aff;
+  --v2-chart-2: #a9822c;
+
+  /* Shadow icon glossy (dùng lại ở IcoBox) */
+  --v2-ico-shadow: 0 5px 14px rgba(30, 20, 80, 0.16), 0 2px 4px rgba(30, 20, 80, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -5px 8px rgba(0, 0, 0, 0.08);
+  --v2-ico-shadow-lg: 0 6px 16px rgba(30, 20, 80, 0.16), 0 2px 5px rgba(30, 20, 80, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 -6px 10px rgba(0, 0, 0, 0.08);
+
+  color: var(--v2-text);
+  background: var(--v2-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+ * Chế độ tối — CHƯA CÓ TRONG GÓI HANDOFF.
+ *
+ * Cả 46 mockup chỉ có bản sáng, nhưng sidebar lại có công tắc "Chế độ sáng".
+ * Bảng dưới đây suy ra từ chính thang ink của handoff (`--ink #171132`,
+ * `--ink-2 #241c46`, `--sidebar #150f2e`) — không thêm hue mới — để công tắc
+ * hoạt động thật thay vì là nút giả. Cần designer duyệt trước khi chốt.
+ * ------------------------------------------------------------------------ */
+:root[data-v2-theme="dark"] [data-ui="v2"] {
+  --v2-bg: var(--v2-ink);
+  --v2-surface: var(--v2-ink-2);
+  --v2-text: #ece9f7;
+  --v2-muted: #9791b8;
+  --v2-line: #2f2757;
+  --v2-violet-light: #2a1f5c;
+  /* Bậc màu chuỗi dữ liệu riêng cho nền tối — dải lightness hợp lệ ở chế độ
+   * tối hẹp hơn (L 0,48–0,67), nên hai màu của nền sáng không dùng lại được.
+   * Cặp này cũng đã qua đủ 6 kiểm tra trên nền `--v2-ink-2`. */
+  --v2-chart-1: #8b6bff;
+  --v2-chart-2: #b5892c;
+}
+
+/* --------------------------------------------------------------------------
+ * Reset cục bộ. Mockup dùng `*{box-sizing:border-box;margin:0;padding:0}` ở
+ * phạm vi toàn cục; ở đây giới hạn trong cây v2 để không ảnh hưởng trang cũ.
+ * ------------------------------------------------------------------------ */
+[data-ui="v2"] *,
+[data-ui="v2"] *::before,
+[data-ui="v2"] *::after {
+  box-sizing: border-box;
+}
+
+[data-ui="v2"] h1,
+[data-ui="v2"] h2,
+[data-ui="v2"] h3,
+[data-ui="v2"] h4,
+[data-ui="v2"] h5,
+[data-ui="v2"] h6,
+[data-ui="v2"] p,
+[data-ui="v2"] figure {
+  margin: 0;
+}
+
+[data-ui="v2"] a {
+  color: var(--v2-violet);
+  text-decoration: none;
+}
+
+[data-ui="v2"] a:hover {
+  color: var(--v2-violet-dark);
+}
+
+/* --------------------------------------------------------------------------
+ * Khối icon glossy. Mockup dùng selector `[class*="ico"]` — quá rộng và dễ
+ * bắt nhầm (bất kỳ class nào chứa "ico"). Ở đây đổi thành class tường minh
+ * `.v2-ico`, hành vi giữ nguyên: shadow nhiều lớp + overlay gradient chéo.
+ * ------------------------------------------------------------------------ */
+[data-ui="v2"] .v2-ico {
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--v2-ico-shadow);
+}
+
+[data-ui="v2"] .v2-ico--lg {
+  box-shadow: var(--v2-ico-shadow-lg);
+}
+
+[data-ui="v2"] .v2-ico::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 55%);
+  pointer-events: none;
+}
+
+[data-ui="v2"] .v2-ico > svg,
+[data-ui="v2"] .v2-ico > img {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.12));
+}
+
+/* --------------------------------------------------------------------------
+ * Hiệu ứng nền hero: chấm sao trôi + sao lấp lánh.
+ * ------------------------------------------------------------------------ */
+@keyframes v2DotDrift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+@keyframes v2StarTwinkle {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes v2SparkleTwinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.6) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(20deg);
+  }
+}
+
+[data-ui="v2"] .v2-move-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.7);
+  animation-name: v2DotDrift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+[data-ui="v2"] .v2-star {
+  transform-origin: center;
+  animation: v2StarTwinkle 2.6s ease-in-out infinite;
+}
+
+[data-ui="v2"] .v2-sparkle {
+  position: absolute;
+  color: #ffd75e;
+  pointer-events: none;
+  animation: v2SparkleTwinkle 2.2s ease-in-out infinite;
+}
+
+/* Tôn trọng người dùng tắt hiệu ứng chuyển động ở cấp hệ điều hành. */
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"] .v2-move-dot,
+  [data-ui="v2"] .v2-star,
+  [data-ui="v2"] .v2-sparkle {
+    animation: none;
+  }
+  [data-ui="v2"] .v2-move-dot {
+    opacity: 0.7;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * Thanh cuộn sidebar — sidebar dài (admin có 25 mục) nên cần cuộn riêng.
+ * ------------------------------------------------------------------------ */
+[data-ui="v2"] .v2-sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3364 transparent;
+}
+
+[data-ui="v2"] .v2-sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-ui="v2"] .v2-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #3a3364;
+  border-radius: 3px;
+}
+
+[data-ui="v2"] .v2-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
