@@ -1,0 +1,238 @@
+/* =============================================================================
+ * Trang chủ Portal 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của
+ * `design_handoff_vo_duong_ai/Trang chu Portal.html`.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 4 điều chỉnh kỹ thuật bắt buộc (không cái nào đổi giá trị thiết kế):
+ *
+ *  1. Mọi selector được thêm tiền tố `.tcp` — file này nạp trong cây `/v2`,
+ *     nếu để nguyên `*`, `body`, `a`, `.card`... thì sẽ đè lên Landing Page và
+ *     Portal/Admin 1.0 đang chạy Production. Tiền tố không đổi giá trị nào.
+ *  2. `:root{...}` → `.tcp{...}`: cùng danh sách biến, cùng giá trị, chỉ đổi
+ *     phạm vi từ toàn tài liệu sang gốc trang này.
+ *  3. `body{...}` gộp vào `.tcp{...}` (cùng lý do 2).
+ *  4. `font-family:'Inter'` → `var(--font-v2-inter)`: layout `/v2` nạp đúng font
+ *     Inter qua `next/font` (self-host, không gọi Google Fonts) và font đó lộ ra
+ *     dưới dạng biến CSS, không dưới tên họ 'Inter'. Vẫn là Inter, cùng các
+ *     weight 400–800 mockup khai báo.
+ *
+ * `@keyframes` CỐ TÌNH để ở phạm vi toàn cục, giữ nguyên tên gốc
+ * (`dotDrift`/`sparkleTwinkle`/`starTwinkle`) vì markup gốc tham chiếu chúng
+ * bằng inline style (`style="animation:dotDrift 5.3s ..."`) — inline style
+ * không thể trỏ tới tên keyframe đã bị băm/đổi. Đã kiểm tra: 3 tên này không
+ * trùng với keyframe nào đang có trong `globals.css` hay `v2-tokens.css`
+ * (bên đó dùng tiền tố `v2*`).
+ * ========================================================================== */
+
+.tcp {
+  --ink: #171132;
+  --ink-2: #241c46;
+  --sidebar: #150f2e;
+  --sidebar-hover: #231a48;
+  --violet: #6d4aff;
+  --violet-dark: #5a37e6;
+  --violet-light: #efe9ff;
+  --gold: #e2b23c;
+  --text: #1c1830;
+  --muted: #6b6685;
+  --line: #ece9f7;
+  --bg: #f7f6fc;
+  --green: #16a34a;
+
+  font-family: var(--font-v2-inter), 'Inter', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh thứ 5 (phát hiện khi đối chiếu render, KHÔNG có trong bản gốc
+   * vì bản gốc không cần): trả `line-height` về `normal`.
+   *
+   * Mockup là file HTML độc lập, không khai báo `line-height` ở đâu ngoài vài
+   * chỗ cụ thể (.hero-text p 1.55, .explore-card p 1.4, .learn-card h4 1.35,
+   * .sugg-card h5 1.35, .profile .who 1.25, .notice-row .t 1.4, .promo p 1.5)
+   * — phần còn lại dùng `normal` mặc định của trình duyệt.
+   *
+   * Trang này lại nằm trong app thật, nơi `globals.css` đặt `body{line-height:
+   * 1.55}` (và Tailwind Preflight đặt `html{line-height:1.5}`). Hai giá trị đó
+   * kế thừa xuống, đẩy CAO mọi dòng chữ không tự khai line-height: h1 hero
+   * 30px → 40.3px, mỗi mục sidebar 38px → 41.7px, topbar 71px → 75.9px...
+   * Đo thực tế bằng cách render song song hai bản mới thấy.
+   *
+   * `normal` ở đây khôi phục đúng hành vi bản gốc; 7 khai báo line-height
+   * tường minh của mockup vẫn giữ nguyên vì chúng đặt trên chính phần tử con. */
+  line-height: normal;
+}
+.tcp,
+.tcp * { box-sizing: border-box; margin: 0; padding: 0 }
+.tcp a { color: var(--violet); text-decoration: none }
+.tcp a:hover { color: var(--violet-dark) }
+.tcp .app { display: flex; min-height: 100vh }
+
+/* Sidebar */
+.tcp .sidebar { width: 224px; flex-shrink: 0; background: var(--sidebar); color: #cbc6e8; display: flex; flex-direction: column; padding: 20px 14px }
+.tcp .brand { display: flex; align-items: center; gap: 10px; padding: 6px 8px 22px }
+.tcp .brand .mark { width: 34px; height: 34px; flex-shrink: 0; display: flex; align-items: center; justify-content: center }
+.tcp .brand .name { font-weight: 800; font-size: 15px; letter-spacing: .2px }
+.tcp .brand .name .vo { color: #3B82F6 }
+.tcp .brand .name .ai { color: #fff }
+.tcp nav.main { display: flex; flex-direction: column; gap: 2px; margin-bottom: 18px }
+.tcp .nav-item { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 9px; font-size: 14px; font-weight: 500; color: #b5afd6; cursor: pointer; transition: background .15s, color .15s; border: none; background: none; width: 100%; text-align: left }
+.tcp .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: .85 }
+.tcp .nav-item:hover { background: var(--sidebar-hover); color: #fff }
+.tcp .nav-item.active { background: var(--violet); color: #fff }
+.tcp .nav-item.active svg { opacity: 1 }
+.tcp .side-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #6f6a91; margin: 10px 12px 6px }
+.tcp .promo { margin-top: auto; background: linear-gradient(160deg, #3d2a8f, #241c46); border-radius: 14px; padding: 18px 16px; position: relative; overflow: hidden }
+.tcp .promo .crown { width: 36px; height: 36px; border-radius: 9px; background: rgba(255, 255, 255, .12); display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 18px; position: relative }
+.tcp .promo .crown::after { content: ''; position: absolute; inset: -14px; background: radial-gradient(circle, rgba(177, 139, 255, .45), transparent 70%); z-index: -1; pointer-events: none }
+.tcp .crown-sparkle { position: absolute; color: #ffd75e; pointer-events: none; animation: sparkleTwinkle 2.2s ease-in-out infinite }
+@keyframes sparkleTwinkle { 0%, 100% { opacity: .2; transform: scale(.6) rotate(0deg) } 50% { opacity: 1; transform: scale(1) rotate(20deg) } }
+.tcp .promo h4 { color: #fff; font-size: 14px; font-weight: 700; margin-bottom: 6px }
+.tcp .promo p { font-size: 12px; color: #c3bde3; line-height: 1.5; margin-bottom: 14px }
+.tcp .promo button { width: 100%; background: linear-gradient(135deg, var(--violet), #9b7bff); color: #fff; border: none; padding: 10px; border-radius: 9px; font-weight: 700; font-size: 13px; cursor: pointer; transition: transform .15s, box-shadow .15s, filter .15s }
+.tcp .promo button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(109, 74, 255, .5); filter: brightness(1.08) }
+.tcp .promo button:active { transform: translateY(0) scale(.97) }
+.tcp .theme-toggle { display: flex; align-items: center; gap: 8px; padding: 14px 6px 4px; font-size: 12.5px; color: #9791b8 }
+.tcp .switch { width: 32px; height: 18px; background: #3a3364; border-radius: 20px; position: relative; cursor: pointer }
+.tcp .switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #fff; border-radius: 50%; transition: .15s }
+.tcp .switch.on { background: var(--violet) }
+.tcp .switch.on::after { left: 16px }
+
+/* Main column */
+.tcp .main-col { flex: 1; min-width: 0; display: flex; flex-direction: column }
+.tcp .topbar { display: flex; align-items: center; gap: 16px; padding: 16px 28px; background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5 }
+.tcp .search { flex: 1; max-width: 640px; position: relative }
+.tcp .search input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font-size: 13.5px; font-family: inherit }
+.tcp .search input:focus { outline: 2px solid var(--violet-light); border-color: var(--violet) }
+.tcp .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--muted) }
+.tcp .upgrade-btn { display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--gold); color: #a9822c; background: #fffaf0; padding: 9px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; transition: transform .15s, box-shadow .15s, background .15s }
+.tcp .upgrade-btn:hover { background: #fff3d9; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(226, 178, 60, .35) }
+.tcp .upgrade-btn:active { transform: translateY(0) scale(.97) }
+.tcp .icon-btn { position: relative; width: 38px; height: 38px; border-radius: 9px; border: none; background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text) }
+.tcp .icon-btn .badge { position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; border-radius: 8px; padding: 1px 5px; min-width: 16px; text-align: center }
+.tcp .profile { display: flex; align-items: center; gap: 9px; cursor: pointer }
+.tcp .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #8b7bde, #5f4bc9); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px }
+.tcp .profile .who { font-size: 13px; font-weight: 600; line-height: 1.25 }
+.tcp .profile .plan { display: inline-block; margin-top: 1px; background: #fef3c7; color: #92720a; font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 6px }
+
+.tcp .content { display: flex; gap: 22px; padding: 24px 28px; align-items: flex-start }
+.tcp .center-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 26px }
+.tcp .right-col { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px }
+
+/* Hero */
+.tcp .hero { background: radial-gradient(circle at 78% 22%, #4a3691 0%, transparent 45%), radial-gradient(circle at 85% 70%, #2d2270 0%, transparent 50%), linear-gradient(160deg, #241c4d 0%, #1a1440 55%, #100b2c 100%); border-radius: 18px; padding: 25px 44px; color: #fff; display: flex; align-items: center; justify-content: space-between; gap: 24px; position: relative; overflow: hidden; box-shadow: inset 0 0 90px rgba(0, 0, 0, .4) }
+.tcp .hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 60% 15%, #fff, transparent), radial-gradient(1px 1px at 80% 60%, #fff, transparent), radial-gradient(1.5px 1.5px at 40% 75%, #fff, transparent), radial-gradient(1px 1px at 92% 35%, #fff, transparent), radial-gradient(1px 1px at 30% 55%, #fff, transparent), radial-gradient(1px 1px at 68% 82%, #fff, transparent), radial-gradient(1.5px 1.5px at 10% 60%, #fff, transparent); opacity: .55; pointer-events: none }
+.tcp .hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, .45), transparent 60%); pointer-events: none }
+.tcp .hero-text, .tcp .hero-bot-wrap { position: relative; z-index: 1 }
+.tcp .move-dot { position: absolute; border-radius: 50%; background: #fff; opacity: 0; pointer-events: none; box-shadow: 0 0 3px rgba(255, 255, 255, .7) }
+@keyframes dotDrift { 0% { opacity: 0; transform: translate(0, 0) } 12% { opacity: 1 } 88% { opacity: .9 } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) } }
+.tcp .hero-text h1 { font-size: 26px; font-weight: 800; margin-bottom: 10px }
+.tcp .hero-text p { font-size: 14.5px; color: #cfc8ee; max-width: 380px; line-height: 1.55; margin-bottom: 20px }
+.tcp .hero-actions { display: flex; gap: 10px }
+.tcp .btn-primary { background: linear-gradient(135deg, var(--violet), #9b7bff); color: #fff; border: none; padding: 11px 20px; border-radius: 9px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0; transition: transform .15s, box-shadow .15s, filter .15s }
+.tcp .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(109, 74, 255, .45); filter: brightness(1.08) }
+.tcp .btn-primary:active { transform: translateY(0) scale(.97) }
+.tcp .btn-ghost { background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .25); color: #fff; padding: 11px 20px; border-radius: 9px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0; transition: transform .15s, background .15s, border-color .15s }
+.tcp .btn-ghost:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .4); transform: translateY(-2px) }
+.tcp .btn-ghost:active { transform: translateY(0) scale(.97) }
+.tcp .hero-bot-wrap { width: 147px; height: 210px; flex-shrink: 0; position: relative; display: flex; align-items: flex-end; justify-content: center }
+.tcp .hero-bot-glow { position: absolute; inset: -20px; background: radial-gradient(ellipse 60% 70% at 50% 55%, rgba(155, 123, 255, .5), transparent 72%); filter: blur(6px); z-index: 0 }
+.tcp .hero-bot-wrap img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 18px 22px rgba(8, 5, 25, .5)) }
+.tcp .hero-stars { position: absolute; z-index: 2; top: -6px; right: -18px; width: 92px; height: 76px; pointer-events: none }
+@keyframes starTwinkle { 0%, 100% { opacity: .55; transform: scale(.85) } 50% { opacity: 1; transform: scale(1.08) } }
+.tcp .hero-stars .star { transform-origin: center; animation: starTwinkle 2.6s ease-in-out infinite }
+
+/* Section headers */
+.tcp .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px }
+.tcp .section-head h2 { font-size: 16.5px; font-weight: 800 }
+.tcp .section-head a { font-size: 13px; font-weight: 600 }
+
+/* Explore grid */
+.tcp .explore-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px }
+.tcp .explore-card { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 18px 14px; text-align: center; cursor: pointer; transition: box-shadow .15s, transform .15s }
+.tcp .explore-card:hover { box-shadow: 0 8px 20px rgba(109, 74, 255, .12); transform: translateY(-2px) }
+.tcp .explore-card .ico { width: 88px; height: 88px; border-radius: 12px; margin: 0 auto 2px; display: flex; align-items: center; justify-content: center }
+.tcp .ico-img { background: none !important; box-shadow: none !important }
+.tcp .ico-img::before { display: none }
+.tcp .ico-img img { width: 78px; height: 78px; object-fit: contain; position: relative; z-index: 1; filter: drop-shadow(0 3px 6px rgba(30, 20, 80, .18)) }
+.tcp .learn-icon { display: flex; align-items: center }
+.tcp .explore-card h3 { font-size: 13.5px; font-weight: 700; margin-bottom: 4px }
+.tcp .explore-card p { font-size: 11.5px; color: var(--muted); line-height: 1.4 }
+
+/* Continue learning grid */
+.tcp .learn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px }
+.tcp .learn-card { border-radius: 13px; padding: 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; transition: transform .15s, box-shadow .15s; border: 1px solid rgba(0, 0, 0, .04); box-shadow: 0 2px 8px rgba(30, 20, 80, .06) }
+.tcp .learn-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(30, 20, 80, .14) }
+.tcp .learn-tag { align-self: flex-start; font-size: 10.5px; font-weight: 800; letter-spacing: .03em; padding: 3px 9px; border-radius: 6px }
+.tcp .learn-card h4 { font-size: 13.5px; font-weight: 700; line-height: 1.35; min-height: 36px }
+.tcp .learn-progress-track { height: 6px; border-radius: 4px; background: rgba(0, 0, 0, .08); overflow: hidden }
+.tcp .learn-progress-fill { height: 100%; border-radius: 4px }
+.tcp .learn-pct { font-size: 11.5px; font-weight: 700; color: var(--muted) }
+.tcp .learn-cta { margin-top: 2px; background: rgba(255, 255, 255, .7); border: 1px solid rgba(0, 0, 0, .06); border-radius: 8px; padding: 8px; text-align: center; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: transform .15s, background .15s, box-shadow .15s }
+.tcp .learn-cta:hover { background: #fff; box-shadow: 0 6px 14px rgba(30, 20, 80, .15); transform: translateY(-1px) }
+.tcp .learn-cta:active { transform: translateY(0) scale(.97) }
+
+/* Suggestions grid */
+.tcp .sugg-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px }
+.tcp .sugg-card { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 14px; cursor: pointer; transition: box-shadow .15s, transform .15s }
+.tcp .sugg-card:hover { box-shadow: 0 8px 20px rgba(109, 74, 255, .1); transform: translateY(-2px) }
+.tcp .sugg-type { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .04em; padding: 2px 7px; border-radius: 5px; margin-bottom: 10px }
+.tcp .sugg-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px }
+.tcp .icon-btn svg { width: 18px; height: 18px }
+.tcp .ico, .tcp .sugg-icon, .tcp .learn-icon { box-shadow: 0 6px 16px rgba(30, 20, 80, .16), 0 2px 5px rgba(30, 20, 80, .12), inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -6px 10px rgba(0, 0, 0, .08); position: relative; overflow: hidden; border-radius: 12px }
+.tcp .ico::before, .tcp .sugg-icon::before, .tcp .learn-icon::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, .4) 0%, rgba(255, 255, 255, 0) 55%); pointer-events: none }
+.tcp .ico svg, .tcp .sugg-icon svg, .tcp .learn-icon svg { filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .12)); position: relative; z-index: 1 }
+.tcp .crown, .tcp .journey-badge { box-shadow: 0 6px 16px rgba(30, 20, 80, .2), inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -5px 9px rgba(0, 0, 0, .1); position: relative; overflow: hidden }
+.tcp .crown::before, .tcp .journey-badge::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, .4) 0%, rgba(255, 255, 255, 0) 55%); pointer-events: none }
+.tcp .crown svg, .tcp .journey-badge svg { position: relative; z-index: 1; filter: drop-shadow(0 1px 1px rgba(0, 0, 0, .12)) }
+
+.tcp .sugg-card h5 { font-size: 13px; font-weight: 700; line-height: 1.35; margin-bottom: 8px }
+.tcp .sugg-meta { font-size: 11.5px; color: var(--muted) }
+
+/* Right column cards */
+.tcp .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px }
+.tcp .greet h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px }
+.tcp .premium-pill { display: inline-block; background: #fef3c7; color: #92720a; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 7px; margin-bottom: 14px }
+.tcp .greet-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); margin-bottom: 4px }
+.tcp .greet-row b { color: var(--text); font-weight: 700 }
+.tcp .greet button { width: 100%; margin-top: 12px; background: var(--violet); color: #fff; border: none; padding: 10px; border-radius: 9px; font-weight: 700; font-size: 13px; cursor: pointer; transition: transform .15s, box-shadow .15s, filter .15s }
+.tcp .greet button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(109, 74, 255, .4); filter: brightness(1.08) }
+.tcp .greet button:active { transform: translateY(0) scale(.97) }
+
+.tcp .journey-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px }
+.tcp .journey-badge { width: 44px; height: 44px; border-radius: 50%; background: var(--violet-light); color: var(--violet); display: flex; align-items: center; justify-content: center; font-size: 19px }
+.tcp .journey-top .lvl { font-size: 11.5px; color: var(--muted) }
+.tcp .journey-top .lvl-name { font-size: 14px; font-weight: 800 }
+.tcp .xp-track { height: 7px; background: var(--bg); border-radius: 5px; overflow: hidden; margin-bottom: 8px }
+.tcp .xp-fill { height: 100%; background: linear-gradient(90deg, var(--violet), #9b7bff); border-radius: 5px }
+.tcp .xp-label { font-size: 11.5px; color: var(--muted); margin-bottom: 14px }
+.tcp .stat-pair { display: flex; gap: 10px }
+.tcp .stat-box { flex: 1; background: var(--bg); border-radius: 10px; padding: 10px; text-align: center }
+.tcp .stat-box .n { font-size: 15px; font-weight: 800 }
+.tcp .stat-box .l { font-size: 10.5px; color: var(--muted); margin-top: 2px }
+
+.tcp .list-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; font-weight: 600; cursor: pointer }
+.tcp .list-row:last-child { border-bottom: none }
+.tcp .list-row svg { width: 16px; height: 16px; color: var(--violet); flex-shrink: 0 }
+.tcp .list-row .arrow { margin-left: auto; color: var(--muted) }
+
+.tcp .notice-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); cursor: pointer }
+.tcp .notice-row:last-child { border-bottom: none }
+.tcp .notice-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--violet); margin-top: 6px; flex-shrink: 0 }
+.tcp .notice-row .t { font-size: 12.5px; font-weight: 600; line-height: 1.4 }
+.tcp .notice-row .time { font-size: 11px; color: var(--muted); margin-top: 2px }
+
+.tcp .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px }
+.tcp .card-head h4 { font-size: 14px; font-weight: 800 }
+.tcp .card-head a { font-size: 12px; font-weight: 600 }
+
+@media (max-width:1180px) {
+  .tcp .explore-grid { grid-template-columns: repeat(3, 1fr) }
+  .tcp .learn-grid { grid-template-columns: repeat(2, 1fr) }
+  .tcp .sugg-grid { grid-template-columns: repeat(2, 1fr) }
+  .tcp .content { flex-direction: column }
+  .tcp .right-col { width: 100%; flex-direction: row; flex-wrap: wrap }
+  .tcp .right-col>.card { flex: 1; min-width: 280px }
+}
