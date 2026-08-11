@@ -5,7 +5,9 @@
  * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
  * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
  *
- * ĐÚNG 4 điều chỉnh kỹ thuật bắt buộc (không cái nào đổi giá trị thiết kế):
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc (không cái nào đổi giá trị thiết kế —
+ * 4 cái đầu ngay dưới đây, cái thứ 5 (`line-height`) và thứ 6 (revert
+ * Preflight) có giải thích đầy đủ tại chỗ trong file):
  *
  *  1. Mọi selector được thêm tiền tố `.tcp` — file này nạp trong cây `/v2`,
  *     nếu để nguyên `*`, `body`, `a`, `.card`... thì sẽ đè lên Landing Page và
@@ -13,10 +15,11 @@
  *  2. `:root{...}` → `.tcp{...}`: cùng danh sách biến, cùng giá trị, chỉ đổi
  *     phạm vi từ toàn tài liệu sang gốc trang này.
  *  3. `body{...}` gộp vào `.tcp{...}` (cùng lý do 2).
- *  4. `font-family:'Inter'` → `var(--font-v2-inter)`: layout `/v2` nạp đúng font
- *     Inter qua `next/font` (self-host, không gọi Google Fonts) và font đó lộ ra
- *     dưới dạng biến CSS, không dưới tên họ 'Inter'. Vẫn là Inter, cùng các
- *     weight 400–800 mockup khai báo.
+ *  4. `font-family:'Inter'` → `'InterGF'` — ĐÚNG bộ file Inter mà bản thiết kế
+ *     dùng, tự host trong `inter-gf.css` + `public/v2/fonts/`. Xem lý do đầy đủ
+ *     ở đầu `inter-gf.css` (tóm tắt: mockup dùng Inter BIẾN THIÊN từ Google
+ *     Fonts, `next/font` với weight rời rạc lại dùng bản TĨNH, metric weight
+ *     đậm lệch 7% và làm sai bố cục).
  *
  * `@keyframes` CỐ TÌNH để ở phạm vi toàn cục, giữ nguyên tên gốc
  * (`dotDrift`/`sparkleTwinkle`/`starTwinkle`) vì markup gốc tham chiếu chúng
@@ -41,7 +44,11 @@
   --bg: #f7f6fc;
   --green: #16a34a;
 
-  font-family: var(--font-v2-inter), 'Inter', system-ui, sans-serif;
+  /* 'InterGF' = đúng bộ Inter biến thiên mà bản thiết kế dùng (xem
+   * `inter-gf.css`). Trước đây dùng `var(--font-v2-inter)` của next/font —
+   * cùng tên Inter nhưng là bản TĨNH, metric weight đậm lệch 7%, làm sai bố
+   * cục topbar và chiều cao lưới "Khám phá nhanh". */
+  font-family: 'InterGF', system-ui, sans-serif;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
@@ -66,6 +73,56 @@
 }
 .tcp,
 .tcp * { box-sizing: border-box; margin: 0; padding: 0 }
+
+/* -----------------------------------------------------------------------------
+ * Điều chỉnh thứ 6 (phát hiện khi đối chiếu render, KHÔNG có trong bản gốc):
+ * TRẢ LẠI mặc định trình duyệt cho những gì Tailwind Preflight đã đổi.
+ *
+ * Mockup là file HTML độc lập: ngoài `<style>` của chính nó, mọi phần tử dùng
+ * đúng mặc định của trình duyệt. Trang này lại nằm trong app thật, nơi
+ * `globals.css` nạp `@import "tailwindcss"` → Preflight (reset toàn cục, KHÔNG
+ * tắt riêng cho 1 nhánh cây DOM được) đổi hàng loạt mặc định đó. Hai khác biệt
+ * đã đo được và làm SAI bố cục:
+ *
+ *   • `button{font:inherit}` — bản gốc để nút dùng font mặc định (Arial 13.33px)
+ *     vì `<style>` chỉ đặt `font-size`/`font-weight`, không đặt `font-family`
+ *     (chính tác giả cũng biết điều này: `.search input` có `font-family:inherit`
+ *     tường minh, nút thì không). Preflight ép nút kế thừa Inter → nút "Nâng cấp
+ *     Premium" rộng 172.77px → 176px, cao 35px → 36px.
+ *   • `svg{display:block}` — bản gốc để svg là inline (mặc định). Preflight
+ *     biến nó thành block → icon lửa/đồng hồ trong `.stat-box .n` xuống dòng
+ *     riêng, thẻ "Hành trình của bạn" cao 216px → 233px.
+ *
+ * Vì vậy revert cả nhóm (không chỉ 2 chỗ đã lộ ra) — mọi khai báo Preflight có
+ * thể ảnh hưởng tới trang này. `revert` = quay về giá trị của user-agent, tức
+ * đúng thứ mockup đang dùng. Khối này đặt TRƯỚC toàn bộ CSS thiết kế bên dưới
+ * nên mọi quy tắc gốc (đặc tả >= và đứng sau) vẫn thắng như thường.
+ * -------------------------------------------------------------------------- */
+.tcp *,
+.tcp *::before,
+.tcp *::after { border-width: revert; border-style: revert; border-color: revert }
+.tcp h1, .tcp h2, .tcp h3, .tcp h4, .tcp h5, .tcp h6 { font-size: revert; font-weight: revert }
+.tcp a { color: revert; text-decoration-line: revert }
+.tcp b, .tcp strong { font-weight: revert }
+.tcp ol, .tcp ul, .tcp menu { list-style: revert }
+.tcp img, .tcp svg, .tcp video, .tcp canvas, .tcp audio,
+.tcp iframe, .tcp embed, .tcp object { display: revert; vertical-align: revert }
+.tcp img, .tcp video { max-width: revert; height: revert }
+.tcp button, .tcp input, .tcp select, .tcp optgroup, .tcp textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.tcp ::placeholder { color: revert; opacity: revert }
+/* `globals.css` đặt `body{text-rendering:optimizeLegibility}` — cũng kế thừa
+ * xuống đây trong khi mockup không có. Trả về `auto` cho giống bản gốc. */
+.tcp { text-rendering: auto }
+
 .tcp a { color: var(--violet); text-decoration: none }
 .tcp a:hover { color: var(--violet-dark) }
 .tcp .app { display: flex; min-height: 100vh }

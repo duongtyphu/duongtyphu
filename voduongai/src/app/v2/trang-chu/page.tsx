@@ -26,6 +26,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import "./inter-gf.css";
 import "./trang-chu.css";
 
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
