@@ -24,7 +24,8 @@ const GENERIC_SOURCES = [
   // /admin/tools) — vẫn tính vào Dashboard vì là 1 trong 7 Intelligence.
   { key: "tool", label: "Công cụ AI", table: "tools", titleField: "name", href: "/admin/tools" },
   { key: "lesson", label: "Lesson", table: "knowledge_seeds", titleField: "title", href: "/admin/ckos/lessons" },
-  { key: "collection", label: "Thư viện AI", table: "knowledge_collections", titleField: "name", href: "/admin/ckos/knowledge-collections" },
+  // Phase 28: `name` -> `title` (xem supabase-phase28-schema-v2-step1-alter.sql).
+  { key: "collection", label: "Thư viện AI", table: "knowledge_collections", titleField: "title", href: "/admin/ckos/knowledge-collections" },
   { key: "best_practice", label: "Best Practice", table: "best_practices", titleField: "title", href: "/admin/ckos/best-practices" },
 ] as const;
 

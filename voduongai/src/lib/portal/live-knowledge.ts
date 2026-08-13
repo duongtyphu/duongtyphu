@@ -92,17 +92,17 @@ export const getLiveKnowledgeCollections = cache(async (): Promise<KnowledgeColl
     const d = (row.data ?? {}) as Record<string, unknown>;
     return {
       id: row.id,
-      // Schema Việc 4 (đơn giản hoá, đã chốt với Founder) chỉ có
-      // name/description/seedSlugs — không có field "slug" riêng. `id` của
-      // bảng chính là slug thật (đã xác nhận qua execute_sql: "ai-office",
-      // "ai-research-presentation", khớp đúng slug ở mảng tĩnh cũ) nên dùng
-      // thẳng làm slug để link "/portal/hetrithucai/collection/[slug]" vẫn đúng.
-      slug: row.id,
-      title: String(d.name ?? ""),
+      // Phase 28 (Schema v2, Bước 1): bảng giờ có đủ `slug`/`title`/
+      // `relatedCollections` ngay trong `data` jsonb (KHÔNG phải cột riêng —
+      // route generic chỉ đọc id/data/status/order). Fallback về `id` /
+      // `name` cho dòng nào chưa migrate hoặc Admin tạo mới còn thiếu key:
+      // `id` vốn chính là slug thật ("ai-office", "ai-research-presentation")
+      // nên link "/portal/hetrithucai/collection/[slug]" luôn đúng.
+      slug: String(d.slug ?? row.id),
+      title: String(d.title ?? d.name ?? ""),
       description: String(d.description ?? ""),
       seedSlugs: asStringArray(d.seedSlugs),
-      // Không có trong schema Việc 4 — CollectionCard hiện không đọc field này.
-      relatedCollections: [],
+      relatedCollections: asStringArray(d.relatedCollections),
     };
   });
 });

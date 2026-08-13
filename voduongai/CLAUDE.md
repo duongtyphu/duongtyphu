@@ -3912,10 +3912,18 @@ còn khung "Chưa có link tiếp thị thật").
 ## BUG P0 ĐÃ SỬA — trigger tạo `members` thiếu cột `email`, chặn TOÀN BỘ đăng ký mới
 
 Phát hiện khi audit riêng luồng Login/Signup trên nhánh `admin-rebuild`
-(trước khi nhánh này được chốt là "đã gộp vào" `claude/landing-preview-nextjs`
-— xem lịch sử: `claude/landing-preview-nextjs` được tạo ra TỪ chính
-`admin-rebuild`, `admin-rebuild` đã bị xoá sau khi xác nhận không còn nội
-dung nào chưa có ở đây). Ghi lại nguyên vẹn ở đây vì đây là bug thật, ảnh
+(`claude/landing-preview-nextjs` được tạo ra TỪ chính `admin-rebuild`).
+**ĐÍNH CHÍNH (2026-08-13):** đoạn này trước đây ghi "`admin-rebuild` đã bị
+xoá" — **SAI, ghi chú lạc hậu**. Nhánh `admin-rebuild` VẪN TỒN TẠI trên
+remote (commit cuối 2026-07-29), nhưng đã lạc hậu ~99 commit so với nhánh
+phát triển hiện tại và chỉ còn đúng 1 commit riêng (`ccae2f3` — file
+tracking `supabase-phase23-fix-signup-trigger-missing-email.sql`). Nội dung
+fix đó **đã có sẵn** ở nhánh hiện tại (qua `supabase-phase23-identity-hub.sql`)
+và **đã apply thật trên Supabase** — xác nhận bằng `pg_get_functiondef()`:
+trigger live hiện là `insert into public.members (id, email, full_name,
+referred_by)`, tức có `email` (bản fix này) VÀ `referred_by` (Phase 27
+Affiliate, apply sau). Không có gì cần merge từ `admin-rebuild`; nhánh đó
+coi như đã bị thay thế hoàn toàn. Ghi lại nguyên vẹn ở đây vì đây là bug thật, ảnh
 hưởng CHÍNH nhánh này (`landing-preview-nextjs` giờ có cả Identity Hub —
 `/register`, Google OAuth — tất cả đều đi qua đúng trigger này).
 
