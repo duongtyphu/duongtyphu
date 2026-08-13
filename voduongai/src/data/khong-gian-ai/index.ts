@@ -20,6 +20,15 @@ export type AiNeedCategory = {
   ctaHref: string;
 };
 
+/**
+ * @deprecated Việc 2 (lệnh "Xử lý 3 xác nhận") — `/portal/aiworkspace/[slug]`
+ * (`generateStaticParams()` + `NeedCategoryPage`) giờ đọc bảng Supabase
+ * `work_needs` qua `src/lib/portal/live-work-needs.ts` (`getLiveWorkNeeds()`),
+ * không còn dùng mảng này. `work_needs` đã gộp đủ field của mảng này (Phase
+ * 32, `supabase-phase32-needs-occupations.sql`) + chuẩn hoá 3 slug lệch
+ * (tao-video/coding/automation) — giữ lại mảng tĩnh để tham khảo/rollback,
+ * không còn consumer nào import.
+ */
 export const NEED_CATEGORIES: AiNeedCategory[] = [
   {
     slug: "viet-noi-dung",
