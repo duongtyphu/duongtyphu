@@ -14,7 +14,7 @@ import {
 } from "../services/journey.service";
 import { JOURNEY_STAGE_LABELS, JourneyStage } from "../types/journey.types";
 import type { LearningJourney } from "../types/journey.types";
-import { getSeedCompletedStepIds, type KnowledgeCollection, type KnowledgeSeed } from "@/features/knowledge";
+import { getSeedCompletedStepIds, useCkosProgressReady, type KnowledgeCollection, type KnowledgeSeed } from "@/features/knowledge";
 import { startCompanionWorkspace } from "@/lib/portal/companion-workspace";
 import { CompanionTaskEntry } from "@/components/portal/companion/CompanionTaskEntry";
 
@@ -36,6 +36,9 @@ export function JourneyCard({
   collections: KnowledgeCollection[];
   seeds: KnowledgeSeed[];
 }) {
+  // Bước 9 — tiến độ giờ tải bất đồng bộ từ Supabase (không còn localStorage
+  // đồng bộ sẵn có) — subscribe để re-render đúng trạng thái khi cache tải xong.
+  useCkosProgressReady();
   const status = computeJourneyStatus(journey, collections, seeds, getSeedCompletedStepIds);
   const guidance = getCompanionJourneyGuidance(journey, status, collections, seeds, getSeedCompletedStepIds);
   const profile = getJourneyLearnerProfile(journey, collections, seeds, getSeedCompletedStepIds);

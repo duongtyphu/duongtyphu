@@ -1,0 +1,25 @@
+-- Bước 9: Migrate tiến độ CKOS từ localStorage sang user_ckos_progress.
+--
+-- PHÁT HIỆN TRƯỚC KHI GHI DỮ LIỆU (không tự sửa, ngoài phạm vi Bước 9):
+-- `useSeedProgress(seed.id)`/`getSeedCompletedStepIds(seed.id)` — tham số
+-- `seed.id` toàn bộ Learning Engine dùng (13 file) đến từ
+-- `getLiveKnowledgeSeeds()` (live-knowledge.ts): `id: String(d.id ?? row.id)`.
+-- Đối chiếu qua execute_sql: 8/11 dòng Published có `data->>'id'` LỆCH với
+-- cột `id` thật của bảng (tiền tố "seed-" thừa, vd. id cột =
+-- "viet-prompt-hieu-qua" nhưng data.id = "seed-viet-prompt-hieu-qua") — trong
+-- khi `prerequisites`/`nextSeeds`/`relatedSeeds` (cũng trong data jsonb) đều
+-- dùng đúng dạng KHÔNG tiền tố (khớp cột `id` thật). Đây là 1 bug có sẵn
+-- trong `live-knowledge.ts` (không phải do Bước 9 gây ra) — có khả năng khiến
+-- prerequisite/next/related lookup của Learning Engine sai cho 8/11 Lesson,
+-- NHƯNG KHÔNG SỬA ở đây (đúng nguyên tắc "CKOS Learning Engine — giữ nguyên,
+-- không đụng" trong CLAUDE.md) — chỉ ghi nhận để Founder quyết định riêng.
+--
+-- Hệ quả trực tiếp cho Bước 9: `user_ckos_progress.seed_id` (đang có FK
+-- REFERENCES knowledge_seeds(id)) sẽ TỪ CHỐI insert cho 8/11 seed nếu dùng
+-- đúng `seed.id` mà toàn bộ code hiện dùng làm khoá tiến độ (đúng như
+-- localStorage cũ đã luôn làm — localStorage không có ràng buộc FK). Để giữ
+-- hành vi giống hệt localStorage cũ (seed_id là định danh phía client, không
+-- validate chéo bảng) và không phải sửa Learning Engine ngoài phạm vi, bỏ
+-- FK này — seed_id vẫn là text, chỉ không còn ràng buộc tham chiếu.
+alter table public.user_ckos_progress
+  drop constraint if exists user_ckos_progress_seed_id_fkey;
