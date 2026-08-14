@@ -5335,3 +5335,71 @@ xác nhận dòng `referrals` chuyển `confirmed` + `commission_amount` đúng;
 (3) `/portal/affiliate` của người giới thiệu hiện đúng số liệu; (4) tạo 1
 yêu cầu thanh toán, Admin duyệt ở `/admin/affiliate/yeu-cau-thanh-toan`,
 xác nhận referrals chuyển `paid`.
+
+## Gộp luồng Schema + UI 2.0 — Bước A/B/C (CKOS)
+
+**Bước A — merge `claude/supabase-audit-schema-w4o7tz` vào `main`** (`b36acdb`,
+9 commit, 18 bảng). Founder duyệt merge thẳng, không yêu cầu verify Preview
+riêng. **Phát hiện quan trọng:** cả 18 bảng ĐÃ có sẵn trên Supabase
+Production TRƯỚC lần merge (kiểm tra bằng `to_regclass`, không suy đoán) —
+merge chỉ đưa phần CODE vào `main`, rủi ro DB bằng 0. Verify sau merge:
+`tsc`/build sạch, 473/473 test pass.
+
+**Bước B — rebase `feat/portal-admin-2.0` lên `main` mới.** 0 xung đột: 2
+nhánh không sửa chung file nào (đã dry-run bằng `git merge-tree` trước khi
+làm thật). Sau rebase: build/`tsc`/eslint sạch, 479/479 test pass.
+
+### Bước C — import nội dung CKOS 2.0
+
+Nguồn: 30 file `.md` Founder gửi (12 tài liệu CKOS + 16 bài Học viện + 2 file
+khung) + 2 file bổ sung (khung CKOS, Tài liệu 13).
+
+**ĐÃ ÁP DỤNG qua Supabase MCP:**
+- `ckos_categories` — thay 7 dòng taxonomy CŨ của 1.0 (Công cụ AI/Prompt/
+  Workflow/Resource/Lesson/Best Practice/Case Study) bằng đúng **6 danh mục**
+  của thiết kế + nội dung 2.0 (Nền tảng AI · Prompt Engineering · Ứng dụng AI ·
+  Công cụ AI · Kỹ năng & Tư duy · Tri thức nâng cao), kèm mô tả đầy đủ.
+- `learning_paths` — thay 5 dòng cũ bằng đúng **4 giai đoạn** lộ trình CKOS
+  (Nhập môn AI · Làm chủ công cụ AI · Xây dựng hệ thống AI · Tạo giá trị &
+  mở rộng), kèm mô tả đầy đủ.
+
+An toàn cho 1.0 vì đã grep xác nhận **0 trang Portal 1.0 nào đọc 2 bảng này**
+(chỉ Server Actions admin của luồng A). `learning_path_courses` đang 0 dòng
+nên xoá 5 lộ trình cũ không để lại FK mồ côi.
+
+**ĐÃ SOẠN, CHỜ CHẠY** — `supabase-phase36-ckos-content-import.sql` (116KB,
+sinh tự động, idempotent): 13 tài liệu + 35 tag + 54 liên kết. Không dán qua
+MCP vì nội dung ~99KB — chạy 1 lần trong Supabase SQL Editor rẻ và an toàn
+hơn hẳn. Xem phần đầu file SQL để biết lý do chọn bảng `knowledge_assets`
+(tái dùng, không tạo bảng mới) và cách phân biệt 13 tài liệu 2.0 với 80
+Knowledge Asset cũ nằm chung bảng (`content->>'categorySlug'`).
+
+### ⚠️ Xung đột chưa xử lý — import Học viện/Workspace SẼ đụng Portal 1.0
+
+Ràng buộc "không đụng Portal 1.0 Production" mâu thuẫn trực tiếp với "import
+nội dung thật vào đúng bảng" ở 4 bảng mà **1.0 và 2.0 dùng chung**:
+
+| Bảng | Số chỗ 1.0 đọc | Rủi ro nếu import ngay |
+|---|---|---|
+| `tools` | 11 | `/portal/aiworkspace` 1.0 đổi nội dung ngay lập tức |
+| `recommended_workspace` | 1 | nt |
+| `ai_workflow_sections` | 1 | nt |
+| `courses` | 5 | **nguy hiểm nhất** — xem dưới |
+
+`courses`: khoá nhập môn mới tên "AI cơ bản cho mọi người" CHỨA chuỗi
+"cơ bản" — trùng `matchPatterns` của chương trình "Lớp học AI Cơ bản" (1.5tr)
+trong `premium-programs.ts`. `matchCourse()` dùng `courses.find()` trên danh
+sách đã `.order("name")`, mà "AI cơ bản..." sắp TRƯỚC "Lớp học AI Cơ bản" →
+thẻ khoá trả phí trên `/portal/premium` Production sẽ hiện giá/id của khoá
+FREE. Cần Founder quyết trước khi import (đổi tên khoá, hoặc cho phép sửa
+`matchCourse()` — nhưng sửa là đụng code 1.0).
+
+`knowledge_assets`/`workspace_projects` KHÔNG có vấn đề này (0 chỗ 1.0 đọc).
+
+### ⚠️ RLS: khoá Premium ở tầng UI là KHÔNG đủ
+
+`knowledge_assets` có policy `knowledge_assets_read_published` =
+`status='PUBLISHED'` cho mọi người — nghĩa là **body của tài liệu Premium
+đọc được công khai qua API** dù UI có khoá. Bước D bắt buộc phải cắt `body`
+ở tầng SERVER cho tài liệu `accessLevel='premium'` khi user chưa Premium
+(kiểm tra `members.premium_expires_at`), không được chỉ phủ overlay ở UI.
