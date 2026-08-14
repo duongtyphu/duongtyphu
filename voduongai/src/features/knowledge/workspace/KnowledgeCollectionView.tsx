@@ -15,10 +15,13 @@ import {
   getSuggestedNextCollection,
 } from "../services/knowledge-collection.service";
 import { getRelatedCollectionObjects } from "../services/knowledge-graph.service";
-import { getSeedCompletedStepIds } from "../utils/use-seed-progress";
+import { getSeedCompletedStepIds, useCkosProgressReady } from "../utils/use-seed-progress";
 import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 
 export function KnowledgeCollectionView({ collection }: { collection: KnowledgeCollection }) {
+  // Bước 9 — tiến độ giờ tải bất đồng bộ từ Supabase (không còn localStorage
+  // đồng bộ sẵn có) — subscribe để re-render đúng trạng thái khi cache tải xong.
+  useCkosProgressReady();
   const progress = computeCollectionProgress(collection, getSeedCompletedStepIds);
   const seedsWithStatus = getSeedsWithStatus(collection, getSeedCompletedStepIds);
   const nextSeed = getNextSeedToLearn(collection, getSeedCompletedStepIds);

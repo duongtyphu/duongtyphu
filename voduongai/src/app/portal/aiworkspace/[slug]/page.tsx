@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  NEED_CATEGORIES,
   AI_PROMPTS,
   PROFESSION_GROUPS,
   type AiTool,
@@ -9,6 +8,7 @@ import {
 } from "@/data/khong-gian-ai";
 import { getLiveTools } from "@/lib/portal/live-tools";
 import { getLiveBlogPosts } from "@/lib/portal/live-blog";
+import { getLiveWorkNeeds } from "@/lib/portal/live-work-needs";
 import type { BlogPost } from "@/data/blog";
 
 // ─────────────────────────────────────────────
@@ -317,6 +317,9 @@ function NeedCategoryPage({
   // thay thế.
   const articles = allArticles.slice(0, 3);
   const prompts = AI_PROMPTS.filter((p) => p.needSlug === category.slug);
+  // Việc 3 (lệnh "Xử lý 3 xác nhận") — ctaHref migrate từ NEED_CATEGORIES
+  // trỏ route chết "/khong-gian-ai/...". Ẩn CTA cho tới khi có đích đúng.
+  const hasWorkingCta = Boolean(category.ctaHref) && !category.ctaHref.startsWith("/khong-gian-ai");
 
   return (
     <div className="rounded-3xl p-6 md:p-8 space-y-10">
@@ -440,22 +443,29 @@ function NeedCategoryPage({
         </section>
       )}
 
-      {/* CTA */}
-      <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-1">{category.ctaLabel}</h2>
-          <p className="text-blue-100 text-sm">Khám phá thêm tài nguyên và prompt mẫu cho {category.title}</p>
-        </div>
-        <a
-          href={category.ctaHref}
-          className="shrink-0 inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
-        >
-          {category.ctaLabel}
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
-      </section>
+      {/* CTA — Việc 3 (lệnh "Xử lý 3 xác nhận"): ctaHref của mọi dòng
+          work_needs migrate từ NEED_CATEGORIES đều trỏ "/khong-gian-ai/..."
+          — route KHÔNG TỒN TẠI trong src/app (đã grep xác nhận, dữ liệu có
+          sẵn từ trước, không phải lỗi ở việc này). Ẩn hẳn khối CTA này (heading
+          + mô tả + nút đều gắn liền 1 đích duy nhất, không có gì để bấm nếu
+          chỉ ẩn nút) cho tới khi có đích đúng — KHÔNG tự bịa route thay thế. */}
+      {hasWorkingCta && (
+        <section className="bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-1">{category.ctaLabel}</h2>
+            <p className="text-blue-100 text-sm">Khám phá thêm tài nguyên và prompt mẫu cho {category.title}</p>
+          </div>
+          <a
+            href={category.ctaHref}
+            className="shrink-0 inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-6 py-3 rounded-xl hover:bg-blue-50 transition-colors text-sm"
+          >
+            {category.ctaLabel}
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </section>
+      )}
 
       {/* Bước tiếp theo */}
       <section>
@@ -782,8 +792,9 @@ function NotFoundPage({ slug }: { slug: string }) {
 
 export async function generateStaticParams() {
   const liveTools = await getLiveTools();
+  const liveWorkNeeds = await getLiveWorkNeeds();
   const toolSlugs = liveTools.map((t) => ({ slug: t.slug }));
-  const needSlugs = NEED_CATEGORIES.map((c) => ({ slug: c.slug }));
+  const needSlugs = liveWorkNeeds.map((c) => ({ slug: c.slug }));
   const professionSlugs = PROFESSION_GROUPS.map((p) => ({ slug: p.slug }));
   return [...toolSlugs, ...needSlugs, ...professionSlugs];
 }
@@ -797,8 +808,9 @@ export default async function Page({
 
   const liveTools = await getLiveTools();
   const articles = await getLiveBlogPosts();
+  const liveWorkNeeds = await getLiveWorkNeeds();
   const tool = liveTools.find((t) => t.slug === slug);
-  const category = NEED_CATEGORIES.find((c) => c.slug === slug);
+  const category = liveWorkNeeds.find((c) => c.slug === slug);
   const profession = PROFESSION_GROUPS.find((p) => p.slug === slug);
 
   const body = tool ? (

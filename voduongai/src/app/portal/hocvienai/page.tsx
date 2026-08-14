@@ -206,8 +206,8 @@ export default async function AcademyHubPage() {
         <div className="space-y-3">
           {faq.map((item) => (
             <GemCard key={item.id}>
-              <p className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.q}</p>
-              <p className="text-sm leading-relaxed text-gray-500">{item.a}</p>
+              <p className="gemos-card-title mb-2 text-sm font-bold text-gray-900">{item.question}</p>
+              <p className="text-sm leading-relaxed text-gray-500">{item.answer}</p>
             </GemCard>
           ))}
         </div>

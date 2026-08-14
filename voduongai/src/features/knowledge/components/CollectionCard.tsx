@@ -7,7 +7,7 @@ import type { KnowledgeCollection } from "../types/knowledge-collection.types";
 import type { KnowledgeSeed } from "../types/knowledge-seed.types";
 import { computeSeedProgress } from "../services/knowledge-seed.service";
 import { learningStatusFromPercent } from "../services/knowledge-collection.service";
-import { getSeedCompletedStepIds } from "../utils/use-seed-progress";
+import { getSeedCompletedStepIds, useCkosProgressReady } from "../utils/use-seed-progress";
 import { getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
 
 /**
@@ -21,6 +21,9 @@ import { getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
  */
 export function CollectionCard({ collection }: { collection: KnowledgeCollection }) {
   const [liveSeeds, setLiveSeeds] = useState<KnowledgeSeed[]>([]);
+  // Bước 9 — tiến độ giờ tải bất đồng bộ từ Supabase (không còn localStorage
+  // đồng bộ sẵn có) — subscribe để re-render đúng % khi cache tải xong.
+  useCkosProgressReady();
 
   useEffect(() => {
     let cancelled = false;

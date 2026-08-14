@@ -12,16 +12,18 @@ import type { FieldConfig } from "@/lib/admin/fields";
  * FAQ" của CKOS (mục đó không tồn tại thật trong hệ thống — xem plan
  * Companion Admin).
  */
+// Phase 28 (Schema v2, Bước 1): key trong `data` jsonb đổi `q`->`question`,
+// `a`->`answer` — xem supabase-phase28-schema-v2-step1-alter.sql.
 type FaqItem = {
   id: string;
-  q: string;
-  a: string;
+  question: string;
+  answer: string;
   status: string;
 };
 
 const fields: FieldConfig[] = [
-  { key: "q", label: "Câu hỏi", type: "text", required: true },
-  { key: "a", label: "Câu trả lời", type: "textarea", full: true, required: true },
+  { key: "question", label: "Câu hỏi", type: "text", required: true },
+  { key: "answer", label: "Câu trả lời", type: "textarea", full: true, required: true },
   { key: "status", label: "Trạng thái", type: "select", options: ["Draft", "Published", "Hidden"], required: true },
 ];
 
@@ -40,8 +42,8 @@ export default function AdminHocvienaiFaqPage() {
         ]}
         renderCard={(item) => (
           <div>
-            <p className="text-sm font-bold text-gray-900">{item.q}</p>
-            <p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.a}</p>
+            <p className="text-sm font-bold text-gray-900">{item.question}</p>
+            <p className="mt-1 line-clamp-2 text-xs text-gray-500">{item.answer}</p>
           </div>
         )}
       />

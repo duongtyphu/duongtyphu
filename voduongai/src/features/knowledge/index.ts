@@ -12,7 +12,7 @@ export { KNOWLEDGE_TYPE_LABELS, KNOWLEDGE_PERSONAS, KNOWLEDGE_GOALS } from "./ut
 export * from "./types/knowledge-seed.types";
 export * from "./services/knowledge-seed.service";
 export { DISCOVERY_GOALS, DISCOVERY_GOAL_TO_SEED_GOAL } from "./data/discovery-goals";
-export { useSeedProgress, getSeedCompletedStepIds } from "./utils/use-seed-progress";
+export { useSeedProgress, getSeedCompletedStepIds, useCkosProgressReady } from "./utils/use-seed-progress";
 
 // Knowledge Workspace Foundation — Collection System + Navigation + Bookmark + Reflection
 export * from "./types/knowledge-collection.types";
