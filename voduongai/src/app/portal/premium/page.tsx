@@ -2,7 +2,8 @@ import { Crown, ArrowRight } from "lucide-react";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getPurchasedIds } from "@/lib/access";
 import { PREMIUM_PROGRAMS } from "@/components/portal/premium/premium-programs";
-import { PremiumProgramCard, type PremiumCourseMatch } from "@/components/portal/premium/PremiumProgramCard";
+import { matchCourse } from "@/components/portal/premium/match-course";
+import { PremiumProgramCard } from "@/components/portal/premium/PremiumProgramCard";
 import { PremiumAdvisor } from "@/components/portal/premium/PremiumAdvisor";
 import { PremiumConsult } from "@/components/portal/premium/PremiumConsult";
 import { FounderSpotlight } from "@/components/portal/premium/FounderSpotlight";
@@ -40,7 +41,9 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  *      → webhook SePay xác nhận → orders confirmed → mở khóa bài giảng.
  */
 
-type CourseRow = { id: number; name: string; status: string; price: number };
+// `courses.id` thật là `text` (vd. "ai-coban", "solo"), không phải số — bản cũ
+// khai `number` là sai, nay `id` là khoá ghép chính thức nên phải đúng kiểu.
+type CourseRow = { id: string; name: string; status: string; price: number };
 
 async function getCourses(): Promise<CourseRow[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -49,26 +52,6 @@ async function getCourses(): Promise<CourseRow[]> {
   const supabase = await getSupabaseServer();
   const { data } = await supabase.from("courses").select("id, name, status, price");
   return data ?? [];
-}
-
-function matchCourse(
-  courses: CourseRow[],
-  patterns: string[],
-  purchasedCourseIds: Set<string>,
-): PremiumCourseMatch {
-  const row = courses.find((c) => {
-    const name = c.name.toLowerCase();
-    return patterns.some((p) => name.includes(p));
-  });
-  if (!row) return null;
-  return {
-    id: row.id,
-    price: row.price,
-    owned: purchasedCourseIds.has(String(row.id)),
-    // Admin bật/tắt mở bán qua cột status tại /admin/course-pricing:
-    // 'open' → CTA thanh toán; giá trị khác → "Sắp mở đăng ký".
-    open: row.status === "open",
-  };
 }
 
 export default async function PremiumPage() {
@@ -82,7 +65,7 @@ export default async function PremiumPage() {
 
   const programCards = PREMIUM_PROGRAMS.map((program) => ({
     program,
-    course: matchCourse(courses, program.matchPatterns, purchasedCourseIds),
+    course: matchCourse(courses, program.courseId, purchasedCourseIds),
   }));
   const ownedProgramNames = programCards.filter((c) => c.course?.owned).map((c) => c.program.name);
 

@@ -35,8 +35,14 @@ export type PremiumAccent = {
 
 export type PremiumProgram = {
   key: "ai-coban" | "ai-nangcao" | "openclaw" | "v-solo" | "v-scale";
-  /** Chuỗi con (lowercase, không dấu cũng thử) để khớp `courses.name` thật trong Supabase. */
-  matchPatterns: string[];
+  /**
+   * `courses.id` thật trong Supabase (khoá chính, kiểu `text`) — dùng để ghép
+   * chương trình này với dòng giá/trạng thái do Admin quản ở
+   * `/admin/course-pricing`. THAY cho `matchPatterns` cũ (so khớp chuỗi con
+   * trong `courses.name`) — cách cũ vỡ khi có 2 khoá tên gần giống nhau, xem
+   * lý do đầy đủ trong `match-course.ts`.
+   */
+  courseId: string;
   icon: LucideIcon;
   level: string;
   name: string;
@@ -55,7 +61,7 @@ export type PremiumProgram = {
 export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   {
     key: "ai-coban",
-    matchPatterns: ["cơ bản", "co ban", "ai basic", "basic"],
+    courseId: "ai-coban",
     icon: GraduationCap,
     level: "Bước khởi đầu",
     name: "Lớp học AI Cơ bản",
@@ -91,7 +97,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   },
   {
     key: "ai-nangcao",
-    matchPatterns: ["nâng cao", "nang cao", "advanced"],
+    courseId: "ai-nangcao",
     icon: Zap,
     level: "Tăng năng lực",
     name: "Lớp học AI Nâng cao",
@@ -129,7 +135,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   },
   {
     key: "openclaw",
-    matchPatterns: ["openclaw", "open claw", "claw"],
+    courseId: "openclaw",
     icon: Bot,
     level: "Công cụ thực chiến",
     name: "Lớp học OpenClaw",
@@ -185,7 +191,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   },
   {
     key: "v-solo",
-    matchPatterns: ["solo"],
+    courseId: "solo",
     icon: User,
     level: "Hệ thống cá nhân",
     name: "V-Solo",
@@ -223,7 +229,7 @@ export const PREMIUM_PROGRAMS: PremiumProgram[] = [
   },
   {
     key: "v-scale",
-    matchPatterns: ["scale"],
+    courseId: "scale",
     icon: Network,
     level: "Hệ thống đội nhóm",
     name: "V-Scale",

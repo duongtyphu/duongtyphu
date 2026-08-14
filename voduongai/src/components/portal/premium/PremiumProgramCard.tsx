@@ -21,7 +21,13 @@ import { formatVnd } from "./premium-programs";
  */
 
 export type PremiumCourseMatch = {
-  id: number;
+  /**
+   * `courses.id` THẬT là `text` (vd. "ai-coban", "solo") — không phải số.
+   * Khai `number` ở đây là sai từ trước, không crash vì Supabase client
+   * không ép kiểu chặt; sửa lại cùng đợt bỏ ghép-theo-tên (xem
+   * `match-course.ts`) vì giờ `id` là khoá ghép chính thức.
+   */
+  id: string;
   price: number;
   owned: boolean;
   /** true khi courses.status = 'open' — Admin bật/tắt tại /admin/course-pricing. */
