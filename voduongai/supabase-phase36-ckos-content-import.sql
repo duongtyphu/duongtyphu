@@ -43,6 +43,26 @@
 -- đúng thời điểm tài liệu vào hệ thống, không phải ngày giả.
 -- ---------------------------------------------------------------------------
 
+-- ---------------------------------------------------------------------------
+-- SỬA LỖI ĐÃ GẶP KHI CHẠY LẦN ĐẦU (23514 check constraint):
+-- `ckos_content_tags.content_type` tạo ở phase29 (Bước 3-5 luồng A) — TRƯỚC
+-- khi bảng `knowledge_assets` tồn tại (phase34, Bước 7) — nên danh sách cho
+-- phép thiếu 'knowledge_asset'. Thiếu sót do thứ tự tạo bảng, không phải cố
+-- ý loại trừ. Nới đúng 1 giá trị, giữ nguyên 10 giá trị cũ.
+-- (Đã áp dụng sẵn qua Supabase MCP; để lại đây để file tự chạy được trọn vẹn
+--  trên môi trường mới.)
+-- ---------------------------------------------------------------------------
+alter table public.ckos_content_tags
+  drop constraint if exists ckos_content_tags_content_type_check;
+alter table public.ckos_content_tags
+  add constraint ckos_content_tags_content_type_check
+  check (content_type = any (array[
+    'knowledge_seed'::text, 'best_practice'::text, 'case_study'::text,
+    'sop'::text, 'resource'::text, 'prompt'::text, 'template'::text,
+    'ebook'::text, 'checklist'::text, 'tool'::text,
+    'knowledge_asset'::text
+  ]));
+
 -- Bước C.3 — Import 13 tài liệu CKOS 2.0 vào `knowledge_assets`.
 -- Sinh tự động từ 13 file .md Founder gửi; KHÔNG sửa nội dung gốc.
 begin;
