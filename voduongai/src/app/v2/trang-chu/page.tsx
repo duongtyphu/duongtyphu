@@ -15,7 +15,7 @@
  *   `<br>` → `<br />`, inline `style="a:b"` → `style={{ a: "b" }}`.
  *
  * Hai chỗ phải diễn giải, đều đã ghi rõ tại chỗ:
- *   1. `src="assets/..."` (đường dẫn tương đối của mockup) → `/v2/assets/...`
+ *   1. `src="assets/..."` (đường dẫn tương đối của mockup) → `/v2-static/assets/...`
  *      (thư mục `public/`). Cùng file ảnh, chỉ khác cách trỏ.
  *   2. `<script>` cuối file gốc làm 2 việc: bật/tắt class `on` cho công tắc
  *      chủ đề, và `window.location.href = dataset.href` khi bấm phần tử có
@@ -26,7 +26,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import "./inter-gf.css";
+import "../inter-gf.css";
 import "./trang-chu.css";
 
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
@@ -254,7 +254,7 @@ export default function TrangChuPortalPage() {
                   cần lớp tối ưu của next/image và next/image sẽ chèn thêm wrapper làm lệch
                   DOM so với thiết kế chuẩn. */}
               <img
-                src="/v2/assets/icon-premium.png"
+                src="/v2-static/assets/icon-premium.png"
                 alt=""
                 style={{ width: "58.5px", height: "58.5px", objectFit: "contain", position: "relative", zIndex: 1 }}
               />
@@ -346,7 +346,7 @@ export default function TrangChuPortalPage() {
                 <div className="hero-bot-wrap">
                   <div className="hero-bot-glow" />
                   {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                  <img src="/v2/assets/companion-robot.png" alt="Companion AI Mentor" />
+                  <img src="/v2-static/assets/companion-robot.png" alt="Companion AI Mentor" />
                   <svg className="hero-stars" viewBox="0 0 110 90" fill="none">
                     <defs>
                       <linearGradient id="starGold" x1="0" y1="0" x2="1" y2="1">
@@ -381,37 +381,37 @@ export default function TrangChuPortalPage() {
                 <div className="explore-grid">
                   <div className="explore-card" onClick={go("Companion.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2/assets/icon-companion.png" alt="Companion" /></div>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-companion.png" alt="Companion" /></div>
                     <h3>Companion AI</h3>
                     <p>AI Mentor cá nhân hóa, hiểu bạn, nhớ bạn và đồng hành cùng bạn 24/7</p>
                   </div>
                   <div className="explore-card" onClick={go("He tri thuc CKOS.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2/assets/icon-ckos.png" alt="Hệ tri thức AI" /></div>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-ckos.png" alt="Hệ tri thức AI" /></div>
                     <h3>Hệ tri thức AI</h3>
                     <p>Thư viện tri thức và công cụ AI chuẩn hoá được chọn lọc, cập nhật liên tục, sẵn sàng cho mọi nhu cầu.</p>
                   </div>
                   <div className="explore-card" onClick={go("Hoc vien AI.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2/assets/icon-hocvien.png" alt="Học viện AI" /></div>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-hocvien.png" alt="Học viện AI" /></div>
                     <h3>Học viện AI</h3>
                     <p>Lộ trình bài bản từ cơ bản đến nâng cao, học đi đôi với thực hành.</p>
                   </div>
                   <div className="explore-card" onClick={go("AI Workspace.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2/assets/icon-workspace.png" alt="AI Workspace" /></div>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-workspace.png" alt="AI Workspace" /></div>
                     <h3>AI Workspace</h3>
                     <p>Nơi bạn thực hành, lưu trữ và triển khai ý tưởng thành sản phẩm thực tế.</p>
                   </div>
                   <div className="explore-card" onClick={go("Premium.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2/assets/icon-premium.png" alt="Premium" /></div>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-premium.png" alt="Premium" /></div>
                     <h3>Premium</h3>
                     <p>Tài nguyên độc quyền dành cho thành viên. Nội dung chuyên sâu, công cụ cao cấp và tư vấn 1:1 cùng chuyên gia.</p>
                   </div>
                   <div className="explore-card" onClick={go("Du an Co hoi.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2/assets/icon-duan.png" alt="Dự án &amp; Cơ hội" /></div>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-duan.png" alt="Dự án &amp; Cơ hội" /></div>
                     <h3>Dự án &amp; Cơ hội</h3>
                     <p>Cơ hội hợp tác, đầu tư và đồng hành trong các dự án công nghệ AI.</p>
                   </div>

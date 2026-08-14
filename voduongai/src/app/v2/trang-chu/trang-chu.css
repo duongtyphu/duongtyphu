@@ -16,7 +16,7 @@
  *     phạm vi từ toàn tài liệu sang gốc trang này.
  *  3. `body{...}` gộp vào `.tcp{...}` (cùng lý do 2).
  *  4. `font-family:'Inter'` → `'InterGF'` — ĐÚNG bộ file Inter mà bản thiết kế
- *     dùng, tự host trong `inter-gf.css` + `public/v2/fonts/`. Xem lý do đầy đủ
+ *     dùng, tự host trong `inter-gf.css` + `public/v2-static/fonts/`. Xem lý do đầy đủ
  *     ở đầu `inter-gf.css` (tóm tắt: mockup dùng Inter BIẾN THIÊN từ Google
  *     Fonts, `next/font` với weight rời rạc lại dùng bản TĨNH, metric weight
  *     đậm lệch 7% và làm sai bố cục).

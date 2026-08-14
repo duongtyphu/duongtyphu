@@ -5403,3 +5403,94 @@ FREE. Cần Founder quyết trước khi import (đổi tên khoá, hoặc cho p
 đọc được công khai qua API** dù UI có khoá. Bước D bắt buộc phải cắt `body`
 ở tầng SERVER cho tài liệu `accessLevel='premium'` khi user chưa Premium
 (kiểm tra `members.premium_expires_at`), không được chỉ phủ overlay ở UI.
+
+## Bước D + E.1 — Phân quyền Free/Premium + trang CKOS 2.0 (`/v2/he-tri-thuc`)
+
+### Bước D — cơ chế khoá Premium
+
+`src/lib/v2/premium-access.ts` (mới) — `getPremiumStatus()`.
+
+**Quy tắc đọc `members.premium_expires_at` ở đây KHÁC `getPurchasedIds()`**
+(`src/lib/access.ts`), dù cùng đọc 1 cột: ở đó câu hỏi là "đơn đã mua còn
+hiệu lực không" nên `NULL` = "không có hạn" = GIỮ quyền; ở đây câu hỏi là
+"user này CÓ PHẢI Premium không" nên `NULL` KHÔNG thể coi là Premium (hiện
+16/16 member đều `NULL` — hiểu ngược lại là mở toàn bộ nội dung Premium cho
+tất cả mọi người). Chốt: **Premium ⇔ `premium_expires_at` CÓ giá trị VÀ còn
+hạn**.
+
+**Điểm cần Founder quyết (chưa tự quyết):** người mua ĐỨT V-Solo/V-Scale
+(đơn không có hạn → `premium_expires_at` vẫn `NULL`) hiện KHÔNG được tính
+là Premium. Muốn tính thì phải hoặc set `premium_expires_at` khi xác nhận
+đơn, hoặc mở rộng hàm đọc thêm `orders` — đây là quyết định kinh doanh.
+
+**Khoá ở tầng SERVER, không chỉ overlay UI** (`src/lib/portal/live-ckos.ts`):
+RLS `knowledge_assets_read_published` cho MỌI người đọc mọi dòng
+`PUBLISHED`, nên chỉ phủ overlay là `body` tài liệu Premium vẫn lấy được
+qua API bằng anon key. Vì vậy `getCkosDocuments()` (danh sách) KHÔNG BAO
+GIỜ select `body`; `getCkosDocument(slug, status)` mới đọc `body` và CẮT BỎ
+ngay tại server khi `accessLevel='premium'` mà user chưa Premium (trả
+`locked: true`).
+
+### Bước E.1 — `/v2/he-tri-thuc` (1:1 với `He tri thuc CKOS.html`)
+
+- **Xoá** `src/app/v2/(portal)/he-tri-thuc/` (bản mock 46-màn cũ) — trang
+  mới tự chứa sidebar/topbar riêng như `trang-chu`, không nằm trong
+  `(portal)/layout.tsx`.
+- `he-tri-thuc.css` — chép nguyên văn `<style>` gốc, prefix `.ckos`, ĐÚNG 6
+  điều chỉnh y hệt bộ đã dùng cho `trang-chu.css` (prefix / `:root`→`.ckos`
+  / `body`→`.ckos` / `'Inter'`→`'InterGF'` / `line-height:normal` / revert
+  Preflight) — không phát sinh điều chỉnh mới nào.
+- `CkosClient.tsx` + `page.tsx` — Server Component fetch dữ liệu thật +
+  `getPremiumStatus()`, Client Component render (bản gốc có 2 view "Tất cả
+  tri thức"/"Thư viện của tôi" + chip lọc đổi active).
+
+**ĐÚNG 3 chỗ khác bản tĩnh** (đều thuộc phần được phép): (1) số liệu/danh
+sách → dữ liệu thật thay số mẫu; (2) chip `.doc-lock` trên dòng tài liệu
+Premium khi chưa Premium — dùng lại y hệt box-model `.doc-tag` (KHÔNG viền:
+thêm viền làm dòng cao thêm 1px, đo được), màu lấy từ `.upgrade-btn`;
+(3) trạng thái rỗng "Thư viện của tôi" dùng microcopy Founder soạn, hiển
+thị bằng class `.empty-hint` VỐN CÓ SẴN trong CSS gốc.
+
+**Giữ nguyên "trơ" đúng như mockup** (bản gốc cũng không làm gì): chip lọc
+chỉ đổi active, "Xem thêm ↓", "Xem tất cả →", nút lưu, ô tìm kiếm, chuông.
+Không tự thêm hành vi — chờ Founder chốt từng cái.
+
+### 2 BUG THẬT phát hiện khi đối chiếu (không phải chỉ lỗi test)
+
+**1. Font/ảnh `/v2/*` trong `public/` bị middleware gate.** `matcher`
+`"/v2/:path*"` khớp cả `/v2/fonts/f1.woff2` → 307 redirect login. Với
+Supabase đã cấu hình (Preview/Production), mọi request tài nguyên tĩnh
+dưới `/v2/` đều phải qua auth check — lãng phí, và fail hoàn toàn cho
+request không mang cookie. Đã sửa bằng cách **chuyển `public/v2/` →
+`public/v2-static/`** (đổi 2 loại đường dẫn trong `inter-gf.css` +
+`trang-chu/page.tsx` + `CkosClient.tsx`) — KHÔNG sửa middleware (dùng
+chung với 1.0). Tài nguyên tĩnh không nên nằm dưới tiền tố URL có auth.
+
+**2. `learning_paths` thiếu cột cho nhãn ngắn.** Thiết kế hiện mỗi giai
+đoạn 2 dòng: tên + nhãn ngắn ("Nền tảng cơ bản"). `description` lại là
+đoạn "Mục tiêu: ..." dài → thẻ đội từ 60px lên 172px. Đã thêm cột
+`subtitle` (migration `learning_paths_add_subtitle`) + backfill 4 nhãn
+ngắn đúng bản thiết kế, GIỮ NGUYÊN `description` cho trang lộ trình chi
+tiết sau này.
+
+### Đối chiếu định lượng: 28 khác biệt → 5, cả 5 đều giải thích được
+
+Playwright, 1440x1000, cùng bộ font, đo tương đối so với `.app`:
+- `font-family` — cùng bộ file, chỉ khác TÊN họ (`InterGF`, đổi để không
+  đụng `next/font` Inter app đang dùng).
+- `rightCol.h`/`helpCard.y` (-119px) — thẻ "Tài liệu phổ biến" hiện
+  empty-hint trung thực thay 3 dòng "12,8k lượt xem" mẫu: **hệ thống chưa
+  có cơ chế đếm lượt xem tài liệu nào**. Cần Founder quyết: xây đếm lượt
+  xem thật, hay đổi tiêu chí xếp hạng.
+- `rmNum` màu (2 dòng) — thiết kế tô đậm giai đoạn 1&2 (`.rm-item.done`);
+  đó là tiến độ per-user, `user_ckos_progress` đang 0 dòng nên hiện đúng
+  trạng thái "chưa hoàn thành giai đoạn nào".
+
+Mọi thứ còn lại khớp CHÍNH XÁC: sidebar 224px, topbar, 5 ô thống kê, 8 chip
+lọc, hero + não SVG, lưới 6 danh mục, danh sách tài liệu, thẻ cột phải,
+footer, avatar.
+
+**Verify:** `tsc`/`eslint` sạch (18 warning cũ), `vitest` 486/486,
+`rm -rf .next && npm run build` sạch. Route devtest tạm dùng để đo (vì
+middleware gate `/v2/*` khi Supabase đã cấu hình) đã xoá + rebuild xác nhận
+sạch.

@@ -1,0 +1,267 @@
+/* =============================================================================
+ * Hệ tri thức (CKOS) 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của
+ * `design_handoff_vo_duong_ai/He tri thuc CKOS.html`.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho Trang chủ Portal
+ * (`trang-chu.css`), không phát sinh điều chỉnh mới nào:
+ *
+ *  1. Mọi selector thêm tiền tố `.ckos` — file này nạp trong cây `/v2`, để
+ *     nguyên `*`, `body`, `a`, `.card`... sẽ đè lên Landing Page và Portal/
+ *     Admin 1.0 đang chạy Production. Tiền tố không đổi giá trị nào.
+ *  2. `:root{...}` → `.ckos{...}`: cùng biến, cùng giá trị, chỉ đổi phạm vi.
+ *  3. `body{...}` gộp vào `.ckos{...}` (cùng lý do 2).
+ *  4. `'Inter'` → `'InterGF'` (xem chú thích tại chỗ).
+ *  5. `line-height: normal` (xem chú thích tại chỗ).
+ *  6. Revert Tailwind Preflight trong phạm vi `.ckos` (xem khối riêng bên dưới).
+ *
+ * `@keyframes` CỐ TÌNH để toàn cục, giữ nguyên tên gốc (`brainPulse`,
+ * `nodeBlink`, `sparkleTwinkle`) vì markup gốc tham chiếu chúng qua inline
+ * style (`style="animation-delay:.4s"` trên phần tử có class đã khai
+ * animation). `sparkleTwinkle` trùng tên với bản trong `trang-chu.css` —
+ * đã đối chiếu: ĐỊNH NGHĨA GIỐNG HỆT NHAU nên nạp cả hai không xung đột.
+ * ========================================================================== */
+
+.ckos{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.ckos, .ckos *{box-sizing:border-box;margin:0;padding:0}
+
+/* -----------------------------------------------------------------------------
+ * Điều chỉnh 6 — TRẢ LẠI mặc định trình duyệt cho những gì Tailwind Preflight
+ * đã đổi (giống hệt cách đã làm ở `trang-chu.css`, cùng lý do).
+ *
+ * Preflight là reset TOÀN CỤC, không tắt riêng cho một nhánh cây DOM được.
+ * Hai khai báo của nó từng làm SAI bố cục thật ở trang trước: `button{font:
+ * inherit}` (bản gốc để nút dùng font mặc định Arial — `<style>` chỉ đặt
+ * font-size/font-weight, KHÔNG đặt font-family) và `svg{display:block}` (bản
+ * gốc để svg inline). Vì vậy revert cả nhóm, không chỉ 2 chỗ đã lộ ra.
+ * `revert` = quay về giá trị user-agent, đúng thứ mockup đang dùng.
+ * -------------------------------------------------------------------------- */
+.ckos *,
+.ckos *::before,
+.ckos *::after { border-width: revert; border-style: revert; border-color: revert }
+.ckos h1, .ckos h2, .ckos h3, .ckos h4, .ckos h5, .ckos h6 { font-size: revert; font-weight: revert }
+.ckos b, .ckos strong { font-weight: revert }
+.ckos ol, .ckos ul, .ckos menu { list-style: revert }
+.ckos img, .ckos svg, .ckos video, .ckos canvas, .ckos audio,
+.ckos iframe, .ckos embed, .ckos object { display: revert; vertical-align: revert }
+.ckos img, .ckos video { max-width: revert; height: revert }
+.ckos button, .ckos input, .ckos select, .ckos optgroup, .ckos textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.ckos ::placeholder { color: revert; opacity: revert }
+
+.ckos {
+  /* Điều chỉnh 4: 'Inter' → 'InterGF' — ĐÚNG bộ Inter biến thiên bản thiết kế
+   * dùng, tự host ở `src/app/v2/inter-gf.css`. Xem đầu file đó để biết vì sao
+   * `next/font` với weight rời rạc lại cho metric lệch. */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5: mockup là file HTML độc lập nên `line-height` mặc định là
+   * `normal`; trong app thật `globals.css` đặt `body{line-height:1.55}` và
+   * Preflight đặt `html{line-height:1.5}` — cả hai kế thừa xuống và đẩy cao
+   * mọi dòng chữ không tự khai line-height. Trả về đúng hành vi bản gốc. */
+  line-height: normal;
+
+  /* `globals.css` còn đặt `body{text-rendering:optimizeLegibility}` — mockup
+   * không có, trả về `auto` cho giống. */
+  text-rendering: auto;
+}
+.ckos a{color:var(--violet);text-decoration:none}
+.ckos a:hover{color:var(--violet-dark)}
+.ckos .app{display:flex;min-height:100vh}
+.ckos .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.ckos .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.ckos .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ckos .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.ckos .brand .name .vo{color:#3B82F6}
+.ckos .brand .name .ai{color:#fff}
+.ckos nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.ckos .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.ckos .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.ckos .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.ckos .nav-item.active{background:var(--violet);color:#fff}
+.ckos .nav-item.active svg{opacity:1}
+.ckos .side-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:#6f6a91;margin:10px 12px 6px}
+.ckos .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.ckos .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.ckos .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.ckos .nav-parent:hover{background:none}
+.ckos .nav-parent svg{opacity:1}
+.ckos .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.ckos .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.ckos .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.ckos .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.ckos .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.ckos .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.ckos .promo button:active{transform:translateY(0) scale(.97)}
+.ckos .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.ckos .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.ckos .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.ckos .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.ckos .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.ckos .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.ckos .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.ckos .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.ckos .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.ckos .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.ckos .icon-btn svg{width:18px;height:18px}
+.ckos .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.ckos .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.ckos .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.ckos .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.ckos .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.ckos .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.ckos .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.ckos .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.ckos .page-head h1{font-size:26px;font-weight:800}
+.ckos .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+.ckos .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.ckos .stat-box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;align-items:center;gap:12px}
+.ckos .stat-box .ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ckos .stat-box .ico svg{width:19px;height:19px}
+.ckos .stat-box .num{font-size:18px;font-weight:800;line-height:1.2}
+.ckos .stat-box .lbl{font-size:11.5px;color:var(--muted)}
+.ckos .filter-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ckos .f-chip{padding:9px 15px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);background:#fff;border:1px solid var(--line);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.ckos .f-chip:hover{background:var(--violet-light);color:var(--violet-dark)}
+.ckos .f-chip.active{background:var(--violet);color:#fff;border-color:var(--violet)}
+.ckos .f-more{margin-left:auto;width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
+.ckos .f-more svg{width:16px;height:16px}
+.ckos .ckos-hero{position:relative;border-radius:16px;padding:30px 34px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:24px;overflow:hidden;background:radial-gradient(ellipse 60% 90% at 78% 50%,#241c56 0%,transparent 70%),linear-gradient(150deg,#120c30 0%,#1a1044 55%,#0c0824 100%)}
+.ckos .ckos-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 70%,rgba(255,255,255,.35) 0,transparent 100%),radial-gradient(1px 1px at 85% 60%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1px 1px at 12% 80%,rgba(255,255,255,.3) 0,transparent 100%);pointer-events:none}
+.ckos .ckos-hero-text{position:relative;z-index:1;max-width:430px}
+.ckos .ckos-hero .tag{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#8fdcff;margin-bottom:14px;letter-spacing:.04em}
+.ckos .ckos-hero .tag svg{width:14px;height:14px}
+.ckos .ckos-hero h2{font-size:24px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.ckos .ckos-hero p{font-size:13.5px;color:#b9b3de;line-height:1.65;margin-bottom:20px}
+.ckos .ckos-cta{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13.5px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.ckos .ckos-cta:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(109,74,255,.5);filter:brightness(1.08)}
+.ckos .brain-wrap{position:relative;z-index:1;width:230px;height:190px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ckos .brain-glow{position:absolute;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(90,150,255,.35),transparent 70%);filter:blur(6px);animation:brainPulse 3.4s ease-in-out infinite}
+@keyframes brainPulse{0%,100%{opacity:.55;transform:scale(.94)}
+.ckos 50%{opacity:1;transform:scale(1.05)}
+}
+.ckos .brain-svg{position:relative;filter:drop-shadow(0 0 18px rgba(120,160,255,.55))}
+.ckos .brain-node{animation:nodeBlink 2.6s ease-in-out infinite}
+@keyframes nodeBlink{0%,100%{opacity:.4}
+.ckos 50%{opacity:1}
+}
+
+.ckos .section-head{display:flex;align-items:baseline;justify-content:space-between}
+.ckos .section-head h3{font-size:17px;font-weight:800}
+.ckos .section-head a{font-size:12.5px;font-weight:700}
+.ckos .cat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.ckos .cat-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 14px;text-align:center;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.ckos .cat-card:hover{box-shadow:0 10px 22px rgba(30,20,80,.1);transform:translateY(-2px)}
+.ckos .cat-card .ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.ckos .cat-card .ico svg{width:22px;height:22px}
+.ckos .cat-card h5{font-size:13px;font-weight:700;margin-bottom:3px}
+.ckos .cat-card span{font-size:11.5px;color:var(--muted)}
+.ckos .doc-list{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.ckos .doc-row{display:flex;align-items:center;gap:14px;padding:16px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.ckos .doc-row:last-child{border-bottom:none}
+.ckos .doc-row:hover{background:var(--bg)}
+.ckos .lib-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ckos .new-folder-btn{display:flex;align-items:center;gap:7px;background:var(--violet);color:#fff;border:none;padding:10px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:filter .15s}
+.ckos .new-folder-btn:hover{filter:brightness(1.08)}
+.ckos .folder-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.ckos .folder-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.ckos .folder-card:hover{box-shadow:0 10px 22px rgba(30,20,80,.1);transform:translateY(-2px)}
+.ckos .folder-card .ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.ckos .folder-card h5{font-size:13.5px;font-weight:700;margin-bottom:3px}
+.ckos .folder-card span{font-size:11.5px;color:var(--muted)}
+.ckos .folder-card.new-folder{border:1.5px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);text-align:center;min-height:112px}
+.ckos .folder-card.new-folder .plus{width:34px;height:34px;border-radius:50%;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center}
+.ckos .folder-card.new-folder .plus svg{width:16px;height:16px}
+.ckos .doc-row .save.saved{color:var(--violet)}
+.ckos .empty-hint{font-size:12.5px;color:var(--muted);padding:16px 18px}
+@media (max-width:1180px){
+  .ckos .folder-grid{grid-template-columns:repeat(2,1fr)}
+}
+.ckos .doc-row .ico{width:38px;height:38px;border-radius:9px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ckos .doc-row .ico svg{width:18px;height:18px}
+.ckos .doc-row .info{flex:1;min-width:0}
+.ckos .doc-row h5{font-size:13.5px;font-weight:700;margin-bottom:4px}
+.ckos .doc-row .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.ckos .doc-tag{font-size:10.5px;font-weight:800;background:var(--violet-light);color:var(--violet);padding:2px 8px;border-radius:6px}
+.ckos .doc-row .date{font-size:12px;color:var(--muted);flex-shrink:0}
+.ckos .doc-row .save{width:30px;height:30px;border-radius:8px;border:none;background:none;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.ckos .doc-row .save svg{width:16px;height:16px}
+.ckos .doc-more{text-align:center;padding:14px;font-size:13px;font-weight:700;color:var(--violet);cursor:pointer;border-top:1px solid var(--line)}
+.ckos .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.ckos .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ckos .card-head h4{font-size:14px;font-weight:800}
+.ckos .card-head a{font-size:12px;font-weight:600}
+.ckos .card p{font-size:12.5px;color:var(--muted);line-height:1.6}
+.ckos .what-graphic{display:flex;justify-content:center;margin-top:14px}
+.ckos .what-graphic .stack{position:relative;width:80px;height:80px}
+.ckos .what-graphic .stack svg{position:absolute}
+.ckos .roadmap{display:flex;flex-direction:column;gap:0}
+.ckos .rm-item{display:flex;gap:12px;position:relative;padding-bottom:22px}
+.ckos .rm-item:last-child{padding-bottom:0}
+.ckos .rm-item::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.ckos .rm-item:last-child::before{display:none}
+.ckos .rm-num{width:26px;height:26px;border-radius:50%;background:var(--violet-light);color:var(--violet);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
+.ckos .rm-item.done .rm-num{background:var(--violet);color:#fff}
+.ckos .rm-text h5{font-size:13px;font-weight:700;margin-bottom:2px}
+.ckos .rm-text span{font-size:11.5px;color:var(--muted)}
+.ckos .pop-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer}
+.ckos .pop-row:last-child{border-bottom:none}
+.ckos .pop-row .ico{width:30px;height:30px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ckos .pop-row .ico svg{width:15px;height:15px}
+.ckos .pop-row .info{flex:1;min-width:0}
+.ckos .pop-row .views{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.ckos .help-card{background:linear-gradient(160deg,#241c4d,#3d2a8f);border-radius:14px;padding:18px;color:#fff;text-align:center}
+.ckos .help-card .stack-mini{margin:0 auto 12px;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center}
+.ckos .help-card h4{font-size:14px;font-weight:800;margin-bottom:6px}
+.ckos .help-card p{font-size:12.5px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.ckos .help-card button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
+.ckos .footer-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
+@media (max-width:1180px){
+  .ckos .content{flex-direction:column}
+.ckos .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+.ckos .right-col>.card, .ckos .right-col>.help-card{flex:1;min-width:280px}
+.ckos .stat-row{grid-template-columns:repeat(3,1fr)}
+.ckos .cat-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+.ckos [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.ckos [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.ckos [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.ckos .crown{position:relative}
+.ckos .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.ckos .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* -----------------------------------------------------------------------------
+ * BƯỚC D — chip khoá Premium trên dòng tài liệu.
+ *
+ * Bản thiết kế KHÔNG có trạng thái khoá (mockup mặc định user là Premium), nên
+ * đây là phần BẮT BUỘC PHẢI THÊM theo lệnh giao. Để không "tự sáng tạo style
+ * mới", chip này dùng lại ĐÚNG mọi giá trị của `.doc-tag` có sẵn ngay bên cạnh
+ * nó (font-size 10.5px, font-weight 800, padding 2px 8px, border-radius 6px,
+ * KHÔNG viền — thêm viền làm dòng cao thêm 1px, đo được khi đối chiếu) — chỉ
+ * đổi cặp màu sang tông vàng vốn đã là màu "Premium" xuyên suốt bản thiết kế
+ * (`.profile .plan`, `.upgrade-btn`). Không thêm hex mới: `#a9822c` +
+ * `#fff3d9` lấy nguyên từ `.upgrade-btn` / `.upgrade-btn:hover`.
+ * -------------------------------------------------------------------------- */
+.ckos .doc-lock {
+  font-size: 10.5px;
+  font-weight: 800;
+  background: #fff3d9;
+  color: #a9822c;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
