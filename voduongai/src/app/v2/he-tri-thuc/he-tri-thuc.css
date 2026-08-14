@@ -222,6 +222,7 @@
 .ckos .pop-row .ico{width:30px;height:30px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ckos .pop-row .ico svg{width:15px;height:15px}
 .ckos .pop-row .info{flex:1;min-width:0}
+.ckos .pop-row h5{font-size:13px;font-weight:700;line-height:1.3}
 .ckos .pop-row .views{font-size:11px;color:var(--muted);display:block;margin-top:2px}
 .ckos .help-card{background:linear-gradient(160deg,#241c4d,#3d2a8f);border-radius:14px;padding:18px;color:#fff;text-align:center}
 .ckos .help-card .stack-mini{margin:0 auto 12px;width:52px;height:52px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center}

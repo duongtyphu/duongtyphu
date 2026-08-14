@@ -1,6 +1,7 @@
 import { cache } from "react";
 
 import { getSupabasePublic } from "@/lib/supabase";
+import { getSupabaseServer } from "@/lib/supabase-server";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 /**
@@ -30,6 +31,26 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
  *     `locked: true` để UI dựng CTA nâng cấp.
  *
  * Đây là lớp phòng thủ thật; overlay ở UI chỉ là phần nhìn thấy được.
+ * ---------------------------------------------------------------------------
+ * MỤC 2 — ĐẾM LƯỢT XEM TÀI LIỆU THẬT (`ckos_content_views`)
+ *
+ * Theo đúng pattern polymorphic đã dùng cho `ckos_content_tags`
+ * (`content_type`/`content_id` dạng text) — KHÔNG thêm cột riêng vào
+ * `knowledge_assets` vì nội dung CKOS nằm rải nhiều bảng. `content_type`
+ * cố định `"knowledge_asset"` (khớp giá trị đã mở rộng cho
+ * `ckos_content_tags_content_type_check` trước đó).
+ *
+ * Ghi qua hàm SECURITY DEFINER `record_ckos_content_view` (không có policy
+ * ghi trực tiếp nào trên `ckos_content_views`/`ckos_content_view_events` —
+ * user không thể tự forge lượt xem qua REST API). Giới hạn tự quyết: **1
+ * lượt/user/tài liệu/ngày** (bảng phụ `ckos_content_view_events` dedupe
+ * theo `viewed_date`, không public-readable, chỉ hàm chạm được).
+ *
+ * `getCkosDocument()` gọi `recordCkosContentView()` khi `!locked` — mỗi lần
+ * user thực sự xem được nội dung (không tính lượt bị khoá Premium).
+ * `getCkosPopularDocuments()` xếp theo `view_count` giảm dần; hệ thống mới
+ * nên toàn bộ có thể đang 0 — khi đó fallback sang "mới nhất"
+ * (`sortedByViews: false`) để card không trống oan.
  * ---------------------------------------------------------------------------
  */
 
@@ -237,6 +258,11 @@ export async function getCkosDocument(
 
   const locked = c.accessLevel === "premium" && !status.isPremium;
 
+  if (!locked) {
+    // Best-effort — không bao giờ chặn render nếu ghi lượt xem lỗi.
+    await recordCkosContentView(r.slug);
+  }
+
   return {
     slug: r.slug,
     title: r.title,
@@ -251,3 +277,77 @@ export async function getCkosDocument(
     locked,
   };
 }
+
+const CKOS_VIEW_CONTENT_TYPE = "knowledge_asset";
+
+/**
+ * Ghi 1 lượt xem tài liệu CKOS (tối đa 1 lượt/user/tài liệu/ngày, xử lý
+ * dedupe ở hàm SQL `record_ckos_content_view`). Best-effort — lỗi (chưa
+ * đăng nhập, chưa cấu hình Supabase, RPC lỗi...) không bao giờ throw ra
+ * ngoài, chỉ bỏ qua việc đếm.
+ */
+export async function recordCkosContentView(slug: string): Promise<void> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return;
+  }
+  try {
+    const supabase = await getSupabaseServer();
+    await supabase.rpc("record_ckos_content_view", {
+      p_content_type: CKOS_VIEW_CONTENT_TYPE,
+      p_content_id: slug,
+    });
+  } catch {
+    // Không chặn render vì lỗi ghi lượt xem — xem docblock MỤC 2 ở đầu file.
+  }
+}
+
+export type CkosPopularDocument = CkosDocumentSummary & { viewCount: number };
+
+export type CkosPopularDocumentsResult = {
+  documents: CkosPopularDocument[];
+  /** false khi toàn bộ `viewCount` = 0 — danh sách đang fallback theo "mới nhất". */
+  sortedByViews: boolean;
+};
+
+/**
+ * "Tài liệu phổ biến" — xếp theo `view_count` giảm dần. Hệ thống mới nên
+ * toàn bộ có thể đang 0 lượt xem; khi đó fallback sang "mới nhất"
+ * (`getCkosDocuments()` đã `order("created_at", {ascending:false})`) thay
+ * vì hiện 1 khối trống — vẫn báo trung thực qua `sortedByViews: false`.
+ */
+export const getCkosPopularDocuments = cache(
+  async (limit = 3): Promise<CkosPopularDocumentsResult> => {
+    const documents = await getCkosDocuments();
+    if (documents.length === 0) return { documents: [], sortedByViews: false };
+
+    const supabase = getSupabasePublic();
+    const viewsBySlug = new Map<string, number>();
+    if (supabase) {
+      const { data } = await supabase
+        .from("ckos_content_views")
+        .select("content_id, view_count")
+        .eq("content_type", CKOS_VIEW_CONTENT_TYPE)
+        .in(
+          "content_id",
+          documents.map((d) => d.slug),
+        );
+      for (const row of data ?? []) {
+        viewsBySlug.set(row.content_id as string, (row.view_count as number) ?? 0);
+      }
+    }
+
+    const withViews: CkosPopularDocument[] = documents.map((doc) => ({
+      ...doc,
+      viewCount: viewsBySlug.get(doc.slug) ?? 0,
+    }));
+
+    const hasAnyView = withViews.some((d) => d.viewCount > 0);
+    if (!hasAnyView) {
+      // `documents` đã sắp theo mới nhất — giữ nguyên thứ tự, chỉ cắt limit.
+      return { documents: withViews.slice(0, limit), sortedByViews: false };
+    }
+
+    const sorted = [...withViews].sort((a, b) => b.viewCount - a.viewCount);
+    return { documents: sorted.slice(0, limit), sortedByViews: true };
+  },
+);

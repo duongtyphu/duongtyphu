@@ -35,7 +35,13 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import type { CkosCategory, CkosDocumentSummary, CkosStage, CkosStats } from "@/lib/portal/live-ckos";
+import type {
+  CkosCategory,
+  CkosDocumentSummary,
+  CkosPopularDocumentsResult,
+  CkosStage,
+  CkosStats,
+} from "@/lib/portal/live-ckos";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 import "../inter-gf.css";
@@ -173,6 +179,7 @@ export function CkosClient({
   stats,
   premium,
   ckosIntro,
+  popular,
 }: {
   categories: CkosCategory[];
   documents: CkosDocumentSummary[];
@@ -180,6 +187,7 @@ export function CkosClient({
   stats: CkosStats;
   premium: PremiumStatus;
   ckosIntro: string;
+  popular: CkosPopularDocumentsResult;
 }) {
   const router = useRouter();
   const [view, setView] = useState<"all" | "library">("all");
@@ -730,14 +738,39 @@ export function CkosClient({
                   <h4>Tài liệu phổ biến</h4>
                   <a href="#">Xem tất cả →</a>
                 </div>
-                {/* Bản thiết kế xếp hạng theo "lượt xem" (12,8k / 9,6k / 8,3k — số
-                    mẫu). Hệ thống HIỆN CHƯA theo dõi lượt xem tài liệu (không có
-                    bảng/cột nào), nên KHÔNG bịa số: giữ nguyên khung thẻ, nói thật
-                    là chưa có dữ liệu. Xem báo cáo — cần Founder quyết có xây đếm
-                    lượt xem hay đổi tiêu chí xếp hạng. */}
-                <div className="empty-hint" style={{ padding: 0 }}>
-                  Chưa có dữ liệu lượt xem — hệ thống chưa theo dõi lượt xem tài liệu.
-                </div>
+                {/* MỤC 2 — đếm lượt xem thật (`ckos_content_views`, xem
+                    live-ckos.ts). Hệ thống mới nên có thể toàn bộ đang 0 lượt —
+                    khi đó fallback hiện theo "mới nhất" (`sortedByViews: false`),
+                    kèm 1 dòng nói thật thay vì bịa số như bản thiết kế mẫu
+                    (12,8k/9,6k/8,3k). */}
+                {popular.documents.length === 0 ? (
+                  <div className="empty-hint" style={{ padding: 0 }}>
+                    Chưa có tài liệu nào — nội dung sẽ hiện ở đây khi được xuất bản.
+                  </div>
+                ) : (
+                  <>
+                    {popular.documents.map((doc) => (
+                      <div className="pop-row" key={doc.slug}>
+                        <div className="ico">
+                          <DocIcon />
+                        </div>
+                        <div className="info">
+                          <h5>{doc.title}</h5>
+                          <span className="views">
+                            {popular.sortedByViews
+                              ? `${doc.viewCount.toLocaleString("vi-VN")} lượt xem`
+                              : formatDate(doc.createdAt)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {!popular.sortedByViews ? (
+                      <div className="empty-hint" style={{ padding: "10px 0 0" }}>
+                        Chưa có dữ liệu lượt xem — đang hiện theo tài liệu mới nhất.
+                      </div>
+                    ) : null}
+                  </>
+                )}
               </div>
 
               <div className="help-card">
