@@ -5494,3 +5494,146 @@ footer, avatar.
 `rm -rf .next && npm run build` sạch. Route devtest tạm dùng để đo (vì
 middleware gate `/v2/*` khi Supabase đã cấu hình) đã xoá + rebuild xác nhận
 sạch.
+
+## Lệnh xử lý 3 quyết định + tiếp tục E.2 (Mục 1/2/3 + Học viện AI)
+
+### Mục 1 — Premium mua đứt fallback: STOP, cần Founder quyết
+
+Lệnh yêu cầu thêm fallback đọc `orders` cho hàm kiểm tra Premium (đơn mua
+đứt V-Solo/V-Scale không có hạn nên `premium_expires_at` mãi `NULL`) —
+nhưng kèm điều kiện dừng rõ ràng: nếu ranh giới "sản phẩm nào là mua đứt
+Premium nền tảng" không rõ trong dữ liệu thật, dừng lại báo cáo thay vì tự
+suy đoán.
+
+**Audit xác nhận đúng điều kiện STOP:** không có bất kỳ cột/flag nào
+(`is_premium`, `grants_premium`...) trên `courses`/`products` phân biệt
+"sản phẩm mở khoá Premium nền tảng" với "khoá học độc lập". `products` có
+0 dòng. Cả 5 chương trình trong `PREMIUM_PROGRAMS`
+(`src/components/portal/premium/premium-programs.ts`) đều mô tả như sản
+phẩm ĐỘC LẬP (mỗi cái có `description`/`audience`/`topics`/`outcome`
+riêng) — không chương trình nào tự nhận là "mở khoá CKOS/nội dung
+Premium". "Premium Monthly" nhắc trong lệnh không tồn tại như 1 sản phẩm
+mua được thật ở bất kỳ đâu trong hệ thống.
+
+**Kết luận:** đúng điều kiện dừng — KHÔNG tự thêm fallback đọc `orders`
+vào `getPremiumStatus()`. Cần Founder xác nhận cụ thể: có sản phẩm nào
+trong 5 chương trình (`ai-coban`/`ai-nangcao`/`openclaw`/`solo`/`scale`)
+nên tính là "mua đứt Premium nền tảng" hay không, trước khi code logic
+này — sai ở đây là rủi ro thật (ai được xem nội dung Premium).
+
+### Mục 2 — Cơ chế đếm lượt xem CKOS thật (đã làm xong)
+
+Bảng mới `ckos_content_views` (aggregate, đọc công khai) +
+`ckos_content_view_events` (dedupe log, không policy — chỉ hàm chạm được)
++ hàm SECURITY DEFINER `record_ckos_content_view()`, theo đúng pattern
+polymorphic `content_type`/`content_id` đã dùng cho `ckos_content_tags`.
+Giới hạn tự quyết: **1 lượt/user/tài liệu/ngày** (dedupe qua
+`viewed_date`).
+
+`src/lib/portal/live-ckos.ts`: `recordCkosContentView()` (best-effort,
+không throw) được gọi trong `getCkosDocument()` khi `!locked`.
+`getCkosPopularDocuments(limit)` xếp theo `view_count` giảm dần, fallback
+sang "mới nhất" (`sortedByViews: false`) khi toàn bộ đang 0 — tự quyết
+định UI: dùng lại đúng class `.pop-row`/`.pop-row .views` đã có sẵn trong
+`he-tri-thuc.css` (thiết kế gốc đã dự trù layout này, chỉ chưa có cơ chế
+đếm) thay vì bịa layout mới.
+
+`src/app/v2/he-tri-thuc/{page.tsx,CkosClient.tsx}`: thẻ "Tài liệu phổ
+biến" đọc `getCkosPopularDocuments(3)`, hiện icon+title+lượt xem (hoặc
+ngày tạo khi fallback) — thay hẳn khối `.empty-hint` cũ.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest` 486/486, `rm -rf .next && npm
+run build` sạch. Đã commit + push (`8af88f9`).
+
+### Mục 3 — không làm gì thêm
+
+Chip lọc/tìm kiếm/chuông/nút lưu giữ nguyên như hiện tại — không có thay
+đổi nào cần thực hiện cho mục này.
+
+### Bước E.2 — `/v2/hoc-vien-ai` (1:1 với `Hoc vien AI.html`)
+
+Thay hẳn bản mock cũ ở `src/app/v2/(portal)/hoc-vien-ai/page.tsx` (đọc
+lớp mock data Phase 1, không có dữ liệu thật) bằng route tự chứa mới
+`src/app/v2/hoc-vien-ai/` (sidebar/topbar riêng, cùng kiến trúc
+`he-tri-thuc`/`trang-chu`) — 1:1 pixel với `Hoc vien AI.html`, tiền tố
+CSS `.hva`, đúng 6 điều chỉnh kỹ thuật đã dùng cho 2 trang trước.
+
+**Audit dữ liệu thật trước khi wiring (qua Supabase MCP):** đúng 1 khoá
+Course Builder có nội dung thật — `ai-cho-nguoi-moi-bat-dau` ("AI cho
+người mới bắt đầu", free, 4 `course_sections`/16 `course_lessons`, toàn
+bộ Published + `is_free_preview=true`), gắn vào giai đoạn 1 "Nhập môn AI"
+của `learning_paths` (bảng DÙNG CHUNG với CKOS, đã có 4 giai đoạn thật từ
+Bước C) qua `learning_path_courses`. 5 khoá Premium 1.0 còn lại
+(`ai-coban`/`ai-nangcao`/`openclaw`/`solo`/`scale`) KHÔNG có section/lesson
+Published nào trong Course Builder (2 dòng "Section mới" Draft/0 lesson
+trên `ai-coban` là dữ liệu test cũ của Founder, không phải nội dung thật).
+`user_lesson_progress` (bảng thật, Phase 30) có 0 dòng — hệ thống mới,
+không phải thiếu hạ tầng.
+
+**Data layer mới `src/lib/portal/live-academy.ts`** (cùng pattern
+`live-ckos.ts`):
+- `getAcademyPaths()` — 4 giai đoạn thật + số bài học Published của khoá
+  gắn vào từng giai đoạn (đếm qua join `course_sections`→`course_lessons`).
+  `description` cắt còn CÂU ĐẦU TIÊN của `learning_paths.description`
+  (đoạn "Mục tiêu: ..." dài) — tự quyết định vì `.path-card p` chỉ có
+  min-height 36px (~2 dòng), còn cột `subtitle` (nhãn 2-3 từ, dùng cho
+  widget CKOS) lại quá ngắn cho vị trí này; cắt câu đầu không bịa nội
+  dung mới, chỉ rút gọn nội dung thật.
+- `getAcademyFeaturedCourses()` — CHỈ khoá có `lessonCount > 0` (nội dung
+  Course Builder thật), không lọc theo `status='open'` của `courses` (vì
+  đó là trạng thái bán hàng Premium 1.0, khác khái niệm "có nội dung
+  Course Builder"). Hiện đúng 1/5 vị trí mẫu của thiết kế — không độn
+  placeholder cho đủ 5.
+- `getAcademyProgress()` — tiến độ THẬT từ `user_lesson_progress`
+  (`completed`/`in_progress`/`not_started`), tính cả khi chưa đăng nhập
+  (`totalLessons`/`totalCourses` không phụ thuộc user). 0% trung thực vì
+  bảng đang 0 dòng — đã verify qua dữ liệu Supabase thật (route dev-preview
+  tạm, xoá ngay sau khi xong): `totalCourses=1`, `totalLessons=16` đúng,
+  `completedLessons=0` đúng.
+- `getAcademyLesson(lessonId, status)` — khoá `content`/`video_url` ở
+  tầng SERVER khi `!is_free_preview && !status.isPremium`, đúng cơ chế
+  Bước D (`getCkosDocument()`). Chưa có UI nào gọi (bản thiết kế này chỉ
+  là trang hub, không có trang xem bài học riêng) — dựng sẵn hạ tầng cho
+  tương lai, cùng tiền lệ `getCkosDocument()` ở Bước E.1.
+
+**3 chỗ khác bản tĩnh (đều thuộc phần được phép — nối dữ liệu thật +
+Bước D, không đổi layout/màu/font):**
+1. "Lộ trình học tập gợi ý" — 4 thẻ dùng dữ liệu thật, % và "x/y bài học"
+   là tiến độ thật (đa số 0% vì hệ thống mới). Icon/gradient mỗi vị trí
+   GIỮ TĨNH theo đúng thiết kế (bảng `learning_paths` không có cột
+   icon/màu) — cùng lý do `CHAPTER_DESTINATIONS` ở Bản đồ hành trình.
+2. "Khóa học nổi bật" — chỉ 1 thẻ thật, KHÔNG có rating "★ x,x (n)" (không
+   bảng đánh giá nào trong hệ thống).
+3. "Hành trình học tập" (cột phải) — BỎ dòng "Điểm kinh nghiệm ... XP"
+   (không có cơ chế XP thật — XP chỉ tồn tại trong
+   `src/lib/v2/data/catalog.ts`, lớp mock data của các trang
+   `/v2/(portal)/*` khác chưa migrate, không liên quan trang này).
+4. "Lớp học sắp diễn ra" — trạng thái rỗng trung thực (không có bảng lịch
+   học trực tuyến nào trong hệ thống, khác hẳn tình huống CKOS Mục 2).
+5. Cả path-grid lẫn course-scroll đều có empty-hint riêng khi 0 dòng
+   (bản thiết kế không tính trường hợp này vì mẫu luôn có sẵn thẻ).
+
+**Giữ nguyên "trơ" đúng Mục 3:** 8 tab trong `.tabs-row` chỉ đổi trạng
+thái active, không đổi nội dung bên dưới (mockup gốc cũng vậy — chỉ có
+đúng 1 khối nội dung "Tổng quan"). Ô tìm kiếm/chuông/mọi CTA không có
+đích thật giữ `href="#"`.
+
+**Verify:** `tsc`/`eslint`/`vitest` (486/486) sạch, `rm -rf .next && npm
+run build` sạch (route `/v2/hoc-vien-ai` thay đúng route mock cũ, không
+ảnh hưởng `/v2/admin/hoc-vien-ai` — route ADM-V2 hoàn toàn khác). Test
+thật qua `next start` với anon key thật (route dev-preview tạm, xoá ngay
+sau khi xong): xác nhận 4 path-card + 1 course-card render đúng dữ liệu
+thật (tên/mô tả/số bài học/% tiến độ), 3 giai đoạn còn lại hiện đúng
+"0 bài học" (chưa có khoá nào gắn), 0% mọi nơi (chưa có tiến độ user
+thật). Test không có Supabase (mặc định sandbox) — cả 2 nhánh (0 dữ liệu)
+render đúng empty-hint, không crash, 0 route khác bị ảnh hưởng
+(`/v2/he-tri-thuc`, `/` đều `200`).
+
+**Chưa làm — không nằm trong phạm vi bản thiết kế này (1 trang hub):**
+trang xem nội dung 1 bài học (route lesson-detail), 7 tab còn lại trong
+`.tabs-row` (Khóa học AI cơ bản/nâng cao/Chuyên đề/Lộ trình/Giảng
+viên/Tài liệu/Chứng chỉ) — đúng như bản gốc chỉ có "Tổng quan" có nội
+dung thật.
+
+Đã commit + push (`0fe8b51`). Bước tiếp theo (chưa làm, theo Quy tắc 5):
+E.3 — AI Workspace.
