@@ -11,20 +11,25 @@ import { getSupabaseServer } from "@/lib/supabase-server";
  * quyền (đúng cho đơn mua đứt).
  *
  * Ở đây câu hỏi là "user này CÓ PHẢI Premium không". `NULL` KHÔNG thể coi là
- * Premium — hiện 16/16 member đều `NULL`, hiểu ngược lại là mở toàn bộ nội
- * dung Premium cho tất cả mọi người. Vì vậy:
+ * Premium ngay — phải fallback kiểm tra `orders` (xem MỤC 1 bên dưới) trước
+ * khi kết luận Free.
  *
- *   Premium ⇔ `premium_expires_at` CÓ giá trị VÀ còn hạn (> now).
- *
- * ĐIỂM CẦN FOUNDER QUYẾT (chưa tự quyết, xem báo cáo): người mua ĐỨT một
- * chương trình Premium (V-Solo/V-Scale — đơn không có hạn nên
- * `premium_expires_at` vẫn `NULL`) hiện KHÔNG được tính là Premium theo quy
- * tắc trên. Nếu Founder muốn tính, cần bổ sung: hoặc set
- * `premium_expires_at` khi xác nhận đơn, hoặc mở rộng hàm này đọc thêm
- * `orders`. Không tự mở rộng vì đây là quyết định kinh doanh.
+ *   1. `premium_expires_at` CÓ giá trị VÀ còn hạn (> now) → Premium.
+ *   2. `premium_expires_at` là `NULL` → fallback: có bất kỳ đơn
+ *      `orders.status='confirmed'` nào không (không lọc theo sản phẩm cụ
+ *      thể) → Premium. Không có đơn nào → Free.
  *
  * Cột chỉ admin/service_role ghi được (trigger `guard_members_self_update`,
  * Phase 28) — user không tự gia hạn cho mình được.
+ * ---------------------------------------------------------------------------
+ * MỤC 1 — QUYẾT ĐỊNH KINH DOANH ĐÃ CHỐT (Lệnh "Premium mua đứt = tất cả 5
+ * chương trình, tiếp tục E.3")
+ *
+ * Mua BẤT KỲ 1 trong 5 chương trình trả phí (`ai-coban`/`ai-nangcao`/
+ * `openclaw`/`solo`/`scale`) → tự động mở Premium nền tảng (CKOS + Học viện
+ * AI + AI Workspace), không phân biệt gói nào — vì vậy fallback ở dưới
+ * KHÔNG lọc theo `course_id`/sản phẩm cụ thể, chỉ cần tồn tại 1 đơn
+ * `confirmed` bất kỳ của user đó.
  * ---------------------------------------------------------------------------
  */
 export type PremiumStatus = {
@@ -44,6 +49,7 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData.user?.id;
+  const email = userData.user?.email;
   if (!userId) return FREE_STATUS;
 
   // RLS `members can read own row` cho phép đọc chính dòng của mình.
@@ -54,7 +60,20 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
     .maybeSingle();
 
   const expiresAt = member?.premium_expires_at as string | null | undefined;
-  const isPremium = Boolean(expiresAt) && new Date(expiresAt as string).getTime() > Date.now();
+  if (expiresAt && new Date(expiresAt).getTime() > Date.now()) {
+    return { isPremium: true, signedIn: true };
+  }
 
-  return { isPremium, signedIn: true };
+  // Fallback MỤC 1 — mua đứt bất kỳ 1 trong 5 chương trình cũng mở Premium.
+  if (!email) return { isPremium: false, signedIn: true };
+
+  const { data: order } = await supabase
+    .from("orders")
+    .select("id")
+    .eq("member_email", email)
+    .eq("status", "confirmed")
+    .limit(1)
+    .maybeSingle();
+
+  return { isPremium: Boolean(order), signedIn: true };
 }
