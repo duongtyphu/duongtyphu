@@ -1,0 +1,229 @@
+/* =============================================================================
+ * Học viện AI 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của
+ * `design_handoff_vo_duong_ai/Hoc vien AI.html`.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho Trang chủ Portal
+ * (`trang-chu.css`, tiền tố `.tcp`) và Hệ tri thức CKOS (`he-tri-thuc.css`,
+ * tiền tố `.ckos`), không phát sinh điều chỉnh mới nào:
+ *
+ *  1. Mọi selector thêm tiền tố `.hva` — file này nạp trong cây `/v2`, để
+ *     nguyên `*`, `body`, `a`, `.card`... sẽ đè lên Landing Page và Portal/
+ *     Admin 1.0 đang chạy Production. Tiền tố không đổi giá trị nào.
+ *  2. `:root{...}` → `.hva{...}`: cùng biến, cùng giá trị, chỉ đổi phạm vi.
+ *  3. `body{...}` gộp vào `.hva{...}` (cùng lý do 2).
+ *  4. `'Inter'` → `'InterGF'` (xem chú thích tại chỗ).
+ *  5. `line-height: normal` (xem chú thích tại chỗ).
+ *  6. Revert Tailwind Preflight trong phạm vi `.hva` (xem khối riêng bên dưới).
+ *
+ * `@keyframes` CỐ TÌNH để toàn cục, giữ nguyên tên gốc (`gradPulse`,
+ * `orbFloat`, `liveBlink`, `sparkleTwinkle`) vì markup gốc tham chiếu chúng
+ * qua inline style. `sparkleTwinkle` trùng tên với bản trong `trang-chu.css`/
+ * `he-tri-thuc.css` — đã đối chiếu: ĐỊNH NGHĨA GIỐNG HỆT NHAU nên nạp cả ba
+ * không xung đột.
+ * ========================================================================== */
+
+.hva{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.hva, .hva *{box-sizing:border-box;margin:0;padding:0}
+
+/* -----------------------------------------------------------------------------
+ * Điều chỉnh 6 — TRẢ LẠI mặc định trình duyệt cho những gì Tailwind Preflight
+ * đã đổi (giống hệt cách đã làm ở `trang-chu.css`/`he-tri-thuc.css`).
+ * -------------------------------------------------------------------------- */
+.hva *,
+.hva *::before,
+.hva *::after { border-width: revert; border-style: revert; border-color: revert }
+.hva h1, .hva h2, .hva h3, .hva h4, .hva h5, .hva h6 { font-size: revert; font-weight: revert }
+.hva b, .hva strong { font-weight: revert }
+.hva ol, .hva ul, .hva menu { list-style: revert }
+.hva img, .hva svg, .hva video, .hva canvas, .hva audio,
+.hva iframe, .hva embed, .hva object { display: revert; vertical-align: revert }
+.hva img, .hva video { max-width: revert; height: revert }
+.hva button, .hva input, .hva select, .hva optgroup, .hva textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.hva ::placeholder { color: revert; opacity: revert }
+
+.hva {
+  /* Điều chỉnh 4: 'Inter' → 'InterGF' — ĐÚNG bộ Inter biến thiên bản thiết kế
+   * dùng, tự host ở `src/app/v2/inter-gf.css`. */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5: mockup là file HTML độc lập nên `line-height` mặc định là
+   * `normal`; app thật có `body{line-height:1.55}`/Preflight
+   * `html{line-height:1.5}` đẩy cao mọi dòng chữ không tự khai line-height. */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.hva a{color:var(--violet);text-decoration:none}
+.hva a:hover{color:var(--violet-dark)}
+.hva .app{display:flex;min-height:100vh}
+.hva .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.hva .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.hva .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hva .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.hva .brand .name .vo{color:#3B82F6}
+.hva .brand .name .ai{color:#fff}
+.hva nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.hva .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.hva .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.hva .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.hva .nav-item.active{background:var(--violet);color:#fff}
+.hva .nav-item.active svg{opacity:1}
+.hva .side-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:#6f6a91;margin:10px 12px 6px}
+.hva .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.hva .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.hva .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.hva .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.hva .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.hva .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.hva .promo button:active{transform:translateY(0) scale(.97)}
+
+.hva .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.hva .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.hva .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.hva .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.hva .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.hva .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.hva .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.hva .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.hva .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.hva .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.hva .icon-btn svg{width:18px;height:18px}
+.hva .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.hva .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.hva .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.hva .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.hva .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+
+.hva .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.hva .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.hva .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+
+.hva .page-head h1{font-size:26px;font-weight:800}
+.hva .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+
+.hva .tabs-row{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto}
+.hva .tabs-row .tab{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.hva .tabs-row .tab svg{width:15px;height:15px}
+.hva .tabs-row .tab.active{background:var(--violet);color:#fff}
+
+.hva .acad-hero{position:relative;border-radius:16px;padding:32px 36px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:24px;overflow:hidden;background:radial-gradient(ellipse 60% 90% at 78% 40%,#3b2a8f 0%,transparent 70%),linear-gradient(150deg,#120c30 0%,#1a1044 55%,#0c0824 100%)}
+.hva .acad-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 70%,rgba(255,255,255,.35) 0,transparent 100%),radial-gradient(1px 1px at 85% 60%,rgba(255,255,255,.4) 0,transparent 100%);pointer-events:none}
+.hva .acad-hero-text{position:relative;z-index:1;max-width:430px}
+.hva .acad-hero h2{font-size:25px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.hva .acad-hero p{font-size:13.5px;color:#b9b3de;line-height:1.65;margin-bottom:20px}
+.hva .acad-btn-row{display:flex;gap:10px}
+.hva .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13.5px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.hva .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(109,74,255,.5);filter:brightness(1.08)}
+.hva .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13.5px;cursor:pointer;transition:background .15s,transform .15s}
+.hva .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.hva .grad-wrap{position:relative;z-index:1;width:230px;height:190px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.hva .grad-glow{position:absolute;width:170px;height:170px;border-radius:50%;background:radial-gradient(circle,rgba(120,150,255,.4),transparent 70%);filter:blur(6px);animation:gradPulse 3.4s ease-in-out infinite}
+@keyframes gradPulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}
+.hva .grad-svg{position:relative;filter:drop-shadow(0 0 18px rgba(120,160,255,.55))}
+.hva .orb-icon{animation:orbFloat 3.2s ease-in-out infinite}
+@keyframes orbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.hva .section-head{display:flex;align-items:baseline;justify-content:space-between}
+.hva .section-head h3{font-size:17px;font-weight:800}
+.hva .section-head a{font-size:12.5px;font-weight:700}
+
+.hva .path-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.hva .path-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px}
+.hva .path-card .top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.hva .path-card .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hva .path-card .ico svg{width:17px;height:17px}
+.hva .path-card h5{font-size:13.5px;font-weight:700}
+.hva .path-card p{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:14px;min-height:36px}
+.hva .path-pct{font-size:12px;font-weight:800;margin-bottom:6px}
+.hva .path-track{height:6px;background:var(--bg);border-radius:5px;overflow:hidden;margin-bottom:8px}
+.hva .path-fill{height:100%;border-radius:5px}
+.hva .path-card .cnt{font-size:11.5px;color:var(--muted);text-align:right}
+
+.hva .course-scroll{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.hva .course-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.hva .course-card:hover{box-shadow:0 12px 26px rgba(30,20,80,.12);transform:translateY(-3px)}
+.hva .course-thumb{position:relative;height:110px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hva .course-thumb svg{width:56px;height:56px}
+.hva .course-badges{position:absolute;top:8px;left:8px;display:flex;gap:5px}
+.hva .badge-pill{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:6px;color:#fff}
+.hva .course-body{padding:12px}
+.hva .course-body h5{font-size:13px;font-weight:700;margin-bottom:5px;line-height:1.35}
+.hva .course-body .desc{font-size:11px;color:var(--muted);line-height:1.45;margin-bottom:8px;min-height:30px}
+.hva .course-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:8px}
+.hva .course-meta .rate{color:#e2b23c;font-weight:700}
+.hva .course-track{height:5px;background:var(--bg);border-radius:4px;overflow:hidden;margin-bottom:5px}
+.hva .course-fill{height:100%;background:var(--violet);border-radius:4px}
+.hva .course-pct{font-size:10.5px;color:var(--muted);text-align:right}
+
+.hva .feat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.hva .feat-item{display:flex;align-items:center;gap:11px}
+.hva .feat-item .ico{width:38px;height:38px;border-radius:9px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hva .feat-item .ico svg{width:18px;height:18px}
+.hva .feat-item h6{font-size:12.5px;font-weight:700}
+.hva .feat-item span{font-size:11px;color:var(--muted)}
+
+.hva .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.hva .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.hva .card-head h4{font-size:14px;font-weight:800}
+.hva .card-head a{font-size:12px;font-weight:600}
+
+.hva .ring-block{display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.hva .ring{width:88px;height:88px;border-radius:50%;background:conic-gradient(var(--violet) 0% 67%, var(--violet-light) 67% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hva .ring-inner{width:68px;height:68px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hva .ring-inner .pct{font-size:17px;font-weight:800;color:var(--violet)}
+.hva .ring-inner .pct-label{font-size:9px;color:var(--muted)}
+.hva .stat-lines{display:flex;flex-direction:column;gap:8px;flex:1}
+.hva .stat-line{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.hva .stat-line b{color:var(--text);font-weight:800}
+
+.hva .class-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+.hva .class-row:last-child{border-bottom:none}
+.hva .class-thumb{width:64px;height:48px;border-radius:8px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hva .class-thumb svg{width:22px;height:22px}
+.hva .live-tag{position:absolute;top:3px;left:3px;background:#ef4444;color:#fff;font-size:8px;font-weight:800;padding:1px 4px;border-radius:4px;display:flex;align-items:center;gap:2px}
+.hva .live-tag::before{content:'';width:4px;height:4px;border-radius:50%;background:#fff;animation:liveBlink 1.4s infinite}
+@keyframes liveBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.hva .class-info h6{font-size:12.5px;font-weight:700;margin-bottom:2px}
+.hva .class-info .who{font-size:11px;color:var(--muted);margin-bottom:2px}
+.hva .class-info .when{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.hva .class-info .when svg{width:10px;height:10px}
+.hva .see-all-link{display:block;text-align:center;font-size:12.5px;font-weight:700;margin-top:10px}
+
+.hva .skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hva .skill-chip{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:600}
+.hva .skill-chip .ico{width:30px;height:30px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hva .skill-chip .ico svg{width:15px;height:15px}
+
+/* MỤC E.2 — trạng thái rỗng trung thực (không có trong bản thiết kế, xem
+   chú thích trong HocVienClient.tsx). Dùng chung 1 class nhẹ, không định
+   kiểu mới ngoài những gì `.card p`/`.muted` gốc đã có. */
+.hva .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+
+@media (max-width:1180px){
+  .hva .content{flex-direction:column}
+.hva .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+.hva .right-col>.card{flex:1;min-width:280px}
+.hva .path-grid{grid-template-columns:repeat(2,1fr)}
+.hva .course-scroll{grid-template-columns:repeat(2,1fr)}
+.hva .feat-strip{grid-template-columns:repeat(2,1fr)}
+}
+
+.hva [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.hva [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.hva [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.hva .crown{position:relative}.hva .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}.hva .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
