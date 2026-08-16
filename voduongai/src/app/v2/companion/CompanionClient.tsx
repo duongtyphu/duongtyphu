@@ -200,6 +200,7 @@ export function CompanionClient({
         <PortalV2Shell
           premium={premium}
           showSearchBox={false}
+          useTopbarRightWrapper={false}
           profileSubtitle="Đang trò chuyện"
           promoText="Mở khóa toàn bộ tính năng nâng cao của Companion AI và Học viện."
           activeHtmlFile="Companion.html"

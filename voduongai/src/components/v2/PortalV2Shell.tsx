@@ -66,6 +66,8 @@ export function PortalV2Shell({
   activeHtmlFile,
   companionExpanded = false,
   showSearchBox = true,
+  customSearch,
+  useTopbarRightWrapper = true,
   profileSubtitle,
   children,
 }: {
@@ -80,6 +82,23 @@ export function PortalV2Shell({
   /** `true` khi đang ở 1 trong 5 trang nhóm Companion — đổi nút "Companion AI" phẳng thành submenu mở rộng. */
   companionExpanded?: boolean;
   showSearchBox?: boolean;
+  /**
+   * Ghi đè toàn bộ khối tìm kiếm (khi trang dùng markup khác `.search-box`
+   * chuẩn — vd `Su menh Companion.html` dùng class `.search`, không có
+   * `<kbd>` — đã audit xác nhận khác biệt thật, không phải mọi trang cùng 1
+   * khuôn `.search-box`). Khi truyền, bỏ qua `showSearchBox`/`searchPlaceholder`.
+   */
+  customSearch?: React.ReactNode;
+  /**
+   * `.topbar-right` (bọc upgrade-btn/icon-btn/profile, `margin-left:auto`)
+   * chỉ tồn tại ở 1 SỐ trang (đã audit: `AI Workspace.html`/`Hoc vien
+   * AI.html`/`He tri thuc CKOS.html` có; `Companion.html`/`Su menh
+   * Companion.html` KHÔNG — topbar của chúng để 3 phần tử là con trực tiếp,
+   * tự canh phải qua `justify-content:flex-end` hoặc `.search{flex:1}` đẩy
+   * sang phải). Mặc định `true` (khuôn phổ biến hơn) — đặt `false` khi trang
+   * xác nhận không có class này trong `<style>` gốc.
+   */
+  useTopbarRightWrapper?: boolean;
   /** Ghi đè dòng phụ dưới tên trong `.profile` (mặc định "Free"/"Premium") — vd nhóm Companion dùng "Lv.7 · 2,450 XP". */
   profileSubtitle?: React.ReactNode;
   children: React.ReactNode;
@@ -263,16 +282,17 @@ export function PortalV2Shell({
 
       <div className="main-col">
         <div className="topbar">
-          {showSearchBox ? (
-            <div className="search-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="7" />
-                <path d="M21 21l-4.3-4.3" />
-              </svg>
-              <input type="text" placeholder={searchPlaceholder} />
-              <kbd>⌘ K</kbd>
-            </div>
-          ) : null}
+          {customSearch ??
+            (showSearchBox ? (
+              <div className="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.3-4.3" />
+                </svg>
+                <input type="text" placeholder={searchPlaceholder} />
+                <kbd>⌘ K</kbd>
+              </div>
+            ) : null)}
           {(() => {
             const rightContent = (
               <>
@@ -298,10 +318,7 @@ export function PortalV2Shell({
                 </div>
               </>
             );
-            // `.topbar-right` (margin-left:auto) chỉ cần khi có `.search-box` đứng
-            // trước để đẩy sang phải — nhóm Companion không có search-box, topbar
-            // tự `justify-content:flex-end`, không bọc thêm div (đúng markup gốc).
-            return showSearchBox ? <div className="topbar-right">{rightContent}</div> : rightContent;
+            return useTopbarRightWrapper ? <div className="topbar-right">{rightContent}</div> : rightContent;
           })()}
         </div>
 
