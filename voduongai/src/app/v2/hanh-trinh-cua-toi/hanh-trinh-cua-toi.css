@@ -1,0 +1,189 @@
+/* =============================================================================
+ * Hành trình của tôi 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.htct` cho mọi selector; (2) `:root` → `.htct`;
+ * (3) `body` gộp vào `.htct`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.htct`.
+ * ========================================================================== */
+
+.htct{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+.htct, .htct *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.htct *,
+.htct *::before,
+.htct *::after { border-width: revert; border-style: revert; border-color: revert }
+.htct h1, .htct h2, .htct h3, .htct h4, .htct h5, .htct h6 { font-size: revert; font-weight: revert }
+.htct b, .htct strong { font-weight: revert }
+.htct ol, .htct ul, .htct menu { list-style: revert }
+.htct img, .htct svg, .htct video, .htct canvas, .htct audio,
+.htct iframe, .htct embed, .htct object { display: revert; vertical-align: revert }
+.htct img, .htct video { max-width: revert; height: revert }
+.htct button, .htct input, .htct select, .htct optgroup, .htct textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.htct ::placeholder { color: revert; opacity: revert }
+
+.htct {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.htct a{color:var(--violet);text-decoration:none}
+.htct a:hover{color:var(--violet-dark)}
+.htct .app{display:flex;min-height:100vh}
+.htct .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.htct .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.htct .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.htct .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.htct .brand .name .vo{color:#3B82F6}
+.htct .brand .name .ai{color:#fff}
+.htct nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.htct .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.htct .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.htct .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.htct .nav-item.active{background:var(--violet);color:#fff}
+.htct .nav-item.active svg{opacity:1}
+.htct .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px}
+.htct .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.htct .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.htct .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.htct .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.htct .hike-visual{width:100%;height:90px;margin-bottom:12px;display:flex;align-items:center;justify-content:center}
+.htct .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.htct .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.htct .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.htct .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.htct .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.htct .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.htct .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.htct .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.htct .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.htct .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.htct .icon-btn svg{width:18px;height:18px}
+.htct .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.htct .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.htct .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.htct .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.htct .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.htct .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.htct .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:22px}
+.htct .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.htct .page-head{display:flex;justify-content:space-between;align-items:flex-start}
+.htct .page-head h1{font-size:26px;font-weight:800}
+.htct .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+.htct .edit-goal-btn{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);padding:10px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.htct .edit-goal-btn:hover{background:var(--bg)}
+.htct .edit-goal-btn svg{width:14px;height:14px}
+.htct .progress-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr 1fr;gap:20px;align-items:center}
+.htct .progress-main h5{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.htct .progress-pct{font-size:32px;font-weight:800;color:var(--violet)}
+.htct .progress-sub{font-size:12.5px;color:var(--muted);margin:4px 0 10px}
+.htct .progress-track{height:8px;background:var(--bg);border-radius:5px;overflow:hidden;position:relative}
+.htct .progress-fill{height:100%;background:linear-gradient(90deg,var(--violet),#9b7bff);border-radius:5px}
+.htct .progress-track .pct-lbl{position:absolute;right:0;top:-20px;font-size:11px;font-weight:700;color:var(--muted)}
+.htct .mini-metric{border-left:1px solid var(--line);padding-left:20px}
+.htct .mini-metric .top{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);margin-bottom:8px}
+.htct .mini-metric .top svg{width:14px;height:14px;color:var(--violet)}
+.htct .mini-metric .val{font-size:22px;font-weight:800}
+.htct .mini-metric .val span{font-size:13px;color:var(--muted);font-weight:600}
+.htct .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px}
+.htct .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.htct .card-head h4{font-size:16px;font-weight:800}
+.htct .card-head a{font-size:12.5px;font-weight:700}
+.htct .stepper{display:flex;align-items:flex-start;justify-content:space-between;position:relative}
+.htct .step-connector{position:absolute;top:29px;left:9%;right:9%;height:3px;background:var(--line);z-index:0}
+.htct .step-connector-fill{position:absolute;top:29px;left:9%;height:3px;background:#189a52;z-index:0}
+.htct .step{flex:1;text-align:center;position:relative;z-index:1}
+.htct .step-dot{width:58px;height:58px;border-radius:50%;background:#fff;border:2px solid var(--line);color:var(--muted);display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.htct .step-dot svg{width:24px;height:24px}
+.htct .step.done .step-dot{border-color:#189a52;background:#e6f7ed;color:#189a52}
+.htct .step.current .step-dot{border-color:var(--violet);background:var(--violet-light);color:var(--violet);box-shadow:0 0 0 5px rgba(109,74,255,.12)}
+.htct .step h6{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.35}
+.htct .step .pct{font-size:12px;font-weight:800;color:var(--muted)}
+.htct .step.done .pct{color:#189a52}
+.htct .step.current .pct{color:var(--violet)}
+.htct .stage-notice{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--violet-light);border-radius:12px;padding:16px 20px;margin-top:20px}
+.htct .stage-notice .left{display:flex;gap:11px;align-items:flex-start}
+.htct .stage-notice .left svg{width:18px;height:18px;color:var(--violet);flex-shrink:0;margin-top:1px}
+.htct .stage-notice h6{font-size:13.5px;font-weight:700;color:var(--violet-dark)}
+.htct .stage-notice p{font-size:12px;color:#5c53a0;margin-top:2px}
+.htct .stage-notice button{background:var(--violet);color:#fff;border:none;padding:10px 18px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.htct .course-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.htct .course-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.htct .course-card:hover{box-shadow:0 12px 26px rgba(30,20,80,.12);transform:translateY(-3px)}
+.htct .course-thumb{position:relative;height:100px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.htct .course-thumb svg{width:52px;height:52px}
+.htct .pct-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:6px}
+.htct .course-body{padding:12px}
+.htct .course-tag{font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px}
+.htct .course-body h5{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.35}
+.htct .course-meta{font-size:11px;color:var(--muted);margin-bottom:8px}
+.htct .course-track{height:5px;background:var(--bg);border-radius:4px;overflow:hidden}
+.htct .course-fill{height:100%;background:var(--violet);border-radius:4px}
+.htct .streak-flame{width:38px;height:38px;flex-shrink:0}
+.htct .streak-num{font-size:26px;font-weight:800;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.htct .week-dots{display:flex;justify-content:space-between}
+.htct .week-dot{display:flex;flex-direction:column;align-items:center;gap:5px}
+.htct .week-dot .c{width:24px;height:24px;border-radius:50%;background:#189a52;color:#fff;display:flex;align-items:center;justify-content:center}
+.htct .week-dot .c svg{width:12px;height:12px}
+.htct .week-dot.off .c{background:var(--bg);border:1px solid var(--line)}
+.htct .week-dot span{font-size:10px;color:var(--muted);font-weight:700}
+.htct .act-row{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.htct .act-row:last-child{border-bottom:none}
+.htct .act-row .ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.htct .act-row .ico svg{width:15px;height:15px}
+.htct .act-row .info h6{font-size:12.3px;font-weight:700;line-height:1.4}
+.htct .act-row .info span{font-size:10.5px;color:var(--muted)}
+.htct .badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.htct .badge-tile{width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;isolation:isolate}
+.htct .badge-tile::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(from 180deg,rgba(255,255,255,.9),rgba(255,255,255,.15) 30%,rgba(255,255,255,.6) 55%,rgba(255,255,255,.15) 80%,rgba(255,255,255,.9));z-index:-1}
+.htct .badge-tile::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.65),transparent 42%),radial-gradient(circle at 70% 80%,rgba(0,0,0,.18),transparent 55%);pointer-events:none}
+.htct .badge-tile svg{width:22px;height:22px;position:relative;z-index:1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+.htct .badge-tile .spark{position:absolute;animation:badgeSparkle 2.4s ease-in-out infinite}
+@keyframes badgeSparkle{0%,100%{opacity:.2;transform:scale(.5)}50%{opacity:1;transform:scale(1)}}
+.htct .badge-more{background:var(--bg);color:var(--muted);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.htct .link-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.htct .link-row:last-child{border-bottom:none}
+.htct .link-row .ico{width:30px;height:30px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.htct .link-row .ico svg{width:14px;height:14px}
+.htct .link-row span{flex:1;font-size:12.5px;font-weight:600}
+.htct .link-row .chev{color:var(--muted);flex-shrink:0}
+.htct [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.htct [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.htct [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+@media (max-width:1180px){
+  .htct .content{flex-direction:column}
+  .htct .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .htct .right-col>.card{flex:1;min-width:280px}
+  .htct .progress-card{grid-template-columns:1fr 1fr;gap:16px}
+  .htct .mini-metric{border-left:none;padding-left:0}
+  .htct .stepper{flex-wrap:wrap;gap:16px}
+  .htct .step-connector, .htct .step-connector-fill{display:none}
+  .htct .course-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Bổ sung ngoài bản thiết kế gốc (file này không có class dưới đây) — mượn
+   nguyên style `.empty-hint` đã dùng ở các trang trước cho trạng thái rỗng
+   trung thực; `.link-row` thêm `cursor:pointer` vì giờ có `onClick` thật. */
+.htct .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+.htct .link-row{cursor:pointer}

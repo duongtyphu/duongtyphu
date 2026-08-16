@@ -69,6 +69,9 @@ export function PortalV2Shell({
   customSearch,
   useTopbarRightWrapper = true,
   profileSubtitle,
+  promoVisual,
+  promoButtonLabel = "Nâng cấp ngay",
+  promoButtonTarget = "Premium.html",
   children,
 }: {
   premium: PremiumStatus;
@@ -101,6 +104,18 @@ export function PortalV2Shell({
   useTopbarRightWrapper?: boolean;
   /** Ghi đè dòng phụ dưới tên trong `.profile` (mặc định "Free"/"Premium") — vd nhóm Companion dùng "Lv.7 · 2,450 XP". */
   profileSubtitle?: React.ReactNode;
+  /**
+   * Ghi đè khối `.crown` (ảnh viên kim cương + sparkle) trong `.promo` —
+   * mặc định `undefined` (giữ crown chuẩn). `Hanh trinh cua toi.html` là
+   * trang ĐẦU TIÊN dùng minh hoạ khác (đồi núi leo dốc thay viên kim
+   * cương) — đã audit xác nhận khác biệt thật, không phải mọi trang cùng 1
+   * khối `.crown`.
+   */
+  promoVisual?: React.ReactNode;
+  /** Nhãn nút cuối `.promo` — mặc định "Nâng cấp ngay". */
+  promoButtonLabel?: string;
+  /** `htmlFile` (khoá `PORTAL_HREF_MAP`) nút `.promo` điều hướng tới — mặc định `"Premium.html"`. */
+  promoButtonTarget?: string;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -259,24 +274,26 @@ export function PortalV2Shell({
         </nav>
 
         <div className="promo">
-          <div className="crown" style={{ background: "none", boxShadow: "none", width: 54, height: 54, overflow: "visible" }}>
-            {CROWN_SPARKLES.map((style, i) => (
-              <svg key={i} className="crown-sparkle" style={style} viewBox="0 0 24 24" fill="currentColor">
-                <path d={SPARKLE_PATH} />
-              </svg>
-            ))}
-            {/* eslint-disable-next-line @next/next/no-img-element -- ảnh minh hoạ tĩnh
-                của bản thiết kế, kích thước cố định 58.5px; dùng <img> để giữ đúng
-                markup gốc (next/image chèn thêm wrapper làm lệch bố cục). */}
-            <img
-              src="/v2-static/assets/icon-premium.png"
-              alt=""
-              style={{ width: 58.5, height: 58.5, objectFit: "contain", position: "relative", zIndex: 1 }}
-            />
-          </div>
+          {promoVisual ?? (
+            <div className="crown" style={{ background: "none", boxShadow: "none", width: 54, height: 54, overflow: "visible" }}>
+              {CROWN_SPARKLES.map((style, i) => (
+                <svg key={i} className="crown-sparkle" style={style} viewBox="0 0 24 24" fill="currentColor">
+                  <path d={SPARKLE_PATH} />
+                </svg>
+              ))}
+              {/* eslint-disable-next-line @next/next/no-img-element -- ảnh minh hoạ tĩnh
+                  của bản thiết kế, kích thước cố định 58.5px; dùng <img> để giữ đúng
+                  markup gốc (next/image chèn thêm wrapper làm lệch bố cục). */}
+              <img
+                src="/v2-static/assets/icon-premium.png"
+                alt=""
+                style={{ width: 58.5, height: 58.5, objectFit: "contain", position: "relative", zIndex: 1 }}
+              />
+            </div>
+          )}
           <h4>{promoTitle}</h4>
           <p>{promoText}</p>
-          <button onClick={() => go("Premium.html")}>Nâng cấp ngay</button>
+          <button onClick={() => go(promoButtonTarget)}>{promoButtonLabel}</button>
         </div>
       </aside>
 
