@@ -1,0 +1,183 @@
+/* =============================================================================
+ * Companion AI 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.comp` cho mọi selector; (2) `:root` → `.comp`;
+ * (3) `body` gộp vào `.comp`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.comp`.
+ * ========================================================================== */
+
+.comp{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.comp, .comp *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.comp *,
+.comp *::before,
+.comp *::after { border-width: revert; border-style: revert; border-color: revert }
+.comp h1, .comp h2, .comp h3, .comp h4, .comp h5, .comp h6 { font-size: revert; font-weight: revert }
+.comp b, .comp strong { font-weight: revert }
+.comp ol, .comp ul, .comp menu { list-style: revert }
+.comp img, .comp svg, .comp video, .comp canvas, .comp audio,
+.comp iframe, .comp embed, .comp object { display: revert; vertical-align: revert }
+.comp img, .comp video { max-width: revert; height: revert }
+.comp button, .comp input, .comp select, .comp optgroup, .comp textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.comp ::placeholder { color: revert; opacity: revert }
+
+.comp {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.comp a{color:var(--violet);text-decoration:none}
+.comp a:hover{color:var(--violet-dark)}
+.comp .app{display:flex;min-height:100vh}
+.comp .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.comp .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.comp .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.comp .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.comp .brand .name .vo{color:#3B82F6}
+.comp .brand .name .ai{color:#fff}
+.comp nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.comp .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.comp .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.comp .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.comp .nav-item.active{background:var(--violet);color:#fff}
+.comp .nav-item.active svg{opacity:1}
+.comp .side-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:#6f6a91;margin:10px 12px 6px}
+.comp .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.comp .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.comp .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.comp .nav-parent:hover{background:none}
+.comp .nav-parent svg{opacity:1}
+.comp .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.comp .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.comp .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.comp .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.comp .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.comp .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.comp .promo button:active{transform:translateY(0) scale(.97)}
+.comp .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.comp .topbar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.comp .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.comp .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.comp .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.comp .icon-btn svg{width:18px;height:18px}
+.comp .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.comp .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.comp .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.comp .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.comp .profile .plan{font-size:11px;color:var(--muted)}
+.comp .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.comp .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.comp .right-col{width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.comp .page-head{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.comp .page-head-text h1{font-size:24px;font-weight:800;display:flex;align-items:center;gap:10px}
+.comp .mentor-pill{font-size:11.5px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.comp .page-head-text p{font-size:14px;color:var(--muted);margin-top:6px}
+.comp .head-bot{width:96px;height:96px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
+.comp .head-bot img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(30,20,80,.25))}
+.comp .head-sparkle{position:absolute;color:#c9bdff;animation:sparkleTwinkle 2.4s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.25;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+.comp .tabs{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px}
+.comp .tab{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:10px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none}
+.comp .tab svg{width:16px;height:16px}
+.comp .tab.active{background:var(--violet);color:#fff}
+.comp .chat-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:18px}
+.comp .msg-row{display:flex;gap:12px;max-width:78%}
+.comp .msg-row.user{align-self:flex-end;flex-direction:row-reverse}
+.comp .msg-avatar{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#8b6bff,#5a37e6);overflow:hidden}
+.comp .msg-avatar img{width:100%;height:100%;object-fit:cover}
+.comp .msg-avatar svg{width:19px;height:19px}
+.comp .msg-avatar.user{background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;font-weight:700;font-size:13px}
+.comp .msg-bubble{background:var(--bg);border-radius:13px;padding:13px 16px;font-size:13.5px;line-height:1.6}
+.comp .msg-row.user .msg-bubble{background:var(--violet-light)}
+.comp .msg-time{font-size:10.5px;color:var(--muted);margin-top:6px;display:block}
+.comp .sugg-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-left:46px}
+.comp .sugg-mini{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:12px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.comp .sugg-mini:hover{box-shadow:0 6px 14px rgba(30,20,80,.1);transform:translateY(-2px)}
+.comp .sugg-mini .ico{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+.comp .sugg-mini .ico svg{width:15px;height:15px}
+.comp .sugg-mini h5{font-size:12.5px;font-weight:700;margin-bottom:3px}
+.comp .sugg-mini p{font-size:11px;color:var(--muted);line-height:1.4;margin-bottom:8px}
+.comp .sugg-mini a{font-size:11.5px;font-weight:700}
+.comp .cta-box{margin-left:46px;background:linear-gradient(145deg,#f4efff,#e4d9ff);border-radius:11px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.comp .cta-box span{font-size:13px;font-weight:700;color:var(--violet-dark)}
+.comp .chat-input-row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:11px;padding:6px 6px 6px 16px}
+.comp .chat-input-row input{flex:1;border:none;outline:none;font-size:13.5px;font-family:inherit;background:none}
+.comp .chat-send{width:38px;height:38px;border-radius:9px;background:var(--violet);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:transform .15s,filter .15s}
+.comp .chat-send:hover{transform:scale(1.06);filter:brightness(1.08)}
+.comp .chat-send svg{width:17px;height:17px}
+.comp .chip-row{display:flex;gap:8px;flex-wrap:wrap}
+.comp .chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);padding:8px 13px;border-radius:9px;font-size:12.5px;font-weight:600;color:var(--text);cursor:pointer;transition:background .15s}
+.comp .chip:hover{background:var(--violet-light);color:var(--violet-dark)}
+.comp .chip svg{width:14px;height:14px}
+.comp /* right column */
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.comp .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.comp .card-head h4{font-size:14px;font-weight:800}
+.comp .card-head a{font-size:12px;font-weight:600}
+.comp .ring-wrap{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.comp .ring{width:80px;height:80px;border-radius:50%;background:conic-gradient(var(--violet) 0% 82%, var(--violet-light) 82% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.comp .ring-inner{width:62px;height:62px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.comp .ring-inner .lv{font-size:15px;font-weight:800;color:var(--violet)}
+.comp .ring-inner .lv-label{font-size:9.5px;color:var(--muted)}
+.comp .profile-stats{display:flex;flex-direction:column;gap:6px}
+.comp .profile-stat{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.comp .profile-stat svg{width:15px;height:15px;color:var(--violet)}
+.comp .profile-stat b{font-weight:800}
+.comp .goal-title{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;gap:8px;align-items:flex-start}
+.comp .goal-title .ico{width:30px;height:30px;border-radius:8px;background:linear-gradient(145deg,#8b6bff,#5a37e6);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.comp .goal-title .ico svg{width:16px;height:16px}
+.comp .goal-progress-track{height:7px;background:var(--bg);border-radius:5px;overflow:hidden;margin:8px 0}
+.comp .goal-progress-fill{height:100%;background:linear-gradient(90deg,var(--violet),#9b7bff);border-radius:5px}
+.comp .goal-check{display:flex;align-items:center;gap:8px;font-size:12.5px;padding:5px 0;color:var(--muted)}
+.comp .goal-check.done{color:var(--text)}
+.comp .goal-check svg{width:15px;height:15px;flex-shrink:0}
+.comp .goal-check.done svg{color:#16a34a}
+.comp .reco-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer}
+.comp .reco-row:last-child{border-bottom:none}
+.comp .reco-row svg{width:16px;height:16px;color:var(--violet);flex-shrink:0}
+.comp .reco-tag{margin-left:auto;font-size:10px;font-weight:800;background:var(--violet-light);color:var(--violet);padding:2px 7px;border-radius:6px;flex-shrink:0}
+.comp .tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.comp .tool-ico{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.comp .tool-ico svg{width:17px;height:17px}
+.comp .help-card{background:linear-gradient(160deg,#241c4d,#3d2a8f);border-radius:14px;padding:18px;color:#fff}
+.comp .help-card p{font-size:12.5px;color:#c3bde3;line-height:1.5;margin:8px 0 14px}
+.comp .help-card button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
+@media (max-width:1180px){
+  .comp .content{flex-direction:column}
+  .comp .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .comp .right-col>.card, .comp .right-col>.help-card{flex:1;min-width:280px}
+  .comp .sugg-row{grid-template-columns:1fr;margin-left:0}
+  .comp .cta-box{margin-left:0}
+}
+.comp [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.comp [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.comp [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.comp .tool-ico{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.comp .tool-ico::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.comp .tool-ico svg{position:relative;z-index:1}
+.comp .crown{position:relative}
+.comp .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.comp .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
