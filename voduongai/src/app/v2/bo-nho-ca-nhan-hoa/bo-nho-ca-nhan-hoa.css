@@ -1,0 +1,163 @@
+/* =============================================================================
+ * Bộ nhớ & Cá nhân hoá 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.bnc` cho mọi selector; (2) `:root` → `.bnc`;
+ * (3) `body` gộp vào `.bnc`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.bnc`.
+ * ========================================================================== */
+
+.bnc{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+.bnc, .bnc *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.bnc *,
+.bnc *::before,
+.bnc *::after { border-width: revert; border-style: revert; border-color: revert }
+.bnc h1, .bnc h2, .bnc h3, .bnc h4, .bnc h5, .bnc h6 { font-size: revert; font-weight: revert }
+.bnc b, .bnc strong { font-weight: revert }
+.bnc ol, .bnc ul, .bnc menu { list-style: revert }
+.bnc img, .bnc svg, .bnc video, .bnc canvas, .bnc audio,
+.bnc iframe, .bnc embed, .bnc object { display: revert; vertical-align: revert }
+.bnc img, .bnc video { max-width: revert; height: revert }
+.bnc button, .bnc input, .bnc select, .bnc optgroup, .bnc textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.bnc ::placeholder { color: revert; opacity: revert }
+
+.bnc {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.bnc a{color:var(--violet);text-decoration:none}
+.bnc .app{display:flex;min-height:100vh}
+.bnc .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.bnc .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.bnc .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.bnc .brand .name{font-weight:800;font-size:15px}
+.bnc .brand .name .vo{color:#3B82F6}
+.bnc .brand .name .ai{color:#fff}
+.bnc nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.bnc .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.bnc .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.bnc .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.bnc .nav-item.active{background:var(--violet);color:#fff}
+.bnc .nav-item.active svg{opacity:1}
+.bnc .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.bnc .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.bnc .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.bnc .nav-parent:hover{background:none}
+.bnc .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px}
+.bnc .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.bnc .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.bnc .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.bnc .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
+.bnc .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.bnc .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.bnc .search{flex:1;max-width:640px;position:relative}
+.bnc .search input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-family:inherit}
+.bnc .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.bnc .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.bnc .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.bnc .icon-btn svg{width:18px;height:18px}
+.bnc .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px}
+.bnc .profile{display:flex;align-items:center;gap:9px}
+.bnc .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.bnc .profile .who{font-size:13px;font-weight:600}
+.bnc .profile .plan{display:inline-block;background:#fef3c7;color:#92720a;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
+.bnc .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.bnc .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
+.bnc .right-col{width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.bnc .page-head{display:flex;align-items:center;gap:10px}
+.bnc .page-head .ico{width:32px;height:32px;border-radius:9px;background:linear-gradient(145deg,#8b6bff,#5a37e6);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bnc .page-head .ico svg{width:17px;height:17px}
+.bnc .page-head h1{font-size:23px;font-weight:800}
+.bnc .page-head p{font-size:13.5px;color:var(--muted);margin-top:2px}
+.bnc .tabs{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px}
+.bnc .tab{flex:1;text-align:center;padding:10px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none}
+.bnc .tab.active{background:var(--violet);color:#fff}
+.bnc .stat-row{display:flex;gap:14px}
+.bnc .stat-card{flex:1;background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;align-items:center;gap:12px}
+.bnc .stat-card .ico{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bnc .stat-card .ico svg{width:19px;height:19px}
+.bnc .stat-card .n{font-size:19px;font-weight:800}
+.bnc .stat-card .l{font-size:11px;color:var(--muted)}
+.bnc .heart-card{background:linear-gradient(160deg,#241c4d,#3d2a8f);border-radius:13px;padding:16px;color:#fff;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;justify-content:center}
+.bnc .heart-card img{width:44px;height:44px;object-fit:contain;margin-bottom:4px}
+.bnc .heart-card h5{font-size:13px;font-weight:800}
+.bnc .heart-card p{font-size:11px;color:#c3bde3;line-height:1.4}
+.bnc .section-title{font-size:15px;font-weight:800;margin-bottom:12px}
+.bnc .two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.bnc .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.bnc .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.bnc .card-head h4{font-size:14px;font-weight:800}
+.bnc .card-head a{font-size:12px;font-weight:600}
+.bnc .memory-row{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+.bnc .memory-row:last-child{border-bottom:none}
+.bnc .memory-row .ico{width:28px;height:28px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bnc .memory-row .ico svg{width:14px;height:14px}
+.bnc .memory-row .txt{font-size:12.5px;line-height:1.4}
+.bnc .memory-row .meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:8px;align-items:center}
+.bnc .memory-row .tag{background:#fef3c7;color:#92720a;font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:auto;flex-shrink:0}
+.bnc .topic-row{display:flex;flex-direction:column;gap:6px;padding:9px 0;border-bottom:1px solid var(--line)}
+.bnc .topic-row:last-child{border-bottom:none}
+.bnc .topic-top{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600}
+.bnc .topic-top .ico{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bnc .topic-top .ico svg{width:12px;height:12px}
+.bnc .topic-top .pct{margin-left:auto;font-weight:800}
+.bnc .topic-track{height:6px;border-radius:4px;background:var(--bg);overflow:hidden}
+.bnc .topic-fill{height:100%;background:linear-gradient(90deg,var(--violet),#9b7bff);border-radius:4px}
+.bnc .personalize-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+.bnc .personalize-card p{font-size:13px;color:var(--muted);max-width:440px;margin-top:4px}
+.bnc .action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.bnc .action-tile{background:var(--bg);border-radius:11px;padding:14px;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.bnc .action-tile .ico{width:30px;height:30px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.bnc .action-tile .ico svg{width:15px;height:15px}
+.bnc .action-tile h6{font-size:12.5px;font-weight:700}
+.bnc .action-tile p{font-size:11px;color:var(--muted);margin:0}
+.bnc .brain-visual{width:110px;height:110px;flex-shrink:0;border-radius:16px;background:linear-gradient(160deg,#241c4d,#3d2a8f);display:flex;align-items:center;justify-content:center}
+.bnc .brain-visual svg{width:56px;height:56px}
+.bnc .summary-row{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.bnc .summary-row:last-child{border-bottom:none}
+.bnc .summary-row svg{width:15px;height:15px;color:var(--muted);flex-shrink:0;margin-top:1px}
+.bnc .summary-row .l{color:var(--muted);display:block;font-size:11px}
+.bnc .summary-row .v{font-weight:700}
+.bnc .privacy-item{display:flex;gap:8px;align-items:flex-start;font-size:12px;padding:6px 0;line-height:1.4}
+.bnc .privacy-item svg{width:15px;height:15px;color:var(--violet);flex-shrink:0;margin-top:1px}
+@media (max-width:1180px){
+  .bnc .content{flex-direction:column}
+  .bnc .right-col{width:100%}
+  .bnc .two-col{grid-template-columns:1fr}
+  .bnc .stat-row{flex-wrap:wrap}
+  .bnc .action-grid{grid-template-columns:repeat(2,1fr)}
+  .bnc .personalize-card{flex-direction:column;align-items:flex-start}
+}
+.bnc [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.bnc [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.bnc [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.bnc .tool-ico{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.bnc .tool-ico::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.bnc .tool-ico svg{position:relative;z-index:1}
+.bnc .crown{position:relative}
+.bnc .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.bnc .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
