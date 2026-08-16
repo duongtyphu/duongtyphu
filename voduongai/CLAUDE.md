@@ -5637,3 +5637,169 @@ dung thật.
 
 Đã commit + push (`0fe8b51`). Bước tiếp theo (chưa làm, theo Quy tắc 5):
 E.3 — AI Workspace.
+
+## Lệnh "Premium mua đứt = tất cả 5 chương trình, tiếp tục E.3"
+
+### Mục 1 — Premium mua đứt: quyết định kinh doanh đã chốt (đảo ngược STOP trước đó)
+
+Mục "Mục 1 — Premium mua đứt fallback: STOP, cần Founder quyết" ở lệnh
+trước đã dừng lại đúng vì không có cột/flag nào phân biệt "sản phẩm nào mở
+khoá Premium nền tảng". Lệnh này Founder xác nhận trực tiếp: **mua BẤT KỲ
+1 trong 5 chương trình trả phí** (`ai-coban`/`ai-nangcao`/`openclaw`/
+`solo`/`scale`) **đều mở Premium nền tảng** (CKOS + Học viện AI + AI
+Workspace) như nhau — không phân biệt gói nào, không cần lọc theo
+`course_id`.
+
+`src/lib/v2/premium-access.ts`'s `getPremiumStatus()` thêm fallback: (1)
+`premium_expires_at` có giá trị và còn hạn → Premium (giữ nguyên logic Bước
+D); (2) `NULL` → fallback kiểm tra có bất kỳ đơn `orders.status='confirmed'`
+nào của email đó không (KHÔNG lọc `course_id`) → Premium nếu có, Free nếu
+không. Test mới `src/lib/v2/__tests__/premium-access.test.ts` (5 test) phủ
+đủ: còn hạn → Premium bất kể đơn hàng; `NULL` + có đơn confirmed → Premium
+qua fallback; `NULL` + không đơn → Free; hết hạn + không đơn → Free; chưa
+đăng nhập → `FREE_STATUS`, không chạm bảng nào. Đã commit `33d7e16`.
+
+### Xung đột 1.0/2.0 ở `tools`/`ai_workflow_sections` — 2 lần STOP, cả 2 Founder chọn ghi đè
+
+Trước khi import nội dung Workspace còn lại (đã hoãn từ Bước C), audit qua
+Supabase xác nhận cả 2 bảng ĐANG PHỤC VỤ Portal 1.0 Production thật (không
+phải bảng mồ côi): `tools` — 11 dòng, đọc bởi `live-tools.ts` cho
+`/portal/aiworkspace` + `/portal/aiworkspace/[slug]`; `ai_workflow_sections`
+— 4 dòng, đọc bởi `AiWorkflowSection` (`AiSpaceSections.tsx`) cho
+`/portal/aiworkspace`. Đây đúng điều kiện STOP của lệnh giao gốc ("nếu
+chạm Portal 1.0 Production hoặc ai xem Premium — dừng lại hỏi") — đã hỏi
+qua `AskUserQuestion` 2 lần riêng biệt (không gộp, vì rủi ro khác nhau: 1
+bảng đổi nội dung Công cụ AI, 1 bảng đổi nội dung Workflow):
+
+- **`ai_workflow_sections`:** Founder chọn **ghi đè** — 4 dòng cũ (nội
+  dung 1.0) → 4 workflow mẫu mới của khung nội dung Workspace 2.0.
+- **`tools`:** Founder chọn **ghi đè bằng 27 công cụ mới** (khớp lựa chọn
+  trên) — nhưng khi soạn migration phát hiện brief đếm trùng 2 công cụ
+  dùng ở nhiều nhóm (Perplexity ở nhóm 1&6, Claude/ChatGPT ở nhóm 1&2) —
+  đã ghi rõ trong migration SQL: **25 dòng DB thật** (mỗi tool 1 dòng duy
+  nhất), không tạo dòng trùng để cố khớp con số "27" của brief (con số đó
+  đếm theo lượt xuất hiện trong bảng, không phải số tool duy nhất).
+
+Migration `phase37_ai_workspace_content_e3` (`apply_migration`,
+`success:true`): `DELETE`+`INSERT` cả 2 bảng với nội dung mới (25
+tools/6 danh mục: Trợ lý AI ×5, Viết lách & Nội dung ×4, Hình ảnh AI ×5,
+Video AI ×4, Âm thanh AI ×3, Nghiên cứu & Phân tích ×4 — đúng URL công
+khai thật, không placeholder); `workspace_projects` (0 dòng trước đó) thêm
+2 dòng mẫu `is_sample=true` (Content YouTube AI 65% in_progress, Viết bài
+blog chuẩn SEO 100% completed), chủ sở hữu kỹ thuật là `id` của Founder
+(chỉ để thoả FK `NOT NULL`, không giới hạn ai xem — xem policy dưới); thêm
+policy mới **`"public read sample projects" ON workspace_projects FOR
+SELECT USING (is_sample = true)`** — tự quyết định (không hỏi lại) vì đây
+là nhu cầu kỹ thuật nhỏ phục vụ đúng ý đồ thiết kế đã duyệt ("2 dự án mẫu
+hiển thị công khai cho mọi user"), không đụng Production 1.0 (bảng 0 dòng
+trước đó, không consumer 1.0 nào).
+
+**Ảnh hưởng đã biết lên Portal 1.0:** `/portal/aiworkspace` (1.0) đổi nội
+dung Công cụ AI + Workflow ngay lập tức sau migration — đây là hệ quả
+Founder đã chấp nhận rõ ràng qua 2 lần `AskUserQuestion`, không phải sự cố
+ngoài ý muốn.
+
+## Bước E.3 — AI Workspace 2.0 (`/v2/ai-workspace`) — module cuối 3 module ưu tiên
+
+Cùng kỹ thuật 1:1 đã dùng cho CKOS (Bước E.1)/Học viện AI (Bước E.2): tiền
+tố CSS `.aiw`, đúng 6 điều chỉnh kỹ thuật, sidebar/topbar/`HREF_MAP` copy
+verbatim, `AiWorkspaceClient.tsx` "use client" + `page.tsx` Server
+Component nối dữ liệu thật + `getPremiumStatus()`. Đã xoá bản mock cũ
+`src/app/v2/(portal)/ai-workspace/` (trùng route `/v2/ai-workspace` với
+route mới — Turbopack chặn build nếu không xoá, đúng lỗi đã gặp ở
+he-tri-thuc/hoc-vien-ai).
+
+`src/lib/portal/live-workspace.ts` (mới):
+- `getWorkspaceToolGroups()` — 6 nhóm, thứ tự = thứ tự xuất hiện đầu tiên
+  trong `tools` theo cột `order` (KHÔNG hardcode danh sách 6 tên — nếu
+  Admin thêm danh mục mới qua `/admin/tools` sau này, nhóm mới tự xuất
+  hiện). Số đếm thật: 5/4/5/4/3/4 (khác số mẫu 12/18/15/12/8/10 trong bản
+  thiết kế).
+- `getWorkspaceFavoriteTools()` — "Công cụ yêu thích" không có bảng lưu
+  preference nào thật; dùng đúng 5 tool id khớp bản thiết kế minh hoạ
+  (`chatgpt`/`claude`/`midjourney`/`notion-ai`/`perplexity` — cả 5 đều là
+  dòng thật trong `tools` sau migration, không phải bịa). Nút star chỉ
+  toggle client-side, không lưu (đúng hành vi JS gốc của mockup, vốn cũng
+  không persist).
+- `getWorkspaceWorkflows()` — 4 dòng `ai_workflow_sections` thật.
+- `getWorkspaceProjects()` — 1 câu SELECT qua `getSupabaseServer()`
+  (session client) tận dụng RLS OR giữa 2 policy permissive (`own` +
+  `public read sample projects`) để trả đúng "dự án thật của user đang
+  đăng nhập + 2 dự án mẫu" trong 1 lần gọi, không cần 2 client/2 query.
+- `getWorkspaceActivity()` — đọc `workspace_project_history` (bảng thật,
+  0 dòng vì hệ thống mới — không phải thiếu hạ tầng).
+- `getWorkspaceLimits(premium)` — Bước D: "1 workflow mở/tháng, tối đa 3
+  dự án cùng lúc" cho Free, không giới hạn cho Premium. **Cố ý KHÔNG tái
+  dùng `getWorkspaceProjects()`** cho phần tính giới hạn — vì
+  `workspace_projects_admin` (policy `ALL`, không lọc chủ sở hữu) khiến
+  session Admin đọc được TOÀN BỘ dự án thật của MỌI người dùng qua câu
+  SELECT chung, dùng tập đó để tính hạn mức cá nhân sẽ đếm nhầm dự án của
+  người khác vào quota của Admin. Dùng 1 câu query riêng, lọc tường minh
+  `eq("user_id", userId).eq("is_sample", false)` sau khi tự
+  `auth.getUser()`. "1 workflow mở/tháng" = số `workflow_id` KHÁC NHAU
+  trong các dự án thật tạo ra trong tháng hiện tại (theo `created_at`);
+  "tối đa 3 dự án" = số dự án thật có `status='in_progress'`.
+
+**Bước D — phạm vi thực thi (đã ghi rõ trong code, không ngộ nhận):**
+bản thiết kế này KHÔNG có hành động "mở workflow"/"tạo dự án" thật nào
+được nối (mọi nút liên quan vẫn không có backend ghi) — nên phần chặn
+dừng ở tầng HIỂN THỊ (banner `.limit-badge` dưới "Workflow mẫu" khi Free
+đã dùng hết 1/1 lượt tháng; khoá "+ Tạo dự án mới" thành biến thể
+`.new-proj.locked` khi Free đạt 3 dự án `in_progress` — cả 2 dùng lại
+đúng cặp màu "Premium" có sẵn `#a9822c`/`#fff3d9`, không tự chế màu mới,
+cùng nguyên tắc `.doc-lock` ở CKOS). Khi có module sau này thêm hành động
+ghi thật (tạo dự án/mở workflow), phải gọi lại `getWorkspaceLimits()` ở
+tầng Server Action đó để chặn thật — ghi rõ trong docblock để không ai
+tưởng nhầm giới hạn đã được thực thi ở tầng ghi.
+
+**9 chỗ khác bản tĩnh** (đều thuộc phạm vi được phép — nối dữ liệu thật +
+Bước D, không đổi layout/màu/font — liệt kê đầy đủ trong docblock đầu
+`AiWorkspaceClient.tsx`): (1) 6 nhóm công cụ dùng số đếm thật; (2) "Công
+cụ yêu thích" 5 công cụ thật, mặc định cả 5 đều đang "yêu thích" (không có
+dữ liệu preference thật để suy ra trạng thái khác); (3) "Dự án của bạn" —
+BỎ HẲN dãy avatar cộng tác viên giả (`.avatars`, không có bảng lưu
+cộng tác viên nào), giữ "Cập nhật: X" (thời gian tương đối thật) + nút
+"⋯" trơ; (4) tab lọc/sort-select/view-toggle giữ TRƠ đúng bản gốc (script
+gốc của chính mockup cũng chỉ đổi class `active`, không lọc/sắp xếp/đổi
+layout thật — chỉ số đếm trong nhãn tab là thật); (5) "Workflow mẫu" 4
+workflow thật, "X bước · Y công cụ" là số thật; (6) "Hoạt động gần đây"
+đọc bảng thật, trạng thái rỗng trung thực; (7) "Gợi ý cho bạn" ghép tối đa
+3 workflow thật (không thêm nguồn dữ liệu mới), bỏ hẳn nhãn "Mới" (không
+có tín hiệu "mới" thật); (8) banner/khoá Bước D; (9) "Xem tất cả công cụ
+→" và CTA không có đích thật khác giữ `href="#"` (chưa có `/v2/khong-gian-ai`,
+thuộc 42 trang còn lại của Bước F).
+
+**Verify:** `tsc`/`eslint` sạch (18 warning còn lại đều có từ trước, không
+liên quan file mới), `vitest run` 491/491, `rm -rf .next && npm run build`
+sạch (route `/v2/ai-workspace` xuất hiện đúng, route mock cũ đã biến
+mất). Test thật qua `next start` với anon key thật (route dev-preview tạm
+`/devtest-aiws`, xoá ngay sau khi xong): xác nhận cả 6 nhóm công cụ (số
+đếm 5/4/5/4/3/4 đúng), 2 dự án mẫu (icon/gradient theo đúng workflow gắn,
+status pill/progress đúng, "Cập nhật: X phút trước" đúng), 4 workflow (số
+bước/công cụ đúng theo từng dòng: 6/5, 8/7, 5/5, 7/5), 5 công cụ yêu thích
+đúng tagline thật, "Hoạt động gần đây" hiện đúng trạng thái rỗng trung
+thực (0 dòng) — 0 lỗi log server ở cả 2 lượt test (có/không Supabase).
+
+**Đối chiếu định lượng Playwright** (script tạm tại scratchpad, không
+commit): so `.app`/`.sidebar`/`.topbar`/`.content`/`.grp-grid`/
+`.proj-grid`/`.wf-grid`/3 `.card` cột phải giữa mock tĩnh (file `.html`
+qua static server cục bộ) và route dev-preview thật, viewport 1440×1000.
+73 diff thô → sau khi loại bỏ 2 nhóm nguyên nhân đã biết (không phải lỗi
+render): (a) offset `y`/`h` cố định 65px xuyên suốt mọi container —
+KHÔNG PHẢI lỗi UI, mà do route dev-preview `/devtest-aiws` nằm NGOÀI
+`/v2` nên `ChromeGate` (`src/components/site/ChromeGate.tsx`) hiện Header/
+Footer marketing (route `/v2/ai-workspace` thật thì `ChromeGate` tự ẩn
+đúng, không có offset này); (b) tên `font-family` khác (`InterGF` vs
+`Inter`, cùng bộ file — đúng pattern đã ghi nhận ở CKOS/Học viện AI) —
+còn lại đúng 2 diff kích thước thật (`.topbar-right` lệch 11px,
+`.proj-toolbar` lệch 19px), cả 2 đều là container `margin-left:auto` co
+giãn theo độ rộng chữ bên trong — hệ quả trực tiếp của (b) (font-metric
+khác nhau làm chữ "Nâng cấp Premium"/"Sắp xếp: Mới nhất" rộng khác vài
+px), không phải sai lệch bố cục. 0 diff về `background-color`, 0 phần tử
+thiếu (`missing`).
+
+Đã commit + push (`b84c616`). **HOÀN TẤT CẢ 3 MODULE ƯU TIÊN** (CKOS →
+Học viện AI → AI Workspace). Bước tiếp theo theo lệnh giao (Bước F — 42
+trang còn lại) CHƯA bắt đầu, chờ xác nhận riêng của Founder trước khi làm
+(đúng Quy tắc 5 — báo cáo xong 1 module rồi mới qua module/giai đoạn kế
+tiếp).
