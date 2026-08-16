@@ -1,0 +1,250 @@
+/* =============================================================================
+ * AI Workspace 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của
+ * `design_handoff_vo_duong_ai/AI Workspace.html`.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho Trang chủ Portal
+ * (`trang-chu.css`, tiền tố `.tcp`), Hệ tri thức CKOS (`he-tri-thuc.css`,
+ * tiền tố `.ckos`) và Học viện AI (`hoc-vien-ai.css`, tiền tố `.hva`), không
+ * phát sinh điều chỉnh mới nào:
+ *
+ *  1. Mọi selector thêm tiền tố `.aiw` — file này nạp trong cây `/v2`, để
+ *     nguyên `*`, `body`, `a`, `.card`... sẽ đè lên Landing Page và Portal/
+ *     Admin 1.0 đang chạy Production. Tiền tố không đổi giá trị nào.
+ *  2. `:root{...}` → `.aiw{...}`: cùng biến, cùng giá trị, chỉ đổi phạm vi.
+ *  3. `body{...}` gộp vào `.aiw{...}` (cùng lý do 2).
+ *  4. `'Inter'` → `'InterGF'` (bộ Inter biến thiên tự host, xem `inter-gf.css`).
+ *  5. `line-height: normal` (mockup là file HTML độc lập, `normal` mặc định;
+ *     app thật có `body{line-height:1.55}`/Preflight `html{line-height:1.5}`
+ *     đẩy cao mọi dòng chữ không tự khai line-height).
+ *  6. Revert Tailwind Preflight trong phạm vi `.aiw` (xem khối riêng bên dưới).
+ *
+ * `[class*="ico"]`/`.crown`/`.crown-sparkle`/`@keyframes sparkleTwinkle` —
+ * ĐỊNH NGHĨA GIỐNG HỆT bản `trang-chu.css`/`he-tri-thuc.css`/`hoc-vien-ai.css`
+ * (đã đối chiếu), nạp cả bốn không xung đột vì cùng giá trị.
+ * ========================================================================== */
+
+.aiw{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.aiw, .aiw *{box-sizing:border-box;margin:0;padding:0}
+
+/* -----------------------------------------------------------------------------
+ * Điều chỉnh 6 — TRẢ LẠI mặc định trình duyệt cho những gì Tailwind Preflight
+ * đã đổi (giống hệt cách đã làm ở `trang-chu.css`/`he-tri-thuc.css`/`hoc-vien-ai.css`).
+ * -------------------------------------------------------------------------- */
+.aiw *,
+.aiw *::before,
+.aiw *::after { border-width: revert; border-style: revert; border-color: revert }
+.aiw h1, .aiw h2, .aiw h3, .aiw h4, .aiw h5, .aiw h6 { font-size: revert; font-weight: revert }
+.aiw b, .aiw strong { font-weight: revert }
+.aiw ol, .aiw ul, .aiw menu { list-style: revert }
+.aiw img, .aiw svg, .aiw video, .aiw canvas, .aiw audio,
+.aiw iframe, .aiw embed, .aiw object { display: revert; vertical-align: revert }
+.aiw img, .aiw video { max-width: revert; height: revert }
+.aiw button, .aiw input, .aiw select, .aiw optgroup, .aiw textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.aiw ::placeholder { color: revert; opacity: revert }
+
+.aiw {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.aiw a{color:var(--violet);text-decoration:none}
+.aiw a:hover{color:var(--violet-dark)}
+.aiw .app{display:flex;min-height:100vh}
+.aiw .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.aiw .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.aiw .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.aiw .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.aiw .brand .name .vo{color:#3B82F6}
+.aiw .brand .name .ai{color:#fff}
+.aiw nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.aiw .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.aiw .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.aiw .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.aiw .nav-item.active{background:var(--violet);color:#fff}
+.aiw .nav-item.active svg{opacity:1}
+.aiw .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.aiw .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.aiw .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.aiw .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.aiw .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.aiw .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.aiw .promo button:active{transform:translateY(0) scale(.97)}
+
+.aiw .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.aiw .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.aiw .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.aiw .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.aiw .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.aiw .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.aiw .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.aiw .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.aiw .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.aiw .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.aiw .icon-btn svg{width:18px;height:18px}
+.aiw .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.aiw .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.aiw .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.aiw .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.aiw .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+
+.aiw .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.aiw .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.aiw .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+
+.aiw .page-head h1{font-size:26px;font-weight:800}
+.aiw .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+
+.aiw .ws-hero{position:relative;border-radius:16px;padding:32px 36px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:24px;overflow:hidden;background:radial-gradient(ellipse 60% 90% at 78% 40%,#3b2a8f 0%,transparent 70%),linear-gradient(150deg,#120c30 0%,#1a1044 55%,#0c0824 100%)}
+.aiw .ws-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 70%,rgba(255,255,255,.35) 0,transparent 100%),radial-gradient(1px 1px at 85% 60%,rgba(255,255,255,.4) 0,transparent 100%);pointer-events:none}
+.aiw .ws-hero-text{position:relative;z-index:1;max-width:400px}
+.aiw .ws-hero h2{font-size:24px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.aiw .ws-hero p{font-size:13.5px;color:#b9b3de;line-height:1.65;margin-bottom:18px}
+.aiw .feat-tags{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:22px}
+.aiw .feat-tag{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#d6d0f0;font-weight:600}
+.aiw .feat-tag svg{width:14px;height:14px;color:#9fd4ff}
+.aiw .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13.5px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.aiw .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(109,74,255,.5);filter:brightness(1.08)}
+.aiw .ws-graphic{position:relative;z-index:1;width:280px;height:200px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.aiw .ws-glow{position:absolute;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle,rgba(120,150,255,.4),transparent 70%);filter:blur(6px);animation:wsPulse 3.4s ease-in-out infinite}
+@keyframes wsPulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}
+.aiw .ws-orb{animation:wsFloat 3.2s ease-in-out infinite}
+@keyframes wsFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.aiw .section-head{display:flex;align-items:baseline;justify-content:space-between}
+.aiw .section-head h3{font-size:17px;font-weight:800}
+.aiw .section-head a{font-size:12.5px;font-weight:700}
+
+.aiw .grp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.aiw .grp-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 14px;text-align:center;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.aiw .grp-card:hover{box-shadow:0 10px 22px rgba(30,20,80,.1);transform:translateY(-2px)}
+.aiw .grp-card .ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.aiw .grp-card .ico svg{width:22px;height:22px}
+.aiw .grp-card h5{font-size:13px;font-weight:700;margin-bottom:3px}
+.aiw .grp-card span{font-size:11.5px;color:var(--muted)}
+
+.aiw .proj-tabs{display:flex;align-items:center;gap:6px}
+.aiw .p-tab{padding:8px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);background:#fff;border:1px solid var(--line);cursor:pointer;white-space:nowrap}
+.aiw .p-tab.active{background:var(--violet);color:#fff;border-color:var(--violet)}
+.aiw .proj-toolbar{display:flex;align-items:center;gap:10px;margin-left:auto}
+.aiw .sort-select{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}
+.aiw .view-toggle{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.aiw .view-toggle button{width:34px;height:34px;border:none;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
+.aiw .view-toggle button.active{background:var(--violet-light);color:var(--violet)}
+.aiw .view-toggle svg{width:15px;height:15px}
+.aiw .proj-row{display:flex;align-items:center;gap:14px;margin-top:10px}
+
+.aiw .proj-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.aiw .proj-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px}
+.aiw .proj-top{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.aiw .proj-top .ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aiw .proj-top .ico svg{width:17px;height:17px}
+.aiw .proj-top h5{font-size:13.5px;font-weight:700;margin-bottom:4px}
+.aiw .status-pill{font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px;display:inline-block}
+.aiw .proj-card .desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px;min-height:44px}
+.aiw .proj-progress-lbl{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:5px}
+.aiw .proj-progress-lbl b{color:var(--text);font-weight:800}
+.aiw .proj-track{height:6px;background:var(--bg);border-radius:5px;overflow:hidden;margin-bottom:12px}
+.aiw .proj-fill{height:100%;background:var(--violet);border-radius:5px}
+.aiw .proj-foot{display:flex;align-items:center;justify-content:space-between}
+.aiw .proj-foot .updated{font-size:11px;color:var(--muted)}
+.aiw .avatars{display:flex}
+.aiw .avatars .av{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);border:2px solid #fff;margin-left:-8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700}
+.aiw .avatars .av:first-child{margin-left:0}
+.aiw .more-btn{width:26px;height:26px;border-radius:7px;border:none;background:none;color:var(--muted);cursor:pointer;font-weight:800}
+
+.aiw .new-proj{border:1.5px dashed var(--line);border-radius:14px;padding:22px;text-align:center;cursor:pointer;transition:background .15s,border-color .15s}
+.aiw .new-proj:hover{background:var(--violet-light);border-color:var(--violet)}
+.aiw .new-proj .plus{display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:800;color:var(--violet-dark);margin-bottom:4px}
+.aiw .new-proj span{font-size:12.5px;color:var(--muted)}
+
+.aiw .wf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.aiw .wf-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.aiw .wf-card:hover{box-shadow:0 10px 22px rgba(30,20,80,.1);transform:translateY(-2px)}
+.aiw .wf-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.aiw .wf-top .ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aiw .wf-top .ico svg{width:17px;height:17px}
+.aiw .wf-top h5{font-size:13.5px;font-weight:700}
+.aiw .wf-top .steps{font-size:11px;color:var(--muted)}
+.aiw .wf-card .desc{font-size:12px;color:var(--muted);line-height:1.5}
+
+.aiw .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.aiw .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.aiw .card-head h4{font-size:14px;font-weight:800}
+.aiw .card-head a{font-size:12px;font-weight:600}
+
+.aiw .tool-fav-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.aiw .tool-fav-row:last-child{border-bottom:none}
+.aiw .tool-fav-row .ico{width:36px;height:36px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.aiw .tool-fav-row .ico svg{width:18px;height:18px}
+.aiw .tool-fav-row .info{flex:1;min-width:0}
+.aiw .tool-fav-row .info h6{font-size:12.8px;font-weight:700}
+.aiw .tool-fav-row .info span{font-size:11px;color:var(--muted)}
+.aiw .star-btn{width:26px;height:26px;border:none;background:none;color:#e2b23c;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.aiw .star-btn svg{width:16px;height:16px}
+.aiw .star-btn.off{color:#d7d3ea}
+
+.aiw .act-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.aiw .act-row:last-child{border-bottom:none}
+.aiw .act-row .ico{width:32px;height:32px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aiw .act-row .ico svg{width:15px;height:15px}
+.aiw .act-row .info{flex:1;min-width:0;font-size:12.5px;font-weight:600}
+.aiw .act-row .time{font-size:11px;color:var(--muted);display:block;margin-top:1px}
+
+.aiw .sugg-card{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:10px;cursor:pointer;transition:background .15s}
+.aiw .sugg-card:hover{background:var(--violet-light)}
+.aiw .sugg-top{display:flex;align-items:center;gap:9px;margin-bottom:6px}
+.aiw .sugg-top .ico{width:30px;height:30px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.aiw .sugg-top .ico svg{width:15px;height:15px}
+.aiw .sugg-top h6{font-size:12.5px;font-weight:700}
+.aiw .new-pill{font-size:9px;font-weight:800;background:var(--gold);color:#fff;padding:1px 6px;border-radius:5px;margin-left:6px}
+.aiw .sugg-card p{font-size:11.5px;color:var(--muted);line-height:1.45}
+
+@media (max-width:1180px){
+  .aiw .content{flex-direction:column}
+  .aiw .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .aiw .right-col>.card{flex:1;min-width:280px}
+  .aiw .grp-grid{grid-template-columns:repeat(3,1fr)}
+  .aiw .proj-grid,.aiw .wf-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+.aiw [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.aiw [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.aiw [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.aiw .crown{position:relative}.aiw .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}.aiw .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* -----------------------------------------------------------------------------
+ * BƯỚC D — giới hạn Free "1 workflow mở/tháng, tối đa 3 dự án cùng lúc".
+ *
+ * Bản thiết kế KHÔNG có trạng thái khoá (mặc định user là Premium) — đây là
+ * phần BẮT BUỘC PHẢI THÊM theo lệnh giao. `.limit-badge` dùng lại ĐÚNG cặp
+ * màu "Premium" đã có sẵn xuyên suốt bản thiết kế (`.upgrade-btn`/
+ * `.upgrade-btn:hover`: `#a9822c` chữ, `#fff3d9` nền) — không thêm hex mới,
+ * cùng nguyên tắc đã áp dụng cho `.doc-lock` ở CKOS.
+ * -------------------------------------------------------------------------- */
+.aiw .limit-badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;background:#fff3d9;color:#a9822c;padding:4px 10px;border-radius:7px;margin-top:8px}
+.aiw .new-proj.locked{border-color:var(--gold);cursor:default}
+.aiw .new-proj.locked:hover{background:#fff3d9;border-color:var(--gold)}
+.aiw .new-proj.locked .plus{color:#a9822c}
+
+/* MỤC E.3 — trạng thái rỗng trung thực (không có trong bản thiết kế), cùng
+   class nhẹ đã dùng ở `he-tri-thuc.css`/`hoc-vien-ai.css`. */
+.aiw .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
