@@ -1,0 +1,213 @@
+/* =============================================================================
+ * Nhật ký học tập 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.nkt` cho mọi selector; (2) `:root` → `.nkt`;
+ * (3) `body` gộp vào `.nkt`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.nkt`.
+ * ========================================================================== */
+
+.nkt{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+.nkt, .nkt *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.nkt *,
+.nkt *::before,
+.nkt *::after { border-width: revert; border-style: revert; border-color: revert }
+.nkt h1, .nkt h2, .nkt h3, .nkt h4, .nkt h5, .nkt h6 { font-size: revert; font-weight: revert }
+.nkt b, .nkt strong { font-weight: revert }
+.nkt ol, .nkt ul, .nkt menu { list-style: revert }
+.nkt img, .nkt svg, .nkt video, .nkt canvas, .nkt audio,
+.nkt iframe, .nkt embed, .nkt object { display: revert; vertical-align: revert }
+.nkt img, .nkt video { max-width: revert; height: revert }
+.nkt button, .nkt input, .nkt select, .nkt optgroup, .nkt textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.nkt ::placeholder { color: revert; opacity: revert }
+
+.nkt {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.nkt a{color:var(--violet);text-decoration:none}
+.nkt a:hover{color:var(--violet-dark)}
+.nkt .app{display:flex;min-height:100vh}
+.nkt .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.nkt .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.nkt .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.nkt .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.nkt .brand .name .vo{color:#3B82F6}
+.nkt .brand .name .ai{color:#fff}
+.nkt nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.nkt .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.nkt .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.nkt .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.nkt .nav-item.active{background:var(--violet);color:#fff}
+.nkt .nav-item.active svg{opacity:1}
+.nkt .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px}
+.nkt .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.nkt .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.nkt .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.nkt .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.nkt .promo-gem{width:80px;height:80px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.nkt .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.nkt .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.nkt .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.nkt .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.nkt .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.nkt .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.nkt .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.nkt .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.nkt .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.nkt .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.nkt .icon-btn svg{width:18px;height:18px}
+.nkt .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.nkt .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.nkt .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.nkt .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.nkt .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.nkt .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.nkt .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
+.nkt .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.nkt .page-head{display:flex;justify-content:space-between;align-items:center}
+.nkt .page-head h1{font-size:26px;font-weight:800}
+.nkt .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+.nkt .new-note-btn{display:flex;align-items:center;gap:7px;background:var(--violet);color:#fff;border:none;padding:11px 18px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:filter .15s,transform .15s}
+.nkt .new-note-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.nkt .new-note-btn svg{width:14px;height:14px}
+.nkt .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.nkt .stat-box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;flex-direction:column;gap:8px}
+.nkt .stat-box .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.nkt .stat-box .ico svg{width:16px;height:16px}
+.nkt .stat-box .num{font-size:18px;font-weight:800}
+.nkt .stat-box .lbl{font-size:11.5px;color:var(--muted)}
+.nkt .stat-box .sub{font-size:10px;color:#189a52;font-weight:700}
+.nkt .two-col{display:grid;grid-template-columns:1fr 1.5fr;gap:16px}
+.nkt .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.nkt .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.nkt .card-head h4{font-size:14px;font-weight:800}
+.nkt .card-head a{font-size:12px;font-weight:600}
+.nkt .cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.nkt .cal-nav span{font-size:13px;font-weight:700}
+.nkt .cal-nav button{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.nkt .cal-nav button svg{width:13px;height:13px}
+.nkt .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.nkt .cal-grid .dow{font-size:10.5px;font-weight:700;color:var(--muted);padding-bottom:6px}
+.nkt .cal-day{font-size:12px;padding:7px 0;border-radius:8px;color:var(--text);cursor:pointer;position:relative}
+.nkt .cal-day.muted{color:#c7c2df}
+.nkt .cal-day.done::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:#189a52}
+.nkt .cal-day.today{background:var(--violet);color:#fff;font-weight:800}
+.nkt .cal-legend{display:flex;gap:14px;margin-top:12px;font-size:11px;color:var(--muted)}
+.nkt .cal-legend span{display:flex;align-items:center;gap:5px}
+.nkt .cal-legend .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.nkt .today-row{display:flex;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.nkt .today-row:last-child{border-bottom:none}
+.nkt .today-row .time{font-size:12px;font-weight:700;color:var(--muted);width:44px;flex-shrink:0}
+.nkt .today-row .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nkt .today-row .ico svg{width:16px;height:16px}
+.nkt .today-row .info{flex:1;min-width:0}
+.nkt .today-row h6{font-size:13px;font-weight:700}
+.nkt .today-row span{font-size:11px;color:var(--muted)}
+.nkt .today-row .dur{font-size:11.5px;font-weight:700;color:var(--muted);flex-shrink:0}
+.nkt .today-row .status{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.nkt .today-row .status.done{background:#e6f7ed;color:#189a52}
+.nkt .today-row .status.pending{border:2px solid var(--line)}
+.nkt .today-row .status svg{width:11px;height:11px}
+.nkt .filter-toolbar{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;flex-wrap:wrap}
+.nkt .f-tab{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.nkt .f-tab.active{background:var(--violet);color:#fff}
+.nkt .filter-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.nkt .cat-select{font-size:12.5px;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.nkt .view-toggle{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.nkt .view-toggle button{width:32px;height:32px;border:none;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
+.nkt .view-toggle button.active{background:var(--violet-light);color:var(--violet)}
+.nkt .view-toggle svg{width:14px;height:14px}
+.nkt .log-list{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.nkt .log-row{display:flex;align-items:center;gap:13px;padding:15px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .15s}
+.nkt .log-row:last-child{border-bottom:none}
+.nkt .log-row:hover{background:var(--bg)}
+.nkt .log-row .ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nkt .log-row .ico svg{width:17px;height:17px}
+.nkt .log-row .info{flex:1;min-width:0}
+.nkt .log-row h6{font-size:13.5px;font-weight:700;margin-bottom:5px}
+.nkt .log-tags{display:flex;gap:6px}
+.nkt .log-tag{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px}
+.nkt .log-row .time{font-size:11.5px;color:var(--muted);flex-shrink:0}
+.nkt .log-row .bm{background:none;border:none;color:var(--muted);cursor:pointer;flex-shrink:0}
+.nkt .log-row .bm svg{width:16px;height:16px}
+.nkt .log-row .more{background:none;border:none;color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0}
+.nkt .see-more{text-align:center;font-size:13px;font-weight:700;color:var(--violet);cursor:pointer;padding:6px 0}
+.nkt .streak-flame{width:60px;height:60px;flex-shrink:0}
+.nkt .streak-num{font-size:34px;font-weight:800;display:flex;align-items:center;gap:12px;margin:6px 0 4px}
+.nkt .streak-lbl{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.nkt .week-dots{display:flex;justify-content:space-between}
+.nkt .week-dot{display:flex;flex-direction:column;align-items:center;gap:5px}
+.nkt .week-dot .c{width:24px;height:24px;border-radius:50%;background:#189a52;color:#fff;display:flex;align-items:center;justify-content:center}
+.nkt .week-dot .c svg{width:12px;height:12px}
+.nkt .week-dot.off .c{background:var(--bg);border:1px solid var(--line)}
+.nkt .week-dot span{font-size:10px;color:var(--muted);font-weight:700}
+.nkt .week-total{font-size:26px;font-weight:800;margin:6px 0 4px}
+.nkt .week-sub{font-size:11px;color:#189a52;font-weight:700;margin-bottom:14px}
+.nkt .week-chart{display:flex;justify-content:space-between;align-items:flex-end;height:90px;gap:8px}
+.nkt .week-bar-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.nkt .week-bar{width:100%;border-radius:4px 4px 0 0;background:var(--violet)}
+.nkt .week-bar-col span{font-size:10px;color:var(--muted);font-weight:700}
+.nkt .week-scale{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);margin-bottom:4px}
+.nkt .quote-card{background:linear-gradient(160deg,#241c4d,#3d2a8f);border-radius:13px;padding:16px;color:#fff;position:relative}
+.nkt .quote-card p{font-size:13px;line-height:1.6;font-style:italic;margin-bottom:8px}
+.nkt .quote-card .author{font-size:11.5px;color:#c3bde3}
+.nkt .quote-star{position:absolute;top:14px;right:14px;color:var(--gold)}
+.nkt .quote-star svg{width:16px;height:16px}
+.nkt .dots-row{display:flex;gap:5px;justify-content:center;margin-top:12px}
+.nkt .dots-row span{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.nkt .dots-row span.active{background:var(--violet)}
+.nkt .doc-row2{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.nkt .doc-row2:last-child{border-bottom:none}
+.nkt .doc-row2 .ico{width:32px;height:32px;border-radius:8px;background:#fdeef0;color:#e0455a;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nkt .doc-row2 .ico svg{width:15px;height:15px}
+.nkt .doc-row2 .info{flex:1;min-width:0}
+.nkt .doc-row2 h6{font-size:12.3px;font-weight:700}
+.nkt .doc-row2 span{font-size:10.5px;color:var(--muted)}
+.nkt .doc-row2 button{background:none;border:none;color:var(--muted);cursor:pointer}
+.nkt .doc-row2 button svg{width:15px;height:15px}
+.nkt [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.nkt [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.nkt [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+@media (max-width:1180px){
+  .nkt .content{flex-direction:column}
+  .nkt .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .nkt .right-col>.card{flex:1;min-width:280px}
+  .nkt .stat-row{grid-template-columns:repeat(2,1fr)}
+  .nkt .two-col{grid-template-columns:1fr}
+}
+.nkt .crown{position:relative}
+.nkt .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.nkt .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* Bổ sung ngoài bản thiết kế gốc (file này không có 2 class dưới đây) —
+   mượn nguyên style `.empty-hint` đã dùng ở He tri thuc CKOS.html/Hoc vien
+   AI.html/AI Workspace.html cho trạng thái rỗng trung thực; `.doc-row2 a`
+   để nút tải tài liệu trỏ link thật (`<a>`) thay vì `<button>` tĩnh, giữ
+   đúng hình dáng nút gốc. */
+.nkt .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+.nkt .doc-row2 a{background:none;border:none;color:var(--muted);cursor:pointer;display:inline-flex}
