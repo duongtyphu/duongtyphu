@@ -1,175 +1,157 @@
 import Link from "next/link";
-import { TrendingDown, TrendingUp } from "lucide-react";
+import { BookOpen, CreditCard, LifeBuoy, ShieldCheck, Users } from "lucide-react";
 
 import { V2_ADMIN_BASE } from "@/components/v2/nav/nav-config";
-import { GrowthChart } from "@/components/v2/admin/GrowthChart";
 import { Card, CardHead } from "@/components/v2/ui/Card";
 import { IcoBox } from "@/components/v2/ui/IcoBox";
 import { PageHead } from "@/components/v2/ui/PageHead";
-import {
-  listGrowthSeries,
-  listKpis,
-  listRecentActivity,
-  listSectionUsage,
-  listSystemStatus,
-} from "@/lib/v2/data/dashboard";
+import { getSupabaseAdmin } from "@/lib/supabase";
+import { listIdentityUsers } from "@/lib/admin/identity-users";
+import { checkAllProvidersHealth } from "@/ai/providers/provider-health-check";
+import { getCkosStats } from "@/lib/portal/live-ckos";
+import { getAcademyPaths } from "@/lib/portal/live-academy";
 
 export const metadata = { title: "Dashboard — Admin" };
 
-const STATUS_STYLE: Record<string, { dot: string; background: string; color: string }> = {
-  ok: { dot: "var(--v2-green)", background: "#e6f7ed", color: "#189a52" },
-  syncing: { dot: "var(--v2-gold)", background: "#fdf1e0", color: "#a9822c" },
-  down: { dot: "var(--v2-red)", background: "#fdeef0", color: "var(--v2-red)" },
-};
+function formatVnd(n: number) {
+  return n.toLocaleString("vi-VN") + "đ";
+}
 
-const RANGES = ["7 ngày", "30 ngày", "90 ngày", "Năm"];
-
+/**
+ * `/v2/admin/dashboard` — không có trang Portal 2.0 tương ứng (đây là
+ * trang tổng quan nội bộ Admin). Đổi từ 5 KPI/biểu đồ tăng trưởng 12
+ * tháng/trạng thái hệ thống/"phân bổ người dùng theo mục"/hoạt động gần
+ * đây — TẤT CẢ bịa — sang dữ liệu thật, tái dùng đúng các hàm đã nối cho
+ * Người dùng/Thanh toán/Hỗ trợ/Tích hợp API/Hệ tri thức/Học viện AI (các
+ * trang Admin khác đã sửa trong đợt này), không viết truy vấn mới. Bỏ
+ * hẳn biểu đồ tăng trưởng theo thời gian (cần time-series analytics chưa
+ * có hạ tầng) — thay bằng "Nội dung theo module" (số đếm thật, không
+ * phải % lượt xem bịa).
+ */
 export default async function AdminDashboardPage() {
-  const [kpis, statuses, usage, activity, growth] = await Promise.all([
-    listKpis(),
-    listSystemStatus(),
-    listSectionUsage(),
-    listRecentActivity(),
-    listGrowthSeries(),
+  const supabase = getSupabaseAdmin();
+
+  const [users, providers, ckosStats, academyPaths, ordersRes, ticketsRes] = await Promise.all([
+    listIdentityUsers(),
+    checkAllProvidersHealth(),
+    getCkosStats(),
+    getAcademyPaths(),
+    supabase
+      ? supabase.from("orders").select("id, member_email, product_name, amount, status, created_at").order("created_at", { ascending: false }).limit(5)
+      : Promise.resolve({ data: [] as { id: number; member_email: string; product_name: string | null; amount: number; status: string; created_at: string }[] }),
+    supabase
+      ? supabase.from("support_tickets").select("id, member_email, subject, status, created_at").order("created_at", { ascending: false }).limit(5)
+      : Promise.resolve({ data: [] as { id: number; member_email: string; subject: string; status: string; created_at: string }[] }),
   ]);
+
+  const orders = ordersRes.data ?? [];
+  const tickets = ticketsRes.data ?? [];
+  const admins = users.filter((u) => u.isAdmin);
+  const confirmedOrders = orders.filter((o) => o.status === "confirmed");
+  const revenue = confirmedOrders.reduce((sum, o) => sum + (o.amount ?? 0), 0);
+  const totalLessons = academyPaths.reduce((sum, p) => sum + p.lessonCount, 0);
+  const availableProviders = providers.filter((p) => p.available);
+
+  const kpis = [
+    { id: "users", value: String(users.length), label: "Tổng người dùng", icon: Users, gradient: "linear-gradient(145deg,#a08bff,#6d4aff)" },
+    { id: "admins", value: String(admins.length), label: "Quản trị viên", icon: ShieldCheck, gradient: "linear-gradient(145deg,#5f8fff,#1d5fd8)" },
+    { id: "lessons", value: String(totalLessons), label: "Bài học đã Published", icon: BookOpen, gradient: "linear-gradient(145deg,#3ecf7e,#189a52)" },
+    { id: "revenue", value: formatVnd(revenue), label: "Doanh thu đã xác nhận", icon: CreditCard, gradient: "linear-gradient(145deg,#e2b23c,#a9660f)" },
+    { id: "tickets", value: String(tickets.filter((t) => t.status === "open").length), label: "Ticket đang mở", icon: LifeBuoy, gradient: "linear-gradient(145deg,#ff9d52,#c2660a)" },
+  ];
+
+  const contentModules = [
+    { label: "Tài liệu CKOS", value: ckosStats.documents },
+    { label: "Danh mục CKOS", value: ckosStats.categories },
+    { label: "Công cụ & Prompt", value: ckosStats.toolsAndPrompts },
+    { label: "Giai đoạn lộ trình Học viện", value: academyPaths.length },
+    { label: "Bài học Published", value: totalLessons },
+  ];
+  const maxModule = Math.max(1, ...contentModules.map((m) => m.value));
 
   return (
     <div className="flex flex-col gap-5 px-7 py-6">
       <PageHead
         crumb="Admin › Dashboard"
         title="Tổng quan hệ thống"
-        description="Theo dõi số liệu vận hành và hoạt động toàn bộ hệ sinh thái VO DUONG AI."
-        action={
-          <div className="flex shrink-0 gap-[6px] rounded-xl border border-[var(--v2-line)] bg-[var(--v2-surface)] p-[6px]">
-            {RANGES.map((range) => (
-              <span
-                key={range}
-                className={[
-                  "rounded-[9px] px-3 py-2 text-[12.5px] font-bold whitespace-nowrap",
-                  range === "30 ngày"
-                    ? "bg-[var(--v2-violet)] text-white"
-                    : "text-[var(--v2-muted)]",
-                ].join(" ")}
-              >
-                {range}
-              </span>
-            ))}
-          </div>
-        }
+        description="Số liệu thật, đọc trực tiếp từ Supabase — không phải dữ liệu mẫu."
       />
 
       <div className="grid grid-cols-2 gap-[14px] min-[1180px]:grid-cols-5">
-        {kpis.map((kpi) => {
-          const TrendIcon = kpi.trend === "up" ? TrendingUp : TrendingDown;
-          return (
-            <div
-              key={kpi.id}
-              className="rounded-[var(--v2-radius-card)] border border-[var(--v2-line)] bg-[var(--v2-surface)] p-[18px]"
-            >
-              <div className="mb-3 flex items-start justify-between">
-                <IcoBox icon={kpi.icon} size="md" background={kpi.gradient} color="#fff" />
-                <span
-                  className={[
-                    "flex items-center gap-1 text-[11.5px] font-extrabold",
-                    kpi.trend === "up" ? "text-[var(--v2-green)]" : "text-[var(--v2-red)]",
-                  ].join(" ")}
-                >
-                  <TrendIcon className="h-[13px] w-[13px]" aria-hidden="true" />
-                  {kpi.delta}
-                </span>
-              </div>
-              <div className="text-[22px] font-extrabold">{kpi.value}</div>
-              <div className="mt-1 text-[12px] text-[var(--v2-muted)]">{kpi.label}</div>
+        {kpis.map((kpi) => (
+          <div key={kpi.id} className="rounded-[var(--v2-radius-card)] border border-[var(--v2-line)] bg-[var(--v2-surface)] p-[18px]">
+            <div className="mb-3 flex items-start justify-between">
+              <IcoBox icon={kpi.icon} size="md" background={kpi.gradient} color="#fff" />
             </div>
-          );
-        })}
-      </div>
-
-      <div className="grid grid-cols-1 gap-5 min-[1180px]:grid-cols-[1.6fr_1fr]">
-        <Card padding="admin">
-          <CardHead title="Tăng trưởng người dùng & doanh thu" />
-          <GrowthChart data={growth} />
-        </Card>
-
-        <Card padding="admin">
-          <CardHead title="Trạng thái hệ thống" />
-          {statuses.map((status) => {
-            const style = STATUS_STYLE[status.state];
-            return (
-              <div
-                key={status.id}
-                className="flex items-center justify-between border-b border-[var(--v2-line)] py-[9px] text-[12.8px] last:border-b-0"
-              >
-                <span className="flex items-center gap-[9px] font-semibold">
-                  <i
-                    aria-hidden="true"
-                    className="h-2 w-2 rounded-full"
-                    style={{ background: style.dot }}
-                  />
-                  {status.name}
-                </span>
-                <span
-                  className="rounded-md px-[9px] py-[2px] text-[11px] font-extrabold"
-                  style={{ background: style.background, color: style.color }}
-                >
-                  {status.label}
-                </span>
-              </div>
-            );
-          })}
-        </Card>
+            <div className="text-[22px] font-extrabold">{kpi.value}</div>
+            <div className="mt-1 text-[12px] text-[var(--v2-muted)]">{kpi.label}</div>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 gap-5 min-[1180px]:grid-cols-2">
         <Card padding="admin">
-          <CardHead title="Phân bổ người dùng theo mục" />
-          {usage.map((row) => (
-            <div key={row.id} className="mb-[14px] flex items-center gap-3 last:mb-0">
-              <span className="w-[150px] shrink-0 text-[12.5px] font-semibold">{row.label}</span>
+          <CardHead title="Nội dung theo module" />
+          {contentModules.map((row) => (
+            <div key={row.label} className="mb-[14px] flex items-center gap-3 last:mb-0">
+              <span className="w-[190px] shrink-0 text-[12.5px] font-semibold">{row.label}</span>
               <span className="h-[10px] flex-1 overflow-hidden rounded-md bg-[var(--v2-bg)]">
                 <span
-                  className="block h-full rounded-md"
-                  style={{ width: `${row.percent}%`, background: row.color }}
+                  className="block h-full rounded-md bg-[var(--v2-violet)]"
+                  style={{ width: `${(row.value / maxModule) * 100}%` }}
                 />
               </span>
-              <span className="w-14 shrink-0 text-right text-[12.5px] font-extrabold">
-                {row.value.toLocaleString("vi-VN")}
-              </span>
+              <span className="w-10 shrink-0 text-right text-[12.5px] font-extrabold">{row.value}</span>
             </div>
           ))}
         </Card>
 
         <Card padding="admin">
-          <CardHead
-            title="Hoạt động gần đây"
-            action={
-              <Link href={`${V2_ADMIN_BASE}/bao-cao`} className="text-[12.5px] font-bold">
-                Xem tất cả →
-              </Link>
-            }
-          />
-          {activity.map((item) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={item.id}
-                className="flex items-center gap-[11px] border-b border-[var(--v2-line)] py-[10px] last:border-b-0"
+          <CardHead title={`AI Provider (${availableProviders.length}/${providers.length} đã cấu hình)`} />
+          {providers.map((p) => (
+            <div key={p.providerId} className="flex items-center justify-between border-b border-[var(--v2-line)] py-[9px] text-[12.8px] last:border-b-0">
+              <span className="flex items-center gap-[9px] font-semibold">
+                <i aria-hidden="true" className="h-2 w-2 rounded-full" style={{ background: p.available ? "var(--v2-green)" : "var(--v2-muted)" }} />
+                {p.providerId}
+              </span>
+              <span
+                className="rounded-md px-[9px] py-[2px] text-[11px] font-extrabold"
+                style={{ background: p.available ? "#e6f7ed" : "var(--v2-bg)", color: p.available ? "#189a52" : "var(--v2-muted)" }}
               >
-                <span
-                  className="v2-ico flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-lg"
-                  style={{ background: item.background, color: item.color }}
-                >
-                  <Icon className="h-[14px] w-[14px]" aria-hidden="true" />
-                </span>
-                <span className="flex-1 text-[12.5px] leading-[1.4]">
-                  {item.emphasis ? <b className="font-bold">{item.emphasis}</b> : null}
-                  {item.emphasis ? " " : ""}
-                  {item.text}
-                </span>
-                <span className="shrink-0 text-[10.5px] text-[var(--v2-muted)]">{item.time}</span>
+                {p.available ? "Đã cấu hình" : "Chưa cấu hình"}
+              </span>
+            </div>
+          ))}
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 min-[1180px]:grid-cols-2">
+        <Card padding="admin">
+          <CardHead title="Đơn hàng gần đây" action={<Link href={`${V2_ADMIN_BASE}/thanh-toan`} className="text-[12.5px] font-bold">Xem tất cả →</Link>} />
+          {orders.length === 0 ? (
+            <p className="text-[12.5px] text-[var(--v2-muted)]">Chưa có đơn hàng nào.</p>
+          ) : (
+            orders.map((o) => (
+              <div key={o.id} className="flex items-center justify-between gap-3 border-b border-[var(--v2-line)] py-[10px] text-[12.5px] last:border-b-0">
+                <span className="min-w-0 flex-1 truncate">{o.product_name ?? o.member_email}</span>
+                <span className="shrink-0 font-bold">{formatVnd(o.amount ?? 0)}</span>
               </div>
-            );
-          })}
+            ))
+          )}
+        </Card>
+
+        <Card padding="admin">
+          <CardHead title="Ticket gần đây" action={<Link href={`${V2_ADMIN_BASE}/ho-tro`} className="text-[12.5px] font-bold">Xem tất cả →</Link>} />
+          {tickets.length === 0 ? (
+            <p className="text-[12.5px] text-[var(--v2-muted)]">Chưa có ticket nào.</p>
+          ) : (
+            tickets.map((t) => (
+              <div key={t.id} className="flex items-center justify-between gap-3 border-b border-[var(--v2-line)] py-[10px] text-[12.5px] last:border-b-0">
+                <span className="min-w-0 flex-1 truncate">{t.subject}</span>
+                <span className="shrink-0 text-[var(--v2-muted)]">{t.status}</span>
+              </div>
+            ))
+          )}
         </Card>
       </div>
     </div>
