@@ -1,0 +1,195 @@
+/* =============================================================================
+ * Cộng đồng AI 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.cda` cho mọi selector; (2) `:root` → `.cda`;
+ * (3) `body` gộp vào `.cda`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.cda`.
+ * ========================================================================== */
+
+.cda{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+.cda, .cda *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.cda *,
+.cda *::before,
+.cda *::after { border-width: revert; border-style: revert; border-color: revert }
+.cda h1, .cda h2, .cda h3, .cda h4, .cda h5, .cda h6 { font-size: revert; font-weight: revert }
+.cda b, .cda strong { font-weight: revert }
+.cda ol, .cda ul, .cda menu { list-style: revert }
+.cda img, .cda svg, .cda video, .cda canvas, .cda audio,
+.cda iframe, .cda embed, .cda object { display: revert; vertical-align: revert }
+.cda img, .cda video { max-width: revert; height: revert }
+.cda button, .cda input, .cda select, .cda optgroup, .cda textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.cda ::placeholder { color: revert; opacity: revert }
+
+.cda {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.cda a{color:var(--violet);text-decoration:none}
+.cda a:hover{color:var(--violet-dark)}
+.cda .app{display:flex;min-height:100vh}
+.cda .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.cda .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.cda .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.cda .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.cda .brand .name .vo{color:#3B82F6}
+.cda .brand .name .ai{color:#fff}
+.cda nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.cda .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.cda .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.cda .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.cda .nav-item.active{background:var(--violet);color:#fff}
+.cda .nav-item.active svg{opacity:1}
+.cda .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.cda .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.cda .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.cda .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.cda .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.cda .promo-gem{width:80px;height:80px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
+.cda .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.cda .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.cda .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.cda .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.cda .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.cda .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.cda .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.cda .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.cda .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.cda .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.cda .icon-btn svg{width:18px;height:18px}
+.cda .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.cda .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.cda .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.cda .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.cda .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.cda .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.cda .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.cda .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.cda .page-head h1{font-size:26px;font-weight:800}
+.cda .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+.cda .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.cda .quick-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.cda .quick-card:hover{box-shadow:0 10px 22px rgba(30,20,80,.1);transform:translateY(-2px)}
+.cda .quick-card .ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cda .quick-card .ico svg{width:19px;height:19px}
+.cda .quick-card h5{font-size:13.5px;font-weight:700}
+.cda .quick-card span{font-size:11px;color:var(--muted)}
+.cda .feed-toolbar{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px}
+.cda .f-tab{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.cda .f-tab.active{background:var(--violet);color:#fff}
+.cda .sort-select{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer;margin-left:auto}
+.cda .create-post-btn{display:flex;align-items:center;gap:7px;background:var(--violet);color:#fff;border:none;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:filter .15s,transform .15s}
+.cda .create-post-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.cda .create-post-btn svg{width:14px;height:14px}
+.cda .composer{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.cda .composer-top{display:flex;gap:12px;align-items:center}
+.cda .composer-top input{flex:1;border:1px solid var(--line);background:var(--bg);border-radius:11px;padding:12px 14px;font-size:13.5px;font-family:inherit;outline:none}
+.cda .composer-top input:focus{border-color:var(--violet)}
+.cda .composer-actions{display:flex;align-items:center;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.cda .comp-act{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;background:none;border:none}
+.cda .comp-act svg{width:16px;height:16px}
+.cda .comp-act:hover{color:var(--violet)}
+.cda .post-btn{margin-left:auto;background:var(--violet);color:#fff;border:none;padding:9px 18px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
+.cda .post-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.cda .post-head{display:flex;align-items:center;gap:11px}
+.cda .post-head .info{flex:1;min-width:0}
+.cda .post-head h6{font-size:13.5px;font-weight:700;display:flex;align-items:center;gap:7px}
+.cda .role-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:6px}
+.cda .post-head .time{font-size:11px;color:var(--muted);margin-top:2px}
+.cda .post-more{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px}
+.cda .post-cat{display:inline-flex;font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:6px;margin:12px 0 8px}
+.cda .post-card h3{font-size:15px;font-weight:800;margin-bottom:8px}
+.cda .post-card p.body{font-size:13px;color:var(--text);line-height:1.65;margin-bottom:10px}
+.cda .tag-row2{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.cda .hash-tag{font-size:11.5px;font-weight:600;color:var(--violet);background:var(--violet-light);padding:3px 9px;border-radius:6px}
+.cda .file-chip{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:11px 14px;margin-bottom:14px}
+.cda .file-chip .ico{width:34px;height:34px;border-radius:8px;background:#fdeef0;color:#e0455a;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cda .file-chip .ico svg{width:16px;height:16px}
+.cda .file-chip .info{flex:1;min-width:0}
+.cda .file-chip h6{font-size:12.5px;font-weight:700}
+.cda .file-chip span{font-size:11px;color:var(--muted)}
+.cda .file-chip button{background:none;border:none;color:var(--muted);cursor:pointer;flex-shrink:0}
+.cda .file-chip button svg{width:17px;height:17px}
+.cda .post-foot{display:flex;align-items:center;gap:20px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.cda .post-foot .grp{display:flex;align-items:center;gap:6px;cursor:pointer}
+.cda .post-foot .grp:hover{color:var(--violet)}
+.cda .post-foot svg{width:15px;height:15px}
+.cda .react-icons{display:flex}
+.cda .react-icons svg{width:15px;height:15px}
+.cda .save-btn{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer}
+.cda .save-btn svg{width:16px;height:16px}
+.cda .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.cda .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cda .card-head h4{font-size:14px;font-weight:800}
+.cda .card-head a{font-size:12px;font-weight:600}
+.cda .member-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.cda .member-row:last-child{border-bottom:none}
+.cda .member-row .rank{width:18px;font-size:12px;font-weight:800;color:var(--muted);flex-shrink:0}
+.cda .member-row .info{flex:1;min-width:0}
+.cda .member-row h6{font-size:12.8px;font-weight:700;display:flex;align-items:center;gap:6px}
+.cda .member-row .stat{font-size:11px;color:var(--muted)}
+.cda .member-row .crown{width:16px;height:16px;color:var(--gold);flex-shrink:0}
+.cda .event-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.cda .event-row:last-child{border-bottom:none}
+.cda .event-date{width:48px;height:48px;border-radius:10px;background:var(--violet-light);color:var(--violet);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
+.cda .event-date .d{font-size:15px;font-weight:800;line-height:1}
+.cda .event-date .m{font-size:9.5px;font-weight:700;text-transform:uppercase}
+.cda .event-info{flex:1;min-width:0}
+.cda .event-info h6{font-size:12.5px;font-weight:700;line-height:1.4;margin-bottom:3px}
+.cda .event-info .when{font-size:11px;color:var(--muted);margin-bottom:8px}
+.cda .event-foot{display:flex;align-items:center;justify-content:space-between}
+.cda .mini-avatars{display:flex}
+.cda .mini-avatars .av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);border:2px solid #fff;margin-left:-7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:700}
+.cda .mini-avatars .av:first-child{margin-left:0}
+.cda .join-btn{background:var(--violet-light);color:var(--violet-dark);border:none;padding:6px 12px;border-radius:8px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap}
+.cda .group-row{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.cda .group-row:last-child{border-bottom:none}
+.cda .group-row .ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cda .group-row .ico svg{width:17px;height:17px}
+.cda .group-row .info{flex:1;min-width:0}
+.cda .group-row h6{font-size:12.5px;font-weight:700}
+.cda .group-row span{font-size:11px;color:var(--muted)}
+.cda .group-row .chev{color:var(--muted);flex-shrink:0}
+.cda [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.cda [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.cda [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+@media (max-width:1180px){
+  .cda .content{flex-direction:column}
+  .cda .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .cda .right-col>.card{flex:1;min-width:280px}
+  .cda .quick-grid{grid-template-columns:repeat(2,1fr)}
+}
+.cda .crown{position:relative}
+.cda .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.cda .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* Bổ sung ngoài bản thiết kế — honest empty-state cho toàn bộ khối "mạng xã
+ * hội cộng đồng" (feed bài viết/leaderboard/sự kiện/nhóm) — hệ thống này
+ * không tồn tại thật ở bất kỳ đâu trong dự án (không bảng posts/comments/
+ * community_groups/community_events nào). Mượn nguyên style `.empty-hint`
+ * đã dùng ở các trang Bước F trước. */
+.cda .empty-hint{font-size:12.5px;color:var(--muted);padding:16px 0;text-align:center}
