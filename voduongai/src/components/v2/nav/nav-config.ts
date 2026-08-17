@@ -107,33 +107,37 @@ const PORTAL_MAIN: NavItem[] = [
   { label: "Dự án & Cơ hội", href: `${V2_PORTAL_BASE}/du-an-co-hoi`, icon: Briefcase },
 
   // Cụm Hệ sinh thái — bung khi đang ở trang đối tác hoặc trang affiliate con.
+  // Trỏ vào /v2/du-an-co-hoi/* (nơi 5 trang thật đã dựng ở Bước F) — KHÔNG
+  // còn phải /v2/he-sinh-thai/* (đã xoá khi build trang thật) hay
+  // /v2/affiliate/mo-hinh|san-giao-dich (2 route mock cũ dữ liệu bịa, xem
+  // "Đã xoá 2 route mock affiliate" trong CLAUDE.md).
   {
     label: "DigiU",
-    href: `${V2_PORTAL_BASE}/he-sinh-thai/digiu`,
+    href: `${V2_PORTAL_BASE}/du-an-co-hoi/digiu`,
     icon: Building2,
     group: "ecosystem",
   },
   {
     label: "SolarGroup",
-    href: `${V2_PORTAL_BASE}/he-sinh-thai/solargroup`,
+    href: `${V2_PORTAL_BASE}/du-an-co-hoi/solargroup`,
     icon: Building2,
     group: "ecosystem",
   },
   {
     label: "Ohana",
-    href: `${V2_PORTAL_BASE}/he-sinh-thai/ohana`,
+    href: `${V2_PORTAL_BASE}/du-an-co-hoi/ohana`,
     icon: Building2,
     group: "ecosystem",
   },
   {
     label: "Các mô hình Affilate",
-    href: `${V2_PORTAL_BASE}/affiliate/mo-hinh`,
+    href: `${V2_PORTAL_BASE}/du-an-co-hoi/cac-mo-hinh-affilate`,
     icon: Share2,
     group: "ecosystem",
   },
   {
     label: "Affilate sàn giao dịch",
-    href: `${V2_PORTAL_BASE}/affiliate/san-giao-dich`,
+    href: `${V2_PORTAL_BASE}/du-an-co-hoi/affilate-san-giao-dich`,
     icon: Wallet,
     group: "ecosystem",
   },
@@ -166,12 +170,7 @@ const GROUP_PREFIXES: Record<NavGroup, string[]> = {
     `${V2_PORTAL_BASE}/nhat-ky-hoi-thoai`,
     `${V2_PORTAL_BASE}/chien-luoc-ca-nhan`,
   ],
-  ecosystem: [
-    `${V2_PORTAL_BASE}/he-sinh-thai`,
-    `${V2_PORTAL_BASE}/du-an-co-hoi`,
-    `${V2_PORTAL_BASE}/affiliate/mo-hinh`,
-    `${V2_PORTAL_BASE}/affiliate/san-giao-dich`,
-  ],
+  ecosystem: [`${V2_PORTAL_BASE}/du-an-co-hoi`],
 };
 
 export function isGroupOpen(group: NavGroup, pathname: string): boolean {
