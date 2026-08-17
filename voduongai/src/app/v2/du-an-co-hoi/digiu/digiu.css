@@ -1,0 +1,204 @@
+/* =============================================================================
+ * DigiU 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.dgu` cho mọi selector; (2) `:root` → `.dgu`;
+ * (3) `body` gộp vào `.dgu`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.dgu`.
+ * ========================================================================== */
+
+.dgu{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.dgu, .dgu *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.dgu *,
+.dgu *::before,
+.dgu *::after { border-width: revert; border-style: revert; border-color: revert }
+.dgu h1, .dgu h2, .dgu h3, .dgu h4, .dgu h5, .dgu h6 { font-size: revert; font-weight: revert }
+.dgu b, .dgu strong { font-weight: revert }
+.dgu ol, .dgu ul, .dgu menu { list-style: revert }
+.dgu img, .dgu svg, .dgu video, .dgu canvas, .dgu audio,
+.dgu iframe, .dgu embed, .dgu object { display: revert; vertical-align: revert }
+.dgu img, .dgu video { max-width: revert; height: revert }
+.dgu button, .dgu input, .dgu select, .dgu optgroup, .dgu textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.dgu ::placeholder { color: revert; opacity: revert }
+
+.dgu {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.dgu a{color:var(--violet);text-decoration:none}
+.dgu a:hover{color:var(--violet-dark)}
+.dgu .app{display:flex;min-height:100vh}
+.dgu .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.dgu .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.dgu .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.dgu .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.dgu .brand .name .vo{color:#3B82F6}
+.dgu .brand .name .ai{color:#fff}
+.dgu nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.dgu .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.dgu .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.dgu .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.dgu .nav-item.active{background:var(--violet);color:#fff}
+.dgu .nav-item.active svg{opacity:1}
+.dgu .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.dgu .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.dgu .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.dgu .nav-parent:hover{background:none}
+.dgu .nav-parent svg{opacity:1}
+.dgu .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.dgu .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.dgu .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.dgu .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.dgu .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.dgu .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.dgu .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.dgu .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.dgu .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.dgu .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.dgu .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.dgu .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.dgu .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.dgu .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.dgu .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.dgu .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.dgu .icon-btn svg{width:18px;height:18px}
+.dgu .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.dgu .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.dgu .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.dgu .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.dgu .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.dgu .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.dgu .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.dgu .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.dgu .profile-head{display:flex;align-items:flex-start;gap:16px}
+.dgu .profile-logo{width:64px;height:64px;border-radius:14px;background:linear-gradient(150deg,#3d2a8f,#1a1044);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;flex-shrink:0}
+.dgu .profile-info{flex:1;min-width:0}
+.dgu .profile-info h1{font-size:23px;font-weight:800;display:flex;align-items:center;gap:8px}
+.dgu .verify-badge{width:20px;height:20px;border-radius:50%;background:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dgu .verify-badge svg{width:11px;height:11px}
+.dgu .profile-info p{font-size:13.5px;color:var(--muted);margin:6px 0 10px}
+.dgu .tag-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.dgu .p-tag{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.dgu .p-since{font-size:12px;color:var(--muted)}
+.dgu .profile-actions{display:flex;gap:10px;flex-shrink:0}
+.dgu .act-btn{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;padding:9px 15px;border-radius:9px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;transition:background .15s}
+.dgu .act-btn:hover{background:var(--bg)}
+.dgu .act-btn svg{width:15px;height:15px}
+.dgu .digiu-hero{position:relative;border-radius:16px;padding:32px 36px;color:#fff;overflow:hidden;background:radial-gradient(ellipse 65% 100% at 75% 45%,#3b2a8f 0%,transparent 70%),linear-gradient(150deg,#120c30 0%,#1a1044 55%,#0c0824 100%);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.dgu .digiu-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 80%,rgba(255,255,255,.35) 0,transparent 100%);pointer-events:none}
+.dgu .digiu-hero-text{position:relative;z-index:1;max-width:380px}
+.dgu .digiu-hero h2{font-size:23px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.dgu .digiu-hero p{font-size:13px;color:#b9b3de;line-height:1.65;margin-bottom:20px}
+.dgu .hero-btn-row{display:flex;gap:10px}
+.dgu .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:12px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.dgu .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(109,74,255,.5);filter:brightness(1.08)}
+.dgu .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;padding:12px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:background .15s,transform .15s}
+.dgu .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.dgu .digiu-net{position:relative;z-index:1;width:340px;height:220px;flex-shrink:0}
+.dgu .net-glow{position:absolute;width:180px;height:180px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(120,150,255,.4),transparent 70%);filter:blur(6px);animation:netPulse 3.4s ease-in-out infinite}
+@keyframes netPulse{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.94)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+.dgu .net-node{animation:netFloat 3.2s ease-in-out infinite}
+@keyframes netFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.dgu .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.dgu .stat-box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;flex-direction:column;gap:8px}
+.dgu .stat-box .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.dgu .stat-box .ico svg{width:16px;height:16px}
+.dgu .stat-box .num{font-size:18px;font-weight:800}
+.dgu .stat-box .lbl{font-size:11.5px;color:var(--muted)}
+.dgu .stat-box .sub{font-size:10px;color:#9691b3}
+.dgu .tabs-row{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto}
+.dgu .tabs-row .tab{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.dgu .tabs-row .tab.active{background:var(--violet);color:#fff}
+.dgu .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+.dgu .about-text h3{font-size:16px;font-weight:800;margin-bottom:10px}
+.dgu .about-text p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.dgu .check-list{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.dgu .check-item{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600}
+.dgu .check-item svg{width:16px;height:16px;color:#189a52;flex-shrink:0}
+.dgu .video-card{border-radius:14px;overflow:hidden;position:relative;aspect-ratio:16/10;background:linear-gradient(150deg,#0c0824,#241c56);display:flex;flex-direction:column;justify-content:space-between;padding:20px;color:#fff}
+.dgu .video-card .vtitle{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.dgu .video-card .vsub{font-size:20px;font-weight:800;margin-top:4px;line-height:1.3}
+.dgu .play-btn{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;align-self:center;cursor:pointer}
+.dgu .play-btn svg{width:20px;height:20px}
+.dgu .video-time{position:absolute;bottom:12px;right:14px;font-size:11px;font-weight:700;background:rgba(0,0,0,.5);padding:3px 8px;border-radius:6px}
+.dgu .video-net-line{position:absolute;inset:0;opacity:.5}
+.dgu .pillars-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.dgu .pillar-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px}
+.dgu .pillar-card .ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.dgu .pillar-card .ico svg{width:20px;height:20px}
+.dgu .pillar-card h5{font-size:14px;font-weight:700;margin-bottom:8px}
+.dgu .pillar-card p{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:12px;min-height:52px}
+.dgu .pillar-card a{font-size:12.5px;font-weight:700}
+.dgu .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.dgu .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.dgu .card-head h4{font-size:14px;font-weight:800}
+.dgu .card-head .period{font-size:11.5px;color:var(--muted);background:var(--bg);padding:4px 9px;border-radius:7px;cursor:pointer}
+.dgu .perf-pct{font-size:22px;font-weight:800;color:#189a52;margin-bottom:2px}
+.dgu .perf-lbl{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+.dgu .perf-note{display:flex;align-items:flex-start;gap:6px;font-size:10.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.dgu .perf-note svg{width:12px;height:12px;color:var(--gold);flex-shrink:0;margin-top:1px}
+.dgu .fin-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.dgu .fin-row:last-child{border-bottom:none}
+.dgu .fin-row .lbl{font-size:12px;color:var(--muted)}
+.dgu .fin-row .val{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+.dgu .chg-pill{font-size:10px;font-weight:800;padding:1px 6px;border-radius:5px;background:#e6f7ed;color:#189a52}
+.dgu .news-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.dgu .news-row:last-child{border-bottom:none}
+.dgu .news-thumb{width:52px;height:44px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.dgu .news-thumb svg{width:18px;height:18px}
+.dgu .news-cat{font-size:9px;font-weight:800;letter-spacing:.04em;margin-bottom:3px}
+.dgu .news-row h6{font-size:12.3px;font-weight:700;line-height:1.4;margin-bottom:3px}
+.dgu .news-row .time{font-size:10.5px;color:var(--muted)}
+.dgu .cta-card{background:linear-gradient(160deg,#241c4d,#3d2a8f);border-radius:14px;padding:20px;color:#fff;position:relative;overflow:hidden}
+.dgu .cta-card .cube{position:absolute;right:-10px;bottom:-10px;width:80px;height:80px;opacity:.9}
+.dgu .cta-card h4{font-size:15px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
+.dgu .cta-card p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px;max-width:190px;position:relative;z-index:1}
+.dgu .cta-card button{background:#fff;color:var(--violet-dark);border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative;z-index:1}
+@media (max-width:1180px){
+  .dgu .content{flex-direction:column}
+  .dgu .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .dgu .right-col>*{flex:1;min-width:280px}
+  .dgu .stat-row{grid-template-columns:repeat(2,1fr)}
+  .dgu .about-grid, .dgu .pillars-grid{grid-template-columns:1fr 1fr}
+}
+.dgu [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.dgu [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.dgu [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.dgu .crown{position:relative}
+.dgu .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.dgu .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* Bước F — Dự án & Cơ hội: trạng thái rỗng trung thực (không có trong bản
+   thiết kế gốc, vốn luôn có sẵn mẫu). Dùng chung 1 class nhẹ, cùng quy ước
+   đã dùng cho CKOS/Học viện AI/AI Workspace. */
+.dgu .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+/* Chip khoá nhẹ cho nội dung chưa có (video/tài liệu) trong thẻ trang trí —
+   cùng cặp màu ".upgrade-btn" đã có sẵn trong CSS gốc. */
+.dgu .doc-lock{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#a9822c;background:#fffaf0;border:1px solid var(--gold);border-radius:7px;padding:3px 9px}
+/* CTA card dùng <a> thay <button> khi có link đăng ký thật (cần href) —
+   cùng style .cta-card button gốc, chỉ đổi selector tag. */
+.dgu .cta-card a.cta-link-btn{background:#fff;color:var(--violet-dark);border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;position:relative;z-index:1;text-decoration:none}
