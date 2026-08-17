@@ -1,0 +1,188 @@
+/* =============================================================================
+ * Chương trình Affiliate 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.aff` cho mọi selector; (2) `:root` → `.aff`;
+ * (3) `body` gộp vào `.aff`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.aff`.
+ * ========================================================================== */
+
+.aff{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48;--green:#189a52}
+.aff, .aff *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.aff *,
+.aff *::before,
+.aff *::after { border-width: revert; border-style: revert; border-color: revert }
+.aff h1, .aff h2, .aff h3, .aff h4, .aff h5, .aff h6 { font-size: revert; font-weight: revert }
+.aff b, .aff strong { font-weight: revert }
+.aff ol, .aff ul, .aff menu { list-style: revert }
+.aff img, .aff svg, .aff video, .aff canvas, .aff audio,
+.aff iframe, .aff embed, .aff object { display: revert; vertical-align: revert }
+.aff img, .aff video { max-width: revert; height: revert }
+.aff button, .aff input, .aff select, .aff optgroup, .aff textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.aff ::placeholder { color: revert; opacity: revert }
+
+.aff {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.aff a{color:var(--violet);text-decoration:none}
+.aff a:hover{color:var(--violet-dark)}
+.aff .app{display:flex;min-height:100vh}
+.aff .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.aff .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.aff .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.aff .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.aff .brand .name .vo{color:#3B82F6}
+.aff .brand .name .ai{color:#fff}
+.aff nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.aff .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.aff .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.aff .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.aff .nav-item.active{background:var(--violet);color:#fff}
+.aff .nav-item.active svg{opacity:1}
+.aff .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px}
+.aff .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.aff .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.aff .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.aff .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.aff .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.aff .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.aff .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.aff .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.aff .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.aff .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.aff .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.aff .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.aff .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.aff .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.aff .icon-btn svg{width:18px;height:18px}
+.aff .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.aff .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.aff .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.aff .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.aff .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.aff .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.aff .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:22px}
+.aff .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.aff .aff-hero{position:relative;border-radius:16px;padding:32px 36px;color:#fff;overflow:hidden;background:radial-gradient(ellipse 65% 100% at 78% 40%,#4a2fb0 0%,transparent 70%),linear-gradient(150deg,#150c38 0%,#221552 55%,#0c0824 100%);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.aff .aff-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 18% 25%,rgba(255,255,255,.55) 0,transparent 100%),radial-gradient(1px 1px at 68% 14%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 85%,rgba(255,255,255,.35) 0,transparent 100%);pointer-events:none}
+.aff .aff-hero-text{position:relative;z-index:1;max-width:420px}
+.aff .aff-hero h2{font-size:23px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.aff .aff-hero h2 .hl{color:var(--gold)}
+.aff .aff-hero p{font-size:13px;color:#c3bde3;line-height:1.65;margin-bottom:20px}
+.aff .hero-btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.aff .btn-gold{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),#f0c96a);color:#3b2a06;border:none;padding:12px 18px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.aff .btn-gold:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(226,178,60,.4);filter:brightness(1.05)}
+.aff .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;padding:12px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:background .15s,transform .15s}
+.aff .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.aff .aff-graphic{position:relative;z-index:1;width:230px;height:200px;flex-shrink:0}
+.aff .net-glow{position:absolute;width:170px;height:170px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(226,178,60,.32),transparent 70%);filter:blur(8px);animation:netPulse 3.2s ease-in-out infinite}
+@keyframes netPulse{0%,100%{opacity:.55;transform:translate(-50%,-50%) scale(.93)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.07)}}
+.aff .orbit-icon{animation:orbFloat 3.4s ease-in-out infinite}
+@keyframes orbFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.aff .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.aff .stat-box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px}
+.aff .stat-box .ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.aff .stat-box .ico svg{width:17px;height:17px}
+.aff .stat-box .num{font-size:19px;font-weight:800}
+.aff .stat-box .lbl{font-size:11.5px;color:var(--muted)}
+.aff .link-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+.aff .link-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.aff .link-card-head h4{font-size:15px;font-weight:800}
+.aff .link-row2{display:flex;gap:10px}
+.aff .link-input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13px;font-family:monospace;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aff .copy-btn{display:flex;align-items:center;gap:7px;background:var(--violet);color:#fff;border:none;padding:11px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:filter .15s}
+.aff .copy-btn:hover{filter:brightness(1.08)}
+.aff .copy-btn svg{width:14px;height:14px}
+.aff .share-icons{display:flex;gap:8px;margin-top:14px}
+.aff .share-icons button{width:38px;height:38px;border-radius:9px;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.aff .share-icons svg{width:16px;height:16px}
+.aff .section-head{display:flex;justify-content:space-between;align-items:baseline}
+.aff .section-head h3{font-size:17px;font-weight:800}
+.aff .tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.aff .tier-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:22px;position:relative}
+.aff .tier-card.current{border-color:var(--violet);box-shadow:0 14px 30px rgba(109,74,255,.14)}
+.aff .tier-badge{position:absolute;top:-11px;right:20px;background:var(--violet);color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px}
+.aff .tier-card .tier-ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.aff .tier-card .tier-ico svg{width:20px;height:20px}
+.aff .tier-card h5{font-size:15px;font-weight:800}
+.aff .tier-card .rate{font-size:26px;font-weight:800;color:var(--violet);margin:8px 0}
+.aff .tier-card .rate span{font-size:12.5px;color:var(--muted);font-weight:600}
+.aff .tier-feat{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+.aff .tier-feat div{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.aff .tier-feat svg{width:15px;height:15px;color:#189a52;flex-shrink:0}
+.aff .tier-req{font-size:11.5px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.aff .steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.aff .step-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;position:relative}
+.aff .step-num{position:absolute;top:16px;right:18px;font-size:34px;font-weight:800;color:var(--violet-light)}
+.aff .step-card .ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.aff .step-card .ico svg{width:19px;height:19px}
+.aff .step-card h5{font-size:14px;font-weight:800;margin-bottom:6px}
+.aff .step-card p{font-size:12.5px;color:var(--muted);line-height:1.55}
+.aff .material-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.aff .material-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.aff .material-thumb{height:90px;display:flex;align-items:center;justify-content:center;color:#fff}
+.aff .material-thumb svg{width:30px;height:30px}
+.aff .material-body{padding:13px}
+.aff .material-body h6{font-size:12.5px;font-weight:700;margin-bottom:8px}
+.aff .material-body button{width:100%;background:var(--violet-light);color:var(--violet-dark);border:none;padding:8px;border-radius:8px;font-weight:700;font-size:11.5px;cursor:pointer}
+.aff .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.aff .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.aff .card-head h4{font-size:14px;font-weight:800}
+.aff .card-head a{font-size:12px;font-weight:700}
+.aff .rank-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.aff .rank-row:last-child{border-bottom:none}
+.aff .rank-row .rk{width:18px;font-size:12px;font-weight:800;color:var(--muted);flex-shrink:0}
+.aff .rank-row .info{flex:1;min-width:0}
+.aff .rank-row h6{font-size:12.8px;font-weight:700}
+.aff .rank-row span{font-size:11px;color:var(--muted)}
+.aff .rank-row .amt{font-size:12.5px;font-weight:800;color:var(--green)}
+.aff .payout-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+.aff .payout-row:last-child{border-bottom:none}
+.aff .payout-row .status{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px}
+.aff .faq-item{border-bottom:1px solid var(--line)}
+.aff .faq-item:last-child{border-bottom:none}
+.aff .faq-q{display:flex;justify-content:space-between;align-items:center;padding:14px 0;cursor:pointer;font-size:13px;font-weight:700}
+.aff .faq-q svg{width:15px;height:15px;color:var(--muted);flex-shrink:0;transition:transform .2s}
+.aff .faq-item.open .faq-q svg{transform:rotate(180deg)}
+.aff .faq-a{font-size:12.5px;color:var(--muted);line-height:1.6;padding-bottom:14px;display:none}
+.aff .faq-item.open .faq-a{display:block}
+.aff [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.aff [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.aff [class*="ico"] svg{position:relative;z-index:1}
+@media (max-width:1180px){
+  .aff .content{flex-direction:column}
+  .aff .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .aff .right-col>.card{flex:1;min-width:280px}
+  .aff .stat-row, .aff .tier-grid, .aff .steps-row{grid-template-columns:repeat(2,1fr)}
+  .aff .material-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Bổ sung ngoài bản thiết kế — honest empty-state (bảng xếp hạng công khai/
+ * bộ tài nguyên marketing không có hệ thống thật), mượn nguyên style
+ * `.empty-hint` đã dùng ở các trang Bước F trước. */
+.aff .empty-hint{font-size:12.5px;color:var(--muted);padding:8px 0}
+.aff .rate-note{font-size:12.5px;color:var(--muted);line-height:1.6}
