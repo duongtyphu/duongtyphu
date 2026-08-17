@@ -1,0 +1,203 @@
+/* =============================================================================
+ * Dự án & Cơ hội 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.duo` cho mọi selector; (2) `:root` → `.duo`;
+ * (3) `body` gộp vào `.duo`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.duo`.
+ * ========================================================================== */
+
+.duo{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.duo, .duo *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.duo *,
+.duo *::before,
+.duo *::after { border-width: revert; border-style: revert; border-color: revert }
+.duo h1, .duo h2, .duo h3, .duo h4, .duo h5, .duo h6 { font-size: revert; font-weight: revert }
+.duo b, .duo strong { font-weight: revert }
+.duo ol, .duo ul, .duo menu { list-style: revert }
+.duo img, .duo svg, .duo video, .duo canvas, .duo audio,
+.duo iframe, .duo embed, .duo object { display: revert; vertical-align: revert }
+.duo img, .duo video { max-width: revert; height: revert }
+.duo button, .duo input, .duo select, .duo optgroup, .duo textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.duo ::placeholder { color: revert; opacity: revert }
+
+.duo {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.duo a{color:var(--violet);text-decoration:none}
+.duo a:hover{color:var(--violet-dark)}
+.duo .app{display:flex;min-height:100vh}
+.duo .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.duo .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.duo .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.duo .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.duo .brand .name .vo{color:#3B82F6}
+.duo .brand .name .ai{color:#fff}
+.duo nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.duo .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.duo .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.duo .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.duo .nav-item.active{background:var(--violet);color:#fff}
+.duo .nav-item.active svg{opacity:1}
+.duo .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.duo .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.duo .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.duo .nav-parent:hover{background:none}
+.duo .nav-parent svg{opacity:1}
+.duo .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.duo .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.duo .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.duo .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.duo .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.duo .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.duo .promo button:active{transform:translateY(0) scale(.97)}
+.duo .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.duo .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.duo .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.duo .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.duo .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.duo .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.duo .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.duo .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.duo .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.duo .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.duo .icon-btn svg{width:18px;height:18px}
+.duo .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.duo .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.duo .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.duo .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.duo .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.duo .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.duo .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.duo .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.duo .page-head h1{font-size:26px;font-weight:800}
+.duo .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+.duo .tabs-row{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto}
+.duo .tabs-row .tab{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.duo .tabs-row .tab svg{width:15px;height:15px}
+.duo .tabs-row .tab.active{background:var(--violet);color:#fff}
+.duo .pj-hero{position:relative;border-radius:16px;padding:30px 34px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:24px;overflow:hidden;background:radial-gradient(ellipse 60% 90% at 78% 40%,#3b2a8f 0%,transparent 70%),linear-gradient(150deg,#120c30 0%,#1a1044 55%,#0c0824 100%)}
+.duo .pj-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 70%,rgba(255,255,255,.35) 0,transparent 100%);pointer-events:none}
+.duo .pj-hero-text{position:relative;z-index:1;max-width:250px;flex-shrink:0}
+.duo .pj-hero h2{font-size:23px;font-weight:800;line-height:1.4;margin-bottom:16px}
+.duo .pj-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.duo .pj-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(109,74,255,.5);filter:brightness(1.08)}
+.duo .pj-feats{position:relative;z-index:1;display:flex;flex-direction:column;gap:16px;flex-shrink:0}
+.duo .pj-feat{display:flex;align-items:flex-start;gap:11px}
+.duo .pj-feat .ico{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.duo .pj-feat .ico svg{width:16px;height:16px}
+.duo .pj-feat h6{font-size:13px;font-weight:700;margin-bottom:2px}
+.duo .pj-feat span{font-size:11.5px;color:#c3bde3}
+.duo .pj-graphic{position:relative;z-index:1;width:220px;height:170px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.duo .pj-glow{position:absolute;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(120,150,255,.4),transparent 70%);filter:blur(6px);animation:pjPulse 3.4s ease-in-out infinite}
+@keyframes pjPulse{0%,100%{opacity:.55;transform:scale(.94)}50%{opacity:1;transform:scale(1.06)}}
+.duo .pj-globe{animation:pjSpin 14s linear infinite}
+@keyframes pjSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.duo .pj-bar{animation:pjRise 2.4s ease-in-out infinite alternate}
+@keyframes pjRise{from{transform:scaleY(.85)}to{transform:scaleY(1)}}
+.duo .section-head{display:flex;align-items:baseline;justify-content:space-between}
+.duo .section-head h3{font-size:17px;font-weight:800}
+.duo .section-head a{font-size:12.5px;font-weight:700}
+.duo .cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.duo .cat-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 14px;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.duo .cat-card:hover{box-shadow:0 10px 22px rgba(30,20,80,.1);transform:translateY(-2px)}
+.duo .cat-card .ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.duo .cat-card .ico svg{width:20px;height:20px}
+.duo .cat-card h5{font-size:13.5px;font-weight:700;margin-bottom:6px}
+.duo .cat-card p{font-size:11.5px;color:var(--muted);line-height:1.45}
+.duo .filter-select{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}
+.duo .pf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.duo .pf-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .15s}
+.duo .pf-card:hover{box-shadow:0 12px 26px rgba(30,20,80,.12);transform:translateY(-3px)}
+.duo .pf-thumb{position:relative;height:110px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.duo .pf-thumb .brand-txt{font-size:20px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.duo .pf-thumb svg{width:22px;height:22px}
+.duo .hot-pill{position:absolute;top:9px;left:9px;font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:6px;color:#fff}
+.duo .pf-body{padding:14px}
+.duo .pf-body h5{font-size:13.5px;font-weight:700;margin-bottom:6px}
+.duo .pf-tags{display:flex;gap:6px;margin-bottom:8px}
+.duo .pf-tag{font-size:10px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:2px 8px;border-radius:6px}
+.duo .pf-body .desc{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:12px;min-height:44px}
+.duo .pf-foot{display:flex;justify-content:space-between;align-items:center}
+.duo .pf-foot .followers{font-size:11px;color:var(--muted)}
+.duo .pf-foot a{font-size:12px;font-weight:700}
+.duo .more-btn-row{text-align:center}
+.duo .more-btn-row button{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .15s}
+.duo .more-btn-row button:hover{background:var(--violet-light);color:var(--violet-dark)}
+.duo .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.duo .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.duo .card-head h4{font-size:14px;font-weight:800}
+.duo .card-head a{font-size:12px;font-weight:600}
+.duo .opp-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
+.duo .opp-row:last-child{border-bottom:none}
+.duo .opp-row .ico{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.duo .opp-row .ico svg{width:19px;height:19px}
+.duo .opp-row .info{flex:1;min-width:0}
+.duo .opp-row h6{font-size:12.8px;font-weight:700;margin-bottom:2px}
+.duo .opp-row .sub{font-size:11px;color:var(--muted);margin-bottom:3px}
+.duo .opp-row .end{font-size:10.5px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.duo .opp-row .end svg{width:10px;height:10px}
+.duo .opp-status{font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:6px;white-space:nowrap;height:fit-content}
+.duo .opp-row>svg.chev{width:14px;height:14px;color:var(--muted);flex-shrink:0;align-self:center}
+.duo .news-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.duo .news-row:last-child{border-bottom:none}
+.duo .news-thumb{width:52px;height:44px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.duo .news-thumb svg{width:18px;height:18px}
+.duo .news-row h6{font-size:12.3px;font-weight:700;line-height:1.4;margin-bottom:3px}
+.duo .news-row .time{font-size:10.5px;color:var(--muted)}
+.duo .doc-row2{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1px solid var(--line)}
+.duo .doc-row2:last-child{border-bottom:none}
+.duo .doc-row2 .ico{width:32px;height:32px;border-radius:8px;background:#fdeef0;color:#e0455a;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.duo .doc-row2 .ico svg{width:15px;height:15px}
+.duo .doc-row2 .info{flex:1;min-width:0}
+.duo .doc-row2 h6{font-size:12.3px;font-weight:700}
+.duo .doc-row2 span{font-size:10.5px;color:var(--muted)}
+.duo .help-card2{text-align:center}
+.duo .avatars-h{display:flex;justify-content:center;margin-bottom:12px}
+.duo .avatars-h .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);border:2px solid #fff;margin-left:-10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.duo .avatars-h .av:first-child{margin-left:0}
+.duo .help-card2 p{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.duo .help-card2 button{width:100%;background:var(--violet);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
+@media (max-width:1180px){
+  .duo .content{flex-direction:column}
+  .duo .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .duo .right-col>.card{flex:1;min-width:280px}
+  .duo .cat-grid{grid-template-columns:repeat(3,1fr)}
+  .duo .pf-grid{grid-template-columns:repeat(2,1fr)}
+}
+.duo [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.duo [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.duo [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.duo .crown{position:relative}
+.duo .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.duo .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* Bước F — Dự án & Cơ hội: trạng thái rỗng trung thực (không có trong bản
+   thiết kế gốc). Cùng quy ước đã dùng cho 5 trang con. */
+.duo .empty-hint{font-size:12.5px;color:var(--muted);padding:8px 0}
+.duo .help-link-btn{display:block;width:100%;box-sizing:border-box;text-align:center;background:var(--violet);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none}
