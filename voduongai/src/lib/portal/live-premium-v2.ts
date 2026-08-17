@@ -83,9 +83,10 @@ export type PremiumMemberSummary = {
 const EMPTY_SUMMARY: PremiumMemberSummary = { totalAmount: 0, firstPurchaseAt: null };
 
 /**
- * Chỉ áp dụng cho 5 `courseId` trong `PREMIUM_PROGRAMS` — không tính đơn
- * hàng của sản phẩm khác (nếu có `products`/`lessons` được mua riêng, không
- * thuộc phạm vi "chương trình Premium").
+ * @deprecated Phase 38 — `/v2/premium` không còn hiển thị 5 chương trình
+ * mua đứt (`PREMIUM_PROGRAMS`/`courses`), thay bằng 3 gói `premium_plans`
+ * (xem `getPremiumPlanMemberSummary()` bên dưới). Giữ lại hàm này để tham
+ * khảo/rollback — không còn consumer nào import.
  */
 export async function getPremiumMemberSummary(programCourseIds: string[]): Promise<PremiumMemberSummary> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return EMPTY_SUMMARY;
@@ -114,4 +115,61 @@ export async function getPremiumMemberSummary(programCourseIds: string[]): Promi
   }, null);
 
   return { totalAmount, firstPurchaseAt };
+}
+
+export type PremiumPlanMemberSummary = {
+  /** Tên gói đã mua gần nhất (đơn `confirmed` mới nhất có `plan_id`) — `null` nếu Premium được cấp thủ công, không qua mua gói. */
+  planName: string | null;
+  /** Số tiền đã trả cho lần mua gói gần nhất. */
+  lastPaidAmount: number;
+  /** `created_at` của đơn mua gói gần nhất — dùng làm "Bắt đầu gói hiện tại từ". */
+  purchasedAt: string | null;
+  /** `members.premium_expires_at` thật — `null` khi Premium chưa có hạn xác định (vd. mua đứt cũ, xem `getPremiumStatus()` Mục 1). */
+  expiresAt: string | null;
+};
+
+const EMPTY_PLAN_SUMMARY: PremiumPlanMemberSummary = { planName: null, lastPaidAmount: 0, purchasedAt: null, expiresAt: null };
+
+/**
+ * Phase 38 — bản kế nhiệm `getPremiumMemberSummary()`: đọc đơn mua GÓI
+ * PREMIUM gần nhất (`orders.plan_id` — Phase 38, khác `course_id` của 5
+ * chương trình cũ) + `members.premium_expires_at` thật (đã được trigger
+ * `on_order_confirmed_premium_plan` gia hạn khi đơn xác nhận).
+ */
+export async function getPremiumPlanMemberSummary(): Promise<PremiumPlanMemberSummary> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return EMPTY_PLAN_SUMMARY;
+
+  const supabase = await getSupabaseServer();
+  const { data: userData } = await supabase.auth.getUser();
+  const userId = userData.user?.id;
+  const email = userData.user?.email;
+  if (!userId || !email) return EMPTY_PLAN_SUMMARY;
+
+  const [{ data: member }, { data: lastOrder }] = await Promise.all([
+    supabase.from("members").select("premium_expires_at").eq("id", userId).maybeSingle(),
+    supabase
+      .from("orders")
+      .select("amount, created_at, plan_id")
+      .eq("member_email", email)
+      .eq("status", "confirmed")
+      .not("plan_id", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  const expiresAt = (member?.premium_expires_at as string | null | undefined) ?? null;
+  if (!lastOrder) return { ...EMPTY_PLAN_SUMMARY, expiresAt };
+
+  // Không dùng cú pháp embed `premium_plans(name)` — `orders.plan_id` chưa
+  // có ràng buộc khoá ngoại tới `premium_plans.id` (cột thêm additive-only,
+  // Phase 38), PostgREST cần FK để suy quan hệ embed. Tra tên gói riêng.
+  const { data: plan } = await supabase.from("premium_plans").select("name").eq("id", lastOrder.plan_id as string).maybeSingle();
+
+  return {
+    planName: (plan?.name as string | undefined) ?? null,
+    lastPaidAmount: Number(lastOrder.amount) || 0,
+    purchasedAt: (lastOrder.created_at as string | null) ?? null,
+    expiresAt,
+  };
 }

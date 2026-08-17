@@ -157,6 +157,10 @@ export const adminWorkspaces: AdminWorkspace[] = [
         items: [
           { label: "Giá khoá học Premium", href: "/admin/course-pricing" },
           { label: "Dashboard (Live-edit)", href: "/admin/premium/dashboard" },
+          // Phase 38 — /v2/premium (Bản thử 2.0) không còn hiển thị 5 chương
+          // trình mua đứt (courses), thay bằng 3 gói thuê bao thật
+          // (premium_plans, CRUD riêng — bảng typed, cùng pattern coupons).
+          { label: "Gói Premium — Tháng/6 Tháng/12 Tháng", href: "/admin/premium/plans" },
         ],
       },
       {

@@ -3,16 +3,21 @@
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
-export type CheckoutItemType = "product" | "lesson" | "course";
+export type CheckoutItemType = "product" | "lesson" | "course" | "premium_plan";
 
 type CreateOrderResult =
   | { ok: false; error: string }
   | { ok: true; orderId: number; orderCode: string; basePrice: number; finalPrice: number };
 
+// `premium_plan` — Phase 38, 3 gói Premium 2.0 (`/v2/premium`, bảng
+// `premium_plans`). Xác nhận đơn qua đúng luồng SePay như mọi item khác;
+// trigger `on_order_confirmed_premium_plan` (DB) tự gia hạn
+// `members.premium_expires_at` khi đơn chuyển `confirmed`.
 const ITEM_TABLE: Record<CheckoutItemType, string> = {
   product: "products",
   lesson: "lessons",
   course: "courses",
+  premium_plan: "premium_plans",
 };
 
 // Looks up the authoritative price server-side instead of trusting the
@@ -65,6 +70,7 @@ export async function createOrder(
   };
   if (itemType === "lesson") row.lesson_id = itemId;
   else if (itemType === "course") row.course_id = String(itemId);
+  else if (itemType === "premium_plan") row.plan_id = String(itemId);
   else row.product_id = itemId;
 
   const { data: order, error } = await admin.from("orders").insert(row).select().single();

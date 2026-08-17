@@ -1,9 +1,6 @@
 import { getPremiumStatus } from "@/lib/v2/premium-access";
-import { getPurchasedIds } from "@/lib/access";
-import { getSupabaseServer } from "@/lib/supabase-server";
-import { PREMIUM_PROGRAMS } from "@/components/portal/premium/premium-programs";
-import { matchCourse } from "@/components/portal/premium/match-course";
-import { getPremiumResourceCounts, getPremiumMemberSummary } from "@/lib/portal/live-premium-v2";
+import { getPremiumResourceCounts, getPremiumPlanMemberSummary } from "@/lib/portal/live-premium-v2";
+import { getLivePremiumPlans } from "@/lib/portal/live-premium-plans";
 import { getLiveCommunityChannels } from "@/lib/portal/live-community";
 import { getLivePremiumFaq } from "@/lib/portal/live-premium";
 import { getJourneyOverview } from "@/lib/portal/live-journey-overview";
@@ -20,46 +17,29 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  * Trạng thái hiển thị do `getPremiumStatus()` quyết định (thật, không phải
  * toggle tay), đúng nguyên tắc đã áp dụng cho mọi trang Bước F trước.
  *
- * `courses.id` là `text` (không phải `number`) — xem
- * `src/app/portal/premium/page.tsx` (bản 1.0) đã sửa lỗi kiểu này.
+ * Phase 38 (yêu cầu riêng của Founder, đảo ngược quyết định "5 chương trình
+ * mua đứt" ghi ở `PremiumClient.tsx`'s docblock cũ): bỏ hẳn 5 chương trình
+ * (`PREMIUM_PROGRAMS`/`courses`) — dùng đúng 3 gói thuê bao "Gói Tháng/6
+ * Tháng/12 Tháng" như bản thiết kế gốc (bảng `premium_plans` thật, không
+ * còn số mẫu). Mua bất kỳ gói nào cũng mở TOÀN BỘ tính năng Portal
+ * (`getPremiumStatus()` đã trả `isPremium` dùng chung cho CKOS/Học viện
+ * AI/AI Workspace từ Bước D — không cần đổi gì thêm ở đó).
  */
-type CourseRow = { id: string; status: string; price: number };
-
-async function getCourses(): Promise<CourseRow[]> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
-  const supabase = await getSupabaseServer();
-  const { data } = await supabase.from("courses").select("id, status, price");
-  return data ?? [];
-}
-
 export default async function PremiumPage() {
-  const [premium, courses, purchasedCourseIds, resourceCounts, communityChannels, faq, journey] = await Promise.all([
+  const [premium, plans, resourceCounts, communityChannels, faq, journey, memberSummary] = await Promise.all([
     getPremiumStatus(),
-    getCourses(),
-    getPurchasedIds("course_id"),
+    getLivePremiumPlans(),
     getPremiumResourceCounts(),
     getLiveCommunityChannels(),
     getLivePremiumFaq(),
     getJourneyOverview(),
+    getPremiumPlanMemberSummary(),
   ]);
-
-  // `program.icon` là `LucideIcon` (function reference) — không serialize được
-  // qua ranh giới Server→Client (đúng lỗi đã gặp ở `EcosystemOverview.tsx`,
-  // xem CLAUDE.md "Bug đã sửa — 5 trang chi tiết hệ sinh thái crash"). Loại
-  // bỏ trước khi truyền xuống `PremiumClient` — component này chỉ dùng SVG
-  // tĩnh chép từ mockup, không render `program.icon`.
-  const programCards = PREMIUM_PROGRAMS.map(({ icon: _icon, ...program }) => {
-    void _icon;
-    return { program, course: matchCourse(courses, program.courseId, purchasedCourseIds) };
-  });
-
-  const ownedProgramCourseIds = programCards.filter((c) => c.course?.owned).map((c) => c.program.courseId);
-  const memberSummary = await getPremiumMemberSummary(ownedProgramCourseIds);
 
   return (
     <PremiumClient
       premium={premium}
-      programCards={programCards}
+      plans={plans}
       resourceCounts={resourceCounts}
       communityChannels={communityChannels}
       faq={faq}

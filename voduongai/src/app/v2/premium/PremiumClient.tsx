@@ -5,15 +5,9 @@ import Link from "next/link";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
-import type { PremiumProgram as PremiumProgramFull } from "@/components/portal/premium/premium-programs";
-
-/** `program.icon` (LucideIcon) bị loại bỏ ở `page.tsx` trước khi truyền
- * xuống Client Component (function không serialize được qua ranh giới
- * Server→Client) — type ở đây khớp đúng shape thực tế nhận được. */
-type PremiumProgram = Omit<PremiumProgramFull, "icon">;
-import type { PremiumCourseMatch } from "@/components/portal/premium/PremiumProgramCard";
 import { formatVnd } from "@/components/portal/premium/premium-programs";
-import type { PremiumResourceCounts, PremiumMemberSummary } from "@/lib/portal/live-premium-v2";
+import type { PremiumPlan } from "@/lib/portal/live-premium-plans";
+import type { PremiumResourceCounts, PremiumPlanMemberSummary } from "@/lib/portal/live-premium-v2";
 import type { LiveCommunityChannel } from "@/lib/portal/live-community";
 import type { PremiumFaqItem } from "@/lib/portal/live-premium";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
@@ -42,39 +36,46 @@ import "./premium.css";
  *    `ebooks` có Admin CRUD (`/admin/ckos/ebooks`) nhưng KHÔNG route Portal
  *    nào đọc (mồ côi thật, khác 5 bảng còn lại đều có trang Portal xem được).
  *
- * 2. Bảng giá 3 gói thuê bao "Tháng/6 Tháng/12 Tháng" (299k/1.49tr/2.59tr,
- *    hoàn toàn không có backing — hệ thống mua hàng thật là 5 chương trình
- *    MUA ĐỨT theo `courses`, không có khái niệm subscription nào) → 5 thẻ
- *    `PREMIUM_PROGRAMS` thật, tái dùng NGUYÊN `matchCourse()`/`getPurchasedIds()`
- *    — đúng cơ chế đã chạy ở `/portal/premium` 1.0, không phát minh luồng
- *    thanh toán mới.
+ * 2. Bảng giá 3 gói thuê bao "Tháng/6 Tháng/12 Tháng" — PHASE 38 (yêu cầu
+ *    riêng của Founder, đảo ngược quyết định gốc ở trên): hệ thống giờ ĐÃ
+ *    CÓ backing thật — bảng `premium_plans` (typed, `getLivePremiumPlans()`),
+ *    3 gói Published với giá/tính năng/nhãn tiết kiệm thật (299k/1.49tr/
+ *    2.59tr). Mua bất kỳ gói nào là 1 đơn hàng qua đúng luồng
+ *    checkout+SePay đang chạy (`itemType="premium_plan"`), xác nhận xong
+ *    trigger DB `on_order_confirmed_premium_plan` tự gia hạn
+ *    `members.premium_expires_at` đúng số ngày của gói — Premium giờ CÓ
+ *    THỜI HẠN thật (khác quyết định "mua đứt = vĩnh viễn" cũ của 5 chương
+ *    trình, 2 cơ chế cùng tồn tại song song ở `getPremiumStatus()`).
  *
- * 3. Bảng "So sánh quyền lợi" (7 hàng theo 3 gói thuê bao) — BỎ HẲN, không
- *    có cách honest nào ánh xạ bảng so sánh phân cấp 3-gói sang 5 chương
- *    trình mua đứt có nội dung khác hẳn nhau (không phải các cấp của cùng 1
- *    gói). "Premium Member nói gì?" (3 đánh giá bịa tên/quote) → honest
- *    empty-state, cùng tiền lệ NO-FAKE-DATA đã áp dụng cho
- *    `student_success_stories`. Gộp 2 khối `.two-col` cũ thành 1 card đơn
- *    (bỏ cột trái đã xoá).
+ * 3. Bảng "So sánh quyền lợi" (7 hàng theo 3 gói thuê bao) — BỎ HẲN, đúng
+ *    quyết định gốc: mockup có sẵn nhưng đây không phải yêu cầu bắt buộc,
+ *    3 thẻ giá đã liệt kê đủ tính năng từng gói. "Premium Member nói gì?"
+ *    (3 đánh giá bịa tên/quote) → honest empty-state, cùng tiền lệ
+ *    NO-FAKE-DATA đã áp dụng cho `student_success_stories`. Gộp 2 khối
+ *    `.two-col` cũ thành 1 card đơn (bỏ cột trái đã xoá).
  *
  * 4. "Lộ trình Premium của bạn" (6 bước bịa % giả) → 4 giai đoạn thật của
  *    `learning_paths` qua `getJourneyOverview()` (tái dùng nguyên, không
  *    viết lại lần 2 — đã dùng ở `/v2/hanh-trinh-cua-toi`).
  *
  * 5. `member-status-card` — "Gói hiện tại: Premium Monthly / 99.000đ/tháng"
- *    + ngày bắt đầu/hết hạn giả → tên chương trình ĐÃ SỞ HỮU thật + tổng số
- *    tiền thật đã thanh toán (`getPremiumMemberSummary()`, cộng dồn
- *    `orders.amount` các đơn `confirmed` khớp 5 `courseId` Premium) + ngày
- *    mua sớm nhất thật. KHÔNG có khái niệm "hết hạn" thật (mọi thành viên
- *    Premium hiện tại đến từ mua đứt, `premium_expires_at` luôn `NULL`) —
- *    hiển thị "Không giới hạn (trọn đời)" tĩnh thay vì bịa ngày hết hạn.
+ *    + ngày bắt đầu/hết hạn giả → PHASE 38: tên GÓI đã mua gần nhất + số
+ *    tiền thật đã trả (`getPremiumPlanMemberSummary()`, đọc `orders.plan_id`)
+ *    + ngày mua thật + ngày hết hạn THẬT (`members.premium_expires_at`, do
+ *    trigger gia hạn khi mua gói — không còn là "Không giới hạn" tĩnh).
+ *    Trường hợp Premium được cấp qua đường khác (thủ công/mua đứt cũ, chưa
+ *    từng mua gói nào) — `planName`/`expiresAt` đều `null`, hiển thị dòng
+ *    fallback trung thực "Được cấp quyền Premium bởi VO DUONG AI" +
+ *    "Không giới hạn thời gian" thay vì bịa ngày.
  *
  * 6. `ustat-grid` (6 số bịa: tài liệu đã tải/prompt đã lưu/workflow đã dùng/
  *    45 giờ/7 ngày/85%) — 3/6 không có hệ thống theo dõi thật (lượt tải,
- *    lượt lưu, lượt dùng workflow) → thay bằng 3 số Premium thật khác:
- *    bài học đã hoàn thành, số chương trình đã sở hữu, huy hiệu đã đạt.
- *    3 còn lại (giờ học/chuỗi ngày/% hoàn thành) đã có backing thật, tái
- *    dùng nguyên từ `journey`.
+ *    lượt lưu, lượt dùng workflow) → thay bằng 3 số Premium thật khác: bài
+ *    học đã hoàn thành, số NGÀY CÒN LẠI của gói hiện tại (tính từ
+ *    `expiresAt` thật — hợp lý hơn "số chương trình sở hữu" cũ vì giờ chỉ
+ *    có 1 gói đang hoạt động, không phải danh sách nhiều chương trình),
+ *    huy hiệu đã đạt. 3 còn lại (giờ học/chuỗi ngày/% hoàn thành) đã có
+ *    backing thật, tái dùng nguyên từ `journey`.
  *
  * 7. `community-strip` — "Hơn 1.200 thành viên..." (số bịa) + 4 avatar giả
  *    → bỏ hẳn, thay dòng giới thiệu chung không kèm số liệu. 4 "cl-item"
@@ -140,24 +141,59 @@ function ResourceGrid({ counts }: { counts: PremiumResourceCounts }) {
   );
 }
 
-function ProgramPriceCard({ program, course }: { program: PremiumProgram; course: PremiumCourseMatch }) {
-  const features = (program.topics[0]?.items ?? []).slice(0, 4);
-  const owned = course?.owned ?? false;
-  const open = course?.open ?? false;
+/** `Math.round(durationDays/30)` — "30 ngày" của DB hiển thị gọn thành "1 tháng" thay vì số ngày lẻ. */
+function planMonths(durationDays: number): number {
+  return Math.max(1, Math.round(durationDays / 30));
+}
+
+/** % tiết kiệm tính THẬT từ `price`/`originalPrice` — không hardcode "20%"/"40%" tĩnh, luôn khớp đúng giá Admin đang cấu hình qua `/admin/premium/plans`. */
+function savingsPercent(price: number, originalPrice: number | null): number | null {
+  if (!originalPrice || originalPrice <= price) return null;
+  return Math.round((1 - price / originalPrice) * 100);
+}
+
+/** Badge "Tiết kiệm đến X%" ở đầu bảng giá — X = % tiết kiệm CAO NHẤT trong các gói đang có, tính thật (không hardcode "40%"). `null` nếu không gói nào có `originalPrice`. */
+function maxSavingsLabel(plans: PremiumPlan[]): string | null {
+  const percents = plans.map((p) => savingsPercent(p.price, p.originalPrice)).filter((p): p is number => p !== null);
+  if (percents.length === 0) return null;
+  return `Tiết kiệm đến ${Math.max(...percents)}%`;
+}
+
+/** `Date.now()` là hàm impure — tách khỏi thân `PremiumClient` (component,
+ * trả JSX) sang hàm thuần độc lập, đúng lỗi `react-hooks/purity` đã gặp
+ * nhiều lần trong dự án (xem CLAUDE.md "countNewUsers()" ở Admin Người dùng). */
+function computeDaysRemaining(expiresAt: string | null): number | null {
+  if (!expiresAt) return null;
+  return Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
+}
+
+function PlanPriceCard({ plan, isPremium }: { plan: PremiumPlan; isPremium: boolean }) {
+  const savePercent = savingsPercent(plan.price, plan.originalPrice);
+  const months = planMonths(plan.durationDays);
+  const perMonth = months > 1 ? Math.round(plan.price / months) : null;
+  const checkoutHref = `/portal/checkout?${new URLSearchParams({
+    type: "premium_plan",
+    id: plan.id,
+    title: plan.name,
+    price: String(plan.price),
+  }).toString()}`;
+
   return (
-    <div className="price-card">
-      <h5>{program.name}</h5>
-      <div className="sub">{program.level}</div>
-      {course && open ? (
-        <div className="amt">{formatVnd(course.price)}</div>
-      ) : (
-        <div className="amt" style={{ fontSize: 15 }}>
-          Sắp mở đăng ký
-        </div>
+    <div className={plan.isFeatured ? "price-card featured" : "price-card"}>
+      {savePercent !== null && (
+        <span className="save-pill" style={plan.isFeatured ? undefined : { background: "#5a37e6" }}>
+          Tiết kiệm {savePercent}%
+        </span>
       )}
-      <div className="per">Thanh toán 1 lần</div>
+      <h5>{plan.name}</h5>
+      <div className="sub">{plan.subtitle}</div>
+      <div className="amt">
+        {formatVnd(plan.price)}
+        {plan.originalPrice ? <span className="strike">{formatVnd(plan.originalPrice)}</span> : null}
+      </div>
+      <div className="per">{perMonth ? `${formatVnd(perMonth)}/tháng` : "/ tháng"}</div>
       <div className="price-feat">
-        {features.map((f) => (
+        {plan.features.map((f) => (
           <div key={f}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <path d="M20 6L9 17l-5-5" />
@@ -166,23 +202,16 @@ function ProgramPriceCard({ program, course }: { program: PremiumProgram; course
           </div>
         ))}
       </div>
-      {owned ? (
+      {isPremium ? (
         <Link href="/portal/my-products" className="price-btn" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
-          Đã sở hữu — Xem sản phẩm
-        </Link>
-      ) : open ? (
-        <Link
-          href={`/portal/checkout?type=course&id=${program.courseId}`}
-          className="price-btn"
-          style={{ display: "block", textAlign: "center", textDecoration: "none" }}
-        >
-          {program.ctaLabel}
+          Đã là Premium — Xem sản phẩm
         </Link>
       ) : (
-        <button className="price-btn" disabled style={{ opacity: 0.6, cursor: "not-allowed" }}>
-          Sắp mở đăng ký
-        </button>
+        <Link href={checkoutHref} className="price-btn" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
+          {plan.ctaLabel}
+        </Link>
       )}
+      {months > 1 && <div className="price-note">Thanh toán 1 lần – học {months} tháng</div>}
     </div>
   );
 }
@@ -292,7 +321,7 @@ function FaqList({ faq }: { faq: PremiumFaqItem[] }) {
 
 export function PremiumClient({
   premium,
-  programCards,
+  plans,
   resourceCounts,
   communityChannels,
   faq,
@@ -300,15 +329,14 @@ export function PremiumClient({
   memberSummary,
 }: {
   premium: PremiumStatus;
-  programCards: { program: PremiumProgram; course: PremiumCourseMatch }[];
+  plans: PremiumPlan[];
   resourceCounts: PremiumResourceCounts;
   communityChannels: LiveCommunityChannel[];
   faq: PremiumFaqItem[];
   journey: JourneyOverview;
-  memberSummary: PremiumMemberSummary;
+  memberSummary: PremiumPlanMemberSummary;
 }) {
-  const ownedPrograms = programCards.filter((c) => c.course?.owned);
-  const ownedNames = ownedPrograms.map((c) => c.program.name);
+  const daysRemaining = computeDaysRemaining(memberSummary.expiresAt);
 
   return (
     <div className="pm">
@@ -500,13 +528,25 @@ export function PremiumClient({
 
                   <div style={{ marginTop: 24 }} id="chuong-trinh">
                     <div className="section-head">
-                      <h3>Chọn chương trình Premium phù hợp với bạn</h3>
+                      <h3>Chọn gói Premium phù hợp với bạn</h3>
+                      {maxSavingsLabel(plans) && (
+                        <span
+                          className="p-tag"
+                          style={{ background: "#e6f7ed", color: "#189a52", fontWeight: 800, padding: "4px 10px", borderRadius: 7, fontSize: 11.5 }}
+                        >
+                          {maxSavingsLabel(plans)}
+                        </span>
+                      )}
                     </div>
-                    <div className="price-grid" style={{ marginTop: 14 }}>
-                      {programCards.map(({ program, course }) => (
-                        <ProgramPriceCard program={program} course={course} key={program.key} />
-                      ))}
-                    </div>
+                    {plans.length === 0 ? (
+                      <p className="empty-hint">Chưa có gói Premium nào đang mở bán.</p>
+                    ) : (
+                      <div className="price-grid" style={{ marginTop: 14 }}>
+                        {plans.map((plan) => (
+                          <PlanPriceCard plan={plan} isPremium={premium.isPremium} key={plan.id} />
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   <div className="card" style={{ marginTop: 24 }}>
@@ -700,18 +740,20 @@ export function PremiumClient({
                           <h4>
                             Premium Member <span className="status">Đang hoạt động</span>
                           </h4>
-                          <div className="plan-line">{ownedNames.length > 0 ? `Sở hữu: ${ownedNames.join(", ")}` : "Được cấp quyền Premium bởi VO DUONG AI"}</div>
-                          {memberSummary.totalAmount > 0 ? <div className="price">Tổng đã đầu tư: {formatVnd(memberSummary.totalAmount)}</div> : null}
+                          <div className="plan-line">
+                            {memberSummary.planName ? `Gói hiện tại: ${memberSummary.planName}` : "Được cấp quyền Premium bởi VO DUONG AI"}
+                          </div>
+                          {memberSummary.lastPaidAmount > 0 ? <div className="price">Đã thanh toán: {formatVnd(memberSummary.lastPaidAmount)}</div> : null}
                         </div>
                       </div>
                       <div className="ms-dates">
                         <div>
-                          <b>{memberSummary.firstPurchaseAt ? new Date(memberSummary.firstPurchaseAt).toLocaleDateString("vi-VN") : "—"}</b>
-                          Bắt đầu Premium
+                          <b>{memberSummary.purchasedAt ? new Date(memberSummary.purchasedAt).toLocaleDateString("vi-VN") : "—"}</b>
+                          Bắt đầu gói hiện tại
                         </div>
                         <div>
-                          <b>Trọn đời</b>
-                          Không giới hạn thời gian
+                          <b>{memberSummary.expiresAt ? new Date(memberSummary.expiresAt).toLocaleDateString("vi-VN") : "Trọn đời"}</b>
+                          {memberSummary.expiresAt ? `Hết hạn (còn ${daysRemaining} ngày)` : "Không giới hạn thời gian"}
                         </div>
                       </div>
                       <Link href="/portal/my-products" className="ms-manage" style={{ display: "inline-block", textAlign: "center", textDecoration: "none" }}>
@@ -724,8 +766,8 @@ export function PremiumClient({
                         <div className="lbl">Bài học đã hoàn thành</div>
                       </div>
                       <div className="ustat">
-                        <div className="num">{ownedNames.length}</div>
-                        <div className="lbl">Chương trình đã sở hữu</div>
+                        <div className="num">{daysRemaining !== null ? daysRemaining : "—"}</div>
+                        <div className="lbl">Ngày còn lại của gói</div>
                       </div>
                       <div className="ustat">
                         <div className="num">{journey.badges.length}</div>
