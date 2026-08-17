@@ -72,6 +72,7 @@ export function PortalV2Shell({
   promoVisual,
   promoButtonLabel = "Nâng cấp ngay",
   promoButtonTarget = "Premium.html",
+  hidePromo = false,
   children,
 }: {
   premium: PremiumStatus;
@@ -116,6 +117,14 @@ export function PortalV2Shell({
   promoButtonLabel?: string;
   /** `htmlFile` (khoá `PORTAL_HREF_MAP`) nút `.promo` điều hướng tới — mặc định `"Premium.html"`. */
   promoButtonTarget?: string;
+  /**
+   * Ẩn hẳn khối `.promo` — mặc định `false` (mọi trang khác giữ nguyên,
+   * luôn hiện). Trang ĐẦU TIÊN cần giá trị `true`: `/v2/premium` khi
+   * `premium.isPremium`, đúng hành vi JS gốc của `Premium.html`
+   * (`promo.style.display='none'` ở trạng thái "Đã đăng ký Premium") — mời
+   * mua Premium ngay trên trang đã sở hữu Premium là vô nghĩa.
+   */
+  hidePromo?: boolean;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -273,7 +282,7 @@ export function PortalV2Shell({
           )}
         </nav>
 
-        <div className="promo">
+        <div className="promo" style={hidePromo ? { display: "none" } : undefined}>
           {promoVisual ?? (
             <div className="crown" style={{ background: "none", boxShadow: "none", width: 54, height: 54, overflow: "visible" }}>
               {CROWN_SPARKLES.map((style, i) => (
