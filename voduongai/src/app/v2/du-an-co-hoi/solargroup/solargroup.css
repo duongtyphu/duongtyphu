@@ -1,0 +1,209 @@
+/* =============================================================================
+ * SolarGroup 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.sgr` cho mọi selector; (2) `:root` → `.sgr`;
+ * (3) `body` gộp vào `.sgr`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.sgr`.
+ * ========================================================================== */
+
+.sgr{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.sgr, .sgr *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.sgr *,
+.sgr *::before,
+.sgr *::after { border-width: revert; border-style: revert; border-color: revert }
+.sgr h1, .sgr h2, .sgr h3, .sgr h4, .sgr h5, .sgr h6 { font-size: revert; font-weight: revert }
+.sgr b, .sgr strong { font-weight: revert }
+.sgr ol, .sgr ul, .sgr menu { list-style: revert }
+.sgr img, .sgr svg, .sgr video, .sgr canvas, .sgr audio,
+.sgr iframe, .sgr embed, .sgr object { display: revert; vertical-align: revert }
+.sgr img, .sgr video { max-width: revert; height: revert }
+.sgr button, .sgr input, .sgr select, .sgr optgroup, .sgr textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.sgr ::placeholder { color: revert; opacity: revert }
+
+.sgr {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.sgr a{color:var(--violet);text-decoration:none}
+.sgr a:hover{color:var(--violet-dark)}
+.sgr .app{display:flex;min-height:100vh}
+.sgr .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.sgr .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.sgr .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sgr .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.sgr .brand .name .vo{color:#3B82F6}
+.sgr .brand .name .ai{color:#fff}
+.sgr nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.sgr .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.sgr .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.sgr .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.sgr .nav-item.active{background:var(--violet);color:#fff}
+.sgr .nav-item.active svg{opacity:1}
+.sgr .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.sgr .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.sgr .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.sgr .nav-parent:hover{background:none}
+.sgr .nav-parent svg{opacity:1}
+.sgr .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.sgr .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.sgr .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.sgr .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.sgr .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.sgr .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.sgr .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.sgr .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.sgr .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.sgr .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.sgr .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.sgr .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.sgr .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.sgr .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.sgr .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.sgr .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.sgr .icon-btn svg{width:18px;height:18px}
+.sgr .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.sgr .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.sgr .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.sgr .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.sgr .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.sgr .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+.sgr .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
+.sgr .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.sgr .profile-head{display:flex;align-items:flex-start;gap:16px}
+.sgr .profile-logo{width:64px;height:64px;border-radius:14px;background:#fdf1d9;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sgr .profile-logo svg{width:30px;height:30px}
+.sgr .profile-info{flex:1;min-width:0}
+.sgr .profile-info h1{font-size:23px;font-weight:800;display:flex;align-items:center;gap:8px}
+.sgr .verify-badge{width:20px;height:20px;border-radius:50%;background:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sgr .verify-badge svg{width:11px;height:11px}
+.sgr .profile-info p{font-size:13.5px;color:var(--muted);margin:6px 0 10px}
+.sgr .tag-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sgr .p-tag{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.sgr .p-since{font-size:12px;color:var(--muted)}
+.sgr .profile-actions{display:flex;gap:10px;flex-shrink:0}
+.sgr .act-btn{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;padding:9px 15px;border-radius:9px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;transition:background .15s}
+.sgr .act-btn:hover{background:var(--bg)}
+.sgr .act-btn svg{width:15px;height:15px}
+.sgr .sg-hero{position:relative;border-radius:16px;padding:32px 36px;color:#fff;overflow:hidden;background:radial-gradient(ellipse 65% 100% at 75% 45%,#4a3308 0%,transparent 70%),linear-gradient(150deg,#1a1400 0%,#241c46 55%,#0c0824 100%);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.sgr .sg-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 80%,rgba(255,255,255,.35) 0,transparent 100%);pointer-events:none}
+.sgr .sg-hero-text{position:relative;z-index:1;max-width:380px}
+.sgr .sg-hero h2{font-size:23px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.sgr .sg-hero p{font-size:13px;color:#d0c9e8;line-height:1.65;margin-bottom:20px}
+.sgr .hero-btn-row{display:flex;gap:10px}
+.sgr .btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),#f0c96a);color:#3b2a06;border:none;padding:12px 18px;border-radius:10px;font-weight:800;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.sgr .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(226,178,60,.4);filter:brightness(1.05)}
+.sgr .btn-ghost{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;padding:12px 18px;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;transition:background .15s,transform .15s}
+.sgr .btn-ghost:hover{background:rgba(255,255,255,.16);transform:translateY(-2px)}
+.sgr .sg-graphic{position:relative;z-index:1;width:280px;height:220px;flex-shrink:0}
+.sgr .net-glow{position:absolute;width:180px;height:180px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(226,178,60,.35),transparent 70%);filter:blur(6px);animation:netPulse 3.4s ease-in-out infinite}
+@keyframes netPulse{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.94)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+.sgr .coil-spin{animation:coilSpin 10s linear infinite;transform-origin:140px 110px}
+@keyframes coilSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.sgr .spark{animation:sparkBlink 2.2s ease-in-out infinite}
+@keyframes sparkBlink{0%,100%{opacity:.3}50%{opacity:1}}
+.sgr .stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.sgr .stat-box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;flex-direction:column;gap:8px}
+.sgr .stat-box .ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.sgr .stat-box .ico svg{width:16px;height:16px}
+.sgr .stat-box .num{font-size:18px;font-weight:800}
+.sgr .stat-box .lbl{font-size:11.5px;color:var(--muted)}
+.sgr .stat-box .sub{font-size:10px;color:#9691b3}
+.sgr .tabs-row{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;overflow-x:auto}
+.sgr .tabs-row .tab{padding:9px 14px;border-radius:9px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;white-space:nowrap}
+.sgr .tabs-row .tab.active{background:var(--violet);color:#fff}
+.sgr .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+.sgr .about-text h3{font-size:16px;font-weight:800;margin-bottom:10px}
+.sgr .about-text p{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px}
+.sgr .check-list{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.sgr .check-item{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600}
+.sgr .check-item svg{width:16px;height:16px;color:#189a52;flex-shrink:0}
+.sgr .video-card{border-radius:14px;overflow:hidden;position:relative;aspect-ratio:16/10;background:linear-gradient(150deg,#1a1400,#3d2a08);display:flex;flex-direction:column;justify-content:space-between;padding:20px;color:#fff}
+.sgr .video-card .vtitle{font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px}
+.sgr .video-card .vsub{font-size:20px;font-weight:800;margin-top:4px;line-height:1.3}
+.sgr .play-btn{width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;align-self:center;cursor:pointer}
+.sgr .play-btn svg{width:20px;height:20px}
+.sgr .video-time{position:absolute;bottom:12px;right:14px;font-size:11px;font-weight:700;background:rgba(0,0,0,.5);padding:3px 8px;border-radius:6px}
+.sgr .sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sgr .sub-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.sgr .sub-thumb{height:96px;display:flex;align-items:center;padding:0 20px;gap:12px;color:#fff}
+.sgr .sub-thumb .ico2{width:46px;height:46px;border-radius:11px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sgr .sub-thumb .ico2 svg{width:22px;height:22px}
+.sgr .sub-thumb h4{font-size:16px;font-weight:800}
+.sgr .sub-thumb span{font-size:11px;opacity:.85}
+.sgr .sub-body{padding:16px 20px}
+.sgr .sub-body p{font-size:12.5px;color:var(--muted);line-height:1.55;margin-bottom:12px;min-height:56px}
+.sgr .sub-mini-stats{display:flex;gap:16px;margin-bottom:12px}
+.sgr .sub-mini-stats div{font-size:11px;color:var(--muted)}
+.sgr .sub-mini-stats b{display:block;font-size:14px;font-weight:800;color:var(--text)}
+.sgr .sub-body a{font-size:12.5px;font-weight:700}
+.sgr .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.sgr .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sgr .card-head h4{font-size:14px;font-weight:800}
+.sgr .roadmap{display:flex;flex-direction:column;gap:0}
+.sgr .rm-item{display:flex;gap:12px;position:relative;padding-bottom:18px}
+.sgr .rm-item:last-child{padding-bottom:0}
+.sgr .rm-item::before{content:'';position:absolute;left:11px;top:24px;bottom:0;width:2px;background:var(--line)}
+.sgr .rm-item:last-child::before{display:none}
+.sgr .rm-dot{width:22px;height:22px;border-radius:50%;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
+.sgr .rm-item.done .rm-dot{background:#189a52;color:#fff}
+.sgr .rm-dot svg{width:11px;height:11px}
+.sgr .rm-text .yr{font-size:10.5px;font-weight:800;color:var(--violet);margin-bottom:1px}
+.sgr .rm-text h6{font-size:12.5px;font-weight:700}
+.sgr .fin-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.sgr .fin-row:last-child{border-bottom:none}
+.sgr .fin-row .lbl{font-size:12px;color:var(--muted)}
+.sgr .fin-row .val{font-size:13.5px;font-weight:800}
+.sgr .news-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.sgr .news-row:last-child{border-bottom:none}
+.sgr .news-thumb{width:52px;height:44px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sgr .news-thumb svg{width:18px;height:18px}
+.sgr .news-cat{font-size:9px;font-weight:800;letter-spacing:.04em;margin-bottom:3px}
+.sgr .news-row h6{font-size:12.3px;font-weight:700;line-height:1.4;margin-bottom:3px}
+.sgr .news-row .time{font-size:10.5px;color:var(--muted)}
+.sgr .cta-card{background:linear-gradient(160deg,#241c4d,#4a3308);border-radius:14px;padding:20px;color:#fff;position:relative;overflow:hidden}
+.sgr .cta-card h4{font-size:15px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
+.sgr .cta-card p{font-size:12px;color:#d0c9e8;line-height:1.5;margin-bottom:14px;max-width:220px;position:relative;z-index:1}
+.sgr .cta-card button{background:#fff;color:#3b2a06;border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative;z-index:1}
+@media (max-width:1180px){
+  .sgr .content{flex-direction:column}
+  .sgr .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .sgr .right-col>*{flex:1;min-width:280px}
+  .sgr .stat-row{grid-template-columns:repeat(2,1fr)}
+  .sgr .about-grid, .sgr .sub-grid{grid-template-columns:1fr}
+}
+.sgr [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.sgr [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.sgr [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+.sgr .crown{position:relative}
+.sgr .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.sgr .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* Bước F — Dự án & Cơ hội: trạng thái rỗng trung thực (không có trong bản
+   thiết kế gốc). Cùng quy ước đã dùng cho CKOS/Học viện AI/AI Workspace/DigiU. */
+.sgr .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+.sgr .cta-card a.cta-link-btn{background:#fff;color:#3b2a06;border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;position:relative;z-index:1;text-decoration:none}
