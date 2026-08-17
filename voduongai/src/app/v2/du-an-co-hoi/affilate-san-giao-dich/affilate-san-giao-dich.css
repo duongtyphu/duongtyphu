@@ -1,0 +1,150 @@
+/* =============================================================================
+ * Affilate sàn giao dịch 2.0 — CSS chép NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng.
+ *
+ * Mọi con số (px, %, s), mọi mã màu hex, mọi gradient, mọi thứ tự khai báo đều
+ * giữ y hệt bản gốc. KHÔNG làm tròn, KHÔNG đổi sang token Tailwind gần đúng.
+ *
+ * ĐÚNG 6 điều chỉnh kỹ thuật bắt buộc — y hệt bộ đã dùng cho 4 trang trước
+ * (Trang chủ Portal/CKOS/Học viện AI/AI Workspace), không phát sinh điều
+ * chỉnh mới nào: (1) tiền tố `.asg` cho mọi selector; (2) `:root` → `.asg`;
+ * (3) `body` gộp vào `.asg`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.asg`.
+ * ========================================================================== */
+
+.asg{--ink:#171132;--ink-2:#241c46;--sidebar:#150f2e;--sidebar-hover:#231a48;--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc}
+.asg, .asg *{box-sizing:border-box;margin:0;padding:0}
+
+/* Điều chỉnh 6 */
+.asg *,
+.asg *::before,
+.asg *::after { border-width: revert; border-style: revert; border-color: revert }
+.asg h1, .asg h2, .asg h3, .asg h4, .asg h5, .asg h6 { font-size: revert; font-weight: revert }
+.asg b, .asg strong { font-weight: revert }
+.asg ol, .asg ul, .asg menu { list-style: revert }
+.asg img, .asg svg, .asg video, .asg canvas, .asg audio,
+.asg iframe, .asg embed, .asg object { display: revert; vertical-align: revert }
+.asg img, .asg video { max-width: revert; height: revert }
+.asg button, .asg input, .asg select, .asg optgroup, .asg textarea {
+  font: revert;
+  font-feature-settings: revert;
+  font-variation-settings: revert;
+  letter-spacing: revert;
+  color: revert;
+  border-radius: revert;
+  background-color: revert;
+  opacity: revert;
+}
+.asg ::placeholder { color: revert; opacity: revert }
+
+.asg {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.asg a{color:var(--violet);text-decoration:none}
+.asg a:hover{color:var(--violet-dark)}
+.asg .app{display:flex;min-height:100vh}
+.asg .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.asg .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.asg .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.asg .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.asg .brand .name .vo{color:#3B82F6}
+.asg .brand .name .ai{color:#fff}
+.asg nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.asg .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.asg .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.asg .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.asg .nav-item.active{background:var(--violet);color:#fff}
+.asg .nav-item.active svg{opacity:1}
+.asg .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.asg .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.asg .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.asg .nav-parent:hover{background:none}
+.asg .nav-parent svg{opacity:1}
+.asg .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.asg .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.asg .promo h4{color:#fff;font-size:14px;font-weight:700;margin-bottom:6px}
+.asg .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px}
+.asg .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.asg .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.asg .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.asg .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.asg .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.asg .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
+.asg .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
+.asg .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.asg .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
+.asg .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.asg .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.asg .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.asg .icon-btn svg{width:18px;height:18px}
+.asg .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.asg .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.asg .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.asg .profile .who{font-size:13px;font-weight:600;line-height:1.25}
+.asg .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.asg .content{padding:24px 28px;display:flex;flex-direction:column;gap:22px}
+.asg .page-head h1{font-size:26px;font-weight:800}
+.asg .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
+.asg .aff-hero{position:relative;border-radius:16px;padding:32px 36px;color:#fff;overflow:hidden;background:radial-gradient(ellipse 65% 100% at 75% 40%,#3b2a8f 0%,transparent 70%),linear-gradient(150deg,#120c30 0%,#1a1044 55%,#0c0824 100%);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.asg .aff-hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 18% 28%,rgba(255,255,255,.5) 0,transparent 100%),radial-gradient(1px 1px at 65% 15%,rgba(255,255,255,.4) 0,transparent 100%),radial-gradient(1.5px 1.5px at 40% 82%,rgba(255,255,255,.35) 0,transparent 100%);pointer-events:none}
+.asg .aff-hero-text{position:relative;z-index:1;max-width:420px}
+.asg .aff-hero .tag{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#8fdcff;margin-bottom:14px}
+.asg .aff-hero .tag svg{width:14px;height:14px}
+.asg .aff-hero h2{font-size:24px;font-weight:800;line-height:1.4;margin-bottom:14px}
+.asg .aff-hero p{font-size:13.5px;color:#b9b3de;line-height:1.65}
+.asg .aff-graphic{position:relative;z-index:1;width:260px;height:200px;flex-shrink:0}
+.asg .net-glow{position:absolute;width:170px;height:170px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(120,150,255,.4),transparent 70%);filter:blur(6px);animation:netPulse 3.4s ease-in-out infinite}
+@keyframes netPulse{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(.94)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}}
+.asg .node-float{animation:nodeFloat 3s ease-in-out infinite}
+@keyframes nodeFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.asg .rise-bar{animation:riseBar 2.6s ease-in-out infinite alternate;transform-origin:bottom}
+@keyframes riseBar{from{transform:scaleY(.8)}to{transform:scaleY(1)}}
+.asg .section-head h3{font-size:17px;font-weight:800}
+.asg .aff-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.asg .aff-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .15s,transform .15s}
+.asg .aff-card:hover{box-shadow:0 12px 26px rgba(30,20,80,.1);transform:translateY(-2px)}
+.asg .aff-top{padding:18px 20px;display:flex;align-items:center;gap:12px}
+.asg .aff-top .ico{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.asg .aff-top .ico svg{width:22px;height:22px}
+.asg .aff-top h4{font-size:15px;font-weight:800}
+.asg .aff-top span{font-size:11px;color:var(--muted)}
+.asg .aff-body{padding:0 20px 20px;display:flex;flex-direction:column;gap:12px;flex:1}
+.asg .aff-body p{font-size:12.5px;color:var(--muted);line-height:1.55;min-height:52px}
+.asg .comm-tag{display:inline-flex;align-self:flex-start;font-size:11px;font-weight:800;padding:4px 10px;border-radius:7px}
+.asg .link-row{display:flex;gap:8px;margin-top:auto}
+.asg .link-row input{flex:1;border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:12px;font-family:inherit;outline:none;background:var(--bg)}
+.asg .link-row input:focus{border-color:var(--violet)}
+.asg .link-save{background:var(--violet);color:#fff;border:none;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:filter .15s,transform .15s}
+.asg .link-save:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.asg .saved-note{font-size:10.5px;color:#189a52;font-weight:700;display:none;align-items:center;gap:4px}
+.asg .saved-note svg{width:11px;height:11px}
+.asg .saved-note.show{display:flex}
+.asg .go-btn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--violet);border:1px solid var(--violet-light);border-radius:8px;padding:8px;background:var(--violet-light);text-decoration:none}
+.asg .go-btn:hover{background:#e2d9ff}
+.asg [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
+.asg [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
+.asg [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
+@media (max-width:1180px){
+  .asg .aff-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  .asg .aff-grid{grid-template-columns:1fr}
+  .asg .aff-hero{flex-direction:column;text-align:center}
+}
+.asg .crown{position:relative}
+.asg .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.asg .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* Bước F — Dự án & Cơ hội: trạng thái rỗng trung thực (không có trong bản
+   thiết kế gốc). Cùng quy ước đã dùng cho DigiU/SolarGroup/Các mô hình Affilate. */
+.asg .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+.asg .go-btn-disabled{display:flex;align-items:center;justify-content:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:8px;background:var(--bg);text-align:center}
