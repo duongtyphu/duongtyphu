@@ -1,160 +1,37 @@
-import { Bot, BookOpen, Briefcase, Crown, GraduationCap, LayoutGrid } from "lucide-react";
+import "../../inter-gf.css";
+import "../../trang-chu/trang-chu.css";
 
-import { Card, CardHead } from "@/components/v2/ui/Card";
-import { UploadSlot } from "@/components/v2/ui/Controls";
-import { Field, FieldRow2, SelectField, TextareaField } from "@/components/v2/ui/Field";
-import { ListEditorPanel } from "@/components/v2/ui/ListEditorPanel";
-import { PageHead, SaveButton } from "@/components/v2/ui/PageHead";
-import { TabsRow } from "@/components/v2/ui/TabsRow";
-import { listExploreCards } from "@/lib/v2/data/home";
-import { listJourneyStages } from "@/lib/v2/data/catalog";
+import { AdminPortalMirror } from "@/components/v2/admin/AdminPortalMirror";
 
 export const metadata = { title: "Trang chủ Portal — Admin" };
 
-const ECOSYSTEM_ICONS = [GraduationCap, Bot, BookOpen, LayoutGrid, Briefcase, Crown];
-
-export default async function AdminTrangChuPage() {
-  const [explore, stages] = await Promise.all([listExploreCards(), listJourneyStages()]);
-
+/**
+ * `/v2/admin/trang-chu` — khớp trực quan `/v2/trang-chu` (CSS `.tcp`).
+ *
+ * PHÁT HIỆN QUAN TRỌNG khi audit trước khi build (không tự sửa, ngoài
+ * phạm vi việc này): `/v2/trang-chu/page.tsx` là trang "lõi" dựng ở Phase
+ * 3 (trước khi kỷ luật NO-FAKE-DATA của Bước F được áp dụng cho 17 trang
+ * còn lại) — TOÀN BỘ nội dung (banner chào mừng, "Tiếp tục học tập" 4
+ * khoá với % tiến độ, "Gợi ý dành cho bạn", khối "Xin chào Võ Đương —
+ * Premium Monthly, hết hạn 01/06/2025", XP/streak...) vẫn HARDCODE 100%
+ * trong JSX, KHÔNG có `@/lib/portal/live-*` nào — khác hẳn 16 trang Portal
+ * 2.0 còn lại đã nối dữ liệu thật. Nối dữ liệu thật cho trang chủ (cần
+ * bảng CMS mới cho banner/quick-explore + tính tiến độ per-user thật) là
+ * việc RIÊNG, lớn hơn phạm vi "xây 25 trang Admin" — không tự làm ở đây.
+ *
+ * Vì vậy KHÔNG có "Sửa nhanh"/link quản lý nào ở trang này (không có gì
+ * thật để quản lý) — chỉ hiện đúng trạng thái thật, tránh dựng CRUD giả
+ * cho nội dung chưa có bảng backing.
+ */
+export default function AdminTrangChuPage() {
   return (
-    <div className="flex flex-col gap-5 px-7 py-6">
-      <PageHead
-        crumb="Admin › Nội dung Portal › Trang chủ"
-        title="Quản lý Trang chủ"
-        description="Chỉnh sửa banner chính, hệ sinh thái, khám phá nhanh và lộ trình học tập hiển thị trên Trang chủ."
-        action={<SaveButton />}
-      />
-
-      <TabsRow
-        tabs={[
-          {
-            id: "banner",
-            label: "Banner chính",
-            content: (
-              <div className="grid grid-cols-1 gap-[18px] min-[860px]:grid-cols-2">
-                <Card padding="admin">
-                  <CardHead title="Nội dung banner" />
-                  <Field label="Tiêu đề chính" defaultValue="Chào mừng bạn trở lại!" />
-                  <TextareaField
-                    label="Mô tả"
-                    rows={3}
-                    defaultValue="Hôm nay là một ngày tuyệt vời để học hỏi và phát triển cùng AI."
-                  />
-                  <FieldRow2>
-                    <Field label="Nút chính — nhãn" defaultValue="Tiếp tục học" />
-                    <Field label="Nút chính — đường dẫn" defaultValue="/v2/hoc-vien-ai" />
-                  </FieldRow2>
-                  <FieldRow2>
-                    <Field label="Nút phụ — nhãn" defaultValue="Gặp Companion AI Mentor" />
-                    <Field label="Nút phụ — đường dẫn" defaultValue="/v2/companion" />
-                  </FieldRow2>
-                </Card>
-
-                <Card padding="admin">
-                  <CardHead title="Hình ảnh / Hiệu ứng nền" />
-                  <div className="mb-[14px]">
-                    <span className="mb-[6px] block text-[12px] font-bold text-[var(--v2-muted)]">
-                      Nhân vật Companion trong banner
-                    </span>
-                    <UploadSlot label="Tải lên ảnh nhân vật Companion (PNG nền trong suốt)" />
-                  </div>
-                  <SelectField
-                    label="Hiệu ứng sao lấp lánh"
-                    options={["Bật — 39 chấm sao di chuyển", "Bật — mật độ thấp", "Tắt hiệu ứng"]}
-                  />
-                  <SelectField
-                    label="5 ngôi sao đánh giá (vị trí tay robot)"
-                    options={["Hiển thị — màu vàng ánh kim", "Ẩn"]}
-                  />
-                </Card>
-              </div>
-            ),
-          },
-          {
-            id: "eco",
-            label: "Hệ sinh thái",
-            content: (
-              <ListEditorPanel
-                listTitle="6 khối Hệ sinh thái"
-                addLabel="Thêm khối hệ sinh thái"
-                formTitle="Chi tiết khối đã chọn"
-                titleField="title"
-                items={explore.map((card, index) => ({
-                  id: card.id,
-                  title: card.title,
-                  subtitle: card.description.slice(0, 60),
-                  icon: ECOSYSTEM_ICONS[index % ECOSYSTEM_ICONS.length],
-                  values: {
-                    title: card.title,
-                    description: card.description,
-                    href: card.href,
-                  },
-                }))}
-                fields={[
-                  { name: "title", label: "Tên khối", type: "text" },
-                  { name: "description", label: "Mô tả ngắn", type: "textarea", rows: 3 },
-                  { name: "href", label: "Đường dẫn", type: "text" },
-                ]}
-              />
-            ),
-          },
-          {
-            id: "explore",
-            label: "Khám phá nhanh",
-            content: (
-              <ListEditorPanel
-                listTitle="6 mục Khám phá nhanh"
-                addLabel="Thêm mục khám phá"
-                formTitle="Chi tiết mục đã chọn"
-                titleField="title"
-                items={explore.map((card, index) => ({
-                  id: `ex_${card.id}`,
-                  title: card.title,
-                  subtitle: card.href,
-                  icon: ECOSYSTEM_ICONS[index % ECOSYSTEM_ICONS.length],
-                  values: {
-                    title: card.title,
-                    description: card.description,
-                    href: card.href,
-                  },
-                }))}
-                fields={[
-                  { name: "title", label: "Tiêu đề", type: "text" },
-                  { name: "description", label: "Mô tả", type: "textarea", rows: 3 },
-                  { name: "href", label: "Đường dẫn", type: "text" },
-                ]}
-              />
-            ),
-          },
-          {
-            id: "roadmap",
-            label: "Lộ trình học tập",
-            content: (
-              <ListEditorPanel
-                listTitle={`${stages.length} giai đoạn lộ trình`}
-                addLabel="Thêm giai đoạn"
-                formTitle="Chi tiết giai đoạn đã chọn"
-                titleField="name"
-                items={stages.map((stage) => ({
-                  id: stage.id,
-                  title: stage.name,
-                  subtitle: stage.description.slice(0, 60),
-                  values: {
-                    name: stage.name,
-                    description: stage.description,
-                    courseCount: String(stage.courseCount),
-                  },
-                }))}
-                fields={[
-                  { name: "name", label: "Tên giai đoạn", type: "text" },
-                  { name: "description", label: "Mô tả", type: "textarea", rows: 3 },
-                  { name: "courseCount", label: "Số khoá học", type: "text" },
-                ]}
-              />
-            ),
-          },
-        ]}
-      />
-    </div>
+    <AdminPortalMirror
+      prefix="tcp"
+      title="Quản lý Trang chủ Portal"
+      description="Trang chủ Portal 2.0 hiện vẫn là nội dung tĩnh trong code (banner/khoá đang học/gợi ý/XP đều hardcode), CHƯA có bảng Supabase nào backing — khác các trang Portal 2.0 khác đã nối dữ liệu thật."
+      stats={[]}
+      note="Chưa có gì để quản lý qua Admin — nội dung trang chủ 2.0 chưa được nối vào Supabase (cần 1 việc riêng: tạo bảng CMS cho banner/quick-explore, tương tự home_cards ở Admin 1.0, trước khi có trang quản lý thật ở đây)."
+      links={[]}
+    />
   );
 }

@@ -1,76 +1,27 @@
-import { Award, Flower2, Gift, Users } from "lucide-react";
+import "../../inter-gf.css";
+import "../../khu-vuon-cua-ban/khu-vuon-cua-ban.css";
 
-import { DataTable } from "@/components/v2/ui/DataTable";
-import type { TableRow } from "@/components/v2/ui/DataTable";
-import { KpiGrid } from "@/components/v2/ui/KpiGrid";
-import { PageHead, SaveButton } from "@/components/v2/ui/PageHead";
-import { STAGE_LABEL, listDailyQuests, listGardenPlants } from "@/lib/v2/data/catalog";
+import { AdminPortalMirror } from "@/components/v2/admin/AdminPortalMirror";
 
 export const metadata = { title: "Khu vườn của bạn — Admin" };
 
-export default async function AdminKhuVuonPage() {
-  const [quests, plants] = await Promise.all([listDailyQuests(), listGardenPlants()]);
-
-  const questRows: TableRow[] = quests.map((quest) => ({
-    id: quest.id,
-    cells: [
-      { t: "strong", v: quest.title },
-      {
-        t: "tag",
-        label: quest.reward,
-        background: "var(--v2-violet-light)",
-        color: "var(--v2-violet)",
-      },
-      { t: "status", label: "Đang hiển thị", color: "var(--v2-green)" },
-    ],
-  }));
-
-  const plantRows: TableRow[] = plants.map((plant) => ({
-    id: plant.id,
-    cells: [
-      { t: "strong", v: plant.name },
-      {
-        t: "tag",
-        label: STAGE_LABEL[plant.stage],
-        background: "#e6f7ed",
-        color: "#189a52",
-      },
-      { t: "muted", v: plant.linkedCourse },
-      { t: "progress", value: plant.progress, label: `${plant.progress}%` },
-    ],
-  }));
-
+/**
+ * `/v2/admin/khu-vuon-cua-ban` — khớp trực quan `/v2/khu-vuon-cua-ban`
+ * (CSS `.kvcb`). Portal đọc NGUYÊN `getJourneyOverview()` (giống "Hành
+ * trình của tôi" 2.0) — trang này KHÔNG có hệ thống dữ liệu riêng nào
+ * khác (garden/quest/inventory là lớp gamification hoàn toàn không có
+ * backing thật, đã ghi rõ trong `KhuVuonCuaBanClient.tsx`) nên không có
+ * nội dung CMS để quản lý ở đây.
+ */
+export default function AdminKhuVuonCuaBanPage() {
   return (
-    <div className="flex flex-col gap-5 px-7 py-6">
-      <PageHead
-        crumb="Admin › Tiện ích nhanh › Khu vườn của bạn"
-        title="Quản lý Khu vườn của bạn"
-        description="Quản lý nhiệm vụ hằng ngày, huy hiệu vườn và vật phẩm thu thập."
-        action={<SaveButton />}
-      />
-
-      <KpiGrid
-        items={[
-          { id: "quests", value: "5", label: "Nhiệm vụ hằng ngày", icon: Gift, gradient: "linear-gradient(145deg,#a08bff,#6d4aff)" },
-          { id: "gardeners", value: "3.240", label: "Người dùng có vườn", icon: Users, gradient: "linear-gradient(145deg,#5f8fff,#1d5fd8)", delta: "8,2%", trend: "up" },
-          { id: "badges", value: "10", label: "Huy hiệu vườn", icon: Award, gradient: "linear-gradient(145deg,#e2b23c,#a9660f)" },
-          { id: "items", value: "18", label: "Vật phẩm", icon: Flower2, gradient: "linear-gradient(145deg,#3ecf7e,#189a52)" },
-        ]}
-      />
-
-      <DataTable
-        title="Nhiệm vụ hằng ngày"
-        headers={["Nhiệm vụ", "Phần thưởng", "Hiển thị"]}
-        rows={questRows}
-        pageSize={6}
-      />
-
-      <DataTable
-        title="Cây trồng theo khoá học"
-        headers={["Cây", "Giai đoạn", "Khoá học liên kết", "Tiến độ"]}
-        rows={plantRows}
-        pageSize={6}
-      />
-    </div>
+    <AdminPortalMirror
+      prefix="kvcb"
+      title="Quản lý Khu vườn của bạn"
+      description="Trang này dùng nguyên dữ liệu hành trình học tập thật (Học viện AI) — lớp gamification vườn/nhiệm vụ/kho đồ không có hạ tầng dữ liệu thật, không có gì để quản lý ở đây."
+      stats={[]}
+      note="Nội dung đứng sau (giai đoạn lộ trình/khoá học) quản lý ở trang 'Học viện AI'."
+      links={[{ label: "Quản lý nội dung Học viện AI (2.0) →", href: "/v2/admin/hoc-vien-ai" }]}
+    />
   );
 }
