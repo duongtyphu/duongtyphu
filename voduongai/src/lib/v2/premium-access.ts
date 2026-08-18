@@ -37,9 +37,21 @@ export type PremiumStatus = {
   isPremium: boolean;
   /** true khi đã đăng nhập (dùng để chọn CTA: "Nâng cấp" vs "Đăng nhập"). */
   signedIn: boolean;
+  /**
+   * Hồ sơ thật của user đang đăng nhập — thêm vào CÙNG object này (không
+   * tách hàm riêng) vì `PremiumStatus` đã được MỌI trang `/v2/*` fetch +
+   * truyền xuống `PortalV2Shell` từ trước (Bước D) — gắn thêm 2 field này
+   * là cách DUY NHẤT đưa danh tính thật tới `PortalV2Shell` (dropdown hồ sơ
+   * trong topbar) mà KHÔNG phải sửa lại props/luồng dữ liệu của ~46 trang
+   * `/v2/*` đã build. `email`/`fullName` lấy TRỰC TIẾP từ
+   * `supabase.auth.getUser()` (`user.email`/`user.user_metadata.full_name`)
+   * — cùng nguồn `/portal/account` 1.0 đang dùng, không bịa thêm cột nào.
+   */
+  email: string | null;
+  fullName: string | null;
 };
 
-export const FREE_STATUS: PremiumStatus = { isPremium: false, signedIn: false };
+export const FREE_STATUS: PremiumStatus = { isPremium: false, signedIn: false, email: null, fullName: null };
 
 export async function getPremiumStatus(): Promise<PremiumStatus> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -49,7 +61,8 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
   const supabase = await getSupabaseServer();
   const { data: userData } = await supabase.auth.getUser();
   const userId = userData.user?.id;
-  const email = userData.user?.email;
+  const email = userData.user?.email ?? null;
+  const fullName = (userData.user?.user_metadata?.full_name as string | undefined) ?? null;
   if (!userId) return FREE_STATUS;
 
   // RLS `members can read own row` cho phép đọc chính dòng của mình.
@@ -61,11 +74,11 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
 
   const expiresAt = member?.premium_expires_at as string | null | undefined;
   if (expiresAt && new Date(expiresAt).getTime() > Date.now()) {
-    return { isPremium: true, signedIn: true };
+    return { isPremium: true, signedIn: true, email, fullName };
   }
 
   // Fallback MỤC 1 — mua đứt bất kỳ 1 trong 5 chương trình cũng mở Premium.
-  if (!email) return { isPremium: false, signedIn: true };
+  if (!email) return { isPremium: false, signedIn: true, email, fullName };
 
   const { data: order } = await supabase
     .from("orders")
@@ -75,5 +88,5 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
     .limit(1)
     .maybeSingle();
 
-  return { isPremium: Boolean(order), signedIn: true };
+  return { isPremium: Boolean(order), signedIn: true, email, fullName };
 }

@@ -54,7 +54,7 @@ describe("getPremiumStatus — MỤC 1: mua đứt bất kỳ 1 trong 5 chương
 
     const status = await getPremiumStatus();
 
-    expect(status).toEqual({ isPremium: true, signedIn: true });
+    expect(status).toEqual({ isPremium: true, signedIn: true, email: "a@test.com", fullName: null });
     expect(ordersMaybeSingleMock).not.toHaveBeenCalled();
   });
 
@@ -65,7 +65,7 @@ describe("getPremiumStatus — MỤC 1: mua đứt bất kỳ 1 trong 5 chương
 
     const status = await getPremiumStatus();
 
-    expect(status).toEqual({ isPremium: true, signedIn: true });
+    expect(status).toEqual({ isPremium: true, signedIn: true, email: "b@test.com", fullName: null });
   });
 
   it("Free khi premium_expires_at NULL và không có đơn `confirmed` nào", async () => {
@@ -75,7 +75,7 @@ describe("getPremiumStatus — MỤC 1: mua đứt bất kỳ 1 trong 5 chương
 
     const status = await getPremiumStatus();
 
-    expect(status).toEqual({ isPremium: false, signedIn: true });
+    expect(status).toEqual({ isPremium: false, signedIn: true, email: "c@test.com", fullName: null });
   });
 
   it("Free khi premium_expires_at đã qua hạn và không có đơn `confirmed` nào (vẫn thử fallback, không tự Premium)", async () => {
@@ -86,7 +86,7 @@ describe("getPremiumStatus — MỤC 1: mua đứt bất kỳ 1 trong 5 chương
 
     const status = await getPremiumStatus();
 
-    expect(status).toEqual({ isPremium: false, signedIn: true });
+    expect(status).toEqual({ isPremium: false, signedIn: true, email: "d@test.com", fullName: null });
   });
 
   it("FREE_STATUS khi chưa đăng nhập — không gọi tới bảng members/orders", async () => {
@@ -94,7 +94,7 @@ describe("getPremiumStatus — MỤC 1: mua đứt bất kỳ 1 trong 5 chương
 
     const status = await getPremiumStatus();
 
-    expect(status).toEqual({ isPremium: false, signedIn: false });
+    expect(status).toEqual({ isPremium: false, signedIn: false, email: null, fullName: null });
     expect(fromMock).not.toHaveBeenCalled();
   });
 });

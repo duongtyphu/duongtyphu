@@ -20,12 +20,32 @@
  * để trang tự truyền `.content` (khác nhau mỗi trang) làm `children`.
  * ========================================================================== */
 
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { PORTAL_HREF_MAP } from "@/lib/v2/href-map";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 
 const SPARKLE_PATH = "M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z";
+
+/** Style dùng chung cho 3 mục trong dropdown hồ sơ — không dựa CSS trang
+ * (component này dùng chung cho nhiều tiền tố `.smc`/`.ckos`/`.hva`/`.aiw`...). */
+const profileMenuItemStyle: React.CSSProperties = {
+  display: "flex",
+  width: "100%",
+  alignItems: "center",
+  borderRadius: 9,
+  border: "none",
+  background: "none",
+  padding: "8px 8px",
+  fontSize: 13,
+  fontWeight: 500,
+  color: "#111827",
+  cursor: "pointer",
+  textAlign: "left",
+  fontFamily: "inherit",
+};
 
 const CROWN_SPARKLES: React.CSSProperties[] = [
   { top: -8, left: -10, width: 12, height: 12, animationDelay: "0s" },
@@ -122,21 +142,59 @@ export function PortalV2Shell({
   /** `htmlFile` (khoá `PORTAL_HREF_MAP`) nút `.promo` điều hướng tới — mặc định `"Premium.html"`. */
   promoButtonTarget?: string;
   /**
-   * Ẩn hẳn khối `.promo` — mặc định `false` (mọi trang khác giữ nguyên,
-   * luôn hiện). Trang ĐẦU TIÊN cần giá trị `true`: `/v2/premium` khi
-   * `premium.isPremium`, đúng hành vi JS gốc của `Premium.html`
-   * (`promo.style.display='none'` ở trạng thái "Đã đăng ký Premium") — mời
-   * mua Premium ngay trên trang đã sở hữu Premium là vô nghĩa.
+   * Ẩn hẳn khối `.promo` — mặc định `false`. Trang gọi có thể tự truyền
+   * `true` cho lý do riêng (vd `/v2/premium` khi `premium.isPremium`, đúng
+   * hành vi JS gốc của `Premium.html`). NGOÀI RA, theo yêu cầu Founder
+   * "tài khoản đã mua Premium thì không hiển thị mục nâng cấp ở bất kỳ đâu
+   * trong portal 2.0 — nguyên tắc xuyên suốt", `PortalV2Shell` tự ẩn khối
+   * này bất cứ khi nào `premium.isPremium` đúng (xem `shouldHidePromo`
+   * bên dưới) — `hidePromo` chỉ còn cần cho trường hợp muốn ẩn dù chưa
+   * Premium (hiện chưa có trang nào dùng vậy).
    */
   hidePromo?: boolean;
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setProfileOpen(false);
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setProfileOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
 
   const go = (htmlFile: string) => {
     const target = PORTAL_HREF_MAP[htmlFile];
     if (target) router.push(target);
   };
+
+  async function handleLogout() {
+    const supabase = getSupabaseBrowser();
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
+  }
+
+  /**
+   * Nguyên tắc xuyên suốt (yêu cầu Founder): tài khoản CHƯA Premium mới
+   * thấy mục nâng cấp; tài khoản ĐÃ Premium không thấy nữa, ở bất kỳ đâu
+   * trong portal 2.0. Áp dụng cho cả `.promo` (sidebar) lẫn `.upgrade-btn`
+   * (topbar) — 2 nơi duy nhất mời nâng cấp trong chính `PortalV2Shell`.
+   */
+  const shouldHidePromo = hidePromo || premium.isPremium;
+
+  const displayName = premium.fullName || premium.email || "Tài khoản";
+  const initial = (premium.fullName || premium.email || "?").trim().charAt(0).toUpperCase();
 
   const navItem = (htmlFile: string, label: React.ReactNode, icon: React.ReactNode) => (
     <button
@@ -286,7 +344,7 @@ export function PortalV2Shell({
           )}
         </nav>
 
-        <div className="promo" style={hidePromo ? { display: "none" } : undefined}>
+        <div className="promo" style={shouldHidePromo ? { display: "none" } : undefined}>
           {promoVisual ?? (
             <div className="crown" style={{ background: "none", boxShadow: "none", width: 54, height: 54, overflow: "visible" }}>
               {CROWN_SPARKLES.map((style, i) => (
@@ -326,12 +384,14 @@ export function PortalV2Shell({
           {(() => {
             const rightContent = (
               <>
-                <button className="upgrade-btn" onClick={() => go("Premium.html")}>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                  </svg>
-                  Nâng cấp Premium
-                </button>
+                {!premium.isPremium && (
+                  <button className="upgrade-btn" onClick={() => go("Premium.html")}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                    </svg>
+                    Nâng cấp Premium
+                  </button>
+                )}
                 <button className="icon-btn">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -339,12 +399,110 @@ export function PortalV2Shell({
                   </svg>
                   {notifBadge > 0 ? <span className="badge">{notifBadge}</span> : null}
                 </button>
-                <div className="profile">
-                  <div className="avatar">VD</div>
-                  <div>
-                    <div className="who">Võ Dương</div>
-                    <span className="plan">{profileSubtitle ?? (premium.isPremium ? "Premium" : "Free")}</span>
+                <div ref={profileRef} style={{ position: "relative" }}>
+                  <div
+                    className="profile"
+                    role="button"
+                    tabIndex={0}
+                    aria-haspopup="menu"
+                    aria-expanded={profileOpen}
+                    onClick={() => setProfileOpen((v) => !v)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setProfileOpen((v) => !v);
+                      }
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="avatar">{initial}</div>
+                    <div>
+                      <div className="who">{displayName}</div>
+                      <span className="plan">{profileSubtitle ?? (premium.isPremium ? "Premium" : "Free")}</span>
+                    </div>
                   </div>
+
+                  {profileOpen && (
+                    <div
+                      role="menu"
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                        top: "calc(100% + 8px)",
+                        zIndex: 50,
+                        width: 240,
+                        borderRadius: 16,
+                        border: "1px solid #E5E7EB",
+                        background: "#fff",
+                        padding: 12,
+                        boxShadow: "0 20px 40px rgba(15,23,42,.15)",
+                      }}
+                    >
+                      <p
+                        style={{
+                          margin: 0,
+                          padding: "0 4px",
+                          fontSize: 13,
+                          fontWeight: 700,
+                          color: "#111827",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {premium.fullName || "Học viên"}
+                      </p>
+                      <p
+                        style={{
+                          margin: "2px 0 0",
+                          padding: "0 4px",
+                          fontSize: 12,
+                          color: "#6B7280",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {premium.email || "Chưa đăng nhập"}
+                      </p>
+
+                      <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid #E5E7EB" }}>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setProfileOpen(false);
+                            router.push("/portal/account");
+                          }}
+                          style={profileMenuItemStyle}
+                        >
+                          Cài đặt tài khoản
+                        </button>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setProfileOpen(false);
+                            router.push("/");
+                          }}
+                          style={profileMenuItemStyle}
+                        >
+                          Về website chính
+                        </button>
+                        <button
+                          type="button"
+                          role="menuitem"
+                          onClick={() => {
+                            setProfileOpen(false);
+                            void handleLogout();
+                          }}
+                          style={{ ...profileMenuItemStyle, color: "#DC2626" }}
+                        >
+                          Đăng xuất
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </>
             );
