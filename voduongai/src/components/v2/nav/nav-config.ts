@@ -36,7 +36,6 @@ import {
   Settings,
   Share2,
   Shield,
-  Sparkles,
   Target,
   LifeBuoy,
   TrendingUp,
@@ -85,12 +84,6 @@ const PORTAL_MAIN: NavItem[] = [
     label: "Bộ nhớ & Cá nhân hoá",
     href: `${V2_PORTAL_BASE}/bo-nho-ca-nhan-hoa`,
     icon: Brain,
-    group: "companion",
-  },
-  {
-    label: "Chiến lược cá nhân",
-    href: `${V2_PORTAL_BASE}/chien-luoc-ca-nhan`,
-    icon: Sparkles,
     group: "companion",
   },
 
@@ -160,7 +153,6 @@ const GROUP_PREFIXES: Record<NavGroup, string[]> = {
     `${V2_PORTAL_BASE}/companion`,
     `${V2_PORTAL_BASE}/su-menh-companion`,
     `${V2_PORTAL_BASE}/bo-nho-ca-nhan-hoa`,
-    `${V2_PORTAL_BASE}/chien-luoc-ca-nhan`,
   ],
   ecosystem: [`${V2_PORTAL_BASE}/du-an-co-hoi`],
 };

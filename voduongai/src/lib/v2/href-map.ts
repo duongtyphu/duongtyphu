@@ -10,7 +10,6 @@ export const PORTAL_HREF_MAP: Record<string, string> = {
   "Companion.html": "/v2/companion",
   "Su menh Companion.html": "/v2/su-menh-companion",
   "Bo nho ca nhan hoa.html": "/v2/bo-nho-ca-nhan-hoa",
-  "Chien luoc ca nhan.html": "/v2/chien-luoc-ca-nhan",
   "He tri thuc CKOS.html": "/v2/he-tri-thuc",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
   "AI Workspace.html": "/v2/ai-workspace",

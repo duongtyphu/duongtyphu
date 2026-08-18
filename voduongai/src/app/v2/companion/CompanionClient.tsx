@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------------------
  * NHỮNG CHỖ KHÁC bản tĩnh:
  *
- *  1. Sidebar dùng `companionExpanded` của `PortalV2Shell` (submenu 5 trang
+ *  1. Sidebar dùng `companionExpanded` của `PortalV2Shell` (submenu 3 trang
  *     Companion) — không phải chrome chung, xem chú thích trong Shell.
  *  2. Topbar KHÔNG có search-box (đúng bản gốc — `.topbar{justify-content:
  *     flex-end}`, không có `.search-box`), profile hiện "Lv.X · Y XP" —
@@ -25,18 +25,50 @@
  *     mock. Tin nhắn chào mừng đầu tiên trong bản thiết kế CHỈ hiện khi
  *     CHƯA có cuộc trò chuyện nào (copy tĩnh của app, không phải dữ liệu
  *     user — an toàn hiển thị).
- *  4. "Hồ sơ của bạn" (Lv.7/2,450 XP/12 ngày liên tục/28 huy hiệu) — KHÔNG
+ *
+ *     Theo yêu cầu Founder "bê nguyên Companion từ phiên bản cũ, chỉ thay
+ *     đổi giao diện 2.0" — đã nâng cấp phần tương tác chat lên đúng mức
+ *     production của 1.0 (`CompanionChatShell`/`CompanionMessageList`),
+ *     KHÔNG đổi 1 dòng markup/CSS nào của bản thiết kế 2.0:
+ *       - Render Markdown thật cho câu trả lời (`MarkdownLite`, tái dùng
+ *         nguyên bản 1.0 — code fence/inline code/đậm/nghiêng — không viết
+ *         lại renderer thứ 2).
+ *       - Ngày giờ thật dưới mỗi tin nhắn (`HH:mm · dd/mm/yyyy`, cùng công
+ *         thức `formatMessageTimestamp` của 1.0), không chỉ giờ.
+ *       - Chỉ báo "đang trả lời" (3 chấm nhấp nháy, tái dùng animation
+ *         `sparkleTwinkle` đã có sẵn trong `companion.css`) trong lúc chờ
+ *         API — người dùng biết Companion đang xử lý thật, không phải đứng
+ *         hình.
+ *       - "Sao chép"/"Thử lại" dưới mỗi câu trả lời (Thử lại chỉ hiện ở câu
+ *         trả lời cuối, gửi lại đúng nội dung tin nhắn user liền trước —
+ *         không có endpoint "regenerate" thật nào, đây là lượt gửi mới
+ *         hoàn toàn, đúng cách 1.0 làm, không bịa cơ chế regenerate).
+ *       - Nút gửi đổi thành nút Dừng khi đang chờ phản hồi (`AbortController`
+ *         huỷ request thật, không chỉ đổi icon).
+ *       - Giới hạn độ dài tin nhắn (`COMPANION_MESSAGE_MAX_LENGTH`, tái
+ *         dùng đúng hằng số 1.0 dùng — `src/lib/portal/companion-chat.ts`),
+ *         chặn gửi + cảnh báo khi vượt quá.
+ *     Đây CHÍNH LÀ luồng thật (cùng API/DB/AI Provider Registry 1.0 dùng),
+ *     không phải mock — nâng cấp phần UI feedback (markdown/ngày giờ/đang
+ *     trả lời/sao chép/thử lại/dừng/giới hạn ký tự) để trải nghiệm khớp
+ *     đúng mức production, đúng yêu cầu "phải có khả năng tự trả lời như
+ *     phiên bản đang chạy production hiện tại".
+ *  4. Đã BỎ HẲN thanh tab "Trò chuyện/Mục tiêu/Ghi nhớ/Tiến trình" (theo
+ *     yêu cầu Founder) — bản thiết kế gốc dùng 4 tab này chỉ đổi trạng thái
+ *     active, không có nội dung khác nhau thật sự đằng sau (3 tab còn lại
+ *     không có view riêng) nên bỏ hẳn thay vì giữ 1 thanh tab trơ.
+ *  5. "Hồ sơ của bạn" (Lv.7/2,450 XP/12 ngày liên tục/28 huy hiệu) — KHÔNG
  *     bịa số: hệ thống không có gamification (Level/XP/badge) nào thật.
  *     Thay bằng trạng thái trung thực, giữ nguyên khung `.ring`/`.profile-stats`.
- *  5. "Mục tiêu hiện tại" — nối `goal-runtime.ts` THẬT (client-side,
+ *  6. "Mục tiêu hiện tại" — nối `goal-runtime.ts` THẬT (client-side,
  *     localStorage — cùng nguồn `/portal/goals` 1.0 đang dùng, không phải
  *     bịa) qua `listGoals()`/`getGoalProgress()`. Rỗng trung thực nếu chưa
  *     có goal nào.
- *  6. "Companion gợi ý cho bạn" — không có recommendation engine thật; dùng
+ *  7. "Companion gợi ý cho bạn" — không có recommendation engine thật; dùng
  *     2 bài viết mới nhất từ bảng `blog` thật (`getLiveBlogPosts()`, cùng
  *     nguồn đã dùng ở AI Workspace 1.0) làm gợi ý nội dung, bỏ hẳn nhãn thời
  *     gian giả ("Thứ 6" — không có lịch webinar thật).
- *  7. "Công cụ yêu thích" — 5 công cụ thật đầu tiên theo `order` trong bảng
+ *  8. "Công cụ yêu thích" — 5 công cụ thật đầu tiên theo `order` trong bảng
  *     `tools` (bản thiết kế chỉ hiện icon, không có tên — giữ đúng, chỉ
  *     thêm `title` attribute cho icon để không hoàn toàn vô nghĩa khi hover).
  * ========================================================================== */
@@ -46,6 +78,8 @@ import { useEffect, useRef, useState } from "react";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { CompanionMessageRow } from "@/app/portal/companion/actions";
+import { COMPANION_MESSAGE_MAX_LENGTH } from "@/lib/portal/companion-chat";
+import { MarkdownLite } from "@/components/portal/companion/chat/MarkdownLite";
 import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 import { getGoalProgress, listGoals } from "@/lib/portal/foundation/goal-runtime";
 import type { BlogPost } from "@/data/blog";
@@ -106,11 +140,39 @@ const TOOL_ICONS: { bg: string; icon: React.ReactNode; title: string }[] = [
   },
 ];
 
-const TABS = ["Trò chuyện", "Mục tiêu", "Ghi nhớ", "Tiến trình"];
+type Msg = CompanionMessageRow & { pending?: boolean };
 
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+/** `HH:mm · dd/mm/yyyy` — đúng công thức `formatMessageTimestamp()` của
+ * `CompanionMessageList.tsx` (1.0), giữ nguyên khi nâng cấp phần hiển thị. */
+function formatMessageTimestamp(createdAt: string) {
+  const d = new Date(createdAt);
+  if (Number.isNaN(d.getTime())) return "";
+  const time = d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
+  const date = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  return `${time} · ${date}`;
 }
+
+const typingDotStyle = (delay: string): React.CSSProperties => ({
+  width: 6,
+  height: 6,
+  borderRadius: "50%",
+  background: "var(--violet)",
+  display: "inline-block",
+  animationName: "sparkleTwinkle",
+  animationDuration: "1.1s",
+  animationIterationCount: "infinite",
+  animationDelay: delay,
+});
+
+const actionBtnStyle: React.CSSProperties = {
+  background: "none",
+  border: "none",
+  cursor: "pointer",
+  fontSize: 11,
+  fontWeight: 700,
+  color: "var(--muted)",
+  padding: 0,
+};
 
 export function CompanionClient({
   premium,
@@ -124,13 +186,19 @@ export function CompanionClient({
   suggestedPosts: BlogPost[];
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState(0);
   const [conversationId, setConversationId] = useState(initialConversationId);
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState<Msg[]>(initialMessages);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  // Đếm cục bộ để sinh id tạm cho tin nhắn optimistic — tránh gọi hàm
+  // "impure" (`Date.now()`) trong thân hàm bị React Compiler coi là có thể
+  // chạy lúc render (đúng cảnh báo `react-hooks/purity`), dù thực tế hàm
+  // này chỉ gọi từ sự kiện gửi/thử lại.
+  const pendingIdRef = useRef(0);
 
   // `listGoals()` đọc `window.localStorage` — không thể lấy giá trị thật lúc
   // SSR/initial render (server không có `window`). Đọc trong `useEffect`
@@ -149,26 +217,36 @@ export function CompanionClient({
 
   const go = (path: string) => router.push(path);
 
-  const send = async () => {
-    const text = input.trim();
-    if (!text || sending) return;
+  const overLimit = input.length > COMPANION_MESSAGE_MAX_LENGTH;
+
+  async function sendMessage(rawText: string) {
+    const text = rawText.trim();
+    if (!text || sending || text.length > COMPANION_MESSAGE_MAX_LENGTH) return;
     setSending(true);
     setError(null);
     setInput("");
 
-    const optimisticUser: CompanionMessageRow = {
-      id: `pending-${Date.now()}`,
+    pendingIdRef.current += 1;
+    const pendingId = `pending-${pendingIdRef.current}`;
+    const optimisticUser: Msg = {
+      id: pendingId,
       role: "user",
       content: text,
       createdAt: new Date().toISOString(),
+      pending: true,
     };
     setMessages((prev) => [...prev, optimisticUser]);
+    requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
+
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
       const res = await fetch("/api/companion/chat", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ conversationId, message: text }),
+        signal: controller.signal,
       });
       const data = await res.json();
       if (!res.ok) {
@@ -177,22 +255,48 @@ export function CompanionClient({
       }
       if (data.conversationId) setConversationId(data.conversationId);
       setMessages((prev) => [
-        ...prev.filter((m) => m.id !== optimisticUser.id),
-        { id: `${optimisticUser.id}-u`, role: "user", content: text, createdAt: optimisticUser.createdAt },
+        ...prev.filter((m) => m.id !== pendingId),
+        { id: `${pendingId}-u`, role: "user", content: text, createdAt: optimisticUser.createdAt },
         {
-          id: `${optimisticUser.id}-a`,
+          id: `${pendingId}-a`,
           role: "assistant",
           content: data.assistantMessage ?? "",
           createdAt: new Date().toISOString(),
         },
       ]);
       requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
-    } catch {
-      setError("Không thể kết nối tới Companion. Vui lòng thử lại.");
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        // Người dùng chủ động bấm Dừng — bỏ tin nhắn optimistic, không báo lỗi.
+        setMessages((prev) => prev.filter((m) => m.id !== pendingId));
+      } else {
+        setError("Không thể kết nối tới Companion. Vui lòng thử lại.");
+      }
     } finally {
       setSending(false);
+      abortRef.current = null;
     }
+  }
+
+  const send = () => sendMessage(input);
+  const stop = () => abortRef.current?.abort();
+  const retry = (text: string) => {
+    if (sending) return;
+    sendMessage(text);
   };
+
+  async function copyMessage(id: string, content: string) {
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1500);
+    } catch {
+      // clipboard không khả dụng — bỏ qua, không có gì để báo lỗi thêm
+    }
+  }
+
+  const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
+  const lastUserBefore = (index: number) => [...messages.slice(0, index)].reverse().find((m) => m.role === "user");
 
   return (
     <div className="comp">
@@ -221,38 +325,8 @@ export function CompanionClient({
                 </div>
               </div>
 
-              <div className="tabs">
-                {TABS.map((label, i) => (
-                  <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
-                    {i === 0 ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 11.5a8.5 8.5 0 01-8.5 8.5 8.4 8.4 0 01-3.9-.94L3 21l1.5-4.5A8.4 8.4 0 013.5 12 8.5 8.5 0 0112 3.5a8.5 8.5 0 019 8z" />
-                      </svg>
-                    ) : null}
-                    {i === 1 ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="12" cy="12" r="9" />
-                        <circle cx="12" cy="12" r="4" />
-                        <circle cx="12" cy="12" r=".5" fill="currentColor" />
-                      </svg>
-                    ) : null}
-                    {i === 2 ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                      </svg>
-                    ) : null}
-                    {i === 3 ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 19h16M7 15l3-4 3 3 5-7" />
-                      </svg>
-                    ) : null}
-                    {label}
-                  </button>
-                ))}
-              </div>
-
               <div className="chat-card">
-                {messages.length === 0 ? (
+                {messages.length === 0 && !sending ? (
                   <div className="msg-row">
                     <div className="msg-avatar">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -269,25 +343,64 @@ export function CompanionClient({
                     </div>
                   </div>
                 ) : (
-                  messages.map((m) => (
-                    <div className={m.role === "user" ? "msg-row user" : "msg-row"} key={m.id}>
-                      <div className={m.role === "user" ? "msg-avatar user" : "msg-avatar"}>
-                        {m.role === "user" ? (
-                          "VD"
-                        ) : (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src="/v2-static/assets/icon-companion.png" alt="Companion" />
-                        )}
-                      </div>
-                      <div>
-                        <div className="msg-bubble" style={{ whiteSpace: "pre-wrap" }}>
-                          {m.content}
+                  messages.map((m, index) => {
+                    if (m.role === "user") {
+                      return (
+                        <div className="msg-row user" key={m.id} style={m.pending ? { opacity: 0.7 } : undefined}>
+                          <div className="msg-avatar user">VD</div>
+                          <div>
+                            <div className="msg-bubble" style={{ whiteSpace: "pre-wrap" }}>
+                              {m.content}
+                            </div>
+                            {!m.pending && <span className="msg-time">{formatMessageTimestamp(m.createdAt)}</span>}
+                          </div>
                         </div>
-                        <span className="msg-time">{formatTime(m.createdAt)}</span>
+                      );
+                    }
+
+                    const isLast = index === lastAssistantIndex;
+                    const precedingUser = lastUserBefore(index);
+
+                    return (
+                      <div className="msg-row" key={m.id}>
+                        <div className="msg-avatar">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/v2-static/assets/icon-companion.png" alt="Companion" />
+                        </div>
+                        <div>
+                          <div className="msg-bubble">
+                            <MarkdownLite text={m.content} />
+                          </div>
+                          <span className="msg-time">{formatMessageTimestamp(m.createdAt)}</span>
+                          <div style={{ display: "flex", gap: 14, marginTop: 6 }}>
+                            <button type="button" onClick={() => copyMessage(m.id, m.content)} style={actionBtnStyle}>
+                              {copiedId === m.id ? "Đã sao chép" : "Sao chép"}
+                            </button>
+                            {isLast && !sending && precedingUser ? (
+                              <button type="button" onClick={() => retry(precedingUser.content)} style={actionBtnStyle}>
+                                Thử lại
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
+
+                {sending ? (
+                  <div className="msg-row">
+                    <div className="msg-avatar">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src="/v2-static/assets/icon-companion.png" alt="Companion" />
+                    </div>
+                    <div className="msg-bubble" style={{ display: "inline-flex", gap: 5, alignItems: "center" }}>
+                      <span style={typingDotStyle("0s")} />
+                      <span style={typingDotStyle(".2s")} />
+                      <span style={typingDotStyle(".4s")} />
+                    </div>
+                  </div>
+                ) : null}
                 <div ref={bottomRef} />
 
                 {error ? (
@@ -309,12 +422,25 @@ export function CompanionClient({
                     }}
                     disabled={sending}
                   />
-                  <button className="chat-send" onClick={send} disabled={sending}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" />
-                    </svg>
-                  </button>
+                  {sending ? (
+                    <button className="chat-send" onClick={stop} aria-label="Dừng phản hồi">
+                      <svg viewBox="0 0 24 24" fill="#fff">
+                        <rect x="6" y="6" width="12" height="12" rx="2" />
+                      </svg>
+                    </button>
+                  ) : (
+                    <button className="chat-send" onClick={send} disabled={!input.trim() || overLimit} aria-label="Gửi tin nhắn">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
+                {overLimit ? (
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#b91c2c" }}>
+                    Quá dài — tối đa {COMPANION_MESSAGE_MAX_LENGTH} ký tự ({input.length}/{COMPANION_MESSAGE_MAX_LENGTH}).
+                  </div>
+                ) : null}
                 <div className="chip-row">
                   {[
                     ["Đặt câu hỏi", <svg key="1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>],

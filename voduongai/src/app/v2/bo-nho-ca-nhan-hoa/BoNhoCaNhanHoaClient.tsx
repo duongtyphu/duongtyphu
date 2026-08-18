@@ -61,8 +61,6 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
 import "../inter-gf.css";
 import "./bo-nho-ca-nhan-hoa.css";
 
-const TABS = ["Tổng quan", "Bộ nhớ", "Hồ sơ của bạn", "Mục tiêu", "Sở thích", "Ngữ cảnh"];
-
 const TOPIC_STYLE = [
   { bg: "linear-gradient(145deg,#b18bff,#7c3aed)", icon: <path d="M9 2a4 4 0 00-4 4 3 3 0 00-2 5 3 3 0 002 5 4 4 0 004 4h6a4 4 0 004-4 3 3 0 002-5 3 3 0 00-2-5 4 4 0 00-4-4z" /> },
   { bg: "linear-gradient(145deg,#ff5f5f,#c62828)", icon: <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" /> },
@@ -78,7 +76,6 @@ function formatDate(iso: string) {
 export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumStatus; joinedAt: string | null }) {
   const router = useRouter();
   const go = (path: string) => router.push(path);
-  const [tab, setTab] = useState(0);
 
   const [entries, setEntries] = useState<MemoryEntry[]>([]);
   const [goals, setGoals] = useState<GoalRecord[]>([]);
@@ -134,14 +131,6 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
                   <h1>Bộ nhớ & Cá nhân hoá</h1>
                   <p>Companion ghi nhớ, hiểu bạn và cá nhân hoá trải nghiệm đồng hành tốt nhất.</p>
                 </div>
-              </div>
-
-              <div className="tabs">
-                {TABS.map((label, i) => (
-                  <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
-                    {label}
-                  </button>
-                ))}
               </div>
 
               <div>
@@ -229,9 +218,6 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
                         </div>
                       ))
                   )}
-                  <a onClick={() => setTab(1)} style={{ display: "block", textAlign: "center", fontSize: "12.5px", fontWeight: 700, marginTop: 6, cursor: "pointer" }}>
-                    Xem tất cả ký ức →
-                  </a>
                 </div>
 
                 <div className="card">
