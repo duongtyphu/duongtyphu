@@ -26,6 +26,8 @@ import { useRouter } from "next/navigation";
 import { PORTAL_HREF_MAP } from "@/lib/v2/href-map";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { getSupabaseBrowser } from "@/lib/supabase-browser";
+import { LocaleProvider, useLocale } from "@/lib/i18n/use-locale";
+import { SUPPORTED_LOCALES, LOCALE_LABELS, LOCALE_STATUS } from "@/lib/i18n/config";
 
 const SPARKLE_PATH = "M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z";
 
@@ -80,6 +82,77 @@ const COMPANION_FAMILY: { htmlFile: string; label: string }[] = [
   { htmlFile: "Su menh Companion.html", label: "Sứ mệnh Companion" },
   { htmlFile: "Bo nho ca nhan hoa.html", label: "Bộ nhớ & Cá nhân hoá" },
 ];
+
+/**
+ * Khối "NGÔN NGỮ" trong dropdown hồ sơ — đúng như `PortalUserMenu` (1.0),
+ * dùng LẠI THẬT `useLocale()`/`SUPPORTED_LOCALES`/`LOCALE_LABELS`/
+ * `LOCALE_STATUS` (không bịa danh sách ngôn ngữ riêng), chỉ khác
+ * `LanguageSwitcher.tsx` (1.0) ở PHẦN TRÌNH BÀY: bản 1.0 dùng class
+ * Tailwind (`bg-gray-100`, `rounded-lg`...) — không dùng lại được nguyên
+ * văn ở đây vì `PortalV2Shell` render trong ~46 tiền tố CSS khác nhau, hầu
+ * hết đều áp "Điều chỉnh 6" (revert Tailwind Preflight, xem comment trong
+ * từng file `*.css` ở `src/app/v2/*`) — cụ thể `.ckos button, .ckos input...
+ * {background-color:revert; border-radius:revert; color:revert; opacity:
+ * revert}` là CSS KHÔNG nằm trong `@layer` nào nên LUÔN thắng
+ * `@layer utilities` của Tailwind bất kể thứ tự/độ đặc hiệu (bài học đã rút
+ * ra khi build Sứ mệnh Companion 2.0) — bọc `<button>` Tailwind-styled vào
+ * đây sẽ mất sạch nền/bo góc/opacity ở phần lớn trang. Component riêng này
+ * dùng inline style (cùng kỹ thuật `profileMenuItemStyle` phía trên) để an
+ * toàn ở MỌI tiền tố, nhưng hành vi/dữ liệu vẫn 100% thật (đổi `locale` lưu
+ * localStorage qua đúng `setLocale()`, không phải bản giả).
+ */
+function ProfileLanguageMenu({ onSelect }: { onSelect: () => void }) {
+  const { locale, setLocale, t } = useLocale();
+
+  return (
+    <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid #E5E7EB" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 8px" }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18" />
+        </svg>
+        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", color: "#6B7280" }}>
+          {t.language.label}
+        </span>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        {SUPPORTED_LOCALES.map((code) => {
+          const { native, flag } = LOCALE_LABELS[code];
+          const status = LOCALE_STATUS[code];
+          const active = locale === code;
+          return (
+            <button
+              key={code}
+              type="button"
+              role="menuitem"
+              aria-current={active ? "true" : undefined}
+              disabled={status === "coming_soon"}
+              onClick={() => {
+                if (status !== "active") return;
+                setLocale(code);
+                onSelect();
+              }}
+              style={{
+                ...profileMenuItemStyle,
+                justifyContent: "space-between",
+                background: active ? "#F3F4F6" : "none",
+                opacity: status === "coming_soon" ? 0.5 : 1,
+                cursor: status === "coming_soon" ? "not-allowed" : "pointer",
+              }}
+            >
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 15, lineHeight: 1 }}>{flag}</span>
+                {native}
+              </span>
+              {active && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#F97316", flexShrink: 0 }} />}
+              {status === "coming_soon" && <span style={{ fontSize: 10, color: "#9CA3AF" }}>{t.language.comingSoon}</span>}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export function PortalV2Shell({
   premium,
@@ -207,7 +280,11 @@ export function PortalV2Shell({
   );
 
   return (
-    <>
+    // `LocaleProvider` bọc ở đây (không phải cấp `/v2/layout.tsx`) — phạm vi
+    // đủ cho `ProfileLanguageMenu` (dropdown hồ sơ) đọc/ghi `useLocale()`
+    // thật, không lan ra `/v2/admin` (dùng shell khác, không có mục ngôn
+    // ngữ này). Không render thêm phần tử DOM nào (xem `LocaleProvider`).
+    <LocaleProvider>
       <aside className="sidebar">
         <div className="brand">
           <div className="mark">
@@ -501,6 +578,8 @@ export function PortalV2Shell({
                           Đăng xuất
                         </button>
                       </div>
+
+                      <ProfileLanguageMenu onSelect={() => setProfileOpen(false)} />
                     </div>
                   )}
                 </div>
@@ -512,6 +591,6 @@ export function PortalV2Shell({
 
         {children}
       </div>
-    </>
+    </LocaleProvider>
   );
 }
