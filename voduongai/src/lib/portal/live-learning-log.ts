@@ -4,8 +4,9 @@ import { getSupabaseServer } from "@/lib/supabase-server";
  * Nguồn dữ liệu THẬT cho "Nhật ký học tập" 2.0 — `/v2/nhat-ky-hoc-tap`
  * (Bước F). Trang này KHÁC hẳn `/portal/nhatkyhoctap` 1.0 (đã Live-edit ở
  * Nhóm 3 Phần A — chỉ quản "chrome" tĩnh của 1 sổ nhật ký chiêm nghiệm) và
- * cũng khác `/v2/nhat-ky-hoi-thoai` (lịch sử chat Companion) — trang này là
- * 1 "learning log" tổng hợp hoạt động học tập thật từ nhiều nguồn có sẵn:
+ * cũng khác "Nhật ký hội thoại" (lịch sử chat Companion, đã xoá khỏi Portal
+ * theo yêu cầu Founder) — trang này là 1 "learning log" tổng hợp hoạt động
+ * học tập thật từ nhiều nguồn có sẵn:
  *
  *  - `user_lesson_progress` (Phase 30, thật, có `completed_at`) — bài học
  *    Học viện AI đã hoàn thành, dùng để tính "Bài học đã hoàn thành"/

@@ -23,8 +23,11 @@
  *     Goal Runtime — đó chỉ là goal/epic/mission, không có các khái niệm
  *     "giai đoạn theo quý"/"bản đồ tầm nhìn"/"nguyên tắc"/"ghi chú"). Xây
  *     mới toàn bộ hệ thống này là 1 tính năng lớn, ngoài phạm vi "chuyển 1:1
- *     trang + nối dữ liệu có sẵn" — hiện trạng thái rỗng trung thực cho cả
- *     5 khối, không bịa nội dung minh hoạ.
+ *     trang + nối dữ liệu có sẵn" — BỎ HẲN cả 5 khối này (không hiện trạng
+ *     thái rỗng vĩnh viễn), theo yêu cầu Founder "mục nào không có nội dung
+ *     thì loại bỏ". Nếu Founder sau này muốn có các tính năng này, đây là
+ *     module riêng cần thiết kế schema + Admin CMS mới, không phải phần mở
+ *     rộng của việc chuyển trang 1:1 này.
  *  3. "Tiến độ tổng thể" (donut 51%/29%/20%) — tính THẬT từ tỉ lệ trạng thái
  *     goal thật (`completed`/`active`/còn lại) thay vì số cố định.
  * ========================================================================== */
@@ -158,26 +161,6 @@ export function ChienLuocCaNhanClient({ premium }: { premium: PremiumStatus }) {
                 </div>
               )}
 
-              <div>
-                <div className="section-head">
-                  <div className="section-title">Lộ trình chiến lược tổng thể</div>
-                </div>
-                <div className="timeline">
-                  <div className="empty-hint">Chưa có tính năng lập lộ trình theo giai đoạn — sẽ cập nhật khi có.</div>
-                </div>
-              </div>
-
-              <div className="map-plan-row">
-                <div className="map-card">
-                  <div className="empty-hint">Chưa có tính năng bản đồ chiến lược.</div>
-                </div>
-                <div className="plan-card">
-                  <div className="card-head">
-                    <h4>Kế hoạch hành động ưu tiên</h4>
-                  </div>
-                  <div className="empty-hint">Chưa có tính năng kế hoạch hành động chi tiết — sẽ cập nhật khi có.</div>
-                </div>
-              </div>
             </div>
 
             <aside className="right-col">
@@ -224,13 +207,6 @@ export function ChienLuocCaNhanClient({ premium }: { premium: PremiumStatus }) {
 
               <div className="card">
                 <div className="card-head">
-                  <h4>Nguyên tắc chiến lược của tôi</h4>
-                </div>
-                <div className="empty-hint">Chưa có tính năng lưu nguyên tắc cá nhân — sẽ cập nhật khi có.</div>
-              </div>
-
-              <div className="card">
-                <div className="card-head">
                   <h4>Nguồn lực chiến lược</h4>
                 </div>
                 <div className="resource-row" onClick={() => go("/v2/he-tri-thuc")}>
@@ -263,13 +239,6 @@ export function ChienLuocCaNhanClient({ premium }: { premium: PremiumStatus }) {
                   </div>
                   <div>Companion AI</div>
                 </div>
-              </div>
-
-              <div className="card note-card">
-                <div className="card-head">
-                  <h4>Ghi chú nhanh</h4>
-                </div>
-                <div className="empty-hint">Chưa có tính năng ghi chú chiến lược — sẽ cập nhật khi có.</div>
               </div>
             </aside>
           </div>

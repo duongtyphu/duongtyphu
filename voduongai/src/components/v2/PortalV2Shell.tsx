@@ -41,19 +41,22 @@ const CROWN_SPARKLES: React.CSSProperties[] = [
 ];
 
 /**
- * 5 trang nhóm "Companion" (`Companion.html`/`Su menh Companion.html`/
- * `Bo nho ca nhan hoa.html`/`Nhat ky hoi thoai.html`/`Chien luoc ca nhan.html`)
- * hiện sidebar KHÁC — mục "Companion AI" mở rộng thành `.nav-parent` (tĩnh,
- * không click được) + `.nav-sub` (5 mục con) thay vì 1 nút phẳng như các
- * trang khác. Đã audit `Companion.html` xác nhận khác biệt này (không phải
- * suy đoán) — 42 trang còn lại cần kiểm tra CSS/markup từng trang trước khi
- * coi là "giống hệt", KHÔNG mặc định mọi trang dùng đúng 1 khuôn.
+ * 4 trang nhóm "Companion" (`Companion.html`/`Su menh Companion.html`/
+ * `Bo nho ca nhan hoa.html`/`Chien luoc ca nhan.html`) hiện sidebar KHÁC —
+ * mục "Companion AI" mở rộng thành `.nav-parent` (tĩnh, không click được) +
+ * `.nav-sub` (4 mục con) thay vì 1 nút phẳng như các trang khác. Đã audit
+ * `Companion.html` xác nhận khác biệt này (không phải suy đoán) — 42 trang
+ * còn lại cần kiểm tra CSS/markup từng trang trước khi coi là "giống hệt",
+ * KHÔNG mặc định mọi trang dùng đúng 1 khuôn.
+ *
+ * "Nhật ký hội thoại" (`Nhat ky hoi thoai.html`, trang thứ 5 ban đầu) đã bị
+ * XOÁ HẲN khỏi Portal theo yêu cầu Founder — xem `src/app/v2/nhat-ky-hoi-thoai`
+ * (đã xoá thư mục).
  */
 const COMPANION_FAMILY: { htmlFile: string; label: string }[] = [
   { htmlFile: "Companion.html", label: "Trò chuyện cùng Companion" },
   { htmlFile: "Su menh Companion.html", label: "Sứ mệnh Companion" },
   { htmlFile: "Bo nho ca nhan hoa.html", label: "Bộ nhớ & Cá nhân hoá" },
-  { htmlFile: "Nhat ky hoi thoai.html", label: "Nhật ký hội thoại" },
   { htmlFile: "Chien luoc ca nhan.html", label: "Chiến lược cá nhân" },
 ];
 

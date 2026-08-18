@@ -36,12 +36,16 @@
  *     bình" không có hệ thống phân loại/level/giờ học thật → bỏ 3 dòng này,
  *     giữ "Mục tiêu chính" (goal `active` đầu tiên, thật) + "Ngày tham gia"
  *     (`members.created_at`, thật — cùng cách `/v2/su-menh-companion`).
- *  7. "Ngữ cảnh hiện tại" — không có hệ thống theo dõi ngữ cảnh (dự án đang
- *     làm/ưu tiên/giờ rảnh/thiết bị/phong cách học) nào thật → thay bằng
- *     trạng thái rỗng trung thực cho cả khối, không bịa nội dung.
- *  8. "Cá nhân hoá trải nghiệm" (4 action-tile) — điều hướng thật:
- *     "Cập nhật mục tiêu" → `/portal/goals`, các ô còn lại chưa có trang đích
- *     thật tương ứng ở 2.0 (giữ nguyên `href="#"`, không tự bịa route).
+ *  7. "Ngữ cảnh hiện tại" (cột phải) — không có hệ thống theo dõi ngữ cảnh
+ *     (dự án đang làm/ưu tiên/giờ rảnh/thiết bị/phong cách học) nào thật,
+ *     và chưa có nơi Admin nào quản lý nội dung này → BỎ HẲN khối này (thay
+ *     vì hiện trạng thái rỗng vĩnh viễn), theo yêu cầu Founder "mục nào
+ *     không có nội dung thì loại bỏ".
+ *  8. "Cá nhân hoá trải nghiệm" — RÚT còn 2 action-tile có đích thật:
+ *     "Cập nhật mục tiêu" → `/portal/goals`, "Phản hồi cho Companion" →
+ *     `/v2/companion`. Đã BỎ 2 ô "Cập nhật sở thích"/"Thiết lập ngữ cảnh"
+ *     (không có trang đích thật ở 2.0, cùng lý do #7) — theo yêu cầu Founder,
+ *     không giữ lại link cụt `href="#"` nào.
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
@@ -289,29 +293,6 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
                       <p>Điều chỉnh mục tiêu của bạn.</p>
                     </div>
                   </div>
-                  <div className="action-tile">
-                    <div className="ico">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 10-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h6>Cập nhật sở thích</h6>
-                      <p>Thêm hoặc chỉnh sửa sở thích.</p>
-                    </div>
-                  </div>
-                  <div className="action-tile">
-                    <div className="ico">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M12 7v5l3 3" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h6>Thiết lập ngữ cảnh</h6>
-                      <p>Cập nhật bối cảnh hiện tại.</p>
-                    </div>
-                  </div>
                   <div className="action-tile" onClick={() => go("/v2/companion")}>
                     <div className="ico">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -353,13 +334,6 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
                     <span className="v">{joinedAt ? formatDate(joinedAt) : "—"}</span>
                   </div>
                 </div>
-              </div>
-
-              <div className="card">
-                <div className="card-head">
-                  <h4>Ngữ cảnh hiện tại</h4>
-                </div>
-                <div className="empty-hint">Chưa có hệ thống theo dõi ngữ cảnh — tính năng này sẽ cập nhật khi có.</div>
               </div>
 
               <div className="card">

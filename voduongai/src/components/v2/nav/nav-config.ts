@@ -29,7 +29,6 @@ import {
   Image as ImageIcon,
   LayoutDashboard,
   LayoutGrid,
-  MessageSquare,
   Menu,
   NotebookPen,
   Plug,
@@ -86,12 +85,6 @@ const PORTAL_MAIN: NavItem[] = [
     label: "Bộ nhớ & Cá nhân hoá",
     href: `${V2_PORTAL_BASE}/bo-nho-ca-nhan-hoa`,
     icon: Brain,
-    group: "companion",
-  },
-  {
-    label: "Nhật ký hội thoại",
-    href: `${V2_PORTAL_BASE}/nhat-ky-hoi-thoai`,
-    icon: MessageSquare,
     group: "companion",
   },
   {
@@ -167,7 +160,6 @@ const GROUP_PREFIXES: Record<NavGroup, string[]> = {
     `${V2_PORTAL_BASE}/companion`,
     `${V2_PORTAL_BASE}/su-menh-companion`,
     `${V2_PORTAL_BASE}/bo-nho-ca-nhan-hoa`,
-    `${V2_PORTAL_BASE}/nhat-ky-hoi-thoai`,
     `${V2_PORTAL_BASE}/chien-luoc-ca-nhan`,
   ],
   ecosystem: [`${V2_PORTAL_BASE}/du-an-co-hoi`],

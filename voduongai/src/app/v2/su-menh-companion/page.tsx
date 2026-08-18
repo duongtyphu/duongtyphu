@@ -1,33 +1,22 @@
-import { getPremiumStatus } from "@/lib/v2/premium-access";
-import { getSupabaseServer } from "@/lib/supabase-server";
-
-import { SuMenhCompanionClient } from "./SuMenhCompanionClient";
+export { default } from "@/app/portal/su-menh-companion/page";
 
 export const metadata = { title: "Sứ mệnh Companion | VO DUONG AI" };
 
 /**
- * `/v2/su-menh-companion` — Bước F. Trang chủ yếu là copy tĩnh (sứ mệnh/giá
- * trị cốt lõi/nguyên tắc hoạt động — bản tuyên ngôn thương hiệu, không phải
- * dữ liệu user). CHỈ 1 điểm có dữ liệu thật: "Đồng hành cùng bạn từ ..." —
- * đổi từ ngày cố định trong bản thiết kế sang ngày tạo tài khoản thật
- * (`members.created_at`) của user đang đăng nhập.
+ * `/v2/su-menh-companion` — theo yêu cầu Founder: lấy NGUYÊN trang
+ * `/portal/su-menh-companion` (1.0) làm nội dung trang này, thay hẳn bản
+ * mock tĩnh 2.0 trước đó (`SuMenhCompanionClient.tsx`, 1:1 từ
+ * `Su menh Companion.html` — đã xoá).
+ *
+ * Import thẳng component gốc (không copy) — đúng nguyên tắc "Live-edit
+ * Cách A" đã dùng xuyên suốt dự án (home-cards/duan-cohoi/5 Cửa Hành
+ * trình...) để đảm bảo khớp byte-for-byte với 1.0 và tự động ăn theo mọi
+ * thay đổi nội dung sau này (6 collection Supabase live-edited qua
+ * `/admin/su-menh-companion/live-edit`), không lệch bản sao.
+ *
+ * Khác MỌI trang `/v2/*` khác: trang này KHÔNG có `PortalV2Shell`
+ * (sidebar/topbar 2.0) — 1.0's `CompanionHomePage` là trải nghiệm
+ * full-bleed riêng (`SanctuaryBackground`/`LivingCore`...), không có
+ * shell nào bọc. Đây là quyết định lấy "nguyên" nội dung 1.0 theo đúng
+ * yêu cầu, không tự ý ép vào khung 2.0.
  */
-export default async function SuMenhCompanionPage() {
-  const premium = await getPremiumStatus();
-
-  let joinedAt: string | null = null;
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    const supabase = await getSupabaseServer();
-    const { data: userData } = await supabase.auth.getUser();
-    if (userData.user) {
-      const { data: member } = await supabase
-        .from("members")
-        .select("created_at")
-        .eq("id", userData.user.id)
-        .maybeSingle();
-      joinedAt = (member?.created_at as string | null) ?? null;
-    }
-  }
-
-  return <SuMenhCompanionClient premium={premium} joinedAt={joinedAt} />;
-}
