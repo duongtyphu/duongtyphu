@@ -1,0 +1,86 @@
+/* =============================================================================
+ * Sứ mệnh Companion 2.0 — CSS cho khung sidebar/topbar (PortalV2Shell), chép
+ * NGUYÊN VĂN từ `<style>` của bản thiết kế tương ứng (`Su menh Companion.html`).
+ *
+ * KHÁC 4 trang shell khác (Trang chủ Portal/CKOS/Học viện AI/AI Workspace,
+ * và cả `Companion.html`/`Bo nho ca nhan hoa.html`) — trang này CHỈ áp dụng
+ * ĐÚNG 5/6 điều chỉnh kỹ thuật chuẩn: (1) tiền tố `.smc`; (2) `:root` →
+ * `.smc`; (3) `body` gộp vào `.smc`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`. **BỎ HẲN điều chỉnh 6 (revert Tailwind Preflight)**
+ * — lý do: theo yêu cầu Founder "chỉ thay đổi trang giữa, còn lại giao diện
+ * portal vẫn giữ nguyên", nội dung ở giữa (`SuMenhCompanionContent.tsx`,
+ * dùng chung với `/portal/su-menh-companion` 1.0) là component TAILWIND
+ * THẬT — không phải hand-CSS như 42 trang Bước F khác. `.smc *{margin:0;
+ * padding:0}` + "Điều chỉnh 6" là CSS KHÔNG nằm trong `@layer` nào
+ * (unlayered) nên theo đúng spec CSS Cascade Layers sẽ LUÔN thắng CSS bên
+ * trong `@layer utilities` của Tailwind (bất kể thứ tự/độ đặc hiệu) — nếu
+ * giữ nguyên sẽ xoá mất mọi class `mt-*`/`px-*`/`text-6xl`/`font-extrabold`...
+ * mà `SuMenhCompanionContent` dùng. Preflight thật của Tailwind (qua
+ * `@import "tailwindcss"` toàn site trong `globals.css`) đã áp dụng SẴN cho
+ * mọi phần tử ở mọi trang — "Điều chỉnh 6" ở các trang khác chỉ là phòng hộ
+ * dư thừa (revert lại đúng đường Preflight gốc cho nội dung hand-CSS), bỏ
+ * nó ở đây không mất tác dụng gì cho khung sidebar/topbar (mọi class
+ * `.smc .nav-item`/`.smc .promo h4`/... bên dưới đều tự set đủ font-size/
+ * weight/margin/padding/border của riêng nó, không phụ thuộc revert).
+ * ========================================================================== */
+
+.smc{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+
+.smc {
+  /* Điều chỉnh 4 */
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+
+  /* Điều chỉnh 5 */
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.smc a{color:var(--violet);text-decoration:none}
+.smc a:hover{color:var(--violet-dark)}
+.smc .app{display:flex;min-height:100vh}
+.smc .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.smc .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.smc .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.smc .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.smc .brand .name .vo{color:#3B82F6}
+.smc .brand .name .ai{color:#fff}
+.smc nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.smc .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.smc .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.smc .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.smc .nav-item.active{background:var(--violet);color:#fff}
+.smc .nav-item.active svg{opacity:1}
+.smc .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.smc .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.smc .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.smc .nav-parent:hover{background:none}
+.smc .nav-parent svg{opacity:1}
+.smc .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.smc .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.smc .promo h4{color:#fff;font-size:14px;font-weight:700;margin:0 0 6px}
+.smc .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin:0 0 14px}
+.smc .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.smc .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.smc .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.smc .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.smc .search{flex:1;max-width:640px;position:relative}
+.smc .search input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-family:inherit;margin:0}
+.smc .search input:focus{outline:2px solid var(--violet-light);border-color:var(--violet)}
+.smc .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.smc .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.smc .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.smc .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.smc .icon-btn svg{width:18px;height:18px}
+.smc .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.smc .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.smc .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.smc .profile .who{font-size:13px;font-weight:600;line-height:1.25;margin:0}
+.smc .profile .plan{display:inline-block;margin-top:1px;background:#fef3c7;color:#92720a;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
+/* Chỉ 1 khối con (SuMenhCompanionContent, không tách center-col/right-col
+   như các trang Companion khác — trang này không có cột phải) — không cần
+   flex, chỉ giữ padding khớp mức đệm chung `.content` của các trang shell
+   khác (24px 28px). */
+.smc .content{padding:24px 28px;box-sizing:border-box}
