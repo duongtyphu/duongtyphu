@@ -84,3 +84,65 @@
    flex, chỉ giữ padding khớp mức đệm chung `.content` của các trang shell
    khác (24px 28px). */
 .smc .content{padding:24px 28px;box-sizing:border-box}
+
+/* =============================================================================
+ * KHÁC bản tĩnh — Founder yêu cầu: "Trang giữa sử dụng màu nền của 1.0, cân
+ * chỉnh chữ, khoảng cách dòng lại, thay đổi giao diện trang giữa sao cho
+ * hợp lý, bắt mắt, dễ nhìn, dễ hiểu — giữ nguyên nội dung, chỉ thay đổi
+ * giao diện cách hiển thị."
+ *
+ * KHÔNG sửa `SuMenhCompanionContent.tsx` (Single Source of Truth dùng
+ * chung với 1.0, xem comment đầu file đó) — mọi điều chỉnh dưới đây là CSS
+ * THUẦN, ghi đè đúng tên class Tailwind mà component đó render ra, trong
+ * phạm vi `.smc` (chỉ tải ở `/v2/su-menh-companion`, không đụng
+ * `/portal/su-menh-companion` 1.0 hay bất kỳ trang `/v2/*` nào khác). Đúng
+ * cơ chế Cascade Layers đã giải thích ở đầu file: CSS không nằm trong
+ * `@layer` nào (file này) LUÔN thắng class Tailwind (`@layer utilities`)
+ * bất kể breakpoint `sm:`/`md:` — chỉ cần ghi đè đúng tên class GỐC (không
+ * tiền tố responsive), không cần lặp lại từng biến thể `sm:`/`md:`.
+ *
+ *  1. Nền — chép lại ĐÚNG công thức `.sanctuary-bg` (`globals.css`, nền
+ *     thật của `/portal/su-menh-companion` 1.0: trắng ngà → xanh nhạt →
+ *     tím nhạt → cam nhạt → trắng, cùng tông xanh-tím-cam nội dung đang
+ *     dùng — `text-blue-500`/`text-violet-500`/`text-orange-500`) làm nền
+ *     cho khối "panel" (div `rounded-3xl p-6 md:p-8`, bao trọn toàn bộ nội
+ *     dung) — KHÔNG mang theo lớp orb trôi nổi/noise động của 1.0 (không
+ *     cần thiết cho riêng "màu nền" Founder yêu cầu, tránh thêm phần tử
+ *     DOM mới vào component dùng chung với 1.0).
+ *  2. Bỏ lớp đệm padding thừa (`.px-4`/`.py-6` của div ngoài cùng, `.px-6`
+ *     của 3 khối căn giữa bên trong) — panel giờ tự cầm padding riêng,
+ *     tránh cộng dồn 2-3 lớp padding lồng nhau (bản gốc 1.0 không bị vì
+ *     `SanctuaryBackground` không có khung panel, toàn trang là 1 nền).
+ *  3. Khoảng cách giữa 10 section (`.mt-32`/`.mt-40`/`.mt-16`) giảm gần một
+ *     nửa — bản gốc thiết kế cho 1 trang riêng cuộn dài (1.0), trong khung
+ *     Portal 2.0 (đã có sidebar/topbar riêng, cột nội dung hẹp lại)
+ *     khoảng cách 128-160px giữa mỗi đoạn cảm giác quá rỗng, khó theo dõi
+ *     mạch nội dung.
+ *  4. Tiêu đề "Companion" (hero, `.text-6xl`, gốc 60px) giảm cỡ chữ cho
+ *     cân đối hơn với cột nội dung đã hẹp lại (sidebar 224px choán chỗ).
+ *  5. `.leading-relaxed` (khoảng cách dòng hầu hết đoạn văn) giảm nhẹ, dễ
+ *     đọc hơn trong khung ứng dụng thay vì trang landing dài.
+ * ========================================================================== */
+.smc .content .p-6{
+  padding:40px 44px;
+  border-radius:24px;
+  border:1px solid rgba(37,99,235,.08);
+  box-shadow:0 1px 3px rgba(23,17,50,.05),0 16px 40px -20px rgba(37,99,235,.16);
+  background-color:#FEFEFE;
+  background-image:
+    radial-gradient(1100px circle at 12% 0%, rgba(37,99,235,.09), transparent 55%),
+    radial-gradient(900px circle at 88% 18%, rgba(124,58,237,.08), transparent 55%),
+    radial-gradient(1000px circle at 50% 60%, rgba(255,122,0,.05), transparent 60%),
+    radial-gradient(900px circle at 15% 100%, rgba(91,140,255,.07), transparent 55%),
+    linear-gradient(180deg,#FEFEFE 0%,#F7F9FC 30%,#F3F0FA 55%,#FDF6EE 78%,#FFFFFF 100%);
+}
+.smc .content .px-4{padding-left:0;padding-right:0}
+.smc .content .py-6{padding-top:0;padding-bottom:0}
+.smc .content .px-6{padding-left:0;padding-right:0}
+.smc .content .py-20{padding-top:32px;padding-bottom:24px}
+.smc .content .mt-32{margin-top:64px}
+.smc .content .mt-40{margin-top:80px}
+.smc .content .mt-16{margin-top:48px}
+.smc .content .text-6xl{font-size:44px;line-height:1.1}
+.smc .content .text-3xl{line-height:1.25}
+.smc .content .leading-relaxed{line-height:1.6}
