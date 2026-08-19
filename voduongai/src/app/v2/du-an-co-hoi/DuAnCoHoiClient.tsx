@@ -62,6 +62,8 @@ import type { SubProjectRow } from "@/lib/portal/live-subprojects";
 import type { EcosystemArticleRow } from "@/lib/portal/live-ecosystem-articles";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
+import { NotificationBell } from "@/components/v2/NotificationBell";
+import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 
 import "../inter-gf.css";
 import "./du-an-co-hoi.css";
@@ -354,14 +356,7 @@ export function DuAnCoHoiClient({
 
         <div className="main-col">
           <div className="topbar">
-            <div className="search-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="7" />
-                <path d="M21 21l-4.3-4.3" />
-              </svg>
-              <input type="text" placeholder="Tìm dự án, cơ hội, từ khoá..." />
-              <kbd>⌘ K</kbd>
-            </div>
+            <PortalSearchBox placeholder="Tìm dự án, cơ hội, từ khoá..." variant="box" />
             <div className="topbar-right">
               {!premium.isPremium && (
                 <button className="upgrade-btn" onClick={() => go("Premium.html")}>
@@ -371,13 +366,7 @@ export function DuAnCoHoiClient({
                   Nâng cấp Premium
                 </button>
               )}
-              <button className="icon-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.7 21a2 2 0 01-3.4 0" />
-                </svg>
-                <span className="badge">3</span>
-              </button>
+              <NotificationBell />
               <ProfileMenu premium={premium} />
             </div>
           </div>

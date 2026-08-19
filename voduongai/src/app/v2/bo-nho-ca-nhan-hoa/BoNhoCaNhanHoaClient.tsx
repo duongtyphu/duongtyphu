@@ -52,6 +52,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
+import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 import { listGoals } from "@/lib/portal/foundation/goal-runtime";
 import type { MemoryEntry } from "@/lib/portal/foundation/memory-store";
@@ -103,20 +104,13 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
       <div className="app">
         <PortalV2Shell
           premium={premium}
-          notifBadge={0}
           searchPlaceholder="Tìm kiếm kiến thức, công cụ, prompt, bài học..."
           useTopbarRightWrapper={false}
           promoText="Mở khóa toàn bộ tính năng nâng cao của Companion AI và Học viện."
           activeHtmlFile="Bo nho ca nhan hoa.html"
           companionExpanded
           customSearch={
-            <div className="search">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="7" />
-                <path d="M21 21l-4.3-4.3" />
-              </svg>
-              <input type="text" placeholder="Tìm kiếm kiến thức, công cụ, prompt, bài học..." />
-            </div>
+            <PortalSearchBox placeholder="Tìm kiếm kiến thức, công cụ, prompt, bài học..." variant="bare" />
           }
         >
           <div className="content">

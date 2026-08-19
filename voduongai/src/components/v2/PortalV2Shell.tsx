@@ -11,8 +11,11 @@
  * KHÔNG đổi sang dùng component này — ngoài phạm vi Bước F).
  *
  * Khác biệt PAGE-SPECIFIC giữa các file thiết kế (không cứng trong shell):
- * `search-box` placeholder, số badge chuông, tiêu đề/nội dung box "Nâng cấp
- * Premium" — nhận qua props, giữ đúng nguyên văn từng trang khi build.
+ * `search-box` placeholder, tiêu đề/nội dung box "Nâng cấp Premium" — nhận
+ * qua props, giữ đúng nguyên văn từng trang khi build. Chuông thông báo
+ * (`NotificationBell`) và ô tìm kiếm (`PortalSearchBox`) đọc dữ liệu THẬT
+ * (bảng `portal_banners`/API `/api/v1/ckos/search`) — không còn số badge
+ * bịa qua prop `notifBadge` (đã bỏ).
  *
  * Trang gọi component này tự bọc `<div className="<prefix>"><div
  * className="app">` bên ngoài — `PortalV2Shell` chỉ render `<aside>` +
@@ -25,6 +28,8 @@ import { useRouter } from "next/navigation";
 import { PORTAL_HREF_MAP } from "@/lib/v2/href-map";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
+import { NotificationBell } from "@/components/v2/NotificationBell";
+import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 
 const SPARKLE_PATH = "M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z";
 
@@ -65,7 +70,6 @@ const COMPANION_FAMILY: { htmlFile: string; label: string }[] = [
 export function PortalV2Shell({
   premium,
   searchPlaceholder,
-  notifBadge = 3,
   promoTitle = "Nâng cấp Premium",
   promoText,
   activeHtmlFile,
@@ -83,7 +87,6 @@ export function PortalV2Shell({
   premium: PremiumStatus;
   /** `undefined` khi `showSearchBox=false` (trang không có ô tìm kiếm, vd nhóm Companion). */
   searchPlaceholder?: string;
-  notifBadge?: number;
   promoTitle?: string;
   promoText: string;
   /** Tên file `.html` gốc của trang đang render (khớp key `PORTAL_HREF_MAP`) — dùng để đánh dấu `nav-item active`. */
@@ -325,16 +328,7 @@ export function PortalV2Shell({
       <div className="main-col">
         <div className="topbar">
           {customSearch ??
-            (showSearchBox ? (
-              <div className="search-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="M21 21l-4.3-4.3" />
-                </svg>
-                <input type="text" placeholder={searchPlaceholder} />
-                <kbd>⌘ K</kbd>
-              </div>
-            ) : null)}
+            (showSearchBox ? <PortalSearchBox placeholder={searchPlaceholder ?? "Tìm kiếm..."} variant="box" /> : null)}
           {(() => {
             const rightContent = (
               <>
@@ -346,13 +340,7 @@ export function PortalV2Shell({
                     Nâng cấp Premium
                   </button>
                 )}
-                <button className="icon-btn">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.7 21a2 2 0 01-3.4 0" />
-                  </svg>
-                  {notifBadge > 0 ? <span className="badge">{notifBadge}</span> : null}
-                </button>
+                <NotificationBell />
                 <ProfileMenu premium={premium} subtitle={profileSubtitle} />
               </>
             );
