@@ -266,3 +266,79 @@
   padding: 2px 8px;
   border-radius: 6px;
 }
+
+/* -----------------------------------------------------------------------------
+ * `/v2/he-tri-thuc/[slug]` — trang chi tiết tài liệu, KHÔNG có mockup riêng
+ * (đã xác nhận với Founder). Dùng ĐÚNG token/màu/font đã khai báo ở trên
+ * (`--ink`/`--violet`/`--muted`/`--line`/`--text`/`--gold`), không thêm hex
+ * mới, không đổi hệ thống class `.card`/`.doc-tag`/`.doc-lock` đã có sẵn.
+ * -------------------------------------------------------------------------- */
+.ckos .doc-back-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--violet);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.ckos .doc-back-link:hover { color: var(--violet-dark) }
+
+.ckos .doc-article { padding: 28px 30px }
+.ckos .doc-article-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.ckos .doc-article-sep { color: var(--line) }
+.ckos .doc-article-title { font-size: 24px; font-weight: 800; color: var(--ink); line-height: 1.35 }
+.ckos .doc-article-summary { font-size: 14.5px; color: var(--muted); line-height: 1.65; margin-top: 10px }
+.ckos .doc-article-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px }
+
+.ckos .doc-body { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line) }
+.ckos .doc-body h2 { font-size: 17px; font-weight: 800; color: var(--ink); margin: 26px 0 10px }
+.ckos .doc-body h2:first-child { margin-top: 0 }
+.ckos .doc-body h3 { font-size: 14.5px; font-weight: 700; color: var(--ink); margin: 20px 0 8px }
+.ckos .doc-body p { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 14px }
+.ckos .doc-body ul, .ckos .doc-body ol { padding-left: 22px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px }
+.ckos .doc-body ul { list-style: disc }
+.ckos .doc-body ol { list-style: decimal }
+.ckos .doc-body li { font-size: 14px; color: var(--text); line-height: 1.65 }
+.ckos .doc-body strong { font-weight: 700; color: var(--ink) }
+
+.ckos .doc-article-locked {
+  margin-top: 22px;
+  padding: 30px 24px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  background: var(--bg);
+  border-radius: 12px;
+}
+.ckos .doc-article-locked .ico {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--violet-light);
+  color: var(--violet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+.ckos .doc-article-locked .ico svg { width: 20px; height: 20px }
+.ckos .doc-article-locked h4 { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 6px }
+.ckos .doc-article-locked p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px }
+.ckos .doc-article-unlock-btn {
+  background: linear-gradient(135deg, var(--violet), #9b7bff);
+  color: #fff;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, filter .15s;
+}
+.ckos .doc-article-unlock-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(109,74,255,.35); filter: brightness(1.05) }

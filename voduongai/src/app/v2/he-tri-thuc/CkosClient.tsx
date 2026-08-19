@@ -32,6 +32,7 @@
  * "diễn giải lại thiết kế" — chờ Founder chốt từng cái.
  * ========================================================================== */
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -566,17 +567,25 @@ export function CkosClient({
                         const locked = doc.accessLevel === "premium" && !premium.isPremium;
                         return (
                           <div className="doc-row" key={doc.slug}>
-                            <div className="ico">
-                              <DocIcon />
-                            </div>
-                            <div className="info">
-                              <h5>{doc.title}</h5>
-                              <div className="meta">
-                                <span className="doc-tag">{doc.categoryName}</span>
-                                <span>{doc.readingTime}</span>
-                                {locked ? <span className="doc-lock">Premium</span> : null}
+                            {/* `display:contents` — Link không tham gia layout, ico+info
+                                vẫn là con trực tiếp của `.doc-row` (giữ đúng `gap:14px`
+                                CSS gốc), tránh lồng <button> (nút Lưu) vào trong <a>. */}
+                            <Link
+                              href={`/v2/he-tri-thuc/${doc.slug}`}
+                              style={{ display: "contents", color: "inherit", textDecoration: "none" }}
+                            >
+                              <div className="ico">
+                                <DocIcon />
                               </div>
-                            </div>
+                              <div className="info">
+                                <h5>{doc.title}</h5>
+                                <div className="meta">
+                                  <span className="doc-tag">{doc.categoryName}</span>
+                                  <span>{doc.readingTime}</span>
+                                  {locked ? <span className="doc-lock">Premium</span> : null}
+                                </div>
+                              </div>
+                            </Link>
                             <span className="date">{formatDate(doc.createdAt)}</span>
                             <button className="save">
                               <SaveIcon />
@@ -740,7 +749,12 @@ export function CkosClient({
                 ) : (
                   <>
                     {popular.documents.map((doc) => (
-                      <div className="pop-row" key={doc.slug}>
+                      <Link
+                        href={`/v2/he-tri-thuc/${doc.slug}`}
+                        className="pop-row"
+                        key={doc.slug}
+                        style={{ color: "inherit", textDecoration: "none" }}
+                      >
                         <div className="ico">
                           <DocIcon />
                         </div>
@@ -752,7 +766,7 @@ export function CkosClient({
                               : formatDate(doc.createdAt)}
                           </span>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                     {!popular.sortedByViews ? (
                       <div className="empty-hint" style={{ padding: "10px 0 0" }}>
