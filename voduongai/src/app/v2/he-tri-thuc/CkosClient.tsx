@@ -42,11 +42,10 @@
  *     đúng class có sẵn) + danh sách Bài học (`.doc-row`, tái dùng). Chip lọc
  *     đổi từ tĩnh sang tên 2 Bộ sưu tập thật, BẤM ĐƯỢC (lọc danh sách bài học
  *     — dữ liệu đã tải hết ở server, không cần gọi mạng thêm). Mỗi bộ sưu
- *     tập/bài học trỏ sang đúng trang chi tiết thật của 1.0
- *     (`/portal/hetrithucai/collection/[slug]`, `/portal/hetrithucai/[slug]`)
- *     — 2.0 CHƯA có trình xem Lesson/Collection riêng (khác `knowledge_assets`
- *     dùng cho `/v2/he-tri-thuc/[slug]`), nên trỏ ra trang 1.0 thật là đích
- *     trung thực nhất hiện có, không phải link chết `href="#"`.
+ *     tập/bài học giờ trỏ sang trình xem GỐC của chính 2.0
+ *     (`/v2/he-tri-thuc/bo-suu-tap/[slug]`, `/v2/he-tri-thuc/bai-hoc/[slug]`
+ *     — xây tiếp sau khi Founder chọn ưu tiên "xây trang xem Bài học/Bộ sưu
+ *     tập gốc"), không còn trỏ ra 1.0 nữa.
  *
  * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC (bản mockup cũng không làm gì): nút lưu
  * (dấu trang) trên "Tài liệu mới nhất", ô tìm kiếm, chuông thông báo. Không
@@ -637,7 +636,7 @@ export function CkosClient({
                         <Link
                           key={col.slug}
                           className="folder-card"
-                          href={`/portal/hetrithucai/collection/${col.slug}`}
+                          href={`/v2/he-tri-thuc/bo-suu-tap/${col.slug}`}
                           style={{ textDecoration: "none", color: "inherit" }}
                         >
                           <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
@@ -665,7 +664,7 @@ export function CkosClient({
                         <Link
                           key={seed.id}
                           className="doc-row"
-                          href={`/portal/hetrithucai/${seed.slug}`}
+                          href={`/v2/he-tri-thuc/bai-hoc/${seed.slug}`}
                           style={{ textDecoration: "none", color: "inherit" }}
                         >
                           <div className="ico">
