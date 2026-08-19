@@ -55,6 +55,7 @@ import { useState } from "react";
 
 import type { AcademyCourse, AcademyPath, AcademyProgress } from "@/lib/portal/live-academy";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
+import { ProfileMenu } from "@/components/v2/ProfileMenu";
 
 import "../inter-gf.css";
 import "./hoc-vien-ai.css";
@@ -259,29 +260,33 @@ export function HocVienClient({
             </button>
           </nav>
 
-          <div className="promo">
-            <div
-              className="crown"
-              style={{ background: "none", boxShadow: "none", width: 54, height: 54, overflow: "visible" }}
-            >
-              {CROWN_SPARKLES.map((style, i) => (
-                <svg key={i} className="crown-sparkle" style={style} viewBox="0 0 24 24" fill="currentColor">
-                  <path d={SPARKLE_PATH} />
-                </svg>
-              ))}
-              {/* eslint-disable-next-line @next/next/no-img-element -- ảnh minh hoạ tĩnh
-                  của bản thiết kế, kích thước cố định 58.5px; dùng <img> để giữ đúng
-                  markup gốc (next/image chèn thêm wrapper làm lệch bố cục). */}
-              <img
-                src="/v2-static/assets/icon-premium.png"
-                alt=""
-                style={{ width: 58.5, height: 58.5, objectFit: "contain", position: "relative", zIndex: 1 }}
-              />
+          {/* Founder: tài khoản đã Premium không thấy mục nâng cấp ở bất kỳ đâu
+              trong portal 2.0 — nguyên tắc site-wide đã áp dụng cho `PortalV2Shell`. */}
+          {!premium.isPremium && (
+            <div className="promo">
+              <div
+                className="crown"
+                style={{ background: "none", boxShadow: "none", width: 54, height: 54, overflow: "visible" }}
+              >
+                {CROWN_SPARKLES.map((style, i) => (
+                  <svg key={i} className="crown-sparkle" style={style} viewBox="0 0 24 24" fill="currentColor">
+                    <path d={SPARKLE_PATH} />
+                  </svg>
+                ))}
+                {/* eslint-disable-next-line @next/next/no-img-element -- ảnh minh hoạ tĩnh
+                    của bản thiết kế, kích thước cố định 58.5px; dùng <img> để giữ đúng
+                    markup gốc (next/image chèn thêm wrapper làm lệch bố cục). */}
+                <img
+                  src="/v2-static/assets/icon-premium.png"
+                  alt=""
+                  style={{ width: 58.5, height: 58.5, objectFit: "contain", position: "relative", zIndex: 1 }}
+                />
+              </div>
+              <h4>Nâng cấp Premium</h4>
+              <p>Mở khóa toàn bộ khóa học nâng cao, tài liệu độc quyền và nội thực chiến.</p>
+              <button onClick={() => go("Premium.html")}>Nâng cấp ngay</button>
             </div>
-            <h4>Nâng cấp Premium</h4>
-            <p>Mở khóa toàn bộ khóa học nâng cao, tài liệu độc quyền và nội thực chiến.</p>
-            <button onClick={() => go("Premium.html")}>Nâng cấp ngay</button>
-          </div>
+          )}
         </aside>
 
         <div className="main-col">
@@ -295,12 +300,14 @@ export function HocVienClient({
               <kbd>⌘ K</kbd>
             </div>
             <div className="topbar-right">
-              <button className="upgrade-btn" onClick={() => go("Premium.html")}>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                </svg>
-                Nâng cấp Premium
-              </button>
+              {!premium.isPremium && (
+                <button className="upgrade-btn" onClick={() => go("Premium.html")}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                  </svg>
+                  Nâng cấp Premium
+                </button>
+              )}
               <button className="icon-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -308,13 +315,7 @@ export function HocVienClient({
                 </svg>
                 <span className="badge">3</span>
               </button>
-              <div className="profile">
-                <div className="avatar">VD</div>
-                <div>
-                  <div className="who">Võ Dương</div>
-                  <span className="plan">{premium.isPremium ? "Premium" : "Free"}</span>
-                </div>
-              </div>
+              <ProfileMenu premium={premium} />
             </div>
           </div>
 

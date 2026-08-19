@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import type { PremiumStatus } from "@/lib/v2/premium-access";
+import { ProfileMenu } from "@/components/v2/ProfileMenu";
 
 import "../../inter-gf.css";
 import "./ohana.css";
@@ -245,12 +246,14 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
               <kbd>⌘ K</kbd>
             </div>
             <div className="topbar-right">
-              <button className="upgrade-btn" onClick={() => go("Premium.html")}>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                </svg>
-                Nâng cấp Premium
-              </button>
+              {!premium.isPremium && (
+                <button className="upgrade-btn" onClick={() => go("Premium.html")}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                  </svg>
+                  Nâng cấp Premium
+                </button>
+              )}
               <button className="icon-btn">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -258,13 +261,7 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
                 </svg>
                 <span className="badge">3</span>
               </button>
-              <div className="profile">
-                <div className="avatar">VD</div>
-                <div>
-                  <div className="who">Võ Dương</div>
-                  <span className="plan">{premium.isPremium ? "Premium" : "Free"}</span>
-                </div>
-              </div>
+              <ProfileMenu premium={premium} />
             </div>
           </div>
 

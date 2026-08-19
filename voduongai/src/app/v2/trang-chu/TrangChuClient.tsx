@@ -42,6 +42,8 @@ import "./trang-chu.css";
 
 import type { AcademyCourse, AcademyProgress } from "@/lib/portal/live-academy";
 import type { ResourceSuggestion, ResourceSuggestionType } from "@/lib/portal/live-resource-suggestions";
+import type { PremiumStatus } from "@/lib/v2/premium-access";
+import { ProfileMenu } from "@/components/v2/ProfileMenu";
 
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
 const HREF_MAP: Record<string, string> = {
@@ -241,10 +243,12 @@ export function TrangChuClient({
   courses,
   progress,
   suggestions,
+  premium,
 }: {
   courses: AcademyCourse[];
   progress: AcademyProgress;
   suggestions: ResourceSuggestion[];
+  premium: PremiumStatus;
 }) {
   const router = useRouter();
   // `<script>` gốc: `this.classList.toggle('on')` trên #themeSwitch.
@@ -371,30 +375,34 @@ export function TrangChuClient({
               Khu vườn của bạn
             </button>
           </nav>
-          <div className="promo">
-            <div
-              className="crown"
-              style={{ background: "none", boxShadow: "none", width: "54px", height: "54px", overflow: "visible" }}
-            >
-              {CROWN_SPARKLES.map((style, i) => (
-                <svg key={i} className="crown-sparkle" style={style} viewBox="0 0 24 24" fill="currentColor">
-                  <path d={SPARKLE_PATH} />
-                </svg>
-              ))}
-              {/* eslint-disable-next-line @next/next/no-img-element -- giữ nguyên thẻ <img>
-                  của bản gốc: kích thước cố định 58.5px do CSS/inline style quy định, không
-                  cần lớp tối ưu của next/image và next/image sẽ chèn thêm wrapper làm lệch
-                  DOM so với thiết kế chuẩn. */}
-              <img
-                src="/v2-static/assets/icon-premium.png"
-                alt=""
-                style={{ width: "58.5px", height: "58.5px", objectFit: "contain", position: "relative", zIndex: 1 }}
-              />
+          {/* Founder: tài khoản đã Premium không thấy mục nâng cấp ở bất kỳ đâu
+              trong portal 2.0 — nguyên tắc site-wide đã áp dụng cho `PortalV2Shell`. */}
+          {!premium.isPremium && (
+            <div className="promo">
+              <div
+                className="crown"
+                style={{ background: "none", boxShadow: "none", width: "54px", height: "54px", overflow: "visible" }}
+              >
+                {CROWN_SPARKLES.map((style, i) => (
+                  <svg key={i} className="crown-sparkle" style={style} viewBox="0 0 24 24" fill="currentColor">
+                    <path d={SPARKLE_PATH} />
+                  </svg>
+                ))}
+                {/* eslint-disable-next-line @next/next/no-img-element -- giữ nguyên thẻ <img>
+                    của bản gốc: kích thước cố định 58.5px do CSS/inline style quy định, không
+                    cần lớp tối ưu của next/image và next/image sẽ chèn thêm wrapper làm lệch
+                    DOM so với thiết kế chuẩn. */}
+                <img
+                  src="/v2-static/assets/icon-premium.png"
+                  alt=""
+                  style={{ width: "58.5px", height: "58.5px", objectFit: "contain", position: "relative", zIndex: 1 }}
+                />
+              </div>
+              <h4>Nâng cấp Premium</h4>
+              <p>Mở khóa toàn bộ lộ trình, tài nguyên và trải nghiệm đồng hành cùng AI.</p>
+              <button onClick={go("Premium.html")}>Nâng cấp ngay</button>
             </div>
-            <h4>Nâng cấp Premium</h4>
-            <p>Mở khóa toàn bộ lộ trình, tài nguyên và trải nghiệm đồng hành cùng AI.</p>
-            <button onClick={go("Premium.html")}>Nâng cấp ngay</button>
-          </div>
+          )}
           <div className="theme-toggle">
             <div
               className={themeOn ? "switch on" : "switch"}
@@ -414,25 +422,21 @@ export function TrangChuClient({
               </svg>
               <input type="text" placeholder="Tìm kiếm khóa học, tài liệu, công cụ, prompt..." />
             </div>
-            <button className="upgrade-btn" onClick={go("Premium.html")}>
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-              </svg>
-              Nâng cấp Premium
-            </button>
+            {!premium.isPremium && (
+              <button className="upgrade-btn" onClick={go("Premium.html")}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                </svg>
+                Nâng cấp Premium
+              </button>
+            )}
             <button className="icon-btn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
                 <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
                 <path d="M13.7 21a2 2 0 01-3.4 0" />
               </svg>
             </button>
-            <div className="profile">
-              <div className="avatar">VD</div>
-              <div>
-                <div className="who">Võ Đương</div>
-                <span className="plan">Premium</span>
-              </div>
-            </div>
+            <ProfileMenu premium={premium} />
           </div>
 
           <div className="content">
