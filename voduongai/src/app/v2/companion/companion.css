@@ -181,3 +181,38 @@
 .comp .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
 .comp .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
 @keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
+
+/* =============================================================================
+ * KHÁC bản tĩnh — Founder yêu cầu: "Khung chát Trò chuyện cùng Companion: là
+ * cố định không thay đổi, lịch sử trò chuyện của người dùng có thể kéo lên
+ * xuống để xem." Bản gốc để cả trang cuộn dài theo hội thoại (`.chat-card`
+ * cao dần không giới hạn) — đổi sang khung ứng dụng chat thật: sidebar/topbar/
+ * tiêu đề/ô nhập/chip gợi ý/cột phải đứng cố định đúng vị trí trong viewport,
+ * CHỈ vùng lịch sử tin nhắn (`.chat-messages`, div mới bọc riêng danh sách tin
+ * nhắn trong `CompanionClient.tsx`, không đổi markup/nội dung bên trong) cuộn
+ * độc lập lên/xuống. `.right-col` (nhiều thẻ cộng dồn có thể cao hơn viewport)
+ * cũng tự cuộn riêng để không thẻ nào bị cắt mất.
+ * ========================================================================== */
+.comp .app{height:100vh;overflow:hidden}
+.comp .sidebar{overflow-y:auto}
+.comp .main-col{height:100vh}
+.comp .content{flex:1;min-height:0;align-items:stretch}
+.comp .center-col{min-height:0}
+.comp .right-col{overflow-y:auto}
+.comp .chat-card{flex:1;min-height:0}
+.comp .chat-messages{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
+
+/* Mobile/tablet (< 1180px): giữ đúng hành vi cuộn cả trang của bản gốc — bản
+ * thiết kế gốc đã đổi `.content` sang xếp dọc (`flex-direction:column`) ở
+ * breakpoint này, khung chat cố định theo chiều cao viewport không phù hợp
+ * khi 2 cột xếp chồng lên nhau. */
+@media (max-width:1180px){
+  .comp .app{height:auto;overflow:visible}
+  .comp .sidebar{overflow-y:visible}
+  .comp .main-col{height:auto}
+  .comp .content{flex:none}
+  .comp .center-col{min-height:auto}
+  .comp .right-col{overflow-y:visible}
+  .comp .chat-card{flex:none}
+  .comp .chat-messages{flex:none;overflow-y:visible;max-height:60vh}
+}

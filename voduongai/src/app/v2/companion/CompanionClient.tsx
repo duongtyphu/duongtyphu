@@ -326,6 +326,7 @@ export function CompanionClient({
               </div>
 
               <div className="chat-card">
+                <div className="chat-messages">
                 {messages.length === 0 && !sending ? (
                   <div className="msg-row">
                     <div className="msg-avatar">
@@ -410,6 +411,7 @@ export function CompanionClient({
                     </div>
                   </div>
                 ) : null}
+                </div>
 
                 <div className="chat-input-row">
                   <input
