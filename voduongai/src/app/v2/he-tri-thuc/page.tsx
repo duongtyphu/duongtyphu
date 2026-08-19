@@ -3,8 +3,8 @@ import {
   getCkosDocuments,
   getCkosPopularDocuments,
   getCkosStages,
-  getCkosStats,
 } from "@/lib/portal/live-ckos";
+import { getLiveKnowledgeCollections, getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 
 import { CkosClient } from "./CkosClient";
@@ -29,13 +29,14 @@ const CKOS_INTRO =
   "CKOS (Vo Duong AI Knowledge Operating System) là hệ tri thức toàn diện, được xây dựng để giúp bạn học, hiểu và ứng dụng AI vào thực tế một cách hiệu quả và bền vững.";
 
 export default async function CkosPage() {
-  const [categories, documents, stages, stats, premium, popular] = await Promise.all([
+  const [categories, documents, stages, premium, popular, collections, seeds] = await Promise.all([
     getCkosCategories(),
     getCkosDocuments(),
     getCkosStages(),
-    getCkosStats(),
     getPremiumStatus(),
     getCkosPopularDocuments(3),
+    getLiveKnowledgeCollections(),
+    getLiveKnowledgeSeeds(),
   ]);
 
   return (
@@ -43,10 +44,11 @@ export default async function CkosPage() {
       categories={categories}
       documents={documents}
       stages={stages}
-      stats={stats}
       premium={premium}
       ckosIntro={CKOS_INTRO}
       popular={popular}
+      collections={collections}
+      seeds={seeds}
     />
   );
 }

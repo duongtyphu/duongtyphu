@@ -9,27 +9,48 @@
  * lucide-react. CSS ở `he-tri-thuc.css` (chép nguyên văn, xem đầu file đó).
  *
  * ---------------------------------------------------------------------------
- * ĐÚNG 3 CHỖ KHÁC bản tĩnh, đều là phần được phép theo lệnh giao
- * ("phần tuỳ biến duy nhất được phép: thêm cơ chế phân quyền và nối dữ liệu
- * thật — không đổi giao diện, layout, màu sắc, font"):
+ * CÁC CHỖ KHÁC bản tĩnh — dữ liệu thật + thay đổi theo yêu cầu riêng của
+ * Founder (không phải diễn giải lại thiết kế tự ý):
  *
- *  1. SỐ LIỆU & DANH SÁCH → dữ liệu thật từ Supabase thay cho số mẫu
- *     ("10,240+ Tài liệu", "2,350 tài liệu"/danh mục, 4 dòng tài liệu mẫu,
- *     ngày 15/05/2024). Bố cục/nhãn/thứ tự giữ nguyên 100%.
+ *  1. SỐ LIỆU & DANH SÁCH → dữ liệu thật từ Supabase thay cho số mẫu.
+ *     6 thẻ danh mục lấy đúng số tài liệu Published thật theo `categorySlug`
+ *     (`getCkosCategories()`, không hardcode) — tự động khớp phân bổ 6 danh
+ *     mục thật (Công cụ AI/Prompt Engineering/Kỹ năng & Tư duy/Tri thức
+ *     nâng cao/Nền tảng AI/Ứng dụng AI).
  *  2. KHOÁ PREMIUM (Bước D) — bản thiết kế KHÔNG có trạng thái khoá. Thêm
  *     đúng 1 chip `.doc-lock` trên dòng tài liệu Premium khi user chưa
  *     Premium, dùng lại y hệt token của `.doc-tag` có sẵn (nền
  *     `--violet-light`, chữ `--violet`, radius 6px, font 10.5px/800) — không
  *     tạo màu/bo góc/shadow mới. Nội dung tài liệu đã bị cắt từ SERVER
  *     (xem `live-ckos.ts`), chip chỉ là phần nhìn thấy được.
- *  3. TRẠNG THÁI RỖNG "Thư viện của tôi" — hệ thống chưa có bảng "đã lưu",
- *     nên dùng đúng microcopy Founder đã soạn, hiển thị bằng class
- *     `.empty-hint` VỐN CÓ SẴN trong CSS gốc (chính tác giả đã dự trù).
+ *  3. ĐÃ XOÁ khối 5 ô thống kê ("109 Tài liệu"...) + hàng 8 chip lọc
+ *     ("Tất cả"/"Nền tảng AI"...) ở view "Tất cả tri thức" — theo yêu cầu
+ *     Founder (đánh dấu trực tiếp trên ảnh chụp), `page-head` giờ nối thẳng
+ *     vào `ckos-hero`.
+ *  4. "Xem thêm ↓" (dưới 4 tài liệu mới nhất) — ĐÃ BẤM ĐƯỢC, tăng dần
+ *     `visibleCount` để hiện thêm tài liệu thật (không phải link chết).
+ *  5. ĐÃ BỎ 3 nút "Xem tất cả →" (Danh mục tri thức nổi bật/CKOS theo lộ
+ *     trình/Tài liệu phổ biến) — theo yêu cầu Founder, các danh mục này
+ *     chưa có trang xem đầy đủ riêng trong 2.0 nên nút không có đích thật.
+ *     "Xem chi tiết →" ở card "CKOS là gì?" GIỮ NGUYÊN (không nằm trong
+ *     yêu cầu xoá).
+ *  6. "Thư viện của tôi" — thay hẳn nội dung "thư mục cá nhân"/"tài liệu đã
+ *     lưu" (luôn trống, chưa có bảng "đã lưu" nào) bằng nội dung "Thư viện
+ *     AI" THẬT từ 1.0 (`getLiveKnowledgeCollections()`/`getLiveKnowledgeSeeds()`,
+ *     cùng bảng `knowledge_collections`/`knowledge_seeds` nuôi
+ *     `/portal/hetrithucai`): lưới Bộ sưu tập (`.folder-card`, tái dùng
+ *     đúng class có sẵn) + danh sách Bài học (`.doc-row`, tái dùng). Chip lọc
+ *     đổi từ tĩnh sang tên 2 Bộ sưu tập thật, BẤM ĐƯỢC (lọc danh sách bài học
+ *     — dữ liệu đã tải hết ở server, không cần gọi mạng thêm). Mỗi bộ sưu
+ *     tập/bài học trỏ sang đúng trang chi tiết thật của 1.0
+ *     (`/portal/hetrithucai/collection/[slug]`, `/portal/hetrithucai/[slug]`)
+ *     — 2.0 CHƯA có trình xem Lesson/Collection riêng (khác `knowledge_assets`
+ *     dùng cho `/v2/he-tri-thuc/[slug]`), nên trỏ ra trang 1.0 thật là đích
+ *     trung thực nhất hiện có, không phải link chết `href="#"`.
  *
- * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC (bản mockup cũng không làm gì): chip lọc
- * chỉ đổi trạng thái active, "Xem thêm ↓", "Xem tất cả →", nút lưu (dấu
- * trang), ô tìm kiếm, chuông thông báo. Không tự thêm hành vi để không
- * "diễn giải lại thiết kế" — chờ Founder chốt từng cái.
+ * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC (bản mockup cũng không làm gì): nút lưu
+ * (dấu trang) trên "Tài liệu mới nhất", ô tìm kiếm, chuông thông báo. Không
+ * tự thêm hành vi để không "diễn giải lại thiết kế" — chờ Founder chốt.
  * ========================================================================== */
 
 import Link from "next/link";
@@ -41,8 +62,10 @@ import type {
   CkosDocumentSummary,
   CkosPopularDocumentsResult,
   CkosStage,
-  CkosStats,
 } from "@/lib/portal/live-ckos";
+import type { KnowledgeCollection } from "@/features/knowledge/types/knowledge-collection.types";
+import type { KnowledgeSeed } from "@/features/knowledge/types/knowledge-seed.types";
+import { Difficulty } from "@/features/knowledge/types/knowledge.types";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
@@ -156,20 +179,6 @@ const CROWN_SPARKLES: React.CSSProperties[] = [
   { bottom: 20, left: -14, width: 6, height: 6, animationDelay: "1.6s" },
 ];
 
-/** 8 chip lọc — chép NGUYÊN VĂN nhãn của bản gốc (không tự sửa cho khớp danh mục). */
-const FILTER_CHIPS = [
-  "Tất cả",
-  "Nền tảng AI",
-  "Prompt",
-  "Ứng dụng AI",
-  "Kỹ năng",
-  "Tri thức nâng cao",
-  "Tài liệu",
-  "Mới nhất",
-];
-
-const LIB_CHIPS = ["Tất cả", "Tài liệu đã lưu", "Ghi chú", "Xem gần đây"];
-
 function formatDate(iso: string) {
   const d = new Date(iso);
   const p = (n: number) => String(n).padStart(2, "0");
@@ -180,30 +189,41 @@ export function CkosClient({
   categories,
   documents,
   stages,
-  stats,
   premium,
   ckosIntro,
   popular,
+  collections,
+  seeds,
 }: {
   categories: CkosCategory[];
   documents: CkosDocumentSummary[];
   stages: CkosStage[];
-  stats: CkosStats;
   premium: PremiumStatus;
   ckosIntro: string;
   popular: CkosPopularDocumentsResult;
+  collections: KnowledgeCollection[];
+  seeds: KnowledgeSeed[];
 }) {
   const router = useRouter();
   const [view, setView] = useState<"all" | "library">("all");
-  const [chip, setChip] = useState(0);
   const [libChip, setLibChip] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
     if (target) router.push(target);
   };
 
-  const latest = documents.slice(0, 4);
+  const latest = documents.slice(0, visibleCount);
+
+  // "Thư viện của tôi" — nội dung "Thư viện AI" thật của 1.0 (knowledge_collections
+  // + knowledge_seeds), xem docblock đầu file mục 6.
+  const libraryChips = ["Tất cả", ...collections.map((c) => c.title)];
+  const seedsByCollection = new Map(collections.map((c) => [c.slug, c] as const));
+  const visibleSeeds =
+    libChip === 0 ? seeds : seeds.filter((s) => s.collectionSlug === collections[libChip - 1]?.slug);
+  const beginnerCount = seeds.filter((s) => s.difficulty === Difficulty.BEGINNER).length;
+  const advancedCount = seeds.filter((s) => s.difficulty === Difficulty.ADVANCED).length;
 
   return (
     <div className="ckos">
@@ -381,86 +401,6 @@ export function CkosClient({
                   </p>
                 </div>
 
-                <div className="stat-row">
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{stats.documents}</div>
-                      <div className="lbl">Tài liệu</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                        <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                        <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                        <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{stats.categories}</div>
-                      <div className="lbl">Chủ đề</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M4 19h16M7 15l3-4 3 3 5-7" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{stats.toolsAndPrompts}</div>
-                      <div className="lbl">Công cụ &amp; Prompt</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <rect x="3" y="5" width="14" height="14" rx="2" />
-                        <path d="M8 3v3M13 3v3M17 12l4-2v9l-4-2z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{stats.linkedLessons}</div>
-                      <div className="lbl">Bài học liên kết</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#4bc4e0,#0e7490)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <circle cx="12" cy="12" r="2.6" />
-                        <path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3h.1a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9v.1a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.6 1z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{stats.learningPaths}</div>
-                      <div className="lbl">Lộ trình học</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="filter-row">
-                  {FILTER_CHIPS.map((label, i) => (
-                    <button
-                      key={label}
-                      className={i === chip ? "f-chip active" : "f-chip"}
-                      onClick={() => setChip(i)}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                  <button className="f-more">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M4 6h16M7 12h10M10 18h4" />
-                    </svg>
-                  </button>
-                </div>
-
                 <div className="ckos-hero">
                   <div className="ckos-hero-text">
                     <div className="tag">
@@ -540,7 +480,6 @@ export function CkosClient({
                 <div>
                   <div className="section-head">
                     <h3>Danh mục tri thức nổi bật</h3>
-                    <a href="#">Xem tất cả →</a>
                   </div>
                   <div className="cat-grid" style={{ marginTop: 14 }}>
                     {categories.map((cat) => (
@@ -594,7 +533,19 @@ export function CkosClient({
                         );
                       })
                     )}
-                    {documents.length > latest.length ? <div className="doc-more">Xem thêm ↓</div> : null}
+                    {documents.length > latest.length ? (
+                      <div
+                        className="doc-more"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => setVisibleCount((v) => v + 10)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") setVisibleCount((v) => v + 10);
+                        }}
+                      >
+                        Xem thêm ↓
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -602,30 +553,30 @@ export function CkosClient({
               <div id="view-library" style={{ display: view === "library" ? undefined : "none" }}>
                 <div className="page-head">
                   <h1>Thư viện của tôi</h1>
-                  <p>Tài liệu, prompt và bài học bạn đã lưu để xem lại bất cứ lúc nào.</p>
+                  <p>Thư viện AI — bộ sưu tập và bài học được VO DUONG AI tuyển chọn, học theo lộ trình hoặc tra cứu riêng lẻ.</p>
                 </div>
 
                 <div className="stat-row" style={{ gridTemplateColumns: "repeat(4,1fr)" }}>
                   <div className="stat-box">
                     <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M6 3h12v18l-6-4-6 4z" />
+                        <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
                       </svg>
                     </div>
                     <div>
-                      <div className="num">0</div>
-                      <div className="lbl">Tài liệu đã lưu</div>
+                      <div className="num">{collections.length}</div>
+                      <div className="lbl">Bộ sưu tập</div>
                     </div>
                   </div>
                   <div className="stat-box">
                     <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
+                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
                       </svg>
                     </div>
                     <div>
-                      <div className="num">0</div>
-                      <div className="lbl">Thư mục</div>
+                      <div className="num">{seeds.length}</div>
+                      <div className="lbl">Bài học</div>
                     </div>
                   </div>
                   <div className="stat-box">
@@ -636,26 +587,26 @@ export function CkosClient({
                       </svg>
                     </div>
                     <div>
-                      <div className="num">0</div>
-                      <div className="lbl">Xem trong tuần</div>
+                      <div className="num">{beginnerCount}</div>
+                      <div className="lbl">Người mới bắt đầu</div>
                     </div>
                   </div>
                   <div className="stat-box">
                     <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
+                        <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
                       </svg>
                     </div>
                     <div>
-                      <div className="num">0</div>
-                      <div className="lbl">Ghi chú</div>
+                      <div className="num">{advancedCount}</div>
+                      <div className="lbl">Nâng cao</div>
                     </div>
                   </div>
                 </div>
 
                 <div className="lib-toolbar">
                   <div className="filter-row">
-                    {LIB_CHIPS.map((label, i) => (
+                    {libraryChips.map((label, i) => (
                       <button
                         key={label}
                         className={i === libChip ? "f-chip active" : "f-chip"}
@@ -665,41 +616,73 @@ export function CkosClient({
                       </button>
                     ))}
                   </div>
-                  <button className="new-folder-btn">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" strokeWidth="2">
-                      <path d="M12 5v14M5 12h14" />
-                    </svg>
-                    Tạo thư mục
-                  </button>
+                  <Link
+                    className="new-folder-btn"
+                    href="/portal/hetrithucai"
+                    style={{ textDecoration: "none" }}
+                  >
+                    Xem đầy đủ trên Thư viện AI →
+                  </Link>
                 </div>
 
                 <div>
                   <div className="section-head">
-                    <h3>Thư mục của tôi</h3>
+                    <h3>Bộ sưu tập tri thức</h3>
                   </div>
-                  <div className="folder-grid" style={{ marginTop: 14 }}>
-                    <div className="folder-card new-folder">
-                      <div className="plus">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 5v14M5 12h14" />
-                        </svg>
-                      </div>
-                      Thư mục mới
+                  {collections.length === 0 ? (
+                    <div className="empty-hint">Chưa có bộ sưu tập nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
+                  ) : (
+                    <div className="folder-grid" style={{ marginTop: 14 }}>
+                      {collections.map((col) => (
+                        <Link
+                          key={col.slug}
+                          className="folder-card"
+                          href={`/portal/hetrithucai/collection/${col.slug}`}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                              <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
+                            </svg>
+                          </div>
+                          <h5>{col.title}</h5>
+                          <span>{seeds.filter((s) => s.collectionSlug === col.slug).length} bài học</span>
+                        </Link>
+                      ))}
                     </div>
-                  </div>
-                  <div className="empty-hint">
-                    <b>Chưa có thư mục nào</b> — Tạo thư mục để sắp xếp tài liệu theo chủ đề của riêng bạn.
-                  </div>
+                  )}
                 </div>
 
                 <div>
                   <div className="section-head">
-                    <h3>Tài liệu đã lưu</h3>
+                    <h3>Tất cả bài học</h3>
                   </div>
                   <div className="doc-list" style={{ marginTop: 14 }}>
-                    <div className="empty-hint">
-                      <b>Thư viện của bạn đang trống</b> — Lưu lại tài liệu hữu ích để xem lại bất cứ lúc nào.
-                    </div>
+                    {visibleSeeds.length === 0 ? (
+                      <div className="empty-hint">Chưa có bài học nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
+                    ) : (
+                      visibleSeeds.map((seed) => (
+                        <Link
+                          key={seed.id}
+                          className="doc-row"
+                          href={`/portal/hetrithucai/${seed.slug}`}
+                          style={{ textDecoration: "none", color: "inherit" }}
+                        >
+                          <div className="ico">
+                            <DocIcon />
+                          </div>
+                          <div className="info">
+                            <h5>{seed.title}</h5>
+                            <div className="meta">
+                              <span className="doc-tag">
+                                {seedsByCollection.get(seed.collectionSlug)?.title ?? "Bài học lẻ"}
+                              </span>
+                              {seed.estimatedTime ? <span>{seed.estimatedTime}</span> : null}
+                            </div>
+                          </div>
+                        </Link>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
@@ -717,7 +700,6 @@ export function CkosClient({
               <div className="card">
                 <div className="card-head">
                   <h4>CKOS theo lộ trình</h4>
-                  <a href="#">Xem tất cả →</a>
                 </div>
                 <div className="roadmap">
                   {stages.map((stage) => (
@@ -735,7 +717,6 @@ export function CkosClient({
               <div className="card">
                 <div className="card-head">
                   <h4>Tài liệu phổ biến</h4>
-                  <a href="#">Xem tất cả →</a>
                 </div>
                 {/* MỤC 2 — đếm lượt xem thật (`ckos_content_views`, xem
                     live-ckos.ts). Hệ thống mới nên có thể toàn bộ đang 0 lượt —
