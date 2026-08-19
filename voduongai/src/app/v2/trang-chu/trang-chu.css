@@ -161,6 +161,7 @@
 .tcp .main-col { flex: 1; min-width: 0; display: flex; flex-direction: column }
 .tcp .topbar { display: flex; align-items: center; gap: 16px; padding: 16px 28px; background: #fff; border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5 }
 .tcp .search { flex: 1; max-width: 640px; position: relative }
+.tcp .topbar-right { display: flex; align-items: center; gap: 16px; margin-left: auto }
 .tcp .search input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font-size: 13.5px; font-family: inherit }
 .tcp .search input:focus { outline: 2px solid var(--violet-light); border-color: var(--violet) }
 .tcp .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--muted) }

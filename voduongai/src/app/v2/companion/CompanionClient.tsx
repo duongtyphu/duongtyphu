@@ -250,7 +250,25 @@ export function CompanionClient({
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(typeof data?.error === "string" ? data.error : "Companion chưa thể phản hồi lúc này.");
+        setError(
+          res.status === 429
+            ? "Companion đang xử lý nhiều yêu cầu cùng lúc — vui lòng chờ một chút rồi thử lại."
+            : typeof data?.error === "string"
+              ? data.error
+              : "Companion chưa thể phản hồi lúc này."
+        );
+        if (data?.conversationId) setConversationId(data.conversationId);
+        if (data?.userMessage) {
+          // Tin nhắn đã lưu thật ở server (vd. lỗi 502 khi AI Provider thất
+          // bại) — thay bong bóng "đang gửi" bằng dữ liệu thật thay vì để
+          // nó kẹt vĩnh viễn ở trạng thái mờ/không có giờ (đúng cách
+          // `CompanionChatShell.tsx` 1.0 xử lý).
+          setMessages((prev) => prev.map((m) => (m.id === pendingId ? { ...data.userMessage, pending: false } : m)));
+        } else {
+          // Chưa có gì được lưu (lỗi xác thực/tạo conversation) — bỏ hẳn
+          // bong bóng tạm, không để kẹt lại trên màn hình.
+          setMessages((prev) => prev.filter((m) => m.id !== pendingId));
+        }
         return;
       }
       if (data.conversationId) setConversationId(data.conversationId);
@@ -267,11 +285,16 @@ export function CompanionClient({
       requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
-        // Người dùng chủ động bấm Dừng — bỏ tin nhắn optimistic, không báo lỗi.
-        setMessages((prev) => prev.filter((m) => m.id !== pendingId));
+        // Người dùng chủ động bấm Dừng — không báo lỗi, chỉ bỏ tin nhắn
+        // optimistic (xử lý chung ở dòng `setMessages` bên dưới).
       } else {
-        setError("Không thể kết nối tới Companion. Vui lòng thử lại.");
+        setError("Không thể kết nối tới Companion. Kiểm tra mạng và thử lại.");
+        // Lỗi mạng xảy ra TRƯỚC khi tới được server — chưa có gì được lưu,
+        // trả lại nội dung vào ô nhập để không mất tin nhắn, đúng cách
+        // `CompanionChatShell.tsx` 1.0 xử lý.
+        setInput(text);
       }
+      setMessages((prev) => prev.filter((m) => m.id !== pendingId));
     } finally {
       setSending(false);
       abortRef.current = null;

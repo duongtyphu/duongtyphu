@@ -418,16 +418,18 @@ export function TrangChuClient({
         <div className="main-col">
           <div className="topbar">
             <PortalSearchBox placeholder="Tìm kiếm khóa học, tài liệu, công cụ, prompt..." variant="bare" />
-            {!premium.isPremium && (
-              <button className="upgrade-btn" onClick={go("Premium.html")}>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                </svg>
-                Nâng cấp Premium
-              </button>
-            )}
-            <NotificationBell />
-            <ProfileMenu premium={premium} />
+            <div className="topbar-right">
+              {!premium.isPremium && (
+                <button className="upgrade-btn" onClick={go("Premium.html")}>
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                  </svg>
+                  Nâng cấp Premium
+                </button>
+              )}
+              <NotificationBell />
+              <ProfileMenu premium={premium} />
+            </div>
           </div>
 
           <div className="content">
