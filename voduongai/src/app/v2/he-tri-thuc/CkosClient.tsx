@@ -46,6 +46,13 @@
  *     (`/v2/he-tri-thuc/bo-suu-tap/[slug]`, `/v2/he-tri-thuc/bai-hoc/[slug]`
  *     — xây tiếp sau khi Founder chọn ưu tiên "xây trang xem Bài học/Bộ sưu
  *     tập gốc"), không còn trỏ ra 1.0 nữa.
+ *  7. 6 thẻ "Danh mục tri thức nổi bật" giờ BẤM ĐƯỢC — mỗi thẻ trỏ sang
+ *     `/v2/he-tri-thuc/danh-muc/[slug]` (trang mới, xem docblock riêng của
+ *     nó), liệt kê đầy đủ tài liệu Published thuộc đúng danh mục đó (lọc từ
+ *     `getCkosDocuments()` theo `categorySlug`). Trước đó thẻ chỉ hiển thị
+ *     số đếm, không có đích — đúng lý do nút "Xem tất cả →" của khối này bị
+ *     xoá ở mục 5 (chưa có trang xem đầy đủ riêng); giờ có trang riêng nên
+ *     bản thân 6 thẻ trở thành lối vào chính, không cần khôi phục nút đó.
  *
  * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC (bản mockup cũng không làm gì): nút lưu
  * (dấu trang) trên "Tài liệu mới nhất", ô tìm kiếm, chuông thông báo. Không
@@ -482,13 +489,18 @@ export function CkosClient({
                   </div>
                   <div className="cat-grid" style={{ marginTop: 14 }}>
                     {categories.map((cat) => (
-                      <div className="cat-card" key={cat.slug}>
+                      <Link
+                        className="cat-card"
+                        key={cat.slug}
+                        href={`/v2/he-tri-thuc/danh-muc/${cat.slug}`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                      >
                         <div className="ico" style={{ background: CAT_ICON_BG[cat.slug] }}>
                           <CategoryIcon slug={cat.slug} />
                         </div>
                         <h5>{cat.name}</h5>
                         <span>{cat.documentCount} tài liệu</span>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </div>
