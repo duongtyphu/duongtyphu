@@ -71,6 +71,7 @@ export default async function AdminHocVienAiPage() {
         links={[
           { label: "Giá & danh sách khoá học (Admin 1.0) →", href: "/admin/course-pricing" },
           { label: "Hệ tri thức AI (CKOS) — Lesson (Admin 1.0) →", href: "/admin/ckos/lessons" },
+          { label: "Huy hiệu & Thành tựu (Admin 1.0) →", href: "/admin/premium/badges" },
         ]}
       />
 

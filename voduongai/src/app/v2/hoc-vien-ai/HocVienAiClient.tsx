@@ -6,9 +6,14 @@
  *
  * Đây LÀ trang thay thế `/v2/hoc-vien-ai` cũ (chỉ có nội dung Học viện AI
  * gốc) — nay gộp thêm toàn bộ nội dung của `/v2/he-tri-thuc` (CKOS) và
- * `/v2/ai-workspace`. 2 route đó vẫn còn tồn tại tạm thời (chưa xoá — đợi
- * Giai đoạn 9, sau khi toàn bộ 7 tab hoàn tất và Founder xác nhận), nhưng
- * KHÔNG còn xuất hiện trong menu (`nav-config.ts` đã gộp — xem Giai đoạn 1).
+ * `/v2/ai-workspace`. Giai đoạn 9: 2 route hub cũ đó đã XOÁ hẳn
+ * (`page.tsx`/`CkosClient.tsx`/`AiWorkspaceClient.tsx`) — mọi HREF_MAP/link
+ * cứng trỏ vào 2 route đó trong toàn bộ `/v2/*` đã audit và đổi sang
+ * `/v2/hoc-vien-ai`. 4 route CON của `/v2/he-tri-thuc` (`[slug]`/`bai-hoc/
+ * [slug]`/`bo-suu-tap/[slug]`/`danh-muc/[slug]`) và cả 2 file CSS
+ * (`he-tri-thuc.css`/`ai-workspace.css`) VẪN GIỮ NGUYÊN — vẫn là đích link
+ * thật của tài liệu/lesson/collection/category CKOS, và vẫn được trang này
+ * import trực tiếp để dùng style `.ckos`/`.aiw`.
  *
  * KIẾN TRÚC: 1 sidebar/topbar DUY NHẤT (trước đây mỗi trong 3 trang cũ tự
  * dựng nguyên khối `.app > .sidebar + .main-col` riêng — 3 bản sao gần như
@@ -74,6 +79,7 @@ import type { LiveSop } from "@/lib/portal/live-sop";
 import type { LiveResource } from "@/lib/portal/live-resources";
 import type { LiveBestPractice } from "@/lib/portal/live-best-practices";
 import type { LiveCaseStudy } from "@/lib/portal/live-case-studies";
+import type { LiveBadge, EarnedBadge } from "@/lib/portal/live-badges";
 import type { BlogPost } from "@/data/blog";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
@@ -204,21 +210,6 @@ function TabIcon({ index }: { index: number }) {
         </svg>
       );
   }
-}
-
-/** Trạng thái "đang xây" trung thực cho 2 tab chưa có nội dung thật (4, 6) —
- * quyết định #5: không để trống im lặng, phải nói rõ đây là tab MỚI, chưa
- * migrate/xây xong, không phải link chết. */
-function ComingSoonTab({ title, description, stage }: { title: string; description: string; stage: string }) {
-  return (
-    <div className="card" style={{ textAlign: "center", padding: "48px 24px" }}>
-      <h4 style={{ marginBottom: 8 }}>{title}</h4>
-      <p style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.6, maxWidth: 420, margin: "0 auto 10px" }}>
-        {description}
-      </p>
-      <p style={{ fontSize: 11.5, color: "var(--muted)", fontStyle: "italic" }}>{stage}</p>
-    </div>
-  );
 }
 
 /* -------------------------------------------------------------- CKOS tab */
@@ -582,18 +573,25 @@ type ResourceLibraryData = {
   blogPosts: BlogPost[];
 };
 
+type BadgesData = {
+  catalog: LiveBadge[];
+  earned: EarnedBadge[];
+};
+
 export function HocVienAiClient({
   premium,
   ckos,
   academy,
   workspace,
   resourceLibrary,
+  badges,
 }: {
   premium: PremiumStatus;
   ckos: CkosData;
   academy: AcademyData;
   workspace: WorkspaceData;
   resourceLibrary: ResourceLibraryData;
+  badges: BadgesData;
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
@@ -699,6 +697,9 @@ export function HocVienAiClient({
     {} as Record<ResourceCategoryKey, number>,
   );
   const visibleResourceItems = resourceFilter ? resourceItems.filter((item) => item.category === resourceFilter) : resourceItems;
+
+  // Tab "Tiến độ của tôi"
+  const earnedBadgeById = new Map(badges.earned.map((b) => [b.id, b] as const));
 
   const countByStatus = (status: WorkspaceProject["status"]) => workspace.projects.filter((p) => p.status === status).length;
   const suggestedWorkflows = workspace.workflows.slice(0, 3);
@@ -2106,11 +2107,85 @@ export function HocVienAiClient({
                   ))}
                 </div>
 
-                <ComingSoonTab
-                  title="Tiến độ của tôi — đang được xây dựng"
-                  description="Sẽ hợp nhất tiến độ CKOS/Học viện AI/AI Workspace + huy hiệu, thành tựu vào 1 nơi duy nhất."
-                  stage="Giai đoạn 8 của kế hoạch gộp — chưa xây (huy hiệu/thành tựu, Founder quyết định #4)."
-                />
+                <div className="section-head">
+                  <h3>Tiến độ học tập</h3>
+                </div>
+                <div className="card" style={{ marginTop: 14 }}>
+                  <div className="ring-block">
+                    <div
+                      className="ring"
+                      style={{
+                        background: `conic-gradient(var(--violet) 0% ${academy.progress.percent}%, var(--violet-light) ${academy.progress.percent}% 100%)`,
+                      }}
+                    >
+                      <div className="ring-inner">
+                        <div className="pct">{academy.progress.percent}%</div>
+                        <div className="pct-label">Hoàn thành</div>
+                      </div>
+                    </div>
+                    <div className="stat-lines">
+                      <div className="stat-line">
+                        Khóa học đã học
+                        <b>
+                          {academy.progress.startedCourses} / {academy.progress.totalCourses}
+                        </b>
+                      </div>
+                      <div className="stat-line">
+                        Bài học đã hoàn thành
+                        <b>
+                          {academy.progress.completedLessons} / {academy.progress.totalLessons}
+                        </b>
+                      </div>
+                      <div className="stat-line">
+                        Thời gian học
+                        <b>{formatMinutes(academy.progress.totalMinutes)}</b>
+                      </div>
+                      <div className="stat-line">
+                        Huy hiệu đã đạt
+                        <b>
+                          {badges.earned.length} / {badges.catalog.length}
+                        </b>
+                      </div>
+                    </div>
+                  </div>
+                  {!premium.signedIn && (
+                    <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
+                      Đăng nhập để theo dõi tiến độ học thật của bạn.
+                    </p>
+                  )}
+                </div>
+
+                <div className="section-head" style={{ marginTop: 24 }}>
+                  <h3>Huy hiệu & Thành tựu</h3>
+                </div>
+                <div className="aiw">
+                  {badges.catalog.length === 0 ? (
+                    <div className="empty-hint" style={{ marginTop: 14 }}>
+                      Chưa có huy hiệu nào — nội dung sẽ hiện ở đây khi được xuất bản.
+                    </div>
+                  ) : (
+                    <div className="grp-grid" style={{ marginTop: 14 }}>
+                      {badges.catalog.map((badge) => {
+                        const earned = earnedBadgeById.get(badge.id);
+                        return (
+                          <div className="grp-card" key={badge.id} style={{ cursor: "default", opacity: earned ? 1 : 0.55 }}>
+                            <div
+                              className="ico"
+                              style={{
+                                background: earned ? "linear-gradient(145deg,#e2b23c,#b3801f)" : "#e5e7eb",
+                                fontSize: 22,
+                              }}
+                            >
+                              {badge.icon || "🏅"}
+                            </div>
+                            <h5>{badge.name}</h5>
+                            <span>{earned ? `Đã đạt · ${formatDate(earned.earnedAt)}` : "Chưa đạt"}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}

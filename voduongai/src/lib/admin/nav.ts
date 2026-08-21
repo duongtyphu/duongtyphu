@@ -161,6 +161,10 @@ export const adminWorkspaces: AdminWorkspace[] = [
           // trình mua đứt (courses), thay bằng 3 gói thuê bao thật
           // (premium_plans, CRUD riêng — bảng typed, cùng pattern coupons).
           { label: "Gói Premium — Tháng/6 Tháng/12 Tháng", href: "/admin/premium/plans" },
+          // Giai đoạn 8 (gộp Học viện AI 2.0) — catalog huy hiệu, hiện thật
+          // ở tab "Tiến độ của tôi" (/v2/hoc-vien-ai). Xem giới hạn thật
+          // (trao thưởng tự động chưa từng chạy) trong badges/page.tsx.
+          { label: "Huy hiệu & Thành tựu", href: "/admin/premium/badges" },
         ],
       },
       {

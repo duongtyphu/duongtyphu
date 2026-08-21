@@ -20,6 +20,7 @@ import { getLiveResources } from "@/lib/portal/live-resources";
 import { getLiveBestPractices } from "@/lib/portal/live-best-practices";
 import { getLiveCaseStudies } from "@/lib/portal/live-case-studies";
 import { getLiveBlogPosts } from "@/lib/portal/live-blog";
+import { getLiveBadges, getUserBadges } from "@/lib/portal/live-badges";
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 
 import { HocVienAiClient } from "./HocVienAiClient";
@@ -88,6 +89,13 @@ export default async function HocVienAiPage() {
     getLiveBlogPosts(),
   ]);
 
+  // Đọc badges SAU khối Promise.all trên (không gộp chung) — `getAcademyProgress()`
+  // ở trên vừa có thể trao huy hiệu mới qua `awardCourseCompletionBadges()`
+  // (side-effect bên trong, xem live-academy.ts); đọc tuần tự sau đảm bảo
+  // `getUserBadges()` thấy đúng huy hiệu vừa trao trong CÙNG lần tải trang,
+  // không phải đợi F5 lần 2.
+  const [badgeCatalog, earnedBadges] = await Promise.all([getLiveBadges(), getUserBadges()]);
+
   return (
     <HocVienAiClient
       premium={premium}
@@ -95,6 +103,7 @@ export default async function HocVienAiPage() {
       academy={{ paths, courses, progress }}
       workspace={{ groups, favorites, workflows, projects, activity, limits }}
       resourceLibrary={{ prompts, sops, resources: resourceList, bestPractices, caseStudies, blogPosts }}
+      badges={{ catalog: badgeCatalog, earned: earnedBadges }}
     />
   );
 }

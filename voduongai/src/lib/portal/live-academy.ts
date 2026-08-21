@@ -3,6 +3,7 @@ import { cache } from "react";
 import { getSupabasePublic } from "@/lib/supabase";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
+import { awardCourseCompletionBadges } from "@/lib/portal/live-badges";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 /**
@@ -288,6 +289,18 @@ export async function getAcademyProgress(): Promise<AcademyProgress> {
       completedByCourse[ref.courseId] = (completedByCourse[ref.courseId] ?? 0) + 1;
     }
   }
+
+  // Giai đoạn 8 — trao huy hiệu "hoàn thành khoá học" ngay khi phát hiện 1
+  // khoá vừa đủ 100% (best-effort, không chặn hiển thị nếu lỗi — xem
+  // awardCourseCompletionBadges()). Đặt ở đây vì đây là nơi DUY NHẤT trong
+  // toàn dự án tính được "khoá nào user vừa hoàn thành đủ" (so completedByCourse
+  // với tổng số bài Published của đúng khoá đó qua `lessons`).
+  const totalByCourse = new Map<string, number>();
+  for (const l of lessons) totalByCourse.set(l.courseId, (totalByCourse.get(l.courseId) ?? 0) + 1);
+  const fullyCompletedCourseIds = Object.entries(completedByCourse)
+    .filter(([courseId, count]) => count > 0 && count === totalByCourse.get(courseId))
+    .map(([courseId]) => courseId);
+  await awardCourseCompletionBadges(userId, fullyCompletedCourseIds);
 
   return {
     signedIn: true,

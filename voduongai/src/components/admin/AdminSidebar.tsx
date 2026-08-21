@@ -166,6 +166,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/course-pricing": Wallet,
   "/admin/premium/dashboard": Crown,
   "/admin/premium/plans": CalendarClock,
+  "/admin/premium/badges": Award,
   "/admin/su-menh-companion/live-edit": Dna,
   "/admin/su-menh-companion/flipbook": Images,
   "/admin/hanh-trinh-cua-toi/mirror": Eye,
