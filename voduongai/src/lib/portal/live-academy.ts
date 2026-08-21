@@ -2,6 +2,7 @@ import { cache } from "react";
 
 import { getSupabasePublic } from "@/lib/supabase";
 import { getSupabaseServer } from "@/lib/supabase-server";
+import { getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 /**
@@ -62,6 +63,38 @@ export type AcademyPath = {
   stageOrder: number;
   /** Số bài học Published thuộc các khoá đã gắn vào giai đoạn này — đếm thật. */
   lessonCount: number;
+  /**
+   * Số Lesson CKOS (`knowledge_seeds`, "Journey Engine" của Hệ tri thức) map
+   * vào giai đoạn này qua `difficulty` — xem `CKOS_DIFFICULTY_TO_PATH_SLUG`.
+   * Field CỘNG THÊM, KHÔNG gộp vào `lessonCount` — `lessonCount` được
+   * `getAcademyPaths()` dùng chung bởi `live-journey-overview.ts` (widget
+   * "Hành trình của tôi") và 2 trang Admin (`admin/hoc-vien-ai`,
+   * `admin/dashboard`) để tính % hoàn thành qua `completedByPath` — mà
+   * `completedByPath` CHỈ đếm được tiến độ `course_lessons` thật
+   * (`user_lesson_progress.lesson_id` là `bigint`, không map được sang
+   * `knowledge_seeds.id` dạng slug). Gộp seed vào mẫu số `lessonCount` sẽ
+   * làm % hoàn thành bị pha loãng giả tạo (mãi không lên 100% dù đã học hết
+   * phần trackable) ở MỌI nơi dùng chung hàm này, không riêng tab này —
+   * nên tách field riêng, chỉ hiển thị số lượng (không có state "hoàn
+   * thành") ở đúng nơi cần (tab "Khóa học & Lộ trình" của trang gộp).
+   */
+  ckosLessonCount: number;
+};
+
+/**
+ * Map `difficulty` của Lesson CKOS (`knowledge_seeds`) sang giai đoạn
+ * (`learning_paths.slug`) — dùng field khách quan đã có sẵn (Founder tự
+ * chọn khi tạo từng Lesson qua `/admin/ckos/lessons`), không bịa thêm
+ * phân loại mới. Dữ liệu thật hiện tại (audit Supabase, 11 Lesson): 8
+ * BEGINNER + 3 INTERMEDIATE, 0 ADVANCED — nên "Xây dựng hệ thống AI"/"Tạo
+ * giá trị & mở rộng" đang có 0 Lesson CKOS, đúng thực trạng nội dung
+ * (11 Lesson đều là kỹ năng văn phòng/nghiên cứu cơ bản-trung cấp), không
+ * phải lỗi mapping.
+ */
+const CKOS_DIFFICULTY_TO_PATH_SLUG: Record<string, string> = {
+  BEGINNER: "nhap-mon-ai",
+  INTERMEDIATE: "lam-chu-cong-cu-ai",
+  ADVANCED: "xay-dung-he-thong-ai",
 };
 
 export type AcademyCourse = {
@@ -127,15 +160,23 @@ export const getAcademyPaths = cache(async (): Promise<AcademyPath[]> => {
   const supabase = getSupabasePublic();
   if (!supabase) return [];
 
-  const [{ data: paths }, lessons] = await Promise.all([
+  const [{ data: paths }, lessons, seeds] = await Promise.all([
     supabase.from("learning_paths").select("slug, title, description, stage_order").order("stage_order"),
     getAcademyPublishedLessons(),
+    getLiveKnowledgeSeeds(),
   ]);
 
   const countBySlug = new Map<string, number>();
   for (const l of lessons) {
     if (!l.pathSlug) continue;
     countBySlug.set(l.pathSlug, (countBySlug.get(l.pathSlug) ?? 0) + 1);
+  }
+
+  const ckosCountBySlug = new Map<string, number>();
+  for (const seed of seeds) {
+    const pathSlug = CKOS_DIFFICULTY_TO_PATH_SLUG[seed.difficulty];
+    if (!pathSlug) continue;
+    ckosCountBySlug.set(pathSlug, (ckosCountBySlug.get(pathSlug) ?? 0) + 1);
   }
 
   return (paths ?? []).map((row) => {
@@ -148,6 +189,7 @@ export const getAcademyPaths = cache(async (): Promise<AcademyPath[]> => {
       description: dotIndex === -1 ? description : description.slice(0, dotIndex + 1),
       stageOrder: p.stage_order ?? 0,
       lessonCount: countBySlug.get(p.slug) ?? 0,
+      ckosLessonCount: ckosCountBySlug.get(p.slug) ?? 0,
     };
   });
 });

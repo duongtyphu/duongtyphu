@@ -69,6 +69,12 @@ import type {
   WorkspaceToolGroup,
   WorkspaceWorkflow,
 } from "@/lib/portal/live-workspace";
+import type { LivePrompt } from "@/lib/portal/live-prompts";
+import type { LiveSop } from "@/lib/portal/live-sop";
+import type { LiveResource } from "@/lib/portal/live-resources";
+import type { LiveBestPractice } from "@/lib/portal/live-best-practices";
+import type { LiveCaseStudy } from "@/lib/portal/live-case-studies";
+import type { BlogPost } from "@/data/blog";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
@@ -454,6 +460,86 @@ const WORKFLOW_STYLE: Record<string, IconStyle> = {
   "nghien-cuu-thi-truong": GROUP_STYLE["Nghiên cứu & Phân tích"],
 };
 
+/* -------------------------------------------- Resource Library tab (mới) */
+
+type ResourceCategoryKey = "prompt" | "sop" | "resource" | "best-practice" | "case-study" | "blog";
+
+/** 1 mục hiển thị trong danh sách "Thư viện tài nguyên" — quy về 1 shape
+ * chung cho cả 6 nguồn dữ liệu khác nhau (Prompt/SOP/Resource/Best
+ * Practice/Case Study/Blog AI), mỗi nguồn tự map sang shape này. */
+type ResourceItem = {
+  key: string;
+  category: ResourceCategoryKey;
+  title: string;
+  tag: string;
+  subtitle: string;
+  href: string;
+  external?: boolean;
+};
+
+const RESOURCE_CATEGORY_STYLE: Record<ResourceCategoryKey, IconStyle> = {
+  prompt: {
+    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M4 5h16v10H8l-4 4z" />
+      </svg>
+    ),
+  },
+  sop: {
+    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M9 6h10M9 12h10M9 18h10" />
+        <path d="M4.5 6l.7.7L6.5 5M4.5 12l.7.7L6.5 11M4.5 18l.7.7L6.5 17" />
+      </svg>
+    ),
+  },
+  resource: {
+    bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M6 2h9l5 5v15H6z" />
+        <path d="M14 2v6h6" />
+      </svg>
+    ),
+  },
+  "best-practice": {
+    bg: "linear-gradient(145deg,#e2b23c,#b3801f)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M12 2l2.9 6.9 7.1.6-5.4 4.6 1.7 7-6.3-4-6.3 4 1.7-7L1.9 9.5l7.1-.6z" />
+      </svg>
+    ),
+  },
+  "case-study": {
+    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M5 21V10M12 21V4M19 21v-7" />
+      </svg>
+    ),
+  },
+  blog: {
+    bg: "linear-gradient(145deg,#ff6b6b,#c22e46)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" />
+      </svg>
+    ),
+  },
+};
+
+const RESOURCE_CATEGORY_LABEL: Record<ResourceCategoryKey, string> = {
+  prompt: "Prompt",
+  sop: "SOP & Quy trình",
+  resource: "Tài nguyên",
+  "best-practice": "Thực hành tốt",
+  "case-study": "Case Study",
+  blog: "Blog AI",
+};
+
 const STATUS_STYLE: Record<WorkspaceProject["status"], { label: string; pillBg: string; pillColor: string; fill?: string }> = {
   in_progress: { label: "Đang thực hiện", pillBg: "var(--violet-light)", pillColor: "var(--violet)" },
   completed: { label: "Hoàn thành", pillBg: "#e6f7ed", pillColor: "#189a52", fill: "#189a52" },
@@ -487,16 +573,27 @@ type WorkspaceData = {
   limits: WorkspaceLimits;
 };
 
+type ResourceLibraryData = {
+  prompts: LivePrompt[];
+  sops: LiveSop[];
+  resources: LiveResource[];
+  bestPractices: LiveBestPractice[];
+  caseStudies: LiveCaseStudy[];
+  blogPosts: BlogPost[];
+};
+
 export function HocVienAiClient({
   premium,
   ckos,
   academy,
   workspace,
+  resourceLibrary,
 }: {
   premium: PremiumStatus;
   ckos: CkosData;
   academy: AcademyData;
   workspace: WorkspaceData;
+  resourceLibrary: ResourceLibraryData;
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
@@ -509,6 +606,8 @@ export function HocVienAiClient({
   const [projTab, setProjTab] = useState(0);
   const [viewMode, setViewMode] = useState(0);
   const [starOff, setStarOff] = useState<Record<string, boolean>>({});
+  // Tab "Thư viện tài nguyên"
+  const [resourceFilter, setResourceFilter] = useState<ResourceCategoryKey | null>(null);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
@@ -522,6 +621,84 @@ export function HocVienAiClient({
     libChip === 0 ? ckos.seeds : ckos.seeds.filter((s) => s.collectionSlug === ckos.collections[libChip - 1]?.slug);
   const beginnerCount = ckos.seeds.filter((s) => s.difficulty === Difficulty.BEGINNER).length;
   const advancedCount = ckos.seeds.filter((s) => s.difficulty === Difficulty.ADVANCED).length;
+
+  // Tab "Thư viện tài nguyên" — gộp 6 nguồn thật (Prompt/SOP/Resource/Best
+  // Practice/Case Study/Blog AI) về cùng 1 shape `ResourceItem`. Chưa có
+  // route chi tiết v2 riêng cho từng nguồn (ngoài phạm vi tab gom-về-1-nơi
+  // này) — mỗi item trỏ về đúng trang 1.0 đang hiển thị nội dung đó, cùng
+  // tiền lệ đã dùng cho "Xem đầy đủ" ở nút "Thư viện của tôi" (link
+  // /portal/hetrithucai) — không tạo link chết tới route v2 chưa tồn tại.
+  const resourceItems: ResourceItem[] = [
+    ...resourceLibrary.prompts.map(
+      (p): ResourceItem => ({
+        key: `prompt-${p.id}`,
+        category: "prompt",
+        title: p.title,
+        tag: p.category || "Prompt",
+        subtitle: p.description,
+        href: "/portal/prompts",
+      }),
+    ),
+    ...resourceLibrary.sops.map(
+      (s): ResourceItem => ({
+        key: `sop-${s.id}`,
+        category: "sop",
+        title: s.title,
+        tag: "SOP",
+        subtitle: s.description,
+        href: "/portal/sop",
+      }),
+    ),
+    ...resourceLibrary.resources.map(
+      (r): ResourceItem => ({
+        key: `resource-${r.id}`,
+        category: "resource",
+        title: r.title,
+        tag: r.type || "Tài nguyên",
+        subtitle: r.description,
+        href: `/portal/resources/${r.id}`,
+      }),
+    ),
+    ...resourceLibrary.bestPractices.map(
+      (b): ResourceItem => ({
+        key: `bp-${b.id}`,
+        category: "best-practice",
+        title: b.title,
+        tag: "Thực hành tốt",
+        subtitle: b.description,
+        href: `/portal/ckos/best-practices/${b.id}`,
+      }),
+    ),
+    ...resourceLibrary.caseStudies.map(
+      (c): ResourceItem => ({
+        key: `cs-${c.id}`,
+        category: "case-study",
+        title: c.title,
+        tag: c.clientName || "Case Study",
+        subtitle: c.resultMetric || c.summary,
+        href: c.linkUrl || "/portal/case-studies",
+        external: Boolean(c.linkUrl),
+      }),
+    ),
+    ...resourceLibrary.blogPosts.map(
+      (post): ResourceItem => ({
+        key: `blog-${post.slug}`,
+        category: "blog",
+        title: post.title,
+        tag: post.category || "Blog AI",
+        subtitle: post.excerpt,
+        href: `/blogai/${post.slug}`,
+      }),
+    ),
+  ];
+  const resourceCountByCategory = resourceItems.reduce(
+    (acc, item) => {
+      acc[item.category] = (acc[item.category] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<ResourceCategoryKey, number>,
+  );
+  const visibleResourceItems = resourceFilter ? resourceItems.filter((item) => item.category === resourceFilter) : resourceItems;
 
   const countByStatus = (status: WorkspaceProject["status"]) => workspace.projects.filter((p) => p.status === status).length;
   const suggestedWorkflows = workspace.workflows.slice(0, 3);
@@ -1149,8 +1326,26 @@ export function HocVienAiClient({
                               <div className="path-fill" style={{ width: `${pct}%`, background: style.fill }} />
                             </div>
                             <div className="cnt">
-                              {completed}/{path.lessonCount} bài học
+                              {completed}/{path.lessonCount} bài học khoá học
                             </div>
+                            {path.ckosLessonCount > 0 && (
+                              <div className="cnt" style={{ marginTop: 2 }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setTab(5)}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    padding: 0,
+                                    font: "inherit",
+                                    color: "var(--violet)",
+                                    cursor: "pointer",
+                                  }}
+                                >
+                                  + {path.ckosLessonCount} bài học Hệ tri thức →
+                                </button>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -1656,11 +1851,90 @@ export function HocVienAiClient({
                   ))}
                 </div>
 
-                <ComingSoonTab
-                  title="Thư viện tài nguyên — đang được xây dựng"
-                  description="Sẽ gom Prompt, SOP/Workflow, Resource, Best Practice, Case Study và Blog AI vào đúng 1 nơi — hiện các nội dung này chưa có nhà riêng trong Học viện AI 2.0."
-                  stage="Giai đoạn 6 của kế hoạch gộp — chưa xây."
-                />
+                <div className="aiw">
+                  <div className="section-head">
+                    <h3>6 nguồn tài nguyên</h3>
+                  </div>
+                  <div className="grp-grid" style={{ marginTop: 14 }}>
+                    {(Object.keys(RESOURCE_CATEGORY_LABEL) as ResourceCategoryKey[]).map((key) => {
+                      const style = RESOURCE_CATEGORY_STYLE[key];
+                      const active = resourceFilter === key;
+                      return (
+                        <div
+                          className="grp-card"
+                          key={key}
+                          onClick={() => setResourceFilter(active ? null : key)}
+                          style={active ? { boxShadow: "0 0 0 2px var(--violet) inset" } : undefined}
+                        >
+                          <div className="ico" style={{ background: style.bg }}>
+                            {style.icon}
+                          </div>
+                          <h5>{RESOURCE_CATEGORY_LABEL[key]}</h5>
+                          <span>{resourceCountByCategory[key] ?? 0} mục</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="ckos">
+                  <div className="section-head" style={{ marginTop: 18 }}>
+                    <h3>{resourceFilter ? RESOURCE_CATEGORY_LABEL[resourceFilter] : "Tất cả tài nguyên"}</h3>
+                    {resourceFilter && (
+                      <a href="#" onClick={(e) => { e.preventDefault(); setResourceFilter(null); }}>
+                        Xem tất cả →
+                      </a>
+                    )}
+                  </div>
+                  <div className="doc-list" style={{ marginTop: 14 }}>
+                    {visibleResourceItems.length === 0 ? (
+                      <div className="empty-hint">Chưa có tài nguyên nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
+                    ) : (
+                      visibleResourceItems.map((item) => {
+                        const linkStyle: React.CSSProperties = { display: "contents", color: "inherit", textDecoration: "none" };
+                        const inner = (
+                          <>
+                            <div className="ico">
+                              <DocIcon />
+                            </div>
+                            <div className="info">
+                              <h5>{item.title}</h5>
+                              <div className="meta">
+                                <span className="doc-tag">{item.tag}</span>
+                                {item.subtitle ? (
+                                  <span
+                                    style={{
+                                      overflow: "hidden",
+                                      textOverflow: "ellipsis",
+                                      whiteSpace: "nowrap",
+                                      maxWidth: 340,
+                                    }}
+                                  >
+                                    {item.subtitle}
+                                  </span>
+                                ) : null}
+                                {item.external ? <span className="doc-tag">Ngoài trang</span> : null}
+                              </div>
+                            </div>
+                          </>
+                        );
+                        return (
+                          <div className="doc-row" key={item.key}>
+                            {item.external ? (
+                              <a href={item.href} target="_blank" rel="noopener noreferrer" style={linkStyle}>
+                                {inner}
+                              </a>
+                            ) : (
+                              <Link href={item.href} style={linkStyle}>
+                                {inner}
+                              </Link>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           )}

@@ -14,6 +14,12 @@ import {
   getWorkspaceToolGroups,
   getWorkspaceWorkflows,
 } from "@/lib/portal/live-workspace";
+import { getLivePrompts } from "@/lib/portal/live-prompts";
+import { getLiveSops } from "@/lib/portal/live-sop";
+import { getLiveResources } from "@/lib/portal/live-resources";
+import { getLiveBestPractices } from "@/lib/portal/live-best-practices";
+import { getLiveCaseStudies } from "@/lib/portal/live-case-studies";
+import { getLiveBlogPosts } from "@/lib/portal/live-blog";
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 
 import { HocVienAiClient } from "./HocVienAiClient";
@@ -52,6 +58,12 @@ export default async function HocVienAiPage() {
     projects,
     activity,
     limits,
+    prompts,
+    sops,
+    resourceList,
+    bestPractices,
+    caseStudies,
+    blogPosts,
   ] = await Promise.all([
     getCkosCategories(),
     getCkosDocuments(),
@@ -68,6 +80,12 @@ export default async function HocVienAiPage() {
     getWorkspaceProjects(),
     getWorkspaceActivity(),
     getWorkspaceLimits(premium),
+    getLivePrompts(),
+    getLiveSops(),
+    getLiveResources(),
+    getLiveBestPractices(),
+    getLiveCaseStudies(),
+    getLiveBlogPosts(),
   ]);
 
   return (
@@ -76,6 +94,7 @@ export default async function HocVienAiPage() {
       ckos={{ categories, documents, stages, ckosIntro: CKOS_INTRO, popular, collections, seeds }}
       academy={{ paths, courses, progress }}
       workspace={{ groups, favorites, workflows, projects, activity, limits }}
+      resourceLibrary={{ prompts, sops, resources: resourceList, bestPractices, caseStudies, blogPosts }}
     />
   );
 }
