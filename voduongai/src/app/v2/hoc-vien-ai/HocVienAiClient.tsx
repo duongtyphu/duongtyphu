@@ -1,55 +1,40 @@
 "use client";
 
 /* =============================================================================
- * Học viện AI 2.0 — TRANG GỘP (Founder quyết định #1-#7, gộp CKOS + Học viện
- * AI + AI Workspace thành 1 trang "Học viện AI" duy nhất, 7 tab nội bộ).
+ * Học viện AI 2.0 — TRANG GỘP (gộp CKOS + Học viện AI + AI Workspace thành
+ * 1 trang "Học viện AI" duy nhất, 4 tab nội bộ).
  *
- * Đây LÀ trang thay thế `/v2/hoc-vien-ai` cũ (chỉ có nội dung Học viện AI
- * gốc) — nay gộp thêm toàn bộ nội dung của `/v2/he-tri-thuc` (CKOS) và
- * `/v2/ai-workspace`. Giai đoạn 9: 2 route hub cũ đó đã XOÁ hẳn
- * (`page.tsx`/`CkosClient.tsx`/`AiWorkspaceClient.tsx`) — mọi HREF_MAP/link
- * cứng trỏ vào 2 route đó trong toàn bộ `/v2/*` đã audit và đổi sang
- * `/v2/hoc-vien-ai`. 4 route CON của `/v2/he-tri-thuc` (`[slug]`/`bai-hoc/
- * [slug]`/`bo-suu-tap/[slug]`/`danh-muc/[slug]`) và cả 2 file CSS
+ * Đây LÀ trang thay thế `/v2/hoc-vien-ai` cũ — gộp toàn bộ nội dung của
+ * `/v2/he-tri-thuc` (CKOS) và `/v2/ai-workspace`. 2 route hub cũ đó đã XOÁ
+ * hẳn — mọi HREF_MAP/link cứng trỏ vào 2 route đó trong toàn bộ `/v2/*` đã
+ * đổi sang `/v2/hoc-vien-ai`. 4 route CON của `/v2/he-tri-thuc` (`[slug]`/
+ * `bai-hoc/[slug]`/`bo-suu-tap/[slug]`/`danh-muc/[slug]`) và cả 2 file CSS
  * (`he-tri-thuc.css`/`ai-workspace.css`) VẪN GIỮ NGUYÊN — vẫn là đích link
- * thật của tài liệu/lesson/collection/category CKOS, và vẫn được trang này
- * import trực tiếp để dùng style `.ckos`/`.aiw`.
+ * thật của tài liệu/lesson/collection/category CKOS (route con 2.0 native),
+ * và vẫn được trang này import trực tiếp để dùng style `.ckos`/`.aiw`.
  *
- * KIẾN TRÚC: 1 sidebar/topbar DUY NHẤT (trước đây mỗi trong 3 trang cũ tự
- * dựng nguyên khối `.app > .sidebar + .main-col` riêng — 3 bản sao gần như
- * giống hệt nhau, chỉ khác mục nav đang `active`). Nội dung mỗi tab giữ
- * NGUYÊN VĂN markup/class/dữ liệu từ 3 Client Component gốc
- * (`CkosClient.tsx`/`HocVienClient.tsx`/`AiWorkspaceClient.tsx`, đã xoá sau
- * khi gộp xong) — chỉ bỏ phần khung `.app/.sidebar/.topbar` lặp lại, giữ
- * đúng phần `.content > .center-col + .right-col` của từng trang, bọc trong
- * đúng class-root CSS gốc (`.ckos`/`.aiw`) để không đổi 1 giá trị style nào.
- * CSS gốc của cả 3 trang (`he-tri-thuc.css`/`hoc-vien-ai.css`/
- * `ai-workspace.css`) dùng CHUNG một bộ token màu — xem `hoc-vien-ai.css`
- * đầu file, không có xung đột khi nạp cả 3.
+ * KIẾN TRÚC: 1 sidebar/topbar DUY NHẤT, bọc `.content > .center-col +
+ * .right-col` của từng phần trong đúng class-root CSS gốc (`.ckos`/`.aiw`).
  *
- * 7 TAB (thứ tự cố định trong `TABS`):
- *  0. Tổng quan — hero chào mừng + 4 điểm nổi bật + "Kỹ năng bạn sẽ đạt
- *     được" (nội dung cũ của trang Học viện AI gốc, tách phần chào mừng).
- *  1. Hệ tri thức — nguyên văn view "Tất cả tri thức" của CKOS cũ (6 danh
- *     mục, tài liệu mới nhất, "CKOS là gì?"/lộ trình/tài liệu phổ biến).
- *  2. Khóa học & Lộ trình — nguyên văn nội dung chính của trang Học viện AI
- *     gốc (4 giai đoạn lộ trình + khóa học nổi bật + vòng tiến độ). Việc
- *     hợp nhất 11 Lesson CKOS (Journey Engine) vào `learning_paths` —
- *     quyết định #3 — CHƯA làm ở đợt này, sẽ làm ở Giai đoạn 4 riêng.
- *  3. AI Workspace — nguyên văn nội dung AI Workspace cũ (công cụ theo
- *     nhóm, dự án, workflow mẫu, công cụ yêu thích, hoạt động gần đây).
- *  4. Thư viện tài nguyên — CHƯA XÂY (Giai đoạn 6, gom Prompt/SOP/Resource/
- *     Best Practice/Case Study/Blog — hiện chưa có nhà nào trong 2.0).
- *     Hiện trạng thái rõ ràng "đang xây" thay vì để trống im lặng — đúng
- *     quyết định #5 (không mồ côi im lặng, phải nói rõ nếu chưa có đích).
- *  5. Thư viện của tôi — nguyên văn view "Thư viện của tôi" của CKOS cũ
- *     (Bộ sưu tập + Bài học từ `knowledge_collections`/`knowledge_seeds`).
- *  6. Tiến độ của tôi — CHƯA XÂY (Giai đoạn 8, huy hiệu/thành tựu — quyết
- *     định #4). Cùng cách hiện trạng thái "đang xây" như tab 4.
+ * 4 TAB (thứ tự cố định trong `TABS`, đã bỏ "Tổng quan" và "Tiến độ của
+ * tôi", đã gộp "Thư viện của tôi" vào "Thư viện tài nguyên"):
+ *  0. Hệ tri thức — view "Tất cả tri thức" của CKOS (6 danh mục, tài liệu
+ *     mới nhất, "CKOS là gì?"/lộ trình/tài liệu phổ biến).
+ *  1. Khóa học & Lộ trình — 4 giai đoạn lộ trình + khóa học nổi bật + vòng
+ *     tiến độ (đã có sẵn ở sidebar cột phải, không cần tab "Tiến độ" riêng).
+ *  2. AI Workspace — công cụ theo nhóm, dự án, workflow mẫu, công cụ yêu
+ *     thích, hoạt động gần đây.
+ *  3. Thư viện tài nguyên — gộp cả 6 nguồn (Prompt/SOP/Resource/Best
+ *     Practice/Case Study/Blog AI) LẪN thư viện CKOS (Bộ sưu tập + Bài
+ *     học). Mọi mục Prompt/SOP/Resource/Best Practice/Blog AI mở XEM ĐẦY
+ *     ĐỦ ngay tại chỗ (panel inline trong tab này) thay vì điều hướng sang
+ *     Portal 1.0 — không còn link nào từ 2.0 sang 1.0. Case Study giữ
+ *     link ngoài `linkUrl` nếu có (đó là site khách hàng thật, không phải
+ *     Portal 1.0).
  *
- * CÒN GIỮ NGUYÊN "TRƠ" ĐÚNG NHƯ 3 TRANG GỐC: mọi hành vi trơ (nút lưu tài
- * liệu, ô tìm kiếm, chuông, CTA `href="#"`...) đã ghi chú trong 3 file gốc
- * giữ nguyên hệt — không tự thêm hành vi mới khi gộp.
+ * CÒN GIỮ NGUYÊN "TRƠ" ĐÚNG NHƯ THIẾT KẾ GỐC: mọi hành vi trơ (nút lưu tài
+ * liệu, ô tìm kiếm, chuông, CTA `href="#"`...) giữ nguyên hệt — không tự
+ * thêm hành vi mới ngoài phạm vi yêu cầu.
  * ========================================================================== */
 
 import Link from "next/link";
@@ -79,7 +64,6 @@ import type { LiveSop } from "@/lib/portal/live-sop";
 import type { LiveResource } from "@/lib/portal/live-resources";
 import type { LiveBestPractice } from "@/lib/portal/live-best-practices";
 import type { LiveCaseStudy } from "@/lib/portal/live-case-studies";
-import type { LiveBadge, EarnedBadge } from "@/lib/portal/live-badges";
 import type { BlogPost } from "@/data/blog";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
@@ -149,64 +133,34 @@ function formatRelativeTime(iso: string): string {
 
 /* ------------------------------------------------------------------- Tabs */
 
-const TABS = [
-  "Tổng quan",
-  "Hệ tri thức",
-  "Khóa học & Lộ trình",
-  "AI Workspace",
-  "Thư viện tài nguyên",
-  "Thư viện của tôi",
-  "Tiến độ của tôi",
-] as const;
+const TABS = ["Hệ tri thức", "Khóa học & Lộ trình", "AI Workspace", "Thư viện tài nguyên"] as const;
 
 function TabIcon({ index }: { index: number }) {
   switch (index) {
     case 0:
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="3" width="7" height="7" rx="1.5" />
-          <rect x="14" y="3" width="7" height="7" rx="1.5" />
-          <rect x="3" y="14" width="7" height="7" rx="1.5" />
-          <rect x="14" y="14" width="7" height="7" rx="1.5" />
-        </svg>
-      );
-    case 1:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
         </svg>
       );
-    case 2:
+    case 1:
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M22 10L12 5 2 10l10 5 10-5z" />
           <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
         </svg>
       );
-    case 3:
+    case 2:
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <rect x="3" y="4" width="18" height="14" rx="2" />
           <path d="M8 21h8M12 18v3" />
         </svg>
       );
-    case 4:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
-        </svg>
-      );
-    case 5:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 3h12v18l-6-4-6 4z" />
-        </svg>
-      );
     default:
       return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 7v5l3 3" />
+          <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
         </svg>
       );
   }
@@ -457,15 +411,21 @@ type ResourceCategoryKey = "prompt" | "sop" | "resource" | "best-practice" | "ca
 
 /** 1 mục hiển thị trong danh sách "Thư viện tài nguyên" — quy về 1 shape
  * chung cho cả 6 nguồn dữ liệu khác nhau (Prompt/SOP/Resource/Best
- * Practice/Case Study/Blog AI), mỗi nguồn tự map sang shape này. */
+ * Practice/Case Study/Blog AI), mỗi nguồn tự map sang shape này.
+ *
+ * KHÔNG có `href` sang Portal 1.0 — bấm vào 1 mục mở panel xem đầy đủ
+ * NGAY TẠI TRANG NÀY (state `openResourceKey`), tra lại bản ghi gốc qua
+ * `id` trong đúng mảng nguồn (`resourceLibrary.*`). Case Study là ngoại lệ
+ * duy nhất còn "link ra ngoài" (`caseStudyLinkUrl`) — đó là site khách
+ * hàng thật, không phải route Portal 1.0. */
 type ResourceItem = {
   key: string;
   category: ResourceCategoryKey;
+  id: string;
   title: string;
   tag: string;
   subtitle: string;
-  href: string;
-  external?: boolean;
+  caseStudyLinkUrl?: string;
 };
 
 const RESOURCE_CATEGORY_STYLE: Record<ResourceCategoryKey, IconStyle> = {
@@ -573,25 +533,18 @@ type ResourceLibraryData = {
   blogPosts: BlogPost[];
 };
 
-type BadgesData = {
-  catalog: LiveBadge[];
-  earned: EarnedBadge[];
-};
-
 export function HocVienAiClient({
   premium,
   ckos,
   academy,
   workspace,
   resourceLibrary,
-  badges,
 }: {
   premium: PremiumStatus;
   ckos: CkosData;
   academy: AcademyData;
   workspace: WorkspaceData;
   resourceLibrary: ResourceLibraryData;
-  badges: BadgesData;
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
@@ -606,6 +559,8 @@ export function HocVienAiClient({
   const [starOff, setStarOff] = useState<Record<string, boolean>>({});
   // Tab "Thư viện tài nguyên"
   const [resourceFilter, setResourceFilter] = useState<ResourceCategoryKey | null>(null);
+  const [openResourceKey, setOpenResourceKey] = useState<string | null>(null);
+  const [promptCopiedKey, setPromptCopiedKey] = useState<string | null>(null);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
@@ -621,71 +576,69 @@ export function HocVienAiClient({
   const advancedCount = ckos.seeds.filter((s) => s.difficulty === Difficulty.ADVANCED).length;
 
   // Tab "Thư viện tài nguyên" — gộp 6 nguồn thật (Prompt/SOP/Resource/Best
-  // Practice/Case Study/Blog AI) về cùng 1 shape `ResourceItem`. Chưa có
-  // route chi tiết v2 riêng cho từng nguồn (ngoài phạm vi tab gom-về-1-nơi
-  // này) — mỗi item trỏ về đúng trang 1.0 đang hiển thị nội dung đó, cùng
-  // tiền lệ đã dùng cho "Xem đầy đủ" ở nút "Thư viện của tôi" (link
-  // /portal/hetrithucai) — không tạo link chết tới route v2 chưa tồn tại.
+  // Practice/Case Study/Blog AI) về cùng 1 shape `ResourceItem`. KHÔNG còn
+  // `href` sang Portal 1.0 — bấm vào 1 mục mở panel xem đầy đủ NGAY TẠI
+  // TRANG NÀY (xem `openResource` + JSX panel bên dưới).
   const resourceItems: ResourceItem[] = [
     ...resourceLibrary.prompts.map(
       (p): ResourceItem => ({
         key: `prompt-${p.id}`,
         category: "prompt",
+        id: p.id,
         title: p.title,
         tag: p.category || "Prompt",
         subtitle: p.description,
-        href: "/portal/prompts",
       }),
     ),
     ...resourceLibrary.sops.map(
       (s): ResourceItem => ({
         key: `sop-${s.id}`,
         category: "sop",
+        id: s.id,
         title: s.title,
         tag: "SOP",
         subtitle: s.description,
-        href: "/portal/sop",
       }),
     ),
     ...resourceLibrary.resources.map(
       (r): ResourceItem => ({
         key: `resource-${r.id}`,
         category: "resource",
+        id: r.id,
         title: r.title,
         tag: r.type || "Tài nguyên",
         subtitle: r.description,
-        href: `/portal/resources/${r.id}`,
       }),
     ),
     ...resourceLibrary.bestPractices.map(
       (b): ResourceItem => ({
         key: `bp-${b.id}`,
         category: "best-practice",
+        id: b.id,
         title: b.title,
         tag: "Thực hành tốt",
         subtitle: b.description,
-        href: `/portal/ckos/best-practices/${b.id}`,
       }),
     ),
     ...resourceLibrary.caseStudies.map(
       (c): ResourceItem => ({
         key: `cs-${c.id}`,
         category: "case-study",
+        id: String(c.id),
         title: c.title,
         tag: c.clientName || "Case Study",
         subtitle: c.resultMetric || c.summary,
-        href: c.linkUrl || "/portal/case-studies",
-        external: Boolean(c.linkUrl),
+        caseStudyLinkUrl: c.linkUrl || undefined,
       }),
     ),
     ...resourceLibrary.blogPosts.map(
       (post): ResourceItem => ({
         key: `blog-${post.slug}`,
         category: "blog",
+        id: post.slug,
         title: post.title,
         tag: post.category || "Blog AI",
         subtitle: post.excerpt,
-        href: `/blogai/${post.slug}`,
       }),
     ),
   ];
@@ -697,9 +650,19 @@ export function HocVienAiClient({
     {} as Record<ResourceCategoryKey, number>,
   );
   const visibleResourceItems = resourceFilter ? resourceItems.filter((item) => item.category === resourceFilter) : resourceItems;
-
-  // Tab "Tiến độ của tôi"
-  const earnedBadgeById = new Map(badges.earned.map((b) => [b.id, b] as const));
+  const openResource = resourceItems.find((item) => item.key === openResourceKey) ?? null;
+  const openPrompt = openResource?.category === "prompt" ? resourceLibrary.prompts.find((p) => p.id === openResource.id) : undefined;
+  const openSop = openResource?.category === "sop" ? resourceLibrary.sops.find((s) => s.id === openResource.id) : undefined;
+  const openResourceDoc =
+    openResource?.category === "resource" ? resourceLibrary.resources.find((r) => r.id === openResource.id) : undefined;
+  const openBestPractice =
+    openResource?.category === "best-practice" ? resourceLibrary.bestPractices.find((b) => b.id === openResource.id) : undefined;
+  const openCaseStudy =
+    openResource?.category === "case-study"
+      ? resourceLibrary.caseStudies.find((c) => String(c.id) === openResource.id)
+      : undefined;
+  const openBlogPost =
+    openResource?.category === "blog" ? resourceLibrary.blogPosts.find((post) => post.slug === openResource.id) : undefined;
 
   const countByStatus = (status: WorkspaceProject["status"]) => workspace.projects.filter((p) => p.status === status).length;
   const suggestedWorkflows = workspace.workflows.slice(0, 3);
@@ -841,201 +804,8 @@ export function HocVienAiClient({
             </div>
           </div>
 
-          {/* ---------------------------------------------------- Tab 0: Tổng quan */}
+          {/* ---------------------------------------------------- Tab 0: Hệ tri thức */}
           {tab === 0 && (
-            <div className="content">
-              <div className="center-col">
-                <div className="page-head">
-                  <h1>Học viện AI</h1>
-                  <p>Hệ tri thức, khóa học và không gian thực hành AI — tất cả trong một nơi.</p>
-                </div>
-
-                <div className="tabs-row">
-                  {TABS.map((label, i) => (
-                    <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
-                      <TabIcon index={i} />
-                      {label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="acad-hero">
-                  <div className="acad-hero-text">
-                    <h2>
-                      Học AI đúng hướng
-                      <br />
-                      Ứng dụng AI hiệu quả
-                    </h2>
-                    <p>Hệ tri thức bài bản, khóa học thực chiến và không gian thực hành — tất cả trong một hành trình duy nhất.</p>
-                    <div className="acad-btn-row">
-                      <button className="btn-primary" onClick={() => setTab(2)}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                        Tiếp tục học
-                      </button>
-                      <button className="btn-ghost" onClick={() => setTab(1)}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                          <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
-                        </svg>
-                        Khám phá Hệ tri thức
-                      </button>
-                    </div>
-                  </div>
-                  <div className="grad-wrap">
-                    <div className="grad-glow" />
-                    <svg className="grad-svg" width="200" height="170" viewBox="0 0 200 170" fill="none">
-                      <g className="orb-icon" style={{ animationDelay: "0s" }}>
-                        <circle cx="30" cy="40" r="17" fill="rgba(109,74,255,.25)" stroke="#8b6bff" strokeWidth="1.2" />
-                        <path d="M23 38l5 5 8-9" stroke="#c9bdff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                      </g>
-                      <g className="orb-icon" style={{ animationDelay: ".6s" }}>
-                        <circle cx="172" cy="42" r="17" fill="rgba(109,74,255,.25)" stroke="#8b6bff" strokeWidth="1.2" />
-                        <path d="M165 48l5-14 5 8 4-4" stroke="#c9bdff" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                      </g>
-                      <g className="orb-icon" style={{ animationDelay: "1.1s" }}>
-                        <circle cx="24" cy="120" r="15" fill="rgba(109,74,255,.25)" stroke="#8b6bff" strokeWidth="1.2" />
-                        <path d="M17 116h14M17 121h10M17 126h12" stroke="#c9bdff" strokeWidth="1.5" strokeLinecap="round" />
-                      </g>
-                      <g className="orb-icon" style={{ animationDelay: "1.6s" }}>
-                        <circle cx="178" cy="120" r="15" fill="rgba(109,74,255,.25)" stroke="#8b6bff" strokeWidth="1.2" />
-                        <path d="M171 126l4-12 4 8 4-16" stroke="#c9bdff" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-                      </g>
-                      <rect x="52" y="72" width="96" height="66" rx="8" fill="url(#bookGrad)" stroke="#8b6bff" strokeWidth="1.4" />
-                      <rect x="52" y="72" width="96" height="14" rx="7" fill="#4a2fb0" />
-                      <text x="100" y="115" fontFamily="Inter,sans-serif" fontSize="30" fontWeight="800" fill="#fff" textAnchor="middle">
-                        AI
-                      </text>
-                      <path d="M62 68l38-14 38 14-38 14z" fill="#1a1044" stroke="#8b6bff" strokeWidth="1.4" />
-                      <path d="M100 82v10M100 82l30-11M130 71v10c0 4-30 4-30 4" stroke="#c9bdff" strokeWidth="1.2" fill="none" />
-                      <circle cx="130" cy="82" r="2.4" fill="#e2b23c" />
-                      <path d="M130 84v11l-3-2" stroke="#e2b23c" strokeWidth="1.3" />
-                      <defs>
-                        <linearGradient id="bookGrad" x1="52" y1="72" x2="148" y2="138">
-                          <stop offset="0" stopColor="#4a2fb0" />
-                          <stop offset="1" stopColor="#241c56" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="feat-strip">
-                  <div className="feat-item">
-                    <div className="ico">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <rect x="3" y="4" width="18" height="14" rx="2" />
-                        <path d="M8 21h8M12 18v3" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h6>Học mọi lúc mọi nơi</h6>
-                      <span>Trên mọi thiết bị, chủ động thời gian học.</span>
-                    </div>
-                  </div>
-                  <div className="feat-item">
-                    <div className="ico">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M13 2L3 14h7l-1 8 10-12h-7z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h6>Thực hành thực tế</h6>
-                      <span>AI Workspace — bài tập tình huống, dự án thực chiến.</span>
-                    </div>
-                  </div>
-                  <div className="feat-item">
-                    <div className="ico">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h6>Hệ tri thức chọn lọc</h6>
-                      <span>CKOS — tri thức hệ thống hoá, học đúng hướng.</span>
-                    </div>
-                  </div>
-                  <div className="feat-item">
-                    <div className="ico">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h6>Chứng chỉ hoàn thành</h6>
-                      <span>Xác nhận năng lực sau mỗi khoá học.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <aside className="right-col">
-                <div className="card">
-                  <div className="card-head">
-                    <h4>Kỹ năng bạn sẽ đạt được</h4>
-                  </div>
-                  <div className="skill-grid">
-                    <div className="skill-chip">
-                      <div className="ico">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6d4aff" strokeWidth="2">
-                          <path d="M13 2L3 14h7l-1 8 10-12h-7z" />
-                        </svg>
-                      </div>
-                      Sử dụng AI hiệu quả
-                    </div>
-                    <div className="skill-chip">
-                      <div className="ico">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6d4aff" strokeWidth="2">
-                          <circle cx="12" cy="12" r="3" />
-                          <path d="M19.4 15a1.7 1.7 0 00.3 1.9M4.6 15a1.7 1.7 0 01-.3 1.9M12 2v4M12 18v4" />
-                        </svg>
-                      </div>
-                      Tư duy AI
-                    </div>
-                    <div className="skill-chip">
-                      <div className="ico">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6d4aff" strokeWidth="2">
-                          <path d="M21 11.5a8.5 8.5 0 01-8.5 8.5 8.4 8.4 0 01-3.9-.94L3 21l1.5-4.5A8.4 8.4 0 013.5 12 8.5 8.5 0 0112 3.5a8.5 8.5 0 019 8z" />
-                        </svg>
-                      </div>
-                      Prompt Engineering
-                    </div>
-                    <div className="skill-chip">
-                      <div className="ico">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6d4aff" strokeWidth="2">
-                          <rect x="3" y="4" width="18" height="14" rx="2" />
-                          <path d="M8 21h8M12 18v3" />
-                        </svg>
-                      </div>
-                      Tự động hoá
-                    </div>
-                    <div className="skill-chip">
-                      <div className="ico">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6d4aff" strokeWidth="2">
-                          <path d="M4 19h16M7 15l3-4 3 3 5-7" />
-                        </svg>
-                      </div>
-                      Phân tích dữ liệu
-                    </div>
-                    <div className="skill-chip">
-                      <div className="ico">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#6d4aff" strokeWidth="2">
-                          <rect x="4" y="4" width="7" height="7" rx="1.5" />
-                          <rect x="13" y="4" width="7" height="7" rx="1.5" />
-                          <rect x="4" y="13" width="7" height="7" rx="1.5" />
-                          <rect x="13" y="13" width="7" height="7" rx="1.5" />
-                        </svg>
-                      </div>
-                      Xây dựng hệ thống
-                    </div>
-                  </div>
-                </div>
-              </aside>
-            </div>
-          )}
-
-          {/* ---------------------------------------------------- Tab 1: Hệ tri thức */}
-          {tab === 1 && (
             <div className="ckos">
               <div className="content">
                 <div className="center-col">
@@ -1280,8 +1050,8 @@ export function HocVienAiClient({
             </div>
           )}
 
-          {/* --------------------------------------------- Tab 2: Khóa học & Lộ trình */}
-          {tab === 2 && (
+          {/* --------------------------------------------- Tab 1: Khóa học & Lộ trình */}
+          {tab === 1 && (
             <div className="content">
               <div className="center-col">
                 <div className="page-head">
@@ -1333,7 +1103,7 @@ export function HocVienAiClient({
                               <div className="cnt" style={{ marginTop: 2 }}>
                                 <button
                                   type="button"
-                                  onClick={() => setTab(5)}
+                                  onClick={() => setTab(3)}
                                   style={{
                                     background: "none",
                                     border: "none",
@@ -1456,8 +1226,8 @@ export function HocVienAiClient({
             </div>
           )}
 
-          {/* --------------------------------------------------- Tab 3: AI Workspace */}
-          {tab === 3 && (
+          {/* --------------------------------------------------- Tab 2: AI Workspace */}
+          {tab === 2 && (
             <div className="aiw">
               <div className="content">
                 <div className="center-col">
@@ -1834,8 +1604,8 @@ export function HocVienAiClient({
             </div>
           )}
 
-          {/* -------------------------------------------- Tab 4: Thư viện tài nguyên */}
-          {tab === 4 && (
+          {/* -------------------------------------------- Tab 3: Thư viện tài nguyên */}
+          {tab === 3 && (
             <div className="content">
               <div className="center-col" style={{ width: "100%" }}>
                 <div className="page-head">
@@ -1864,7 +1634,10 @@ export function HocVienAiClient({
                         <div
                           className="grp-card"
                           key={key}
-                          onClick={() => setResourceFilter(active ? null : key)}
+                          onClick={() => {
+                            setResourceFilter(active ? null : key);
+                            setOpenResourceKey(null);
+                          }}
                           style={active ? { boxShadow: "0 0 0 2px var(--violet) inset" } : undefined}
                         >
                           <div className="ico" style={{ background: style.bg }}>
@@ -1879,149 +1652,277 @@ export function HocVienAiClient({
                 </div>
 
                 <div className="ckos">
-                  <div className="section-head" style={{ marginTop: 18 }}>
-                    <h3>{resourceFilter ? RESOURCE_CATEGORY_LABEL[resourceFilter] : "Tất cả tài nguyên"}</h3>
-                    {resourceFilter && (
-                      <a href="#" onClick={(e) => { e.preventDefault(); setResourceFilter(null); }}>
-                        Xem tất cả →
-                      </a>
-                    )}
-                  </div>
-                  <div className="doc-list" style={{ marginTop: 14 }}>
-                    {visibleResourceItems.length === 0 ? (
-                      <div className="empty-hint">Chưa có tài nguyên nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                    ) : (
-                      visibleResourceItems.map((item) => {
-                        const linkStyle: React.CSSProperties = { display: "contents", color: "inherit", textDecoration: "none" };
-                        const inner = (
-                          <>
-                            <div className="ico">
-                              <DocIcon />
-                            </div>
-                            <div className="info">
-                              <h5>{item.title}</h5>
-                              <div className="meta">
-                                <span className="doc-tag">{item.tag}</span>
-                                {item.subtitle ? (
-                                  <span
-                                    style={{
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      whiteSpace: "nowrap",
-                                      maxWidth: 340,
-                                    }}
-                                  >
-                                    {item.subtitle}
-                                  </span>
-                                ) : null}
-                                {item.external ? <span className="doc-tag">Ngoài trang</span> : null}
-                              </div>
-                            </div>
-                          </>
-                        );
-                        return (
-                          <div className="doc-row" key={item.key}>
-                            {item.external ? (
-                              <a href={item.href} target="_blank" rel="noopener noreferrer" style={linkStyle}>
-                                {inner}
-                              </a>
-                            ) : (
-                              <Link href={item.href} style={linkStyle}>
-                                {inner}
-                              </Link>
-                            )}
+                  {openResource ? (
+                    <div className="card" style={{ marginTop: 18, padding: 22 }}>
+                      <button
+                        type="button"
+                        onClick={() => setOpenResourceKey(null)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          padding: 0,
+                          font: "inherit",
+                          color: "var(--violet)",
+                          cursor: "pointer",
+                        }}
+                      >
+                        ← Quay lại danh sách
+                      </button>
+                      <div style={{ marginTop: 14 }}>
+                        <span className="doc-tag">{openResource.tag}</span>
+                      </div>
+                      <h2 style={{ marginTop: 10 }}>{openResource.title}</h2>
+
+                      {openResource.category === "prompt" && openPrompt && (
+                        <>
+                          <p style={{ color: "var(--muted)", marginTop: 8 }}>{openPrompt.description}</p>
+                          <div
+                            style={{
+                              marginTop: 16,
+                              background: "var(--bg)",
+                              border: "1px solid var(--line)",
+                              borderRadius: 10,
+                              padding: 16,
+                              whiteSpace: "pre-wrap",
+                              fontSize: 13.5,
+                              lineHeight: 1.6,
+                            }}
+                          >
+                            {openPrompt.content}
                           </div>
-                        );
-                      })
-                    )}
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            style={{ marginTop: 14 }}
+                            onClick={() => {
+                              navigator.clipboard.writeText(openPrompt.content);
+                              setPromptCopiedKey(openResource.key);
+                              setTimeout(() => setPromptCopiedKey(null), 2000);
+                            }}
+                          >
+                            {promptCopiedKey === openResource.key ? "Đã sao chép ✓" : "Sao chép prompt"}
+                          </button>
+                        </>
+                      )}
+
+                      {openResource.category === "sop" && openSop && (
+                        <>
+                          <p style={{ color: "var(--muted)", marginTop: 8 }}>{openSop.description}</p>
+                          <div style={{ marginTop: 16 }}>
+                            <h5>Khi nào dùng</h5>
+                            <p style={{ color: "var(--muted)" }}>{openSop.whenToUse}</p>
+                          </div>
+                          <div style={{ marginTop: 12 }}>
+                            <h5>Khi nào không nên dùng</h5>
+                            <p style={{ color: "var(--muted)" }}>{openSop.whenNotToUse}</p>
+                          </div>
+                          {openSop.steps.length > 0 && (
+                            <div style={{ marginTop: 12 }}>
+                              <h5>Các bước thực hiện</h5>
+                              <ol style={{ marginTop: 8, paddingLeft: 20, color: "var(--muted)" }}>
+                                {openSop.steps.map((step, i) => (
+                                  <li key={i} style={{ marginBottom: 6 }}>
+                                    {step}
+                                  </li>
+                                ))}
+                              </ol>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {openResource.category === "resource" && openResourceDoc && (
+                        <>
+                          <p style={{ color: "var(--muted)", marginTop: 8 }}>{openResourceDoc.description}</p>
+                          <div style={{ marginTop: 16 }}>
+                            <h5>Khi nào dùng</h5>
+                            <p style={{ color: "var(--muted)" }}>{openResourceDoc.whenToUse}</p>
+                          </div>
+                          <div style={{ marginTop: 12 }}>
+                            <h5>Khi nào không nên dùng</h5>
+                            <p style={{ color: "var(--muted)" }}>{openResourceDoc.whenNotToUse}</p>
+                          </div>
+                        </>
+                      )}
+
+                      {openResource.category === "best-practice" && openBestPractice && (
+                        <>
+                          <p style={{ color: "var(--muted)", marginTop: 8 }}>{openBestPractice.description}</p>
+                          <div style={{ marginTop: 16, whiteSpace: "pre-wrap", color: "var(--muted)", lineHeight: 1.6 }}>
+                            {openBestPractice.principle}
+                          </div>
+                        </>
+                      )}
+
+                      {openResource.category === "case-study" && openCaseStudy && (
+                        <>
+                          <p style={{ color: "var(--muted)", marginTop: 8 }}>{openCaseStudy.summary}</p>
+                          {openCaseStudy.resultMetric && (
+                            <div style={{ marginTop: 12 }}>
+                              <h5>Kết quả</h5>
+                              <p style={{ color: "var(--muted)" }}>{openCaseStudy.resultMetric}</p>
+                            </div>
+                          )}
+                          {openCaseStudy.thumbnailUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element -- ảnh minh hoạ do Admin dán URL ngoài, không phải asset tĩnh cố định.
+                            <img
+                              src={openCaseStudy.thumbnailUrl}
+                              alt=""
+                              style={{ marginTop: 14, width: "100%", borderRadius: 10, objectFit: "cover" }}
+                            />
+                          )}
+                          {openCaseStudy.linkUrl && (
+                            <a
+                              className="btn-primary"
+                              style={{ marginTop: 14, display: "inline-flex", textDecoration: "none" }}
+                              href={openCaseStudy.linkUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Xem thêm ↗
+                            </a>
+                          )}
+                        </>
+                      )}
+
+                      {openResource.category === "blog" && openBlogPost && (
+                        <>
+                          <div className="meta" style={{ marginTop: 8 }}>
+                            <span>{openBlogPost.date}</span>
+                            <span>·</span>
+                            <span>{openBlogPost.readTime}</span>
+                          </div>
+                          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+                            {openBlogPost.content.map((paragraph, i) => (
+                              <p key={i} style={{ color: "var(--muted)", lineHeight: 1.7 }}>
+                                {paragraph}
+                              </p>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div className="section-head" style={{ marginTop: 18 }}>
+                        <h3>{resourceFilter ? RESOURCE_CATEGORY_LABEL[resourceFilter] : "Tất cả tài nguyên"}</h3>
+                        {resourceFilter && (
+                          <a
+                            href="#"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setResourceFilter(null);
+                            }}
+                          >
+                            Xem tất cả →
+                          </a>
+                        )}
+                      </div>
+                      <div className="doc-list" style={{ marginTop: 14 }}>
+                        {visibleResourceItems.length === 0 ? (
+                          <div className="empty-hint">Chưa có tài nguyên nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
+                        ) : (
+                          visibleResourceItems.map((item) => (
+                            <button
+                              type="button"
+                              key={item.key}
+                              className="doc-row"
+                              onClick={() => setOpenResourceKey(item.key)}
+                              style={{
+                                width: "100%",
+                                background: "none",
+                                border: "none",
+                                textAlign: "left",
+                                font: "inherit",
+                                color: "inherit",
+                              }}
+                            >
+                              <div className="ico">
+                                <DocIcon />
+                              </div>
+                              <div className="info">
+                                <h5>{item.title}</h5>
+                                <div className="meta">
+                                  <span className="doc-tag">{item.tag}</span>
+                                  {item.subtitle ? (
+                                    <span
+                                      style={{
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap",
+                                        maxWidth: 340,
+                                      }}
+                                    >
+                                      {item.subtitle}
+                                    </span>
+                                  ) : null}
+                                </div>
+                              </div>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                <div className="stat-row" style={{ marginTop: 24, gridTemplateColumns: "repeat(4,1fr)" }}>
+                  <div className="stat-box">
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="num">{ckos.collections.length}</div>
+                      <div className="lbl">Bộ sưu tập</div>
+                    </div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="num">{ckos.seeds.length}</div>
+                      <div className="lbl">Bài học</div>
+                    </div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 7v5l3 3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="num">{beginnerCount}</div>
+                      <div className="lbl">Người mới bắt đầu</div>
+                    </div>
+                  </div>
+                  <div className="stat-box">
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="num">{advancedCount}</div>
+                      <div className="lbl">Nâng cao</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
 
-          {/* ------------------------------------------------ Tab 5: Thư viện của tôi */}
-          {tab === 5 && (
-            <div className="ckos">
-              <div className="content">
-                <div className="center-col">
-                  <div className="page-head">
-                    <h1>Học viện AI</h1>
-                    <p>Hệ tri thức, khóa học và không gian thực hành AI — tất cả trong một nơi.</p>
-                  </div>
-
-                  <div className="tabs-row">
-                    {TABS.map((label, i) => (
-                      <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
-                        <TabIcon index={i} />
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="stat-row" style={{ gridTemplateColumns: "repeat(4,1fr)" }}>
-                    <div className="stat-box">
-                      <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                          <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="num">{ckos.collections.length}</div>
-                        <div className="lbl">Bộ sưu tập</div>
-                      </div>
-                    </div>
-                    <div className="stat-box">
-                      <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                          <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="num">{ckos.seeds.length}</div>
-                        <div className="lbl">Bài học</div>
-                      </div>
-                    </div>
-                    <div className="stat-box">
-                      <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                          <circle cx="12" cy="12" r="9" />
-                          <path d="M12 7v5l3 3" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="num">{beginnerCount}</div>
-                        <div className="lbl">Người mới bắt đầu</div>
-                      </div>
-                    </div>
-                    <div className="stat-box">
-                      <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                          <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <div className="num">{advancedCount}</div>
-                        <div className="lbl">Nâng cao</div>
-                      </div>
-                    </div>
-                  </div>
-
+                <div className="ckos">
                   <div className="lib-toolbar">
                     <div className="filter-row">
                       {libraryChips.map((label, i) => (
-                        <button
-                          key={label}
-                          className={i === libChip ? "f-chip active" : "f-chip"}
-                          onClick={() => setLibChip(i)}
-                        >
+                        <button key={label} className={i === libChip ? "f-chip active" : "f-chip"} onClick={() => setLibChip(i)}>
                           {label}
                         </button>
                       ))}
                     </div>
-                    <Link className="new-folder-btn" href="/portal/hetrithucai" style={{ textDecoration: "none" }}>
-                      Xem đầy đủ trên Thư viện AI →
-                    </Link>
                   </div>
 
                   <div>
@@ -2084,107 +1985,6 @@ export function HocVienAiClient({
                       )}
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ------------------------------------------------- Tab 6: Tiến độ của tôi */}
-          {tab === 6 && (
-            <div className="content">
-              <div className="center-col" style={{ width: "100%" }}>
-                <div className="page-head">
-                  <h1>Học viện AI</h1>
-                  <p>Hệ tri thức, khóa học và không gian thực hành AI — tất cả trong một nơi.</p>
-                </div>
-
-                <div className="tabs-row">
-                  {TABS.map((label, i) => (
-                    <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
-                      <TabIcon index={i} />
-                      {label}
-                    </button>
-                  ))}
-                </div>
-
-                <div className="section-head">
-                  <h3>Tiến độ học tập</h3>
-                </div>
-                <div className="card" style={{ marginTop: 14 }}>
-                  <div className="ring-block">
-                    <div
-                      className="ring"
-                      style={{
-                        background: `conic-gradient(var(--violet) 0% ${academy.progress.percent}%, var(--violet-light) ${academy.progress.percent}% 100%)`,
-                      }}
-                    >
-                      <div className="ring-inner">
-                        <div className="pct">{academy.progress.percent}%</div>
-                        <div className="pct-label">Hoàn thành</div>
-                      </div>
-                    </div>
-                    <div className="stat-lines">
-                      <div className="stat-line">
-                        Khóa học đã học
-                        <b>
-                          {academy.progress.startedCourses} / {academy.progress.totalCourses}
-                        </b>
-                      </div>
-                      <div className="stat-line">
-                        Bài học đã hoàn thành
-                        <b>
-                          {academy.progress.completedLessons} / {academy.progress.totalLessons}
-                        </b>
-                      </div>
-                      <div className="stat-line">
-                        Thời gian học
-                        <b>{formatMinutes(academy.progress.totalMinutes)}</b>
-                      </div>
-                      <div className="stat-line">
-                        Huy hiệu đã đạt
-                        <b>
-                          {badges.earned.length} / {badges.catalog.length}
-                        </b>
-                      </div>
-                    </div>
-                  </div>
-                  {!premium.signedIn && (
-                    <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 4 }}>
-                      Đăng nhập để theo dõi tiến độ học thật của bạn.
-                    </p>
-                  )}
-                </div>
-
-                <div className="section-head" style={{ marginTop: 24 }}>
-                  <h3>Huy hiệu & Thành tựu</h3>
-                </div>
-                <div className="aiw">
-                  {badges.catalog.length === 0 ? (
-                    <div className="empty-hint" style={{ marginTop: 14 }}>
-                      Chưa có huy hiệu nào — nội dung sẽ hiện ở đây khi được xuất bản.
-                    </div>
-                  ) : (
-                    <div className="grp-grid" style={{ marginTop: 14 }}>
-                      {badges.catalog.map((badge) => {
-                        const earned = earnedBadgeById.get(badge.id);
-                        return (
-                          <div className="grp-card" key={badge.id} style={{ cursor: "default", opacity: earned ? 1 : 0.55 }}>
-                            <div
-                              className="ico"
-                              style={{
-                                background: earned ? "linear-gradient(145deg,#e2b23c,#b3801f)" : "#e5e7eb",
-                                fontSize: 22,
-                              }}
-                            >
-                              {badge.icon || "🏅"}
-                            </div>
-                            <h5>{badge.name}</h5>
-                            <span>{earned ? `Đã đạt · ${formatDate(earned.earnedAt)}` : "Chưa đạt"}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
