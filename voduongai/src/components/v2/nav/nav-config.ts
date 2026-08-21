@@ -17,7 +17,6 @@ import {
   ArrowLeft,
   BarChart3,
   Bot,
-  BookOpen,
   Briefcase,
   Brain,
   Building2,
@@ -28,7 +27,6 @@ import {
   Home,
   Image as ImageIcon,
   LayoutDashboard,
-  LayoutGrid,
   Menu,
   NotebookPen,
   Plug,
@@ -87,9 +85,9 @@ const PORTAL_MAIN: NavItem[] = [
     group: "companion",
   },
 
-  { label: "Hệ tri thức (CKOS)", href: `${V2_PORTAL_BASE}/he-tri-thuc`, icon: BookOpen },
+  // Gộp CKOS + Học viện AI + AI Workspace thành 1 mục "Học viện AI" (7 tab
+  // nội bộ) — Founder quyết định #1/#2, xem docblock đầu file HocVienAiClient.
   { label: "Học viện AI", href: `${V2_PORTAL_BASE}/hoc-vien-ai`, icon: GraduationCap },
-  { label: "AI Workspace", href: `${V2_PORTAL_BASE}/ai-workspace`, icon: LayoutGrid },
   { label: "Dự án & Cơ hội", href: `${V2_PORTAL_BASE}/du-an-co-hoi`, icon: Briefcase },
 
   // Cụm Hệ sinh thái — bung khi đang ở trang đối tác hoặc trang affiliate con.
@@ -209,9 +207,9 @@ export const ADMIN_NAV: NavSection[] = [
     items: [
       { label: "Trang chủ", href: `${V2_ADMIN_BASE}/trang-chu`, icon: Home },
       { label: "Companion AI", href: `${V2_ADMIN_BASE}/companion`, icon: Bot },
-      { label: "Hệ tri thức (CKOS)", href: `${V2_ADMIN_BASE}/he-tri-thuc`, icon: BookOpen },
+      // Gộp cùng 3 mục Portal (CKOS/Học viện AI/AI Workspace) — Founder xác
+      // nhận mở rộng quyết định #2 sang Admin 2.0.
       { label: "Học viện AI", href: `${V2_ADMIN_BASE}/hoc-vien-ai`, icon: GraduationCap },
-      { label: "AI Workspace", href: `${V2_ADMIN_BASE}/ai-workspace`, icon: LayoutGrid },
       { label: "Dự án & Cơ hội", href: `${V2_ADMIN_BASE}/du-an-co-hoi`, icon: Briefcase },
       { label: "Premium", href: `${V2_ADMIN_BASE}/premium`, icon: Crown },
       { label: "Chương trình Affilate", href: `${V2_ADMIN_BASE}/affiliate`, icon: Share2 },
