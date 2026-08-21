@@ -10,9 +10,12 @@ export const PORTAL_HREF_MAP: Record<string, string> = {
   "Companion.html": "/v2/companion",
   "Su menh Companion.html": "/v2/su-menh-companion",
   "Bo nho ca nhan hoa.html": "/v2/bo-nho-ca-nhan-hoa",
-  "He tri thuc CKOS.html": "/v2/he-tri-thuc",
+  // Giai đoạn 9 (gộp Học viện AI 2.0) — "He tri thuc CKOS.html"/"AI Workspace.html"
+  // trỏ về đúng /v2/hoc-vien-ai (đã gộp cả 3 nội dung vào 7 tab nội bộ) sau
+  // khi xoá 2 route hub cũ /v2/he-tri-thuc và /v2/ai-workspace.
+  "He tri thuc CKOS.html": "/v2/hoc-vien-ai",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
-  "AI Workspace.html": "/v2/ai-workspace",
+  "AI Workspace.html": "/v2/hoc-vien-ai",
   "Du an Co hoi.html": "/v2/du-an-co-hoi",
   "Premium.html": "/v2/premium",
   "Chuong trinh Affilate.html": "/v2/affiliate",

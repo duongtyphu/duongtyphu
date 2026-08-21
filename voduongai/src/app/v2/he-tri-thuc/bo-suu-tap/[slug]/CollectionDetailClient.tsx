@@ -28,9 +28,9 @@ import "../../he-tri-thuc.css";
 const HREF_MAP: Record<string, string> = {
   "Trang chu Portal.html": "/v2/trang-chu",
   "Companion.html": "/v2/companion",
-  "He tri thuc CKOS.html": "/v2/he-tri-thuc",
+  "He tri thuc CKOS.html": "/v2/hoc-vien-ai",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
-  "AI Workspace.html": "/v2/ai-workspace",
+  "AI Workspace.html": "/v2/hoc-vien-ai",
   "Du an Co hoi.html": "/v2/du-an-co-hoi",
   "Premium.html": "/v2/premium",
   "Chuong trinh Affilate.html": "/v2/affiliate",
@@ -236,7 +236,7 @@ export function CollectionDetailClient({
 
           <div className="content">
             <div className="center-col" style={{ maxWidth: 760 }}>
-              <Link href="/v2/he-tri-thuc" className="doc-back-link">
+              <Link href="/v2/hoc-vien-ai" className="doc-back-link">
                 ← Hệ tri thức (CKOS)
               </Link>
 

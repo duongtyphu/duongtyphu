@@ -177,7 +177,7 @@ export async function listAffiliatePrograms(): Promise<AffiliateProgram[]> {
     { id: "pg2", name: "DigiU", description: "Nền tảng đào tạo số cho doanh nghiệp vừa và nhỏ.", commission: "20%", signupUrl: "/v2/he-sinh-thai/digiu", visible: true },
     { id: "pg3", name: "SolarGroup", description: "Chương trình đồng đầu tư năng lượng tái tạo.", commission: "Theo thoả thuận", signupUrl: "/v2/he-sinh-thai/solargroup", visible: true },
     { id: "pg4", name: "Ohana", description: "Mạng lưới cộng đồng học tập địa phương.", commission: "10%", signupUrl: "/v2/he-sinh-thai/ohana", visible: true },
-    { id: "pg5", name: "Công cụ AI đối tác", description: "Hoa hồng từ các công cụ AI được giới thiệu trong CKOS.", commission: "8 – 30%", signupUrl: "/v2/he-tri-thuc", visible: false },
+    { id: "pg5", name: "Công cụ AI đối tác", description: "Hoa hồng từ các công cụ AI được giới thiệu trong CKOS.", commission: "8 – 30%", signupUrl: "/v2/hoc-vien-ai", visible: false },
   ]);
 }
 

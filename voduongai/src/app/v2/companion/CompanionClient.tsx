@@ -570,7 +570,7 @@ export function CompanionClient({
               <div className="card">
                 <div className="card-head">
                   <h4>Công cụ yêu thích</h4>
-                  <a onClick={() => go("/v2/ai-workspace")} style={{ cursor: "pointer" }}>
+                  <a onClick={() => go("/v2/hoc-vien-ai")} style={{ cursor: "pointer" }}>
                     Quản lý
                   </a>
                 </div>

@@ -37,6 +37,14 @@ const nextConfig: NextConfig = {
       // giữ redirect ở page.tsx của chính nó, đã trỏ lại đích mới.)
       { source: "/portal/student-success", destination: "/portal/congdongai", permanent: true },
       { source: "/portal/updates", destination: "/portal/congdongai#tin-tuc", permanent: true },
+      // Giai đoạn 9 (gộp Học viện AI 2.0) — 2 route hub cũ đã gộp vào
+      // /v2/hoc-vien-ai (7 tab nội bộ), route cũ redirect về route mới,
+      // không để 404. CHỈ redirect đúng path trần — KHÔNG dùng :path*, vì
+      // 4 route con của /v2/he-tri-thuc ([slug]/bai-hoc/bo-suu-tap/danh-muc)
+      // vẫn còn sống thật (trang chi tiết tài liệu/lesson/collection/danh
+      // mục CKOS), không được redirect đè lên.
+      { source: "/v2/he-tri-thuc", destination: "/v2/hoc-vien-ai", permanent: true },
+      { source: "/v2/ai-workspace", destination: "/v2/hoc-vien-ai", permanent: true },
     ];
   },
 };

@@ -58,9 +58,9 @@ import "./cac-mo-hinh-affilate.css";
 const HREF_MAP: Record<string, string> = {
   "Trang chu Portal.html": "/v2/trang-chu",
   "Companion.html": "/v2/companion",
-  "He tri thuc CKOS.html": "/v2/he-tri-thuc",
+  "He tri thuc CKOS.html": "/v2/hoc-vien-ai",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
-  "AI Workspace.html": "/v2/ai-workspace",
+  "AI Workspace.html": "/v2/hoc-vien-ai",
   "Du an Co hoi.html": "/v2/du-an-co-hoi",
   "DigiU.html": "/v2/du-an-co-hoi/digiu",
   "SolarGroup.html": "/v2/du-an-co-hoi/solargroup",

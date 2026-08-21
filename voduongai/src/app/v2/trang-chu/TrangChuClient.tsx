@@ -50,9 +50,9 @@ import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
 const HREF_MAP: Record<string, string> = {
   "Companion.html": "/v2/companion",
-  "He tri thuc CKOS.html": "/v2/he-tri-thuc",
+  "He tri thuc CKOS.html": "/v2/hoc-vien-ai",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
-  "AI Workspace.html": "/v2/ai-workspace",
+  "AI Workspace.html": "/v2/hoc-vien-ai",
   "Du an Co hoi.html": "/v2/du-an-co-hoi",
   "Premium.html": "/v2/premium",
   "Chuong trinh Affilate.html": "/v2/affiliate",
@@ -238,7 +238,7 @@ const SUGG_TARGET: Record<ResourceSuggestionType, string | null> = {
   template: "/portal/templates",
   workflow: "/portal/sop",
   ebook: null,
-  tool: "/v2/ai-workspace",
+  tool: "/v2/hoc-vien-ai",
 };
 
 export function TrangChuClient({

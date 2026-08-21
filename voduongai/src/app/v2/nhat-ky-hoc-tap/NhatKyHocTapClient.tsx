@@ -422,7 +422,7 @@ export function NhatKyHocTapClient({ premium, log }: { premium: PremiumStatus; l
               <div className="card">
                 <div className="card-head">
                   <h4>Tài liệu & liên kết gần đây</h4>
-                  <a href="/v2/he-tri-thuc">Xem tất cả →</a>
+                  <a href="/v2/hoc-vien-ai">Xem tất cả →</a>
                 </div>
                 {recentDocuments.length === 0 ? (
                   <div className="empty-hint">Chưa có tài liệu nào.</div>
