@@ -289,7 +289,7 @@ export function TrangChuClient({
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
               </svg>
-              Companion
+              Companion AI
             </button>
             <button className="nav-item" onClick={go("Hoc vien AI.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -320,26 +320,13 @@ export function TrangChuClient({
               </svg>
               Chương trình Affilate
             </button>
-            <button className="nav-item" onClick={go("Hanh trinh cua toi.html")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M12 7v5l3 3" />
-              </svg>
-              Hành trình của tôi
-            </button>
-            <button className="nav-item" onClick={go("Su menh Companion.html")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 10-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" />
-              </svg>
-              Sứ mệnh Companion
-            </button>
             <button className="nav-item" onClick={go("Cong dong AI.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="8" cy="8" r="3" />
                 <circle cx="17" cy="9" r="3" />
                 <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
               </svg>
-              Cộng đồng
+              Cộng đồng AI
             </button>
           </nav>
           <div className="side-label">TIỆN ÍCH NHANH</div>
