@@ -49,7 +49,6 @@ import type {
 } from "@/lib/portal/live-ckos";
 import type { KnowledgeCollection } from "@/features/knowledge/types/knowledge-collection.types";
 import type { KnowledgeSeed } from "@/features/knowledge/types/knowledge-seed.types";
-import { Difficulty } from "@/features/knowledge/types/knowledge.types";
 import type { AcademyCourse, AcademyPath, AcademyProgress } from "@/lib/portal/live-academy";
 import type {
   WorkspaceActivity,
@@ -491,6 +490,26 @@ const RESOURCE_CATEGORY_LABEL: Record<ResourceCategoryKey, string> = {
   blog: "Blog AI",
 };
 
+/**
+ * Khoá lọc DUY NHẤT cho lưới "N nguồn tài nguyên" — 6 nguồn tĩnh
+ * (`ResourceCategoryKey`) GỘP CHUNG với N bộ sưu tập CKOS (mỗi bộ sưu tập
+ * 1 card `collection-${slug}`, số lượng ăn theo `ckos.collections` thật,
+ * không hardcode số 2). Gộp về 1 lưới/1 state để người dùng thấy TOÀN BỘ
+ * nguồn tài nguyên ở 1 nơi duy nhất, không phải lục 2 khu vực khác nhau
+ * (trước đây "6 nguồn tài nguyên" và "Bộ sưu tập tri thức" là 2 khối
+ * tách rời, mỗi khối 1 kiểu thẻ khác nhau — đã gộp cho gọn/nhất quán).
+ */
+type LibraryFilterKey = ResourceCategoryKey | `collection-${string}`;
+
+const COLLECTION_CARD_STYLE: IconStyle = {
+  bg: "linear-gradient(145deg,#14b8a6,#0f766e)",
+  icon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+      <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
+    </svg>
+  ),
+};
+
 const STATUS_STYLE: Record<WorkspaceProject["status"], { label: string; pillBg: string; pillColor: string; fill?: string }> = {
   in_progress: { label: "Đang thực hiện", pillBg: "var(--violet-light)", pillColor: "var(--violet)" },
   completed: { label: "Hoàn thành", pillBg: "#e6f7ed", pillColor: "#189a52", fill: "#189a52" },
@@ -551,14 +570,16 @@ export function HocVienAiClient({
 
   // Tab "Hệ tri thức"
   const [ckosVisibleCount, setCkosVisibleCount] = useState(4);
-  // Tab "Thư viện của tôi"
-  const [libChip, setLibChip] = useState(0);
   // Tab "AI Workspace"
   const [projTab, setProjTab] = useState(0);
   const [viewMode, setViewMode] = useState(0);
   const [starOff, setStarOff] = useState<Record<string, boolean>>({});
-  // Tab "Thư viện tài nguyên"
-  const [resourceFilter, setResourceFilter] = useState<ResourceCategoryKey | null>(null);
+  // Tab "Thư viện tài nguyên" — 1 state filter DUY NHẤT cho cả lưới 8 nguồn
+  // (6 nguồn tài nguyên tĩnh + N bộ sưu tập CKOS động) — key là
+  // `ResourceCategoryKey` cho 6 nguồn tĩnh, hoặc `collection-${slug}` cho
+  // bộ sưu tập CKOS. Gộp về 1 state (thay vì 2 state rời `resourceFilter`/
+  // `libChip` như trước) để lưới chỉ có ĐÚNG 1 card active tại 1 thời điểm.
+  const [libraryFilter, setLibraryFilter] = useState<LibraryFilterKey | null>(null);
   const [openResourceKey, setOpenResourceKey] = useState<string | null>(null);
   const [promptCopiedKey, setPromptCopiedKey] = useState<string | null>(null);
 
@@ -568,12 +589,6 @@ export function HocVienAiClient({
   };
 
   const latestDocs = ckos.documents.slice(0, ckosVisibleCount);
-  const libraryChips = ["Tất cả", ...ckos.collections.map((c) => c.title)];
-  const seedsByCollection = new Map(ckos.collections.map((c) => [c.slug, c] as const));
-  const visibleSeeds =
-    libChip === 0 ? ckos.seeds : ckos.seeds.filter((s) => s.collectionSlug === ckos.collections[libChip - 1]?.slug);
-  const beginnerCount = ckos.seeds.filter((s) => s.difficulty === Difficulty.BEGINNER).length;
-  const advancedCount = ckos.seeds.filter((s) => s.difficulty === Difficulty.ADVANCED).length;
 
   // Tab "Thư viện tài nguyên" — gộp 6 nguồn thật (Prompt/SOP/Resource/Best
   // Practice/Case Study/Blog AI) về cùng 1 shape `ResourceItem`. KHÔNG còn
@@ -649,7 +664,42 @@ export function HocVienAiClient({
     },
     {} as Record<ResourceCategoryKey, number>,
   );
-  const visibleResourceItems = resourceFilter ? resourceItems.filter((item) => item.category === resourceFilter) : resourceItems;
+
+  // Lưới "N nguồn tài nguyên" — 6 card tĩnh + 1 card/bộ sưu tập CKOS (tăng
+  // theo đúng số bộ sưu tập thật, không hardcode "8"). Mỗi bộ sưu tập đếm
+  // số bài học (seed) thuộc về nó qua `collectionSlug`.
+  const libraryCards = [
+    ...(Object.keys(RESOURCE_CATEGORY_LABEL) as ResourceCategoryKey[]).map((key) => ({
+      key: key as LibraryFilterKey,
+      label: RESOURCE_CATEGORY_LABEL[key],
+      count: resourceCountByCategory[key] ?? 0,
+      style: RESOURCE_CATEGORY_STYLE[key],
+    })),
+    ...ckos.collections.map((col) => ({
+      key: `collection-${col.slug}` as LibraryFilterKey,
+      label: col.title,
+      count: ckos.seeds.filter((s) => s.collectionSlug === col.slug).length,
+      style: COLLECTION_CARD_STYLE,
+    })),
+  ];
+
+  const activeCollection = libraryFilter?.startsWith("collection-")
+    ? ckos.collections.find((c) => `collection-${c.slug}` === libraryFilter)
+    : undefined;
+  const activeResourceCategory =
+    libraryFilter && !activeCollection ? (libraryFilter as ResourceCategoryKey) : null;
+  const activeCollectionSeeds = activeCollection
+    ? ckos.seeds.filter((s) => s.collectionSlug === activeCollection.slug)
+    : [];
+  const libraryFilterLabel = activeCollection
+    ? activeCollection.title
+    : activeResourceCategory
+      ? RESOURCE_CATEGORY_LABEL[activeResourceCategory]
+      : "Tất cả tài nguyên";
+
+  const visibleResourceItems = activeResourceCategory
+    ? resourceItems.filter((item) => item.category === activeResourceCategory)
+    : resourceItems;
   const openResource = resourceItems.find((item) => item.key === openResourceKey) ?? null;
   const openPrompt = openResource?.category === "prompt" ? resourceLibrary.prompts.find((p) => p.id === openResource.id) : undefined;
   const openSop = openResource?.category === "sop" ? resourceLibrary.sops.find((s) => s.id === openResource.id) : undefined;
@@ -1624,27 +1674,26 @@ export function HocVienAiClient({
 
                 <div className="aiw">
                   <div className="section-head">
-                    <h3>6 nguồn tài nguyên</h3>
+                    <h3>{libraryCards.length} nguồn tài nguyên</h3>
                   </div>
-                  <div className="grp-grid" style={{ marginTop: 14 }}>
-                    {(Object.keys(RESOURCE_CATEGORY_LABEL) as ResourceCategoryKey[]).map((key) => {
-                      const style = RESOURCE_CATEGORY_STYLE[key];
-                      const active = resourceFilter === key;
+                  <div className="grp-grid" style={{ marginTop: 14, gridTemplateColumns: "repeat(4,1fr)" }}>
+                    {libraryCards.map((card) => {
+                      const active = libraryFilter === card.key;
                       return (
                         <div
                           className="grp-card"
-                          key={key}
+                          key={card.key}
                           onClick={() => {
-                            setResourceFilter(active ? null : key);
+                            setLibraryFilter(active ? null : card.key);
                             setOpenResourceKey(null);
                           }}
                           style={active ? { boxShadow: "0 0 0 2px var(--violet) inset" } : undefined}
                         >
-                          <div className="ico" style={{ background: style.bg }}>
-                            {style.icon}
+                          <div className="ico" style={{ background: card.style.bg }}>
+                            {card.style.icon}
                           </div>
-                          <h5>{RESOURCE_CATEGORY_LABEL[key]}</h5>
-                          <span>{resourceCountByCategory[key] ?? 0} mục</span>
+                          <h5>{card.label}</h5>
+                          <span>{card.count} mục</span>
                         </div>
                       );
                     })}
@@ -1802,16 +1851,56 @@ export function HocVienAiClient({
                         </>
                       )}
                     </div>
+                  ) : activeCollection ? (
+                    <>
+                      <div className="section-head" style={{ marginTop: 18 }}>
+                        <h3>{libraryFilterLabel}</h3>
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setLibraryFilter(null);
+                          }}
+                        >
+                          Xem tất cả →
+                        </a>
+                      </div>
+                      <div className="doc-list" style={{ marginTop: 14 }}>
+                        {activeCollectionSeeds.length === 0 ? (
+                          <div className="empty-hint">Chưa có bài học nào trong bộ sưu tập này.</div>
+                        ) : (
+                          activeCollectionSeeds.map((seed) => (
+                            <Link
+                              key={seed.id}
+                              className="doc-row"
+                              href={`/v2/he-tri-thuc/bai-hoc/${seed.slug}`}
+                              style={{ textDecoration: "none", color: "inherit" }}
+                            >
+                              <div className="ico">
+                                <DocIcon />
+                              </div>
+                              <div className="info">
+                                <h5>{seed.title}</h5>
+                                <div className="meta">
+                                  <span className="doc-tag">Bài học</span>
+                                  {seed.estimatedTime ? <span>{seed.estimatedTime}</span> : null}
+                                </div>
+                              </div>
+                            </Link>
+                          ))
+                        )}
+                      </div>
+                    </>
                   ) : (
                     <>
                       <div className="section-head" style={{ marginTop: 18 }}>
-                        <h3>{resourceFilter ? RESOURCE_CATEGORY_LABEL[resourceFilter] : "Tất cả tài nguyên"}</h3>
-                        {resourceFilter && (
+                        <h3>{libraryFilterLabel}</h3>
+                        {activeResourceCategory && (
                           <a
                             href="#"
                             onClick={(e) => {
                               e.preventDefault();
-                              setResourceFilter(null);
+                              setLibraryFilter(null);
                             }}
                           >
                             Xem tất cả →
@@ -1864,127 +1953,6 @@ export function HocVienAiClient({
                       </div>
                     </>
                   )}
-                </div>
-
-                <div className="stat-row" style={{ marginTop: 24, gridTemplateColumns: "repeat(4,1fr)" }}>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M3 7l2-3h14l2 3M3 7v12a1 1 0 001 1h16a1 1 0 001-1V7M3 7h18" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{ckos.collections.length}</div>
-                      <div className="lbl">Bộ sưu tập</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{ckos.seeds.length}</div>
-                      <div className="lbl">Bài học</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M12 7v5l3 3" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{beginnerCount}</div>
-                      <div className="lbl">Người mới bắt đầu</div>
-                    </div>
-                  </div>
-                  <div className="stat-box">
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="num">{advancedCount}</div>
-                      <div className="lbl">Nâng cao</div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="ckos">
-                  <div className="lib-toolbar">
-                    <div className="filter-row">
-                      {libraryChips.map((label, i) => (
-                        <button key={label} className={i === libChip ? "f-chip active" : "f-chip"} onClick={() => setLibChip(i)}>
-                          {label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Bộ sưu tập tri thức</h3>
-                    </div>
-                    {ckos.collections.length === 0 ? (
-                      <div className="empty-hint">Chưa có bộ sưu tập nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                    ) : (
-                      <div className="folder-grid" style={{ marginTop: 14 }}>
-                        {ckos.collections.map((col) => (
-                          <Link
-                            key={col.slug}
-                            className="folder-card"
-                            href={`/v2/he-tri-thuc/bo-suu-tap/${col.slug}`}
-                            style={{ textDecoration: "none", color: "inherit" }}
-                          >
-                            <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                                <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
-                              </svg>
-                            </div>
-                            <h5>{col.title}</h5>
-                            <span>{ckos.seeds.filter((s) => s.collectionSlug === col.slug).length} bài học</span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Tất cả bài học</h3>
-                    </div>
-                    <div className="doc-list" style={{ marginTop: 14 }}>
-                      {visibleSeeds.length === 0 ? (
-                        <div className="empty-hint">Chưa có bài học nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                      ) : (
-                        visibleSeeds.map((seed) => (
-                          <Link
-                            key={seed.id}
-                            className="doc-row"
-                            href={`/v2/he-tri-thuc/bai-hoc/${seed.slug}`}
-                            style={{ textDecoration: "none", color: "inherit" }}
-                          >
-                            <div className="ico">
-                              <DocIcon />
-                            </div>
-                            <div className="info">
-                              <h5>{seed.title}</h5>
-                              <div className="meta">
-                                <span className="doc-tag">
-                                  {seedsByCollection.get(seed.collectionSlug)?.title ?? "Bài học lẻ"}
-                                </span>
-                                {seed.estimatedTime ? <span>{seed.estimatedTime}</span> : null}
-                              </div>
-                            </div>
-                          </Link>
-                        ))
-                      )}
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
