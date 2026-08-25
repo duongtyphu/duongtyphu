@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 import { getAcademyFeaturedCourses, getAcademyPaths, getAcademyProgress } from "./live-academy";
 
@@ -161,8 +161,8 @@ export async function getJourneyOverview(): Promise<JourneyOverview> {
   }
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
+  const user = await getCachedAuthUser();
+  const userId = user?.id;
   if (!userId) return base;
 
   const [{ data: lessonRows }, { data: reflectionRows }, { data: capsuleRows }, { data: badgeRows }] = await Promise.all([

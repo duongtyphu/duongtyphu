@@ -707,6 +707,103 @@ cuộn xuống cuối, bấm "Companion qua hình ảnh →" → xác nhận ở
 xuyên suốt (không nhảy sang `/portal/*`); (4) topbar "Sứ mệnh Companion"/
 "Bộ nhớ & Cá nhân hoá" giờ căn phải đúng như trang chủ.
 
+## Sửa nguyên nhân gốc — Portal 2.0 tải chậm + có thể chính là nguyên nhân crash "Đã có lỗi xảy ra"
+
+Founder báo thêm 2 điều liên quan: (1) "chuyển mục thì tải rất chậm" trên
+2.0 so với 1.0, "muốn tải trang v2 phải ngay tức thì"; (2) chat Companion
+**vẫn** lỗi trang dù bản vá "Thử lại" (`window.location.reload()`) trước
+đó đã giúp phục hồi được — tức lớp phòng thủ hoạt động đúng nhưng crash
+GỐC vẫn xảy ra, và **không xảy ra trên 1.0**. Đã audit sâu để tìm nguyên
+nhân thật thay vì chỉ vá lớp phòng thủ thêm 1 lần nữa.
+
+**Phát hiện gốc rễ (đọc trực tiếp ~20 file, không suy đoán):** gần như MỌI
+trang `/v2/*` gọi `getPremiumStatus()` (1 lần `auth.getUser()` — xác thực
+JWT bằng 1 request MẠNG THẬT tới Supabase Auth, không rẻ như đọc cookie)
+RỒI GỌI LẠI `auth.getUser()` LẦN NỮA, ĐỘC LẬP, trong chính hàm `live-*.ts`
+riêng của trang đó (`getAcademyProgress()`, `getAccountData()`,
+`getAffiliateOverview()`, `getLearningLogData()`, `getPremiumPlanMemberSummary()`,
+`getWorkspaceLimits()`, `getGreetingState()`, `listConversations()`/
+`getConversationMessages()`...) — **2, có nơi 3 lần xác thực THẬT GIỐNG HỆT
+NHAU nối tiếp nhau trong CÙNG 1 lượt render 1 trang**, cộng thêm 1 lần
+`middleware.ts` đã làm trước đó cho MỌI request `/v2/*` (kể cả prefetch).
+`/v2/bo-nho-ca-nhan-hoa/page.tsx` là ca nặng nhất — gọi `getPremiumStatus()`
+XONG rồi tự mở 1 client Supabase khác gọi `auth.getUser()` lần 2 ngay bên
+dưới, hoàn toàn không cần thiết.
+
+**Đây chính là nguyên nhân khiến 2.0 chậm hơn 1.0** (1.0 không có tầng
+`getPremiumStatus()`/`live-*.ts` nào gọi lặp lại kiểu này) — mỗi lần
+chuyển trang phải chờ thêm 2-3 vòng round-trip mạng không cần thiết tới
+Supabase Auth, TRƯỚC KHI trang bắt đầu fetch dữ liệu thật của chính nó.
+
+**Manh mối nối sang bug crash:** `auth.getUser()` KHÔNG chỉ trả lỗi qua
+`{data, error}` như phần lớn API Supabase khác — nó CÓ THỂ THROW thật.
+Xác nhận bằng chứng cụ thể qua Vercel runtime logs (không suy đoán): lỗi
+duy nhất từng ghi nhận trong dự án ở route `/middleware` là
+`AuthApiError: Invalid Refresh Token: Refresh Token Not Found` — bắt được
+dưới dạng EXCEPTION, không phải giá trị trả về. **Không có `try/catch`
+nào bọc quanh bất kỳ lần gọi `auth.getUser()` nào** (kể cả trong
+`middleware.ts`) trước bản vá này. Với tần suất gọi 3-4 lần/trang như
+trên, xác suất 1 trong số đó gặp đúng lúc refresh token hết hạn/mạng chập
+chờn (rất dễ xảy ra khi phiên đăng nhập kéo dài) rồi THROW thay vì trả lỗi
+mềm — là đủ để: (a) nếu throw trong `middleware.ts` → crash cả Edge
+Function (lỗi hạ tầng Vercel, nặng hơn); (b) nếu throw trong 1 hàm
+`live-*.ts` đang chạy trong Server Component → đúng chính xác cơ chế
+`/v2/error.tsx` bắt được ("Đã có lỗi xảy ra"). Gọi càng nhiều lần, xác
+suất trúng càng cao — khớp đúng lý do BUG CHỈ XUẤT HIỆN Ở 2.0 (1.0 gọi
+`auth.getUser()` ít hơn hẳn, không có tầng gọi lặp).
+
+**Đã sửa tận gốc theo 2 lớp, không phải vá thêm 1 lớp phòng thủ mới:**
+
+1. **Dedupe** — `src/lib/supabase-server.ts` thêm `getCachedAuthUser()`,
+   bọc `cache()` (React, KHÔNG phải `unstable_cache` của Next.js — hàm đó
+   cache XUYÊN SUỐT nhiều request, sai cho dữ liệu theo phiên đăng nhập).
+   `cache()` dedupe ĐÚNG 1 lượt render — gọi hàm này ở 5 nơi khác nhau
+   trong cùng 1 trang giờ chỉ tốn ĐÚNG 1 lần gọi mạng thật. Đã thay thế
+   toàn bộ `getSupabaseServer()` + `auth.getUser()` tự viết riêng bằng
+   `getCachedAuthUser()` ở 13 file: `premium-access.ts` (dùng bởi MỌI
+   trang `/v2/*`), `bo-nho-ca-nhan-hoa/page.tsx`, `account-data.ts`,
+   `live-academy.ts`, `live-affiliate.ts`, `live-badges.ts`,
+   `live-journey-overview.ts`, `live-learning-log.ts`, `live-premium-v2.ts`,
+   `live-workspace.ts`, `live-greeting.ts`, `v2/auth.ts`,
+   `portal/companion/actions.ts` (dùng chung 1.0/2.0 — `listConversations()`/
+   `getConversationMessages()` cũng hưởng lợi).
+2. **Chống throw** — `getCachedAuthUser()` bọc `try/catch`, coi lỗi xác
+   thực tạm thời (throw) như "chưa đăng nhập" (`null`) thay vì để lan ra
+   ngoài — mọi nơi gọi hàm này đã xử lý `null` an toàn từ trước (honest
+   fallback), không cần sửa thêm gì downstream. `middleware.ts` cũng bọc
+   `try/catch` tương tự quanh `supabase.auth.getUser()` (lớp NẶNG hơn —
+   throw ở đây làm crash cả Edge Function, không chỉ 1 trang).
+
+**Chưa sửa (ngoài phạm vi, cân nhắc sau nếu cần):** `middleware.ts` vẫn
+gọi `auth.getUser()` riêng biệt, KHÔNG dedupe được với các lần gọi trong
+Server Component (khác runtime/pha request — middleware chạy Edge Runtime
+trước khi Next.js bắt đầu render, `cache()` không bắc cầu qua ranh giới
+này). Đây là chi phí còn lại, áp dụng như nhau cho cả 1.0 và 2.0 — không
+phải nguyên nhân gây lệch hiệu năng giữa 2 bản, nên không phải ưu tiên
+của đợt sửa này.
+
+**Verify:** `tsc --noEmit`/`eslint src` sạch (0 lỗi, 18 warning có sẵn từ
+trước), `vitest run` 495/495 pass (1 test file cập nhật mock —
+`premium-access.test.ts` thêm mock `getCachedAuthUser`). `rm -rf .next &&
+npm run build` sạch. `next start` xác nhận `/`, `/login`, `/portal`,
+`/v2/companion`, `/v2/trang-chu` đều `200`, log server sạch (không tính
+cảnh báo workspace-root có sẵn, không liên quan).
+
+**Giới hạn trung thực — 2 điều CHƯA đo được bằng số liệu thật:**
+1. Không đo được mức độ nhanh hơn cụ thể (sandbox không có Supabase thật
+   để so sánh thời gian trước/sau) — chỉ khẳng định được về mặt kiến trúc:
+   số lần gọi mạng tới Supabase Auth mỗi lượt tải trang `/v2/*` giảm từ
+   2-4 lần xuống đúng 1 lần. Founder tự cảm nhận lại trên Preview URL.
+2. Giả thuyết "tần suất gọi cao → dễ trúng lúc throw → crash" là suy luận
+   có căn cứ (bằng chứng log thật + đọc code xác nhận không có try/catch
+   nào) nhưng CHƯA có stack trace trực tiếp từ đúng lần crash khi chat để
+   xác nhận 100% đây là cùng 1 nguyên nhân với bug "Đã có lỗi xảy ra" khi
+   chat. Nếu sau bản vá này Founder VẪN gặp lại đúng lỗi đó, đây sẽ là
+   bằng chứng cần điều tra tiếp — lúc đó rất cần Founder chụp lại đúng
+   dòng lỗi trong Console trình duyệt (F12) ngay lúc xảy ra, vì đó là mảnh
+   duy nhất chưa lấy được từ mọi hướng chẩn đoán đã thử (Vercel runtime
+   logs, Supabase data, đọc toàn bộ code liên quan).
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

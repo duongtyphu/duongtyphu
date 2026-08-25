@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getCachedAuthUser } from "@/lib/supabase-server";
 import { getWelcomeState, getWelcomeMessage, type WelcomeState } from "@/lib/portal/warmth-engine";
 import { getLifeMomentLine } from "@/lib/portal/life-moments";
 
@@ -36,9 +36,7 @@ export async function getGreetingState(): Promise<GreetingState> {
     return FALLBACK;
   }
   try {
-    const supabase = await getSupabaseServer();
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
+    const user = await getCachedAuthUser();
     const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
     const welcomeState = getWelcomeState({
       createdAt: user?.created_at ? new Date(user.created_at) : undefined,

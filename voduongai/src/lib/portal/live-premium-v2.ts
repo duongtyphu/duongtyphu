@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { getSupabasePublic } from "@/lib/supabase";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 /**
  * Nguồn dữ liệu THẬT cho `/v2/premium` (Bước F) — thay 2 khối bịa lớn nhất
@@ -140,9 +140,9 @@ export async function getPremiumPlanMemberSummary(): Promise<PremiumPlanMemberSu
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return EMPTY_PLAN_SUMMARY;
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
-  const email = userData.user?.email;
+  const user = await getCachedAuthUser();
+  const userId = user?.id;
+  const email = user?.email;
   if (!userId || !email) return EMPTY_PLAN_SUMMARY;
 
   const [{ data: member }, { data: lastOrder }] = await Promise.all([

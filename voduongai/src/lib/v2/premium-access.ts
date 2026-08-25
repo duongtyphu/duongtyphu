@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 /**
  * BƯỚC D — Trạng thái Premium runtime cho toàn bộ Portal 2.0.
@@ -59,10 +59,10 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
   }
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
-  const email = userData.user?.email ?? null;
-  const fullName = (userData.user?.user_metadata?.full_name as string | undefined) ?? null;
+  const user = await getCachedAuthUser();
+  const userId = user?.id;
+  const email = user?.email ?? null;
+  const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   if (!userId) return FREE_STATUS;
 
   // RLS `members can read own row` cho phép đọc chính dòng của mình.

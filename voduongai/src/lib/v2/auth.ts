@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 export type V2Session = {
   userId: string;
@@ -41,8 +41,7 @@ export async function getV2Session(): Promise<V2Session | null> {
 
   try {
     const supabase = await getSupabaseServer();
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
+    const user = await getCachedAuthUser();
     if (!user) return null;
 
     const { data: member } = await supabase

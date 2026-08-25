@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { getSupabaseAdmin, getSupabasePublic } from "@/lib/supabase";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 /**
  * Nguồn thật cho Huy hiệu/Thành tựu (bảng Supabase `badges`/`user_badges`,
@@ -70,8 +70,8 @@ export const getLiveBadges = cache(async (): Promise<LiveBadge[]> => {
 export async function getUserBadges(): Promise<EarnedBadge[]> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
+  const user = await getCachedAuthUser();
+  const userId = user?.id;
   if (!userId) return [];
 
   const [{ data: earned }, badges] = await Promise.all([

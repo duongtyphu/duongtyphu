@@ -1,6 +1,6 @@
 "use server";
 
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 import { revalidatePath } from "next/cache";
 
 const MESSAGE_PAGE_SIZE = 50;
@@ -8,15 +8,18 @@ const TITLE_MAX_LENGTH = 100;
 
 /** Guard giống `getAffiliateOverview()` (`live-affiliate.ts`) — sandbox/môi
     trường chưa cấu hình Supabase KHÔNG được làm crash cả trang, chỉ trả
-    `null` (xử lý như "chưa đăng nhập" trung thực) thay vì throw. */
+    `null` (xử lý như "chưa đăng nhập" trung thực) thay vì throw.
+    `getCachedAuthUser()` — `listConversations()` (Promise.all đầu trang) và
+    `getConversationMessages()` (gọi sau) đều qua đây; dedupe còn 1 lần xác
+    thực mạng thật thay vì 2, cùng lần với `getPremiumStatus()`. */
 async function requireUser() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return null;
   }
   const supabase = await getSupabaseServer();
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) return null;
-  return { supabase, user: data.user };
+  const user = await getCachedAuthUser();
+  if (!user) return null;
+  return { supabase, user };
 }
 
 export type CompanionConversationSummary = {

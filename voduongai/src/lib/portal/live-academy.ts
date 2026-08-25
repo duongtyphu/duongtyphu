@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { getSupabasePublic } from "@/lib/supabase";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 import { getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
 import { awardCourseCompletionBadges } from "@/lib/portal/live-badges";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
@@ -258,8 +258,8 @@ export async function getAcademyProgress(): Promise<AcademyProgress> {
   }
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
+  const user = await getCachedAuthUser();
+  const userId = user?.id;
   if (!userId || totalLessons === 0) {
     return { ...EMPTY_PROGRESS, totalLessons, totalCourses };
   }

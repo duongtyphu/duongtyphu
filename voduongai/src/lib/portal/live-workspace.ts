@@ -1,7 +1,7 @@
 import { cache } from "react";
 
 import { getSupabasePublic } from "@/lib/supabase";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 /**
@@ -240,8 +240,8 @@ export async function getWorkspaceLimits(premium: PremiumStatus): Promise<Worksp
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return base;
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const userId = userData.user?.id;
+  const user = await getCachedAuthUser();
+  const userId = user?.id;
   if (!userId) return base;
 
   const monthStart = new Date();

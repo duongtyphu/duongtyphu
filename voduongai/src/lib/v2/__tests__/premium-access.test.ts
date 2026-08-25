@@ -10,6 +10,7 @@ vi.mock("@/lib/supabase-server", () => ({
     auth: { getUser: getUserMock },
     from: fromMock,
   })),
+  getCachedAuthUser: vi.fn(async () => (await getUserMock()).data.user),
 }));
 
 import { getPremiumStatus } from "@/lib/v2/premium-access";

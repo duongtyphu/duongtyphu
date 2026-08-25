@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 import { buildLifeProfile } from "@/lib/portal/life-profile/life-profile";
 
 /**
@@ -22,8 +22,7 @@ export async function getAccountData() {
     return { user: null, orders: [] as AccountOrder[], now: Date.now(), lifeProfile: buildLifeProfile({ dateOfBirth: null, dateOfBirthHidden: false }) };
   }
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const user = userData.user;
+  const user = await getCachedAuthUser();
   if (!user?.email) {
     return { user, orders: [] as AccountOrder[], now: Date.now(), lifeProfile: buildLifeProfile({ dateOfBirth: null, dateOfBirthHidden: false }) };
   }

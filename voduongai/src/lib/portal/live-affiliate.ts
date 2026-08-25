@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 import { siteConfig } from "@/lib/site";
 
@@ -71,8 +71,7 @@ export async function getAffiliateOverview(): Promise<AffiliateOverview | null> 
   }
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const user = userData.user;
+  const user = await getCachedAuthUser();
   if (!user?.email) return null;
 
   const { data: memberRow } = await supabase

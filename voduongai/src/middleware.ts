@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import type { User } from "@supabase/supabase-js";
 import { ADMIN_LOGIN_PATH, isAdminRoute, isProtectedRoute } from "@/lib/protected-routes";
 
 export async function middleware(request: NextRequest) {
@@ -33,7 +34,23 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const { data } = await supabase.auth.getUser();
+  // `auth.getUser()` có thể THROW thật (không chỉ trả lỗi qua `{data,
+  // error}`) — xác nhận qua Vercel runtime logs: `AuthApiError: Invalid
+  // Refresh Token` từng bắt được đúng ở `/middleware` dưới dạng exception
+  // (refresh token cookie hỏng/hết hạn khi mạng chập chờn giữa lúc có
+  // phiên). Middleware không có error boundary nào bọc quanh — 1 lần
+  // throw ở đây làm CẢ EDGE FUNCTION crash (không phải trang lỗi đẹp của
+  // Next.js, mà lỗi hạ tầng Vercel), khác hẳn lỗi bên trong React render
+  // (được `/v2/error.tsx`/`error.tsx` gốc bắt) — nặng hơn nhiều. Coi như
+  // "chưa đăng nhập" khi throw, để mọi route tiếp tục xử lý honest (redirect
+  // `/login` nếu là route bảo vệ) thay vì crash toàn bộ request.
+  let user: User | null;
+  try {
+    user = (await supabase.auth.getUser()).data.user;
+  } catch {
+    user = null;
+  }
+  const data = { user };
 
   const pathname = request.nextUrl.pathname;
   const isPortalRoute = isProtectedRoute(pathname);

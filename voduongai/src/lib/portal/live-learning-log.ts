@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 /**
  * Nguồn dữ liệu THẬT cho "Nhật ký học tập" 2.0 — `/v2/nhat-ky-hoc-tap`
@@ -87,8 +87,7 @@ export async function getLearningLogData(): Promise<LearningLogData> {
   }
 
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const user = userData.user;
+  const user = await getCachedAuthUser();
 
   const { data: docsRows } = await supabase
     .from("documents")
