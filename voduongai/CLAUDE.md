@@ -885,6 +885,70 @@ xác nhận thấy spinner tím + "Đang tải..." rõ ràng (không còn cảm 
 "đứng hình") trong lúc chuyển; (2) tốc độ chuyển mục tổng thể có nhanh
 hơn cảm nhận trước đó không.
 
+## Sửa nguyên nhân gốc thứ 3 — bật Client Router Cache để chuyển mục "nhanh như đổi tab nội bộ"
+
+Founder so sánh cụ thể: muốn chuyển mục ở Menu nhanh **như đổi tab nội bộ
+1 trang** (vd 7 tab trong `/v2/hoc-vien-ai` — đổi tức thì vì chỉ là
+`useState`, KHÔNG có request mạng nào cả). Đây là thanh chuẩn cao — đổi
+TRANG (khác route hẳn) luôn cần ít nhất 1 request đầu tiên (route mới có
+dữ liệu thật riêng), khác bản chất với đổi tab (0 request). Đã tra đúng
+`node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/staleTimes.md`
+(theo đúng yêu cầu AGENTS.md) trước khi sửa, không đoán.
+
+**Phát hiện:** Next.js có sẵn "Client Router Cache" — giữ lại RSC payload
+đã tải Ở TRÌNH DUYỆT, tái dùng ngay (0 request) nếu quay lại đúng route
+đó trong 1 khoảng thời gian. Nhưng **mặc định của Next.js 15+ cho route
+ĐỘNG** (mọi trang `/v2/*` — đọc session mỗi request) là **TTL = 0 giây**
+(đổi từ 30s xuống 0s kể từ bản 15.0.0, ghi rõ trong "Version History" của
+tài liệu trên) — nghĩa là dù vừa tải xong 1 trang, bấm quay lại NGAY LẬP
+TỨC vẫn tải lại từ đầu, không có bộ nhớ đệm nào cả. Đây là nguyên nhân
+thứ 3, ĐỘC LẬP với 2 nguyên nhân trước (dedupe `auth.getUser()` +
+`loading.tsx`/prefetch) — dù đã sửa cả 2 thì kiểu di chuyển "bấm qua lại
+vài mục quen thuộc" (Companion ↔ Học viện AI ↔ Dự án & Cơ hội...) vẫn
+luôn phải tải lại TOÀN BỘ mỗi lần, không bao giờ đạt cảm giác "như tab".
+
+**Đã sửa** — `next.config.ts` thêm `experimental.staleTimes: {dynamic:
+30, static: 300}`. `dynamic: 30` khôi phục đúng mức Next.js dùng SUỐT
+nhiều năm trước bản 15 (không phải giá trị tự bịa) — quay lại 1 route
+`/v2/*` bất kỳ trong 30 giây tái dùng thẳng dữ liệu đã tải, không gọi lại
+server, đúng cảm giác "tab" Founder muốn cho kiểu dùng phổ biến nhất
+(bấm qua lại vài mục quen thuộc liên tục). `static: 300` giữ nguyên mặc
+định (route đã `router.prefetch()` tường minh — đúng cơ chế mới thêm ở
+sidebar, xem mục "nguyên nhân gốc thứ 2" — đã được ưu ái cache 5 phút).
+
+**Đánh đổi CẦN GHI RÕ (không giấu, đã ghi thẳng trong comment
+`next.config.ts`):** trong đúng 30 giây đó, nếu người dùng sửa dữ liệu ở
+1 trang (vd tạo Mục tiêu mới ở `/v2/muc-tieu`) rồi quay LẠI 1 trang đã
+ghé trước đó có hiển thị dữ liệu liên quan (vd "Mục tiêu hiện tại" ở
+`/v2/companion`), trang đó có thể hiện dữ liệu CŨ tới 30 giây trước khi
+tự làm mới. Đây là đánh đổi tốc độ-vs-tươi mới CÓ CHỦ ĐÍCH, đúng đúng yêu
+cầu "phải tải ngay tức thì" — người dùng có thể F5 thủ công nếu cần thấy
+ngay dữ liệu mới nhất, đúng cách web app thông thường vẫn hoạt động
+(không phải bug, là đặc tính cache).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch — dòng đầu build output xác nhận
+`Experiments (use with caution): · staleTimes` đã bật đúng. `next start`
+xác nhận `/`, `/v2/trang-chu`, `/v2/companion`, `/v2/hoc-vien-ai` đều
+`200`, log sạch.
+
+**Ghi nhận riêng, NGOÀI PHẠM VI đợt sửa này:** build output cũng cảnh báo
+`The "middleware" file convention is deprecated. Please use "proxy"
+instead` (`node_modules/next/dist/docs/01-app/01-getting-started/16-proxy.md`
+có hướng dẫn đầy đủ) — đúng file `src/middleware.ts` vừa sửa ở nguyên
+nhân gốc thứ 1. Đây là cảnh báo có SẴN TỪ TRƯỚC (không phải do đợt sửa
+này gây ra), và đổi hẳn quy ước `middleware` → `proxy` là 1 việc RIÊNG,
+cần audit kỹ khác biệt hành vi trước khi đổi (đây là file gate xác thực
+quan trọng nhất hệ thống, không đổi vội) — chưa làm ở đợt này, chỉ ghi
+lại để không quên.
+
+**Giới hạn trung thực:** sandbox không có Supabase thật nên không đo
+được bằng số liệu cụ thể việc "quay lại 1 route trong 30s có thực sự 0
+request" — chỉ xác nhận đúng cấu hình theo tài liệu chính thức + build
+sạch. Founder tự test trên Preview URL: bấm qua lại 2-3 mục quen thuộc
+liên tục (vd Companion → Học viện AI → Companion) trong vòng 30 giây,
+xác nhận lần quay lại có nhanh hơn hẳn lần đầu không (gần như tức thì).
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

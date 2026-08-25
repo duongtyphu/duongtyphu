@@ -1,6 +1,47 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  /**
+   * Founder yêu cầu chuyển mục ở Menu `/v2/*` phải nhanh như đổi tab NỘI
+   * BỘ 1 trang (vd 7 tab trong `/v2/hoc-vien-ai` — đổi tức thì vì chỉ là
+   * `useState`, không có request mạng nào). Đổi TRANG (khác route hẳn) thì
+   * luôn cần Ít nhất 1 request đầu tiên (route mới cần tải dữ liệu thật
+   * riêng của nó) — nhưng Next.js có "Client Router Cache" giữ lại RSC
+   * payload đã tải ở TRÌNH DUYỆT trong 1 khoảng thời gian, tái dùng ngay
+   * (0 request) nếu quay lại đúng route đó trong khoảng đó — đúng cơ chế
+   * khiến việc "bấm qua lại vài mục quen thuộc" cảm giác gần như tab.
+   *
+   * MẶC ĐỊNH của Next.js 15+ (đã xác nhận qua
+   * `node_modules/next/dist/docs/.../staleTimes.md`, theo đúng yêu cầu
+   * AGENTS.md — không đoán): route ĐỘNG (mọi trang `/v2/*`, đọc session
+   * mỗi request) có TTL cache = 0 giây — nghĩa là dù đã tải 1 lần, quay lại
+   * NGAY LẬP TỨC vẫn tải lại từ đầu. Route đã `router.prefetch()` (đã thêm
+   * ở sidebar 2.0, xem mục "Sửa nguyên nhân gốc thứ 2" trong CLAUDE.md)
+   * mặc định được 5 phút — NHƯNG chỉ áp dụng đúng route vừa hover/focus,
+   * không áp dụng cho route quay lại SAU KHI đã điều hướng đi (cache theo
+   * segment, không phải theo "đã từng ghé qua trong phiên").
+   *
+   * `dynamic: 30` khôi phục đúng mức mặc định Next.js dùng SUỐT nhiều năm
+   * trước bản 15 (đổi về 0 mới là thay đổi gần đây, không phải "chuẩn" duy
+   * nhất) — quay lại 1 route `/v2/*` bất kỳ trong 30 giây tái dùng thẳng
+   * dữ liệu đã tải, KHÔNG gọi lại server. `static: 300` giữ đúng mặc định
+   * (route đã `prefetch()` tường minh).
+   *
+   * Đánh đổi CẦN GHI RÕ (không giấu): trong đúng 30 giây đó, nếu người
+   * dùng sửa dữ liệu ở 1 trang (vd tạo Mục tiêu mới ở `/v2/muc-tieu`) rồi
+   * quay LẠI 1 trang đã ghé trước đó có hiển thị dữ liệu liên quan (vd
+   * "Mục tiêu hiện tại" ở `/v2/companion`), trang đó có thể hiện dữ liệu
+   * CŨ tới 30 giây trước khi tự làm mới. Đây là đánh đổi tốc độ-vs-tươi
+   * mới CÓ CHỦ ĐÍCH, đúng tinh thần Founder yêu cầu ("phải tải ngay tức
+   * thì") — người dùng có thể F5 thủ công nếu cần thấy ngay dữ liệu mới
+   * nhất, đúng cách web app thông thường vẫn hoạt động.
+   */
+  experimental: {
+    staleTimes: {
+      dynamic: 30,
+      static: 300,
+    },
+  },
   async redirects() {
     return [
       { source: "/privacy-policy", destination: "/privacy", permanent: true },
