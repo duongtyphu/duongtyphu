@@ -804,6 +804,87 @@ cảnh báo workspace-root có sẵn, không liên quan).
    duy nhất chưa lấy được từ mọi hướng chẩn đoán đã thử (Vercel runtime
    logs, Supabase data, đọc toàn bộ code liên quan).
 
+## Sửa nguyên nhân gốc thứ 2 — Portal 2.0 tải chậm: thiếu `loading.tsx` + sidebar không prefetch
+
+Founder hỏi lại "tìm nguyên nhân khiến trang V2 tải khá chậm" sau bản vá
+dedupe `auth.getUser()` — tiếp tục audit sâu hơn thay vì dừng ở 1 nguyên
+nhân, tìm ra 2 phát hiện mới, ĐỘC LẬP với bản vá trước (bản trước giảm
+tổng thời gian tải; 2 phát hiện này là về CẢM GIÁC phản hồi tức thì khi
+bấm chuyển mục).
+
+**1 — TOÀN BỘ cây `/v2/*` (50 route `page.tsx`) không có 1 file
+`loading.tsx` nào của riêng nó** (đã `find` xác nhận, không suy đoán) —
+chỉ kế thừa `src/app/loading.tsx` GỐC, vốn style cho NỀN TỐI
+(`text-white/50`, `border-white/20` — đúng cho Landing Page/Portal 1.0
+`.mesh-navy`). Trên nền SÁNG của 2.0 (`--v2-bg: #f7f6fc`), chữ/viền trắng
+gần như VÔ HÌNH — nghĩa là suốt từ trước tới nay, **mỗi lần chuyển trang
+`/v2/*` vẫn ĐÚNG có hiển thị trạng thái loading (không phải bug logic)**,
+nhưng người dùng hoàn toàn không thấy gì — cảm giác app bị đứng/treo
+thay vì "đang tải", đúng khớp với "chờ rất khó chịu" Founder mô tả.
+**Đối chiếu:** `/portal/*` (1.0, 64 route) cũng **0** `loading.tsx` riêng
+— nhưng do cùng dùng nền tối với `loading.tsx` gốc nên không bị vô hình,
+chỉ riêng 2.0 mới lộ ra vấn đề vì đổi hẳn sang nền sáng.
+
+**Đã sửa:** `src/app/v2/loading.tsx` (mới) — Next.js tự cascade 1 file
+này thành Suspense fallback cho TOÀN BỘ 50 route con (không cần thêm
+từng trang), render bên trong `v2/layout.tsx` (đã bọc `data-ui="v2"`) nên
+dùng an toàn token `--v2-violet`/`--v2-bg`/`--v2-muted` — spinner tím
+đúng thương hiệu 2.0, luôn nhìn thấy rõ trên mọi trang (hand-CSS lẫn
+Tailwind thật).
+
+**2 — Sidebar 2.0 điều hướng bằng `<button onClick={() => router.push(...)}>`
+ở TẤT CẢ 3 nơi định nghĩa sidebar** (`PortalV2Shell.tsx` — dùng chung
+~18 trang; `DuAnCoHoiClient.tsx`/`HocVienAiClient.tsx` — 2 trang hand-rolled,
+`hoc-vien-ai` là trang gộp CKOS+Học viện AI+AI Workspace, lượt truy cập
+cao nhất) — **KHÔNG BAO GIỜ prefetch**. Đối chiếu `PortalSidebar.tsx`
+(1.0): dùng `next/link`'s `<Link>` — tự động prefetch route khi vào
+viewport, cho 1 khoảng đầu trước khi người dùng thực sự bấm. `router.push()`
+gọi từ `<button onClick>` thì KHÔNG có cơ chế này — mỗi lần bấm mới BẮT
+ĐẦU toàn bộ pipeline tải (middleware → Server Component fetch dữ liệu)
+đúng lúc bấm, không có "đầu trước" nào cả. Đây là khác biệt kiến trúc THẬT
+giữa 2 bản, giải thích trực tiếp phần "chuyển mục" trong câu Founder báo.
+
+(Đã tra `node_modules/next/dist/docs/01-app/02-guides/prefetching.md`
+trước khi sửa, theo đúng yêu cầu AGENTS.md — bảng "Prefetching static vs.
+dynamic routes" xác nhận: route ĐỘNG như `/v2/*` (đọc session mỗi request)
+chỉ được `<Link>` prefetch tới ranh giới `loading.js` gần nhất — càng
+thêm lý do vì sao mục 1 (thêm `loading.tsx`) và mục 2 (thêm prefetch) BỔ
+SUNG cho nhau, không phải 2 việc tách rời.)
+
+**Đã sửa** — giữ nguyên 100% markup `<button>` (đúng mockup gốc, không đổi
+sang `<a>`/`<Link>` để tránh rủi ro lệch CSS/hành vi "không click lại
+trang đang active"), chỉ thêm `onMouseEnter`/`onFocus` gọi
+`router.prefetch(target)` (API chính thức Next.js cho đúng tình huống
+này — xem "Manual prefetch" trong tài liệu trên) — hover/focus xảy ra
+trước click thật vài trăm ms (thời gian di chuột/tab tới nút), đủ để RSC
+payload tải sẵn phần lớn trước khi người dùng bấm:
+- `PortalV2Shell.tsx`'s `navItem()` + submenu `COMPANION_FAMILY` — sửa
+  tay, 2 vị trí.
+- `DuAnCoHoiClient.tsx`/`HocVienAiClient.tsx` — thêm hàm `prefetchNav()`
+  cạnh `go()` có sẵn, áp dụng cơ học (script Python, đã kiểm tra `tsc`/
+  `eslint`/build sạch sau khi chạy) cho toàn bộ nút `onClick={() => go("X.html")}`
+  — 17 nút (du-an-co-hoi) + 14 nút (hoc-vien-ai).
+
+**Chưa sửa (ngoài phạm vi, cân nhắc sau nếu cần):** 2 nút phụ trong
+`PortalV2Shell.tsx` (nút "Nâng cấp ngay" trong `.promo`, nút
+"Nâng cấp Premium" ở topbar) chưa thêm prefetch — tần suất bấm thấp hơn
+hẳn sidebar chính, không phải trọng tâm "chuyển mục" Founder báo.
+
+**Verify:** `tsc --noEmit`/`eslint src` sạch (0 lỗi, 18 warning có sẵn từ
+trước), `vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch.
+`next start` xác nhận `/v2/trang-chu`/`/v2/companion`/`/v2/du-an-co-hoi`/
+`/v2/hoc-vien-ai`/`/v2/tai-khoan` đều `200`, log server sạch.
+
+**Giới hạn trung thực:** sandbox không có Supabase thật nên không đo được
+thời gian tải trước/sau bằng số liệu cụ thể, và không quan sát được trực
+tiếp khoảnh khắc `loading.tsx` xuất hiện (không có độ trễ mạng thật để
+kéo dài đủ lâu nhìn thấy) — chỉ xác nhận được đúng cơ chế Next.js áp dụng
+đúng theo tài liệu chính thức + build/test sạch. Founder tự cảm nhận lại
+trên Preview URL: (1) bấm chuyển mục ở sidebar bất kỳ trang `/v2/*` nào,
+xác nhận thấy spinner tím + "Đang tải..." rõ ràng (không còn cảm giác
+"đứng hình") trong lúc chuyển; (2) tốc độ chuyển mục tổng thể có nhanh
+hơn cảm nhận trước đó không.
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

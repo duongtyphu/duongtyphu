@@ -153,15 +153,29 @@ export function PortalV2Shell({
    */
   const shouldHidePromo = hidePromo || premium.isPremium;
 
-  const navItem = (htmlFile: string, label: React.ReactNode, icon: React.ReactNode) => (
-    <button
-      className={htmlFile === activeHtmlFile ? "nav-item active" : "nav-item"}
-      onClick={htmlFile === activeHtmlFile ? undefined : () => go(htmlFile)}
-    >
-      {icon}
-      {label}
-    </button>
-  );
+  /**
+   * `router.prefetch()` lúc hover/focus — sidebar dùng `<button onClick>`
+   * (giữ đúng markup gốc, mockup dùng `<button>` chứ không phải `<a>`),
+   * KHÔNG tự động được `next/link` prefetch cho không. Không có bước này,
+   * mỗi lần bấm chuyển mục mới BẮT ĐẦU tải (middleware + Server Component
+   * fetch dữ liệu) đúng lúc bấm — cảm giác "chuyển mục chậm" Founder báo.
+   * Hover/focus xảy ra TRƯỚC click vài trăm ms (di chuột/tab tới nút) —
+   * đủ để RSC payload tải sẵn phần lớn, click chỉ còn hiển thị.
+   */
+  const navItem = (htmlFile: string, label: React.ReactNode, icon: React.ReactNode) => {
+    const target = PORTAL_HREF_MAP[htmlFile];
+    return (
+      <button
+        className={htmlFile === activeHtmlFile ? "nav-item active" : "nav-item"}
+        onClick={htmlFile === activeHtmlFile ? undefined : () => go(htmlFile)}
+        onMouseEnter={target ? () => router.prefetch(target) : undefined}
+        onFocus={target ? () => router.prefetch(target) : undefined}
+      >
+        {icon}
+        {label}
+      </button>
+    );
+  };
 
   return (
     <>
@@ -196,15 +210,20 @@ export function PortalV2Shell({
                 Companion AI
               </button>
               <div className="nav-sub">
-                {COMPANION_FAMILY.map((item) => (
-                  <button
-                    key={item.htmlFile}
-                    className={item.htmlFile === activeHtmlFile ? "nav-item active" : "nav-item"}
-                    onClick={item.htmlFile === activeHtmlFile ? undefined : () => go(item.htmlFile)}
-                  >
-                    {item.label}
-                  </button>
-                ))}
+                {COMPANION_FAMILY.map((item) => {
+                  const subTarget = PORTAL_HREF_MAP[item.htmlFile];
+                  return (
+                    <button
+                      key={item.htmlFile}
+                      className={item.htmlFile === activeHtmlFile ? "nav-item active" : "nav-item"}
+                      onClick={item.htmlFile === activeHtmlFile ? undefined : () => go(item.htmlFile)}
+                      onMouseEnter={subTarget ? () => router.prefetch(subTarget) : undefined}
+                      onFocus={subTarget ? () => router.prefetch(subTarget) : undefined}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
               </div>
             </>
           ) : (

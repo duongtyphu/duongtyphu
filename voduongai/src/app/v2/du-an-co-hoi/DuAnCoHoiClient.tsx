@@ -138,6 +138,14 @@ export function DuAnCoHoiClient({
     if (target) router.push(target);
   };
 
+  /** Prefetch lúc hover/focus (giữ nguyên `<button onClick>`, xem lý do
+      trong `PortalV2Shell.tsx`'s `navItem()`) — trang này chưa dùng shell
+      dùng chung nên sidebar tự chép tay, cần đúng cơ chế tương tự riêng. */
+  const prefetchNav = (htmlFile: string) => {
+    const target = HREF_MAP[htmlFile];
+    if (target) router.prefetch(target);
+  };
+
   const handleTab = (i: number) => {
     const t = TABS[i];
     if (t.href) {
@@ -236,20 +244,26 @@ export function DuAnCoHoiClient({
           </div>
 
           <nav className="main">
-            <button className="nav-item" onClick={() => go("Trang chu Portal.html")}>
+            <button className="nav-item" onClick={() => go("Trang chu Portal.html")}
+              onMouseEnter={() => prefetchNav("Trang chu Portal.html")}
+              onFocus={() => prefetchNav("Trang chu Portal.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M3 10l9-7 9 7v9a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
               </svg>
               Trang chủ
             </button>
-            <button className="nav-item" onClick={() => go("Companion.html")}>
+            <button className="nav-item" onClick={() => go("Companion.html")}
+              onMouseEnter={() => prefetchNav("Companion.html")}
+              onFocus={() => prefetchNav("Companion.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="8" r="4" />
                 <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
               </svg>
               Companion AI
             </button>
-            <button className="nav-item" onClick={() => go("Moi ngay mot y tuong.html")}>
+            <button className="nav-item" onClick={() => go("Moi ngay mot y tuong.html")}
+              onMouseEnter={() => prefetchNav("Moi ngay mot y tuong.html")}
+              onFocus={() => prefetchNav("Moi ngay mot y tuong.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M9 18h6" />
                 <path d="M10 22h4" />
@@ -257,7 +271,9 @@ export function DuAnCoHoiClient({
               </svg>
               Mỗi ngày một ý tưởng
             </button>
-            <button className="nav-item" onClick={() => go("Hoc vien AI.html")}>
+            <button className="nav-item" onClick={() => go("Hoc vien AI.html")}
+              onMouseEnter={() => prefetchNav("Hoc vien AI.html")}
+              onFocus={() => prefetchNav("Hoc vien AI.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M22 10L12 5 2 10l10 5 10-5z" />
                 <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
@@ -272,29 +288,43 @@ export function DuAnCoHoiClient({
               Dự án &amp; Cơ hội
             </button>
             <div className="nav-sub">
-              <button className="nav-item" onClick={() => go("DigiU.html")}>
+              <button className="nav-item" onClick={() => go("DigiU.html")}
+              onMouseEnter={() => prefetchNav("DigiU.html")}
+              onFocus={() => prefetchNav("DigiU.html")}>
                 DigiU
               </button>
-              <button className="nav-item" onClick={() => go("SolarGroup.html")}>
+              <button className="nav-item" onClick={() => go("SolarGroup.html")}
+              onMouseEnter={() => prefetchNav("SolarGroup.html")}
+              onFocus={() => prefetchNav("SolarGroup.html")}>
                 SolarGroup
               </button>
-              <button className="nav-item" onClick={() => go("Ohana.html")}>
+              <button className="nav-item" onClick={() => go("Ohana.html")}
+              onMouseEnter={() => prefetchNav("Ohana.html")}
+              onFocus={() => prefetchNav("Ohana.html")}>
                 Ohana
               </button>
-              <button className="nav-item" onClick={() => go("Cac mo hinh Affilate.html")}>
+              <button className="nav-item" onClick={() => go("Cac mo hinh Affilate.html")}
+              onMouseEnter={() => prefetchNav("Cac mo hinh Affilate.html")}
+              onFocus={() => prefetchNav("Cac mo hinh Affilate.html")}>
                 Các mô hình Affilate
               </button>
-              <button className="nav-item" onClick={() => go("Affilate san giao dich.html")}>
+              <button className="nav-item" onClick={() => go("Affilate san giao dich.html")}
+              onMouseEnter={() => prefetchNav("Affilate san giao dich.html")}
+              onFocus={() => prefetchNav("Affilate san giao dich.html")}>
                 Affilate sàn giao dịch
               </button>
             </div>
-            <button className="nav-item" onClick={() => go("Premium.html")}>
+            <button className="nav-item" onClick={() => go("Premium.html")}
+              onMouseEnter={() => prefetchNav("Premium.html")}
+              onFocus={() => prefetchNav("Premium.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
               </svg>
               Premium
             </button>
-            <button className="nav-item" onClick={() => go("Chuong trinh Affilate.html")}>
+            <button className="nav-item" onClick={() => go("Chuong trinh Affilate.html")}
+              onMouseEnter={() => prefetchNav("Chuong trinh Affilate.html")}
+              onFocus={() => prefetchNav("Chuong trinh Affilate.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="18" cy="5" r="3" />
                 <circle cx="6" cy="12" r="3" />
@@ -303,7 +333,9 @@ export function DuAnCoHoiClient({
               </svg>
               Chương trình Affilate
             </button>
-            <button className="nav-item" onClick={() => go("Cong dong AI.html")}>
+            <button className="nav-item" onClick={() => go("Cong dong AI.html")}
+              onMouseEnter={() => prefetchNav("Cong dong AI.html")}
+              onFocus={() => prefetchNav("Cong dong AI.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="8" cy="8" r="3" />
                 <circle cx="17" cy="9" r="3" />
@@ -314,20 +346,26 @@ export function DuAnCoHoiClient({
           </nav>
 
           <nav className="main">
-            <button className="nav-item" onClick={() => go("Nhat ky hoc tap.html")}>
+            <button className="nav-item" onClick={() => go("Nhat ky hoc tap.html")}
+              onMouseEnter={() => prefetchNav("Nhat ky hoc tap.html")}
+              onFocus={() => prefetchNav("Nhat ky hoc tap.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
               </svg>
               Nhật ký học tập
             </button>
-            <button className="nav-item" onClick={() => go("Hanh trinh cua toi.html")}>
+            <button className="nav-item" onClick={() => go("Hanh trinh cua toi.html")}
+              onMouseEnter={() => prefetchNav("Hanh trinh cua toi.html")}
+              onFocus={() => prefetchNav("Hanh trinh cua toi.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 3" />
               </svg>
               Hành trình của tôi
             </button>
-            <button className="nav-item" onClick={() => go("Khu vuon cua ban.html")}>
+            <button className="nav-item" onClick={() => go("Khu vuon cua ban.html")}
+              onMouseEnter={() => prefetchNav("Khu vuon cua ban.html")}
+              onFocus={() => prefetchNav("Khu vuon cua ban.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
               </svg>
@@ -346,7 +384,9 @@ export function DuAnCoHoiClient({
             </div>
             <h4>Nâng cấp Premium</h4>
             <p>Mở khoá tất cả khoá học nâng cao, tài nguyên độc quyền và đặc quyền.</p>
-            <button onClick={() => go("Premium.html")}>Nâng cấp ngay</button>
+            <button onClick={() => go("Premium.html")}
+              onMouseEnter={() => prefetchNav("Premium.html")}
+              onFocus={() => prefetchNav("Premium.html")}>Nâng cấp ngay</button>
           </div>
         </aside>
 
@@ -355,7 +395,9 @@ export function DuAnCoHoiClient({
             <PortalSearchBox placeholder="Tìm dự án, cơ hội, từ khoá..." variant="box" />
             <div className="topbar-right">
               {!premium.isPremium && (
-                <button className="upgrade-btn" onClick={() => go("Premium.html")}>
+                <button className="upgrade-btn" onClick={() => go("Premium.html")}
+              onMouseEnter={() => prefetchNav("Premium.html")}
+              onFocus={() => prefetchNav("Premium.html")}>
                   <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
                   </svg>
