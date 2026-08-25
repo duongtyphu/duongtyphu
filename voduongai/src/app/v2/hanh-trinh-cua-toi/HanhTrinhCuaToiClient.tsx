@@ -36,9 +36,10 @@
  *     người đạt) — hiện `.empty-hint` trung thực, không bịa 4 huy hiệu mẫu.
  *  7. "Liên kết nhanh" — 4 đích điều hướng THẬT: Nhật ký học tập
  *     (`/v2/nhat-ky-hoc-tap`, đã build), Mục tiêu của tôi
- *     (`/portal/goals` — nơi quản mục tiêu thật, đổi từ
- *     `/v2/chien-luoc-ca-nhan` sau khi trang đó bị xoá khỏi Portal theo
- *     yêu cầu Founder), Khu vườn của bạn/Cộng đồng AI
+ *     (`/v2/muc-tieu` — Bảng Mục tiêu 2.0, đổi từ `/portal/goals` theo yêu
+ *     cầu Founder "không liên kết qua portal 1.0", trước đó từng đổi từ
+ *     `/v2/chien-luoc-ca-nhan` sau khi trang đó bị xoá khỏi Portal), Khu
+ *     vườn của bạn/Cộng đồng AI
  *     (`/v2/khu-vuon-cua-ban`/`/v2/cong-dong-ai` — đúng route đích theo
  *     `PORTAL_HREF_MAP`, sẽ có nội dung khi build tới lượt trong Bước F).
  *  8. Khối `.promo` sidebar — bản thiết kế này dùng minh hoạ đồi núi +
@@ -152,7 +153,7 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
                   <h1>Hành trình của tôi</h1>
                   <p>Theo dõi tiến độ, mục tiêu và thành tựu trên hành trình phát triển cùng AI.</p>
                 </div>
-                <button className="edit-goal-btn" onClick={() => router.push("/portal/goals")}>
+                <button className="edit-goal-btn" onClick={() => router.push("/v2/muc-tieu")}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M11 4H4v16h16v-7" />
                     <path d="M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z" />
@@ -420,7 +421,7 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
                     <path d="M9 6l6 6-6 6" />
                   </svg>
                 </div>
-                <div className="link-row" onClick={() => router.push("/portal/goals")}>
+                <div className="link-row" onClick={() => router.push("/v2/muc-tieu")}>
                   <div className="ico">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />

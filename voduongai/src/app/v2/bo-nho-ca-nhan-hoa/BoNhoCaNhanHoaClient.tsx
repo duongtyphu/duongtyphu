@@ -27,8 +27,8 @@
  *     (số ký ức thuộc chủ đề đó / chủ đề nhiều nhất) — không phải "điểm
  *     quan tâm" bịa.
  *  4. "Mục tiêu đang theo đuổi" (stat card 3) = số goal `active` thật, đọc
- *     `goal-runtime.ts` (cùng nguồn `/portal/goals` — dùng lại y hệt
- *     `/v2/companion` đã làm).
+ *     `goal-runtime.ts` (cùng nguồn Bảng Mục tiêu 2.0 `/v2/muc-tieu` —
+ *     dùng lại y hệt `/v2/companion` đã làm).
  *  5. "Mức độ hiểu bạn" (92%, stat card 4) — KHÔNG CÓ CƠ SỞ THẬT (không có
  *     điểm số "hiểu bạn" nào được tính) — đổi thành trạng thái trung thực
  *     "—" thay vì bịa %.
@@ -42,7 +42,7 @@
  *     vì hiện trạng thái rỗng vĩnh viễn), theo yêu cầu Founder "mục nào
  *     không có nội dung thì loại bỏ".
  *  8. "Cá nhân hoá trải nghiệm" — RÚT còn 2 action-tile có đích thật:
- *     "Cập nhật mục tiêu" → `/portal/goals`, "Phản hồi cho Companion" →
+ *     "Cập nhật mục tiêu" → `/v2/muc-tieu`, "Phản hồi cho Companion" →
  *     `/v2/companion`. Đã BỎ 2 ô "Cập nhật sở thích"/"Thiết lập ngữ cảnh"
  *     (không có trang đích thật ở 2.0, cùng lý do #7) — theo yêu cầu Founder,
  *     không giữ lại link cụt `href="#"` nào.
@@ -264,7 +264,7 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
                   </div>
                 </div>
                 <div className="action-grid">
-                  <div className="action-tile" onClick={() => go("/portal/goals")}>
+                  <div className="action-tile" onClick={() => go("/v2/muc-tieu")}>
                     <div className="ico">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="9" />

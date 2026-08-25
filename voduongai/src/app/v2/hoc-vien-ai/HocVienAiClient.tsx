@@ -39,7 +39,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type {
   CkosCategory,
@@ -134,6 +134,8 @@ function formatRelativeTime(iso: string): string {
 /* ------------------------------------------------------------------- Tabs */
 
 const TABS = ["Hệ tri thức", "Khóa học & Lộ trình", "AI Workspace", "Thư viện tài nguyên"] as const;
+/** Khoá `?tab=` tương ứng từng phần tử `TABS` — dùng cho link ngoài (task #63). */
+const TAB_QUERY_KEYS = ["he-tri-thuc", "khoa-hoc", "ai-workspace", "thu-vien"] as const;
 
 function TabIcon({ index }: { index: number }) {
   switch (index) {
@@ -568,6 +570,18 @@ export function HocVienAiClient({
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
+
+  // Task #63 — "Công cụ yêu thích" ở /v2/companion link thẳng vào tab "AI
+  // Workspace" của trang này qua `?tab=ai-workspace`. Đọc ở `useEffect` (không
+  // phải lazy init của `useState`) để khớp đúng HTML server-render ban đầu
+  // (luôn tab 0), tránh hydration mismatch — chỉ đổi tab sau khi mount xong.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const wanted = params.get("tab");
+    const index = TABS.findIndex((_, i) => TAB_QUERY_KEYS[i] === wanted);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc `window.location.search` thật, không có tương đương SSR
+    if (index >= 0) setTab(index);
+  }, []);
 
   // Tab "Hệ tri thức"
   const [ckosVisibleCount, setCkosVisibleCount] = useState(4);

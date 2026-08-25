@@ -35,6 +35,10 @@ export type CompanionFavoriteTool = {
   id: string;
   name: string;
   category: string;
+  /** URL trang chủ thật của công cụ (cột `tools.website`, qua `getLiveTools()`)
+      — dùng để suy ra favicon thật thay icon danh mục tĩnh (task #63). Rỗng
+      nếu Admin chưa điền, component tự fallback về icon danh mục. */
+  website: string;
 };
 
 export type CompanionFavoriteToolsResult = {
@@ -69,14 +73,14 @@ export async function getCompanionFavoriteTools(
 
     if (matched.length > 0) {
       return {
-        tools: matched.map((t) => ({ id: t.slug, name: t.name, category: t.category })),
+        tools: matched.map((t) => ({ id: t.slug, name: t.name, category: t.category, website: t.website })),
         personalized: true,
       };
     }
   }
 
   return {
-    tools: allTools.slice(0, FAVORITE_TOOL_COUNT).map((t) => ({ id: t.slug, name: t.name, category: t.category })),
+    tools: allTools.slice(0, FAVORITE_TOOL_COUNT).map((t) => ({ id: t.slug, name: t.name, category: t.category, website: t.website })),
     personalized: false,
   };
 }

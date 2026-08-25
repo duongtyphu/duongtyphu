@@ -383,6 +383,125 @@ xác nhận Companion trả lời có "nhắc" tới Sứ mệnh/Điều lệ đ
 trả lời có thể đổi giọng điệu tinh tế, khó test tự động); (3) "Công cụ
 yêu thích" đổi theo nội dung trò chuyện gần nhất.
 
+## Giai đoạn 2 rework — cột phải "Trò chuyện cùng Companion" (đã hoàn tất, task #60-63)
+
+Sau khi Giai đoạn 2 gốc xong, Founder yêu cầu tiếp 4 mục cụ thể cho cột
+phải `/v2/companion`: "Hồ sơ của bạn" phải nối hồ sơ thật; "Mục tiêu hiện
+tại" không được liên kết qua portal 1.0 mà phải tích hợp "Bảng Mục tiêu"
+lên 2.0; "Companion gợi ý cho bạn" đổi sang gợi ý mục khác trong 2.0
+(không còn Blog AI — Founder đã bỏ, sẽ xoá vĩnh viễn); "Công cụ yêu thích"
+phải có logo thật + link đúng nội dung học theo công cụ AI ở Học viện AI.
+
+**#60 — "Hồ sơ của bạn":** vòng tròn `.ring` (trước là 82% cứng trong CSS,
+không có ý nghĩa) đổi thành % tiến độ Học viện AI THẬT
+(`getAcademyProgress()`, `src/lib/portal/live-academy.ts` — cùng nguồn
+`/v2/hoc-vien-ai` tab "Tiến độ của tôi" dùng), `conic-gradient` tính động
+theo `academyProgress.percent`. `.profile-stats` hiện tên/email thật
+(`premium.fullName || premium.email`, "Chưa đăng nhập" nếu
+`!premium.signedIn`), trạng thái Premium thật, và
+`{completedLessons}/{totalLessons} bài học đã hoàn thành`. `page.tsx` thêm
+`getAcademyProgress()` vào `Promise.all()` đầu, truyền prop
+`academyProgress` xuống `CompanionClient`.
+
+**#61 — "Mục tiêu hiện tại" + Bảng Mục tiêu 2.0 (`/v2/muc-tieu`):** xây
+route MỚI (chưa có mockup Claude Design riêng cho "Bảng Mục tiêu" — thiết
+kế theo đúng ngôn ngữ 2.0 đã có, tái dùng token/class của `companion.css`
+qua `<div className="comp">` vì đây là phần mở rộng trực tiếp của
+Companion, không phải chuyển 1:1 từ 1 file `.html` nên KHÔNG áp dụng "6
+điều chỉnh kỹ thuật"):
+- `src/app/v2/muc-tieu/page.tsx` + `MucTieuClient.tsx` — danh sách mục
+  tiêu (card + progress bar + status pill) + form tạo mới INLINE (không
+  tách route `/moi` riêng, giảm 1 lượt điều hướng) — 100% tái dùng
+  `goal-runtime.ts` (Phase 40, Supabase-backed theo `member_id`) không đổi
+  1 dòng logic nào: `hydrateGoalRuntime()`/`seedLandingPageProductionGoal()`/
+  `listGoals()`/`getGoalProgress()`/`createGoalDraft()`/
+  `computeGoalDashboardSummary()`.
+- `src/app/v2/muc-tieu/[goalId]/page.tsx` + `GoalDetailClient.tsx` — chi
+  tiết 1 mục tiêu: thông tin/status/progress, nút "Khởi chạy mục tiêu"
+  (`launchGoal()`), Timeline (`statusHistory`), danh sách Epic→Mission.
+  **Giới hạn đã ghi rõ trong code:** nút "Bắt đầu nhiệm vụ" trong mỗi
+  Mission vẫn gọi `startCompanionWorkspace()` → đưa vào `/portal/workspace`
+  (Portal 1.0, engine Task→Output→Review→Approval→Portfolio thật) — CHƯA
+  có bản 2.0 tương đương, ngoài phạm vi task #61 (đây là hành động SÂU,
+  chỉ chạm sau khi đã vào chi tiết 1 Mission cụ thể, khác yêu cầu gốc của
+  Founder là thẻ tóm tắt ở `/v2/companion` không còn trỏ thẳng
+  `/portal/goals`).
+- `src/app/v2/muc-tieu/muc-tieu.css` — class mới (`.goal-list`/
+  `.goal-item`/`.status-pill`/`.goal-form`/`.epic-block`/`.mission-row`...),
+  tiền tố `.comp`, dùng lại token màu (`--violet`/`--muted`/`--line`) đã
+  định nghĩa trong `companion.css` (import chéo — cùng kỹ thuật
+  `hoc-vien-ai/HocVienAiClient.tsx` import `ai-workspace.css`).
+- Sidebar/topbar: `PortalV2Shell` với `activeHtmlFile="Companion.html"` +
+  `companionExpanded` — không có mockup riêng nên không có entry
+  `PORTAL_HREF_MAP` mới; sidebar hiện đúng "Trò chuyện cùng Companion"
+  active (xấp xỉ hợp lý, vì trang này là phần mở rộng của Companion).
+- `/v2/companion` (`CompanionClient.tsx`): "Xem tất cả"/"tạo mục tiêu đầu
+  tiên" đổi từ `/portal/goals`/`/portal/goals/new` → `/v2/muc-tieu` (cả
+  2 link giờ trỏ cùng 1 đích, vì trang mới có cả list lẫn form tạo inline).
+- Dọn 2 link `/portal/goals` còn sót (ghi chú trong summary trước) —
+  `BoNhoCaNhanHoaClient.tsx`'s action-tile "Cập nhật mục tiêu" và
+  `HanhTrinhCuaToiClient.tsx`'s `edit-goal-btn`/`link-row` "Mục tiêu của
+  tôi" — cả 3 đổi sang `/v2/muc-tieu`.
+
+**#62 — "Companion gợi ý cho bạn":** bỏ hẳn `getLiveBlogPosts()` (cả ở
+`page.tsx` lẫn `CompanionClient.tsx`) — thay bằng `INTERNAL_SUGGESTIONS`
+(hằng số tĩnh trong `CompanionClient.tsx`, đúng ví dụ Founder nêu): "Mỗi
+ngày một ý tưởng" (`/v2/moi-ngay-mot-y-tuong`), "Học viện AI"
+(`/v2/hoc-vien-ai`), "Dự án & Cơ hội" (`/v2/du-an-co-hoi`) — không phải
+recommendation engine, chỉ là điều hướng nội bộ trung thực (3 đích đều là
+hub thật, luôn có nội dung, không cần dữ liệu server để quyết định hiện/
+ẩn). Nút "Xem thêm gợi ý →"/`/blogai` cũng bỏ hẳn (không còn "xem thêm" vì
+danh sách giờ cố định 3 mục, không phải danh sách nội dung phân trang).
+
+**#63 — "Công cụ yêu thích" — logo thật + link đúng:**
+- `CompanionFavoriteTool` (`live-companion-favorites.ts`) thêm field
+  `website: string` (từ `tools.website`/cột `link` qua `getLiveTools()`,
+  đã có sẵn, chỉ chưa truyền ra ngoài) ở CẢ 2 nhánh (`personalized`/
+  fallback).
+- `CompanionClient.tsx`'s `faviconUrlFor(website)` — suy `hostname` qua
+  `new URL(website).hostname`, dựng URL dịch vụ favicon công khai của
+  Google (`https://www.google.com/s2/favicons?domain=...&sz=64` — không
+  cần API key/hạ tầng upload ảnh mới, đúng giới hạn "dự án chưa có upload
+  thật ở bất kỳ đâu" đã ghi nhận nhiều lần). Trả `null` nếu `website` rỗng/
+  không phải URL hợp lệ (`try/catch`) — `.tool-ico` fallback về
+  `CATEGORY_STYLE` (icon danh mục tĩnh) y hệt trước, KHÔNG bao giờ vỡ giao
+  diện dù link hỏng (`<img>` có `onError` ẩn ảnh, không hiện icon vỡ mặc
+  định trình duyệt).
+- **Đích link đã audit kỹ trước khi quyết định (điều tra bị gián đoạn
+  giữa 2 turn, đã tiếp tục đúng chỗ dừng):** `/v2/hoc-vien-ai` là trang
+  "Học viện AI 2.0" ĐÃ GỘP cả 3 nội dung CKOS + Học viện AI + AI Workspace
+  vào 4 tab nội bộ (xem `HocVienAiClient.tsx`, tab thứ 3 "AI Workspace" —
+  `workspace.groups`/`workspace.favorites`, đọc thật từ bảng `tools` qua
+  `live-workspace.ts`) — ĐÂY chính là "nội dung học theo công cụ AI"
+  Founder nhắc tới, không phải 1 trang riêng nào khác. "Quản lý" và mỗi
+  icon công cụ giờ điều hướng `/v2/hoc-vien-ai?tab=ai-workspace` (trước là
+  `/v2/hoc-vien-ai` trơ, luôn rơi vào tab mặc định "Hệ tri thức").
+- `HocVienAiClient.tsx` thêm đọc `?tab=` — `TAB_QUERY_KEYS` (map song song
+  `TABS`, `["he-tri-thuc","khoa-hoc","ai-workspace","thu-vien"]`) +
+  `useEffect` đổi `tab` SAU KHI mount (không phải lazy init `useState`, để
+  khớp đúng HTML server-render ban đầu — luôn tab 0 — tránh hydration
+  mismatch, cùng kỹ thuật `TrangChuClient.tsx` đã dùng cho lời chào theo
+  giờ trong ngày).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (2 route mới `/v2/muc-tieu`/
+`/v2/muc-tieu/[goalId]` xuất hiện đúng, không route nào biến mất). `next
+start` xác nhận `/v2/companion`/`/v2/muc-tieu`/`/v2/muc-tieu/[id bất kỳ]`/
+`/v2/hoc-vien-ai` đều `200`, HTML server-render đúng: "Chưa đăng nhập"
+(honest, sandbox không có Supabase), cả 3 gợi ý nội bộ (Mỗi ngày một ý
+tưởng/Học viện AI/Dự án & Cơ hội), 0 "blogai" còn sót trong
+`CompanionClient.tsx`, 0 lỗi log server.
+
+**Chưa tự test được** (cùng giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY`/tài khoản đăng nhập thật đã nêu nhiều lần) —
+Founder tự test trên Preview URL: (1) `/v2/companion` với tài khoản có tên
+thật + đang học dở vài bài Học viện AI, xác nhận vòng tròn hồ sơ đúng %,
+tên hiện đúng; (2) tạo 1 mục tiêu mới qua `/v2/muc-tieu`, xác nhận xuất
+hiện đúng ở cả `/v2/companion`'s "Mục tiêu hiện tại" lẫn `/portal/goals`
+(dữ liệu dùng chung `goal-runtime.ts`); (3) bấm vào 1 công cụ trong "Công
+cụ yêu thích", xác nhận logo thật hiện đúng (không phải icon danh mục) và
+`/v2/hoc-vien-ai` mở đúng tab "AI Workspace".
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

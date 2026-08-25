@@ -57,26 +57,38 @@
  *     yêu cầu Founder) — bản thiết kế gốc dùng 4 tab này chỉ đổi trạng thái
  *     active, không có nội dung khác nhau thật sự đằng sau (3 tab còn lại
  *     không có view riêng) nên bỏ hẳn thay vì giữ 1 thanh tab trơ.
- *  5. "Hồ sơ của bạn" (Lv.7/2,450 XP/12 ngày liên tục/28 huy hiệu) — KHÔNG
- *     bịa số: hệ thống không có gamification (Level/XP/badge) nào thật.
- *     Thay bằng trạng thái trung thực, giữ nguyên khung `.ring`/`.profile-stats`.
- *  6. "Mục tiêu hiện tại" — nối `goal-runtime.ts` THẬT (client-side,
- *     localStorage — cùng nguồn `/portal/goals` 1.0 đang dùng, không phải
- *     bịa) qua `listGoals()`/`getGoalProgress()`. Rỗng trung thực nếu chưa
- *     có goal nào.
- *  7. "Companion gợi ý cho bạn" — không có recommendation engine thật; dùng
- *     2 bài viết mới nhất từ bảng `blog` thật (`getLiveBlogPosts()`, cùng
- *     nguồn đã dùng ở AI Workspace 1.0) làm gợi ý nội dung, bỏ hẳn nhãn thời
- *     gian giả ("Thứ 6" — không có lịch webinar thật).
+ *  5. "Hồ sơ của bạn" — TASK #60 (Giai đoạn 2 rework): KHÔNG bịa số
+ *     Level/XP/badge (hệ thống không có gamification thật) — thay bằng hồ
+ *     sơ THẬT của học viên: tên/email (`premium.fullName`/`premium.email`,
+ *     cùng nguồn `ProfileMenu.tsx` dùng), trạng thái Premium, và vòng tròn
+ *     `.ring` giờ hiển thị % tiến độ Học viện AI THẬT
+ *     (`getAcademyProgress()`, `src/lib/portal/live-academy.ts` — cùng
+ *     nguồn `/v2/hoc-vien-ai` dùng cho tab "Tiến độ của tôi") thay vì
+ *     82% cứng trong CSS gốc. 0% trung thực khi chưa đăng nhập/chưa học bài
+ *     nào — không suy diễn.
+ *  6. "Mục tiêu hiện tại" — TASK #61: vẫn nối `goal-runtime.ts` THẬT
+ *     (Phase 40, Supabase-backed theo `member_id`, qua
+ *     `listGoals()`/`getGoalProgress()`) NHƯNG 2 link "Xem tất cả"/"tạo mục
+ *     tiêu đầu tiên" đổi từ `/portal/goals`/`/portal/goals/new` (Portal 1.0)
+ *     sang `/v2/muc-tieu` (Bảng Mục tiêu 2.0 mới, `src/app/v2/muc-tieu/`) —
+ *     đúng yêu cầu Founder "không được liên kết qua trang portal 1.0".
+ *  7. "Companion gợi ý cho bạn" — TASK #62: BỎ HẲN 2 bài Blog AI (Founder
+ *     đã xoá Blog AI, không dùng nữa) — thay bằng gợi ý tĩnh tới các mục
+ *     KHÁC trong chính Portal 2.0 (`INTERNAL_SUGGESTIONS` bên dưới —
+ *     "Mỗi ngày một ý tưởng"/"Học viện AI"/"Dự án & Cơ hội", đúng ví dụ
+ *     Founder nêu) — không phải recommendation engine, chỉ là điều hướng
+ *     nội bộ trung thực (mọi trang đích đều có nội dung thật).
  *  8. "Công cụ yêu thích" — GIAI ĐOẠN 2, mục 2c: ĐỘNG theo cuộc trò chuyện
  *     gần nhất, tái dùng `MentorContext.suggestedTools` đã có sẵn (Sprint
  *     R02) qua `getCompanionFavoriteTools()` (`page.tsx` fetch, xem docblock
- *     đầy đủ trong `live-companion-favorites.ts`) — KHÔNG còn là mảng SVG
- *     tĩnh hoàn toàn tách rời dữ liệu như trước (5 icon trang trí, 2 cặp
- *     trùng tiêu đề). Honest fallback (5 công cụ Published đầu theo `order`)
- *     khi chưa có tín hiệu cá nhân hoá nào — vẫn là dữ liệu THẬT, không bịa.
- *     `title` attribute mỗi icon giờ là TÊN CÔNG CỤ THẬT (trước đây là tên
- *     danh mục lặp lại, không phân biệt được từng công cụ khi hover).
+ *     đầy đủ trong `live-companion-favorites.ts`). TASK #63 (đợt này):
+ *     icon danh mục tĩnh (`CATEGORY_STYLE`) đổi thành LOGO THẬT của từng
+ *     công cụ — favicon suy từ `tools.website` thật qua dịch vụ favicon
+ *     công khai (Google `s2/favicons`, không cần API key/hạ tầng upload
+ *     mới), fallback về `CATEGORY_STYLE` khi công cụ chưa có `website`.
+ *     "Quản lý" giờ trỏ đúng `/v2/hoc-vien-ai?tab=ai-workspace` (tab "AI
+ *     Workspace" — nơi Founder đã xây nội dung học/công cụ theo từng công
+ *     cụ AI, gộp vào Học viện AI 2.0 từ trước) thay vì tab mặc định đầu.
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
@@ -88,7 +100,7 @@ import { COMPANION_MESSAGE_MAX_LENGTH } from "@/lib/portal/companion-chat";
 import { MarkdownLite } from "@/components/portal/companion/chat/MarkdownLite";
 import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 import { getGoalProgress, listGoals, hydrateGoalRuntime } from "@/lib/portal/foundation/goal-runtime";
-import type { BlogPost } from "@/data/blog";
+import type { AcademyProgress } from "@/lib/portal/live-academy";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import type { CompanionFavoriteToolsResult } from "@/lib/portal/live-companion-favorites";
 import type { CompanionMemorySuggestion } from "@/ai/runtime/public-chat-response";
@@ -166,6 +178,58 @@ const DEFAULT_CATEGORY_STYLE: { bg: string; icon: React.ReactNode } = {
   ),
 };
 
+/** Task #62 — gợi ý tĩnh tới các mục KHÁC trong Portal 2.0 (thay 2 bài Blog
+    AI đã bỏ). Cả 3 đích đều là hub thật, luôn có nội dung — không cần dữ
+    liệu server để quyết định hiện/ẩn. */
+const INTERNAL_SUGGESTIONS: { label: string; href: string; icon: React.ReactNode }[] = [
+  {
+    label: "Mỗi ngày một ý tưởng",
+    href: "/v2/moi-ngay-mot-y-tuong",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M9 18h6" />
+        <path d="M10 22h4" />
+        <path d="M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V17a1 1 0 001 1h4a1 1 0 001-1v-.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Học viện AI",
+    href: "/v2/hoc-vien-ai",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Dự án & Cơ hội",
+    href: "/v2/du-an-co-hoi",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+        <rect x="14" y="3" width="7" height="7" rx="1.5" />
+        <rect x="3" y="14" width="7" height="7" rx="1.5" />
+        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      </svg>
+    ),
+  },
+];
+
+/** Task #63 — favicon thật suy từ `tool.website` (dịch vụ favicon công khai
+    của Google, không cần API key/hạ tầng upload riêng). `null` nếu
+    `website` rỗng/không phải URL hợp lệ — component tự fallback về icon
+    danh mục tĩnh (`CATEGORY_STYLE`). */
+function faviconUrlFor(website: string): string | null {
+  if (!website) return null;
+  try {
+    const hostname = new URL(website).hostname;
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=64`;
+  } catch {
+    return null;
+  }
+}
+
 type Msg = CompanionMessageRow & { pending?: boolean };
 
 /** `HH:mm · dd/mm/yyyy` — đúng công thức `formatMessageTimestamp()` của
@@ -204,13 +268,13 @@ export function CompanionClient({
   premium,
   initialConversationId,
   initialMessages,
-  suggestedPosts,
+  academyProgress,
   favoriteTools,
 }: {
   premium: PremiumStatus;
   initialConversationId: string | null;
   initialMessages: CompanionMessageRow[];
-  suggestedPosts: BlogPost[];
+  academyProgress: AcademyProgress;
   favoriteTools: CompanionFavoriteToolsResult;
 }) {
   const router = useRouter();
@@ -602,17 +666,36 @@ export function CompanionClient({
                   <h4>Hồ sơ của bạn</h4>
                 </div>
                 <div className="ring-wrap">
-                  <div className="ring" style={{ background: "var(--violet-light)" }}>
+                  <div
+                    className="ring"
+                    style={{
+                      background: `conic-gradient(var(--violet) 0% ${academyProgress.percent}%, var(--violet-light) ${academyProgress.percent}% 100%)`,
+                    }}
+                  >
                     <div className="ring-inner">
-                      <div className="lv" style={{ fontSize: 12 }}>
-                        —
+                      <div className="lv" style={{ fontSize: 15 }}>
+                        {academyProgress.percent}%
                       </div>
-                      <div className="lv-label">Chưa có dữ liệu</div>
+                      <div className="lv-label">Học viện AI</div>
                     </div>
                   </div>
                   <div className="profile-stats">
+                    <div className="profile-stat">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
+                      </svg>
+                      <b>{premium.signedIn ? premium.fullName || premium.email || "Học viên" : "Chưa đăng nhập"}</b>
+                    </div>
+                    <div className="profile-stat">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 15a4 4 0 100-8 4 4 0 000 8z" />
+                        <path d="M4.2 15a8 8 0 1115.6 0" />
+                      </svg>
+                      {premium.isPremium ? "Thành viên Premium" : "Tài khoản miễn phí"}
+                    </div>
                     <div className="profile-stat" style={{ color: "var(--muted)" }}>
-                      Hệ thống chưa theo dõi cấp độ/điểm kinh nghiệm — số liệu sẽ hiện khi có.
+                      {academyProgress.completedLessons}/{academyProgress.totalLessons} bài học Học viện AI đã hoàn thành
                     </div>
                   </div>
                 </div>
@@ -621,7 +704,7 @@ export function CompanionClient({
               <div className="card">
                 <div className="card-head">
                   <h4>Mục tiêu hiện tại</h4>
-                  <a onClick={() => go("/portal/goals")} style={{ cursor: "pointer" }}>
+                  <a onClick={() => go("/v2/muc-tieu")} style={{ cursor: "pointer" }}>
                     Xem tất cả
                   </a>
                 </div>
@@ -644,7 +727,7 @@ export function CompanionClient({
                 ) : (
                   <div className="empty-hint">
                     Chưa có mục tiêu nào —{" "}
-                    <a onClick={() => go("/portal/goals/new")} style={{ cursor: "pointer" }}>
+                    <a onClick={() => go("/v2/muc-tieu")} style={{ cursor: "pointer" }}>
                       tạo mục tiêu đầu tiên
                     </a>
                     .
@@ -656,30 +739,18 @@ export function CompanionClient({
                 <div className="card-head">
                   <h4>Companion gợi ý cho bạn</h4>
                 </div>
-                {suggestedPosts.length === 0 ? (
-                  <div className="empty-hint">Chưa có gợi ý nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                ) : (
-                  suggestedPosts.map((post) => (
-                    <div className="reco-row" key={post.slug} onClick={() => go(`/blogai/${post.slug}`)}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                      </svg>
-                      {post.title}
-                    </div>
-                  ))
-                )}
-                <a
-                  onClick={() => go("/blogai")}
-                  style={{ display: "block", textAlign: "center", fontSize: "12.5px", fontWeight: 700, marginTop: 10, cursor: "pointer" }}
-                >
-                  Xem thêm gợi ý →
-                </a>
+                {INTERNAL_SUGGESTIONS.map((s) => (
+                  <div className="reco-row" key={s.href} onClick={() => go(s.href)}>
+                    {s.icon}
+                    {s.label}
+                  </div>
+                ))}
               </div>
 
               <div className="card">
                 <div className="card-head">
                   <h4>Công cụ yêu thích</h4>
-                  <a onClick={() => go("/v2/hoc-vien-ai")} style={{ cursor: "pointer" }}>
+                  <a onClick={() => go("/v2/hoc-vien-ai?tab=ai-workspace")} style={{ cursor: "pointer" }}>
                     Quản lý
                   </a>
                 </div>
@@ -689,10 +760,31 @@ export function CompanionClient({
                   <>
                     <div className="tools-grid">
                       {favoriteTools.tools.map((t) => {
+                        const favicon = faviconUrlFor(t.website);
                         const style = CATEGORY_STYLE[t.category] ?? DEFAULT_CATEGORY_STYLE;
                         return (
-                          <div className="tool-ico" style={{ background: style.bg }} key={t.id} title={t.name}>
-                            {style.icon}
+                          <div
+                            className="tool-ico"
+                            style={{ background: favicon ? "#fff" : style.bg, cursor: "pointer" }}
+                            key={t.id}
+                            title={t.name}
+                            onClick={() => go("/v2/hoc-vien-ai?tab=ai-workspace")}
+                          >
+                            {favicon ? (
+                              // eslint-disable-next-line @next/next/no-img-element -- favicon ngoài, dịch vụ công khai, không cần next/image domain allowlist
+                              <img
+                                src={favicon}
+                                alt={t.name}
+                                width={20}
+                                height={20}
+                                style={{ borderRadius: 4 }}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              style.icon
+                            )}
                           </div>
                         );
                       })}
