@@ -26,7 +26,7 @@ không phải audit lại từ đầu):
 
 | # | Hạng mục | Trạng thái `/v2` hiện tại | Việc cần làm |
 |---|---|---|---|
-| 1 | Thêm menu "Mỗi ngày một ý tưởng" (dưới Companion AI, trên Học viện AI); trang chủ rút gọn còn 5 thẻ | **Chưa có.** `nav-config.ts` không có mục này. `TrangChuClient.tsx` hiện có **6** thẻ "Khám phá nhanh" (Companion AI/Hệ tri thức AI/Học viện AI/AI Workspace/Premium/Dự án & Cơ hội) | Thêm route + nav entry mới (chờ mockup riêng — xem "Còn chặn" bên dưới); rút gọn `TrangChuClient.tsx` còn đúng 5 thẻ theo thứ tự đã chốt |
+| 1 | Thêm menu "Mỗi ngày một ý tưởng" (dưới Companion AI, trên Học viện AI); trang chủ rút gọn còn 5 thẻ | **XONG (Giai đoạn 1, commit `06b4192`).** Nav entry thêm vào cả 4 nơi định nghĩa sidebar (`PortalV2Shell.tsx` dùng chung 9 trang + 3 trang hand-rolled `trang-chu`/`du-an-co-hoi`/`hoc-vien-ai`) + `nav-config.ts` + `href-map.ts`. `TrangChuClient.tsx` "Khám phá nhanh" còn đúng 5 thẻ, đúng thứ tự: Companion AI/Mỗi ngày một ý tưởng/Học viện AI/Dự án & Cơ hội/Premium (grid CSS 6→5 cột) | Route `/v2/moi-ngay-mot-y-tuong` hiện là **placeholder honest "đang xây dựng"** (chưa có mockup riêng, Founder gửi sau) — cần thay nội dung thật khi có mockup, giữ nguyên phần khung `PortalV2Shell` |
 | 2a | Companion: ghi nhớ tự động phát hiện + xác nhận 1 chạm | **Chưa có.** `BoNhoCaNhanHoaClient.tsx` chỉ đồng bộ từ Reflection sau khi hoàn thành Output (không phát hiện trong lúc chat); `CompanionClient.tsx` đã bỏ hẳn tab Ghi nhớ trước đó | Xây cơ chế phát hiện khoảnh khắc đáng nhớ ngay trong hội thoại + UI xác nhận 1 chạm |
 | 2b | Nội dung Sứ mệnh Companion (6 khối) vào system prompt chat thật | **Chưa có.** `companion-prompt-builder.ts` dùng thẳng `COMPANION_CHAT_SYSTEM_PROMPT_V1` tĩnh (`companion-chat.system.prompt.ts`) — không đọc nội dung Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian | Port nội dung 6 khối vào system prompt hoặc khối User Context của `companion-prompt-builder.ts` |
 | 2c | "Công cụ yêu thích" động theo người dùng | **Một phần.** `CompanionClient.tsx` lấy 5 công cụ thật từ bảng `tools` theo `order` — dữ liệu thật nhưng KHÔNG cá nhân hoá (không dùng `suggestedTools`/`MentorContext`) | Nối vào `MentorContext.suggestedTools` đã có sẵn |
@@ -56,7 +56,7 @@ blocker trước — chi tiết đầy đủ từng hạng mục xem bảng trê
 gọn phạm vi mỗi giai đoạn):
 0. Duyệt kế hoạch + cập nhật CLAUDE.md (mục này — **đã hoàn tất**).
 1. Trang chủ `/v2/trang-chu` rút gọn 5 thẻ + đặt chỗ menu "Mỗi ngày một ý
-   tưởng" (chưa dựng nội dung trang đó).
+   tưởng" (chưa dựng nội dung trang đó) — **ĐÃ HOÀN TẤT, commit `06b4192`.**
 2. Companion AI lõi: ghi nhớ 1-chạm, port Sứ mệnh Companion vào system
    prompt, nối "Công cụ yêu thích" động, kiểm tra/sửa layout Sứ mệnh
    Companion.
