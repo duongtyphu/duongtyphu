@@ -68,9 +68,15 @@
  *     2 bài viết mới nhất từ bảng `blog` thật (`getLiveBlogPosts()`, cùng
  *     nguồn đã dùng ở AI Workspace 1.0) làm gợi ý nội dung, bỏ hẳn nhãn thời
  *     gian giả ("Thứ 6" — không có lịch webinar thật).
- *  8. "Công cụ yêu thích" — 5 công cụ thật đầu tiên theo `order` trong bảng
- *     `tools` (bản thiết kế chỉ hiện icon, không có tên — giữ đúng, chỉ
- *     thêm `title` attribute cho icon để không hoàn toàn vô nghĩa khi hover).
+ *  8. "Công cụ yêu thích" — GIAI ĐOẠN 2, mục 2c: ĐỘNG theo cuộc trò chuyện
+ *     gần nhất, tái dùng `MentorContext.suggestedTools` đã có sẵn (Sprint
+ *     R02) qua `getCompanionFavoriteTools()` (`page.tsx` fetch, xem docblock
+ *     đầy đủ trong `live-companion-favorites.ts`) — KHÔNG còn là mảng SVG
+ *     tĩnh hoàn toàn tách rời dữ liệu như trước (5 icon trang trí, 2 cặp
+ *     trùng tiêu đề). Honest fallback (5 công cụ Published đầu theo `order`)
+ *     khi chưa có tín hiệu cá nhân hoá nào — vẫn là dữ liệu THẬT, không bịa.
+ *     `title` attribute mỗi icon giờ là TÊN CÔNG CỤ THẬT (trước đây là tên
+ *     danh mục lặp lại, không phân biệt được từng công cụ khi hover).
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
@@ -84,33 +90,27 @@ import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 import { getGoalProgress, listGoals } from "@/lib/portal/foundation/goal-runtime";
 import type { BlogPost } from "@/data/blog";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
+import type { CompanionFavoriteToolsResult } from "@/lib/portal/live-companion-favorites";
+import type { CompanionMemorySuggestion } from "@/ai/runtime/public-chat-response";
+import { saveMemorySuggestion } from "@/lib/portal/companion/memory-suggestion";
 
 import "../inter-gf.css";
 import "./companion.css";
 
-const TOOL_ICONS: { bg: string; icon: React.ReactNode; title: string }[] = [
-  {
+/** Icon/màu theo đúng 6 danh mục thật của bảng `tools` (migration
+    `phase37_ai_workspace_content_e3`, xem CLAUDE.md) — danh mục lạ (chưa có
+    trong 6 cái này) rơi vào `DEFAULT_CATEGORY_STYLE`, không crash. */
+const CATEGORY_STYLE: Record<string, { bg: string; icon: React.ReactNode }> = {
+  "Trợ lý AI": {
     bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
-    title: "Trợ lý AI",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 11.5a8.5 8.5 0 01-8.5 8.5 8.4 8.4 0 01-3.9-.94L3 21l1.5-4.5A8.4 8.4 0 013.5 12 8.5 8.5 0 0112 3.5a8.5 8.5 0 019 8z" />
       </svg>
     ),
   },
-  {
-    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
-    title: "Trợ lý AI",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2.5c2.4 1.8 3.8 4.6 3.8 8.3 0 2-.5 3.8-1.3 5.3l-2.5 2.4-2.5-2.4c-.8-1.5-1.3-3.3-1.3-5.3 0-3.7 1.4-6.5 3.8-8.3z" />
-        <circle cx="12" cy="10" r="1.7" />
-      </svg>
-    ),
-  },
-  {
+  "Viết lách & Nội dung": {
     bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
-    title: "Viết lách & Nội dung",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
         <path d="M4.5 4.5h15v11.5H9l-4.5 4z" />
@@ -118,9 +118,36 @@ const TOOL_ICONS: { bg: string; icon: React.ReactNode; title: string }[] = [
       </svg>
     ),
   },
-  {
+  "Hình ảnh AI": {
+    bg: "linear-gradient(145deg,#ff7ab8,#d6336c)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <path d="M21 15l-5-5L5 21" />
+      </svg>
+    ),
+  },
+  "Video AI": {
+    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="5" width="18" height="14" rx="2" />
+        <path d="M9 9l6 3-6 3z" fill="#fff" stroke="none" />
+      </svg>
+    ),
+  },
+  "Âm thanh AI": {
+    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+        <rect x="9" y="2" width="6" height="11" rx="3" />
+        <path d="M5 10a7 7 0 0014 0M12 17v4M9 21h6" />
+      </svg>
+    ),
+  },
+  "Nghiên cứu & Phân tích": {
     bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    title: "Nghiên cứu & Phân tích",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
         <circle cx="11" cy="11" r="7" />
@@ -128,17 +155,16 @@ const TOOL_ICONS: { bg: string; icon: React.ReactNode; title: string }[] = [
       </svg>
     ),
   },
-  {
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    title: "Nghiên cứu & Phân tích",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="13.5" cy="8.5" r="5.5" />
-        <path d="M9 12.5L3 19M13.5 5v3.5l2.5 1.5" />
-      </svg>
-    ),
-  },
-];
+};
+
+const DEFAULT_CATEGORY_STYLE: { bg: string; icon: React.ReactNode } = {
+  bg: "linear-gradient(145deg,#9791b8,#5f5980)",
+  icon: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.5 6.2a3.8 3.8 0 00-5 4.8l-6 6 2.5 2.5 6-6a3.8 3.8 0 004.8-5l-2.4 2.4-2.1-.6-.6-2.1z" />
+    </svg>
+  ),
+};
 
 type Msg = CompanionMessageRow & { pending?: boolean };
 
@@ -179,11 +205,13 @@ export function CompanionClient({
   initialConversationId,
   initialMessages,
   suggestedPosts,
+  favoriteTools,
 }: {
   premium: PremiumStatus;
   initialConversationId: string | null;
   initialMessages: CompanionMessageRow[];
   suggestedPosts: BlogPost[];
+  favoriteTools: CompanionFavoriteToolsResult;
 }) {
   const router = useRouter();
   const [conversationId, setConversationId] = useState(initialConversationId);
@@ -192,6 +220,10 @@ export function CompanionClient({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  // Giai đoạn 2, mục 2a — ghi nhớ tự động phát hiện + xác nhận 1 chạm.
+  // Chỉ giữ gợi ý của LƯỢT GẦN NHẤT (không xếp chồng nhiều gợi ý cũ).
+  const [memorySuggestion, setMemorySuggestion] = useState<CompanionMemorySuggestion | null>(null);
+  const [memorySaveState, setMemorySaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const bottomRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   // Đếm cục bộ để sinh id tạm cho tin nhắn optimistic — tránh gọi hàm
@@ -282,6 +314,10 @@ export function CompanionClient({
           createdAt: new Date().toISOString(),
         },
       ]);
+      // Giai đoạn 2, mục 2a — API trả `memorySuggestion` khi lượt này có
+      // khoảnh khắc đáng nhớ (status "keep"), `null` khi không có gì.
+      setMemorySuggestion(data.memorySuggestion ?? null);
+      setMemorySaveState("idle");
       requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
     } catch (err) {
       if (err instanceof DOMException && err.name === "AbortError") {
@@ -316,6 +352,18 @@ export function CompanionClient({
     } catch {
       // clipboard không khả dụng — bỏ qua, không có gì để báo lỗi thêm
     }
+  }
+
+  async function handleSaveMemory() {
+    if (!memorySuggestion || memorySaveState !== "idle") return;
+    setMemorySaveState("saving");
+    const result = await saveMemorySuggestion(memorySuggestion);
+    setMemorySaveState(result === "saved" ? "saved" : "error");
+  }
+
+  function handleDismissMemory() {
+    setMemorySuggestion(null);
+    setMemorySaveState("idle");
   }
 
   const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
@@ -435,6 +483,64 @@ export function CompanionClient({
                   </div>
                 ) : null}
                 </div>
+
+                {/* Giai đoạn 2, mục 2a — ghi nhớ tự động phát hiện + xác
+                    nhận 1 chạm. Chỉ hiện khi API vừa báo có khoảnh khắc
+                    đáng nhớ ("keep") ở lượt gần nhất — không tự động lưu,
+                    người dùng phải chủ động bấm "Lưu". */}
+                {memorySuggestion ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 8,
+                      background: "var(--violet-light)",
+                      border: "1px solid var(--violet)",
+                      borderRadius: 12,
+                      padding: "12px 14px",
+                      marginBottom: 10,
+                    }}
+                  >
+                    {memorySaveState === "saved" ? (
+                      <div style={{ fontSize: 12.5, color: "var(--violet-dark)", fontWeight: 700 }}>
+                        Đã lưu vào My Story.
+                      </div>
+                    ) : (
+                      <>
+                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--violet-dark)" }}>
+                          Đây có vẻ là một khoảnh khắc đáng nhớ — lưu vào My Story nhé?
+                        </div>
+                        <div style={{ fontSize: 12.5, color: "var(--text)", fontStyle: "italic" }}>
+                          &quot;{memorySuggestion.content}&quot;
+                        </div>
+                        {memorySaveState === "error" ? (
+                          <div style={{ fontSize: 11.5, color: "#b91c2c" }}>
+                            Chưa lưu được — vui lòng thử lại.
+                          </div>
+                        ) : null}
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button
+                            type="button"
+                            onClick={handleSaveMemory}
+                            disabled={memorySaveState === "saving"}
+                            className="chip"
+                            style={{ background: "var(--violet)", color: "#fff", cursor: "pointer" }}
+                          >
+                            {memorySaveState === "saving" ? "Đang lưu…" : "Lưu vào My Story"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleDismissMemory}
+                            className="chip"
+                            style={{ cursor: "pointer" }}
+                          >
+                            Bỏ qua
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ) : null}
 
                 <div className="chat-input-row">
                   <input
@@ -574,13 +680,27 @@ export function CompanionClient({
                     Quản lý
                   </a>
                 </div>
-                <div className="tools-grid">
-                  {TOOL_ICONS.map((t, i) => (
-                    <div className="tool-ico" style={{ background: t.bg }} key={i} title={t.title}>
-                      {t.icon}
+                {favoriteTools.tools.length === 0 ? (
+                  <div className="empty-hint">Chưa có công cụ nào để gợi ý — nội dung sẽ hiện khi có.</div>
+                ) : (
+                  <>
+                    <div className="tools-grid">
+                      {favoriteTools.tools.map((t) => {
+                        const style = CATEGORY_STYLE[t.category] ?? DEFAULT_CATEGORY_STYLE;
+                        return (
+                          <div className="tool-ico" style={{ background: style.bg }} key={t.id} title={t.name}>
+                            {style.icon}
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
-                </div>
+                    {favoriteTools.personalized ? (
+                      <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 8 }}>
+                        Gợi ý theo cuộc trò chuyện gần nhất của bạn.
+                      </div>
+                    ) : null}
+                  </>
+                )}
               </div>
 
               <div className="help-card">

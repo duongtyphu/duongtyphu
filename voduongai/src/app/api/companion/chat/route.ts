@@ -7,6 +7,7 @@ import { buildCompanionPrompt } from "@/ai/runtime/companion-prompt-builder";
 import { buildPublicChatResponse } from "@/ai/runtime/public-chat-response";
 import type { RuntimeConversation } from "@/ai/runtime/runtime-context";
 import { publishedCatalogProvider } from "@/ai/catalog/catalog-provider";
+import { getCompanionMissionContext } from "@/lib/portal/live-companion-mission";
 
 /**
  * Companion Chat MVP — API DUY NHẤT gửi/nhận tin nhắn thật ở
@@ -44,6 +45,14 @@ import { publishedCatalogProvider } from "@/ai/catalog/catalog-provider";
  *
  * Không streaming (kiến trúc Provider Layer hiện tại chỉ trả JSON đầy đủ,
  * không có SDK/stream nào cài sẵn — đúng phạm vi Sprint cho phép).
+ *
+ * PORTAL 2.0, GIAI ĐOẠN 2 — Sứ mệnh Companion vào system prompt: gọi thêm
+ * `getCompanionMissionContext()` (song song với Catalog) rồi truyền vào
+ * `buildCompanionPrompt()` làm tham số thứ 5 — Companion giờ "biết" đúng
+ * Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian đã
+ * Publish ở `/portal/su-menh-companion`, thay vì persona chung chung
+ * trước đây. Ảnh hưởng CẢ `/portal/companion` (1.0) lẫn `/v2/companion`
+ * (2.0) — cả 2 gọi chung route này (Single Source of Truth).
  */
 
 const FRIENDLY_AI_ERROR = "Companion chưa thể phản hồi lúc này. Vui lòng thử lại.";
@@ -148,14 +157,17 @@ export async function POST(request: Request) {
   const runtimeConversation: RuntimeConversation = {
     turns: [...history, { role: "user", content: trimmedMessage }],
   };
-  const catalog = await publishedCatalogProvider.getCatalog();
+  const [catalog, missionContext] = await Promise.all([
+    publishedCatalogProvider.getCatalog(),
+    getCompanionMissionContext(),
+  ]);
   const { context: runtimeContext, mentorContext } = runCompanionRuntimeEngine({
     conversationId: activeConversationId,
     conversation: runtimeConversation,
     catalog,
   });
 
-  const { prompt } = buildCompanionPrompt(runtimeContext, mentorContext, history, trimmedMessage);
+  const { prompt } = buildCompanionPrompt(runtimeContext, mentorContext, history, trimmedMessage, missionContext);
 
   let replyText = "";
   let isMock = false;
@@ -219,12 +231,26 @@ export async function POST(request: Request) {
   // R01-FIX — response public đi qua đúng 1 ranh giới duy nhất, không
   // nhận RuntimeContext làm tham số nên không thể vô tình trả thêm field
   // nội bộ nào ra ngoài (xem `public-chat-response.ts`).
+  //
+  // GIAI ĐOẠN 2, mục 2a — chỉ tính SẴN 1 projection hẹp {content, type}
+  // (KHÔNG cả `MemoryDecision`/`RuntimeContext`) ngay tại route.ts (nơi
+  // DUY NHẤT được phép đọc `runtimeContext.memory`), rồi mới truyền vào
+  // `buildPublicChatResponse()` qua đúng field đã khai báo tường minh.
+  const memorySuggestion =
+    runtimeContext.memory.decision.status === "keep" && runtimeContext.memory.decision.candidate
+      ? {
+          content: runtimeContext.memory.decision.candidate.content,
+          type: runtimeContext.memory.decision.candidate.type,
+        }
+      : null;
+
   return NextResponse.json(
     buildPublicChatResponse({
       conversationId: activeConversationId,
       userMessage,
       assistantMessage,
       isMock,
+      memorySuggestion,
     })
   );
 }

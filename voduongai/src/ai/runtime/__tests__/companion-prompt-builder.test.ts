@@ -31,6 +31,36 @@ describe("SPRINT R01 — CompanionPromptBuilder: không đổi Persona/Constitut
   });
 });
 
+describe("GIAI ĐOẠN 2 — CompanionPromptBuilder: Sứ mệnh Companion (missionContext)", () => {
+  it("không truyền missionContext → hành vi/thứ tự giữ nguyên 100% như trước", () => {
+    const { context, mentorContext } = runCompanionRuntimeEngine({
+      conversationId: "m1",
+      conversation: convo("Xin chào"),
+    });
+    const result = buildCompanionPrompt(context, mentorContext, [], "Xin chào");
+    expect(result.missionContext).toBe("");
+    expect(result.prompt.startsWith(COMPANION_CHAT_SYSTEM_PROMPT_V1)).toBe(true);
+  });
+
+  it("có missionContext → chèn đúng vị trí giữa System và Runtime Context", () => {
+    const { context, mentorContext } = runCompanionRuntimeEngine({
+      conversationId: "m2",
+      conversation: convo("Xin chào"),
+    });
+    const mission = "Sứ mệnh & bản sắc của Companion (nguồn: trang Sứ mệnh Companion):\nSứ mệnh:\n- Đồng hành cùng bạn học AI.";
+    const result = buildCompanionPrompt(context, mentorContext, [], "Xin chào", mission);
+    expect(result.missionContext).toBe(mission);
+    expect(result.prompt).toContain(mission);
+
+    const systemIdx = result.prompt.indexOf(COMPANION_CHAT_SYSTEM_PROMPT_V1);
+    const missionIdx = result.prompt.indexOf(mission);
+    const runtimeIdx = result.prompt.indexOf("Bối cảnh người học");
+    expect(systemIdx).toBe(0);
+    expect(missionIdx).toBeGreaterThan(systemIdx);
+    expect(missionIdx).toBeLessThan(runtimeIdx);
+  });
+});
+
 describe("SPRINT R01 — CompanionPromptBuilder: User Context phản ánh đúng RuntimeContext", () => {
   it("có goal → userContext nhắc đúng category, không nhắc khi chưa có goal", () => {
     const { context: withGoal, mentorContext: pkg1 } = runCompanionRuntimeEngine({

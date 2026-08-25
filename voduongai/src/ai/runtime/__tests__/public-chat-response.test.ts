@@ -8,15 +8,34 @@ function rowOf(content: string): CompanionMessageRow {
 const FORBIDDEN_KEYS = ["goal", "strategy", "learningPlan", "knowledgeRouting", "memory", "reflection", "prompt"];
 
 describe("SPRINT R01-FIX — Public Chat Response: ranh giới nội bộ/public", () => {
-  it("chỉ trả đúng 4 field hợp đồng cũ, không có field Companion Brain nào khác", () => {
+  it("GIAI ĐOẠN 2 — chỉ trả đúng 5 field hợp đồng (4 cũ + memorySuggestion), không có field Companion Brain nào khác", () => {
     const response = buildPublicChatResponse({
       conversationId: "conv-1",
       userMessage: rowOf("Xin chào"),
       assistantMessage: rowOf("Chào bạn!"),
       isMock: false,
+      memorySuggestion: null,
     });
 
-    expect(Object.keys(response).sort()).toEqual(["assistantMessage", "conversationId", "isMock", "userMessage"].sort());
+    expect(Object.keys(response).sort()).toEqual(
+      ["assistantMessage", "conversationId", "isMock", "memorySuggestion", "userMessage"].sort()
+    );
+  });
+
+  it("memorySuggestion chỉ có đúng 2 field content/type — không lộ reason/confidence/shouldRemember nội bộ của MemoryCandidate", () => {
+    const response = buildPublicChatResponse({
+      conversationId: "conv-1b",
+      userMessage: rowOf("Tôi vừa học được cách viết prompt."),
+      assistantMessage: rowOf("Tuyệt vời!"),
+      isMock: false,
+      memorySuggestion: { content: "Tôi vừa học được cách viết prompt.", type: "learning" },
+    });
+
+    expect(Object.keys(response.memorySuggestion ?? {}).sort()).toEqual(["content", "type"]);
+    const json = JSON.stringify(response);
+    for (const forbidden of ["reason", "confidence", "shouldRemember"]) {
+      expect(json).not.toContain(`"${forbidden}"`);
+    }
   });
 
   it("không chứa bất kỳ key nào trong danh sách cấm (goal/strategy/learningPlan/knowledgeRouting/memory/reflection/prompt)", () => {
@@ -25,6 +44,7 @@ describe("SPRINT R01-FIX — Public Chat Response: ranh giới nội bộ/public
       userMessage: rowOf("Tôi muốn học prompt."),
       assistantMessage: rowOf("Được, mình sẽ giúp bạn."),
       isMock: true,
+      memorySuggestion: null,
     });
 
     for (const key of FORBIDDEN_KEYS) {

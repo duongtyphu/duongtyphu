@@ -32,11 +32,14 @@ import type { RuntimeContext } from "./runtime-context";
 
 export type CompanionPromptResult = {
   systemPrompt: string;
+  /** Portal 2.0, Giai đoạn 2 — nội dung "Sứ mệnh Companion" (6 khối), rỗng
+      ("") khi chưa Publish khối nào (xem `live-companion-mission.ts`). */
+  missionContext: string;
   userContext: string;
   knowledgePackageContext: string;
   conversationContext: string;
-  /** Ghép sẵn theo đúng thứ tự System Prompt → User Context → Knowledge
-      Package → Conversation Context — dùng thẳng cho
+  /** Ghép sẵn theo đúng thứ tự System Prompt → Sứ mệnh Companion → User
+      Context → Knowledge Package → Conversation Context — dùng thẳng cho
       `providerManager.execute()`. */
   prompt: string;
 };
@@ -112,17 +115,24 @@ export function buildCompanionPrompt(
   context: RuntimeContext,
   mentorContext: MentorContext,
   history: CompanionHistoryItem[],
-  userMessage: string
+  userMessage: string,
+  /** Portal 2.0, Giai đoạn 2 — nội dung "Sứ mệnh Companion" (6 khối),
+      lấy từ `getCompanionMissionContext()`. Optional + mặc định rỗng để
+      không phá vỡ các lời gọi hiện có (test cũ, nơi gọi khác nếu có) —
+      "" bị `filter()` loại bỏ nên hành vi/thứ tự các phần còn lại giữ
+      nguyên 100% khi không truyền. */
+  missionContext: string = ""
 ): CompanionPromptResult {
   const systemPrompt = COMPANION_CHAT_SYSTEM_PROMPT_V1;
   const userContext = buildUserContext(context);
   const knowledgePackageContext = buildKnowledgePackageContext(mentorContext);
   const conversationContext = buildConversationContext(history, userMessage);
 
-  // Đúng thứ tự Phần 6: System → Runtime Context → Knowledge Package →
-  // Conversation.
+  // Đúng thứ tự Phần 6 (mở rộng Giai đoạn 2): System → Sứ mệnh Companion →
+  // Runtime Context → Knowledge Package → Conversation.
   const prompt = [
     systemPrompt,
+    missionContext ? `\n${missionContext}` : "",
     `\nBối cảnh người học:\n${userContext}`,
     knowledgePackageContext
       ? `\nTri thức tham khảo (đã Publish, đã kiểm tra quyền truy cập):\n${knowledgePackageContext}`
@@ -133,7 +143,7 @@ export function buildCompanionPrompt(
     .filter((section) => section.length > 0)
     .join("\n");
 
-  return { systemPrompt, userContext, knowledgePackageContext, conversationContext, prompt };
+  return { systemPrompt, missionContext, userContext, knowledgePackageContext, conversationContext, prompt };
 }
 
 export const CompanionPromptBuilder = { build: buildCompanionPrompt };

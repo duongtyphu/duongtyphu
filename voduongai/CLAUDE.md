@@ -59,7 +59,8 @@ gọn phạm vi mỗi giai đoạn):
    tưởng" (chưa dựng nội dung trang đó) — **ĐÃ HOÀN TẤT, commit `06b4192`.**
 2. Companion AI lõi: ghi nhớ 1-chạm, port Sứ mệnh Companion vào system
    prompt, nối "Công cụ yêu thích" động, kiểm tra/sửa layout Sứ mệnh
-   Companion.
+   Companion — **ĐÃ HOÀN TẤT, xem mục "Giai đoạn 2 — Companion AI lõi"
+   ngay dưới đây.**
 3. Layout site-wide (sidebar/topbar cố định khi cuộn — sửa 1 lần, áp dụng
    toàn bộ `/v2/*`) + cấu trúc lại `/v2/hoc-vien-ai` (gỡ AI Workspace, 3
    nhóm 55 bài slide, lưới 13 video, 6 danh mục thư viện, liên kết chéo).
@@ -80,6 +81,99 @@ gọn phạm vi mỗi giai đoạn):
 ý làm hoặc bịa nội dung ngoài phạm vi đã duyệt; số liệu/tên riêng không
 kiểm chứng được (như trường hợp SolarGroup) phải hỏi lại thay vì tự đoán
 là thật hay giả.
+
+## Giai đoạn 2 — Companion AI lõi (đã hoàn tất)
+
+4 mục (2a-2d) đều đã làm, ảnh hưởng chung: `/api/companion/chat` (dùng
+chung bởi CẢ `/portal/companion` 1.0 lẫn `/v2/companion` 2.0 — Single
+Source of Truth, nên sửa 1 chỗ phản ánh cả 2 nơi).
+
+**2a — Ghi nhớ tự động phát hiện + xác nhận 1 chạm.** Phát hiện quan
+trọng khi audit: đây là hệ thống KHÁC hẳn "Living Stories"
+(`story-matching-engine.ts`/`CompanionStoryMoment.tsx`/
+`saveLivingStoryToMyStory()` — nội dung kể sẵn, hiện qua widget nổi, đã
+có 1-chạm từ trước) — 2a nói về `MemoryCandidate`/`decideMemoryDecision()`
+(`ai/memory/`, rút trực tiếp từ CÂU CHAT thật, rule-based) — hệ thống này
+TRƯỚC ĐÓ không hề có đường lưu vào `memory_capsules` nào cả (chỉ dùng nội
+bộ để dựng prompt). Đã xây mới:
+- `public-chat-response.ts` — thêm field `memorySuggestion:
+  {content, type} | null` (projection HẸP của `MemoryCandidate`, không mở
+  lại toàn bộ `MemoryDecision`/`RuntimeContext` — đúng ngoại lệ chính file
+  này đã ghi "KHÔNG thêm field mới trừ khi UI thật sự cần và đã có dữ
+  liệu thật"). 2 test file (`public-chat-response.test.ts`,
+  `r02-integration.test.ts`) cập nhật theo đúng contract mới (5 field thay
+  vì 4) — vẫn giữ nguyên bộ test "không lộ field nội bộ cấm".
+- `route.ts` — tự tính `memorySuggestion` từ `runtimeContext.memory.decision`
+  (chỉ khi `status==="keep"`) ngay tại route.ts (nơi duy nhất được đọc
+  `RuntimeContext` đầy đủ), truyền qua field đã khai báo tường minh.
+- `src/lib/portal/companion/memory-suggestion.ts` (mới) — cầu nối THỨ HAI
+  song song `story-memory.ts` (không gộp, 2 nguồn khác nhau):
+  `saveMemorySuggestion()` ghi `memory_capsules` (`source:
+  "companion_chat"`, mới — phân biệt với `"companion_living_story"` đã
+  có). `MemoryType` (learning/goal/preference/reflection/session) →
+  `MemoryCapsuleKind` gần nghĩa nhất (lesson/milestone/decision/
+  breakthrough — không thêm giá trị enum mới).
+- `CompanionClient.tsx` (`/v2/companion`) — sau mỗi lượt gửi, nếu API trả
+  `memorySuggestion`, hiện 1 card ngay trong khung chat (trích nguyên văn
+  câu chat + nút "Lưu vào My Story"/"Bỏ qua") — KHÔNG tự động lưu.
+
+**2b — Nội dung Sứ mệnh Companion (6 khối) vào system prompt chat thật.**
+`src/lib/portal/live-companion-mission.ts` (mới) —
+`getCompanionMissionContext()` đọc `mission_items`/`philosophy_pairs`/
+`constitution`/`genome`/`evolution`/`timeline` (CHỈ `status='Published'`
+— khác trang Portal hiện không lọc status khi hiển thị, xem lý do trong
+file) qua `getSupabaseAdmin()` (cùng cách `/api/admin/collections/[table]`
+đọc — 6 bảng này chưa xác nhận RLS công khai), format thành text block,
+cache 30s process-local (cùng mức `getPublishedCatalog()`). `companion-
+prompt-builder.ts`'s `buildCompanionPrompt()` thêm tham số thứ 5
+`missionContext` (optional, mặc định "" — không phá test cũ), chèn ngay
+sau System Prompt, trước Runtime Context — thứ tự mới: **System → Sứ
+mệnh Companion → Runtime Context → Knowledge Package → Conversation.**
+
+**2c — "Công cụ yêu thích" động theo người dùng.** Phát hiện quan trọng:
+`TOOL_ICONS` cũ trong `CompanionClient.tsx` là mảng SVG TĨNH HOÀN TOÀN
+(0 kết nối dữ liệu thật, có 2 cặp trùng tiêu đề danh mục) — KHÁC với ghi
+nhận trước đó (nhầm với cách AI Workspace 2.0 làm). `src/lib/portal/
+live-companion-favorites.ts` (mới) — `getCompanionFavoriteTools()` gọi
+LẠI `runCompanionRuntimeEngine()` (read-only, chỉ ghi 1 dòng execution
+log process-local — không side-effect thật) trên cuộc trò chuyện GẦN
+NHẤT đã tải sẵn, lấy `mentorContext.suggestedTools` → join với bảng
+`tools` thật (`getLiveTools()`) qua `id` dạng `tool-${slug}` (đã xác nhận
+đúng shape từ `published-catalog-adapter.ts`). Honest fallback (5 công cụ
+Published đầu theo `order`, vẫn là dữ liệu thật) khi chưa có tín hiệu cá
+nhân hoá nào. `CompanionClient.tsx` đổi `TOOL_ICONS` tĩnh → `CATEGORY_STYLE`
+(map icon/gradient theo đúng 6 danh mục thật của `tools`, có fallback cho
+danh mục lạ) + render theo `favoriteTools` prop từ `page.tsx`.
+
+**2d — Kiểm tra/sửa layout Sứ mệnh Companion.** Đã audit trực quan bằng
+Playwright (`next start` + `SuMenhCompanionContent.tsx`, dùng chung
+`/portal/su-menh-companion` và `/v2/su-menh-companion` — xem mục "Sứ mệnh
+Companion — Việc 6" ở trên) — **KẾT LUẬN: layout KHÔNG bị lỗi.** 4 ảnh
+chụp (top/mid1/mid2/bottom) đều hiển thị đúng bố cục, spacing, gradient,
+footer — sạch, không chồng lấn. Các khối "trống" nhìn thấy (mục 03/04/07/08
+không có nội dung, khối Bộ gene để trống vòng tròn) là do sandbox KHÔNG
+có Supabase cấu hình (6 bảng trả 500 qua `/api/admin/collections/[table]`,
+`useCollection()` fallback về mảng rỗng `[]`) — đúng giới hạn sandbox đã
+ghi nhận nhiều lần trong tài liệu này, KHÔNG phải bug CSS/layout. Founder
+nên tự xem lại `/v2/su-menh-companion` trên Preview URL thật (có Supabase)
+— nếu vẫn thấy vỡ bố cục ở đó, cần báo lại cụ thể (ảnh chụp/khối nào) vì
+nguyên nhân sẽ khác với những gì audit ở đây loại trừ được.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass (4 test mới +
+mở rộng 2 test có sẵn), `rm -rf .next && npm run build` sạch. `next start`
+xác nhận `/v2/companion`, `/v2/su-menh-companion`, `/v2/bo-nho-ca-nhan-hoa`
+đều trả `200`, 0 lỗi log server (ngoài cảnh báo workspace-root có sẵn,
+không liên quan).
+
+**Chưa tự test được:** gửi tin nhắn thật + bấm "Lưu vào My Story" qua UI
+có tài khoản đăng nhập + AI Provider thật (sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY`/API key AI nào) — Founder tự test trên Preview
+URL: (1) chat 1 câu có tín hiệu học tập rõ ràng (vd "Tôi vừa học được
+cách viết prompt") → xác nhận card "Lưu vào My Story" hiện đúng, bấm Lưu
+→ kiểm tra `memory_capsules` có dòng mới `source='companion_chat'`; (2)
+xác nhận Companion trả lời có "nhắc" tới Sứ mệnh/Điều lệ đã Publish (câu
+trả lời có thể đổi giọng điệu tinh tế, khó test tự động); (3) "Công cụ
+yêu thích" đổi theo nội dung trò chuyện gần nhất.
 
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)

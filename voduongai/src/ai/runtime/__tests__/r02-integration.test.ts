@@ -138,8 +138,11 @@ describe("SPRINT R02 — Integration: Goal → KnowledgeNeed → Resolver → Kn
       userMessage: { id: "u1", role: "user", content: "hi", created_at: "2026-01-01T00:00:00.000Z" },
       assistantMessage: { id: "a1", role: "assistant", content: "hello", created_at: "2026-01-01T00:00:00.000Z" },
       isMock: true,
+      memorySuggestion: null,
     });
-    expect(Object.keys(response).sort()).toEqual(["assistantMessage", "conversationId", "isMock", "userMessage"].sort());
+    expect(Object.keys(response).sort()).toEqual(
+      ["assistantMessage", "conversationId", "isMock", "memorySuggestion", "userMessage"].sort()
+    );
   });
 });
 
