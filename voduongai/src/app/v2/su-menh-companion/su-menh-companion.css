@@ -38,8 +38,16 @@
   text-rendering: auto;
 }
 
-.smc a{color:var(--violet);text-decoration:none}
-.smc a:hover{color:var(--violet-dark)}
+/* KHÔNG có rule `.smc a{...}` ở đây (khác các trang `/v2/*` khác) — chrome
+ * (sidebar/topbar) của trang này không có thẻ `<a>` nào (toàn `<button
+ * onClick>`, xem `PortalV2Shell.tsx`), 2 thẻ `<a>` DUY NHẤT trong trang này
+ * nằm trong `SuMenhCompanionContent.tsx` (Tailwind thật, tự set màu chữ
+ * riêng — `text-white`/`text-blue-700`) — 1 rule `.smc a` màu tím ở đây sẽ
+ * đè lên đúng 2 màu đó (đã xảy ra thật, xem bản vá `:not(.smc *)` trong
+ * `v2-tokens.css`), không phải revert lại cho đúng, mà PHÁ mất chủ đích màu
+ * chữ đã chọn (kể cả sau khi `v2-tokens.css` loại trừ `.smc`, rule cục bộ
+ * này vẫn có cùng lỗi nếu tồn tại).
+ */
 .smc .app{display:flex;min-height:100vh}
 .smc .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
 .smc .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}

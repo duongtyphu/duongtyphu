@@ -95,23 +95,32 @@
   box-sizing: border-box;
 }
 
-[data-ui="v2"] h1,
-[data-ui="v2"] h2,
-[data-ui="v2"] h3,
-[data-ui="v2"] h4,
-[data-ui="v2"] h5,
-[data-ui="v2"] h6,
-[data-ui="v2"] p,
-[data-ui="v2"] figure {
+/* `:not(.smc *)` — loại trừ `/v2/su-menh-companion`: đây là trang DUY NHẤT
+ * trong cây `/v2` render nội dung Tailwind THẬT (`SuMenhCompanionContent.tsx`,
+ * dùng chung với `/portal/su-menh-companion` 1.0, xem docblock file đó) thay
+ * vì hand-CSS như 46 trang `/v2/*` còn lại. Reset unlayered này (đúng ý đồ:
+ * luôn thắng `@layer utilities` của Tailwind, xem giải thích Cascade Layers
+ * trong `su-menh-companion.css`) vô tình xoá mất mọi `mt-*`/`mb-*`/`text-*`
+ * màu chữ mà nội dung đó dùng — bug thật đã phát hiện (căn giữa footer bị
+ * lệch, nút "Companion qua hình ảnh" chữ trắng bị đổi thành tím trên nền
+ * gradient tím/cam, gần như không đọc được). */
+[data-ui="v2"] h1:not(.smc *),
+[data-ui="v2"] h2:not(.smc *),
+[data-ui="v2"] h3:not(.smc *),
+[data-ui="v2"] h4:not(.smc *),
+[data-ui="v2"] h5:not(.smc *),
+[data-ui="v2"] h6:not(.smc *),
+[data-ui="v2"] p:not(.smc *),
+[data-ui="v2"] figure:not(.smc *) {
   margin: 0;
 }
 
-[data-ui="v2"] a {
+[data-ui="v2"] a:not(.smc *) {
   color: var(--v2-violet);
   text-decoration: none;
 }
 
-[data-ui="v2"] a:hover {
+[data-ui="v2"] a:hover:not(.smc *) {
   color: var(--v2-violet-dark);
 }
 

@@ -145,15 +145,6 @@ export function SuMenhCompanionContent() {
           </section>
         </div>
 
-        <div className="relative z-10 mx-auto max-w-xl px-6 pb-4 text-center sm:px-10">
-          <Link
-            href="/portal"
-            className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50/60 px-5 py-2 text-sm font-semibold text-blue-700 transition hover:border-blue-200 hover:bg-blue-50"
-          >
-            Companion đang chờ ở Home — mở Gem Home để xem gợi ý hôm nay →
-          </Link>
-        </div>
-
         <div className="mx-auto max-w-3xl px-6 sm:px-10">
           {/* ═══════════════════ LIVING CORE™ — demo các size/state ═══════════════════ */}
           <Reveal className="mt-32">

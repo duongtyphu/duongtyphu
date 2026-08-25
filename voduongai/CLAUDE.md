@@ -155,6 +155,66 @@ mở `/v2/trang-chu` vào buổi sáng/tối để xác nhận dòng phụ dư�
 đúng, và thử với 1 tài khoản đang học dở 1 khoá để xác nhận dòng "Bạn
 đang học dở..." hiện đúng tên khoá + số bài còn lại.
 
+## Bug đã sửa — `/v2/su-menh-companion`: chữ mất tương phản + footer lệch + link 1.0
+
+Founder báo 2 vấn đề (kèm mô tả, không kèm ảnh) trong lúc đang làm Giai đoạn
+2: (1) "màu sắc chữ viết với màu nền không hợp lý", (2) "đoạn ở cuối trang...
+cân chỉnh giữa hàng không bị lệch so với trang" + 1 đoạn "đang liên kết tới
+portal 1.0, yêu cầu xoá bỏ". Đã dùng Playwright chụp toàn trang (không có
+Supabase, sandbox) để xác định chính xác 3 vấn đề — cả 3 hoá ra CÙNG 1 ROOT
+CAUSE.
+
+**Root cause thật (không phải bug riêng của trang này):**
+`src/styles/v2-tokens.css`'s "Reset cục bộ" (`[data-ui="v2"] h1..h6, p,
+figure {margin:0}` + `[data-ui="v2"] a {color: var(--v2-violet)}`) là CSS
+**unlayered** (cố tình — để luôn thắng `@layer utilities` của Tailwind,
+đúng ý đồ cho 46 trang `/v2/*` hand-CSS khác). Nhưng `/v2/su-menh-companion`
+là trang DUY NHẤT trong `/v2` render nội dung **Tailwind thật**
+(`SuMenhCompanionContent.tsx`, dùng chung với `/portal/su-menh-companion`
+1.0) — reset toàn cục này vô tình xoá mất mọi `mt-*`/`mb-*` (Preflight
+`margin:0` "thắng" `.mt-6`/`.mx-auto`... của Tailwind) và đè màu chữ
+`text-white`/`text-blue-700` thành tím (`--v2-violet`) trên MỌI thẻ `<a>`.
+Hậu quả đo được qua Playwright: nút "Companion qua hình ảnh →" (gradient
+xanh-tím-cam) có `color: rgb(109,74,255)` (tím) thay vì trắng — gần như
+không đọc được; đoạn `<p>` cuối footer có `margin-left/right: 0px` (không
+phải giá trị `auto` đã resolve) nên căn lệch trái so với khối nội dung phía
+trên (center 640px thay vì 832px — đúng bằng nửa `max-w-sm`).
+
+`su-menh-companion.css` (CSS riêng trang này) từng có 1 dòng comment giải
+thích ĐÃ CHỦ ĐỘNG bỏ "điều chỉnh 6" (revert Preflight) vì lý do y hệt trên —
+nhưng chỉ bỏ được ở FILE CỦA CHÍNH TRANG NÀY, không huỷ được rule tương tự
+đang tồn tại độc lập ở `v2-tokens.css` (áp dụng site-wide qua `[data-ui="v2"]`,
+không phải riêng trang này). Đồng thời `su-menh-companion.css` còn có 1 dòng
+`.smc a{color:var(--violet)}` THỪA, tự nó cũng gây đúng bug màu chữ — audit
+xác nhận trang này **không có `<a>` nào khác** ngoài 2 thẻ trong
+`SuMenhCompanionContent.tsx` (chrome sidebar/topbar toàn `<button>`, xem
+`PortalV2Shell.tsx`), nên dòng CSS này không có mục tiêu hợp lệ nào.
+
+**Đã sửa (2 file):**
+- `v2-tokens.css` — thêm `:not(.smc *)` vào cả 2 rule reset (margin
+  h1-h6/p/figure, màu `a`) — loại trừ đúng subtree `.smc` (Sứ mệnh
+  Companion 2.0), giữ nguyên hành vi cho 46 trang `/v2/*` khác (không dùng
+  class `.smc`, không bị ảnh hưởng).
+- `su-menh-companion.css` — xoá hẳn `.smc a{...}`/`.smc a:hover{...}` (dòng
+  thừa, không có mục tiêu hợp lệ).
+
+**Đã xoá "đoạn liên kết portal 1.0"** — banner "Companion đang chờ ở Home —
+mở Gem Home để xem gợi ý hôm nay →" (`href="/portal"`) ngay dưới Hero trong
+`SuMenhCompanionContent.tsx` (Single Source of Truth dùng chung 1.0/2.0 —
+xoá ảnh hưởng cả 2 bản, chủ đích vì đây chỉ là banner quảng bá chéo, không
+phải nội dung cốt lõi). **Giữ nguyên** nút "Companion qua hình ảnh →" (trỏ
+`/portal/su-menh-companion/companion-qua-hinh-anh`, 7 trang flipbook thật,
+Admin quản qua `/admin/su-menh-companion/flipbook`) — đây là nội dung thật
+có giá trị, chưa có route `/v2/*` tương đương, khác bản chất với banner đã
+xoá; chỉ sửa màu chữ, không xoá.
+
+**Verify:** `tsc`/`vitest` (495/495) sạch, `rm -rf .next && npm run build`
+sạch. Playwright trước/sau (đo `getComputedStyle`, không chỉ nhìn ảnh):
+màu nút "Companion qua hình ảnh" → `rgb(255,255,255)` (trắng, đúng
+`text-white` gốc); tâm đoạn footer và tâm khối quote phía trên cùng =
+832px (thẳng hàng); `margin-top` đoạn `<p class="mt-6">` mẫu → `24px`
+(đúng, trước là `0px`). Banner "Gem Home" xác nhận biến mất khỏi DOM.
+
 ## Giai đoạn 2 — Companion AI lõi (đã hoàn tất)
 
 4 mục (2a-2d) đều đã làm, ảnh hưởng chung: `/api/companion/chat` (dùng
