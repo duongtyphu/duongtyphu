@@ -35,7 +35,7 @@
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import "../inter-gf.css";
 import "./trang-chu.css";
@@ -43,9 +43,28 @@ import "./trang-chu.css";
 import type { AcademyCourse, AcademyProgress } from "@/lib/portal/live-academy";
 import type { ResourceSuggestion, ResourceSuggestionType } from "@/lib/portal/live-resource-suggestions";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
+import type { GreetingState } from "@/lib/v2/live-greeting";
+import { getWarmthLine } from "@/lib/portal/warmth-engine";
+import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
+
+/** "Portal 2.0 trong một cái nhìn" — 4 số liệu thật, xem docblock ở `page.tsx`. */
+export type PortalStats = {
+  ecosystemCount: number;
+  premiumPlanCount: number;
+  communityChannelCount: number;
+  toolCount: number;
+};
+
+/** "Cơ hội nổi bật" — preview 1 hệ sinh thái thật (`ecosystem_chrome`). */
+export type OpportunityPreview = { slug: "digiu" | "solargroup"; name: string; description: string };
+
+const OPPORTUNITY_HREF: Record<OpportunityPreview["slug"], string> = {
+  digiu: "/v2/du-an-co-hoi/digiu",
+  solargroup: "/v2/du-an-co-hoi/solargroup",
+};
 
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
 const HREF_MAP: Record<string, string> = {
@@ -247,11 +266,17 @@ export function TrangChuClient({
   progress,
   suggestions,
   premium,
+  greeting,
+  stats,
+  opportunities,
 }: {
   courses: AcademyCourse[];
   progress: AcademyProgress;
   suggestions: ResourceSuggestion[];
   premium: PremiumStatus;
+  greeting: GreetingState;
+  stats: PortalStats;
+  opportunities: OpportunityPreview[];
 }) {
   const router = useRouter();
   // `<script>` gốc: `this.classList.toggle('on')` trên #themeSwitch.
@@ -262,6 +287,48 @@ export function TrangChuClient({
     const target = HREF_MAP[htmlFile];
     if (target) router.push(target);
   };
+
+  // GIAI ĐOẠN 1 (rework) — "Companion sống": lời chào theo giờ trong ngày.
+  // Tính CLIENT-SIDE (sau mount, cùng kỹ thuật `CompanionThoughtLine`) vì
+  // giờ máy chủ (UTC) không phản ánh đúng múi giờ thật của người dùng.
+  const [timeLine, setTimeLine] = useState<string | null>(null);
+  useEffect(() => {
+    const hour = new Date().getHours();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc đồng hồ thiết bị thật, không có tương đương SSR
+    if (hour < 12) setTimeLine(getWarmthLine("goodMorning"));
+    else if (hour >= 18) setTimeLine(getWarmthLine("goodEvening"));
+  }, []);
+
+  // Câu suy ngẫm ngắn của Companion (cùng nguồn Thought Seeds thật đã
+  // dùng ở `/portal/companion`/`CompanionThoughtLine`) — chọn 1 lần/lượt ghé.
+  const [thought, setThought] = useState<string | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- chọn 1 lần từ danh sách tĩnh, không có tương đương SSR
+    setThought(getRandomThoughtSeed());
+  }, []);
+
+  // "Hoạt động gần nhất" — khoá đang học dở thật (từ props `courses`/
+  // `progress` đã có sẵn, không gọi thêm dữ liệu mới).
+  const activityLine = useMemo(() => {
+    const inProgress = courses.find((c) => {
+      const done = progress.completedByCourse[c.id] ?? 0;
+      return done > 0 && c.lessonCount > 0 && done < c.lessonCount;
+    });
+    if (!inProgress) return null;
+    const done = progress.completedByCourse[inProgress.id] ?? 0;
+    const remaining = inProgress.lessonCount - done;
+    return `Bạn đang học dở "${inProgress.name}" — còn ${remaining} bài nữa là xong.`;
+  }, [courses, progress]);
+
+  const [welcomeFirstLine, ...welcomeRestLines] = greeting.welcomeMessage.split("\n");
+  const heroSubtitle =
+    greeting.comebackLine ??
+    activityLine ??
+    timeLine ??
+    (welcomeRestLines.length > 0
+      ? welcomeRestLines.join(" ")
+      : "Hôm nay là một ngày tuyệt vời để học hỏi và phát triển cùng AI.");
+  const showNameEyebrow = Boolean(greeting.fullName) && greeting.welcomeState !== "first";
 
   return (
     <div className="tcp">
@@ -437,8 +504,9 @@ export function TrangChuClient({
                   />
                 ))}
                 <div className="hero-text">
-                  <h1>Chào mừng bạn trở lại!</h1>
-                  <p>Hôm nay là một ngày tuyệt vời để học hỏi và phát triển cùng AI.</p>
+                  {showNameEyebrow && <p className="hero-eyebrow">Chào {greeting.fullName}</p>}
+                  <h1>{welcomeFirstLine}</h1>
+                  <p style={{ whiteSpace: "pre-line" }}>{heroSubtitle}</p>
                   <div className="hero-actions">
                     <button className="btn-primary" onClick={go("Hoc vien AI.html")}>
                       <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
@@ -481,6 +549,65 @@ export function TrangChuClient({
                       <path className="star" style={{ animationDelay: "1.2s" }} d="M98 46l2 4.8 5.2.5-4 3.4 1.3 5-4.5-2.7-4.5 2.7 1.3-5-4-3.4 5.2-.5z" fill="url(#starGold)" />
                     </g>
                   </svg>
+                </div>
+              </section>
+
+              {thought && <p className="companion-quote">&ldquo;{thought}&rdquo;</p>}
+
+              <section>
+                <div className="section-head">
+                  <h2>Portal 2.0 trong một cái nhìn</h2>
+                </div>
+                <div className="portal-stats">
+                  <div className="portal-stat-card" onClick={go("Du an Co hoi.html")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#8b7bde,#5f4bc9)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.ecosystemCount}</div>
+                      <div className="portal-stat-label">Hệ sinh thái Dự án &amp; Cơ hội</div>
+                    </div>
+                  </div>
+                  <div className="portal-stat-card" onClick={go("Premium.html")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#f5c56b,#e2b23c)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
+                        <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.premiumPlanCount}</div>
+                      <div className="portal-stat-label">Gói Premium đang mở</div>
+                    </div>
+                  </div>
+                  <div className="portal-stat-card" onClick={go("Cong dong AI.html")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#60a5fa,#2563eb)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
+                        <path d="M16 3.13a4 4 0 010 7.75" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.communityChannelCount}</div>
+                      <div className="portal-stat-label">Kênh cộng đồng đang hoạt động</div>
+                    </div>
+                  </div>
+                  <div className="portal-stat-card" onClick={go("Hoc vien AI.html")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#4ade80,#16a34a)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14.5 6.2a3.8 3.8 0 00-5 4.8l-6 6 2.5 2.5 6-6a3.8 3.8 0 004.8-5l-2.4 2.4-2.1-.6-.6-2.1z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.toolCount}</div>
+                      <div className="portal-stat-label">Công cụ AI trong Workspace</div>
+                    </div>
+                  </div>
                 </div>
               </section>
 
@@ -560,6 +687,29 @@ export function TrangChuClient({
                   </div>
                 )}
               </section>
+
+              {opportunities.length > 0 && (
+                <section>
+                  <div className="section-head">
+                    <h2>Cơ hội nổi bật</h2>
+                    <a onClick={go("Du an Co hoi.html")} style={{ cursor: "pointer" }}>Xem tất cả</a>
+                  </div>
+                  <div className="opportunity-grid">
+                    {opportunities.map((o) => (
+                      <div key={o.slug} className="opportunity-card" onClick={() => router.push(OPPORTUNITY_HREF[o.slug])}>
+                        <h4>{o.name}</h4>
+                        <p>{o.description}</p>
+                        <span className="cta">
+                          Xem chi tiết
+                          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                          </svg>
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               <section>
                 <div className="section-head">

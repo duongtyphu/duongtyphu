@@ -26,7 +26,7 @@ không phải audit lại từ đầu):
 
 | # | Hạng mục | Trạng thái `/v2` hiện tại | Việc cần làm |
 |---|---|---|---|
-| 1 | Thêm menu "Mỗi ngày một ý tưởng" (dưới Companion AI, trên Học viện AI); trang chủ rút gọn còn 5 thẻ | **XONG (Giai đoạn 1, commit `06b4192`).** Nav entry thêm vào cả 4 nơi định nghĩa sidebar (`PortalV2Shell.tsx` dùng chung 9 trang + 3 trang hand-rolled `trang-chu`/`du-an-co-hoi`/`hoc-vien-ai`) + `nav-config.ts` + `href-map.ts`. `TrangChuClient.tsx` "Khám phá nhanh" còn đúng 5 thẻ, đúng thứ tự: Companion AI/Mỗi ngày một ý tưởng/Học viện AI/Dự án & Cơ hội/Premium (grid CSS 6→5 cột) | Route `/v2/moi-ngay-mot-y-tuong` hiện là **placeholder honest "đang xây dựng"** (chưa có mockup riêng, Founder gửi sau) — cần thay nội dung thật khi có mockup, giữ nguyên phần khung `PortalV2Shell` |
+| 1 | Thêm menu "Mỗi ngày một ý tưởng" (dưới Companion AI, trên Học viện AI); trang chủ rút gọn còn 5 thẻ | **XONG (Giai đoạn 1, commit `06b4192`), sau đó REWORK theo phản hồi Founder — xem mục "Giai đoạn 1 (rework) — Trang chủ 'Companion sống'" bên dưới.** Nav entry thêm vào cả 4 nơi định nghĩa sidebar (`PortalV2Shell.tsx` dùng chung 9 trang + 3 trang hand-rolled `trang-chu`/`du-an-co-hoi`/`hoc-vien-ai`) + `nav-config.ts` + `href-map.ts`. `TrangChuClient.tsx` "Khám phá nhanh" còn đúng 5 thẻ, đúng thứ tự: Companion AI/Mỗi ngày một ý tưởng/Học viện AI/Dự án & Cơ hội/Premium (grid CSS 6→5 cột, icon "Mỗi ngày một ý tưởng" đã có ảnh thật) | Route `/v2/moi-ngay-mot-y-tuong` hiện là **placeholder honest "đang xây dựng"** (chưa có mockup riêng, Founder gửi sau) — cần thay nội dung thật khi có mockup, giữ nguyên phần khung `PortalV2Shell` |
 | 2a | Companion: ghi nhớ tự động phát hiện + xác nhận 1 chạm | **Chưa có.** `BoNhoCaNhanHoaClient.tsx` chỉ đồng bộ từ Reflection sau khi hoàn thành Output (không phát hiện trong lúc chat); `CompanionClient.tsx` đã bỏ hẳn tab Ghi nhớ trước đó | Xây cơ chế phát hiện khoảnh khắc đáng nhớ ngay trong hội thoại + UI xác nhận 1 chạm |
 | 2b | Nội dung Sứ mệnh Companion (6 khối) vào system prompt chat thật | **Chưa có.** `companion-prompt-builder.ts` dùng thẳng `COMPANION_CHAT_SYSTEM_PROMPT_V1` tĩnh (`companion-chat.system.prompt.ts`) — không đọc nội dung Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian | Port nội dung 6 khối vào system prompt hoặc khối User Context của `companion-prompt-builder.ts` |
 | 2c | "Công cụ yêu thích" động theo người dùng | **Một phần.** `CompanionClient.tsx` lấy 5 công cụ thật từ bảng `tools` theo `order` — dữ liệu thật nhưng KHÔNG cá nhân hoá (không dùng `suggestedTools`/`MentorContext`) | Nối vào `MentorContext.suggestedTools` đã có sẵn |
@@ -56,7 +56,10 @@ blocker trước — chi tiết đầy đủ từng hạng mục xem bảng trê
 gọn phạm vi mỗi giai đoạn):
 0. Duyệt kế hoạch + cập nhật CLAUDE.md (mục này — **đã hoàn tất**).
 1. Trang chủ `/v2/trang-chu` rút gọn 5 thẻ + đặt chỗ menu "Mỗi ngày một ý
-   tưởng" (chưa dựng nội dung trang đó) — **ĐÃ HOÀN TẤT, commit `06b4192`.**
+   tưởng" (chưa dựng nội dung trang đó) — **ĐÃ HOÀN TẤT, commit `06b4192`,
+   sau đó REWORK theo phản hồi Founder (thêm "Companion sống" + các
+   section khoe điểm mạnh thật) — xem mục "Giai đoạn 1 (rework)" ngay
+   dưới đây.**
 2. Companion AI lõi: ghi nhớ 1-chạm, port Sứ mệnh Companion vào system
    prompt, nối "Công cụ yêu thích" động, kiểm tra/sửa layout Sứ mệnh
    Companion — **ĐÃ HOÀN TẤT, xem mục "Giai đoạn 2 — Companion AI lõi"
@@ -81,6 +84,76 @@ gọn phạm vi mỗi giai đoạn):
 ý làm hoặc bịa nội dung ngoài phạm vi đã duyệt; số liệu/tên riêng không
 kiểm chứng được (như trường hợp SolarGroup) phải hỏi lại thay vì tự đoán
 là thật hay giả.
+
+## Giai đoạn 1 (rework) — Trang chủ "Companion sống" (đã hoàn tất)
+
+Founder chưa hài lòng với bản Giai đoạn 1 gốc ("chỉ rút gọn thẻ, chưa ấn
+tượng") — yêu cầu thêm thiết kế khoe được điểm mạnh thật của Portal 2.0 +
+một khối "Companion sống" (trạng thái/câu chào đổi theo giờ/hoạt động gần
+nhất). Đã đề xuất 5 mục cụ thể, Founder duyệt làm cả 5:
+
+**1 — Hero "Companion sống"** (thay lời chào tĩnh cố định). Nguồn: port
+NGUYÊN `warmth-engine.ts`/`life-moments.ts` (Single Source of Truth, cùng
+bộ copy thật `/portal/page.tsx`'s `CompanionPresenceBand` đã dùng) qua
+`src/lib/v2/live-greeting.ts` (mới, `getGreetingState()`) — đọc session
+`/v2` riêng (khác `getPremiumStatus()`, không gắn thêm field không liên
+quan Premium vào contract đã cố định cho ~46 trang). H1 = dòng đầu của
+`welcomeMessage` (đổi theo lần đầu/mới quay lại/lâu không ghé — 4 trạng
+thái `WelcomeState` có sẵn); dòng phụ (`<p>`) ưu tiên theo thứ tự: dòng
+"quiet return" thật khi `state==="comeback"` (`getLifeMomentLine`) → hoạt
+động gần nhất THẬT (khoá đang học dở, tính từ `courses`/`progress` đã có
+sẵn ở props, không gọi thêm dữ liệu) → lời chào theo giờ trong ngày (buổi
+sáng/tối, `getWarmthLine("goodMorning"/"goodEvening")`, tính CLIENT-SIDE
+sau mount vì giờ máy chủ UTC không phản ánh múi giờ thật của người dùng,
+cùng kỹ thuật `CompanionThoughtLine`) → phần còn lại của `welcomeMessage`
+gốc → fallback tĩnh cũ. Nhãn "Chào {tên}" chỉ hiện khi có tên thật VÀ
+không phải lần đầu ghé.
+
+**2 — "Companion đang đồng hành"** — 1 dòng quote ngắn dưới Hero, tái dùng
+NGUYÊN `THOUGHT_SEEDS` thật (`src/data/portal/thought-seeds.ts`, cùng
+nguồn `/portal/companion`/`CompanionThoughtLine`), chọn 1 lần/lượt ghé,
+client-side.
+
+**3 — Section mới "Portal 2.0 trong một cái nhìn"** — 4 số liệu THẬT (đặt
+ngay sau Hero, trước "Khám phá nhanh"): số hệ sinh thái Dự án & Cơ hội
+(hằng số cấu trúc = 5, khớp đúng 5 route `/v2/du-an-co-hoi/*` đã dựng —
+bảng `projects` generic không map 1:1 vào 5 route này nên không đếm qua
+query, xem `DuAnCoHoiClient.tsx`), số gói Premium (`getLivePremiumPlans().length`),
+số kênh cộng đồng đang hoạt động (`getLiveCommunityChannels().length`),
+số công cụ AI trong Workspace (`getLiveTools().length`) — 3 số sau đều đếm
+thật từ Supabase, honest `0` khi sandbox chưa cấu hình (đã xác nhận qua
+`next start`, không phải bug). Mỗi ô bấm vào dẫn đúng trang tương ứng.
+
+**4 — Section mới "Cơ hội nổi bật"** — preview 2 hệ sinh thái thật (DigiU/
+SolarGroup — 2 hệ sinh thái có đủ `ecosystem_chrome` + dự án con thật),
+tái dùng NGUYÊN `getLiveEcosystemChrome()` đã dùng ở `/v2/du-an-co-hoi`
+(cùng `name`/`shortDescription`), đặt sau "Tiếp tục học tập", trước "Gợi ý
+dành cho bạn". Tự ẩn cả section nếu vì lý do nào đó cả 2 chrome đều rỗng
+(không xảy ra trong thực tế vì `getLiveEcosystemChrome()` luôn fallback về
+nội dung tĩnh thật trong `ecosystems.ts`).
+
+**5 — Giữ nguyên "Khám phá nhanh"/"Tiếp tục học tập"/"Gợi ý dành cho bạn"**
+(đã dùng dữ liệu thật từ trước) — chỉ sắp lại thứ tự: Hero → Companion
+quote → Portal stats → Khám phá nhanh → Tiếp tục học tập → Cơ hội nổi bật
+→ Gợi ý dành cho bạn.
+
+Cũng trong đợt này: icon "Mỗi ngày một ý tưởng" ở "Khám phá nhanh" đổi từ
+SVG bóng đèn tạm sang ảnh badge thật Founder gửi (`public/v2-static/assets/icon-moi-ngay-mot-y-tuong.png`,
+nền đã trong suốt sẵn, chỉ resize 256×256 khớp 5 icon còn lại).
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495, `rm -rf .next && npm
+run build` sạch. `next start` xác nhận `/v2/trang-chu` trả `200`, HTML
+server-render đúng cả 4 số liệu (5/0/0/0 — 3 số 0 vì sandbox không cấu
+hình Supabase, honest), 2 thẻ "Cơ hội nổi bật" (DigiU/SolarGroup) render
+đúng nội dung thật (fallback tĩnh), H1 hero đổi đúng theo `welcomeMessage`,
+0 lỗi log server.
+
+**Chưa tự test được:** lời chào theo giờ trong ngày + dòng "hoạt động gần
+nhất" (cả 2 chỉ tính client-side sau mount — cần trình duyệt thật + tài
+khoản đăng nhập có tiến độ khoá học thật, sandbox không có) — Founder tự
+mở `/v2/trang-chu` vào buổi sáng/tối để xác nhận dòng phụ dưới H1 đổi
+đúng, và thử với 1 tài khoản đang học dở 1 khoá để xác nhận dòng "Bạn
+đang học dở..." hiện đúng tên khoá + số bài còn lại.
 
 ## Giai đoạn 2 — Companion AI lõi (đã hoàn tất)
 
