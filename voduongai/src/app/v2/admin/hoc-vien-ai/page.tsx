@@ -1,41 +1,38 @@
 import { getCkosCategories, getCkosStats } from "@/lib/portal/live-ckos";
 import { getAcademyFeaturedCourses, getAcademyPaths } from "@/lib/portal/live-academy";
-import { getWorkspaceToolGroups, getWorkspaceWorkflows } from "@/lib/portal/live-workspace";
 
 import "../../inter-gf.css";
 import "../../he-tri-thuc/he-tri-thuc.css";
 import "../../hoc-vien-ai/hoc-vien-ai.css";
-import "../../ai-workspace/ai-workspace.css";
 
 import { AdminPortalMirror } from "@/components/v2/admin/AdminPortalMirror";
 
 export const metadata = { title: "Học viện AI — Admin" };
 
 /**
- * `/v2/admin/hoc-vien-ai` — gộp 3 trang mirror cũ (`/v2/admin/he-tri-thuc`,
- * `/v2/admin/hoc-vien-ai`, `/v2/admin/ai-workspace`) thành 1, theo Founder
- * quyết định #2 (gộp menu Portal 2.0) mở rộng sang Admin 2.0 (đã hỏi riêng,
- * Founder xác nhận gộp luôn).
+ * `/v2/admin/hoc-vien-ai` — gộp mirror của các mảng nội dung thật sự đang
+ * hiển thị trên `/v2/hoc-vien-ai`, theo Founder quyết định #2 (gộp menu
+ * Portal 2.0) mở rộng sang Admin 2.0.
  *
- * Vẫn là 3 khối `AdminPortalMirror` xếp dọc (không viết lại component
- * dùng chung — mỗi khối giữ đúng `prefix` CSS gốc của chính mảng nội dung
- * đó, vì 3 mảng vẫn đọc 3 bộ bảng Supabase khác nhau và trỏ sang 3 khu vực
- * khác nhau của Admin 1.0). Nội dung từng khối copy nguyên vẹn từ 3 trang
- * cũ đã xoá (`/v2/admin/he-tri-thuc`, `/v2/admin/ai-workspace`).
+ * Trước đây có 3 khối (CKOS/Học viện AI/AI Workspace, khớp 3 tab gốc của
+ * trang Portal). Tab "AI Workspace" đã bị gỡ hẳn khỏi `/v2/hoc-vien-ai`
+ * theo yêu cầu Founder (mục 4a của kế hoạch gốc 14 hạng mục) — route đứng
+ * riêng cũ `/v2/ai-workspace` cũng đã sớm bị xoá + redirect vĩnh viễn về
+ * `/v2/hoc-vien-ai` từ trước (xem `next.config.ts`), nên nội dung đó không
+ * còn tồn tại ở BẤT KỲ đâu trong `/v2/*` nữa — đã xoá khối `AdminPortalMirror`
+ * "aiw" tương ứng (mirror 1 nội dung không còn hiển thị thật là gây hiểu
+ * lầm cho Admin, không phải chỉ dọn dẹp thẩm mỹ). Chỉ còn 2 khối CKOS/Học
+ * viện AI, khớp đúng 2 tab đầu còn lại của trang Portal thật.
  */
 export default async function AdminHocVienAiPage() {
-  const [ckosStats, ckosCategories, academyPaths, academyCourses, workspaceGroups, workspaceWorkflows] =
-    await Promise.all([
-      getCkosStats(),
-      getCkosCategories(),
-      getAcademyPaths(),
-      getAcademyFeaturedCourses(),
-      getWorkspaceToolGroups(),
-      getWorkspaceWorkflows(),
-    ]);
+  const [ckosStats, ckosCategories, academyPaths, academyCourses] = await Promise.all([
+    getCkosStats(),
+    getCkosCategories(),
+    getAcademyPaths(),
+    getAcademyFeaturedCourses(),
+  ]);
 
   const totalAcademyLessons = academyPaths.reduce((sum, p) => sum + p.lessonCount, 0);
-  const totalWorkspaceTools = workspaceGroups.reduce((sum, g) => sum + g.count, 0);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -72,23 +69,6 @@ export default async function AdminHocVienAiPage() {
           { label: "Giá & danh sách khoá học (Admin 1.0) →", href: "/admin/course-pricing" },
           { label: "Hệ tri thức AI (CKOS) — Lesson (Admin 1.0) →", href: "/admin/ckos/lessons" },
           { label: "Huy hiệu & Thành tựu (Admin 1.0) →", href: "/admin/premium/badges" },
-        ]}
-      />
-
-      <AdminPortalMirror
-        prefix="aiw"
-        title="AI Workspace"
-        description="Danh sách công cụ AI + workflow mẫu hiển thị ở đây đọc trực tiếp từ bảng tools/ai_workflow_sections — quản lý nội dung qua Admin 1.0."
-        stats={[
-          { label: "Công cụ AI (Published)", value: String(totalWorkspaceTools) },
-          { label: "Nhóm công cụ", value: String(workspaceGroups.length) },
-          { label: "Workflow mẫu", value: String(workspaceWorkflows.length) },
-        ]}
-        note={`Nhóm công cụ thật: ${workspaceGroups.map((g) => `${g.category} (${g.count})`).join(" · ")}.`}
-        links={[
-          { label: "Quản lý Công cụ AI (Admin 1.0) →", href: "/admin/tools" },
-          { label: "Quản lý Quy trình AI (Admin 1.0) →", href: "/admin/aiworkspace/ai-workflow-sections" },
-          { label: "Quản lý Workspace đề xuất (Admin 1.0) →", href: "/admin/aiworkspace/recommended-workspace" },
         ]}
       />
     </div>

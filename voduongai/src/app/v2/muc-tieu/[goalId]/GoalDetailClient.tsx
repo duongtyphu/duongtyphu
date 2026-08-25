@@ -229,7 +229,7 @@ export function GoalDetailClient({ premium, goalId }: { premium: PremiumStatus; 
           premium={premium}
           showSearchBox={false}
           promoTitle="Nâng cấp Premium"
-          promoText="Mở khoá toàn bộ Học viện AI, CKOS và AI Workspace."
+          promoText="Mở khoá toàn bộ Học viện AI và CKOS."
           activeHtmlFile="Companion.html"
           companionExpanded
           useTopbarRightWrapper={false}

@@ -1,36 +1,38 @@
 "use client";
 
 /* =============================================================================
- * Học viện AI 2.0 — TRANG GỘP (gộp CKOS + Học viện AI + AI Workspace thành
- * 1 trang "Học viện AI" duy nhất, 4 tab nội bộ).
+ * Học viện AI 2.0 — TRANG GỘP (gộp CKOS + Học viện AI thành 1 trang "Học
+ * viện AI" duy nhất, 3 tab nội bộ).
  *
  * Đây LÀ trang thay thế `/v2/hoc-vien-ai` cũ — gộp toàn bộ nội dung của
- * `/v2/he-tri-thuc` (CKOS) và `/v2/ai-workspace`. 2 route hub cũ đó đã XOÁ
- * hẳn — mọi HREF_MAP/link cứng trỏ vào 2 route đó trong toàn bộ `/v2/*` đã
- * đổi sang `/v2/hoc-vien-ai`. 4 route CON của `/v2/he-tri-thuc` (`[slug]`/
- * `bai-hoc/[slug]`/`bo-suu-tap/[slug]`/`danh-muc/[slug]`) và cả 2 file CSS
- * (`he-tri-thuc.css`/`ai-workspace.css`) VẪN GIỮ NGUYÊN — vẫn là đích link
- * thật của tài liệu/lesson/collection/category CKOS (route con 2.0 native),
- * và vẫn được trang này import trực tiếp để dùng style `.ckos`/`.aiw`.
+ * `/v2/he-tri-thuc` (CKOS). Route hub cũ đó đã XOÁ hẳn — mọi HREF_MAP/link
+ * cứng trỏ vào route đó trong toàn bộ `/v2/*` đã đổi sang `/v2/hoc-vien-ai`.
+ * 4 route CON của `/v2/he-tri-thuc` (`[slug]`/`bai-hoc/[slug]`/
+ * `bo-suu-tap/[slug]`/`danh-muc/[slug]`) và file CSS `he-tri-thuc.css` VẪN
+ * GIỮ NGUYÊN — vẫn là đích link thật của tài liệu/lesson/collection/category
+ * CKOS (route con 2.0 native), và vẫn được trang này import trực tiếp để
+ * dùng style `.ckos`. `ai-workspace.css` cũng VẪN GIỮ (import) — tab "Thư
+ * viện tài nguyên" bên dưới vẫn dùng lại class `.aiw` cho lưới nguồn tài
+ * nguyên, dù tab "AI Workspace" (công cụ/dự án/workflow) đã bị gỡ hẳn khỏi
+ * trang này theo yêu cầu Founder — nội dung đó vẫn sống độc lập ở route
+ * riêng `/v2/ai-workspace`.
  *
  * KIẾN TRÚC: 1 sidebar/topbar DUY NHẤT, bọc `.content > .center-col +
  * .right-col` của từng phần trong đúng class-root CSS gốc (`.ckos`/`.aiw`).
  *
- * 4 TAB (thứ tự cố định trong `TABS`, đã bỏ "Tổng quan" và "Tiến độ của
- * tôi", đã gộp "Thư viện của tôi" vào "Thư viện tài nguyên"):
+ * 3 TAB (thứ tự cố định trong `TABS`, đã bỏ "Tổng quan" và "Tiến độ của
+ * tôi", đã gộp "Thư viện của tôi" vào "Thư viện tài nguyên", đã gỡ tab
+ * "AI Workspace"):
  *  0. Hệ tri thức — view "Tất cả tri thức" của CKOS (6 danh mục, tài liệu
  *     mới nhất, "CKOS là gì?"/lộ trình/tài liệu phổ biến).
  *  1. Khóa học & Lộ trình — 4 giai đoạn lộ trình + khóa học nổi bật + vòng
  *     tiến độ (đã có sẵn ở sidebar cột phải, không cần tab "Tiến độ" riêng).
- *  2. AI Workspace — công cụ theo nhóm, dự án, workflow mẫu, công cụ yêu
- *     thích, hoạt động gần đây.
- *  3. Thư viện tài nguyên — gộp cả 6 nguồn (Prompt/SOP/Resource/Best
- *     Practice/Case Study/Blog AI) LẪN thư viện CKOS (Bộ sưu tập + Bài
- *     học). Mọi mục Prompt/SOP/Resource/Best Practice/Blog AI mở XEM ĐẦY
- *     ĐỦ ngay tại chỗ (panel inline trong tab này) thay vì điều hướng sang
- *     Portal 1.0 — không còn link nào từ 2.0 sang 1.0. Case Study giữ
- *     link ngoài `linkUrl` nếu có (đó là site khách hàng thật, không phải
- *     Portal 1.0).
+ *  2. Thư viện tài nguyên — gộp cả 4 nguồn (Prompt/SOP/Resource/Best
+ *     Practice) LẪN thư viện CKOS (Bộ sưu tập + Bài học). Mọi mục mở XEM
+ *     ĐẦY ĐỦ ngay tại chỗ (panel inline trong tab này) thay vì điều hướng
+ *     sang Portal 1.0 — không còn link nào từ 2.0 sang 1.0. Case Study và
+ *     Blog AI đã bị gỡ hẳn khỏi danh mục này theo yêu cầu Founder (đúng kế
+ *     hoạch gốc 14 hạng mục — mục 4c).
  *
  * CÒN GIỮ NGUYÊN "TRƠ" ĐÚNG NHƯ THIẾT KẾ GỐC: mọi hành vi trơ (nút lưu tài
  * liệu, ô tìm kiếm, chuông, CTA `href="#"`...) giữ nguyên hệt — không tự
@@ -50,20 +52,10 @@ import type {
 import type { KnowledgeCollection } from "@/features/knowledge/types/knowledge-collection.types";
 import type { KnowledgeSeed } from "@/features/knowledge/types/knowledge-seed.types";
 import type { AcademyCourse, AcademyPath, AcademyProgress } from "@/lib/portal/live-academy";
-import type {
-  WorkspaceActivity,
-  WorkspaceFavoriteTool,
-  WorkspaceLimits,
-  WorkspaceProject,
-  WorkspaceToolGroup,
-  WorkspaceWorkflow,
-} from "@/lib/portal/live-workspace";
 import type { LivePrompt } from "@/lib/portal/live-prompts";
 import type { LiveSop } from "@/lib/portal/live-sop";
 import type { LiveResource } from "@/lib/portal/live-resources";
 import type { LiveBestPractice } from "@/lib/portal/live-best-practices";
-import type { LiveCaseStudy } from "@/lib/portal/live-case-studies";
-import type { BlogPost } from "@/data/blog";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
@@ -116,26 +108,11 @@ function formatMinutes(totalMinutes: number) {
   return `${hours} giờ ${minutes} phút`;
 }
 
-function formatRelativeTime(iso: string): string {
-  const date = new Date(iso);
-  const diffMin = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diffMin < 1) return "Vừa xong";
-  if (diffMin < 60) return `${diffMin} phút trước`;
-  const diffHour = Math.floor(diffMin / 60);
-  if (diffHour < 24) return `${diffHour} giờ trước`;
-  const diffDay = Math.floor(diffHour / 24);
-  if (diffDay === 1) return "Hôm qua";
-  if (diffDay < 7) return `${diffDay} ngày trước`;
-  const diffWeek = Math.floor(diffDay / 7);
-  if (diffWeek < 5) return `${diffWeek} tuần trước`;
-  return date.toLocaleDateString("vi-VN");
-}
-
 /* ------------------------------------------------------------------- Tabs */
 
-const TABS = ["Hệ tri thức", "Khóa học & Lộ trình", "AI Workspace", "Thư viện tài nguyên"] as const;
-/** Khoá `?tab=` tương ứng từng phần tử `TABS` — dùng cho link ngoài (task #63). */
-const TAB_QUERY_KEYS = ["he-tri-thuc", "khoa-hoc", "ai-workspace", "thu-vien"] as const;
+const TABS = ["Hệ tri thức", "Khóa học & Lộ trình", "Thư viện tài nguyên"] as const;
+/** Khoá `?tab=` tương ứng từng phần tử `TABS` — dùng cho link ngoài. */
+const TAB_QUERY_KEYS = ["he-tri-thuc", "khoa-hoc", "thu-vien"] as const;
 
 function TabIcon({ index }: { index: number }) {
   switch (index) {
@@ -150,13 +127,6 @@ function TabIcon({ index }: { index: number }) {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M22 10L12 5 2 10l10 5 10-5z" />
           <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
-        </svg>
-      );
-    case 2:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="4" width="18" height="14" rx="2" />
-          <path d="M8 21h8M12 18v3" />
         </svg>
       );
     default:
@@ -284,142 +254,19 @@ const PATH_STYLES = [
   },
 ];
 
-/* ------------------------------------------------------------ Workspace tab */
+/* -------------------------------------------- Resource Library tab (mới) */
 
 type IconStyle = { bg: string; icon: React.ReactNode };
 
-const GROUP_STYLE: Record<string, IconStyle> = {
-  "Trợ lý AI": {
-    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M21 11.5a8.5 8.5 0 01-8.5 8.5 8.4 8.4 0 01-3.9-.94L3 21l1.5-4.5A8.4 8.4 0 013.5 12 8.5 8.5 0 0112 3.5a8.5 8.5 0 019 8z" />
-      </svg>
-    ),
-  },
-  "Viết lách & Nội dung": {
-    bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M14.7 6.3a1 1 0 000-1.4l-1.6-1.6a1 1 0 00-1.4 0L4 11v3h3z" />
-      </svg>
-    ),
-  },
-  "Hình ảnh AI": {
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <circle cx="7" cy="8" r="3" />
-        <circle cx="17" cy="7" r="3" />
-        <circle cx="12" cy="16" r="3" />
-        <path d="M7 11v3M17 10v3M9 16h6" />
-      </svg>
-    ),
-  },
-  "Video AI": {
-    bg: "linear-gradient(145deg,#ff6b6b,#c22e46)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="M9 9l6 3-6 3z" />
-      </svg>
-    ),
-  },
-  "Âm thanh AI": {
-    bg: "linear-gradient(145deg,#e2b23c,#b3801f)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M11 5L6 9H3v6h3l5 4z" />
-        <path d="M15.5 8.5a5 5 0 010 7" />
-      </svg>
-    ),
-  },
-  "Nghiên cứu & Phân tích": {
-    bg: "linear-gradient(145deg,#3ecf7e,#0e7490)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M4 19h16M7 15l3-4 3 3 5-7" />
-      </svg>
-    ),
-  },
-};
-
-const DEFAULT_GROUP_STYLE: IconStyle = {
-  bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
-  icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-      <rect x="3" y="4" width="18" height="14" rx="2" />
-      <path d="M8 21h8M12 18v3" />
-    </svg>
-  ),
-};
-
-const FAVORITE_STYLE: Record<string, IconStyle> = {
-  chatgpt: GROUP_STYLE["Trợ lý AI"],
-  claude: {
-    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M12 2.5c2.4 1.8 3.8 4.6 3.8 8.3 0 2-.5 3.8-1.3 5.3l-2.5 2.4-2.5-2.4c-.8-1.5-1.3-3.3-1.3-5.3 0-3.7 1.4-6.5 3.8-8.3z" />
-      </svg>
-    ),
-  },
-  midjourney: {
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <circle cx="7" cy="8" r="3" />
-        <circle cx="17" cy="7" r="3" />
-        <circle cx="12" cy="16" r="3" />
-      </svg>
-    ),
-  },
-  "notion-ai": {
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-      </svg>
-    ),
-  },
-  perplexity: {
-    bg: "linear-gradient(145deg,#e879b9,#b4348a)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <circle cx="11" cy="11" r="7" />
-        <path d="M21 21l-4.3-4.3" />
-      </svg>
-    ),
-  },
-};
-
-const WORKFLOW_STYLE: Record<string, IconStyle> = {
-  "viet-bai-blog-chuan-seo": GROUP_STYLE["Viết lách & Nội dung"],
-  "tao-video-youtube": GROUP_STYLE["Video AI"],
-  "content-facebook": {
-    bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M18 2H6a2 2 0 00-2 2v16l4-3h10a2 2 0 002-2V4a2 2 0 00-2-2z" />
-      </svg>
-    ),
-  },
-  "nghien-cuu-thi-truong": GROUP_STYLE["Nghiên cứu & Phân tích"],
-};
-
-/* -------------------------------------------- Resource Library tab (mới) */
-
-type ResourceCategoryKey = "prompt" | "sop" | "resource" | "best-practice" | "case-study" | "blog";
+type ResourceCategoryKey = "prompt" | "sop" | "resource" | "best-practice";
 
 /** 1 mục hiển thị trong danh sách "Thư viện tài nguyên" — quy về 1 shape
- * chung cho cả 6 nguồn dữ liệu khác nhau (Prompt/SOP/Resource/Best
- * Practice/Case Study/Blog AI), mỗi nguồn tự map sang shape này.
+ * chung cho cả 4 nguồn dữ liệu khác nhau (Prompt/SOP/Resource/Best
+ * Practice), mỗi nguồn tự map sang shape này.
  *
  * KHÔNG có `href` sang Portal 1.0 — bấm vào 1 mục mở panel xem đầy đủ
  * NGAY TẠI TRANG NÀY (state `openResourceKey`), tra lại bản ghi gốc qua
- * `id` trong đúng mảng nguồn (`resourceLibrary.*`). Case Study là ngoại lệ
- * duy nhất còn "link ra ngoài" (`caseStudyLinkUrl`) — đó là site khách
- * hàng thật, không phải route Portal 1.0. */
+ * `id` trong đúng mảng nguồn (`resourceLibrary.*`). */
 type ResourceItem = {
   key: string;
   category: ResourceCategoryKey;
@@ -427,7 +274,6 @@ type ResourceItem = {
   title: string;
   tag: string;
   subtitle: string;
-  caseStudyLinkUrl?: string;
 };
 
 const RESOURCE_CATEGORY_STYLE: Record<ResourceCategoryKey, IconStyle> = {
@@ -465,23 +311,6 @@ const RESOURCE_CATEGORY_STYLE: Record<ResourceCategoryKey, IconStyle> = {
       </svg>
     ),
   },
-  "case-study": {
-    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M5 21V10M12 21V4M19 21v-7" />
-      </svg>
-    ),
-  },
-  blog: {
-    bg: "linear-gradient(145deg,#ff6b6b,#c22e46)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M12 20h9" />
-        <path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" />
-      </svg>
-    ),
-  },
 };
 
 const RESOURCE_CATEGORY_LABEL: Record<ResourceCategoryKey, string> = {
@@ -489,12 +318,10 @@ const RESOURCE_CATEGORY_LABEL: Record<ResourceCategoryKey, string> = {
   sop: "SOP & Quy trình",
   resource: "Tài nguyên",
   "best-practice": "Thực hành tốt",
-  "case-study": "Case Study",
-  blog: "Blog AI",
 };
 
 /**
- * Khoá lọc DUY NHẤT cho lưới "N nguồn tài nguyên" — 6 nguồn tĩnh
+ * Khoá lọc DUY NHẤT cho lưới "N nguồn tài nguyên" — 4 nguồn tĩnh
  * (`ResourceCategoryKey`) GỘP CHUNG với N bộ sưu tập CKOS (mỗi bộ sưu tập
  * 1 card `collection-${slug}`, số lượng ăn theo `ckos.collections` thật,
  * không hardcode số 2). Gộp về 1 lưới/1 state để người dùng thấy TOÀN BỘ
@@ -511,12 +338,6 @@ const COLLECTION_CARD_STYLE: IconStyle = {
       <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
     </svg>
   ),
-};
-
-const STATUS_STYLE: Record<WorkspaceProject["status"], { label: string; pillBg: string; pillColor: string; fill?: string }> = {
-  in_progress: { label: "Đang thực hiện", pillBg: "var(--violet-light)", pillColor: "var(--violet)" },
-  completed: { label: "Hoàn thành", pillBg: "#e6f7ed", pillColor: "#189a52", fill: "#189a52" },
-  paused: { label: "Tạm dừng", pillBg: "#fdf1e0", pillColor: "#a9822c", fill: "#c2660a" },
 };
 
 /* ---------------------------------------------------------------- Props */
@@ -537,44 +358,30 @@ type AcademyData = {
   progress: AcademyProgress;
 };
 
-type WorkspaceData = {
-  groups: WorkspaceToolGroup[];
-  favorites: WorkspaceFavoriteTool[];
-  workflows: WorkspaceWorkflow[];
-  projects: WorkspaceProject[];
-  activity: WorkspaceActivity[];
-  limits: WorkspaceLimits;
-};
-
 type ResourceLibraryData = {
   prompts: LivePrompt[];
   sops: LiveSop[];
   resources: LiveResource[];
   bestPractices: LiveBestPractice[];
-  caseStudies: LiveCaseStudy[];
-  blogPosts: BlogPost[];
 };
 
 export function HocVienAiClient({
   premium,
   ckos,
   academy,
-  workspace,
   resourceLibrary,
 }: {
   premium: PremiumStatus;
   ckos: CkosData;
   academy: AcademyData;
-  workspace: WorkspaceData;
   resourceLibrary: ResourceLibraryData;
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
 
-  // Task #63 — "Công cụ yêu thích" ở /v2/companion link thẳng vào tab "AI
-  // Workspace" của trang này qua `?tab=ai-workspace`. Đọc ở `useEffect` (không
-  // phải lazy init của `useState`) để khớp đúng HTML server-render ban đầu
-  // (luôn tab 0), tránh hydration mismatch — chỉ đổi tab sau khi mount xong.
+  // Đọc `?tab=` ở `useEffect` (không phải lazy init của `useState`) để khớp
+  // đúng HTML server-render ban đầu (luôn tab 0), tránh hydration mismatch —
+  // chỉ đổi tab sau khi mount xong.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const wanted = params.get("tab");
@@ -585,13 +392,9 @@ export function HocVienAiClient({
 
   // Tab "Hệ tri thức"
   const [ckosVisibleCount, setCkosVisibleCount] = useState(4);
-  // Tab "AI Workspace"
-  const [projTab, setProjTab] = useState(0);
-  const [viewMode, setViewMode] = useState(0);
-  const [starOff, setStarOff] = useState<Record<string, boolean>>({});
-  // Tab "Thư viện tài nguyên" — 1 state filter DUY NHẤT cho cả lưới 8 nguồn
-  // (6 nguồn tài nguyên tĩnh + N bộ sưu tập CKOS động) — key là
-  // `ResourceCategoryKey` cho 6 nguồn tĩnh, hoặc `collection-${slug}` cho
+  // Tab "Thư viện tài nguyên" — 1 state filter DUY NHẤT cho cả lưới N nguồn
+  // (4 nguồn tài nguyên tĩnh + N bộ sưu tập CKOS động) — key là
+  // `ResourceCategoryKey` cho 4 nguồn tĩnh, hoặc `collection-${slug}` cho
   // bộ sưu tập CKOS. Gộp về 1 state (thay vì 2 state rời `resourceFilter`/
   // `libChip` như trước) để lưới chỉ có ĐÚNG 1 card active tại 1 thời điểm.
   const [libraryFilter, setLibraryFilter] = useState<LibraryFilterKey | null>(null);
@@ -614,10 +417,10 @@ export function HocVienAiClient({
 
   const latestDocs = ckos.documents.slice(0, ckosVisibleCount);
 
-  // Tab "Thư viện tài nguyên" — gộp 6 nguồn thật (Prompt/SOP/Resource/Best
-  // Practice/Case Study/Blog AI) về cùng 1 shape `ResourceItem`. KHÔNG còn
-  // `href` sang Portal 1.0 — bấm vào 1 mục mở panel xem đầy đủ NGAY TẠI
-  // TRANG NÀY (xem `openResource` + JSX panel bên dưới).
+  // Tab "Thư viện tài nguyên" — gộp 4 nguồn thật (Prompt/SOP/Resource/Best
+  // Practice) về cùng 1 shape `ResourceItem`. KHÔNG còn `href` sang Portal
+  // 1.0 — bấm vào 1 mục mở panel xem đầy đủ NGAY TẠI TRANG NÀY (xem
+  // `openResource` + JSX panel bên dưới).
   const resourceItems: ResourceItem[] = [
     ...resourceLibrary.prompts.map(
       (p): ResourceItem => ({
@@ -659,27 +462,6 @@ export function HocVienAiClient({
         subtitle: b.description,
       }),
     ),
-    ...resourceLibrary.caseStudies.map(
-      (c): ResourceItem => ({
-        key: `cs-${c.id}`,
-        category: "case-study",
-        id: String(c.id),
-        title: c.title,
-        tag: c.clientName || "Case Study",
-        subtitle: c.resultMetric || c.summary,
-        caseStudyLinkUrl: c.linkUrl || undefined,
-      }),
-    ),
-    ...resourceLibrary.blogPosts.map(
-      (post): ResourceItem => ({
-        key: `blog-${post.slug}`,
-        category: "blog",
-        id: post.slug,
-        title: post.title,
-        tag: post.category || "Blog AI",
-        subtitle: post.excerpt,
-      }),
-    ),
   ];
   const resourceCountByCategory = resourceItems.reduce(
     (acc, item) => {
@@ -689,7 +471,7 @@ export function HocVienAiClient({
     {} as Record<ResourceCategoryKey, number>,
   );
 
-  // Lưới "N nguồn tài nguyên" — 6 card tĩnh + 1 card/bộ sưu tập CKOS (tăng
+  // Lưới "N nguồn tài nguyên" — 4 card tĩnh + 1 card/bộ sưu tập CKOS (tăng
   // theo đúng số bộ sưu tập thật, không hardcode "8"). Mỗi bộ sưu tập đếm
   // số bài học (seed) thuộc về nó qua `collectionSlug`.
   const libraryCards = [
@@ -731,16 +513,6 @@ export function HocVienAiClient({
     openResource?.category === "resource" ? resourceLibrary.resources.find((r) => r.id === openResource.id) : undefined;
   const openBestPractice =
     openResource?.category === "best-practice" ? resourceLibrary.bestPractices.find((b) => b.id === openResource.id) : undefined;
-  const openCaseStudy =
-    openResource?.category === "case-study"
-      ? resourceLibrary.caseStudies.find((c) => String(c.id) === openResource.id)
-      : undefined;
-  const openBlogPost =
-    openResource?.category === "blog" ? resourceLibrary.blogPosts.find((post) => post.slug === openResource.id) : undefined;
-
-  const countByStatus = (status: WorkspaceProject["status"]) => workspace.projects.filter((p) => p.status === status).length;
-  const suggestedWorkflows = workspace.workflows.slice(0, 3);
-  const showLimitBanner = premium.signedIn && !workspace.limits.isPremium;
 
   return (
     <div className="hva">
@@ -883,7 +655,7 @@ export function HocVienAiClient({
                 />
               </div>
               <h4>Nâng cấp Premium</h4>
-              <p>Mở khóa toàn bộ nội dung nâng cao của Học viện AI, CKOS và AI Workspace.</p>
+              <p>Mở khóa toàn bộ nội dung nâng cao của Học viện AI và CKOS.</p>
               <button onClick={() => go("Premium.html")}
               onMouseEnter={() => prefetchNav("Premium.html")}
               onFocus={() => prefetchNav("Premium.html")}>Nâng cấp ngay</button>
@@ -1211,7 +983,7 @@ export function HocVienAiClient({
                               <div className="cnt" style={{ marginTop: 2 }}>
                                 <button
                                   type="button"
-                                  onClick={() => setTab(3)}
+                                  onClick={() => setTab(2)}
                                   style={{
                                     background: "none",
                                     border: "none",
@@ -1334,388 +1106,8 @@ export function HocVienAiClient({
             </div>
           )}
 
-          {/* --------------------------------------------------- Tab 2: AI Workspace */}
+          {/* -------------------------------------------- Tab 2: Thư viện tài nguyên */}
           {tab === 2 && (
-            <div className="aiw">
-              <div className="content">
-                <div className="center-col">
-                  <div className="page-head">
-                    <h1>Học viện AI</h1>
-                    <p>Hệ tri thức, khóa học và không gian thực hành AI — tất cả trong một nơi.</p>
-                  </div>
-
-                  <div className="tabs-row">
-                    {TABS.map((label, i) => (
-                      <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
-                        <TabIcon index={i} />
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="ws-hero">
-                    <div className="ws-hero-text">
-                      <h2>Không gian thực hành AI của bạn</h2>
-                      <p>Chọn công cụ phù hợp, áp dụng kiến thức và biến ý tưởng thành kết quả thực tế.</p>
-                      <div className="feat-tags">
-                        <div className="feat-tag">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="12" cy="12" r="9" />
-                            <path d="M12 7v5l3 3" />
-                          </svg>
-                          Nhiều công cụ AI
-                        </div>
-                        <div className="feat-tag">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                          </svg>
-                          Workflow thực chiến
-                        </div>
-                        <div className="feat-tag">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="4" y="4" width="16" height="16" rx="2" />
-                            <path d="M4 9h16" />
-                          </svg>
-                          Lưu &amp; quản lý
-                        </div>
-                        <div className="feat-tag">
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="4" y="2" width="10" height="20" rx="2" />
-                            <rect x="16" y="7" width="6" height="12" rx="1.5" />
-                          </svg>
-                          Đồng bộ đa thiết bị
-                        </div>
-                      </div>
-                      <button className="btn-primary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.4}>
-                          <path d="M12 5v14M5 12h14" />
-                        </svg>
-                        Tạo dự án mới
-                      </button>
-                    </div>
-                    <div className="ws-graphic">
-                      <div className="ws-glow" />
-                      <svg width="260" height="190" viewBox="0 0 260 190" fill="none">
-                        <g className="ws-orb" style={{ animationDelay: "0s" }}>
-                          <rect x="8" y="22" width="24" height="24" rx="7" fill="rgba(109,74,255,.28)" stroke="#9b7bff" strokeWidth="1.2" />
-                          <circle cx="20" cy="34" r="4" fill="#c9bdff" />
-                        </g>
-                        <path d="M32 34h20" stroke="#6d84ff" strokeWidth="1.4" strokeDasharray="3 3" />
-                        <path d="M52 34l-4-3M52 34l-4 3" stroke="#6d84ff" strokeWidth="1.4" />
-                        <g className="ws-orb" style={{ animationDelay: ".4s" }}>
-                          <rect x="8" y="70" width="24" height="24" rx="7" fill="rgba(109,74,255,.28)" stroke="#9b7bff" strokeWidth="1.2" />
-                          <path d="M14 88l4-10 4 6 4-12" stroke="#c9bdff" strokeWidth="1.6" fill="none" strokeLinecap="round" />
-                        </g>
-                        <g className="ws-orb" style={{ animationDelay: ".8s" }}>
-                          <rect x="222" y="20" width="24" height="24" rx="7" fill="rgba(109,74,255,.28)" stroke="#9b7bff" strokeWidth="1.2" />
-                          <circle cx="234" cy="32" r="7" fill="none" stroke="#c9bdff" strokeWidth="1.6" />
-                        </g>
-                        <g className="ws-orb" style={{ animationDelay: "1.2s" }}>
-                          <rect x="222" y="66" width="24" height="24" rx="7" fill="rgba(109,74,255,.28)" stroke="#9b7bff" strokeWidth="1.2" />
-                          <path d="M228 84l6-14 6 14M230 80h8" stroke="#c9bdff" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                        </g>
-                        <g className="ws-orb" style={{ animationDelay: "1.6s" }}>
-                          <rect x="14" y="118" width="24" height="24" rx="7" fill="rgba(109,74,255,.28)" stroke="#9b7bff" strokeWidth="1.2" />
-                          <path d="M20 136c0-6 4-10 8-10s8 4 8 10" stroke="#c9bdff" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                        </g>
-                        <g className="ws-orb" style={{ animationDelay: "2s" }}>
-                          <rect x="216" y="120" width="24" height="24" rx="7" fill="rgba(109,74,255,.28)" stroke="#9b7bff" strokeWidth="1.2" />
-                          <circle cx="228" cy="128" r="3" fill="#c9bdff" />
-                          <path d="M222 138c2-4 10-4 12 0" stroke="#c9bdff" strokeWidth="1.4" fill="none" strokeLinecap="round" />
-                        </g>
-                        <rect x="66" y="30" width="128" height="94" rx="10" fill="url(#wsScreen)" stroke="#8b6bff" strokeWidth="1.6" />
-                        <rect x="76" y="40" width="108" height="66" rx="6" fill="#0c0824" stroke="#6d4aff" strokeWidth="1" />
-                        <text x="130" y="82" fontFamily="Inter,sans-serif" fontSize="30" fontWeight="800" fill="#fff" textAnchor="middle">
-                          AI
-                        </text>
-                        <rect x="100" y="126" width="60" height="8" rx="4" fill="#3d2a8f" />
-                        <defs>
-                          <linearGradient id="wsScreen" x1="66" y1="30" x2="194" y2="124">
-                            <stop offset="0" stopColor="#3d2a8f" />
-                            <stop offset="1" stopColor="#1a1044" />
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Công cụ theo nhóm</h3>
-                      <a href="#">Xem tất cả công cụ →</a>
-                    </div>
-                    {workspace.groups.length === 0 ? (
-                      <div className="empty-hint" style={{ marginTop: 14 }}>
-                        Chưa có công cụ nào — nội dung sẽ hiện ở đây khi được xuất bản.
-                      </div>
-                    ) : (
-                      <div className="grp-grid" style={{ marginTop: 14 }}>
-                        {workspace.groups.map((group) => {
-                          const style = GROUP_STYLE[group.category] ?? DEFAULT_GROUP_STYLE;
-                          return (
-                            <div className="grp-card" key={group.category}>
-                              <div className="ico" style={{ background: style.bg }}>
-                                {style.icon}
-                              </div>
-                              <h5>{group.category}</h5>
-                              <span>{group.count} công cụ</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Dự án của bạn</h3>
-                    </div>
-                    <div className="proj-row">
-                      <div className="proj-tabs">
-                        <button className={projTab === 0 ? "p-tab active" : "p-tab"} onClick={() => setProjTab(0)}>
-                          Tất cả ({workspace.projects.length})
-                        </button>
-                        <button className={projTab === 1 ? "p-tab active" : "p-tab"} onClick={() => setProjTab(1)}>
-                          Đang thực hiện ({countByStatus("in_progress")})
-                        </button>
-                        <button className={projTab === 2 ? "p-tab active" : "p-tab"} onClick={() => setProjTab(2)}>
-                          Hoàn thành ({countByStatus("completed")})
-                        </button>
-                        <button className={projTab === 3 ? "p-tab active" : "p-tab"} onClick={() => setProjTab(3)}>
-                          Tạm dừng ({countByStatus("paused")})
-                        </button>
-                      </div>
-                      <div className="proj-toolbar">
-                        <div className="sort-select">
-                          Sắp xếp: Mới nhất
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M6 9l6 6 6-6" />
-                          </svg>
-                        </div>
-                        <div className="view-toggle">
-                          <button className={viewMode === 0 ? "active" : undefined} onClick={() => setViewMode(0)}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                              <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                              <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                              <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                            </svg>
-                          </button>
-                          <button className={viewMode === 1 ? "active" : undefined} onClick={() => setViewMode(1)}>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {workspace.projects.length === 0 ? (
-                      <div className="empty-hint" style={{ marginTop: 14 }}>
-                        Chưa có dự án nào — bắt đầu dự án đầu tiên của bạn bên dưới.
-                      </div>
-                    ) : (
-                      <div className="proj-grid" style={{ marginTop: 14 }}>
-                        {workspace.projects.map((project) => {
-                          const workflowStyle = project.workflowId ? WORKFLOW_STYLE[project.workflowId] : undefined;
-                          const style = workflowStyle ?? DEFAULT_GROUP_STYLE;
-                          const statusStyle = STATUS_STYLE[project.status];
-                          return (
-                            <div className="proj-card" key={project.id}>
-                              <div className="proj-top">
-                                <div className="ico" style={{ background: style.bg }}>
-                                  {style.icon}
-                                </div>
-                                <div>
-                                  <h5>{project.title}</h5>
-                                  <span className="status-pill" style={{ background: statusStyle.pillBg, color: statusStyle.pillColor }}>
-                                    {statusStyle.label}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="desc">{project.description}</div>
-                              <div className="proj-progress-lbl">
-                                Tiến độ<b>{project.progressPercent}%</b>
-                              </div>
-                              <div className="proj-track">
-                                <div
-                                  className="proj-fill"
-                                  style={{ width: `${project.progressPercent}%`, background: statusStyle.fill }}
-                                />
-                              </div>
-                              <div className="proj-foot">
-                                <span className="updated">Cập nhật: {formatRelativeTime(project.updatedAt)}</span>
-                                <button className="more-btn">⋯</button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {workspace.limits.isPremium || workspace.limits.canCreateProject ? (
-                      <div className="new-proj" style={{ marginTop: 14 }}>
-                        <div className="plus">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}>
-                            <path d="M12 5v14M5 12h14" />
-                          </svg>
-                          Tạo dự án mới
-                        </div>
-                        <span>Bắt đầu một dự án mới với AI</span>
-                      </div>
-                    ) : (
-                      <div className="new-proj locked" style={{ marginTop: 14 }} onClick={() => go("Premium.html")}
-              onMouseEnter={() => prefetchNav("Premium.html")}
-              onFocus={() => prefetchNav("Premium.html")}>
-                        <div className="plus">
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                            <rect x="5" y="10" width="14" height="10" rx="2" />
-                            <path d="M8 10V7a4 4 0 018 0v3" />
-                          </svg>
-                          Đã đạt giới hạn 3 dự án cùng lúc (Free)
-                        </div>
-                        <span>Nâng cấp Premium để tạo thêm dự án không giới hạn</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Workflow mẫu</h3>
-                      <a href="#">Xem tất cả workflow →</a>
-                    </div>
-                    {showLimitBanner ? (
-                      <div className="limit-badge">
-                        Gói Free — đã dùng {Math.min(workspace.limits.workflowsOpenedThisMonth, 1)}/1 lượt mở workflow tháng này
-                        {!workspace.limits.canOpenNewWorkflow ? " · Nâng cấp Premium để mở không giới hạn" : ""}
-                      </div>
-                    ) : null}
-                    {workspace.workflows.length === 0 ? (
-                      <div className="empty-hint" style={{ marginTop: 14 }}>
-                        Chưa có workflow nào — nội dung sẽ hiện ở đây khi được xuất bản.
-                      </div>
-                    ) : (
-                      <div className="wf-grid" style={{ marginTop: 14 }}>
-                        {workspace.workflows.map((workflow) => {
-                          const style = WORKFLOW_STYLE[workflow.id] ?? DEFAULT_GROUP_STYLE;
-                          return (
-                            <div className="wf-card" key={workflow.id}>
-                              <div className="wf-top">
-                                <div className="ico" style={{ background: style.bg }}>
-                                  {style.icon}
-                                </div>
-                                <div>
-                                  <h5>{workflow.title}</h5>
-                                  <span className="steps">
-                                    {workflow.steps.length} bước · {workflow.suggestedTools.length} công cụ
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="desc">{workflow.description}</div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <aside className="right-col">
-                  <div className="card">
-                    <div className="card-head">
-                      <h4>Công cụ yêu thích</h4>
-                      <a href="#">Quản lý</a>
-                    </div>
-                    {workspace.favorites.length === 0 ? (
-                      <div className="empty-hint">Chưa có công cụ nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                    ) : (
-                      workspace.favorites.map((tool) => {
-                        const style = FAVORITE_STYLE[tool.id] ?? DEFAULT_GROUP_STYLE;
-                        const off = Boolean(starOff[tool.id]);
-                        return (
-                          <div className="tool-fav-row" key={tool.id}>
-                            <div className="ico" style={{ background: style.bg }}>
-                              {style.icon}
-                            </div>
-                            <div className="info">
-                              <h6>{tool.name}</h6>
-                              <span>{tool.tagline}</span>
-                            </div>
-                            <button
-                              className={off ? "star-btn off" : "star-btn"}
-                              onClick={() => setStarOff((prev) => ({ ...prev, [tool.id]: !prev[tool.id] }))}
-                            >
-                              <svg fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                              </svg>
-                            </button>
-                          </div>
-                        );
-                      })
-                    )}
-                    <a href="#" style={{ display: "block", textAlign: "center", fontSize: "12.5px", fontWeight: 700, marginTop: 10 }}>
-                      Xem tất cả công cụ →
-                    </a>
-                  </div>
-
-                  <div className="card">
-                    <div className="card-head">
-                      <h4>Hoạt động gần đây</h4>
-                      <a href="#">Xem tất cả</a>
-                    </div>
-                    {workspace.activity.length === 0 ? (
-                      <div className="empty-hint">Chưa có hoạt động nào — bắt đầu 1 dự án để thấy lịch sử ở đây.</div>
-                    ) : (
-                      workspace.activity.map((item) => (
-                        <div className="act-row" key={item.id}>
-                          <div className="ico">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M12 5v14M5 12h14" />
-                            </svg>
-                          </div>
-                          <div className="info">
-                            {item.label}
-                            <span className="time">{formatRelativeTime(item.occurredAt)}</span>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-
-                  <div className="card">
-                    <div className="card-head">
-                      <h4>Gợi ý cho bạn</h4>
-                    </div>
-                    {suggestedWorkflows.length === 0 ? (
-                      <div className="empty-hint">Chưa có gợi ý nào — nội dung sẽ hiện ở đây khi có thêm dữ liệu.</div>
-                    ) : (
-                      suggestedWorkflows.map((workflow, i) => {
-                        const style = WORKFLOW_STYLE[workflow.id] ?? DEFAULT_GROUP_STYLE;
-                        const isLast = i === suggestedWorkflows.length - 1;
-                        return (
-                          <div className="sugg-card" style={isLast ? { marginBottom: 0 } : undefined} key={workflow.id}>
-                            <div className="sugg-top">
-                              <div className="ico" style={{ background: style.bg }}>
-                                {style.icon}
-                              </div>
-                              <h6>Workflow: {workflow.title}</h6>
-                            </div>
-                            <p>{workflow.description}</p>
-                          </div>
-                        );
-                      })
-                    )}
-                    <button className="btn-primary" style={{ width: "100%", justifyContent: "center", marginTop: 14 }}>
-                      Xem thêm gợi ý →
-                    </button>
-                  </div>
-                </aside>
-              </div>
-            </div>
-          )}
-
-          {/* -------------------------------------------- Tab 3: Thư viện tài nguyên */}
-          {tab === 3 && (
             <div className="content">
               <div className="center-col" style={{ width: "100%" }}>
                 <div className="page-head">
@@ -1863,53 +1255,6 @@ export function HocVienAiClient({
                         </>
                       )}
 
-                      {openResource.category === "case-study" && openCaseStudy && (
-                        <>
-                          <p style={{ color: "var(--muted)", marginTop: 8 }}>{openCaseStudy.summary}</p>
-                          {openCaseStudy.resultMetric && (
-                            <div style={{ marginTop: 12 }}>
-                              <h5>Kết quả</h5>
-                              <p style={{ color: "var(--muted)" }}>{openCaseStudy.resultMetric}</p>
-                            </div>
-                          )}
-                          {openCaseStudy.thumbnailUrl && (
-                            // eslint-disable-next-line @next/next/no-img-element -- ảnh minh hoạ do Admin dán URL ngoài, không phải asset tĩnh cố định.
-                            <img
-                              src={openCaseStudy.thumbnailUrl}
-                              alt=""
-                              style={{ marginTop: 14, width: "100%", borderRadius: 10, objectFit: "cover" }}
-                            />
-                          )}
-                          {openCaseStudy.linkUrl && (
-                            <a
-                              className="btn-primary"
-                              style={{ marginTop: 14, display: "inline-flex", textDecoration: "none" }}
-                              href={openCaseStudy.linkUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Xem thêm ↗
-                            </a>
-                          )}
-                        </>
-                      )}
-
-                      {openResource.category === "blog" && openBlogPost && (
-                        <>
-                          <div className="meta" style={{ marginTop: 8 }}>
-                            <span>{openBlogPost.date}</span>
-                            <span>·</span>
-                            <span>{openBlogPost.readTime}</span>
-                          </div>
-                          <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
-                            {openBlogPost.content.map((paragraph, i) => (
-                              <p key={i} style={{ color: "var(--muted)", lineHeight: 1.7 }}>
-                                {paragraph}
-                              </p>
-                            ))}
-                          </div>
-                        </>
-                      )}
                     </div>
                   ) : activeCollection ? (
                     <>

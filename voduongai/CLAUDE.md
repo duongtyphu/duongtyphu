@@ -955,6 +955,114 @@ dedupe `auth.getUser()`, `loading.tsx`/prefetch sidebar, `staleTimes`).
 Chưa đóng hẳn — nếu Founder vẫn thấy chậm sau khi tự test trên Preview
 URL, đây là điểm quay lại đầu tiên trước khi tìm nguyên nhân thứ 4.
 
+## Giai đoạn 3, mục 4a + 4c — gỡ tab AI Workspace + gỡ Case Study/Blog AI khỏi Thư viện tài nguyên
+
+Founder xác nhận (qua `AskUserQuestion`, không phải chat rời) tiếp tục đúng
+2 hạng mục còn lại của kế hoạch gốc 14 hạng mục — cả 2 hạng mục này TRÁI
+với quyết định "gộp có chủ đích" đã làm ở đợt "Gộp Học viện AI 2.0" trước
+đó, Founder xác nhận ưu tiên kế hoạch gốc, đảo ngược 2 quyết định đó:
+
+**4a — Gỡ tab "AI Workspace" khỏi `/v2/hoc-vien-ai`.** Trang này trước đó
+có 4 tab (Hệ tri thức/Khóa học & Lộ trình/AI Workspace/Thư viện tài
+nguyên) — đã gỡ hẳn tab thứ 3, còn lại đúng 3 tab (Thư viện tài nguyên đổi
+từ index 3 → 2). **Phát hiện quan trọng khi sửa `page.tsx` của
+`/v2/admin/hoc-vien-ai`:** route đứng riêng `/v2/ai-workspace` (nội dung
+Portal thật) **KHÔNG còn tồn tại** — đã bị xoá + redirect vĩnh viễn về
+`/v2/hoc-vien-ai` từ đợt "Giai đoạn 9" trước (`next.config.ts`'s
+`{ source: "/v2/ai-workspace", destination: "/v2/hoc-vien-ai", permanent:
+true }`) — nghĩa là nội dung "công cụ AI theo nhóm/dự án/workflow mẫu" chỉ
+tồn tại DUY NHẤT dưới dạng tab vừa gỡ, giờ không còn ở BẤT KỲ đâu trong
+`/v2/*`. Điều này đổi hẳn phạm vi việc cần làm so với giả định ban đầu
+(tưởng còn `/v2/ai-workspace` sống riêng để trỏ link sang):
+
+- `HocVienAiClient.tsx` — xoá toàn bộ: JSX tab (`tab === 2`, ~380 dòng),
+  state (`projTab`/`viewMode`/`starOff`), derived values
+  (`countByStatus`/`suggestedWorkflows`/`showLimitBanner`), prop
+  `workspace`/type `WorkspaceData`, các map style chỉ dùng riêng cho tab
+  này (`GROUP_STYLE`/`DEFAULT_GROUP_STYLE`/`FAVORITE_STYLE`/
+  `WORKFLOW_STYLE`/`STATUS_STYLE`), hàm `formatRelativeTime` (chỉ dùng cho
+  "Hoạt động gần đây"), import 6 type từ `live-workspace.ts`. Giữ nguyên
+  `type IconStyle` (dùng chung cho Thư viện tài nguyên) và import
+  `ai-workspace.css` (tab Thư viện tài nguyên vẫn dùng class `.aiw` cho
+  lưới nguồn tài nguyên). `TABS`/`TAB_QUERY_KEYS` bớt 1 phần tử, `TabIcon`
+  bỏ `case 2` (rơi vào `default` đúng icon thư viện cũ). Sửa
+  `onClick={() => setTab(3)}` (nút "+N bài học Hệ tri thức →" ở tab Khóa
+  học) → `setTab(2)`.
+- `page.tsx` — bỏ fetch 6 hàm `getWorkspace*()`, bỏ prop `workspace`.
+- `CompanionClient.tsx` — 2 chỗ "Công cụ yêu thích" (link "Quản lý" + mỗi
+  icon công cụ) trước trỏ `/v2/hoc-vien-ai?tab=ai-workspace` (dead —
+  query param không còn tab nào khớp, rơi về tab 0 mặc định) → đổi thành
+  `/v2/hoc-vien-ai` (bare, cùng đích, bỏ query param vô nghĩa).
+- `/v2/admin/hoc-vien-ai/page.tsx` — xoá hẳn khối `AdminPortalMirror`
+  thứ 3 ("aiw", mirror `tools`/`ai_workflow_sections`) — **không phải chỉ
+  dọn thẩm mỹ**: khối này giờ mirror 1 nội dung không còn hiển thị THẬT ở
+  bất kỳ đâu trong Portal 2.0 (đúng lý do đã nêu ở trên), giữ lại sẽ gây
+  hiểu lầm cho Admin. Bỏ fetch `getWorkspaceToolGroups()`/
+  `getWorkspaceWorkflows()`, bỏ import `ai-workspace.css` (không còn khối
+  nào trong trang Admin này dùng `.aiw`).
+- **Dọn thêm 3 chỗ marketing copy nhắc "AI Workspace" như 1 tính năng còn
+  tồn tại** (phát hiện qua smoke-test HTML thật, không chỉ qua code review)
+  — banner "Nâng cấp Premium" ở sidebar `/v2/hoc-vien-ai`
+  ("...Học viện AI, CKOS và AI Workspace." → "...Học viện AI và CKOS."),
+  và cùng câu y hệt ở `PortalV2Shell`'s `promoText` prop tại 2 trang
+  `/v2/muc-tieu` + `/v2/muc-tieu/[goalId]` (không sửa 70+ file khác có
+  chứa chuỗi "AI Workspace" xuất hiện qua grep — phần lớn là CSS class
+  `.aiw`/Portal 1.0/i18n không liên quan, chỉ sửa đúng các bản sao NGUYÊN
+  VĂN của câu banner này).
+
+**4c — Gỡ Case Study + Blog AI khỏi "Thư viện tài nguyên".** Danh mục này
+trước có 6 nguồn (Prompt/SOP/Resource/Best Practice/Case Study/Blog AI) —
+giờ còn đúng 4 nguồn tĩnh (Case Study/Blog AI vẫn xem được ở nơi khác:
+`/portal/case-studies`, `/blogai` — chỉ không còn xuất hiện trong lưới
+"Thư viện tài nguyên" gộp của Học viện AI 2.0):
+
+- `HocVienAiClient.tsx` — bỏ `"case-study" | "blog"` khỏi
+  `ResourceCategoryKey`, bỏ field `caseStudyLinkUrl` khỏi `ResourceItem`,
+  bỏ 2 entry khỏi `RESOURCE_CATEGORY_STYLE`/`RESOURCE_CATEGORY_LABEL`, bỏ
+  2 đoạn `.map()` (caseStudies/blogPosts) khỏi mảng `resourceItems`, bỏ
+  `openCaseStudy`/`openBlogPost` derivations + 2 khối JSX render tương ứng
+  trong panel "xem đầy đủ" (`openResource.category === "case-study"` /
+  `"blog"`).
+- `page.tsx` — bỏ fetch `getLiveCaseStudies()`/`getLiveBlogPosts()`, bỏ 2
+  field khỏi prop `resourceLibrary`. **Không xoá** `live-case-studies.ts`/
+  `live-blog.ts` (2 hàm này vẫn được dùng thật ở nơi khác:
+  `/v2/companion`, `/v2/admin/companion`, và cả cụm
+  `/portal/aiworkspace/*` của Portal 1.0 — đã grep xác nhận trước khi
+  quyết định không đụng).
+
+**Verify:** `tsc --noEmit`/`eslint src` sạch (0 lỗi, 18 warning có sẵn từ
+trước, không liên quan đợt này), `vitest run` 495/495 pass, `rm -rf .next
+&& npm run build` sạch (route `/v2/hoc-vien-ai` vẫn xuất hiện đúng, không
+route nào biến mất). `next start` xác nhận: `/`, `/v2/hoc-vien-ai`,
+`/v2/companion`, `/v2/muc-tieu` đều `200`; `/v2/ai-workspace` vẫn `308`
+redirect đúng như thiết kế cũ (không phải regression của đợt này); HTML
+server-render của `/v2/hoc-vien-ai` xác nhận đúng 3 tab
+("Hệ tri thức"/"Khóa học & Lộ trình"/"Thư viện tài nguyên"), 0 lần xuất
+hiện "AI Workspace"/"Case Study"/"Blog AI" trong toàn bộ HTML; 0 lỗi log
+server ở mọi lượt test.
+
+**Chưa tự test được** (giới hạn sandbox không có Supabase/tài khoản đăng
+nhập thật đã nêu nhiều lần) — Founder tự test trên Preview URL: (1)
+`/v2/hoc-vien-ai` chỉ còn đúng 3 tab, chuyển tab hoạt động đúng; (2)
+`/v2/companion`'s "Công cụ yêu thích" — nút "Quản lý" và icon công cụ đều
+dẫn đúng `/v2/hoc-vien-ai` (không còn 404/redirect vòng); (3)
+`/admin/tools`/`/admin/aiworkspace/*` (Admin 1.0) vẫn quản lý dữ liệu
+`tools`/`ai_workflow_sections` bình thường (bảng Supabase KHÔNG bị xoá,
+chỉ dừng đọc/hiển thị ở tab đã gỡ) — nếu sau này cần khôi phục nội dung
+này ở `/v2/*`, dữ liệu vẫn còn nguyên.
+
+**Mục 4b (chưa làm — blocker thật, cần Founder cung cấp nội dung):** kế
+hoạch gốc yêu cầu Tab "Khóa học & Lộ trình" có 3 nhóm "Học AI theo nhu
+cầu/công cụ/nghề nghiệp" với 55 bài slide (15+20+20, viewer trình chiếu
+gốc) + lưới 13 video YouTube Admin-editable, dẫn chiếu "21-điểm brief
+gốc". Đã grep TOÀN BỘ codebase cho "21-điểm", "13 video", "55 bài slide",
+"native slide viewer" — **0 kết quả ở bất kỳ đâu**. Nội dung này không tồn
+tại trong repo dưới bất kỳ hình thức nào (không phải chỉ chưa migrate lên
+Supabase — không có cả bản nháp/outline tĩnh). Đúng nguyên tắc
+NO-FAKE-DATA, không thể tự bịa 55 bài slide hay danh sách 13 video —
+**cần Founder cung cấp nội dung thật (brief gốc/danh sách video/nội dung
+slide) trước khi làm được mục này.**
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

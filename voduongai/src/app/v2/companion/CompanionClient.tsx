@@ -86,9 +86,13 @@
  *     công cụ — favicon suy từ `tools.website` thật qua dịch vụ favicon
  *     công khai (Google `s2/favicons`, không cần API key/hạ tầng upload
  *     mới), fallback về `CATEGORY_STYLE` khi công cụ chưa có `website`.
- *     "Quản lý" giờ trỏ đúng `/v2/hoc-vien-ai?tab=ai-workspace` (tab "AI
- *     Workspace" — nơi Founder đã xây nội dung học/công cụ theo từng công
- *     cụ AI, gộp vào Học viện AI 2.0 từ trước) thay vì tab mặc định đầu.
+ *     "Quản lý" và mỗi icon công cụ giờ trỏ `/v2/hoc-vien-ai` (bare, không
+ *     còn `?tab=ai-workspace`) — tab "AI Workspace" đã bị gỡ hẳn khỏi
+ *     `/v2/hoc-vien-ai` theo yêu cầu Founder (mục 4a của kế hoạch gốc), và
+ *     `/v2/ai-workspace` (route đứng riêng cũ) đã sớm bị xoá + redirect
+ *     vĩnh viễn về `/v2/hoc-vien-ai` từ trước (xem `next.config.ts`) — nội
+ *     dung "công cụ theo từng nhu cầu" không còn tồn tại riêng ở `/v2/*`
+ *     nữa, "Quản lý" giờ chỉ đưa về trang Học viện AI (tab mặc định).
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
@@ -771,7 +775,7 @@ export function CompanionClient({
               <div className="card">
                 <div className="card-head">
                   <h4>Công cụ yêu thích</h4>
-                  <a onClick={() => go("/v2/hoc-vien-ai?tab=ai-workspace")} style={{ cursor: "pointer" }}>
+                  <a onClick={() => go("/v2/hoc-vien-ai")} style={{ cursor: "pointer" }}>
                     Quản lý
                   </a>
                 </div>
@@ -789,7 +793,7 @@ export function CompanionClient({
                             style={{ background: favicon ? "#fff" : style.bg, cursor: "pointer" }}
                             key={t.id}
                             title={t.name}
-                            onClick={() => go("/v2/hoc-vien-ai?tab=ai-workspace")}
+                            onClick={() => go("/v2/hoc-vien-ai")}
                           >
                             {favicon ? (
                               // eslint-disable-next-line @next/next/no-img-element -- favicon ngoài, dịch vụ công khai, không cần next/image domain allowlist
