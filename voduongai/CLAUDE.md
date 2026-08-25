@@ -949,6 +949,12 @@ sạch. Founder tự test trên Preview URL: bấm qua lại 2-3 mục quen thu�
 liên tục (vd Companion → Học viện AI → Companion) trong vòng 30 giây,
 xác nhận lần quay lại có nhanh hơn hẳn lần đầu không (gần như tức thì).
 
+**Founder xác nhận (2026-08-25): đã ghi nhận, tạm dừng đợt tối ưu tốc độ
+tải trang ở đây — sẽ quay lại xử lý tiếp sau** (3 nguyên nhân gốc đã sửa:
+dedupe `auth.getUser()`, `loading.tsx`/prefetch sidebar, `staleTimes`).
+Chưa đóng hẳn — nếu Founder vẫn thấy chậm sau khi tự test trên Preview
+URL, đây là điểm quay lại đầu tiên trước khi tìm nguyên nhân thứ 4.
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

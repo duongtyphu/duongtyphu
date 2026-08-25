@@ -256,3 +256,29 @@
 [data-ui="v2"] .v2-sidebar-scroll::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* --------------------------------------------------------------------------
+ * Giai đoạn 3, mục 3a — "Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng
+ * yên". Trước đây MỌI trang `/v2/*` (20 file CSS hand-chép riêng, đã audit
+ * qua grep, không suy đoán) đều `.app{display:flex;min-height:100vh}` +
+ * `.sidebar` KHÔNG có `position:sticky`/`overflow-y` — sidebar cuộn theo
+ * cả trang thay vì đứng yên (chỉ `.topbar{position:sticky;top:0}` đã đúng
+ * từ trước, mục 3b).
+ *
+ * Sửa Ở ĐÂY (site-wide, đúng 1 chỗ áp dụng toàn bộ `/v2/*`, không sửa
+ * từng trang) thay vì lặp lại ở 20 file — an toàn vì đã audit không file
+ * nào trong 20 file đó khai `position`/`overflow`/`height` riêng cho
+ * `.sidebar` (0 xung đột thuộc tính, CSS cascade cộng dồn chứ không đè).
+ * `.sidebar` "đứng yên" bằng CÙNG cơ chế `position:sticky;top:0` mà
+ * `.topbar` đã dùng (không phải `position:fixed` — sticky an toàn hơn,
+ * tự tôn trọng luồng flex `.app` sẵn có, không cần tính lại `left`/`width`
+ * thủ công). `height:100vh` + `overflow-y:auto` — sidebar dài hơn màn
+ * hình (vd nhóm Companion 3 mục con) tự cuộn RIÊNG bên trong, không kéo
+ * cả viewport cuộn theo.
+ * ------------------------------------------------------------------------ */
+[data-ui="v2"] .sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
