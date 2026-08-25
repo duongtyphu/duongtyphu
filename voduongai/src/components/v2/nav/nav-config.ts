@@ -27,6 +27,7 @@ import {
   Home,
   Image as ImageIcon,
   LayoutDashboard,
+  Lightbulb,
   Menu,
   NotebookPen,
   Plug,
@@ -84,6 +85,12 @@ const PORTAL_MAIN: NavItem[] = [
     icon: Brain,
     group: "companion",
   },
+
+  // Portal 2.0, đợt điều chỉnh mới (Giai đoạn 1, xem CLAUDE.md "ĐỊNH HƯỚNG
+  // HIỆN TẠI") — mục menu mới, cố định giữa Companion AI và Học viện AI.
+  // Trang đích CHƯA có mockup riêng (Founder gửi sau) — hiện là placeholder
+  // honest "đang xây dựng", chưa dựng nội dung thật.
+  { label: "Mỗi ngày một ý tưởng", href: `${V2_PORTAL_BASE}/moi-ngay-mot-y-tuong`, icon: Lightbulb },
 
   // Gộp CKOS + Học viện AI + AI Workspace thành 1 mục "Học viện AI" (7 tab
   // nội bộ) — Founder quyết định #1/#2, xem docblock đầu file HocVienAiClient.

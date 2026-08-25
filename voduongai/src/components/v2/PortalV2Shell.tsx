@@ -218,6 +218,15 @@ export function PortalV2Shell({
             )
           )}
           {navItem(
+            "Moi ngay mot y tuong.html",
+            "Mỗi ngày một ý tưởng",
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18h6" />
+              <path d="M10 22h4" />
+              <path d="M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V17a1 1 0 001 1h4a1 1 0 001-1v-.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z" />
+            </svg>,
+          )}
+          {navItem(
             "Hoc vien AI.html",
             "Học viện AI",
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

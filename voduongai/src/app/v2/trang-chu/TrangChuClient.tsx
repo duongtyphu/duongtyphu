@@ -50,6 +50,7 @@ import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
 const HREF_MAP: Record<string, string> = {
   "Companion.html": "/v2/companion",
+  "Moi ngay mot y tuong.html": "/v2/moi-ngay-mot-y-tuong",
   "He tri thuc CKOS.html": "/v2/hoc-vien-ai",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
   "AI Workspace.html": "/v2/hoc-vien-ai",
@@ -291,6 +292,14 @@ export function TrangChuClient({
               </svg>
               Companion AI
             </button>
+            <button className="nav-item" onClick={go("Moi ngay mot y tuong.html")}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18h6" />
+                <path d="M10 22h4" />
+                <path d="M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V17a1 1 0 001 1h4a1 1 0 001-1v-.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z" />
+              </svg>
+              Mỗi ngày một ý tưởng
+            </button>
             <button className="nav-item" onClick={go("Hoc vien AI.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M22 10L12 5 2 10l10 5 10-5z" />
@@ -486,11 +495,19 @@ export function TrangChuClient({
                     <h3>Companion AI</h3>
                     <p>AI Mentor cá nhân hóa, hiểu bạn, nhớ bạn và đồng hành cùng bạn 24/7</p>
                   </div>
-                  <div className="explore-card" onClick={go("He tri thuc CKOS.html")}>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2-static/assets/icon-ckos.png" alt="Hệ tri thức AI" /></div>
-                    <h3>Hệ tri thức AI</h3>
-                    <p>Thư viện tri thức và công cụ AI chuẩn hoá được chọn lọc, cập nhật liên tục, sẵn sàng cho mọi nhu cầu.</p>
+                  {/* Chưa có icon riêng (chưa có mockup Claude Design cho trang
+                      này) — dùng SVG lightbulb inline thay ảnh PNG, cùng khung
+                      `.ico` glossy như các thẻ khác, không phải `.ico-img`. */}
+                  <div className="explore-card" onClick={go("Moi ngay mot y tuong.html")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#ffb74d,#e2b23c)" }}>
+                      <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 18h6" />
+                        <path d="M10 22h4" />
+                        <path d="M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V17a1 1 0 001 1h4a1 1 0 001-1v-.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z" />
+                      </svg>
+                    </div>
+                    <h3>Mỗi ngày một ý tưởng</h3>
+                    <p>Trái tim của Portal — kết nối tới mọi mục khác. Đang được xây dựng.</p>
                   </div>
                   <div className="explore-card" onClick={go("Hoc vien AI.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
@@ -498,23 +515,17 @@ export function TrangChuClient({
                     <h3>Học viện AI</h3>
                     <p>Lộ trình bài bản từ cơ bản đến nâng cao, học đi đôi với thực hành.</p>
                   </div>
-                  <div className="explore-card" onClick={go("AI Workspace.html")}>
+                  <div className="explore-card" onClick={go("Du an Co hoi.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2-static/assets/icon-workspace.png" alt="AI Workspace" /></div>
-                    <h3>AI Workspace</h3>
-                    <p>Nơi bạn thực hành, lưu trữ và triển khai ý tưởng thành sản phẩm thực tế.</p>
+                    <div className="ico ico-img"><img src="/v2-static/assets/icon-duan.png" alt="Dự án &amp; Cơ hội" /></div>
+                    <h3>Dự án &amp; Cơ hội</h3>
+                    <p>Cơ hội hợp tác, đầu tư và đồng hành trong các dự án công nghệ AI.</p>
                   </div>
                   <div className="explore-card" onClick={go("Premium.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
                     <div className="ico ico-img"><img src="/v2-static/assets/icon-premium.png" alt="Premium" /></div>
                     <h3>Premium</h3>
                     <p>Tài nguyên độc quyền dành cho thành viên. Nội dung chuyên sâu, công cụ cao cấp và tư vấn 1:1 cùng chuyên gia.</p>
-                  </div>
-                  <div className="explore-card" onClick={go("Du an Co hoi.html")}>
-                    {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
-                    <div className="ico ico-img"><img src="/v2-static/assets/icon-duan.png" alt="Dự án &amp; Cơ hội" /></div>
-                    <h3>Dự án &amp; Cơ hội</h3>
-                    <p>Cơ hội hợp tác, đầu tư và đồng hành trong các dự án công nghệ AI.</p>
                   </div>
                 </div>
               </section>

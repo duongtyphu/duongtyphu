@@ -71,6 +71,7 @@ import "./du-an-co-hoi.css";
 const HREF_MAP: Record<string, string> = {
   "Trang chu Portal.html": "/v2/trang-chu",
   "Companion.html": "/v2/companion",
+  "Moi ngay mot y tuong.html": "/v2/moi-ngay-mot-y-tuong",
   "He tri thuc CKOS.html": "/v2/hoc-vien-ai",
   "Hoc vien AI.html": "/v2/hoc-vien-ai",
   "AI Workspace.html": "/v2/hoc-vien-ai",
@@ -247,6 +248,14 @@ export function DuAnCoHoiClient({
                 <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
               </svg>
               Companion AI
+            </button>
+            <button className="nav-item" onClick={() => go("Moi ngay mot y tuong.html")}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18h6" />
+                <path d="M10 22h4" />
+                <path d="M12 2a7 7 0 00-4 12.7c.6.5 1 1.3 1 2.1V17a1 1 0 001 1h4a1 1 0 001-1v-.2c0-.8.4-1.6 1-2.1A7 7 0 0012 2z" />
+              </svg>
+              Mỗi ngày một ý tưởng
             </button>
             <button className="nav-item" onClick={() => go("Hoc vien AI.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

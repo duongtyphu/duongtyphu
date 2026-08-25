@@ -10,6 +10,11 @@ export const PORTAL_HREF_MAP: Record<string, string> = {
   "Companion.html": "/v2/companion",
   "Su menh Companion.html": "/v2/su-menh-companion",
   "Bo nho ca nhan hoa.html": "/v2/bo-nho-ca-nhan-hoa",
+  // Portal 2.0, đợt điều chỉnh mới (Giai đoạn 1, xem CLAUDE.md "ĐỊNH HƯỚNG
+  // HIỆN TẠI") — mục menu mới, đặt giữa Companion AI và Học viện AI. CHƯA có
+  // mockup Claude Design riêng (Founder sẽ gửi sau, nội dung lớn nên tách
+  // phase riêng) — trang đích hiện là placeholder honest "đang xây dựng".
+  "Moi ngay mot y tuong.html": "/v2/moi-ngay-mot-y-tuong",
   // Giai đoạn 9 (gộp Học viện AI 2.0) — "He tri thuc CKOS.html"/"AI Workspace.html"
   // trỏ về đúng /v2/hoc-vien-ai (đã gộp cả 3 nội dung vào 7 tab nội bộ) sau
   // khi xoá 2 route hub cũ /v2/he-tri-thuc và /v2/ai-workspace.

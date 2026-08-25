@@ -208,7 +208,7 @@
 .tcp .section-head a { font-size: 13px; font-weight: 600 }
 
 /* Explore grid */
-.tcp .explore-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px }
+.tcp .explore-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px }
 .tcp .explore-card { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 18px 14px; text-align: center; cursor: pointer; transition: box-shadow .15s, transform .15s }
 .tcp .explore-card:hover { box-shadow: 0 8px 20px rgba(109, 74, 255, .12); transform: translateY(-2px) }
 .tcp .explore-card .ico { width: 88px; height: 88px; border-radius: 12px; margin: 0 auto 2px; display: flex; align-items: center; justify-content: center }
