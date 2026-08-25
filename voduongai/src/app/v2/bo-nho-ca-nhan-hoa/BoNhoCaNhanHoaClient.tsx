@@ -54,9 +54,9 @@ import { useEffect, useState } from "react";
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
-import { listGoals } from "@/lib/portal/foundation/goal-runtime";
+import { listGoals, hydrateGoalRuntime } from "@/lib/portal/foundation/goal-runtime";
 import type { MemoryEntry } from "@/lib/portal/foundation/memory-store";
-import { listMemoryEntries } from "@/lib/portal/foundation/memory-store";
+import { listMemoryEntries, hydrateMemoryStore } from "@/lib/portal/foundation/memory-store";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 import "../inter-gf.css";
@@ -81,10 +81,14 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
   const [entries, setEntries] = useState<MemoryEntry[]>([]);
   const [goals, setGoals] = useState<GoalRecord[]>([]);
   useEffect(() => {
-    // Đọc localStorage chỉ có ở client sau mount (cùng pattern `/v2/companion`).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEntries(listMemoryEntries());
-    setGoals(listGoals());
+    // Phase 40 — hydrate cache từ Supabase (member_id thật) trước khi đọc,
+    // thay cho localStorage per-browser cũ (cùng pattern `/v2/companion`).
+    (async () => {
+      await Promise.all([hydrateMemoryStore(), hydrateGoalRuntime()]);
+       
+      setEntries(listMemoryEntries());
+      setGoals(listGoals());
+    })();
   }, []);
 
   const activeGoals = goals.filter((g) => g.status === "active");

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { seedLandingPageProductionGoal, listGoalMissions, linkMissionToSession } from "@/lib/portal/foundation/goal-runtime";
+import { seedLandingPageProductionGoal, listGoalMissions, linkMissionToSession, __resetGoalRuntimeCacheForTest} from "@/lib/portal/foundation/goal-runtime";
 import { recordMissionQA, buildMissionPackage, recordMissionAnalysis, recordMissionResearch, addMissionDecision, recordMissionReview, recordMissionLessonsLearned, recordMissionOwnerApproval } from "@/lib/portal/foundation/mission-runtime";
 import { activateWave1Companions, getCompanion } from "@/lib/portal/foundation/workforce-registry";
 import { recordPerformanceSnapshot, recordCompanionReflection, computeImprovementPlan, getWorkforceEvolutionTimeline } from "@/lib/portal/foundation/workforce-evolution";
@@ -17,6 +17,7 @@ import { promoteBestPractice, suggestBlueprintImprovement, getOrganizationalMemo
 describe("PHASE 3 FINALIZATION — F1 + F2 Runtime Demo (nối tiếp Mission 01 thật)", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    __resetGoalRuntimeCacheForTest();
     activateWave1Companions();
   });
 

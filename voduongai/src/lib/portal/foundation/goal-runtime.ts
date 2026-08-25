@@ -14,10 +14,29 @@
  * (field đã có sẵn) mang chính `missionId` của Goal Runtime này — không
  * cần field mới trong Kernel.
  *
- * localStorage-backed, cùng pattern static+overlay đã dùng ở
- * `workforce-registry.ts`/`portfolio-store.ts`.
+ * PHASE 40 — trước đây `localStorage`-backed (per-browser, KHÔNG gắn
+ * `user_id` thật). Giờ lưu qua 3 bảng Supabase (`goal_records`/
+ * `goal_epics`/`goal_missions`, RLS `member_id = auth.uid()`), theo đúng
+ * yêu cầu Founder "mọi chỉ số phải kết nối và ghi nhận thật với hồ sơ của
+ * từng học viên" — 1 học viên đổi thiết bị/trình duyệt vẫn thấy đúng Goal
+ * của mình, 2 học viên chung máy không còn thấy chung dữ liệu.
+ *
+ * Kiến trúc "cache đồng bộ + persist bất đồng bộ" — GIỮ NGUYÊN 100% chữ
+ * ký mọi hàm export bên dưới (đều đồng bộ như cũ) để không phải viết lại
+ * `WorkspaceMvp.tsx`/`GoalRuntimeBoard.tsx`/`GoalDetail.tsx`/... (nhiều nơi
+ * gọi các hàm này ngay trong render/event handler đồng bộ). Chỉ thêm 1
+ * hàm mới bắt buộc: `hydrateGoalRuntime()` (async, gọi 1 lần lúc mount
+ * TRƯỚC khi đọc lần đầu — xem cách `/v2/companion`/`/v2/muc-tieu` gọi
+ * trong `useEffect`). `readList`/`writeList` (2 hàm nội bộ DUY NHẤT từng
+ * chạm `localStorage`) đổi thành đọc/ghi cache trong bộ nhớ (đồng bộ,
+ * không đổi hành vi phía trên) + đẩy lên Supabase ở nền (fire-and-forget,
+ * không chặn UI — mọi lời gọi ghi trong file này đều không dùng giá trị
+ * Promise trả về). Cache tự re-hydrate nếu phát hiện đổi tài khoản đăng
+ * nhập. Không có hàm XOÁ goal/epic/mission nào (đã audit toàn file) nên
+ * chiến lược "upsert cả dòng mỗi lần ghi" là an toàn, không mất dữ liệu.
  */
 
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import type { DepartmentId } from "./workforce-registry";
 import { emitGrowthEvent } from "./growth-event-bus";
 
@@ -84,7 +103,7 @@ export type GoalMissionRecord = {
   missionId: string;
   epicId: string;
   title: string;
-  owner: string; // Owner (người dùng) — hệ thống hiện là single-owner per browser, chưa có multi-user backend thật
+  owner: string; // Owner (người dùng) — 1 member_id thật (Phase 40), không còn "single-owner per browser"
   department: DepartmentId;
   companionEmployeeId: string;
   input: string[];
@@ -96,25 +115,210 @@ export type GoalMissionRecord = {
   createdAt: string;
 };
 
-const GOALS_KEY = "vdai_goal_runtime_goals";
-const EPICS_KEY = "vdai_goal_runtime_epics";
-const MISSIONS_KEY = "vdai_goal_runtime_missions";
+// ---------------------------------------------------------------------------
+// Cache đồng bộ + persist bất đồng bộ (Phase 40) — xem docblock đầu file.
 
-function readList<T>(key: string): T[] {
+type GoalRow = {
+  goal_id: string;
+  title: string;
+  status: GoalStatus;
+  description: string | null;
+  category: string | null;
+  goal_type: string | null;
+  priority: GoalPriority | null;
+  expected_deliverable: string | null;
+  due_date: string | null;
+  tags: string[] | null;
+  created_by: string | null;
+  status_history: GoalStatusHistoryEntry[] | null;
+  created_at: string;
+};
+type EpicRow = { epic_id: string; goal_id: string; title: string; status: GoalStatus; created_at: string };
+type MissionRow = {
+  mission_id: string;
+  epic_id: string;
+  title: string;
+  owner: string;
+  department: DepartmentId;
+  companion_employee_id: string;
+  input: string[];
+  output: string[];
+  deliverables: string[];
+  definition_of_done: string[];
+  status: MissionStatus;
+  session_id: string | null;
+  created_at: string;
+};
+
+function rowToGoal(r: GoalRow): GoalRecord {
+  return {
+    goalId: r.goal_id,
+    title: r.title,
+    status: r.status,
+    createdAt: r.created_at,
+    description: r.description ?? undefined,
+    category: r.category ?? undefined,
+    goalType: r.goal_type ?? undefined,
+    priority: r.priority ?? undefined,
+    expectedDeliverable: r.expected_deliverable ?? undefined,
+    dueDate: r.due_date ?? undefined,
+    tags: r.tags ?? undefined,
+    createdBy: r.created_by ?? undefined,
+    statusHistory: r.status_history ?? undefined,
+  };
+}
+function goalToRow(g: GoalRecord, memberId: string) {
+  return {
+    goal_id: g.goalId,
+    member_id: memberId,
+    title: g.title,
+    status: g.status,
+    description: g.description ?? null,
+    category: g.category ?? null,
+    goal_type: g.goalType ?? null,
+    priority: g.priority ?? null,
+    expected_deliverable: g.expectedDeliverable ?? null,
+    due_date: g.dueDate ?? null,
+    tags: g.tags ?? null,
+    created_by: g.createdBy ?? null,
+    status_history: g.statusHistory ?? null,
+    created_at: g.createdAt,
+  };
+}
+function rowToEpic(r: EpicRow): EpicRecord {
+  return { epicId: r.epic_id, goalId: r.goal_id, title: r.title, status: r.status, createdAt: r.created_at };
+}
+function epicToRow(e: EpicRecord, memberId: string) {
+  return { epic_id: e.epicId, goal_id: e.goalId, member_id: memberId, title: e.title, status: e.status, created_at: e.createdAt };
+}
+function rowToMission(r: MissionRow): GoalMissionRecord {
+  return {
+    missionId: r.mission_id,
+    epicId: r.epic_id,
+    title: r.title,
+    owner: r.owner,
+    department: r.department,
+    companionEmployeeId: r.companion_employee_id,
+    input: r.input ?? [],
+    output: r.output ?? [],
+    deliverables: r.deliverables ?? [],
+    definitionOfDone: r.definition_of_done ?? [],
+    status: r.status,
+    sessionId: r.session_id ?? undefined,
+    createdAt: r.created_at,
+  };
+}
+function missionToRow(m: GoalMissionRecord, memberId: string) {
+  return {
+    mission_id: m.missionId,
+    epic_id: m.epicId,
+    member_id: memberId,
+    title: m.title,
+    owner: m.owner,
+    department: m.department,
+    companion_employee_id: m.companionEmployeeId,
+    input: m.input,
+    output: m.output,
+    deliverables: m.deliverables,
+    definition_of_done: m.definitionOfDone,
+    status: m.status,
+    session_id: m.sessionId ?? null,
+    created_at: m.createdAt,
+  };
+}
+
+let cachedMemberId: string | null | undefined = undefined;
+let goalsCache: GoalRecord[] = [];
+let epicsCache: EpicRecord[] = [];
+let missionsCache: GoalMissionRecord[] = [];
+
+/**
+ * Tải Goal/Epic/Mission thật của member đang đăng nhập vào cache trong bộ
+ * nhớ — PHẢI gọi (và `await`) trước khi dùng `listGoals()`/`listEpics()`/
+ * `listGoalMissions()`/... lần đầu ở mỗi trang. No-op nếu đã hydrate đúng
+ * member hiện tại (an toàn gọi lại nhiều lần, kể cả trên mỗi lần mount).
+ */
+export async function hydrateGoalRuntime(): Promise<void> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    cachedMemberId = null;
+    goalsCache = [];
+    epicsCache = [];
+    missionsCache = [];
+    return;
+  }
   try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T[]) : [];
+    const supabase = getSupabaseBrowser();
+    const { data: userData } = await supabase.auth.getUser();
+    const memberId = userData.user?.id ?? null;
+    if (memberId === cachedMemberId) return;
+    cachedMemberId = memberId;
+    if (!memberId) {
+      goalsCache = [];
+      epicsCache = [];
+      missionsCache = [];
+      return;
+    }
+    const [goalsRes, epicsRes, missionsRes] = await Promise.all([
+      supabase.from("goal_records").select("goal_id, title, status, description, category, goal_type, priority, expected_deliverable, due_date, tags, created_by, status_history, created_at").eq("member_id", memberId).order("created_at", { ascending: true }),
+      supabase.from("goal_epics").select("epic_id, goal_id, title, status, created_at").eq("member_id", memberId).order("created_at", { ascending: true }),
+      supabase.from("goal_missions").select("mission_id, epic_id, title, owner, department, companion_employee_id, input, output, deliverables, definition_of_done, status, session_id, created_at").eq("member_id", memberId).order("created_at", { ascending: true }),
+    ]);
+    goalsCache = goalsRes.error || !goalsRes.data ? [] : (goalsRes.data as GoalRow[]).map(rowToGoal);
+    epicsCache = epicsRes.error || !epicsRes.data ? [] : (epicsRes.data as EpicRow[]).map(rowToEpic);
+    missionsCache = missionsRes.error || !missionsRes.data ? [] : (missionsRes.data as MissionRow[]).map(rowToMission);
   } catch {
-    return [];
+    goalsCache = [];
+    epicsCache = [];
+    missionsCache = [];
   }
 }
 
-function writeList<T>(key: string, list: T[]): void {
+type StoreKey = "goals" | "epics" | "missions";
+
+function readList<T>(key: StoreKey): T[] {
+  if (key === "goals") return goalsCache as unknown as T[];
+  if (key === "epics") return epicsCache as unknown as T[];
+  return missionsCache as unknown as T[];
+}
+
+/** Ghi cache ngay (đồng bộ) + đẩy đúng 1 dòng vừa đổi lên Supabase ở nền
+    (fire-and-forget — lỗi mạng chỉ mất khả năng lưu bền, không vỡ
+    Runtime, cùng tinh thần try/catch localStorage cũ). `changed` là dòng
+    vừa thêm/sửa (luôn ở cuối mảng khi thêm mới, hoặc chính dòng đã patch
+    khi cập nhật — mọi call site trong file này đều biết rõ dòng nào vừa
+    đổi nên truyền tường minh, không cần diff cả mảng). */
+function writeList<T>(key: StoreKey, list: T[], changed: T): void {
+  if (key === "goals") goalsCache = list as unknown as GoalRecord[];
+  else if (key === "epics") epicsCache = list as unknown as EpicRecord[];
+  else missionsCache = list as unknown as GoalMissionRecord[];
+  void persistChanged(key, changed);
+}
+
+async function persistChanged<T>(key: StoreKey, changed: T): Promise<void> {
+  if (!cachedMemberId) return;
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return;
   try {
-    window.localStorage.setItem(key, JSON.stringify(list));
+    const supabase = getSupabaseBrowser();
+    if (key === "goals") {
+      await supabase.from("goal_records").upsert(goalToRow(changed as GoalRecord, cachedMemberId), { onConflict: "goal_id" });
+    } else if (key === "epics") {
+      await supabase.from("goal_epics").upsert(epicToRow(changed as EpicRecord, cachedMemberId), { onConflict: "epic_id" });
+    } else {
+      await supabase.from("goal_missions").upsert(missionToRow(changed as GoalMissionRecord, cachedMemberId), { onConflict: "mission_id" });
+    }
   } catch {
-    // localStorage đầy/không khả dụng — Goal Runtime chỉ mất khả năng lưu lâu dài, không vỡ Runtime.
+    // Mất kết nối/lỗi ghi — chấp nhận được ở MVP, cùng tinh thần localStorage cũ.
   }
+}
+
+/** CHỈ dùng trong test — cache module-level không tự reset giữa các test
+    case như `localStorage.clear()` cũ, nên test phải tự gọi hàm này trong
+    `beforeEach()` (xem `goal-runtime.test.ts`). */
+export function __resetGoalRuntimeCacheForTest(): void {
+  cachedMemberId = undefined;
+  goalsCache = [];
+  epicsCache = [];
+  missionsCache = [];
 }
 
 function newId(prefix: string): string {
@@ -125,12 +329,12 @@ function newId(prefix: string): string {
 
 export function createGoal(title: string): GoalRecord {
   const goal: GoalRecord = { goalId: newId("goal"), title, status: "active", createdAt: new Date().toISOString() };
-  writeList(GOALS_KEY, [...readList<GoalRecord>(GOALS_KEY), goal]);
+  writeList("goals", [...readList<GoalRecord>("goals"), goal], goal);
   return goal;
 }
 
 export function listGoals(): GoalRecord[] {
-  return readList<GoalRecord>(GOALS_KEY);
+  return readList<GoalRecord>("goals");
 }
 
 export function getGoal(goalId: string): GoalRecord | undefined {
@@ -138,12 +342,12 @@ export function getGoal(goalId: string): GoalRecord | undefined {
 }
 
 function updateGoalRecord(goalId: string, patch: Partial<GoalRecord>): GoalRecord | null {
-  const goals = readList<GoalRecord>(GOALS_KEY);
+  const goals = readList<GoalRecord>("goals");
   const idx = goals.findIndex((g) => g.goalId === goalId);
   if (idx < 0) return null;
   const updated = { ...goals[idx], ...patch };
   goals[idx] = updated;
-  writeList(GOALS_KEY, goals);
+  writeList("goals", goals, updated);
   return updated;
 }
 
@@ -193,7 +397,7 @@ export function createGoalDraft(input: CreateGoalDraftInput): GoalRecord {
     createdBy: input.createdBy ?? "Owner",
     statusHistory: [{ status: "draft", at: createdAt }],
   };
-  writeList(GOALS_KEY, [...readList<GoalRecord>(GOALS_KEY), goal]);
+  writeList("goals", [...readList<GoalRecord>("goals"), goal], goal);
   return goal;
 }
 
@@ -201,12 +405,12 @@ export function createGoalDraft(input: CreateGoalDraftInput): GoalRecord {
 
 export function createEpic(goalId: string, title: string): EpicRecord {
   const epic: EpicRecord = { epicId: newId("epic"), goalId, title, status: "active", createdAt: new Date().toISOString() };
-  writeList(EPICS_KEY, [...readList<EpicRecord>(EPICS_KEY), epic]);
+  writeList("epics", [...readList<EpicRecord>("epics"), epic], epic);
   return epic;
 }
 
 export function listEpics(goalId?: string): EpicRecord[] {
-  const epics = readList<EpicRecord>(EPICS_KEY);
+  const epics = readList<EpicRecord>("epics");
   return goalId ? epics.filter((e) => e.goalId === goalId) : epics;
 }
 
@@ -216,12 +420,12 @@ export type CreateGoalMissionInput = Omit<GoalMissionRecord, "missionId" | "stat
 
 export function createGoalMission(input: CreateGoalMissionInput): GoalMissionRecord {
   const mission: GoalMissionRecord = { ...input, missionId: newId("gmission"), status: "not_started", createdAt: new Date().toISOString() };
-  writeList(MISSIONS_KEY, [...readList<GoalMissionRecord>(MISSIONS_KEY), mission]);
+  writeList("missions", [...readList<GoalMissionRecord>("missions"), mission], mission);
   return mission;
 }
 
 export function listGoalMissions(epicId?: string): GoalMissionRecord[] {
-  const missions = readList<GoalMissionRecord>(MISSIONS_KEY);
+  const missions = readList<GoalMissionRecord>("missions");
   return epicId ? missions.filter((m) => m.epicId === epicId) : missions;
 }
 
@@ -230,12 +434,12 @@ export function getGoalMission(missionId: string): GoalMissionRecord | undefined
 }
 
 function updateMission(missionId: string, patch: Partial<GoalMissionRecord>): GoalMissionRecord | null {
-  const missions = readList<GoalMissionRecord>(MISSIONS_KEY);
+  const missions = readList<GoalMissionRecord>("missions");
   const idx = missions.findIndex((m) => m.missionId === missionId);
   if (idx < 0) return null;
   const updated = { ...missions[idx], ...patch };
   missions[idx] = updated;
-  writeList(MISSIONS_KEY, missions);
+  writeList("missions", missions, updated);
   return updated;
 }
 
@@ -329,20 +533,19 @@ export function computeGoalDashboardSummary(): GoalDashboardSummary {
 
 // ---- Seed: Landing Page Production — Goal ĐẦU TIÊN, không phải duy nhất ----
 
-const SEEDED_KEY = "vdai_goal_runtime_seeded_landing_page";
-
 /**
  * Gieo Goal đầu tiên của hệ thống bằng đúng cấu trúc chung (Goal → Epic
  * → 6 Mission) — không có nhánh logic nào ở đây khác với việc Owner tự
  * tạo 1 Goal mới qua `createGoal`/`createEpic`/`createGoalMission`.
- * Idempotent — gọi nhiều lần chỉ gieo đúng 1 lần.
+ * Idempotent — gọi nhiều lần chỉ gieo đúng 1 lần (Phase 40 — kiểm tra
+ * thẳng `listGoals()` thay vì 1 cờ `localStorage` riêng, an toàn hơn vì
+ * gắn liền với dữ liệu thật, không thể lệch pha).
  */
 export function seedLandingPageProductionGoal(): { goal: GoalRecord; epic: EpicRecord; missions: GoalMissionRecord[] } | null {
-  if (window.localStorage.getItem(SEEDED_KEY)) {
-    const goal = listGoals().find((g) => g.title === "Landing Page Production");
-    if (!goal) return null;
-    const epic = listEpics(goal.goalId)[0];
-    return epic ? { goal, epic, missions: listGoalMissions(epic.epicId) } : null;
+  const existing = listGoals().find((g) => g.title === "Landing Page Production");
+  if (existing) {
+    const epic = listEpics(existing.goalId)[0];
+    return epic ? { goal: existing, epic, missions: listGoalMissions(epic.epicId) } : null;
   }
 
   const goal = createGoal("Landing Page Production");
@@ -416,12 +619,6 @@ export function seedLandingPageProductionGoal(): { goal: GoalRecord; epic: EpicR
       definitionOfDone: ["Đã rà soát nhất quán thương hiệu", "Owner xác nhận sẵn sàng ra mắt (Approve cuối cùng)"],
     }),
   ];
-
-  try {
-    window.localStorage.setItem(SEEDED_KEY, "1");
-  } catch {
-    // không chặn seed nếu localStorage lỗi ghi cờ — lần sau có thể seed lại, chấp nhận được ở MVP
-  }
 
   return { goal, epic, missions };
 }

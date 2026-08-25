@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { createGoal, createEpic, createGoalMission, getGoalMission, linkMissionToSession } from "@/lib/portal/foundation/goal-runtime";
+import { createGoal, createEpic, createGoalMission, getGoalMission, linkMissionToSession, __resetGoalRuntimeCacheForTest} from "@/lib/portal/foundation/goal-runtime";
 import {
   recordMissionAnalysis,
   recordMissionResearch,
@@ -25,6 +25,7 @@ import {
 describe("MISSION 01 — Mission Runtime (generic pipeline)", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    __resetGoalRuntimeCacheForTest();
   });
 
   function seedGenericMission() {

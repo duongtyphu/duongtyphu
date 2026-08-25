@@ -215,6 +215,81 @@ màu nút "Companion qua hình ảnh" → `rgb(255,255,255)` (trắng, đúng
 832px (thẳng hàng); `margin-top` đoạn `<p class="mt-6">` mẫu → `24px`
 (đúng, trước là `0px`). Banner "Gem Home" xác nhận biến mất khỏi DOM.
 
+## Phase 40 — Goal Runtime + Memory Store: localStorage → Supabase (per member_id thật)
+
+Founder yêu cầu (khi đang làm Giai đoạn 2 rework): "Bộ nhớ & Cá nhân hoá:
+Tất cả các chỉ số và thông tin phải được kết nối và ghi nhận thật với hồ sơ
+của từng học viên." Audit phát hiện `goal-runtime.ts`/`memory-store.ts`
+(nguồn "Mục tiêu"/"Ký ức" dùng CHUNG bởi `/portal/goals/*`,
+`WorkspaceMvp.tsx`, `/v2/companion`, `/v2/bo-nho-ca-nhan-hoa`,
+`/v2/hanh-trinh-cua-toi`, `CompanionContextPanel.tsx`) đều lưu qua
+`window.localStorage` THUẦN — không gắn `user_id` nào. Đã hỏi Founder mức
+xử lý (chỉ hiển thị đúng số liệu thật hiện có, HAY di chuyển hẳn sang
+Supabase) — Founder chọn **di chuyển hẳn sang Supabase**.
+
+**Schema mới** (`supabase-phase40-goal-runtime-memory-store.sql`, áp dụng
+qua Supabase MCP): `memory_entries` (1 dòng/`syncMemoryForPortfolioItem()`,
+unique `(member_id, portfolio_item_id)` — giữ đúng tính idempotent cũ),
+`goal_records`/`goal_epics`/`goal_missions` (mirror 1:1 `GoalRecord`/
+`EpicRecord`/`GoalMissionRecord`). RLS mọi bảng: `member_id = auth.uid()`
+(SELECT/INSERT cho `memory_entries` — không có UPDATE/DELETE vì Memory chỉ
+tạo mới; ALL cho 3 bảng Goal — có UPDATE vì đổi status/link session). Không
+bảng nào có thao tác XOÁ trong code (đã audit toàn bộ `goal-runtime.ts`) —
+an toàn dùng chiến lược "upsert cả dòng mỗi lần ghi", không cần RLS DELETE.
+
+**Kiến trúc "cache đồng bộ + persist bất đồng bộ"** — KHÔNG đổi bất kỳ chữ
+ký hàm export nào của 2 file (`listGoals()`/`getGoalProgress()`/
+`createGoalDraft()`/`syncMemoryForPortfolioItem()`/... vẫn đồng bộ 100% như
+cũ) — tránh phải viết lại toàn bộ ~10 call site (nhiều nơi gọi ngay trong
+render/event handler đồng bộ, đặc biệt `WorkspaceMvp.tsx`'s
+`handleSubmitReflection` không phải hàm async). Chỉ 2 hàm nội bộ từng chạm
+`localStorage` (`readList`/`writeList`) đổi thành đọc/ghi 1 cache trong bộ
+nhớ (đồng bộ, hành vi phía trên không đổi) + đẩy lên Supabase ở nền
+(fire-and-forget, `void persistChanged(...)` — mọi lời gọi ghi trong 2 file
+này từ trước đã không dùng giá trị Promise trả về nên an toàn tuyệt đối).
+Thêm đúng 2 hàm mới: `hydrateGoalRuntime()`/`hydrateMemoryStore()` (async,
+đọc `auth.getUser()` + tải toàn bộ dòng của đúng `member_id` vào cache) —
+PHẢI `await` 1 lần lúc mount TRƯỚC khi đọc lần đầu ở mỗi trang. Cache tự
+re-hydrate nếu phát hiện đổi tài khoản đăng nhập (so `memberId` mới với
+`cachedMemberId` đã cache) — xử lý đúng trường hợp đăng xuất/đăng nhập tài
+khoản khác trong cùng phiên trình duyệt.
+
+**8 call site đã cập nhật** (thêm `await hydrateX()` trước lần đọc đầu,
+qua `useEffect` — không đổi gì khác): `GoalRuntimeBoard.tsx`/
+`GoalDetail.tsx`/`GoalCreateForm.tsx` (1.0), `WorkspaceMvp.tsx` (1.0, cả 2
+hydrate — effect riêng, chạy sớm nhất), `CompanionContextPanel.tsx` (1.0),
+`/v2/bo-nho-ca-nhan-hoa`/`/v2/hanh-trinh-cua-toi`/`/v2/companion` (cả 3
+route 2.0). `seedLandingPageProductionGoal()` đơn giản hoá — bỏ cờ
+`localStorage` `SEEDED_KEY` riêng, kiểm tra thẳng `listGoals().some(...)`
+(gắn liền dữ liệu thật, không thể lệch pha với cờ riêng như bản cũ).
+
+**6 test file cập nhật** — `beforeEach(() => window.localStorage.clear())`
+cũ không còn tác dụng (cache module-level không tự reset giữa các
+`it()`/`test()` trong CÙNG 1 file — khác `localStorage`, vitest không tự
+xoá biến module giữa các test case cùng file). Thêm 2 hàm CHỈ-DÙNG-TEST
+`__resetGoalRuntimeCacheForTest()`/`__resetMemoryStoreCacheForTest()`, gọi
+trong `beforeEach()` của `goal-runtime.test.ts`,
+`workspace-runtime-integration.test.ts`, `phase3-finalization-e2e.test.ts`,
+`mission-runtime.test.ts`, `program-board.test.ts`,
+`mission-01-golden-reference.test.ts`. Phát hiện đúng lúc chạy `vitest run`
+lần đầu sau khi viết lại 2 file (1 test đếm sai `total: 8` thay vì `2` do
+cache rò rỉ giữa các `it()`) — đã sửa trước khi commit, không phải regression
+ẩn.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass (sau khi thêm 2
+hàm reset test), `rm -rf .next && npm run build` sạch.
+
+**Chưa tự test được:** luồng thật qua UI có tài khoản đăng nhập (cùng giới
+hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) —
+Founder tự test: (1) tạo 1 Goal mới ở `/portal/goals/new`, xác nhận xuất
+hiện đúng trong bảng `goal_records` (Supabase); (2) đăng nhập tài khoản đó
+trên 1 thiết bị/trình duyệt KHÁC, xác nhận `/v2/companion`/`/portal/goals`
+hiện ĐÚNG Goal vừa tạo (khác hành vi cũ — trước đây sẽ trống); (3) hoàn
+thành 1 Output trong AI Workspace, xác nhận `memory_entries` có dòng mới
+đúng `member_id`; (4) đăng nhập 2 tài khoản khác nhau trên CÙNG 1 trình
+duyệt (hoặc 2 cửa sổ ẩn danh riêng), xác nhận KHÔNG còn thấy chung dữ liệu
+Goal/Memory của nhau (bug gốc Founder báo).
+
 ## Giai đoạn 2 — Companion AI lõi (đã hoàn tất)
 
 4 mục (2a-2d) đều đã làm, ảnh hưởng chung: `/api/companion/chat` (dùng

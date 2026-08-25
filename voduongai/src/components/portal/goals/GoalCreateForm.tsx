@@ -9,11 +9,11 @@
  * (`/portal/goals/[goalId]`).
  */
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { createGoalDraft, type GoalPriority } from "@/lib/portal/foundation/goal-runtime";
+import { createGoalDraft, hydrateGoalRuntime, type GoalPriority } from "@/lib/portal/foundation/goal-runtime";
 
 const GOAL_CATEGORY_OPTIONS = ["Marketing", "Sản phẩm", "Vận hành", "Học tập", "Cá nhân", "Khác"];
 const GOAL_TYPE_OPTIONS = ["Nội dung", "Sản phẩm", "Nghiên cứu", "Vận hành", "Khác"];
@@ -29,6 +29,12 @@ export function GoalCreateForm() {
   const [dueDate, setDueDate] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    // Phase 40 — hydrate cache trước khi form có thể submit (tạo Goal cần
+    // `member_id` đã xác định để lưu bền lên Supabase, xem `goal-runtime.ts`).
+    void hydrateGoalRuntime();
+  }, []);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();

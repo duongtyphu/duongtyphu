@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { seedLandingPageProductionGoal, listGoalMissions, getGoalMission, linkMissionToSession } from "@/lib/portal/foundation/goal-runtime";
+import { seedLandingPageProductionGoal, listGoalMissions, getGoalMission, linkMissionToSession, __resetGoalRuntimeCacheForTest} from "@/lib/portal/foundation/goal-runtime";
 import {
   recordMissionAnalysis,
   recordMissionResearch,
@@ -30,6 +30,7 @@ import {
 describe("MISSION 01 — Golden Reference Mission (Landing Page Production, Research & Planning)", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    __resetGoalRuntimeCacheForTest();
   });
 
   it("Chạy trọn Pipeline trên Mission 01 thật — Mission Package + Golden Mission Template sinh ra thành công", () => {

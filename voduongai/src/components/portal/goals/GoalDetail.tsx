@@ -24,6 +24,7 @@ import {
   getEpicProgress,
   getMissionProgress,
   launchGoal,
+  hydrateGoalRuntime,
   type GoalRecord,
   type EpicRecord,
   type GoalMissionRecord,
@@ -122,8 +123,11 @@ export function GoalDetail({ goalId }: { goalId: string }) {
   const [goal, setGoal] = useState<GoalRecord | null | undefined>(undefined);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGoal(getGoal(goalId) ?? null);
+    (async () => {
+      await hydrateGoalRuntime();
+       
+      setGoal(getGoal(goalId) ?? null);
+    })();
   }, [goalId]);
 
   function handleLaunch() {

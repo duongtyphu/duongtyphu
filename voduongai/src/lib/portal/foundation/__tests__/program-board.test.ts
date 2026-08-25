@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { computeProgramBoard } from "@/lib/portal/foundation/program-board";
-import { seedLandingPageProductionGoal } from "@/lib/portal/foundation/goal-runtime";
+import { seedLandingPageProductionGoal, __resetGoalRuntimeCacheForTest} from "@/lib/portal/foundation/goal-runtime";
 
 /**
  * PROGRAM: PRODUCTION BETA — Program Board.
@@ -12,6 +12,7 @@ import { seedLandingPageProductionGoal } from "@/lib/portal/foundation/goal-runt
 describe("PROGRAM: PRODUCTION BETA — Program Board", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    __resetGoalRuntimeCacheForTest();
   });
 
   it("computeProgramBoard() trả về đúng 5 Track A-E theo đúng tên", () => {

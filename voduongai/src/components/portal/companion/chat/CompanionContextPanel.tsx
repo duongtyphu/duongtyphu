@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { listGoals, listEpics, listGoalMissions, type GoalRecord, type GoalMissionRecord } from "@/lib/portal/foundation/goal-runtime";
+import { listGoals, listEpics, listGoalMissions, hydrateGoalRuntime, type GoalRecord, type GoalMissionRecord } from "@/lib/portal/foundation/goal-runtime";
 import { listAllSessions, type WorkspaceSessionRecord } from "@/lib/portal/foundation/workspace-session-store";
 import { MODULE_LABELS } from "@/companion/agents/module-agent-map";
 import { useReflections } from "@/lib/portal/reflections";
@@ -41,11 +41,13 @@ export function CompanionContextPanel() {
   const { reflections, ready: reflectionsReady } = useReflections();
 
   useEffect(() => {
+    void (async () => {
+    await hydrateGoalRuntime();
     const goals = listGoals()
       .filter((g) => g.status === "active" || g.status === "ready_for_analysis")
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     const goal = goals[0] ?? null;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
+     
     setActiveGoal(goal);
 
     if (goal) {
@@ -59,6 +61,7 @@ export function CompanionContextPanel() {
       .filter((s) => s.status !== "completed")
       .sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
     setInProgressSession(sessions[0] ?? null);
+    })();
   }, []);
 
   const latestReflection = reflections[0];

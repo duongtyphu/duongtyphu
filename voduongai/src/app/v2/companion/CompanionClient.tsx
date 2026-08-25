@@ -87,7 +87,7 @@ import type { CompanionMessageRow } from "@/app/portal/companion/actions";
 import { COMPANION_MESSAGE_MAX_LENGTH } from "@/lib/portal/companion-chat";
 import { MarkdownLite } from "@/components/portal/companion/chat/MarkdownLite";
 import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
-import { getGoalProgress, listGoals } from "@/lib/portal/foundation/goal-runtime";
+import { getGoalProgress, listGoals, hydrateGoalRuntime } from "@/lib/portal/foundation/goal-runtime";
 import type { BlogPost } from "@/data/blog";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import type { CompanionFavoriteToolsResult } from "@/lib/portal/live-companion-favorites";
@@ -240,10 +240,13 @@ export function CompanionClient({
   // mãi mãi rỗng dù localStorage có dữ liệu thật.
   const [goals, setGoals] = useState<GoalRecord[]>([]);
   useEffect(() => {
-    // Đọc localStorage chỉ có ở client sau mount — phải set trong effect
-    // (cùng pattern `GrowthActivityPanel.tsx`).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGoals(listGoals());
+    // Phase 40 — hydrate cache từ Supabase (member_id thật) trước khi đọc,
+    // thay cho localStorage per-browser cũ (cùng pattern `GrowthActivityPanel.tsx`).
+    (async () => {
+      await hydrateGoalRuntime();
+       
+      setGoals(listGoals());
+    })();
   }, []);
   const activeGoal = goals.find((g) => g.status === "active") ?? goals[0] ?? null;
 

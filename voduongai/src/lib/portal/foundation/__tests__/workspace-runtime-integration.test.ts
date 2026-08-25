@@ -10,7 +10,7 @@ import {
 } from "@/lib/portal/foundation/workspace-session-store";
 import { activateWave1Companions } from "@/lib/portal/foundation/workforce-registry";
 import { promoteEligibleOutputs, listPortfolioItems } from "@/lib/portal/foundation/portfolio-store";
-import { syncMemoryForPortfolioItem, listMemoryEntries } from "@/lib/portal/foundation/memory-store";
+import { syncMemoryForPortfolioItem, listMemoryEntries, __resetMemoryStoreCacheForTest } from "@/lib/portal/foundation/memory-store";
 import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 
 /**
@@ -29,6 +29,10 @@ import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 describe("PHASE 4 SPRINT 003 — Workspace Runtime Integration (E2E)", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    // Phase 40 — memory-store.ts giờ dùng cache trong bộ nhớ (Supabase-backed
+    // thật), không còn localStorage — reset cache module-level thay vì
+    // chỉ dựa vào `localStorage.clear()`.
+    __resetMemoryStoreCacheForTest();
     vi.restoreAllMocks();
   });
 

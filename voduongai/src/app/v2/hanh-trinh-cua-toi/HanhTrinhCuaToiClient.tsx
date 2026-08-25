@@ -53,7 +53,7 @@ import { useRouter } from "next/navigation";
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
-import { listGoals, type GoalRecord } from "@/lib/portal/foundation/goal-runtime";
+import { listGoals, hydrateGoalRuntime, type GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 
 import "./hanh-trinh-cua-toi.css";
 
@@ -103,8 +103,11 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
   const [goals, setGoals] = useState<GoalRecord[]>([]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGoals(listGoals());
+    (async () => {
+      await hydrateGoalRuntime();
+       
+      setGoals(listGoals());
+    })();
   }, []);
   const activeGoals = goals.filter((g) => g.status === "active").length;
 

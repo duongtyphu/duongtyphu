@@ -48,9 +48,9 @@ import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store"
 import { computeCapabilityProfiles } from "@/lib/portal/foundation/capability-engine";
 import { recordNewUnlocks } from "@/lib/portal/foundation/mission-unlock-runtime";
 import { listAgentRuns, type AgentRunRecord } from "@/lib/portal/foundation/agent-run-store";
-import { syncMemoryForPortfolioItem } from "@/lib/portal/foundation/memory-store";
+import { syncMemoryForPortfolioItem, hydrateMemoryStore } from "@/lib/portal/foundation/memory-store";
 import { listCompanions, activateWave1Companions, type CompanionRecord } from "@/lib/portal/foundation/workforce-registry";
-import { getGoalMission, linkMissionToSession, completeGoalMission } from "@/lib/portal/foundation/goal-runtime";
+import { getGoalMission, linkMissionToSession, completeGoalMission, hydrateGoalRuntime } from "@/lib/portal/foundation/goal-runtime";
 import { AI_RESOURCES } from "@/data/portal/ai-workspace";
 
 const SOURCE_LABEL: Record<string, string> = {
@@ -161,6 +161,15 @@ export function WorkspaceMvp() {
   const [companions, setCompanions] = useState<CompanionRecord[]>([]);
   const [selectedCompanionId, setSelectedCompanionId] = useState<string>("");
   const [companionRunning, setCompanionRunning] = useState(false);
+
+  useEffect(() => {
+    // Phase 40 — hydrate Goal Runtime/Memory Store (Supabase, member_id
+    // thật) trước khi các luồng dưới (Reflection submit → Memory Sync,
+    // Mission complete) có thể chạy — cùng mức ưu tiên "chạy sớm nhất có
+    // thể" như context effect ngay dưới.
+    void hydrateGoalRuntime();
+    void hydrateMemoryStore();
+  }, []);
 
   useEffect(() => {
     // Ưu tiên context đầy đủ từ sessionStorage; query params chỉ là bản

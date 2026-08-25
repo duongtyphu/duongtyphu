@@ -19,6 +19,7 @@ import {
   getGoalProgress,
   seedLandingPageProductionGoal,
   computeGoalDashboardSummary,
+  hydrateGoalRuntime,
   type GoalRecord,
   type GoalStatus,
 } from "@/lib/portal/foundation/goal-runtime";
@@ -77,10 +78,14 @@ export function GoalRuntimeBoard() {
   const [goals, setGoals] = useState<GoalRecord[]>([]);
 
   useEffect(() => {
-    // GOAL 001 — gieo Goal đầu tiên nếu chưa có (idempotent).
-    seedLandingPageProductionGoal();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGoals(listGoals());
+    (async () => {
+      // Phase 40 — hydrate cache từ Supabase (member_id thật) trước khi đọc.
+      await hydrateGoalRuntime();
+      // GOAL 001 — gieo Goal đầu tiên nếu chưa có (idempotent).
+      seedLandingPageProductionGoal();
+       
+      setGoals(listGoals());
+    })();
   }, []);
 
   const summary = computeGoalDashboardSummary();
