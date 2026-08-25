@@ -27,6 +27,22 @@
  * nghĩa `--violet`/`--ink`... riêng trong CSS của chính nó, không có 1 bộ
  * token dùng chung ở tầng `/v2` — nên file này dùng màu trung tính an
  * toàn, không phụ thuộc biến CSS của trang cụ thể nào).
+ *
+ * "Thử lại" cố ý dùng `window.location.reload()` (tải lại HẲN trang,
+ * không phải `reset()` của Next.js — hàm chỉ re-render lại children của
+ * error boundary bằng JS bundle ĐANG CÓ SẴN trên trình duyệt). Founder báo
+ * lỗi trang khi chat Companion vẫn còn xảy ra sau khi 2 nguyên nhân đầu
+ * (memorySuggestion layout-shift + thiếu try/catch) đã được vá và deploy —
+ * dấu hiệu mạnh nhất chỉ ra "Version Skew" (xem
+ * `node_modules/next/dist/docs/01-app/02-guides/self-hosting.md`, mục
+ * "Version Skew"): trong lúc làm việc này có 6+ lần redeploy liên tiếp
+ * trong ~30 phút, nếu người dùng đang mở sẵn tab `/v2/companion` xuyên
+ * qua 1 lần redeploy, JS chunk/Server Function cũ trên tab đó có thể lệch
+ * với server mới — gửi tin nhắn tiếp sẽ ném lỗi client-side. `reset()`
+ * KHÔNG sửa được lỗi này vì nó tái sử dụng đúng bundle cũ đang lỗi; chỉ
+ * `window.location.reload()` (tải lại document, kéo bundle mới nhất từ
+ * server) mới thoát được. Đổi lại là đánh đổi: mất trạng thái form/cuộn
+ * trang hiện tại, nhưng đây là màn hình lỗi — không có gì đáng giữ lại.
  */
 
 import { useEffect } from "react";
@@ -66,7 +82,10 @@ export default function V2Error({
       <div style={{ display: "flex", gap: 12 }}>
         <button
           type="button"
-          onClick={reset}
+          onClick={() => {
+            reset();
+            window.location.reload();
+          }}
           style={{
             background: "linear-gradient(145deg,#8b6bff,#5a37e6)",
             color: "#fff",

@@ -571,6 +571,51 @@ nào, bao lâu sau khi mở trang) để tiếp tục truy — lớp phòng th�
 mới thêm sẽ giúp lỗi đó hiện ra như 1 màn hình khôi phục thay vì crash
 trắng, dễ chẩn đoán hơn.
 
+**ĐÍNH CHÍNH — bug KHÔNG hết sau bản vá trên.** Founder báo lại 2 lần
+(kèm ảnh chụp) rằng khi chat với Companion vẫn hiện đúng màn hình
+"Đã có lỗi xảy ra" của `/v2/error.tsx` — nghĩa là lớp phòng thủ đã hoạt
+động đúng (bắt được crash, không vỡ giao diện), nhưng CRASH GỐC đằng sau
+nó vẫn xảy ra, không phải do memorySuggestion (bug đó đã verify sửa đúng
+qua Playwright, không tái phát).
+
+**Chẩn đoán đã làm (Vercel + Supabase MCP, không tìm ra bằng chứng trực
+tiếp):**
+- `get_runtime_errors` (cả scoped `/v2/companion` 24h lẫn toàn dự án 7
+  ngày) — **0 lỗi server-side liên quan** (chỉ có 1 `AuthApiError: Invalid
+  Refresh Token` ở `/middleware`, 6 ngày trước, không liên quan). Kết
+  luận: đây là **crash thuần client-side** (exception ném ra khi React
+  render trong trình duyệt), không lộ ra trong log Vercel.
+- Query trực tiếp `companion_messages` — chat thật đang thành công ở tầng
+  dữ liệu (tin nhắn gần nhất lưu đúng, nội dung markdown cân bằng, không
+  có dấu hiệu gây crash khi parse).
+- `list_deployments` cho thấy 6+ lần redeploy liên tiếp trong ~30 phút
+  ngay trong lúc làm việc này — kết hợp `list_teams` xác nhận project ở
+  **gói Hobby** (không có Skew Protection trả phí của Vercel) → hình
+  thành giả thuyết chính: **Next.js "Version Skew"** (tài liệu chính thức
+  tại `node_modules/next/dist/docs/01-app/02-guides/self-hosting.md`,
+  mục "Version Skew") — tab đã mở sẵn `/v2/companion` từ trước 1 lần
+  redeploy sẽ mang JS chunk/Server Function cũ, gửi tin nhắn tiếp theo có
+  thể lệch với server mới, gây lỗi client-side.
+
+**Đã áp dụng (chưa xác nhận đã hết bug — đây là bản vá theo giả thuyết,
+không phải xác nhận root cause bằng stack trace thật):** đổi nút "Thử
+lại" trong `/v2/error.tsx` từ gọi `reset()` (React tự re-render children
+của error boundary bằng bundle CŨ đang lỗi — không sửa được version
+skew) sang gọi **`window.location.reload()`** (tải lại hẳn trang, kéo
+bundle mới nhất từ server) — nếu đúng là version skew, bấm "Thử lại" giờ
+sẽ thực sự phục hồi được thay vì lặp lại đúng lỗi cũ.
+
+**Giới hạn trung thực:** giả thuyết Version Skew CHƯA được xác nhận bằng
+stack trace/console error thật (sandbox không đăng nhập được để tái hiện
+bằng tài khoản thật + AI Provider thật). Founder tự test trên Preview
+URL: (1) chat vài lượt, nếu gặp lại "Đã có lỗi xảy ra", bấm "Thử lại" và
+xác nhận có phục hồi được không (nếu có → xác nhận đúng version skew,
+bản vá đã đủ); (2) nếu VẪN lỗi ngay cả sau khi tải lại — mở Console
+trình duyệt (F12) ngay lúc lỗi xảy ra, chụp lại đúng dòng exception màu
+đỏ (kèm stack trace nếu có) gửi lại — đây là mảnh bằng chứng duy nhất còn
+thiếu để xác định chính xác nguyên nhân, vì server-side không hề ghi
+nhận gì.
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript
