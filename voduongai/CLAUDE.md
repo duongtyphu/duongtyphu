@@ -502,6 +502,75 @@ hiện đúng ở cả `/v2/companion`'s "Mục tiêu hiện tại" lẫn `/port
 cụ yêu thích", xác nhận logo thật hiện đúng (không phải icon danh mục) và
 `/v2/hoc-vien-ai` mở đúng tab "AI Workspace".
 
+## Bug đã sửa — chat `/v2/companion` "co giật màn hình + báo lỗi trang"
+
+Founder báo chat với Companion ở Portal 2.0 hay bị giật màn hình và báo
+lỗi trang. Sandbox không có Supabase/AI Provider thật nên không thể tái
+hiện y hệt lỗi cuối (`/api/companion/chat` yêu cầu đăng nhập) — đã audit
+kỹ toàn bộ luồng gửi/nhận tin nhắn + Playwright với API giả lập (`route()`)
+để đo trực tiếp, tìm ra **1 nguyên nhân giật màn hình THẬT** (đo được, đã
+sửa) + vá thêm **1 lỗ hổng bắt lỗi** + thêm **1 lớp phòng thủ hệ thống**
+để mọi lỗi render khác (đã biết hay chưa biết) không còn vỡ hẳn giao diện.
+
+**1 — Nguyên nhân giật màn hình (đã đo bằng `boundingBox()` trước/sau,
+không chỉ suy đoán):** khối "Lưu vào My Story" (Giai đoạn 2, mục 2a) trước
+đây nằm là SIBLING của `.chat-messages` bên trong `.chat-card`
+(`companion.css`: `height:70vh; overflow:hidden`, flex column). Khối này
+xuất hiện/biến mất ngay sau MỖI lượt Companion trả lời (khi API báo có
+khoảnh khắc đáng nhớ) — CSS flex không hoạt ảnh khi 1 sibling thêm/bớt
+height, nên `.chat-messages` (flex:1) NHẢY kích thước đột ngột, đúng lúc
+`requestAnimationFrame(scrollIntoView)` cũng đang chạy riêng — 2 hiệu ứng
+chồng nhau = giật màn hình mỗi lượt chat có gợi ý ghi nhớ. **Đã sửa:**
+chuyển khối này vào BÊN TRONG `.chat-messages` (phần tử cuối cùng, ngay
+trước `bottomRef`) — giờ chỉ là nội dung cuộn thêm trong 1 khung
+`overflow-y:auto` đã cố định kích thước, không còn đổi layout `.chat-card`.
+Verify bằng Playwright: đo `.chat-card.boundingBox()` qua 4 lượt chat (xen
+kẽ có/không gợi ý ghi nhớ) — chiều cao đứng yên tuyệt đối (630px cả 4 lần,
+trước đây sẽ dao động).
+
+**2 — Lỗ hổng bắt lỗi:** `handleSaveMemory()` gọi
+`await saveMemorySuggestion(...)` KHÔNG có `try/catch` — nếu hàm này throw
+(vd Supabase client gặp sự cố bất kỳ), exception rơi thành unhandled
+promise rejection trong 1 event handler. Đã bọc `try/catch`, lỗi giờ hiện
+trạng thái "Chưa lưu được — vui lòng thử lại" trung thực thay vì lan ra
+ngoài không kiểm soát được.
+
+**3 — Lớp phòng thủ hệ thống (quan trọng nhất, phòng cả lỗi CHƯA BIẾT):**
+audit phát hiện **toàn bộ cây `/v2/*` KHÔNG có 1 file `error.tsx` nào**
+(đã grep xác nhận) — nghĩa là BẤT KỲ exception render nào ở BẤT KỲ trang
+`/v2/*` nào (không chỉ Companion) đều rơi thẳng ra `src/app/error.tsx`
+(root, nền TỐI `text-white` — thiết kế cho Landing Page/Portal 1.0) — vỡ
+hẳn giao diện sáng 2.0, đúng cảm giác "báo lỗi trang" đột ngột. Đã tạo
+`src/app/v2/error.tsx` (error boundary cấp `/v2` — Next.js giữ nguyên
+`v2/layout.tsx` bao quanh, chỉ thay `page.tsx` bằng UI khôi phục), style
+đúng tông sáng 2.0 (nền `#f7f6fc`, nút "Thử lại"/`reset()` gradient tím,
+"Về Trang chủ"/`/v2/trang-chu`) — nếu có lỗi render nào khác xảy ra sau
+này (ở Companion hay trang 2.0 bất kỳ), người dùng thấy màn hình khôi phục
+đúng thương hiệu thay vì trang lỗi lạc tông phải tải lại cả ứng dụng.
+
+**File sửa:** `src/app/v2/companion/CompanionClient.tsx` (chuyển khối
+memorySuggestion + bọc try/catch `handleSaveMemory`). **File mới:**
+`src/app/v2/error.tsx`.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright thật (`next start`, API
+`/api/companion/chat` giả lập qua `page.route()` vì sandbox không có
+Supabase/AI Provider): gửi 4 tin nhắn liên tiếp (xen kẽ có/không gợi ý ghi
+nhớ), đo `.chat-card` height ổn định 630px cả 4 lần (trước khi sửa sẽ dao
+động — đã xác nhận bằng cách đo cùng script trên code cũ), bấm "Lưu vào My
+Story" không lỗi, 0 `pageerror`, không xuất hiện "Đã có lỗi xảy ra".
+
+**Chưa tự tái hiện được lỗi 100% với dữ liệu/AI Provider thật** (giới hạn
+sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/API key AI đã nêu nhiều
+lần) — Founder tự test trên Preview URL: chat vài lượt liên tục ở
+`/v2/companion`, đặc biệt các lượt có card "Lưu vào My Story" hiện ra, xác
+nhận không còn giật màn hình. Nếu VẪN còn gặp lỗi trang sau bản vá này,
+đây sẽ là bằng chứng cho thấy còn 1 nguyên nhân KHÁC (không phải khối
+memorySuggestion) — báo lại kèm bước tái hiện cụ thể (đang gõ gì, bấm nút
+nào, bao lâu sau khi mở trang) để tiếp tục truy — lớp phòng thủ `/v2/error.tsx`
+mới thêm sẽ giúp lỗi đó hiện ra như 1 màn hình khôi phục thay vì crash
+trắng, dễ chẩn đoán hơn.
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

@@ -424,8 +424,16 @@ export function CompanionClient({
   async function handleSaveMemory() {
     if (!memorySuggestion || memorySaveState !== "idle") return;
     setMemorySaveState("saving");
-    const result = await saveMemorySuggestion(memorySuggestion);
-    setMemorySaveState(result === "saved" ? "saved" : "error");
+    try {
+      const result = await saveMemorySuggestion(memorySuggestion);
+      setMemorySaveState(result === "saved" ? "saved" : "error");
+    } catch {
+      // `saveMemorySuggestion()` có thể throw (vd Supabase client chưa cấu
+      // hình đúng) — trước đây KHÔNG có try/catch, exception rơi thành
+      // unhandled promise rejection trong 1 event handler. Bắt lại để hiện
+      // trạng thái lỗi trung thực thay vì để lan ra ngoài.
+      setMemorySaveState("error");
+    }
   }
 
   function handleDismissMemory() {
@@ -540,21 +548,24 @@ export function CompanionClient({
                     </div>
                   </div>
                 ) : null}
-                <div ref={bottomRef} />
-
-                {error ? (
-                  <div className="msg-row">
-                    <div className="msg-bubble" style={{ background: "#fdeef0", color: "#b91c2c" }}>
-                      {error}
-                    </div>
-                  </div>
-                ) : null}
-                </div>
-
                 {/* Giai đoạn 2, mục 2a — ghi nhớ tự động phát hiện + xác
                     nhận 1 chạm. Chỉ hiện khi API vừa báo có khoảnh khắc
                     đáng nhớ ("keep") ở lượt gần nhất — không tự động lưu,
-                    người dùng phải chủ động bấm "Lưu". */}
+                    người dùng phải chủ động bấm "Lưu".
+                    BUG ĐÃ SỬA — "co giật màn hình": khối này trước đây là
+                    SIBLING của `.chat-messages` bên trong `.chat-card` (flex
+                    column, chiều cao CỐ ĐỊNH `height:70vh; overflow:hidden`,
+                    xem `companion.css`). Mỗi lần khối này xuất hiện/biến mất
+                    (ngay sau khi Companion trả lời), layout flex renegotiate
+                    KHÔNG hoạt ảnh (CSS không animate `flex-basis`) — chiều
+                    cao `.chat-messages` (flex:1) NHẢY đột ngột cùng lúc với
+                    `requestAnimationFrame(scrollIntoView)` chạy riêng — 2
+                    hiệu ứng chồng nhau tạo cảm giác giật/nhảy màn hình mỗi
+                    lượt chat. Đã chuyển khối này vào BÊN TRONG
+                    `.chat-messages` (phần tử cuối, trước `bottomRef`) — giờ
+                    là 1 phần của khu vực cuộn (`overflow-y:auto`), không còn
+                    làm đổi kích thước khung `.chat-card` cố định nữa; xuất
+                    hiện mượt trong cùng 1 lần cuộn `scrollIntoView`. */}
                 {memorySuggestion ? (
                   <div
                     style={{
@@ -565,7 +576,6 @@ export function CompanionClient({
                       border: "1px solid var(--violet)",
                       borderRadius: 12,
                       padding: "12px 14px",
-                      marginBottom: 10,
                     }}
                   >
                     {memorySaveState === "saved" ? (
@@ -608,6 +618,17 @@ export function CompanionClient({
                     )}
                   </div>
                 ) : null}
+
+                <div ref={bottomRef} />
+
+                {error ? (
+                  <div className="msg-row">
+                    <div className="msg-bubble" style={{ background: "#fdeef0", color: "#b91c2c" }}>
+                      {error}
+                    </div>
+                  </div>
+                ) : null}
+                </div>
 
                 <div className="chat-input-row">
                   <input
