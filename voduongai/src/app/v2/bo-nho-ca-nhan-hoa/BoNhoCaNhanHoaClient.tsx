@@ -345,7 +345,7 @@ export function BoNhoCaNhanHoaClient({ premium, joinedAt }: { premium: PremiumSt
                   Dữ liệu của bạn được bảo mật tuyệt đối.
                 </div>
                 <a
-                  onClick={() => go("/portal/account")}
+                  onClick={() => go("/v2/tai-khoan")}
                   style={{
                     display: "block",
                     textAlign: "center",

@@ -92,7 +92,14 @@ const LIVING_CORE_STATE_LABEL: Record<LivingCoreState, string> = {
   offline: "Offline",
 };
 
-export function SuMenhCompanionContent() {
+export function SuMenhCompanionContent({
+  flipbookHref = "/portal/su-menh-companion/companion-qua-hinh-anh",
+}: {
+  /** Đích nút "Companion qua hình ảnh →" — mặc định 1.0 (giữ nguyên hành vi
+      cũ). `/v2/su-menh-companion` truyền `/v2/su-menh-companion/companion-qua-hinh-anh`
+      (Founder: "không được link qua bản 1.0 nữa"). */
+  flipbookHref?: string;
+} = {}) {
   const [seed, setSeed] = useState<string | null>(null);
   const [livingCoreState, setLivingCoreState] = useState<LivingCoreState>("idle");
 
@@ -443,7 +450,7 @@ export function SuMenhCompanionContent() {
           {/* ═══════════════════ CTA — Companion qua hình ảnh ═══════════════════ */}
           <div className="mt-32 flex justify-center">
             <Link
-              href="/portal/su-menh-companion/companion-qua-hinh-anh"
+              href={flipbookHref}
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-600 via-violet-600 to-orange-500 px-8 py-4 text-base font-bold text-white shadow-lg transition hover:shadow-xl"
             >
               Companion qua hình ảnh →

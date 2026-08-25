@@ -35,7 +35,7 @@ export function SuMenhCompanionClient({ premium }: { premium: PremiumStatus }) {
           }
         >
           <div className="content">
-            <SuMenhCompanionContent />
+            <SuMenhCompanionContent flipbookHref="/v2/su-menh-companion/companion-qua-hinh-anh" />
           </div>
         </PortalV2Shell>
       </div>

@@ -95,32 +95,34 @@
   box-sizing: border-box;
 }
 
-/* `:not(.smc *)` — loại trừ `/v2/su-menh-companion`: đây là trang DUY NHẤT
- * trong cây `/v2` render nội dung Tailwind THẬT (`SuMenhCompanionContent.tsx`,
- * dùng chung với `/portal/su-menh-companion` 1.0, xem docblock file đó) thay
- * vì hand-CSS như 46 trang `/v2/*` còn lại. Reset unlayered này (đúng ý đồ:
- * luôn thắng `@layer utilities` của Tailwind, xem giải thích Cascade Layers
- * trong `su-menh-companion.css`) vô tình xoá mất mọi `mt-*`/`mb-*`/`text-*`
- * màu chữ mà nội dung đó dùng — bug thật đã phát hiện (căn giữa footer bị
- * lệch, nút "Companion qua hình ảnh" chữ trắng bị đổi thành tím trên nền
- * gradient tím/cam, gần như không đọc được). */
-[data-ui="v2"] h1:not(.smc *),
-[data-ui="v2"] h2:not(.smc *),
-[data-ui="v2"] h3:not(.smc *),
-[data-ui="v2"] h4:not(.smc *),
-[data-ui="v2"] h5:not(.smc *),
-[data-ui="v2"] h6:not(.smc *),
-[data-ui="v2"] p:not(.smc *),
-[data-ui="v2"] figure:not(.smc *) {
+/* `:not(.smc *):not(.tkh *)` — loại trừ `/v2/su-menh-companion` VÀ
+ * `/v2/tai-khoan`: 2 trang trong cây `/v2` render nội dung Tailwind THẬT
+ * (`SuMenhCompanionContent.tsx`/`AccountContent.tsx`, dùng chung với 1.0,
+ * xem docblock mỗi file) thay vì hand-CSS như 46+ trang `/v2/*` còn lại.
+ * Reset unlayered này (đúng ý đồ: luôn thắng `@layer utilities` của
+ * Tailwind, xem giải thích Cascade Layers trong `su-menh-companion.css`)
+ * vô tình xoá mất mọi `mt-*`/`mb-*`/`text-*` màu chữ mà nội dung đó dùng —
+ * bug thật đã phát hiện lần đầu ở `.smc` (căn giữa footer bị lệch, nút
+ * "Companion qua hình ảnh" chữ trắng bị đổi thành tím) — áp dụng phòng
+ * ngừa luôn cho `.tkh` (Tài khoản 2.0, cùng bản chất "embed Tailwind thật"),
+ * không đợi bug xảy ra rồi mới vá lần 2. */
+[data-ui="v2"] h1:not(.smc *):not(.tkh *),
+[data-ui="v2"] h2:not(.smc *):not(.tkh *),
+[data-ui="v2"] h3:not(.smc *):not(.tkh *),
+[data-ui="v2"] h4:not(.smc *):not(.tkh *),
+[data-ui="v2"] h5:not(.smc *):not(.tkh *),
+[data-ui="v2"] h6:not(.smc *):not(.tkh *),
+[data-ui="v2"] p:not(.smc *):not(.tkh *),
+[data-ui="v2"] figure:not(.smc *):not(.tkh *) {
   margin: 0;
 }
 
-[data-ui="v2"] a:not(.smc *) {
+[data-ui="v2"] a:not(.smc *):not(.tkh *) {
   color: var(--v2-violet);
   text-decoration: none;
 }
 
-[data-ui="v2"] a:hover:not(.smc *) {
+[data-ui="v2"] a:hover:not(.smc *):not(.tkh *) {
   color: var(--v2-violet-dark);
 }
 

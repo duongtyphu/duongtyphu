@@ -45,7 +45,7 @@ const fadeVariants = {
  * bằng `object-fit: contain` (next/image `fill`), giữ nguyên toàn bộ nội
  * dung dù ảnh portrait hay landscape.
  */
-export function CompanionFlipbook() {
+export function CompanionFlipbook({ backHref = "/portal/companion" }: { backHref?: string } = {}) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(1);
   const { items: pages, ready } = useCollection<FlipbookPage>("companion-flipbook-pages", []);
@@ -87,7 +87,7 @@ export function CompanionFlipbook() {
   if (!ready || !page) {
     return (
       <div className="companion-flipbook-stage relative -mx-4 -my-6 flex min-h-screen flex-col items-center justify-center overflow-x-hidden bg-[#010425] px-4 py-6 md:-mx-8 md:-my-8 sm:py-8">
-        <Link href="/portal/companion" className="companion-artwork-back" style={{ zIndex: 30 }}>
+        <Link href={backHref} className="companion-artwork-back" style={{ zIndex: 30 }}>
           ← Quay lại Companion
         </Link>
       </div>
@@ -96,7 +96,7 @@ export function CompanionFlipbook() {
 
   return (
     <div className="companion-flipbook-stage relative -mx-4 -my-6 flex min-h-screen flex-col items-center justify-center overflow-x-hidden bg-[#010425] px-4 py-6 md:-mx-8 md:-my-8 sm:py-8">
-      <Link href="/portal/companion" className="companion-artwork-back" style={{ zIndex: 30 }}>
+      <Link href={backHref} className="companion-artwork-back" style={{ zIndex: 30 }}>
         ← Quay lại Companion
       </Link>
 

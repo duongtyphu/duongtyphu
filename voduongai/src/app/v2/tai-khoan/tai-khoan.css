@@ -1,0 +1,74 @@
+/* =============================================================================
+ * Tài khoản 2.0 — CSS khung sidebar/topbar (`PortalV2Shell`), dựa trên
+ * `su-menh-companion.css` (cùng tình huống: trang giữa là component
+ * TAILWIND THẬT dùng chung với 1.0 — `AccountContent.tsx`, xem
+ * `SuMenhCompanionContent.tsx` — không phải hand-CSS 46 trang Bước F khác).
+ *
+ * Đúng 5/6 điều chỉnh kỹ thuật chuẩn: (1) tiền tố `.tkh`; (2) `:root` →
+ * `.tkh`; (3) `body` gộp vào `.tkh`; (4) `'Inter'` → `'InterGF'`; (5)
+ * `line-height: normal`. BỎ điều chỉnh 6 (revert Preflight) — cùng lý do
+ * `su-menh-companion.css`: nội dung ở giữa là Tailwind thật, cần Preflight
+ * gốc để `space-y-*`/`rounded-2xl`/`bg-white/[0.04]`... hoạt động đúng.
+ *
+ * KHÔNG có rule `.tkh a{...}` — cùng lý do `su-menh-companion.css`: chrome
+ * (sidebar/topbar) chỉ có `<button onClick>` (xem `PortalV2Shell.tsx`), mọi
+ * `<a>` thật nằm trong `AccountContent.tsx` (Tailwind, tự set màu riêng) —
+ * đã loại trừ `.tkh` khỏi reset toàn cục trong `v2-tokens.css` (cùng cách
+ * `.smc`).
+ * ========================================================================== */
+
+.tkh{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+
+.tkh {
+  font-family: 'InterGF', system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  line-height: normal;
+  text-rendering: auto;
+}
+
+.tkh .app{display:flex;min-height:100vh}
+.tkh .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.tkh .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
+.tkh .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.tkh .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
+.tkh .brand .name .vo{color:#3B82F6}
+.tkh .brand .name .ai{color:#fff}
+.tkh nav.main{display:flex;flex-direction:column;gap:2px;margin-bottom:18px}
+.tkh .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;font-size:14px;font-weight:500;color:#b5afd6;cursor:pointer;transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left}
+.tkh .nav-item svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+.tkh .nav-item:hover{background:var(--sidebar-hover);color:#fff}
+.tkh .nav-item.active{background:var(--violet);color:#fff}
+.tkh .nav-item.active svg{opacity:1}
+.tkh .nav-sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 10px 26px;border-left:1px solid rgba(255,255,255,.1);padding-left:10px}
+.tkh .nav-sub .nav-item{font-size:12.8px;padding:7px 10px}
+.tkh .nav-parent{font-weight:700;color:#e4e1f5!important;cursor:default}
+.tkh .nav-parent:hover{background:none}
+.tkh .nav-parent svg{opacity:1}
+.tkh .promo{margin-top:auto;background:linear-gradient(160deg,#3d2a8f,#241c46);border-radius:14px;padding:18px 16px;position:relative;overflow:hidden}
+.tkh .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.tkh .promo h4{color:#fff;font-size:14px;font-weight:700;margin:0 0 6px}
+.tkh .promo p{font-size:12px;color:#c3bde3;line-height:1.5;margin:0 0 14px}
+.tkh .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
+.tkh .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
+.tkh .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.tkh .topbar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.tkh .search{flex:1;max-width:640px;position:relative}
+.tkh .search input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-family:inherit;margin:0}
+.tkh .search input:focus{outline:2px solid var(--violet-light);border-color:var(--violet)}
+.tkh .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
+.tkh .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.tkh .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
+.tkh .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.tkh .icon-btn svg{width:18px;height:18px}
+.tkh .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
+.tkh .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
+.tkh .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.tkh .profile .who{font-size:13px;font-weight:600;line-height:1.25;margin:0}
+.tkh .profile .plan{display:inline-block;margin-top:1px;background:#fef3c7;color:#92720a;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
+
+/* Nội dung giữa (`AccountContent.tsx`) tự cầm bố cục (`space-y-6`) — chỉ
+   cần khung padding + giới hạn bề rộng đọc thoải mái, tránh 5 tab kéo dài
+   hết chiều rộng màn hình lớn. */
+.tkh .content{padding:24px 28px;box-sizing:border-box;max-width:900px;margin:0 auto;width:100%}

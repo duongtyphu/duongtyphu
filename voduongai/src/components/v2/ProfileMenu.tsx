@@ -219,7 +219,7 @@ export function ProfileMenu({
                 role="menuitem"
                 onClick={() => {
                   setProfileOpen(false);
-                  router.push("/portal/account");
+                  router.push("/v2/tai-khoan");
                 }}
                 style={profileMenuItemStyle}
               >

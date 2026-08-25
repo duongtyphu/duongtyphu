@@ -1,5 +1,22 @@
 @AGENTS.md
 
+## NGUYÊN TẮC BẤT BIẾN — mọi việc đang sửa chỉ trỏ đích 2.0, KHÔNG link về 1.0
+
+Founder chỉ đạo trực tiếp (lưu vĩnh viễn, áp dụng cho MỌI việc sửa `/v2/*`
+từ nay về sau, không chỉ đợt việc phát sinh ra chỉ đạo này): **tất cả
+những gì đang sửa/thêm ở Portal 2.0 chỉ được có đích cuối là `/v2/*` —
+KHÔNG được tạo/giữ link trỏ ngược về Portal 1.0 (`/portal/*`) nữa.**
+
+Khi 1 trang/tính năng 2.0 cần dữ liệu hoặc logic đã có sẵn ở 1.0 (vd.
+`AccountContent`/`getAccountData()`, `SuMenhCompanionContent`,
+`CompanionFlipbook`), cách làm đúng là **tách nội dung/logic đó thành 1
+component/hàm dùng chung** (Single Source of Truth, nhận prop tuỳ chọn để
+đổi đích link — mặc định giữ hành vi 1.0, 2.0 truyền prop trỏ `/v2/*`) —
+KHÔNG bao giờ để trang 2.0 điều hướng thẳng sang route `/portal/*`. Ví dụ
+đã áp dụng: `AccountContent` nhận `coursesHref` (2.0 truyền `/v2/premium`),
+`SuMenhCompanionContent` nhận `flipbookHref`, `CompanionFlipbook` nhận
+`backHref`.
+
 ## ĐỊNH HƯỚNG HIỆN TẠI — VO DUONG AI Portal 2.0, đợt điều chỉnh mới (đã Founder duyệt, CHƯA triển khai)
 
 **Đọc mục này TRƯỚC KHI làm bất kỳ việc gì liên quan `/v2/*`.** Đây là bản kế
@@ -615,6 +632,80 @@ trình duyệt (F12) ngay lúc lỗi xảy ra, chụp lại đúng dòng excepti
 đỏ (kèm stack trace nếu có) gửi lại — đây là mảnh bằng chứng duy nhất còn
 thiếu để xác định chính xác nguyên nhân, vì server-side không hề ghi
 nhận gì.
+
+## Bug đã sửa — topbar lệch trái + di chuyển 3 link cuối cùng còn trỏ Portal 1.0
+
+Cùng đợt Founder báo lỗi giật màn hình Companion, có thêm 4 yêu cầu khác:
+(1) topbar "Companion AI" & trang con bị lệch; (2) "Companion qua hình
+ảnh" (cuối Sứ mệnh Companion) đang trỏ 1.0; (3) "Quản lý quyền riêng tư"
+đang trỏ 1.0; (4) "Hồ sơ người dùng" phải di chuyển hẳn sang 2.0. Cả 4 đã
+hoàn tất.
+
+**1 — Topbar lệch (`su-menh-companion.css`/`bo-nho-ca-nhan-hoa.css`).**
+Cả 2 trang dùng `PortalV2Shell` với `useTopbarRightWrapper={false}`
+(nhóm "gia đình Companion" — dựa vào `.topbar{justify-content:flex-end}`
+tự căn cụm avatar/chuông sang phải, thay vì bọc `.topbar-right` riêng)
+nhưng CSS riêng của 2 trang này thiếu đúng dòng `justify-content:flex-end`
+trên `.topbar` (có ở `companion.css`'s `.comp .topbar` nhưng bị bỏ sót khi
+tạo 2 file CSS này) — cụm hồ sơ/chuông nằm lùi vào ~180px so với mép phải
+chuẩn (đo qua Playwright `boundingBox()` trước/sau). Đã thêm đúng 1 dòng
+CSS/file. Đã audit thêm 9 trang `/v2/*` khác — không phát hiện lỗi tương
+tự nào khác.
+
+**2 — "Companion qua hình ảnh" → 2.0.** `SuMenhCompanionContent.tsx`
+(Single Source of Truth 1.0/2.0) thêm prop tuỳ chọn `flipbookHref`
+(mặc định giữ `/portal/su-menh-companion/companion-qua-hinh-anh` cho
+1.0). `CompanionFlipbook.tsx` (component carousel 7 trang thật) thêm prop
+tuỳ chọn `backHref` (mặc định giữ `/portal/companion`). `/v2/su-menh-companion`
+truyền `flipbookHref="/v2/su-menh-companion/companion-qua-hinh-anh"`; route
+mới `src/app/v2/su-menh-companion/companion-qua-hinh-anh/page.tsx` render
+`<CompanionFlipbook backHref="/v2/su-menh-companion" />` — KHÔNG bọc
+`PortalV2Shell` (chủ đích, giữ trải nghiệm "sách ảnh" full-bleed nguyên bản,
+cùng lý do 1.0 cũng không bọc shell cho trang này).
+
+**3+4 — "Quản lý quyền riêng tư" + "Hồ sơ người dùng" → `/v2/tai-khoan`
+(mới).** Theo đúng nguyên tắc Single Source of Truth đã dùng xuyên suốt
+dự án: tách `AccountContent`/`getAccountData()` khỏi
+`/portal/account/page.tsx` (giờ chỉ còn 9 dòng, gọi `getAccountData()` +
+render `AccountContent`) — `AccountContent` nhận thêm prop `coursesHref`
+(mặc định `/portal/premium`, 2.0 truyền `/v2/premium`). `v2-tokens.css`'s
+reset unlayered (đã loại trừ `.smc`, xem mục "Bug đã sửa —
+`/v2/su-menh-companion`" ở trên) mở rộng loại trừ thêm `.tkh` (Tài khoản
+2.0 cũng render Tailwind thật, cùng bản chất `.smc`). `tai-khoan.css`
+(shell CSS mới, dựa trên `su-menh-companion.css`, đã có sẵn
+`justify-content:flex-end` từ đầu — không lặp lại lỗi mục 1).
+`TaiKhoanClient.tsx`/`page.tsx` (mới) — `activeHtmlFile="Tai khoan.html"`
+(không khớp mục nào trong `PORTAL_HREF_MAP`, cố ý — trang này chỉ vào
+được qua popover "Cài đặt tài khoản", không phải 1 đích sidebar). Đã cập
+nhật `ProfileMenu.tsx`'s "Cài đặt tài khoản" và
+`BoNhoCaNhanHoaClient.tsx`'s "Quản lý quyền riêng tư →" từ
+`router.push("/portal/account")`/`go("/portal/account")` sang
+`/v2/tai-khoan`.
+
+**File sửa:** `su-menh-companion.css`, `bo-nho-ca-nhan-hoa.css`,
+`SuMenhCompanionContent.tsx`, `SuMenhCompanionClient.tsx`,
+`CompanionFlipbook.tsx`, `v2-tokens.css`, `portal/account/page.tsx`,
+`ProfileMenu.tsx`, `BoNhoCaNhanHoaClient.tsx`. **File mới:**
+`v2/su-menh-companion/companion-qua-hinh-anh/page.tsx`,
+`components/portal/account/AccountContent.tsx`, `lib/portal/account-data.ts`,
+`v2/tai-khoan/{tai-khoan.css,page.tsx,TaiKhoanClient.tsx}`.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (2 route mới `/v2/tai-khoan` +
+`/v2/su-menh-companion/companion-qua-hinh-anh` xuất hiện đúng). `next
+start` xác nhận cả 2 route trả `200`, HTML chứa đúng `<h1>Tài khoản</h1>`
++ "chưa yêu cầu đăng nhập" (honest, sandbox không có Supabase) và nội
+dung flipbook "Companion qua hình ảnh", 0 lỗi log server.
+
+**Chưa tự test được** (giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY`/tài khoản đăng nhập thật đã nêu nhiều lần) —
+Founder tự test trên Preview URL: (1) mở popover hồ sơ ở bất kỳ trang
+`/v2/*` nào, bấm "Cài đặt tài khoản" → xác nhận vào đúng `/v2/tai-khoan`
+với dữ liệu thật (không phải "chưa đăng nhập"); (2) từ `/v2/bo-nho-ca-nhan-hoa`
+bấm "Quản lý quyền riêng tư →" → cùng đích; (3) `/v2/su-menh-companion`
+cuộn xuống cuối, bấm "Companion qua hình ảnh →" → xác nhận ở lại `/v2/*`
+xuyên suốt (không nhảy sang `/portal/*`); (4) topbar "Sứ mệnh Companion"/
+"Bộ nhớ & Cá nhân hoá" giờ căn phải đúng như trang chủ.
 
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
