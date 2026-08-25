@@ -1,5 +1,85 @@
 @AGENTS.md
 
+## ĐỊNH HƯỚNG HIỆN TẠI — VO DUONG AI Portal 2.0, đợt điều chỉnh mới (đã Founder duyệt, CHƯA triển khai)
+
+**Đọc mục này TRƯỚC KHI làm bất kỳ việc gì liên quan `/v2/*`.** Đây là bản kế
+hoạch mới nhất Founder đã duyệt qua 1 tài liệu tổng hợp (Artifact HTML,
+không lưu trong repo) — nêu 14 hạng mục cần thay đổi trên hệ thống Portal
+2.0 THẬT SỰ đang chạy ở route `/v2/*` (lịch sử build gốc của `/v2` — Bước
+E.1/E.2/E.3, Bước F 42 trang, gộp Học viện AI 7→4 tab, Premium 2.0,
+Affiliate... — nằm ở phần **cuối file này**, tìm mục `## Gộp luồng Schema +
+UI 2.0`). Bản kế hoạch 14 hạng mục là **lớp thay đổi TIẾP THEO**, áp lên
+trên `/v2` đã có sẵn — không phải xây lại từ đầu.
+
+**Đính chính quan trọng đã tự phát hiện khi soạn kế hoạch:** trong lúc thảo
+luận, bản kế hoạch từng bị viết nhầm tham chiếu `/portal/*` (Portal 1.0 /
+admin-rebuild — hệ thống hoàn toàn khác, xem phần lịch sử "Nhóm 3"/"ADM-V2"
+ở dưới) như thể đó là đích triển khai. Đã audit lại và xác nhận: `/v2/*`
+mới là Portal 2.0 thật — khớp 1:1 với đúng 1 họ mockup HTML do Claude
+Design tạo (`Hoc vien AI.html`, `Companion.html`, `Du an Co hoi.html`,
+`SolarGroup.html`, `Chuong trinh Affilate.html`...). Mọi route/file nhắc
+tới bên dưới đều đã verify trỏ đúng `/v2/*`.
+
+**14 hạng mục + trạng thái thật của `/v2` tại thời điểm duyệt kế hoạch**
+(đã audit trực tiếp code, không suy đoán — mỗi dòng ghi rõ bằng chứng để
+không phải audit lại từ đầu):
+
+| # | Hạng mục | Trạng thái `/v2` hiện tại | Việc cần làm |
+|---|---|---|---|
+| 1 | Thêm menu "Mỗi ngày một ý tưởng" (dưới Companion AI, trên Học viện AI); trang chủ rút gọn còn 5 thẻ | **Chưa có.** `nav-config.ts` không có mục này. `TrangChuClient.tsx` hiện có **6** thẻ "Khám phá nhanh" (Companion AI/Hệ tri thức AI/Học viện AI/AI Workspace/Premium/Dự án & Cơ hội) | Thêm route + nav entry mới (chờ mockup riêng — xem "Còn chặn" bên dưới); rút gọn `TrangChuClient.tsx` còn đúng 5 thẻ theo thứ tự đã chốt |
+| 2a | Companion: ghi nhớ tự động phát hiện + xác nhận 1 chạm | **Chưa có.** `BoNhoCaNhanHoaClient.tsx` chỉ đồng bộ từ Reflection sau khi hoàn thành Output (không phát hiện trong lúc chat); `CompanionClient.tsx` đã bỏ hẳn tab Ghi nhớ trước đó | Xây cơ chế phát hiện khoảnh khắc đáng nhớ ngay trong hội thoại + UI xác nhận 1 chạm |
+| 2b | Nội dung Sứ mệnh Companion (6 khối) vào system prompt chat thật | **Chưa có.** `companion-prompt-builder.ts` dùng thẳng `COMPANION_CHAT_SYSTEM_PROMPT_V1` tĩnh (`companion-chat.system.prompt.ts`) — không đọc nội dung Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian | Port nội dung 6 khối vào system prompt hoặc khối User Context của `companion-prompt-builder.ts` |
+| 2c | "Công cụ yêu thích" động theo người dùng | **Một phần.** `CompanionClient.tsx` lấy 5 công cụ thật từ bảng `tools` theo `order` — dữ liệu thật nhưng KHÔNG cá nhân hoá (không dùng `suggestedTools`/`MentorContext`) | Nối vào `MentorContext.suggestedTools` đã có sẵn |
+| 2d | Layout/nền trang Sứ mệnh Companion bị lỗi | **Không xác định qua đọc code** — `su-menh-companion.css` có lý giải kỹ thuật chủ đích (bỏ "điều chỉnh 6"/revert Preflight vì dùng Tailwind thật), không phải bug rõ ràng trong source tĩnh | Cần audit trực quan (screenshot/Playwright) trước khi kết luận có vỡ bố cục hay không |
+| 3a | Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng yên | **Chưa có.** Mọi CSS trang (`companion.css`/`affiliate.css`/`du-an-co-hoi.css`...) đều `.app{display:flex;min-height:100vh}`, `.sidebar` không có `position:sticky`/`overflow-y` — sidebar cuộn theo trang. Chỉ `.topbar{position:sticky;top:0}` | Sửa CSS site-wide (áp dụng cho toàn bộ trang `/v2/*`, không phải sửa từng trang) |
+| 3b | Topbar (Premium/chuông/avatar) đồng nhất mọi trang | **Xong.** `PortalV2Shell.tsx` + các trang tự chép đều dùng chung `NotificationBell`/`ProfileMenu` | Không cần làm gì |
+| 4a | Học viện AI — cấu trúc tab, gỡ AI Workspace | **Trái yêu cầu.** `HocVienAiClient.tsx` hiện có 4 tab: Hệ tri thức / Khóa học & Lộ trình / **AI Workspace** / Thư viện tài nguyên — AI Workspace vẫn là tab con, Founder muốn gỡ hẳn (kể cả xoá dữ liệu) | Gỡ tab AI Workspace, xoá dữ liệu liên quan (25 công cụ đã migrate, `workspace_projects`, `workflows`) |
+| 4b | Tab 1 — 3 nhóm "Học AI theo nhu cầu/công cụ/nghề nghiệp", 55 bài slide; Tab 2 — lưới video YouTube Admin-editable | **Chưa có, kiến trúc khác hẳn.** Tab "Khóa học & Lộ trình" hiện dùng 4 giai đoạn CKOS (`learning_paths`) + Course Builder — không có cấu trúc 3-nhóm/55-bài, không có lưới video YouTube nào | Xây mới hoàn toàn theo đúng 21-điểm brief gốc: 15+20+20 bài slide, native slide viewer, lưới 13 video YouTube (seed đã chốt) |
+| 4c | Thư viện tài nguyên — 6 danh mục, bỏ Case Study/Blog AI | **Chưa làm.** `HocVienAiClient.tsx` hiện 6 danh mục nhưng **vẫn còn** `case-study` và `blog` trong đó | Bỏ 2 danh mục này, curation lại nội dung còn lại |
+| 5a | Hub Dự án & Cơ hội — bỏ tab hệ sinh thái, thêm 4 khối (Đồng hành/Nguyên tắc chia sẻ/Companion gửi bạn/FAQ) | **Chưa có.** `DuAnCoHoiClient.tsx` vẫn có `tabs-row` điều hướng theo hệ sinh thái; 0 kết quả grep cho cả 3 khối text còn lại | Bỏ tab, port 4 khối từ Portal 1.0 (`/portal/duan-cohoi`) |
+| 5b | SolarGroup — nội dung theo mockup (hero, 5 chỉ số, 8 tab, Sovelmash/AERONOVA) | **Khác biệt có chủ đích, không phải thiếu sót.** `SolarGroupClient.tsx` đã CHỦ ĐỘNG bỏ 580K+/194+/$50/20+/40% và đổi hero (không nhắc "Duyunov") vì đây là số liệu/tên riêng không kiểm chứng được — đúng nguyên tắc NO-FAKE-DATA của dự án. 8 tab giữ trơ; Sovelmash/AeroNova đã lấy từ `getLiveSubProjects()` thật | **Founder cần xác nhận lại:** những số liệu/tên riêng trong mockup (580.000+ nhà đầu tư, "Duyunov"...) là thông tin công khai thật của SolarGroup (dùng được) hay chỉ là ví dụ dàn dựng cho mockup — quyết định này đổi hẳn cách xử lý trang |
+| 6 | Premium — 3 gói thật, 2 trạng thái, bỏ Kho tài nguyên/testimonials | **Một phần.** `PremiumClient.tsx` đã có 3 gói thật (`premium_plans`) + 2 trạng thái theo `premium.isPremium` + đã bỏ testimonials/bảng so sánh. **"Kho tài nguyên Premium" vẫn còn, đang dùng số liệu mẫu** | Bỏ khối "Kho tài nguyên Premium", thêm icon kim cương + 3 khối mới từ 1.0 |
+| 7 | Affiliate — 3 cấp hoa hồng, khối Đối tác/Đại sứ, Leaderboard + Lịch sử thanh toán dữ liệu thật | **Một phần.** `AffiliateClient.tsx` đã có 3 cấp 20/30/40% từ dữ liệu thật (`referrals`) + Lịch sử thanh toán thật (`payoutRequests`). Khối Đối tác/Đại sứ riêng đã bị bỏ có chủ đích (chưa có cấp bậc thật để hiển thị). **Leaderboard là empty-state trung thực — RLS hiện chặn đọc dòng người khác, chưa có dữ liệu thật để hiện** | Thêm lại khối Đối tác/Đại sứ theo mockup; cần thiết kế cách đọc Leaderboard hợp lệ qua RLS (có thể qua view tổng hợp/Server Action riêng, không mở rộng quyền đọc trực tiếp) |
+| 8 | Cộng đồng AI — Community Map thật, lịch Zoom cố định | **Chưa có.** `CongDongAiClient.tsx` không có bảng `posts`/`community_groups`/`community_events` nào — mọi khối đang honest empty-state | Thêm field vị trí opt-in vào `members` (đã chốt phương án), xây Community Map + lịch Zoom cố định 2 buổi/tuần |
+| 9 | Nhật ký học tập / Hành trình của tôi — badge + 3 sub-tab My Story/Mirror/Bản đồ hành trình | **Một phần.** `HanhTrinhCuaToiClient.tsx`: hạ tầng `badges`/`user_badges` đã có nhưng 0 huy hiệu định nghĩa → empty-hint. My Story/Mirror/Bản đồ hành trình **vẫn chỉ tồn tại ở `/portal/story`, `/portal/mirror`, `/portal/hanhtrinhcuatoi/ban-do` (Portal 1.0)** — chưa migrate sang `/v2` | Định nghĩa nội dung badge; migrate/port 3 sub-tab sang `/v2/hanh-trinh-cua-toi`, nâng cấp click-to-reveal |
+| 10 | Companion nổi (widget toàn Portal) | **Chưa có.** Grep toàn bộ `src/app/v2` + `src/components/v2` cho widget/floating companion: 0 kết quả | Xây mới, nối vào toàn bộ nội dung/hạ tầng của hạng mục 1–9 sau khi các mục đó xong |
+
+**Điểm còn chặn:** mockup Claude Design cho trang "Mỗi ngày một ý tưởng"
+Founder sẽ gửi riêng ở bước sau (nội dung lớn, tách thành hạng mục/phase
+độc lập, không gộp cứng vào việc rút gọn trang chủ). Ngoài ra, mục 5b cần
+Founder xác nhận lại tính xác thực của số liệu/tên riêng trong mockup
+SolarGroup trước khi quyết định khôi phục hay tiếp tục bỏ.
+
+**10 giai đoạn triển khai đã duyệt** (thứ tự ưu tiên phần không vướng
+blocker trước — chi tiết đầy đủ từng hạng mục xem bảng trên, đây chỉ tóm
+gọn phạm vi mỗi giai đoạn):
+0. Duyệt kế hoạch + cập nhật CLAUDE.md (mục này — **đã hoàn tất**).
+1. Trang chủ `/v2/trang-chu` rút gọn 5 thẻ + đặt chỗ menu "Mỗi ngày một ý
+   tưởng" (chưa dựng nội dung trang đó).
+2. Companion AI lõi: ghi nhớ 1-chạm, port Sứ mệnh Companion vào system
+   prompt, nối "Công cụ yêu thích" động, kiểm tra/sửa layout Sứ mệnh
+   Companion.
+3. Layout site-wide (sidebar/topbar cố định khi cuộn — sửa 1 lần, áp dụng
+   toàn bộ `/v2/*`) + cấu trúc lại `/v2/hoc-vien-ai` (gỡ AI Workspace, 3
+   nhóm 55 bài slide, lưới 13 video, 6 danh mục thư viện, liên kết chéo).
+4. `/v2/du-an-co-hoi` + 5 trang con: bỏ tab hệ sinh thái, thêm 4 khối từ
+   1.0, viết lại nội dung DigiU/SolarGroup (sau khi Founder xác nhận số
+   liệu)/Ohana/Các mô hình Affiliate/Affiliate sàn giao dịch.
+5. `/v2/premium`: bỏ Kho tài nguyên Premium, icon kim cương, 3 khối mới.
+6. `/v2/affiliate`: khối Đối tác/Đại sứ, thiết kế đọc Leaderboard hợp lệ
+   qua RLS, giữ nguyên phần đã đúng (3 cấp, lịch sử thanh toán).
+7. `/v2/cong-dong-ai`: field vị trí opt-in, Community Map, lịch Zoom.
+8. `/v2/nhat-ky-hoc-tap` + `/v2/hanh-trinh-cua-toi`: định nghĩa badge,
+   migrate 3 sub-tab từ Portal 1.0, làm sâu Khu vườn của bạn.
+9. Companion nổi (widget) — làm sau cùng, phụ thuộc 1–8.
+10. Dọn dẹp Portal 1.0 (`/portal/*`) và mọi nội dung không liên quan Portal
+    2.0 — **việc riêng, làm sau khi Portal 2.0 hoàn thiện, chưa bắt đầu**.
+
+**Nguyên tắc bất biến của đợt này (Founder nhắc lại nhiều lần):** không tự
+ý làm hoặc bịa nội dung ngoài phạm vi đã duyệt; số liệu/tên riêng không
+kiểm chứng được (như trường hợp SolarGroup) phải hỏi lại thay vì tự đoán
+là thật hay giả.
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript
