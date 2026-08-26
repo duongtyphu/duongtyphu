@@ -48,7 +48,7 @@ không phải audit lại từ đầu):
 | 2b | Nội dung Sứ mệnh Companion (6 khối) vào system prompt chat thật | **Chưa có.** `companion-prompt-builder.ts` dùng thẳng `COMPANION_CHAT_SYSTEM_PROMPT_V1` tĩnh (`companion-chat.system.prompt.ts`) — không đọc nội dung Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian | Port nội dung 6 khối vào system prompt hoặc khối User Context của `companion-prompt-builder.ts` |
 | 2c | "Công cụ yêu thích" động theo người dùng | **Một phần.** `CompanionClient.tsx` lấy 5 công cụ thật từ bảng `tools` theo `order` — dữ liệu thật nhưng KHÔNG cá nhân hoá (không dùng `suggestedTools`/`MentorContext`) | Nối vào `MentorContext.suggestedTools` đã có sẵn |
 | 2d | Layout/nền trang Sứ mệnh Companion bị lỗi | **Không xác định qua đọc code** — `su-menh-companion.css` có lý giải kỹ thuật chủ đích (bỏ "điều chỉnh 6"/revert Preflight vì dùng Tailwind thật), không phải bug rõ ràng trong source tĩnh | Cần audit trực quan (screenshot/Playwright) trước khi kết luận có vỡ bố cục hay không |
-| 3a | Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng yên | **ĐÃ XONG** — xem mục "Giai đoạn 3 — hoàn tất phần cuối cùng: Layout site-wide" phía dưới. | — |
+| 3a | Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng yên | **ĐÃ XONG** (từ commit `200decdf`, `src/styles/v2-tokens.css`) — xem mục "Giai đoạn 3 — xác nhận đã hoàn tất toàn bộ" phía dưới. | — |
 | 3b | Topbar (Premium/chuông/avatar) đồng nhất mọi trang | **Xong.** `PortalV2Shell.tsx` + các trang tự chép đều dùng chung `NotificationBell`/`ProfileMenu` | Không cần làm gì |
 | 4a | Học viện AI — cấu trúc tab, gỡ AI Workspace | **Trái yêu cầu.** `HocVienAiClient.tsx` hiện có 4 tab: Hệ tri thức / Khóa học & Lộ trình / **AI Workspace** / Thư viện tài nguyên — AI Workspace vẫn là tab con, Founder muốn gỡ hẳn (kể cả xoá dữ liệu) | Gỡ tab AI Workspace, xoá dữ liệu liên quan (25 công cụ đã migrate, `workspace_projects`, `workflows`) |
 | 4b | Tab 1 — 3 nhóm "Học AI theo nhu cầu/công cụ/nghề nghiệp", 55 bài slide; Tab 2 — lưới video YouTube Admin-editable | **Chưa có, kiến trúc khác hẳn.** Tab "Khóa học & Lộ trình" hiện dùng 4 giai đoạn CKOS (`learning_paths`) + Course Builder — không có cấu trúc 3-nhóm/55-bài, không có lưới video YouTube nào | Xây mới hoàn toàn theo đúng 21-điểm brief gốc: 15+20+20 bài slide, native slide viewer, lưới 13 video YouTube (seed đã chốt) |
@@ -1231,51 +1231,51 @@ giữ nguyên 100%.
 Cả 2 đã merge `main` + deploy Production ngay sau khi xong (đúng quy trình
 mới), verify `tsc`/`eslint`/`vitest` 495/495/`build` sạch mỗi lần.
 
-## Giai đoạn 3 — hoàn tất phần cuối cùng: Layout site-wide (sidebar/topbar cố định khi cuộn)
+## Giai đoạn 3 — xác nhận đã hoàn tất toàn bộ (đính chính: mục 3a đã xong từ trước, không phải làm mới)
 
-Founder yêu cầu kiểm tra lại Giai đoạn 3 trước khi qua Giai đoạn 4 — audit
-xác nhận đúng như bảng 14-hạng-mục đã ghi ở mục 3a: mọi trang `/v2/*`
-(21 file CSS, `.app{display:flex;min-height:100vh}`, `.sidebar` không có
-`position:sticky`/`overflow-y`) vẫn để SIDEBAR cuộn theo trang — chỉ
-`.topbar` đã `position:sticky;top:0` từ trước. Đây là phần DUY NHẤT còn
-thiếu của Giai đoạn 3 (phần "cấu trúc lại `/v2/hoc-vien-ai`" — gỡ AI
-Workspace/3 nhóm 55 bài slide/lưới 13 video/thư viện tài nguyên — đã xong
-từ trước, xem các mục "Giai đoạn 3, mục 4a+4c"/"mục 4b"/"Điều chỉnh sau
-mục 4b" phía trên).
+Founder yêu cầu kiểm tra lại Giai đoạn 3 trước khi qua Giai đoạn 4. Audit
+ban đầu (chỉ grep 21 file CSS riêng từng trang `/v2/*`) tưởng mục 3a
+("Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng yên") CHƯA làm — nhưng
+`git log` phát hiện commit `200decdf` ("fix(v2): sidebar/topbar đứng yên
+khi cuộn nội dung (Giai đoạn 3, mục 3a)", đã lên Production trước cả PR
+#61) đã thêm ĐÚNG rule này vào `src/styles/v2-tokens.css`
+(`[data-ui="v2"] .sidebar{position:sticky;top:0;height:100vh;overflow-y:auto}`
+— site-wide 1 chỗ, đúng tinh thần "sửa 1 lần" đã đề ra) — chỉ là commit đó
+chưa từng được ghi lại đúng trong bảng theo dõi 14-hạng-mục (dòng 3a vẫn
+"Chưa có" dù code đã đúng), nên lần audit trước không phát hiện ra (chỉ
+kiểm tra 21 file CSS riêng, bỏ sót `v2-tokens.css` — nơi dự án đã dùng làm
+điểm sửa site-wide chung cho `/v2/*` từ trước, ví dụ loại trừ `.smc`/`.tkh`
+khỏi reset Preflight).
 
-**Đã sửa — áp dụng đồng loạt cho cả 21 file CSS** (mọi trang `/v2/*` có
-shell `.app`/`.sidebar`/`.main-col`/`.topbar` riêng, kể cả `trang-chu.css`
-định dạng có khoảng trắng khác 20 file còn lại — đã xử lý cả 2 định dạng):
-- `.app{display:flex;min-height:100vh}` → `.app{display:flex;height:100vh;overflow:hidden}`
-  — cố định chiều cao đúng khung nhìn, khoá cuộn ở cấp trang.
-- `.sidebar{...}` thêm `overflow-y:auto` — tự cuộn riêng nếu nội dung
-  sidebar dài hơn khung nhìn (hiếm khi xảy ra, nhưng an toàn).
-- `.main-col{flex:1;min-width:0;display:flex;flex-direction:column}` thêm
-  `overflow-y:auto` — ĐÂY là vùng thực sự cuộn (chứa `.topbar` + nội dung
-  trang). Vì `.topbar` đã sẵn `position:sticky;top:0` từ trước, giờ sticky
-  đúng theo scroll container mới (`.main-col`) → topbar đứng yên trong khi
-  phần nội dung bên dưới cuộn.
+**Đã tự sửa lại lỗi trong lúc audit:** vì chưa thấy fix cũ, đã LỠ thêm 1
+lớp fix thứ 2 (đổi `.app` sang `height:100vh;overflow:hidden` + thêm
+`overflow-y:auto` cho `.main-col` ở cả 21 file CSS riêng từng trang) —
+merge nhầm vào `main`/deploy Production qua PR #65. Sau khi phát hiện fix
+cũ đã tồn tại và tự kiểm chứng bằng Playwright (dựng `git worktree` tại
+đúng commit `200decdf`, xác nhận CHỈ rule cũ đã đủ: cuộn trang thật,
+`sidebar`/`topbar` bounding box đứng yên tuyệt đối, 0 lỗi console) — đã
+**revert lại toàn bộ 21 file vừa sửa thừa** (giữ nguyên `min-height:100vh`/
+không `overflow-y` — đúng thiết kế ban đầu, vì bản thân `v2-tokens.css` đã
+lo đủ), tránh để lại 2 cơ chế cuộn chồng chéo nhau trong code (vi phạm
+nguyên tắc "không dead/redundant code" của dự án).
 
-Không đụng `/v2/muc-tieu` (2 file `.tsx` import chéo `companion.css` thay
-vì tự định nghĩa shell riêng — tự động hưởng lợi từ bản sửa `companion.css`,
-không cần sửa thêm).
+**Kết luận đúng:** Giai đoạn 3 (layout site-wide + cấu trúc lại
+`/v2/hoc-vien-ai` + 2 đợt điều chỉnh Thư viện tài nguyên — xem các mục
+"Giai đoạn 3, mục 4a+4c"/"mục 4b"/"Điều chỉnh sau mục 4b"/"Điều chỉnh tiếp
+theo — Thư viện tài nguyên" phía trên) **đã hoàn tất từ trước khi đợt audit
+này bắt đầu** — không có việc gì thực sự cần làm thêm ở Giai đoạn 3.
 
-**Verify:** `tsc`/`eslint` sạch (thay đổi thuần CSS, không đụng code),
-`vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (không
-route nào đổi). Playwright thật qua `next start` (Supabase chưa cấu hình
-→ `/v2/*` public theo đúng fallback có sẵn của `middleware.ts`) trên 3
-trang mẫu (`/v2/hoc-vien-ai`, `/v2/trang-chu`, `/v2/companion`): đo
-`getComputedStyle(.app).overflow === "hidden"`, cuộn `.main-col` tới
-`scrollTop` bất kỳ → `boundingBox()` của `.sidebar`/`.topbar` KHÔNG đổi vị
-trí (đứng yên tuyệt đối), `window.scrollY` luôn `0` (trang/`body` không
-còn cuộn — chỉ `.main-col` cuộn). Chụp ảnh trước/sau khi cuộn `/v2/trang-chu`
-500px xác nhận trực quan: sidebar/topbar giữ nguyên, nội dung bên dưới
-("Portal 2.0 trong một cái nhìn"...) đã trôi lên đúng vị trí cuộn. 0 lỗi
-console.
+**Bài học quy trình (áp dụng cho các đợt audit "kiểm tra giai đoạn X đã
+xong chưa" sau này):** khi audit trạng thái 1 hạng mục, PHẢI kiểm tra CẢ
+`git log`/code thật lẫn tài liệu theo dõi — tài liệu có thể trễ hơn code
+thật (commit sửa xong nhưng quên cập nhật bảng trạng thái), không chỉ tin
+1 nguồn duy nhất. Đặc biệt với các fix "site-wide" của dự án này, luôn
+kiểm tra cả `src/styles/v2-tokens.css` (điểm sửa chung `[data-ui="v2"]`)
+TRƯỚC khi kết luận "chưa có" chỉ vì không thấy trong các file CSS riêng
+từng trang.
 
-**GIAI ĐOẠN 3 ĐÃ HOÀN TẤT TOÀN BỘ** (layout site-wide + cấu trúc lại
-`/v2/hoc-vien-ai` + 2 đợt điều chỉnh Thư viện tài nguyên ở trên). Tiếp
-theo: Giai đoạn 4 — `/v2/du-an-co-hoi` + 5 trang con.
+**GIAI ĐOẠN 3 ĐÃ HOÀN TẤT TOÀN BỘ.** Tiếp theo: Giai đoạn 4 —
+`/v2/du-an-co-hoi` + 5 trang con.
 
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)

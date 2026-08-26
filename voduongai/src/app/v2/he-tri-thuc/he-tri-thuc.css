@@ -80,8 +80,8 @@
 }
 .ckos a{color:var(--violet);text-decoration:none}
 .ckos a:hover{color:var(--violet-dark)}
-.ckos .app{display:flex;height:100vh;overflow:hidden}
-.ckos .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px;overflow-y:auto}
+.ckos .app{display:flex;min-height:100vh}
+.ckos .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
 .ckos .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
 .ckos .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .ckos .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
@@ -106,7 +106,7 @@
 .ckos .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
 .ckos .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
 .ckos .promo button:active{transform:translateY(0) scale(.97)}
-.ckos .main-col{flex:1;min-width:0;display:flex;flex-direction:column;overflow-y:auto}
+.ckos .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
 .ckos .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .ckos .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
 .ckos .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
