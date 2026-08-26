@@ -40,7 +40,13 @@
  *     ĐẦY ĐỦ ngay tại chỗ (panel inline trong tab này) thay vì điều hướng
  *     sang Portal 1.0 — không còn link nào từ 2.0 sang 1.0. Case Study và
  *     Blog AI đã bị gỡ hẳn khỏi danh mục này theo yêu cầu Founder (đúng kế
- *     hoạch gốc 14 hạng mục — mục 4c).
+ *     hoạch gốc 14 hạng mục — mục 4c). Bộ chọn "N nguồn tài nguyên" (6 =
+ *     4 nguồn tĩnh + N bộ sưu tập CKOS) hiển thị dạng dãy TAB (tái dùng
+ *     đúng class `.acad-groups`/`.acad-group-chip` của khối "Học AI
+ *     theo..." ở tab 0) thay vì lưới thẻ icon màu cũ (`.grp-grid`/
+ *     `.grp-card`) — theo yêu cầu Founder. Đã xoá luôn `RESOURCE_CATEGORY_STYLE`/
+ *     `COLLECTION_CARD_STYLE`/`IconStyle` (chỉ phục vụ icon/màu của thiết
+ *     kế thẻ cũ, không còn nơi nào đọc).
  *
  * CÒN GIỮ NGUYÊN "TRƠ" ĐÚNG NHƯ THIẾT KẾ GỐC: mọi hành vi trơ (nút lưu tài
  * liệu, ô tìm kiếm, chuông, CTA `href="#"`...) giữ nguyên hệt — không tự
@@ -160,8 +166,6 @@ function DocIcon() {
 
 /* -------------------------------------------- Resource Library tab (mới) */
 
-type IconStyle = { bg: string; icon: React.ReactNode };
-
 type ResourceCategoryKey = "prompt" | "sop" | "resource" | "best-practice";
 
 /** 1 mục hiển thị trong danh sách "Thư viện tài nguyên" — quy về 1 shape
@@ -178,43 +182,6 @@ type ResourceItem = {
   title: string;
   tag: string;
   subtitle: string;
-};
-
-const RESOURCE_CATEGORY_STYLE: Record<ResourceCategoryKey, IconStyle> = {
-  prompt: {
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M4 5h16v10H8l-4 4z" />
-      </svg>
-    ),
-  },
-  sop: {
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M9 6h10M9 12h10M9 18h10" />
-        <path d="M4.5 6l.7.7L6.5 5M4.5 12l.7.7L6.5 11M4.5 18l.7.7L6.5 17" />
-      </svg>
-    ),
-  },
-  resource: {
-    bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M6 2h9l5 5v15H6z" />
-        <path d="M14 2v6h6" />
-      </svg>
-    ),
-  },
-  "best-practice": {
-    bg: "linear-gradient(145deg,#e2b23c,#b3801f)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M12 2l2.9 6.9 7.1.6-5.4 4.6 1.7 7-6.3-4-6.3 4 1.7-7L1.9 9.5l7.1-.6z" />
-      </svg>
-    ),
-  },
 };
 
 const RESOURCE_CATEGORY_LABEL: Record<ResourceCategoryKey, string> = {
@@ -234,15 +201,6 @@ const RESOURCE_CATEGORY_LABEL: Record<ResourceCategoryKey, string> = {
  * tách rời, mỗi khối 1 kiểu thẻ khác nhau — đã gộp cho gọn/nhất quán).
  */
 type LibraryFilterKey = ResourceCategoryKey | `collection-${string}`;
-
-const COLLECTION_CARD_STYLE: IconStyle = {
-  bg: "linear-gradient(145deg,#14b8a6,#0f766e)",
-  icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-      <path d="M4 4h6v16H4zM14 4h6v16h-6z" />
-    </svg>
-  ),
-};
 
 /* ---------------------------------------------------------------- Props */
 
@@ -375,7 +333,7 @@ export function HocVienAiClient({
     {} as Record<ResourceCategoryKey, number>,
   );
 
-  // Lưới "N nguồn tài nguyên" — 4 card tĩnh + 1 card/bộ sưu tập CKOS (tăng
+  // Lưới "N nguồn tài nguyên" — 4 tab tĩnh + 1 tab/bộ sưu tập CKOS (tăng
   // theo đúng số bộ sưu tập thật, không hardcode "8"). Mỗi bộ sưu tập đếm
   // số bài học (seed) thuộc về nó qua `collectionSlug`.
   const libraryCards = [
@@ -383,13 +341,11 @@ export function HocVienAiClient({
       key: key as LibraryFilterKey,
       label: RESOURCE_CATEGORY_LABEL[key],
       count: resourceCountByCategory[key] ?? 0,
-      style: RESOURCE_CATEGORY_STYLE[key],
     })),
     ...ckos.collections.map((col) => ({
       key: `collection-${col.slug}` as LibraryFilterKey,
       label: col.title,
       count: ckos.seeds.filter((s) => s.collectionSlug === col.slug).length,
-      style: COLLECTION_CARD_STYLE,
     })),
   ];
 
@@ -885,29 +841,26 @@ export function HocVienAiClient({
                   ))}
                 </div>
 
-                <div className="aiw">
+                <div>
                   <div className="section-head">
                     <h3>{libraryCards.length} nguồn tài nguyên</h3>
                   </div>
-                  <div className="grp-grid" style={{ marginTop: 14, gridTemplateColumns: "repeat(4,1fr)" }}>
+                  <div className="acad-groups" style={{ marginTop: 14 }}>
                     {libraryCards.map((card) => {
                       const active = libraryFilter === card.key;
                       return (
-                        <div
-                          className="grp-card"
+                        <button
                           key={card.key}
+                          type="button"
+                          className={active ? "acad-group-chip active" : "acad-group-chip"}
                           onClick={() => {
                             setLibraryFilter(active ? null : card.key);
                             setOpenResourceKey(null);
                           }}
-                          style={active ? { boxShadow: "0 0 0 2px var(--violet) inset" } : undefined}
                         >
-                          <div className="ico" style={{ background: card.style.bg }}>
-                            {card.style.icon}
-                          </div>
-                          <h5>{card.label}</h5>
-                          <span>{card.count} mục</span>
-                        </div>
+                          {card.label}
+                          <span className="cnt">{card.count}</span>
+                        </button>
                       );
                     })}
                   </div>
