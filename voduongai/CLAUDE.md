@@ -1305,10 +1305,16 @@ dùng 2 hệ thiết kế khác hẳn nhau — Tailwind+GemCard ở 1.0, CSS tay
 ở 2.0 — nên chỉ port dữ liệu/nội dung, không chia sẻ component), đặt sau
 "Dự án nổi bật", đúng thứ tự 1.0:
 - **Đồng hành** — 5 ảnh thật cộng đồng/sự kiện digiU (dùng lại đúng file
-  đã có sẵn ở `public/images/duan-cohoi/dong-hanh/`, không cần ảnh mới),
-  hiện dạng lưới 5 cột (`.companion-grid`, CSS mới — 1.0 dùng marquee chạy
-  vô hạn, 2.0 đơn giản hoá thành lưới tĩnh, tránh phát sinh keyframe/
-  prefers-reduced-motion mới cho 1 khối phụ).
+  đã có sẵn ở `public/images/duan-cohoi/dong-hanh/`, không cần ảnh mới) —
+  Founder yêu cầu riêng ngay sau bản đầu (bản đầu đơn giản hoá thành lưới
+  tĩnh 5 cột, tránh phát sinh CSS marquee mới): đổi sang marquee chạy liên
+  tục phải→trái, cùng kỹ thuật `.tools-marquee`/`.eco-article-marquee`
+  (`globals.css`) — track render 2 lần (`[...COMPANION_PHOTOS,
+  ...COMPANION_PHOTOS]`, nửa sau `aria-hidden`), animate đúng `-50%` để
+  loop liền mạch, dừng khi hover/focus, tắt hẳn khi
+  `prefers-reduced-motion: reduce`. CSS riêng `.duo .companion-marquee`/
+  `.companion-marquee-track` (không dùng chung class `globals.css` — 2 hệ
+  CSS độc lập, `/v2/*` không phụ thuộc style Landing/Portal 1.0).
 - **Nguyên tắc chia sẻ** — 4 tiêu chí, tái dùng NGUYÊN `.card`/`.doc-row2`
   đã có sẵn trong `du-an-co-hoi.css` (đổi màu icon sang xanh lá, không
   thêm class mới cho hàng).

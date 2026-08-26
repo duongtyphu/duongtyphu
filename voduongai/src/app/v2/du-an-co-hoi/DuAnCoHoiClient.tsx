@@ -26,8 +26,13 @@
  *     2 hệ thiết kế hoàn toàn khác nhau (Tailwind+GemCard ở 1.0, CSS tay
  *     `.duo` ở 2.0) nên không chia sẻ được component, chỉ chia sẻ nội
  *     dung. 5 ảnh dùng lại đúng file đã có (`public/images/duan-cohoi/
- *     dong-hanh/`, không cần ảnh mới). Đặt sau "Dự án nổi bật", đúng thứ
- *     tự 1.0: Đồng hành → Nguyên tắc chia sẻ → FAQ → Companion gửi bạn.
+ *     dong-hanh/`, không cần ảnh mới) — "Đồng hành" là marquee chạy liên
+ *     tục phải→trái (cùng kỹ thuật `.tools-marquee`/`.eco-article-marquee`
+ *     ở `globals.css`: track render 2 lần, animate đúng -50% để loop liền
+ *     mạch, dừng khi hover/focus, tắt hẳn khi `prefers-reduced-motion`),
+ *     không phải grid tĩnh — CSS riêng cho `.duo` vì 2 trang không dùng
+ *     chung `globals.css` marquee classes. Đặt sau "Dự án nổi bật", đúng
+ *     thứ tự 1.0: Đồng hành → Nguyên tắc chia sẻ → FAQ → Companion gửi bạn.
  *  2. `pj-hero` — h2/3 pj-feat mô tả chung giữ nguyên tĩnh (copy quảng bá
  *     chung, không khẳng định số liệu cụ thể). Nút "Xem hướng dẫn đầu tư"
  *     giữ trơ (chưa có tài liệu hướng dẫn đầu tư thật riêng biệt nào).
@@ -611,13 +616,15 @@ export function DuAnCoHoiClient({
                 <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 4 }}>
                   Những người bạn đồng hành theo năm tháng — khoảnh khắc cùng cộng đồng digiU qua các sự kiện.
                 </p>
-                <div className="companion-grid" style={{ marginTop: 14 }}>
-                  {COMPANION_PHOTOS.map((p) => (
-                    <div className="companion-photo" key={p.src}>
-                      {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh, cùng convention <img> đã dùng cho icon Premium ở sidebar file này */}
-                      <img src={p.src} alt={p.alt} />
-                    </div>
-                  ))}
+                <div className="companion-marquee" style={{ marginTop: 14 }}>
+                  <div className="companion-marquee-track">
+                    {[...COMPANION_PHOTOS, ...COMPANION_PHOTOS].map((p, i) => (
+                      <div className="companion-photo" key={`${p.src}-${i}`} aria-hidden={i >= COMPANION_PHOTOS.length}>
+                        {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh, cùng convention <img> đã dùng cho icon Premium ở sidebar file này */}
+                        <img src={p.src} alt={p.alt} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 

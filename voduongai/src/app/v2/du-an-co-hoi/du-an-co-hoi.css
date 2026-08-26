@@ -204,15 +204,26 @@
 
 /* Giai đoạn 4 — 4 khối thay tabs-row (Đồng hành/Nguyên tắc chia sẻ/FAQ/
    Companion gửi bạn), không có trong bản thiết kế gốc — tái dùng tối đa
-   .card/.doc-row2/.section-head có sẵn, chỉ thêm CSS cho 2 lưới mới. */
-.duo .companion-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.duo .companion-photo{position:relative;aspect-ratio:1;border-radius:13px;overflow:hidden;border:1px solid var(--line)}
+   .card/.doc-row2/.section-head có sẵn, chỉ thêm CSS cho "Đồng hành"
+   (marquee) và "Companion gửi bạn" (lưới quote). */
+
+/* "Đồng hành" — marquee chạy liên tục phải→trái, cùng kỹ thuật
+   .tools-marquee/.eco-article-marquee ở globals.css (track render 2 lần,
+   animate đúng -50% để loop liền mạch) — tách riêng vì .duo không dùng
+   chung globals.css marquee classes (2 hệ CSS độc lập). */
+.duo .companion-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,black 4%,black 96%,transparent);mask-image:linear-gradient(90deg,transparent,black 4%,black 96%,transparent)}
+.duo .companion-marquee-track{display:flex;gap:12px;width:max-content;animation:duoCompanionScroll 42s linear infinite}
+.duo .companion-marquee-track:hover,.duo .companion-marquee-track:focus-within{animation-play-state:paused}
+@keyframes duoCompanionScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion: reduce){.duo .companion-marquee-track{animation:none}}
+.duo .companion-photo{width:220px;height:220px;flex-shrink:0;border-radius:13px;overflow:hidden;border:1px solid var(--line)}
 .duo .companion-photo img{width:100%;height:100%;object-fit:cover;display:block}
+
 .duo .quote-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
 .duo .quote-card{border:1px solid var(--line);border-radius:14px;padding:18px}
 .duo .quote-card .topic{display:inline-block;font-size:10px;font-weight:800;color:#fff;padding:3px 9px;border-radius:6px;margin-bottom:10px}
 .duo .quote-card p{font-size:12.5px;color:var(--text);line-height:1.55}
 @media (max-width:900px){
-  .duo .companion-grid{grid-template-columns:repeat(2,1fr)}
+  .duo .companion-photo{width:170px;height:170px}
   .duo .quote-grid{grid-template-columns:1fr}
 }
