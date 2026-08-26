@@ -22,8 +22,24 @@
  * của Ohana.
  *
  * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC: 8 tab trong `.tabs-row` chỉ đổi trạng
- * thái active. Nút "Theo dõi"/"Chia sẻ"/"Tải Whitepaper"/mọi CTA không có
- * đích thật giữ nguyên như bản thiết kế (không có backend nào phía sau).
+ * thái active. Nút "Theo dõi"/"Chia sẻ" và mọi CTA ở các tab khác (Vũ trụ
+ * Ohana/Công nghệ/Tokenomics/Lộ trình/Cộng đồng/Tin tức/Tài liệu — chỉ tab
+ * "Tổng quan" có nội dung) không có đích thật, giữ nguyên như bản thiết kế
+ * — nội dung này Founder sẽ cung cấp sau (tạm thời không có bất kỳ liên
+ * kết nào), không tự suy đoán.
+ *
+ * ĐỢT SỬA THEO YÊU CẦU FOUNDER (liên kết thật, KHÔNG map dữ liệu — vẫn giữ
+ * đúng nguyên tắc "không dùng dữ liệu ecosystem_chrome" ở trên):
+ * - "Khám phá hệ sinh thái" (Hero) + "Tin tức nổi bật" (mỗi dòng tin) +
+ *   nút CTA riêng dưới "Lộ trình chiến lược" → đều trỏ thẳng link đăng ký
+ *   Astronixa thật (`REGISTER_URL`).
+ * - "Tải Whitepaper" (Hero) → trỏ thư mục Drive Whitepaper thật
+ *   (`WHITEPAPER_URL`) — chỉ là link, không đọc nội dung file.
+ * - Khung video ở `about-grid` → nhúng YouTube thật (`VIDEO_URL`), bấm
+ *   play mới tải iframe (không tự autoplay khi vào trang).
+ * - Đã bỏ 3 liên kết chết không có đích: "Xem thêm về Ohana →" (about-
+ *   text), "Khám phá →" (mỗi thẻ PILLARS), "Xem tất cả →" (Tin tức nổi
+ *   bật).
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
@@ -33,9 +49,16 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
+import { toYouTubeEmbedUrl } from "@/lib/portal/videoEmbed";
 
 import "../../inter-gf.css";
 import "./ohana.css";
+
+const REGISTER_URL = "https://office.astronixa.com/sign-up/5336189091.html";
+const WHITEPAPER_URL =
+  "https://drive.google.com/drive/folders/1PG8lplVd-T0FK4uGamvrOuZOjD_3Dzjh?usp=sharing";
+const VIDEO_URL = "https://youtu.be/ZJ6hjh2ShYw?si=oP_PZuN8VDgaBmun";
+const VIDEO_EMBED_URL = toYouTubeEmbedUrl(VIDEO_URL);
 
 const HREF_MAP: Record<string, string> = {
   "Trang chu Portal.html": "/v2/trang-chu",
@@ -97,6 +120,7 @@ const NEWS = [
 export function OhanaClient({ premium }: { premium: PremiumStatus }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
@@ -292,13 +316,15 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
                   <h2>Ohana — Vũ trụ hợp nhất của Giá trị &amp; Thịnh vượng số</h2>
                   <p>Chào mừng đến với hệ sinh thái Ohana: mạng lưới siêu kết nối hợp nhất SaaS, AI và Web3, kiến tạo một nền kinh tế số không giới hạn cho mọi người tham gia.</p>
                   <div className="hero-btn-row">
-                    <button className="btn-primary">Khám phá hệ sinh thái</button>
-                    <button className="btn-ghost">
+                    <a className="btn-primary" href={REGISTER_URL} target="_blank" rel="noopener noreferrer">
+                      Khám phá hệ sinh thái
+                    </a>
+                    <a className="btn-ghost" href={WHITEPAPER_URL} target="_blank" rel="noopener noreferrer">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
                         <path d="M12 3v13m0 0l-4-4m4 4l4-4M4 21h16" />
                       </svg>
                       Tải Whitepaper
-                    </button>
+                    </a>
                   </div>
                 </div>
                 <div className="oh-graphic">
@@ -391,21 +417,35 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
                       Token Astron với mô hình giảm phát (burn) dài hạn
                     </div>
                   </div>
-                  <a href="#">Xem thêm về Ohana →</a>
                 </div>
                 <div className="video-card">
-                  <div className="vtitle">Astronixa</div>
-                  <div className="vsub">
-                    Universe
-                    <br />
-                    Overview
-                  </div>
-                  <button className="play-btn">
-                    <svg viewBox="0 0 24 24" fill="#fff">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                  <span className="video-time">03:20</span>
+                  {videoPlaying && VIDEO_EMBED_URL ? (
+                    <iframe
+                      src={`${VIDEO_EMBED_URL}?autoplay=1`}
+                      title="Video giới thiệu Ohana"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
+                    />
+                  ) : (
+                    <>
+                      <div className="vtitle">Astronixa</div>
+                      <div className="vsub">
+                        Universe
+                        <br />
+                        Overview
+                      </div>
+                      <button
+                        className="play-btn"
+                        onClick={() => setVideoPlaying(true)}
+                        aria-label="Phát video giới thiệu Ohana"
+                      >
+                        <svg viewBox="0 0 24 24" fill="#fff">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -421,7 +461,6 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
                       </div>
                       <h5>{p.title}</h5>
                       <p>{p.desc}</p>
-                      <a href="#">Khám phá →</a>
                     </div>
                   ))}
                 </div>
@@ -446,6 +485,16 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
                 </div>
               </div>
 
+              <a
+                className="btn-primary"
+                href={REGISTER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ justifyContent: "center", width: "100%" }}
+              >
+                Đăng ký tài khoản Ohana
+              </a>
+
               <div className="card">
                 <div className="card-head">
                   <h4>Token Ecosystem</h4>
@@ -461,10 +510,16 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
               <div className="card">
                 <div className="card-head">
                   <h4>Tin tức nổi bật</h4>
-                  <a href="#">Xem tất cả →</a>
                 </div>
                 {NEWS.map((n) => (
-                  <div className="news-row" key={n.title}>
+                  <a
+                    className="news-row"
+                    key={n.title}
+                    href={REGISTER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "var(--text)" }}
+                  >
                     <div className="news-thumb" style={{ background: n.bg }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke={n.stroke} strokeWidth="1.8">
                         {n.icon}
@@ -477,7 +532,7 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
                       <h6>{n.title}</h6>
                       <span className="time">{n.time}</span>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
 
