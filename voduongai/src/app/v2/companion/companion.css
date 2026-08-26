@@ -50,8 +50,8 @@
 
 .comp a{color:var(--violet);text-decoration:none}
 .comp a:hover{color:var(--violet-dark)}
-.comp .app{display:flex;min-height:100vh}
-.comp .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
+.comp .app{display:flex;height:100vh;overflow:hidden}
+.comp .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px;overflow-y:auto}
 .comp .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
 .comp .brand .mark{width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .comp .brand .name{font-weight:800;font-size:15px;letter-spacing:.2px}
@@ -76,7 +76,7 @@
 .comp .promo button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;transition:transform .15s,box-shadow .15s,filter .15s}
 .comp .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
 .comp .promo button:active{transform:translateY(0) scale(.97)}
-.comp .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.comp .main-col{flex:1;min-width:0;display:flex;flex-direction:column;overflow-y:auto}
 .comp .topbar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
 .comp .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .comp .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
