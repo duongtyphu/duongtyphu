@@ -23,10 +23,18 @@
  * 3 TAB (thứ tự cố định trong `TABS`, đã bỏ "Tổng quan" và "Tiến độ của
  * tôi", đã gộp "Thư viện của tôi" vào "Thư viện tài nguyên", đã gỡ tab
  * "AI Workspace"):
- *  0. Hệ tri thức — view "Tất cả tri thức" của CKOS (6 danh mục, tài liệu
- *     mới nhất, "CKOS là gì?"/lộ trình/tài liệu phổ biến).
- *  1. Khóa học & Lộ trình — 4 giai đoạn lộ trình + khóa học nổi bật + vòng
- *     tiến độ (đã có sẵn ở sidebar cột phải, không cần tab "Tiến độ" riêng).
+ *  0. Hệ tri thức — ĐÃ CHUYỂN VÀO ĐÂY 3 nhóm "Học AI theo nhu cầu/công
+ *     cụ/nghề nghiệp" (55 bài slide, mỗi nhóm 3 bài đầu miễn phí — còn lại
+ *     khoá Premium, xem `live-academy-slides.ts`), thay hẳn UI cũ (banner
+ *     hero/"Danh mục tri thức nổi bật"/"Tài liệu mới nhất" — theo yêu cầu
+ *     Founder, đã xoá 3 khối này). Trình chiếu native `SlideViewer.tsx` —
+ *     không nhúng công cụ ngoài. Cột phải GIỮ NGUYÊN (CKOS là gì?/CKOS
+ *     theo lộ trình/Tài liệu phổ biến/help-card) — không nằm trong phạm vi
+ *     yêu cầu xoá.
+ *  1. Khóa học & Lộ trình — sau khi chuyển 3 nhóm bài slide sang tab 0, tab
+ *     này chỉ còn lưới "Video bài giảng AI" (đổi tên từ "Video hướng dẫn"
+ *     theo yêu cầu Founder) + cột phải (vòng tiến độ `academy.progress`,
+ *     "Lớp học sắp diễn ra").
  *  2. Thư viện tài nguyên — gộp cả 4 nguồn (Prompt/SOP/Resource/Best
  *     Practice) LẪN thư viện CKOS (Bộ sưu tập + Bài học). Mọi mục mở XEM
  *     ĐẦY ĐỦ ngay tại chỗ (panel inline trong tab này) thay vì điều hướng
@@ -43,15 +51,17 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import type {
-  CkosCategory,
-  CkosDocumentSummary,
-  CkosPopularDocumentsResult,
-  CkosStage,
-} from "@/lib/portal/live-ckos";
+import type { CkosPopularDocumentsResult, CkosStage } from "@/lib/portal/live-ckos";
 import type { KnowledgeCollection } from "@/features/knowledge/types/knowledge-collection.types";
 import type { KnowledgeSeed } from "@/features/knowledge/types/knowledge-seed.types";
-import type { AcademyCourse, AcademyPath, AcademyProgress } from "@/lib/portal/live-academy";
+import type { AcademyProgress } from "@/lib/portal/live-academy";
+import {
+  ACADEMY_LESSON_GROUPS,
+  type AcademyLessonGroup,
+  type AcademySlideLessonDetail,
+  type AcademyVideo,
+} from "@/lib/portal/live-academy-slides";
+import { SlideViewer } from "./SlideViewer";
 import type { LivePrompt } from "@/lib/portal/live-prompts";
 import type { LiveSop } from "@/lib/portal/live-sop";
 import type { LiveResource } from "@/lib/portal/live-resources";
@@ -140,60 +150,6 @@ function TabIcon({ index }: { index: number }) {
 
 /* -------------------------------------------------------------- CKOS tab */
 
-const CAT_ICON_BG: Record<string, string> = {
-  "nen-tang-ai": "linear-gradient(145deg,#8b6bff,#5a37e6)",
-  "prompt-engineering": "linear-gradient(145deg,#5f8fff,#1d5fd8)",
-  "ung-dung-ai": "linear-gradient(145deg,#3ecf7e,#189a52)",
-  "cong-cu-ai": "linear-gradient(145deg,#ff9d52,#c2660a)",
-  "ky-nang-tu-duy": "linear-gradient(145deg,#e879b9,#b4348a)",
-  "tri-thuc-nang-cao": "linear-gradient(145deg,#4bc4e0,#0e7490)",
-};
-
-function CategoryIcon({ slug }: { slug: string }) {
-  switch (slug) {
-    case "nen-tang-ai":
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-          <rect x="4" y="4" width="7" height="7" rx="1.5" />
-          <rect x="13" y="4" width="7" height="7" rx="1.5" />
-          <rect x="4" y="13" width="7" height="7" rx="1.5" />
-          <rect x="13" y="13" width="7" height="7" rx="1.5" />
-        </svg>
-      );
-    case "prompt-engineering":
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-          <path d="M21 11.5a8.5 8.5 0 01-8.5 8.5 8.4 8.4 0 01-3.9-.94L3 21l1.5-4.5A8.4 8.4 0 013.5 12 8.5 8.5 0 0112 3.5a8.5 8.5 0 019 8z" />
-        </svg>
-      );
-    case "ung-dung-ai":
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-          <path d="M13 2L3 14h7l-1 8 10-12h-7z" />
-        </svg>
-      );
-    case "cong-cu-ai":
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-          <path d="M14.7 6.3a1 1 0 000-1.4l-1.6-1.6a1 1 0 00-1.4 0L4 11v3h3zM12.5 5.5L15 8M6 15H3v-3" />
-        </svg>
-      );
-    case "ky-nang-tu-duy":
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-          <circle cx="9" cy="9" r="5.5" />
-          <circle cx="15" cy="15" r="5.5" />
-        </svg>
-      );
-    default:
-      return (
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-          <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-        </svg>
-      );
-  }
-}
-
 function DocIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -201,58 +157,6 @@ function DocIcon() {
     </svg>
   );
 }
-
-function SaveIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M6 3h12v18l-6-4-6 4z" />
-    </svg>
-  );
-}
-
-/* --------------------------------------------------------- Academy tab */
-
-const PATH_STYLES = [
-  {
-    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    fill: "linear-gradient(90deg,#3ecf7e,#189a52)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="4" />
-        <circle cx="12" cy="12" r=".5" fill="#fff" />
-      </svg>
-    ),
-  },
-  {
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    fill: "linear-gradient(90deg,#a08bff,#6d4aff)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M13 2L3 14h7l-1 8 10-12h-7z" />
-      </svg>
-    ),
-  },
-  {
-    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
-    fill: "linear-gradient(90deg,#ff9d52,#c2660a)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <rect x="3" y="4" width="18" height="14" rx="2" />
-        <path d="M8 21h8M12 18v3" />
-      </svg>
-    ),
-  },
-  {
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    fill: "linear-gradient(90deg,#4bc4e0,#0e7490)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M4 19h16M7 15l3-4 3 3 5-7" />
-      </svg>
-    ),
-  },
-];
 
 /* -------------------------------------------- Resource Library tab (mới) */
 
@@ -343,8 +247,6 @@ const COLLECTION_CARD_STYLE: IconStyle = {
 /* ---------------------------------------------------------------- Props */
 
 type CkosData = {
-  categories: CkosCategory[];
-  documents: CkosDocumentSummary[];
   stages: CkosStage[];
   ckosIntro: string;
   popular: CkosPopularDocumentsResult;
@@ -353,9 +255,9 @@ type CkosData = {
 };
 
 type AcademyData = {
-  paths: AcademyPath[];
-  courses: AcademyCourse[];
   progress: AcademyProgress;
+  slideLessons: AcademySlideLessonDetail[];
+  videos: AcademyVideo[];
 };
 
 type ResourceLibraryData = {
@@ -390,8 +292,12 @@ export function HocVienAiClient({
     if (index >= 0) setTab(index);
   }, []);
 
-  // Tab "Hệ tri thức"
-  const [ckosVisibleCount, setCkosVisibleCount] = useState(4);
+  // Tab "Khóa học & Lộ trình" — nhóm đang lọc + bài đang mở trong SlideViewer.
+  const [lessonGroup, setLessonGroup] = useState<AcademyLessonGroup>("nhu-cau");
+  const [openLessonId, setOpenLessonId] = useState<string | null>(null);
+  const visibleLessons = academy.slideLessons.filter((l) => l.group === lessonGroup);
+  const openLesson = academy.slideLessons.find((l) => l.id === openLessonId) ?? null;
+
   // Tab "Thư viện tài nguyên" — 1 state filter DUY NHẤT cho cả lưới N nguồn
   // (4 nguồn tài nguyên tĩnh + N bộ sưu tập CKOS động) — key là
   // `ResourceCategoryKey` cho 4 nguồn tĩnh, hoặc `collection-${slug}` cho
@@ -414,8 +320,6 @@ export function HocVienAiClient({
     const target = HREF_MAP[htmlFile];
     if (target) router.prefetch(target);
   };
-
-  const latestDocs = ckos.documents.slice(0, ckosVisibleCount);
 
   // Tab "Thư viện tài nguyên" — gộp 4 nguồn thật (Prompt/SOP/Resource/Best
   // Practice) về cùng 1 shape `ResourceItem`. KHÔNG còn `href` sang Portal
@@ -701,140 +605,60 @@ export function HocVienAiClient({
                     ))}
                   </div>
 
-                  <div className="ckos-hero">
-                    <div className="ckos-hero-text">
-                      <div className="tag">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" />
-                        </svg>
-                        HỆ TRI THỨC TOÀN DIỆN
+                  <div>
+                    <div className="section-head">
+                      <h3>Học AI theo...</h3>
+                    </div>
+                    <div className="acad-groups" style={{ marginTop: 14 }}>
+                      {ACADEMY_LESSON_GROUPS.map((g) => {
+                        const count = academy.slideLessons.filter((l) => l.group === g.key).length;
+                        return (
+                          <button
+                            key={g.key}
+                            type="button"
+                            className={g.key === lessonGroup ? "acad-group-chip active" : "acad-group-chip"}
+                            onClick={() => setLessonGroup(g.key)}
+                          >
+                            {g.label}
+                            <span className="cnt">{count}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {visibleLessons.length === 0 ? (
+                      <div className="empty-hint" style={{ marginTop: 14 }}>
+                        Chưa có bài học nào ở nhóm này — nội dung sẽ hiện ở đây khi được xuất bản.
                       </div>
-                      <h2>Tri thức đúng — Ứng dụng nhanh — Tạo giá trị lớn</h2>
-                      <p>
-                        CKOS là hệ tri thức được chọn lọc và hệ thống hóa, giúp bạn học AI một cách bài bản và ứng dụng hiệu
-                        quả.
-                      </p>
-                    </div>
-                    <div className="brain-wrap">
-                      <div className="brain-glow" />
-                      <svg className="brain-svg" width="180" height="150" viewBox="0 0 180 150" fill="none">
-                        <path
-                          d="M90 20c-22 0-36 14-38 30-10 4-16 14-14 26 1 8 7 14 14 16-2 12 6 24 20 26 2 8 10 14 18 14s16-6 18-14c14-2 22-14 20-26 7-2 13-8 14-16 2-12-4-22-14-26-2-16-16-30-38-30z"
-                          stroke="#7fb4ff"
-                          strokeWidth="1.6"
-                          opacity=".85"
-                        />
-                        <path
-                          d="M90 20v100M60 40c8 6 8 18 0 26M120 40c-8 6-8 18 0 26M52 76c10-2 18 4 20 14M128 76c-10-2-18 4-20 14M58 108c10 2 16-4 18-12M122 108c-10 2-16-4-18-12"
-                          stroke="#7fb4ff"
-                          strokeWidth="1.2"
-                          opacity=".6"
-                        />
-                        <g className="brain-node" fill="#9fd4ff">
-                          <circle cx="60" cy="40" r="2.6" />
-                        </g>
-                        <g className="brain-node" fill="#9fd4ff" style={{ animationDelay: ".4s" }}>
-                          <circle cx="120" cy="40" r="2.6" />
-                        </g>
-                        <g className="brain-node" fill="#9fd4ff" style={{ animationDelay: ".8s" }}>
-                          <circle cx="52" cy="76" r="2.6" />
-                        </g>
-                        <g className="brain-node" fill="#9fd4ff" style={{ animationDelay: "1.2s" }}>
-                          <circle cx="128" cy="76" r="2.6" />
-                        </g>
-                        <g className="brain-node" fill="#9fd4ff" style={{ animationDelay: "1.6s" }}>
-                          <circle cx="58" cy="108" r="2.6" />
-                        </g>
-                        <g className="brain-node" fill="#9fd4ff" style={{ animationDelay: "2s" }}>
-                          <circle cx="122" cy="108" r="2.6" />
-                        </g>
-                        <g className="brain-node" fill="#c9bdff" style={{ animationDelay: ".6s" }}>
-                          <circle cx="90" cy="20" r="3" />
-                        </g>
-                        <g className="brain-node" fill="#c9bdff" style={{ animationDelay: "1s" }}>
-                          <circle cx="90" cy="120" r="3" />
-                        </g>
-                        <rect x="66" y="120" width="18" height="24" rx="2" fill="#3d2a8f" stroke="#8b6bff" strokeWidth="1.2" />
-                        <rect x="86" y="116" width="18" height="28" rx="2" fill="#4a2fb0" stroke="#9b7bff" strokeWidth="1.2" />
-                        <text x="90" y="135" fontFamily="Inter,sans-serif" fontSize="8" fontWeight="800" fill="#e4e1f5" textAnchor="middle">
-                          CKOS
-                        </text>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Danh mục tri thức nổi bật</h3>
-                    </div>
-                    <div className="cat-grid" style={{ marginTop: 14 }}>
-                      {ckos.categories.map((cat) => (
-                        <Link
-                          className="cat-card"
-                          key={cat.slug}
-                          href={`/v2/he-tri-thuc/danh-muc/${cat.slug}`}
-                          style={{ textDecoration: "none", color: "inherit" }}
-                        >
-                          <div className="ico" style={{ background: CAT_ICON_BG[cat.slug] }}>
-                            <CategoryIcon slug={cat.slug} />
-                          </div>
-                          <h5>{cat.name}</h5>
-                          <span>{cat.documentCount} tài liệu</span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="section-head">
-                      <h3>Tài liệu mới nhất</h3>
-                    </div>
-                    <div className="doc-list" style={{ marginTop: 14 }}>
-                      {latestDocs.length === 0 ? (
-                        <div className="empty-hint">Chưa có tài liệu nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                      ) : (
-                        latestDocs.map((doc) => {
-                          const locked = doc.accessLevel === "premium" && !premium.isPremium;
-                          return (
-                            <div className="doc-row" key={doc.slug}>
-                              <Link
-                                href={`/v2/he-tri-thuc/${doc.slug}`}
-                                style={{ display: "contents", color: "inherit", textDecoration: "none" }}
-                              >
-                                <div className="ico">
-                                  <DocIcon />
-                                </div>
-                                <div className="info">
-                                  <h5>{doc.title}</h5>
-                                  <div className="meta">
-                                    <span className="doc-tag">{doc.categoryName}</span>
-                                    <span>{doc.readingTime}</span>
-                                    {locked ? <span className="doc-lock">Premium</span> : null}
-                                  </div>
-                                </div>
-                              </Link>
-                              <span className="date">{formatDate(doc.createdAt)}</span>
-                              <button className="save">
-                                <SaveIcon />
-                              </button>
+                    ) : (
+                      <div className="lesson-grid" style={{ marginTop: 14 }}>
+                        {visibleLessons.map((lesson) => (
+                          <button
+                            key={lesson.id}
+                            type="button"
+                            className="lesson-card"
+                            onClick={() => (lesson.locked ? go("Premium.html") : setOpenLessonId(lesson.id))}
+                          >
+                            <span className="cat">{lesson.categoryLabel}</span>
+                            <h5>{lesson.title}</h5>
+                            <p>{lesson.summary}</p>
+                            <div className="meta">
+                              <span>{lesson.slideCount || "—"} slide</span>
+                              {lesson.locked ? (
+                                <span className="lesson-lock">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                                    <rect x="4" y="10" width="16" height="10" rx="2" />
+                                    <path d="M8 10V7a4 4 0 018 0v3" />
+                                  </svg>
+                                  Premium
+                                </span>
+                              ) : (
+                                <span>Miễn phí</span>
+                              )}
                             </div>
-                          );
-                        })
-                      )}
-                      {ckos.documents.length > latestDocs.length ? (
-                        <div
-                          className="doc-more"
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => setCkosVisibleCount((v) => v + 10)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") setCkosVisibleCount((v) => v + 10);
-                          }}
-                        >
-                          Xem thêm ↓
-                        </div>
-                      ) : null}
-                    </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -950,103 +774,40 @@ export function HocVienAiClient({
 
                 <div>
                   <div className="section-head">
-                    <h3>Lộ trình học tập gợi ý</h3>
-                    <a href="#">Xem tất cả lộ trình →</a>
+                    <h3>Video bài giảng AI</h3>
                   </div>
-                  {academy.paths.length === 0 ? (
+                  {academy.videos.length === 0 ? (
                     <div className="empty-hint" style={{ marginTop: 14 }}>
-                      Chưa có lộ trình nào — nội dung sẽ hiện ở đây khi được xuất bản.
+                      Chưa có video nào — nội dung sẽ hiện ở đây khi được xuất bản.
                     </div>
                   ) : (
-                    <div className="path-grid" style={{ marginTop: 14 }}>
-                      {academy.paths.map((path, i) => {
-                        const style = PATH_STYLES[i % PATH_STYLES.length];
-                        const completed = academy.progress.completedByPath[path.slug] ?? 0;
-                        const pct = path.lessonCount > 0 ? Math.round((completed / path.lessonCount) * 100) : 0;
+                    <div className="video-grid" style={{ marginTop: 14 }}>
+                      {academy.videos.map((video) => {
+                        const videoId = video.embedUrl?.split("/embed/")[1];
                         return (
-                          <div className="path-card" key={path.slug}>
-                            <div className="top">
-                              <div className="ico" style={{ background: style.bg }}>
-                                {style.icon}
-                              </div>
-                              <h5>{path.title}</h5>
+                          <a
+                            key={video.id}
+                            className="video-card"
+                            href={video.youtubeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <div className="thumb">
+                              {videoId ? (
+                                // eslint-disable-next-line @next/next/no-img-element -- thumbnail YouTube công khai, không cần next/image cho ảnh ngoài kích thước cố định
+                                <img src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`} alt="" />
+                              ) : null}
                             </div>
-                            <p>{path.description}</p>
-                            <div className="path-pct">{pct}% hoàn thành</div>
-                            <div className="path-track">
-                              <div className="path-fill" style={{ width: `${pct}%`, background: style.fill }} />
+                            <div className="body">
+                              <h6>{video.title}</h6>
+                              {video.description ? <div className="desc">{video.description}</div> : null}
                             </div>
-                            <div className="cnt">
-                              {completed}/{path.lessonCount} bài học khoá học
-                            </div>
-                            {path.ckosLessonCount > 0 && (
-                              <div className="cnt" style={{ marginTop: 2 }}>
-                                <button
-                                  type="button"
-                                  onClick={() => setTab(2)}
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    padding: 0,
-                                    font: "inherit",
-                                    color: "var(--violet)",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  + {path.ckosLessonCount} bài học Hệ tri thức →
-                                </button>
-                              </div>
-                            )}
-                          </div>
+                          </a>
                         );
                       })}
                     </div>
                   )}
-                </div>
-
-                <div>
-                  <div className="section-head">
-                    <h3>Khóa học nổi bật</h3>
-                    <a href="#">Xem tất cả khóa học →</a>
-                  </div>
-                  <div className="course-scroll" style={{ marginTop: 14 }}>
-                    {academy.courses.length === 0 ? (
-                      <div className="empty-hint">Chưa có khoá học nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                    ) : (
-                      academy.courses.map((course) => {
-                        const completed = academy.progress.completedByCourse[course.id] ?? 0;
-                        const pct = course.lessonCount > 0 ? Math.round((completed / course.lessonCount) * 100) : 0;
-                        return (
-                          <div className="course-card" key={course.id}>
-                            <div className="course-thumb" style={{ background: "linear-gradient(160deg,#1a1044,#3d2a8f)" }}>
-                              <div className="course-badges">
-                                <span className="badge-pill" style={{ background: "#189a52" }}>
-                                  Miễn phí
-                                </span>
-                              </div>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="#9fd4ff" strokeWidth="1.6">
-                                <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                                <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                                <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                                <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                              </svg>
-                            </div>
-                            <div className="course-body">
-                              <h5>{course.name}</h5>
-                              <div className="desc">{course.description}</div>
-                              <div className="course-meta">
-                                <span>{course.lessonCount} bài học</span>
-                              </div>
-                              <div className="course-track">
-                                <div className="course-fill" style={{ width: `${pct}%` }} />
-                              </div>
-                              <div className="course-pct">{pct}%</div>
-                            </div>
-                          </div>
-                        );
-                      })
-                    )}
-                  </div>
                 </div>
               </div>
 
@@ -1371,6 +1132,9 @@ export function HocVienAiClient({
           </div>
         </div>
       </div>
+      {openLesson && !openLesson.locked ? (
+        <SlideViewer lesson={openLesson} onClose={() => setOpenLessonId(null)} />
+      ) : null}
     </div>
   );
 }

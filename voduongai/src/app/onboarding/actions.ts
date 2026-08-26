@@ -14,7 +14,7 @@ export async function completeOnboarding(formData: FormData) {
     .getAll("interests")
     .map((v) => String(v))
     .filter((id): id is InterestId => INTEREST_OPTIONS.some((opt) => opt.id === id));
-  const next = sanitizeNextParam(String(formData.get("next") ?? ""), "/portal/hocvienai");
+  const next = sanitizeNextParam(String(formData.get("next") ?? ""), "/v2/trang-chu");
 
   if (!fullName || !occupation || !aiGoal || interests.length === 0) {
     return { error: "Vui lòng điền đủ họ tên, nghề nghiệp, mục tiêu và chọn ít nhất 1 lựa chọn." };

@@ -209,6 +209,64 @@
 .hva .skill-chip .ico{width:30px;height:30px;border-radius:8px;background:var(--violet-light);color:var(--violet);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .hva .skill-chip .ico svg{width:15px;height:15px}
 
+/* -----------------------------------------------------------------------------
+ * Mục 4b — Tab "Khóa học & Lộ trình": 3 nhóm "Học AI theo nhu cầu/công cụ/
+ * nghề nghiệp" (55 bài slide) + lưới video YouTube. Class MỚI, không có
+ * trong mockup gốc (mockup chưa từng thiết kế cấu trúc này) — bám sát
+ * ngôn ngữ hình ảnh sẵn có của `.hva` (card trắng/viền `--line`/accent
+ * `--violet`), không tự chế token màu mới.
+ * -------------------------------------------------------------------------- */
+.hva .acad-groups{display:flex;gap:8px;flex-wrap:wrap}
+.hva .acad-group-chip{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s,background .15s}
+.hva .acad-group-chip .cnt{font-size:11px;font-weight:700;color:var(--muted);background:var(--bg);border-radius:999px;padding:1px 7px}
+.hva .acad-group-chip:hover{border-color:var(--violet)}
+.hva .acad-group-chip.active{background:var(--violet);border-color:var(--violet);color:#fff}
+.hva .acad-group-chip.active .cnt{background:rgba(255,255,255,.22);color:#fff}
+
+.hva .lesson-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hva .lesson-card{position:relative;text-align:left;background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;cursor:pointer;transition:box-shadow .15s,transform .15s;font:inherit;color:inherit}
+.hva .lesson-card:hover{box-shadow:0 12px 26px rgba(30,20,80,.12);transform:translateY(-3px)}
+.hva .lesson-card .cat{font-size:11px;font-weight:800;color:var(--violet);text-transform:uppercase;letter-spacing:.04em}
+.hva .lesson-card h5{font-size:13.5px;font-weight:700;margin-top:6px;line-height:1.4}
+.hva .lesson-card p{font-size:12px;color:var(--muted);line-height:1.5;margin-top:6px;min-height:34px}
+.hva .lesson-card .meta{display:flex;align-items:center;justify-content:space-between;margin-top:12px;font-size:11.5px;color:var(--muted)}
+.hva .lesson-lock{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:800;color:#a9822c;background:#fffaf0}
+.hva .lesson-lock svg{width:11px;height:11px}
+
+.hva .video-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.hva .video-card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.hva .video-card .thumb{position:relative;aspect-ratio:16/9;background:var(--bg)}
+.hva .video-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.hva .video-card .body{padding:11px 12px}
+.hva .video-card h6{font-size:12.5px;font-weight:700;line-height:1.4}
+.hva .video-card .desc{font-size:11px;color:var(--muted);line-height:1.45;margin-top:4px}
+
+.hva .slide-overlay{position:fixed;inset:0;background:rgba(12,8,30,.62);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px}
+.hva .slide-modal{background:#fff;border-radius:16px;width:100%;max-width:640px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.hva .slide-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+.hva .slide-modal-cat{font-size:11px;font-weight:800;color:var(--violet);text-transform:uppercase;letter-spacing:.04em}
+.hva .slide-modal-head h3{font-size:16px;font-weight:800;margin-top:4px}
+.hva .slide-close{width:32px;height:32px;flex-shrink:0;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.hva .slide-close svg{width:16px;height:16px}
+.hva .slide-stage{padding:26px 28px;flex:1;overflow-y:auto}
+.hva .slide-stage h4{font-size:19px;font-weight:800;margin-bottom:12px}
+.hva .slide-stage p{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap}
+.hva .slide-modal-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-top:1px solid var(--line)}
+.hva .slide-nav-btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;color:var(--text)}
+.hva .slide-nav-btn:disabled{opacity:.35;cursor:not-allowed}
+.hva .slide-dots{display:flex;gap:6px}
+.hva .slide-dot{width:7px;height:7px;border-radius:50%;border:none;background:var(--line);cursor:pointer;padding:0}
+.hva .slide-dot.active{background:var(--violet);width:18px;border-radius:4px}
+
+@media (max-width:900px){
+  .hva .lesson-grid{grid-template-columns:repeat(2,1fr)}
+  .hva .video-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+  .hva .lesson-grid{grid-template-columns:1fr}
+  .hva .video-grid{grid-template-columns:1fr}
+}
+
 /* MỤC E.2 — trạng thái rỗng trung thực (không có trong bản thiết kế, xem
    chú thích trong HocVienClient.tsx). Dùng chung 1 class nhẹ, không định
    kiểu mới ngoài những gì `.card p`/`.muted` gốc đã có. */

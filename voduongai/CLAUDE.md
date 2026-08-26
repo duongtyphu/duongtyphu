@@ -1051,17 +1051,91 @@ dẫn đúng `/v2/hoc-vien-ai` (không còn 404/redirect vòng); (3)
 chỉ dừng đọc/hiển thị ở tab đã gỡ) — nếu sau này cần khôi phục nội dung
 này ở `/v2/*`, dữ liệu vẫn còn nguyên.
 
-**Mục 4b (chưa làm — blocker thật, cần Founder cung cấp nội dung):** kế
-hoạch gốc yêu cầu Tab "Khóa học & Lộ trình" có 3 nhóm "Học AI theo nhu
-cầu/công cụ/nghề nghiệp" với 55 bài slide (15+20+20, viewer trình chiếu
-gốc) + lưới 13 video YouTube Admin-editable, dẫn chiếu "21-điểm brief
-gốc". Đã grep TOÀN BỘ codebase cho "21-điểm", "13 video", "55 bài slide",
-"native slide viewer" — **0 kết quả ở bất kỳ đâu**. Nội dung này không tồn
-tại trong repo dưới bất kỳ hình thức nào (không phải chỉ chưa migrate lên
-Supabase — không có cả bản nháp/outline tĩnh). Đúng nguyên tắc
-NO-FAKE-DATA, không thể tự bịa 55 bài slide hay danh sách 13 video —
-**cần Founder cung cấp nội dung thật (brief gốc/danh sách video/nội dung
-slide) trước khi làm được mục này.**
+## Giai đoạn 3, mục 4b — 3 nhóm 55 bài slide + lưới video YouTube (đã hoàn tất)
+
+Tiếp nối mục "Mục 4b (chưa làm)" ở trên — blocker đã được gỡ: Founder cung
+cấp trực tiếp danh sách 15+20+20 danh mục cho 3 nhóm, quy tắc khoá Premium
+("mỗi nhóm miễn phí 3 bài đầu"), và 14 link YouTube (13 video duy nhất sau
+khi loại 1 link trùng, đúng khớp "1 trùng lặp trong 14 link gốc" của brief
+— không còn là dữ liệu bịa, đủ điều kiện triển khai theo NO-FAKE-DATA).
+
+**Hạ tầng (frame trước, đúng chỉ đạo "bỏ thiết kế cũ, dựng khung, rồi mới
+soạn nội dung"):**
+- 2 bảng Supabase mới, khuôn generic `id/data jsonb/status/order` —
+  `academy_slide_lessons` (55 dòng) và `academy_videos` (13 dòng) — đăng
+  ký vào `SUPABASE_COLLECTIONS`.
+- `src/lib/portal/live-academy-slides.ts` (mới) — `getAcademySlideLessonsWithContent(premium)`
+  (1 câu SELECT toàn bộ 55 bài kèm slide, khoá `slides=[]` ở SERVER khi
+  `!isFreePreview && !premium.isPremium` — đúng cơ chế Bước D đã dùng cho
+  `getCkosDocument()`/`getAcademyLesson()`, không chỉ overlay UI) và
+  `getAcademyVideos()` (cache() process-local).
+- `src/app/v2/hoc-vien-ai/SlideViewer.tsx` (mới) — modal trình chiếu slide
+  native (bàn phím ←/→/Esc, nút điều hướng, progress dots bấm được),
+  không nhúng công cụ ngoài, đúng yêu cầu "viewer trình chiếu gốc".
+- `HocVienAiClient.tsx` — thay hẳn khối "Lộ trình học tập gợi ý" +
+  "Khóa học nổi bật" (đọc `learning_paths`/`courses` cũ) bằng: 3 chip
+  nhóm (đếm số bài mỗi nhóm) → `.lesson-grid` (categoryLabel/title/
+  summary/số slide + khoá Premium hoặc "Miễn phí") → mở `SlideViewer`
+  khi bấm bài đã mở khoá, điều hướng `Premium.html` khi bấm bài bị khoá;
+  lưới video YouTube riêng (thumbnail `i.ytimg.com`, mở tab mới).
+- `hoc-vien-ai.css` — thêm CSS mới (`.acad-groups`/`.lesson-grid`/
+  `.lesson-card`/`.lesson-lock`/`.video-grid`/`.video-card`/
+  `.slide-overlay`/`.slide-modal`...), tiền tố `.hva` có sẵn, không phát
+  sinh điều chỉnh kỹ thuật mới nào (chỉ thêm CSS vào file `.hva` đã tồn
+  tại, không port mockup HTML mới).
+- Admin: `/admin/hocvienai/slide-lessons` (editor riêng — không dùng
+  `VisualEditor` generic vì `slides[]` là mảng object lồng nhau; định
+  dạng nhập liệu đơn giản `## Tiêu đề\nNội dung` trong 1 textarea, parse/
+  serialize qua `rawToSlides()`/`slidesToRaw()`) và `/admin/hocvienai/videos`
+  (`VisualEditor` chuẩn, 4 field phẳng). Cả 2 nối vào nhóm sidebar "Học
+  viện AI" (`nav.ts`) + icon `Presentation`/`Clapperboard`
+  (`AdminSidebar.tsx`).
+- `/v2/admin/hoc-vien-ai/page.tsx` — khối mirror "Khóa học & Lộ trình"
+  (trước đọc `academyPaths`/`academyCourses` của kiến trúc CŨ, giờ đã bỏ
+  hẳn khỏi Portal thật) cập nhật đọc đúng số liệu mới (tổng bài + số bài
+  mỗi nhóm + số video), link sang 2 trang Admin trên.
+
+**Nội dung (soạn sau khi khung đã xong, đúng thứ tự Founder yêu cầu):**
+- 55 bài × 3 slide (title/summary/3×{heading,body}) — nội dung THẬT do
+  Claude soạn trực tiếp (không phải dữ liệu bịa số liệu/sự kiện — đây là
+  nội dung giáo dục nguyên bản theo đúng yêu cầu "soạn nội dung", cùng
+  bản chất với các bài SOP/Best Practice khác trong CKOS), bám sát công
+  cụ AI thật (ChatGPT/Claude/Gemini/Midjourney...) và quy trình thực tế
+  cho từng nhu cầu/công cụ/nghề nghiệp. `order` 1-15 (nhu-cau) / 16-35
+  (cong-cu) / 36-55 (nghe-nghiep) — monotonic theo đúng thứ tự Founder
+  liệt kê, để "3 bài đầu mỗi nhóm" (đã đặt `isFreePreview:true`) khớp
+  đúng 3 danh mục đầu tiên Founder liệt kê cho từng nhóm (nhu-cau: Viết &
+  Content/Hình ảnh & Thiết kế/Video AI; cong-cu: ChatGPT/Claude/Gemini;
+  nghe-nghiep: Quản lý & Lãnh đạo/Marketing/Social Media-Creator).
+- 13 video — title THẬT lấy qua YouTube oEmbed API (`curl
+  "https://www.youtube.com/oembed?url=...&format=json"`, không bịa tiêu
+  đề), `youtubeUrl` sạch (không giữ tham số tracking `si=` của link gốc),
+  description do Claude tóm tắt ngắn dựa trên title thật (không thêm số
+  liệu/thống kê nào không có nguồn).
+- Seed qua Supabase MCP (`execute_sql`, 3 batch theo nhóm — script Python
+  sinh SQL từ dữ liệu Python dict để tránh lỗi escape/transcription thủ
+  công trên khối lượng lớn, đã validate JSON hợp lệ trước khi chạy từng
+  batch), toàn bộ `status='Published'`.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (route `/v2/hoc-vien-ai` build đúng,
+không route nào biến mất). Verify dữ liệu qua 2 lớp: (1) `execute_sql`
+trực tiếp — 55/55 lesson (đúng 15/20/20 theo nhóm, đúng 3/nhóm
+`isFreePreview`, `order` liên tục không trùng/thiếu, mọi dòng đủ 3 slide,
+0 dòng thiếu `title`/`summary`/`categoryLabel`), 13/13 video Published;
+(2) gọi THẬT qua `@supabase/supabase-js` với anon key thật (đúng client
+Portal dùng, không phải chỉ SQL thô) — xác nhận round-trip đúng shape
+`LessonRow`/`VideoRow` mà `live-academy-slides.ts` kỳ vọng.
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần — `/v2/*` yêu cầu đăng
+nhập qua `protected-routes.ts` nên không thể tự curl trang thật) —
+Founder tự test trên Preview URL: (1) `/v2/hoc-vien-ai` tab "Khóa học &
+Lộ trình" hiện đúng 3 nhóm + lưới video, bấm 1 bài Miễn phí mở đúng
+`SlideViewer` (điều hướng bàn phím/nút/progress dots hoạt động), bấm 1
+bài khoá Premium điều hướng đúng sang trang Premium; (2) tài khoản Premium
+thật mở được toàn bộ 55 bài; (3) sửa nội dung 1 bài qua
+`/admin/hocvienai/slide-lessons`, xác nhận phản ánh đúng lên Portal.
 
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
