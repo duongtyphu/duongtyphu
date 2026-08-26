@@ -1137,6 +1137,76 @@ bài khoá Premium điều hướng đúng sang trang Premium; (2) tài khoản 
 thật mở được toàn bộ 55 bài; (3) sửa nội dung 1 bài qua
 `/admin/hocvienai/slide-lessons`, xác nhận phản ánh đúng lên Portal.
 
+## Điều chỉnh sau mục 4b — chuyển 3 nhóm bài slide vào tab "Hệ tri thức" + đổi tên video + Portal 2.0 làm cổng chính
+
+Founder yêu cầu 4 điều chỉnh ngay sau khi mục 4b hoàn tất. Cả 4 đã làm,
+merge vào `main` qua [PR #61](https://github.com/duongtyphu/duongtyphu/pull/61),
+deploy Production ngay (đúng chỉ đạo mới: mỗi giai đoạn sửa xong commit +
+đưa lên Vercel Production luôn, không chờ gộp nhiều đợt).
+
+**1-2 — `/v2/hoc-vien-ai`: gộp 3 nhóm bài slide vào tab "Hệ tri thức",
+đổi tên "Video hướng dẫn" → "Video bài giảng AI".** Tab "Hệ tri thức"
+(tab 0) trước đó có banner hero CKOS + "Danh mục tri thức nổi bật" (lưới
+6 danh mục) + "Tài liệu mới nhất" (danh sách tài liệu CKOS) — cả 3 khối
+này đã XOÁ theo yêu cầu Founder, thay bằng khối "Học AI theo..." (3 chip
+nhóm nhu cầu/công cụ/nghề nghiệp + lưới 55 bài slide, mở `SlideViewer`)
+chuyển nguyên từ tab "Khóa học & Lộ trình" (tab 1) sang. Cột phải của tab
+0 (CKOS là gì?/CKOS theo lộ trình/Tài liệu phổ biến/help-card "Mở khóa
+CKOS") **giữ nguyên** — không nằm trong phạm vi yêu cầu xoá. Tab 1 sau khi
+chuyển đi chỉ còn lưới "Video bài giảng AI" (đổi tên từ "Video hướng
+dẫn") + cột phải tiến độ học tập (vòng tròn %, "Lớp học sắp diễn ra").
+
+Dọn dead code phát sinh: `CAT_ICON_BG`/`CategoryIcon`/`SaveIcon` (chỉ
+dùng trong 2 khối đã xoá), state `ckosVisibleCount`/`latestDocs`, và bỏ
+hẳn fetch `getCkosCategories()`/`getCkosDocuments()` ở `page.tsx` (không
+còn consumer nào trong trang này — `CkosData` type bớt 2 field). Đồng bộ
+nhãn "Video bài giảng AI" ở toàn bộ Admin: `/admin/hocvienai/videos`
+(`VisualEditor` title/breadcrumb) và mirror `/v2/admin/hoc-vien-ai`
+(stat/link label + description).
+
+**3 — Portal 2.0 làm cổng chính, thay `/portal` (1.0).** Audit xác nhận
+mọi luồng đăng nhập/đăng ký/OAuth callback đều đi qua đúng 1 điểm quyết
+định: `sanitizeNextParam()` (`src/lib/auth/safe-next.ts`), fallback mặc
+định trước đó là `/portal`. Đổi fallback này thành `/v2/trang-chu` — áp
+dụng tự động cho `/login`, `/register`, `/auth/callback` (Google OAuth,
+magic-link, password-reset), vì cả 4 CTA "Đăng nhập"/"Đăng ký" trên
+Landing Page (`Hero.tsx`/`PortalPreview.tsx`/`EcosystemPillars.tsx`/
+`FinalCTA.tsx`) đều trỏ thẳng `/login` KHÔNG kèm `?next=`. Đồng bộ thêm 3
+chỗ khác cùng logic: `middleware.ts` (user đã đăng nhập ghé thẳng
+`/login`/`/register` → redirect `/v2/trang-chu` thay vì `/portal`),
+`onboarding/page.tsx`+`onboarding/actions.ts` (fallback tường minh của
+luồng hoàn tất hồ sơ khi thiếu `next`, đổi từ `/portal/hocvienai` sang
+`/v2/trang-chu`), `register/page.tsx` (sửa literal so sánh `next !==
+"/portal"` khớp fallback mới, tránh thừa `?next=` dư thừa khi link sang
+`/login`). **`/portal` (1.0) và mọi route con vẫn hoạt động bình
+thường** — chỉ đổi ĐÍCH MẶC ĐỊNH sau xác thực, không xoá/khoá route nào.
+
+**4 — Deploy Production ngay sau khi sửa (quy trình mới từ nay).** Theo
+đúng `landing-release` skill (project `voduongai` đã git-link Vercel,
+push/merge vào `main` tự động trigger deployment `target: production`):
+commit theo từng nhóm việc → push branch → tạo PR → merge vào `main`
+(không chờ review) → poll `list_deployments`/`get_deployment` tới
+`readyState: READY` + `target: production`. Đây là thay đổi quy trình so
+với các đợt trước (trước đó chỉ push lên nhánh feature, không tự merge
+main/deploy Production) — áp dụng từ đợt này trở đi theo đúng chỉ đạo
+Founder, không chỉ riêng đợt sửa này.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (route `/v2/hoc-vien-ai` build đúng,
+không route nào biến mất). Kiểm tra thủ công `sanitizeNextParam()` qua
+script Node độc lập (không qua Supabase, hàm thuần): input rỗng/null/
+open-redirect (`https://evil.com`, `//evil.com`) đều trả về
+`/v2/trang-chu`; path nội bộ hợp lệ (`/v2/premium`) giữ nguyên.
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật đã nêu nhiều lần) — Founder tự test trên Production:
+(1) `/v2/hoc-vien-ai` tab "Hệ tri thức" hiện đúng 3 nhóm chip + lưới 55
+bài slide (không còn banner/danh mục/tài liệu mới nhất), tab "Khóa học &
+Lộ trình" chỉ còn "Video bài giảng AI"; (2) từ Landing Page bấm "Tiếp tục
+với Google" hoặc đăng nhập bằng email, xác nhận sau khi xác thực xong vào
+đúng `/v2/trang-chu` (không còn rơi vào `/portal` 1.0); (3) tài khoản mới
+đăng ký hoàn tất onboarding xong cũng vào đúng `/v2/trang-chu`.
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript
