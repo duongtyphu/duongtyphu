@@ -5,9 +5,10 @@ import { AdminAtmosphere } from "@/components/admin/AdminAtmosphere";
 import type { FieldConfig } from "@/lib/admin/fields";
 
 /**
- * Mục 4b (kế hoạch gốc 14 hạng mục) — Học viện AI 2.0, tab "Khóa học & Lộ
- * trình", lưới video YouTube. Đọc bởi `getAcademyVideos()`
- * (`src/lib/portal/live-academy-slides.ts`), hiển thị ở `/v2/hoc-vien-ai`.
+ * Mục 4b (kế hoạch gốc 14 hạng mục) — Học viện AI 2.0, lưới "Video bài
+ * giảng AI" (đổi tên từ "Video hướng dẫn" theo yêu cầu Founder). Đọc bởi
+ * `getAcademyVideos()` (`src/lib/portal/live-academy-slides.ts`), hiển
+ * thị ở `/v2/hoc-vien-ai` tab "Khóa học & Lộ trình".
  */
 type VideoItem = {
   id: string;
@@ -29,13 +30,13 @@ export default function AdminAcademyVideosPage() {
     <AdminAtmosphere atmosphereClassName="academy-atmosphere-bg">
       <VisualEditor<VideoItem>
         collectionKey="academy-videos"
-        title="Học viện AI — Video hướng dẫn"
+        title="Học viện AI — Video bài giảng AI"
         itemNoun="video"
         fields={fields}
         breadcrumb={[
           { label: "Học viện" },
           { label: "Học viện AI", href: "/admin/hocvienai/work-needs" },
-          { label: "Video hướng dẫn" },
+          { label: "Video bài giảng AI" },
         ]}
         renderCard={(item) => (
           <div>

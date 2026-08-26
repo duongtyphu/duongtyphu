@@ -66,18 +66,18 @@ export default async function AdminHocVienAiPage() {
       <AdminPortalMirror
         prefix="hva"
         title="Khóa học & Lộ trình"
-        description="3 nhóm 'Học AI theo nhu cầu/công cụ/nghề nghiệp' (55 bài slide) + lưới video YouTube hiển thị ở đây đọc trực tiếp từ academy_slide_lessons/academy_videos — quản lý nội dung qua Admin 1.0."
+        description="3 nhóm 'Học AI theo nhu cầu/công cụ/nghề nghiệp' (55 bài slide, hiển thị ở tab 'Hệ tri thức') + lưới 'Video bài giảng AI' (hiển thị ở tab 'Khóa học & Lộ trình') — đọc trực tiếp từ academy_slide_lessons/academy_videos, quản lý nội dung qua Admin 1.0."
         stats={[
           { label: "Tổng bài học đã Published", value: String(slideLessons.length) },
           { label: "Theo nhu cầu", value: String(lessonCountByGroup["nhu-cau"] ?? 0) },
           { label: "Theo công cụ", value: String(lessonCountByGroup["cong-cu"] ?? 0) },
           { label: "Theo nghề nghiệp", value: String(lessonCountByGroup["nghe-nghiep"] ?? 0) },
-          { label: "Video hướng dẫn", value: String(videos.length) },
+          { label: "Video bài giảng AI", value: String(videos.length) },
         ]}
         note="Mỗi nhóm 3 bài đầu (theo thứ tự soạn trong Admin) miễn phí xem thử — các bài còn lại chỉ tài khoản Premium xem được."
         links={[
           { label: "Học AI theo nhu cầu/công cụ/nghề nghiệp (Admin 1.0) →", href: "/admin/hocvienai/slide-lessons" },
-          { label: "Video hướng dẫn (Admin 1.0) →", href: "/admin/hocvienai/videos" },
+          { label: "Video bài giảng AI (Admin 1.0) →", href: "/admin/hocvienai/videos" },
         ]}
       />
     </div>
