@@ -13,10 +13,11 @@ export default async function OnboardingPage({
   searchParams: Promise<{ next?: string }>;
 }) {
   const { next: rawNext } = await searchParams;
-  const next = sanitizeNextParam(rawNext, "/portal/hocvienai");
+  const next = sanitizeNextParam(rawNext, "/v2/trang-chu");
 
-  // Cùng fallback với /portal (xem middleware.ts) — khi Supabase chưa cấu
-  // hình (local/demo), không có khái niệm session/onboarding thật để gate.
+  // Cùng fallback với cổng chính Portal 2.0 (xem `safe-next.ts`/`middleware.ts`)
+  // — khi Supabase chưa cấu hình (local/demo), không có khái niệm session/
+  // onboarding thật để gate.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     redirect(next);
   }

@@ -202,7 +202,7 @@ function RegisterForm() {
         <p className={`mt-6 text-center text-xs ${t.faint}`}>
           Đã có tài khoản?{" "}
           <Link
-            href={`/login${next !== "/portal" ? `?next=${encodeURIComponent(next)}` : ""}`}
+            href={`/login${next !== "/v2/trang-chu" ? `?next=${encodeURIComponent(next)}` : ""}`}
             className={`font-semibold ${t.link}`}
           >
             Đăng nhập

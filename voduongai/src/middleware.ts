@@ -75,7 +75,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isLoginRoute && data.user) {
-    return NextResponse.redirect(new URL("/portal", request.url));
+    // Cổng chính vào Portal là 2.0 (`/v2/trang-chu`), thay cho `/portal`
+    // (1.0) cũ — đúng chỉ đạo Founder, khớp fallback mặc định của
+    // `sanitizeNextParam()` (`src/lib/auth/safe-next.ts`).
+    return NextResponse.redirect(new URL("/v2/trang-chu", request.url));
   }
 
   // Onboarding gate: user mới (chưa có members.onboarding_completed_at)
