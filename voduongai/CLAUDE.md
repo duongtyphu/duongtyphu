@@ -48,7 +48,7 @@ không phải audit lại từ đầu):
 | 2b | Nội dung Sứ mệnh Companion (6 khối) vào system prompt chat thật | **Chưa có.** `companion-prompt-builder.ts` dùng thẳng `COMPANION_CHAT_SYSTEM_PROMPT_V1` tĩnh (`companion-chat.system.prompt.ts`) — không đọc nội dung Sứ mệnh/Triết lý/Điều lệ/Bộ gene/Hành trình tiến hoá/Dòng thời gian | Port nội dung 6 khối vào system prompt hoặc khối User Context của `companion-prompt-builder.ts` |
 | 2c | "Công cụ yêu thích" động theo người dùng | **Một phần.** `CompanionClient.tsx` lấy 5 công cụ thật từ bảng `tools` theo `order` — dữ liệu thật nhưng KHÔNG cá nhân hoá (không dùng `suggestedTools`/`MentorContext`) | Nối vào `MentorContext.suggestedTools` đã có sẵn |
 | 2d | Layout/nền trang Sứ mệnh Companion bị lỗi | **Không xác định qua đọc code** — `su-menh-companion.css` có lý giải kỹ thuật chủ đích (bỏ "điều chỉnh 6"/revert Preflight vì dùng Tailwind thật), không phải bug rõ ràng trong source tĩnh | Cần audit trực quan (screenshot/Playwright) trước khi kết luận có vỡ bố cục hay không |
-| 3a | Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng yên | **Chưa có.** Mọi CSS trang (`companion.css`/`affiliate.css`/`du-an-co-hoi.css`...) đều `.app{display:flex;min-height:100vh}`, `.sidebar` không có `position:sticky`/`overflow-y` — sidebar cuộn theo trang. Chỉ `.topbar{position:sticky;top:0}` | Sửa CSS site-wide (áp dụng cho toàn bộ trang `/v2/*`, không phải sửa từng trang) |
+| 3a | Chỉ vùng nội dung giữa cuộn, sidebar/topbar đứng yên | **ĐÃ XONG** — xem mục "Giai đoạn 3 — hoàn tất phần cuối cùng: Layout site-wide" phía dưới. | — |
 | 3b | Topbar (Premium/chuông/avatar) đồng nhất mọi trang | **Xong.** `PortalV2Shell.tsx` + các trang tự chép đều dùng chung `NotificationBell`/`ProfileMenu` | Không cần làm gì |
 | 4a | Học viện AI — cấu trúc tab, gỡ AI Workspace | **Trái yêu cầu.** `HocVienAiClient.tsx` hiện có 4 tab: Hệ tri thức / Khóa học & Lộ trình / **AI Workspace** / Thư viện tài nguyên — AI Workspace vẫn là tab con, Founder muốn gỡ hẳn (kể cả xoá dữ liệu) | Gỡ tab AI Workspace, xoá dữ liệu liên quan (25 công cụ đã migrate, `workspace_projects`, `workflows`) |
 | 4b | Tab 1 — 3 nhóm "Học AI theo nhu cầu/công cụ/nghề nghiệp", 55 bài slide; Tab 2 — lưới video YouTube Admin-editable | **Chưa có, kiến trúc khác hẳn.** Tab "Khóa học & Lộ trình" hiện dùng 4 giai đoạn CKOS (`learning_paths`) + Course Builder — không có cấu trúc 3-nhóm/55-bài, không có lưới video YouTube nào | Xây mới hoàn toàn theo đúng 21-điểm brief gốc: 15+20+20 bài slide, native slide viewer, lưới 13 video YouTube (seed đã chốt) |
@@ -1206,6 +1206,76 @@ Lộ trình" chỉ còn "Video bài giảng AI"; (2) từ Landing Page bấm "Ti
 với Google" hoặc đăng nhập bằng email, xác nhận sau khi xác thực xong vào
 đúng `/v2/trang-chu` (không còn rơi vào `/portal` 1.0); (3) tài khoản mới
 đăng ký hoàn tất onboarding xong cũng vào đúng `/v2/trang-chu`.
+
+## Điều chỉnh tiếp theo — Thư viện tài nguyên: 6 tab + hộp thẻ (PR #63, #64)
+
+2 yêu cầu riêng, ngay sau đợt trên, cùng tab "Thư viện tài nguyên"
+(`/v2/hoc-vien-ai`):
+
+**PR #63 — bộ chọn nguồn tài nguyên đổi từ `.grp-grid`/`.grp-card` sang
+tab-pill.** Tái dùng NGUYÊN `.acad-groups`/`.acad-group-chip` (class đã có
+sẵn cho khối "Học AI theo..." ở tab "Hệ tri thức") — không thêm CSS mới.
+`libraryCards` (4 danh mục tĩnh Prompt/SOP/Resource/Best Practice + N bộ
+sưu tập CKOS `Published` từ `ckos.collections`, hiện tại N=2) render thành
+dãy chip bấm active/count, đúng 6 tab tại thời điểm này (dynamic theo số
+collection thật, không hardcode "6").
+
+**PR #64 — danh sách mục tài nguyên đổi từ `.doc-list`/`.doc-row` (dạng
+dòng) sang `.lesson-grid`/`.lesson-card` (dạng hộp).** Tái dùng NGUYÊN
+class đã dùng cho lưới 55 bài slide ở tab "Hệ tri thức" — đồng bộ hình ảnh
+2 tab. Áp dụng cho cả 2 nhánh hiển thị: danh sách theo danh mục
+(Prompt/SOP/Resource/Best Practice) và danh sách bài học trong 1 bộ sưu
+tập CKOS đang mở. Hành vi bấm (mở panel xem đầy đủ / điều hướng bài học)
+giữ nguyên 100%.
+
+Cả 2 đã merge `main` + deploy Production ngay sau khi xong (đúng quy trình
+mới), verify `tsc`/`eslint`/`vitest` 495/495/`build` sạch mỗi lần.
+
+## Giai đoạn 3 — hoàn tất phần cuối cùng: Layout site-wide (sidebar/topbar cố định khi cuộn)
+
+Founder yêu cầu kiểm tra lại Giai đoạn 3 trước khi qua Giai đoạn 4 — audit
+xác nhận đúng như bảng 14-hạng-mục đã ghi ở mục 3a: mọi trang `/v2/*`
+(21 file CSS, `.app{display:flex;min-height:100vh}`, `.sidebar` không có
+`position:sticky`/`overflow-y`) vẫn để SIDEBAR cuộn theo trang — chỉ
+`.topbar` đã `position:sticky;top:0` từ trước. Đây là phần DUY NHẤT còn
+thiếu của Giai đoạn 3 (phần "cấu trúc lại `/v2/hoc-vien-ai`" — gỡ AI
+Workspace/3 nhóm 55 bài slide/lưới 13 video/thư viện tài nguyên — đã xong
+từ trước, xem các mục "Giai đoạn 3, mục 4a+4c"/"mục 4b"/"Điều chỉnh sau
+mục 4b" phía trên).
+
+**Đã sửa — áp dụng đồng loạt cho cả 21 file CSS** (mọi trang `/v2/*` có
+shell `.app`/`.sidebar`/`.main-col`/`.topbar` riêng, kể cả `trang-chu.css`
+định dạng có khoảng trắng khác 20 file còn lại — đã xử lý cả 2 định dạng):
+- `.app{display:flex;min-height:100vh}` → `.app{display:flex;height:100vh;overflow:hidden}`
+  — cố định chiều cao đúng khung nhìn, khoá cuộn ở cấp trang.
+- `.sidebar{...}` thêm `overflow-y:auto` — tự cuộn riêng nếu nội dung
+  sidebar dài hơn khung nhìn (hiếm khi xảy ra, nhưng an toàn).
+- `.main-col{flex:1;min-width:0;display:flex;flex-direction:column}` thêm
+  `overflow-y:auto` — ĐÂY là vùng thực sự cuộn (chứa `.topbar` + nội dung
+  trang). Vì `.topbar` đã sẵn `position:sticky;top:0` từ trước, giờ sticky
+  đúng theo scroll container mới (`.main-col`) → topbar đứng yên trong khi
+  phần nội dung bên dưới cuộn.
+
+Không đụng `/v2/muc-tieu` (2 file `.tsx` import chéo `companion.css` thay
+vì tự định nghĩa shell riêng — tự động hưởng lợi từ bản sửa `companion.css`,
+không cần sửa thêm).
+
+**Verify:** `tsc`/`eslint` sạch (thay đổi thuần CSS, không đụng code),
+`vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (không
+route nào đổi). Playwright thật qua `next start` (Supabase chưa cấu hình
+→ `/v2/*` public theo đúng fallback có sẵn của `middleware.ts`) trên 3
+trang mẫu (`/v2/hoc-vien-ai`, `/v2/trang-chu`, `/v2/companion`): đo
+`getComputedStyle(.app).overflow === "hidden"`, cuộn `.main-col` tới
+`scrollTop` bất kỳ → `boundingBox()` của `.sidebar`/`.topbar` KHÔNG đổi vị
+trí (đứng yên tuyệt đối), `window.scrollY` luôn `0` (trang/`body` không
+còn cuộn — chỉ `.main-col` cuộn). Chụp ảnh trước/sau khi cuộn `/v2/trang-chu`
+500px xác nhận trực quan: sidebar/topbar giữ nguyên, nội dung bên dưới
+("Portal 2.0 trong một cái nhìn"...) đã trôi lên đúng vị trí cuộn. 0 lỗi
+console.
+
+**GIAI ĐOẠN 3 ĐÃ HOÀN TẤT TOÀN BỘ** (layout site-wide + cấu trúc lại
+`/v2/hoc-vien-ai` + 2 đợt điều chỉnh Thư viện tài nguyên ở trên). Tiếp
+theo: Giai đoạn 4 — `/v2/du-an-co-hoi` + 5 trang con.
 
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
