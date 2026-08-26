@@ -46,7 +46,11 @@
  *     theo..." ở tab 0) thay vì lưới thẻ icon màu cũ (`.grp-grid`/
  *     `.grp-card`) — theo yêu cầu Founder. Đã xoá luôn `RESOURCE_CATEGORY_STYLE`/
  *     `COLLECTION_CARD_STYLE`/`IconStyle` (chỉ phục vụ icon/màu của thiết
- *     kế thẻ cũ, không còn nơi nào đọc).
+ *     kế thẻ cũ, không còn nơi nào đọc). Danh sách mục tài nguyên (Prompt/
+ *     SOP/Resource/Best Practice/bài học trong bộ sưu tập) cũng đổi từ
+ *     dạng dòng (`.doc-list`/`.doc-row`) sang lưới thẻ hộp — tái dùng đúng
+ *     `.lesson-grid`/`.lesson-card` của khối "Học AI theo..." — cho đồng
+ *     bộ hình ảnh với tab "Hệ tri thức", theo yêu cầu Founder.
  *
  * CÒN GIỮ NGUYÊN "TRƠ" ĐÚNG NHƯ THIẾT KẾ GỐC: mọi hành vi trơ (nút lưu tài
  * liệu, ô tìm kiếm, chuông, CTA `href="#"`...) giữ nguyên hệt — không tự
@@ -984,31 +988,21 @@ export function HocVienAiClient({
                           Xem tất cả →
                         </a>
                       </div>
-                      <div className="doc-list" style={{ marginTop: 14 }}>
-                        {activeCollectionSeeds.length === 0 ? (
-                          <div className="empty-hint">Chưa có bài học nào trong bộ sưu tập này.</div>
-                        ) : (
-                          activeCollectionSeeds.map((seed) => (
-                            <Link
-                              key={seed.id}
-                              className="doc-row"
-                              href={`/v2/he-tri-thuc/bai-hoc/${seed.slug}`}
-                              style={{ textDecoration: "none", color: "inherit" }}
-                            >
-                              <div className="ico">
-                                <DocIcon />
-                              </div>
-                              <div className="info">
-                                <h5>{seed.title}</h5>
-                                <div className="meta">
-                                  <span className="doc-tag">Bài học</span>
-                                  {seed.estimatedTime ? <span>{seed.estimatedTime}</span> : null}
-                                </div>
-                              </div>
+                      {activeCollectionSeeds.length === 0 ? (
+                        <div className="empty-hint" style={{ marginTop: 14 }}>
+                          Chưa có bài học nào trong bộ sưu tập này.
+                        </div>
+                      ) : (
+                        <div className="lesson-grid" style={{ marginTop: 14 }}>
+                          {activeCollectionSeeds.map((seed) => (
+                            <Link key={seed.id} className="lesson-card" href={`/v2/he-tri-thuc/bai-hoc/${seed.slug}`}>
+                              <span className="cat">Bài học</span>
+                              <h5>{seed.title}</h5>
+                              <p>{seed.estimatedTime ?? ""}</p>
                             </Link>
-                          ))
-                        )}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </>
                   ) : (
                     <>
@@ -1026,50 +1020,21 @@ export function HocVienAiClient({
                           </a>
                         )}
                       </div>
-                      <div className="doc-list" style={{ marginTop: 14 }}>
-                        {visibleResourceItems.length === 0 ? (
-                          <div className="empty-hint">Chưa có tài nguyên nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                        ) : (
-                          visibleResourceItems.map((item) => (
-                            <button
-                              type="button"
-                              key={item.key}
-                              className="doc-row"
-                              onClick={() => setOpenResourceKey(item.key)}
-                              style={{
-                                width: "100%",
-                                background: "none",
-                                border: "none",
-                                textAlign: "left",
-                                font: "inherit",
-                                color: "inherit",
-                              }}
-                            >
-                              <div className="ico">
-                                <DocIcon />
-                              </div>
-                              <div className="info">
-                                <h5>{item.title}</h5>
-                                <div className="meta">
-                                  <span className="doc-tag">{item.tag}</span>
-                                  {item.subtitle ? (
-                                    <span
-                                      style={{
-                                        overflow: "hidden",
-                                        textOverflow: "ellipsis",
-                                        whiteSpace: "nowrap",
-                                        maxWidth: 340,
-                                      }}
-                                    >
-                                      {item.subtitle}
-                                    </span>
-                                  ) : null}
-                                </div>
-                              </div>
+                      {visibleResourceItems.length === 0 ? (
+                        <div className="empty-hint" style={{ marginTop: 14 }}>
+                          Chưa có tài nguyên nào — nội dung sẽ hiện ở đây khi được xuất bản.
+                        </div>
+                      ) : (
+                        <div className="lesson-grid" style={{ marginTop: 14 }}>
+                          {visibleResourceItems.map((item) => (
+                            <button type="button" key={item.key} className="lesson-card" onClick={() => setOpenResourceKey(item.key)}>
+                              <span className="cat">{item.tag}</span>
+                              <h5>{item.title}</h5>
+                              <p>{item.subtitle}</p>
                             </button>
-                          ))
-                        )}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
