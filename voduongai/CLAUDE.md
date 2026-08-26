@@ -1277,6 +1277,69 @@ từng trang.
 **GIAI ĐOẠN 3 ĐÃ HOÀN TẤT TOÀN BỘ.** Tiếp theo: Giai đoạn 4 —
 `/v2/du-an-co-hoi` + 5 trang con.
 
+## Giai đoạn 4, phần 1 — Hub `/v2/du-an-co-hoi`: bỏ tab hệ sinh thái, thêm 4 khối
+
+Audit trước khi sửa phát hiện hub `/v2/du-an-co-hoi` (`DuAnCoHoiClient.tsx`)
+đã lệch khá xa so với mục 5a của kế hoạch 14-hạng-mục gốc — không phải
+chưa làm gì, mà đã có `tabs-row` (6/7 tab) điều hướng THẬT sang 5 trang
+con với dữ liệu Supabase sống động (`getLiveSubProjects`/
+`getAllLiveEcosystemArticles`/`chrome.documents`...), khác hẳn giả định
+ban đầu "tab chỉ trang trí, xoá vô hại". Đã dừng hỏi Founder qua
+`AskUserQuestion` trước khi động vào (bỏ tab = mất 1 trong 3 đường dẫn
+vào 5 trang con) — Founder xác nhận **làm đúng kế hoạch gốc: bỏ hẳn tab**.
+
+**Xác nhận trước khi xoá — không mất chức năng điều hướng:** đã đọc kỹ
+JSX, phát hiện `tabs-row` chỉ là đường dẫn THỨ 3 trùng lặp — sidebar
+(`nav-sub`, 5 mục con dưới "Dự án & Cơ hội") và `cat-grid` ("Danh mục dự
+án & cơ hội", 5 thẻ ngay dưới hero, mỗi thẻ `onClick={() => go(c.href)}`)
+đều đã dẫn đúng tới cùng 5 trang con. Bỏ `tabs-row` không làm mất khả
+năng vào bất kỳ trang con nào — chỉ bỏ đường dẫn dư thừa.
+
+**Đã xoá:** `TABS` array (7 tab + icon SVG), state `tab`, hàm `handleTab`,
+khối JSX `tabs-row` — dead code xoá sạch, không giữ lại.
+
+**Đã thêm 4 khối mới** (port NỘI DUNG thật từ `/portal/duan-cohoi/page.tsx`
+— Portal 1.0, cùng trang, đã có sẵn cả 4 khối này — **không** import/link
+ngược route `/portal/*`, đúng NGUYÊN TẮC BẤT BIẾN đầu file này; 2 trang
+dùng 2 hệ thiết kế khác hẳn nhau — Tailwind+GemCard ở 1.0, CSS tay `.duo`
+ở 2.0 — nên chỉ port dữ liệu/nội dung, không chia sẻ component), đặt sau
+"Dự án nổi bật", đúng thứ tự 1.0:
+- **Đồng hành** — 5 ảnh thật cộng đồng/sự kiện digiU (dùng lại đúng file
+  đã có sẵn ở `public/images/duan-cohoi/dong-hanh/`, không cần ảnh mới),
+  hiện dạng lưới 5 cột (`.companion-grid`, CSS mới — 1.0 dùng marquee chạy
+  vô hạn, 2.0 đơn giản hoá thành lưới tĩnh, tránh phát sinh keyframe/
+  prefers-reduced-motion mới cho 1 khối phụ).
+- **Nguyên tắc chia sẻ** — 4 tiêu chí, tái dùng NGUYÊN `.card`/`.doc-row2`
+  đã có sẵn trong `du-an-co-hoi.css` (đổi màu icon sang xanh lá, không
+  thêm class mới cho hàng).
+- **Câu hỏi thường gặp** — 3 câu FAQ, tái dùng `.card`.
+- **Companion gửi bạn** — 5 lời nhắn (Đầu tư thông minh/Kỷ luật/Kiên nhẫn/
+  Thành công/Tri thức), lưới 2 cột (`.quote-grid`, CSS mới — màu tint/
+  accent chuyển từ Tailwind gradient class sang hex/gradient CSS tay,
+  khớp đúng bảng màu sẵn có của `.duo`, không bịa hue mới).
+
+Cả 4 khối đều là nội dung TĨNH (không props/state) — không ảnh hưởng
+`categories`/`featuredSubs`/`newsItems`/`documents` (dữ liệu thật đã có từ
+trước, giữ nguyên 100%).
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass, `rm -rf .next
+&& npm run build` sạch (route `/v2/du-an-co-hoi` build đúng). Playwright
+thật qua `next start` (Supabase chưa cấu hình → public): xác nhận `.tabs-row`
+count = 0, đủ 6 heading `<h3>` theo đúng thứ tự (Danh mục dự án & cơ hội/
+Dự án nổi bật/Đồng hành/Nguyên tắc chia sẻ/Câu hỏi thường gặp/Companion
+gửi bạn), 5 ảnh + 5 quote card render đúng, 0 lỗi console. Chụp ảnh toàn
+trang xác nhận layout không vỡ, sidebar `nav-sub` vẫn đủ 5 mục con.
+
+**Chưa làm — phần 2 của Giai đoạn 4 (viết lại nội dung DigiU/SolarGroup/
+Ohana/Các mô hình Affiliate/Affiliate sàn giao dịch):** 5 trang con hiện
+tại đã có tầng dữ liệu thật phong phú (đọc `ecosystem_chrome`/
+`ecosystem_subprojects`/`ecosystem_articles`/`ecosystem_ratings` qua
+`/portal` 1.0, xem docblock từng file — DigiU/SolarGroup đã có sẵn công
+sức đối chiếu tông điệu trung thực với dữ liệu Founder xác nhận thật).
+Đây là phần việc RIÊNG, lớn hơn hẳn phần 1 — chưa động tới, cần xác nhận
+phạm vi cụ thể với Founder trước khi làm (mỗi trang có brief/nội dung mới
+gì cần viết, hay giữ nguyên như hiện tại vì đã có dữ liệu thật).
+
 ## Stack
 - Next.js 16.2.9 (App Router, Turbopack: `next dev --turbopack`)
 - React 19, TypeScript

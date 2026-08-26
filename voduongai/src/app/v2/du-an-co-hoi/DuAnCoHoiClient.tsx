@@ -11,11 +11,23 @@
  * ---------------------------------------------------------------------------
  * NHỮNG CHỖ KHÁC bản tĩnh:
  *
- *  1. `tabs-row` — 6/7 tab (DigiU/SolarGroup/Ohana/Các mô hình Affilate/
- *     Affilate sàn giao dịch) giờ ĐIỀU HƯỚNG THẬT sang đúng 5 trang con đã
- *     dựng (khác các trang khác trong họ này — ở đây các trang đích đã có
- *     sẵn, không cần giữ trơ). "Tổng quan"/"Tất cả" ở lại hub (chỉ đổi
- *     active, đúng hành vi gốc).
+ *  1. `tabs-row` (6/7 tab điều hướng hệ sinh thái) đã BỎ HẲN theo đúng yêu
+ *     cầu gốc của kế hoạch 14-hạng-mục (mục 5a — "bỏ tab hệ sinh thái,
+ *     thêm 4 khối Đồng hành/Nguyên tắc chia sẻ/Companion gửi bạn/FAQ").
+ *     KHÔNG mất khả năng vào 5 trang con — `cat-grid` (mục 3 dưới) và mục
+ *     "Dự án & Cơ hội" trong sidebar (`nav-sub`) đã là 2 đường dẫn thật
+ *     khác dẫn tới đúng 5 trang, tabs-row chỉ là đường thứ 3 trùng lặp.
+ *  1b. 4 khối MỚI (Đồng hành/Nguyên tắc chia sẻ/FAQ/Companion gửi bạn) —
+ *     port nội dung THẬT từ `/portal/duan-cohoi/page.tsx` (Portal 1.0,
+ *     cùng trang, đã có sẵn 4 khối này) vào đúng thiết kế `.duo` của
+ *     2.0 — port NỘI DUNG (mảng dữ liệu tĩnh: 5 ảnh thật, 4 tiêu chí, 3
+ *     FAQ, 5 lời nhắn Companion), KHÔNG import/link ngược route
+ *     `/portal/*` (đúng NGUYÊN TẮC BẤT BIẾN đầu CLAUDE.md) — 2 trang dùng
+ *     2 hệ thiết kế hoàn toàn khác nhau (Tailwind+GemCard ở 1.0, CSS tay
+ *     `.duo` ở 2.0) nên không chia sẻ được component, chỉ chia sẻ nội
+ *     dung. 5 ảnh dùng lại đúng file đã có (`public/images/duan-cohoi/
+ *     dong-hanh/`, không cần ảnh mới). Đặt sau "Dự án nổi bật", đúng thứ
+ *     tự 1.0: Đồng hành → Nguyên tắc chia sẻ → FAQ → Companion gửi bạn.
  *  2. `pj-hero` — h2/3 pj-feat mô tả chung giữ nguyên tĩnh (copy quảng bá
  *     chung, không khẳng định số liệu cụ thể). Nút "Xem hướng dẫn đầu tư"
  *     giữ trơ (chưa có tài liệu hướng dẫn đầu tư thật riêng biệt nào).
@@ -55,7 +67,6 @@
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import type { EcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 import type { SubProjectRow } from "@/lib/portal/live-subprojects";
@@ -67,6 +78,78 @@ import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 
 import "../inter-gf.css";
 import "./du-an-co-hoi.css";
+
+/** 5 ảnh thật cộng đồng/sự kiện digiU — cùng file đã dùng ở
+ * `/portal/duan-cohoi/page.tsx` (`public/images/duan-cohoi/dong-hanh/`),
+ * không phải ảnh mới. */
+const COMPANION_PHOTOS = [
+  { src: "/images/duan-cohoi/dong-hanh/digiu-doi-ngu-01.jpg", alt: "Đội ngũ digiU" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-hoi-thao-ai-blockchain.jpg", alt: "Hội thảo Trí tuệ nhân tạo & Blockchain cùng cộng đồng digiU" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-dai-dien-hoi-thao.jpg", alt: "Đại diện digiU tại hội thảo" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-5-nam-thanh-lap.jpg", alt: "Sự kiện kỷ niệm 5 năm thành lập digiU" },
+  { src: "/images/duan-cohoi/dong-hanh/digiu-doi-ngu-02.jpg", alt: "Đội ngũ digiU tại sự kiện cộng đồng" },
+] as const;
+
+/** 4 tiêu chí — nội dung THẬT, port nguyên văn từ `/portal/duan-cohoi/page.tsx`. */
+const CRITERIA = [
+  "Mình đã thực sự tham gia và có trải nghiệm trực tiếp",
+  "Góc nhìn trung thực — bao gồm cả điểm yếu và rủi ro",
+  "Không cam kết lợi nhuận dưới bất kỳ hình thức nào",
+  "Mọi quyết định tài chính là của bạn — mình chỉ chia sẻ góc nhìn",
+];
+
+/** 3 câu FAQ — nội dung THẬT, port nguyên văn từ `/portal/duan-cohoi/page.tsx`. */
+const FAQ = [
+  {
+    q: "Đây có phải là lời khuyến nghị đầu tư không?",
+    a: "Không. Tất cả nội dung ở đây là chia sẻ góc nhìn và trải nghiệm cá nhân của tôi. Bạn phải tự nghiên cứu và chịu trách nhiệm với quyết định tài chính của mình.",
+  },
+  {
+    q: "Tại sao VO DUONG AI chia sẻ về các dự án này?",
+    a: "Vì tôi tin rằng minh bạch về những gì mình đang theo dõi và tham gia sẽ giúp cộng đồng có nhiều góc nhìn hơn — không phải để ai đó làm theo tôi.",
+  },
+  {
+    q: "Làm thế nào để tôi đánh giá một dự án?",
+    a: "Đọc phần 'Nguyên tắc chia sẻ' của chúng tôi, đọc tài liệu gốc của dự án, tham gia cộng đồng để hỏi thêm, và chỉ tham gia với số tiền bạn sẵn sàng mất hoàn toàn.",
+  },
+];
+
+/** 5 lời nhắn Companion (Đầu tư thông minh & Thành công) — nội dung THẬT,
+ * port nguyên văn từ `/portal/duan-cohoi/page.tsx`. Bảng màu chuyển từ
+ * Tailwind gradient sang hex/gradient CSS tay khớp bảng màu sẵn có của
+ * `.duo` (violet/gold/xanh lá/đỏ/xám — không bịa hue mới). */
+const COMPANION_QUOTES = [
+  {
+    topic: "Đầu tư thông minh",
+    quote: "Khoản đầu tư khôn ngoan nhất không phải là khoản sinh lời nhanh nhất — mà là khoản bạn hiểu rõ nhất.",
+    tint: "#eef2ff",
+    accent: "linear-gradient(135deg,#2563eb,#4f46e5)",
+  },
+  {
+    topic: "Kỷ luật",
+    quote: "Đừng trả học phí đắt cho một bài học rẻ: hiểu trước, tham gia sau — và chỉ với số tiền bạn chấp nhận mất.",
+    tint: "#fff7ed",
+    accent: "linear-gradient(135deg,#e2b23c,#c2660a)",
+  },
+  {
+    topic: "Kiên nhẫn",
+    quote: "Thành công không đến từ việc nắm bắt mọi cơ hội, mà từ việc đủ kiên nhẫn chờ cơ hội thuộc về mình.",
+    tint: "#ecfdf5",
+    accent: "linear-gradient(135deg,#189a52,#3ecf7e)",
+  },
+  {
+    topic: "Thành công",
+    quote: "Người thành công không phải người chưa từng sai — họ là người biết dừng đúng lúc và bắt đầu lại đủ nhanh.",
+    tint: "#f3f0ff",
+    accent: "linear-gradient(135deg,#6d4aff,#4f46e5)",
+  },
+  {
+    topic: "Tri thức",
+    quote: "Tài sản lớn nhất của bạn không nằm trong ví — nó nằm ở kiến thức bạn tích luỹ mỗi ngày.",
+    tint: "#f4f4f5",
+    accent: "linear-gradient(135deg,#334155,#189a52)",
+  },
+] as const;
 
 const HREF_MAP: Record<string, string> = {
   "Trang chu Portal.html": "/v2/trang-chu",
@@ -89,28 +172,6 @@ const HREF_MAP: Record<string, string> = {
   "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
 };
 
-const TABS: { label: string; icon: React.ReactNode; href: string | null }[] = [
-  {
-    label: "Tổng quan",
-    icon: <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>,
-    href: null,
-  },
-  { label: "DigiU", icon: <><circle cx="7" cy="8" r="3" /><circle cx="17" cy="7" r="3" /><circle cx="12" cy="16" r="3" /></>, href: "DigiU.html" },
-  {
-    label: "SolarGroup",
-    icon: <><circle cx="12" cy="12" r="4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" /></>,
-    href: "SolarGroup.html",
-  },
-  { label: "Ohana", icon: <path d="M13 2L3 14h7l-1 8 10-12h-7z" />, href: "Ohana.html" },
-  {
-    label: "Các mô hình Affilate",
-    icon: <><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></>,
-    href: "Cac mo hinh Affilate.html",
-  },
-  { label: "Affilate sàn giao dịch", icon: <><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></>, href: "Affilate san giao dich.html" },
-  { label: "Tất cả", icon: <path d="M8 7h13M8 12h13M8 17h13M3 7h.01M3 12h.01M3 17h.01" />, href: null },
-];
-
 export function DuAnCoHoiClient({
   chromeDigiu,
   chromeSolarGroup,
@@ -131,7 +192,6 @@ export function DuAnCoHoiClient({
   premium: PremiumStatus;
 }) {
   const router = useRouter();
-  const [tab, setTab] = useState(0);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
@@ -144,15 +204,6 @@ export function DuAnCoHoiClient({
   const prefetchNav = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
     if (target) router.prefetch(target);
-  };
-
-  const handleTab = (i: number) => {
-    const t = TABS[i];
-    if (t.href) {
-      go(t.href);
-      return;
-    }
-    setTab(i);
   };
 
   const categories = [
@@ -416,17 +467,6 @@ export function DuAnCoHoiClient({
                 <p>Khám phá các dự án tiềm năng và cơ hội phát triển cùng VO DUONG AI.</p>
               </div>
 
-              <div className="tabs-row">
-                {TABS.map((t, i) => (
-                  <button key={t.label} className={i === tab && !t.href ? "tab active" : "tab"} onClick={() => handleTab(i)}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      {t.icon}
-                    </svg>
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-
               <div className="pj-hero">
                 <div className="pj-hero-text">
                   <h2>
@@ -562,6 +602,77 @@ export function DuAnCoHoiClient({
                     ))}
                   </div>
                 )}
+              </div>
+
+              <div>
+                <div className="section-head">
+                  <h3>Đồng hành</h3>
+                </div>
+                <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 4 }}>
+                  Những người bạn đồng hành theo năm tháng — khoảnh khắc cùng cộng đồng digiU qua các sự kiện.
+                </p>
+                <div className="companion-grid" style={{ marginTop: 14 }}>
+                  {COMPANION_PHOTOS.map((p) => (
+                    <div className="companion-photo" key={p.src}>
+                      {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh, cùng convention <img> đã dùng cho icon Premium ở sidebar file này */}
+                      <img src={p.src} alt={p.alt} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="section-head">
+                  <h3>Nguyên tắc chia sẻ</h3>
+                </div>
+                <div className="card" style={{ marginTop: 14 }}>
+                  {CRITERIA.map((c, i) => (
+                    <div className="doc-row2" key={i}>
+                      <div className="ico" style={{ background: "#e9f9ef", color: "#189a52" }}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" />
+                          <path d="M9 12l2 2 4-4" />
+                        </svg>
+                      </div>
+                      <div className="info">
+                        <span style={{ fontSize: 12.5, color: "var(--text)" }}>{c}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="section-head">
+                  <h3>Câu hỏi thường gặp</h3>
+                </div>
+                <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 10 }}>
+                  {FAQ.map((item) => (
+                    <div className="card" key={item.q}>
+                      <h5 style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 6 }}>{item.q}</h5>
+                      <p style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.55 }}>{item.a}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <div className="section-head">
+                  <h3>Companion gửi bạn</h3>
+                </div>
+                <p style={{ fontSize: 12.5, color: "var(--muted)", marginTop: 4 }}>
+                  5 điều Companion muốn bạn mang theo — không phải lời khuyên đầu tư, là những nguyên tắc để bạn tự tin hơn trước mọi quyết định.
+                </p>
+                <div className="quote-grid" style={{ marginTop: 14 }}>
+                  {COMPANION_QUOTES.map((item) => (
+                    <div className="quote-card" key={item.topic} style={{ background: item.tint }}>
+                      <span className="topic" style={{ background: item.accent }}>
+                        {item.topic}
+                      </span>
+                      <p>{item.quote}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
