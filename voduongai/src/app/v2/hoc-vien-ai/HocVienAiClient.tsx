@@ -25,8 +25,12 @@
  * "AI Workspace"):
  *  0. Hệ tri thức — view "Tất cả tri thức" của CKOS (6 danh mục, tài liệu
  *     mới nhất, "CKOS là gì?"/lộ trình/tài liệu phổ biến).
- *  1. Khóa học & Lộ trình — 4 giai đoạn lộ trình + khóa học nổi bật + vòng
- *     tiến độ (đã có sẵn ở sidebar cột phải, không cần tab "Tiến độ" riêng).
+ *  1. Khóa học & Lộ trình — mục 4b kế hoạch gốc: 3 nhóm "Học AI theo nhu
+ *     cầu/công cụ/nghề nghiệp" (55 bài slide, mỗi nhóm 3 bài đầu miễn phí —
+ *     còn lại khoá Premium, xem `live-academy-slides.ts`) + lưới video
+ *     YouTube. Trình chiếu native `SlideViewer.tsx` — không nhúng công cụ
+ *     ngoài. Cột phải giữ nguyên vòng tiến độ (đọc `academy.progress`,
+ *     không liên quan cấu trúc 3-nhóm này).
  *  2. Thư viện tài nguyên — gộp cả 4 nguồn (Prompt/SOP/Resource/Best
  *     Practice) LẪN thư viện CKOS (Bộ sưu tập + Bài học). Mọi mục mở XEM
  *     ĐẦY ĐỦ ngay tại chỗ (panel inline trong tab này) thay vì điều hướng
@@ -51,7 +55,14 @@ import type {
 } from "@/lib/portal/live-ckos";
 import type { KnowledgeCollection } from "@/features/knowledge/types/knowledge-collection.types";
 import type { KnowledgeSeed } from "@/features/knowledge/types/knowledge-seed.types";
-import type { AcademyCourse, AcademyPath, AcademyProgress } from "@/lib/portal/live-academy";
+import type { AcademyProgress } from "@/lib/portal/live-academy";
+import {
+  ACADEMY_LESSON_GROUPS,
+  type AcademyLessonGroup,
+  type AcademySlideLessonDetail,
+  type AcademyVideo,
+} from "@/lib/portal/live-academy-slides";
+import { SlideViewer } from "./SlideViewer";
 import type { LivePrompt } from "@/lib/portal/live-prompts";
 import type { LiveSop } from "@/lib/portal/live-sop";
 import type { LiveResource } from "@/lib/portal/live-resources";
@@ -210,50 +221,6 @@ function SaveIcon() {
   );
 }
 
-/* --------------------------------------------------------- Academy tab */
-
-const PATH_STYLES = [
-  {
-    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    fill: "linear-gradient(90deg,#3ecf7e,#189a52)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="4" />
-        <circle cx="12" cy="12" r=".5" fill="#fff" />
-      </svg>
-    ),
-  },
-  {
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    fill: "linear-gradient(90deg,#a08bff,#6d4aff)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M13 2L3 14h7l-1 8 10-12h-7z" />
-      </svg>
-    ),
-  },
-  {
-    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
-    fill: "linear-gradient(90deg,#ff9d52,#c2660a)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <rect x="3" y="4" width="18" height="14" rx="2" />
-        <path d="M8 21h8M12 18v3" />
-      </svg>
-    ),
-  },
-  {
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    fill: "linear-gradient(90deg,#4bc4e0,#0e7490)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-        <path d="M4 19h16M7 15l3-4 3 3 5-7" />
-      </svg>
-    ),
-  },
-];
-
 /* -------------------------------------------- Resource Library tab (mới) */
 
 type IconStyle = { bg: string; icon: React.ReactNode };
@@ -353,9 +320,9 @@ type CkosData = {
 };
 
 type AcademyData = {
-  paths: AcademyPath[];
-  courses: AcademyCourse[];
   progress: AcademyProgress;
+  slideLessons: AcademySlideLessonDetail[];
+  videos: AcademyVideo[];
 };
 
 type ResourceLibraryData = {
@@ -389,6 +356,12 @@ export function HocVienAiClient({
     // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc `window.location.search` thật, không có tương đương SSR
     if (index >= 0) setTab(index);
   }, []);
+
+  // Tab "Khóa học & Lộ trình" — nhóm đang lọc + bài đang mở trong SlideViewer.
+  const [lessonGroup, setLessonGroup] = useState<AcademyLessonGroup>("nhu-cau");
+  const [openLessonId, setOpenLessonId] = useState<string | null>(null);
+  const visibleLessons = academy.slideLessons.filter((l) => l.group === lessonGroup);
+  const openLesson = academy.slideLessons.find((l) => l.id === openLessonId) ?? null;
 
   // Tab "Hệ tri thức"
   const [ckosVisibleCount, setCkosVisibleCount] = useState(4);
@@ -950,103 +923,96 @@ export function HocVienAiClient({
 
                 <div>
                   <div className="section-head">
-                    <h3>Lộ trình học tập gợi ý</h3>
-                    <a href="#">Xem tất cả lộ trình →</a>
+                    <h3>Học AI theo...</h3>
                   </div>
-                  {academy.paths.length === 0 ? (
+                  <div className="acad-groups" style={{ marginTop: 14 }}>
+                    {ACADEMY_LESSON_GROUPS.map((g) => {
+                      const count = academy.slideLessons.filter((l) => l.group === g.key).length;
+                      return (
+                        <button
+                          key={g.key}
+                          type="button"
+                          className={g.key === lessonGroup ? "acad-group-chip active" : "acad-group-chip"}
+                          onClick={() => setLessonGroup(g.key)}
+                        >
+                          {g.label}
+                          <span className="cnt">{count}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {visibleLessons.length === 0 ? (
                     <div className="empty-hint" style={{ marginTop: 14 }}>
-                      Chưa có lộ trình nào — nội dung sẽ hiện ở đây khi được xuất bản.
+                      Chưa có bài học nào ở nhóm này — nội dung sẽ hiện ở đây khi được xuất bản.
                     </div>
                   ) : (
-                    <div className="path-grid" style={{ marginTop: 14 }}>
-                      {academy.paths.map((path, i) => {
-                        const style = PATH_STYLES[i % PATH_STYLES.length];
-                        const completed = academy.progress.completedByPath[path.slug] ?? 0;
-                        const pct = path.lessonCount > 0 ? Math.round((completed / path.lessonCount) * 100) : 0;
-                        return (
-                          <div className="path-card" key={path.slug}>
-                            <div className="top">
-                              <div className="ico" style={{ background: style.bg }}>
-                                {style.icon}
-                              </div>
-                              <h5>{path.title}</h5>
-                            </div>
-                            <p>{path.description}</p>
-                            <div className="path-pct">{pct}% hoàn thành</div>
-                            <div className="path-track">
-                              <div className="path-fill" style={{ width: `${pct}%`, background: style.fill }} />
-                            </div>
-                            <div className="cnt">
-                              {completed}/{path.lessonCount} bài học khoá học
-                            </div>
-                            {path.ckosLessonCount > 0 && (
-                              <div className="cnt" style={{ marginTop: 2 }}>
-                                <button
-                                  type="button"
-                                  onClick={() => setTab(2)}
-                                  style={{
-                                    background: "none",
-                                    border: "none",
-                                    padding: 0,
-                                    font: "inherit",
-                                    color: "var(--violet)",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  + {path.ckosLessonCount} bài học Hệ tri thức →
-                                </button>
-                              </div>
+                    <div className="lesson-grid" style={{ marginTop: 14 }}>
+                      {visibleLessons.map((lesson) => (
+                        <button
+                          key={lesson.id}
+                          type="button"
+                          className="lesson-card"
+                          onClick={() => (lesson.locked ? go("Premium.html") : setOpenLessonId(lesson.id))}
+                        >
+                          <span className="cat">{lesson.categoryLabel}</span>
+                          <h5>{lesson.title}</h5>
+                          <p>{lesson.summary}</p>
+                          <div className="meta">
+                            <span>{lesson.slideCount || "—"} slide</span>
+                            {lesson.locked ? (
+                              <span className="lesson-lock">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+                                  <rect x="4" y="10" width="16" height="10" rx="2" />
+                                  <path d="M8 10V7a4 4 0 018 0v3" />
+                                </svg>
+                                Premium
+                              </span>
+                            ) : (
+                              <span>Miễn phí</span>
                             )}
                           </div>
-                        );
-                      })}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <div className="section-head">
-                    <h3>Khóa học nổi bật</h3>
-                    <a href="#">Xem tất cả khóa học →</a>
+                    <h3>Video hướng dẫn</h3>
                   </div>
-                  <div className="course-scroll" style={{ marginTop: 14 }}>
-                    {academy.courses.length === 0 ? (
-                      <div className="empty-hint">Chưa có khoá học nào — nội dung sẽ hiện ở đây khi được xuất bản.</div>
-                    ) : (
-                      academy.courses.map((course) => {
-                        const completed = academy.progress.completedByCourse[course.id] ?? 0;
-                        const pct = course.lessonCount > 0 ? Math.round((completed / course.lessonCount) * 100) : 0;
+                  {academy.videos.length === 0 ? (
+                    <div className="empty-hint" style={{ marginTop: 14 }}>
+                      Chưa có video nào — nội dung sẽ hiện ở đây khi được xuất bản.
+                    </div>
+                  ) : (
+                    <div className="video-grid" style={{ marginTop: 14 }}>
+                      {academy.videos.map((video) => {
+                        const videoId = video.embedUrl?.split("/embed/")[1];
                         return (
-                          <div className="course-card" key={course.id}>
-                            <div className="course-thumb" style={{ background: "linear-gradient(160deg,#1a1044,#3d2a8f)" }}>
-                              <div className="course-badges">
-                                <span className="badge-pill" style={{ background: "#189a52" }}>
-                                  Miễn phí
-                                </span>
-                              </div>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="#9fd4ff" strokeWidth="1.6">
-                                <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                                <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                                <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                                <rect x="14" y="14" width="7" height="7" rx="1.5" />
-                              </svg>
+                          <a
+                            key={video.id}
+                            className="video-card"
+                            href={video.youtubeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <div className="thumb">
+                              {videoId ? (
+                                // eslint-disable-next-line @next/next/no-img-element -- thumbnail YouTube công khai, không cần next/image cho ảnh ngoài kích thước cố định
+                                <img src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`} alt="" />
+                              ) : null}
                             </div>
-                            <div className="course-body">
-                              <h5>{course.name}</h5>
-                              <div className="desc">{course.description}</div>
-                              <div className="course-meta">
-                                <span>{course.lessonCount} bài học</span>
-                              </div>
-                              <div className="course-track">
-                                <div className="course-fill" style={{ width: `${pct}%` }} />
-                              </div>
-                              <div className="course-pct">{pct}%</div>
+                            <div className="body">
+                              <h6>{video.title}</h6>
+                              {video.description ? <div className="desc">{video.description}</div> : null}
                             </div>
-                          </div>
+                          </a>
                         );
-                      })
-                    )}
-                  </div>
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1371,6 +1337,9 @@ export function HocVienAiClient({
           </div>
         </div>
       </div>
+      {openLesson && !openLesson.locked ? (
+        <SlideViewer lesson={openLesson} onClose={() => setOpenLessonId(null)} />
+      ) : null}
     </div>
   );
 }

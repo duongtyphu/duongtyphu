@@ -1,5 +1,9 @@
 import { getCkosCategories, getCkosStats } from "@/lib/portal/live-ckos";
-import { getAcademyFeaturedCourses, getAcademyPaths } from "@/lib/portal/live-academy";
+import {
+  ACADEMY_LESSON_GROUPS,
+  getAcademySlideLessonsWithContent,
+  getAcademyVideos,
+} from "@/lib/portal/live-academy-slides";
 
 import "../../inter-gf.css";
 import "../../he-tri-thuc/he-tri-thuc.css";
@@ -25,14 +29,18 @@ export const metadata = { title: "Học viện AI — Admin" };
  * viện AI, khớp đúng 2 tab đầu còn lại của trang Portal thật.
  */
 export default async function AdminHocVienAiPage() {
-  const [ckosStats, ckosCategories, academyPaths, academyCourses] = await Promise.all([
+  const [ckosStats, ckosCategories, slideLessons, videos] = await Promise.all([
     getCkosStats(),
     getCkosCategories(),
-    getAcademyPaths(),
-    getAcademyFeaturedCourses(),
+    // Không cần khoá Premium ở đây (Admin chỉ đếm số liệu) — truyền
+    // isPremium:true để không có bài nào bị lọc mất khỏi tổng đếm.
+    getAcademySlideLessonsWithContent({ isPremium: true, signedIn: true, email: null, fullName: null }),
+    getAcademyVideos(),
   ]);
 
-  const totalAcademyLessons = academyPaths.reduce((sum, p) => sum + p.lessonCount, 0);
+  const lessonCountByGroup = Object.fromEntries(
+    ACADEMY_LESSON_GROUPS.map((g) => [g.key, slideLessons.filter((l) => l.group === g.key).length]),
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -58,17 +66,18 @@ export default async function AdminHocVienAiPage() {
       <AdminPortalMirror
         prefix="hva"
         title="Khóa học & Lộ trình"
-        description="4 giai đoạn lộ trình + khoá học nổi bật hiển thị ở đây đọc trực tiếp từ learning_paths/courses/course_sections/course_lessons — quản lý nội dung qua Admin 1.0."
+        description="3 nhóm 'Học AI theo nhu cầu/công cụ/nghề nghiệp' (55 bài slide) + lưới video YouTube hiển thị ở đây đọc trực tiếp từ academy_slide_lessons/academy_videos — quản lý nội dung qua Admin 1.0."
         stats={[
-          { label: "Giai đoạn lộ trình", value: String(academyPaths.length) },
-          { label: "Khoá học có nội dung", value: String(academyCourses.length) },
-          { label: "Bài học đã Published", value: String(totalAcademyLessons) },
+          { label: "Tổng bài học đã Published", value: String(slideLessons.length) },
+          { label: "Theo nhu cầu", value: String(lessonCountByGroup["nhu-cau"] ?? 0) },
+          { label: "Theo công cụ", value: String(lessonCountByGroup["cong-cu"] ?? 0) },
+          { label: "Theo nghề nghiệp", value: String(lessonCountByGroup["nghe-nghiep"] ?? 0) },
+          { label: "Video hướng dẫn", value: String(videos.length) },
         ]}
-        note={`Giai đoạn thật: ${academyPaths.map((p) => p.title).join(" · ")}.`}
+        note="Mỗi nhóm 3 bài đầu (theo thứ tự soạn trong Admin) miễn phí xem thử — các bài còn lại chỉ tài khoản Premium xem được."
         links={[
-          { label: "Giá & danh sách khoá học (Admin 1.0) →", href: "/admin/course-pricing" },
-          { label: "Hệ tri thức AI (CKOS) — Lesson (Admin 1.0) →", href: "/admin/ckos/lessons" },
-          { label: "Huy hiệu & Thành tựu (Admin 1.0) →", href: "/admin/premium/badges" },
+          { label: "Học AI theo nhu cầu/công cụ/nghề nghiệp (Admin 1.0) →", href: "/admin/hocvienai/slide-lessons" },
+          { label: "Video hướng dẫn (Admin 1.0) →", href: "/admin/hocvienai/videos" },
         ]}
       />
     </div>

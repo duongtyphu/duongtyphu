@@ -118,6 +118,9 @@ export const adminWorkspaces: AdminWorkspace[] = [
         items: [
           { label: "Theo nhu cầu công việc", href: "/admin/hocvienai/work-needs" },
           { label: "Câu hỏi thường gặp", href: "/admin/hocvienai/faq" },
+          // Mục 4b — /v2/hoc-vien-ai, tab "Khóa học & Lộ trình".
+          { label: "Học AI theo nhu cầu/công cụ/nghề nghiệp (55 bài slide)", href: "/admin/hocvienai/slide-lessons" },
+          { label: "Video hướng dẫn", href: "/admin/hocvienai/videos" },
         ],
       },
       {

@@ -5,7 +5,8 @@ import {
   getCkosStages,
 } from "@/lib/portal/live-ckos";
 import { getLiveKnowledgeCollections, getLiveKnowledgeSeeds } from "@/lib/portal/live-knowledge";
-import { getAcademyFeaturedCourses, getAcademyPaths, getAcademyProgress } from "@/lib/portal/live-academy";
+import { getAcademyProgress } from "@/lib/portal/live-academy";
+import { getAcademySlideLessonsWithContent, getAcademyVideos } from "@/lib/portal/live-academy-slides";
 import { getLivePrompts } from "@/lib/portal/live-prompts";
 import { getLiveSops } from "@/lib/portal/live-sop";
 import { getLiveResources } from "@/lib/portal/live-resources";
@@ -35,7 +36,7 @@ const CKOS_INTRO =
 export default async function HocVienAiPage() {
   const premium = await getPremiumStatus();
 
-  const [categories, documents, stages, popular, collections, seeds, paths, courses, progress, prompts, sops, resourceList, bestPractices] =
+  const [categories, documents, stages, popular, collections, seeds, progress, slideLessons, videos, prompts, sops, resourceList, bestPractices] =
     await Promise.all([
       getCkosCategories(),
       getCkosDocuments(),
@@ -43,9 +44,9 @@ export default async function HocVienAiPage() {
       getCkosPopularDocuments(3),
       getLiveKnowledgeCollections(),
       getLiveKnowledgeSeeds(),
-      getAcademyPaths(),
-      getAcademyFeaturedCourses(),
       getAcademyProgress(),
+      getAcademySlideLessonsWithContent(premium),
+      getAcademyVideos(),
       getLivePrompts(),
       getLiveSops(),
       getLiveResources(),
@@ -56,7 +57,7 @@ export default async function HocVienAiPage() {
     <HocVienAiClient
       premium={premium}
       ckos={{ categories, documents, stages, ckosIntro: CKOS_INTRO, popular, collections, seeds }}
-      academy={{ paths, courses, progress }}
+      academy={{ progress, slideLessons, videos }}
       resourceLibrary={{ prompts, sops, resources: resourceList, bestPractices }}
     />
   );

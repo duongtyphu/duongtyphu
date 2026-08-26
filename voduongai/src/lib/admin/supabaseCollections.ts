@@ -196,6 +196,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // khớp đúng providerId trong src/ai/providers/registry.ts — xem chi tiết
   // trong supabase-phase29-ai-provider-priority.sql.
   "ai-provider-priority": "ai_provider_priority",
+
+  // Mục 4b (kế hoạch gốc 14 hạng mục) — Học viện AI 2.0, tab "Khóa học &
+  // Lộ trình": 3 nhóm "Học AI theo nhu cầu/công cụ/nghề nghiệp" (55 bài
+  // slide) + lưới video YouTube. Xem `live-academy-slides.ts` cho cơ chế
+  // khoá Premium (mỗi nhóm 3 bài đầu miễn phí).
+  "academy-slide-lessons": "academy_slide_lessons",
+  "academy-videos": "academy_videos",
 };
 
 export function tableForCollection(key: string): string | null {
