@@ -13,32 +13,29 @@
  *
  *  1. Trang này (`nav-parent="Du an Co hoi.html"` trong mockup gốc) map
  *     sang hệ sinh thái THẬT `eco_trading` (slug `sangiaodich`, "Các sàn
- *     giao dịch Crypto") — đã có sẵn `ecosystem_chrome.exchanges` thật (7
- *     sàn: Binance/OKX/MEXC/Bybit/Kucoin/Gate/Bitget) — KHỚP CHÍNH XÁC 7
- *     thẻ mẫu trong bản thiết kế (không thừa/thiếu sàn nào, không cần
- *     lược bớt như "Các mô hình Affilate").
+ *     giao dịch Crypto") — `ecosystem_chrome.exchanges` (7 sàn: Binance/
+ *     OKX/MEXC/Bybit/Kucoin/Gate/Bitget) đã có `url` link affiliate THẬT
+ *     (Founder cung cấp trực tiếp, cập nhật qua `execute_sql`) — KHỚP
+ *     CHÍNH XÁC 7 thẻ mẫu trong bản thiết kế.
  *  2. `page-head p` dùng `chrome.shortDescription` thật. `aff-hero p` dùng
- *     `chrome.fullIntro` thật (đúng nội dung "đây là danh sách các sàn
- *     giao dịch crypto thật..., sàn nào chưa có link tiếp thị thật sẽ ghi
- *     rõ thay vì dùng link giả").
- *  3. Mỗi `aff-card` — icon/mô tả/nhãn hoa hồng giữ đúng bản thiết kế cho
- *     7 sàn khớp tên thật (tra theo `exchange.id` cố định: `exc_binance`/
- *     `exc_okx`/`exc_mexc`/`exc_bybit`/`exc_kucoin`/`exc_gate`/
- *     `exc_bitget`). Đây là mô tả CHUNG về cách chương trình affiliate
- *     công khai của từng sàn hoạt động (không phải số liệu riêng của
- *     VDUONG AI) — giữ nguyên theo đúng bản thiết kế. Nút "Đăng ký chương
- *     trình →" CHỈ hoạt động khi `exchange.url` có thật; rỗng thì hiện
- *     dòng trung thực "Chưa có link chính thức — sẽ cập nhật khi có."
- *     (đúng câu đã dùng ở `EcosystemExchangesBox` 1.0), không tự bịa link.
- *  4. Ô "Dán link affiliate ___ của bạn" + nút "Lưu" — tính năng THẬT
- *     (lưu link affiliate CÁ NHÂN vào `localStorage`, đúng nguyên bản JS
- *     gốc, không cần backend).
+ *     `chrome.fullIntro` thật.
+ *  3. Mỗi `aff-card` — icon/mô tả/nhãn hoa hồng (`tagLabel`, vd "Hoa hồng
+ *     trọn đời đến 50%") giữ đúng bản thiết kế gốc cho 7 sàn khớp tên
+ *     thật (tra theo `exchange.id` cố định: `exc_binance`/`exc_okx`/
+ *     `exc_mexc`/`exc_bybit`/`exc_kucoin`/`exc_gate`/`exc_bitget`) — đây
+ *     là mô tả CHUNG về cách chương trình affiliate công khai của từng
+ *     sàn hoạt động (không phải số liệu riêng của VDUONG AI), đã có sẵn %
+ *     hoa hồng từ bản thiết kế gốc nên không cần bổ sung thêm. Nút "Đăng
+ *     ký chương trình →" CHỈ hoạt động khi `exchange.url` có thật; rỗng
+ *     thì hiện dòng trung thực "Chưa có link chính thức — sẽ cập nhật khi
+ *     có." — không tự bịa link.
+ *  4. Ô "Dán link affiliate ___ của bạn" + nút "Lưu" — ĐÃ BỎ theo yêu cầu
+ *     Founder (chỉ lưu `localStorage` cá nhân, không có tác dụng thật).
  *  5. Sàn nào không nằm trong 7 id đã biết (Admin thêm mới qua Admin sau
  *     này) vẫn hiển thị được — dùng icon/màu chung mặc định, không crash.
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import type { EcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 import type { MarketingLink } from "@/data/portal/ecosystems";
@@ -167,24 +164,6 @@ const DEFAULT_STYLE: CardStyle = {
 
 function ExchangeCard({ exchange }: { exchange: MarketingLink }) {
   const style = CARD_STYLE[exchange.id] ?? DEFAULT_STYLE;
-  const storageKey = `aff-link-${exchange.id}`;
-  const [value, setValue] = useState("");
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    // Đọc localStorage chỉ có ở client sau mount (cùng pattern `/v2/bo-nho-ca-nhan-hoa`).
-    const stored = window.localStorage.getItem(storageKey);
-    if (stored) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setValue(stored);
-    }
-  }, [storageKey]);
-
-  const handleSave = () => {
-    window.localStorage.setItem(storageKey, value);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   return (
     <div className="aff-card">
@@ -211,23 +190,6 @@ function ExchangeCard({ exchange }: { exchange: MarketingLink }) {
         ) : (
           <span className="go-btn-disabled">Chưa có link chính thức — sẽ cập nhật khi có.</span>
         )}
-        <div className="link-row">
-          <input
-            type="text"
-            placeholder={`Dán link affiliate ${exchange.label} của bạn`}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-          <button className="link-save" onClick={handleSave}>
-            Lưu
-          </button>
-        </div>
-        <span className={saved ? "saved-note show" : "saved-note"}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-          Đã lưu
-        </span>
       </div>
     </div>
   );

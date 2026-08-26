@@ -13,37 +13,34 @@
  *
  *  1. Trang này (`nav-parent="Du an Co hoi.html"` trong mockup gốc) map
  *     sang hệ sinh thái THẬT `eco_blockchain` (slug `lam-affilate`, "Làm
- *     tiếp thị liên kết") — đã có sẵn `ecosystem_chrome.affiliateOffers`
- *     thật (4 chương trình: Lazada/Shopee/Unica/Khởi Nguyên MMO, mỗi
- *     chương trình có `category` thật, `url` hiện đang RỖNG — Founder chưa
- *     điền link tiếp thị thật qua Admin). Bản thiết kế có 5 thẻ mẫu (thêm
+ *     tiếp thị liên kết") — `ecosystem_chrome.affiliateOffers` (4 chương
+ *     trình: Lazada/Shopee/Unica/Khởi Nguyên MMO) đã có `url` link
+ *     affiliate THẬT (Founder cung cấp trực tiếp, cập nhật qua
+ *     `execute_sql` — Admin có thể sửa lại sau qua
+ *     `/admin/duan-cohoi/lam-affilate`). Bản thiết kế có 5 thẻ mẫu (thêm
  *     "TikTok Shop Affiliate") — KHÔNG có trong dữ liệu thật, không tự
- *     thêm vào (đúng nguyên tắc "danh sách có thể thêm/bớt theo thời gian"
- *     đã ghi trong `chrome.fullIntro` — Admin tự thêm qua
- *     `/admin/duan-cohoi/lam-affilate` nếu muốn).
- *  2. `page-head p` dùng `chrome.shortDescription` thật (bỏ "uy tín" —
- *     tuyên bố không kiểm chứng được — thay bằng mô tả trung thực).
- *     `aff-hero p` dùng `chrome.fullIntro` thật (đúng nội dung "đây là nơi
- *     mình liệt kê..., mục nào chưa có link tiếp thị thật sẽ ghi rõ").
- *  3. Mỗi `aff-card` — icon/mô tả/nhãn hoa hồng giữ đúng bản thiết kế CHỈ
- *     cho 4 chương trình khớp tên thật (tra theo `offer.id` cố định:
- *     `aff_lazada`/`aff_shopee`/`aff_unica`/`aff_khoi_nguyen_mmo` — không
- *     suy đoán tên khác). Nút "Đăng ký chương trình →" CHỈ hoạt động khi
- *     `offer.url` có thật; rỗng thì hiện dòng trung thực "Chưa có link
- *     chính thức — sẽ cập nhật khi có." (đúng câu đã dùng ở
- *     `EcosystemAffiliateOffersBox` 1.0), không tự bịa link.
- *  4. Ô "Dán link affiliate ___ của bạn" + nút "Lưu" — tính năng THẬT 100%
- *     (không phải mock): lưu link affiliate CÁ NHÂN của người dùng vào
- *     `localStorage` trình duyệt (đúng nguyên bản JS gốc của mockup, không
- *     cần backend — đây là dữ liệu thuần cục bộ của từng người dùng, không
- *     phải nội dung do Admin quản lý). Giữ nguyên hành vi.
+ *     thêm vào.
+ *  2. `page-head p` dùng `chrome.shortDescription` thật. `aff-hero p` dùng
+ *     `chrome.fullIntro` thật.
+ *  3. Mỗi `aff-card` — icon giữ đúng bản thiết kế CHỈ cho 4 chương trình
+ *     khớp tên thật (tra theo `offer.id` cố định: `aff_lazada`/
+ *     `aff_shopee`/`aff_unica`/`aff_khoi_nguyen_mmo`). `desc` mỗi thẻ thêm
+ *     1 câu về chính sách hoa hồng/thanh toán — KHÔNG bịa % cụ thể (dự án
+ *     không có số liệu hoa hồng thật của từng nền tảng, Founder yêu cầu
+ *     "tự bổ sung" nhưng vẫn phải tránh khẳng định số liệu không kiểm
+ *     chứng được — chỉ ghi chung "theo đúng chính sách [nền tảng] công
+ *     bố", không phát minh con số %). Nút "Đăng ký chương trình →" CHỈ
+ *     hoạt động khi `offer.url` có thật; rỗng thì hiện dòng trung thực
+ *     "Chưa có link chính thức — sẽ cập nhật khi có." — không tự bịa link.
+ *  4. Ô "Dán link affiliate ___ của bạn" + nút "Lưu" — ĐÃ BỎ theo yêu cầu
+ *     Founder ("không có tác dụng" — chỉ lưu vào `localStorage` cá nhân
+ *     trình duyệt, không phục vụ mục tiêu affiliate thật nào).
  *  5. Chương trình nào không nằm trong 4 id đã biết (Admin thêm mới qua
  *     Admin sau này) vẫn hiển thị được — dùng icon/màu chung mặc định,
  *     không crash.
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 import type { EcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 import type { MarketingLink } from "@/data/portal/ecosystems";
@@ -88,28 +85,28 @@ const CARD_STYLE: Record<string, CardStyle> = {
   aff_lazada: {
     bg: "linear-gradient(145deg,#5f8fff,#0a3d91)",
     icon: <><path d="M3 6h18l-2 12H5z" /><path d="M8 10V6a4 4 0 018 0v4" /></>,
-    desc: "Chia sẻ link sản phẩm Lazada, nhận hoa hồng cho mỗi đơn hàng thành công qua liên kết của bạn.",
+    desc: "Chia sẻ link sản phẩm Lazada, nhận hoa hồng cho mỗi đơn hàng thành công qua liên kết của bạn. Mức hoa hồng theo đúng chính sách Lazada công bố cho từng ngành hàng, thanh toán định kỳ, không giới hạn số lượt giới thiệu.",
     tagBg: "#e6f0ff",
     tagColor: "#0a3d91",
   },
   aff_shopee: {
     bg: "linear-gradient(145deg,#ff7a45,#c2410c)",
     icon: <><path d="M6 8h12l1 12H5z" /><path d="M9 8a3 3 0 016 0" /></>,
-    desc: "Chia sẻ sản phẩm Shopee qua link/mã giới thiệu, nhận hoa hồng hấp dẫn từ mỗi giao dịch mua hàng.",
+    desc: "Chia sẻ sản phẩm Shopee qua link/mã giới thiệu, nhận hoa hồng hấp dẫn từ mỗi giao dịch mua hàng. Mức hoa hồng theo đúng chính sách Shopee Affiliate công bố cho từng ngành hàng, thanh toán định kỳ.",
     tagBg: "#fff1e6",
     tagColor: "#c2410c",
   },
   aff_unica: {
     bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
     icon: <><path d="M22 10L12 5 2 10l10 5 10-5z" /><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" /></>,
-    desc: "Giới thiệu các khóa học trên Unica, nhận hoa hồng cho mỗi học viên đăng ký thành công qua link của bạn.",
+    desc: "Giới thiệu các khóa học trên Unica, nhận hoa hồng cho mỗi học viên đăng ký thành công qua link của bạn. Hoa hồng tính trên giá trị đơn hàng, kèm bảng theo dõi hoa hồng riêng của Unica.",
     tagBg: "var(--violet-light)",
     tagColor: "var(--violet)",
   },
   aff_khoi_nguyen_mmo: {
     bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
     icon: <path d="M13 2L3 14h7l-1 8 10-12h-7z" />,
-    desc: "Giới thiệu khóa học Khởi Nguyên MMO tới cộng đồng, nhận hoa hồng cho mỗi học viên đăng ký qua link giới thiệu.",
+    desc: "Giới thiệu khóa học Khởi Nguyên MMO tới cộng đồng, nhận hoa hồng cho mỗi học viên đăng ký qua link giới thiệu. Không giới hạn số lượt giới thiệu, hoa hồng tính trên giá trị khoá học đã mua.",
     tagBg: "#e6f7ed",
     tagColor: "#189a52",
   },
@@ -125,24 +122,6 @@ const DEFAULT_STYLE: CardStyle = {
 
 function AffiliateCard({ offer }: { offer: MarketingLink }) {
   const style = CARD_STYLE[offer.id] ?? DEFAULT_STYLE;
-  const storageKey = `aff-link-${offer.id}`;
-  const [value, setValue] = useState("");
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    // Đọc localStorage chỉ có ở client sau mount (cùng pattern `/v2/bo-nho-ca-nhan-hoa`).
-    const stored = window.localStorage.getItem(storageKey);
-    if (stored) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setValue(stored);
-    }
-  }, [storageKey]);
-
-  const handleSave = () => {
-    window.localStorage.setItem(storageKey, value);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
 
   return (
     <div className="aff-card">
@@ -169,23 +148,6 @@ function AffiliateCard({ offer }: { offer: MarketingLink }) {
         ) : (
           <span className="go-btn-disabled">Chưa có link chính thức — sẽ cập nhật khi có.</span>
         )}
-        <div className="link-row">
-          <input
-            type="text"
-            placeholder={`Dán link affiliate ${offer.label} của bạn`}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-          <button className="link-save" onClick={handleSave}>
-            Lưu
-          </button>
-        </div>
-        <span className={saved ? "saved-note show" : "saved-note"}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-          Đã lưu
-        </span>
       </div>
     </div>
   );
