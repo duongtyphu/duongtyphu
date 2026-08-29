@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
@@ -8,7 +8,6 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { formatVnd } from "@/components/portal/premium/premium-programs";
 import type { PremiumPlan } from "@/lib/portal/live-premium-plans";
 import type { PremiumPlanMemberSummary, PremiumPerk, PremiumAdvisorSituation, PremiumFounder, PremiumLibraryCounts } from "@/lib/portal/live-premium-v2";
-import type { LiveCommunityChannel } from "@/lib/portal/live-community";
 import type { PremiumFaqItem, PremiumChrome, PremiumPaymentStep } from "@/lib/portal/live-premium";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
 import { siteConfig } from "@/lib/site";
@@ -226,14 +225,6 @@ import "./premium.css";
  *    gắn trigger.
  */
 
-const PLATFORM_LABEL_SHORT: Record<string, string> = {
-  Facebook: "FB",
-  YouTube: "YT",
-  TikTok: "TT",
-  Zalo: "ZL",
-  Telegram: "TG",
-};
-
 /** Nhóm Zalo riêng cho Premium Member — link thật Founder cung cấp trực
  * tiếp (khác kênh Zalo cộng đồng chung `community.ch_4` đọc từ
  * `getLiveCommunityChannels()`, dùng chung ở `/v2/cong-dong-ai`). */
@@ -408,6 +399,71 @@ function formatDateTime(iso: string): string {
 }
 
 /**
+ * Đồng hồ đếm ngược "Thời gian còn lại của gói" — Founder yêu cầu thêm ở
+ * mục Premium Member, tính THẬT từ `memberSummary.expiresAt` (`members.premium_expires_at`
+ * thật, do trigger `on_order_confirmed_premium_plan` gia hạn đúng số ngày
+ * gói đã mua — 1/6/12 tháng đều tự phản ánh đúng qua cùng 1 cột này,
+ * không cần biết gói nào để tính). Chỉ hiện khi `expiresAt` có giá trị —
+ * Premium cấp thủ công (không mua gói, `expiresAt=null`) hiện badge
+ * "Không giới hạn thời gian" riêng, KHÔNG đếm ngược giả.
+ *
+ * `now=null` ban đầu (chỉ set thật sau `useEffect`, chạy đúng 1 lần khi
+ * mount) — tránh hydration mismatch giữa giờ server-render và giờ máy
+ * trình duyệt, cùng kỹ thuật đã dùng cho lời chào theo giờ trong ngày ở
+ * `/v2/trang-chu` (`TrangChuClient.tsx`).
+ */
+function useCountdownParts(expiresAt: string | null) {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    if (!expiresAt) return;
+    // Đọc `Date.now()` thật ngay khi mount — không có tương đương SSR
+    // (server không biết giờ máy trình duyệt), cùng lý do đã dùng cho
+    // `TrangChuClient.tsx`'s lời chào theo giờ trong ngày.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
+
+  if (!expiresAt || now === null) return null;
+  const diff = Math.max(0, new Date(expiresAt).getTime() - now);
+  return {
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor((diff % 86400000) / 3600000),
+    minutes: Math.floor((diff % 3600000) / 60000),
+    seconds: Math.floor((diff % 60000) / 1000),
+  };
+}
+
+function PremiumCountdown({ expiresAt }: { expiresAt: string }) {
+  const parts = useCountdownParts(expiresAt);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return (
+    <div className="ms-countdown">
+      <div className="ms-countdown-label">⏳ Thời gian còn lại của gói</div>
+      <div className="ms-countdown-units">
+        <div className="cd-unit">
+          <b>{parts ? pad(parts.days) : "--"}</b>
+          <span>Ngày</span>
+        </div>
+        <div className="cd-unit">
+          <b>{parts ? pad(parts.hours) : "--"}</b>
+          <span>Giờ</span>
+        </div>
+        <div className="cd-unit">
+          <b>{parts ? pad(parts.minutes) : "--"}</b>
+          <span>Phút</span>
+        </div>
+        <div className="cd-unit">
+          <b>{parts ? pad(parts.seconds) : "--"}</b>
+          <span>Giây</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
  * Đợt sửa "3 hộp thiết kế sáng tạo hơn, đẳng cấp" — tier badge tính THẬT
  * từ dữ liệu (không bịa nhãn marketing): `plan.isFeatured` (cột thật
  * `premium_plans.is_featured`, Admin tự chọn qua `/admin/premium/plans`)
@@ -418,7 +474,7 @@ function formatDateTime(iso: string): string {
  */
 function planTier(plan: PremiumPlan, isBestValue: boolean): { label: string; icon: string; className: string; savePillBg?: string } {
   if (plan.isFeatured) return { label: "Phổ biến nhất", icon: "🔥", className: "price-card featured" };
-  if (isBestValue) return { label: "Giá trị tốt nhất", icon: "💎", className: "price-card best-value", savePillBg: "#a9822c" };
+  if (isBestValue) return { label: "Giá trị tốt nhất", icon: "💎", className: "price-card best-value", savePillBg: "#8a6a1f" };
   return { label: "Bắt đầu nhẹ nhàng", icon: "🚀", className: "price-card", savePillBg: "#5a37e6" };
 }
 
@@ -516,50 +572,98 @@ function PremiumRoadmap({ journey }: { journey: JourneyOverview }) {
   );
 }
 
-function CommunityStrip({ channels }: { channels: LiveCommunityChannel[] }) {
-  if (channels.length === 0) {
-    return (
-      <div className="community-strip">
-        <div>
-          <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>Cộng đồng Premium</h3>
-          <p className="empty-hint">Chưa có kênh cộng đồng nào đang hoạt động.</p>
-        </div>
-      </div>
-    );
-  }
+/**
+ * "Cộng đồng Premium" — Founder gửi ảnh chụp bố cục 4 quyền lợi cộng đồng
+ * (Nhóm kín/Livestream/Workshop/Q&A) + CTA "Tham gia ngay", yêu cầu thiết
+ * kế lại theo đúng nội dung đó, CTA gắn link nhóm Zalo thật.
+ *
+ * "Nhóm kín Premium"/"Livestream độc quyền"/"Workshop thực chiến"/"Q&A
+ * cùng chuyên gia" — 4 dòng mô tả QUYỀN LỢI tĩnh (không phải số liệu đo
+ * được), do Founder trực tiếp cung cấp qua ảnh thiết kế — giữ nguyên như
+ * bản gửi. "Nhóm kín Premium" CHÍNH LÀ nhóm Zalo Premium
+ * (`PREMIUM_ZALO_GROUP_URL`), không phải 1 kênh riêng khác.
+ *
+ * CỐ Ý BỎ 2 phần trong ảnh gốc — vi phạm NO-FAKE-DATA đã xác nhận qua
+ * Supabase MCP: (1) dãy avatar tròn "A B C D" — không có cơ chế/quyền hiển
+ * thị ảnh đại diện thành viên khác (vừa lộ dữ liệu cá nhân, vừa không có
+ * ảnh thật); (2) "Hơn 1.200 thành viên Premium..." — số liệu thực tế hiện
+ * tại chỉ có 1 tài khoản Premium đang hoạt động (đếm qua
+ * `members.premium_expires_at`), lệch ~1200 lần so với con số trong ảnh.
+ * Thay bằng 1 dòng giới thiệu trung thực, không kèm số. Đã báo lại Founder
+ * trong tóm tắt cuối phiên — xem CLAUDE.md.
+ *
+ * Không còn phụ thuộc `getLiveCommunityChannels()` (bảng `community`,
+ * FB/YouTube/TikTok/Zalo chung) — khối này giờ MÔ TẢ QUYỀN LỢI Premium,
+ * không phải danh sách kênh mạng xã hội chung (khối đó vẫn còn thật ở
+ * `/v2/cong-dong-ai`). Đã bỏ hẳn prop `channels`/`communityChannels` khỏi
+ * `PremiumClient`/`page.tsx` (không còn consumer nào khác trong trang này).
+ */
+const COMMUNITY_PERKS: { title: string; desc: string; icon: React.ReactNode }[] = [
+  {
+    title: "Nhóm kín Premium",
+    desc: "Cộng đồng học viên chất lượng cao",
+    icon: (
+      <>
+        <circle cx="9" cy="7" r="4" />
+        <path d="M2 21v-2a4 4 0 014-4h6a4 4 0 014 4v2" />
+        <path d="M16 3.13a4 4 0 010 7.75M22 21v-2a4 4 0 00-3-3.87" />
+      </>
+    ),
+  },
+  {
+    title: "Livestream độc quyền",
+    desc: "Chia sẻ kiến thức hàng tuần",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M10 8.5l6 3.5-6 3.5z" />
+      </>
+    ),
+  },
+  {
+    title: "Workshop thực chiến",
+    desc: "Ứng dụng AI vào công việc",
+    icon: (
+      <>
+        <path d="M22 10L12 5 2 10l10 5 10-5z" />
+        <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
+      </>
+    ),
+  },
+  {
+    title: "Q&A cùng chuyên gia",
+    desc: "Giải đáp thắc mắc trực tiếp",
+    icon: <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />,
+  },
+];
+
+function CommunityStrip() {
   return (
     <div className="community-strip">
       <div>
         <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>Cộng đồng Premium</h3>
         <p style={{ fontSize: 12.5, color: "var(--muted)", marginBottom: 14 }}>Kết nối, chia sẻ và phát triển cùng cộng đồng Premium Member</p>
         <div className="community-links">
-          {channels.map((c) => (
-            <div className="cl-item" key={c.id}>
-              <div className="ico" style={{ fontSize: 11, fontWeight: 800 }}>
-                {PLATFORM_LABEL_SHORT[c.platform] ?? c.platform.slice(0, 2).toUpperCase()}
+          {COMMUNITY_PERKS.map((p) => (
+            <div className="cl-item" key={p.title}>
+              <div className="ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  {p.icon}
+                </svg>
               </div>
               <div>
-                <h6>{c.label}</h6>
-                <span>{c.platform}</span>
+                <h6>{p.title}</h6>
+                <span>{p.desc}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
       <div className="community-right">
-        <p>Kết nối trực tiếp với VO DUONG AI qua các kênh chính thức bên trên.</p>
-        <div className="community-right-actions">
-          <a href={channels[0].url} target="_blank" rel="noopener noreferrer">
-            <button>Tham gia ngay</button>
-          </a>
-          <a href={PREMIUM_ZALO_GROUP_URL} target="_blank" rel="noopener noreferrer" className="zalo-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.7 21a2 2 0 01-3.4 0" />
-            </svg>
-            Nhóm Zalo Premium
-          </a>
-        </div>
+        <p>Kết nối trực tiếp với VO DUONG AI và cộng đồng Premium Member qua nhóm Zalo chính thức.</p>
+        <a href={PREMIUM_ZALO_GROUP_URL} target="_blank" rel="noopener noreferrer">
+          <button>Tham gia ngay</button>
+        </a>
       </div>
     </div>
   );
@@ -590,7 +694,6 @@ function FaqList({ faq }: { faq: PremiumFaqItem[] }) {
 export function PremiumClient({
   premium,
   plans,
-  communityChannels,
   faq,
   journey,
   memberSummary,
@@ -603,7 +706,6 @@ export function PremiumClient({
 }: {
   premium: PremiumStatus;
   plans: PremiumPlan[];
-  communityChannels: LiveCommunityChannel[];
   faq: PremiumFaqItem[];
   journey: JourneyOverview;
   memberSummary: PremiumPlanMemberSummary;
@@ -738,7 +840,7 @@ export function PremiumClient({
                       {maxSavingsLabel(plans) && (
                         <span
                           className="p-tag"
-                          style={{ background: "#e6f7ed", color: "#189a52", fontWeight: 800, padding: "4px 10px", borderRadius: 7, fontSize: 11.5 }}
+                          style={{ background: "#e6f7ed", color: "#066b4d", fontWeight: 800, padding: "4px 10px", borderRadius: 7, fontSize: 11.5 }}
                         >
                           {maxSavingsLabel(plans)}
                         </span>
@@ -901,17 +1003,30 @@ export function PremiumClient({
                           {memberSummary.lastPaidAmount > 0 ? <div className="price">Đã thanh toán: {formatVnd(memberSummary.lastPaidAmount)}</div> : null}
                         </div>
                       </div>
-                      <div className="ms-dates">
-                        <div>
-                          <b>{memberSummary.purchasedAt ? formatDateTime(memberSummary.purchasedAt) : "—"}</b>
-                          Bắt đầu gói hiện tại
+
+                      {memberSummary.expiresAt ? (
+                        <PremiumCountdown expiresAt={memberSummary.expiresAt} />
+                      ) : (
+                        <div className="ms-unlimited">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.06-8-12.356-8-5.096 0-5.096 8 0 8 5.296 0 7.26-8 12.356-8z" />
+                          </svg>
+                          Premium không giới hạn thời gian
                         </div>
-                        <div>
-                          <b>{memberSummary.expiresAt ? new Date(memberSummary.expiresAt).toLocaleDateString("vi-VN") : "Trọn đời"}</b>
-                          {memberSummary.expiresAt ? `Hết hạn (còn ${daysRemaining} ngày)` : "Không giới hạn thời gian"}
+                      )}
+
+                      <div className="ms-info-rows">
+                        <div className="ms-info-row">
+                          <span>Bắt đầu gói hiện tại</span>
+                          <b>{memberSummary.purchasedAt ? formatDateTime(memberSummary.purchasedAt) : "—"}</b>
+                        </div>
+                        <div className="ms-info-row">
+                          <span>Hết hạn</span>
+                          <b>{memberSummary.expiresAt ? formatDateTime(memberSummary.expiresAt) : "Không giới hạn"}</b>
                         </div>
                       </div>
-                      <Link href="/v2/tai-khoan" className="ms-manage" style={{ display: "inline-block", textAlign: "center", textDecoration: "none" }}>
+
+                      <Link href="/v2/tai-khoan" className="ms-manage" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
                         Quản lý gói Premium
                       </Link>
                     </div>
@@ -954,7 +1069,7 @@ export function PremiumClient({
                   </div>
 
                   <div style={{ marginTop: 24 }}>
-                    <CommunityStrip channels={communityChannels} />
+                    <CommunityStrip />
                   </div>
                 </>
               )}
