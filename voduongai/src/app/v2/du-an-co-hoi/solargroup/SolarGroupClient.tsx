@@ -8,66 +8,56 @@
  * lucide-react. CSS ở `solargroup.css` (chép nguyên văn, xem đầu file đó).
  *
  * ---------------------------------------------------------------------------
- * NHỮNG CHỖ KHÁC bản tĩnh — CÙNG NGUYÊN TẮC đã áp dụng cho DigiU: dữ liệu
- * thật của SolarGroup ở 1.0 (`ecosystem_chrome`, id `eco_solargroup`) mang
- * tông điệu THẬN TRỌNG rõ rệt ("mình đang nghiên cứu, chưa coi đây là
- * khuyến nghị tham gia", "không phù hợp cho nhu cầu thanh khoản ngắn hạn")
- * — trong khi bản thiết kế này có RẤT NHIỀU tuyên bố mời gọi đầu tư cụ thể
- * không có thật (580.000+ nhà đầu tư, 194 quốc gia, $50 đầu tư tối thiểu,
- * 20+ bằng sáng chế, mốc lộ trình theo năm, "Trở thành nhà đầu tư ngay hôm
- * nay"...) — phát minh thêm số liệu/mốc thời gian sẽ vi phạm trực tiếp
- * NO-FAKE-DATA, và với nội dung mang tính mời gọi đầu tư thì rủi ro sai
- * lệch còn nghiêm trọng hơn (có thể hiểu nhầm là cam kết/khuyến nghị tài
- * chính). Quyết định: giữ NGUYÊN bố cục/class/hiệu ứng thị giác, thay MỌI
- * nội dung mang tính khẳng định số liệu/mốc thời gian/mời gọi đầu tư bằng
- * dữ liệu thật hoặc honest empty-state — không suy đoán, không chọn map
- * gần đúng.
+ * ĐỢT SỬA GIAI ĐOẠN 4 PHẦN 2 (theo nội dung Founder cung cấp trực tiếp —
+ * đảo ngược quyết định NO-FAKE-DATA thận trọng trước đó): các con số/tên
+ * riêng ("Động cơ của Duyunov", "Slavyanka", "580.000+ nhà đầu tư", "194
+ * quốc gia"...) từng bị coi là "không kiểm chứng được" ở đợt build đầu —
+ * Founder xác nhận đây là dữ liệu THẬT (nguồn công khai solargroup.pro/vi,
+ * đã đối chiếu chéo trong lịch sử dự án) — giờ khôi phục nguyên văn.
  *
- *  1. Hero (`.sg-hero`) — h2 dùng tên cố định "SolarGroup — Mô hình cổ phần
- *     dài hạn" (không bịa tên dự án con "Slavyanka"/"Duyunov" ở vị trí
- *     hero vì đây là chi tiết chỉ đúng với 1 dự án con cụ thể, không phải
- *     mô tả cả hệ sinh thái); p dùng `chrome.shortDescription` thật. Nút
- *     "Xem video giới thiệu" CHỈ hiện khi có video thật.
- *  2. `profile-head` — bỏ "580.000+ nhà đầu tư tại 194 quốc gia" (bịa),
- *     thay bằng chip `chrome.statusBadge` thật + số dự án con thật.
- *  3. `stat-row` — 5 số liệu bịa (nhà đầu tư/quốc gia/đầu tư tối thiểu/bằng
- *     sáng chế/giảm tiêu thụ năng lượng) → 5 số liệu THẬT: số dự án con, số
- *     bài cập nhật, số tài liệu, số video, số tiêu chí Đánh giá đã "Đạt".
- *  4. `about-grid` — đoạn giới thiệu dùng `chrome.fullIntro` thật,
- *     check-list dùng `chrome.highlights` thật (thay 4 dòng bịa về công
- *     nghệ Slavyanka). `video-card` hiện video thật đầu tiên nếu có, rỗng
- *     thì khung trung thực.
- *  5. `sub-grid` ("2 dự án con") — dùng dữ liệu thật
- *     `getLiveSubProjects("eco_solargroup")` (Sovelmash/AeroNova thật).
- *     Bỏ `sub-mini-stats` (3 số liệu/mốc mỗi thẻ đều bịa — "$100M cần huy
- *     động", "2019 cư dân SEZ Moscow"... không có trong dữ liệu thật).
- *     Link "Xem chi tiết →" trỏ trang chi tiết dự án con thật ở 1.0.
- *  6. "Lộ trình dự án" (mốc năm 2017/2019/2025/"Sắp tới" — bịa, không có hệ
- *     thống theo dõi mốc lộ trình nào trong dự án) → thay bằng "Đánh giá
- *     nhanh" (số tiêu chí Đạt/6 thật, cùng mẫu đã dùng ở DigiU).
- *  7. "Tổng quan đầu tư" (toàn bộ 4 dòng đều bịa — $50/580K/194/24-7) →
- *     thay bằng "Đường link liên kết" thật (`chrome.links`).
- *  8. "Tài liệu & Báo cáo" (3 tài liệu PDF/PPTX bịa tên) → dùng
- *     `chrome.documents` thật, rỗng thì `.empty-hint`.
- *  9. "Câu hỏi thường gặp" — KHÔNG có hệ thống FAQ nào cho từng hệ sinh
- *     thái trong dự án (chỉ có 3 câu hỏi trơ, không có câu trả lời) →
- *     honest empty-state thay vì hiện 3 câu hỏi không trả lời được.
- * 10. "Tin tức nổi bật" → 3 bài viết THẬT mới nhất
- *     (`getLiveEcosystemArticles("eco_solargroup")`), rỗng thì
- *     `.empty-hint`.
- * 11. CTA cuối trang — bỏ "Đầu tư từ $50, được bảo vệ bởi thoả thuận pháp
- *     lý..." (lời mời đầu tư cụ thể không có thật) và nút "Bắt đầu đầu tư"
- *     → đổi thành lời mời tìm hiểu chung chung + nút trỏ link đăng ký thật
- *     đầu tiên trong `chrome.links` (không có thì vô hiệu hoá nhẹ).
+ *  1. Logo — ảnh logo thật (`/images/duan-cohoi/logos/solargroup-logo.jpg`).
+ *  2. `profile-head` — mô tả + 3 badge (Công nghệ/Năng lượng/Crowdfunding) +
+ *     "580.000+ nhà đầu tư tại 194 quốc gia" — literal Founder cấp.
+ *  3. `sg-hero` — tiêu đề "Động cơ của Duyunov — Công nghệ Slavyanka" + đoạn
+ *     giới thiệu literal (theo `src/lib/v2/data/ecosystem.ts`'s
+ *     `heroBody`/`aboutBody` — "bản thiết kế 2.0" Founder từng gửi, đã xác
+ *     nhận khớp `milestonesTitle: "Lộ trình dự án"` trùng yêu cầu spec).
+ *  4. `stat-row` (5 ô số liệu marketing giữa trang) — ĐÃ BỎ HẲN theo yêu cầu
+ *     Founder (số liệu 580K+/194 quốc gia chuyển vào `profile-head` thay vì
+ *     hiện dạng stat-box).
+ *  5. 8 tab rút còn 4 tab CHỨC NĂNG THẬT: Tổng quan/Dự án con/Công nghệ/
+ *     Tài liệu — bỏ Lộ trình (đưa lên cột phải)/Đầu tư/Tin tức/Câu hỏi
+ *     thường gặp.
+ *     - Tổng quan: "Về SolarGroup" literal + video YouTube (bấm play mới
+ *       tải iframe) + "Các dự án con" thật (`getLiveSubProjects`).
+ *     - Dự án con: mỗi dự án con 1 "slide" đầy đủ (tên/mô tả/giới thiệu chi
+ *       tiết/link đăng ký) — dữ liệu thật từ `ecosystem_subprojects`
+ *       (Sovelmash/AeroNova), fallback nội dung từ "bản thiết kế 2.0" khi
+ *       Admin chưa điền `fullIntro`. **Lưu ý trung thực:** spec gốc yêu cầu
+ *       lấy nội dung từ thư mục Drive `1c9Rm0WCxVA7SprSEIX8xR8d1mt1916iC` —
+ *       session này KHÔNG có quyền truy cập thư mục đó (đã thử qua Google
+ *       Drive MCP, trả về "not found") nên dùng dữ liệu thật đã có sẵn
+ *       trong Supabase thay thế, không bịa nội dung mới.
+ *     - Công nghệ: 2 cột, mỗi cột 1 dự án con, cùng nguồn dữ liệu như trên
+ *       (cùng lý do chưa truy cập được Drive).
+ *     - Tài liệu: link tới thư mục Drive tài liệu SolarGroup Founder cung
+ *       cấp + `chrome.documents` thật.
+ *  6. Cột phải: "Đánh giá nhanh" → "Lộ trình dự án" (4 giai đoạn, theo "bản
+ *     thiết kế 2.0"). "Tài liệu & Báo cáo" → "Tổng quan đầu tư" (4 số liệu
+ *     tổng hợp, cùng nguồn "bản thiết kế 2.0"). Bỏ hẳn "Câu hỏi thường
+ *     gặp". "Tin tức nổi bật" — bỏ "Xem tất cả →", mỗi bài link thẳng tới
+ *     link đăng ký thật (`chrome.links`) thay vì trang chi tiết nội bộ.
+ *  7. Đã bỏ MỌI link trỏ ngược Portal 1.0 (đúng NGUYÊN TẮC BẤT BIẾN đầu
+ *     file này) — "Xem thêm về SolarGroup →" (about-text), "Xem chi tiết →"
+ *     (mỗi thẻ dự án con) không có đích `/v2/*` tương đương nên XOÁ hẳn.
  *
- * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC: 8 tab trong `.tabs-row` chỉ đổi trạng
- * thái active. Nút "Theo dõi"/"Chia sẻ" giữ trơ. Ô tìm kiếm/chuông giữ trơ.
+ * Nút "Theo dõi"/"Chia sẻ" ở `.profile-actions` không có hệ thống theo
+ * dõi/chia sẻ thật, giữ trơ. Ô tìm kiếm/chuông thông báo giữ trơ.
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { DEFAULT_POTENTIAL_ANALYSIS } from "@/data/portal/ecosystems";
 import type { EcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 import type { SubProjectRow } from "@/lib/portal/live-subprojects";
 import type { EcosystemArticleRow } from "@/lib/portal/live-ecosystem-articles";
@@ -76,10 +66,21 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
+import { toYouTubeEmbedUrl } from "@/lib/portal/videoEmbed";
 
 import "../../inter-gf.css";
 import "./solargroup.css";
 
+/** Video giới thiệu SolarGroup (Founder cấp trực tiếp trong phiên này). */
+const SOLARGROUP_INTRO_VIDEO_URL = "https://youtu.be/wOOP3suBf2E?si=vHslFtdhAp8ofnwk";
+
+/** Thư mục tài liệu SolarGroup thật trên Drive (Founder cấp trực tiếp) —
+ * dùng cho tab "Tài liệu" và tab "Dự án con"/"Công nghệ" (nguồn dự kiến,
+ * hiện chưa truy cập được — xem docblock đầu file). */
+const SOLARGROUP_DOCS_FOLDER_URL =
+  "https://drive.google.com/drive/folders/1c9Rm0WCxVA7SprSEIX8xR8d1mt1916iC?usp=drive_link";
+
+/** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
 const HREF_MAP: Record<string, string> = {
   "Trang chu Portal.html": "/v2/trang-chu",
   "Companion.html": "/v2/companion",
@@ -100,19 +101,64 @@ const HREF_MAP: Record<string, string> = {
   "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
 };
 
-const TABS = ["Tổng quan", "Dự án con", "Công nghệ", "Lộ trình", "Đầu tư", "Tin tức", "Tài liệu", "Câu hỏi thường gặp"];
+const TABS = ["Tổng quan", "Dự án con", "Công nghệ", "Tài liệu"];
+
+/** "Lộ trình dự án" — theo "bản thiết kế 2.0 đã gửi trước đó"
+ * (`src/lib/v2/data/ecosystem.ts`'s `solargroup.milestones`). */
+const ROADMAP_STAGES = [
+  { period: "Giai đoạn 1", title: "Hoàn tất nghiên cứu và đăng ký sáng chế công nghệ Slavyanka", done: true },
+  { period: "Giai đoạn 2", title: "Xây dựng trung tâm thiết kế Sovelmash tại Alabushevo", done: true },
+  { period: "Giai đoạn 3", title: "Sản xuất thử nghiệm và kiểm định động cơ theo tiêu chuẩn công nghiệp", done: false },
+  { period: "Giai đoạn 4", title: "Thương mại hoá và mở rộng sang thị trường quốc tế", done: false },
+];
+
+/** "Tổng quan đầu tư" — theo "bản thiết kế 2.0 đã gửi trước đó"
+ * (`src/lib/v2/data/ecosystem.ts`'s `solargroup.stats`). */
+const INVESTMENT_OVERVIEW = [
+  { label: "Dự án con", value: "2" },
+  { label: "Giai đoạn lộ trình", value: "4" },
+  { label: "Đã hoàn thành", value: "2" },
+  { label: "Mô hình", value: "Gọi vốn cộng đồng" },
+];
+
+/** 4 điểm nổi bật về công nghệ Slavyanka — literal Founder cấp (nguồn công
+ * khai solargroup.pro/vi, đã đối chiếu trước đó trong lịch sử dự án). */
+const SOLARGROUP_HIGHLIGHTS = [
+  "Giảm tiêu thụ năng lượng lên đến 40%",
+  "Giảm chi phí sản xuất động cơ điện lên đến 30%",
+  "Tăng độ tin cậy, hệ số làm việc đạt 2,5",
+  "Hơn 100.000 động cơ Slavyanka đã được sản xuất",
+];
+
+/** Nội dung dự phòng cho "Dự án con"/"Công nghệ" khi `ecosystem_subprojects`
+ * chưa có `fullIntro` — lấy từ "bản thiết kế 2.0 đã gửi trước đó"
+ * (`src/lib/v2/data/ecosystem.ts`'s `solargroup.pillars`). Chỉ dùng khi
+ * chưa truy cập được thư mục Drive nêu ở docblock đầu file. */
+const SUBPROJECT_FALLBACK_INTRO: { match: string; text: string }[] = [
+  {
+    match: "sovelmash",
+    text: 'Bộ phận thiết kế và công nghệ kỹ thuật (D&E) tại Technopolis Moscow "Alabushevo", nơi thực hiện nghiên cứu và thử nghiệm động cơ.',
+  },
+  {
+    match: "aeronova",
+    text: "Phát triển, sản xuất và vận hành khí cầu thế hệ mới — thực hiện bởi AERONOVA, hướng tới thị trường vận tải hàng hoá đường không chi phí thấp.",
+  },
+  {
+    match: "khí cầu",
+    text: "Phát triển, sản xuất và vận hành khí cầu thế hệ mới — thực hiện bởi AERONOVA, hướng tới thị trường vận tải hàng hoá đường không chi phí thấp.",
+  },
+];
+
+function subProjectIntro(sub: SubProjectRow): string {
+  if (sub.fullIntro) return sub.fullIntro;
+  if (sub.shortDescription) return sub.shortDescription;
+  const fallback = SUBPROJECT_FALLBACK_INTRO.find((f) => sub.name.toLowerCase().includes(f.match));
+  return fallback?.text ?? "Thông tin chi tiết sẽ được cập nhật khi có.";
+}
 
 const SUB_STYLES = [
   { bg: "linear-gradient(150deg,#1a1400,#3d2a08)", stroke: "#f0c96a", icon: <><rect x="3" y="9" width="18" height="11" rx="1.5" /><path d="M7 9V6a2 2 0 012-2h6a2 2 0 012 2v3M3 14h18" /></> },
   { bg: "linear-gradient(150deg,#0c1a3d,#1a1044)", stroke: "#9fd4ff", icon: <><ellipse cx="12" cy="10" rx="8" ry="5" /><path d="M6 13c0 3 2.5 7 6 8 3.5-1 6-5 6-8" /></> },
-];
-
-const STAT_STYLES = [
-  { bg: "linear-gradient(145deg,#8b6bff,#5a37e6)", icon: <><circle cx="8" cy="8" r="3" /><circle cx="17" cy="9" r="3" /><path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" /></> },
-  { bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)", icon: <><path d="M22 10L12 5 2 10l10 5 10-5zM6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" /></> },
-  { bg: "linear-gradient(145deg,#e2b23c,#a9660f)", icon: <><path d="M4 4h6v16H4zM14 4h6v16h-6z" /></> },
-  { bg: "linear-gradient(145deg,#a08bff,#6d4aff)", icon: <><path d="M8 5v14l11-7z" /></> },
-  { bg: "linear-gradient(145deg,#3ecf7e,#189a52)", icon: <><path d="M20 6L9 17l-5-5" /></> },
 ];
 
 function CheckSvg() {
@@ -136,28 +182,21 @@ export function SolarGroupClient({
   ratings: EcosystemRatingRow[];
   premium: PremiumStatus;
 }) {
+  void ratings;
   const router = useRouter();
   const [tab, setTab] = useState(0);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
     if (target) router.push(target);
   };
 
-  const firstVideo = chrome.videos.find((v) => v.visible);
-  const metCount = ratings.filter((r) => r.ratingStatus === "met").length;
+  const introVideoEmbedUrl = toYouTubeEmbedUrl(SOLARGROUP_INTRO_VIDEO_URL);
   const registerLink = chrome.links.find((l) => l.visible)?.url ?? "";
   const topArticles = articles.slice(0, 3);
-  const visibleDocs = chrome.documents.filter((d) => d.visible);
+  const visibleDocuments = chrome.documents.filter((d) => d.visible);
   const visibleLinks = chrome.links.filter((l) => l.visible);
-
-  const stats = [
-    { num: String(subProjects.length), lbl: "Dự án con", sub: "Đang triển khai" },
-    { num: String(articles.length), lbl: "Cập nhật mới", sub: "Tin tức & bài viết" },
-    { num: String(visibleDocs.length), lbl: "Tài liệu", sub: "Có thể tải về" },
-    { num: String(chrome.videos.length), lbl: "Video", sub: "Giới thiệu & hướng dẫn" },
-    { num: `${metCount}/6`, lbl: "Tiêu chí đạt", sub: "Đánh giá minh bạch" },
-  ];
 
   return (
     <div className="sgr">
@@ -300,11 +339,13 @@ export function SolarGroupClient({
           <div className="content">
             <div className="center-col">
               <div className="profile-head">
-                <div className="profile-logo">
-                  <svg viewBox="0 0 24 24" fill="#e2b23c">
-                    <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                  </svg>
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo tĩnh cố định, không phải nội dung quản trị được */}
+                <img
+                  src="/images/duan-cohoi/logos/solargroup-logo.jpg"
+                  alt="Logo SolarGroup"
+                  className="profile-logo"
+                  style={{ objectFit: "cover", padding: 0 }}
+                />
                 <div className="profile-info">
                   <h1>
                     SolarGroup
@@ -314,10 +355,15 @@ export function SolarGroupClient({
                       </svg>
                     </div>
                   </h1>
-                  <p>{chrome.shortDescription}</p>
+                  <p>
+                    Công ty đầu tư quốc tế tài trợ dự án &quot;Động cơ của Duyunov&quot; — công nghệ cuộn dây
+                    &quot;Slavyanka&quot; và các dự án công nghệ tiên phong khác.
+                  </p>
                   <div className="tag-row">
-                    <span className="p-tag">{chrome.statusBadge}</span>
-                    <span className="p-since">{subProjects.length} dự án con đang theo dõi</span>
+                    <span className="p-tag">Công nghệ</span>
+                    <span className="p-tag">Năng lượng</span>
+                    <span className="p-tag">Crowdfunding</span>
+                    <span className="p-since">580.000+ nhà đầu tư tại 194 quốc gia</span>
                   </div>
                 </div>
                 <div className="profile-actions">
@@ -341,20 +387,21 @@ export function SolarGroupClient({
 
               <div className="sg-hero">
                 <div className="sg-hero-text">
-                  <h2>SolarGroup — Mô hình cổ phần dài hạn</h2>
-                  <p>{chrome.shortDescription}</p>
+                  <h2>Động cơ của Duyunov — Công nghệ Slavyanka</h2>
+                  <p>
+                    Hỗ trợ các sáng tạo công nghệ và thu lợi nhuận từ đó. Dự án thương mại hoá công nghệ cuộn dây
+                    Slavyanka cho động cơ điện hiệu suất cao.
+                  </p>
                   <div className="hero-btn-row">
                     <a className="btn-primary" href="#du-an-con">
                       Giới thiệu dự án
                     </a>
-                    {firstVideo ? (
-                      <a className="btn-ghost" href={firstVideo.url} target="_blank" rel="noopener noreferrer">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                        Xem video giới thiệu
-                      </a>
-                    ) : null}
+                    <a className="btn-ghost" href={SOLARGROUP_INTRO_VIDEO_URL} target="_blank" rel="noopener noreferrer">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="#fff">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                      Xem video giới thiệu
+                    </a>
                   </div>
                 </div>
                 <div className="sg-graphic">
@@ -388,21 +435,6 @@ export function SolarGroupClient({
                 </div>
               </div>
 
-              <div className="stat-row">
-                {stats.map((s, i) => (
-                  <div className="stat-box" key={s.lbl}>
-                    <div className="ico" style={{ background: STAT_STYLES[i].bg }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-                        {STAT_STYLES[i].icon}
-                      </svg>
-                    </div>
-                    <div className="num">{s.num}</div>
-                    <div className="lbl">{s.lbl}</div>
-                    <div className="sub">{s.sub}</div>
-                  </div>
-                ))}
-              </div>
-
               <div className="tabs-row">
                 {TABS.map((label, i) => (
                   <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
@@ -411,102 +443,194 @@ export function SolarGroupClient({
                 ))}
               </div>
 
-              <div className="about-grid">
-                <div className="about-text">
-                  <h3>Về SolarGroup</h3>
-                  <p>{chrome.fullIntro}</p>
-                  {chrome.highlights.length > 0 ? (
-                    <div className="check-list">
-                      {chrome.highlights.map((h) => (
-                        <div className="check-item" key={h}>
-                          <CheckSvg />
-                          {h}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                  <a href="https://voduongai.com/portal/duan-cohoi/solargroup" target="_blank" rel="noopener noreferrer">
-                    Xem thêm về SolarGroup →
-                  </a>
-                </div>
-                <div className="video-card">
-                  {firstVideo ? (
-                    <>
-                      <div className="vtitle">SolarGroup</div>
-                      <div className="vsub">{firstVideo.label || "Video giới thiệu"}</div>
-                      <a className="play-btn" href={firstVideo.url} target="_blank" rel="noopener noreferrer">
-                        <svg viewBox="0 0 24 24" fill="#fff">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </a>
-                    </>
-                  ) : (
-                    <>
-                      <div className="vtitle">SolarGroup</div>
-                      <p className="empty-hint" style={{ color: "#d0c9e8" }}>
-                        Video giới thiệu sẽ cập nhật khi có.
+              {tab === 0 ? (
+                <>
+                  <div className="about-grid">
+                    <div className="about-text">
+                      <h3>Về SolarGroup</h3>
+                      <p>
+                        SolarGroup là công ty đầu tư quốc tế tổ chức gọi vốn cộng đồng cho dự án &quot;Động cơ của
+                        Duyunov&quot;. Nhà đầu tư trở thành đồng sở hữu phần vốn dự án và hưởng lợi nhuận theo tỷ lệ
+                        đóng góp khi công nghệ được thương mại hoá.
                       </p>
-                    </>
-                  )}
-                </div>
-              </div>
+                      <div className="check-list">
+                        {SOLARGROUP_HIGHLIGHTS.map((h) => (
+                          <div className="check-item" key={h}>
+                            <CheckSvg />
+                            {h}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="video-card">
+                      {videoPlaying ? (
+                        <div style={{ position: "absolute", inset: 0 }}>
+                          <iframe
+                            src={`${introVideoEmbedUrl}?autoplay=1`}
+                            title="Video giới thiệu SolarGroup"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            style={{ width: "100%", height: "100%", border: "none" }}
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="vtitle">SolarGroup</div>
+                          <div className="vsub">Video giới thiệu</div>
+                          <button className="play-btn" onClick={() => setVideoPlaying(true)} aria-label="Phát video giới thiệu SolarGroup">
+                            <svg viewBox="0 0 24 24" fill="#fff">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
-              <div id="du-an-con">
-                <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>
-                  {subProjects.length} dự án con của SolarGroup
-                </h3>
-                {subProjects.length === 0 ? (
-                  <p className="empty-hint">Chưa có dự án con nào được công bố.</p>
-                ) : (
-                  <div className="sub-grid">
-                    {subProjects.map((sub, i) => {
+                  <div id="du-an-con">
+                    <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>
+                      {subProjects.length} dự án con của SolarGroup
+                    </h3>
+                    {subProjects.length === 0 ? (
+                      <p className="empty-hint">Chưa có dự án con nào được công bố.</p>
+                    ) : (
+                      <div className="sub-grid">
+                        {subProjects.map((sub, i) => {
+                          const style = SUB_STYLES[i % SUB_STYLES.length];
+                          return (
+                            <div className="sub-card" key={sub.id}>
+                              <div className="sub-thumb" style={{ background: style.bg }}>
+                                <div className="ico2">
+                                  <svg viewBox="0 0 24 24" fill="none" stroke={style.stroke} strokeWidth="1.8">
+                                    {style.icon}
+                                  </svg>
+                                </div>
+                                <div>
+                                  <h4>{sub.name}</h4>
+                                  <span>{sub.shortDescription}</span>
+                                </div>
+                              </div>
+                              <div className="sub-body">
+                                <p>{subProjectIntro(sub)}</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : null}
+
+              {tab === 1 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {subProjects.length === 0 ? (
+                    <p className="empty-hint">Chưa có dự án con nào được công bố.</p>
+                  ) : (
+                    subProjects.map((sub, i) => {
                       const style = SUB_STYLES[i % SUB_STYLES.length];
+                      const subLinks = sub.links.filter((l) => l.visible);
                       return (
                         <div className="sub-card" key={sub.id}>
-                          <div className="sub-thumb" style={{ background: style.bg }}>
+                          <div className="sub-thumb" style={{ background: style.bg, height: 120 }}>
                             <div className="ico2">
                               <svg viewBox="0 0 24 24" fill="none" stroke={style.stroke} strokeWidth="1.8">
                                 {style.icon}
                               </svg>
                             </div>
                             <div>
-                              <h4>{sub.name}</h4>
+                              <h4 style={{ fontSize: 19 }}>{sub.name}</h4>
                               <span>{sub.shortDescription}</span>
                             </div>
                           </div>
-                          <div className="sub-body">
-                            <p>{sub.fullIntro || sub.shortDescription}</p>
-                            <a href={`https://voduongai.com/portal/duan-cohoi/solargroup/${sub.slug}`} target="_blank" rel="noopener noreferrer">
-                              Xem chi tiết {sub.name} →
-                            </a>
+                          <div className="sub-body" style={{ padding: "20px 24px" }}>
+                            <p style={{ minHeight: "auto", fontSize: 13.5, lineHeight: 1.7 }}>{subProjectIntro(sub)}</p>
+                            {subLinks.length > 0 ? (
+                              <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 8 }}>
+                                {subLinks.map((l) => (
+                                  <div className="fin-row" key={l.id}>
+                                    <a className="lbl" href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text)" }}>
+                                      {l.label}
+                                    </a>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : null}
                           </div>
                         </div>
                       );
-                    })}
+                    })
+                  )}
+                </div>
+              ) : null}
+
+              {tab === 2 ? (
+                <div className="card">
+                  <div className="card-head">
+                    <h4>Công nghệ</h4>
                   </div>
-                )}
-              </div>
+                  {subProjects.length === 0 ? (
+                    <p className="empty-hint">Chưa có thông tin công nghệ nào được công bố.</p>
+                  ) : (
+                    <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(subProjects.length, 2)}, 1fr)`, gap: 20 }}>
+                      {subProjects.map((sub) => (
+                        <div key={sub.id}>
+                          <h5 style={{ fontSize: 14.5, fontWeight: 800, marginBottom: 8 }}>{sub.name}</h5>
+                          <p style={{ fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>{subProjectIntro(sub)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              {tab === 3 ? (
+                <div className="card">
+                  <div className="card-head">
+                    <h4>Tài liệu SolarGroup</h4>
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 14 }}>
+                    Toàn bộ tài liệu, whitepaper và hướng dẫn của SolarGroup được tổng hợp trong 1 thư mục Drive.
+                  </p>
+                  <a className="btn-primary" href={SOLARGROUP_DOCS_FOLDER_URL} target="_blank" rel="noopener noreferrer">
+                    Mở thư mục tài liệu →
+                  </a>
+                  {visibleDocuments.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 16 }}>
+                      {visibleDocuments.map((d) => (
+                        <div className="fin-row" key={d.id}>
+                          <a className="lbl" href={d.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text)" }}>
+                            {d.label}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
             <aside className="right-col">
               <div className="card">
                 <div className="card-head">
-                  <h4>Đánh giá nhanh</h4>
+                  <h4>Lộ trình dự án</h4>
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: "#189a52", marginBottom: 2 }}>{metCount}/6</div>
-                <div style={{ fontSize: 11.5, color: "var(--muted)", marginBottom: 12 }}>Tiêu chí minh bạch đã đạt</div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                  {DEFAULT_POTENTIAL_ANALYSIS.map((c) => {
-                    const row = ratings.find((r) => r.criterionId === c.id);
-                    const status = row?.ratingStatus ?? "not-assessed";
-                    const color = status === "met" ? "#189a52" : status === "not-met" ? "#e0455a" : "#9691b3";
-                    return (
-                      <div key={c.id} style={{ display: "flex", alignItems: "flex-start", gap: 6, fontSize: 11.5, color: "var(--muted)" }}>
-                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, marginTop: 5, flexShrink: 0 }} />
-                        {c.criterion}
+                <div className="roadmap">
+                  {ROADMAP_STAGES.map((s) => (
+                    <div className={s.done ? "rm-item done" : "rm-item"} key={s.period}>
+                      <div className="rm-dot">
+                        {s.done ? (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3}>
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        ) : null}
                       </div>
-                    );
-                  })}
+                      <div className="rm-text">
+                        <div className="yr">{s.period}</div>
+                        <h6>{s.title}</h6>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
@@ -529,49 +653,21 @@ export function SolarGroupClient({
 
               <div className="card">
                 <div className="card-head">
-                  <h4>Tài liệu &amp; Báo cáo</h4>
+                  <h4>Tổng quan đầu tư</h4>
                 </div>
-                {visibleDocs.length === 0 ? (
-                  <p className="empty-hint">Chưa có tài liệu nào.</p>
-                ) : (
-                  visibleDocs.map((d) => (
-                    <a
-                      className="news-row"
-                      key={d.id}
-                      href={d.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      <div className="news-thumb" style={{ background: "#fdeef0", color: "#e0455a" }}>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                          <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <h6>{d.label}</h6>
-                        <span className="time">Tải về</span>
-                      </div>
-                    </a>
-                  ))
-                )}
-              </div>
-
-              <div className="card">
-                <div className="card-head">
-                  <h4>Câu hỏi thường gặp</h4>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {INVESTMENT_OVERVIEW.map((s) => (
+                    <div className="fin-row" key={s.label}>
+                      <span className="lbl">{s.label}</span>
+                      <span className="val">{s.value}</span>
+                    </div>
+                  ))}
                 </div>
-                <p className="empty-hint">Chưa có câu hỏi thường gặp cho SolarGroup.</p>
               </div>
 
               <div className="card">
                 <div className="card-head">
                   <h4>Tin tức nổi bật</h4>
-                  {topArticles.length > 0 ? (
-                    <a href="https://voduongai.com/portal/duan-cohoi/solargroup" target="_blank" rel="noopener noreferrer">
-                      Xem tất cả →
-                    </a>
-                  ) : null}
                 </div>
                 {topArticles.length === 0 ? (
                   <p className="empty-hint">Chưa có bài viết cập nhật nào.</p>
@@ -580,10 +676,10 @@ export function SolarGroupClient({
                     <a
                       className="news-row"
                       key={a.id}
-                      href={`https://voduongai.com/portal/duan-cohoi/solargroup/cap-nhat/${a.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none", color: "inherit" }}
+                      href={registerLink || undefined}
+                      target={registerLink ? "_blank" : undefined}
+                      rel={registerLink ? "noopener noreferrer" : undefined}
+                      style={{ textDecoration: "none", color: "inherit", cursor: registerLink ? "pointer" : "default" }}
                     >
                       <div className="news-thumb" style={{ background: "linear-gradient(145deg,#3d2a08,#a9660f)" }}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="#ffe4c2" strokeWidth="1.8">
@@ -595,7 +691,7 @@ export function SolarGroupClient({
                           CẬP NHẬT
                         </div>
                         <h6>{a.title}</h6>
-                        <span className="time">Xem bài viết</span>
+                        <span className="time">{registerLink ? "Tham gia ngay" : "SolarGroup"}</span>
                       </div>
                     </a>
                   ))
