@@ -168,3 +168,42 @@ export async function getAffiliateOverview(): Promise<AffiliateOverview | null> 
     payoutRequests,
   };
 }
+
+export type AffiliateLeaderboardEntry = {
+  rank: number;
+  memberId: string;
+  fullName: string;
+  totalCommission: number;
+  referralCount: number;
+  isYou: boolean;
+};
+
+/**
+ * Giai đoạn 6 — "Bảng xếp hạng Affiliate" thật (`/v2/affiliate`). Gọi RPC
+ * `get_affiliate_leaderboard()` (SECURITY DEFINER, xem
+ * `supabase-giai-doan-6-affiliate-leaderboard-rpc.sql`) — hàm CHỈ trả
+ * đúng 4 cột an toàn đã tổng hợp (không lộ `referred_email`/`order_id`
+ * của người khác), bypass đúng phạm vi hẹp thay vì mở rộng RLS
+ * `referrals`. Founder xác nhận hiển thị TÊN ĐẦY ĐỦ + SỐ HOA HỒNG (không
+ * ẩn danh). Dùng session client (`getSupabaseServer()`) — RPC tự đọc
+ * `auth.uid()` từ JWT của session để đánh dấu `isYou`/luôn kèm hạng của
+ * chính người gọi dù ngoài top N.
+ */
+export async function getAffiliateLeaderboard(limit = 10): Promise<AffiliateLeaderboardEntry[]> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return [];
+
+  const supabase = await getSupabaseServer();
+  const { data, error } = await supabase.rpc("get_affiliate_leaderboard", { limit_n: limit });
+  if (error || !data) return [];
+
+  return (data as Array<{ rank: number; member_id: string; full_name: string; total_commission: number; referral_count: number; is_you: boolean }>).map(
+    (row) => ({
+      rank: row.rank,
+      memberId: row.member_id,
+      fullName: row.full_name,
+      totalCommission: row.total_commission,
+      referralCount: row.referral_count,
+      isYou: row.is_you,
+    }),
+  );
+}
