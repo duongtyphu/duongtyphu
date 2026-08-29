@@ -269,3 +269,61 @@
  * trung thực; cộng đồng chưa có kênh nào bật Active).
  * ========================================================================== */
 .pm .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
+
+/* Giai đoạn 5 — 3 khối mới port từ Portal 1.0 (Thanh toán hoạt động thế
+ * nào?/Không chắc nên chọn gì?/Người đồng hành) + khối "Đặc quyền Portal
+ * 2.0" thay "Kho tài nguyên Premium" đã bỏ — cũng ngoài bản thiết kế gốc,
+ * tự thiết kế theo đúng token màu/bo góc/khoảng cách đã dùng xuyên suốt
+ * file này (không bịa token mới). */
+.pm .payment-steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+.pm .payment-step-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 14px}
+.pm .payment-step-card .step-num{width:26px;height:26px;border-radius:50%;background:var(--violet);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.pm .payment-step-card h6{font-size:13px;font-weight:700;margin-bottom:5px}
+.pm .payment-step-card p{font-size:11.5px;color:var(--muted);line-height:1.5}
+
+.pm .advisor-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+.pm .advisor-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.pm .advisor-ico{width:38px;height:38px;border-radius:11px;background:linear-gradient(145deg,#8b6bff,#5a37e6);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm .advisor-ico svg{width:19px;height:19px}
+.pm .advisor-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.pm .advisor-head h3{font-size:17px;font-weight:800}
+.pm .advisor-desc{font-size:12.5px;color:var(--muted);line-height:1.55;max-width:640px;margin-bottom:16px}
+.pm .advisor-chips{display:flex;flex-wrap:wrap;gap:8px}
+.pm .advisor-chip{border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:12px;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;transition:border-color .15s,background .15s}
+.pm .advisor-chip:hover{border-color:var(--violet)}
+.pm .advisor-chip.active{background:var(--violet);border-color:var(--violet);color:#fff}
+.pm .advisor-result{margin-top:16px;background:var(--bg);border-radius:12px;padding:16px}
+.pm .advisor-result p{font-size:13px;line-height:1.6;margin-bottom:12px}
+.pm .advisor-edit-panel{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+.pm .advisor-edit-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--violet);margin-bottom:8px}
+.pm .advisor-edit-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:8px;font-size:12px}
+.pm .advisor-edit-row span{color:var(--muted)}
+
+.pm .founder-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:start}
+.pm .founder-photo{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:14px;background:var(--bg)}
+.pm .founder-body h4{font-size:19px;font-weight:800}
+.pm .founder-role{font-size:12.5px;font-weight:700;color:var(--violet);margin:2px 0 10px}
+.pm .founder-intro{font-size:12.5px;line-height:1.6;color:var(--text);margin-bottom:12px}
+.pm .founder-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
+.pm .founder-tags span{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.pm .founder-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.pm .founder-expertise ul,.pm .founder-achievements ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.pm .founder-expertise li,.pm .founder-achievements li{font-size:12px;line-height:1.5;color:var(--text);padding-left:14px;position:relative}
+.pm .founder-expertise li::before,.pm .founder-achievements li::before{content:'';position:absolute;left:0;top:7px;width:4px;height:4px;border-radius:50%;background:var(--violet)}
+.pm .founder-expertise{margin-bottom:14px}
+.pm .founder-philosophy{font-size:12.5px;font-style:italic;color:var(--text);background:var(--violet-light);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+
+.pm .privilege-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.pm .privilege-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s}
+.pm .privilege-card:hover{border-color:var(--violet);transform:translateY(-2px)}
+.pm .privilege-card .ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm .privilege-card .ico svg{width:17px;height:17px}
+.pm .privilege-card h6{font-size:12.5px;font-weight:700}
+.pm .privilege-card span{font-size:11px;color:var(--muted)}
+
+@media (max-width:1180px){
+  .pm .payment-steps-grid{grid-template-columns:repeat(2,1fr)}
+  .pm .founder-card{grid-template-columns:1fr}
+  .pm .founder-photo{max-width:160px;margin:0 auto}
+  .pm .privilege-grid{grid-template-columns:1fr}
+}

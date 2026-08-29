@@ -4,6 +4,132 @@ import { getSupabasePublic } from "@/lib/supabase";
 import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 /**
+ * Giai đoạn 5 — 3 khối mới của `/v2/premium`, admin-editable qua
+ * `premium_perks`/`premium_advisor_situations`/`premium_founder`
+ * (bảng generic mới, xem `supabase-phase28-premium-v2-perks-advisor-founder.sql`).
+ * Thay thế 3 mảng/nội dung TĨNH trước đây (perk-grid hardcode 2 trạng
+ * thái, `PremiumAdvisor`'s SITUATIONS nhắm 5 chương trình cũ, hồ sơ
+ * Founder chỉ tồn tại tĩnh ở Portal 1.0's FounderSpotlight — không admin-
+ * editable ở bất kỳ đâu).
+ */
+export type PremiumPerk = {
+  id: string;
+  status: string;
+  audience: "guest" | "member";
+  icon: string;
+  title: string;
+  description: string;
+};
+
+export type PremiumAdvisorSituation = {
+  id: string;
+  status: string;
+  label: string;
+  recommendation: string;
+  targetPlanId: string;
+  targetLabel: string;
+};
+
+export type PremiumFounder = {
+  id: string;
+  status: string;
+  name: string;
+  role: string;
+  photoUrl: string;
+  tags: string[];
+  intro: string;
+  expertise: string[];
+  philosophy: string;
+  achievements: string[];
+};
+
+const DEFAULT_FOUNDER: PremiumFounder = {
+  id: "founder",
+  status: "Published",
+  name: "Võ Đương",
+  role: "Nhà sáng lập VO DUONG AI",
+  photoUrl: "/images/founder-portrait.jpg",
+  tags: ["AI ứng dụng", "Affiliate Marketing", "Automation", "AI Strategy", "Phát triển hệ thống"],
+  intro:
+    "Võ Đương là nhà sáng lập VO DUONG AI — nhà đầu tư và người ứng dụng AI thực chiến trong kinh doanh số. Với nền tảng thực chiến trong Affiliate Marketing và xây dựng hệ thống tự động hóa, anh xây VO DUONG AI thành một hệ sinh thái có lộ trình rõ ràng thay vì những thông tin rời rạc.",
+  expertise: [
+    "Ứng dụng AI trong kinh doanh số và Affiliate Marketing",
+    "Xây dựng hệ thống tự động hóa quy trình vận hành",
+    "Phát triển kênh nội dung và chiến lược phân phối",
+  ],
+  philosophy: "Học AI không phải để biết — mà để làm được ngay. Mỗi buổi học là một kết quả thực tế.",
+  achievements: [
+    "Sáng lập và trực tiếp xây dựng hệ sinh thái VO DUONG AI: Portal, Companion, hệ tri thức CKOS và các chương trình đào tạo.",
+    "Đại diện Quốc gia khu vực Miền Nam — DigiU Việt Nam.",
+    "Nhiều năm đầu tư và vận hành hệ thống Affiliate/tài sản số bằng AI — nội dung giảng dạy lấy từ chính trải nghiệm này.",
+  ],
+};
+
+export const getAllLivePremiumPerks = cache(async (): Promise<PremiumPerk[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("premium_perks").select("id, data, status, order").order("order", { ascending: true });
+  if (error || !data) return [];
+  return data.map((row) => {
+    const d = (row.data ?? {}) as Record<string, unknown>;
+    return {
+      id: row.id as string,
+      status: row.status as string,
+      audience: d.audience === "member" ? "member" : "guest",
+      icon: String(d.icon ?? ""),
+      title: String(d.title ?? ""),
+      description: String(d.description ?? ""),
+    };
+  });
+});
+
+export const getAllLivePremiumAdvisorSituations = cache(async (): Promise<PremiumAdvisorSituation[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("premium_advisor_situations")
+    .select("id, data, status, order")
+    .order("order", { ascending: true });
+  if (error || !data) return [];
+  return data.map((row) => {
+    const d = (row.data ?? {}) as Record<string, unknown>;
+    return {
+      id: row.id as string,
+      status: row.status as string,
+      label: String(d.label ?? ""),
+      recommendation: String(d.recommendation ?? ""),
+      targetPlanId: String(d.targetPlanId ?? ""),
+      targetLabel: String(d.targetLabel ?? ""),
+    };
+  });
+});
+
+export const getLivePremiumFounder = cache(async (): Promise<PremiumFounder> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return DEFAULT_FOUNDER;
+  const { data, error } = await supabase
+    .from("premium_founder")
+    .select("id, data, status")
+    .eq("id", "founder")
+    .eq("status", "Published")
+    .maybeSingle();
+  if (error || !data) return DEFAULT_FOUNDER;
+  const d = (data.data ?? {}) as Record<string, unknown>;
+  return {
+    id: data.id as string,
+    status: data.status as string,
+    name: String(d.name ?? DEFAULT_FOUNDER.name),
+    role: String(d.role ?? DEFAULT_FOUNDER.role),
+    photoUrl: String(d.photoUrl ?? DEFAULT_FOUNDER.photoUrl),
+    tags: Array.isArray(d.tags) ? (d.tags as string[]) : DEFAULT_FOUNDER.tags,
+    intro: String(d.intro ?? DEFAULT_FOUNDER.intro),
+    expertise: Array.isArray(d.expertise) ? (d.expertise as string[]) : DEFAULT_FOUNDER.expertise,
+    philosophy: String(d.philosophy ?? DEFAULT_FOUNDER.philosophy),
+    achievements: Array.isArray(d.achievements) ? (d.achievements as string[]) : DEFAULT_FOUNDER.achievements,
+  };
+});
+
+/**
  * Nguồn dữ liệu THẬT cho `/v2/premium` (Bước F) — thay 2 khối bịa lớn nhất
  * trong `Premium.html`:
  *

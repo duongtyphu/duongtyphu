@@ -7,10 +7,15 @@ import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { formatVnd } from "@/components/portal/premium/premium-programs";
 import type { PremiumPlan } from "@/lib/portal/live-premium-plans";
-import type { PremiumResourceCounts, PremiumPlanMemberSummary } from "@/lib/portal/live-premium-v2";
+import type { PremiumPlanMemberSummary, PremiumPerk, PremiumAdvisorSituation, PremiumFounder } from "@/lib/portal/live-premium-v2";
 import type { LiveCommunityChannel } from "@/lib/portal/live-community";
-import type { PremiumFaqItem } from "@/lib/portal/live-premium";
+import type { PremiumFaqItem, PremiumChrome, PremiumPaymentStep } from "@/lib/portal/live-premium";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
+import { siteConfig } from "@/lib/site";
+import { PremiumPerksGrid } from "@/components/v2/premium/PremiumPerksGrid";
+import { PremiumPaymentStepsBlock } from "@/components/v2/premium/PremiumPaymentStepsBlock";
+import { PremiumAdvisorBlock } from "@/components/v2/premium/PremiumAdvisorBlock";
+import { PremiumFounderBlock } from "@/components/v2/premium/PremiumFounderBlock";
 
 import "./premium.css";
 
@@ -23,18 +28,6 @@ import "./premium.css";
  *
  * ĐÚNG những chỗ khác bản tĩnh (đều thuộc phạm vi "nối dữ liệu thật hoặc
  * honest empty-state", không đổi layout/màu/font):
- *
- * 1. "Kho tài nguyên Premium" (`res-grid`, cả 2 trạng thái) — 6 số mẫu cố
- *    định (250+/80+/120+/60+/45+/30+) → số thật từ `getPremiumResourceCounts()`
- *    (5/9 "Intelligence" CKOS: prompts/sop/templates/ebooks/checklists +
- *    `case_studies`). Bản memberState còn 3 card thêm "công cụ"/"video"/
- *    "cập nhật hàng tuần" — BỎ "video" (không có bảng video nào) và "cập
- *    nhật hàng tuần" (không có tín hiệu "mới" thật), GIỮ "công cụ" (bảng
- *    `tools` thật, đã Full ở CKOS Coverage) — dùng CHUNG 1 lưới 7 thẻ cho cả
- *    2 trạng thái (đúng dữ liệu công khai, không có gì Premium-only ở đây).
- *    Card "Tài liệu" (ebook) không có "Xem ngay →" — audit xác nhận bảng
- *    `ebooks` có Admin CRUD (`/admin/ckos/ebooks`) nhưng KHÔNG route Portal
- *    nào đọc (mồ côi thật, khác 5 bảng còn lại đều có trang Portal xem được).
  *
  * 2. Bảng giá 3 gói thuê bao "Tháng/6 Tháng/12 Tháng" — PHASE 38 (yêu cầu
  *    riêng của Founder, đảo ngược quyết định gốc ở trên): hệ thống giờ ĐÃ
@@ -49,10 +42,7 @@ import "./premium.css";
  *
  * 3. Bảng "So sánh quyền lợi" (7 hàng theo 3 gói thuê bao) — BỎ HẲN, đúng
  *    quyết định gốc: mockup có sẵn nhưng đây không phải yêu cầu bắt buộc,
- *    3 thẻ giá đã liệt kê đủ tính năng từng gói. "Premium Member nói gì?"
- *    (3 đánh giá bịa tên/quote) → honest empty-state, cùng tiền lệ
- *    NO-FAKE-DATA đã áp dụng cho `student_success_stories`. Gộp 2 khối
- *    `.two-col` cũ thành 1 card đơn (bỏ cột trái đã xoá).
+ *    3 thẻ giá đã liệt kê đủ tính năng từng gói.
  *
  * 4. "Lộ trình Premium của bạn" (6 bước bịa % giả) → 4 giai đoạn thật của
  *    `learning_paths` qua `getJourneyOverview()` (tái dùng nguyên, không
@@ -86,12 +76,67 @@ import "./premium.css";
  * 8. Nút "Xem video giới thiệu" (hero guest) — BỎ, không có video giới
  *    thiệu thật nào trong dự án.
  *
- * 9. `support-mini`/`ms-manage` — không có trang "Quản lý gói Premium"/
- *    "hỗ trợ" riêng nào ở `/v2` (2 trang đó KHÔNG nằm trong danh sách 42
- *    trang Bước F) → trỏ thẳng route 1.0 THẬT đã có sẵn (`/portal/my-products`,
- *    `/portal/support`) — an toàn vì route Next.js là đường dẫn tuyệt đối,
- *    không phụ thuộc `/v2`/`/portal` đang đứng ở đâu. "Chat với chúng tôi"
- *    → `/v2/companion` (điểm chat AI thật duy nhất trong hệ thống).
+ * 9. `support-mini`/`ms-manage`/nút "Đã là Premium — Xem sản phẩm" — trước
+ *    trỏ `/portal/my-products`/`/portal/support` (Portal 1.0, VI PHẠM
+ *    NGUYÊN TẮC BẤT BIẾN đầu CLAUDE.md, phát hiện khi audit Giai đoạn 5) →
+ *    đổi sang `/v2/tai-khoan` (trang Tài khoản 2.0 đã có sẵn, hiển thị
+ *    đúng "Sản phẩm đã mua" từ `orders` thật qua `AccountContent`) và
+ *    `siteConfig.community.zaloGroup` (kênh liên hệ thật, cùng cách đã
+ *    dùng cho "Liên hệ hỗ trợ" ở hub Dự án & Cơ hội). "Chat với chúng tôi"
+ *    → `/v2/companion` (điểm chat AI thật duy nhất trong hệ thống, giữ
+ *    nguyên, không đổi).
+ *
+ * ─── GIAI ĐOẠN 5 (đợt redesign lớn theo yêu cầu riêng Founder) ───────────
+ *
+ * A. Icon kim cương — SVG outline vàng cũ trước tiêu đề "Premium" → ảnh
+ *    kim cương tím thật đã có sẵn (`icon-premium.png`, cùng ảnh dùng cho
+ *    promo sidebar/topbar toàn `/v2/*`).
+ *
+ * B. BỎ HẲN "Kho tài nguyên Premium" (cả 2 trạng thái) — Founder yêu cầu
+ *    trực tiếp, không còn dùng `getPremiumResourceCounts()` ở trang này
+ *    nữa (hàm vẫn giữ nguyên, còn dùng bởi `/v2/admin/premium` — mirror
+ *    thống kê CKOS riêng, không đụng). BỎ HẲN "Premium Member nói gì?"
+ *    (honest empty-state cũ — Founder yêu cầu bỏ luôn, không chỉ ẩn khi
+ *    rỗng).
+ *
+ * C. Quyền lợi Premium viết lại đầy đủ/uy tín hơn — `premium_plans.features`
+ *    (mỗi gói) + 2 lưới "Vì sao nên nâng cấp?"/"Quyền lợi dành riêng cho
+ *    Premium Member" đổi từ mảng hardcode sang bảng mới `premium_perks`
+ *    (8 mục/trạng thái, `PremiumPerksGrid`, admin-editable) — mọi mục đều
+ *    gắn tính năng THẬT đã build trong Portal 2.0 (CKOS/Học viện AI/AI
+ *    Workspace/Chương trình Affiliate/Companion/Cộng đồng), không bịa số
+ *    liệu/cam kết.
+ *
+ * D. 3 khối mới, đúng thứ tự Founder yêu cầu, port ý tưởng từ Portal 1.0
+ *    (`/portal/premium/page.tsx`) nhưng thiết kế lại theo `.pm` (không copy
+ *    Tailwind/canvas tối của 1.0):
+ *    - "Thanh toán hoạt động thế nào?" (`PremiumPaymentStepsBlock`) — tái
+ *      dùng NGUYÊN `premium_chrome.paymentSectionTitle` + `premium_payment_steps`
+ *      (đã có sẵn, admin-editable qua `/admin/premium/dashboard` từ trước)
+ *      — Single Source of Truth với Portal 1.0, không tạo bảng trùng.
+ *    - "Không chắc nên chọn gì?" (`PremiumAdvisorBlock`) — CHỈ port Ý TƯỞNG
+ *      Companion Advisor (1.0's `PremiumAdvisor.tsx`), không port thẳng nội
+ *      dung vì 1.0 nhắm 5 chương trình mua đứt cũ không còn tồn tại ở đây
+ *      — viết lại 6 tình huống mới nhắm đúng 3 gói thuê bao thật (bảng mới
+ *      `premium_advisor_situations`).
+ *    - "🤝 Người đồng hành" (`PremiumFounderBlock`) — port NGUYÊN VĂN hồ sơ
+ *      Founder thật từ 1.0's `FounderSpotlight.tsx` (không bịa) vào bảng
+ *      mới `premium_founder` (trước đó tĩnh 100%, kể cả ở 1.0 — giờ admin-
+ *      editable). "Câu hỏi thường gặp" GIỮ NGUYÊN vị trí/nguồn dữ liệu
+ *      (`getLivePremiumFaq()`, đã đúng từ trước).
+ *
+ * E. Trạng thái "Đã mua" (memberState) — khối "Kho tài nguyên Premium" đã
+ *    bỏ ở cột trái `.two-col` được thay bằng "Đặc quyền Portal 2.0 của
+ *    bạn" (`.privilege-grid`, TĨNH — 6 link thật tới CKOS/Học viện AI/AI
+ *    Workspace/Chương trình Affiliate/Companion/Dự án & Cơ hội, đều là
+ *    route `/v2/*` đã build thật) — đúng yêu cầu "dùng nội dung đặc quyền
+ *    có thật ở Portal 2.0", không bịa tính năng mới.
+ *
+ * F. Admin quản lý: `/admin/premium/plans` (giá/trạng thái/`features` từng
+ *    gói, đã có sẵn), `/admin/premium/dashboard` (Hero/2 nhãn section/
+ *    thanh toán/FAQ — dùng chung Portal 1.0), `/admin/premium/v2-dashboard`
+ *    (MỚI — quyền lợi/cố vấn chọn gói/người đồng hành, 3 khối riêng của
+ *    `/v2/premium`, xem `src/app/admin/(dashboard)/premium/v2-dashboard/page.tsx`).
  */
 
 const PLATFORM_LABEL_SHORT: Record<string, string> = {
@@ -102,44 +147,81 @@ const PLATFORM_LABEL_SHORT: Record<string, string> = {
   Telegram: "TG",
 };
 
-function ResourceGrid({ counts }: { counts: PremiumResourceCounts }) {
-  const [activeTab, setActiveTab] = useState(0);
-  const tabs = ["Tất cả", "Prompt", "Workflow", "Template", "Tài liệu", "Công cụ"];
-  const cards: { icon: string; num: number; label: string; href: string | null }[] = [
-    { icon: "linear-gradient(145deg,#8b6bff,#5a37e6)", num: counts.prompts, label: "Prompt", href: "/portal/prompts" },
-    { icon: "linear-gradient(145deg,#5f8fff,#1d5fd8)", num: counts.workflows, label: "Workflow", href: "/portal/sop" },
-    { icon: "linear-gradient(145deg,#3ecf7e,#189a52)", num: counts.templates, label: "Template", href: "/portal/templates" },
-    { icon: "linear-gradient(145deg,#ff9d52,#c2660a)", num: counts.ebooks, label: "Tài liệu", href: null },
-    { icon: "linear-gradient(145deg,#e879b9,#b4348a)", num: counts.checklists, label: "Checklist", href: "/portal/checklists" },
-    { icon: "linear-gradient(145deg,#4bc4e0,#0e7490)", num: counts.caseStudies, label: "Case Study", href: "/portal/case-studies" },
-  ];
-  return (
-    <>
-      <div className="res-tabs">
-        {tabs.map((t, i) => (
-          <button key={t} className={i === activeTab ? "active" : ""} onClick={() => setActiveTab(i)}>
-            {t}
-          </button>
-        ))}
-      </div>
-      <div className="res-grid">
-        {cards.map((c) => (
-          <div className="res-card" key={c.label}>
-            <div className="ico" style={{ background: c.icon }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="14" rx="2" />
-                <path d="M8 21h8M12 18v3" />
-              </svg>
-            </div>
-            <div className="num">{c.num}+</div>
-            <div className="lbl">{c.label}</div>
-            {c.href ? <Link href={c.href}>Xem ngay →</Link> : null}
-          </div>
-        ))}
-      </div>
-    </>
-  );
-}
+/**
+ * "Đặc quyền Portal 2.0 của bạn" (memberState) — thay "Kho tài nguyên
+ * Premium" đã bỏ, đúng yêu cầu Founder "dùng nội dung đặc quyền có thật ở
+ * Portal 2.0" — 6 link TĨNH tới đúng 6 route `/v2/*` thật đã build (không
+ * bịa route/tính năng mới).
+ */
+const PORTAL_PRIVILEGES: { href: string; bg: string; title: string; desc: string; icon: React.ReactNode }[] = [
+  {
+    href: "/v2/he-tri-thuc",
+    bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
+    title: "Hệ tri thức AI (CKOS)",
+    desc: "Prompt · Workflow · Template · Case Study",
+    icon: (
+      <>
+        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
+      </>
+    ),
+  },
+  {
+    href: "/v2/hoc-vien-ai",
+    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
+    title: "Học viện AI",
+    desc: "Trọn lộ trình bài giảng slide & video",
+    icon: (
+      <>
+        <path d="M22 10L12 5 2 10l10 5 10-5z" />
+        <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
+      </>
+    ),
+  },
+  {
+    href: "/v2/ai-workspace",
+    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
+    title: "AI Workspace",
+    desc: "Công cụ AI & workflow không giới hạn",
+    icon: (
+      <>
+        <rect x="3" y="4" width="18" height="14" rx="2" />
+        <path d="M8 21h8M12 18v3" />
+      </>
+    ),
+  },
+  {
+    href: "/v2/affiliate",
+    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
+    title: "Chương trình Affiliate",
+    desc: "Mã giới thiệu & hoa hồng của bạn",
+    icon: <path d="M8 12l3 3 5-6M12 22c5.5-1.5 9-6 9-11V5l-9-3-9 3v6c0 5 3.5 9.5 9 11z" />,
+  },
+  {
+    href: "/v2/companion",
+    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
+    title: "Companion",
+    desc: "Trò chuyện, gợi ý theo tiến độ thật",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="12" cy="12" r=".5" fill="#fff" />
+      </>
+    ),
+  },
+  {
+    href: "/v2/du-an-co-hoi",
+    bg: "linear-gradient(145deg,#e879b9,#b4348a)",
+    title: "Dự án & Cơ hội",
+    desc: "DigiU · SolarGroup · Ohana và hơn thế",
+    icon: (
+      <>
+        <path d="M3 7l9-4 9 4-9 4-9-4z" />
+        <path d="M3 17l9 4 9-4M3 12l9 4 9-4" />
+      </>
+    ),
+  },
+];
 
 /** `Math.round(durationDays/30)` — "30 ngày" của DB hiển thị gọn thành "1 tháng" thay vì số ngày lẻ. */
 function planMonths(durationDays: number): number {
@@ -203,7 +285,7 @@ function PlanPriceCard({ plan, isPremium }: { plan: PremiumPlan; isPremium: bool
         ))}
       </div>
       {isPremium ? (
-        <Link href="/portal/my-products" className="price-btn" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
+        <Link href="/v2/tai-khoan" className="price-btn" style={{ display: "block", textAlign: "center", textDecoration: "none" }}>
           Đã là Premium — Xem sản phẩm
         </Link>
       ) : (
@@ -322,19 +404,27 @@ function FaqList({ faq }: { faq: PremiumFaqItem[] }) {
 export function PremiumClient({
   premium,
   plans,
-  resourceCounts,
   communityChannels,
   faq,
   journey,
   memberSummary,
+  chrome,
+  paymentSteps,
+  perks,
+  advisorSituations,
+  founder,
 }: {
   premium: PremiumStatus;
   plans: PremiumPlan[];
-  resourceCounts: PremiumResourceCounts;
   communityChannels: LiveCommunityChannel[];
   faq: PremiumFaqItem[];
   journey: JourneyOverview;
   memberSummary: PremiumPlanMemberSummary;
+  chrome: PremiumChrome;
+  paymentSteps: PremiumPaymentStep[];
+  perks: PremiumPerk[];
+  advisorSituations: PremiumAdvisorSituation[];
+  founder: PremiumFounder;
 }) {
   const daysRemaining = computeDaysRemaining(memberSummary.expiresAt);
 
@@ -356,10 +446,8 @@ export function PremiumClient({
               <div className="page-head">
                 <div>
                   <h1>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e2b23c" strokeWidth="2">
-                      <path d="M7.5 4.5h9l3.5 5-8 10-8-10z" />
-                      <path d="M2 9.5h20" />
-                    </svg>
+                    {/* eslint-disable-next-line @next/next/no-img-element -- icon tĩnh cố định */}
+                    <img src="/v2-static/assets/icon-premium.png" alt="" width={24} height={24} style={{ objectFit: "contain" }} />
                     Premium
                   </h1>
                   <p>Đồng hành – Định hướng – Chuyển hóa cùng AI</p>
@@ -452,78 +540,7 @@ export function PremiumClient({
 
                   <div style={{ marginTop: 24 }}>
                     <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>Vì sao nên nâng cấp Premium?</h3>
-                    <div className="perk-grid">
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <circle cx="12" cy="12" r="9" />
-                            <circle cx="12" cy="12" r="4" />
-                            <circle cx="12" cy="12" r=".5" fill="#fff" />
-                          </svg>
-                        </div>
-                        <h5>Định hướng & Lộ trình cá nhân</h5>
-                        <p>Lộ trình được AI & chuyên gia thiết kế riêng theo mục tiêu của bạn.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                          </svg>
-                        </div>
-                        <h5>Bài giảng & Tài liệu độc quyền</h5>
-                        <p>Nội dung chuyên sâu chỉ dành riêng cho Premium Member, cập nhật liên tục.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <rect x="3" y="4" width="18" height="14" rx="2" />
-                            <path d="M8 21h8M12 18v3" />
-                          </svg>
-                        </div>
-                        <h5>Công cụ & Template thực chiến</h5>
-                        <p>Bộ công cụ, prompt, template và workflow giúp bạn làm chủ công việc nhanh.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#a08bff,#6d4aff)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <circle cx="12" cy="8" r="4" />
-                            <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-                          </svg>
-                        </div>
-                        <h5>Prompt Library cao cấp</h5>
-                        <p>Thư viện prompt chất lượng cao, được chọn lọc cho từng tình huống ứng dụng.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#4bc4e0,#0e7490)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                            <path d="M13.7 21a2 2 0 01-3.4 0" />
-                          </svg>
-                        </div>
-                        <h5>Hỗ trợ ưu tiên & đồng hành</h5>
-                        <p>Được ưu tiên hỗ trợ và đồng hành trong suốt quá trình học tập.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <circle cx="8" cy="8" r="3" />
-                            <circle cx="17" cy="9" r="3" />
-                            <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
-                          </svg>
-                        </div>
-                        <h5>Cộng đồng Premium chất lượng cao</h5>
-                        <p>Kết nối với những người cùng tư duy, cùng mục tiêu phát triển.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: 24 }}>
-                    <div className="section-head">
-                      <h3>Kho tài nguyên Premium</h3>
-                    </div>
-                    <div style={{ margin: "14px 0" }}>
-                      <ResourceGrid counts={resourceCounts} />
-                    </div>
+                    <PremiumPerksGrid seed={perks} audience="guest" />
                   </div>
 
                   <div style={{ marginTop: 24 }} id="chuong-trinh">
@@ -549,14 +566,11 @@ export function PremiumClient({
                     )}
                   </div>
 
-                  <div className="card" style={{ marginTop: 24 }}>
-                    <div className="card-head">
-                      <h4>Premium Member nói gì?</h4>
-                    </div>
-                    <p className="empty-hint">
-                      Chưa có đánh giá thật từ học viên — tính năng thu thập đánh giá sẽ được bổ sung khi có phản hồi thật.
-                    </p>
-                  </div>
+                  <PremiumPaymentStepsBlock seedChrome={chrome} seedSteps={paymentSteps} />
+
+                  <PremiumAdvisorBlock seed={advisorSituations} plans={plans} />
+
+                  <PremiumFounderBlock seed={founder} />
 
                   <FaqList faq={faq} />
 
@@ -600,7 +614,7 @@ export function PremiumClient({
                         dụng AI hiệu quả và bền vững.
                       </p>
                       <div className="hero-btn-row">
-                        <Link href="/portal/my-products" className="btn-gold">
+                        <Link href="/v2/tai-khoan" className="btn-gold">
                           Quản lý gói Premium
                         </Link>
                         <a href="#loi-ich" className="btn-ghost">
@@ -646,77 +660,30 @@ export function PremiumClient({
                     <div className="section-head">
                       <h3>Quyền lợi dành riêng cho Premium Member</h3>
                     </div>
-                    <div className="perk-grid" style={{ marginTop: 14 }}>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <circle cx="12" cy="12" r="9" />
-                            <circle cx="12" cy="12" r="4" />
-                            <circle cx="12" cy="12" r=".5" fill="#fff" />
-                          </svg>
-                        </div>
-                        <h5>Định hướng & Lộ trình cá nhân</h5>
-                        <p>Được định hướng 1:1 và thiết kế lộ trình học AI phù hợp với mục tiêu.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                          </svg>
-                        </div>
-                        <h5>Bản đồ học AI cá nhân hóa</h5>
-                        <p>Bản đồ học AI riêng giúp bạn đi đúng hướng, tiết kiệm thời gian.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#ff9d52,#c2660a)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <path d="M22 10L12 5 2 10l10 5 10-5z" />
-                            <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
-                          </svg>
-                        </div>
-                        <h5>Tài liệu học chuẩn độc quyền</h5>
-                        <p>Kho tài liệu chọn lọc, biên soạn chuẩn và luôn được cập nhật.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#a08bff,#6d4aff)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <rect x="3" y="4" width="18" height="14" rx="2" />
-                            <path d="M8 21h8M12 18v3" />
-                          </svg>
-                        </div>
-                        <h5>Mẫu công cụ & Workflow chuẩn</h5>
-                        <p>Bộ công cụ, workflow thực chiến giúp bạn ứng dụng ngay.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#4bc4e0,#0e7490)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <circle cx="12" cy="8" r="4" />
-                            <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
-                          </svg>
-                        </div>
-                        <h5>Prompt Library cao cấp</h5>
-                        <p>Thư viện prompt chất lượng cao cho mọi tình huống công việc.</p>
-                      </div>
-                      <div className="perk-card">
-                        <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
-                          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                            <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                            <path d="M13.7 21a2 2 0 01-3.4 0" />
-                          </svg>
-                        </div>
-                        <h5>Hỗ trợ ưu tiên & đồng hành</h5>
-                        <p>Được ưu tiên hỗ trợ và đồng hành trong suốt quá trình học tập.</p>
-                      </div>
+                    <div style={{ marginTop: 14 }}>
+                      <PremiumPerksGrid seed={perks} audience="member" />
                     </div>
                   </div>
 
                   <div className="two-col" style={{ marginTop: 24 }}>
                     <div>
                       <div className="section-head">
-                        <h3>Kho tài nguyên Premium</h3>
+                        <h3>Đặc quyền Portal 2.0 của bạn</h3>
                       </div>
-                      <div style={{ margin: "14px 0" }}>
-                        <ResourceGrid counts={resourceCounts} />
+                      <div className="privilege-grid" style={{ marginTop: 14 }}>
+                        {PORTAL_PRIVILEGES.map((item) => (
+                          <Link href={item.href} className="privilege-card" key={item.href}>
+                            <div className="ico" style={{ background: item.bg }}>
+                              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                                {item.icon}
+                              </svg>
+                            </div>
+                            <div>
+                              <h6>{item.title}</h6>
+                              <span>{item.desc}</span>
+                            </div>
+                          </Link>
+                        ))}
                       </div>
                     </div>
 
@@ -756,7 +723,7 @@ export function PremiumClient({
                           {memberSummary.expiresAt ? `Hết hạn (còn ${daysRemaining} ngày)` : "Không giới hạn thời gian"}
                         </div>
                       </div>
-                      <Link href="/portal/my-products" className="ms-manage" style={{ display: "inline-block", textAlign: "center", textDecoration: "none" }}>
+                      <Link href="/v2/tai-khoan" className="ms-manage" style={{ display: "inline-block", textAlign: "center", textDecoration: "none" }}>
                         Quản lý gói Premium
                       </Link>
                     </div>
@@ -792,8 +759,8 @@ export function PremiumClient({
                       <Link href="/v2/companion" style={{ display: "block" }}>
                         <button style={{ width: "100%" }}>Chat với chúng tôi</button>
                       </Link>
-                      <a href="/portal/support" className="ghost-link">
-                        Hoặc gửi yêu cầu hỗ trợ
+                      <a href={siteConfig.community.zaloGroup} target="_blank" rel="noopener noreferrer" className="ghost-link">
+                        Hoặc liên hệ qua Zalo
                       </a>
                     </div>
                   </div>
