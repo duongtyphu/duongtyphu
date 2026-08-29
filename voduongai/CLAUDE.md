@@ -7575,3 +7575,153 @@ Preview URL: (1) từ `/v2/premium`, bấm mua 1 gói → xác nhận vào đún
 đúng `/v2/tai-khoan` (không phải `/portal/my-products`); (3) tài khoản
 `duongvv.vn@gmail.com` xác nhận `isPremium: true` ngay khi vào `/v2/premium`
 (không cần đơn hàng nào).
+
+## Giai đoạn 5 — Rework thứ 2: cân bằng thẩm mỹ, So sánh quyền lợi, kho tài nguyên Premium, Zalo, tự động nâng cấp
+
+Founder yêu cầu 1 loạt sửa cho cả 2 trạng thái `/v2/premium`. Đã audit dữ
+liệu thật (Supabase MCP) trước khi code, không suy đoán — phát hiện 1 gap
+thật ("Mỗi ngày một ý tưởng" chưa có nội dung) và 1 bug thật (RLS
+`community` sai vocabulary trạng thái) trong lúc làm.
+
+**1 — Guest: "Vì sao nên nâng cấp Premium?" cân bằng.** `.perk-grid` (8 mục)
+đổi desktop từ `repeat(6,1fr)` (lệch 6+2 hàng cuối) sang `repeat(4,1fr)`
+(2 hàng x 4, cân bằng thật) + thêm hover effect (`border-color`/
+`translateY`/`box-shadow`) — áp dụng chung cho cả guest lẫn member vì
+dùng chung `PremiumPerksGrid`.
+
+**2 — Guest: "Chọn gói Premium phù hợp với bạn" sáng tạo hơn.** 3 thẻ giá
+thêm badge tầng TÍNH THẬT từ dữ liệu (`planTier()`, không bịa nhãn):
+`plan.isFeatured` (cột thật, Admin chọn qua `/admin/premium/plans`) →
+"🔥 Phổ biến nhất"; `bestValuePlanId()` (gói KHÔNG featured có % tiết
+kiệm thật cao nhất, tính qua `savingsPercent()` có sẵn) → "💎 Giá trị tốt
+nhất" (viền/nút vàng riêng); còn lại → "🚀 Bắt đầu nhẹ nhàng". Với dữ liệu
+hiện tại: Gói Tháng="Bắt đầu nhẹ nhàng", Gói 6 Tháng (`isFeatured=true`)
+="Phổ biến nhất", Gói 12 Tháng (savings ~46%, cao nhất)="Giá trị tốt
+nhất".
+
+**3 — Bỏ "Thanh toán 1 lần · Sở hữu trọn đời" ở cuối trang.** Đúng yêu cầu
+(chỉ `bottom-cta`, dòng y hệt ở `hero-trust` đầu trang GIỮ NGUYÊN — Founder
+chỉ nhắc "ở cuối trang"). Claim này cũng SAI với mô hình hiện tại (Phase
+38 đổi Premium sang gói thuê bao có `durationDays`, không còn "sở hữu
+trọn đời" đúng nghĩa) — lý do chính đáng để bỏ, không chỉ vì Founder yêu
+cầu.
+
+**4 — Thêm lại "So sánh quyền lợi".** `PremiumComparisonTable.tsx` (mới) —
+dựng THẬT từ `premium_plans.features` (không hardcode nội dung bảng).
+Mỗi gói viết kiểu CỘNG DỒN ("Tất cả quyền lợi Gói Tháng" + vài dòng riêng)
+— `resolvePlanFeatures()` đệ quy thay dòng "Tất cả quyền lợi Gói X" bằng
+toàn bộ danh sách đã resolve của gói X (tra theo `name`, chỉ nhận gói
+đứng TRƯỚC trong mảng, tránh vòng lặp). Hàng bảng = hợp các dòng đã
+resolve của mọi gói (thứ tự xuất hiện lần đầu). Tự động đúng nếu Admin
+sửa `features` sau này. CSS `.comp-table` vốn ĐÃ CÓ SẴN trong
+`premium.css` từ đầu (chưa từng bị xoá, chỉ JSX từng bị bỏ ở đợt Giai
+đoạn 5 gốc) — không cần CSS mới.
+
+**5 — Member: "Mỗi ngày một ý tưởng" — CHƯA LÀM, cần Founder xác nhận
+thêm.** Founder yêu cầu thêm quyền lợi FULL của tính năng này vào
+"Quyền lợi dành riêng cho Premium Member" — audit xác nhận
+`/v2/moi-ngay-mot-y-tuong` (và card tương ứng ở `/v2/trang-chu`) VẪN LÀ
+PLACEHOLDER "đang được xây dựng", chưa có mockup/nội dung/tính năng thật
+nào. Viết "quyền lợi đầy đủ" cho 1 tính năng chưa tồn tại là bịa, vi phạm
+NO-FAKE-DATA — đã dừng lại, KHÔNG thêm perk này. Cần Founder gửi nội
+dung/mockup thật của "Mỗi ngày một ý tưởng" trước khi làm tiếp mục này.
+
+**6 — "Đặc quyền Portal 2.0 của bạn" → "Đặc quyền truy cập kho tài nguyên
+Premium".** Founder phát hiện đúng: khối cũ (6 link điều hướng Học viện
+AI/Affiliate/Companion/Dự án & Cơ hội/Hành trình của tôi/Cộng đồng AI)
+TRÙNG nội dung với "Quyền lợi dành riêng cho Premium Member" ngay phía
+trên. Đã thay bằng 10 hộp nguồn tài nguyên, cùng link
+`/v2/hoc-vien-ai?tab=thu-vien` (tab "Thư viện tài nguyên" thật). 6 hộp
+đầu có SỐ ĐẾM THẬT — hàm mới `getLibraryResourceCounts()`
+(`live-premium-v2.ts`, đếm `prompts`/`sop`/`resources`/`best_practices`
+Published + 2 bộ sưu tập CKOS `ai-office`/`ai-research-presentation` qua
+`knowledge_seeds.collectionSlug`, KHÁC `getPremiumResourceCounts()` cũ vì
+hàm đó đếm 1 tập nguồn khác — `templates`/`ebooks`/`checklists`/
+`case_studies`, không khớp đúng "Thư viện tài nguyên"). Số thật tại thời
+điểm làm: Prompt 32, SOP & Quy trình 4, Tài nguyên 10, Thực hành tốt 13,
+AI Office 2026 8, AI Research & Productivity 3. 4 hộp cuối (Claude/
+ChatGPT/Gemini/Nhóm Workflow) — Founder xác nhận sẽ tự bổ sung nội dung
+sau, hiện "Sắp cập nhật" trung thực — KHÔNG tự suy diễn dù `tools`/
+`ai_workflow_sections` đã có dữ liệu thật liên quan (Claude/ChatGPT/
+Gemini là tool thật, `ai_workflow_sections` có 4 dòng), vì chưa rõ ý đồ
+nội dung Founder muốn cho 4 hộp này. CSS đổi tên `.privilege-grid`/
+`.privilege-card` (không dùng nơi nào khác, đã grep xác nhận) →
+`.resource-grid`/`.resource-card`, tăng cột `repeat(3,1fr)` →
+`repeat(5,1fr)` (10 hộp = 2 hàng x 5, cân bằng). Đã tách khỏi `.two-col`
+với "Lộ trình Premium của bạn" (10 hộp cần đủ chiều rộng trang, nhồi vào
+nửa `.two-col` sẽ quá hẹp) — "Lộ trình Premium của bạn" giờ là 1 card
+riêng full-width, nội dung giữ nguyên.
+
+**7 — "Cộng đồng Premium" — thêm nút Zalo.** Nút mới "Nhóm Zalo Premium"
+(`PREMIUM_ZALO_GROUP_URL = "https://zalo.me/g/ijozriwaktv2pserw1q9"`, link
+thật Founder cung cấp trực tiếp — KHÁC kênh Zalo cộng đồng chung
+`community.ch_4` đọc từ `getLiveCommunityChannels()`), thêm CẠNH nút
+"Tham gia ngay" hiện có, không thay thế.
+
+**BUG THẬT phát hiện khi test (không liên quan trực tiếp yêu cầu Founder,
+nhưng chặn đúng tính năng đang sửa) — RLS `community` sai vocabulary
+trạng thái.** Policy `"public read published" ON community FOR SELECT
+USING (status = 'Published')` — nhưng bảng `community` dùng vocabulary
+RIÊNG `"Active"/"Inactive"` (đã ghi rõ trong chính docblock
+`live-community.ts`, code lọc đúng `.eq("status", "Active")`) — policy
+KHÔNG BAO GIỜ khớp, khiến `getLiveCommunityChannels()` (dùng anon key qua
+`getSupabasePublic()`) luôn trả về `[]` cho MỌI user thật, trên CẢ
+`/v2/cong-dong-ai` lẫn `/v2/premium`'s "Cộng đồng Premium" — kể cả TRƯỚC
+đợt sửa này (không phải regression mới, bug đã tồn tại từ khi bảng được
+tạo). Phát hiện qua test devtest route với anon key thật (channels.length
+luôn 0 dù DB có 4 dòng Active hợp lệ). **Đã sửa** qua `apply_migration`
+(`fix_community_rls_status_vocabulary`) — đổi policy thành
+`USING (status = 'Active')`. Verify lại ngay sau khi sửa: devtest route
+hiện đúng nút "Nhóm Zalo Premium"/"Tham gia ngay" (trước đó rơi vào
+empty-hint "Chưa có kênh cộng đồng nào đang hoạt động").
+
+**8 — "Ngày/giờ đăng ký Premium phải kết nối thật".** `purchasedAt`
+(`memberSummary.purchasedAt` = `orders.created_at` thật, Phase 38) đã
+đúng từ trước — chỉ đổi CÁCH HIỂN THỊ: `formatDateTime()` (mới, tự dựng
+chuỗi `dd/MM/yyyy, HH:mm` thủ công thay vì `toLocaleString("vi-VN",
+{...})` — locale này tự đổi thứ tự thành "giờ trước ngày" khi kết hợp
+`hour`/`minute` với `day`/`month`/`year`, khác thứ tự Founder yêu cầu).
+"Bộ đếm thật của người dùng" (`ustat-grid`) — audit lại xác nhận cả 6 số
+(bài học/ngày còn lại/huy hiệu/giờ học/chuỗi ngày/% hoàn thành) đều đọc
+thật từ `getJourneyOverview()`/`memberSummary`, không có số nào bịa — đã
+đúng từ đợt Giai đoạn 5 gốc, không cần sửa thêm.
+
+**9 — "Cơ chế tự động nâng cấp Premium khi xác nhận thanh toán" — ĐÃ CÓ
+SẴN, không cần xây mới.** Xác nhận qua Supabase MCP (`pg_trigger`,
+`pg_proc`): trigger `on_order_confirmed_premium_plan` (hàm
+`handle_premium_plan_order_confirmed()`) gắn `AFTER UPDATE ON orders`,
+đang BẬT (`tgenabled='O'`) — logic: khi `status` chuyển sang `'confirmed'`
+VÀ đơn có `plan_id`, tự `UPDATE members SET premium_expires_at =
+GREATEST(COALESCE(premium_expires_at, now()), now()) + duration_days`.
+Đây chính là Phase 38 đã xây từ trước (đã ghi trong docblock
+`live-premium-plans.ts`) — không phải thiếu, chỉ chưa được xác nhận lại
+tường minh. Không có code nào cần sửa cho mục này.
+
+**File sửa:** `PremiumClient.tsx`, `page.tsx`, `premium.css`,
+`live-premium-v2.ts` (thêm `getLibraryResourceCounts()`). **File mới:**
+`src/components/v2/premium/PremiumComparisonTable.tsx`. **Migration:**
+`fix_community_rls_status_vocabulary` (Supabase, đã apply).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Test thật qua route dev-preview tạm
+(`devtest-premium`, anon key thật qua env — xoá route + rebuild sạch
+ngay sau khi xác nhận xong, xác nhận `npm run build` không còn nhắc tới
+route này): cả 2 trạng thái (guest qua `PremiumClient` với `premium`
+giả `signedIn:false`, member qua prop giả `isPremium:true` +
+`memberSummary` mẫu — CHỈ để bật đúng nhánh JSX, không phải dữ liệu thật
+persist ở đâu) render đúng 200, 0 lỗi log server. Xác nhận cụ thể: 3
+badge tầng gói đúng cả 3 loại; bảng so sánh render; dòng "Thanh toán 1
+lần" còn ĐÚNG 1 lần (hero, không phải 2); 10 hộp tài nguyên đủ cả 10,
+6 số đếm khớp CHÍNH XÁC với query SQL trực tiếp (32/4/10/13/8/3), 4 hộp
+"Sắp cập nhật" đúng 4 lần; nút "Nhóm Zalo Premium" đúng URL thật; ngày
+giờ hiển thị đúng thứ tự `dd/MM/yyyy, HH:mm`.
+
+**Chưa tự test được:** thao tác qua UI thật với tài khoản đăng nhập/mua
+gói thật (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY` đã nêu
+nhiều lần) — Founder tự test trên Preview/Production URL: (1) xác nhận
+"Cộng đồng Premium" giờ hiện đủ kênh + nút Zalo (bug RLS vừa sửa — trước
+đây LUÔN trống trên Production thật, không chỉ sandbox); (2) mua 1 gói
+thật, xác nhận `members.premium_expires_at` tự gia hạn ngay sau khi đơn
+`confirmed` (không cần thao tác gì thêm — cơ chế đã có sẵn từ Phase 38);
+(3) gửi nội dung/mockup thật cho "Mỗi ngày một ý tưởng" để hoàn tất mục
+5 còn thiếu.

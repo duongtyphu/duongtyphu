@@ -199,6 +199,61 @@ export const getPremiumResourceCounts = cache(async (): Promise<PremiumResourceC
   return counts;
 });
 
+/**
+ * Đợt sửa "Đặc quyền truy cập kho tài nguyên Premium" (thay hẳn khối
+ * "Đặc quyền Portal 2.0 của bạn" cũ — trùng nội dung với "Quyền lợi dành
+ * riêng cho Premium Member" ngay phía trên). 6 số đếm THẬT cho đúng 6
+ * nguồn tài nguyên hiển thị ở tab "Thư viện tài nguyên" của
+ * `/v2/hoc-vien-ai` (`prompts`/`sop`/`resources`/`best_practices` — 4
+ * nguồn tĩnh — + 2 bộ sưu tập CKOS `ai-office`/`ai-research-presentation`,
+ * đếm qua `knowledge_seeds.collectionSlug`) — KHÔNG dùng
+ * `getPremiumResourceCounts()` phía trên vì hàm đó đếm 1 tập nguồn KHÁC
+ * (`sop` được gọi là "workflows", cộng `templates`/`ebooks`/`checklists`/
+ * `case_studies` — không khớp đúng 4+2 nguồn thật của tab "Thư viện tài
+ * nguyên").
+ */
+export type PremiumLibraryCounts = {
+  prompt: number;
+  sop: number;
+  resource: number;
+  bestPractice: number;
+  aiOffice: number;
+  aiResearch: number;
+};
+
+const EMPTY_LIBRARY_COUNTS: PremiumLibraryCounts = { prompt: 0, sop: 0, resource: 0, bestPractice: 0, aiOffice: 0, aiResearch: 0 };
+
+export const getLibraryResourceCounts = cache(async (): Promise<PremiumLibraryCounts> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return EMPTY_LIBRARY_COUNTS;
+
+  const countPublished = (table: string) => supabase.from(table).select("id", { count: "exact", head: true }).eq("status", "Published");
+  const countInCollection = (slug: string) =>
+    supabase
+      .from("knowledge_seeds")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "Published")
+      .eq("data->>collectionSlug", slug);
+
+  const [prompt, sop, resource, bestPractice, aiOffice, aiResearch] = await Promise.all([
+    countPublished("prompts"),
+    countPublished("sop"),
+    countPublished("resources"),
+    countPublished("best_practices"),
+    countInCollection("ai-office"),
+    countInCollection("ai-research-presentation"),
+  ]);
+
+  return {
+    prompt: prompt.count ?? 0,
+    sop: sop.count ?? 0,
+    resource: resource.count ?? 0,
+    bestPractice: bestPractice.count ?? 0,
+    aiOffice: aiOffice.count ?? 0,
+    aiResearch: aiResearch.count ?? 0,
+  };
+});
+
 export type PremiumMemberSummary = {
   /** Tổng `orders.amount` thật đã thanh toán cho các chương trình Premium đã sở hữu (sau coupon nếu có). */
   totalAmount: number;
