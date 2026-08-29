@@ -4,6 +4,7 @@ import {
   getAllLivePremiumPerks,
   getAllLivePremiumAdvisorSituations,
   getLivePremiumFounder,
+  getLibraryResourceCounts,
 } from "@/lib/portal/live-premium-v2";
 import { getLivePremiumPlans } from "@/lib/portal/live-premium-plans";
 import { getLiveCommunityChannels } from "@/lib/portal/live-community";
@@ -42,7 +43,7 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  * code, không port thẳng được — xem `supabase-phase28-premium-v2-perks-advisor-founder.sql`).
  */
 export default async function PremiumPage() {
-  const [premium, plans, communityChannels, faq, journey, memberSummary, chrome, paymentSteps, perks, advisorSituations, founder] =
+  const [premium, plans, communityChannels, faq, journey, memberSummary, chrome, paymentSteps, perks, advisorSituations, founder, libraryCounts] =
     await Promise.all([
       getPremiumStatus(),
       getLivePremiumPlans(),
@@ -55,6 +56,7 @@ export default async function PremiumPage() {
       getAllLivePremiumPerks(),
       getAllLivePremiumAdvisorSituations(),
       getLivePremiumFounder(),
+      getLibraryResourceCounts(),
     ]);
 
   return (
@@ -70,6 +72,7 @@ export default async function PremiumPage() {
       perks={perks}
       advisorSituations={advisorSituations}
       founder={founder}
+      libraryCounts={libraryCounts}
     />
   );
 }

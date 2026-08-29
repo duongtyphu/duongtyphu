@@ -120,8 +120,12 @@
 .pm .section-head{display:flex;align-items:baseline;justify-content:space-between}
 .pm .section-head h3{font-size:17px;font-weight:800}
 .pm .section-head a{font-size:12.5px;font-weight:700}
-.pm .perk-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
-.pm .perk-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 14px}
+/* Đợt rework "cân bằng trong trang" — 8 mục (guest lẫn member) trên
+ * `repeat(6,1fr)` xếp lệch 6+2 ở hàng cuối; đổi sang `repeat(4,1fr)` = 2
+ * hàng x 4, cân bằng thật cho đúng số lượng mục đang có. */
+.pm .perk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.pm .perk-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 14px;transition:border-color .15s,transform .15s,box-shadow .15s}
+.pm .perk-card:hover{border-color:var(--violet);transform:translateY(-3px);box-shadow:0 12px 24px rgba(109,74,255,.14)}
 .pm .perk-card .ico{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
 .pm .perk-card .ico svg{width:20px;height:20px}
 .pm .perk-card h5{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.35}
@@ -313,17 +317,38 @@
 .pm .founder-expertise{margin-bottom:14px}
 .pm .founder-philosophy{font-size:12.5px;font-style:italic;color:var(--text);background:var(--violet-light);border-radius:10px;padding:12px 14px;margin-bottom:14px}
 
-.pm .privilege-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.pm .privilege-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s}
-.pm .privilege-card:hover{border-color:var(--violet);transform:translateY(-2px)}
-.pm .privilege-card .ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pm .privilege-card .ico svg{width:17px;height:17px}
-.pm .privilege-card h6{font-size:12.5px;font-weight:700}
-.pm .privilege-card span{font-size:11px;color:var(--muted)}
+/* Đợt rework "Đặc quyền truy cập kho tài nguyên Premium" — thay
+ * `.privilege-grid`/`.privilege-card` (6 link điều hướng, trùng nội dung
+ * `.perk-grid` phía trên) bằng `.resource-grid`/`.resource-card` (10 hộp
+ * nguồn tài nguyên) — cùng kiểu thẻ, đổi tên cho đúng nội dung mới + tăng
+ * số cột (5, không phải 3) vì có 10 hộp cần cân bằng 2 hàng x 5. */
+.pm .resource-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.pm .resource-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s,box-shadow .15s}
+.pm .resource-card:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:0 10px 20px rgba(109,74,255,.12)}
+.pm .resource-card .ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pm .resource-card .ico svg{width:17px;height:17px}
+.pm .resource-card h6{font-size:12.5px;font-weight:700}
+.pm .resource-card span{font-size:11px;color:var(--muted)}
+
+/* Badge tầng gói ("🔥 Phổ biến nhất"/"💎 Giá trị tốt nhất"/"🚀 Bắt đầu nhẹ
+ * nhàng") + biến thể "Giá trị tốt nhất" (viền/nền vàng, khác `.featured`
+ * đã có sẵn — viền tím). */
+.pm .tier-tag{display:block;font-size:10.5px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.pm .price-card.featured .tier-tag{color:var(--violet)}
+.pm .price-card.best-value{border-color:var(--gold);box-shadow:0 14px 30px rgba(226,178,60,.16)}
+.pm .price-card.best-value .tier-tag{color:#a9822c}
+.pm .price-card.best-value .price-btn{border-color:var(--gold);color:#a9822c}
+.pm .price-card.best-value .price-btn:hover{background:#fffaf0}
+
+/* Nút "Nhóm Zalo Premium" cạnh "Tham gia ngay" ở khối Cộng đồng Premium. */
+.pm .community-right-actions{display:flex;flex-direction:column;gap:8px}
+.pm .zalo-btn{display:flex;align-items:center;justify-content:center;gap:7px;background:#fff;border:1.5px solid #0068ff;color:#0068ff;padding:9px 16px;border-radius:9px;font-weight:700;font-size:12.5px;white-space:nowrap;transition:background .15s}
+.pm .zalo-btn:hover{background:#eaf2ff}
+.pm .zalo-btn svg{width:15px;height:15px}
 
 @media (max-width:1180px){
   .pm .payment-steps-grid{grid-template-columns:repeat(2,1fr)}
   .pm .founder-card{grid-template-columns:1fr}
   .pm .founder-photo{max-width:160px;margin:0 auto}
-  .pm .privilege-grid{grid-template-columns:1fr}
+  .pm .resource-grid{grid-template-columns:repeat(2,1fr)}
 }

@@ -7,7 +7,7 @@ import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { formatVnd } from "@/components/portal/premium/premium-programs";
 import type { PremiumPlan } from "@/lib/portal/live-premium-plans";
-import type { PremiumPlanMemberSummary, PremiumPerk, PremiumAdvisorSituation, PremiumFounder } from "@/lib/portal/live-premium-v2";
+import type { PremiumPlanMemberSummary, PremiumPerk, PremiumAdvisorSituation, PremiumFounder, PremiumLibraryCounts } from "@/lib/portal/live-premium-v2";
 import type { LiveCommunityChannel } from "@/lib/portal/live-community";
 import type { PremiumFaqItem, PremiumChrome, PremiumPaymentStep } from "@/lib/portal/live-premium";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
@@ -16,6 +16,7 @@ import { PremiumPerksGrid } from "@/components/v2/premium/PremiumPerksGrid";
 import { PremiumPaymentStepsBlock } from "@/components/v2/premium/PremiumPaymentStepsBlock";
 import { PremiumAdvisorBlock } from "@/components/v2/premium/PremiumAdvisorBlock";
 import { PremiumFounderBlock } from "@/components/v2/premium/PremiumFounderBlock";
+import { PremiumComparisonTable } from "@/components/v2/premium/PremiumComparisonTable";
 
 import "./premium.css";
 
@@ -40,9 +41,12 @@ import "./premium.css";
  *    THỜI HẠN thật (khác quyết định "mua đứt = vĩnh viễn" cũ của 5 chương
  *    trình, 2 cơ chế cùng tồn tại song song ở `getPremiumStatus()`).
  *
- * 3. Bảng "So sánh quyền lợi" (7 hàng theo 3 gói thuê bao) — BỎ HẲN, đúng
- *    quyết định gốc: mockup có sẵn nhưng đây không phải yêu cầu bắt buộc,
- *    3 thẻ giá đã liệt kê đủ tính năng từng gói.
+ * 3. Bảng "So sánh quyền lợi" — quyết định gốc từng BỎ HẲN (mockup có sẵn
+ *    nhưng không bắt buộc, 3 thẻ giá đã đủ) — Founder ĐẢO NGƯỢC quyết định
+ *    này ở đợt rework sau (xem mục "GIAI ĐOẠN 5 — REWORK" cuối docblock),
+ *    yêu cầu thêm lại. CSS `.comp-table` vẫn còn nguyên trong `premium.css`
+ *    từ đầu (chưa từng bị xoá) — chỉ JSX bị bỏ, giờ dựng lại qua
+ *    `PremiumComparisonTable.tsx`.
  *
  * 4. "Lộ trình Premium của bạn" (6 bước bịa % giả) → 4 giai đoạn thật của
  *    `learning_paths` qua `getJourneyOverview()` (tái dùng nguyên, không
@@ -146,6 +150,80 @@ import "./premium.css";
  *    thanh toán/FAQ — dùng chung Portal 1.0), `/admin/premium/v2-dashboard`
  *    (MỚI — quyền lợi/cố vấn chọn gói/người đồng hành, 3 khối riêng của
  *    `/v2/premium`, xem `src/app/admin/(dashboard)/premium/v2-dashboard/page.tsx`).
+ *
+ * ─── GIAI ĐOẠN 5 — REWORK (yêu cầu riêng, ngay sau khi Giai đoạn 5 gốc lên
+ * Production) ───────────────────────────────────────────────────────────
+ *
+ * 1. Guest state — "Vì sao nên nâng cấp Premium?" (`.perk-grid`, 8 mục)
+ *    đổi lưới desktop từ `repeat(6,1fr)` (8 mục = 6+2 lệch hàng) sang
+ *    `repeat(4,1fr)` (8 mục = 2 hàng x 4, cân bằng thật) + thêm hover
+ *    effect (`premium.css`).
+ *
+ * 2. "Chọn gói Premium phù hợp với bạn" — 3 thẻ giá thêm badge phân tầng
+ *    TÍNH THẬT từ dữ liệu (không bịa nhãn marketing): `plan.isFeatured`
+ *    (cột thật) → "🔥 Phổ biến nhất"; `bestValuePlanId()` (gói KHÔNG
+ *    featured có % tiết kiệm thật cao nhất, tính qua `savingsPercent()`)
+ *    → "💎 Giá trị tốt nhất"; còn lại → "🚀 Bắt đầu nhẹ nhàng". Xem
+ *    `planTier()`.
+ *
+ * 3. Bỏ dòng "Thanh toán 1 lần · Sở hữu trọn đời" ở `bottom-cta` (cuối
+ *    trang guest) — Founder yêu cầu trực tiếp (đây cũng là claim SAI với
+ *    mô hình thuê bao có thời hạn hiện tại — Phase 38 đã đổi Premium sang
+ *    "gói thuê bao có `durationDays`", không còn "sở hữu trọn đời" đúng
+ *    nghĩa). Dòng y hệt còn ở `hero-trust` (đầu trang) — GIỮ NGUYÊN, ngoài
+ *    phạm vi yêu cầu (chỉ nhắc "ở cuối trang").
+ *
+ * 4. Thêm lại "So sánh quyền lợi" — `PremiumComparisonTable.tsx` (component
+ *    mới), dựng THẬT từ `premium_plans.features` (đệ quy resolve "Tất cả
+ *    quyền lợi Gói X" thành danh sách đầy đủ), không hardcode nội dung.
+ *
+ * 5. Member state — `.perk-card` (dùng chung guest/member) hover effect từ
+ *    mục 1 áp dụng luôn cho "Quyền lợi dành riêng cho Premium Member".
+ *    **CHƯA thêm quyền lợi "Mỗi ngày một ý tưởng"** — Founder yêu cầu
+ *    nhưng route `/v2/moi-ngay-mot-y-tuong` hiện vẫn là placeholder
+ *    "đang xây dựng" (xem docblock file đó), CHƯA có nội dung/tính năng
+ *    thật nào để mô tả — viết "quyền lợi đầy đủ" cho 1 tính năng chưa tồn
+ *    tại là bịa, vi phạm NO-FAKE-DATA. Đã báo lại Founder, chờ nội dung
+ *    thật (mockup/mô tả tính năng) trước khi thêm perk này.
+ *
+ * 6. "Đặc quyền Portal 2.0 của bạn" (6 link điều hướng, TRÙNG nội dung với
+ *    "Quyền lợi dành riêng cho Premium Member" ngay phía trên — cả 2 đều
+ *    liệt kê Học viện AI/Affiliate/Companion...) → thay hẳn bằng "Đặc
+ *    quyền truy cập kho tài nguyên Premium" — 10 hộp nguồn tài nguyên,
+ *    cùng link `/v2/hoc-vien-ai?tab=thu-vien` (tab "Thư viện tài nguyên").
+ *    6 hộp đầu (Prompt/SOP & Quy trình/Tài nguyên/Thực hành tốt/AI Office
+ *    2026/AI Research & Productivity) có SỐ ĐẾM THẬT
+ *    (`getLibraryResourceCounts()`, mới, đếm `prompts`/`sop`/`resources`/
+ *    `best_practices` + 2 bộ sưu tập CKOS qua `knowledge_seeds.collectionSlug`).
+ *    4 hộp cuối (Claude/ChatGPT/Gemini/Nhóm Workflow) — Founder xác nhận sẽ
+ *    tự bổ sung nội dung sau, hiện "Sắp cập nhật" trung thực, KHÔNG bịa số
+ *    đếm dù `tools`/`ai_workflow_sections` đã có dữ liệu thật liên quan
+ *    (cố ý không tự suy diễn nội dung Founder chưa xác nhận). Đã tách khỏi
+ *    `.two-col` với "Lộ trình Premium của bạn" (10 hộp cần đủ chiều rộng
+ *    trang mới cân bằng — nhồi vào nửa `.two-col` sẽ làm hộp quá hẹp) —
+ *    "Lộ trình Premium của bạn" giờ là 1 card riêng, giữ nguyên nội dung.
+ *
+ * 7. "Cộng đồng Premium" — thêm nút "Nhóm Zalo Premium"
+ *    (`PREMIUM_ZALO_GROUP_URL`, link thật Founder cung cấp trực tiếp —
+ *    KHÁC kênh Zalo cộng đồng chung `community.ch_4`) cạnh nút "Tham gia
+ *    ngay" hiện có, không thay thế.
+ *
+ * 8. "Ngày/giờ đăng ký Premium" — `formatDateTime()` (mới) hiện đủ NGÀY +
+ *    GIỜ cho "Bắt đầu gói hiện tại" (trước chỉ có ngày,
+ *    `toLocaleDateString`) — vẫn cùng nguồn thật `memberSummary.purchasedAt`
+ *    (`orders.created_at`) đã đúng từ Phase 38, chỉ đổi cách hiển thị.
+ *    "Bộ đếm thật của người dùng" (`ustat-grid`) đã audit lại — toàn bộ 6
+ *    số đều đọc thật từ `getJourneyOverview()`/`memberSummary`, không có
+ *    số nào bịa (đã đúng từ mục 6 phía trên, không cần sửa thêm).
+ *
+ * 9. "Cơ chế tự động nâng cấp Premium khi xác nhận thanh toán" — ĐÃ CÓ SẴN
+ *    TỪ PHASE 38, không cần xây mới: trigger `on_order_confirmed_premium_plan`
+ *    (hàm `handle_premium_plan_order_confirmed()`) gắn trên `orders`,
+ *    `AFTER UPDATE`, tự gia hạn `members.premium_expires_at` ngay khi
+ *    `status` chuyển `confirmed` VÀ đơn có `plan_id`. Đã xác nhận qua
+ *    `pg_trigger` (Supabase MCP): trigger đang BẬT (`tgenabled='O'`) trên
+ *    bảng `orders` thật — không phải chỉ định nghĩa function rồi bỏ quên
+ *    gắn trigger.
  */
 
 const PLATFORM_LABEL_SHORT: Record<string, string> = {
@@ -156,83 +234,129 @@ const PLATFORM_LABEL_SHORT: Record<string, string> = {
   Telegram: "TG",
 };
 
+/** Nhóm Zalo riêng cho Premium Member — link thật Founder cung cấp trực
+ * tiếp (khác kênh Zalo cộng đồng chung `community.ch_4` đọc từ
+ * `getLiveCommunityChannels()`, dùng chung ở `/v2/cong-dong-ai`). */
+const PREMIUM_ZALO_GROUP_URL = "https://zalo.me/g/ijozriwaktv2pserw1q9";
+
 /**
- * "Đặc quyền Portal 2.0 của bạn" (memberState) — thay "Kho tài nguyên
- * Premium" đã bỏ, đúng yêu cầu Founder "dùng nội dung đặc quyền có thật ở
- * Portal 2.0" — 6 link TĨNH tới đúng 6 route `/v2/*` thật đã build (không
- * bịa route/tính năng mới).
+ * "Đặc quyền truy cập kho tài nguyên Premium" (memberState) — thay hẳn
+ * "Đặc quyền Portal 2.0 của bạn" cũ (Founder phát hiện: trùng nội dung với
+ * "Quyền lợi dành riêng cho Premium Member" ngay phía trên — 2 khối cùng
+ * liệt kê Học viện AI/Affiliate/Companion...). Khối mới liệt kê ĐÚNG 10
+ * nguồn của tab "Thư viện tài nguyên" (`/v2/hoc-vien-ai?tab=thu-vien`,
+ * xem `TAB_QUERY_KEYS` trong `HocVienAiClient.tsx`) — 6 nguồn đầu có số
+ * đếm THẬT (`getLibraryResourceCounts()`), 4 nguồn cuối (Claude/ChatGPT/
+ * Gemini/Nhóm Workflow) Founder xác nhận sẽ tự bổ sung nội dung sau —
+ * hiện "Sắp cập nhật" trung thực, KHÔNG bịa số đếm/mô tả cho 4 mục này.
  */
-const PORTAL_PRIVILEGES: { href: string; bg: string; title: string; desc: string; icon: React.ReactNode }[] = [
-  {
-    href: "/v2/hoc-vien-ai",
-    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
-    title: "Học viện AI",
-    desc: "Hệ tri thức, bài giảng slide & video, thư viện tài nguyên",
-    icon: (
-      <>
-        <path d="M22 10L12 5 2 10l10 5 10-5z" />
-        <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
-      </>
-    ),
-  },
-  {
-    href: "/v2/affiliate",
-    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    title: "Chương trình Affiliate",
-    desc: "Mã giới thiệu & hoa hồng của bạn",
-    icon: <path d="M8 12l3 3 5-6M12 22c5.5-1.5 9-6 9-11V5l-9-3-9 3v6c0 5 3.5 9.5 9 11z" />,
-  },
-  {
-    href: "/v2/companion",
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    title: "Companion",
-    desc: "Trò chuyện, gợi ý theo tiến độ thật",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <circle cx="12" cy="12" r="4" />
-        <circle cx="12" cy="12" r=".5" fill="#fff" />
-      </>
-    ),
-  },
-  {
-    href: "/v2/du-an-co-hoi",
-    bg: "linear-gradient(145deg,#e879b9,#b4348a)",
-    title: "Dự án & Cơ hội",
-    desc: "DigiU · SolarGroup · Ohana và hơn thế",
-    icon: (
-      <>
-        <path d="M3 7l9-4 9 4-9 4-9-4z" />
-        <path d="M3 17l9 4 9-4M3 12l9 4 9-4" />
-      </>
-    ),
-  },
-  {
-    href: "/v2/hanh-trinh-cua-toi",
-    bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
-    title: "Hành trình của tôi",
-    desc: "My Story · Mirror · Bản đồ hành trình · Huy hiệu",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3 3" />
-      </>
-    ),
-  },
-  {
-    href: "/v2/cong-dong-ai",
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    title: "Cộng đồng AI",
-    desc: "Kết nối qua các kênh cộng đồng chính thức",
-    icon: (
-      <>
-        <circle cx="8" cy="8" r="3" />
-        <circle cx="17" cy="9" r="3" />
-        <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
-      </>
-    ),
-  },
-];
+type ResourceLibraryBox = { key: string; bg: string; title: string; icon: React.ReactNode; count: number | null };
+
+function buildResourceLibraryBoxes(counts: PremiumLibraryCounts): ResourceLibraryBox[] {
+  return [
+    {
+      key: "prompt",
+      bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
+      title: "Prompt",
+      icon: (
+        <>
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+        </>
+      ),
+      count: counts.prompt,
+    },
+    {
+      key: "sop",
+      bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
+      title: "SOP & Quy trình",
+      icon: (
+        <>
+          <path d="M9 11l3 3L22 4" />
+          <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+        </>
+      ),
+      count: counts.sop,
+    },
+    {
+      key: "resource",
+      bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
+      title: "Tài nguyên",
+      icon: <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />,
+      count: counts.resource,
+    },
+    {
+      key: "best-practice",
+      bg: "linear-gradient(145deg,#e2b23c,#c2660a)",
+      title: "Thực hành tốt",
+      icon: <path d="M12 2l2.6 6.6L21 9.3l-5 4.6L17.4 21 12 17.6 6.6 21 8 13.9l-5-4.6 6.4-.7z" />,
+      count: counts.bestPractice,
+    },
+    {
+      key: "ai-office",
+      bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
+      title: "AI Office 2026",
+      icon: (
+        <>
+          <rect x="3" y="7" width="18" height="13" rx="2" />
+          <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" />
+        </>
+      ),
+      count: counts.aiOffice,
+    },
+    {
+      key: "ai-research",
+      bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
+      title: "AI Research & Productivity",
+      icon: (
+        <>
+          <circle cx="11" cy="11" r="7" />
+          <path d="M21 21l-4.35-4.35" />
+        </>
+      ),
+      count: counts.aiResearch,
+    },
+    {
+      key: "claude",
+      bg: "linear-gradient(145deg,#e879b9,#b4348a)",
+      title: "Claude",
+      icon: <path d="M12 2l2.6 6.6L21 9.3l-5 4.6L17.4 21 12 17.6 6.6 21 8 13.9l-5-4.6 6.4-.7z" />,
+      count: null,
+    },
+    {
+      key: "chatgpt",
+      bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
+      title: "ChatGPT",
+      icon: (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="4" />
+        </>
+      ),
+      count: null,
+    },
+    {
+      key: "gemini",
+      bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
+      title: "Gemini",
+      icon: <path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z" />,
+      count: null,
+    },
+    {
+      key: "workflow",
+      bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
+      title: "Nhóm Workflow",
+      icon: (
+        <>
+          <circle cx="6" cy="6" r="2.5" />
+          <circle cx="18" cy="6" r="2.5" />
+          <circle cx="12" cy="18" r="2.5" />
+          <path d="M6 8.5V13a3 3 0 003 3h1M18 8.5V13a3 3 0 01-3 3h-1" />
+        </>
+      ),
+      count: null,
+    },
+  ];
+}
 
 /** `Math.round(durationDays/30)` — "30 ngày" của DB hiển thị gọn thành "1 tháng" thay vì số ngày lẻ. */
 function planMonths(durationDays: number): number {
@@ -252,6 +376,17 @@ function maxSavingsLabel(plans: PremiumPlan[]): string | null {
   return `Tiết kiệm đến ${Math.max(...percents)}%`;
 }
 
+/** Gói "Giá trị tốt nhất" — gói KHÔNG phải `isFeatured` có % tiết kiệm thật cao nhất (tính qua `savingsPercent()`). `null` nếu không gói nào đủ điều kiện (không có `originalPrice` hoặc tất cả đều `isFeatured`). */
+function bestValuePlanId(plans: PremiumPlan[]): string | null {
+  let best: { id: string; percent: number } | null = null;
+  for (const p of plans) {
+    if (p.isFeatured) continue;
+    const percent = savingsPercent(p.price, p.originalPrice);
+    if (percent !== null && (!best || percent > best.percent)) best = { id: p.id, percent };
+  }
+  return best?.id ?? null;
+}
+
 /** `Date.now()` là hàm impure — tách khỏi thân `PremiumClient` (component,
  * trả JSX) sang hàm thuần độc lập, đúng lỗi `react-hooks/purity` đã gặp
  * nhiều lần trong dự án (xem CLAUDE.md "countNewUsers()" ở Admin Người dùng). */
@@ -260,10 +395,38 @@ function computeDaysRemaining(expiresAt: string | null): number | null {
   return Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
 }
 
-function PlanPriceCard({ plan, isPremium }: { plan: PremiumPlan; isPremium: boolean }) {
+/** "Ngày/giờ đăng ký Premium phải kết nối thật" — `purchasedAt` là
+ * `orders.created_at` thật của đơn mua gói gần nhất (`getPremiumPlanMemberSummary()`),
+ * hiển thị kèm GIỜ (không chỉ ngày như bản cũ) theo đúng yêu cầu. */
+function formatDateTime(iso: string): string {
+  const d = new Date(iso);
+  const p = (n: number) => String(n).padStart(2, "0");
+  // Tự dựng chuỗi thay vì `toLocaleString("vi-VN", {...})` — locale này tự
+  // đổi thứ tự thành "giờ trước ngày" khi kết hợp `hour`/`minute` với
+  // `day`/`month`/`year`, khác thứ tự "ngày/giờ" Founder yêu cầu.
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}, ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+/**
+ * Đợt sửa "3 hộp thiết kế sáng tạo hơn, đẳng cấp" — tier badge tính THẬT
+ * từ dữ liệu (không bịa nhãn marketing): `plan.isFeatured` (cột thật
+ * `premium_plans.is_featured`, Admin tự chọn qua `/admin/premium/plans`)
+ * → "Phổ biến nhất"; `isBestValue` (gói có % tiết kiệm CAO NHẤT trong các
+ * gói đang có, tính thật qua `savingsPercent()`, KHÔNG phải gói featured)
+ * → "Giá trị tốt nhất"; còn lại (thường là gói rẻ nhất, không giảm giá)
+ * → "Bắt đầu nhẹ nhàng".
+ */
+function planTier(plan: PremiumPlan, isBestValue: boolean): { label: string; icon: string; className: string; savePillBg?: string } {
+  if (plan.isFeatured) return { label: "Phổ biến nhất", icon: "🔥", className: "price-card featured" };
+  if (isBestValue) return { label: "Giá trị tốt nhất", icon: "💎", className: "price-card best-value", savePillBg: "#a9822c" };
+  return { label: "Bắt đầu nhẹ nhàng", icon: "🚀", className: "price-card", savePillBg: "#5a37e6" };
+}
+
+function PlanPriceCard({ plan, isPremium, isBestValue }: { plan: PremiumPlan; isPremium: boolean; isBestValue: boolean }) {
   const savePercent = savingsPercent(plan.price, plan.originalPrice);
   const months = planMonths(plan.durationDays);
   const perMonth = months > 1 ? Math.round(plan.price / months) : null;
+  const tier = planTier(plan, isBestValue);
   const checkoutHref = `/v2/checkout?${new URLSearchParams({
     type: "premium_plan",
     id: plan.id,
@@ -272,12 +435,15 @@ function PlanPriceCard({ plan, isPremium }: { plan: PremiumPlan; isPremium: bool
   }).toString()}`;
 
   return (
-    <div className={plan.isFeatured ? "price-card featured" : "price-card"}>
+    <div className={tier.className}>
       {savePercent !== null && (
-        <span className="save-pill" style={plan.isFeatured ? undefined : { background: "#5a37e6" }}>
+        <span className="save-pill" style={tier.savePillBg ? { background: tier.savePillBg } : undefined}>
           Tiết kiệm {savePercent}%
         </span>
       )}
+      <span className="tier-tag">
+        {tier.icon} {tier.label}
+      </span>
       <h5>{plan.name}</h5>
       <div className="sub">{plan.subtitle}</div>
       <div className="amt">
@@ -382,9 +548,18 @@ function CommunityStrip({ channels }: { channels: LiveCommunityChannel[] }) {
       </div>
       <div className="community-right">
         <p>Kết nối trực tiếp với VO DUONG AI qua các kênh chính thức bên trên.</p>
-        <a href={channels[0].url} target="_blank" rel="noopener noreferrer">
-          <button>Tham gia ngay</button>
-        </a>
+        <div className="community-right-actions">
+          <a href={channels[0].url} target="_blank" rel="noopener noreferrer">
+            <button>Tham gia ngay</button>
+          </a>
+          <a href={PREMIUM_ZALO_GROUP_URL} target="_blank" rel="noopener noreferrer" className="zalo-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.7 21a2 2 0 01-3.4 0" />
+            </svg>
+            Nhóm Zalo Premium
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -424,6 +599,7 @@ export function PremiumClient({
   perks,
   advisorSituations,
   founder,
+  libraryCounts,
 }: {
   premium: PremiumStatus;
   plans: PremiumPlan[];
@@ -436,8 +612,10 @@ export function PremiumClient({
   perks: PremiumPerk[];
   advisorSituations: PremiumAdvisorSituation[];
   founder: PremiumFounder;
+  libraryCounts: PremiumLibraryCounts;
 }) {
   const daysRemaining = computeDaysRemaining(memberSummary.expiresAt);
+  const bestValueId = bestValuePlanId(plans);
 
   return (
     <div className="pm">
@@ -571,11 +749,18 @@ export function PremiumClient({
                     ) : (
                       <div className="price-grid" style={{ marginTop: 14 }}>
                         {plans.map((plan) => (
-                          <PlanPriceCard plan={plan} isPremium={premium.isPremium} key={plan.id} />
+                          <PlanPriceCard
+                            plan={plan}
+                            isPremium={premium.isPremium}
+                            isBestValue={plan.id === bestValueId}
+                            key={plan.id}
+                          />
                         ))}
                       </div>
                     )}
                   </div>
+
+                  <PremiumComparisonTable plans={plans} />
 
                   <PremiumPaymentStepsBlock seedChrome={chrome} seedSteps={paymentSteps} />
 
@@ -601,12 +786,6 @@ export function PremiumClient({
                           <path d="M5 12h14M13 6l6 6-6 6" />
                         </svg>
                       </a>
-                      <span className="trust">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                        Thanh toán 1 lần · Sở hữu trọn đời
-                      </span>
                     </div>
                   </div>
                 </>
@@ -676,34 +855,32 @@ export function PremiumClient({
                     </div>
                   </div>
 
-                  <div className="two-col" style={{ marginTop: 24 }}>
-                    <div>
-                      <div className="section-head">
-                        <h3>Đặc quyền Portal 2.0 của bạn</h3>
-                      </div>
-                      <div className="privilege-grid" style={{ marginTop: 14 }}>
-                        {PORTAL_PRIVILEGES.map((item) => (
-                          <Link href={item.href} className="privilege-card" key={item.href}>
-                            <div className="ico" style={{ background: item.bg }}>
-                              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                                {item.icon}
-                              </svg>
-                            </div>
-                            <div>
-                              <h6>{item.title}</h6>
-                              <span>{item.desc}</span>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
+                  <div style={{ marginTop: 24 }}>
+                    <div className="section-head">
+                      <h3>Đặc quyền truy cập kho tài nguyên Premium</h3>
                     </div>
+                    <div className="resource-grid" style={{ marginTop: 14 }}>
+                      {buildResourceLibraryBoxes(libraryCounts).map((item) => (
+                        <Link href="/v2/hoc-vien-ai?tab=thu-vien" className="resource-card" key={item.key}>
+                          <div className="ico" style={{ background: item.bg }}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                              {item.icon}
+                            </svg>
+                          </div>
+                          <div>
+                            <h6>{item.title}</h6>
+                            <span>{item.count !== null ? `${item.count} mục` : "Sắp cập nhật"}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
 
-                    <div className="card roadmap-card">
-                      <div className="card-head">
-                        <h4>Lộ trình Premium của bạn</h4>
-                      </div>
-                      <PremiumRoadmap journey={journey} />
+                  <div className="card roadmap-card" style={{ marginTop: 24 }}>
+                    <div className="card-head">
+                      <h4>Lộ trình Premium của bạn</h4>
                     </div>
+                    <PremiumRoadmap journey={journey} />
                   </div>
 
                   <div className="two-col" style={{ marginTop: 24, gridTemplateColumns: "1.4fr .8fr .8fr" }}>
@@ -726,7 +903,7 @@ export function PremiumClient({
                       </div>
                       <div className="ms-dates">
                         <div>
-                          <b>{memberSummary.purchasedAt ? new Date(memberSummary.purchasedAt).toLocaleDateString("vi-VN") : "—"}</b>
+                          <b>{memberSummary.purchasedAt ? formatDateTime(memberSummary.purchasedAt) : "—"}</b>
                           Bắt đầu gói hiện tại
                         </div>
                         <div>
