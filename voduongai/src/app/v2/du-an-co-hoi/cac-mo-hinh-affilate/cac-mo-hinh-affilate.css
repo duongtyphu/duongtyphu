@@ -89,7 +89,7 @@
 .cma .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .cma .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .cma .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.cma .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.cma .profile .plan{font-size:11px;color:#a9822c;font-weight:700}
 .cma .content{padding:24px 28px;display:flex;flex-direction:column;gap:22px}
 .cma .page-head h1{font-size:26px;font-weight:800}
 .cma .page-head p{font-size:14px;color:var(--muted);margin-top:6px}

@@ -89,7 +89,7 @@
 .sgr .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .sgr .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .sgr .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.sgr .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.sgr .profile .plan{font-size:11px;color:#a9822c;font-weight:700}
 .sgr .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
 .sgr .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
 .sgr .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}

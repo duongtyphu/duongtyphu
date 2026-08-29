@@ -641,13 +641,20 @@ export function SolarGroupClient({
                 {visibleLinks.length === 0 ? (
                   <p className="empty-hint">Chưa có đường link liên kết nào.</p>
                 ) : (
-                  visibleLinks.map((l) => (
-                    <div className="fin-row" key={l.id}>
-                      <a className="lbl" href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text)" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {visibleLinks.map((l) => (
+                      <a
+                        key={l.id}
+                        className="btn-primary"
+                        href={l.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ justifyContent: "center", width: "100%", color: "#fff" }}
+                      >
                         {l.label}
                       </a>
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 )}
               </div>
 

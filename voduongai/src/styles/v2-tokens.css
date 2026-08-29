@@ -95,8 +95,8 @@
   box-sizing: border-box;
 }
 
-/* `:not(.smc *):not(.tkh *)` — loại trừ `/v2/su-menh-companion` VÀ
- * `/v2/tai-khoan`: 2 trang trong cây `/v2` render nội dung Tailwind THẬT
+/* `:where(:not(.smc *)):where(:not(.tkh *))` — loại trừ `/v2/su-menh-companion`
+ * VÀ `/v2/tai-khoan`: 2 trang trong cây `/v2` render nội dung Tailwind THẬT
  * (`SuMenhCompanionContent.tsx`/`AccountContent.tsx`, dùng chung với 1.0,
  * xem docblock mỗi file) thay vì hand-CSS như 46+ trang `/v2/*` còn lại.
  * Reset unlayered này (đúng ý đồ: luôn thắng `@layer utilities` của
@@ -105,24 +105,38 @@
  * bug thật đã phát hiện lần đầu ở `.smc` (căn giữa footer bị lệch, nút
  * "Companion qua hình ảnh" chữ trắng bị đổi thành tím) — áp dụng phòng
  * ngừa luôn cho `.tkh` (Tài khoản 2.0, cùng bản chất "embed Tailwind thật"),
- * không đợi bug xảy ra rồi mới vá lần 2. */
-[data-ui="v2"] h1:not(.smc *):not(.tkh *),
-[data-ui="v2"] h2:not(.smc *):not(.tkh *),
-[data-ui="v2"] h3:not(.smc *):not(.tkh *),
-[data-ui="v2"] h4:not(.smc *):not(.tkh *),
-[data-ui="v2"] h5:not(.smc *):not(.tkh *),
-[data-ui="v2"] h6:not(.smc *):not(.tkh *),
-[data-ui="v2"] p:not(.smc *):not(.tkh *),
-[data-ui="v2"] figure:not(.smc *):not(.tkh *) {
+ * không đợi bug xảy ra rồi mới vá lần 2.
+ *
+ * BUG ĐÃ SỬA (đợt audit "Dự án & Cơ hội") — `:not(.smc *):not(.tkh *)` viết
+ * TRỰC TIẾP (không bọc `:where()`) vô tình CỘNG THÊM độ ưu tiên CSS
+ * (mỗi `:not(.class *)` tính đúng 1 class-level specificity) — rule `a`
+ * reset từ specificity gốc (0,1,1) leo lên (0,3,1), VƯỢT QUA mọi CSS
+ * 2-class thông thường của từng trang kiểu `.dgu .btn-primary{color:#fff}`
+ * (0,2,0). Hậu quả đo được: nút CTA `.btn-primary` (DigiU/SolarGroup/Ohana…)
+ * hiển thị SAI màu tím thay vì trắng/nâu theo thiết kế — có chỗ tím trên
+ * nền tím (`.help-link-btn` ở hub `/v2/du-an-co-hoi`) khiến CHỮ VÔ HÌNH
+ * hoàn toàn. Đã bọc `:not(...)` trong `:where(...)` — `:where()` GIỮ
+ * NGUYÊN logic loại trừ `.smc`/`.tkh` (khớp y hệt) nhưng luôn có độ ưu
+ * tiên CSS = 0, nên cả 3 rule dưới đây trở lại đúng specificity gốc
+ * trước khi có ngoại lệ `.smc`/`.tkh` — CSS 2-class của từng trang lại
+ * thắng đúng như ý đồ ban đầu. */
+[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)),
+[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)) {
   margin: 0;
 }
 
-[data-ui="v2"] a:not(.smc *):not(.tkh *) {
+[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)) {
   color: var(--v2-violet);
   text-decoration: none;
 }
 
-[data-ui="v2"] a:hover:not(.smc *):not(.tkh *) {
+[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)) {
   color: var(--v2-violet-dark);
 }
 

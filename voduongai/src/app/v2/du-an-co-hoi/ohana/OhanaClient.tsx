@@ -98,9 +98,9 @@ const PILLARS = [
 ];
 
 const ROADMAP = [
-  { done: true, dot: "1", yr: "Q3/2026", text: "Nền tảng: Social, Commerce & Wallet" },
+  { done: true, dot: "1", yr: "Q2/2026", text: "Nền tảng: Social, Commerce & Wallet" },
   { done: false, dot: "2", yr: "Q4/2026", text: "Cỗ máy doanh thu: SaaS & mở rộng kiếm tiền" },
-  { done: false, dot: "3", yr: "Giai đoạn 3", text: "Giữ chân & mở rộng hệ sinh thái" },
+  { done: false, dot: "3", yr: "Q1/2027", text: "Giữ chân & mở rộng hệ sinh thái" },
   { done: false, dot: "4", yr: "Q2/2027", text: "Kinh tế Token & thanh khoản toàn cầu" },
 ];
 
@@ -268,13 +268,13 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
           <div className="content">
             <div className="center-col">
               <div className="profile-head">
-                <div className="profile-logo">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#c9bdff" strokeWidth="1.8">
-                    <circle cx="12" cy="12" r="9" />
-                    <ellipse cx="12" cy="12" rx="9" ry="3.5" />
-                    <path d="M12 3v18" />
-                  </svg>
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo tĩnh cố định, không phải nội dung quản trị được */}
+                <img
+                  src="/images/duan-cohoi/logos/ohana-logo.png"
+                  alt="Logo Astronixa / Ohana"
+                  className="profile-logo"
+                  style={{ objectFit: "contain", padding: 8 }}
+                />
                 <div className="profile-info">
                   <h1>
                     Ohana
@@ -539,12 +539,12 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
               <div className="cta-card">
                 <h4>Sẵn sàng bước vào Vũ trụ Ohana?</h4>
                 <p>Tham gia phong trào và trở thành một phần của hệ sinh thái số toàn diện nhất.</p>
-                <button>
+                <a href={REGISTER_URL} target="_blank" rel="noopener noreferrer">
                   Bắt đầu ngay
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
-                </button>
+                </a>
               </div>
             </aside>
           </div>
