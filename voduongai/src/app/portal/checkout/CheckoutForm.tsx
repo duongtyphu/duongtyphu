@@ -12,7 +12,18 @@ type CheckoutTarget = {
   price: number;
 };
 
-export function CheckoutForm({ target, email }: { target: CheckoutTarget; email: string }) {
+export function CheckoutForm({
+  target,
+  email,
+  orderReceivedBasePath = "/portal/checkout/order-received",
+}: {
+  target: CheckoutTarget;
+  email: string;
+  /** Đích trang "đơn hàng đã ghi nhận" — mặc định giữ 1.0, `/v2/checkout`
+   * truyền `/v2/checkout/order-received` (Single Source of Truth, đúng
+   * nguyên tắc "mọi thứ sửa từ nay chỉ trỏ đích 2.0"). */
+  orderReceivedBasePath?: string;
+}) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -37,7 +48,7 @@ export function CheckoutForm({ target, email }: { target: CheckoutTarget; email:
       setError(result.error);
       return;
     }
-    router.push(`/portal/checkout/order-received/${result.orderId}`);
+    router.push(`${orderReceivedBasePath}/${result.orderId}`);
   }
 
   return (

@@ -127,10 +127,19 @@ import "./premium.css";
  *
  * E. Trạng thái "Đã mua" (memberState) — khối "Kho tài nguyên Premium" đã
  *    bỏ ở cột trái `.two-col` được thay bằng "Đặc quyền Portal 2.0 của
- *    bạn" (`.privilege-grid`, TĨNH — 6 link thật tới CKOS/Học viện AI/AI
- *    Workspace/Chương trình Affiliate/Companion/Dự án & Cơ hội, đều là
- *    route `/v2/*` đã build thật) — đúng yêu cầu "dùng nội dung đặc quyền
- *    có thật ở Portal 2.0", không bịa tính năng mới.
+ *    bạn" (`.privilege-grid`, TĨNH — 6 link thật tới Học viện AI/Chương
+ *    trình Affiliate/Companion/Dự án & Cơ hội/Hành trình của tôi/Cộng
+ *    đồng AI, đều là route `/v2/*` đã build thật) — đúng yêu cầu "dùng
+ *    nội dung đặc quyền có thật ở Portal 2.0", không bịa tính năng mới.
+ *    ĐÍNH CHÍNH (Founder phát hiện): bản đầu có 2 link CHẾT
+ *    (`/v2/he-tri-thuc`/`/v2/ai-workspace`) — cả 2 route hub đã bị XOÁ từ
+ *    trước (gộp vào `/v2/hoc-vien-ai`, xem `src/lib/v2/href-map.ts`'s
+ *    comment "Giai đoạn 9") nhưng docblock cũ của file này chưa cập nhật
+ *    kịp nên không phát hiện lúc build. Đã đổi sang 2 route thật khác
+ *    (Hành trình của tôi/Cộng đồng AI) — đồng thời sửa `premium_perks`/
+ *    `premium_plans.features`/`premium_advisor_situations` (dữ liệu, qua
+ *    Supabase MCP) khỏi mọi chỗ nhắc "CKOS"/"AI Workspace" như tính năng
+ *    RIÊNG — nội dung đó vẫn thật, chỉ không còn sống ở route độc lập.
  *
  * F. Admin quản lý: `/admin/premium/plans` (giá/trạng thái/`features` từng
  *    gói, đã có sẵn), `/admin/premium/dashboard` (Hero/2 nhãn section/
@@ -155,37 +164,14 @@ const PLATFORM_LABEL_SHORT: Record<string, string> = {
  */
 const PORTAL_PRIVILEGES: { href: string; bg: string; title: string; desc: string; icon: React.ReactNode }[] = [
   {
-    href: "/v2/he-tri-thuc",
-    bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
-    title: "Hệ tri thức AI (CKOS)",
-    desc: "Prompt · Workflow · Template · Case Study",
-    icon: (
-      <>
-        <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-      </>
-    ),
-  },
-  {
     href: "/v2/hoc-vien-ai",
     bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
     title: "Học viện AI",
-    desc: "Trọn lộ trình bài giảng slide & video",
+    desc: "Hệ tri thức, bài giảng slide & video, thư viện tài nguyên",
     icon: (
       <>
         <path d="M22 10L12 5 2 10l10 5 10-5z" />
         <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" />
-      </>
-    ),
-  },
-  {
-    href: "/v2/ai-workspace",
-    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
-    title: "AI Workspace",
-    desc: "Công cụ AI & workflow không giới hạn",
-    icon: (
-      <>
-        <rect x="3" y="4" width="18" height="14" rx="2" />
-        <path d="M8 21h8M12 18v3" />
       </>
     ),
   },
@@ -221,6 +207,31 @@ const PORTAL_PRIVILEGES: { href: string; bg: string; title: string; desc: string
       </>
     ),
   },
+  {
+    href: "/v2/hanh-trinh-cua-toi",
+    bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
+    title: "Hành trình của tôi",
+    desc: "My Story · Mirror · Bản đồ hành trình · Huy hiệu",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 7v5l3 3" />
+      </>
+    ),
+  },
+  {
+    href: "/v2/cong-dong-ai",
+    bg: "linear-gradient(145deg,#a08bff,#6d4aff)",
+    title: "Cộng đồng AI",
+    desc: "Kết nối qua các kênh cộng đồng chính thức",
+    icon: (
+      <>
+        <circle cx="8" cy="8" r="3" />
+        <circle cx="17" cy="9" r="3" />
+        <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
+      </>
+    ),
+  },
 ];
 
 /** `Math.round(durationDays/30)` — "30 ngày" của DB hiển thị gọn thành "1 tháng" thay vì số ngày lẻ. */
@@ -253,7 +264,7 @@ function PlanPriceCard({ plan, isPremium }: { plan: PremiumPlan; isPremium: bool
   const savePercent = savingsPercent(plan.price, plan.originalPrice);
   const months = planMonths(plan.durationDays);
   const perMonth = months > 1 ? Math.round(plan.price / months) : null;
-  const checkoutHref = `/portal/checkout?${new URLSearchParams({
+  const checkoutHref = `/v2/checkout?${new URLSearchParams({
     type: "premium_plan",
     id: plan.id,
     title: plan.name,

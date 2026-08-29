@@ -95,10 +95,11 @@
   box-sizing: border-box;
 }
 
-/* `:where(:not(.smc *)):where(:not(.tkh *))` — loại trừ `/v2/su-menh-companion`
- * VÀ `/v2/tai-khoan`: 2 trang trong cây `/v2` render nội dung Tailwind THẬT
- * (`SuMenhCompanionContent.tsx`/`AccountContent.tsx`, dùng chung với 1.0,
- * xem docblock mỗi file) thay vì hand-CSS như 46+ trang `/v2/*` còn lại.
+/* `:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *))` — loại trừ
+ * `/v2/su-menh-companion`, `/v2/tai-khoan` VÀ `/v2/checkout`: 3 trang trong
+ * cây `/v2` render nội dung Tailwind THẬT (`SuMenhCompanionContent.tsx`/
+ * `AccountContent.tsx`/`CheckoutForm.tsx`+`OrderReceipt.tsx`, dùng chung với
+ * 1.0, xem docblock mỗi file) thay vì hand-CSS như 46+ trang `/v2/*` còn lại.
  * Reset unlayered này (đúng ý đồ: luôn thắng `@layer utilities` của
  * Tailwind, xem giải thích Cascade Layers trong `su-menh-companion.css`)
  * vô tình xoá mất mọi `mt-*`/`mb-*`/`text-*` màu chữ mà nội dung đó dùng —
@@ -118,25 +119,25 @@
  * hoàn toàn. Đã bọc `:not(...)` trong `:where(...)` — `:where()` GIỮ
  * NGUYÊN logic loại trừ `.smc`/`.tkh` (khớp y hệt) nhưng luôn có độ ưu
  * tiên CSS = 0, nên cả 3 rule dưới đây trở lại đúng specificity gốc
- * trước khi có ngoại lệ `.smc`/`.tkh` — CSS 2-class của từng trang lại
+ * trước khi có ngoại lệ `.smc`/`.tkh`/`.chk` — CSS 2-class của từng trang lại
  * thắng đúng như ý đồ ban đầu. */
-[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)),
-[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)) {
+[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
+[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)) {
   margin: 0;
 }
 
-[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)) {
+[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)) {
   color: var(--v2-violet);
   text-decoration: none;
 }
 
-[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)) {
+[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)) {
   color: var(--v2-violet-dark);
 }
 
