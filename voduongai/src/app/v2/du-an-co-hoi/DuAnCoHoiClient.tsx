@@ -64,17 +64,26 @@
  *     mô hình Affilate/Affilate sàn giao dịch (`getAllLiveEcosystemArticles()`,
  *     lọc `subProjectId=""` — bài cấp hệ sinh thái, không lẫn bài dự án
  *     con). Nhãn `.time` giữ trung thực ("Cập nhật" — không bịa mốc thời
- *     gian cụ thể), link trỏ trang chi tiết bài viết thật ở 1.0.
+ *     gian cụ thể). **Rà soát lại (đợt kiểm tra Giai đoạn 4):** link trước
+ *     đó trỏ `voduongai.com/portal/duan-cohoi/.../cap-nhat/...` (Portal
+ *     1.0, vi phạm NGUYÊN TẮC BẤT BIẾN) — chưa có trang chi tiết bài viết
+ *     nào ở `/v2/*`, đã sửa trỏ về đúng trang hệ sinh thái 2.0 tương ứng
+ *     (`/v2/du-an-co-hoi/{slug}`) thay vì trang chi tiết.
  *  7. "Tài liệu & hướng dẫn" (4 tài liệu bịa kèm dung lượng cụ thể) → gộp
  *     `chrome.documents` THẬT từ 4 hệ sinh thái (DigiU/SolarGroup/Các mô
  *     hình Affilate/Affilate sàn giao dịch), tối đa 4, bỏ dung lượng bịa
  *     (không có metadata dung lượng thật) — chỉ hiện "Tải về".
  *  8. "Bạn cần hỗ trợ?" — avatar minh hoạ giữ nguyên (trang trí, không
- *     khẳng định số liệu). Nút "Liên hệ hỗ trợ" trỏ trang hỗ trợ thật ở
- *     1.0 (`/portal/support`).
+ *     khẳng định số liệu). Nút "Liên hệ hỗ trợ" — **rà soát lại**: trước
+ *     đó trỏ `/portal/support` (Portal 1.0), chưa có trang hỗ trợ nào ở
+ *     `/v2/*` — đã đổi sang kênh liên hệ thật đang dùng chung toàn dự án
+ *     (`siteConfig.community.zaloGroup`, cùng nguồn "Kết nối ngay hôm nay"
+ *     ở `/portal/congdongai` đã dùng).
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
+
+import { siteConfig } from "@/lib/site";
 
 import type { EcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 import type { SubProjectRow } from "@/lib/portal/live-subprojects";
@@ -699,9 +708,7 @@ export function DuAnCoHoiClient({
                     <a
                       className="news-row"
                       key={a.id}
-                      href={`https://voduongai.com/portal/duan-cohoi/${ECO_SLUG[a.ecosystemId] ?? ""}/cap-nhat/${a.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`/v2/du-an-co-hoi/${ECO_SLUG[a.ecosystemId] ?? ""}`}
                       style={{ textDecoration: "none", color: "inherit" }}
                     >
                       <div className="news-thumb" style={{ background: "linear-gradient(145deg,#241c4d,#5a37e6)" }}>
@@ -756,7 +763,7 @@ export function DuAnCoHoiClient({
                 </div>
                 <h4 style={{ marginBottom: 8 }}>Bạn cần hỗ trợ?</h4>
                 <p>Đội ngũ của chúng tôi luôn sẵn sàng hỗ trợ bạn.</p>
-                <a className="help-link-btn" href="https://voduongai.com/portal/support" target="_blank" rel="noopener noreferrer">
+                <a className="help-link-btn" href={siteConfig.community.zaloGroup} target="_blank" rel="noopener noreferrer">
                   Liên hệ hỗ trợ
                 </a>
               </div>

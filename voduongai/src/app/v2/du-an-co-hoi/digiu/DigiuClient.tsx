@@ -250,7 +250,8 @@ export function DigiuClient({
   const firstVideo = chrome.videos.find((v) => v.visible);
   const firstVideoEmbedUrl = firstVideo ? toYouTubeEmbedUrl(firstVideo.url) : null;
   const metCount = ratings.filter((r) => r.ratingStatus === "met").length;
-  const registerLink = chrome.links.find((l) => l.visible)?.url ?? "";
+  const visibleLinks = chrome.links.filter((l) => l.visible);
+  const registerLink = visibleLinks[0]?.url ?? "";
   const topArticles = articles.slice(0, 3);
   const visibleDocuments = chrome.documents.filter((d) => d.visible);
   const marqueeArticles = articles.length > 0 ? [...articles, ...articles] : [];
@@ -719,9 +720,9 @@ export function DigiuClient({
                         {marqueeArticles.map((a, i) => (
                           <a
                             key={`${a.id}-${i}`}
-                            href={`https://voduongai.com/portal/duan-cohoi/digiu/cap-nhat/${a.slug}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                            href={registerLink || undefined}
+                            target={registerLink ? "_blank" : undefined}
+                            rel={registerLink ? "noopener noreferrer" : undefined}
                             aria-hidden={i >= articles.length ? true : undefined}
                             style={{
                               display: "block",
@@ -805,18 +806,23 @@ export function DigiuClient({
                 <div className="card-head">
                   <h4>Đường link liên kết</h4>
                 </div>
-                {chrome.links.filter((l) => l.visible).length === 0 ? (
+                {visibleLinks.length === 0 ? (
                   <p className="empty-hint">Chưa có đường link liên kết nào.</p>
                 ) : (
-                  chrome.links
-                    .filter((l) => l.visible)
-                    .map((l) => (
-                      <div className="fin-row" key={l.id}>
-                        <a className="lbl" href={l.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text)" }}>
-                          {l.label}
-                        </a>
-                      </div>
-                    ))
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    {visibleLinks.map((l) => (
+                      <a
+                        key={l.id}
+                        className="btn-primary"
+                        href={l.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ justifyContent: "center", width: "100%", color: "#fff" }}
+                      >
+                        {l.label}
+                      </a>
+                    ))}
+                  </div>
                 )}
               </div>
 

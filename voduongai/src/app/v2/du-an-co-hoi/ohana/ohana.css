@@ -89,7 +89,7 @@
 .oha .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .oha .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .oha .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.oha .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+.oha .profile .plan{font-size:11px;color:#a9822c;font-weight:700}
 .oha .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
 .oha .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
 .oha .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
@@ -182,7 +182,7 @@
 .oha .cta-card{background:linear-gradient(160deg,#241c4d,#0a0620);border-radius:14px;padding:20px;color:#fff;position:relative;overflow:hidden}
 .oha .cta-card h4{font-size:15px;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
 .oha .cta-card p{font-size:12px;color:#c3bde3;line-height:1.5;margin-bottom:14px;max-width:220px;position:relative;z-index:1}
-.oha .cta-card button{background:#fff;color:var(--violet-dark);border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative;z-index:1}
+.oha .cta-card button,.oha .cta-card a{background:#fff;color:var(--violet-dark);border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;position:relative;z-index:1;text-decoration:none;width:fit-content}
 @media (max-width:1180px){
   .oha .content{flex-direction:column}
   .oha .right-col{width:100%;flex-direction:row;flex-wrap:wrap}

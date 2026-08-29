@@ -137,7 +137,7 @@ const CARD_STYLE: Record<string, CardStyle> = {
     sub: "Sàn giao dịch lâu đời, đa dạng token",
     tagLabel: "Hoa hồng theo cấp bậc VIP",
     tagBg: "#e1fbf1",
-    tagColor: "#0aa876",
+    tagColor: "#066b4d",
   },
   exc_bitget: {
     bg: "linear-gradient(145deg,#00d1a3,#00987a)",
