@@ -50,8 +50,11 @@
  *     (`getLiveSubProjects`, tối đa 4 trong 5 dự án con thật đang có: 3
  *     DigiU + 2 SolarGroup). Nhãn góc thẻ (`hot-pill`) đổi từ "Nổi bật"/
  *     "Mới" (tuyên bố xu hướng không kiểm chứng được) sang tên hệ sinh
- *     thái cha (trung lập, có thật). Bỏ dòng "X người theo dõi" (bịa) —
- *     link "Xem chi tiết →" trỏ trang chi tiết dự án con thật ở 1.0.
+ *     thái cha (trung lập, có thật). Bỏ dòng "X người theo dõi" (bịa) VÀ
+ *     bỏ hẳn link "Xem chi tiết →" (trước trỏ `voduongai.com/portal/duan-cohoi/
+ *     ...`, Portal 1.0 — vi phạm NGUYÊN TẮC BẤT BIẾN, và chưa có trang chi
+ *     tiết dự án con nào ở `/v2/*` để trỏ tới) — theo đúng yêu cầu Founder,
+ *     xoá hẳn thay vì trỏ bậy.
  *  5. "Cơ hội đang mở" (3 cơ hội đầu tư bịa kèm hạn chót cụ thể — KHÔNG có
  *     hệ thống "cơ hội đầu tư" nào trong dự án, và đây là nội dung mời
  *     gọi đầu tư với ngày cụ thể không có thật — rủi ro cao nếu để sai)
@@ -255,8 +258,8 @@ export function DuAnCoHoiClient({
   ];
 
   const featuredSubs = [
-    ...subDigiu.map((s) => ({ sub: s, parent: "DigiU", ecoHref: "DigiU.html", ecoSlug: "digiu", bg: "linear-gradient(160deg,#241c56,#0c0824)" })),
-    ...subSolarGroup.map((s) => ({ sub: s, parent: "SolarGroup", ecoHref: "SolarGroup.html", ecoSlug: "solargroup", bg: "linear-gradient(160deg,#0e3a4a,#1d5fd8)" })),
+    ...subDigiu.map((s) => ({ sub: s, parent: "DigiU", bg: "linear-gradient(160deg,#241c56,#0c0824)" })),
+    ...subSolarGroup.map((s) => ({ sub: s, parent: "SolarGroup", bg: "linear-gradient(160deg,#0e3a4a,#1d5fd8)" })),
   ].slice(0, 4);
 
   const newsItems = allArticles
@@ -577,7 +580,7 @@ export function DuAnCoHoiClient({
                   <p className="empty-hint">Chưa có dự án con nào được công bố.</p>
                 ) : (
                   <div className="pf-grid" style={{ marginTop: 14 }}>
-                    {featuredSubs.map(({ sub, parent, ecoSlug, bg }) => (
+                    {featuredSubs.map(({ sub, parent, bg }) => (
                       <div className="pf-card" key={sub.id}>
                         <div className="pf-thumb" style={{ background: bg }}>
                           <span className="hot-pill" style={{ background: "#189a52" }}>
@@ -596,12 +599,6 @@ export function DuAnCoHoiClient({
                             <span className="pf-tag">{parent}</span>
                           </div>
                           <div className="desc">{sub.shortDescription}</div>
-                          <div className="pf-foot">
-                            <span className="followers" />
-                            <a href={`https://voduongai.com/portal/duan-cohoi/${ecoSlug}/${sub.slug}`} target="_blank" rel="noopener noreferrer">
-                              Xem chi tiết →
-                            </a>
-                          </div>
                         </div>
                       </div>
                     ))}
