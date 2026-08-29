@@ -8,75 +8,53 @@
  * lucide-react. CSS ở `digiu.css` (chép nguyên văn, xem đầu file đó).
  *
  * ---------------------------------------------------------------------------
- * NHỮNG CHỖ KHÁC bản tĩnh — tất cả xuất phát từ 1 nguyên tắc: hệ sinh thái
- * DigiU đã có tầng dữ liệu THẬT ở 1.0 (`ecosystem_chrome`/
- * `ecosystem_subprojects`/`ecosystem_articles`/`ecosystem_ratings`,
- * `eco_digiu`) với nội dung do Founder tự viết — nội dung đó có tông điệu
- * TRUNG THỰC/khiêm tốn ("mình đang trực tiếp đồng hành và quan sát, chưa
- * phải đánh giá dài hạn"), khác hẳn tông điệu quảng bá thể chế của bản
- * thiết kế này (quỹ WebWise Capital, đối tác Paradigm/Coinbase Ventures,
- * "3,2 triệu người theo dõi", "+44% tăng trưởng"...) — những con số/tên đối
- * tác đó KHÔNG có trong dữ liệu thật, và việc phát minh ra thể chế/số liệu
- * mới sẽ vi phạm trực tiếp nguyên tắc NO-FAKE-DATA đã áp dụng xuyên suốt dự
- * án (không bao giờ bịa số liệu/nội dung). Quyết định: giữ NGUYÊN bố cục/
- * class/hiệu ứng thị giác của bản thiết kế, nhưng thay MỌI nội dung chữ có
- * tính khẳng định sự kiện/số liệu bằng dữ liệu thật — không suy đoán, không
- * chọn cách map gần đúng.
+ * ĐỢT SỬA GIAI ĐOẠN 4 PHẦN 2 (theo nội dung Founder cung cấp trực tiếp —
+ * KHÁC hẳn hướng đi trước đó): các con số/tên tổ chức ("3,2 triệu người
+ * theo dõi", "quỹ WebWise Capital", "20+ quỹ đối tác"...) từng bị coi là
+ * "không kiểm chứng được" ở đợt build đầu (nên đã thay bằng dữ liệu
+ * `ecosystem_chrome` trung thực/khiêm tốn) — giờ Founder (chủ sở hữu dữ
+ * liệu) trực tiếp xác nhận đây là nội dung THẬT, không phải suy đoán từ
+ * mockup nữa. Toàn bộ nội dung dưới đây là literal string cố định do
+ * Founder cung cấp — KHÔNG map vào `chrome.shortDescription`/`fullIntro`/
+ * `highlights` (những field đó không khớp cấu trúc "3 badge + follower
+ * count" mới), nhưng `chrome.links`/`chrome.videos`/`chrome.documents`
+ * vẫn dùng dữ liệu Supabase thật như trước (không đổi).
  *
- *  1. Hero (`.digiu-hero`) — h2 dùng tên hệ sinh thái thật (chuỗi cố định
- *     "DigiU"), p dùng `chrome.shortDescription` thật (thay đoạn quảng bá
- *     "vận hành quỹ đầu tư mạo hiểm WebWise Capital..." không có thật).
- *     Nút "Khám phá hệ sinh thái" cuộn neo tới khối "Các dự án con" thật.
- *     Nút "Xem video giới thiệu" CHỈ hiện khi `chrome.videos` có ít nhất 1
- *     video thật, trỏ thẳng video đó — không có thì ẩn hẳn nút (không bịa
- *     video minh hoạ).
- *  2. `profile-head` — badge "AI & Blockchain"/"VC Funding"/"Web3" (thể loại
- *     tự đặt, không có thật) và "3,2 triệu+ người theo dõi" (số bịa) được
- *     thay bằng đúng 1 chip `chrome.statusBadge` thật (5 giá trị cố định,
- *     Admin chọn qua select) + số dự án con thật.
- *  3. `stat-row` — 5 ô số liệu marketing bịa (follower/khách hàng/tăng
- *     trưởng/sản phẩm/quỹ đối tác) thay bằng 5 số liệu THẬT tương ứng đúng
- *     dữ liệu đã có: số dự án con, số bài cập nhật, số tài liệu, số video,
- *     số tiêu chí Đánh giá đã "Đạt" trên 6.
- *  4. `about-grid` — đoạn giới thiệu dài (`about-text p`) dùng
- *     `chrome.fullIntro` thật; `check-list` dùng `chrome.highlights` thật
- *     (thay 4 dòng bịa "7 mảng nghiên cứu"/"20+ quỹ đối tác"...). Link "Xem
- *     thêm về DigiU →" trỏ trang chi tiết đầy đủ ở 1.0
- *     (`/portal/duan-cohoi/digiu` — v2 chưa có trang tương đương, thuộc 42
- *     trang còn lại của Bước F). `video-card` hiện video thật đầu tiên
- *     trong `chrome.videos` (nhãn thật, không bịa thời lượng "02:45") —
- *     rỗng thì hiện khung trung thực "Video giới thiệu sẽ cập nhật khi có."
- *  5. `pillars-grid` ("Các trụ cột của DigiU") — 4 thẻ bịa (DigiU Technical
- *     Lab/WebWise Capital/Alpha Mind/Sản phẩm thương mại) thay hẳn bằng
- *     lưới "Các dự án con" THẬT (`getLiveSubProjects("eco_digiu")` — đúng
- *     hạ tầng CRUD Admin đã có sẵn, xem CLAUDE.md mục "Dự án & Cơ hội").
- *     Icon/màu mỗi vị trí xoay vòng theo INDEX (không phải dữ liệu — cùng
- *     lý do `PATH_STYLES` ở Học viện AI), tên/mô tả là `sub.name`/
- *     `sub.shortDescription` thật. Link "Khám phá →" trỏ trang chi tiết
- *     dự án con thật ở 1.0 (`/portal/duan-cohoi/digiu/[slug]`). Rỗng →
- *     `.empty-hint` trung thực.
- *  6. "Hiệu suất đầu tư DigiU" (biểu đồ %/tháng bịa hoàn toàn — KHÔNG có hệ
- *     thống theo dõi hiệu suất đầu tư nào trong dự án) → thay bằng "Đánh
- *     giá nhanh": số tiêu chí "Đạt" thật trên 6 (`ecosystem_ratings`,
- *     `getLiveEcosystemRatingRows`), kèm ghi chú minh bạch thay cho dòng
- *     "Hiệu suất quá khứ không đảm bảo tương lai" cũ.
- *  7. "Đối tác & Nhà đầu tư" (Paradigm/Coinbase Ventures/Polychain... —
- *     KHÔNG có thật, DigiU không công khai danh sách nhà đầu tư ở đây) →
- *     thay bằng "Đường link liên kết" thật (`chrome.links`, đúng hạ tầng
- *     "Đường link liên kết dự án" đã có ở 1.0) — rỗng thì `.empty-hint`.
- *  8. "Tin tức nổi bật" → 3 bài viết THẬT mới nhất
- *     (`getLiveEcosystemArticles("eco_digiu")`, đúng "Cập nhật thông tin
- *     mới" đã có ở 1.0), link trỏ trang chi tiết bài viết thật ở 1.0. Nhãn
- *     `.time` giữ trung thực ("Cập nhật" — không bịa mốc thời gian cụ thể
- *     vì `EcosystemArticleRow` không có field ngày công khai). Rỗng thì
- *     `.empty-hint`.
- *  9. CTA cuối trang — bỏ chữ "đồng sở hữu" (ngụ ý quyền sở hữu/cổ phần
- *     không có thật), giữ lời mời chung chung. Nút "Tham gia ngay" trỏ
- *     link đăng ký thật đầu tiên trong `chrome.links` (nếu có, mở tab mới)
- *     — không có thì nút vô hiệu hoá nhẹ, không dẫn tới link giả.
+ *  1. Logo — thay khối "U" text bằng ảnh logo thật (`/images/duan-cohoi/
+ *     logos/digiu-logo.jpg`, tải trực tiếp từ Drive Founder cung cấp).
+ *  2. `profile-head` — mô tả ngắn + 3 badge (AI & Blockchain/VC Funding/
+ *     Web3) + "3,2 triệu+ người theo dõi cộng đồng" — literal Founder cấp.
+ *  3. `digiu-hero` — tiêu đề + đoạn giới thiệu literal Founder cấp.
+ *  4. `stat-row` (5 ô số liệu marketing) — ĐÃ BỎ HẲN theo yêu cầu Founder.
+ *  5. 8 tab giờ CHỨC NĂNG THẬT (trước chỉ đổi trạng thái active, không đổi
+ *     nội dung) — còn lại 6 tab: Tổng quan/Sản phẩm/Lộ trình/Tổng số lượng
+ *     cổ phần (đổi tên từ "Tokenomics")/Tin tức/Tài liệu. Bỏ hẳn "Dự án"
+ *     (gộp "Các dự án con" vào tab Tổng quan) và "Câu hỏi thường gặp".
+ *     - Tổng quan: "Về DigiU" (literal Founder cấp) + video YouTube thật
+ *       nhúng trực tiếp (`chrome.videos[0]`, bấm play mới tải iframe) +
+ *       "Các dự án con" thật (giữ nguyên `getLiveSubProjects`).
+ *     - Sản phẩm: 3 sản phẩm thật DigiU (Thẻ WebWise Pay/Tiền gửi RWA/
+ *       Alpha Mind AI Academy) — Claude soạn lại ngắn gọn từ tài liệu
+ *       Founder gửi (Google Docs), không phải dữ liệu Supabase.
+ *     - Lộ trình: 4 giai đoạn lộ trình gọi vốn (Bridge Round/Scale Up/
+ *       Liquidity Event/Value Realization) — soạn lại từ infographic
+ *       Founder gửi.
+ *     - Tổng số lượng cổ phần: tỷ lệ sở hữu cổ phần + 3 vòng gọi vốn —
+ *       soạn lại từ infographic Founder gửi.
+ *     - Tin tức: băng marquee "Cập nhật thông tin mới" (bài viết thật
+ *       `articles` prop, đúng `ecosystem_articles` — không phải nội dung
+ *       mới, chỉ đổi cách hiển thị từ danh sách sang băng chạy).
+ *     - Tài liệu: link tới thư mục Drive tài liệu DigiU Founder cung cấp.
+ *  6. Đã bỏ MỌI link trỏ ngược Portal 1.0 (đúng NGUYÊN TẮC BẤT BIẾN đầu
+ *     file này) — "Xem thêm về DigiU →" (about-text), "Xem chi tiết →"
+ *     (Đánh giá nhanh), "Xem tất cả →" (Tin tức nổi bật), "Khám phá →"
+ *     (mỗi thẻ dự án con) đều không có đích `/v2/*` tương đương nên XOÁ
+ *     hẳn thay vì trỏ bậy — không phải quên, là quyết định có chủ đích.
+ *  7. "Đánh giá nhanh"/"Đường link liên kết"/"Tin tức nổi bật" (cột phải)/
+ *     CTA cuối trang — giữ nguyên nối dữ liệu thật (`ecosystem_ratings`/
+ *     `chrome.links`/`ecosystem_articles`) như bản trước, chỉ bỏ các link
+ *     portal 1.0 nêu ở mục 6.
  *
- * CÒN GIỮ NGUYÊN "TRƠ" NHƯ BẢN GỐC (bản mockup cũng không làm gì): 8 tab
- * trong `.tabs-row` chỉ đổi trạng thái active, không đổi nội dung bên dưới.
  * Nút "Theo dõi"/"Chia sẻ" ở `.profile-actions` không có hệ thống theo
  * dõi/chia sẻ thật, giữ trơ. Ô tìm kiếm/chuông thông báo giữ trơ.
  * ========================================================================== */
@@ -93,9 +71,16 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
+import { toYouTubeEmbedUrl } from "@/lib/portal/videoEmbed";
 
 import "../../inter-gf.css";
 import "./digiu.css";
+
+/** Thư mục tài liệu DigiU thật trên Drive (Founder cấp trực tiếp trong phiên
+ * này) — dùng cho tab "Tài liệu". Không có nguồn `chrome.documents` tương
+ * đương (đó là danh sách link rời, đây là 1 thư mục tổng hợp). */
+const DIGIU_DOCS_FOLDER_URL =
+  "https://drive.google.com/drive/folders/17f4zh0T5-ePDbx5AEysSIE_l8vLm7ku_?usp=drive_link";
 
 /** Đích điều hướng của mockup (tên file `.html`) → route thật trong `/v2`. */
 const HREF_MAP: Record<string, string> = {
@@ -118,7 +103,77 @@ const HREF_MAP: Record<string, string> = {
   "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
 };
 
-const TABS = ["Tổng quan", "Dự án", "Sản phẩm", "Lộ trình", "Tokenomics", "Tin tức", "Tài liệu", "Câu hỏi thường gặp"];
+const TABS = ["Tổng quan", "Sản phẩm", "Lộ trình", "Tổng số lượng cổ phần", "Tin tức", "Tài liệu"];
+
+/** Sản phẩm thật của DigiU — Claude soạn lại ngắn gọn từ 3 tài liệu Google
+ * Docs Founder gửi (Thẻ WebWise Pay, Tiền gửi DigiU, Alpha Mind AI Academy).
+ * Không phải dữ liệu Supabase — literal cố định theo tài liệu nguồn. */
+const PRODUCTS = [
+  {
+    name: "Thẻ WebWise Pay",
+    desc: "Thẻ MasterCard quốc tế cho phép chi tiêu trực tiếp bằng USDT/crypto — thanh toán dịch vụ AI (ChatGPT, Claude, Netflix, Spotify...), mua sắm quốc tế, vé máy bay/khách sạn. Nạp đa mạng (BSC/TON/ETH/TRX/BTC/POL), tích hợp Apple Pay/Google Pay/Samsung Pay, có cả thẻ vật lý và ứng dụng di động.",
+  },
+  {
+    name: "Tiền gửi DigiU (RWA)",
+    desc: "Công cụ đầu tư tài chính thuộc hệ thống Ngân hàng RWA — Tiền gửi Cố định (USDT, kỳ hạn 12–36 tháng, lợi suất 13–20%/năm) và Tiền gửi Linh hoạt (BTC/ETH/USDT, lợi suất đến 12%/năm, chi trả hàng tháng).",
+  },
+  {
+    name: "Alpha Mind AI Academy",
+    desc: "Chương trình đào tạo AI 3 cấp độ (Cơ bản → Nâng cao → Chuyên sâu OpenClaw) — mục tiêu bình dân hoá công nghệ AI, giúp học viên làm chủ 30+ công cụ AI và phát triển AI Agent cá nhân.",
+  },
+];
+
+/** Lộ trình gia tăng giá trị cổ đông — soạn lại từ infographic Founder gửi. */
+const ROADMAP_STAGES = [
+  {
+    stage: "01 · 2026",
+    title: "Bridge Round",
+    desc: "Định giá ưu đãi trước thương mại hoá — hoàn thiện sản phẩm AI Hub, mở rộng Alpha AI và thị trường toàn cầu, tăng quy mô cộng đồng.",
+  },
+  {
+    stage: "02 · 2026–2027",
+    title: "Scale Up",
+    desc: "Mở rộng hệ sinh thái (AI Alpha, AI Hub, Thiết bị AI, Blockchain Infrastructure, WebWise Capital) — mục tiêu tăng trưởng doanh thu 3–5 lần.",
+  },
+  {
+    stage: "03 · 2028–2029",
+    title: "Liquidity Event",
+    desc: "Các lựa chọn thanh khoản: IPO / Series A / Tokenization / Strategic Acquisition / Buy-back Program — mục tiêu vốn hoá 1+ tỷ USD.",
+  },
+  {
+    stage: "04 · Tương lai",
+    title: "Value Realization",
+    desc: "Hiện thực hoá lợi nhuận cho cổ đông qua cổ tức, buy-back, IPO, thị trường thứ cấp và tokenized assets.",
+  },
+];
+
+/** 3 vòng gọi vốn — soạn lại từ infographic "Các vòng gọi vốn của DigiU". */
+const FUNDING_ROUNDS = [
+  {
+    name: "Pre-seed (Tiền hạt giống)",
+    period: "01.11.2019 – 04.12.2019",
+    status: "Đã kết thúc",
+    desc: "Giai đoạn sớm nhất, chứng minh ý tưởng và thử nghiệm thị trường ban đầu. Nhà đầu tư: người sáng lập và nhà đầu tư thiên thần.",
+  },
+  {
+    name: "Seed (Hạt giống)",
+    period: "05.12.2019 – 30.6.2025",
+    status: "Đã kết thúc",
+    desc: "Phát triển sản phẩm, xây dựng đội ngũ, tạo mô hình kinh doanh. Nhà đầu tư: nhà đầu tư thiên thần, cộng đồng (crowdfunding), quỹ BR Capital.",
+  },
+  {
+    name: "Bridge round (Vòng cầu nối)",
+    period: "15.9.2025 – 15.9.2027",
+    status: "Đang diễn ra",
+    desc: "Tận dụng cơ hội tăng trưởng nhanh, chuẩn bị cho Series A/IPO/Tokenization. Nhà đầu tư: cộng đồng hiện tại và nhà đầu tư mới.",
+  },
+];
+
+const OWNERSHIP_SHARE = [
+  { label: "Đội ngũ sáng lập", pct: 51 },
+  { label: "Nhà đầu tư hạt giống", pct: 29 },
+  { label: "Quỹ dự trữ", pct: 20 },
+];
 
 /** 4 icon/gradient theo VỊ TRÍ (dự án con không có cột icon/màu riêng) —
  * cùng lý do `PATH_STYLES` ở Học viện AI. */
@@ -162,14 +217,6 @@ const PILLAR_STYLES = [
   },
 ];
 
-const STAT_STYLES = [
-  { bg: "linear-gradient(145deg,#8b6bff,#5a37e6)", icon: <path d="M13 2L3 14h7l-1 8 10-12h-7z" /> },
-  { bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)", icon: <path d="M22 10L12 5 2 10l10 5 10-5zM6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5" /> },
-  { bg: "linear-gradient(145deg,#e2b23c,#b3801f)", icon: <path d="M4 4h6v16H4zM14 4h6v16h-6z" /> },
-  { bg: "linear-gradient(145deg,#a08bff,#6d4aff)", icon: <path d="M8 5v14l11-7z" /> },
-  { bg: "linear-gradient(145deg,#3ecf7e,#189a52)", icon: <path d="M20 6L9 17l-5-5" /> },
-];
-
 function CheckSvg() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -193,6 +240,7 @@ export function DigiuClient({
 }) {
   const router = useRouter();
   const [tab, setTab] = useState(0);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const go = (htmlFile: string) => {
     const target = HREF_MAP[htmlFile];
@@ -200,17 +248,12 @@ export function DigiuClient({
   };
 
   const firstVideo = chrome.videos.find((v) => v.visible);
+  const firstVideoEmbedUrl = firstVideo ? toYouTubeEmbedUrl(firstVideo.url) : null;
   const metCount = ratings.filter((r) => r.ratingStatus === "met").length;
   const registerLink = chrome.links.find((l) => l.visible)?.url ?? "";
   const topArticles = articles.slice(0, 3);
-
-  const stats = [
-    { num: String(subProjects.length), lbl: "Dự án con", sub: "Đang triển khai" },
-    { num: String(articles.length), lbl: "Cập nhật mới", sub: "Tin tức & bài viết" },
-    { num: String(chrome.documents.length), lbl: "Tài liệu", sub: "Có thể tải về" },
-    { num: String(chrome.videos.length), lbl: "Video", sub: "Giới thiệu & hướng dẫn" },
-    { num: `${metCount}/6`, lbl: "Tiêu chí đạt", sub: "Đánh giá minh bạch" },
-  ];
+  const visibleDocuments = chrome.documents.filter((d) => d.visible);
+  const marqueeArticles = articles.length > 0 ? [...articles, ...articles] : [];
 
   return (
     <div className="dgu">
@@ -353,7 +396,13 @@ export function DigiuClient({
           <div className="content">
             <div className="center-col">
               <div className="profile-head">
-                <div className="profile-logo">U</div>
+                {/* eslint-disable-next-line @next/next/no-img-element -- logo tĩnh cố định, không phải nội dung quản trị được */}
+                <img
+                  src="/images/duan-cohoi/logos/digiu-logo.jpg"
+                  alt="Logo DigiU"
+                  className="profile-logo"
+                  style={{ objectFit: "cover", padding: 0 }}
+                />
                 <div className="profile-info">
                   <h1>
                     DigiU
@@ -363,10 +412,12 @@ export function DigiuClient({
                       </svg>
                     </div>
                   </h1>
-                  <p>{chrome.shortDescription}</p>
+                  <p>Hệ sinh thái phát triển và gọi vốn (VC funding) cho các dự án công nghệ AI, Blockchain và Web3.</p>
                   <div className="tag-row">
-                    <span className="p-tag">{chrome.statusBadge}</span>
-                    <span className="p-since">{subProjects.length} dự án con đang theo dõi</span>
+                    <span className="p-tag">AI &amp; Blockchain</span>
+                    <span className="p-tag">VC Funding</span>
+                    <span className="p-tag">Web3</span>
+                    <span className="p-since">3,2 triệu+ người theo dõi cộng đồng</span>
                   </div>
                 </div>
                 <div className="profile-actions">
@@ -390,8 +441,11 @@ export function DigiuClient({
 
               <div className="digiu-hero">
                 <div className="digiu-hero-text">
-                  <h2>DigiU – Hệ sinh thái phát triển &amp; kiếm thu nhập số</h2>
-                  <p>{chrome.shortDescription}</p>
+                  <h2>DigiU – Hệ sinh thái phát triển &amp; gọi vốn cho công nghệ tương lai.</h2>
+                  <p>
+                    DigiU nghiên cứu AI, Blockchain, Web3, RWA và năng lượng, đồng thời vận hành quỹ đầu tư mạo hiểm
+                    WebWise Capital để tài trợ các startup công nghệ tiên phong trên toàn cầu.
+                  </p>
                   <div className="hero-btn-row">
                     <a className="btn-primary" href="#du-an-con">
                       Khám phá hệ sinh thái
@@ -458,21 +512,6 @@ export function DigiuClient({
                 </div>
               </div>
 
-              <div className="stat-row">
-                {stats.map((s, i) => (
-                  <div className="stat-box" key={s.lbl}>
-                    <div className="ico" style={{ background: STAT_STYLES[i].bg }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
-                        {STAT_STYLES[i].icon}
-                      </svg>
-                    </div>
-                    <div className="num">{s.num}</div>
-                    <div className="lbl">{s.lbl}</div>
-                    <div className="sub">{s.sub}</div>
-                  </div>
-                ))}
-              </div>
-
               <div className="tabs-row">
                 {TABS.map((label, i) => (
                   <button key={label} className={i === tab ? "tab active" : "tab"} onClick={() => setTab(i)}>
@@ -481,83 +520,263 @@ export function DigiuClient({
                 ))}
               </div>
 
-              <div className="about-grid">
-                <div className="about-text">
-                  <h3>Về DigiU</h3>
-                  <p>{chrome.fullIntro}</p>
-                  {chrome.highlights.length > 0 ? (
-                    <div className="check-list">
-                      {chrome.highlights.map((h) => (
-                        <div className="check-item" key={h}>
+              {tab === 0 ? (
+                <>
+                  <div className="about-grid">
+                    <div className="about-text">
+                      <h3>Về DigiU</h3>
+                      <p>
+                        DigiU là hệ sinh thái phát triển và gọi vốn (VC funding) cho các dự án công nghệ. DigiU
+                        Technical Lab nghiên cứu AI, Blockchain, RWA, VR và năng lượng, còn quỹ WebWise Capital tài
+                        trợ cho các startup Blockchain, AI và Web3 giai đoạn đầu.
+                      </p>
+                      <div className="check-list">
+                        <div className="check-item">
                           <CheckSvg />
-                          {h}
+                          7 mảng nghiên cứu: AI, Blockchain, RWA, VR, năng lượng…
+                        </div>
+                        <div className="check-item">
+                          <CheckSvg />
+                          Quỹ WebWise Capital đồng hành cùng 20+ quỹ đối tác quốc tế
+                        </div>
+                        <div className="check-item">
+                          <CheckSvg />
+                          Hơn 3,2 triệu người theo dõi trên mạng xã hội
+                        </div>
+                        <div className="check-item">
+                          <CheckSvg />
+                          Hơn 100.000 khách hàng, tăng trưởng người dùng +44%/năm
+                        </div>
+                      </div>
+                    </div>
+                    <div className="video-card">
+                      {videoPlaying && firstVideoEmbedUrl ? (
+                        <div style={{ position: "absolute", inset: 0 }}>
+                          <iframe
+                            src={`${firstVideoEmbedUrl}?autoplay=1`}
+                            title={firstVideo?.label || "Video giới thiệu DigiU"}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            style={{ width: "100%", height: "100%", border: "none" }}
+                          />
+                        </div>
+                      ) : firstVideo ? (
+                        <>
+                          <div className="vtitle">
+                            Digi<span style={{ background: "var(--violet)", padding: "1px 7px", borderRadius: 5, fontSize: 14 }}>U</span>
+                          </div>
+                          <div className="vsub">{firstVideo.label || "Video giới thiệu"}</div>
+                          {firstVideoEmbedUrl ? (
+                            <button
+                              className="play-btn"
+                              onClick={() => setVideoPlaying(true)}
+                              aria-label="Phát video giới thiệu DigiU"
+                            >
+                              <svg viewBox="0 0 24 24" fill="#fff">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <a className="play-btn" href={firstVideo.url} target="_blank" rel="noopener noreferrer">
+                              <svg viewBox="0 0 24 24" fill="#fff">
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </a>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <div className="vtitle">
+                            Digi<span style={{ background: "var(--violet)", padding: "1px 7px", borderRadius: 5, fontSize: 14 }}>U</span>
+                          </div>
+                          <p className="empty-hint" style={{ color: "#c3bde3" }}>
+                            Video giới thiệu sẽ cập nhật khi có.
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div id="du-an-con">
+                    <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>Các dự án con của DigiU</h3>
+                    {subProjects.length === 0 ? (
+                      <p className="empty-hint">Chưa có dự án con nào được công bố.</p>
+                    ) : (
+                      <div className="pillars-grid">
+                        {subProjects.map((sub, i) => {
+                          const style = PILLAR_STYLES[i % PILLAR_STYLES.length];
+                          return (
+                            <div className="pillar-card" key={sub.id}>
+                              <div className="ico" style={{ background: style.bg }}>
+                                {style.icon}
+                              </div>
+                              <h5>{sub.name}</h5>
+                              <p>{sub.shortDescription}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : null}
+
+              {tab === 1 ? (
+                <div className="pillars-grid">
+                  {PRODUCTS.map((p, i) => {
+                    const style = PILLAR_STYLES[i % PILLAR_STYLES.length];
+                    return (
+                      <div className="pillar-card" key={p.name}>
+                        <div className="ico" style={{ background: style.bg }}>
+                          {style.icon}
+                        </div>
+                        <h5>{p.name}</h5>
+                        <p style={{ minHeight: "auto" }}>{p.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : null}
+
+              {tab === 2 ? (
+                <div className="pillars-grid">
+                  {ROADMAP_STAGES.map((s, i) => {
+                    const style = PILLAR_STYLES[i % PILLAR_STYLES.length];
+                    return (
+                      <div className="pillar-card" key={s.stage}>
+                        <div className="ico" style={{ background: style.bg }}>
+                          {style.icon}
+                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: "var(--violet)", marginBottom: 4 }}>{s.stage}</div>
+                        <h5>{s.title}</h5>
+                        <p style={{ minHeight: "auto" }}>{s.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : null}
+
+              {tab === 3 ? (
+                <>
+                  <div className="card" style={{ marginBottom: 18 }}>
+                    <div className="card-head">
+                      <h4>Tỷ lệ sở hữu cổ phần DigiU</h4>
+                    </div>
+                    <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 12 }}>
+                      Từ năm 2019 đến nay, hệ sinh thái DigiU đã và đang trải qua 3 vòng gọi vốn.
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                      {OWNERSHIP_SHARE.map((o) => (
+                        <div key={o.label}>
+                          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12.5, fontWeight: 700, marginBottom: 4 }}>
+                            <span>{o.label}</span>
+                            <span>{o.pct}%</span>
+                          </div>
+                          <div style={{ height: 8, borderRadius: 6, background: "var(--bg)", overflow: "hidden" }}>
+                            <div style={{ height: "100%", width: `${o.pct}%`, background: "var(--violet)", borderRadius: 6 }} />
+                          </div>
                         </div>
                       ))}
                     </div>
-                  ) : null}
-                  <a href="https://voduongai.com/portal/duan-cohoi/digiu" target="_blank" rel="noopener noreferrer">
-                    Xem thêm về DigiU →
-                  </a>
-                </div>
-                <div className="video-card">
-                  {firstVideo ? (
-                    <>
-                      <div className="vtitle">
-                        Digi<span style={{ background: "var(--violet)", padding: "1px 7px", borderRadius: 5, fontSize: 14 }}>U</span>
-                      </div>
-                      <div className="vsub">{firstVideo.label || "Video giới thiệu"}</div>
-                      <a className="play-btn" href={firstVideo.url} target="_blank" rel="noopener noreferrer">
-                        <svg viewBox="0 0 24 24" fill="#fff">
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                      </a>
-                    </>
-                  ) : (
-                    <>
-                      <div className="vtitle">
-                        Digi<span style={{ background: "var(--violet)", padding: "1px 7px", borderRadius: 5, fontSize: 14 }}>U</span>
-                      </div>
-                      <p className="empty-hint" style={{ color: "#c3bde3" }}>
-                        Video giới thiệu sẽ cập nhật khi có.
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div id="du-an-con">
-                <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 14 }}>Các dự án con của DigiU</h3>
-                {subProjects.length === 0 ? (
-                  <p className="empty-hint">Chưa có dự án con nào được công bố.</p>
-                ) : (
+                  </div>
                   <div className="pillars-grid">
-                    {subProjects.map((sub, i) => {
+                    {FUNDING_ROUNDS.map((r, i) => {
                       const style = PILLAR_STYLES[i % PILLAR_STYLES.length];
                       return (
-                        <div className="pillar-card" key={sub.id}>
+                        <div className="pillar-card" key={r.name}>
                           <div className="ico" style={{ background: style.bg }}>
                             {style.icon}
                           </div>
-                          <h5>{sub.name}</h5>
-                          <p>{sub.shortDescription}</p>
-                          <a href={`https://voduongai.com/portal/duan-cohoi/digiu/${sub.slug}`} target="_blank" rel="noopener noreferrer">
-                            Khám phá →
-                          </a>
+                          <h5>{r.name}</h5>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: "var(--muted)", marginBottom: 6 }}>
+                            {r.period} · {r.status}
+                          </div>
+                          <p style={{ minHeight: "auto" }}>{r.desc}</p>
                         </div>
                       );
                     })}
                   </div>
-                )}
-              </div>
+                </>
+              ) : null}
+
+              {tab === 4 ? (
+                <div className="card">
+                  <div className="card-head">
+                    <h4>Cập nhật thông tin mới</h4>
+                  </div>
+                  {articles.length === 0 ? (
+                    <p className="empty-hint">Chưa có bài viết cập nhật nào.</p>
+                  ) : (
+                    <div style={{ overflow: "hidden" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          width: "max-content",
+                          gap: 14,
+                          animation: "digiuNewsMarquee 32s linear infinite",
+                        }}
+                      >
+                        {marqueeArticles.map((a, i) => (
+                          <a
+                            key={`${a.id}-${i}`}
+                            href={`https://voduongai.com/portal/duan-cohoi/digiu/cap-nhat/${a.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-hidden={i >= articles.length ? true : undefined}
+                            style={{
+                              display: "block",
+                              width: 220,
+                              flexShrink: 0,
+                              border: "1px solid var(--line)",
+                              borderRadius: 12,
+                              padding: 14,
+                              textDecoration: "none",
+                              color: "inherit",
+                            }}
+                          >
+                            <div className="news-cat" style={{ color: "#6d4aff" }}>
+                              CẬP NHẬT
+                            </div>
+                            <h6 style={{ fontSize: 13, fontWeight: 700, lineHeight: 1.4 }}>{a.title}</h6>
+                          </a>
+                        ))}
+                      </div>
+                      <style>{`@keyframes digiuNewsMarquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}`}</style>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              {tab === 5 ? (
+                <div className="card">
+                  <div className="card-head">
+                    <h4>Tài liệu DigiU</h4>
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--muted)", marginBottom: 14 }}>
+                    Toàn bộ tài liệu, whitepaper và hướng dẫn của DigiU được tổng hợp trong 1 thư mục Drive.
+                  </p>
+                  <a className="btn-primary" href={DIGIU_DOCS_FOLDER_URL} target="_blank" rel="noopener noreferrer">
+                    Mở thư mục tài liệu →
+                  </a>
+                  {visibleDocuments.length > 0 ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 16 }}>
+                      {visibleDocuments.map((d) => (
+                        <div className="fin-row" key={d.id}>
+                          <a className="lbl" href={d.url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--text)" }}>
+                            {d.label}
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
             <aside className="right-col">
               <div className="card">
                 <div className="card-head">
                   <h4>Đánh giá nhanh</h4>
-                  <a href="https://voduongai.com/portal/duan-cohoi/digiu" target="_blank" rel="noopener noreferrer">
-                    Xem chi tiết →
-                  </a>
                 </div>
                 <div className="perf-pct">{metCount}/6</div>
                 <div className="perf-lbl">Tiêu chí minh bạch đã đạt</div>
@@ -604,11 +823,6 @@ export function DigiuClient({
               <div className="card">
                 <div className="card-head">
                   <h4>Tin tức nổi bật</h4>
-                  {topArticles.length > 0 ? (
-                    <a href="https://voduongai.com/portal/duan-cohoi/digiu" target="_blank" rel="noopener noreferrer">
-                      Xem tất cả →
-                    </a>
-                  ) : null}
                 </div>
                 {topArticles.length === 0 ? (
                   <p className="empty-hint">Chưa có bài viết cập nhật nào.</p>
@@ -617,10 +831,10 @@ export function DigiuClient({
                     <a
                       className="news-row"
                       key={a.id}
-                      href={`https://voduongai.com/portal/duan-cohoi/digiu/cap-nhat/${a.slug}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none", color: "inherit" }}
+                      href={registerLink || undefined}
+                      target={registerLink ? "_blank" : undefined}
+                      rel={registerLink ? "noopener noreferrer" : undefined}
+                      style={{ textDecoration: "none", color: "inherit", cursor: registerLink ? "pointer" : "default" }}
                     >
                       <div className="news-thumb" style={{ background: "linear-gradient(145deg,#241c4d,#5a37e6)" }}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="#c9bdff" strokeWidth="1.8">
@@ -632,7 +846,7 @@ export function DigiuClient({
                           CẬP NHẬT
                         </div>
                         <h6>{a.title}</h6>
-                        <span className="time">Xem bài viết</span>
+                        <span className="time">{registerLink ? "Tham gia ngay" : "DigiU"}</span>
                       </div>
                     </a>
                   ))
