@@ -7349,3 +7349,140 @@ hệ thống Affiliate thật hay giữ tách biệt) trước khi bắt đầu;
 cần thông tin lịch Zoom thật; (4) có muốn làm TOÀN BỘ 5 mục trong 1 đợt
 "Giai đoạn 5" hay tách từng mục thành đợt riêng theo đúng Quy tắc 5 (báo
 cáo xong 1 mục mới qua mục kế tiếp, như đã áp dụng cho Bước E.1/E.2/E.3).
+
+**Founder chọn hướng khác — đúng "Giai đoạn 5" trong `vdaiportal2.0.html`
+gốc (Premium), không phải 5 mục đề xuất thay thế ở trên.** Bản kế hoạch
+gốc Founder gửi lại xác nhận rõ "Giai đoạn 5 — Premium: redesign + 2
+trạng thái trang theo đã mua/chưa" — 5 mục 5.1-5.5 đề xuất ở trên (dựa
+trên bảng 14-hạng-mục cũ) vẫn còn giá trị tham khảo cho các giai đoạn
+SAU Premium, nhưng chưa phải việc được chọn làm tiếp theo.
+
+## Giai đoạn 5 — Redesign Premium ([PR #74](https://github.com/duongtyphu/duongtyphu/pull/74))
+
+Founder giao chi tiết dựa trên `vdaiportal2.0.html` (bản kế hoạch gốc) +
+yêu cầu cụ thể riêng cho `/v2/premium`. Đã audit trực tiếp trước khi code
+(không suy đoán từ tài liệu cũ, đúng bài học "kiểm tra cả code thật lẫn
+tài liệu"):
+
+**P0 — Xác nhận 3 gói Premium đang mở bán.** Query trực tiếp
+`premium_plans` — cả 3 dòng (`premium-thang`/`premium-6-thang`/
+`premium-12-thang`) đã `status='Published'` từ trước — **không có gì cần
+kích hoạt**, đúng như đính chính đã ghi trong `vdaiportal2.0.html`
+("0 gói Premium" từng là lỗi audit sandbox-không-Supabase, không phải bug
+thật).
+
+**Icon kim cương.** SVG outline vàng trước chữ "Premium" → ảnh
+`icon-premium.png` (đã có sẵn trong `public/v2-static/assets/`, cùng ảnh
+dùng cho promo sidebar/topbar toàn `/v2/*` — đúng là "hình ảnh viên kim
+cương tím đã thiết kế có sẵn" Founder nhắc tới, xác nhận bằng cách xem
+ảnh trực tiếp trước khi dùng).
+
+**Bỏ "Kho tài nguyên Premium" + "Premium Member nói gì?".** Cả 2 xoá hẳn
+ở CẢ 2 trạng thái (guest/member) — không chỉ ẩn khi rỗng như quyết định
+cũ, đúng yêu cầu "bỏ luôn". `getPremiumResourceCounts()` giữ nguyên (còn
+dùng bởi `/v2/admin/premium`, mirror thống kê CKOS riêng, không đụng).
+
+**Viết lại quyền lợi — đầy đủ và uy tín hơn.** `premium_plans.features`
+(UPDATE trực tiếp qua Supabase MCP, không phải bịa — mỗi dòng gắn tính
+năng THẬT đã build: CKOS/Học viện AI/AI Workspace/Chương trình Affiliate/
+Companion/hỗ trợ ưu tiên). 2 lưới "Vì sao nên nâng cấp?"/"Quyền lợi dành
+riêng cho Premium Member" (trước đó 6 thẻ hardcode mỗi bên) → bảng mới
+`premium_perks` (8 mục/trạng thái, phân biệt qua field `audience`,
+`PremiumPerksGrid.tsx`) — không bịa số liệu/cam kết không kiểm chứng
+được (không "98% học viên hài lòng" hay tương tự).
+
+**3 khối mới, đúng thứ tự Founder yêu cầu, port từ Portal 1.0
+(`/portal/premium/page.tsx`) nhưng KHÔNG copy 1:1 — thiết kế lại theo
+`.pm` (hand-CSS của `/v2/premium`, không phải canvas tối/Tailwind của
+1.0):**
+- **"Thanh toán hoạt động thế nào?"** — tái dùng NGUYÊN
+  `premium_chrome.paymentSectionTitle` + `premium_payment_steps` (đã có
+  sẵn, admin-editable qua `/admin/premium/dashboard` từ đợt "Premium
+  Dashboard Live-edit" trước đó) — Single Source of Truth thật với Portal
+  1.0, không tạo bảng trùng. `PremiumPaymentStepsBlock.tsx`.
+- **"Không chắc nên chọn gì?"** — CHỈ port Ý TƯỞNG "Companion Advisor"
+  (1.0's `PremiumAdvisor.tsx`, 6 tình huống nhắm 5 chương trình mua đứt
+  cũ đã bị Phase 38 bỏ) — không port thẳng nội dung vì đích không còn
+  tồn tại. Viết lại 6 tình huống MỚI nhắm đúng 3 gói thuê bao thật
+  (bảng mới `premium_advisor_situations`, field `targetPlanId` tham
+  chiếu `premium_plans.id`, rỗng = định tuyến sang Companion thay vì 1
+  gói cụ thể — đúng hành vi gốc "chưa chắc thì đừng mua"). `PremiumAdvisorBlock.tsx`.
+- **"🤝 Người đồng hành"** — port NGUYÊN VĂN hồ sơ Founder thật từ 1.0's
+  `FounderSpotlight.tsx` (tên/vai trò/ảnh/thẻ/giới thiệu/chuyên môn/triết
+  lý/hành trình — không bịa, chỉ đưa nội dung đã công bố sẵn vào bảng mới
+  `premium_founder`, singleton). `PremiumFounderBlock.tsx`.
+- **"Câu hỏi thường gặp"** — GIỮ NGUYÊN vị trí + nguồn dữ liệu
+  (`getLivePremiumFaq()`, đã đúng từ trước khi `/v2/premium` được build).
+
+**Trạng thái "Đã mua" — dùng nội dung đặc quyền có thật ở Portal 2.0.**
+Khối "Kho tài nguyên Premium" đã bỏ ở cột trái `.two-col` được thay bằng
+"Đặc quyền Portal 2.0 của bạn" (`.privilege-grid`, TĨNH — 6 link thật tới
+CKOS/Học viện AI/AI Workspace/Chương trình Affiliate/Companion/Dự án &
+Cơ hội, đều là route `/v2/*` đã build thật) — đúng yêu cầu, không bịa
+tính năng mới. Nguyên tắc ẩn/hiện theo `premium.isPremium` (đã có sẵn từ
+trước, không cần sửa gì) — đây CHÍNH LÀ cơ chế "trang Premium phải ẩn khi
+chưa mua, mở khi đã mua" Founder nhắc lại: `/v2/premium`'s JSX rẽ nhánh
+hoàn toàn theo `premium.isPremium` (thật, từ `getPremiumStatus()`, dùng
+1 route DUY NHẤT chứ không phải 2 trang riêng biệt).
+
+**Bug phát hiện khi audit — vi phạm NGUYÊN TẮC BẤT BIẾN.** 4 vị trí (nút
+"Quản lý gói Premium" ở Hero + `member-status-card`, nút "Đã là Premium —
+Xem sản phẩm" ở `PlanPriceCard`, "Hoặc gửi yêu cầu hỗ trợ") vẫn trỏ thẳng
+`/portal/my-products`/`/portal/support` (Portal 1.0) — docblock cũ tự
+giải thích "2 trang đó KHÔNG nằm trong 42 trang Bước F" nhưng NGUYÊN TẮC
+BẤT BIẾN không có ngoại lệ đó. Đã sửa: `/v2/tai-khoan` (trang Tài khoản
+2.0 đã có sẵn, `AccountContent` hiển thị đúng "Sản phẩm đã mua" từ
+`orders` thật) cho 3 vị trí đầu, `siteConfig.community.zaloGroup` (kênh
+liên hệ thật, cùng cách đã dùng cho hub Dự án & Cơ hội) cho vị trí cuối.
+
+**Admin quản lý toàn bộ.** `/admin/premium/plans` (giá/`features` từng
+gói, đã có sẵn), `/admin/premium/dashboard` (Hero/2 nhãn section/thanh
+toán/FAQ — dùng chung Portal 1.0, Single Source of Truth), **route MỚI**
+`/admin/premium/v2-dashboard` (Live-edit Cách A, render lại
+`/v2/premium/page.tsx` thật bọc `EditModeProvider` — quản 2 lưới quyền
+lợi/cố vấn chọn gói/người đồng hành, 3 khối riêng của `/v2/premium`).
+
+**Bug tự phát hiện và sửa TRƯỚC khi commit (đúng lớp lỗi đã ghi nhận
+nhiều lần — "className của `EditableRegion` chỉ áp dụng khi
+editMode=true"):** lúc đầu đặt `className="perk-card"`/`className="founder-body"`
+trực tiếp trên `EditableRegion` bọc nội dung quyền lợi/hồ sơ Founder —
+sẽ làm layout (`.perk-card`/`.founder-body`, padding/grid) BIẾN MẤT trên
+Portal thật (editMode=false, component trả `<>{children}</>` bỏ qua
+className). Đã sửa: giữ `.perk-card`/`.founder-body` trên `<div>` thật,
+`EditableRegion` chỉ bọc nội dung bên trong không cần layout riêng —
+phát hiện TRƯỚC khi test, không phải bug đã xuất bản.
+
+**Bug tự phát hiện thứ 2:** `PremiumAdvisorBlock`'s chip bấm-để-chọn tình
+huống nếu bọc `EditableRegion` sẽ có 2 `onClick` chồng nhau trên cùng 1
+phần tử (chọn tình huống VÀ mở popover sửa cùng lúc). Đã tách: chip hiển
+thị/tương tác giữ nguyên `<button>` thuần; sửa nội dung qua 1 panel
+"Live-edit — Danh sách tình huống" RIÊNG, chỉ hiện khi `editMode=true` —
+cùng pattern panel Live-edit luôn hiện (không gắn vào vị trí hiển thị tự
+nhiên) đã dùng cho Mirror/Nhật ký học tập ở Nhóm 3 Phần A.
+
+**File mới:** `supabase-phase28-premium-v2-perks-advisor-founder.sql` (3
+bảng: `premium_perks`/`premium_advisor_situations`/`premium_founder`),
+`src/components/v2/premium/{EditModeContext,EditableRegion,PremiumPerksGrid,
+PremiumPaymentStepsBlock,PremiumAdvisorBlock,PremiumFounderBlock}.tsx`,
+`src/app/admin/(dashboard)/premium/v2-dashboard/page.tsx`.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (2 route mới xuất hiện đúng). Test
+thật qua route dev-preview tạm với anon key thật (dán tạm qua env,
+`next start` sau khi build lại với env đó, xoá route + rebuild lại ngay
+sau khi xác nhận xong — cùng kỹ thuật đã dùng nhiều lần trong dự án):
+Playwright xác nhận 0 pageerror, 3 `.price-card` + 8 `.perk-card` (guest)
++ 4 bước thanh toán + 6 chip cố vấn (bấm 1 chip → `.advisor-result` hiện
+đúng) + hồ sơ Founder (tên "Võ Đương", ảnh thật) đều render đúng dữ liệu
+Supabase thật; grep xác nhận 0 tham chiếu `/portal/my-products`/
+`/portal/support` còn sót, `icon-premium.png` xuất hiện đúng vị trí H1.
+Chụp ảnh toàn trang xác nhận layout sạch, không chồng lấn (đã merge PR
+#74, đang deploy Production — xem xác nhận cuối cùng ở turn tiếp theo).
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản Premium đăng
+nhập thật đã nêu nhiều lần): trạng thái "Đã mua" (memberState) — khối
+"Đặc quyền Portal 2.0 của bạn" mới, `member-status-card`/`ustat-grid` với
+dữ liệu thật, và toàn bộ luồng Live-edit qua `/admin/premium/v2-dashboard`
+(sửa quyền lợi/cố vấn/hồ sơ Founder qua UI, xác nhận phản ánh đúng lên
+`/v2/premium`) — Founder tự test trên Preview/Production URL với tài
+khoản đã mua gói Premium.
