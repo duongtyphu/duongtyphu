@@ -84,7 +84,12 @@
 .pm .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .pm .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .pm .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.pm .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+/* Contrast fix (audit "Giai đoạn 5 rework #2") — chữ vàng nhạt `--gold`
+ * (#e2b23c) trên nền topbar trắng chỉ đạt 1.97:1 (WCAG cần ≥4.5:1 cho chữ
+ * nhỏ). Thêm nền `#fef3c7` + chữ `#7a5c08` (cùng cặp đã dùng an toàn cho
+ * `.tkh .profile .plan` ở `/v2/tai-khoan`, ratio 5.61:1) thay vì chỉ đổi
+ * màu chữ trên nền trong suốt. */
+.pm .profile .plan{font-size:10.5px;font-weight:800;background:#fef3c7;color:#7a5c08;padding:1px 7px;border-radius:6px;display:inline-block;margin-top:1px}
 .pm .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
 .pm .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:24px}
 .pm .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
@@ -146,13 +151,18 @@
 .pm .rm2-item:last-child{padding-bottom:0}
 .pm .rm2-item::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
 .pm .rm2-item:last-child::before{display:none}
-.pm .rm2-dot{width:26px;height:26px;border-radius:50%;background:var(--violet-light);color:var(--violet);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
-.pm .rm2-item.done .rm2-dot{background:#189a52;color:#fff}
+/* Contrast fix — `--violet` (#6d4aff) trên `--violet-light` chỉ đạt
+ * 4.36:1 (dưới ngưỡng 4.5:1); `--violet-dark` (#5a37e6, đã có sẵn token)
+ * đạt 5.69:1. `#189a52` trên nền trắng (chữ trắng) chỉ đạt 3.63:1 → đổi
+ * `#066b4d` (cùng màu xanh đậm đã dùng an toàn ở đợt audit "Dự án & Cơ
+ * hội", ratio 6.53:1). */
+.pm .rm2-dot{width:26px;height:26px;border-radius:50%;background:var(--violet-light);color:var(--violet-dark);font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;z-index:1}
+.pm .rm2-item.done .rm2-dot{background:#066b4d;color:#fff}
 .pm .rm2-item.active .rm2-dot{background:var(--violet);color:#fff}
 .pm .rm2-text{flex:1}
 .pm .rm2-text .top-row{display:flex;justify-content:space-between;font-size:13px;font-weight:700}
 .pm .rm2-text .stat{font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap}
-.pm .rm2-text .stat.done{color:#189a52}
+.pm .rm2-text .stat.done{color:#066b4d}
 .pm .rm2-text .stat.active{color:var(--violet)}
 .pm .rm2-text p{font-size:11.5px;color:var(--muted);margin-top:2px}
 .pm .rm2-track{height:6px;background:var(--bg);border-radius:5px;overflow:hidden;margin-top:6px}
@@ -160,17 +170,49 @@
 .pm .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
 .pm .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
 .pm .card-head h4{font-size:14px;font-weight:800}
-.pm .member-status-card{background:linear-gradient(150deg,#fdf6e6,#fff);border:1px solid #f0dfa8;border-radius:16px;padding:20px;display:grid;grid-template-columns:1fr auto auto;gap:24px;align-items:center}
+/* Đợt rework "Premium Member khoa học, rõ ràng, thẩm mỹ hơn" — đổi từ 1
+ * hàng ngang `grid-template-columns:1fr auto auto` (badge/dates/nút chen
+ * chúc cùng 1 hàng, không đủ chỗ cho đồng hồ đếm ngược mới) sang cột dọc
+ * `flex-direction:column` — mỗi khối (badge/đếm ngược/thông tin gói/nút)
+ * có đủ chiều rộng riêng, phân cấp rõ bằng `border-top` giữa các khối. */
+.pm .member-status-card{background:linear-gradient(150deg,#fdf6e6,#fff);border:1px solid #f0dfa8;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px}
 .pm .ms-badge{display:flex;align-items:center;gap:10px}
 .pm .ms-crown{width:38px;height:38px;border-radius:10px;background:linear-gradient(150deg,var(--gold),#a9660f);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pm .ms-crown svg{width:19px;height:19px}
 .pm .ms-badge h4{font-size:15px;font-weight:800}
-.pm .ms-badge .status{font-size:10.5px;font-weight:800;background:#e6f7ed;color:#189a52;padding:2px 8px;border-radius:6px;margin-left:8px}
+/* Contrast fix (audit "Giai đoạn 5 rework #2") — `#189a52` (xanh lá) chỉ
+ * đạt 3.27:1 trên `#e6f7ed` (chữ nhỏ badge) và 3.63:1 làm nền chữ trắng
+ * (`.save-pill` mặc định)/làm màu chữ trên nền trắng (`.rm2-text
+ * .stat.done`) — đều dưới ngưỡng 4.5:1. Đổi sang `#066b4d` (cùng màu
+ * xanh đậm đã dùng an toàn ở đợt audit "Dự án & Cơ hội" cho đúng tình
+ * huống này, ratio 5.87-6.53:1 tuỳ nền) ở cả 4 chỗ (`.ms-badge .status`,
+ * `.save-pill`, `.rm2-text .stat.done`, và badge "Tiết kiệm đến X%" —
+ * inline style trong `PremiumClient.tsx`). Icon check-mark (`.price-feat
+ * svg`/`.comp-table svg`) GIỮ NGUYÊN `#189a52` — icon không phải chữ,
+ * ngưỡng WCAG non-text contrast chỉ cần 3:1, 3.63:1 đã đạt. */
+.pm .ms-badge .status{font-size:10.5px;font-weight:800;background:#e6f7ed;color:#066b4d;padding:2px 8px;border-radius:6px;margin-left:8px}
 .pm .ms-badge .plan-line{font-size:12px;color:var(--muted);margin-top:2px}
 .pm .ms-badge .price{font-size:12.5px;font-weight:700;margin-top:1px}
-.pm .ms-dates{display:flex;gap:22px;font-size:11.5px;color:var(--muted)}
-.pm .ms-dates b{display:block;font-size:13px;font-weight:800;color:var(--text)}
-.pm .ms-manage{background:var(--gold);color:#3b2a06;border:none;padding:11px 22px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
+
+/* Đồng hồ đếm ngược — tính THẬT từ `members.premium_expires_at`, xem
+ * `PremiumCountdown`/`useCountdownParts()`. 4 ô đơn vị đều nhau, số lớn
+ * `font-variant-numeric:tabular-nums` để không "nhảy" độ rộng mỗi giây. */
+.pm .ms-countdown{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}
+.pm .ms-countdown-label{font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:10px}
+.pm .ms-countdown-units{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pm .cd-unit{background:var(--bg);border-radius:9px;padding:9px 4px;text-align:center}
+.pm .cd-unit b{display:block;font-size:20px;font-weight:800;color:var(--violet);font-variant-numeric:tabular-nums;line-height:1.2}
+.pm .cd-unit span{font-size:10px;color:var(--muted);font-weight:600}
+.pm .ms-unlimited{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12.5px;font-weight:700;color:var(--text)}
+.pm .ms-unlimited svg{width:18px;height:18px;color:var(--gold);flex-shrink:0}
+
+/* Thông tin gói — hàng label/giá trị rõ ràng, thay `.ms-dates` cũ (2 cột
+ * cạnh nhau, dễ lẫn nhãn với số khi thu hẹp). */
+.pm .ms-info-rows{display:flex;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:14px}
+.pm .ms-info-row{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted)}
+.pm .ms-info-row b{font-size:12.5px;font-weight:700;color:var(--text)}
+
+.pm .ms-manage{width:100%;background:var(--gold);color:#3b2a06;border:none;padding:11px 22px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap}
 .pm .ustat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
 .pm .ustat{text-align:center}
 .pm .ustat .num{font-size:20px;font-weight:800;color:var(--violet)}
@@ -208,7 +250,7 @@
 .pm .price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
 .pm .price-card{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:22px;position:relative}
 .pm .price-card.featured{border-color:var(--violet);box-shadow:0 14px 30px rgba(109,74,255,.16);transform:translateY(-6px)}
-.pm .save-pill{position:absolute;top:-11px;right:20px;background:#189a52;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px}
+.pm .save-pill{position:absolute;top:-11px;right:20px;background:#066b4d;color:#fff;font-size:10px;font-weight:800;padding:3px 10px;border-radius:6px}
 .pm .price-card h5{font-size:15px;font-weight:800}
 .pm .price-card .sub{font-size:11.5px;color:var(--muted);margin-bottom:14px}
 .pm .price-card .amt{font-size:24px;font-weight:800}
@@ -225,7 +267,9 @@
 .pm .comp-table th:first-child, .pm .comp-table td:first-child{text-align:left}
 .pm .comp-table th{font-weight:800;color:var(--muted);font-size:11.5px}
 .pm .comp-table svg{width:15px;height:15px;color:#189a52}
-.pm .comp-table .dash{color:#c7c2df}
+/* Contrast fix — #c7c2df trên nền trắng chỉ đạt 1.72:1 (gần như vô hình).
+ * Đổi sang `var(--muted)` (đã dùng an toàn khắp file, 5.43:1). */
+.pm .comp-table .dash{color:var(--muted)}
 .pm .testi-card{background:var(--bg);border-radius:12px;padding:16px;margin-bottom:12px}
 .pm .testi-card:last-child{margin-bottom:0}
 .pm .testi-card p{font-size:12.5px;color:var(--text);line-height:1.6;margin-bottom:10px}
@@ -309,7 +353,7 @@
 .pm .founder-role{font-size:12.5px;font-weight:700;color:var(--violet);margin:2px 0 10px}
 .pm .founder-intro{font-size:12.5px;line-height:1.6;color:var(--text);margin-bottom:12px}
 .pm .founder-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px}
-.pm .founder-tags span{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.pm .founder-tags span{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet-dark);padding:3px 10px;border-radius:7px}
 .pm .founder-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
 .pm .founder-expertise ul,.pm .founder-achievements ul{list-style:none;display:flex;flex-direction:column;gap:5px}
 .pm .founder-expertise li,.pm .founder-achievements li{font-size:12px;line-height:1.5;color:var(--text);padding-left:14px;position:relative}
@@ -332,12 +376,19 @@
 
 /* Badge tầng gói ("🔥 Phổ biến nhất"/"💎 Giá trị tốt nhất"/"🚀 Bắt đầu nhẹ
  * nhàng") + biến thể "Giá trị tốt nhất" (viền/nền vàng, khác `.featured`
- * đã có sẵn — viền tím). */
+ * đã có sẵn — viền tím).
+ *
+ * Contrast fix (audit "Giai đoạn 5 rework #2") — `#a9822c` trên nền
+ * trắng chỉ đạt 3.55:1, dưới ngưỡng 4.5:1 (đo được ở cả `.tier-tag`,
+ * `.price-btn`, và `.save-pill` nền vàng chữ trắng cùng bug). Đổi sang
+ * `#8a6a1f` (đậm hơn, cùng 1 giá trị dùng cho CẢ chữ-trên-trắng lẫn
+ * trắng-trên-nền — tỉ lệ tương phản đối xứng, 1 màu sửa cả 2 chiều,
+ * 5.05:1). */
 .pm .tier-tag{display:block;font-size:10.5px;font-weight:700;color:var(--muted);margin-bottom:8px}
-.pm .price-card.featured .tier-tag{color:var(--violet)}
+.pm .price-card.featured .tier-tag{color:var(--violet-dark)}
 .pm .price-card.best-value{border-color:var(--gold);box-shadow:0 14px 30px rgba(226,178,60,.16)}
-.pm .price-card.best-value .tier-tag{color:#a9822c}
-.pm .price-card.best-value .price-btn{border-color:var(--gold);color:#a9822c}
+.pm .price-card.best-value .tier-tag{color:#8a6a1f}
+.pm .price-card.best-value .price-btn{border-color:var(--gold);color:#8a6a1f}
 .pm .price-card.best-value .price-btn:hover{background:#fffaf0}
 
 /* Nút "Nhóm Zalo Premium" cạnh "Tham gia ngay" ở khối Cộng đồng Premium. */

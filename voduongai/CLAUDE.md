@@ -7725,3 +7725,122 @@ thật, xác nhận `members.premium_expires_at` tự gia hạn ngay sau khi đ�
 `confirmed` (không cần thao tác gì thêm — cơ chế đã có sẵn từ Phase 38);
 (3) gửi nội dung/mockup thật cho "Mỗi ngày một ý tưởng" để hoàn tất mục
 5 còn thiếu.
+
+## Giai đoạn 5 — Rework thứ 3: "Cộng đồng Premium" theo ảnh mẫu, đồng hồ đếm ngược, redesign "Premium Member", audit contrast toàn trang
+
+Founder gửi ảnh chụp bố cục "Cộng đồng Premium" của 1 thiết kế khác, yêu
+cầu áp dụng cho `/v2/premium` + 2 yêu cầu mid-turn (đồng hồ đếm ngược gói,
+redesign "Premium Member" khoa học hơn) + yêu cầu audit toàn diện.
+
+**1 — "Cộng đồng Premium" theo ảnh mẫu.** Ảnh gốc có: 4 quyền lợi (Nhóm
+kín Premium/Livestream độc quyền/Workshop thực chiến/Q&A cùng chuyên gia)
++ dãy avatar tròn "A B C D" + dòng "Hơn 1.200 thành viên Premium đang học
+tập và phát triển mỗi ngày" + CTA "Tham gia ngay". Đã audit qua Supabase
+MCP TRƯỚC khi code (không suy đoán, không copy mù nội dung ảnh):
+- Không có bảng nào (`community_events`/tương tự) backing "Livestream
+  độc quyền"/"Workshop thực chiến"/"Q&A cùng chuyên gia" như hoạt động có
+  lịch trình — nhưng đây là 4 dòng MÔ TẢ QUYỀN LỢI tĩnh do Founder trực
+  tiếp cung cấp qua ảnh thiết kế (không phải số liệu đo được), giữ nguyên
+  như bản gửi — "Nhóm kín Premium" map đúng vào nhóm Zalo Premium
+  (`PREMIUM_ZALO_GROUP_URL`) đã thêm ở đợt rework trước.
+- **CỐ Ý BỎ 2 phần vi phạm NO-FAKE-DATA** (đã xác nhận số liệu thật qua
+  SQL): dãy avatar "A B C D" (không có cơ chế/quyền hiển thị ảnh đại diện
+  thành viên khác — vừa lộ dữ liệu cá nhân, vừa không có ảnh thật); "Hơn
+  1.200 thành viên Premium" — số THẬT hiện tại chỉ có **1** tài khoản
+  Premium đang hoạt động (đếm qua `members.premium_expires_at`, `0` đơn
+  hàng `confirmed`) — lệch ~1200 lần so với ảnh, đúng loại số liệu đã bị
+  gỡ 1 lần trước đó ở CHÍNH khối này (xem mục "Giai đoạn 5 rework" đầu
+  tiên, hạng mục #7 gốc: "'Hơn 1.200 thành viên...' (số bịa)... → bỏ
+  hẳn"). Thay bằng 1 dòng giới thiệu trung thực không kèm số.
+- CTA "Tham gia ngay" đổi từ `channels[0].url` (kênh đầu tiên trong
+  `community` — thường là Facebook) sang `PREMIUM_ZALO_GROUP_URL` (đúng
+  yêu cầu "CTA gắn link nhóm Zalo").
+- Khối này KHÔNG còn phụ thuộc `getLiveCommunityChannels()` (danh sách
+  kênh mạng xã hội chung) — chuyển hẳn thành mô tả QUYỀN LỢI Premium
+  tĩnh, khác bản chất "danh sách kênh" cũ. Đã dọn sạch: bỏ hẳn prop
+  `communityChannels`/`channels` khỏi `PremiumClient`/`page.tsx`, bỏ
+  import `getLiveCommunityChannels`/`LiveCommunityChannel`, bỏ
+  `PLATFORM_LABEL_SHORT` (không còn consumer) — tránh dead code. Khối
+  kênh mạng xã hội chung (FB/YouTube/TikTok/Zalo) VẪN CÒN thật ở
+  `/v2/cong-dong-ai`, không đụng.
+
+**2 — Đồng hồ đếm ngược "Thời gian còn lại của gói" (yêu cầu mid-turn).**
+`PremiumCountdown`/`useCountdownParts()` (mới) — tính THẬT từ
+`memberSummary.expiresAt` (`members.premium_expires_at`, đã đúng từ Phase
+38, tự phản ánh đúng dù gói 1/6/12 tháng vì đều cộng dồn vào cùng 1 cột).
+4 ô Ngày/Giờ/Phút/Giây, tick mỗi giây qua `setInterval`. `now` khởi tạo
+`null`, chỉ set thật trong `useEffect` (client-only, tránh hydration
+mismatch giữa giờ server-render và giờ máy trình duyệt — cùng kỹ thuật
+lời chào theo giờ ở `TrangChuClient.tsx`). Chỉ hiện khi `expiresAt` có
+giá trị — Premium cấp thủ công (`expiresAt=null`, vd tài khoản admin) hiện
+badge "Premium không giới hạn thời gian" riêng, KHÔNG đếm ngược giả.
+Verify qua Playwright: đo giá trị giây tại 2 mốc cách nhau 1.2s, xác nhận
+giảm đúng 1 (59→58) — đồng hồ THẬT SỰ đang chạy, không phải số tĩnh.
+
+**3 — Redesign "Premium Member" khoa học/rõ ràng/thẩm mỹ hơn (yêu cầu
+mid-turn).** `.member-status-card` đổi từ 1 hàng ngang chen chúc
+(`grid-template-columns:1fr auto auto` — badge/ngày/nút cùng 1 hàng,
+không đủ chỗ cho đồng hồ đếm ngược mới) sang cột dọc rõ ràng
+(`flex-direction:column`, 4 khối phân cấp bằng `border-top`): badge
+(crown+trạng thái+gói) → đồng hồ đếm ngược (hoặc badge "không giới hạn")
+→ `.ms-info-rows` (label/giá trị rõ ràng, thay `.ms-dates` cũ dễ lẫn nhãn
+với số) → nút "Quản lý gói Premium" full-width. Ngày "Hết hạn" đổi sang
+`formatDateTime()` (đủ ngày+giờ, đồng bộ với "Bắt đầu gói hiện tại" thay
+vì chỉ ngày như trước).
+
+**4 — Audit contrast toàn trang (yêu cầu Founder, cả 2 trạng thái).**
+Playwright đo `getComputedStyle` thật (không suy đoán), tính tỉ lệ tương
+phản WCAG chuẩn, quét TOÀN BỘ text node trong `.pm` ở cả 3 kịch bản
+(guest/member có gói/member không giới hạn). Phát hiện 13 cặp màu dưới
+ngưỡng ở lần quét đầu — sau khi loại các FALSE POSITIVE do script tự viết
+đo sai nền gradient (đi bộ DOM tìm `background-color` không phát hiện
+được `background: linear-gradient(...)`/`radial-gradient(...)` vì thuộc
+tính đó không set `background-color`, ví dụ `.avatar`/`.pm-hero` — kiểm
+tra lại trực tiếp bằng cách đọc CSS, xác nhận các trường hợp này (chữ
+trắng trên nền tối `.pm-hero`, icon trắng trên gradient `.avatar`) trong
+thực tế tương phản RẤT TỐT, không phải lỗi thật), còn lại **7 lỗi tương
+phản THẬT**, đã sửa hết:
+
+| Vị trí | Trước | Sau | Ratio trước → sau |
+|---|---|---|---|
+| `.price-card.best-value` (tier-tag/price-btn/save-pill) — MỚI thêm đợt trước, tự phát hiện | `#a9822c` trên trắng | `#8a6a1f` (đối xứng, sửa cả chữ-trên-trắng lẫn trắng-trên-nền) | 3.55 → 5.05 |
+| `.comp-table .dash` ("—") — CSS mockup gốc, bị "đánh thức" khi thêm lại bảng So sánh | `#c7c2df` | `var(--muted)` | 1.72 → 5.43 |
+| `.profile .plan` ("Free"/"Premium" topbar) — CSS riêng trang này, có sẵn từ trước | `color:var(--gold)` không nền | thêm nền `#fef3c7` + `color:#7a5c08` (cùng cặp đã dùng an toàn ở `/v2/tai-khoan`) | 1.97 → 5.61 |
+| `.ms-badge .status`/`.save-pill` mặc định/`.rm2-text .stat.done`/badge "Tiết kiệm đến X%" — 4 chỗ dùng chung 1 màu, có sẵn từ trước | `#189a52` | `#066b4d` (cùng xanh đậm đã dùng an toàn ở đợt audit "Dự án & Cơ hội") | 3.27–3.63 → 5.87–6.53 |
+| `.rm2-dot`/`.founder-tags span` — có sẵn từ trước | `color:var(--violet)` trên `--violet-light` | `color:var(--violet-dark)` | 4.36 → 5.69 |
+
+Icon check-mark (`.price-feat svg`/`.comp-table svg`, vẫn giữ `#189a52`)
+KHÔNG sửa — icon không phải chữ, ngưỡng WCAG non-text contrast chỉ cần
+3:1 (đạt 3.63:1), sửa thêm là thừa.
+
+**Còn 1 vị trí chưa sửa, NGOÀI PHẠM VI trang này:** `.upgrade-btn` ("Nâng
+cấp Premium", topbar) — 3.41:1, dưới ngưỡng — nhưng đây là CSS DÙNG CHUNG
+(`PortalV2Shell`, xuất hiện trên MỌI trang `/v2/*` có nút nâng cấp, không
+phải riêng `/v2/premium`). Sửa ở đây cần đổi 1 điểm chung, ảnh hưởng toàn
+bộ `/v2/*` — ngoài phạm vi 1 trang, cần xác nhận riêng trước khi sửa.
+
+**Link chết/mồ côi:** grep toàn bộ `href`/`Link` trong `PremiumClient.tsx`
+— 0 `href="#"` còn sót (2 anchor nội trang `#chuong-trinh`/`#loi-ich` đều
+có `id` đích tồn tại, đúng vị trí trạng thái tương ứng — không phải link
+chết). Mọi `href` còn lại trỏ route `/v2/*` thật đã build hoặc URL ngoài
+thật (Zalo). Không phát hiện link mồ côi nào.
+
+**File sửa:** `PremiumClient.tsx`, `premium.css`, `page.tsx` (bỏ
+`communityChannels`).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Test qua route dev-preview tạm với
+anon key thật (`next start`, xoá route + rebuild sạch ngay sau khi xong):
+Playwright xác nhận đồng hồ đếm ngược tick đúng (59→58 sau 1.2s), 10 hộp
+tài nguyên + 6 số đếm khớp SQL trực tiếp, "Cộng đồng Premium" hiện đúng 4
+quyền lợi + nút "Tham gia ngay" trỏ đúng Zalo, contrast audit lần 2 chỉ
+còn 5 false-positive đã xác nhận qua đọc CSS trực tiếp (không phải lỗi
+thật) + 1 vị trí chung ngoài phạm vi. Chụp ảnh toàn trang cả 2 trạng thái
+xác nhận layout sạch, không chồng lấn, thẩm mỹ đúng yêu cầu.
+
+**ĐÁNH GIÁ ĐỘ HOÀN THIỆN GIAI ĐOẠN 5 (Premium redesign):** xem báo cáo
+đầy đủ trong phản hồi cuối phiên này — tóm tắt: P0/icon kim cương/bỏ Kho
+tài nguyên+testimonials/quyền lợi viết lại/3 khối mới/2 trạng thái/Admin
+quản lý — đã HOÀN TẤT. 1 mục CHƯA hoàn tất (không tự làm được): quyền lợi
+"Mỗi ngày một ý tưởng" — chờ Founder gửi nội dung thật (tính năng vẫn
+"đang xây dựng", chưa có gì thật để viết).
