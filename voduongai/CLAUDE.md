@@ -7149,3 +7149,203 @@ Học viện AI → AI Workspace). Bước tiếp theo theo lệnh giao (Bước
 trang còn lại) CHƯA bắt đầu, chờ xác nhận riêng của Founder trước khi làm
 (đúng Quy tắc 5 — báo cáo xong 1 module rồi mới qua module/giai đoạn kế
 tiếp).
+
+## Giai đoạn 4 — audit toàn diện "Dự án & Cơ hội" (hub + 5 trang con): CTA, màu sắc, link chết, logo Ohana ([PR #72](https://github.com/duongtyphu/duongtyphu/pull/72))
+
+Founder yêu cầu rà soát lại toàn bộ hub `/v2/du-an-co-hoi` + 5 trang con
+(DigiU/SolarGroup/Ohana/Các mô hình Affilate/Affilate sàn giao dịch) sau
+khi phần nội dung chính (Giai đoạn 4 phần 1+2, PR #67-#71) đã xong: (1)
+nút CTA "Đường link liên kết" ở DigiU/SolarGroup giống Ohana + hiệu ứng
+hover; (2) lỗi hiển thị/màu chữ-nền không rõ; (3) không link chết/không
+đích/không link Portal 1.0; (4) logo Ohana thật (Founder gửi kèm) + bổ
+sung nội dung tham khảo từ `astronixa.com`/`affiliateohana.vercel.app`.
+
+**1 — CTA "Đường link liên kết".** DigiU/SolarGroup đổi từ danh sách chữ
+(`.fin-row`) sang cột nút `.btn-primary` full-width (đã có sẵn hiệu ứng
+hover `transform`/`box-shadow`/`filter` trong CSS mỗi trang, không cần
+viết mới), đồng bộ với Ohana.
+
+**2 — BUG HỆ THỐNG đã sửa (quan trọng nhất, ảnh hưởng nhiều trang
+`/v2/*`, không riêng đợt audit này):** Playwright đo `getComputedStyle`
+thật trên cả 6 trang phát hiện nút `.btn-primary`/`.help-link-btn` (kiểu
+`<a>`) hiển thị SAI màu — tím thay vì trắng/nâu theo CSS riêng từng
+trang, có chỗ (`.help-link-btn` ở hub, nút "Liên hệ hỗ trợ") **chữ tím
+trên nền tím = hoàn toàn vô hình**. Root cause: `v2-tokens.css`'s rule
+reset `[data-ui="v2"] a:not(.smc *):not(.tkh *){color:var(--v2-violet)}`
+(thêm từ bug fix `/v2/su-menh-companion` trước đó, xem mục "Bug đã sửa —
+`/v2/su-menh-companion`" ở trên) — mỗi `:not(.class *)` viết trực tiếp
+CỘNG THÊM 1 mức specificity CSS, đẩy rule từ (0,1,1) gốc lên (0,3,1),
+VƯỢT QUA specificity CSS 2-class thông thường của từng trang
+(`.dgu .btn-primary{color:#fff}` = (0,2,0)). Đây là REGRESSION do chính
+bản vá `.smc`/`.tkh` trước đó gây ra, không ai phát hiện vì lúc đó chỉ
+test 2 trang liên quan, không quét toàn `/v2/*`.
+
+**Đã sửa tận gốc (1 chỗ, `v2-tokens.css`)** — bọc `:not(...)` trong
+`:where(...)`: `:where(:not(.smc *)):where(:not(.tkh *))`. `:where()`
+giữ NGUYÊN logic khớp/loại trừ (kết quả matching y hệt) nhưng LUÔN có
+specificity = 0, nên cả 3 rule (margin h1-h6/p/figure, màu `a`, màu
+`a:hover`) trở lại đúng specificity gốc trước khi có ngoại lệ `.smc`/
+`.tkh` — CSS từng trang lại thắng đúng ý đồ ban đầu, không cần vá tay
+từng nút trên từng trang. Verify: Playwright xác nhận cả 6 trang hết bug
+(DigiU/Ohana `.btn-primary` → trắng đúng; SolarGroup 2 nút → nút Hero
+giữ đúng nâu-trên-vàng theo thiết kế riêng, nút "Đường link liên kết" →
+trắng đúng theo yêu cầu Founder) — và xác nhận KHÔNG regression 2 trang
+`.smc`/`.tkh` (nút "Companion qua hình ảnh" vẫn trắng, margin `.smc p`
+vẫn giữ, không bị reset về 0).
+
+**3 — Contrast dưới ngưỡng WCAG (2 chỗ, đo bằng script contrast-ratio
+tự viết, ngưỡng 3.0):** badge "Free" (`.profile .plan`, sidebar) —
+vàng nhạt `#e2b23c` trên nền trắng (ratio 1.97) → đổi sang `#a9822c`
+(cùng màu đã dùng an toàn cho `.upgrade-btn`, ratio đạt), áp dụng cả 6
+file CSS trang con. Tag "Hoa hồng theo cấp bậc VIP" (Affilate sàn giao
+dịch, thẻ Gate.io) — xanh lá `#0aa876` trên nền xanh lá nhạt (ratio
+2.80) → đổi sang `#066b4d` (ratio 5.99).
+
+**4 — Link chết/Portal 1.0 (grep toàn thư mục, không suy đoán):** xác
+nhận 0 tham chiếu `/portal/*`/`href="#"` còn sót trong code (chỉ còn
+trong comment lịch sử) — 3 link đã sửa ở đợt trước (tin tức hub, "Liên
+hệ hỗ trợ", marquee DigiU) vẫn đúng. Phát hiện thêm 1 nút không có đích
+("Bắt đầu ngay", cuối cột phải Ohana — trước là `<button>` trơ, không
+nằm trong danh sách "8 tab/CTA trơ có chủ đích" đã ghi trong docblock) →
+đổi thành `<a href={REGISTER_URL}>`.
+
+**5 — Logo Ohana thật.** Founder gửi file `astonixa -Ohana.png` (mark
+icon, nền trong suốt) — xử lý qua `sharp` (`.trim()` bỏ viền trong suốt
+thừa, resize 256×256 `fit:"contain"`, nén PNG) → lưu
+`public/images/duan-cohoi/logos/ohana-logo.png`, thay SVG orbit-ring
+placeholder trong `profile-logo`. Founder gửi thêm 1 bản logo ngang đầy
+đủ (có chữ "ASTRONIXA" + tagline "One Universe. One Family") — dùng làm
+nguồn tham khảo nội dung, không thay logo vuông đã dùng (logo ngang
+không hợp khung 64×64 của `profile-logo`).
+
+**6 — Bổ sung nội dung Ohana từ 2 nguồn Founder chỉ định.**
+`affiliateohana.vercel.app` (fetch qua WebFetch) xác nhận đúng mô hình
+kinh doanh/sản phẩm (OHANA AI Agent, OhanaSocial, Ohana Meet, AstroBuy,
+AstroPay, OHANA-C, AstroChain — khớp `PILLARS` đã có). `astronixa.com`
+(WebFetch bị chặn 403, fetch qua `curl` với User-Agent trình duyệt →
+200, strip HTML lấy text thật) xác nhận đúng roadmap 4 giai đoạn — phát
+hiện `ROADMAP` trong code lệch 2 mốc so với nguồn thật: giai đoạn 1 ghi
+"Q3/2026" (nguồn thật: **Q2/2026**), giai đoạn 3 ghi "Giai đoạn 3" mơ hồ
+(nguồn thật: **Q1/2027**, tên "RETENTION & ECOSYSTEM EXPANSION" khớp
+đúng bản dịch tiếng Việt sẵn có "Giữ chân & mở rộng hệ sinh thái") — đã
+sửa cả 2 theo đúng nguồn xác minh. Nội dung còn lại (STATS/PILLARS/
+TOKEN_ROWS/địa chỉ Delaware) đã khớp đúng nguồn thật, không cần sửa
+thêm.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright qua `next start`
+(script contrast-audit tự viết, đo `getComputedStyle` thật, ngưỡng
+WCAG 3.0): 0 lỗi tương phản trên cả 6 trang (trước khi sửa: 2-3 lỗi/
+trang, gồm 1 lỗi "chữ vô hình" ở hub), 0 pageerror. Đã merge PR #72 vào
+`main` (rebase qua squash-merge conflict trước đó, xác nhận nội dung
+0-diff trước khi rebase — cùng kỹ thuật đã dùng nhiều lần) và deploy
+Production — xác nhận `READY`, 0 runtime error, cả 6 route trả đúng
+`307→/login` (Production có Supabase, đúng hành vi mong đợi).
+
+### Giai đoạn 4 — xác nhận HOÀN TẤT
+
+Đối chiếu lại toàn bộ phạm vi gốc của Giai đoạn 4 (`/v2/du-an-co-hoi` +
+5 trang con: bỏ tab hệ sinh thái, thêm 4 khối từ 1.0, viết lại nội dung
+DigiU/SolarGroup/Ohana/Các mô hình Affiliate/Affiliate sàn giao dịch) —
+cả hub (PR #67-68) lẫn 5 trang con (PR #69-71) đã có nội dung thật, và
+đợt audit này (PR #72) đóng nốt phần "chất lượng hiển thị" (CTA/màu sắc/
+link chết) mà phạm vi gốc không liệt kê rõ nhưng thuộc cùng tinh thần
+"không bịa, không lỗi, không link chết về 1.0". **GIAI ĐOẠN 4 HOÀN TẤT
+TOÀN BỘ.**
+
+## Đối chiếu numbering "10 giai đoạn" (kế hoạch gốc) với "Bước A-F" (lịch sử build /v2) — trước khi lên kế hoạch Giai đoạn 5
+
+Trước khi lên kế hoạch Giai đoạn 5, đã audit lại để không lặp việc đã
+làm dưới tên gọi khác — "10 giai đoạn" (mục "ĐỊNH HƯỚNG HIỆN TẠI" đầu
+file) và "Bước A-F" (lịch sử build gốc `/v2`, nhắc ở dòng đầu mục đó) là
+**2 lớp công việc chồng lên nhau theo thời gian, không phải 2 kế hoạch
+độc lập**: `/v2/premium`/`/v2/affiliate`/`/v2/du-an-co-hoi`... đều đã
+được dựng 1:1 từ mockup HTML ("Bước F 42 trang") TRƯỚC KHI kế hoạch
+"10 giai đoạn" được viết — nên nhiều mục trong bảng 14-hạng-mục gốc
+("Giai đoạn 5: bỏ Kho tài nguyên Premium, icon kim cương, 3 khối mới")
+**đã được giải quyết một phần lớn bởi chính đợt build Bước F + các đợt
+sửa tiếp theo (Phase 38 gói thuê bao thật)**, không phải chưa đụng tới
+như bảng gốc mô tả.
+
+**Audit trực tiếp `/v2/premium` (không tin bảng cũ):**
+`PremiumClient.tsx`'s docblock (9 điểm, đã cập nhật qua nhiều đợt) xác
+nhận: "Kho tài nguyên Premium" đã đọc số liệu THẬT (`getPremiumResourceCounts()`,
+không còn 6 số mẫu cố định); 3 gói thuê bao đã có backing thật
+(`premium_plans`, mua qua checkout+SePay, tự gia hạn `premium_expires_at`
+qua trigger); "Lộ trình Premium" dùng `learning_paths` thật; icon "kim
+cương" — có `gem-glow` (hiệu ứng phát sáng quanh icon Premium ở Hero,
+xác nhận qua `premium.css`) khớp đúng tinh thần "icon kim cương" yêu cầu
+gốc. **Kết luận: phần lớn Giai đoạn 5 gốc đã xong**, không cần làm lại.
+
+**1 gap THẬT phát hiện khi audit `/v2/premium` (vi phạm NGUYÊN TẮC BẤT
+BIẾN đầu file này)** — 4 vị trí vẫn trỏ thẳng Portal 1.0:
+`PremiumClient.tsx` dòng 206/603/759 (`<Link href="/portal/my-products">`,
+nút "Quản lý gói"/"Nâng cấp") và dòng 795 (`<a href="/portal/support">`,
+"Chat với chúng tôi hỗ trợ"). Docblock cũ tự giải thích đây là quyết
+định có chủ đích ("2 trang đó KHÔNG nằm trong danh sách 42 trang Bước
+F") — nhưng NGUYÊN TẮC BẤT BIẾN (đầu file này) không có ngoại lệ "chưa
+có trang 2.0 tương đương thì tạm trỏ 1.0" — đúng tinh thần đã áp dụng
+cho `DuAnCoHoiClient.tsx` (đổi "Liên hệ hỗ trợ" sang kênh Zalo thật thay
+vì `/portal/support`, đợt audit Giai đoạn 4 vừa xong). **Chưa tự sửa ở
+đợt này** (ngoài phạm vi yêu cầu "Dự án & cơ hội" của đợt audit hiện
+tại) — đề xuất xử lý ở Giai đoạn 5 dưới đây.
+
+## Đề xuất kế hoạch Giai đoạn 5 (CHỜ FOUNDER XÁC NHẬN TRƯỚC KHI LÀM — đúng Quy tắc 5)
+
+Vì phần lớn phạm vi gốc của "Giai đoạn 5" (Premium) đã xong qua các đợt
+trước, đề xuất Giai đoạn 5 MỚI gồm các hạng mục còn thật sự "Chưa có"/
+"Một phần" trong bảng 14-hạng-mục gốc (đã re-audit trực tiếp code, xem
+mục dưới mỗi hạng mục — không suy đoán từ bảng cũ), theo thứ tự ưu tiên
+đề xuất (độ phức tạp tăng dần):
+
+**5.1 — Sửa nhanh: gỡ 4 link Portal 1.0 ở `/v2/premium`** (gap vừa phát
+hiện ở trên). Ước tính: nhỏ, 1 đợt riêng — `/portal/my-products` → chưa
+có trang "Quản lý gói Premium" ở `/v2` (cần xây mới, đơn giản: liệt kê
+gói đang có + lịch sử mua, tái dùng `getPremiumPlanMemberSummary()` đã
+có); `/portal/support` → đổi sang kênh Zalo thật (`siteConfig.community.zaloGroup`,
+cùng giải pháp đã dùng cho hub Dự án & Cơ hội) hoặc `/v2/companion`.
+
+**5.2 — Affiliate (`/v2/affiliate`) — Bảng xếp hạng + khối Đối tác/Đại
+sứ.** Re-audit: `AffiliateClient.tsx` vẫn honest empty-state cho
+Leaderboard (RLS chặn đọc dòng người khác — đúng lý do cũ), khối Đối
+tác/Đại sứ vẫn chưa có (chưa có cấp bậc thật). **Lưu ý quan trọng phát
+hiện khi audit:** dự án hiện có ĐẾN 2 khái niệm "Affiliate" độc lập ở
+`/v2` — trang mockup cũ `/v2/affiliate` (Bước F, nội dung tĩnh phần lớn)
+VÀ hệ thống "Chương trình Affiliate" đầy đủ mới xây sau này
+(`/portal/affiliate`, bảng `referrals`/`affiliate_commission_rules`/
+`affiliate_payout_requests` thật, Admin Workspace riêng — xem mục
+"Chương trình Affiliate — module đầy đủ" ở trên). **Cần hỏi Founder
+trước khi làm:** có nên GỘP `/v2/affiliate` để đọc dữ liệu thật từ hệ
+thống `/portal/affiliate` (thay vì làm Leaderboard/Đối tác-Đại sứ mới
+cho riêng trang mockup) hay giữ 2 trang tách biệt với mục đích khác
+nhau — đây là quyết định kiến trúc, không tự chọn.
+
+**5.3 — Cộng đồng AI (`/v2/cong-dong-ai`) — Community Map + lịch Zoom
+cố định.** Re-audit: `CongDongAiClient.tsx` vẫn còn "Sự kiện sắp diễn
+ra" bịa ngày/giờ Zoom cụ thể (vi phạm NO-FAKE-DATA, cần sửa dù không
+nằm trong phạm vi "Community Map" gốc). Cần Founder xác nhận: (a) lịch
+Zoom cố định thật là gì (tần suất/giờ) để thay dữ liệu bịa; (b)
+Community Map cần trường vị trí opt-in mới trong `members` — đã có
+phương án kỹ thuật chốt sẵn từ bảng gốc, chỉ cần xác nhận triển khai.
+
+**5.4 — Nhật ký học tập/Hành trình của tôi — badge thật + migrate 3
+sub-tab.** Re-audit: `badges`/`user_badges` (Phase 30) vẫn 0 huy hiệu
+định nghĩa (honest empty-state đúng). My Story/Mirror/Bản đồ hành trình
+**vẫn hoàn toàn chưa xuất hiện ở `/v2/hanh-trinh-cua-toi`** (0 kết quả
+grep link/route) — đây là gap lớn nhất trong 4 mục đề xuất (cần thiết kế
+3 trang `/v2/*` mới, không chỉ nối dữ liệu). Có thể tái dùng kiến trúc
+"render lại component Portal 1.0 thật + đổi prop `backHref`" đã áp dụng
+cho `CompanionFlipbook`/`AccountContent` (Single Source of Truth, không
+viết lại logic).
+
+**5.5 — Companion nổi (widget toàn Portal).** Re-audit: 0 kết quả grep
+"floating"/"widget" liên quan Companion trong `src/components/v2`. Đúng
+theo kế hoạch gốc, đây là việc làm SAU CÙNG (phụ thuộc 1-9 đã xong) —
+đề xuất giữ nguyên thứ tự ưu tiên thấp nhất.
+
+**Founder cần xác nhận:** (1) có đồng ý thứ tự ưu tiên 5.1→5.5 trên
+không; (2) riêng 5.2 cần quyết định kiến trúc (gộp `/v2/affiliate` vào
+hệ thống Affiliate thật hay giữ tách biệt) trước khi bắt đầu; (3) 5.3
+cần thông tin lịch Zoom thật; (4) có muốn làm TOÀN BỘ 5 mục trong 1 đợt
+"Giai đoạn 5" hay tách từng mục thành đợt riêng theo đúng Quy tắc 5 (báo
+cáo xong 1 mục mới qua mục kế tiếp, như đã áp dụng cho Bước E.1/E.2/E.3).
