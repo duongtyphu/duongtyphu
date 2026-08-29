@@ -7844,3 +7844,89 @@ tài nguyên+testimonials/quyền lợi viết lại/3 khối mới/2 trạng th
 quản lý — đã HOÀN TẤT. 1 mục CHƯA hoàn tất (không tự làm được): quyền lợi
 "Mỗi ngày một ý tưởng" — chờ Founder gửi nội dung thật (tính năng vẫn
 "đang xây dựng", chưa có gì thật để viết).
+
+## Giai đoạn 6 — Affiliate: "Bảng xếp hạng Affiliate" thật + sửa link 1.0
+
+Founder chọn (qua `AskUserQuestion`) "Gộp `/v2/affiliate` vào hệ thống
+Affiliate đầy đủ" cho Giai đoạn 6. Audit trước khi code phát hiện
+`/v2/affiliate` **ĐÃ dùng đúng `getAffiliateOverview()` thật** từ trước
+(3 cấp hoa hồng, lịch sử thanh toán — xem docblock đầu
+`AffiliateClient.tsx`) — không cần xây lại. Đúng 2 việc còn thiếu thật:
+
+**1 — "Bảng xếp hạng Affiliate".** Trước là honest empty-state vì RLS
+`referrals` chỉ cho đọc dòng của chính mình (`auth.uid() = referrer_id`)
+— không build được leaderboard qua RLS thông thường. Hỏi Founder qua
+`AskUserQuestion` mức độ hiển thị danh tính người khác — Founder chọn
+**"Tên đầy đủ + số hoa hồng"** (công khai, không ẩn danh).
+
+Giải pháp: RPC `SECURITY DEFINER` `get_affiliate_leaderboard(limit_n int
+default 10)` (`supabase-giai-doan-6-affiliate-leaderboard-rpc.sql`) — chỉ
+trả đúng 4 cột đã tổng hợp (`rank`/`member_id`/`full_name`/
+`total_commission`/`referral_count`/`is_you`), KHÔNG mở rộng RLS
+`referrals` trực tiếp (sẽ lộ toàn bộ cột kể cả `referred_email`/
+`order_id`). `auth.uid()` vẫn phản ánh đúng JWT người gọi dù chạy
+SECURITY DEFINER — dùng để luôn kèm dòng hạng của chính người gọi dù họ
+ngoài top N + đánh dấu `is_you`.
+
+**Bug tự phát hiện và sửa TRƯỚC khi publish (chưa từng chạy thật):** sau
+`revoke all on function ... from public`, Supabase VẪN tự cấp EXECUTE cho
+`anon`/`authenticated` khi tạo function mới — cơ chế default-privilege
+RIÊNG của Supabase, KHÔNG đi qua pseudo-role `PUBLIC` nên lệnh revoke trên
+không chặn được. Xác nhận qua `information_schema.routine_privileges`
+(không suy đoán): `anon` vẫn có EXECUTE dù ý định chỉ cho
+`authenticated`. Đã `revoke execute on function
+public.get_affiliate_leaderboard(int) from anon;` (migration thứ 2), re-
+verify chỉ còn `postgres`/`authenticated`/`service_role` có EXECUTE. **Bài
+học chung cho mọi RPC/function Supabase sau này:** LUÔN verify
+`information_schema.routine_privileges` sau khi tạo — `revoke ... from
+public` một mình không đủ trên Supabase.
+
+`src/lib/portal/live-affiliate.ts` thêm `AffiliateLeaderboardEntry` type +
+`getAffiliateLeaderboard(limit=10)` (session client, tự đọc `auth.uid()`
+từ JWT phiên). `AffiliateClient.tsx` thay khối "Bảng xếp hạng Affiliate"
+(trước empty-state) bằng render thật, tái dùng NGUYÊN class `.rank-row`/
+`.rk`/`.info`/`.amt` — CSS mockup gốc từng tồn tại sẵn trong
+`affiliate.css` nhưng chưa từng được dùng tới cho đến giờ.
+
+**2 — Sửa vi phạm NGUYÊN TẮC BẤT BIẾN.** Nút "Liên hệ đội ngũ" trỏ
+`/portal/support` (Portal 1.0) → đổi sang `/v2/companion`, đổi text thành
+"Chat với Companion" (đúng kênh hỗ trợ thật của 2.0, cùng giải pháp đã
+dùng cho hub Dự án & Cơ hội/Premium ở các đợt trước).
+
+**3 — Contrast fix phát sinh khi kích hoạt lại CSS mockup dormant** (đúng
+bài học đã ghi nhiều lần: CSS mockup gốc chưa từng được test tương phản
+khi còn dormant):
+- `.rank-row .amt` (số hoa hồng trong bảng xếp hạng): `var(--green)` →
+  `#066b4d` (cùng xanh đậm đã dùng an toàn ở nhiều đợt audit trước).
+- `PAYOUT_STATUS_STYLE` (badge trạng thái Lịch sử thanh toán):
+  `pending`→`{background:"#fdf1e0",color:"#8a6a1f"}`,
+  `approved`/`paid`→`{background:"#e6f7ed",color:"#066b4d"}`,
+  `rejected`→`{background:"#fdeef0",color:"#b02040"}`.
+- Badge "Đang hoạt động": `color:"var(--green)"` → `color:"#066b4d"`.
+
+**4 — Thêm mới `.rank-row.you`** (`affiliate.css`) — mockup gốc không tính
+trường hợp highlight dòng của chính người xem (`background:var(--violet-light);
+margin:0 -8px;padding:9px 8px;border-radius:8px;border-bottom-color:transparent`).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (route `/v2/affiliate` build đúng).
+Verify RPC end-to-end bằng dữ liệu test thật (chèn 1 dòng tạm vào
+`referrals` cho tài khoản admin, gọi RPC qua `execute_sql`, xác nhận đúng
+`{rank:1, member_id, full_name:"Võ Đương", total_commission:"150000",
+referral_count:1, is_you:null}` — `is_you:null` đúng vì gọi qua SQL
+console không có JWT — sau đó xoá dòng test, xác nhận `referrals` về lại
+0 dòng). Test qua route dev-preview tạm (`devtest-affiliate`, render lại
+`AffiliatePage` thật với anon key thật, `next start`, xoá route + rebuild
+sạch ngay sau khi xong): trả `200`, HTML xác nhận đúng "Bảng xếp hạng
+Affiliate" + "Chưa có ai phát sinh hoa hồng — hãy là người đầu tiên xuất
+hiện trên bảng xếp hạng!" (honest empty-state đúng vì `referrals` thật
+đang 0 dòng), "Chat với Companion" + `/v2/companion` xuất hiện đúng, 0
+`/portal/support` còn sót, 0 lỗi/pageerror trong HTML trả về.
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test trên
+Preview URL: (1) khi có ≥1 dòng `referrals` với `commission_amount>0` và
+`status` `confirmed`/`paid` thật, xác nhận bảng xếp hạng hiện đúng tên/
+hoa hồng/`(Bạn)` cho đúng tài khoản đang xem, dòng của mình luôn xuất
+hiện dù ngoài top 10; (2) nút "Chat với Companion" dẫn đúng
+`/v2/companion`.

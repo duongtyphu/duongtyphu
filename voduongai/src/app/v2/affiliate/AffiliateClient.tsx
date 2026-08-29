@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
-import type { AffiliateOverview } from "@/lib/portal/live-affiliate";
+import type { AffiliateOverview, AffiliateLeaderboardEntry } from "@/lib/portal/live-affiliate";
 
 import { RequestPayoutButtonV2 } from "./RequestPayoutButtonV2";
 import "./affiliate.css";
@@ -46,16 +46,22 @@ import "./affiliate.css";
  *    ngay lúc đăng ký qua link, không phải cookie có hạn; câu "lên cấp
  *    Đối tác/Đại sứ" bỏ hẳn vì không có cấp bậc — thay bằng câu về cách
  *    tính hoa hồng thật).
- * 7. "Bảng xếp hạng Affiliate" (top 4 + hạng của bạn, tên/số bịa) — không
- *    có endpoint công khai nào cho phép 1 thành viên đọc dữ liệu giới
- *    thiệu của người KHÁC (RLS `referrals` chỉ cho đọc dòng của chính
- *    mình) → honest empty-state, không tự chế 1 bảng xếp hạng giả.
+ * 7. "Bảng xếp hạng Affiliate" (top 4 + hạng của bạn, tên/số bịa) — GIAI
+ *    ĐOẠN 6: đổi từ honest empty-state (quyết định gốc, đúng thời điểm đó
+ *    vì chưa có endpoint công khai nào cho 1 thành viên đọc dữ liệu giới
+ *    thiệu của người KHÁC) sang bảng xếp hạng THẬT —
+ *    `getAffiliateLeaderboard()` gọi RPC `get_affiliate_leaderboard()`
+ *    (SECURITY DEFINER, chỉ trả 4 cột an toàn đã tổng hợp, không lộ
+ *    `referred_email`/`order_id` — không mở rộng RLS `referrals` trực
+ *    tiếp). Founder xác nhận hiển thị TÊN ĐẦY ĐỦ + SỐ HOA HỒNG.
  * 8. "Lịch sử thanh toán" (4 dòng tháng bịa) → `payoutRequests` thật (có
  *    thể `null` nếu tính năng chưa kích hoạt — hiện đã kích hoạt theo
  *    CLAUDE.md). Thêm nút "Yêu cầu thanh toán" thật (không có trong
  *    mockup nhưng khả năng ghi đã có sẵn ở 1.0, không bỏ phí).
- * 9. "Cần hỗ trợ Affiliate?" — nút "Liên hệ đội ngũ" trỏ `/portal/support`
- *    thật (route 1.0 đã dùng cho cùng mục đích ở trang Premium).
+ * 9. "Cần hỗ trợ Affiliate?" — nút trỏ `/v2/companion` (GIAI ĐOẠN 6: sửa
+ *    từ `/portal/support`, VI PHẠM NGUYÊN TẮC BẤT BIẾN đầu CLAUDE.md —
+ *    phát hiện khi audit đợt gộp hệ thống Affiliate; cùng đích chat AI
+ *    thật đã dùng cho "Cần hỗ trợ?" ở `/v2/premium`).
  *
  * Chưa đăng nhập / chưa có mã giới thiệu — 2 honest empty-state riêng biệt
  * (khớp đúng 2 nhánh `getAffiliateOverview()` đã xử lý ở 1.0).
@@ -76,11 +82,14 @@ const PAYOUT_STATUS_LABEL: Record<string, string> = {
   rejected: "Đã từ chối",
 };
 
+// Contrast fix (audit "Giai đoạn 6") — 3/4 màu gốc dưới ngưỡng WCAG 4.5:1
+// trên nền tương ứng (pending 3.18:1, approved/paid 3.27:1, rejected
+// 3.61:1) — đổi sang các sắc đậm hơn cùng tông, đều đạt 4.53-5.97:1.
 const PAYOUT_STATUS_STYLE: Record<string, { background: string; color: string }> = {
-  pending: { background: "#fdf1e0", color: "#a9822c" },
-  approved: { background: "#e6f7ed", color: "#189a52" },
-  paid: { background: "#e6f7ed", color: "#189a52" },
-  rejected: { background: "#fdeef0", color: "#e0455a" },
+  pending: { background: "#fdf1e0", color: "#8a6a1f" },
+  approved: { background: "#e6f7ed", color: "#066b4d" },
+  paid: { background: "#e6f7ed", color: "#066b4d" },
+  rejected: { background: "#fdeef0", color: "#b02040" },
 };
 
 function CopyableLink({ link }: { link: string }) {
@@ -140,10 +149,12 @@ export function AffiliateClient({
   premium,
   overview,
   qrSvg,
+  leaderboard,
 }: {
   premium: PremiumStatus;
   overview: AffiliateOverview | null;
   qrSvg: string | null;
+  leaderboard: AffiliateLeaderboardEntry[];
 }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -297,7 +308,7 @@ export function AffiliateClient({
                   <div className="link-card" id="lien-ket">
                     <div className="link-card-head">
                       <h4>Liên kết giới thiệu của bạn</h4>
-                      <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--green)", background: "#e6f7ed", padding: "3px 10px", borderRadius: 6 }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 700, color: "#066b4d", background: "#e6f7ed", padding: "3px 10px", borderRadius: 6 }}>
                         Đang hoạt động
                       </span>
                     </div>
@@ -413,7 +424,23 @@ export function AffiliateClient({
                 <div className="card-head">
                   <h4>Bảng xếp hạng Affiliate</h4>
                 </div>
-                <p className="empty-hint">Bảng xếp hạng chưa khả dụng — chỉ hiển thị dữ liệu của chính bạn (bảo mật dữ liệu giới thiệu).</p>
+                {leaderboard.length === 0 ? (
+                  <p className="empty-hint">Chưa có ai phát sinh hoa hồng — hãy là người đầu tiên xuất hiện trên bảng xếp hạng!</p>
+                ) : (
+                  leaderboard.map((entry) => (
+                    <div className={entry.isYou ? "rank-row you" : "rank-row"} key={entry.memberId}>
+                      <span className="rk">{entry.rank}</span>
+                      <div className="info">
+                        <h6>
+                          {entry.fullName}
+                          {entry.isYou ? " (Bạn)" : ""}
+                        </h6>
+                        <span>{entry.referralCount} người đã giới thiệu</span>
+                      </div>
+                      <span className="amt">{formatMoney(entry.totalCommission)}</span>
+                    </div>
+                  ))
+                )}
               </div>
 
               <div className="card">
@@ -447,10 +474,10 @@ export function AffiliateClient({
                   Liên hệ đội ngũ đối tác để được tư vấn chiến lược tăng chuyển đổi.
                 </p>
                 <Link
-                  href="/portal/support"
+                  href="/v2/companion"
                   style={{ display: "block", textAlign: "center", width: "100%", background: "var(--gold)", color: "#3b2a06", border: "none", padding: 10, borderRadius: 9, fontWeight: 800, fontSize: 13, textDecoration: "none" }}
                 >
-                  Liên hệ đội ngũ
+                  Chat với Companion
                 </Link>
               </div>
             </aside>

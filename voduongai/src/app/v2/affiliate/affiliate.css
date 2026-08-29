@@ -159,7 +159,17 @@
 .aff .rank-row .info{flex:1;min-width:0}
 .aff .rank-row h6{font-size:12.8px;font-weight:700}
 .aff .rank-row span{font-size:11px;color:var(--muted)}
-.aff .rank-row .amt{font-size:12.5px;font-weight:800;color:var(--green)}
+/* `#066b4d` thay `var(--green)` (#189a52) — Giai đoạn 6 kích hoạt lại
+ * `.rank-row` (trước đó không dòng nào dùng, xem CLAUDE.md) với dữ liệu
+ * thật, đo lại contrast: #189a52 trên nền trắng chỉ 3.63:1 (dưới ngưỡng
+ * WCAG 4.5:1 cho chữ thường) — cùng bản sửa đã áp dụng cho `/v2/premium`
+ * (ratio 6.53:1). Không đổi biến `--green` dùng chung (còn dùng cho icon
+ * `.tier-feat svg`, ngưỡng non-text chỉ cần 3:1, không cần sửa). */
+.aff .rank-row .amt{font-size:12.5px;font-weight:800;color:#066b4d}
+/* Giai đoạn 6 — làm nổi bật dòng của chính người xem trong bảng xếp hạng
+ * (không có trong `<style>` gốc — mockup không tính trường hợp "hạng của
+ * bạn" nằm ngoài top hiển thị, xem `get_affiliate_leaderboard()` RPC). */
+.aff .rank-row.you{background:var(--violet-light);margin:0 -8px;padding:9px 8px;border-radius:8px;border-bottom-color:transparent}
 .aff .payout-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px}
 .aff .payout-row:last-child{border-bottom:none}
 .aff .payout-row .status{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:6px}
