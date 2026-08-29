@@ -190,6 +190,13 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "premium-chrome": "premium_chrome",
   "premium-payment-steps": "premium_payment_steps",
   "premium-faq": "premium_faq",
+  // Giai đoạn 5 (Premium 2.0, /v2/premium) — 3 khối trước đây tĩnh 100%
+  // trong code (kể cả ở Portal 1.0: PremiumAdvisor/FounderSpotlight),
+  // giờ admin-editable riêng cho /v2/premium qua Live-edit
+  // `/admin/premium/v2-dashboard`.
+  "premium-perks": "premium_perks",
+  "premium-advisor-situations": "premium_advisor_situations",
+  "premium-founder": "premium_founder",
   // AI Provider Priority — Founder tự sắp thứ tự ưu tiên AI Provider (trên
   // xuống = ưu tiên cao xuống thấp) qua VisualEditor, đọc bởi
   // src/ai/providers/priority-store.ts (server-only). `id` mỗi dòng PHẢI

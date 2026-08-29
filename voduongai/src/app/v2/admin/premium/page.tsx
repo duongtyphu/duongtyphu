@@ -36,6 +36,7 @@ export default async function AdminPremiumPage() {
       links={[
         { label: "Dashboard Premium — Hero/thanh toán/FAQ (Admin 1.0) →", href: "/admin/premium/dashboard" },
         { label: "3 gói Premium (Tháng/6 Tháng/12 Tháng) (Admin 1.0) →", href: "/admin/premium/plans" },
+        { label: "Quyền lợi/Cố vấn chọn gói/Người đồng hành (Premium 2.0 Live-edit) →", href: "/admin/premium/v2-dashboard" },
       ]}
     />
   );

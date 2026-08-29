@@ -1,8 +1,13 @@
 import { getPremiumStatus } from "@/lib/v2/premium-access";
-import { getPremiumResourceCounts, getPremiumPlanMemberSummary } from "@/lib/portal/live-premium-v2";
+import {
+  getPremiumPlanMemberSummary,
+  getAllLivePremiumPerks,
+  getAllLivePremiumAdvisorSituations,
+  getLivePremiumFounder,
+} from "@/lib/portal/live-premium-v2";
 import { getLivePremiumPlans } from "@/lib/portal/live-premium-plans";
 import { getLiveCommunityChannels } from "@/lib/portal/live-community";
-import { getLivePremiumFaq } from "@/lib/portal/live-premium";
+import { getLivePremiumFaq, getLivePremiumChrome, getLivePremiumPaymentSteps } from "@/lib/portal/live-premium";
 import { getJourneyOverview } from "@/lib/portal/live-journey-overview";
 
 import { PremiumClient } from "./PremiumClient";
@@ -24,27 +29,47 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  * còn số mẫu). Mua bất kỳ gói nào cũng mở TOÀN BỘ tính năng Portal
  * (`getPremiumStatus()` đã trả `isPremium` dùng chung cho CKOS/Học viện
  * AI/AI Workspace từ Bước D — không cần đổi gì thêm ở đó).
+ *
+ * Giai đoạn 5 (redesign theo yêu cầu riêng Founder — xem docblock đầu
+ * `PremiumClient.tsx` cho chi tiết đầy đủ từng thay đổi): bỏ hẳn "Kho tài
+ * nguyên Premium"/"Premium Member nói gì?"; icon kim cương thật thay SVG;
+ * viết lại quyền lợi từng gói (`premium_plans.features`) + 2 lưới quyền
+ * lợi (`premium_perks`); thêm 3 khối mới port từ Portal 1.0 ("Thanh toán
+ * hoạt động thế nào?" tái dùng NGUYÊN `premium_chrome`/`premium_payment_steps`
+ * đã có — Single Source of Truth với `/admin/premium/dashboard`; "Không
+ * chắc nên chọn gì?"/`premium_advisor_situations` và "🤝 Người đồng hành"/
+ * `premium_founder` là 2 bảng MỚI vì bản 1.0 tương ứng tĩnh 100% trong
+ * code, không port thẳng được — xem `supabase-phase28-premium-v2-perks-advisor-founder.sql`).
  */
 export default async function PremiumPage() {
-  const [premium, plans, resourceCounts, communityChannels, faq, journey, memberSummary] = await Promise.all([
-    getPremiumStatus(),
-    getLivePremiumPlans(),
-    getPremiumResourceCounts(),
-    getLiveCommunityChannels(),
-    getLivePremiumFaq(),
-    getJourneyOverview(),
-    getPremiumPlanMemberSummary(),
-  ]);
+  const [premium, plans, communityChannels, faq, journey, memberSummary, chrome, paymentSteps, perks, advisorSituations, founder] =
+    await Promise.all([
+      getPremiumStatus(),
+      getLivePremiumPlans(),
+      getLiveCommunityChannels(),
+      getLivePremiumFaq(),
+      getJourneyOverview(),
+      getPremiumPlanMemberSummary(),
+      getLivePremiumChrome(),
+      getLivePremiumPaymentSteps(),
+      getAllLivePremiumPerks(),
+      getAllLivePremiumAdvisorSituations(),
+      getLivePremiumFounder(),
+    ]);
 
   return (
     <PremiumClient
       premium={premium}
       plans={plans}
-      resourceCounts={resourceCounts}
       communityChannels={communityChannels}
       faq={faq}
       journey={journey}
       memberSummary={memberSummary}
+      chrome={chrome}
+      paymentSteps={paymentSteps}
+      perks={perks}
+      advisorSituations={advisorSituations}
+      founder={founder}
     />
   );
 }
