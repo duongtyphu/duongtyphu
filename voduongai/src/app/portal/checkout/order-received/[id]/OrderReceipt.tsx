@@ -28,7 +28,16 @@ function CopyField({ label, value, highlight }: { label: string; value: string; 
   );
 }
 
-export function OrderReceipt({ order }: { order: OrderRecord }) {
+export function OrderReceipt({
+  order,
+  successHref = "/portal/my-products",
+}: {
+  order: OrderRecord;
+  /** Đích "Xem sản phẩm của tôi" sau khi xác nhận thanh toán — mặc định
+   * giữ 1.0, `/v2/checkout` truyền `/v2/tai-khoan` (đã hiển thị đúng "Sản
+   * phẩm đã mua" từ `orders` thật qua `AccountContent`). */
+  successHref?: string;
+}) {
   const [status, setStatus] = useState(order.status);
   const [finalPrice, setFinalPrice] = useState(order.amount);
   const [couponCode, setCouponCode] = useState("");
@@ -69,7 +78,7 @@ export function OrderReceipt({ order }: { order: OrderRecord }) {
           Nội dung sẽ xuất hiện trong <strong className="text-gray-900">Sản phẩm của tôi</strong>.
         </p>
         <a
-          href="/portal/my-products"
+          href={successHref}
           className="mt-4 inline-block rounded-full gradient-surface px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90"
         >
           Xem sản phẩm của tôi →

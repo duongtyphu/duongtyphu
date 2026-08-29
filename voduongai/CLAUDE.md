@@ -7486,3 +7486,92 @@ dữ liệu thật, và toàn bộ luồng Live-edit qua `/admin/premium/v2-dash
 (sửa quyền lợi/cố vấn/hồ sơ Founder qua UI, xác nhận phản ánh đúng lên
 `/v2/premium`) — Founder tự test trên Preview/Production URL với tài
 khoản đã mua gói Premium.
+
+## Sau PR #74 — 3 việc riêng: đính chính CKOS/AI Workspace, cấp Premium vĩnh viễn cho admin, di chuyển checkout sang 2.0
+
+Founder báo 2 điều ngay sau khi Giai đoạn 5 Premium lên Production, cộng
+1 yêu cầu mid-turn — cả 3 đã xử lý.
+
+**1 — Đính chính "bạn có nhầm không? mình đã bỏ các mục liên quan đến:
+CKOS/AI Workspace/".** Đã ghi đầy đủ ở docblock mục E của
+`PremiumClient.tsx` (xem ngay phía trên) — tóm tắt: `PORTAL_PRIVILEGES`
+(khối "Đặc quyền Portal 2.0 của bạn", trạng thái đã mua) từng có 2 thẻ
+trỏ `/v2/he-tri-thuc`/`/v2/ai-workspace` — cả 2 route hub đã bị XOÁ từ
+"Giai đoạn 9" (gộp vào `/v2/hoc-vien-ai`, xem comment trong
+`src/lib/v2/href-map.ts`) nhưng không được re-verify trước khi viết nội
+dung Giai đoạn 5 — lỗi lặp lại bài học đã ghi nhiều lần trong file này
+("luôn kiểm tra code thật, không tin tài liệu/docblock cũ"). Đã đổi 2
+thẻ chết sang 2 route thật khác (`/v2/hanh-trinh-cua-toi`/`/v2/cong-dong-ai`),
+đồng thời sửa dữ liệu Supabase cùng framing sai (không phải link chết vì
+perk không có href, nhưng nội dung sai sự thật): `premium_perks` (xoá 4
+dòng CKOS/AI-Workspace riêng, gộp nội dung vào Học viện AI, thêm 4 dòng
+mới nhắc "Hành trình của tôi"/"Mục tiêu"), `premium_plans.features` (gộp
+câu CKOS/AI-Workspace vào 1 dòng "Học viện AI"), `premium_advisor_situations`
+(sửa `adv_tool.recommendation` không còn nhắc "AI Workspace không giới
+hạn").
+
+**2 — "đánh dấu Gmail của admin: (duongvv.vn@gmail.com); được đặc toàn
+quyền là Premium."** Data-only, không đụng code. UPDATE trực tiếp
+`members` (qua Supabase MCP) cho dòng `id: aefb971f-e549-4a06-8a40-3c23c6ddadd2`
+(email `duongvv.vn@gmail.com`, `is_admin: true`): `premium_expires_at =
+'2099-12-31T23:59:59+00:00'`. Khớp đúng logic MỤC 1 của
+`getPremiumStatus()` (Bước D) — `premium_expires_at` có giá trị VÀ còn
+hạn (~74 năm nữa) → `isPremium: true` vĩnh viễn cho tài khoản này, không
+phụ thuộc đơn hàng nào.
+
+**3 — "trang thanh toán vẫn liên kết sang portal 1.0 => hãy di chuyển
+trang thanh toán sang portal 2.0."** Grep xác nhận CHỈ `PremiumClient.tsx`
+(1 chỗ, `PlanPriceCard.checkoutHref`) tham chiếu `/portal/checkout` trong
+toàn bộ `src/app/v2`/`src/components/v2` — không có chỗ nào khác cần sửa
+thêm.
+
+Đúng NGUYÊN TẮC BẤT BIẾN: tách logic nghiệp vụ checkout (`createOrder`/
+`applyCoupon`/`getOrderStatus`/`getOrder`, `src/app/portal/checkout/actions.ts`)
+thành Single Source of Truth dùng chung — Server Actions này vốn đã
+route-agnostic (không có `redirect`/path hardcode nào ngoài 1 chỗ
+`redirect("/login")`), tái dùng nguyên vẹn, không copy. 2 chỗ hardcode
+path 1.0 duy nhất được thêm prop tuỳ chọn (mặc định giữ hành vi 1.0):
+- `CheckoutForm.tsx` — `orderReceivedBasePath` (mặc định
+  `/portal/checkout/order-received`, 2.0 truyền `/v2/checkout/order-received`).
+- `OrderReceipt.tsx` — `successHref` (mặc định `/portal/my-products`, 2.0
+  truyền `/v2/tai-khoan` — đã hiển thị đúng "Sản phẩm đã mua" từ `orders`
+  thật qua `AccountContent`).
+
+**Route mới** (`src/app/v2/checkout/`), cùng khuôn kỹ thuật `/v2/tai-khoan`
+(component giữa là Tailwind thật dùng chung 1.0, không phải 1 trong 46
+mockup HTML — không có `activeHtmlFile` khớp sidebar, chỉ vào được qua
+nút "Thanh toán ngay" ở `/v2/premium`): `checkout.css` (tiền tố `.chk`,
+đúng 5/6 điều chỉnh kỹ thuật chuẩn, BỎ điều chỉnh 6 vì nội dung giữa là
+Tailwind thật — cùng lý do `tai-khoan.css`/`su-menh-companion.css`),
+`CheckoutClient.tsx` (bọc `PortalV2Shell` + `CheckoutForm`),
+`page.tsx` (Server Component, mirror đúng auth-check/searchParams của
+`/portal/checkout/page.tsx` — chỉ đổi fallback redirect từ `/portal` →
+`/v2/trang-chu`), `order-received/[id]/OrderReceivedClient.tsx` +
+`page.tsx` (mirror cặp file tương ứng của 1.0, tái dùng `getOrder()`).
+`v2-tokens.css`'s reset unlayered (loại trừ `.smc`/`.tkh`) mở rộng loại
+trừ thêm `.chk` (cùng lý do — Preflight gốc cần giữ nguyên cho Tailwind
+thật của `CheckoutForm`/`OrderReceipt`).
+
+`PremiumClient.tsx`'s `checkoutHref` đổi từ `/portal/checkout?...` sang
+`/v2/checkout?...` — đây là điểm nối DUY NHẤT tới route mới trong toàn bộ
+`/v2/*` hiện tại (khớp grep đã xác nhận).
+
+**Verify:** `tsc --noEmit` sạch, `eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (2 route mới `/v2/checkout` +
+`/v2/checkout/order-received/[id]` xuất hiện đúng). Test qua `next start`
+(sandbox không cấu hình Supabase): cả `/v2/checkout` và `/portal/checkout`
+(1.0, bản gốc) trả `200` với cùng 1 lỗi log
+("Your project's URL and Key are required...") — xác nhận đây là giới
+hạn sandbox có sẵn từ 1.0 (route 1.0 gọi `getSupabaseServer()` không có
+guard env-var, y hệt route mới), không phải regression riêng của route
+2.0 mới thêm.
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test trên
+Preview URL: (1) từ `/v2/premium`, bấm mua 1 gói → xác nhận vào đúng
+`/v2/checkout` (không rơi về `/portal/checkout`); (2) hoàn tất thanh toán
+(hoặc chờ webhook SePay xác nhận) → xác nhận vào đúng
+`/v2/checkout/order-received/<id>`, bấm "Xem sản phẩm của tôi →" → vào
+đúng `/v2/tai-khoan` (không phải `/portal/my-products`); (3) tài khoản
+`duongvv.vn@gmail.com` xác nhận `isPremium: true` ngay khi vào `/v2/premium`
+(không cần đơn hàng nào).
