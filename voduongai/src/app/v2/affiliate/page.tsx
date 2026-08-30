@@ -1,7 +1,8 @@
 import QRCode from "qrcode";
 
 import { getPremiumStatus } from "@/lib/v2/premium-access";
-import { getAffiliateOverview, getAffiliateLeaderboard } from "@/lib/portal/live-affiliate";
+import { getAffiliateOverview, getAffiliateLeaderboard, getAffiliateTierRules } from "@/lib/portal/live-affiliate";
+import { getLiveLandingChrome } from "@/lib/portal/live-landing-chrome";
 
 import { AffiliateClient } from "./AffiliateClient";
 
@@ -27,13 +28,38 @@ export const metadata = { title: "Chương trình Affiliate | VO DUONG AI" };
  * Affiliate" (trước honest empty-state vì RLS `referrals` chỉ cho đọc
  * dòng của chính mình) — nay đọc `getAffiliateLeaderboard()` (RPC
  * SECURITY DEFINER, xem `supabase-giai-doan-6-affiliate-leaderboard-rpc.sql`).
+ *
+ * Giai đoạn 6 (tiếp) — "Mức hoa hồng của bạn" (3 tầng, đúng thiết kế đã
+ * chốt trong `vdaiportal2.0.html`) đọc `getAffiliateTierRules()` (bảng
+ * `affiliate_tier_rules`, xem `supabase-giai-doan-6-affiliate-tier-rules.sql`).
+ * "Bộ tài nguyên Marketing" soạn mới (Claude tự soạn nội dung thật, không
+ * bịa) — video giới thiệu dùng lại NGUYÊN `youtubeId` thật của
+ * `landing_chrome` (khối "skills-showcase", Single Source of Truth với
+ * `/`), logo/bộ nhận diện trỏ file thật `public/brand/*`.
  */
 export default async function AffiliatePage() {
-  const [premium, overview, leaderboard] = await Promise.all([getPremiumStatus(), getAffiliateOverview(), getAffiliateLeaderboard()]);
+  const [premium, overview, leaderboard, tierRules, landingChrome] = await Promise.all([
+    getPremiumStatus(),
+    getAffiliateOverview(),
+    getAffiliateLeaderboard(),
+    getAffiliateTierRules(),
+    getLiveLandingChrome(),
+  ]);
 
   const qrSvg = overview?.referralLink
     ? await QRCode.toString(overview.referralLink, { type: "svg", margin: 1, width: 176, color: { dark: "#1c1830", light: "#ffffffff" } })
     : null;
 
-  return <AffiliateClient premium={premium} overview={overview} qrSvg={qrSvg} leaderboard={leaderboard} />;
+  const introVideoId = landingChrome.find((row) => row.id === "skills-showcase")?.youtubeId ?? null;
+
+  return (
+    <AffiliateClient
+      premium={premium}
+      overview={overview}
+      qrSvg={qrSvg}
+      leaderboard={leaderboard}
+      tierRules={tierRules}
+      introVideoId={introVideoId}
+    />
+  );
 }

@@ -210,6 +210,14 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   // khoá Premium (mỗi nhóm 3 bài đầu miễn phí).
   "academy-slide-lessons": "academy_slide_lessons",
   "academy-videos": "academy_videos",
+
+  // Giai đoạn 6 (tiếp) — "Mức hoa hồng của bạn" (3 tầng: Người mới/Đối
+  // tác/Đại sứ), đúng thiết kế đã chốt trong vdaiportal2.0.html. KHÔNG
+  // dùng chung `affiliate_commission_rules` (bảng đó phục vụ trigger
+  // handle_order_confirmed_commission() theo course/product/lesson, không
+  // có khái niệm "tầng theo số giao dịch của referrer") — xem comment đầu
+  // `supabase-giai-doan-6-affiliate-tier-rules.sql`.
+  "affiliate-tier-rules": "affiliate_tier_rules",
 };
 
 export function tableForCollection(key: string): string | null {

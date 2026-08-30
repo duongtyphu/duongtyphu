@@ -1,5 +1,7 @@
+import { cache } from "react";
+
 import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getSupabaseAdmin, getSupabasePublic } from "@/lib/supabase";
 import { siteConfig } from "@/lib/site";
 
 export type AffiliateReferralStatus = "pending" | "confirmed" | "paid";
@@ -207,3 +209,47 @@ export async function getAffiliateLeaderboard(limit = 10): Promise<AffiliateLead
     }),
   );
 }
+
+export type AffiliateTierRule = {
+  id: string;
+  tierKey: string;
+  label: string;
+  ratePercent: number;
+  minTransactions: number;
+  benefits: string[];
+  condition: string;
+  isFeatured: boolean;
+};
+
+/**
+ * "Mức hoa hồng của bạn" (3 tầng) — bảng `affiliate_tier_rules` (Giai
+ * đoạn 6 tiếp, xem `supabase-giai-doan-6-affiliate-tier-rules.sql`), đúng
+ * thiết kế đã chốt trong `vdaiportal2.0.html`. Đọc công khai qua anon key
+ * (RLS "public read published") — không phụ thuộc phiên đăng nhập, khách
+ * chưa đăng nhập cũng xem được 3 tầng.
+ */
+export const getAffiliateTierRules = cache(async (): Promise<AffiliateTierRule[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("affiliate_tier_rules")
+    .select("id, data, status, order")
+    .eq("status", "Published")
+    .order("order", { ascending: true });
+  if (error || !data) return [];
+
+  return data.map((row) => {
+    const d = (row.data ?? {}) as Record<string, unknown>;
+    return {
+      id: row.id as string,
+      tierKey: typeof d.tierKey === "string" ? d.tierKey : row.id,
+      label: typeof d.label === "string" ? d.label : row.id,
+      ratePercent: typeof d.ratePercent === "number" ? d.ratePercent : 0,
+      minTransactions: typeof d.minTransactions === "number" ? d.minTransactions : 0,
+      benefits: Array.isArray(d.benefits) ? (d.benefits as string[]) : [],
+      condition: typeof d.condition === "string" ? d.condition : "",
+      isFeatured: d.isFeatured === true,
+    };
+  });
+});

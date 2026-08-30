@@ -7930,3 +7930,126 @@ Preview URL: (1) khi có ≥1 dòng `referrals` với `commission_amount>0` và
 hoa hồng/`(Bạn)` cho đúng tài khoản đang xem, dòng của mình luôn xuất
 hiện dù ngoài top 10; (2) nút "Chat với Companion" dẫn đúng
 `/v2/companion`.
+
+## Giai đoạn 6 (tiếp) — "Mức hoa hồng của bạn" (3 tầng) + soạn mới "Bộ tài nguyên Marketing"
+
+Founder yêu cầu 2 việc cho `/v2/affiliate`: (1) thêm lại "Mức hoa hồng của
+bạn" đúng như đã thiết kế và chốt trước đó trong `vdaiportal2.0.html`
+(mục 07 "Chương trình Affiliate"); (2) soạn mới "Bộ tài nguyên Marketing"
+(Claude tự soạn nội dung).
+
+**Tìm lại thiết kế gốc đã chốt** (`/root/.claude/uploads/.../vdaiportal2.0.html`,
+mục 07): 3 tầng — Người mới 20%/giao dịch (không yêu cầu, áp dụng ngay);
+Đối tác 30%/giao dịch, cấp nổi bật mặc định (đạt từ 10 giao dịch thành
+công, +landing page riêng +hỗ trợ ưu tiên); Đại sứ 40%/giao dịch (đạt từ
+50 giao dịch, +hoa hồng cấp 2 5% +tư vấn chiến lược 1:1). Tài liệu gốc ghi
+rõ: "cần lưu thành cấu hình đọc được từ hệ thống (không hardcode cứng
+trong UI)".
+
+**Audit trước khi chọn nơi lưu cấu hình:** `affiliate_commission_rules`
+(bảng đã có, quản qua `/admin/affiliate/cau-hinh-hoa-hong`) chỉ có
+`product_type/product_id/product_label/commission_rate` — phục vụ ĐÚNG 1
+mục đích: trigger `handle_order_confirmed_commission()` tra cứu theo
+course/product/lesson khi 1 đơn hàng confirmed (đã đọc trực tiếp
+`pg_get_functiondef()` để xác nhận, không suy đoán). Bảng này KHÔNG có
+khái niệm "tầng theo số giao dịch của referrer", và không có cột cho
+quyền lợi/ngưỡng giao dịch — dùng chung sẽ vừa sai ngữ nghĩa (Admin nhầm
+lẫn 2 khái niệm khác nhau trong cùng 1 trang) vừa thiếu field cần thiết.
+→ Tạo bảng MỚI `affiliate_tier_rules` (generic `id/data jsonb/status/order`,
+`supabase-giai-doan-6-affiliate-tier-rules.sql`), hoàn toàn KHÔNG được
+trigger nào đọc — chỉ Portal hiển thị + Admin sửa. Seed đúng 3 tầng theo
+nội dung đã chốt ở `vdaiportal2.0.html`.
+
+**Tầng hiện tại tính THẬT, không hardcode ngưỡng trong UI:**
+`AffiliateClient.tsx` so `overview.customers` (số giao dịch đã tạo đơn
+hàng thật — đúng bằng số dòng `referrals.status IN ('confirmed','paid')`
+vì `orderId` và `status` được set CÙNG LÚC trong
+`handle_order_confirmed_commission()`) với `minTransactions` của từng
+tầng (đọc từ DB qua `getAffiliateTierRules()`, sort tăng dần). Badge góc
+card: `"Cấp của bạn"` (ưu tiên) nếu đây là tầng hiện tại của người xem;
+`"Phổ biến"` (màu vàng) nếu không phải tầng hiện tại nhưng
+`tier.isFeatured` (Đối tác, theo đúng "cấp nổi bật/mặc định hiển thị"
+trong thiết kế gốc). Dòng ghi chú dưới lưới tính tiến độ thật ("còn N
+giao dịch nữa để lên tầng X") hoặc "đang ở tầng cao nhất".
+
+**Lưu ý trung thực ghi rõ ngay trong UI (không giấu):** mức % hiển thị ở
+3 tầng là MỤC TIÊU tầng bậc Founder đặt ra — hoa hồng THỰC TẾ ghi nhận
+trên từng giao dịch vẫn tính theo `affiliate_commission_rules` (cấu hình
+theo sản phẩm, trigger hiện tại KHÔNG đọc theo tầng referrer) cho tới khi
+có 1 việc riêng nối 2 hệ số này lại — 2 con số CÓ THỂ lệch nhau, trang
+không giả vờ đã đồng bộ.
+
+**Tái dùng CSS mockup dormant** — `affiliate.css` đã có sẵn từ trước
+(chưa từng dùng tới) đúng bộ class `.tier-grid`/`.tier-card`/
+`.tier-card.current`/`.tier-badge`/`.tier-ico`/`.tier-card .rate`/
+`.tier-feat`/`.tier-req` VÀ `.material-grid`/`.material-card`/
+`.material-thumb`/`.material-body` — cả 2 bộ đúng khớp thiết kế gốc cho
+"Mức hoa hồng của bạn" và "Bộ tài nguyên Marketing", không cần viết CSS
+mới. Đã tính contrast thủ công (công thức WCAG chuẩn) cho mọi cặp màu
+mới chạm tới lần đầu (badge "Cấp của bạn" trắng/tím `--violet` 5.16:1,
+badge "Phổ biến" nâu/vàng `#3b2a06`/`--gold` 7.01:1, nút
+`.material-body button` tím đậm/tím nhạt 5.69:1, nút disabled xám/be
+5.07:1) — toàn bộ đạt ngưỡng 4.5:1, không cần sửa.
+
+**"Bộ tài nguyên Marketing" — tự soạn, KHÔNG bịa file không tồn tại**
+(đúng 4 hạng mục thiết kế gốc: banner/video/mẫu bài viết/logo, mỗi mục
+chỉ đưa nội dung THẬT giao được ngay):
+- **Video giới thiệu VDAI Academy** — trỏ NGUYÊN `youtubeId` thật của
+  `landing_chrome`'s khối "skills-showcase" (`zH5IvC-A6iI`, Single Source
+  of Truth với video demo công khai trên Landing Page `/`) — không phải
+  video mới, tái dùng đúng nội dung đã xuất bản.
+- **Bộ nhận diện thương hiệu** — trỏ file logo thật đã có sẵn từ trước
+  `public/brand/primary-logo-light.svg` (nền trong suốt, chữ tối — hợp
+  dùng trên nền sáng, đã so sánh với `primary-logo-dark.svg` — bản đó có
+  nền navy đặc, không phù hợp làm logo tải về đa dụng), nút "Tải logo ↓"
+  (`download` attribute).
+- **Mẫu bài viết chia sẻ** — 1 đoạn caption MỚI do Claude soạn (nội dung
+  nguyên bản, không phải dữ liệu đo được — cùng bản chất với FAQ/copy
+  hướng dẫn khác đã có trên trang này), tự động chèn
+  `overview.referralLink` thật khi đã đăng nhập, nút "Sao chép mẫu" dùng
+  `navigator.clipboard` (cùng cơ chế `CopyableLink` đã có).
+- **Banner quảng cáo** — KHÔNG có file ảnh banner nào tồn tại trong dự án
+  → giữ honest "Đang cập nhật" (nút mờ, không bấm được) thay vì giả vờ có
+  link tải — đúng NO-FAKE-DATA.
+
+**Sửa 1 test bị chặn (phát hiện thật, không phải false positive):**
+`route-integrity.test.ts`'s `NON_PAGE_PREFIXES` (danh sách tiền tố URL bỏ
+qua khi kiểm tra link nội bộ — đã có `/images/`/`/assets/`) thiếu
+`/brand/` — file logo tĩnh `public/brand/*.svg` chưa từng được link trực
+tiếp qua `href` ở đâu trong dự án trước đây. Đã thêm `/brand/` vào danh
+sách, cùng lý do `/images/`/`/assets/` đã có (thư mục static asset thật,
+không phải page route).
+
+**Admin quản lý** — `/admin/affiliate/cau-hinh-cap-do` (`VisualEditor`,
+nhóm sidebar "Affiliate", sau "Cấu hình hoa hồng theo sản phẩm" — tên
+khác biệt rõ, tránh Admin nhầm 2 khái niệm). Field `benefits` dùng
+`transform: "newline-list"` (mỗi dòng 1 quyền lợi, tránh cắt sai câu có
+dấu phẩy — cùng bài học đã rút ra ở "Dự án & Cơ hội" cho field
+`highlights`; xác nhận `DataTableRowPanel.tsx` — nền của `VisualEditor` —
+đã hỗ trợ transform này từ trước, không cần nối thêm). `tierKey` giới
+hạn select 3 giá trị cố định (khớp `TIER_ICON_BG` ở `AffiliateClient.tsx`),
+tránh Admin gõ sai làm lệch icon.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass (bao
+gồm sửa `route-integrity.test.ts`), `rm -rf .next && npm run build` sạch
+(route Admin mới `/admin/affiliate/cau-hinh-cap-do` xuất hiện đúng). Test
+qua 2 route dev-preview tạm (đã xoá + rebuild sạch ngay sau khi xong):
+(1) render `AffiliatePage` thật với anon key thật — xác nhận "Bộ tài
+nguyên Marketing" (không phụ thuộc đăng nhập) render đúng cả 4 mục với
+nội dung thật (video YouTube thật, link logo thật, mẫu bài viết, banner
+honest "Đang cập nhật"); (2) render `AffiliateClient` trực tiếp với
+`overview` mẫu (chỉ để bật đúng nhánh JSX đã đăng nhập, không phải dữ
+liệu thật persist ở đâu) — Playwright xác nhận: 12 giao dịch → đúng tầng
+"Đối tác" + badge "Cấp của bạn" + dòng tiến độ "còn 38 giao dịch nữa để
+lên Đại sứ"; 0 giao dịch → đúng tầng "Người mới" là current, "Đối tác"
+đổi sang badge "Phổ biến" (xác nhận đúng logic ưu tiên current > featured);
+nút "Sao chép mẫu" copy đúng nội dung kèm link giới thiệu thật vào
+clipboard (đọc lại qua `navigator.clipboard.readText()`); 0 `pageerror`
+cả 2 lượt test.
+
+**Chưa tự test được:** thao tác qua Admin UI thật có tài khoản đăng nhập
+(cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều
+lần) — Founder tự test tại `/admin/affiliate/cau-hinh-cap-do` (sửa
+%/ngưỡng/quyền lợi, xác nhận phản ánh đúng lên `/v2/affiliate`), và tự
+xác nhận tầng hiện tại tính đúng với 1 tài khoản có giao dịch `referrals`
+thật (khác test data giả lập ở đây).

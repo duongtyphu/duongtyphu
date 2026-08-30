@@ -241,6 +241,12 @@ export const adminWorkspaces: AdminWorkspace[] = [
       { label: "Đơn hàng", href: "/admin/affiliate/don-hang" },
       { label: "Hoa hồng", href: "/admin/affiliate/hoa-hong" },
       { label: "Cấu hình hoa hồng theo sản phẩm", href: "/admin/affiliate/cau-hinh-hoa-hong" },
+      // Giai đoạn 6 (tiếp) — "Mức hoa hồng của bạn" (/v2/affiliate), 3
+      // tầng Người mới/Đối tác/Đại sứ đúng thiết kế đã chốt trong
+      // vdaiportal2.0.html. Bảng `affiliate_tier_rules` MỚI, KHÔNG cùng
+      // bảng với "Cấu hình hoa hồng theo sản phẩm" ở trên (xem comment
+      // đầu `supabase-giai-doan-6-affiliate-tier-rules.sql`).
+      { label: "Cấu hình cấp độ (Mức hoa hồng của bạn)", href: "/admin/affiliate/cau-hinh-cap-do" },
       { label: "Yêu cầu thanh toán", href: "/admin/affiliate/yeu-cau-thanh-toan" },
       { label: "Báo cáo", href: "/admin/affiliate/bao-cao" },
     ],
