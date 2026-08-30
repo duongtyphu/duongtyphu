@@ -8053,3 +8053,90 @@ lần) — Founder tự test tại `/admin/affiliate/cau-hinh-cap-do` (sửa
 %/ngưỡng/quyền lợi, xác nhận phản ánh đúng lên `/v2/affiliate`), và tự
 xác nhận tầng hiện tại tính đúng với 1 tài khoản có giao dịch `referrals`
 thật (khác test data giả lập ở đây).
+
+## Audit contrast + link chết/mồ côi — `/v2/affiliate` (sau khi Giai đoạn 6 hoàn tất)
+
+Founder yêu cầu audit toàn diện trang Chương trình Affiliate. Dùng đúng
+phương pháp đã dùng cho `/v2/premium`/"Dự án & Cơ hội" trước đó: script
+Playwright tự viết (công thức WCAG chuẩn, quét mọi text node trong `.aff`)
++ đọc trực tiếp CSS/JSX cho mọi trường hợp script không phát hiện được
+(dữ liệu điều kiện, trạng thái ẩn). Test qua 3 route dev-preview tạm (anon
+key thật, đủ 3 trạng thái: chưa đăng nhập/chưa có mã giới thiệu/đã đăng
+nhập đủ dữ liệu — xoá cả 3 + rebuild sạch ngay sau khi xong).
+
+**4 lỗi THẬT tìm thấy và đã sửa:**
+
+1. **`.upgrade-btn` ("Nâng cấp Premium", topbar)** — `color:#a9822c` trên
+   nền `#fffaf0` chỉ 3.41:1. Đính chính 1 hiểu lầm cũ: đợt audit Premium
+   trước từng ghi "CSS dùng chung site-wide, ngoài phạm vi 1 trang" — audit
+   lần này xác nhận **KHÔNG có `.upgrade-btn` global nào trong
+   `v2-tokens.css`** (đã grep xác nhận 0 kết quả) — mỗi trang `/v2/*` tự
+   định nghĩa `.upgrade-btn` RIÊNG trong CSS của chính nó (page-scoped),
+   chỉ TRÙNG giá trị hex do copy cùng 1 mockup gốc. Vì vậy đây HOÀN TOÀN
+   trong phạm vi sửa của trang này — đã đổi `#a9822c`→`#8a6a1f` (4.85:1
+   trên `#fffaf0`, cùng màu đã dùng an toàn ở `/v2/premium`).
+2. **`.profile .plan` ("Free"/"Premium", topbar)** — `color:var(--gold)`
+   không nền, 1.97:1 trên trắng — cùng bug đã sửa ở `/v2/premium` và
+   `/v2/tai-khoan` nhưng CSS trang Affiliate là bản copy riêng, chưa từng
+   được sửa theo. Thêm nền `#fef3c7`+`color:#7a5c08` (5.61:1).
+3. **`RequestPayoutButtonV2.tsx`** — 2 màu chỉ hiện khi form submit thành
+   công/lỗi (script quét DOM tĩnh không bắt được, phải đọc code + tính tay):
+   `#189a52` (thông báo "Đã gửi yêu cầu") 3.63:1 trên trắng → `#066b4d`
+   (5.87:1, cùng màu `PAYOUT_STATUS_STYLE` trong file); `#e0455a` (thông
+   báo lỗi) 4.07:1 → `#b02040` (5.97:1, cùng màu đã dùng ở
+   `AffiliateClient.tsx`).
+4. **Link mồ côi — nút Hero "Lấy liên kết giới thiệu →" (`href="#lien-ket"`)**
+   — phát hiện qua đọc code (không phải script tự động): `id="lien-ket"`
+   trước đây CHỈ đặt trên `.link-card` (nhánh thứ 3, đã đăng nhập + có mã
+   giới thiệu) trong khi nút Hero LUÔN hiển thị (nằm ngoài điều kiện) — ở
+   2/3 trạng thái thật (chưa đăng nhập, đã đăng nhập nhưng chưa được cấp
+   mã) không có phần tử nào mang id đó, bấm nút không cuộn tới đâu cả
+   (không lỗi, chỉ im lặng không làm gì). Đã sửa: đặt `id="lien-ket"` trên
+   phần tử ĐẦU TIÊN của CẢ 3 nhánh (2 `.card` empty-state + `.stat-row` ở
+   nhánh đủ dữ liệu, thay vì `.link-card`) — không bọc 1 `<div>` chung
+   quanh cả 3 nhánh vì sẽ phá `gap:22px` của flex `.center-col` (thử rồi
+   phát hiện, đã revert). Verify Playwright: đúng 1 phần tử mang id ở mỗi
+   trạng thái, bấm nút → `scrollY` đổi từ 0 → 500 (xác nhận cuộn thật, cả
+   3 trạng thái).
+
+**Các cảnh báo còn lại (11 dòng, đều xác nhận false-positive qua đọc trực
+tiếp `background-image`/ngữ cảnh CSS, không phải lỗi thật) — script
+`getBgColor()` chỉ dò `background-color` khi đi bộ DOM lên tổ tiên, không
+phát hiện được `background: gradient(...)`:**
+- `.aff-hero` (chữ trắng/vàng/tím nhạt) — nền thật là gradient tối
+  `radial-gradient(...)`+`linear-gradient(150deg,#150c38,#241c56...)`,
+  xác nhận qua `getComputedStyle().backgroundImage`.
+- `.btn-ghost` — cùng nền gradient tối của `.aff-hero` (nút trong suốt
+  8% trắng đặt trên nền đó).
+- `.avatar` "T" — nền `linear-gradient(135deg,#8b7bde,#5f4bc9)`.
+- Card "Cần hỗ trợ Affiliate?" — nền `linear-gradient(150deg,#150c38,#241c56)`
+  (inline style, xác nhận qua `element.style.background`).
+- SVG `<text>` "%" trong đồ hoạ Hero — script đọc CSS `color` (kế thừa
+  trắng từ `.aff-hero`), nhưng thẻ SVG dùng thuộc tính `fill="#3b2a06"`
+  TRỰC TIẾP (không phải `fill="currentColor"`) — trình duyệt render đúng
+  màu nâu đậm trên nền gradient vàng của circle, độc lập với `color` CSS.
+  Phát hiện mới: giới hạn CHƯA từng ghi nhận trước đó của script (chỉ áp
+  dụng cho chữ HTML, không tính `fill=` literal trên SVG).
+- `.step-num` "1"/"2"/"3" (34px, `color:var(--violet-light)`, định vị
+  tuyệt đối góc trên-phải mỗi step-card) — số watermark trang trí thuần
+  tuý phía sau `<h5>` tiêu đề bước (nội dung thật đã có `<h5>` riêng
+  truyền tải) — không phải chữ cần đọc được, đúng ngoại lệ WCAG 1.4.3 cho
+  văn bản trang trí/không thiết yếu.
+
+**Không phát hiện link chết nào khác** — grep toàn bộ `href=`/`Link href`
+trong `AffiliateClient.tsx`/`RequestPayoutButtonV2.tsx`: còn lại đều hợp
+lệ (Facebook sharer/mailto thật, `#faq` luôn có đích vì nằm ngoài mọi điều
+kiện, YouTube/logo thật từ Giai đoạn 6 trước, `/v2/companion` route thật).
+Nút promo sidebar "Xem chương trình →" (`PortalV2Shell`,
+`promoButtonTarget="Chuong trinh Affilate.html"`) tự trỏ về lại chính
+trang này — không phải link chết (`href-map.ts` xác nhận map đúng
+`/v2/affiliate`), chỉ là quảng bá tự tham chiếu, đúng ý đồ thiết kế.
+
+**File sửa:** `affiliate.css` (2 fix), `RequestPayoutButtonV2.tsx` (2 fix),
+`AffiliateClient.tsx` (fix link mồ côi).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright contrast-audit trước/sau:
+13 cảnh báo → 11 (đúng 2 lỗi thật đã sửa biến mất, 11 còn lại xác nhận
+false-positive qua đọc CSS trực tiếp, không phải bỏ sót). 0 pageerror ở
+mọi lượt test.

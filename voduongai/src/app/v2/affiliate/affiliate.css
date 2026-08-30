@@ -75,7 +75,11 @@
 .aff .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
 .aff .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
 .aff .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
-.aff .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+/* `#8a6a1f` thay `#a9822c` — Audit contrast: #a9822c trên nền #fffaf0 chỉ
+ * 3.41:1 (dưới ngưỡng WCAG 4.5:1), cùng bug đã sửa cho `.upgrade-btn` ở
+ * `/v2/premium` (page-scoped CSS trùng giá trị, không phải rule dùng
+ * chung site-wide như tưởng trước đó — mỗi trang tự định nghĩa riêng). */
+.aff .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .aff .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .aff .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .aff .icon-btn svg{width:18px;height:18px}
@@ -83,7 +87,10 @@
 .aff .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .aff .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .aff .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.aff .profile .plan{font-size:11px;color:var(--gold);font-weight:700}
+/* Audit contrast: `color:var(--gold)` không nền → #e2b23c trên trắng chỉ
+ * 1.97:1 — thêm nền `#fef3c7`+`color:#7a5c08` (5.61:1), cùng cặp đã dùng
+ * an toàn ở `.tkh .profile .plan` (/v2/tai-khoan). */
+.aff .profile .plan{font-size:11px;color:#7a5c08;background:#fef3c7;padding:1px 6px;border-radius:5px;font-weight:700}
 .aff .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
 .aff .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:22px}
 .aff .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
