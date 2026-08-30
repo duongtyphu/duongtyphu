@@ -1858,9 +1858,13 @@ body {
 /* ------------------------------------------------------------
  * MY STORY — variant "corkboard" (Founder duyệt qua canvas mockup):
  * mỗi khoảnh khắc/bước ngoặt/ký ức/tác phẩm là 1 note ghim lên bảng gỗ,
- * thay cho "sách lật trang" mặc định. Cùng tông giấy ấm với
- * `.story-book-bg`, chỉ đổi CHẤT LIỆU (bảng gỗ + note giấy) chứ không đổi
- * tông màu tổng thể của cửa My Story.
+ * thay cho "sách lật trang" mặc định.
+ *
+ * Giai đoạn 10 — Founder yêu cầu đổi nền sang ĐEN thống nhất (cùng hệ với
+ * 5 tab còn lại của "Hành trình của tôi", mỗi tab 1 màu accent riêng —
+ * My Story = vàng/gold) thay vì tông gỗ nâu/tan ban đầu. Note giấy màu
+ * (`.story-cork-note`) và ghim đỏ (`.story-cork-pin`) giữ nguyên không đổi
+ * — chỉ đổi màu NỀN đằng sau.
  * ------------------------------------------------------------ */
 .story-corkboard-bg {
   position: absolute;
@@ -1868,22 +1872,21 @@ body {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(1100px circle at 12% -8%, rgba(180, 130, 60, 0.1), transparent 60%),
-    radial-gradient(900px circle at 92% 108%, rgba(120, 80, 30, 0.1), transparent 60%),
-    linear-gradient(180deg, #c99a5b 0%, #b4823f 100%);
+    radial-gradient(900px circle at 50% -10%, rgba(251, 191, 36, 0.08), transparent 60%),
+    #0a0a0f;
 }
 
 .story-corkboard-bg::after {
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.5;
+  opacity: 0.4;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(90, 60, 20, 0.14) 0, transparent 2px),
-    radial-gradient(circle at 60% 70%, rgba(90, 60, 20, 0.12) 0, transparent 2px),
-    radial-gradient(circle at 80% 20%, rgba(90, 60, 20, 0.13) 0, transparent 2px),
-    radial-gradient(circle at 35% 85%, rgba(90, 60, 20, 0.1) 0, transparent 2px),
-    radial-gradient(circle at 45% 45%, rgba(90, 60, 20, 0.11) 0, transparent 2px);
+    radial-gradient(circle at 20% 30%, rgba(251, 191, 36, 0.05) 0, transparent 2px),
+    radial-gradient(circle at 60% 70%, rgba(251, 191, 36, 0.04) 0, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba(251, 191, 36, 0.045) 0, transparent 2px),
+    radial-gradient(circle at 35% 85%, rgba(251, 191, 36, 0.035) 0, transparent 2px),
+    radial-gradient(circle at 45% 45%, rgba(251, 191, 36, 0.04) 0, transparent 2px);
   background-size: 140px 140px;
 }
 
@@ -1916,15 +1919,18 @@ body {
  * Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 18.5.
  * ============================================================ */
 
+/* Giai đoạn 10 — Founder yêu cầu nền đen thống nhất cho cả 6 tab, mỗi tab
+ * 1 màu accent riêng (Mirror = cyan) thay vì mỗi tab 1 tông nền khác
+ * nhau — đổi nền đen thuần #08090C (trước là xanh navy #0F1720→#232A3D). */
 .mirror-chamber-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 60% 40% at 50% -5%, rgba(167, 139, 250, 0.12), transparent 65%),
-    radial-gradient(ellipse 50% 35% at 85% 90%, rgba(148, 163, 184, 0.06), transparent 65%),
-    linear-gradient(180deg, #0F1720 0%, #1B2536 55%, #232A3D 100%);
+    radial-gradient(ellipse 60% 40% at 68% -5%, rgba(34, 211, 238, 0.09), transparent 65%),
+    radial-gradient(ellipse 50% 35% at 85% 90%, rgba(34, 211, 238, 0.05), transparent 65%),
+    #08090c;
 }
 
 /* Lớp "sương kính" bạc rất mờ phủ toàn khung — cảm giác nhìn qua mặt
@@ -1946,7 +1952,7 @@ body {
   bottom: 8%;
   left: 50%;
   width: 1px;
-  background: linear-gradient(180deg, transparent, rgba(196, 181, 253, 0.16) 45%, transparent);
+  background: linear-gradient(180deg, transparent, rgba(34, 211, 238, 0.2) 45%, transparent);
   animation: mirror-shimmer 12s ease-in-out infinite;
   pointer-events: none;
 }
@@ -1961,7 +1967,7 @@ body {
 .mirror-ripple {
   position: absolute;
   border-radius: 9999px;
-  border: 1px solid rgba(196, 181, 253, 0.16);
+  border: 1px solid rgba(34, 211, 238, 0.2);
   pointer-events: none;
   animation: mirror-ripple 9s ease-in-out infinite;
 }
@@ -1975,7 +1981,7 @@ body {
 .mirror-particle {
   position: absolute;
   border-radius: 9999px;
-  background: rgba(226, 232, 255, 0.5);
+  background: rgba(103, 232, 249, 0.6);
   pointer-events: none;
   animation: mirror-drift 10s ease-in-out infinite;
 }
@@ -1985,13 +1991,25 @@ body {
   50% { transform: translateY(-10px); }
 }
 
+/* Vệt sáng chéo trên khối gương lớn (art hero, Giai đoạn 10) — thở rất
+ * chậm, cùng họ "gần như bất động" với shimmer/ripple ở trên. */
+.mirror-glasssheen {
+  animation: mirror-glasssheen 8s ease-in-out infinite;
+}
+
+@keyframes mirror-glasssheen {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mirror-reflection-line {
     animation: none;
     opacity: 0.5;
   }
   .mirror-ripple,
-  .mirror-particle {
+  .mirror-particle,
+  .mirror-glasssheen {
     animation: none;
     opacity: 0;
   }
@@ -2069,9 +2087,13 @@ body {
 
 /* ============================================================
  * JOURNEY MAP — Explorer's Map / Ancient Atlas (Journey Platform, P6)
- * Giấy da cũ vàng cát (nhạt hơn My Story để không trùng tông), la bàn,
- * đường đồng mức mờ, vệt cháy mép bản đồ. Xem
- * docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 18.7.
+ *
+ * Giai đoạn 10 — Founder yêu cầu nền đen thống nhất (cùng hệ 6 tab của
+ * "Hành trình của tôi", mỗi tab 1 accent riêng — Bản đồ = cam) thay cho
+ * giấy da vàng cát ban đầu. La bàn/đường tuyến đường/vệt cháy mép vẫn giữ
+ * nguyên Ý TƯỞNG, chỉ đổi bảng màu sang cam trên nền đen; thêm mới lưới
+ * toạ độ + dãy núi silhouette theo yêu cầu "thêm chi tiết núi/lưới/la bàn
+ * 8 hướng". Xem docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 18.7.
  * ============================================================ */
 
 .map-parchment-bg {
@@ -2080,11 +2102,9 @@ body {
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 55% 40% at 4% 2%, rgba(120, 90, 40, 0.14), transparent 60%),
-    radial-gradient(ellipse 55% 40% at 96% 3%, rgba(120, 90, 40, 0.14), transparent 60%),
-    radial-gradient(ellipse 55% 40% at 4% 98%, rgba(120, 90, 40, 0.14), transparent 60%),
-    radial-gradient(ellipse 55% 40% at 96% 98%, rgba(120, 90, 40, 0.14), transparent 60%),
-    linear-gradient(160deg, #EDE0C4 0%, #E4D3A8 55%, #D9C593 100%);
+    radial-gradient(ellipse 60% 40% at 30% -5%, rgba(251, 146, 60, 0.1), transparent 65%),
+    radial-gradient(ellipse 50% 35% at 90% 100%, rgba(251, 146, 60, 0.06), transparent 65%),
+    #0a0a0f;
 }
 
 /* Đường đồng mức — vài đường cong mảnh lặp lại, gợi vân địa hình. */
@@ -2093,10 +2113,38 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.35;
   background-image:
-    repeating-radial-gradient(circle at 15% 25%, transparent 0, transparent 38px, rgba(120, 90, 40, 0.05) 39px, transparent 40px),
-    repeating-radial-gradient(circle at 85% 75%, transparent 0, transparent 46px, rgba(120, 90, 40, 0.05) 47px, transparent 48px);
+    repeating-radial-gradient(circle at 15% 25%, transparent 0, transparent 38px, rgba(251, 146, 60, 0.05) 39px, transparent 40px),
+    repeating-radial-gradient(circle at 85% 75%, transparent 0, transparent 46px, rgba(251, 146, 60, 0.05) 47px, transparent 48px);
+}
+
+/* Lưới toạ độ — vài đường kẻ mảnh gợi bản đồ kỹ thuật, mờ dần ra rìa
+ * (mask-image) để không cạnh tranh với nội dung ở giữa. */
+.map-coordinate-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image:
+    linear-gradient(rgba(251, 146, 60, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251, 146, 60, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 25%, black 0%, transparent 78%);
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 25%, black 0%, transparent 78%);
+}
+
+/* Dãy núi — silhouette tĩnh cuối khung, gợi "còn nhiều chặng đường phía
+ * trước" (chỉ khí quyển, không phải nội dung — vẽ trực tiếp trong SVG). */
+.map-mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 /* La bàn — thở rất chậm, lay rất nhẹ (Motion: "compass breathing"). */
@@ -2108,6 +2156,18 @@ body {
 @keyframes map-compass-breathe {
   0%, 100% { transform: rotate(-1.5deg) scale(1); opacity: 0.9; }
   50% { transform: rotate(1.5deg) scale(1.02); opacity: 1; }
+}
+
+/* Kim la bàn 8 hướng — quay rất chậm, gần như đứng yên (cùng nhịp "khám
+ * phá chậm rãi" mục 18.9), khác `.map-compass` (lay nhẹ toàn khối). */
+.map-compass-needle {
+  animation: map-compass-needle-drift 22s ease-in-out infinite;
+  transform-origin: 56px 56px;
+}
+
+@keyframes map-compass-needle-drift {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
 }
 
 /* Đường tuyến đường chấm-nét nối các Chương — "vẽ dần" rất chậm khi vào trang. */
@@ -2127,12 +2187,13 @@ body {
 }
 
 @keyframes map-chapter-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 158, 58, 0.35); }
-  50% { box-shadow: 0 0 0 10px rgba(217, 158, 58, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(251, 146, 60, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .map-compass,
+  .map-compass-needle,
   .map-route-path,
   .map-chapter-pulse {
     animation: none;

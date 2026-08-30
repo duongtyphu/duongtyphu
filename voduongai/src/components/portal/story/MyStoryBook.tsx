@@ -397,22 +397,22 @@ export function MyStoryBook({
           {backHref !== null && <PortalBackLink href={backHref} label="Hành trình của tôi" tone="light" />}
 
           <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
-            <div className="text-[#3B2A12]">
+            <div className="text-white">
               {chapter && (
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#78350F]/75">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#FBBF24]">
                   Chương {chapter.index} — {chapter.name}
                 </p>
               )}
               <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-[28px]">{chrome.title}</h1>
-              <p className="mt-2 max-w-lg text-sm leading-relaxed text-[#3B2A12]/70">{chrome.subtitle}</p>
+              <p className="mt-2 max-w-lg text-sm leading-relaxed text-white/60">{chrome.subtitle}</p>
               {companionLine && (
-                <p className={`${caveat.className} mt-3 max-w-md text-lg leading-snug text-[#4A3208]/80`}>&ldquo;{companionLine}&rdquo;</p>
+                <p className={`${caveat.className} mt-3 max-w-md text-lg leading-snug text-[#FDE29B]/85`}>&ldquo;{companionLine}&rdquo;</p>
               )}
             </div>
             <button
               type="button"
               onClick={() => setCorkWriteOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-full bg-[#3B2A12] px-5 py-3 text-sm font-bold text-[#FBF3E1] shadow-[0_10px_22px_-8px_rgba(59,42,18,0.5)] transition hover:brightness-110"
+              className="flex items-center gap-2 rounded-full bg-gradient-to-br from-[#FBBF24] to-[#D97706] px-5 py-3 text-sm font-bold text-[#1c1506] shadow-[0_10px_22px_-8px_rgba(251,191,36,0.4)] transition hover:brightness-110"
             >
               {corkWriteOpen ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
               Ghim note mới
@@ -420,7 +420,7 @@ export function MyStoryBook({
           </div>
 
           {corkWriteOpen && (
-            <div className="mt-6 rounded-2xl bg-[#FDF9EF] p-6 shadow-[0_20px_40px_-12px_rgba(0,0,0,.35)] sm:p-8">
+            <div className="mt-6 rounded-2xl bg-[#FDF9EF] p-6 shadow-[0_20px_40px_-12px_rgba(0,0,0,.5)] sm:p-8">
               <WriteNook reflections={reflections} chrome={chrome} variant="corkboard" onSaved={() => setCorkWriteOpen(false)} />
               {!storageReady && <p className="mt-4 text-xs italic text-[#3B2A12]/50">{chrome.storageNotReadyLine}</p>}
             </div>
@@ -428,8 +428,8 @@ export function MyStoryBook({
 
           {bookIsEmpty ? (
             <div className="mt-16 text-center">
-              <p className="mx-auto max-w-sm text-base italic leading-relaxed text-[#3B2A12]/70">{chrome.emptyStateLine1}</p>
-              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#3B2A12]/50">{chrome.emptyStateLine2}</p>
+              <p className="mx-auto max-w-sm text-base italic leading-relaxed text-white/65">{chrome.emptyStateLine1}</p>
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-white/40">{chrome.emptyStateLine2}</p>
             </div>
           ) : (
             <div className="mt-8 flex flex-wrap gap-6">
@@ -466,22 +466,22 @@ export function MyStoryBook({
             </div>
           )}
 
-          <section className="mt-16 text-center text-[#3B2A12]">
-            <p className="text-base italic leading-relaxed text-[#3B2A12]/75">{chrome.nextChapterPrompt}</p>
+          <section className="mt-16 text-center text-white">
+            <p className="text-base italic leading-relaxed text-white/75">{chrome.nextChapterPrompt}</p>
             <Link
               href={workspaceHref}
-              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#78350F] underline decoration-[#78350F]/30 underline-offset-4 transition hover:decoration-[#78350F]"
+              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#FDE29B] underline decoration-[#FDE29B]/30 underline-offset-4 transition hover:decoration-[#FDE29B]"
             >
               {chrome.nextChapterCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
-            <p className="mt-6 text-xs text-[#3B2A12]/55">
+            <p className="mt-6 text-xs text-white/50">
               {mirrorInviteText?.prefix ?? chrome.mirrorPromptPrefix}{" "}
               {onOpenMirror ? (
-                <button type="button" onClick={onOpenMirror} className="underline decoration-[#3B2A12]/30 underline-offset-4 hover:text-[#3B2A12]">
+                <button type="button" onClick={onOpenMirror} className="underline decoration-white/30 underline-offset-4 hover:text-white">
                   {mirrorInviteText?.label ?? chrome.mirrorLinkLabel}
                 </button>
               ) : (
-                <Link href={mirrorHref} className="underline decoration-[#3B2A12]/30 underline-offset-4 hover:text-[#3B2A12]">
+                <Link href={mirrorHref} className="underline decoration-white/30 underline-offset-4 hover:text-white">
                   {chrome.mirrorLinkLabel}
                 </Link>
               )}

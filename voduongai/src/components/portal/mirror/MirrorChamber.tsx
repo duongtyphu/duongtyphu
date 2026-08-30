@@ -169,6 +169,46 @@ export function MirrorChamber({
       <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "78%", top: "58%", animationDelay: "5s" }} aria-hidden />
       <div className="mirror-reflection-line" aria-hidden />
 
+      {/* Khối gương kính lớn — art hero tĩnh, đối xứng, mờ nhẹ phía sau
+       * nội dung (KHÔNG bố cục lệch phải như mockup gốc, để không xáo
+       * trộn cấu trúc NHÌN LẠI/NHẬN RA/TỰ HỎI + panel admin thật). */}
+      <svg
+        className="pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 opacity-[0.16]"
+        width="460"
+        height="680"
+        viewBox="0 0 460 680"
+        fill="none"
+        aria-hidden
+      >
+        <defs>
+          <linearGradient id="mirrorFrame" x1="0" y1="0" x2="460" y2="680" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#67E8F9" />
+            <stop offset="50%" stopColor="#22D3EE" />
+            <stop offset="100%" stopColor="#0E7490" />
+          </linearGradient>
+          <radialGradient id="mirrorGlass" cx="50%" cy="38%" r="65%">
+            <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.22" />
+            <stop offset="55%" stopColor="#0B1220" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#050810" stopOpacity="0.85" />
+          </radialGradient>
+          <linearGradient id="mirrorSheen" x1="110" y1="90" x2="230" y2="260" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="45%" stopColor="#ffffff" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <rect x="212" y="580" width="36" height="86" rx="14" fill="url(#mirrorFrame)" fillOpacity="0.5" />
+        <ellipse cx="230" cy="300" rx="210" ry="290" fill="url(#mirrorGlass)" stroke="url(#mirrorFrame)" strokeWidth="6" />
+        <ellipse cx="230" cy="300" rx="196" ry="276" fill="none" stroke="#22D3EE" strokeOpacity="0.18" strokeWidth="1" />
+        <path
+          className="mirror-glasssheen"
+          d="M110 90 L230 260"
+          stroke="url(#mirrorSheen)"
+          strokeWidth="46"
+          strokeLinecap="round"
+        />
+      </svg>
+
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
        * quyển nền phía sau mới full-bleed. */}
@@ -237,7 +277,7 @@ export function MirrorChamber({
             <OriginLineWhisper context="mirror_of_growth" line={originLine} />
             <Link
               href={academyHref}
-              className="mt-12 inline-flex items-center gap-1.5 text-sm font-medium text-violet-200/70 underline decoration-violet-200/25 underline-offset-4 transition hover:text-violet-100"
+              className="mt-12 inline-flex items-center gap-1.5 text-sm font-medium text-cyan-200/70 underline decoration-cyan-200/25 underline-offset-4 transition hover:text-cyan-100"
             >
               {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -326,14 +366,14 @@ export function MirrorChamber({
                 <button
                   type="button"
                   onClick={onOpenStory}
-                  className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-violet-200/50 underline decoration-violet-200/20 underline-offset-4 transition hover:text-violet-200/80"
+                  className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-cyan-200/50 underline decoration-cyan-200/20 underline-offset-4 transition hover:text-cyan-200/80"
                 >
                   {storyInviteLabel} <ArrowRight className="h-3 w-3" />
                 </button>
               ) : (
                 <Link
                   href={storyHref}
-                  className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-violet-200/50 underline decoration-violet-200/20 underline-offset-4 transition hover:text-violet-200/80"
+                  className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-cyan-200/50 underline decoration-cyan-200/20 underline-offset-4 transition hover:text-cyan-200/80"
                 >
                   Viết câu trả lời trong My Story <ArrowRight className="h-3 w-3" />
                 </Link>

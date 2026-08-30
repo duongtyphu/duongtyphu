@@ -1,22 +1,18 @@
 "use client";
 
 /* =============================================================================
- * NhatKyHocTapTab — tab "Nhật ký học tập" bên trong `/v2/hanh-trinh-cua-toi`
- * (Giai đoạn 8, gộp 3 trang). PORT nội dung từ `NhatKyHocTapClient.tsx`
- * (route `/v2/nhat-ky-hoc-tap` đã xoá — xem CLAUDE.md) — bỏ khung
- * `PortalV2Shell`/`.app` (trang cha `HanhTrinhCuaToiClient` đã có sẵn 1
- * shell duy nhất, không lồng 2 shell).
+ * NhatKyHocTapTab — tab "Nhật ký học tập" bên trong `/v2/hanh-trinh-cua-toi`.
  *
- * ĐIỀU CHỈNH LAYOUT (Founder yêu cầu sau khi xem trước) — bản gốc 2 cột
- * (center-col 1fr + right-col 300px) chỉ hợp với 1 TRANG RIÊNG đủ rộng;
- * khi nhúng làm 1 tab bên trong trang khác, cột phải 300px bị bóp méo/mất
- * chữ. Đổi sang 1 CỘT DUY NHẤT full-width, dùng lưới linh hoạt cho các thẻ
- * phụ thay vì cột 300px cố định. Bỏ thẻ "Chuỗi ngày học tập" (trùng lặp
- * 100% với thẻ cùng tên ở tab "Hành trình của tôi" — cùng ý nghĩa số ngày
- * liên tục, đúng quyền tự dọn nội dung dư thừa Founder đã cấp cho phạm vi
- * trang này) — 3 thẻ còn lại (Thời gian học trong tuần/Ghi chú nổi bật/
- * Tài liệu & liên kết gần đây) không trùng ý nghĩa, giữ nguyên, chỉ đổi vị
- * trí xuống dưới `.log-list`, xếp lưới 3 cột full-width.
+ * GIAI ĐOẠN 10 (Founder yêu cầu thiết kế lại hoàn toàn — "không đơn điệu,
+ * đơn giản, rẻ tiền", sáng tạo lên đặc biệt ở các ô) — bố cục bento-grid
+ * bất đối xứng trên nền đen, thay hẳn dashboard thẻ trắng cũ: hero chuỗi
+ * ngày có ngọn lửa, 3 chỉ số đếm dạng vòng tròn trang trí (không fill %
+ * giả — các field này là SỐ ĐẾM tuyệt đối, không phải %, nên vòng tròn
+ * luôn để trống, chỉ đóng vai trò khung trang trí trung thực), lịch dạng
+ * ô vuông, hoạt động hôm nay dạng timeline có mốc nối, biểu đồ tuần dạng
+ * đường sóng vẽ đúng theo `weekChart` thật. Danh sách nhật ký + bộ lọc +
+ * chuyển view GIỮ NGUYÊN chức năng thật đã có (không rút gọn tính năng).
+ * Mọi field vẫn đúng 100% `LearningLogData`, không bịa thêm.
  * ========================================================================== */
 
 import { useState } from "react";
@@ -51,318 +47,319 @@ function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
 }
 
-const ENTRY_ICON: Record<LearningLogEntry["kind"], { bg: string; path: string; label: string }> = {
-  lesson: { bg: "linear-gradient(145deg,#a08bff,#6d4aff)", path: "M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z", label: "Học viện AI" },
-  reflection: { bg: "linear-gradient(145deg,#e2b23c,#a9660f)", path: "M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z", label: "Chiêm nghiệm" },
-  capsule: { bg: "linear-gradient(145deg,#e879b9,#b4348a)", path: "M6 3h12v18l-6-4-6 4z", label: "Ghi chú" },
+const ENTRY_ICON: Record<LearningLogEntry["kind"], { bg: string; color: string; path: string; fill: boolean; label: string }> = {
+  lesson: { bg: "rgba(96,165,250,.14)", color: "#93C5FD", path: "M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z", fill: false, label: "Học viện AI" },
+  reflection: { bg: "rgba(251,191,36,.14)", color: "#FDE29B", path: "M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z", fill: true, label: "Chiêm nghiệm" },
+  capsule: { bg: "rgba(244,114,182,.14)", color: "#F9A8D4", path: "M6 3h12v18l-6-4-6 4z", fill: true, label: "Ghi chú" },
 };
 
 const WEEK_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+const FILTERS = ["Tất cả", "Bài học", "Thực hành", "Chiêm nghiệm", "Tài liệu", "Ý tưởng"];
 
 export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
   const [activeFilter, setActiveFilter] = useState(0);
   const [activeView, setActiveView] = useState(0);
 
   const { stats, entries, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote, recentDocuments } = log;
-  const today = new Date();
-  const todayLabel = today.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const todayLabel = new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
   const maxWeekMinutes = Math.max(...weekChart.map((d) => d.minutes), 1);
 
+  const wavePoints = weekChart.map((d, i) => {
+    const x = (i / Math.max(weekChart.length - 1, 1)) * 700;
+    const y = 82 - (d.minutes / maxWeekMinutes) * 66;
+    return { x, y };
+  });
+  const waveLine = wavePoints.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" L ");
+  const waveFill = `M0 82 L ${waveLine} V90 H0Z`;
+  const lastPoint = wavePoints[wavePoints.length - 1];
+
   return (
-    <div className="nkt">
-      <div className="content-single">
-        <div className="page-head">
+    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      <div className="absolute inset-0 z-0" style={{ background: "#08090D" }} aria-hidden />
+      <div
+        className="jn-lamp absolute pointer-events-none"
+        style={{ top: -160, right: -80, width: 640, height: 640, background: "radial-gradient(circle, rgba(96,165,250,.14), transparent 65%)" }}
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(1000px circle at 85% -8%, rgba(30,73,118,.3), transparent 60%)" }}
+        aria-hidden
+      />
+
+      <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 36, flexWrap: "wrap", gap: 16 }}>
             <div>
-              <h1>Nhật ký học tập</h1>
-              <p>Ghi lại hành trình học tập mỗi ngày. Học – Thực hành – Chiêm nghiệm – Tiến bộ.</p>
+              <h1 style={{ fontSize: 28, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-.01em" }}>Nhật ký học tập</h1>
+              <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", margin: 0 }}>Ghi lại hành trình học tập mỗi ngày. Học – Thực hành – Chiêm nghiệm – Tiến bộ.</p>
             </div>
-            <button className="new-note-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4">
-                <path d="M12 5v14M5 12h14" />
+            <button
+              type="button"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                background: "linear-gradient(135deg,#60A5FA,#3B82F6)",
+                color: "#06131F",
+                border: "none",
+                borderRadius: 999,
+                padding: "13px 22px",
+                fontSize: 13.5,
+                fontWeight: 800,
+                cursor: "pointer",
+                boxShadow: "0 10px 24px -8px rgba(59,130,246,.55)",
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5v14M5 12h14" stroke="#06131F" strokeWidth="2.6" strokeLinecap="round" />
               </svg>
               Ghi chú mới
             </button>
           </div>
 
-          <div className="stat-row">
-            <div className="stat-box">
-              <div className="ico" style={{ background: "linear-gradient(145deg,#a08bff,#6d4aff)" }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 7v5l3 3" />
-                </svg>
-              </div>
-              <div className="num">{formatMinutes(stats.minutesToday)}</div>
-              <div className="lbl">Thời gian học hôm nay</div>
+          {/* Dải chỉ số */}
+          <div className="jn-stat-row" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 14, marginBottom: 16 }}>
+            <div className="jn-card" style={{ padding: 22, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", background: "linear-gradient(160deg,#1A130A,#0F1116)" }}>
+              <svg className="jn-flame" width="34" height="42" viewBox="0 0 46 56" style={{ marginBottom: 8 }}>
+                <path
+                  d="M23 2C10 18 6 28 6 36c0 11 8 18 17 18s17-7 17-18c0-6-3-13-8-19 1 6-2 10-5 10 2-8-2-16-4-25z"
+                  fill="url(#jnFlameGrad)"
+                />
+                <defs>
+                  <linearGradient id="jnFlameGrad" x1="0" y1="0" x2="0" y2="56">
+                    <stop offset="0" stopColor="#FDBA74" />
+                    <stop offset="1" stopColor="#EA580C" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{stats.streakDays}</div>
+              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.45)", marginTop: 6 }}>ngày liên tục</div>
             </div>
-            <div className="stat-box">
-              <div className="ico" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                  <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                </svg>
-              </div>
-              <div className="num">{stats.lessonsCompletedTotal}</div>
-              <div className="lbl">Bài học đã hoàn thành</div>
-            </div>
-            <div className="stat-box">
-              <div className="ico" style={{ background: "linear-gradient(145deg,#ff6b45,#c2340a)" }}>
-                <svg viewBox="0 0 24 24" fill="#fff" stroke="none">
-                  <path d="M12 2.5c2.4 1.8 3.8 4.6 3.8 8.3 0 2-.5 3.8-1.3 5.3l-2.5 2.4-2.5-2.4c-.8-1.5-1.3-3.3-1.3-5.3 0-3.7 1.4-6.5 3.8-8.3z" />
-                </svg>
-              </div>
-              <div className="num">{stats.streakDays} ngày</div>
-              <div className="lbl">Ngày học liên tục</div>
-              {stats.streakDays > 0 ? <div className="sub">Đang duy trì 🔥</div> : null}
-            </div>
-            <div className="stat-box">
-              <div className="ico" style={{ background: "linear-gradient(145deg,#5f8fff,#1d5fd8)" }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                  <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" />
-                </svg>
-              </div>
-              <div className="num">—</div>
-              <div className="lbl">Điểm kinh nghiệm</div>
-              <div className="sub" style={{ color: "var(--muted)" }}>
-                Chưa có hệ thống tính điểm
-              </div>
-            </div>
-            <div className="stat-box">
-              <div className="ico" style={{ background: "linear-gradient(145deg,#e879b9,#b4348a)" }}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                  <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                </svg>
-              </div>
-              <div className="num">{stats.notesCount}</div>
-              <div className="lbl">Ghi chú & chiêm nghiệm</div>
-            </div>
+
+            <StatRing glow="rgba(96,165,250,.15)" value={formatMinutes(stats.minutesToday)} label="Thời gian học hôm nay" />
+            <StatRing glow="rgba(74,222,128,.15)" value={String(stats.lessonsCompletedTotal)} label="Bài học đã hoàn thành" />
+            <StatRing glow="rgba(255,255,255,.06)" value="—" label="Điểm kinh nghiệm (chưa có hệ tính điểm)" dashed />
+            <StatRing glow="rgba(251,191,36,.15)" value={String(stats.notesCount)} label="Ghi chú & chiêm nghiệm" />
           </div>
 
-          <div className="two-col">
-            <div className="card">
-              <div className="card-head">
-                <h4>Lịch học</h4>
+          <div className="jn-bento-2col" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 16 }}>
+            {/* Lịch học */}
+            <div className="jn-card" style={{ padding: 26 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Lịch học — {calendar.monthLabel}</h3>
+                <div style={{ display: "flex", gap: 4 }}>
+                  <button type="button" aria-label="Tháng trước" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2"><path d="M15 6l-6 6 6 6" /></svg>
+                  </button>
+                  <button type="button" aria-label="Tháng sau" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2"><path d="M9 6l6 6-6 6" /></svg>
+                  </button>
+                </div>
               </div>
-              <div className="cal-nav">
-                <button aria-label="Tháng trước">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 6l-6 6 6 6" />
-                  </svg>
-                </button>
-                <span>{calendar.monthLabel}</span>
-                <button aria-label="Tháng sau">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 6l6 6-6 6" />
-                  </svg>
-                </button>
-              </div>
-              <div className="cal-grid">
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8, fontSize: 10.5, color: "rgba(255,255,255,.4)", textAlign: "center", marginBottom: 10 }}>
                 {WEEK_LABELS.map((d) => (
-                  <div className="dow" key={d}>
-                    {d}
-                  </div>
+                  <span key={d}>{d}</span>
                 ))}
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8 }}>
                 {calendar.days.map((d, i) => (
-                  <div
+                  <span
                     key={`${d.day}-${i}`}
-                    className={
-                      !d.inMonth ? "cal-day muted" : d.isToday ? "cal-day today" : d.done ? "cal-day done" : "cal-day"
-                    }
+                    style={{
+                      aspectRatio: "1",
+                      borderRadius: 8,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 11,
+                      fontWeight: d.isToday ? 800 : 400,
+                      color: !d.inMonth ? "rgba(255,255,255,.2)" : d.isToday ? "#fff" : d.done ? "#93C5FD" : "rgba(255,255,255,.7)",
+                      background: d.isToday
+                        ? "linear-gradient(135deg,#60A5FA,#3B82F6)"
+                        : d.done
+                          ? "rgba(96,165,250,.12)"
+                          : "rgba(255,255,255,.03)",
+                      boxShadow: d.isToday ? "0 4px 14px -2px rgba(59,130,246,.5)" : undefined,
+                    }}
                   >
                     {d.day}
-                  </div>
+                  </span>
                 ))}
-              </div>
-              <div className="cal-legend">
-                <span>
-                  <span className="dot" style={{ background: "#189a52" }}></span>Đã học
-                </span>
-                <span>
-                  <span className="dot" style={{ background: "var(--violet)" }}></span>Hôm nay
-                </span>
-                <span>
-                  <span className="dot" style={{ background: "#c7c2df" }}></span>Chưa học
-                </span>
               </div>
             </div>
 
-            <div className="card">
-              <div className="card-head">
-                <h4>Hôm nay, {todayLabel}</h4>
-                <a href="#">Xem tất cả →</a>
+            {/* Hôm nay — timeline */}
+            <div className="jn-card" style={{ padding: 26 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16 }}>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Hôm nay, {todayLabel}</h3>
+                <a href="#" style={{ fontSize: 11.5, fontWeight: 700 }}>
+                  Tất cả →
+                </a>
               </div>
               {todayEntries.length === 0 ? (
-                <div className="empty-hint">Chưa có hoạt động học tập nào hôm nay.</div>
+                <div style={{ position: "relative", paddingLeft: 18 }}>
+                  <span style={{ position: "absolute", left: 3, top: 2, width: 8, height: 8, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "2px solid #0F1116" }} />
+                  <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có hoạt động học tập nào hôm nay.</div>
+                </div>
               ) : (
-                todayEntries.slice(0, 4).map((e) => {
-                  const icon = ENTRY_ICON[e.kind];
-                  return (
-                    <div className="today-row" key={e.id}>
-                      <span className="time">{formatTime(e.occurredAt)}</span>
-                      <div className="ico" style={{ background: icon.bg }}>
-                        <svg viewBox="0 0 24 24" fill={e.kind === "reflection" ? "#fff" : "none"} stroke="#fff" strokeWidth="2">
-                          <path d={icon.path} />
-                        </svg>
+                <div style={{ position: "relative", paddingLeft: 18 }}>
+                  <div style={{ position: "absolute", left: 3, top: 4, bottom: 4, width: 1, background: "rgba(255,255,255,.1)" }} />
+                  {todayEntries.slice(0, 4).map((e) => {
+                    const icon = ENTRY_ICON[e.kind];
+                    return (
+                      <div key={e.id} style={{ position: "relative", paddingBottom: 16 }}>
+                        <span style={{ position: "absolute", left: -18, top: 2, width: 8, height: 8, borderRadius: "50%", background: icon.color, border: "2px solid #0F1116" }} />
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginBottom: 2 }}>{formatTime(e.occurredAt)} · {icon.label}</div>
+                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "#fff" }}>{e.title}</div>
                       </div>
-                      <div className="info">
-                        <h6>{e.title}</h6>
-                        <span>{icon.label}</span>
-                      </div>
-                      <div className="status done">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
-                      </div>
-                    </div>
-                  );
-                })
+                    );
+                  })}
+                </div>
               )}
             </div>
           </div>
 
-          <div className="filter-toolbar">
-            {["Tất cả", "Bài học", "Thực hành", "Chiêm nghiệm", "Tài liệu", "Ý tưởng"].map((label, i) => (
-              <button
-                key={label}
-                className={i === activeFilter ? "f-tab active" : "f-tab"}
-                onClick={() => setActiveFilter(i)}
-              >
-                {label}
-              </button>
-            ))}
-            <div className="filter-right">
-              <div className="cat-select">
-                Tất cả danh mục
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
+          {/* Bộ lọc + danh sách nhật ký thật */}
+          <div className="jn-card" style={{ padding: 26, marginBottom: 16 }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                {FILTERS.map((label, i) => (
+                  <button key={label} type="button" className={i === activeFilter ? "jn-filter-chip active" : "jn-filter-chip"} onClick={() => setActiveFilter(i)}>
+                    {label}
+                  </button>
+                ))}
               </div>
-              <div className="view-toggle">
-                <button className={activeView === 0 ? "active" : ""} onClick={() => setActiveView(0)}>
+              <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,.04)", borderRadius: 10, padding: 2 }}>
+                <button type="button" className={activeView === 0 ? "jn-view-btn active" : "jn-view-btn"} onClick={() => setActiveView(0)} aria-label="Dạng lưới">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="7" height="7" rx="1.5" />
-                    <rect x="14" y="3" width="7" height="7" rx="1.5" />
-                    <rect x="3" y="14" width="7" height="7" rx="1.5" />
-                    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                    <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
+                    <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
                   </svg>
                 </button>
-                <button className={activeView === 1 ? "active" : ""} onClick={() => setActiveView(1)}>
+                <button type="button" className={activeView === 1 ? "jn-view-btn active" : "jn-view-btn"} onClick={() => setActiveView(1)} aria-label="Dạng danh sách">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 6h16M4 12h16M4 18h16" />
                   </svg>
                 </button>
               </div>
             </div>
-          </div>
 
-          <div className="log-list">
             {entries.length === 0 ? (
-              <div className="empty-hint">Chưa có nhật ký nào — hoàn thành bài học hoặc viết chiêm nghiệm để bắt đầu.</div>
+              <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có nhật ký nào — hoàn thành bài học hoặc viết chiêm nghiệm để bắt đầu.</div>
             ) : (
-              entries.slice(0, 6).map((e) => {
-                const icon = ENTRY_ICON[e.kind];
-                return (
-                  <div className="log-row" key={e.id}>
-                    <div className="ico" style={{ background: icon.bg }}>
-                      <svg viewBox="0 0 24 24" fill={e.kind === "reflection" ? "#fff" : "none"} stroke="#fff" strokeWidth="2">
-                        <path d={icon.path} />
-                      </svg>
-                    </div>
-                    <div className="info">
-                      <h6>{e.title}</h6>
-                      <div className="log-tags">
-                        <span className="log-tag" style={{ background: "var(--violet-light)", color: "var(--violet)" }}>
-                          {icon.label}
-                        </span>
+              <div style={activeView === 0 ? { display: "grid", gridTemplateColumns: "repeat(2,1fr)", columnGap: 24 } : undefined}>
+                {entries.slice(0, 6).map((e) => {
+                  const icon = ENTRY_ICON[e.kind];
+                  return (
+                    <div className="jn-log-row" key={e.id}>
+                      <div className="ico" style={{ background: icon.bg, color: icon.color }}>
+                        <svg viewBox="0 0 24 24" fill={icon.fill ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
+                          <path d={icon.path} />
+                        </svg>
                       </div>
+                      <div className="info">
+                        <h6>{e.title}</h6>
+                        <span className="tag">{icon.label}</span>
+                      </div>
+                      <span className="time">{formatRelativeTime(e.occurredAt)}</span>
                     </div>
-                    <span className="time">{formatRelativeTime(e.occurredAt)}</span>
-                    <button className="bm">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M6 3h12v18l-6-4-6 4z" />
-                      </svg>
-                    </button>
-                    <button className="more">⋯</button>
-                  </div>
-                );
-              })
-            )}
-        </div>
-
-        <div className="secondary-grid">
-          <div className="card">
-            <div className="card-head">
-              <h4>Thời gian học trong tuần</h4>
-            </div>
-            <div className="week-total">{formatMinutes(weekTotalMinutes)}</div>
-            <div className="week-chart">
-              {weekChart.map((d) => (
-                <div className="week-bar-col" key={d.label}>
-                  <div
-                    className="week-bar"
-                    style={{
-                      height: `${Math.max((d.minutes / maxWeekMinutes) * 100, d.minutes > 0 ? 8 : 2)}%`,
-                      background: d.isToday ? "var(--violet)" : d.minutes > 0 ? "var(--violet)" : "var(--line)",
-                    }}
-                  ></div>
-                  <span>{d.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-head">
-              <h4>Ghi chú nổi bật</h4>
-            </div>
-            {featuredNote ? (
-              <>
-                <div className="quote-card">
-                  <div className="quote-star">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                    </svg>
-                  </div>
-                  <p>&quot;{featuredNote.text}&quot;</p>
-                  <div className="author">- {featuredNote.authorName}</div>
-                </div>
-                <div className="dots-row">
-                  <span className="active"></span>
-                </div>
-              </>
-            ) : (
-              <div className="empty-hint">Chưa có ghi chú nào — viết chiêm nghiệm đầu tiên để lưu lại đây.</div>
+                  );
+                })}
+              </div>
             )}
           </div>
 
-          <div className="card">
-            <div className="card-head">
-              <h4>Tài liệu & liên kết gần đây</h4>
-              <a href="/v2/hoc-vien-ai">Xem tất cả →</a>
+          <div className="jn-bento-2col" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 16 }}>
+            {/* Thời gian học trong tuần — sóng */}
+            <div className="jn-card" style={{ padding: 26 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: "0 0 4px" }}>Thời gian học trong tuần</h3>
+              <div style={{ fontSize: 26, fontWeight: 900, color: "#fff", marginBottom: 14 }}>
+                {formatMinutes(weekTotalMinutes)}
+              </div>
+              <svg width="100%" height="90" viewBox="0 0 700 90" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="jnWaveFill" x1="0" y1="0" x2="0" y2="90">
+                    <stop offset="0" stopColor="#60A5FA" stopOpacity=".25" />
+                    <stop offset="1" stopColor="#60A5FA" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                <path d={`M ${waveLine}`} fill="none" stroke="#60A5FA" strokeWidth="2.5" strokeLinecap="round" />
+                <path d={waveFill} fill="url(#jnWaveFill)" />
+                {lastPoint ? <circle cx={lastPoint.x} cy={lastPoint.y} r="4" fill="#93C5FD" /> : null}
+              </svg>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "rgba(255,255,255,.35)", marginTop: 6 }}>
+                {weekChart.map((d) => (
+                  <span key={d.label}>{d.label}</span>
+                ))}
+              </div>
+            </div>
+
+            {/* Ghi chú nổi bật */}
+            <div className="jn-card" style={{ padding: 26, display: "flex", flexDirection: "column" }}>
+              <svg width="26" height="20" viewBox="0 0 24 24" fill="#60A5FA" opacity=".5" style={{ marginBottom: 10 }}>
+                <path d="M7 7c-2 0-4 2-4 5s2 5 4 5 4-2 4-5-2-5-4-5zm10 0c-2 0-4 2-4 5s2 5 4 5 4-2 4-5-2-5-4-5z" />
+              </svg>
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: "0 0 10px" }}>Ghi chú nổi bật</h3>
+              {featuredNote ? (
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,.75)", fontStyle: "italic", margin: "0 0 10px" }}>&quot;{featuredNote.text}&quot;</p>
+                  <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.4)" }}>— {featuredNote.authorName}</div>
+                </div>
+              ) : (
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic", flex: 1 }}>Chưa có ghi chú nào — viết chiêm nghiệm đầu tiên để lưu lại đây.</div>
+              )}
+            </div>
+          </div>
+
+          {/* Tài liệu & liên kết */}
+          <div className="jn-card" style={{ padding: 26 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Tài liệu &amp; liên kết gần đây</h3>
+              <a href="/v2/hoc-vien-ai" style={{ fontSize: 11.5, fontWeight: 700 }}>
+                Tất cả →
+              </a>
             </div>
             {recentDocuments.length === 0 ? (
-              <div className="empty-hint">Chưa có tài liệu nào.</div>
+              <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có tài liệu nào.</div>
             ) : (
-              recentDocuments.map((doc) => (
-                <div className="doc-row2" key={doc.id}>
-                  <div className="ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 10 }}>
+                {recentDocuments.map((doc) => (
+                  <a
+                    key={doc.id}
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 12, padding: "10px 14px", textDecoration: "none" }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" strokeWidth="2" style={{ flexShrink: 0 }}>
                       <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
                     </svg>
-                  </div>
-                  <div className="info">
-                    <h6>{doc.title}</h6>
-                  </div>
-                  <a href={doc.url} target="_blank" rel="noopener noreferrer">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 3v13m0 0l-4-4m4 4l4-4M4 21h16" />
-                    </svg>
+                    <span style={{ fontSize: 12.5, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{doc.title}</span>
                   </a>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/** 1 ô chỉ số dạng vòng tròn trang trí — CÁC FIELD Ở ĐÂY LÀ SỐ ĐẾM TUYỆT
+    ĐỐI (không phải %), nên vòng tròn luôn để trống (không fill cung màu
+    giả) — chỉ đóng vai trò khung trang trí trung thực quanh con số thật. */
+function StatRing({ glow, value, label, dashed }: { glow: string; value: string; label: string; dashed?: boolean }) {
+  return (
+    <div className="jn-card" style={{ padding: 22, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+      <svg width="66" height="66" viewBox="0 0 76 76" style={{ marginBottom: 8 }}>
+        <circle cx="38" cy="38" r="32" fill="none" stroke={glow} strokeWidth="7" strokeDasharray={dashed ? "3 5" : undefined} />
+        <text x="38" y="44" textAnchor="middle" fontSize="16" fontWeight="800" fill="#fff">
+          {value}
+        </text>
+      </svg>
+      <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)" }}>{label}</div>
     </div>
   );
 }
