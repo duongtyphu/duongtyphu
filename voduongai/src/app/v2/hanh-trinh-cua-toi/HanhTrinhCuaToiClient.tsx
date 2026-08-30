@@ -605,6 +605,7 @@ export function HanhTrinhCuaToiClient({
                       workspaceHref="/v2/muc-tieu"
                       onOpenMirror={() => setActiveTab("mirror")}
                       mirrorInviteText={{ prefix: "Muốn im lặng một chút?", label: "Ghé qua Mirror" }}
+                      variant="corkboard"
                     />
                   </div>
                 )}

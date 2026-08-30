@@ -26,36 +26,73 @@ import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
 
 import "./khu-vuon-cua-ban-tab.css";
 
-/** Vẽ chậu cây trang trí thuần tuý — cycle theo index, KHÔNG gắn ý nghĩa dữ liệu nào. */
-const POT_ART = [
-  {
-    fill: "#8b6bff",
-    ellipse: "#a08bff",
-    stem: "#3a7d3f",
-    plant: "M40 45c-10-14-26-10-26-2s16 8 26 -2M40 40c10-10 24-6 24 2s-14 8-24 -2",
-  },
-  {
-    fill: "#5a37e6",
-    ellipse: "#7c5aef",
-    stem: "#3a7d3f",
-    plant: "M40 48c-11-16-28-11-28-2s18 9 28-2M40 42c11-11 26-6 26 3s-16 8-26-3",
-  },
-  {
-    fill: "#5f8fff",
-    ellipse: "#7fa6ff",
-    stem: "#3a7d3f",
-    plant: "M40 50c-9-13-22-9-22-1s14 7 22-1",
-  },
-  {
-    fill: "#189a52",
-    ellipse: "#3ab873",
-    stem: "#2e7d4f",
-    plant: "",
-  },
-];
+/** Vị trí sao/đom đóm trang trí thuần tuý — cố định, không gắn ý nghĩa dữ liệu. */
+const GN_STARS = [
+  { left: "8%", top: "9%", delay: ".2s" },
+  { left: "18%", top: "5%", delay: "1.4s" },
+  { left: "30%", top: "13%", delay: ".8s" },
+  { left: "44%", top: "6%", delay: "2.1s" },
+  { left: "58%", top: "11%", delay: "1.7s" },
+  { left: "70%", top: "7%", delay: ".4s" },
+  { left: "83%", top: "14%", delay: "2.6s" },
+  { left: "92%", top: "8%", delay: "1s" },
+] as const;
+
+const GN_FIREFLIES = [
+  { left: "26%", bottom: "22%", color: "#FDE68A", delay: ".3s" },
+  { left: "52%", bottom: "38%", color: "#BEF264", delay: "2.1s" },
+  { left: "68%", bottom: "52%", color: "#FDE68A", delay: "1.2s" },
+  { left: "14%", bottom: "34%", color: "#86EFAC", delay: "3.4s" },
+] as const;
+
+type GardenTier = "seed" | "sapling" | "growing" | "bloom";
+
+function tierOf(percent: number): GardenTier {
+  if (percent <= 0) return "seed";
+  if (percent < 50) return "sapling";
+  if (percent < 100) return "growing";
+  return "bloom";
+}
+
+const TIER_CANOPY: Record<Exclude<GardenTier, "seed">, { size: number; trunk: number; bg: string; glow: string }> = {
+  sapling: { size: 34, trunk: 20, bg: "radial-gradient(circle at 35% 30%, #FDE68A, #A16207 70%)", glow: "0 0 12px rgba(250,204,21,.25)" },
+  growing: { size: 54, trunk: 30, bg: "radial-gradient(circle at 35% 30%, #BEF264, #4D9F3A 70%)", glow: "0 0 20px rgba(163,230,53,.32)" },
+  bloom: { size: 74, trunk: 38, bg: "radial-gradient(circle at 35% 30%, #86EFAC, #16A34A 70%)", glow: "0 0 28px rgba(74,222,128,.4)" },
+};
+
+/** Chiều cao `.garden-scene` (khớp `khu-vuon-cua-ban-tab.css`). Cây "bloom"
+ * cao nhất (canopy 74 + trunk 38 + nhãn 2 dòng + % ≈ 165px) — `baseY`/`amp`
+ * dưới đây được chọn để `bottomPx + 165 <= SCENE_HEIGHT` ở MỌI vị trí lệch
+ * dọc, tránh bị cắt bởi `overflow:hidden` (đã xảy ra ở bản nháp đầu). */
+const SCENE_HEIGHT = 320;
+
+/** Vị trí (%, px) + đường nối uốn lượn cho N cây trên "lối đi" — chia đều
+ * theo chiều ngang, lệch dọc xen kẽ để tạo cảm giác con đường thật, không
+ * cần khớp cứng với số chương cố định (khác Bản đồ hành trình luôn có
+ * đúng 5). Toạ độ path dùng chung hệ 0–1000 với % ngang để luôn thẳng hàng
+ * dù khung co giãn theo chiều rộng thật. */
+function buildGardenPath(n: number) {
+  const baseY = 90;
+  const amp = 28;
+  const points = Array.from({ length: n }, (_, i) => {
+    const leftPct = ((i + 1) / (n + 1)) * 100;
+    const bottomPx = baseY + (i % 2 === 0 ? -amp : amp * 0.6);
+    return { leftPct, bottomPx, svgY: SCENE_HEIGHT - bottomPx };
+  });
+  if (points.length < 2) return { points, d: "" };
+  let d = `M ${points[0].leftPct * 10} ${points[0].svgY}`;
+  for (let i = 1; i < points.length; i++) {
+    const prev = points[i - 1];
+    const cur = points[i];
+    const midX = (prev.leftPct * 10 + cur.leftPct * 10) / 2;
+    d += ` Q ${midX} ${prev.svgY} ${midX} ${(prev.svgY + cur.svgY) / 2} Q ${midX} ${cur.svgY} ${cur.leftPct * 10} ${cur.svgY}`;
+  }
+  return { points, d };
+}
 
 export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
   const { stages } = journey;
+  const { points: gardenPoints, d: gardenPathD } = buildGardenPath(stages.length);
 
   return (
     <div className="kvcb">
@@ -87,61 +124,70 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
               </button>
             </div>
             <div className="garden-scene">
-              <svg viewBox="0 0 1100 260" preserveAspectRatio="none">
-                <rect width="1100" height="260" fill="url(#skyGrad)" />
-                <circle cx="960" cy="55" r="34" fill="#ffe9a8" opacity=".85" />
-                <circle cx="960" cy="55" r="46" fill="#fff3cf" opacity=".4" />
-                <ellipse cx="150" cy="70" rx="55" ry="18" fill="#fff" opacity=".8" />
-                <ellipse cx="200" cy="60" rx="40" ry="15" fill="#fff" opacity=".7" />
-                <ellipse cx="700" cy="45" rx="60" ry="17" fill="#fff" opacity=".75" />
-                <path d="M0 200c150-30 300 10 450-10s300-25 450 5 200-5 200-5v70H0z" fill="#8fc36a" />
-                <path d="M0 215c150-20 300 5 450-5s300-18 450 6 200-3 200-3v52H0z" fill="#7ab556" />
-                <defs>
-                  <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="260">
-                    <stop offset="0" stopColor="#a8d8f0" />
-                    <stop offset="1" stopColor="#dcf0e0" />
-                  </linearGradient>
-                </defs>
-              </svg>
+              {GN_STARS.map((star, i) => (
+                <div
+                  key={i}
+                  className="gn-star"
+                  style={{ width: 2, height: 2, left: star.left, top: star.top, animationDelay: star.delay }}
+                />
+              ))}
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  right: "9%",
+                  top: "9%",
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle,#F6F0D8 0%,rgba(246,240,216,.5) 55%,transparent 75%)",
+                  boxShadow: "0 0 32px rgba(246,240,216,.3)",
+                }}
+              />
+
               {stages.length === 0 ? (
-                <div className="pot-row" style={{ alignItems: "center", justifyItems: "center" }}>
-                  <div className="empty-hint" style={{ gridColumn: "1 / -1", textAlign: "center" }}>
-                    Chưa có giai đoạn học tập nào — bắt đầu học tại Học viện AI.
-                  </div>
+                <div
+                  className="empty-hint"
+                  style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", color: "rgba(255,255,255,.55)" }}
+                >
+                  Chưa có giai đoạn học tập nào — bắt đầu học tại Học viện AI.
                 </div>
               ) : (
-                <div className="pot-row">
+                <>
+                  {gardenPathD && (
+                    <svg viewBox={`0 0 1000 ${SCENE_HEIGHT}`} preserveAspectRatio="none" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}>
+                      <path d={gardenPathD} stroke="rgba(190,242,210,.28)" strokeWidth="2" strokeDasharray="2 8" fill="none" />
+                    </svg>
+                  )}
+                  {GN_FIREFLIES.map((f, i) => (
+                    <div
+                      key={i}
+                      className="gn-firefly"
+                      style={{ width: 4, height: 4, left: f.left, bottom: f.bottom, background: f.color, boxShadow: `0 0 8px ${f.color}`, animationDelay: f.delay }}
+                    />
+                  ))}
                   {stages.map((s, i) => {
-                    const art = POT_ART[i % POT_ART.length];
+                    const point = gardenPoints[i];
+                    const tier = tierOf(s.percent);
                     return (
-                      <div className="pot-item" key={s.slug}>
-                        <div className="pot-tooltip">
-                          {s.title}
-                          <span>{s.percent}% hoàn thành</span>
-                        </div>
-                        <svg className="pot-svg" viewBox="0 0 80 110">
-                          {art.plant ? (
-                            <>
-                              <path d="M40 30v40" stroke={art.stem} strokeWidth="4" strokeLinecap="round" />
-                              <path d={art.plant} fill="none" stroke={art.stem} strokeWidth="3.5" />
-                            </>
-                          ) : (
-                            <path
-                              d="M40 18c-14 8-16 24-16 34 0 12 7 20 16 20s16-8 16-20c0-10-2-26-16-34z"
-                              fill="#2e7d4f"
+                      <div className="gn-tree" key={s.slug} style={{ left: `${point.leftPct}%`, bottom: point.bottomPx }}>
+                        {tier === "seed" ? (
+                          <div className="gn-seed" />
+                        ) : (
+                          <>
+                            <div
+                              className="gn-canopy"
+                              style={{ width: TIER_CANOPY[tier].size, height: TIER_CANOPY[tier].size, background: TIER_CANOPY[tier].bg, boxShadow: TIER_CANOPY[tier].glow }}
                             />
-                          )}
-                          <path d="M20 68h40l-4 32H24z" fill={art.fill} />
-                          <ellipse cx="40" cy="68" rx="20" ry="6" fill={art.ellipse} />
-                          <circle cx="40" cy="84" r="8" fill="#fff" opacity=".85" />
-                        </svg>
-                        <div className="water-track">
-                          <div className="water-fill" style={{ width: `${s.percent}%` }}></div>
-                        </div>
+                            <div className="gn-trunk" style={{ height: TIER_CANOPY[tier].trunk }} />
+                          </>
+                        )}
+                        <div className="gn-label">{s.title}</div>
+                        <div className="gn-percent">{tier === "seed" ? "Chưa bắt đầu" : `${s.percent}% · ${s.lessonCount} bài`}</div>
                       </div>
                     );
                   })}
-                </div>
+                </>
               )}
             </div>
             <div className="tip-strip">
