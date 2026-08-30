@@ -2,12 +2,21 @@
 
 /* =============================================================================
  * NhatKyHocTapTab — tab "Nhật ký học tập" bên trong `/v2/hanh-trinh-cua-toi`
- * (Giai đoạn 8, gộp 3 trang). PORT NGUYÊN nội dung từ
- * `NhatKyHocTapClient.tsx` (route `/v2/nhat-ky-hoc-tap` đã xoá — xem
- * CLAUDE.md) — chỉ bỏ khung `PortalV2Shell`/`.app` (trang cha
- * `HanhTrinhCuaToiClient` đã có sẵn 1 shell duy nhất, không lồng 2 shell).
- * Giữ nguyên tiền tố CSS `.nkt` + toàn bộ logic/dữ liệu thật — xem
- * `src/lib/portal/live-learning-log.ts` cho nguồn dữ liệu đầy đủ.
+ * (Giai đoạn 8, gộp 3 trang). PORT nội dung từ `NhatKyHocTapClient.tsx`
+ * (route `/v2/nhat-ky-hoc-tap` đã xoá — xem CLAUDE.md) — bỏ khung
+ * `PortalV2Shell`/`.app` (trang cha `HanhTrinhCuaToiClient` đã có sẵn 1
+ * shell duy nhất, không lồng 2 shell).
+ *
+ * ĐIỀU CHỈNH LAYOUT (Founder yêu cầu sau khi xem trước) — bản gốc 2 cột
+ * (center-col 1fr + right-col 300px) chỉ hợp với 1 TRANG RIÊNG đủ rộng;
+ * khi nhúng làm 1 tab bên trong trang khác, cột phải 300px bị bóp méo/mất
+ * chữ. Đổi sang 1 CỘT DUY NHẤT full-width, dùng lưới linh hoạt cho các thẻ
+ * phụ thay vì cột 300px cố định. Bỏ thẻ "Chuỗi ngày học tập" (trùng lặp
+ * 100% với thẻ cùng tên ở tab "Hành trình của tôi" — cùng ý nghĩa số ngày
+ * liên tục, đúng quyền tự dọn nội dung dư thừa Founder đã cấp cho phạm vi
+ * trang này) — 3 thẻ còn lại (Thời gian học trong tuần/Ghi chú nổi bật/
+ * Tài liệu & liên kết gần đây) không trùng ý nghĩa, giữ nguyên, chỉ đổi vị
+ * trí xuống dưới `.log-list`, xếp lưới 3 cột full-width.
  * ========================================================================== */
 
 import { useState } from "react";
@@ -54,16 +63,15 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
   const [activeFilter, setActiveFilter] = useState(0);
   const [activeView, setActiveView] = useState(0);
 
-  const { stats, entries, todayEntries, weekChart, weekTotalMinutes, weekDots, calendar, featuredNote, recentDocuments } = log;
+  const { stats, entries, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote, recentDocuments } = log;
   const today = new Date();
   const todayLabel = today.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
   const maxWeekMinutes = Math.max(...weekChart.map((d) => d.minutes), 1);
 
   return (
     <div className="nkt">
-      <div className="content">
-        <div className="center-col">
-          <div className="page-head">
+      <div className="content-single">
+        <div className="page-head">
             <div>
               <h1>Nhật ký học tập</h1>
               <p>Ghi lại hành trình học tập mỗi ngày. Học – Thực hành – Chiêm nghiệm – Tiến bộ.</p>
@@ -278,53 +286,9 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                 );
               })
             )}
-          </div>
         </div>
 
-        <aside className="right-col">
-          <div className="card">
-            <div className="card-head">
-              <h4>Chuỗi ngày học tập</h4>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <div>
-                <div className="streak-num">
-                  {stats.streakDays}
-                  <span style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600 }}>ngày liên tục</span>
-                </div>
-                <div className="streak-lbl">
-                  {stats.streakDays > 0 ? "Bạn đang trên đà chinh phục mục tiêu!" : "Hoàn thành 1 hoạt động hôm nay để bắt đầu chuỗi ngày học tập."}
-                </div>
-              </div>
-              <svg
-                className="streak-flame"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#ff6b45"
-                strokeWidth="1.6"
-              >
-                <path
-                  d="M12 2.5c2.4 1.8 3.8 4.6 3.8 8.3 0 2-.5 3.8-1.3 5.3l-2.5 2.4-2.5-2.4c-.8-1.5-1.3-3.3-1.3-5.3 0-3.7 1.4-6.5 3.8-8.3z"
-                  fill="rgba(255,107,69,.15)"
-                />
-              </svg>
-            </div>
-            <div className="week-dots">
-              {weekDots.map((d) => (
-                <div className={d.done ? "week-dot" : "week-dot off"} key={d.label}>
-                  <div className="c">
-                    {d.done ? (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    ) : null}
-                  </div>
-                  <span>{d.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <div className="secondary-grid">
           <div className="card">
             <div className="card-head">
               <h4>Thời gian học trong tuần</h4>
@@ -397,7 +361,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
               ))
             )}
           </div>
-        </aside>
+        </div>
       </div>
     </div>
   );

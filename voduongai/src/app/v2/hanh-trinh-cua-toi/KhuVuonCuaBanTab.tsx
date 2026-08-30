@@ -2,31 +2,29 @@
 
 /* =============================================================================
  * KhuVuonCuaBanTab — tab "Khu vườn của bạn" bên trong `/v2/hanh-trinh-cua-toi`
- * (Giai đoạn 8, gộp 3 trang). PORT NGUYÊN nội dung từ
- * `KhuVuonCuaBanClient.tsx` (route `/v2/khu-vuon-cua-ban` đã xoá — xem
- * CLAUDE.md) — bỏ khung `PortalV2Shell`/`.app` (trang cha đã có 1 shell
- * duy nhất), và bỏ nút "Xem chi tiết vườn →" (trước trỏ thẳng
- * `/v2/hanh-trinh-cua-toi` — nay dư thừa vì tab này đã nằm ngay trong
- * trang đó). Giữ nguyên tiền tố CSS `.kvcb` + toàn bộ nội dung/quyết định
- * honest-empty-state đã ghi trong file gốc.
+ * (Giai đoạn 8, gộp 3 trang). PORT nội dung từ `KhuVuonCuaBanClient.tsx`
+ * (route `/v2/khu-vuon-cua-ban` đã xoá — xem CLAUDE.md) — bỏ khung
+ * `PortalV2Shell`/`.app` (trang cha đã có 1 shell duy nhất), và bỏ nút
+ * "Xem chi tiết vườn →" (trước trỏ thẳng `/v2/hanh-trinh-cua-toi` — nay
+ * dư thừa vì tab này đã nằm ngay trong trang đó).
+ *
+ * ĐIỀU CHỈNH LAYOUT (Founder yêu cầu sau khi xem trước, cùng đợt với
+ * Nhật ký học tập) — đổi từ 2 cột (center-col 1fr + right-col 300px, chỉ
+ * hợp trang riêng) sang 1 CỘT DUY NHẤT full-width. Bỏ 3 thẻ ở cột phải cũ
+ * TRÙNG LẶP 100% với nội dung đã có ở tab "Hành trình của tôi" (đúng
+ * quyền tự dọn nội dung dư thừa Founder đã cấp cho phạm vi trang này):
+ * "Tổng quan khu vườn" (4 số — bài học/streak/giờ học/huy hiệu — cả 4 đều
+ * đã hiện ở progress-card + Thành tựu của tôi của tab kia), "Huy hiệu của
+ * bạn" (đúng `journey.badges`, trùng "Thành tựu của tôi"), "Hoạt động gần
+ * đây" (đúng `journey.activities`, trùng thẻ cùng tên ở tab kia). Giữ
+ * nguyên "Nhiệm vụ hằng ngày"/"Vật phẩm của bạn" (honest empty-state,
+ * tính năng CHƯA xây, không trùng đâu khác) + `quote-card2` (câu triết lý
+ * tĩnh, nội dung riêng của trang này).
  * ========================================================================== */
 
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
 
 import "./khu-vuon-cua-ban-tab.css";
-
-function formatRelativeTime(iso: string): string {
-  const date = new Date(iso);
-  const diffMin = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diffMin < 1) return "Vừa xong";
-  if (diffMin < 60) return `${diffMin} phút trước`;
-  const diffHour = Math.floor(diffMin / 60);
-  if (diffHour < 24) return `${diffHour} giờ trước`;
-  const diffDay = Math.floor(diffHour / 24);
-  if (diffDay === 1) return "Hôm qua";
-  if (diffDay < 7) return `${diffDay} ngày trước`;
-  return date.toLocaleDateString("vi-VN");
-}
 
 /** Vẽ chậu cây trang trí thuần tuý — cycle theo index, KHÔNG gắn ý nghĩa dữ liệu nào. */
 const POT_ART = [
@@ -61,9 +59,8 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
 
   return (
     <div className="kvcb">
-      <div className="content">
-        <div className="center-col">
-          <div className="page-head">
+      <div className="content-single">
+        <div className="page-head">
             <h1>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
@@ -162,114 +159,9 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
             <div className="empty-hint">Tính năng nhiệm vụ hằng ngày đang được xây dựng — sẽ cập nhật khi có.</div>
           </div>
 
-          <div>
-            <div className="section-head" style={{ marginBottom: 14 }}>
-              <h3>Hoạt động gần đây</h3>
-            </div>
-            <div className="act-list">
-              {journey.activities.length === 0 ? (
-                <div className="empty-hint" style={{ padding: "13px 18px" }}>
-                  Chưa có hoạt động nào gần đây.
-                </div>
-              ) : (
-                journey.activities.map((a) => (
-                  <div className="act-row2" key={a.id}>
-                    <div className="ico" style={{ background: "#e6f7ed", color: "#189a52" }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                    </div>
-                    <div className="txt">
-                      {a.kind === "lesson" ? "Hoàn thành bài học" : a.kind === "reflection" ? "Viết chiêm nghiệm" : "Lưu ghi chú"} &quot;{a.title}&quot;
-                    </div>
-                    <div className="act-time">{formatRelativeTime(a.occurredAt)}</div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
         </div>
 
-        <aside className="right-col">
-          <div className="card">
-            <div className="card-head">
-              <h4>Tổng quan khu vườn</h4>
-            </div>
-            <div className="ov-grid">
-              <div className="ov-box">
-                <div className="ico" style={{ background: "#e6f7ed", color: "#189a52" }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="num">{journey.completedLessons}</div>
-                  <div className="lbl">Bài học hoàn thành</div>
-                </div>
-              </div>
-              <div className="ov-box">
-                <div className="ico" style={{ background: "#e6f0ff", color: "#1d5fd8" }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 2.5c2.4 1.8 3.8 4.6 3.8 8.3 0 2-.5 3.8-1.3 5.3l-2.5 2.4-2.5-2.4c-.8-1.5-1.3-3.3-1.3-5.3 0-3.7 1.4-6.5 3.8-8.3z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="num">{journey.streakDays}</div>
-                  <div className="lbl">Ngày học liên tục</div>
-                </div>
-              </div>
-              <div className="ov-box">
-                <div className="ico" style={{ background: "#fdf1e0", color: "#a9822c" }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 7v5l3 3" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="num">{journey.totalHours}</div>
-                  <div className="lbl">Giờ học tích luỹ</div>
-                </div>
-              </div>
-              <div className="ov-box">
-                <div className="ico" style={{ background: "var(--violet-light)", color: "var(--violet)" }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" />
-                  </svg>
-                </div>
-                <div>
-                  <div className="num">{journey.badges.length}</div>
-                  <div className="lbl">Huy hiệu</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card">
-            <div className="card-head">
-              <h4>Huy hiệu của bạn</h4>
-            </div>
-            {journey.badges.length === 0 ? (
-              <div className="empty-hint">Hệ thống huy hiệu đang được xây dựng — chưa có huy hiệu nào.</div>
-            ) : (
-              <div className="badge-carousel">
-                {journey.badges.slice(0, 4).map((b) => (
-                  <div className="badge-tile2" key={b.id}>
-                    <div className="badge-hex" style={{ background: "linear-gradient(150deg,#5f8fff,#1d5fd8)" }}>
-                      {b.icon ? (
-                        <span style={{ fontSize: 20 }}>{b.icon}</span>
-                      ) : (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                          <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" />
-                        </svg>
-                      )}
-                    </div>
-                    <span>{b.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
+        <div className="secondary-grid">
           <div className="card">
             <div className="card-head">
               <h4>Vật phẩm của bạn</h4>
@@ -296,8 +188,8 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
               <path d="M14 60h32l-3 8H17z" fill="#e2b23c" />
             </svg>
           </div>
-        </aside>
+        </div>
       </div>
-    </div>
   );
 }
+
