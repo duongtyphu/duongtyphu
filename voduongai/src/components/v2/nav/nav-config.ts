@@ -22,14 +22,12 @@ import {
   Building2,
   CreditCard,
   Crown,
-  Flower2,
   GraduationCap,
   Home,
   Image as ImageIcon,
   LayoutDashboard,
   Lightbulb,
   Menu,
-  NotebookPen,
   Plug,
   Route,
   Settings,
@@ -137,9 +135,7 @@ const PORTAL_MAIN: NavItem[] = [
 ];
 
 const PORTAL_QUICK: NavItem[] = [
-  { label: "Nhật ký học tập", href: `${V2_PORTAL_BASE}/nhat-ky-hoc-tap`, icon: NotebookPen },
   { label: "Hành trình của tôi", href: `${V2_PORTAL_BASE}/hanh-trinh-cua-toi`, icon: Route },
-  { label: "Khu vườn của bạn", href: `${V2_PORTAL_BASE}/khu-vuon-cua-ban`, icon: Flower2 },
 ];
 
 export const PORTAL_NAV: NavSection[] = [
@@ -223,9 +219,7 @@ export const ADMIN_NAV: NavSection[] = [
   {
     label: "Tiện ích nhanh",
     items: [
-      { label: "Nhật ký học tập", href: `${V2_ADMIN_BASE}/nhat-ky-hoc-tap`, icon: NotebookPen },
       { label: "Hành trình của tôi", href: `${V2_ADMIN_BASE}/hanh-trinh-cua-toi`, icon: Route },
-      { label: "Khu vườn của bạn", href: `${V2_ADMIN_BASE}/khu-vuon-cua-ban`, icon: Flower2 },
     ],
   },
   {

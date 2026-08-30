@@ -75,12 +75,25 @@ async function getMirrorData() {
   }
 }
 
-export default async function MirrorPage() {
-  const [{ reflections, capsules, premiumCount }, chrome, questions] = await Promise.all([
-    getMirrorData(),
-    getLiveMirrorChrome(),
-    getLiveMirrorQuestions(),
-  ]);
+/**
+ * Gom fetch + toàn bộ engine growth-map (KHÔNG gồm `chrome`/`questions` —
+ * 2 nguồn đó tách riêng để `/v2/hanh-trinh-cua-toi` cũng gọi lại được,
+ * cùng cách `getStoryData()`/`getMapData()` đã export) thành đúng bộ props
+ * `MirrorChamber` cần — dùng chung cho cả `/portal/mirror` (dưới đây) và
+ * tab "Mirror" trong `/v2/hanh-trinh-cua-toi`.
+ */
+export async function getMirrorProps(): Promise<{
+  invitation: string | null;
+  narrativeLines: ReturnType<typeof buildMirrorNarrative>;
+  reflectionMoments: ReturnType<typeof buildReflectionMoments>;
+  firstFootprint: ReturnType<typeof buildFirstFootprintMirrorView>;
+  quietSeasonLine: string | null;
+  originLine: string | null;
+  reflectionCount: number;
+  capsuleCount: number;
+  premiumCount: number;
+}> {
+  const { reflections, capsules, premiumCount } = await getMirrorData();
   const baseSignals = [...signalsFromReflections(reflections), ...signalsFromMemoryCapsules(capsules)];
   const growthSignals = [...baseSignals, ...deriveComebackSignals(baseSignals)];
 
@@ -98,19 +111,25 @@ export default async function MirrorPage() {
   const mirrorContext = getOriginLineContextDefinition("mirror_of_growth");
   const originLine = hasReflectionMaterial ? null : getOriginLineFromCoreMemory(mirrorContext.coreMemoryContext);
 
-  return (
-    <MirrorChamber
-      invitation={invitation}
-      narrativeLines={narrativeLines}
-      reflectionMoments={reflectionMoments}
-      firstFootprint={firstFootprint}
-      quietSeasonLine={quietSeasonLine}
-      originLine={originLine}
-      reflectionCount={reflections.length}
-      capsuleCount={capsules.length}
-      premiumCount={premiumCount}
-      seedChrome={chrome}
-      seedQuestions={questions}
-    />
-  );
+  return {
+    invitation,
+    narrativeLines,
+    reflectionMoments,
+    firstFootprint,
+    quietSeasonLine,
+    originLine,
+    reflectionCount: reflections.length,
+    capsuleCount: capsules.length,
+    premiumCount,
+  };
+}
+
+export default async function MirrorPage() {
+  const [props, chrome, questions] = await Promise.all([
+    getMirrorProps(),
+    getLiveMirrorChrome(),
+    getLiveMirrorQuestions(),
+  ]);
+
+  return <MirrorChamber {...props} seedChrome={chrome} seedQuestions={questions} />;
 }

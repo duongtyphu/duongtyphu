@@ -18,7 +18,7 @@ export const metadata = {
  * hiện tại, hoạt động từng pillar, output thật). Xem
  * docs/JOURNEY_PLATFORM_ARCHITECTURE.md mục 8 và 18.7.
  */
-async function getMapData(): Promise<{ reflections: Reflection[]; premiumCount: number }> {
+export async function getMapData(): Promise<{ reflections: Reflection[]; premiumCount: number }> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return { reflections: [], premiumCount: 0 };
   }

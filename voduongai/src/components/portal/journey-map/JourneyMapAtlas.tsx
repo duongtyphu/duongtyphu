@@ -94,10 +94,35 @@ export function JourneyMapAtlas({
   reflections,
   premiumCount,
   seedChrome,
+  backHref = "/portal/hanhtrinhcuatoi",
+  academyHref = "/portal/hocvienai",
+  storyHref = "/portal/story",
+  workspaceHref = "/portal/workspace",
+  premiumHref = "/portal/premium",
+  chapterDestinations = CHAPTER_DESTINATIONS,
+  portalConnections = PORTAL_CONNECTIONS,
 }: {
   reflections: Reflection[];
   premiumCount: number;
   seedChrome: MapChrome;
+  /** Đích nút "← Hành trình của tôi" — `null` để ẩn hẳn (khi nhúng làm 1
+      tab bên trong `/v2/hanh-trinh-cua-toi`). */
+  backHref?: string | null;
+  /** Đích CTA trạng thái trống + "hướng tiếp theo" khi chưa có hành trình. */
+  academyHref?: string;
+  /** Đích "hướng tiếp theo" khi chưa có suy ngẫm nào. */
+  storyHref?: string;
+  /** Đích "hướng tiếp theo" khi đã có hành trình (tiếp tục thực hành). */
+  workspaceHref?: string;
+  /** Đích dòng "Kết nối tới Portal" — Premium. */
+  premiumHref?: string;
+  /** 5 đích của "Năm Chương cuộc đời" — GIỮ NGUYÊN index-bound với
+      `JOURNEY_CHAPTER_NAMES`, chỉ đổi được nguyên mảng, không đổi lẻ 1 phần
+      tử (xem CLAUDE.md — rủi ro cao nhất đã audit). */
+  chapterDestinations?: readonly { href: string; label: string }[];
+  /** 4 đích "Kết nối tới Portal" — GIỮ NGUYÊN field `module` (khoá tra cứu
+      thật vào `getModuleActivitySummary()`), chỉ đổi `href`/`label`. */
+  portalConnections?: readonly { module: (typeof PORTAL_CONNECTIONS)[number]["module"]; href: string; label: string }[];
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MapChrome>("map-chrome", [seedChrome], {
@@ -110,7 +135,7 @@ export function JourneyMapAtlas({
 
   useEffect(() => {
     const summary = getGardenSummary();
-    const conns = PORTAL_CONNECTIONS.map((c) => ({
+    const conns = portalConnections.map((c) => ({
       label: c.label,
       href: c.href,
       count: getModuleActivitySummary(c.module).sessionCount,
@@ -119,7 +144,7 @@ export function JourneyMapAtlas({
     setChapter(getCurrentChapterFromClient(premiumCount));
     setConnections(conns);
     setHasAnyJourney(summary.journeysTouched > 0);
-  }, [premiumCount]);
+  }, [premiumCount, portalConnections]);
 
   if (chapter === undefined || hasAnyJourney === null) {
     return <div className="map-parchment-bg min-h-[70vh] rounded-3xl" aria-hidden />;
@@ -139,10 +164,10 @@ export function JourneyMapAtlas({
   // Hướng tiếp theo — MỘT gợi ý duy nhất, ưu tiên theo dữ liệu thật.
   const nextDirection =
     reflections.length === 0
-      ? { text: "Viết suy ngẫm đầu tiên của bạn.", href: "/portal/story" }
+      ? { text: "Viết suy ngẫm đầu tiên của bạn.", href: storyHref }
       : !hasAnyJourney
-        ? { text: "Bắt đầu hành trình học đầu tiên của bạn.", href: "/portal/hocvienai" }
-        : { text: "Tiếp tục thực hành trong Workspace.", href: "/portal/workspace" };
+        ? { text: "Bắt đầu hành trình học đầu tiên của bạn.", href: academyHref }
+        : { text: "Tiếp tục thực hành trong Workspace.", href: workspaceHref };
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
@@ -153,11 +178,13 @@ export function JourneyMapAtlas({
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
        * quyển nền phía sau mới full-bleed. */}
       <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
-        <PortalBackLink
-          href="/portal/hanhtrinhcuatoi"
-          label="Hành trình của tôi"
-          colorClassName="text-amber-950/40 hover:text-amber-950/70"
-        />
+        {backHref !== null && (
+          <PortalBackLink
+            href={backHref}
+            label="Hành trình của tôi"
+            colorClassName="text-amber-950/40 hover:text-amber-950/70"
+          />
+        )}
 
         {editMode && (
           <div className="mt-6 space-y-4 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 text-left">
@@ -194,7 +221,7 @@ export function JourneyMapAtlas({
               {chrome.emptyStateLine}
             </p>
             <Link
-              href="/portal/hocvienai"
+              href={academyHref}
               className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 underline decoration-amber-800/30 underline-offset-4 hover:decoration-amber-800"
             >
               {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
@@ -268,10 +295,10 @@ export function JourneyMapAtlas({
                         </span>
                         {state !== "not-yet" && (
                           <Link
-                            href={CHAPTER_DESTINATIONS[i].href}
+                            href={chapterDestinations[i].href}
                             className="mt-1 text-[9px] font-semibold text-amber-800/60 underline decoration-amber-800/25 underline-offset-2 hover:text-amber-800"
                           >
-                            {CHAPTER_DESTINATIONS[i].label}
+                            {chapterDestinations[i].label}
                           </Link>
                         )}
                       </li>
@@ -301,7 +328,7 @@ export function JourneyMapAtlas({
                   </Link>
                 ))}
                 <Link
-                  href="/portal/premium"
+                  href={premiumHref}
                   className="flex items-center justify-between rounded-lg border border-amber-900/10 bg-white/30 px-4 py-2.5 text-sm transition hover:border-amber-900/25 hover:bg-white/50"
                 >
                   <span className="font-semibold text-amber-950/80">{chrome.premiumConnectionLabel}</span>
