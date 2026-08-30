@@ -211,3 +211,14 @@
    đúng hình dáng nút gốc. */
 .nkt .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
 .nkt .doc-row2 a{background:none;border:none;color:var(--muted);cursor:pointer;display:inline-flex}
+
+/* Giai đoạn 8, điều chỉnh sau khi Founder xem trước — bản gốc `.content`
+   là bố cục 2 cột (center-col 1fr + right-col 300px) cho 1 TRANG RIÊNG.
+   Khi nhúng làm tab bên trong trang khác, cột 300px bị bóp méo — đổi
+   sang `.content-single` (1 cột, full-width) + `.secondary-grid` (lưới
+   3 cột co giãn cho 3 thẻ phụ, thay cột 300px cố định). */
+.nkt .content-single{display:flex;flex-direction:column;gap:20px;padding:24px 28px}
+.nkt .secondary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media (max-width:900px){
+  .nkt .secondary-grid{grid-template-columns:1fr}
+}
