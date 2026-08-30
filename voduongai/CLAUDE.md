@@ -8485,3 +8485,99 @@ Portal" + Premium row đều dẫn đúng route `/v2/*` (không rơi về
 `/portal/*`); (4) 2 tab "Nhật ký học tập"/"Khu vườn của bạn" hoạt động
 đúng dữ liệu thật của tài khoản (đã tự verify HTML render đúng cấu trúc
 trong sandbox, nhưng số liệu thật cần tài khoản có hoạt động học tập).
+
+## Giai đoạn 8 (tiếp) — tách "Hành trình của tôi" thành tab riêng, viền màu + dải nhãn cho 3 cửa ([PR #85](https://github.com/duongtyphu/duongtyphu/pull/85))
+
+Founder gửi 2 ảnh mockup (Nhật ký học tập/Khu vườn của bạn dạng 1 cột,
+không cột phải) kèm yêu cầu: (1) 2 tab đó chuyển từ 2 cột sang 1 cột; (2)
+khối "Tổng tiến độ hành trình/Lộ trình của tôi/Tiếp tục học" chỉ được nằm
+trong phạm vi "Hành trình của tôi", các tab khác không được hiện; (3) áp
+dụng quyền tự dọn nội dung không thật đã cấp riêng cho phạm vi này. Sau đó
+hỏi thêm kế hoạch thiết kế cho My Story/Mirror/Hành trình của tôi — trình
+bày kế hoạch (dải nhãn nhỏ + viền màu theo tông tab + giữ nguyên chất liệu
+atmospheric riêng của My Story/Mirror thay vì reskin theo tông tím-nhạt
+dashboard), Founder duyệt toàn bộ hướng + tự soạn khung 2 câu mời chuyển
+tab, chỉ định thêm redesign My Story dạng "corkboard" cho đợt sau.
+
+### Đợt 1 (PR #84) — 2 tab đầu chuyển 1 cột, dọn nội dung trùng lặp
+
+`NhatKyHocTapTab.tsx`/`KhuVuonCuaBanTab.tsx` restructure thành
+`<div class="content-single">` (thay khối 2 cột center/right cũ). Bỏ hẳn
+các card TRÙNG LẶP 100% với "Hành trình của tôi"/nhau: "Chuỗi ngày học
+tập" (trùng progress-card), "Tổng quan khu vườn"/"Huy hiệu của bạn"/"Hoạt
+động gần đây" (trùng nội dung Khu vườn chính) — đúng phạm vi "dọn nội
+dung không thật/trùng lặp" Founder đã cấp quyền, không phải xoá nội dung
+thật. CSS thêm `.content-single`/`.secondary-grid` (grid 2-3 cột co giãn
+responsive), sửa 1 lỗi chữ đè lên icon quote-card (`padding-right`).
+
+### Đợt 2 (PR #85) — "Hành trình của tôi" thành tab thứ 6 rõ ràng, viền màu theo tông tab
+
+Giải quyết dứt điểm việc khối progress-card/Lộ trình/Tiếp tục học/cột phụ
+(Chuỗi ngày, Hoạt động gần đây, Thành tựu, Liên kết nhanh) — trước đó luôn
+render CỐ ĐỊNH bên ngoài `.tab-panel`, hiện ở MỌI tab — bằng cách thêm
+"Hành trình của tôi" làm tab đầu tiên/mặc định trong `TABS` (giờ 6 tab),
+bọc toàn bộ khối đó trong `activeTab === "hanh-trinh-cua-toi" &&` cùng
+layout `.journey-split` (center-col + aside.right-col) chỉ hiện đúng 1
+tab này.
+
+- **`TAB_ACCENT: Record<TabKey, string>`** — map màu theo tông từng tab
+  (tím `#6d4aff` Hành trình/Nhật ký, xanh lá `#189a52` Khu vườn, nâu hổ
+  phách `#a9660f`/`#92661f` My Story/Bản đồ hành trình, chàm đậm
+  `#2a2160` Mirror), set qua CSS custom property `--tab-accent` trên
+  `.tab-panel` → viền 2px đổi màu theo tab đang mở, `transition` mượt khi
+  chuyển tab.
+- **`PortalTabLabel`** — component dải nhãn nhỏ (icon emoji + text, viền
+  dưới cùng tông màu) render đầu tab-panel CHỈ cho 3 "cửa" có chất liệu
+  atmospheric khác biệt dashboard (My Story 📖, Mirror 🌙, Bản đồ hành
+  trình 🧭) — không áp dụng cho 3 tab còn lại (Hành trình/Nhật ký/Khu vườn
+  vốn đã cùng tông sáng-tím với dashboard, không cần dải nhãn chuyển
+  tiếp).
+- **Copy-override cho câu mời chuyển tab, KHÔNG đụng nội dung CMS gốc**:
+  `MyStoryBook.tsx` thêm prop `mirrorInviteText?: { prefix, label }` — chỉ
+  override nhánh nút `onOpenMirror` (tab-embed context), nhánh `<Link>`
+  fallback (dùng ở `/portal/story` 1.0 standalone) vẫn đọc nguyên từ
+  `chrome.mirrorPromptPrefix`/`chrome.mirrorLinkLabel`. Tương tự
+  `MirrorChamber.tsx` thêm `storyInviteLabel` (default = câu gốc 1.0, chỉ
+  override nhánh `onOpenStory`). Copy đã dùng ở tab-embed: "Muốn im lặng
+  một chút? Ghé qua Mirror" / "Chép lại câu trả lời trong My Story".
+- Tái xác nhận kỹ thuật chuyển tab bằng callback (`onOpenMirror`/
+  `onOpenStory`, đã có từ Giai đoạn 8 đợt 1) — không đổi sang kỹ thuật
+  `?tab=` query-param vì `useEffect([])` chỉ đọc `window.location.search`
+  1 lần lúc mount, không phản ứng khi đổi query cùng route.
+
+### Verify
+
+`tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass, `rm -rf .next &&
+npm run build` sạch. Playwright xác nhận trực quan (screenshot) đúng 3
+điều: (1) "Hành trình của tôi" — progress-card/Lộ trình/Tiếp tục học/cột
+phụ hiện đúng, viền tím; (2) "Nhật ký học tập"/"Khu vườn của bạn" — khối
+đó KHÔNG còn hiện (đúng yêu cầu gốc), viền tím/xanh lá đúng tông; (3) "My
+Story" rơi vào `/v2/error.tsx` — xác nhận lại đây vẫn là giới hạn sandbox
+Supabase client-side có sẵn từ đợt trước (không phải regression mới do
+đợt sửa này), không tự verify trực quan được Mirror/Bản đồ hành trình
+trong sandbox (dev server + Playwright không còn sẵn sau khi container
+restart giữa 2 lượt làm việc) — tin cậy vào `tsc` sạch + cùng pattern
+`PortalTabLabel`/`.htct-native` đã verify đúng ở My Story.
+
+Squash-merge PR #85 lại gặp ĐÚNG vấn đề branch-divergence đã ghi ở PR #84
+(base cục bộ `f050540` khác SHA nhưng NỘI DUNG GIỐNG HỆT base squash-merge
+mới trên `origin/main` là `6c7cd31`) — áp dụng lại đúng kỹ thuật đã ghi:
+tạo branch backup, `git checkout -B <branch> origin/main`, verify
+`git diff <old> <new> -- . | wc -l` = 0, `git cherry-pick`, `push
+--force-with-lease`, xoá backup branch — cherry-pick áp dụng sạch, merge
+thành công.
+
+**Chưa tự test được** — Founder tự test trên Preview/Production URL: (1)
+tab Mirror/Bản đồ hành trình hiển thị đúng viền + dải nhãn (chưa tự verify
+trực quan được trong sandbox lần này); (2) 2 câu mời chuyển tab My Story
+↔ Mirror hiển thị đúng chữ mới; (3) viền màu tab-panel đổi mượt khi bấm
+qua lại các tab.
+
+**Việc lớn CHƯA bắt đầu, còn tồn đọng cho đợt sau**: redesign My Story
+dạng "corkboard" — từng mục nội dung (khoảnh khắc/chương/capsule) hiển
+thị như 1 tờ note giấy được ghim lên tấm bảng, thay cho dạng "sách lật
+trang" hiện tại. Founder gợi ý dùng canvas để thiết kế. Cần làm rõ phạm
+vi cụ thể (áp dụng cho phần nào của trang My Story, "viết trang mới" có
+còn giữ hay chuyển thành "ghim note mới") trước khi triển khai code — dự
+kiến bắt đầu bằng 1 canvas thiết kế (`design` skill) để Founder duyệt
+hướng trước khi code.
