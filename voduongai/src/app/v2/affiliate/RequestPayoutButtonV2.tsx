@@ -21,7 +21,9 @@ export function RequestPayoutButtonV2({ maxAmount }: { maxAmount: number }) {
   const [errorMsg, setErrorMsg] = useState("");
 
   if (status === "done") {
-    return <p style={{ fontSize: 12.5, color: "#189a52", fontWeight: 700 }}>Đã gửi yêu cầu — đội ngũ VO DUONG AI sẽ xử lý sớm.</p>;
+    // Audit contrast: #189a52 trên nền trắng chỉ 3.63:1 — đổi sang #066b4d
+    // (5.87:1), cùng màu đã dùng an toàn cho PAYOUT_STATUS_STYLE ở file này.
+    return <p style={{ fontSize: 12.5, color: "#066b4d", fontWeight: 700 }}>Đã gửi yêu cầu — đội ngũ VO DUONG AI sẽ xử lý sớm.</p>;
   }
 
   if (!open) {
@@ -67,7 +69,9 @@ export function RequestPayoutButtonV2({ maxAmount }: { maxAmount: number }) {
         className="link-input"
         style={{ fontFamily: "inherit" }}
       />
-      {status === "error" && <p style={{ fontSize: 11.5, color: "#e0455a" }}>{errorMsg}</p>}
+      {/* Audit contrast: #e0455a trên nền trắng chỉ 4.07:1 — đổi sang #b02040
+          (5.97:1), cùng màu đã dùng an toàn ở AffiliateClient.tsx. */}
+      {status === "error" && <p style={{ fontSize: 11.5, color: "#b02040" }}>{errorMsg}</p>}
       <div style={{ display: "flex", gap: 8 }}>
         <button type="submit" className="copy-btn" disabled={status === "submitting"}>
           {status === "submitting" ? "Đang gửi..." : "Gửi yêu cầu"}

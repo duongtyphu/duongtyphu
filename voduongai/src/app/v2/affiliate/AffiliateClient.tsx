@@ -366,17 +366,23 @@ export function AffiliateClient({
                 </div>
               </div>
 
+              {/* Hero CTA "Lấy liên kết giới thiệu →" trỏ #lien-ket — trước
+                  đây id chỉ nằm trên .link-card (nhánh thứ 3), thành link
+                  mồ côi (không cuộn tới đâu) ở 2 nhánh còn lại (chưa đăng
+                  nhập / chưa có mã giới thiệu) — audit link phát hiện, đặt
+                  id trên phần tử ĐẦU TIÊN của cả 3 nhánh (không dùng 1 div
+                  bọc chung để không phá gap flex của .center-col). */}
               {!overview ? (
-                <div className="card">
+                <div className="card" id="lien-ket">
                   <p className="empty-hint">Đăng nhập để lấy link giới thiệu và xem hoa hồng của bạn.</p>
                 </div>
               ) : !overview.referralCode || !overview.referralLink ? (
-                <div className="card">
+                <div className="card" id="lien-ket">
                   <p className="empty-hint">Tài khoản của bạn chưa được cấp mã giới thiệu. Liên hệ đội ngũ VO DUONG AI để được hỗ trợ.</p>
                 </div>
               ) : (
                 <>
-                  <div className="stat-row">
+                  <div className="stat-row" id="lien-ket">
                     <div className="stat-box">
                       <div className="ico" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
@@ -416,7 +422,7 @@ export function AffiliateClient({
                     </div>
                   </div>
 
-                  <div className="link-card" id="lien-ket">
+                  <div className="link-card">
                     <div className="link-card-head">
                       <h4>Liên kết giới thiệu của bạn</h4>
                       <span style={{ fontSize: 11.5, fontWeight: 700, color: "#066b4d", background: "#e6f7ed", padding: "3px 10px", borderRadius: 6 }}>
