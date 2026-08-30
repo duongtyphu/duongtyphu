@@ -89,47 +89,6 @@ import { KhuVuonCuaBanTab } from "./KhuVuonCuaBanTab";
 
 import "./hanh-trinh-cua-toi.css";
 
-function formatRelativeTime(iso: string): string {
-  const date = new Date(iso);
-  const diffMin = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diffMin < 1) return "Vừa xong";
-  if (diffMin < 60) return `${diffMin} phút trước`;
-  const diffHour = Math.floor(diffMin / 60);
-  if (diffHour < 24) return `${diffHour} giờ trước`;
-  const diffDay = Math.floor(diffHour / 24);
-  if (diffDay === 1) return "Hôm qua";
-  if (diffDay < 7) return `${diffDay} ngày trước`;
-  return date.toLocaleDateString("vi-VN");
-}
-
-const COURSE_THUMBS = [
-  { bg: "linear-gradient(160deg,#1a1044,#5a37e6)", stroke: "#c9bdff" },
-  { bg: "linear-gradient(160deg,#0e2a44,#1d5fd8)", stroke: "#9fd4ff" },
-  { bg: "linear-gradient(160deg,#241c4d,#8b5a2c)", stroke: "#e2b23c" },
-  { bg: "linear-gradient(160deg,#0f3d33,#189a52)", stroke: "#9fe0c2" },
-];
-
-const ACTIVITY_ICON: Record<
-  "lesson" | "reflection" | "capsule",
-  { bg: string; color: string; path: string; prefix: string }
-> = {
-  lesson: { bg: "#e6f7ed", color: "#189a52", path: "M20 6L9 17l-5-5", prefix: "Hoàn thành bài học" },
-  reflection: {
-    bg: "#fdf1e0",
-    color: "#a9822c",
-    path: "M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z",
-    prefix: "Viết chiêm nghiệm",
-  },
-  capsule: { bg: "var(--violet-light)", color: "var(--violet)", path: "M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z", prefix: "Lưu ghi chú" },
-};
-
-const BADGE_GRADIENTS = [
-  "radial-gradient(circle at 35% 30%,#c9b6ff,#7c5cff 55%,#5a37e6 100%)",
-  "radial-gradient(circle at 35% 30%,#ffe8b0,#f0c96a 55%,#c2660a 100%)",
-  "radial-gradient(circle at 35% 30%,#bcdcff,#5f8fff 55%,#1d5fd8 100%)",
-  "radial-gradient(circle at 35% 30%,#bdf3d3,#3ecf7e 55%,#189a52 100%)",
-];
-
 type StoryTabProps = {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -208,33 +167,116 @@ const TAB_ICON: Record<TabKey, React.ReactNode> = {
   ),
 };
 
-/** Màu viền `.tab-panel` đổi theo tông của tab đang mở — 2 tab "bản địa"
-    (Hành trình của tôi/Nhật ký học tập) dùng đúng --violet của `.htct`;
-    Khu vườn dùng xanh lá (khớp icon lá đã dùng trong trang); 3 "cửa" thật
-    của Portal 1.0 dùng đúng tông khí quyển riêng của chính chúng (hổ
-    phách cho My Story, tím than tối cho Mirror, hổ phách giấy da cho Bản
-    đồ hành trình) — không bịa màu mới, lấy từ chính CSS gốc mỗi cửa. */
-const TAB_ACCENT: Record<TabKey, string> = {
-  "hanh-trinh-cua-toi": "#6d4aff",
-  "nhat-ky-hoc-tap": "#6d4aff",
-  "khu-vuon-cua-ban": "#189a52",
-  "my-story": "#a9660f",
-  mirror: "#2a2160",
-  "ban-do-hanh-trinh": "#92661f",
+/** Hub — trang chủ tab "Hành trình của tôi" (Giai đoạn 10, thay hẳn
+    progress-card/Lộ trình/Tiếp tục học/cột phụ cũ). 1 hộp jewel-tone cho
+    MỖI tab trong 6 tab (kể cả chính nó) — bấm vào tương đương bấm tab đó
+    trên thanh tab, dùng lại đúng `setActiveTab`. Không route/modal riêng. */
+const HUB_CARD_STYLE: Record<
+  TabKey,
+  { bg: string; glow: string; iconBg: string; iconBorder: string; iconColor: string; descColor: string; statColor: string }
+> = {
+  "hanh-trinh-cua-toi": {
+    bg: "linear-gradient(135deg,#3D2E75,#1B1638)",
+    glow: "rgba(139,124,246,.28)",
+    iconBg: "rgba(139,124,246,.16)",
+    iconBorder: "rgba(139,124,246,.3)",
+    iconColor: "#B8ADF9",
+    descColor: "rgba(255,255,255,.62)",
+    statColor: "#DDD5FC",
+  },
+  "nhat-ky-hoc-tap": {
+    bg: "linear-gradient(135deg,#1E4976,#0E223A)",
+    glow: "rgba(96,165,250,.26)",
+    iconBg: "rgba(96,165,250,.16)",
+    iconBorder: "rgba(96,165,250,.3)",
+    iconColor: "#9DC5FB",
+    descColor: "rgba(255,255,255,.62)",
+    statColor: "#CFE3FC",
+  },
+  "khu-vuon-cua-ban": {
+    bg: "linear-gradient(135deg,#0F3325,#081A2E)",
+    glow: "rgba(74,222,128,.24)",
+    iconBg: "rgba(74,222,128,.14)",
+    iconBorder: "rgba(74,222,128,.28)",
+    iconColor: "#7EE8A6",
+    descColor: "rgba(255,255,255,.62)",
+    statColor: "#BDF5D3",
+  },
+  "my-story": {
+    bg: "linear-gradient(135deg,#8B6914,#2E2306)",
+    glow: "rgba(251,191,36,.28)",
+    iconBg: "rgba(251,191,36,.16)",
+    iconBorder: "rgba(251,191,36,.32)",
+    iconColor: "#FDE29B",
+    descColor: "rgba(255,255,255,.68)",
+    statColor: "#FCEBBE",
+  },
+  mirror: {
+    bg: "linear-gradient(135deg,#1B2C3E,#0A141F)",
+    glow: "rgba(34,211,238,.22)",
+    iconBg: "rgba(34,211,238,.14)",
+    iconBorder: "rgba(34,211,238,.28)",
+    iconColor: "#8DE9F5",
+    descColor: "rgba(255,255,255,.6)",
+    statColor: "#C3F1F8",
+  },
+  "ban-do-hanh-trinh": {
+    bg: "linear-gradient(135deg,#9A4B1F,#3D1D0C)",
+    glow: "rgba(251,146,60,.26)",
+    iconBg: "rgba(251,146,60,.16)",
+    iconBorder: "rgba(251,146,60,.32)",
+    iconColor: "#FDBE8B",
+    descColor: "rgba(255,255,255,.62)",
+    statColor: "#FCD9BC",
+  },
 };
 
-/** Dải nhãn nhỏ đầu tab-panel — CHỈ cho 3 "cửa" thật của Portal 1.0 (My
-    Story/Mirror/Bản đồ hành trình), báo trước sắp đổi khí quyển (chữ
-    serif ấm/nền tối tĩnh lặng/giấy da) trước khi mắt chạm vào bên trong —
-    2 tab "bản địa" đầu không cần vì đã cùng tông sáng-tím của `.htct`. */
-function PortalTabLabel({ icon, label, tone }: { icon: React.ReactNode; label: string; tone: string }) {
-  return (
-    <div className="portal-tab-label" style={{ color: tone, borderColor: tone }}>
-      {icon}
-      <span>{label}</span>
-    </div>
-  );
-}
+const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
+  "hanh-trinh-cua-toi": { headline: "Toàn cảnh hành trình của bạn", desc: "Tiến độ, lộ trình học và gợi ý bước tiếp theo — mọi thứ ở một nơi." },
+  "nhat-ky-hoc-tap": { headline: "Mỗi ngày một dòng nhật ký", desc: "Ghi lại buổi học, thực hành và điều bạn vừa nhận ra hôm nay." },
+  "khu-vuon-cua-ban": { headline: "Một khu vườn lớn lên cùng bạn", desc: "Từng giai đoạn học nảy mầm thành một cái cây thật trong đêm." },
+  "my-story": { headline: "Câu chuyện của riêng bạn", desc: "Khoảnh khắc, bước ngoặt và ký ức — ghim lại thành một tấm bảng sống động." },
+  mirror: { headline: "Một khoảng lặng để nhìn lại", desc: "Không phải trả lời ai — chỉ để bạn thấy chính mình rõ hơn." },
+  "ban-do-hanh-trinh": { headline: "Con đường bạn đang đi", desc: "5 chương cuộc đời — từ nơi bắt đầu đến nơi bạn chưa từng tới." },
+};
+
+const HUB_CARD_ICON: Record<TabKey, React.ReactNode> = {
+  "hanh-trinh-cua-toi": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8 14l3-3.5 2 2 4-4.5" />
+    </svg>
+  ),
+  "nhat-ky-hoc-tap": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <rect x="5" y="3" width="14" height="18" rx="1.5" />
+      <path d="M8.5 8h7M8.5 12h7M8.5 16h4" />
+    </svg>
+  ),
+  "khu-vuon-cua-ban": (
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C9 7 6 10 6 14a6 6 0 0012 0c0-4-3-7-6-12z" />
+    </svg>
+  ),
+  "my-story": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M6 2h9l5 5v15H6z" />
+      <path d="M15 2v5h5" />
+    </svg>
+  ),
+  mirror: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="3" opacity=".6" />
+    </svg>
+  ),
+  "ban-do-hanh-trinh": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v8M8 12h8" />
+    </svg>
+  ),
+};
 
 export function HanhTrinhCuaToiClient({
   premium,
@@ -263,13 +305,24 @@ export function HanhTrinhCuaToiClient({
     })();
   }, []);
   const activeGoals = goals.filter((g) => g.status === "active").length;
+  const { stages } = journey;
 
-  const { stages, currentStageIndex } = journey;
-  const n = stages.length;
-  const offsetPct = n > 0 ? 50 / n : 0;
-  const currentDotFraction = currentStageIndex != null && n > 0 ? ((currentStageIndex + 0.5) / n) * 100 : 0;
-  const fillWidthPct = Math.max(currentDotFraction - offsetPct, 0);
-  const currentStage = currentStageIndex != null ? stages[currentStageIndex] : null;
+  /** Chỉ số rút gọn hiện trong từng hộp Hub — luôn lấy đúng field props đã
+      có sẵn (không tính lại field nào cần đọc localStorage phía client như
+      `chapter`/`corkNotes`, vốn chỉ tính được bên trong chính component của
+      tab đó) — Bản đồ hành trình vì vậy dùng 1 dòng cấu trúc thật cố định
+      (5 chương) thay vì suy đoán lại chương hiện tại ở đây. */
+  const hubStat: Record<TabKey, string> = {
+    "hanh-trinh-cua-toi": `${journey.overallPercent}% hoàn thành${goals.length > 0 ? ` · ${activeGoals}/${goals.length} mục tiêu` : ""}`,
+    "nhat-ky-hoc-tap": log.stats.notesCount > 0 ? `${log.stats.notesCount} ghi chú đã lưu` : "Chưa có ghi chú nào",
+    "khu-vuon-cua-ban": stages.length > 0 ? `${stages.filter((s) => s.percent > 0).length} / ${stages.length} giai đoạn đang lớn` : "Chưa có giai đoạn nào",
+    "my-story":
+      story.capsules.length + story.milestones.length > 0
+        ? `${story.capsules.length + story.milestones.length} ký ức & bước ngoặt đã lưu`
+        : "Chưa có ký ức nào",
+    mirror: mirror.reflectionCount > 0 ? `${mirror.reflectionCount} chiêm nghiệm đã ghi lại` : "Chưa có chiêm nghiệm nào",
+    "ban-do-hanh-trinh": "5 chương cuộc đời",
+  };
 
   return (
     <div className="htct">
@@ -327,278 +380,61 @@ export function HanhTrinhCuaToiClient({
                 ))}
               </div>
 
-              <div className="tab-panel" style={{ "--tab-accent": TAB_ACCENT[activeTab] } as React.CSSProperties}>
+              <div className="tab-panel">
                 {activeTab === "hanh-trinh-cua-toi" && (
-                  <div className="journey-split">
-                    <div className="center-col">
-                      <div className="progress-card">
-                        <div className="progress-main">
-                          <h5>Tổng tiến độ hành trình</h5>
-                          <div className="progress-pct">{journey.overallPercent}%</div>
-                          <div className="progress-sub">
-                            {journey.overallPercent > 0 ? "Bạn đang đi đúng hướng! Tiếp tục phát huy nhé." : "Bắt đầu bài học đầu tiên để mở khoá tiến độ."}
-                          </div>
-                          <div className="progress-track">
-                            <div className="progress-fill" style={{ width: `${journey.overallPercent}%` }}></div>
-                          </div>
-                        </div>
-                        <div className="mini-metric">
-                          <div className="top">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <circle cx="12" cy="12" r="9" />
-                              <circle cx="12" cy="12" r="4" />
-                              <circle cx="12" cy="12" r=".5" fill="currentColor" />
-                            </svg>
-                            Mục tiêu đang theo đuổi
-                          </div>
-                          <div className="val">
-                            {activeGoals}
-                            <span> / {goals.length} mục tiêu</span>
-                          </div>
-                        </div>
-                        <div className="mini-metric">
-                          <div className="top">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                            </svg>
-                            Khóa học đã hoàn thành
-                          </div>
-                          <div className="val">
-                            {journey.completedCourses}
-                            <span> / {journey.totalCourses} khóa học</span>
-                          </div>
-                        </div>
-                        <div className="mini-metric">
-                          <div className="top">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <circle cx="12" cy="12" r="9" />
-                              <path d="M12 7v5l3 3" />
-                            </svg>
-                            Giờ học tích lũy
-                          </div>
-                          <div className="val">
-                            {journey.totalHours}
-                            <span> giờ</span>
-                          </div>
-                        </div>
-                        <div className="mini-metric">
-                          <div className="top">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                            </svg>
-                            Điểm kinh nghiệm (XP)
-                          </div>
-                          <div className="val">—</div>
-                        </div>
-                      </div>
+                  <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+                    <div className="absolute inset-0 z-0" style={{ background: "#0A0A0F" }} aria-hidden />
+                    <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+                      <div style={{ maxWidth: 1360, margin: "0 auto" }}>
+                        <h1 style={{ color: "#fff", fontSize: 28, fontWeight: 800, margin: "0 0 8px", letterSpacing: "-.01em" }}>
+                          Chào bạn, đây là hành trình của bạn
+                        </h1>
+                        <p style={{ color: "rgba(255,255,255,.5)", fontSize: 14.5, margin: "0 0 36px", maxWidth: 580 }}>
+                          6 không gian — mỗi nơi một cách nhìn khác về cùng một hành trình học AI của bạn.
+                        </p>
 
-                      <div className="card">
-                        <div className="card-head">
-                          <h4>Lộ trình của tôi</h4>
-                          <a onClick={() => router.push("/v2/hoc-vien-ai")} style={{ cursor: "pointer" }}>
-                            Xem toàn bộ lộ trình →
-                          </a>
-                        </div>
-                        {n === 0 ? (
-                          <div className="empty-hint">Chưa có lộ trình nào — bắt đầu học tại Học viện AI để mở khoá.</div>
-                        ) : (
-                          <>
-                            <div className="stepper">
-                              <div className="step-connector" style={{ left: `${offsetPct}%`, right: `${offsetPct}%` }}></div>
-                              <div
-                                className="step-connector-fill"
-                                style={{ left: `${offsetPct}%`, width: `${fillWidthPct}%` }}
-                              ></div>
-                              {stages.map((s, i) => {
-                                const status = s.percent === 100 ? "done" : i === currentStageIndex ? "current" : "";
-                                return (
-                                  <div className={status ? `step ${status}` : "step"} key={s.slug}>
-                                    <div className="step-dot">
-                                      {s.percent === 100 ? (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                          <path d="M20 6L9 17l-5-5" />
-                                        </svg>
-                                      ) : (
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                          <circle cx="12" cy="12" r="9" />
-                                          <path d="M12 7v5l3 3" />
-                                        </svg>
-                                      )}
+                        <div className="hub-grid">
+                          {TABS.map((t) => {
+                            const style = HUB_CARD_STYLE[t.key];
+                            const copy = HUB_CARD_COPY[t.key];
+                            return (
+                              <button
+                                key={t.key}
+                                type="button"
+                                className="hub-card"
+                                style={{ background: style.bg }}
+                                onClick={() => setActiveTab(t.key)}
+                              >
+                                <div className="hub-card-grain" aria-hidden />
+                                <div className="hub-card-glow" style={{ background: `radial-gradient(circle, ${style.glow}, transparent 70%)` }} aria-hidden />
+                                <div className="hub-card-inner">
+                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                                    <div className="hub-icon" style={{ background: style.iconBg, border: `1px solid ${style.iconBorder}`, color: style.iconColor }}>
+                                      {HUB_CARD_ICON[t.key]}
                                     </div>
-                                    <h6>{s.title}</h6>
-                                    <div className="pct">{s.percent}%</div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                            {currentStage ? (
-                              <div className="stage-notice">
-                                <div className="left">
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <circle cx="12" cy="12" r="9" />
-                                    <path d="M12 8v5M12 16h.01" />
-                                  </svg>
-                                  <div>
-                                    <h6>
-                                      Bạn đang ở giai đoạn {(currentStageIndex ?? 0) + 1}: {currentStage.title}
-                                    </h6>
-                                    <p>{currentStage.description}</p>
-                                  </div>
-                                </div>
-                                <button onClick={() => router.push("/v2/hoc-vien-ai")}>Tiếp tục học</button>
-                              </div>
-                            ) : null}
-                          </>
-                        )}
-                      </div>
-
-                      <div>
-                        <div className="card-head" style={{ marginBottom: 14 }}>
-                          <h4>Tiếp tục học</h4>
-                          <a onClick={() => router.push("/v2/hoc-vien-ai")} style={{ cursor: "pointer" }}>
-                            Xem tất cả →
-                          </a>
-                        </div>
-                        {journey.courses.length === 0 ? (
-                          <div className="empty-hint">Chưa có khoá học nào đang học — bắt đầu tại Học viện AI.</div>
-                        ) : (
-                          <div className="course-grid">
-                            {journey.courses.map((c, i) => {
-                              const thumb = COURSE_THUMBS[i % COURSE_THUMBS.length];
-                              return (
-                                <div
-                                  className="course-card"
-                                  key={c.id}
-                                  onClick={() => router.push("/v2/hoc-vien-ai")}
-                                >
-                                  <div className="course-thumb" style={{ background: thumb.bg }}>
-                                    <span className="pct-badge">{c.percent}%</span>
-                                    <svg viewBox="0 0 24 24" fill="none" stroke={thumb.stroke} strokeWidth="1.4">
-                                      <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
+                                    <svg className="hub-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={style.iconColor} strokeWidth="2.2">
+                                      <path d="M5 12h14M13 6l6 6-6 6" />
                                     </svg>
                                   </div>
-                                  <div className="course-body">
-                                    <span className="course-tag" style={{ background: "var(--violet-light)", color: "var(--violet)" }}>
-                                      Học viện AI
-                                    </span>
-                                    <h5>{c.name}</h5>
-                                    <div className="course-meta">
-                                      Bài {c.completedCount}/{c.lessonCount}
-                                    </div>
-                                    <div className="course-track">
-                                      <div className="course-fill" style={{ width: `${c.percent}%` }}></div>
-                                    </div>
+                                  <h3>{copy.headline}</h3>
+                                  <p style={{ color: style.descColor }}>{copy.desc}</p>
+                                  <div className="hub-stat">
+                                    <span className="dot" style={{ background: style.statColor }} />
+                                    <span style={{ color: style.statColor }}>{hubStat[t.key]}</span>
                                   </div>
                                 </div>
-                              );
-                            })}
-                          </div>
-                        )}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
-
-                    <aside className="right-col">
-                      <div className="card">
-                        <div className="card-head">
-                          <h4>Chuỗi ngày học tập</h4>
-                        </div>
-                        <div className="streak-num">
-                          <svg className="streak-flame" viewBox="0 0 24 24" fill="#ff6b45" stroke="none">
-                            <path d="M12 2.5c2.4 1.8 3.8 4.6 3.8 8.3 0 2-.5 3.8-1.3 5.3l-2.5 2.4-2.5-2.4c-.8-1.5-1.3-3.3-1.3-5.3 0-3.7 1.4-6.5 3.8-8.3z" />
-                          </svg>
-                          {journey.streakDays} <span style={{ fontSize: 13, color: "var(--muted)", fontWeight: 600 }}>ngày liên tiếp</span>
-                        </div>
-                        <div className="week-dots">
-                          {journey.weekDots.map((d, i) => (
-                            <div className={d.done ? "week-dot" : "week-dot off"} key={`${d.label}-${i}`}>
-                              <div className="c">
-                                {d.done ? (
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                                    <path d="M20 6L9 17l-5-5" />
-                                  </svg>
-                                ) : null}
-                              </div>
-                              <span>{d.label}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="card">
-                        <div className="card-head">
-                          <h4>Hoạt động gần đây</h4>
-                        </div>
-                        {journey.activities.length === 0 ? (
-                          <div className="empty-hint">Chưa có hoạt động nào gần đây.</div>
-                        ) : (
-                          journey.activities.map((a) => {
-                            const icon = ACTIVITY_ICON[a.kind];
-                            return (
-                              <div className="act-row" key={a.id}>
-                                <div className="ico" style={{ background: icon.bg, color: icon.color }}>
-                                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                                    <path d={icon.path} />
-                                  </svg>
-                                </div>
-                                <div className="info">
-                                  <h6>
-                                    {icon.prefix} &quot;{a.title}&quot;
-                                  </h6>
-                                  <span>{formatRelativeTime(a.occurredAt)}</span>
-                                </div>
-                              </div>
-                            );
-                          })
-                        )}
-                      </div>
-
-                      <div className="card">
-                        <div className="card-head">
-                          <h4>Thành tựu của tôi</h4>
-                        </div>
-                        {journey.badges.length === 0 ? (
-                          <div className="empty-hint">Hệ thống huy hiệu đang được xây dựng — chưa có huy hiệu nào.</div>
-                        ) : (
-                          <div className="badge-grid">
-                            {journey.badges.slice(0, 4).map((b, i) => (
-                              <div className="badge-tile" style={{ background: BADGE_GRADIENTS[i % BADGE_GRADIENTS.length] }} key={b.id} title={b.name}>
-                                {b.icon ? (
-                                  <span style={{ position: "relative", zIndex: 1, fontSize: 20 }}>{b.icon}</span>
-                                ) : (
-                                  <svg viewBox="0 0 24 24" fill="#fff" stroke="none">
-                                    <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                                  </svg>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="card">
-                        <div className="card-head">
-                          <h4>Liên kết nhanh</h4>
-                        </div>
-                        <div className="link-row" onClick={() => router.push("/v2/muc-tieu")}>
-                          <div className="ico">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
-                            </svg>
-                          </div>
-                          <span>Mục tiêu của tôi</span>
-                          <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M9 6l6 6-6 6" />
-                          </svg>
-                        </div>
-                      </div>
-                    </aside>
                   </div>
                 )}
                 {activeTab === "nhat-ky-hoc-tap" && <NhatKyHocTapTab log={log} />}
                 {activeTab === "khu-vuon-cua-ban" && <KhuVuonCuaBanTab journey={journey} />}
                 {activeTab === "my-story" && (
                   <div className="htct-native">
-                    <PortalTabLabel icon="📖" label="Không gian riêng — My Story" tone={TAB_ACCENT["my-story"]} />
                     <MyStoryBook
                       {...story}
                       backHref={null}
@@ -611,7 +447,6 @@ export function HanhTrinhCuaToiClient({
                 )}
                 {activeTab === "mirror" && (
                   <div className="htct-native">
-                    <PortalTabLabel icon="🌙" label="Không gian riêng — Mirror" tone={TAB_ACCENT.mirror} />
                     <MirrorChamber
                       {...mirror}
                       backHref={null}
@@ -623,7 +458,6 @@ export function HanhTrinhCuaToiClient({
                 )}
                 {activeTab === "ban-do-hanh-trinh" && (
                   <div className="htct-native">
-                    <PortalTabLabel icon="🧭" label="Không gian riêng — Bản đồ hành trình" tone={TAB_ACCENT["ban-do-hanh-trinh"]} />
                     <JourneyMapAtlas
                       {...map}
                       backHref={null}

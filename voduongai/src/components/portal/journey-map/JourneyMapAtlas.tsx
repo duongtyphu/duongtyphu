@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { getCurrentChapterFromClient, JOURNEY_CHAPTER_NAMES, type JourneyChapter } from "@/lib/portal/foundation/journey-chapter";
 import { getGardenSummary, getModuleActivitySummary } from "@/lib/portal/foundation/growth-view";
@@ -68,6 +68,79 @@ const PORTAL_CONNECTIONS = [
   { module: "khong-gian-ai" as const, href: "/portal/aiworkspace", label: "AI Workspace" },
   { module: "opportunities" as const, href: "/portal/duan-cohoi", label: "Dự án & Cơ hội" },
 ];
+
+/** 8 điểm la bàn (viết tắt tiếng Việt: Bắc/Đông Bắc/Đông/...), toạ độ
+    tính sẵn quanh vòng tròn r=44, tâm (56,56) — khớp `CompassRose` bên
+    dưới, không tính lượng giác lúc render. */
+const COMPASS_POINTS = [
+  { label: "B", x: 56, y: 12 },
+  { label: "ĐB", x: 87, y: 25 },
+  { label: "Đ", x: 100, y: 56 },
+  { label: "ĐN", x: 87, y: 87 },
+  { label: "N", x: 56, y: 100 },
+  { label: "TN", x: 25, y: 87 },
+  { label: "T", x: 12, y: 56 },
+  { label: "TB", x: 25, y: 25 },
+] as const;
+
+/** La bàn 8 hướng — thay lucide `Compass` đơn giản cũ (Giai đoạn 10, chi
+    tiết hơn cho khí quyển bản đồ): 2 vòng viền + 8 điểm B/Đ/N/T + kim
+    xoay rất chậm (`.map-compass-needle`, khác `.map-compass` lay nhẹ cả
+    khối bên ngoài). */
+function CompassRose() {
+  return (
+    <svg width="112" height="112" viewBox="0 0 112 112" className="map-compass mx-auto" aria-hidden>
+      <defs>
+        <linearGradient id="mapNeedleGrad" x1="56" y1="18" x2="56" y2="94" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FB923C" />
+          <stop offset="50%" stopColor="#7c5c3a" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="#FDBA74" />
+        </linearGradient>
+      </defs>
+      <circle cx="56" cy="56" r="50" fill="none" stroke="rgba(251,146,60,0.28)" strokeWidth="1" />
+      <circle cx="56" cy="56" r="38" fill="none" stroke="rgba(251,146,60,0.18)" strokeWidth="1" />
+      {COMPASS_POINTS.map((p) => (
+        <text
+          key={p.label}
+          x={p.x}
+          y={p.y}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontSize="7"
+          fontWeight="700"
+          fill="rgba(253,186,116,0.65)"
+        >
+          {p.label}
+        </text>
+      ))}
+      <g className="map-compass-needle">
+        <path d="M56 18 L63 56 L56 94 L49 56 Z" fill="url(#mapNeedleGrad)" />
+      </g>
+      <circle cx="56" cy="56" r="4.5" fill="#FDBA74" />
+    </svg>
+  );
+}
+
+/** Dãy núi — 3 lớp silhouette tĩnh cuối khung, chỉ khí quyển trang trí
+    ("còn nhiều chặng đường phía trước"), không phải nội dung. */
+function MapMountains() {
+  return (
+    <svg className="map-mountains" viewBox="0 0 500 160" preserveAspectRatio="none" height="160" aria-hidden>
+      <path
+        d="M0 160 L0 96 L60 58 L120 100 L180 40 L240 96 L300 64 L360 108 L420 52 L470 92 L500 70 L500 160 Z"
+        fill="rgba(251,146,60,0.05)"
+      />
+      <path
+        d="M0 160 L0 122 L80 84 L150 128 L220 78 L290 130 L360 90 L430 132 L500 100 L500 160 Z"
+        fill="rgba(251,146,60,0.08)"
+      />
+      <path
+        d="M0 160 L0 140 L100 112 L200 146 L300 108 L400 144 L500 118 L500 160 Z"
+        fill="rgba(251,146,60,0.12)"
+      />
+    </svg>
+  );
+}
 
 /** Nhóm field cho panel Live-edit luôn hiện — `isFullyEmpty` và
  * `currentChapter === null` là 2 điều kiện runtime khác nhau, phụ thuộc
@@ -177,7 +250,9 @@ export function JourneyMapAtlas({
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="map-parchment-bg" aria-hidden />
+      <div className="map-coordinate-grid" aria-hidden />
       <div className="map-topo-lines" aria-hidden />
+      <MapMountains />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
@@ -187,47 +262,47 @@ export function JourneyMapAtlas({
           <PortalBackLink
             href={backHref}
             label="Hành trình của tôi"
-            colorClassName="text-amber-950/40 hover:text-amber-950/70"
+            colorClassName="text-white/40 hover:text-white/70"
           />
         )}
 
         {editMode && (
-          <div className="mt-6 space-y-4 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 text-left">
-            <p className="text-xs font-bold uppercase tracking-wide text-blue-600">Live-edit — Nội dung Bản đồ hành trình</p>
+          <div className="mt-6 space-y-4 rounded-2xl border border-dashed border-white/20 bg-white/5 p-4 text-left">
+            <p className="text-xs font-bold uppercase tracking-wide text-white/50">Live-edit — Nội dung Bản đồ hành trình</p>
             <EditableRegion record={chrome} fields={HEADER_FIELDS} update={updateChrome}>
-              <p className="text-sm text-gray-700">Tiêu đề &amp; câu phụ đề</p>
+              <p className="text-sm text-white/70">Tiêu đề &amp; câu phụ đề</p>
             </EditableRegion>
             <EditableRegion record={chrome} fields={EMPTY_STATE_FIELDS} update={updateChrome}>
-              <p className="text-sm text-gray-700">Trạng thái trống (dòng chữ + CTA)</p>
+              <p className="text-sm text-white/70">Trạng thái trống (dòng chữ + CTA)</p>
             </EditableRegion>
             <EditableRegion record={chrome} fields={SECTION_LABEL_FIELDS} update={updateChrome}>
-              <p className="text-sm text-gray-700">7 nhãn mục nội dung</p>
+              <p className="text-sm text-white/70">7 nhãn mục nội dung</p>
             </EditableRegion>
             <EditableRegion record={chrome} fields={FOOTER_FIELDS} update={updateChrome}>
-              <p className="text-sm text-gray-700">Lời khép Companion + trạng thái: {chrome.status}</p>
+              <p className="text-sm text-white/70">Lời khép Companion + trạng thái: {chrome.status}</p>
             </EditableRegion>
           </div>
         )}
 
         {/* ── 1. La bàn ────────────────────────────────────────────────── */}
         <header className="mt-8 text-center">
-          <Compass className="map-compass mx-auto h-12 w-12 text-amber-800/70" strokeWidth={1.25} />
-          <h1 className="mt-5 text-2xl font-bold tracking-tight text-amber-950/90 sm:text-3xl">
+          <CompassRose />
+          <h1 className="mt-5 text-2xl font-bold tracking-tight text-white/90 sm:text-3xl">
             {chrome.title}
           </h1>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-amber-950/55">
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-white/55">
             {chrome.subtitle}
           </p>
         </header>
 
         {isFullyEmpty ? (
           <div className="mt-20 text-center">
-            <p className="mx-auto max-w-sm text-base italic leading-relaxed text-amber-950/60">
+            <p className="mx-auto max-w-sm text-base italic leading-relaxed text-white/60">
               {chrome.emptyStateLine}
             </p>
             <Link
               href={academyHref}
-              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-800 underline decoration-amber-800/30 underline-offset-4 hover:decoration-amber-800"
+              className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-300 underline decoration-orange-300/30 underline-offset-4 hover:decoration-orange-200"
             >
               {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
@@ -236,14 +311,14 @@ export function JourneyMapAtlas({
           <>
             {/* ── 2. Vị trí hiện tại ─────────────────────────────────────── */}
             <section className="mt-12 text-center">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">{chrome.currentPositionLabel}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-orange-300/60">{chrome.currentPositionLabel}</p>
               {currentChapter ? (
                 <>
-                  <p className="mt-2 text-xl font-bold text-amber-950/90">{currentChapter.name}</p>
-                  <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-amber-950/55">{currentChapter.evidence}</p>
+                  <p className="mt-2 text-xl font-bold text-white/90">{currentChapter.name}</p>
+                  <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-white/55">{currentChapter.evidence}</p>
                 </>
               ) : (
-                <p className="mx-auto mt-2 max-w-sm text-sm italic leading-relaxed text-amber-950/55">
+                <p className="mx-auto mt-2 max-w-sm text-sm italic leading-relaxed text-white/55">
                   {chrome.noChapterYetLine}
                 </p>
               )}
@@ -251,7 +326,7 @@ export function JourneyMapAtlas({
 
             {/* ── 3. Năm Chương cuộc đời — tuyến đường trên bản đồ ───────── */}
             <section className="mt-14">
-              <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">
+              <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-orange-300/60">
                 {chrome.chaptersSectionLabel}
               </p>
               <div className="relative mt-6 h-[130px] sm:h-[110px]">
@@ -264,7 +339,7 @@ export function JourneyMapAtlas({
                   <path
                     d="M 50 35 C 90 35, 110 15, 150 15 C 190 15, 210 49, 250 49 C 290 49, 310 15, 350 15 C 390 15, 410 35, 450 35"
                     className="map-route-path"
-                    stroke="rgba(146,106,48,0.4)"
+                    stroke="rgba(251,146,60,0.4)"
                     strokeWidth="2"
                     fill="none"
                   />
@@ -287,23 +362,23 @@ export function JourneyMapAtlas({
                           }`}
                           className={`flex h-7 w-7 items-center justify-center rounded-full border-2 text-[10px] font-bold ${
                             state === "current"
-                              ? "map-chapter-pulse border-amber-600 bg-amber-500 text-white"
+                              ? "map-chapter-pulse border-orange-400 bg-orange-500 text-white"
                               : state === "walked"
-                                ? "border-amber-700/70 bg-amber-700/70 text-white"
-                                : "border-amber-800/25 bg-[#EDE0C4] text-amber-800/30 opacity-70 blur-[0.3px]"
+                                ? "border-orange-600/70 bg-orange-600/70 text-white"
+                                : "border-white/15 bg-white/5 text-white/25 opacity-70 blur-[0.3px]"
                           }`}
                         >
                           {idx}
                         </span>
                         {state === "walked" && (
-                          <svg aria-hidden width="14" height="8" viewBox="0 0 14 8" className="mt-1 opacity-40">
-                            <ellipse cx="3" cy="2.5" rx="2" ry="2.5" fill="#78350F" />
-                            <ellipse cx="11" cy="5.5" rx="2" ry="2.5" fill="#78350F" />
+                          <svg aria-hidden width="14" height="8" viewBox="0 0 14 8" className="mt-1 opacity-50">
+                            <ellipse cx="3" cy="2.5" rx="2" ry="2.5" fill="#FDBA74" />
+                            <ellipse cx="11" cy="5.5" rx="2" ry="2.5" fill="#FDBA74" />
                           </svg>
                         )}
                         <span
                           className={`mt-1.5 text-[10px] leading-tight ${
-                            state === "not-yet" ? "text-amber-950/25" : "text-amber-950/70"
+                            state === "not-yet" ? "text-white/25" : "text-white/70"
                           }`}
                         >
                           {name}
@@ -311,7 +386,7 @@ export function JourneyMapAtlas({
                         {state !== "not-yet" && (
                           <Link
                             href={chapterDestinations[i].href}
-                            className="mt-1 text-[9px] font-semibold text-amber-800/60 underline decoration-amber-800/25 underline-offset-2 hover:text-amber-800"
+                            className="mt-1 text-[9px] font-semibold text-orange-300/70 underline decoration-orange-300/25 underline-offset-2 hover:text-orange-200"
                           >
                             {chapterDestinations[i].label}
                           </Link>
@@ -321,33 +396,33 @@ export function JourneyMapAtlas({
                   })}
                 </ol>
               </div>
-              <p className="mx-auto mt-6 max-w-sm text-center text-[11px] leading-relaxed text-amber-950/40">
+              <p className="mx-auto mt-6 max-w-sm text-center text-[11px] leading-relaxed text-white/40">
                 {chrome.statesCaption}
               </p>
             </section>
 
             {/* ── 4. Kết nối tới Portal ──────────────────────────────────── */}
             <section className="mt-14">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">{chrome.connectionsSectionLabel}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-orange-300/60">{chrome.connectionsSectionLabel}</p>
               <div className="mt-4 space-y-2.5">
                 {connections.map((c) => (
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="flex items-center justify-between rounded-lg border border-amber-900/10 bg-white/30 px-4 py-2.5 text-sm transition hover:border-amber-900/25 hover:bg-white/50"
+                    className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm transition hover:border-white/20 hover:bg-white/10"
                   >
-                    <span className="font-semibold text-amber-950/80">{c.label}</span>
-                    <span className="text-xs text-amber-950/45">
+                    <span className="font-semibold text-white/80">{c.label}</span>
+                    <span className="text-xs text-white/45">
                       {c.count > 0 ? `Đã chạm tới — ${c.count} phiên thật` : "Chưa chạm tới"}
                     </span>
                   </Link>
                 ))}
                 <Link
                   href={premiumHref}
-                  className="flex items-center justify-between rounded-lg border border-amber-900/10 bg-white/30 px-4 py-2.5 text-sm transition hover:border-amber-900/25 hover:bg-white/50"
+                  className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-sm transition hover:border-white/20 hover:bg-white/10"
                 >
-                  <span className="font-semibold text-amber-950/80">{chrome.premiumConnectionLabel}</span>
-                  <span className="text-xs text-amber-950/45">
+                  <span className="font-semibold text-white/80">{chrome.premiumConnectionLabel}</span>
+                  <span className="text-xs text-white/45">
                     {premiumCount > 0 ? `Đang đồng hành — ${premiumCount} chương trình` : "Chưa tham gia"}
                   </span>
                 </Link>
@@ -356,10 +431,10 @@ export function JourneyMapAtlas({
 
             {/* ── 5. Hướng tiếp theo — một gợi ý duy nhất ─────────────────── */}
             <section className="mt-14 text-center">
-              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">{chrome.nextDirectionSectionLabel}</p>
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-orange-300/60">{chrome.nextDirectionSectionLabel}</p>
               <Link
                 href={nextDirection.href}
-                className="mt-3 inline-flex items-center gap-1.5 text-base font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 hover:decoration-amber-900"
+                className="mt-3 inline-flex items-center gap-1.5 text-base font-semibold text-orange-300 underline decoration-orange-300/30 underline-offset-4 hover:decoration-orange-200"
               >
                 {nextDirection.text} <ArrowRight className="h-4 w-4" />
               </Link>
@@ -368,7 +443,7 @@ export function JourneyMapAtlas({
         )}
 
         {/* ── 6. Lời khép của Companion ──────────────────────────────────── */}
-        <p className="mx-auto mt-16 max-w-sm text-center text-sm italic leading-relaxed text-amber-950/45">
+        <p className="mx-auto mt-16 max-w-sm text-center text-sm italic leading-relaxed text-white/40">
           {chrome.closingLine}
         </p>
       </div>
