@@ -8581,3 +8581,123 @@ vi cụ thể (áp dụng cho phần nào của trang My Story, "viết trang m�
 còn giữ hay chuyển thành "ghim note mới") trước khi triển khai code — dự
 kiến bắt đầu bằng 1 canvas thiết kế (`design` skill) để Founder duyệt
 hướng trước khi code.
+
+## Giai đoạn 9 — thiết kế lại 4 tab trải nghiệm: Khu vườn/My Story/Mirror/Bản đồ hành trình ([PR #87](https://github.com/duongtyphu/duongtyphu/pull/87))
+
+Founder duyệt hướng qua 1 canvas mockup 6 artboard (skill `design`,
+published dạng Claude Design Artifact — không phải file trong repo) rồi
+yêu cầu triển khai thành code luôn, kèm chỉ đạo bổ sung: "phân bổ lại bố
+cục, cân chỉnh hàng, chữ viết, màu chữ cho phù hợp ở các trang" — áp dụng
+khi viết code, không chỉ chép nguyên mockup.
+
+### Phát hiện quan trọng trước khi vẽ mockup — đã có 2 hệ khí quyển sẵn
+
+Trước khi thiết kế, đọc `docs/JOURNEY_PLATFORM_ARCHITECTURE.md` mục 18
+("GLOBAL ART DIRECTION — Sáu không gian cảm xúc", trạng thái 🔒 PO
+APPROVED — VISUAL LANGUAGE FREEZE) phát hiện: Mirror và Bản đồ hành trình
+**ĐÃ CÓ SẴN** khí quyển riêng trong `globals.css` (`.mirror-chamber-bg`/
+`.mirror-glass-veil`/`.mirror-reflection-line`, `.map-parchment-bg`/
+`.map-topo-lines`/`.map-compass`/`.map-route-path`) VÀ đã được
+`MirrorChamber.tsx`/`JourneyMapAtlas.tsx` sử dụng — chỉ là Founder chưa
+xem được trực quan qua sandbox (giới hạn Supabase/dev-server đã ghi ở
+Giai đoạn 8). Vì vậy đợt này với 2 cửa đó là LÀM GIÀU THÊM khí quyển sẵn
+có, không phải xây từ đầu. Còn "Khu vườn" có 2 hệ TÁCH BIỆT: hệ đầy đủ
+"vườn cổ tích đêm/ngày" (`GardenExperience.tsx`, PO-approved P2, dùng ở
+`/portal/khuvuoncuaban` 1.0, data model khác — Cây+Ngọc theo
+mission/reflection/milestone) và tab nhúng `KhuVuonCuaBanTab.tsx` (data
+model khác — `JourneyStage[]` theo giai đoạn học, trước đó chỉ có nền
+ngày-trời-xanh đơn giản). Do 2 model dữ liệu khác nhau, KHÔNG reuse thẳng
+`GardenExperience` được — thay vào đó mượn ĐÚNG tông màu khí quyển đêm đã
+duyệt (`.garden-sky--night` values) áp cho tab riêng, không đụng
+`GardenExperience.tsx`/`/portal/khuvuoncuaban` 1.0.
+
+### Khu vườn của bạn — vườn đêm cổ tích, mỗi giai đoạn học = 1 cây
+
+`KhuVuonCuaBanTab.tsx`: thay SVG nền ngày-trời-xanh + `.pot-row` (grid 5
+chậu cây cố định) bằng `.garden-scene` nền đêm nhiều lớp (đúng gradient
+`.garden-sky--night` đã duyệt) + sao lấp lánh (`.gn-star`, twinkle) + đom
+đóm trôi chậm (`.gn-firefly`, drift) + trăng tĩnh. Mỗi `JourneyStage`
+(data thật, không đổi field) vẽ thành 1 "cây" trên lối đi uốn lượn
+(`buildGardenPath()` — sinh toạ độ N điểm chia đều theo % ngang + lệch
+dọc xen kẽ, vẽ path SVG mượt qua N điểm bất kỳ, không cứng nhắc như Bản
+đồ hành trình luôn đúng 5). 4 tier theo `percent`: hạt giống (0%, chấm
+mờ nét đứt) → cây non (<50%) → đang lớn (50–99%) → nở hoa (100%, canopy
+lớn nhất + glow mạnh nhất), canopy có nhịp "thở" nhẹ
+(`kvcb-tree-breathe`).
+
+**Bug tự phát hiện qua code-review trước khi ship (đã sửa)**: bản nháp
+đầu dùng `baseY=150, amp=46` trong khung `.garden-scene` cao 260px cố
+định `overflow:hidden` — cây tier "nở hoa" (canopy 74px + trunk 38px +
+nhãn + %) ở vị trí lệch dọc thấp bị cắt mất phần trên (vượt quá 260px).
+Sửa bằng 3 thay đổi: tăng `.garden-scene` lên 320px, đổi `baseY=90,
+amp=28` (đảm bảo `bottomPx + ~165px nội dung cao nhất <= 320px` ở MỌI vị
+trí lệch dọc), thêm `-webkit-line-clamp:2` cho nhãn tên giai đoạn để chặn
+chiều cao không giới hạn nếu tên quá dài.
+
+### My Story — variant `"corkboard"`, giữ nguyên `"book"` mặc định
+
+`MyStoryBook.tsx` thêm prop `variant?: "book" | "corkboard"` (mặc định
+`"book"` — hành vi `/portal/story` 1.0 KHÔNG đổi 1 dòng nào). Khi
+`variant="corkboard"` (chỉ set ở tab nhúng, `HanhTrinhCuaToiClient.tsx`):
+
+- Nền đổi từ `.story-book-bg` (giấy sách) sang `.story-corkboard-bg`
+  (bảng gỗ nâu + kết cấu cork chấm tròn lặp, cùng tông ấm với sách gốc,
+  chỉ đổi CHẤT LIỆU).
+- 5 khối nội dung thật gộp thành 1 mảng `corkNotes` (Important
+  Moments/Turning Points/Memory Capsule/Created Works + lá thư tháng —
+  ĐÚNG 5 khối đã có ở variant "book", không field nào bịa thêm), mỗi mục
+  render thành 1 `.story-cork-note` (note giấy màu theo loại + ghim đỏ
+  `.story-cork-pin` + chữ viết tay font Caveat qua `next/font/google` —
+  subset chỉ có `latin` trong version hiện tại, KHÔNG có `vietnamese`,
+  nên dấu tiếng Việt sẽ fallback sang font hệ thống theo glyph — chấp
+  nhận được cho chữ trang trí, không phải nội dung chính). Xoay lệch
+  từng note dùng `corkRotation(i) = ((i*37) % 9) - 4` — TẤT ĐỊNH theo
+  index, KHÔNG dùng `Math.random()` (tránh hydration mismatch SSR/CSR).
+  Bố cục dùng `flex-wrap` (không phải toạ độ tuyệt đối cố định như bản
+  mockup tĩnh) vì số lượng note thay đổi runtime theo dữ liệu thật.
+- "Viết một trang mới" thiết kế lại UI/UX mới theo yêu cầu riêng của
+  Founder: nút tròn "+ Ghim note mới" toggle 1 panel mở rộng ngay tại chỗ
+  (không dùng modal/portal — đơn giản/an toàn hơn trong ngữ cảnh tab
+  nhúng), bên trong `WriteNook` (component chung, thêm prop `variant` +
+  `onSaved`) — TÁI SỬ DỤNG đúng 2 hook thật `useReflections()`/
+  `useMemoryCapsules()` và 2 hành động lưu (`submitAnswer`/`addCapsule`)
+  y hệt variant "book", chỉ đổi hình thức: textarea lớn hơn + xem trước
+  note trực tiếp khi đang gõ + nút tròn thay vì link gạch chân. Lưu xong
+  gọi `onSaved()` để tự đóng panel — note vừa ghim hiện ngay trong danh
+  sách phía trên sau khi Next.js re-render (không cần tải lại trang).
+- `RemovableEntry` (gỡ ký ức tự lưu) giữ nguyên logic, chỉ bọc quanh
+  note thay vì dòng văn xuôi.
+
+### Mirror & Bản đồ hành trình — làm giàu khí quyển sẵn có
+
+`MirrorChamber.tsx`: thêm 2 lớp `.mirror-ripple` (gợn phản chiếu tâm,
+chu kỳ 9s, 2 vòng lệch pha 4.5s) + 4 `.mirror-particle` (hạt sáng trôi
+rất nhẹ, chu kỳ 10s) — vẫn đúng tinh thần "một nguồn sáng duy nhất, gần
+như bất động" ở mục 18.5, không thêm cấu trúc nội dung mới.
+
+`JourneyMapAtlas.tsx`: đường nối 5 Chương đổi từ `<line>` thẳng sang
+`<path>` uốn lượn qua đúng 5 điểm neo (`CHAPTER_WAVE_OFFSET = [0,-20,14,
+-20,0]`, khớp `translateY` từng `<li>` để marker luôn nằm đúng trên
+path dù container co giãn %). Chương "hiện tại" thêm `.map-chapter-pulse`
+(glow thở nhẹ 2.6s); chương "đã qua" thêm 2 chấm dấu chân SVG nhỏ dưới
+marker; chương "chưa tới" thêm `blur-[0.3px]` + giảm opacity cho cảm
+giác "còn ẩn trong sương".
+
+Cả 2 nơi: animation mới đều thêm vào đúng khối `@media
+(prefers-reduced-motion: reduce)` sẵn có của từng cửa (không tạo khối
+mới trùng lặp).
+
+### Verify
+
+`tsc --noEmit`/`eslint` sạch, `rm -rf .next && npm run build` sạch,
+`vitest run` 495/495 pass. Chạy `code-review` skill (effort medium) trước
+khi ship — phát hiện đúng 1 lỗi thật (clipping cây "bloom" ở Khu vườn,
+xem trên) — đã sửa và verify lại sạch.
+
+**Chưa tự verify trực quan được lần này** (dev server + Playwright không
+còn sẵn trong sandbox sau khi container khởi động lại giữa 2 lượt làm
+việc — khác các đợt trước có ảnh chụp màn hình thật) — chỉ verify được
+qua `curl` (route `/v2/hanh-trinh-cua-toi` vẫn redirect đúng `/login` như
+trước, không đổi hành vi auth-gate) + đọc lại code cẩn thận + review nội
+bộ. Founder cần tự xem trên Production để xác nhận 4 khí quyển mới hiển
+thị đúng như mockup đã duyệt trước khi coi đợt này là hoàn tất.
