@@ -27,7 +27,7 @@ export const metadata = {
 
 type FirstPremiumMoment = { title: string; occurredAt: string } | null;
 
-async function getStoryData(): Promise<{
+export async function getStoryData(): Promise<{
   memberSince: Date | null;
   reflections: Reflection[];
   capsules: MemoryCapsule[];

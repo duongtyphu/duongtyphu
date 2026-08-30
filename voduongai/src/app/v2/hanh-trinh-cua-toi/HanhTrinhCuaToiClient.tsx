@@ -34,18 +34,39 @@
  *  6. "Thành tựu của tôi" — bảng `badges`/`user_badges` (Phase 30) có thật
  *     nhưng **0 huy hiệu nào được định nghĩa trong hệ thống** (không chỉ 0
  *     người đạt) — hiện `.empty-hint` trung thực, không bịa 4 huy hiệu mẫu.
- *  7. "Liên kết nhanh" — 3 đích điều hướng THẬT: Nhật ký học tập
- *     (`/v2/nhat-ky-hoc-tap`, đã build), Mục tiêu của tôi
- *     (`/v2/muc-tieu` — Bảng Mục tiêu 2.0, đổi từ `/portal/goals` theo yêu
- *     cầu Founder "không liên kết qua portal 1.0", trước đó từng đổi từ
- *     `/v2/chien-luoc-ca-nhan` sau khi trang đó bị xoá khỏi Portal), Khu
- *     vườn của bạn (`/v2/khu-vuon-cua-ban`). (Giai đoạn 7 bỏ đích thứ 4
- *     "Cộng đồng VO DUONG AI"/`/v2/cong-dong-ai` — route đã xoá hẳn khỏi
- *     Portal 2.0, xem CLAUDE.md.)
+ *  7. "Liên kết nhanh" — 2 đích điều hướng THẬT còn lại: Mục tiêu của tôi
+ *     (`/v2/muc-tieu`). (Giai đoạn 7 bỏ "Cộng đồng VO DUONG AI"; Giai đoạn
+ *     8 bỏ nốt "Nhật ký học tập"/"Khu vườn của bạn" — cả 2 route đã xoá,
+ *     nội dung giờ nằm trong khối 5-tab mới bên dưới, không còn là "liên
+ *     kết nhanh" điều hướng SANG trang khác nữa.)
  *  8. Khối `.promo` sidebar — bản thiết kế này dùng minh hoạ đồi núi +
  *     nút "Tiếp tục học" (khác khối "Nâng cấp Premium" chuẩn) — đã tổng
  *     quát hoá `PortalV2Shell` thêm `promoVisual`/`promoButtonLabel`/
  *     `promoButtonTarget` để giữ đúng 1:1, trỏ nút này tới Học viện AI.
+ *
+ * ---------------------------------------------------------------------------
+ * GIAI ĐOẠN 8 (mid-turn Founder yêu cầu, KHÔNG có trong mockup gốc) — gộp
+ * `/v2/nhat-ky-hoc-tap` + `/v2/khu-vuon-cua-ban` (2 route đã xoá) vào
+ * chính trang này dưới dạng 1 khối 5-tab MỚI ("Nhật ký học tập"/"Khu vườn
+ * của bạn"/"My Story"/"Mirror"/"Bản đồ hành trình"), đặt ngay sau
+ * `.page-head`, TRƯỚC `.progress-card` — mọi nội dung khác của trang GIỮ
+ * NGUYÊN 100% như trên. 2 tab đầu port nguyên từ 2 route đã xoá
+ * (`NhatKyHocTapTab.tsx`/`KhuVuonCuaBanTab.tsx`, cùng CSS `.nkt`/`.kvcb`).
+ * 3 tab sau render lại NGUYÊN 3 component thật của Portal 1.0
+ * (`MyStoryBook.tsx`/`MirrorChamber.tsx`/`JourneyMapAtlas.tsx`, dùng chung
+ * với `/portal/story`/`/portal/mirror`/`/portal/hanhtrinhcuatoi/ban-do` —
+ * Single Source of Truth, không copy nội dung) bọc `.htct-native` (loại
+ * trừ khỏi reset Preflight của `/v2`, xem `v2-tokens.css`) + href override
+ * trỏ `/v2/*` (NGUYÊN TẮC BẤT BIẾN — không link ngược `/portal/*`):
+ * `academyHref="/v2/hoc-vien-ai"`, `premiumHref="/v2/premium"`,
+ * `workspaceHref="/v2/muc-tieu"` (chưa có bản 2.0 của Companion Workspace
+ * Task→Output→Review, `/v2/muc-tieu` là đích 2.0 gần nhất — cùng quyết
+ * định đã áp dụng cho `/v2/muc-tieu`'s "Bắt đầu nhiệm vụ"), và với riêng
+ * "Bản đồ hành trình": đích "Cộng đồng" trong 5-Chương-cuộc-đời đổi thành
+ * `/v2/affiliate` (Cộng đồng AI 2.0 đã xoá ở Giai đoạn 7 — "Giúp người
+ * khác" diễn giải lại thành chia sẻ/giới thiệu qua Affiliate, gần nghĩa
+ * nhất còn tồn tại ở 2.0). Cross-link My Story↔Mirror chuyển thứ tab
+ * (không `<Link>` điều hướng sang route khác) qua callback `onSwitchTab`.
  * ========================================================================== */
 
 import { useEffect, useState } from "react";
@@ -55,6 +76,16 @@ import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
 import { listGoals, hydrateGoalRuntime, type GoalRecord } from "@/lib/portal/foundation/goal-runtime";
+import type { LearningLogData } from "@/lib/portal/live-learning-log";
+import { MyStoryBook, type StoryChrome } from "@/components/portal/story/MyStoryBook";
+import { MirrorChamber, type MirrorChrome, type MirrorQuestionRow } from "@/components/portal/mirror/MirrorChamber";
+import { JourneyMapAtlas, type MapChrome } from "@/components/portal/journey-map/JourneyMapAtlas";
+import type { Reflection } from "@/lib/portal/reflections";
+import type { MemoryCapsule } from "@/lib/portal/memoryCapsules";
+import type { GrowthMilestone } from "@/lib/portal/growth-map/growth-milestones";
+
+import { NhatKyHocTapTab } from "./NhatKyHocTapTab";
+import { KhuVuonCuaBanTab } from "./KhuVuonCuaBanTab";
 
 import "./hanh-trinh-cua-toi.css";
 
@@ -99,14 +130,100 @@ const BADGE_GRADIENTS = [
   "radial-gradient(circle at 35% 30%,#bdf3d3,#3ecf7e 55%,#189a52 100%)",
 ];
 
-export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumStatus; journey: JourneyOverview }) {
+type StoryTabProps = {
+  memberSince: Date | null;
+  reflections: Reflection[];
+  capsules: MemoryCapsule[];
+  milestones: GrowthMilestone[];
+  firstPremium: { title: string; occurredAt: string } | null;
+  premiumCount: number;
+  storageReady: boolean;
+  seedChrome: StoryChrome;
+};
+
+type MirrorTabProps = {
+  invitation: string | null;
+  narrativeLines: React.ComponentProps<typeof MirrorChamber>["narrativeLines"];
+  reflectionMoments: React.ComponentProps<typeof MirrorChamber>["reflectionMoments"];
+  firstFootprint: React.ComponentProps<typeof MirrorChamber>["firstFootprint"];
+  quietSeasonLine: string | null;
+  originLine: string | null;
+  reflectionCount: number;
+  capsuleCount: number;
+  premiumCount: number;
+  seedChrome: MirrorChrome;
+  seedQuestions: MirrorQuestionRow[];
+};
+
+type MapTabProps = {
+  reflections: Reflection[];
+  premiumCount: number;
+  seedChrome: MapChrome;
+};
+
+const TABS = [
+  { key: "nhat-ky-hoc-tap", label: "Nhật ký học tập" },
+  { key: "khu-vuon-cua-ban", label: "Khu vườn của bạn" },
+  { key: "my-story", label: "My Story" },
+  { key: "mirror", label: "Mirror" },
+  { key: "ban-do-hanh-trinh", label: "Bản đồ hành trình" },
+] as const;
+
+type TabKey = (typeof TABS)[number]["key"];
+
+const TAB_ICON: Record<TabKey, React.ReactNode> = {
+  "nhat-ky-hoc-tap": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
+    </svg>
+  ),
+  "khu-vuon-cua-ban": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
+    </svg>
+  ),
+  "my-story": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
+    </svg>
+  ),
+  mirror: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 8v.01M12 16v-5" />
+    </svg>
+  ),
+  "ban-do-hanh-trinh": (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 3" />
+    </svg>
+  ),
+};
+
+export function HanhTrinhCuaToiClient({
+  premium,
+  journey,
+  log,
+  story,
+  mirror,
+  map,
+}: {
+  premium: PremiumStatus;
+  journey: JourneyOverview;
+  log: LearningLogData;
+  story: StoryTabProps;
+  mirror: MirrorTabProps;
+  map: MapTabProps;
+}) {
   const router = useRouter();
   const [goals, setGoals] = useState<GoalRecord[]>([]);
+  const [activeTab, setActiveTab] = useState<TabKey>("nhat-ky-hoc-tap");
 
   useEffect(() => {
     (async () => {
       await hydrateGoalRuntime();
-       
+
       setGoals(listGoals());
     })();
   }, []);
@@ -160,6 +277,69 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
                   </svg>
                   Chỉnh sửa mục tiêu
                 </button>
+              </div>
+
+              <div className="tab-bar">
+                {TABS.map((t) => (
+                  <button
+                    key={t.key}
+                    className={activeTab === t.key ? "tab-btn active" : "tab-btn"}
+                    onClick={() => setActiveTab(t.key)}
+                  >
+                    {TAB_ICON[t.key]}
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="tab-panel">
+                {activeTab === "nhat-ky-hoc-tap" && <NhatKyHocTapTab log={log} />}
+                {activeTab === "khu-vuon-cua-ban" && <KhuVuonCuaBanTab journey={journey} />}
+                {activeTab === "my-story" && (
+                  <div className="htct-native">
+                    <MyStoryBook
+                      {...story}
+                      backHref={null}
+                      workspaceHref="/v2/muc-tieu"
+                      onOpenMirror={() => setActiveTab("mirror")}
+                    />
+                  </div>
+                )}
+                {activeTab === "mirror" && (
+                  <div className="htct-native">
+                    <MirrorChamber
+                      {...mirror}
+                      backHref={null}
+                      academyHref="/v2/hoc-vien-ai"
+                      onOpenStory={() => setActiveTab("my-story")}
+                    />
+                  </div>
+                )}
+                {activeTab === "ban-do-hanh-trinh" && (
+                  <div className="htct-native">
+                    <JourneyMapAtlas
+                      {...map}
+                      backHref={null}
+                      academyHref="/v2/hoc-vien-ai"
+                      storyHref="/v2/hanh-trinh-cua-toi"
+                      workspaceHref="/v2/muc-tieu"
+                      premiumHref="/v2/premium"
+                      chapterDestinations={[
+                        { href: "/v2/hoc-vien-ai", label: "Học viện AI" },
+                        { href: "/v2/hoc-vien-ai", label: "AI Workspace" },
+                        { href: "/v2/muc-tieu", label: "Workspace" },
+                        { href: "/v2/premium", label: "Premium" },
+                        { href: "/v2/affiliate", label: "Cộng đồng" },
+                      ]}
+                      portalConnections={[
+                        { module: "ckos", href: "/v2/hoc-vien-ai", label: "Hệ tri thức AI" },
+                        { module: "academy", href: "/v2/hoc-vien-ai", label: "Học viện AI" },
+                        { module: "khong-gian-ai", href: "/v2/hoc-vien-ai", label: "AI Workspace" },
+                        { module: "opportunities", href: "/v2/du-an-co-hoi", label: "Dự án & Cơ hội" },
+                      ]}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="progress-card">
@@ -410,17 +590,6 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
                 <div className="card-head">
                   <h4>Liên kết nhanh</h4>
                 </div>
-                <div className="link-row" onClick={() => router.push("/v2/nhat-ky-hoc-tap")}>
-                  <div className="ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
-                    </svg>
-                  </div>
-                  <span>Nhật ký học tập</span>
-                  <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 6l6 6-6 6" />
-                  </svg>
-                </div>
                 <div className="link-row" onClick={() => router.push("/v2/muc-tieu")}>
                   <div className="ico">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -428,17 +597,6 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
                     </svg>
                   </div>
                   <span>Mục tiêu của tôi</span>
-                  <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 6l6 6-6 6" />
-                  </svg>
-                </div>
-                <div className="link-row" onClick={() => router.push("/v2/khu-vuon-cua-ban")}>
-                  <div className="ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
-                    </svg>
-                  </div>
-                  <span>Khu vườn của bạn</span>
                   <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 6l6 6-6 6" />
                   </svg>

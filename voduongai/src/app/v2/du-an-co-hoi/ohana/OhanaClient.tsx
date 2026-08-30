@@ -74,9 +74,7 @@ const HREF_MAP: Record<string, string> = {
   "Affilate san giao dich.html": "/v2/du-an-co-hoi/affilate-san-giao-dich",
   "Premium.html": "/v2/premium",
   "Chuong trinh Affilate.html": "/v2/affiliate",
-  "Nhat ky hoc tap.html": "/v2/nhat-ky-hoc-tap",
   "Hanh trinh cua toi.html": "/v2/hanh-trinh-cua-toi",
-  "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
 };
 
 const TABS = ["Tổng quan", "Vũ trụ Ohana", "Công nghệ", "Tokenomics", "Lộ trình", "Cộng đồng", "Tin tức", "Tài liệu"];
@@ -203,24 +201,12 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
           </nav>
 
           <nav className="main">
-            <button className="nav-item" onClick={() => go("Nhat ky hoc tap.html")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" />
-              </svg>
-              Nhật ký học tập
-            </button>
             <button className="nav-item" onClick={() => go("Hanh trinh cua toi.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="9" />
                 <path d="M12 7v5l3 3" />
               </svg>
               Hành trình của tôi
-            </button>
-            <button className="nav-item" onClick={() => go("Khu vuon cua ban.html")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
-              </svg>
-              Khu vườn của bạn
             </button>
           </nav>
 

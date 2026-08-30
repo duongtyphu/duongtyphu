@@ -8267,3 +8267,221 @@ xác nhận trên Preview URL: sidebar mọi trang `/v2/*` không còn mục "C�
 đồng AI", `/v2/trang-chu` chỉ còn 3 thẻ "Portal 2.0 trong một cái nhìn",
 `/v2/hanh-trinh-cua-toi` "Liên kết nhanh" chỉ còn 3 mục, `/v2/admin/quan-ly-menu`
 không còn liệt kê "Cộng đồng AI" trong cây menu.
+
+## Giai đoạn 8 — Gộp 3 trang "Nhật ký học tập"/"Hành trình của tôi"/"Khu vườn của bạn" thành 1 trang với 5 tab
+
+Founder yêu cầu (mid-turn ngay sau khi Giai đoạn 7 xong): gộp 3 trang
+`/v2/nhat-ky-hoc-tap` + `/v2/hanh-trinh-cua-toi` + `/v2/khu-vuon-cua-ban`
+thành 1 trang duy nhất, tên trang giữ "Hành trình của tôi". Sau đó làm rõ
+qua tin nhắn thứ 2: bên trong trang có 5 TAB (không phải gộp nội dung
+tuyến tính) — Nhật ký học tập/Khu vườn của bạn/My Story/Mirror/Bản đồ
+hành trình (5 tab; "Hành trình của tôi" là TÊN trang, không phải 1 trong
+5 tab — giải quyết chênh lệch "5 tab" vs "6 mục liệt kê" trong yêu cầu
+gốc). **Mọi thành phần khác của trang (progress-card/lộ trình/tiếp tục
+học/chuỗi ngày/thành tựu/liên kết nhanh/sidebar/topbar/promo) GIỮ NGUYÊN
+100%** — khối 5-tab là nội dung THÊM MỚI, không thay thế gì.
+
+Đây là bước cuối cùng "chốt" nội dung/thiết kế đã ghi trong
+`vdaiportal2.0.html`'s mục "Giai đoạn 8 — Hành trình của tôi": Nhật ký
+học tập gắn hoạt động thật (đã có sẵn); 3 "cửa" My Story/Mirror/Bản đồ
+hành trình "nâng cấp từ khái niệm 1.0" với hành vi bấm-để-mở-rộng ngay
+trong trang (chính là hành vi tab click-to-reveal); Khu vườn của bạn "làm
+sâu thêm" (đã làm ở đợt build gốc — bỏ hết phần gamification bịa, chỉ
+giữ dữ liệu thật).
+
+### Xoá 2 route con, giữ route "Hành trình của tôi" làm nơi chứa cả 5 tab
+
+`/v2/nhat-ky-hoc-tap` và `/v2/khu-vuon-cua-ban` (+ 2 admin mirror
+`/v2/admin/nhat-ky-hoc-tap`/`/v2/admin/khu-vuon-cua-ban`, cả 2 vốn chỉ là
+`AdminPortalMirror` — trang "không có gì để quản lý", an toàn xoá) — xoá
+hẳn theo ĐÚNG quy trình 12-file "hand-copy sidebar" đã dùng cho Cộng đồng
+AI (Giai đoạn 7): `href-map.ts` (2 entry Portal + 2 entry Admin),
+`PortalV2Shell.tsx` (2 nav-item, sidebar LIVE dùng chung ~26 trang),
+`nav-config.ts` (2 entry `PORTAL_NAV` + 2 entry `ADMIN_NAV`, bỏ import
+`NotebookPen`/`Flower2` không còn dùng), 9 file hand-copy đơn giản + 2
+file có `prefetchNav()` (`DuAnCoHoiClient.tsx`/`HocVienAiClient.tsx`) qua
+script Python regex (verify đúng 1 khớp/pattern/file trước khi ghi — bắt
+được 1 lỗi định dạng nhỏ do regex greedy `\s*` nuốt cả xuống dòng lân
+cận, đã tự phát hiện qua `git diff` và sửa lại bằng script chuẩn hoá thứ
+2, không phải lỗi chức năng), `TrangChuClient.tsx` (form `go()` curried
+khác 2 dạng trên, sửa tay).
+
+### Kiến trúc 2 tab đầu — port nguyên nội dung route đã xoá thành component nhúng
+
+`NhatKyHocTapTab.tsx`/`KhuVuonCuaBanTab.tsx` (mới, tại
+`src/app/v2/hanh-trinh-cua-toi/`) — port NGUYÊN VĂN JSX/logic từ
+`NhatKyHocTapClient.tsx`/`KhuVuonCuaBanClient.tsx` (đã xoá), chỉ bỏ khung
+`PortalV2Shell`/`.app` (trang cha `HanhTrinhCuaToiClient` đã có đúng 1
+shell, không lồng 2 shell) và bỏ `premium` prop (chỉ dùng cho
+`PortalV2Shell`, không dùng trong nội dung). Xác nhận trước khi bỏ `.app`:
+`.app{display:flex;min-height:100vh}` chỉ phục vụ layout sidebar+content
+của trang standalone cũ — `.content{display:flex;gap:22px}` tự đủ cho
+layout 2 cột center/right, không phụ thuộc `.app`. 2 file CSS
+(`nhat-ky-hoc-tap-tab.css`/`khu-vuon-cua-ban-tab.css`) copy nguyên từ 2
+file đã xoá, giữ đúng tiền tố `.nkt`/`.kvcb`. `KhuVuonCuaBanTab.tsx` bỏ
+thêm nút "Xem chi tiết vườn →" (trước trỏ `/v2/hanh-trinh-cua-toi` — dư
+thừa vì tab này giờ đã nằm ngay trong chính trang đó).
+
+### Kiến trúc 3 tab sau — render lại NGUYÊN 3 component Portal 1.0 (Single Source of Truth)
+
+`My Story`/`Mirror`/`Bản đồ hành trình` KHÔNG tồn tại ở `/v2/*` trước đợt
+này — chỉ có ở `/portal/story`/`/portal/mirror`/`/portal/hanhtrinhcuatoi/ban-do`
+(1.0). Đúng nguyên tắc Single Source of Truth đã dùng cho
+`AccountContent`/`CompanionFlipbook`/`CheckoutForm` trước đó: **render
+lại NGUYÊN** `MyStoryBook.tsx`/`MirrorChamber.tsx`/`JourneyMapAtlas.tsx`
+(không copy nội dung) — KHÔNG áp dụng "6 điều chỉnh kỹ thuật" (đây là
+Tailwind thật, không phải 1:1 từ file `.html` mockup).
+
+**Data — tái dùng nguyên fetcher 1.0, không viết lại logic:** 3
+`page.tsx` của Portal 1.0 (`story/page.tsx`/`mirror/page.tsx`/
+`hanhtrinhcuatoi/ban-do/page.tsx`) đã có sẵn hàm fetch Server-side —
+thêm đúng từ khoá `export` (additive, 0 đổi hành vi 1.0):
+`getStoryData()`, `getMapData()` (2 hàm đã có tên sẵn, chỉ thêm
+`export`). Riêng `mirror/page.tsx` trước đó KHÔNG tách hàm riêng (fetch +
+toàn bộ engine growth-map viết thẳng trong `MirrorPage()`) — đã refactor
+tách thành `export async function getMirrorProps()` (gồm cả
+`getMirrorData()` fetch lẫn `buildCompanionMirrorInvitation`/
+`buildMirrorNarrative`/`buildReflectionMoments`/`buildFirstFootprintMirrorView`/
+origin-line logic), `MirrorPage()` gọi lại hàm này — hành vi 1.0 không
+đổi, chỉ tách để `/v2/hanh-trinh-cua-toi/page.tsx` gọi lại được.
+`getLiveStoryChrome()`/`getLiveMirrorChrome()`/`getLiveMirrorQuestions()`/
+`getLiveMapChrome()` (đã có sẵn từ Nhóm 3 Phần A) fetch song song cùng 7
+nguồn khác trong 1 `Promise.all()` ở `page.tsx` mới.
+
+**NGUYÊN TẮC BẤT BIẾN — cả 3 component có SẴN nhiều `href="/portal/*"`
+hardcode (audit phát hiện trước khi sửa, không đoán):** `PortalBackLink`
+(cả 3, "← Hành trình của tôi"), `MyStoryBook`: nút "Bắt đầu viết tiếp"
+(`/portal/workspace`) + link "Mở Mirror" (`/portal/mirror`);
+`MirrorChamber`: CTA trạng thái trống (`/portal/hocvienai`) + link "Viết
+câu trả lời trong My Story" (`/portal/story`); `JourneyMapAtlas`: CTA
+trạng thái trống + `nextDirection` (`/portal/hocvienai`/`/portal/story`/
+`/portal/workspace`) + **`CHAPTER_DESTINATIONS`** (5 đích, index-bound
+với `JOURNEY_CHAPTER_NAMES`) + **`PORTAL_CONNECTIONS`** (4 đích, field
+`module` là khoá tra cứu thật) + Premium row riêng — 2 mảng này là đúng
+"RỦI RO CAO NHẤT" đã cảnh báo ở Việc 9/Nhóm 3 Phần A (không được sửa cấu
+trúc index/key), nhưng CHƯA từng có ai hỏi liệu ĐÍCH `href` bên trong có
+được đổi hay không khi dùng ở `/v2` — quyết định ở đây: giữ NGUYÊN cấu
+trúc/field `module`, chỉ đổi được `href`/`label` qua prop.
+
+**Giải pháp — thêm optional href-override prop cho cả 3 component, mặc
+định giữ đúng giá trị `/portal/*` cũ (0 đổi hành vi 1.0):**
+- `MyStoryBook`: `backHref?: string|null` (null = ẩn hẳn nút),
+  `workspaceHref?: string`, `mirrorHref?: string`, `onOpenMirror?: () =>
+  void` (khi có, "Mở Mirror" đổi từ `<Link>` sang `<button onClick>` —
+  dùng để CHUYỂN TAB tại chỗ thay vì điều hướng route, xem dưới).
+- `MirrorChamber`: `backHref?: string|null`, `academyHref?: string`,
+  `storyHref?: string`, `onOpenStory?: () => void` (cùng cơ chế callback
+  cho "Viết câu trả lời trong My Story").
+- `JourneyMapAtlas`: `backHref?: string|null`, `academyHref?: string`,
+  `storyHref?: string`, `workspaceHref?: string`, `premiumHref?: string`,
+  `chapterDestinations?: readonly {href,label}[]` (mặc định
+  `CHAPTER_DESTINATIONS`), `portalConnections?: readonly
+  {module,href,label}[]` (mặc định `PORTAL_CONNECTIONS`, giữ đúng kiểu
+  literal union của `module` — không nới lỏng thành `string`, tránh
+  Admin/dev truyền sai khoá tra cứu).
+
+**Cross-link My Story↔Mirror dùng callback, KHÔNG dùng `?tab=` query
+param** (khác kỹ thuật `HocVienAiClient.tsx` đã dùng trước đây) — lý do:
+`?tab=` chỉ đọc 1 LẦN lúc mount (`useEffect([])`, tránh hydration
+mismatch), không phản ứng khi đã đứng sẵn trên trang và bấm link nội bộ
+đổi query (Next.js không remount component khi chỉ đổi query cùng route)
+— callback `onOpenMirror`/`onOpenStory` gọi thẳng `setActiveTab()` của
+component cha, phản ứng ngay lập tức, đúng bản chất "tab UI trong 1
+trang" thay vì "điều hướng route".
+
+**Đích v2 cụ thể đã chọn cho từng override** (đều là route `/v2/*` thật
+đã build, không còn `href` trỏ `/portal/*` nào sau khi nhúng):
+`academyHref`/1 vị trí `AI Workspace` trong `CHAPTER_DESTINATIONS` →
+`/v2/hoc-vien-ai` (CKOS+Học viện AI+AI Workspace đã gộp vào 1 trang từ
+"Giai đoạn 9" trước đó — khớp đúng điều đã ghi cho "Công cụ yêu thích" ở
+`/v2/companion`); `premiumHref` → `/v2/premium`; `workspaceHref` →
+`/v2/muc-tieu` (chưa có bản 2.0 của Companion Workspace Task→Output→Review
+— `/v2/muc-tieu` là đích 2.0 gần nhất, cùng quyết định đã áp dụng cho
+chính `/v2/muc-tieu`'s nút "Bắt đầu nhiệm vụ"); đích "Cộng đồng" trong
+`CHAPTER_DESTINATIONS` (chương "Giúp người khác") → `/v2/affiliate`
+(Cộng đồng AI 2.0 đã xoá ở Giai đoạn 7 — diễn giải lại "giúp người khác"
+thành chia sẻ/giới thiệu qua chương trình Affiliate, gần nghĩa nhất còn
+tồn tại thật ở 2.0, KHÔNG bịa 1 đích mới không liên quan); `ckos`/
+`academy`/`khong-gian-ai` trong `PORTAL_CONNECTIONS` đều → `/v2/hoc-vien-ai`
+(cùng lý do gộp trang), `opportunities` → `/v2/du-an-co-hoi`.
+
+**`.htct-native` — loại trừ khỏi reset Preflight của `/v2` (mở rộng
+`v2-tokens.css`, cùng cơ chế `.smc`/`.tkh`/`.chk` đã có):** 3 tab
+My Story/Mirror/Bản đồ hành trình bọc `<div className="htct-native">`
+trước khi render component Tailwind thật — thêm `:where(:not(.htct-native
+*))` vào cả 3 rule reset unlayered (margin h1-h6/p/figure, màu `a`, màu
+`a:hover`), giữ đúng bọc `:where()` (không viết `:not()` trực tiếp — BUG
+ĐÃ SỬA ở đợt "Dự án & Cơ hội" trước đó, tránh lặp lại đúng lớp lỗi
+specificity CSS đã gặp).
+
+### Component `Cognitive Model` của Companion (`src/ai/platform/`, `src/ai/knowledge/`) — KHÔNG cần cập nhật
+
+Trước khi code, đã audit `platform-model.ts` (shape `PlatformNode`) xác
+nhận **không có field `href`/`route`/`path` nào** — node chỉ có
+`id/name/type/description/parentId/childrenIds/tags/
+supportedGoalCategories/supportedKnowledgeTypes`, thuần khái niệm/ngữ
+nghĩa, KHÔNG phụ thuộc URL thật. `mentor-navigation.ts`'s
+`REVIEW_PROGRESS_AREA_ID = "nhat-ky-hoc-tap"` chỉ là khoá tra cứu vào
+`findPlatformNode()` (trả về 1 `PlatformNode` khái niệm, không phải URL
+điều hướng) — an toàn giữ nguyên dù route `/v2/nhat-ky-hoc-tap` đã xoá.
+**Kết luận: việc gộp route KHÔNG ảnh hưởng "mô hình nhận thức" của
+Companion** — không cần sửa file nào trong `src/ai/platform/`/
+`src/ai/knowledge/`.
+
+### CSS tab-bar mới — không có trong mockup gốc, tự thiết kế theo ngôn ngữ 2.0 sẵn có
+
+`.tab-bar`/`.tab-btn`/`.tab-panel` (thêm vào cuối `hanh-trinh-cua-toi.css`)
+— tái dùng token màu/spacing đã có của chính file (`--violet`/`--line`/
+`--muted`), cùng tinh thần `/v2/muc-tieu` (route mới không có mockup HTML
+riêng, "không áp dụng 6 điều chỉnh kỹ thuật" vì không port từ file
+`.html`). `.tab-panel{border-radius:16px;overflow:hidden}` bọc ngoài mỗi
+tab — tiện lợi bo góc + cắt đúng phần `-mx-4 -my-6 ... overflow-hidden`
+breakout atmosphere của 3 component Tailwind (My Story/Mirror/Map vốn
+thiết kế full-bleed cho standalone page, giờ được "đóng khung" gọn gàng
+trong 1 panel khi nhúng làm tab).
+
+### Verify
+
+`tsc --noEmit`/`eslint src/app/v2 src/components/v2 src/components/portal/story
+src/components/portal/mirror src/components/portal/journey-map` sạch,
+`vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (route
+`/v2/hanh-trinh-cua-toi` build đúng, `/v2/nhat-ky-hoc-tap`/
+`/v2/khu-vuon-cua-ban`/2 admin mirror đã biến mất khỏi route list, không
+route nào khác biến mất theo). `next start` (Supabase chưa cấu hình,
+Portal tự công khai theo fallback có sẵn) — `curl` xác nhận `200` cho
+`/v2/hanh-trinh-cua-toi` + 14 route khác đã sửa sidebar (0 regression từ
+đợt xoá 12-file). Playwright thật: tab mặc định "Nhật ký học tập" render
+đúng HTML server-side (đủ card Lịch học/Chuỗi ngày học tập/Thời gian học
+trong tuần/Ghi chú nổi bật/Tài liệu); bấm qua lại tab 1↔2 (Nhật ký học
+tập/Khu vườn của bạn — 2 tab không cần Supabase client-side) đổi đúng nội
+dung, 0 `pageerror`, phần còn lại của trang (progress-card/"Lộ trình của
+tôi"/"Mục tiêu của tôi" quick-link) giữ nguyên không đổi qua mọi lần
+chuyển tab — đúng yêu cầu "các thành phần khác của trang giữ nguyên".
+
+**Phát hiện qua test (KHÔNG phải regression, xác nhận qua so sánh trực
+tiếp với `/portal/story` — cùng hành vi y hệt):** bấm tab "My Story" gây
+`/v2/error.tsx` hiện ra (màn hình khôi phục, đúng thiết kế — không phải
+crash trắng) — nguyên nhân là `useReflections()`/`useMemoryCapsules()`
+(hook client-side gọi Supabase browser client trực tiếp trong
+`MyStoryBook.tsx`, không có "enabled" guard nào) throw ngay khi
+`NEXT_PUBLIC_SUPABASE_URL`/`ANON_KEY` chưa cấu hình — đã verify: mở thẳng
+`/portal/story` (Portal 1.0, không đụng gì trong đợt này) trong CÙNG
+sandbox này cũng rơi vào đúng màn hình lỗi y hệt (`error.tsx` gốc 1.0,
+khác chữ 1 chút). Kết luận: đây là giới hạn SANDBUY có sẵn từ trước (đã
+ghi nhận nhiều lần trong tài liệu này — "sandbox không có Supabase thật")
+áp dụng ĐỒNG ĐỀU cho cả 1.0 lẫn tab nhúng mới ở 2.0, không phải lỗi do
+việc nhúng gây ra.
+
+**Chưa tự test được** (giới hạn sandbox không có Supabase thật cấu hình
+ở client-side đã nêu trên, và không có tài khoản đăng nhập thật) —
+Founder tự test trên Preview URL: (1) cả 5 tab hiển thị đúng nội dung
+thật (My Story/Mirror/Bản đồ hành trình cần tài khoản đăng nhập có dữ
+liệu `reflections`/`memory_capsules` thật để không rơi vào trạng thái
+trống); (2) bấm "Mở Mirror" (cuối tab My Story) → xác nhận CHUYỂN NGAY
+sang tab Mirror (không rời trang, không tải lại); bấm "Viết câu trả lời
+trong My Story" (cuối tab Mirror) → chuyển ngược lại tab My Story; (3) ở
+tab Bản đồ hành trình, xác nhận 5 "Chương cuộc đời" + 4 "Kết nối tới
+Portal" + Premium row đều dẫn đúng route `/v2/*` (không rơi về
+`/portal/*`); (4) 2 tab "Nhật ký học tập"/"Khu vườn của bạn" hoạt động
+đúng dữ liệu thật của tài khoản (đã tự verify HTML render đúng cấu trúc
+trong sandbox, nhưng số liệu thật cần tài khoản có hoạt động học tập).

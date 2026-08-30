@@ -24,9 +24,7 @@ export const PORTAL_HREF_MAP: Record<string, string> = {
   "Du an Co hoi.html": "/v2/du-an-co-hoi",
   "Premium.html": "/v2/premium",
   "Chuong trinh Affilate.html": "/v2/affiliate",
-  "Nhat ky hoc tap.html": "/v2/nhat-ky-hoc-tap",
   "Hanh trinh cua toi.html": "/v2/hanh-trinh-cua-toi",
-  "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
 };
 
 /** Đích điều hướng Admin 2.0 (tên file `.html`) → route thật trong `/v2/admin`. */
@@ -45,9 +43,7 @@ export const ADMIN_HREF_MAP: Record<string, string> = {
   "Admin Du an Co hoi.html": "/v2/admin/du-an-co-hoi",
   "Admin Premium.html": "/v2/admin/premium",
   "Admin Chuong trinh Affilate.html": "/v2/admin/affiliate",
-  "Admin Nhat ky hoc tap.html": "/v2/admin/nhat-ky-hoc-tap",
   "Admin Hanh trinh cua toi.html": "/v2/admin/hanh-trinh-cua-toi",
-  "Admin Khu vuon cua ban.html": "/v2/admin/khu-vuon-cua-ban",
   "Admin Nguoi dung.html": "/v2/admin/nguoi-dung",
   "Admin Thanh toan Giao dich.html": "/v2/admin/thanh-toan",
   "Admin Thong bao.html": "/v2/admin/thong-bao",

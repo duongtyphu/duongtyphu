@@ -95,11 +95,16 @@
   box-sizing: border-box;
 }
 
-/* `:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *))` — loại trừ
+/* `:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *))` — loại trừ
  * `/v2/su-menh-companion`, `/v2/tai-khoan` VÀ `/v2/checkout`: 3 trang trong
  * cây `/v2` render nội dung Tailwind THẬT (`SuMenhCompanionContent.tsx`/
  * `AccountContent.tsx`/`CheckoutForm.tsx`+`OrderReceipt.tsx`, dùng chung với
  * 1.0, xem docblock mỗi file) thay vì hand-CSS như 46+ trang `/v2/*` còn lại.
+ * `.htct-native` (thêm ở Giai đoạn 8) bọc 3 tab "My Story"/"Mirror"/"Bản đồ
+ * hành trình" bên trong `/v2/hanh-trinh-cua-toi` — render lại NGUYÊN
+ * `MyStoryBook.tsx`/`MirrorChamber.tsx`/`JourneyMapAtlas.tsx` dùng chung với
+ * `/portal/story`/`/portal/mirror`/`/portal/hanhtrinhcuatoi/ban-do`, cùng
+ * bản chất "embed Tailwind thật" như `.smc`/`.tkh`/`.chk`.
  * Reset unlayered này (đúng ý đồ: luôn thắng `@layer utilities` của
  * Tailwind, xem giải thích Cascade Layers trong `su-menh-companion.css`)
  * vô tình xoá mất mọi `mt-*`/`mb-*`/`text-*` màu chữ mà nội dung đó dùng —
@@ -121,23 +126,23 @@
  * tiên CSS = 0, nên cả 3 rule dưới đây trở lại đúng specificity gốc
  * trước khi có ngoại lệ `.smc`/`.tkh`/`.chk` — CSS 2-class của từng trang lại
  * thắng đúng như ý đồ ban đầu. */
-[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)),
-[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)) {
+[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
+[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)) {
   margin: 0;
 }
 
-[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)) {
+[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)) {
   color: var(--v2-violet);
   text-decoration: none;
 }
 
-[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)) {
+[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)) {
   color: var(--v2-violet-dark);
 }
 

@@ -187,3 +187,16 @@
    trung thực; `.link-row` thêm `cursor:pointer` vì giờ có `onClick` thật. */
 .htct .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
 .htct .link-row{cursor:pointer}
+
+/* Giai đoạn 8 — khối 5-tab mới (gộp Nhật ký học tập/Khu vườn của bạn/My
+   Story/Mirror/Bản đồ hành trình), KHÔNG có trong bản thiết kế mockup gốc
+   (mockup chỉ có 1 trang "Hành trình của tôi" đơn). Tự thiết kế theo đúng
+   ngôn ngữ 2.0 đã có (tái dùng token màu/spacing `--violet`/`--line`/
+   `--muted` của chính file này), cùng tinh thần `/v2/muc-tieu` (route mới
+   không có mockup HTML riêng). */
+.htct .tab-bar{display:flex;gap:6px;overflow-x:auto;padding:6px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:20px}
+.htct .tab-btn{flex:1;min-width:150px;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 12px;border:none;border-radius:10px;background:transparent;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.htct .tab-btn svg{width:15px;height:15px;flex-shrink:0}
+.htct .tab-btn:hover{background:var(--violet-light);color:var(--violet)}
+.htct .tab-btn.active{background:var(--violet);color:#fff}
+.htct .tab-panel{margin-bottom:24px;border:1px solid var(--line);border-radius:16px;overflow:hidden}

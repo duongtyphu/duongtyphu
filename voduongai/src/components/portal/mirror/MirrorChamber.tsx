@@ -84,6 +84,10 @@ export function MirrorChamber({
   premiumCount,
   seedChrome,
   seedQuestions,
+  backHref = "/portal/hanhtrinhcuatoi",
+  academyHref = "/portal/hocvienai",
+  storyHref = "/portal/story",
+  onOpenStory,
 }: {
   invitation: string | null;
   narrativeLines: MirrorNarrativeLine[];
@@ -96,6 +100,18 @@ export function MirrorChamber({
   premiumCount: number;
   seedChrome: MirrorChrome;
   seedQuestions: MirrorQuestionRow[];
+  /** Đích nút "← Hành trình của tôi" — `null` để ẩn hẳn (khi nhúng làm 1
+      tab bên trong `/v2/hanh-trinh-cua-toi`). */
+  backHref?: string | null;
+  /** Đích CTA trạng thái trống ("Bắt đầu ở Học viện AI"). */
+  academyHref?: string;
+  /** Đích link "Viết câu trả lời trong My Story" — bỏ qua khi có
+      `onOpenStory`. */
+  storyHref?: string;
+  /** Khi có — "Viết câu trả lời trong My Story" đổi từ `<Link>` điều
+      hướng route sang `<button>` gọi callback này (dùng khi nhúng làm
+      tab, chuyển sang tab My Story ngay tại chỗ thay vì rời trang). */
+  onOpenStory?: () => void;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MirrorChrome>("mirror-chrome", [seedChrome], {
@@ -139,7 +155,7 @@ export function MirrorChamber({
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
        * quyển nền phía sau mới full-bleed. */}
       <div className="mx-auto max-w-xl px-5 py-14 sm:px-8 md:py-20">
-        <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="dark" />
+        {backHref !== null && <PortalBackLink href={backHref} label="Hành trình của tôi" tone="dark" />}
 
         {/* Nhóm 3, Live-edit — panel LUÔN hiện khi editMode, không phụ
          * thuộc trạng thái động thật (isFullyQuiet chỉ đúng khi tài
@@ -202,7 +218,7 @@ export function MirrorChamber({
             )}
             <OriginLineWhisper context="mirror_of_growth" line={originLine} />
             <Link
-              href="/portal/hocvienai"
+              href={academyHref}
               className="mt-12 inline-flex items-center gap-1.5 text-sm font-medium text-violet-200/70 underline decoration-violet-200/25 underline-offset-4 transition hover:text-violet-100"
             >
               {chrome.emptyStateCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
@@ -288,12 +304,22 @@ export function MirrorChamber({
               <p className="mx-auto mt-6 max-w-sm text-lg italic leading-loose text-white/80">
                 {todaysMirrorQuestion(publishedQuestions)}
               </p>
-              <Link
-                href="/portal/story"
-                className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-violet-200/50 underline decoration-violet-200/20 underline-offset-4 transition hover:text-violet-200/80"
-              >
-                Viết câu trả lời trong My Story <ArrowRight className="h-3 w-3" />
-              </Link>
+              {onOpenStory ? (
+                <button
+                  type="button"
+                  onClick={onOpenStory}
+                  className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-violet-200/50 underline decoration-violet-200/20 underline-offset-4 transition hover:text-violet-200/80"
+                >
+                  Viết câu trả lời trong My Story <ArrowRight className="h-3 w-3" />
+                </button>
+              ) : (
+                <Link
+                  href={storyHref}
+                  className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-violet-200/50 underline decoration-violet-200/20 underline-offset-4 transition hover:text-violet-200/80"
+                >
+                  Viết câu trả lời trong My Story <ArrowRight className="h-3 w-3" />
+                </Link>
+              )}
             </section>
           </>
         )}

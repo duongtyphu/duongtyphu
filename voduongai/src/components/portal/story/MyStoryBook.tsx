@@ -210,6 +210,10 @@ export function MyStoryBook({
   premiumCount = 0,
   storageReady,
   seedChrome,
+  backHref = "/portal/hanhtrinhcuatoi",
+  workspaceHref = "/portal/workspace",
+  mirrorHref = "/portal/mirror",
+  onOpenMirror,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -219,6 +223,17 @@ export function MyStoryBook({
   premiumCount?: number;
   storageReady: boolean;
   seedChrome: StoryChrome;
+  /** Đích nút "← Hành trình của tôi" — `null` để ẩn hẳn (khi nhúng làm 1
+      tab bên trong `/v2/hanh-trinh-cua-toi`, nút quay lại là dư thừa). */
+  backHref?: string | null;
+  /** Đích nút "Bắt đầu viết tiếp" (mục "Chương tiếp theo"). */
+  workspaceHref?: string;
+  /** Đích link "Mở Mirror" cuối trang — bỏ qua khi có `onOpenMirror`. */
+  mirrorHref?: string;
+  /** Khi có — "Mở Mirror" đổi từ `<Link>` điều hướng route sang `<button>`
+      gọi callback này (dùng khi nhúng làm tab, chuyển sang tab Mirror
+      ngay tại chỗ thay vì rời trang). */
+  onOpenMirror?: () => void;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
@@ -299,7 +314,7 @@ export function MyStoryBook({
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
        * quyển nền phía sau mới full-bleed. */}
       <div className="mx-auto max-w-2xl px-5 py-10 sm:px-8 md:py-14">
-        <PortalBackLink href="/portal/hanhtrinhcuatoi" label="Hành trình của tôi" tone="light" />
+        {backHref !== null && <PortalBackLink href={backHref} label="Hành trình của tôi" tone="light" />}
 
         {editMode && (
           <div className="story-page-block mt-6 space-y-4 rounded-2xl border border-blue-200 bg-blue-50/60 p-4 text-left">
@@ -521,16 +536,26 @@ export function MyStoryBook({
             {chrome.nextChapterPrompt}
           </p>
           <Link
-            href="/portal/workspace"
+            href={workspaceHref}
             className="story-serif mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 transition hover:decoration-amber-900"
           >
             {chrome.nextChapterCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <p className="story-serif mt-6 text-xs text-stone-400">
             {chrome.mirrorPromptPrefix}{" "}
-            <Link href="/portal/mirror" className="underline decoration-stone-300 underline-offset-4 hover:text-stone-600">
-              {chrome.mirrorLinkLabel}
-            </Link>
+            {onOpenMirror ? (
+              <button
+                type="button"
+                onClick={onOpenMirror}
+                className="underline decoration-stone-300 underline-offset-4 hover:text-stone-600"
+              >
+                {chrome.mirrorLinkLabel}
+              </button>
+            ) : (
+              <Link href={mirrorHref} className="underline decoration-stone-300 underline-offset-4 hover:text-stone-600">
+                {chrome.mirrorLinkLabel}
+              </Link>
+            )}
           </p>
         </section>
       </div>
