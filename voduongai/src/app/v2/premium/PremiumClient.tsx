@@ -227,7 +227,8 @@ import "./premium.css";
 
 /** Nhóm Zalo riêng cho Premium Member — link thật Founder cung cấp trực
  * tiếp (khác kênh Zalo cộng đồng chung `community.ch_4` đọc từ
- * `getLiveCommunityChannels()`, dùng chung ở `/v2/cong-dong-ai`). */
+ * `getLiveCommunityChannels()` — Giai đoạn 7 xoá hẳn `/v2/cong-dong-ai`,
+ * nơi duy nhất từng dùng kênh đó ở Portal 2.0). */
 const PREMIUM_ZALO_GROUP_URL = "https://zalo.me/g/ijozriwaktv2pserw1q9";
 
 /**
@@ -594,9 +595,10 @@ function PremiumRoadmap({ journey }: { journey: JourneyOverview }) {
  *
  * Không còn phụ thuộc `getLiveCommunityChannels()` (bảng `community`,
  * FB/YouTube/TikTok/Zalo chung) — khối này giờ MÔ TẢ QUYỀN LỢI Premium,
- * không phải danh sách kênh mạng xã hội chung (khối đó vẫn còn thật ở
- * `/v2/cong-dong-ai`). Đã bỏ hẳn prop `channels`/`communityChannels` khỏi
- * `PremiumClient`/`page.tsx` (không còn consumer nào khác trong trang này).
+ * không phải danh sách kênh mạng xã hội chung. Đã bỏ hẳn prop `channels`/
+ * `communityChannels` khỏi `PremiumClient`/`page.tsx` (không còn consumer
+ * nào khác trong trang này). (Giai đoạn 7 xoá hẳn `/v2/cong-dong-ai` —
+ * `getLiveCommunityChannels()` không còn consumer nào trong `/v2/*`.)
  */
 const COMMUNITY_PERKS: { title: string; desc: string; icon: React.ReactNode }[] = [
   {

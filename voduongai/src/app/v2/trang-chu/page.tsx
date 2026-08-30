@@ -3,7 +3,6 @@ import { getResourceSuggestions } from "@/lib/portal/live-resource-suggestions";
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 import { getGreetingState } from "@/lib/v2/live-greeting";
 import { getLivePremiumPlans } from "@/lib/portal/live-premium-plans";
-import { getLiveCommunityChannels } from "@/lib/portal/live-community";
 import { getLiveTools } from "@/lib/portal/live-tools";
 import { getLiveEcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
 
@@ -23,19 +22,20 @@ import { TrangChuClient, type PortalStats, type OpportunityPreview } from "./Tra
  * GIAI ĐOẠN 1 (rework, "Companion sống") — 3 nguồn dữ liệu mới:
  * - `getGreetingState()` (mới, `lib/v2/live-greeting.ts`) — lời chào đổi
  *   theo lần đầu/mới quay lại/lâu không ghé, tái dùng `warmth-engine.ts`.
- * - `stats` — 4 số liệu THẬT cho section "Portal 2.0 trong một cái nhìn":
- *   `ecosystemCount` là hằng số cấu trúc (5 route `/v2/du-an-co-hoi/*` đã
- *   dựng thật — bảng `projects` generic không map 1:1 vào 5 route này nên
- *   không đếm qua query, xem `DuAnCoHoiClient.tsx`), 3 số còn lại đếm thật
- *   từ Supabase (`premium_plans`/`community`/`tools`, đều đã lọc
- *   Published/Active ở tầng `live-*.ts`).
+ * - `stats` — 3 số liệu THẬT cho section "Portal 2.0 trong một cái nhìn"
+ *   (Giai đoạn 7 bỏ số thứ 4 "Kênh cộng đồng đang hoạt động" khi xoá hẳn
+ *   `/v2/cong-dong-ai` — xem CLAUDE.md): `ecosystemCount` là hằng số cấu
+ *   trúc (5 route `/v2/du-an-co-hoi/*` đã dựng thật — bảng `projects`
+ *   generic không map 1:1 vào 5 route này nên không đếm qua query, xem
+ *   `DuAnCoHoiClient.tsx`), 2 số còn lại đếm thật từ Supabase
+ *   (`premium_plans`/`tools`, đều đã lọc Published ở tầng `live-*.ts`).
  * - `opportunities` — preview 2 hệ sinh thái (DigiU/SolarGroup, 2 hệ sinh
  *   thái có đủ `ecosystem_chrome` + dự án con thật) cho section "Cơ hội
  *   nổi bật", tái dùng đúng `getLiveEcosystemChrome()` đã dùng ở
  *   `/v2/du-an-co-hoi`.
  */
 export default async function TrangChuPortalPage() {
-  const [courses, progress, suggestions, premium, greeting, premiumPlans, communityChannels, tools, digiuChrome, solarGroupChrome] =
+  const [courses, progress, suggestions, premium, greeting, premiumPlans, tools, digiuChrome, solarGroupChrome] =
     await Promise.all([
       getAcademyFeaturedCourses(),
       getAcademyProgress(),
@@ -43,7 +43,6 @@ export default async function TrangChuPortalPage() {
       getPremiumStatus(),
       getGreetingState(),
       getLivePremiumPlans(),
-      getLiveCommunityChannels(),
       getLiveTools(),
       getLiveEcosystemChrome("eco_digiu"),
       getLiveEcosystemChrome("eco_solargroup"),
@@ -52,7 +51,6 @@ export default async function TrangChuPortalPage() {
   const stats: PortalStats = {
     ecosystemCount: 5,
     premiumPlanCount: premiumPlans.length,
-    communityChannelCount: communityChannels.length,
     toolCount: tools.length,
   };
 

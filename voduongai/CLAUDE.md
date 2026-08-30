@@ -8140,3 +8140,130 @@ trang này — không phải link chết (`href-map.ts` xác nhận map đúng
 13 cảnh báo → 11 (đúng 2 lỗi thật đã sửa biến mất, 11 còn lại xác nhận
 false-positive qua đọc CSS trực tiếp, không phải bỏ sót). 0 pageerror ở
 mọi lượt test.
+
+## Giai đoạn 7 — ĐẢO NGƯỢC quyết định: xoá hẳn "Cộng đồng AI" khỏi Portal 2.0
+
+Kế hoạch gốc (mục 7 trong bảng 14-hạng-mục đầu file, dòng "`/v2/cong-dong-ai`:
+field vị trí opt-in, Community Map, lịch Zoom") và đợt re-audit trước đó
+("5.3 — Cộng đồng AI") đều hướng tới XÂY THÊM cho trang này. Founder đảo
+ngược: **bỏ hẳn, xoá danh mục Cộng đồng AI ra khỏi Portal 2.0** — không
+xây Community Map/lịch Zoom nữa.
+
+**Đính chính 1 claim cũ đã sai (CLAUDE.md dòng ~7765, "Bug đã sửa —
+`/v2/su-menh-companion`"/rework Premium):** từng ghi "khối kênh mạng xã
+hội chung (FB/YouTube/TikTok/Zalo) vẫn còn thật ở `/v2/cong-dong-ai`,
+không đụng" — **SAI ngay tại thời điểm viết**, đã audit lại trước khi xoá
+(không tự suy đoán): `CongDongAiClient.tsx`/`page.tsx` chưa từng gọi
+`getLiveCommunityChannels()` — trang này 100% honest-empty tĩnh, KHÔNG có
+phụ thuộc dữ liệu Supabase nào. Consumer thật DUY NHẤT của
+`getLiveCommunityChannels()` trong `/v2/*` là 1 stat card khác hẳn ("Kênh
+cộng đồng đang hoạt động" ở `/v2/trang-chu`'s "Portal 2.0 trong một cái
+nhìn", trỏ sang `/v2/cong-dong-ai` dù bản thân trang đó không hiển thị
+đúng nội dung "kênh cộng đồng" gì cả — 1 lệch pha có sẵn từ trước, không
+phải do đợt xoá này gây ra). Đã xoá cả 2 khi thực hiện đợt này (xem dưới).
+
+**Audit trước khi xoá (không chỉ đọc grep) phát hiện quy mô LỚN hơn 1
+route đơn lẻ:** "Cộng đồng AI" là mục menu sidebar, bị HAND-COPY (chép
+tay) độc lập vào **12 file Client Component khác nhau** (đúng pattern đã
+ghi nhận nhiều lần: các trang Bước F dùng `PortalV2Shell` chung, nhưng 3
+trang "hand-rolled" (`trang-chu`/`du-an-co-hoi`/`hoc-vien-ai`) VÀ 4 trang
+chi tiết CKOS (`he-tri-thuc/[slug]`/`bo-suu-tap/[slug]`/`danh-muc/[slug]`/
+`bai-hoc/[slug]`) VÀ 5 trang chi tiết hệ sinh thái
+(`digiu`/`solargroup`/`ohana`/`cac-mo-hinh-affilate`/
+`affilate-san-giao-dich`) đều tự chép tay sidebar riêng, mỗi file có
+`HREF_MAP`/`go()` cục bộ). Cơ chế `go()` khi thiếu key trong map là
+**im lặng không làm gì** (`if (target) router.push(target)`) — xoá 1 khoá
+khỏi map mà quên xoá nút bấm tương ứng sẽ tạo ra nút bấm "chết vô hình"
+(không lỗi, không cảnh báo, chỉ không phản ứng khi bấm) — vì vậy MỌI file
+đều phải sửa ĐỒNG THỜI cả map lẫn nút, không tách rời.
+
+**Phát hiện kiến trúc phụ, ngoài phạm vi sửa (chỉ audit để biết an toàn,
+không đụng):** dự án có 1 hệ thống Admin 2.0 THỨ HAI song song với
+`/admin/*` (CMS thật đã xây xuyên suốt session này) — `src/components/v2/shell/*`
+(dùng `nav-config.ts` làm nguồn nav) — chỉ `AdminSidebar.tsx` (shell) là
+SỐNG THẬT (import bởi `src/app/v2/admin/layout.tsx`, bọc mọi trang
+`/v2/admin/*`); `PortalSidebar.tsx`/`PortalHero.tsx` (shell) là **dead
+code, 0 importer** (đã grep xác nhận). `AdminV2Shell.tsx` (khác hẳn, hệ
+"Bước F" — mirror 1:1 từng trang Portal cho Admin xem) cũng **dead code,
+0 importer ở bất kỳ đâu** — chỉ `PortalV2Shell.tsx` (Portal) là route
+thật duy nhất của cặp Portal/Admin V2Shell. Không xoá `AdminV2Shell.tsx`
+(vẫn còn tham chiếu "Admin Cong dong AI.html" đã mất khỏi `ADMIN_HREF_MAP`)
+— pre-existing dead code, ngoài phạm vi đợt này, không gây rủi ro chức
+năng thật vì không route nào render nó.
+
+**Đã xoá/sửa (theo lớp hậu quả, đúng thứ tự audit ban đầu):**
+
+1. **Route thật** — xoá hẳn `src/app/v2/cong-dong-ai/{page.tsx,
+   CongDongAiClient.tsx,cong-dong-ai.css}` + admin mirror
+   `src/app/v2/admin/cong-dong-ai/page.tsx` (xoá mirror TRƯỚC/CÙNG lúc vì
+   nó `import` thẳng `cong-dong-ai.css` của route thật — xoá css trước sẽ
+   vỡ build).
+2. **`href-map.ts`** — xoá `"Cong dong AI.html"` (PORTAL_HREF_MAP, dùng
+   bởi `PortalV2Shell.tsx` LIVE) và `"Admin Cong dong AI.html"`
+   (ADMIN_HREF_MAP, dùng bởi `AdminV2Shell.tsx` dead — vẫn xoá vì trỏ
+   route giờ không tồn tại, tránh dangling reference dù không ai đọc).
+3. **`PortalV2Shell.tsx`** — xoá nav-item "Cộng đồng AI" (sidebar LIVE,
+   hiện trên mọi trang dùng shell này).
+4. **`nav-config.ts`** — xoá CẢ 2 entry: `PORTAL_NAV` (chỉ có 1 consumer
+   thật — `/v2/admin/quan-ly-menu`, trang "chỉ đọc đúng cây menu THẬT",
+   phải xoá để không nói dối về menu thật) và `ADMIN_NAV` (LIVE, render
+   trong sidebar THẬT của mọi trang `/v2/admin/*` qua `AdminSidebar.tsx`
+   (shell)/`layout.tsx`). Xoá luôn import `Users` (lucide-react) không
+   còn dùng sau khi bỏ 2 entry.
+5. **9 file hand-copy đơn giản** (chỉ `HREF_MAP` + nút, không có
+   prefetch) — xoá bằng script Python (regex block-match, verify đúng 1
+   khớp/file trước khi ghi, cùng kỹ thuật "cơ học" đã dùng cho việc thêm
+   prefetch hàng loạt trước đây): `CkosDocumentClient.tsx`,
+   `CollectionDetailClient.tsx`, `CategoryDetailClient.tsx`,
+   `LessonDetailClient.tsx`, `SolarGroupClient.tsx`, `OhanaClient.tsx`,
+   `CacMoHinhAffilateClient.tsx`, `AffilateSanGiaoDichClient.tsx`,
+   `DigiuClient.tsx`.
+6. **2 file hand-copy có `prefetchNav()`** — cùng script, regex khớp
+   thêm 2 dòng `onMouseEnter`/`onFocus`: `DuAnCoHoiClient.tsx`,
+   `HocVienAiClient.tsx`.
+7. **`TrangChuClient.tsx`** — 2 chỗ khác nhau, KHÔNG chỉ 1: (a) nút
+   sidebar "Cộng đồng AI" (xoá như trên); (b) thẻ số liệu THẬT trong
+   "Portal 2.0 trong một cái nhìn" ("Kênh cộng đồng đang hoạt động",
+   `stats.communityChannelCount`, đúng consumer thật duy nhất của
+   `getLiveCommunityChannels()` trong toàn `/v2/*` — xem đính chính ở
+   trên) — xoá hẳn thẻ này (không có đích thay thế hợp lý), đổi
+   `PortalStats` từ 4 field xuống 3, `.portal-stats` CSS
+   `repeat(4,1fr)`→`repeat(3,1fr)` để 3 thẻ còn lại cân bằng.
+   `page.tsx` bỏ `getLiveCommunityChannels()` khỏi `Promise.all`.
+8. **`HanhTrinhCuaToiClient.tsx`** — "Liên kết nhanh" (4 đích) mất đích
+   thứ 4 "Cộng đồng VO DUONG AI" → còn 3 (Nhật ký học tập/Mục tiêu của
+   tôi/Khu vườn của bạn) — `.link-row:last-child{border-bottom:none}` đã
+   có sẵn, tự động xử lý đúng viền dưới của dòng cuối mới, không cần sửa
+   CSS.
+9. **`PremiumClient.tsx`** — 2 comment (không phải code sống) từng khẳng
+   định sai "kênh cộng đồng vẫn còn thật ở `/v2/cong-dong-ai`" — sửa lại
+   cho khớp trạng thái thật (route đã xoá). 1 comment lịch sử khác (dòng
+   ~142, mô tả 1 lần sửa TRƯỚC đó đã bị thay thế hoàn toàn bởi thiết kế
+   sau này) giữ nguyên — vẫn đúng về mặt lịch sử, không phải claim sai về
+   hiện tại.
+10. **KHÔNG đụng** (dead code/orphaned từ trước, ngoài phạm vi đợt này,
+    xác nhận zero rủi ro chức năng qua audit): `AdminV2Shell.tsx`,
+    `src/lib/v2/data/{catalog,home,dashboard,notifications}.ts` (0 hoặc
+    gần-0 importer, phần "Cộng đồng AI" trong các file mock-data này —
+    `catalog.ts`'s `POSTS`, `home.ts`'s `QUICK_LINKS`, `dashboard.ts`'s
+    `STATUSES`/`USAGE`, `notifications.ts`'s 1 dòng mock — không route
+    thật nào đọc).
+
+**Verify:** `tsc --noEmit` sạch (sau khi `rm -rf .next` để loại type cache
+cũ tham chiếu route đã xoá), `eslint src/app/v2 src/components/v2
+src/lib/v2` sạch, `vitest run` 495/495 pass, `rm -rf .next && npm run
+build` sạch — xác nhận `/v2/cong-dong-ai`/`/v2/admin/cong-dong-ai` biến
+mất khỏi route list, không route nào khác biến mất theo. Test qua route
+dev-preview tạm với anon key thật (render trực tiếp `TrangChuPortalPage`+
+`HanhTrinhCuaToiPage`, xoá route + rebuild sạch ngay sau khi xong): HTML
+0 lần xuất hiện "Cộng đồng AI", 0 "Kênh cộng đồng đang hoạt động", đúng 3
+`.portal-stat-card` (không phải 4), đúng 3 `.link-row` (không phải 4), 0
+lỗi log server.
+
+**Chưa tự test được:** click-through qua UI thật với tài khoản đăng nhập
+xác nhận không còn nút "chết" nào ở 12 trang đã sửa sidebar tay (giới hạn
+sandbox không có tài khoản đăng nhập thật đã nêu nhiều lần) — Founder tự
+xác nhận trên Preview URL: sidebar mọi trang `/v2/*` không còn mục "Cộng
+đồng AI", `/v2/trang-chu` chỉ còn 3 thẻ "Portal 2.0 trong một cái nhìn",
+`/v2/hanh-trinh-cua-toi` "Liên kết nhanh" chỉ còn 3 mục, `/v2/admin/quan-ly-menu`
+không còn liệt kê "Cộng đồng AI" trong cây menu.

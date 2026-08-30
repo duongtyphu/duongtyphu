@@ -34,14 +34,14 @@
  *  6. "Thành tựu của tôi" — bảng `badges`/`user_badges` (Phase 30) có thật
  *     nhưng **0 huy hiệu nào được định nghĩa trong hệ thống** (không chỉ 0
  *     người đạt) — hiện `.empty-hint` trung thực, không bịa 4 huy hiệu mẫu.
- *  7. "Liên kết nhanh" — 4 đích điều hướng THẬT: Nhật ký học tập
+ *  7. "Liên kết nhanh" — 3 đích điều hướng THẬT: Nhật ký học tập
  *     (`/v2/nhat-ky-hoc-tap`, đã build), Mục tiêu của tôi
  *     (`/v2/muc-tieu` — Bảng Mục tiêu 2.0, đổi từ `/portal/goals` theo yêu
  *     cầu Founder "không liên kết qua portal 1.0", trước đó từng đổi từ
  *     `/v2/chien-luoc-ca-nhan` sau khi trang đó bị xoá khỏi Portal), Khu
- *     vườn của bạn/Cộng đồng AI
- *     (`/v2/khu-vuon-cua-ban`/`/v2/cong-dong-ai` — đúng route đích theo
- *     `PORTAL_HREF_MAP`, sẽ có nội dung khi build tới lượt trong Bước F).
+ *     vườn của bạn (`/v2/khu-vuon-cua-ban`). (Giai đoạn 7 bỏ đích thứ 4
+ *     "Cộng đồng VO DUONG AI"/`/v2/cong-dong-ai` — route đã xoá hẳn khỏi
+ *     Portal 2.0, xem CLAUDE.md.)
  *  8. Khối `.promo` sidebar — bản thiết kế này dùng minh hoạ đồi núi +
  *     nút "Tiếp tục học" (khác khối "Nâng cấp Premium" chuẩn) — đã tổng
  *     quát hoá `PortalV2Shell` thêm `promoVisual`/`promoButtonLabel`/
@@ -439,19 +439,6 @@ export function HanhTrinhCuaToiClient({ premium, journey }: { premium: PremiumSt
                     </svg>
                   </div>
                   <span>Khu vườn của bạn</span>
-                  <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 6l6 6-6 6" />
-                  </svg>
-                </div>
-                <div className="link-row" onClick={() => router.push("/v2/cong-dong-ai")}>
-                  <div className="ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="8" cy="8" r="3" />
-                      <circle cx="17" cy="9" r="3" />
-                      <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
-                    </svg>
-                  </div>
-                  <span>Cộng đồng VO DUONG AI</span>
                   <svg className="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M9 6l6 6-6 6" />
                   </svg>
