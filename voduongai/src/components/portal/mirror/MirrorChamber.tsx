@@ -153,6 +153,20 @@ export function MirrorChamber({
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="mirror-chamber-bg" aria-hidden />
       <div className="mirror-glass-veil" aria-hidden />
+      <div
+        className="mirror-ripple"
+        style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130 }}
+        aria-hidden
+      />
+      <div
+        className="mirror-ripple"
+        style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130, animationDelay: "4.5s" }}
+        aria-hidden
+      />
+      <div className="mirror-particle" style={{ width: 2, height: 2, left: "22%", top: "30%", animationDelay: ".5s" }} aria-hidden />
+      <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "70%", top: "22%", animationDelay: "3s" }} aria-hidden />
+      <div className="mirror-particle" style={{ width: 2, height: 2, left: "34%", top: "64%", animationDelay: "1.8s" }} aria-hidden />
+      <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "78%", top: "58%", animationDelay: "5s" }} aria-hidden />
       <div className="mirror-reflection-line" aria-hidden />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">

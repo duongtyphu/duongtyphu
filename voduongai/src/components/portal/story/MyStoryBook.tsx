@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { BookOpen, ArrowRight, Feather, Mail } from "lucide-react";
+import { Caveat } from "next/font/google";
+import { BookOpen, ArrowRight, Feather, Mail, Plus, X } from "lucide-react";
 import { getCurrentChapterFromClient, type JourneyChapter } from "@/lib/portal/foundation/journey-chapter";
 import { getJourneyProgress } from "@/lib/portal/foundation/growth-view";
 import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
@@ -145,7 +146,37 @@ function formatDate(iso: string | Date): string {
   return d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+const caveat = Caveat({ subsets: ["latin"], weight: ["600", "700"], display: "swap" });
+
 type ImportantMoment = { id: string; label: string; title: string; date: Date };
+
+/** Note ghim trên bảng — variant "corkboard" (xem `buildCorkNotes` bên
+ * dưới). 5 loại đúng bằng 5 khối nội dung thật đã có ở variant "book",
+ * KHÔNG field nào bịa thêm — chỉ đổi cách trình bày. */
+type CorkNoteType = "moment" | "turning" | "capsule" | "work" | "letter";
+
+type CorkNote = {
+  id: string;
+  type: CorkNoteType;
+  typeLabel: string;
+  title: string;
+  meta?: string;
+  removable?: { capsuleId: string };
+};
+
+const CORK_TYPE_STYLE: Record<CorkNoteType, { bg: string; pin: string; text: string; label: string }> = {
+  moment: { bg: "#F5D488", pin: "radial-gradient(circle at 32% 28%, #FF6B6B, #C81E1E 70%)", text: "#4A3208", label: "rgba(120,72,10,.8)" },
+  turning: { bg: "#BFD9EE", pin: "radial-gradient(circle at 32% 28%, #93C5FD, #2563EB 70%)", text: "#1E3A8A", label: "rgba(30,58,138,.75)" },
+  capsule: { bg: "#F6C9D9", pin: "radial-gradient(circle at 32% 28%, #F9A8D4, #DB2777 70%)", text: "#831843", label: "rgba(157,23,77,.75)" },
+  work: { bg: "#CFE8CE", pin: "radial-gradient(circle at 32% 28%, #86EFAC, #15803D 70%)", text: "#14532D", label: "rgba(21,87,36,.75)" },
+  letter: { bg: "#F5D488", pin: "radial-gradient(circle at 32% 28%, #FCD34D, #B45309 70%)", text: "#4A3208", label: "rgba(120,72,10,.8)" },
+};
+
+/** Xoay lệch giả-ngẫu-nhiên NHƯNG tất định theo index — tránh hydration
+ * mismatch (không dùng Math.random trong render). */
+function corkRotation(i: number): number {
+  return ((i * 37) % 9) - 4;
+}
 
 /** Gỡ một ký ức tự lưu khỏi cuốn sách — xác nhận nhẹ, ngay tại chỗ,
  * không modal tối phủ trang giấy ấm. */
@@ -215,6 +246,7 @@ export function MyStoryBook({
   mirrorHref = "/portal/mirror",
   onOpenMirror,
   mirrorInviteText,
+  variant = "book",
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -240,6 +272,11 @@ export function MyStoryBook({
       khác" không còn đúng ngữ cảnh). Không đụng nội dung CMS dùng chung
       với `/portal/story` 1.0. */
   mirrorInviteText?: { prefix: string; label: string };
+  /** "book" (mặc định) = sách lật trang nguyên bản, dùng ở `/portal/story`
+      1.0. "corkboard" = bảng ghim note, chỉ dùng ở tab nhúng
+      `/v2/hanh-trinh-cua-toi` (Founder duyệt qua canvas mockup) — cùng
+      DATA thật, chỉ đổi cách trình bày. */
+  variant?: "book" | "corkboard";
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
@@ -251,6 +288,7 @@ export function MyStoryBook({
   const [firstOutput, setFirstOutput] = useState<{ date: string } | null | undefined>(undefined);
   const [firstCompletedJourney, setFirstCompletedJourney] = useState<{ date: string } | null | undefined>(undefined);
   const [createdWorks, setCreatedWorks] = useState<{ title: string; outputCount: number }[]>([]);
+  const [corkWriteOpen, setCorkWriteOpen] = useState(false);
 
   useEffect(() => {
     const events = readGrowthEvents();
@@ -294,6 +332,44 @@ export function MyStoryBook({
     return list.sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [memberSince, firstOutput, firstCompletedJourney, firstPremium]);
 
+  /** Cùng 5 khối dữ liệu thật ở trên, gộp thành 1 danh sách "note" cho
+      variant corkboard — KHÔNG field nào bịa thêm, chỉ đổi hình thức
+      trình bày (mỗi đơn vị dữ liệu = 1 note ghim). */
+  const corkNotes: CorkNote[] = [
+    ...(monthlyStats.hasAnyHistory
+      ? [{ id: "letter", type: "letter" as const, typeLabel: `${chrome.monthlyLetterLabel} ${monthlyStats.monthLabel}`, title: buildLetter(monthlyStats) }]
+      : []),
+    ...importantMoments.map((m) => ({
+      id: m.id,
+      type: "moment" as const,
+      typeLabel: chrome.momentsSectionLabel,
+      title: m.title,
+      meta: formatDate(m.date),
+    })),
+    ...milestones.map((m) => ({
+      id: m.id,
+      type: "turning" as const,
+      typeLabel: chrome.turningPointsSectionLabel,
+      title: m.title,
+      meta: formatDate(m.occurredAt),
+    })),
+    ...capsules.map((c) => ({
+      id: c.id,
+      type: "capsule" as const,
+      typeLabel: KIND_LABEL[c.kind],
+      title: c.title,
+      meta: formatDate(c.occurredAt),
+      removable: { capsuleId: c.id },
+    })),
+    ...createdWorks.map((w, i) => ({
+      id: `${w.title}-${i}`,
+      type: "work" as const,
+      typeLabel: chrome.createdSectionLabel,
+      title: w.title,
+      meta: `${w.outputCount} kết quả thật`,
+    })),
+  ];
+
   const isBookLoading = chapter === undefined || firstOutput === undefined;
   const bookIsEmpty =
     !isBookLoading &&
@@ -309,7 +385,111 @@ export function MyStoryBook({
   }
 
   if (isBookLoading) {
-    return <div className="story-book-bg min-h-[60vh] rounded-3xl" aria-hidden />;
+    return <div className={`${variant === "corkboard" ? "story-corkboard-bg" : "story-book-bg"} min-h-[60vh] rounded-3xl`} aria-hidden />;
+  }
+
+  if (variant === "corkboard") {
+    return (
+      <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+        <div className="story-corkboard-bg" aria-hidden />
+
+        <div className="relative z-10 px-5 py-8 md:px-9 md:py-10">
+          {backHref !== null && <PortalBackLink href={backHref} label="Hành trình của tôi" tone="light" />}
+
+          <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
+            <div className="text-[#3B2A12]">
+              {chapter && (
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#78350F]/75">
+                  Chương {chapter.index} — {chapter.name}
+                </p>
+              )}
+              <h1 className="mt-2 text-2xl font-extrabold tracking-tight sm:text-[28px]">{chrome.title}</h1>
+              <p className="mt-2 max-w-lg text-sm leading-relaxed text-[#3B2A12]/70">{chrome.subtitle}</p>
+              {companionLine && (
+                <p className={`${caveat.className} mt-3 max-w-md text-lg leading-snug text-[#4A3208]/80`}>&ldquo;{companionLine}&rdquo;</p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setCorkWriteOpen((v) => !v)}
+              className="flex items-center gap-2 rounded-full bg-[#3B2A12] px-5 py-3 text-sm font-bold text-[#FBF3E1] shadow-[0_10px_22px_-8px_rgba(59,42,18,0.5)] transition hover:brightness-110"
+            >
+              {corkWriteOpen ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+              Ghim note mới
+            </button>
+          </div>
+
+          {corkWriteOpen && (
+            <div className="mt-6 rounded-2xl bg-[#FDF9EF] p-6 shadow-[0_20px_40px_-12px_rgba(0,0,0,.35)] sm:p-8">
+              <WriteNook reflections={reflections} chrome={chrome} variant="corkboard" onSaved={() => setCorkWriteOpen(false)} />
+              {!storageReady && <p className="mt-4 text-xs italic text-[#3B2A12]/50">{chrome.storageNotReadyLine}</p>}
+            </div>
+          )}
+
+          {bookIsEmpty ? (
+            <div className="mt-16 text-center">
+              <p className="mx-auto max-w-sm text-base italic leading-relaxed text-[#3B2A12]/70">{chrome.emptyStateLine1}</p>
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-[#3B2A12]/50">{chrome.emptyStateLine2}</p>
+            </div>
+          ) : (
+            <div className="mt-8 flex flex-wrap gap-6">
+              {corkNotes.map((note, i) => {
+                const style = CORK_TYPE_STYLE[note.type];
+                const rotate = corkRotation(i);
+                const content = (
+                  <div
+                    className="story-cork-note relative w-[220px] shrink-0 p-5 pt-6"
+                    style={{ background: style.bg, transform: `rotate(${rotate}deg)` }}
+                  >
+                    <span className="story-cork-pin" style={{ background: style.pin }} aria-hidden />
+                    <div className="text-[10px] font-bold uppercase tracking-[0.06em]" style={{ color: style.label }}>
+                      {note.typeLabel}
+                    </div>
+                    <div className={`${caveat.className} mt-2 text-xl leading-tight`} style={{ color: style.text }}>
+                      {note.title}
+                    </div>
+                    {note.meta && (
+                      <div className="mt-2.5 text-[11px]" style={{ color: style.label }}>
+                        {note.meta}
+                      </div>
+                    )}
+                  </div>
+                );
+                return note.removable ? (
+                  <RemovableEntry key={note.id} capsuleId={note.removable.capsuleId} onRemoved={() => handleRemoved(note.removable!.capsuleId)} chrome={chrome}>
+                    {content}
+                  </RemovableEntry>
+                ) : (
+                  <div key={note.id}>{content}</div>
+                );
+              })}
+            </div>
+          )}
+
+          <section className="mt-16 text-center text-[#3B2A12]">
+            <p className="text-base italic leading-relaxed text-[#3B2A12]/75">{chrome.nextChapterPrompt}</p>
+            <Link
+              href={workspaceHref}
+              className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#78350F] underline decoration-[#78350F]/30 underline-offset-4 transition hover:decoration-[#78350F]"
+            >
+              {chrome.nextChapterCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+            <p className="mt-6 text-xs text-[#3B2A12]/55">
+              {mirrorInviteText?.prefix ?? chrome.mirrorPromptPrefix}{" "}
+              {onOpenMirror ? (
+                <button type="button" onClick={onOpenMirror} className="underline decoration-[#3B2A12]/30 underline-offset-4 hover:text-[#3B2A12]">
+                  {mirrorInviteText?.label ?? chrome.mirrorLinkLabel}
+                </button>
+              ) : (
+                <Link href={mirrorHref} className="underline decoration-[#3B2A12]/30 underline-offset-4 hover:text-[#3B2A12]">
+                  {chrome.mirrorLinkLabel}
+                </Link>
+              )}
+            </p>
+          </section>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -575,7 +755,22 @@ export function MyStoryBook({
  * cuốn sách, không viết hộ". Hai hook tự quản lý vòng đời dữ liệu riêng
  * (đọc/ghi Supabase trực tiếp) — mục đã lưu chỉ hiện lại đầy đủ trong các
  * chương phía trên sau khi tải lại trang, giống các cửa Journey khác. */
-function WriteNook({ reflections, chrome }: { reflections: Reflection[]; chrome: StoryChrome }) {
+function WriteNook({
+  reflections,
+  chrome,
+  variant = "book",
+  onSaved,
+}: {
+  reflections: Reflection[];
+  chrome: StoryChrome;
+  /** "corkboard" = form hiện đại + note xem trước trực tiếp (Founder yêu
+      cầu thiết kế UI/UX mới cho riêng khối này). Cùng 2 hook/2 hành động
+      lưu thật với "book" — chỉ khác hình thức. */
+  variant?: "book" | "corkboard";
+  /** corkboard only — gọi sau khi lưu thành công 1 trong 2 loại, để panel
+      viết tự đóng lại (note vừa ghim hiện ngay trong danh sách phía trên). */
+  onSaved?: () => void;
+}) {
   const { question, answeredToday, submitAnswer, signedIn, ready, tableReady } = useReflections();
   const { addCapsule, ready: capsuleReady, tableReady: capsuleTableReady } = useMemoryCapsules();
   const [draft, setDraft] = useState("");
@@ -583,12 +778,76 @@ function WriteNook({ reflections, chrome }: { reflections: Reflection[]; chrome:
   const [memoryTitle, setMemoryTitle] = useState("");
   const [savedMemory, setSavedMemory] = useState(false);
 
+  const notReadyClass = variant === "corkboard" ? "mt-5 text-sm italic text-[#3B2A12]/50" : "story-serif mt-5 text-sm italic text-stone-400";
+
   if (!ready || !signedIn) return null;
   if (!tableReady || !capsuleReady || !capsuleTableReady) {
+    return <p className={notReadyClass}>{chrome.writeNookNotReadyLine}</p>;
+  }
+
+  if (variant === "corkboard") {
     return (
-      <p className="story-serif mt-5 text-sm italic text-stone-400">
-        {chrome.writeNookNotReadyLine}
-      </p>
+      <div className="space-y-6">
+        {answeredToday || savedReflection ? (
+          <p className="text-sm italic leading-relaxed text-[#3B2A12]/60">{chrome.thankYouLine}</p>
+        ) : (
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+            <div className="flex-1">
+              <p className="text-sm italic text-[#3B2A12]/60">{question}</p>
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder={chrome.reflectionPlaceholder}
+                rows={5}
+                className="mt-2 w-full resize-none rounded-xl border border-[#3B2A12]/15 bg-white p-4 text-sm leading-relaxed text-[#3B2A12] placeholder:text-[#3B2A12]/35 focus:outline-none focus:ring-1 focus:ring-[#78350F]/30"
+              />
+              <button
+                type="button"
+                disabled={!draft.trim()}
+                onClick={async () => {
+                  await submitAnswer(draft);
+                  setSavedReflection(true);
+                  onSaved?.();
+                }}
+                className="mt-3 rounded-full bg-[#3B2A12] px-5 py-2.5 text-sm font-bold text-[#FBF3E1] shadow-[0_10px_20px_-8px_rgba(59,42,18,0.5)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {chrome.saveReflectionCtaLabel}
+              </button>
+            </div>
+            {draft.trim() && (
+              <div className="story-cork-note w-[150px] shrink-0 p-4 pt-5" style={{ background: "#F5D488", transform: "rotate(-2deg)" }}>
+                <span className="story-cork-pin" style={{ background: CORK_TYPE_STYLE.moment.pin }} aria-hidden />
+                <div className={`${caveat.className} text-[17px] leading-tight text-[#4A3208]`}>{draft}</div>
+              </div>
+            )}
+          </div>
+        )}
+
+        <div className="border-t border-[#3B2A12]/10 pt-5">
+          <p className="text-sm italic text-[#3B2A12]/60">{chrome.momentPrompt}</p>
+          <input
+            value={memoryTitle}
+            onChange={(e) => setMemoryTitle(e.target.value)}
+            placeholder={chrome.momentPlaceholder}
+            className="mt-2 w-full rounded-xl border border-[#3B2A12]/15 bg-white p-3 text-sm text-[#3B2A12] placeholder:text-[#3B2A12]/35 focus:outline-none focus:ring-1 focus:ring-[#78350F]/30"
+          />
+          <button
+            type="button"
+            disabled={!memoryTitle.trim()}
+            onClick={async () => {
+              await addCapsule({ kind: "milestone", title: memoryTitle });
+              setMemoryTitle("");
+              setSavedMemory(true);
+              onSaved?.();
+              setTimeout(() => setSavedMemory(false), 3000);
+            }}
+            className="mt-3 rounded-full border border-[#3B2A12]/25 px-5 py-2.5 text-sm font-bold text-[#3B2A12] transition hover:bg-[#3B2A12]/5 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {savedMemory ? chrome.savedMomentLabel : chrome.saveMomentCtaLabel}
+          </button>
+        </div>
+        {reflections.length === 0 && <p className="text-xs italic text-[#3B2A12]/45">{chrome.noReflectionsLine}</p>}
+      </div>
     );
   }
 

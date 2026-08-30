@@ -57,6 +57,11 @@ const CHAPTER_DESTINATIONS = [
   { href: "/portal/congdongai", label: "Cộng đồng" },
 ] as const;
 
+/** Lệch dọc (px) từng Chương trên tuyến đường — khớp đúng 5 điểm neo của
+ * `path d=` bên dưới (viewBox 500x70, gốc y=35) để marker luôn nằm đúng
+ * trên đường vẽ dù container co giãn theo % chiều rộng thật. */
+const CHAPTER_WAVE_OFFSET = [0, -20, 14, -20, 0] as const;
+
 const PORTAL_CONNECTIONS = [
   { module: "ckos" as const, href: "/portal/hetrithucai", label: "Hệ tri thức AI" },
   { module: "academy" as const, href: "/portal/hocvienai", label: "Học viện AI" },
@@ -249,28 +254,32 @@ export function JourneyMapAtlas({
               <p className="text-center text-[11px] font-bold uppercase tracking-[0.25em] text-amber-800/50">
                 {chrome.chaptersSectionLabel}
               </p>
-              <div className="relative mt-8">
+              <div className="relative mt-6 h-[130px] sm:h-[110px]">
                 <svg
                   aria-hidden
-                  className="pointer-events-none absolute left-0 right-0 top-[13px] h-[2px] w-full"
+                  className="pointer-events-none absolute left-0 right-0 top-0 h-[70px] w-full"
+                  viewBox="0 0 500 70"
                   preserveAspectRatio="none"
                 >
-                  <line
-                    x1="0"
-                    y1="1"
-                    x2="100%"
-                    y2="1"
+                  <path
+                    d="M 50 35 C 90 35, 110 15, 150 15 C 190 15, 210 49, 250 49 C 290 49, 310 15, 350 15 C 390 15, 410 35, 450 35"
                     className="map-route-path"
                     stroke="rgba(146,106,48,0.4)"
                     strokeWidth="2"
+                    fill="none"
                   />
                 </svg>
-                <ol className="relative grid grid-cols-5 gap-1">
+                <ol className="relative grid h-[70px] grid-cols-5 gap-1">
                   {JOURNEY_CHAPTER_NAMES.map((name, i) => {
                     const idx = i + 1;
                     const state = chapterState(idx);
+                    const wave = CHAPTER_WAVE_OFFSET[i] ?? 0;
                     return (
-                      <li key={name} className="flex flex-col items-center text-center">
+                      <li
+                        key={name}
+                        className="relative flex flex-col items-center text-center"
+                        style={{ transform: `translateY(${wave}px)` }}
+                      >
                         <span
                           title={`Chương ${idx} — ${name}`}
                           aria-label={`Chương ${idx}: ${name} — ${
@@ -278,17 +287,23 @@ export function JourneyMapAtlas({
                           }`}
                           className={`flex h-7 w-7 items-center justify-center rounded-full border-2 text-[10px] font-bold ${
                             state === "current"
-                              ? "border-amber-600 bg-amber-500 text-white shadow-[0_0_0_4px_rgba(217,158,58,0.25)]"
+                              ? "map-chapter-pulse border-amber-600 bg-amber-500 text-white"
                               : state === "walked"
                                 ? "border-amber-700/70 bg-amber-700/70 text-white"
-                                : "border-amber-800/25 bg-[#EDE0C4] text-amber-800/30"
+                                : "border-amber-800/25 bg-[#EDE0C4] text-amber-800/30 opacity-70 blur-[0.3px]"
                           }`}
                         >
                           {idx}
                         </span>
+                        {state === "walked" && (
+                          <svg aria-hidden width="14" height="8" viewBox="0 0 14 8" className="mt-1 opacity-40">
+                            <ellipse cx="3" cy="2.5" rx="2" ry="2.5" fill="#78350F" />
+                            <ellipse cx="11" cy="5.5" rx="2" ry="2.5" fill="#78350F" />
+                          </svg>
+                        )}
                         <span
-                          className={`mt-2 text-[10px] leading-tight ${
-                            state === "not-yet" ? "text-amber-950/30" : "text-amber-950/70"
+                          className={`mt-1.5 text-[10px] leading-tight ${
+                            state === "not-yet" ? "text-amber-950/25" : "text-amber-950/70"
                           }`}
                         >
                           {name}

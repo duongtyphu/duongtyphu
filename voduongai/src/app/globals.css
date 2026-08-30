@@ -1855,6 +1855,59 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ------------------------------------------------------------
+ * MY STORY — variant "corkboard" (Founder duyệt qua canvas mockup):
+ * mỗi khoảnh khắc/bước ngoặt/ký ức/tác phẩm là 1 note ghim lên bảng gỗ,
+ * thay cho "sách lật trang" mặc định. Cùng tông giấy ấm với
+ * `.story-book-bg`, chỉ đổi CHẤT LIỆU (bảng gỗ + note giấy) chứ không đổi
+ * tông màu tổng thể của cửa My Story.
+ * ------------------------------------------------------------ */
+.story-corkboard-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1100px circle at 12% -8%, rgba(180, 130, 60, 0.1), transparent 60%),
+    radial-gradient(900px circle at 92% 108%, rgba(120, 80, 30, 0.1), transparent 60%),
+    linear-gradient(180deg, #c99a5b 0%, #b4823f 100%);
+}
+
+.story-corkboard-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(90, 60, 20, 0.14) 0, transparent 2px),
+    radial-gradient(circle at 60% 70%, rgba(90, 60, 20, 0.12) 0, transparent 2px),
+    radial-gradient(circle at 80% 20%, rgba(90, 60, 20, 0.13) 0, transparent 2px),
+    radial-gradient(circle at 35% 85%, rgba(90, 60, 20, 0.1) 0, transparent 2px),
+    radial-gradient(circle at 45% 45%, rgba(90, 60, 20, 0.11) 0, transparent 2px);
+  background-size: 140px 140px;
+}
+
+.story-cork-note {
+  border-radius: 4px;
+  box-shadow: 0 10px 22px -8px rgba(59, 42, 18, 0.35), 0 2px 6px rgba(59, 42, 18, 0.18);
+  transition: transform 0.2s ease;
+}
+
+.story-cork-note:hover {
+  transform: translateY(-3px) rotate(0deg) !important;
+}
+
+.story-cork-pin {
+  position: absolute;
+  left: 50%;
+  top: -9px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
+}
+
 /* ============================================================
  * MIRROR — Reflection Chamber (Journey Platform, Phase P4)
  * Kính khói, xanh lạnh, bạc, tím nhạt — đối lập có chủ đích với hơi ấm
@@ -1903,10 +1956,44 @@ body {
   50% { opacity: 0.7; transform: translateX(-50%) scaleY(1); }
 }
 
+/* Gợn phản chiếu trung tâm — cực chậm, viền mảnh, không glow rực (đúng
+ * "một nguồn sáng duy nhất" của mục 18.5). */
+.mirror-ripple {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid rgba(196, 181, 253, 0.16);
+  pointer-events: none;
+  animation: mirror-ripple 9s ease-in-out infinite;
+}
+
+@keyframes mirror-ripple {
+  0% { transform: scale(0.9); opacity: 0.14; }
+  100% { transform: scale(1.25); opacity: 0; }
+}
+
+/* Hạt sáng trôi cực nhẹ — mật độ thấp, không phải "hạt bay" kiểu Garden. */
+.mirror-particle {
+  position: absolute;
+  border-radius: 9999px;
+  background: rgba(226, 232, 255, 0.5);
+  pointer-events: none;
+  animation: mirror-drift 10s ease-in-out infinite;
+}
+
+@keyframes mirror-drift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mirror-reflection-line {
     animation: none;
     opacity: 0.5;
+  }
+  .mirror-ripple,
+  .mirror-particle {
+    animation: none;
+    opacity: 0;
   }
 }
 
@@ -2033,9 +2120,21 @@ body {
   to { stroke-dashoffset: -140; }
 }
 
+/* Chương "hiện tại" — glow thở rất nhẹ, đúng nhịp "khám phá chậm rãi"
+ * của cửa này (mục 18.9), không rung/nảy. */
+.map-chapter-pulse {
+  animation: map-chapter-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes map-chapter-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 158, 58, 0.35); }
+  50% { box-shadow: 0 0 0 10px rgba(217, 158, 58, 0); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .map-compass,
-  .map-route-path {
+  .map-route-path,
+  .map-chapter-pulse {
     animation: none;
   }
 }
