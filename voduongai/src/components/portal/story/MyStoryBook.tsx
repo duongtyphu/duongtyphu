@@ -214,6 +214,7 @@ export function MyStoryBook({
   workspaceHref = "/portal/workspace",
   mirrorHref = "/portal/mirror",
   onOpenMirror,
+  mirrorInviteText,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -234,6 +235,11 @@ export function MyStoryBook({
       gọi callback này (dùng khi nhúng làm tab, chuyển sang tab Mirror
       ngay tại chỗ thay vì rời trang). */
   onOpenMirror?: () => void;
+  /** Ghi đè `{chrome.mirrorPromptPrefix} {chrome.mirrorLinkLabel}` — dùng
+      khi nhúng làm tab (chuyển tab tại chỗ, câu mời "sẽ đưa bạn sang nơi
+      khác" không còn đúng ngữ cảnh). Không đụng nội dung CMS dùng chung
+      với `/portal/story` 1.0. */
+  mirrorInviteText?: { prefix: string; label: string };
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
@@ -542,14 +548,14 @@ export function MyStoryBook({
             {chrome.nextChapterCtaLabel} <ArrowRight className="h-3.5 w-3.5" />
           </Link>
           <p className="story-serif mt-6 text-xs text-stone-400">
-            {chrome.mirrorPromptPrefix}{" "}
+            {mirrorInviteText?.prefix ?? chrome.mirrorPromptPrefix}{" "}
             {onOpenMirror ? (
               <button
                 type="button"
                 onClick={onOpenMirror}
                 className="underline decoration-stone-300 underline-offset-4 hover:text-stone-600"
               >
-                {chrome.mirrorLinkLabel}
+                {mirrorInviteText?.label ?? chrome.mirrorLinkLabel}
               </button>
             ) : (
               <Link href={mirrorHref} className="underline decoration-stone-300 underline-offset-4 hover:text-stone-600">

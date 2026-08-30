@@ -88,6 +88,7 @@ export function MirrorChamber({
   academyHref = "/portal/hocvienai",
   storyHref = "/portal/story",
   onOpenStory,
+  storyInviteLabel = "Viết câu trả lời trong My Story",
 }: {
   invitation: string | null;
   narrativeLines: MirrorNarrativeLine[];
@@ -112,6 +113,9 @@ export function MirrorChamber({
       hướng route sang `<button>` gọi callback này (dùng khi nhúng làm
       tab, chuyển sang tab My Story ngay tại chỗ thay vì rời trang). */
   onOpenStory?: () => void;
+  /** Nội dung link cuối trang — mặc định giữ nguyên câu 1.0. Nhúng làm
+      tab đổi câu mời (chuyển tab tại chỗ, không phải rời trang). */
+  storyInviteLabel?: string;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MirrorChrome>("mirror-chrome", [seedChrome], {
@@ -310,7 +314,7 @@ export function MirrorChamber({
                   onClick={onOpenStory}
                   className="mt-8 inline-flex items-center gap-1.5 text-xs font-medium text-violet-200/50 underline decoration-violet-200/20 underline-offset-4 transition hover:text-violet-200/80"
                 >
-                  Viết câu trả lời trong My Story <ArrowRight className="h-3 w-3" />
+                  {storyInviteLabel} <ArrowRight className="h-3 w-3" />
                 </button>
               ) : (
                 <Link
