@@ -74,7 +74,7 @@ const IGNORED_DIRS = new Set(["node_modules", ".next", "__tests__"]);
 const SOURCE_FILE = /\.(tsx?|jsx?)$/;
 const HREF_RE = /\b(?:href|to)\s*=\s*"(\/[^"?#\s]*)/g;
 const IMPERATIVE_RE = /\b(?:router\.push|router\.replace|redirect)\(\s*"(\/[^"?#\s]*)/g;
-const NON_PAGE_PREFIXES = ["/api/", "/_next/", "/favicon", "/images/", "/assets/", "/icon", "/opengraph-image", "/robots.txt", "/sitemap.xml"];
+const NON_PAGE_PREFIXES = ["/api/", "/_next/", "/favicon", "/images/", "/assets/", "/brand/", "/icon", "/opengraph-image", "/robots.txt", "/sitemap.xml"];
 // VDAI SOLO/SCALE course pages (see CLAUDE.md's Internal-linking convention) —
 // real pages, but not part of this Next.js app's own route tree, so they
 // can't be verified by a filesystem scan the way every other link here can.

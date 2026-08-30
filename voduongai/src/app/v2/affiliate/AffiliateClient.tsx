@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
-import type { AffiliateOverview, AffiliateLeaderboardEntry } from "@/lib/portal/live-affiliate";
+import type { AffiliateOverview, AffiliateLeaderboardEntry, AffiliateTierRule } from "@/lib/portal/live-affiliate";
 
 import { RequestPayoutButtonV2 } from "./RequestPayoutButtonV2";
 import "./affiliate.css";
@@ -25,19 +25,41 @@ import "./affiliate.css";
  *    URL share chuẩn công khai thật; Zalo/TikTok không có API share-URL
  *    công khai đáng tin cậy → cả 4 nút cùng hành vi copy-to-clipboard thật
  *    (không giả vờ mở dialog chia sẻ không chắc hoạt động).
- * 3. "Cấp hoa hồng của bạn" (bảng 3 cấp 20%/30%/40% theo số lượng giới
- *    thiệu tích luỹ) — KHÔNG có hệ thống cấp bậc nào thật (`affiliate_
- *    commission_rules` cấu hình theo SẢN PHẨM, không theo lượng giới thiệu
- *    của người giới thiệu — đã audit `handle_order_confirmed_commission()`).
- *    Thay bằng 1 card đơn hiển thị mức hoa hồng THẬT đang áp dụng (rút ra
- *    từ chính `referrals` của người dùng, hoặc mức mặc định nếu chưa có
- *    giao dịch nào).
+ * 3. "Mức hoa hồng của bạn" (bảng 3 tầng Người mới 20%/Đối tác 30%/Đại sứ
+ *    40%) — GIAI ĐOẠN 6 (tiếp): đúng thiết kế đã chốt trong
+ *    `vdaiportal2.0.html`, đọc `tierRules` (bảng `affiliate_tier_rules`
+ *    MỚI — KHÔNG dùng chung `affiliate_commission_rules`, bảng đó chỉ
+ *    phục vụ trigger `handle_order_confirmed_commission()` theo SẢN PHẨM,
+ *    không có khái niệm "tầng theo số giao dịch của referrer", xem
+ *    `supabase-giai-doan-6-affiliate-tier-rules.sql`). Tầng hiện tại của
+ *    người dùng tính THẬT từ `overview.customers` (số giao dịch đã tạo
+ *    đơn hàng thật — đúng bằng số dòng `referrals.status IN
+ *    ('confirmed','paid')`, vì cả `orderId` lẫn `status` được set CÙNG
+ *    LÚC trong `handle_order_confirmed_commission()`), so với
+ *    `minTransactions` mỗi tầng đọc từ DB (không hardcode ngưỡng 10/50
+ *    trong UI). **Lưu ý trung thực đã ghi rõ ngay trong UI:** mức % hiển
+ *    thị ở đây là MỤC TIÊU tầng bậc Founder đặt ra, hoa hồng THỰC TẾ ghi
+ *    nhận trên từng giao dịch vẫn tính theo `affiliate_commission_rules`
+ *    (cấu hình theo sản phẩm) cho tới khi trigger được nối theo tầng
+ *    referrer — 2 hệ số có thể lệch nhau, không giả vờ đã đồng bộ.
  * 4. "Cách thức hoạt động" (3 bước tĩnh) — khớp đúng luồng thật (lấy link →
  *    chia sẻ → nhận hoa hồng khi đơn được xác nhận), giữ nguyên là copy
  *    hướng dẫn, không phải dữ liệu.
- * 5. "Bộ tài nguyên Marketing" (banner/video/caption/logo tải xuống) —
- *    không có thư viện tài nguyên marketing nào tồn tại (không bảng, không
- *    CDN link) → honest empty-state.
+ * 5. "Bộ tài nguyên Marketing" — GIAI ĐOẠN 6 (tiếp, "tự soạn" theo yêu cầu
+ *    Founder): 4 hạng mục đúng mockup gốc, mỗi hạng mục chỉ đưa nội dung
+ *    THẬT có thể giao ngay, không bịa file không tồn tại — (a) "Video
+ *    giới thiệu" trỏ NGUYÊN `youtubeId` thật của Landing Page
+ *    (`landing_chrome`'s khối "skills-showcase", Single Source of Truth
+ *    với `/` — cùng video demo VDAI Academy đã dùng công khai); (b) "Bộ
+ *    nhận diện thương hiệu" trỏ file logo thật `public/brand/primary-logo-
+ *    light.svg` (đã tồn tại từ trước, dùng cho mọi nhu cầu nhận diện khác
+ *    trong dự án); (c) "Mẫu bài viết chia sẻ" — 1 đoạn caption MỚI do
+ *    Claude soạn (nội dung nguyên bản, không phải dữ liệu đo được — cùng
+ *    bản chất với FAQ/copy hướng dẫn khác trên trang này), tự động chèn
+ *    `overview.referralLink` thật khi đã đăng nhập, nút Sao chép dùng
+ *    lại đúng cơ chế `navigator.clipboard` của `CopyableLink`; (d)
+ *    "Banner quảng cáo" — KHÔNG có file ảnh banner nào tồn tại → honest
+ *    "Đang cập nhật" cho đúng hạng mục này (không giả vờ có link tải).
  * 6. FAQ — 2/4 câu giữ nguyên (khớp thật: không giới hạn số người giới
  *    thiệu/hoa hồng theo đơn hàng xác nhận); 2/4 câu viết lại cho khớp cơ
  *    chế THẬT (mockup bịa "trả tự động ngày 5 hàng tháng, tối thiểu
@@ -91,6 +113,70 @@ const PAYOUT_STATUS_STYLE: Record<string, { background: string; color: string }>
   paid: { background: "#e6f7ed", color: "#066b4d" },
   rejected: { background: "#fdeef0", color: "#b02040" },
 };
+
+// "Mức hoa hồng của bạn" — icon/gradient theo `tierKey` thật (đọc từ
+// `affiliate_tier_rules.data.tierKey`), fallback cho tierKey lạ (Admin
+// thêm tầng mới ngoài 3 tầng gốc) để không vỡ giao diện.
+const TIER_ICON_BG: Record<string, string> = {
+  new: "linear-gradient(145deg,#a08bff,#6d4aff)",
+  partner: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
+  ambassador: "linear-gradient(145deg,#e2b23c,#a9660f)",
+};
+const DEFAULT_TIER_ICON_BG = "linear-gradient(145deg,#a08bff,#6d4aff)";
+
+// "Bộ tài nguyên Marketing" — `.material-body button` (CSS gốc) chỉ style
+// đúng thẻ <button>; 2 mục có link thật (video/logo) dùng <a>, cần style
+// tay để đồng bộ hình dạng nút với 2 mục còn lại (mẫu bài viết/banner).
+const buttonLinkStyle: CSSProperties = {
+  display: "block",
+  width: "100%",
+  textAlign: "center",
+  background: "var(--violet-light)",
+  color: "var(--violet-dark)",
+  border: "none",
+  padding: 8,
+  borderRadius: 8,
+  fontWeight: 700,
+  fontSize: 11.5,
+  textDecoration: "none",
+  boxSizing: "border-box",
+};
+const buttonDisabledStyle: CSSProperties = {
+  width: "100%",
+  background: "var(--bg)",
+  color: "var(--muted)",
+  border: "1px solid var(--line)",
+  padding: 8,
+  borderRadius: 8,
+  fontWeight: 700,
+  fontSize: 11.5,
+  cursor: "default",
+};
+
+function TierIcon({ tierKey }: { tierKey: string }) {
+  if (tierKey === "ambassador") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+        <path d="M5 18h14M5 18l-1.5-9L8 12l4-6 4 6 4.5-3L19 18" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (tierKey === "partner") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+    </svg>
+  );
+}
 
 function CopyableLink({ link }: { link: string }) {
   const [label, setLabel] = useState("Sao chép");
@@ -150,16 +236,41 @@ export function AffiliateClient({
   overview,
   qrSvg,
   leaderboard,
+  tierRules,
+  introVideoId,
 }: {
   premium: PremiumStatus;
   overview: AffiliateOverview | null;
   qrSvg: string | null;
   leaderboard: AffiliateLeaderboardEntry[];
+  tierRules: AffiliateTierRule[];
+  introVideoId: string | null;
 }) {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [templateCopyLabel, setTemplateCopyLabel] = useState("Sao chép mẫu");
 
-  const distinctRates = overview ? Array.from(new Set(overview.referrals.map((r) => r.commissionRate))).filter((r) => r > 0) : [];
   const conversionRate = overview?.visits && overview.visits > 0 ? ((overview.customers / overview.visits) * 100).toFixed(1) + "%" : "—";
+
+  // "Mức hoa hồng của bạn" — tầng hiện tại = tầng cao nhất mà số giao
+  // dịch thành công thật (overview.customers) đã đạt ngưỡng minTransactions
+  // (đọc từ DB, không hardcode). Tầng đầu (minTransactions=0) luôn khớp
+  // nên currentTier chỉ null khi chưa đăng nhập.
+  const successfulTransactions = overview?.customers ?? 0;
+  const sortedTiers = [...tierRules].sort((a, b) => a.minTransactions - b.minTransactions);
+  const currentTier = overview
+    ? sortedTiers.reduce<AffiliateTierRule | null>((acc, t) => (successfulTransactions >= t.minTransactions ? t : acc), null)
+    : null;
+  const currentTierIndex = currentTier ? sortedTiers.findIndex((t) => t.id === currentTier.id) : -1;
+  const nextTier = currentTierIndex >= 0 && currentTierIndex + 1 < sortedTiers.length ? sortedTiers[currentTierIndex + 1] : null;
+  const transactionsToNextTier = nextTier ? Math.max(0, nextTier.minTransactions - successfulTransactions) : 0;
+
+  const shareTemplate = `Mình đang dùng VO DUONG AI để học và làm chủ AI trong công việc — chương trình Premium có Học viện AI, Companion cá nhân hoá và cộng đồng thực chiến. Bạn tham gia qua link giới thiệu của mình nhé:\n${overview?.referralLink ?? "[link giới thiệu của bạn — đăng nhập để lấy]"}`;
+  const copyTemplate = () => {
+    navigator.clipboard.writeText(shareTemplate).then(() => {
+      setTemplateCopyLabel("Đã sao chép!");
+      setTimeout(() => setTemplateCopyLabel("Sao chép mẫu"), 2000);
+    });
+  };
 
   const faqItems = [
     {
@@ -332,20 +443,61 @@ export function AffiliateClient({
                     <div className="section-head" style={{ marginBottom: 14 }}>
                       <h3>Mức hoa hồng của bạn</h3>
                     </div>
-                    <div className="card">
-                      {distinctRates.length > 0 ? (
-                        <p className="rate-note">
-                          Mức hoa hồng đang áp dụng trên các giao dịch của bạn:{" "}
-                          <strong>{distinctRates.map((r) => `${r}%`).join(", ")}</strong> trên giá trị đơn hàng — tuỳ theo cấu hình từng sản
-                          phẩm.
+                    {sortedTiers.length === 0 ? (
+                      <div className="card">
+                        <p className="empty-hint">Chưa có cấu hình tầng hoa hồng — Admin cần thiết lập ở &quot;Cấu hình cấp độ Affiliate&quot;.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="tier-grid">
+                          {sortedTiers.map((tier) => {
+                            const isCurrent = currentTier?.id === tier.id;
+                            return (
+                              <div className={isCurrent ? "tier-card current" : "tier-card"} key={tier.id}>
+                                {isCurrent ? (
+                                  <span className="tier-badge">Cấp của bạn</span>
+                                ) : tier.isFeatured ? (
+                                  <span className="tier-badge" style={{ background: "var(--gold)", color: "#3b2a06" }}>
+                                    Phổ biến
+                                  </span>
+                                ) : null}
+                                <div className="tier-ico" style={{ background: TIER_ICON_BG[tier.tierKey] ?? DEFAULT_TIER_ICON_BG }}>
+                                  <TierIcon tierKey={tier.tierKey} />
+                                </div>
+                                <h5>{tier.label}</h5>
+                                <div className="rate">
+                                  {tier.ratePercent}%<span> / giao dịch</span>
+                                </div>
+                                <div className="tier-feat">
+                                  {tier.benefits.map((benefit) => (
+                                    <div key={benefit}>
+                                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M20 6L9 17l-5-5" />
+                                      </svg>
+                                      <span>{benefit}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                                <p className="tier-req">{tier.condition}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <p className="rate-note" style={{ marginTop: 12 }}>
+                          {nextTier ? (
+                            <>
+                              Bạn đang ở tầng <strong>{currentTier?.label}</strong> với {successfulTransactions} giao dịch thành công — còn{" "}
+                              <strong>{transactionsToNextTier}</strong> giao dịch nữa để lên {nextTier.label} ({nextTier.ratePercent}%).
+                            </>
+                          ) : (
+                            <>
+                              Bạn đang ở tầng cao nhất — <strong>{currentTier?.label}</strong> với {successfulTransactions} giao dịch thành công.
+                            </>
+                          )}{" "}
+                          Mức % hiển thị là mục tiêu tầng bậc — hoa hồng thực tế trên từng giao dịch vẫn theo cấu hình sản phẩm đang áp dụng.
                         </p>
-                      ) : (
-                        <p className="rate-note">
-                          Chưa có giao dịch nào được ghi nhận. Mức hoa hồng mặc định là <strong>10%</strong> trên giá trị đơn hàng được xác
-                          nhận, một số chương trình có thể có mức riêng do Admin cấu hình.
-                        </p>
-                      )}
-                    </div>
+                      </>
+                    )}
                   </div>
                 </>
               )}
@@ -396,9 +548,78 @@ export function AffiliateClient({
                 <div className="section-head" style={{ marginBottom: 14 }}>
                   <h3>Bộ tài nguyên Marketing</h3>
                 </div>
-                <div className="card">
-                  <p className="empty-hint">Chưa có tài nguyên marketing nào — banner, video, mẫu bài viết sẽ được cập nhật sau.</p>
+                <div className="material-grid">
+                  <div className="material-card">
+                    <div className="material-thumb" style={{ background: "linear-gradient(145deg,#ff6b6b,#c81d4a)" }}>
+                      <svg viewBox="0 0 24 24" fill="#fff" stroke="none">
+                        <polygon points="6 3 20 12 6 21 6 3" />
+                      </svg>
+                    </div>
+                    <div className="material-body">
+                      <h6>Video giới thiệu VDAI Academy</h6>
+                      {introVideoId ? (
+                        <a
+                          href={`https://www.youtube.com/watch?v=${introVideoId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={buttonLinkStyle}
+                        >
+                          Xem trên YouTube ↗
+                        </a>
+                      ) : (
+                        <button type="button" disabled style={buttonDisabledStyle}>
+                          Đang cập nhật
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="material-card">
+                    <div className="material-thumb" style={{ background: "linear-gradient(145deg,#8b6bff,#5a37e6)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
+                      </svg>
+                    </div>
+                    <div className="material-body">
+                      <h6>Bộ nhận diện thương hiệu</h6>
+                      <a href="/brand/primary-logo-light.svg" download style={buttonLinkStyle}>
+                        Tải logo ↓
+                      </a>
+                    </div>
+                  </div>
+                  <div className="material-card">
+                    <div className="material-thumb" style={{ background: "linear-gradient(145deg,#3ecf7e,#189a52)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <path d="M14 3v4a1 1 0 001 1h4" />
+                        <path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z" />
+                        <path d="M9 13h6M9 17h6" />
+                      </svg>
+                    </div>
+                    <div className="material-body">
+                      <h6>Mẫu bài viết chia sẻ</h6>
+                      <button type="button" onClick={copyTemplate}>
+                        {templateCopyLabel}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="material-card">
+                    <div className="material-thumb" style={{ background: "linear-gradient(145deg,#a0a4b8,#6b6685)" }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <rect x="3" y="5" width="18" height="14" rx="2" />
+                        <circle cx="8.5" cy="10.5" r="1.5" />
+                        <path d="M21 16l-5.5-5.5L3 19" />
+                      </svg>
+                    </div>
+                    <div className="material-body">
+                      <h6>Banner quảng cáo</h6>
+                      <button type="button" disabled style={buttonDisabledStyle}>
+                        Đang cập nhật
+                      </button>
+                    </div>
+                  </div>
                 </div>
+                <p style={{ fontSize: 11, color: "var(--muted)", marginTop: 10 }}>
+                  Đăng ký sử dụng nội dung/logo VO DUONG AI khi chia sẻ đúng mục đích quảng bá chương trình Affiliate.
+                </p>
               </div>
 
               <div className="card" id="faq">

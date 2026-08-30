@@ -195,6 +195,7 @@ const navIcons: Record<string, LucideIcon> = {
   "/admin/affiliate/don-hang": ShoppingCart,
   "/admin/affiliate/hoa-hong": Wallet,
   "/admin/affiliate/cau-hinh-hoa-hong": Percent,
+  "/admin/affiliate/cau-hinh-cap-do": Layers,
   "/admin/affiliate/yeu-cau-thanh-toan": CreditCard,
   "/admin/affiliate/bao-cao": BarChart3,
   "/admin/van-hanh/ho-tro-khach-hang": LifeBuoy,
