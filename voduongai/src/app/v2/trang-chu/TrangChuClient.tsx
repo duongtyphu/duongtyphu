@@ -50,11 +50,10 @@ import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 
-/** "Portal 2.0 trong một cái nhìn" — 4 số liệu thật, xem docblock ở `page.tsx`. */
+/** "Portal 2.0 trong một cái nhìn" — 3 số liệu thật, xem docblock ở `page.tsx`. */
 export type PortalStats = {
   ecosystemCount: number;
   premiumPlanCount: number;
-  communityChannelCount: number;
   toolCount: number;
 };
 
@@ -78,7 +77,6 @@ const HREF_MAP: Record<string, string> = {
   "Chuong trinh Affilate.html": "/v2/affiliate",
   "Hanh trinh cua toi.html": "/v2/hanh-trinh-cua-toi",
   "Su menh Companion.html": "/v2/su-menh-companion",
-  "Cong dong AI.html": "/v2/cong-dong-ai",
   "Nhat ky hoc tap.html": "/v2/nhat-ky-hoc-tap",
   "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
 };
@@ -396,14 +394,6 @@ export function TrangChuClient({
               </svg>
               Chương trình Affilate
             </button>
-            <button className="nav-item" onClick={go("Cong dong AI.html")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="8" cy="8" r="3" />
-                <circle cx="17" cy="9" r="3" />
-                <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
-              </svg>
-              Cộng đồng AI
-            </button>
           </nav>
           <div className="side-label">TIỆN ÍCH NHANH</div>
           <nav className="main">
@@ -581,20 +571,6 @@ export function TrangChuClient({
                     <div>
                       <div className="portal-stat-num">{stats.premiumPlanCount}</div>
                       <div className="portal-stat-label">Gói Premium đang mở</div>
-                    </div>
-                  </div>
-                  <div className="portal-stat-card" onClick={go("Cong dong AI.html")}>
-                    <div className="ico" style={{ background: "linear-gradient(145deg,#60a5fa,#2563eb)" }}>
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 00-3-3.87" />
-                        <path d="M16 3.13a4 4 0 010 7.75" />
-                      </svg>
-                    </div>
-                    <div>
-                      <div className="portal-stat-num">{stats.communityChannelCount}</div>
-                      <div className="portal-stat-label">Kênh cộng đồng đang hoạt động</div>
                     </div>
                   </div>
                   <div className="portal-stat-card" onClick={go("Hoc vien AI.html")}>

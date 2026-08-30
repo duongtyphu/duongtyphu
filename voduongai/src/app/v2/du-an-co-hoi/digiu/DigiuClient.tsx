@@ -97,7 +97,6 @@ const HREF_MAP: Record<string, string> = {
   "Affilate san giao dich.html": "/v2/du-an-co-hoi/affilate-san-giao-dich",
   "Premium.html": "/v2/premium",
   "Chuong trinh Affilate.html": "/v2/affiliate",
-  "Cong dong AI.html": "/v2/cong-dong-ai",
   "Nhat ky hoc tap.html": "/v2/nhat-ky-hoc-tap",
   "Hanh trinh cua toi.html": "/v2/hanh-trinh-cua-toi",
   "Khu vuon cua ban.html": "/v2/khu-vuon-cua-ban",
@@ -329,14 +328,6 @@ export function DigiuClient({
                 <path d="M8.6 10.6l6.9-4M8.6 13.4l6.9 4" />
               </svg>
               Chương trình Affilate
-            </button>
-            <button className="nav-item" onClick={() => go("Cong dong AI.html")}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="8" cy="8" r="3" />
-                <circle cx="17" cy="9" r="3" />
-                <path d="M2 21c0-3.3 2.7-6 6-6s6 2.7 6 6M13 15c3 0 6 2 6 6" />
-              </svg>
-              Cộng đồng AI
             </button>
           </nav>
 

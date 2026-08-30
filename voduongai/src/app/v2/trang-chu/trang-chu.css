@@ -212,7 +212,9 @@
 .tcp .companion-quote { text-align: center; font-size: 12.5px; font-style: italic; color: var(--muted); margin: -12px 0 -4px }
 
 /* Portal stats — "Portal 2.0 trong một cái nhìn" */
-.tcp .portal-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px }
+/* Giai đoạn 7 — bỏ 1/4 thẻ (Kênh cộng đồng đang hoạt động, trỏ /v2/cong-dong-ai
+ * đã xoá) — repeat(4,1fr) → repeat(3,1fr) để 3 thẻ còn lại cân bằng. */
+.tcp .portal-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px }
 .tcp .portal-stat-card { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: box-shadow .15s, transform .15s }
 .tcp .portal-stat-card:hover { box-shadow: 0 8px 20px rgba(109, 74, 255, .12); transform: translateY(-2px) }
 .tcp .portal-stat-card .ico { width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0; margin: 0 }

@@ -39,7 +39,6 @@ import {
   LifeBuoy,
   TrendingUp,
   UserCog,
-  Users,
   Wallet,
   Bell,
 } from "lucide-react";
@@ -135,7 +134,6 @@ const PORTAL_MAIN: NavItem[] = [
 
   { label: "Premium", href: `${V2_PORTAL_BASE}/premium`, icon: Crown },
   { label: "Chương trình Affilate", href: `${V2_PORTAL_BASE}/affiliate`, icon: Share2 },
-  { label: "Cộng đồng AI", href: `${V2_PORTAL_BASE}/cong-dong-ai`, icon: Users },
 ];
 
 const PORTAL_QUICK: NavItem[] = [
@@ -220,7 +218,6 @@ export const ADMIN_NAV: NavSection[] = [
       { label: "Dự án & Cơ hội", href: `${V2_ADMIN_BASE}/du-an-co-hoi`, icon: Briefcase },
       { label: "Premium", href: `${V2_ADMIN_BASE}/premium`, icon: Crown },
       { label: "Chương trình Affilate", href: `${V2_ADMIN_BASE}/affiliate`, icon: Share2 },
-      { label: "Cộng đồng AI", href: `${V2_ADMIN_BASE}/cong-dong-ai`, icon: Users },
     ],
   },
   {
