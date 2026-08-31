@@ -119,7 +119,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
           {/* Dải chỉ số — Founder yêu cầu thu nhỏ lại cho vừa với kích thước
               trang giữa (padding/svg/font đều giảm so với bản trước). */}
           <div className="jn-stat-row" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12, marginBottom: 16 }}>
-            <div className="jn-card" style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", background: "linear-gradient(160deg,#1A130A,#0F1116)" }}>
+            <div className="jn-card" style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", background: "linear-gradient(160deg, rgba(255,140,60,.10), rgba(255,255,255,.04))" }}>
               <svg className="jn-flame" width="26" height="32" viewBox="0 0 46 56" style={{ marginBottom: 6 }}>
                 <path
                   d="M23 2C10 18 6 28 6 36c0 11 8 18 17 18s17-7 17-18c0-6-3-13-8-19 1 6-2 10-5 10 2-8-2-16-4-25z"
@@ -198,7 +198,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
               </div>
               {todayEntries.length === 0 ? (
                 <div style={{ position: "relative", paddingLeft: 18 }}>
-                  <span style={{ position: "absolute", left: 3, top: 2, width: 8, height: 8, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "2px solid #0F1116" }} />
+                  <span style={{ position: "absolute", left: 3, top: 2, width: 8, height: 8, borderRadius: "50%", background: "rgba(255,255,255,.2)", border: "2px solid var(--bg)" }} />
                   <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có hoạt động học tập nào hôm nay.</div>
                 </div>
               ) : (
@@ -208,7 +208,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                     const icon = ENTRY_ICON[e.kind];
                     return (
                       <div key={e.id} style={{ position: "relative", paddingBottom: 16 }}>
-                        <span style={{ position: "absolute", left: -18, top: 2, width: 8, height: 8, borderRadius: "50%", background: icon.color, border: "2px solid #0F1116" }} />
+                        <span style={{ position: "absolute", left: -18, top: 2, width: 8, height: 8, borderRadius: "50%", background: icon.color, border: "2px solid var(--bg)" }} />
                         <div style={{ fontSize: 10, color: "rgba(255,255,255,.4)", marginBottom: 2 }}>{formatTime(e.occurredAt)} · {icon.label}</div>
                         <div style={{ fontSize: 12.5, fontWeight: 700, color: "#fff" }}>{e.title}</div>
                       </div>
