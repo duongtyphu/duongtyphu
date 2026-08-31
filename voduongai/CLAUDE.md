@@ -9017,3 +9017,127 @@ nhập có dữ liệu thật (`reflections`/`memory_capsules`/chương/`connect
 Production URL, đặc biệt xác nhận: nhóm note My Story hiện đúng khi có đủ
 5 loại dữ liệu thật, cây các tier ở Khu vườn hiện đúng hình dạng mới khi
 có `JourneyStage` với `percent` khác 0.
+
+## Giai đoạn 10 (tiếp) — sửa BUG GỐC: unlayered CSS `.htct` vô hiệu hoá
+## Tailwind trong 3 tab nhúng + chiều sâu nền + thu nhỏ hộp + gương phản chiếu
+
+Founder gửi 5 ảnh chụp Production (mỗi ảnh khoanh đỏ chú thích cụ thể) sau
+khi PR #92 lên Production, yêu cầu: (1) cả 5 tab thêm "chiều sâu, độ bóng"
+cho nền; (2) Nhật ký học tập — thu nhỏ 5 hộp chỉ số; (3) Khu vườn của bạn
+— vẽ hình cây thật ngay cả ở trạng thái "chưa bắt đầu"; (4) My Story/
+Mirror/Bản đồ hành trình — đưa cụm chữ (và với Mirror, cả khối gương) ra
+GIỮA trang; (5) Mirror — gương thu nhỏ về góc phải, màu bên trong giống
+gương thật hơn; (6) Bản đồ hành trình — tăng cỡ chữ vừa phải.
+
+**Phát hiện quan trọng nhất (không phải 1 trong 6 yêu cầu — là NGUYÊN NHÂN
+GỐC giải thích được cả yêu cầu (4)):** đo `getComputedStyle` thật qua
+Playwright (không suy đoán) phát hiện `mx-auto` (Tailwind) trên
+`MyStoryBook.tsx`'s content wrapper resolve ra `margin-left/right: 0px`
+thay vì giá trị centered — tức Tailwind `.mx-auto` HOÀN TOÀN KHÔNG có tác
+dụng. Truy ngược: `hanh-trinh-cua-toi.css`'s "Điều chỉnh 6" (dòng 15,
+`.htct, .htct *{margin:0;padding:0}` — revert Preflight cho 42 trang
+`/v2/*` hand-CSS, viết UNLAYERED có chủ đích để luôn thắng
+`@layer utilities` của Tailwind) áp dụng cho MỌI phần tử trong `.htct`,
+KỂ CẢ 3 tab nhúng `MyStoryBook`/`MirrorChamber`/`JourneyMapAtlas` (Giai
+đoạn 8, render lại component TAILWIND THẬT của Portal 1.0, bọc
+`.htct-native`) — CSS Cascade Layers quy định unlayered LUÔN thắng layered
+bất kể specificity/thứ tự, nên `margin:0` unlayered đè mất `mx-auto`/
+`mt-*`/`px-*`... layered của Tailwind trong CẢ 3 component. Cùng lý do,
+`.htct a{color:var(--violet)}` (dòng 51, cũng unlayered) đè mất MỌI màu
+chữ `<Link>`/`<a>` Tailwind thật trong 3 component (nút "Bắt đầu viết
+tiếp"/"Đặt dấu chân đầu tiên" lẽ ra vàng/cam nhưng bị ép tím).
+
+**Đây CHÍNH LÀ bug đã "vá" 1 lần cho `.smc`/`.tkh`/`.chk` trong
+`v2-tokens.css`** (xem mục "Bug đã sửa — `/v2/su-menh-companion`" và
+"Bug đã sửa — 5 trang chi tiết hệ sinh thái crash + popup Live-edit bị cắt
+cụt" ở trên) — nhưng đây là 1 bản reset RIÊNG, sống trong
+`hanh-trinh-cua-toi.css` (không phải `v2-tokens.css`), nên bản vá cũ
+không tự động che phủ được. Bài học lặp lại: mỗi khi 1 trang `/v2/*` MỚI
+nhúng nguyên component Tailwind thật (Cách A — Giai đoạn 8/Nhóm 3), phải
+kiểm tra NGAY CSS reset unlayered của CHÍNH trang đó, không chỉ tin
+`v2-tokens.css` đã lo đủ.
+
+**Đã sửa tận gốc** — mở rộng "Điều chỉnh 6" trong `hanh-trinh-cua-toi.css`
+loại trừ subtree `.htct-native` khỏi TOÀN BỘ 8 rule reset (margin/padding,
+border-revert, heading font-size/weight-revert, b/strong-revert,
+list-style-revert, media display/vertical-align-revert, img/video
+max-width/height-revert, button/input-revert, placeholder-revert, màu
+`a`/`a:hover`) — dùng đúng `:where(:not(.htct-native)):where(:not(
+.htct-native *))` (cùng kỹ thuật `:where()` đã dùng cho `.smc`/`.tkh`,
+giữ specificity = 0 để không đổi hành vi cascade của phần còn lại). Verify
+bằng đo lại `getComputedStyle`: `marginLeft`/`marginRight` của `.mx-auto`
+đổi từ `0px` → `394px`/`394px` (đúng centered) sau khi sửa.
+
+**6 việc còn lại theo yêu cầu Founder:**
+
+- **Chiều sâu/bóng cho nền (cả 5 tab)** — thêm 2 lớp `radial-gradient`
+  NEO Ở TOP (bán kính px CỐ ĐỊNH — vd `1200px circle at 50% -10%` —
+  không theo %, nên KHÔNG lặp lại bug "tối dần cuối trang dài" đã sửa ở
+  đợt trước) tạo ánh sáng gần đầu trang, + `boxShadow: inset 0 0 160px
+  rgba(0,0,0,.35)` (vignette, px cố định quanh 4 cạnh, không phụ thuộc
+  chiều cao nội dung) — áp cùng div nền đặc ở cả 5 nơi. Nhật ký/Khu vườn
+  (2 file JSX tự chứa) sửa trực tiếp; My Story/Mirror/Bản đồ hành trình
+  (3 component dùng chung) thêm prop `bgShadow?: string` mới (đi kèm
+  `bgOverride` đã có), giá trị nền/shadow định nghĩa 1 lần ở
+  `HanhTrinhCuaToiClient.tsx` (`STORY_BG`/`MIRROR_BG`/`MAP_BG`/
+  `TAB_BG_SHADOW`) — không đổi hành vi `/portal/*` (prop optional).
+- **Nhật ký học tập — thu nhỏ 5 hộp chỉ số.** Giảm `padding` (22→16),
+  kích thước SVG (flame 34×42→26×32, ring 66×66→54×54), font-size
+  (value 22→18/11→10/label giữ 11→10).
+- **Khu vườn của bạn — cây thật ở "chưa bắt đầu".** Thêm `SproutSVG()`
+  (mầm cây 2 lá non nhú từ đất, thay vòng tròn nét đứt trừu tượng cũ) —
+  vẫn trung thực đúng trạng thái "0%" (không vẽ thân/tán như tier cao
+  hơn), chỉ đổi từ ký hiệu trừu tượng sang hình cây thật.
+- **My Story — căn giữa cụm nội dung.** Thêm `mx-auto max-w-4xl` cho
+  wrapper content (trước hoàn toàn thiếu constraint bề rộng, khác Mirror/
+  Map vốn đã có `mx-auto max-w-xl`/`max-w-2xl` — chỉ là bị vô hiệu hoá bởi
+  bug gốc ở trên).
+- **Mirror — gương thu nhỏ về góc phải + phản chiếu hơn.** SVG art từ
+  460×680 (đè gần nửa màn hình, `top-1/2` vắt giữa chiều cao) → 220×326
+  (`bottom-[4%] right-[3%]`, góc dưới-phải, opacity 0.22→0.5); tăng độ
+  phản chiếu `mirrorGlass` radialGradient (thêm điểm dừng sáng ở tâm, độ
+  mờ tổng thể giảm) + thêm 1 vệt sheen thứ 2 — "giống gương thật" hơn hẳn
+  bản gần-trong-suốt cũ.
+- **Bản đồ hành trình — tăng cỡ chữ.** `h1` `text-2xl sm:text-3xl` →
+  `text-3xl sm:text-4xl`, subtitle `text-sm max-w-md` → `text-base
+  max-w-lg`, margin-top tăng nhẹ theo tỉ lệ.
+
+**File sửa:** `hanh-trinh-cua-toi.css` (bug gốc + `.htct-native` exempt),
+`NhatKyHocTapTab.tsx` (chiều sâu nền + thu nhỏ hộp), `KhuVuonCuaBanTab.tsx`
+(chiều sâu nền + `SproutSVG`), `MyStoryBook.tsx` (`mx-auto max-w-4xl` +
+`bgShadow` prop), `MirrorChamber.tsx` (`bgShadow` prop + gương thu nhỏ/
+phản chiếu hơn), `JourneyMapAtlas.tsx` (`bgShadow` prop + tăng cỡ chữ),
+`HanhTrinhCuaToiClient.tsx` (định nghĩa `STORY_BG`/`MIRROR_BG`/`MAP_BG`/
+`TAB_BG_SHADOW`, truyền `bgShadow` cho cả 3 component).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright thật qua `next dev`
+(sandbox không cấu hình Supabase, Portal tự công khai theo fallback có
+sẵn), chụp lại TOÀN BỘ 5 tab ở viewport RỘNG (1900px, giống điều kiện màn
+hình Founder chụp) trước/sau khi sửa `.htct-native` — xác nhận: My
+Story/Mirror/Bản đồ hành trình đều căn giữa đúng thật sự (không chỉ có
+`mx-auto` trong code mà `getComputedStyle` xác nhận margin-left/right
+bằng nhau và khác 0), màu link đổi đúng từ tím sang vàng/cam/cyan theo
+từng tab, nền cả 5 tab có chiều sâu rõ rệt (sáng ở góc/đỉnh, tối dần đều ở
+mép — không tối theo chiều dài nội dung), Mirror hết đè logo Companion
+(đã xoá từ đợt trước) + gương thu nhỏ đúng góc phải-dưới không còn che
+chữ, Bản đồ hành trình chữ to rõ hơn. Test thêm ở viewport hẹp (1280px) —
+0 hồi quy (Mirror/Map vẫn không đè chữ). Test "Ghim note mới" (My Story)
+— vẫn rơi vào `/v2/error.tsx` giống trước, xác nhận qua log dev server
+đây là ĐÚNG giới hạn sandbox đã ghi nhận nhiều lần (thiếu biến môi trường
+Supabase phía client, không phải regression của đợt sửa này — lỗi log
+xác nhận đúng `getSupabaseBrowser()` throw vì thiếu env, không liên quan
+CSS/component vừa sửa).
+
+**Chưa tự test được:** xem trên Production với tài khoản đăng nhập thật
+có dữ liệu (`JourneyStage`/`reflections`/`memory_capsules`) — Founder tự
+xác nhận: (1) cả 5 tab đủ cảm giác "chiều sâu" mong muốn (mức độ vignette/
+highlight có thể cần tinh chỉnh thêm theo gu thẩm mỹ, đây là lần đầu thêm
+hiệu ứng này); (2) mầm cây (Khu vườn, tier "chưa bắt đầu") hiện đúng hình
+dạng mới; (3) Mirror với dữ liệu thật (không phải empty-state) — xác nhận
+gương góc phải-dưới không che nội dung "Nhìn lại/Nhận ra/Tự hỏi" dài hơn;
+(4) tổng thể bug gốc `.htct-native` vừa sửa có thể ảnh hưởng thêm những
+chi tiết nhỏ khác (spacing/màu) ở 3 component này chưa được liệt kê rõ
+trong 5 ảnh Founder gửi — nếu thấy điểm nào khác lạ so với trước, đó nhiều
+khả năng là hệ quả TÍCH CỰC của việc Tailwind giờ đã hoạt động đúng như
+thiết kế gốc (không phải lỗi mới).

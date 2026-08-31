@@ -186,6 +186,24 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
   );
 }
 
+/** Founder yêu cầu: giai đoạn "Chưa bắt đầu" (0%) cũng phải là hình cây
+    thật (mầm cây nhú lên từ đất, có 2 lá non) thay vì vòng tròn nét đứt
+    trừu tượng cũ — vẫn trung thực đúng trạng thái "chưa học" (không vẽ
+    thân/tán như các tier cao hơn), chỉ đổi từ ký hiệu trừu tượng sang
+    hình ảnh cây/mầm thật. */
+function SproutSVG() {
+  return (
+    <svg width="34" height="34" viewBox="0 0 34 34" style={{ margin: "0 auto" }}>
+      <ellipse cx="17" cy="30" rx="12" ry="3" fill="#3F2A16" opacity=".7" />
+      <path d="M17 30 L17 20" stroke="#4D7C0F" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path d="M17 24 Q10 21 8 15" stroke="#4D7C0F" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      <path d="M17 21 Q24 18 26 12" stroke="#4D7C0F" strokeWidth="1.6" fill="none" strokeLinecap="round" />
+      <ellipse cx="8" cy="14" rx="6" ry="4" fill="#84CC16" transform="rotate(-25 8 14)" />
+      <ellipse cx="26" cy="11" rx="5.5" ry="3.6" fill="#65A30D" transform="rotate(20 26 11)" />
+    </svg>
+  );
+}
+
 export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
   const router = useRouter();
   const { stages, currentStageIndex, badges } = journey;
@@ -198,8 +216,20 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           viền góc như bản trước) — thay hẳn base đen `#070a12`. Dùng màu
           ĐẶC (không fade theo chiều cao) để "toàn trang giữa" luôn xanh,
           không tối dần thành đen ở cuối trang (trang này khá dài — cảnh
-          vườn 460px + khối Thành tựu/triết lý bên dưới). */}
-      <div className="absolute inset-0 z-0" style={{ background: "#0D2C50" }} aria-hidden />
+          vườn 460px + khối Thành tựu/triết lý bên dưới). Founder yêu cầu
+          thêm "chiều sâu, độ bóng" — 2 lớp radial neo ở TOP (bán kính px
+          cố định, không theo %) + vignette `boxShadow` inset (px cố định
+          quanh 4 cạnh) — không lặp lại bug gradient tối dần theo % chiều
+          cao container cũ. */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background:
+            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 85% 10%, rgba(147,197,253,.09), transparent 60%), #0D2C50",
+          boxShadow: "inset 0 0 160px rgba(0,0,0,.35)",
+        }}
+        aria-hidden
+      />
 
       {/* dải aurora trừu tượng vắt ngang trời */}
       <div
@@ -282,10 +312,7 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
                 return (
                   <div className="gd-tree" key={s.slug} style={{ position: "absolute", left: `${point.leftPct}%`, bottom: point.bottomPx, textAlign: "center", transform: "translateX(-50%)" }}>
                     {tier === "seed" ? (
-                      <svg width="30" height="30" viewBox="0 0 30 30" style={{ margin: "0 auto" }}>
-                        <circle cx="15" cy="15" r="7" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth="1.4" strokeDasharray="2 3" />
-                        <circle cx="15" cy="15" r="2.4" fill="rgba(255,255,255,.5)" />
-                      </svg>
+                      <SproutSVG />
                     ) : (
                       <TreeSVG tier={tier} />
                     )}

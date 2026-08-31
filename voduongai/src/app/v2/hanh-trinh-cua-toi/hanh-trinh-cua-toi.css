@@ -12,19 +12,29 @@
  * ========================================================================== */
 
 .htct{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#f5f4fb;--muted:#a39dc4;--line:rgba(255,255,255,.1);--bg:#0a0a0f;--sidebar:#150f2e;--sidebar-hover:#231a48}
-.htct, .htct *{box-sizing:border-box;margin:0;padding:0}
+/* `.htct-native` bọc 3 tab nhúng render lại component Tailwind THẬT của
+   Portal 1.0 (My Story/Mirror/Bản đồ hành trình, Giai đoạn 8) — loại trừ
+   cả subtree này khỏi "Điều chỉnh 6" (revert Preflight) bên dưới, đúng
+   cơ chế `:where(:not(.smc *))` đã dùng cho `v2-tokens.css` — nếu không,
+   CSS unlayered ở đây (margin/border/font-size/color revert) sẽ LUÔN
+   thắng mọi utility Tailwind layered (`mx-auto`, `mt-*`, `text-2xl`,
+   `text-cyan-200`...) dùng trong 3 component đó, dù thứ tự/specificity
+   nhìn qua tưởng thấp hơn. Đây CHÍNH LÀ nguyên nhân "cụm chữ không nằm
+   giữa trang" Founder báo ở cả 3 tab (Tailwind `mx-auto`/`mt-*` bị vô
+   hiệu hoá hoàn toàn bởi `margin:0` unlayered bên dưới). */
+.htct, .htct *:where(:not(.htct-native)):where(:not(.htct-native *)){box-sizing:border-box;margin:0;padding:0}
 
 /* Điều chỉnh 6 */
-.htct *,
-.htct *::before,
-.htct *::after { border-width: revert; border-style: revert; border-color: revert }
-.htct h1, .htct h2, .htct h3, .htct h4, .htct h5, .htct h6 { font-size: revert; font-weight: revert }
-.htct b, .htct strong { font-weight: revert }
-.htct ol, .htct ul, .htct menu { list-style: revert }
-.htct img, .htct svg, .htct video, .htct canvas, .htct audio,
-.htct iframe, .htct embed, .htct object { display: revert; vertical-align: revert }
-.htct img, .htct video { max-width: revert; height: revert }
-.htct button, .htct input, .htct select, .htct optgroup, .htct textarea {
+.htct *:where(:not(.htct-native)):where(:not(.htct-native *)),
+.htct *::before:where(:not(.htct-native *)),
+.htct *::after:where(:not(.htct-native *)) { border-width: revert; border-style: revert; border-color: revert }
+.htct h1:where(:not(.htct-native *)), .htct h2:where(:not(.htct-native *)), .htct h3:where(:not(.htct-native *)), .htct h4:where(:not(.htct-native *)), .htct h5:where(:not(.htct-native *)), .htct h6:where(:not(.htct-native *)) { font-size: revert; font-weight: revert }
+.htct b:where(:not(.htct-native *)), .htct strong:where(:not(.htct-native *)) { font-weight: revert }
+.htct ol:where(:not(.htct-native *)), .htct ul:where(:not(.htct-native *)), .htct menu:where(:not(.htct-native *)) { list-style: revert }
+.htct img:where(:not(.htct-native *)), .htct svg:where(:not(.htct-native *)), .htct video:where(:not(.htct-native *)), .htct canvas:where(:not(.htct-native *)), .htct audio:where(:not(.htct-native *)),
+.htct iframe:where(:not(.htct-native *)), .htct embed:where(:not(.htct-native *)), .htct object:where(:not(.htct-native *)) { display: revert; vertical-align: revert }
+.htct img:where(:not(.htct-native *)), .htct video:where(:not(.htct-native *)) { max-width: revert; height: revert }
+.htct button:where(:not(.htct-native *)), .htct input:where(:not(.htct-native *)), .htct select:where(:not(.htct-native *)), .htct optgroup:where(:not(.htct-native *)), .htct textarea:where(:not(.htct-native *)) {
   font: revert;
   font-feature-settings: revert;
   font-variation-settings: revert;
@@ -34,7 +44,7 @@
   background-color: revert;
   opacity: revert;
 }
-.htct ::placeholder { color: revert; opacity: revert }
+.htct ::placeholder:where(:not(.htct-native *)) { color: revert; opacity: revert }
 
 .htct {
   /* Điều chỉnh 4 */
@@ -48,8 +58,8 @@
   text-rendering: auto;
 }
 
-.htct a{color:var(--violet);text-decoration:none}
-.htct a:hover{color:var(--violet-dark)}
+.htct a:where(:not(.htct-native *)){color:var(--violet);text-decoration:none}
+.htct a:where(:not(.htct-native *)):hover{color:var(--violet-dark)}
 .htct .app{display:flex;min-height:100vh}
 .htct .sidebar{width:224px;flex-shrink:0;background:var(--sidebar);color:#cbc6e8;display:flex;flex-direction:column;padding:20px 14px}
 .htct .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 22px}
