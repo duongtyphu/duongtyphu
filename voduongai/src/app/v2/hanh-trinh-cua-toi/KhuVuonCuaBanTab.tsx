@@ -142,14 +142,12 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      <div className="absolute inset-0 z-0" style={{ background: "#070a12" }} aria-hidden />
-      {/* Chiều sâu + đồng nhất màu với hộp Hub "Khu vườn của bạn"
-          (HUB_CARD_STYLE["khu-vuon-cua-ban"], linear-gradient(135deg,#0F3325,#081A2E)). */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{ background: "linear-gradient(135deg, rgba(15,51,37,.5) 0%, rgba(8,26,46,.5) 45%, transparent 75%)" }}
-        aria-hidden
-      />
+      {/* Founder yêu cầu riêng: nền xanh lam phủ TOÀN trang giữa (không chỉ
+          viền góc như bản trước) — thay hẳn base đen `#070a12`. Dùng màu
+          ĐẶC (không fade theo chiều cao) để "toàn trang giữa" luôn xanh,
+          không tối dần thành đen ở cuối trang (trang này khá dài — cảnh
+          vườn 460px + khối Thành tựu/triết lý bên dưới). */}
+      <div className="absolute inset-0 z-0" style={{ background: "#0D2C50" }} aria-hidden />
 
       {/* dải aurora trừu tượng vắt ngang trời */}
       <div
@@ -190,18 +188,6 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
       />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <div style={{ color: "#fff", maxWidth: 640, marginBottom: 8 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#7EE8A6", marginBottom: 8 }}>
-              Hành trình của tôi
-            </div>
-            <h1 style={{ fontSize: 28, fontWeight: 800, margin: "0 0 8px" }}>Khu vườn của bạn</h1>
-            <p style={{ fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,.55)", margin: 0 }}>
-              Mỗi cây trên lối đi là một giai đoạn học — cây càng lớn, hoa càng nở, quả càng chín, bạn càng đi xa trong giai đoạn đó.
-            </p>
-          </div>
-        </div>
-
         {/* Lối đi + cây — full-bleed, không giới hạn maxWidth 900 như phần chữ */}
         <div style={{ position: "relative", height: SCENE_HEIGHT, marginTop: 8 }}>
           {GN_LEAVES.map((leaf, i) => (
