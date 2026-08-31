@@ -179,6 +179,7 @@ export function JourneyMapAtlas({
   premiumHref = "/portal/premium",
   chapterDestinations = CHAPTER_DESTINATIONS,
   portalConnections = PORTAL_CONNECTIONS,
+  bgOverride,
 }: {
   reflections: Reflection[];
   premiumCount: number;
@@ -201,6 +202,10 @@ export function JourneyMapAtlas({
   /** 4 đích "Kết nối tới Portal" — GIỮ NGUYÊN field `module` (khoá tra cứu
       thật vào `getModuleActivitySummary()`), chỉ đổi `href`/`label`. */
   portalConnections?: readonly { module: (typeof PORTAL_CONNECTIONS)[number]["module"]; href: string; label: string }[];
+  /** Founder yêu cầu riêng cho tab nhúng: màu nền ĐẶC phủ toàn trang giữa
+      (thay `.map-parchment-bg` gradient góc mặc định của 1.0) — override
+      qua inline style, không đụng `/portal/hanhtrinhcuatoi/ban-do`. */
+  bgOverride?: string;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MapChrome>("map-chrome", [seedChrome], {
@@ -225,7 +230,13 @@ export function JourneyMapAtlas({
   }, [premiumCount, portalConnections]);
 
   if (chapter === undefined || hasAnyJourney === null) {
-    return <div className="map-parchment-bg min-h-[70vh] rounded-3xl" aria-hidden />;
+    return (
+      <div
+        className="map-parchment-bg min-h-[70vh] rounded-3xl"
+        style={bgOverride ? { background: bgOverride } : undefined}
+        aria-hidden
+      />
+    );
   }
   // Gán lại thành hằng số mới để TypeScript giữ nguyên kiểu đã hẹp
   // (JourneyChapter, không còn `undefined`) bên trong các closure phía dưới.
@@ -249,7 +260,7 @@ export function JourneyMapAtlas({
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      <div className="map-parchment-bg" aria-hidden />
+      <div className="map-parchment-bg" style={bgOverride ? { background: bgOverride } : undefined} aria-hidden />
       <div className="map-coordinate-grid" aria-hidden />
       <div className="map-topo-lines" aria-hidden />
       <MapMountains />

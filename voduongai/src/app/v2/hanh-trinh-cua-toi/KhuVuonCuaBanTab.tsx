@@ -90,21 +90,57 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
   if (tier === "bloom") {
     return (
       <svg width="150" height="180" viewBox="0 0 150 180">
-        <path d="M75 180 L73 128 Q71 108 75 96" stroke="#5A3A22" strokeWidth="8" fill="none" strokeLinecap="round" />
-        <path d="M75 118 L52 100" stroke="#5A3A22" strokeWidth="4.5" fill="none" strokeLinecap="round" />
-        <path d="M75 112 L98 94" stroke="#5A3A22" strokeWidth="4.5" fill="none" strokeLinecap="round" />
-        <circle cx="75" cy="64" r="40" fill="#15803D" />
-        <circle cx="48" cy="80" r="28" fill="#16A34A" />
-        <circle cx="102" cy="80" r="28" fill="#16A34A" />
-        <circle cx="75" cy="36" r="30" fill="#22C55E" />
-        <circle cx="52" cy="52" r="22" fill="#4ADE80" opacity=".85" />
-        <circle cx="98" cy="55" r="20" fill="#4ADE80" opacity=".8" />
-        <g fill="#FBCFE8">
-          <circle cx="42" cy="58" r="4.2" /><circle cx="100" cy="46" r="4.2" /><circle cx="68" cy="18" r="4.2" />
-          <circle cx="108" cy="72" r="4.2" /><circle cx="34" cy="84" r="4.2" /><circle cx="86" cy="24" r="4.2" />
+        {/* Thân + rễ toả — thân thật có độ cong tự nhiên, rễ bè ra ở gốc */}
+        <path d="M75 180 Q68 172 70 160 Q60 172 50 176" stroke="#4A2E18" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <path d="M75 180 Q82 172 80 160 Q90 172 100 176" stroke="#4A2E18" strokeWidth="4" fill="none" strokeLinecap="round" />
+        <path d="M75 180 C73 156 78 132 74 108 C72 98 76 90 75 82" stroke="#5A3A22" strokeWidth="9" fill="none" strokeLinecap="round" />
+        <path d="M74 130 Q54 118 46 96" stroke="#5A3A22" strokeWidth="5" fill="none" strokeLinecap="round" />
+        <path d="M76 118 Q98 104 104 84" stroke="#5A3A22" strokeWidth="5" fill="none" strokeLinecap="round" />
+        <path d="M74 96 Q60 84 55 68" stroke="#4A2E18" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+        {/* Tán lá — nhiều thuỳ chồng lớp tạo khối tròn tự nhiên, không phải 1 khối tròn đơn */}
+        <g>
+          <circle cx="75" cy="70" r="42" fill="#14532D" />
+          <circle cx="42" cy="86" r="26" fill="#166534" />
+          <circle cx="108" cy="86" r="26" fill="#166534" />
+          <circle cx="75" cy="40" r="34" fill="#15803D" />
+          <circle cx="46" cy="58" r="26" fill="#16A34A" />
+          <circle cx="104" cy="58" r="26" fill="#16A34A" />
+          <circle cx="75" cy="26" r="26" fill="#22C55E" />
+          <circle cx="52" cy="40" r="18" fill="#4ADE80" opacity=".9" />
+          <circle cx="98" cy="42" r="17" fill="#4ADE80" opacity=".85" />
+          <circle cx="75" cy="16" r="16" fill="#86EFAC" opacity=".8" />
         </g>
-        <g fill="#F87171">
-          <ellipse cx="56" cy="94" rx="5.5" ry="6" /><ellipse cx="88" cy="96" rx="5.5" ry="6" /><ellipse cx="72" cy="102" rx="5.5" ry="6" />
+        {/* Vài chiếc lá đơn lẻ nổi rõ trên viền tán — tăng cảm giác "lá thật" */}
+        <g fill="#22C55E" stroke="#14532D" strokeWidth=".6">
+          <ellipse cx="30" cy="70" rx="6" ry="3.4" transform="rotate(-30 30 70)" />
+          <ellipse cx="120" cy="72" rx="6" ry="3.4" transform="rotate(30 120 72)" />
+          <ellipse cx="75" cy="8" rx="6" ry="3.4" transform="rotate(4 75 8)" />
+          <ellipse cx="40" cy="30" rx="5.5" ry="3" transform="rotate(-50 40 30)" />
+          <ellipse cx="110" cy="32" rx="5.5" ry="3" transform="rotate(50 110 32)" />
+        </g>
+        {/* Hoa — cụm 5 cánh nhỏ quanh nhuỵ vàng, không chỉ chấm tròn đơn sắc */}
+        {[
+          [40, 52], [102, 42], [66, 14], [112, 66], [30, 80], [88, 20], [56, 96], [96, 92],
+        ].map(([fx, fy], i) => (
+          <g key={i} transform={`translate(${fx} ${fy})`}>
+            <circle cx="-3.6" cy="0" r="3" fill="#FBCFE8" />
+            <circle cx="3.6" cy="0" r="3" fill="#FBCFE8" />
+            <circle cx="0" cy="-3.6" r="3" fill="#F9A8D4" />
+            <circle cx="0" cy="3.6" r="3" fill="#F9A8D4" />
+            <circle cx="0" cy="0" r="2.2" fill="#FDE047" />
+          </g>
+        ))}
+        {/* Quả — elip đỏ có điểm sáng nhỏ tạo khối căng mọng */}
+        <g>
+          {[
+            [56, 100], [90, 102], [72, 110], [104, 92], [44, 96],
+          ].map(([fx, fy], i) => (
+            <g key={i} transform={`translate(${fx} ${fy})`}>
+              <ellipse cx="0" cy="0" rx="6" ry="7" fill="#DC2626" />
+              <ellipse cx="-1.6" cy="-2" rx="1.8" ry="2.2" fill="#F87171" opacity=".8" />
+              <path d="M0 -7 Q1 -9.5 3 -9" stroke="#166534" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+            </g>
+          ))}
         </g>
       </svg>
     );
@@ -112,24 +148,40 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
   if (tier === "growing") {
     return (
       <svg width="110" height="140" viewBox="0 0 110 140">
-        <path d="M55 140 L53 100 Q52 84 55 74" stroke="#5A3A22" strokeWidth="6" fill="none" strokeLinecap="round" />
-        <circle cx="55" cy="52" r="30" fill="#65A30D" />
-        <circle cx="36" cy="64" r="20" fill="#84CC16" />
-        <circle cx="74" cy="64" r="20" fill="#84CC16" />
-        <circle cx="55" cy="30" r="22" fill="#A3E635" />
+        <path d="M55 140 C53 118 57 96 54 78 C53 70 56 64 55 56" stroke="#5A3A22" strokeWidth="6.5" fill="none" strokeLinecap="round" />
+        <path d="M54 96 Q40 86 35 70" stroke="#5A3A22" strokeWidth="3.6" fill="none" strokeLinecap="round" />
+        <path d="M56 88 Q72 78 76 64" stroke="#5A3A22" strokeWidth="3.6" fill="none" strokeLinecap="round" />
+        <circle cx="55" cy="52" r="30" fill="#4D7C0F" />
+        <circle cx="34" cy="66" r="19" fill="#65A30D" />
+        <circle cx="76" cy="66" r="19" fill="#65A30D" />
+        <circle cx="55" cy="28" r="23" fill="#84CC16" />
+        <circle cx="38" cy="42" r="15" fill="#A3E635" opacity=".85" />
+        <circle cx="72" cy="42" r="14" fill="#A3E635" opacity=".8" />
+        <g fill="#84CC16" stroke="#4D7C0F" strokeWidth=".5">
+          <ellipse cx="22" cy="58" rx="5" ry="2.8" transform="rotate(-30 22 58)" />
+          <ellipse cx="88" cy="60" rx="5" ry="2.8" transform="rotate(30 88 60)" />
+        </g>
         <g fill="#FEF3C7">
-          <circle cx="34" cy="48" r="3.4" /><circle cx="76" cy="42" r="3.4" /><circle cx="55" cy="16" r="3.4" />
+          <circle cx="30" cy="48" r="3.4" /><circle cx="78" cy="42" r="3.4" /><circle cx="55" cy="12" r="3.4" />
+          <circle cx="64" cy="66" r="3" /><circle cx="42" cy="70" r="3" />
         </g>
       </svg>
     );
   }
   return (
     <svg width="70" height="90" viewBox="0 0 70 90">
-      <path d="M35 90 L34 66 Q34 56 35 50" stroke="#5A3A22" strokeWidth="4" fill="none" strokeLinecap="round" />
-      <circle cx="35" cy="36" r="18" fill="#A16207" />
-      <circle cx="24" cy="42" r="11" fill="#CA8A04" />
-      <circle cx="46" cy="42" r="11" fill="#CA8A04" />
-      <circle cx="35" cy="22" r="13" fill="#EAB308" />
+      <path d="M35 90 C34 76 36 64 35 54 C34 48 36 44 35 38" stroke="#5A3A22" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M35 64 Q26 58 24 48" stroke="#5A3A22" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      <path d="M35 58 Q44 52 46 44" stroke="#5A3A22" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+      <circle cx="35" cy="36" r="18" fill="#854D0E" />
+      <circle cx="22" cy="44" r="11" fill="#A16207" />
+      <circle cx="48" cy="44" r="11" fill="#A16207" />
+      <circle cx="35" cy="20" r="14" fill="#CA8A04" />
+      <circle cx="35" cy="34" r="9" fill="#EAB308" opacity=".8" />
+      <g fill="#CA8A04" stroke="#854D0E" strokeWidth=".4">
+        <ellipse cx="16" cy="38" rx="3.6" ry="2" transform="rotate(-30 16 38)" />
+        <ellipse cx="54" cy="40" rx="3.6" ry="2" transform="rotate(30 54 40)" />
+      </g>
     </svg>
   );
 }
@@ -188,6 +240,16 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
       />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
+        {/* Founder yêu cầu: bỏ dòng "Hành trình của tôi" (eyebrow), giữ lại
+            h1 + subtitle — chuyển sang góc trái trên cùng, subtitle viết lại
+            tinh tế/chuyên nghiệp hơn (thay câu liệt kê cơ chế cũ). */}
+        <div style={{ maxWidth: 560 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: "#fff", margin: "0 0 6px" }}>Khu vườn của bạn</h1>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,.65)", lineHeight: 1.6, margin: 0 }}>
+            Mỗi cây là một giai đoạn học tập — lớn lên, đơm hoa kết trái theo từng bước tiến của bạn.
+          </p>
+        </div>
+
         {/* Lối đi + cây — full-bleed, không giới hạn maxWidth 900 như phần chữ */}
         <div style={{ position: "relative", height: SCENE_HEIGHT, marginTop: 8 }}>
           {GN_LEAVES.map((leaf, i) => (
@@ -238,36 +300,30 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           )}
         </div>
 
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        {/* Founder yêu cầu: 3 khối (Tiếp tục học/Thành tựu/Câu triết lý) xếp
+            thành 1 hàng ngang, gọn gàng — thay vì xếp chồng dọc như trước. */}
+        <div className="kvcb-row" style={{ maxWidth: 1100, margin: "0 auto" }}>
           {/* Tiếp tục học — chuyển từ tab Hành trình của tôi, gắn liền chỗ hiện tiến độ */}
           {currentStage && (
             <div
+              className="kvcb-col"
               style={{
                 background: "linear-gradient(135deg,rgba(74,222,128,.08),rgba(255,255,255,.02))",
                 border: "1px solid rgba(74,222,128,.28)",
-                borderRadius: 18,
-                padding: "24px 28px",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                gap: 20,
-                flexWrap: "wrap",
-                marginBottom: 20,
+                borderRadius: 16,
               }}
             >
-              <div style={{ display: "flex", gap: 16, alignItems: "flex-start" }}>
-                <div style={{ width: 40, height: 40, flexShrink: 0, borderRadius: 12, background: "rgba(74,222,128,.16)", border: "1px solid rgba(74,222,128,.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#7EE8A6" strokeWidth="2">
+              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <div style={{ width: 34, height: 34, flexShrink: 0, borderRadius: 10, background: "rgba(74,222,128,.16)", border: "1px solid rgba(74,222,128,.3)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7EE8A6" strokeWidth="2">
                     <path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" />
                   </svg>
                 </div>
-                <div>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#7EE8A6", marginBottom: 6 }}>
-                    Bạn đang ở giai đoạn {(currentStageIndex ?? 0) + 1}: {currentStage.title}
-                  </div>
-                  <div style={{ fontSize: 13, color: "rgba(255,255,255,.6)", maxWidth: 460 }}>{currentStage.description}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#7EE8A6" }}>
+                  Giai đoạn {(currentStageIndex ?? 0) + 1}: {currentStage.title}
                 </div>
               </div>
+              <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.6)", lineHeight: 1.5, flex: 1 }}>{currentStage.description}</div>
               <button
                 type="button"
                 onClick={() => router.push("/v2/hoc-vien-ai")}
@@ -276,13 +332,14 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
                   background: "linear-gradient(135deg,#4ADE80,#16A34A)",
                   color: "#06210F",
                   border: "none",
-                  padding: "13px 24px",
-                  borderRadius: 11,
+                  padding: "11px 18px",
+                  borderRadius: 10,
                   fontWeight: 800,
-                  fontSize: 13.5,
+                  fontSize: 12.5,
                   cursor: "pointer",
                   whiteSpace: "nowrap",
                   boxShadow: "0 8px 20px -6px rgba(74,222,128,.5)",
+                  alignSelf: "flex-start",
                 }}
               >
                 Tiếp tục học →
@@ -291,44 +348,42 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           )}
 
           {/* Thành tựu của tôi — badges thật, thay 2 ô "Nhiệm vụ hằng ngày"/"Vật phẩm" giả cũ */}
-          <div style={{ marginBottom: 20 }}>
-            <h3 style={{ color: "#fff", fontSize: 15, fontWeight: 800, margin: "0 0 14px" }}>Thành tựu của tôi</h3>
+          <div className="kvcb-col">
+            <h3 style={{ color: "#fff", fontSize: 13.5, fontWeight: 800, margin: 0 }}>Thành tựu của tôi</h3>
             {badges.length === 0 ? (
-              <div style={{ background: "#111318", border: "1px solid rgba(74,222,128,.14)", borderRadius: 16, padding: "24px 28px", display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ width: 40, height: 40, flexShrink: 0, borderRadius: 12, background: "rgba(255,255,255,.04)", border: "1px dashed rgba(255,255,255,.18)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth="1.8">
-                    <circle cx="12" cy="8" r="5" />
-                    <path d="M8.5 13l-2 7 5.5-3 5.5 3-2-7" />
-                  </svg>
-                </div>
-                <div style={{ fontSize: 13, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có huy hiệu nào — huy hiệu thật sẽ hiện ở đây khi bạn đạt được.</div>
+              <div style={{ background: "rgba(255,255,255,.03)", border: "1px dashed rgba(255,255,255,.18)", borderRadius: 12, padding: "16px", display: "flex", alignItems: "center", gap: 12, flex: 1 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" strokeWidth="1.8" style={{ flexShrink: 0 }}>
+                  <circle cx="12" cy="8" r="5" />
+                  <path d="M8.5 13l-2 7 5.5-3 5.5 3-2-7" />
+                </svg>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có huy hiệu nào.</div>
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(84px,1fr))", gap: 8 }}>
                 {badges.map((b) => (
-                  <div key={b.id} title={b.name} style={{ background: "#111318", border: "1px solid rgba(74,222,128,.16)", borderRadius: 14, padding: 16, textAlign: "center" }}>
+                  <div key={b.id} title={b.name} style={{ background: "#111318", border: "1px solid rgba(74,222,128,.16)", borderRadius: 12, padding: 10, textAlign: "center" }}>
                     <div
                       style={{
-                        width: 44,
-                        height: 44,
-                        margin: "0 auto 10px",
+                        width: 34,
+                        height: 34,
+                        margin: "0 auto 6px",
                         borderRadius: "50%",
                         background: "radial-gradient(circle at 35% 30%,#86EFAC,#16A34A 70%)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 0 16px rgba(74,222,128,.35)",
+                        boxShadow: "0 0 12px rgba(74,222,128,.35)",
                       }}
                     >
                       {b.icon ? (
-                        <span style={{ fontSize: 18 }}>{b.icon}</span>
+                        <span style={{ fontSize: 14 }}>{b.icon}</span>
                       ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff">
                           <path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z" />
                         </svg>
                       )}
                     </div>
-                    <div style={{ fontSize: 11.5, fontWeight: 700, color: "#fff" }}>{b.name}</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>{b.name}</div>
                   </div>
                 ))}
               </div>
@@ -336,11 +391,14 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           </div>
 
           {/* Câu triết lý — nội dung riêng của trang này, giữ nguyên */}
-          <div style={{ background: "linear-gradient(150deg,rgba(74,222,128,.08),rgba(255,255,255,.02))", border: "1px solid rgba(74,222,128,.16)", borderRadius: 16, padding: 22, position: "relative", overflow: "hidden" }}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#4ADE80" style={{ marginBottom: 10, opacity: 0.7 }}>
+          <div
+            className="kvcb-col"
+            style={{ background: "linear-gradient(150deg,rgba(74,222,128,.08),rgba(255,255,255,.02))", border: "1px solid rgba(74,222,128,.16)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#4ADE80" style={{ opacity: 0.7 }}>
               <path d="M7 7c-2 0-4 2-4 5s2 5 4 5 4-2 4-5-2-5-4-5zm10 0c-2 0-4 2-4 5s2 5 4 5 4-2 4-5-2-5-4-5z" />
             </svg>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,.75)", lineHeight: 1.6, margin: 0, maxWidth: 560 }}>
+            <p style={{ fontSize: 12.5, color: "rgba(255,255,255,.75)", lineHeight: 1.55, margin: 0, flex: 1 }}>
               Bạn không cần tuyệt vời ngay hôm nay. Chỉ cần tốt hơn ngày hôm qua một chút. Và khu vườn của bạn sẽ nở hoa.
             </p>
           </div>

@@ -89,6 +89,9 @@ export function MirrorChamber({
   storyHref = "/portal/story",
   onOpenStory,
   storyInviteLabel = "Viết câu trả lời trong My Story",
+  bgOverride,
+  hideCompanionLogo = false,
+  artAlign = "center",
 }: {
   invitation: string | null;
   narrativeLines: MirrorNarrativeLine[];
@@ -116,6 +119,19 @@ export function MirrorChamber({
   /** Nội dung link cuối trang — mặc định giữ nguyên câu 1.0. Nhúng làm
       tab đổi câu mời (chuyển tab tại chỗ, không phải rời trang). */
   storyInviteLabel?: string;
+  /** Founder yêu cầu riêng cho tab nhúng `/v2/hanh-trinh-cua-toi`: màu nền
+      ĐẶC phủ toàn trang giữa (thay `.mirror-chamber-bg` gradient mặc định
+      của 1.0) — override qua inline style (`background` inline luôn thắng
+      class), không đổi `/portal/mirror`. */
+  bgOverride?: string;
+  /** Founder yêu cầu riêng: ẩn Living Core (logo Companion) ở tab nhúng —
+      mặc định `false`, giữ nguyên hành vi 1.0. */
+  hideCompanionLogo?: boolean;
+  /** Vị trí khối gương kính lớn (art trang trí phía sau nội dung) — mặc
+      định `"center"` giữ nguyên 1.0. `"right"` (Founder yêu cầu cho tab
+      nhúng): gương đang nằm giữa trang bị nội dung ở giữa che khuất, dời
+      hẳn sang mép phải màn hình để luôn nhìn thấy được. */
+  artAlign?: "center" | "right";
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MirrorChrome>("mirror-chrome", [seedChrome], {
@@ -140,7 +156,13 @@ export function MirrorChamber({
   }, []);
 
   if (clientFacts === null) {
-    return <div className="mirror-chamber-bg min-h-[70vh] rounded-3xl" aria-hidden />;
+    return (
+      <div
+        className="mirror-chamber-bg min-h-[70vh] rounded-3xl"
+        style={bgOverride ? { background: bgOverride } : undefined}
+        aria-hidden
+      />
+    );
   }
 
   const hasReflectionMaterial =
@@ -151,7 +173,7 @@ export function MirrorChamber({
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      <div className="mirror-chamber-bg" aria-hidden />
+      <div className="mirror-chamber-bg" style={bgOverride ? { background: bgOverride } : undefined} aria-hidden />
       <div className="mirror-glass-veil" aria-hidden />
       <div
         className="mirror-ripple"
@@ -173,7 +195,11 @@ export function MirrorChamber({
        * nội dung (KHÔNG bố cục lệch phải như mockup gốc, để không xáo
        * trộn cấu trúc NHÌN LẠI/NHẬN RA/TỰ HỎI + panel admin thật). */}
       <svg
-        className="pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 opacity-[0.16]"
+        className={
+          artAlign === "right"
+            ? "pointer-events-none absolute right-[2%] top-1/2 z-0 -translate-y-1/2 opacity-[0.22] md:right-[6%]"
+            : "pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 opacity-[0.16]"
+        }
         width="460"
         height="680"
         viewBox="0 0 460 680"
@@ -255,8 +281,10 @@ export function MirrorChamber({
         )}
 
         <header className="mt-10 text-center">
-          <LivingCore size={52} state="idle" intensity="low" showParticles={false} className="mx-auto" />
-          <h1 className="mt-8 text-2xl font-semibold tracking-tight text-white/90 sm:text-3xl">{chrome.title}</h1>
+          {!hideCompanionLogo && (
+            <LivingCore size={52} state="idle" intensity="low" showParticles={false} className="mx-auto" />
+          )}
+          <h1 className={`${hideCompanionLogo ? "mt-0" : "mt-8"} text-2xl font-semibold tracking-tight text-white/90 sm:text-3xl`}>{chrome.title}</h1>
           {invitation && (
             <p className="mx-auto mt-5 max-w-md text-base leading-loose text-white/60">{invitation}</p>
           )}

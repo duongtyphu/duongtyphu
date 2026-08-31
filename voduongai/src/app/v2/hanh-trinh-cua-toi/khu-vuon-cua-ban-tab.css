@@ -29,3 +29,23 @@
   filter: brightness(1.08);
   box-shadow: 0 12px 26px -6px rgba(74, 222, 128, .65);
 }
+
+/* Founder yêu cầu: "Tiếp tục học"/"Thành tựu của tôi"/"Câu triết lý" thành
+   1 hàng ngang gọn gàng — 3 cột cân đối trên desktop, gập xuống 1 cột trên
+   di động. */
+.kvcb-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+.kvcb-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 16px;
+}
+@media (max-width: 900px) {
+  .kvcb-row { grid-template-columns: 1fr; }
+}
