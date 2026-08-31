@@ -240,12 +240,23 @@ const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
   "ban-do-hanh-trinh": { headline: "Con đường bạn đang đi", desc: "5 chương cuộc đời — từ nơi bắt đầu đến nơi bạn chưa từng tới." },
 };
 
-/** Founder yêu cầu thêm "chiều sâu, độ bóng" cho nền đặc của 3 tab
+/** Founder từng yêu cầu thêm "chiều sâu, độ bóng" cho nền đặc của 3 tab
  * (My Story/Mirror/Bản đồ hành trình) — 2 lớp radial NEO Ở TOP (bán kính
  * px cố định, không theo %) tạo ánh sáng gần đầu trang, KHÔNG lặp lại bug
- * cũ (gradient theo % chiều cao container sẽ tối dần ở cuối trang dài).
- * `TAB_BG_SHADOW` là vignette `boxShadow` inset (px cố định quanh 4 cạnh,
- * không phụ thuộc chiều cao nội dung) — cùng dùng chung cả 3 tab.
+ * cũ (gradient theo % chiều cao container sẽ tối dần ở cuối trang dài) —
+ * 2 lớp radial này GIỮ NGUYÊN, vẫn đúng ý đồ ban đầu.
+ *
+ * ĐÃ BỎ `TAB_BG_SHADOW` (vignette `boxShadow: inset 0 0 160px
+ * rgba(0,0,0,.35)` quanh 4 cạnh) — Founder báo lại nhiều lần "vẫn còn lớp
+ * phủ phần nội dung ở dưới các tab" dù màu nền đã liền mạch (`var(--bg)`
+ * cascade đúng) — root cause hoá ra chính LÀ vignette này: mép TRÊN của
+ * div nền (đứng ngay dưới thanh tab) bị tối đi rõ rệt bởi inset shadow,
+ * tạo đúng cảm giác "1 lớp phủ tối" nằm trên nội dung, dù bản chất chỉ là
+ * hiệu ứng trang trí — không phải màu nền khác. Vignette áp dụng đối xứng
+ * cả 4 cạnh nên KHÔNG có cách chỉnh nào giữ được cạnh trên "trong" mà vẫn
+ * giữ cạnh dưới/2 bên tối — bỏ hẳn là cách duy nhất triệt để, ưu tiên
+ * đúng yêu cầu "liền mạch tuyệt đối" Founder nhấn mạnh xuyên suốt Giai
+ * đoạn 10, hơn là hiệu ứng "chiều sâu" trang trí.
  *
  * Founder yêu cầu (đợt sau, sau khi thấy ảnh chụp còn seam giữa header và
  * nội dung): KHÔNG "đắp" màu riêng lên khung giữa (`.tab-panel`) nữa — mọi
@@ -258,7 +269,6 @@ const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
  * (chỉ còn 1 chuỗi CSS `var(--bg)` cố định, không phải hex thay đổi theo
  * tab nữa). `TAB_HEADER_BG` giờ là NƠI DUY NHẤT định nghĩa 5 giá trị hex
  * thật trong toàn bộ file. */
-const TAB_BG_SHADOW = "inset 0 0 160px rgba(0,0,0,.35)";
 const STORY_BG =
   "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 12%, rgba(253,222,155,.10), transparent 60%), var(--bg)";
 const MIRROR_BG =
@@ -497,7 +507,6 @@ export function HanhTrinhCuaToiClient({
                       mirrorInviteText={{ prefix: "Muốn im lặng một chút?", label: "Ghé qua Mirror" }}
                       variant="corkboard"
                       bgOverride={STORY_BG}
-                      bgShadow={TAB_BG_SHADOW}
                     />
                   </div>
                 )}
@@ -510,7 +519,6 @@ export function HanhTrinhCuaToiClient({
                       onOpenStory={() => setActiveTab("my-story")}
                       storyInviteLabel="Chép lại câu trả lời trong My Story"
                       bgOverride={MIRROR_BG}
-                      bgShadow={TAB_BG_SHADOW}
                       hideCompanionLogo
                       artAlign="right"
                     />
@@ -526,7 +534,6 @@ export function HanhTrinhCuaToiClient({
                       workspaceHref="/v2/muc-tieu"
                       premiumHref="/v2/premium"
                       bgOverride={MAP_BG}
-                      bgShadow={TAB_BG_SHADOW}
                       chapterDestinations={[
                         { href: "/v2/hoc-vien-ai", label: "Học viện AI" },
                         { href: "/v2/hoc-vien-ai", label: "AI Workspace" },

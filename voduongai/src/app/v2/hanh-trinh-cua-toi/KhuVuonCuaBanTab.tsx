@@ -219,13 +219,15 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           biến CSS đã được `.htct` (component cha) override đúng theo tab
           đang mở, kế thừa tự nhiên xuống tới đây. Chỉ còn ĐÚNG 1 nơi định
           nghĩa màu (`TAB_HEADER_BG`), loại bỏ nguy cơ 2 nguồn lệch nhau.
-          Giữ nguyên 2 lớp radial "chiều sâu, độ bóng" + vignette. */}
+          Giữ nguyên 2 lớp radial "chiều sâu, độ bóng". ĐÃ BỎ vignette
+          (`boxShadow: inset 0 0 160px rgba(0,0,0,.35)`) — cùng lý do đã
+          sửa ở `NhatKyHocTapTab.tsx`: root cause thật của "vẫn còn lớp
+          phủ nội dung dưới thanh tab" Founder báo lại nhiều lần. */}
       <div
         className="absolute inset-0 z-0"
         style={{
           background:
             "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 85% 10%, rgba(147,197,253,.09), transparent 60%), var(--bg)",
-          boxShadow: "inset 0 0 160px rgba(0,0,0,.35)",
         }}
         aria-hidden
       />
