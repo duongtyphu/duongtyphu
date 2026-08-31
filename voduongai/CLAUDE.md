@@ -9267,3 +9267,60 @@ học tập: topbar/page-head/tab-bar/panel-ancestor đều `rgb(15,54,96)`,
 nhập thật ở màn hình hẹp/mobile (`@media (max-width:1180px)` đổi
 `.content` sang `flex-direction:column` — sandbox chỉ test ở 1900px) —
 Founder tự xác nhận trên Preview/Production URL sau khi deploy.
+
+## Giai đoạn 10 (tiếp) — bỏ hẳn "đắp màu" riêng lẻ ở từng tab, dùng chung đúng 1 nguồn `--bg`
+
+Ngay sau bản vá seam/topbar ở trên, Founder gửi lại đúng ảnh chụp
+(`htct-nhat-ky-hoc-tap.png`, chính ảnh đã dùng để verify bản vá trước) kèm
+chú thích đỏ tại vị trí ranh giới header↔nội dung: "1;2;3 cùng một màu nền
+liền mạch" / "dùng chung màu nền của trang" — chỉ rõ: dù màu ĐÃ liền mạch
+về mặt thị giác (đã verify), kỹ thuật hiện tại vẫn SAI — mỗi tab content
+component (`NhatKyHocTapTab`/`KhuVuonCuaBanTab`/`MyStoryBook`/
+`MirrorChamber`/`JourneyMapAtlas`) tự "đắp" (paint) 1 màu nền LITERAL HEX
+riêng của chính nó (`#0F3660`/`#0D2C50`/`#5A4010`/`#152A3D`/`#4A3212`,
+qua `background` inline style hoặc prop `bgOverride`) — TRÙNG GIÁ TRỊ
+nhưng ĐỘC LẬP HOÀN TOÀN với `TAB_HEADER_BG` (nguồn màu của `.htct`'s
+`--bg`). Đây là 2 nguồn dữ liệu riêng biệt tình cờ đồng bộ giá trị —
+đúng nguyên nhân gốc của MỌI lần seam đã xảy ra trước đó (PR #94, và bản
+vá `--bg` cascade đầu tiên của đợt này): chỉ cần 1 trong 2 nơi bị sửa mà
+quên sửa nơi kia là seam quay lại ngay.
+
+**Đã sửa — xoá hẳn việc "đắp" màu ở tầng component, chỉ giữ 1 nguồn
+`--bg` duy nhất:** thay literal hex ở CUỐI mỗi chuỗi `background` (phần
+base đứng sau 2 lớp radial "chiều sâu") bằng `var(--bg)` — biến CSS đã
+được `.htct` set đúng theo tab đang mở (`style={{"--bg": htctBg}}`, từ
+bản vá trước) và tự động kế thừa (CSS custom property inherit qua DOM,
+không bị chặn bởi bất kỳ class/wrapper trung gian nào) xuống tới:
+- `NhatKyHocTapTab.tsx`/`KhuVuonCuaBanTab.tsx` — literal hex trong chuỗi
+  `background` (radial-gradient(...), radial-gradient(...), <hex>) đổi
+  thành `var(--bg)`.
+- `HanhTrinhCuaToiClient.tsx`'s `STORY_BG`/`MIRROR_BG`/`MAP_BG` (3 hằng
+  số truyền qua prop `bgOverride` cho `MyStoryBook`/`MirrorChamber`/
+  `JourneyMapAtlas` — 3 component Portal 1.0 dùng chung, `bgOverride`
+  gán thẳng vào `style.background` của DOM node) — cùng thay literal hex
+  cuối chuỗi bằng `var(--bg)`. Xác nhận trước khi sửa: cả 3 component đều
+  render bên trong `<div className="htct-native">` — 1 descendant DOM
+  THẬT của `.htct` (không phải Portal, không phải iframe) — nên `var(--bg)`
+  trong inline style của chúng chắc chắn resolve đúng theo `--bg` đã set
+  ở `.htct` (cascade CSS custom property xuyên DOM, không phụ thuộc
+  class/component boundary).
+
+Kết quả: `TAB_HEADER_BG` (5 giá trị hex) giờ là NƠI DUY NHẤT trong toàn
+bộ file định nghĩa màu thật của từng tab — mọi nơi khác (topbar, page-head,
+tab-bar, 5 tab-content component) chỉ THAM CHIẾU `var(--bg)`, không còn
+literal hex nào lặp lại. Không còn khả năng "quên sửa 1 chỗ" gây lệch màu
+— sửa `TAB_HEADER_BG` là tự động phản ánh khắp mọi nơi.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright thật (`next dev`,
+viewport 1900×1000, click qua đủ 6 tab, đo `getComputedStyle().backgroundColor`
+của `.topbar`/`.page-head`/`.tab-bar`/container gần nhất phía sau
+`.tab-panel`) — kết quả GIỐNG HỆT bản vá trước (đúng kỳ vọng, vì giá trị
+số không đổi, chỉ đổi CƠ CHẾ): Hub 4 điểm đo `rgb(10,10,15)`; 5 tab còn
+lại mỗi tab 4 điểm đo cùng 1 màu duy nhất khớp `TAB_HEADER_BG`. 0
+`pageerror`. Chụp ảnh lại xác nhận trực quan không đổi so với bản trước
+(bằng chứng cơ chế mới hoạt động đúng, không phải regression).
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật ở màn hình hẹp/mobile — Founder tự xác nhận trên Preview/
+Production URL sau khi deploy.

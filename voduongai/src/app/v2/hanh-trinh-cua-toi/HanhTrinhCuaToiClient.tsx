@@ -245,14 +245,26 @@ const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
  * px cố định, không theo %) tạo ánh sáng gần đầu trang, KHÔNG lặp lại bug
  * cũ (gradient theo % chiều cao container sẽ tối dần ở cuối trang dài).
  * `TAB_BG_SHADOW` là vignette `boxShadow` inset (px cố định quanh 4 cạnh,
- * không phụ thuộc chiều cao nội dung) — cùng dùng chung cả 3 tab. */
+ * không phụ thuộc chiều cao nội dung) — cùng dùng chung cả 3 tab.
+ *
+ * Founder yêu cầu (đợt sau, sau khi thấy ảnh chụp còn seam giữa header và
+ * nội dung): KHÔNG "đắp" màu riêng lên khung giữa (`.tab-panel`) nữa — mọi
+ * nơi phải dùng CHUNG đúng 1 nguồn màu nền của trang. Base của cả 3 hằng
+ * số này đổi từ literal hex (từng trùng NHƯNG ĐỘC LẬP với `TAB_HEADER_BG`
+ * bên dưới — 2 nguồn dễ lệch nhau nếu sửa 1 chỗ quên chỗ kia) sang
+ * `var(--bg)` — biến CSS đã được override đúng theo tab đang mở ngay tại
+ * `.htct` (`style={{"--bg": htctBg}}`), kế thừa tự nhiên xuống
+ * `MyStoryBook`/`MirrorChamber`/`JourneyMapAtlas` qua prop `bgOverride`
+ * (chỉ còn 1 chuỗi CSS `var(--bg)` cố định, không phải hex thay đổi theo
+ * tab nữa). `TAB_HEADER_BG` giờ là NƠI DUY NHẤT định nghĩa 5 giá trị hex
+ * thật trong toàn bộ file. */
 const TAB_BG_SHADOW = "inset 0 0 160px rgba(0,0,0,.35)";
 const STORY_BG =
-  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 12%, rgba(253,222,155,.10), transparent 60%), #5A4010";
+  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 12%, rgba(253,222,155,.10), transparent 60%), var(--bg)";
 const MIRROR_BG =
-  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 15% 85%, rgba(34,211,238,.08), transparent 60%), #152A3D";
+  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 15% 85%, rgba(34,211,238,.08), transparent 60%), var(--bg)";
 const MAP_BG =
-  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 90%, rgba(251,146,60,.10), transparent 60%), #4A3212";
+  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 90%, rgba(251,146,60,.10), transparent 60%), var(--bg)";
 
 /** Founder yêu cầu riêng: màu của mỗi tab (5 tab, KHÔNG tính Hub — Hub giữ
  * nguyên nền đen + 6 hộp màu) phải phủ luôn phần "header" — dòng tiêu đề
