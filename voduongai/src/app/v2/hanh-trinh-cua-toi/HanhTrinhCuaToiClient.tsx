@@ -254,6 +254,20 @@ const MIRROR_BG =
 const MAP_BG =
   "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 90%, rgba(251,146,60,.10), transparent 60%), #4A3212";
 
+/** Founder yêu cầu riêng: màu của mỗi tab (5 tab, KHÔNG tính Hub — Hub giữ
+ * nguyên nền đen + 6 hộp màu) phải phủ luôn phần "header" — dòng tiêu đề
+ * "Hành trình của tôi" + thanh 6 nút chuyển tab — chứ không chỉ riêng
+ * `.tab-panel` (nội dung) bên dưới như trước. Dùng ĐÚNG màu đặc (base hex,
+ * không kèm lớp radial "chiều sâu") của từng tab để khớp tông với nội dung
+ * ngay bên dưới nó. `hanh-trinh-cua-toi` (Hub) → `undefined`, giữ nền đen. */
+const TAB_HEADER_BG: Partial<Record<TabKey, string>> = {
+  "nhat-ky-hoc-tap": "#0F3660",
+  "khu-vuon-cua-ban": "#0D2C50",
+  "my-story": "#5A4010",
+  mirror: "#152A3D",
+  "ban-do-hanh-trinh": "#4A3212",
+};
+
 const HUB_CARD_ICON: Record<TabKey, React.ReactNode> = {
   "hanh-trinh-cua-toi": (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -367,21 +381,41 @@ export function HanhTrinhCuaToiClient({
         >
           <div className="content">
             <div className="center-col">
-              <div className="page-head">
-                <div>
-                  <h1>Hành trình của tôi</h1>
-                  <p>Theo dõi tiến độ, mục tiêu và thành tựu trên hành trình phát triển cùng AI.</p>
+              {/* Founder yêu cầu: màu riêng của tab đang mở phủ luôn khối này
+                  (tiêu đề + thanh tab), không chỉ nội dung .tab-panel bên
+                  dưới — bọc chung 1 khối "phá khung" padding của `.content`
+                  (24px/28px, đúng giá trị CSS gốc) để màu tràn sát mép
+                  trang/topbar, rồi bù lại padding y hệt bên trong. Hub giữ
+                  nguyên nền đen (không set style). */}
+              <div
+                style={
+                  TAB_HEADER_BG[activeTab]
+                    ? {
+                        background: TAB_HEADER_BG[activeTab],
+                        margin: "-24px -28px 0",
+                        padding: "24px 28px 22px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 22,
+                      }
+                    : { display: "flex", flexDirection: "column", gap: 22 }
+                }
+              >
+                <div className="page-head">
+                  <div>
+                    <h1>Hành trình của tôi</h1>
+                    <p>Theo dõi tiến độ, mục tiêu và thành tựu trên hành trình phát triển cùng AI.</p>
+                  </div>
+                  <button className="edit-goal-btn" onClick={() => router.push("/v2/muc-tieu")}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M11 4H4v16h16v-7" />
+                      <path d="M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z" />
+                    </svg>
+                    Chỉnh sửa mục tiêu
+                  </button>
                 </div>
-                <button className="edit-goal-btn" onClick={() => router.push("/v2/muc-tieu")}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M11 4H4v16h16v-7" />
-                    <path d="M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z" />
-                  </svg>
-                  Chỉnh sửa mục tiêu
-                </button>
-              </div>
 
-              <div className="tab-bar">
+                <div className="tab-bar">
                 {TABS.map((t) => (
                   <button
                     key={t.key}
@@ -392,6 +426,7 @@ export function HanhTrinhCuaToiClient({
                     {t.label}
                   </button>
                 ))}
+                </div>
               </div>
 
               <div className="tab-panel">
