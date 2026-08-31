@@ -9141,3 +9141,50 @@ chi tiết nhỏ khác (spacing/màu) ở 3 component này chưa được liệt
 trong 5 ảnh Founder gửi — nếu thấy điểm nào khác lạ so với trước, đó nhiều
 khả năng là hệ quả TÍCH CỰC của việc Tailwind giờ đã hoạt động đúng như
 thiết kế gốc (không phải lỗi mới).
+
+## Giai đoạn 10 (tiếp) — màu riêng từng tab phủ lên cả header + thanh tab (không chỉ nội dung)
+
+Sau đợt sửa nền đặc + căn giữa ở trên, Founder báo "vẫn không hiểu ý" —
+dừng lại, KHÔNG code ngay, hỏi lại cho tới khi hiểu đúng (đúng yêu cầu
+Founder: "Khoan hãy chạy code: hãy nghe mình giải thích đến khi nào
+hiểu"). Sau 1 vòng hỏi-đáp, chốt đúng yêu cầu:
+
+- **Trang Hub** ("Hành trình của tôi") — GIỮ NGUYÊN, không đổi: nền đen
+  toàn trang + 6 hộp jewel-tone.
+- **5 tab còn lại** — màu riêng của từng tab (đã có sẵn từ đợt trước:
+  Nhật ký `#0F3660` xanh dương/Khu vườn `#0D2C50` xanh lam/My Story
+  `#5A4010` vàng đồng/Mirror `#152A3D` navy/Bản đồ `#4A3212` bronze) phải
+  phủ **từ dòng tiêu đề "Hành trình của tôi" + thanh 6 nút chuyển tab trở
+  xuống** — KHÔNG chỉ riêng phần nội dung `.tab-panel` bên dưới như trước
+  (trước đó phần "header" này vẫn cố định nền đen bất kể tab nào đang mở).
+  Founder xác nhận rõ: **không tính** thanh trên cùng (ô tìm kiếm/chuông/
+  avatar) — thanh đó dùng chung toàn `/v2/hanh-trinh-cua-toi`, giữ nguyên
+  không đổi.
+
+**Triển khai:** thêm `TAB_HEADER_BG: Partial<Record<TabKey,string>>` (5
+entry, `hanh-trinh-cua-toi` không có = giữ đen). Bọc chung `.page-head` +
+`.tab-bar` (trước đó là 2 con trực tiếp của `.center-col`, cách nhau bởi
+`.center-col{gap:22px}`) trong 1 `<div>` mới — khi có màu, "phá khung"
+padding của `.content` (`margin:-24px -28px 0` để tràn sát mép trang/
+topbar, `padding:24px 28px 22px` bù lại khoảng cách y hệt bản gốc) +
+`display:flex;flexDirection:column;gap:22` để tái tạo đúng khoảng cách
+page-head↔tab-bar đã mất khi tách khỏi `.center-col`. Khi không có màu
+(tab Hub), wrapper chỉ còn `display:flex;flexDirection:column;gap:22` —
+không margin/padding — layout giữ nguyên 100% như trước (đã xác nhận qua
+so sánh ảnh chụp Hub trước/sau, không đổi 1px nào).
+
+**File sửa:** `HanhTrinhCuaToiClient.tsx` (duy nhất).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright chụp cả 6 tab (viewport
+1900px, cùng độ rộng đã dùng để phát hiện bug centering trước đó) — xác
+nhận: Hub không đổi (nền đen, 6 hộp màu y hệt); cả 5 tab còn lại màu phủ
+liên tục KHÔNG NGẮT QUÃNG từ dòng tiêu đề "Hành trình của tôi" → thanh 6
+tab → nội dung bên dưới, sát mép trái/phải/trên đúng flush với topbar và
+sidebar, không còn dải đen nào xen giữa.
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật ở các độ phân giải màn hình khác (đặc biệt màn hình hẹp/mobile
+— `@media (max-width:1180px)` đổi `.content` sang `flex-direction:column`,
+chưa tự chụp lại ở breakpoint này) — Founder tự xác nhận trên Preview/
+Production URL.
