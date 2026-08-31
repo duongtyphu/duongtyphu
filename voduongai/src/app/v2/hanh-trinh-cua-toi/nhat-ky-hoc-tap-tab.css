@@ -25,6 +25,7 @@
   border-radius: 20px;
   position: relative;
   overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
 }
 .jn-card::before {
   content: "";
@@ -33,56 +34,47 @@
   background: linear-gradient(160deg, rgba(255, 255, 255, .03), transparent 40%);
   pointer-events: none;
 }
+.jn-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(96, 165, 250, .28);
+  box-shadow: 0 16px 34px -14px rgba(0, 0, 0, .55);
+}
 
-.jn-filter-chip {
-  border: none;
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 12.5px;
-  font-weight: 700;
-  cursor: pointer;
-  white-space: nowrap;
-  background: rgba(255, 255, 255, .05);
-  color: rgba(255, 255, 255, .55);
-  transition: background .15s, color .15s;
+.jn-icon-btn {
+  transition: background .15s, transform .15s;
 }
-.jn-filter-chip:hover { background: rgba(96, 165, 250, .14); color: #fff; }
-.jn-filter-chip.active { background: linear-gradient(135deg, #60A5FA, #3B82F6); color: #06131F; }
+.jn-icon-btn:hover {
+  background: rgba(96, 165, 250, .16) !important;
+  transform: translateY(-1px);
+}
 
-.jn-view-btn {
-  border: none;
-  background: transparent;
-  color: rgba(255, 255, 255, .4);
-  padding: 8px;
-  border-radius: 9px;
-  cursor: pointer;
-  display: flex;
+.jn-cta-btn {
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
 }
-.jn-view-btn.active { background: rgba(96, 165, 250, .16); color: #93C5FD; }
-.jn-view-btn svg { width: 16px; height: 16px; }
+.jn-cta-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 14px 28px -8px rgba(59, 130, 246, .65);
+}
 
-.jn-log-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, .06);
+/* `.htct a{color:var(--violet)}` (trang cha) có specificity (0,1,1) — cao
+   hơn `.jn-link` đơn lẻ (0,1,0), cần khớp bằng .htct a.jn-link để thắng. */
+.htct a.jn-link {
+  color: #93C5FD;
+  transition: color .15s ease;
 }
-.jn-log-row:last-child { border-bottom: none; }
-.jn-log-row .ico {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.htct a.jn-link:hover {
+  color: #fff;
 }
-.jn-log-row .ico svg { width: 16px; height: 16px; }
-.jn-log-row .info { flex: 1; min-width: 0; }
-.jn-log-row .info h6 { font-size: 12.5px; font-weight: 700; color: #fff; line-height: 1.4; margin: 0; }
-.jn-log-row .info .tag { font-size: 10px; font-weight: 700; color: rgba(255, 255, 255, .4); }
-.jn-log-row .time { font-size: 10.5px; color: rgba(255, 255, 255, .35); flex-shrink: 0; }
+
+.jn-doc-card {
+  transition: transform .15s ease, background .15s ease, border-color .15s ease;
+}
+.jn-doc-card:hover {
+  transform: translateY(-2px);
+  background: rgba(96, 165, 250, .08) !important;
+  border-color: rgba(96, 165, 250, .3) !important;
+}
 
 @media (max-width: 900px) {
   .jn-bento-2col { grid-template-columns: 1fr !important; }

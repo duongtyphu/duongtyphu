@@ -143,6 +143,13 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="absolute inset-0 z-0" style={{ background: "#070a12" }} aria-hidden />
+      {/* Chiều sâu + đồng nhất màu với hộp Hub "Khu vườn của bạn"
+          (HUB_CARD_STYLE["khu-vuon-cua-ban"], linear-gradient(135deg,#0F3325,#081A2E)). */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: "linear-gradient(135deg, rgba(15,51,37,.5) 0%, rgba(8,26,46,.5) 45%, transparent 75%)" }}
+        aria-hidden
+      />
 
       {/* dải aurora trừu tượng vắt ngang trời */}
       <div
@@ -278,6 +285,7 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
               <button
                 type="button"
                 onClick={() => router.push("/v2/hoc-vien-ai")}
+                className="gd-cta-btn"
                 style={{
                   background: "linear-gradient(135deg,#4ADE80,#16A34A)",
                   color: "#06210F",

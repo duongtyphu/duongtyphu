@@ -43,40 +43,45 @@ export function useMemoryCapsules() {
 
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(async ({ data }) => {
-      const uid = data.user?.id ?? null;
-      setUserId(uid);
-      if (!uid) {
-        setReady(true);
-        return;
-      }
-      const { data: rows, error } = await supabase
-        .from("memory_capsules")
-        .select("id, kind, title, description, occurred_at, source, story_id, meaning_tags")
-        .eq("member_id", uid)
-        .order("occurred_at", { ascending: false });
-      if (error) {
-        if (isMissingTableError(error)) {
-          setTableReady(false);
-          warnMissingTableOnce("memory_capsules");
+    supabase.auth
+      .getUser()
+      .then(async ({ data }) => {
+        const uid = data.user?.id ?? null;
+        setUserId(uid);
+        if (!uid) {
+          setReady(true);
+          return;
         }
+        const { data: rows, error } = await supabase
+          .from("memory_capsules")
+          .select("id, kind, title, description, occurred_at, source, story_id, meaning_tags")
+          .eq("member_id", uid)
+          .order("occurred_at", { ascending: false });
+        if (error) {
+          if (isMissingTableError(error)) {
+            setTableReady(false);
+            warnMissingTableOnce("memory_capsules");
+          }
+          setReady(true);
+          return;
+        }
+        setCapsules(
+          (rows ?? []).map((r) => ({
+            id: r.id,
+            kind: r.kind,
+            title: r.title,
+            description: r.description ?? undefined,
+            occurredAt: r.occurred_at,
+            source: r.source ?? undefined,
+            storyId: r.story_id ?? undefined,
+            meaningTags: r.meaning_tags ?? undefined,
+          }))
+        );
         setReady(true);
-        return;
-      }
-      setCapsules(
-        (rows ?? []).map((r) => ({
-          id: r.id,
-          kind: r.kind,
-          title: r.title,
-          description: r.description ?? undefined,
-          occurredAt: r.occurred_at,
-          source: r.source ?? undefined,
-          storyId: r.story_id ?? undefined,
-          meaningTags: r.meaning_tags ?? undefined,
-        }))
-      );
-      setReady(true);
-    });
+      })
+      // Cùng lý do `useReflections()` — `auth.getUser()` có thể throw, không để
+      // rejection rơi tự do khiến `ready` mãi `false`.
+      .catch(() => setReady(true));
   }, []);
 
   const addCapsule = useCallback(

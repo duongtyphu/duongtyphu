@@ -1873,6 +1873,9 @@ body {
   pointer-events: none;
   background:
     radial-gradient(900px circle at 50% -10%, rgba(251, 191, 36, 0.08), transparent 60%),
+    /* Chiều sâu + đồng nhất màu với hộp Hub "My Story"
+     * (`HUB_CARD_STYLE["my-story"]`, `linear-gradient(135deg,#8B6914,#2E2306)`). */
+    linear-gradient(135deg, rgba(139, 105, 20, 0.5) 0%, rgba(46, 35, 6, 0.5) 45%, transparent 75%),
     #0a0a0f;
 }
 
@@ -1930,6 +1933,10 @@ body {
   background:
     radial-gradient(ellipse 60% 40% at 68% -5%, rgba(34, 211, 238, 0.09), transparent 65%),
     radial-gradient(ellipse 50% 35% at 85% 90%, rgba(34, 211, 238, 0.05), transparent 65%),
+    /* Chiều sâu + đồng nhất màu với hộp Hub "Mirror" (`HUB_CARD_STYLE.mirror`,
+     * `linear-gradient(135deg,#1B2C3E,#0A141F)`) — dải chuyển sắc mờ cùng
+     * hướng/màu, không thay hẳn nền đen gốc. */
+    linear-gradient(135deg, rgba(27, 44, 62, 0.5) 0%, rgba(10, 20, 31, 0.5) 45%, transparent 75%),
     #08090c;
 }
 
@@ -2104,6 +2111,9 @@ body {
   background:
     radial-gradient(ellipse 60% 40% at 30% -5%, rgba(251, 146, 60, 0.1), transparent 65%),
     radial-gradient(ellipse 50% 35% at 90% 100%, rgba(251, 146, 60, 0.06), transparent 65%),
+    /* Chiều sâu + đồng nhất màu với hộp Hub "Bản đồ hành trình"
+     * (`HUB_CARD_STYLE["ban-do-hanh-trinh"]`, `linear-gradient(135deg,#9A4B1F,#3D1D0C)`). */
+    linear-gradient(135deg, rgba(154, 75, 31, 0.5) 0%, rgba(61, 29, 12, 0.5) 45%, transparent 75%),
     #0a0a0f;
 }
 

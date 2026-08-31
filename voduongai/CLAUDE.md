@@ -8701,3 +8701,134 @@ qua `curl` (route `/v2/hanh-trinh-cua-toi` vẫn redirect đúng `/login` như
 trước, không đổi hành vi auth-gate) + đọc lại code cẩn thận + review nội
 bộ. Founder cần tự xem trên Production để xác nhận 4 khí quyển mới hiển
 thị đúng như mockup đã duyệt trước khi coi đợt này là hoàn tất.
+
+## Giai đoạn 10 — sửa nền trắng chrome + audit "méo, không cân chỉnh" + 3 yêu cầu mid-turn (hover, dọn Nhật ký, chiều sâu nền)
+
+Founder gửi ảnh chụp 6 tab Production (có 1 ảnh khoanh tay đỏ "Nền đen, chữ
+trắng" ở khối topbar/tiêu đề trang Nhật ký học tập) + phản hồi 2 vấn đề:
+(A) nền trang giữa (topbar/`page-head`/`tab-bar`) trắng-sáng lệch hẳn với
+nền đen của từng tab-panel bên dưới; (B) "kích thước các thành phần đang bị
+méo, không cân chỉnh".
+
+**Vấn đề A — đã xác nhận và sửa.** Đọc `hanh-trinh-cua-toi.css` xác nhận
+`.htct` (root token `--bg:#f7f6fc` sáng, `--text`/`--muted` tối) +
+`.topbar`/`.tab-bar`/`.edit-goal-btn` hardcode `background:#fff` — 3 khối
+này KHÔNG hề đổi theo redesign đen-jewel-tone Giai đoạn 10 của các tab-panel
+(chỉ riêng `.hub-card`/mỗi component tab tự set nền đen). Vì file CSS này
+CHỈ dùng cho đúng 1 route (`hanh-trinh-cua-toi.css` — xác nhận qua grep,
+2 file import: `HanhTrinhCuaToiClient.tsx` + admin mirror), an toàn đổi
+thẳng token gốc: `--bg:#0a0a0f`, `--text:#f5f4fb`, `--muted:#a39dc4`,
+`--line:rgba(255,255,255,.1)` (contrast `--muted`/`--bg` ratio ~7.7:1, tính
+tay theo công thức WCAG — đạt AAA). 3 nơi hardcode `background:#fff` đổi
+sang `var(--bg)`/translate rgba trong suốt (`.search-box`/`.icon-btn` dùng
+`rgba(255,255,255,.06)` để không lẫn hẳn vào `.topbar`, vì cả 2 giờ cùng
+`--bg`); `.edit-goal-btn` thêm `color:var(--text)` tường minh (trước đó
+chữ button ăn theo UA-default đen qua "Điều chỉnh 6" `button{color:revert}`,
+không phải kế thừa từ `.htct` — đổi nền tối mà không set `color` sẽ làm
+chữ đen-trên-đen vô hình). `.tab-btn:hover` đổi từ
+`background:var(--violet-light)` (be sáng, lệch tông trên nền đen) sang
+`rgba(109,74,255,.18)` + `color:#fff`. `--line` (cũ `#ece9f7` be nhạt) đổi
+sang overlay trắng mờ cho mọi divider tối. Toàn bộ phần dead-code cũ
+(`.progress-card`/`.right-col`/`.course-grid`/`.badge-grid`/`.link-row`/...
+— không còn JSX nào tham chiếu từ khi Hub 6-hộp thay thế ở Giai đoạn 10
+gốc, đã xác nhận qua grep trước khi đổi `--bg`/`--text` toàn cục) không bị
+ảnh hưởng vì không render.
+
+**Vấn đề B — audit kỹ, KHÔNG tìm thấy lỗi méo cấu trúc thật.** Dựng route
+`devtest-map` tạm (render thẳng `JourneyMapAtlas` với `premiumCount=1` +
+localStorage `vdai_workspace_sessions` giả 3 output → chương hiện tại =
+"Xây hệ thống", chương 1-3 walked có dấu chân) để lần đầu xem được nhánh
+CÓ DỮ LIỆU (audit trước đó chỉ test được nhánh rỗng `isFullyEmpty`). Đo
+bounding box từng `<li>` + tâm marker qua Playwright: cả 5 marker căn giữa
+CHÍNH XÁC cột grid của nó (`li.cx === circle.cx` cả 5 vị trí), chiều cao
+nội dung mỗi item (76.4px, kể cả dấu chân walked-state) nằm gọn trong ngân
+sách `h-[110px]` ở viewport desktop — KHÔNG overflow/chồng lấn "Kết nối tới
+Portal" bên dưới như giả thuyết ban đầu (dự đoán offset `-20px` cộng dấu
+chân sẽ tràn khỏi khung — thực đo không xảy ra). Ảnh chụp xác nhận cảm giác
+"lệch" ban đầu chỉ là crop/độ phân giải thấp đánh lừa mắt, không phải bug
+thật. **Kết luận: không có lỗi méo cấu trúc ở Bản đồ hành trình** — cảm
+nhận "không cân chỉnh" của Founder nhiều khả năng đến từ vấn đề A (màu nền
+lệch tông) + thiếu phản hồi hover (xem mục dưới), không phải kích thước.
+Đã xoá route `devtest-map` ngay sau khi xác nhận.
+
+**Bug thật phát hiện khi đang test (Founder báo mid-turn): "Ghim note mới"
+ở My Story bị lỗi.** Playwright bấm nút → `WriteNook` (corkboard variant)
+crash ngay khi mount, rơi vào `/v2/error.tsx` toàn trang. Root cause đầu
+tiên nghi là thiếu Supabase env (sandbox) — loại trừ giả thuyết này vì
+variant "book" (dùng ở `/portal/story` 1.0, mount `WriteNook` NGAY LẬP TỨC
+không cần bấm gì) dùng đúng 2 hook `useReflections()`/`useMemoryCapsules()`
+y hệt mà KHÔNG hề có báo lỗi tương tự trên Production — nếu do thiếu env,
+1.0 đã crash trước rồi. **Root cause thật:** cả 2 hook gọi
+`supabase.auth.getUser().then(...)` KHÔNG có `.catch()` — đúng lớp lỗi đã
+"vá" 1 lần cho `getCachedAuthUser()` (server-side, "Sửa nguyên nhân gốc —
+Portal 2.0 tải chậm") nhưng CHƯA từng áp dụng cho 2 hook CLIENT-side này.
+`auth.getUser()` có thể reject (refresh token hết hạn/mạng chập chờn — same
+class bug, khác tầng) → unhandled rejection → `ready` mãi `false` → panel
+viết mãi không hiện nội dung, đúng cảm giác "bị lỗi" Founder mô tả (không
+nhất thiết crash trắng, sandbox chỉ crash vì đây LÀ điều kiện thiếu-env
+thật + cộng thêm lỗ hổng thiếu `.catch()` cùng lúc). **Đã sửa:** thêm
+`.catch(() => setReady(true))` cho cả `useReflections()`/
+`useMemoryCapsules()` (`src/lib/portal/reflections.ts`,
+`src/lib/portal/memoryCapsules.ts`) — coi lỗi xác thực tạm thời như "chưa
+đăng nhập" thay vì để rejection rơi tự do.
+
+**3 yêu cầu mid-turn khác, đã làm cả 3:**
+
+1. **Bỏ khối lọc + danh sách nhật ký ở tab "Nhật ký học tập"** (Founder gửi
+   ảnh chỉ đúng khối này — dãy chip "Tất cả/Bài học/Thực hành/Chiêm nghiệm/
+   Tài liệu/Ý tưởng" + lưới/danh sách entries) — xoá hẳn khối
+   `.jn-card` chứa bộ lọc + `entries.map()` trong `NhatKyHocTapTab.tsx`
+   (dead code phát sinh: state `activeFilter`/`activeView`, hằng số
+   `FILTERS`, hàm `formatRelativeTime` — dọn sạch cả 3 + CSS
+   `.jn-filter-chip`/`.jn-view-btn`/`.jn-log-row` không còn consumer nào).
+   Phần còn lại của trang (5 ô chỉ số, lịch học, timeline hôm nay, biểu đồ
+   tuần, ghi chú nổi bật, tài liệu gần đây) giữ nguyên 100%.
+2. **Thêm hiệu ứng hover cho hộp/CTA các tab.** Audit trước khi thêm: Hub
+   (`.hub-card:hover`), Mirror, Bản đồ hành trình, My Story đã có hover đầy
+   đủ từ các đợt trước (grep xác nhận mỗi CTA/link đều có class `hover:`) —
+   KHÔNG sửa gì thêm ở 4 nơi này. 2 nơi thật sự thiếu: `NhatKyHocTapTab.tsx`
+   (`.jn-card` — thêm `transition`+`:hover{transform:translateY(-2px)}` áp
+   dụng ĐỒNG LOẠT mọi card; nút "Ghi chú mới" → `.jn-cta-btn`; 2 nút chuyển
+   tháng lịch học → `.jn-icon-btn`; 2 link "Tất cả →" + link tài liệu →
+   `.jn-link`/`.jn-doc-card`) và `KhuVuonCuaBanTab.tsx` (nút "Tiếp tục học
+   →" → `.gd-cta-btn`; các "cây" giai đoạn KHÔNG thêm hover vì không có
+   onClick/href — tránh gợi ý sai khả năng bấm). **Bug tự phát hiện khi
+   verify:** `.jn-link{color:#93C5FD}` lúc đầu bị `.htct a{color:var(
+   --violet)}` (trang cha) đè mất vì đúng specificity cao hơn — đã sửa
+   thành `.htct a.jn-link` để thắng chắc chắn, xác nhận lại qua ảnh chụp
+   (chữ "Tất cả →" đổi từ tím sang xanh dương đúng ý).
+3. **Chiều sâu + đồng nhất màu nền mỗi tab với đúng màu hộp Hub tương ứng
+   của nó.** Mỗi 1 trong 5 tab (Nhật ký/Khu vườn/My Story/Mirror/Bản đồ)
+   thêm ĐÚNG 1 lớp `linear-gradient(135deg, {màu sáng hộp Hub} 0%, {màu tối
+   hộp Hub} 45%, transparent 75%)` (opacity .5, cùng 135deg/cùng hex với
+   `HUB_CARD_STYLE` trong `HanhTrinhCuaToiClient.tsx` — không bịa màu mới),
+   chèn giữa các lớp glow accent hiện có và nền đen phẳng gốc — giữ nguyên
+   mọi lớp trang trí cũ (ngọn lửa, la bàn, núi, gợn phản chiếu...), chỉ
+   thêm 1 lớp "ánh sáng chéo" tạo chiều sâu VÀ khớp đúng tông màu hộp Hub:
+   Nhật ký `#1E4976→#0E223A` (xanh dương, sửa trong JSX vì tab này không có
+   file CSS riêng cho lớp nền — thêm trực tiếp 1 `<div>` mới); Khu vườn
+   `#0F3325→#081A2E` (xanh lá, JSX); My Story `#8B6914→#2E2306` (vàng hổ
+   phách, `globals.css .story-corkboard-bg`); Mirror `#1B2C3E→#0A141F`
+   (cyan-navy, `globals.css .mirror-chamber-bg`); Bản đồ hành trình
+   `#9A4B1F→#3D1D0C` (cam-nâu, `globals.css .map-parchment-bg`). Xác nhận
+   qua ảnh chụp trước/sau: cả 5 tab giờ rõ ràng cùng "gia đình màu" với hộp
+   Hub tương ứng (trước đó gần như cùng 1 tông đen thuần, khó phân biệt).
+
+**Verify:** `tsc --noEmit` sạch, `eslint src` sạch (0 lỗi mới — 18 warning
+còn lại đều pre-existing, không liên quan file đã sửa), `vitest run`
+495/495 pass, `rm -rf .next && npm run build` sạch (302 trang, không route
+nào biến mất/lỗi). Playwright qua `next dev` (sandbox không cấu hình
+Supabase, đúng fallback công khai có sẵn): chụp lại cả 6 tab xác nhận nền
+chrome đen liền mạch với tab-panel (vấn đề A hết hẳn), 5 tab bg đổi màu
+đúng gia đình hộp Hub, khối lọc/danh sách Nhật ký đã biến mất, hover
+`.jn-card`/`.jn-cta-btn` đo được `transform` đổi đúng khi `hover()` qua
+Playwright. Để chẩn đoán "Ghim note mới", đã tạm dán anon key thật (biến
+môi trường `.env.local`, cùng kỹ thuật đã dùng nhiều lần) để bắt được đúng
+lỗi thật trong console — xoá `.env.local` + khởi động lại `next dev` về
+đúng trạng thái sandbox mặc định ngay sau khi xác nhận nguyên nhân.
+
+**Chưa tự test được:** bấm "Ghim note mới" với tài khoản đăng nhập thật có
+`SUPABASE_SERVICE_ROLE_KEY`/session hợp lệ trên Preview URL, xác nhận panel
+viết giờ hiện đúng nội dung (không còn kẹt ở trạng thái "không hiện gì")
+— Founder tự test, đặc biệt trường hợp refresh token gần hết hạn (khó tái
+hiện chủ động trong sandbox).

@@ -15,8 +15,6 @@
  * Mọi field vẫn đúng 100% `LearningLogData`, không bịa thêm.
  * ========================================================================== */
 
-import { useState } from "react";
-
 import type { LearningLogData, LearningLogEntry } from "@/lib/portal/live-learning-log";
 
 import "./nhat-ky-hoc-tap-tab.css";
@@ -30,19 +28,6 @@ function formatMinutes(totalMinutes: number): string {
   return `${h}h ${m}m`;
 }
 
-function formatRelativeTime(iso: string): string {
-  const date = new Date(iso);
-  const diffMin = Math.floor((Date.now() - date.getTime()) / 60000);
-  if (diffMin < 1) return "Vừa xong";
-  if (diffMin < 60) return `${diffMin} phút trước`;
-  const diffHour = Math.floor(diffMin / 60);
-  if (diffHour < 24) return `${diffHour} giờ trước`;
-  const diffDay = Math.floor(diffHour / 24);
-  if (diffDay === 1) return "Hôm qua";
-  if (diffDay < 7) return `${diffDay} ngày trước`;
-  return date.toLocaleDateString("vi-VN");
-}
-
 function formatTime(iso: string): string {
   return new Date(iso).toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
 }
@@ -54,13 +39,9 @@ const ENTRY_ICON: Record<LearningLogEntry["kind"], { bg: string; color: string; 
 };
 
 const WEEK_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-const FILTERS = ["Tất cả", "Bài học", "Thực hành", "Chiêm nghiệm", "Tài liệu", "Ý tưởng"];
 
 export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
-  const [activeFilter, setActiveFilter] = useState(0);
-  const [activeView, setActiveView] = useState(0);
-
-  const { stats, entries, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote, recentDocuments } = log;
+  const { stats, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote, recentDocuments } = log;
   const todayLabel = new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
   const maxWeekMinutes = Math.max(...weekChart.map((d) => d.minutes), 1);
 
@@ -76,6 +57,13 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="absolute inset-0 z-0" style={{ background: "#08090D" }} aria-hidden />
+      {/* Chiều sâu + đồng nhất màu với hộp Hub "Nhật ký học tập"
+          (HUB_CARD_STYLE["nhat-ky-hoc-tap"], linear-gradient(135deg,#1E4976,#0E223A)). */}
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        style={{ background: "linear-gradient(135deg, rgba(30,73,118,.5) 0%, rgba(14,34,58,.5) 45%, transparent 75%)" }}
+        aria-hidden
+      />
       <div
         className="jn-lamp absolute pointer-events-none"
         style={{ top: -160, right: -80, width: 640, height: 640, background: "radial-gradient(circle, rgba(96,165,250,.14), transparent 65%)" }}
@@ -96,6 +84,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
             </div>
             <button
               type="button"
+              className="jn-cta-btn"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -149,10 +138,10 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
                 <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Lịch học — {calendar.monthLabel}</h3>
                 <div style={{ display: "flex", gap: 4 }}>
-                  <button type="button" aria-label="Tháng trước" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <button type="button" className="jn-icon-btn" aria-label="Tháng trước" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2"><path d="M15 6l-6 6 6 6" /></svg>
                   </button>
-                  <button type="button" aria-label="Tháng sau" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <button type="button" className="jn-icon-btn" aria-label="Tháng sau" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2"><path d="M9 6l6 6-6 6" /></svg>
                   </button>
                 </div>
@@ -193,7 +182,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
             <div className="jn-card" style={{ padding: 26 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16 }}>
                 <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Hôm nay, {todayLabel}</h3>
-                <a href="#" style={{ fontSize: 11.5, fontWeight: 700 }}>
+                <a href="#" className="jn-link" style={{ fontSize: 11.5, fontWeight: 700 }}>
                   Tất cả →
                 </a>
               </div>
@@ -218,56 +207,6 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Bộ lọc + danh sách nhật ký thật */}
-          <div className="jn-card" style={{ padding: 26, marginBottom: 16 }}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                {FILTERS.map((label, i) => (
-                  <button key={label} type="button" className={i === activeFilter ? "jn-filter-chip active" : "jn-filter-chip"} onClick={() => setActiveFilter(i)}>
-                    {label}
-                  </button>
-                ))}
-              </div>
-              <div style={{ display: "flex", gap: 2, background: "rgba(255,255,255,.04)", borderRadius: 10, padding: 2 }}>
-                <button type="button" className={activeView === 0 ? "jn-view-btn active" : "jn-view-btn"} onClick={() => setActiveView(0)} aria-label="Dạng lưới">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
-                    <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
-                  </svg>
-                </button>
-                <button type="button" className={activeView === 1 ? "jn-view-btn active" : "jn-view-btn"} onClick={() => setActiveView(1)} aria-label="Dạng danh sách">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {entries.length === 0 ? (
-              <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có nhật ký nào — hoàn thành bài học hoặc viết chiêm nghiệm để bắt đầu.</div>
-            ) : (
-              <div style={activeView === 0 ? { display: "grid", gridTemplateColumns: "repeat(2,1fr)", columnGap: 24 } : undefined}>
-                {entries.slice(0, 6).map((e) => {
-                  const icon = ENTRY_ICON[e.kind];
-                  return (
-                    <div className="jn-log-row" key={e.id}>
-                      <div className="ico" style={{ background: icon.bg, color: icon.color }}>
-                        <svg viewBox="0 0 24 24" fill={icon.fill ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
-                          <path d={icon.path} />
-                        </svg>
-                      </div>
-                      <div className="info">
-                        <h6>{e.title}</h6>
-                        <span className="tag">{icon.label}</span>
-                      </div>
-                      <span className="time">{formatRelativeTime(e.occurredAt)}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
 
           <div className="jn-bento-2col" style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 16, marginBottom: 16 }}>
@@ -316,7 +255,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
           <div className="jn-card" style={{ padding: 26 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
               <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Tài liệu &amp; liên kết gần đây</h3>
-              <a href="/v2/hoc-vien-ai" style={{ fontSize: 11.5, fontWeight: 700 }}>
+              <a href="/v2/hoc-vien-ai" className="jn-link" style={{ fontSize: 11.5, fontWeight: 700 }}>
                 Tất cả →
               </a>
             </div>
@@ -330,6 +269,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="jn-doc-card"
                     style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 12, padding: "10px 14px", textDecoration: "none" }}
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" strokeWidth="2" style={{ flexShrink: 0 }}>
