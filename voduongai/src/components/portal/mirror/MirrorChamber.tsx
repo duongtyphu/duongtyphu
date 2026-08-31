@@ -179,7 +179,11 @@ export function MirrorChamber({
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="mirror-chamber-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
-      <div className="mirror-glass-veil" aria-hidden />
+      {/* `.mirror-glass-veil` ("sương kính bạc phủ toàn khung") là đúng
+          nghĩa đen "lớp phủ" Founder báo lại ở tab nhúng 2.0 — bỏ hẳn khi
+          có `bgOverride` (tín hiệu ngữ cảnh tab nhúng, đã dùng cho
+          background/boxShadow ở trên). `/portal/mirror` 1.0 giữ nguyên. */}
+      {!bgOverride && <div className="mirror-glass-veil" aria-hidden />}
       <div
         className="mirror-ripple"
         style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130 }}

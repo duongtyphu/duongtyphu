@@ -1893,6 +1893,15 @@ body {
   background-size: 140px 140px;
 }
 
+/* Founder báo "vẫn còn lớp phủ" ở tab nhúng My Story 2.0 dù nền base đã
+ * phẳng — chính texture chấm tròn `::after` ở trên (phủ toàn khung, độc
+ * lập với `background` inline) là nguyên nhân. Modifier tắt hẳn nó, chỉ
+ * áp dụng khi `MyStoryBook` nhận `bgOverride` (ngữ cảnh tab nhúng 2.0) —
+ * `/portal/story` 1.0 không dùng class này, giữ nguyên texture như cũ. */
+.story-corkboard-bg--flat::after {
+  display: none;
+}
+
 .story-cork-note {
   border-radius: 4px;
   box-shadow: 0 10px 22px -8px rgba(59, 42, 18, 0.35), 0 2px 6px rgba(59, 42, 18, 0.18);

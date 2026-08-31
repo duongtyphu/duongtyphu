@@ -266,8 +266,19 @@ export function JourneyMapAtlas({
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
       <div className="map-parchment-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
-      <div className="map-coordinate-grid" aria-hidden />
-      <div className="map-topo-lines" aria-hidden />
+      {/* `.map-coordinate-grid`/`.map-topo-lines` là 2 lớp texture PHỦ TOÀN
+          KHUNG (position:absolute;inset:0) — đúng nghĩa đen "lớp phủ"
+          Founder báo lại ở tab nhúng 2.0. Bỏ hẳn khi có `bgOverride` (tín
+          hiệu ngữ cảnh tab nhúng, đã dùng cho background/boxShadow ở
+          trên). `MapMountains` (silhouette đáy khung, không phải lớp mờ
+          phủ toàn khung) GIỮ NGUYÊN. `/portal/hanhtrinhcuatoi/ban-do` 1.0
+          giữ nguyên cả 2 lớp texture như cũ. */}
+      {!bgOverride && (
+        <>
+          <div className="map-coordinate-grid" aria-hidden />
+          <div className="map-topo-lines" aria-hidden />
+        </>
+      )}
       <MapMountains />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">

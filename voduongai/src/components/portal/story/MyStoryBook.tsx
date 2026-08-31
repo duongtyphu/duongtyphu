@@ -403,7 +403,7 @@ export function MyStoryBook({
   if (isBookLoading) {
     return (
       <div
-        className={`${variant === "corkboard" ? "story-corkboard-bg" : "story-book-bg"} min-h-[60vh] rounded-3xl`}
+        className={`${variant === "corkboard" ? `story-corkboard-bg${bgOverride ? " story-corkboard-bg--flat" : ""}` : "story-book-bg"} min-h-[60vh] rounded-3xl`}
         style={variant === "corkboard" && bgOverride ? { background: bgOverride } : undefined}
         aria-hidden
       />
@@ -413,8 +413,16 @@ export function MyStoryBook({
   if (variant === "corkboard") {
     return (
       <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+        {/* Founder báo lại "vẫn còn lớp phủ" ở tab nhúng 2.0 dù nền base đã
+            phẳng (`bgOverride`) — root cause là `::after` texture chấm tròn
+            của `.story-corkboard-bg` (opacity .4, phủ toàn khung, ĐỘC LẬP
+            với `background` inline) vẫn còn hiện. Thêm modifier class tắt
+            hẳn `::after` này CHỈ khi `bgOverride` có giá trị (đúng tín hiệu
+            "đang ở ngữ cảnh tab nhúng 2.0" đã dùng cho background/boxShadow
+            — không cần thêm prop mới). `/portal/story` 1.0 (`bgOverride`
+            luôn undefined) giữ nguyên texture như cũ. */}
         <div
-          className="story-corkboard-bg"
+          className={`story-corkboard-bg${bgOverride ? " story-corkboard-bg--flat" : ""}`}
           style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined}
           aria-hidden
         />
