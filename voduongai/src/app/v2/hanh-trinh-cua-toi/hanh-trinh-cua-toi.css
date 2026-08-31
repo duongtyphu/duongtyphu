@@ -11,7 +11,7 @@
  * `line-height: normal`; (6) revert Tailwind Preflight trong phạm vi `.htct`.
  * ========================================================================== */
 
-.htct{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
+.htct{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#f5f4fb;--muted:#a39dc4;--line:rgba(255,255,255,.1);--bg:#0a0a0f;--sidebar:#150f2e;--sidebar-hover:#231a48}
 .htct, .htct *{box-sizing:border-box;margin:0;padding:0}
 
 /* Điều chỉnh 6 */
@@ -70,15 +70,15 @@
 .htct .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
 .htct .hike-visual{width:100%;height:90px;margin-bottom:12px;display:flex;align-items:center;justify-content:center}
 .htct .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
-.htct .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.htct .search-box{flex:1;display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
+.htct .topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.htct .search-box{flex:1;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:10px;padding:9px 14px;max-width:420px}
 .htct .search-box svg{width:16px;height:16px;color:var(--muted);flex-shrink:0}
-.htct .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
-.htct .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.htct .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit;color:var(--text)}
+.htct .search-box kbd{font-size:11px;color:var(--muted);background:rgba(255,255,255,.1);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
 .htct .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
 .htct .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .htct .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
-.htct .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
+.htct .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .htct .icon-btn svg{width:18px;height:18px}
 .htct .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px;min-width:16px;text-align:center}
 .htct .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
@@ -91,8 +91,8 @@
 .htct .page-head{display:flex;justify-content:space-between;align-items:flex-start}
 .htct .page-head h1{font-size:26px;font-weight:800}
 .htct .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
-.htct .edit-goal-btn{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--line);padding:10px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .15s}
-.htct .edit-goal-btn:hover{background:var(--bg)}
+.htct .edit-goal-btn{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line);padding:10px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.htct .edit-goal-btn:hover{background:rgba(255,255,255,.14)}
 .htct .edit-goal-btn svg{width:14px;height:14px}
 .htct .progress-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr 1fr;gap:20px;align-items:center}
 .htct .progress-main h5{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:10px}
@@ -195,10 +195,10 @@
    ngôn ngữ 2.0 đã có (tái dùng token màu/spacing `--violet`/`--line`/
    `--muted` của chính file này), cùng tinh thần `/v2/muc-tieu` (route mới
    không có mockup HTML riêng). */
-.htct .tab-bar{display:flex;gap:6px;overflow-x:auto;padding:6px;background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:20px}
+.htct .tab-bar{display:flex;gap:6px;overflow-x:auto;padding:6px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;margin-bottom:20px}
 .htct .tab-btn{flex:1;min-width:150px;display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 12px;border:none;border-radius:10px;background:transparent;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
 .htct .tab-btn svg{width:15px;height:15px;flex-shrink:0}
-.htct .tab-btn:hover{background:var(--violet-light);color:var(--violet)}
+.htct .tab-btn:hover{background:rgba(109,74,255,.18);color:#fff}
 .htct .tab-btn.active{background:var(--violet);color:#fff}
 /* Giai đoạn 10 — Founder yêu cầu bỏ hẳn khung viền màu quanh `.tab-panel`
    (trước đó 2px border đổi theo `--tab-accent`, PR #85) — nay khí quyển

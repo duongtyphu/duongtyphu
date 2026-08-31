@@ -28,31 +28,38 @@ export function useReflections() {
 
   useEffect(() => {
     const supabase = getSupabaseBrowser();
-    supabase.auth.getUser().then(async ({ data }) => {
-      const uid = data.user?.id ?? null;
-      setUserId(uid);
-      if (!uid) {
-        setReady(true);
-        return;
-      }
-      const { data: rows, error } = await supabase
-        .from("reflections")
-        .select("id, question, answer, created_at")
-        .eq("member_id", uid)
-        .order("created_at", { ascending: false });
-      if (error) {
-        if (isMissingTableError(error)) {
-          setTableReady(false);
-          warnMissingTableOnce("reflections");
+    supabase.auth
+      .getUser()
+      .then(async ({ data }) => {
+        const uid = data.user?.id ?? null;
+        setUserId(uid);
+        if (!uid) {
+          setReady(true);
+          return;
         }
+        const { data: rows, error } = await supabase
+          .from("reflections")
+          .select("id, question, answer, created_at")
+          .eq("member_id", uid)
+          .order("created_at", { ascending: false });
+        if (error) {
+          if (isMissingTableError(error)) {
+            setTableReady(false);
+            warnMissingTableOnce("reflections");
+          }
+          setReady(true);
+          return;
+        }
+        setReflections(
+          (rows ?? []).map((r) => ({ id: r.id, question: r.question, answer: r.answer, createdAt: r.created_at }))
+        );
         setReady(true);
-        return;
-      }
-      setReflections(
-        (rows ?? []).map((r) => ({ id: r.id, question: r.question, answer: r.answer, createdAt: r.created_at }))
-      );
-      setReady(true);
-    });
+      })
+      // `auth.getUser()` có thể throw (refresh token hết hạn/mạng chập chờn — cùng
+      // nguyên nhân đã gặp ở `getCachedAuthUser()`, server-side). Không try/catch ở
+      // đây sẽ để promise rejection không ai xử lý — `ready` mãi mãi `false`, panel
+      // viết mãi không hiện ra, trông như "bị lỗi" dù không crash trang.
+      .catch(() => setReady(true));
   }, []);
 
   const answeredToday = reflections.some(

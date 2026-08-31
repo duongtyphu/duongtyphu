@@ -20,3 +20,12 @@
 @media (prefers-reduced-motion: reduce) {
   .gd-star, .gd-firefly, .gd-tree, .gd-leaf, .gd-mistband { animation: none; }
 }
+
+.gd-cta-btn {
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.gd-cta-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+  box-shadow: 0 12px 26px -6px rgba(74, 222, 128, .65);
+}
