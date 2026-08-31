@@ -9188,3 +9188,139 @@ nhập thật ở các độ phân giải màn hình khác (đặc biệt màn h
 — `@media (max-width:1180px)` đổi `.content` sang `flex-direction:column`,
 chưa tự chụp lại ở breakpoint này) — Founder tự xác nhận trên Preview/
 Production URL.
+
+## Giai đoạn 10 (tiếp) — sửa dứt điểm "vẫn còn seam" + kéo màu lên cả topbar: kiến trúc `--bg` cascade thay hẳn kỹ thuật wrapper/margin âm
+
+Ngay sau khi mục "màu riêng từng tab phủ lên cả header + thanh tab" ở trên
+lên Production (PR #94), Founder gửi 5 ảnh chụp Production (mỗi ảnh đánh
+số + mũi tên đỏ) cho thấy VẪN còn 1 dải màu KHÁC (tối/đen) xen giữa vùng
+đã tô màu (header/tab-bar) và vùng `.tab-panel` bên dưới — bản vá PR #94
+chưa đạt "liền mạch" thật sự dù đã đúng hướng. Kèm theo đó, TRONG LÚC đang
+xử lý ảnh, Founder gửi tiếp 1 tin nhắn đảo ngược quyết định trước đó: kéo
+màu lên **cả phần topbar** (ô tìm kiếm/chuông/avatar) — trước đó (PR #94)
+Founder đã xác nhận rõ KHÔNG tính topbar, giờ đổi ý.
+
+**Root cause của seam còn sót (PR #94):** wrapper `<div>` bọc
+`.page-head`+`.tab-bar` dùng kỹ thuật "phá khung + bù padding" (margin âm
+`-24px -28px 0` + `padding` bù lại) để tô màu ĐÚNG VÙNG ĐÓ — nhưng khoảng
+`gap:22px` của `.center-col` (flex column) giữa wrapper này và
+`.tab-panel` KHÔNG nằm trong bất kỳ phần tử nào có background riêng — nó
+chỉ để lộ background của `.center-col`/`.content`/`.htct` (mặc định
+`#0a0a0f` đen) xuyên qua. Đây chính là dải màu lạ Founder chỉ ra trong
+ảnh.
+
+**Phát hiện kiến trúc quan trọng khi audit lại `hanh-trinh-cua-toi.css`:**
+`.htct .topbar{...;background:var(--bg);...}` (dòng 83) VÀ `.htct{...;
+background:var(--bg);...}` (gốc, dòng 49-59) đều dùng CHUNG 1 CSS custom
+property `--bg`, định nghĩa 1 lần ở `.htct{--bg:#0a0a0f;...}` (dòng 14).
+Quan trọng hơn: KHÔNG MỘT container trung gian nào (`.app`/`.main-col`/
+`.content`/`.center-col`/`.page-head`) tự khai `background` riêng — tất cả
+hoàn toàn trong suốt. Nghĩa là màu nền THẬT SỰ duy nhất đứng sau toàn bộ
+trang (kể cả topbar, kể cả mọi khe hở `gap` giữa các flex-child) chính là
+`background:var(--bg)` đặt trên gốc `.htct`.
+
+**Giải pháp — bỏ hẳn kỹ thuật wrapper/margin-âm/padding-bù của PR #94,
+thay bằng override đúng 1 biến CSS `--bg` ngay tại `.htct`:**
+```tsx
+const htctBg = TAB_HEADER_BG[activeTab];
+
+return (
+  <div className="htct" style={htctBg ? ({ "--bg": htctBg } as React.CSSProperties) : undefined}>
+```
+Vì `--bg` là 1 biến CSS kế thừa theo cascade bình thường, override nó ở
+gốc `.htct` tự động lan ra MỌI nơi chưa tô màu riêng — bao gồm topbar
+(giải quyết đúng yêu cầu mới của Founder) VÀ mọi "khe hở" trước đây từng
+lộ màu đen (giải quyết dứt điểm seam Founder vừa báo) — cùng lúc, không
+cần bọc div/margin âm/padding bù thủ công nào. JSX của `.page-head`/
+`.tab-bar`/`.tab-panel` quay lại đúng dạng ĐƠN GIẢN, là con trực tiếp của
+`.center-col` (y hệt trước khi có bất kỳ kỹ thuật wrapper nào) — không
+mất khoảng cách 22px vì `.center-col{display:flex;flex-direction:column;
+gap:22px}` vốn đã lo đủ layout này từ đầu.
+
+`.sidebar` có `background:var(--sidebar)` RIÊNG (biến khác `--bg`) — nên
+override `--bg` theo tab KHÔNG ảnh hưởng màu navy tối cố định của sidebar
+(đúng ý, sidebar phải giữ nguyên xuyên suốt mọi tab). `.search-box`/
+`.icon-btn` dùng `rgba(255,255,255,.06)` cố định (overlay "kính mờ") —
+không phụ thuộc `--bg`, nên vẫn giữ đúng cảm giác đồng nhất "kính" trên
+mọi màu nền tab khác nhau.
+
+`TAB_HEADER_BG` (không đổi từ PR #94) — 5 giá trị hex khớp CHÍNH XÁC màu
+nền `.tab-panel` của từng tab (`nhat-ky-hoc-tap:#0F3660`,
+`khu-vuon-cua-ban:#0D2C50`, `my-story:#5A4010`, `mirror:#152A3D`,
+`ban-do-hanh-trinh:#4A3212`) — Hub (`hanh-trinh-cua-toi`) không có trong
+map, tự rơi về mặc định `--bg:#0a0a0f` (đen) của `.htct`.
+
+**Verify:** `npx tsc --noEmit`/`eslint src/app/v2/hanh-trinh-cua-toi` sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch.
+Playwright thật (`next dev`, sandbox không cấu hình Supabase — Portal tự
+công khai theo fallback có sẵn), viewport 1900×1000, click qua đủ 6 tab,
+đo trực tiếp `getComputedStyle().backgroundColor` của `.topbar`/
+`.page-head`/`.tab-bar` VÀ container gần nhất thực sự tô màu phía sau
+`.tab-panel`: Hub → cả 4 điểm đo đều `rgb(10,10,15)`; 5 tab còn lại →
+CẢ 4 điểm đo cùng 1 màu DUY NHẤT khớp đúng `TAB_HEADER_BG` (vd. Nhật ký
+học tập: topbar/page-head/tab-bar/panel-ancestor đều `rgb(15,54,96)`,
+đúng `#0F3660`) — xác nhận liền mạch tuyệt đối từ topbar xuống hết trang,
+0 dải màu lạ xen giữa. Chụp ảnh toàn màn hình 6 tab xác nhận trực quan
+đúng như kỳ vọng (đính kèm trong báo cáo gửi Founder). 0 `pageerror`.
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật ở màn hình hẹp/mobile (`@media (max-width:1180px)` đổi
+`.content` sang `flex-direction:column` — sandbox chỉ test ở 1900px) —
+Founder tự xác nhận trên Preview/Production URL sau khi deploy.
+
+## Giai đoạn 10 (tiếp) — bỏ hẳn "đắp màu" riêng lẻ ở từng tab, dùng chung đúng 1 nguồn `--bg`
+
+Ngay sau bản vá seam/topbar ở trên, Founder gửi lại đúng ảnh chụp
+(`htct-nhat-ky-hoc-tap.png`, chính ảnh đã dùng để verify bản vá trước) kèm
+chú thích đỏ tại vị trí ranh giới header↔nội dung: "1;2;3 cùng một màu nền
+liền mạch" / "dùng chung màu nền của trang" — chỉ rõ: dù màu ĐÃ liền mạch
+về mặt thị giác (đã verify), kỹ thuật hiện tại vẫn SAI — mỗi tab content
+component (`NhatKyHocTapTab`/`KhuVuonCuaBanTab`/`MyStoryBook`/
+`MirrorChamber`/`JourneyMapAtlas`) tự "đắp" (paint) 1 màu nền LITERAL HEX
+riêng của chính nó (`#0F3660`/`#0D2C50`/`#5A4010`/`#152A3D`/`#4A3212`,
+qua `background` inline style hoặc prop `bgOverride`) — TRÙNG GIÁ TRỊ
+nhưng ĐỘC LẬP HOÀN TOÀN với `TAB_HEADER_BG` (nguồn màu của `.htct`'s
+`--bg`). Đây là 2 nguồn dữ liệu riêng biệt tình cờ đồng bộ giá trị —
+đúng nguyên nhân gốc của MỌI lần seam đã xảy ra trước đó (PR #94, và bản
+vá `--bg` cascade đầu tiên của đợt này): chỉ cần 1 trong 2 nơi bị sửa mà
+quên sửa nơi kia là seam quay lại ngay.
+
+**Đã sửa — xoá hẳn việc "đắp" màu ở tầng component, chỉ giữ 1 nguồn
+`--bg` duy nhất:** thay literal hex ở CUỐI mỗi chuỗi `background` (phần
+base đứng sau 2 lớp radial "chiều sâu") bằng `var(--bg)` — biến CSS đã
+được `.htct` set đúng theo tab đang mở (`style={{"--bg": htctBg}}`, từ
+bản vá trước) và tự động kế thừa (CSS custom property inherit qua DOM,
+không bị chặn bởi bất kỳ class/wrapper trung gian nào) xuống tới:
+- `NhatKyHocTapTab.tsx`/`KhuVuonCuaBanTab.tsx` — literal hex trong chuỗi
+  `background` (radial-gradient(...), radial-gradient(...), <hex>) đổi
+  thành `var(--bg)`.
+- `HanhTrinhCuaToiClient.tsx`'s `STORY_BG`/`MIRROR_BG`/`MAP_BG` (3 hằng
+  số truyền qua prop `bgOverride` cho `MyStoryBook`/`MirrorChamber`/
+  `JourneyMapAtlas` — 3 component Portal 1.0 dùng chung, `bgOverride`
+  gán thẳng vào `style.background` của DOM node) — cùng thay literal hex
+  cuối chuỗi bằng `var(--bg)`. Xác nhận trước khi sửa: cả 3 component đều
+  render bên trong `<div className="htct-native">` — 1 descendant DOM
+  THẬT của `.htct` (không phải Portal, không phải iframe) — nên `var(--bg)`
+  trong inline style của chúng chắc chắn resolve đúng theo `--bg` đã set
+  ở `.htct` (cascade CSS custom property xuyên DOM, không phụ thuộc
+  class/component boundary).
+
+Kết quả: `TAB_HEADER_BG` (5 giá trị hex) giờ là NƠI DUY NHẤT trong toàn
+bộ file định nghĩa màu thật của từng tab — mọi nơi khác (topbar, page-head,
+tab-bar, 5 tab-content component) chỉ THAM CHIẾU `var(--bg)`, không còn
+literal hex nào lặp lại. Không còn khả năng "quên sửa 1 chỗ" gây lệch màu
+— sửa `TAB_HEADER_BG` là tự động phản ánh khắp mọi nơi.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright thật (`next dev`,
+viewport 1900×1000, click qua đủ 6 tab, đo `getComputedStyle().backgroundColor`
+của `.topbar`/`.page-head`/`.tab-bar`/container gần nhất phía sau
+`.tab-panel`) — kết quả GIỐNG HỆT bản vá trước (đúng kỳ vọng, vì giá trị
+số không đổi, chỉ đổi CƠ CHẾ): Hub 4 điểm đo `rgb(10,10,15)`; 5 tab còn
+lại mỗi tab 4 điểm đo cùng 1 màu duy nhất khớp `TAB_HEADER_BG`. 0
+`pageerror`. Chụp ảnh lại xác nhận trực quan không đổi so với bản trước
+(bằng chứng cơ chế mới hoạt động đúng, không phải regression).
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật ở màn hình hẹp/mobile — Founder tự xác nhận trên Preview/
+Production URL sau khi deploy.

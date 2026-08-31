@@ -56,20 +56,19 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      {/* Founder yêu cầu riêng: nền xanh da trời phủ TOÀN trang giữa (không
-          chỉ viền góc như bản trước) — thay hẳn base đen `#08090D`. Dùng
-          màu ĐẶC (không fade theo chiều cao) để "toàn trang giữa" luôn
-          xanh, không tối dần thành đen ở cuối trang khi nội dung dài.
-          Founder yêu cầu thêm "chiều sâu, độ bóng" — 2 lớp radial NEO Ở
-          TOP (bán kính px cố định, không theo %) chỉ tạo ánh sáng gần đầu
-          trang, KHÔNG lặp lại bug cũ (gradient theo % chiều cao container
-          sẽ tối dần ở cuối trang dài) + vignette `boxShadow` inset (px cố
-          định quanh 4 cạnh, không phụ thuộc chiều cao nội dung). */}
+      {/* Founder yêu cầu (đợt sau, sau khi thấy ảnh chụp còn seam): KHÔNG
+          "đắp" màu riêng lên khung giữa nữa — phải dùng CHUNG đúng 1 nguồn
+          màu nền của cả trang. Base đổi từ literal `#0F3660` (trùng nhưng
+          ĐỘC LẬP với `TAB_HEADER_BG` ở component cha) sang `var(--bg)` —
+          biến CSS đã được `.htct` (component cha) override đúng theo tab
+          đang mở, kế thừa tự nhiên xuống tới đây. Chỉ còn ĐÚNG 1 nơi định
+          nghĩa màu (`TAB_HEADER_BG`), loại bỏ nguy cơ 2 nguồn lệch nhau.
+          Giữ nguyên 2 lớp radial "chiều sâu, độ bóng" + vignette. */}
       <div
         className="absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.07), transparent 55%), radial-gradient(800px circle at 88% 12%, rgba(147,197,253,.10), transparent 60%), #0F3660",
+            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.07), transparent 55%), radial-gradient(800px circle at 88% 12%, rgba(147,197,253,.10), transparent 60%), var(--bg)",
           boxShadow: "inset 0 0 160px rgba(0,0,0,.35)",
         }}
         aria-hidden

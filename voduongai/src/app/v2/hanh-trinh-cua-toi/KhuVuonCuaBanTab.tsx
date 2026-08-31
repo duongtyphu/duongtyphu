@@ -212,20 +212,19 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      {/* Founder yêu cầu riêng: nền xanh lam phủ TOÀN trang giữa (không chỉ
-          viền góc như bản trước) — thay hẳn base đen `#070a12`. Dùng màu
-          ĐẶC (không fade theo chiều cao) để "toàn trang giữa" luôn xanh,
-          không tối dần thành đen ở cuối trang (trang này khá dài — cảnh
-          vườn 460px + khối Thành tựu/triết lý bên dưới). Founder yêu cầu
-          thêm "chiều sâu, độ bóng" — 2 lớp radial neo ở TOP (bán kính px
-          cố định, không theo %) + vignette `boxShadow` inset (px cố định
-          quanh 4 cạnh) — không lặp lại bug gradient tối dần theo % chiều
-          cao container cũ. */}
+      {/* Founder yêu cầu (đợt sau, sau khi thấy ảnh chụp còn seam): KHÔNG
+          "đắp" màu riêng lên khung giữa nữa — phải dùng CHUNG đúng 1 nguồn
+          màu nền của cả trang. Base đổi từ literal `#0D2C50` (trùng nhưng
+          ĐỘC LẬP với `TAB_HEADER_BG` ở component cha) sang `var(--bg)` —
+          biến CSS đã được `.htct` (component cha) override đúng theo tab
+          đang mở, kế thừa tự nhiên xuống tới đây. Chỉ còn ĐÚNG 1 nơi định
+          nghĩa màu (`TAB_HEADER_BG`), loại bỏ nguy cơ 2 nguồn lệch nhau.
+          Giữ nguyên 2 lớp radial "chiều sâu, độ bóng" + vignette. */}
       <div
         className="absolute inset-0 z-0"
         style={{
           background:
-            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 85% 10%, rgba(147,197,253,.09), transparent 60%), #0D2C50",
+            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 85% 10%, rgba(147,197,253,.09), transparent 60%), var(--bg)",
           boxShadow: "inset 0 0 160px rgba(0,0,0,.35)",
         }}
         aria-hidden
