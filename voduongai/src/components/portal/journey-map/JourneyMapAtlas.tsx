@@ -180,6 +180,7 @@ export function JourneyMapAtlas({
   chapterDestinations = CHAPTER_DESTINATIONS,
   portalConnections = PORTAL_CONNECTIONS,
   bgOverride,
+  bgShadow,
 }: {
   reflections: Reflection[];
   premiumCount: number;
@@ -206,6 +207,10 @@ export function JourneyMapAtlas({
       (thay `.map-parchment-bg` gradient góc mặc định của 1.0) — override
       qua inline style, không đụng `/portal/hanhtrinhcuatoi/ban-do`. */
   bgOverride?: string;
+  /** Founder yêu cầu thêm "chiều sâu, độ bóng" cho nền — `boxShadow`
+      vignette (px cố định, an toàn cho trang dài) áp cùng div với
+      `bgOverride`. */
+  bgShadow?: string;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MapChrome>("map-chrome", [seedChrome], {
@@ -233,7 +238,7 @@ export function JourneyMapAtlas({
     return (
       <div
         className="map-parchment-bg min-h-[70vh] rounded-3xl"
-        style={bgOverride ? { background: bgOverride } : undefined}
+        style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined}
         aria-hidden
       />
     );
@@ -260,7 +265,7 @@ export function JourneyMapAtlas({
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      <div className="map-parchment-bg" style={bgOverride ? { background: bgOverride } : undefined} aria-hidden />
+      <div className="map-parchment-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
       <div className="map-coordinate-grid" aria-hidden />
       <div className="map-topo-lines" aria-hidden />
       <MapMountains />
@@ -296,12 +301,15 @@ export function JourneyMapAtlas({
         )}
 
         {/* ── 1. La bàn ────────────────────────────────────────────────── */}
+        {/* Founder yêu cầu: tăng kích cỡ chữ vừa phải (h1/subtitle) — cụm
+            này vốn đã `mx-auto`/`text-center`, đã căn giữa đúng cấu trúc
+            có sẵn (không có max-width cha nào giới hạn lệch trái/phải). */}
         <header className="mt-8 text-center">
           <CompassRose />
-          <h1 className="mt-5 text-2xl font-bold tracking-tight text-white/90 sm:text-3xl">
+          <h1 className="mt-6 text-3xl font-bold tracking-tight text-white/90 sm:text-4xl">
             {chrome.title}
           </h1>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-white/55">
+          <p className="mx-auto mt-3 max-w-lg text-base leading-relaxed text-white/55">
             {chrome.subtitle}
           </p>
         </header>

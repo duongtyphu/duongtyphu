@@ -254,6 +254,7 @@ export function MyStoryBook({
   mirrorInviteText,
   variant = "book",
   bgOverride,
+  bgShadow,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -288,6 +289,10 @@ export function MyStoryBook({
       (thay `.story-corkboard-bg` gradient mặc định) — chỉ có tác dụng khi
       `variant="corkboard"`, không đụng `/portal/story` (variant "book"). */
   bgOverride?: string;
+  /** Founder yêu cầu thêm "chiều sâu, độ bóng" cho nền — `boxShadow` vignette
+      (px cố định quanh 4 cạnh, không phụ thuộc chiều cao nội dung, an toàn
+      cho trang dài) áp cùng div với `bgOverride`. */
+  bgShadow?: string;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
@@ -408,9 +413,17 @@ export function MyStoryBook({
   if (variant === "corkboard") {
     return (
       <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-        <div className="story-corkboard-bg" style={bgOverride ? { background: bgOverride } : undefined} aria-hidden />
+        <div
+          className="story-corkboard-bg"
+          style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined}
+          aria-hidden
+        />
 
-        <div className="relative z-10 px-5 py-8 md:px-9 md:py-10">
+        {/* Founder yêu cầu: cụm tiêu đề + note phải NẰM GIỮA trang (trước
+            không có `mx-auto max-w-*` nên trên màn hình rộng, cụm chữ bị
+            dồn về sát trái, để trống hẳn nửa phải màn hình — khác Mirror/
+            Bản đồ hành trình vốn đã có `mx-auto max-w-*`). */}
+        <div className="relative z-10 mx-auto max-w-4xl px-5 py-8 md:px-9 md:py-10">
           {backHref !== null && <PortalBackLink href={backHref} label="Hành trình của tôi" tone="light" />}
 
           <div className="mt-4 flex flex-wrap items-start justify-between gap-4">

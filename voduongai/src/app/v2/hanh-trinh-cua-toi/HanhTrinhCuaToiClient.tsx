@@ -240,6 +240,20 @@ const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
   "ban-do-hanh-trinh": { headline: "Con đường bạn đang đi", desc: "5 chương cuộc đời — từ nơi bắt đầu đến nơi bạn chưa từng tới." },
 };
 
+/** Founder yêu cầu thêm "chiều sâu, độ bóng" cho nền đặc của 3 tab
+ * (My Story/Mirror/Bản đồ hành trình) — 2 lớp radial NEO Ở TOP (bán kính
+ * px cố định, không theo %) tạo ánh sáng gần đầu trang, KHÔNG lặp lại bug
+ * cũ (gradient theo % chiều cao container sẽ tối dần ở cuối trang dài).
+ * `TAB_BG_SHADOW` là vignette `boxShadow` inset (px cố định quanh 4 cạnh,
+ * không phụ thuộc chiều cao nội dung) — cùng dùng chung cả 3 tab. */
+const TAB_BG_SHADOW = "inset 0 0 160px rgba(0,0,0,.35)";
+const STORY_BG =
+  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 12%, rgba(253,222,155,.10), transparent 60%), #5A4010";
+const MIRROR_BG =
+  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 15% 85%, rgba(34,211,238,.08), transparent 60%), #152A3D";
+const MAP_BG =
+  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 90%, rgba(251,146,60,.10), transparent 60%), #4A3212";
+
 const HUB_CARD_ICON: Record<TabKey, React.ReactNode> = {
   "hanh-trinh-cua-toi": (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -442,7 +456,8 @@ export function HanhTrinhCuaToiClient({
                       onOpenMirror={() => setActiveTab("mirror")}
                       mirrorInviteText={{ prefix: "Muốn im lặng một chút?", label: "Ghé qua Mirror" }}
                       variant="corkboard"
-                      bgOverride="#5A4010"
+                      bgOverride={STORY_BG}
+                      bgShadow={TAB_BG_SHADOW}
                     />
                   </div>
                 )}
@@ -454,7 +469,8 @@ export function HanhTrinhCuaToiClient({
                       academyHref="/v2/hoc-vien-ai"
                       onOpenStory={() => setActiveTab("my-story")}
                       storyInviteLabel="Chép lại câu trả lời trong My Story"
-                      bgOverride="#152A3D"
+                      bgOverride={MIRROR_BG}
+                      bgShadow={TAB_BG_SHADOW}
                       hideCompanionLogo
                       artAlign="right"
                     />
@@ -469,7 +485,8 @@ export function HanhTrinhCuaToiClient({
                       storyHref="/v2/hanh-trinh-cua-toi"
                       workspaceHref="/v2/muc-tieu"
                       premiumHref="/v2/premium"
-                      bgOverride="#4A3212"
+                      bgOverride={MAP_BG}
+                      bgShadow={TAB_BG_SHADOW}
                       chapterDestinations={[
                         { href: "/v2/hoc-vien-ai", label: "Học viện AI" },
                         { href: "/v2/hoc-vien-ai", label: "AI Workspace" },

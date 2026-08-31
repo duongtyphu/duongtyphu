@@ -90,6 +90,7 @@ export function MirrorChamber({
   onOpenStory,
   storyInviteLabel = "Viết câu trả lời trong My Story",
   bgOverride,
+  bgShadow,
   hideCompanionLogo = false,
   artAlign = "center",
 }: {
@@ -124,13 +125,17 @@ export function MirrorChamber({
       của 1.0) — override qua inline style (`background` inline luôn thắng
       class), không đổi `/portal/mirror`. */
   bgOverride?: string;
+  /** Founder yêu cầu thêm "chiều sâu, độ bóng" cho nền — `boxShadow`
+      vignette (px cố định, an toàn cho trang dài) áp cùng div với
+      `bgOverride`. */
+  bgShadow?: string;
   /** Founder yêu cầu riêng: ẩn Living Core (logo Companion) ở tab nhúng —
       mặc định `false`, giữ nguyên hành vi 1.0. */
   hideCompanionLogo?: boolean;
   /** Vị trí khối gương kính lớn (art trang trí phía sau nội dung) — mặc
       định `"center"` giữ nguyên 1.0. `"right"` (Founder yêu cầu cho tab
-      nhúng): gương đang nằm giữa trang bị nội dung ở giữa che khuất, dời
-      hẳn sang mép phải màn hình để luôn nhìn thấy được. */
+      nhúng): gương thu nhỏ, đặt ở góc phải màn hình (không còn vắt giữa
+      chiều cao) để không che khuất/lệch cụm chữ ở giữa. */
   artAlign?: "center" | "right";
 }) {
   const editMode = useEditMode();
@@ -159,7 +164,7 @@ export function MirrorChamber({
     return (
       <div
         className="mirror-chamber-bg min-h-[70vh] rounded-3xl"
-        style={bgOverride ? { background: bgOverride } : undefined}
+        style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined}
         aria-hidden
       />
     );
@@ -173,7 +178,7 @@ export function MirrorChamber({
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      <div className="mirror-chamber-bg" style={bgOverride ? { background: bgOverride } : undefined} aria-hidden />
+      <div className="mirror-chamber-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
       <div className="mirror-glass-veil" aria-hidden />
       <div
         className="mirror-ripple"
@@ -191,17 +196,21 @@ export function MirrorChamber({
       <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "78%", top: "58%", animationDelay: "5s" }} aria-hidden />
       <div className="mirror-reflection-line" aria-hidden />
 
-      {/* Khối gương kính lớn — art hero tĩnh, đối xứng, mờ nhẹ phía sau
-       * nội dung (KHÔNG bố cục lệch phải như mockup gốc, để không xáo
-       * trộn cấu trúc NHÌN LẠI/NHẬN RA/TỰ HỎI + panel admin thật). */}
+      {/* Khối gương kính — art trang trí phía sau nội dung. Founder yêu
+       * cầu riêng cho tab nhúng: THU NHỎ (460×680 → 220×326) + đặt hẳn ở
+       * GÓC phải-dưới màn hình (không còn vắt giữa chiều cao, tránh chiếm
+       * hết nửa phải màn hình) + màu bên trong "giống gương thật" hơn —
+       * tăng độ phản chiếu/độ bóng của `mirrorGlass` (opacity trung tâm
+       * cao hơn, thêm 1 lớp sheen chéo thứ 2) thay vì gần như trong suốt
+       * như bản cũ. */}
       <svg
         className={
           artAlign === "right"
-            ? "pointer-events-none absolute right-[2%] top-1/2 z-0 -translate-y-1/2 opacity-[0.22] md:right-[6%]"
+            ? "pointer-events-none absolute bottom-[4%] right-[3%] z-0 opacity-[0.5] md:right-[5%]"
             : "pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 opacity-[0.16]"
         }
-        width="460"
-        height="680"
+        width={artAlign === "right" ? 220 : 460}
+        height={artAlign === "right" ? 326 : 680}
         viewBox="0 0 460 680"
         fill="none"
         aria-hidden
@@ -212,14 +221,20 @@ export function MirrorChamber({
             <stop offset="50%" stopColor="#22D3EE" />
             <stop offset="100%" stopColor="#0E7490" />
           </linearGradient>
-          <radialGradient id="mirrorGlass" cx="50%" cy="38%" r="65%">
-            <stop offset="0%" stopColor="#22D3EE" stopOpacity="0.22" />
-            <stop offset="55%" stopColor="#0B1220" stopOpacity="0.5" />
-            <stop offset="100%" stopColor="#050810" stopOpacity="0.85" />
+          <radialGradient id="mirrorGlass" cx="42%" cy="32%" r="70%">
+            <stop offset="0%" stopColor="#A5F3FC" stopOpacity="0.55" />
+            <stop offset="35%" stopColor="#22D3EE" stopOpacity="0.28" />
+            <stop offset="65%" stopColor="#0B1220" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#050810" stopOpacity="0.88" />
           </radialGradient>
           <linearGradient id="mirrorSheen" x1="110" y1="90" x2="230" y2="260" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-            <stop offset="45%" stopColor="#ffffff" stopOpacity="0.35" />
+            <stop offset="45%" stopColor="#ffffff" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="mirrorSheen2" x1="260" y1="380" x2="340" y2="480" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.22" />
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </linearGradient>
         </defs>
@@ -233,6 +248,7 @@ export function MirrorChamber({
           strokeWidth="46"
           strokeLinecap="round"
         />
+        <path d="M270 390 L330 460" stroke="url(#mirrorSheen2)" strokeWidth="28" strokeLinecap="round" />
       </svg>
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">

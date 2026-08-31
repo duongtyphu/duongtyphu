@@ -59,8 +59,21 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
       {/* Founder yêu cầu riêng: nền xanh da trời phủ TOÀN trang giữa (không
           chỉ viền góc như bản trước) — thay hẳn base đen `#08090D`. Dùng
           màu ĐẶC (không fade theo chiều cao) để "toàn trang giữa" luôn
-          xanh, không tối dần thành đen ở cuối trang khi nội dung dài. */}
-      <div className="absolute inset-0 z-0" style={{ background: "#0F3660" }} aria-hidden />
+          xanh, không tối dần thành đen ở cuối trang khi nội dung dài.
+          Founder yêu cầu thêm "chiều sâu, độ bóng" — 2 lớp radial NEO Ở
+          TOP (bán kính px cố định, không theo %) chỉ tạo ánh sáng gần đầu
+          trang, KHÔNG lặp lại bug cũ (gradient theo % chiều cao container
+          sẽ tối dần ở cuối trang dài) + vignette `boxShadow` inset (px cố
+          định quanh 4 cạnh, không phụ thuộc chiều cao nội dung). */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background:
+            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.07), transparent 55%), radial-gradient(800px circle at 88% 12%, rgba(147,197,253,.10), transparent 60%), #0F3660",
+          boxShadow: "inset 0 0 160px rgba(0,0,0,.35)",
+        }}
+        aria-hidden
+      />
       <div
         className="jn-lamp absolute pointer-events-none"
         style={{ top: -160, right: -80, width: 640, height: 640, background: "radial-gradient(circle, rgba(96,165,250,.14), transparent 65%)" }}
@@ -104,10 +117,11 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
             </button>
           </div>
 
-          {/* Dải chỉ số */}
-          <div className="jn-stat-row" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 14, marginBottom: 16 }}>
-            <div className="jn-card" style={{ padding: 22, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", background: "linear-gradient(160deg,#1A130A,#0F1116)" }}>
-              <svg className="jn-flame" width="34" height="42" viewBox="0 0 46 56" style={{ marginBottom: 8 }}>
+          {/* Dải chỉ số — Founder yêu cầu thu nhỏ lại cho vừa với kích thước
+              trang giữa (padding/svg/font đều giảm so với bản trước). */}
+          <div className="jn-stat-row" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 12, marginBottom: 16 }}>
+            <div className="jn-card" style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", background: "linear-gradient(160deg,#1A130A,#0F1116)" }}>
+              <svg className="jn-flame" width="26" height="32" viewBox="0 0 46 56" style={{ marginBottom: 6 }}>
                 <path
                   d="M23 2C10 18 6 28 6 36c0 11 8 18 17 18s17-7 17-18c0-6-3-13-8-19 1 6-2 10-5 10 2-8-2-16-4-25z"
                   fill="url(#jnFlameGrad)"
@@ -119,8 +133,8 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                   </linearGradient>
                 </defs>
               </svg>
-              <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{stats.streakDays}</div>
-              <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.45)", marginTop: 6 }}>ngày liên tục</div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{stats.streakDays}</div>
+              <div style={{ fontSize: 9.5, color: "rgba(255,255,255,.45)", marginTop: 5 }}>ngày liên tục</div>
             </div>
 
             <StatRing glow="rgba(96,165,250,.15)" value={formatMinutes(stats.minutesToday)} label="Thời gian học hôm nay" />
@@ -258,14 +272,14 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
     giả) — chỉ đóng vai trò khung trang trí trung thực quanh con số thật. */
 function StatRing({ glow, value, label, dashed }: { glow: string; value: string; label: string; dashed?: boolean }) {
   return (
-    <div className="jn-card" style={{ padding: 22, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
-      <svg width="66" height="66" viewBox="0 0 76 76" style={{ marginBottom: 8 }}>
+    <div className="jn-card" style={{ padding: 16, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center" }}>
+      <svg width="54" height="54" viewBox="0 0 76 76" style={{ marginBottom: 6 }}>
         <circle cx="38" cy="38" r="32" fill="none" stroke={glow} strokeWidth="7" strokeDasharray={dashed ? "3 5" : undefined} />
         <text x="38" y="44" textAnchor="middle" fontSize="16" fontWeight="800" fill="#fff">
           {value}
         </text>
       </svg>
-      <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)" }}>{label}</div>
+      <div style={{ fontSize: 10, color: "rgba(255,255,255,.45)" }}>{label}</div>
     </div>
   );
 }
