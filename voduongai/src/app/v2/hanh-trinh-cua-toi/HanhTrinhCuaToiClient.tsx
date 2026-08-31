@@ -241,40 +241,19 @@ const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
 };
 
 /** Founder từng yêu cầu thêm "chiều sâu, độ bóng" cho nền đặc của 3 tab
- * (My Story/Mirror/Bản đồ hành trình) — 2 lớp radial NEO Ở TOP (bán kính
- * px cố định, không theo %) tạo ánh sáng gần đầu trang, KHÔNG lặp lại bug
- * cũ (gradient theo % chiều cao container sẽ tối dần ở cuối trang dài) —
- * 2 lớp radial này GIỮ NGUYÊN, vẫn đúng ý đồ ban đầu.
- *
- * ĐÃ BỎ `TAB_BG_SHADOW` (vignette `boxShadow: inset 0 0 160px
- * rgba(0,0,0,.35)` quanh 4 cạnh) — Founder báo lại nhiều lần "vẫn còn lớp
- * phủ phần nội dung ở dưới các tab" dù màu nền đã liền mạch (`var(--bg)`
- * cascade đúng) — root cause hoá ra chính LÀ vignette này: mép TRÊN của
- * div nền (đứng ngay dưới thanh tab) bị tối đi rõ rệt bởi inset shadow,
- * tạo đúng cảm giác "1 lớp phủ tối" nằm trên nội dung, dù bản chất chỉ là
- * hiệu ứng trang trí — không phải màu nền khác. Vignette áp dụng đối xứng
- * cả 4 cạnh nên KHÔNG có cách chỉnh nào giữ được cạnh trên "trong" mà vẫn
- * giữ cạnh dưới/2 bên tối — bỏ hẳn là cách duy nhất triệt để, ưu tiên
- * đúng yêu cầu "liền mạch tuyệt đối" Founder nhấn mạnh xuyên suốt Giai
- * đoạn 10, hơn là hiệu ứng "chiều sâu" trang trí.
- *
- * Founder yêu cầu (đợt sau, sau khi thấy ảnh chụp còn seam giữa header và
- * nội dung): KHÔNG "đắp" màu riêng lên khung giữa (`.tab-panel`) nữa — mọi
- * nơi phải dùng CHUNG đúng 1 nguồn màu nền của trang. Base của cả 3 hằng
- * số này đổi từ literal hex (từng trùng NHƯNG ĐỘC LẬP với `TAB_HEADER_BG`
- * bên dưới — 2 nguồn dễ lệch nhau nếu sửa 1 chỗ quên chỗ kia) sang
- * `var(--bg)` — biến CSS đã được override đúng theo tab đang mở ngay tại
+ * (My Story/Mirror/Bản đồ hành trình) — 2 lớp radial "ánh sáng gần đầu
+ * trang" + vignette `boxShadow` (đã bỏ ở đợt trước vì gây cảm giác "lớp
+ * phủ" dưới thanh tab). Giờ Founder yêu cầu BỎ HẲN toàn bộ hiệu ứng "chiều
+ * sâu" còn lại, áp dụng cho cả 5 tab: mỗi hằng số chỉ còn ĐÚNG 1 chuỗi
+ * `var(--bg)` — biến CSS đã được override theo tab đang mở ngay tại
  * `.htct` (`style={{"--bg": htctBg}}`), kế thừa tự nhiên xuống
- * `MyStoryBook`/`MirrorChamber`/`JourneyMapAtlas` qua prop `bgOverride`
- * (chỉ còn 1 chuỗi CSS `var(--bg)` cố định, không phải hex thay đổi theo
- * tab nữa). `TAB_HEADER_BG` giờ là NƠI DUY NHẤT định nghĩa 5 giá trị hex
- * thật trong toàn bộ file. */
-const STORY_BG =
-  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 12%, rgba(253,222,155,.10), transparent 60%), var(--bg)";
-const MIRROR_BG =
-  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 15% 85%, rgba(34,211,238,.08), transparent 60%), var(--bg)";
-const MAP_BG =
-  "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.08), transparent 55%), radial-gradient(800px circle at 85% 90%, rgba(251,146,60,.10), transparent 60%), var(--bg)";
+ * `MyStoryBook`/`MirrorChamber`/`JourneyMapAtlas` qua prop `bgOverride`.
+ * `TAB_HEADER_BG` vẫn là NƠI DUY NHẤT định nghĩa 5 giá trị hex thật trong
+ * toàn bộ file — 3 hằng số này chỉ còn là cầu nối `var(--bg)` cho đúng 3
+ * component dùng chung Portal 1.0. */
+const STORY_BG = "var(--bg)";
+const MIRROR_BG = "var(--bg)";
+const MAP_BG = "var(--bg)";
 
 /** Founder yêu cầu riêng: màu của mỗi tab (5 tab, KHÔNG tính Hub — Hub giữ
  * nguyên nền đen + 6 hộp màu) phải phủ luôn phần "header" — dòng tiêu đề
