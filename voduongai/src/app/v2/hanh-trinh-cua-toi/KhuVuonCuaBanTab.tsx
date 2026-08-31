@@ -387,7 +387,7 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
             ) : (
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(84px,1fr))", gap: 8 }}>
                 {badges.map((b) => (
-                  <div key={b.id} title={b.name} style={{ background: "#111318", border: "1px solid rgba(74,222,128,.16)", borderRadius: 12, padding: 10, textAlign: "center" }}>
+                  <div key={b.id} title={b.name} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(74,222,128,.16)", borderRadius: 12, padding: 10, textAlign: "center" }}>
                     <div
                       style={{
                         width: 34,

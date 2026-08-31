@@ -20,7 +20,17 @@
 .jn-lamp { animation: jn-glow 6s ease-in-out infinite; }
 
 .jn-card {
-  background: #0F1116;
+  /* Founder báo "vẫn còn 2 màu nền" sau khi đã sửa lớp nền GỐC (`var(--bg)`
+     cascade) — hoá ra nguyên nhân thật KHÔNG phải lớp nền gốc (đã đúng),
+     mà là chính các "ô" (`.jn-card`) phủ gần kín màn hình lại "đắp" 1 màu
+     đen tuyệt đối `#0F1116` ĐỘC LẬP với `var(--bg)` (xanh dương của tab
+     này) — vi phạm đúng nguyên tắc "dùng chung nền trang" lần thứ 2, chỉ
+     khác vị trí (ở cấp "ô nội dung" thay vì "khung giữa"). Đổi sang lớp
+     phủ trong suốt (cùng kỹ thuật `rgba(255,255,255,.03-.08)` mà tab
+     "Khu vườn của bạn" đã dùng đúng từ đầu) — để `var(--bg)` luôn xuyên
+     qua, ô chỉ là 1 lớp "nổi nhẹ" trên đúng màu nền trang, không phải 1
+     khối màu tách biệt. */
+  background: rgba(255, 255, 255, .05);
   border: 1px solid rgba(255, 255, 255, .06);
   border-radius: 20px;
   position: relative;
