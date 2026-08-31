@@ -442,6 +442,7 @@ export function HanhTrinhCuaToiClient({
                       onOpenMirror={() => setActiveTab("mirror")}
                       mirrorInviteText={{ prefix: "Muốn im lặng một chút?", label: "Ghé qua Mirror" }}
                       variant="corkboard"
+                      bgOverride="#5A4010"
                     />
                   </div>
                 )}
@@ -453,6 +454,9 @@ export function HanhTrinhCuaToiClient({
                       academyHref="/v2/hoc-vien-ai"
                       onOpenStory={() => setActiveTab("my-story")}
                       storyInviteLabel="Chép lại câu trả lời trong My Story"
+                      bgOverride="#152A3D"
+                      hideCompanionLogo
+                      artAlign="right"
                     />
                   </div>
                 )}
@@ -465,6 +469,7 @@ export function HanhTrinhCuaToiClient({
                       storyHref="/v2/hanh-trinh-cua-toi"
                       workspaceHref="/v2/muc-tieu"
                       premiumHref="/v2/premium"
+                      bgOverride="#4A3212"
                       chapterDestinations={[
                         { href: "/v2/hoc-vien-ai", label: "Học viện AI" },
                         { href: "/v2/hoc-vien-ai", label: "AI Workspace" },

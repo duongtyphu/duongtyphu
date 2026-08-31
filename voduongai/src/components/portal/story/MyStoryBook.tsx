@@ -169,8 +169,14 @@ const CORK_TYPE_STYLE: Record<CorkNoteType, { bg: string; pin: string; text: str
   turning: { bg: "#BFD9EE", pin: "radial-gradient(circle at 32% 28%, #93C5FD, #2563EB 70%)", text: "#1E3A8A", label: "rgba(30,58,138,.75)" },
   capsule: { bg: "#F6C9D9", pin: "radial-gradient(circle at 32% 28%, #F9A8D4, #DB2777 70%)", text: "#831843", label: "rgba(157,23,77,.75)" },
   work: { bg: "#CFE8CE", pin: "radial-gradient(circle at 32% 28%, #86EFAC, #15803D 70%)", text: "#14532D", label: "rgba(21,87,36,.75)" },
-  letter: { bg: "#F5D488", pin: "radial-gradient(circle at 32% 28%, #FCD34D, #B45309 70%)", text: "#4A3208", label: "rgba(120,72,10,.8)" },
+  letter: { bg: "#FCE2A8", pin: "radial-gradient(circle at 32% 28%, #FCD34D, #B45309 70%)", text: "#4A3208", label: "rgba(120,72,10,.8)" },
 };
+
+/** Founder yêu cầu: sắp xếp note "khoa học, dễ hiểu" — thay vì xáo trộn
+    lẫn lộn 5 loại vào 1 hàng, nhóm note theo LOẠI (đúng thứ tự thời gian
+    "đời sống" của trang: lá thư tháng → khoảnh khắc → bước ngoặt → ký ức
+    tự lưu → tác phẩm), mỗi nhóm có 1 nhãn nhỏ để phân biệt rõ. */
+const CORK_GROUP_ORDER: CorkNoteType[] = ["letter", "moment", "turning", "capsule", "work"];
 
 /** Xoay lệch giả-ngẫu-nhiên NHƯNG tất định theo index — tránh hydration
  * mismatch (không dùng Math.random trong render). */
@@ -247,6 +253,7 @@ export function MyStoryBook({
   onOpenMirror,
   mirrorInviteText,
   variant = "book",
+  bgOverride,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -277,6 +284,10 @@ export function MyStoryBook({
       `/v2/hanh-trinh-cua-toi` (Founder duyệt qua canvas mockup) — cùng
       DATA thật, chỉ đổi cách trình bày. */
   variant?: "book" | "corkboard";
+  /** Founder yêu cầu riêng cho tab nhúng: màu nền ĐẶC phủ toàn trang giữa
+      (thay `.story-corkboard-bg` gradient mặc định) — chỉ có tác dụng khi
+      `variant="corkboard"`, không đụng `/portal/story` (variant "book"). */
+  bgOverride?: string;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
@@ -385,13 +396,19 @@ export function MyStoryBook({
   }
 
   if (isBookLoading) {
-    return <div className={`${variant === "corkboard" ? "story-corkboard-bg" : "story-book-bg"} min-h-[60vh] rounded-3xl`} aria-hidden />;
+    return (
+      <div
+        className={`${variant === "corkboard" ? "story-corkboard-bg" : "story-book-bg"} min-h-[60vh] rounded-3xl`}
+        style={variant === "corkboard" && bgOverride ? { background: bgOverride } : undefined}
+        aria-hidden
+      />
+    );
   }
 
   if (variant === "corkboard") {
     return (
       <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-        <div className="story-corkboard-bg" aria-hidden />
+        <div className="story-corkboard-bg" style={bgOverride ? { background: bgOverride } : undefined} aria-hidden />
 
         <div className="relative z-10 px-5 py-8 md:px-9 md:py-10">
           {backHref !== null && <PortalBackLink href={backHref} label="Hành trình của tôi" tone="light" />}
@@ -432,35 +449,46 @@ export function MyStoryBook({
               <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-white/40">{chrome.emptyStateLine2}</p>
             </div>
           ) : (
-            <div className="mt-8 flex flex-wrap gap-6">
-              {corkNotes.map((note, i) => {
-                const style = CORK_TYPE_STYLE[note.type];
-                const rotate = corkRotation(i);
-                const content = (
-                  <div
-                    className="story-cork-note relative w-[220px] shrink-0 p-5 pt-6"
-                    style={{ background: style.bg, transform: `rotate(${rotate}deg)` }}
-                  >
-                    <span className="story-cork-pin" style={{ background: style.pin }} aria-hidden />
-                    <div className="text-[10px] font-bold uppercase tracking-[0.06em]" style={{ color: style.label }}>
-                      {note.typeLabel}
+            <div className="mt-8 space-y-8">
+              {CORK_GROUP_ORDER.map((groupType) => {
+                const notesInGroup = corkNotes.filter((n) => n.type === groupType);
+                if (notesInGroup.length === 0) return null;
+                const style = CORK_TYPE_STYLE[groupType];
+                return (
+                  <div key={groupType}>
+                    <div className="flex items-center gap-2.5">
+                      <span className="h-2 w-2 rounded-full" style={{ background: style.pin }} aria-hidden />
+                      <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/45">{notesInGroup[0].typeLabel}</p>
                     </div>
-                    <div className={`${caveat.className} mt-2 text-xl leading-tight`} style={{ color: style.text }}>
-                      {note.title}
+                    <div className="mt-4 flex flex-wrap gap-6">
+                      {notesInGroup.map((note, i) => {
+                        const rotate = corkRotation(i);
+                        const content = (
+                          <div
+                            className="story-cork-note relative w-[220px] shrink-0 p-5 pt-6"
+                            style={{ background: style.bg, transform: `rotate(${rotate}deg)` }}
+                          >
+                            <span className="story-cork-pin" style={{ background: style.pin }} aria-hidden />
+                            <div className={`${caveat.className} text-xl leading-tight`} style={{ color: style.text }}>
+                              {note.title}
+                            </div>
+                            {note.meta && (
+                              <div className="mt-2.5 text-[11px] font-semibold" style={{ color: style.label }}>
+                                {note.meta}
+                              </div>
+                            )}
+                          </div>
+                        );
+                        return note.removable ? (
+                          <RemovableEntry key={note.id} capsuleId={note.removable.capsuleId} onRemoved={() => handleRemoved(note.removable!.capsuleId)} chrome={chrome}>
+                            {content}
+                          </RemovableEntry>
+                        ) : (
+                          <div key={note.id}>{content}</div>
+                        );
+                      })}
                     </div>
-                    {note.meta && (
-                      <div className="mt-2.5 text-[11px]" style={{ color: style.label }}>
-                        {note.meta}
-                      </div>
-                    )}
                   </div>
-                );
-                return note.removable ? (
-                  <RemovableEntry key={note.id} capsuleId={note.removable.capsuleId} onRemoved={() => handleRemoved(note.removable!.capsuleId)} chrome={chrome}>
-                    {content}
-                  </RemovableEntry>
-                ) : (
-                  <div key={note.id}>{content}</div>
                 );
               })}
             </div>

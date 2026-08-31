@@ -8896,3 +8896,124 @@ nêu nhiều lần) — Founder tự xác nhận 2 tông xanh mới đúng ý ("
 trời"/"xanh lam") và cụm tiêu đề đã xoá đúng khối mong muốn (nếu Founder
 thực ra chỉ muốn ẩn/rút gọn thay vì xoá hẳn, đây là thay đổi dễ hoàn tác —
 báo lại để khôi phục).
+
+## Giai đoạn 10 (tiếp) — 4 tab còn lại: khôi phục tiêu đề Khu vườn + hàng
+## ngang 3 ô + cây thật hơn; My Story/Mirror/Bản đồ hành trình nền đặc
+## toàn trang + bỏ logo companion + chuyển gương sang phải + gộp note
+
+Founder gửi 1 yêu cầu lớn phủ cả 4 tab còn lại ngay sau đợt xanh da trời/
+xanh lam ở trên — bao gồm 1 điểm ĐẢO NGƯỢC quyết định trước đó: cụm tiêu
+đề Khu vườn của bạn (eyebrow "Hành trình của tôi" + h1 "Khu vườn của bạn"
++ subtitle) đã bị xoá HẲN ở đợt trước — Founder làm rõ chỉ muốn bỏ đúng
+dòng eyebrow, còn h1+subtitle phải khôi phục lại (chuyển sang góc trái
+trên cùng, viết lại subtitle tinh tế/chuyên nghiệp hơn).
+
+**Khu vườn của bạn:**
+- Khôi phục header top-left: `<h1>Khu vườn của bạn</h1>` + subtitle viết
+  lại ("Mỗi cây là một giai đoạn học tập — lớn lên, đơm hoa kết trái theo
+  từng bước tiến của bạn.") — KHÔNG thêm lại dòng eyebrow "Hành trình của
+  tôi" (đúng yêu cầu chỉ bỏ đúng dòng đó).
+- "Tiếp tục học"/"Thành tựu của tôi"/"Câu triết lý" — 3 khối trước xếp
+  chồng dọc trong `<div style={{maxWidth:900}}>`, giờ chuyển thành `.kvcb-row`
+  (CSS grid `repeat(3,1fr)`, gập `1fr` dưới 900px) — mỗi khối rút gọn
+  padding/font-size để vừa 1 cột (card "Tiếp tục học" đổi bố cục ngang→dọc,
+  nút CTA `alignSelf:flex-start`; badge lưới thu nhỏ `minmax(84px,1fr)`).
+- `TreeSVG` (3 tier bloom/growing/sapling) vẽ lại hoàn toàn: thân cây cong
+  tự nhiên (path thay vì đường thẳng) + rễ bè ở gốc, tán lá nhiều lớp
+  hình tròn chồng lệch (không phải 1 khối tròn đơn), thêm vài chiếc lá
+  đơn lẻ nổi trên viền tán, hoa 5-cánh quanh nhuỵ vàng (thay chấm hồng
+  đơn sắc cũ), quả elip có điểm sáng + cuống lá xanh (thay elip đỏ trơn).
+
+**Kiến trúc chung cho 3 tab còn lại (My Story/Mirror/Bản đồ hành trình):**
+cả 3 render lại NGUYÊN `MyStoryBook`/`MirrorChamber`/`JourneyMapAtlas`
+(Single Source of Truth dùng chung Portal 1.0, theo đúng kiến trúc Giai
+đoạn 8) — mọi thay đổi nền/logo/vị trí phải thêm qua PROP TUỲ CHỌN mới,
+mặc định giữ nguyên hành vi 1.0, chỉ khi `/v2/hanh-trinh-cua-toi` truyền
+prop mới có hiệu lực (đúng nguyên tắc đã áp dụng xuyên suốt dự án cho
+`backHref`/`academyHref`/`onOpenStory`...).
+
+**My Story (variant "corkboard"):**
+- Thêm prop `bgOverride?: string` cho `MyStoryBook` — khi có, override
+  `background` của `.story-corkboard-bg` bằng inline style (inline style
+  luôn thắng class cho cùng thuộc tính CSS, không cần thêm class mới).
+  Tab nhúng truyền `bgOverride="#5A4010"` (vàng đồng đặc, khác Nhật ký/
+  Khu vườn — không dùng lại gradient góc mờ dần cũ, đúng bài học "gradient
+  dài theo chiều cao container sẽ tối dần ở cuối trang dài" đã rút ra ở
+  đợt trước).
+- "Sắp xếp note khoa học, dễ hiểu": trước đó 5 loại note (lá thư/khoảnh
+  khắc/bước ngoặt/ký ức tự lưu/tác phẩm) trộn lẫn ngẫu nhiên trong 1 hàng
+  `flex-wrap`. Đã nhóm lại theo LOẠI (`CORK_GROUP_ORDER`, đúng thứ tự thời
+  gian "đời sống" trang: lá thư tháng → khoảnh khắc → bước ngoặt → ký ức
+  tự lưu → tác phẩm), mỗi nhóm có 1 nhãn nhỏ (chấm màu + tên loại) phía
+  trên hàng note của nhóm đó — chỉ hiện nhóm có note thật (`filter`), 0
+  field dữ liệu nào bịa thêm. Đồng thời bỏ nhãn loại lặp lại TRONG từng
+  note (đã có ở nhãn nhóm phía trên, để trên note nữa là dư thừa) — chỉ
+  giữ tiêu đề + `meta` (ngày/số liệu).
+- Màu "letter" (lá thư tháng) trước trùng hệt "moment" (`#F5D488`) — khó
+  phân biệt 2 loại note cạnh nhau dù đã tách nhóm; đổi "letter" sang
+  `#FCE2A8` (vàng nhạt hơn, vẫn cùng gia đình ấm).
+
+**Mirror:**
+- Thêm `bgOverride?: string` (cùng cơ chế inline-style override,
+  `.mirror-chamber-bg`) — tab nhúng truyền `"#152A3D"` (cyan-navy đặc,
+  giữa 2 điểm dừng gradient gốc `#1B2C3E`/`#0A141F`).
+- **"Bỏ logo companion"** — xác định đúng `<LivingCore>` (Energy Core™,
+  biểu tượng Companion đã Design-Lock) render đầu `<header>` chính là
+  "logo companion" Founder nhắc tới (không phải 1 phần tử nào khác trong
+  file — đã grep "companion"/"logo" trước khi kết luận). Thêm prop
+  `hideCompanionLogo?: boolean` (mặc định `false`, giữ 1.0) — tab nhúng
+  truyền `true`, `<h1>` tự bỏ `mt-8` xuống `mt-0` khi ẩn logo (tránh
+  khoảng trắng thừa phía trên tiêu đề). **Không đụng file
+  `LivingCore.tsx`** (Design Lock — chỉ ẩn tại 1 vị trí gọi, không sửa
+  chính component).
+- **"Gương bên trái bị che lấp → chuyển sang phải"** — khối SVG gương
+  kính lớn (art trang trí, opacity thấp, z-0) trước đó CĂN GIỮA
+  (`left-1/2 -translate-x-1/2`) đúng giữa cột nội dung `max-w-xl` cũng
+  căn giữa — bị nội dung/chữ ở trên đè khuất gần như hoàn toàn (không
+  phải "bên trái" theo nghĩa đen, mà "bị che lấp bởi khối giữa" — cùng
+  hiệu ứng). Thêm prop `artAlign?: "center" | "right"` (mặc định
+  `"center"`, giữ 1.0) — tab nhúng truyền `"right"`: SVG chuyển sang
+  `right-[2%] md:right-[6%]` + tăng opacity 0.16→0.22 (không còn bị nội
+  dung đè lên, cần rõ hơn 1 chút để vẫn thấy được như art trang trí).
+
+**Bản đồ hành trình:**
+- Thêm `bgOverride?: string` cho `JourneyMapAtlas` (`.map-parchment-bg`)
+  — tab nhúng truyền `"#4A3212"` (bronze-gold đặc, khác tông cam-nâu gốc
+  của Hub card để 2 tab "vàng đồng" — My Story/Bản đồ — vẫn phân biệt
+  được nhau khi chuyển qua lại).
+- "Cụm chữ + hình ảnh (la bàn+tiêu đề+phụ đề) → giữa trang" — audit xác
+  nhận khối này ĐÃ `text-center` + nằm trong `mx-auto max-w-2xl` (căn
+  giữa ngang tuyệt đối theo cấu trúc có sẵn) — không có lệch trái/phải
+  nào cần sửa, chỉ áp dụng nền đặc (đã có ở trên) để khối nổi bật rõ hơn
+  trên nền đồng nhất.
+
+**File sửa:** `KhuVuonCuaBanTab.tsx` (header + `.kvcb-row` layout +
+`TreeSVG`), `khu-vuon-cua-ban-tab.css` (`.kvcb-row`/`.kvcb-col`),
+`MyStoryBook.tsx` (`bgOverride` + gom nhóm note + màu "letter"),
+`MirrorChamber.tsx` (`bgOverride`/`hideCompanionLogo`/`artAlign`),
+`JourneyMapAtlas.tsx` (`bgOverride`), `HanhTrinhCuaToiClient.tsx` (truyền
+3 prop mới cho 3 tab tương ứng).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (0 route nào biến mất/lỗi).
+Playwright thật (`next dev`, sandbox không cấu hình Supabase — Portal tự
+công khai theo fallback có sẵn) chụp đủ 4 tab qua kịch bản click-through
+thật (không phải chỉnh sửa tay HTML) — xác nhận trực quan cả 4 điểm: (1)
+Khu vườn — header top-left đúng h1+subtitle mới, KHÔNG còn eyebrow, 2/3
+ô "Tiếp tục học/Thành tựu/Câu triết lý" hiện đúng hàng ngang (ô "Tiếp tục
+học" ẩn đúng thiết kế vì sandbox không có `currentStage`); (2) My Story —
+nền vàng đồng đặc phủ đều; (3) Mirror — nền navy đặc, KHÔNG còn Living
+Core ở đầu trang, khối gương kính lớn rõ ràng ở mép phải màn hình,
+KHÔNG còn bị chữ đè lên; (4) Bản đồ hành trình — nền bronze-gold đặc,
+la bàn+tiêu đề+phụ đề căn giữa đúng.
+
+**Chưa tự test được:** (1) `TreeSVG` mới chỉ xác nhận qua đọc code +
+`tsc` sạch — sandbox hiện `Chưa có giai đoạn học tập nào` (không có
+`JourneyStage` thật) nên KHÔNG chụp được ảnh cây thật render (`seed`
+state hiện đúng, nhưng bloom/growing/sapling tier chưa có dữ liệu để
+trigger); (2) toàn bộ 3 tab render lại component 1.0 cần tài khoản đăng
+nhập có dữ liệu thật (`reflections`/`memory_capsules`/chương/`connections`)
+để xem đủ nội dung ngoài trạng thái trống — Founder tự test trên Preview/
+Production URL, đặc biệt xác nhận: nhóm note My Story hiện đúng khi có đủ
+5 loại dữ liệu thật, cây các tier ở Khu vườn hiện đúng hình dạng mới khi
+có `JourneyStage` với `percent` khác 0.
