@@ -219,18 +219,13 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           biến CSS đã được `.htct` (component cha) override đúng theo tab
           đang mở, kế thừa tự nhiên xuống tới đây. Chỉ còn ĐÚNG 1 nơi định
           nghĩa màu (`TAB_HEADER_BG`), loại bỏ nguy cơ 2 nguồn lệch nhau.
-          Giữ nguyên 2 lớp radial "chiều sâu, độ bóng". ĐÃ BỎ vignette
-          (`boxShadow: inset 0 0 160px rgba(0,0,0,.35)`) — cùng lý do đã
-          sửa ở `NhatKyHocTapTab.tsx`: root cause thật của "vẫn còn lớp
-          phủ nội dung dưới thanh tab" Founder báo lại nhiều lần. */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.06), transparent 55%), radial-gradient(800px circle at 85% 10%, rgba(147,197,253,.09), transparent 60%), var(--bg)",
-        }}
-        aria-hidden
-      />
+          ĐÃ BỎ HẲN "chiều sâu, độ bóng" (2 lớp radial "ánh sáng gần đầu
+          trang") — Founder yêu cầu áp dụng cho cả 5 tab: chỉ giữ lại đúng
+          màu nền gốc `var(--bg)`. Toàn bộ nội dung "vườn đêm cổ tích" bên
+          dưới (sao/trăng/aurora/đồi/sương/đom đóm/cây) GIỮ NGUYÊN 100% —
+          không thuộc lớp "chiều sâu" đang bỏ, đây là chủ đề thị giác gốc
+          của tab này (Giai đoạn 9). */}
+      <div className="absolute inset-0 z-0" style={{ background: "var(--bg)" }} aria-hidden />
 
       {/* dải aurora trừu tượng vắt ngang trời */}
       <div

@@ -63,31 +63,14 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
           biến CSS đã được `.htct` (component cha) override đúng theo tab
           đang mở, kế thừa tự nhiên xuống tới đây. Chỉ còn ĐÚNG 1 nơi định
           nghĩa màu (`TAB_HEADER_BG`), loại bỏ nguy cơ 2 nguồn lệch nhau.
-          Giữ nguyên 2 lớp radial "chiều sâu, độ bóng". ĐÃ BỎ vignette
-          (`boxShadow: inset 0 0 160px rgba(0,0,0,.35)`) — Founder báo lại
-          nhiều lần "vẫn còn lớp phủ nội dung dưới thanh tab" dù màu nền đã
-          liền mạch: root cause chính là vignette này tự làm tối mép TRÊN
-          của div (ngay dưới thanh tab), tạo cảm giác 1 lớp phủ tối dù bản
-          chất chỉ là hiệu ứng trang trí. Không có cách chỉnh đối xứng nào
-          giữ mép trên "trong" mà vẫn giữ 3 mép còn lại tối — bỏ hẳn. */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            "radial-gradient(1200px circle at 50% -10%, rgba(255,255,255,.07), transparent 55%), radial-gradient(800px circle at 88% 12%, rgba(147,197,253,.10), transparent 60%), var(--bg)",
-        }}
-        aria-hidden
-      />
-      <div
-        className="jn-lamp absolute pointer-events-none"
-        style={{ top: -160, right: -80, width: 640, height: 640, background: "radial-gradient(circle, rgba(96,165,250,.14), transparent 65%)" }}
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(1000px circle at 85% -8%, rgba(30,73,118,.3), transparent 60%)" }}
-        aria-hidden
-      />
+          ĐÃ BỎ HẲN "chiều sâu, độ bóng" (2 lớp radial "ánh sáng gần đầu
+          trang" + vignette `boxShadow` + glow góc `.jn-lamp` + lớp radial
+          phụ) — Founder yêu cầu áp dụng cho cả 5 tab: chỉ giữ lại đúng
+          màu nền gốc `var(--bg)`, không còn lớp hiệu ứng "chiều sâu" nào
+          khác. Đây là bước cuối cùng của chuỗi sửa "lớp phủ dưới thanh
+          tab" — vignette đã bỏ ở đợt trước không đủ, Founder muốn bỏ luôn
+          cả phần glow còn lại. */}
+      <div className="absolute inset-0 z-0" style={{ background: "var(--bg)" }} aria-hidden />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>

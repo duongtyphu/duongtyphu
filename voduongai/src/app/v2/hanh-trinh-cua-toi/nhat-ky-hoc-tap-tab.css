@@ -12,12 +12,7 @@
   0%, 100% { transform: scale(1) translateY(0); }
   50% { transform: scale(1.06) translateY(-2px); }
 }
-@keyframes jn-glow {
-  0%, 100% { opacity: .45; }
-  50% { opacity: .8; }
-}
 .jn-flame { animation: jn-flame 3.4s ease-in-out infinite; transform-origin: bottom center; }
-.jn-lamp { animation: jn-glow 6s ease-in-out infinite; }
 
 .jn-card {
   /* Founder báo "vẫn còn 2 màu nền" sau khi đã sửa lớp nền GỐC (`var(--bg)`
