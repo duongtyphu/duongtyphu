@@ -24,20 +24,44 @@ import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
 
 import "./khu-vuon-cua-ban-tab.css";
 
+/** Founder yêu cầu (đợt sau): "nhiều sao hơn, nhiều aurora, nhiều sương
+ * hơn, nhiều đom đóm hơn" — tăng mật độ toàn bộ khí quyển vườn đêm, không
+ * đổi kỹ thuật/animation gốc, chỉ tăng SỐ LƯỢNG phần tử. Sao tăng từ 6 lên
+ * 18 (thêm `size` để có sao lớn/nhỏ khác nhau, tạo chiều sâu), trải rộng
+ * top 2–34% (vẫn nằm trên dãy đồi, không lấn xuống vùng cây). */
 const GN_STARS = [
-  { left: "8%", top: "5%", delay: "0s" },
-  { left: "22%", top: "3%", delay: "1.4s" },
-  { left: "60%", top: "6%", delay: ".8s" },
-  { left: "82%", top: "4%", delay: "2.1s" },
-  { left: "38%", top: "9%", delay: "1.1s" },
-  { left: "70%", top: "12%", delay: "2.6s" },
+  { left: "4%", top: "4%", size: 2, delay: "0s" },
+  { left: "10%", top: "18%", size: 1.5, delay: "1.8s" },
+  { left: "16%", top: "7%", size: 2.5, delay: "3.2s" },
+  { left: "22%", top: "3%", size: 2, delay: "1.4s" },
+  { left: "28%", top: "22%", size: 1.5, delay: "2.4s" },
+  { left: "34%", top: "10%", size: 2, delay: ".6s" },
+  { left: "40%", top: "26%", size: 1.5, delay: "3.8s" },
+  { left: "46%", top: "5%", size: 2.5, delay: "1.1s" },
+  { left: "52%", top: "16%", size: 2, delay: "2.9s" },
+  { left: "58%", top: "8%", size: 1.5, delay: ".9s" },
+  { left: "60%", top: "28%", size: 2, delay: "3.4s" },
+  { left: "66%", top: "4%", size: 2.5, delay: "1.7s" },
+  { left: "72%", top: "20%", size: 1.5, delay: "2.6s" },
+  { left: "78%", top: "10%", size: 2, delay: "4.1s" },
+  { left: "82%", top: "4%", size: 2, delay: "2.1s" },
+  { left: "86%", top: "24%", size: 1.5, delay: "1.3s" },
+  { left: "90%", top: "12%", size: 2.5, delay: "3.6s" },
+  { left: "94%", top: "6%", size: 2, delay: "2.2s" },
 ] as const;
 
+/** Đom đóm tăng từ 4 lên 9, trải rộng cả chiều ngang lẫn chiều cao khu
+ * vườn (thay vì chỉ tập trung giữa trang). */
 const GN_FIREFLIES = [
-  { left: "26%", bottom: "25%", color: "#FDE68A", delay: "0s" },
+  { left: "10%", bottom: "20%", color: "#FDE68A", delay: "0s" },
+  { left: "26%", bottom: "25%", color: "#FDE68A", delay: "1.4s" },
+  { left: "18%", bottom: "38%", color: "#86EFAC", delay: "3.6s" },
+  { left: "38%", bottom: "18%", color: "#BEF264", delay: "2.5s" },
   { left: "52%", bottom: "42%", color: "#BEF264", delay: "2.1s" },
-  { left: "14%", bottom: "30%", color: "#86EFAC", delay: "3.6s" },
+  { left: "46%", bottom: "30%", color: "#FBCFE8", delay: "5s" },
+  { left: "62%", bottom: "22%", color: "#86EFAC", delay: "4.2s" },
   { left: "68%", bottom: "52%", color: "#FBCFE8", delay: "1.2s" },
+  { left: "80%", bottom: "34%", color: "#FDE68A", delay: "3s" },
 ] as const;
 
 const GN_LEAVES = [
@@ -110,17 +134,23 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
           <circle cx="98" cy="42" r="17" fill="#4ADE80" opacity=".85" />
           <circle cx="75" cy="16" r="16" fill="#86EFAC" opacity=".8" />
         </g>
-        {/* Vài chiếc lá đơn lẻ nổi rõ trên viền tán — tăng cảm giác "lá thật" */}
+        {/* Vài chiếc lá đơn lẻ nổi rõ trên viền tán — tăng cảm giác "lá thật".
+            Founder yêu cầu thêm "nhiều lá hơn" — tăng từ 5 lên 8. */}
         <g fill="#22C55E" stroke="#14532D" strokeWidth=".6">
           <ellipse cx="30" cy="70" rx="6" ry="3.4" transform="rotate(-30 30 70)" />
           <ellipse cx="120" cy="72" rx="6" ry="3.4" transform="rotate(30 120 72)" />
           <ellipse cx="75" cy="8" rx="6" ry="3.4" transform="rotate(4 75 8)" />
           <ellipse cx="40" cy="30" rx="5.5" ry="3" transform="rotate(-50 40 30)" />
           <ellipse cx="110" cy="32" rx="5.5" ry="3" transform="rotate(50 110 32)" />
+          <ellipse cx="18" cy="50" rx="5" ry="2.8" transform="rotate(-60 18 50)" />
+          <ellipse cx="132" cy="52" rx="5" ry="2.8" transform="rotate(60 132 52)" />
+          <ellipse cx="60" cy="4" rx="5" ry="2.8" transform="rotate(-8 60 4)" />
         </g>
-        {/* Hoa — cụm 5 cánh nhỏ quanh nhuỵ vàng, không chỉ chấm tròn đơn sắc */}
+        {/* Hoa — cụm 5 cánh nhỏ quanh nhuỵ vàng, không chỉ chấm tròn đơn sắc.
+            Founder yêu cầu thêm "nhiều hoa hơn" — tăng từ 8 lên 11. */}
         {[
           [40, 52], [102, 42], [66, 14], [112, 66], [30, 80], [88, 20], [56, 96], [96, 92],
+          [20, 60], [118, 50], [75, 4],
         ].map(([fx, fy], i) => (
           <g key={i} transform={`translate(${fx} ${fy})`}>
             <circle cx="-3.6" cy="0" r="3" fill="#FBCFE8" />
@@ -130,10 +160,10 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
             <circle cx="0" cy="0" r="2.2" fill="#FDE047" />
           </g>
         ))}
-        {/* Quả — elip đỏ có điểm sáng nhỏ tạo khối căng mọng */}
+        {/* Quả — elip đỏ có điểm sáng nhỏ tạo khối căng mọng — tăng từ 5 lên 7. */}
         <g>
           {[
-            [56, 100], [90, 102], [72, 110], [104, 92], [44, 96],
+            [56, 100], [90, 102], [72, 110], [104, 92], [44, 96], [66, 84], [36, 110],
           ].map(([fx, fy], i) => (
             <g key={i} transform={`translate(${fx} ${fy})`}>
               <ellipse cx="0" cy="0" rx="6" ry="7" fill="#DC2626" />
@@ -157,13 +187,20 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
         <circle cx="55" cy="28" r="23" fill="#84CC16" />
         <circle cx="38" cy="42" r="15" fill="#A3E635" opacity=".85" />
         <circle cx="72" cy="42" r="14" fill="#A3E635" opacity=".8" />
+        {/* "Phát triển theo từng giai đoạn": tier "growing" nhiều lá/nụ hoa
+            hơn tier "sapling" nhưng vẫn ít hơn "bloom" — tăng lá từ 2 lên 5,
+            nụ hoa (chấm nhạt, chưa nở hẳn như bloom) từ 5 lên 8. */}
         <g fill="#84CC16" stroke="#4D7C0F" strokeWidth=".5">
           <ellipse cx="22" cy="58" rx="5" ry="2.8" transform="rotate(-30 22 58)" />
           <ellipse cx="88" cy="60" rx="5" ry="2.8" transform="rotate(30 88 60)" />
+          <ellipse cx="20" cy="54" rx="4.6" ry="2.6" transform="rotate(-40 20 54)" />
+          <ellipse cx="90" cy="58" rx="4.6" ry="2.6" transform="rotate(40 90 58)" />
+          <ellipse cx="55" cy="8" rx="4.6" ry="2.6" transform="rotate(-6 55 8)" />
         </g>
         <g fill="#FEF3C7">
           <circle cx="30" cy="48" r="3.4" /><circle cx="78" cy="42" r="3.4" /><circle cx="55" cy="12" r="3.4" />
           <circle cx="64" cy="66" r="3" /><circle cx="42" cy="70" r="3" />
+          <circle cx="20" cy="40" r="2.8" /><circle cx="90" cy="44" r="2.8" /><circle cx="55" cy="30" r="3" />
         </g>
       </svg>
     );
@@ -178,9 +215,15 @@ function TreeSVG({ tier }: { tier: Exclude<GardenTier, "seed"> }) {
       <circle cx="48" cy="44" r="11" fill="#A16207" />
       <circle cx="35" cy="20" r="14" fill="#CA8A04" />
       <circle cx="35" cy="34" r="9" fill="#EAB308" opacity=".8" />
+      {/* "Phát triển theo từng giai đoạn": tier "sapling" — cây non, tán lá
+          còn ít, CHƯA có hoa/quả (chỉ xuất hiện từ "growing" trở lên).
+          Founder yêu cầu thêm "nhiều lá hơn" — tăng từ 2 lên 5. */}
       <g fill="#CA8A04" stroke="#854D0E" strokeWidth=".4">
         <ellipse cx="16" cy="38" rx="3.6" ry="2" transform="rotate(-30 16 38)" />
         <ellipse cx="54" cy="40" rx="3.6" ry="2" transform="rotate(30 54 40)" />
+        <ellipse cx="35" cy="6" rx="3.4" ry="1.9" transform="rotate(-4 35 6)" />
+        <ellipse cx="10" cy="28" rx="3.2" ry="1.8" transform="rotate(-55 10 28)" />
+        <ellipse cx="60" cy="30" rx="3.2" ry="1.8" transform="rotate(55 60 30)" />
       </g>
     </svg>
   );
@@ -227,7 +270,9 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
           của tab này (Giai đoạn 9). */}
       <div className="absolute inset-0 z-0" style={{ background: "var(--bg)" }} aria-hidden />
 
-      {/* dải aurora trừu tượng vắt ngang trời */}
+      {/* Dải aurora trừu tượng vắt ngang trời — Founder yêu cầu "nhiều
+          aurora hơn": thêm dải thứ 2 (góc/màu khác, lệch xuống thấp hơn)
+          + 1 điểm glow phụ ở radial layer, cạnh 2 lớp gốc. */}
       <div
         className="absolute pointer-events-none"
         style={{
@@ -240,8 +285,17 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
       <div
         className="absolute pointer-events-none"
         style={{
+          top: -20, left: -120, right: -120, height: 360, opacity: 0.28,
+          background: "linear-gradient(70deg, transparent 15%, rgba(167,139,250,.16) 35%, rgba(56,189,248,.14) 55%, transparent 78%)",
+          filter: "blur(50px)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="absolute pointer-events-none"
+        style={{
           top: 0, left: 0, right: 0, height: 680,
-          background: "radial-gradient(ellipse 75% 45% at 50% 95%, rgba(74,222,128,.12), transparent 70%), radial-gradient(ellipse 50% 30% at 78% 10%, rgba(139,124,246,.10), transparent 70%)",
+          background: "radial-gradient(ellipse 75% 45% at 50% 95%, rgba(74,222,128,.12), transparent 70%), radial-gradient(ellipse 50% 30% at 78% 10%, rgba(139,124,246,.10), transparent 70%), radial-gradient(ellipse 40% 25% at 15% 20%, rgba(74,222,128,.10), transparent 70%)",
         }}
         aria-hidden
       />
@@ -254,11 +308,14 @@ export function KhuVuonCuaBanTab({ journey }: { journey: JourneyOverview }) {
         <path d="M0 110 Q 260 60 540 100 T 1000 80 T 1440 100 V160 H0Z" fill="#0A1D18" />
       </svg>
 
+      {/* Sương trôi — Founder yêu cầu "nhiều sương hơn": tăng từ 2 lên 4 dải. */}
       <div className="gd-mistband" style={{ left: "5%", bottom: 250, width: 340, height: 36, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(255,255,255,.05), transparent 70%)", filter: "blur(6px)" }} />
       <div className="gd-mistband" style={{ left: "55%", bottom: 300, width: 280, height: 30, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(255,255,255,.04), transparent 70%)", filter: "blur(6px)", animationDelay: "6s" }} />
+      <div className="gd-mistband" style={{ left: "30%", bottom: 230, width: 260, height: 26, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(255,255,255,.045), transparent 70%)", filter: "blur(6px)", animationDelay: "3s" }} />
+      <div className="gd-mistband" style={{ left: "78%", bottom: 270, width: 220, height: 24, borderRadius: "50%", background: "radial-gradient(ellipse, rgba(255,255,255,.04), transparent 70%)", filter: "blur(6px)", animationDelay: "9s" }} />
 
       {GN_STARS.map((star, i) => (
-        <div key={i} className="gd-star" style={{ width: 2, height: 2, left: star.left, top: star.top, animationDelay: star.delay }} />
+        <div key={i} className="gd-star" style={{ width: star.size, height: star.size, left: star.left, top: star.top, animationDelay: star.delay }} />
       ))}
       <div
         aria-hidden
