@@ -352,8 +352,22 @@ export function HanhTrinhCuaToiClient({
     "ban-do-hanh-trinh": "5 chương cuộc đời",
   };
 
+  /* Founder đổi quyết định (sau khi thấy ảnh chụp "màu nền liền mạch"): màu
+     riêng của tab đang mở phải kéo lên TỚI CẢ topbar (ô tìm kiếm/chuông/
+     avatar), không dừng ở dòng tiêu đề như bản trước — áp dụng cho cả 5 tab
+     (không tính Hub). Giải pháp gọn nhất: `.topbar{background:var(--bg)}`
+     (hanh-trinh-cua-toi.css dòng 83) VÀ toàn bộ `.content`/`.center-col`/
+     `.page-head`/`.tab-bar`/khe hở giữa chúng đều KHÔNG có background riêng
+     — chỉ kế thừa `background:var(--bg)` đặt trên chính `.htct` (dòng 49-59)
+     — nên override đúng 1 biến CSS `--bg` ngay tại gốc `.htct` là màu lan
+     tự động khắp mọi vùng chưa được tô màu riêng, kể cả topbar, KHÔNG cần
+     bọc div/margin âm/padding bù thủ công như bản trước (đã revert). Hub
+     (`activeTab==="hanh-trinh-cua-toi"`) không có trong `TAB_HEADER_BG` →
+     giữ nguyên mặc định `#0a0a0f` (đen) của class `.htct`. */
+  const htctBg = TAB_HEADER_BG[activeTab];
+
   return (
-    <div className="htct">
+    <div className="htct" style={htctBg ? ({ "--bg": htctBg } as React.CSSProperties) : undefined}>
       <div className="app">
         <PortalV2Shell
           premium={premium}
@@ -381,52 +395,31 @@ export function HanhTrinhCuaToiClient({
         >
           <div className="content">
             <div className="center-col">
-              {/* Founder yêu cầu: màu riêng của tab đang mở phủ luôn khối này
-                  (tiêu đề + thanh tab), không chỉ nội dung .tab-panel bên
-                  dưới — bọc chung 1 khối "phá khung" padding của `.content`
-                  (24px/28px, đúng giá trị CSS gốc) để màu tràn sát mép
-                  trang/topbar, rồi bù lại padding y hệt bên trong. Hub giữ
-                  nguyên nền đen (không set style). */}
-              <div
-                style={
-                  TAB_HEADER_BG[activeTab]
-                    ? {
-                        background: TAB_HEADER_BG[activeTab],
-                        margin: "-24px -28px 0",
-                        padding: "24px 28px 22px",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 22,
-                      }
-                    : { display: "flex", flexDirection: "column", gap: 22 }
-                }
-              >
-                <div className="page-head">
-                  <div>
-                    <h1>Hành trình của tôi</h1>
-                    <p>Theo dõi tiến độ, mục tiêu và thành tựu trên hành trình phát triển cùng AI.</p>
-                  </div>
-                  <button className="edit-goal-btn" onClick={() => router.push("/v2/muc-tieu")}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M11 4H4v16h16v-7" />
-                      <path d="M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z" />
-                    </svg>
-                    Chỉnh sửa mục tiêu
-                  </button>
+              <div className="page-head">
+                <div>
+                  <h1>Hành trình của tôi</h1>
+                  <p>Theo dõi tiến độ, mục tiêu và thành tựu trên hành trình phát triển cùng AI.</p>
                 </div>
+                <button className="edit-goal-btn" onClick={() => router.push("/v2/muc-tieu")}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M11 4H4v16h16v-7" />
+                    <path d="M17.5 3.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z" />
+                  </svg>
+                  Chỉnh sửa mục tiêu
+                </button>
+              </div>
 
-                <div className="tab-bar">
-                {TABS.map((t) => (
-                  <button
-                    key={t.key}
-                    className={activeTab === t.key ? "tab-btn active" : "tab-btn"}
-                    onClick={() => setActiveTab(t.key)}
-                  >
-                    {TAB_ICON[t.key]}
-                    {t.label}
-                  </button>
-                ))}
-                </div>
+              <div className="tab-bar">
+              {TABS.map((t) => (
+                <button
+                  key={t.key}
+                  className={activeTab === t.key ? "tab-btn active" : "tab-btn"}
+                  onClick={() => setActiveTab(t.key)}
+                >
+                  {TAB_ICON[t.key]}
+                  {t.label}
+                </button>
+              ))}
               </div>
 
               <div className="tab-panel">
