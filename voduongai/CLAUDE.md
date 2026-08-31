@@ -8832,3 +8832,67 @@ lỗi thật trong console — xoá `.env.local` + khởi động lại `next de
 viết giờ hiện đúng nội dung (không còn kẹt ở trạng thái "không hiện gì")
 — Founder tự test, đặc biệt trường hợp refresh token gần hết hạn (khó tái
 hiện chủ động trong sandbox).
+
+## Giai đoạn 10 (tiếp) — Nhật ký học tập/Khu vườn của bạn: nền xanh đặc toàn trang + bỏ 2 khối
+
+Founder yêu cầu riêng ngay sau đợt trên: 2 tab đầu dùng nền XANH (không
+phải chỉ tinh chỉnh sắc thái như đợt trước) — "xanh da trời" cho Nhật ký
+học tập, "xanh lam" cho Khu vườn của bạn — phủ TOÀN trang giữa (đợt trước
+chỉ thêm 1 lớp gradient chéo mờ dần về trong suốt ở góc, phần lớn trang
+vẫn đen) + bỏ 2 khối cụ thể: "Tài liệu & liên kết gần đây" (Nhật ký học
+tập) và cụm tiêu đề "Hành trình của tôi / Khu vườn của bạn / Mỗi cây trên
+lối đi..." (Khu vườn của bạn — Founder trích dẫn nguyên văn đúng khối
+eyebrow+h1+subtitle hiện có, khớp 100% nội dung thật, đủ để xác định chính
+xác khối cần xoá dù câu thiếu động từ tường minh).
+
+**Bug tự phát hiện khi làm, đã sửa trước khi ship:** bản nháp đầu dùng
+`linear-gradient(160deg, ...)` kéo dài từ 0% đến 100% CHIỀU CAO CONTAINER
+(`position:absolute;inset:0` trên khối `min-h-full`, cao theo NỘI DUNG thực
+tế — Khu vườn của bạn khá dài do cảnh vườn 460px + khối "Thành tựu của
+tôi"/triết lý bên dưới) — phần cuối trang rơi vào điểm dừng tối nhất của
+gradient (`#071730`), nhìn gần như đen trở lại, không đạt "toàn trang giữa
+là xanh" như yêu cầu. Phát hiện qua so sánh ảnh chụp full-page trước/sau —
+khu vực quanh "Thành tựu của tôi" rõ ràng tối hơn hẳn phần đầu trang. **Đã
+sửa:** đổi cả 2 nền từ gradient dài sang 1 màu ĐẶC duy nhất
+(`background:"#0F3660"` Nhật ký, `background:"#0D2C50"` Khu vườn) — đảm bảo
+đồng nhất tuyệt đối bất kể chiều dài nội dung, không phụ thuộc chiều cao
+container.
+
+**Nhật ký học tập** (`NhatKyHocTapTab.tsx`): base đổi từ `#08090D` (đen)
+sang `#0F3660` (xanh da trời đặc) — bỏ hẳn lớp gradient chéo "chiều sâu"
+đã thêm ở đợt trước (giờ dư thừa vì base đã đủ xanh). Giữ nguyên 2 lớp
+glow trang trí sẵn có (`jn-lamp` góc trên-phải, radial navy góc `85% -8%`)
+làm điểm nhấn trên nền xanh mới. Xoá hẳn khối "Tài liệu & liên kết gần
+đây" (`.jn-card` cuối trang, gồm cả nhánh rỗng "Chưa có tài liệu nào" lẫn
+nhánh có `recentDocuments`) — dọn theo: bỏ `recentDocuments` khỏi
+destructuring `log` (không còn consumer trong file, KHÔNG đụng
+`live-learning-log.ts` — hàm fetch/field vẫn giữ nguyên, chỉ ngừng hiển thị
+ở UI này, đúng nguyên tắc "chỉ tách phần hiển thị" đã áp dụng nhiều lần
+trong dự án), xoá CSS `.jn-doc-card` (không còn dùng, `.jn-link` vẫn giữ vì
+còn 1 chỗ dùng khác trong file — link "Tất cả →" ở khối "Hôm nay").
+
+**Khu vườn của bạn** (`KhuVuonCuaBanTab.tsx`): base đổi từ `#070a12` (đen)
+sang `#0D2C50` (xanh lam đặc, một tông khác Nhật ký để 2 tab vẫn phân biệt
+được) — bỏ lớp gradient chéo "chiều sâu" cũ. Xoá cụm header (`<div>` bọc
+eyebrow "HÀNH TRÌNH CỦA TÔI" + `<h1>Khu vườn của bạn</h1>` + `<p>` mô tả) —
+trang giờ bắt đầu thẳng vào cảnh sao/đom đóm/trăng/lối đi ngay dưới thanh
+tab, không còn tiêu đề riêng (tên trang vẫn thấy được qua chính thanh tab
+"Khu vườn của bạn" đang active). Giữ nguyên 100% mọi lớp trang trí khác
+(sao lấp lánh, đom đóm, trăng, dải aurora, 2 lớp đồi núi, sương trôi, lá
+rơi, từng cây SVG theo tier) — chỉ đổi base color + xoá đúng 1 khối text.
+
+**Verify:** `tsc --noEmit` sạch, `eslint src/app/v2/hanh-trinh-cua-toi`
+sạch, `vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (0
+dòng "error"/"failed" trong toàn bộ output). Playwright qua `next dev`
+(sandbox không cấu hình Supabase, fallback công khai có sẵn): chụp lại cả
+2 tab xác nhận nền xanh phủ ĐỀU toàn trang (kể cả khu vực cuối trang dài
+nhất — "Thành tựu của tôi" ở Khu vườn), khối "Tài liệu & liên kết gần đây"
+đã biến mất khỏi Nhật ký học tập, cụm tiêu đề đã biến mất khỏi Khu vườn
+của bạn (trang bắt đầu thẳng vào cảnh sao).
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật (cùng giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY` đã
+nêu nhiều lần) — Founder tự xác nhận 2 tông xanh mới đúng ý ("xanh da
+trời"/"xanh lam") và cụm tiêu đề đã xoá đúng khối mong muốn (nếu Founder
+thực ra chỉ muốn ẩn/rút gọn thay vì xoá hẳn, đây là thay đổi dễ hoàn tác —
+báo lại để khôi phục).

@@ -41,7 +41,7 @@ const ENTRY_ICON: Record<LearningLogEntry["kind"], { bg: string; color: string; 
 const WEEK_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
 export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
-  const { stats, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote, recentDocuments } = log;
+  const { stats, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote } = log;
   const todayLabel = new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
   const maxWeekMinutes = Math.max(...weekChart.map((d) => d.minutes), 1);
 
@@ -56,14 +56,11 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
 
   return (
     <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
-      <div className="absolute inset-0 z-0" style={{ background: "#08090D" }} aria-hidden />
-      {/* Chiều sâu + đồng nhất màu với hộp Hub "Nhật ký học tập"
-          (HUB_CARD_STYLE["nhat-ky-hoc-tap"], linear-gradient(135deg,#1E4976,#0E223A)). */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{ background: "linear-gradient(135deg, rgba(30,73,118,.5) 0%, rgba(14,34,58,.5) 45%, transparent 75%)" }}
-        aria-hidden
-      />
+      {/* Founder yêu cầu riêng: nền xanh da trời phủ TOÀN trang giữa (không
+          chỉ viền góc như bản trước) — thay hẳn base đen `#08090D`. Dùng
+          màu ĐẶC (không fade theo chiều cao) để "toàn trang giữa" luôn
+          xanh, không tối dần thành đen ở cuối trang khi nội dung dài. */}
+      <div className="absolute inset-0 z-0" style={{ background: "#0F3660" }} aria-hidden />
       <div
         className="jn-lamp absolute pointer-events-none"
         style={{ top: -160, right: -80, width: 640, height: 640, background: "radial-gradient(circle, rgba(96,165,250,.14), transparent 65%)" }}
@@ -249,37 +246,6 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                 <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic", flex: 1 }}>Chưa có ghi chú nào — viết chiêm nghiệm đầu tiên để lưu lại đây.</div>
               )}
             </div>
-          </div>
-
-          {/* Tài liệu & liên kết */}
-          <div className="jn-card" style={{ padding: 26 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Tài liệu &amp; liên kết gần đây</h3>
-              <a href="/v2/hoc-vien-ai" className="jn-link" style={{ fontSize: 11.5, fontWeight: 700 }}>
-                Tất cả →
-              </a>
-            </div>
-            {recentDocuments.length === 0 ? (
-              <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic" }}>Chưa có tài liệu nào.</div>
-            ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: 10 }}>
-                {recentDocuments.map((doc) => (
-                  <a
-                    key={doc.id}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="jn-doc-card"
-                    style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,.03)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 12, padding: "10px 14px", textDecoration: "none" }}
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" strokeWidth="2" style={{ flexShrink: 0 }}>
-                      <path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 014 17.5z" />
-                    </svg>
-                    <span style={{ fontSize: 12.5, fontWeight: 700, color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{doc.title}</span>
-                  </a>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
