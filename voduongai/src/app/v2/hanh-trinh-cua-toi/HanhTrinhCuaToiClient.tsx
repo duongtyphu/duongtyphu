@@ -270,17 +270,46 @@ const MAP_BG = "var(--bg)";
  *
  * `my-story`/`mirror`/`ban-do-hanh-trinh` — Founder báo nền 3 tab này vẫn
  * là 1 hex ĐẶC RIÊNG (tự chọn ở đợt "nền đặc toàn trang" trước), KHÔNG
- * khớp byte-for-byte với đúng gradient hiển thị trên thẻ Hub tương ứng
- * (`HUB_CARD_STYLE[...].bg`, cùng tông nhưng khác giá trị) — yêu cầu
- * "dùng màu nền đã thống nhất theo trang hub" nghĩa là lấy THẲNG
- * `HUB_CARD_STYLE[...].bg` làm nguồn duy nhất (không copy hex riêng) để
- * mở tab luôn khớp pixel-for-pixel với đúng màu đã thấy trên thẻ Hub. */
+ * khớp với đúng gradient hiển thị trên thẻ Hub tương ứng
+ * (`HUB_CARD_STYLE[...].bg`, cùng tông nhưng khác giá trị).
+ *
+ * **ĐÍNH CHÍNH — lần sửa đầu (gán thẳng `HUB_CARD_STYLE[...].bg`, nguyên
+ * chuỗi gradient) SAI, đã gây bug MỚI ("2 lớp nền chồng lên nhau", Founder
+ * chụp ảnh báo lại ngay sau khi deploy).** Root cause: `--bg` cascade qua
+ * NHIỀU khối DOM tách biệt (topbar/page-head/tab-bar/tab-panel — đúng
+ * kiến trúc "1 nguồn --bg" đã chốt ở PR #95) — khi `--bg` là 1 MÀU PHẲNG,
+ * mọi khối hiện cùng 1 màu, liền mạch tuyệt đối. Khi `--bg` là 1
+ * GRADIENT, mỗi khối lại tự vẽ LẠI gradient đó theo đúng kích thước
+ * RIÊNG của chính nó (background-image luôn tính theo box của phần tử
+ * đang áp dụng, không kế thừa toạ độ) — topbar (thấp) vẽ 1 dải sáng→tối
+ * ngắn, tab-panel (cao hơn) vẽ LẠI 1 dải sáng→tối khác ngay bên dưới →
+ * đúng cảm giác "2 lớp nền" tại ranh giới giữa 2 khối, y hệt bug đã sửa ở
+ * PR #98 (lúc đó lỗi này đến từ 2 lớp radial "chiều sâu", giờ lặp lại với
+ * chính `HUB_CARD_STYLE[...].bg`).
+ *
+ * **Sửa đúng:** giữ `TAB_HEADER_BG` là MÀU PHẲNG (bắt buộc, để cascade
+ * qua nhiều khối không vỡ) nhưng tính từ CHÍNH `HUB_CARD_STYLE[...].bg`
+ * — lấy trung điểm (average) 2 điểm dừng của gradient 135° — thay vì
+ * hex tự chọn tay như bản gốc. Vẫn đúng tinh thần "màu nền thống nhất
+ * theo Hub" (không còn là số tuỳ ý, luôn tính lại đúng từ nguồn Hub nếu
+ * `HUB_CARD_STYLE` đổi sau này) mà không gây seam. */
+function midHex(a: string, b: string): string {
+  const pa = parseInt(a.slice(1), 16);
+  const pb = parseInt(b.slice(1), 16);
+  const avg = (shift: number) => Math.round((((pa >> shift) & 255) + ((pb >> shift) & 255)) / 2);
+  return `#${[avg(16), avg(8), avg(0)].map((c) => c.toString(16).padStart(2, "0")).join("")}`;
+}
+function midOfGradient(gradient: string): string {
+  const stops = gradient.match(/#[0-9a-fA-F]{6}/g);
+  if (!stops || stops.length < 2) return gradient;
+  return midHex(stops[0], stops[1]);
+}
 const TAB_HEADER_BG: Partial<Record<TabKey, string>> = {
   "nhat-ky-hoc-tap": "#0F3660",
   "khu-vuon-cua-ban": "#0D2C50",
-  "my-story": HUB_CARD_STYLE["my-story"].bg,
-  mirror: HUB_CARD_STYLE.mirror.bg,
-  "ban-do-hanh-trinh": HUB_CARD_STYLE["ban-do-hanh-trinh"].bg,
+  "my-story": midOfGradient(HUB_CARD_STYLE["my-story"].bg),
+  mirror: midOfGradient(HUB_CARD_STYLE.mirror.bg),
+  "ban-do-hanh-trinh": midOfGradient(HUB_CARD_STYLE["ban-do-hanh-trinh"].bg),
 };
 
 const HUB_CARD_ICON: Record<TabKey, React.ReactNode> = {
