@@ -1,15 +1,12 @@
 /* =============================================================================
- * "Mỗi ngày một ý tưởng" — PLACEHOLDER, chưa có mockup Claude Design riêng
- * (Founder xác nhận sẽ gửi sau, nội dung lớn nên tách phase riêng — xem
- * CLAUDE.md "ĐỊNH HƯỚNG HIỆN TẠI", Giai đoạn 1). Trang này CHỈ dựng đủ để
- * mục menu mới có 1 chỗ trỏ hợp lệ, không phải bản thiết kế cuối cùng.
+ * "Mỗi ngày một ý tưởng" — Portal 2.0.
  *
  * Phần khung (biến `--*`/Preflight-revert/sidebar/topbar/promo/crown-sparkle)
  * chép NGUYÊN VĂN từ `nhat-ky-hoc-tap.css` — đây là phần "chrome" giống hệt
  * nhau ở mọi trang PortalV2Shell, không phải nội dung riêng của trang này.
  * Tiền tố `.mnmyt`, cùng đúng 6 điều chỉnh kỹ thuật bắt buộc như các trang
- * khác. Khi có mockup thật, thay hẳn khối "Nội dung trang" bên dưới, KHÔNG
- * cần đổi phần khung.
+ * khác. Nội dung riêng của trang (đã dọn sạch bản placeholder "đang xây
+ * dựng" cũ) sẽ có CSS riêng thêm vào cuối file khi build.
  * ========================================================================== */
 
 .mnmyt{--violet:#6d4aff;--violet-dark:#5a37e6;--violet-light:#efe9ff;--gold:#e2b23c;--text:#1c1830;--muted:#6b6685;--line:#ece9f7;--bg:#f7f6fc;--sidebar:#150f2e;--sidebar-hover:#231a48}
@@ -96,13 +93,6 @@
 .mnmyt .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
 .mnmyt .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
 @keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
-
-/* Nội dung trang — chỉ có ở placeholder này, không phải phần khung dùng chung. */
-.mnmyt .coming-soon{background:#fff;border:1px solid var(--line);border-radius:16px;padding:56px 40px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
-.mnmyt .coming-soon .ico{width:64px;height:64px;border-radius:16px;background:linear-gradient(145deg,#ffb74d,#e2b23c);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
-.mnmyt .coming-soon .ico svg{width:30px;height:30px}
-.mnmyt .coming-soon h2{font-size:19px;font-weight:800}
-.mnmyt .coming-soon p{font-size:13.5px;color:var(--muted);line-height:1.6;max-width:480px}
 
 @media (max-width:1180px){
   .mnmyt .content{flex-direction:column}
