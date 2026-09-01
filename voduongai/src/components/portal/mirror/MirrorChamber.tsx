@@ -93,6 +93,7 @@ export function MirrorChamber({
   bgShadow,
   hideCompanionLogo = false,
   artAlign = "center",
+  fullBleed = true,
 }: {
   invitation: string | null;
   narrativeLines: MirrorNarrativeLine[];
@@ -137,6 +138,21 @@ export function MirrorChamber({
       nhúng): gương thu nhỏ, đặt ở góc phải màn hình (không còn vắt giữa
       chiều cao) để không che khuất/lệch cụm chữ ở giữa. */
   artAlign?: "center" | "right";
+  /** RỦI RO CAO — Founder báo "vẫn còn 2 lớp nền" NHIỀU LẦN dù màu đã
+      khớp tuyệt đối. Root cause thật sự: `-mx-4 -my-6 md:-mx-8 md:-my-8`
+      (kỹ thuật "phá khung" để nền tràn hết cạnh) được viết cho NGỮ CẢNH
+      1.0 (`/portal/mirror`), nơi trang cha CÓ padding `px-4 py-6 md:px-8
+      md:py-8` cần phá — margin âm kéo div NÀY tràn RA NGOÀI khung cha
+      đúng đủ để bù lại. Ở tab nhúng 2.0 (`.tab-panel`), khung cha KHÔNG
+      hề có padding nào để bù — margin âm vẫn kéo div tràn ra 32px mỗi
+      cạnh (đo được qua Playwright: div con lấn ra ngoài `.tab-panel`
+      32px cả 4 phía, chồng lên khe hở giữa `.tab-panel` và `.tab-bar`
+      phía trên) — đây MỚI là "2 lớp" thật, không phải do màu lệch (màu
+      đã khớp từ PR #104). `fullBleed=false` (chỉ set khi nhúng tab 2.0)
+      bỏ hẳn margin âm — an toàn vì không có padding nào cần bù ở đây,
+      div tự nhiên đã tràn kín `.tab-panel`. Mặc định `true` GIỮ NGUYÊN
+      100% hành vi `/portal/mirror` 1.0. */
+  fullBleed?: boolean;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MirrorChrome>("mirror-chrome", [seedChrome], {
@@ -177,7 +193,7 @@ export function MirrorChamber({
   const isFullyQuiet = !hasReflectionMaterial && !hasRealFacts;
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+    <div className={fullBleed ? "relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8" : "relative min-h-full overflow-hidden"}>
       <div className="mirror-chamber-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
       {/* `.mirror-glass-veil` ("sương kính bạc phủ toàn khung") là đúng
           nghĩa đen "lớp phủ" Founder báo lại ở tab nhúng 2.0 — bỏ hẳn khi

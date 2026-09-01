@@ -181,6 +181,7 @@ export function JourneyMapAtlas({
   portalConnections = PORTAL_CONNECTIONS,
   bgOverride,
   bgShadow,
+  fullBleed = true,
 }: {
   reflections: Reflection[];
   premiumCount: number;
@@ -211,6 +212,15 @@ export function JourneyMapAtlas({
       vignette (px cố định, an toàn cho trang dài) áp cùng div với
       `bgOverride`. */
   bgShadow?: string;
+  /** RỦI RO CAO — Founder báo "vẫn còn 2 lớp nền" NHIỀU LẦN dù màu đã
+      khớp tuyệt đối. Root cause thật sự: `-mx-4 -my-6 md:-mx-8 md:-my-8`
+      viết cho ngữ cảnh 1.0 (`/portal/hanhtrinhcuatoi/ban-do`, trang cha
+      CÓ padding cần phá) — ở tab nhúng 2.0, `.tab-panel` KHÔNG có padding
+      nào để bù, margin âm vẫn kéo div tràn 32px mỗi cạnh, lấn vào khe hở
+      trên `.tab-bar` — đây MỚI là "2 lớp" thật. `fullBleed=false` (chỉ
+      set ở tab nhúng 2.0) bỏ margin âm — an toàn vì không có padding nào
+      cần bù. Mặc định `true` giữ nguyên 100% hành vi 1.0. */
+  fullBleed?: boolean;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<MapChrome>("map-chrome", [seedChrome], {
@@ -264,7 +274,7 @@ export function JourneyMapAtlas({
         : { text: "Tiếp tục thực hành trong Workspace.", href: workspaceHref };
 
   return (
-    <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+    <div className={fullBleed ? "relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8" : "relative min-h-full overflow-hidden"}>
       <div className="map-parchment-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
       {/* `.map-coordinate-grid`/`.map-topo-lines` là 2 lớp texture PHỦ TOÀN
           KHUNG (position:absolute;inset:0) — đúng nghĩa đen "lớp phủ"
