@@ -1,5 +1,123 @@
 @AGENTS.md
 
+## Giai đoạn 13 — quét toàn bộ 66 file `supabase-*.sql`: tìm migration "viết sẵn nhưng chưa apply"
+
+Founder yêu cầu tiếp tục theo đúng hướng vừa phát hiện ở bug `memory_capsules`
+(mục dưới đây): rà soát MỌI file migration trong repo để tìm các trường hợp
+tương tự — code đã viết đúng, migration đã có sẵn trong repo, nhưng chưa
+từng chạy lên Production.
+
+**Phương pháp (không suy đoán, đối chiếu trực tiếp với schema thật):**
+1. Parse cả 66 file `supabase-*.sql` bằng script, trích mọi `create table`
+   (kèm danh sách cột khai trong dấu ngoặc) và `alter table ... add column`
+   — gộp thành 1 bản đồ "schema kỳ vọng theo code" (100 bảng, ~1000 cột).
+2. Query trực tiếp `information_schema.columns` (schema `public`) trên
+   Supabase Production thật qua MCP — lấy toàn bộ bảng/cột đang tồn tại
+   thật (137 bảng, 941 cột).
+3. Diff 2 tập — báo cáo bảng/cột có trong migration nhưng KHÔNG có thật.
+4. Với MỖI kết quả lệch, audit thêm 1 bước bắt buộc trước khi kết luận là
+   bug: grep xem có file `src/` nào THẬT SỰ đọc/ghi bảng/cột đó không —
+   phân biệt "migration đã bị bỏ quên, tính năng đang hỏng" (cần sửa) với
+   "migration mồ côi từ kiến trúc cũ đã bị thay thế" (không cần sửa, để
+   nguyên làm tư liệu lịch sử).
+
+**Kết quả — 3 nhóm, đã audit từng nhóm riêng:**
+
+### Nhóm 1 — Dead/mồ côi, KHÔNG sửa (đã audit xác nhận 0 consumer thật)
+
+- `affiliate_academy`/`ai_academy`/`personal_brand`
+  (`supabase-phase2-migration.sql`) — 0 kết quả grep trong toàn bộ
+  `src/` — kiến trúc rất sớm, đã bị thay thế hoàn toàn bởi các bảng
+  generic sau này (`academy_slide_lessons`, `bo-nho-ca-nhan-hoa`...).
+- 8 bảng `companion_capabilities`/`companion_coaching_strategy`/
+  `companion_conversation_examples`/`companion_knowledge_refs`/
+  `companion_memory_policy`/`companion_safety_rules`/
+  `companion_test_sessions`/`companion_training_scenarios`/
+  `companion_versions` (`supabase-phase7-companion-admin.sql`, "Companion
+  Admin" Sprint 7 — kiến trúc CRUD generic đời đầu) — CHỈ xuất hiện trong
+  `SUPABASE_COLLECTIONS` (allowlist bảo mật cho route generic, không tự
+  nó render UI nào) — 0 trang Admin nào thật sự gọi tới 9 collection-key
+  này (đã grep `collectionKey="companion-*"` trong toàn bộ
+  `src/app`). `/admin/companion` (trang Companion thật hiện tại) dùng hẳn
+  kiến trúc khác (`inference-actions.ts`/`runtime-actions.ts`/
+  `manifest-actions.ts`, không phải `VisualEditor`/`DataTable` generic).
+  Kết luận: đăng ký mồ côi còn sót lại, vô hại (không có gì gọi tới), để
+  nguyên — dọn dẹp (nếu muốn) là việc riêng, không khẩn.
+- `courses.created_at` (`supabase-course-pricing.sql`) — bảng `courses`
+  ĐÃ tồn tại từ trước file này với schema khác (đúng 6 cột, đã audit ghi
+  nhận ở mục "Premium (`/portal/premium`) — bảng `courses`" phía dưới),
+  nên `create table if not exists` trong file này chưa từng thực thi
+  phần thân — `created_at` không được thêm. Xác nhận 0 nơi trong `src/`
+  SELECT cột này của `courses` — không phải bug, chỉ là 1 cột "kỳ vọng"
+  trong file không khớp bảng thật đã có từ trước, đã biết từ lâu.
+
+### Nhóm 2 — BUG THẬT, đã sửa (additive, an toàn, apply ngay qua Supabase MCP)
+
+**`members` thiếu 3 cột** (`date_of_birth`/`date_of_birth_hidden`/
+`identity_type`, Sprint 18.3 "The Life Profile" + Sprint 18.4 "Founder
+Identity Foundation", viết sẵn trong `supabase-core-schema.sql` — file
+này TỰ MÔ TẢ mục đích là "để không mất khả năng dựng lại DB từ code nếu
+mất project Supabase", ngụ ý các dòng trong đó PHẢI phản ánh đúng schema
+thật, nhưng thực tế bị bỏ sót 3 cột này). **7 file code đã coi 3 cột này
+như đã tồn tại thật:** `src/lib/portal/life-profile/life-profile.ts`,
+`src/lib/portal/identity/identity-layer.ts`,
+`src/lib/portal/founder/founder-identity.ts`,
+`src/app/portal/origin/page.tsx`,
+`src/app/portal/account/life-profile-actions.ts`,
+`src/app/portal/layout.tsx`, `src/lib/portal/account-data.ts` — đúng
+cùng lớp lỗi với `memory_capsules` (PGRST204 mọi query chạm 3 cột này,
+tính năng Life Profile/Founder Identity coi như CHƯA TỪNG hoạt động
+đúng trên Production dù code đã hoàn chỉnh từ lâu, chỉ là không crash mà
+âm thầm rơi vào honest-fallback nên không ai để ý).
+
+**Đã sửa** — `alter table members add column if not exists date_of_birth
+date, add column if not exists date_of_birth_hidden boolean not null
+default false, add column if not exists identity_type text` + check
+constraint (khớp nguyên văn `supabase-core-schema.sql`, additive-only,
+0 rủi ro dữ liệu cũ) — apply qua Supabase MCP, verify lại 3 cột đã tồn
+tại đúng kiểu dữ liệu.
+
+### Nhóm 3 — Migration an toàn nhưng chưa cấp thiết, đã apply luôn (không phải bug, chỉ mở khoá 1 tính năng Admin)
+
+**`ai_provider_priority`** (`supabase-phase29-ai-provider-priority.sql`)
+— bảng chưa tồn tại, nhưng khác `members`/`memory_capsules`:
+`priority-store.ts` đã tự viết `DEFAULT_PRIORITY_ORDER` làm fallback
+graceful NGAY CẢ KHI bảng chưa apply (comment gốc trong code xác nhận rõ
+đây là thiết kế chủ đích, không phải lỗi) — nên KHÔNG ảnh hưởng luồng
+chọn AI Provider thật của Companion/writer-agent/reviewer-agent. Ảnh
+hưởng DUY NHẤT: trang Admin `/admin/he-thong/uu-tien-ai` (kéo-thả đổi
+ưu tiên Provider) không dùng được vì bảng trống. Vì migration hoàn toàn
+additive-safe (`create table if not exists` + RLS + 12 dòng seed đúng
+`providerId` thật trong `registry.ts`, đã viết sẵn kỹ và có ghi chú rõ
+trong chính file), đã apply luôn để mở khoá tính năng — không cần đợi
+xác nhận riêng vì rủi ro gần như bằng 0 và không đổi hành vi runtime nào
+đang chạy.
+
+### Đã CHỦ ĐỘNG KHÔNG apply — `supabase-phase26-site-navigation.sql`
+
+Đúng theo quyết định đã ghi nhận từ trước (mục "Website Workspace" phía
+dưới) — migration này (bảng `site_navigation` cho module "Điều hướng")
+đã tự đánh giá rủi ro cao hơn (Header/Footer site-wide, lưu lượng cao
+nhất hệ thống) và ĐANG CHỜ Founder xác nhận riêng trước khi apply — audit
+này không đổi quyết định đó, chỉ xác nhận lại nó vẫn đang ở đúng trạng
+thái "chưa apply có chủ đích", không phải bị bỏ quên.
+
+**Không có DB migration nào khác được apply trong đợt audit này** — 2
+nhóm còn lại (Nhóm 1 dead, `supabase-phase26` đang chờ riêng) giữ nguyên.
+
+**Verify:** không đổi code (chỉ 2 lệnh DDL qua Supabase MCP), nên không
+cần chạy lại `tsc`/`eslint`/`vitest`/`build`. Xác nhận qua
+`information_schema.columns` sau khi apply: `members` có đủ 3 cột mới
+đúng kiểu dữ liệu (`date`/`boolean`/`text`), `ai_provider_priority` tồn
+tại với đủ 12 dòng seed.
+
+**Chưa tự test được qua UI thật** (giới hạn sandbox không có tài khoản
+đăng nhập/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự
+kiểm tra trên Production: (1) `/portal/origin` (Life Profile) — điền
+ngày sinh, xác nhận lưu được và không còn honest-fallback; (2)
+`/admin/he-thong/uu-tien-ai` — xác nhận trang giờ hiện đủ 12 Provider,
+kéo-thả đổi thứ tự hoạt động được.
+
 ## Giai đoạn 12 — sidebar "menu đổi khi chuyển trang" ([PR #109](https://github.com/duongtyphu/duongtyphu/pull/109)) + bug P0 `memory_capsules` thiếu cột
 
 Ngay sau Giai đoạn 11 (fix "sidebar nhảy" — flicker lúc tải trang), Founder
