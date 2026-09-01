@@ -400,6 +400,7 @@ export function DuAnCoHoiClient({
             </button>
           </nav>
 
+          <div className="side-label">GÓC TIẾN BỘ</div>
           <nav className="main">
             <button className="nav-item" onClick={() => go("Hanh trinh cua toi.html")}
               onMouseEnter={() => prefetchNav("Hanh trinh cua toi.html")}

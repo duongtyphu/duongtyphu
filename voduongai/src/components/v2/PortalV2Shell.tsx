@@ -280,6 +280,7 @@ export function PortalV2Shell({
           )}
         </nav>
 
+        <div className="side-label">GÓC TIẾN BỘ</div>
         <nav className="main">
           {navItem(
             "Hanh trinh cua toi.html",
