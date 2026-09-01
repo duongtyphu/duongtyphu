@@ -248,9 +248,11 @@ const HUB_CARD_COPY: Record<TabKey, { headline: string; desc: string }> = {
  * `var(--bg)` — biến CSS đã được override theo tab đang mở ngay tại
  * `.htct` (`style={{"--bg": htctBg}}`), kế thừa tự nhiên xuống
  * `MyStoryBook`/`MirrorChamber`/`JourneyMapAtlas` qua prop `bgOverride`.
- * `TAB_HEADER_BG` vẫn là NƠI DUY NHẤT định nghĩa 5 giá trị hex thật trong
- * toàn bộ file — 3 hằng số này chỉ còn là cầu nối `var(--bg)` cho đúng 3
- * component dùng chung Portal 1.0. */
+ * `TAB_HEADER_BG` vẫn là NƠI DUY NHẤT định nghĩa nền thật của từng tab
+ * trong toàn bộ file (dù giờ 3/5 giá trị là gradient tham chiếu thẳng
+ * `HUB_CARD_STYLE`, không còn hex đứng riêng — xem comment tại
+ * `TAB_HEADER_BG`) — 3 hằng số này chỉ còn là cầu nối `var(--bg)` cho
+ * đúng 3 component dùng chung Portal 1.0. */
 const STORY_BG = "var(--bg)";
 const MIRROR_BG = "var(--bg)";
 const MAP_BG = "var(--bg)";
@@ -258,15 +260,27 @@ const MAP_BG = "var(--bg)";
 /** Founder yêu cầu riêng: màu của mỗi tab (5 tab, KHÔNG tính Hub — Hub giữ
  * nguyên nền đen + 6 hộp màu) phải phủ luôn phần "header" — dòng tiêu đề
  * "Hành trình của tôi" + thanh 6 nút chuyển tab — chứ không chỉ riêng
- * `.tab-panel` (nội dung) bên dưới như trước. Dùng ĐÚNG màu đặc (base hex,
- * không kèm lớp radial "chiều sâu") của từng tab để khớp tông với nội dung
- * ngay bên dưới nó. `hanh-trinh-cua-toi` (Hub) → `undefined`, giữ nền đen. */
+ * `.tab-panel` (nội dung) bên dưới như trước. `hanh-trinh-cua-toi` (Hub)
+ * → `undefined`, giữ nền đen.
+ *
+ * `nhat-ky-hoc-tap`/`khu-vuon-cua-ban` giữ nguyên 2 flat hex riêng (KHÔNG
+ * đổi — `NhatKyHocTapTab.tsx` dùng `var(--bg)` làm `border-color` cho các
+ * chấm timeline, chỉ nhận được màu ĐẶC, gán 1 chuỗi gradient vào đây sẽ
+ * làm border đó thành CSS không hợp lệ).
+ *
+ * `my-story`/`mirror`/`ban-do-hanh-trinh` — Founder báo nền 3 tab này vẫn
+ * là 1 hex ĐẶC RIÊNG (tự chọn ở đợt "nền đặc toàn trang" trước), KHÔNG
+ * khớp byte-for-byte với đúng gradient hiển thị trên thẻ Hub tương ứng
+ * (`HUB_CARD_STYLE[...].bg`, cùng tông nhưng khác giá trị) — yêu cầu
+ * "dùng màu nền đã thống nhất theo trang hub" nghĩa là lấy THẲNG
+ * `HUB_CARD_STYLE[...].bg` làm nguồn duy nhất (không copy hex riêng) để
+ * mở tab luôn khớp pixel-for-pixel với đúng màu đã thấy trên thẻ Hub. */
 const TAB_HEADER_BG: Partial<Record<TabKey, string>> = {
   "nhat-ky-hoc-tap": "#0F3660",
   "khu-vuon-cua-ban": "#0D2C50",
-  "my-story": "#5A4010",
-  mirror: "#152A3D",
-  "ban-do-hanh-trinh": "#4A3212",
+  "my-story": HUB_CARD_STYLE["my-story"].bg,
+  mirror: HUB_CARD_STYLE.mirror.bg,
+  "ban-do-hanh-trinh": HUB_CARD_STYLE["ban-do-hanh-trinh"].bg,
 };
 
 const HUB_CARD_ICON: Record<TabKey, React.ReactNode> = {
