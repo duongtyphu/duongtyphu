@@ -270,16 +270,20 @@ export function JourneyMapAtlas({
           KHUNG (position:absolute;inset:0) — đúng nghĩa đen "lớp phủ"
           Founder báo lại ở tab nhúng 2.0. Bỏ hẳn khi có `bgOverride` (tín
           hiệu ngữ cảnh tab nhúng, đã dùng cho background/boxShadow ở
-          trên). `MapMountains` (silhouette đáy khung, không phải lớp mờ
-          phủ toàn khung) GIỮ NGUYÊN. `/portal/hanhtrinhcuatoi/ban-do` 1.0
-          giữ nguyên cả 2 lớp texture như cũ. */}
+          trên). Founder tiếp tục báo còn "lớp phủ" sau khi 2 lớp texture
+          này đã bỏ (PR #99) — `MapMountains` (`.map-mountains`,
+          `position:absolute;inset-x:0;bottom:0`, `globals.css`) trước đó
+          giữ lại vì lý luận "silhouette đáy khung, không phải lớp mờ phủ
+          toàn khung" — nhưng vẫn LÀ 1 lớp phủ tuyệt đối che 160px đáy
+          khung, đúng cùng bản chất. Bỏ luôn khi có `bgOverride`.
+          `/portal/hanhtrinhcuatoi/ban-do` 1.0 giữ nguyên cả 3 lớp như cũ. */}
       {!bgOverride && (
         <>
           <div className="map-coordinate-grid" aria-hidden />
           <div className="map-topo-lines" aria-hidden />
+          <MapMountains />
         </>
       )}
-      <MapMountains />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
