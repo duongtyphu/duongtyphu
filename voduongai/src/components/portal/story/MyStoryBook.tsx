@@ -240,7 +240,7 @@ function RemovableEntry({
 
 export function MyStoryBook({
   memberSince,
-  reflections,
+  reflections: initialReflections,
   capsules: initialCapsules,
   milestones,
   firstPremium,
@@ -310,6 +310,13 @@ export function MyStoryBook({
     enabled: editMode,
   });
   const chrome = chromeItems[0] ?? seedChrome;
+  // Founder yêu cầu: "Ghim note mới" lưu được nhưng không hiện ngay trên
+  // corkboard (`useReflections()`/`useMemoryCapsules()` — 2 hook client-side
+  // trong `WriteNook` — quản state NỘI BỘ riêng, không liên quan gì tới
+  // `reflections`/`capsules` props tĩnh này). Đổi cả 2 thành state khởi tạo
+  // từ props, cập nhật NGAY qua callback `onReflectionAdded`/`onCapsuleAdded`
+  // (xem `WriteNook` bên dưới) — "gộp thành 1 nguồn" theo đúng yêu cầu.
+  const [reflections, setReflections] = useState(initialReflections);
   const [capsules, setCapsules] = useState(initialCapsules);
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
   const [firstOutput, setFirstOutput] = useState<{ date: string } | null | undefined>(undefined);
@@ -411,6 +418,14 @@ export function MyStoryBook({
     setCapsules((prev) => prev.filter((c) => c.id !== id));
   }
 
+  function handleReflectionAdded(item: Reflection) {
+    setReflections((prev) => [item, ...prev]);
+  }
+
+  function handleCapsuleAdded(item: MemoryCapsule) {
+    setCapsules((prev) => [item, ...prev]);
+  }
+
   if (isBookLoading) {
     return (
       <div
@@ -470,7 +485,14 @@ export function MyStoryBook({
 
           {corkWriteOpen && (
             <div className="mt-6 rounded-2xl bg-[#FDF9EF] p-6 shadow-[0_20px_40px_-12px_rgba(0,0,0,.5)] sm:p-8">
-              <WriteNook reflections={reflections} chrome={chrome} variant="corkboard" onSaved={() => setCorkWriteOpen(false)} />
+              <WriteNook
+                reflections={reflections}
+                chrome={chrome}
+                variant="corkboard"
+                onSaved={() => setCorkWriteOpen(false)}
+                onReflectionAdded={handleReflectionAdded}
+                onCapsuleAdded={handleCapsuleAdded}
+              />
               {!storageReady && <p className="mt-4 text-xs italic text-[#3B2A12]/50">{chrome.storageNotReadyLine}</p>}
             </div>
           )}
@@ -620,7 +642,12 @@ export function MyStoryBook({
             <p className="story-serif mt-3 text-sm leading-relaxed text-stone-400">
               {chrome.emptyStateLine2}
             </p>
-            <WriteNook reflections={reflections} chrome={chrome} />
+            <WriteNook
+              reflections={reflections}
+              chrome={chrome}
+              onReflectionAdded={handleReflectionAdded}
+              onCapsuleAdded={handleCapsuleAdded}
+            />
           </div>
         ) : (
           <>
@@ -771,7 +798,12 @@ export function MyStoryBook({
                   {chrome.writeNookSectionLabel}
                 </span>
               </div>
-              <WriteNook reflections={reflections} chrome={chrome} />
+              <WriteNook
+              reflections={reflections}
+              chrome={chrome}
+              onReflectionAdded={handleReflectionAdded}
+              onCapsuleAdded={handleCapsuleAdded}
+            />
             </section>
           </>
         )}
@@ -820,6 +852,8 @@ function WriteNook({
   chrome,
   variant = "book",
   onSaved,
+  onReflectionAdded,
+  onCapsuleAdded,
 }: {
   reflections: Reflection[];
   chrome: StoryChrome;
@@ -830,6 +864,13 @@ function WriteNook({
   /** corkboard only — gọi sau khi lưu thành công 1 trong 2 loại, để panel
       viết tự đóng lại (note vừa ghim hiện ngay trong danh sách phía trên). */
   onSaved?: () => void;
+  /** Gọi ngay sau khi `submitAnswer()`/`addCapsule()` trả về dòng vừa tạo
+      thành công — để component cha (`MyStoryBook`) cập nhật NGAY danh sách
+      hiển thị của chính nó (Founder: "Ghim note mới lưu được nhưng không
+      hiện ngay" — gộp `useReflections()`/`useMemoryCapsules()` thành 1
+      nguồn hiển thị duy nhất với props `reflections`/`capsules`). */
+  onReflectionAdded?: (item: Reflection) => void;
+  onCapsuleAdded?: (item: MemoryCapsule) => void;
 }) {
   const { question, answeredToday, submitAnswer, signedIn, ready, tableReady } = useReflections();
   const { addCapsule, ready: capsuleReady, tableReady: capsuleTableReady } = useMemoryCapsules();
@@ -865,7 +906,8 @@ function WriteNook({
                 type="button"
                 disabled={!draft.trim()}
                 onClick={async () => {
-                  await submitAnswer(draft);
+                  const created = await submitAnswer(draft);
+                  if (created) onReflectionAdded?.(created);
                   setSavedReflection(true);
                   onSaved?.();
                 }}
@@ -895,7 +937,8 @@ function WriteNook({
             type="button"
             disabled={!memoryTitle.trim()}
             onClick={async () => {
-              await addCapsule({ kind: "milestone", title: memoryTitle });
+              const created = await addCapsule({ kind: "milestone", title: memoryTitle });
+              if (created) onCapsuleAdded?.(created);
               setMemoryTitle("");
               setSavedMemory(true);
               onSaved?.();
@@ -931,7 +974,8 @@ function WriteNook({
             type="button"
             disabled={!draft.trim()}
             onClick={async () => {
-              await submitAnswer(draft);
+              const created = await submitAnswer(draft);
+              if (created) onReflectionAdded?.(created);
               setSavedReflection(true);
             }}
             className="story-serif mt-2 text-sm font-semibold text-amber-900 underline decoration-amber-900/30 underline-offset-4 transition hover:decoration-amber-900 disabled:cursor-not-allowed disabled:opacity-40"
@@ -953,7 +997,8 @@ function WriteNook({
           type="button"
           disabled={!memoryTitle.trim()}
           onClick={async () => {
-            await addCapsule({ kind: "milestone", title: memoryTitle });
+            const created = await addCapsule({ kind: "milestone", title: memoryTitle });
+            if (created) onCapsuleAdded?.(created);
             setMemoryTitle("");
             setSavedMemory(true);
             setTimeout(() => setSavedMemory(false), 3000);

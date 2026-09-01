@@ -10,12 +10,30 @@
  * giả — các field này là SỐ ĐẾM tuyệt đối, không phải %, nên vòng tròn
  * luôn để trống, chỉ đóng vai trò khung trang trí trung thực), lịch dạng
  * ô vuông, hoạt động hôm nay dạng timeline có mốc nối, biểu đồ tuần dạng
- * đường sóng vẽ đúng theo `weekChart` thật. Danh sách nhật ký + bộ lọc +
- * chuyển view GIỮ NGUYÊN chức năng thật đã có (không rút gọn tính năng).
- * Mọi field vẫn đúng 100% `LearningLogData`, không bịa thêm.
+ * đường sóng vẽ đúng theo `weekChart` thật. Mọi field vẫn đúng 100%
+ * `LearningLogData`, không bịa thêm.
+ *
+ * GIAI ĐOẠN — 4 điều chỉnh theo yêu cầu Founder (audit "Hành trình của
+ * tôi"):
+ *  1. Bỏ nút "Ghi chú mới" (không có `onClick`, không có form nào phía sau
+ *     — CTA chết).
+ *  2. Lịch học — 2 nút chuyển tháng giờ ĐIỀU HƯỚNG THẬT: tính lại
+ *     `calendar.days` ở CLIENT từ `log.entries` (toàn bộ hoạt động thật,
+ *     không giới hạn tháng hiện tại — dữ liệu đã có sẵn từ trước, chỉ chưa
+ *     dùng), không phải chỉ trang trí. `calendar`/`monthLabel` từ server
+ *     (tháng hiện tại) chỉ dùng làm giá trị khởi tạo, tránh 1 nhịp tính lại
+ *     thừa ở lần render đầu.
+ *  3. Bỏ link "Tất cả →" (href="#", không có đích).
+ *  4. "Ghi chú nổi bật" → "Companion đồng hành" — 1 câu nói của Companion,
+ *     đổi ngẫu nhiên mỗi lần truy cập (tái dùng `THOUGHT_SEEDS`/
+ *     `getRandomThoughtSeed()` — cùng nguồn dùng ở Mirror/Trang chủ, không
+ *     bịa nội dung mới, đúng NO-FAKE-DATA).
  * ========================================================================== */
 
+import { useMemo, useState, useEffect } from "react";
+
 import type { LearningLogData, LearningLogEntry } from "@/lib/portal/live-learning-log";
+import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 
 import "./nhat-ky-hoc-tap-tab.css";
 
@@ -40,10 +58,83 @@ const ENTRY_ICON: Record<LearningLogEntry["kind"], { bg: string; color: string; 
 
 const WEEK_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
+/** Cùng logic `dateKey()` ở `live-learning-log.ts` (server) — khớp key để
+    đối chiếu đúng ngày có hoạt động thật, tính lại được cho BẤT KỲ tháng
+    nào ở client (không giới hạn tháng hiện tại như bản server trả về). */
+function dateKey(iso: string) {
+  const d = new Date(iso);
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+type CalendarDay = { day: number; inMonth: boolean; done: boolean; isToday: boolean };
+
+/** Cùng thuật toán dựng lịch ở server (`getLearningLogData()`), tổng quát
+    hoá theo `year`/`month` bất kỳ — "lịch thật" theo đúng yêu cầu Founder:
+    2 nút chuyển tháng đổi `year`/`month` này, KHÔNG chỉ đổi trang trí. */
+function buildCalendarMonth(year: number, month: number, activeDayKeys: Set<string>, todayKey: string): CalendarDay[] {
+  const firstOfMonth = new Date(year, month, 1);
+  const firstWeekday = (firstOfMonth.getDay() + 6) % 7; // 0 = T2
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  const days: CalendarDay[] = [];
+  for (let i = 0; i < firstWeekday; i++) {
+    days.push({ day: daysInPrevMonth - firstWeekday + 1 + i, inMonth: false, done: false, isToday: false });
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const d = new Date(year, month, day);
+    const key = dateKey(d.toISOString());
+    days.push({ day, inMonth: true, done: activeDayKeys.has(key), isToday: key === todayKey });
+  }
+  const remainder = days.length % 7;
+  if (remainder > 0) {
+    for (let day = 1; day <= 7 - remainder; day++) days.push({ day, inMonth: false, done: false, isToday: false });
+  }
+  return days;
+}
+
 export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
-  const { stats, todayEntries, weekChart, weekTotalMinutes, calendar, featuredNote } = log;
-  const todayLabel = new Date().toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const { stats, entries, todayEntries, weekChart, weekTotalMinutes } = log;
+  const now = new Date();
+  const todayLabel = now.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
+  const todayKey = dateKey(now.toISOString());
   const maxWeekMinutes = Math.max(...weekChart.map((d) => d.minutes), 1);
+
+  // Lịch thật — điều hướng bằng tháng/năm đang xem, tính lại `days` từ TOÀN
+  // BỘ hoạt động thật (`entries`, không giới hạn tháng hiện tại như server).
+  const [viewYear, setViewYear] = useState(now.getFullYear());
+  const [viewMonth, setViewMonth] = useState(now.getMonth());
+  const activeDayKeys = useMemo(() => new Set(entries.map((e) => dateKey(e.occurredAt))), [entries]);
+  const calendarDays = useMemo(
+    () => buildCalendarMonth(viewYear, viewMonth, activeDayKeys, todayKey),
+    [viewYear, viewMonth, activeDayKeys, todayKey],
+  );
+  const monthLabel = `Tháng ${viewMonth + 1}, ${viewYear}`;
+  function goToPrevMonth() {
+    if (viewMonth === 0) {
+      setViewYear((y) => y - 1);
+      setViewMonth(11);
+    } else {
+      setViewMonth((m) => m - 1);
+    }
+  }
+  function goToNextMonth() {
+    if (viewMonth === 11) {
+      setViewYear((y) => y + 1);
+      setViewMonth(0);
+    } else {
+      setViewMonth((m) => m + 1);
+    }
+  }
+
+  // "Companion đồng hành" — 1 câu nói ngẫu nhiên mỗi lần truy cập, chọn ở
+  // client (sau mount) để tránh hydration mismatch (cùng kỹ thuật đã dùng
+  // ở Mirror/Trang chủ với `getRandomThoughtSeed()`).
+  const [companionLine, setCompanionLine] = useState<string | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- chọn ngẫu nhiên chỉ có ở client sau mount (tránh hydration mismatch)
+    setCompanionLine(getRandomThoughtSeed());
+  }, []);
 
   const wavePoints = weekChart.map((d, i) => {
     const x = (i / Math.max(weekChart.length - 1, 1)) * 700;
@@ -74,34 +165,9 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 36, flexWrap: "wrap", gap: 16 }}>
-            <div>
-              <h1 style={{ fontSize: 28, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-.01em" }}>Nhật ký học tập</h1>
-              <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", margin: 0 }}>Ghi lại hành trình học tập mỗi ngày. Học – Thực hành – Chiêm nghiệm – Tiến bộ.</p>
-            </div>
-            <button
-              type="button"
-              className="jn-cta-btn"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                background: "linear-gradient(135deg,#60A5FA,#3B82F6)",
-                color: "#06131F",
-                border: "none",
-                borderRadius: 999,
-                padding: "13px 22px",
-                fontSize: 13.5,
-                fontWeight: 800,
-                cursor: "pointer",
-                boxShadow: "0 10px 24px -8px rgba(59,130,246,.55)",
-              }}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                <path d="M12 5v14M5 12h14" stroke="#06131F" strokeWidth="2.6" strokeLinecap="round" />
-              </svg>
-              Ghi chú mới
-            </button>
+          <div style={{ marginBottom: 36 }}>
+            <h1 style={{ fontSize: 28, fontWeight: 800, color: "#fff", margin: "0 0 8px", letterSpacing: "-.01em" }}>Nhật ký học tập</h1>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", margin: 0 }}>Ghi lại hành trình học tập mỗi ngày. Học – Thực hành – Chiêm nghiệm – Tiến bộ.</p>
           </div>
 
           {/* Dải chỉ số — Founder yêu cầu thu nhỏ lại cho vừa với kích thước
@@ -134,12 +200,12 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
             {/* Lịch học */}
             <div className="jn-card" style={{ padding: 26 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
-                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Lịch học — {calendar.monthLabel}</h3>
+                <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Lịch học — {monthLabel}</h3>
                 <div style={{ display: "flex", gap: 4 }}>
-                  <button type="button" className="jn-icon-btn" aria-label="Tháng trước" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <button type="button" onClick={goToPrevMonth} className="jn-icon-btn" aria-label="Tháng trước" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2"><path d="M15 6l-6 6 6 6" /></svg>
                   </button>
-                  <button type="button" className="jn-icon-btn" aria-label="Tháng sau" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <button type="button" onClick={goToNextMonth} className="jn-icon-btn" aria-label="Tháng sau" style={{ background: "rgba(255,255,255,.05)", border: "none", borderRadius: 8, width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2"><path d="M9 6l6 6-6 6" /></svg>
                   </button>
                 </div>
@@ -150,7 +216,7 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
                 ))}
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", gap: 8 }}>
-                {calendar.days.map((d, i) => (
+                {calendarDays.map((d, i) => (
                   <span
                     key={`${d.day}-${i}`}
                     style={{
@@ -178,11 +244,8 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
 
             {/* Hôm nay — timeline */}
             <div className="jn-card" style={{ padding: 26 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 16 }}>
+              <div style={{ marginBottom: 16 }}>
                 <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: 0 }}>Hôm nay, {todayLabel}</h3>
-                <a href="#" className="jn-link" style={{ fontSize: 11.5, fontWeight: 700 }}>
-                  Tất cả →
-                </a>
               </div>
               {todayEntries.length === 0 ? (
                 <div style={{ position: "relative", paddingLeft: 18 }}>
@@ -232,19 +295,21 @@ export function NhatKyHocTapTab({ log }: { log: LearningLogData }) {
               </div>
             </div>
 
-            {/* Ghi chú nổi bật */}
+            {/* Companion đồng hành — 1 câu nói ngẫu nhiên mỗi lần truy cập
+                (thay "Ghi chú nổi bật" theo yêu cầu Founder). */}
             <div className="jn-card" style={{ padding: 26, display: "flex", flexDirection: "column" }}>
-              <svg width="26" height="20" viewBox="0 0 24 24" fill="#60A5FA" opacity=".5" style={{ marginBottom: 10 }}>
-                <path d="M7 7c-2 0-4 2-4 5s2 5 4 5 4-2 4-5-2-5-4-5zm10 0c-2 0-4 2-4 5s2 5 4 5 4-2 4-5-2-5-4-5z" />
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FDE29B" strokeWidth="1.6" opacity=".6" style={{ marginBottom: 10 }}>
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4 4-6 8-6s8 2 8 6" />
               </svg>
-              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: "0 0 10px" }}>Ghi chú nổi bật</h3>
-              {featuredNote ? (
+              <h3 style={{ fontSize: 15, fontWeight: 800, color: "#fff", margin: "0 0 10px" }}>Companion đồng hành</h3>
+              {companionLine ? (
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,.75)", fontStyle: "italic", margin: "0 0 10px" }}>&quot;{featuredNote.text}&quot;</p>
-                  <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.4)" }}>— {featuredNote.authorName}</div>
+                  <p style={{ fontSize: 13, lineHeight: 1.6, color: "rgba(255,255,255,.75)", fontStyle: "italic", margin: "0 0 10px" }}>&quot;{companionLine}&quot;</p>
+                  <div style={{ fontSize: 11.5, color: "rgba(255,255,255,.4)" }}>— Companion</div>
                 </div>
               ) : (
-                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic", flex: 1 }}>Chưa có ghi chú nào — viết chiêm nghiệm đầu tiên để lưu lại đây.</div>
+                <div style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)", fontStyle: "italic", flex: 1 }}>&nbsp;</div>
               )}
             </div>
           </div>

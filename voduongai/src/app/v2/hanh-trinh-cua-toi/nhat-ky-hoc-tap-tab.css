@@ -14,6 +14,13 @@
 }
 .jn-flame { animation: jn-flame 3.4s ease-in-out infinite; transform-origin: bottom center; }
 
+/* Founder: hiệu ứng ngọn lửa chưa tắt theo "giảm hiệu ứng chuyển động" —
+   mọi khối khác (Khu vườn/My Story/Mirror/Bản đồ hành trình) đều đã có
+   `@media (prefers-reduced-motion: reduce)`, riêng `.jn-flame` bị bỏ sót. */
+@media (prefers-reduced-motion: reduce) {
+  .jn-flame { animation: none; }
+}
+
 .jn-card {
   /* Founder báo "vẫn còn 2 màu nền" sau khi đã sửa lớp nền GỐC (`var(--bg)`
      cascade) — hoá ra nguyên nhân thật KHÔNG phải lớp nền gốc (đã đúng),
@@ -51,25 +58,6 @@
 .jn-icon-btn:hover {
   background: rgba(96, 165, 250, .16) !important;
   transform: translateY(-1px);
-}
-
-.jn-cta-btn {
-  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
-}
-.jn-cta-btn:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.08);
-  box-shadow: 0 14px 28px -8px rgba(59, 130, 246, .65);
-}
-
-/* `.htct a{color:var(--violet)}` (trang cha) có specificity (0,1,1) — cao
-   hơn `.jn-link` đơn lẻ (0,1,0), cần khớp bằng .htct a.jn-link để thắng. */
-.htct a.jn-link {
-  color: #93C5FD;
-  transition: color .15s ease;
-}
-.htct a.jn-link:hover {
-  color: #fff;
 }
 
 @media (max-width: 900px) {

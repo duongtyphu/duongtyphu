@@ -275,8 +275,6 @@ export function TrangChuClient({
   opportunities: OpportunityPreview[];
 }) {
   const router = useRouter();
-  // `<script>` gốc: `this.classList.toggle('on')` trên #themeSwitch.
-  const [themeOn, setThemeOn] = useState(false);
 
   // `<script>` gốc: mọi phần tử `[data-href]` điều hướng khi bấm.
   const go = (htmlFile: string) => () => {
@@ -393,7 +391,7 @@ export function TrangChuClient({
               Chương trình Affilate
             </button>
           </nav>
-          <div className="side-label">TIỆN ÍCH NHANH</div>
+          <div className="side-label">GÓC TIẾN BỘ</div>
           <nav className="main">
             <button className="nav-item" onClick={go("Hanh trinh cua toi.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -431,14 +429,6 @@ export function TrangChuClient({
               <button onClick={go("Premium.html")}>Nâng cấp ngay</button>
             </div>
           )}
-          <div className="theme-toggle">
-            <div
-              className={themeOn ? "switch on" : "switch"}
-              id="themeSwitch"
-              onClick={() => setThemeOn((v) => !v)}
-            />
-            Chế độ sáng
-          </div>
         </aside>
 
         <div className="main-col">
