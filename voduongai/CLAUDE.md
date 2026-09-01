@@ -1,5 +1,109 @@
 @AGENTS.md
 
+## Giai đoạn 12 — sidebar "menu đổi khi chuyển trang" ([PR #109](https://github.com/duongtyphu/duongtyphu/pull/109)) + bug P0 `memory_capsules` thiếu cột
+
+Ngay sau Giai đoạn 11 (fix "sidebar nhảy" — flicker lúc tải trang), Founder
+báo tiếp: "khi ở trang chủ thì các mục menu hiện đúng nhưng khi chuyển qua
+các danh mục khác thì hệ menu thay đổi và không còn đúng như mình yêu cầu
+là cố định nữa" — đây là bug KHÁC (nội dung menu đổi, không phải hiệu ứng
+lúc tải), cần audit lại từ đầu, không suy đoán đã sửa xong ở Giai đoạn 11.
+
+**Audit — liệt kê CẢ 13 nơi định nghĩa sidebar** (`PortalV2Shell.tsx` dùng
+chung ~18 trang + 12 trang tự chép sidebar tay theo kiến trúc "Bước F" đã
+ghi nhận nhiều lần), so sánh chính xác danh sách nav-item bằng
+Playwright — phát hiện KHÔNG CÓ 2 nơi nào giống hệt nhau:
+
+| Nhóm | Trang | Thiếu gì |
+|---|---|---|
+| A | `PortalV2Shell.tsx` (18 trang: Premium/Affiliate/Mục tiêu/Tài khoản/Checkout/Sứ mệnh Companion/Bộ nhớ cá nhân hoá/Mỗi ngày một ý tưởng/Hành trình của tôi...) | Thiếu hẳn nhãn "GÓC TIẾN BỘ" (0 dòng `side-label` trong file) |
+| B | `TrangChuClient.tsx`, `HocVienAiClient.tsx` (2 trang) | Đủ cả 7 mục + nhãn — ĐÚNG chuẩn, dùng làm mẫu đối chiếu |
+| C | 4 trang chi tiết CKOS (`he-tri-thuc/[slug]`/`bai-hoc`/`bo-suu-tap`/`danh-muc`) | Thiếu nút "Mỗi ngày một ý tưởng" trong danh sách chính (có nhãn) |
+| D | `DuAnCoHoiClient.tsx` (hub Dự án & Cơ hội) | Thiếu nhãn "GÓC TIẾN BỘ" (có đủ 7 mục) |
+| E | 5 trang con Dự án & Cơ hội (DigiU/SolarGroup/Ohana/Các mô hình Affilate/Affilate sàn giao dịch) | Thiếu CẢ nút "Mỗi ngày một ý tưởng" LẪN nhãn "GÓC TIẾN BỘ" |
+
+Đúng nguyên nhân Founder mô tả: bấm từ Trang chủ (nhóm B, đủ) sang Dự án &
+Cơ hội/1 trang con CKOS (nhóm C/D/E, thiếu) — menu hiện khác nhau thật,
+không phải cảm giác.
+
+**Đã sửa cả 13 nơi về đúng 1 danh sách** (Trang chủ/Companion AI/Mỗi ngày
+một ý tưởng/Học viện AI/Dự án & Cơ hội/Premium/Chương trình Affilate +
+nhãn "GÓC TIẾN BỘ" + Hành trình của tôi) — dùng script Python match-block
+cho các file cùng pattern (xác nhận đúng 1 khớp/file trước khi ghi, cùng
+kỹ thuật "cơ học" đã dùng nhiều lần trong dự án), riêng `DuAnCoHoiClient.tsx`
+sửa tay vì dùng pattern `prefetchNav()` multi-line khác 5 file kia.
+
+**Phát hiện phụ khi sửa — `.side-label` chỉ có CSS ở ĐÚNG 4/46 trang**
+(`trang-chu.css`/`hoc-vien-ai.css`/`he-tri-thuc.css`/`companion.css`, mỗi
+file định nghĩa riêng `.{prefix} .side-label{...}`) — thêm nhãn vào
+`PortalV2Shell.tsx` (dùng ở 18 trang khác, phần lớn KHÔNG có CSS riêng
+cho class này) sẽ khiến nhãn hiện ra KHÔNG có style (chữ mặc định trình
+duyệt). Đã thêm 1 rule dùng chung `[data-ui="v2"] .side-label{...}` vào
+`v2-tokens.css` (giá trị khớp nguyên văn 4 file cũ, không đổi thẩm mỹ) —
+đảm bảo MỌI trang `/v2/*` hiện đúng kiểu dáng dù trang đó có tự định
+nghĩa CSS hay không, tránh lặp lại đúng lớp lỗi "thiếu CSS cục bộ" đã gặp
+nhiều lần trong dự án.
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Playwright thật (`next dev`) đối
+chiếu danh sách nav-item ở 5 trang mẫu (`trang-chu`, `premium` [đại diện
+nhóm A], `du-an-co-hoi`, `du-an-co-hoi/digiu`, `hoc-vien-ai`) — cả 5 đều
+hiện đúng 8 mục cốt lõi + nhãn "GÓC TIẾN BỘ" (2 trang Dự án & Cơ hội có
+thêm 5 mục con hiện đúng khi đang mở, không phải thiếu/thừa). Đo
+`getComputedStyle` xác nhận nhãn trên `/v2/premium` (không có CSS riêng)
+lên đúng `font-size:11px;font-weight:700;color:#6f6a91`. Merge PR #109,
+deploy Production, xác nhận `READY`.
+
+### Bug P0 phát hiện SONG SONG — `memory_capsules` thiếu 3 cột, "Ghim note mới" báo "chưa sẵn sàng"
+
+Founder test "Ghim note mới" (My Story, `/v2/hanh-trinh-cua-toi`) ngay sau
+Giai đoạn 11, gặp 2 dòng honest-nhưng-SAI: "Khu vực lưu ký ức đang được
+chuẩn bị — bạn có thể quay lại viết sau." + "...Bạn vẫn có thể đọc lại
+hành trình của mình." — đúng 2 nhánh "bảng chưa sẵn sàng"
+(`chrome.writeNookNotReadyLine` từ `useMemoryCapsules()`'s `tableReady`,
+và `chrome.storageNotReadyLine` từ `storageReady` — `getStoryData()`).
+
+**Root cause thật (đã audit qua Supabase MCP, không suy đoán):** cả
+`reflections` lẫn `memory_capsules` ĐỀU TỒN TẠI THẬT trên Production
+(`to_regclass()` xác nhận) — "bảng chưa sẵn sàng" là chẩn đoán SAI của
+chính `isMissingTableError()`. Nguyên nhân thật: `memory_capsules` (schema
+gốc `supabase-human-story-engine.sql`) chỉ có 7 cột
+(`id/member_id/kind/title/description/occurred_at/created_at`) — trong
+khi CODE ở ÍT NHẤT 6 nơi (`memoryCapsules.ts`'s `useMemoryCapsules()`+
+`addCapsule()`'s insert-select, và 4 trang Server Component:
+`portal/story/page.tsx`/`portal/mirror/page.tsx`/`portal/layout.tsx`/
+`portal/khuvuoncuaban/page.tsx`) SELECT thêm cột `source`
+(4-6 nơi)/`story_id`/`meaning_tags` (riêng `memoryCapsules.ts`) — 3 cột
+này **CHƯA TỪNG được thêm vào Production**, dù migration đã VIẾT SẴN
+trong repo từ trước (`supabase-living-story-memory.sql`, Sprint 13.4
+"Story Becomes Memory") — chỉ là **chưa từng được chạy**. PostgREST trả
+lỗi `PGRST204` (cột không tồn tại trong schema cache) cho MỌI SELECT này
+→ `isMissingTableError()` (đúng thiết kế, bắt cả `PGRST204` lẫn `42P01`)
+coi nhầm là "bảng chưa kích hoạt" — dù bảng có thật, chỉ THIẾU CỘT.
+
+**Ảnh hưởng rộng hơn "Ghim note mới":** MỌI consumer của
+`useMemoryCapsules()`/`getStoryData()`'s nhánh capsule (My Story cả 2
+variant, Mirror, Khu vườn của bạn, `portal/layout.tsx` — có thể ảnh hưởng
+badge/notification gì đó đọc `memory_capsules` ở tầng layout) đều silently
+fail theo đúng đường "honest empty/not-ready state" — trông như tính năng
+đã tắt có chủ đích, không phải bug, nên không ai phát hiện ra cho tới khi
+Giai đoạn 11 làm "Ghim note mới" thực sự MỞ ĐƯỢC panel lần đầu.
+
+**Đã sửa — apply đúng migration đã viết sẵn (không viết lại, không đoán
+schema):** `alter table memory_capsules add column if not exists source
+text, add column if not exists story_id text, add column if not exists
+meaning_tags text[]` (qua Supabase MCP `apply_migration`, additive-only,
+mọi cột nullable — 0 rủi ro dữ liệu cũ, đã verify 1 dòng thật vẫn đọc
+đúng `title`/`occurred_at` sau khi thêm cột). Xác nhận lại bằng SQL y hệt
+câu SELECT các file trên dùng — chạy sạch, không còn PGRST204.
+
+**Không sửa code nào** — đây là gap SCHEMA, không phải gap logic; code đã
+đúng từ đầu (đúng migration đã viết, chỉ chưa chạy).
+
+**Chưa tự test được qua UI thật** (giới hạn sandbox không có tài khoản
+đăng nhập/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test
+lại "Ghim note mới" trên Production ngay, xác nhận 2 dòng "chưa sẵn sàng"
+đã biến mất và panel viết hoạt động đúng như Giai đoạn 11 đã sửa.
+
 ## NGUYÊN TẮC BẤT BIẾN — mọi việc đang sửa chỉ trỏ đích 2.0, KHÔNG link về 1.0
 
 Founder chỉ đạo trực tiếp (lưu vĩnh viễn, áp dụng cho MỌI việc sửa `/v2/*`
