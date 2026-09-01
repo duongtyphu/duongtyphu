@@ -243,7 +243,7 @@ export function CkosDocumentClient({
             </button>
           </nav>
 
-          <div className="side-label">TIỆN ÍCH NHANH</div>
+          <div className="side-label">GÓC TIẾN BỘ</div>
           <nav className="main">
             <button className="nav-item" onClick={() => go("Hanh trinh cua toi.html")}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -83,10 +83,12 @@ export function useReflections() {
         return;
       }
       if (data) {
-        setReflections((prev) => [
-          { id: data.id, question: data.question, answer: data.answer, createdAt: data.created_at },
-          ...prev,
-        ]);
+        const newItem: Reflection = { id: data.id, question: data.question, answer: data.answer, createdAt: data.created_at };
+        setReflections((prev) => [newItem, ...prev]);
+        // Trả về dòng vừa tạo — cho phép nơi gọi (vd `MyStoryBook`) cập nhật
+        // NGAY danh sách hiển thị của chính nó, không phải chờ tải lại
+        // trang để thấy state nội bộ của hook này.
+        return newItem;
       }
     },
     [userId, question]

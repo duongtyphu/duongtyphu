@@ -101,19 +101,19 @@ export function useMemoryCapsules() {
         return;
       }
       if (data) {
-        setCapsules((prev) => [
-          {
-            id: data.id,
-            kind: data.kind,
-            title: data.title,
-            description: data.description ?? undefined,
-            occurredAt: data.occurred_at,
-            source: data.source ?? undefined,
-            storyId: data.story_id ?? undefined,
-            meaningTags: data.meaning_tags ?? undefined,
-          },
-          ...prev,
-        ]);
+        const newItem: MemoryCapsule = {
+          id: data.id,
+          kind: data.kind,
+          title: data.title,
+          description: data.description ?? undefined,
+          occurredAt: data.occurred_at,
+          source: data.source ?? undefined,
+          storyId: data.story_id ?? undefined,
+          meaningTags: data.meaning_tags ?? undefined,
+        };
+        setCapsules((prev) => [newItem, ...prev]);
+        // Trả về dòng vừa tạo — cùng lý do `submitAnswer()` ở `reflections.ts`.
+        return newItem;
       }
     },
     [userId]

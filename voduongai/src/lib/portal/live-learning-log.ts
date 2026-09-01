@@ -41,8 +41,14 @@ export type LearningLogStats = {
 
 export type WeekChartDay = { label: string; minutes: number; isToday: boolean };
 export type WeekDot = { label: string; done: boolean; isFuture: boolean };
-export type CalendarDay = { day: number; iso: string; inMonth: boolean; done: boolean; isToday: boolean };
 
+/**
+ * `calendar`/`featuredNote` (đã có ở đây trước đây) đã bỏ — "Lịch học" giờ
+ * tính lại THẬT ở client từ `entries` (không giới hạn 1 tháng, cho phép
+ * chuyển tháng thật — xem `NhatKyHocTapTab.tsx`), và "Ghi chú nổi bật" đã
+ * đổi thành "Companion đồng hành" (câu nói ngẫu nhiên từ `thought-seeds.ts`,
+ * không đọc dữ liệu nào ở đây nữa) theo yêu cầu Founder.
+ */
 export type LearningLogData = {
   stats: LearningLogStats;
   entries: LearningLogEntry[];
@@ -50,8 +56,6 @@ export type LearningLogData = {
   weekChart: WeekChartDay[];
   weekTotalMinutes: number;
   weekDots: WeekDot[];
-  calendar: { monthLabel: string; days: CalendarDay[] };
-  featuredNote: { text: string; authorName: string } | null;
   recentDocuments: { id: number; title: string; url: string }[];
 };
 
@@ -62,8 +66,6 @@ const EMPTY_DATA: LearningLogData = {
   weekChart: [],
   weekTotalMinutes: 0,
   weekDots: [],
-  calendar: { monthLabel: "", days: [] },
-  featuredNote: null,
   recentDocuments: [],
 };
 
@@ -105,9 +107,8 @@ export async function getLearningLogData(): Promise<LearningLogData> {
     return { ...EMPTY_DATA, recentDocuments };
   }
 
-  const [{ data: memberRow }, { data: progressRows }, { data: reflectionRows }, { data: capsuleRows }] =
+  const [{ data: progressRows }, { data: reflectionRows }, { data: capsuleRows }] =
     await Promise.all([
-      supabase.from("members").select("full_name").eq("id", user.id).maybeSingle(),
       supabase
         .from("user_lesson_progress")
         .select("status, completed_at, watched_seconds, lesson_id, course_lessons(title, duration_minutes)")
@@ -200,48 +201,6 @@ export async function getLearningLogData(): Promise<LearningLogData> {
     weekDots.push({ label: WEEKDAY_LABELS[i], done: activeDayKeys.has(key), isFuture: d.getTime() > now.getTime() });
   }
 
-  // ---- lịch tháng hiện tại ----
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const firstOfMonth = new Date(year, month, 1);
-  const firstWeekday = (firstOfMonth.getDay() + 6) % 7; // 0 = T2
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const daysInPrevMonth = new Date(year, month, 0).getDate();
-
-  const calendarDays: CalendarDay[] = [];
-  for (let i = 0; i < firstWeekday; i++) {
-    const day = daysInPrevMonth - firstWeekday + 1 + i;
-    calendarDays.push({ day, iso: "", inMonth: false, done: false, isToday: false });
-  }
-  for (let day = 1; day <= daysInMonth; day++) {
-    const d = new Date(year, month, day);
-    const key = dateKey(d.toISOString());
-    calendarDays.push({
-      day,
-      iso: d.toISOString(),
-      inMonth: true,
-      done: activeDayKeys.has(key),
-      isToday: key === todayKey,
-    });
-  }
-  const remainder = calendarDays.length % 7;
-  if (remainder > 0) {
-    for (let day = 1; day <= 7 - remainder; day++) {
-      calendarDays.push({ day, iso: "", inMonth: false, done: false, isToday: false });
-    }
-  }
-
-  const featuredReflection = reflections[0] as { answer: string } | undefined;
-  const featuredCapsule = capsules.find((c) => c.description) as { description: string } | undefined;
-  const featuredText = featuredReflection?.answer ?? featuredCapsule?.description ?? null;
-  const featuredNote =
-    featuredText != null
-      ? {
-          text: featuredText,
-          authorName: (memberRow?.full_name as string | null) || "Bạn",
-        }
-      : null;
-
   return {
     stats,
     entries,
@@ -249,8 +208,6 @@ export async function getLearningLogData(): Promise<LearningLogData> {
     weekChart,
     weekTotalMinutes,
     weekDots,
-    calendar: { monthLabel: `Tháng ${month + 1}, ${year}`, days: calendarDays },
-    featuredNote,
     recentDocuments,
   };
 }
