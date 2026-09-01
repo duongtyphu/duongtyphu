@@ -1,5 +1,41 @@
 @AGENTS.md
 
+## Giai đoạn 14 — dọn placeholder "Mỗi ngày một ý tưởng" trước khi xây mới ([PR #112](https://github.com/duongtyphu/duongtyphu/pull/112))
+
+Sau khi xác nhận fix `date_of_birth` (Giai đoạn 13, Life Profile) hoạt
+động đúng trên Production, Founder chuyển hướng sang trang
+`/v2/moi-ngay-mot-y-tuong`: "Mình muốn bạn dọn dẹp sạch sẽ trang giữa của
+mục này trước khi mình làm mới hoàn toàn nó" — bỏ hẳn 2 dòng placeholder
+Giai đoạn 1 cũ ("Mỗi ngày một ý tưởng" / "Trang trung tâm kết nối tới mọi
+mục khác trong Portal — đang được xây dựng") để dành **full trang giữa**
+cho nội dung mới, mockup sẽ gửi sau.
+
+**Đã làm** — `MoiNgayMotYTuongClient.tsx`: xoá hẳn `<div className="page-head">`
+(h1 + mô tả) và `<section className="coming-soon">` (icon SVG + heading
+"Trang này đang được xây dựng" + đoạn giải thích) — thay bằng
+`<div className="content"><div className="center-col">{/* Nội dung mới sẽ
+dựng ở đây */}</div></div>`, để trống hoàn toàn. **Giữ nguyên 100% phần
+khung** `PortalV2Shell` (sidebar/topbar/promo) — chỉ dọn nội dung giữa.
+`moi-ngay-mot-y-tuong.css` — xoá CSS dead code `.mnmyt .coming-soon` và
+các rule liên quan (5 dòng). `page.tsx` — cập nhật docblock (bỏ khung
+"Placeholder honest 'đang xây dựng'" đã lỗi thời).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `next dev` xác nhận qua `curl`
+không còn "đang được xây dựng"/"coming-soon" trong HTML trả về (chỉ còn
+đúng nhãn nav-item "Mỗi ngày một ý tưởng" ở sidebar, không phải nội dung
+placeholder), Playwright xác nhận `.center-col` rỗng hoàn toàn
+(`innerHTML === ""`), 0 lỗi console. `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Merge PR #112 (squash, commit
+`732309b7c596acb53171be7524f8c4f91bf3b148`), deploy Production — xác nhận
+`readyState: READY`, `target: production`.
+
+**Trạng thái sau đợt này:** trang giữa của `/v2/moi-ngay-mot-y-tuong`
+hoàn toàn TRỐNG (không còn placeholder cũ, chưa có nội dung mới) — đây là
+bước CHUẨN BỊ theo đúng trình tự Founder yêu cầu ("dọn sạch trước khi làm
+mới hoàn toàn"). **CHƯA bắt đầu xây nội dung mới** — Founder sẽ gửi
+mockup/hướng thiết kế riêng ở một cuộc trò chuyện khác; không tự thiết kế/
+xây nội dung cho trang này khi chưa có chỉ đạo cụ thể.
+
 ## Giai đoạn 13 — quét toàn bộ 66 file `supabase-*.sql`: tìm migration "viết sẵn nhưng chưa apply"
 
 Founder yêu cầu tiếp tục theo đúng hướng vừa phát hiện ở bug `memory_capsules`
