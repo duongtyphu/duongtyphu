@@ -9324,3 +9324,92 @@ lại mỗi tab 4 điểm đo cùng 1 màu duy nhất khớp `TAB_HEADER_BG`. 0
 **Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
 nhập thật ở màn hình hẹp/mobile — Founder tự xác nhận trên Preview/
 Production URL sau khi deploy.
+
+## Giai đoạn 10 (tiếp) — chuỗi 4 đợt cuối: `.jn-card` đắp đen riêng, bỏ vignette, bỏ hẳn "chiều sâu", bỏ lớp phủ toàn khung 3 cửa
+
+Sau bản vá "1 nguồn `--bg` duy nhất" ở trên, Founder tiếp tục báo LẠI
+"vẫn còn lớp phủ" nhiều lần liên tiếp — mỗi lần lộ ra 1 root cause riêng,
+độc lập với 3 lần trước, dù triệu chứng bên ngoài giống hệt nhau ("còn 2
+màu nền"/"còn lớp phủ dưới thanh tab"). Ghi gộp cả 4 đợt vì diễn ra liên
+tục trong cùng 1 buổi, mỗi đợt đúng 1 PR:
+
+**PR #96 — `.jn-card` (9 ô bento Nhật ký học tập) tự đắp `#0F1116` đen
+tuyệt đối, độc lập với `var(--bg)`.** Lớp nền GỐC đã đúng từ PR #95,
+nhưng các "ô" phủ gần kín trang (5 ô chỉ số/lịch/timeline/chart/note) lại
+tự set màu nền RIÊNG không liên quan `--bg` — đúng lỗi "2 nguồn màu độc
+lập tình cờ khớp giá trị" nhưng ở tầng KHÁC (ô nội dung, không phải khung
+giữa). Đổi `.jn-card` sang `rgba(255,255,255,.05)` trong suốt (đúng kỹ
+thuật `KhuVuonCuaBanTab.tsx` đã dùng đúng từ đầu) để `var(--bg)` luôn
+xuyên qua — card chỉ "nổi nhẹ" trên nền trang, không phải khối màu tách
+biệt. Đồng bộ luôn viền chấm timeline (`border:2px solid #0F1116` cứng)
+sang `var(--bg)`, và 1 ô huy hiệu Khu vườn (`#111318`) sang cùng pattern.
+
+**PR #97 — vignette `boxShadow: inset 0 0 160px rgba(0,0,0,.35)` (thêm ở
+đợt "chiều sâu, độ bóng" trước đó) chính là "lớp phủ" Founder thấy.** Áp
+dụng đối xứng cả 4 cạnh, mép TRÊN của div nền (ngay dưới thanh tab) bị
+tối đi rõ rệt — đúng vị trí Founder luôn chỉ tay vào. Không có cách chỉnh
+vignette đối xứng nào giữ mép trên "trong" mà vẫn giữ 3 mép còn lại tối —
+bỏ hẳn `TAB_BG_SHADOW` (hằng số dùng chung 3 tab qua prop `bgShadow`) +
+2 chỗ hardcode ở `NhatKyHocTapTab.tsx`/`KhuVuonCuaBanTab.tsx`, giữ nguyên
+2 lớp radial "ánh sáng gần đầu trang".
+
+**PR #98 — bỏ HẲN hiệu ứng "chiều sâu, độ bóng" còn lại (áp dụng cả 5
+tab), theo yêu cầu trực tiếp của Founder** (không phải root-cause mới —
+Founder xác nhận muốn bỏ luôn phần còn lại sau khi vignette đã bỏ vẫn
+chưa đủ ưng ý): `NhatKyHocTapTab.tsx` bỏ 2 lớp radial + glow `.jn-lamp` +
+1 lớp radial phụ (`@keyframes jn-glow` trong CSS trở thành dead code, đã
+xoá); `KhuVuonCuaBanTab.tsx` bỏ 2 lớp radial ở base div (giữ nguyên 100%
+chủ đề "vườn đêm cổ tích" — sao/trăng/aurora/đồi/sương/đom đóm/cây, không
+thuộc lớp "chiều sâu" đang bỏ); `HanhTrinhCuaToiClient.tsx` flatten
+`STORY_BG`/`MIRROR_BG`/`MAP_BG` thành `"var(--bg)"` (trước là 2 lớp
+radial/hằng số). Sau PR này mỗi tab chỉ còn ĐÚNG 1 màu nền phẳng.
+
+**PR #99 — root cause THẬT SỰ cuối cùng: 3 lớp TEXTURE PHỦ TOÀN KHUNG
+(`position:absolute;inset:0`) ở chính 3 component Portal 1.0 dùng chung,
+hoàn toàn độc lập với `bgOverride`/`--bg`, chưa từng bị đụng tới suốt cả
+chuỗi sửa nền ở trên** (mọi đợt trước chỉ sửa màu NỀN, không đụng các lớp
+texture TRANG TRÍ nằm phía trên nền):
+- `MirrorChamber.tsx`: `.mirror-glass-veil` ("sương kính phủ toàn khung")
+  — bỏ khi có `bgOverride` (`{!bgOverride && <div className="mirror-glass-veil" aria-hidden />}`,
+  đúng ngữ cảnh tab nhúng 2.0), giữ nguyên ở `/portal/mirror` 1.0
+  (`bgOverride` luôn undefined ở đó).
+- `JourneyMapAtlas.tsx`: `.map-topo-lines` + `.map-coordinate-grid` (2
+  lớp texture) — cùng cơ chế. `MapMountains` (silhouette đáy khung) GIỮ
+  NGUYÊN — không phải lớp mờ phủ toàn khung, là art trang trí hợp lệ.
+- `MyStoryBook.tsx`: `.story-corkboard-bg::after` (texture chấm tròn phủ
+  toàn khung, `opacity:.4`) — thêm modifier class
+  `story-corkboard-bg--flat` (CSS mới: `.story-corkboard-bg--flat::after
+  {display:none}`) tắt hẳn khi có `bgOverride`.
+
+**Kèm yêu cầu mid-turn khác (cùng PR #99):** làm giàu khí quyển "vườn
+đêm cổ tích" (Khu vườn của bạn) — tăng sao (6→18, kích thước khác nhau),
+thêm dải aurora thứ 2 + 1 glow phụ, tăng sương (2→4 dải), tăng đom đóm
+(4→9), và tăng lá/hoa/quả theo TỪNG GIAI ĐOẠN cây rõ rệt hơn (sapling:
+2→5 lá, không hoa/quả; growing: 2→5 lá + 5→8 nụ hoa nhạt, không quả;
+bloom: 5→8 lá + 8→11 hoa nở + 5→7 quả) — phát triển thị giác rõ theo %
+tiến độ.
+
+**Verify (cả 4 PR):** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495
+pass, `rm -rf .next && npm run build` sạch mỗi lần. PR #99 verify thêm
+qua Playwright (dữ liệu giả 4 stage 0/30/70/100%): `document.querySelectorAll`
+xác nhận 0 phần tử `.mirror-glass-veil`/`.map-topo-lines`/
+`.map-coordinate-grid` ở tab tương ứng, `.story-corkboard-bg--flat` áp
+dụng đúng ở My Story; cả 4 tier cây (sprout/sapling/growing/bloom) render
+đúng, tăng dần độ dày lá/hoa/quả theo tiến độ, sao/aurora/sương/đom đóm
+dày hơn rõ rệt so với bản trước.
+
+Cả 4 PR đã merge `main` + deploy Production ngay sau khi xong (đúng quy
+trình `landing-release`), xác nhận qua `list_deployments`: commit `106d5dd`
+(PR #99, merge của `9c4b4ee`) → `state:"READY"`, `target:"production"`.
+
+**GIAI ĐOẠN 10 — "MỘT NGUỒN NỀN + KHÔNG CÒN LỚP PHỦ" ĐÃ HOÀN TẤT.** Chuỗi
+9 PR liên tiếp (#89→#99, cùng 1 buổi làm việc, Founder phản hồi gần như
+tức thời sau mỗi lần deploy) là bài học quy trình quan trọng nhất của cả
+đợt: "lớp phủ"/"còn 2 màu nền" là 1 TRIỆU CHỨNG bên ngoài có thể do NHIỀU
+root cause độc lập gây ra cùng lúc (khung giữa/`.tab-panel` wrapper margin
+âm → biến CSS `--bg` không cascade đúng → literal hex "đắp" riêng ở từng
+component → màu riêng ở tầng "ô nội dung" bên trong → vignette box-shadow
+làm tối 1 cạnh → texture phủ toàn khung độc lập với màu nền) — sửa xong 1
+root cause không có nghĩa đã hết triệu chứng, phải audit LẠI TỪ ĐẦU (đo
+`getComputedStyle` thật, không suy đoán) mỗi lần Founder báo lại đúng câu
+mô tả cũ, thay vì giả định "chắc chưa deploy kịp"/"cache trình duyệt".
