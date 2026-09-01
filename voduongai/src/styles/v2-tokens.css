@@ -302,3 +302,23 @@
   height: 100vh;
   overflow-y: auto;
 }
+
+/* Founder: "8 mục menu hiện đúng ở trang chủ nhưng đổi khi chuyển trang
+ * khác" — audit phát hiện `.side-label` ("GÓC TIẾN BỘ") trước đó chỉ có
+ * CSS ở ĐÚNG 4/46 trang tự chép sidebar tay (`trang-chu.css`/
+ * `hoc-vien-ai.css`/`he-tri-thuc.css`/`companion.css`) — `PortalV2Shell.tsx`
+ * (dùng chung ~18 trang khác: Premium/Affiliate/Mục tiêu/Tài khoản/
+ * Checkout/Sứ mệnh Companion/Bộ nhớ cá nhân hoá/Mỗi ngày một ý tưởng/Hành
+ * trình của tôi...) chưa từng render label này — nên các trang đó thiếu
+ * hẳn 1 dòng phân cách trong sidebar, KHÁC bố cục Trang chủ/Học viện AI.
+ * Đã thêm label vào `PortalV2Shell.tsx` — style dùng chung Ở ĐÂY (thay vì
+ * lặp lại CSS riêng từng trang) để MỌI trang `/v2/*` luôn có cùng 1 kiểu
+ * dáng, không phụ thuộc trang đó có tự định nghĩa `.side-label` hay
+ * không. Giá trị khớp NGUYÊN VĂN 4 file CSS cũ (không đổi thẩm mỹ). */
+[data-ui="v2"] .side-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: #6f6a91;
+  margin: 10px 12px 6px;
+}
