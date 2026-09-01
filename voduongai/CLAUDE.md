@@ -9413,3 +9413,76 @@ làm tối 1 cạnh → texture phủ toàn khung độc lập với màu nền)
 root cause không có nghĩa đã hết triệu chứng, phải audit LẠI TỪ ĐẦU (đo
 `getComputedStyle` thật, không suy đoán) mỗi lần Founder báo lại đúng câu
 mô tả cũ, thay vì giả định "chắc chưa deploy kịp"/"cache trình duyệt".
+
+## Giai đoạn 10 (tiếp) — PR #101/#102: khí quyển trang trí còn sót + hex nền lệch với thẻ Hub
+
+Ngay sau khi PR #99 lên Production, Founder gửi lại đúng câu "hãy xoá lớp
+phủ" ở My Story/Mirror/Bản đồ hành trình — audit lại code (không tin đã
+xong chỉ vì PR #99 đã chốt "3 lớp texture toàn khung") phát hiện: PR #99
+chỉ gỡ 3 lớp TEXTURE phủ toàn khung, KHÔNG đụng tới các lớp KHÍ QUYỂN
+TRANG TRÍ khác vẫn render KHÔNG ĐIỀU KIỆN (không gate theo `bgOverride`)
+— đúng cùng bản chất "lớp phủ" (mỗi lớp là 1 `position:absolute` đè lên
+vùng nội dung) nhưng chưa từng bị đụng tới trong toàn bộ chuỗi sửa nền
+trước đó.
+
+**PR #101 — gate nốt phần khí quyển còn sót:**
+- `MirrorChamber.tsx`: gợn phản chiếu (`.mirror-ripple` x2), hạt sáng
+  trôi (`.mirror-particle` x4), vệt chiếu (`.mirror-reflection-line`), và
+  khối SVG gương kính lớn (`mirrorGlass`/`mirrorFrame`/2 sheen) — bỏ khi
+  có `bgOverride`, giữ nguyên 100% ở `/portal/mirror` 1.0.
+- `JourneyMapAtlas.tsx`: `MapMountains` (`.map-mountains`, silhouette đáy
+  khung `position:absolute`) — PR #99 từng giữ lại vì lý luận "không phải
+  lớp mờ phủ toàn khung", nhưng vẫn LÀ 1 lớp phủ tuyệt đối che 160px đáy
+  khung — gộp vào cùng nhóm `!bgOverride` với `.map-coordinate-grid`/
+  `.map-topo-lines`.
+- Giữ nguyên: `CompassRose` (la bàn — decoration NẰM TRONG luồng nội
+  dung header, không `position:absolute` đè lên gì), `story-cork-note`
+  (nội dung thật của My Story, không phải overlay).
+
+**PR #102 — Founder tiếp tục: "xoá nền cũ từ portal 1.0 => sử dụng màu
+nền đã thống nhất theo trang hub hành trình của tôi".** Audit phát hiện
+`TAB_HEADER_BG` (biến gán vào `--bg`, cascade toàn header+tab-bar+nội
+dung mỗi tab — cơ chế "1 nguồn --bg duy nhất" đã chốt ở đợt trước) của
+đúng 3 tab My Story/Mirror/Bản đồ hành trình là 1 hex ĐẶC tự chọn riêng
+(đợt "nền đặc toàn trang" trước đó) — KHÔNG khớp byte-for-byte với
+gradient THẬT hiển thị trên chính thẻ Hub của tab đó
+(`HUB_CARD_STYLE[...].bg`, cùng tông nhưng khác giá trị số, vd. My Story:
+`TAB_HEADER_BG` cũ `#5A4010` vs `HUB_CARD_STYLE["my-story"].bg`
+`linear-gradient(135deg,#8B6914,#2E2306)`). "Đã thống nhất" trước đó chỉ
+đúng ở tầng CƠ CHẾ (1 biến `--bg` duy nhất), chưa đúng ở tầng GIÁ TRỊ.
+
+**Đã sửa:** đổi `TAB_HEADER_BG["my-story"]`/`["mirror"]`/
+`["ban-do-hanh-trinh"]` thành tham chiếu THẲNG `HUB_CARD_STYLE[...].bg`
+(không copy hex) — mở tab giờ khớp pixel-for-pixel với đúng màu đã thấy
+trên thẻ Hub. `--bg` giờ giữ 1 chuỗi gradient CSS (không phải màu đơn) —
+verify qua Playwright xác nhận cascade CSS custom property hoạt động
+đúng với giá trị gradient (`getComputedStyle().backgroundImage` khớp
+đúng ở cả 3 điểm đo: root/topbar/panel).
+
+**Cố ý KHÔNG đổi 2 tab còn lại** (Nhật ký học tập/Khu vườn của bạn) —
+`NhatKyHocTapTab.tsx` dùng `var(--bg)` làm `border-color` cho các chấm
+timeline (`border: 2px solid var(--bg)`) — gán 1 chuỗi gradient vào đó
+sẽ tạo ra `border-color` không hợp lệ (CSS chỉ chấp nhận màu đơn cho
+`border-color`, không chấp nhận hàm gradient), browser sẽ âm thầm bỏ
+qua khai báo đó. 2 tab này giữ nguyên flat hex như cũ.
+
+**Verify (cả 2 PR):** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495
+pass, `rm -rf .next && npm run build` sạch. PR #101 verify qua Playwright
+(route dev-preview tạm, đã xoá): `document.querySelectorAll` cho cả 8
+selector overlay (ripple/particle/reflection-line/glass-veil/svg-art/
+mountains/topo-lines/coord-grid) = 0 khi có `bgOverride`, chụp ảnh xác
+nhận cả 3 tab chỉ còn màu nền phẳng. PR #102 verify qua Playwright (route
+dev-preview tạm khác, đã xoá): gán `--bg` = gradient Mirror thật, đo
+`getComputedStyle` ở 3 cấp DOM (root `.htct`/`.topbar`/`.panel`) đều trả
+đúng `linear-gradient(135deg, rgb(27, 44, 62), rgb(10, 20, 31))`.
+
+Cả 2 PR đã merge `main` + deploy Production ngay sau khi xong, xác nhận
+qua `list_deployments`: PR #101 (commit `1d57074`) → `READY`/
+`production`; PR #102 (commit `ba7d733`) → đang build lúc ghi tài liệu
+này, xem báo cáo cuối cùng gửi Founder để biết kết quả deploy.
+
+**Bài học tiếp nối:** ngay cả sau khi hợp nhất về "1 nguồn `--bg` duy
+nhất" (đợt PR #95), vẫn cần kiểm tra GIÁ TRỊ gán vào nguồn đó có thực sự
+khớp với nơi khác tự nhận "cùng 1 màu" hay không (ở đây là thẻ Hub) —
+thống nhất CƠ CHẾ không tự động đảm bảo thống nhất GIÁ TRỊ nếu 2 nơi độc
+lập tự chọn số liệu riêng dù cùng ý đồ thẩm mỹ.
