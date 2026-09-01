@@ -1893,14 +1893,6 @@ body {
   background-size: 140px 140px;
 }
 
-/* Founder báo "vẫn còn lớp phủ" ở tab nhúng My Story 2.0 dù nền base đã
- * phẳng — chính texture chấm tròn `::after` ở trên (phủ toàn khung, độc
- * lập với `background` inline) là nguyên nhân. Modifier tắt hẳn nó, chỉ
- * áp dụng khi `MyStoryBook` nhận `bgOverride` (ngữ cảnh tab nhúng 2.0) —
- * `/portal/story` 1.0 không dùng class này, giữ nguyên texture như cũ. */
-.story-corkboard-bg--flat::after {
-  display: none;
-}
 
 .story-cork-note {
   border-radius: 4px;
@@ -2154,7 +2146,7 @@ body {
   mask-image: radial-gradient(ellipse 70% 55% at 50% 25%, black 0%, transparent 78%);
 }
 
-/* Dãy núi — silhouette tĩnh cuối khung, gợi "còn nhiều chặng đường phía
+/* Dãy núi — silhouette cuối khung, gợi "còn nhiều chặng đường phía
  * trước" (chỉ khí quyển, không phải nội dung — vẽ trực tiếp trong SVG). */
 .map-mountains {
   position: absolute;
@@ -2164,6 +2156,48 @@ body {
   width: 100%;
   z-index: 0;
   pointer-events: none;
+}
+
+/* Hiệu ứng gió — Founder yêu cầu thêm cho khung núi (đợt khôi phục khí
+ * quyển sau khi bug "2 lớp nền" đã sửa tận gốc ở tầng cấu trúc, PR #105).
+ * 2 lớp gộp lại tạo cảm giác "gió thổi qua rặng núi", vẫn giữ đúng tinh
+ * thần "khám phá chậm rãi" (mục 18.9) — biên độ nhỏ, chu kỳ dài, không
+ * giật/nảy:
+ * (a) mỗi lớp núi (3 `<path>`, xa→gần) đung đưa ngang RẤT NHẸ, tốc độ
+ *     khác nhau theo lớp — lớp xa (mờ nhất) đung đưa chậm nhất/biên độ
+ *     nhỏ nhất, lớp gần (đậm nhất) nhanh hơn/biên độ lớn hơn một chút —
+ *     đúng cảm giác parallax gió thật (gần thấy rõ hơn xa);
+ * (b) 2-3 "vệt gió" (`.map-wind-wisp`, path cong mảnh) trôi ngang qua dải
+ *     núi theo chu kỳ, mờ dần ở 2 đầu — gợi từng cơn gió thổi qua, không
+ *     phải chuyển động liên tục đều đều. */
+.map-mountain-layer-1 { animation: map-mountain-sway-1 26s ease-in-out infinite; transform-origin: 50% 100%; }
+.map-mountain-layer-2 { animation: map-mountain-sway-2 19s ease-in-out infinite; transform-origin: 50% 100%; }
+.map-mountain-layer-3 { animation: map-mountain-sway-3 14s ease-in-out infinite; transform-origin: 50% 100%; }
+
+@keyframes map-mountain-sway-1 {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2px); }
+}
+@keyframes map-mountain-sway-2 {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-3px); }
+}
+@keyframes map-mountain-sway-3 {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+}
+
+.map-wind-wisp {
+  animation: map-wind-gust 9s ease-in-out infinite;
+}
+.map-wind-wisp:nth-child(2) { animation-delay: 3s; }
+.map-wind-wisp:nth-child(3) { animation-delay: 6s; }
+
+@keyframes map-wind-gust {
+  0% { transform: translateX(-40px); opacity: 0; }
+  15% { opacity: 0.5; }
+  85% { opacity: 0.5; }
+  100% { transform: translateX(560px); opacity: 0; }
 }
 
 /* La bàn — thở rất chậm, lay rất nhẹ (Motion: "compass breathing"). */
@@ -2214,7 +2248,11 @@ body {
   .map-compass,
   .map-compass-needle,
   .map-route-path,
-  .map-chapter-pulse {
+  .map-chapter-pulse,
+  .map-mountain-layer-1,
+  .map-mountain-layer-2,
+  .map-mountain-layer-3,
+  .map-wind-wisp {
     animation: none;
   }
 }

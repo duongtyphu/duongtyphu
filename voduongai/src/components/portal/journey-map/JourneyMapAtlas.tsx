@@ -121,23 +121,34 @@ function CompassRose() {
   );
 }
 
-/** Dãy núi — 3 lớp silhouette tĩnh cuối khung, chỉ khí quyển trang trí
-    ("còn nhiều chặng đường phía trước"), không phải nội dung. */
+/** Dãy núi — 3 lớp silhouette cuối khung, chỉ khí quyển trang trí ("còn
+    nhiều chặng đường phía trước"), không phải nội dung. Mỗi lớp đung đưa
+    ngang rất nhẹ (`.map-mountain-layer-{1,2,3}`, tốc độ khác nhau theo
+    độ sâu — parallax) + 3 "vệt gió" (`.map-wind-wisp`) trôi ngang theo
+    chu kỳ, gợi cảm giác gió thổi qua rặng núi (Founder yêu cầu riêng, đợt
+    khôi phục khí quyển sau khi bug "2 lớp nền" đã sửa tận gốc — xem
+    `globals.css`). */
 function MapMountains() {
   return (
     <svg className="map-mountains" viewBox="0 0 500 160" preserveAspectRatio="none" height="160" aria-hidden>
       <path
+        className="map-mountain-layer-1"
         d="M0 160 L0 96 L60 58 L120 100 L180 40 L240 96 L300 64 L360 108 L420 52 L470 92 L500 70 L500 160 Z"
         fill="rgba(251,146,60,0.05)"
       />
       <path
+        className="map-mountain-layer-2"
         d="M0 160 L0 122 L80 84 L150 128 L220 78 L290 130 L360 90 L430 132 L500 100 L500 160 Z"
         fill="rgba(251,146,60,0.08)"
       />
       <path
+        className="map-mountain-layer-3"
         d="M0 160 L0 140 L100 112 L200 146 L300 108 L400 144 L500 118 L500 160 Z"
         fill="rgba(251,146,60,0.12)"
       />
+      <path className="map-wind-wisp" d="M-40 70 Q -10 62 20 70 T 80 70" stroke="rgba(253,222,155,.4)" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <path className="map-wind-wisp" d="M-40 95 Q -10 89 20 95 T 80 95" stroke="rgba(253,222,155,.32)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+      <path className="map-wind-wisp" d="M-40 50 Q -10 44 20 50 T 80 50" stroke="rgba(253,222,155,.28)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
     </svg>
   );
 }
@@ -276,24 +287,18 @@ export function JourneyMapAtlas({
   return (
     <div className={fullBleed ? "relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8" : "relative min-h-full overflow-hidden"}>
       <div className="map-parchment-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
-      {/* `.map-coordinate-grid`/`.map-topo-lines` là 2 lớp texture PHỦ TOÀN
-          KHUNG (position:absolute;inset:0) — đúng nghĩa đen "lớp phủ"
-          Founder báo lại ở tab nhúng 2.0. Bỏ hẳn khi có `bgOverride` (tín
-          hiệu ngữ cảnh tab nhúng, đã dùng cho background/boxShadow ở
-          trên). Founder tiếp tục báo còn "lớp phủ" sau khi 2 lớp texture
-          này đã bỏ (PR #99) — `MapMountains` (`.map-mountains`,
-          `position:absolute;inset-x:0;bottom:0`, `globals.css`) trước đó
-          giữ lại vì lý luận "silhouette đáy khung, không phải lớp mờ phủ
-          toàn khung" — nhưng vẫn LÀ 1 lớp phủ tuyệt đối che 160px đáy
-          khung, đúng cùng bản chất. Bỏ luôn khi có `bgOverride`.
-          `/portal/hanhtrinhcuatoi/ban-do` 1.0 giữ nguyên cả 3 lớp như cũ. */}
-      {!bgOverride && (
-        <>
-          <div className="map-coordinate-grid" aria-hidden />
-          <div className="map-topo-lines" aria-hidden />
-          <MapMountains />
-        </>
-      )}
+      {/* ĐÃ KHÔI PHỤC theo yêu cầu Founder — 3 lớp khí quyển (lưới toạ độ/
+          đường topo/silhouette núi) từng bị gate `!bgOverride` (PR #99/
+          #101, khi "lớp phủ" còn bị nhầm là do các lớp này) — root cause
+          THẬT của "2 lớp nền" hoá ra là margin âm phá khung sai ngữ cảnh
+          (PR #105, đã sửa tận gốc, không liên quan các lớp khí quyển
+          này). Giờ render KHÔNG ĐIỀU KIỆN, giống hệt
+          `/portal/hanhtrinhcuatoi/ban-do` 1.0 — an toàn vì `fullBleed`
+          (PR #105) đã đảm bảo khung chứa các lớp này khớp khít
+          `.tab-panel`, không còn tràn ra ngoài nữa. */}
+      <div className="map-coordinate-grid" aria-hidden />
+      <div className="map-topo-lines" aria-hidden />
+      <MapMountains />
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí

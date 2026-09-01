@@ -414,7 +414,7 @@ export function MyStoryBook({
   if (isBookLoading) {
     return (
       <div
-        className={`${variant === "corkboard" ? `story-corkboard-bg${bgOverride ? " story-corkboard-bg--flat" : ""}` : "story-book-bg"} min-h-[60vh] rounded-3xl`}
+        className={`${variant === "corkboard" ? "story-corkboard-bg" : "story-book-bg"} min-h-[60vh] rounded-3xl`}
         style={variant === "corkboard" && bgOverride ? { background: bgOverride } : undefined}
         aria-hidden
       />
@@ -424,16 +424,16 @@ export function MyStoryBook({
   if (variant === "corkboard") {
     return (
       <div className={fullBleed ? "relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8" : "relative min-h-full overflow-hidden"}>
-        {/* Founder báo lại "vẫn còn lớp phủ" ở tab nhúng 2.0 dù nền base đã
-            phẳng (`bgOverride`) — root cause là `::after` texture chấm tròn
-            của `.story-corkboard-bg` (opacity .4, phủ toàn khung, ĐỘC LẬP
-            với `background` inline) vẫn còn hiện. Thêm modifier class tắt
-            hẳn `::after` này CHỈ khi `bgOverride` có giá trị (đúng tín hiệu
-            "đang ở ngữ cảnh tab nhúng 2.0" đã dùng cho background/boxShadow
-            — không cần thêm prop mới). `/portal/story` 1.0 (`bgOverride`
-            luôn undefined) giữ nguyên texture như cũ. */}
+        {/* ĐÃ KHÔI PHỤC theo yêu cầu Founder — texture chấm tròn `::after`
+            (`.story-corkboard-bg`) từng bị tắt qua modifier `--flat` khi
+            có `bgOverride` (PR #99, khi "lớp phủ" còn bị nhầm là do lớp
+            này) — root cause THẬT của "2 lớp nền" hoá ra là margin âm phá
+            khung sai ngữ cảnh (PR #105, đã sửa tận gốc, không liên quan
+            texture này). Bỏ hẳn modifier `--flat`, giờ render giống hệt
+            `/portal/story` 1.0 — an toàn vì `fullBleed` (PR #105) đã đảm
+            bảo khung chứa texture này khớp khít `.tab-panel`. */}
         <div
-          className={`story-corkboard-bg${bgOverride ? " story-corkboard-bg--flat" : ""}`}
+          className="story-corkboard-bg"
           style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined}
           aria-hidden
         />

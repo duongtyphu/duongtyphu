@@ -195,86 +195,78 @@ export function MirrorChamber({
   return (
     <div className={fullBleed ? "relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8" : "relative min-h-full overflow-hidden"}>
       <div className="mirror-chamber-bg" style={bgOverride ? { background: bgOverride, boxShadow: bgShadow } : undefined} aria-hidden />
-      {/* `.mirror-glass-veil` ("sương kính bạc phủ toàn khung") là đúng
-          nghĩa đen "lớp phủ" Founder báo lại ở tab nhúng 2.0 — bỏ hẳn khi
-          có `bgOverride` (tín hiệu ngữ cảnh tab nhúng, đã dùng cho
-          background/boxShadow ở trên). `/portal/mirror` 1.0 giữ nguyên. */}
-      {!bgOverride && <div className="mirror-glass-veil" aria-hidden />}
-      {/* Founder tiếp tục báo "còn lớp phủ" ở tab nhúng 2.0 SAU KHI 3 lớp
-          texture toàn khung đã bỏ (PR #99) — root cause còn lại là chính
-          các lớp KHÍ QUYỂN TRANG TRÍ này (gợn phản chiếu/hạt sáng/vệt
-          chiếu/khối gương kính lớn) vẫn render KHÔNG ĐIỀU KIỆN dù đã có
-          `bgOverride` — mỗi lớp là 1 `position:absolute` phủ lên vùng nội
-          dung, đúng nghĩa "lớp phủ" dù không phải full-frame texture. Bỏ
-          hẳn khi có `bgOverride` (đúng tín hiệu ngữ cảnh tab nhúng 2.0 đã
-          dùng cho `.mirror-glass-veil`) — giữ nguyên 100% ở `/portal/mirror`
-          1.0 (`bgOverride` luôn undefined ở đó). */}
-      {!bgOverride && (
-        <>
-          <div
-            className="mirror-ripple"
-            style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130 }}
-            aria-hidden
-          />
-          <div
-            className="mirror-ripple"
-            style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130, animationDelay: "4.5s" }}
-            aria-hidden
-          />
-          <div className="mirror-particle" style={{ width: 2, height: 2, left: "22%", top: "30%", animationDelay: ".5s" }} aria-hidden />
-          <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "70%", top: "22%", animationDelay: "3s" }} aria-hidden />
-          <div className="mirror-particle" style={{ width: 2, height: 2, left: "34%", top: "64%", animationDelay: "1.8s" }} aria-hidden />
-          <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "78%", top: "58%", animationDelay: "5s" }} aria-hidden />
-          <div className="mirror-reflection-line" aria-hidden />
-          <svg
-            className={
-              artAlign === "right"
-                ? "pointer-events-none absolute bottom-[4%] right-[3%] z-0 opacity-[0.5] md:right-[5%]"
-                : "pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 opacity-[0.16]"
-            }
-            width={artAlign === "right" ? 220 : 460}
-            height={artAlign === "right" ? 326 : 680}
-            viewBox="0 0 460 680"
-            fill="none"
-            aria-hidden
-          >
-            <defs>
-              <linearGradient id="mirrorFrame" x1="0" y1="0" x2="460" y2="680" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#67E8F9" />
-                <stop offset="50%" stopColor="#22D3EE" />
-                <stop offset="100%" stopColor="#0E7490" />
-              </linearGradient>
-              <radialGradient id="mirrorGlass" cx="42%" cy="32%" r="70%">
-                <stop offset="0%" stopColor="#A5F3FC" stopOpacity="0.55" />
-                <stop offset="35%" stopColor="#22D3EE" stopOpacity="0.28" />
-                <stop offset="65%" stopColor="#0B1220" stopOpacity="0.55" />
-                <stop offset="100%" stopColor="#050810" stopOpacity="0.88" />
-              </radialGradient>
-              <linearGradient id="mirrorSheen" x1="110" y1="90" x2="230" y2="260" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-                <stop offset="45%" stopColor="#ffffff" stopOpacity="0.5" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-              </linearGradient>
-              <linearGradient id="mirrorSheen2" x1="260" y1="380" x2="340" y2="480" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-                <stop offset="50%" stopColor="#ffffff" stopOpacity="0.22" />
-                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            <rect x="212" y="580" width="36" height="86" rx="14" fill="url(#mirrorFrame)" fillOpacity="0.5" />
-            <ellipse cx="230" cy="300" rx="210" ry="290" fill="url(#mirrorGlass)" stroke="url(#mirrorFrame)" strokeWidth="6" />
-            <ellipse cx="230" cy="300" rx="196" ry="276" fill="none" stroke="#22D3EE" strokeOpacity="0.18" strokeWidth="1" />
-            <path
-              className="mirror-glasssheen"
-              d="M110 90 L230 260"
-              stroke="url(#mirrorSheen)"
-              strokeWidth="46"
-              strokeLinecap="round"
-            />
-            <path d="M270 390 L330 460" stroke="url(#mirrorSheen2)" strokeWidth="28" strokeLinecap="round" />
-          </svg>
-        </>
-      )}
+      {/* ĐÃ KHÔI PHỤC theo yêu cầu Founder — toàn bộ khí quyển trang trí
+          (sương kính/gợn phản chiếu/hạt sáng/vệt chiếu/khối gương kính
+          lớn) từng bị gate `!bgOverride` (PR #101, khi "lớp phủ" còn bị
+          nhầm là do các lớp này) — root cause THẬT của "2 lớp nền" hoá ra
+          là margin âm phá khung sai ngữ cảnh (PR #105, đã sửa tận gốc,
+          không liên quan các lớp khí quyển này). Giờ render KHÔNG ĐIỀU
+          KIỆN, giống hệt `/portal/mirror` 1.0 — an toàn vì `fullBleed`
+          (PR #105) đã đảm bảo khung chứa các lớp này khớp khít
+          `.tab-panel`, không còn tràn ra ngoài nữa. */}
+      <div className="mirror-glass-veil" aria-hidden />
+      <div
+        className="mirror-ripple"
+        style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130 }}
+        aria-hidden
+      />
+      <div
+        className="mirror-ripple"
+        style={{ width: 260, height: 260, left: "50%", top: "46%", marginLeft: -130, marginTop: -130, animationDelay: "4.5s" }}
+        aria-hidden
+      />
+      <div className="mirror-particle" style={{ width: 2, height: 2, left: "22%", top: "30%", animationDelay: ".5s" }} aria-hidden />
+      <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "70%", top: "22%", animationDelay: "3s" }} aria-hidden />
+      <div className="mirror-particle" style={{ width: 2, height: 2, left: "34%", top: "64%", animationDelay: "1.8s" }} aria-hidden />
+      <div className="mirror-particle" style={{ width: 1.5, height: 1.5, left: "78%", top: "58%", animationDelay: "5s" }} aria-hidden />
+      <div className="mirror-reflection-line" aria-hidden />
+      <svg
+        className={
+          artAlign === "right"
+            ? "pointer-events-none absolute bottom-[4%] right-[3%] z-0 opacity-[0.5] md:right-[5%]"
+            : "pointer-events-none absolute left-1/2 top-1/2 z-0 -translate-x-1/2 -translate-y-1/2 opacity-[0.16]"
+        }
+        width={artAlign === "right" ? 220 : 460}
+        height={artAlign === "right" ? 326 : 680}
+        viewBox="0 0 460 680"
+        fill="none"
+        aria-hidden
+      >
+        <defs>
+          <linearGradient id="mirrorFrame" x1="0" y1="0" x2="460" y2="680" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#67E8F9" />
+            <stop offset="50%" stopColor="#22D3EE" />
+            <stop offset="100%" stopColor="#0E7490" />
+          </linearGradient>
+          <radialGradient id="mirrorGlass" cx="42%" cy="32%" r="70%">
+            <stop offset="0%" stopColor="#A5F3FC" stopOpacity="0.55" />
+            <stop offset="35%" stopColor="#22D3EE" stopOpacity="0.28" />
+            <stop offset="65%" stopColor="#0B1220" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#050810" stopOpacity="0.88" />
+          </radialGradient>
+          <linearGradient id="mirrorSheen" x1="110" y1="90" x2="230" y2="260" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="45%" stopColor="#ffffff" stopOpacity="0.5" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+          <linearGradient id="mirrorSheen2" x1="260" y1="380" x2="340" y2="480" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
+            <stop offset="50%" stopColor="#ffffff" stopOpacity="0.22" />
+            <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        <rect x="212" y="580" width="36" height="86" rx="14" fill="url(#mirrorFrame)" fillOpacity="0.5" />
+        <ellipse cx="230" cy="300" rx="210" ry="290" fill="url(#mirrorGlass)" stroke="url(#mirrorFrame)" strokeWidth="6" />
+        <ellipse cx="230" cy="300" rx="196" ry="276" fill="none" stroke="#22D3EE" strokeOpacity="0.18" strokeWidth="1" />
+        <path
+          className="mirror-glasssheen"
+          d="M110 90 L230 260"
+          stroke="url(#mirrorSheen)"
+          strokeWidth="46"
+          strokeLinecap="round"
+        />
+        <path d="M270 390 L330 460" stroke="url(#mirrorSheen2)" strokeWidth="28" strokeLinecap="round" />
+      </svg>
 
       <div className="relative z-10 px-4 py-6 md:px-8 md:py-8">
       {/* Content Gutter — giữ nguyên đúng khoảng cách trước đây, chỉ khí
