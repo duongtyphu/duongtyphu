@@ -255,6 +255,7 @@ export function MyStoryBook({
   variant = "book",
   bgOverride,
   bgShadow,
+  fullBleed = true,
 }: {
   memberSince: Date | null;
   reflections: Reflection[];
@@ -293,6 +294,16 @@ export function MyStoryBook({
       (px cố định quanh 4 cạnh, không phụ thuộc chiều cao nội dung, an toàn
       cho trang dài) áp cùng div với `bgOverride`. */
   bgShadow?: string;
+  /** RỦI RO CAO — Founder báo "vẫn còn 2 lớp nền" NHIỀU LẦN dù màu đã
+      khớp tuyệt đối. Root cause thật sự: `-mx-4 -my-6 md:-mx-8 md:-my-8`
+      viết cho ngữ cảnh 1.0 (`/portal/story`, trang cha CÓ padding cần
+      phá) — ở tab nhúng 2.0, `.tab-panel` KHÔNG có padding nào để bù,
+      margin âm vẫn kéo div tràn 32px mỗi cạnh, lấn vào khe hở trên
+      `.tab-bar` — đây MỚI là "2 lớp" thật. `fullBleed=false` (chỉ set ở
+      tab nhúng 2.0, cùng `variant="corkboard"`) bỏ margin âm — an toàn
+      vì không có padding nào cần bù. Mặc định `true` giữ nguyên 100%
+      hành vi 1.0 (variant "book" không dùng prop này). */
+  fullBleed?: boolean;
 }) {
   const editMode = useEditMode();
   const { items: chromeItems, update: updateChrome } = useCollection<StoryChrome>("story-chrome", [seedChrome], {
@@ -412,7 +423,7 @@ export function MyStoryBook({
 
   if (variant === "corkboard") {
     return (
-      <div className="relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8">
+      <div className={fullBleed ? "relative -mx-4 -my-6 min-h-full overflow-hidden md:-mx-8 md:-my-8" : "relative min-h-full overflow-hidden"}>
         {/* Founder báo lại "vẫn còn lớp phủ" ở tab nhúng 2.0 dù nền base đã
             phẳng (`bgOverride`) — root cause là `::after` texture chấm tròn
             của `.story-corkboard-bg` (opacity .4, phủ toàn khung, ĐỘC LẬP

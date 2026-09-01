@@ -529,6 +529,7 @@ export function HanhTrinhCuaToiClient({
                       mirrorInviteText={{ prefix: "Muốn im lặng một chút?", label: "Ghé qua Mirror" }}
                       variant="corkboard"
                       bgOverride={STORY_BG}
+                      fullBleed={false}
                     />
                   </div>
                 )}
@@ -541,6 +542,7 @@ export function HanhTrinhCuaToiClient({
                       onOpenStory={() => setActiveTab("my-story")}
                       storyInviteLabel="Chép lại câu trả lời trong My Story"
                       bgOverride={MIRROR_BG}
+                      fullBleed={false}
                       hideCompanionLogo
                       artAlign="right"
                     />
@@ -556,6 +558,7 @@ export function HanhTrinhCuaToiClient({
                       workspaceHref="/v2/muc-tieu"
                       premiumHref="/v2/premium"
                       bgOverride={MAP_BG}
+                      fullBleed={false}
                       chapterDestinations={[
                         { href: "/v2/hoc-vien-ai", label: "Học viện AI" },
                         { href: "/v2/hoc-vien-ai", label: "AI Workspace" },
