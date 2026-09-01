@@ -17,6 +17,177 @@ KHÔNG bao giờ để trang 2.0 điều hướng thẳng sang route `/portal/*`
 `SuMenhCompanionContent` nhận `flipbookHref`, `CompanionFlipbook` nhận
 `backHref`.
 
+## Giai đoạn 11 — audit toàn diện "Hành trình của tôi" ([PR #107](https://github.com/duongtyphu/duongtyphu/pull/107))
+
+Founder yêu cầu audit lại toàn bộ `/v2/hanh-trinh-cua-toi` (cả 6 tab) trước
+khi thực hiện. Đã đọc trực tiếp code từng file (không suy đoán, không tin
+báo cáo cũ) và báo cáo 3 bug thật trước khi sửa — Founder duyệt cả 3 kèm
+2 việc mới (gỡ theme-toggle sidebar + audit "sidebar nhảy") trong cùng 1
+chỉ đạo chi tiết. Cả 5 hạng mục đã hoàn tất, merge `main` + deploy
+Production, xác nhận `READY`.
+
+**1 — My Story (corkboard): "Ghim note mới" không hiện ngay.** Root cause
+đã audit đúng trong tài liệu cũ: `useReflections()`/`useMemoryCapsules()`
+(2 hook client-side trong `WriteNook`) quản state NỘI BỘ riêng
+(`submitAnswer`/`addCapsule` chỉ `setReflections`/`setCapsules` bên trong
+CHÍNH hook, không trả lại dòng vừa tạo) — hoàn toàn tách biệt với
+`reflections`/`capsules` (props tĩnh `MyStoryBook` dùng để dựng
+`corkNotes`). Đã sửa "gộp thành 1 nguồn" đúng yêu cầu Founder:
+- `submitAnswer()` (`reflections.ts`)/`addCapsule()` (`memoryCapsules.ts`)
+  giờ trả về `Promise<Reflection|undefined>`/`Promise<MemoryCapsule|undefined>`
+  (dòng vừa tạo) thay vì `Promise<void>` — đã grep xác nhận cả 8 lời gọi
+  hiện có (`MyStoryBook.tsx` ×4, `ReflectionJournalCard.tsx`,
+  `AddMemoryCapsuleForm.tsx`, `LifeMomentBubble.tsx`,
+  `FirstFootprintCeremony.tsx`) đều chỉ `await` không dùng giá trị trả về
+  — đổi kiểu trả về an toàn tuyệt đối, không cần sửa nơi khác.
+- `MyStoryBook.tsx` — đổi `reflections`/`capsules` từ prop tĩnh trực tiếp
+  sang `useState` khởi tạo từ prop (`initialReflections`/`initialCapsules`),
+  thêm `handleReflectionAdded()`/`handleCapsuleAdded()` (prepend dòng mới
+  vào state) truyền xuống `WriteNook` qua 2 prop callback mới
+  (`onReflectionAdded`/`onCapsuleAdded`, optional). Cả 3 vị trí render
+  `WriteNook` (corkboard + book-empty + book-normal) đều gọi callback
+  ngay sau `submitAnswer()`/`addCapsule()` trả về dòng thật — note mới
+  hiện NGAY trong `corkNotes` (biến đổi phái sinh từ `reflections`/
+  `capsules` state) mà không cần tải lại trang. Áp dụng cho CẢ 2 variant
+  ("book" lẫn "corkboard") vì cùng 1 root cause, cùng lợi ích cho
+  `/portal/story` 1.0.
+
+**2 — Tab "Nhật ký học tập" — 4 sửa theo đúng yêu cầu Founder** (đè quyết
+định "wire onClick" trong audit gốc bằng quyết định thiết kế mới của
+Founder — REMOVE thay vì WIRE 2 CTA, xây LỊCH THẬT thay vì chỉ trang trí):
+- Bỏ hẳn nút "Ghi chú mới" (góc trên, không `onClick`, không form nào
+  phía sau).
+- **Lịch học — 2 nút chuyển tháng điều hướng THẬT.** Trước đó
+  `calendar.days` chỉ tính ĐÚNG 1 THÁNG HIỆN TẠI ở server
+  (`getLearningLogData()`), không có cách nào xem tháng khác. Giải pháp:
+  chuyển việc dựng lịch sang CLIENT, dùng `log.entries` (toàn bộ hoạt
+  động thật — lesson/reflection/capsule, ĐÃ có sẵn trong
+  `LearningLogData`, chỉ chưa được `NhatKyHocTapTab` đọc) để tính
+  `activeDayKeys` không giới hạn tháng nào — `buildCalendarMonth(year,
+  month, ...)` (client, cùng thuật toán `dateKey()`/tính `firstWeekday`/
+  `daysInMonth` y hệt server) dựng lại `calendarDays` cho ĐÚNG
+  `viewYear`/`viewMonth` đang xem, 2 nút Trước/Sau đổi state này — đây là
+  "lịch thật" (phản ánh đúng dữ liệu thật của bất kỳ tháng nào), không
+  phải chỉ trang trí. Dọn `calendar`/`featuredNote`/`CalendarDay` (type +
+  logic tính toán trong `live-learning-log.ts`, gồm cả fetch `members.full_name`
+  chỉ dùng cho `featuredNote.authorName`) — dead code sau khi client tự
+  tính lại, đã grep xác nhận không consumer nào khác đọc 2 field này
+  (`HanhTrinhCuaToiClient.tsx` chỉ đọc `log.stats.notesCount`).
+- Bỏ hẳn link "Tất cả →" (`href="#"`, không đích).
+- **"Ghi chú nổi bật" → "Companion đồng hành"** — thay vì hiển thị
+  reflection/capsule có `description` đầu tiên (không phải khái niệm
+  "Companion nói"), đổi sang 1 câu nói CỦA COMPANION, chọn ngẫu nhiên mỗi
+  lần truy cập — tái dùng NGUYÊN `THOUGHT_SEEDS`/`getRandomThoughtSeed()`
+  (`src/data/portal/thought-seeds.ts`, cùng nguồn dùng ở Mirror/Trang chủ),
+  chọn ở CLIENT sau mount (`useEffect`, tránh hydration mismatch — cùng kỹ
+  thuật `MirrorChamber.tsx`/`TrangChuClient.tsx` đã dùng) — đúng
+  NO-FAKE-DATA, không bịa nội dung mới.
+- Dọn CSS dead code phát sinh (`.jn-cta-btn`, `.htct a.jn-link` — không
+  còn consumer nào sau khi bỏ 2 CTA trên).
+
+**3 — `.jn-flame` (ngọn lửa chuỗi ngày học) — thêm `prefers-reduced-motion:
+reduce`.** Xác nhận đúng bug đã audit: mọi hiệu ứng khác trong "Hành
+trình của tôi" (Khu vườn/My Story/Mirror/Bản đồ hành trình) đều có khối
+`@media (prefers-reduced-motion: reduce)`, riêng `.jn-flame` (thêm ở Giai
+đoạn 10) bị bỏ sót — đã thêm khối tương tự (`animation: none`).
+
+**4 — Sidebar: bỏ công tắc sáng/tối.** Audit phạm vi trước khi sửa (không
+suy đoán từ báo cáo cũ): `ThemeToggle.tsx` (component, `src/components/v2/shell/`)
+chỉ có 1 consumer — `PortalSidebar.tsx` (cùng thư mục `v2/shell/`) — bản
+thân file đó **0 importer thật** (grep xác nhận, cùng kết luận đã ghi
+trong tài liệu này ở mục "Giai đoạn 7" cho `AdminV2Shell.tsx` — dead code
+từ hệ Admin V2Shell cũ) → không có công tắc nào LIVE dùng component này.
+Công tắc DUY NHẤT thật sự hiển thị cho người dùng là 1 bản HARDCODE riêng
+trong `TrangChuClient.tsx` (`themeOn`/`setThemeOn` + `.theme-toggle` div,
+KHÔNG dùng `ThemeToggle.tsx`) — toggle này CHỈ đổi class CSS của chính nút
+switch (`switch`/`switch on`), không đổi theme/`data-v2-theme` hay bất kỳ
+gì khác của trang (đã grep xác nhận `themeOn` không dùng ở đâu khác) —
+thuần trang trí, không có tác dụng thật. Đã xoá hẳn state + JSX khối này.
+
+**5 — Sidebar: đổi nhãn "TIỆN ÍCH NHANH" → "GÓC TIẾN BỘ".** Xác nhận lại
+phạm vi trước khi sửa: `PortalV2Shell.tsx` (sidebar dùng chung ~26 trang,
+gồm `HanhTrinhCuaToiClient.tsx`) **không có** nhãn "TIỆN ÍCH NHANH" nào
+(2 khối `<nav className="main">` không có `side-label` xen giữa) — nhãn
+này chỉ tồn tại ở đúng 6 trang "hand-copy sidebar" (kiến trúc đã ghi nhận
+nhiều lần trong tài liệu này): `CkosDocumentClient.tsx`,
+`CollectionDetailClient.tsx`, `CategoryDetailClient.tsx`,
+`LessonDetailClient.tsx`, `HocVienAiClient.tsx`, `TrangChuClient.tsx` —
+đã đổi cả 6.
+
+**6 — Audit + sửa "sidebar nhảy khi chuyển trang".** Đo bằng Playwright
+THẬT (không suy đoán) — `next dev` + throttle mạng (giả lập độ trễ để
+khung "đang tải" đủ dài quan sát được), theo dõi `document.querySelectorAll`
+mỗi 15-20ms trong lúc bấm chuyển trang: xác nhận `<aside class="sidebar">`
+**biến mất hoàn toàn khỏi DOM** trong suốt quá trình tải, thay bằng nội
+dung `/v2/loading.tsx` (chỉ có spinner, không có sidebar) — rồi mới xuất
+hiện lại `<aside>` của trang đích. Đây CHÍNH LÀ "nhảy lỗi" Founder mô tả.
+
+**Root cause (đã audit kiến trúc trước khi kết luận):** không có
+`layout.tsx` dùng chung nào cho các trang Portal `/v2/*` (chỉ có
+`v2/layout.tsx` gốc — font + `data-ui="v2"`, không có sidebar; và
+`v2/admin/layout.tsx` — CÓ sidebar dùng chung `AdminSidebar` NGOÀI
+`{children}`, kiến trúc ĐÚNG, nhưng chỉ áp dụng cho `/v2/admin/*`) — mọi
+trang Portal (`PortalV2Shell` dùng chung ~18 trang lẫn 12 trang hand-copy
+sidebar) tự render `<aside className="sidebar">` BÊN TRONG chính
+`page.tsx`/Client Component của nó. Vì sidebar không nằm trong 1 layout
+NGOÀI Suspense boundary, `loading.tsx` (Suspense fallback cho toàn bộ cây
+`/v2`, thêm ở đợt "Sửa nguyên nhân gốc thứ 2" trước đó) BỌC LUÔN CẢ
+SIDEBAR mỗi khi trang đích cần thời gian tải (Server Component fetch dữ
+liệu) — sidebar trang cũ biến mất, màn hình rơi về fallback (trước đó chỉ
+có spinner giữa màn hình trắng), rồi sidebar trang mới mới xuất hiện.
+
+**Đã cân nhắc và loại bỏ phương án refactor kiến trúc** (chuyển ~26 trang
+sang 1 `layout.tsx` dùng chung để sidebar là 1 DOM node thật không unmount)
+— rủi ro cao, phạm vi lớn: mỗi trang hiện truyền props RIÊNG cho
+`PortalV2Shell` (`activeHtmlFile`/`searchPlaceholder`/`promoText`/
+`promoButtonTarget`...) mà 1 `layout.tsx` không có cách nhận được từ page
+con trong Next.js App Router (cần Context/route-derived logic hoàn toàn
+mới) — ngoài phạm vi audit lỗi này, để lại như 1 việc riêng nếu Founder
+muốn làm sau.
+
+**Đã sửa đúng NGUYÊN NHÂN gây cảm giác "nhảy" mà không đổi kiến trúc
+routing:** `v2/loading.tsx` giờ tự vẽ 1 khung `<aside>` CÙNG kích thước/
+màu/logo với sidebar thật (`width: var(--v2-sidebar-w, 224px)`,
+`background: var(--v2-sidebar, #150f2e)`, logo SVG + "VO DUONG AI" +
+6 thanh skeleton nav-item) + 1 dải topbar-shaped phía trên nội dung —
+khi chuyển trang, LUÔN có 1 khối hình dạng sidebar hiện diện liên tục
+(sidebar trang cũ → khung sidebar tạm cùng hình dạng → sidebar trang mới),
+không còn khoảnh khắc trắng/trống nào. Verify lại bằng Playwright: `<aside>`
+(bất kỳ, kể cả khung tạm) hiện diện LIÊN TỤC 100% thời gian qua nhiều cặp
+trang (`trang-chu`↔`hoc-vien-ai`, `hanh-trinh-cua-toi`↔`premium`), 0 lần
+đếm được `count===0`, 0 page error.
+
+**File sửa:** `src/lib/portal/reflections.ts`, `src/lib/portal/memoryCapsules.ts`,
+`src/components/portal/story/MyStoryBook.tsx`,
+`src/app/v2/hanh-trinh-cua-toi/NhatKyHocTapTab.tsx`,
+`src/app/v2/hanh-trinh-cua-toi/nhat-ky-hoc-tap-tab.css`,
+`src/lib/portal/live-learning-log.ts`, `src/app/v2/trang-chu/TrangChuClient.tsx`,
+`src/app/v2/loading.tsx`, và 5 file hand-copy sidebar còn lại
+(`CkosDocumentClient.tsx`/`CollectionDetailClient.tsx`/
+`CategoryDetailClient.tsx`/`LessonDetailClient.tsx`/`HocVienAiClient.tsx`).
+
+**Verify:** `tsc --noEmit`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (0 route biến mất). Playwright thật
+qua `next dev` (throttle mạng) xác nhận cả 6 điểm sửa: My Story panel viết
+hiện đúng field, "Ghi chú mới"/"Tất cả →" đã biến mất, 2 nút chuyển tháng
+đổi đúng `monthLabel`/`calendarDays`, "Companion đồng hành" hiện câu ngẫu
+nhiên, 0 "TIỆN ÍCH NHANH" còn sót trong `src/`, sidebar không còn biến mất
+khi chuyển trang. Merge [PR #107](https://github.com/duongtyphu/duongtyphu/pull/107)
+vào `main`, deploy Production — xác nhận `readyState: READY`,
+`target: production`, `curl` xác nhận `/` trả `200` và `/v2/hanh-trinh-cua-toi`
+trả `307` (redirect `/login` đúng — Production có Supabase thật, khác
+sandbox).
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test trên
+Production: (1) ghim 1 note mới ở tab My Story, xác nhận hiện ngay không
+cần F5; (2) bấm 2 nút chuyển tháng ở Lịch học, xác nhận đổi đúng tháng +
+đúng ngày có hoạt động thật của tháng đó; (3) tải lại "Companion đồng
+hành" vài lần (chuyển tab qua lại), xác nhận câu nói đổi ngẫu nhiên; (4)
+bấm qua lại nhiều mục trong sidebar liên tục, xác nhận không còn cảm giác
+"nhảy"/menu biến mất — đặc biệt trên mạng chậm hoặc lần đầu vào 1 trang
+(Server Component cần thời gian fetch dữ liệu thật).
+
 ## ĐỊNH HƯỚNG HIỆN TẠI — VO DUONG AI Portal 2.0, đợt điều chỉnh mới (đã Founder duyệt, CHƯA triển khai)
 
 **Đọc mục này TRƯỚC KHI làm bất kỳ việc gì liên quan `/v2/*`.** Đây là bản kế
