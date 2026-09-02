@@ -33,6 +33,7 @@ import { useRouter } from "next/navigation";
 import type { MnytCategory, MnytGlobeNode, MnytGlossaryTerm, MnytTopicSummary } from "@/lib/portal/live-mnyt";
 import { getMnytGlossaryCategoryMeta } from "@/lib/mnyt/glossary-categories";
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
+import { MnytOnboardingModal } from "./MnytOnboardingModal";
 
 type Props = {
   lang: "vi" | "en";
@@ -46,6 +47,7 @@ type Props = {
   completedIds: string[];
   badgeCount: number;
   interestNames: string[];
+  interests: string[];
 };
 
 const PARTICLE_COUNT = 48;
@@ -77,10 +79,12 @@ export function MnytHomeClient({
   completedIds,
   badgeCount,
   interestNames,
+  interests,
 }: Props) {
   const router = useRouter();
   const isVi = lang === "vi";
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [hoverNode, setHoverNode] = useState<MnytGlobeNode | null>(null);
   const [dragDeg, setDragDeg] = useState(0);
@@ -159,10 +163,8 @@ export function MnytHomeClient({
     setIsPointerDown(false);
   }, []);
 
-  // Modal onboarding (đổi lĩnh vực quan tâm) — Giai đoạn 6 sẽ dựng đủ 6
-  // modal, trong đó có modal này; nút dưới đây chưa mở được gì cho tới lúc
-  // đó (đúng nguyên tắc "không giả vờ chạy được" — không gắn hành vi giả).
-  const onOpenOnboarding = useCallback(() => {}, []);
+  const onOpenOnboarding = useCallback(() => setShowOnboarding(true), []);
+  const onCloseOnboarding = useCallback(() => setShowOnboarding(false), []);
 
   const openRandomTopic = useCallback(() => {
     if (globeNodes.length === 0) return;
@@ -179,6 +181,7 @@ export function MnytHomeClient({
     pathViewTitle: isVi ? "Xem lộ trình học tập của bạn" : "View your learning path",
     interestNote: isVi ? `Đang ưu tiên: ${interestNames.join(", ")}` : `Prioritizing: ${interestNames.join(", ")}`,
     changeInterests: isVi ? "Đổi lĩnh vực" : "Change fields",
+    pickInterests: isVi ? "Chọn lĩnh vực quan tâm" : "Pick your fields",
     globeCaption: isVi ? "Kéo để xoay quả cầu · Chạm vào 1 nốt để xem trước ý tưởng" : "Drag to rotate · Hover a node to preview an idea",
     globeSectionLabel: isVi ? "KHÔNG GIAN Ý TƯỞNG" : "IDEA SPACE",
     trendingLabel: isVi ? "🔥 Đang thịnh hành" : "🔥 Trending now",
@@ -240,14 +243,12 @@ export function MnytHomeClient({
         </div>
       </div>
 
-      {interestNames.length > 0 && (
-        <div className="mnyt-home-interests-note">
-          <span>{t.interestNote}</span>
-          <button type="button" onClick={onOpenOnboarding}>
-            {t.changeInterests}
-          </button>
-        </div>
-      )}
+      <div className="mnyt-home-interests-note">
+        {interestNames.length > 0 && <span>{t.interestNote}</span>}
+        <button type="button" onClick={onOpenOnboarding}>
+          {interestNames.length > 0 ? t.changeInterests : t.pickInterests}
+        </button>
+      </div>
 
       <div className="mnyt-home-dash-grid">
         <Link
@@ -517,6 +518,10 @@ export function MnytHomeClient({
           );
         })}
       </div>
+
+      {showOnboarding && (
+        <MnytOnboardingModal lang={lang} categories={categories} initialInterests={interests} onClose={onCloseOnboarding} />
+      )}
     </section>
   );
 }

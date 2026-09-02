@@ -770,6 +770,111 @@
   cursor: not-allowed;
 }
 
+.mnyt .mnyt-onboarding-card {
+  max-width: 520px;
+  width: 100%;
+  background: #12111c;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 20px;
+  padding: clamp(20px, 5vw, 32px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.mnyt .mnyt-onboarding-orb {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.35), transparent 70%);
+  pointer-events: none;
+}
+.mnyt .mnyt-onboarding-eyebrow {
+  position: relative;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--violet-light);
+  text-transform: uppercase;
+}
+.mnyt .mnyt-onboarding-title {
+  position: relative;
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 22px;
+  margin: 8px 0 6px;
+}
+.mnyt .mnyt-onboarding-body {
+  position: relative;
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0 0 22px;
+  line-height: 1.5;
+}
+.mnyt .mnyt-onboarding-chips {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.mnyt .mnyt-onboarding-chip {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(231, 229, 240, 0.15);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.mnyt .mnyt-onboarding-chip[data-selected="true"] {
+  background: color-mix(in srgb, var(--chip-color, var(--violet)) 22%, transparent);
+  border-color: var(--chip-color, var(--violet));
+  color: #fff;
+}
+.mnyt .mnyt-onboarding-chip:hover {
+  border-color: rgba(231, 229, 240, 0.4);
+}
+.mnyt .mnyt-onboarding-actions {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.mnyt .mnyt-onboarding-skip-btn {
+  background: transparent;
+  border: 1px solid rgba(231, 229, 240, 0.15);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-onboarding-start-btn {
+  background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: none;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-onboarding-skip-btn:disabled,
+.mnyt .mnyt-onboarding-start-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* =============================================================================
  * Trang chủ (Home) — mockup dòng 103-267. Thứ tự khối đã được Founder duyệt
  * riêng (khác thứ tự gốc của mockup — dashCards/path-link đổi từ ĐẦU khối

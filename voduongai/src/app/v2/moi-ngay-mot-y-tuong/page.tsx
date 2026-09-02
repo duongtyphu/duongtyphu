@@ -58,6 +58,7 @@ export default async function MoiNgayMotYTuongHomePage() {
       completedIds={state.completedIds}
       badgeCount={state.badges.length}
       interestNames={interestNames}
+      interests={state.prefs.interests}
     />
   );
 }
