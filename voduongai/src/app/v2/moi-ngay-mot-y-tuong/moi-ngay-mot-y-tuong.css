@@ -1019,6 +1019,82 @@
   text-decoration: underline;
 }
 
+.mnyt .mnyt-sharecard-card {
+  max-width: 480px;
+  width: 100%;
+  background: #12111c;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 20px;
+  padding: 20px;
+}
+.mnyt .mnyt-sharecard-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.mnyt .mnyt-sharecard-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+.mnyt .mnyt-sharecard-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.mnyt .mnyt-sharecard-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+.mnyt .mnyt-sharecard-canvas-wrap {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+}
+.mnyt .mnyt-sharecard-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mnyt .mnyt-sharecard-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+.mnyt .mnyt-sharecard-download-btn,
+.mnyt .mnyt-sharecard-share-btn {
+  flex: 1;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-sharecard-download-btn {
+  background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: none;
+  color: #fff;
+}
+.mnyt .mnyt-sharecard-share-btn {
+  background: transparent;
+  border: 1px solid rgba(231, 229, 240, 0.15);
+  color: var(--text);
+}
+.mnyt .mnyt-sharecard-download-btn:disabled,
+.mnyt .mnyt-sharecard-share-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* =============================================================================
  * Trang chủ (Home) — mockup dòng 103-267. Thứ tự khối đã được Founder duyệt
  * riêng (khác thứ tự gốc của mockup — dashCards/path-link đổi từ ĐẦU khối

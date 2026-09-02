@@ -31,6 +31,7 @@ import type { MnytQuiz, MnytTopicFull, MnytTopicSummary } from "@/lib/portal/liv
 import { completeMnytTopic, reportMnytOutdated, saveMnytChecklist, saveMnytJournalEntry, toggleMnytFavorite } from "@/lib/portal/mnyt-sync";
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
 import { MnytPathMapModal } from "./MnytPathMapModal";
+import { MnytShareCardModal } from "./MnytShareCardModal";
 
 type Props = {
   lang: "vi" | "en";
@@ -45,6 +46,7 @@ type Props = {
   initialChecklist: [boolean, boolean, boolean];
   signedIn: boolean;
   completedIds: string[];
+  streak: number;
 };
 
 const STEP_COUNT = 5;
@@ -62,12 +64,14 @@ export function MnytDetailClient({
   initialChecklist,
   signedIn,
   completedIds,
+  streak,
 }: Props) {
   const router = useRouter();
   const isVi = lang === "vi";
   const c = topic.content;
 
   const [showPathMap, setShowPathMap] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [visited, setVisited] = useState<Set<number>>(() => new Set([0]));
   const [conceptTab, setConceptTab] = useState(0);
@@ -413,7 +417,7 @@ export function MnytDetailClient({
             <button type="button" className="mnyt-detail-fav-btn" data-active={isFavorite} onClick={handleToggleFavorite}>
               {t.favLabel}
             </button>
-            <button type="button" className="mnyt-detail-share-btn" disabled title={isVi ? "Sắp ra mắt" : "Coming soon"}>
+            <button type="button" className="mnyt-detail-share-btn" onClick={() => setShowShareCard(true)}>
               {t.shareCardLabel}
             </button>
             <button type="button" className="mnyt-detail-outline-btn" onClick={handleShare}>
@@ -566,6 +570,24 @@ export function MnytDetailClient({
           currentTopicId={topic.id}
           completedIds={completedIds}
           onClose={() => setShowPathMap(false)}
+        />
+      )}
+
+      {showShareCard && (
+        <MnytShareCardModal
+          lang={lang}
+          topic={{
+            title: topic.title,
+            titleEn: topic.titleEn,
+            categoryName: topic.categoryName,
+            categoryNameEn: topic.categoryNameEn,
+            color: topic.color,
+            day: topic.day,
+            takeaway: c.takeaway,
+            takeawayEn: c.takeawayEn,
+          }}
+          streak={streak}
+          onClose={() => setShowShareCard(false)}
         />
       )}
     </section>
