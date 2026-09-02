@@ -1,6 +1,7 @@
 import { Be_Vietnam_Pro, Space_Grotesk } from "next/font/google";
 
 import { getMnytStateBundle } from "@/lib/portal/mnyt-sync";
+import { getLiveMnytCategories } from "@/lib/portal/live-mnyt";
 
 import { MnytShellClient } from "./MnytShellClient";
 
@@ -17,6 +18,11 @@ import { MnytShellClient } from "./MnytShellClient";
  * điều hướng, cấp streak/xp/freeze/badge cho header + `prefs` khởi tạo cho
  * `MnytShellClient`. Route con cần thêm dữ liệu riêng (topic hôm nay, danh
  * sách archive...) tự fetch thêm trong chính `page.tsx` của nó.
+ *
+ * `getLiveMnytCategories()` gọi thêm ở đây (Giai đoạn 6) — modal "Gửi ý
+ * tưởng của bạn" (mở từ header, có mặt trên MỌI route) cần danh sách lĩnh
+ * vực cho ô chọn — `cache()` (React) khử trùng lặp nếu `page.tsx` của route
+ * con cũng gọi lại hàm này trong cùng 1 lượt render.
  */
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -33,7 +39,7 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export default async function MoiNgayMotYTuongLayout({ children }: { children: React.ReactNode }) {
-  const state = await getMnytStateBundle();
+  const [state, categories] = await Promise.all([getMnytStateBundle(), getLiveMnytCategories()]);
 
   return (
     <div
@@ -45,7 +51,9 @@ export default async function MoiNgayMotYTuongLayout({ children }: { children: R
         } as React.CSSProperties
       }
     >
-      <MnytShellClient initialState={state}>{children}</MnytShellClient>
+      <MnytShellClient initialState={state} categories={categories}>
+        {children}
+      </MnytShellClient>
     </div>
   );
 }

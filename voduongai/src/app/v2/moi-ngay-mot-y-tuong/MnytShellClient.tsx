@@ -24,11 +24,15 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import type { MnytCategory } from "@/lib/portal/live-mnyt";
 import type { MnytStateBundle } from "@/lib/portal/mnyt-sync";
 import { updateMnytPrefs } from "@/lib/portal/mnyt-sync";
 
 import { MnytHeader } from "@/components/v2/mnyt/MnytHeader";
 import { MnytBottomNav } from "@/components/v2/mnyt/MnytBottomNav";
+import { MnytToastProvider, useMnytToast } from "@/components/v2/mnyt/MnytToastContext";
+import { MnytTourModal } from "@/components/v2/mnyt/MnytTourModal";
+import { MnytSubmitIdeaModal } from "@/components/v2/mnyt/MnytSubmitIdeaModal";
 
 import "./moi-ngay-mot-y-tuong.css";
 
@@ -54,12 +58,46 @@ function writeCachedPrefs(prefs: MnytStateBundle["prefs"]) {
   }
 }
 
-export function MnytShellClient({ initialState, children }: { initialState: MnytStateBundle; children: React.ReactNode }) {
+/**
+ * `MnytShellClient` — thin wrapper cấp `MnytToastProvider` (toast dùng
+ * chung); logic thật ở `MnytShellInner` (bên trong Provider, để gọi được
+ * `useMnytToast()`).
+ */
+export function MnytShellClient({
+  initialState,
+  categories,
+  children,
+}: {
+  initialState: MnytStateBundle;
+  categories: MnytCategory[];
+  children: React.ReactNode;
+}) {
+  return (
+    <MnytToastProvider>
+      <MnytShellInner initialState={initialState} categories={categories}>
+        {children}
+      </MnytShellInner>
+    </MnytToastProvider>
+  );
+}
+
+function MnytShellInner({
+  initialState,
+  categories,
+  children,
+}: {
+  initialState: MnytStateBundle;
+  categories: MnytCategory[];
+  children: React.ReactNode;
+}) {
   const [prefs, setPrefs] = useState<MnytStateBundle["prefs"]>(() => ({
     ...initialState.prefs,
     ...(readCachedPrefs() ?? {}),
   }));
   const [systemReducedMotion, setSystemReducedMotion] = useState(false);
+  const [showSubmit, setShowSubmit] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  const showToast = useMnytToast();
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -80,16 +118,38 @@ export function MnytShellClient({ initialState, children }: { initialState: Mnyt
   }, [prefs, persistPrefs]);
 
   const onToggleReminder = useCallback(() => {
-    persistPrefs({ ...prefs, reminderOn: !prefs.reminderOn });
-  }, [prefs, persistPrefs]);
+    const next = !prefs.reminderOn;
+    persistPrefs({ ...prefs, reminderOn: next });
+    showToast(
+      next
+        ? prefs.lang === "en"
+          ? "Daily reminder enabled."
+          : "Đã bật nhắc nhở mỗi ngày."
+        : prefs.lang === "en"
+          ? "Daily reminder turned off."
+          : "Đã tắt nhắc nhở mỗi ngày.",
+    );
+  }, [prefs, persistPrefs, showToast]);
 
   const onToggleLang = useCallback(() => {
     persistPrefs({ ...prefs, lang: prefs.lang === "vi" ? "en" : "vi" });
   }, [prefs, persistPrefs]);
 
-  const onOpenSubmit = useCallback(() => {
-    // Modal gửi ý tưởng — Giai đoạn 6 (dựng toàn bộ modal).
-  }, []);
+  const onOpenSubmit = useCallback(() => setShowSubmit(true), []);
+  const onCloseSubmit = useCallback(() => setShowSubmit(false), []);
+
+  const dismissTour = useCallback(() => {
+    setTourStep(0);
+    persistPrefs({ ...prefs, tourSeen: true });
+  }, [prefs, persistPrefs]);
+
+  const onNextTourStep = useCallback(() => {
+    if (tourStep >= 3) {
+      dismissTour();
+      return;
+    }
+    setTourStep((s) => s + 1);
+  }, [tourStep, dismissTour]);
 
   const calmMode = prefs.calmMode || systemReducedMotion;
   const rootClassName = useMemo(() => `mnyt${calmMode ? " calm-mode" : ""}`, [calmMode]);
@@ -113,6 +173,8 @@ export function MnytShellClient({ initialState, children }: { initialState: Mnyt
         {children}
         <MnytBottomNav lang={prefs.lang} />
       </div>
+      {!prefs.tourSeen && <MnytTourModal lang={prefs.lang} step={tourStep} onNext={onNextTourStep} onSkip={dismissTour} />}
+      {showSubmit && <MnytSubmitIdeaModal lang={prefs.lang} categories={categories} onClose={onCloseSubmit} />}
     </div>
   );
 }

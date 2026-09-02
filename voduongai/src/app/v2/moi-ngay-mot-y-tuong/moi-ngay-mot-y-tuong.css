@@ -618,6 +618,159 @@
 }
 
 /* =============================================================================
+ * Modal dùng chung (Giai đoạn 6) — Tour giới thiệu (mockup dòng 1061-1077)
+ * + Gửi ý tưởng của bạn (mockup dòng 1276-1296). Cả 2 mount ở
+ * `MnytShellClient.tsx` (có mặt trên mọi route con).
+ * ========================================================================== */
+.mnyt .mnyt-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 6, 10, 0.82);
+  backdrop-filter: blur(4px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 4vw, 24px);
+}
+
+.mnyt .mnyt-tour-card {
+  max-width: 380px;
+  width: 100%;
+  background: #12111c;
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 20px;
+  padding: clamp(20px, 5vw, 30px);
+  text-align: center;
+  animation: fadeUp 0.3s ease both;
+}
+.mnyt .mnyt-tour-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+.mnyt .mnyt-tour-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(231, 229, 240, 0.2);
+}
+.mnyt .mnyt-tour-dot[data-active="true"] {
+  background: var(--violet);
+}
+.mnyt .mnyt-tour-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 19px;
+  margin: 0 0 10px;
+}
+.mnyt .mnyt-tour-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+.mnyt .mnyt-tour-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.mnyt .mnyt-tour-skip-btn {
+  background: transparent;
+  border: 1px solid rgba(231, 229, 240, 0.2);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-tour-next-btn {
+  background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: none;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 11px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.mnyt .mnyt-submit-card {
+  max-width: 480px;
+  width: 100%;
+  background: #12111c;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 20px;
+  padding: clamp(20px, 5vw, 32px);
+}
+.mnyt .mnyt-submit-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+.mnyt .mnyt-submit-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+}
+.mnyt .mnyt-submit-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mnyt .mnyt-submit-input,
+.mnyt .mnyt-submit-select,
+.mnyt .mnyt-submit-textarea {
+  background: var(--code-surface);
+  border: 1px solid rgba(231, 229, 240, 0.15);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  outline: none;
+}
+.mnyt .mnyt-submit-textarea {
+  resize: vertical;
+}
+.mnyt .mnyt-submit-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 22px;
+}
+.mnyt .mnyt-submit-cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(231, 229, 240, 0.15);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-submit-send-btn {
+  background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: none;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-submit-cancel-btn:disabled,
+.mnyt .mnyt-submit-send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =============================================================================
  * Trang chủ (Home) — mockup dòng 103-267. Thứ tự khối đã được Founder duyệt
  * riêng (khác thứ tự gốc của mockup — dashCards/path-link đổi từ ĐẦU khối
  * sang SAU cụm hero+CTA): banner ảnh → nhãn hôm nay → tiêu đề → mô tả → CTA
