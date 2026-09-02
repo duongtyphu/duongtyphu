@@ -1095,6 +1095,114 @@
   cursor: not-allowed;
 }
 
+.mnyt .mnyt-cert-card {
+  max-width: 640px;
+  width: 100%;
+  background: #12111c;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 20px;
+  padding: 20px;
+}
+.mnyt .mnyt-cert-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.mnyt .mnyt-cert-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+.mnyt .mnyt-cert-close-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.mnyt .mnyt-cert-close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+}
+.mnyt .mnyt-cert-canvas-wrap {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+}
+.mnyt .mnyt-cert-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.mnyt .mnyt-cert-download-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  background: color-mix(in srgb, var(--cert-accent, var(--violet)) 18%, transparent);
+  border: 1px solid var(--cert-accent, var(--violet));
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-cert-download-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mnyt .mnyt-cert-locked {
+  text-align: center;
+  padding: 20px 10px 10px;
+}
+.mnyt .mnyt-cert-locked-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin: 0 auto 14px;
+}
+.mnyt .mnyt-cert-locked-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.mnyt .mnyt-cert-locked-body {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+.mnyt .mnyt-cert-locked-track {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.mnyt .mnyt-cert-locked-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.mnyt .mnyt-cert-locked-progress {
+  font-size: 12px;
+  color: var(--text-faint);
+  font-weight: 600;
+}
+
 /* =============================================================================
  * Trang chủ (Home) — mockup dòng 103-267. Thứ tự khối đã được Founder duyệt
  * riêng (khác thứ tự gốc của mockup — dashCards/path-link đổi từ ĐẦU khối

@@ -25,10 +25,8 @@ export const metadata = { title: "Lộ trình leo cấp | Mỗi ngày một ý t
  * vực sau đó gọi `/api/mnyt/path` (client-side), cùng hàm dùng lại, Single
  * Source of Truth.
  *
- * Nút "Nhận chứng nhận" — mockup mở modal Certificate (1 trong 6 modal của
- * Giai đoạn 6, CHƯA build) — giữ nút hiện diện đúng vị trí, `onClick` tạm
- * no-op (cùng cách `MnytShellClient.tsx`'s `onOpenSubmit` đang chờ modal
- * "Gửi ý tưởng"), sẽ nối khi tới lượt xây modal.
+ * Nút "Nhận chứng nhận" mở modal Certificate (6/6 modal Giai đoạn 6) — xem
+ * docblock `MnytPathClient.tsx`/`MnytCertificateModal.tsx`.
  *
  * `?cat=<key>` (tuỳ chọn) — đúng hành vi `openDomainPath()` của mockup gốc:
  * view Bản đồ lĩnh vực (9/10) bấm 1 nốt/thẻ lĩnh vực sẽ điều hướng thẳng
@@ -63,6 +61,7 @@ export default async function MnytPathPage({ searchParams }: { searchParams: Pro
       completedIds={state.completedIds}
       defaultCategoryKey={defaultCategoryKey}
       initialPathTopics={initialPathTopics}
+      learnerName={state.prefs.learnerName}
     />
   );
 }

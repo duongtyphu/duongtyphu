@@ -18,8 +18,9 @@
  *   ĐẦU TIÊN chưa hoàn thành TÍNH LIÊN TỤC từ node 0 (`pathPrefix`) — chỉ
  *   1 node "đang ở đây" tại 1 thời điểm.
  *
- * Nút "Nhận chứng nhận" mở modal Certificate — CHƯA build (1 trong 6 modal
- * của Giai đoạn 6), `onClick` tạm no-op, xem docblock `page.tsx`.
+ * Nút "Nhận chứng nhận" mở modal Certificate (6/6 modal Giai đoạn 6) — gắn
+ * đúng trạng thái hoàn thành THẬT của lĩnh vực đang chọn
+ * (`pathDoneCount`/`pathTopics.length`), xem `MnytCertificateModal.tsx`.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -27,6 +28,7 @@ import Link from "next/link";
 
 import type { MnytCategory, MnytGlobeNode, MnytTopicSummary } from "@/lib/portal/live-mnyt";
 import { mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
+import { MnytCertificateModal } from "./MnytCertificateModal";
 
 type Props = {
   lang: "vi" | "en";
@@ -37,6 +39,7 @@ type Props = {
   completedIds: string[];
   defaultCategoryKey: string;
   initialPathTopics: MnytTopicSummary[];
+  learnerName: string | null;
 };
 
 function useViewportWidth(): number {
@@ -72,12 +75,14 @@ export function MnytPathClient({
   completedIds,
   defaultCategoryKey,
   initialPathTopics,
+  learnerName,
 }: Props) {
   const isVi = lang === "vi";
 
   const [activeCategory, setActiveCategory] = useState(defaultCategoryKey);
   const [pathTopics, setPathTopics] = useState(initialPathTopics);
   const [lockedMsg, setLockedMsg] = useState<string | null>(null);
+  const [showCert, setShowCert] = useState(false);
 
   const isFirstRun = useRef(true);
   const abortRef = useRef<AbortController | null>(null);
@@ -382,10 +387,23 @@ export function MnytPathClient({
 
       <div className="mnyt-path-base-label">{t.base}</div>
       <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
-        <button type="button" className="mnyt-path-cert-btn" style={{ borderColor: activeCat.color, color: activeCat.color }} onClick={() => {}}>
+        <button type="button" className="mnyt-path-cert-btn" style={{ borderColor: activeCat.color, color: activeCat.color }} onClick={() => setShowCert(true)}>
           {t.cert}
         </button>
       </div>
+
+      {showCert && (
+        <MnytCertificateModal
+          lang={lang}
+          categoryName={activeCat.name}
+          categoryNameEn={activeCat.nameEn || activeCat.name}
+          categoryColor={activeCat.color}
+          learnerName={learnerName}
+          totalTopics={pathTopics.length}
+          doneCount={pathDoneCount}
+          onClose={() => setShowCert(false)}
+        />
+      )}
     </section>
   );
 }
