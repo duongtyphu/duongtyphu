@@ -29,9 +29,16 @@ export const metadata = { title: "Lộ trình leo cấp | Mỗi ngày một ý t
  * Giai đoạn 6, CHƯA build) — giữ nút hiện diện đúng vị trí, `onClick` tạm
  * no-op (cùng cách `MnytShellClient.tsx`'s `onOpenSubmit` đang chờ modal
  * "Gửi ý tưởng"), sẽ nối khi tới lượt xây modal.
+ *
+ * `?cat=<key>` (tuỳ chọn) — đúng hành vi `openDomainPath()` của mockup gốc:
+ * view Bản đồ lĩnh vực (9/10) bấm 1 nốt/thẻ lĩnh vực sẽ điều hướng thẳng
+ * sang đúng lĩnh vực đó ở đây. Validate lại `key` có khớp 1 lĩnh vực thật
+ * (`categories`) trước khi dùng — query lạ/rỗng rơi về đúng logic mặc định
+ * cũ (`todayTopic.catKey` → lĩnh vực đầu tiên).
  */
-export default async function MnytPathPage() {
+export default async function MnytPathPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const state = await getMnytStateBundle();
+  const sp = await searchParams;
 
   const [categories, globeNodes, difficulties, topicsCount, todayTopic] = await Promise.all([
     getLiveMnytCategories(),
@@ -41,7 +48,9 @@ export default async function MnytPathPage() {
     getLiveMnytTodayTopic(state.prefs.interests),
   ]);
 
-  const defaultCategoryKey = todayTopic?.categoryKey ?? categories[0]?.key ?? "";
+  const requestedCategoryKey = typeof sp.cat === "string" ? sp.cat : undefined;
+  const validRequestedKey = requestedCategoryKey && categories.some((c) => c.key === requestedCategoryKey) ? requestedCategoryKey : null;
+  const defaultCategoryKey = validRequestedKey ?? todayTopic?.categoryKey ?? categories[0]?.key ?? "";
   const initialPathTopics = defaultCategoryKey ? await getLiveMnytPathTopics(defaultCategoryKey) : [];
 
   return (
