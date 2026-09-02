@@ -252,6 +252,39 @@ export const getLiveMnytTopicsPage = async (
   return { items: (data as unknown as SummaryRow[]).map(mapSummaryRow), total: count ?? data.length };
 };
 
+/** Ý tưởng liền kề theo `day` (điều hướng cuối trang Chi tiết ý tưởng). */
+export const getLiveMnytAdjacentTopics = cache(
+  async (day: number): Promise<{ prev: MnytTopicSummary | null; next: MnytTopicSummary | null }> => {
+    const supabase = getSupabasePublic();
+    if (!supabase) return { prev: null, next: null };
+    const [prevRes, nextRes] = await Promise.all([
+      supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published").eq("day", day - 1).maybeSingle(),
+      supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published").eq("day", day + 1).maybeSingle(),
+    ]);
+    return {
+      prev: prevRes.data ? mapSummaryRow(prevRes.data as unknown as SummaryRow) : null,
+      next: nextRes.data ? mapSummaryRow(nextRes.data as unknown as SummaryRow) : null,
+    };
+  },
+);
+
+/** Ý tưởng liên quan — cùng lĩnh vực, loại trừ chính nó (view Chi tiết ý
+ * tưởng, bước "Tổng kết"). */
+export const getLiveMnytRelatedTopics = cache(async (categoryKey: string, excludeId: string, limit = 3): Promise<MnytTopicSummary[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_topics")
+    .select(SUMMARY_COLUMNS)
+    .eq("status", "Published")
+    .eq("category_key", categoryKey)
+    .neq("id", excludeId)
+    .order("day", { ascending: true })
+    .limit(limit);
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
 export const getLiveMnytTopicById = cache(async (id: string): Promise<MnytTopicFull | null> => {
   const supabase = getSupabasePublic();
   if (!supabase) return null;
