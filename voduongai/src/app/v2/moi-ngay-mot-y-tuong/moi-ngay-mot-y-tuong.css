@@ -4139,6 +4139,7 @@
   transition: all 0.18s ease;
   cursor: pointer;
   font-family: inherit;
+  text-decoration: none;
 }
 .mnyt .mnyt-profile-export-btn:hover {
   transform: translateY(-2px);
@@ -4823,4 +4824,172 @@
   font-size: 11px;
   color: var(--text-faint);
   margin-top: 12px;
+}
+
+/* =============================================================================
+ * Sổ tay ý tưởng (Giai đoạn 7) — trang in được, thiết kế mới (không mockup
+ * gốc riêng), bám ngôn ngữ thị giác `.mnyt` sẵn có. Khối `@media print`
+ * cuối file đổi sang bản GIẤY SÁNG khi in/"Save as PDF", ẩn toolbar/header/
+ * bottom-nav.
+ * ========================================================================== */
+.mnyt .mnyt-notebook {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.mnyt .mnyt-notebook-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.mnyt .mnyt-notebook-back {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.mnyt .mnyt-notebook-back:hover {
+  color: var(--text);
+}
+.mnyt .mnyt-notebook-print-btn {
+  background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: none;
+  color: #fff;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.mnyt .mnyt-notebook-cover {
+  text-align: center;
+  padding: 28px 20px 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-strong);
+  border-radius: 18px;
+  background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.12), transparent 70%);
+}
+.mnyt .mnyt-notebook-cover-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.mnyt .mnyt-notebook-cover-summary {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  margin: 0 0 4px;
+}
+.mnyt .mnyt-notebook-cover-date {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin: 0;
+}
+.mnyt .mnyt-notebook-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+.mnyt .mnyt-notebook-empty-cta {
+  display: inline-block;
+  margin-top: 14px;
+  color: var(--violet-light);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+}
+.mnyt .mnyt-notebook-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mnyt .mnyt-notebook-entry {
+  display: block;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--entry-accent, var(--violet));
+  border-radius: 12px;
+  padding: 16px 18px;
+  text-decoration: none;
+  color: inherit;
+  break-inside: avoid;
+  transition: background 0.15s ease;
+}
+.mnyt .mnyt-notebook-entry:hover {
+  background: var(--surface-raised);
+}
+.mnyt .mnyt-notebook-entry-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.mnyt .mnyt-notebook-entry-day {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.mnyt .mnyt-notebook-entry-cat {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.mnyt .mnyt-notebook-entry-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+.mnyt .mnyt-notebook-entry-hook {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+.mnyt .mnyt-notebook-entry-meta {
+  font-size: 11.5px;
+  color: var(--text-faint);
+}
+
+@media print {
+  .mnyt-header,
+  .mnyt-bottom-nav,
+  .mnyt .mnyt-notebook-toolbar {
+    display: none !important;
+  }
+  .mnyt {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .mnyt .mnyt-notebook-cover {
+    background: none !important;
+    border-color: #ddd !important;
+  }
+  .mnyt .mnyt-notebook-cover-title {
+    color: #111 !important;
+  }
+  .mnyt .mnyt-notebook-cover-summary,
+  .mnyt .mnyt-notebook-cover-date {
+    color: #444 !important;
+  }
+  .mnyt .mnyt-notebook-entry {
+    background: none !important;
+    border-color: #ddd !important;
+    border-left-color: var(--entry-accent, #7c3aed) !important;
+    page-break-inside: avoid;
+  }
+  .mnyt .mnyt-notebook-entry-title {
+    color: #111 !important;
+  }
+  .mnyt .mnyt-notebook-entry-hook {
+    color: #333 !important;
+  }
+  .mnyt .mnyt-notebook-entry-day,
+  .mnyt .mnyt-notebook-entry-meta {
+    color: #666 !important;
+  }
 }

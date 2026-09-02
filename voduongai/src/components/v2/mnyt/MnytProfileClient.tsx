@@ -15,9 +15,8 @@
  * `MnytArchiveClient.tsx` — cùng box-model/token màu qua `--card-accent`/
  * `--card-tint`).
  *
- * "Xuất sổ tay ý tưởng" — no-op stub (`onClick={() => {}}`), cùng tiền lệ
- * nút "Nhận chứng nhận" ở `MnytPathClient.tsx` — modal/trang thật chờ Giai
- * đoạn 7 (Sổ tay ý tưởng in được).
+ * "Xuất sổ tay ý tưởng" dẫn sang `/v2/moi-ngay-mot-y-tuong/so-tay-y-tuong`
+ * (Giai đoạn 7 — trang in "Sổ tay ý tưởng", xem `MnytNotebookClient.tsx`).
  */
 
 import { useState } from "react";
@@ -197,9 +196,9 @@ export function MnytProfileClient({
       <h1 className="mnyt-profile-title">{t.title}</h1>
       <p className="mnyt-profile-subtitle">{t.subtitle}</p>
 
-      <button type="button" className="mnyt-profile-export-btn" onClick={() => {}}>
+      <Link href={MNYT_ROUTES.notebook} className="mnyt-profile-export-btn">
         {t.exportNotebook}
-      </button>
+      </Link>
 
       <div className="mnyt-profile-identity-card">
         <div className="mnyt-profile-avatar" style={avatarStyle}>
