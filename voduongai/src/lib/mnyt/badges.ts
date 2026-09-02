@@ -59,3 +59,47 @@ export function buildBadgeDefs(categories: { key: string; name: string; color: s
   });
   return [...FIXED_BADGE_DEFS, ...categoryDefs];
 }
+
+/**
+ * Dữ liệu THUẦN (không có hàm `check`) cho view "Huy hiệu" — `BadgeDef.check`
+ * là closure nên không thể truyền từ Server Component xuống Client Component
+ * qua props (Next.js RSC boundary). `earned` lấy THẲNG từ `state.badges` thật
+ * (nguồn duy nhất huy hiệu đã đạt được lưu khi hoàn thành ý tưởng,
+ * `completeMnytTopic()`), KHÔNG gọi lại `check()` — tránh 2 nguồn có thể
+ * lệch nhau nếu ngưỡng/logic đổi sau này mà chưa backfill lại `mnyt_badges`.
+ */
+export type BadgeCardData = {
+  id: string;
+  label: string;
+  desc: string;
+  type: "streak" | "total" | "category";
+  tier?: BadgeTier;
+  categoryKey?: string;
+  categoryColor?: string;
+  target: number;
+  current: number;
+  earned: boolean;
+  earnedAt?: string;
+};
+
+export function buildBadgeCards(defs: BadgeDef[], input: BadgeCheckInput, earnedBadges: { id: string; earnedAt: string }[]): BadgeCardData[] {
+  const earnedMap = new Map(earnedBadges.map((b) => [b.id, b.earnedAt]));
+  return defs.map((def) => {
+    const current =
+      def.type === "streak" ? input.streak : def.type === "total" ? input.totalCompleted : (input.categoryCompleted[def.categoryKey ?? ""] ?? 0);
+    const earnedAt = earnedMap.get(def.id);
+    return {
+      id: def.id,
+      label: def.label,
+      desc: def.desc,
+      type: def.type,
+      tier: def.tier,
+      categoryKey: def.categoryKey,
+      categoryColor: def.categoryColor,
+      target: def.target,
+      current,
+      earned: earnedAt !== undefined,
+      earnedAt,
+    };
+  });
+}

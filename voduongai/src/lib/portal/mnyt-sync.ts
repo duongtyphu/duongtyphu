@@ -345,3 +345,29 @@ export async function saveMnytTermSrs(termId: number, srs: { box: number; dueAt:
     .upsert({ member_id: ctx.user.id, term_id: termId, box: srs.box, due_at: srs.dueAt, seen_at: srs.seenAt, updated_at: new Date().toISOString() }, { onConflict: "member_id,term_id" });
   return { ok: !error };
 }
+
+// ---------------------------------------------------------------------------
+// 7 NGÀY GẦN NHẤT — biểu đồ hoàn thành cho view "Huy hiệu" (mockup gốc
+// dòng ~1061-1216). Đếm theo `completed_at` (giờ SERVER, cùng nguồn tính
+// streak) — KHÔNG suy ra streak, chỉ đếm số ý tưởng hoàn thành mỗi ngày.
+// ---------------------------------------------------------------------------
+
+export async function getMnyt7DayCompletionCounts(): Promise<{ date: string; count: number }[]> {
+  const today = todayUtc();
+  const days = Array.from({ length: 7 }, (_, i) => addDaysUtc(today, i - 6));
+  const ctx = await requireMnytMember();
+  if (!ctx) return days.map((date) => ({ date, count: 0 }));
+
+  const { data } = await ctx.supabase
+    .from("mnyt_completions")
+    .select("completed_at")
+    .eq("member_id", ctx.user.id)
+    .gte("completed_at", `${days[0]}T00:00:00.000Z`);
+
+  const counts = new Map<string, number>();
+  for (const row of data ?? []) {
+    const day = (row.completed_at as string).slice(0, 10);
+    counts.set(day, (counts.get(day) ?? 0) + 1);
+  }
+  return days.map((date) => ({ date, count: counts.get(date) ?? 0 }));
+}
