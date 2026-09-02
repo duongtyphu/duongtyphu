@@ -215,6 +215,14 @@ export const getLiveMnytToolNames = cache(async (): Promise<string[]> => {
   return Array.from(names).sort((a, b) => a.localeCompare(b));
 });
 
+/** Thứ tự cấp độ THẬT (xác nhận qua Supabase — đúng 3 giá trị đang dùng) —
+ * dùng để sắp `getLiveMnytDifficulties()` theo đúng tiến trình Dễ→Khó, vì
+ * sắp chữ cái thường ("Cơ bản"/"Nâng cao"/"Trung bình") sẽ đặt "Nâng cao"
+ * (khó nhất) ở giữa — sai ý nghĩa cho cả chip lọc lẫn "bản đồ tiến độ" ở
+ * view Lộ trình. Giá trị lạ (nếu phát sinh sau này) rơi xuống cuối, sắp
+ * chữ cái với nhau — không crash, chỉ mất đúng thứ tự tiến trình. */
+const DIFFICULTY_ORDER = ["Cơ bản", "Trung bình", "Nâng cao"];
+
 /** Danh sách độ khó thật, duy nhất — cùng lý do/kỹ thuật `getLiveMnytToolNames()`. */
 export const getLiveMnytDifficulties = cache(async (): Promise<string[]> => {
   const supabase = getSupabasePublic();
@@ -223,7 +231,14 @@ export const getLiveMnytDifficulties = cache(async (): Promise<string[]> => {
   if (error || !data) return [];
   const names = new Set<string>();
   for (const row of data as { difficulty: string }[]) names.add(row.difficulty);
-  return Array.from(names).sort((a, b) => a.localeCompare(b));
+  return Array.from(names).sort((a, b) => {
+    const ia = DIFFICULTY_ORDER.indexOf(a);
+    const ib = DIFFICULTY_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
 });
 
 export type MnytTopicListParams = {
@@ -282,6 +297,26 @@ export const getLiveMnytTopicsPage = async (
   if (error || !data) return { items: [], total: 0 };
   return { items: (data as unknown as SummaryRow[]).map(mapSummaryRow), total: count ?? data.length };
 };
+
+/**
+ * Toàn bộ ý tưởng của ĐÚNG 1 lĩnh vực, sắp theo `path_step` (thứ tự leo
+ * cấp thật của lộ trình) — dùng cho view Lộ trình. Khác
+ * `getLiveMnytTopicsPage()` (sắp theo `day`, có phân trang) — 1 lĩnh vực
+ * chỉ có vài chục ý tưởng (446/35 ≈ 13 trung bình), không cần phân trang,
+ * và thứ tự leo cấp KHÔNG chắc trùng thứ tự `day`.
+ */
+export const getLiveMnytPathTopics = cache(async (categoryKey: string): Promise<MnytTopicSummary[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_topics")
+    .select(SUMMARY_COLUMNS)
+    .eq("status", "Published")
+    .eq("category_key", categoryKey)
+    .order("path_step", { ascending: true });
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
 
 /** Ý tưởng liền kề theo `day` (điều hướng cuối trang Chi tiết ý tưởng). */
 export const getLiveMnytAdjacentTopics = cache(

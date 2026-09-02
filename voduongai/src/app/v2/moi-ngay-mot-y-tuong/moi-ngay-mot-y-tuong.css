@@ -2191,3 +2191,274 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* =============================================================================
+ * Lộ trình leo cấp (Path) — mockup dòng 485-561. "Bản đồ tiến độ" (lưới lĩnh
+ * vực × cấp độ) → chip lĩnh vực cuộn ngang → thanh tiến độ → tuyến đường
+ * leo cấp (SVG lượn sóng + nút tròn mở khoá tuần tự).
+ * ========================================================================== */
+.mnyt .mnyt-path {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 10px clamp(16px, 4.5vw, 40px) 120px;
+  animation: fadeUp 0.5s ease both;
+}
+.mnyt .mnyt-path-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 10px 0 6px;
+}
+.mnyt .mnyt-path-subtitle {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  margin: 0 0 16px;
+}
+.mnyt .mnyt-path-map-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--divider);
+}
+.mnyt .mnyt-path-map-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--violet-light);
+}
+.mnyt .mnyt-path-map-meta {
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+.mnyt .mnyt-path-map-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.mnyt .mnyt-path-map-row {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 7px 8px 8px;
+  border-radius: 9px;
+  background: transparent;
+  border: 1px solid transparent;
+  transition: background 0.18s ease;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+}
+.mnyt .mnyt-path-map-row[data-active="true"] {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-strong);
+}
+.mnyt .mnyt-path-map-cells {
+  display: flex;
+  gap: 3px;
+}
+.mnyt .mnyt-path-map-cell {
+  flex: 1;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+.mnyt .mnyt-path-map-cell[data-on="true"] {
+  height: 15px;
+}
+.mnyt .mnyt-path-map-row-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-darkest);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mnyt .mnyt-path-map-row-label[data-done="true"] {
+  color: var(--text-secondary);
+}
+.mnyt .mnyt-path-map-legend {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.mnyt .mnyt-path-map-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: var(--text-darkest);
+}
+.mnyt .mnyt-path-map-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.mnyt .mnyt-path-cat-chips {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+}
+.mnyt .mnyt-path-cat-chip {
+  flex: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 13px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.mnyt .mnyt-path-progress-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--divider);
+  border-radius: 16px;
+  padding: 14px 18px;
+}
+.mnyt .mnyt-path-progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mnyt .mnyt-path-progress-name {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 16.5px;
+  font-weight: 700;
+}
+.mnyt .mnyt-path-progress-track {
+  flex: 1;
+  min-width: 140px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.mnyt .mnyt-path-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+.mnyt .mnyt-path-progress-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.mnyt .mnyt-path-summit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 22px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.mnyt .mnyt-path-summit-line {
+  width: 26px;
+  height: 1px;
+  opacity: 0.5;
+}
+.mnyt .mnyt-path-canvas {
+  position: relative;
+  margin: 18px auto 0;
+  max-width: 760px;
+}
+.mnyt .mnyt-path-canvas-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.mnyt .mnyt-path-node-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: min(46%, 340px);
+  z-index: 2;
+}
+.mnyt .mnyt-path-node-label-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-wrap: pretty;
+  color: var(--text-darkest);
+}
+.mnyt .mnyt-path-node-label-title[data-state="done"] {
+  color: var(--text-bright);
+}
+.mnyt .mnyt-path-node-label-title[data-state="current"] {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--amber-lighter);
+}
+.mnyt .mnyt-path-node-label-meta {
+  font-size: 11px;
+  color: var(--text-darkest);
+}
+.mnyt .mnyt-path-node-label-meta[data-unlocked="true"] {
+  color: var(--text-faint);
+}
+.mnyt .mnyt-path-node {
+  position: absolute;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-weight: 700;
+  z-index: 3;
+  text-decoration: none;
+}
+.mnyt .mnyt-path-locked-msg {
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--amber-light);
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: 10px;
+  padding: 9px 14px;
+  margin-top: 14px;
+}
+.mnyt .mnyt-path-base-label {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-darkest);
+  margin-top: 14px;
+}
+.mnyt .mnyt-path-cert-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 11px 22px;
+  border-radius: 22px;
+  cursor: pointer;
+  font-family: inherit;
+}
