@@ -318,6 +318,27 @@ export const getLiveMnytPathTopics = cache(async (categoryKey: string): Promise<
   return (data as unknown as SummaryRow[]).map(mapSummaryRow);
 });
 
+/**
+ * Trọn bộ "thẻ lật" (view Thẻ lật, mockup dòng 1218-1254) — TOÀN BỘ ý
+ * tưởng của 1 lĩnh vực, hoặc TOÀN BỘ 446 ý tưởng nếu `categoryKey` là
+ * `null`/`"all"` (đúng hành vi `openFlashcards()` gốc: `filterCategory
+ * === 'all' ? this.topics : this.topics.filter(...)`). Chỉ SELECT cột NHẸ
+ * (`SUMMARY_COLUMNS`, không có `content`) — mặt trước/sau thẻ chỉ cần
+ * `title`/`hook`; đoạn `concept` (nặng hơn, nằm trong `content` jsonb) tải
+ * RIÊNG, LƯỜI, đúng lúc lật thẻ (`GET /api/mnyt/topics/[id]` có sẵn),
+ * không tải trước cho cả bộ — đúng nguyên tắc "KHÔNG tải hết 446 ý tưởng
+ * để hiển thị 1" của README, mở rộng áp dụng cho cả trường hợp N thẻ.
+ */
+export const getLiveMnytFlashDeck = cache(async (categoryKey: string | null): Promise<MnytTopicSummary[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  let query = supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published");
+  if (categoryKey && categoryKey !== "all") query = query.eq("category_key", categoryKey);
+  const { data, error } = await query.order("day", { ascending: true });
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
 /** Ý tưởng liền kề theo `day` (điều hướng cuối trang Chi tiết ý tưởng). */
 export const getLiveMnytAdjacentTopics = cache(
   async (day: number): Promise<{ prev: MnytTopicSummary | null; next: MnytTopicSummary | null }> => {
