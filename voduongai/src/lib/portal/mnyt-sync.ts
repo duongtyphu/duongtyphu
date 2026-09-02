@@ -352,6 +352,21 @@ export async function saveMnytTermSrs(termId: number, srs: { box: number; dueAt:
 // streak) — KHÔNG suy ra streak, chỉ đếm số ý tưởng hoàn thành mỗi ngày.
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// TOÀN BỘ NGÀY ĐÃ HOÀN THÀNH — dùng cho view "Lịch" (chấm điểm ô ngày, đếm
+// tổng ngày hoàn thành) và view "Hồ sơ" (so sánh tháng này/tháng trước) —
+// 1 truy vấn duy nhất, tính hết ở nơi gọi (client dựng lịch cho BẤT KỲ
+// tháng nào, cùng kỹ thuật "Nhật ký học tập" 1.0 đã dùng — không giới hạn
+// đúng 1 tháng ở server).
+// ---------------------------------------------------------------------------
+
+export async function getMnytCompletionDates(): Promise<string[]> {
+  const ctx = await requireMnytMember();
+  if (!ctx) return [];
+  const { data } = await ctx.supabase.from("mnyt_completions").select("completed_at").eq("member_id", ctx.user.id);
+  return (data ?? []).map((r) => (r.completed_at as string).slice(0, 10));
+}
+
 export async function getMnyt7DayCompletionCounts(): Promise<{ date: string; count: number }[]> {
   const today = todayUtc();
   const days = Array.from({ length: 7 }, (_, i) => addDaysUtc(today, i - 6));

@@ -373,7 +373,13 @@ export const getLiveMnytTopicById = cache(async (id: string): Promise<MnytTopicF
  * `range(idx, idx)`, sắp theo `day` để thứ tự ổn định (khớp ý nghĩa "list"
  * gốc, vốn được sinh theo đúng thứ tự `day`).
  */
-export const getLiveMnytTodayTopic = async (interests: string[]): Promise<MnytTopicSummary | null> => {
+/**
+ * Ý tưởng của MỘT NGÀY cụ thể, tính theo `dayOffset` ngày kể từ hôm nay
+ * (epoch day thật, `Date.now()`) — dùng chung cho "ý tưởng hôm nay"
+ * (`dayOffset=0`, `getLiveMnytTodayTopic`) và "ý tưởng ngày mai" (`dayOffset=1`,
+ * `getLiveMnytTomorrowTopic`, view Lịch — thẻ khoá "sắp mở khoá").
+ */
+async function getMnytTopicByDayOffset(interests: string[], dayOffset: number): Promise<MnytTopicSummary | null> {
   const supabase = getSupabasePublic();
   if (!supabase) return null;
 
@@ -395,7 +401,7 @@ export const getLiveMnytTodayTopic = async (interests: string[]): Promise<MnytTo
       .eq("status", "Published");
     const allTotal = allCount ?? 0;
     if (allTotal === 0) return null;
-    const idx = Math.floor(Date.now() / 86400000) % allTotal;
+    const idx = (Math.floor(Date.now() / 86400000) + dayOffset) % allTotal;
     const { data } = await supabase
       .from("mnyt_topics")
       .select(SUMMARY_COLUMNS)
@@ -406,10 +412,14 @@ export const getLiveMnytTodayTopic = async (interests: string[]): Promise<MnytTo
     return data ? mapSummaryRow(data as unknown as SummaryRow) : null;
   }
 
-  const idx = Math.floor(Date.now() / 86400000) % total;
+  const idx = (Math.floor(Date.now() / 86400000) + dayOffset) % total;
   const { data } = await buildBase().order("day", { ascending: true }).range(idx, idx).maybeSingle();
   return data ? mapSummaryRow(data as unknown as SummaryRow) : null;
-};
+}
+
+export const getLiveMnytTodayTopic = async (interests: string[]): Promise<MnytTopicSummary | null> => getMnytTopicByDayOffset(interests, 0);
+
+export const getLiveMnytTomorrowTopic = async (interests: string[]): Promise<MnytTopicSummary | null> => getMnytTopicByDayOffset(interests, 1);
 
 export type MnytGlossaryTerm = {
   id: number;
