@@ -44,6 +44,7 @@ export default async function MnytDetailPage({ params, searchParams }: { params:
       initialJournal={state.journal[topic.id] ?? ""}
       initialChecklist={state.checklist[topic.id] ?? [false, false, false]}
       signedIn={state.signedIn}
+      completedIds={state.completedIds}
     />
   );
 }

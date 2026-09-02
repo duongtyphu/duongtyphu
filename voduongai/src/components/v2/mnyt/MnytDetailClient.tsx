@@ -30,6 +30,7 @@ import { useRouter } from "next/navigation";
 import type { MnytQuiz, MnytTopicFull, MnytTopicSummary } from "@/lib/portal/live-mnyt";
 import { completeMnytTopic, reportMnytOutdated, saveMnytChecklist, saveMnytJournalEntry, toggleMnytFavorite } from "@/lib/portal/mnyt-sync";
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
+import { MnytPathMapModal } from "./MnytPathMapModal";
 
 type Props = {
   lang: "vi" | "en";
@@ -43,6 +44,7 @@ type Props = {
   initialJournal: string;
   initialChecklist: [boolean, boolean, boolean];
   signedIn: boolean;
+  completedIds: string[];
 };
 
 const STEP_COUNT = 5;
@@ -59,11 +61,13 @@ export function MnytDetailClient({
   initialJournal,
   initialChecklist,
   signedIn,
+  completedIds,
 }: Props) {
   const router = useRouter();
   const isVi = lang === "vi";
   const c = topic.content;
 
+  const [showPathMap, setShowPathMap] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [visited, setVisited] = useState<Set<number>>(() => new Set([0]));
   const [conceptTab, setConceptTab] = useState(0);
@@ -341,9 +345,9 @@ export function MnytDetailClient({
             {t.toolsLabel} {topic.tools.join(", ")}
           </span>
         )}
-        <Link href={MNYT_ROUTES.path} className="mnyt-detail-pathmap-btn">
+        <button type="button" className="mnyt-detail-pathmap-btn" onClick={() => setShowPathMap(true)}>
           {t.pathMap}
-        </Link>
+        </button>
       </div>
 
       <h1 className="mnyt-detail-title">{isVi ? topic.title : topic.titleEn || topic.title}</h1>
@@ -552,6 +556,18 @@ export function MnytDetailClient({
           <div />
         )}
       </div>
+
+      {showPathMap && (
+        <MnytPathMapModal
+          lang={lang}
+          categoryKey={topic.categoryKey}
+          categoryName={isVi ? topic.categoryName : topic.categoryNameEn || topic.categoryName}
+          categoryColor={topic.color}
+          currentTopicId={topic.id}
+          completedIds={completedIds}
+          onClose={() => setShowPathMap(false)}
+        />
+      )}
     </section>
   );
 }
