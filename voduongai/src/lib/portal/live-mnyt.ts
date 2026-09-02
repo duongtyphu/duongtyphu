@@ -195,6 +195,37 @@ export const getLiveMnytCategories = cache(async (): Promise<MnytCategory[]> => 
   }));
 });
 
+/**
+ * Danh sách CÔNG CỤ thật, duy nhất — dùng cho chip lọc "Công cụ" ở Kho ý
+ * tưởng. Khác mockup gốc (đọc từ `TOOL_MAP` mẫu, cố định theo lĩnh vực) —
+ * đây đọc trực tiếp cột `tools` (jsonb array) của mọi ý tưởng Published
+ * thật, dedupe + sắp chữ cái ở JS (Supabase JS client không có cách
+ * `SELECT DISTINCT unnest(...)` qua PostgREST filter builder), cùng kỹ
+ * thuật `getLiveMnytCategoryTotals()` đã dùng (446 dòng × 1 cột nhẹ).
+ */
+export const getLiveMnytToolNames = cache(async (): Promise<string[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("mnyt_topics").select("tools").eq("status", "Published");
+  if (error || !data) return [];
+  const names = new Set<string>();
+  for (const row of data as { tools: string[] | null }[]) {
+    for (const tool of row.tools ?? []) names.add(tool);
+  }
+  return Array.from(names).sort((a, b) => a.localeCompare(b));
+});
+
+/** Danh sách độ khó thật, duy nhất — cùng lý do/kỹ thuật `getLiveMnytToolNames()`. */
+export const getLiveMnytDifficulties = cache(async (): Promise<string[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("mnyt_topics").select("difficulty").eq("status", "Published");
+  if (error || !data) return [];
+  const names = new Set<string>();
+  for (const row of data as { difficulty: string }[]) names.add(row.difficulty);
+  return Array.from(names).sort((a, b) => a.localeCompare(b));
+});
+
 export type MnytTopicListParams = {
   page: number;
   pageSize: number;

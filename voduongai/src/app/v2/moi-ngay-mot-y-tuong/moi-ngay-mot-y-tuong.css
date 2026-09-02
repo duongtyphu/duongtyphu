@@ -1932,3 +1932,262 @@
   cursor: not-allowed;
   transform: none;
 }
+
+/* =============================================================================
+ * Kho ý tưởng (Archive) — mockup dòng 915-984. Chip lọc lĩnh vực + công cụ,
+ * ô tìm kiếm, chip độ khó, lưới thẻ (phân trang thật qua `/api/mnyt/topics`,
+ * không tải hết 446 dòng), khối "Ý tưởng bạn đã đề xuất" (xem docblock
+ * `MnytArchiveClient.tsx` — đổi ý nghĩa so với mockup gốc do RLS thật).
+ * ========================================================================== */
+.mnyt .mnyt-archive {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 10px clamp(16px, 4.5vw, 40px) 100px;
+  animation: fadeUp 0.5s ease both;
+}
+.mnyt .mnyt-archive-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 10px 0 18px;
+}
+.mnyt .mnyt-archive-community {
+  margin-bottom: 26px;
+}
+.mnyt .mnyt-archive-community-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--violet);
+  margin-bottom: 10px;
+}
+.mnyt .mnyt-archive-community-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.mnyt .mnyt-archive-community-card {
+  background: var(--surface);
+  border: 1px dashed rgba(167, 139, 250, 0.3);
+  border-radius: 14px;
+  padding: 18px;
+}
+.mnyt .mnyt-archive-community-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.mnyt .mnyt-archive-community-card-category {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--violet);
+}
+.mnyt .mnyt-archive-community-card-status {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--amber);
+  background: rgba(251, 191, 36, 0.12);
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+.mnyt .mnyt-archive-community-card-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 15.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.mnyt .mnyt-archive-community-card-hook {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.mnyt .mnyt-archive-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.mnyt .mnyt-archive-chip-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.mnyt .mnyt-archive-chip {
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  transition: all 0.18s ease;
+}
+.mnyt .mnyt-archive-chip[data-active="true"] {
+  border-color: rgba(167, 139, 250, 0.5);
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--violet-light);
+}
+.mnyt .mnyt-archive-chip[data-variant="tool"][data-active="true"] {
+  border-color: rgba(34, 211, 238, 0.5);
+  background: rgba(34, 211, 238, 0.12);
+  color: var(--cyan-light);
+}
+.mnyt .mnyt-archive-flashcard-btn {
+  background: linear-gradient(135deg, var(--violet), var(--violet-deep));
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 9px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.mnyt .mnyt-archive-search {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--surface);
+  border: 1px solid rgba(231, 229, 240, 0.15);
+  color: var(--text);
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  outline: none;
+  margin-bottom: 22px;
+  font-family: inherit;
+}
+.mnyt .mnyt-archive-diff-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 12px 0 6px;
+}
+.mnyt .mnyt-archive-diff-chip {
+  padding: 7px 13px;
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: inherit;
+  transition: all 0.18s ease;
+}
+.mnyt .mnyt-archive-diff-chip[data-active="true"] {
+  border-color: rgba(167, 139, 250, 0.5);
+  background: rgba(167, 139, 250, 0.12);
+  color: var(--violet);
+}
+.mnyt .mnyt-archive-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 14px 0 16px;
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+.mnyt .mnyt-archive-clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--cyan-light);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  font-family: inherit;
+}
+.mnyt .mnyt-archive-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-faint);
+  font-size: 14px;
+}
+.mnyt .mnyt-archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.mnyt .mnyt-archive-card {
+  display: block;
+  cursor: pointer;
+  text-decoration: none;
+  background: linear-gradient(135deg, var(--card-tint, transparent), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--card-accent, var(--violet));
+  border-radius: 14px;
+  padding: 20px;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.2s;
+}
+.mnyt .mnyt-archive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+.mnyt .mnyt-archive-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.mnyt .mnyt-archive-card-category {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.mnyt .mnyt-archive-card-badge {
+  font-size: 16px;
+}
+.mnyt .mnyt-archive-card-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 16.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+.mnyt .mnyt-archive-card-hook {
+  font-size: 13px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.mnyt .mnyt-archive-card-tag {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-right: 6px;
+  display: inline-block;
+}
+.mnyt .mnyt-archive-load-more-btn {
+  background: transparent;
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  color: var(--violet-light);
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 11px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.mnyt .mnyt-archive-load-more-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
