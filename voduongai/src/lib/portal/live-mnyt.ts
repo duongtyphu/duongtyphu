@@ -351,6 +351,18 @@ export const getLiveMnytRelatedTopics = cache(async (categoryKey: string, exclud
   return (data as unknown as SummaryRow[]).map(mapSummaryRow);
 });
 
+/** Nhiều ý tưởng theo `id` — dùng cho lưới "yêu thích" ở view Hồ sơ
+ * (`favoriteIds` đã có sẵn từ state per-member, cần đủ title/hook/color/
+ * difficulty/estMinutes để dựng thẻ, không chỉ id). */
+export const getLiveMnytTopicsByIds = cache(async (ids: string[]): Promise<MnytTopicSummary[]> => {
+  if (ids.length === 0) return [];
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published").in("id", ids);
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
 export const getLiveMnytTopicById = cache(async (id: string): Promise<MnytTopicFull | null> => {
   const supabase = getSupabasePublic();
   if (!supabase) return null;

@@ -3523,3 +3523,310 @@
 .mnyt .mnyt-calendar-tomorrow-countdown strong {
   color: var(--text);
 }
+
+/* === View Hồ sơ (8) — mockup dòng 323-427. avatar+tên editable, 4 thẻ
+ * chỉ số, so sánh tháng, "ước tính minh hoạ" streak percentile, tổng kết
+ * tuần, lưới yêu thích (tái dùng .mnyt-archive-card). === */
+.mnyt .mnyt-profile-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 10px 0 6px;
+}
+.mnyt .mnyt-profile-subtitle {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  margin: 0 0 24px;
+}
+.mnyt .mnyt-profile-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: var(--green);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 9px 16px;
+  border-radius: 20px;
+  margin-bottom: 22px;
+  transition: all 0.18s ease;
+  cursor: pointer;
+  font-family: inherit;
+}
+.mnyt .mnyt-profile-export-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(52, 211, 153, 0.6);
+  box-shadow: 0 8px 20px rgba(52, 211, 153, 0.2);
+}
+.mnyt .mnyt-profile-identity-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin-bottom: 22px;
+}
+.mnyt .mnyt-profile-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-weight: 700;
+  font-size: 27px;
+  flex-shrink: 0;
+  border: 2px dashed rgba(167, 139, 250, 0.53);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--violet);
+}
+.mnyt .mnyt-profile-identity-fields {
+  flex: 1;
+  min-width: 220px;
+}
+.mnyt .mnyt-profile-field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 7px;
+}
+.mnyt .mnyt-profile-name-input {
+  width: 100%;
+  max-width: 340px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+.mnyt .mnyt-profile-photo-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.mnyt .mnyt-profile-photo-btn {
+  background: rgba(167, 139, 250, 0.14);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: var(--violet-light);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 9px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-block;
+}
+.mnyt .mnyt-profile-photo-remove-btn {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 9px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.mnyt .mnyt-profile-identity-hint {
+  font-size: 11.5px;
+  color: var(--text-faint);
+  margin-top: 10px;
+  max-width: 420px;
+}
+.mnyt .mnyt-profile-stats-row {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.mnyt .mnyt-profile-stat-card {
+  flex: 1;
+  min-width: 150px;
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+.mnyt .mnyt-profile-stat-card-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: block;
+}
+.mnyt .mnyt-profile-stat-card-link:hover {
+  transform: translateY(-3px);
+}
+.mnyt .mnyt-profile-stat-card-violet {
+  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+.mnyt .mnyt-profile-stat-card-violet .mnyt-profile-stat-label {
+  color: var(--violet-light);
+}
+.mnyt .mnyt-profile-stat-card-amber {
+  background: rgba(251, 146, 60, 0.08);
+  border: 1px solid rgba(251, 146, 60, 0.25);
+}
+.mnyt .mnyt-profile-stat-card-amber .mnyt-profile-stat-label {
+  color: #fdba74;
+}
+.mnyt .mnyt-profile-stat-card-cyan {
+  background: rgba(34, 211, 238, 0.08);
+  border: 1px solid rgba(34, 211, 238, 0.25);
+}
+.mnyt .mnyt-profile-stat-card-cyan:hover {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 10px 24px rgba(34, 211, 238, 0.15);
+}
+.mnyt .mnyt-profile-stat-card-cyan .mnyt-profile-stat-label {
+  color: var(--cyan-light);
+}
+.mnyt .mnyt-profile-stat-card-green {
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+.mnyt .mnyt-profile-stat-card-green:hover {
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 10px 24px rgba(52, 211, 153, 0.15);
+}
+.mnyt .mnyt-profile-stat-card-green .mnyt-profile-stat-label {
+  color: var(--green);
+}
+.mnyt .mnyt-profile-stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.mnyt .mnyt-profile-stat-value {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+.mnyt .mnyt-profile-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+}
+.mnyt .mnyt-profile-panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--violet);
+  margin-bottom: 14px;
+}
+.mnyt .mnyt-profile-month-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mnyt .mnyt-profile-month-row-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+.mnyt .mnyt-profile-bar-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.mnyt .mnyt-profile-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+.mnyt .mnyt-profile-bar-fill-violet {
+  background: linear-gradient(90deg, var(--violet), var(--violet-deep));
+}
+.mnyt .mnyt-profile-bar-fill-dim {
+  background: rgba(231, 229, 240, 0.25);
+}
+.mnyt .mnyt-profile-bar-fill-gradient {
+  background: linear-gradient(90deg, var(--cyan), var(--violet));
+}
+.mnyt .mnyt-profile-month-trend {
+  font-size: 12px;
+  color: var(--text-faint);
+  margin-top: 12px;
+}
+.mnyt .mnyt-profile-leaderboard-text {
+  font-size: 14px;
+  color: var(--text-bright);
+  margin-bottom: 10px;
+}
+.mnyt .mnyt-profile-leaderboard-note {
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-top: 6px;
+}
+.mnyt .mnyt-profile-recap-card {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.14), rgba(34, 211, 238, 0.08));
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 28px;
+}
+.mnyt .mnyt-profile-recap-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.mnyt .mnyt-profile-recap-title {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+.mnyt .mnyt-profile-recap-share-btn {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.mnyt .mnyt-profile-recap-stats {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.mnyt .mnyt-profile-recap-value {
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.mnyt .mnyt-profile-recap-value-sm {
+  font-size: 16px;
+}
+.mnyt .mnyt-profile-recap-label {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.mnyt .mnyt-profile-empty {
+  text-align: center;
+  padding: 30px 20px;
+  color: var(--text-faint);
+  font-size: 13.5px;
+  background: var(--surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: 14px;
+}

@@ -72,13 +72,14 @@ export type MnytStateBundle = {
     calmMode: boolean;
     reminderOn: boolean;
     tourSeen: boolean;
+    learnerName: string | null;
   };
   savedTermIds: number[];
   termSrs: Record<number, { box: number; dueAt: string | null; seenAt: string | null }>;
   submissions: { id: number; title: string; category: string; hook: string; adminStatus: string; createdAt: string }[];
 };
 
-const DEFAULT_PREFS: MnytStateBundle["prefs"] = { lang: "vi", interests: [], soundOn: true, calmMode: false, reminderOn: true, tourSeen: false };
+const DEFAULT_PREFS: MnytStateBundle["prefs"] = { lang: "vi", interests: [], soundOn: true, calmMode: false, reminderOn: true, tourSeen: false, learnerName: null };
 
 export async function getMnytStateBundle(): Promise<MnytStateBundle> {
   const ctx = await requireMnytMember();
@@ -97,7 +98,7 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
     supabase.from("mnyt_badges").select("badge_id, earned_at").eq("member_id", user.id),
     supabase.from("mnyt_journal_entries").select("topic_id, content").eq("member_id", user.id),
     supabase.from("mnyt_checklist_entries").select("topic_id, items").eq("member_id", user.id),
-    supabase.from("mnyt_prefs").select("lang, interests, sound_on, calm_mode, reminder_on, tour_seen").eq("member_id", user.id).maybeSingle(),
+    supabase.from("mnyt_prefs").select("lang, interests, sound_on, calm_mode, reminder_on, tour_seen, learner_name").eq("member_id", user.id).maybeSingle(),
     supabase.from("mnyt_saved_terms").select("term_id").eq("member_id", user.id),
     supabase.from("mnyt_term_srs").select("term_id, box, due_at, seen_at").eq("member_id", user.id),
     supabase.from("mnyt_submissions").select("id, title, category, hook, admin_status, created_at").eq("member_id", user.id).order("created_at", { ascending: false }),
@@ -117,7 +118,7 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
     termSrs[row.term_id as number] = { box: row.box as number, dueAt: row.due_at as string | null, seenAt: row.seen_at as string | null };
   }
 
-  const prefsRow = prefsRes.data as { lang: string; interests: string[]; sound_on: boolean; calm_mode: boolean; reminder_on: boolean; tour_seen: boolean } | null;
+  const prefsRow = prefsRes.data as { lang: string; interests: string[]; sound_on: boolean; calm_mode: boolean; reminder_on: boolean; tour_seen: boolean; learner_name: string | null } | null;
 
   return {
     signedIn: true,
@@ -130,7 +131,7 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
     journal,
     checklist,
     prefs: prefsRow
-      ? { lang: (prefsRow.lang as "vi" | "en") ?? "vi", interests: prefsRow.interests ?? [], soundOn: prefsRow.sound_on ?? true, calmMode: prefsRow.calm_mode ?? false, reminderOn: prefsRow.reminder_on ?? true, tourSeen: prefsRow.tour_seen ?? false }
+      ? { lang: (prefsRow.lang as "vi" | "en") ?? "vi", interests: prefsRow.interests ?? [], soundOn: prefsRow.sound_on ?? true, calmMode: prefsRow.calm_mode ?? false, reminderOn: prefsRow.reminder_on ?? true, tourSeen: prefsRow.tour_seen ?? false, learnerName: prefsRow.learner_name ?? null }
       : DEFAULT_PREFS,
     savedTermIds: (savedRes.data ?? []).map((r) => r.term_id as number),
     termSrs,
@@ -304,7 +305,7 @@ export async function reportMnytOutdated(topicId: string): Promise<{ ok: boolean
 // PREFS — last-write-wins theo thiết bị, patch từng phần.
 // ---------------------------------------------------------------------------
 
-export async function updateMnytPrefs(patch: Partial<{ lang: "vi" | "en"; interests: string[]; soundOn: boolean; calmMode: boolean; reminderOn: boolean; tourSeen: boolean }>): Promise<{ ok: boolean }> {
+export async function updateMnytPrefs(patch: Partial<{ lang: "vi" | "en"; interests: string[]; soundOn: boolean; calmMode: boolean; reminderOn: boolean; tourSeen: boolean; learnerName: string | null }>): Promise<{ ok: boolean }> {
   const ctx = await requireMnytMember();
   if (!ctx) return { ok: false };
   const row: Record<string, unknown> = { member_id: ctx.user.id, updated_at: new Date().toISOString() };
@@ -314,6 +315,7 @@ export async function updateMnytPrefs(patch: Partial<{ lang: "vi" | "en"; intere
   if (patch.calmMode !== undefined) row.calm_mode = patch.calmMode;
   if (patch.reminderOn !== undefined) row.reminder_on = patch.reminderOn;
   if (patch.tourSeen !== undefined) row.tour_seen = patch.tourSeen;
+  if (patch.learnerName !== undefined) row.learner_name = patch.learnerName;
 
   const { error } = await ctx.supabase.from("mnyt_prefs").upsert(row, { onConflict: "member_id" });
   return { ok: !error };
@@ -365,6 +367,13 @@ export async function getMnytCompletionDates(): Promise<string[]> {
   if (!ctx) return [];
   const { data } = await ctx.supabase.from("mnyt_completions").select("completed_at").eq("member_id", ctx.user.id);
   return (data ?? []).map((r) => (r.completed_at as string).slice(0, 10));
+}
+
+export async function getMnytCompletionLog(): Promise<{ topicId: string; date: string }[]> {
+  const ctx = await requireMnytMember();
+  if (!ctx) return [];
+  const { data } = await ctx.supabase.from("mnyt_completions").select("topic_id, completed_at").eq("member_id", ctx.user.id);
+  return (data ?? []).map((r) => ({ topicId: r.topic_id as string, date: (r.completed_at as string).slice(0, 10) }));
 }
 
 export async function getMnyt7DayCompletionCounts(): Promise<{ date: string; count: number }[]> {
