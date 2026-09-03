@@ -16,7 +16,10 @@
  * `--card-tint`).
  *
  * "Xuất sổ tay ý tưởng" dẫn sang `/v2/moi-ngay-mot-y-tuong/so-tay-y-tuong`
- * (Giai đoạn 7 — trang in "Sổ tay ý tưởng", xem `MnytNotebookClient.tsx`).
+ * (Giai đoạn 11 — trang TÀI LIỆU ĐỘC LẬP, đúng mockup thật
+ * `So Tay Y Tuong.dc.html`, xem `so-tay-y-tuong/page.tsx`) — mở trong TAB
+ * MỚI (`target="_blank"`, đúng README: đây là "xuất tài liệu", không phải
+ * điều hướng rời khỏi app).
  */
 
 import { useState } from "react";
@@ -196,7 +199,7 @@ export function MnytProfileClient({
       <h1 className="mnyt-profile-title">{t.title}</h1>
       <p className="mnyt-profile-subtitle">{t.subtitle}</p>
 
-      <Link href={MNYT_ROUTES.notebook} className="mnyt-profile-export-btn">
+      <Link href={MNYT_ROUTES.notebook} className="mnyt-profile-export-btn" target="_blank" rel="noopener noreferrer">
         {t.exportNotebook}
       </Link>
 
