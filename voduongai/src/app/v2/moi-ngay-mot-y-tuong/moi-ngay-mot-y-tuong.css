@@ -178,6 +178,313 @@
   }
 }
 
+/* =============================================================================
+ * Portal 2.0 shell wiring — sidebar + topbar CHUẨN dùng chung ~46 trang khác
+ * (`PortalV2Shell`). Trang này giờ bọc `<div className="app"><PortalV2Shell>
+ * ...</PortalV2Shell></div>` BÊN TRONG `.mnyt` (theo đúng chỉ đạo Founder:
+ * chỉ trang giữa — `.mnyt-shell` — là nội dung riêng của tính năng, Menu
+ * (sidebar) và thanh header (tìm kiếm + avatar) giữ NGUYÊN như mọi trang
+ * `/v2/*` khác).
+ *
+ * Giá trị hex dưới đây COPY NGUYÊN VĂN từ bộ token `--sidebar/--violet/
+ * --text/--line/--bg/--gold` mà mọi trang `PortalV2Shell` khác dùng (đối
+ * chiếu `ai-workspace.css`/`trang-chu.css`) — viết LITERAL (không qua
+ * `var()`) vì `.mnyt` đã tự định nghĩa `--bg`/`--text`/`--violet`... cho
+ * RIÊNG nội dung tối bên trong (khối token đầu file) — dùng `var()` ở đây
+ * sẽ vô tình lấy nhầm giá trị TỐI của `.mnyt` cho sidebar/topbar SÁNG.
+ * ========================================================================== */
+.mnyt .app {
+  display: flex;
+  min-height: 100vh;
+}
+.mnyt .sidebar {
+  width: 224px;
+  flex-shrink: 0;
+  background: #150f2e;
+  color: #cbc6e8;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+}
+.mnyt .sidebar .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 22px;
+}
+.mnyt .sidebar .brand .mark {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mnyt .sidebar .brand .name {
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+}
+.mnyt .sidebar .brand .name .vo {
+  color: #3b82f6;
+}
+.mnyt .sidebar .brand .name .ai {
+  color: #fff;
+}
+.mnyt .sidebar .nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #b5afd6;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.mnyt .sidebar .nav-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.mnyt .sidebar .nav-item:hover {
+  background: #231a48;
+  color: #fff;
+}
+.mnyt .sidebar .nav-item.active {
+  background: #6d4aff;
+  color: #fff;
+}
+.mnyt .sidebar .nav-item.active svg {
+  opacity: 1;
+}
+.mnyt .sidebar .promo {
+  margin-top: auto;
+  background: linear-gradient(160deg, #3d2a8f, #241c46);
+  border-radius: 14px;
+  padding: 18px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.mnyt .sidebar .promo .crown {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+.mnyt .sidebar .promo .crown::after {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  background: radial-gradient(circle, rgba(177, 139, 255, 0.45), transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+.mnyt .sidebar .promo .crown-sparkle {
+  position: absolute;
+  color: #ffd75e;
+  pointer-events: none;
+  animation: sparkleTwinkle 2.2s ease-in-out infinite;
+}
+@keyframes sparkleTwinkle {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.6) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(20deg);
+  }
+}
+.mnyt .sidebar .promo h4 {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.mnyt .sidebar .promo p {
+  font-size: 12px;
+  color: #c3bde3;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.mnyt .sidebar .promo button {
+  width: 100%;
+  background: linear-gradient(135deg, #6d4aff, #9b7bff);
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+}
+.mnyt .sidebar .promo button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(109, 74, 255, 0.5);
+  filter: brightness(1.08);
+}
+.mnyt .sidebar .promo button:active {
+  transform: translateY(0) scale(0.97);
+}
+.mnyt .main-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.mnyt .main-col .topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 28px;
+  background: #fff;
+  border-bottom: 1px solid #ece9f7;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.mnyt .main-col .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+.mnyt .main-col .search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f7f6fc;
+  border: 1px solid #ece9f7;
+  border-radius: 10px;
+  padding: 9px 14px;
+  max-width: 420px;
+}
+.mnyt .main-col .search-box svg {
+  width: 16px;
+  height: 16px;
+  color: #6b6685;
+  flex-shrink: 0;
+}
+.mnyt .main-col .search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 13px;
+  font-family: inherit;
+  color: #1c1830;
+}
+.mnyt .main-col .search-box kbd {
+  font-size: 11px;
+  color: #6b6685;
+  background: #fff;
+  border: 1px solid #ece9f7;
+  border-radius: 5px;
+  padding: 2px 6px;
+}
+.mnyt .main-col .upgrade-btn {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1.5px solid #e2b23c;
+  color: #a9822c;
+  background: #fffaf0;
+  padding: 9px 16px;
+  border-radius: 9px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.mnyt .main-col .upgrade-btn:hover {
+  background: #fff3d9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(226, 178, 60, 0.35);
+}
+.mnyt .main-col .upgrade-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+.mnyt .main-col .icon-btn {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: none;
+  background: #f7f6fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #1c1830;
+}
+.mnyt .main-col .icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.mnyt .main-col .icon-btn .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 1px 5px;
+  min-width: 16px;
+  text-align: center;
+}
+.mnyt .main-col .profile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  cursor: pointer;
+}
+.mnyt .main-col .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8b7bde, #5f4bc9);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.mnyt .main-col .profile .who {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #1c1830;
+}
+.mnyt .main-col .profile .plan {
+  display: inline-block;
+  margin-top: 1px;
+  background: #fef3c7;
+  color: #92720a;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 6px;
+}
+
 /* Chế độ tĩnh — tắt toàn bộ animation, gắn `.calm-mode` lên `.mnyt` khi
  * `prefsCalmMode` bật HOẶC `prefers-reduced-motion: reduce` (xem
  * `useCalmMode()` trong Phase 5 context). */

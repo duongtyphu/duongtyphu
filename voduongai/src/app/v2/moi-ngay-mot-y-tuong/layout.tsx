@@ -2,6 +2,7 @@ import { Be_Vietnam_Pro, Space_Grotesk } from "next/font/google";
 
 import { getMnytStateBundle } from "@/lib/portal/mnyt-sync";
 import { getLiveMnytCategories } from "@/lib/portal/live-mnyt";
+import { getPremiumStatus } from "@/lib/v2/premium-access";
 
 import { MnytShellClient } from "./MnytShellClient";
 
@@ -10,9 +11,17 @@ import { MnytShellClient } from "./MnytShellClient";
  * (`/v2/moi-ngay-mot-y-tuong/*`) — nạp font riêng (Space Grotesk + Be
  * Vietnam Pro, khác Inter mà `v2/layout.tsx` đã nạp cho 46 trang khác —
  * không sửa layout đó, tránh tải thêm font cho những trang không cần) và
- * bọc `MnytShellClient` (header + bottom-nav + quản lý `prefs`) — mọi route
- * con (`kho-y-tuong`, `lo-trinh`, `y-tuong/[id]`...) tự động thừa hưởng
- * cùng 1 shell, không cần lặp lại ở từng `page.tsx`.
+ * bọc `MnytShellClient` — mọi route con (`kho-y-tuong`, `lo-trinh`,
+ * `y-tuong/[id]`...) tự động thừa hưởng cùng 1 shell, không cần lặp lại ở
+ * từng `page.tsx`.
+ *
+ * Kể từ đợt tích hợp Portal 2.0 (chỉ đạo Founder: "Menu và thanh header
+ * (tìm kiếm và cụm avata) vẫn giữ nguyên như các trang khác trong portal
+ * 2.0") — `MnytShellClient` không còn tự dựng header/bottom-nav toàn màn
+ * hình nữa, mà bọc `PortalV2Shell` (sidebar + topbar CHUẨN dùng chung ~46
+ * trang khác) BÊN NGOÀI, chỉ giữ `MnytHeader`/10 view làm nội dung "trang
+ * giữa" — nên layout này cần thêm `getPremiumStatus()` (prop bắt buộc của
+ * `PortalV2Shell`, quyết định ẩn/hiện khối "Nâng cấp Premium").
  *
  * `getMnytStateBundle()` gọi Ở ĐÂY (không phải từng `page.tsx`) — 1 lần/
  * điều hướng, cấp streak/xp/freeze/badge cho header + `prefs` khởi tạo cho
@@ -39,7 +48,11 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export default async function MoiNgayMotYTuongLayout({ children }: { children: React.ReactNode }) {
-  const [state, categories] = await Promise.all([getMnytStateBundle(), getLiveMnytCategories()]);
+  const [state, categories, premium] = await Promise.all([
+    getMnytStateBundle(),
+    getLiveMnytCategories(),
+    getPremiumStatus(),
+  ]);
 
   return (
     <div
@@ -51,7 +64,7 @@ export default async function MoiNgayMotYTuongLayout({ children }: { children: R
         } as React.CSSProperties
       }
     >
-      <MnytShellClient initialState={state} categories={categories}>
+      <MnytShellClient initialState={state} categories={categories} premium={premium}>
         {children}
       </MnytShellClient>
     </div>
