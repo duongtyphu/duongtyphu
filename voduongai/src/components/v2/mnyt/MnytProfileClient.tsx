@@ -337,10 +337,6 @@ export function MnytProfileClient({
                 </div>
                 <div className="mnyt-archive-card-title">{title}</div>
                 <div className="mnyt-archive-card-hook">{hook}</div>
-                <span className="mnyt-archive-card-tag">{topic.difficulty}</span>
-                <span className="mnyt-archive-card-tag">
-                  ~{topic.estMinutes} {t.minutes}
-                </span>
               </Link>
             );
           })}

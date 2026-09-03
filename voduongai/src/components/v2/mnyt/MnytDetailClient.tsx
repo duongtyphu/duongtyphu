@@ -21,6 +21,14 @@
  * nội dung "công cụ nào tốt nhất cho việc gì/cần lưu ý gì" theo từng cặp
  * công cụ — bịa nội dung này sẽ vi phạm nguyên tắc không tạo dữ liệu giả,
  * nên bỏ hẳn khối này (đúng tinh thần README "chỉ hiển thị dữ liệu thật").
+ *
+ * Không có "freshness badge"/"Cập nhật lần cuối" ở bước Tổng kết (mockup's
+ * `freshnessBadge`/`lastUpdatedValue`/`freshnessNote`, dòng ~885-887) —
+ * `mnyt_topics.updated_at` có thật trong schema nhưng logic phân loại
+ * "mức độ mới" (ngưỡng nào ra badge gì, câu `freshnessNote` nói gì) KHÔNG
+ * xuất hiện trong mockup tĩnh (chỉ có biến JS, không có giá trị). Tự đặt
+ * ngưỡng/câu chữ ở đây sẽ là bịa nội dung — chỉ giữ nút "Nội dung này đã
+ * lỗi thời?" (đã có, không phụ thuộc suy đoán ngưỡng nào).
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
