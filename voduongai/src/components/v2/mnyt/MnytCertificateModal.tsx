@@ -18,6 +18,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
 
 type Props = {
   lang: "vi" | "en";
@@ -72,6 +73,8 @@ export function MnytCertificateModal({ lang, categoryName, categoryNameEn, categ
   const catName = isVi ? categoryName : categoryNameEn || categoryName;
   const completed = totalTopics > 0 && doneCount >= totalTopics;
   const remaining = Math.max(0, totalTopics - doneCount);
+
+  useMnytModalEscape(onClose);
 
   const t = {
     title: isVi ? "Chứng nhận hoàn thành" : "Certificate of completion",

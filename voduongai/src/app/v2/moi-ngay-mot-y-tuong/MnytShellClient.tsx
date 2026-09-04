@@ -46,6 +46,7 @@ import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import { MnytHeader } from "@/components/v2/mnyt/MnytHeader";
+import { MnytSoundProvider } from "@/components/v2/mnyt/MnytSoundContext";
 import { MnytToastProvider, useMnytToast } from "@/components/v2/mnyt/MnytToastContext";
 import { MnytTourModal } from "@/components/v2/mnyt/MnytTourModal";
 import { MnytSubmitIdeaModal } from "@/components/v2/mnyt/MnytSubmitIdeaModal";
@@ -197,7 +198,7 @@ function MnytShellInner({
               onToggleLang={onToggleLang}
               onOpenSubmit={onOpenSubmit}
             />
-            {children}
+            <MnytSoundProvider soundOn={prefs.soundOn}>{children}</MnytSoundProvider>
           </div>
         </PortalV2Shell>
       </div>

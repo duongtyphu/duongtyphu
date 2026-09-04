@@ -70,6 +70,18 @@ export function MnytHeader({
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
+  // Mockup gốc (`_onKeyDown`, dòng 1964): Escape đóng `showSettingsMenu`
+  // đang mở — áp dụng tương tự cho dropdown "Khám phá".
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "Escape" && e.key !== "Esc") return;
+      if (exploreOpen) setExploreOpen(false);
+      if (settingsOpen) setSettingsOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [exploreOpen, settingsOpen]);
+
   return (
     <header className="mnyt-header">
       <Link href={MNYT_ROUTES.home} className="mnyt-brand">

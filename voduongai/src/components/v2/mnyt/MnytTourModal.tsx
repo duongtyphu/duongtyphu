@@ -13,6 +13,8 @@
  * vực, tính năng thật đã có trong app), không lặp lại lỗi thiếu nội dung.
  */
 
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
+
 type TourStep = { title: string; desc: string };
 
 const TOUR_STEPS_VI: TourStep[] = [
@@ -41,6 +43,9 @@ export function MnytTourModal({ lang, step, onNext, onSkip }: Props) {
   const steps = isVi ? TOUR_STEPS_VI : TOUR_STEPS_EN;
   const current = steps[Math.min(step, steps.length - 1)];
   const isLast = step >= steps.length - 1;
+
+  // Mockup gốc: Escape = closeTour() — cùng hành vi nút "Bỏ qua".
+  useMnytModalEscape(onSkip);
 
   const t = {
     next: isVi ? "Tiếp" : "Next",

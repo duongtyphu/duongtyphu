@@ -4363,7 +4363,7 @@
 }
 .mnyt .mnyt-calendar-grid-card {
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 26px;
@@ -4376,7 +4376,7 @@
 }
 .mnyt .mnyt-calendar-nav-btn {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.15);
   color: var(--text);
   width: 32px;
   height: 32px;
@@ -4435,7 +4435,7 @@
 }
 .mnyt .mnyt-calendar-tomorrow-card {
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.1);
   border-radius: 16px;
   padding: 26px;
   text-align: center;
@@ -4547,7 +4547,7 @@
   width: 100%;
   max-width: 340px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   border-radius: 10px;
   padding: 11px 14px;
   color: var(--text);
@@ -4574,7 +4574,7 @@
 }
 .mnyt .mnyt-profile-photo-remove-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.16);
   color: var(--text-dim);
   font-weight: 600;
   font-size: 12.5px;
@@ -4740,7 +4740,7 @@
 }
 .mnyt .mnyt-profile-recap-share-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.25);
   color: var(--text);
   font-weight: 600;
   font-size: 12.5px;

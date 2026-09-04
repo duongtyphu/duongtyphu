@@ -18,6 +18,7 @@ import Link from "next/link";
 
 import type { MnytTopicSummary } from "@/lib/portal/live-mnyt";
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
 
 type Props = {
   lang: "vi" | "en";
@@ -44,6 +45,8 @@ export function MnytPathMapModal({ lang, categoryKey, categoryName, categoryColo
   const isVi = lang === "vi";
   const [topics, setTopics] = useState<MnytTopicSummary[] | null>(null);
   const [failed, setFailed] = useState(false);
+
+  useMnytModalEscape(onClose);
 
   useEffect(() => {
     let cancelled = false;

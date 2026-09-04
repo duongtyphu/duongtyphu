@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 
 import type { MnytCategory } from "@/lib/portal/live-mnyt";
 import { updateMnytPrefs } from "@/lib/portal/mnyt-sync";
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
 
 type Props = {
   lang: "vi" | "en";
@@ -60,6 +61,10 @@ export function MnytOnboardingModal({ lang, categories, initialInterests, onClos
     onClose();
     router.refresh();
   };
+
+  // Mockup gốc: Escape = skipOnboarding() — CHỦ ĐỘNG xoá lựa chọn cũ,
+  // đúng hành vi nút "Bỏ qua" (xem docblock đầu file).
+  useMnytModalEscape(() => void finish([]));
 
   return (
     <div className="mnyt-modal-backdrop" role="dialog" aria-modal="true">

@@ -40,6 +40,8 @@ import { completeMnytTopic, reportMnytOutdated, saveMnytChecklist, saveMnytJourn
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
 import { MnytPathMapModal } from "./MnytPathMapModal";
 import { MnytShareCardModal } from "./MnytShareCardModal";
+import { useMnytSoundOn } from "./MnytSoundContext";
+import { playMnytStepAdvanceTone } from "@/lib/mnyt/sound";
 
 type Props = {
   lang: "vi" | "en";
@@ -77,6 +79,7 @@ export function MnytDetailClient({
   const router = useRouter();
   const isVi = lang === "vi";
   const c = topic.content;
+  const soundOn = useMnytSoundOn();
 
   const [showPathMap, setShowPathMap] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
@@ -191,14 +194,23 @@ export function MnytDetailClient({
   }, [signedIn, completing, topic.id]);
 
   const nextStep = useCallback(() => {
+    // Mockup gốc (dòng ~2569): ở bước Trắc nghiệm (index 2), "Tiếp" bị
+    // CHẶN cho tới khi đáp án đã chọn ĐÚNG (không phải chỉ "đã chọn") —
+    // đúng yêu cầu README "Tiếp is blocked until the correct answer is
+    // selected" — thiếu gate này trước đây khiến bước quiz không chặn gì.
+    if (currentStep === 2 && mainQuizAnswer !== mainQuiz.correct) return;
     if (currentStep < STEP_COUNT - 1) {
       const n = currentStep + 1;
       setVisited((prev) => new Set(prev).add(n));
       setCurrentStep(n);
+      // Mockup gốc (dòng 2576): âm 520Hz/0.1s đúng lúc chuyển bước TIẾN
+      // (không phát khi lùi bước hay khi hoàn thành bài) — README mục
+      // "Sound", tôn trọng công tắc `soundOn` (mutable, đã có ở Cài đặt).
+      playMnytStepAdvanceTone(soundOn);
     } else {
       void handleComplete();
     }
-  }, [currentStep, handleComplete]);
+  }, [currentStep, handleComplete, mainQuizAnswer, mainQuiz, soundOn]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
@@ -209,12 +221,28 @@ export function MnytDetailClient({
     function onKey(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
       if (target && ["TEXTAREA", "INPUT"].includes(target.tagName)) return;
-      if (e.key === "ArrowRight") nextStep();
-      if (e.key === "ArrowLeft") prevStep();
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "ArrowRight") {
+        nextStep();
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        prevStep();
+        return;
+      }
+      // Mockup gốc (dòng ~1948-1951): ở bước Trắc nghiệm (index 2), phím
+      // 1-4 chọn đáp án cho câu hỏi chính — chỉ áp dụng khi chưa trả lời
+      // (khớp hành vi disable của nút bấm chuột cùng câu hỏi).
+      if (currentStep === 2 && /^[1-4]$/.test(e.key)) {
+        const idx = Number(e.key) - 1;
+        if (idx < mainQuiz.options.length && mainQuizAnswer === null) {
+          setMainQuizAnswer(idx);
+        }
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [quickMode, lessonDone, nextStep, prevStep]);
+  }, [quickMode, lessonDone, nextStep, prevStep, currentStep, mainQuiz, mainQuizAnswer]);
 
   const toggleChecklistItem = useCallback(
     (i: 0 | 1 | 2) => {
@@ -542,7 +570,12 @@ export function MnytDetailClient({
             <button type="button" className="mnyt-detail-nav-btn" onClick={prevStep} disabled={currentStep === 0}>
               {t.back_}
             </button>
-            <button type="button" className="mnyt-detail-nav-btn mnyt-detail-nav-btn--primary" onClick={nextStep} disabled={completing || (currentStep === STEP_COUNT - 1 && !signedIn)}>
+            <button
+              type="button"
+              className="mnyt-detail-nav-btn mnyt-detail-nav-btn--primary"
+              onClick={nextStep}
+              disabled={completing || (currentStep === STEP_COUNT - 1 && !signedIn) || (currentStep === 2 && mainQuizAnswer !== mainQuiz.correct)}
+            >
               {t.next}
             </button>
           </div>

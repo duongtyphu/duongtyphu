@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
 
 type ShareTopic = {
   title: string;
@@ -94,6 +95,8 @@ export function MnytShareCardModal({ lang, topic, streak, onClose }: Props) {
   const title = isVi ? topic.title : topic.titleEn || topic.title;
   const categoryName = isVi ? topic.categoryName : topic.categoryNameEn || topic.categoryName;
   const takeaway = isVi ? topic.takeaway : topic.takeawayEn || topic.takeaway;
+
+  useMnytModalEscape(onClose);
 
   useEffect(() => {
     const canvas = canvasRef.current;
