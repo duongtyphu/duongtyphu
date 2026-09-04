@@ -60,6 +60,7 @@ export type MnytStateBundle = {
   streak: number;
   xp: number;
   freezeCount: number;
+  lastCompletedDate: string | null;
   completedIds: string[];
   favoriteIds: string[];
   badges: { id: string; earnedAt: string }[];
@@ -85,14 +86,14 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
   const ctx = await requireMnytMember();
   if (!ctx) {
     return {
-      signedIn: false, streak: 0, xp: 0, freezeCount: 0, completedIds: [], favoriteIds: [], badges: [],
+      signedIn: false, streak: 0, xp: 0, freezeCount: 0, lastCompletedDate: null, completedIds: [], favoriteIds: [], badges: [],
       journal: {}, checklist: {}, prefs: DEFAULT_PREFS, savedTermIds: [], termSrs: {}, submissions: [],
     };
   }
   const { user, supabase } = ctx;
 
   const [stateRes, completionsRes, favsRes, badgesRes, journalRes, checklistRes, prefsRes, savedRes, srsRes, submissionsRes] = await Promise.all([
-    supabase.from("mnyt_user_state").select("streak, xp, freeze_count").eq("member_id", user.id).maybeSingle(),
+    supabase.from("mnyt_user_state").select("streak, xp, freeze_count, last_completed_date").eq("member_id", user.id).maybeSingle(),
     supabase.from("mnyt_completions").select("topic_id").eq("member_id", user.id),
     supabase.from("mnyt_favorites").select("topic_id").eq("member_id", user.id),
     supabase.from("mnyt_badges").select("badge_id, earned_at").eq("member_id", user.id),
@@ -125,6 +126,7 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
     streak: (stateRes.data?.streak as number | undefined) ?? 0,
     xp: (stateRes.data?.xp as number | undefined) ?? 0,
     freezeCount: (stateRes.data?.freeze_count as number | undefined) ?? 0,
+    lastCompletedDate: (stateRes.data?.last_completed_date as string | null | undefined) ?? null,
     completedIds: (completionsRes.data ?? []).map((r) => r.topic_id as string),
     favoriteIds: (favsRes.data ?? []).map((r) => r.topic_id as string),
     badges: (badgesRes.data ?? []).map((r) => ({ id: r.badge_id as string, earnedAt: r.earned_at as string })),

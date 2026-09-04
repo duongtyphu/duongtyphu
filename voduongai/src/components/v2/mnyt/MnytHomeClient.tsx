@@ -6,12 +6,24 @@
  * tự gốc mockup — dashboard cards/link Lộ trình đổi từ ĐẦU khối sang SAU
  * cụm hero+CTA):
  *
- *   Banner ảnh (trần, giữa, 300px) → nhãn "Ý tưởng hôm nay" → tiêu đề →
- *   mô tả (hook) → CTA chính full-width → hàng 4 CTA phụ bằng nhau →
- *   (ghi chú lĩnh vực quan tâm, nếu có) → dashboard cards (chuỗi/đã học/
- *   huy hiệu) → chip lọc + quả cầu 3D 446 nốt → dải "Đang thịnh hành" →
- *   gợi ý Từ điển → nhãn "KHÔNG GIAN Ý TƯỞNG" (số liệu THẬT, không hardcode)
- *   → lưới 35 thẻ chủ đề.
+ *   (Banner nhắc nhở, nếu có) → Banner ảnh (trần, giữa, 300px) → nhãn "Ý
+ *   tưởng hôm nay" → tiêu đề → mô tả (hook) → CTA chính full-width → hàng 4
+ *   CTA phụ bằng nhau → (ghi chú lĩnh vực quan tâm, nếu có) → dashboard
+ *   cards (chuỗi/đã học/huy hiệu) → chip lọc + quả cầu 3D 446 nốt → dải
+ *   "Đang thịnh hành" → gợi ý Từ điển → nhãn "KHÔNG GIAN Ý TƯỞNG" (số liệu
+ *   THẬT, không hardcode) → lưới 35 thẻ chủ đề.
+ *
+ * Banner nhắc nhở (`showReminderBanner`, mockup dòng 104-109/2690-2693) —
+ * PHÁT HIỆN THIẾU khi audit lại pixel-level (đối chiếu trực tiếp mockup,
+ * không tin docblock cũ chỉ liệt kê phần đã cố ý đổi thứ tự chứ không nhắc
+ * gì tới banner này — tức đây là gap thật, không phải quyết định có chủ
+ * đích). Điều kiện y hệt mockup: CHƯA hoàn thành ý tưởng nào hôm nay
+ * (`lastCompletedDate !== hôm nay`, so UTC — khớp cách `mnyt-sync.ts` lưu
+ * `last_completed_date`) VÀ `streak > 0` VÀ giờ ĐỊA PHƯƠNG của người xem
+ * `>= 18h` — phần giờ địa phương CHỈ tính được ở client sau mount (giờ UTC
+ * server render lệch múi giờ người dùng thật), cùng kỹ thuật đã dùng cho
+ * lời chào theo giờ ở `TrangChuClient.tsx` — mặc định `false` lúc SSR,
+ * tránh hydration mismatch.
  *
  * Quả cầu 3D — README (mục "1. Trang chủ") tự nêu rõ có thể "reconsider
  * node count for performance" — giữ ĐỦ toàn bộ node thật (không mẫu/sample
@@ -26,7 +38,7 @@
  * lọc, dải "Đang thịnh hành", lưới thẻ chủ đề) và trang "Kho ý tưởng".
  */
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -44,6 +56,7 @@ type Props = {
   globeNodes: MnytGlobeNode[];
   glossaryTeaser: MnytGlossaryTerm[];
   streak: number;
+  lastCompletedDate: string | null;
   completedIds: string[];
   badgeCount: number;
   interestNames: string[];
@@ -76,6 +89,7 @@ export function MnytHomeClient({
   globeNodes,
   glossaryTeaser,
   streak,
+  lastCompletedDate,
   completedIds,
   badgeCount,
   interestNames,
@@ -93,6 +107,14 @@ export function MnytHomeClient({
   const dragState = useRef<{ dragging: boolean; startX: number; startDeg: number; moved: boolean } | null>(null);
 
   const completedSet = useMemo(() => new Set(completedIds), [completedIds]);
+
+  const [isEveningLocal, setIsEveningLocal] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc đồng hồ thiết bị thật, không có tương đương SSR
+    setIsEveningLocal(new Date().getHours() >= 18);
+  }, []);
+  const doneTodayAlready = lastCompletedDate === new Date().toISOString().slice(0, 10);
+  const showReminderBanner = !doneTodayAlready && streak > 0 && isEveningLocal;
 
   const nodeCategoryMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -190,14 +212,28 @@ export function MnytHomeClient({
     glossaryTeaserCta: isVi ? "Xem tất cả →" : "See all →",
     catDoneLabel: isVi ? "đã học" : "done",
     all: isVi ? "Tất cả" : "All",
+    reminderBannerText: isVi
+      ? `Giữ chuỗi ${streak} ngày của bạn — hôm nay bạn chưa học ý tưởng nào.`
+      : `Keep your ${streak}-day streak alive — you haven't learned today's idea yet.`,
+    reminderCtaLabel: isVi ? "Học ngay" : "Learn now",
   };
 
   const totalDone = completedIds.length;
 
   return (
     <section data-screen-label="Home" className="mnyt-view mnyt-home">
-      {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh public/, không cần Next Image optimize cho asset 1 kích thước cố định */}
-      <img className="mnyt-home-banner" src="/v2-static/assets/moi-ngay-1-y-tuong-banner.png" alt={isVi ? "Mỗi ngày 1 ý tưởng học AI" : "One AI idea a day"} width={300} height={300} />
+      {showReminderBanner && todayTopic && (
+        <div className="mnyt-home-reminder">
+          <span className="mnyt-home-reminder-dot" aria-hidden />
+          <div className="mnyt-home-reminder-text">{t.reminderBannerText}</div>
+          <Link href={mnytDetailHref(todayTopic.id)} className="mnyt-home-reminder-cta">
+            {t.reminderCtaLabel}
+          </Link>
+        </div>
+      )}
+
+      {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh public/, không cần Next Image optimize; kích thước gốc chưa xác định (mockup dùng height:auto) nên không khai width/height để tránh ép sai tỉ lệ */}
+      <img className="mnyt-home-banner" src="/v2-static/assets/moi-ngay-1-y-tuong-banner.png" alt={isVi ? "Mỗi ngày 1 ý tưởng học AI" : "One AI idea a day"} />
 
       <div className="mnyt-home-hero">
         {todayTopic ? (
