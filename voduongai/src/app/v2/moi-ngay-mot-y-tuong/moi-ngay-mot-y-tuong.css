@@ -179,19 +179,30 @@
 }
 
 /* =============================================================================
- * Portal 2.0 shell wiring — sidebar + topbar CHUẨN dùng chung ~46 trang khác
- * (`PortalV2Shell`). Trang này giờ bọc `<div className="app"><PortalV2Shell>
- * ...</PortalV2Shell></div>` BÊN TRONG `.mnyt` (theo đúng chỉ đạo Founder:
- * chỉ trang giữa — `.mnyt-shell` — là nội dung riêng của tính năng, Menu
- * (sidebar) và thanh header (tìm kiếm + avatar) giữ NGUYÊN như mọi trang
- * `/v2/*` khác).
+ * Portal 2.0 shell wiring — sidebar + topbar dùng chung `PortalV2Shell`.
+ * Trang này bọc `<div className="app"><PortalV2Shell>...</PortalV2Shell>
+ * </div>` BÊN TRONG `.mnyt` (theo đúng chỉ đạo Founder: chỉ trang giữa —
+ * `.mnyt-shell` — là nội dung riêng của tính năng, Menu (sidebar) giữ
+ * NGUYÊN như mọi trang `/v2/*` khác).
  *
- * Giá trị hex dưới đây COPY NGUYÊN VĂN từ bộ token `--sidebar/--violet/
- * --text/--line/--bg/--gold` mà mọi trang `PortalV2Shell` khác dùng (đối
- * chiếu `ai-workspace.css`/`trang-chu.css`) — viết LITERAL (không qua
- * `var()`) vì `.mnyt` đã tự định nghĩa `--bg`/`--text`/`--violet`... cho
- * RIÊNG nội dung tối bên trong (khối token đầu file) — dùng `var()` ở đây
- * sẽ vô tình lấy nhầm giá trị TỐI của `.mnyt` cho sidebar/topbar SÁNG.
+ * Sidebar giữ nguyên giá trị hex COPY NGUYÊN VĂN từ bộ token `--sidebar/
+ * --violet/--text/--line/--gold` mà mọi trang `PortalV2Shell` khác dùng
+ * (đối chiếu `ai-workspace.css`/`trang-chu.css`) — viết LITERAL (không qua
+ * `var()`), vì đây là màu SIDEBAR CHUẨN dùng chung ~46 trang, không liên
+ * quan gì tới theme riêng của `.mnyt`.
+ *
+ * Topbar — ĐÃ ĐỔI Ý theo yêu cầu Founder ("Topbar dùng chung màu nền đen
+ * với trang Mỗi ngày một ý tưởng"): thay vì nền trắng chuẩn như 46 trang
+ * khác, topbar của RIÊNG trang này giờ dùng thẳng `var(--bg)`/`var(--text)`/
+ * `var(--surface-raised)`/`var(--border)` — đúng bộ token TỐI mà `.mnyt` đã
+ * tự định nghĩa cho nội dung bên trong (khối token đầu file) — để topbar
+ * liền mạch với `.mnyt-shell` phía dưới, không còn lệch tông trắng/đen.
+ * Đây là NGOẠI LỆ CÓ CHỦ ĐÍCH, chỉ áp dụng cho đúng trang này — không đụng
+ * `PortalV2Shell.tsx`/45 trang `/v2/*` khác (vẫn giữ topbar trắng chuẩn).
+ * Dropdown của `NotificationBell`/`ProfileMenu`/`PortalSearchBox` (kết quả
+ * tìm kiếm/thông báo/hồ sơ) dùng inline style riêng, LUÔN nền trắng bất kể
+ * tiền tố CSS trang nào (thiết kế có chủ đích, xem docblock 2 file đó) —
+ * không đụng, không phải phần "topbar" theo nghĩa CSS đang sửa ở đây.
  * ========================================================================== */
 .mnyt .app {
   display: flex;
@@ -351,8 +362,8 @@
   align-items: center;
   gap: 16px;
   padding: 16px 28px;
-  background: #fff;
-  border-bottom: 1px solid #ece9f7;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 5;
@@ -368,8 +379,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f7f6fc;
-  border: 1px solid #ece9f7;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 9px 14px;
   max-width: 420px;
@@ -377,7 +388,7 @@
 .mnyt .main-col .search-box svg {
   width: 16px;
   height: 16px;
-  color: #6b6685;
+  color: var(--text-muted);
   flex-shrink: 0;
 }
 .mnyt .main-col .search-box input {
@@ -387,13 +398,16 @@
   background: none;
   font-size: 13px;
   font-family: inherit;
-  color: #1c1830;
+  color: var(--text);
+}
+.mnyt .main-col .search-box input::placeholder {
+  color: var(--text-faint);
 }
 .mnyt .main-col .search-box kbd {
   font-size: 11px;
-  color: #6b6685;
-  background: #fff;
-  border: 1px solid #ece9f7;
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
   border-radius: 5px;
   padding: 2px 6px;
 }
@@ -401,9 +415,9 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  border: 1.5px solid #e2b23c;
-  color: #a9822c;
-  background: #fffaf0;
+  border: 1.5px solid rgba(251, 191, 36, 0.45);
+  color: var(--amber-light);
+  background: rgba(251, 191, 36, 0.12);
   padding: 9px 16px;
   border-radius: 9px;
   font-weight: 700;
@@ -413,7 +427,7 @@
   transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
 .mnyt .main-col .upgrade-btn:hover {
-  background: #fff3d9;
+  background: rgba(251, 191, 36, 0.2);
   transform: translateY(-1px);
   box-shadow: 0 6px 14px rgba(226, 178, 60, 0.35);
 }
@@ -426,12 +440,12 @@
   height: 38px;
   border-radius: 9px;
   border: none;
-  background: #f7f6fc;
+  background: var(--surface-raised);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: #1c1830;
+  color: var(--text);
 }
 .mnyt .main-col .icon-btn svg {
   width: 18px;
@@ -472,7 +486,7 @@
   font-size: 13px;
   font-weight: 600;
   line-height: 1.25;
-  color: #1c1830;
+  color: var(--text);
 }
 .mnyt .main-col .profile .plan {
   display: inline-block;
