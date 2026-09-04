@@ -1,0 +1,61 @@
+/* =============================================================================
+ * "Sổ tay ý tưởng" — Giai đoạn 11 (REWORK, đúng mockup thật vừa tìm thấy).
+ *
+ * CSS chép NGUYÊN VĂN từ `<style>`/inline style của
+ * `design_handoff_moi_ngay_1_y_tuong/So Tay Y Tuong.dc.html` — bản mockup
+ * RIÊNG của trang này (khác hẳn `Moi Ngay 1 Y Tuong.dc.html`, bản mockup
+ * app 10 view). Trang này là 1 TÀI LIỆU ĐỘC LẬP (đúng docblock của
+ * `page.tsx`) — không dùng `.mnyt` (namespace app tối), không dùng
+ * `PortalV2Shell` — nên có tiền tố riêng `.notebook-doc`.
+ *
+ * `<doc-page margin="0.85in">` (custom element của công cụ thiết kế, không
+ * phải thư viện thật) — thay bằng khung "tờ giấy" thuần CSS: `.notebook-doc`
+ * mô phỏng đúng margin 0.85in bằng `padding`, `@page{margin:0.85in}` lo
+ * đúng margin khi in thật (đã bỏ `.notebook-shell`/`padding` khi in để
+ * không cộng dồn 2 lớp margin).
+ * ========================================================================== */
+
+.notebook-shell {
+  min-height: 100vh;
+  background: #f4f3f8;
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.notebook-doc {
+  width: 100%;
+  max-width: 800px;
+  background: #fff;
+  padding: 0.85in;
+  box-shadow: 0 8px 30px rgba(28, 27, 38, 0.08);
+  border-radius: 4px;
+}
+
+.notebook-doc a {
+  color: #7c3aed;
+  text-decoration: none;
+}
+.notebook-doc a:hover {
+  color: #0891b2;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .notebook-shell {
+    background: #fff;
+    padding: 0;
+    display: block;
+  }
+  .notebook-doc {
+    max-width: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+  @page {
+    margin: 0.85in;
+  }
+}

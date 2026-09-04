@@ -114,6 +114,20 @@ export const adminWorkspaces: AdminWorkspace[] = [
         ],
       },
       {
+        // Phase 41 — nội dung THẬT của "Mỗi ngày một ý tưởng" (446 ý
+        // tưởng/35 lĩnh vực/100 thuật ngữ, `mnyt_*`), thay hẳn placeholder
+        // "đang được xây dựng" ở /v2/moi-ngay-mot-y-tuong. Nav item Portal
+        // đã có sẵn từ Giai đoạn 1 (PortalV2Shell.tsx) nhưng chưa từng có
+        // trong `portalNavSections`/10 subGroup gốc — thêm mới subGroup
+        // này, không phải 1 trong "10 mục Portal cũ" ở comment đầu file.
+        label: "Mỗi ngày một ý tưởng",
+        items: [
+          { label: "Ý tưởng (446)", href: "/admin/moi-ngay-mot-y-tuong/y-tuong" },
+          { label: "Danh mục (35 lĩnh vực)", href: "/admin/moi-ngay-mot-y-tuong/danh-muc" },
+          { label: "Từ điển (100 thuật ngữ)", href: "/admin/moi-ngay-mot-y-tuong/tu-dien" },
+        ],
+      },
+      {
         label: "Học viện AI",
         items: [
           { label: "Theo nhu cầu công việc", href: "/admin/hocvienai/work-needs" },

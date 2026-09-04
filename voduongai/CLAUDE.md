@@ -1,5 +1,113 @@
 @AGENTS.md
 
+## Task #1/#12 — import đủ 446/446 ý tưởng "Mỗi ngày một ý tưởng" (hoàn tất)
+
+Phần dữ liệu cuối cùng còn thiếu của tính năng "Mỗi ngày một ý tưởng"
+(`mnyt_topics`, bảng `id/day/category_key/category_name/color/title/hook/
+difficulty/est_minutes/tools/content jsonb/status`) — trước đợt này chỉ có
+198/446 dòng (35 lĩnh vực và 100 thuật ngữ đã đủ từ trước). Import 248
+dòng còn thiếu qua các batch SQL đã soạn sẵn (23 file `10_topics_NN.sql`,
+sau đó 1 agent nền tách nhỏ thêm thành các file `chunks/NN_chunk_MM.sql`,
+mỗi câu `insert ... on conflict (id) do update` — idempotent, an toàn chạy
+lại).
+
+**Quá trình thật (không suôn sẻ, ghi lại để không lặp lại nhầm lẫn):** 3
+lượt agent nền liên tiếp bị rate-limit (`HTTP 429`) giữa chừng — mỗi lượt
+vẫn có tiến triển thật trước khi dừng (198→220→312→446), không lượt nào
+mất dữ liệu đã chèn (nhờ `on conflict do update`). Trước mỗi lần dừng, tự
+xác nhận lại đúng vị trí dừng bằng truy vấn `min(day)/max(day)` + gap-check
+trực tiếp qua Supabase MCP (không tin báo cáo tự nhận của agent trước khi
+verify), rồi soạn danh sách chính xác các file còn thiếu + đúng thứ tự cho
+lượt kế tiếp — tránh chạy lại các file đã áp dụng (lãng phí ngân sách agent)
+và tránh bỏ sót ngày nào.
+
+**Kết quả cuối cùng, xác nhận qua Supabase MCP trực tiếp (không suy diễn
+từ báo cáo agent):** `count(*)=446`, `count(*) filter (status='Published')=446`,
+`min(day)=1, max(day)=446`, gap-check (`generate_series(1,446) except
+select day from mnyt_topics`) trả về 0 dòng, `count(distinct id)=446`
+(không trùng id), 0 dòng thiếu `title`/`content`/`category_key`. **Toàn
+bộ 446/446 ý tưởng + 35 lĩnh vực + 100 thuật ngữ đã đủ và sạch.**
+
+Đây là thay đổi DỮ LIỆU (Supabase), không phải thay đổi code — không có
+file nào trong repo cần sửa/commit cho việc này.
+
+## Task #13 — audit pixel-level 9 view "Mỗi ngày một ý tưởng" (không tin báo cáo cũ)
+
+Founder giao lại đúng Task #13 trong kế hoạch chuẩn: đối chiếu pixel-level
+9 view tương tác (Trang chủ/Lịch/Hồ sơ/Kho ý tưởng/Bản đồ lĩnh vực/Lộ
+trình leo cấp/Từ điển/Chi tiết ý tưởng/Thẻ lật — KHÔNG tính "Sổ tay ý
+tưởng", vừa xây lại 1:1 riêng ở Giai đoạn 11 ngay trước đó) với đúng
+mockup gốc (`Moi Ngay 1 Y Tuong.dc.html`), không tin các dòng commit cũ
+tự nhận "1:1 mockup dòng X-Y" — phải tự đọc lại mockup và code thật.
+
+**Phương pháp:** đọc trực tiếp từng khối `<sc-if>` tương ứng mỗi view
+trong mockup (màu/spacing/radius/shadow/font-size dạng inline style —
+đây CHÍNH LÀ nguồn sự thật, template `{{ }}` chỉ là cơ chế binding, bỏ
+qua) + đọc component/CSS thật tương ứng (`moi-ngay-mot-y-tuong.css`,
+prefix `.mnyt`), so khớp trực tiếp giá trị số (không suy đoán, không tin
+docblock cũ). Không dựng Playwright/devtest route cho đợt này — sandbox
+không có Supabase nên mọi trang thật rơi vào honest-fallback/gate đăng
+nhập giống các đợt audit khác đã ghi nhận nhiều lần trong tài liệu này;
+so khớp trực tiếp giá trị CSS/JSX với mockup cho kết quả đáng tin cậy
+hơn và không tốn chi phí dựng hạ tầng test tạm.
+
+**Kết quả — 9/9 view đã đối chiếu, phần lớn khớp CHÍNH XÁC (100% giá trị
+số: radius/padding/font-size/màu/box-shadow) với mockup, chỉ tìm thấy
+đúng 2 điểm cần xử lý:**
+
+1. **Hồ sơ (`MnytProfileClient.tsx`) — BUG THẬT, đã sửa.** Lưới "Ý tưởng
+   yêu thích" (mockup dòng 409-422, `favoritesCards`) tái dùng NGUYÊN
+   class `.mnyt-archive-card` từ Kho ý tưởng — nhưng mockup Hồ sơ chỉ có
+   category/badge/title/hook (không có 2 dòng tag độ khó+thời lượng),
+   trong khi mockup Kho ý tưởng (dòng 965-977, `archiveCards`) CÓ 2 tag
+   đó. Việc tái dùng class chung đã "mượn" luôn 2 tag không thuộc về Hồ
+   sơ — đã xoá 2 `<span className="mnyt-archive-card-tag">` (độ khó +
+   `~{estMinutes} phút`) khỏi khối favorites trong `MnytProfileClient.tsx`,
+   khớp đúng mockup (chỉ giữ category/badge/title/hook).
+2. **Chi tiết ý tưởng (`MnytDetailClient.tsx`) — gap thật, ĐÃ GHI CHÚ
+   không tự sửa (đúng NGUYÊN TẮC không bịa nội dung).** Bước "Tổng kết"
+   của mockup (dòng 883-890) có "freshness badge"/"Cập nhật lần cuối:
+   {{ lastUpdatedValue }}"/"{{ freshnessNote }}" — bảng `mnyt_topics`
+   (`supabase-phase41-moi-ngay-mot-y-tuong.sql`) CÓ THẬT cột
+   `updated_at`, nên đây KHÔNG PHẢI trường hợp thiếu dữ liệu như
+   `toolCompare` (đã ghi chú từ trước, dữ liệu thật không có nội dung so
+   sánh công cụ) — nhưng NGƯỠNG phân loại "mức độ mới" (badge nào ứng
+   với khoảng thời gian nào) và câu chữ chính xác của `freshnessNote`
+   KHÔNG xuất hiện trong mockup tĩnh (chỉ có biến JS `{{ freshnessBadge
+   }}`/`{{ freshnessBadgeStyle }}`, không có giá trị/logic). Tự đặt
+   ngưỡng/viết câu này sẽ là bịa nội dung — đã thêm đoạn giải thích vào
+   docblock đầu file (cùng vị trí đã giải thích `toolCompare`) thay vì tự
+   đoán, giữ nguyên UI hiện có (chỉ có nút "Nội dung này đã lỗi thời?",
+   đúng mockup, không phụ thuộc ngưỡng nào).
+
+**8 view còn lại (Trang chủ, Lịch, Bản đồ lĩnh vực, Lộ trình leo cấp, Từ
+điển, Kho ý tưởng, Huy hiệu, Thẻ lật) — đối chiếu đầy đủ giá trị CSS
+(radius/padding/font-size/màu/box-shadow) với inline style mockup, khớp
+CHÍNH XÁC, không phát hiện sai lệch thật nào khác cần sửa.** Lưu ý riêng
+đã cân nhắc nhưng KHÔNG coi là bug (đúng tinh thần "chỉ sửa cái xác minh
+được là sai"):
+- Trang chủ: thứ tự khối hero/CTA/dashboard-card KHÁC mockup gốc — đã có
+  docblock ghi rõ đây là thứ tự Founder DUYỆT RIÊNG cho khối hero (xem
+  "Giai đoạn 1 rework"), không phải sai lệch cần khôi phục.
+  `.mnyt-home-secondary-btn` padding `11px 10px` (mockup `11px 16px`) —
+  hệ quả trực tiếp của layout lưới 4-cột-đều Founder duyệt (thay vì
+  `flex-wrap` gốc), không sửa.
+- Từ điển: có 4 nút chế độ (Grid/List/Flashcard/Quiz) trong khi mockup
+  `glossaryModes` ghi `hint-placeholder-count="3"` — không đủ bằng chứng
+  kết luận "List" là thêm sai (mockup không có JS logic nào lộ ra để xác
+  nhận/phủ nhận), không sửa vì rủi ro xoá nhầm 1 tính năng hợp lệ.
+- Chi tiết ý tưởng: ảnh bìa dùng gradient tĩnh thay `<image-slot>` — nhất
+  quán với pattern "không có hạ tầng upload ảnh" đã áp dụng khắp dự án
+  (Bản đồ lĩnh vực dùng chữ cái đầu thay ảnh, v.v.), không phải bug.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (2 file đã sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch
+(không route nào lỗi/biến mất).
+
+**Không dùng route devtest tạm nào** cho đợt audit này (khác methodology
+gợi ý ban đầu) — lý do đã giải thích ở mục "Phương pháp" trên; git status
+xác nhận sạch, không sót file devtest nào.
+
 ## Giai đoạn 14 — dọn placeholder "Mỗi ngày một ý tưởng" trước khi xây mới ([PR #112](https://github.com/duongtyphu/duongtyphu/pull/112))
 
 Sau khi xác nhận fix `date_of_birth` (Giai đoạn 13, Life Profile) hoạt

@@ -1,0 +1,514 @@
+import { cache } from "react";
+import { getSupabasePublic } from "@/lib/supabase";
+
+/**
+ * "Mỗi ngày một ý tưởng" (`/v2/moi-ngay-mot-y-tuong`) — lớp đọc dữ liệu
+ * NỘI DUNG (topics/categories/glossary), Phase 41.
+ *
+ * README bàn giao (`design_handoff_moi_ngay_1_y_tuong/README.md`, mục "Data
+ * Model") yêu cầu tường minh: KHÔNG tải hết 446 ý tưởng để hiển thị 1 —
+ * `getMnytTopicsPage()` chỉ SELECT các cột NHẸ (không có `content` jsonb đầy
+ * đủ) cho danh sách/lưới; `getMnytTopicById()` mới SELECT `content` đầy đủ,
+ * dùng đúng lúc mở 1 ý tưởng. `/api/mnyt/topics` (route.ts riêng) gọi lại
+ * ĐÚNG hàm `getMnytTopicsPage()` này — Single Source of Truth giữa API REST
+ * (dùng cho "tải thêm" phía client ở Kho ý tưởng) và Server Component (SSR
+ * trang chủ/lộ trình).
+ */
+
+export type MnytCategory = {
+  key: string;
+  name: string;
+  nameEn: string;
+  shortName: string;
+  color: string;
+  orderIndex: number;
+};
+
+export type MnytQuiz = {
+  question: string;
+  options: string[];
+  correct: number;
+  why?: string;
+};
+
+/** Nội dung đầy đủ 1 ý tưởng — chỉ SELECT khi mở trang Chi tiết. */
+export type MnytTopicContent = {
+  concept: string;
+  conceptEn: string;
+  apply: string;
+  applyEn: string;
+  mechanism: string;
+  mechanismEn: string;
+  risk: string;
+  riskEn: string;
+  takeaway: string;
+  takeawayEn: string;
+  promptExample: string;
+  promptShort: string;
+  promptShortEn: string;
+  promptDetailed: string;
+  promptDetailedEn: string;
+  promptAdvanced: string;
+  promptAdvancedEn: string;
+  quiz: MnytQuiz;
+  quizEn: MnytQuiz;
+  scenarioQuiz: MnytQuiz;
+  scenarioQuizEn: MnytQuiz;
+  applyQuiz: MnytQuiz;
+  applyQuizEn: MnytQuiz;
+};
+
+/** Trường nhẹ — đủ cho lưới/danh sách (Trang chủ, Kho ý tưởng, Lộ trình). */
+export type MnytTopicSummary = {
+  id: string;
+  day: number;
+  categoryKey: string;
+  categoryName: string;
+  categoryNameEn: string;
+  color: string;
+  title: string;
+  titleEn: string;
+  hook: string;
+  hookEn: string;
+  difficulty: string;
+  estMinutes: number;
+  tools: string[];
+  isTrending: boolean;
+  pathStep: number;
+  pathTotal: number;
+};
+
+export type MnytTopicFull = MnytTopicSummary & { content: MnytTopicContent };
+
+const SUMMARY_COLUMNS =
+  "id, day, category_key, category_name, category_name_en, color, title, title_en, hook, hook_en, difficulty, est_minutes, tools, is_trending, path_step, path_total";
+
+type SummaryRow = {
+  id: string;
+  day: number;
+  category_key: string;
+  category_name: string;
+  category_name_en: string;
+  color: string;
+  title: string;
+  title_en: string;
+  hook: string;
+  hook_en: string;
+  difficulty: string;
+  est_minutes: number;
+  tools: string[] | null;
+  is_trending: boolean;
+  path_step: number;
+  path_total: number;
+};
+
+function mapSummaryRow(row: SummaryRow): MnytTopicSummary {
+  return {
+    id: row.id,
+    day: row.day,
+    categoryKey: row.category_key,
+    categoryName: row.category_name,
+    categoryNameEn: row.category_name_en,
+    color: row.color,
+    title: row.title,
+    titleEn: row.title_en,
+    hook: row.hook,
+    hookEn: row.hook_en,
+    difficulty: row.difficulty,
+    estMinutes: row.est_minutes,
+    tools: row.tools ?? [],
+    isTrending: row.is_trending,
+    pathStep: row.path_step,
+    pathTotal: row.path_total,
+  };
+}
+
+/**
+ * Số ý tưởng THẬT/lĩnh vực — dùng cho thanh tiến độ ở lưới "thẻ chủ đề"
+ * (Trang chủ) và badge "Chuyên gia <lĩnh vực>". Chỉ SELECT đúng 1 cột nhẹ
+ * (`category_key`) cho toàn bộ 446 dòng rồi đếm ở JS — Supabase JS client
+ * không có `GROUP BY` trực tiếp qua PostgREST filter builder, và 446 dòng
+ * × 1 cột text là chi phí không đáng kể so với 1 RPC riêng.
+ */
+export const getLiveMnytCategoryTotals = cache(async (): Promise<Record<string, number>> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return {};
+  const { data, error } = await supabase.from("mnyt_topics").select("category_key").eq("status", "Published");
+  if (error || !data) return {};
+  const totals: Record<string, number> = {};
+  for (const row of data as { category_key: string }[]) {
+    totals[row.category_key] = (totals[row.category_key] ?? 0) + 1;
+  }
+  return totals;
+});
+
+export const getLiveMnytTopicsCount = cache(async (): Promise<number> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return 0;
+  const { count } = await supabase.from("mnyt_topics").select("id", { count: "exact", head: true }).eq("status", "Published");
+  return count ?? 0;
+});
+
+/** Lưới nhẹ cho quả cầu 3D + dải "Đang thịnh hành" — chỉ 5 cột cần thiết,
+ * KHÔNG có `content`/`hook` đầy đủ. */
+export type MnytGlobeNode = { id: string; day: number; categoryKey: string; categoryName: string; color: string; title: string; difficulty: string; isTrending: boolean };
+
+export const getLiveMnytGlobeNodes = cache(async (): Promise<MnytGlobeNode[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_topics")
+    .select("id, day, category_key, category_name, color, title, difficulty, is_trending")
+    .eq("status", "Published")
+    .order("day", { ascending: true });
+  if (error || !data) return [];
+  return (
+    data as { id: string; day: number; category_key: string; category_name: string; color: string; title: string; difficulty: string; is_trending: boolean }[]
+  ).map((r) => ({
+    id: r.id,
+    day: r.day,
+    categoryKey: r.category_key,
+    categoryName: r.category_name,
+    color: r.color,
+    title: r.title,
+    difficulty: r.difficulty,
+    isTrending: r.is_trending,
+  }));
+});
+
+export const getLiveMnytCategories = cache(async (): Promise<MnytCategory[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_categories")
+    .select("key, name, name_en, short_name, color, order_index")
+    .eq("status", "Published")
+    .order("order_index", { ascending: true });
+  if (error || !data) return [];
+  return data.map((row) => ({
+    key: row.key as string,
+    name: row.name as string,
+    nameEn: row.name_en as string,
+    shortName: row.short_name as string,
+    color: row.color as string,
+    orderIndex: row.order_index as number,
+  }));
+});
+
+/**
+ * Danh sách CÔNG CỤ thật, duy nhất — dùng cho chip lọc "Công cụ" ở Kho ý
+ * tưởng. Khác mockup gốc (đọc từ `TOOL_MAP` mẫu, cố định theo lĩnh vực) —
+ * đây đọc trực tiếp cột `tools` (jsonb array) của mọi ý tưởng Published
+ * thật, dedupe + sắp chữ cái ở JS (Supabase JS client không có cách
+ * `SELECT DISTINCT unnest(...)` qua PostgREST filter builder), cùng kỹ
+ * thuật `getLiveMnytCategoryTotals()` đã dùng (446 dòng × 1 cột nhẹ).
+ */
+export const getLiveMnytToolNames = cache(async (): Promise<string[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("mnyt_topics").select("tools").eq("status", "Published");
+  if (error || !data) return [];
+  const names = new Set<string>();
+  for (const row of data as { tools: string[] | null }[]) {
+    for (const tool of row.tools ?? []) names.add(tool);
+  }
+  return Array.from(names).sort((a, b) => a.localeCompare(b));
+});
+
+/** Thứ tự cấp độ THẬT (xác nhận qua Supabase — đúng 3 giá trị đang dùng) —
+ * dùng để sắp `getLiveMnytDifficulties()` theo đúng tiến trình Dễ→Khó, vì
+ * sắp chữ cái thường ("Cơ bản"/"Nâng cao"/"Trung bình") sẽ đặt "Nâng cao"
+ * (khó nhất) ở giữa — sai ý nghĩa cho cả chip lọc lẫn "bản đồ tiến độ" ở
+ * view Lộ trình. Giá trị lạ (nếu phát sinh sau này) rơi xuống cuối, sắp
+ * chữ cái với nhau — không crash, chỉ mất đúng thứ tự tiến trình. */
+const DIFFICULTY_ORDER = ["Cơ bản", "Trung bình", "Nâng cao"];
+
+/** Danh sách độ khó thật, duy nhất — cùng lý do/kỹ thuật `getLiveMnytToolNames()`. */
+export const getLiveMnytDifficulties = cache(async (): Promise<string[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("mnyt_topics").select("difficulty").eq("status", "Published");
+  if (error || !data) return [];
+  const names = new Set<string>();
+  for (const row of data as { difficulty: string }[]) names.add(row.difficulty);
+  return Array.from(names).sort((a, b) => {
+    const ia = DIFFICULTY_ORDER.indexOf(a);
+    const ib = DIFFICULTY_ORDER.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+});
+
+export type MnytTopicListParams = {
+  page: number;
+  pageSize: number;
+  categoryKey?: string | null;
+  difficulty?: string | null;
+  tool?: string | null;
+  isTrending?: boolean | null;
+  q?: string | null;
+  /** true = sắp theo `day` giảm dần (mới nhất trước) — mặc định tăng dần. */
+  sortDesc?: boolean;
+};
+
+const MAX_PAGE_SIZE = 60;
+const DEFAULT_PAGE_SIZE = 60;
+
+export function clampMnytPageSize(raw: number | null | undefined): number {
+  const n = Number(raw) || DEFAULT_PAGE_SIZE;
+  return Math.min(MAX_PAGE_SIZE, Math.max(1, n));
+}
+
+/**
+ * Danh sách ý tưởng có phân trang + lọc thật (query trực tiếp DB, không tải
+ * hết 446 dòng rồi lọc/slice ở tầng ứng dụng như CKOS Read API foundation
+ * cũ — bảng `mnyt_topics` có đủ cột typed để Postgres tự lọc/`range()`).
+ */
+export const getLiveMnytTopicsPage = async (
+  params: MnytTopicListParams,
+): Promise<{ items: MnytTopicSummary[]; total: number }> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return { items: [], total: 0 };
+
+  const page = Math.max(1, params.page);
+  const pageSize = clampMnytPageSize(params.pageSize);
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
+    .from("mnyt_topics")
+    .select(SUMMARY_COLUMNS, { count: "exact" })
+    .eq("status", "Published");
+
+  if (params.categoryKey) query = query.eq("category_key", params.categoryKey);
+  if (params.difficulty) query = query.eq("difficulty", params.difficulty);
+  if (params.tool) query = query.contains("tools", [params.tool]);
+  if (params.isTrending) query = query.eq("is_trending", true);
+  if (params.q && params.q.trim()) {
+    const q = params.q.trim().replace(/[%_]/g, "");
+    query = query.or(`title.ilike.%${q}%,hook.ilike.%${q}%,category_name.ilike.%${q}%`);
+  }
+
+  query = query.order("day", { ascending: !params.sortDesc }).range(from, to);
+
+  const { data, error, count } = await query;
+  if (error || !data) return { items: [], total: 0 };
+  return { items: (data as unknown as SummaryRow[]).map(mapSummaryRow), total: count ?? data.length };
+};
+
+/**
+ * Toàn bộ ý tưởng của ĐÚNG 1 lĩnh vực, sắp theo `path_step` (thứ tự leo
+ * cấp thật của lộ trình) — dùng cho view Lộ trình. Khác
+ * `getLiveMnytTopicsPage()` (sắp theo `day`, có phân trang) — 1 lĩnh vực
+ * chỉ có vài chục ý tưởng (446/35 ≈ 13 trung bình), không cần phân trang,
+ * và thứ tự leo cấp KHÔNG chắc trùng thứ tự `day`.
+ */
+export const getLiveMnytPathTopics = cache(async (categoryKey: string): Promise<MnytTopicSummary[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_topics")
+    .select(SUMMARY_COLUMNS)
+    .eq("status", "Published")
+    .eq("category_key", categoryKey)
+    .order("path_step", { ascending: true });
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
+/**
+ * Trọn bộ "thẻ lật" (view Thẻ lật, mockup dòng 1218-1254) — TOÀN BỘ ý
+ * tưởng của 1 lĩnh vực, hoặc TOÀN BỘ 446 ý tưởng nếu `categoryKey` là
+ * `null`/`"all"` (đúng hành vi `openFlashcards()` gốc: `filterCategory
+ * === 'all' ? this.topics : this.topics.filter(...)`). Chỉ SELECT cột NHẸ
+ * (`SUMMARY_COLUMNS`, không có `content`) — mặt trước/sau thẻ chỉ cần
+ * `title`/`hook`; đoạn `concept` (nặng hơn, nằm trong `content` jsonb) tải
+ * RIÊNG, LƯỜI, đúng lúc lật thẻ (`GET /api/mnyt/topics/[id]` có sẵn),
+ * không tải trước cho cả bộ — đúng nguyên tắc "KHÔNG tải hết 446 ý tưởng
+ * để hiển thị 1" của README, mở rộng áp dụng cho cả trường hợp N thẻ.
+ */
+export const getLiveMnytFlashDeck = cache(async (categoryKey: string | null): Promise<MnytTopicSummary[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  let query = supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published");
+  if (categoryKey && categoryKey !== "all") query = query.eq("category_key", categoryKey);
+  const { data, error } = await query.order("day", { ascending: true });
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
+/** Ý tưởng liền kề theo `day` (điều hướng cuối trang Chi tiết ý tưởng). */
+export const getLiveMnytAdjacentTopics = cache(
+  async (day: number): Promise<{ prev: MnytTopicSummary | null; next: MnytTopicSummary | null }> => {
+    const supabase = getSupabasePublic();
+    if (!supabase) return { prev: null, next: null };
+    const [prevRes, nextRes] = await Promise.all([
+      supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published").eq("day", day - 1).maybeSingle(),
+      supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published").eq("day", day + 1).maybeSingle(),
+    ]);
+    return {
+      prev: prevRes.data ? mapSummaryRow(prevRes.data as unknown as SummaryRow) : null,
+      next: nextRes.data ? mapSummaryRow(nextRes.data as unknown as SummaryRow) : null,
+    };
+  },
+);
+
+/** Ý tưởng liên quan — cùng lĩnh vực, loại trừ chính nó (view Chi tiết ý
+ * tưởng, bước "Tổng kết"). */
+export const getLiveMnytRelatedTopics = cache(async (categoryKey: string, excludeId: string, limit = 3): Promise<MnytTopicSummary[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_topics")
+    .select(SUMMARY_COLUMNS)
+    .eq("status", "Published")
+    .eq("category_key", categoryKey)
+    .neq("id", excludeId)
+    .order("day", { ascending: true })
+    .limit(limit);
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
+/** Nhiều ý tưởng theo `id` — dùng cho lưới "yêu thích" ở view Hồ sơ
+ * (`favoriteIds` đã có sẵn từ state per-member, cần đủ title/hook/color/
+ * difficulty/estMinutes để dựng thẻ, không chỉ id). */
+export const getLiveMnytTopicsByIds = cache(async (ids: string[]): Promise<MnytTopicSummary[]> => {
+  if (ids.length === 0) return [];
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase.from("mnyt_topics").select(SUMMARY_COLUMNS).eq("status", "Published").in("id", ids);
+  if (error || !data) return [];
+  return (data as unknown as SummaryRow[]).map(mapSummaryRow);
+});
+
+export const getLiveMnytTopicById = cache(async (id: string): Promise<MnytTopicFull | null> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("mnyt_topics")
+    .select(`${SUMMARY_COLUMNS}, content`)
+    .eq("id", id)
+    .eq("status", "Published")
+    .maybeSingle();
+  if (error || !data) return null;
+  const row = data as unknown as SummaryRow & { content: MnytTopicContent };
+  return { ...mapSummaryRow(row), content: row.content };
+});
+
+/**
+ * "Ý tưởng hôm nay" — tôn trọng lĩnh vực người dùng đã chọn ở onboarding
+ * (`interests`), giữ đúng logic vòng lặp theo epoch-day của mockup gốc
+ * (`todayId()`: `Math.floor(Date.now()/86400000) % list.length`) nhưng
+ * KHÔNG tải toàn bộ danh sách — chỉ COUNT rồi lấy đúng 1 dòng qua
+ * `range(idx, idx)`, sắp theo `day` để thứ tự ổn định (khớp ý nghĩa "list"
+ * gốc, vốn được sinh theo đúng thứ tự `day`).
+ */
+/**
+ * Ý tưởng của MỘT NGÀY cụ thể, tính theo `dayOffset` ngày kể từ hôm nay
+ * (epoch day thật, `Date.now()`) — dùng chung cho "ý tưởng hôm nay"
+ * (`dayOffset=0`, `getLiveMnytTodayTopic`) và "ý tưởng ngày mai" (`dayOffset=1`,
+ * `getLiveMnytTomorrowTopic`, view Lịch — thẻ khoá "sắp mở khoá").
+ */
+async function getMnytTopicByDayOffset(interests: string[], dayOffset: number): Promise<MnytTopicSummary | null> {
+  const supabase = getSupabasePublic();
+  if (!supabase) return null;
+
+  const buildBase = () => {
+    let q = supabase.from("mnyt_topics").select(SUMMARY_COLUMNS, { count: "exact" }).eq("status", "Published");
+    if (interests.length) q = q.in("category_key", interests);
+    return q;
+  };
+
+  const { count } = await buildBase().range(0, 0);
+  const total = count ?? 0;
+  if (total === 0) {
+    // Không có ý tưởng nào khớp lĩnh vực đã chọn (dữ liệu trống bất
+    // thường) — quay lại toàn bộ kho, đúng fallback `pool.length ? pool :
+    // this.topics` của mockup gốc.
+    const { count: allCount } = await supabase
+      .from("mnyt_topics")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "Published");
+    const allTotal = allCount ?? 0;
+    if (allTotal === 0) return null;
+    const idx = (Math.floor(Date.now() / 86400000) + dayOffset) % allTotal;
+    const { data } = await supabase
+      .from("mnyt_topics")
+      .select(SUMMARY_COLUMNS)
+      .eq("status", "Published")
+      .order("day", { ascending: true })
+      .range(idx, idx)
+      .maybeSingle();
+    return data ? mapSummaryRow(data as unknown as SummaryRow) : null;
+  }
+
+  const idx = (Math.floor(Date.now() / 86400000) + dayOffset) % total;
+  const { data } = await buildBase().order("day", { ascending: true }).range(idx, idx).maybeSingle();
+  return data ? mapSummaryRow(data as unknown as SummaryRow) : null;
+}
+
+export const getLiveMnytTodayTopic = async (interests: string[]): Promise<MnytTopicSummary | null> => getMnytTopicByDayOffset(interests, 0);
+
+export const getLiveMnytTomorrowTopic = async (interests: string[]): Promise<MnytTopicSummary | null> => getMnytTopicByDayOffset(interests, 1);
+
+export type MnytGlossaryTerm = {
+  id: number;
+  term: string;
+  termEn: string;
+  category: string;
+  definition: string;
+  definitionEn: string;
+  orderIndex: number;
+};
+
+type GlossaryRow = {
+  id: number;
+  term: string;
+  term_en: string;
+  category: string;
+  definition: string;
+  definition_en: string;
+  order_index: number;
+};
+
+function mapGlossaryRow(row: GlossaryRow): MnytGlossaryTerm {
+  return {
+    id: row.id,
+    term: row.term,
+    termEn: row.term_en,
+    category: row.category,
+    definition: row.definition,
+    definitionEn: row.definition_en,
+    orderIndex: row.order_index,
+  };
+}
+
+/** 100 dòng — nhẹ, không cần phân trang thật, nhưng vẫn qua 1 API riêng
+ * (`/api/mnyt/glossary`) để đúng kiến trúc "đọc qua API", không tải tĩnh. */
+export const getLiveMnytGlossary = cache(async (): Promise<MnytGlossaryTerm[]> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("mnyt_glossary")
+    .select("id, term, term_en, category, definition, definition_en, order_index")
+    .eq("status", "Published")
+    .order("order_index", { ascending: true });
+  if (error || !data) return [];
+  return (data as GlossaryRow[]).map(mapGlossaryRow);
+});
+
+export const getLiveMnytGlossaryTermById = cache(async (id: number): Promise<MnytGlossaryTerm | null> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("mnyt_glossary")
+    .select("id, term, term_en, category, definition, definition_en, order_index")
+    .eq("id", id)
+    .eq("status", "Published")
+    .maybeSingle();
+  if (error || !data) return null;
+  return mapGlossaryRow(data as GlossaryRow);
+});
