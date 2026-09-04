@@ -1,5 +1,36 @@
 @AGENTS.md
 
+## Task #1/#12 — import đủ 446/446 ý tưởng "Mỗi ngày một ý tưởng" (hoàn tất)
+
+Phần dữ liệu cuối cùng còn thiếu của tính năng "Mỗi ngày một ý tưởng"
+(`mnyt_topics`, bảng `id/day/category_key/category_name/color/title/hook/
+difficulty/est_minutes/tools/content jsonb/status`) — trước đợt này chỉ có
+198/446 dòng (35 lĩnh vực và 100 thuật ngữ đã đủ từ trước). Import 248
+dòng còn thiếu qua các batch SQL đã soạn sẵn (23 file `10_topics_NN.sql`,
+sau đó 1 agent nền tách nhỏ thêm thành các file `chunks/NN_chunk_MM.sql`,
+mỗi câu `insert ... on conflict (id) do update` — idempotent, an toàn chạy
+lại).
+
+**Quá trình thật (không suôn sẻ, ghi lại để không lặp lại nhầm lẫn):** 3
+lượt agent nền liên tiếp bị rate-limit (`HTTP 429`) giữa chừng — mỗi lượt
+vẫn có tiến triển thật trước khi dừng (198→220→312→446), không lượt nào
+mất dữ liệu đã chèn (nhờ `on conflict do update`). Trước mỗi lần dừng, tự
+xác nhận lại đúng vị trí dừng bằng truy vấn `min(day)/max(day)` + gap-check
+trực tiếp qua Supabase MCP (không tin báo cáo tự nhận của agent trước khi
+verify), rồi soạn danh sách chính xác các file còn thiếu + đúng thứ tự cho
+lượt kế tiếp — tránh chạy lại các file đã áp dụng (lãng phí ngân sách agent)
+và tránh bỏ sót ngày nào.
+
+**Kết quả cuối cùng, xác nhận qua Supabase MCP trực tiếp (không suy diễn
+từ báo cáo agent):** `count(*)=446`, `count(*) filter (status='Published')=446`,
+`min(day)=1, max(day)=446`, gap-check (`generate_series(1,446) except
+select day from mnyt_topics`) trả về 0 dòng, `count(distinct id)=446`
+(không trùng id), 0 dòng thiếu `title`/`content`/`category_key`. **Toàn
+bộ 446/446 ý tưởng + 35 lĩnh vực + 100 thuật ngữ đã đủ và sạch.**
+
+Đây là thay đổi DỮ LIỆU (Supabase), không phải thay đổi code — không có
+file nào trong repo cần sửa/commit cho việc này.
+
 ## Task #13 — audit pixel-level 9 view "Mỗi ngày một ý tưởng" (không tin báo cáo cũ)
 
 Founder giao lại đúng Task #13 trong kế hoạch chuẩn: đối chiếu pixel-level
