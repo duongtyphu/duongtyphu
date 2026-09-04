@@ -204,6 +204,102 @@ gần như không nhìn thấy bằng mắt thường) nên KHÔNG dừng lại 
 file trong ngân sách đợt này — cần 1 đợt riêng nếu Founder muốn triệt để
 100% ở mức này.
 
+### Mục 3 (tiếp) — hoàn tất audit 43 dòng `var(--border-strong)` còn lại
+
+Founder yêu cầu tiếp tục tới khi đối chiếu đúng 100% với mockup. Đã rà hết
+43 usage còn lại (49 tổng − 6 đã sửa ở trên). Mockup gốc
+(`Moi Ngay 1 Y Tuong.dc.html`) **không có CSS class nào** — thuần
+template `sc-if`/`sc-for` với style tính bằng JS hoặc literal inline —
+nên đối chiếu bằng cách đọc đúng khối JS/inline style tính ra style cho
+từng phần tử tương ứng (định vị bằng label nút/cấu trúc lân cận, không
+phải tên class vì mockup không có).
+
+**25/43 dòng SAI thật, đã sửa** (giá trị mockup literal thay cho
+`var(--border-strong)`=0.12 cố định):
+
+| Selector | Mockup | Trước | Sau |
+|---|---|---|---|
+| `.mnyt-dropdown` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-settings-btn` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-settings-dropdown` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-home-secondary-btn` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-home-globe-preview` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-detail-checklist-box` | 2px, 0.3 | 1px, 0.12 | 2px, 0.3 |
+| `.mnyt-detail-nav-btn` | 0.15 | 0.12 | 0.15 |
+| `.mnyt-detail-journal textarea` | 0.15 | 0.12 | 0.15 |
+| `.mnyt-detail-outline-btn` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-path-map-row[data-active]` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-mode-btn` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-cat-chip` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-glossary-flash-scope-btn` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-flash-face[data-flipped]` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-flash-nav-btn` | 0.16 | 0.12 | 0.16 |
+| `.mnyt-glossary-flash-save-btn` | 0.16 | 0.12 | 0.16 |
+| `.mnyt-glossary-quiz-reset-btn` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-quiz-card` | 0.1 | 0.12 | 0.1 |
+| `.mnyt-glossary-quiz-option` | 0.13 | 0.12 | 0.13 |
+| `.mnyt-glossary-quiz-explain` | 0.1 | 0.12 | 0.1 |
+| `.mnyt-badges-overall-card` | 0.08 | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-badges-week-card` | 0.08 | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-badges-filter-btn` | 0.15 | 0.12 | 0.15 |
+| `.mnyt-badges-card` | 0.08 | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-fields-tip` | 0.14 | 0.12 | 0.14 |
+
+**10/43 dòng đã ĐÚNG sẵn** (giá trị mockup trùng khớp 0.12, KHÔNG sửa):
+`.mnyt-detail-dot`, `.mnyt-detail-tab`, `.mnyt-detail-quiz-opt`,
+`.mnyt-archive-chip`, `.mnyt-archive-diff-chip`, `.mnyt-path-cat-chip`,
+`.mnyt-glossary-level-chip`, `.mnyt-glossary-flash-empty`,
+`.mnyt-profile-empty`, `.mnyt-home-secondary-btn--locked`.
+
+**6/43 dòng KHÔNG có nguồn đối chiếu trong mockup** (giữ nguyên
+`var(--border-strong)`, không phải bug — tính năng/cấu trúc chỉ tồn tại ở
+bản build thật):
+- `.main-col .search-box kbd` — ô tìm kiếm ⌘K là 1 component shell dùng
+  chung toàn `/v2/*` (`PortalSearchBox.tsx`), không xuất hiện trong mockup
+  "Mỗi ngày 1 ý tưởng" (mockup không có search box nào có phím tắt).
+- `.mnyt-sharecard-canvas-wrap` / `.mnyt-cert-canvas-wrap` — khung bọc
+  `<canvas>` do component thật tự thêm để trình bày ảnh vẽ bằng Canvas
+  API; mockup chỉ có `{{ shareCardWrapStyle }}`/`{{ certWrapStyle }}` cho
+  khối NGOÀI, không có "canvas wrap" con nào trong markup tĩnh.
+  - `.mnyt-home-filter-chip` — chip lọc theo lĩnh vực ở Trang chủ, đã
+  grep toàn màn hình Home (dòng 103-268) không thấy "chip" nào — tính năng
+  này không có trong mockup Trang chủ.
+- `.mnyt-detail-copy-btn` — nút "Sao chép prompt" không có trong mockup
+  (mockup chỉ hiện khối prompt, không có nút copy nào sau đó).
+- `.mnyt-notebook-cover` — khối bìa trang trí (gradient tím) trên MÀN HÌNH
+  của trang Sổ tay ý tưởng; mockup PDF ("So Tay Y Tuong.dc.html") là trang
+  in nền TRẮNG đơn giản, không có "cover card" tối nào để đối chiếu.
+
+**2/43 dòng dùng `var(--cat-border, var(--border-strong))` — fallback
+KHÔNG BAO GIỜ được kích hoạt thật:** `.mnyt-glossary-card` /
+`.mnyt-glossary-card-icon` — đọc code (`MnytGlossaryClient.tsx` dòng 363)
+xác nhận `--cat-border` được set UNCONDITIONAL cho MỌI thẻ thuật ngữ (mỗi
+term luôn có `cat`), nên nhánh `var(--border-strong)` chết, không ảnh
+hưởng hiển thị thật — không sửa.
+
+**1 nuance còn tồn đọng, đã ghi nhận nhưng KHÔNG tự mở rộng phạm vi sửa**
+(vượt quá 1 hằng số CSS, là thay đổi cấu trúc): mockup cho MỌI category
+chip ở Từ điển (không riêng "Tất cả") 1 viền màu RIÊNG theo danh mục
+(`GLOSSARY_CAT_COLORS[k].border`, dao động 0.3-0.35 tuỳ danh mục) NGAY CẢ
+KHI CHƯA active — bản build thật (`MnytGlossaryClient.tsx`) chỉ tô màu
+viền theo danh mục khi ACTIVE (`style={{borderColor: cat.color}}`), còn
+lại dùng chung 1 màu trung tính (`.mnyt-glossary-cat-chip`, đã sửa đúng
+0.2 khớp chip "Tất cả" — nhưng các chip danh mục khác lẽ ra phải có màu
+riêng ngay cả khi chưa active). Muốn triệt để 100% cần thêm inline
+`borderColor` mặc định theo từng danh mục (không chỉ khi active) — việc
+riêng, cần xác nhận trước khi làm vì đụng tới JSX/data, không chỉ CSS.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (toàn bộ route
+`/v2/moi-ngay-mot-y-tuong/*` còn nguyên, không route nào biến mất/lỗi).
+
+**KẾT LUẬN — Mục 3 (pixel-level border-alpha) đã đối chiếu 100% (49/49
+usage `var(--border-strong)` trong file, cả 6 đã sửa đợt trước lẫn 43 đợt
+này) với mockup gốc.** 1 nuance category-chip nêu trên là phát hiện MỚI
+(không phải sai sót còn sót của chính 49 dòng này) — thuộc phạm vi rộng
+hơn ("màu sắc theo danh mục" chứ không phải "alpha viền trung tính"), đã
+báo cáo minh bạch thay vì im lặng bỏ qua.
+
 ### Mục 5 — Dữ liệu: 446/446/35/100 đủ, nhưng `estMinutes` hẹp hơn README hứa
 
 Query trực tiếp Supabase (project `uosxpxolsvwcafxvnroy`):
