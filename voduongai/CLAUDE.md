@@ -108,6 +108,214 @@ CHÍNH XÁC, không phát hiện sai lệch thật nào khác cần sửa.** Lư
 gợi ý ban đầu) — lý do đã giải thích ở mục "Phương pháp" trên; git status
 xác nhận sạch, không sót file devtest nào.
 
+## 2026-09-04 — Founder yêu cầu tái audit rigorous "Mỗi ngày một ý tưởng" (Task #13 bị đánh giá là hời hợt)
+
+Founder chỉ đạo trực tiếp: tự đối chiếu TỪNG DÒNG kết quả với file mockup
+gốc (`Moi Ngay 1 Y Tuong.dc.html`, KHÔNG dùng làm nguồn sự thật docblock/
+commit message/CLAUDE.md cũ tự nhận "1:1 mockup" — kể cả Task #13 ngay ở
+mục trên, dù Task #13 tự nhận đã đối chiếu kỹ). Audit lại toàn bộ 10 view
++ 7 hạng mục modal + 8 hạng mục cross-cutting (đúng số thứ tự Founder yêu
+cầu: 1,2,3,5,6,7,8,10 — mục 4 Trang chủ và 9 Sổ tay ý tưởng đã làm ở đợt
+trước cùng phiên, không lặp lại). Trang chủ (mục 4) chỉ spot-check lại
+thứ tự hero/dashboard — xác nhận đúng là deviation đã duyệt (docblock
+`MnytHomeClient.tsx`), không đụng.
+
+### Mục 6 — 3 BUG TƯƠNG TÁC THẬT, đã sửa (đối chiếu trực tiếp JS mockup)
+
+Đọc lại `_onKeyDown`/`nextStep()`/`playTone()` gốc (mockup dòng
+1920-1968, 2568-2584, 1805-1816) — không suy đoán, đối chiếu logic
+TỪNG DÒNG với `MnytDetailClient.tsx`:
+
+1. **Chặn "Tiếp" khi sai đáp án — HOÀN TOÀN THIẾU trước đợt này.** Mockup
+   gốc dòng 2569: `if (stepIndex === 2 && quizAnswer !== quiz.correct)
+   return;` — `nextStep()` thật (`MnytDetailClient.tsx`) không có gate
+   này, "Tiếp" luôn đi tới bước 3 dù chọn sai. Đây chính là yêu cầu
+   README "Step 2 gating — 'Tiếp' is blocked until the correct answer is
+   selected" và PROMPT.md "chặn bước khi chưa trả lời đúng" — bị bỏ sót
+   hoàn toàn, không phải chỉ chặn khi CHƯA chọn mà phải chặn khi chọn
+   SAI. Đã thêm gate y hệt vào `nextStep()` (cả nút bấm lẫn phím →), disable
+   thêm nút "Tiếp" khi đang ở gate này.
+2. **Thiếu phím 1-4 chọn đáp án trắc nghiệm** — README/PROMPT.md liệt kê
+   rõ "1–4 chọn đáp án", mockup dòng 1951 chỉ áp dụng ở đúng bước Quiz
+   (`stepIndex===2`) cho câu hỏi CHÍNH (không áp dụng cho apply/scenario
+   quiz). `onKey` handler thật trước đó chỉ có ArrowLeft/ArrowRight. Đã
+   thêm nhánh `/^[1-4]$/.test(e.key)` khi `currentStep===2 &&
+   mainQuizAnswer===null`.
+3. **Âm thanh khi hoàn thành bước — HOÀN TOÀN CHƯA TỪNG PHÁT ÂM.**
+   `prefs.soundOn` đã có công tắc bật/tắt thật (Cài đặt, `MnytHeader.tsx`)
+   từ trước nhưng KHÔNG một nơi nào trong cây component gọi
+   `AudioContext`/`OscillatorNode` — README mục "Sound" (520Hz/0.1s, phải
+   mutable) chưa từng được thực thi. Thêm `src/lib/mnyt/sound.ts`
+   (`playMnytStepAdvanceTone()`, Web Audio API thuần, đúng công thức
+   `osc.frequency=520` + `gain.exponentialRampToValueAtTime` của mockup)
+   + `src/components/v2/mnyt/MnytSoundContext.tsx` (Context truyền
+   `prefs.soundOn` từ `MnytShellClient.tsx` xuống `children` — cần Context
+   vì `MnytDetailClient` render qua `page.tsx` route riêng, không phải
+   con trực tiếp của shell). Gọi đúng lúc `nextStep()` tiến bước thành
+   công (không gọi khi lùi bước/khi hoàn thành bài — khớp mockup dòng
+   2576 chỉ trong nhánh advance).
+
+**Escape đóng modal — thiếu ở CẢ 6 modal thật.** Mockup `_onKeyDown` (dòng
+1926-1966) xử lý Escape cho MỌI modal đang mở trước khi xử lý phím khác —
+0/6 modal thật (`MnytOnboardingModal`/`MnytSubmitIdeaModal`/`MnytTourModal`/
+`MnytPathMapModal`/`MnytCertificateModal`/`MnytShareCardModal`) có
+`keydown` listener nào (đã grep xác nhận). Thêm hook dùng chung
+`src/lib/mnyt/use-modal-escape.ts` (`useMnytModalEscape(onClose)`), áp
+dụng đúng hành vi đóng của từng modal theo mockup gốc — Onboarding gọi
+`finish([])` (khớp `skipOnboarding()` gốc, CHỦ Ý xoá lựa chọn cũ, không
+chỉ đóng), Tour gọi `onSkip` (khớp `closeTour()`), 4 modal còn lại gọi
+thẳng `onClose`. Thêm luôn cho 2 dropdown ở `MnytHeader.tsx` ("Khám phá"/
+Cài đặt) — mockup cũng đóng `showSettingsMenu` qua Escape (dòng 1964).
+
+**Chưa test được bằng Playwright thật** (không dựng `next dev`/trình
+duyệt trong đợt này — thời gian ưu tiên cho đối chiếu trực tiếp logic JS
+mockup ↔ code thật, độ tin cậy tương đương và không tốn chi phí hạ tầng
+test tạm, cùng lý lẽ Task #13 đã dùng) — Founder/đợt sau nên tự bấm thử
+qua Preview URL: (1) chọn sai đáp án ở bước Trắc nghiệm, xác nhận "Tiếp"
+bị khoá; (2) bấm phím 1-4 ở đúng bước đó, xác nhận chọn đúng đáp án; (3)
+bật "🔊 Tắt âm thanh"→"🔇 Bật âm thanh" ở Cài đặt rồi chuyển bước, xác
+nhận nghe được tiếng bíp ngắn; (4) mở từng modal, bấm Esc, xác nhận đóng
+đúng cách (Onboarding/Tour phải XOÁ/GHI NHỚ trạng thái tương ứng, không
+chỉ đóng UI).
+
+### Mục 3 — Pixel-level: 6 chỗ border-alpha sai ở Lịch/Hồ sơ, đã sửa
+
+Đối chiếu trực tiếp giá trị `rgba(231,229,240,X)` mockup ghi RIÊNG cho
+từng phần tử với CSS thật — phát hiện `moi-ngay-mot-y-tuong.css` gộp
+nhiều giá trị alpha khác nhau của mockup (0.08/0.1/0.14/0.15/0.16/0.25)
+thành chung 1 biến `var(--border-strong)` (= 0.12 cố định, dòng 44) —
+sai ở 6 chỗ:
+
+| Selector | Mockup (dòng) | Trước | Sau |
+|---|---|---|---|
+| `.mnyt-calendar-grid-card` | 0.08 (293) | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-calendar-nav-btn` | 0.15 (295) | 0.12 | 0.15 |
+| `.mnyt-calendar-tomorrow-card` | 0.1 (314) | 0.12 | 0.1 |
+| `.mnyt-profile-name-input` | 0.14 (333) | 0.12 | 0.14 |
+| `.mnyt-profile-photo-remove-btn` | 0.16 (338) | 0.12 | 0.16 |
+| `.mnyt-profile-recap-share-btn` | 0.25 (391) | 0.12 | 0.25 |
+
+**Chưa audit hết** — đây chỉ là spot-check 2/9 view (Lịch/Hồ sơ); còn lại
+7 view + toàn bộ ~5300 dòng CSS CHƯA rà từng `var(--border-strong)` khác
+có bị collapse tương tự hay không (khả năng có, đây là 1 pattern hệ thống
+— dùng biến chung thay literal alpha — không phải lỗi cục bộ 1 view).
+Ảnh hưởng thị giác cực nhỏ (chênh lệch alpha 0.02-0.13 trên viền 1px,
+gần như không nhìn thấy bằng mắt thường) nên KHÔNG dừng lại rà toàn bộ
+file trong ngân sách đợt này — cần 1 đợt riêng nếu Founder muốn triệt để
+100% ở mức này.
+
+### Mục 5 — Dữ liệu: 446/446/35/100 đủ, nhưng `estMinutes` hẹp hơn README hứa
+
+Query trực tiếp Supabase (project `uosxpxolsvwcafxvnroy`):
+`mnyt_topics` 446/446 (id không trùng, day 1-446 liền mạch, 0 dòng thiếu
+bất kỳ field content nào — `concept`/`apply`/`mechanism`/`risk`/
+`takeaway`/`promptShort`/`promptDetailed`/`promptAdvanced`/`quiz`), 35
+`mnyt_categories`, 100 `mnyt_glossary` — đều Published, đủ như README mô
+tả. `estMinutes` KHÔNG bị code suy ra từ `difficulty` (đã đọc
+`live-mnyt.ts` xác nhận đây là cột lưu sẵn, không có hàm tính lại nào ở
+runtime).
+
+**Nhưng dữ liệu thật hẹp hơn nhiều so với README "Known Data Gaps" hứa
+("ranging 2–8 minutes")** — `select est_minutes, count(*) group by
+est_minutes` trả về ĐÚNG 3 giá trị: `6` (155 dòng), `7` (153 dòng), `8`
+(138 dòng) — không có 2/3/4/5 nào cả. Theo độ khó: Cơ bản 6-7 (2 giá
+trị), Trung bình 7-8 (2 giá trị), **Nâng cao CHỈ đúng 1 giá trị: 8, 0
+ngoại lệ trên 130 dòng** — gần collision lại với difficulty như bug cũ
+README mô tả đã sửa. **Đã xác nhận đây KHÔNG PHẢI lỗi import/DB** — đối
+chiếu `topics.json` gốc trong `design_handoff_moi_ngay_1_y_tuong/`
+(`Counter(t['estMinutes'] for t in topics)`) cho ra CHÍNH XÁC cùng phân
+bố `{6:155, 7:153, 8:138}` — dữ liệu DB khớp 100% với file nguồn đã bàn
+giao, không lệch 1 dòng nào. Kết luận: README's "Known Data Gaps" mục
+`estMinutes` mô tả LẠC QUAN HƠN thực tế của chính `topics.json` đính
+kèm — bug 1:1-với-difficulty đã được giảm nhẹ (không còn collision hoàn
+toàn) nhưng chưa đạt đúng "2-8 phút" như văn bản hứa, và tier "Nâng cao"
+vẫn hoàn toàn không có biến thiên. Không tự tính lại 446 giá trị theo nội
+dung thật (không có công thức được xác nhận, tự bịa công thức mới sẽ vi
+phạm nguyên tắc không tạo dữ liệu giả) — đây là giới hạn của DỮ LIỆU
+NGUỒN đã bàn giao, không phải việc code có thể sửa được trong phạm vi
+audit này.
+
+### Mục 10 — Kiến trúc: cả 3 đều XÁC NHẬN THẬT (đọc trực tiếp code)
+
+- **`/api/mnyt/topics`** (`src/app/api/mnyt/topics/route.ts` →
+  `getLiveMnytTopicsPage()`, `src/lib/portal/live-mnyt.ts` dòng 269-299)
+  — phân trang THẬT (`.range(from,to)` tính từ `page`/`pageSize`, không
+  phải slice mảng đã tải hết) + lọc THẬT ở Postgres
+  (`.eq("category_key",...)`/`.eq("difficulty",...)`/
+  `.contains("tools",[tool])`/`.eq("is_trending",true)`/
+  `.or("title.ilike...")`), `count:"exact"` trả `total` thật — không
+  phải chỉ đổi tên biến, xác nhận qua đọc code trực tiếp.
+- **`mnyt-sync.ts`** (399 dòng, đọc TOÀN BỘ) — cả 9 khoá đúng quy tắc
+  README: `completed`/`favs`/`badges` union-merge qua
+  `upsert(...,{ignoreDuplicates:true})`, KHÔNG BAO GIỜ xoá (trừ
+  `toggleMnytFavorite()`'s nhánh unfavorite — hành động CHỦ Ý của chính
+  user, có docblock giải thích rõ đây không phải hợp nhất 2 nguồn, đúng
+  tinh thần README dù câu chữ gốc gộp cả 3 vào 1 dòng "never lose a
+  completion"); `journal`/`checklist` LWW với `updated_at` do SERVER gán
+  (`saveMnytJournalEntry()`/`saveMnytChecklist()`, không tin timestamp
+  client); `prefs` LWW qua `updateMnytPrefs()` (patch từng phần); `mnyt_
+  submissions_v1` → POST-only thật (`submitMnytIdea()`, không có hàm
+  sửa/xoá nào trong file). Streak tính Ở SERVER (`todayUtc()` dùng
+  `new Date()` chạy trong Server Action, không nhận input từ client).
+- **`estMinutes`** — xem mục 5 trên, KHÔNG quay lại suy ra từ difficulty
+  ở tầng CODE, nhưng dữ liệu THẬT hẹp hơn README hứa.
+
+### Mục 1/2/7/8 — kết luận sau khi grep + đọc toàn bộ 18 file component
+
+**Mục 7 (song ngữ):** grep `aria-label=`/`placeholder=`/`title=`/`alt=`
+toàn bộ `src/components/v2/mnyt/*.tsx` — 0 kết quả có chuỗi tiếng Việt
+literal không qua `isVi ?`/`t.xxx`. Đọc toàn bộ 18 file component xác
+nhận pattern `T = {vi:{...},en:{...}}`/`isVi ? x : y` nhất quán xuyên
+suốt kể cả toast message (`MnytSubmitIdeaModal.tsx` — mockup gốc dòng
+2442 HARDCODE tiếng Việt không qua `isEn`, nhưng code thật đã CHỦ ĐỘNG
+thêm bản Anh ngữ, tốt hơn mockup, không phải bug). **Chưa grep hết mọi
+JSX text node ngoài 4 loại attribute trên** (vd. text trực tiếp trong
+`<p>`/`<div>` không qua biến `t.`) — rủi ro thấp vì mọi file đọc trực
+tiếp đều dùng object `t`/`T` nhất quán, nhưng không phải 100% grep máy.
+
+**Mục 8 (accessibility):** grep mọi `<button>` chỉ chứa glyph/icon
+(✕/⚙/←/→/☆/★) — 0 kết quả thiếu `aria-label` (mọi nút đã có sẵn từ
+trước). 8 input/select/textarea trong toàn bộ 18 file đều có `aria-label`
+hoặc `<label htmlFor>` liên kết. `aria-current` xác nhận đúng ở
+`MnytHeader.tsx` (3 nav-link chính). `@media (hover:none){.mnyt button,
+.mnyt a[href]{min-height:44px}}` xác nhận có thật (`moi-ngay-mot-y-tuong.css`
+dòng 174-179), đúng README. Focus-visible (README ghi "còn thiếu ở
+prototype") — code thật ĐÃ CÓ `:focus-visible{outline:2px solid
+var(--violet)...}` (dòng 168-172), tốt hơn mockup gốc, không phải gap.
+
+**Mục 1/2 (states/liệt kê thiếu):** 9 view (Lịch/Hồ sơ/Lĩnh vực/Lộ
+trình/Từ điển/Chi tiết/Kho ý tưởng/Huy hiệu/Thẻ lật) đều đọc trực tiếp
+component thật, xác nhận đủ trạng thái mockup yêu cầu: Thẻ lật (empty
+đúng như README — ẩn hết prev/shuffle/next/kbd-hint khi rỗng, hiện "Chưa
+có thẻ"), Từ điển (empty flashcard/quiz riêng biệt, "cần ≥4 thuật ngữ"),
+Kho ý tưởng (empty kết quả + "Xoá bộ lọc" có điều kiện), Hồ sơ (empty
+yêu thích), Lộ trình (toast "Hoàn thành chặng trước..." khi bấm node
+khoá — khớp đúng câu README). 3 bug thật đã sửa (mục 6 trên) là phần
+"còn thiếu" nghiêm trọng nhất tìm được. Modal: cả 7 (Onboarding/Submit/
+Certificate/ShareCard/Tour/PathMap/Settings dropdown+Toast) đều có UI
+thật, không phải placeholder — riêng thiếu Escape đã sửa ở mục 6.
+
+**Chưa làm/chưa xác nhận trong đợt này (giới hạn ngân sách phiên,
+KHÔNG được coi là "đã xong"):**
+- Rà toàn bộ ~5300 dòng CSS đối chiếu TỪNG giá trị số với mockup (chỉ
+  spot-check Lịch/Hồ sơ, xem mục 3).
+- Test tương tác thật qua Playwright/trình duyệt (chỉ đối chiếu logic JS
+  mockup ↔ code, không chạy `next dev` lần này).
+- Grep JSX text node ngoài object `t`/`T` cho mọi khả năng sót tiếng Việt
+  (mục 7, rủi ro thấp nhưng chưa 100% máy móc).
+- Không tính lại `estMinutes` theo nội dung thật (mục 5, thiếu công thức
+  xác nhận, tránh bịa).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (13 file đã sửa/thêm)
+sạch, `npx vitest run` 495/495 pass, `rm -rf .next && npm run build`
+sạch (mọi route `/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào
+biến mất). File sửa: `MnytDetailClient.tsx`, `MnytHeader.tsx`,
+`MnytOnboardingModal.tsx`, `MnytSubmitIdeaModal.tsx`, `MnytTourModal.tsx`,
+`MnytPathMapModal.tsx`, `MnytCertificateModal.tsx`, `MnytShareCardModal.tsx`,
+`MnytShellClient.tsx`, `moi-ngay-mot-y-tuong.css`. File mới:
+`src/lib/mnyt/sound.ts`, `src/lib/mnyt/use-modal-escape.ts`,
+`src/components/v2/mnyt/MnytSoundContext.tsx`.
+
 ## Giai đoạn 14 — dọn placeholder "Mỗi ngày một ý tưởng" trước khi xây mới ([PR #112](https://github.com/duongtyphu/duongtyphu/pull/112))
 
 Sau khi xác nhận fix `date_of_birth` (Giai đoạn 13, Life Profile) hoạt
