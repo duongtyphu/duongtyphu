@@ -1835,6 +1835,29 @@
 
 /* --- Globe --- */
 .mnyt .mnyt-home-globe-wrap {
+  /*
+   * `--mnyt-globe-r` — bán kính (px) của quả cầu 3D node/hạt bụi
+   * (`translate3d(calc(var(--mnyt-globe-r) * hệ_số), ...)` trong
+   * `MnytHomeClient.tsx`). Giữ nguyên 200px ở màn hình đủ rộng (không đổi
+   * hành vi cũ) nhưng KẸP theo bề rộng viewport để không tràn ngang trên
+   * di động hẹp — bug phát hiện khi audit mobile: bán kính cố định 200px
+   * không co trên màn hình <480px, khiến node/hạt bụi vươn ra ngoài vùng
+   * nội dung (đường kính 2×200=400px > bề rộng khả dụng của điện thoại
+   * nhỏ), gây cuộn ngang toàn trang. `(100vw - 80px) / 2` = nửa bề rộng
+   * khả dụng còn lại sau khi trừ 80px lề 2 bên — cùng ngân sách lề đã
+   * dùng cho `ringCap` của 2 vòng quay bên dưới.
+   */
+  --mnyt-globe-r: min(200px, calc((100vw - 80px) / 2));
+  /*
+   * Hạt bụi trang trí (`.mnyt-home-globe-particle`) nhân thêm hệ số
+   * "jitter" 1.15-1.5 lần bán kính (xem `particlePositions` trong
+   * `MnytHomeClient.tsx`) để bay lơ lửng NGOÀI quả cầu node — dùng chung
+   * `--mnyt-globe-r` sẽ vẫn tràn ở màn hình hẹp dù đã kẹp cho node (vì
+   * node không có hệ số nhân thêm này). Biến riêng, chia thêm 1.5 (mức
+   * jitter tối đa) để đảm bảo hạt bụi xa nhất cũng không vượt quá nửa bề
+   * rộng khả dụng.
+   */
+  --mnyt-globe-r-dust: min(200px, calc((100vw - 80px) / 2 / 1.5));
   position: relative;
   height: 440px;
   perspective: 1400px;
@@ -1881,25 +1904,80 @@
 }
 .mnyt .mnyt-home-globe-ring-outer,
 .mnyt .mnyt-home-globe-ring-mid {
+  /*
+   * Bug đã sửa (Founder báo "2 vòng quay đối xứng bị lệch"): trước đây
+   * chính div này vừa canh giữa bằng `transform: translate(-50%, -50%)`
+   * vừa `animation: ringRotate` cũng nhắm vào `transform` — animation CSS
+   * LUÔN GHI ĐÈ toàn bộ giá trị `transform` tại mỗi khung hình (không
+   * cộng dồn với giá trị tĩnh), nên ngay khi animation chạy, phần
+   * translate(-50%,-50%) canh giữa bị xoá mất — vòng tròn lệch hẳn về
+   * góc trên-trái của tâm quả cầu, xoay quanh đúng cái góc lệch đó chứ
+   * không xoay tại chỗ quanh tâm. Đã tách: div NGOÀI (đây) chỉ lo canh
+   * giữa (transform tĩnh, KHÔNG BAO GIỜ animate) + kích thước; đường viền
+   * xoay chuyển sang `::before` bên trong (position:absolute;inset:0),
+   * animation áp cho `::before` không đụng transform canh giữa của cha.
+   *
+   * Đồng thời sửa luôn lỗi méo hình: `width/height: 92%/76%` trước đây
+   * tính theo CHIỀU RỘNG lẫn CHIỀU CAO của `.mnyt-home-globe-wrap` — khung
+   * này KHÔNG VUÔNG (rộng theo `max-width:1180px` của trang, cao cố định
+   * 440/560/760px tuỳ breakpoint) nên vòng tròn thực chất bị kéo thành
+   * hình elip dẹt ở màn hình rộng. Đổi sang kích thước PIXEL CỐ ĐỊNH theo
+   * từng breakpoint (khớp đúng 92%/76% của chiều cao `.mnyt-home-globe-wrap`
+   * tại breakpoint đó — chiều cao luôn ổn định, không phụ thuộc bề rộng
+   * trang) + kẹp thêm bằng `max((100vw - 80px) / 1.42, 220px)` để không
+   * tràn ngang trên màn hình di động hẹp — cùng công thức `ringCap` của
+   * mockup gốc (dòng 2703-2705).
+   */
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 1px solid rgba(167, 139, 250, 0.12);
   pointer-events: none;
 }
 .mnyt .mnyt-home-globe-ring-outer {
-  width: 92%;
-  height: 92%;
-  transform: translate(-50%, -50%);
+  width: min(405px, max(220px, calc((100vw - 80px) / 1.42)));
+  height: min(405px, max(220px, calc((100vw - 80px) / 1.42)));
+}
+.mnyt .mnyt-home-globe-ring-outer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(167, 139, 250, 0.12);
   animation: ringRotate 120s linear infinite;
 }
 .mnyt .mnyt-home-globe-ring-mid {
-  width: 76%;
-  height: 76%;
-  transform: translate(-50%, -50%);
-  border-color: rgba(103, 232, 249, 0.1);
+  width: min(334px, max(220px, calc((100vw - 80px) / 1.42)));
+  height: min(334px, max(220px, calc((100vw - 80px) / 1.42)));
+}
+.mnyt .mnyt-home-globe-ring-mid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(103, 232, 249, 0.1);
   animation: ringRotate 90s linear infinite reverse;
+}
+@media (min-width: 720px) {
+  .mnyt .mnyt-home-globe-ring-outer {
+    width: min(515px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(515px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
+  .mnyt .mnyt-home-globe-ring-mid {
+    width: min(426px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(426px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
+}
+@media (min-width: 1024px) {
+  .mnyt .mnyt-home-globe-ring-outer {
+    width: min(699px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(699px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
+  .mnyt .mnyt-home-globe-ring-mid {
+    width: min(578px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(578px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
 }
 .mnyt .mnyt-home-globe-core {
   position: absolute;
