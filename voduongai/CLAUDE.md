@@ -381,6 +381,118 @@ xác nhận trên Preview/Production URL, đặc biệt xác nhận cảm nhận
 "2 vòng quay đối xứng" giờ đã đúng ý (route devtest chỉ verify được tâm/
 kích thước bằng số đo, không thay thế được đánh giá thẩm mỹ chủ quan).
 
+## Audit + sửa — Thẻ chia sẻ ý tưởng / Chứng chỉ / Avatar / Banner 35 thẻ chủ đề
+
+Founder yêu cầu kiểm tra 4 mục ở "Mỗi ngày một ý tưởng" và hoàn thiện ngay
+nếu phát hiện sai lệch thật so với mockup gốc (`Moi Ngay 1 Y Tuong.dc.html`).
+Đối chiếu trực tiếp hàm vẽ Canvas THẬT của mockup (`downloadShareCard()`/
+`downloadCert()`, KHÔNG phải DOM preview tĩnh — 2 thứ khác nhau, DOM
+preview chỉ là bản xem trước trên màn hình, ảnh export thật do 2 hàm này
+vẽ lại từ đầu bằng Canvas 2D) với 2 file component thật.
+
+**1 — Thẻ chia sẻ ý tưởng (`MnytShareCardModal.tsx`) — lệch nặng, đã viết
+lại toàn bộ.** Bản cũ tự vẽ 1 bố cục HOÀN TOÀN KHÁC mockup: canvas vuông
+1080×1080 (mockup: 1080×1350), viền vuông góc (mockup: bo góc 46px + vòng
+tròn nét đứt trang trí), badge danh mục góc phải (mockup: dòng
+"Danh mục · #Ngày" màu theo chủ đề), KHÔNG có avatar/tên/vai trò học viên
+nào cả (mockup có đủ). Đã viết lại đúng thứ tự vẽ mockup: nền gradient chéo
++ glow góc phải-trên → viền bo góc + vòng tròn nét đứt → logo + 1 dòng
+brand → dòng "Danh mục · #Ngày" → tiêu đề 66px (tối đa 4 dòng) → vạch màu
+ngắn → takeaway 36px (tối đa 5 dòng) → chân thẻ: avatar chữ cái đầu + tên +
+nhãn "Học viên". Avatar LUÔN vẽ chữ cái đầu (không ảnh) — đúng nguyên tắc
+"dự án chưa có hạ tầng lưu ảnh đại diện" áp dụng xuyên suốt dự án, và đúng
+khớp nhánh fallback thật của chính mockup gốc
+(`learnerAvatarText: this.state.learnerPhoto ? '' : this.learnerInitials()`)
+— đây là trạng thái phổ biến nhất của người dùng thật, không phải rút gọn
+qua loa. **Giữ lại có chủ đích** 1 dòng "🔥 X ngày liên tiếp" (dữ liệu
+`streak` thật, mockup không vẽ trong canvas export nhưng bản build cũ đã
+có, đặt cạnh phải hàng chân thẻ, không chiếm chỗ avatar/tên/vai trò) — đây
+là enhancement dữ liệu thật, không phải bịa. `learnerName` được thread
+xuyên suốt (trước đó hoàn toàn thiếu prop này): `page.tsx` →
+`MnytDetailClient.tsx` → `MnytShareCardModal.tsx`.
+
+**2 — Chứng chỉ (`MnytCertificateModal.tsx`) — cùng lớp lệch, đã viết lại
+toàn bộ.** Bản cũ: canvas 1600×1120 (mockup: 1600×1130), viền đơn giản
+(mockup: 3 lớp viền bo góc lồng nhau + vân chéo mảnh + 2 glow góc), brand
+vẽ 2 dòng lớn (mockup: 1 dòng brand nhỏ + tiêu đề nhỏ có vạch 2 bên, KHÔNG
+phải tiêu đề 46px đầu trang), KHÔNG avatar học viên, chữ ký chỉ chữ không
+ảnh. Đã viết lại đúng mockup: brand 1 dòng → tiêu đề nhỏ có vạch 2 bên →
+AVATAR học viên (chữ cái đầu, cùng nguyên tắc trên) → "Học viên" → tên →
+vạch chia → câu trạng thái → tên lĩnh vực → huy hiệu hoàn thành → chân
+trang: ngày cấp (trái) + chữ ký kèm ẢNH CHÂN DUNG THẬT của Founder (phải,
+`/images/founder-portrait.jpg` — cùng ảnh dùng ở `FounderSpotlight.tsx`/
+Premium "Người đồng hành", xác nhận qua đọc byte ảnh là JPEG thật 1254×1254px,
+không phải ảnh bịa), crop vùng khuôn mặt thủ công (`PORTRAIT_CROP`, ảnh
+gốc là chân dung toàn thân, không cắt vuông theo tâm được). **1 deviation
+có chủ đích, đã ghi rõ trong docblock, không giấu:** giữ nguyên gate "chỉ
+hiện/tải khi `doneCount >= totalTopics`" (100% hoàn thành) thay vì mockup
+gốc cho tải cả khi chưa xong (thanh tiến độ thay huy hiệu ✓) — bản build
+chọn trung thực/rõ ràng hơn, không phải bỏ sót.
+
+**3 — Đổi/bổ sung avatar — không xây upload mới, dùng đúng chữ cái đầu từ
+`learnerName` thật.** Đúng nguyên tắc "dự án chưa có hạ tầng lưu ảnh đại
+diện ở bất kỳ đâu" (ảnh Hồ sơ cũng chỉ ephemeral client-side, không
+persist) — thêm hạ tầng upload/persist ảnh cho riêng 2 modal này sẽ trái
+convention toàn dự án. Cả 2 modal giờ luôn vẽ avatar chữ cái đầu tất định
+từ `learnerName` (trường đã persist thật trong `mnyt_prefs.learner_name`)
+— khớp đúng hành vi fallback thật của mockup, không phải giải pháp né
+tránh.
+
+**4 — Banner 35 thẻ chủ đề (`MnytHomeClient.tsx` + CSS) — 3 sai lệch thật,
+đã sửa cả 3.** Đối chiếu trực tiếp mockup dòng 236-267 (markup) +
+2894-2907 (JS tính `categoryStats`):
+- **Nền cover thừa.** Mockup: `<div style="position:relative;width:100%;
+  height:76px;">` — KHÔNG có background nào khi chưa có ảnh cover (chỉ có
+  `image-slot` khi `hasCover`, cộng 2 lớp overlay gradient phía trên). Bản
+  build thêm hẳn 1 nền `linear-gradient(160deg, var(--field-color-soft),
+  rgba(10,11,18,0.9))` không có trong mockup — đã xoá.
+- **Overlay bị làm yếu sai.** Mockup: `background:linear-gradient(180deg,
+  transparent 40%, {{cat.color}}33 100%), linear-gradient(0deg,#0a0b12 0%,
+  transparent 60%);` — KHÔNG có modifier `opacity` nào (full strength; màu
+  đã tự mang alpha `33` trong chính color-stop). Bản build bọc cả 2 gradient
+  trong `opacity:0.2` — vừa làm yếu sai gradient màu danh mục (vốn đã có
+  alpha riêng), vừa làm yếu SAI vignette đen (mockup không giảm alpha
+  vignette này). Đã xoá `opacity:0.2`, đổi gradient màu sang dùng đúng biến
+  `--field-color-soft` (đã có sẵn = `${cat.color}33`, khớp đúng
+  `{{cat.color}}33` mockup).
+- **Badge chữ cái đầu — phẳng thay vì mặt cầu phát sáng.** Mockup
+  `iconStyle` (xác nhận đúng vị trí qua dòng 243, render ngay chỗ
+  `{{cat.initial}}`): `width:32px;height:32px;border-radius:10px;...
+  background:radial-gradient(circle at 32% 28%, ${c.color}, ${c.color}99
+  55%, #0a0b12 130%);box-shadow:0 0 16px ${c.color}55, inset 0 0 6px
+  rgba(255,255,255,0.25);` — badge mặt cầu phát sáng thật. Bản build:
+  `width:26px;height:26px;border-radius:8px;background:var(--field-color);`
+  — phẳng tuyệt đối, không glow, sai cả kích thước lẫn bo góc. Đã sửa đúng
+  32×32/`border-radius:10px`/radial-gradient/box-shadow — thêm 2 CSS custom
+  property mới trên mỗi thẻ (`--field-color-99`/`--field-color-55`, khớp
+  đúng `${c.color}99`/`${c.color}55` mockup) vì CSS trước đó chỉ có
+  `--field-color`/`--field-color-soft` (alpha `33`), không đủ 2 mức alpha
+  glow cần thiết.
+
+**Không sửa** (đã đối chiếu, khớp đúng mockup từ trước): chiều cao cover
+76px, `border-top:3px solid var(--field-color)` trên phần thân thẻ, badge
+checkmark hoàn thành (vị trí/kích thước/style).
+
+**Verify:** `npx tsc --noEmit` sạch, `eslint` (6 file đã sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (toàn
+bộ route `/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào biến
+mất). Playwright thật qua route devtest tạm (render trực tiếp 2 modal +
+3 thẻ chủ đề mẫu với dữ liệu giả lập, đã xoá route ngay sau khi xác nhận
+xong + rebuild lại xác nhận route không còn trong output): 0 lỗi console/
+page error; ảnh chụp canvas Share Card/Certificate khớp đúng bố cục mô tả
+ở trên (logo+brand/danh mục+ngày/tiêu đề/vạch màu/takeaway/avatar chữ cái
+đầu+tên+streak cho Share Card; 3 viền lồng nhau/brand+tiêu đề có vạch/
+avatar/tên/trạng thái/huy hiệu/chữ ký kèm ảnh Founder thật cho Certificate);
+banner 3 thẻ chủ đề mẫu hiện đúng badge chữ cái đầu dạng mặt cầu phát sáng
++ vignette cover đúng cường độ.
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài khoản
+đăng nhập thật đã nêu nhiều lần) — Founder tự bấm nút "Thẻ chia sẻ ý
+tưởng"/"Nhận chứng nhận" ở View Chi tiết/Lộ trình thật, xác nhận ảnh PNG
+tải về đúng bố cục mới; xác nhận toàn bộ 35 thẻ chủ đề ở Trang chủ hiện
+đúng badge glow mới.
+
 ### Mục 5 — Dữ liệu: 446/446/35/100 đủ, nhưng `estMinutes` hẹp hơn README hứa
 
 Query trực tiếp Supabase (project `uosxpxolsvwcafxvnroy`):

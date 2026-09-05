@@ -68,6 +68,7 @@ type Props = {
   signedIn: boolean;
   completedIds: string[];
   streak: number;
+  learnerName: string | null;
 };
 
 const STEP_COUNT = 5;
@@ -120,6 +121,7 @@ export function MnytDetailClient({
   signedIn,
   completedIds,
   streak,
+  learnerName,
 }: Props) {
   const router = useRouter();
   const isVi = lang === "vi";
@@ -717,6 +719,7 @@ export function MnytDetailClient({
             takeawayEn: c.takeawayEn,
           }}
           streak={streak}
+          learnerName={learnerName}
           onClose={() => setShowShareCard(false)}
         />
       )}

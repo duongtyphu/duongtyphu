@@ -2255,7 +2255,6 @@
   position: relative;
   width: 100%;
   height: 76px;
-  background: linear-gradient(160deg, var(--field-color-soft), rgba(10, 11, 18, 0.9));
 }
 .mnyt .mnyt-home-field-cover::after {
   content: "";
@@ -2263,25 +2262,26 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 40%, var(--field-color) 100%),
+    linear-gradient(180deg, transparent 40%, var(--field-color-soft) 100%),
     linear-gradient(0deg, #0a0b12 0%, transparent 60%);
-  opacity: 0.2;
 }
 .mnyt .mnyt-home-field-initial {
   position: absolute;
   top: 8px;
   left: 8px;
   pointer-events: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 13px;
   font-weight: 700;
-  color: #0a0b12;
-  background: var(--field-color);
+  color: #fff;
+  background: radial-gradient(circle at 32% 28%, var(--field-color), var(--field-color-99) 55%, #0a0b12 130%);
+  box-shadow: 0 0 16px var(--field-color-55), inset 0 0 6px rgba(255, 255, 255, 0.25);
 }
 .mnyt .mnyt-home-field-check {
   position: absolute;

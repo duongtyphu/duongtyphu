@@ -530,7 +530,17 @@ export function MnytHomeClient({
           const expanded = expandedCategory === cat.key;
           const initial = (cat.shortName || cat.name).trim().charAt(0).toUpperCase();
           return (
-            <div key={cat.key} className="mnyt-home-field-card" style={{ ["--field-color" as string]: cat.color, ["--field-color-soft" as string]: `${cat.color}33`, ["--field-border" as string]: `${cat.color}33` }}>
+            <div
+              key={cat.key}
+              className="mnyt-home-field-card"
+              style={{
+                ["--field-color" as string]: cat.color,
+                ["--field-color-soft" as string]: `${cat.color}33`,
+                ["--field-color-99" as string]: `${cat.color}99`,
+                ["--field-color-55" as string]: `${cat.color}55`,
+                ["--field-border" as string]: `${cat.color}33`,
+              }}
+            >
               <div className="mnyt-home-field-cover">
                 <div className="mnyt-home-field-initial">{initial}</div>
                 {mastered && (
