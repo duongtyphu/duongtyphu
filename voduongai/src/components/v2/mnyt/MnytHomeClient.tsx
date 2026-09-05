@@ -67,6 +67,7 @@ import type { MnytCategory, MnytGlobeNode, MnytGlossaryTerm, MnytTopicSummary } 
 import { getMnytGlossaryCategoryMeta } from "@/lib/mnyt/glossary-categories";
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
 import { MnytOnboardingModal } from "./MnytOnboardingModal";
+import { MnytFieldBannerCanvas } from "./MnytFieldBannerCanvas";
 
 type Props = {
   lang: "vi" | "en";
@@ -542,6 +543,7 @@ export function MnytHomeClient({
               }}
             >
               <div className="mnyt-home-field-cover">
+                <MnytFieldBannerCanvas categoryKey={cat.key} color={cat.color} />
                 <div className="mnyt-home-field-initial">{initial}</div>
                 {mastered && (
                   <div className="mnyt-home-field-check" aria-label={isVi ? "Đã hoàn thành" : "Mastered"}>
