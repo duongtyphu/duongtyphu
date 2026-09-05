@@ -452,8 +452,8 @@ export function MnytHomeClient({
                 onMouseLeave={() => setHoverNode(null)}
                 onPointerDown={(e) => e.stopPropagation()}
                 style={{
-                  width: completedSet.has(node.id) ? 8 : 6,
-                  height: completedSet.has(node.id) ? 8 : 6,
+                  width: completedSet.has(node.id) ? 16 : 12,
+                  height: completedSet.has(node.id) ? 16 : 12,
                   background: node.color,
                   boxShadow: `0 0 6px ${node.color}`,
                   opacity: 1,

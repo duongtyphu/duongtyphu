@@ -10872,3 +10872,19 @@ nhắc gì tới kích thước.
 khi xác nhận): `getComputedStyle` xác nhận `--mnyt-globe-r` resolve đúng
 `min(288px, ...)`, node transform áp dụng đúng 288px, `opacity` node =
 `1`.
+
+## Sau đó — "Tăng thêm 100% opacity 446 nốt" → làm rõ, đổi hướng sang tăng kích thước
+
+Founder gõ tiếp "TĂNG THÊM 100% Opacity 446 nốt ý tưởng" — về kỹ thuật
+`opacity` CSS đã ở mức tối đa (1/100%) từ đợt sửa ngay trước, không thể
+tăng thêm. Đã dừng hỏi qua `AskUserQuestion` (không tự đoán) — Founder
+chọn "Tăng kích thước nốt" (loại bỏ 2 lựa chọn còn lại: tăng glow, hoặc
+không cần gì thêm).
+
+Đã sửa `.mnyt-home-globe-node` (`MnytHomeClient.tsx`): kích thước tăng
+GẤP ĐÔI — hoàn thành 8px→16px, chưa hoàn thành 6px→12px. Giữ nguyên
+`boxShadow: 0 0 6px` (không đụng, Founder không chọn tăng glow) và
+`opacity: 1` (đã đúng từ đợt trước).
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass, `rm -rf .next
+&& npm run build` sạch.
