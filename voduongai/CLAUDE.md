@@ -10599,3 +10599,146 @@ nhất" (đợt PR #95), vẫn cần kiểm tra GIÁ TRỊ gán vào nguồn đ�
 khớp với nơi khác tự nhận "cùng 1 màu" hay không (ở đây là thẻ Hub) —
 thống nhất CƠ CHẾ không tự động đảm bảo thống nhất GIÁ TRỊ nếu 2 nơi độc
 lập tự chọn số liệu riêng dù cùng ý đồ thẩm mỹ.
+
+## ĐÍNH CHÍNH — "2 vòng quay đối xứng" quanh quả cầu Trang chủ: bản sửa
+## trước đó SAI TIỀN ĐỀ, mockup không hề cho 2 vòng này quay
+
+Founder báo lại nguyên văn: "Kiểm tra lại quả cầu => các ý tưởng luôn luôn
+di chuyển / 2 quỹ đạo quay quanh =>> vẫn chưa khớp với bản thiết kế /
+Hiệu ứng màu chữ, nền vẫn chưa được khắc phục. / Kiểm tra lại toàn bộ
+trang 'Mỗi ngày một ý tưởng'" — tức bản vá ring ở mục "Bug đã sửa — '2
+vòng quay đối xứng bị lệch'..." (phía trên) KHÔNG giải quyết đúng vấn đề
+dù đã verify kỹ (đo tâm/kích thước bằng Playwright) ở đợt đó.
+
+**Root cause thật (đọc lại trực tiếp mockup, không tin báo cáo cũ dù báo
+cáo đó đã verify bằng số đo):** `ringOuterStyle`/`ringMidStyle` (mockup,
+dòng 2706-2707) — dùng CHUNG cho CẢ quả cầu ý tưởng Trang chủ (dòng
+166-167) LẪN quả cầu domain ở Bản đồ lĩnh vực (dòng 444-445, xác nhận qua
+2 vị trí `{{ ringOuterStyle }}` trong markup) — là 2 ELIP TĨNH nghiêng
+bằng `transform:rotateX(75deg)` (outer) / `rotateX(75deg) rotate(30deg)`
+(mid), dựa vào `perspective:1400px` của cha để tạo hiệu ứng "vòng Sao
+Thổ" — **KHÔNG có `animation` nào cả**. Bản vá trước đó (Turn 1) đi từ
+tiền đề SAI (cho rằng 2 vòng NÊN quay, chỉ cần sửa lỗi lệch tâm khi quay)
+— tiền đề này bắt nguồn từ chính câu hỏi gốc của Founder ("2 vòng quay...
+bị lệch"), không phải từ đọc lại mockup. Kết quả: bản vá cũ giữ nguyên
+`animation: ringRotate 120s/90s` trên `::before`, chỉ sửa đúng lỗi lệch
+tâm — hình học đã đúng NHƯNG với 2 vòng tròn viền đều (`border` 1px đồng
+nhất mọi hướng), xoay 1 vòng tròn hoàn hảo quanh tâm của chính nó tạo ra
+**0 thay đổi thị giác** (vòng tròn đối xứng xoay quanh tâm luôn trông y
+hệt ở mọi góc quay) — nên "animation" đó thực chất vô hình, và quan trọng
+hơn: 2 vòng hiện ra là 2 CÒNG TRÒN PHẲNG, không phải 2 ELIP NGHIÊNG kiểu
+"vòng Sao Thổ" như mockup — đây mới là thứ không khớp bản thiết kế.
+
+**Bằng chứng chéo xác nhận trước khi sửa (không chỉ đọc lại mockup 1
+lần):** `.mnyt-fields-ring-outer`/`-mid` (quả cầu Bản đồ lĩnh vực,
+`moi-ngay-mot-y-tuong.css` dòng ~5040) **đã làm ĐÚNG** mẫu này từ trước —
+`transform: translate(-50%,-50%) rotateX(75deg)` (outer) /
+`rotateX(75deg) rotate(30deg)` (mid), KHÔNG animation, kích thước cố định
+320/360px, border `rgba(167,139,250,0.14)`/`rgba(34,211,238,0.1)` — khớp
+100% giá trị mockup. Chính docblock của bản vá Turn 1 (mục "Bug đã sửa —
+'2 vòng quay đối xứng bị lệch'" ở trên) từng TỰ GHI NHẬN sự kiện này khi
+audit lúc đó ("`.mnyt-fields-ring-outer/-mid`... dùng đúng
+`transform: translate(-50%,-50%) rotateX(75deg)` NHƯNG KHÔNG có animation
+nào cả... chỉ Home globe được 'thêm' hiệu ứng xoay ngoài mockup") — nhưng
+kết luận đó bị đọc sai thành "Fields đã đúng, không đụng" thay vì "Fields
+đã đúng, Home phải sửa THEO Fields" — bỏ lỡ tín hiệu ngay trong chính tài
+liệu của mình.
+
+**Đã sửa** (`.mnyt-home-globe-ring-outer`/`-mid`,
+`moi-ngay-mot-y-tuong.css`): bỏ hẳn `::before` + `animation: ringRotate`
+(không còn animation nào xung đột với `transform` tĩnh — đúng nguyên
+nhân gốc bug Turn 1 đã xác định, nhưng nay giải quyết bằng cách bỏ hẳn
+animation thay vì tách lớp). Border chuyển thẳng vào chính div ngoài,
+`transform` gộp `translate(-50%,-50%) rotateX(75deg)` (outer) /
+`rotateX(75deg) rotate(30deg)` (mid) — cùng công thức Fields, GIỮ NGUYÊN
+phần kích thước co giãn theo breakpoint/viewport đã có từ Turn 1 (quả cầu
+Trang chủ nhiều node hơn hẳn Fields, cần khung lớn hơn 320/360px cố
+định — đây là khác biệt hợp lý duy nhất so với Fields, không phải sai
+lệch). Sửa kèm 2 giá trị màu border lệch nhẹ so với mockup (di sản từ bản
+build gốc, không phải do Turn 1 gây ra): outer `rgba(167,139,250,0.12)`→
+`0.14`; mid dùng nhầm mã Tailwind cyan-300 `rgba(103,232,249,0.1)` (giao
+diện `#67e8f9`) → đúng cyan-400 mockup `rgba(34,211,238,0.1)` (`#22d3ee`).
+
+**Node/hạt bụi quả cầu (`animation:spin 60s linear infinite` lồng trong
+lớp kéo-xoay) — ĐÃ ĐÚNG, không đụng.** Đối chiếu lại mockup (dòng 183:
+`animation:spin 60s linear infinite`, lồng trong div `rotateY({{
+dragOffset }}deg)` điều khiển bởi `startDrag`/`onDragMove`/`endDrag`) —
+khớp 100% với code thật. Câu "các ý tưởng luôn luôn di chuyển" trong báo
+cáo Founder là MÔ TẢ ĐÚNG hành vi mockup có chủ đích (quả cầu tự xoay
+liên tục + xoay thêm khi kéo tay), không phải triệu chứng của 1 bug —
+không sửa.
+
+**Verify bằng Playwright thật (không chỉ đọc code) qua `next dev`:** đo
+`getComputedStyle` xác nhận `animationName: "none"` ở cả outer/mid (trước
+đó là `ringRotate`), `transform` là ma trận 3D (rotateX đã áp dụng, xác
+nhận hiệu ứng nghiêng thật chứ không phải chỉ khai báo suông), màu border
+khớp đúng byte-for-byte giá trị mockup, `perspective:1400px` của cha vẫn
+nguyên. Chụp màn hình xác nhận thị giác: 2 elip nghiêng đối xứng kiểu
+"vòng Sao Thổ" quanh quả cầu tím phát sáng — đúng cảm giác thiết kế gốc,
+khác hẳn 2 vòng tròn phẳng trước đó.
+
+**Hiệu ứng màu chữ, nền — audit toàn bộ 9/10 view thật (Playwright, đo
+tương phản WCAG thật trên DOM đã render, không suy đoán):**
+
+1. **BUG THẬT, đã sửa** — `.mnyt .main-col .profile .plan` (badge
+   "Free"/"Premium" ở topbar, CSS RIÊNG của file này) — `color:#92720a`
+   trên nền `#fef3c7` chỉ đạt 4.07:1, dưới ngưỡng WCAG AA 4.5:1 cho chữ
+   thường. Đúng lớp bug đã gặp và sửa ở NHIỀU trang `/v2/*` khác cho cùng
+   1 thành phần này (Premium/Affiliate/Tài khoản — mỗi trang có 1 bản CSS
+   riêng, sửa 1 nơi không tự lan sang nơi khác) nhưng trang này chưa từng
+   được vá theo. Đổi sang `#7a5c08` (cùng cặp đã dùng an toàn ở các trang
+   trên, ratio ~5.4:1).
+2. **Đã xem xét, KHÔNG sửa (khớp mockup + khớp quy ước dự án, không phải
+   bug)** — `.mnyt-brand-tagline` ("AI mỗi ngày, tiến bộ mỗi ngày", header)
+   `color:#5b5875` trên nền `#0a0b12` — 2.90:1, dưới ngưỡng. Đối chiếu
+   mockup gốc (dòng 44): `color:#5b5875` — khớp byte-for-byte, không phải
+   lệch phát sinh khi build. Đây là kiểu "phụ đề mờ dưới tên hiệu ứng
+   gradient nổi bật" — cùng tinh thần quy ước logo bắt buộc của CHÍNH dự
+   án này (đầu file `CLAUDE.md`, dòng "ACADEMY" dùng `color:#94a3b8` nhạt
+   dưới "VDAI" đậm) — 1 lựa chọn thẩm mỹ có chủ đích lặp lại nhiều nơi
+   trong hệ thống, không phải sai sót. Không tự ý đổi lệch khỏi mockup;
+   nếu Founder muốn ưu tiên WCAG hơn fidelity ở đúng điểm này, cần xác
+   nhận riêng.
+3. **Phát hiện, KHÔNG sửa (ngoài phạm vi trang này)** — `.side-label`
+   ("GÓC TIẾN BỘ", sidebar) `color:#6f6a91` trên nền `#150f2e` — 3.64:1.
+   Đây là CSS DÙNG CHUNG (`v2-tokens.css`'s `[data-ui="v2"] .side-label`,
+   áp dụng cho TOÀN BỘ ~46 trang `/v2/*`, không riêng "Mỗi ngày một ý
+   tưởng") — sửa ở đây sẽ đổi màu nhãn này trên mọi trang khác, vượt quá
+   phạm vi yêu cầu "kiểm tra lại trang Mỗi ngày một ý tưởng". Ghi nhận
+   minh bạch, cần 1 việc riêng (site-wide) nếu Founder muốn xử lý.
+4. **Phát hiện, KHÔNG phải bug thật (chỉ xảy ra vì sandbox rỗng dữ
+   liệu)** — `MnytPathClient.tsx` (Lộ trình leo cấp) render hoàn toàn
+   trống (`<section className="mnyt-path" />`, dòng 182-184) khi
+   `categories` rỗng — sandbox không có Supabase nên `getLiveMnytCategories()`
+   trả `[]`. Trên Production, bảng `mnyt_categories` LUÔN có 35 dòng
+   (xác nhận ở mục "Task #1/#12" đầu file) nên nhánh này không bao giờ
+   kích hoạt thật — không sửa, chỉ ghi nhận để không nhầm là bug ẩn nếu
+   gặp lại tình huống tương tự.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (toàn bộ 10 route
+`/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào biến mất/lỗi).
+Playwright thật qua `next dev` (Supabase chưa cấu hình, Portal tự công
+khai theo fallback có sẵn) — chụp ảnh toàn trang cả 9 view chính (Trang
+chủ/Kho ý tưởng/Từ điển/Huy hiệu/Hồ sơ/Bản đồ lĩnh vực/Lộ trình/Lịch/Thẻ
+lật), 0 lỗi console/page error, badge "Free" đã đọc được rõ sau khi sửa.
+
+**Chưa tự test được:** xem trực tiếp trên Production với dữ liệu thật
+(446 topic thật, 35 lĩnh vực thật — quả cầu/nốt/hạt bụi sẽ đông đúc hơn
+hẳn sandbox rỗng) — đặc biệt xác nhận cảm giác thẩm mỹ "2 elip nghiêng
+kiểu vòng Sao Thổ" giờ đã đúng ý so với bản thiết kế, và xác nhận nếu
+Founder vẫn thấy "hiệu ứng màu chữ, nền" nào khác chưa được liệt kê ở
+trên (4 mục đã audit hết những gì đo được trên sandbox — dữ liệu thật
+trên Production có thể lộ ra bối cảnh màu/nền khác chưa test được ở đây,
+ví dụ banner 35 thẻ chủ đề với ảnh cover thật, hoặc node quả cầu với 446
+màu sắc thật khác nhau).
+
+**Bài học quy trình (áp dụng cho các đợt "Founder báo lại y hệt vấn đề cũ
+sau khi đã fix + verify kỹ" sau này):** verify bằng số đo (tâm/kích thước/
+transform) xác nhận ĐÚNG những gì mình ĐANG kiểm tra, nhưng không tự động
+xác nhận mình đã kiểm tra ĐÚNG THỨ CẦN KIỂM TRA — bản vá Turn 1 verify
+hình học rất kỹ (tâm/kích thước/elip) nhưng chưa từng tự hỏi "mockup có
+thực sự cho 2 vòng này ANIMATE hay không" trước khi bắt tay sửa lỗi lệch
+tâm của chính animation đó. Khi Founder báo lại y hệt vấn đề dù đã có bản
+vá + verify, ưu tiên đọc lại NGUYÊN VĂN mockup từ đầu (không tin lại kết
+luận cũ dù kết luận đó có kèm số đo) trước khi tìm lỗi ở chỗ khác.

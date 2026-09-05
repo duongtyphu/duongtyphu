@@ -489,10 +489,19 @@
   color: var(--text);
 }
 .mnyt .main-col .profile .plan {
+  /*
+   * Bug đã sửa (audit "hiệu ứng màu chữ, nền") — `color:#92720a` trên nền
+   * `#fef3c7` chỉ đạt tỉ lệ tương phản 4.07:1 (đo bằng Playwright thật),
+   * dưới ngưỡng WCAG AA 4.5:1 cho chữ thường — đúng lớp bug đã gặp và sửa
+   * ở nhiều trang `/v2/*` khác (Premium/Affiliate/Tài khoản) cho cùng 1
+   * badge "Free"/"Premium" ở topbar (mỗi trang tự có 1 bản CSS riêng, sửa
+   * 1 nơi không tự lan sang nơi khác). Đổi sang `#7a5c08` (cùng cặp đã
+   * dùng an toàn ở các trang trên, ratio ~5.4:1).
+   */
   display: inline-block;
   margin-top: 1px;
   background: #fef3c7;
-  color: #92720a;
+  color: #7a5c08;
   font-size: 10.5px;
   font-weight: 700;
   padding: 1px 7px;
@@ -2000,59 +2009,42 @@
 .mnyt .mnyt-home-globe-ring-outer,
 .mnyt .mnyt-home-globe-ring-mid {
   /*
-   * Bug đã sửa (Founder báo "2 vòng quay đối xứng bị lệch"): trước đây
-   * chính div này vừa canh giữa bằng `transform: translate(-50%, -50%)`
-   * vừa `animation: ringRotate` cũng nhắm vào `transform` — animation CSS
-   * LUÔN GHI ĐÈ toàn bộ giá trị `transform` tại mỗi khung hình (không
-   * cộng dồn với giá trị tĩnh), nên ngay khi animation chạy, phần
-   * translate(-50%,-50%) canh giữa bị xoá mất — vòng tròn lệch hẳn về
-   * góc trên-trái của tâm quả cầu, xoay quanh đúng cái góc lệch đó chứ
-   * không xoay tại chỗ quanh tâm. Đã tách: div NGOÀI (đây) chỉ lo canh
-   * giữa (transform tĩnh, KHÔNG BAO GIỜ animate) + kích thước; đường viền
-   * xoay chuyển sang `::before` bên trong (position:absolute;inset:0),
-   * animation áp cho `::before` không đụng transform canh giữa của cha.
-   *
-   * Đồng thời sửa luôn lỗi méo hình: `width/height: 92%/76%` trước đây
-   * tính theo CHIỀU RỘNG lẫn CHIỀU CAO của `.mnyt-home-globe-wrap` — khung
-   * này KHÔNG VUÔNG (rộng theo `max-width:1180px` của trang, cao cố định
-   * 440/560/760px tuỳ breakpoint) nên vòng tròn thực chất bị kéo thành
-   * hình elip dẹt ở màn hình rộng. Đổi sang kích thước PIXEL CỐ ĐỊNH theo
-   * từng breakpoint (khớp đúng 92%/76% của chiều cao `.mnyt-home-globe-wrap`
-   * tại breakpoint đó — chiều cao luôn ổn định, không phụ thuộc bề rộng
-   * trang) + kẹp thêm bằng `max((100vw - 80px) / 1.42, 220px)` để không
-   * tràn ngang trên màn hình di động hẹp — cùng công thức `ringCap` của
-   * mockup gốc (dòng 2703-2705).
+   * ĐÍNH CHÍNH (Founder báo lại "2 vòng quay vẫn chưa khớp bản thiết kế"
+   * sau bản vá trước — bản vá trước chỉ sửa ĐÚNG lỗi lệch tâm lúc xoay,
+   * nhưng SAI TIỀN ĐỀ: mockup gốc KHÔNG hề cho 2 vòng này xoay. Đọc lại
+   * trực tiếp `ringOuterStyle`/`ringMidStyle` (mockup, dòng 2706-2707,
+   * dùng CHUNG cho cả quả cầu Trang chủ lẫn quả cầu Bản đồ lĩnh vực —
+   * xác nhận qua 2 vị trí `{{ ringOuterStyle }}` trong markup, dòng
+   * 166-167 và 444-445) — 2 vòng là ELIP TĨNH nghiêng bằng
+   * `transform:rotateX(75deg)` (nhờ `perspective:1400px` của cha, hiệu
+   * ứng "vòng Sao Thổ"), KHÔNG có `animation` nào cả. `.mnyt-fields-ring-
+   * outer/-mid` (Bản đồ lĩnh vực) đã làm ĐÚNG mẫu này từ trước (dòng
+   * 5040 trở xuống) — bản vá này đưa Trang chủ khớp lại đúng công thức
+   * đó, chỉ giữ khác biệt DUY NHẤT là kích thước co giãn theo breakpoint/
+   * viewport (quả cầu Trang chủ có nhiều node hơn hẳn, cần khung lớn
+   * hơn) thay vì cố định 320/360px như Bản đồ lĩnh vực.
+   * Bỏ hẳn `::before` + `animation: ringRotate` — không cần tách lớp nữa
+   * vì không còn animation nào xung đột với `transform` tĩnh của chính
+   * div này (đúng nguyên nhân gốc bug cũ: animation ghi đè transform tĩnh
+   * — nay không animate thì không còn xung đột).
    */
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   border-radius: 50%;
   pointer-events: none;
 }
 .mnyt .mnyt-home-globe-ring-outer {
   width: min(405px, max(220px, calc((100vw - 80px) / 1.42)));
   height: min(405px, max(220px, calc((100vw - 80px) / 1.42)));
-}
-.mnyt .mnyt-home-globe-ring-outer::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1px solid rgba(167, 139, 250, 0.12);
-  animation: ringRotate 120s linear infinite;
+  border: 1px solid rgba(167, 139, 250, 0.14);
+  transform: translate(-50%, -50%) rotateX(75deg);
 }
 .mnyt .mnyt-home-globe-ring-mid {
   width: min(334px, max(220px, calc((100vw - 80px) / 1.42)));
   height: min(334px, max(220px, calc((100vw - 80px) / 1.42)));
-}
-.mnyt .mnyt-home-globe-ring-mid::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  border: 1px solid rgba(103, 232, 249, 0.1);
-  animation: ringRotate 90s linear infinite reverse;
+  border: 1px solid rgba(34, 211, 238, 0.1);
+  transform: translate(-50%, -50%) rotateX(75deg) rotate(30deg);
 }
 @media (min-width: 720px) {
   .mnyt .mnyt-home-globe-ring-outer {
