@@ -456,7 +456,7 @@ export function MnytHomeClient({
                   height: completedSet.has(node.id) ? 8 : 6,
                   background: node.color,
                   boxShadow: `0 0 6px ${node.color}`,
-                  opacity: completedSet.has(node.id) ? 1 : 0.75,
+                  opacity: 1,
                   transform: `translate3d(calc(var(--mnyt-globe-r) * ${x}), calc(var(--mnyt-globe-r) * ${y}), calc(var(--mnyt-globe-r) * ${z}))`,
                 }}
               />
