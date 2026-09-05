@@ -10847,3 +10847,28 @@ lĩnh vực thật, đủ màu sắc/icon khác nhau, cạnh badge chữ cái đ
 CSS đã có sẵn) — Founder tự xác nhận trên Preview/Production URL, đặc
 biệt cảm nhận thẩm mỹ tổng thể (độ đậm/nhạt của icon watermark, độ rõ của
 hoạ tiết đường chéo) có đúng ý hay cần tinh chỉnh thêm.
+
+## Tiếp tục tăng bán kính quả cầu +20% (cộng dồn) + hạt ý tưởng đang quay lên 100% opacity
+
+Founder: "Tăng thêm tăng bán kính quả cầu +20% và các hạt ý tưởng đang
+quay lên 100%" — đọc đúng chữ "tăng THÊM" là cộng dồn lên giá trị ĐÃ tăng
+lần trước (240px), không phải lặp lại +20% trên mốc gốc 200px.
+
+**Bán kính:** `--mnyt-globe-r`/`--mnyt-globe-r-dust`: 240px → 288px (đúng
+240×1.2). Giữ nguyên công thức kẹp viewport `(100vw-80px)/2` (dust chia
+thêm 1.5) — không đổi ngưỡng an toàn chống tràn ngang di động.
+
+**"Hạt ý tưởng đang quay lên 100%":** đọc đúng thành phần kỹ thuật khớp
+mô tả — 446 nốt ý tưởng (`.mnyt-home-globe-node`) nằm trong
+`.mnyt-home-globe-spin-layer` (khối luôn tự xoay `animation:spin 60s`) —
+trước đó `opacity: completedSet.has(node.id) ? 1 : 0.75` (đa số ý tưởng
+CHƯA hoàn thành chỉ hiện 75%). Đổi thành `opacity: 1` cố định cho MỌI nốt
+— đúng nghĩa đen "lên 100%". Giữ nguyên khác biệt kích thước 8px/6px
+(hoàn thành/chưa) — Founder chỉ yêu cầu tăng độ hiển thị (opacity), không
+nhắc gì tới kích thước.
+
+**Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass, `rm -rf .next
+&& npm run build` sạch. Playwright thật (route devtest tạm, xoá ngay sau
+khi xác nhận): `getComputedStyle` xác nhận `--mnyt-globe-r` resolve đúng
+`min(288px, ...)`, node transform áp dụng đúng 288px, `opacity` node =
+`1`.

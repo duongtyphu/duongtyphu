@@ -1942,18 +1942,21 @@
   /*
    * `--mnyt-globe-r` — bán kính (px) của quả cầu 3D node/hạt bụi
    * (`translate3d(calc(var(--mnyt-globe-r) * hệ_số), ...)` trong
-   * `MnytHomeClient.tsx`). Founder yêu cầu riêng: tăng +20% (200px→240px ở
-   * màn hình đủ rộng — chủ ý lệch khỏi công thức `R` co giãn theo `n` của
-   * mockup gốc, cùng tinh thần đã áp dụng cho 2 vòng quay). Vẫn giữ
-   * nguyên công thức KẸP theo bề rộng viewport để không tràn ngang trên
-   * di động hẹp — bug phát hiện khi audit mobile: bán kính cố định không
-   * co trên màn hình hẹp khiến node/hạt bụi vươn ra ngoài vùng nội dung,
-   * gây cuộn ngang toàn trang. `(100vw - 80px) / 2` = nửa bề rộng khả
-   * dụng còn lại sau khi trừ 80px lề 2 bên (không đổi hệ số này — đây là
-   * NGƯỠNG AN TOÀN chống tràn, không phải kích thước danh nghĩa) — cùng
-   * ngân sách lề đã dùng cho `ringCap` của 2 vòng quay bên dưới.
+   * `MnytHomeClient.tsx`). Founder yêu cầu riêng, ĐÃ TĂNG QUA 2 ĐỢT (chủ ý
+   * lệch khỏi công thức `R` co giãn theo `n` của mockup gốc, cùng tinh
+   * thần đã áp dụng cho 2 vòng quay): đợt 1 200px→240px (+20%), đợt 2 (đợt
+   * này) "tăng thêm +20%" trên giá trị đã tăng — 240px→288px, KHÔNG phải
+   * +20% trên 200px gốc (Founder dùng đúng chữ "tăng thêm", nghĩa là cộng
+   * dồn lên giá trị hiện tại, không phải lặp lại mốc cũ). Vẫn giữ nguyên
+   * công thức KẸP theo bề rộng viewport để không tràn ngang trên di động
+   * hẹp — bug phát hiện khi audit mobile: bán kính cố định không co trên
+   * màn hình hẹp khiến node/hạt bụi vươn ra ngoài vùng nội dung, gây cuộn
+   * ngang toàn trang. `(100vw - 80px) / 2` = nửa bề rộng khả dụng còn lại
+   * sau khi trừ 80px lề 2 bên (không đổi hệ số này — đây là NGƯỠNG AN
+   * TOÀN chống tràn, không phải kích thước danh nghĩa) — cùng ngân sách
+   * lề đã dùng cho `ringCap` của 2 vòng quay bên dưới.
    */
-  --mnyt-globe-r: min(240px, calc((100vw - 80px) / 2));
+  --mnyt-globe-r: min(288px, calc((100vw - 80px) / 2));
   /*
    * Hạt bụi trang trí (`.mnyt-home-globe-particle`) nhân thêm hệ số
    * "jitter" 1.15-1.5 lần bán kính (xem `particlePositions` trong
@@ -1961,9 +1964,10 @@
    * `--mnyt-globe-r` sẽ vẫn tràn ở màn hình hẹp dù đã kẹp cho node (vì
    * node không có hệ số nhân thêm này). Biến riêng, chia thêm 1.5 (mức
    * jitter tối đa) để đảm bảo hạt bụi xa nhất cũng không vượt quá nửa bề
-   * rộng khả dụng. Cùng +20% với `--mnyt-globe-r` (200px→240px).
+   * rộng khả dụng. Cùng "tăng thêm +20%" với `--mnyt-globe-r`
+   * (200px→240px→288px).
    */
-  --mnyt-globe-r-dust: min(240px, calc((100vw - 80px) / 2 / 1.5));
+  --mnyt-globe-r-dust: min(288px, calc((100vw - 80px) / 2 / 1.5));
   position: relative;
   height: 440px;
   perspective: 1400px;
