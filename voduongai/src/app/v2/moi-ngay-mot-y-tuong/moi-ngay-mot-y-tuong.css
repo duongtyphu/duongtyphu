@@ -499,6 +499,75 @@
   border-radius: 6px;
 }
 
+/* =============================================================================
+ * BUG MOBILE ĐÃ SỬA — sidebar (224px cố định) + topbar (search-box/
+ * upgrade-btn/icon-btn/avatar không co giãn) của `PortalV2Shell` tràn ngang
+ * trên di động (đo thật: `scrollWidth` cố định ~853px bất kể viewport
+ * 320-430px). Không sửa `PortalV2Shell.tsx` (dùng chung ~46 trang khác) —
+ * toàn bộ cơ chế dưới đây tự chứa trong `.mnyt` (xem docblock
+ * `MnytShellClient.tsx`). `.mnyt .app .sidebar` (3 lớp selector) đủ
+ * specificity thắng `[data-ui="v2"] .sidebar` ở `v2-tokens.css` bất kể thứ
+ * tự nạp CSS.
+ * ========================================================================== */
+.mnyt .mnyt-mobile-nav-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: none;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mnyt .mnyt-nav-backdrop {
+  display: none;
+}
+@media (max-width: 880px) {
+  .mnyt .app .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 220;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  }
+  .mnyt .app.mnyt-nav-open .sidebar {
+    transform: translateX(0);
+  }
+  .mnyt .app.mnyt-nav-open .mnyt-nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 6, 10, 0.6);
+    z-index: 210;
+  }
+  .mnyt .main-col .mnyt-mobile-nav-btn {
+    display: flex;
+  }
+  .mnyt .main-col .search-box {
+    min-width: 0;
+  }
+  .mnyt .main-col .search-box input {
+    min-width: 0;
+  }
+  .mnyt .main-col .search-box kbd {
+    display: none;
+  }
+  .mnyt .main-col .upgrade-btn {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .mnyt .main-col .search-box {
+    display: none;
+  }
+}
+
 /* Chế độ tĩnh — tắt toàn bộ animation, gắn `.calm-mode` lên `.mnyt` khi
  * `prefsCalmMode` bật HOẶC `prefers-reduced-motion: reduce` (xem
  * `useCalmMode()` trong Phase 5 context). */
@@ -753,6 +822,29 @@
   gap: 12px;
   position: relative;
 }
+.mnyt .mnyt-mobilemenu-wrap {
+  display: none;
+  position: relative;
+}
+.mnyt .mnyt-mobilemenu-btn {
+  background: transparent;
+  border: 1px solid rgba(231, 229, 240, 0.2);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+.mnyt .mnyt-dropdown.mnyt-mobilemenu-dropdown {
+  left: auto;
+  right: 0;
+  top: 44px;
+}
 .mnyt .mnyt-streak-pill {
   display: flex;
   align-items: center;
@@ -935,6 +1027,9 @@
   .mnyt .mnyt-nav,
   .mnyt .mnyt-header-right .mnyt-freeze-pill {
     display: none;
+  }
+  .mnyt .mnyt-mobilemenu-wrap {
+    display: block;
   }
 }
 

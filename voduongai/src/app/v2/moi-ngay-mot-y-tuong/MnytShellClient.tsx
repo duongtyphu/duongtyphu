@@ -35,9 +35,34 @@
  * (server, luôn mới nhất mỗi lần điều hướng vì `page.tsx` mỗi route con
  * đều gọi lại `getMnytStateBundle()`) — không cần đồng bộ realtime ở tầng
  * shell, các Server Action ghi (Giai đoạn 4) tự làm mới qua điều hướng.
+ *
+ * BUG MOBILE ĐÃ SỬA — `PortalV2Shell` (sidebar 224px cố định + topbar
+ * search-box/upgrade-btn/icon-btn/avatar) KHÔNG có xử lý mobile nào (đã đo
+ * bằng Playwright: `document.documentElement.scrollWidth` cố định ~853px
+ * bất kể viewport 320-430px, ở MỌI trang dùng shell này, không riêng
+ * mnyt) — cuộn ngang thật trên điện thoại. Vì `PortalV2Shell.tsx` dùng
+ * chung ~46 trang khác, KHÔNG sửa trực tiếp component đó (tránh rủi ro lan
+ * rộng ngoài phạm vi yêu cầu) — toàn bộ cơ chế "drawer" dưới đây tự chứa
+ * hoàn toàn trong `.mnyt` (component này + `moi-ngay-mot-y-tuong.css`),
+ * không đụng `PortalV2Shell.tsx`:
+ * - Sidebar chuyển sang `position:fixed;transform:translateX(-100%)` dưới
+ *   880px (CSS `.mnyt .app .sidebar`, đủ specificity thắng
+ *   `[data-ui="v2"] .sidebar` ở `v2-tokens.css`), trượt vào bằng lớp
+ *   `.mnyt-nav-open` gắn trên `.app` — TOGGLE bằng nút hamburger truyền
+ *   qua `customSearch` (PortalV2Shell không có prop "thêm nút vào topbar"
+ *   nào khác, nhưng `customSearch` thay thế TOÀN BỘ ô tìm kiếm, nên bọc
+ *   luôn `<PortalSearchBox>` y hệt mặc định bên trong để không đổi hành vi
+ *   tìm kiếm — chỉ thêm 1 nút đứng trước).
+ * - Đóng drawer khi: bấm nút lần 2, bấm nền mờ (`.mnyt-nav-backdrop`),
+ *   Escape, hoặc điều hướng sang route khác (theo dõi `usePathname()`).
+ * - `.search-box`/`input` thêm `min-width:0` (mặc định trình duyệt không
+ *   cho input co dưới ~170px, chính là 1 nguyên nhân tràn ngang), ẩn
+ *   `<kbd>`/`.upgrade-btn` dưới 880px (không mất chức năng — Premium vẫn
+ *   vào được qua sidebar/thẻ promo trong drawer).
  * ========================================================================== */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { usePathname } from "next/navigation";
 
 import type { MnytCategory } from "@/lib/portal/live-mnyt";
 import type { MnytStateBundle } from "@/lib/portal/mnyt-sync";
@@ -45,6 +70,7 @@ import { updateMnytPrefs } from "@/lib/portal/mnyt-sync";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
+import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 import { MnytHeader } from "@/components/v2/mnyt/MnytHeader";
 import { MnytSoundProvider } from "@/components/v2/mnyt/MnytSoundContext";
 import { MnytToastProvider, useMnytToast } from "@/components/v2/mnyt/MnytToastContext";
@@ -118,7 +144,29 @@ function MnytShellInner({
   const [systemReducedMotion, setSystemReducedMotion] = useState(false);
   const [showSubmit, setShowSubmit] = useState(false);
   const [tourStep, setTourStep] = useState(0);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const showToast = useMnytToast();
+  const pathname = usePathname();
+
+  // Đóng drawer sidebar mobile ngay sau khi điều hướng sang route khác.
+  // Cập nhật state khi render (không phải trong effect) theo đúng pattern
+  // React khuyến nghị cho "adjust state on prop change".
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMobileNavOpen(false);
+  }
+
+  // Escape đóng drawer sidebar mobile — cùng hành vi Esc đã áp dụng cho
+  // mọi modal/dropdown khác trong tính năng này.
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" || e.key === "Esc") setMobileNavOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -177,12 +225,28 @@ function MnytShellInner({
 
   return (
     <div className={rootClassName} lang={prefs.lang}>
-      <div className="app">
+      <div className={`app${mobileNavOpen ? " mnyt-nav-open" : ""}`}>
+        {mobileNavOpen && <div className="mnyt-nav-backdrop" onClick={() => setMobileNavOpen(false)} aria-hidden="true" />}
         <PortalV2Shell
           premium={premium}
           activeHtmlFile="Moi ngay mot y tuong.html"
-          searchPlaceholder="Tìm kiếm ý tưởng, lĩnh vực, thuật ngữ..."
           promoText="Mở khoá toàn bộ 446 ý tưởng AI và lộ trình cá nhân hoá mỗi ngày."
+          customSearch={
+            <>
+              <button
+                type="button"
+                className="mnyt-mobile-nav-btn"
+                onClick={() => setMobileNavOpen((v) => !v)}
+                aria-expanded={mobileNavOpen}
+                aria-label={prefs.lang === "en" ? "Open menu" : "Mở menu"}
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                </svg>
+              </button>
+              <PortalSearchBox placeholder="Tìm kiếm ý tưởng, lĩnh vực, thuật ngữ..." variant="box" />
+            </>
+          }
         >
           <div className="mnyt-shell">
             <MnytHeader

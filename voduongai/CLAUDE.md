@@ -493,6 +493,85 @@ tưởng"/"Nhận chứng nhận" ở View Chi tiết/Lộ trình thật, xác n
 tải về đúng bố cục mới; xác nhận toàn bộ 35 thẻ chủ đề ở Trang chủ hiện
 đúng badge glow mới.
 
+## Bug đã sửa — mobile: sidebar/topbar tràn ngang + menu 10 view biến mất
+
+Founder yêu cầu "Sửa lỗi hiển thị trên các thiết bị mobile ngay". Đo bằng
+Playwright thật (không suy đoán) trên cả 10 route con của "Mỗi ngày một ý
+tưởng" ở 6 mốc viewport (320/360/375/390/414/430px) — phát hiện 2 bug thật,
+độc lập với nhau, cả 2 đều là bug CÓ SẴN từ trước (không phải do đợt sửa
+Thẻ chia sẻ/Chứng chỉ/Banner ngay trước đó gây ra):
+
+**1 — `PortalV2Shell` (sidebar 224px cố định + topbar search-box/
+upgrade-btn/icon-btn/avatar) tràn ngang trên MỌI trong 10 route, ở CẢ 6
+mốc viewport.** Đo `document.documentElement.scrollWidth` cố định đúng
+853px bất kể viewport 320-430px — sidebar không có bất kỳ xử lý mobile
+nào (không ẩn, không thu gọn), cộng với `<input>` trong `.search-box`
+không co được dưới ~170px (mặc định trình duyệt, thiếu `min-width:0`).
+**Xác nhận đây là bug của chính `PortalV2Shell` dùng chung ~46 trang
+`/v2/*` khác** (grep toàn bộ CSS các trang khác xác nhận 0 trang nào có
+xử lý mobile cho `.sidebar`) — KHÔNG sửa trực tiếp `PortalV2Shell.tsx`
+(tránh rủi ro lan rộng ngoài phạm vi yêu cầu, vốn chỉ nói về tính năng này)
+— toàn bộ cơ chế fix tự chứa hoàn toàn trong phạm vi `.mnyt`
+(`MnytShellClient.tsx` + `moi-ngay-mot-y-tuong.css`), không đụng file dùng
+chung:
+- Dưới 880px: sidebar chuyển `position:fixed;transform:translateX(-100%)`
+  (CSS `.mnyt .app .sidebar`, 3 lớp selector đủ specificity thắng
+  `[data-ui="v2"] .sidebar` ở `v2-tokens.css` bất kể thứ tự nạp CSS),
+  trượt vào bằng lớp `.mnyt-nav-open` gắn trên `.app` khi bấm nút hamburger
+  mới — truyền qua prop `customSearch` sẵn có của `PortalV2Shell` (thay
+  toàn bộ ô tìm kiếm bằng chính `<PortalSearchBox>` gốc + 1 nút hamburger
+  đứng trước, không đổi hành vi tìm kiếm). Đóng khi: bấm nút lần 2, bấm nền
+  mờ, Escape, hoặc điều hướng route khác (`usePathname()`).
+- `.search-box`/`input` thêm `min-width:0` (bỏ sàn co dãn mặc định trình
+  duyệt), ẩn `<kbd>`/`.upgrade-btn` dưới 880px (không mất chức năng —
+  Premium vẫn vào được qua sidebar/thẻ promo trong drawer), ẩn hẳn
+  `.search-box` dưới 480px.
+
+**2 — Menu 10 view riêng của tính năng (`MnytHeader.tsx`'s `.mnyt-nav`)
+biến mất hoàn toàn dưới 720px KHÔNG có thay thế nào — nghiêm trọng hơn bug
+1 (không chỉ tràn ngang, mà THỰC SỰ không điều hướng được).** `.mnyt-nav`
+gồm 3 link trực tiếp (Trang chủ/Kho ý tưởng/Từ điển) + dropdown "Khám phá"
+(Lĩnh vực/Lộ trình/Hồ sơ/Lịch/Huy hiệu/Gửi ý tưởng) — CSS có sẵn từ trước
+`@media(max-width:719px){.mnyt-nav{display:none}}` nhưng KHÔNG có bất kỳ
+menu thay thế nào (`MnytBottomNav` cũ đã bị xoá có chủ đích ở đợt tích hợp
+`PortalV2Shell`, với lý do "sidebar chuẩn đã đủ" — nhưng sidebar chuẩn chỉ
+có 1 mục "Mỗi ngày một ý tưởng" trỏ Trang chủ, KHÔNG có 8 đích con này).
+Kết quả: trên điện thoại, người dùng chỉ còn vào được Trang chủ (qua logo)
+và Hồ sơ (qua streak-pill/level-ring) — Kho ý tưởng/Từ điển/Lĩnh vực/Lộ
+trình/Lịch/Huy hiệu/Gửi ý tưởng hoàn toàn không có đường vào.
+
+**Đã sửa** — thêm `.mnyt-mobilemenu-wrap` (nút hamburger + dropdown gộp đủ
+8 đích + "Gửi ý tưởng của bạn"), chỉ hiện dưới 720px (đối xứng đúng
+breakpoint `.mnyt-nav` đã ẩn), đặt trong `.mnyt-header-right`. Tái dùng
+NGUYÊN class `.mnyt-dropdown`/`.mnyt-dropdown-item`/`.mnyt-dropdown-sep`
+đã có sẵn cho dropdown "Khám phá" — không tạo bộ style mới. Đóng khi: bấm
+ngoài (mở rộng `onDocClick` có sẵn), Escape (mở rộng `onKey` có sẵn), hoặc
+điều hướng route khác (so sánh `pathname` khi render, đúng pattern React
+"adjust state on prop change" — không dùng `setState` trong `useEffect`
+để tránh cascading render, theo đúng cảnh báo `react-hooks/set-state-in-
+effect` của ESLint).
+
+**Verify:** `npx tsc --noEmit` sạch, `eslint` (3 file đã sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch.
+Playwright thật (`next dev`, không cấu hình Supabase — Portal tự công
+khai theo fallback có sẵn): đo lại `scrollWidth` cả 10 route × 6 viewport
+— **0/60 còn tràn ngang** (trước khi sửa: 54/60, chỉ trang Chi tiết ý
+tưởng không dính vì dùng layout khác). Test tương tác thật (không chỉ đo
+tĩnh): bấm hamburger sidebar → `.sidebar` trượt từ `x:-224` (ẩn) vào
+`x:0` (hiện) đúng; bấm nền mờ → trượt ngược lại `x:-224`; bấm hamburger
+menu 10 view → dropdown hiện đủ 9 mục (8 đích + "Gửi ý tưởng của bạn");
+bấm "Kho ý tưởng" → điều hướng đúng route VÀ dropdown tự đóng. 0 lỗi
+console/page error liên quan 2 bug trên.
+
+**Phát hiện phụ, KHÔNG sửa (ngoài phạm vi "mobile", không phải bug mobile-
+specific):** 1 cảnh báo hydration mismatch vô hại ở hạt bụi quả cầu Trang
+chủ (`mnyt-home-globe-particle`, từ đợt sửa "2 vòng quay đối xứng" trước
+đó) — do trình duyệt làm tròn giá trị `px` thập phân dài khi parse lại
+HTML SSR, chỉ lệch phần nghìn pixel, không ảnh hưởng thị giác; và 1 lỗi
+500 khi gọi `/api/admin/collections/portal-banners` (đúng giới hạn sandbox
+không có Supabase đã ghi nhận nhiều lần trong tài liệu này, không liên
+quan thay đổi hôm nay).
+
 ### Mục 5 — Dữ liệu: 446/446/35/100 đủ, nhưng `estMinutes` hẹp hơn README hứa
 
 Query trực tiếp Supabase (project `uosxpxolsvwcafxvnroy`):
