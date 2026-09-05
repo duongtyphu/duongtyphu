@@ -29,6 +29,17 @@
  * xuất hiện trong mockup tĩnh (chỉ có biến JS, không có giá trị). Tự đặt
  * ngưỡng/câu chữ ở đây sẽ là bịa nội dung — chỉ giữ nút "Nội dung này đã
  * lỗi thời?" (đã có, không phụ thuộc suy đoán ngưỡng nào).
+ *
+ * Âm thanh + pháo hoa (đợt audit rigorous — mockup gốc có 4 lần gọi
+ * `playTone()` trong luồng này, trước đó chỉ 1/4 được thực thi):
+ * chuyển bước (dòng 2576, đã có từ trước), phản hồi đúng/sai ở quiz
+ * CHÍNH (dòng 2583, `handleMainQuizAnswer`), và hoàn thành bài học (dòng
+ * 2633, 2 âm liên tiếp + `confettiSeed` 36 mảnh — `generateMnytConfettiPieces()`
+ * đúng công thức ngẫu nhiên gốc, vật lý bay `tx=cos(angle)*dist`/
+ * `ty=sin(angle)*dist-60` khớp dòng ~2926-2928, render trong
+ * `.mnyt-detail-done` đã sẵn `position:relative;overflow:hidden`, tái
+ * dùng `@keyframes confettiPop` đã có sẵn trong CSS — không thêm keyframe
+ * mới).
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -40,6 +51,8 @@ import { completeMnytTopic, reportMnytOutdated, saveMnytChecklist, saveMnytJourn
 import { MNYT_ROUTES, mnytDetailHref } from "@/app/v2/moi-ngay-mot-y-tuong/mnyt-routes";
 import { MnytPathMapModal } from "./MnytPathMapModal";
 import { MnytShareCardModal } from "./MnytShareCardModal";
+import { useMnytSoundOn } from "./MnytSoundContext";
+import { playMnytStepAdvanceTone, playMnytQuizFeedbackTone, playMnytCompleteTone } from "@/lib/mnyt/sound";
 
 type Props = {
   lang: "vi" | "en";
@@ -55,9 +68,44 @@ type Props = {
   signedIn: boolean;
   completedIds: string[];
   streak: number;
+  learnerName: string | null;
 };
 
 const STEP_COUNT = 5;
+
+/**
+ * Pháo hoa chúc mừng hoàn thành — mockup gốc `confettiSeed` (dòng
+ * ~2620-2631) sinh 36 mảnh ngẫu nhiên/lần hoàn thành, mỗi mảnh bay ra
+ * theo góc+khoảng cách riêng (`confettiPop`, `moi-ngay-mot-y-tuong.css`
+ * dòng 588). 6 màu đúng `confettiColors` gốc (dòng ~2918-2928).
+ */
+type MnytConfettiPiece = {
+  angle: number;
+  dist: number;
+  rot: number;
+  colorIdx: number;
+  size: number;
+  tall: boolean;
+  delay: number;
+  dur: number;
+  round: boolean;
+};
+
+const MNYT_CONFETTI_COLORS = ["#a78bfa", "#22d3ee", "#fb923c", "#34d399", "#f472b6", "#facc15"];
+
+function generateMnytConfettiPieces(): MnytConfettiPiece[] {
+  return Array.from({ length: 36 }, () => ({
+    angle: Math.random() * Math.PI * 2,
+    dist: 120 + Math.random() * 260,
+    rot: Math.round(Math.random() * 720 - 360),
+    colorIdx: Math.floor(Math.random() * 6),
+    size: 6 + Math.random() * 6,
+    tall: Math.random() > 0.5,
+    delay: Number((Math.random() * 0.18).toFixed(2)),
+    dur: Number((0.9 + Math.random() * 0.6).toFixed(2)),
+    round: Math.random() > 0.4,
+  }));
+}
 
 export function MnytDetailClient({
   lang,
@@ -73,10 +121,12 @@ export function MnytDetailClient({
   signedIn,
   completedIds,
   streak,
+  learnerName,
 }: Props) {
   const router = useRouter();
   const isVi = lang === "vi";
   const c = topic.content;
+  const soundOn = useMnytSoundOn();
 
   const [showPathMap, setShowPathMap] = useState(false);
   const [showShareCard, setShowShareCard] = useState(false);
@@ -96,6 +146,7 @@ export function MnytDetailClient({
   const [reported, setReported] = useState(false);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
   const [quickAnswer, setQuickAnswer] = useState<number | null>(null);
+  const [confettiPieces, setConfettiPieces] = useState<MnytConfettiPiece[] | null>(null);
 
   const journalDirty = useRef(false);
 
@@ -187,18 +238,32 @@ export function MnytDetailClient({
     if (result.ok) {
       setCompleteResult({ newBadges: result.newBadges });
       setLessonDone(true);
+      // Mockup gốc (dòng 2620-2633): sinh pháo hoa + 2 âm liên tiếp
+      // (660/0.18 + 880/0.22) ngay khi bài học chuyển sang trạng thái
+      // hoàn thành.
+      setConfettiPieces(generateMnytConfettiPieces());
+      playMnytCompleteTone(soundOn);
     }
-  }, [signedIn, completing, topic.id]);
+  }, [signedIn, completing, topic.id, soundOn]);
 
   const nextStep = useCallback(() => {
+    // Mockup gốc (dòng ~2569): ở bước Trắc nghiệm (index 2), "Tiếp" bị
+    // CHẶN cho tới khi đáp án đã chọn ĐÚNG (không phải chỉ "đã chọn") —
+    // đúng yêu cầu README "Tiếp is blocked until the correct answer is
+    // selected" — thiếu gate này trước đây khiến bước quiz không chặn gì.
+    if (currentStep === 2 && mainQuizAnswer !== mainQuiz.correct) return;
     if (currentStep < STEP_COUNT - 1) {
       const n = currentStep + 1;
       setVisited((prev) => new Set(prev).add(n));
       setCurrentStep(n);
+      // Mockup gốc (dòng 2576): âm 520Hz/0.1s đúng lúc chuyển bước TIẾN
+      // (không phát khi lùi bước hay khi hoàn thành bài) — README mục
+      // "Sound", tôn trọng công tắc `soundOn` (mutable, đã có ở Cài đặt).
+      playMnytStepAdvanceTone(soundOn);
     } else {
       void handleComplete();
     }
-  }, [currentStep, handleComplete]);
+  }, [currentStep, handleComplete, mainQuizAnswer, mainQuiz, soundOn]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
@@ -209,12 +274,28 @@ export function MnytDetailClient({
     function onKey(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
       if (target && ["TEXTAREA", "INPUT"].includes(target.tagName)) return;
-      if (e.key === "ArrowRight") nextStep();
-      if (e.key === "ArrowLeft") prevStep();
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === "ArrowRight") {
+        nextStep();
+        return;
+      }
+      if (e.key === "ArrowLeft") {
+        prevStep();
+        return;
+      }
+      // Mockup gốc (dòng ~1948-1951): ở bước Trắc nghiệm (index 2), phím
+      // 1-4 chọn đáp án cho câu hỏi chính — chỉ áp dụng khi chưa trả lời
+      // (khớp hành vi disable của nút bấm chuột cùng câu hỏi).
+      if (currentStep === 2 && /^[1-4]$/.test(e.key)) {
+        const idx = Number(e.key) - 1;
+        if (idx < mainQuiz.options.length && mainQuizAnswer === null) {
+          setMainQuizAnswer(idx);
+        }
+      }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [quickMode, lessonDone, nextStep, prevStep]);
+  }, [quickMode, lessonDone, nextStep, prevStep, currentStep, mainQuiz, mainQuizAnswer]);
 
   const toggleChecklistItem = useCallback(
     (i: 0 | 1 | 2) => {
@@ -244,6 +325,18 @@ export function MnytDetailClient({
     setReported(true);
     await reportMnytOutdated(topic.id);
   }, [topic.id]);
+
+  // Mockup gốc `selectQuiz()` (dòng 2583): CHỈ quiz TRẮC NGHIỆM CHÍNH
+  // (bước "Kiểm tra") phát âm phản hồi đúng/sai — `selectApply()`/
+  // `selectScenario()` (dòng 2549-2550) không gọi `playTone`, nên KHÔNG
+  // bọc tương tự cho `setApplyQuizAnswer`/`setScenarioQuizAnswer`.
+  const handleMainQuizAnswer = useCallback(
+    (idx: number) => {
+      playMnytQuizFeedbackTone(idx === mainQuiz.correct, soundOn);
+      setMainQuizAnswer(idx);
+    },
+    [mainQuiz, soundOn],
+  );
 
   const t = {
     back: isVi ? "← Quay lại kho ý tưởng" : "← Back to library",
@@ -387,6 +480,32 @@ export function MnytDetailClient({
 
       {lessonDone ? (
         <div className="mnyt-detail-done">
+          {confettiPieces?.map((p, i) => {
+            const tx = Math.cos(p.angle) * p.dist;
+            const ty = Math.sin(p.angle) * p.dist - 60;
+            const width = p.tall ? p.size * 0.5 : p.size;
+            const height = p.tall ? p.size * 2.2 : p.size;
+            return (
+              <div
+                key={i}
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  width,
+                  height,
+                  background: MNYT_CONFETTI_COLORS[p.colorIdx],
+                  borderRadius: p.round ? "50%" : "2px",
+                  pointerEvents: "none",
+                  ["--tx" as string]: `${tx}px`,
+                  ["--ty" as string]: `${ty}px`,
+                  ["--rot" as string]: `${p.rot}deg`,
+                  animation: `confettiPop ${p.dur}s ease-out ${p.delay}s forwards`,
+                }}
+              />
+            );
+          })}
           <div className="mnyt-detail-done-kicker">{t.doneLabel}</div>
           <h2 className="mnyt-detail-done-title">
             {t.doneTitle} {isVi ? topic.title : topic.titleEn || topic.title}
@@ -484,7 +603,7 @@ export function MnytDetailClient({
           {currentStep === 2 && (
             <div className="mnyt-detail-card" style={{ ["--card-accent" as string]: topic.color }}>
               <div className="mnyt-detail-card-kicker">{t.stepLabels[2]}</div>
-              {renderQuizBlock(mainQuiz, mainQuizAnswer, setMainQuizAnswer, "main")}
+              {renderQuizBlock(mainQuiz, mainQuizAnswer, handleMainQuizAnswer, "main")}
               {hasApplyQuiz && renderQuizBlock(applyQuiz, applyQuizAnswer, setApplyQuizAnswer, "apply")}
               {hasScenario && renderQuizBlock(scenarioQuiz, scenarioQuizAnswer, setScenarioQuizAnswer, "scenario")}
             </div>
@@ -542,7 +661,12 @@ export function MnytDetailClient({
             <button type="button" className="mnyt-detail-nav-btn" onClick={prevStep} disabled={currentStep === 0}>
               {t.back_}
             </button>
-            <button type="button" className="mnyt-detail-nav-btn mnyt-detail-nav-btn--primary" onClick={nextStep} disabled={completing || (currentStep === STEP_COUNT - 1 && !signedIn)}>
+            <button
+              type="button"
+              className="mnyt-detail-nav-btn mnyt-detail-nav-btn--primary"
+              onClick={nextStep}
+              disabled={completing || (currentStep === STEP_COUNT - 1 && !signedIn) || (currentStep === 2 && mainQuizAnswer !== mainQuiz.correct)}
+            >
               {t.next}
             </button>
           </div>
@@ -595,6 +719,7 @@ export function MnytDetailClient({
             takeawayEn: c.takeawayEn,
           }}
           streak={streak}
+          learnerName={learnerName}
           onClose={() => setShowShareCard(false)}
         />
       )}

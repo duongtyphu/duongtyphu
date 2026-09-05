@@ -6,12 +6,24 @@
  * tự gốc mockup — dashboard cards/link Lộ trình đổi từ ĐẦU khối sang SAU
  * cụm hero+CTA):
  *
- *   Banner ảnh (trần, giữa, 300px) → nhãn "Ý tưởng hôm nay" → tiêu đề →
- *   mô tả (hook) → CTA chính full-width → hàng 4 CTA phụ bằng nhau →
- *   (ghi chú lĩnh vực quan tâm, nếu có) → dashboard cards (chuỗi/đã học/
- *   huy hiệu) → chip lọc + quả cầu 3D 446 nốt → dải "Đang thịnh hành" →
- *   gợi ý Từ điển → nhãn "KHÔNG GIAN Ý TƯỞNG" (số liệu THẬT, không hardcode)
- *   → lưới 35 thẻ chủ đề.
+ *   (Banner nhắc nhở, nếu có) → Banner ảnh (trần, giữa, 300px) → nhãn "Ý
+ *   tưởng hôm nay" → tiêu đề → mô tả (hook) → CTA chính full-width → hàng 4
+ *   CTA phụ bằng nhau → (ghi chú lĩnh vực quan tâm, nếu có) → dashboard
+ *   cards (chuỗi/đã học/huy hiệu) → chip lọc + quả cầu 3D 446 nốt → dải
+ *   "Đang thịnh hành" → gợi ý Từ điển → nhãn "KHÔNG GIAN Ý TƯỞNG" (số liệu
+ *   THẬT, không hardcode) → lưới 35 thẻ chủ đề.
+ *
+ * Banner nhắc nhở (`showReminderBanner`, mockup dòng 104-109/2690-2693) —
+ * PHÁT HIỆN THIẾU khi audit lại pixel-level (đối chiếu trực tiếp mockup,
+ * không tin docblock cũ chỉ liệt kê phần đã cố ý đổi thứ tự chứ không nhắc
+ * gì tới banner này — tức đây là gap thật, không phải quyết định có chủ
+ * đích). Điều kiện y hệt mockup: CHƯA hoàn thành ý tưởng nào hôm nay
+ * (`lastCompletedDate !== hôm nay`, so UTC — khớp cách `mnyt-sync.ts` lưu
+ * `last_completed_date`) VÀ `streak > 0` VÀ giờ ĐỊA PHƯƠNG của người xem
+ * `>= 18h` — phần giờ địa phương CHỈ tính được ở client sau mount (giờ UTC
+ * server render lệch múi giờ người dùng thật), cùng kỹ thuật đã dùng cho
+ * lời chào theo giờ ở `TrangChuClient.tsx` — mặc định `false` lúc SSR,
+ * tránh hydration mismatch.
  *
  * Quả cầu 3D — README (mục "1. Trang chủ") tự nêu rõ có thể "reconsider
  * node count for performance" — giữ ĐỦ toàn bộ node thật (không mẫu/sample
@@ -24,9 +36,30 @@
  * bản đồ KHÔNG GIAN mang tính bổ trợ/thị giác, nội dung TƯƠNG ĐƯƠNG luôn
  * có sẵn qua đường điều hướng bàn phím đầy đủ khác trong cùng trang (chip
  * lọc, dải "Đang thịnh hành", lưới thẻ chủ đề) và trang "Kho ý tưởng".
+ *
+ * Bug đã sửa — "2 vòng quay đối xứng bị lệch" (Founder báo trực tiếp) +
+ * audit mobile phát sinh thêm 1 bug tràn ngang, cả 2 sửa ở
+ * `moi-ngay-mot-y-tuong.css`:
+ * 1. `.mnyt-home-globe-ring-outer`/`-mid` vừa canh giữa bằng
+ *    `transform: translate(-50%,-50%)` vừa `animation: ringRotate` cũng
+ *    nhắm `transform` — animation LUÔN GHI ĐÈ toàn bộ `transform` mỗi
+ *    khung hình (không cộng dồn), xoá mất phần canh giữa ngay khi chạy →
+ *    vòng lệch hẳn khỏi tâm quả cầu. Đã tách: div ngoài chỉ canh giữa
+ *    (tĩnh, không animate), viền+animation chuyển vào `::before` con.
+ *    Đồng thời `width/height:92%/76%` theo cả 2 chiều của khung KHÔNG
+ *    VUÔNG (`.mnyt-home-globe-wrap`, rộng theo trang/cao cố định) từng
+ *    kéo vòng thành elip — đổi sang px cố định theo breakpoint + kẹp
+ *    `max((100vw-80px)/1.42, 220px)` để không tràn ngang trên di động hẹp.
+ * 2. Bán kính quả cầu node/hạt bụi từng CỐ ĐỊNH 200px (biến `GLOBE_RADIUS`
+ *    cũ) — không co trên màn hình <480px, khiến node/hạt bụi tràn khỏi
+ *    vùng nội dung (gây cuộn ngang toàn trang, phát hiện khi audit mobile
+ *    ngay sau bug #1). Đổi sang biến CSS `--mnyt-globe-r` (co theo
+ *    viewport, giữ nguyên 200px ở màn hình đủ rộng) — toạ độ node/hạt bụi
+ *    giờ lưu dạng hệ số đơn vị, nhân thật trong `calc()` của `transform`
+ *    lúc render thay vì nhân sẵn bằng hằng số JS.
  */
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -44,6 +77,7 @@ type Props = {
   globeNodes: MnytGlobeNode[];
   glossaryTeaser: MnytGlossaryTerm[];
   streak: number;
+  lastCompletedDate: string | null;
   completedIds: string[];
   badgeCount: number;
   interestNames: string[];
@@ -51,7 +85,9 @@ type Props = {
 };
 
 const PARTICLE_COUNT = 48;
-const GLOBE_RADIUS = 200;
+// Bán kính quả cầu (200px ở màn hình rộng) giờ do CSS `--mnyt-globe-r`
+// quyết định (`moi-ngay-mot-y-tuong.css`, tự kẹp theo bề rộng viewport) —
+// xem `nodePositions`/`particlePositions` bên dưới.
 
 function seeded(seed: number): number {
   const x = Math.sin(seed * 12.9898) * 43758.5453;
@@ -76,6 +112,7 @@ export function MnytHomeClient({
   globeNodes,
   glossaryTeaser,
   streak,
+  lastCompletedDate,
   completedIds,
   badgeCount,
   interestNames,
@@ -93,6 +130,14 @@ export function MnytHomeClient({
   const dragState = useRef<{ dragging: boolean; startX: number; startDeg: number; moved: boolean } | null>(null);
 
   const completedSet = useMemo(() => new Set(completedIds), [completedIds]);
+
+  const [isEveningLocal, setIsEveningLocal] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc đồng hồ thiết bị thật, không có tương đương SSR
+    setIsEveningLocal(new Date().getHours() >= 18);
+  }, []);
+  const doneTodayAlready = lastCompletedDate === new Date().toISOString().slice(0, 10);
+  const showReminderBanner = !doneTodayAlready && streak > 0 && isEveningLocal;
 
   const nodeCategoryMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -124,11 +169,18 @@ export function MnytHomeClient({
     return nodesByCategory.get(activeFilter) ?? [];
   }, [activeFilter, globeNodes, nodesByCategory]);
 
+  // Toạ độ lưu dạng HỆ SỐ ĐƠN VỊ (không nhân sẵn GLOBE_RADIUS) — nhân thật
+  // sự diễn ra trong CSS `calc(var(--mnyt-globe-r) * hệ_số)` lúc render (xem
+  // JSX bên dưới) để bán kính quả cầu co giãn theo `--mnyt-globe-r`
+  // (`moi-ngay-mot-y-tuong.css`, kẹp theo bề rộng viewport) — tránh lỗi
+  // tràn ngang trên di động hẹp đã phát hiện khi audit mobile (bán kính cố
+  // định 200px trước đây không co trên màn hình <480px, khiến node/hạt bụi
+  // tràn khỏi vùng nội dung).
   const nodePositions = useMemo(() => {
     const n = filteredNodes.length;
     return filteredNodes.map((node, i) => {
       const p = fibonacciPoint(i, n);
-      return { node, x: p.x * GLOBE_RADIUS, y: p.y * GLOBE_RADIUS, z: p.z * GLOBE_RADIUS };
+      return { node, x: p.x, y: p.y, z: p.z };
     });
   }, [filteredNodes]);
 
@@ -136,7 +188,7 @@ export function MnytHomeClient({
     return Array.from({ length: PARTICLE_COUNT }, (_, i) => {
       const p = fibonacciPoint(i, PARTICLE_COUNT);
       const jitter = 1.15 + seeded(i * 7.13) * 0.35;
-      return { x: p.x * GLOBE_RADIUS * jitter, y: p.y * GLOBE_RADIUS * jitter, z: p.z * GLOBE_RADIUS * jitter, size: 1.5 + seeded(i * 3.71) * 2 };
+      return { x: p.x * jitter, y: p.y * jitter, z: p.z * jitter, size: 1.5 + seeded(i * 3.71) * 2 };
     });
   }, []);
 
@@ -190,14 +242,28 @@ export function MnytHomeClient({
     glossaryTeaserCta: isVi ? "Xem tất cả →" : "See all →",
     catDoneLabel: isVi ? "đã học" : "done",
     all: isVi ? "Tất cả" : "All",
+    reminderBannerText: isVi
+      ? `Giữ chuỗi ${streak} ngày của bạn — hôm nay bạn chưa học ý tưởng nào.`
+      : `Keep your ${streak}-day streak alive — you haven't learned today's idea yet.`,
+    reminderCtaLabel: isVi ? "Học ngay" : "Learn now",
   };
 
   const totalDone = completedIds.length;
 
   return (
     <section data-screen-label="Home" className="mnyt-view mnyt-home">
-      {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh public/, không cần Next Image optimize cho asset 1 kích thước cố định */}
-      <img className="mnyt-home-banner" src="/v2-static/assets/moi-ngay-1-y-tuong-banner.png" alt={isVi ? "Mỗi ngày 1 ý tưởng học AI" : "One AI idea a day"} width={300} height={300} />
+      {showReminderBanner && todayTopic && (
+        <div className="mnyt-home-reminder">
+          <span className="mnyt-home-reminder-dot" aria-hidden />
+          <div className="mnyt-home-reminder-text">{t.reminderBannerText}</div>
+          <Link href={mnytDetailHref(todayTopic.id)} className="mnyt-home-reminder-cta">
+            {t.reminderCtaLabel}
+          </Link>
+        </div>
+      )}
+
+      {/* eslint-disable-next-line @next/next/no-img-element -- ảnh tĩnh public/, không cần Next Image optimize; kích thước gốc chưa xác định (mockup dùng height:auto) nên không khai width/height để tránh ép sai tỉ lệ */}
+      <img className="mnyt-home-banner" src="/v2-static/assets/moi-ngay-1-y-tuong-banner.png" alt={isVi ? "Mỗi ngày 1 ý tưởng học AI" : "One AI idea a day"} />
 
       <div className="mnyt-home-hero">
         {todayTopic ? (
@@ -366,7 +432,11 @@ export function MnytHomeClient({
                 key={i}
                 className="mnyt-home-globe-particle"
                 aria-hidden
-                style={{ width: p.size, height: p.size, transform: `translate3d(${p.x}px, ${p.y}px, ${p.z}px)` }}
+                style={{
+                  width: p.size,
+                  height: p.size,
+                  transform: `translate3d(calc(var(--mnyt-globe-r-dust) * ${p.x}), calc(var(--mnyt-globe-r-dust) * ${p.y}), calc(var(--mnyt-globe-r-dust) * ${p.z}))`,
+                }}
               />
             ))}
             {nodePositions.map(({ node, x, y, z }) => (
@@ -386,7 +456,7 @@ export function MnytHomeClient({
                   background: node.color,
                   boxShadow: `0 0 6px ${node.color}`,
                   opacity: completedSet.has(node.id) ? 1 : 0.75,
-                  transform: `translate3d(${x}px, ${y}px, ${z}px)`,
+                  transform: `translate3d(calc(var(--mnyt-globe-r) * ${x}), calc(var(--mnyt-globe-r) * ${y}), calc(var(--mnyt-globe-r) * ${z}))`,
                 }}
               />
             ))}
@@ -460,7 +530,17 @@ export function MnytHomeClient({
           const expanded = expandedCategory === cat.key;
           const initial = (cat.shortName || cat.name).trim().charAt(0).toUpperCase();
           return (
-            <div key={cat.key} className="mnyt-home-field-card" style={{ ["--field-color" as string]: cat.color, ["--field-color-soft" as string]: `${cat.color}33`, ["--field-border" as string]: `${cat.color}33` }}>
+            <div
+              key={cat.key}
+              className="mnyt-home-field-card"
+              style={{
+                ["--field-color" as string]: cat.color,
+                ["--field-color-soft" as string]: `${cat.color}33`,
+                ["--field-color-99" as string]: `${cat.color}99`,
+                ["--field-color-55" as string]: `${cat.color}55`,
+                ["--field-border" as string]: `${cat.color}33`,
+              }}
+            >
               <div className="mnyt-home-field-cover">
                 <div className="mnyt-home-field-initial">{initial}</div>
                 {mastered && (

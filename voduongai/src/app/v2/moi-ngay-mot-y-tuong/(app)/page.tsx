@@ -55,6 +55,7 @@ export default async function MoiNgayMotYTuongHomePage() {
       globeNodes={globeNodes}
       glossaryTeaser={glossaryTeaser}
       streak={state.streak}
+      lastCompletedDate={state.lastCompletedDate}
       completedIds={state.completedIds}
       badgeCount={state.badges.length}
       interestNames={interestNames}

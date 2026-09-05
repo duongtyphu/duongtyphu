@@ -499,6 +499,75 @@
   border-radius: 6px;
 }
 
+/* =============================================================================
+ * BUG MOBILE ĐÃ SỬA — sidebar (224px cố định) + topbar (search-box/
+ * upgrade-btn/icon-btn/avatar không co giãn) của `PortalV2Shell` tràn ngang
+ * trên di động (đo thật: `scrollWidth` cố định ~853px bất kể viewport
+ * 320-430px). Không sửa `PortalV2Shell.tsx` (dùng chung ~46 trang khác) —
+ * toàn bộ cơ chế dưới đây tự chứa trong `.mnyt` (xem docblock
+ * `MnytShellClient.tsx`). `.mnyt .app .sidebar` (3 lớp selector) đủ
+ * specificity thắng `[data-ui="v2"] .sidebar` ở `v2-tokens.css` bất kể thứ
+ * tự nạp CSS.
+ * ========================================================================== */
+.mnyt .mnyt-mobile-nav-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: none;
+  background: var(--surface-raised);
+  color: var(--text);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mnyt .mnyt-nav-backdrop {
+  display: none;
+}
+@media (max-width: 880px) {
+  .mnyt .app .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 220;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  }
+  .mnyt .app.mnyt-nav-open .sidebar {
+    transform: translateX(0);
+  }
+  .mnyt .app.mnyt-nav-open .mnyt-nav-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 6, 10, 0.6);
+    z-index: 210;
+  }
+  .mnyt .main-col .mnyt-mobile-nav-btn {
+    display: flex;
+  }
+  .mnyt .main-col .search-box {
+    min-width: 0;
+  }
+  .mnyt .main-col .search-box input {
+    min-width: 0;
+  }
+  .mnyt .main-col .search-box kbd {
+    display: none;
+  }
+  .mnyt .main-col .upgrade-btn {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  .mnyt .main-col .search-box {
+    display: none;
+  }
+}
+
 /* Chế độ tĩnh — tắt toàn bộ animation, gắn `.calm-mode` lên `.mnyt` khi
  * `prefsCalmMode` bật HOẶC `prefers-reduced-motion: reduce` (xem
  * `useCalmMode()` trong Phase 5 context). */
@@ -710,7 +779,7 @@
   top: 34px;
   left: 0;
   background: var(--popover-surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   border-radius: 14px;
   padding: 8px;
   display: flex;
@@ -752,6 +821,29 @@
   align-items: center;
   gap: 12px;
   position: relative;
+}
+.mnyt .mnyt-mobilemenu-wrap {
+  display: none;
+  position: relative;
+}
+.mnyt .mnyt-mobilemenu-btn {
+  background: transparent;
+  border: 1px solid rgba(231, 229, 240, 0.2);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+.mnyt .mnyt-dropdown.mnyt-mobilemenu-dropdown {
+  left: auto;
+  right: 0;
+  top: 44px;
 }
 .mnyt .mnyt-streak-pill {
   display: flex;
@@ -818,7 +910,7 @@
 }
 .mnyt .mnyt-settings-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.2);
   color: var(--text);
   font-size: 15px;
   padding: 7px 11px;
@@ -831,7 +923,7 @@
   top: 48px;
   right: 0;
   background: var(--popover-surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   border-radius: 14px;
   padding: 10px;
   display: flex;
@@ -935,6 +1027,9 @@
   .mnyt .mnyt-nav,
   .mnyt .mnyt-header-right .mnyt-freeze-pill {
     display: none;
+  }
+  .mnyt .mnyt-mobilemenu-wrap {
+    display: block;
   }
 }
 
@@ -1532,6 +1627,43 @@
  * dashboard cards → quả cầu 3D + chip lọc → dải "đang thịnh hành" → gợi ý
  * Từ điển → nhãn "KHÔNG GIAN Ý TƯỞNG" → lưới thẻ chủ đề.
  * ========================================================================== */
+.mnyt .mnyt-home-reminder {
+  max-width: 640px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(251, 146, 60, 0.08);
+  border: 1px solid rgba(251, 146, 60, 0.28);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.mnyt .mnyt-home-reminder-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fb923c;
+  box-shadow: 0 0 8px #fb923c;
+  flex-shrink: 0;
+}
+.mnyt .mnyt-home-reminder-text {
+  flex: 1;
+  font-size: 12.5px;
+  color: #fdba74;
+}
+.mnyt .mnyt-home-reminder-cta {
+  flex-shrink: 0;
+  display: inline-block;
+  background: rgba(251, 146, 60, 0.16);
+  border: 1px solid rgba(251, 146, 60, 0.4);
+  color: #fdba74;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  text-decoration: none;
+}
 .mnyt .mnyt-home-banner {
   display: block;
   width: 300px;
@@ -1606,7 +1738,7 @@
 }
 .mnyt .mnyt-home-secondary-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.2);
   color: var(--text);
   font-family: inherit;
   font-weight: 600;
@@ -1798,6 +1930,29 @@
 
 /* --- Globe --- */
 .mnyt .mnyt-home-globe-wrap {
+  /*
+   * `--mnyt-globe-r` — bán kính (px) của quả cầu 3D node/hạt bụi
+   * (`translate3d(calc(var(--mnyt-globe-r) * hệ_số), ...)` trong
+   * `MnytHomeClient.tsx`). Giữ nguyên 200px ở màn hình đủ rộng (không đổi
+   * hành vi cũ) nhưng KẸP theo bề rộng viewport để không tràn ngang trên
+   * di động hẹp — bug phát hiện khi audit mobile: bán kính cố định 200px
+   * không co trên màn hình <480px, khiến node/hạt bụi vươn ra ngoài vùng
+   * nội dung (đường kính 2×200=400px > bề rộng khả dụng của điện thoại
+   * nhỏ), gây cuộn ngang toàn trang. `(100vw - 80px) / 2` = nửa bề rộng
+   * khả dụng còn lại sau khi trừ 80px lề 2 bên — cùng ngân sách lề đã
+   * dùng cho `ringCap` của 2 vòng quay bên dưới.
+   */
+  --mnyt-globe-r: min(200px, calc((100vw - 80px) / 2));
+  /*
+   * Hạt bụi trang trí (`.mnyt-home-globe-particle`) nhân thêm hệ số
+   * "jitter" 1.15-1.5 lần bán kính (xem `particlePositions` trong
+   * `MnytHomeClient.tsx`) để bay lơ lửng NGOÀI quả cầu node — dùng chung
+   * `--mnyt-globe-r` sẽ vẫn tràn ở màn hình hẹp dù đã kẹp cho node (vì
+   * node không có hệ số nhân thêm này). Biến riêng, chia thêm 1.5 (mức
+   * jitter tối đa) để đảm bảo hạt bụi xa nhất cũng không vượt quá nửa bề
+   * rộng khả dụng.
+   */
+  --mnyt-globe-r-dust: min(200px, calc((100vw - 80px) / 2 / 1.5));
   position: relative;
   height: 440px;
   perspective: 1400px;
@@ -1822,7 +1977,7 @@
   right: 18px;
   z-index: 500;
   background: var(--popover-surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   border-radius: 14px;
   padding: 14px 16px;
   max-width: 260px;
@@ -1844,25 +1999,80 @@
 }
 .mnyt .mnyt-home-globe-ring-outer,
 .mnyt .mnyt-home-globe-ring-mid {
+  /*
+   * Bug đã sửa (Founder báo "2 vòng quay đối xứng bị lệch"): trước đây
+   * chính div này vừa canh giữa bằng `transform: translate(-50%, -50%)`
+   * vừa `animation: ringRotate` cũng nhắm vào `transform` — animation CSS
+   * LUÔN GHI ĐÈ toàn bộ giá trị `transform` tại mỗi khung hình (không
+   * cộng dồn với giá trị tĩnh), nên ngay khi animation chạy, phần
+   * translate(-50%,-50%) canh giữa bị xoá mất — vòng tròn lệch hẳn về
+   * góc trên-trái của tâm quả cầu, xoay quanh đúng cái góc lệch đó chứ
+   * không xoay tại chỗ quanh tâm. Đã tách: div NGOÀI (đây) chỉ lo canh
+   * giữa (transform tĩnh, KHÔNG BAO GIỜ animate) + kích thước; đường viền
+   * xoay chuyển sang `::before` bên trong (position:absolute;inset:0),
+   * animation áp cho `::before` không đụng transform canh giữa của cha.
+   *
+   * Đồng thời sửa luôn lỗi méo hình: `width/height: 92%/76%` trước đây
+   * tính theo CHIỀU RỘNG lẫn CHIỀU CAO của `.mnyt-home-globe-wrap` — khung
+   * này KHÔNG VUÔNG (rộng theo `max-width:1180px` của trang, cao cố định
+   * 440/560/760px tuỳ breakpoint) nên vòng tròn thực chất bị kéo thành
+   * hình elip dẹt ở màn hình rộng. Đổi sang kích thước PIXEL CỐ ĐỊNH theo
+   * từng breakpoint (khớp đúng 92%/76% của chiều cao `.mnyt-home-globe-wrap`
+   * tại breakpoint đó — chiều cao luôn ổn định, không phụ thuộc bề rộng
+   * trang) + kẹp thêm bằng `max((100vw - 80px) / 1.42, 220px)` để không
+   * tràn ngang trên màn hình di động hẹp — cùng công thức `ringCap` của
+   * mockup gốc (dòng 2703-2705).
+   */
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 1px solid rgba(167, 139, 250, 0.12);
   pointer-events: none;
 }
 .mnyt .mnyt-home-globe-ring-outer {
-  width: 92%;
-  height: 92%;
-  transform: translate(-50%, -50%);
+  width: min(405px, max(220px, calc((100vw - 80px) / 1.42)));
+  height: min(405px, max(220px, calc((100vw - 80px) / 1.42)));
+}
+.mnyt .mnyt-home-globe-ring-outer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(167, 139, 250, 0.12);
   animation: ringRotate 120s linear infinite;
 }
 .mnyt .mnyt-home-globe-ring-mid {
-  width: 76%;
-  height: 76%;
-  transform: translate(-50%, -50%);
-  border-color: rgba(103, 232, 249, 0.1);
+  width: min(334px, max(220px, calc((100vw - 80px) / 1.42)));
+  height: min(334px, max(220px, calc((100vw - 80px) / 1.42)));
+}
+.mnyt .mnyt-home-globe-ring-mid::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(103, 232, 249, 0.1);
   animation: ringRotate 90s linear infinite reverse;
+}
+@media (min-width: 720px) {
+  .mnyt .mnyt-home-globe-ring-outer {
+    width: min(515px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(515px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
+  .mnyt .mnyt-home-globe-ring-mid {
+    width: min(426px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(426px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
+}
+@media (min-width: 1024px) {
+  .mnyt .mnyt-home-globe-ring-outer {
+    width: min(699px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(699px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
+  .mnyt .mnyt-home-globe-ring-mid {
+    width: min(578px, max(220px, calc((100vw - 80px) / 1.42)));
+    height: min(578px, max(220px, calc((100vw - 80px) / 1.42)));
+  }
 }
 .mnyt .mnyt-home-globe-core {
   position: absolute;
@@ -2140,7 +2350,6 @@
   position: relative;
   width: 100%;
   height: 76px;
-  background: linear-gradient(160deg, var(--field-color-soft), rgba(10, 11, 18, 0.9));
 }
 .mnyt .mnyt-home-field-cover::after {
   content: "";
@@ -2148,25 +2357,26 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(180deg, transparent 40%, var(--field-color) 100%),
+    linear-gradient(180deg, transparent 40%, var(--field-color-soft) 100%),
     linear-gradient(0deg, #0a0b12 0%, transparent 60%);
-  opacity: 0.2;
 }
 .mnyt .mnyt-home-field-initial {
   position: absolute;
   top: 8px;
   left: 8px;
   pointer-events: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
+  font-size: 13px;
   font-weight: 700;
-  color: #0a0b12;
-  background: var(--field-color);
+  color: #fff;
+  background: radial-gradient(circle at 32% 28%, var(--field-color), var(--field-color-99) 55%, #0a0b12 130%);
+  box-shadow: 0 0 16px var(--field-color-55), inset 0 0 6px rgba(255, 255, 255, 0.25);
 }
 .mnyt .mnyt-home-field-check {
   position: absolute;
@@ -2503,7 +2713,7 @@
   width: 20px;
   height: 20px;
   border-radius: 6px;
-  border: 1px solid var(--border-strong);
+  border: 2px solid rgba(231, 229, 240, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2582,7 +2792,7 @@
   padding: 12px 22px;
   border-radius: 12px;
   cursor: pointer;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.15);
   background: transparent;
   color: var(--text);
   transition: all 0.18s ease;
@@ -2695,7 +2905,7 @@
   width: 100%;
   box-sizing: border-box;
   background: var(--code-surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.15);
   border-radius: 10px;
   padding: 12px 14px;
   color: var(--text);
@@ -2778,7 +2988,7 @@
   color: var(--cyan-light) !important;
 }
 .mnyt .mnyt-detail-outline-btn {
-  border-color: var(--border-strong) !important;
+  border-color: rgba(231, 229, 240, 0.2) !important;
   color: var(--text) !important;
 }
 .mnyt .mnyt-detail-outline-btn:hover {
@@ -3163,7 +3373,7 @@
 }
 .mnyt .mnyt-path-map-row[data-active="true"] {
   background: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-strong);
+  border-color: rgba(231, 229, 240, 0.14);
 }
 .mnyt .mnyt-path-map-cells {
   display: flex;
@@ -3399,7 +3609,7 @@
 }
 .mnyt .mnyt-glossary-mode-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   color: var(--text-dim);
   font-size: 12px;
   font-weight: 600;
@@ -3438,7 +3648,7 @@
   align-items: center;
   gap: 6px;
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.2);
   color: var(--text-muted);
   font-size: 12px;
   font-weight: 600;
@@ -3691,7 +3901,7 @@
 }
 .mnyt .mnyt-glossary-flash-scope-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   color: var(--text-dim);
   font-size: 11.5px;
   font-weight: 600;
@@ -3734,7 +3944,7 @@
 }
 .mnyt .mnyt-glossary-flash-face[data-flipped="true"] {
   background: var(--surface);
-  border-color: var(--border-strong);
+  border-color: rgba(231, 229, 240, 0.14);
   box-shadow: none;
 }
 .mnyt .mnyt-glossary-flash-level {
@@ -3826,7 +4036,7 @@
 }
 .mnyt .mnyt-glossary-flash-nav-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.16);
   color: var(--text-muted);
   font-size: 13px;
   font-weight: 600;
@@ -3841,7 +4051,7 @@
 }
 .mnyt .mnyt-glossary-flash-save-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.16);
   font-size: 15px;
   padding: 8px 15px;
   border-radius: 10px;
@@ -3880,7 +4090,7 @@
 }
 .mnyt .mnyt-glossary-quiz-reset-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   color: var(--text-faint);
   font-size: 11.5px;
   font-weight: 600;
@@ -3891,7 +4101,7 @@
 }
 .mnyt .mnyt-glossary-quiz-card {
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.1);
   border-radius: 18px;
   padding: 22px 24px;
   margin-bottom: 14px;
@@ -3929,7 +4139,7 @@
   width: 100%;
   text-align: left;
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.13);
   color: var(--text-bright);
   font-size: 14px;
   font-weight: 600;
@@ -3966,7 +4176,7 @@
   margin-top: 16px;
   padding: 14px 16px;
   background: rgba(255, 255, 255, 0.025);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.1);
   border-radius: 12px;
 }
 .mnyt .mnyt-glossary-quiz-explain-label {
@@ -4039,7 +4249,7 @@
   flex: 2;
   min-width: 220px;
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 18px 22px;
 }
@@ -4117,7 +4327,7 @@
 }
 .mnyt .mnyt-badges-week-card {
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 22px;
   margin-bottom: 22px;
@@ -4164,7 +4374,7 @@
 }
 .mnyt .mnyt-badges-filter-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.15);
   color: var(--text-dim);
   font-size: 12px;
   font-weight: 600;
@@ -4193,7 +4403,7 @@
   display: flex;
   gap: 14px;
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 16px;
 }
@@ -4326,7 +4536,7 @@
 }
 .mnyt .mnyt-calendar-grid-card {
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 26px;
@@ -4339,7 +4549,7 @@
 }
 .mnyt .mnyt-calendar-nav-btn {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.15);
   color: var(--text);
   width: 32px;
   height: 32px;
@@ -4398,7 +4608,7 @@
 }
 .mnyt .mnyt-calendar-tomorrow-card {
   background: var(--surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.1);
   border-radius: 16px;
   padding: 26px;
   text-align: center;
@@ -4510,7 +4720,7 @@
   width: 100%;
   max-width: 340px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   border-radius: 10px;
   padding: 11px 14px;
   color: var(--text);
@@ -4537,7 +4747,7 @@
 }
 .mnyt .mnyt-profile-photo-remove-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.16);
   color: var(--text-dim);
   font-weight: 600;
   font-size: 12.5px;
@@ -4703,7 +4913,7 @@
 }
 .mnyt .mnyt-profile-recap-share-btn {
   background: transparent;
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.25);
   color: var(--text);
   font-weight: 600;
   font-size: 12.5px;
@@ -4897,7 +5107,7 @@
   right: 10px;
   width: 216px;
   background: var(--popover-surface);
-  border: 1px solid var(--border-strong);
+  border: 1px solid rgba(231, 229, 240, 0.14);
   border-radius: 14px;
   padding: 13px 15px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);

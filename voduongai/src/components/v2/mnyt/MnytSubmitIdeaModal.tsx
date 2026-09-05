@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import type { MnytCategory } from "@/lib/portal/live-mnyt";
 import { submitMnytIdea } from "@/lib/portal/mnyt-sync";
 import { useMnytToast } from "@/components/v2/mnyt/MnytToastContext";
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
 
 type Props = {
   lang: "vi" | "en";
@@ -36,6 +37,8 @@ export function MnytSubmitIdeaModal({ lang, categories, onClose }: Props) {
   const [category, setCategory] = useState(categories[0]?.name ?? "");
   const [hook, setHook] = useState("");
   const [sending, setSending] = useState(false);
+
+  useMnytModalEscape(onClose);
 
   const t = {
     title: isVi ? "Đề xuất ý tưởng của bạn" : "Suggest an idea",

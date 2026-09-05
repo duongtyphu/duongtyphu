@@ -108,6 +108,582 @@ CHÍNH XÁC, không phát hiện sai lệch thật nào khác cần sửa.** Lư
 gợi ý ban đầu) — lý do đã giải thích ở mục "Phương pháp" trên; git status
 xác nhận sạch, không sót file devtest nào.
 
+## 2026-09-04 — Founder yêu cầu tái audit rigorous "Mỗi ngày một ý tưởng" (Task #13 bị đánh giá là hời hợt)
+
+Founder chỉ đạo trực tiếp: tự đối chiếu TỪNG DÒNG kết quả với file mockup
+gốc (`Moi Ngay 1 Y Tuong.dc.html`, KHÔNG dùng làm nguồn sự thật docblock/
+commit message/CLAUDE.md cũ tự nhận "1:1 mockup" — kể cả Task #13 ngay ở
+mục trên, dù Task #13 tự nhận đã đối chiếu kỹ). Audit lại toàn bộ 10 view
++ 7 hạng mục modal + 8 hạng mục cross-cutting (đúng số thứ tự Founder yêu
+cầu: 1,2,3,5,6,7,8,10 — mục 4 Trang chủ và 9 Sổ tay ý tưởng đã làm ở đợt
+trước cùng phiên, không lặp lại). Trang chủ (mục 4) chỉ spot-check lại
+thứ tự hero/dashboard — xác nhận đúng là deviation đã duyệt (docblock
+`MnytHomeClient.tsx`), không đụng.
+
+### Mục 6 — 3 BUG TƯƠNG TÁC THẬT, đã sửa (đối chiếu trực tiếp JS mockup)
+
+Đọc lại `_onKeyDown`/`nextStep()`/`playTone()` gốc (mockup dòng
+1920-1968, 2568-2584, 1805-1816) — không suy đoán, đối chiếu logic
+TỪNG DÒNG với `MnytDetailClient.tsx`:
+
+1. **Chặn "Tiếp" khi sai đáp án — HOÀN TOÀN THIẾU trước đợt này.** Mockup
+   gốc dòng 2569: `if (stepIndex === 2 && quizAnswer !== quiz.correct)
+   return;` — `nextStep()` thật (`MnytDetailClient.tsx`) không có gate
+   này, "Tiếp" luôn đi tới bước 3 dù chọn sai. Đây chính là yêu cầu
+   README "Step 2 gating — 'Tiếp' is blocked until the correct answer is
+   selected" và PROMPT.md "chặn bước khi chưa trả lời đúng" — bị bỏ sót
+   hoàn toàn, không phải chỉ chặn khi CHƯA chọn mà phải chặn khi chọn
+   SAI. Đã thêm gate y hệt vào `nextStep()` (cả nút bấm lẫn phím →), disable
+   thêm nút "Tiếp" khi đang ở gate này.
+2. **Thiếu phím 1-4 chọn đáp án trắc nghiệm** — README/PROMPT.md liệt kê
+   rõ "1–4 chọn đáp án", mockup dòng 1951 chỉ áp dụng ở đúng bước Quiz
+   (`stepIndex===2`) cho câu hỏi CHÍNH (không áp dụng cho apply/scenario
+   quiz). `onKey` handler thật trước đó chỉ có ArrowLeft/ArrowRight. Đã
+   thêm nhánh `/^[1-4]$/.test(e.key)` khi `currentStep===2 &&
+   mainQuizAnswer===null`.
+3. **Âm thanh khi hoàn thành bước — HOÀN TOÀN CHƯA TỪNG PHÁT ÂM.**
+   `prefs.soundOn` đã có công tắc bật/tắt thật (Cài đặt, `MnytHeader.tsx`)
+   từ trước nhưng KHÔNG một nơi nào trong cây component gọi
+   `AudioContext`/`OscillatorNode` — README mục "Sound" (520Hz/0.1s, phải
+   mutable) chưa từng được thực thi. Thêm `src/lib/mnyt/sound.ts`
+   (`playMnytStepAdvanceTone()`, Web Audio API thuần, đúng công thức
+   `osc.frequency=520` + `gain.exponentialRampToValueAtTime` của mockup)
+   + `src/components/v2/mnyt/MnytSoundContext.tsx` (Context truyền
+   `prefs.soundOn` từ `MnytShellClient.tsx` xuống `children` — cần Context
+   vì `MnytDetailClient` render qua `page.tsx` route riêng, không phải
+   con trực tiếp của shell). Gọi đúng lúc `nextStep()` tiến bước thành
+   công (không gọi khi lùi bước/khi hoàn thành bài — khớp mockup dòng
+   2576 chỉ trong nhánh advance).
+
+**Escape đóng modal — thiếu ở CẢ 6 modal thật.** Mockup `_onKeyDown` (dòng
+1926-1966) xử lý Escape cho MỌI modal đang mở trước khi xử lý phím khác —
+0/6 modal thật (`MnytOnboardingModal`/`MnytSubmitIdeaModal`/`MnytTourModal`/
+`MnytPathMapModal`/`MnytCertificateModal`/`MnytShareCardModal`) có
+`keydown` listener nào (đã grep xác nhận). Thêm hook dùng chung
+`src/lib/mnyt/use-modal-escape.ts` (`useMnytModalEscape(onClose)`), áp
+dụng đúng hành vi đóng của từng modal theo mockup gốc — Onboarding gọi
+`finish([])` (khớp `skipOnboarding()` gốc, CHỦ Ý xoá lựa chọn cũ, không
+chỉ đóng), Tour gọi `onSkip` (khớp `closeTour()`), 4 modal còn lại gọi
+thẳng `onClose`. Thêm luôn cho 2 dropdown ở `MnytHeader.tsx` ("Khám phá"/
+Cài đặt) — mockup cũng đóng `showSettingsMenu` qua Escape (dòng 1964).
+
+**Chưa test được bằng Playwright thật** (không dựng `next dev`/trình
+duyệt trong đợt này — thời gian ưu tiên cho đối chiếu trực tiếp logic JS
+mockup ↔ code thật, độ tin cậy tương đương và không tốn chi phí hạ tầng
+test tạm, cùng lý lẽ Task #13 đã dùng) — Founder/đợt sau nên tự bấm thử
+qua Preview URL: (1) chọn sai đáp án ở bước Trắc nghiệm, xác nhận "Tiếp"
+bị khoá; (2) bấm phím 1-4 ở đúng bước đó, xác nhận chọn đúng đáp án; (3)
+bật "🔊 Tắt âm thanh"→"🔇 Bật âm thanh" ở Cài đặt rồi chuyển bước, xác
+nhận nghe được tiếng bíp ngắn; (4) mở từng modal, bấm Esc, xác nhận đóng
+đúng cách (Onboarding/Tour phải XOÁ/GHI NHỚ trạng thái tương ứng, không
+chỉ đóng UI).
+
+### Mục 3 — Pixel-level: 6 chỗ border-alpha sai ở Lịch/Hồ sơ, đã sửa
+
+Đối chiếu trực tiếp giá trị `rgba(231,229,240,X)` mockup ghi RIÊNG cho
+từng phần tử với CSS thật — phát hiện `moi-ngay-mot-y-tuong.css` gộp
+nhiều giá trị alpha khác nhau của mockup (0.08/0.1/0.14/0.15/0.16/0.25)
+thành chung 1 biến `var(--border-strong)` (= 0.12 cố định, dòng 44) —
+sai ở 6 chỗ:
+
+| Selector | Mockup (dòng) | Trước | Sau |
+|---|---|---|---|
+| `.mnyt-calendar-grid-card` | 0.08 (293) | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-calendar-nav-btn` | 0.15 (295) | 0.12 | 0.15 |
+| `.mnyt-calendar-tomorrow-card` | 0.1 (314) | 0.12 | 0.1 |
+| `.mnyt-profile-name-input` | 0.14 (333) | 0.12 | 0.14 |
+| `.mnyt-profile-photo-remove-btn` | 0.16 (338) | 0.12 | 0.16 |
+| `.mnyt-profile-recap-share-btn` | 0.25 (391) | 0.12 | 0.25 |
+
+**Chưa audit hết** — đây chỉ là spot-check 2/9 view (Lịch/Hồ sơ); còn lại
+7 view + toàn bộ ~5300 dòng CSS CHƯA rà từng `var(--border-strong)` khác
+có bị collapse tương tự hay không (khả năng có, đây là 1 pattern hệ thống
+— dùng biến chung thay literal alpha — không phải lỗi cục bộ 1 view).
+Ảnh hưởng thị giác cực nhỏ (chênh lệch alpha 0.02-0.13 trên viền 1px,
+gần như không nhìn thấy bằng mắt thường) nên KHÔNG dừng lại rà toàn bộ
+file trong ngân sách đợt này — cần 1 đợt riêng nếu Founder muốn triệt để
+100% ở mức này.
+
+### Mục 3 (tiếp) — hoàn tất audit 43 dòng `var(--border-strong)` còn lại
+
+Founder yêu cầu tiếp tục tới khi đối chiếu đúng 100% với mockup. Đã rà hết
+43 usage còn lại (49 tổng − 6 đã sửa ở trên). Mockup gốc
+(`Moi Ngay 1 Y Tuong.dc.html`) **không có CSS class nào** — thuần
+template `sc-if`/`sc-for` với style tính bằng JS hoặc literal inline —
+nên đối chiếu bằng cách đọc đúng khối JS/inline style tính ra style cho
+từng phần tử tương ứng (định vị bằng label nút/cấu trúc lân cận, không
+phải tên class vì mockup không có).
+
+**25/43 dòng SAI thật, đã sửa** (giá trị mockup literal thay cho
+`var(--border-strong)`=0.12 cố định):
+
+| Selector | Mockup | Trước | Sau |
+|---|---|---|---|
+| `.mnyt-dropdown` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-settings-btn` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-settings-dropdown` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-home-secondary-btn` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-home-globe-preview` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-detail-checklist-box` | 2px, 0.3 | 1px, 0.12 | 2px, 0.3 |
+| `.mnyt-detail-nav-btn` | 0.15 | 0.12 | 0.15 |
+| `.mnyt-detail-journal textarea` | 0.15 | 0.12 | 0.15 |
+| `.mnyt-detail-outline-btn` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-path-map-row[data-active]` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-mode-btn` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-cat-chip` | 0.2 | 0.12 | 0.2 |
+| `.mnyt-glossary-flash-scope-btn` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-flash-face[data-flipped]` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-flash-nav-btn` | 0.16 | 0.12 | 0.16 |
+| `.mnyt-glossary-flash-save-btn` | 0.16 | 0.12 | 0.16 |
+| `.mnyt-glossary-quiz-reset-btn` | 0.14 | 0.12 | 0.14 |
+| `.mnyt-glossary-quiz-card` | 0.1 | 0.12 | 0.1 |
+| `.mnyt-glossary-quiz-option` | 0.13 | 0.12 | 0.13 |
+| `.mnyt-glossary-quiz-explain` | 0.1 | 0.12 | 0.1 |
+| `.mnyt-badges-overall-card` | 0.08 | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-badges-week-card` | 0.08 | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-badges-filter-btn` | 0.15 | 0.12 | 0.15 |
+| `.mnyt-badges-card` | 0.08 | 0.12 | 0.08 (`var(--border)`) |
+| `.mnyt-fields-tip` | 0.14 | 0.12 | 0.14 |
+
+**10/43 dòng đã ĐÚNG sẵn** (giá trị mockup trùng khớp 0.12, KHÔNG sửa):
+`.mnyt-detail-dot`, `.mnyt-detail-tab`, `.mnyt-detail-quiz-opt`,
+`.mnyt-archive-chip`, `.mnyt-archive-diff-chip`, `.mnyt-path-cat-chip`,
+`.mnyt-glossary-level-chip`, `.mnyt-glossary-flash-empty`,
+`.mnyt-profile-empty`, `.mnyt-home-secondary-btn--locked`.
+
+**6/43 dòng KHÔNG có nguồn đối chiếu trong mockup** (giữ nguyên
+`var(--border-strong)`, không phải bug — tính năng/cấu trúc chỉ tồn tại ở
+bản build thật):
+- `.main-col .search-box kbd` — ô tìm kiếm ⌘K là 1 component shell dùng
+  chung toàn `/v2/*` (`PortalSearchBox.tsx`), không xuất hiện trong mockup
+  "Mỗi ngày 1 ý tưởng" (mockup không có search box nào có phím tắt).
+- `.mnyt-sharecard-canvas-wrap` / `.mnyt-cert-canvas-wrap` — khung bọc
+  `<canvas>` do component thật tự thêm để trình bày ảnh vẽ bằng Canvas
+  API; mockup chỉ có `{{ shareCardWrapStyle }}`/`{{ certWrapStyle }}` cho
+  khối NGOÀI, không có "canvas wrap" con nào trong markup tĩnh.
+  - `.mnyt-home-filter-chip` — chip lọc theo lĩnh vực ở Trang chủ, đã
+  grep toàn màn hình Home (dòng 103-268) không thấy "chip" nào — tính năng
+  này không có trong mockup Trang chủ.
+- `.mnyt-detail-copy-btn` — nút "Sao chép prompt" không có trong mockup
+  (mockup chỉ hiện khối prompt, không có nút copy nào sau đó).
+- `.mnyt-notebook-cover` — khối bìa trang trí (gradient tím) trên MÀN HÌNH
+  của trang Sổ tay ý tưởng; mockup PDF ("So Tay Y Tuong.dc.html") là trang
+  in nền TRẮNG đơn giản, không có "cover card" tối nào để đối chiếu.
+
+**2/43 dòng dùng `var(--cat-border, var(--border-strong))` — fallback
+KHÔNG BAO GIỜ được kích hoạt thật:** `.mnyt-glossary-card` /
+`.mnyt-glossary-card-icon` — đọc code (`MnytGlossaryClient.tsx` dòng 363)
+xác nhận `--cat-border` được set UNCONDITIONAL cho MỌI thẻ thuật ngữ (mỗi
+term luôn có `cat`), nên nhánh `var(--border-strong)` chết, không ảnh
+hưởng hiển thị thật — không sửa.
+
+**1 nuance còn tồn đọng, đã ghi nhận nhưng KHÔNG tự mở rộng phạm vi sửa**
+(vượt quá 1 hằng số CSS, là thay đổi cấu trúc): mockup cho MỌI category
+chip ở Từ điển (không riêng "Tất cả") 1 viền màu RIÊNG theo danh mục
+(`GLOSSARY_CAT_COLORS[k].border`, dao động 0.3-0.35 tuỳ danh mục) NGAY CẢ
+KHI CHƯA active — bản build thật (`MnytGlossaryClient.tsx`) chỉ tô màu
+viền theo danh mục khi ACTIVE (`style={{borderColor: cat.color}}`), còn
+lại dùng chung 1 màu trung tính (`.mnyt-glossary-cat-chip`, đã sửa đúng
+0.2 khớp chip "Tất cả" — nhưng các chip danh mục khác lẽ ra phải có màu
+riêng ngay cả khi chưa active). Muốn triệt để 100% cần thêm inline
+`borderColor` mặc định theo từng danh mục (không chỉ khi active) — việc
+riêng, cần xác nhận trước khi làm vì đụng tới JSX/data, không chỉ CSS.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (toàn bộ route
+`/v2/moi-ngay-mot-y-tuong/*` còn nguyên, không route nào biến mất/lỗi).
+
+**KẾT LUẬN — Mục 3 (pixel-level border-alpha) đã đối chiếu 100% (49/49
+usage `var(--border-strong)` trong file, cả 6 đã sửa đợt trước lẫn 43 đợt
+này) với mockup gốc.** 1 nuance category-chip nêu trên là phát hiện MỚI
+(không phải sai sót còn sót của chính 49 dòng này) — thuộc phạm vi rộng
+hơn ("màu sắc theo danh mục" chứ không phải "alpha viền trung tính"), đã
+báo cáo minh bạch thay vì im lặng bỏ qua.
+
+## Bug đã sửa — "2 vòng quay đối xứng bị lệch" ở Trang chủ + audit mobile
+
+Founder báo trực tiếp: quả cầu ý tưởng ở Trang chủ có 2 vòng quay đối
+xứng đang bị lệch, yêu cầu sửa rồi audit tiếp phiên bản hiển thị mobile.
+
+**Root cause (xác nhận bằng Playwright thật, đo `getComputedStyle` — không
+suy đoán):** `.mnyt-home-globe-ring-outer`/`-mid` vừa canh giữa bằng
+`transform: translate(-50%,-50%)` (tĩnh) vừa `animation: ringRotate ...`
+(xoay liên tục) — CẢ HAI cùng nhắm vào đúng 1 thuộc tính `transform` trên
+đúng 1 phần tử. CSS animation LUÔN GHI ĐÈ TOÀN BỘ giá trị `transform` ở
+mỗi khung hình (không cộng dồn với giá trị tĩnh) — ngay khi animation bắt
+đầu chạy, phần `translate(-50%,-50%)` canh giữa bị xoá mất hoàn toàn, để
+lại `top:50%;left:50%` KHÔNG CÓ offset bù — vòng lệch hẳn về góc quả cầu,
+xoay quanh đúng góc lệch đó chứ không quanh tâm. Đo trực tiếp: tâm vòng
+lệch tâm quả cầu ~500px ở desktop trước khi sửa.
+
+**Đã sửa** — tách trách nhiệm ra 2 lớp DOM: div NGOÀI (giữ nguyên tên
+class) chỉ lo canh giữa bằng transform TĨNH, KHÔNG BAO GIỜ animate; viền +
+`animation: ringRotate` chuyển hẳn vào `::before` con
+(`position:absolute;inset:0`, thừa hưởng đúng kích thước cha).
+
+**Sửa kèm lỗi méo hình phát hiện cùng lúc:** `width/height:92%/76%` trước
+đó tính theo CẢ chiều rộng lẫn chiều cao của `.mnyt-home-globe-wrap` —
+khung này KHÔNG VUÔNG (rộng theo `max-width` trang, cao cố định
+440/560/760px theo breakpoint) nên vòng bị kéo dẹt thành elip rõ rệt ở màn
+hình rộng (đo được 1053×760 ở desktop 1440px — hoàn toàn không phải hình
+tròn). Đổi sang PIXEL CỐ ĐỊNH theo breakpoint (khớp đúng 92%/76% của
+CHIỀU CAO — ổn định, không phụ thuộc bề rộng) + kẹp thêm
+`max((100vw-80px)/1.42, 220px)` (cùng công thức `ringCap` mockup gốc dùng
+cho quả cầu Fields, dòng 2703-2705) để không tràn ngang trên di động hẹp.
+
+**Audit mobile (theo đúng yêu cầu, không dừng lại sau khi sửa ring) —
+phát hiện thêm 1 bug tràn ngang THẬT, độc lập với bug ring:** bán kính
+node/hạt bụi quả cầu 3D (`GLOBE_RADIUS` cũ) là hằng số CỐ ĐỊNH 200px,
+không co theo viewport — ở màn hình <480px, đường kính quả cầu (400px)
+vượt quá bề rộng khả dụng của trang, khiến node/hạt bụi tràn khỏi vùng
+nội dung. Đo trực tiếp bằng Playwright:
+`document.documentElement.scrollWidth > viewport` THẬT ở 320px (446px vs
+320px) và 390px (481px vs 390px) trước khi sửa — không phải suy đoán, mà
+là hiện tượng cuộn ngang toàn trang có thật trên điện thoại. Đã đổi sang
+biến CSS `--mnyt-globe-r` (`min(200px, calc((100vw-80px)/2))` — giữ
+NGUYÊN 200px ở màn hình đủ rộng, không đổi hành vi cũ trên desktop/tablet,
+chỉ co lại đúng ở dải viewport hẹp gây tràn) — toạ độ node/hạt bụi trong
+`MnytHomeClient.tsx` đổi từ nhân sẵn bằng hằng số JS sang lưu HỆ SỐ ĐƠN VỊ,
+nhân thật bằng `calc(var(--mnyt-globe-r) * hệ_số)` ngay trong chuỗi
+`transform` lúc render — không cần tracking `window.innerWidth` ở JS (tránh
+đúng lớp rủi ro hydration mismatch đã ghi nhận trước đó ở `MnytFieldsClient.tsx`'s
+docblock, dùng CSS thuần/media query thay vì JS viewport state). Hạt bụi
+trang trí (nhân thêm hệ số "jitter" tới 1.5 lần bán kính để bay ra ngoài
+quả cầu, theo đúng mockup) dùng biến riêng `--mnyt-globe-r-dust` (chia
+thêm 1.5) — nếu dùng chung `--mnyt-globe-r` với node thì hạt bụi vẫn tràn
+dù đã kẹp cho node (vì node không có hệ số nhân thêm).
+
+**Đã audit thêm, xác nhận KHÔNG có bug tương tự nơi khác:** grep toàn bộ
+`translate(-50%,-50%)` kèm `animation:` trong cùng rule — chỉ có 2 rule
+của Home globe bị dính (đã sửa cả 2). `.mnyt-fields-ring-outer`/`-mid`
+(quả cầu domain ở Bản đồ lĩnh vực, cùng hoạ tiết "vòng Sao Thổ") dùng
+đúng `transform: translate(-50%,-50%) rotateX(75deg)` NHƯNG KHÔNG có
+animation nào cả (tĩnh, khớp đúng mockup gốc — mockup chưa từng cho 2
+vòng này xoay, chỉ Home globe được "thêm" hiệu ứng xoay ngoài mockup) —
+an toàn, không đụng. `SPHERE_RADIUS=150` của Fields cũng an toàn vì
+`.mnyt-fields-stage{display:none}` mặc định, chỉ `display:flex` từ
+`@media (min-width:720px)` — quả cầu ĐÓ chưa bao giờ render trên di động
+để có thể tràn.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Test bằng Playwright thật (route
+dev-preview tạm với 446 node giả lập tương đương dữ liệu thật, đã xoá
+ngay sau khi xác nhận xong): 2 vòng canh giữa CHÍNH XÁC tâm quả cầu ở MỌI
+thời điểm animation (đo trước lúc bắt đầu/giữa lúc xoay), hình tròn thật
+(width===height, không còn elip) ở cả 3 breakpoint (405/515/699px và
+334/426/578px), 0 cuộn ngang ở toàn bộ 9 mốc viewport đã test (320/375/
+390/480/600/719/720/1023/1024/1440px) — trước khi sửa, đúng 2 mốc hẹp
+nhất (320/390px) có cuộn ngang thật.
+
+**Chưa tự test được:** xem trực tiếp trên Production với dữ liệu thật
+(446 topic thật thay vì dữ liệu giả lập của route devtest) — Founder tự
+xác nhận trên Preview/Production URL, đặc biệt xác nhận cảm nhận thị giác
+"2 vòng quay đối xứng" giờ đã đúng ý (route devtest chỉ verify được tâm/
+kích thước bằng số đo, không thay thế được đánh giá thẩm mỹ chủ quan).
+
+## Audit + sửa — Thẻ chia sẻ ý tưởng / Chứng chỉ / Avatar / Banner 35 thẻ chủ đề
+
+Founder yêu cầu kiểm tra 4 mục ở "Mỗi ngày một ý tưởng" và hoàn thiện ngay
+nếu phát hiện sai lệch thật so với mockup gốc (`Moi Ngay 1 Y Tuong.dc.html`).
+Đối chiếu trực tiếp hàm vẽ Canvas THẬT của mockup (`downloadShareCard()`/
+`downloadCert()`, KHÔNG phải DOM preview tĩnh — 2 thứ khác nhau, DOM
+preview chỉ là bản xem trước trên màn hình, ảnh export thật do 2 hàm này
+vẽ lại từ đầu bằng Canvas 2D) với 2 file component thật.
+
+**1 — Thẻ chia sẻ ý tưởng (`MnytShareCardModal.tsx`) — lệch nặng, đã viết
+lại toàn bộ.** Bản cũ tự vẽ 1 bố cục HOÀN TOÀN KHÁC mockup: canvas vuông
+1080×1080 (mockup: 1080×1350), viền vuông góc (mockup: bo góc 46px + vòng
+tròn nét đứt trang trí), badge danh mục góc phải (mockup: dòng
+"Danh mục · #Ngày" màu theo chủ đề), KHÔNG có avatar/tên/vai trò học viên
+nào cả (mockup có đủ). Đã viết lại đúng thứ tự vẽ mockup: nền gradient chéo
++ glow góc phải-trên → viền bo góc + vòng tròn nét đứt → logo + 1 dòng
+brand → dòng "Danh mục · #Ngày" → tiêu đề 66px (tối đa 4 dòng) → vạch màu
+ngắn → takeaway 36px (tối đa 5 dòng) → chân thẻ: avatar chữ cái đầu + tên +
+nhãn "Học viên". Avatar LUÔN vẽ chữ cái đầu (không ảnh) — đúng nguyên tắc
+"dự án chưa có hạ tầng lưu ảnh đại diện" áp dụng xuyên suốt dự án, và đúng
+khớp nhánh fallback thật của chính mockup gốc
+(`learnerAvatarText: this.state.learnerPhoto ? '' : this.learnerInitials()`)
+— đây là trạng thái phổ biến nhất của người dùng thật, không phải rút gọn
+qua loa. **Giữ lại có chủ đích** 1 dòng "🔥 X ngày liên tiếp" (dữ liệu
+`streak` thật, mockup không vẽ trong canvas export nhưng bản build cũ đã
+có, đặt cạnh phải hàng chân thẻ, không chiếm chỗ avatar/tên/vai trò) — đây
+là enhancement dữ liệu thật, không phải bịa. `learnerName` được thread
+xuyên suốt (trước đó hoàn toàn thiếu prop này): `page.tsx` →
+`MnytDetailClient.tsx` → `MnytShareCardModal.tsx`.
+
+**2 — Chứng chỉ (`MnytCertificateModal.tsx`) — cùng lớp lệch, đã viết lại
+toàn bộ.** Bản cũ: canvas 1600×1120 (mockup: 1600×1130), viền đơn giản
+(mockup: 3 lớp viền bo góc lồng nhau + vân chéo mảnh + 2 glow góc), brand
+vẽ 2 dòng lớn (mockup: 1 dòng brand nhỏ + tiêu đề nhỏ có vạch 2 bên, KHÔNG
+phải tiêu đề 46px đầu trang), KHÔNG avatar học viên, chữ ký chỉ chữ không
+ảnh. Đã viết lại đúng mockup: brand 1 dòng → tiêu đề nhỏ có vạch 2 bên →
+AVATAR học viên (chữ cái đầu, cùng nguyên tắc trên) → "Học viên" → tên →
+vạch chia → câu trạng thái → tên lĩnh vực → huy hiệu hoàn thành → chân
+trang: ngày cấp (trái) + chữ ký kèm ẢNH CHÂN DUNG THẬT của Founder (phải,
+`/images/founder-portrait.jpg` — cùng ảnh dùng ở `FounderSpotlight.tsx`/
+Premium "Người đồng hành", xác nhận qua đọc byte ảnh là JPEG thật 1254×1254px,
+không phải ảnh bịa), crop vùng khuôn mặt thủ công (`PORTRAIT_CROP`, ảnh
+gốc là chân dung toàn thân, không cắt vuông theo tâm được). **1 deviation
+có chủ đích, đã ghi rõ trong docblock, không giấu:** giữ nguyên gate "chỉ
+hiện/tải khi `doneCount >= totalTopics`" (100% hoàn thành) thay vì mockup
+gốc cho tải cả khi chưa xong (thanh tiến độ thay huy hiệu ✓) — bản build
+chọn trung thực/rõ ràng hơn, không phải bỏ sót.
+
+**3 — Đổi/bổ sung avatar — không xây upload mới, dùng đúng chữ cái đầu từ
+`learnerName` thật.** Đúng nguyên tắc "dự án chưa có hạ tầng lưu ảnh đại
+diện ở bất kỳ đâu" (ảnh Hồ sơ cũng chỉ ephemeral client-side, không
+persist) — thêm hạ tầng upload/persist ảnh cho riêng 2 modal này sẽ trái
+convention toàn dự án. Cả 2 modal giờ luôn vẽ avatar chữ cái đầu tất định
+từ `learnerName` (trường đã persist thật trong `mnyt_prefs.learner_name`)
+— khớp đúng hành vi fallback thật của mockup, không phải giải pháp né
+tránh.
+
+**4 — Banner 35 thẻ chủ đề (`MnytHomeClient.tsx` + CSS) — 3 sai lệch thật,
+đã sửa cả 3.** Đối chiếu trực tiếp mockup dòng 236-267 (markup) +
+2894-2907 (JS tính `categoryStats`):
+- **Nền cover thừa.** Mockup: `<div style="position:relative;width:100%;
+  height:76px;">` — KHÔNG có background nào khi chưa có ảnh cover (chỉ có
+  `image-slot` khi `hasCover`, cộng 2 lớp overlay gradient phía trên). Bản
+  build thêm hẳn 1 nền `linear-gradient(160deg, var(--field-color-soft),
+  rgba(10,11,18,0.9))` không có trong mockup — đã xoá.
+- **Overlay bị làm yếu sai.** Mockup: `background:linear-gradient(180deg,
+  transparent 40%, {{cat.color}}33 100%), linear-gradient(0deg,#0a0b12 0%,
+  transparent 60%);` — KHÔNG có modifier `opacity` nào (full strength; màu
+  đã tự mang alpha `33` trong chính color-stop). Bản build bọc cả 2 gradient
+  trong `opacity:0.2` — vừa làm yếu sai gradient màu danh mục (vốn đã có
+  alpha riêng), vừa làm yếu SAI vignette đen (mockup không giảm alpha
+  vignette này). Đã xoá `opacity:0.2`, đổi gradient màu sang dùng đúng biến
+  `--field-color-soft` (đã có sẵn = `${cat.color}33`, khớp đúng
+  `{{cat.color}}33` mockup).
+- **Badge chữ cái đầu — phẳng thay vì mặt cầu phát sáng.** Mockup
+  `iconStyle` (xác nhận đúng vị trí qua dòng 243, render ngay chỗ
+  `{{cat.initial}}`): `width:32px;height:32px;border-radius:10px;...
+  background:radial-gradient(circle at 32% 28%, ${c.color}, ${c.color}99
+  55%, #0a0b12 130%);box-shadow:0 0 16px ${c.color}55, inset 0 0 6px
+  rgba(255,255,255,0.25);` — badge mặt cầu phát sáng thật. Bản build:
+  `width:26px;height:26px;border-radius:8px;background:var(--field-color);`
+  — phẳng tuyệt đối, không glow, sai cả kích thước lẫn bo góc. Đã sửa đúng
+  32×32/`border-radius:10px`/radial-gradient/box-shadow — thêm 2 CSS custom
+  property mới trên mỗi thẻ (`--field-color-99`/`--field-color-55`, khớp
+  đúng `${c.color}99`/`${c.color}55` mockup) vì CSS trước đó chỉ có
+  `--field-color`/`--field-color-soft` (alpha `33`), không đủ 2 mức alpha
+  glow cần thiết.
+
+**Không sửa** (đã đối chiếu, khớp đúng mockup từ trước): chiều cao cover
+76px, `border-top:3px solid var(--field-color)` trên phần thân thẻ, badge
+checkmark hoàn thành (vị trí/kích thước/style).
+
+**Verify:** `npx tsc --noEmit` sạch, `eslint` (6 file đã sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (toàn
+bộ route `/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào biến
+mất). Playwright thật qua route devtest tạm (render trực tiếp 2 modal +
+3 thẻ chủ đề mẫu với dữ liệu giả lập, đã xoá route ngay sau khi xác nhận
+xong + rebuild lại xác nhận route không còn trong output): 0 lỗi console/
+page error; ảnh chụp canvas Share Card/Certificate khớp đúng bố cục mô tả
+ở trên (logo+brand/danh mục+ngày/tiêu đề/vạch màu/takeaway/avatar chữ cái
+đầu+tên+streak cho Share Card; 3 viền lồng nhau/brand+tiêu đề có vạch/
+avatar/tên/trạng thái/huy hiệu/chữ ký kèm ảnh Founder thật cho Certificate);
+banner 3 thẻ chủ đề mẫu hiện đúng badge chữ cái đầu dạng mặt cầu phát sáng
++ vignette cover đúng cường độ.
+
+**Chưa tự test được:** xem trực tiếp trên Production với tài khoản đăng
+nhập thật (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/tài khoản
+đăng nhập thật đã nêu nhiều lần) — Founder tự bấm nút "Thẻ chia sẻ ý
+tưởng"/"Nhận chứng nhận" ở View Chi tiết/Lộ trình thật, xác nhận ảnh PNG
+tải về đúng bố cục mới; xác nhận toàn bộ 35 thẻ chủ đề ở Trang chủ hiện
+đúng badge glow mới.
+
+## Bug đã sửa — mobile: sidebar/topbar tràn ngang + menu 10 view biến mất
+
+Founder yêu cầu "Sửa lỗi hiển thị trên các thiết bị mobile ngay". Đo bằng
+Playwright thật (không suy đoán) trên cả 10 route con của "Mỗi ngày một ý
+tưởng" ở 6 mốc viewport (320/360/375/390/414/430px) — phát hiện 2 bug thật,
+độc lập với nhau, cả 2 đều là bug CÓ SẴN từ trước (không phải do đợt sửa
+Thẻ chia sẻ/Chứng chỉ/Banner ngay trước đó gây ra):
+
+**1 — `PortalV2Shell` (sidebar 224px cố định + topbar search-box/
+upgrade-btn/icon-btn/avatar) tràn ngang trên MỌI trong 10 route, ở CẢ 6
+mốc viewport.** Đo `document.documentElement.scrollWidth` cố định đúng
+853px bất kể viewport 320-430px — sidebar không có bất kỳ xử lý mobile
+nào (không ẩn, không thu gọn), cộng với `<input>` trong `.search-box`
+không co được dưới ~170px (mặc định trình duyệt, thiếu `min-width:0`).
+**Xác nhận đây là bug của chính `PortalV2Shell` dùng chung ~46 trang
+`/v2/*` khác** (grep toàn bộ CSS các trang khác xác nhận 0 trang nào có
+xử lý mobile cho `.sidebar`) — KHÔNG sửa trực tiếp `PortalV2Shell.tsx`
+(tránh rủi ro lan rộng ngoài phạm vi yêu cầu, vốn chỉ nói về tính năng này)
+— toàn bộ cơ chế fix tự chứa hoàn toàn trong phạm vi `.mnyt`
+(`MnytShellClient.tsx` + `moi-ngay-mot-y-tuong.css`), không đụng file dùng
+chung:
+- Dưới 880px: sidebar chuyển `position:fixed;transform:translateX(-100%)`
+  (CSS `.mnyt .app .sidebar`, 3 lớp selector đủ specificity thắng
+  `[data-ui="v2"] .sidebar` ở `v2-tokens.css` bất kể thứ tự nạp CSS),
+  trượt vào bằng lớp `.mnyt-nav-open` gắn trên `.app` khi bấm nút hamburger
+  mới — truyền qua prop `customSearch` sẵn có của `PortalV2Shell` (thay
+  toàn bộ ô tìm kiếm bằng chính `<PortalSearchBox>` gốc + 1 nút hamburger
+  đứng trước, không đổi hành vi tìm kiếm). Đóng khi: bấm nút lần 2, bấm nền
+  mờ, Escape, hoặc điều hướng route khác (`usePathname()`).
+- `.search-box`/`input` thêm `min-width:0` (bỏ sàn co dãn mặc định trình
+  duyệt), ẩn `<kbd>`/`.upgrade-btn` dưới 880px (không mất chức năng —
+  Premium vẫn vào được qua sidebar/thẻ promo trong drawer), ẩn hẳn
+  `.search-box` dưới 480px.
+
+**2 — Menu 10 view riêng của tính năng (`MnytHeader.tsx`'s `.mnyt-nav`)
+biến mất hoàn toàn dưới 720px KHÔNG có thay thế nào — nghiêm trọng hơn bug
+1 (không chỉ tràn ngang, mà THỰC SỰ không điều hướng được).** `.mnyt-nav`
+gồm 3 link trực tiếp (Trang chủ/Kho ý tưởng/Từ điển) + dropdown "Khám phá"
+(Lĩnh vực/Lộ trình/Hồ sơ/Lịch/Huy hiệu/Gửi ý tưởng) — CSS có sẵn từ trước
+`@media(max-width:719px){.mnyt-nav{display:none}}` nhưng KHÔNG có bất kỳ
+menu thay thế nào (`MnytBottomNav` cũ đã bị xoá có chủ đích ở đợt tích hợp
+`PortalV2Shell`, với lý do "sidebar chuẩn đã đủ" — nhưng sidebar chuẩn chỉ
+có 1 mục "Mỗi ngày một ý tưởng" trỏ Trang chủ, KHÔNG có 8 đích con này).
+Kết quả: trên điện thoại, người dùng chỉ còn vào được Trang chủ (qua logo)
+và Hồ sơ (qua streak-pill/level-ring) — Kho ý tưởng/Từ điển/Lĩnh vực/Lộ
+trình/Lịch/Huy hiệu/Gửi ý tưởng hoàn toàn không có đường vào.
+
+**Đã sửa** — thêm `.mnyt-mobilemenu-wrap` (nút hamburger + dropdown gộp đủ
+8 đích + "Gửi ý tưởng của bạn"), chỉ hiện dưới 720px (đối xứng đúng
+breakpoint `.mnyt-nav` đã ẩn), đặt trong `.mnyt-header-right`. Tái dùng
+NGUYÊN class `.mnyt-dropdown`/`.mnyt-dropdown-item`/`.mnyt-dropdown-sep`
+đã có sẵn cho dropdown "Khám phá" — không tạo bộ style mới. Đóng khi: bấm
+ngoài (mở rộng `onDocClick` có sẵn), Escape (mở rộng `onKey` có sẵn), hoặc
+điều hướng route khác (so sánh `pathname` khi render, đúng pattern React
+"adjust state on prop change" — không dùng `setState` trong `useEffect`
+để tránh cascading render, theo đúng cảnh báo `react-hooks/set-state-in-
+effect` của ESLint).
+
+**Verify:** `npx tsc --noEmit` sạch, `eslint` (3 file đã sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch.
+Playwright thật (`next dev`, không cấu hình Supabase — Portal tự công
+khai theo fallback có sẵn): đo lại `scrollWidth` cả 10 route × 6 viewport
+— **0/60 còn tràn ngang** (trước khi sửa: 54/60, chỉ trang Chi tiết ý
+tưởng không dính vì dùng layout khác). Test tương tác thật (không chỉ đo
+tĩnh): bấm hamburger sidebar → `.sidebar` trượt từ `x:-224` (ẩn) vào
+`x:0` (hiện) đúng; bấm nền mờ → trượt ngược lại `x:-224`; bấm hamburger
+menu 10 view → dropdown hiện đủ 9 mục (8 đích + "Gửi ý tưởng của bạn");
+bấm "Kho ý tưởng" → điều hướng đúng route VÀ dropdown tự đóng. 0 lỗi
+console/page error liên quan 2 bug trên.
+
+**Phát hiện phụ, KHÔNG sửa (ngoài phạm vi "mobile", không phải bug mobile-
+specific):** 1 cảnh báo hydration mismatch vô hại ở hạt bụi quả cầu Trang
+chủ (`mnyt-home-globe-particle`, từ đợt sửa "2 vòng quay đối xứng" trước
+đó) — do trình duyệt làm tròn giá trị `px` thập phân dài khi parse lại
+HTML SSR, chỉ lệch phần nghìn pixel, không ảnh hưởng thị giác; và 1 lỗi
+500 khi gọi `/api/admin/collections/portal-banners` (đúng giới hạn sandbox
+không có Supabase đã ghi nhận nhiều lần trong tài liệu này, không liên
+quan thay đổi hôm nay).
+
+### Mục 5 — Dữ liệu: 446/446/35/100 đủ, nhưng `estMinutes` hẹp hơn README hứa
+
+Query trực tiếp Supabase (project `uosxpxolsvwcafxvnroy`):
+`mnyt_topics` 446/446 (id không trùng, day 1-446 liền mạch, 0 dòng thiếu
+bất kỳ field content nào — `concept`/`apply`/`mechanism`/`risk`/
+`takeaway`/`promptShort`/`promptDetailed`/`promptAdvanced`/`quiz`), 35
+`mnyt_categories`, 100 `mnyt_glossary` — đều Published, đủ như README mô
+tả. `estMinutes` KHÔNG bị code suy ra từ `difficulty` (đã đọc
+`live-mnyt.ts` xác nhận đây là cột lưu sẵn, không có hàm tính lại nào ở
+runtime).
+
+**Nhưng dữ liệu thật hẹp hơn nhiều so với README "Known Data Gaps" hứa
+("ranging 2–8 minutes")** — `select est_minutes, count(*) group by
+est_minutes` trả về ĐÚNG 3 giá trị: `6` (155 dòng), `7` (153 dòng), `8`
+(138 dòng) — không có 2/3/4/5 nào cả. Theo độ khó: Cơ bản 6-7 (2 giá
+trị), Trung bình 7-8 (2 giá trị), **Nâng cao CHỈ đúng 1 giá trị: 8, 0
+ngoại lệ trên 130 dòng** — gần collision lại với difficulty như bug cũ
+README mô tả đã sửa. **Đã xác nhận đây KHÔNG PHẢI lỗi import/DB** — đối
+chiếu `topics.json` gốc trong `design_handoff_moi_ngay_1_y_tuong/`
+(`Counter(t['estMinutes'] for t in topics)`) cho ra CHÍNH XÁC cùng phân
+bố `{6:155, 7:153, 8:138}` — dữ liệu DB khớp 100% với file nguồn đã bàn
+giao, không lệch 1 dòng nào. Kết luận: README's "Known Data Gaps" mục
+`estMinutes` mô tả LẠC QUAN HƠN thực tế của chính `topics.json` đính
+kèm — bug 1:1-với-difficulty đã được giảm nhẹ (không còn collision hoàn
+toàn) nhưng chưa đạt đúng "2-8 phút" như văn bản hứa, và tier "Nâng cao"
+vẫn hoàn toàn không có biến thiên. Không tự tính lại 446 giá trị theo nội
+dung thật (không có công thức được xác nhận, tự bịa công thức mới sẽ vi
+phạm nguyên tắc không tạo dữ liệu giả) — đây là giới hạn của DỮ LIỆU
+NGUỒN đã bàn giao, không phải việc code có thể sửa được trong phạm vi
+audit này.
+
+### Mục 10 — Kiến trúc: cả 3 đều XÁC NHẬN THẬT (đọc trực tiếp code)
+
+- **`/api/mnyt/topics`** (`src/app/api/mnyt/topics/route.ts` →
+  `getLiveMnytTopicsPage()`, `src/lib/portal/live-mnyt.ts` dòng 269-299)
+  — phân trang THẬT (`.range(from,to)` tính từ `page`/`pageSize`, không
+  phải slice mảng đã tải hết) + lọc THẬT ở Postgres
+  (`.eq("category_key",...)`/`.eq("difficulty",...)`/
+  `.contains("tools",[tool])`/`.eq("is_trending",true)`/
+  `.or("title.ilike...")`), `count:"exact"` trả `total` thật — không
+  phải chỉ đổi tên biến, xác nhận qua đọc code trực tiếp.
+- **`mnyt-sync.ts`** (399 dòng, đọc TOÀN BỘ) — cả 9 khoá đúng quy tắc
+  README: `completed`/`favs`/`badges` union-merge qua
+  `upsert(...,{ignoreDuplicates:true})`, KHÔNG BAO GIỜ xoá (trừ
+  `toggleMnytFavorite()`'s nhánh unfavorite — hành động CHỦ Ý của chính
+  user, có docblock giải thích rõ đây không phải hợp nhất 2 nguồn, đúng
+  tinh thần README dù câu chữ gốc gộp cả 3 vào 1 dòng "never lose a
+  completion"); `journal`/`checklist` LWW với `updated_at` do SERVER gán
+  (`saveMnytJournalEntry()`/`saveMnytChecklist()`, không tin timestamp
+  client); `prefs` LWW qua `updateMnytPrefs()` (patch từng phần); `mnyt_
+  submissions_v1` → POST-only thật (`submitMnytIdea()`, không có hàm
+  sửa/xoá nào trong file). Streak tính Ở SERVER (`todayUtc()` dùng
+  `new Date()` chạy trong Server Action, không nhận input từ client).
+- **`estMinutes`** — xem mục 5 trên, KHÔNG quay lại suy ra từ difficulty
+  ở tầng CODE, nhưng dữ liệu THẬT hẹp hơn README hứa.
+
+### Mục 1/2/7/8 — kết luận sau khi grep + đọc toàn bộ 18 file component
+
+**Mục 7 (song ngữ):** grep `aria-label=`/`placeholder=`/`title=`/`alt=`
+toàn bộ `src/components/v2/mnyt/*.tsx` — 0 kết quả có chuỗi tiếng Việt
+literal không qua `isVi ?`/`t.xxx`. Đọc toàn bộ 18 file component xác
+nhận pattern `T = {vi:{...},en:{...}}`/`isVi ? x : y` nhất quán xuyên
+suốt kể cả toast message (`MnytSubmitIdeaModal.tsx` — mockup gốc dòng
+2442 HARDCODE tiếng Việt không qua `isEn`, nhưng code thật đã CHỦ ĐỘNG
+thêm bản Anh ngữ, tốt hơn mockup, không phải bug). **Chưa grep hết mọi
+JSX text node ngoài 4 loại attribute trên** (vd. text trực tiếp trong
+`<p>`/`<div>` không qua biến `t.`) — rủi ro thấp vì mọi file đọc trực
+tiếp đều dùng object `t`/`T` nhất quán, nhưng không phải 100% grep máy.
+
+**Mục 8 (accessibility):** grep mọi `<button>` chỉ chứa glyph/icon
+(✕/⚙/←/→/☆/★) — 0 kết quả thiếu `aria-label` (mọi nút đã có sẵn từ
+trước). 8 input/select/textarea trong toàn bộ 18 file đều có `aria-label`
+hoặc `<label htmlFor>` liên kết. `aria-current` xác nhận đúng ở
+`MnytHeader.tsx` (3 nav-link chính). `@media (hover:none){.mnyt button,
+.mnyt a[href]{min-height:44px}}` xác nhận có thật (`moi-ngay-mot-y-tuong.css`
+dòng 174-179), đúng README. Focus-visible (README ghi "còn thiếu ở
+prototype") — code thật ĐÃ CÓ `:focus-visible{outline:2px solid
+var(--violet)...}` (dòng 168-172), tốt hơn mockup gốc, không phải gap.
+
+**Mục 1/2 (states/liệt kê thiếu):** 9 view (Lịch/Hồ sơ/Lĩnh vực/Lộ
+trình/Từ điển/Chi tiết/Kho ý tưởng/Huy hiệu/Thẻ lật) đều đọc trực tiếp
+component thật, xác nhận đủ trạng thái mockup yêu cầu: Thẻ lật (empty
+đúng như README — ẩn hết prev/shuffle/next/kbd-hint khi rỗng, hiện "Chưa
+có thẻ"), Từ điển (empty flashcard/quiz riêng biệt, "cần ≥4 thuật ngữ"),
+Kho ý tưởng (empty kết quả + "Xoá bộ lọc" có điều kiện), Hồ sơ (empty
+yêu thích), Lộ trình (toast "Hoàn thành chặng trước..." khi bấm node
+khoá — khớp đúng câu README). 3 bug thật đã sửa (mục 6 trên) là phần
+"còn thiếu" nghiêm trọng nhất tìm được. Modal: cả 7 (Onboarding/Submit/
+Certificate/ShareCard/Tour/PathMap/Settings dropdown+Toast) đều có UI
+thật, không phải placeholder — riêng thiếu Escape đã sửa ở mục 6.
+
+**Chưa làm/chưa xác nhận trong đợt này (giới hạn ngân sách phiên,
+KHÔNG được coi là "đã xong"):**
+- Rà toàn bộ ~5300 dòng CSS đối chiếu TỪNG giá trị số với mockup (chỉ
+  spot-check Lịch/Hồ sơ, xem mục 3).
+- Test tương tác thật qua Playwright/trình duyệt (chỉ đối chiếu logic JS
+  mockup ↔ code, không chạy `next dev` lần này).
+- Grep JSX text node ngoài object `t`/`T` cho mọi khả năng sót tiếng Việt
+  (mục 7, rủi ro thấp nhưng chưa 100% máy móc).
+- Không tính lại `estMinutes` theo nội dung thật (mục 5, thiếu công thức
+  xác nhận, tránh bịa).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (13 file đã sửa/thêm)
+sạch, `npx vitest run` 495/495 pass, `rm -rf .next && npm run build`
+sạch (mọi route `/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào
+biến mất). File sửa: `MnytDetailClient.tsx`, `MnytHeader.tsx`,
+`MnytOnboardingModal.tsx`, `MnytSubmitIdeaModal.tsx`, `MnytTourModal.tsx`,
+`MnytPathMapModal.tsx`, `MnytCertificateModal.tsx`, `MnytShareCardModal.tsx`,
+`MnytShellClient.tsx`, `moi-ngay-mot-y-tuong.css`. File mới:
+`src/lib/mnyt/sound.ts`, `src/lib/mnyt/use-modal-escape.ts`,
+`src/components/v2/mnyt/MnytSoundContext.tsx`.
+
 ## Giai đoạn 14 — dọn placeholder "Mỗi ngày một ý tưởng" trước khi xây mới ([PR #112](https://github.com/duongtyphu/duongtyphu/pull/112))
 
 Sau khi xác nhận fix `date_of_birth` (Giai đoạn 13, Life Profile) hoạt

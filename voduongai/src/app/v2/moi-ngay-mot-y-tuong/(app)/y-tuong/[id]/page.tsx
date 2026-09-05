@@ -46,6 +46,7 @@ export default async function MnytDetailPage({ params, searchParams }: { params:
       signedIn={state.signedIn}
       completedIds={state.completedIds}
       streak={state.streak}
+      learnerName={state.prefs.learnerName}
     />
   );
 }

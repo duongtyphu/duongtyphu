@@ -1,23 +1,33 @@
 "use client";
 
 /**
- * Modal "Nhận chứng nhận" (6/6 modal Giai đoạn 6, modal cuối cùng) — mở từ
- * nút cùng tên ở View Lộ trình (`MnytPathClient.tsx`, trước đó `onClick`
- * no-op). GẮN VỚI TRẠNG THÁI HOÀN THÀNH THẬT của lĩnh vực đang chọn —
- * `doneCount < totalTopics` chỉ hiện màn hình "chưa đủ điều kiện" trung
- * thực (còn thiếu bao nhiêu ý tưởng), KHÔNG có canvas/nút tải nào cả —
- * chỉ khi `doneCount >= totalTopics` (đã học hết toàn bộ ý tưởng trong lộ
- * trình lĩnh vực đó) mới vẽ chứng nhận thật bằng Canvas 2D API (cùng kỹ
- * thuật `MnytShareCardModal.tsx`, không thư viện mới).
+ * Modal "Nhận chứng nhận" (6/6 modal Giai đoạn 6) — mở từ nút cùng tên ở
+ * View Lộ trình (`MnytPathClient.tsx`). GẮN VỚI TRẠNG THÁI HOÀN THÀNH THẬT
+ * của lĩnh vực đang chọn — `doneCount < totalTopics` chỉ hiện màn hình
+ * "chưa đủ điều kiện" trung thực (còn thiếu bao nhiêu ý tưởng), KHÔNG có
+ * canvas/nút tải nào cả — chỉ khi `doneCount >= totalTopics` mới vẽ chứng
+ * nhận thật bằng Canvas 2D API. **Lưu ý khác mockup gốc có chủ đích:**
+ * `downloadCert()` (dòng 2207-2362) cho tải chứng nhận NGAY CẢ KHI CHƯA
+ * hoàn thành (thanh tiến độ thay vì huy hiệu ✓) — bản build này CHỌN gate
+ * chặt hơn (chỉ hiện/tải khi đã 100%) vì rõ ràng/trung thực hơn cho người
+ * dùng, không phải bỏ sót.
  *
- * Tên học viên lấy từ `prefs.learnerName` (đã có sẵn field thật, người
- * dùng có thể chưa từng điền) — rỗng thì dùng nhãn chung "Học viên VDAI
- * Academy" (trung thực, không suy đoán tên thật). Chữ ký "Võ Đương — Nhà
- * sáng lập VO DUONG AI" là hồ sơ Founder THẬT đã xác nhận ở nơi khác trong
- * dự án (`/portal/su-menh-companion`'s hồ sơ Founder), không phải bịa.
+ * Đối chiếu lại nhánh ĐÃ HOÀN THÀNH với `downloadCert()` — trước đây file
+ * này tự vẽ 1 bố cục KHÁC hẳn (nền/viền đơn giản hơn, brand vẽ 2 dòng,
+ * tiêu đề lớn 46px ngay đầu, KHÔNG có avatar học viên, chữ ký chỉ có chữ
+ * không có ảnh chân dung). Đã viết lại đúng theo mockup: canvas 1600×1130
+ * → nền gradient chéo + 2 glow góc + vân chéo mảnh → 3 lớp viền bo góc
+ * lồng nhau → brand 1 dòng → tiêu đề nhỏ có vạch 2 bên (không phải tiêu
+ * đề lớn) → AVATAR học viên (chữ cái đầu, dự án chưa có hạ tầng lưu ảnh
+ * đại diện — xem lý do đầy đủ ở `MnytShareCardModal.tsx`) → nhãn "Học
+ * viên" → tên → vạch chia → câu trạng thái → tên lĩnh vực → huy hiệu
+ * hoàn thành → chân trang: ngày cấp (trái) + chữ ký kèm ẢNH CHÂN DUNG THẬT
+ * của Founder (phải, `/images/founder-portrait.jpg` — cùng ảnh đã dùng ở
+ * `FounderSpotlight.tsx`/Premium "Người đồng hành", không phải ảnh bịa).
  */
 
 import { useEffect, useRef, useState } from "react";
+import { useMnytModalEscape } from "@/lib/mnyt/use-modal-escape";
 
 type Props = {
   lang: "vi" | "en";
@@ -31,12 +41,55 @@ type Props = {
 };
 
 const CERT_W = 1600;
-const CERT_H = 1120;
+const CERT_H = 1130;
+const INSTRUCTOR_PORTRAIT_SRC = "/images/founder-portrait.jpg";
+// Vùng cắt vuông quanh khuôn mặt trong `founder-portrait.jpg` (1254×1254px)
+// — ảnh gốc là chân dung toàn thân, khuôn mặt nằm lệch trên-giữa, không
+// cắt vuông đơn giản theo tâm ảnh được (sẽ lấy trúng phần vai/áo).
+const PORTRAIT_CROP = { x: 310, y: 140, size: 560 };
 
-function drawLogoMark(ctx: CanvasRenderingContext2D, x: number, y: number, scale: number) {
+function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines: number): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const test = current ? `${current} ${word}` : word;
+    if (current && ctx.measureText(test).width > maxWidth) {
+      lines.push(current);
+      current = word;
+      if (lines.length === maxLines) break;
+    } else {
+      current = test;
+    }
+  }
+  if (lines.length < maxLines && current) lines.push(current);
+
+  const consumedText = lines.join(" ");
+  if (consumedText.length < text.length && lines.length === maxLines) {
+    let last = lines[maxLines - 1];
+    while (last.length > 0 && ctx.measureText(`${last}…`).width > maxWidth) {
+      last = last.slice(0, -1);
+    }
+    lines[maxLines - 1] = `${last}…`;
+  }
+  return lines;
+}
+
+function roundRectPath(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function drawBrandMark(ctx: CanvasRenderingContext2D, x: number, y: number, size: number) {
+  const s = size / 32;
   ctx.save();
   ctx.translate(x, y);
-  ctx.scale(scale, scale);
+  ctx.scale(s, s);
   ctx.fillStyle = "#2563EB";
   ctx.beginPath();
   ctx.moveTo(3, 5);
@@ -47,21 +100,53 @@ function drawLogoMark(ctx: CanvasRenderingContext2D, x: number, y: number, scale
   ctx.lineTo(9, 5);
   ctx.closePath();
   ctx.fill();
-  ctx.fillStyle = "#F97316";
+  ctx.fillStyle = "#FF7A00";
   ctx.beginPath();
   ctx.arc(27, 7.5, 3, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
 
-function fitFontSize(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, weight: number, startSize: number, minSize: number): number {
-  let size = startSize;
-  while (size > minSize) {
-    ctx.font = `${weight} ${size}px system-ui, sans-serif`;
-    if (ctx.measureText(text).width <= maxWidth) break;
-    size -= 2;
-  }
-  return size;
+function learnerInitials(name: string | null): string {
+  const n = (name || "").trim();
+  if (!n) return "?";
+  const parts = n.split(/\s+/);
+  return (parts.length > 1 ? parts[parts.length - 2][0] + parts[parts.length - 1][0] : parts[0].slice(0, 2)).toUpperCase();
+}
+
+function drawInitialsAvatar(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, ringColor: string, initials: string) {
+  ctx.save();
+  ctx.fillStyle = "rgba(255,255,255,0.05)";
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = ringColor;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `700 ${Math.round(r * 0.85)}px "Space Grotesk", system-ui, sans-serif`;
+  ctx.fillText(initials, cx, cy + 2);
+  ctx.restore();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = ringColor;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+}
+
+function loadImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const timer = setTimeout(() => resolve(null), 4000);
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve(img);
+    };
+    img.onerror = () => {
+      clearTimeout(timer);
+      resolve(null);
+    };
+    img.src = src;
+  });
 }
 
 export function MnytCertificateModal({ lang, categoryName, categoryNameEn, categoryColor, learnerName, totalTopics, doneCount, onClose }: Props) {
@@ -72,6 +157,9 @@ export function MnytCertificateModal({ lang, categoryName, categoryNameEn, categ
   const catName = isVi ? categoryName : categoryNameEn || categoryName;
   const completed = totalTopics > 0 && doneCount >= totalTopics;
   const remaining = Math.max(0, totalTopics - doneCount);
+  const displayName = (learnerName || "").trim() || (isVi ? "Học viên" : "Learner");
+
+  useMnytModalEscape(onClose);
 
   const t = {
     title: isVi ? "Chứng nhận hoàn thành" : "Certificate of completion",
@@ -86,113 +174,204 @@ export function MnytCertificateModal({ lang, categoryName, categoryNameEn, categ
 
   useEffect(() => {
     if (!completed) return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    let cancelled = false;
 
-    canvas.width = CERT_W;
-    canvas.height = CERT_H;
+    (async () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    ctx.fillStyle = "#0a0b12";
-    ctx.fillRect(0, 0, CERT_W, CERT_H);
-    const glow = ctx.createRadialGradient(CERT_W / 2, CERT_H / 2, 0, CERT_W / 2, CERT_H / 2, CERT_W * 0.7);
-    glow.addColorStop(0, `${categoryColor}26`);
-    glow.addColorStop(1, "rgba(10,11,18,0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(0, 0, CERT_W, CERT_H);
+      const instructorImg = await loadImage(INSTRUCTOR_PORTRAIT_SRC);
+      if (cancelled) return;
 
-    ctx.strokeStyle = `${categoryColor}88`;
-    ctx.lineWidth = 3;
-    ctx.strokeRect(48, 48, CERT_W - 96, CERT_H - 96);
-    ctx.strokeStyle = "rgba(231,229,240,0.18)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(64, 64, CERT_W - 128, CERT_H - 128);
+      canvas.width = CERT_W;
+      canvas.height = CERT_H;
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
+      const bg = ctx.createLinearGradient(0, 0, CERT_W, CERT_H);
+      bg.addColorStop(0, "#16141f");
+      bg.addColorStop(0.55, "#0e0d16");
+      bg.addColorStop(1, "#0b0b13");
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, CERT_W, CERT_H);
+      for (const [px, py] of [
+        [0.12, 0.1],
+        [0.88, 0.9],
+      ]) {
+        const rg = ctx.createRadialGradient(CERT_W * px, CERT_H * py, 0, CERT_W * px, CERT_H * py, CERT_W * 0.42);
+        rg.addColorStop(0, `${categoryColor}1f`);
+        rg.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = rg;
+        ctx.fillRect(0, 0, CERT_W, CERT_H);
+      }
+      ctx.save();
+      ctx.globalAlpha = 0.05;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 1.4;
+      for (let x = -CERT_H; x < CERT_W; x += 26) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + CERT_H, CERT_H);
+        ctx.stroke();
+      }
+      ctx.restore();
 
-    drawLogoMark(ctx, CERT_W / 2 - 90, 128, 1.8);
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "800 24px system-ui, sans-serif";
-    ctx.fillText("VDAI ACADEMY", CERT_W / 2 + 18, 156);
-    ctx.fillStyle = "rgba(231,229,240,0.5)";
-    ctx.font = "600 14px system-ui, sans-serif";
-    ctx.fillText(isVi ? "MỖI NGÀY MỘT Ý TƯỞNG" : "ONE AI IDEA A DAY", CERT_W / 2 + 18, 176);
+      ctx.strokeStyle = `${categoryColor}77`;
+      ctx.lineWidth = 4;
+      roundRectPath(ctx, 34, 34, CERT_W - 68, CERT_H - 68, 30);
+      ctx.stroke();
+      ctx.strokeStyle = `${categoryColor}33`;
+      ctx.lineWidth = 2;
+      roundRectPath(ctx, 56, 56, CERT_W - 112, CERT_H - 112, 20);
+      ctx.stroke();
+      ctx.strokeStyle = `${categoryColor}1c`;
+      ctx.lineWidth = 1.5;
+      roundRectPath(ctx, 70, 70, CERT_W - 140, CERT_H - 140, 14);
+      ctx.stroke();
 
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "800 46px system-ui, sans-serif";
-    ctx.fillText(isVi ? "CHỨNG NHẬN HOÀN THÀNH" : "CERTIFICATE OF COMPLETION", CERT_W / 2, 268);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
 
-    ctx.fillStyle = "rgba(231,229,240,0.6)";
-    ctx.font = "500 20px system-ui, sans-serif";
-    ctx.fillText(isVi ? "được trao cho" : "presented to", CERT_W / 2, 330);
+      drawBrandMark(ctx, CERT_W / 2 - 90, 116, 44);
+      ctx.fillStyle = "#8f8da3";
+      ctx.font = '700 22px "Be Vietnam Pro", system-ui, sans-serif';
+      ctx.textAlign = "left";
+      const brand = isVi ? "Mỗi ngày một ý tưởng AI" : "One AI idea a day";
+      ctx.fillText(brand.toUpperCase(), CERT_W / 2 - 34, 128);
+      ctx.textAlign = "center";
 
-    const nameText = learnerName?.trim() || (isVi ? "Học viên VDAI Academy" : "VDAI Academy learner");
-    const nameSize = fitFontSize(ctx, nameText, CERT_W - 260, 700, 64, 34);
-    ctx.font = `italic 700 ${nameSize}px system-ui, sans-serif`;
-    ctx.fillStyle = categoryColor;
-    ctx.fillText(nameText, CERT_W / 2, 410);
+      let y = 208;
+      const titleTxt = t.title.toUpperCase();
+      ctx.fillStyle = categoryColor;
+      ctx.font = '700 27px "Be Vietnam Pro", system-ui, sans-serif';
+      ctx.save();
+      try {
+        (ctx as CanvasRenderingContext2D & { letterSpacing?: string }).letterSpacing = "6px";
+      } catch {
+        // letterSpacing chưa hỗ trợ ở trình duyệt này — bỏ qua, không chặn vẽ tiếp.
+      }
+      const tw = ctx.measureText(titleTxt).width;
+      ctx.fillText(titleTxt, CERT_W / 2, y);
+      ctx.restore();
+      ctx.strokeStyle = `${categoryColor}77`;
+      ctx.lineWidth = 1.5;
+      for (const [x0, dir] of [
+        [CERT_W / 2 - tw / 2 - 40, -1],
+        [CERT_W / 2 + tw / 2 + 40, 1],
+      ]) {
+        ctx.beginPath();
+        ctx.moveTo(x0, y + 16);
+        ctx.lineTo(x0 + dir * 120, y + 16);
+        ctx.stroke();
+      }
 
-    ctx.strokeStyle = `${categoryColor}55`;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(CERT_W / 2 - 160, 430);
-    ctx.lineTo(CERT_W / 2 + 160, 430);
-    ctx.stroke();
+      drawInitialsAvatar(ctx, CERT_W / 2, 350, 74, `${categoryColor}aa`, learnerInitials(learnerName));
 
-    ctx.fillStyle = "rgba(231,229,240,0.75)";
-    ctx.font = "500 21px system-ui, sans-serif";
-    ctx.fillText(isVi ? "đã hoàn thành xuất sắc lộ trình" : "has successfully completed the path", CERT_W / 2, 486);
+      y = 452;
+      ctx.fillStyle = "#8f8da3";
+      ctx.font = '700 20px "Be Vietnam Pro", system-ui, sans-serif';
+      ctx.fillText((isVi ? "Học viên" : "Learner").toUpperCase(), CERT_W / 2, y);
+      y += 34;
+      ctx.fillStyle = "#f5f3ff";
+      ctx.font = '700 62px "Space Grotesk", system-ui, sans-serif';
+      ctx.fillText(displayName, CERT_W / 2, y);
 
-    const catSize = fitFontSize(ctx, catName, CERT_W - 260, 800, 42, 26);
-    ctx.font = `800 ${catSize}px system-ui, sans-serif`;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(catName, CERT_W / 2, 546);
+      y += 88;
+      ctx.strokeStyle = `${categoryColor}66`;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(CERT_W / 2 - 130, y);
+      ctx.lineTo(CERT_W / 2 + 130, y);
+      ctx.stroke();
 
-    ctx.fillStyle = "rgba(231,229,240,0.6)";
-    ctx.font = "500 19px system-ui, sans-serif";
-    ctx.fillText(
-      isVi ? `Gồm ${totalTopics} ý tưởng AI thực chiến` : `${totalTopics} real-world AI ideas completed`,
-      CERT_W / 2,
-      590,
-    );
+      y += 34;
+      ctx.fillStyle = "#a5a3b6";
+      ctx.font = '400 27px "Be Vietnam Pro", system-ui, sans-serif';
+      ctx.fillText(isVi ? "đã hoàn thành toàn bộ ý tưởng trong lĩnh vực" : "has completed every idea in", CERT_W / 2, y);
 
-    ctx.strokeStyle = "rgba(231,229,240,0.14)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(140, CERT_H - 190);
-    ctx.lineTo(CERT_W - 140, CERT_H - 190);
-    ctx.stroke();
+      y += 46;
+      ctx.fillStyle = "#f5f3ff";
+      ctx.font = '700 58px "Space Grotesk", system-ui, sans-serif';
+      for (const line of wrapLines(ctx, catName, CERT_W - 420, 2)) {
+        ctx.fillText(line, CERT_W / 2, y);
+        y += 70;
+      }
 
-    const today = new Date();
-    const dateStr = today.toLocaleDateString(isVi ? "vi-VN" : "en-US", { year: "numeric", month: "long", day: "numeric" });
+      y += 26;
+      const label = `${doneCount}/${totalTopics} ${isVi ? "ý tưởng" : "ideas"}`;
+      ctx.font = '700 26px "Be Vietnam Pro", system-ui, sans-serif';
+      const lw = ctx.measureText(label).width + 74;
+      ctx.fillStyle = `${categoryColor}22`;
+      roundRectPath(ctx, CERT_W / 2 - lw / 2, y - 8, lw, 52, 26);
+      ctx.fill();
+      ctx.strokeStyle = `${categoryColor}66`;
+      ctx.lineWidth = 1.5;
+      roundRectPath(ctx, CERT_W / 2 - lw / 2, y - 8, lw, 52, 26);
+      ctx.stroke();
+      ctx.strokeStyle = categoryColor;
+      ctx.lineWidth = 3.4;
+      ctx.lineCap = "round";
+      const kx = CERT_W / 2 - lw / 2 + 26;
+      const ky = y + 18;
+      ctx.beginPath();
+      ctx.moveTo(kx, ky);
+      ctx.lineTo(kx + 8, ky + 8);
+      ctx.lineTo(kx + 22, ky - 8);
+      ctx.stroke();
+      ctx.fillStyle = categoryColor;
+      ctx.textAlign = "left";
+      ctx.fillText(label, kx + 36, y + 4);
+      ctx.textAlign = "center";
 
-    ctx.textAlign = "left";
-    ctx.fillStyle = "rgba(231,229,240,0.5)";
-    ctx.font = "600 16px system-ui, sans-serif";
-    ctx.fillText(isVi ? "NGÀY HOÀN THÀNH" : "COMPLETION DATE", 140, CERT_H - 138);
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "600 22px system-ui, sans-serif";
-    ctx.fillText(dateStr, 140, CERT_H - 108);
+      const footY = CERT_H - 168;
+      ctx.strokeStyle = "rgba(231,229,240,0.12)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(140, footY - 26);
+      ctx.lineTo(CERT_W - 140, footY - 26);
+      ctx.stroke();
 
-    ctx.textAlign = "right";
-    ctx.strokeStyle = "rgba(231,229,240,0.4)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(CERT_W - 140, CERT_H - 150);
-    ctx.lineTo(CERT_W - 400, CERT_H - 150);
-    ctx.stroke();
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "600 20px system-ui, sans-serif";
-    ctx.fillText("Võ Đương", CERT_W - 140, CERT_H - 122);
-    ctx.fillStyle = "rgba(231,229,240,0.5)";
-    ctx.font = "500 15px system-ui, sans-serif";
-    ctx.fillText(isVi ? "Nhà sáng lập VO DUONG AI" : "Founder, VO DUONG AI", CERT_W - 140, CERT_H - 100);
-    ctx.textAlign = "left";
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#8f8da3";
+      ctx.font = '700 18px "Be Vietnam Pro", system-ui, sans-serif';
+      ctx.fillText((isVi ? "Ngày cấp" : "Issued on").toUpperCase(), 140, footY);
+      ctx.fillStyle = "#dedcea";
+      ctx.font = '400 24px "Be Vietnam Pro", system-ui, sans-serif';
+      const today = new Date();
+      const dateStr = today.toLocaleDateString(isVi ? "vi-VN" : "en-US", { year: "numeric", month: "long", day: "numeric" });
+      ctx.fillText(dateStr, 140, footY + 30);
 
-    setReady(true);
-  }, [completed, categoryColor, catName, learnerName, totalTopics, isVi]);
+      if (instructorImg) {
+        const r = 40;
+        const cx = CERT_W - 180;
+        const cy = footY + 24;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(instructorImg, PORTRAIT_CROP.x, PORTRAIT_CROP.y, PORTRAIT_CROP.size, PORTRAIT_CROP.size, cx - r, cy - r, r * 2, r * 2);
+        ctx.restore();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = `${categoryColor}88`;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#dedcea";
+        ctx.font = '700 24px "Space Grotesk", system-ui, sans-serif';
+        ctx.fillText("Võ Đương", cx - r - 20, footY);
+        ctx.fillStyle = "#8f8da3";
+        ctx.font = '700 17px "Be Vietnam Pro", system-ui, sans-serif';
+        ctx.fillText((isVi ? "Nhà sáng lập VO DUONG AI" : "Founder, VO DUONG AI").toUpperCase(), cx - r - 20, footY + 32);
+      }
+
+      setReady(true);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [completed, categoryColor, catName, learnerName, displayName, totalTopics, doneCount, isVi, t.title]);
 
   const handleDownload = () => {
     const canvas = canvasRef.current;

@@ -10,6 +10,17 @@
  *
  * Route thật thay cho state `view` của mockup (xem `mnyt-routes.ts`) —
  * `usePathname()` quyết định `aria-current`.
+ *
+ * BUG MOBILE ĐÃ SỬA — `.mnyt-nav` (3 link trực tiếp + dropdown "Khám phá",
+ * 6 đích khác) trước đó chỉ có `display:none` dưới 720px
+ * (`moi-ngay-mot-y-tuong.css`), KHÔNG có thay thế nào — mọi đích trong đó
+ * (Kho ý tưởng/Từ điển/Lĩnh vực/Lộ trình/Hồ sơ/Lịch/Huy hiệu/Gửi ý tưởng)
+ * hoàn toàn không thể điều hướng tới được trên di động (chỉ còn Trang chủ
+ * qua logo và Hồ sơ qua streak-pill/level-ring). Đã thêm
+ * `.mnyt-mobilemenu-wrap` — 1 nút hamburger + dropdown gộp đủ 8 đích, chỉ
+ * hiện dưới 720px (đối xứng đúng breakpoint `.mnyt-nav` đã ẩn), tái dùng
+ * NGUYÊN class `.mnyt-dropdown`/`.mnyt-dropdown-item`/`.mnyt-dropdown-sep`
+ * đã có sẵn cho dropdown "Khám phá" — không tạo bộ style mới.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -52,8 +63,10 @@ export function MnytHeader({
   const router = useRouter();
   const [exploreOpen, setExploreOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const exploreRef = useRef<HTMLDivElement>(null);
   const settingsRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const level = 1 + Math.floor(xp / 100);
   const xpInLevel = xp % 100;
@@ -65,10 +78,34 @@ export function MnytHeader({
     function onDocClick(e: MouseEvent) {
       if (exploreRef.current && !exploreRef.current.contains(e.target as Node)) setExploreOpen(false);
       if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) setSettingsOpen(false);
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) setMobileMenuOpen(false);
     }
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
+
+  // Mockup gốc (`_onKeyDown`, dòng 1964): Escape đóng `showSettingsMenu`
+  // đang mở — áp dụng tương tự cho dropdown "Khám phá".
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key !== "Escape" && e.key !== "Esc") return;
+      if (exploreOpen) setExploreOpen(false);
+      if (settingsOpen) setSettingsOpen(false);
+      if (mobileMenuOpen) setMobileMenuOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [exploreOpen, settingsOpen, mobileMenuOpen]);
+
+  // Đóng menu mobile ngay sau khi điều hướng sang route khác (bấm 1 mục
+  // trong dropdown) — tự khớp vì mọi item đều là <Link>, không có onClick
+  // riêng để tự đóng. Cập nhật state khi render (không phải trong effect)
+  // theo đúng pattern React khuyến nghị cho "adjust state on prop change".
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMobileMenuOpen(false);
+  }
 
   return (
     <header className="mnyt-header">
@@ -141,6 +178,58 @@ export function MnytHeader({
       </nav>
 
       <div className="mnyt-header-right">
+        <div className="mnyt-mobilemenu-wrap" ref={mobileMenuRef}>
+          <button
+            type="button"
+            className="mnyt-mobilemenu-btn"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+            aria-expanded={mobileMenuOpen}
+            aria-label={isVi ? "Menu điều hướng" : "Navigation menu"}
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M3 6h18M3 12h18M3 18h18" />
+            </svg>
+          </button>
+          {mobileMenuOpen && (
+            <div className="mnyt-dropdown mnyt-mobilemenu-dropdown" role="menu">
+              <Link href={MNYT_ROUTES.home} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Trang chủ" : "Home"}
+              </Link>
+              <Link href={MNYT_ROUTES.archive} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Kho ý tưởng" : "Idea library"}
+              </Link>
+              <Link href={MNYT_ROUTES.glossary} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Từ điển" : "Glossary"}
+              </Link>
+              <Link href={MNYT_ROUTES.fields} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Lĩnh vực" : "Fields"}
+              </Link>
+              <Link href={MNYT_ROUTES.path} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Lộ trình" : "Path"}
+              </Link>
+              <Link href={MNYT_ROUTES.profile} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Hồ sơ" : "Profile"}
+              </Link>
+              <Link href={MNYT_ROUTES.calendar} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Lịch học" : "Calendar"}
+              </Link>
+              <Link href={MNYT_ROUTES.badges} className="mnyt-dropdown-item" role="menuitem">
+                {isVi ? "Huy hiệu" : "Badges"} ({badgeCount})
+              </Link>
+              <div className="mnyt-dropdown-sep" />
+              <button
+                type="button"
+                className="mnyt-dropdown-item accent"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  onOpenSubmit();
+                }}
+              >
+                {isVi ? "Gửi ý tưởng của bạn" : "Submit your idea"}
+              </button>
+            </div>
+          )}
+        </div>
         <Link href={MNYT_ROUTES.profile} className="mnyt-streak-pill">
           <span className="mnyt-streak-dot" aria-hidden />
           <span>
