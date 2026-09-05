@@ -300,6 +300,87 @@ này) với mockup gốc.** 1 nuance category-chip nêu trên là phát hiện M
 hơn ("màu sắc theo danh mục" chứ không phải "alpha viền trung tính"), đã
 báo cáo minh bạch thay vì im lặng bỏ qua.
 
+## Bug đã sửa — "2 vòng quay đối xứng bị lệch" ở Trang chủ + audit mobile
+
+Founder báo trực tiếp: quả cầu ý tưởng ở Trang chủ có 2 vòng quay đối
+xứng đang bị lệch, yêu cầu sửa rồi audit tiếp phiên bản hiển thị mobile.
+
+**Root cause (xác nhận bằng Playwright thật, đo `getComputedStyle` — không
+suy đoán):** `.mnyt-home-globe-ring-outer`/`-mid` vừa canh giữa bằng
+`transform: translate(-50%,-50%)` (tĩnh) vừa `animation: ringRotate ...`
+(xoay liên tục) — CẢ HAI cùng nhắm vào đúng 1 thuộc tính `transform` trên
+đúng 1 phần tử. CSS animation LUÔN GHI ĐÈ TOÀN BỘ giá trị `transform` ở
+mỗi khung hình (không cộng dồn với giá trị tĩnh) — ngay khi animation bắt
+đầu chạy, phần `translate(-50%,-50%)` canh giữa bị xoá mất hoàn toàn, để
+lại `top:50%;left:50%` KHÔNG CÓ offset bù — vòng lệch hẳn về góc quả cầu,
+xoay quanh đúng góc lệch đó chứ không quanh tâm. Đo trực tiếp: tâm vòng
+lệch tâm quả cầu ~500px ở desktop trước khi sửa.
+
+**Đã sửa** — tách trách nhiệm ra 2 lớp DOM: div NGOÀI (giữ nguyên tên
+class) chỉ lo canh giữa bằng transform TĨNH, KHÔNG BAO GIỜ animate; viền +
+`animation: ringRotate` chuyển hẳn vào `::before` con
+(`position:absolute;inset:0`, thừa hưởng đúng kích thước cha).
+
+**Sửa kèm lỗi méo hình phát hiện cùng lúc:** `width/height:92%/76%` trước
+đó tính theo CẢ chiều rộng lẫn chiều cao của `.mnyt-home-globe-wrap` —
+khung này KHÔNG VUÔNG (rộng theo `max-width` trang, cao cố định
+440/560/760px theo breakpoint) nên vòng bị kéo dẹt thành elip rõ rệt ở màn
+hình rộng (đo được 1053×760 ở desktop 1440px — hoàn toàn không phải hình
+tròn). Đổi sang PIXEL CỐ ĐỊNH theo breakpoint (khớp đúng 92%/76% của
+CHIỀU CAO — ổn định, không phụ thuộc bề rộng) + kẹp thêm
+`max((100vw-80px)/1.42, 220px)` (cùng công thức `ringCap` mockup gốc dùng
+cho quả cầu Fields, dòng 2703-2705) để không tràn ngang trên di động hẹp.
+
+**Audit mobile (theo đúng yêu cầu, không dừng lại sau khi sửa ring) —
+phát hiện thêm 1 bug tràn ngang THẬT, độc lập với bug ring:** bán kính
+node/hạt bụi quả cầu 3D (`GLOBE_RADIUS` cũ) là hằng số CỐ ĐỊNH 200px,
+không co theo viewport — ở màn hình <480px, đường kính quả cầu (400px)
+vượt quá bề rộng khả dụng của trang, khiến node/hạt bụi tràn khỏi vùng
+nội dung. Đo trực tiếp bằng Playwright:
+`document.documentElement.scrollWidth > viewport` THẬT ở 320px (446px vs
+320px) và 390px (481px vs 390px) trước khi sửa — không phải suy đoán, mà
+là hiện tượng cuộn ngang toàn trang có thật trên điện thoại. Đã đổi sang
+biến CSS `--mnyt-globe-r` (`min(200px, calc((100vw-80px)/2))` — giữ
+NGUYÊN 200px ở màn hình đủ rộng, không đổi hành vi cũ trên desktop/tablet,
+chỉ co lại đúng ở dải viewport hẹp gây tràn) — toạ độ node/hạt bụi trong
+`MnytHomeClient.tsx` đổi từ nhân sẵn bằng hằng số JS sang lưu HỆ SỐ ĐƠN VỊ,
+nhân thật bằng `calc(var(--mnyt-globe-r) * hệ_số)` ngay trong chuỗi
+`transform` lúc render — không cần tracking `window.innerWidth` ở JS (tránh
+đúng lớp rủi ro hydration mismatch đã ghi nhận trước đó ở `MnytFieldsClient.tsx`'s
+docblock, dùng CSS thuần/media query thay vì JS viewport state). Hạt bụi
+trang trí (nhân thêm hệ số "jitter" tới 1.5 lần bán kính để bay ra ngoài
+quả cầu, theo đúng mockup) dùng biến riêng `--mnyt-globe-r-dust` (chia
+thêm 1.5) — nếu dùng chung `--mnyt-globe-r` với node thì hạt bụi vẫn tràn
+dù đã kẹp cho node (vì node không có hệ số nhân thêm).
+
+**Đã audit thêm, xác nhận KHÔNG có bug tương tự nơi khác:** grep toàn bộ
+`translate(-50%,-50%)` kèm `animation:` trong cùng rule — chỉ có 2 rule
+của Home globe bị dính (đã sửa cả 2). `.mnyt-fields-ring-outer`/`-mid`
+(quả cầu domain ở Bản đồ lĩnh vực, cùng hoạ tiết "vòng Sao Thổ") dùng
+đúng `transform: translate(-50%,-50%) rotateX(75deg)` NHƯNG KHÔNG có
+animation nào cả (tĩnh, khớp đúng mockup gốc — mockup chưa từng cho 2
+vòng này xoay, chỉ Home globe được "thêm" hiệu ứng xoay ngoài mockup) —
+an toàn, không đụng. `SPHERE_RADIUS=150` của Fields cũng an toàn vì
+`.mnyt-fields-stage{display:none}` mặc định, chỉ `display:flex` từ
+`@media (min-width:720px)` — quả cầu ĐÓ chưa bao giờ render trên di động
+để có thể tràn.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. Test bằng Playwright thật (route
+dev-preview tạm với 446 node giả lập tương đương dữ liệu thật, đã xoá
+ngay sau khi xác nhận xong): 2 vòng canh giữa CHÍNH XÁC tâm quả cầu ở MỌI
+thời điểm animation (đo trước lúc bắt đầu/giữa lúc xoay), hình tròn thật
+(width===height, không còn elip) ở cả 3 breakpoint (405/515/699px và
+334/426/578px), 0 cuộn ngang ở toàn bộ 9 mốc viewport đã test (320/375/
+390/480/600/719/720/1023/1024/1440px) — trước khi sửa, đúng 2 mốc hẹp
+nhất (320/390px) có cuộn ngang thật.
+
+**Chưa tự test được:** xem trực tiếp trên Production với dữ liệu thật
+(446 topic thật thay vì dữ liệu giả lập của route devtest) — Founder tự
+xác nhận trên Preview/Production URL, đặc biệt xác nhận cảm nhận thị giác
+"2 vòng quay đối xứng" giờ đã đúng ý (route devtest chỉ verify được tâm/
+kích thước bằng số đo, không thay thế được đánh giá thẩm mỹ chủ quan).
+
 ### Mục 5 — Dữ liệu: 446/446/35/100 đủ, nhưng `estMinutes` hẹp hơn README hứa
 
 Query trực tiếp Supabase (project `uosxpxolsvwcafxvnroy`):
