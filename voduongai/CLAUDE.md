@@ -10742,3 +10742,108 @@ thực sự cho 2 vòng này ANIMATE hay không" trước khi bắt tay sửa l�
 tâm của chính animation đó. Khi Founder báo lại y hệt vấn đề dù đã có bản
 vá + verify, ưu tiên đọc lại NGUYÊN VĂN mockup từ đầu (không tin lại kết
 luận cũ dù kết luận đó có kèm số đo) trước khi tìm lỗi ở chỗ khác.
+
+## Founder yêu cầu riêng, lệch chủ ý khỏi mockup — 2 vòng quay +10% & bán kính quả cầu +20% ([PR #117](https://github.com/duongtyphu/duongtyphu/pull/117), [PR #118](https://github.com/duongtyphu/duongtyphu/pull/118))
+
+Ngay sau bản vá "2 vòng quay đối xứng" ở mục trên (đưa 2 vòng về ĐÚNG mockup
+— tĩnh, nghiêng 3D, không quay), Founder yêu cầu 2 thay đổi RIÊNG, chủ ý
+lệch khỏi mockup gốc (không phải bug cần sửa về đúng, mà là điều chỉnh
+thẩm mỹ theo ý Founder) — ghi lại ở đây vì 2 PR này trước đó chỉ có commit
+message, chưa có mục CLAUDE.md riêng.
+
+**PR #117 — "Tăng kích thước vòng ý tưởng quả cầu lên 10%, luôn luôn
+quay".** `.mnyt-home-globe-ring-outer`/`-mid`: tăng 3 cặp breakpoint +10%
+(outer 405/515/699px → 446/567/769px; mid 334/426/578px → 367/469/636px),
+đồng thời cho quay LIÊN TỤC — đảo ngược đúng phần "không quay" vừa xác
+nhận khớp mockup ở mục trên. Để tránh tái diễn bug gốc (animation ghi đè
+transform tĩnh nếu cùng 1 phần tử), animation `ringRotate` đặt vào
+`::before` con (`position:absolute;inset:0`, không đặt lại lên chính div
+ngoài đang giữ transform tĩnh canh giữa+nghiêng). Đổi border từ solid
+sang dashed — vòng tròn ĐỀU xoay quanh tâm chính nó không tạo ra thay đổi
+thị giác nào (hình học đối xứng hoàn hảo), dashed mới làm chuyển động
+thực sự nhìn thấy được (cùng mẫu `.mnyt-brand-orb-ring` đã có sẵn trong
+file).
+
+**PR #118 — "tăng kích thước bán kính các hạt ý tưởng lên 20%".**
+`--mnyt-globe-r`/`--mnyt-globe-r-dust` (bán kính node/hạt bụi quả cầu 3D):
+200px → 240px ở màn hình đủ rộng, giữ nguyên công thức kẹp theo viewport
+`(100vw-80px)/2` chống tràn ngang di động hẹp (không đổi ngưỡng an toàn
+này, chỉ đổi kích thước danh nghĩa).
+
+**Verify cả 2:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch. PR #117 verify bằng Playwright: CSS
+width đúng +10% tại breakpoint desktop, animation `::before` tiến triển
+theo thời gian (transform đổi giữa 2 mốc), border-style dashed cả 2 vòng.
+PR #118 verify qua kỹ thuật content-hash CSS chunk (tìm file `.next/static/chunks/*.css`
+chứa chuỗi "240px" cục bộ, curl đúng file đó trên `voduongai.vercel.app`
+production — xác nhận nội dung khớp byte-for-byte, không chỉ tin
+`readyState:READY`). Cả 2 đã merge `main` + deploy Production, xác nhận
+`READY`/`target:production`.
+
+## Banner Canvas cho 35 thẻ chủ đề — thiết kế riêng theo từng lĩnh vực ([PR #119](https://github.com/duongtyphu/duongtyphu/pull/119))
+
+Founder yêu cầu (sau khi đã xác nhận trước đó qua audit riêng: "35 ảnh
+banner lĩnh vực... CHƯA có ảnh thật... Không tự generate/vẽ ảnh thay thế"
+— chỉ đạo đó áp dụng cho THỜI ĐIỂM đó, giờ Founder chủ động đảo ngược):
+"Banner 35 thẻ chủ đề => bạn sử dụng canvas để thiết kế, theo đúng từng
+chủ đề." — thay nền phẳng `var(--surface)` của `.mnyt-home-field-cover`
+(76px cao, lưới `auto-fill minmax(190px,1fr)`) bằng 1 thiết kế Canvas
+2D THẬT riêng cho từng lĩnh vực, dùng icon + màu `mnyt_categories.color`
+thật của chính lĩnh vực đó — dự án chưa có hạ tầng upload ảnh cover (đã
+ghi nhận nhiều lần), không dùng ảnh, vẽ trực tiếp bằng Canvas 2D thuần
+(cùng tiền lệ kỹ thuật `MnytShareCardModal.tsx`/`MnytCertificateModal.tsx`).
+
+**Nguồn icon:** `src/lib/mnyt/field-banner-icons.ts` (mới) — trích trực
+tiếp `__iconNode` nội bộ của `lucide-react` (^1.21.0, đã là dependency có
+sẵn) cho 35 icon đã chọn 1-1 theo từng `category.key` (`cafe→coffee`,
+`marketing→megaphone`, `realestate→house`... đủ 35, xem
+`MNYT_CATEGORY_ICON`) — KHÔNG dùng component React của lucide-react
+(không render lên `<canvas>` được), chỉ lấy dữ liệu hình học thô
+(mảng `[tag, attrs]`: path/circle/rect/line/polyline/ellipse trên lưới
+24×24, stroke 2px) để tự vẽ. Xử lý riêng trường hợp `home.mjs` (re-export
+rỗng từ `house.mjs`, không có `__iconNode` của chính nó) bằng cách đọc
+thẳng `house.mjs`.
+
+**Hàm vẽ:** `src/lib/mnyt/field-banner-canvas.ts` (mới) —
+`drawMnytFieldBanner(ctx, width, height, categoryKey, color)`: nền tối
+`#0a0b12` (khớp overlay CSS `::after` sẵn có) → mảng màu chủ đề phủ nhẹ từ
+trái (linear gradient alpha 0.22→0) → hoạ tiết đường chéo mỏng tinted màu
+chủ đề (alpha 0.08, trang trí) → glow tròn (radial, alpha 0.32→0) phía
+sau vị trí icon → icon minh hoạ lớn dạng watermark nét mảnh (`Path2D`/
+`ctx.arc()`/`ctx.roundRect()`/`moveTo+lineTo` tuỳ loại thẻ, stroke alpha
+0.6, không fill) vẽ SAU CÙNG để nổi trên hoạ tiết.
+
+**Component:** `src/components/v2/mnyt/MnytFieldBannerCanvas.tsx` (mới,
+"use client") — `useEffect`+`ResizeObserver` co giãn theo đúng bề rộng
+cột lưới thật (không cố định px, vì `auto-fill minmax(190px,1fr)` co giãn
+theo số cột thực tế), nhân `devicePixelRatio` (kẹp tối đa 2) để nét không
+mờ trên màn Retina. `aria-hidden` — thuần trang trí, tên/mô tả lĩnh vực đã
+có sẵn qua text thật ở `.mnyt-home-field-name` bên dưới, không mất thông
+tin nếu ẩn khỏi screen reader.
+
+**Tích hợp:** `MnytHomeClient.tsx` — thêm `<MnytFieldBannerCanvas
+categoryKey={cat.key} color={cat.color} />` làm phần tử ĐẦU TIÊN trong
+`.mnyt-home-field-cover`, TRƯỚC `.mnyt-home-field-initial` (badge chữ cái
+đầu, giữ nguyên 100% — mặt cầu phát sáng đã đúng mockup từ đợt sửa trước)
+và trước `::after` (vignette CSS, tự động render trên cùng vì là generated
+content của chính phần tử cha, không cần sửa gì). Badge checkmark hoàn
+thành (`.mnyt-home-field-check`, góc phải) không bị ảnh hưởng.
+
+**Verify:** `npx tsc --noEmit`/`npx eslint` (4 file mới/sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (toàn
+bộ route `/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào biến
+mất). Playwright thật (route devtest tạm render 6 thẻ mẫu với đủ 6 màu
+chủ đề khác nhau, xoá ngay sau khi xác nhận xong): 0 lỗi console/page
+error, cả 6 canvas vẽ ĐẦY ĐỦ pixel (không rỗng/trong suốt — đo
+`getImageData` xác nhận toàn bộ 220×76px có alpha>0), mỗi thẻ có màu góc
+trên-trái khác nhau đúng theo `category.color` riêng (xác nhận qua sample
+pixel: nâu/xanh dương/xanh lá/xám/tím/cam — khớp 6 màu mẫu). Chụp ảnh xác
+nhận trực quan: mỗi thẻ có nền tối pha màu chủ đề + hoạ tiết đường chéo +
+icon minh hoạ lớn rõ ràng (cà phê/loa/biểu đồ tăng/cán cân/nhà/em bé) —
+khớp đúng ý đồ "thiết kế riêng theo từng lĩnh vực".
+
+**Chưa tự test được:** xem trực tiếp trên Production với dữ liệu thật (35
+lĩnh vực thật, đủ màu sắc/icon khác nhau, cạnh badge chữ cái đầu + vignette
+CSS đã có sẵn) — Founder tự xác nhận trên Preview/Production URL, đặc
+biệt cảm nhận thẩm mỹ tổng thể (độ đậm/nhạt của icon watermark, độ rõ của
+hoạ tiết đường chéo) có đúng ý hay cần tinh chỉnh thêm.
