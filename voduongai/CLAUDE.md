@@ -11257,3 +11257,120 @@ trả lời; (2) xác nhận Companion trả lời đúng khi hỏi "X ở đâu
 Portal" (X là 1 tính năng 2.0 thật) — câu trả lời nên trỏ đúng route
 `/v2/*`, không nhắc `/portal/*`; (3) ở vài khu vực có nudge (vd
 `/v2/premium`), đợi ~3s xác nhận bong bóng gợi ý hiện đúng 1 lần/phiên.
+
+## Giai đoạn 9 (đợt 2) — Companion Widget: kéo-thả/ẩn-hiện/đổi màu theo nền + khung chat chuyên nghiệp hơn + "trưởng thành" = ghi nhớ tiến độ học thật
+
+Founder gửi tiếp 3 yêu cầu cụ thể ngay sau đợt 9.1-9.3: (a) Companion
+Widget phải di chuyển/ẩn tự do khắp màn hình, đổi màu theo cấu trúc nền
+từng khu vực; (b) khung chat thiết kế chuyên nghiệp hơn; (c) "Companion
+trưởng thành" được định nghĩa lại CỤ THỂ (thay cho đề xuất trừu tượng
+"tiến hoá theo số liệu hệ thống" ở đợt trước, chưa được Founder duyệt):
+khả năng NHỚ tiến độ học thật của người dùng + trả lời được thắc mắc về
+thông tin trong Portal (vế sau đã xong ở đợt 9.3, vế đầu — ghi nhớ tiến
+độ — là việc thật của đợt này).
+
+**(c) Học viên "thật" — `getCompanionLearnerMemory()`.** Phát hiện quan
+trọng khi audit: `RuntimeContext`'s `memory`/`goal` chỉ EPHEMERAL (phân
+tích lại từ đúng cuộc hội thoại hiện tại, không có bảng nào lưu
+`MemoryCandidate`/`MemoryDecision` xuyên phiên) — Companion trước đây
+KHÔNG hề có bộ nhớ thật về tiến độ học của 1 người dùng cụ thể qua nhiều
+lần chat khác nhau. `src/lib/portal/companion/learner-memory.ts` (mới) —
+tổng hợp 3 nguồn dữ liệu THẬT đã có sẵn (best-effort, lỗi 1 nguồn không
+chặn 2 nguồn còn lại): `getAcademyProgress()` (số bài/khoá đã hoàn thành),
+`getMnytStateBundle()` (số ý tưởng đã học, streak, huy hiệu "Mỗi ngày một
+ý tưởng"), và trực tiếp `goal_records` (Mục tiêu đang theo đuổi, tối đa
+5 mục tiêu `active`/`ready_for_analysis` gần nhất) — trả về 1 đoạn text
+mô tả "Hồ sơ học tập THẬT" chèn vào prompt, dặn Companion dùng để cá nhân
+hoá chứ không lặp lại máy móc mỗi câu.
+
+**Quyết định kỹ thuật quan trọng:** KHÔNG dùng `goal-runtime.ts`'s
+`hydrateGoalRuntime()`/`listGoals()` (đã âm thầm cache theo
+`getSupabaseBrowser()` — client BROWSER-ONLY, Phase 40) vì Route Handler
+(`/api/companion/chat/route.ts`) chạy server-side, không gọi được client
+này — viết thẳng 1 câu SELECT `goal_records` bằng client server đã xác
+thực sẵn (tham số `supabase` truyền vào từ `route.ts`), không cố ép module
+cache client-only hoạt động sai ngữ cảnh.
+
+`companion-prompt-builder.ts`'s `buildCompanionPrompt()` thêm tham số thứ
+7 `learnerMemoryContext` (optional, mặc định rỗng — không phá hợp đồng
+cũ), chèn vào thứ tự: System → Sứ mệnh Companion → Bản đồ sản phẩm 2.0 →
+**Hồ sơ học tập thật** → Runtime Context → Knowledge Package →
+Conversation. `route.ts` gọi `getCompanionLearnerMemory(supabase,
+user.id)` song song 2 fetch còn lại trong cùng `Promise.all()`.
+
+**Bug tự phát hiện và sửa trước khi ship (vi phạm NGUYÊN TẮC BẤT BIẾN):**
+audit `CompanionChatHeader.tsx` (đang làm redesign "(b)") phát hiện nút
+"Mở Companion đầy đủ" hardcode `href="/portal/companion"` — nếu widget
+2.0 ship nguyên trạng, bấm nút này sẽ điều hướng NGƯỢC VỀ Portal 1.0,
+đúng điều tuyệt đối cấm của dự án. Đã thêm prop `fullPageHref` (mặc định
+giữ `/portal/companion` cho 1.0, xuyên suốt cả chuỗi
+`CompanionChatShell`→`CompanionFloatingChat`→`CompanionWidget`, 2.0
+truyền `/v2/companion`) — bug này CHƯA TỪNG xuất bản (bắt được trong lúc
+build đợt 9.2, trước khi PR đầu tiên merge), không phải regression.
+
+**(b) Khung chat chuyên nghiệp hơn.** `CompanionChatHeader.tsx` — dải
+gradient nhấn mảnh trên cùng (tím-chàm-tím), avatar `LivingCore` bọc
+trong khung tròn gradient nhẹ + viền, dòng trạng thái "● Đang hoạt động"
+(chỉ hiện ở `compact`, xanh lá — quy ước UI thông thường, KHÔNG phải
+health-check thật, ghi rõ để không hiểu nhầm là giám sát uptime).
+`CompanionFloatingChat.tsx` — hiệu ứng mở/đóng mờ dần+trượt nhẹ tự viết
+bằng `useState`+`requestAnimationFrame`+class Tailwind có điều kiện (dự
+án KHÔNG cài `tailwindcss-animate`, class `animate-in`/`fade-in`/
+`slide-in-from-*` không có tác dụng gì — đã xác nhận qua
+`grep -rn "tailwindcss-animate" package.json` 0 kết quả), bóng đổ/bo góc
+mềm hơn.
+
+**(a) Kéo-thả/ẩn-hiện/đổi màu — `CompanionWidget.tsx` viết lại toàn bộ.**
+2 bug hydration/CSS tự phát hiện và sửa TRƯỚC khi ship (bắt được qua
+Playwright, chưa từng xuất bản):
+1. **React error #418 (hydration mismatch)** — lần đầu dùng
+   `useState(() => readStoredPosition() ?? defaultPosition())` (lazy
+   initializer) cho vị trí/trạng thái ẩn — SAI vì lazy initializer chạy
+   NGAY trong lượt hydrate đầu của client (đọc `localStorage` có giá trị
+   ngay), trong khi server luôn render `null`/`false` (không có
+   `window`) — mismatch. Sửa: `useState(false)`/`useState(null)` (giống
+   hệt server) + `useEffect` set giá trị thật SAU KHI mount (kèm
+   `eslint-disable-next-line react-hooks/set-state-in-effect` có giải
+   thích — đây là 1 trong số ít trường hợp hợp lệ dùng effect để set
+   state, vì giá trị client-only không có cách nào "adjust state during
+   render").
+2. **Nút "nhảy" khi bong bóng gợi ý xuất hiện/biến mất** — container
+   `flex-col items-end` ban đầu neo bằng `left`/`top` (khớp state theo
+   dõi nội bộ) — khi bong bóng (rộng 288px) thêm vào làm khung tự-co-giãn
+   theo bề rộng con lớn nhất, `items-end` giữ đúng mép PHẢI của khung
+   nhưng khung đó lại neo trái, nên nút bị đẩy sang phải ~224px mỗi lần
+   bong bóng hiện/ẩn. Sửa: style render tính `right`/`bottom` (suy từ
+   `left`/`top` nội bộ: `right = viewportWidth - left - BUTTON_SIZE`) —
+   neo đúng mép phải cố định, khớp hành vi `bottom-5 right-5` gốc.
+
+`getWidgetZone(pathname)` — map route sang 2 "tông nền" đã audit trực
+tiếp CSS thật (không đoán): đa số `/v2/*` nền sáng; `/v2/moi-ngay-mot-y-tuong`
+(`.mnyt{--bg:#0a0b12}`) và `/v2/hanh-trinh-cua-toi` (`.htct{--bg:#0a0a0f}`)
+là 2 khu vực nền THẬT SỰ tối — nút widget đổi sang mặt kính tối + viền/
+glow theo đúng `--violet` của chính khu vực đó khi ở 2 vùng này.
+
+**Verify:** `npx tsc --noEmit`/`eslint` sạch, `npx vitest run` 495/495
+pass, `rm -rf .next && npm run build` sạch. Playwright thật qua `next
+start` (production build, không phải `next dev`) — trước bản vá: 2-3 lỗi
+`pageerror` "Minified React error #418" trên mỗi trang test; sau bản vá:
+`pageerrors: []` (rỗng) trên toàn bộ 4 kịch bản test (trang-chu kéo-thả/
+ẩn-hiện-tải lại/mở lại, mnyt vùng tối, hanh-trinh-cua-toi vùng tối,
+premium mở chat). Kéo-thả xác nhận thật (không chỉ đọc code): vị trí
+`{x:1192,y:812}` (mặc định) → kéo tới `{x:166,y:166}` → ẩn → tải lại
+trang → vẫn ẩn (persist qua `localStorage` đúng) → hiện lại → vị trí
+khôi phục đúng `{x:168,y:168}` (khớp lần kéo trước, sai số làm tròn
+2px). `fullPageHref` xác nhận đúng `/v2/companion` trên widget 2.0 (khác
+`/portal/companion` mặc định của header). Ảnh chụp xác nhận: redesign
+chuyên nghiệp hơn (gradient bar/status dot/avatar ring) hiển thị đúng
+trên nền `/v2/premium`; nút widget ở vùng sáng (`trang-chu`) giữ đúng
+mặt kính trắng phát sáng, kéo thả tới góc trên-trái vẫn giữ đúng style +
+lộ nút "✕" ẩn khi hover (group-hover).
+
+**Chưa tự xác nhận trực quan được:** vùng tối `/v2/moi-ngay-mot-y-tuong`
+bị 1 modal onboarding ("Chào mừng bạn!") che đúng góc widget trong ảnh
+chụp test — không tự confirm được màu kính tối/viền tím qua ảnh này (đã
+xác nhận đúng qua code review `getWidgetZone()` + đã thấy `hanh-trinh-cua-toi`
+tối tương tự hoạt động đúng cơ chế zone, chỉ riêng ảnh mnyt bị che). Founder
+tự xác nhận trên Preview URL: mở `/v2/moi-ngay-mot-y-tuong` (bỏ qua/đóng
+onboarding nếu hiện), xác nhận nút widget góc dưới-phải hiện đúng mặt
+kính tối + viền tím (không phải mặt kính trắng như trang sáng).

@@ -40,6 +40,7 @@ export function CompanionChatShell({
   variant = "full",
   onOpenSpace,
   onClose,
+  fullPageHref,
 }: {
   conversations: CompanionConversationSummary[];
   initialConversationId: string | null;
@@ -49,6 +50,9 @@ export function CompanionChatShell({
   onOpenSpace?: () => void;
   /** Chỉ dùng khi `variant="compact"` — đóng panel nổi. */
   onClose?: () => void;
+  /** Chỉ dùng khi `variant="compact"` — đích nút "Mở Companion đầy đủ",
+      xem `CompanionChatHeader.tsx`. */
+  fullPageHref?: string;
 }) {
   const compact = variant === "compact";
   const router = useRouter();
@@ -256,6 +260,7 @@ export function CompanionChatShell({
           onOpenDrawer={() => setDrawerOpen(true)}
           onOpenSpace={compact ? onOpenSpace : undefined}
           onClose={compact ? onClose : undefined}
+          fullPageHref={fullPageHref}
         />
 
         <CompanionMessageList
