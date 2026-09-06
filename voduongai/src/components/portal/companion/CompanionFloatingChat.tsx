@@ -20,11 +20,16 @@ import type { CompanionConversationSummary, CompanionMessageRow } from "@/app/po
 export function CompanionFloatingChat({
   onClose,
   onOpenSpace,
+  fullPageHref,
 }: {
   onClose: () => void;
   /** Optional — Portal 2.0's `CompanionWidget` không truyền (bỏ hẳn nút "Mở
       Không gian Companion", trải nghiệm kịch bản cũ chỉ có ở 1.0). */
   onOpenSpace?: () => void;
+  /** Đích nút "Mở Companion đầy đủ" trong header — mặc định `/portal/companion`
+      (`CompanionChatHeader.tsx`). `CompanionWidget` (2.0) truyền
+      `/v2/companion`. */
+  fullPageHref?: string;
 }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState<CompanionConversationSummary[]>([]);
@@ -63,20 +68,32 @@ export function CompanionFloatingChat({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
+  // Chuyển tiếp mở panel mượt hơn (mờ dần + trượt nhẹ từ dưới lên) — thuần
+  // Tailwind transition (dự án KHÔNG cài `tailwindcss-animate`, các class
+  // `animate-in`/`fade-in`/`slide-in-from-*` sẽ KHÔNG có tác dụng gì nếu
+  // dùng ở đây), bật cờ `entered` ngay sau khi mount 1 tick.
+  const [entered, setEntered] = useState(false);
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-end p-0 sm:p-6" role="presentation">
       <button
         type="button"
         aria-label="Đóng Companion"
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 sm:bg-black/20"
+        className={`absolute inset-0 bg-black/40 transition-opacity duration-200 sm:bg-black/20 ${entered ? "opacity-100" : "opacity-0"}`}
       />
       <div
         ref={closeButtonFocusRef}
         role="dialog"
         aria-modal="true"
         aria-label="Companion — trò chuyện"
-        className="relative z-10 flex h-[85vh] w-full flex-col overflow-hidden rounded-t-[28px] border border-gray-200 bg-white shadow-2xl sm:h-[600px] sm:w-[400px] sm:rounded-2xl"
+        className={`relative z-10 flex h-[85vh] w-full flex-col overflow-hidden rounded-t-[28px] border border-gray-100 bg-white shadow-[0_24px_70px_rgba(24,16,60,0.28)] transition-all duration-200 ease-out sm:h-[620px] sm:w-[400px] sm:rounded-[22px] ${
+          entered ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0"
+        }`}
       >
         {loading ? (
           <div className="flex flex-1 items-center justify-center text-sm text-gray-400">Đang tải Companion...</div>
@@ -88,6 +105,7 @@ export function CompanionFloatingChat({
             initialMessages={initialMessages}
             onOpenSpace={onOpenSpace}
             onClose={onClose}
+            fullPageHref={fullPageHref}
           />
         )}
       </div>

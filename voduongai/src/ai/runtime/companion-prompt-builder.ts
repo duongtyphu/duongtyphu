@@ -31,6 +31,15 @@
  * knowledge.prompt.ts`), để Companion "hiểu rõ" toàn bộ sản phẩm 2.0 khi
  * định hướng người dùng — không phải nội dung Admin-editable như Sứ mệnh
  * Companion, nên chèn liền sau `missionContext`, trước User Context.
+ *
+ * PORTAL 2.0, GIAI ĐOẠN 9 (tiếp) — "Companion trưởng thành": thêm tham
+ * số thứ 7 `learnerMemoryContext` (optional, mặc định rỗng) — hồ sơ học
+ * tập THẬT của người dùng (tiến độ Học viện AI/"Mỗi ngày một ý tưởng"/
+ * mục tiêu đang theo đuổi, xem `getCompanionLearnerMemory()` ở
+ * `lib/portal/companion/learner-memory.ts`) — KHÁC `userContext` (chỉ
+ * suy từ nội dung CUỘC HỘI THOẠI hiện tại, không đọc DB) — chèn TRƯỚC
+ * `userContext` vì đây là dữ liệu bền vững hơn (đúng con người thật qua
+ * nhiều phiên), không phải phân tích tạm thời trong 1 lượt chat.
  */
 import { COMPANION_CHAT_SYSTEM_PROMPT_V1 } from "@/ai/prompts/companion-chat.system.prompt";
 import { trimHistoryForContext, type CompanionHistoryItem } from "@/lib/portal/companion-chat";
@@ -46,6 +55,9 @@ export type CompanionPromptResult = {
   /** Portal 2.0, Giai đoạn 9 — "bản đồ sản phẩm" 2.0 (route/tính năng
       thật), rỗng khi không truyền (call site cũ/test). */
   portalKnowledgeContext: string;
+  /** Portal 2.0, Giai đoạn 9 — hồ sơ học tập THẬT của người dùng (đọc
+      DB, khác `userContext` bên dưới — chỉ suy từ hội thoại hiện tại). */
+  learnerMemoryContext: string;
   userContext: string;
   knowledgePackageContext: string;
   conversationContext: string;
@@ -133,19 +145,22 @@ export function buildCompanionPrompt(
       "" bị `filter()` loại bỏ nên hành vi/thứ tự các phần còn lại giữ
       nguyên 100% khi không truyền. */
   missionContext: string = "",
-  portalKnowledgeContext: string = ""
+  portalKnowledgeContext: string = "",
+  learnerMemoryContext: string = ""
 ): CompanionPromptResult {
   const systemPrompt = COMPANION_CHAT_SYSTEM_PROMPT_V1;
   const userContext = buildUserContext(context);
   const knowledgePackageContext = buildKnowledgePackageContext(mentorContext);
   const conversationContext = buildConversationContext(history, userMessage);
 
-  // Đúng thứ tự: System → Sứ mệnh Companion → Bản đồ sản phẩm 2.0 →
-  // Runtime Context → Knowledge Package → Conversation.
+  // Đúng thứ tự: System → Sứ mệnh Companion → Bản đồ sản phẩm 2.0 → Hồ sơ
+  // học tập thật → Runtime Context (hội thoại hiện tại) → Knowledge
+  // Package → Conversation.
   const prompt = [
     systemPrompt,
     missionContext ? `\n${missionContext}` : "",
     portalKnowledgeContext ? `\n${portalKnowledgeContext}` : "",
+    learnerMemoryContext ? `\n${learnerMemoryContext}` : "",
     `\nBối cảnh người học:\n${userContext}`,
     knowledgePackageContext
       ? `\nTri thức tham khảo (đã Publish, đã kiểm tra quyền truy cập):\n${knowledgePackageContext}`
@@ -160,6 +175,7 @@ export function buildCompanionPrompt(
     systemPrompt,
     missionContext,
     portalKnowledgeContext,
+    learnerMemoryContext,
     userContext,
     knowledgePackageContext,
     conversationContext,

@@ -9,6 +9,7 @@ import type { RuntimeConversation } from "@/ai/runtime/runtime-context";
 import { publishedCatalogProvider } from "@/ai/catalog/catalog-provider";
 import { getCompanionMissionContext } from "@/lib/portal/live-companion-mission";
 import { COMPANION_PORTAL_KNOWLEDGE_V2 } from "@/ai/prompts/companion-portal-knowledge.prompt";
+import { getCompanionLearnerMemory } from "@/lib/portal/companion/learner-memory";
 
 /**
  * Companion Chat MVP — API DUY NHẤT gửi/nhận tin nhắn thật ở
@@ -166,9 +167,10 @@ export async function POST(request: Request) {
   const runtimeConversation: RuntimeConversation = {
     turns: [...history, { role: "user", content: trimmedMessage }],
   };
-  const [catalog, missionContext] = await Promise.all([
+  const [catalog, missionContext, learnerMemoryContext] = await Promise.all([
     publishedCatalogProvider.getCatalog(),
     getCompanionMissionContext(),
+    getCompanionLearnerMemory(supabase, user.id),
   ]);
   const { context: runtimeContext, mentorContext } = runCompanionRuntimeEngine({
     conversationId: activeConversationId,
@@ -182,7 +184,8 @@ export async function POST(request: Request) {
     history,
     trimmedMessage,
     missionContext,
-    COMPANION_PORTAL_KNOWLEDGE_V2
+    COMPANION_PORTAL_KNOWLEDGE_V2,
+    learnerMemoryContext
   );
 
   let replyText = "";
