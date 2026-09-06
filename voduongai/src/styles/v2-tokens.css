@@ -95,11 +95,13 @@
   box-sizing: border-box;
 }
 
-/* `:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *))` — loại trừ
- * `/v2/su-menh-companion`, `/v2/tai-khoan` VÀ `/v2/checkout`: 3 trang trong
- * cây `/v2` render nội dung Tailwind THẬT (`SuMenhCompanionContent.tsx`/
- * `AccountContent.tsx`/`CheckoutForm.tsx`+`OrderReceipt.tsx`, dùng chung với
- * 1.0, xem docblock mỗi file) thay vì hand-CSS như 46+ trang `/v2/*` còn lại.
+/* `:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *))` — loại trừ
+ * `/v2/su-menh-companion`, `/v2/tai-khoan`, `/v2/checkout` VÀ
+ * `/v2/premium/[courseId]/hoc` (Giai đoạn 11, Đợt 1): 4 trang trong cây
+ * `/v2` render nội dung Tailwind THẬT (`SuMenhCompanionContent.tsx`/
+ * `AccountContent.tsx`/`CheckoutForm.tsx`+`OrderReceipt.tsx`/
+ * `CourseLearnClient.tsx`, dùng chung với 1.0, xem docblock mỗi file) thay
+ * vì hand-CSS như 46+ trang `/v2/*` còn lại.
  * `.htct-native` (thêm ở Giai đoạn 8) bọc 3 tab "My Story"/"Mirror"/"Bản đồ
  * hành trình" bên trong `/v2/hanh-trinh-cua-toi` — render lại NGUYÊN
  * `MyStoryBook.tsx`/`MirrorChamber.tsx`/`JourneyMapAtlas.tsx` dùng chung với
@@ -126,23 +128,23 @@
  * tiên CSS = 0, nên cả 3 rule dưới đây trở lại đúng specificity gốc
  * trước khi có ngoại lệ `.smc`/`.tkh`/`.chk` — CSS 2-class của từng trang lại
  * thắng đúng như ý đồ ban đầu. */
-[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)),
-[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)) {
+[data-ui="v2"] h1:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] h2:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] h3:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] h4:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] h5:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] h6:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] p:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)),
+[data-ui="v2"] figure:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)) {
   margin: 0;
 }
 
-[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)) {
+[data-ui="v2"] a:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)) {
   color: var(--v2-violet);
   text-decoration: none;
 }
 
-[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)) {
+[data-ui="v2"] a:hover:where(:not(.smc *)):where(:not(.tkh *)):where(:not(.chk *)):where(:not(.htct-native *)):where(:not(.chl *)) {
   color: var(--v2-violet-dark);
 }
 

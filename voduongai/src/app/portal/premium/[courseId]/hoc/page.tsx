@@ -37,9 +37,16 @@ export async function generateMetadata({ params }: { params: Promise<{ courseId:
   return { title: course ? `Học — ${course.name}` : "Học" };
 }
 
-export default async function CourseLearnPage({ params }: { params: Promise<{ courseId: string }> }) {
-  const { courseId } = await params;
-
+export async function CourseLearnPageContent({
+  courseId,
+  backHref = "/portal/premium",
+  purchaseHref = "/portal/premium",
+}: {
+  courseId: string;
+  /** `null` = ẩn hẳn nút quay lại (khi trang cha đã có back-link riêng). */
+  backHref?: string | null;
+  purchaseHref?: string;
+}) {
   const course = await getCourseMeta(courseId);
   if (!course) notFound();
 
@@ -52,14 +59,14 @@ export default async function CourseLearnPage({ params }: { params: Promise<{ co
 
   return (
     <div className="space-y-6">
-      <PortalBackLink href="/portal/premium" label="Premium" tone="light" />
+      {backHref !== null && <PortalBackLink href={backHref} label="Premium" tone="light" />}
 
       <div>
         <h1 className="text-2xl font-extrabold text-gray-900">{course.name}</h1>
         {!owned && (
           <p className="mt-2 text-sm text-gray-500">
             Bạn đang xem bản xem thử — chỉ các bài học đánh dấu &quot;Xem thử&quot; mở khoá đầy đủ.{" "}
-            <Link href="/portal/premium" className="font-semibold text-brand-blue hover:underline">
+            <Link href={purchaseHref} className="font-semibold text-brand-blue hover:underline">
               Mua khoá học này →
             </Link>
           </p>
@@ -71,8 +78,13 @@ export default async function CourseLearnPage({ params }: { params: Promise<{ co
           Khoá học chưa có nội dung nào được xuất bản.
         </p>
       ) : (
-        <CourseLearnClient sections={sections} owned={owned} />
+        <CourseLearnClient sections={sections} owned={owned} purchaseHref={purchaseHref} />
       )}
     </div>
   );
+}
+
+export default async function CourseLearnPage({ params }: { params: Promise<{ courseId: string }> }) {
+  const { courseId } = await params;
+  return <CourseLearnPageContent courseId={courseId} />;
 }
