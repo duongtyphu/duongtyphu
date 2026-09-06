@@ -11374,3 +11374,97 @@ tối tương tự hoạt động đúng cơ chế zone, chỉ riêng ảnh mnyt
 tự xác nhận trên Preview URL: mở `/v2/moi-ngay-mot-y-tuong` (bỏ qua/đóng
 onboarding nếu hiện), xác nhận nút widget góc dưới-phải hiện đúng mặt
 kính tối + viền tím (không phải mặt kính trắng như trang sáng).
+
+## Giai đoạn 10, đợt 1 — dọn dead code + sửa 1 link vi phạm NGUYÊN TẮC BẤT BIẾN
+
+Founder giao Giai đoạn 10 ("dọn dẹp, chỉ giữ lại những gì liên quan Portal
+2.0"). Trước khi xoá bất kỳ thứ gì, đã audit toàn diện qua Agent Explore
+(chạy `isolation: "worktree"`) để lập bản đồ: cái gì thật sự không còn
+liên quan (an toàn xoá) vs. cái gì đang bị `/v2/*` **mượn dùng làm Single
+Source of Truth** (tuyệt đối không đụng) vs. cái gì bị chính **Admin
+"Live-edit Cách A"** render lại nguyên vẹn làm giao diện chỉnh sửa (kênh
+phụ thuộc RIÊNG, độc lập với `/v2`, cũng không đụng được).
+
+**Bug quy trình tự phát hiện — worktree audit bị stale, không tin mù kết
+luận của agent.** Agent audit báo "không tìm thấy `CompanionWidget.tsx`
+trong `/v2`" và "`CompanionFloatingChat`/`CompanionChatShell` không được
+2.0 dùng" — SAI, vì `isolation: "worktree"` tạo bản sao TRƯỚC thời điểm
+PR #126 (Companion Widget) vừa merge vào `main`. Đã tự grep lại trực tiếp
+trên working tree thật để xác nhận: `CompanionWidget.tsx` CÓ tồn tại và
+CÓ import `CompanionFloatingChat` thật (dòng 44) — route này (`/portal/companion`,
+`CompanionFloatingChat.tsx`, `CompanionChatShell.tsx`) vẫn ở nhóm KHÔNG
+ĐƯỢC XOÁ, đúng như đã biết từ trước, chỉ sai ở LÝ DO agent đưa ra. Đã
+re-verify độc lập TOÀN BỘ danh sách "an toàn xoá" của agent bằng grep
+đường dẫn import chính xác (không phải basename thô — basename như
+"catalog"/"home"/"dashboard" khớp nhầm hàng chục file không liên quan)
+trước khi xoá bất kỳ file nào — 9/9 file agent đề xuất đều xác nhận đúng
+0 importer thật trên working tree hiện tại (không bị ảnh hưởng bởi lỗi
+stale worktree, vì đây là dead code có từ trước, không liên quan đợt
+Companion Widget vừa merge).
+
+**Đã xoá (9 file, xác nhận 0 importer thật qua grep đường dẫn import
+chính xác, không phải chỉ tên biến/basename):**
+- `src/lib/v2/data/{catalog,home,notifications,dashboard}.ts` — mock data
+  Bước F cũ, chưa từng migrate thật, 0 nơi nào import (`dashboard.ts` có
+  1 importer duy nhất là `GrowthChart.tsx` — nhưng chính file đó cũng 0
+  importer, dead code bắc cầu, xoá cả 2 cùng lúc).
+- `src/components/v2/shell/PortalSidebar.tsx`, `src/components/v2/portal/PortalHero.tsx`,
+  `src/components/v2/AdminV2Shell.tsx` — 3 shell component mồ côi đã ghi
+  nhận từ trước trong lịch sử dự án (đợt audit Giai đoạn 11/12 cũ từng
+  xác nhận 0 importer, chỉ chưa xoá vật lý) — re-verify lại đúng vẫn 0
+  importer, xoá dứt điểm.
+- `src/components/v2/shell/ThemeToggle.tsx` — importer duy nhất là
+  `PortalSidebar.tsx` (đã dead ở trên), dead code bắc cầu.
+
+**KHÔNG đụng** (đã audit riêng, còn tài liệu con dùng chung với
+`AdminSidebar.tsx` đang sống — `/v2/admin/*`): `BrandMark.tsx`/
+`NavLink.tsx`/`PromoUpgrade.tsx`/`Topbar.tsx` (cùng thư mục
+`components/v2/shell/`), và `CompanionChat.tsx`/`PartnerPage.tsx`/
+`hero-dots.ts` (`components/v2/portal/`) — chưa audit, để lại cho đợt
+sau nếu Founder muốn dọn tiếp thư mục `shell/`/`portal/`.
+
+**Bug thật phát hiện — vi phạm NGUYÊN TẮC BẤT BIẾN, đã sửa.**
+`TrangChuClient.tsx`'s `SUGG_TARGET` (khối "Gợi ý dành cho bạn", Trang
+chủ 2.0) — 2/5 loại gợi ý (`prompt`/`workflow`) trỏ thẳng `/portal/prompts`/
+`/portal/sop` (Portal 1.0). Đã sửa cả 2 sang `/v2/hoc-vien-ai?tab=thu-vien`
+(đúng tab "Thư viện tài nguyên" 2.0, đã có category Prompt/SOP từ đợt
+Nhóm 3). `template` (trỏ `/portal/templates`) — audit xác nhận **KHÔNG
+CÓ** mục "Templates" nào trong "Thư viện tài nguyên" 2.0 (chỉ có 4 nguồn:
+Prompt/SOP/Resource/Thực hành tốt + bộ sưu tập CKOS, xem
+`RESOURCE_CATEGORY_LABEL`) — đổi sang `null` (không link giả), đúng
+pattern đã dùng cho `ebook` (thẻ không click được thay vì trỏ sai/trỏ
+1.0). `tool` (trỏ `/v2/hoc-vien-ai`) giữ nguyên — đã trong `/v2`, không
+vi phạm.
+
+**Phát hiện phụ, KHÔNG sửa ở đợt này (ngoài phạm vi dọn dẹp, cần quyết
+định riêng):** đối chiếu `git log --all` xác nhận `src/app/v2/ai-workspace/page.tsx`
+**CHƯA TỪNG tồn tại trong bất kỳ commit nào** — mâu thuẫn với 1 mục lịch
+sử "Bước E.3 — AI Workspace 2.0 (`/v2/ai-workspace`)" đã ghi trong chính
+tài liệu này (mô tả đã build xong 1 trang đầy đủ 6 nhóm công cụ). Route
+`/v2/ai-workspace` hiện chỉ có 1 redirect vĩnh viễn (`next.config.ts`)
+sang `/v2/hoc-vien-ai` — nghĩa là mục lịch sử đó mô tả công việc **không
+bao giờ thực sự lên `main`** (có thể do PR chưa merge, hoặc bị ghi đè ở
+1 đợt sau mà tài liệu không cập nhật theo). "Công cụ yêu thích" ở
+`/v2/companion` vẫn đọc `tools` thật độc lập, không phụ thuộc trang này
+— không có tính năng nào hỏng, chỉ là 1 trang "hiển thị tổng hợp công cụ
+AI" documented-nhưng-chưa-tồn-tại. Founder cần xác nhận: có muốn build
+lại trang này thật (theo đúng đặc tả cũ) hay bỏ hẳn ý định này khỏi
+roadmap.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint src` sạch (0 lỗi, 18
+warning có sẵn từ trước — không phát sinh mới), `npx vitest run` 495/495
+pass, `rm -rf .next && npm run build` sạch (mọi route build đúng, không
+route nào biến mất).
+
+**Đây mới là ĐỢT 1 (an toàn nhất) của Giai đoạn 10 — CHƯA đụng tới các
+route Portal 1.0 lớn hơn.** Audit đầy đủ còn phát hiện ~17+ route
+`/portal/*` (achievements/experts/roadmap/services/earn/personal-brand/
+ai-academy/start-here/checklists/student-success/updates/case-studies/
+saved/practice/origin/ai-assistant/congdongai...) không có bằng chứng bị
+`/v2` hay Admin dùng, nhưng đang có cross-link dày đặc TRONG CHÍNH cây
+1.0 với nhau + Landing Page (`MobileNavDrawer.tsx`/`AccountMenu.tsx`) vẫn
+link thẳng `/portal/hocvienai`/`/portal/account` — xoá lẻ từng route sẽ
+tạo link chết hàng loạt, cần 1 kế hoạch riêng (xoá theo cụm + cân nhắc
+redirect 301 thay vì xoá thẳng để giữ SEO) và Founder xác nhận rõ trước
+khi thực hiện, do rủi ro ảnh hưởng traffic/backlink thật cao hơn hẳn đợt
+1 (dead code nội bộ, 0 rủi ro production).
