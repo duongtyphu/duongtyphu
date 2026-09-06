@@ -178,12 +178,16 @@ import "./premium.css";
  *
  * 5. Member state — `.perk-card` (dùng chung guest/member) hover effect từ
  *    mục 1 áp dụng luôn cho "Quyền lợi dành riêng cho Premium Member".
- *    **CHƯA thêm quyền lợi "Mỗi ngày một ý tưởng"** — Founder yêu cầu
- *    nhưng route `/v2/moi-ngay-mot-y-tuong` hiện vẫn là placeholder
- *    "đang xây dựng" (xem docblock file đó), CHƯA có nội dung/tính năng
- *    thật nào để mô tả — viết "quyền lợi đầy đủ" cho 1 tính năng chưa tồn
- *    tại là bịa, vi phạm NO-FAKE-DATA. Đã báo lại Founder, chờ nội dung
- *    thật (mockup/mô tả tính năng) trước khi thêm perk này.
+ *    **ĐÃ THÊM quyền lợi "Mỗi ngày một ý tưởng"** (Giai đoạn 11, Đợt 2 —
+ *    audit NO-FAKE-DATA phát hiện docblock này lỗi thời: gap từng ghi
+ *    "route vẫn placeholder đang xây dựng" — SAI, `/v2/moi-ngay-mot-y-tuong`
+ *    đã hoàn thiện đầy đủ từ lâu, 446 ý tưởng/35 lĩnh vực/100 thuật ngữ,
+ *    10 view). Đã thêm 2 dòng `premium_perks` (`perk_guest_mnyt`/
+ *    `perk_member_mnyt`, `order:1` — đúng vị trí trống đã để sẵn từ đầu,
+ *    mọi perk khác bắt đầu từ `order:2`), icon `book` (có sẵn trong
+ *    `ICON_MAP`, chưa dòng nào dùng tới trước đó), số liệu trích nguyên
+ *    văn đã xác nhận qua Supabase MCP (xem mục "Task #1/#12" đầu
+ *    CLAUDE.md) — không bịa số mới.
  *
  * 6. "Đặc quyền Portal 2.0 của bạn" (6 link điều hướng, TRÙNG nội dung với
  *    "Quyền lợi dành riêng cho Premium Member" ngay phía trên — cả 2 đều

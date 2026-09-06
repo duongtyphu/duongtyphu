@@ -583,7 +583,7 @@ export function TrangChuClient({
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
                     <div className="ico ico-img"><img src="/v2-static/assets/icon-moi-ngay-mot-y-tuong.png" alt="Mỗi ngày một ý tưởng" /></div>
                     <h3>Mỗi ngày một ý tưởng</h3>
-                    <p>Trái tim của Portal — kết nối tới mọi mục khác. Đang được xây dựng.</p>
+                    <p>Kho ý tưởng thực chiến theo từng lĩnh vực — học, lưu và áp dụng ngay mỗi ngày.</p>
                   </div>
                   <div className="explore-card" onClick={go("Hoc vien AI.html")}>
                     {/* eslint-disable-next-line @next/next/no-img-element -- xem ghi chú ở <img> Premium trên. */}
