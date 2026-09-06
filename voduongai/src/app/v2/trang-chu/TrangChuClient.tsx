@@ -626,7 +626,7 @@ export function TrangChuClient({
                           key={course.id}
                           className="learn-card"
                           style={{ background: style.cardBg, cursor: "pointer" }}
-                          onClick={() => router.push(`/portal/premium/${course.id}/hoc`)}
+                          onClick={() => router.push(`/v2/premium/${course.id}/hoc`)}
                         >
                           <span className="learn-tag" style={{ background: style.tagBg, color: style.tagColor }}>
                             {percent > 0 ? "ĐANG HỌC" : "CHƯA BẮT ĐẦU"}

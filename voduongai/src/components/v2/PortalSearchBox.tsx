@@ -8,14 +8,24 @@
  *
  * Nguồn dữ liệu THẬT: gọi lại ĐÚNG API tìm kiếm CKOS đã có sẵn
  * (`/api/v1/ckos/search`, `src/app/api/v1/ckos/search/route.ts`) — route
- * công khai, không cần đăng nhập, gộp cả nội dung tĩnh 2.0/1.0 dùng chung
- * (Lesson/Prompt/Workflow/Resource) lẫn dữ liệu Supabase thật (Goal/Best
- * Practice/Case Study/Tool AI) — KHÔNG viết API tìm kiếm riêng cho 2.0 (tái
- * sử dụng, không xây trùng, đúng nguyên tắc "Tầng dữ liệu hiện có" của dự
- * án). `href` mỗi kết quả phần lớn trỏ vào `/portal/*` (1.0) — ĐÚNG Ý —
- * nhiều nội dung (Prompt/Resource/SOP/Case Study/Best Practice) CHƯA có
- * trang xem riêng ở 2.0, cùng cách `TrangChuClient.tsx`'s `SUGG_TARGET` đã
- * trỏ sang 1.0 cho các loại tương tự.
+ * công khai, không cần đăng nhập, DÙNG CHUNG với Portal 1.0
+ * (`CkosQuickSearch.tsx`), gộp cả nội dung tĩnh (Lesson/Prompt/Workflow/
+ * Resource) lẫn dữ liệu Supabase thật (Goal/Best Practice/Case Study/Tool
+ * AI) — KHÔNG viết API tìm kiếm riêng cho 2.0 (tái sử dụng, không xây
+ * trùng, đúng nguyên tắc "Tầng dữ liệu hiện có" của dự án).
+ *
+ * ĐÍNH CHÍNH (Giai đoạn 11, Đợt 1 — audit toàn diện): route trả `href`
+ * LUÔN trỏ `/portal/*` (đúng cho 1.0, nơi route này được viết ra ban đầu)
+ * — bản build trước đó của component này coi đây là "ĐÚNG Ý" và dùng
+ * thẳng, VI PHẠM NGUYÊN TẮC BẤT BIẾN đầu CLAUDE.md. Vì API dùng chung với
+ * 1.0 (không thể sửa `href` tại nguồn mà không đổi hành vi 1.0), đã thêm
+ * `remapHrefForV2()` — remap CLIENT-SIDE ngay tại đây, theo ĐÚNG bảng ánh
+ * xạ `SUGG_TARGET` mà `TrangChuClient.tsx` đã dùng cho tình huống tương tự
+ * (loại nội dung chưa có trang chi tiết riêng ở 2.0 → trỏ về đúng tab
+ * "Thư viện tài nguyên"/hub gần nhất; loại có trang chi tiết 2.0 thật
+ * — `lesson` — trỏ thẳng trang đó; loại hoàn toàn không có đích 2.0
+ * — `case_study`, "Thư viện tài nguyên" 2.0 đã bỏ hẳn Case Study — giữ
+ * `null`, không link giả, kết quả hiện nhưng không bấm được).
  * ========================================================================== */
 
 import { useEffect, useRef, useState } from "react";
@@ -41,6 +51,25 @@ const TYPE_LABEL: Record<SearchResultType, string> = {
   lesson: "Bài học",
   resource: "Tài nguyên",
 };
+
+/** Đích 2.0 cho từng loại kết quả — `null` = không có đích 2.0 nào hợp lý,
+ * kết quả vẫn hiện nhưng không bấm được (đúng pattern `SUGG_TARGET` của
+ * `TrangChuClient.tsx`, không link giả về 1.0). */
+const V2_TARGET: Record<SearchResultType, ((id: string) => string) | null> = {
+  lesson: (id) => `/v2/he-tri-thuc/bai-hoc/${id}`,
+  prompt: () => "/v2/hoc-vien-ai?tab=thu-vien",
+  workflow: () => "/v2/hoc-vien-ai?tab=thu-vien",
+  resource: () => "/v2/hoc-vien-ai?tab=thu-vien",
+  best_practice: () => "/v2/hoc-vien-ai?tab=thu-vien",
+  tool: () => "/v2/hoc-vien-ai",
+  goal: () => "/v2/muc-tieu",
+  case_study: null,
+};
+
+function remapHrefForV2(result: SearchResult): string | null {
+  const mapper = V2_TARGET[result.type];
+  return mapper ? mapper(result.id) : null;
+}
 
 const searchBoxIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -142,13 +171,16 @@ export function PortalSearchBox({
               Không tìm thấy kết quả cho &quot;{trimmed}&quot;.
             </p>
           ) : (
-            results.map((r) => (
+            results.map((r) => {
+              const v2Href = remapHrefForV2(r);
+              return (
               <button
                 key={`${r.type}-${r.id}`}
                 type="button"
                 role="option"
                 aria-selected={false}
-                onClick={() => go(r.href)}
+                disabled={!v2Href}
+                onClick={v2Href ? () => go(v2Href) : undefined}
                 style={{
                   display: "flex",
                   width: "100%",
@@ -158,7 +190,8 @@ export function PortalSearchBox({
                   border: "none",
                   background: "none",
                   padding: "8px 8px",
-                  cursor: "pointer",
+                  cursor: v2Href ? "pointer" : "default",
+                  opacity: v2Href ? 1 : 0.55,
                   textAlign: "left",
                   fontFamily: "inherit",
                 }}
@@ -195,7 +228,8 @@ export function PortalSearchBox({
                   </span>
                 )}
               </button>
-            ))
+              );
+            })
           )}
         </div>
       )}

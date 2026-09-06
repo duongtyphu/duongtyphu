@@ -11703,3 +11703,113 @@ lộ trình Founder đã giao: Giai đoạn 11 (audit toàn diện Portal 2.0 �
 trình bày kế hoạch để duyệt trước khi thực hiện, theo đúng chỉ đạo gốc),
 Giai đoạn 12 (điều chỉnh Landing Page khớp Portal 2.0), Giai đoạn 13
 (thiết kế lại Admin quản lý Portal 2.0).
+
+## Giai đoạn 11 — Audit toàn diện Portal 2.0 (kế hoạch 6 đợt, đã duyệt)
+
+Trình bày kế hoạch 6 đợt trước khi thực hiện (đúng chỉ đạo gốc), Founder
+duyệt "làm đủ cả 6 đợt theo thứ tự": (1) Quét NGUYÊN TẮC BẤT BIẾN + link
+toàn hệ thống; (2) Tính trung thực dữ liệu (NO-FAKE-DATA); (3) Contrast/
+accessibility toàn diện; (4) Responsive/mobile; (5) Admin↔Portal wiring
+correctness (spot-check rủi ro cao); (6) Companion Widget + hiệu năng.
+
+### Đợt 1 — Quét NGUYÊN TẮC BẤT BIẾN + link toàn hệ thống
+
+Grep toàn bộ `href`/`push`/`replace`/`location.href`/`window.open` với
+literal VÀ template-literal trỏ `/portal/*` trong `src/app/v2` +
+`src/components/v2` (rộng hơn `route-integrity.test.ts` — test đó chỉ bắt
+string-literal `href="..."`, KHÔNG bắt template literal
+`` `/portal/x/${id}` ``, và không kiểm tra "route đúng nhưng SAI PHIÊN
+BẢN" — 1 route `/portal/*` hợp lệ vẫn pass test dù vi phạm nguyên tắc).
+
+**2 vi phạm THẬT tìm thấy, cả 2 đã sửa:**
+
+1. **`TrangChuClient.tsx` — "Tiếp tục học tập"** (khối card khoá học ở
+   Trang chủ 2.0): `onClick={() => router.push(\`/portal/premium/${course.id}/hoc\`)}`
+   — template literal nên KHÔNG bị `route-integrity.test.ts` bắt (regex
+   `IMPERATIVE_RE` chỉ khớp string literal `"..."`). `/v2/premium` chưa
+   từng có route con xem nội dung khoá học (`git log --all` xác nhận
+   `/v2/ai-workspace` cũng từng bị mô tả nhầm tương tự ở lịch sử trước —
+   bài học "không tin tài liệu cũ, luôn kiểm tra route thật trên đĩa").
+   Đã xây `/v2/premium/[courseId]/hoc` (mới) theo đúng kiến trúc Single
+   Source of Truth đã dùng cho `/v2/checkout`: tách `CourseLearnPageContent`
+   (Server Component, export từ `/portal/premium/[courseId]/hoc/page.tsx`,
+   nhận `backHref`/`purchaseHref` tuỳ chọn — mặc định giữ `/portal/premium`
+   cho 1.0) + `CourseLearnClient.tsx` thêm prop `purchaseHref` (mặc định
+   `/portal/premium`) cho nút "Mua khoá học này →". `/v2/premium/[courseId]/hoc/`
+   (mới) — `CourseLearnV2Client.tsx` (khung `PortalV2Shell`,
+   `activeHtmlFile="Premium.html"`, cùng khuôn kỹ thuật `checkout`/
+   `tai-khoan` — không có mockup Claude Design riêng) + `course-learn.css`
+   (tiền tố `.chl`, đúng 5/6 điều chỉnh kỹ thuật, BỎ điều chỉnh 6 vì nội
+   dung giữa là Tailwind thật) + `page.tsx` gọi
+   `CourseLearnPageContent(backHref=null, purchaseHref="/v2/premium")`.
+   `v2-tokens.css`'s reset unlayered (loại trừ `.smc`/`.tkh`/`.chk`/
+   `.htct-native`) mở rộng loại trừ thêm `.chl`. `TrangChuClient.tsx`'s
+   `onClick` đổi sang `router.push(\`/v2/premium/${course.id}/hoc\`)`.
+
+2. **`PortalSearchBox.tsx` — ô tìm kiếm dùng chung ~19+ trang `/v2/*`.**
+   Component tự nhận "href mỗi kết quả phần lớn trỏ `/portal/*` — ĐÚNG Ý"
+   trong chính docblock cũ — đọc lại thấy đây là quyết định SAI (dù có
+   lý do: nhiều loại nội dung tìm kiếm được — Prompt/Workflow/Resource/
+   Best Practice/Case Study — chưa có trang chi tiết riêng ở 2.0), vi phạm
+   trực tiếp câu "tuyệt đối không được tạo/giữ link trỏ ngược Portal 1.0"
+   — và không nhất quán với chính bản sửa đã áp dụng cho
+   `TrangChuClient.tsx`'s `SUGG_TARGET` ở Giai đoạn 10 đợt 1 (đã đổi từ
+   trỏ 1.0 sang trỏ `/v2/hoc-vien-ai?tab=thu-vien`/`null` cho đúng tình
+   huống tương tự).
+   API `/api/v1/ckos/search` DÙNG CHUNG với 1.0 (`CkosQuickSearch.tsx`)
+   nên KHÔNG sửa `href` tại nguồn (sẽ đổi hành vi 1.0) — thêm
+   `remapHrefForV2()` (client-side, chỉ trong `PortalSearchBox.tsx`) theo
+   ĐÚNG bảng `SUGG_TARGET` đã có tiền lệ: `lesson` (có trang chi tiết 2.0
+   thật, `id` = slug) → `/v2/he-tri-thuc/bai-hoc/${id}`; `prompt`/
+   `workflow`/`resource`/`best_practice` (đều nằm trong "Thư viện tài
+   nguyên" 2.0) → `/v2/hoc-vien-ai?tab=thu-vien`; `tool` → `/v2/hoc-vien-ai`;
+   `goal` → `/v2/muc-tieu`; `case_study` (Thư viện tài nguyên 2.0 đã bỏ
+   hẳn Case Study ở "Việc 4c" trước đó — 0 đích 2.0 hợp lý) → `null`, kết
+   quả vẫn hiện (đúng nguyên tắc "không giấu dữ liệu tìm thấy") nhưng
+   KHÔNG bấm được (`disabled`, `opacity:.55`, không `onClick`) — đúng
+   pattern `template`/`ebook` đã dùng ở `SUGG_TARGET`.
+
+**1 gap ĐÃ BIẾT, KHÔNG tự sửa (documented limitation, không phải bỏ
+sót):** `GoalDetailClient.tsx` (`/v2/muc-tieu/[goalId]`) — nút "Bắt đầu
+Nhiệm vụ" vẫn gọi `startCompanionWorkspace()` → `/portal/workspace`
+(Portal 1.0, engine Task→Output→Review→Approval→Portfolio thật). Đã ghi
+rõ trong chính docblock từ khi xây (task #61): "CHƯA có bản 2.0 tương
+đương... đây là hành động SÂU, chỉ chạm tới sau khi đã vào chi tiết 1
+Mission cụ thể" — xây 1 bản Companion Workspace 2.0 đầy đủ là 1 hạng mục
+lớn riêng (nguyên "Companion nổi"/Giai đoạn 9 mới chỉ làm mini-chat, chưa
+làm workspace engine), ngoài phạm vi 1 đợt audit. Founder cần xác nhận
+đây có phải ưu tiên xây tiếp hay giữ nguyên gap này.
+
+**Sidebar 12 trang "hand-copy" — đã đối chiếu lại toàn bộ với
+`PortalV2Shell.tsx` (canonical, 8 mục: Trang chủ/Companion AI (mở rộng: Trò
+chuyện cùng Companion/Sứ mệnh Companion/Bộ nhớ & Cá nhân hoá)/Mỗi ngày một
+ý tưởng/Học viện AI/Dự án & Cơ hội/Premium/Chương trình Affilate + nhãn
+"GÓC TIẾN BỘ"/Hành trình của tôi) — cả 12 file
+(`TrangChuClient`/`DuAnCoHoiClient`/`HocVienAiClient`/`CkosDocumentClient`/
+`CollectionDetailClient`/`CategoryDetailClient`/`LessonDetailClient`/
+`SolarGroupClient`/`OhanaClient`/`CacMoHinhAffilateClient`/
+`AffilateSanGiaoDichClient`/`DigiuClient`) khớp CHÍNH XÁC danh sách canonical
+(mỗi file chỉ thiếu đúng mục trang hiện tại của chính nó trong kết quả grep
+— vì mục đó render dạng active/không qua `go()`, không phải thiếu thật) —
+0 lệch, không cần sửa gì.**
+
+**`route-context.ts`/`module-agent-map.ts`/`href-map.ts`/
+`companion-portal-knowledge.prompt.ts`** — grep xác nhận 0 tham chiếu còn
+sót tới 12 route Portal 1.0 đã xoá ở Giai đoạn 10 (`practice`/`origin`/
+`affiliate-hub`/`achievements`/`earn`/`services`/`start-here`/
+`personal-brand`/`ai-academy`/`experts`/`student-success`/`updates`).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint src/app/v2
+src/components/v2 src/app/portal/premium` sạch, `npx vitest run` 495/495
+pass, `rm -rf .next && npm run build` sạch (route `/v2/premium/[courseId]/hoc`
+mới xuất hiện đúng, không route nào khác bị ảnh hưởng). Smoke-test qua
+`next start` (Supabase chưa cấu hình, Portal tự công khai theo fallback có
+sẵn): `/v2/premium/openclaw/hoc` (course id thật) trả `200`, 0 lỗi log
+server ngoài cảnh báo workspace-root có sẵn từ trước.
+
+**Chưa tự test được:** click-through qua UI thật (ô tìm kiếm trả kết quả
+thật, bấm vào từng loại xác nhận đích đúng; thẻ khoá học ở Trang chủ dẫn
+đúng `/v2/premium/[courseId]/hoc` mới) với tài khoản đăng nhập + Supabase
+thật — Founder tự test trên Preview URL.
+
+**Tiếp theo:** Đợt 2 — Tính trung thực dữ liệu (NO-FAKE-DATA).

@@ -21,7 +21,15 @@ function findFirstViewable(sections: LiveCourseSection[], owned: boolean): LiveC
  * sẵn bài học xem được đầu tiên (đã mua → bài đầu tiên; chưa mua → bài
  * xem thử đầu tiên nếu có) để trang không trống khi vừa vào.
  */
-export function CourseLearnClient({ sections, owned }: { sections: LiveCourseSection[]; owned: boolean }) {
+export function CourseLearnClient({
+  sections,
+  owned,
+  purchaseHref = "/portal/premium",
+}: {
+  sections: LiveCourseSection[];
+  owned: boolean;
+  purchaseHref?: string;
+}) {
   const firstViewable = findFirstViewable(sections, owned);
   const [selectedLessonId, setSelectedLessonId] = useState<number | null>(firstViewable?.id ?? null);
 
@@ -91,7 +99,7 @@ export function CourseLearnClient({ sections, owned }: { sections: LiveCourseSec
               </p>
             </div>
             <Link
-              href="/portal/premium"
+              href={purchaseHref}
               className="rounded-lg bg-brand-blue px-5 py-2.5 text-sm font-bold text-white transition hover:opacity-90"
             >
               Mua khoá học này →
