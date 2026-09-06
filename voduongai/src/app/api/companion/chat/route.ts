@@ -8,6 +8,7 @@ import { buildPublicChatResponse } from "@/ai/runtime/public-chat-response";
 import type { RuntimeConversation } from "@/ai/runtime/runtime-context";
 import { publishedCatalogProvider } from "@/ai/catalog/catalog-provider";
 import { getCompanionMissionContext } from "@/lib/portal/live-companion-mission";
+import { COMPANION_PORTAL_KNOWLEDGE_V2 } from "@/ai/prompts/companion-portal-knowledge.prompt";
 
 /**
  * Companion Chat MVP — API DUY NHẤT gửi/nhận tin nhắn thật ở
@@ -53,6 +54,14 @@ import { getCompanionMissionContext } from "@/lib/portal/live-companion-mission"
  * Publish ở `/portal/su-menh-companion`, thay vì persona chung chung
  * trước đây. Ảnh hưởng CẢ `/portal/companion` (1.0) lẫn `/v2/companion`
  * (2.0) — cả 2 gọi chung route này (Single Source of Truth).
+ *
+ * PORTAL 2.0, GIAI ĐOẠN 9 — Companion nổi (Widget), "Companion phải nắm rõ
+ * và hiểu rõ nhất để định hướng cho người dùng": truyền thêm hằng số tĩnh
+ * `COMPANION_PORTAL_KNOWLEDGE_V2` (bản đồ route/tính năng THẬT đã xây ở
+ * `/v2/*`, xem `ai/prompts/companion-portal-knowledge.prompt.ts`) làm tham
+ * số thứ 6 của `buildCompanionPrompt()` — khác `missionContext` (đọc DB,
+ * Admin-editable), khối này do người viết code duy trì, không đổi theo
+ * từng request nên không cần round-trip Supabase riêng.
  */
 
 const FRIENDLY_AI_ERROR = "Companion chưa thể phản hồi lúc này. Vui lòng thử lại.";
@@ -167,7 +176,14 @@ export async function POST(request: Request) {
     catalog,
   });
 
-  const { prompt } = buildCompanionPrompt(runtimeContext, mentorContext, history, trimmedMessage, missionContext);
+  const { prompt } = buildCompanionPrompt(
+    runtimeContext,
+    mentorContext,
+    history,
+    trimmedMessage,
+    missionContext,
+    COMPANION_PORTAL_KNOWLEDGE_V2
+  );
 
   let replyText = "";
   let isMock = false;

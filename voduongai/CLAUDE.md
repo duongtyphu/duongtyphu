@@ -11137,3 +11137,123 @@ sẵn): đo `getComputedStyle` xác nhận `.mnyt-profile` giờ có
 tưởng, `max-width:1000px`, cùng cơ chế căn giữa) xác nhận hành vi nhất
 quán giữa 2 trang. Chụp ảnh xác nhận trực quan nội dung đã lùi vào đúng
 khoảng cách chuẩn, không còn sát viền.
+
+## Giai đoạn 9 (một phần) — Companion nổi (Widget) Portal 2.0
+
+Founder giao lộ trình 5 bước tiếp theo (Giai đoạn 9 Companion Widget →
+Giai đoạn 10 dọn dẹp → audit toàn diện → sửa Landing Page → thiết kế lại
+Admin 2.0). Bắt đầu Giai đoạn 9. Hỏi qua `AskUserQuestion` về phạm vi
+(MVP đơn giản hay port toàn bộ hệ 1.0) — Founder chọn hướng thứ 3, cụ thể
+hơn cả 2 lựa chọn đưa ra: **"Tận dụng và cải tiến Companion 2.0. Sử dụng
+lại tất cả các tính năng mà companion đã có, cộng thêm nội dung 8 trang
+đã xây, Companion phải hiểu rõ nhất để định hướng người dùng, và có cơ
+chế để Companion tiến hoá/trưởng thành/update mỗi ngày."**
+
+**Phát hiện quan trọng khi audit trước khi build (không suy đoán):**
+Portal 1.0 đã có sẵn `CompanionPresence.tsx` (841 dòng, mount ở
+`PortalShell.tsx`) — hệ thống RẤT đầy đủ (icon kéo-thả, mood engine,
+life-moment/return-after-silence ceremony, proactive thought/story
+matching, contextual nudge, quick panel) nhưng gắn rất sâu vào tín hiệu
+CHỈ 1.0 mới có (`garden-model`/`reflection-meaning` qua `portal-signals.ts`,
+props server-side riêng của `PortalShell`) — port nguyên khối này sẽ là
+việc RẤT lớn, rủi ro hồi quy cao cho 1.0 đang chạy thật.
+
+**Phát hiện thứ 2, giảm rủi ro đáng kể:** `CompanionFloatingChat.tsx` +
+`CompanionChatShell(variant="compact")` (mini chat nổi, Sprint
+EPIC-CS-001) **hoàn toàn route-agnostic** — 2 lời gọi
+`router.push("/portal/companion")` bên trong `CompanionChatShell.tsx` đều
+nằm sau `if (!compact)`, không bao giờ chạy ở chế độ nổi. Tái dùng NGUYÊN
+VẸN cho 2.0, không sửa 1 dòng logic chat nào (chỉ nới lỏng `onOpenSpace`
+từ bắt buộc sang optional — 2.0 không dùng "Không gian Companion", trải
+nghiệm kịch bản cũ chỉ có ở 1.0, đổi kiểu này an toàn vì chỉ có đúng 1
+caller khác, `CompanionPresence.tsx`, luôn truyền hàm thật).
+
+**Quyết định kiến trúc — KHÔNG port `CompanionPresence.tsx` nguyên khối,
+xây 1 thiết kế MỚI gọn hơn cho 2.0** (`CompanionWidget.tsx`), giữ đúng 2
+lớp giá trị cốt lõi Founder yêu cầu ở đợt này: (1) mini chat AI thật —
+tái dùng nguyên `CompanionFloatingChat`; (2) gợi ý theo đúng khu vực đang
+xem ("Contextual Nudge") — tái dùng nguyên `route-context.ts`/
+`nudge-session.ts` (cả 2 đã generic từ trước, chỉ cần THÊM entry `/v2/*`,
+không sửa entry `/portal/*` nào — an toàn tuyệt đối cho 1.0). Mood/
+life-moment/proactive-thought đầy đủ như 1.0 là việc RIÊNG, lớn hơn nhiều
+— chưa làm ở đợt này, cần Founder xác nhận có muốn nâng cấp tiếp không.
+
+**Đã làm:**
+- `src/lib/portal/companion/route-context.ts` — thêm `ROUTE_CONTEXTS_V2`
+  (9 entry: CKOS/Học viện AI/Mỗi ngày một ý tưởng/Dự án & Cơ hội/Premium/
+  Affiliate/Hành trình của tôi/Mục tiêu/Sứ mệnh Companion, mỗi entry
+  `href` trỏ đúng `/v2/*`) + `DEFAULT_CONTEXT_V2`, `getRouteContext()`/
+  `hasContextualNudge()` rẽ nhánh theo tiền tố `/v2/` — 0 thay đổi hành vi
+  cho `/portal/*`.
+- `src/companion/agents/module-agent-map.ts` — thêm 6 prefix `/v2/*` ánh
+  xạ vào ĐÚNG 8 `PortalModule` đã có (không thêm module mới), kể cả khi
+  2.0 đã gộp nhiều khu vực 1.0 vào 1 trang (CKOS+Học viện AI+AI Workspace
+  → `/v2/hoc-vien-ai`; 5 "cửa" Hành trình → `/v2/hanh-trinh-cua-toi`).
+- `src/components/portal/companion/CompanionFloatingChat.tsx` — nới lỏng
+  `onOpenSpace: () => void` → `onOpenSpace?: () => void`.
+- `src/components/v2/companion/CompanionWidget.tsx` (mới) — nút nổi
+  `LivingCore` (Design Lock v1.2, không đụng) góc dưới-phải, click mở
+  `CompanionFloatingChat`; bong bóng gợi ý chủ động (nudge) hiện 1 lần/
+  khu vực/phiên sau 2.6s trễ, có nút "Trò chuyện với Companion →"/"Tắt
+  gợi ý" — tái dùng `nudge-session.ts` (chung 1 khoá `localStorage` với
+  1.0, tắt gợi ý ở 1 bản tắt luôn cả 2, đúng kỳ vọng UX 1 tài khoản).
+  KHÔNG kéo-thả (đơn giản hoá cho v1, khác 1.0) — có thể nâng cấp sau.
+- `src/components/v2/companion/CompanionWidgetGate.tsx` (mới) — Client
+  Component dùng `usePathname()`, loại trừ `/v2/admin`, `/v2/companion`
+  (đã LÀ trang chat đầy đủ), `/v2/checkout`, flipbook
+  (`/v2/su-menh-companion/companion-qua-hinh-anh`), trang in
+  (`/v2/moi-ngay-mot-y-tuong/so-tay-y-tuong`).
+- `src/app/v2/layout.tsx` — mount `CompanionWidgetGate` bọc `{children}`.
+  **Mount Ở ĐÂY, không phải `PortalV2Shell.tsx`** — đây là điểm DUY NHẤT
+  bọc TOÀN BỘ cây `/v2/*`, kể cả 12 trang "hand-copy sidebar" không dùng
+  `PortalV2Shell` (`trang-chu`/`du-an-co-hoi`/`hoc-vien-ai`/4 trang CKOS/
+  5 trang hệ sinh thái) — mount ở `PortalV2Shell.tsx` sẽ bỏ sót 12 trang
+  này, đúng lớp lỗi "quên đồng bộ 1 trong N file hand-copy" đã gặp nhiều
+  lần trong dự án (Cộng đồng AI, sidebar Giai đoạn 12...).
+- **"Companion phải hiểu rõ nội dung 8 trang để định hướng"** —
+  `src/ai/prompts/companion-portal-knowledge.prompt.ts` (mới) —
+  `COMPANION_PORTAL_KNOWLEDGE_V2`, khối text TĨNH (do code duy trì, khác
+  `missionContext` đọc DB) mô tả đúng 11 khu vực `/v2/*` thật đã xây kèm
+  route chính xác, dặn rõ "luôn trỏ `/v2/...`, không bao giờ gợi ý
+  `/portal/...`". `companion-prompt-builder.ts`'s `buildCompanionPrompt()`
+  thêm tham số thứ 6 `portalKnowledgeContext` (optional, mặc định rỗng —
+  không phá hợp đồng cũ/test có sẵn), chèn ngay sau `missionContext`.
+  `route.ts` (`/api/companion/chat`, dùng chung 1.0/2.0) truyền hằng số
+  này vào — ảnh hưởng CẢ `/portal/companion` lẫn `/v2/companion`/widget
+  mới (Single Source of Truth, đúng quy ước xuyên suốt dự án).
+
+**CHƯA làm — "cơ chế Companion tiến hoá/trưởng thành/update mỗi ngày"**
+(Founder yêu cầu, cần xác nhận trước khi build vì đụng schema + là quyết
+định sản phẩm/triết lý, không tự quyết định 1 mình): đề xuất tính "giai
+đoạn tiến hoá hiện tại" từ SỐ LIỆU THẬT hệ thống (vd. tổng tài liệu tri
+thức Published/số học viên Premium/số ngày kể từ khi Portal 2.0 ra mắt)
+thay vì tự bịa hệ XP/level cho nhân vật Companion — phản ánh lên đúng
+"Hành trình tiến hoá" (5 giai đoạn) đã có sẵn ở `/v2/su-menh-companion`
+(hiện tĩnh, chưa đánh dấu giai đoạn nào là "hiện tại"), cộng 1 dòng
+"daily brief" tính số liệu thật mỗi ngày chèn vào prompt để câu trả lời
+tự nhiên phản ánh sự "lớn lên" của hệ thống. Chưa build — chờ Founder xác
+nhận cụ thể tiêu chí/số liệu nào được coi là "tiến hoá" trước khi động
+tới schema.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (8 file mới/sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (mọi
+route `/v2/*` build đúng, không route nào biến mất). Playwright thật qua
+`next start` (Supabase chưa cấu hình, Portal tự công khai theo fallback
+có sẵn): xác nhận nút nổi hiện đúng ở `trang-chu`/`premium`/
+`moi-ngay-mot-y-tuong`/`hoc-vien-ai`/`du-an-co-hoi/digiu` (cả trang dùng
+`PortalV2Shell` lẫn 12 trang hand-copy sidebar), **0 nút nổi** ở
+`/v2/companion` và `/v2/moi-ngay-mot-y-tuong/so-tay-y-tuong` (đúng loại
+trừ); bấm nút → panel chat mở đúng (dialog `aria-label="Companion — trò
+chuyện"` xuất hiện, chào hỏi + 6 gợi ý nhanh + ô nhập liệu render đúng),
+0 lỗi console/page error. `/v2/checkout` (không query hợp lệ) tự
+redirect `/v2/trang-chu` đúng thiết kế route đó — không phải lỗi loại
+trừ widget.
+
+**Chưa tự test được:** trò chuyện thật qua widget với AI Provider/tài
+khoản đăng nhập thật (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/
+API key AI đã nêu nhiều lần) — Founder tự test trên Preview URL: (1) bấm
+nút nổi ở vài trang khác nhau, xác nhận mở đúng, gửi tin nhắn nhận được
+trả lời; (2) xác nhận Companion trả lời đúng khi hỏi "X ở đâu trong
+Portal" (X là 1 tính năng 2.0 thật) — câu trả lời nên trỏ đúng route
+`/v2/*`, không nhắc `/portal/*`; (3) ở vài khu vực có nudge (vd
+`/v2/premium`), đợi ~3s xác nhận bong bóng gợi ý hiện đúng 1 lần/phiên.
