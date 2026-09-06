@@ -86,7 +86,7 @@
 .htct .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit;color:var(--text)}
 .htct .search-box kbd{font-size:11px;color:var(--muted);background:rgba(255,255,255,.1);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
 .htct .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
-.htct .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.htct .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .htct .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .htct .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .htct .icon-btn svg{width:18px;height:18px}
@@ -130,7 +130,7 @@
 .htct .step.current .step-dot{border-color:var(--violet);background:var(--violet-light);color:var(--violet);box-shadow:0 0 0 5px rgba(109,74,255,.12)}
 .htct .step h6{font-size:13px;font-weight:700;margin-bottom:3px;line-height:1.35}
 .htct .step .pct{font-size:12px;font-weight:800;color:var(--muted)}
-.htct .step.done .pct{color:#189a52}
+.htct .step.done .pct{color:#066b4d}
 .htct .step.current .pct{color:var(--violet)}
 .htct .stage-notice{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--violet-light);border-radius:12px;padding:16px 20px;margin-top:20px}
 .htct .stage-notice .left{display:flex;gap:11px;align-items:flex-start}

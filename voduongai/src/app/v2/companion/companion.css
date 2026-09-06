@@ -78,7 +78,7 @@
 .comp .promo button:active{transform:translateY(0) scale(.97)}
 .comp .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
 .comp .topbar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
-.comp .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.comp .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .comp .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .comp .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .comp .icon-btn svg{width:18px;height:18px}
@@ -92,7 +92,7 @@
 .comp .right-col{width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
 .comp .page-head{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .comp .page-head-text h1{font-size:24px;font-weight:800;display:flex;align-items:center;gap:10px}
-.comp .mentor-pill{font-size:11.5px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.comp .mentor-pill{font-size:11.5px;font-weight:700;background:var(--violet-light);color:var(--violet-dark);padding:3px 10px;border-radius:7px}
 .comp .page-head-text p{font-size:14px;color:var(--muted);margin-top:6px}
 .comp .head-bot{width:96px;height:96px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
 .comp .head-bot img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(30,20,80,.25))}
@@ -157,7 +157,7 @@
 .comp .reco-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12.5px;font-weight:600;cursor:pointer}
 .comp .reco-row:last-child{border-bottom:none}
 .comp .reco-row svg{width:16px;height:16px;color:var(--violet);flex-shrink:0}
-.comp .reco-tag{margin-left:auto;font-size:10px;font-weight:800;background:var(--violet-light);color:var(--violet);padding:2px 7px;border-radius:6px;flex-shrink:0}
+.comp .reco-tag{margin-left:auto;font-size:10px;font-weight:800;background:var(--violet-light);color:var(--violet-dark);padding:2px 7px;border-radius:6px;flex-shrink:0}
 .comp .tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .comp .tool-ico{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .comp .tool-ico svg{width:17px;height:17px}

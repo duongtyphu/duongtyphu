@@ -81,7 +81,7 @@
 .dgu .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
 .dgu .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
 .dgu .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
-.dgu .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.dgu .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .dgu .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .dgu .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .dgu .icon-btn svg{width:18px;height:18px}
@@ -89,7 +89,7 @@
 .dgu .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .dgu .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .dgu .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.dgu .profile .plan{font-size:11px;color:#a9822c;font-weight:700}
+.dgu .profile .plan{font-size:11px;color:#7a5c08;font-weight:700}
 .dgu .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
 .dgu .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
 .dgu .right-col{width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
@@ -101,7 +101,7 @@
 .dgu .verify-badge svg{width:11px;height:11px}
 .dgu .profile-info p{font-size:13.5px;color:var(--muted);margin:6px 0 10px}
 .dgu .tag-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.dgu .p-tag{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet);padding:3px 10px;border-radius:7px}
+.dgu .p-tag{font-size:11px;font-weight:700;background:var(--violet-light);color:var(--violet-dark);padding:3px 10px;border-radius:7px}
 .dgu .p-since{font-size:12px;color:var(--muted)}
 .dgu .profile-actions{display:flex;gap:10px;flex-shrink:0}
 .dgu .act-btn{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;padding:9px 15px;border-radius:9px;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;white-space:nowrap;transition:background .15s}
@@ -164,7 +164,7 @@
 .dgu .fin-row:last-child{border-bottom:none}
 .dgu .fin-row .lbl{font-size:12px;color:var(--muted)}
 .dgu .fin-row .val{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
-.dgu .chg-pill{font-size:10px;font-weight:800;padding:1px 6px;border-radius:5px;background:#e6f7ed;color:#189a52}
+.dgu .chg-pill{font-size:10px;font-weight:800;padding:1px 6px;border-radius:5px;background:#e6f7ed;color:#066b4d}
 .dgu .news-row{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer}
 .dgu .news-row:last-child{border-bottom:none}
 .dgu .news-thumb{width:52px;height:44px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
@@ -198,7 +198,7 @@
 .dgu .empty-hint{font-size:12.5px;color:var(--muted);padding:4px 0}
 /* Chip khoá nhẹ cho nội dung chưa có (video/tài liệu) trong thẻ trang trí —
    cùng cặp màu ".upgrade-btn" đã có sẵn trong CSS gốc. */
-.dgu .doc-lock{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#a9822c;background:#fffaf0;border:1px solid var(--gold);border-radius:7px;padding:3px 9px}
+.dgu .doc-lock{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#7a5c08;background:#fffaf0;border:1px solid var(--gold);border-radius:7px;padding:3px 9px}
 /* CTA card dùng <a> thay <button> khi có link đăng ký thật (cần href) —
    cùng style .cta-card button gốc, chỉ đổi selector tag. */
 .dgu .cta-card a.cta-link-btn{background:#fff;color:var(--violet-dark);border:none;padding:10px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;position:relative;z-index:1;text-decoration:none}

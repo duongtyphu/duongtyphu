@@ -96,7 +96,7 @@
 .aiw .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
 .aiw .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
 .aiw .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
-.aiw .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.aiw .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .aiw .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .aiw .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .aiw .icon-btn svg{width:18px;height:18px}
@@ -148,7 +148,7 @@
 .aiw .sort-select{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 12px;cursor:pointer}
 .aiw .view-toggle{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
 .aiw .view-toggle button{width:34px;height:34px;border:none;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)}
-.aiw .view-toggle button.active{background:var(--violet-light);color:var(--violet)}
+.aiw .view-toggle button.active{background:var(--violet-light);color:var(--violet-dark)}
 .aiw .view-toggle svg{width:15px;height:15px}
 .aiw .proj-row{display:flex;align-items:center;gap:14px;margin-top:10px}
 
@@ -235,15 +235,20 @@
  * BƯỚC D — giới hạn Free "1 workflow mở/tháng, tối đa 3 dự án cùng lúc".
  *
  * Bản thiết kế KHÔNG có trạng thái khoá (mặc định user là Premium) — đây là
- * phần BẮT BUỘC PHẢI THÊM theo lệnh giao. `.limit-badge` dùng lại ĐÚNG cặp
- * màu "Premium" đã có sẵn xuyên suốt bản thiết kế (`.upgrade-btn`/
- * `.upgrade-btn:hover`: `#a9822c` chữ, `#fff3d9` nền) — không thêm hex mới,
- * cùng nguyên tắc đã áp dụng cho `.doc-lock` ở CKOS.
+ * phần BẮT BUỘC PHẢI THÊM theo lệnh giao. `.limit-badge` dùng lại
+ * `#fff3d9` (nền) từ `.upgrade-btn:hover` — không thêm hex mới, cùng
+ * nguyên tắc đã áp dụng cho `.doc-lock` ở CKOS.
+ *
+ * ĐÍNH CHÍNH (Giai đoạn 11, Đợt 3 — audit contrast toàn diện): `color`
+ * gốc `#a9822c` (dưới ngưỡng WCAG AA 4.5:1, cùng bug `.upgrade-btn`) đã
+ * sửa thành `#7a5c08` — khớp giá trị dùng cho `.profile .plan` (badge
+ * nhỏ), khác `.upgrade-btn`'s `#8a6a1f` (nút lớn hơn) — 2 giá trị khác
+ * nhau có chủ đích, xem `affiliate.css`.
  * -------------------------------------------------------------------------- */
-.aiw .limit-badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;background:#fff3d9;color:#a9822c;padding:4px 10px;border-radius:7px;margin-top:8px}
+.aiw .limit-badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:700;background:#fff3d9;color:#7a5c08;padding:4px 10px;border-radius:7px;margin-top:8px}
 .aiw .new-proj.locked{border-color:var(--gold);cursor:default}
 .aiw .new-proj.locked:hover{background:#fff3d9;border-color:var(--gold)}
-.aiw .new-proj.locked .plus{color:#a9822c}
+.aiw .new-proj.locked .plus{color:#7a5c08}
 
 /* MỤC E.3 — trạng thái rỗng trung thực (không có trong bản thiết kế), cùng
    class nhẹ đã dùng ở `he-tri-thuc.css`/`hoc-vien-ai.css`. */

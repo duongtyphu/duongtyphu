@@ -76,14 +76,14 @@
 .bnc .search{flex:1;max-width:640px;position:relative}
 .bnc .search input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-family:inherit}
 .bnc .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
-.bnc .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
+.bnc .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap}
 .bnc .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .bnc .icon-btn svg{width:18px;height:18px}
 .bnc .icon-btn .badge{position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;border-radius:8px;padding:1px 5px}
 .bnc .profile{display:flex;align-items:center;gap:9px}
 .bnc .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .bnc .profile .who{font-size:13px;font-weight:600}
-.bnc .profile .plan{display:inline-block;background:#fef3c7;color:#92720a;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
+.bnc .profile .plan{display:inline-block;background:#fef3c7;color:#7a5c08;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
 .bnc .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
 .bnc .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:20px}
 .bnc .right-col{width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
@@ -117,7 +117,7 @@
 .bnc .memory-row .ico svg{width:14px;height:14px}
 .bnc .memory-row .txt{font-size:12.5px;line-height:1.4}
 .bnc .memory-row .meta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;gap:8px;align-items:center}
-.bnc .memory-row .tag{background:#fef3c7;color:#92720a;font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:auto;flex-shrink:0}
+.bnc .memory-row .tag{background:#fef3c7;color:#7a5c08;font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px;margin-left:auto;flex-shrink:0}
 .bnc .topic-row{display:flex;flex-direction:column;gap:6px;padding:9px 0;border-bottom:1px solid var(--line)}
 .bnc .topic-row:last-child{border-bottom:none}
 .bnc .topic-top{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:600}

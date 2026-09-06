@@ -81,7 +81,7 @@
 .cma .search-box input{flex:1;border:none;outline:none;background:none;font-size:13px;font-family:inherit}
 .cma .search-box kbd{font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 6px}
 .cma .topbar-right{display:flex;align-items:center;gap:16px;margin-left:auto}
-.cma .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.cma .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .cma .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .cma .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .cma .icon-btn svg{width:18px;height:18px}
@@ -89,7 +89,7 @@
 .cma .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .cma .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .cma .profile .who{font-size:13px;font-weight:600;line-height:1.25}
-.cma .profile .plan{font-size:11px;color:#a9822c;font-weight:700}
+.cma .profile .plan{font-size:11px;color:#7a5c08;font-weight:700}
 .cma .content{padding:24px 28px;display:flex;flex-direction:column;gap:22px}
 .cma .page-head h1{font-size:26px;font-weight:800}
 .cma .page-head p{font-size:14px;color:var(--muted);margin-top:6px}
@@ -124,10 +124,10 @@
 .cma .link-row input:focus{border-color:var(--violet)}
 .cma .link-save{background:var(--violet);color:#fff;border:none;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:filter .15s,transform .15s}
 .cma .link-save:hover{filter:brightness(1.1);transform:translateY(-1px)}
-.cma .saved-note{font-size:10.5px;color:#189a52;font-weight:700;display:none;align-items:center;gap:4px}
+.cma .saved-note{font-size:10.5px;color:#066b4d;font-weight:700;display:none;align-items:center;gap:4px}
 .cma .saved-note svg{width:11px;height:11px}
 .cma .saved-note.show{display:flex}
-.cma .go-btn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--violet);border:1px solid var(--violet-light);border-radius:8px;padding:8px;background:var(--violet-light);text-decoration:none}
+.cma .go-btn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--violet-dark);border:1px solid var(--violet-light);border-radius:8px;padding:8px;background:var(--violet-light);text-decoration:none}
 .cma .go-btn:hover{background:#e2d9ff}
 .cma [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
 .cma [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
