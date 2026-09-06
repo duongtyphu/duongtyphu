@@ -86,6 +86,13 @@ const nextConfig: NextConfig = {
       // mục CKOS), không được redirect đè lên.
       { source: "/v2/he-tri-thuc", destination: "/v2/hoc-vien-ai", permanent: true },
       { source: "/v2/ai-workspace", destination: "/v2/hoc-vien-ai", permanent: true },
+      // Giai đoạn 10 (dọn dẹp Portal 2.0) — 3 route Portal 1.0 vốn đã là
+      // stub `redirect()` (Academy Reset / Community Campus Reconstruction)
+      // nay xoá hẳn page.tsx, thăng redirect lên tầng route config để
+      // link/bookmark cũ vẫn chuyển hướng đúng thay vì 404.
+      { source: "/portal/personal-brand", destination: "/portal/hocvienai", permanent: true },
+      { source: "/portal/ai-academy", destination: "/portal/hocvienai", permanent: true },
+      { source: "/portal/experts", destination: "/portal/congdongai", permanent: true },
     ];
   },
 };
