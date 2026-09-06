@@ -11614,16 +11614,23 @@ code đơn thuần, cần xác nhận riêng trước khi xoá):
   ở đợt 2 cho `practice`/`origin`; `affiliate-hub` cũng chưa từng được
   thêm vào menu chính, chỉ có 1 banner CTA từ trang hệ sinh thái
   `lam-affilate`, xem dưới).
-- `src/components/admin/AdminSidebar.tsx` — 3 icon mapping cho
-  `/admin/duan-cohoi/affiliate-hub-sections`/`affiliate-products`/
-  `affiliate-hub-top-products` (`Route`/`ShoppingBag`/`Award`) — GIỮ
-  NGUYÊN, vì đây là icon cho trang ADMIN quản lý dữ liệu (vẫn còn hoạt
-  động, không phụ thuộc route Portal `affiliate-hub` đã xoá) — chỉ Portal
-  UI hiển thị nội dung đó bị xoá, Admin CRUD vẫn giữ nguyên (dữ liệu
-  Supabase không xoá, để Founder tự quyết định dùng lại sau nếu cần).
-- `src/lib/admin/nav.ts` — 3 entry Admin (`affiliate-hub-sections`/
-  `affiliate-products`/`affiliate-hub-top-products`) — GIỮ NGUYÊN, cùng
-  lý do trên.
+- **Đính chính (khớp đúng phạm vi uỷ quyền gốc "affiliate-hub (Portal
+  1.0 route + Admin CRUD, recently built with real Supabase data)"):**
+  Admin CRUD của Affiliate Hub CŨNG ĐÃ XOÁ CÙNG ĐỢT NÀY, không chỉ riêng
+  route Portal — 3 trang Admin
+  (`src/app/admin/(dashboard)/duan-cohoi/{affiliate-hub-sections,
+  affiliate-products,affiliate-hub-top-products}/page.tsx`) +
+  `src/lib/portal/live-affiliate-hub.ts` (data-fetching layer dùng
+  chung Portal/Admin) đã xoá. `src/lib/admin/nav.ts` (3 entry "Affiliate
+  Hub — ..." dưới nhóm "Dự án & Cơ hội"), `src/components/admin/AdminSidebar.tsx`
+  (3 icon mapping `Route`/`ShoppingBag`/`Award` + 2 import không còn
+  dùng), và `dashboard/page.tsx`'s `TABLE_FOR_HREF` (3 dòng
+  `affiliate_hub_sections`/`affiliate_products`/`affiliate_hub_top_products`)
+  đã dọn theo — cả 3 file này nằm trong danh sách " M" (modified,
+  unstaged) từ trước khi đợt này bắt đầu, tức phần sửa đã có sẵn từ 1
+  turn trước khi bị ngắt bởi compaction, chỉ chưa được `git add`/commit
+  — đợt này xác nhận lại đúng nội dung sửa rồi stage+commit cùng lúc,
+  không tự ý sửa thêm gì khác.
 - `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — xoá khối
   `GemCard` CTA "Affiliate Hub — hướng dẫn thực chiến" (trong nhánh
   `structureType === "affiliate-list"`, chỉ ảnh hưởng trang
@@ -11672,9 +11679,12 @@ deletion cần thiết** cho 3 module này.
 `affiliate_products`, `affiliate_hub_top_products`) — GIỮ NGUYÊN, không
 xoá dữ liệu.** Đúng nguyên tắc chung của dự án (không xoá dữ liệu
 Supabase song song với xoá code UI nếu không có chỉ đạo riêng) — dữ liệu
-vẫn còn nguyên, Admin CRUD (`/admin/duan-cohoi/affiliate-hub-*`) vẫn quản
-lý được bình thường, chỉ không còn trang Portal nào hiển thị nội dung đó
-cho người dùng cuối.
+vẫn còn nguyên trên Supabase, nhưng **không còn UI nào (cả Portal lẫn
+Admin) đọc/ghi 3 bảng này nữa** sau đợt này (xem đính chính "Admin CRUD
+CŨNG ĐÃ XOÁ" ở trên) — 3 bảng trở thành dữ liệu mồ côi có chủ đích, giữ
+lại để Founder tự quyết định khôi phục UI sau này nếu cần, không phải
+để "vẫn quản lý được bình thường" như bản nháp đầu của mục này từng ghi
+nhầm.
 
 **Verify:** `npx tsc --noEmit` sạch, `npx eslint src` sạch (0 lỗi, 18
 warning có sẵn từ trước — không phát sinh mới), `npx vitest run` 495/495
