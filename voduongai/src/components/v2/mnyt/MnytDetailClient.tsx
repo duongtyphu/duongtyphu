@@ -318,8 +318,10 @@ export function MnytDetailClient({
   const handleJournalBlur = useCallback(() => {
     if (!journalDirty.current) return;
     journalDirty.current = false;
-    void saveMnytJournalEntry(topic.id, journalText);
-  }, [topic.id, journalText]);
+    // "Ghi chú của bạn" đồng bộ sang My Story (memory_capsules) — cần tên ý
+    // tưởng để capsule có tiêu đề nhận diện được (xem `syncMnytJournalToMyStory()`).
+    void saveMnytJournalEntry(topic.id, journalText, isVi ? topic.title : topic.titleEn || topic.title);
+  }, [topic.id, journalText, isVi, topic.title, topic.titleEn]);
 
   const handleReportOutdated = useCallback(async () => {
     setReported(true);

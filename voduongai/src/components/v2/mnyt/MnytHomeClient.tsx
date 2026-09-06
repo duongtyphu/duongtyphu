@@ -452,8 +452,11 @@ export function MnytHomeClient({
                 onMouseLeave={() => setHoverNode(null)}
                 onPointerDown={(e) => e.stopPropagation()}
                 style={{
-                  width: completedSet.has(node.id) ? 16 : 12,
-                  height: completedSet.has(node.id) ? 16 : 12,
+                  // Kích thước qua CSS variable (không hardcode px) — cho phép
+                  // `@media (max-width: 719px)` thu nhỏ chấm trên di động, xem
+                  // `.mnyt-home-globe-wrap` trong moi-ngay-mot-y-tuong.css.
+                  width: completedSet.has(node.id) ? "var(--mnyt-node-size-done)" : "var(--mnyt-node-size)",
+                  height: completedSet.has(node.id) ? "var(--mnyt-node-size-done)" : "var(--mnyt-node-size)",
                   background: node.color,
                   boxShadow: `0 0 6px ${node.color}`,
                   opacity: 1,

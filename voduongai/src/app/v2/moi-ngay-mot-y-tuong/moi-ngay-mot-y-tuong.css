@@ -141,6 +141,18 @@
   background-color: revert;
   opacity: revert;
 }
+/* Tailwind Preflight đặt `appearance:button` cho `<button>` (fix border-radius
+ * trên iOS Safari) — nhưng giữ nguyên "appearance" native khiến trình duyệt
+ * tự vẽ khung/nền theo theme hệ điều hành, ĐÈ LÊN mọi `background`/`border`
+ * màu tuỳ chỉnh CSS khai báo (kể cả `!important`) — đây chính là nguyên
+ * nhân "lỗi bảng màu hiển thị" ở các CTA (Tiếp/Hoàn thành/Yêu thích/Thẻ
+ * chia sẻ/Chia sẻ...). Mọi `<button>` trong trang này đều tự khai màu nền/
+ * viền/bo góc riêng qua CSS nên không cần appearance gốc — tắt hẳn để CSS
+ * toàn quyền kiểm soát, đúng cách reset chuẩn cho nút tuỳ biến hoàn toàn. */
+.mnyt button {
+  appearance: none;
+  -webkit-appearance: none;
+}
 .mnyt ::placeholder {
   color: revert;
   opacity: revert;
@@ -1968,6 +1980,19 @@
    * (200px→240px→288px).
    */
   --mnyt-globe-r-dust: min(288px, calc((100vw - 80px) / 2 / 1.5));
+  /*
+   * `--mnyt-node-size`/`--mnyt-node-size-done` — đường kính (px) của mỗi
+   * chấm ý tưởng (`.mnyt-home-globe-node`, 446 chấm) — giá trị mặc định
+   * khớp đợt "tăng gấp đôi" trước (12px/16px). Founder yêu cầu riêng CHO
+   * MÀN HÌNH DI ĐỘNG: giảm nhỏ lại để 446 chấm không tạo cảm giác lấn áp/
+   * rối mắt trên quả cầu vốn đã bị KẸP nhỏ lại theo bề rộng viewport hẹp
+   * (`--mnyt-globe-r`) — nhiều chấm to chen chúc trên 1 mặt cầu nhỏ là
+   * nguyên nhân chính gây rối mắt. Dùng biến CSS (thay vì hằng số JS) để
+   * `@media` bên dưới ghi đè được — style inline trong `MnytHomeClient.tsx`
+   * chỉ tham chiếu `var(--mnyt-node-size...)`, không hardcode px.
+   */
+  --mnyt-node-size: 12px;
+  --mnyt-node-size-done: 16px;
   position: relative;
   height: 440px;
   perspective: 1400px;
@@ -1984,6 +2009,16 @@
 @media (min-width: 1024px) {
   .mnyt .mnyt-home-globe-wrap {
     height: 760px;
+  }
+}
+@media (max-width: 719px) {
+  .mnyt .mnyt-home-globe-wrap {
+    /* Founder yêu cầu riêng: 446 chấm ý tưởng nhỏ lại trên di động (quả
+     * cầu cũng đã nhỏ hơn ở màn hình hẹp, xem `--mnyt-globe-r`) — về gần
+     * đúng kích thước TRƯỚC đợt "tăng gấp đôi" (8px/6px), giữ nguyên
+     * desktop 16px/12px. */
+    --mnyt-node-size: 6px;
+    --mnyt-node-size-done: 8px;
   }
 }
 .mnyt .mnyt-home-globe-preview {
@@ -2998,6 +3033,7 @@
   transform: translateY(0);
 }
 .mnyt .mnyt-detail-fav-btn {
+  background: transparent !important;
   border-color: rgba(251, 191, 36, 0.4) !important;
   color: var(--amber) !important;
 }
@@ -3009,17 +3045,19 @@
   background: rgba(251, 191, 36, 0.16) !important;
 }
 .mnyt .mnyt-detail-share-btn {
+  background: transparent !important;
   border-color: rgba(103, 232, 249, 0.35) !important;
   color: var(--cyan-light) !important;
 }
 .mnyt .mnyt-detail-outline-btn {
+  background: transparent !important;
   border-color: rgba(231, 229, 240, 0.2) !important;
   color: var(--text) !important;
 }
 .mnyt .mnyt-detail-outline-btn:hover {
   transform: translateY(-2px);
   border-color: rgba(231, 229, 240, 0.45) !important;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.05) !important;
 }
 .mnyt .mnyt-detail-another-btn {
   background: linear-gradient(135deg, var(--violet), var(--violet-deep)) !important;

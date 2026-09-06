@@ -160,6 +160,10 @@ type CorkNote = {
   type: CorkNoteType;
   typeLabel: string;
   title: string;
+  /** Nội dung phụ hiển thị dưới `title` (vd. "Ghi chú của bạn" đồng bộ từ
+   * "Mỗi ngày một ý tưởng" — `title` = tên ý tưởng, `description` = ghi
+   * chú thật user viết) — chỉ 1 số loại note có, tuỳ chọn. */
+  description?: string;
   meta?: string;
   removable?: { capsuleId: string };
 };
@@ -392,6 +396,7 @@ export function MyStoryBook({
       type: "capsule" as const,
       typeLabel: KIND_LABEL[c.kind],
       title: c.title,
+      description: c.description,
       meta: formatDate(c.occurredAt),
       removable: { capsuleId: c.id },
     })),
@@ -526,6 +531,11 @@ export function MyStoryBook({
                             <div className={`${caveat.className} text-xl leading-tight`} style={{ color: style.text }}>
                               {note.title}
                             </div>
+                            {note.description && (
+                              <div className={`${caveat.className} mt-1.5 text-base leading-snug opacity-80`} style={{ color: style.text }}>
+                                {note.description}
+                              </div>
+                            )}
                             {note.meta && (
                               <div className="mt-2.5 text-[11px] font-semibold" style={{ color: style.label }}>
                                 {note.meta}

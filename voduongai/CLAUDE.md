@@ -10960,3 +10960,143 @@ hiện tại sẽ tự hiện lại `1` freeze ngay lần đăng nhập/hoàn th
 đầu tiên của tháng mới; (2) màu đáp án đúng ở Trắc nghiệm (mọi vị trí:
 bước Trắc nghiệm chính, Áp dụng, Tình huống) hiện đúng viền xanh lá đậm
 `#34d399` (trước đó nhạt hơn/pha màu chữ) khi chọn đúng.
+
+## BUG THẬT đã sửa — 3 CTA "Yêu thích"/"Thẻ chia sẻ"/"Chia sẻ" hiện hộp
+## màu xám/be nguyên bản trình duyệt thay vì trong suốt + đồng bộ "Ghi chú
+## của bạn" sang My Story + thu nhỏ 446 chấm ý tưởng trên di động
+
+Founder báo 4 việc cùng lúc: (1) lỗi màu ở chuỗi CTA "quiz → Tiếp → Hoàn
+thành → Yêu thích/Thẻ chia sẻ/Chia sẻ"; (2) hỏi "Ghi chú của bạn" lưu ở
+đâu, muốn kết nối + hiển thị ở "My Story"; (3) trang "Hồ sơ" báo tràn khắp
+trang; (4) 446 chấm ý tưởng quay quanh quả cầu cần nhỏ lại trên di động.
+
+### 1 — BUG THẬT (đã dựng devtest + Playwright để xác nhận bằng ảnh chụp
+thật, không chỉ đọc code): 3 nút hiện hộp màu SAI khi KHÔNG hover/active
+
+Route devtest tạm (`/devtest-mnyt-cta`, xoá ngay sau khi xác nhận + build
+sạch lại) dựng đúng markup+class thật của khối "Done screen" — chụp ảnh
+`next start` (production build, loại trừ nghi ngờ "chỉ lỗi dev-mode")
+xác nhận: 3 nút "☆ Yêu thích" (chưa active)/"🖼 Thẻ chia sẻ"/"Chia sẻ" hiện
+hộp NỀN ĐẶC màu be/cyan-nhạt/trắng — hoàn toàn lệch với ý đồ mockup (nền
+TRONG SUỐT, chỉ viền màu nổi trên nền tối `#0a0b12`).
+
+**Root cause (đọc CSSOM qua CDP `CSS.getMatchedStylesForNode` + đối chiếu
+`getComputedStyle`):** `.mnyt .mnyt-detail-fav-btn`/`-share-btn`/
+`-outline-btn` (`moi-ngay-mot-y-tuong.css`) chỉ khai `border-color`/`color`
+`!important` — KHÔNG khai `background` nào cho trạng thái mặc định (chỉ
+`[data-active="true"]` của fav-btn và `:hover` của outline-btn có
+background). "Điều chỉnh 6" (revert Preflight, dòng ~130-143) áp
+`background-color: revert` cho MỌI `<button>` trong `.mnyt` — khi KHÔNG
+có rule nào khác của TÁC GIẢ khai `background`, `revert` đưa thẳng về
+màu nền TRÌNH DUYỆT GỐC cho nút (`ButtonFace`, be/xám nhạt tuỳ theme hệ
+điều hành) — đúng hộp màu Founder thấy. Mockup gốc KHÔNG gặp lỗi này vì
+mọi nút custom trong file tĩnh LUÔN khai `background:` tường minh (kể cả
+khi là `transparent`) — bản port React đã bỏ sót đúng 3 khai báo này.
+
+**Đã sửa** — thêm `background: transparent !important;` vào base rule
+của cả 3 lớp (`fav-btn`/`share-btn`/`outline-btn`), thêm `!important` cho
+`background` trong `.mnyt-detail-outline-btn:hover` (trước thiếu, sẽ bị
+`background:transparent !important` mới thêm ở base đè mất lúc hover).
+Verify lại bằng screenshot: cả 3 nút giờ đúng trong suốt, lộ nền tối phía
+sau, viền/màu chữ giữ nguyên đúng mockup (amber/cyan-light/text).
+
+**Lưu ý cho các đợt CSS khác của trang này:** đây là 1 LỚP LỖI có thể lặp
+lại ở BẤT KỲ `<button>` nào trong `.mnyt` KHÔNG khai `background` tường
+minh (do "Điều chỉnh 6" revert áp dụng toàn cục) — nếu phát hiện thêm nút
+nào hiện màu xám/be lạ, kiểm tra ĐÚNG nguyên nhân này trước (thiếu khai
+`background`), không suy đoán sang hướng khác (đã tốn nhiều công sức thử
+sai theo hướng `appearance`/cascade layers trước khi tìm đúng — 2 hướng
+đó KHÔNG phải nguyên nhân, dù ban đầu rất giống).
+
+**Quiz gate "Tiếp"/"Hoàn thành"** — đã kiểm tra kỹ (ảnh chụp cả 2 trạng
+thái gate/mở khoá): KHÔNG có bug tương tự — nút LUÔN khai `background`
+tường minh (gradient tím ở trạng thái mở, cùng gradient + `opacity:0.4`
+CSS ở trạng thái khoá) nên không bao giờ rơi vào "revert" — chỉ là 1 khác
+biệt thẩm mỹ nhỏ so với mockup (mockup dùng nền phẳng
+`rgba(139,92,246,0.3)` cho trạng thái khoá thay vì gradient làm mờ), KHÔNG
+sửa vì không phải bug, chỉ là chi tiết thẩm mỹ không ảnh hưởng chức năng.
+
+### 2 — "Ghi chú của bạn" lưu ở đâu + kết nối sang My Story
+
+**Trả lời câu hỏi:** lưu trong bảng `mnyt_journal_entries` (per-topic,
+last-write-wins, qua `saveMnytJournalEntry()`) — TRƯỚC ĐÂY hoàn toàn tách
+biệt, không hiện ở bất kỳ đâu ngoài đúng trang chi tiết ý tưởng đó.
+
+**Đã kết nối sang My Story** (`memory_capsules`, đọc bởi
+`useMemoryCapsules()`/`MyStoryBook.tsx` — cả 2 cửa "Hành trình của tôi"):
+`saveMnytJournalEntry()` giờ nhận thêm tham số `topicTitle`, sau khi lưu
+`mnyt_journal_entries` thành công sẽ ĐỒNG BỘ 1 `memory_capsules` row
+(best-effort, lỗi đồng bộ không chặn việc lưu ghi chú chính) —
+`kind:"lesson"` (khớp cách `memory-suggestion.ts` map loại "learning" từ
+Companion chat), `source:"mnyt_journal"`, `story_id: "mnyt-idea:<topicId>"`
+(tiền tố tự đặt, cùng cách `story-memory.ts` dùng cột này tham chiếu
+ngược nguồn) — dùng để TÌM LẠI đúng capsule khi user SỬA note (UPDATE,
+không tạo trùng lặp mỗi lần blur) và XOÁ capsule nếu user xoá sạch nội
+dung (giữ My Story khớp đúng trạng thái note hiện tại). `title` = tên ý
+tưởng, `description` = nội dung ghi chú thật.
+
+**Bug phụ phát hiện khi audit `MyStoryBook.tsx`:** variant `"corkboard"`
+(đang dùng ở tab "My Story" trong `/v2/hanh-trinh-cua-toi` — đích hiển
+thị THẬT Founder đang xem) chỉ render `note.title` trên mỗi note ghim,
+KHÔNG có chỗ hiển thị `description` — nghĩa là nếu chỉ thêm dữ liệu như
+trên, ghi chú thật (description) sẽ KHÔNG hiện ra ở corkboard (chỉ hiện
+đúng ở variant "book" cũ, `/portal/story` 1.0, nơi đã có sẵn khối render
+`c.description`). Đã thêm field `description` vào `CorkNote` + render 1
+dòng chữ viết tay (cùng font Caveat, opacity 80%) dưới `title` khi có —
+tối thiểu xâm lấn (field optional, mọi note khác không set field này
+không đổi hiển thị).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` sạch, `npx vitest run`
+495/495 pass, `rm -rf .next && npm run build` sạch.
+
+**Chưa tự test được:** lưu ghi chú thật qua tài khoản đăng nhập, xác nhận
+xuất hiện đúng trên "My Story" (giới hạn sandbox không có
+`SUPABASE_SERVICE_ROLE_KEY`/tài khoản thật đã nêu nhiều lần) — Founder tự
+kiểm tra: viết 1 ghi chú ở bước Tổng kết 1 ý tưởng bất kỳ, mở tab
+"My Story" (`/v2/hanh-trinh-cua-toi`), xác nhận note hiện đúng trong nhóm
+"Ký ức tự lưu" với tên ý tưởng + nội dung ghi chú; sửa lại note đó, xác
+nhận KHÔNG tạo note trùng (chỉ cập nhật note cũ); xoá sạch nội dung note,
+xác nhận note biến mất khỏi My Story.
+
+### 3 — Trang "Hồ sơ" báo tràn khắp trang — KHÔNG tái hiện được, cần thêm thông tin
+
+Đã audit kỹ CSS (`mnyt-profile-*`, `mnyt-archive-*`) — không tìm thấy
+`min-width`/kích thước cố định nào có thể gây tràn. Đã dựng 2 kịch bản
+test bằng Playwright: (1) route thật `/v2/moi-ngay-mot-y-tuong/ho-so`
+(sandbox không cấu hình Supabase → Portal tự công khai, trạng thái trống/
+chưa đăng nhập) ở 11 mốc viewport (320-1280px); (2) route devtest tạm
+dựng `MnytProfileClient` với dữ liệu MẪU đầy đủ (6 ý tưởng yêu thích, tên
+dài, hook dài — để có cái gì đó "tràn" nếu bug thật liên quan tới nội
+dung) ở 9 mốc viewport (320-900px). **CẢ 2 kịch bản đều KHÔNG phát hiện
+`scrollWidth > viewport` ở BẤT KỲ mốc nào** — không tái hiện được bug.
+
+**Chưa tìm ra nguyên nhân cụ thể** — có thể do dữ liệu THẬT của tài khoản
+Founder có đặc điểm riêng chưa mô phỏng được trong sandbox (ảnh đại diện
+đã upload, tên rất dài, số liệu streak/level lớn bất thường, hoặc trình
+duyệt/thiết bị cụ thể). **Cần Founder gửi ảnh chụp màn hình cụ thể** (kèm
+loại thiết bị/trình duyệt nếu có) để xác định chính xác phần tử nào đang
+tràn — không tự đoán sửa khi chưa xác nhận được hiện tượng thật, tránh
+sửa nhầm phần không liên quan.
+
+### 4 — 446 chấm ý tưởng nhỏ lại trên di động
+
+`.mnyt-home-globe-node`'s kích thước (12px/16px, đã "tăng gấp đôi" đợt
+trước theo yêu cầu khác) chuyển từ hằng số JS sang 2 biến CSS
+`--mnyt-node-size`/`--mnyt-node-size-done` (khai trên `.mnyt-home-globe-wrap`,
+cùng cách `--mnyt-globe-r` đã dùng) — `MnytHomeClient.tsx`'s style inline
+giờ tham chiếu `var(--mnyt-node-size...)` thay vì số cứng. Thêm
+`@media (max-width: 719px)` ghi đè về `6px`/`8px` (gần đúng kích thước
+TRƯỚC đợt "tăng gấp đôi") — quả cầu vốn đã tự co nhỏ trên màn hình hẹp
+(`--mnyt-globe-r` kẹp theo `100vw`), 446 chấm to bằng nhau chen chúc trên
+1 mặt cầu nhỏ là nguyên nhân chính gây cảm giác rối mắt — thu nhỏ chấm cho
+tương xứng tỉ lệ, giữ nguyên 16px/12px ở desktop (`min-width:720px` trở
+lên, không đổi).
+
+**Verify:** `npx tsc --noEmit`/`npx eslint` sạch, `npx vitest run`
+495/495 pass, `rm -rf .next && npm run build` sạch.
+
+**Chưa tự test được:** xem trực tiếp trên thiết bị di động thật (sandbox
+không có thiết bị thật, chỉ verify qua đọc CSS logic — biến số/media
+query đã đúng cú pháp và không xung đột breakpoint nào khác) — Founder tự
+xác nhận trên điện thoại thật, 446 chấm giờ có cảm giác gọn gàng/dễ nhìn
+hơn.
