@@ -11812,4 +11812,61 @@ thật, bấm vào từng loại xác nhận đích đúng; thẻ khoá học �
 đúng `/v2/premium/[courseId]/hoc` mới) với tài khoản đăng nhập + Supabase
 thật — Founder tự test trên Preview URL.
 
-**Tiếp theo:** Đợt 2 — Tính trung thực dữ liệu (NO-FAKE-DATA).
+### Đợt 2 — Tính trung thực dữ liệu (NO-FAKE-DATA)
+
+Quét toàn bộ `/v2/*` tìm nội dung bịa/số liệu giả/claim lỗi thời (fake
+review count, testimonial giả, % cố định không tính từ dữ liệu, avatar
+chữ cái đầu giả, "đang xây dựng" cho tính năng đã xong...). Phần lớn lớp
+này đã được audit rất kỹ ở nhiều đợt trước (Premium rework, Affiliate,
+DigiU/SolarGroup...) — đợt này tìm phần CÒN SÓT.
+
+**2 vấn đề thật, đã sửa cả 2 — cùng 1 nguyên nhân gốc: docblock/nội dung
+không được cập nhật sau khi "Mỗi ngày một ý tưởng" hoàn thiện (446 ý
+tưởng/35 lĩnh vực/100 thuật ngữ, 10 view, đã xong từ lâu):**
+
+1. **`TrangChuClient.tsx` — thẻ "Mỗi ngày một ý tưởng" ở "Khám phá
+   nhanh"** vẫn ghi `"Trái tim của Portal — kết nối tới mọi mục khác.
+   Đang được xây dựng."` — SAI SỰ THẬT, tính năng đã hoàn thiện đầy đủ từ
+   lâu. Đổi sang `"Kho ý tưởng thực chiến theo từng lĩnh vực — học, lưu
+   và áp dụng ngay mỗi ngày."` (không cite số cụ thể — nhất quán với các
+   thẻ láng giềng, đều mô tả định tính).
+
+2. **`PremiumClient.tsx` — thiếu hẳn perk "Mỗi ngày một ý tưởng" trong cả
+   2 khối "Vì sao nên nâng cấp Premium?"/"Quyền lợi dành riêng cho Premium
+   Member".** Docblock cũ (đợt "Rework thứ 2") tự ghi lý do KHÔNG thêm:
+   "route `/v2/moi-ngay-mot-y-tuong` hiện vẫn là placeholder 'đang xây
+   dựng'... viết 'quyền lợi đầy đủ' là bịa" — đúng tại THỜI ĐIỂM VIẾT
+   nhưng đã LỖI THỜI, tính năng hoàn thiện từ trước khi đợt Premium rework
+   đó bắt đầu. Query trực tiếp `premium_perks` (Supabase MCP) xác nhận
+   thêm: 16 dòng hiện có đều `order` 2-9 (8 cặp guest/member) — `order:1`
+   bị BỎ TRỐNG, đúng dấu hiệu 1 vị trí đã "chừa sẵn" cho perk này từ đầu.
+   Đã thêm 2 dòng `perk_guest_mnyt`/`perk_member_mnyt` (`order:1`, icon
+   `book` — có sẵn trong `ICON_MAP` của `PremiumPerksGrid.tsx`, chưa dòng
+   nào dùng tới trước đó) qua Supabase MCP, nội dung trích đúng số liệu đã
+   xác minh (446/35/100, xem mục "Task #1/#12" đầu file này) — không bịa
+   số mới. Cập nhật lại docblock `PremiumClient.tsx` phản ánh đúng trạng
+   thái đã sửa.
+
+**Đã kiểm tra kỹ, không phát hiện vấn đề mới (đều là nội dung thật/đã
+audit đúng từ trước):** `DigiuClient.tsx`'s "Hơn 3,2 triệu người theo
+dõi"/"Hơn 100.000 khách hàng..." — docblock xác nhận "literal Founder
+cấp" (dữ liệu thật Founder cung cấp trực tiếp, không phải Supabase
+nhưng có nguồn), không phải bịa. `OhanaClient.tsx`'s roadmap "dự kiến ra
+mắt Q3/2026"... — nội dung roadmap THẬT của bên thứ ba (Ohana/Astronixa),
+đã verify qua `astronixa.com` ở đợt trước, không phải nội dung tự đoán —
+ngoài phạm vi sửa (không phải lỗi code, là roadmap bên ngoài). 0 fake
+review count/testimonial/avatar giả/% cố định không tính từ dữ liệu tìm
+thấy trong lượt grep rộng qua toàn bộ `src/app/v2`.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint src/app/v2/trang-chu
+src/app/v2/premium` sạch, `npx vitest run` 495/495 pass, `rm -rf .next &&
+npm run build` sạch. Xác nhận 2 dòng `premium_perks` mới qua Supabase MCP
+(`status='Published'`, đúng `order:1`).
+
+**Chưa tự test được:** xem trực quan 2 perk mới trên `/v2/premium` với
+Supabase thật (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/
+trình duyệt tương tác được đã nêu nhiều lần) — Founder tự xác nhận trên
+Preview URL: cả 2 trạng thái (guest/member) hiện đúng perk "Mỗi ngày một
+ý tưởng" ở VỊ TRÍ ĐẦU TIÊN trong lưới quyền lợi.
+
+**Tiếp theo:** Đợt 3 — Contrast/accessibility toàn diện.
