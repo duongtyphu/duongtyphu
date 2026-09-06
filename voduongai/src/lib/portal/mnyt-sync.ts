@@ -39,12 +39,52 @@ function addDaysUtc(dateStr: string, delta: number): string {
   d.setUTCDate(d.getUTCDate() + delta);
   return d.toISOString().slice(0, 10);
 }
+// Khớp `monthKey()` mockup gốc (dòng 2455: `${d.getFullYear()}-${d.getMonth()}`,
+// tháng 0-index) — chỉ đổi sang giờ UTC cho nhất quán với `todayUtc()`.
+function monthKeyUtc(): string {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${d.getUTCMonth()}`;
+}
 
 async function requireMnytMember() {
   const user = await getCachedAuthUser();
   if (!user) return null;
   const supabase = await getSupabaseServer();
   return { user, supabase };
+}
+
+// Nạp lại freeze count, tự "làm mới hạn mức" đúng 1 lần mỗi tháng lịch —
+// khớp mockup gốc (dòng 1888-1899: `if (saved.freezeMonth === mk) giữ
+// nguyên; else freezeCount = 1, freezeMonth = mk`). Ghi lại NGAY nếu tháng
+// đã đổi, để lần đọc sau (kể cả không hoàn thành ý tường nào) cũng thấy
+// đúng freezeCount mới — không đợi tới `completeMnytTopic()` mới cập nhật.
+async function loadAndRefillFreeze(
+  supabase: Awaited<ReturnType<typeof getSupabaseServer>>,
+  userId: string,
+): Promise<{ streak: number; xp: number; freezeCount: number; lastCompletedDate: string | null }> {
+  const { data: row } = await supabase
+    .from("mnyt_user_state")
+    .select("streak, xp, freeze_count, freeze_month, last_completed_date")
+    .eq("member_id", userId)
+    .maybeSingle();
+
+  const currentMonth = monthKeyUtc();
+  const streak = (row?.streak as number | undefined) ?? 0;
+  const xp = (row?.xp as number | undefined) ?? 0;
+  const lastCompletedDate = (row?.last_completed_date as string | null | undefined) ?? null;
+
+  if (!row) return { streak, xp, freezeCount: 1, lastCompletedDate };
+
+  if (row.freeze_month === currentMonth) {
+    return { streak, xp, freezeCount: (row.freeze_count as number | undefined) ?? 1, lastCompletedDate };
+  }
+
+  // Sang tháng mới (hoặc dòng cũ chưa từng có `freeze_month`) — làm mới về 1.
+  await supabase
+    .from("mnyt_user_state")
+    .update({ freeze_count: 1, freeze_month: currentMonth, updated_at: new Date().toISOString() })
+    .eq("member_id", userId);
+  return { streak, xp, freezeCount: 1, lastCompletedDate };
 }
 
 // ---------------------------------------------------------------------------
@@ -92,8 +132,8 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
   }
   const { user, supabase } = ctx;
 
-  const [stateRes, completionsRes, favsRes, badgesRes, journalRes, checklistRes, prefsRes, savedRes, srsRes, submissionsRes] = await Promise.all([
-    supabase.from("mnyt_user_state").select("streak, xp, freeze_count, last_completed_date").eq("member_id", user.id).maybeSingle(),
+  const [freezeState, completionsRes, favsRes, badgesRes, journalRes, checklistRes, prefsRes, savedRes, srsRes, submissionsRes] = await Promise.all([
+    loadAndRefillFreeze(supabase, user.id),
     supabase.from("mnyt_completions").select("topic_id").eq("member_id", user.id),
     supabase.from("mnyt_favorites").select("topic_id").eq("member_id", user.id),
     supabase.from("mnyt_badges").select("badge_id, earned_at").eq("member_id", user.id),
@@ -123,10 +163,10 @@ export async function getMnytStateBundle(): Promise<MnytStateBundle> {
 
   return {
     signedIn: true,
-    streak: (stateRes.data?.streak as number | undefined) ?? 0,
-    xp: (stateRes.data?.xp as number | undefined) ?? 0,
-    freezeCount: (stateRes.data?.freeze_count as number | undefined) ?? 0,
-    lastCompletedDate: (stateRes.data?.last_completed_date as string | null | undefined) ?? null,
+    streak: freezeState.streak,
+    xp: freezeState.xp,
+    freezeCount: freezeState.freezeCount,
+    lastCompletedDate: freezeState.lastCompletedDate,
     completedIds: (completionsRes.data ?? []).map((r) => r.topic_id as string),
     favoriteIds: (favsRes.data ?? []).map((r) => r.topic_id as string),
     badges: (badgesRes.data ?? []).map((r) => ({ id: r.badge_id as string, earnedAt: r.earned_at as string })),
@@ -168,16 +208,12 @@ export async function completeMnytTopic(topicId: string): Promise<CompleteMnytTo
 
   const isFirstTime = (inserted?.length ?? 0) > 0;
 
-  const { data: stateRow } = await supabase
-    .from("mnyt_user_state")
-    .select("streak, xp, freeze_count, last_completed_date")
-    .eq("member_id", user.id)
-    .maybeSingle();
+  const stateRow = await loadAndRefillFreeze(supabase, user.id);
 
-  let streak = stateRow?.streak ?? 0;
-  let xp = stateRow?.xp ?? 0;
-  let freezeCount = stateRow?.freeze_count ?? 0;
-  const lastDate = (stateRow?.last_completed_date as string | null) ?? null;
+  let streak = stateRow.streak;
+  let xp = stateRow.xp;
+  let freezeCount = stateRow.freezeCount;
+  const lastDate = stateRow.lastCompletedDate;
   const today = todayUtc();
 
   if (isFirstTime) {
@@ -190,7 +226,7 @@ export async function completeMnytTopic(topicId: string): Promise<CompleteMnytTo
       else if (lastDate === twoDaysAgo && freezeCount > 0) { streak += 1; freezeCount -= 1; }
       else streak = 1;
     }
-    await supabase.from("mnyt_user_state").upsert({ member_id: user.id, streak, xp, freeze_count: freezeCount, last_completed_date: today, updated_at: new Date().toISOString() });
+    await supabase.from("mnyt_user_state").upsert({ member_id: user.id, streak, xp, freeze_count: freezeCount, freeze_month: monthKeyUtc(), last_completed_date: today, updated_at: new Date().toISOString() });
   }
 
   // Huy hiệu — chỉ tính lại khi có thay đổi thật (lần đầu hoàn thành).
