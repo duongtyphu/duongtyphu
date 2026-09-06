@@ -4707,6 +4707,19 @@
 /* === View Hồ sơ (8) — mockup dòng 323-427. avatar+tên editable, 4 thẻ
  * chỉ số, so sánh tháng, "ước tính minh hoạ" streak percentile, tổng kết
  * tuần, lưới yêu thích (tái dùng .mnyt-archive-card). === */
+/* Bug đã sửa — `.mnyt-profile` (root section, mockup dòng 324) là view DUY
+ * NHẤT trong 9 view thiếu rule max-width/margin/padding "trang giữa" mà mọi
+ * view khác đều có (`.mnyt-archive`/`.mnyt-path`/`.mnyt-glossary`/
+ * `.mnyt-badges`/`.mnyt-calendar`/`.mnyt-fields`/`.mnyt-flashcard`, hoặc
+ * `.mnyt-view` dùng chung cho Home) — khiến nội dung Hồ sơ sát viền hơn hẳn
+ * các trang khác. Giá trị khớp đúng mockup gốc (dòng 324):
+ * `max-width:900px;margin:0 auto;padding:10px clamp(16px,4.5vw,40px) 100px`. */
+.mnyt .mnyt-profile {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 10px clamp(16px, 4.5vw, 40px) 100px;
+  animation: fadeUp 0.5s ease both;
+}
 .mnyt .mnyt-profile-title {
   font-family: var(--font-mnyt-display, "Space Grotesk"), sans-serif;
   font-size: 26px;

@@ -11100,3 +11100,40 @@ không có thiết bị thật, chỉ verify qua đọc CSS logic — biến s�
 query đã đúng cú pháp và không xung đột breakpoint nào khác) — Founder tự
 xác nhận trên điện thoại thật, 446 chấm giờ có cảm giác gọn gàng/dễ nhìn
 hơn.
+
+## BUG THẬT đã sửa — trang Hồ sơ thiếu padding "trang giữa", nội dung sát viền
+
+Founder gửi ảnh chụp trang `/v2/moi-ngay-mot-y-tuong/ho-so`, báo "Lỗi hiện
+thị trang giữa". Không xác định được lỗi từ ảnh (không thấy tràn ngang rõ
+ràng) — hỏi lại, Founder làm rõ: không phải overflow, mà là **thiếu
+khoảng cách chuẩn** giữa nội dung và viền "trang giữa" so với các trang
+khác trong cùng tính năng.
+
+**Root cause (đối chiếu trực tiếp CSS 9 view, không suy đoán):** mỗi view
+gốc trong `moi-ngay-mot-y-tuong.css` đều tự định nghĩa
+`max-width`/`margin:0 auto`/`padding:10px clamp(16px,4.5vw,40px) 100px`
+cho chính root section của nó (`.mnyt-archive`/`.mnyt-path`/
+`.mnyt-glossary`/`.mnyt-badges`/`.mnyt-calendar`/`.mnyt-fields`/
+`.mnyt-flashcard`), hoặc dùng lớp dùng chung `.mnyt-view` (Home) — **CHỈ
+`.mnyt-profile` (root `<section>` của `MnytProfileClient.tsx`) thiếu hẳn
+rule này** — không có class `.mnyt-view`, không có rule CSS riêng nào
+định nghĩa max-width/margin/padding cho chính nó. Kết quả: nội dung Hồ sơ
+kế thừa `width:100%` mặc định của cha (`.mnyt-shell`), sát viền hơn hẳn
+8 view còn lại.
+
+Đối chiếu mockup gốc (`Moi Ngay 1 Y Tuong.dc.html`, dòng 324) xác nhận
+đúng giá trị gốc bị thiếu: `max-width:900px;margin:0 auto;padding:10px
+clamp(16px,4.5vw,40px) 100px;animation:fadeUp .5s ease both;` — đã thêm
+đúng 1 rule `.mnyt .mnyt-profile{...}` này vào CSS (khớp byte-for-byte
+mockup), không cần sửa component TSX nào.
+
+**Verify:** `npx tsc --noEmit`/`eslint` sạch, `npx vitest run` 495/495
+pass, `rm -rf .next && npm run build` sạch (route
+`/v2/moi-ngay-mot-y-tuong/ho-so` build đúng). Playwright thật qua `next
+start` (Supabase chưa cấu hình, Portal tự công khai theo fallback có
+sẵn): đo `getComputedStyle` xác nhận `.mnyt-profile` giờ có
+`max-width:900px`, căn giữa đúng (`marginLeft`/`marginRight` bằng nhau,
+78px mỗi bên ở viewport 1280px) — đối chiếu với `.mnyt-archive` (Kho ý
+tưởng, `max-width:1000px`, cùng cơ chế căn giữa) xác nhận hành vi nhất
+quán giữa 2 trang. Chụp ảnh xác nhận trực quan nội dung đã lùi vào đúng
+khoảng cách chuẩn, không còn sát viền.
