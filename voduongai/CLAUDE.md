@@ -11870,3 +11870,112 @@ Preview URL: cả 2 trạng thái (guest/member) hiện đúng perk "Mỗi ngày
 ý tưởng" ở VỊ TRÍ ĐẦU TIÊN trong lưới quyền lợi.
 
 **Tiếp theo:** Đợt 3 — Contrast/accessibility toàn diện.
+
+### Đợt 3 — Contrast/accessibility toàn diện
+
+Rà toàn bộ `/v2/*` (18-19 file CSS hand-copy riêng từng trang, cùng bộ
+biến `--gold`/`--violet`/`--green` lặp lại xuyên suốt do copy từ chung 1
+mockup gốc) tìm cặp màu chữ/nền dưới ngưỡng WCAG AA (4.5:1 chữ thường,
+3:1 chữ lớn/icon non-text), dùng công thức relative-luminance chuẩn (xem
+đầu file này, mục "Key Technical Concepts" của lịch sử phiên).
+
+**Đợt 3 làm qua 4 lượt quét theo TỪNG PATTERN màu (không phải từng
+trang) — vì cùng 1 giá trị hex lỗi bị copy-paste lặp lại ở hàng chục vị
+trí khác nhau xuyên suốt các file, sửa theo pattern hiệu quả hơn hẳn sửa
+từng trang:**
+
+**Lượt 1 — `#a9822c`/`#92720a` (vàng/nâu, badge "Premium"/"Free" và các
+biến thể).** 39 dòng, 18 file — `#a9822c` (3.2-3.6:1, fail) → `#8a6a1f`
+(4.85:1) cho các phần tử cỡ `.upgrade-btn` (nút, padding lớn); `#92720a`
+→ `#7a5c08` (5.6-6.3:1) cho badge nhỏ như `.profile .plan`. Cả 2 đích áp
+dụng đồng nhất theo NGỮ CẢNH kích thước/trọng lượng chữ tại từng vị trí,
+không đổi mù giá trị.
+
+**Lượt 2 — `#189a52` (xanh lá, TEXT-only, không đụng icon).** 4 vị trí
+đổi `color:#189a52` → `#066b4d` (5.9-6.5:1) cho text thuần (`.pct`/
+`.saved-note`/`.chg-pill`) — GIỮ NGUYÊN mọi instance `#189a52` dùng cho
+`svg`/icon container (đã đạt 3:1 non-text threshold ở giá trị gốc, đổi
+thêm là thừa và tạo lệch màu không cần thiết so với icon khác).
+
+**Lượt 3 — `var(--violet)` trên nền `var(--violet-light)` (4.36:1, cận
+ngưỡng, fail chữ thường/nhỏ).** Đây là lượt phức tạp nhất — script đầu
+tiên dùng regex `color:\s*var\(--violet\)(?!-)` KHÔNG anchor theo ranh
+giới tên thuộc tính, nên khớp NHẦM vào đuôi chuỗi `border-color:var(
+--violet)` (vì "border-**color:**var(--violet)" chứa đúng chuỗi con
+"color:var(--violet)"). Đã tự phát hiện lỗi này TRƯỚC KHI verify xong
+(nhờ nhìn lại danh sách 33 dòng đã đổi, thấy `.tkh/.smc/.chk/.chl/.tcp
+.search input:focus` — rõ ràng là rule `:focus` viền input, không phải
+text màu) — dừng lại, đối chiếu lại TỪNG dòng trong số 33 dòng đã đổi
+bằng cách đọc trực tiếp CSS xung quanh (kiểm tra có child `.ico svg{...}`
+hay không để phân biệt icon-container/text) trước khi quyết định giữ hay
+revert, thay vì tin thẳng kết quả script:
+
+- **7 dòng FALSE POSITIVE (border-color, không phải text)** — revert về
+  `border-color:var(--violet)` nguyên trạng: `.aiw .new-proj:hover`,
+  `.chk/.chl/.smc/.tkh/.tcp .search input:focus`, và phần `border-color`
+  của `.htct .step.current .step-dot`.
+- **12 dòng ICON CONTAINER (không phải text hiển thị)** — xác nhận qua
+  child rule `<selector> svg{width:...;height:...}` liền kề (hoặc đọc
+  thẳng JSX khi CSS không đủ rõ, ví dụ `.tcp .journey-badge` — ban đầu
+  tưởng là số/badge chữ vì có `font-size:19px`, nhưng
+  `.tcp .crown svg, .tcp .journey-badge svg{...}` xác nhận đây LÀ icon
+  — và `.sgr .rm-dot` — JSX xác nhận chỉ render SVG checkmark khi
+  `done`, rỗng khi chưa, không bao giờ hiện text) — revert về
+  `color:var(--violet)`, giữ nguyên hài hoà với icon khác cùng trang (đã
+  đạt 3:1 non-text threshold ở giá trị gốc):
+  `.aiw .act-row .ico`, `.bnc .memory-row/.action-tile .ico`, phần
+  `color` của `.htct .step.current .step-dot`, `.htct .link-row .ico`,
+  `.ckos .folder-card.new-folder .plus`, `.ckos .doc-row/.pop-row .ico`,
+  `.hva .feat-item/.skill-chip .ico`, `.pm .community-links/.stat-mini
+  .ico`, `.sgr .rm-dot`, `.tcp .journey-badge`.
+- **14 dòng TRUE POSITIVE (text thật, đúng cần sửa)** — giữ nguyên
+  `color:var(--violet-dark)` (5.69:1): `.aiw .view-toggle button.active`,
+  `.comp .mentor-pill/.reco-tag`, `.asg/.cma .go-btn` (nhãn nút),
+  `.dgu .p-tag`, `.duo .pf-tag`, `.oha .p-tag/.rm-dot` (rm-dot ở đây
+  render số "1"-"4" dạng text, xác nhận qua JSX `{r.dot}`, KHÁC bản chất
+  `.sgr .rm-dot` ở trên — cùng tên class nhưng 2 cách render khác nhau ở
+  2 file khác nhau, phải kiểm tra riêng từng file, không suy từ tên
+  class), `.sgr .p-tag`, `.ckos .doc-tag/.rm-num` (rm-num render
+  `{stage.stageOrder}`, xác nhận qua JSX), `.comp .status-pill.active`
+  (thực ra ở `muc-tieu.css`, dùng chung prefix `.comp` với
+  `companion.css` — 2 file khác nhau cùng định nghĩa rule cho cùng 1
+  class prefix).
+
+**Lượt 4 (spot-check bổ sung, không tìm thấy lỗi mới):** `.htct .profile
+.plan{color:var(--gold)}` — nghi ngờ ban đầu (không có nền riêng, chỉ đặt
+`color` trực tiếp) hoá ra AN TOÀN: tính tay contrast `#e2b23c` (gold) trên
+`--bg:#0a0a0f` (nền tối của toàn bộ `.htct`, kế thừa từ `.topbar{background:
+var(--bg)}`) cho ratio ~10:1 — vượt xa cả ngưỡng AAA, không cần sửa.
+
+**Bug tự phát hiện và sửa trong lúc chạy 3 script Python liên tiếp (đã
+sửa trước khi verify, không phải để lọt qua):** cả 3 lượt regex ban đầu
+match theo GIÁ TRỊ HEX/BIẾN, không phân biệt code vs. comment — Lượt 1
+vô tình đổi hex trong 3 dòng comment lịch sử (giải thích các fix TRƯỚC
+đó, không liên quan) ở `premium.css`/`he-tri-thuc.css`/`ai-workspace.css`
+— đã đọc lại qua `git diff` ngay sau khi chạy script (trước khi verify),
+phát hiện và viết lại đúng nội dung comment gốc (không xoá, chỉ sửa lại
+câu chữ cho khớp sự thật kỹ thuật đã có từ trước).
+
+**File sửa:** toàn bộ 18 file CSS `/v2/*` liệt kê ở 3 lượt trên (không
+file `.tsx`/`.ts` nào bị đụng — thuần đổi giá trị màu trong CSS tĩnh).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx vitest run` 495/495 pass,
+`rm -rf .next && npm run build` sạch (0 lỗi/warning mới, mọi route build
+đúng — bao gồm route mới `/v2/premium/[courseId]/hoc` từ Đợt 1). Đối
+chiếu `git diff` sau khi revert xác nhận: 19 dòng false-positive/icon
+quay lại giá trị BYTE-FOR-BYTE với `git HEAD` (không còn diff nào cho các
+dòng đó — bằng chứng revert đúng, không sót sai khác biệt định dạng), chỉ
+2 dòng có lệch khoảng trắng nhỏ (`trang-chu.css`, do script không giữ
+đúng style "space sau dấu hai chấm" của file gốc) đã tự sửa lại khớp
+100% format cũ trước khi verify cuối.
+
+**Chưa tự test được:** xem trực quan qua trình duyệt thật với dữ liệu
+Supabase Production (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/
+trình duyệt tương tác được đã nêu nhiều lần) — không cần thiết cho đợt
+này vì mọi giá trị contrast đã tính bằng công thức WCAG chuẩn trực tiếp
+trên giá trị hex/biến CSS thật (không phụ thuộc dữ liệu runtime) — nhưng
+Founder nên tự xác nhận cảm giác thẩm mỹ tổng thể (nhiều nút/badge/icon
+đổi màu cùng lúc trên hàng chục trang) không có gì "lệch tông" ở đâu đó
+mắt người phát hiện được mà công thức số không bắt được.
+
+**Tiếp theo:** Đợt 4 — Responsive/mobile toàn diện.

@@ -78,7 +78,7 @@
 .smc .search input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-family:inherit;margin:0}
 .smc .search input:focus{outline:2px solid var(--violet-light);border-color:var(--violet)}
 .smc .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted)}
-.smc .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#a9822c;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
+.smc .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .smc .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .smc .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}
 .smc .icon-btn svg{width:18px;height:18px}
@@ -86,7 +86,7 @@
 .smc .profile{display:flex;align-items:center;gap:9px;cursor:pointer}
 .smc .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .smc .profile .who{font-size:13px;font-weight:600;line-height:1.25;margin:0}
-.smc .profile .plan{display:inline-block;margin-top:1px;background:#fef3c7;color:#92720a;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
+.smc .profile .plan{display:inline-block;margin-top:1px;background:#fef3c7;color:#7a5c08;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px}
 /* Chỉ 1 khối con (SuMenhCompanionContent, không tách center-col/right-col
    như các trang Companion khác — trang này không có cột phải) — không cần
    flex, chỉ giữ padding khớp mức đệm chung `.content` của các trang shell

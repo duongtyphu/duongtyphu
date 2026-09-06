@@ -165,7 +165,7 @@
 .tcp .search input { width: 100%; padding: 10px 14px 10px 38px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); font-size: 13.5px; font-family: inherit }
 .tcp .search input:focus { outline: 2px solid var(--violet-light); border-color: var(--violet) }
 .tcp .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: var(--muted) }
-.tcp .upgrade-btn { display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--gold); color: #a9822c; background: #fffaf0; padding: 9px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; transition: transform .15s, box-shadow .15s, background .15s }
+.tcp .upgrade-btn { display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--gold); color: #8a6a1f; background: #fffaf0; padding: 9px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap; transition: transform .15s, box-shadow .15s, background .15s }
 .tcp .upgrade-btn:hover { background: #fff3d9; transform: translateY(-1px); box-shadow: 0 6px 14px rgba(226, 178, 60, .35) }
 .tcp .upgrade-btn:active { transform: translateY(0) scale(.97) }
 .tcp .icon-btn { position: relative; width: 38px; height: 38px; border-radius: 9px; border: none; background: var(--bg); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text) }
@@ -173,7 +173,7 @@
 .tcp .profile { display: flex; align-items: center; gap: 9px; cursor: pointer }
 .tcp .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #8b7bde, #5f4bc9); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px }
 .tcp .profile .who { font-size: 13px; font-weight: 600; line-height: 1.25 }
-.tcp .profile .plan { display: inline-block; margin-top: 1px; background: #fef3c7; color: #92720a; font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 6px }
+.tcp .profile .plan { display: inline-block; margin-top: 1px; background: #fef3c7; color: #7a5c08; font-size: 10.5px; font-weight: 700; padding: 1px 7px; border-radius: 6px }
 
 .tcp .content { display: flex; gap: 22px; padding: 24px 28px; align-items: flex-start }
 .tcp .center-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 26px }
@@ -274,7 +274,7 @@
 /* Right column cards */
 .tcp .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px }
 .tcp .greet h3 { font-size: 15px; font-weight: 800; margin-bottom: 8px }
-.tcp .premium-pill { display: inline-block; background: #fef3c7; color: #92720a; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 7px; margin-bottom: 14px }
+.tcp .premium-pill { display: inline-block; background: #fef3c7; color: #7a5c08; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 7px; margin-bottom: 14px }
 .tcp .greet-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); margin-bottom: 4px }
 .tcp .greet-row b { color: var(--text); font-weight: 700 }
 .tcp .greet button { width: 100%; margin-top: 12px; background: var(--violet); color: #fff; border: none; padding: 10px; border-radius: 9px; font-weight: 700; font-size: 13px; cursor: pointer; transition: transform .15s, box-shadow .15s, filter .15s }
