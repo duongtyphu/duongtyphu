@@ -11585,3 +11585,121 @@ chỉ đọc code): 3 redirect mới trả đúng `308` + `location` đúng đí
 8 route "giữ lại" (`roadmap`/`checklists`/`case-studies`/`saved`/
 `ai-assistant`/`congdongai`/`practice`/`origin`) vẫn `200` — xác nhận 0
 collateral damage.
+
+## Giai đoạn 10, đợt 3 (cuối cùng) — xoá `practice`/`origin`/`affiliate-hub`
+
+Founder xác nhận xoá 3 route Portal 1.0 còn lại từ đợt 2 (đã cố ý dừng
+lại ở đó vì cả 3 đều là TÍNH NĂNG THẬT đang hoạt động, không phải dead
+code đơn thuần, cần xác nhận riêng trước khi xoá):
+
+- **`practice`** — có form thật (`PracticeSubmissionForm.tsx`, đọc/ghi
+  bảng `submissions` Supabase thật).
+- **`origin`** — "Origin Room", route cố ý ẩn (`robots:{index:false}`,
+  gate `isFounder()`), đọc Identity Layer/Core Memory Engine thật.
+- **`affiliate-hub`** — hub "Affiliate Hub" (hướng dẫn thực chiến làm
+  Affiliate Marketing), vừa được nối dây Portal+Admin đầy đủ ở đợt
+  "Affiliate Hub — nối dây Portal + Admin" (mục trên), có 3 bảng Supabase
+  thật + Admin CRUD thật.
+
+**Đã xoá:**
+- `src/app/portal/practice/` (route + `PracticeSubmissionForm.tsx`).
+- `src/app/portal/origin/` (route).
+- `src/app/portal/affiliate-hub/` (route hub + `[slug]/` route chi
+  tiết).
+
+**Cascading cleanup (đã rà toàn bộ, không chỉ xoá thư mục route):**
+- `src/lib/portal/hubs.ts` — không có entry nào trỏ 3 route này trong
+  `portalNavSections` (đã audit trước khi xoá — cả 3 đều KHÔNG nằm
+  trong menu Portal chính thức, khớp đúng lý do "0 inbound thật" đã ghi
+  ở đợt 2 cho `practice`/`origin`; `affiliate-hub` cũng chưa từng được
+  thêm vào menu chính, chỉ có 1 banner CTA từ trang hệ sinh thái
+  `lam-affilate`, xem dưới).
+- **Đính chính (khớp đúng phạm vi uỷ quyền gốc "affiliate-hub (Portal
+  1.0 route + Admin CRUD, recently built with real Supabase data)"):**
+  Admin CRUD của Affiliate Hub CŨNG ĐÃ XOÁ CÙNG ĐỢT NÀY, không chỉ riêng
+  route Portal — 3 trang Admin
+  (`src/app/admin/(dashboard)/duan-cohoi/{affiliate-hub-sections,
+  affiliate-products,affiliate-hub-top-products}/page.tsx`) +
+  `src/lib/portal/live-affiliate-hub.ts` (data-fetching layer dùng
+  chung Portal/Admin) đã xoá. `src/lib/admin/nav.ts` (3 entry "Affiliate
+  Hub — ..." dưới nhóm "Dự án & Cơ hội"), `src/components/admin/AdminSidebar.tsx`
+  (3 icon mapping `Route`/`ShoppingBag`/`Award` + 2 import không còn
+  dùng), và `dashboard/page.tsx`'s `TABLE_FOR_HREF` (3 dòng
+  `affiliate_hub_sections`/`affiliate_products`/`affiliate_hub_top_products`)
+  đã dọn theo — cả 3 file này nằm trong danh sách " M" (modified,
+  unstaged) từ trước khi đợt này bắt đầu, tức phần sửa đã có sẵn từ 1
+  turn trước khi bị ngắt bởi compaction, chỉ chưa được `git add`/commit
+  — đợt này xác nhận lại đúng nội dung sửa rồi stage+commit cùng lúc,
+  không tự ý sửa thêm gì khác.
+- `src/app/portal/duan-cohoi/[ecosystemSlug]/page.tsx` — xoá khối
+  `GemCard` CTA "Affiliate Hub — hướng dẫn thực chiến" (trong nhánh
+  `structureType === "affiliate-list"`, chỉ ảnh hưởng trang
+  `lam-affilate`) trỏ `/portal/affiliate-hub` — đây là điểm inbound DUY
+  NHẤT thật sự dẫn tới route vừa xoá, phải gỡ để tránh link chết.
+- `src/components/portal/journey/JourneyHero.tsx` — xoá (0 importer
+  trong toàn `src`, dead code có sẵn từ trước — nhưng có hardcode
+  `href: "/portal/practice"` khiến `route-integrity.test.ts` fail ngay
+  khi `/portal/practice` bị xoá). Đây là cascading dependency BẮT BUỘC
+  phải xử lý (test tự động chặn), không phải scope-creep.
+- `src/components/portal/journey/RelatedActions.tsx` +
+  `src/data/portal/journey-hub.ts` — xoá cả 2 (0 importer trong `src/app`,
+  cùng cụm dead code `journey/` với `JourneyHero.tsx` — `journey-hub.ts`
+  chỉ còn đúng 1 consumer là `RelatedActions.tsx`, và mảng
+  `relatedActions` của nó có 1 entry `ra4: href="/portal/practice"` trỏ
+  route vừa xoá). Không bị `route-integrity.test.ts` bắt (dữ liệu nằm
+  trong object-literal, không phải JSX `href="..."` literal) nhưng đây
+  là dead code thật sự, không có lý do giữ lại code còn trỏ route đã xoá
+  dù không reachable.
+- `src/data/admin/affiliateHub.ts` — xoá (0 importer trong toàn `src`,
+  đã được ghi nhận từ trước trong lịch sử dự án là "tàn dư từ trước đợt
+  dọn admin cũ" — có field `ctaHref: "/portal/affiliate-hub"` trỏ route
+  vừa xoá, nhưng file này vốn đã hoàn toàn không được import ở bất kỳ
+  đâu, không ảnh hưởng gì khi xoá).
+- `src/components/portal/companion/OriginLineWhisper.tsx` — GIỮ NGUYÊN,
+  chỉ có 1 dòng COMMENT (không phải code sống) nhắc `/portal/origin` để
+  giải thích lý do kỹ thuật cần client wrapper riêng — vô hại, không sửa.
+
+**Xác nhận origin's dependencies là shared infrastructure, KHÔNG cascading
+xoá thêm (đã audit qua Grep trước khi xoá, không suy đoán từ tên file):**
+`life-profile.ts`, `founder-identity.ts`, và `identity-layer.ts` (dependency
+gián tiếp qua `founder-identity.ts` — grep riêng `identity-layer` chỉ trả về
+đúng 1 file tham chiếu: `founder-identity.ts`, nghĩa là `identity-layer.ts`
+được giữ sống hoàn toàn qua chuỗi phụ thuộc `founder-identity.ts`, không
+mồ côi) — cả 3 module này đều được dùng bởi các file SỐNG khác ngoài
+`origin/page.tsx`: `src/lib/portal/account-data.ts`,
+`src/components/portal/account/LifeProfileCard.tsx`,
+`src/components/portal/account/AccountContent.tsx` (dùng chung 1.0/2.0),
+`src/app/v2/tai-khoan/TaiKhoanClient.tsx`, và `src/app/portal/layout.tsx`
+— xác nhận qua Grep pattern `life-profile|identity-layer|founder-identity`
+trả về đúng 7 file, trong đó chỉ `origin/page.tsx` (đã xoá) là consumer
+riêng của route này, 6 file còn lại là hạ tầng dùng chung — **0 cascading
+deletion cần thiết** cho 3 module này.
+
+**3 bảng Supabase của Affiliate Hub (`affiliate_hub_sections`,
+`affiliate_products`, `affiliate_hub_top_products`) — GIỮ NGUYÊN, không
+xoá dữ liệu.** Đúng nguyên tắc chung của dự án (không xoá dữ liệu
+Supabase song song với xoá code UI nếu không có chỉ đạo riêng) — dữ liệu
+vẫn còn nguyên trên Supabase, nhưng **không còn UI nào (cả Portal lẫn
+Admin) đọc/ghi 3 bảng này nữa** sau đợt này (xem đính chính "Admin CRUD
+CŨNG ĐÃ XOÁ" ở trên) — 3 bảng trở thành dữ liệu mồ côi có chủ đích, giữ
+lại để Founder tự quyết định khôi phục UI sau này nếu cần, không phải
+để "vẫn quản lý được bình thường" như bản nháp đầu của mục này từng ghi
+nhầm.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint src` sạch (0 lỗi, 18
+warning có sẵn từ trước — không phát sinh mới), `npx vitest run` 495/495
+pass (sau khi xoá `JourneyHero.tsx` — trước đó fail đúng 1 test vì lý do
+đã nêu trên), `rm -rf .next && npm run build` sạch (3 route
+`practice`/`origin`/`affiliate-hub` + route chi tiết `affiliate-hub/[slug]`
+biến mất khỏi build output, không route nào khác bị ảnh hưởng). Smoke-test
+qua `next start` thật: `/portal/practice`/`/portal/origin`/
+`/portal/affiliate-hub` đều `404` đúng (không crash); `/portal/duan-cohoi/digiu`/
+`/portal/duan-cohoi/lam-affilate`/`/portal/checklists`/`/portal/case-studies`/
+`/portal/saved`/`/portal/roadmap`/`/portal/congdongai`/`/` đều `200` —
+xác nhận 0 collateral damage.
+
+**GIAI ĐOẠN 10 (DỌN DẸP PORTAL 2.0) HOÀN TẤT CẢ 3 ĐỢT.** Tiếp theo theo
+lộ trình Founder đã giao: Giai đoạn 11 (audit toàn diện Portal 2.0 —
+trình bày kế hoạch để duyệt trước khi thực hiện, theo đúng chỉ đạo gốc),
+Giai đoạn 12 (điều chỉnh Landing Page khớp Portal 2.0), Giai đoạn 13
+(thiết kế lại Admin quản lý Portal 2.0).
