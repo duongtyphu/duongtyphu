@@ -61,9 +61,6 @@ export const SUPABASE_COLLECTIONS: Record<string, string> = {
   "portal-sections": "portal_sections",
   "portal-welcome": "portal_welcome",
 
-  // Phase 5 — Services (was localStorage-only)
-  services: "services",
-
   // Phase 6 — Admin rebuild: home_cards, projects, founder_profile
   "home-cards": "home_cards",
   projects: "projects",

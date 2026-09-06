@@ -11468,3 +11468,120 @@ tạo link chết hàng loạt, cần 1 kế hoạch riêng (xoá theo cụm + c
 redirect 301 thay vì xoá thẳng để giữ SEO) và Founder xác nhận rõ trước
 khi thực hiện, do rủi ro ảnh hưởng traffic/backlink thật cao hơn hẳn đợt
 1 (dead code nội bộ, 0 rủi ro production).
+
+## Giai đoạn 10, đợt 2 — xoá cụm route Portal 1.0 mồ côi thật
+
+Founder xác nhận tiếp tục: "audit sâu hơn rồi xoá theo cụm". Audit qua
+Agent Explore (lần này KHÔNG dùng `isolation: "worktree"` — tránh lặp lại
+lỗi worktree bị stale đã gặp ở đợt 1) cho 17 route nghi ngờ mồ côi, thu
+thập đủ 6 loại bằng chứng/route (inbound Portal 1.0, inbound Landing Page,
+inbound `/v2`/Admin, có trong `sitemap.ts` hay không, outbound, có
+Server Action/component bị import ngoài route hay không). Đã TỰ RE-VERIFY
+độc lập toàn bộ kết luận "an toàn xoá" bằng grep trực tiếp trên working
+tree (không tin mù báo cáo agent, đúng bài học đợt 1) trước khi xoá bất
+kỳ file nào.
+
+**Xác nhận: cả 17 route đều KHÔNG có trong `src/app/sitemap.ts`** — file
+này có comment tường minh giải thích lý do (`/portal/*` yêu cầu đăng
+nhập, liệt kê trong sitemap chỉ lãng phí crawl budget vì Google sẽ thấy
+redirect) — không route nào trong đợt này có rủi ro mất SEO/index Google.
+
+**Đã xoá 9 route (0 inbound thật ở BẤT KỲ đâu — Portal 1.0/Landing/`/v2`/
+Admin, đã re-verify độc lập qua grep chính xác chuỗi `"/portal/<route>`
+toàn bộ `src`, không chỉ basename):**
+- `achievements`, `earn`, `services`, `start-here` — hub tĩnh/trang liệt
+  kê link, không đọc dữ liệu thật có ý nghĩa, không route nào khác phụ
+  thuộc. `services/page.tsx` kéo theo cascading dead code:
+  `AdminServicesSection.tsx` (component, chỉ dùng ở route này) +
+  `src/data/admin/services.ts` (`servicesSeed`, chỉ dùng bởi component
+  đó) — xoá cả 3 cùng lúc. Cũng xoá dòng `services: "services"` khỏi
+  `SUPABASE_COLLECTIONS` (`supabaseCollections.ts`) — allowlist API
+  generic, không còn consumer nào gọi tới sau khi xoá component.
+- `personal-brand`, `ai-academy` — đã LÀ stub `redirect()` từ trước
+  ("Academy Reset — Product Decision", trỏ `/portal/hocvienai`).
+- `experts` — đã LÀ stub `redirect()` ("Community Campus
+  Reconstruction", trỏ `/portal/congdongai`).
+- `student-success`, `updates` — đã 100% dead code từ trước (redirect
+  301 đã có sẵn ở tầng `next.config.ts`, `page.tsx` chỉ giữ "tham khảo
+  lịch sử" theo đúng docblock cũ) — xoá file không đổi hành vi vì
+  redirect chặn trước khi Next.js kịp render route.
+
+**Bước bắt buộc trước khi xoá 3 route đầu tiên (`personal-brand`/
+`ai-academy`/`experts`) — thăng redirect lên `next.config.ts`.** 3 route
+này KHÔNG phải trang tĩnh vô hại — chúng là stub `redirect()` ĐANG SỐNG,
+tồn tại chính vì lý do "route giữ nguyên, không để 404" (comment gốc tự
+ghi rõ). Nếu chỉ xoá `page.tsx` mà không thêm gì, bookmark/link cũ trỏ
+tới 3 URL này sẽ gặp 404 thay vì chuyển hướng như hiện tại — RE GRESSION
+thật dù route "mồ côi" theo nghĩa graph nội bộ. Đã thêm 3 rule redirect
+tương ứng vào `next.config.ts` (đúng convention đã có sẵn trong chính
+file này — nhiều route cũ khác đã redirect kiểu này từ trước, xem comment
+"IA & Route Localization Refactor v1.0"/"Community Campus
+Reconstruction") TRƯỚC KHI xoá 3 file — giữ nguyên 100% hành vi chuyển
+hướng, chỉ chuyển từ "logic trong page.tsx" sang "rule ở route config".
+
+**KHÔNG xoá 6 route (có inbound thật, xác nhận qua grep):**
+`roadmap` (link từ `hocvienai/page.tsx`, hub cốt lõi), `checklists` (link
+từ `AiSpaceSections.tsx` trong hub `/portal/aiworkspace` + `PortalSearch`
+toàn site + Admin CRUD thật là nơi hiển thị DUY NHẤT), `case-studies`
+(link dày từ nhiều hub CKOS/Học viện AI/Cộng đồng + Admin CRUD thật +
+bảng Supabase thật), `saved` (icon bookmark trên `PortalHeader`, hiển
+thị TOÀN Portal 1.0), `ai-assistant` (nút "Trở lại" trong
+`CompanionSpace.tsx`, 1 phần của widget Companion mounted khắp Portal
+1.0 qua `CompanionPresence`), `congdongai` (xem mục riêng dưới đây).
+
+**`congdongai` — xác nhận chắc chắn KHÔNG mồ côi, dù `/v2/cong-dong-ai`
+đã bị Founder chủ động xoá hẳn ở "Giai đoạn 7".** Route này hiện là mục
+menu chính thức (`PortalSidebar.tsx`/`hubs.ts`'s `portalNavSections`,
+nhãn "Cộng đồng"), đích hội tụ của 4 rule redirect cũ trong
+`next.config.ts`, và có mặt trong `PortalHeader.tsx` (icon chuông tin
+tức). Grep xác nhận **0 tham chiếu code sống** nào trong toàn bộ `/v2/*`
+tới "cộng đồng" — 9 kết quả grep tìm được đều nằm trong comment lịch sử
+giải thích lý do Giai đoạn 7 đã xoá bản 2.0. Kết luận: `/portal/congdongai`
+hiện là nơi DUY NHẤT còn phục vụ tính năng "cộng đồng" cho toàn hệ
+thống — xoá nó sẽ mất hẳn tính năng, không phải dọn dẹp trùng lặp.
+
+**`achievements` — xác nhận KHÔNG phải hệ thống huy hiệu thật, an toàn
+xoá.** Đọc trực tiếp `page.tsx` xác nhận đây chỉ là 1 hub tĩnh 2 link,
+KHÔNG đọc bất kỳ dữ liệu badge/huy hiệu nào. Hệ huy hiệu THẬT (`badges`/
+`user_badges`) chỉ được `/admin/premium/badges` (Admin CRUD) và
+`/v2/hanh-trinh-cua-toi`/`/v2/premium` (hiển thị cho người dùng, qua
+`live-journey-overview.ts`) dùng — 2.0 đã có trang xem huy hiệu riêng,
+không phụ thuộc route này. Tên gọi trùng ("Thành tựu") nhưng nội dung
+hoàn toàn không liên quan.
+
+**2 route CHƯA xoá, cần Founder xác nhận riêng (khác pure dead-code —
+đây là tính năng THẬT vẫn hoạt động, chỉ mất hết link, có thể đang được
+truy cập trực tiếp/bookmark):**
+- **`practice`** — có form thật (`PracticeSubmissionForm.tsx`) đọc/ghi
+  bảng `submissions` Supabase thật. 2 "inbound" tìm thấy
+  (`JourneyHero.tsx`, `journey-hub.ts` qua `RelatedActions.tsx`) đã xác
+  nhận CHÍNH các file đó cũng là dead code (0 importer) — nên về mặt
+  cấu trúc route này thật sự 0 inbound. Nhưng khác các stub/hub tĩnh đã
+  xoá ở trên, đây là 1 TÍNH NĂNG ĐANG HOẠT ĐỘNG (xem/nộp bài thực hành) —
+  xoá sẽ mất khả năng nộp bài nếu có ai đó vẫn dùng qua URL trực tiếp.
+- **`origin`** — route cố ý ẩn (`robots:{index:false}`, gate
+  `isFounder()`, tên "Origin Room") đọc dữ liệu thật từ Identity Layer/
+  Core Memory Engine (hạ tầng đầu tư công sức lớn, Sprint 18.4/18.9). 0
+  inbound tuyệt đối (kể cả từ chính hệ thống) — đúng kiểu URL chỉ dành
+  cho Founder tự truy cập trực tiếp, không phải bị quên liên kết.
+
+**1 route ngoài phạm vi 17-list, cần Founder quyết định riêng, KHÔNG xếp
+vào cụm nào:** `src/app/portal/affiliate-hub/**` — có 3 bảng Supabase
+thật (seed dữ liệu thật, không rỗng) + Admin CRUD thật (`/admin/duan-cohoi/
+affiliate-hub-*`, đăng ký trong `nav.ts`) — MỚI xây gần đây, không phải
+mồ côi. Cần Founder xác nhận: tính route này là "Portal 2.0" (giữ
+nguyên/có thể cần port sang `/v2` sau này) hay dọn theo lộ trình khác.
+
+**Verify:** `npx tsc --noEmit` sạch (sau khi `rm -rf .next && npm run
+build` để tái tạo `.next/types` — xoá route cũ để lại type-cache cũ,
+đúng lỗi đã gặp nhiều lần trước đó trong dự án), `npx eslint src` sạch (0
+lỗi, 18 warning có sẵn từ trước), `npx vitest run` 495/495 pass, `rm -rf
+.next && npm run build` sạch (9 route biến mất khỏi build output, không
+route nào khác bị ảnh hưởng). Smoke-test qua `next start` thật (không
+chỉ đọc code): 3 redirect mới trả đúng `308` + `location` đúng đích;
+4 route xoá thẳng (`achievements`/`earn`/`services`/`start-here`) trả
+`404` đúng (không crash); `student-success`/`updates` vẫn `308` đúng
+(redirect có sẵn từ trước, không bị ảnh hưởng bởi việc xoá `page.tsx`);
+8 route "giữ lại" (`roadmap`/`checklists`/`case-studies`/`saved`/
+`ai-assistant`/`congdongai`/`practice`/`origin`) vẫn `200` — xác nhận 0
+collateral damage.
