@@ -294,12 +294,67 @@ export async function toggleMnytFavorite(topicId: string): Promise<{ ok: boolean
 // gán (không tin timestamp client gửi lên).
 // ---------------------------------------------------------------------------
 
-export async function saveMnytJournalEntry(topicId: string, content: string): Promise<{ ok: boolean }> {
+// "Ghi chú của bạn" (bước Tổng kết) ĐỒNG BỘ SANG "My Story" (`memory_capsules`,
+// đọc bởi `useMemoryCapsules()`/`MyStoryBook.tsx` — cả 2 cửa "Hành trình của
+// tôi") — Founder yêu cầu riêng: ghi chú per-topic này trước đó CHỈ lưu ở
+// `mnyt_journal_entries` (không hề hiện ở My Story). Khớp theo `story_id`
+// dạng `mnyt-idea:<topicId>` (tiền tố tự đặt, cùng cách `story-memory.ts`
+// dùng cột này để tham chiếu ngược về bản ghi nguồn) — cho phép TÌM LẠI
+// đúng capsule đã tạo cho topic này khi user SỬA note (upsert, không tạo
+// capsule trùng lặp mỗi lần blur), và XOÁ capsule nếu user xoá sạch nội
+// dung note (giữ My Story khớp đúng trạng thái note hiện tại, không để lại
+// capsule "ma"). `kind: "lesson"` khớp đúng cách `memory-suggestion.ts` map
+// loại "learning" từ Companion chat — cùng ngữ nghĩa "điều học được".
+async function syncMnytJournalToMyStory(
+  supabase: Awaited<ReturnType<typeof getSupabaseServer>>,
+  userId: string,
+  topicId: string,
+  topicTitle: string,
+  content: string,
+): Promise<void> {
+  const storyId = `mnyt-idea:${topicId}`;
+  const trimmed = content.trim();
+
+  const { data: existing } = await supabase.from("memory_capsules").select("id").eq("member_id", userId).eq("story_id", storyId).maybeSingle();
+
+  if (!trimmed) {
+    if (existing) await supabase.from("memory_capsules").delete().eq("id", existing.id);
+    return;
+  }
+
+  if (existing) {
+    await supabase
+      .from("memory_capsules")
+      .update({ title: topicTitle, description: trimmed, occurred_at: new Date().toISOString() })
+      .eq("id", existing.id);
+  } else {
+    await supabase.from("memory_capsules").insert({
+      member_id: userId,
+      kind: "lesson",
+      title: topicTitle,
+      description: trimmed,
+      occurred_at: new Date().toISOString(),
+      source: "mnyt_journal",
+      story_id: storyId,
+    });
+  }
+}
+
+export async function saveMnytJournalEntry(topicId: string, content: string, topicTitle: string): Promise<{ ok: boolean }> {
   const ctx = await requireMnytMember();
   if (!ctx) return { ok: false };
   const { error } = await ctx.supabase
     .from("mnyt_journal_entries")
     .upsert({ member_id: ctx.user.id, topic_id: topicId, content, updated_at: new Date().toISOString() }, { onConflict: "member_id,topic_id" });
+  if (!error) {
+    // Best-effort — lỗi đồng bộ My Story không được chặn việc lưu ghi chú
+    // chính (`mnyt_journal_entries` đã lưu thành công ở trên).
+    try {
+      await syncMnytJournalToMyStory(ctx.supabase, ctx.user.id, topicId, topicTitle, content);
+    } catch {
+      // ignore
+    }
+  }
   return { ok: !error };
 }
 
