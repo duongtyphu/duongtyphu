@@ -10888,3 +10888,75 @@ GẤP ĐÔI — hoàn thành 8px→16px, chưa hoàn thành 6px→12px. Giữ ng
 
 **Verify:** `tsc`/`eslint` sạch, `vitest run` 495/495 pass, `rm -rf .next
 && npm run build` sạch.
+
+## Audit 11 mục đối chiếu mockup gốc — 2 bug thật, đã sửa cả 2
+
+Founder yêu cầu audit rất chi tiết (11 mục: 10 view+6 modal, bảng màu,
+font, animation, layout Trang chủ, độ đầy đủ dữ liệu, tương tác, trang in
+Sổ tay, song ngữ, accessibility, 3 thay đổi kiến trúc), đối chiếu trực
+tiếp file+dòng giữa bản triển khai và mockup gốc, không chấp nhận "đã
+xong" mà không có bằng chứng cụ thể. Kết quả: 9/11 mục khớp đúng hoặc có
+sai lệch đã biết/có chủ đích từ trước; đúng 2 lỗi MỚI, chưa từng ghi
+nhận trong lịch sử audit trước đó của tài liệu này — Founder duyệt sửa
+ngay cả 2.
+
+**Bug 1 — màu highlight đáp án đúng ở Trắc nghiệm sai với mockup.**
+`.mnyt-detail-quiz-opt[data-state="correct"]` (`moi-ngay-mot-y-tuong.css`)
+dùng `background: rgba(110, 231, 183, 0.14)` +
+`border-color: rgba(110, 231, 183, 0.5)` — cả 2 dựa trên `#6ee7b7` (đúng
+mã `--green`, nhưng SAI vai trò: mockup dùng `#6ee7b7` cho MÀU CHỮ, không
+phải nền/viền). Mockup gốc (dòng 3031/3048/3089, style tính JS cho quiz
+chính/apply/scenario — cả 3 dùng chung logic) quy định:
+`bg:'rgba(52,211,153,0.12)'` (dựa `#34d399`, không phải `#6ee7b7`) +
+`border:'#34d399'` + `color:'#6ee7b7'`. Đã sửa `background` →
+`rgba(52, 211, 153, 0.12)`, `border-color` → `#34d399` (literal, khớp
+đúng mockup thay vì rgba suy từ biến khác) — `color: var(--green)` giữ
+nguyên (đã đúng từ đầu, đúng `#6ee7b7`). Ảnh hưởng cả 3 vị trí quiz
+(chính/Áp dụng/Tình huống) vì cả 3 dùng chung 1 hàm `renderQuizBlock()`
+trong `MnytDetailClient.tsx`.
+
+**Bug 2 — cơ chế "Freeze" (bảo toàn streak) thiếu logic làm mới hàng
+tháng + sai giá trị mặc định.** Mockup gốc (`freezeCount:1` ở state khởi
+tạo, dòng 1793; `monthKey()`/`freezeMonth` dòng 1888-1899, 2455) cho MỖI
+NGƯỜI DÙNG 1 lượt "đóng băng" streak MIỄN PHÍ MỖI THÁNG LỊCH (tự làm mới
+về 1 khi phát hiện tháng đã đổi so với `freezeMonth` đã lưu) — bản triển
+khai (`mnyt-sync.ts`) đã copy đúng công thức tính streak dùng freeze
+(dòng 190: `else if (lastDate === twoDaysAgo && freezeCount > 0) {
+streak += 1; freezeCount -= 1; }`, khớp mockup dòng 2611) nhưng HOÀN
+TOÀN THIẾU cơ chế làm mới hàng tháng — `freeze_count` mặc định `0`
+(schema Supabase, khác `1` của mockup) và KHÔNG có cột nào lưu tháng
+gần nhất đã làm mới, nên 1 khi dùng hết (`freezeCount=0`) sẽ MÃI MÃI
+không có freeze nào nữa, sai hẳn với thiết kế "làm mới mỗi tháng".
+
+**Đã sửa** — thêm cột `freeze_month` (text, `supabase-mnyt-user-state-freeze-monthly-refill.sql`
+tương đương, áp dụng trực tiếp qua Supabase MCP `apply_migration`:
+`mnyt_user_state_freeze_monthly_refill`) + đổi default `freeze_count` từ
+`0` → `1` (khớp state khởi tạo mockup). Thêm hàm dùng chung
+`loadAndRefillFreeze()` (`mnyt-sync.ts`) — khớp đúng logic
+`monthKey()`/kiểm tra `saved.freezeMonth === mk` của mockup (chỉ đổi
+sang tính theo giờ UTC thay vì giờ máy client, nhất quán với
+`todayUtc()` đã dùng cho streak): đọc `freeze_month` hiện tại, nếu khác
+tháng lịch hiện tại (kể cả `null` — dòng cũ từ trước khi có cột này) thì
+LÀM MỚI NGAY (`freeze_count=1`, cập nhật `freeze_month`) và ghi lại DB
+luôn (không đợi tới lần hoàn thành ý tưởng kế tiếp) — dùng ở CẢ
+`getMnytStateBundle()` (để hiển thị đúng số freeze ngay cả khi user chỉ
+xem, chưa hoàn thành gì) LẪN `completeMnytTopic()` (để tính streak dùng
+đúng freeze đã làm mới). 2 dòng dữ liệu thật hiện có (`freeze_count=0`
+cả 2) không cần backfill tay — sẽ tự làm mới đúng logic ở lần đọc/ghi kế
+tiếp (khớp đúng hành vi "lazy, on-load" của chính mockup gốc, không phải
+chạy 1 script migrate dữ liệu riêng).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (2 file đã sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch
+(toàn bộ route `/v2/moi-ngay-mot-y-tuong/*` build đúng, không route nào
+biến mất/lỗi).
+
+**Chưa tự test được:** hành vi làm mới freeze thật qua UI/thời gian thật
+(cần đợi qua ranh giới tháng lịch thật hoặc giả lập đồng hồ hệ thống,
+sandbox không làm được — chỉ verify được đúng LOGIC qua đọc code + build
+sạch, không chạy được kịch bản "tháng đổi" thật) — Founder tự kiểm tra
+lại sau khi bước sang tháng lịch mới: (1) tài khoản có `freeze_count=0`
+hiện tại sẽ tự hiện lại `1` freeze ngay lần đăng nhập/hoàn thành ý tưởng
+đầu tiên của tháng mới; (2) màu đáp án đúng ở Trắc nghiệm (mọi vị trí:
+bước Trắc nghiệm chính, Áp dụng, Tình huống) hiện đúng viền xanh lá đậm
+`#34d399` (trước đó nhạt hơn/pha màu chữ) khi chọn đúng.
