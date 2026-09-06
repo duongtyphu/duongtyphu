@@ -22,7 +22,9 @@ export function CompanionFloatingChat({
   onOpenSpace,
 }: {
   onClose: () => void;
-  onOpenSpace: () => void;
+  /** Optional — Portal 2.0's `CompanionWidget` không truyền (bỏ hẳn nút "Mở
+      Không gian Companion", trải nghiệm kịch bản cũ chỉ có ở 1.0). */
+  onOpenSpace?: () => void;
 }) {
   const [loading, setLoading] = useState(true);
   const [conversations, setConversations] = useState<CompanionConversationSummary[]>([]);

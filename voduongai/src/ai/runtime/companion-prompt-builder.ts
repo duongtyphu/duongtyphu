@@ -23,6 +23,14 @@
  * SPRINT FIX-R02 — Phần 5: đổi tên tham số/field `knowledgePackage` →
  * `mentorContext` (đúng rename Phần 3), hành vi đọc/ghép prompt giữ
  * nguyên 100%.
+ *
+ * PORTAL 2.0, GIAI ĐOẠN 9 — Companion nổi (Widget): thêm tham số thứ 6
+ * `portalKnowledgeContext` (optional, mặc định rỗng — không phá hợp đồng
+ * cũ) — nội dung TĨNH mô tả các route/tính năng THẬT đã xây ở `/v2/*`
+ * (`COMPANION_PORTAL_KNOWLEDGE_V2`, xem `ai/prompts/companion-portal-
+ * knowledge.prompt.ts`), để Companion "hiểu rõ" toàn bộ sản phẩm 2.0 khi
+ * định hướng người dùng — không phải nội dung Admin-editable như Sứ mệnh
+ * Companion, nên chèn liền sau `missionContext`, trước User Context.
  */
 import { COMPANION_CHAT_SYSTEM_PROMPT_V1 } from "@/ai/prompts/companion-chat.system.prompt";
 import { trimHistoryForContext, type CompanionHistoryItem } from "@/lib/portal/companion-chat";
@@ -35,6 +43,9 @@ export type CompanionPromptResult = {
   /** Portal 2.0, Giai đoạn 2 — nội dung "Sứ mệnh Companion" (6 khối), rỗng
       ("") khi chưa Publish khối nào (xem `live-companion-mission.ts`). */
   missionContext: string;
+  /** Portal 2.0, Giai đoạn 9 — "bản đồ sản phẩm" 2.0 (route/tính năng
+      thật), rỗng khi không truyền (call site cũ/test). */
+  portalKnowledgeContext: string;
   userContext: string;
   knowledgePackageContext: string;
   conversationContext: string;
@@ -121,18 +132,20 @@ export function buildCompanionPrompt(
       không phá vỡ các lời gọi hiện có (test cũ, nơi gọi khác nếu có) —
       "" bị `filter()` loại bỏ nên hành vi/thứ tự các phần còn lại giữ
       nguyên 100% khi không truyền. */
-  missionContext: string = ""
+  missionContext: string = "",
+  portalKnowledgeContext: string = ""
 ): CompanionPromptResult {
   const systemPrompt = COMPANION_CHAT_SYSTEM_PROMPT_V1;
   const userContext = buildUserContext(context);
   const knowledgePackageContext = buildKnowledgePackageContext(mentorContext);
   const conversationContext = buildConversationContext(history, userMessage);
 
-  // Đúng thứ tự Phần 6 (mở rộng Giai đoạn 2): System → Sứ mệnh Companion →
+  // Đúng thứ tự: System → Sứ mệnh Companion → Bản đồ sản phẩm 2.0 →
   // Runtime Context → Knowledge Package → Conversation.
   const prompt = [
     systemPrompt,
     missionContext ? `\n${missionContext}` : "",
+    portalKnowledgeContext ? `\n${portalKnowledgeContext}` : "",
     `\nBối cảnh người học:\n${userContext}`,
     knowledgePackageContext
       ? `\nTri thức tham khảo (đã Publish, đã kiểm tra quyền truy cập):\n${knowledgePackageContext}`
@@ -143,7 +156,15 @@ export function buildCompanionPrompt(
     .filter((section) => section.length > 0)
     .join("\n");
 
-  return { systemPrompt, missionContext, userContext, knowledgePackageContext, conversationContext, prompt };
+  return {
+    systemPrompt,
+    missionContext,
+    portalKnowledgeContext,
+    userContext,
+    knowledgePackageContext,
+    conversationContext,
+    prompt,
+  };
 }
 
 export const CompanionPromptBuilder = { build: buildCompanionPrompt };
