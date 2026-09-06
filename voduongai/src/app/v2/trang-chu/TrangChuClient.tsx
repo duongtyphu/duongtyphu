@@ -250,9 +250,14 @@ const SUGG_STYLE: Record<ResourceSuggestionType, {
 
 /** Đích thật của mỗi loại tài nguyên khi bấm thẻ — `null` = không có trang xem nội dung nào (không gắn link giả). */
 const SUGG_TARGET: Record<ResourceSuggestionType, string | null> = {
-  prompt: "/portal/prompts",
-  template: "/portal/templates",
-  workflow: "/portal/sop",
+  prompt: "/v2/hoc-vien-ai?tab=thu-vien",
+  // Bảng `templates` không có mục tương ứng trong "Thư viện tài nguyên"
+  // 2.0 (chỉ có Prompt/SOP/Resource/Thực hành tốt + bộ sưu tập CKOS, xem
+  // `RESOURCE_CATEGORY_LABEL` ở HocVienAiClient.tsx) — KHÔNG trỏ về
+  // `/portal/templates` (NGUYÊN TẮC BẤT BIẾN: 2.0 không bao giờ link
+  // ngược 1.0), giữ `null` (không link giả) như `ebook`.
+  template: null,
+  workflow: "/v2/hoc-vien-ai?tab=thu-vien",
   ebook: null,
   tool: "/v2/hoc-vien-ai",
 };
