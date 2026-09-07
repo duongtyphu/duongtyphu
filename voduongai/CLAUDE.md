@@ -12301,3 +12301,75 @@ hình hẹp.
 
 **GIAI ĐOẠN 12 HOÀN TẤT.** Tiếp theo theo lộ trình Founder đã giao: Giai
 đoạn 13 — Thiết kế lại Admin quản lý Portal 2.0.
+
+## Giai đoạn 13 — Thiết kế lại Admin quản lý Portal 2.0 (ĐÍNH CHÍNH: đã có sẵn, chưa từng ghi lại)
+
+Trước khi bắt đầu code, audit phát hiện `/v2/admin/*` (19 route: `dashboard`/
+`quan-ly-menu`/`bao-cao`/`thu-vien-media`/`landing-page`/`trang-phap-ly`/
+`trang-chu`/`companion`/`hoc-vien-ai`/`du-an-co-hoi`/`premium`/`affiliate`/
+`hanh-trinh-cua-toi`/`nguoi-dung`+`[id]`/`thanh-toan`/`thong-bao`/
+`tich-hop-api`/`ho-tro`/`cau-hinh`) **ĐÃ TỒN TẠI ĐẦY ĐỦ, chất lượng cao,
+đã build/deploy thật** — nhưng KHÔNG được ghi lại ở bất kỳ đâu trong file
+này. `git log` xác nhận mọi file trong thư mục này đều truy về đúng 1
+commit squash (`6424001`, PR #64 "đổi danh sách mục tài nguyên...") —
+thông điệp commit đó không mô tả đúng nội dung thật (di sản của kiểu
+squash-merge lịch sử đã ghi nhận nhiều lần trong tài liệu này), nghĩa là
+đây là công sức THẬT từ 1 phiên làm việc trước đó bị mất tài liệu hoá
+(compaction cắt mất trước khi kịp ghi vào CLAUDE.md), không phải hàng rào
+giả/dead code.
+
+**Đã audit lại (không tin mù, đọc trực tiếp 9/19 trang đại diện đủ mọi
+pattern + eslint toàn thư mục) trước khi kết luận "đã xong":**
+
+- **Kiến trúc:** `/v2/admin/*` là 1 lớp **điều hướng/tổng quan tổ chức
+  theo đúng cấu trúc Portal 2.0** (nav từ `nav-config.ts`'s `V2_ADMIN_BASE`,
+  khớp 1:1 các mục sidebar `/v2/*` thật: Trang chủ/Companion AI/Học viện
+  AI/Dự án & Cơ hội/Premium/Chương trình Affilate/Hành trình của tôi +
+  nhóm site-wide: Người dùng/Thanh toán/Thông báo/Tích hợp & API/Hỗ trợ/
+  Cấu hình hệ thống/Quản lý Menu/Báo cáo/Thư viện Media/Landing Page/
+  Trang Pháp lý) — **KHÔNG xây trùng CRUD** với `/admin/*` (Admin 1.0, đã
+  xây đầy đủ qua các sprint ADM-V2-01→07 ghi ở mục "KIẾN TRÚC ADMIN V2.0"
+  phía trên). Mỗi trang `/v2/admin/*` dùng 1 trong 2 pattern:
+  1. **Mirror + số liệu thật + link ra CRUD thật** (`AdminPortalMirror`,
+     component dùng chung) — cho nội dung ĐÃ có nơi quản lý ở `/admin/*`
+     (vd. `premium` trỏ `/admin/premium/dashboard`+`/admin/premium/plans`+
+     `/admin/premium/v2-dashboard`; `trang-chu`/`hanh-trinh-cua-toi` đọc
+     trực tiếp `getAcademyPaths()`/`getAcademyProgress()`, không có nội
+     dung CMS riêng để sửa).
+  2. **Trang tự viết, đọc dữ liệu/code thật trực tiếp** — cho nội dung
+     KHÔNG có trang `/admin/*` tương đương (vd. `quan-ly-menu` đọc thẳng
+     `PORTAL_NAV` từ code, chỉ đọc; `cau-hinh` chỉ boolean env-var, không
+     bao giờ hiện giá trị secret; `landing-page` trỏ thẳng `/admin/landing`
+     — không có bản Landing Page "2.0" riêng).
+- **NO-FAKE-DATA đã áp dụng triệt để, đúng chuẩn dự án:** mọi trang có
+  docblock tự ghi rõ ĐÃ XOÁ nội dung bịa gì trước đó (`thong-bao`: bỏ KPI+
+  bảng template gửi hàng loạt bịa; `thu-vien-media`: bỏ "2.148 GB đã
+  dùng"/"6.842 ảnh" bịa + ô kéo-thả không có action thật; `cau-hinh`: bỏ
+  ma trận 4 vai trò bịa (hệ thống thật chỉ có `is_admin` nhị phân) + nhật
+  ký thao tác kèm TÊN/IP giả; `trang-phap-ly`: bỏ nội dung điều khoản/
+  chính sách TỰ SOẠN giả — rủi ro pháp lý thật nếu tưởng là thật) — thay
+  bằng Empty State trung thực hoặc số liệu/link thật.
+- **Auth gate thật:** `layout.tsx` — `redirect("/admin/login")` nếu chưa
+  đăng nhập, `redirect("/v2/trang-chu")` nếu không phải admin.
+- **`eslint src/app/v2/admin src/components/v2/admin src/components/v2/nav`
+  sạch** (0 lỗi/warning mới).
+
+**Kết luận: Giai đoạn 13 đã hoàn tất từ trước — không cần code thêm.**
+Việc duy nhất còn thiếu là chính mục tài liệu này (đã bổ sung ngay bây
+giờ) — đây là bài học quy trình: kiểm tra `git log`/code thật TRƯỚC KHI
+bắt đầu 1 giai đoạn mới trong danh sách kế hoạch, không chỉ tin mục lục
+CLAUDE.md/task list, vì có thể có phiên làm việc trước đã hoàn tất nhưng
+tài liệu hoá bị ngắt giữa chừng (compaction).
+
+**Gap đã biết, ghi nhận nhưng KHÔNG tự mở rộng phạm vi** (đúng nội dung
+docblock từng trang tự thừa nhận, không phải việc bỏ sót của đợt audit
+này): `trang-chu`/Hero+"Khám phá nhanh" chưa có bảng CMS riêng (cần 1
+việc tương tự `home_cards` ở Admin 1.0); "Thành tựu của tôi" chưa có huy
+hiệu nào định nghĩa (đúng honest-empty, không phải bug); Thông báo/Thư
+viện Media/Nhật ký thao tác đều chưa có hạ tầng backing (đúng quyết định
+đã ghi nhận nhiều lần cho Admin 1.0, không lặp lại quyết định xây mới ở
+đây).
+
+**GIAI ĐOẠN 13 HOÀN TẤT (đã có sẵn, xác nhận + ghi lại tài liệu).** Đây là
+mục cuối cùng trong lộ trình Founder giao đầu phiên — cả 13 giai đoạn đã
+hoàn tất.
