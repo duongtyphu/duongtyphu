@@ -18,7 +18,6 @@ import {
   BarChart3,
   Bot,
   Briefcase,
-  Brain,
   Building2,
   CreditCard,
   Crown,
@@ -74,12 +73,6 @@ const PORTAL_MAIN: NavItem[] = [
     label: "Sứ mệnh Companion",
     href: `${V2_PORTAL_BASE}/su-menh-companion`,
     icon: Target,
-    group: "companion",
-  },
-  {
-    label: "Bộ nhớ & Cá nhân hoá",
-    href: `${V2_PORTAL_BASE}/bo-nho-ca-nhan-hoa`,
-    icon: Brain,
     group: "companion",
   },
 

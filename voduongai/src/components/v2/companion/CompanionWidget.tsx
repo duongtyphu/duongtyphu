@@ -28,14 +28,14 @@
  * `CompanionPresence.tsx` 1.0, nhưng KHÔNG dùng CHUNG key
  * `localStorage` — 2 bản có layout khác nhau (topbar/sidebar 2.0 khác
  * 1.0), chia sẻ toạ độ dễ lệch); ẩn/hiện (thu nhỏ về 1 tab nhỏ góc dưới,
- * bấm lại để mở full, nhớ trạng thái qua `localStorage`); đổi màu theo
- * cấu trúc nền — `getWidgetZone(pathname)` (bên dưới) map route sang 1
- * trong 2 "tông nền" THẬT đã audit trực tiếp CSS: đa số trang `/v2/*`
- * nền sáng (`--bg:#f7f6fc`), riêng 2 khu vực nền THẬT SỰ tối
- * (`/v2/moi-ngay-mot-y-tuong`'s `.mnyt{--bg:#0a0b12}`,
- * `/v2/hanh-trinh-cua-toi`'s `.htct{--bg:#0a0a0f}`) — nút đổi sang mặt
- * kính tối + viền/glow theo đúng màu nhấn (`--violet`) của CHÍNH khu vực
- * đó (không bịa màu mới, lấy từ CSS thật của trang).
+ * bấm lại để mở full, nhớ trạng thái qua `localStorage`).
+ *
+ * ĐỢT 3 (Founder yêu cầu, đảo ngược ĐỢT 2's "đổi màu theo nền"): trước đó
+ * nút tự đổi mặt kính tối/sáng theo `getWidgetZone(pathname)` (2 khu vực
+ * nền tối thật: `/v2/moi-ngay-mot-y-tuong`, `/v2/hanh-trinh-cua-toi`) —
+ * Founder yêu cầu "không sử dụng nền xung quanh" — đã bỏ hẳn cơ chế này,
+ * nút giữ ĐÚNG 1 giao diện cố định (mặt kính trắng + viền tím nhạt) trên
+ * MỌI trang, không phụ thuộc trang đang đứng là sáng hay tối.
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -51,20 +51,6 @@ const SAFE_MARGIN = 16;
 const DRAG_THRESHOLD = 6;
 const POSITION_STORAGE_KEY = "companion-widget-position-v2";
 const HIDDEN_STORAGE_KEY = "companion-widget-hidden-v2";
-
-type WidgetZone = { tone: "light" | "dark"; accent: string };
-
-/** Đúng 2 khu vực nền tối THẬT trong `/v2/*` (đã audit trực tiếp CSS gốc
-    của từng trang — không suy đoán), còn lại mặc định nền sáng. */
-const DARK_ZONES: { prefix: string; accent: string }[] = [
-  { prefix: "/v2/moi-ngay-mot-y-tuong", accent: "#a78bfa" }, // .mnyt{--violet:#a78bfa}
-  { prefix: "/v2/hanh-trinh-cua-toi", accent: "#8b7bde" }, // .htct — họ jewel-tone, tím trung tính làm mặc định
-];
-
-function getWidgetZone(pathname: string): WidgetZone {
-  const match = DARK_ZONES.find((z) => pathname.startsWith(z.prefix));
-  return match ? { tone: "dark", accent: match.accent } : { tone: "light", accent: "#6d4aff" };
-}
 
 type Position = { left: number; top: number };
 
@@ -133,7 +119,6 @@ export function CompanionWidget() {
 
   const currentPath = pathname ?? "/v2";
   const routeContext = getRouteContext(currentPath);
-  const zone = getWidgetZone(currentPath);
 
   // Đọc vị trí/trạng thái ẩn thật từ `localStorage` — chỉ chạy client-side,
   // sau khi hydrate đã commit (không còn rủi ro mismatch #418 ở trên). Cố ý
@@ -310,15 +295,11 @@ export function CompanionWidget() {
               aria-label="Mở Companion"
               title="Kéo để di chuyển · Bấm để mở chat"
               style={{ width: BUTTON_SIZE, height: BUTTON_SIZE, touchAction: "none" }}
-              className={`flex items-center justify-center rounded-full shadow-[0_10px_30px_rgba(15,10,40,0.22)] transition hover:shadow-[0_14px_36px_rgba(15,10,40,0.28)] ${
+              className={`flex items-center justify-center rounded-full bg-white shadow-[0_10px_30px_rgba(15,10,40,0.22)] transition hover:shadow-[0_14px_36px_rgba(15,10,40,0.28)] ${
                 dragging ? "cursor-grabbing scale-105" : "cursor-grab hover:scale-105"
-              } ${zone.tone === "dark" ? "bg-[#150f2e]/95" : "bg-white"}`}
+              }`}
             >
-              <span
-                aria-hidden
-                className="absolute inset-0 rounded-full"
-                style={{ boxShadow: `0 0 0 1px ${zone.tone === "dark" ? `${zone.accent}55` : "rgba(0,0,0,0.05)"}` }}
-              />
+              <span aria-hidden className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.05)" }} />
               <LivingCore size={52} state="idle" intensity="medium" />
             </button>
 
