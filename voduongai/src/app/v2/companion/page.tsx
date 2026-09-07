@@ -1,6 +1,5 @@
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 import { getConversationMessages, listConversations } from "@/app/portal/companion/actions";
-import { getCompanionFavoriteTools } from "@/lib/portal/live-companion-favorites";
 import { getAcademyProgress } from "@/lib/portal/live-academy";
 
 import { CompanionClient } from "./CompanionClient";
@@ -20,10 +19,8 @@ export const metadata = { title: "Companion AI | VO DUONG AI" };
  * (xem `INTERNAL_SUGGESTIONS` trong `CompanionClient.tsx`) — không cần dữ
  * liệu server nào thêm.
  *
- * Giai đoạn 2, mục 2c: "Công cụ yêu thích" giờ động theo cuộc trò chuyện
- * gần nhất (`getCompanionFavoriteTools()`, xem docblock trong file đó) —
- * gọi SAU khi đã có `latestConversationId`/`initialMessages` nên không thể
- * gộp vào `Promise.all()` đầu tiên.
+ * "Công cụ yêu thích" (Task #63, `getCompanionFavoriteTools()`) — ĐÃ BỎ
+ * HẲN theo yêu cầu Founder (xem docblock đầu `CompanionClient.tsx`, mục 8).
  */
 export default async function CompanionPage() {
   const [conversations, premium, academyProgress] = await Promise.all([
@@ -34,7 +31,6 @@ export default async function CompanionPage() {
 
   const latestConversationId = conversations[0]?.id ?? null;
   const initialMessages = latestConversationId ? await getConversationMessages(latestConversationId) : [];
-  const favoriteTools = await getCompanionFavoriteTools(latestConversationId, initialMessages);
 
   return (
     <CompanionClient
@@ -42,7 +38,6 @@ export default async function CompanionPage() {
       initialConversationId={latestConversationId}
       initialMessages={initialMessages}
       academyProgress={academyProgress}
-      favoriteTools={favoriteTools}
     />
   );
 }

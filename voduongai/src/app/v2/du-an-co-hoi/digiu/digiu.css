@@ -191,6 +191,19 @@
   .dgu .profile-actions{width:100%}
   .dgu .stat-row, .dgu .about-grid, .dgu .pillars-grid{grid-template-columns:1fr}
 }
+
+/* Task #41 — BUG NGHIÊM TRỌNG NHẤT tìm thấy trong đợt audit: `.digiu-hero`
+   2 cột (`.digiu-hero-text` max-width:380px CÓ THỂ co lại + `.digiu-net`
+   340px `flex-shrink:0` KHÔNG co) không có breakpoint nào — dưới ~800px,
+   flex ép `.digiu-hero-text` co lại còn vài chục px để nhường chỗ cho
+   `.digiu-net` cứng, khiến tiêu đề "DigiU – Hệ sinh thái..." vỡ thành 1
+   chữ/dòng (đọc được nhưng hoàn toàn mất thẩm mỹ) — đã xác nhận bằng ảnh
+   chụp Playwright thật ở 375px trước khi sửa. */
+@media (max-width:800px){
+  .dgu .digiu-hero{flex-direction:column;align-items:flex-start;padding:24px 22px}
+  .dgu .digiu-hero-text{max-width:100%}
+  .dgu .digiu-net{align-self:center}
+}
 .dgu [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
 .dgu [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
 .dgu [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}

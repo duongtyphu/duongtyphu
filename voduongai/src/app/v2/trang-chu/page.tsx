@@ -3,8 +3,9 @@ import { getResourceSuggestions } from "@/lib/portal/live-resource-suggestions";
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 import { getGreetingState } from "@/lib/v2/live-greeting";
 import { getLiveEcosystemChrome } from "@/lib/portal/live-ecosystem-chrome";
-import { getLiveMnytTopicsCount, getLiveMnytCategories } from "@/lib/portal/live-mnyt";
-import { getAcademyLessonGroupCounts } from "@/lib/portal/live-academy-slides";
+import { getLiveMnytTopicsCount, getLiveMnytCategories, getLiveMnytGlossaryCount } from "@/lib/portal/live-mnyt";
+import { getAcademyLessonGroupCounts, getAcademyVideoCount } from "@/lib/portal/live-academy-slides";
+import { getLibraryResourceCounts } from "@/lib/portal/live-premium-v2";
 
 import { TrangChuClient, type PortalStats, type OpportunityPreview } from "./TrangChuClient";
 
@@ -41,6 +42,20 @@ import { TrangChuClient, type PortalStats, type OpportunityPreview } from "./Tra
  * Mỗi ô dẫn đúng trang học tương ứng (`Mỗi ngày một ý tưởng`, "Bản đồ
  * lĩnh vực", 3 nhóm bài trong tab "Hệ tri thức" của `/v2/hoc-vien-ai`
  * qua `?group=`) — xem `TrangChuClient.tsx`.
+ *
+ * TASK #39 (thêm 13 hộp, tổng 18) — 6 hộp mới dùng số đếm THẬT (đã đối
+ * chiếu trực tiếp Supabase trước khi code, không suy đoán): thuật ngữ
+ * (`getLiveMnytGlossaryCount()`, bảng `mnyt_glossary`), bài giảng video
+ * (`getAcademyVideoCount()`, bảng `academy_videos`), Prompt/Tài nguyên/
+ * Thực hành thực chiến/AI dành cho dân văn phòng (`getLibraryResourceCounts()`,
+ * cùng nguồn đã dùng cho "Đặc quyền truy cập kho tài nguyên Premium" ở
+ * `/v2/premium` — không đếm lại bằng query riêng). Khoá học Premium dùng
+ * `courses.length` (đã fetch sẵn ở trên, không cần query thêm). 6 hộp còn
+ * lại (Dự án & Cơ hội=5/Mức hoa hồng Affiliate=3/Nguồn thư viện=10+/
+ * Claude=15+/ChatGPT=8+/Gemini=2+) là hằng số cấu trúc/số liệu Founder cấp
+ * trực tiếp — không có 1 bảng/query đơn nào phản ánh đúng "số nguồn"/"số
+ * tài nguyên theo từng công cụ AI" này, xem chú thích tại chỗ trong
+ * `TrangChuClient.tsx`.
  */
 export default async function TrangChuPortalPage() {
   const [
@@ -54,6 +69,9 @@ export default async function TrangChuPortalPage() {
     ideaCount,
     fields,
     lessonGroupCounts,
+    glossaryCount,
+    academyVideoCount,
+    libraryCounts,
   ] = await Promise.all([
     getAcademyFeaturedCourses(),
     getAcademyProgress(),
@@ -65,6 +83,9 @@ export default async function TrangChuPortalPage() {
     getLiveMnytTopicsCount(),
     getLiveMnytCategories(),
     getAcademyLessonGroupCounts(),
+    getLiveMnytGlossaryCount(),
+    getAcademyVideoCount(),
+    getLibraryResourceCounts(),
   ]);
 
   const stats: PortalStats = {
@@ -73,6 +94,13 @@ export default async function TrangChuPortalPage() {
     needLessonCount: lessonGroupCounts["nhu-cau"],
     toolLessonCount: lessonGroupCounts["cong-cu"],
     careerLessonCount: lessonGroupCounts["nghe-nghiep"],
+    glossaryCount,
+    academyVideoCount,
+    promptCount: libraryCounts.prompt,
+    resourceCount: libraryCounts.resource,
+    bestPracticeCount: libraryCounts.bestPractice,
+    officeCount: libraryCounts.aiOffice,
+    premiumCourseCount: courses.length,
   };
 
   const allOpportunities: OpportunityPreview[] = [

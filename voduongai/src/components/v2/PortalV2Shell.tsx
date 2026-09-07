@@ -32,6 +32,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 
 import { PORTAL_HREF_MAP } from "@/lib/v2/href-map";
+import { useSidebarDragScroll } from "@/lib/v2/useSidebarDragScroll";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
@@ -193,6 +194,9 @@ export function PortalV2Shell({
    * (tránh che kín màn hình lúc tải trang), sidebar desktop mặc định MỞ.
    */
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  /** Task #43 — click-và-kéo để cuộn sidebar, cộng thêm cho cuộn bằng con
+   * lăn chuột đã có sẵn (xem `useSidebarDragScroll.ts`). */
+  const sidebarDragRef = useSidebarDragScroll<HTMLElement>();
   const toggleSidebar = () => {
     if (typeof window !== "undefined" && window.innerWidth <= 880) {
       setMobileNavOpen((v) => !v);
@@ -257,6 +261,7 @@ export function PortalV2Shell({
         aria-hidden="true"
       />
       <aside
+        ref={sidebarDragRef}
         className={[
           "sidebar",
           mobileNavOpen ? "mobile-open" : "",

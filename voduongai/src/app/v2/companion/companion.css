@@ -87,9 +87,22 @@
 .comp .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8b7bde,#5f4bc9);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
 .comp .profile .who{font-size:13px;font-weight:600;line-height:1.25}
 .comp .profile .plan{font-size:11px;color:var(--muted)}
-.comp .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start}
+/* Founder: "Cho trang giữa giữ cố định không di chuyển lên xuống được" —
+   trước đây `.content` cao theo NỘI DUNG (không giới hạn), nên khi
+   `.right-col` (nhiều card xếp dọc) cao hơn `.center-col`, `.content`
+   giãn theo cột cao nhất, kéo CẢ TRANG cuộn dọc (document scroll) —
+   `.center-col` (đã cố định đúng khớp viewport qua `.chat-card`'s
+   `calc(100vh - 233px)`, xem docblock dưới) bị cuốn trôi lên/xuống theo,
+   trái ý muốn "cố định". Đã giới hạn cứng `.content` = đúng chiều cao còn
+   lại dưới topbar (`calc(100vh - 71px)`, khớp số đo `71px` topbar đã dùng
+   để tính `.chat-card` — cùng 1 nguồn số đo, không đoán lại), `overflow:
+   hidden` chặn tràn; `.right-col` tự cuộn RIÊNG bên trong
+   (`overflow-y:auto`) khi nội dung dài hơn khung — `.center-col` không
+   cần đổi gì (chiều cao tự nhiên của nó, `page-head` + gap + `.chat-card`,
+   đã khớp CHÍNH XÁC phần còn lại, xem toán học ở docblock `.chat-card`). */
+.comp .content{display:flex;gap:22px;padding:24px 28px;align-items:flex-start;height:calc(100vh - 71px);overflow:hidden}
 .comp .center-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:18px}
-.comp .right-col{width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:18px}
+.comp .right-col{width:320px;flex-shrink:0;display:flex;flex-direction:column;gap:18px;height:100%;overflow-y:auto}
 .comp .page-head{display:flex;align-items:center;justify-content:space-between;gap:20px}
 .comp .page-head-text h1{font-size:24px;font-weight:800;display:flex;align-items:center;gap:10px}
 .comp .mentor-pill{font-size:11.5px;font-weight:700;background:var(--violet-light);color:var(--violet-dark);padding:3px 10px;border-radius:7px}
@@ -165,8 +178,12 @@
 .comp .help-card p{font-size:12.5px;color:#c3bde3;line-height:1.5;margin:8px 0 14px}
 .comp .help-card button{width:100%;background:linear-gradient(135deg,var(--violet),#9b7bff);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer}
 @media (max-width:1180px){
-  .comp .content{flex-direction:column}
-  .comp .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  /* Cột giữa "cố định" (đo `71px` topbar) chỉ hợp lý khi 2 cột đứng CẠNH
+     NHAU (desktop) — dưới 1180px `.content` xếp dọc (`flex-direction:
+     column`), khôi phục cuộn tự nhiên theo trang, không giữ chiều cao ép
+     buộc/`overflow:hidden` (sẽ cắt mất nội dung khi xếp dọc). */
+  .comp .content{flex-direction:column;height:auto;overflow:visible}
+  .comp .right-col{width:100%;flex-direction:row;flex-wrap:wrap;height:auto;overflow:visible}
   .comp .center-col{width:100%}
   .comp .right-col>.card, .comp .right-col>.help-card{flex:1;min-width:280px}
   .comp .sugg-row{grid-template-columns:1fr;margin-left:0}

@@ -180,10 +180,32 @@
 .tcp .right-col { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px }
 
 /* Hero */
-.tcp .hero { background: radial-gradient(circle at 78% 22%, #4a3691 0%, transparent 45%), radial-gradient(circle at 85% 70%, #2d2270 0%, transparent 50%), linear-gradient(160deg, #241c4d 0%, #1a1440 55%, #100b2c 100%); border-radius: 18px; padding: 25px 44px; color: #fff; display: flex; align-items: center; justify-content: center; gap: clamp(32px, 6vw, 64px); position: relative; overflow: hidden; box-shadow: inset 0 0 90px rgba(0, 0, 0, .4) }
+/* Founder: "Banner chính di chuyển phần chữ về vị trí cũ (sát bên trái
+   của banner), hình robot giữ nguyên ở giữa." — `flex + justify-content:
+   center` (đợt trước) canh 2 phần tử làm 1 KHỐI ở giữa (cả text lẫn robot
+   cùng dịch vào giữa) — không tách được "chữ trái, robot giữa banner"
+   bằng flex 2 phần tử thông thường (space-between đẩy ra 2 MÉP, center
+   gộp làm 1 khối). Đổi sang CSS Grid 3 cột `1fr auto 1fr`: cột 1 (`1fr`)
+   chứa `.hero-text` (`justify-self:start` — dính mép trái thật), cột 2
+   (`auto`, khớp đúng 147px cố định của `.hero-bot-wrap`) nằm GIỮA 2 cột
+   `1fr` bằng nhau nên LUÔN ở đúng tâm ngang của `.hero` bất kể `.hero-text`
+   ngắn/dài (trong ngân sách hợp lý), cột 3 (`1fr`, trống) chỉ để cân bằng
+   — không cần phần tử nào chiếm. */
+.tcp .hero { background: radial-gradient(circle at 78% 22%, #4a3691 0%, transparent 45%), radial-gradient(circle at 85% 70%, #2d2270 0%, transparent 50%), linear-gradient(160deg, #241c4d 0%, #1a1440 55%, #100b2c 100%); border-radius: 18px; padding: 25px 44px; color: #fff; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: clamp(24px, 5vw, 56px); position: relative; overflow: hidden; box-shadow: inset 0 0 90px rgba(0, 0, 0, .4) }
 .tcp .hero::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 60% 15%, #fff, transparent), radial-gradient(1px 1px at 80% 60%, #fff, transparent), radial-gradient(1.5px 1.5px at 40% 75%, #fff, transparent), radial-gradient(1px 1px at 92% 35%, #fff, transparent), radial-gradient(1px 1px at 30% 55%, #fff, transparent), radial-gradient(1px 1px at 68% 82%, #fff, transparent), radial-gradient(1.5px 1.5px at 10% 60%, #fff, transparent); opacity: .55; pointer-events: none }
 .tcp .hero::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(0, 0, 0, .45), transparent 60%); pointer-events: none }
 .tcp .hero-text, .tcp .hero-bot-wrap { position: relative; z-index: 1 }
+/* `min-width:0` — mặc định 1 grid item có `min-width:auto`, tự nới rộng
+   TRÁCH khỏi tỉ lệ `1fr` nếu nội dung bên trong không co được (2 nút
+   `.hero-actions` có `white-space:nowrap;flex-shrink:0`, buộc hàng nút
+   PHẢI giữ đủ chỗ cho cả 2 nút cạnh nhau) — đã đo thật bằng Playwright:
+   thiếu dòng này, ở banner hẹp (~1024px viewport) cột chữ tự giãn quá
+   tỉ lệ, đẩy robot LỆCH khỏi tâm banner dù đã dùng Grid 3 cột cân bằng.
+   Cho phép cột co đúng `1fr`, kèm `.hero-actions{flex-wrap:wrap}` để 2
+   nút tự xuống dòng khi hẹp thay vì ép cột giãn — giữ robot LUÔN đúng
+   tâm banner ở mọi độ rộng. */
+.tcp .hero-text { justify-self: start; min-width: 0 }
+.tcp .hero-actions { flex-wrap: wrap }
 .tcp .move-dot { position: absolute; border-radius: 50%; background: #fff; opacity: 0; pointer-events: none; box-shadow: 0 0 3px rgba(255, 255, 255, .7) }
 @keyframes dotDrift { 0% { opacity: 0; transform: translate(0, 0) } 12% { opacity: 1 } 88% { opacity: .9 } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) } }
 .tcp .hero-eyebrow { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #b9adf7; margin-bottom: 6px }
@@ -196,7 +218,7 @@
 .tcp .btn-ghost { background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .25); color: #fff; padding: 11px 20px; border-radius: 9px; font-weight: 700; font-size: 13.5px; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; flex-shrink: 0; transition: transform .15s, background .15s, border-color .15s }
 .tcp .btn-ghost:hover { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .4); transform: translateY(-2px) }
 .tcp .btn-ghost:active { transform: translateY(0) scale(.97) }
-.tcp .hero-bot-wrap { width: 147px; height: 210px; flex-shrink: 0; position: relative; display: flex; align-items: flex-end; justify-content: center }
+.tcp .hero-bot-wrap { width: 147px; height: 210px; flex-shrink: 0; position: relative; display: flex; align-items: flex-end; justify-content: center; justify-self: center }
 .tcp .hero-bot-glow { position: absolute; inset: -20px; background: radial-gradient(ellipse 60% 70% at 50% 55%, rgba(155, 123, 255, .5), transparent 72%); filter: blur(6px); z-index: 0 }
 .tcp .hero-bot-wrap img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: contain; object-position: bottom; filter: drop-shadow(0 18px 22px rgba(8, 5, 25, .5)) }
 .tcp .hero-stars { position: absolute; z-index: 2; top: -6px; right: -18px; width: 92px; height: 76px; pointer-events: none }
@@ -321,7 +343,10 @@
 }
 
 @media (max-width:640px) {
-  .tcp .hero { flex-direction: column; align-items: flex-start; padding: 20px 20px 24px; text-align: left }
+  /* Xếp dọc trên di động — quay lại `display:flex` (Grid 3-cột chỉ hợp lý
+     ở hàng ngang desktop), robot canh giữa qua `.hero-bot-wrap{align-self:
+     center}` bên dưới thay vì `justify-self` (không áp dụng cho flex). */
+  .tcp .hero { display: flex; flex-direction: column; align-items: flex-start; padding: 20px 20px 24px; text-align: left }
   .tcp .hero-text { min-width: 0; width: 100% }
   .tcp .hero-text p { max-width: 100% }
   .tcp .hero-actions { flex-wrap: wrap }

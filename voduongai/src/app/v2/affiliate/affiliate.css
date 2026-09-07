@@ -190,6 +190,11 @@
 .aff [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
 .aff [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
 .aff [class*="ico"] svg{position:relative;z-index:1}
+.aff .promo .crown{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.aff .crown{position:relative}
+.aff .crown::after{content:'';position:absolute;inset:-14px;background:radial-gradient(circle,rgba(177,139,255,.45),transparent 70%);z-index:-1;pointer-events:none}
+.aff .crown-sparkle{position:absolute;color:#ffd75e;pointer-events:none;animation:sparkleTwinkle 2.2s ease-in-out infinite}
+@keyframes sparkleTwinkle{0%,100%{opacity:.2;transform:scale(.6) rotate(0deg)}50%{opacity:1;transform:scale(1) rotate(20deg)}}
 @media (max-width:1180px){
   .aff .content{flex-direction:column}
   .aff .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
@@ -197,6 +202,18 @@
   .aff .right-col>.card{flex:1;min-width:280px}
   .aff .stat-row, .aff .tier-grid, .aff .steps-row{grid-template-columns:repeat(2,1fr)}
   .aff .material-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Task #41 — BUG THẬT, cùng lớp lỗi với `.pj-hero`/`.digiu-hero` (Dự án &
+   Cơ hội): `.aff-hero` 2 cột (`.aff-hero-text` max-width:420px CÓ THỂ co +
+   `.aff-graphic` 230px `flex-shrink:0` KHÔNG co) không có breakpoint nào
+   — dưới ~760px, flex ép hero-text co lại còn vài chục px, tiêu đề "Kiếm
+   thu nhập bền vững cùng Chương trình Affiliate" + 2 nút CTA vỡ thành
+   1 chữ/dòng — đã xác nhận bằng ảnh chụp Playwright thật ở 375px. */
+@media (max-width:760px){
+  .aff .aff-hero{flex-direction:column;align-items:flex-start;padding:24px 22px}
+  .aff .aff-hero-text{max-width:100%}
+  .aff .aff-graphic{align-self:center}
 }
 
 /* Bổ sung ngoài bản thiết kế — honest empty-state (bảng xếp hạng công khai/

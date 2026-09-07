@@ -149,6 +149,15 @@ export const getLiveMnytTopicsCount = cache(async (): Promise<number> => {
   return count ?? 0;
 });
 
+/** Đếm nhẹ số thuật ngữ Published (bảng `mnyt_glossary`) — dùng cho ô "100
+ * thuật ngữ AI giải thích dễ hiểu" ở "Hệ sinh thái VO DUONG AI", Trang chủ. */
+export const getLiveMnytGlossaryCount = cache(async (): Promise<number> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return 0;
+  const { count } = await supabase.from("mnyt_glossary").select("id", { count: "exact", head: true }).eq("status", "Published");
+  return count ?? 0;
+});
+
 /** Lưới nhẹ cho quả cầu 3D + dải "Đang thịnh hành" — chỉ 5 cột cần thiết,
  * KHÔNG có `content`/`hook` đầy đủ. */
 export type MnytGlobeNode = { id: string; day: number; categoryKey: string; categoryName: string; color: string; title: string; difficulty: string; isTrending: boolean };

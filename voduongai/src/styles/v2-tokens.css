@@ -305,6 +305,15 @@
   overflow-y: auto;
 }
 
+/* Task #43 — click-và-kéo (drag) để cuộn sidebar, xem `useSidebarDragScroll.ts`.
+ * `.dragging-scroll` chỉ gắn trong lúc đang kéo — tắt `user-select` (tránh
+ * bôi đen chữ khi rê chuột) + đổi cursor thành "grabbing" làm phản hồi
+ * trực quan. */
+[data-ui="v2"] .sidebar.dragging-scroll {
+  cursor: grabbing;
+  user-select: none;
+}
+
 /* ---------------------------------------------------------------------
  * Giai đoạn 11, Đợt 4 (audit responsive/mobile toàn diện) — bug mobile HỆ
  * THỐNG: sidebar 224px cố định + topbar (search-box/upgrade-btn) không co

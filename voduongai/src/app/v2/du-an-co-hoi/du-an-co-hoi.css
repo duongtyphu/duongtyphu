@@ -194,6 +194,20 @@
 @media (max-width:480px){
   .duo .cat-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* Task #41 — BUG THẬT: `.pj-hero` là 3 cột (`.pj-hero-text` max-width:250px +
+   `.pj-feats` + `.pj-graphic` 220px) đều `flex-shrink:0`, không có breakpoint
+   nào cho tới đợt này — dưới ~640px, 3 cột cộng lại vượt xa bề rộng khả
+   dụng, `overflow:hidden` của `.pj-hero` ÂM THẦM CẮT MẤT cả `.pj-graphic`
+   lẫn phần chữ (h6/span) của `.pj-feats` (chỉ còn 3 icon vuông trơ, không
+   đọc được nội dung) — không gây tràn ngang trang (nên audit `scrollWidth`
+   trước đó không bắt được), chỉ mất nội dung trong đúng khung banner. */
+@media (max-width:640px){
+  .duo .pj-hero{flex-direction:column;align-items:flex-start;padding:24px 22px}
+  .duo .pj-hero-text{max-width:100%}
+  .duo .pj-feats{width:100%}
+  .duo .pj-graphic{align-self:center}
+}
 .duo [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
 .duo [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
 .duo [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}

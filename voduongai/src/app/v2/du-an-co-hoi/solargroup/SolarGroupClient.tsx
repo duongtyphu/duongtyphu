@@ -67,6 +67,7 @@ import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
 import { toYouTubeEmbedUrl } from "@/lib/portal/videoEmbed";
+import { useSidebarDragScroll } from "@/lib/v2/useSidebarDragScroll";
 
 import "../../inter-gf.css";
 import "./solargroup.css";
@@ -192,6 +193,9 @@ export function SolarGroupClient({
    * `.v2-mobile-nav-backdrop` đã có sẵn trong `v2-tokens.css`.
    */
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  /** Task #43 — click-và-kéo để cuộn sidebar, cộng thêm cho cuộn bằng
+   * con lăn chuột đã có sẵn (xem `useSidebarDragScroll.ts`). */
+  const sidebarDragRef = useSidebarDragScroll<HTMLElement>();
   /**
    * Founder: "thêm chức năng dấu 3 gạch để co giãn/ẩn thanh Menu" — cùng
    * cơ chế đã thêm ở `PortalV2Shell.tsx` (xem docblock đó): nút
@@ -243,6 +247,7 @@ export function SolarGroupClient({
           aria-hidden="true"
         />
         <aside
+          ref={sidebarDragRef}
           className={[
             "sidebar",
             mobileNavOpen ? "mobile-open" : "",
