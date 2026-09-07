@@ -212,9 +212,10 @@
 .tcp .companion-quote { text-align: center; font-size: 12.5px; font-style: italic; color: var(--muted); margin: -12px 0 -4px }
 
 /* Portal stats — "Portal 2.0 trong một cái nhìn" */
-/* Giai đoạn 7 — bỏ 1/4 thẻ (Kênh cộng đồng đang hoạt động, trỏ /v2/cong-dong-ai
- * đã xoá) — repeat(4,1fr) → repeat(3,1fr) để 3 thẻ còn lại cân bằng. */
-.tcp .portal-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px }
+/* "Hệ sinh thái VO DUONG AI" — 5 ô số liệu, cùng nhịp breakpoint 5→3→2 đã
+ * dùng cho `.explore-grid` (cũng 5 thẻ) ngay bên dưới, để 2 lưới liền kề
+ * cân đối cùng lúc. */
+.tcp .portal-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px }
 .tcp .portal-stat-card { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: box-shadow .15s, transform .15s; min-width: 0 }
 .tcp .portal-stat-card > div:last-child { min-width: 0 }
 .tcp .portal-stat-card:hover { box-shadow: 0 8px 20px rgba(109, 74, 255, .12); transform: translateY(-2px) }
@@ -311,6 +312,7 @@
 
 @media (max-width:1180px) {
   .tcp .explore-grid { grid-template-columns: repeat(3, 1fr) }
+  .tcp .portal-stats { grid-template-columns: repeat(3, 1fr) }
   .tcp .learn-grid { grid-template-columns: repeat(2, 1fr) }
   .tcp .sugg-grid { grid-template-columns: repeat(2, 1fr) }
   .tcp .content { flex-direction: column }
@@ -325,9 +327,9 @@
   .tcp .hero-actions { flex-wrap: wrap }
   .tcp .hero-bot-wrap { align-self: center; margin-top: 4px }
   .tcp .explore-grid { grid-template-columns: repeat(2, 1fr) }
+  .tcp .portal-stats { grid-template-columns: repeat(2, 1fr) }
   .tcp .learn-grid { grid-template-columns: 1fr }
   .tcp .sugg-grid { grid-template-columns: 1fr }
-  .tcp .portal-stats { grid-template-columns: 1fr }
   .tcp .opportunity-grid { grid-template-columns: 1fr }
 }
 

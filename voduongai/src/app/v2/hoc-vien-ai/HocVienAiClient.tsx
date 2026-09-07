@@ -264,19 +264,27 @@ export function HocVienAiClient({
   }, [mobileNavOpen]);
   const [tab, setTab] = useState(0);
 
-  // Đọc `?tab=` ở `useEffect` (không phải lazy init của `useState`) để khớp
-  // đúng HTML server-render ban đầu (luôn tab 0), tránh hydration mismatch —
-  // chỉ đổi tab sau khi mount xong.
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const wanted = params.get("tab");
-    const index = TABS.findIndex((_, i) => TAB_QUERY_KEYS[i] === wanted);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc `window.location.search` thật, không có tương đương SSR
-    if (index >= 0) setTab(index);
-  }, []);
-
   // Tab "Khóa học & Lộ trình" — nhóm đang lọc + bài đang mở trong SlideViewer.
   const [lessonGroup, setLessonGroup] = useState<AcademyLessonGroup>("nhu-cau");
+
+  // Đọc `?tab=`/`?group=` ở `useEffect` (không phải lazy init của
+  // `useState`) để khớp đúng HTML server-render ban đầu (luôn tab 0/nhóm
+  // "nhu-cau"), tránh hydration mismatch — chỉ đổi tab/nhóm sau khi mount
+  // xong. `?group=` dùng cho link từ Trang chủ ("Hệ sinh thái VO DUONG AI"),
+  // trỏ thẳng đúng nhóm bài trong lưới "Học AI theo..." ở tab "Hệ tri thức".
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const wantedTab = params.get("tab");
+    const index = TABS.findIndex((_, i) => TAB_QUERY_KEYS[i] === wantedTab);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc `window.location.search` thật, không có tương đương SSR
+    if (index >= 0) setTab(index);
+
+    const wantedGroup = params.get("group");
+    if (wantedGroup === "nhu-cau" || wantedGroup === "cong-cu" || wantedGroup === "nghe-nghiep") {
+      setLessonGroup(wantedGroup);
+    }
+  }, []);
+
   const [openLessonId, setOpenLessonId] = useState<string | null>(null);
   const visibleLessons = academy.slideLessons.filter((l) => l.group === lessonGroup);
   const openLesson = academy.slideLessons.find((l) => l.id === openLessonId) ?? null;
