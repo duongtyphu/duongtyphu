@@ -12373,3 +12373,35 @@ viện Media/Nhật ký thao tác đều chưa có hạ tầng backing (đúng q
 **GIAI ĐOẠN 13 HOÀN TẤT (đã có sẵn, xác nhận + ghi lại tài liệu).** Đây là
 mục cuối cùng trong lộ trình Founder giao đầu phiên — cả 13 giai đoạn đã
 hoàn tất.
+
+## Giai đoạn 12 (tiếp) — Header: bỏ 3 mục, thêm hộp "Mỗi ngày một ý tưởng" vào hệ sinh thái
+
+Founder yêu cầu riêng, sau khi Giai đoạn 12 gốc đã deploy: (1) bỏ "Trang
+chủ"/"Companion"/"Cộng đồng" khỏi menu header; (2) thêm hộp "Mỗi ngày một
+ý tưởng" vào section "Học viện AI trong một cái nhìn"
+(`EcosystemPillars.tsx`), thành đủ 5 hộp.
+
+**1 — `mainNav` (`src/lib/site.ts`)** — nguồn DUY NHẤT cho cả desktop nav
+(`HeaderClient.tsx`) lẫn mobile drawer (`MobileNavDrawer.tsx`, cùng import
+1 mảng) — xoá 3 entry (`Trang chủ`/`/`, `Companion`/`/#companion-ai`,
+`Cộng đồng`/`/#cong-dong`), còn lại 4: Học viện AI/Kỹ năng AI/Công cụ AI/
+Hành trình của tôi. Không đụng section `id="cong-dong"` (`TrustStats.tsx`)
+hay bất kỳ anchor nào khác trên trang — chỉ bỏ đường link ở header, các
+section đó vẫn còn nguyên trên trang (cuộn/truy cập trực tiếp vẫn được).
+
+**2 — `ITEMS` (`EcosystemPillars.tsx`)** — thêm hộp thứ 5 "Mỗi ngày một ý
+tưởng" (giữa Companion AI và Dự án & Cơ hội), mô tả trích đúng số liệu
+thật đã xác minh nhiều lần trong tài liệu này (446 ý tưởng/35 lĩnh vực).
+Icon: `public/images/landing-preview/icons/eco-moi-ngay-mot-y-tuong.png`
+(mới) — resize 400×400 (khớp 5 icon `eco-*` còn lại trong thư mục, giữ
+nguyên alpha trong suốt) từ icon thật Founder đã gửi trước đó
+(`public/v2-static/assets/icon-moi-ngay-mot-y-tuong.png`, đã dùng cho thẻ
+"Mỗi ngày một ý tưởng" ở "Khám phá nhanh" Trang chủ 2.0 — cùng nguồn, chỉ
+đổi kích thước, không tạo ảnh mới).
+
+**Verify:** `npx tsc --noEmit`/`eslint` (2 file sửa) sạch, `npx vitest
+run` 495/495 pass, `rm -rf .next && npm run build` sạch. Test thật qua
+`next start`: `curl "/"` trả `200`, xác nhận 0 lần còn "Trang chủ"/
+"/#companion-ai"/"/#cong-dong" trong nav HTML, đủ 4 mục nav còn lại, hộp
+"Mỗi ngày một ý tưởng" + icon mới render đúng (endpoint `/_next/image`
+cho icon trả `200`).

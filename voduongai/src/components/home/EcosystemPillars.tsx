@@ -32,6 +32,12 @@ const ITEMS = [
     desc: "AI Mentor cá nhân hóa, hiểu bạn, nhớ bạn và đồng hành cùng bạn mỗi ngày.",
   },
   {
+    id: "moi-ngay-mot-y-tuong",
+    icon: "/images/landing-preview/icons/eco-moi-ngay-mot-y-tuong.png",
+    title: "Mỗi ngày một ý tưởng",
+    desc: "446 ý tưởng thực chiến theo 35 lĩnh vực — học, lưu và áp dụng ngay mỗi ngày.",
+  },
+  {
     id: "du-an-co-hoi",
     icon: "/images/landing-preview/icons/eco-du-an-co-hoi.png",
     title: "Dự án & Cơ hội",
