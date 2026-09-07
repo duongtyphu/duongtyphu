@@ -149,6 +149,27 @@ type VideoRow = {
   order: number;
 };
 
+/**
+ * Số bài Published theo từng nhóm (nhu-cầu/công-cụ/nghề-nghiệp) — dùng cho
+ * 3 ô số liệu "Hệ sinh thái VO DUONG AI" ở Trang chủ. Đếm thật qua
+ * `data.group`, KHÔNG hardcode 15/20/20 (dù đúng con số hiện tại theo
+ * `CLAUDE.md`) — tự đúng nếu Founder thêm/bớt bài qua Admin sau này.
+ */
+export const getAcademyLessonGroupCounts = cache(
+  async (): Promise<Record<AcademyLessonGroup, number>> => {
+    const counts: Record<AcademyLessonGroup, number> = { "nhu-cau": 0, "cong-cu": 0, "nghe-nghiep": 0 };
+    const supabase = getSupabasePublic();
+    if (!supabase) return counts;
+
+    const { data } = await supabase.from("academy_slide_lessons").select("data").eq("status", "Published");
+    for (const row of (data ?? []) as { data: { group?: AcademyLessonGroup } }[]) {
+      const group = row.data.group ?? "nhu-cau";
+      if (group in counts) counts[group] += 1;
+    }
+    return counts;
+  },
+);
+
 /** Lưới 13 video YouTube (Admin-editable, không giới hạn cứng số 13). */
 export const getAcademyVideos = cache(async (): Promise<AcademyVideo[]> => {
   const supabase = getSupabasePublic();

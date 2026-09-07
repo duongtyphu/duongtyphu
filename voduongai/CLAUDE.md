@@ -12405,3 +12405,53 @@ run` 495/495 pass, `rm -rf .next && npm run build` sạch. Test thật qua
 "/#companion-ai"/"/#cong-dong" trong nav HTML, đủ 4 mục nav còn lại, hộp
 "Mỗi ngày một ý tưởng" + icon mới render đúng (endpoint `/_next/image`
 cho icon trả `200`).
+
+## Trang chủ — "Portal 2.0 trong một cái nhìn" → "Hệ sinh thái VO DUONG AI" + 5 ô số liệu
+
+Task còn tồn đọng từ đợt lên kế hoạch cũ (trước cả chuỗi Giai đoạn 1-13
+đã hoàn tất ở trên) — 3 ô số liệu cũ (`ecosystemCount`/`premiumPlanCount`/
+`toolCount`) thay hẳn bằng 5 ô mới, số đếm THẬT (không hằng số/không bịa),
+mỗi ô dẫn đúng trang học tương ứng:
+
+| Ô | Nguồn thật | Đích |
+|---|---|---|
+| Ý tưởng AI | `getLiveMnytTopicsCount()` (`mnyt_topics` Published) | `/v2/moi-ngay-mot-y-tuong` |
+| Chủ đề học AI | `getLiveMnytCategories().length` (`mnyt_categories` Published) | `/v2/moi-ngay-mot-y-tuong/linh-vuc` |
+| Nhu cầu học AI | `getAcademyLessonGroupCounts()["nhu-cau"]` | `/v2/hoc-vien-ai?tab=he-tri-thuc&group=nhu-cau` |
+| Bài học công cụ AI | `getAcademyLessonGroupCounts()["cong-cu"]` | `/v2/hoc-vien-ai?tab=he-tri-thuc&group=cong-cu` |
+| Bài học nghề nghiệp ứng dụng AI | `getAcademyLessonGroupCounts()["nghe-nghiep"]` | `/v2/hoc-vien-ai?tab=he-tri-thuc&group=nghe-nghiep` |
+
+`getAcademyLessonGroupCounts()` (mới, `live-academy-slides.ts`) — đếm
+thật qua `data.group` của bảng `academy_slide_lessons` (Published), KHÔNG
+hardcode 15/20/20 (dù đúng số hiện tại theo lịch sử "Giai đoạn 3, mục
+4b" ở trên) — tự đúng nếu Founder thêm/bớt bài qua Admin sau này.
+
+`HocVienAiClient.tsx` thêm đọc `?group=` (cùng `useEffect` đã đọc `?tab=`
+từ trước, tránh hydration mismatch — chỉ đổi `lessonGroup` SAU khi mount)
+— 3 giá trị hợp lệ `nhu-cau`/`cong-cu`/`nghe-nghiep` khớp đúng
+`AcademyLessonGroup`, giá trị lạ bị bỏ qua (giữ nguyên mặc định
+`"nhu-cau"`). Route đích luôn kèm `tab=he-tri-thuc` vì lưới "Học AI
+theo..." chỉ render ở tab 0 (`tab===0`), không phải tab 1/2.
+
+CSS (`trang-chu.css`) — `.portal-stats` đổi từ `repeat(3,1fr)` sang
+`repeat(5,1fr)`, cùng nhịp breakpoint 5→3→2 đã dùng cho `.explore-grid`
+(cũng 5 thẻ, ngay bên dưới) để 2 lưới liền kề cân đối.
+
+**Verify:** `npx tsc --noEmit`/`eslint` (5 file sửa) sạch, `npx vitest
+run` 495/495 pass, `rm -rf .next && npm run build` sạch (mọi route build
+đúng). Test thật qua `next start` (Supabase chưa cấu hình, honest `0` cho
+cả 5 số — đúng fallback, không phải lỗi): `curl "/v2/trang-chu"` trả
+`200`, HTML xác nhận đúng heading "Hệ sinh thái VO DUONG AI" (0 lần còn
+"Portal 2.0 trong một cái nhìn") + đủ 5 nhãn ("Ý tưởng AI"/"Chủ đề học
+AI"/"Nhu cầu học AI"/"Bài học công cụ AI"/"Bài học nghề nghiệp ứng dụng
+AI"); `curl "/v2/hoc-vien-ai?tab=he-tri-thuc&group=cong-cu"` và
+`curl "/v2/moi-ngay-mot-y-tuong/linh-vuc"` đều trả `200`, 0 lỗi log
+server.
+
+**Chưa tự test được:** số liệu thật (446/35/15/20/20) + hành vi bấm ô →
+điều hướng đúng nhóm bài đã lọc sẵn qua tài khoản đăng nhập thật (giới
+hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) —
+Founder tự xác nhận trên Preview/Production URL: (1) 5 ô hiện đúng số
+446/35/15/20/20; (2) bấm ô "Bài học công cụ AI" → vào đúng
+`/v2/hoc-vien-ai`, tab "Hệ tri thức" đã mở sẵn, chip "Theo công cụ" đã
+active, lưới chỉ hiện đúng 20 bài nhóm đó.
