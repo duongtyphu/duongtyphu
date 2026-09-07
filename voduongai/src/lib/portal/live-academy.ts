@@ -103,9 +103,16 @@ export type AcademyCourse = {
   name: string;
   description: string;
   lessonCount: number;
+  /**
+   * Số bài `is_free_preview=true` — dùng để phân biệt "khoá hoàn toàn miễn
+   * phí" (`freeLessonCount === lessonCount`) với "khoá gate theo Premium"
+   * (`freeLessonCount < lessonCount`) ở nơi hiển thị badge khoá/mở, không
+   * hardcode theo `id` cụ thể nào.
+   */
+  freeLessonCount: number;
 };
 
-type LessonRef = { id: number; courseId: string; pathSlug: string | null; durationMinutes: number };
+type LessonRef = { id: number; courseId: string; pathSlug: string | null; durationMinutes: number; isFreePreview: boolean };
 
 /** Toàn bộ bài học Published, kèm khoá/giai đoạn sở hữu — dùng chung cho path/course/progress. */
 const getAcademyPublishedLessons = cache(async (): Promise<LessonRef[]> => {
@@ -139,7 +146,7 @@ const getAcademyPublishedLessons = cache(async (): Promise<LessonRef[]> => {
 
   const { data: lessons } = await supabase
     .from("course_lessons")
-    .select("id, section_id, duration_minutes")
+    .select("id, section_id, duration_minutes, is_free_preview")
     .eq("status", "Published")
     .in("section_id", sectionIds);
 
@@ -152,6 +159,7 @@ const getAcademyPublishedLessons = cache(async (): Promise<LessonRef[]> => {
       courseId,
       pathSlug: pathSlugByCourse.get(courseId) ?? null,
       durationMinutes: (l.duration_minutes as number | null) ?? 0,
+      isFreePreview: Boolean(l.is_free_preview),
     });
   }
   return refs;
@@ -206,7 +214,11 @@ export const getAcademyFeaturedCourses = cache(async (): Promise<AcademyCourse[]
   ]);
 
   const countByCourse = new Map<string, number>();
-  for (const l of lessons) countByCourse.set(l.courseId, (countByCourse.get(l.courseId) ?? 0) + 1);
+  const freeCountByCourse = new Map<string, number>();
+  for (const l of lessons) {
+    countByCourse.set(l.courseId, (countByCourse.get(l.courseId) ?? 0) + 1);
+    if (l.isFreePreview) freeCountByCourse.set(l.courseId, (freeCountByCourse.get(l.courseId) ?? 0) + 1);
+  }
 
   return (courses ?? [])
     .map((c) => ({
@@ -214,6 +226,7 @@ export const getAcademyFeaturedCourses = cache(async (): Promise<AcademyCourse[]
       name: c.name as string,
       description: (c.description as string | null) ?? "",
       lessonCount: countByCourse.get(c.id as string) ?? 0,
+      freeLessonCount: freeCountByCourse.get(c.id as string) ?? 0,
     }))
     .filter((c) => c.lessonCount > 0);
 });

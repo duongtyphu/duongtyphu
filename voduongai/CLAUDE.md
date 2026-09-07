@@ -12455,3 +12455,83 @@ Founder tự xác nhận trên Preview/Production URL: (1) 5 ô hiện đúng s�
 446/35/15/20/20; (2) bấm ô "Bài học công cụ AI" → vào đúng
 `/v2/hoc-vien-ai`, tab "Hệ tri thức" đã mở sẵn, chip "Theo công cụ" đã
 active, lưới chỉ hiện đúng 20 bài nhóm đó.
+
+## Task #26-28 — 3 khoá học Premium mới, thích nghi mô hình subscription (không tạo lại "5 chương trình mua đứt")
+
+Task tracker cũ (#26-28) viết cho mô hình Premium mua-đứt-theo-chương-trình
+đã bị thay thế hoàn toàn bởi Phase 38 (gói thuê bao "Gói Tháng/6 Tháng/12
+Tháng", `getPremiumStatus()` là Single Source of Truth `isPremium`). Đã
+hỏi Founder qua `AskUserQuestion` trước khi làm (không tự diễn giải lại
+task cũ) — Founder chọn **thích nghi**: soạn nội dung khoá học Course
+Builder thật (khớp format khoá free có sẵn "AI cho người mới bắt đầu" —
+kịch bản video đầy đủ, xưng "mình là Võ Dương"), gate theo Premium
+subscription hiện có, KHÔNG dựng lại mô hình bán riêng.
+
+**#26 — Soạn 3 khoá học mới, mỗi khoá 3 chương/7 bài (2 bài đầu free
+preview), khớp đúng 3 giai đoạn CKOS còn lại (Founder chọn "Gọn: 6-8
+bài/khoá"):** `lam-chu-cong-cu-ai`/`xay-dung-he-thong-ai`/
+`tao-gia-tri-mo-rong` — 3 `courses` mới (`status='open'`, `price=0`, đúng
+mô hình "khoá $0đ mở theo Premium", không phải sản phẩm bán riêng), 9
+`course_sections`, 21 `course_lessons` (kịch bản video đầy đủ, first-person
+"Võ Dương", đúng format khoá cũ) — gắn vào `learning_path_courses` theo
+đúng 3 giai đoạn CKOS còn thiếu khoá (`lam-chu-cong-cu-ai`/
+`xay-dung-he-thong-ai`/`tao-gia-tri-mo-rong`, đã có tên/mô tả từ Bước C).
+
+**Bug thật phát hiện + sửa khi chuẩn bị #26 (không phải yêu cầu gốc,
+nhưng bắt buộc phải sửa để 3 khoá $0đ mới không vô dụng với Premium
+subscriber):** `CourseLearnPageContent`
+(`src/app/portal/premium/[courseId]/hoc/page.tsx`, dùng chung 1.0/2.0) có
+`owned` CHỈ đọc `getPurchasedIds("course_id")` (đơn mua RIÊNG đúng khoá —
+đúng cho 5 chương trình mua-đứt cũ, SAI cho khoá $0đ không ai "mua" qua
+checkout). Đã thêm `getPremiumStatus()` — `owned = đã mua ĐÚNG khoá này
+HOẶC đang có Premium` — không phá nhánh mua-đứt cũ nếu còn dùng. Kèm
+`getPremiumStatus()` (`src/lib/v2/premium-access.ts`) bọc `cache()` (React)
+vì route `/v2/premium/[courseId]/hoc` gọi hàm này 2 lần/lượt render.
+
+**#27 — Trang chủ: "Tiếp tục học tập" → "Các khoá học Premium"**
+(`TrangChuClient.tsx`, đổi đúng 1 dòng `<h2>`).
+
+**#28 — `/v2/premium`: thêm section "Khoá học Premium".** Đọc đúng
+`getAcademyFeaturedCourses()` (Single Source of Truth — cùng nguồn "Tiếp
+tục học tập" ở Trang chủ và tab "Hệ tri thức" của `/v2/hoc-vien-ai`,
+KHÔNG tạo danh sách khoá song song). `live-academy.ts` thêm
+`isFreePreview` vào `LessonRef` + `freeLessonCount` vào `AcademyCourse`
+(đếm bài `is_free_preview=true`/khoá, để phân biệt "khoá hoàn toàn miễn
+phí" `freeLessonCount===lessonCount` với "khoá gate theo Premium"
+`freeLessonCount<lessonCount`, không hardcode theo `id` cụ thể).
+
+`PremiumCourseGrid` (component mới trong `PremiumClient.tsx`) — mỗi hộp
+CHỈ LÀ LINK xem nội dung (`/v2/premium/[courseId]/hoc`, đã gate đúng theo
+`premium.isPremium` từ bản vá `owned` ở trên), KHÔNG PHẢI nút mua riêng —
+badge "Miễn phí"/"🔒 Premium"/"Đã mở khoá" tính từ dữ liệu thật, không
+disable link (khoá Premium chưa nâng cấp vẫn bấm được để xem 2 bài preview
+đầu, đúng hành vi `owned` cho phép). Chèn 2 vị trí: nhánh guest (sau bảng
+so sánh giá, trước "Thanh toán hoạt động thế nào?") và nhánh member (sau
+"Đặc quyền truy cập kho tài nguyên Premium", trước "Lộ trình Premium của
+bạn") — cả 2 dùng chung 1 component, chỉ khác vị trí chèn trong JSX.
+
+CSS mới `.course-grid`/`.course-card`/`.course-tag` (`premium.css`) —
+`auto-fill,minmax(240px,1fr)` (tự co giãn theo số khoá thật, không cần
+breakpoint riêng, cùng pattern đã dùng ở `moi-ngay-mot-y-tuong.css`/
+`muc-tieu.css`). Badge màu tái dùng ĐÚNG cặp đã verify WCAG AA từ trước
+(`#e6f7ed`/`#066b4d` xanh lá "Miễn phí", `#fff3d9`/`#7a5c08` vàng khoá —
+cùng cặp `.doc-lock` ở CKOS — và `--violet-light`/`--violet-dark` cho "Đã
+mở khoá"), không bịa màu mới.
+
+**Verify:** `npx tsc --noEmit`/`eslint` (7 file sửa) sạch, `npx vitest
+run` 495/495 pass, `rm -rf .next && npm run build` sạch (route
+`/v2/premium/[courseId]/hoc` — đã tồn tại từ trước, không đổi — vẫn build
+đúng, không route nào biến mất). Test qua `next start` (Supabase chưa cấu
+hình, honest fallback đúng): `/v2/premium` trả `200`, HTML xác nhận đúng
+heading "Khoá học Premium" + `.course-grid` render honest empty-hint
+"Chưa có khoá học nào được xuất bản." (đúng — `getAcademyFeaturedCourses()`
+trả `[]` khi không có Supabase, không phải lỗi).
+
+**Chưa tự test được:** nội dung 3 khoá mới + badge khoá/mở thật qua tài
+khoản đăng nhập (Premium và Free) trên Preview/Production URL (giới hạn
+sandbox không có `SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder
+tự xác nhận: (1) `/v2/premium` hiện đủ 4 khoá (1 free cũ + 3 mới), đúng
+badge từng khoá; (2) tài khoản Free bấm vào khoá gate Premium vẫn xem
+được 2 bài preview đầu, bài còn lại khoá đúng; (3) tài khoản Premium mở
+được toàn bộ nội dung cả 3 khoá mới (xác nhận bản vá `owned` hoạt động
+đúng).

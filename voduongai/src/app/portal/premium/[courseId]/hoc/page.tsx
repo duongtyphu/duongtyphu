@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getSupabasePublic } from "@/lib/supabase";
 import { getPurchasedIds } from "@/lib/access";
+import { getPremiumStatus } from "@/lib/v2/premium-access";
 import { getLiveCourseContent } from "@/lib/portal/live-course-content";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { CourseLearnClient } from "./CourseLearnClient";
@@ -17,9 +18,16 @@ import { CourseLearnClient } from "./CourseLearnClient";
  * KHÔNG cần tự kiểm tra đăng nhập — `middleware.ts` đã gate TOÀN BỘ
  * `/portal/*` (xem `src/lib/protected-routes.ts`, không có ngoại lệ),
  * chưa đăng nhập tự động redirect `/login?next=...` trước khi route này
- * chạy. Kiểm soát "đã mua chưa" dùng đúng `getPurchasedIds("course_id")`
- * có sẵn (`src/lib/access.ts`, đã dùng ở `/portal/premium`) — không viết
- * cơ chế xác thực mới.
+ * chạy.
+ *
+ * SỬA (đợt "3 khoá học Premium mới", thích nghi mô hình subscription) —
+ * `owned` trước đây CHỈ đọc `getPurchasedIds("course_id")` (đơn mua RIÊNG
+ * đúng khoá này) — đúng cho 5 chương trình mua-đứt cũ, nhưng SAI cho 3
+ * khoá mới (giá 0đ, không ai "mua" qua checkout) vốn phải mở khoá cho MỌI
+ * người đang có gói Premium thuê bao (Phase 38). Đã thêm
+ * `getPremiumStatus()` (Single Source of Truth subscription, dùng khắp
+ * `/v2/*`) — `owned = đã mua ĐÚNG khoá này HOẶC đang có Premium` — vẫn
+ * giữ nhánh mua-đứt cũ hoạt động nếu có, không phá logic cũ.
  *
  * KHÔNG xây tiến độ học (course progress) — quyết định để sau.
  */
@@ -50,12 +58,13 @@ export async function CourseLearnPageContent({
   const course = await getCourseMeta(courseId);
   if (!course) notFound();
 
-  const [sections, purchasedCourseIds] = await Promise.all([
+  const [sections, purchasedCourseIds, premium] = await Promise.all([
     getLiveCourseContent(courseId),
     getPurchasedIds("course_id"),
+    getPremiumStatus(),
   ]);
 
-  const owned = purchasedCourseIds.has(courseId);
+  const owned = purchasedCourseIds.has(courseId) || premium.isPremium;
 
   return (
     <div className="space-y-6">
