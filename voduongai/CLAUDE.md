@@ -12099,3 +12099,112 @@ cuộn ngang xuất hiện.
 (chung/hand-copy) nhưng KHÔNG phải toàn bộ ~46 trang `/v2/*` — trang nào
 khác có grid/flex riêng chưa breakpoint dưới 640px vẫn có khả năng còn
 tràn nhẹ, chưa kiểm tra hết trong đợt này.
+
+### Đợt 5 — Admin↔Portal wiring correctness (spot-check rủi ro cao)
+
+Audit qua Agent Explore (chạy KHÔNG dùng `isolation: "worktree"`, tránh
+đúng lỗi "worktree stale" đã gặp ở Giai đoạn 10 đợt 1) — tìm 2 lớp bug ĐÃ
+TỪNG xảy ra nhiều lần trong lịch sử dự án này (mỗi lần đều gây hậu quả
+thật: crash trắng, hoặc Admin sửa xong Portal không phản ánh):
+
+1. **Context Provider multi-row thiếu fallback theo `id` khi seed** —
+   pattern `useCollection(key, seed, {enabled})` (Live-edit "Cách A"):
+   khi `enabled=true` (Admin edit mode), `items` bắt đầu RỖNG cho tới khi
+   fetch xong — nếu code đọc `items.find(r => r.id === X)` không có
+   `?? seed`/`?? DEFAULT` sẽ crash ngay khi vào edit mode (đúng bug đã
+   gặp ở `LandingChromeContext.tsx` trước đó). Đã rà toàn bộ ~20 Context
+   Provider/component dùng pattern này (`Ecosystem*Context`,
+   `Premium*Context`/`Premium*Block`, `Mirror`/`Journal`/`Story`/
+   `JourneyMap`/`Garden`, `HomePillarCards`, `ProjectCards`,
+   `Ecosystem*Section`, `AiSpaceSections`...) — **0/20 còn thiếu
+   fallback**, toàn bộ đã đúng pattern `.find(...) ?? seed` hoặc là
+   list-render thuần không có lookup-theo-id nào có thể throw.
+2. **Fetcher `live-*.ts` không select `id`/`status` cùng `data`** — nếu 1
+   hàm `getLiveXxx()` chỉ `select("data")` mà được dùng làm seed cho
+   `useCollection()`, dữ liệu seed sẽ LỆCH SHAPE với dữ liệu fetch RAW
+   lúc Admin bật edit mode. Rà toàn bộ 41 file `live-*.ts` — 19 file dùng
+   làm seed Live-edit đều ĐÃ ĐÚNG (`select("id, data, status[, order]")`).
+   11 file khác thiếu `status` (`live-best-practices`/`live-blog`/
+   `live-hocvienai-faq`/`live-knowledge`/`live-prompts`/`live-resources`/
+   `live-sop`/`live-tools`/`live-updates`/`live-workspace`/
+   `live-resource-suggestions`, 2 file cuối thiếu cả `id`) nhưng **0/11
+   file này được dùng làm seed `useCollection()` ở bất kỳ đâu** — toàn bộ
+   chỉ phục vụ Server Component hiển thị tĩnh (fetch-once, không có
+   edit-mode client fetch song song) — theo đúng tiêu chí "chỉ tính bug
+   nếu ĐANG dùng cho Live-edit", cả 11 file này KHÔNG PHẢI bug hiện tại.
+
+**Ghi chú phòng ngừa tương lai (không phải bug, chỉ cảnh báo):** nếu sau
+này ai đó nối `live-tools.ts` (bảng `tools`, đã có Admin CRUD
+`/admin/tools` từ lâu, khả năng cao nhất sẽ được nối vào Live-edit) hoặc
+`live-resource-suggestions.ts` vào `useCollection()`, PHẢI bổ sung
+`id`/`status` vào câu SELECT trước — không tự động an toàn.
+
+**Root-cause fix của 2 bug hệ thống lớn nhất trong lịch sử dự án
+("GET route không trả `status`" và "PATCH route âm thầm rơi `status` về
+Draft") — đã xác nhận lại còn nguyên vẹn, không bị regression:**
+`src/app/api/admin/collections/[table]/route.ts` (GET) vẫn
+`select("id, data, status, order")`; `[id]/route.ts` (PATCH) vẫn ưu tiên
+`patch.status` → `existing.status` → `"Draft"` (không rơi thẳng về
+Draft khi patch không kèm status).
+
+### Đợt 6 — Companion Widget + hiệu năng
+
+**Companion Widget (Giai đoạn 9):** đọc lại `CompanionWidget.tsx`/
+`CompanionWidgetGate.tsx` — xác nhận widget KHÔNG gọi API/Supabase nào
+khi mount (chỉ đọc/ghi `localStorage`, tính toán vị trí thuần
+client-side) — không phát sinh round-trip mạng thêm cho mọi trang
+`/v2/*`. Mount đúng 1 điểm (`v2/layout.tsx`, bọc `{children}`) — không
+lặp lại thủ công ở từng trang, danh sách loại trừ (`/v2/admin`,
+`/v2/companion`, `/v2/checkout`, flipbook, trang in Sổ tay ý tưởng) hợp
+lý, không có route nào lẽ ra nên loại trừ mà đang hiện, hay ngược lại.
+
+**Hiệu năng — 2 bug thật tìm thấy và đã sửa, đúng lớp lỗi đã "vá tận
+gốc" trước đó ("Sửa nguyên nhân gốc — Portal 2.0 tải chậm") nhưng sót lại
+ở 2 chỗ xây SAU đợt fix đó:**
+
+1. **`getPurchasedIds()`** (`src/lib/access.ts`, dùng bởi
+   `/portal/premium`, `CourseLearnPageContent` — dùng chung
+   `/portal/premium/[courseId]/hoc` VÀ `/v2/premium/[courseId]/hoc`) —
+   gọi thẳng `supabase.auth.getUser()` thay vì `getCachedAuthUser()`
+   (dedupe qua React `cache()`). Xác nhận thật: `/v2/premium/[courseId]/hoc/page.tsx`
+   gọi CẢ `getPremiumStatus()` (đã dùng `getCachedAuthUser()`) LẪN
+   `CourseLearnPageContent` → `getPurchasedIds()` (raw) trong CÙNG 1 lượt
+   render — 2 round-trip mạng thật tới Supabase Auth thay vì 1. Đã sửa
+   tại NGUỒN (đổi hẳn sang `getCachedAuthUser()`) — tự động dedupe với
+   MỌI nơi khác trong cùng render đã dùng hàm cache này, không cần sửa
+   từng call site.
+2. **`/v2/checkout/page.tsx`** — tương tự, gọi `getPremiumStatus()` +
+   tự `getSupabaseServer()`/`auth.getUser()` RIÊNG để lấy email. Đổi
+   sang gọi thẳng `getCachedAuthUser()` (đã trả về `User` đầy đủ, có
+   `email`) — bỏ hẳn `getSupabaseServer()` (không cần dùng cho việc gì
+   khác trong hàm này).
+
+**Đã kiểm tra, KHÔNG sửa (ngoài phạm vi/không phải regression của
+2.0):** `useSavedItems()` (`src/lib/portal/saved.ts`) gọi
+`auth.getUser()` — nhưng đây là hook CLIENT-side, `getCachedAuthUser()`
+(React `cache()`, chỉ dedupe SERVER-side trong 1 request) không áp dụng
+được, không phải cùng lớp bug. `src/app/portal/layout.tsx` (1.0) tự gọi
+`auth.getUser()` RAW 1 lần (đã có "FIX-P0" riêng từ trước, lý do khác:
+tránh nhiều `auth.getUser()` ĐỒNG THỜI làm đua rotate refresh-token, không
+phải để giảm round-trip) — không dedupe được với `getCachedAuthUser()` ở
+tầng `page.tsx` con vì 1 hàm raw không cache chung với hàm đã cache khác;
+đây là vấn đề CỦA RIÊNG 1.0 (chỉ trang `/portal/*` mới đi qua layout này,
+`/v2/*` không bao giờ render qua đây) — không phải nguyên nhân "2.0 chậm
+hơn 1.0", ngoài phạm vi đợt audit Portal 2.0 này, không sửa.
+
+**Verify:** `npx tsc --noEmit`/`eslint`/`vitest run` (495/495) sạch,
+`rm -rf .next && npm run build` sạch.
+
+**Chưa tự đo được bằng số liệu thật:** cùng giới hạn sandbox không có
+Supabase thật đã nêu nhiều lần — chỉ xác nhận được bằng đọc code (số lần
+gọi `auth.getUser()`/`getCachedAuthUser()` trong 1 lượt render giảm từ 2
+xuống 1 ở cả 2 điểm sửa), không đo trực tiếp được mức giảm thời gian tải
+thật trên Production.
+
+---
+
+**GIAI ĐOẠN 11 (AUDIT TOÀN DIỆN PORTAL 2.0) HOÀN TẤT CẢ 6 ĐỢT** (Quét
+NGUYÊN TẮC BẤT BIẾN + link → NO-FAKE-DATA → Contrast/accessibility →
+Responsive/mobile → Admin↔Portal wiring → Companion Widget + hiệu năng).
+Tiếp theo theo lộ trình Founder đã giao: Giai đoạn 12 — Điều chỉnh Landing
+Page khớp Portal 2.0.
