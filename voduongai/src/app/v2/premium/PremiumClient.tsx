@@ -10,7 +10,6 @@ import type { PremiumPlan } from "@/lib/portal/live-premium-plans";
 import type { PremiumPlanMemberSummary, PremiumPerk, PremiumAdvisorSituation, PremiumFounder, PremiumLibraryCounts } from "@/lib/portal/live-premium-v2";
 import type { PremiumFaqItem, PremiumChrome, PremiumPaymentStep } from "@/lib/portal/live-premium";
 import type { JourneyOverview } from "@/lib/portal/live-journey-overview";
-import { siteConfig } from "@/lib/site";
 import { PremiumPerksGrid } from "@/components/v2/premium/PremiumPerksGrid";
 import { PremiumPaymentStepsBlock } from "@/components/v2/premium/PremiumPaymentStepsBlock";
 import { PremiumAdvisorBlock } from "@/components/v2/premium/PremiumAdvisorBlock";
@@ -228,6 +227,28 @@ import "./premium.css";
  *    `pg_trigger` (Supabase MCP): trigger đang BẬT (`tgenabled='O'`) trên
  *    bảng `orders` thật — không phải chỉ định nghĩa function rồi bỏ quên
  *    gắn trigger.
+ *
+ * ─── Task #50 (yêu cầu riêng Founder, sau GIAI ĐOẠN 5 REWORK) ────────────
+ *
+ * 10. Member state, khối `.two-col` cuối trang: BỎ HẲN `.ustat-grid` (6 số
+ *    thật — bài học/ngày còn lại/huy hiệu/giờ học/chuỗi ngày/% hoàn thành,
+ *    xem mục 8 phía trên) và `.support-mini` ("Bạn cần hỗ trợ?") — Founder
+ *    yêu cầu trực tiếp ("bỏ box tiến độ + hỗ trợ"). Dữ liệu 6 số KHÔNG mất
+ *    (vẫn đọc thật ở "Hành trình của tôi"/`/v2/hanh-trinh-cua-toi`), chỉ
+ *    không còn lặp lại ở đây. Thay CẢ 2 khối bằng `CommunityStrip` (trước
+ *    đó nằm RIÊNG, full-width, phía dưới `.two-col` — xem mục 7 phía trên)
+ *    — chuyển LÊN vào đúng khoảng trống vừa giải phóng, thiết kế lại thành
+ *    thẻ dọc gọn (`.community-compact`, cùng style `.member-status-card`/
+ *    `.support-mini` cũ — nền trắng/viền/bo góc 14px) thay vì dải ngang
+ *    full-width cũ. `.two-col` giờ đúng 2 cột (`1.4fr 1fr`, đã là default
+ *    của chính class này — bỏ hẳn override 3 cột `1.4fr .8fr .8fr`).
+ *    `COMMUNITY_PERKS`/`PREMIUM_ZALO_GROUP_URL` giữ nguyên, chỉ đổi layout
+ *    hiển thị. Đã dọn CSS chết cùng đợt (không phải scope-creep — cùng khu
+ *    vực đang sửa): `.community-strip`/`.community-links`/`.community-right`/
+ *    `.mini-avatars` (0 consumer sau khi redesign) và
+ *    `.community-right-actions`/`.zalo-btn` (đã mồ côi từ trước, không
+ *    JSX nào từng dùng — nút "Nhóm Zalo Premium" ở mục 7 thực ra render
+ *    trực tiếp không qua 2 class này).
  */
 
 /** Nhóm Zalo riêng cho Premium Member — link thật Founder cung cấp trực
@@ -422,14 +443,6 @@ function bestValuePlanId(plans: PremiumPlan[]): string | null {
     if (percent !== null && (!best || percent > best.percent)) best = { id: p.id, percent };
   }
   return best?.id ?? null;
-}
-
-/** `Date.now()` là hàm impure — tách khỏi thân `PremiumClient` (component,
- * trả JSX) sang hàm thuần độc lập, đúng lỗi `react-hooks/purity` đã gặp
- * nhiều lần trong dự án (xem CLAUDE.md "countNewUsers()" ở Admin Người dùng). */
-function computeDaysRemaining(expiresAt: string | null): number | null {
-  if (!expiresAt) return null;
-  return Math.max(0, Math.ceil((new Date(expiresAt).getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
 }
 
 /** "Ngày/giờ đăng ký Premium phải kết nối thật" — `purchasedAt` là
@@ -684,34 +697,36 @@ const COMMUNITY_PERKS: { title: string; desc: string; icon: React.ReactNode }[] 
   },
 ];
 
+/**
+ * Redesign compact (Task #50) — thẻ dọc, cùng chiều cao với
+ * `.member-status-card` cạnh nó trong `.two-col` (`height:100%`, nút CTA
+ * `margin-top:auto` ghim đáy). Dùng lại NGUYÊN `COMMUNITY_PERKS`/
+ * `PREMIUM_ZALO_GROUP_URL` — chỉ đổi layout hiển thị (dọc thay vì dải
+ * ngang full-width cũ).
+ */
 function CommunityStrip() {
   return (
-    <div className="community-strip">
-      <div>
-        <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 4 }}>Cộng đồng Premium</h3>
-        <p style={{ fontSize: 12.5, color: "var(--muted)", marginBottom: 14 }}>Kết nối, chia sẻ và phát triển cùng cộng đồng Premium Member</p>
-        <div className="community-links">
-          {COMMUNITY_PERKS.map((p) => (
-            <div className="cl-item" key={p.title}>
-              <div className="ico">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  {p.icon}
-                </svg>
-              </div>
-              <div>
-                <h6>{p.title}</h6>
-                <span>{p.desc}</span>
-              </div>
+    <div className="community-compact">
+      <h4>Cộng đồng Premium</h4>
+      <p>Kết nối, chia sẻ và phát triển cùng cộng đồng Premium Member</p>
+      <div className="cc-list">
+        {COMMUNITY_PERKS.map((p) => (
+          <div className="cc-item" key={p.title}>
+            <div className="ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {p.icon}
+              </svg>
             </div>
-          ))}
-        </div>
+            <div>
+              <h6>{p.title}</h6>
+              <span>{p.desc}</span>
+            </div>
+          </div>
+        ))}
       </div>
-      <div className="community-right">
-        <p>Kết nối trực tiếp với VO DUONG AI và cộng đồng Premium Member qua nhóm Zalo chính thức.</p>
-        <a href={PREMIUM_ZALO_GROUP_URL} target="_blank" rel="noopener noreferrer">
-          <button>Tham gia ngay</button>
-        </a>
-      </div>
+      <a href={PREMIUM_ZALO_GROUP_URL} target="_blank" rel="noopener noreferrer" style={{ marginTop: "auto" }}>
+        <button style={{ width: "100%" }}>Tham gia ngay</button>
+      </a>
     </div>
   );
 }
@@ -765,7 +780,6 @@ export function PremiumClient({
   libraryCounts: PremiumLibraryCounts;
   courses: AcademyCourse[];
 }) {
-  const daysRemaining = computeDaysRemaining(memberSummary.expiresAt);
   const bestValueId = bestValuePlanId(plans);
 
   return (
@@ -1052,7 +1066,7 @@ export function PremiumClient({
                     <PremiumRoadmap journey={journey} />
                   </div>
 
-                  <div className="two-col" style={{ marginTop: 24, gridTemplateColumns: "1.4fr .8fr .8fr" }}>
+                  <div className="two-col" style={{ marginTop: 24 }}>
                     <div className="member-status-card">
                       <div className="ms-badge">
                         <div className="ms-crown">
@@ -1097,45 +1111,6 @@ export function PremiumClient({
                         Quản lý gói Premium
                       </Link>
                     </div>
-                    <div className="ustat-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
-                      <div className="ustat">
-                        <div className="num">{journey.completedLessons}</div>
-                        <div className="lbl">Bài học đã hoàn thành</div>
-                      </div>
-                      <div className="ustat">
-                        <div className="num">{daysRemaining !== null ? daysRemaining : "—"}</div>
-                        <div className="lbl">Ngày còn lại của gói</div>
-                      </div>
-                      <div className="ustat">
-                        <div className="num">{journey.badges.length}</div>
-                        <div className="lbl">Huy hiệu đã đạt</div>
-                      </div>
-                      <div className="ustat">
-                        <div className="num">{journey.totalHours} giờ</div>
-                        <div className="lbl">Tổng thời gian học</div>
-                      </div>
-                      <div className="ustat">
-                        <div className="num">{journey.streakDays} ngày</div>
-                        <div className="lbl">Chuỗi ngày học</div>
-                      </div>
-                      <div className="ustat">
-                        <div className="num">{journey.overallPercent}%</div>
-                        <div className="lbl">Mức độ hoàn thành</div>
-                      </div>
-                    </div>
-                    <div className="support-mini">
-                      <h4>Bạn cần hỗ trợ?</h4>
-                      <p>Đội ngũ VO DUONG AI luôn sẵn sàng hỗ trợ bạn.</p>
-                      <Link href="/v2/companion" style={{ display: "block" }}>
-                        <button style={{ width: "100%" }}>Chat với chúng tôi</button>
-                      </Link>
-                      <a href={siteConfig.community.zaloGroup} target="_blank" rel="noopener noreferrer" className="ghost-link">
-                        Hoặc liên hệ qua Zalo
-                      </a>
-                    </div>
-                  </div>
-
-                  <div style={{ marginTop: 24 }}>
                     <CommunityStrip />
                   </div>
                 </>
