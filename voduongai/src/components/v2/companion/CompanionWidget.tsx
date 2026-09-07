@@ -244,7 +244,7 @@ export function CompanionWidget() {
         }}
         aria-label="Hiện lại Companion"
         title="Hiện lại Companion"
-        className="fixed bottom-5 right-5 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 shadow-[0_6px_18px_rgba(15,10,40,0.18)] ring-1 ring-black/5 transition hover:scale-105 sm:bottom-6 sm:right-6"
+        className="fixed bottom-5 right-5 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition hover:scale-105 sm:bottom-6 sm:right-6"
       >
         <LivingCore size={16} state="sleeping" intensity="low" />
       </button>
@@ -286,6 +286,14 @@ export function CompanionWidget() {
           )}
 
           <div className="group relative">
+            {/* Founder: "Companion nổi... vẫn còn nền trắng xung quanh => làm
+                cho nền trong suốt, hình companion hoà vào nền." Trước đây
+                `bg-white` + viền/bóng đổ mô phỏng 1 "đĩa" tròn đặc phía sau
+                `LivingCore` — đi NGƯỢC chính triết lý thiết kế của
+                `LivingCore.tsx` (Design Lock: "rìa tan dần vào trong suốt,
+                không viền tối", tự có glow/blur riêng, không cần đĩa nền).
+                Nút giờ chỉ còn vùng bấm trong suốt bao quanh orb — không đổi
+                gì trong `LivingCore.tsx` (Design Lock, không tự ý sửa). */}
             <button
               type="button"
               onPointerDown={onPointerDown}
@@ -295,11 +303,10 @@ export function CompanionWidget() {
               aria-label="Mở Companion"
               title="Kéo để di chuyển · Bấm để mở chat"
               style={{ width: BUTTON_SIZE, height: BUTTON_SIZE, touchAction: "none" }}
-              className={`flex items-center justify-center rounded-full bg-white shadow-[0_10px_30px_rgba(15,10,40,0.22)] transition hover:shadow-[0_14px_36px_rgba(15,10,40,0.28)] ${
+              className={`flex items-center justify-center rounded-full bg-transparent transition ${
                 dragging ? "cursor-grabbing scale-105" : "cursor-grab hover:scale-105"
               }`}
             >
-              <span aria-hidden className="absolute inset-0 rounded-full" style={{ boxShadow: "0 0 0 1px rgba(0,0,0,0.05)" }} />
               <LivingCore size={52} state="idle" intensity="medium" />
             </button>
 

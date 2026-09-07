@@ -78,21 +78,26 @@
  *     "Mỗi ngày một ý tưởng"/"Học viện AI"/"Dự án & Cơ hội", đúng ví dụ
  *     Founder nêu) — không phải recommendation engine, chỉ là điều hướng
  *     nội bộ trung thực (mọi trang đích đều có nội dung thật).
- *  8. "Công cụ yêu thích" — GIAI ĐOẠN 2, mục 2c: ĐỘNG theo cuộc trò chuyện
- *     gần nhất, tái dùng `MentorContext.suggestedTools` đã có sẵn (Sprint
- *     R02) qua `getCompanionFavoriteTools()` (`page.tsx` fetch, xem docblock
- *     đầy đủ trong `live-companion-favorites.ts`). TASK #63 (đợt này):
- *     icon danh mục tĩnh (`CATEGORY_STYLE`) đổi thành LOGO THẬT của từng
- *     công cụ — favicon suy từ `tools.website` thật qua dịch vụ favicon
- *     công khai (Google `s2/favicons`, không cần API key/hạ tầng upload
- *     mới), fallback về `CATEGORY_STYLE` khi công cụ chưa có `website`.
- *     "Quản lý" và mỗi icon công cụ giờ trỏ `/v2/hoc-vien-ai` (bare, không
- *     còn `?tab=ai-workspace`) — tab "AI Workspace" đã bị gỡ hẳn khỏi
- *     `/v2/hoc-vien-ai` theo yêu cầu Founder (mục 4a của kế hoạch gốc), và
- *     `/v2/ai-workspace` (route đứng riêng cũ) đã sớm bị xoá + redirect
- *     vĩnh viễn về `/v2/hoc-vien-ai` từ trước (xem `next.config.ts`) — nội
- *     dung "công cụ theo từng nhu cầu" không còn tồn tại riêng ở `/v2/*`
- *     nữa, "Quản lý" giờ chỉ đưa về trang Học viện AI (tab mặc định).
+ *  8. "Công cụ yêu thích" (TASK #63) — ĐÃ XOÁ HẲN khỏi UI theo yêu cầu
+ *     Founder ("bỏ mục Công cụ yêu thích và hộp 'Bạn cần hỗ trợ thêm?' ở
+ *     cột phải"). Dọn theo: prop `favoriteTools`/type
+ *     `CompanionFavoriteToolsResult`, `CATEGORY_STYLE`/
+ *     `DEFAULT_CATEGORY_STYLE`/`faviconUrlFor()` (chỉ dùng cho khối này),
+ *     `getCompanionFavoriteTools()` khỏi `page.tsx` — không còn consumer
+ *     nào của `lib/portal/live-companion-favorites.ts` trong toàn bộ dự
+ *     án, đã xoá luôn file đó (tránh dead code).
+ *  9. "Bạn cần hỗ trợ thêm?" (`.help-card`) — ĐÃ XOÁ HẲN, cùng yêu cầu
+ *     trên. Cột phải giờ còn đúng 3 card: "Hồ sơ của bạn"/"Mục tiêu hiện
+ *     tại"/"Companion gợi ý cho bạn".
+ * 10. **Cột giữa "cố định"** — Founder: "Cho trang giữa giữ cố định không
+ *     di chuyển lên xuống được." Trước đây `.content` không giới hạn
+ *     chiều cao, nên khi `.right-col` (nhiều card) cao hơn `.center-col`,
+ *     CẢ TRANG cuộn dọc theo, kéo cả khung chat (`.chat-card`, đã cố định
+ *     đúng `calc(100vh - 233px)` từ trước) trôi lên/xuống theo — trái ý
+ *     "cố định". Đã giới hạn `.content{height:calc(100vh - 71px);
+ *     overflow:hidden}` (71px = topbar, cùng số đo đã dùng để tính
+ *     `.chat-card`) + `.right-col{height:100%;overflow-y:auto}` (tự cuộn
+ *     riêng bên trong) — xem docblock đầy đủ trong `companion.css`.
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
@@ -106,81 +111,11 @@ import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 import { getGoalProgress, listGoals, hydrateGoalRuntime } from "@/lib/portal/foundation/goal-runtime";
 import type { AcademyProgress } from "@/lib/portal/live-academy";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
-import type { CompanionFavoriteToolsResult } from "@/lib/portal/live-companion-favorites";
 import type { CompanionMemorySuggestion } from "@/ai/runtime/public-chat-response";
 import { saveMemorySuggestion } from "@/lib/portal/companion/memory-suggestion";
 
 import "../inter-gf.css";
 import "./companion.css";
-
-/** Icon/màu theo đúng 6 danh mục thật của bảng `tools` (migration
-    `phase37_ai_workspace_content_e3`, xem CLAUDE.md) — danh mục lạ (chưa có
-    trong 6 cái này) rơi vào `DEFAULT_CATEGORY_STYLE`, không crash. */
-const CATEGORY_STYLE: Record<string, { bg: string; icon: React.ReactNode }> = {
-  "Trợ lý AI": {
-    bg: "linear-gradient(145deg,#8b6bff,#5a37e6)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 11.5a8.5 8.5 0 01-8.5 8.5 8.4 8.4 0 01-3.9-.94L3 21l1.5-4.5A8.4 8.4 0 013.5 12 8.5 8.5 0 0112 3.5a8.5 8.5 0 019 8z" />
-      </svg>
-    ),
-  },
-  "Viết lách & Nội dung": {
-    bg: "linear-gradient(145deg,#5f8fff,#1d5fd8)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4.5 4.5h15v11.5H9l-4.5 4z" />
-        <path d="M8.5 8.8h7M8.5 12h4.5" />
-      </svg>
-    ),
-  },
-  "Hình ảnh AI": {
-    bg: "linear-gradient(145deg,#ff7ab8,#d6336c)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <path d="M21 15l-5-5L5 21" />
-      </svg>
-    ),
-  },
-  "Video AI": {
-    bg: "linear-gradient(145deg,#ff9d52,#c2660a)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="M9 9l6 3-6 3z" fill="#fff" stroke="none" />
-      </svg>
-    ),
-  },
-  "Âm thanh AI": {
-    bg: "linear-gradient(145deg,#4bc4e0,#0e7490)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <rect x="9" y="2" width="6" height="11" rx="3" />
-        <path d="M5 10a7 7 0 0014 0M12 17v4M9 21h6" />
-      </svg>
-    ),
-  },
-  "Nghiên cứu & Phân tích": {
-    bg: "linear-gradient(145deg,#3ecf7e,#189a52)",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="11" cy="11" r="7" />
-        <path d="M21 21l-4.3-4.3" />
-      </svg>
-    ),
-  },
-};
-
-const DEFAULT_CATEGORY_STYLE: { bg: string; icon: React.ReactNode } = {
-  bg: "linear-gradient(145deg,#9791b8,#5f5980)",
-  icon: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14.5 6.2a3.8 3.8 0 00-5 4.8l-6 6 2.5 2.5 6-6a3.8 3.8 0 004.8-5l-2.4 2.4-2.1-.6-.6-2.1z" />
-    </svg>
-  ),
-};
 
 /** Task #62 — gợi ý tĩnh tới các mục KHÁC trong Portal 2.0 (thay 2 bài Blog
     AI đã bỏ). Cả 3 đích đều là hub thật, luôn có nội dung — không cần dữ
@@ -219,20 +154,6 @@ const INTERNAL_SUGGESTIONS: { label: string; href: string; icon: React.ReactNode
     ),
   },
 ];
-
-/** Task #63 — favicon thật suy từ `tool.website` (dịch vụ favicon công khai
-    của Google, không cần API key/hạ tầng upload riêng). `null` nếu
-    `website` rỗng/không phải URL hợp lệ — component tự fallback về icon
-    danh mục tĩnh (`CATEGORY_STYLE`). */
-function faviconUrlFor(website: string): string | null {
-  if (!website) return null;
-  try {
-    const hostname = new URL(website).hostname;
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=64`;
-  } catch {
-    return null;
-  }
-}
 
 type Msg = CompanionMessageRow & { pending?: boolean };
 
@@ -273,13 +194,11 @@ export function CompanionClient({
   initialConversationId,
   initialMessages,
   academyProgress,
-  favoriteTools,
 }: {
   premium: PremiumStatus;
   initialConversationId: string | null;
   initialMessages: CompanionMessageRow[];
   academyProgress: AcademyProgress;
-  favoriteTools: CompanionFavoriteToolsResult;
 }) {
   const router = useRouter();
   const [conversationId, setConversationId] = useState(initialConversationId);
@@ -366,7 +285,26 @@ export function CompanionClient({
           // bại) — thay bong bóng "đang gửi" bằng dữ liệu thật thay vì để
           // nó kẹt vĩnh viễn ở trạng thái mờ/không có giờ (đúng cách
           // `CompanionChatShell.tsx` 1.0 xử lý).
-          setMessages((prev) => prev.map((m) => (m.id === pendingId ? { ...data.userMessage, pending: false } : m)));
+          //
+          // BUG THẬT ĐÃ SỬA — trước đây spread thẳng `data.userMessage`
+          // (shape server `{id,role,content,created_at}`, SNAKE_CASE) vào
+          // `Msg` (kỳ vọng `createdAt` camelCase) — `m.createdAt` luôn
+          // `undefined` cho nhánh lỗi này, `formatMessageTimestamp()` âm
+          // thầm trả về chuỗi rỗng (không crash, chỉ mất giờ hiển thị).
+          // Map tường minh đúng field, khớp `CompanionMessageRow` cục bộ.
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === pendingId
+                ? {
+                    id: data.userMessage.id,
+                    role: data.userMessage.role,
+                    content: data.userMessage.content,
+                    createdAt: data.userMessage.created_at,
+                    pending: false,
+                  }
+                : m
+            )
+          );
         } else {
           // Chưa có gì được lưu (lỗi xác thực/tạo conversation) — bỏ hẳn
           // bong bóng tạm, không để kẹt lại trên màn hình.
@@ -375,14 +313,33 @@ export function CompanionClient({
         return;
       }
       if (data.conversationId) setConversationId(data.conversationId);
+      // BUG NGHIÊM TRỌNG ĐÃ SỬA — "mỗi khi chát hệ thống tải lại trang":
+      // `data.assistantMessage` (response `/api/companion/chat`, xem
+      // `PublicChatResponse`) là 1 OBJECT ĐẦY ĐỦ
+      // `{id,role,content,created_at}`, KHÔNG PHẢI chuỗi text — trước đây
+      // gán THẲNG cả object này vào `content` (`content: data.assistantMessage
+      // ?? ""`). `<MarkdownLite text={m.content} />` sau đó gọi
+      // `text.split(...)` trên 1 OBJECT → `TypeError: text.split is not a
+      // function` ở MỌI LƯỢT chat thành công — exception này bị Next.js
+      // Error Boundary cấp route (`/v2/error.tsx`) bắt, thay thế TOÀN BỘ
+      // cây UI bằng màn hình lỗi → đúng cảm giác "cả trang bị tải lại"
+      // Founder mô tả (không phải navigation thật, là unmount do crash).
+      // Sửa: trích đúng `.content`/`.id`/`.created_at` từ 2 object server
+      // trả về (cùng cách `CompanionChatShell.tsx`'s `toChatMessage()` xử
+      // lý), không tự tổng hợp `createdAt`/`id` giả nữa.
       setMessages((prev) => [
         ...prev.filter((m) => m.id !== pendingId),
-        { id: `${pendingId}-u`, role: "user", content: text, createdAt: optimisticUser.createdAt },
         {
-          id: `${pendingId}-a`,
-          role: "assistant",
-          content: data.assistantMessage ?? "",
-          createdAt: new Date().toISOString(),
+          id: data.userMessage.id,
+          role: data.userMessage.role,
+          content: data.userMessage.content,
+          createdAt: data.userMessage.created_at,
+        },
+        {
+          id: data.assistantMessage.id,
+          role: data.assistantMessage.role,
+          content: data.assistantMessage.content,
+          createdAt: data.assistantMessage.created_at,
         },
       ]);
       // Giai đoạn 2, mục 2a — API trả `memorySuggestion` khi lượt này có
@@ -772,64 +729,6 @@ export function CompanionClient({
                 ))}
               </div>
 
-              <div className="card">
-                <div className="card-head">
-                  <h4>Công cụ yêu thích</h4>
-                  <a onClick={() => go("/v2/hoc-vien-ai")} style={{ cursor: "pointer" }}>
-                    Quản lý
-                  </a>
-                </div>
-                {favoriteTools.tools.length === 0 ? (
-                  <div className="empty-hint">Chưa có công cụ nào để gợi ý — nội dung sẽ hiện khi có.</div>
-                ) : (
-                  <>
-                    <div className="tools-grid">
-                      {favoriteTools.tools.map((t) => {
-                        const favicon = faviconUrlFor(t.website);
-                        const style = CATEGORY_STYLE[t.category] ?? DEFAULT_CATEGORY_STYLE;
-                        return (
-                          <div
-                            className="tool-ico"
-                            style={{ background: favicon ? "#fff" : style.bg, cursor: "pointer" }}
-                            key={t.id}
-                            title={t.name}
-                            onClick={() => go("/v2/hoc-vien-ai")}
-                          >
-                            {favicon ? (
-                              // eslint-disable-next-line @next/next/no-img-element -- favicon ngoài, dịch vụ công khai, không cần next/image domain allowlist
-                              <img
-                                src={favicon}
-                                alt={t.name}
-                                width={20}
-                                height={20}
-                                style={{ borderRadius: 4 }}
-                                onError={(e) => {
-                                  e.currentTarget.style.display = "none";
-                                }}
-                              />
-                            ) : (
-                              style.icon
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {favoriteTools.personalized ? (
-                      <div style={{ fontSize: 11, color: "var(--muted)", marginTop: 8 }}>
-                        Gợi ý theo cuộc trò chuyện gần nhất của bạn.
-                      </div>
-                    ) : null}
-                  </>
-                )}
-              </div>
-
-              <div className="help-card">
-                <h4 style={{ fontSize: 14, fontWeight: 800 }}>Bạn cần hỗ trợ thêm?</h4>
-                <p>Companion luôn sẵn sàng đồng hành cùng bạn.</p>
-                <button onClick={() => document.querySelector<HTMLInputElement>(".comp .chat-input-row input")?.focus()}>
-                  Bắt đầu trò chuyện
-                </button>
-              </div>
             </aside>
           </div>
         </PortalV2Shell>

@@ -49,14 +49,25 @@ import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
 import { NotificationBell } from "@/components/v2/NotificationBell";
 import { PortalSearchBox } from "@/components/v2/PortalSearchBox";
+import { useSidebarDragScroll } from "@/lib/v2/useSidebarDragScroll";
 
-/** "Hệ sinh thái VO DUONG AI" — 5 số liệu thật, xem docblock ở `page.tsx`. */
+/** "Hệ sinh thái VO DUONG AI" — 18 ô (5 gốc + 13 thêm ở Task #39), xem
+ * docblock ở `page.tsx`. 11 field số đếm THẬT; 6 ô còn lại (Task #39) là
+ * hằng số cấu trúc/số liệu Founder cấp trực tiếp, viết literal trong JSX
+ * — xem chú thích tại chỗ. */
 export type PortalStats = {
   ideaCount: number;
   fieldCount: number;
   needLessonCount: number;
   toolLessonCount: number;
   careerLessonCount: number;
+  glossaryCount: number;
+  academyVideoCount: number;
+  promptCount: number;
+  resourceCount: number;
+  bestPracticeCount: number;
+  officeCount: number;
+  premiumCourseCount: number;
 };
 
 /** "Cơ hội nổi bật" — preview 1 hệ sinh thái thật (`ecosystem_chrome`). */
@@ -149,8 +160,16 @@ const CROWN_SPARKLES: React.CSSProperties[] = [
 
 const SPARKLE_PATH = "M12 2l1.6 6.4L20 10l-6.4 1.6L12 18l-1.6-6.4L4 10l6.4-1.6z";
 
-/** 3 biến thể màu/icon "đang học" (cycle theo vị trí) + 1 biến thể "chưa bắt đầu" — chép nguyên từ bản thiết kế gốc. */
-const LEARN_CARD_ACTIVE_STYLES = [
+/**
+ * TASK #40 — 4 màu nền cố định cho "Các khoá học Premium" (Tím/Xanh lá
+ * cây/Xanh ngọc bích/Cam), cycle theo VỊ TRÍ (`i % 4`), KHÔNG còn phụ
+ * thuộc `percent` (đợt trước chỉ có 3 màu "đang học" + 1 màu xám "chưa
+ * bắt đầu" — hợp lý cho "Tiếp tục học tập" cũ, nhưng section này giờ luôn
+ * hiện ĐỦ cả 4 khoá bất kể tiến độ, nên cần 4 màu phân biệt cố định).
+ * 2 màu đầu (Tím/Xanh lá cây) giữ nguyên palette gốc; Xanh ngọc bích/Cam
+ * là 2 màu mới thêm.
+ */
+const LEARN_CARD_STYLES = [
   {
     cardBg: "linear-gradient(155deg,#f4efff 0%,#e4d9ff 100%)",
     tagBg: "#ded0ff", tagColor: "#5a37e6",
@@ -175,9 +194,9 @@ const LEARN_CARD_ACTIVE_STYLES = [
     ),
   },
   {
-    cardBg: "linear-gradient(155deg,#eaf2ff 0%,#cfe1ff 100%)",
-    tagBg: "#ded0ff", tagColor: "#5a37e6",
-    iconBg: "linear-gradient(145deg,#8b6bff,#5a37e6)", fillColor: "#7c5cfc",
+    cardBg: "linear-gradient(155deg,#e6fbf7 0%,#c3f3e8 100%)",
+    tagBg: "#bdf0e3", tagColor: "#0f766e",
+    iconBg: "linear-gradient(145deg,#2dd4bf,#0d9488)", fillColor: "#14b8a6",
     icon: (
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 10v4a1 1 0 001 1h2l7 3.5V5.5L6 9H4a1 1 0 00-1 1z" />
@@ -185,21 +204,18 @@ const LEARN_CARD_ACTIVE_STYLES = [
       </svg>
     ),
   },
+  {
+    cardBg: "linear-gradient(155deg,#fff3e6 0%,#ffe0bf 100%)",
+    tagBg: "#ffe0bf", tagColor: "#b45309",
+    iconBg: "linear-gradient(145deg,#fb923c,#ea580c)", fillColor: "#f97316",
+    icon: (
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" />
+        <path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z" />
+      </svg>
+    ),
+  },
 ];
-
-const LEARN_CARD_INACTIVE_STYLE = {
-  cardBg: "linear-gradient(155deg,#f6f5fa 0%,#e6e4ef 100%)",
-  tagBg: "#e2e0ec", tagColor: "#57506f",
-  iconBg: "linear-gradient(145deg,#9791b8,#5f5980)", fillColor: "#9791b8",
-  icon: (
-    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3.5" y="4" width="6" height="6" rx="1.5" />
-      <rect x="14.5" y="4" width="6" height="6" rx="1.5" />
-      <rect x="9" y="14" width="6" height="6" rx="1.5" />
-      <path d="M6.5 10v2a2 2 0 002 2H9M17.5 10v2a2 2 0 01-2 2h-1.5" />
-    </svg>
-  ),
-};
 
 /** Nhãn/màu/icon theo loại tài nguyên — chép nguyên 5 biến thể của bản thiết kế gốc. */
 const SUGG_STYLE: Record<ResourceSuggestionType, {
@@ -293,6 +309,9 @@ export function TrangChuClient({
    * `.v2-mobile-nav-backdrop` đã có sẵn trong `v2-tokens.css`.
    */
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  /** Task #43 — click-và-kéo để cuộn sidebar, cộng thêm cho cuộn bằng
+   * con lăn chuột đã có sẵn (xem `useSidebarDragScroll.ts`). */
+  const sidebarDragRef = useSidebarDragScroll<HTMLElement>();
   /**
    * Founder: "thêm chức năng dấu 3 gạch để co giãn/ẩn thanh Menu" — cùng
    * cơ chế đã thêm ở `PortalV2Shell.tsx` (xem docblock đó): nút
@@ -379,6 +398,7 @@ export function TrangChuClient({
           aria-hidden="true"
         />
         <aside
+          ref={sidebarDragRef}
           className={[
             "sidebar",
             mobileNavOpen ? "mobile-open" : "",
@@ -667,6 +687,200 @@ export function TrangChuClient({
                       <div className="portal-stat-label">Bài học nghề nghiệp ứng dụng AI</div>
                     </div>
                   </div>
+
+                  {/* TASK #39 — 13 hộp mới (tổng 18). 6 hộp số đếm THẬT
+                      (glossaryCount/academyVideoCount/promptCount/
+                      resourceCount/bestPracticeCount/officeCount/
+                      premiumCourseCount) — xem docblock `page.tsx`. 6 hộp
+                      còn lại (5 dự án & cơ hội/3 mức hoa hồng Affiliate/10
+                      nguồn thư viện/15 Claude/8 ChatGPT/2 Gemini) là hằng
+                      số cấu trúc/số liệu Founder cấp trực tiếp — không có
+                      bảng/query đơn nào phản ánh đúng "số nguồn tài
+                      nguyên theo từng công cụ AI" này. */}
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/moi-ngay-mot-y-tuong/tu-dien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#f9a8d4,#db2777)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.glossaryCount}</div>
+                      <div className="portal-stat-label">Thuật ngữ AI giải thích dễ hiểu</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=khoa-hoc")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#f87171,#dc2626)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.academyVideoCount}+</div>
+                      <div className="portal-stat-label">Bài giảng video</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#a5b4fc,#6366f1)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16v12H8l-4 4z" />
+                        <path d="M8 9h8M8 12h5" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.promptCount}+</div>
+                      <div className="portal-stat-label">Prompt</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#5eead4,#0d9488)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 7l9-4 9 4-9 4-9-4z" />
+                        <path d="M3 7v10l9 4 9-4V7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.resourceCount}+</div>
+                      <div className="portal-stat-label">Tài nguyên</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#bef264,#65a30d)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M9 12l2 2 4-4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.bestPracticeCount}+</div>
+                      <div className="portal-stat-label">Bài thực hành thực chiến</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#93c5fd,#2563eb)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="3" y="7" width="18" height="13" rx="2" />
+                        <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" />
+                        <path d="M3 12h18" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.officeCount}+</div>
+                      <div className="portal-stat-label">Bài AI dành cho dân văn phòng</div>
+                    </div>
+                  </div>
+                  <div className="portal-stat-card" onClick={() => router.push("/v2/du-an-co-hoi")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#fdba74,#ea580c)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z" />
+                        <path d="M12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">5+</div>
+                      <div className="portal-stat-label">Dự án &amp; Cơ hội thực chiến</div>
+                    </div>
+                  </div>
+                  <div className="portal-stat-card" onClick={() => router.push("/v2/premium")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#fde68a,#d97706)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
+                        <path d="M2 6l4 4 6-8 6 8 4-4-2 13H4z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">{stats.premiumCourseCount}+</div>
+                      <div className="portal-stat-label">Khoá học Premium chất lượng</div>
+                    </div>
+                  </div>
+                  <div className="portal-stat-card" onClick={() => router.push("/v2/affiliate")}>
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#86efac,#15803d)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M9 15l6-6M9.5 10a.5.5 0 100-1 .5.5 0 000 1zM14.5 15a.5.5 0 100-1 .5.5 0 000 1z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">3</div>
+                      <div className="portal-stat-label">Mức hoa hồng cho người làm Affiliate</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#c4b5fd,#7c3aed)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect x="4" y="4" width="4" height="16" rx="1" />
+                        <rect x="10" y="7" width="4" height="13" rx="1" />
+                        <rect x="16" y="2" width="4" height="18" rx="1" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">10+</div>
+                      <div className="portal-stat-label">Nguồn thư viện tài nguyên</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#fdba8c,#c2410c)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
+                        <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">15+</div>
+                      <div className="portal-stat-label">Tài nguyên về Claude</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#6ee7b7,#059669)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M8.5 15.5c1-3 5-3 6 0M9 9.5h.01M15 9.5h.01" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">8+</div>
+                      <div className="portal-stat-label">Tài nguyên về ChatGPT</div>
+                    </div>
+                  </div>
+                  <div
+                    className="portal-stat-card"
+                    onClick={() => router.push("/v2/hoc-vien-ai?tab=thu-vien")}
+                  >
+                    <div className="ico" style={{ background: "linear-gradient(145deg,#93c5fd,#8b5cf6)" }}>
+                      <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff">
+                        <path d="M12 2c0 5.5 4.5 10 10 10-5.5 0-10 4.5-10 10 0-5.5-4.5-10-10-10 5.5 0 10-4.5 10-10z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="portal-stat-num">2+</div>
+                      <div className="portal-stat-label">Tài nguyên về Gemini</div>
+                    </div>
+                  </div>
                 </div>
               </section>
 
@@ -722,7 +936,7 @@ export function TrangChuClient({
                     {courses.map((course, i) => {
                       const completed = progress.completedByCourse[course.id] ?? 0;
                       const percent = course.lessonCount > 0 ? Math.round((completed / course.lessonCount) * 100) : 0;
-                      const style = percent > 0 ? LEARN_CARD_ACTIVE_STYLES[i % LEARN_CARD_ACTIVE_STYLES.length] : LEARN_CARD_INACTIVE_STYLE;
+                      const style = LEARN_CARD_STYLES[i % LEARN_CARD_STYLES.length];
                       return (
                         <div
                           key={course.id}

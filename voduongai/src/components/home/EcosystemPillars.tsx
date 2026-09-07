@@ -38,6 +38,12 @@ const ITEMS = [
     desc: "446 ý tưởng thực chiến theo 35 lĩnh vực — học, lưu và áp dụng ngay mỗi ngày.",
   },
   {
+    id: "hanh-trinh-cua-toi",
+    icon: "/images/landing-preview/icons/eco-hanh-trinh-cua-toi.png",
+    title: "Hành trình của tôi",
+    desc: "Nhật ký học tập, dấu mốc trưởng thành và câu chuyện riêng của bạn — tất cả được ghi lại theo thời gian thực.",
+  },
+  {
     id: "du-an-co-hoi",
     icon: "/images/landing-preview/icons/eco-du-an-co-hoi.png",
     title: "Dự án & Cơ hội",
@@ -117,19 +123,19 @@ export function EcosystemPillars({ variant = "dark" }: { variant?: "dark" | "lig
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-wrap items-stretch justify-center gap-4 xl:flex-nowrap"
+          className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:items-stretch sm:justify-center xl:flex-nowrap"
         >
           {ITEMS.map(({ id, icon, title, desc }) => (
             <div
               id={id}
               key={id}
-              className={`card-shine flex w-[200px] scroll-mt-24 flex-col items-center gap-3 rounded-[10.8px] border px-5 py-7 text-center ${
+              className={`card-shine flex w-full scroll-mt-24 flex-col items-center gap-3 rounded-[10.8px] border px-4 py-6 text-center sm:w-[200px] sm:px-5 sm:py-7 ${
                 isLight
                   ? "border-[#ECEDF5] bg-white shadow-[0_4px_20px_rgba(15,23,60,.05)]"
                   : "border-white/10 bg-white/[0.04]"
               }`}
             >
-              <div className="flex h-[77px] w-[77px] items-center justify-center">
+              <div className="flex h-[68px] w-[68px] items-center justify-center sm:h-[77px] sm:w-[77px]">
                 <Image
                   src={icon}
                   alt={title}

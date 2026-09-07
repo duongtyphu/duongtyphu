@@ -170,6 +170,15 @@ export const getAcademyLessonGroupCounts = cache(
   },
 );
 
+/** Đếm nhẹ số video Published (bảng `academy_videos`) — dùng cho ô "13+ bài
+ * giảng video" ở "Hệ sinh thái VO DUONG AI", Trang chủ. */
+export const getAcademyVideoCount = cache(async (): Promise<number> => {
+  const supabase = getSupabasePublic();
+  if (!supabase) return 0;
+  const { count } = await supabase.from("academy_videos").select("id", { count: "exact", head: true }).eq("status", "Published");
+  return count ?? 0;
+});
+
 /** Lưới 13 video YouTube (Admin-editable, không giới hạn cứng số 13). */
 export const getAcademyVideos = cache(async (): Promise<AcademyVideo[]> => {
   const supabase = getSupabasePublic();

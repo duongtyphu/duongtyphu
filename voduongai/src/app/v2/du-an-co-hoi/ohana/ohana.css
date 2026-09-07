@@ -197,6 +197,17 @@
   .oha .profile-actions{width:100%}
   .oha .stat-row, .oha .about-grid, .oha .pillars-grid{grid-template-columns:1fr}
 }
+
+/* Task #41 — cùng lớp bug với `.pj-hero` (hub Dự án & Cơ hội): `.oh-hero`
+   là 2 cột (`.oh-hero-text` max-width:380px + `.oh-graphic` 300px, cả 2
+   `flex-shrink:0`) không có breakpoint nào — dưới ~720px, `overflow:hidden`
+   của `.oh-hero` âm thầm cắt mất `.oh-graphic`, không gây tràn ngang trang
+   nên audit `scrollWidth` không bắt được. */
+@media (max-width:720px){
+  .oha .oh-hero{flex-direction:column;align-items:flex-start;padding:24px 22px}
+  .oha .oh-hero-text{max-width:100%}
+  .oha .oh-graphic{align-self:center}
+}
 .oha [class*="ico"]{box-shadow:0 5px 14px rgba(30,20,80,.16),0 2px 4px rgba(30,20,80,.1),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -5px 8px rgba(0,0,0,.08);position:relative;overflow:hidden}
 .oha [class*="ico"]::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 55%);pointer-events:none}
 .oha [class*="ico"] svg{position:relative;z-index:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
