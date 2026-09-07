@@ -55,9 +55,9 @@ const CROWN_SPARKLES: React.CSSProperties[] = [
 /**
  * 3 trang nhóm "Companion" (`Companion.html`/`Su menh Companion.html`/
  * `Bo nho ca nhan hoa.html`) hiện sidebar KHÁC — mục "Companion AI" mở rộng
- * thành `.nav-parent` (tĩnh, không click được) + `.nav-sub` (3 mục con)
- * thay vì 1 nút phẳng như các trang khác. Đã audit `Companion.html` xác
- * nhận khác biệt này (không phải suy đoán) — 42 trang còn lại cần kiểm tra
+ * thành `.nav-parent` (tĩnh, không click được) + `.nav-sub` (mục con) thay
+ * vì 1 nút phẳng như các trang khác. Đã audit `Companion.html` xác nhận
+ * khác biệt này (không phải suy đoán) — 42 trang còn lại cần kiểm tra
  * CSS/markup từng trang trước khi coi là "giống hệt", KHÔNG mặc định mọi
  * trang dùng đúng 1 khuôn.
  *
@@ -66,11 +66,20 @@ const CROWN_SPARKLES: React.CSSProperties[] = [
  * bị XOÁ HẲN khỏi Portal theo yêu cầu Founder (xem
  * `src/app/v2/nhat-ky-hoi-thoai`/`src/app/v2/chien-luoc-ca-nhan`, cả 2 thư
  * mục đã xoá).
+ *
+ * "Bộ nhớ & Cá nhân hoá" (`Bo nho ca nhan hoa.html`) — CHỈ bỏ khỏi menu
+ * theo yêu cầu Founder (không xoá route/trang, khác 2 mục trên) — trang
+ * `/v2/bo-nho-ca-nhan-hoa` VẪN CÒN, chỉ không còn xuất hiện trong submenu
+ * này nữa. Trang này vẫn tự render `PortalV2Shell` với
+ * `activeHtmlFile="Bo nho ca nhan hoa.html"` — `companionExpanded` giờ chỉ
+ * còn bung đúng 2 mục con, item "đang active" của chính trang đó không nằm
+ * trong danh sách hiện — không gây lỗi (chỉ là không có mục nào tô đậm ở
+ * submenu khi đang đứng ở trang này, chấp nhận được vì trang không còn
+ * điểm vào từ sidebar nữa).
  */
 const COMPANION_FAMILY: { htmlFile: string; label: string }[] = [
   { htmlFile: "Companion.html", label: "Trò chuyện cùng Companion" },
   { htmlFile: "Su menh Companion.html", label: "Sứ mệnh Companion" },
-  { htmlFile: "Bo nho ca nhan hoa.html", label: "Bộ nhớ & Cá nhân hoá" },
 ];
 
 export function PortalV2Shell({
