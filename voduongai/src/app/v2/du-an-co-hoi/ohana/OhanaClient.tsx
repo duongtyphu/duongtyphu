@@ -42,8 +42,8 @@
  *   bật).
  * ========================================================================== */
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import type { PremiumStatus } from "@/lib/v2/premium-access";
 import { ProfileMenu } from "@/components/v2/ProfileMenu";
@@ -116,6 +116,30 @@ const NEWS = [
 
 export function OhanaClient({ premium }: { premium: PremiumStatus }) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  /**
+   * Bug mobile HỆ THỐNG (Giai đoạn 11, Đợt 4) — sidebar 224px cố định
+   * tràn ngang trên di động. Trang này tự chép JSX/CSS sidebar riêng
+   * (không dùng `PortalV2Shell.tsx`) nên không tự động thừa hưởng cơ chế
+   * hamburger/drawer đã thêm ở component đó — thêm cùng cơ chế Ở ĐÂY,
+   * dùng chung CSS site-wide `[data-ui="v2"] .sidebar`/`.v2-mobile-nav-btn`/
+   * `.v2-mobile-nav-backdrop` đã có sẵn trong `v2-tokens.css`.
+   */
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMobileNavOpen(false);
+  }
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" || e.key === "Esc") setMobileNavOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileNavOpen]);
   const [tab, setTab] = useState(0);
   const [videoPlaying, setVideoPlaying] = useState(false);
 
@@ -127,7 +151,12 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
   return (
     <div className="oha">
       <div className="app">
-        <aside className="sidebar">
+        <div
+          className={mobileNavOpen ? "v2-mobile-nav-backdrop open" : "v2-mobile-nav-backdrop"}
+          onClick={() => setMobileNavOpen(false)}
+          aria-hidden="true"
+        />
+        <aside className={mobileNavOpen ? "sidebar mobile-open" : "sidebar"}>
           <div className="brand">
             <div className="mark">
               <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
@@ -236,6 +265,17 @@ export function OhanaClient({ premium }: { premium: PremiumStatus }) {
 
         <div className="main-col">
           <div className="topbar">
+            <button
+              type="button"
+              className="v2-mobile-nav-btn"
+              onClick={() => setMobileNavOpen((v) => !v)}
+              aria-expanded={mobileNavOpen}
+              aria-label="Mở menu"
+            >
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M3 6h18M3 12h18M3 18h18" />
+              </svg>
+            </button>
             <PortalSearchBox placeholder="Tìm kiếm dự án, cơ hội, token, tài liệu..." variant="box" />
             <div className="topbar-right">
               {!premium.isPremium && (

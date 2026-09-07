@@ -185,6 +185,7 @@
   .htct .content{flex-direction:column}
   .htct .journey-split{flex-direction:column}
   .htct .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .htct .center-col{width:100%}
   .htct .right-col>.card{flex:1;min-width:280px}
   .htct .progress-card{grid-template-columns:1fr 1fr;gap:16px}
   .htct .mini-metric{border-left:none;padding-left:0}

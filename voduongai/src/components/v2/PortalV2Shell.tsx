@@ -18,12 +18,18 @@
  * bịa qua prop `notifBadge` (đã bỏ).
  *
  * Trang gọi component này tự bọc `<div className="<prefix>"><div
- * className="app">` bên ngoài — `PortalV2Shell` chỉ render `<aside>` +
+ * className="app">` bên ngoài — `PortalV2Shell` chỉ render 1 backdrop
+ * (`.v2-mobile-nav-backdrop`, mobile-only) + `<aside>` +
  * `<div className="main-col"><div className="topbar">...</div>{children}</div>`,
  * để trang tự truyền `.content` (khác nhau mỗi trang) làm `children`.
+ *
+ * Mobile drawer (Giai đoạn 11, Đợt 4 — xem docblock `mobileNavOpen` bên
+ * dưới): tự chứa hoàn toàn trong component này, không cần trang cha phối
+ * hợp gì — CSS site-wide tương ứng ở `v2-tokens.css`.
  * ========================================================================== */
 
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 import { PORTAL_HREF_MAP } from "@/lib/v2/href-map";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
@@ -139,6 +145,44 @@ export function PortalV2Shell({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+
+  /**
+   * BUG MOBILE — sidebar 224px cố định + topbar (search-box/upgrade-btn/
+   * icon-btn/avatar không co giãn) tràn ngang trên di động ở MỌI trang dùng
+   * shell này (đã đo bằng Playwright ở Giai đoạn 11, Đợt 4 — `scrollWidth`
+   * vượt viewport 150-1740px tuỳ trang, kể cả ~18 trang dùng trực tiếp
+   * component này). Trước đây (Giai đoạn 4/`.mnyt`) đã có 1 lần fix nhưng
+   * CHỦ Ý chỉ tự chứa trong `.mnyt` để "tránh rủi ro lan rộng ngoài phạm
+   * vi yêu cầu" — giờ Đợt 4 audit rộng đã xác nhận đây là bug HỆ THỐNG,
+   * sửa thẳng tại component dùng chung này để 1 lần áp dụng cho mọi nơi.
+   *
+   * `PortalV2Shell` không tự render `.app` (trang cha render), nên KHÔNG
+   * toggle class trên `.app` như `.mnyt` từng làm — thay vào đó toggle
+   * trực tiếp class trên chính `<aside className="sidebar">` (phần tử
+   * component này SỞ HỮU thật) + tự render backdrop làm sibling — độc
+   * lập hoàn toàn với DOM của trang cha, không cần trang cha phối hợp gì.
+   * CSS media-query tương ứng đặt site-wide trong `v2-tokens.css` (chọn
+   * selector đủ specificity thắng mọi rule `.prefix .sidebar{...}` riêng
+   * từng trang, cùng kỹ thuật `.mnyt .app .sidebar` đã dùng trước đó).
+   */
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
+    setMobileNavOpen(false);
+  }
+
+  // Escape đóng drawer sidebar mobile — cùng hành vi đã áp dụng cho mọi
+  // modal/dropdown khác trong `/v2/*` (xem `.mnyt`'s tiền lệ).
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape" || e.key === "Esc") setMobileNavOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileNavOpen]);
 
   const go = (htmlFile: string) => {
     const target = PORTAL_HREF_MAP[htmlFile];
@@ -179,7 +223,12 @@ export function PortalV2Shell({
 
   return (
     <>
-      <aside className="sidebar">
+      <div
+        className={mobileNavOpen ? "v2-mobile-nav-backdrop open" : "v2-mobile-nav-backdrop"}
+        onClick={() => setMobileNavOpen(false)}
+        aria-hidden="true"
+      />
+      <aside className={mobileNavOpen ? "sidebar mobile-open" : "sidebar"}>
         <div className="brand">
           <div className="mark">
             <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
@@ -318,6 +367,17 @@ export function PortalV2Shell({
 
       <div className="main-col">
         <div className="topbar">
+          <button
+            type="button"
+            className="v2-mobile-nav-btn"
+            onClick={() => setMobileNavOpen((v) => !v)}
+            aria-expanded={mobileNavOpen}
+            aria-label="Mở menu"
+          >
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M3 6h18M3 12h18M3 18h18" />
+            </svg>
+          </button>
           {customSearch ??
             (showSearchBox ? <PortalSearchBox placeholder={searchPlaceholder ?? "Tìm kiếm..."} variant="box" /> : null)}
           {(() => {

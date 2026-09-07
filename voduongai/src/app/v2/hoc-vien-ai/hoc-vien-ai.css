@@ -275,6 +275,7 @@
 @media (max-width:1180px){
   .hva .content{flex-direction:column}
 .hva .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+.hva .center-col{width:100%}
 .hva .right-col>.card{flex:1;min-width:280px}
 .hva .path-grid{grid-template-columns:repeat(2,1fr)}
 .hva .course-scroll{grid-template-columns:repeat(2,1fr)}
