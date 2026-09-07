@@ -16,6 +16,7 @@ import { PremiumPaymentStepsBlock } from "@/components/v2/premium/PremiumPayment
 import { PremiumAdvisorBlock } from "@/components/v2/premium/PremiumAdvisorBlock";
 import { PremiumFounderBlock } from "@/components/v2/premium/PremiumFounderBlock";
 import { PremiumComparisonTable } from "@/components/v2/premium/PremiumComparisonTable";
+import type { AcademyCourse } from "@/lib/portal/live-academy";
 
 import "./premium.css";
 
@@ -352,6 +353,46 @@ function buildResourceLibraryBoxes(counts: PremiumLibraryCounts): ResourceLibrar
       count: null,
     },
   ];
+}
+
+/**
+ * "Khoá học Premium" — link xem nội dung Course Builder thật (3 khoá mới
+ * soạn theo model subscription, xem `getAcademyFeaturedCourses()`), KHÔNG
+ * phải nút mua riêng. `freeLessonCount === lessonCount` → khoá hoàn toàn
+ * miễn phí (badge "Miễn phí"); `freeLessonCount < lessonCount` → gate theo
+ * Premium — chưa nâng cấp vẫn bấm được (xem trước các bài `is_free_preview`),
+ * chỉ hiện badge khoá nhắc còn nội dung bị ẩn (đúng `owned` đã vá ở chính
+ * route `/v2/premium/[courseId]/hoc`, không lặp logic gate ở đây).
+ */
+function PremiumCourseGrid({ courses, isPremium }: { courses: AcademyCourse[]; isPremium: boolean }) {
+  if (courses.length === 0) return <p className="empty-hint">Chưa có khoá học nào được xuất bản.</p>;
+  return (
+    <div className="course-grid">
+      {courses.map((course) => {
+        const isFullyFree = course.freeLessonCount >= course.lessonCount;
+        const isLocked = !isFullyFree && !isPremium;
+        return (
+          <Link href={`/v2/premium/${course.id}/hoc`} className="course-card" key={course.id}>
+            <div className="course-card-top">
+              <h6>{course.name}</h6>
+              {isFullyFree ? (
+                <span className="course-tag free">Miễn phí</span>
+              ) : isLocked ? (
+                <span className="course-tag locked">🔒 Premium</span>
+              ) : (
+                <span className="course-tag open">Đã mở khoá</span>
+              )}
+            </div>
+            <p>{course.description}</p>
+            <span className="course-meta">
+              {course.lessonCount} bài học
+              {!isFullyFree && course.freeLessonCount > 0 ? ` · ${course.freeLessonCount} bài xem thử` : ""}
+            </span>
+          </Link>
+        );
+      })}
+    </div>
+  );
 }
 
 /** `Math.round(durationDays/30)` — "30 ngày" của DB hiển thị gọn thành "1 tháng" thay vì số ngày lẻ. */
@@ -709,6 +750,7 @@ export function PremiumClient({
   advisorSituations,
   founder,
   libraryCounts,
+  courses,
 }: {
   premium: PremiumStatus;
   plans: PremiumPlan[];
@@ -721,6 +763,7 @@ export function PremiumClient({
   advisorSituations: PremiumAdvisorSituation[];
   founder: PremiumFounder;
   libraryCounts: PremiumLibraryCounts;
+  courses: AcademyCourse[];
 }) {
   const daysRemaining = computeDaysRemaining(memberSummary.expiresAt);
   const bestValueId = bestValuePlanId(plans);
@@ -870,6 +913,15 @@ export function PremiumClient({
 
                   <PremiumComparisonTable plans={plans} />
 
+                  <div style={{ marginTop: 24 }}>
+                    <div className="section-head">
+                      <h3>Khoá học Premium</h3>
+                    </div>
+                    <div style={{ marginTop: 14 }}>
+                      <PremiumCourseGrid courses={courses} isPremium={premium.isPremium} />
+                    </div>
+                  </div>
+
                   <PremiumPaymentStepsBlock seedChrome={chrome} seedSteps={paymentSteps} />
 
                   <PremiumAdvisorBlock seed={advisorSituations} plans={plans} />
@@ -981,6 +1033,15 @@ export function PremiumClient({
                           </div>
                         </Link>
                       ))}
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 24 }}>
+                    <div className="section-head">
+                      <h3>Khoá học Premium</h3>
+                    </div>
+                    <div style={{ marginTop: 14 }}>
+                      <PremiumCourseGrid courses={courses} isPremium={premium.isPremium} />
                     </div>
                   </div>
 

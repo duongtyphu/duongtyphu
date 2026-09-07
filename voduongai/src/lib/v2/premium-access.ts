@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 /**
@@ -53,7 +54,15 @@ export type PremiumStatus = {
 
 export const FREE_STATUS: PremiumStatus = { isPremium: false, signedIn: false, email: null, fullName: null };
 
-export async function getPremiumStatus(): Promise<PremiumStatus> {
+/**
+ * Bọc `cache()` (React, dedupe đúng 1 lượt render — cùng cơ chế
+ * `getCachedAuthUser()`) — thêm khi `/v2/premium/[courseId]/hoc/page.tsx`
+ * bắt đầu gọi hàm này 2 LẦN trong cùng 1 lượt render (1 lần cho
+ * `CourseLearnV2Client`, 1 lần bên trong `CourseLearnPageContent` dùng
+ * chung với 1.0) — không có `cache()`, đó sẽ là 2 round-trip Supabase
+ * thật (đọc `members`/`orders`) thay vì 1.
+ */
+export const getPremiumStatus = cache(async (): Promise<PremiumStatus> => {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return FREE_STATUS;
   }
@@ -89,4 +98,4 @@ export async function getPremiumStatus(): Promise<PremiumStatus> {
     .maybeSingle();
 
   return { isPremium: Boolean(order), signedIn: true, email, fullName };
-}
+});

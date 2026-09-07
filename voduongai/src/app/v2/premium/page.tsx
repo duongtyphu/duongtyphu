@@ -9,6 +9,7 @@ import {
 import { getLivePremiumPlans } from "@/lib/portal/live-premium-plans";
 import { getLivePremiumFaq, getLivePremiumChrome, getLivePremiumPaymentSteps } from "@/lib/portal/live-premium";
 import { getJourneyOverview } from "@/lib/portal/live-journey-overview";
+import { getAcademyFeaturedCourses } from "@/lib/portal/live-academy";
 
 import { PremiumClient } from "./PremiumClient";
 
@@ -40,9 +41,17 @@ export const metadata = { title: "Premium | VO DUONG AI" };
  * chắc nên chọn gì?"/`premium_advisor_situations` và "🤝 Người đồng hành"/
  * `premium_founder` là 2 bảng MỚI vì bản 1.0 tương ứng tĩnh 100% trong
  * code, không port thẳng được — xem `supabase-phase28-premium-v2-perks-advisor-founder.sql`).
+ *
+ * "3 khoá học Premium mới" (thích nghi mô hình subscription, KHÔNG tạo mô
+ * hình bán riêng) — thêm section "Khoá học Premium" đọc đúng
+ * `getAcademyFeaturedCourses()` (cùng nguồn "Tiếp tục học tập" ở Trang chủ
+ * và tab "Hệ tri thức" của `/v2/hoc-vien-ai` — Single Source of Truth,
+ * không tạo danh sách khoá song song). Mỗi hộp chỉ là LINK xem nội dung
+ * (`/v2/premium/[courseId]/hoc`, đã gate đúng theo `premium.isPremium` từ
+ * bản vá `owned` ở chính route đó), không phải nút mua riêng.
  */
 export default async function PremiumPage() {
-  const [premium, plans, faq, journey, memberSummary, chrome, paymentSteps, perks, advisorSituations, founder, libraryCounts] =
+  const [premium, plans, faq, journey, memberSummary, chrome, paymentSteps, perks, advisorSituations, founder, libraryCounts, courses] =
     await Promise.all([
       getPremiumStatus(),
       getLivePremiumPlans(),
@@ -55,6 +64,7 @@ export default async function PremiumPage() {
       getAllLivePremiumAdvisorSituations(),
       getLivePremiumFounder(),
       getLibraryResourceCounts(),
+      getAcademyFeaturedCourses(),
     ]);
 
   return (
@@ -70,6 +80,7 @@ export default async function PremiumPage() {
       advisorSituations={advisorSituations}
       founder={founder}
       libraryCounts={libraryCounts}
+      courses={courses}
     />
   );
 }

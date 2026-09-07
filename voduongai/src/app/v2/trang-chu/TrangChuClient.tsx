@@ -687,7 +687,7 @@ export function TrangChuClient({
 
               <section>
                 <div className="section-head">
-                  <h2>Tiếp tục học tập</h2>
+                  <h2>Các khoá học Premium</h2>
                   <a onClick={go("Hoc vien AI.html")} style={{ cursor: "pointer" }}>Xem tất cả khóa học</a>
                 </div>
                 {courses.length === 0 ? (
