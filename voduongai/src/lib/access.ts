@@ -1,4 +1,4 @@
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getSupabaseServer, getCachedAuthUser } from "@/lib/supabase-server";
 
 type OrderItemColumn = "lesson_id" | "product_id" | "course_id";
 
@@ -28,10 +28,21 @@ export async function getPurchasedIds(column: OrderItemColumn): Promise<Set<stri
     return new Set();
   }
 
+  // BUG HIỆU NĂNG ĐÃ SỬA (Giai đoạn 11, Đợt 5/6): trước đây gọi thẳng
+  // `supabase.auth.getUser()` ở đây — mọi trang gọi `getPurchasedIds()`
+  // CÙNG với 1 hàm khác cũng cần xác thực (vd. `getPremiumStatus()`, dùng
+  // `getCachedAuthUser()` nội bộ) đều tốn thêm 1 round-trip mạng thật tới
+  // Supabase Auth không cần thiết trong CÙNG 1 lượt render (ví dụ xác
+  // nhận thật: `/v2/premium/[courseId]/hoc` gọi cả 2). Đổi sang
+  // `getCachedAuthUser()` (dedupe qua React `cache()`, cùng cơ chế đã áp
+  // dụng site-wide ở "Sửa nguyên nhân gốc — Portal 2.0 tải chậm") —
+  // KHÔNG đổi hành vi (vẫn trả `Set` rỗng khi chưa đăng nhập), chỉ giảm
+  // số lần gọi mạng khi hàm này được gọi cùng lúc với hàm khác đã dùng
+  // `getCachedAuthUser()`.
   const supabase = await getSupabaseServer();
-  const { data: userData } = await supabase.auth.getUser();
-  const email = userData.user?.email;
-  const userId = userData.user?.id;
+  const user = await getCachedAuthUser();
+  const email = user?.email;
+  const userId = user?.id;
   if (!email) return new Set();
 
   if (userId) {

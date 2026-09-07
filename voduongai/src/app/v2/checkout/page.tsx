@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSupabaseServer } from "@/lib/supabase-server";
+import { getCachedAuthUser } from "@/lib/supabase-server";
 import { getPremiumStatus } from "@/lib/v2/premium-access";
 import { CheckoutClient } from "./CheckoutClient";
 import type { CheckoutItemType } from "@/app/portal/checkout/actions";
@@ -27,9 +27,15 @@ export default async function CheckoutPage({
     redirect("/v2/trang-chu");
   }
 
-  const [premium, supabase] = await Promise.all([getPremiumStatus(), getSupabaseServer()]);
-  const { data: userData } = await supabase.auth.getUser();
-  const email = userData.user?.email;
+  // BUG HIỆU NĂNG ĐÃ SỬA (Giai đoạn 11, Đợt 5/6): trước đây gọi thêm
+  // `supabase.auth.getUser()` RIÊNG ở đây — dù `getPremiumStatus()` đã
+  // gọi `getCachedAuthUser()` (dedupe qua React `cache()`) cho đúng phiên
+  // render này, lệnh gọi trực tiếp `auth.getUser()` KHÔNG đi qua cùng hàm
+  // cache nên vẫn tốn thêm 1 round-trip mạng thật tới Supabase Auth —
+  // đúng lớp bug đã sửa tận gốc ở nhiều trang khác ("Sửa nguyên nhân gốc
+  // — Portal 2.0 tải chậm"), chỉ sót lại ở trang này (xây sau đợt fix đó).
+  const [premium, user] = await Promise.all([getPremiumStatus(), getCachedAuthUser()]);
+  const email = user?.email;
   if (!email) redirect("/login");
 
   return <CheckoutClient premium={premium} email={email} target={{ itemType: type, itemId: id, title, price }} />;
