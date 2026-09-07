@@ -12629,3 +12629,205 @@ tra thêm nguyên nhân thứ 3 (khác `maxDuration`/retry đã sửa); (3) mở
 chat kéo dài gần sát đáy màn hình thay vì dừng giữa chừng; (4) xem
 `/v2/trang-chu` xác nhận cảm giác thẩm mỹ cụm robot+sao đã cân đối hơn
 theo đúng ý.
+
+## Batch 12 việc theo yêu cầu Founder ([PR #142](https://github.com/duongtyphu/duongtyphu/pull/142)) — Landing "Hành trình của tôi" + 18-hộp Trang chủ + 4-màu Premium + sidebar drag-scroll + fix mobile 5 trang + crown icon + Companion widget/chat
+
+Founder giao 1 lượt 12 yêu cầu (tasks #36-47), phần lớn là các đợt tinh
+chỉnh nhỏ/độc lập trên nền `/v2/*` đã build đầy đủ qua các Giai đoạn
+1-13 — không dừng hỏi lại giữa chừng, làm hết cả batch rồi báo cáo 1 lần
+theo đúng workflow tự động đã thiết lập.
+
+**#36 — Landing page: thêm hộp "Hành trình của tôi" vào mục Hệ sinh
+thái, icon tự thiết kế bằng Canvas.** `EcosystemPillars.tsx`'s `ITEMS`
+thêm 1 entry mới giữa "Mỗi ngày một ý tưởng" và "Dự án & Cơ hội" (la
+bàn/compass — "Nhật ký học tập, dấu mốc trưởng thành và câu chuyện riêng
+của bạn — tất cả được ghi lại theo thời gian thực."). Founder nói rõ
+"icon bạn cho canvas thiết kế luôn nhé" — hiểu là Claude tự vẽ icon
+(không dùng ảnh có sẵn), đúng tiền lệ "Banner Canvas 35 thẻ chủ đề" đã
+làm trước đó cho "Mỗi ngày một ý tưởng": hand-author 1 file SVG (la bàn
+mạ vàng, mặt trong kem, kim chỉ hướng đỏ/xanh navy, chữ N/S/E/W, glossy
+highlight, drop-shadow) rồi rasterize qua `sharp` (dependency có sẵn) ra
+PNG 400×400 trong suốt (`public/images/landing-preview/icons/eco-hanh-trinh-cua-toi.png`)
+— khớp đúng khuôn 5 icon còn lại trong bộ (`eco-*.png`, 400×400).
+
+**#37 — Landing page: sửa hiển thị mobile mục "Hệ sinh thái" (đang nhỏ).**
+Đo thật (không suy đoán) xác nhận 6 thẻ (200px, icon 77px) KHÔNG bị co
+nhỏ hơn kích thước tuyệt đối của chính nó trên mobile — vấn đề thật là
+khoảng trắng THỪA quanh các thẻ cố định-px trên màn hình hẹp (dùng
+`flex-wrap` cũ), khiến khối cảm giác thưa/rời rạc. Đổi container từ
+`flex flex-wrap ... xl:flex-nowrap` sang `grid grid-cols-2 gap-4
+sm:flex sm:flex-wrap ... xl:flex-nowrap` (lưới 2 cột full-width dưới
+`sm` 640px, quay lại flex cố định 200px/thẻ ở `sm` trở lên) — mỗi thẻ
+`w-[200px]` → `w-full ... sm:w-[200px]`, padding/icon co nhẹ ở mobile
+(`px-4 py-6`/`h-[68px] w-[68px]` → `sm:px-5 sm:py-7`/`sm:h-[77px]
+sm:w-[77px]`).
+
+**#38 — Portal 2.0 Trang chủ: banner đưa chữ về vị trí cũ (sát trái),
+robot giữ giữa.** Bản "sửa nhỏ" trước đó dùng `justify-content:center`
+canh 2 phần tử làm 1 khối chung ở giữa — không tách được "chữ trái/robot
+giữa" bằng flex 2 phần tử. Đổi `.tcp .hero` sang CSS Grid 3 cột `1fr
+auto 1fr`: cột 1 (`1fr`) chứa `.hero-text` (`justify-self:start`, dính
+mép trái thật), cột 2 (`auto`, khớp 147px cố định của `.hero-bot-wrap`)
+luôn nằm đúng tâm ngang giữa 2 cột `1fr` bằng nhau bất kể `.hero-text`
+dài/ngắn, cột 3 trống chỉ để cân bằng. Thêm `.hero-text{min-width:0}` +
+`.hero-actions{flex-wrap:wrap}` (grid item mặc định `min-width:auto`
+không co được nếu 2 nút CTA `white-space:nowrap` — đo bằng Playwright ở
+banner hẹp ~1024px xác nhận thiếu dòng này sẽ đẩy robot lệch tâm). Mobile
+(`≤640px`) quay lại `display:flex` (Grid 3 cột chỉ hợp lý hàng ngang),
+robot canh giữa qua `.hero-bot-wrap{align-self:center}`.
+
+**#39 — Portal 2.0 Trang chủ: mở rộng "Hệ sinh thái VO DUONG AI" từ 5
+lên 18 hộp** (13 nhãn mới Founder cấp verbatim: 100 thuật ngữ AI/13+ bài
+giảng video/32+ Prompt/10+ tài nguyên/13+ bài thực hành thực chiến/8+ bài
+AI dành cho dân văn phòng/5+ Dự án & Cơ hội thực chiến/4+ khoá học
+Premium chất lượng/3 mức hoa hồng cho người làm Affilate/10+ nguồn thư
+viện tài nguyên/15+ tài nguyên về Claude/8+ tài nguyên về ChatGPT/2+ tài
+nguyên về Gemini). **7 hộp nối dữ liệu THẬT** (đối chiếu trực tiếp
+Supabase trước khi code, không suy đoán): thuật ngữ
+(`getLiveMnytGlossaryCount()`, bảng `mnyt_glossary`, hàm mới trong
+`live-mnyt.ts`), bài giảng video (`getAcademyVideoCount()`, bảng
+`academy_videos`, hàm mới trong `live-academy-slides.ts`), Prompt/Tài
+nguyên/Thực hành thực chiến/AI dành cho dân văn phòng (cả 4 dùng chung
+`getLibraryResourceCounts()` — cùng nguồn đã dùng cho "Đặc quyền truy
+cập kho tài nguyên Premium" ở `/v2/premium`, không đếm lại bằng query
+riêng), khoá học Premium (`courses.length`, đã fetch sẵn). **6 hộp còn
+lại là hằng số cấu trúc/literal Founder cấp trực tiếp** (Dự án & Cơ
+hội=5, mức hoa hồng Affiliate=3, nguồn thư viện=10+, Claude=15+,
+ChatGPT=8+, Gemini=2+) — không có bảng/query đơn nào phản ánh đúng "số
+nguồn"/"số tài nguyên theo từng công cụ AI", ghi chú rõ tại chỗ trong
+code, đúng tiền lệ "literal Founder cấp" đã dùng nhiều lần trong dự án
+(vd. follower count DigiU).
+
+**#40 — "Các khoá học Premium": 4 màu nền khác nhau (Tím/Xanh lá/Xanh
+ngọc bích/Cam), luôn cố định theo vị trí, không phụ thuộc tiến độ.**
+Trước đó chỉ có 2 palette (`ACTIVE`/`INACTIVE`, chọn theo `percent > 0` —
+nghĩa là 1 khoá 0% tiến độ và 1 khoá khác cũng 0% sẽ trông giống hệt
+nhau). Gộp thành 1 mảng `LEARN_CARD_STYLES` 4 phần tử (Tím/Xanh lá đã có
+từ trước + 2 palette MỚI: Xanh ngọc bích `linear-gradient(155deg,#e6fbf7,#c3f3e8)`/
+`linear-gradient(145deg,#2dd4bf,#0d9488)`, Cam `linear-gradient(155deg,#fff3e6,#ffe0bf)`/
+`linear-gradient(145deg,#fb923c,#ea580c)` kèm icon rocket SVG mới), render
+logic đổi từ `percent > 0 ? ACTIVE : INACTIVE` sang
+`LEARN_CARD_STYLES[i % LEARN_CARD_STYLES.length]` — LUÔN cycle theo VỊ
+TRÍ trong lưới, không phụ thuộc trạng thái tiến độ.
+
+**#41 — Kiểm tra + sửa banner mobile 9 trang Portal 2.0.** Đo bằng
+Playwright thật (`document.scrollWidth` vs viewport) ở 3 mốc mobile trên
+cả 9 trang Founder liệt kê (Trang chủ/Dự án & cơ hội/DigiU/SolarGroup/
+Ohana/Các mô hình Affilate/Affilate sàn giao dịch/Premium/Chương trình
+Affilate) — phát hiện đúng 1 pattern bug lặp lại ở **5/9 trang**: hero 2
+cột (`.xxx-hero-text` có thể co + `.xxx-graphic`/`.xxx-net` 200-250px
+`flex-shrink:0` KHÔNG co) không có breakpoint mobile nào — dưới ngưỡng
+hẹp, flex ép cột chữ co còn vài chục px, tiêu đề/CTA vỡ thành 1 chữ/dòng
+(DigiU là ca nặng nhất, mockup mô tả "hiền robot" theo cách gõ gốc). Đã
+thêm breakpoint stack-column cho cả 5 file, mỗi ngưỡng riêng theo đúng
+điểm hero thật sự vỡ ở từng trang (đo trước, không áp mù 1 con số
+chung): `affiliate.css` (`≤760px`), `du-an-co-hoi.css` (`≤640px`),
+`digiu/digiu.css` (`≤800px`), `solargroup/solargroup.css` (`≤700px`),
+`ohana/ohana.css` (`≤720px`) — mỗi block:
+`flex-direction:column;align-items:flex-start;padding:24px 22px` cho
+hero + `max-width:100%` cho phần text + `align-self:center` cho phần
+graphic. Premium và "Các mô hình Affilate" đã sạch từ trước, không sửa
+gì.
+
+**#42 — Chương trình Affiliate (Free): sửa vị trí icon viên kim cương
+cuối menu.** Root cause: `.aff .promo .crown` (khối icon kim cương ở
+promo box cuối sidebar) và 3 rule liên quan (`.aff .crown`,
+`.aff .crown::after` — vòng glow tím phía sau, `.aff .crown-sparkle` +
+`@keyframes sparkleTwinkle` — lấp lánh vàng) **hoàn toàn thiếu CSS** ở
+file `affiliate.css` — mọi trang `/v2/*` khác có promo box đều đã có
+sẵn bộ CSS này, riêng file này bị bỏ sót từ đợt build gốc nên icon render
+không đúng kích thước/vị trí (rơi về style mặc định trình duyệt, không
+canh giữa/không có glow). Thêm đủ 4 rule khớp byte-for-byte các trang
+khác — không tự chế giá trị mới.
+
+**#43 — Sidebar trái: thêm chế độ kéo lên/xuống khi di chuyển chuột.**
+Sidebar đã cuộn được bằng con lăn chuột từ trước (`overflow-y:auto`,
+`v2-tokens.css`) khi nội dung tràn quá `100vh` — đã verify hoạt động
+đúng trước khi làm thêm, để không lặp lại việc đã có. Hook mới
+`src/lib/v2/useSidebarDragScroll.ts` — CỘNG THÊM khả năng click-và-kéo
+(drag) để cuộn, đúng nghĩa đen "kéo" trong yêu cầu, không thay thế cuộn
+bằng con lăn. Dùng ngưỡng `DRAG_THRESHOLD_PX=6` để phân biệt "click bình
+thường" (nav-item/nút thu gọn vẫn bấm được đúng) với "đang kéo" (chặn
+sự kiện `click` phát sinh ngay sau đó ở capture phase, tránh vô tình
+điều hướng khi người dùng chỉ định kéo cuộn). `v2-tokens.css` thêm
+`.sidebar.dragging-scroll{cursor:grabbing;user-select:none}`. Áp dụng
+đồng bộ cho `PortalV2Shell.tsx` (dùng chung ~26 trang) VÀ đủ 12 trang
+"hand-copy sidebar" (script Python match-block, verify đúng 1 khớp/file
+trước khi ghi, cùng kỹ thuật cơ học đã dùng nhiều lần trong dự án) —
+`TrangChuClient`/`DuAnCoHoiClient`/`HocVienAiClient`/4 trang chi tiết
+CKOS/5 trang chi tiết hệ sinh thái.
+
+**#44 — Companion widget nổi: bỏ nền trắng, làm trong suốt.** Founder:
+"vẫn còn nền trắng xung quanh => làm cho nền trong suốt, hình companion
+hoà vào nền." Cả 2 nút (thu nhỏ góc dưới-phải khi ẩn, và nút chính mở
+chat) trước đó có `bg-white` + shadow + 1 `<span>` viền mô phỏng "đĩa"
+tròn đặc phía sau `LivingCore` — đi NGƯỢC chính triết lý thiết kế của
+`LivingCore.tsx` (Design Lock: "rìa tan dần vào trong suốt, không viền
+tối", tự có glow/blur riêng, không cần đĩa nền). Đổi cả 2 sang
+`bg-transparent`, bỏ hẳn `<span>` viền giả — không đụng gì trong
+`LivingCore.tsx` (Design Lock, chỉ sửa nơi gọi).
+
+**#45 — `/v2/companion`: cột giữa cố định không cuộn theo nội dung + bỏ
+2 mục cột phải.** Founder: "bỏ mục Công cụ yêu thích và hộp 'Bạn cần hỗ
+trợ thêm?' ở cột phải" + "cho trang giữa giữ cố định không di chuyển lên
+xuống được". Đã xoá hẳn khối "Công cụ yêu thích" (kể cả
+`CATEGORY_STYLE`/`DEFAULT_CATEGORY_STYLE`/`faviconUrlFor()`/prop
+`favoriteTools`/`getCompanionFavoriteTools()` ở `page.tsx`) và
+"Bạn cần hỗ trợ thêm?" (`.help-card`) — cột phải còn đúng 3 card: "Hồ
+sơ của bạn"/"Mục tiêu hiện tại"/"Companion gợi ý cho bạn". Không còn
+consumer nào của `src/lib/portal/live-companion-favorites.ts` trong
+toàn dự án → xoá hẳn file (tránh dead code). Cố định cột giữa: trước đây
+`.comp .content` không giới hạn chiều cao, nên khi `.right-col` (nhiều
+card) cao hơn `.center-col`, CẢ TRANG cuộn dọc theo, kéo cả khung chat
+(`.chat-card`, đã cố định `calc(100vh - 233px)` từ đợt trước) trôi lên/
+xuống theo — trái ý "cố định". Đã giới hạn
+`.comp .content{height:calc(100vh - 71px);overflow:hidden}` (71px =
+cùng số đo topbar đã dùng để tính `.chat-card`, không đoán lại) +
+`.comp .right-col{height:100%;overflow-y:auto}` (tự cuộn riêng bên
+trong khi nội dung dài hơn khung). Dưới `1180px` (`.content` xếp dọc)
+khôi phục `height:auto;overflow:visible` — ép buộc chiều cao chỉ hợp lý
+khi 2 cột cạnh nhau.
+
+**#46 — BUG NGHIÊM TRỌNG đã sửa — Companion chat "tải lại trang" mỗi khi
+gửi tin nhắn.** Root cause thật (không phải navigation, là crash):
+`data.assistantMessage` (response `/api/companion/chat`) là 1 OBJECT đầy
+đủ `{id,role,content,created_at}`, KHÔNG PHẢI chuỗi text — code cũ gán
+THẲNG cả object này vào `content` của message hiển thị
+(`content: data.assistantMessage ?? ""`). `<MarkdownLite text={m.content}/>`
+sau đó gọi `text.split(...)` trên 1 OBJECT → `TypeError: text.split is
+not a function` ở **MỌI lượt chat gửi thành công** — exception bị Next.js
+Error Boundary cấp route (`/v2/error.tsx`) bắt, thay thế toàn bộ cây UI
+bằng màn hình lỗi → đúng cảm giác "cả trang bị tải lại" Founder mô tả
+(thực chất là unmount do crash, không phải điều hướng thật). Đã sửa:
+trích đúng `.content`/`.id`/`.created_at` từ cả 2 object server trả về
+(`userMessage`/`assistantMessage`), cùng cách `CompanionChatShell.tsx`
+1.0's `toChatMessage()` xử lý — không tự tổng hợp `id`/`createdAt` giả
+nữa. **Bug phụ cùng lớp, cũng đã sửa:** nhánh lỗi retry-send (gửi lại tin
+nhắn optimistic khi API lỗi) trước đó spread thẳng `data.userMessage`
+(shape server snake_case) vào state `Msg` (kỳ vọng `createdAt` camelCase)
+— `m.createdAt` luôn `undefined`, giờ hiển thị âm thầm rỗng (không
+crash, chỉ mất giờ) — đã map tường minh đúng field.
+
+**Verify (toàn bộ batch):** `npx tsc --noEmit` sạch, `npx eslint src`
+sạch (0 lỗi, 18 warning có sẵn từ trước — không phát sinh mới), `npx
+vitest run` 498/498 pass, `rm -rf .next && npm run build` sạch (mọi
+route build đúng, không route nào biến mất/lỗi). Đã merge
+[PR #142](https://github.com/duongtyphu/duongtyphu/pull/142) vào `main`
+(squash) và deploy Production — xác nhận `readyState: READY`,
+`target: production`.
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật/`SUPABASE_SERVICE_ROLE_KEY`/API key AI thật đã nêu nhiều lần) —
+Founder tự test trên Production URL: (1) mục "Hành trình của tôi" mới ở
+Landing Page + hiển thị lưới hệ sinh thái trên điện thoại thật; (2)
+banner Trang chủ — chữ sát trái/robot đúng tâm ở nhiều độ rộng màn hình;
+(3) đủ 18 hộp "Hệ sinh thái VO DUONG AI" với số liệu thật (glossary/
+video/prompt/resource/best-practice/office count); (4) 4 màu "Các khoá
+học Premium" hiện đúng theo vị trí; (5) cuộn 9 trang đã sửa mobile trên
+điện thoại thật, đặc biệt DigiU (ca nặng nhất); (6) icon kim cương ở
+Chương trình Affiliate (Free) hiện đúng vị trí/glow; (7) kéo chuột trên
+sidebar để cuộn (không chỉ con lăn); (8) widget Companion nổi trong suốt
+đúng ý; (9) `/v2/companion` — cột giữa không cuộn theo cột phải, 2 mục
+đã xoá không còn xuất hiện; (10) **quan trọng nhất** — gửi vài lượt chat
+liên tiếp với Companion, xác nhận KHÔNG còn crash "tải lại trang" (bug
+#46, ảnh hưởng MỌI lượt chat trước bản vá này).
