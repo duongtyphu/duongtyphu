@@ -20,6 +20,7 @@ import type {
 } from "./types";
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
+import { PROVIDER_FETCH_TIMEOUT_MS } from "./provider-timeout";
 
 const DEFAULT_MODEL = "claude-sonnet-5";
 const ENV_VAR = "ANTHROPIC_API_KEY";
@@ -63,6 +64,7 @@ export class AnthropicProviderAdapter implements ProviderAdapter {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({ model, max_tokens: 4096, messages: [{ role: "user", content: prompt }] }),
+      signal: AbortSignal.timeout(PROVIDER_FETCH_TIMEOUT_MS),
     });
     if (!res.ok) throw new Error(`Anthropic API lỗi: ${res.status}`);
     const json = await res.json();

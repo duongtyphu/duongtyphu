@@ -44,6 +44,13 @@ export type SelectAdapterParams = {
       nghĩa "bảng ưu tiên mặc định của hệ thống"). Không truyền/rỗng → giữ
       nguyên hành vi cũ (bảng ưu tiên cố định theo nhóm capability). */
   priorityOrder?: string[];
+  /** Retry-with-fallback (`provider-manager.ts`) — loại các `providerId`
+      đã THỬ VÀ LỖI ở lượt gọi trước khỏi MỌI bước chọn (preferred/
+      fallback/priority order/ranked candidates), để lượt gọi lại tự nhiên
+      rơi xuống Provider THẬT kế tiếp thay vì chọn lại đúng Provider vừa
+      lỗi. Không truyền/rỗng → giữ nguyên hành vi cũ hệt trước đây (mọi
+      test/call site hiện có đều không truyền tham số này). */
+  excludeProviderIds?: string[];
 };
 
 /**
@@ -111,8 +118,9 @@ function rankByOptimizeFor(candidates: ProviderAdapter[], optimizeFor: OptimizeF
 
 export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
   const { capability, preferredProvider, fallbackProvider, fallbackAllowed = true, optimizeFor = "quality", priorityOrder } = params;
+  const excluded = new Set(params.excludeProviderIds ?? []);
 
-  if (preferredProvider) {
+  if (preferredProvider && !excluded.has(preferredProvider)) {
     const preferred = providerRegistry.get(preferredProvider);
     if (preferred && preferred.supportedCapabilities.includes(capability) && preferred.isAvailable()) {
       return preferred;
@@ -121,7 +129,7 @@ export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
     // xuống lựa chọn tự động để giữ tính bền vững của Workspace.
   }
 
-  if (fallbackProvider) {
+  if (fallbackProvider && !excluded.has(fallbackProvider)) {
     const fallback = providerRegistry.get(fallbackProvider);
     if (fallback && fallback.supportedCapabilities.includes(capability) && fallback.isAvailable()) {
       return fallback;
@@ -137,6 +145,7 @@ export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
     if (preferenceOrder) {
       for (const providerId of preferenceOrder) {
         if (providerId === "mock") continue; // Mock chỉ được chọn ở bước fallback cuối
+        if (excluded.has(providerId)) continue;
         const candidate = providerRegistry.get(providerId);
         if (candidate && candidate.supportedCapabilities.includes(capability) && candidate.isAvailable()) {
           return candidate;
@@ -147,7 +156,7 @@ export function selectAdapter(params: SelectAdapterParams): ProviderAdapter {
 
   const realCandidates = providerRegistry
     .listSupporting(capability)
-    .filter((a) => a.providerId !== "mock" && a.isAvailable());
+    .filter((a) => a.providerId !== "mock" && a.isAvailable() && !excluded.has(a.providerId));
 
   if (realCandidates.length > 0) {
     const ranked = rankByOptimizeFor(realCandidates, optimizeFor);

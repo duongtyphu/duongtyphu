@@ -42,6 +42,7 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
 
   afterEach(() => {
     clearProviderEnv();
+    vi.unstubAllGlobals();
   });
 
   it("1. ProviderRegistry đăng ký đúng 13 Provider (10 Wave 1 + 3 INF-01), đúng 4 Tier", async () => {
@@ -195,6 +196,67 @@ describe("PHASE 4 EPIC 01 — AI Provider Layer (server-side)", () => {
     const entries = listExecutions("mock");
     expect(entries).toHaveLength(1);
     expect(entries[0]).toMatchObject({ providerId: "mock", capability: "writing.review", taskType: "reviewer", success: true, isMock: true });
+  });
+
+  it("6b. Retry-with-fallback: Provider chính lỗi → ProviderManager tự thử Provider dự phòng THẬT kế tiếp và trả kết quả thành công", async () => {
+    process.env.ANTHROPIC_API_KEY = "test-key-not-real";
+    process.env.OPENAI_API_KEY = "test-key-not-real";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockImplementation((url: string) => {
+        if (url.includes("anthropic.com")) return Promise.reject(new Error("Anthropic tạm thời quá tải"));
+        if (url.includes("openai.com")) {
+          return Promise.resolve({
+            ok: true,
+            status: 200,
+            json: async () => ({ choices: [{ message: { content: "Trả lời từ OpenAI" } }] }),
+          });
+        }
+        throw new Error(`URL không mong đợi trong test: ${url}`);
+      })
+    );
+
+    const { providerManager } = await import("../provider-manager");
+    const { listExecutions } = await import("../provider-execution-log");
+
+    const result = await providerManager.execute({ capability: "growth.goal-coaching", taskType: "companion-chat", input: { prompt: "x" } });
+    expect(result.providerId).toBe("openai");
+    expect(result.raw).toBe("Trả lời từ OpenAI");
+
+    // Ghi log CẢ 2 lượt thử — 1 thất bại (anthropic) + 1 thành công (openai).
+    const anthropicEntries = listExecutions("anthropic");
+    const openaiEntries = listExecutions("openai");
+    expect(anthropicEntries).toHaveLength(1);
+    expect(anthropicEntries[0]).toMatchObject({ success: false });
+    expect(openaiEntries).toHaveLength(1);
+    expect(openaiEntries[0]).toMatchObject({ success: true });
+  });
+
+  it("6c. Retry-with-fallback: CẢ 2 Provider thật đều lỗi → ném lại lỗi gốc, KHÔNG âm thầm trả lời bằng Mock", async () => {
+    process.env.ANTHROPIC_API_KEY = "test-key-not-real";
+    process.env.OPENAI_API_KEY = "test-key-not-real";
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Cả 2 Provider đều lỗi")));
+
+    const { providerManager } = await import("../provider-manager");
+    await expect(
+      providerManager.execute({ capability: "growth.goal-coaching", taskType: "companion-chat", input: { prompt: "x" } })
+    ).rejects.toThrow("Cả 2 Provider đều lỗi");
+  });
+
+  it("6d. Retry-with-fallback: chỉ 1 Provider thật được cấu hình, Provider đó lỗi → ném lại lỗi gốc, KHÔNG rơi xuống Mock (tránh thông báo sai 'chưa cấu hình API key')", async () => {
+    process.env.ANTHROPIC_API_KEY = "test-key-not-real";
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Anthropic lỗi thật")));
+
+    const { providerManager } = await import("../provider-manager");
+    const { listExecutions } = await import("../provider-execution-log");
+
+    await expect(
+      providerManager.execute({ capability: "growth.goal-coaching", taskType: "companion-chat", input: { prompt: "x" } })
+    ).rejects.toThrow("Anthropic lỗi thật");
+
+    // Chỉ đúng 1 lượt thử được ghi log (anthropic) — KHÔNG có lượt thử Mock nào.
+    expect(listExecutions("anthropic")).toHaveLength(1);
+    expect(listExecutions("mock")).toHaveLength(0);
   });
 
   it("ProviderHealthCheck kiểm tra được toàn bộ Provider đã đăng ký, không gọi mạng thật", async () => {

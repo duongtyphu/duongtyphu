@@ -15,6 +15,7 @@ import type {
 } from "./types";
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
+import { PROVIDER_FETCH_TIMEOUT_MS } from "./provider-timeout";
 
 const DEFAULT_MODEL = "mistral-large-latest";
 const ENV_VAR = "MISTRAL_API_KEY";
@@ -54,6 +55,7 @@ export class MistralProviderAdapter implements ProviderAdapter {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({ model, messages: [{ role: "user", content: prompt }] }),
+      signal: AbortSignal.timeout(PROVIDER_FETCH_TIMEOUT_MS),
     });
     if (!res.ok) throw new Error(`Mistral API lỗi: ${res.status}`);
     const json = await res.json();

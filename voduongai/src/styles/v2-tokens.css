@@ -336,7 +336,7 @@
  * cần 1 đợt riêng thêm cùng cơ chế hamburger/state cho nhóm 12 trang này.
  * ------------------------------------------------------------------------ */
 [data-ui="v2"] .v2-mobile-nav-btn {
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
   width: 38px;
@@ -347,6 +347,10 @@
   color: var(--text, #1c1830);
   cursor: pointer;
   flex-shrink: 0;
+  transition: background .15s;
+}
+[data-ui="v2"] .v2-mobile-nav-btn:hover {
+  background: rgba(120, 113, 150, .24);
 }
 [data-ui="v2"] .v2-mobile-nav-backdrop {
   display: none;
@@ -372,9 +376,6 @@
     background: rgba(6, 6, 10, .6);
     z-index: 210;
   }
-  [data-ui="v2"] .v2-mobile-nav-btn {
-    display: flex;
-  }
   [data-ui="v2"] .main-col .search-box {
     min-width: 0;
   }
@@ -385,6 +386,37 @@
     display: none;
   }
   [data-ui="v2"] .main-col .upgrade-btn {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------
+ * Founder: "thêm chức năng dấu 3 gạch để co giãn/ẩn thanh Menu" — nút
+ * `.v2-mobile-nav-btn` (đã có sẵn, trước đó CHỈ hiện <=880px cho drawer
+ * mobile) giờ LUÔN hiển thị và kiêm thêm vai trò thứ 2 ở màn hình rộng:
+ * ẩn/hiện hẳn `<aside class="sidebar">`, để `.main-col{flex:1}` (có sẵn ở
+ * MỌI trang `/v2/*`, xem `.app{display:flex}` + `.main-col{flex:1;
+ * min-width:0}` đã audit đủ 13 file CSS liên quan) tự "co giãn" lấp đầy
+ * khoảng trống — không cần biết/đổi CSS riêng từng trang.
+ *
+ * Dùng ĐÚNG kỹ thuật specificity đã áp dụng cho `.sidebar` sticky/mobile ở
+ * trên: `[data-ui="v2"] .sidebar.collapsed` = 3 lớp class (0,3,0), luôn
+ * thắng rule `.prefix .sidebar{width:224px}` của từng trang (0,2,0) mà
+ * không cần `!important`. `display:none` (không animate width) — bulletproof
+ * bất kể mỗi trang tự set padding/border/box-sizing khác nhau cho
+ * `.sidebar`, tránh vỡ hình nửa-co-nửa-không nếu dùng width-transition.
+ *
+ * Class `.collapsed` do `PortalV2Shell.tsx`/12 trang hand-copy sidebar tự
+ * toggle qua state `sidebarCollapsed` RIÊNG (không dùng chung
+ * `mobileNavOpen`/`.mobile-open` — 2 khái niệm khác nhau: drawer overlay
+ * mobile mặc định ĐÓNG, sidebar desktop mặc định MỞ). Chỉ có hiệu lực ở
+ * `min-width:881px` — dưới ngưỡng đó `mobileNavOpen`/`.mobile-open` vẫn
+ * là cơ chế duy nhất chi phối (xem khối `@media(max-width:880px)` ở
+ * trên), tránh 1 click ở màn hình hẹp vô tình gắn cả 2 class cùng lúc
+ * làm `display:none` đè mất `transform` của drawer.
+ * ------------------------------------------------------------------------ */
+@media (min-width: 881px) {
+  [data-ui="v2"] .sidebar.collapsed {
     display: none;
   }
 }

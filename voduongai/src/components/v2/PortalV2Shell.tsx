@@ -182,6 +182,25 @@ export function PortalV2Shell({
     setMobileNavOpen(false);
   }
 
+  /**
+   * Founder: "thêm chức năng dấu 3 gạch để co giãn/ẩn thanh Menu" — nút
+   * `.v2-mobile-nav-btn` (trước chỉ hiện <=880px) giờ LUÔN hiển thị, kiêm
+   * 2 vai trò tuỳ độ rộng màn hình lúc bấm: <=880px vẫn mở/đóng drawer
+   * mobile như cũ (`mobileNavOpen`); >880px ẩn/hiện hẳn `<aside>` để
+   * `.main-col` tự "co giãn" lấp đầy (`sidebarCollapsed`, class
+   * `.collapsed`, CSS ở `v2-tokens.css`). 2 state TÁCH RIÊNG (không dùng
+   * chung 1 boolean) vì mặc định khác nhau: drawer mobile mặc định ĐÓNG
+   * (tránh che kín màn hình lúc tải trang), sidebar desktop mặc định MỞ.
+   */
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const toggleSidebar = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 880) {
+      setMobileNavOpen((v) => !v);
+    } else {
+      setSidebarCollapsed((v) => !v);
+    }
+  };
+
   // Escape đóng drawer sidebar mobile — cùng hành vi đã áp dụng cho mọi
   // modal/dropdown khác trong `/v2/*` (xem `.mnyt`'s tiền lệ).
   useEffect(() => {
@@ -237,7 +256,15 @@ export function PortalV2Shell({
         onClick={() => setMobileNavOpen(false)}
         aria-hidden="true"
       />
-      <aside className={mobileNavOpen ? "sidebar mobile-open" : "sidebar"}>
+      <aside
+        className={[
+          "sidebar",
+          mobileNavOpen ? "mobile-open" : "",
+          sidebarCollapsed ? "collapsed" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <div className="brand">
           <div className="mark">
             <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
@@ -379,9 +406,9 @@ export function PortalV2Shell({
           <button
             type="button"
             className="v2-mobile-nav-btn"
-            onClick={() => setMobileNavOpen((v) => !v)}
-            aria-expanded={mobileNavOpen}
-            aria-label="Mở menu"
+            onClick={toggleSidebar}
+            aria-expanded={mobileNavOpen || !sidebarCollapsed}
+            aria-label="Ẩn/hiện menu"
           >
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M3 6h18M3 12h18M3 18h18" />

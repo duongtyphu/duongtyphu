@@ -17,7 +17,13 @@ import { providerManager } from "@/ai/providers/provider-manager";
  *   logic dựng Prompt/parse JSON riêng cho từng Companion (khác Writer/
  *   Reviewer — 8 Companion còn lại của Wave 1 chưa có Agent chuyên biệt,
  *   dùng chung đường này, trả `raw` text để caller tự xử lý).
+ *
+ * `maxDuration=60` — cùng lý do đã sửa ở `/api/companion/chat/route.ts`
+ * (mặc định Vercel gói Hobby chỉ 10s, không đủ cho 1 lượt gọi AI Provider
+ * thật + retry-with-fallback của `provider-manager.ts`).
  */
+export const maxDuration = 60;
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   if (!body || typeof body !== "object") {

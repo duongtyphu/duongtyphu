@@ -63,7 +63,20 @@ import { getCompanionLearnerMemory } from "@/lib/portal/companion/learner-memory
  * số thứ 6 của `buildCompanionPrompt()` — khác `missionContext` (đọc DB,
  * Admin-editable), khối này do người viết code duy trì, không đổi theo
  * từng request nên không cần round-trip Supabase riêng.
+ *
+ * BUG THẬT ĐÃ SỬA — "Companion chưa thể phản hồi lúc này" hay xảy ra:
+ * route này (App Router, Node.js runtime) trước đó KHÔNG khai `maxDuration`
+ * → tự động dùng mặc định của Vercel (gói Hobby: 10 GIÂY) — 1 prompt
+ * Companion thật (System + Sứ mệnh + Bản đồ 2.0 + Hồ sơ học tập + Runtime
+ * Context + Knowledge Package + lịch sử hội thoại) hoàn toàn có thể khiến
+ * Anthropic/OpenAI trả lời chậm hơn 10s, nhất là lúc tải cao — Vercel tự
+ * HẠ GỤC function ngay lúc đó, không kịp chạm vào khối `catch` thân thiện
+ * ở dưới, hiện lỗi generic phía client. Đã nâng lên `maxDuration=60`
+ * (trần cho phép của gói Hobby) — đủ chỗ cho `ProviderManager.execute()`
+ * thử tối đa 2 Provider (`provider-manager.ts`'s retry-with-fallback mới
+ * thêm, 25s/lần qua `provider-timeout.ts`) + phần Supabase/dựng prompt.
  */
+export const maxDuration = 60;
 
 const FRIENDLY_AI_ERROR = "Companion chưa thể phản hồi lúc này. Vui lòng thử lại.";
 
