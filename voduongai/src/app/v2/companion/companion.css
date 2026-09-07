@@ -192,17 +192,32 @@
  * `.center-col`/`.right-col`. Chỉ vùng lịch sử tin nhắn (`.chat-messages`, div
  * mới bọc riêng danh sách tin nhắn trong `CompanionClient.tsx`, không đổi
  * markup/nội dung bên trong) cuộn độc lập lên/xuống bên trong khung cố định.
+ *
+ * ĐÍNH CHÍNH — Founder báo tiếp: "Mở rộng khung chứa Ô chát xuống dưới cho
+ * vừa vặn trang giữa" — `70vh` (trần `640px`) để lại 1 khoảng trắng thừa
+ * dưới khung ở màn hình cao (đo bằng Playwright thật: viewport 900px cao
+ * → `.chat-card` chỉ cao 630px, còn dư ~60px chưa dùng tới trước khi chạm
+ * đáy trang). Đổi từ `vh` (tỉ lệ theo viewport, không biết phần TRÊN khung
+ * cao bao nhiêu) sang `calc(100vh - Npx)` (trừ đúng chiều cao THẬT của mọi
+ * thứ đứng trên `.chat-card`, đo bằng Playwright: topbar 71px + padding
+ * `.content` 24px + `.page-head` 96px + gap `.center-col` 18px = 209px,
+ * cộng 24px lề dưới khớp `padding-bottom` của `.content` cho cân đối trên/
+ * dưới = 233px) — khung giờ LUÔN chạm gần sát đáy trang bất kể chiều cao
+ * màn hình, đúng "vừa vặn trang giữa", vẫn giữ nguyên cơ chế "cố định,
+ * chỉ `.chat-messages` cuộn riêng" ở yêu cầu gốc phía trên, không đổi.
+ * `min-height`/`max-height` giữ làm biên an toàn (màn quá thấp/quá cao).
  * ========================================================================== */
-.comp .chat-card{height:70vh;min-height:420px;max-height:640px;overflow:hidden}
+.comp .chat-card{height:calc(100vh - 233px);min-height:420px;max-height:900px;overflow:hidden}
 .comp .chat-messages{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:18px}
-
-@media (max-width:1180px){
-  .comp .chat-card{height:60vh;min-height:360px;max-height:520px}
-}
 
 @media (max-width:640px){
   .comp .page-head{flex-direction:column;align-items:flex-start;gap:12px}
   .comp .page-head-text{min-width:0;width:100%}
   .comp .head-bot{align-self:center}
   .comp .tools-grid{grid-template-columns:repeat(3,1fr)}
+  /* `.page-head` vừa chuyển sang cột (trên) → cao hẳn lên 177px (đo thật)
+     thay vì 96px — offset của `.chat-card` tính lại tương ứng:
+     71 (topbar) + 24 (padding) + 177 (page-head) + 18 (gap) + 24 (lề dưới)
+     = 314px. */
+  .comp .chat-card{height:calc(100vh - 314px);min-height:360px;max-height:640px}
 }

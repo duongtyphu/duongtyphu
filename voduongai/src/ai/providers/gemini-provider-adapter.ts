@@ -16,6 +16,7 @@ import type {
 } from "./types";
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
+import { PROVIDER_FETCH_TIMEOUT_MS } from "./provider-timeout";
 
 // gemini-1.5-flash đã bị Google retire (shutdown) — đổi sang
 // gemini-3.5-flash (đang được khuyến nghị cho production, chưa có ngày
@@ -61,6 +62,7 @@ export class GeminiProviderAdapter implements ProviderAdapter {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+        signal: AbortSignal.timeout(PROVIDER_FETCH_TIMEOUT_MS),
       }
     );
     if (!res.ok) throw new Error(`Gemini API lỗi: ${res.status}`);

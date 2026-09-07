@@ -20,6 +20,7 @@ import type {
 } from "./types";
 import { runAdapterBenchmark } from "./benchmark-utils";
 import { ALL_TEXT_CAPABILITIES } from "./capability-list";
+import { PROVIDER_FETCH_TIMEOUT_MS } from "./provider-timeout";
 
 const DEFAULT_MODEL = "llama3.1";
 const ENV_VAR = "OLLAMA_BASE_URL";
@@ -59,6 +60,7 @@ export class OllamaProviderAdapter implements ProviderAdapter {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ model, prompt, stream: false }),
+      signal: AbortSignal.timeout(PROVIDER_FETCH_TIMEOUT_MS),
     });
     if (!res.ok) throw new Error(`Ollama API lỗi: ${res.status}`);
     const json = await res.json();

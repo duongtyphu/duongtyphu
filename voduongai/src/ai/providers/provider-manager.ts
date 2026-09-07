@@ -39,47 +39,81 @@ export type ProviderManagerRequest = {
   optimizeFor?: OptimizeFor;
 };
 
+/**
+ * Retry-with-fallback (tối đa 2 lần thử) — TRƯỚC ĐÂY `execute()` chỉ thử
+ * ĐÚNG 1 Adapter (`selectAdapter()` chọn 1 lần duy nhất): Provider chính
+ * gặp sự cố tạm thời (rate-limit/quá tải/mạng chập chờn/timeout — xem
+ * `provider-timeout.ts`) là request LỖI NGAY, dù Provider dự phòng đã
+ * khai báo sẵn trong `CAPABILITY_FAMILY_PREFERENCE` (vd nhóm "growth"
+ * dùng cho Companion Chat: `["anthropic", "openai", "mock"]`) hoàn toàn
+ * không được thử tới — đây là nguyên nhân chính khiến `/v2/companion`/
+ * `/portal/companion` hay báo "Companion chưa thể phản hồi lúc này".
+ *
+ * Lượt 2 loại trừ (`excludeProviderIds`) đúng Provider vừa lỗi, để
+ * `selectAdapter()` tự nhiên chọn Provider THẬT kế tiếp. Nếu lượt 2 không
+ * còn Provider thật nào khác (chỉ còn Mock) — DỪNG NGAY, không âm thầm
+ * trả lời bằng Mock (sẽ hiện nhầm thông báo "chưa cấu hình API key" dù
+ * Provider thật ĐÃ cấu hình, chỉ đang lỗi tạm thời) — ném lại lỗi gốc để
+ * `route.ts` trả đúng thông báo thân thiện. Hành vi fallback-Mock-khi-
+ * KHÔNG-có-Provider-thật-nào-từ-đầu (mọi caller khác dựa vào, xem
+ * `writer-agent.ts`/`reviewer-agent.ts`/`/api/ai/workforce`) giữ nguyên
+ * 100% — trường hợp đó Mock luôn được chọn ngay ở lượt 1 (không lỗi),
+ * vòng lặp trả về ngay, không bao giờ chạm lượt 2.
+ */
 async function execute(request: ProviderManagerRequest): Promise<ProviderExecuteResult> {
   const priorityOrder = await getProviderPriorityOrder();
-  const adapter = selectAdapter({
-    capability: request.capability,
-    preferredProvider: request.preferredProvider,
-    fallbackProvider: request.fallbackProvider,
-    fallbackAllowed: request.fallbackAllowed,
-    optimizeFor: request.optimizeFor,
-    priorityOrder,
-  });
-  const startedAt = Date.now();
+  const tried: string[] = [];
+  let lastError: unknown;
 
-  try {
-    const result = await adapter.execute({
-      taskType: request.taskType,
-      input: request.input,
-      context: request.context,
-    });
-    recordExecution({
-      providerId: adapter.providerId,
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const adapter = selectAdapter({
       capability: request.capability,
-      taskType: request.taskType,
-      success: true,
-      isMock: result.isMock,
-      latencyMs: Date.now() - startedAt,
-      at: new Date().toISOString(),
+      preferredProvider: request.preferredProvider,
+      fallbackProvider: request.fallbackProvider,
+      fallbackAllowed: request.fallbackAllowed,
+      optimizeFor: request.optimizeFor,
+      priorityOrder,
+      excludeProviderIds: tried,
     });
-    return result;
-  } catch (err) {
-    recordExecution({
-      providerId: adapter.providerId,
-      capability: request.capability,
-      taskType: request.taskType,
-      success: false,
-      isMock: adapter.providerId === "mock",
-      latencyMs: Date.now() - startedAt,
-      error: err instanceof Error ? err.message : "Lỗi không xác định.",
-      at: new Date().toISOString(),
-    });
-    throw err;
+
+    // Lượt thử lại (attempt > 0) không còn Provider thật nào khác ngoài
+    // Mock — dừng, không thử Mock thay thế (xem docblock trên).
+    if (attempt > 0 && adapter.providerId === "mock") break;
+
+    const startedAt = Date.now();
+    try {
+      const result = await adapter.execute({
+        taskType: request.taskType,
+        input: request.input,
+        context: request.context,
+      });
+      recordExecution({
+        providerId: adapter.providerId,
+        capability: request.capability,
+        taskType: request.taskType,
+        success: true,
+        isMock: result.isMock,
+        latencyMs: Date.now() - startedAt,
+        at: new Date().toISOString(),
+      });
+      return result;
+    } catch (err) {
+      recordExecution({
+        providerId: adapter.providerId,
+        capability: request.capability,
+        taskType: request.taskType,
+        success: false,
+        isMock: adapter.providerId === "mock",
+        latencyMs: Date.now() - startedAt,
+        error: err instanceof Error ? err.message : "Lỗi không xác định.",
+        at: new Date().toISOString(),
+      });
+      lastError = err;
+      tried.push(adapter.providerId);
+    }
   }
+
+  throw lastError;
 }
 
 /** Có ít nhất 1 Provider THẬT (không tính Mock) đã cấu hình sẵn sàng? */

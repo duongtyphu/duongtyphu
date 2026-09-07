@@ -90,6 +90,21 @@ export function LessonDetailClient({
    * `.v2-mobile-nav-backdrop` đã có sẵn trong `v2-tokens.css`.
    */
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  /**
+   * Founder: "thêm chức năng dấu 3 gạch để co giãn/ẩn thanh Menu" — cùng
+   * cơ chế đã thêm ở `PortalV2Shell.tsx` (xem docblock đó): nút
+   * `.v2-mobile-nav-btn` giờ luôn hiển thị, >880px ẩn/hiện hẳn `<aside>`
+   * qua state riêng `sidebarCollapsed` (khác `mobileNavOpen` — mặc định
+   * khác nhau giữa drawer mobile/sidebar desktop).
+   */
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const toggleSidebar = () => {
+    if (typeof window !== "undefined" && window.innerWidth <= 880) {
+      setMobileNavOpen((v) => !v);
+    } else {
+      setSidebarCollapsed((v) => !v);
+    }
+  };
   const [prevPathname, setPrevPathname] = useState(pathname);
   if (pathname !== prevPathname) {
     setPrevPathname(pathname);
@@ -116,7 +131,15 @@ export function LessonDetailClient({
           onClick={() => setMobileNavOpen(false)}
           aria-hidden="true"
         />
-        <aside className={mobileNavOpen ? "sidebar mobile-open" : "sidebar"}>
+        <aside
+          className={[
+            "sidebar",
+            mobileNavOpen ? "mobile-open" : "",
+            sidebarCollapsed ? "collapsed" : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+        >
           <div className="brand">
             <div className="mark">
               <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
@@ -225,9 +248,9 @@ export function LessonDetailClient({
             <button
               type="button"
               className="v2-mobile-nav-btn"
-              onClick={() => setMobileNavOpen((v) => !v)}
-              aria-expanded={mobileNavOpen}
-              aria-label="Mở menu"
+              onClick={toggleSidebar}
+              aria-expanded={mobileNavOpen || !sidebarCollapsed}
+              aria-label="Ẩn/hiện menu"
             >
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M3 6h18M3 12h18M3 18h18" />

@@ -12535,3 +12535,97 @@ badge từng khoá; (2) tài khoản Free bấm vào khoá gate Premium vẫn xe
 được 2 bài preview đầu, bài còn lại khoá đúng; (3) tài khoản Premium mở
 được toàn bộ nội dung cả 3 khoá mới (xác nhận bản vá `owned` hoạt động
 đúng).
+
+## 4 sửa nhỏ theo yêu cầu Founder — sidebar co giãn, Companion chat retry, chat-card calc(100vh), banner robot căn giữa
+
+Founder giao 4 việc riêng biệt trong cùng 1 đợt, đã hoàn tất cả 4:
+
+**1 — Portal 2.0: nút 3 vạch co giãn/ẩn sidebar.** `PortalV2Shell.tsx`
+thêm state `sidebarCollapsed` (desktop, mặc định mở) song song
+`mobileNavOpen` (mobile, đã có từ trước) — 1 handler `toggleSidebar()`
+tự chọn đúng state theo `window.innerWidth` lúc bấm (≤880px → toggle
+drawer mobile; >880px → toggle ẩn/hiện sidebar desktop). CSS mới
+`v2-tokens.css`: `[data-ui="v2"] .sidebar.collapsed{display:none}` (chỉ
+`@media(min-width:881px)`, không đụng cơ chế mobile-drawer đã có), đủ
+specificity (3 class) để thắng mọi rule `.prefix .sidebar{width:224px}`
+riêng từng trang mà không cần `!important`. Nút hamburger đổi từ
+`display:none` (chỉ hiện mobile) sang `display:flex` (hiện mọi màn
+hình). Áp dụng đồng bộ cho cả `PortalV2Shell.tsx` (dùng chung ~18 trang)
+LẪN 12 trang "hand-copy sidebar" (script Python match-block, verify đúng
+1 khớp/file trước khi ghi) — cùng 1 khối state + JSX thay đổi ở mọi nơi,
+tránh lặp lại lỗi "quên đồng bộ 1 file" đã gặp nhiều lần trong lịch sử
+dự án này.
+
+**2 — Companion chat hay báo "chưa thể phản hồi lúc này" — sửa tận gốc,
+không chỉ vá triệu chứng.** Root cause kép, cả 2 đã sửa:
+- **Vercel Hobby timeout 10s mặc định** — `/api/companion/chat/route.ts`
+  và `/api/ai/workforce/route.ts` (đường "companion-task" chung cho 10
+  AI Companion Wave 1) thêm `export const maxDuration = 60;` (mức tối đa
+  Hobby cho phép) — trước đó 1 lượt gọi AI Provider thật (đặc biệt có
+  retry) rất dễ vượt 10s và bị Vercel cắt ngang, hiện đúng thông báo lỗi
+  Founder mô tả.
+- **0 khả năng chịu lỗi tạm thời** — `provider-manager.ts`'s `execute()`
+  trước đó chỉ thử ĐÚNG 1 Adapter/lượt, dù `CAPABILITY_FAMILY_PREFERENCE`
+  đã khai báo sẵn Provider dự phòng (vd nhóm "growth" dùng cho Companion
+  Chat: `["anthropic","openai","mock"]`) — Provider chính lỗi tạm thời
+  (rate-limit/quá tải/timeout mạng) là request lỗi ngay, không bao giờ
+  thử Provider dự phòng. Viết lại thành vòng lặp retry-with-fallback tối
+  đa 2 lượt: lượt 2 loại trừ đúng Provider vừa lỗi
+  (`excludeProviderIds`, tham số mới thêm vào `selectAdapter()`/
+  `model-router.ts`), DỪNG NGAY nếu lượt 2 không còn Provider thật nào
+  khác (chỉ còn Mock) — không bao giờ âm thầm trả lời bằng Mock giữa
+  chừng khi Provider thật đã xác nhận có cấu hình (tránh hiện nhầm thông
+  báo "chưa cấu hình API key"). `provider-timeout.ts` (mới) —
+  `PROVIDER_FETCH_TIMEOUT_MS=25_000` (25s×2 lượt vẫn nằm trong ngân sách
+  60s `maxDuration`), thêm `signal: AbortSignal.timeout(...)` vào cả 12
+  adapter provider — trước đó 0 adapter nào có timeout riêng, 1 request
+  treo vô thời hạn tới Provider ngoài sẽ chiếm hết ngân sách 60s.
+  Hành vi fallback-Mock-khi-KHÔNG-có-Provider-thật-nào-từ-đầu (mọi caller
+  khác dựa vào — `writer-agent.ts`/`reviewer-agent.ts`/companion-task)
+  giữ nguyên 100%, không đổi. `provider-layer.test.ts` thêm 3 test mới
+  (failover sang Provider thật thứ 2, cả 2 Provider lỗi vẫn ném đúng lỗi
+  gốc, 1 Provider lỗi không âm thầm rơi về Mock).
+
+**3 — Mở rộng khung chat Companion xuống dưới cho vừa trang giữa.**
+`companion.css`'s `.comp .chat-card` đổi từ `height:70vh` (tỉ lệ %
+không tính chiều cao nội dung phía trên, để trống nhiều khoảng trên màn
+hình cao) sang `height:calc(100vh - 233px)` (233px = đo thật bằng
+Playwright: topbar 71px + content padding 24px×2 + page-head 96px + gap
+18px), verify lại xác nhận đáy khung luôn cách đáy viewport đúng 24px ở
+mọi chiều cao màn hình. Thêm breakpoint `@media(max-width:640px)` riêng
+(`calc(100vh - 314px)`, bù thêm chiều cao `page-head` xếp dọc trên
+mobile).
+
+**4 — Banner Trang chủ: căn giữa cụm robot+5 sao cho cân đối hơn.**
+`trang-chu.css`'s `.tcp .hero` đổi `justify-content:space-between` (đẩy
+`hero-text`/`hero-bot-wrap` ra sát 2 mép, robot dính chặt mép phải card)
+sang `justify-content:center` + `gap:clamp(32px,6vw,64px)` — nhóm
+text+robot giờ là 1 khối được canh giữa banner như 1 đơn vị (verify
+Playwright: lề trái/phải quanh khối bằng nhau tuyệt đối ở viewport
+1440px), robot không còn "dính" mép phải. Không đụng breakpoint mobile
+(≤640px, đã tự chuyển `flex-direction:column` + `align-items:flex-start`
+từ trước, không phụ thuộc `justify-content` desktop).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (32 file sửa/thêm)
+sạch, `npx vitest run` 498/498 pass (495 cũ + 3 test mới của việc #2),
+`rm -rf .next && npm run build` sạch (mọi route build đúng, không route
+nào biến mất). Playwright thật qua `next dev` (Supabase chưa cấu hình,
+Portal tự công khai theo fallback có sẵn): (1) đo layout hero sau khi
+sửa — lề trái/phải quanh khối text+robot bằng nhau (239.5px mỗi bên ở
+1440px), chụp ảnh xác nhận trực quan cân đối, không còn robot dính mép.
+Việc #1/#3 verify qua đọc lại CSS specificity + kiểm tra `tsc`/build
+(không dựng lại route devtest riêng cho đợt này, tái dùng đúng phương
+pháp đo `trang-chu` đã làm).
+
+**Chưa tự test được** (giới hạn sandbox không có tài khoản đăng nhập
+thật/`SUPABASE_SERVICE_ROLE_KEY`/API key AI thật đã nêu nhiều lần) —
+Founder tự test trên Preview/Production URL: (1) bấm nút 3 vạch ở
+sidebar bất kỳ trang `/v2/*` nào (cả nhóm dùng chung `PortalV2Shell` lẫn
+12 trang hand-copy), xác nhận sidebar ẩn/hiện đúng ở cả desktop/mobile;
+(2) chat với Companion nhiều lượt liên tiếp, xác nhận tần suất gặp
+"chưa thể phản hồi" giảm hẳn — nếu vẫn gặp, đây là bằng chứng cần điều
+tra thêm nguyên nhân thứ 3 (khác `maxDuration`/retry đã sửa); (3) mở
+`/v2/companion` ở màn hình cao (laptop 900px+/màn ngoài), xác nhận khung
+chat kéo dài gần sát đáy màn hình thay vì dừng giữa chừng; (4) xem
+`/v2/trang-chu` xác nhận cảm giác thẩm mỹ cụm robot+sao đã cân đối hơn
+theo đúng ý.
