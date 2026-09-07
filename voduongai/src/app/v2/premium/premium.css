@@ -299,6 +299,7 @@
 @media (max-width:1180px){
   .pm .content{flex-direction:column}
   .pm .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .pm .center-col{width:100%}
   .pm .right-col>*{flex:1;min-width:280px}
   .pm .perk-grid, .pm .res-grid, .pm .price-grid{grid-template-columns:repeat(2,1fr)}
   .pm .two-col{grid-template-columns:1fr}
@@ -367,7 +368,8 @@
  * nguồn tài nguyên) — cùng kiểu thẻ, đổi tên cho đúng nội dung mới + tăng
  * số cột (5, không phải 3) vì có 10 hộp cần cân bằng 2 hàng x 5. */
 .pm .resource-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.pm .resource-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s,box-shadow .15s}
+.pm .resource-card{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s,box-shadow .15s;min-width:0}
+.pm .resource-card>div:last-child{min-width:0}
 .pm .resource-card:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:0 10px 20px rgba(109,74,255,.12)}
 .pm .resource-card .ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .pm .resource-card .ico svg{width:17px;height:17px}
@@ -402,4 +404,14 @@
   .pm .founder-card{grid-template-columns:1fr}
   .pm .founder-photo{max-width:160px;margin:0 auto}
   .pm .resource-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+@media (max-width:640px){
+  .pm .pm-hero{flex-direction:column;align-items:flex-start;padding:24px 20px}
+  .pm .pm-hero-text{max-width:100%;width:100%;min-width:0}
+  .pm .pm-graphic{align-self:center;margin-top:8px}
+  .pm .bottom-cta{flex-direction:column;align-items:flex-start;gap:16px}
+  .pm .bottom-cta-right{align-items:flex-start;width:100%}
+  .pm .bottom-cta-right .btn-gold{width:100%;justify-content:center}
+  .pm .perk-grid, .pm .res-grid, .pm .price-grid, .pm .resource-grid, .pm .payment-steps-grid{grid-template-columns:1fr}
 }

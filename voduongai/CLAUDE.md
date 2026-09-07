@@ -11979,3 +11979,123 @@ Founder nên tự xác nhận cảm giác thẩm mỹ tổng thể (nhiều nút
 mắt người phát hiện được mà công thức số không bắt được.
 
 **Tiếp theo:** Đợt 4 — Responsive/mobile toàn diện.
+
+### Đợt 4 — Responsive/mobile toàn diện
+
+Đo bằng Playwright thật (`document.documentElement.scrollWidth` vs
+`clientWidth`, không suy đoán) trên 14 trang mẫu × 3 viewport hẹp
+(320/375/390px) — đại diện đủ 2 kiến trúc sidebar: ~18 trang dùng chung
+`PortalV2Shell.tsx` và 12 trang "hand-copy" tự chép JSX/CSS sidebar riêng
+(`TrangChuClient`/`DuAnCoHoiClient`/`HocVienAiClient`/4 trang chi tiết
+CKOS/5 trang chi tiết hệ sinh thái).
+
+**Bug HỆ THỐNG (ảnh hưởng gần như mọi trang `/v2/*`):** sidebar 224px cố
+định + topbar (`.search-box`/`.upgrade-btn`) không co giãn — tràn ngang
+150-1740px tuỳ trang ở mọi viewport hẹp. Trước đó (Giai đoạn 4) chỉ
+`.mnyt` được vá riêng, chủ ý không lan ra site-wide để tránh rủi ro ngoài
+phạm vi yêu cầu lúc đó — audit rộng lần này xác nhận đây là bug hệ thống,
+sửa 1 lần cho toàn bộ:
+
+- **`v2-tokens.css`** — thêm `@media(max-width:880px)` biến `.sidebar`
+  (mọi trang `[data-ui="v2"] .sidebar`) thành `position:fixed`,
+  `transform:translateX(-100%)` (ẩn) → `.sidebar.mobile-open` trượt vào
+  (`translateX(0)`), kèm `.v2-mobile-nav-btn` (nút hamburger, ẩn mặc định,
+  hiện dưới 880px) + `.v2-mobile-nav-backdrop` (nền mờ đóng khi bấm ra
+  ngoài). `.search-box`/`input` thêm `min-width:0`, ẩn `<kbd>`/
+  `.upgrade-btn` dưới 880px, ẩn hẳn `.search-box` dưới 480px — cùng cơ chế
+  đã dùng cho `.mnyt` trước đó, giờ áp dụng site-wide đúng 1 chỗ.
+- **`PortalV2Shell.tsx`** — state `mobileNavOpen` (tự đóng khi đổi route
+  qua so sánh `pathname`, đóng khi bấm backdrop/Escape), render backdrop +
+  nút hamburger trong `.topbar`, toggle class `mobile-open` trên chính
+  `<aside>` component này sở hữu — áp dụng ngay cho ~18 trang dùng chung.
+- **12 trang hand-copy** — thêm ĐÚNG cùng state/JSX (`mobileNavOpen`/
+  backdrop/nút hamburger) vào từng file riêng (không dùng được
+  `PortalV2Shell`, phải tự chép), dùng chung CSS site-wide đã thêm ở
+  `v2-tokens.css` — không tạo cơ chế CSS mới.
+
+**Bug cục bộ từng trang** (grid/flex không co giãn đúng ở viewport hẹp,
+đã sửa từng nơi theo đúng nguyên nhân đo được, không áp dụng mù 1 công
+thức chung):
+
+- `he-tri-thuc.css` — `.ckos .center-col` thiếu `width:100%` trong khối
+  `@media(max-width:1180px)` (đã có `.content{flex-direction:column}`
+  nhưng thiếu dòng này khiến center-col không chiếm đủ bề rộng cột).
+- `trang-chu.css` — `.hero` (banner "Companion sống") không có xử lý
+  mobile nào: thêm `@media(max-width:640px)` (column layout, bỏ
+  `hero-bot-wrap` fixed width, `hero-actions` wrap) +
+  `@media(max-width:400px)` (thu nhỏ `hero-bot-wrap`/h1). Phát hiện thêm
+  qua Playwright bisection (ẩn từng con của `.center-col`, đo lại
+  `scrollWidth`): `.portal-stat-card` (grid item của "Portal 2.0 trong
+  một cái nhìn") thiếu `min-width:0` — đúng bug kinh điển "flex/grid item
+  min-width:auto không co giãn" (grid item mặc định không co xuống dưới
+  min-content của chính nó dù track là `1fr`, khiến 1 card có nhãn dài
+  nhất kéo cả 3 cột giãn theo) — thêm `min-width:0` cho card + text-wrap
+  con, cộng `grid-template-columns:1fr` cho `.portal-stats`/
+  `.opportunity-grid` dưới 640px.
+- `premium.css` — `.pm-hero`/`.bottom-cta` (2 khối `display:flex;
+  justify-content:space-between`, không wrap) tràn ngang do `.pm-graphic`
+  (250px, flex-shrink:0) + `.bottom-cta-right` (flex-shrink:0) không co.
+  Thêm `@media(max-width:640px)` chuyển cả 2 sang column, và collapse
+  `.perk-grid`/`.res-grid`/`.price-grid`/`.resource-grid`/
+  `.payment-steps-grid` về 1 cột. `.resource-card` (flex row icon+text)
+  cùng bug min-width:auto như `.portal-stat-card` — thêm `min-width:0`.
+- `companion.css` — `.page-head` (h1+pill+p bên trái, `.head-bot` 96px
+  ảnh cố định bên phải, không wrap) tràn do `.page-head-text` thiếu
+  `min-width:0`. Thêm `@media(max-width:640px)` chuyển column +
+  `.tools-grid` xuống 3 cột.
+- `muc-tieu.css` — `.summary-grid` (5 cột chỉ số cố định, không breakpoint
+  nào) tràn ở 320px. Thêm `@media(max-width:640px)` (3 cột)/
+  `@media(max-width:400px)` (2 cột).
+- `du-an-co-hoi.css` — `.cat-grid` (Danh mục dự án & cơ hội, 3 cột ở
+  1180px) vẫn hơi tràn ở 320px do nhãn danh mục dài. Thêm
+  `@media(max-width:480px)` (2 cột).
+- `digiu.css`/`solargroup.css`/`ohana.css` (3/5 trang chi tiết hệ sinh
+  thái có `.profile-head` — 2 trang còn lại dùng cấu trúc khác, không có
+  bug này) — `.profile-head` (logo 64px + `.profile-info` flex:1 + 2 nút
+  `.profile-actions` không wrap) tràn vì logo+actions (không co) đã vượt
+  quá bề rộng khả dụng ở 320px dù `.profile-info` có `min-width:0` đúng.
+  Thêm `@media(max-width:480px)` cho cả 3 file: `.profile-head{flex-wrap:
+  wrap}` + `.profile-actions{width:100%}` (actions rơi xuống dòng riêng).
+- `SuMenhCompanionContent.tsx` (dùng chung `/portal/su-menh-companion` 1.0
+  và `/v2/su-menh-companion`) — dải demo kích thước `LivingCore` (7 mẫu
+  128→16px, phần tử 256px có vòng quỹ đạo trang trí vẽ tràn ra ngoài
+  khung layout của chính nó — `overflow:visible` theo đúng thiết kế
+  Design Lock, KHÔNG sửa `LivingCore.tsx`) kéo cả trang cuộn ngang ở
+  320-390px dù dải demo đã có `flex-wrap`. Bọc dải demo trong 1
+  `overflow-x-auto` riêng (đúng nguyên tắc "nội dung rộng cuộn trong
+  khung của chính nó, trang không bao giờ cuộn ngang") — không đụng
+  `LivingCore.tsx`, ảnh hưởng ĐỒNG THỜI cả `/portal/su-menh-companion`
+  1.0 (an toàn, chỉ thêm khả năng cuộn khi thực sự cần, không đổi gì khi
+  không tràn) lẫn `/v2/su-menh-companion`.
+
+**Phương pháp xác nhận "false positive" trước khi sửa nhầm** — nhiều phần
+tử rộng hơn viewport (marquee ảnh Đồng hành ở `/v2/du-an-co-hoi`,
+`.pj-graphic`/`.pm-graphic` bên trong hero `overflow:hidden`, tabs-row có
+sẵn `overflow-x:auto`) KHÔNG phải bug thật — script audit ban đầu
+(`getBoundingClientRect()` thuần) báo dương tính giả vì không tính tới
+`overflow:hidden`/`overflow-x:auto` của tổ tiên đã tự clip nội dung, không
+lan ra `document.scrollWidth`. Viết lại script kiểm tra thêm điều kiện
+"không có tổ tiên nào `overflow:hidden|clip`" trước khi liệt kê 1 phần tử
+là nguyên nhân overflow thật — tránh sửa nhầm các trường hợp đã tự chứa.
+
+**Verify:** `npx tsc --noEmit`/`eslint`/`vitest run` (495/495) sạch,
+`rm -rf .next && npm run build` sạch (2 route mới từ đợt trước —
+`/v2/premium/[courseId]/hoc` — vẫn build đúng). Playwright thật qua
+`next start` (Supabase chưa cấu hình, Portal tự công khai theo fallback
+có sẵn), lặp lại đúng 14 trang × 3 viewport ban đầu — **0/42 còn overflow,
+0 lỗi console** (trước khi sửa: 8/42 dương tính, tệ nhất
+`/v2/premium` 113px ở 320px).
+
+**Chưa tự test được:** thao tác kéo-mở sidebar mobile thật qua tay/chạm
+trên thiết bị di động thật với tài khoản đăng nhập (giới hạn sandbox
+không có trình duyệt cảm ứng/tài khoản Supabase thật đã nêu nhiều lần) —
+Founder tự xác nhận trên Preview/Production URL: (1) bấm nút hamburger ở
+topbar bất kỳ trang `/v2/*` nào dưới 880px, xác nhận sidebar trượt vào
+đúng, bấm nền mờ/Escape đóng lại; (2) cuộn qua các trang đã liệt kê ở
+trên trên điện thoại thật, xác nhận không còn cảm giác "kẹt ngang"/thanh
+cuộn ngang xuất hiện.
+
+**Chưa audit hết** — 14 trang mẫu là đại diện đủ 2 kiến trúc sidebar
+(chung/hand-copy) nhưng KHÔNG phải toàn bộ ~46 trang `/v2/*` — trang nào
+khác có grid/flex riêng chưa breakpoint dưới 640px vẫn có khả năng còn
+tràn nhẹ, chưa kiểm tra hết trong đợt này.

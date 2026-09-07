@@ -305,6 +305,95 @@
   overflow-y: auto;
 }
 
+/* ---------------------------------------------------------------------
+ * Giai đoạn 11, Đợt 4 (audit responsive/mobile toàn diện) — bug mobile HỆ
+ * THỐNG: sidebar 224px cố định + topbar (search-box/upgrade-btn) không co
+ * giãn tràn ngang trên di động ở MỌI trang `/v2/*` dùng `PortalV2Shell`
+ * (đã đo Playwright thật: `scrollWidth` vượt viewport 150-550px ở các
+ * trang nội dung "gọn" như Companion/Premium/Sứ mệnh Companion/Mục tiêu,
+ * và nặng hơn ở trang có lưới/grid riêng chưa responsive — xem thêm fix
+ * riêng cho `.cat-grid`/hub-card trong docblock từng file CSS liên quan).
+ * Trước đây (Giai đoạn 4) chỉ `.mnyt` được vá — CHỦ Ý tự chứa trong đúng
+ * `.mnyt`/`MnytShellClient.tsx` để "tránh rủi ro lan rộng ngoài phạm vi
+ * yêu cầu" lúc đó — giờ audit rộng (Đợt 4) xác nhận đây là bug HỆ THỐNG,
+ * sửa Ở ĐÂY (site-wide, 1 chỗ, đúng nguyên tắc đã dùng cho sticky sidebar
+ * ở trên) thay vì lặp lại cơ chế riêng cho từng trang.
+ *
+ * `[data-ui="v2"] .sidebar` cùng specificity (0,0,2,0) với mỗi trang tự
+ * định nghĩa `.prefix .sidebar{width:224px;...}` — KHÔNG xung đột vì
+ * property KHÁC NHAU: mọi trang chỉ set width/background/color/
+ * flex-shrink/display/flex-direction/padding, KHÔNG trang nào set
+ * position/transform/z-index/box-shadow/transition trên `.sidebar` — nên
+ * các thuộc tính mới ở đây áp dụng an toàn bất kể cascade order (page CSS
+ * vs `v2-tokens.css`) thắng-thua thế nào cho riêng `width`.
+ *
+ * `.v2-mobile-nav-btn`/`.v2-mobile-nav-backdrop`/class `.mobile-open` —
+ * do `PortalV2Shell.tsx` tự render + toggle (state nội bộ, không cần
+ * trang cha phối hợp — xem docblock component đó). 12 trang tự chép
+ * sidebar tay (`TrangChuClient`/`DuAnCoHoiClient`/`HocVienAiClient`/4
+ * trang chi tiết CKOS/5 trang chi tiết hệ sinh thái) KHÔNG render 2 phần
+ * tử này — CSS ở đây vô hại với các trang đó (selector không khớp gì),
+ * cần 1 đợt riêng thêm cùng cơ chế hamburger/state cho nhóm 12 trang này.
+ * ------------------------------------------------------------------------ */
+[data-ui="v2"] .v2-mobile-nav-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  border: none;
+  background: rgba(120, 113, 150, .14);
+  color: var(--text, #1c1830);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+[data-ui="v2"] .v2-mobile-nav-backdrop {
+  display: none;
+}
+@media (max-width: 880px) {
+  [data-ui="v2"] .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 220;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, .5);
+  }
+  [data-ui="v2"] .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  [data-ui="v2"] .v2-mobile-nav-backdrop.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 6, 10, .6);
+    z-index: 210;
+  }
+  [data-ui="v2"] .v2-mobile-nav-btn {
+    display: flex;
+  }
+  [data-ui="v2"] .main-col .search-box {
+    min-width: 0;
+  }
+  [data-ui="v2"] .main-col .search-box input {
+    min-width: 0;
+  }
+  [data-ui="v2"] .main-col .search-box kbd {
+    display: none;
+  }
+  [data-ui="v2"] .main-col .upgrade-btn {
+    display: none;
+  }
+}
+@media (max-width: 480px) {
+  [data-ui="v2"] .main-col .search-box {
+    display: none;
+  }
+}
+
 /* Founder: "8 mục menu hiện đúng ở trang chủ nhưng đổi khi chuyển trang
  * khác" — audit phát hiện `.side-label` ("GÓC TIẾN BỘ") trước đó chỉ có
  * CSS ở ĐÚNG 4/46 trang tự chép sidebar tay (`trang-chu.css`/

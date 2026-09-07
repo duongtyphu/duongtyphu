@@ -193,6 +193,7 @@
 @media (max-width:1180px){
   .aff .content{flex-direction:column}
   .aff .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .aff .center-col{width:100%}
   .aff .right-col>.card{flex:1;min-width:280px}
   .aff .stat-row, .aff .tier-grid, .aff .steps-row{grid-template-columns:repeat(2,1fr)}
   .aff .material-grid{grid-template-columns:repeat(2,1fr)}

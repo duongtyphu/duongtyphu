@@ -167,6 +167,7 @@
 @media (max-width:1180px){
   .comp .content{flex-direction:column}
   .comp .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .comp .center-col{width:100%}
   .comp .right-col>.card, .comp .right-col>.help-card{flex:1;min-width:280px}
   .comp .sugg-row{grid-template-columns:1fr;margin-left:0}
   .comp .cta-box{margin-left:0}
@@ -197,4 +198,11 @@
 
 @media (max-width:1180px){
   .comp .chat-card{height:60vh;min-height:360px;max-height:520px}
+}
+
+@media (max-width:640px){
+  .comp .page-head{flex-direction:column;align-items:flex-start;gap:12px}
+  .comp .page-head-text{min-width:0;width:100%}
+  .comp .head-bot{align-self:center}
+  .comp .tools-grid{grid-template-columns:repeat(3,1fr)}
 }

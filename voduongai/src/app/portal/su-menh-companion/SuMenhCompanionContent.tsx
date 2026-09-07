@@ -185,7 +185,15 @@ export function SuMenhCompanionContent({
               </div>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-end gap-10">
+            {/* overflow-x-auto: `LivingCore size=256` vẽ vòng quỹ đạo trang trí
+                vượt ra ngoài khung layout của chính nó (overflow:visible theo
+                thiết kế Design Lock, không sửa `LivingCore.tsx`) — trên viewport
+                hẹp (≤360px) phần vượt đó từng kéo cả trang cuộn ngang. Bọc dải
+                demo kích thước trong khung cuộn ngang riêng, đúng nguyên tắc
+                "nội dung rộng cuộn trong khung của chính nó, trang không bao
+                giờ cuộn ngang". */}
+            <div className="mt-10 -mx-1 overflow-x-auto px-1">
+            <div className="flex flex-wrap items-end gap-10">
               <div className="flex flex-col items-center gap-3">
                 <LivingCore size={256} state="idle" />
                 <span className="text-xs font-medium text-gray-400">256px · idle</span>
@@ -214,6 +222,7 @@ export function SuMenhCompanionContent({
                 <LivingCore size={64} state="offline" />
                 <span className="text-xs font-medium text-gray-400">64px · offline</span>
               </div>
+            </div>
             </div>
           </Reveal>
 

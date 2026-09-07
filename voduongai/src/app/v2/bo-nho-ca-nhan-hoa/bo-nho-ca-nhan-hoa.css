@@ -146,6 +146,7 @@
 @media (max-width:1180px){
   .bnc .content{flex-direction:column}
   .bnc .right-col{width:100%}
+  .bnc .center-col{width:100%}
   .bnc .two-col{grid-template-columns:1fr}
   .bnc .stat-row{flex-wrap:wrap}
   .bnc .action-grid{grid-template-columns:repeat(2,1fr)}

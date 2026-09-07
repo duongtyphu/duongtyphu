@@ -221,6 +221,7 @@
 @media (max-width:1180px){
   .aiw .content{flex-direction:column}
   .aiw .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+  .aiw .center-col{width:100%}
   .aiw .right-col>.card{flex:1;min-width:280px}
   .aiw .grp-grid{grid-template-columns:repeat(3,1fr)}
   .aiw .proj-grid,.aiw .wf-grid{grid-template-columns:repeat(2,1fr)}

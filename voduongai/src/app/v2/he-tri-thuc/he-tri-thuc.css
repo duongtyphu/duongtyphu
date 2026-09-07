@@ -233,6 +233,7 @@
 @media (max-width:1180px){
   .ckos .content{flex-direction:column}
 .ckos .right-col{width:100%;flex-direction:row;flex-wrap:wrap}
+.ckos .center-col{width:100%}
 .ckos .right-col>.card, .ckos .right-col>.help-card{flex:1;min-width:280px}
 .ckos .stat-row{grid-template-columns:repeat(3,1fr)}
 .ckos .cat-grid{grid-template-columns:repeat(3,1fr)}
