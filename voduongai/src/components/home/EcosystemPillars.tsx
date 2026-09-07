@@ -23,25 +23,13 @@ const ITEMS = [
     id: "hoc-vien-ai",
     icon: "/images/landing-preview/icons/eco-hoc-vien-ai.png",
     title: "Học viện AI",
-    desc: "Lộ trình bài bản từ cơ bản đến nâng cao, học đi đôi với thực hành.",
+    desc: "Hệ tri thức, lộ trình khoá học và thư viện công cụ AI — gộp chung một không gian học tập duy nhất.",
   },
   {
     id: "companion-ai",
     icon: "/images/landing-preview/icons/eco-companion-ai.png",
     title: "Companion AI",
     desc: "AI Mentor cá nhân hóa, hiểu bạn, nhớ bạn và đồng hành cùng bạn mỗi ngày.",
-  },
-  {
-    id: "ckos",
-    icon: "/images/landing-preview/icons/eco-ckos.png",
-    title: "Hệ tri thức AI (CKOS)",
-    desc: "Thư viện tri thức chọn lọc, cập nhật liên tục, sẵn sàng cho mọi nhu cầu.",
-  },
-  {
-    id: "ai-workspace",
-    icon: "/images/landing-preview/icons/eco-ai-workspace.png",
-    title: "AI Workspace",
-    desc: "Nơi bạn thực hành, lưu trữ và triển khai ý tưởng thành sản phẩm thực tế.",
   },
   {
     id: "du-an-co-hoi",

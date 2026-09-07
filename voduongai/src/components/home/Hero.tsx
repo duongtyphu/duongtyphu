@@ -38,8 +38,8 @@ const floatingBadges = [
     duration: 7,
   },
   {
-    title: "Affiliate Hub",
-    subtitle: undefined,
+    title: "Affiliate",
+    subtitle: "Chương trình",
     className: "right-[-4%] bottom-[26%] md:right-[-7%]",
     duration: 4.5,
   },
