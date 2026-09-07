@@ -14,7 +14,7 @@ const columns = [
     title: "Khám phá",
     links: [
       { label: "Học viện AI", href: "/login" },
-      { label: "Hệ tri thức AI (CKOS)", href: "/login" },
+      { label: "Companion AI", href: "/login" },
       { label: "Dự án & Cơ hội", href: "/login" },
       { label: "Premium", href: "/login" },
     ],

@@ -5,9 +5,9 @@ import { motion } from "framer-motion";
 import {
   Home,
   HeartHandshake,
-  Library,
+  Lightbulb,
   GraduationCap,
-  Cpu,
+  Crown,
   Rocket,
   Search,
   Bell,
@@ -20,12 +20,16 @@ import {
 // edited here). Uses container queries (`@lg:`) instead of viewport
 // breakpoints so the sidebar/columns adapt to the width of the box this
 // mockup is placed in, not the browser viewport.
+// Index 3 ("Học viện AI") is highlighted by `active` below in sync with
+// the cursor animation's first stop — keep the array length/order stable
+// (swap labels in place) rather than removing items, so that index stays
+// correct without also touching the `i === 3` check.
 const sidebar: { label: string; icon: LucideIcon }[] = [
   { label: "Trang chủ Học viện", icon: Home },
   { label: "Companion", icon: HeartHandshake },
-  { label: "Hệ tri thức AI (CKOS)", icon: Library },
+  { label: "Mỗi ngày một ý tưởng", icon: Lightbulb },
   { label: "Học viện AI", icon: GraduationCap },
-  { label: "AI Workspace", icon: Cpu },
+  { label: "Premium", icon: Crown },
   { label: "Dự án & Cơ hội", icon: Rocket },
 ];
 

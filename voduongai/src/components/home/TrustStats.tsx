@@ -16,7 +16,7 @@ const FEATURES = [
   {
     icon: "/images/landing-preview/icons/platform-community.png",
     title: "Cộng đồng tích cực",
-    desc: "Hơn 10,000+ thành viên cùng học hỏi và hỗ trợ nhau mỗi ngày.",
+    desc: "Cùng học hỏi và hỗ trợ nhau mỗi ngày trong hành trình chinh phục AI.",
   },
   {
     icon: "/images/landing-preview/icons/community-knowledge.png",

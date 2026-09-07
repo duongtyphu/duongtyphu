@@ -12208,3 +12208,96 @@ NGUYÊN TẮC BẤT BIẾN + link → NO-FAKE-DATA → Contrast/accessibility �
 Responsive/mobile → Admin↔Portal wiring → Companion Widget + hiệu năng).
 Tiếp theo theo lộ trình Founder đã giao: Giai đoạn 12 — Điều chỉnh Landing
 Page khớp Portal 2.0.
+
+## Giai đoạn 12 — Điều chỉnh Landing Page khớp Portal 2.0
+
+Audit qua Agent Explore (background, đọc toàn bộ `src/app/page.tsx` +
+`src/components/home/**` + `LandingChromeContext`/`live-landing-chrome.ts`)
+theo đúng 4 hạng mục Founder giao: (1) link chết/trỏ 12 route Portal 1.0
+đã xoá ở Giai đoạn 10; (2) nội dung mô tả tính năng lỗi thời/không khớp
+cấu trúc 2.0 thật; (3) đích CTA đăng nhập/đăng ký; (4) tình trạng wiring
+Landing Page CMS (Phase 25) so với những gì đã ghi trong CLAUDE.md.
+
+**Mục 1 (link chết) và mục 3 (CTA) — sạch, không phát hiện gì.** Cả 4 CTA
+chính (Hero/EcosystemPillars/PortalPreview/FinalCTA) đều trỏ `/login`
+không kèm `?next=`, tự động ăn theo fallback `sanitizeNextParam()` →
+`/v2/trang-chu`. Không link nào trỏ 12 route Portal 1.0 đã xoá.
+
+**Mục 4 (CMS wiring) — khớp 100% với tài liệu đã ghi**, không lệch.
+
+**Mục 2 (nội dung lỗi thời) — 3 phát hiện thật từ agent, cộng 2 phát hiện
+thêm khi tự smoke-test lại HTML thật sau khi sửa (agent audit chỉ đọc
+code tĩnh, không phát hiện được nội dung đến từ 1 component con import
+gián tiếp) — tổng cộng 5 vị trí đã sửa:**
+
+1. **`EcosystemPillars.tsx` (mảng `ITEMS`)** — trước đó tách "Học viện
+   AI"/"Hệ tri thức AI (CKOS)"/"AI Workspace" thành 3 pillar độc lập, dù
+   Portal 2.0 đã gộp cả 3 vào đúng 1 trang (`/v2/hoc-vien-ai`, 3 tab nội
+   bộ — `next.config.ts` xác nhận `he-tri-thuc`/`ai-workspace` giờ chỉ là
+   redirect vĩnh viễn). Đã gộp thành 1 pillar "Học viện AI" (mô tả viết
+   lại phản ánh đúng cấu trúc gộp: "Hệ tri thức, lộ trình khoá học và thư
+   viện công cụ AI — gộp chung một không gian học tập duy nhất."), xoá 2
+   card CKOS/AI Workspace — còn lại 4 pillar (Học viện AI/Companion AI/
+   Dự án & Cơ hội/Premium). An toàn xoá vì layout dùng `flex-wrap` (không
+   phải grid cột cố định) và không có anchor `#ckos`/`#ai-workspace` nào
+   trỏ tới 2 id này ở nơi khác.
+2. **`Hero.tsx` (mảng `floatingBadges`)** — badge nổi "Affiliate Hub" đặt
+   tên theo route `/portal/affiliate-hub` đã xoá hẳn ở "Giai đoạn 10, đợt
+   3" — đổi thành "Affiliate" + phụ đề "Chương trình" (khớp tính năng
+   thật `/v2/affiliate`).
+3. **`TrustStats.tsx` (mảng `FEATURES`)** — "Hơn 10,000+ thành viên cùng
+   học hỏi..." là số hardcode không nguồn. Đã xác nhận qua Supabase MCP
+   (`select count(*) from members`) — **16 thành viên thật**, lệch hơn
+   600 lần so với con số claim. Đổi sang câu định tính không cite số
+   ("Cùng học hỏi và hỗ trợ nhau mỗi ngày trong hành trình chinh phục
+   AI.") — đúng NO-FAKE-DATA, không tự bịa số khác để thay thế.
+4. **`Footer.tsx` (mảng `columns`, cột "Khám phá")** — cùng lớp lỗi #1,
+   Footer (site-wide, không riêng `/`) liệt kê "Học viện AI" VÀ "Hệ tri
+   thức AI (CKOS)" như 2 mục tách biệt. Đổi mục CKOS thành "Companion AI"
+   (tính năng thật, trước đó hoàn toàn vắng mặt trong cột này dù là 1 nav
+   item chính của `/v2/*`).
+5. **`LandingPreviewPortalMockup.tsx` (mảng `sidebar`, mockup sidebar
+   động trong section "Khám phá nền tảng"/`PortalPreview.tsx`)** — phát
+   hiện KHÔNG qua audit ban đầu (agent chỉ đọc trực tiếp `PortalPreview.tsx`,
+   không theo `import` sang file con này) mà qua chính việc tự `curl` lại
+   HTML thật sau khi sửa 4 mục trên để xác nhận — vẫn còn "Hệ tri thức AI
+   (CKOS)" + "AI Workspace" tách rời "Học viện AI", đúng cùng bug #1.
+   **Rủi ro riêng của file này:** biến `active` tính theo INDEX
+   (`i === 0 || (step === 0 && i === 3)`, đồng bộ với animation con trỏ
+   "click" minh hoạ) — xoá bớt phần tử sẽ dịch index và làm sai vị trí
+   item được highlight lúc cursor dừng ở sidebar. Đã sửa AN TOÀN bằng
+   cách GIỮ NGUYÊN độ dài mảng + thứ tự index, chỉ đổi NHÃN+ICON của 2 vị
+   trí (index 2: CKOS → "Mỗi ngày một ý tưởng"/`Lightbulb`; index 4: AI
+   Workspace → "Premium"/`Crown`) — index 3 ("Học viện AI", vị trí được
+   `active` highlight) không đổi gì, animation giữ nguyên hành vi.
+
+**Đã kiểm tra, KHÔNG sửa (đúng như agent xác nhận):**
+"Cộng đồng AI"/Community Map/lịch Zoom không được nhắc tới ở Landing Page
+(0 vi phạm); không có testimonial/review giả; 5 hệ sinh thái Dự án & Cơ
+hội chỉ nhắc ở mức tổng quan, không liệt kê sai tên nào.
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint` (5 file sửa) sạch,
+`npx vitest run` 495/495 pass, `rm -rf .next && npm run build` sạch (1
+lần build gặp `/v2/premium/[courseId]/hoc` biến mất khỏi route list —
+xác nhận đây là build flakiness của sandbox Turbopack, không liên quan
+code sửa trong đợt này: file route không đổi, build lại ngay sau đó route
+xuất hiện lại bình thường, lặp lại 2 lần liên tiếp đều thành công). Test
+thật qua `next start` (Supabase chưa cấu hình, Portal tự công khai theo
+fallback có sẵn) — `curl "/"` trả `200`; grep xác nhận **0 lần** còn xuất
+hiện "10,000+"/"Affiliate Hub"/"Hệ tri thức AI (CKOS)"/"AI Workspace"
+trong HTML server-render, và xác nhận có mặt đầy đủ nội dung mới ở cả 5
+vị trí đã sửa.
+
+**Chưa tự test được:** xem trực quan qua trình duyệt với dữ liệu
+Production thật (giới hạn sandbox không có `SUPABASE_SERVICE_ROLE_KEY`/
+trình duyệt tương tác được đã nêu nhiều lần) — riêng animation con trỏ
+trong `LandingPreviewPortalMockup.tsx` (mục 5) chỉ verify được qua đọc
+code (không đổi index nào), chưa tự xem chuyển động thật trên trình
+duyệt — Founder tự xác nhận trên Preview/Production URL: (1) mockup
+sidebar trong section "Khám phá nền tảng" vẫn cuộn/nhấp nháy đúng như
+trước (chỉ đổi 2 nhãn, không đổi hành vi); (2) 4 pillar mới ở
+"Học viện AI trong một cái nhìn" hiển thị đúng, không vỡ layout ở màn
+hình hẹp.
+
+**GIAI ĐOẠN 12 HOÀN TẤT.** Tiếp theo theo lộ trình Founder đã giao: Giai
+đoạn 13 — Thiết kế lại Admin quản lý Portal 2.0.
