@@ -7,11 +7,12 @@ import {
   runReviewerAgentForOutput,
   approveOutput,
   submitReflection,
+  __resetWorkspaceSessionsCacheForTest,
 } from "@/lib/portal/foundation/workspace-session-store";
 import { activateWave1Companions } from "@/lib/portal/foundation/workforce-registry";
-import { promoteEligibleOutputs, listPortfolioItems } from "@/lib/portal/foundation/portfolio-store";
+import { promoteEligibleOutputs, listPortfolioItems, __resetPortfolioItemsCacheForTest } from "@/lib/portal/foundation/portfolio-store";
 import { syncMemoryForPortfolioItem, listMemoryEntries, __resetMemoryStoreCacheForTest } from "@/lib/portal/foundation/memory-store";
-import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
+import { readGrowthEvents, __resetGrowthEventBusCacheForTest } from "@/lib/portal/foundation/growth-event-bus";
 
 /**
  * PHASE 4 SPRINT 003 — Workspace Runtime Integration.
@@ -29,10 +30,14 @@ import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 describe("PHASE 4 SPRINT 003 — Workspace Runtime Integration (E2E)", () => {
   beforeEach(() => {
     window.localStorage.clear();
-    // Phase 40 — memory-store.ts giờ dùng cache trong bộ nhớ (Supabase-backed
-    // thật), không còn localStorage — reset cache module-level thay vì
-    // chỉ dựa vào `localStorage.clear()`.
+    // Phase 40/42 — memory-store.ts/growth-event-bus.ts/
+    // workspace-session-store.ts/portfolio-store.ts giờ dùng cache trong
+    // bộ nhớ (Supabase-backed thật), không còn localStorage — reset cache
+    // module-level thay vì chỉ dựa vào `localStorage.clear()`.
     __resetMemoryStoreCacheForTest();
+    __resetGrowthEventBusCacheForTest();
+    __resetWorkspaceSessionsCacheForTest();
+    __resetPortfolioItemsCacheForTest();
     vi.restoreAllMocks();
   });
 

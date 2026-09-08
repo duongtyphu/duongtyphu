@@ -11,11 +11,12 @@ import {
   submitReflection,
   completeSession,
   getSession,
+  __resetWorkspaceSessionsCacheForTest,
 } from "@/lib/portal/foundation/workspace-session-store";
-import { promoteEligibleOutputs, listPortfolioItems } from "@/lib/portal/foundation/portfolio-store";
+import { promoteEligibleOutputs, listPortfolioItems, __resetPortfolioItemsCacheForTest } from "@/lib/portal/foundation/portfolio-store";
 import { computeCapabilityProfiles, getCapabilityTimeline } from "@/lib/portal/foundation/capability-engine";
 import { recordNewUnlocks, getMissionUnlockStatuses } from "@/lib/portal/foundation/mission-unlock-runtime";
-import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
+import { readGrowthEvents, __resetGrowthEventBusCacheForTest } from "@/lib/portal/foundation/growth-event-bus";
 
 /**
  * PHASE 2 EXIT VALIDATION — QA End-to-End.
@@ -39,6 +40,12 @@ import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 describe("Phase 2 Exit Validation — full loop (Academy → Unlock)", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    // Phase 42 — growth-event-bus.ts/workspace-session-store.ts/
+    // portfolio-store.ts giờ dùng cache trong bộ nhớ (Supabase-backed
+    // thật), không còn localStorage.
+    __resetGrowthEventBusCacheForTest();
+    __resetWorkspaceSessionsCacheForTest();
+    __resetPortfolioItemsCacheForTest();
   });
 
   it("chạy đủ Mission → Workspace → Output → Review → Reflection → Portfolio → Growth → Capability → Unlock", () => {

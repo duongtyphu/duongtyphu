@@ -7,6 +7,7 @@ import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { listAllSessions, type WorkspaceSessionRecord } from "@/lib/portal/foundation/workspace-session-store";
 import { listPortfolioItems, type PortfolioItemRecord } from "@/lib/portal/foundation/portfolio-store";
 import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
+import { hydrateGrowthView } from "@/lib/portal/foundation/growth-view";
 import { buildBehaviorLessons } from "@/lib/portal/foundation/learning-lessons";
 import { todaysJournalIntention } from "@/lib/portal/growth-map/journal-intention";
 import type { Reflection } from "@/lib/portal/reflections";
@@ -169,15 +170,17 @@ export function LearningJournalNotebook({
   const [todayHighlight, setTodayHighlight] = useState<string | null>(null);
 
   useEffect(() => {
-    const all = listAllSessions();
-    const today = new Date();
-    const todaysEvents = readGrowthEvents().filter((e) => isSameDay(e.timestamp, today));
-    const reflectionToday = reflections.some((r) => isSameDay(r.createdAt, today));
-    const matched = TODAY_PRIORITY.find((p) => todaysEvents.some((e) => e.eventType === p.type));
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setSessions(all);
-    setPortfolio(listPortfolioItems());
-    setTodayHighlight(matched?.sentence ?? (reflectionToday ? "Hôm nay bạn đã dừng lại để suy ngẫm." : null));
+    void (async () => {
+      await hydrateGrowthView();
+      const all = listAllSessions();
+      const today = new Date();
+      const todaysEvents = readGrowthEvents().filter((e) => isSameDay(e.timestamp, today));
+      const reflectionToday = reflections.some((r) => isSameDay(r.createdAt, today));
+      const matched = TODAY_PRIORITY.find((p) => todaysEvents.some((e) => e.eventType === p.type));
+      setSessions(all);
+      setPortfolio(listPortfolioItems());
+      setTodayHighlight(matched?.sentence ?? (reflectionToday ? "Hôm nay bạn đã dừng lại để suy ngẫm." : null));
+    })();
   }, [reflections]);
 
   const entries = useMemo(() => (sessions ? buildEntries(sessions, reflections) : []), [sessions, reflections]);

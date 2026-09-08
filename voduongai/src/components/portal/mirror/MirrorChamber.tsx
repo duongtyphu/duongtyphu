@@ -7,7 +7,7 @@ import { LivingCore } from "@/components/LivingCore";
 import { OriginLineWhisper } from "@/components/portal/companion/OriginLineWhisper";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { getRandomThoughtSeed } from "@/data/portal/thought-seeds";
-import { getGardenSummary, getRecentActivity, type ActivityEntry } from "@/lib/portal/foundation/growth-view";
+import { getGardenSummary, getRecentActivity, hydrateGrowthView, type ActivityEntry } from "@/lib/portal/foundation/growth-view";
 import { todaysMirrorQuestion } from "@/lib/portal/growth-map/mirror-question";
 import type { MirrorNarrativeLine } from "@/lib/portal/growth-map/mirror-narrative";
 import type { ReflectionMoment } from "@/lib/portal/growth-map/growth-reflection-engine";
@@ -170,10 +170,12 @@ export function MirrorChamber({
   const [thoughtSeed, setThoughtSeed] = useState<string | null>(null);
 
   useEffect(() => {
-    const summary = getGardenSummary();
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setClientFacts({ activity: getRecentActivity(2), outputCount: summary.totalOutputs });
-    setThoughtSeed(getRandomThoughtSeed());
+    void (async () => {
+      await hydrateGrowthView();
+      const summary = getGardenSummary();
+      setClientFacts({ activity: getRecentActivity(2), outputCount: summary.totalOutputs });
+      setThoughtSeed(getRandomThoughtSeed());
+    })();
   }, []);
 
   if (clientFacts === null) {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CompanionGuide } from "@/components/portal/CompanionGuide";
-import { getRecentActivity } from "@/lib/portal/foundation/growth-view";
+import { getRecentActivity, hydrateGrowthView } from "@/lib/portal/foundation/growth-view";
 
 /**
  * Portal 4.0 Phase 3 — Companion Memory & Context.
@@ -24,9 +24,11 @@ export function CompanionMemoryLine({
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const [latest] = getRecentActivity(1);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading browser-only localStorage, no SSR equivalent
-    setMessage(latest ? contextTemplate.replace("{activity}", latest.label.toLowerCase()) : emptyMessage);
+    void (async () => {
+      await hydrateGrowthView();
+      const [latest] = getRecentActivity(1);
+      setMessage(latest ? contextTemplate.replace("{activity}", latest.label.toLowerCase()) : emptyMessage);
+    })();
   }, [emptyMessage, contextTemplate]);
 
   if (!message) return null;

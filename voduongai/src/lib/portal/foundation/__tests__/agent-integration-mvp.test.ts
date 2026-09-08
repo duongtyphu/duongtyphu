@@ -7,9 +7,10 @@ import {
   runReviewerAgentForOutput,
   approveOutput,
   submitReflection,
+  __resetWorkspaceSessionsCacheForTest,
 } from "@/lib/portal/foundation/workspace-session-store";
-import { promoteEligibleOutputs, listPortfolioItems } from "@/lib/portal/foundation/portfolio-store";
-import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
+import { promoteEligibleOutputs, listPortfolioItems, __resetPortfolioItemsCacheForTest } from "@/lib/portal/foundation/portfolio-store";
+import { readGrowthEvents, __resetGrowthEventBusCacheForTest } from "@/lib/portal/foundation/growth-event-bus";
 import { listAgentRuns } from "@/lib/portal/foundation/agent-run-store";
 
 /**
@@ -31,6 +32,13 @@ import { listAgentRuns } from "@/lib/portal/foundation/agent-run-store";
 describe("AI Agent Integration MVP — end-to-end test case", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    // Phase 42 — growth-event-bus.ts/workspace-session-store.ts/
+    // portfolio-store.ts giờ dùng cache trong bộ nhớ (Supabase-backed
+    // thật), không còn localStorage — reset cache module-level thay vì
+    // chỉ dựa vào `localStorage.clear()` cũ.
+    __resetGrowthEventBusCacheForTest();
+    __resetWorkspaceSessionsCacheForTest();
+    __resetPortfolioItemsCacheForTest();
     vi.restoreAllMocks();
   });
 

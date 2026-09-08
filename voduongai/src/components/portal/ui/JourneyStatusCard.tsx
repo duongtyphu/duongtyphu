@@ -1,14 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { GemCard } from "@/components/portal/ui/GemCard";
 import { Button } from "@/components/portal/ui/Button";
-import { getJourneyProgress } from "@/lib/portal/foundation/growth-view";
+import { getJourneyProgress, hydrateGrowthView, type JourneyProgressEntry } from "@/lib/portal/foundation/growth-view";
 
 // Shared "Continue Learning / Progress" card — reuses the real read-only
 // engine (`getJourneyProgress()`, reads actual WorkspaceSession data, no
 // fabricated numbers). Used by both CKOS and Academy pages with different
 // copy/CTA, per Product Transformation Wave 1's "Learning/Progress" and
 // "Empty State chuyên nghiệp" requirement on every pillar page.
+//
+// Phase 42 — `getJourneyProgress()` giờ đọc cache Supabase-backed
+// (`growth-view.ts`), phải `await hydrateGrowthView()` trước lần đọc đầu.
+// Component này KHÔNG có `useEffect` sẵn (đọc thẳng trong render body) —
+// đổi sang `useState` + `useEffect` để có chỗ `await` hydrate an toàn.
 export function JourneyStatusCard({
   eyebrow,
   emptyMessage,
@@ -20,7 +26,15 @@ export function JourneyStatusCard({
   ctaLabel: string;
   ctaHref: string;
 }) {
-  const journeys = getJourneyProgress();
+  const [journeys, setJourneys] = useState<JourneyProgressEntry[]>([]);
+
+  useEffect(() => {
+    void (async () => {
+      await hydrateGrowthView();
+      setJourneys(getJourneyProgress());
+    })();
+  }, []);
+
   const active = journeys.find((j) => !j.isCompleted);
 
   return (

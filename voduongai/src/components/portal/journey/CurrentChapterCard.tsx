@@ -7,6 +7,7 @@ import {
   getCurrentChapterFromClient,
   type JourneyChapter,
 } from "@/lib/portal/foundation/journey-chapter";
+import { hydrateGrowthView } from "@/lib/portal/foundation/growth-view";
 
 /**
  * Journey P1 — "Chương hiện tại" trên Journey Hub.
@@ -23,8 +24,10 @@ export function CurrentChapterCard({ premiumCount = 0 }: { premiumCount?: number
   const [chapter, setChapter] = useState<JourneyChapter | undefined>(undefined);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setChapter(getCurrentChapterFromClient(premiumCount));
+    void (async () => {
+      await hydrateGrowthView();
+      setChapter(getCurrentChapterFromClient(premiumCount));
+    })();
   }, [premiumCount]);
 
   if (chapter === undefined) return null;
