@@ -3,13 +3,32 @@
 /**
  * Companion nổi (Widget) — Portal 2.0, Giai đoạn 9.
  *
- * Founder chỉ đạo: "Tận dụng và cải tiến Companion 2.0. Sử dụng lại tất cả
- * các tính năng mà companion đã có" — audit trước khi build xác nhận
- * `CompanionFloatingChat`/`CompanionChatShell(variant="compact")` (mini
- * chat nổi đã xây cho Portal 1.0, Sprint EPIC-CS-001) HOÀN TOÀN
- * route-agnostic — tái dùng NGUYÊN VẸN, không viết lại 1 dòng logic chat
- * nào. `LivingCore` (Design Lock v1.2) cũng tái dùng nguyên, không đổi
- * hình học/màu sắc.
+ * ĐÍNH CHÍNH KIẾN TRÚC (đảo ngược quyết định ban đầu): bản đầu tái dùng
+ * NGUYÊN `CompanionFloatingChat`/`CompanionChatShell` (Portal 1.0, Sprint
+ * EPIC-CS-001) với lý do "route-agnostic, dùng chung an toàn". Founder chỉ
+ * đạo lại trực tiếp: "phiên bản Companion ở thanh Menu (`/v2/companion`)
+ * và Companion nổi trên màn hình LÀ MỘT, và nó phải được di chuyển hoàn
+ * toàn ở Portal 2.0 — không liên quan đến Portal 1.0, vì Portal 1.0 sẽ bị
+ * xoá hoàn toàn sau khi chốt." Route-agnostic không còn là lý do đủ — 1.0
+ * sẽ biến mất, nên widget KHÔNG được import bất kỳ gì từ
+ * `src/components/portal/companion/*` nữa.
+ *
+ * Đã sửa: panel chat (`CompanionWidgetPanel.tsx`) giờ dùng CHUNG
+ * `useCompanionChat()`/`CompanionChatArea` với `/v2/companion` (trang đầy
+ * đủ) — đúng nghĩa "là một": cùng 1 UI, cùng 1 logic, chỉ khác vỏ bọc
+ * (trang full-height vs. panel nổi góc màn hình). `LivingCore` (Design
+ * Lock v1.2) vẫn tái dùng nguyên, không đổi hình học/màu sắc.
+ *
+ * Sửa kèm 2 bug Founder báo: (1) "load hơi chậm khi mở chat" — trước đây
+ * `CompanionFloatingChat` chỉ BẮT ĐẦU tải hội thoại SAU KHI người dùng bấm
+ * mở (mount lúc đó mới chạy effect fetch) → luôn có độ trễ thấy được. Giờ
+ * `CompanionWidget` tự PREFETCH hội thoại gần nhất ngay khi mount (tức
+ * ngay khi trang `/v2/*` bất kỳ tải xong, không chờ click) — panel gần như
+ * luôn có sẵn dữ liệu khi mở. (2) "khung gõ chữ có viền đôi" — panel mới
+ * dùng `.comp .chat-input-row` (1 viền duy nhất quanh cả hàng, xem
+ * `companion.css`), không còn `CompanionComposer.tsx` (1.0 — viền ngoài
+ * của khung composer LỒNG thêm viền trong quanh ô nhập, đúng bug Founder
+ * mô tả).
  *
  * KHÔNG port nguyên `CompanionPresence.tsx` (841 dòng, 1.0) — hệ thống đó
  * gắn rất sâu vào tín hiệu chỉ 1.0 mới có (garden-stage/reflection-meaning
@@ -18,9 +37,8 @@
  * KẾ MỚI, gọn hơn — giữ 3 lớp giá trị cốt lõi Founder yêu cầu: (1) mini
  * chat AI thật; (2) gợi ý theo đúng khu vực đang xem ("Contextual Nudge",
  * tái dùng nguyên `route-context.ts`/`nudge-session.ts`); (3) kéo-thả tự
- * do khắp màn hình + ẩn/hiện + đổi màu theo nền từng khu vực (đợt sau, xem
- * dưới) — mood/life-moment/proactive-thought đầy đủ như 1.0 vẫn là việc
- * RIÊNG, lớn hơn, chưa làm ở đợt này.
+ * do khắp màn hình + ẩn/hiện — mood/life-moment/proactive-thought đầy đủ
+ * như 1.0 vẫn là việc RIÊNG, lớn hơn, chưa làm ở đợt này.
  *
  * ĐỢT 2 (Founder yêu cầu thêm): kéo-thả tự do khắp màn hình (vị trí nhớ
  * lại qua `localStorage`, luôn giữ trong vùng nhìn thấy — cùng nguyên lý
@@ -41,7 +59,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { LivingCore } from "@/components/LivingCore";
-import { CompanionFloatingChat } from "@/components/portal/companion/CompanionFloatingChat";
+import { CompanionWidgetPanel } from "@/components/v2/companion/CompanionWidgetPanel";
+import { listConversations, getConversationMessages } from "@/app/portal/companion/actions";
+import type { CompanionMessageRow } from "@/app/portal/companion/actions";
 import { getRouteContext, hasContextualNudge } from "@/lib/portal/companion/route-context";
 import { hasNudgeBeenShown, isNudgeDisabled, markNudgeShown, setNudgeDisabled } from "@/lib/portal/companion/nudge-session";
 
@@ -97,7 +117,38 @@ function readStoredHidden(): boolean {
 export function CompanionWidget() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // Panel chỉ MOUNT lần đầu khi mở (`hasOpenedOnce`), sau đó ở lại mounted
+  // vĩnh viễn — đóng/mở chỉ toggle `visible`, không unmount — để giữ đúng
+  // trạng thái hội thoại (kể cả tin nhắn vừa gửi) qua nhiều lần đóng/mở,
+  // không phụ thuộc dữ liệu prefetch ban đầu có kịp làm mới hay không.
+  const [hasOpenedOnce, setHasOpenedOnce] = useState(false);
   const [nudgeVisible, setNudgeVisible] = useState(false);
+  // Prefetch hội thoại gần nhất NGAY KHI widget mount (tức ngay khi trang
+  // `/v2/*` bất kỳ tải xong) — thay vì chỉ bắt đầu tải SAU KHI người dùng
+  // bấm mở (đúng nguyên nhân "load hơi chậm" Founder báo). Tới lúc người
+  // dùng thực sự bấm mở, dữ liệu gần như luôn đã sẵn sàng.
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [initialMessages, setInitialMessages] = useState<CompanionMessageRow[]>([]);
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const rows = await listConversations();
+        if (cancelled) return;
+        const mostRecent = rows[0] ?? null;
+        if (!mostRecent) return;
+        setConversationId(mostRecent.id);
+        const msgs = await getConversationMessages(mostRecent.id);
+        if (!cancelled) setInitialMessages(msgs);
+      } catch {
+        // Lỗi mạng/chưa đăng nhập — panel vẫn mở được, chỉ bắt đầu 1 hội
+        // thoại mới thay vì tiếp tục hội thoại cũ.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   // BUG THẬT đã tự phát hiện + sửa trước khi ship (chưa từng xuất bản):
   // bản nháp đầu dùng lazy initializer (`useState(() => readStoredPosition())`)
   // với kỳ vọng "chạy ngay ở lượt render đầu, tránh 1 khung hình nhảy vị
@@ -230,6 +281,7 @@ export function CompanionWidget() {
       // Không kéo (di chuyển dưới ngưỡng) — coi là click, mở chat.
       setNudgeVisible(false);
       setOpen(true);
+      setHasOpenedOnce(true);
     },
     [persistPosition]
   );
@@ -276,6 +328,7 @@ export function CompanionWidget() {
               onOpenChat={() => {
                 setNudgeVisible(false);
                 setOpen(true);
+                setHasOpenedOnce(true);
               }}
               onDismiss={() => setNudgeVisible(false)}
               onDisableAll={() => {
@@ -329,7 +382,15 @@ export function CompanionWidget() {
         </div>
       )}
 
-      {open && <CompanionFloatingChat onClose={() => setOpen(false)} fullPageHref="/v2/companion" />}
+      {hasOpenedOnce && (
+        <CompanionWidgetPanel
+          visible={open}
+          onClose={() => setOpen(false)}
+          initialConversationId={conversationId}
+          initialMessages={initialMessages}
+          fullPageHref="/v2/companion"
+        />
+      )}
     </>
   );
 }

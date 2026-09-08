@@ -98,21 +98,34 @@
  *     overflow:hidden}` (71px = topbar, cùng số đo đã dùng để tính
  *     `.chat-card`) + `.right-col{height:100%;overflow-y:auto}` (tự cuộn
  *     riêng bên trong) — xem docblock đầy đủ trong `companion.css`.
+ * 11. **Hợp nhất với Companion nổi (widget)** — Founder: "hiện bản
+ *     Companion ở thanh Menu và Companion nổi trên màn hình là một, và nó
+ *     phải được di chuyển hoàn toàn ở Portal 2.0 (không liên quan Portal
+ *     1.0)". Toàn bộ logic chat (state/gửi/dừng/thử lại/sao chép/ghi nhớ)
+ *     đã tách ra `src/lib/v2/companion/useCompanionChat.ts` + UI vùng chat
+ *     ra `src/components/v2/companion/CompanionChatArea.tsx` — dùng CHUNG
+ *     bởi trang này VÀ `CompanionWidgetPanel.tsx` (widget nổi, mount ở
+ *     `v2/layout.tsx`). Widget KHÔNG còn import
+ *     `CompanionFloatingChat`/`CompanionChatShell`/`CompanionComposer`
+ *     (Portal 1.0) — mọi phần chat giờ 100% Portal 2.0, dùng đúng CSS
+ *     `.comp` (`companion.css`) như trang này. Cũng sửa kèm bug "khung gõ
+ *     chữ có viền đôi" ở widget (bug nằm ở `CompanionComposer.tsx` 1.0 mà
+ *     widget cũ dùng — nay không còn dùng nữa) và "load hơi chậm khi mở
+ *     chat" (widget giờ prefetch hội thoại ngay khi mount, không đợi lúc
+ *     bấm mở mới bắt đầu tải).
  * ========================================================================== */
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { PortalV2Shell } from "@/components/v2/PortalV2Shell";
 import type { CompanionMessageRow } from "@/app/portal/companion/actions";
-import { COMPANION_MESSAGE_MAX_LENGTH } from "@/lib/portal/companion-chat";
-import { MarkdownLite } from "@/components/portal/companion/chat/MarkdownLite";
 import type { GoalRecord } from "@/lib/portal/foundation/goal-runtime";
 import { getGoalProgress, listGoals, hydrateGoalRuntime } from "@/lib/portal/foundation/goal-runtime";
 import type { AcademyProgress } from "@/lib/portal/live-academy";
 import type { PremiumStatus } from "@/lib/v2/premium-access";
-import type { CompanionMemorySuggestion } from "@/ai/runtime/public-chat-response";
-import { saveMemorySuggestion } from "@/lib/portal/companion/memory-suggestion";
+import { useCompanionChat } from "@/lib/v2/companion/useCompanionChat";
+import { CompanionChatArea } from "@/components/v2/companion/CompanionChatArea";
 
 import "../inter-gf.css";
 import "./companion.css";
@@ -155,40 +168,6 @@ const INTERNAL_SUGGESTIONS: { label: string; href: string; icon: React.ReactNode
   },
 ];
 
-type Msg = CompanionMessageRow & { pending?: boolean };
-
-/** `HH:mm · dd/mm/yyyy` — đúng công thức `formatMessageTimestamp()` của
- * `CompanionMessageList.tsx` (1.0), giữ nguyên khi nâng cấp phần hiển thị. */
-function formatMessageTimestamp(createdAt: string) {
-  const d = new Date(createdAt);
-  if (Number.isNaN(d.getTime())) return "";
-  const time = d.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" });
-  const date = d.toLocaleDateString("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" });
-  return `${time} · ${date}`;
-}
-
-const typingDotStyle = (delay: string): React.CSSProperties => ({
-  width: 6,
-  height: 6,
-  borderRadius: "50%",
-  background: "var(--violet)",
-  display: "inline-block",
-  animationName: "sparkleTwinkle",
-  animationDuration: "1.1s",
-  animationIterationCount: "infinite",
-  animationDelay: delay,
-});
-
-const actionBtnStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  cursor: "pointer",
-  fontSize: 11,
-  fontWeight: 700,
-  color: "var(--muted)",
-  padding: 0,
-};
-
 export function CompanionClient({
   premium,
   initialConversationId,
@@ -201,23 +180,10 @@ export function CompanionClient({
   academyProgress: AcademyProgress;
 }) {
   const router = useRouter();
-  const [conversationId, setConversationId] = useState(initialConversationId);
-  const [messages, setMessages] = useState<Msg[]>(initialMessages);
-  const [input, setInput] = useState("");
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  // Giai đoạn 2, mục 2a — ghi nhớ tự động phát hiện + xác nhận 1 chạm.
-  // Chỉ giữ gợi ý của LƯỢT GẦN NHẤT (không xếp chồng nhiều gợi ý cũ).
-  const [memorySuggestion, setMemorySuggestion] = useState<CompanionMemorySuggestion | null>(null);
-  const [memorySaveState, setMemorySaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const bottomRef = useRef<HTMLDivElement>(null);
-  const abortRef = useRef<AbortController | null>(null);
-  // Đếm cục bộ để sinh id tạm cho tin nhắn optimistic — tránh gọi hàm
-  // "impure" (`Date.now()`) trong thân hàm bị React Compiler coi là có thể
-  // chạy lúc render (đúng cảnh báo `react-hooks/purity`), dù thực tế hàm
-  // này chỉ gọi từ sự kiện gửi/thử lại.
-  const pendingIdRef = useRef(0);
+  // Logic chat DÙNG CHUNG với Companion nổi (widget) — xem
+  // `useCompanionChat`/`CompanionChatArea`, tách ra khi hợp nhất 2 bề mặt
+  // theo đúng chỉ đạo Founder ("Companion ở Menu và Companion nổi là một").
+  const chat = useCompanionChat({ initialConversationId, initialMessages });
 
   // `listGoals()` đọc `window.localStorage` — không thể lấy giá trị thật lúc
   // SSR/initial render (server không có `window`). Đọc trong `useEffect`
@@ -231,179 +197,13 @@ export function CompanionClient({
     // thay cho localStorage per-browser cũ (cùng pattern `GrowthActivityPanel.tsx`).
     (async () => {
       await hydrateGoalRuntime();
-       
+
       setGoals(listGoals());
     })();
   }, []);
   const activeGoal = goals.find((g) => g.status === "active") ?? goals[0] ?? null;
 
   const go = (path: string) => router.push(path);
-
-  const overLimit = input.length > COMPANION_MESSAGE_MAX_LENGTH;
-
-  async function sendMessage(rawText: string) {
-    const text = rawText.trim();
-    if (!text || sending || text.length > COMPANION_MESSAGE_MAX_LENGTH) return;
-    setSending(true);
-    setError(null);
-    setInput("");
-
-    pendingIdRef.current += 1;
-    const pendingId = `pending-${pendingIdRef.current}`;
-    const optimisticUser: Msg = {
-      id: pendingId,
-      role: "user",
-      content: text,
-      createdAt: new Date().toISOString(),
-      pending: true,
-    };
-    setMessages((prev) => [...prev, optimisticUser]);
-    requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
-    try {
-      const res = await fetch("/api/companion/chat", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ conversationId, message: text }),
-        signal: controller.signal,
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(
-          res.status === 429
-            ? "Companion đang xử lý nhiều yêu cầu cùng lúc — vui lòng chờ một chút rồi thử lại."
-            : typeof data?.error === "string"
-              ? data.error
-              : "Companion chưa thể phản hồi lúc này."
-        );
-        if (data?.conversationId) setConversationId(data.conversationId);
-        if (data?.userMessage) {
-          // Tin nhắn đã lưu thật ở server (vd. lỗi 502 khi AI Provider thất
-          // bại) — thay bong bóng "đang gửi" bằng dữ liệu thật thay vì để
-          // nó kẹt vĩnh viễn ở trạng thái mờ/không có giờ (đúng cách
-          // `CompanionChatShell.tsx` 1.0 xử lý).
-          //
-          // BUG THẬT ĐÃ SỬA — trước đây spread thẳng `data.userMessage`
-          // (shape server `{id,role,content,created_at}`, SNAKE_CASE) vào
-          // `Msg` (kỳ vọng `createdAt` camelCase) — `m.createdAt` luôn
-          // `undefined` cho nhánh lỗi này, `formatMessageTimestamp()` âm
-          // thầm trả về chuỗi rỗng (không crash, chỉ mất giờ hiển thị).
-          // Map tường minh đúng field, khớp `CompanionMessageRow` cục bộ.
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === pendingId
-                ? {
-                    id: data.userMessage.id,
-                    role: data.userMessage.role,
-                    content: data.userMessage.content,
-                    createdAt: data.userMessage.created_at,
-                    pending: false,
-                  }
-                : m
-            )
-          );
-        } else {
-          // Chưa có gì được lưu (lỗi xác thực/tạo conversation) — bỏ hẳn
-          // bong bóng tạm, không để kẹt lại trên màn hình.
-          setMessages((prev) => prev.filter((m) => m.id !== pendingId));
-        }
-        return;
-      }
-      if (data.conversationId) setConversationId(data.conversationId);
-      // BUG NGHIÊM TRỌNG ĐÃ SỬA — "mỗi khi chát hệ thống tải lại trang":
-      // `data.assistantMessage` (response `/api/companion/chat`, xem
-      // `PublicChatResponse`) là 1 OBJECT ĐẦY ĐỦ
-      // `{id,role,content,created_at}`, KHÔNG PHẢI chuỗi text — trước đây
-      // gán THẲNG cả object này vào `content` (`content: data.assistantMessage
-      // ?? ""`). `<MarkdownLite text={m.content} />` sau đó gọi
-      // `text.split(...)` trên 1 OBJECT → `TypeError: text.split is not a
-      // function` ở MỌI LƯỢT chat thành công — exception này bị Next.js
-      // Error Boundary cấp route (`/v2/error.tsx`) bắt, thay thế TOÀN BỘ
-      // cây UI bằng màn hình lỗi → đúng cảm giác "cả trang bị tải lại"
-      // Founder mô tả (không phải navigation thật, là unmount do crash).
-      // Sửa: trích đúng `.content`/`.id`/`.created_at` từ 2 object server
-      // trả về (cùng cách `CompanionChatShell.tsx`'s `toChatMessage()` xử
-      // lý), không tự tổng hợp `createdAt`/`id` giả nữa.
-      setMessages((prev) => [
-        ...prev.filter((m) => m.id !== pendingId),
-        {
-          id: data.userMessage.id,
-          role: data.userMessage.role,
-          content: data.userMessage.content,
-          createdAt: data.userMessage.created_at,
-        },
-        {
-          id: data.assistantMessage.id,
-          role: data.assistantMessage.role,
-          content: data.assistantMessage.content,
-          createdAt: data.assistantMessage.created_at,
-        },
-      ]);
-      // Giai đoạn 2, mục 2a — API trả `memorySuggestion` khi lượt này có
-      // khoảnh khắc đáng nhớ (status "keep"), `null` khi không có gì.
-      setMemorySuggestion(data.memorySuggestion ?? null);
-      setMemorySaveState("idle");
-      requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }));
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") {
-        // Người dùng chủ động bấm Dừng — không báo lỗi, chỉ bỏ tin nhắn
-        // optimistic (xử lý chung ở dòng `setMessages` bên dưới).
-      } else {
-        setError("Không thể kết nối tới Companion. Kiểm tra mạng và thử lại.");
-        // Lỗi mạng xảy ra TRƯỚC khi tới được server — chưa có gì được lưu,
-        // trả lại nội dung vào ô nhập để không mất tin nhắn, đúng cách
-        // `CompanionChatShell.tsx` 1.0 xử lý.
-        setInput(text);
-      }
-      setMessages((prev) => prev.filter((m) => m.id !== pendingId));
-    } finally {
-      setSending(false);
-      abortRef.current = null;
-    }
-  }
-
-  const send = () => sendMessage(input);
-  const stop = () => abortRef.current?.abort();
-  const retry = (text: string) => {
-    if (sending) return;
-    sendMessage(text);
-  };
-
-  async function copyMessage(id: string, content: string) {
-    try {
-      await navigator.clipboard.writeText(content);
-      setCopiedId(id);
-      setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1500);
-    } catch {
-      // clipboard không khả dụng — bỏ qua, không có gì để báo lỗi thêm
-    }
-  }
-
-  async function handleSaveMemory() {
-    if (!memorySuggestion || memorySaveState !== "idle") return;
-    setMemorySaveState("saving");
-    try {
-      const result = await saveMemorySuggestion(memorySuggestion);
-      setMemorySaveState(result === "saved" ? "saved" : "error");
-    } catch {
-      // `saveMemorySuggestion()` có thể throw (vd Supabase client chưa cấu
-      // hình đúng) — trước đây KHÔNG có try/catch, exception rơi thành
-      // unhandled promise rejection trong 1 event handler. Bắt lại để hiện
-      // trạng thái lỗi trung thực thay vì để lan ra ngoài.
-      setMemorySaveState("error");
-    }
-  }
-
-  function handleDismissMemory() {
-    setMemorySuggestion(null);
-    setMemorySaveState("idle");
-  }
-
-  const lastAssistantIndex = messages.map((m) => m.role).lastIndexOf("assistant");
-  const lastUserBefore = (index: number) => [...messages.slice(0, index)].reverse().find((m) => m.role === "user");
 
   return (
     <div className="comp">
@@ -433,212 +233,23 @@ export function CompanionClient({
               </div>
 
               <div className="chat-card">
-                <div className="chat-messages">
-                {messages.length === 0 && !sending ? (
-                  <div className="msg-row">
-                    <div className="msg-avatar">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/v2-static/assets/icon-companion.png" alt="Companion" />
-                    </div>
-                    <div>
-                      <div className="msg-bubble">
-                        Xin chào! 👋
-                        <br />
-                        Mình là Companion, AI Mentor của bạn.
-                        <br />
-                        Hôm nay bạn muốn học gì, làm gì, hay khám phá điều gì mới? Mình luôn ở đây để hỗ trợ bạn. 💜
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  messages.map((m, index) => {
-                    if (m.role === "user") {
-                      return (
-                        <div className="msg-row user" key={m.id} style={m.pending ? { opacity: 0.7 } : undefined}>
-                          <div className="msg-avatar user">VD</div>
-                          <div>
-                            <div className="msg-bubble" style={{ whiteSpace: "pre-wrap" }}>
-                              {m.content}
-                            </div>
-                            {!m.pending && <span className="msg-time">{formatMessageTimestamp(m.createdAt)}</span>}
-                          </div>
-                        </div>
-                      );
-                    }
-
-                    const isLast = index === lastAssistantIndex;
-                    const precedingUser = lastUserBefore(index);
-
-                    return (
-                      <div className="msg-row" key={m.id}>
-                        <div className="msg-avatar">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src="/v2-static/assets/icon-companion.png" alt="Companion" />
-                        </div>
-                        <div>
-                          <div className="msg-bubble">
-                            <MarkdownLite text={m.content} />
-                          </div>
-                          <span className="msg-time">{formatMessageTimestamp(m.createdAt)}</span>
-                          <div style={{ display: "flex", gap: 14, marginTop: 6 }}>
-                            <button type="button" onClick={() => copyMessage(m.id, m.content)} style={actionBtnStyle}>
-                              {copiedId === m.id ? "Đã sao chép" : "Sao chép"}
-                            </button>
-                            {isLast && !sending && precedingUser ? (
-                              <button type="button" onClick={() => retry(precedingUser.content)} style={actionBtnStyle}>
-                                Thử lại
-                              </button>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-
-                {sending ? (
-                  <div className="msg-row">
-                    <div className="msg-avatar">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src="/v2-static/assets/icon-companion.png" alt="Companion" />
-                    </div>
-                    <div className="msg-bubble" style={{ display: "inline-flex", gap: 5, alignItems: "center" }}>
-                      <span style={typingDotStyle("0s")} />
-                      <span style={typingDotStyle(".2s")} />
-                      <span style={typingDotStyle(".4s")} />
-                    </div>
-                  </div>
-                ) : null}
-                {/* Giai đoạn 2, mục 2a — ghi nhớ tự động phát hiện + xác
-                    nhận 1 chạm. Chỉ hiện khi API vừa báo có khoảnh khắc
-                    đáng nhớ ("keep") ở lượt gần nhất — không tự động lưu,
-                    người dùng phải chủ động bấm "Lưu".
-                    BUG ĐÃ SỬA — "co giật màn hình": khối này trước đây là
-                    SIBLING của `.chat-messages` bên trong `.chat-card` (flex
-                    column, chiều cao CỐ ĐỊNH `height:70vh; overflow:hidden`,
-                    xem `companion.css`). Mỗi lần khối này xuất hiện/biến mất
-                    (ngay sau khi Companion trả lời), layout flex renegotiate
-                    KHÔNG hoạt ảnh (CSS không animate `flex-basis`) — chiều
-                    cao `.chat-messages` (flex:1) NHẢY đột ngột cùng lúc với
-                    `requestAnimationFrame(scrollIntoView)` chạy riêng — 2
-                    hiệu ứng chồng nhau tạo cảm giác giật/nhảy màn hình mỗi
-                    lượt chat. Đã chuyển khối này vào BÊN TRONG
-                    `.chat-messages` (phần tử cuối, trước `bottomRef`) — giờ
-                    là 1 phần của khu vực cuộn (`overflow-y:auto`), không còn
-                    làm đổi kích thước khung `.chat-card` cố định nữa; xuất
-                    hiện mượt trong cùng 1 lần cuộn `scrollIntoView`. */}
-                {memorySuggestion ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 8,
-                      background: "var(--violet-light)",
-                      border: "1px solid var(--violet)",
-                      borderRadius: 12,
-                      padding: "12px 14px",
-                    }}
-                  >
-                    {memorySaveState === "saved" ? (
-                      <div style={{ fontSize: 12.5, color: "var(--violet-dark)", fontWeight: 700 }}>
-                        Đã lưu vào My Story.
-                      </div>
-                    ) : (
-                      <>
-                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--violet-dark)" }}>
-                          Đây có vẻ là một khoảnh khắc đáng nhớ — lưu vào My Story nhé?
-                        </div>
-                        <div style={{ fontSize: 12.5, color: "var(--text)", fontStyle: "italic" }}>
-                          &quot;{memorySuggestion.content}&quot;
-                        </div>
-                        {memorySaveState === "error" ? (
-                          <div style={{ fontSize: 11.5, color: "#b91c2c" }}>
-                            Chưa lưu được — vui lòng thử lại.
-                          </div>
-                        ) : null}
-                        <div style={{ display: "flex", gap: 8 }}>
-                          <button
-                            type="button"
-                            onClick={handleSaveMemory}
-                            disabled={memorySaveState === "saving"}
-                            className="chip"
-                            style={{ background: "var(--violet)", color: "#fff", cursor: "pointer" }}
-                          >
-                            {memorySaveState === "saving" ? "Đang lưu…" : "Lưu vào My Story"}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleDismissMemory}
-                            className="chip"
-                            style={{ cursor: "pointer" }}
-                          >
-                            Bỏ qua
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ) : null}
-
-                <div ref={bottomRef} />
-
-                {error ? (
-                  <div className="msg-row">
-                    <div className="msg-bubble" style={{ background: "#fdeef0", color: "#b91c2c" }}>
-                      {error}
-                    </div>
-                  </div>
-                ) : null}
-                </div>
-
-                <div className="chat-input-row">
-                  <input
-                    type="text"
-                    placeholder="Nhắn tin cho Companion..."
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") send();
-                    }}
-                    disabled={sending}
-                  />
-                  {sending ? (
-                    <button className="chat-send" onClick={stop} aria-label="Dừng phản hồi">
-                      <svg viewBox="0 0 24 24" fill="#fff">
-                        <rect x="6" y="6" width="12" height="12" rx="2" />
-                      </svg>
-                    </button>
-                  ) : (
-                    <button className="chat-send" onClick={send} disabled={!input.trim() || overLimit} aria-label="Gửi tin nhắn">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-                {overLimit ? (
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "#b91c2c" }}>
-                    Quá dài — tối đa {COMPANION_MESSAGE_MAX_LENGTH} ký tự ({input.length}/{COMPANION_MESSAGE_MAX_LENGTH}).
-                  </div>
-                ) : null}
-                <div className="chip-row">
-                  {[
-                    ["Đặt câu hỏi", <svg key="1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>],
-                    ["Gợi ý bài học", <svg key="2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20V2H6.5A2.5 2.5 0 004 4.5z" /></svg>],
-                    ["Tạo kế hoạch", <svg key="3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" /></svg>],
-                    ["Phân tích & đánh giá", <svg key="4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19h16M7 15l3-4 3 3 5-7" /></svg>],
-                    ["Công cụ AI", <svg key="5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M8 21h8M12 18v3" /></svg>],
-                  ].map(([label, icon]) => (
-                    <div
-                      className="chip"
-                      key={label as string}
-                      onClick={() => setInput((label as string) + ": ")}
-                    >
-                      {icon}
-                      {label}
-                    </div>
-                  ))}
-                </div>
+                <CompanionChatArea
+                  messages={chat.messages}
+                  sending={chat.sending}
+                  error={chat.error}
+                  copiedId={chat.copiedId}
+                  memorySuggestion={chat.memorySuggestion}
+                  memorySaveState={chat.memorySaveState}
+                  input={chat.input}
+                  onInputChange={chat.setInput}
+                  onSend={chat.send}
+                  onStop={chat.stop}
+                  onCopy={chat.copyMessage}
+                  onRetry={chat.retry}
+                  onSaveMemory={chat.handleSaveMemory}
+                  onDismissMemory={chat.handleDismissMemory}
+                  bottomRef={chat.bottomRef}
+                />
               </div>
             </div>
 

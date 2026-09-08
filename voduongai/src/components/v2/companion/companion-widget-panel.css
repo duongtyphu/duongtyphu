@@ -1,0 +1,95 @@
+/* Companion nổi (Widget) — panel chat, Portal 2.0 thuần (không còn phụ
+ * thuộc `CompanionComposer`/`CompanionChatShell` của Portal 1.0).
+ *
+ * Lớp ngoài cùng (overlay/kích thước/vị trí/hoạt ảnh mở-đóng) dùng
+ * Tailwind trực tiếp trong `CompanionWidgetPanel.tsx` (đồng bộ quy ước nút
+ * nổi ở `CompanionWidget.tsx`). Lớp trong (`.comp`) tái dùng NGUYÊN token
+ * màu + `.chat-card`/`.msg-*`/`.chat-input-row`/`.chip` đã có sẵn trong
+ * `companion.css` — không viết lại UI tin nhắn lần thứ 2, và KHÔNG có khung
+ * lồng nào quanh ô nhập liệu (chỉ đúng 1 viền từ `.chat-input-row`).
+ */
+
+.comp .cwp-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.comp .cwp-header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--violet), var(--violet-dark), var(--violet));
+}
+.comp .cwp-header-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #efe9ff, #e3dbff);
+}
+.comp .cwp-header-text {
+  flex: 1;
+  min-width: 0;
+}
+.comp .cwp-header-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.2;
+}
+.comp .cwp-header-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #16a34a;
+  margin-top: 2px;
+}
+.comp .cwp-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  flex-shrink: 0;
+}
+.comp .cwp-header-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
+}
+.comp .cwp-header-btn:hover {
+  border-color: var(--violet);
+  color: var(--violet-dark);
+}
+
+/* Ghi đè kích thước `.chat-card` (mặc định thiết kế cho trang đầy đủ,
+   `calc(100vh - 233px)`) — panel nổi để `.chat-card` lấp đầy phần thân còn
+   lại của chính nó (chiều cao panel đã cố định ở Tailwind ngoài cùng). */
+.comp .chat-card.cwp-chat-card {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  border: none;
+  border-radius: 0;
+  padding: 14px;
+  gap: 10px;
+}
