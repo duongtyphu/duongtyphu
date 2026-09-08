@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Caveat } from "next/font/google";
 import { BookOpen, ArrowRight, Feather, Mail, Plus, X } from "lucide-react";
 import { getCurrentChapterFromClient, type JourneyChapter } from "@/lib/portal/foundation/journey-chapter";
-import { getJourneyProgress } from "@/lib/portal/foundation/growth-view";
+import { getJourneyProgress, hydrateGrowthView } from "@/lib/portal/foundation/growth-view";
 import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 import {
   buildUnderstandingNote,
@@ -329,17 +329,19 @@ export function MyStoryBook({
   const [corkWriteOpen, setCorkWriteOpen] = useState(false);
 
   useEffect(() => {
-    const events = readGrowthEvents();
-    const firstOut = events.find((e) => e.eventType === "OUTPUT_CREATED");
-    const firstJourney = events.find((e) => e.eventType === "MISSION_COMPLETED");
-    const works = getJourneyProgress()
-      .filter((j) => j.outputCount > 0)
-      .map((j) => ({ title: j.missionGoal, outputCount: j.outputCount }));
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setChapter(getCurrentChapterFromClient(premiumCount));
-    setFirstOutput(firstOut ? { date: firstOut.timestamp } : null);
-    setFirstCompletedJourney(firstJourney ? { date: firstJourney.timestamp } : null);
-    setCreatedWorks(works);
+    void (async () => {
+      await hydrateGrowthView();
+      const events = readGrowthEvents();
+      const firstOut = events.find((e) => e.eventType === "OUTPUT_CREATED");
+      const firstJourney = events.find((e) => e.eventType === "MISSION_COMPLETED");
+      const works = getJourneyProgress()
+        .filter((j) => j.outputCount > 0)
+        .map((j) => ({ title: j.missionGoal, outputCount: j.outputCount }));
+      setChapter(getCurrentChapterFromClient(premiumCount));
+      setFirstOutput(firstOut ? { date: firstOut.timestamp } : null);
+      setFirstCompletedJourney(firstJourney ? { date: firstJourney.timestamp } : null);
+      setCreatedWorks(works);
+    })();
   }, [premiumCount]);
 
   const companionLine = useMemo(() => buildInsightMemoryLine(reflections), [reflections]);

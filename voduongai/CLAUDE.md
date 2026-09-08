@@ -12831,3 +12831,128 @@ sidebar để cuộn (không chỉ con lăn); (8) widget Companion nổi trong s
 đã xoá không còn xuất hiện; (10) **quan trọng nhất** — gửi vài lượt chat
 liên tiếp với Companion, xác nhận KHÔNG còn crash "tải lại trang" (bug
 #46, ảnh hưởng MỌI lượt chat trước bản vá này).
+
+## Phase 42 — Companion Workspace Kernel: localStorage → Supabase (per member_id thật)
+
+Founder giao task #52 ("Audit + khắc phục lỗi ở 5 khu vực dùng nhiều nhất
+— Companion/Mnyt/Học viện AI/Dự án Cơ hội/Premium — + Hành trình của
+tôi"). Audit qua 2 agent nền chạy song song xác nhận Companion chat proper/
+Mnyt/Học viện AI/Dự án & Cơ hội/Premium+Affiliate+Checkout đều đã Supabase-
+backed đúng `member_id` thật (không phát hiện bug mới) — chỉ đúng 1 khu vực
+còn gap: **"Companion Workspace Kernel"** — 3 file nền tảng
+(`growth-event-bus.ts`/`workspace-session-store.ts`/`portfolio-store.ts`)
+lưu TOÀN BỘ Task→Output→Review→Approval→Portfolio (engine chính của
+`WorkspaceMvp.tsx`, vào từ nút "Bắt đầu Nhiệm vụ" ở `/v2/muc-tieu/[goalId]`)
+cộng Growth Event backbone (nuôi "Nhật ký học tập"/"Hành trình của tôi"/
+"Khu vườn của bạn" qua `growth-view.ts`) — thuần `localStorage`, KHÔNG gắn
+`member_id` nào: 2 học viên dùng chung máy thấy chung dữ liệu, đổi máy mất
+hết lịch sử. Đúng bug gốc Phase 40 (`goal-runtime.ts`/`memory-store.ts`) đã
+sửa trước đó, chỉ chưa lan tới 3 file này.
+
+**Schema mới** (`supabase-phase42-workspace-kernel.sql`, áp dụng qua
+Supabase MCP): `growth_events` (mirror `GrowthEvent`, RLS SELECT+INSERT —
+log APPEND-ONLY, đã audit toàn bộ 3 file xác nhận không có hàm xoá Event
+nào), `workspace_sessions` (mirror `WorkspaceSessionRecord`, `context`/
+`history`/`outputs` giữ nguyên dạng jsonb — không tách bảng con vì mọi call
+site luôn đọc/ghi cả 1 record đầy đủ, RLS FOR ALL vì cập nhật liên tục —
+pause/resume/advance step/output mới), `portfolio_items` (mirror
+`PortfolioItemRecord`, RLS SELECT+INSERT — `promoteEligibleOutputs()` chỉ
+tạo mới, không bao giờ sửa/xoá). Cả 3 index `(member_id, <ngày> desc)`.
+
+**Kiến trúc "cache đồng bộ + persist bất đồng bộ"** — đúng Phase 40 (không
+đổi bất kỳ chữ ký hàm export nào của 3 file — `emitGrowthEvent()`/
+`readGrowthEvents()`/`createSession()`/`upsert()`/`listAllSessions()`/
+`promoteEligibleOutputs()`/`listPortfolioItems()`... vẫn đồng bộ 100% như
+cũ, tránh viết lại hàng chục call site đang gọi ngay trong render/event
+handler đồng bộ). Mỗi file chỉ đổi đúng các hàm nội bộ từng chạm
+`localStorage` (`persistEvent`/`readAll`+`writeAll`+`upsert`/
+`persistCreated`+`listPortfolioItems`) thành đọc/ghi 1 cache trong bộ nhớ
+(đồng bộ, hành vi phía trên không đổi) + đẩy lên Supabase ở nền
+(fire-and-forget). Thêm đúng 3 hàm mới bắt buộc: `hydrateGrowthEventBus()`/
+`hydrateWorkspaceSessions()`/`hydratePortfolioItems()` (async, đọc
+`auth.getUser()` + tải toàn bộ dòng của đúng `member_id` vào cache) — PHẢI
+`await` 1 lần lúc mount TRƯỚC khi đọc lần đầu ở mỗi trang/component. Cache
+tự re-hydrate nếu phát hiện đổi tài khoản đăng nhập.
+
+**`growth-view.ts`** (lớp đọc tổng hợp cho Nhật ký học tập/Hành trình của
+tôi/Khu vườn của bạn, đọc CẢ 3 nguồn trên) thêm `hydrateGrowthView()` —
+điểm gọi DUY NHẤT mọi component tiêu thụ file này nên dùng (`await
+Promise.all([hydrateGrowthEventBus(), hydrateWorkspaceSessions(),
+hydratePortfolioItems()])`), thay vì mỗi component tự gọi rời rạc 3 lần.
+
+**13 consumer component đã wire hydrate** (thêm `await hydrateGrowthView()`
+— hoặc `hydrateWorkspaceSessions()` riêng cho component chỉ chạm 1 nguồn —
+vào TRƯỚC lần đọc đồng bộ đầu tiên trong `useEffect` có sẵn, đổi callback
+đồng bộ thành async IIFE):
+`GrowthActivityPanel.tsx`, `PillarEntranceCard.tsx`, `GardenExperience.tsx`
+(đúng effect thứ 2 — effect thứ 1 chỉ tính khí quyển ngày/đêm, không đụng),
+`GardenWidget.tsx`, `CompanionMemoryLine.tsx`, `MirrorChamber.tsx`,
+`JourneyMapAtlas.tsx`, `MyStoryBook.tsx`, `LearningJournalNotebook.tsx`,
+`CurrentChapterCard.tsx` (Journey Hub — đã có `useEffect` sẵn, chỉ thêm
+hydrate). Riêng `CompanionContextPanel.tsx` (1.0, đã có sẵn `hydrateGoalRuntime()`
+từ Phase 40) — thêm `hydrateWorkspaceSessions()` chạy song song qua
+`Promise.all()`. `WorkspaceMvp.tsx` (writer chính của `workspace-session-store`/
+`portfolio-store`, `/portal/workspace`) — thêm `hydrateWorkspaceSessions()`/
+`hydratePortfolioItems()` vào đúng effect riêng "chạy sớm nhất" đã có sẵn
+cho `hydrateGoalRuntime()`/`hydrateMemoryStore()` (Phase 40), cùng mức ưu
+tiên non-blocking (chấp nhận race condition nhỏ ở lần render đầu, đúng
+tiền lệ Phase 40 đã chấp nhận cho chính component này).
+
+**1 trường hợp khó — `JourneyStatusCard.tsx`** (dùng chung CKOS/Học viện
+AI): đọc `getJourneyProgress()` THẲNG trong render body, không có
+`useEffect` sẵn — viết lại thành `useState` + `useEffect` (mặc định
+`[]`, hydrate xong mới `setJourneys()`) để có chỗ `await` an toàn.
+
+**Bug tự phát hiện + sửa khi chạy `vitest run` lần đầu (đúng lớp lỗi đã
+gặp ở Phase 40 — "cache module-level không tự reset giữa các `it()` cùng
+file như `localStorage.clear()` cũ"):** 1 test (`agent-integration-mvp.test.ts`,
+"Reviewer Agent gợi ý 'revise'...") đếm sai `USER_APPROVAL_REQUIRED` do
+Event của test trước rò rỉ sang test sau qua `eventsCache` chưa reset.
+Thêm 3 hàm CHỈ-DÙNG-TEST `__resetGrowthEventBusCacheForTest()`/
+`__resetWorkspaceSessionsCacheForTest()`/`__resetPortfolioItemsCacheForTest()`,
+gọi trong `beforeEach()` của 5 test file có chạm 1 trong 3 store này
+(`agent-integration-mvp.test.ts`, `workforce-activation.test.ts`,
+`workspace-runtime-integration.test.ts`, `goal-runtime.test.ts`,
+`phase2-e2e-loop.test.ts`) — đúng con số cũng gồm 5-6 file như Phase 40
+từng gặp.
+
+**Phát hiện phụ khi dọn lint:** sau khi bọc setState trong async IIFE, ESLint
+`react-hooks/set-state-in-effect` không còn nhận diện các lệnh `setState`
+đó nằm "trực tiếp trong effect" nữa (vì nay nằm trong 1 hàm async lồng
+bên trong) — 11 dòng `eslint-disable-next-line` cũ trở thành "unused
+directive" (warning), đã xoá sạch. Trong lúc dọn bằng `sed` hàng loạt, lỡ
+xoá nhầm 1 dòng disable HỢP LỆ khác trong `GardenExperience.tsx` (effect
+thứ 1, tính khí quyển ngày/đêm — không liên quan Phase 42, code gốc có
+sẵn từ trước) — ESLint bắt được ngay (`error`, không phải warning) vì
+đó VẪN là `setState` trực tiếp trong effect thật — đã khôi phục lại dòng
+đó trước khi commit.
+
+**Không đụng** (đúng tinh thần Phase 40 — chỉ page-level entry point mới
+cần hydrate riêng, các file nội bộ gọi `emitGrowthEvent`/đọc qua các hàm
+trên không cần tự hydrate vì phụ thuộc hydrate đã chạy ở component gọi
+chúng): `workforce-registry.ts`, `learning-lessons.ts`, `memory-store.ts`,
+`mission-runtime.ts`, `mission-unlock-runtime.ts`, `agent-run-store.ts`,
+`capability-engine.ts`, `companion-manager.ts`, `execution-orchestrator.ts`,
+`impact-engine.ts`, `companion-workspace.ts`. `NhatKyHocTapTab.tsx`/
+`KhuVuonCuaBanTab.tsx` (`/v2/hanh-trinh-cua-toi`, Giai đoạn 8) — đã xác
+nhận qua grep KHÔNG đụng `growth-view.ts`/3 store này (dùng nguồn dữ liệu
+khác — `live-learning-log.ts`, Supabase server-side fetch).
+
+**Verify:** `npx tsc --noEmit` sạch, `npx eslint src` sạch (0 lỗi, 0
+warning mới trên toàn bộ file sửa/thêm — kể cả sau khi dọn `eslint-disable`
+thừa), `npx vitest run` 498/498 pass (5 test file cập nhật `beforeEach`),
+`rm -rf .next && npm run build` sạch (exit 0, mọi route build đúng, không
+route nào biến mất — chỉ còn cảnh báo workspace-root có sẵn từ trước,
+không liên quan).
+
+**Chưa tự test được qua UI thật** (giới hạn sandbox không có tài khoản
+đăng nhập/`SUPABASE_SERVICE_ROLE_KEY` đã nêu nhiều lần) — Founder tự test
+trên Preview/Production URL: (1) hoàn thành 1 Nhiệm vụ trong AI Workspace
+(`/portal/workspace`), xác nhận `growth_events`/`workspace_sessions`/
+`portfolio_items` (Supabase) có dòng mới đúng `member_id`; (2) đăng nhập
+CÙNG 1 tài khoản trên thiết bị/trình duyệt KHÁC, xác nhận "Nhật ký học
+tập"/"Hành trình của tôi"/"Khu vườn của bạn" hiện ĐÚNG dữ liệu vừa tạo
+(khác hành vi cũ — trước đây sẽ trống); (3) đăng nhập 2 tài khoản khác
+nhau trên CÙNG 1 trình duyệt (hoặc 2 cửa sổ ẩn danh), xác nhận KHÔNG còn
+thấy chung dữ liệu Workspace/Growth Event/Portfolio của nhau (đúng bug
+gốc Founder giao task #52 để tìm và sửa).

@@ -36,6 +36,7 @@ import {
   runReviewerAgentForOutput,
   runCompanionAgentForOutput,
   approveOutput,
+  hydrateWorkspaceSessions,
   type OutputType,
   type WorkspaceSessionRecord,
 } from "@/lib/portal/foundation/workspace-session-store";
@@ -44,7 +45,7 @@ import {
   REFLECTION_QUESTIONS,
   getNextAction,
 } from "@/lib/portal/foundation/execution-orchestrator";
-import { promoteEligibleOutputs } from "@/lib/portal/foundation/portfolio-store";
+import { promoteEligibleOutputs, hydratePortfolioItems } from "@/lib/portal/foundation/portfolio-store";
 import { computeCapabilityProfiles } from "@/lib/portal/foundation/capability-engine";
 import { recordNewUnlocks } from "@/lib/portal/foundation/mission-unlock-runtime";
 import { listAgentRuns, type AgentRunRecord } from "@/lib/portal/foundation/agent-run-store";
@@ -166,9 +167,14 @@ export function WorkspaceMvp() {
     // Phase 40 — hydrate Goal Runtime/Memory Store (Supabase, member_id
     // thật) trước khi các luồng dưới (Reflection submit → Memory Sync,
     // Mission complete) có thể chạy — cùng mức ưu tiên "chạy sớm nhất có
-    // thể" như context effect ngay dưới.
+    // thể" như context effect ngay dưới. Phase 42 — thêm hydrate Workspace
+    // Session Store/Portfolio Store (đây là consumer đọc/ghi chính của cả
+    // 2, cần chạy sớm nhất để findResumableSession()/promoteEligibleOutputs()
+    // thấy đúng dữ liệu thật của member).
     void hydrateGoalRuntime();
     void hydrateMemoryStore();
+    void hydrateWorkspaceSessions();
+    void hydratePortfolioItems();
   }, []);
 
   useEffect(() => {

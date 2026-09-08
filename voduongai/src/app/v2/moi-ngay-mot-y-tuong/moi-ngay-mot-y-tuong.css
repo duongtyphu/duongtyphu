@@ -547,6 +547,27 @@
   display: none;
 }
 @media (max-width: 880px) {
+  /*
+   * BUG THẬT ĐÃ SỬA (Founder báo "dấu 3 gạch hiển thị 2 lần" trên di
+   * động) — `PortalV2Shell.tsx` giờ LUÔN tự render `.v2-mobile-nav-btn`
+   * của chính nó ở đầu `.topbar` (thêm SAU khi cơ chế drawer riêng
+   * `.mnyt-mobile-nav-btn` ở trên đã tồn tại từ trước — 2 cơ chế độc lập
+   * cùng lúc). Trong đúng khoảng `<=880px` này, nút của `PortalV2Shell`
+   * KHÔNG có tác dụng thật: nó chỉ toggle class `.mobile-open` ngay trên
+   * `<aside>`, nhưng `.mnyt .app .sidebar{transform:translateX(-100%)}`
+   * bên dưới (3 lớp selector, đủ specificity thắng
+   * `[data-ui="v2"] .sidebar.mobile-open` 2 lớp của `v2-tokens.css`) LUÔN
+   * đè lại — bấm nút đó không xảy ra gì. Chỉ ẩn nút thừa này TRONG
+   * media query này (KHÔNG ẩn ở màn hình rộng — `>880px` không có xung
+   * đột gì, nút `.v2-mobile-nav-btn` vẫn là cơ chế co giãn/ẩn sidebar
+   * DUY NHẤT + hoạt động đúng ở đó, giữ nguyên tính năng Task #31/#43
+   * cho trang này). Giữ đúng 1 hamburger hoạt động thật ở mobile
+   * (`.mnyt-mobile-nav-btn`, toggle `.mnyt-nav-open` qua
+   * `MnytShellClient.tsx`).
+   */
+  .mnyt .main-col .v2-mobile-nav-btn {
+    display: none;
+  }
   .mnyt .app .sidebar {
     position: fixed;
     top: 0;
@@ -837,15 +858,43 @@
   background: var(--divider);
   margin: 3px 6px;
 }
+/*
+ * BUG THẬT ĐÃ SỬA (Founder báo "bên dưới dấu 3 gạch click vào không hiển
+ * thị đầy đủ (bị che lấp)") — `.mnyt-mobilemenu-wrap` (34px, chứa nút +
+ * dropdown "Menu điều hướng") là con ĐẦU TIÊN của `.mnyt-header-right`
+ * (đứng trước streak-pill/level-ring/settings), không phải con cuối cùng
+ * — nhưng dropdown lại định vị `right:0` như thể nó LÀ phần tử ngoài
+ * cùng bên phải. Đo bằng Playwright thật (`next dev`, 7 mốc viewport
+ * 320-719px) xác nhận: dưới ~500px, `.mnyt-header` wrap 2 dòng khiến
+ * `.mnyt-header-right` (không có margin đẩy) rơi về SÁT MÉP TRÁI thay vì
+ * phải — dropdown (190px, `right:0` tính từ wrap 34px gần mép trái) tính
+ * ra toạ độ ÂM, bị `.mnyt-shell{overflow-x:hidden}` cắt mất phần lớn.
+ *
+ * Đã sửa 2 lớp, xác nhận lại bằng Playwright (0/7 mốc còn cắt ở CẢ 2 phía
+ * sau khi sửa, trước đó 4/7 mốc hẹp nhất bị cắt trái):
+ * 1. `.mnyt-header-right{margin-left:auto}` — ghim CẢ NHÓM luôn về mép
+ *    phải của dòng nó đang chiếm (đúng cơ chế margin:auto trong flexbox,
+ *    không phụ thuộc `.mnyt-header` wrap 1 hay 2 dòng — cùng kỹ thuật đã
+ *    dùng cho `.v2-mobile-nav-btn` ở các trang `useTopbarRightWrapper=
+ *    false` khác). Không đổi gì ở màn hình rộng (nhóm vốn đã đúng mép
+ *    phải nhờ `.mnyt-header{justify-content:space-between}`).
+ * 2. `.mnyt-mobilemenu-wrap{position:static}` (bỏ `position:relative` cũ)
+ *    — dropdown giờ định vị theo `position:relative` của CHÍNH
+ *    `.mnyt-header-right` (đã có sẵn) thay vì theo cái wrap 34px nằm ở
+ *    ĐẦU nhóm — `right:0` giờ đúng nghĩa "mép phải của CẢ NHÓM header-
+ *    right" (luôn nằm trong khung nhờ mục 1), không còn phụ thuộc vị trí
+ *    tương đối của nút hamburger bên trong nhóm.
+ */
 .mnyt .mnyt-header-right {
   display: flex;
   align-items: center;
   gap: 12px;
   position: relative;
+  margin-left: auto;
 }
 .mnyt .mnyt-mobilemenu-wrap {
   display: none;
-  position: relative;
+  position: static;
 }
 .mnyt .mnyt-mobilemenu-btn {
   background: transparent;

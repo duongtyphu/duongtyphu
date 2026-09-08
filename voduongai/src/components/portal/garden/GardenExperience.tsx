@@ -13,6 +13,7 @@ import {
   getGardenSummary,
   getRecentActivity,
   getJourneyProgress,
+  hydrateGrowthView,
   type GardenSummary,
 } from "@/lib/portal/foundation/growth-view";
 import { useCollection } from "@/lib/admin/store";
@@ -287,30 +288,32 @@ export function GardenExperience({
 
   useEffect(() => {
     document.title = "Khu vườn của bạn — VO DUONG AI";
-    const s = getGardenSummary();
-    const [latest] = getRecentActivity(1);
-    const moments: GemMoment[] = [];
-    const withOutputs = getJourneyProgress().find((j) => j.outputCount > 0);
-    if (withOutputs) {
-      moments.push({
-        kind: "output",
-        label: GEM_KIND_LABEL.output,
-        title: withOutputs.missionGoal,
-        text: `Bạn đã tạo ra ${withOutputs.outputCount} kết quả thật cho mục tiêu này — chúng là nước tưới của khu vườn.`,
-      });
-    }
-    if (s.missionsCompleted + s.journeysTouched + s.totalOutputs > 0) {
-      moments.push({
-        kind: "summary",
-        label: GEM_KIND_LABEL.summary,
-        title: "Khu vườn được nuôi từ việc thật",
-        text: `${s.missionsCompleted} nhiệm vụ hoàn thành, ${s.journeysTouched} hành trình đã chạm tới, ${s.totalOutputs} kết quả đã tạo ra — không hơn, không kém.`,
-      });
-    }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setSummary(s);
-    setLocalMoments(moments);
-    setLastActivity(latest ? latest.label : null);
+    void (async () => {
+      await hydrateGrowthView();
+      const s = getGardenSummary();
+      const [latest] = getRecentActivity(1);
+      const moments: GemMoment[] = [];
+      const withOutputs = getJourneyProgress().find((j) => j.outputCount > 0);
+      if (withOutputs) {
+        moments.push({
+          kind: "output",
+          label: GEM_KIND_LABEL.output,
+          title: withOutputs.missionGoal,
+          text: `Bạn đã tạo ra ${withOutputs.outputCount} kết quả thật cho mục tiêu này — chúng là nước tưới của khu vườn.`,
+        });
+      }
+      if (s.missionsCompleted + s.journeysTouched + s.totalOutputs > 0) {
+        moments.push({
+          kind: "summary",
+          label: GEM_KIND_LABEL.summary,
+          title: "Khu vườn được nuôi từ việc thật",
+          text: `${s.missionsCompleted} nhiệm vụ hoàn thành, ${s.journeysTouched} hành trình đã chạm tới, ${s.totalOutputs} kết quả đã tạo ra — không hơn, không kém.`,
+        });
+      }
+      setSummary(s);
+      setLocalMoments(moments);
+      setLastActivity(latest ? latest.label : null);
+    })();
   }, []);
 
   const moments = useMemo(() => [...serverMoments, ...localMoments], [serverMoments, localMoments]);

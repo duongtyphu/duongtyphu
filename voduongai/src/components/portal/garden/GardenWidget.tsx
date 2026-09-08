@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Leaf } from "lucide-react";
-import { getGardenSummary, type GardenSummary } from "@/lib/portal/foundation/growth-view";
+import { getGardenSummary, hydrateGrowthView, type GardenSummary } from "@/lib/portal/foundation/growth-view";
 
 /**
  * Preview nhỏ của "Khu vườn của bạn" ở trang chủ Portal.
@@ -18,8 +18,10 @@ export function GardenWidget() {
   const [garden, setGarden] = useState<GardenSummary | null>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setGarden(getGardenSummary());
+    void (async () => {
+      await hydrateGrowthView();
+      setGarden(getGardenSummary());
+    })();
   }, []);
 
   return (

@@ -18,7 +18,7 @@ import {
   seedLandingPageProductionGoal,
   __resetGoalRuntimeCacheForTest,
 } from "@/lib/portal/foundation/goal-runtime";
-import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
+import { readGrowthEvents, __resetGrowthEventBusCacheForTest } from "@/lib/portal/foundation/growth-event-bus";
 
 /**
  * GOAL 001 — Goal Runtime. Generic Goal → Epic → Mission — Landing Page
@@ -27,10 +27,11 @@ import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
  */
 describe("GOAL 001 — Goal Runtime", () => {
   beforeEach(() => {
-    // Phase 40 — goal-runtime.ts giờ dùng cache trong bộ nhớ (Supabase-backed
-    // thật), không còn localStorage — reset cache module-level thay vì
-    // `localStorage.clear()` cũ.
+    // Phase 40/42 — goal-runtime.ts/growth-event-bus.ts giờ dùng cache
+    // trong bộ nhớ (Supabase-backed thật), không còn localStorage — reset
+    // cache module-level thay vì `localStorage.clear()` cũ.
     __resetGoalRuntimeCacheForTest();
+    __resetGrowthEventBusCacheForTest();
   });
 
   it("Generic: tạo Goal → Epic → Mission bất kỳ, không liên quan Landing Page", () => {

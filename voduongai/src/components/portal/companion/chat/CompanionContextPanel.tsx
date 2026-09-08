@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { listGoals, listEpics, listGoalMissions, hydrateGoalRuntime, type GoalRecord, type GoalMissionRecord } from "@/lib/portal/foundation/goal-runtime";
-import { listAllSessions, type WorkspaceSessionRecord } from "@/lib/portal/foundation/workspace-session-store";
+import { listAllSessions, hydrateWorkspaceSessions, type WorkspaceSessionRecord } from "@/lib/portal/foundation/workspace-session-store";
 import { MODULE_LABELS } from "@/companion/agents/module-agent-map";
 import { useReflections } from "@/lib/portal/reflections";
 
@@ -42,7 +42,7 @@ export function CompanionContextPanel() {
 
   useEffect(() => {
     void (async () => {
-    await hydrateGoalRuntime();
+    await Promise.all([hydrateGoalRuntime(), hydrateWorkspaceSessions()]);
     const goals = listGoals()
       .filter((g) => g.status === "active" || g.status === "ready_for_analysis")
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());

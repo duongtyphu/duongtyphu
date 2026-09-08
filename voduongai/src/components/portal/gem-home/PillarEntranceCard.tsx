@@ -14,7 +14,7 @@ import {
   HeartHandshake,
   type LucideIcon,
 } from "lucide-react";
-import { getModuleActivitySummary, getGardenSummary, getRecentActivity } from "@/lib/portal/foundation/growth-view";
+import { getModuleActivitySummary, getGardenSummary, getRecentActivity, hydrateGrowthView } from "@/lib/portal/foundation/growth-view";
 import { EditableRegion } from "./EditableRegion";
 import type { FieldConfig } from "@/lib/admin/fields";
 
@@ -151,29 +151,31 @@ export function PillarEntranceCard({
 
   useEffect(() => {
     if (startedOverride) return;
-    let line: string | null = null;
-    if (startedMode === "module" && module) {
-      const summary = getModuleActivitySummary(module);
-      line =
-        summary.sessionCount === 0
-          ? "Bạn chưa bắt đầu gì ở đây."
-          : summary.outputCount > 0
-            ? `Bạn đã có ${summary.outputCount} kết quả thật từ ${summary.sessionCount} phiên làm việc ở đây.`
-            : `Bạn đã bắt đầu ${summary.sessionCount} phiên ở đây, chưa có kết quả nào hoàn tất.`;
-    } else if (startedMode === "aggregate") {
-      const garden = getGardenSummary();
-      line =
-        garden.totalOutputs === 0
-          ? "Khu vườn của bạn còn trống — chưa có gì để nhìn lại."
-          : `Bạn đã tạo ${garden.totalOutputs} kết quả thật, chạm tới ${garden.journeysTouched} hành trình.`;
-    } else if (startedMode === "recent") {
-      const [latest] = getRecentActivity(1);
-      line = latest ? `Lần gần nhất, bạn đã ${latest.label.toLowerCase()}.` : "Chưa có gì để nhớ — điều đó sẽ bắt đầu từ lần đầu tiên bạn làm việc trong Workspace.";
-    }
-    if (line) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- reading browser-only localStorage, no SSR equivalent
-      setStartedLine(line);
-    }
+    void (async () => {
+      await hydrateGrowthView();
+      let line: string | null = null;
+      if (startedMode === "module" && module) {
+        const summary = getModuleActivitySummary(module);
+        line =
+          summary.sessionCount === 0
+            ? "Bạn chưa bắt đầu gì ở đây."
+            : summary.outputCount > 0
+              ? `Bạn đã có ${summary.outputCount} kết quả thật từ ${summary.sessionCount} phiên làm việc ở đây.`
+              : `Bạn đã bắt đầu ${summary.sessionCount} phiên ở đây, chưa có kết quả nào hoàn tất.`;
+      } else if (startedMode === "aggregate") {
+        const garden = getGardenSummary();
+        line =
+          garden.totalOutputs === 0
+            ? "Khu vườn của bạn còn trống — chưa có gì để nhìn lại."
+            : `Bạn đã tạo ${garden.totalOutputs} kết quả thật, chạm tới ${garden.journeysTouched} hành trình.`;
+      } else if (startedMode === "recent") {
+        const [latest] = getRecentActivity(1);
+        line = latest ? `Lần gần nhất, bạn đã ${latest.label.toLowerCase()}.` : "Chưa có gì để nhớ — điều đó sẽ bắt đầu từ lần đầu tiên bạn làm việc trong Workspace.";
+      }
+      if (line) {
+        setStartedLine(line);
+      }
+    })();
   }, [module, startedMode, startedOverride]);
 
   const textBlock = (

@@ -2,16 +2,32 @@
  * EPIC 03 — Sprint B2: AI Workspace Execution Engine.
  *
  * Workspace Session thật — thay thế cơ chế "1 context duy nhất, ghi đè
- * mỗi lần" của Sprint 01/02 bằng 1 danh sách Session thật (localStorage,
- * chưa có backend — đúng tinh thần "chưa gọi AI thật" đã giữ xuyên suốt
- * EPIC 02-03), có thể Pause/Resume/Complete, giữ Output + Version + lịch
- * sử đầy đủ.
+ * mỗi lần" của Sprint 01/02 bằng 1 danh sách Session thật, có thể Pause/
+ * Resume/Complete, giữ Output + Version + lịch sử đầy đủ.
  *
- * Không đổi UI lớn — module này chỉ là lớp dữ liệu; `WorkspaceMvp.tsx`
- * gọi các hàm ở đây để hiển thị/tương tác.
+ * PHASE 42 — trước đây `localStorage`-backed (per-browser, KHÔNG gắn
+ * `member_id` thật). Task #52 phát hiện đây là gap dữ liệu nghiêm trọng
+ * nhất trong 5 khu vực dùng nhiều nhất: toàn bộ Task→Output→Review→
+ * Approval (engine chính của `WorkspaceMvp.tsx`, vào từ nút "Bắt đầu
+ * Nhiệm vụ" ở `/v2/muc-tieu/[goalId]`) lưu chung 1 khoá localStorage —
+ * 2 học viên dùng chung máy thấy chung Session, đổi máy mất hết. Giờ lưu
+ * qua bảng `workspace_sessions` (RLS `member_id = auth.uid()`), đúng
+ * kiến trúc "cache đồng bộ + persist bất đồng bộ" Phase 40 — GIỮ NGUYÊN
+ * 100% chữ ký mọi hàm export bên dưới (đều đồng bộ như cũ). Chỉ
+ * `readAll`/`writeAll`/`upsert` (3 hàm nội bộ DUY NHẤT từng chạm
+ * `localStorage`) đổi thành đọc/ghi cache trong bộ nhớ + đẩy lên Supabase
+ * ở nền (fire-and-forget). Thêm 1 hàm mới bắt buộc: `hydrateWorkspaceSessions()`
+ * (async, gọi 1 lần lúc mount TRƯỚC khi đọc/ghi lần đầu).
+ *
+ * `context`/`history`/`outputs` lưu nguyên vẹn dạng jsonb (không tách
+ * bảng con) — mọi call site trong hệ thống luôn đọc/ghi cả 1
+ * `WorkspaceSessionRecord` đầy đủ (không có truy vấn nào cần lọc theo 1
+ * Output/1 dòng lịch sử riêng lẻ), nên tách chuẩn hoá là việc thừa, tăng
+ * rủi ro không cần thiết cho 1 bản vá tập trung vào member_id.
  */
 
 import type { WorkspaceContext } from "@/lib/portal/companion-workspace";
+import { getSupabaseBrowser } from "@/lib/supabase-browser";
 import { emitGrowthEvent } from "./growth-event-bus";
 import { getProviderForCapability } from "./provider-manager";
 import { startAgentRun, completeAgentRun, failAgentRun } from "./agent-run-store";
@@ -107,25 +123,101 @@ export type WorkspaceSessionRecord = {
   outputs: OutputRecord[];
 };
 
-const SESSIONS_KEY = "vdai_workspace_sessions";
 const MAX_SESSIONS = 100;
 
-function readAll(): WorkspaceSessionRecord[] {
+type WorkspaceSessionRow = {
+  session_id: string;
+  context: WorkspaceContext;
+  status: WorkspaceSessionStatus;
+  current_step_id: ExecutionStepId;
+  started_at: string;
+  paused_at: string | null;
+  resumed_at: string | null;
+  finished_at: string | null;
+  history: HistoryEntry[] | null;
+  outputs: OutputRecord[] | null;
+};
+
+function rowToSession(r: WorkspaceSessionRow): WorkspaceSessionRecord {
+  return {
+    sessionId: r.session_id,
+    context: r.context,
+    status: r.status,
+    currentStepId: r.current_step_id,
+    startedAt: r.started_at,
+    pausedAt: r.paused_at ?? undefined,
+    resumedAt: r.resumed_at ?? undefined,
+    finishedAt: r.finished_at ?? undefined,
+    history: r.history ?? [],
+    outputs: r.outputs ?? [],
+  };
+}
+
+function sessionToRow(s: WorkspaceSessionRecord, memberId: string) {
+  return {
+    session_id: s.sessionId,
+    member_id: memberId,
+    context: s.context,
+    status: s.status,
+    current_step_id: s.currentStepId,
+    started_at: s.startedAt,
+    paused_at: s.pausedAt ?? null,
+    resumed_at: s.resumedAt ?? null,
+    finished_at: s.finishedAt ?? null,
+    history: s.history,
+    outputs: s.outputs,
+  };
+}
+
+let cachedMemberId: string | null | undefined = undefined;
+let sessionsCache: WorkspaceSessionRecord[] = [];
+
+/**
+ * Tải Workspace Session thật của member đang đăng nhập vào cache trong
+ * bộ nhớ — PHẢI gọi (và `await`) trước khi dùng `listAllSessions()`/
+ * `getSession()`/`findResumableSession()`/... lần đầu ở mỗi trang. No-op
+ * nếu đã hydrate đúng member hiện tại.
+ */
+export async function hydrateWorkspaceSessions(): Promise<void> {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    cachedMemberId = null;
+    sessionsCache = [];
+    return;
+  }
   try {
-    const raw = window.localStorage.getItem(SESSIONS_KEY);
-    return raw ? (JSON.parse(raw) as WorkspaceSessionRecord[]) : [];
+    const supabase = getSupabaseBrowser();
+    const { data: userData } = await supabase.auth.getUser();
+    const memberId = userData.user?.id ?? null;
+    if (memberId === cachedMemberId) return;
+    cachedMemberId = memberId;
+    if (!memberId) {
+      sessionsCache = [];
+      return;
+    }
+    const { data, error } = await supabase
+      .from("workspace_sessions")
+      .select("session_id, context, status, current_step_id, started_at, paused_at, resumed_at, finished_at, history, outputs")
+      .eq("member_id", memberId)
+      .order("started_at", { ascending: true });
+    sessionsCache = error || !data ? [] : (data as WorkspaceSessionRow[]).map(rowToSession);
   } catch {
-    return [];
+    sessionsCache = [];
   }
 }
 
+/** CHỈ dùng trong test — cache module-level không tự reset giữa các test
+    case như `localStorage.clear()` cũ, nên test phải tự gọi hàm này. */
+export function __resetWorkspaceSessionsCacheForTest(): void {
+  cachedMemberId = undefined;
+  sessionsCache = [];
+}
+
+function readAll(): WorkspaceSessionRecord[] {
+  return sessionsCache;
+}
+
 function writeAll(sessions: WorkspaceSessionRecord[]) {
-  try {
-    window.localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions.slice(-MAX_SESSIONS)));
-  } catch {
-    // localStorage đầy/không khả dụng — Workspace vẫn dùng được trong phiên hiện tại
-    // (state React), chỉ mất khả năng resume sau khi rời trang.
-  }
+  sessionsCache = sessions.slice(-MAX_SESSIONS);
 }
 
 function upsert(session: WorkspaceSessionRecord) {
@@ -134,6 +226,18 @@ function upsert(session: WorkspaceSessionRecord) {
   if (idx >= 0) all[idx] = session;
   else all.push(session);
   writeAll(all);
+  void persistSession(session);
+}
+
+async function persistSession(session: WorkspaceSessionRecord): Promise<void> {
+  if (!cachedMemberId) return;
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return;
+  try {
+    const supabase = getSupabaseBrowser();
+    await supabase.from("workspace_sessions").upsert(sessionToRow(session, cachedMemberId), { onConflict: "session_id" });
+  } catch {
+    // Mất kết nối/lỗi ghi — chấp nhận được ở MVP, cùng tinh thần localStorage cũ.
+  }
 }
 
 /** Khóa để tìm Session có thể resume — cùng nguồn + cùng mục tiêu/Mission

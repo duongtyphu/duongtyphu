@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PortalBackLink } from "@/components/portal/ui/PortalBackLink";
 import { getCurrentChapterFromClient, JOURNEY_CHAPTER_NAMES, type JourneyChapter } from "@/lib/portal/foundation/journey-chapter";
-import { getGardenSummary, getModuleActivitySummary } from "@/lib/portal/foundation/growth-view";
+import { getGardenSummary, getModuleActivitySummary, hydrateGrowthView } from "@/lib/portal/foundation/growth-view";
 import type { Reflection } from "@/lib/portal/reflections";
 import { useCollection } from "@/lib/admin/store";
 import { useEditMode } from "@/components/portal/journey-map/EditModeContext";
@@ -243,16 +243,18 @@ export function JourneyMapAtlas({
   const [hasAnyJourney, setHasAnyJourney] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const summary = getGardenSummary();
-    const conns = portalConnections.map((c) => ({
-      label: c.label,
-      href: c.href,
-      count: getModuleActivitySummary(c.module).sessionCount,
-    }));
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- đọc localStorage chỉ có ở client sau mount
-    setChapter(getCurrentChapterFromClient(premiumCount));
-    setConnections(conns);
-    setHasAnyJourney(summary.journeysTouched > 0);
+    void (async () => {
+      await hydrateGrowthView();
+      const summary = getGardenSummary();
+      const conns = portalConnections.map((c) => ({
+        label: c.label,
+        href: c.href,
+        count: getModuleActivitySummary(c.module).sessionCount,
+      }));
+      setChapter(getCurrentChapterFromClient(premiumCount));
+      setConnections(conns);
+      setHasAnyJourney(summary.journeysTouched > 0);
+    })();
   }, [premiumCount, portalConnections]);
 
   if (chapter === undefined || hasAnyJourney === null) {

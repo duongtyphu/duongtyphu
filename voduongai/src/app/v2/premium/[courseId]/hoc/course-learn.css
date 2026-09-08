@@ -56,6 +56,10 @@
 .chl .promo button:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(109,74,255,.5);filter:brightness(1.08)}
 .chl .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
 .chl .topbar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+/* Cùng bug/fix "dấu 3 gạch lệch phải" đã ghi ở companion.css — trang này
+   showSearchBox=false, không có phần tử flex:1 nào hấp thụ khoảng trống
+   trước .topbar{justify-content:flex-end}. */
+.chl .v2-mobile-nav-btn{margin-right:auto}
 .chl .search{flex:1;max-width:640px;position:relative}
 .chl .search input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-family:inherit;margin:0}
 .chl .search input:focus{outline:2px solid var(--violet-light);border-color:var(--violet)}

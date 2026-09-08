@@ -7,12 +7,28 @@
  * `PortfolioItem` đã có). Nếu người dùng chưa có hoạt động nào, mọi hàm
  * ở đây trả về mảng rỗng — trang gọi phải tự xử lý trạng thái rỗng, không
  * hiển thị số liệu bịa.
+ *
+ * PHASE 42 — cả 3 nguồn bên dưới giờ Supabase-backed (per-member_id
+ * thật, không còn localStorage). `hydrateGrowthView()` là điểm gọi DUY
+ * NHẤT mọi component tiêu thụ file này nên dùng — PHẢI `await` trong
+ * `useEffect` TRƯỚC lần đọc đầu tiên ở mỗi component/trang (xem
+ * `GrowthActivityPanel.tsx`/`GardenExperience.tsx`/`MirrorChamber.tsx`/
+ * `JourneyMapAtlas.tsx`/`GardenWidget.tsx`/`CompanionMemoryLine.tsx`/
+ * `PillarEntranceCard.tsx`/`JourneyStatusCard.tsx` để biết cách gọi).
  */
 
-import { readGrowthEvents } from "./growth-event-bus";
-import { listAllSessions } from "./workspace-session-store";
-import { listPortfolioItems } from "./portfolio-store";
+import { readGrowthEvents, hydrateGrowthEventBus } from "./growth-event-bus";
+import { listAllSessions, hydrateWorkspaceSessions } from "./workspace-session-store";
+import { listPortfolioItems, hydratePortfolioItems } from "./portfolio-store";
 import type { GrowthEvent, GrowthEventType } from "./data-model";
+
+/** Hydrate cả 3 nguồn (Growth Event/Workspace Session/Portfolio Item)
+    song song — gọi 1 lần duy nhất thay vì 3 lời gọi rời rạc ở mỗi
+    component tiêu thụ `growth-view.ts`. An toàn gọi lại nhiều lần (mỗi
+    hàm con tự no-op nếu đã hydrate đúng member hiện tại). */
+export async function hydrateGrowthView(): Promise<void> {
+  await Promise.all([hydrateGrowthEventBus(), hydrateWorkspaceSessions(), hydratePortfolioItems()]);
+}
 
 const EVENT_LABEL: Record<GrowthEventType, string> = {
   WORKSPACE_STARTED: "Bắt đầu một Không gian làm việc mới",

@@ -16,6 +16,7 @@ import {
   getRecentActivity,
   getJourneyProgress,
   getGardenSummary,
+  hydrateGrowthView,
   type ActivityEntry,
   type JourneyProgressEntry,
   type GardenSummary,
@@ -35,11 +36,12 @@ export function GrowthActivityPanel({ variant }: { variant: Variant }) {
   const [garden, setGarden] = useState<GardenSummary | null>(null);
 
   useEffect(() => {
-    // Đọc localStorage chỉ có ở client sau mount — phải set trong effect.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActivity(getRecentActivity());
-    setProgress(getJourneyProgress());
-    setGarden(getGardenSummary());
+    void (async () => {
+      await hydrateGrowthView();
+      setActivity(getRecentActivity());
+      setProgress(getJourneyProgress());
+      setGarden(getGardenSummary());
+    })();
   }, []);
 
   return (

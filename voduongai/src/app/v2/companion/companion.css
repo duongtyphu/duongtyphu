@@ -78,6 +78,17 @@
 .comp .promo button:active{transform:translateY(0) scale(.97)}
 .comp .main-col{flex:1;min-width:0;display:flex;flex-direction:column}
 .comp .topbar{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px 28px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+/* BUG THẬT đã sửa — Founder báo dấu 3 gạch (.v2-mobile-nav-btn, con ĐẦU
+   TIÊN của .topbar, PortalV2Shell.tsx) hiện lệch sang phải cạnh chuông/
+   avatar thay vì nằm bên trái ("phía Menu"). Root cause: trang này
+   (useTopbarRightWrapper=false, không có .search-box flex:1 để hấp thụ
+   khoảng trống) dùng .topbar{justify-content:flex-end} — đẩy CẢ NHÓM
+   children (kể cả hamburger) dồn về mép phải. margin-right:auto hấp thụ
+   hết khoảng trống còn lại NGAY SAU hamburger (đúng cơ chế margin auto
+   trong flexbox, độc lập với justify-content của cha) — ghim nó ở mép
+   trái, nhóm còn lại (nâng cấp/chuông/avatar) vẫn đúng mép phải như cũ.
+   Dùng chung cho /v2/muc-tieu (import companion.css). */
+.comp .v2-mobile-nav-btn{margin-right:auto}
 .comp .upgrade-btn{display:flex;align-items:center;gap:7px;border:1.5px solid var(--gold);color:#8a6a1f;background:#fffaf0;padding:9px 16px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;transition:transform .15s,box-shadow .15s,background .15s}
 .comp .upgrade-btn:hover{background:#fff3d9;transform:translateY(-1px);box-shadow:0 6px 14px rgba(226,178,60,.35)}
 .comp .icon-btn{position:relative;width:38px;height:38px;border-radius:9px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text)}

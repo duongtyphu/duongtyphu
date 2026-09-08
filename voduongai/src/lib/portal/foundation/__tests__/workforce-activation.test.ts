@@ -7,7 +7,7 @@ import {
   setWorkingStatus,
 } from "@/lib/portal/foundation/workforce-registry";
 import { assignTask, toOutputContract } from "@/lib/portal/foundation/companion-manager";
-import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
+import { readGrowthEvents, __resetGrowthEventBusCacheForTest } from "@/lib/portal/foundation/growth-event-bus";
 
 /**
  * PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1).
@@ -20,6 +20,9 @@ import { readGrowthEvents } from "@/lib/portal/foundation/growth-event-bus";
 describe("PHASE 4 EPIC 02 — Activate Core AI Companion Team (Wave 1)", () => {
   beforeEach(() => {
     window.localStorage.clear();
+    // Phase 42 — growth-event-bus.ts giờ dùng cache trong bộ nhớ
+    // (Supabase-backed thật), không còn localStorage.
+    __resetGrowthEventBusCacheForTest();
     vi.restoreAllMocks();
   });
 
